@@ -2,6 +2,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import Home from './pages/Home';
+import NotFound from './pages/not-found';
 import EventDetail from './pages/EventDetail';
 import Plans from './pages/Plans';
 import TrustCenter from './pages/TrustCenter';
@@ -66,6 +67,9 @@ export default function App() {
         <Route path="/help" element={<HelpCenter />} />
         
         <Route path="/admin" element={<SettingsPage />} />
+
+        {/* 404 catch-all */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AppShell>
   );

@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
-import { Calendar, Hash, Bookmark, CalendarPlus, Users, ShieldCheck, MapPin, CheckCircle } from 'lucide-react';
+import { Calendar, Bookmark, CalendarPlus, Users, CheckCircle, MapPin } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { mockUsers } from '../../data/mockUsers';
+import type { Event } from '../../types';
 
 interface EventCardProps {
-  event: any; // We'll keep it any or use the type from mockEvents
-  key?: React.Key;
+  event: Event;
 }
 
-export function EventCard({ event }: EventCardProps) {
+export const EventCard = memo(function EventCard({ event }: EventCardProps) {
   const navigate = useNavigate();
   const [isSaved, setIsSaved] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -30,14 +30,12 @@ export function EventCard({ event }: EventCardProps) {
     const dateStr = event.date.replace(/-/g, '');
     const timeStr = event.time ? event.time.replace(':', '') + '00' : '000000';
     
-    // Default duration of 2 hours if not specified
     let endHour = parseInt(event.time ? event.time.split(':')[0] : '0') + 2;
     if (endHour >= 24) endHour = endHour - 24;
     const endHourStr = endHour.toString().padStart(2, '0');
     const minStr = event.time ? event.time.split(':')[1] : '00';
     const endTimeStr = `${endHourStr}${minStr}00`;
     
-    // Add timezone if you like, but Google handles locale cleanly without Z sometimes, or use +02:00? Google Cal format uses basic string.
     const start = `${dateStr}T${timeStr}`;
     const end = `${dateStr}T${endTimeStr}`;
     
@@ -78,6 +76,7 @@ export function EventCard({ event }: EventCardProps) {
           <button 
             className="hover:text-indigo-600 transition-colors bg-gray-100 hover:bg-indigo-50 p-1.5 rounded"
             onClick={getCalendarUrl}
+            title="Add to Google Calendar"
           >
             <CalendarPlus className="w-3.5 h-3.5" />
           </button>
@@ -129,17 +128,17 @@ export function EventCard({ event }: EventCardProps) {
 
         {organizer && (
           <div className="flex items-center gap-2 mb-4">
-             <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-6 h-6 rounded-full object-cover" />
-             <div className="flex flex-col">
-               <span className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Organizer</span>
-               <a 
-                 href={`/organizer/${organizer.id}`} 
-                 className="text-[11px] font-bold text-[#111827] hover:text-indigo-600 hover:underline"
-                 onClick={(e) => { e.stopPropagation(); navigate(`/organizer/${organizer.id}`); }}
-               >
-                 {organizer.name}
-               </a>
-             </div>
+            <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-6 h-6 rounded-full object-cover" />
+            <div className="flex flex-col">
+              <span className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Organizer</span>
+              <a 
+                href={`/organizer/${organizer.id}`} 
+                className="text-[11px] font-bold text-[#111827] hover:text-indigo-600 hover:underline"
+                onClick={(e) => { e.stopPropagation(); navigate(`/organizer/${organizer.id}`); }}
+              >
+                {organizer.name}
+              </a>
+            </div>
           </div>
         )}
         
@@ -166,4 +165,4 @@ export function EventCard({ event }: EventCardProps) {
       </div>
     </Card>
   );
-}
+});

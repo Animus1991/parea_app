@@ -1,45 +1,6 @@
-import { Bell, Calendar, MessageCircle, AlertTriangle } from 'lucide-react';
+import { mockNotifications } from '../data/mockNotifications';
 
 export default function Notifications() {
-  const notifications = [
-    {
-      id: 'n1',
-      type: 'match',
-      message: "New Match! You've been placed in a high-trust group for 'Weekend Getaway: Arachova Retreat'.",
-      time: '10 mins ago',
-      read: false,
-      icon: AlertTriangle, // We will change this to Users below
-      color: 'bg-emerald-100 text-emerald-600'
-    },
-    {
-      id: 'n2',
-      type: 'message',
-      message: "Organizer Alex sent a message: 'Hey everyone! Please check the updated meeting point for tomorrow's hike.'",
-      time: '1 hour ago',
-      read: false,
-      icon: MessageCircle,
-      color: 'bg-indigo-100 text-indigo-600'
-    },
-    {
-      id: 'n3',
-      type: 'reminder',
-      message: "Reminder: 'Laugh out Loud: Stand-up Comedy' starts in 24 hours. Don't forget your tickets!",
-      time: '3 hours ago',
-      read: true,
-      icon: Calendar,
-      color: 'bg-gray-100 text-gray-600'
-    },
-    {
-      id: 'n4',
-      type: 'system',
-      message: "Your reliability score increased to 95%. Thanks for being a great community member!",
-      time: '2 days ago',
-      read: true,
-      icon: AlertTriangle,
-      color: 'bg-gray-100 text-gray-600'
-    }
-  ];
-
   return (
     <div className="mx-auto max-w-full space-y-6 pb-20">
       <div className="flex justify-between items-end">
@@ -53,7 +14,7 @@ export default function Notifications() {
       </div>
 
       <div className="space-y-3">
-        {notifications.map((notif) => {
+        {mockNotifications.map((notif) => {
           const Icon = notif.icon;
           return (
             <div 

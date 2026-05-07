@@ -181,8 +181,16 @@ export default function EventDetail() {
     
     try {
       const d = new Date(`${event.date}T${event.time}`);
-      startDate = d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
       
+      // Format as local time (no 'Z' suffix) so the ICS DTSTART is a floating
+      // time — calendar apps will interpret it in the user's local timezone,
+      // avoiding the UTC-conversion offset bug for Greek users (UTC+2/+3).
+      const pad = (n: number) => n.toString().padStart(2, '0');
+      const toLocalICS = (dt: Date) =>
+        `${dt.getFullYear()}${pad(dt.getMonth() + 1)}${pad(dt.getDate())}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`;
+
+      startDate = toLocalICS(d);
+
       let addMinutes = 60; // Default 1 hr
       if (event.duration) {
         let parsedMins = 0;
@@ -194,7 +202,7 @@ export default function EventDetail() {
       }
       
       const endD = new Date(d.getTime() + addMinutes * 60000);
-      endDate = endD.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      endDate = toLocalICS(endD);
     } catch(e) {
        console.error("Invalid date", e);
        return;
@@ -305,7 +313,7 @@ export default function EventDetail() {
           {/* Match Score Badge based on User Interests */}
           {event.tags && event.tags.length > 0 && (
             <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700 font-bold" icon={<span className="text-[10px]">🔥</span>}>
-              {Math.min(98, Math.max(15, Math.round((currentUser.interests.filter(i => event.tags.includes(i)).length / event.tags.length) * 100) + 40))}% Match
+              {Math.min(98, Math.max(15, Math.round((currentUser.interests.filter(i => (event.tags ?? []).includes(i)).length / (event.tags ?? [1]).length) * 100) + 40))}% Match
             </Badge>
           )}
         </div>

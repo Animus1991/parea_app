@@ -21,34 +21,34 @@ export default function GroupChat() {
   const group = mockGroups.find(g => g.id === groupId) || mockGroups.find(g => g.eventId === groupId); // Fallback if routing passes eventId
   const event = mockEvents.find(e => e.id === group?.eventId);
   
-  // Generating a lot of mock messages to show off virtualized list
-  const initialMessages: ChatMessage[] = Array.from({ length: 1000 }).map((_, i) => ({
-    id: `m${i}`,
-    senderId: i % 2 === 0 ? 'u2' : (i % 3 === 0 ? 'u3' : currentUser.id),
-    senderName: i % 2 === 0 ? 'Maria' : (i % 3 === 0 ? 'Nikos' : currentUser.name),
-    text: `Test message ${i} from previous conversations. ${i % 5 === 0 ? 'Looking forward to it!' : ''}`,
-    timestamp: new Date(Date.now() - (1000 - i) * 60000).toISOString()
-  }));
-
-  // Append original messages
-  initialMessages.push(
-    {
-      id: 'system1',
-      senderId: 'system',
-      senderName: 'System',
-      text: 'Group confirmed! Say hi to your new Nakamas. Meeting details are available in the info panel.',
-      timestamp: new Date(Date.now() - 86400000).toISOString()
-    },
-    {
-      id: 'msg-maria',
-      senderId: 'u2',
-      senderName: 'Maria',
-      text: 'Hey everyone! Excited for this.',
-      timestamp: new Date(Date.now() - 3600000).toISOString()
-    }
-  );
-
-  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
+  // Lazy initializer: the 1000-message array is built only once on mount,
+  // not on every re-render (useState ignores the initial value after first render).
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    const msgs: ChatMessage[] = Array.from({ length: 1000 }).map((_, i) => ({
+      id: `m${i}`,
+      senderId: i % 2 === 0 ? 'u2' : (i % 3 === 0 ? 'u3' : currentUser.id),
+      senderName: i % 2 === 0 ? 'Maria' : (i % 3 === 0 ? 'Nikos' : currentUser.name),
+      text: `Test message ${i} from previous conversations. ${i % 5 === 0 ? 'Looking forward to it!' : ''}`,
+      timestamp: new Date(Date.now() - (1000 - i) * 60000).toISOString()
+    }));
+    msgs.push(
+      {
+        id: 'system1',
+        senderId: 'system',
+        senderName: 'System',
+        text: 'Group confirmed! Say hi to your new Nakamas. Meeting details are available in the info panel.',
+        timestamp: new Date(Date.now() - 86400000).toISOString()
+      },
+      {
+        id: 'msg-maria',
+        senderId: 'u2',
+        senderName: 'Maria',
+        text: 'Hey everyone! Excited for this.',
+        timestamp: new Date(Date.now() - 3600000).toISOString()
+      }
+    );
+    return msgs;
+  });
   const [newMessage, setNewMessage] = useState('');
   const [showInfo, setShowInfo] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);

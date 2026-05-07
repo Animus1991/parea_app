@@ -50,6 +50,7 @@ export default function NearbyGroups() {
   const [isMapFullscreen, setIsMapFullscreen] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(() => window.innerWidth < 1024 ? 320 : 384);
   const [isDragging, setIsDragging] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -94,7 +95,7 @@ export default function NearbyGroups() {
           setMapCenter(loc);
           setUserLocation(loc);
         },
-        (error) => console.log("Geolocation permission denied:", error),
+        (error) => console.warn("Geolocation permission denied:", error),
       );
     }
   }, []);
@@ -110,13 +111,14 @@ export default function NearbyGroups() {
           setMapCenter(loc);
           setUserLocation(loc);
         },
-        (error) =>
-          alert(
-            "Couldn't get your location. Please check browser permissions.",
-          ),
+        () => {
+          setLocationError("Couldn't get your location. Check browser permissions.");
+          setTimeout(() => setLocationError(null), 4000);
+        },
       );
     } else {
-      alert("Geolocation is not supported by your browser.");
+      setLocationError("Geolocation is not supported by your browser.");
+      setTimeout(() => setLocationError(null), 4000);
     }
   };
 
@@ -161,7 +163,7 @@ export default function NearbyGroups() {
   // Mock map render removed for brevity, assuming apiKey is usually present or we can just simplify it.
   // We'll keep the full logic since it's important for the case where there's no API key.
 
-  if (!apiKey) {
+  if (!hasValidKey) {
     return (
       <div className={`overflow-hidden rounded-none md:rounded-xl lg:rounded-none z-0 ${isMapFullscreen ? "fixed !inset-0 !z-[9999] bg-black" : "absolute inset-0 animate-in fade-in duration-500"}`}>
         {/* Map Background Mock */}
@@ -238,7 +240,7 @@ export default function NearbyGroups() {
                       {group.category}
                     </div>
                     <GroupImage
-                      src={group.imageUrl}
+                      src={group.imageUrl ?? ''}
                       alt={group.title}
                       className="w-full h-24 object-cover rounded-md mb-2 shadow-sm"
                     />
@@ -354,7 +356,7 @@ export default function NearbyGroups() {
               >
                 <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                   <GroupImage
-                    src={group.imageUrl}
+                    src={group.imageUrl ?? ''}
                     alt={group.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
@@ -492,7 +494,7 @@ export default function NearbyGroups() {
                         onClick={() => navigate(`/events/${evt.id}`)}
                       >
                         <GroupImage
-                          src={evt.imageUrl}
+                          src={evt.imageUrl ?? ''}
                           alt={evt.title}
                           className="w-full h-24 object-cover rounded-md mb-2 shadow-sm"
                         />
@@ -556,6 +558,11 @@ export default function NearbyGroups() {
         >
           <Crosshair className="h-5 w-5" />
         </button>
+        {locationError && (
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-red-600 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg pointer-events-none whitespace-nowrap z-50">
+            {locationError}
+          </div>
+        )}
         <button
           onClick={() => setIsMapFullscreen(!isMapFullscreen)}
           className="h-11 px-4 bg-[#111827] text-white rounded-xl shadow-lg flex items-center justify-center hover:bg-black transition-colors pointer-events-auto shrink-0"
@@ -645,7 +652,7 @@ export default function NearbyGroups() {
             >
               <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                 <GroupImage
-                  src={group.imageUrl}
+                  src={group.imageUrl ?? ''}
                   alt={group.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />

@@ -32,7 +32,7 @@ export default function Plans() {
             <p className="text-xs text-amber-800 font-medium">You need to complete ID verification to join the "Arachova Retreat" you expressed interest in.</p>
           </div>
         </div>
-        <button onClick={() => navigate('/trust')} className="bg-amber-600 text-white px-4 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-amber-700 transition-colors whitespace-nowrap shrink-0 snap-center">
+        <button onClick={() => navigate('/verification')} className="bg-amber-600 text-white px-4 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-amber-700 transition-colors whitespace-nowrap shrink-0 snap-center">
           Verify Now
         </button>
       </Card>
