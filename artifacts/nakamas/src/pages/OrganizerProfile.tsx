@@ -1,0 +1,160 @@
+import { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { mockUsers } from '../data/mockUsers';
+import { mockEvents } from '../data/mockEvents';
+import { Card } from '../components/common/Card';
+import { Badge } from '../components/common/Badge';
+import { Calendar, MapPin, ShieldCheck, Mail, Globe, X } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
+
+export default function OrganizerProfile() {
+  const { id } = useParams();
+  const [showContactModal, setShowContactModal] = useState(false);
+  const organizer = mockUsers.find(u => u.id === id);
+  const hostedEvents = mockEvents.filter(e => e.organizerId === id);
+
+  if (!organizer) return <div className="p-8 text-center text-gray-500 font-medium">Organizer not found</div>;
+
+  const isVerifiedOrganizer = organizer.idVerified && organizer.reliabilityScore >= 80;
+
+  return (
+    <div className="mx-auto max-w-full space-y-8 relative">
+      {/* Profile Header */}
+      <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm text-center sm:text-left sm:flex sm:items-start gap-8">
+        <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 mx-auto sm:mx-0 shrink-0 border-4 border-white shadow-md">
+          {organizer.photoUrl ? (
+            <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-3xl font-bold">
+              {organizer.name.substring(0, 2).toUpperCase()}
+            </div>
+          )}
+        </div>
+        
+        <div className="mt-6 sm:mt-0 flex-1 space-y-4">
+          <div>
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
+              {isVerifiedOrganizer && (
+                <Badge variant="outline" icon={<ShieldCheck className="h-3 w-3 text-indigo-600" />}>
+                  Verified Organizer
+                </Badge>
+              )}
+              <Badge variant="neutral">Trust Tier {organizer.trustTier.split('_')[0]}</Badge>
+            </div>
+            <h1 className="text-3xl font-bold text-[#111827]">{organizer.name}</h1>
+            <p className="text-sm text-gray-500 font-medium mt-1"><MapPin className="h-3.5 w-3.5 inline mr-1" /> {organizer.city}</p>
+          </div>
+          
+          <p className="text-sm text-gray-600 leading-relaxed max-w-2xl">
+            {organizer.bio || 'This organizer has not provided a biography yet. They are a verified partner of Nakamas managing high-quality group events.'}
+          </p>
+
+          {/* Average Rating Section */}
+          <div className="flex items-center gap-4 bg-gray-50 p-3 rounded-lg border border-gray-100 w-fit">
+             <div className="flex items-center gap-1 text-yellow-500">
+               {[1, 2, 3, 4, 5].map(star => (
+                 <svg key={star} className={`w-4 h-4 ${star <= 4 ? 'fill-current' : 'text-gray-300'}`} viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                 </svg>
+               ))}
+             </div>
+             <div className="text-xs font-bold text-[#111827]">
+               4.2 / 5.0 
+               <span className="text-gray-500 font-medium ml-1">(120+ Event Reviews)</span>
+             </div>
+          </div>
+          
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-2">
+            <button 
+              onClick={() => setShowContactModal(true)}
+              className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-indigo-600 transition-colors flex items-center gap-1"
+            >
+              <Mail className="h-4 w-4" /> Contact Organizer
+            </button>
+            <a 
+              href="#" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-indigo-600 transition-colors flex items-center gap-1"
+            >
+              <Globe className="h-4 w-4" /> Website
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h2 className="text-lg font-bold text-[#111827]">Upcoming Events by {organizer.name}</h2>
+        {hostedEvents.length === 0 ? (
+          <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+            <p className="text-gray-500 font-medium text-sm">No upcoming events currently scheduled.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {hostedEvents.map(event => (
+              <Link key={event.id} to={`/events/${event.id}`}>
+                <Card className="flex items-start gap-4 p-4 hover:border-indigo-300 transition-colors cursor-pointer group">
+                  <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden shrink-0">
+                    <div className="w-full h-full bg-indigo-50 flex flex-col items-center justify-center text-indigo-700">
+                      <span className="text-[10px] font-bold uppercase tracking-widest">{format(parseISO(event.date), 'MMM')}</span>
+                      <span className="text-xl font-bold leading-none">{format(parseISO(event.date), 'd')}</span>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-[#111827] group-hover:text-indigo-600 transition-colors line-clamp-1">{event.title}</h3>
+                    <p className="text-xs text-gray-500 mt-1">{event.time} • {event.locationArea}</p>
+                    <div className="mt-2 flex gap-2">
+                      <Badge variant="neutral">{event.category}</Badge>
+                      {event.isPaid ? <Badge variant="outline">€{event.price}</Badge> : <Badge variant="outline">Free</Badge>}
+                    </div>
+                  </div>
+                  <div className="hidden sm:flex items-center text-[10px] font-bold uppercase tracking-wider text-indigo-600 self-center">
+                    View &rarr;
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {showContactModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-[#111827]">Contact {organizer.name}</h3>
+              <button onClick={() => setShowContactModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 mb-4">
+              Send a secure message to this organizer about their events, tickting issues, or general inquiries.
+            </p>
+            <textarea 
+              className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none mb-4 focus:ring-2 focus:ring-indigo-600 outline-none"
+              rows={4}
+              placeholder="Your message..."
+            ></textarea>
+            <div className="flex justify-end gap-3">
+              <button 
+                onClick={() => setShowContactModal(false)}
+                className="px-4 py-2 text-sm font-bold text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  alert("Your message has been sent directly to the organizer.");
+                  setShowContactModal(false);
+                }}
+                className="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
+              >
+                Send Message
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

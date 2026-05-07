@@ -1,36 +1,54 @@
-# [Project name]
+# Nakamas
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Athens social event discovery app — find small groups for shared experiences.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/nakamas run dev` — run the Nakamas web app (Vite dev server)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Frontend: React 19 + Vite + TypeScript
+- Routing: React Router DOM v7 (BrowserRouter)
+- Styling: Tailwind CSS v4 (`@import "tailwindcss"` + `@theme {}` in CSS — no tailwind.config.js)
+- Icons: lucide-react
+- Dates: date-fns
+- Utilities: clsx, tailwind-merge
+- QR codes: qrcode.react
+- Virtual lists: react-virtuoso
+- Maps: @vis.gl/react-google-maps (optional — needs `VITE_GOOGLE_MAPS_PLATFORM_KEY`)
+- Animations: framer-motion
+- All data is mock (no backend)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/nakamas/src/` — all source code
+  - `App.tsx` — React Router routes (25 pages)
+  - `main.tsx` — BrowserRouter wrapper + Google Maps error suppression
+  - `index.css` — Tailwind v4 config + Google Fonts (Inter) + brand tokens
+  - `types/index.ts` — shared TypeScript types
+  - `lib/utils.ts` — `cn()` helper (clsx + tailwind-merge)
+  - `components/layout/AppShell.tsx` — sidebar + top nav shell
+  - `components/common/` — Badge, Button, Card, ErrorBoundary, Skeleton
+  - `components/events/EventCard.tsx` — event listing card
+  - `components/groups/JoinGroupFlow.tsx` — multi-step join flow modal
+  - `data/` — mockEvents, mockGroups, mockUsers (currentUser = mockUsers[0])
+  - `pages/` — 25 page components (Home, EventDetail, NearbyGroups, etc.)
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Pure frontend with mock data — no API server needed
+- Tailwind CSS v4 used without a config file; brand colors defined in `@theme {}` block in `index.css`
+- NearbyGroups page uses a resizable sidebar with a CSS variable `--sidebar-width` for drag-to-resize
+- Google Maps is optional; NearbyGroups has an ErrorBoundary + mock map fallback if no API key is set
+- AdminDashboard is imported as `SettingsPage` and mounted at `/admin` route in App.tsx
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Social event discovery for Athens — users browse events, join small groups, chat with group members, manage their calendar and connections, and optionally host events.
 
 ## User preferences
 
@@ -38,7 +56,9 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Set `VITE_GOOGLE_MAPS_PLATFORM_KEY` env var to enable the live Google Map in NearbyGroups; without it, a styled mock fallback renders instead
+- Button component only accepts variants: `'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'` — not `'default'`
+- Do NOT modify `artifacts/nakamas/vite.config.ts`
 
 ## Pointers
 
