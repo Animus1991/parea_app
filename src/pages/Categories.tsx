@@ -65,11 +65,11 @@ export default function Categories() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#111827]">Categories</h1>
-          <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">Explore our full range of curated experiences.</p>
+          <h1 className="text-xl md:text-2xl font-extrabold tracking-tight text-[#111827]">Categories</h1>
+          <p className="text-gray-500 font-medium text-[13px] mt-1.5">Explore our full range of curated experiences.</p>
         </div>
       </div>
 

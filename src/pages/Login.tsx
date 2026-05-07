@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Card } from '../components/common/Card';
+import { Users } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -8,8 +9,8 @@ export default function Login() {
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] px-4">
       <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4">
         <div className="text-center space-y-2">
-          <div className="text-3xl font-bold tracking-tight text-[#111827] mx-auto flex justify-center mb-4">
-            Nakamas<span className="text-indigo-600">.</span>
+          <div className="flex items-center justify-center text-4xl font-black tracking-tight text-[#111827] mb-4 font-['Outfit'] uppercase">
+             NAKAMAS
           </div>
           <h1 className="text-2xl font-bold text-[#111827]">Welcome back</h1>
           <p className="text-xs text-gray-500 font-medium">Log in to discover trusted groups and experiences.</p>
@@ -20,7 +21,7 @@ export default function Login() {
             onClick={() => navigate('/')}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border border-gray-200 bg-white text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
           >
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+            <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
             Continue with Google
           </button>
           
@@ -28,7 +29,7 @@ export default function Login() {
             onClick={() => navigate('/')}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full bg-black text-sm font-bold text-white hover:bg-gray-900 transition-colors shadow-sm"
           >
-            <img src="https://www.svgrepo.com/show/511330/apple-173.svg" alt="Apple" className="w-5 h-5 filter invert" />
+            <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/511330/apple-173.svg" alt="Apple" className="w-5 h-5 filter invert" />
             Continue with Apple
           </button>
         </div>

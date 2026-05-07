@@ -11,12 +11,13 @@ export const mockUsers: User[] = [
     trustTier: '3_high_trust',
     reliabilityScore: 95,
     badges: ['Reliable participant', 'Phone verified', 'Payment verified'],
-    photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200',
+    photoUrl: 'https://i.pravatar.cc/200?u=u1',
     emailVerified: true,
     phoneVerified: true,
     paymentVerified: true,
     idVerified: false,
-    isOrganizer: false
+    isOrganizer: false,
+    connections: ['u2', 'u3', 'org1']
   },
   {
     id: 'u2',
@@ -28,12 +29,13 @@ export const mockUsers: User[] = [
     trustTier: '2_confirmed',
     reliabilityScore: 85,
     badges: ['Payment verified'],
-    photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
+    photoUrl: 'https://i.pravatar.cc/200?u=u2',
     emailVerified: true,
     phoneVerified: true,
     paymentVerified: true,
     idVerified: false,
-    isOrganizer: false
+    isOrganizer: false,
+    connections: ['u1', 'u3']
   },
   {
     id: 'u3',
@@ -45,12 +47,13 @@ export const mockUsers: User[] = [
     trustTier: '1_explorer',
     reliabilityScore: 50,
     badges: ['New member'],
-    photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200',
+    photoUrl: 'https://i.pravatar.cc/200?u=u3',
     emailVerified: true,
     phoneVerified: false,
     paymentVerified: false,
     idVerified: false,
-    isOrganizer: false
+    isOrganizer: false,
+    connections: ['u1', 'u2', 'org1']
   },
   {
     id: 'org1',
@@ -62,12 +65,13 @@ export const mockUsers: User[] = [
     trustTier: '3_high_trust',
     reliabilityScore: 100,
     badges: ['Organizer verified'],
-    photoUrl: 'https://images.unsplash.com/photo-1560179707-f14e90841261?auto=format&fit=crop&q=80&w=200',
+    photoUrl: 'https://i.pravatar.cc/200?u=org1',
     emailVerified: true,
     phoneVerified: true,
     paymentVerified: true,
     idVerified: true,
-    isOrganizer: true
+    isOrganizer: true,
+    connections: ['u1', 'u3']
   }
 ];
 

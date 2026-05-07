@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   Compass, CalendarCheck, ShieldCheck, Menu, Bell, MessageSquare, 
@@ -8,26 +8,34 @@ import {
 import { cn } from '../../lib/utils';
 import { currentUser } from '../../data/mockUsers';
 
-function NavSection({ title, children }: { title: string, children: ReactNode }) {
+function NavSection({ title, children, isDesktopSidebar }: { title: string, children: ReactNode, isDesktopSidebar?: boolean }) {
+  const titleClass = isDesktopSidebar ? "hidden lg:block px-3 text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-2" : "px-3 text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-2";
+  const dividerClass = isDesktopSidebar ? "block lg:hidden h-px bg-gray-200 my-4 mx-4" : "hidden";
+  
   return (
-    <div className="mb-6">
-      <h3 className="px-3 text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-2">{title}</h3>
-      <div className="space-y-0.5">
+    <div className="mb-2 lg:mb-6">
+      <div className={dividerClass}></div>
+      <h3 className={titleClass}>{title}</h3>
+      <div className="space-y-1.5 lg:space-y-0.5">
         {children}
       </div>
     </div>
   );
 }
 
-function NavItem({ to, icon: Icon, label, disabled = false }: { to: string, icon: any, label: string, disabled?: boolean }) {
+function NavItem({ to, icon: Icon, label, disabled = false, isDesktopSidebar }: { to: string, icon: any, label: string, disabled?: boolean, isDesktopSidebar?: boolean }) {
+  const textClass = isDesktopSidebar ? "hidden lg:block" : "block";
+  const iconClass = isDesktopSidebar ? "h-[22px] w-[22px] lg:h-4 lg:w-4 shrink-0" : "h-4 w-4 shrink-0";
+  const containerClass = isDesktopSidebar ? "justify-center lg:justify-start px-0 py-3 lg:px-3 lg:py-2" : "justify-start px-3 py-2";
+
   if (disabled) {
     return (
-      <div className="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-400 rounded-lg cursor-not-allowed">
-        <div className="flex items-center gap-3">
-          <Icon className="h-4 w-4 shrink-0" />
-          <span>{label}</span>
+      <div className={cn("flex items-center justify-between text-sm font-medium text-gray-400 rounded-lg cursor-not-allowed group", containerClass)} title={label}>
+        <div className={cn("flex items-center gap-3 w-full", isDesktopSidebar ? "justify-center lg:justify-start" : "justify-start")}>
+          <Icon className={iconClass} />
+          <span className={textClass}>{label}</span>
         </div>
-        <span className="text-[9px] uppercase tracking-wider font-bold bg-gray-100 px-1.5 py-0.5 rounded text-gray-400">Soon</span>
+        <span className={cn("text-[9px] uppercase tracking-wider font-bold bg-gray-100 px-1.5 py-0.5 rounded text-gray-400", textClass)}>Soon</span>
       </div>
     );
   }
@@ -35,60 +43,64 @@ function NavItem({ to, icon: Icon, label, disabled = false }: { to: string, icon
   return (
     <NavLink
       to={to}
+      title={label}
       className={({ isActive }) =>
         cn(
-          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+          "flex items-center gap-3 rounded-xl lg:rounded-lg text-sm font-medium transition-colors group",
+          containerClass,
           isActive
-            ? "bg-indigo-50 text-indigo-700 font-bold"
-            : "text-gray-600 hover:bg-gray-50 hover:text-[#111827]"
+            ? "bg-indigo-50 lg:bg-indigo-50 text-indigo-700 font-bold"
+            : "text-gray-500 lg:text-gray-600 hover:bg-gray-100 lg:hover:bg-gray-50 hover:text-[#111827]"
         )
       }
     >
-      <Icon className="h-4 w-4 shrink-0" />
-      {label}
+      <Icon className={iconClass} />
+      <span className={textClass}>{label}</span>
     </NavLink>
   );
 }
 
-function NavLinks() {
+function NavLinks({ isDesktopSidebar }: { isDesktopSidebar?: boolean }) {
+  const childProps = (child: React.ReactElement) => React.cloneElement(child, { isDesktopSidebar });
+
   return (
     <>
-      <NavSection title="Explore & Discover">
-        <NavItem to="/" icon={Compass} label="Discover Events" />
-        <NavItem to="/categories" icon={Grid} label="Categories" />
-        <NavItem to="/nearby" icon={MapPin} label="Local Groups" />
+      <NavSection title="Explore & Discover" isDesktopSidebar={isDesktopSidebar}>
+        {childProps(<NavItem to="/" icon={Compass} label="Discover Events" />)}
+        {childProps(<NavItem to="/categories" icon={Grid} label="Categories" />)}
+        {childProps(<NavItem to="/nearby" icon={MapPin} label="Local Groups" />)}
       </NavSection>
 
-      <NavSection title="My Experience">
-        <NavItem to="/agenda" icon={Calendar} label="My Calendar" />
-        <NavItem to="/plans" icon={CalendarCheck} label="My Plans" />
-        <NavItem to="/saved" icon={Bookmark} label="Saved Events" />
-        <NavItem to="/history" icon={History} label="Past Memories" />
+      <NavSection title="My Experience" isDesktopSidebar={isDesktopSidebar}>
+        {childProps(<NavItem to="/agenda" icon={Calendar} label="My Calendar" />)}
+        {childProps(<NavItem to="/plans" icon={CalendarCheck} label="My Plans" />)}
+        {childProps(<NavItem to="/saved" icon={Bookmark} label="Saved Events" />)}
+        {childProps(<NavItem to="/history" icon={History} label="Past Memories" />)}
       </NavSection>
 
-      <NavSection title="Community">
-        <NavItem to="/connections" icon={Users} label="My Nakamas" />
-        <NavItem to="/chats" icon={MessageSquare} label="Group Chats" />
+      <NavSection title="Community" isDesktopSidebar={isDesktopSidebar}>
+        {childProps(<NavItem to="/connections" icon={Users} label="My Nakamas" />)}
+        {childProps(<NavItem to="/chats" icon={MessageSquare} label="Group Chats" />)}
       </NavSection>
 
-      <NavSection title="Host & Organize">
-        <NavItem to="/manage" icon={TrendingUp} label="Host Dashboard" />
-        <NavItem to="/create" icon={PlusSquare} label="Create Experience" />
-        <NavItem to="/wallet" icon={CreditCard} label="Wallet & Earnings" />
+      <NavSection title="Host & Organize" isDesktopSidebar={isDesktopSidebar}>
+        {childProps(<NavItem to="/manage" icon={TrendingUp} label="Host Dashboard" />)}
+        {childProps(<NavItem to="/create" icon={PlusSquare} label="Create Experience" />)}
+        {childProps(<NavItem to="/wallet" icon={CreditCard} label="Wallet & Earnings" />)}
       </NavSection>
 
-      <NavSection title="Trust & Safety">
-        <NavItem to="/verification" icon={BadgeCheck} label="Identity Verification" />
-        <NavItem to="/trust" icon={ShieldCheck} label="Trust Center" />
-        <NavItem to="/report" icon={Flag} label="Report an Issue" />
+      <NavSection title="Trust & Safety" isDesktopSidebar={isDesktopSidebar}>
+        {childProps(<NavItem to="/verification" icon={BadgeCheck} label="Identity Verification" />)}
+        {childProps(<NavItem to="/trust" icon={ShieldCheck} label="Trust Center" />)}
+        {childProps(<NavItem to="/report" icon={Flag} label="Report an Issue" />)}
       </NavSection>
 
-      <NavSection title="Account & Settings">
-        <NavItem to="/profile" icon={User} label="My Profile" />
-        <NavItem to="/notifications" icon={Bell} label="Notifications" />
-        <NavItem to="/settings" icon={Settings} label="Settings & Privacy" />
-        <NavItem to="/help" icon={HelpCircle} label="Help Center" />
-        <NavItem to="/admin" icon={Terminal} label="Admin & Mod" />
+      <NavSection title="Account & Settings" isDesktopSidebar={isDesktopSidebar}>
+        {childProps(<NavItem to="/profile" icon={User} label="My Profile" />)}
+        {childProps(<NavItem to="/notifications" icon={Bell} label="Notifications" />)}
+        {childProps(<NavItem to="/settings" icon={Settings} label="Settings & Privacy" />)}
+        {childProps(<NavItem to="/help" icon={HelpCircle} label="Help Center" />)}
+        {childProps(<NavItem to="/admin" icon={Terminal} label="Admin & Mod" />)}
       </NavSection>
     </>
   );
@@ -96,15 +108,16 @@ function NavLinks() {
 
 export function SideNav() {
   return (
-    <aside className="w-64 bg-white border-r border-[#E5E7EB] h-full flex-col shrink-0 hidden md:flex">
-      <div className="h-14 flex items-center px-6 border-b border-[#E5E7EB] shrink-0">
-        <div className="text-base font-bold tracking-tight text-[#111827]">
-          Nakamas<span className="text-indigo-600">.</span>
+    <aside className="bg-white border-r border-[#E5E7EB] h-full flex-col shrink-0 hidden md:flex w-[88px] lg:w-64 transition-all duration-300 z-30">
+      <div className="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-[#E5E7EB] shrink-0">
+        <div className="flex items-center text-[39px] lg:text-[31px] font-bold tracking-tight text-[#18D8DB] font-['Poppins']">
+           <span className="lg:hidden">N</span>
+           <span className="hidden lg:block">Nakamas</span>
         </div>
       </div>
       
-      <div className="flex-1 overflow-y-auto py-6 px-3 noscrollbar">
-        <NavLinks />
+      <div className="flex-1 overflow-y-auto py-4 lg:py-6 px-2 lg:px-3">
+        <NavLinks isDesktopSidebar />
       </div>
     </aside>
   );
@@ -112,10 +125,10 @@ export function SideNav() {
 
 export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   return (
-    <nav className="flex items-center justify-between px-6 py-3 bg-white border-b border-[#E5E7EB] h-14 shrink-0">
+    <nav className="flex items-center justify-between px-6 py-3 bg-white border-b border-[#E5E7EB] h-16 shrink-0">
       <div className="flex items-center space-x-8">
-        <div className="text-base font-bold tracking-tight text-[#111827] md:hidden">
-          Nakamas<span className="text-indigo-600">.</span>
+        <div className="flex items-center text-[25px] font-bold tracking-tight text-[#18D8DB] md:hidden font-['Poppins']">
+           Nakamas
         </div>
         <div className="hidden md:block">
            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dashboard</span>
@@ -190,14 +203,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)}></div>
           <div className="relative w-64 max-w-sm bg-white h-full shadow-xl flex flex-col z-50">
             <div className="h-14 flex items-center justify-between px-6 border-b border-[#E5E7EB] shrink-0">
-              <div className="text-base font-bold tracking-tight text-[#111827]">
-                Parea<span className="text-indigo-600">.</span>
+              <div className="text-[25px] font-bold tracking-tight text-[#18D8DB] font-['Poppins']">
+                Nakamas
               </div>
               <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-500 hover:text-[#111827]">
                 <X className="h-6 w-6" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto py-6 px-3 noscrollbar" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="flex-1 overflow-y-auto py-6 px-3" onClick={() => setIsMobileMenuOpen(false)}>
                <NavLinks />
             </div>
           </div>
@@ -205,8 +218,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       )}
       <div className="flex flex-col flex-1 h-screen overflow-hidden">
         <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
-        <main className="flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-5xl p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto relative flex flex-col">
+          <div className="mx-auto w-full max-w-full p-4 lg:px-12 lg:py-8 flex-1 flex flex-col">
             {children}
           </div>
         </main>

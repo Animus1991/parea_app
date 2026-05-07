@@ -4,7 +4,7 @@ import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { Skeleton, ProfileSkeleton } from '../components/common/Skeleton';
 import { currentUser } from '../data/mockUsers';
-import { Shield, ShieldCheck, CheckCircle2, History, Camera } from 'lucide-react';
+import { Shield, ShieldCheck, CheckCircle2, History, Camera, Edit2, X, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
@@ -12,6 +12,14 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const [photoUrl, setPhotoUrl] = useState(currentUser.photoUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [bio, setBio] = useState('Passionate about finding cool local events and meeting new people.');
+  const [isEditingBio, setIsEditingBio] = useState(false);
+  const [tempBio, setTempBio] = useState(bio);
+
+  const [interests, setInterests] = useState(currentUser.interests);
+  const [isAddingInterest, setIsAddingInterest] = useState(false);
+  const [newInterest, setNewInterest] = useState('');
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 600);
@@ -27,14 +35,14 @@ export default function Profile() {
   };
 
   if (isLoading) {
-    return <div className="mx-auto max-w-2xl px-4 py-8"><ProfileSkeleton /></div>;
+    return <div className="mx-auto max-w-full px-4 py-8"><ProfileSkeleton /></div>;
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8 pb-12">
+    <div className="mx-auto max-w-5xl space-y-8 pb-12">
       <div>
-        <h1 className="text-2xl font-bold text-[#111827]">Profile</h1>
-        <p className="mt-1 text-xs text-gray-500 font-medium">Manage your trust settings, verifications, and history.</p>
+        <h1 className="text-xl md:text-2xl font-extrabold tracking-tight text-[#111827]">Profile</h1>
+        <p className="mt-1 text-xs text-gray-500 font-medium leading-relaxed">Manage your trust settings, verifications, and history.</p>
       </div>
 
       <Card className="p-6">
@@ -42,7 +50,7 @@ export default function Profile() {
           <div className="relative group">
             <div className="h-20 w-20 sm:h-16 sm:w-16 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 border border-indigo-200 overflow-hidden">
                {photoUrl ? (
-                 <img src={photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
+                 <img referrerPolicy="no-referrer" src={photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
                ) : (
                  <span className="text-indigo-700 font-bold text-xl uppercase">{currentUser.name.substring(0, 2)}</span>
                )}
@@ -69,11 +77,43 @@ export default function Profile() {
               <span>•</span>
               <span>{currentUser.city}</span>
             </div>
-            <div className={`mt-2 flex items-center gap-1.5 text-xs font-bold px-2 py-1 rounded w-fit ${currentUser.reliabilityScore >= 80 ? 'text-emerald-600 bg-emerald-50' : currentUser.reliabilityScore >= 50 ? 'text-blue-600 bg-blue-50' : 'text-amber-600 bg-amber-50'}`}>
-              <ShieldCheck className="h-4 w-4" />
-              {currentUser.reliabilityScore >= 80 ? 'Highly Reliable' : currentUser.reliabilityScore >= 50 ? 'Frequent Participant' : 'Needs Improvement'}
+            
+            <div className="mt-3">
+              {isEditingBio ? (
+                <div className="space-y-2">
+                  <textarea 
+                    value={tempBio} 
+                    onChange={(e) => setTempBio(e.target.value)}
+                    className="w-full text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-md p-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none"
+                    rows={3}
+                  />
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={() => { setBio(tempBio); setIsEditingBio(false); }}>Save</Button>
+                    <Button size="sm" variant="outline" onClick={() => { setTempBio(bio); setIsEditingBio(false); }}>Cancel</Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="group relative">
+                  <p className="text-sm text-gray-600 font-medium pr-8">{bio}</p>
+                  <button 
+                    onClick={() => setIsEditingBio(true)}
+                    className="absolute top-0 right-0 p-1 text-gray-400 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity rounded-md hover:bg-gray-100"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
             </div>
-            <div className="text-sm text-gray-400 font-bold uppercase mt-1">Tier: {currentUser.trustTier.split('_')[1]}</div>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Badge variant="outline" className={`text-xs py-1 px-2.5 shadow-sm ${currentUser.reliabilityScore >= 80 ? 'text-green-700 bg-green-50 border-green-200' : currentUser.reliabilityScore >= 50 ? 'text-blue-700 bg-blue-50 border-blue-200' : 'text-amber-700 bg-amber-50 border-amber-200'}`}>
+                <ShieldCheck className="h-4 w-4 mr-1.5 inline" />
+                {currentUser.reliabilityScore}% Reliability Score
+              </Badge>
+              <Badge variant="outline" className={`text-xs py-1 px-2.5 shadow-sm ${currentUser.trustTier === '3_high_trust' ? 'text-indigo-700 bg-indigo-50 border-indigo-200' : 'text-gray-700 bg-gray-50 border-gray-200'}`}>
+                {currentUser.trustTier === '3_high_trust' ? 'High Trust Tier' : currentUser.trustTier.replace(/_/g, ' ').toUpperCase() + ' Tier'}
+              </Badge>
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <Button variant="outline" size="sm">Edit</Button>
@@ -164,11 +204,54 @@ export default function Profile() {
         
         <div className="mt-8 pt-6 border-t border-gray-100">
           <h3 className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest mb-3">Interests</h3>
-          <div className="flex flex-wrap gap-2">
-            {currentUser.interests.map(i => (
-              <Badge key={i} variant="neutral">{i}</Badge>
+          <div className="flex flex-wrap gap-2 items-center">
+            {interests.map(i => (
+              <Badge key={i} variant="neutral" className="pr-1.5 select-none bg-gray-50 border-gray-200 text-gray-700">
+                {i}
+                <button 
+                  onClick={() => setInterests(interests.filter(int => int !== i))}
+                  className="ml-1.5 p-0.5 rounded-full hover:bg-gray-200 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
             ))}
-            <Button variant="ghost" size="sm" className="bg-gray-50 border border-gray-200">+ Add</Button>
+            
+            {isAddingInterest ? (
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (newInterest.trim() && !interests.includes(newInterest.trim())) {
+                    setInterests([...interests, newInterest.trim()]);
+                    setNewInterest('');
+                    setIsAddingInterest(false);
+                  }
+                }}
+                className="flex items-center gap-2"
+              >
+                <input
+                  type="text"
+                  value={newInterest}
+                  onChange={(e) => setNewInterest(e.target.value)}
+                  placeholder="New interest..."
+                  className="text-xs border border-gray-200 rounded px-2 py-1 w-28 focus:outline-none focus:border-indigo-500"
+                  autoFocus
+                  onBlur={() => {
+                    if (!newInterest.trim()) setIsAddingInterest(false);
+                  }}
+                />
+                <Button type="submit" size="sm" variant="ghost" className="h-6 px-2 text-indigo-600 font-bold uppercase text-[10px]">Add</Button>
+              </form>
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="bg-gray-50 border border-gray-200 h-6 px-2 text-xs font-medium text-gray-600 hover:bg-gray-100 flex items-center gap-1"
+                onClick={() => setIsAddingInterest(true)}
+              >
+                <Plus className="w-3 h-3" /> Add Interest
+              </Button>
+            )}
           </div>
         </div>
 

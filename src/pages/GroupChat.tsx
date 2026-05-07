@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { mockGroups } from '../data/mockGroups';
 import { mockEvents } from '../data/mockEvents';
 import { currentUser, mockUsers } from '../data/mockUsers';
-import { Send, Users, ArrowLeft, Info, MapPin, Calendar, ShieldCheck, Tag, X } from 'lucide-react';
+import { Send, Users, ArrowLeft, Info, MapPin, Calendar, ShieldCheck, Tag, X, Clock, Filter } from 'lucide-react';
+import { Virtuoso } from 'react-virtuoso';
 
 interface ChatMessage {
   id: string;
@@ -20,37 +21,42 @@ export default function GroupChat() {
   const group = mockGroups.find(g => g.id === groupId) || mockGroups.find(g => g.eventId === groupId); // Fallback if routing passes eventId
   const event = mockEvents.find(e => e.id === group?.eventId);
   
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  // Generating a lot of mock messages to show off virtualized list
+  const initialMessages: ChatMessage[] = Array.from({ length: 1000 }).map((_, i) => ({
+    id: `m${i}`,
+    senderId: i % 2 === 0 ? 'u2' : (i % 3 === 0 ? 'u3' : currentUser.id),
+    senderName: i % 2 === 0 ? 'Maria' : (i % 3 === 0 ? 'Nikos' : currentUser.name),
+    text: `Test message ${i} from previous conversations. ${i % 5 === 0 ? 'Looking forward to it!' : ''}`,
+    timestamp: new Date(Date.now() - (1000 - i) * 60000).toISOString()
+  }));
+
+  // Append original messages
+  initialMessages.push(
     {
-      id: 'm1',
+      id: 'system1',
       senderId: 'system',
       senderName: 'System',
       text: 'Group confirmed! Say hi to your new Nakamas. Meeting details are available in the info panel.',
       timestamp: new Date(Date.now() - 86400000).toISOString()
     },
     {
-      id: 'm2',
+      id: 'msg-maria',
       senderId: 'u2',
       senderName: 'Maria',
       text: 'Hey everyone! Excited for this.',
       timestamp: new Date(Date.now() - 3600000).toISOString()
     }
-  ]);
+  );
+
+  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [newMessage, setNewMessage] = useState('');
   const [showInfo, setShowInfo] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [memberSearchQuery, setMemberSearchQuery] = useState('');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Add small delay to ensure DOM has updated before scrolling
-    const timer = setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [messages]);
+  const [senderFilter, setSenderFilter] = useState<string>('all');
+  const virtuosoRef = useRef<any>(null);
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,13 +72,34 @@ export default function GroupChat() {
 
     setMessages([...messages, msg]);
     setNewMessage('');
+    
+    // Scroll to bottom after state update
+    setTimeout(() => {
+      if (virtuosoRef.current) {
+        virtuosoRef.current.scrollToIndex({ index: 'LAST', align: 'end', behavior: 'smooth' });
+      }
+    }, 50);
   };
 
   const handleDeleteMessage = (id: string) => {
     setMessages(messages.filter(m => m.id !== id));
   };
 
-  const filteredMessages = messages.filter(m => m.text.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredMessages = useMemo(() => {
+    return messages
+      .filter(m => senderFilter === 'all' || m.senderId === senderFilter)
+      .filter(m => m.text.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [messages, senderFilter, searchQuery]);
+
+  // Once mounted, auto scroll to bottom
+  useEffect(() => {
+    const timer = setTimeout(() => {
+       if (virtuosoRef.current) {
+         virtuosoRef.current.scrollToIndex({ index: 'LAST', align: 'end', behavior: 'auto' });
+       }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (!group || !event) {
     return <div className="p-8 text-center text-gray-500">Chat not found or group not confirmed.</div>;
@@ -80,8 +107,52 @@ export default function GroupChat() {
 
   const groupMembersDetailed = group.members.map(mId => mockUsers.find(u => u.id === mId) || currentUser);
 
+  const renderMessage = (index: number, msg: ChatMessage) => {
+    const isSystem = msg.senderId === 'system';
+    const isMe = msg.senderId === currentUser.id;
+
+    if (isSystem) {
+      return (
+        <div key={msg.id} className="text-center my-4 w-full">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
+            {msg.text}
+          </span>
+        </div>
+      );
+    }
+
+    return (
+      <div key={msg.id} className={`flex flex-col group py-2 w-full px-4 ${isMe ? 'items-end' : 'items-start'}`}>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1 mb-1">{isMe ? 'You' : msg.senderName}</span>
+        <div className="flex items-center gap-2">
+          {isMe && (
+            <button 
+              onClick={() => handleDeleteMessage(msg.id)}
+              className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-600 transition-all rounded-full bg-gray-100"
+              title="Delete message"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+          <div 
+            className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
+              isMe 
+                ? 'bg-indigo-600 text-white rounded-tr-none' 
+                : 'bg-white border border-gray-200 text-[#111827] rounded-tl-none shadow-sm'
+            }`}
+          >
+            {msg.text}
+          </div>
+        </div>
+        <span className="text-[10px] text-gray-400 mt-1 mr-1 font-medium tracking-wide">
+          {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </span>
+      </div>
+    );
+  };
+
   return (
-    <div className="mx-auto max-w-5xl h-[calc(100vh-12rem)] flex bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden relative">
+    <div className="mx-auto max-w-full h-[calc(100vh-12rem)] flex bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden relative">
       <div className={`flex flex-col flex-1 ${showInfo ? 'hidden md:flex border-r border-gray-200' : 'flex'}`}>
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50 shrink-0">
@@ -100,12 +171,22 @@ export default function GroupChat() {
             </div>
           </div>
           <div className="flex items-center justify-end gap-2">
+            <select
+              value={senderFilter}
+              onChange={(e) => setSenderFilter(e.target.value)}
+              className="text-[10px] uppercase font-bold border border-gray-200 rounded-full px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white"
+            >
+              <option value="all">All Senders</option>
+              {groupMembersDetailed.map(m => (
+                <option key={m.id} value={m.id}>{m.name}</option>
+              ))}
+            </select>
             <input 
               type="text" 
               placeholder="Search chat..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-3 py-1 text-xs border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-indigo-500 hidden sm:block" 
+              className="px-3 py-1.5 text-xs border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-indigo-500 w-24 sm:w-auto" 
             />
             <button 
               onClick={() => setShowInfo(true)}
@@ -122,63 +203,26 @@ export default function GroupChat() {
           </div>
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50">
-          <div className="text-center mb-6">
+        {/* Messages Virtualized */}
+        <div className="flex-1 overflow-hidden bg-gray-50/50 relative">
+          <div className="absolute top-0 w-full text-center py-3 z-10 bg-gradient-to-b from-gray-50/90 to-transparent">
              <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 px-4 py-2 rounded-lg shadow-sm">
-               <span className="text-amber-800 font-bold uppercase tracking-widest text-[10px]">
-                 ⚠️ Important Security Notice
+               <span className="text-amber-800 font-bold uppercase tracking-widest text-[10px] flex items-center gap-1">
+                 <ShieldCheck className="h-3.5 w-3.5" /> Ephemeral Mode Active
                </span>
-               <span className="text-amber-700 text-xs font-medium border-l border-amber-200 pl-2">
-                 Chat will auto-destruct 24 hours after the event ends.
+               <span className="text-amber-700 text-xs font-medium border-l border-amber-200 pl-2 flex items-center gap-1.5">
+                 <Clock className="h-3.5 w-3.5" /> Chat self-destructs 24 hours after the event
                </span>
              </div>
           </div>
           
-          {filteredMessages.map((msg) => {
-            const isSystem = msg.senderId === 'system';
-            const isMe = msg.senderId === currentUser.id;
-
-            if (isSystem) {
-              return (
-                <div key={msg.id} className="text-center my-4">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
-                    {msg.text}
-                  </span>
-                </div>
-              );
-            }
-
-            return (
-              <div key={msg.id} className={`flex flex-col group ${isMe ? 'items-end' : 'items-start'}`}>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1 mb-1">{isMe ? 'You' : msg.senderName}</span>
-                <div className="flex items-center gap-2">
-                  {isMe && (
-                    <button 
-                      onClick={() => handleDeleteMessage(msg.id)}
-                      className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-600 transition-all rounded-full bg-gray-100"
-                      title="Delete message"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  )}
-                  <div 
-                    className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
-                      isMe 
-                        ? 'bg-indigo-600 text-white rounded-tr-none' 
-                        : 'bg-white border border-gray-200 text-[#111827] rounded-tl-none shadow-sm'
-                    }`}
-                  >
-                    {msg.text}
-                  </div>
-                </div>
-                <span className="text-[10px] text-gray-400 mt-1 mr-1 font-medium tracking-wide">
-                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
-              </div>
-            );
-          })}
-          <div ref={messagesEndRef} />
+          <Virtuoso
+            ref={virtuosoRef}
+            data={filteredMessages}
+            itemContent={renderMessage}
+            className="h-full w-full custom-scrollbar"
+            alignToBottom={true}
+          />
         </div>
 
         {/* Input */}
@@ -213,7 +257,7 @@ export default function GroupChat() {
           
           <div className="p-4 space-y-6">
             <div>
-              <img src={event.imageUrl} alt={event.title} className="w-full h-32 object-cover rounded-lg shadow-sm border border-gray-200 mb-3" />
+              <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-32 object-cover rounded-lg shadow-sm border border-gray-200 mb-3" />
               <h4 className="font-bold text-sm text-[#111827]">{event.title}</h4>
               
               {event.tags && event.tags.length > 0 && (
@@ -261,14 +305,26 @@ export default function GroupChat() {
                 className="w-full px-3 py-1.5 mb-3 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white" 
               />
               <div className="space-y-3">
-                {groupMembersDetailed.filter(m => m.name.toLowerCase().includes(memberSearchQuery.toLowerCase())).map(member => (
+                {groupMembersDetailed.filter(m => m.name.toLowerCase().includes(memberSearchQuery.toLowerCase())).map(member => {
+                  const isCloseToEvent = false; // Mocking that the event is > 2 hours away
+                  return (
                   <div key={member.id} className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden shrink-0 relative group">
                        {member.photoUrl ? (
-                         <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover" />
+                         <img 
+                           referrerPolicy="no-referrer"
+                           src={member.photoUrl} 
+                           alt={member.name} 
+                           className={`w-full h-full object-cover transition-all ${!isCloseToEvent && member.id !== currentUser.id ? 'blur-sm grayscale opacity-70' : ''}`} 
+                         />
                        ) : (
                          <div className="w-full h-full flex items-center justify-center text-gray-500 font-bold text-xs bg-indigo-100 text-indigo-700">
                            {member.name.substring(0, 2)}
+                         </div>
+                       )}
+                       {!isCloseToEvent && member.id !== currentUser.id && (
+                         <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                           <ShieldCheck className="w-4 h-4 text-white" />
                          </div>
                        )}
                     </div>
@@ -285,7 +341,7 @@ export default function GroupChat() {
                       </p>
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
             </div>
             

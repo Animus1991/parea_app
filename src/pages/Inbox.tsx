@@ -14,7 +14,7 @@ export default function Inbox() {
       lastMessage: 'Are we meeting at the entrance?',
       time: '12:30 PM',
       unread: 3,
-      image: 'https://images.unsplash.com/photo-1585699324551-f6c309eedeca?w=500&q=80',
+      image: 'https://picsum.photos/seed/comedy/500/500',
       participants: 6
     },
     {
@@ -23,7 +23,7 @@ export default function Inbox() {
       lastMessage: 'I will bring Catan!',
       time: 'Yesterday',
       unread: 0,
-      image: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffaed?w=500&q=80',
+      image: 'https://picsum.photos/seed/boardgame/500/500',
       participants: 4
     },
     {
@@ -32,13 +32,13 @@ export default function Inbox() {
       lastMessage: 'Awesome trail guys, thanks!',
       time: 'Mon',
       unread: 0,
-      image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=500&q=80',
+      image: 'https://picsum.photos/seed/hike/500/500',
       participants: 8
     }
   ];
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0 h-[calc(100vh-100px)] flex flex-col">
+    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0 h-[calc(100vh-100px)] flex flex-col">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 shrink-0">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-[#111827]">Group Chats</h1>
@@ -65,7 +65,7 @@ export default function Inbox() {
             onClick={() => navigate(`/chat/${chat.id}`)}
           >
             <div className="relative shrink-0">
-              <img src={chat.image} alt={chat.title} className="w-12 h-12 md:w-14 md:h-14 rounded-xl object-cover" />
+              <img referrerPolicy="no-referrer" src={chat.image} alt={chat.title} className="w-12 h-12 md:w-14 md:h-14 rounded-xl object-cover" />
               {chat.unread > 0 && (
                 <div className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
                   {chat.unread}

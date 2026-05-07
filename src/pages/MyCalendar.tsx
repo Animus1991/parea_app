@@ -26,7 +26,7 @@ export default function MyCalendar() {
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-[#111827]">My Calendar</h1>
@@ -96,7 +96,7 @@ export default function MyCalendar() {
                     </div>
                     <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-500 font-medium">
                       <div className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {event.time}</div>
-                      <div className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {event.location}</div>
+                      <div className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {event.locationArea}</div>
                     </div>
                   </div>
                 </div>

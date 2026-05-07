@@ -3,19 +3,31 @@ import { Users, Search, MessageCircle, MoreVertical, Coffee, MapPin, Calendar, U
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
+import { currentUser, mockUsers } from '../data/mockUsers';
 
 export default function MyConnections() {
   const [activeTab, setActiveTab] = useState<'all' | 'requests'>('all');
   
-  const connections = [
-    { id: 1, name: 'Elena R.', role: 'Explorer', mutual: 4, location: 'Downtown', image: 'https://i.pravatar.cc/150?u=1' },
-    { id: 2, name: 'Marcus T.', role: 'Organizer', mutual: 2, location: 'Westside', image: 'https://i.pravatar.cc/150?u=2' },
-    { id: 3, name: 'Sarah K.', role: 'Newbie', mutual: 1, location: 'North District', image: 'https://i.pravatar.cc/150?u=3' },
-    { id: 4, name: 'David L.', role: 'Guide', mutual: 7, location: 'City Center', image: 'https://i.pravatar.cc/150?u=4' },
-  ];
+  // Calculate mutual connections
+  const calculateMutualConnections = (userConnections: string[] = []) => {
+    const myConnections = currentUser.connections || [];
+    // The mutual count is the intersection of myConnections and their connections
+    const mutuals = myConnections.filter(id => userConnections.includes(id) && id !== currentUser.id);
+    return mutuals.length;
+  };
+
+  // Map to format
+  const connections = mockUsers.filter(u => u.id !== currentUser.id).map(u => ({
+    id: u.id,
+    name: u.name,
+    role: u.isOrganizer ? 'Organizer' : (u.reliabilityScore > 80 ? 'Explorer' : 'Newbie'),
+    mutual: calculateMutualConnections(u.connections),
+    location: u.city || 'Downtown',
+    image: u.photoUrl || `https://i.pravatar.cc/150?u=${u.id}`
+  }));
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-[#111827]">My Nakamas</h1>
@@ -57,7 +69,7 @@ export default function MyConnections() {
         {connections.map((conn) => (
           <Card key={conn.id} className="p-4 flex items-center justify-between hover:border-indigo-200 transition-colors cursor-pointer group">
             <div className="flex items-center gap-3">
-              <img src={conn.image} alt={conn.name} className="w-12 h-12 rounded-full object-cover bg-gray-100" />
+              <img referrerPolicy="no-referrer" src={conn.image} alt={conn.name} className="w-12 h-12 rounded-full object-cover bg-gray-100" />
               <div>
                 <h3 className="font-bold text-[#111827] text-sm group-hover:text-indigo-600 transition-colors">{conn.name}</h3>
                 <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">

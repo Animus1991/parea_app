@@ -8,7 +8,7 @@ export default function OrganizerDashboard() {
   const navigate = useNavigate();
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8 pb-12">
+    <div className="mx-auto max-w-full space-y-8 pb-12">
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-2xl font-bold text-[#111827]">Organizer Dashboard</h1>

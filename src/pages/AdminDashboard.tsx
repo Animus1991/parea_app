@@ -5,7 +5,7 @@ import { Button } from '../components/common/Button';
 
 export default function AdminDashboard() {
   return (
-    <div className="mx-auto max-w-5xl space-y-8 pb-12">
+    <div className="mx-auto max-w-full space-y-8 pb-12">
       <div>
         <h1 className="text-2xl font-bold text-red-700">Moderation & Trust Dashboard</h1>
         <p className="mt-1 text-xs text-gray-500 font-medium">Internal admin view: Issue private behavior flags to influence user reliability scores.</p>

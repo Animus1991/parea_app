@@ -22,6 +22,28 @@ export function EventCard({ event }: EventCardProps) {
     setIsSaved(!isSaved);
   };
 
+  const getCalendarUrl = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const text = encodeURIComponent(event.title);
+    const details = encodeURIComponent(event.description || '');
+    const location = encodeURIComponent(event.exactLocation || event.locationArea || '');
+    const dateStr = event.date.replace(/-/g, '');
+    const timeStr = event.time ? event.time.replace(':', '') + '00' : '000000';
+    
+    // Default duration of 2 hours if not specified
+    let endHour = parseInt(event.time ? event.time.split(':')[0] : '0') + 2;
+    if (endHour >= 24) endHour = endHour - 24;
+    const endHourStr = endHour.toString().padStart(2, '0');
+    const minStr = event.time ? event.time.split(':')[1] : '00';
+    const endTimeStr = `${endHourStr}${minStr}00`;
+    
+    // Add timezone if you like, but Google handles locale cleanly without Z sometimes, or use +02:00? Google Cal format uses basic string.
+    const start = `${dateStr}T${timeStr}`;
+    const end = `${dateStr}T${endTimeStr}`;
+    
+    window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&details=${details}&location=${location}&dates=${start}/${end}`, '_blank');
+  };
+
   return (
     <Card 
       className="flex h-full flex-col overflow-hidden cursor-pointer relative group border border-gray-200 shadow-sm hover:shadow-md transition-all hover:border-indigo-200 p-0" 
@@ -29,8 +51,8 @@ export function EventCard({ event }: EventCardProps) {
     >
       <div className="relative h-40 w-full overflow-hidden bg-gray-100 shrink-0">
         {!imgError ? (
-          <img 
-            src={event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1400&auto=format&fit=crop'} 
+          <img referrerPolicy="no-referrer" 
+            src={event.imageUrl || 'https://picsum.photos/seed/eventdefault/800/600'} 
             alt={event.title} 
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 text-transparent" 
             onError={() => setImgError(true)}
@@ -55,7 +77,7 @@ export function EventCard({ event }: EventCardProps) {
           </div>
           <button 
             className="hover:text-indigo-600 transition-colors bg-gray-100 hover:bg-indigo-50 p-1.5 rounded"
-            onClick={(e) => { e.stopPropagation(); alert('Added to calendar'); }}
+            onClick={getCalendarUrl}
           >
             <CalendarPlus className="w-3.5 h-3.5" />
           </button>
@@ -69,7 +91,7 @@ export function EventCard({ event }: EventCardProps) {
           </span>
           <span>•</span>
           <span className="flex items-center gap-1">
-            <Users className="w-3 h-3" /> {event.id.charCodeAt(1) * 2 + 5} interested
+            <Users className="w-3 h-3" /> {event.id.charCodeAt(1) * 2 + 5} interested • {(event.maxParticipants || 40) - 12} spots left
           </span>
           {event.minTrustTierAccess === '3_high_trust' && (
             <>
@@ -82,7 +104,7 @@ export function EventCard({ event }: EventCardProps) {
         </div>
 
         <div className="w-full h-16 bg-gray-100 rounded-md overflow-hidden relative mb-3">
-          <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=600&auto=format&fit=crop" alt="Map Preview" className="w-full h-full object-cover opacity-80 mix-blend-luminosity" />
+          <img referrerPolicy="no-referrer" src="https://picsum.photos/seed/map/600/400" alt="Map Preview" className="w-full h-full object-cover opacity-80 mix-blend-luminosity" />
           <div className="absolute inset-0 bg-indigo-600/5"></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-indigo-600/20 rounded-full flex items-center justify-center animate-pulse">
             <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full shadow-[0_0_10px_rgba(79,70,229,0.8)]"></div>
@@ -107,7 +129,7 @@ export function EventCard({ event }: EventCardProps) {
 
         {organizer && (
           <div className="flex items-center gap-2 mb-4">
-             <img src={organizer.photoUrl} alt={organizer.name} className="w-6 h-6 rounded-full object-cover" />
+             <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-6 h-6 rounded-full object-cover" />
              <div className="flex flex-col">
                <span className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Organizer</span>
                <a 

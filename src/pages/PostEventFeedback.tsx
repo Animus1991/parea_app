@@ -19,11 +19,28 @@ export default function PostEventFeedback() {
         {step === 1 && (
           <div className="space-y-8">
             <div>
-              <h3 className="text-sm font-bold text-[#111827] uppercase tracking-wide mb-4">Rate the Experience</h3>
+              <h3 className="text-sm font-bold text-[#111827] uppercase tracking-wide mb-4">Rate the Organizer & Event Quality</h3>
+              <p className="text-xs text-gray-500 font-medium mb-3">
+                 Did the organizer deliver on the promise? Was the event well organized?
+              </p>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button key={star} className="p-2 hover:bg-gray-50 rounded-full transition-colors">
                     <Star className="w-8 h-8 text-gray-300 hover:text-amber-400 hover:fill-amber-400 transition-colors" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-bold text-[#111827] uppercase tracking-wide mb-4 mt-6">Rate the Group Vibe</h3>
+              <p className="text-xs text-gray-500 font-medium mb-3">
+                 Was the group chemistry good? Did everyone respect the etiquette?
+              </p>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button key={`vibe-${star}`} className="p-2 hover:bg-gray-50 rounded-full transition-colors">
+                    <Star className="w-8 h-8 text-gray-300 hover:text-indigo-400 hover:fill-indigo-400 transition-colors" />
                   </button>
                 ))}
               </div>

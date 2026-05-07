@@ -41,7 +41,7 @@ export default function Notifications() {
   ];
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 pb-20">
+    <div className="mx-auto max-w-full space-y-6 pb-20">
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-2xl font-bold text-[#111827]">Notifications</h1>

@@ -18,6 +18,7 @@ export interface User {
   paymentVerified: boolean;
   idVerified: boolean;
   isOrganizer: boolean;
+  connections?: string[];
 }
 
 export interface Notification {
@@ -42,12 +43,15 @@ export interface Event {
   exactLocation?: string; // Revealed only to confirmed participants
   isPaid: boolean;
   price: number;
+  lat?: number;
+  lng?: number;
   groupDiscount?: { minSize: number, percentage: number };
   organizerId: string;
   safetyLevel: SafetyLevel;
   minTrustTierAccess: TrustTier;
   maxParticipants: number;
   imageUrl?: string;
+  externalLink?: string;
 }
 
 export interface Group {

@@ -18,12 +18,12 @@ export default function OrganizerProfile() {
   const isVerifiedOrganizer = organizer.idVerified && organizer.reliabilityScore >= 80;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 relative">
+    <div className="mx-auto max-w-full space-y-8 relative">
       {/* Profile Header */}
       <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm text-center sm:text-left sm:flex sm:items-start gap-8">
         <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 mx-auto sm:mx-0 shrink-0 border-4 border-white shadow-md">
           {organizer.photoUrl ? (
-            <img src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />
+            <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400 text-3xl font-bold">
               {organizer.name.substring(0, 2).toUpperCase()}

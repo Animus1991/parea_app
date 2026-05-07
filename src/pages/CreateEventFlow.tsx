@@ -10,7 +10,7 @@ export default function CreateEventFlow() {
   const [visibility, setVisibility] = useState<'public' | 'private'>('public');
 
   return (
-    <div className="max-w-2xl mx-auto pb-24 md:pb-8 animate-in fade-in duration-500">
+    <div className="max-w-full mx-auto pb-24 md:pb-8 animate-in fade-in duration-500">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-[#111827]">Create Experience</h1>
         <p className="text-gray-500 text-sm mt-1">Design your perfect real-world gathering.</p>

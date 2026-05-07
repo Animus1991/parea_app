@@ -153,22 +153,49 @@ export default function JoinGroupFlow() {
       )}
 
       {step === 3 && (
-        <div className="space-y-6 text-center py-4">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50">
-            <CheckCircle className="h-6 w-6 text-indigo-600" />
+        <div className="space-y-6 text-center py-4 animate-in fade-in zoom-in duration-500">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 mb-2">
+            <CheckCircle className="h-8 w-8 text-emerald-600" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-[#111827]">You're In!</h2>
-            <p className="mt-2 text-sm text-gray-600 font-medium leading-relaxed">
-              Your {event.isPaid && 'payment hold is active and your'} spot is reserved. The group chat is now open. We'll send you the exact meeting location 24h before the event happens.
+            <h2 className="text-2xl font-extrabold text-[#111827]">You're In!</h2>
+            <p className="mt-2 text-sm text-gray-600 font-medium leading-relaxed max-w-[280px] mx-auto">
+              Your {event.isPaid && 'payment hold is active and your'} spot is reserved. We'll send you the exact meeting location 24h prior.
             </p>
           </div>
-          <div className="pt-6 space-y-3">
-             <Button className="w-full" size="lg" onClick={() => navigate('/plans')}>
-               Go To My Plans
-             </Button>
-             <Button variant="ghost" className="w-full border border-gray-200" onClick={() => navigate(`/events/${eventId}`)}>
-               Back to Event
+
+          {/* Psychological Push: Social Proof & Consistency */}
+          <div className="mt-8 bg-gradient-to-br from-indigo-50/80 to-white border border-indigo-100/50 rounded-2xl p-6 text-left relative overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
+             <div className="absolute top-0 right-0 p-5">
+                <span className="flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                </span>
+             </div>
+             
+             <div className="relative z-10">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <div className="bg-indigo-100/50 p-1.5 rounded-lg text-indigo-700">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-sm font-bold text-indigo-950">One last, quick thing for your group</h3>
+                </div>
+                
+                <p className="text-[13px] text-gray-600 font-medium mb-5 leading-relaxed pr-4">
+                  Your new group is excited to meet you! Customarily, to keep our community safe and ensure everyone feels perfectly comfortable collaborating, <strong className="text-indigo-900 font-bold">over 85% of members</strong> claim their Verified Badge before their first event.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-3">
+                   <Button className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-[13px] py-2 px-5 shadow-lg shadow-indigo-200 transition-all" onClick={() => navigate('/verification')}>
+                     Secure my Verified Badge (~60s)
+                   </Button>
+                </div>
+             </div>
+          </div>
+
+          <div className="pt-4 space-y-3">
+             <Button variant="ghost" className="w-full text-gray-500 font-bold hover:bg-gray-50 text-sm h-11" onClick={() => navigate('/plans')}>
+               Skip for now, go to My Plans
              </Button>
           </div>
         </div>

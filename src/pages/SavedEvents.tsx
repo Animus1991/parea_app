@@ -10,7 +10,7 @@ export default function SavedEvents() {
   const savedEvents = [mockEvents[0], mockEvents[2]];
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-[#111827]">Saved Events</h1>
@@ -23,7 +23,7 @@ export default function SavedEvents() {
           {savedEvents.map(event => (
             <Link key={event.id} to={`/events/${event.id}`} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all group flex flex-col">
               <div className="h-32 bg-gray-200 relative overflow-hidden shrink-0">
-                <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#111827] shadow-sm z-10">
                   <Bookmark className="w-4 h-4 fill-current text-indigo-600" />
                 </button>

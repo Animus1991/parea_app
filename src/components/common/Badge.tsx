@@ -7,6 +7,7 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: 'default' | 'outline' | 'success' | 'warning' | 'neutral' | 'blue';
   className?: string;
   icon?: ReactNode;
+  onClick?: (e: any) => void;
 }
 
 export function Badge({ children, variant = 'default', className, icon, ...props }: BadgeProps) {

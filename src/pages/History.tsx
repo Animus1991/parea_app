@@ -9,7 +9,7 @@ export default function History() {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-[#111827]">Past History</h1>
@@ -22,7 +22,7 @@ export default function History() {
           <div key={event.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             <div className="p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
               <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
-                <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+                <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
                 <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-white text-[10px] font-bold uppercase tracking-wider">
                   {index === 0 ? 'Yesterday' : 'Last Week'}
                 </div>
