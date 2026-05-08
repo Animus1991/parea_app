@@ -167,6 +167,8 @@ export default function Home() {
             <span className="flex items-center gap-1.5"><MapIcon className="w-3.5 h-3.5 text-[#18D8DB]" /> {t('home.hero.stat3', 'Δημοσια σημεια')}</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3">
-            </div></div></div></div>  );
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -143,10 +143,13 @@ export function EventCard({ event }: EventCardProps) {
              <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-7 h-7 rounded-full object-cover border border-gray-200" />
              <div className="flex flex-col">
                <span className="text-[9px] text-gray-400 uppercase tracking-wider font-bold">
-</span>
-</div>
-</div>
-</div>
-</Card>
+                 {t('event_card.organizer', 'ΔΙΟΡΓΑΝΩΤΗΣ')}
+               </span>
+               <span className="text-xs font-semibold text-gray-900">{organizer.name}</span>
+             </div>
+          </div>
+        )}
+      </div>
+    </Card>
   );
 }

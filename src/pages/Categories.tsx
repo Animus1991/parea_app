@@ -9,7 +9,7 @@ import { Skeleton, EventCardSkeleton } from '../components/common/Skeleton';
 import { format, parseISO, isToday, isThisWeek, isThisMonth } from 'date-fns';
 import { useLanguage } from "../lib/i18n";
 
-const ALL_CATEGORIES = [
+const getCategories = (t: any) => [
   { id: '1', name: t(`Θέατρο`, `Theatre`), icon: Ticket, count: 12, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100' },
   { id: '2', name: t(`Συναυλίες`, `Concerts`), icon: Music, count: 8, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
   { id: '3', name: t(`Σινεμά`, `Cinema`), icon: Camera, count: 15, color: 'text-cyan-600', bg: 'bg-cyan-50', border: 'border-cyan-100' },
@@ -49,7 +49,7 @@ export default function Categories() {
     return () => clearTimeout(timer);
   }, [activeCategory, priceFilter, dateFilter, searchQuery]);
 
-  const visibleCategories = ALL_CATEGORIES.filter(cat => 
+  const visibleCategories = getCategories(t).filter(cat => 
     cat.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 

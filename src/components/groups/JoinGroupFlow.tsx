@@ -25,9 +25,28 @@ export default function JoinGroupFlow() {
         <div className="space-y-6">
           <div>
             <h2 className="text-xl font-bold text-[#111827]">
-</h2>
-</div>
-</div>
-</div>
+              Join {event.title}
+            </h2>
+            <p className="text-sm text-gray-500 mt-2">
+              Select how you want to join this event. Joining a group can unlock discounts.
+            </p>
+          </div>
+          <div className="space-y-4">
+            <Button variant="primary" className="w-full" onClick={() => setStep(2)}>
+              Continue
+            </Button>
+          </div>
+        </div>
+      )}
+      {step === 2 && (
+        <div className="space-y-6 text-center">
+            <CheckCircle className="w-16 h-16 text-emerald-500 mx-auto" />
+            <h2 className="text-xl font-bold text-[#111827]">You're all set!</h2>
+            <Button variant="primary" className="w-full" onClick={() => navigate(`/events/${eventId}`)}>
+              Back to Event
+            </Button>
+        </div>
+      )}
+    </div>
   );
 }

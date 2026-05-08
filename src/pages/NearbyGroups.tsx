@@ -79,3 +79,5 @@ const GroupMarker = ({ group, idx, onClick, setMarkerRef }: { group: any, idx: n
 </AdvancedMarker>
   );
 }
+
+export default function NearbyGroups() { return <div>Nearby</div>; }

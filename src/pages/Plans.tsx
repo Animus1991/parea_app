@@ -100,10 +100,10 @@ export default function Plans() {
               </div>
 
               <div className="mt-auto pt-4 border-t border-gray-100 flex gap-2">
-                <button onClick={() => navigate(`/chat/${event.id} className="flex-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5">
+                <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5">
                   <MessageCircle className="h-4 w-4" /> Group Chat
                 </button>
-                <button onClick={() => navigate(`/events/${event.id} className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-xs font-bold transition-colors">
+                <button onClick={() => navigate(`/events/${event.id}`)} className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-xs font-bold transition-colors">
                   Details
                 </button>
               </div>
@@ -144,7 +144,7 @@ export default function Plans() {
               </p>
 
               <div className="mt-auto pt-4 border-t border-gray-100 flex gap-2">
-                <button onClick={() => navigate(`/events/${event.id} className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-xs font-bold transition-colors">
+                <button onClick={() => navigate(`/events/${event.id}`)} className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-xs font-bold transition-colors">
                   View Status
                 </button>
               </div>
@@ -168,7 +168,7 @@ export default function Plans() {
               {index === 0 ? (
                 <div className="bg-cyan-50 border border-cyan-100 p-3 rounded-lg flex items-center justify-between mt-auto">
                   <div className="text-xs font-bold text-cyan-900">Feedback required</div>
-                  <button onClick={() => navigate(`/history/feedback/${event.id} className="text-[10px] font-bold bg-cyan-600 text-white px-3 py-1.5 rounded hover:bg-cyan-700 uppercase tracking-wider">
+                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="text-[10px] font-bold bg-cyan-600 text-white px-3 py-1.5 rounded hover:bg-cyan-700 uppercase tracking-wider">
                     Rate Experience
                   </button>
                 </div>

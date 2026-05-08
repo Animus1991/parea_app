@@ -1,3 +1,4 @@
+import { Outlet } from 'react-router-dom';
 import React, { ReactNode, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
@@ -102,4 +103,7 @@ function NavItem({ to, icon: Icon, label, disabled = false, isDesktopSidebar }: 
   );
 }
 
+}
+export function AppShell({ children }: { children: React.ReactNode }) { 
+  return <div className="min-h-screen bg-gray-50 flex"><main className="flex-1 w-full max-w-md mx-auto bg-white overflow-y-auto relative shadow-2xl overflow-x-hidden">{children}</main></div>; 
 }

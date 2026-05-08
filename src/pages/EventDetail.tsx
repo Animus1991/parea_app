@@ -35,3 +35,4 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
     </div>
   );
 }
+export default function EventDetail() { return <div className="p-8 text-center">Event Detail</div>; }

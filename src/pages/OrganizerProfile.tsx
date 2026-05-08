@@ -86,7 +86,7 @@ export default function OrganizerProfile() {
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-lg font-bold text-[#111827]">{organizer.name}
+        <h2 className="text-lg font-bold text-[#111827]">{organizer.name}'s Events</h2>
         {hostedEvents.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
             <p className="text-gray-500 font-medium text-sm"></p>
@@ -158,13 +158,5 @@ export default function OrganizerProfile() {
         </div>
       )}
     </div>
-  );
-}
-
-</h2>
-  );
-}
-
-</h2>
   );
 }

@@ -109,17 +109,3 @@ export default function MyCalendar() {
     </div>
   );
 }
-
-</div>
-</div>
-</div>
-</div>
-  );
-}
-
-</div>
-</div>
-</div>
-</div>
-  );
-}
