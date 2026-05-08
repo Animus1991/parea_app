@@ -58,25 +58,28 @@ export function ProfileSkeleton() {
 export function EventDetailSkeleton() {
   return (
     <div className="space-y-6">
-      <Skeleton className="h-6 h-w-24 mb-4" />
-      <div className="space-y-3">
-        <Skeleton className="h-8 w-3/4" />
-        <div className="flex gap-2">
-          <Skeleton className="h-6 w-20 rounded-full" />
-          <Skeleton className="h-6 w-20 rounded-full" />
+      <Skeleton className="w-full h-48 md:h-64 lg:h-80 object-cover -mx-4 -mt-4 lg:-mx-12 lg:-mt-8 mb-8 !w-auto !max-w-none" />
+      <div className="space-y-6">
+        <Skeleton className="h-6 w-24 mb-4" />
+        <div className="space-y-3">
+          <Skeleton className="h-8 w-3/4" />
+          <div className="flex gap-2">
+            <Skeleton className="h-6 w-20 rounded-full" />
+            <Skeleton className="h-6 w-20 rounded-full" />
+          </div>
         </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4 mt-6">
-        <Skeleton className="h-12 w-full rounded-lg" />
-        <Skeleton className="h-12 w-full rounded-lg" />
-        <Skeleton className="h-12 w-full rounded-lg" />
-        <Skeleton className="h-12 w-full rounded-lg" />
-      </div>
-      <div className="space-y-3 mt-6">
-        <Skeleton className="h-5 w-40" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-3/4" />
+        <div className="grid grid-cols-2 gap-4 mt-6">
+          <Skeleton className="h-[42px] w-full rounded-lg" />
+          <Skeleton className="h-[42px] w-full rounded-lg" />
+          <Skeleton className="h-[42px] w-full rounded-lg" />
+          <Skeleton className="h-[42px] w-full rounded-lg" />
+        </div>
+        <div className="space-y-3 mt-6">
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+        </div>
       </div>
     </div>
   );

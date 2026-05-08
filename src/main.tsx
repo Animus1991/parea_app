@@ -25,10 +25,14 @@ window.addEventListener('unhandledrejection', (e) => {
   console.warn('Google Maps Authentication Failed. API Key may be invalid or restricted.');
 };
 
+import { LanguageProvider } from './lib/i18n';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <LanguageProvider>
+        <App />
+      </LanguageProvider>
     </BrowserRouter>
   </StrictMode>,
 );

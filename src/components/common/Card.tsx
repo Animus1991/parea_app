@@ -7,7 +7,7 @@ export function Card({ children, className, onClick, ...props }: HTMLAttributes<
       onClick={onClick}
       className={cn(
         "rounded-xl border border-gray-200 bg-white shadow-sm",
-        onClick && "cursor-pointer transition-colors hover:border-indigo-300",
+        onClick && "cursor-pointer transition-colors hover:border-cyan-300",
         className
       )}
       {...props}

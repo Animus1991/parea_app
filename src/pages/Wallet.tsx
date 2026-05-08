@@ -2,8 +2,10 @@ import React from 'react';
 import { CreditCard, DollarSign, ArrowUpRight, ArrowDownRight, Clock, Building2, CheckCircle2 } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
+import { useLanguage } from "../lib/i18n";
 
 export default function Wallet() {
+    const { t } = useLanguage();
   const transactions = [
     { id: '1', type: 'Payout', amount: 120.00, status: 'Completed', date: 'Oct 12, 2024', desc: 'Transfer to Bank ending in 4092' },
     { id: '2', type: 'Earnings', amount: 45.00, status: 'Available', date: 'Oct 10, 2024', desc: 'Ticket sales: Yoga in the Park' },
@@ -14,32 +16,28 @@ export default function Wallet() {
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#111827]">Wallet & Earnings</h1>
-          <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">Manage your event revenue and payouts.</p>
+          <h1 className="text-xl md:text-2xl font-bold text-[#111827]"></h1>
+          <p className="text-gray-500 font-medium text-xs md:text-sm mt-1"></p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-6 bg-indigo-600 text-white border-0 shadow-md">
-          <div className="flex items-center gap-2 text-indigo-100 mb-2">
+        <Card className="p-6 bg-cyan-600 text-white border-0 shadow-sm">
+          <div className="flex items-center gap-2 text-cyan-100 mb-2">
             <DollarSign className="w-4 h-4" />
-            <h3 className="text-xs font-bold uppercase tracking-widest">Available Balance</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider"></h3>
           </div>
           <p className="text-4xl font-black mb-4">$345.50</p>
-          <Button className="w-full bg-white text-indigo-900 hover:bg-gray-100 border-0">
-            Withdraw Funds
-          </Button>
+          <Button className="w-full bg-white text-cyan-900 hover:bg-gray-100 border-0"></Button>
         </Card>
 
         <Card className="p-6">
           <div className="flex items-center gap-2 text-gray-500 mb-2">
             <Clock className="w-4 h-4" />
-            <h3 className="text-xs font-bold uppercase tracking-widest">Pending Clearing</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider"></h3>
           </div>
           <p className="text-3xl font-bold text-gray-800 mb-2">$85.00</p>
-          <p className="text-[10px] text-gray-400 font-medium leading-tight">
-            Revenue from recently completed events. Clears 3-5 days after event completion.
-          </p>
+          <p className="text-[10px] text-gray-400 font-medium leading-tight"></p>
         </Card>
 
         <Card className="p-6 border border-gray-200 bg-gray-50 flex flex-col justify-center">
@@ -48,21 +46,21 @@ export default function Wallet() {
                 <Building2 className="w-5 h-5" />
              </div>
              <div>
-                <h3 className="font-bold text-sm text-[#111827]">Bank Account</h3>
+                <h3 className="font-bold text-sm text-[#111827]"></h3>
                 <p className="text-xs text-gray-500 font-medium">Chase ****4092</p>
              </div>
           </div>
-          <Button variant="outline" size="sm" className="w-full text-xs">Manage Payout Methods</Button>
+          <Button variant="outline" size="sm" className="w-full text-xs"></Button>
         </Card>
       </div>
 
       <Card className="mt-8">
          <div className="p-4 md:p-6 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-[#111827]">Recent Transactions</h2>
+            <h2 className="text-lg font-bold text-[#111827]"></h2>
             <select className="text-xs border border-gray-200 rounded-lg px-2 py-1 outline-none">
-              <option>All Time</option>
-              <option>This Month</option>
-              <option>Last Month</option>
+              <option></option>
+              <option></option>
+              <option></option>
             </select>
          </div>
          <div className="divide-y divide-gray-100">

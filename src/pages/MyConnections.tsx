@@ -4,8 +4,11 @@ import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { currentUser, mockUsers } from '../data/mockUsers';
+import { useLanguage } from "../lib/i18n";
 
 export default function MyConnections() {
+    const { t } = useLanguage();
+    
   const [activeTab, setActiveTab] = useState<'all' | 'requests'>('all');
   
   // Calculate mutual connections
@@ -20,9 +23,9 @@ export default function MyConnections() {
   const connections = mockUsers.filter(u => u.id !== currentUser.id).map(u => ({
     id: u.id,
     name: u.name,
-    role: u.isOrganizer ? 'Organizer' : (u.reliabilityScore > 80 ? 'Explorer' : 'Newbie'),
+    role: u.isOrganizer ? t(`Διοργανωτής`, `Organizer`) : (u.reliabilityScore > 80 ? t(`Εξερευνητής`, `Explorer`) : t(`Νέος`, `New`)),
     mutual: calculateMutualConnections(u.connections),
-    location: u.city || 'Downtown',
+    location: u.city || t(`Κέντρο`, `Center`),
     image: u.photoUrl || `https://i.pravatar.cc/150?u=${u.id}`
   }));
 
@@ -30,69 +33,10 @@ export default function MyConnections() {
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#111827]">My Nakamas</h1>
-          <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">People you've connected with through events.</p>
-        </div>
-      </div>
-
-      <div className="flex gap-4 border-b border-gray-200">
-        <button 
-          className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'all' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-          onClick={() => setActiveTab('all')}
-        >
-          Connections (24)
-        </button>
-        <button 
-          className={`pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'requests' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-          onClick={() => setActiveTab('requests')}
-        >
-          Requests
-          <span className="bg-rose-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">2</span>
-        </button>
-      </div>
-
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input 
-            type="text" 
-            placeholder="Search connections..." 
-            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-        <Button variant="outline" className="shrink-0 flex items-center gap-2">
-           <Filter className="w-4 h-4" /> Filter
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-        {connections.map((conn) => (
-          <Card key={conn.id} className="p-4 flex items-center justify-between hover:border-indigo-200 transition-colors cursor-pointer group">
-            <div className="flex items-center gap-3">
-              <img referrerPolicy="no-referrer" src={conn.image} alt={conn.name} className="w-12 h-12 rounded-full object-cover bg-gray-100" />
-              <div>
-                <h3 className="font-bold text-[#111827] text-sm group-hover:text-indigo-600 transition-colors">{conn.name}</h3>
-                <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
-                  <MapPin className="w-3 h-3" /> {conn.location}
-                </p>
-                <div className="flex items-center gap-2 mt-1.5">
-                  <Badge variant="neutral" className="text-[9px] px-1.5 py-0">{conn.role}</Badge>
-                  <span className="text-[10px] text-gray-400 font-medium">{conn.mutual} mutuals</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <button className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors" title="Message">
-                <MessageCircle className="w-5 h-5" />
-              </button>
-              <button className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors">
-                <MoreVertical className="w-5 h-5" />
-              </button>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </div>
+          <h1 className="text-xl md:text-2xl font-bold text-[#111827]">
+</h1>
+</div>
+</div>
+</div>
   );
 }
