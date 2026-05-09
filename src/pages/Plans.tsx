@@ -32,7 +32,7 @@ export default function Plans() {
             <p className="text-xs text-amber-800 font-medium">You need to complete ID verification to join the "Arachova Retreat" you expressed interest in.</p>
           </div>
         </div>
-        <button onClick={() => navigate('/trust')} className="bg-amber-600 text-white px-4 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-amber-700 transition-colors whitespace-nowrap shrink-0 snap-center">
+        <button onClick={() => navigate('/verification')} className="bg-amber-600 text-white px-4 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-amber-700 transition-colors whitespace-nowrap shrink-0 snap-center">
           Verify Now
         </button>
       </Card>
@@ -42,7 +42,7 @@ export default function Plans() {
           onClick={() => setActiveTab('upcoming')}
           className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors whitespace-nowrap ${
             activeTab === 'upcoming' 
-              ? 'border-b-2 border-cyan-600 text-cyan-900' 
+              ? 'border-b-2 border-indigo-600 text-indigo-900' 
               : 'text-gray-500 hover:text-[#111827]'
           }`}
         >
@@ -52,7 +52,7 @@ export default function Plans() {
           onClick={() => setActiveTab('pending')}
           className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors whitespace-nowrap ${
             activeTab === 'pending' 
-              ? 'border-b-2 border-cyan-600 text-cyan-900' 
+              ? 'border-b-2 border-indigo-600 text-indigo-900' 
               : 'text-gray-500 hover:text-[#111827]'
           }`}
         >
@@ -62,7 +62,7 @@ export default function Plans() {
           onClick={() => setActiveTab('past')}
           className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors whitespace-nowrap ${
             activeTab === 'past' 
-              ? 'border-b-2 border-cyan-600 text-cyan-900' 
+              ? 'border-b-2 border-indigo-600 text-indigo-900' 
               : 'text-gray-500 hover:text-[#111827]'
           }`}
         >
@@ -73,10 +73,10 @@ export default function Plans() {
       {activeTab === 'upcoming' && (
       <div className="space-y-4">
         {upcomingEvents.map(event => (
-          <Card key={event.id} className="rounded-xl p-4 sm:p-5 border border-cyan-100 flex flex-col sm:flex-row gap-4">
+          <Card key={event.id} className="rounded-xl p-4 sm:p-5 border border-indigo-100 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
-              <div className="absolute top-2 left-2 bg-cyan-600 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
+              <div className="absolute top-2 left-2 bg-indigo-600 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
                 Confirmed
               </div>
             </div>
@@ -100,7 +100,7 @@ export default function Plans() {
               </div>
 
               <div className="mt-auto pt-4 border-t border-gray-100 flex gap-2">
-                <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5">
+                <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5">
                   <MessageCircle className="h-4 w-4" /> Group Chat
                 </button>
                 <button onClick={() => navigate(`/events/${event.id}`)} className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-xs font-bold transition-colors">
@@ -166,9 +166,9 @@ export default function Plans() {
               <h3 className="font-bold text-base text-[#111827] mb-3">{event.title}</h3>
               
               {index === 0 ? (
-                <div className="bg-cyan-50 border border-cyan-100 p-3 rounded-lg flex items-center justify-between mt-auto">
-                  <div className="text-xs font-bold text-cyan-900">Feedback required</div>
-                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="text-[10px] font-bold bg-cyan-600 text-white px-3 py-1.5 rounded hover:bg-cyan-700 uppercase tracking-wider">
+                <div className="bg-indigo-50 border border-indigo-100 p-3 rounded-lg flex items-center justify-between mt-auto">
+                  <div className="text-xs font-bold text-indigo-900">Feedback required</div>
+                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="text-[10px] font-bold bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 uppercase tracking-wider">
                     Rate Experience
                   </button>
                 </div>

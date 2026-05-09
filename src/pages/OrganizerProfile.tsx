@@ -6,10 +6,8 @@ import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Calendar, MapPin, ShieldCheck, Mail, Globe, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { useLanguage } from "../lib/i18n";
 
 export default function OrganizerProfile() {
-    const { t } = useLanguage();
   const { id } = useParams();
   const [showContactModal, setShowContactModal] = useState(false);
   const organizer = mockUsers.find(u => u.id === id);
@@ -23,7 +21,7 @@ export default function OrganizerProfile() {
     <div className="mx-auto max-w-full space-y-8 relative">
       {/* Profile Header */}
       <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm text-center sm:text-left sm:flex sm:items-start gap-8">
-        <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 mx-auto sm:mx-0 shrink-0 border-4 border-white shadow-sm">
+        <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 mx-auto sm:mx-0 shrink-0 border-4 border-white shadow-md">
           {organizer.photoUrl ? (
             <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />
           ) : (
@@ -37,7 +35,7 @@ export default function OrganizerProfile() {
           <div>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
               {isVerifiedOrganizer && (
-                <Badge variant="outline" icon={<ShieldCheck className="h-3 w-3 text-cyan-600" />}>
+                <Badge variant="outline" icon={<ShieldCheck className="h-3 w-3 text-indigo-600" />}>
                   Verified Organizer
                 </Badge>
               )}
@@ -69,7 +67,7 @@ export default function OrganizerProfile() {
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-2">
             <button 
               onClick={() => setShowContactModal(true)}
-              className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-cyan-600 transition-colors flex items-center gap-1"
+              className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-indigo-600 transition-colors flex items-center gap-1"
             >
               <Mail className="h-4 w-4" /> Contact Organizer
             </button>
@@ -77,7 +75,7 @@ export default function OrganizerProfile() {
               href="#" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-cyan-600 transition-colors flex items-center gap-1"
+              className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-indigo-600 transition-colors flex items-center gap-1"
             >
               <Globe className="h-4 w-4" /> Website
             </a>
@@ -86,31 +84,31 @@ export default function OrganizerProfile() {
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-lg font-bold text-[#111827]">{organizer.name}'s Events</h2>
+        <h2 className="text-lg font-bold text-[#111827]">Upcoming Events by {organizer.name}</h2>
         {hostedEvents.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-            <p className="text-gray-500 font-medium text-sm"></p>
+            <p className="text-gray-500 font-medium text-sm">No upcoming events currently scheduled.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {hostedEvents.map(event => (
               <Link key={event.id} to={`/events/${event.id}`}>
-                <Card className="flex items-start gap-4 p-4 hover:border-cyan-300 transition-colors cursor-pointer group">
+                <Card className="flex items-start gap-4 p-4 hover:border-indigo-300 transition-colors cursor-pointer group">
                   <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden shrink-0">
-                    <div className="w-full h-full bg-cyan-50 flex flex-col items-center justify-center text-cyan-700">
-                      <span className="text-[10px] font-bold uppercase tracking-wider">{format(parseISO(event.date), 'MMM')}</span>
+                    <div className="w-full h-full bg-indigo-50 flex flex-col items-center justify-center text-indigo-700">
+                      <span className="text-[10px] font-bold uppercase tracking-widest">{format(parseISO(event.date), 'MMM')}</span>
                       <span className="text-xl font-bold leading-none">{format(parseISO(event.date), 'd')}</span>
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-[#111827] group-hover:text-cyan-600 transition-colors line-clamp-1">{event.title}</h3>
+                    <h3 className="font-bold text-[#111827] group-hover:text-indigo-600 transition-colors line-clamp-1">{event.title}</h3>
                     <p className="text-xs text-gray-500 mt-1">{event.time} • {event.locationArea}</p>
                     <div className="mt-2 flex gap-2">
                       <Badge variant="neutral">{event.category}</Badge>
                       {event.isPaid ? <Badge variant="outline">€{event.price}</Badge> : <Badge variant="outline">Free</Badge>}
                     </div>
                   </div>
-                  <div className="hidden sm:flex items-center text-[10px] font-bold uppercase tracking-wider text-cyan-600 self-center">
+                  <div className="hidden sm:flex items-center text-[10px] font-bold uppercase tracking-wider text-indigo-600 self-center">
                     View &rarr;
                   </div>
                 </Card>
@@ -133,7 +131,7 @@ export default function OrganizerProfile() {
               Send a secure message to this organizer about their events, tickting issues, or general inquiries.
             </p>
             <textarea 
-              className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none mb-4 focus:ring-2 focus:ring-cyan-600 outline-none"
+              className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none mb-4 focus:ring-2 focus:ring-indigo-600 outline-none"
               rows={4}
               placeholder="Your message..."
             ></textarea>
@@ -149,7 +147,7 @@ export default function OrganizerProfile() {
                   alert("Your message has been sent directly to the organizer.");
                   setShowContactModal(false);
                 }}
-                className="px-4 py-2 text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-700 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
               >
                 Send Message
               </button>

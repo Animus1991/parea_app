@@ -15,10 +15,10 @@ export function Badge({ children, variant = 'default', className, icon, ...props
   const variants = {
     default: "bg-gray-100 text-[#111827]",
     outline: "border border-gray-200 text-gray-800 bg-white",
-    success: "bg-cyan-50 text-cyan-700",
+    success: "bg-indigo-50 text-indigo-700",
     warning: "bg-gray-800 text-white",
     neutral: "bg-gray-100 text-gray-600",
-    blue: "bg-cyan-50 text-cyan-700",
+    blue: "bg-indigo-50 text-indigo-700",
   };
 
   return (
