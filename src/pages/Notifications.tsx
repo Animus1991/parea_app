@@ -72,7 +72,7 @@ export default function Notifications() {
       {/* Today */}
       {todayNotifs.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-[12.1125px] font-bold text-gray-400 uppercase tracking-widest">{t(`Σήμερα`, `Today`)}</h3>
+          <h3 className="text-[12.1125px] font-bold text-gray-400 tracking-wide">{t(`Σήμερα`, `Today`)}</h3>
           {todayNotifs.map((notif) => {
             const Icon = notif.icon;
             return (
@@ -82,7 +82,7 @@ export default function Notifications() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[13.5px] leading-relaxed text-[#111827] font-medium">{notif.message}</p>
-                  <span className="text-[11.25px] font-bold text-gray-400 uppercase tracking-wider mt-1 block">{notif.time}</span>
+                  <span className="text-[11.25px] font-bold text-gray-400 tracking-wide mt-1 block">{notif.time}</span>
                   {notif.type === 'match' && (
                     <button onClick={() => navigate('/plans')} className="mt-2 text-[11.2px] font-bold text-cyan-700 bg-cyan-100 px-2.5 py-1 rounded-full hover:bg-cyan-200 transition-colors inline-flex items-center gap-1">
                       {t(`Δείτε ομάδα`, `View group`)} <ArrowRight className="w-2.5 h-2.5" />
@@ -104,7 +104,7 @@ export default function Notifications() {
       {/* Earlier */}
       {earlierNotifs.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-[11.2px] font-bold text-gray-400 uppercase tracking-widest">{t(`Προηγούμενες`, `Earlier`)}</h3>
+          <h3 className="text-[11.2px] font-bold text-gray-400 tracking-wide">{t(`Προηγούμενες`, `Earlier`)}</h3>
           {earlierNotifs.map((notif) => {
             const Icon = notif.icon;
             return (
@@ -114,7 +114,7 @@ export default function Notifications() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[13.5px] leading-relaxed text-gray-600">{notif.message}</p>
-                  <span className="text-[11.25px] font-bold text-gray-400 uppercase tracking-wider mt-1 block">{notif.time}</span>
+                  <span className="text-[11.25px] font-bold text-gray-400 tracking-wide mt-1 block">{notif.time}</span>
                 </div>
               </div>
             );

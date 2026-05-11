@@ -86,7 +86,7 @@ function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: N
       >
         <Icon className={iconClass} />
         <span className={textClass}>{label}</span>
-      <span className={cn('text-[9px] uppercase tracking-wider font-bold bg-gray-100 px-1.5 py-0.5 rounded text-gray-400', textClass)}>{t('Σύντομα', 'Soon')}</span>
+      <span className={cn('text-[9px] tracking-wide font-bold bg-gray-100 px-1.5 py-0.5 rounded text-gray-400', textClass)}>{t('Σύντομα', 'Soon')}</span>
       </div>
     );
   }
@@ -126,7 +126,7 @@ function NavSection({ title, children, compact = false }: NavSectionProps) {
       {compact && <div className="block lg:hidden h-px bg-gray-200 my-4 mx-4" />}
       <h3
         className={cn(
-          'px-3 text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-2',
+          'px-3 text-[10px] font-bold tracking-wide text-[#6B7280] mb-2',
           compact ? 'hidden lg:block' : 'block'
         )}
       >
@@ -225,7 +225,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           <NakamasLogo className="text-[22px]" />
         </div>
         <div className="hidden md:block">
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
+          <span className="text-[10px] font-bold text-gray-400 tracking-wide">{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3">
@@ -264,7 +264,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           {currentUser ? (
             <NavLink to="/profile" className="flex items-center space-x-2 relative group">
               <div className="hidden sm:flex flex-col items-end">
-                <span className="text-[10px] font-bold text-[#0E8B8D] uppercase tracking-wider">{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
+                <span className="text-[10px] font-bold text-[#0E8B8D] tracking-wide">{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
                 <span className="text-[11px] font-bold text-[#111827]">{currentUser.name}</span>
               </div>
               <div className="w-[28px] h-[28px] rounded-full bg-cyan-100 border border-cyan-200 flex items-center justify-center text-[#0E8B8D] font-bold text-[10px] uppercase overflow-hidden">

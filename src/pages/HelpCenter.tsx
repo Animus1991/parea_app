@@ -69,7 +69,7 @@ export default function HelpCenter() {
 
       {/* FAQ Accordion */}
       <div>
-        <h2 className="text-[12.1125px] font-bold text-gray-400 uppercase tracking-wider mb-3">{t(`Συχνές Ερωτήσεις`, `Frequently Asked Questions`)}</h2>
+        <h2 className="text-[12.1125px] font-bold text-gray-400 tracking-wide mb-3">{t(`Συχνές Ερωτήσεις`, `Frequently Asked Questions`)}</h2>
         <div className="space-y-2">
           {faqs.map(faq => (
             <Card key={faq.id} className="overflow-hidden">
@@ -92,12 +92,12 @@ export default function HelpCenter() {
 
       {/* Articles */}
       <div>
-        <h2 className="text-[13.5px] font-bold text-gray-400 uppercase tracking-wider mb-3">{t(`Άρθρα Βοήθειας`, `Help Articles`)}</h2>
+        <h2 className="text-[13.5px] font-bold text-gray-400 tracking-wide mb-3">{t(`Άρθρα Βοήθειας`, `Help Articles`)}</h2>
         <div className="space-y-3">
           {filtered.map(article => (
             <Card key={article.id} className="p-4 flex items-center justify-between hover:border-cyan-200 cursor-pointer transition-colors">
               <div>
-                <span className="text-[12.5px] font-bold text-cyan-600 uppercase tracking-wider">{article.category}</span>
+                <span className="text-[12.5px] font-bold text-cyan-600 tracking-wide">{article.category}</span>
                 <h3 className="font-bold text-[16.2px] text-[#111827] mt-0.5">{article.title}</h3>
               </div>
               <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />

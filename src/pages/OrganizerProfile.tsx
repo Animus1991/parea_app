@@ -70,7 +70,7 @@ export default function OrganizerProfile() {
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-2">
             <button 
               onClick={() => setShowContactModal(true)}
-              className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-cyan-600 transition-colors flex items-center gap-1"
+              className="text-[10px] font-bold tracking-wide text-gray-500 hover:text-cyan-600 transition-colors flex items-center gap-1"
             >
               <Mail className="h-4 w-4" /> {t('Επικοινωνία', 'Contact Organizer')}
             </button>
@@ -78,7 +78,7 @@ export default function OrganizerProfile() {
               href="#" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-cyan-600 transition-colors flex items-center gap-1"
+              className="text-[10px] font-bold tracking-wide text-gray-500 hover:text-cyan-600 transition-colors flex items-center gap-1"
             >
               <Globe className="h-4 w-4" /> {t('Ιστότοπος', 'Website')}
             </a>
@@ -99,7 +99,7 @@ export default function OrganizerProfile() {
                 <Card className="flex items-start gap-4 p-4 hover:border-cyan-300 transition-colors cursor-pointer group">
                   <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                     <div className="w-full h-full bg-cyan-50 flex flex-col items-center justify-center text-cyan-700">
-                      <span className="text-[10px] font-bold uppercase tracking-widest">{format(parseISO(event.date), 'MMM')}</span>
+                      <span className="text-[10px] font-bold tracking-wide">{format(parseISO(event.date), 'MMM')}</span>
                       <span className="text-xl font-bold leading-none">{format(parseISO(event.date), 'd')}</span>
                     </div>
                   </div>
@@ -111,7 +111,7 @@ export default function OrganizerProfile() {
                       {event.isPaid ? <Badge variant="outline">€{event.price}</Badge> : <Badge variant="outline">{t('Δωρεάν', 'Free')}</Badge>}
                     </div>
                   </div>
-                  <div className="hidden sm:flex items-center text-[10px] font-bold uppercase tracking-wider text-cyan-600 self-center">
+                  <div className="hidden sm:flex items-center text-[10px] font-bold tracking-wide text-cyan-600 self-center">
                     {t('Προβολή', 'View')} &rarr;
                   </div>
                 </Card>

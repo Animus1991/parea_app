@@ -31,15 +31,15 @@ export default function History() {
       <div className="grid grid-cols-3 gap-3">
         <Card className="p-3 text-center">
           <p className="text-[23px] font-black text-[#111827]">3</p>
-          <p className="text-[11.2px] text-gray-500 font-medium uppercase tracking-wider">{t(`Εκδηλώσεις`, `Events`)}</p>
+          <p className="text-[11.2px] text-gray-500 font-medium tracking-wide">{t(`Εκδηλώσεις`, `Events`)}</p>
         </Card>
         <Card className="p-3 text-center">
           <p className="text-[23px] font-black text-[#111827]">4.5</p>
-          <p className="text-[11.2px] text-gray-500 font-medium uppercase tracking-wider">{t(`Μ.Ο. Βαθμολογία`, `Avg Rating`)}</p>
+          <p className="text-[11.2px] text-gray-500 font-medium tracking-wide">{t(`Μ.Ο. Βαθμολογία`, `Avg Rating`)}</p>
         </Card>
         <Card className="p-3 text-center">
           <p className="text-[23px] font-black text-[#111827]">14</p>
-          <p className="text-[11.2px] text-gray-500 font-medium uppercase tracking-wider">{t(`Άτομα`, `People Met`)}</p>
+          <p className="text-[11.2px] text-gray-500 font-medium tracking-wide">{t(`Άτομα`, `People Met`)}</p>
         </Card>
       </div>
 

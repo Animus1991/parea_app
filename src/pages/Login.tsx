@@ -28,7 +28,7 @@ export default function Login() {
         </div>
 
         <div className="space-y-4 pt-4">
-          <div className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
+          <div className="text-center text-xs font-bold text-gray-400 tracking-wide mb-4">
             {t('Επιλέξτε Λογαριασμό (Demo)', 'Select Account (Demo)')}
           </div>
           <div className="grid grid-cols-1 gap-3">
@@ -58,7 +58,7 @@ export default function Login() {
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white px-2 text-[10px] text-gray-400 uppercase tracking-widest">{t('Ή συνεχίστε με', 'Or continue with')}</span>
+              <span className="bg-white px-2 text-[10px] text-gray-400 tracking-wide">{t('Ή συνεχίστε με', 'Or continue with')}</span>
             </div>
           </div>
 

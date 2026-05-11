@@ -88,7 +88,7 @@ export default function JoinGroupFlow() {
                
                <div className="mt-4 flex items-center justify-center p-3 bg-cyan-50 border border-cyan-100 rounded-xl shadow-inner">
                  <div className="text-center">
-                   <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-0.5">Selected Target Size</p>
+                   <p className="text-[10px] font-bold text-cyan-400 tracking-wide mb-0.5">Selected Target Size</p>
                    <div className="flex items-center justify-center gap-1.5 text-cyan-900 font-bold text-lg">
                      <Users className="w-4 h-4 text-cyan-600" />
                      {newGroupSize} <span className="text-xs font-medium text-cyan-700">Members</span>
@@ -101,7 +101,7 @@ export default function JoinGroupFlow() {
                      <Tag className="h-5 w-5" />
                    </div>
                    <div>
-                     <h4 className="text-sm font-bold text-emerald-800 uppercase tracking-widest leading-tight">Discount Unlocked!</h4>
+                     <h4 className="text-sm font-bold text-emerald-800 tracking-wide leading-tight">Discount Unlocked!</h4>
                      <p className="text-xs text-emerald-700 font-medium mt-1">
                        Awesome! By starting a group of {newGroupSize}, everyone (including you) gets <span className="font-bold text-emerald-800 bg-emerald-100 px-1 py-0.5 rounded">{event.groupDiscount.percentage}% OFF</span> the ticket price.
                      </p>
@@ -150,7 +150,7 @@ export default function JoinGroupFlow() {
                 <span>Total Charge</span>
                 <span>€{((event.groupDiscount && newGroupSize >= event.groupDiscount.minSize ? event.price * (1 - event.groupDiscount.percentage / 100) : event.price) + 1.5).toFixed(2)}</span>
               </div>
-              <div className="bg-yellow-50 text-yellow-800 text-sm p-3 rounded font-bold uppercase tracking-wider flex items-start gap-2 mt-4 leading-relaxed">
+              <div className="bg-yellow-50 text-yellow-800 text-sm p-3 rounded font-bold tracking-wide flex items-start gap-2 mt-4 leading-relaxed">
                 <ShieldCheck className="h-4 w-4 shrink-0" />
                 No Web Scraping! Payment is pre-authorized and processed through official API affiliate integration (e.g. more.com) once the group is confirmed.
               </div>

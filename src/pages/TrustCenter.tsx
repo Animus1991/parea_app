@@ -16,7 +16,7 @@ export default function TrustCenter() {
       <div className="grid gap-4 md:grid-cols-2">
          <Card className="p-5 space-y-5">
            <div>
-             <h2 className="text-[10.9766035490675px] font-bold text-[#6B7280] uppercase tracking-wider mb-3 flex items-center gap-1.5">
+             <h2 className="text-[10.9766035490675px] font-bold text-[#6B7280] tracking-wide mb-3 flex items-center gap-1.5">
                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />{t(`Κατάσταση Επαλήθευσης`, `Verification Status`)}</h2>
              <p className="text-[16.2px] font-bold text-[#111827]">{currentUser.trustTier}</p>
            </div>
@@ -41,7 +41,7 @@ export default function TrustCenter() {
              <div className="flex items-center justify-between">
                <div className="flex items-center gap-2 text-[13.5px] text-gray-400 font-medium">
                  <UserCheck className="h-3.5 w-3.5 text-gray-300" />{t(`Ταυτότητα`, `Government ID`)}</div>
-               <span className="text-[11.2px] text-cyan-600 font-bold cursor-pointer hover:underline uppercase tracking-wider">{t(`Επαλήθευση`, `Verify`)}</span>
+               <span className="text-[11.2px] text-cyan-600 font-bold cursor-pointer hover:underline tracking-wide">{t(`Επαλήθευση`, `Verify`)}</span>
              </div>
            </div>
            
@@ -65,15 +65,15 @@ export default function TrustCenter() {
                 <text x="60" y="56" textAnchor="middle" className="text-[30px] font-black fill-[#111827]" fontSize="28">{currentUser.reliabilityScore}</text>
                 <text x="60" y="74" textAnchor="middle" className="fill-gray-400" fontSize="10" fontWeight="600">%</text>
               </svg>
-              <p className="text-[12.5px] font-bold text-gray-500 uppercase tracking-wider">{t(`Βαθμός Αξιοπιστίας`, `Reliability Score`)}</p>
+              <p className="text-[12.5px] font-bold text-gray-500 tracking-wide">{t(`Βαθμός Αξιοπιστίας`, `Reliability Score`)}</p>
             </Card>
 
             <Card className="p-4 md:p-5 bg-gray-50 border-none shadow-none">
-              <h3 className="text-[12.1964473899675px] font-bold text-[#111827] uppercase tracking-wider mb-1.5">{t(`Πώς λειτουργεί`, `How It Works`)}</h3>
+              <h3 className="text-[12.1964473899675px] font-bold text-[#111827] tracking-wide mb-1.5">{t(`Πώς λειτουργεί`, `How It Works`)}</h3>
               <p className="text-[13.8px] md:text-[13.5px] text-gray-600 leading-relaxed">{t(`Κάθε επαλήθευση αυξάνει το επίπεδο εμπιστοσύνης σας, ξεκλειδώνοντας πρόσβαση σε εκδηλώσεις υψηλής ασφάλειας.`, `Each verification raises your trust tier, unlocking access to high-safety events.`)}</p>
             </Card>
             <Card className="p-4 md:p-5 bg-gray-50 border-none shadow-none">
-              <h3 className="text-[12.1964473899675px] font-bold text-[#111827] uppercase tracking-wider mb-1.5">{t(`Επίπεδα Εμπιστοσύνης`, `Trust Tiers`)}</h3>
+              <h3 className="text-[12.1964473899675px] font-bold text-[#111827] tracking-wide mb-1.5">{t(`Επίπεδα Εμπιστοσύνης`, `Trust Tiers`)}</h3>
               <p className="text-[13.8px] md:text-[13.5px] text-gray-600 leading-relaxed">{t(`Newcomer → Verified → Trusted → Super Trusted. Κάθε επίπεδο απαιτεί περισσότερες επαληθεύσεις.`, `Newcomer → Verified → Trusted → Super Trusted. Each tier requires more verifications.`)}</p>
             </Card>
          </div>
@@ -81,7 +81,7 @@ export default function TrustCenter() {
 
       {/* Trust History Timeline */}
       <Card className="p-5">
-        <h3 className="text-[12.5px] font-bold text-[#111827] uppercase tracking-widest mb-4 flex items-center gap-1.5">
+        <h3 className="text-[12.5px] font-bold text-[#111827] tracking-wide mb-4 flex items-center gap-1.5">
           <TrendingUp className="w-3.5 h-3.5 text-cyan-600" />{t(`Ιστορικό Εμπιστοσύνης`, `Trust History`)}
         </h3>
         <div className="space-y-0">

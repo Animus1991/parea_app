@@ -71,7 +71,7 @@ export default function VerificationCenter() {
                     <p className="text-[10.90125px] text-gray-400 uppercase font-bold tracking-wider mt-0.5">{t(`Προαιρετικό`, `Optional`)}</p>
                  </div>
               </div>
-              <span className="bg-gray-100 text-gray-600 text-[10.90125px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">{t(`Προχωρημένο`, `Advanced`)}</span>
+              <span className="bg-gray-100 text-gray-600 text-[10.90125px] font-bold px-2 py-0.5 rounded-full tracking-wide">{t(`Προχωρημένο`, `Advanced`)}</span>
            </div>
            <p className="text-[14.908928449356px] text-gray-500 mb-4 max-w-xl">{t(`Ανεβάστε φωτογραφία της ταυτότητάς σας για πρόσβαση σε εκδηλώσεις υψηλής ασφάλειας.`, `Upload a photo of your ID to access high-safety events.`)}</p>
            <div className="bg-gray-50 p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-dashed border-gray-200">
@@ -86,7 +86,7 @@ export default function VerificationCenter() {
 
       {/* Benefits per tier */}
       <Card className="p-5">
-        <h3 className="text-[12.5px] font-bold text-[#111827] uppercase tracking-widest mb-4">{t(`Τι ξεκλειδώνετε`, `What you unlock`)}</h3>
+        <h3 className="text-[12.5px] font-bold text-[#111827] tracking-wide mb-4">{t(`Τι ξεκλειδώνετε`, `What you unlock`)}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="bg-cyan-50 border border-cyan-100 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">

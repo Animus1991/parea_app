@@ -64,7 +64,7 @@ export default function Achievements() {
             </div>
           </div>
           <div className="text-right">
-            <p className="text-[12.1125px] font-bold text-gray-400 uppercase tracking-wider">{t(`Επόμενο επίπεδο`, `Next level`)}</p>
+            <p className="text-[12.1125px] font-bold text-gray-400 tracking-wide">{t(`Επόμενο επίπεδο`, `Next level`)}</p>
             <p className="text-[14.535px] font-bold text-[#111827]">{200 - (totalXP % 200)} XP</p>
           </div>
         </div>
@@ -104,7 +104,7 @@ export default function Achievements() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`pb-3 text-[13.5px] font-bold uppercase tracking-wider transition-colors whitespace-nowrap ${
+            className={`pb-3 text-[13.5px] font-bold tracking-wide transition-colors whitespace-nowrap ${
               activeTab === tab.key ? 'border-b-2 border-cyan-600 text-cyan-900' : 'text-gray-500 hover:text-[#111827]'
             }`}
           >

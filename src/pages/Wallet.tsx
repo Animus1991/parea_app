@@ -25,7 +25,7 @@ export default function Wallet() {
         <Card className="p-6 bg-cyan-600 text-white border-0 shadow-md">
           <div className="flex items-center gap-2 text-cyan-100 mb-2">
             <Euro className="w-4 h-4" />
-            <h3 className="text-xs font-bold uppercase tracking-widest">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
+            <h3 className="text-xs font-bold tracking-wide">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
           <p className="text-4xl font-black mb-4">€345.50</p>
           <Button className="w-full bg-white text-cyan-900 hover:bg-gray-100 border-0">
@@ -36,7 +36,7 @@ export default function Wallet() {
         <Card className="p-6">
           <div className="flex items-center gap-2 text-gray-500 mb-2">
             <Clock className="w-4 h-4" />
-            <h3 className="text-xs font-bold uppercase tracking-widest">{t('Εκκρεμεί εξόφληση', 'Pending Clearing')}</h3>
+            <h3 className="text-xs font-bold tracking-wide">{t('Εκκρεμεί εξόφληση', 'Pending Clearing')}</h3>
           </div>
           <p className="text-3xl font-bold text-gray-800 mb-2">€85.00</p>
           <p className="text-[10px] text-gray-400 font-medium leading-tight">
@@ -77,7 +77,7 @@ export default function Wallet() {
                 <div>
                   <h4 className="font-bold text-[#111827] text-sm">{tx.desc}</h4>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{tx.date}</span>
+                    <span className="text-[10px] text-gray-400 font-bold tracking-wide">{tx.date}</span>
                     <span className="text-[10px] text-gray-300">•</span>
                     <span className="text-[10px] text-gray-500 font-medium flex items-center justify-center gap-1">
                       {tx.status === t('Ολοκληρώθηκε', 'Completed') || tx.status === t('Διαθέσιμο', 'Available')

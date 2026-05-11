@@ -100,7 +100,7 @@ export default function ReportIssue() {
               <span>{t(`Αναμενόμενος χρόνος απόκρισης: <24 ώρες`, `Expected response time: <24 hours`)}</span>
             </div>
 
-            <button type="submit" className="w-full bg-[#111827] text-white py-2.5 rounded-full text-[12.15px] font-bold shadow-sm hover:bg-black transition-colors uppercase tracking-wider">{t(`Υποβολή Αναφοράς`, `Submit Report`)}</button>
+            <button type="submit" className="w-full bg-[#111827] text-white py-2.5 rounded-full text-[12.15px] font-bold shadow-sm hover:bg-black transition-colors  tracking-wider">{t(`Υποβολή Αναφοράς`, `Submit Report`)}</button>
           </form>
         </div>
       ) : (

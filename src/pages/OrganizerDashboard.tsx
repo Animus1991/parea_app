@@ -22,22 +22,22 @@ export default function OrganizerDashboard() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className="p-4 border-t-4 border-t-cyan-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] uppercase tracking-wider">{t(`Ενεργές`, `Active`)}</h3>
+          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wide">{t(`Ενεργές`, `Active`)}</h3>
           <p className="text-[25px] font-black text-[#111827] mt-1">3</p>
           <p className="text-[11.2px] text-gray-400 font-medium">{t(`εκδηλώσεις`, `events`)}</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-emerald-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] uppercase tracking-wider">{t(`Συμμετέχοντες`, `Participants`)}</h3>
+          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wide">{t(`Συμμετέχοντες`, `Participants`)}</h3>
           <p className="text-[25px] font-black text-[#111827] mt-1">48</p>
           <p className="text-[11.2px] text-green-500 font-bold flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />+12%</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-amber-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] uppercase tracking-wider">{t(`Βαθμολογία`, `Rating`)}</h3>
+          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wide">{t(`Βαθμολογία`, `Rating`)}</h3>
           <p className="text-[25px] font-black text-[#111827] mt-1 flex items-center gap-1">4.8 <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /></p>
           <p className="text-[11.2px] text-gray-400 font-medium">23 {t(`αξιολογήσεις`, `reviews`)}</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-purple-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] uppercase tracking-wider">{t(`Έσοδα`, `Revenue`)}</h3>
+          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wide">{t(`Έσοδα`, `Revenue`)}</h3>
           <p className="text-[25px] font-black text-[#111827] mt-1">€340</p>
           <p className="text-[11.2px] text-gray-400 font-medium">{t(`αυτόν τον μήνα`, `this month`)}</p>
         </Card>
@@ -46,7 +46,7 @@ export default function OrganizerDashboard() {
       {/* Fill rate bar */}
       <Card className="p-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-[12.1125px] font-bold text-[#111827] uppercase tracking-wider">{t(`Ποσοστό Πληρότητας`, `Fill Rate`)}</h3>
+          <h3 className="text-[12.1125px] font-bold text-[#111827] tracking-wide">{t(`Ποσοστό Πληρότητας`, `Fill Rate`)}</h3>
           <span className="text-[12.1125px] font-bold text-cyan-600">72%</span>
         </div>
         <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
@@ -58,7 +58,7 @@ export default function OrganizerDashboard() {
       {/* Attendee Satisfaction */}
       <Card className="p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-[12.1125px] font-bold text-[#111827] uppercase tracking-wider">{t(`Ικανοποίηση Συμμετεχόντων`, `Attendee Satisfaction`)}</h3>
+          <h3 className="text-[12.1125px] font-bold text-[#111827] tracking-wide">{t(`Ικανοποίηση Συμμετεχόντων`, `Attendee Satisfaction`)}</h3>
           <span className="text-[11.2px] font-medium text-gray-400">{t(`Τελ. 30 μέρες`, `Last 30 days`)}</span>
         </div>
         <div className="grid grid-cols-3 gap-3">
@@ -83,7 +83,7 @@ export default function OrganizerDashboard() {
 
       {/* Quick Create Templates */}
       <div>
-        <h3 className="text-[12.5px] font-bold text-gray-400 uppercase tracking-wider mb-2">{t(`Γρήγορη Δημιουργία`, `Quick Create`)}</h3>
+        <h3 className="text-[12.5px] font-bold text-gray-400 tracking-wide mb-2">{t(`Γρήγορη Δημιουργία`, `Quick Create`)}</h3>
         <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar">
           {[
             { label: t(`Πεζοπορία`, `Hiking`), emoji: '🥾' },
@@ -106,7 +106,7 @@ export default function OrganizerDashboard() {
             <div className="flex flex-col">
                <div className="flex items-center gap-2 mb-1">
                  <Badge variant="neutral">Stand-up</Badge>
-                 <span className="text-[12.5px] text-gray-500 font-bold uppercase tracking-wider">{t(`Σε 2 μέρες`, `In 2 days`)}</span>
+                 <span className="text-[12.5px] text-gray-500 font-bold tracking-wide">{t(`Σε 2 μέρες`, `In 2 days`)}</span>
                </div>
                <h3 className="text-[18px] font-bold text-[#111827]">{t(`Stand-up Comedy Night`, `Stand-up Comedy Night`)}</h3>
             </div>
@@ -161,7 +161,7 @@ export default function OrganizerDashboard() {
             <div className="flex flex-col">
                <div className="flex items-center gap-2 mb-1">
                  <Badge variant="neutral">Hiking</Badge>
-                 <span className="text-[12.5px] text-gray-500 font-bold uppercase tracking-wider">{t(`Σε 5 μέρες`, `In 5 days`)}</span>
+                 <span className="text-[12.5px] text-gray-500 font-bold tracking-wide">{t(`Σε 5 μέρες`, `In 5 days`)}</span>
                </div>
                <h3 className="text-[18px] font-bold text-[#111827]">{t(`Πεζοπορία στον Υμηττό`, `Hike on Hymettus`)}</h3>
             </div>

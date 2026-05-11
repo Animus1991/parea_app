@@ -98,7 +98,7 @@ export default function MyCalendar() {
               <div className="grid grid-cols-7 gap-2 mb-4">
                 {days.map((day, i) => (
                   <div key={i} className="text-center">
-                    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{format(day, 'EEE')}</div>
+                    <div className="text-[10px] font-bold text-gray-400 tracking-wide">{format(day, 'EEE')}</div>
                     <div className={`mt-1 w-8 h-8 mx-auto flex items-center justify-center rounded-full text-sm font-bold ${isToday(day) ? 'bg-cyan-600 text-white' : 'text-[#111827]'}`}>
                       {format(day, 'd')}
                     </div>
@@ -116,7 +116,7 @@ export default function MyCalendar() {
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
                         <h3 className="font-bold text-[#111827] text-sm">{event.title}</h3>
-                        <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                        <span className="flex items-center gap-1 text-[10px] font-bold tracking-wide text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                           <CheckCircle className="w-3 h-3" /> {t('Επιβεβαιώθηκε', 'Confirmed')}
                         </span>
                       </div>
@@ -143,7 +143,7 @@ export default function MyCalendar() {
               {/* Day-of-week headers */}
               <div className="grid grid-cols-7 gap-1 mb-1">
                 {[t('Δευ', 'Mon'), t('Τρι', 'Tue'), t('Τετ', 'Wed'), t('Πεμ', 'Thu'), t('Παρ', 'Fri'), t('Σαβ', 'Sat'), t('Κυρ', 'Sun')].map(d => (
-                  <div key={d} className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest py-2">{d}</div>
+                  <div key={d} className="text-center text-[10px] font-bold text-gray-400 tracking-wide py-2">{d}</div>
                 ))}
               </div>
 
@@ -182,7 +182,7 @@ export default function MyCalendar() {
               {/* Upcoming events list below the grid */}
               {upcomingEvents.length > 0 && (
                 <div className="mt-4 space-y-2 border-t border-gray-100 pt-4">
-                  <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t('Προσεχώς αυτόν τον μήνα', 'Upcoming This Month')}</h4>
+                  <h4 className="text-[10px] font-bold text-gray-400 tracking-wide mb-2">{t('Προσεχώς αυτόν τον μήνα', 'Upcoming This Month')}</h4>
                   {upcomingEvents.map((event, idx) => (
                     <div
                       key={idx}

@@ -285,7 +285,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                     <p className="text-xs font-bold text-[#111827] leading-none mb-1">
                       {loc.name} {loc.isMe ? "(Εσείς)" : ""}
                     </p>
-                    <p className="text-[9px] text-emerald-600 font-bold uppercase tracking-widest flex items-center gap-1">
+                    <p className="text-[9px] text-emerald-600 font-bold tracking-wide flex items-center gap-1">
                       <span
                         className={`w-1.5 h-1.5 rounded-full ${loc.sos ? "bg-red-500" : loc.isOutOfBounds ? "bg-amber-500" : "bg-emerald-500"} animate-pulse`}
                       ></span>

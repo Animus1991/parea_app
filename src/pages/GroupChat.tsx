@@ -310,7 +310,7 @@ export default function GroupChat() {
                     <h2 className="text-sm md:text-base font-bold text-[#111827] truncate">
                       {event.title}
                     </h2>
-                    <p className="text-[10px] md:text-[11px] text-gray-500 uppercase tracking-wider font-bold truncate flex items-center gap-1.5 mt-0.5">
+                    <p className="text-[10px] md:text-[11px] text-gray-500 tracking-wide font-bold truncate flex items-center gap-1.5 mt-0.5">
                       <Users className="h-3 w-3 shrink-0" />{" "}
                       {group.members.length} {t("Μέλη", "Members")}
                     </p>
@@ -369,7 +369,7 @@ export default function GroupChat() {
           {/* Ephemeral Notice */}
           {isEphemeral && showEphemeralBanner && (
             <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 px-2 py-2 sm:px-3 text-center shadow-sm z-10 backdrop-blur-sm flex items-center justify-center relative">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-800 pr-6 w-full">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-[10px] sm:text-[11px] font-bold tracking-wide text-amber-800 pr-6 w-full">
                 <span className="flex items-center justify-center gap-1.5 whitespace-nowrap">
                   <ShieldCheck className="h-3.5 w-3.5 shrink-0" />{" "}
                   {t("Εφήμερη Λειτουργία", "Ephemeral Mode")}
@@ -534,7 +534,7 @@ export default function GroupChat() {
                       {event.tags.map((tag: string) => (
                         <span
                           key={tag}
-                          className="bg-cyan-50 text-cyan-700 px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-widest border border-cyan-100"
+                          className="bg-cyan-50 text-cyan-700 px-2.5 py-1 rounded-md text-[9px] font-bold tracking-wide border border-cyan-100"
                         >
                           {tag}
                         </span>
@@ -667,7 +667,7 @@ export default function GroupChat() {
                               member.id !== currentUser.id && (
                                 <div className="absolute inset-0 bg-black/20 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[1px]">
                                   <ShieldCheck className="w-4 h-4 text-white mb-0.5" />
-                                  <span className="text-[7px] font-bold text-white uppercase tracking-widest text-center px-1">
+                                  <span className="text-[7px] font-bold text-white tracking-wide text-center px-1">
                                     {t("Κρυφό", "Hidden")}
                                   </span>
                                 </div>
@@ -686,13 +686,13 @@ export default function GroupChat() {
                             </div>
                             <div className="flex items-center gap-1.5">
                               <span
-                                className={`px-1.5 py-0.5 text-[8px] font-bold flex shrink-0 uppercase tracking-widest rounded-md items-center gap-1 border ${member.reliabilityScore >= 80 ? "bg-emerald-50 text-emerald-700 border-emerald-100" : member.reliabilityScore >= 50 ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-amber-50 text-amber-700 border-amber-100"}`}
+                                className={`px-1.5 py-0.5 text-[8px] font-bold flex shrink-0 tracking-wide rounded-md items-center gap-1 border ${member.reliabilityScore >= 80 ? "bg-emerald-50 text-emerald-700 border-emerald-100" : member.reliabilityScore >= 50 ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-amber-50 text-amber-700 border-amber-100"}`}
                               >
                                 <ShieldCheck className="h-2.5 w-2.5" />
                                 {member.reliabilityScore}%
                               </span>
                               <p
-                                className={`text-[9px] font-bold uppercase tracking-wider truncate ${member.reliabilityScore >= 80 ? "text-emerald-600" : member.reliabilityScore >= 50 ? "text-blue-600" : "text-amber-600"}`}
+                                className={`text-[9px] font-bold tracking-wide truncate ${member.reliabilityScore >= 80 ? "text-emerald-600" : member.reliabilityScore >= 50 ? "text-blue-600" : "text-amber-600"}`}
                               >
                                 {member.reliabilityScore >= 80
                                   ? t("Υψηλή Αξιοπιστία", "Highly Reliable")
@@ -848,13 +848,13 @@ export default function GroupChat() {
               <div className="space-y-2 pt-2">
                 <button
                   onClick={() => setShowReportModal(true)}
-                  className="w-full py-2.5 px-4 text-[11px] font-bold uppercase tracking-wider text-red-600 bg-red-50/50 hover:bg-red-50 border border-red-100 rounded-lg transition-colors flex justify-center items-center gap-2"
+                  className="w-full py-2.5 px-4 text-[11px] font-bold tracking-wide text-red-600 bg-red-50/50 hover:bg-red-50 border border-red-100 rounded-lg transition-colors flex justify-center items-center gap-2"
                 >
                   {t("Αναφορά Προβλήματος", "Report Safety Issue")}
                 </button>
                 <button
                   onClick={() => setShowLeaveModal(true)}
-                  className="w-full py-2.5 px-4 text-[11px] font-bold uppercase tracking-wider text-gray-500 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors"
+                  className="w-full py-2.5 px-4 text-[11px] font-bold tracking-wide text-gray-500 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors"
                 >
                   {t("Αποχώρηση", "Leave Group")}
                 </button>
@@ -996,7 +996,7 @@ export default function GroupChat() {
                           },
                         ]);
                       }}
-                      className="w-full bg-white text-red-600 border border-red-200 hover:bg-red-50 py-2 rounded-lg text-xs font-bold uppercase tracking-wider"
+                      className="w-full bg-white text-red-600 border border-red-200 hover:bg-red-50 py-2 rounded-lg text-xs font-bold tracking-wide"
                     >
                       {t("Διακοπή Κοινοποίησης", "Stop Sharing Now")}
                     </button>
@@ -1004,7 +1004,7 @@ export default function GroupChat() {
                 )}
 
                 <div className="space-y-3">
-                  <h4 className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                  <h4 className="text-[11px] font-bold tracking-wide text-gray-500">
                     1. {t("Ακρίβεια", "Precision")}
                   </h4>
                   <div className="grid grid-cols-2 gap-3">
@@ -1054,7 +1054,7 @@ export default function GroupChat() {
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                  <h4 className="text-[11px] font-bold tracking-wide text-gray-500">
                     2. {t("Ορατότητα", "Share With")}
                   </h4>
                   <div className="flex flex-col gap-2">
@@ -1116,7 +1116,7 @@ export default function GroupChat() {
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                  <h4 className="text-[11px] font-bold tracking-wide text-gray-500">
                     3. {t("Αυτόματη Λήξη", "Auto-Expiry")}
                   </h4>
                   <select

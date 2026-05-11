@@ -78,8 +78,8 @@ export default function AdminDashboard() {
                  </div>
               </div>
               <div className="flex gap-2">
-                <button className="text-[18px] uppercase tracking-wider bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded font-bold transition-colors shadow-sm border border-gray-200">{t(`Εξέταση`, `Review`)}</button>
-                <button className="text-[18px] uppercase tracking-wider bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded font-bold transition-colors border border-red-200">{t(`Αποκλεισμός`, `Ban`)}</button>
+                <button className="text-[18px]  tracking-wider bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded font-bold transition-colors shadow-sm border border-gray-200">{t(`Εξέταση`, `Review`)}</button>
+                <button className="text-[18px]  tracking-wider bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded font-bold transition-colors border border-red-200">{t(`Αποκλεισμός`, `Ban`)}</button>
               </div>
             </Card>
 
@@ -92,7 +92,7 @@ export default function AdminDashboard() {
                  </div>
               </div>
               <div className="flex gap-2 shrink-0">
-                <button className="text-[18px] uppercase tracking-wider bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-bold shadow-sm transition-colors">{t(`Αναστολή`, `Suspend`)}</button>
+                <button className="text-[18px]  tracking-wider bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-bold shadow-sm transition-colors">{t(`Αναστολή`, `Suspend`)}</button>
               </div>
             </Card>
           </div>

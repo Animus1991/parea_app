@@ -141,7 +141,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
 
         {/* Date Badge — top left */}
         <div className="absolute top-3 left-3 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm rounded-xl w-12 h-[50px] shadow-sm border border-white/20 z-10">
-          <span className="text-[10px] font-extrabold text-[#0E8B8D] uppercase tracking-wider leading-none mb-0.5">
+          <span className="text-[10px] font-extrabold text-[#0E8B8D] tracking-wide leading-none mb-0.5">
             {month}
           </span>
           <span className="text-lg font-black text-gray-900 leading-none">
