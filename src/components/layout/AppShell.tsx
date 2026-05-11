@@ -357,7 +357,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { t } = useLanguage();
 
   return (
-    <div className="flex h-screen w-full bg-[#F3F4F6] text-[#111827] font-sans antialiased overflow-hidden select-none">
+    <div className="flex h-screen w-full bg-[#F3F4F6] text-[#111827] font-sans antialiased overflow-hidden">
       <SideNav />
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
