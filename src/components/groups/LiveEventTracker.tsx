@@ -4,6 +4,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useStore } from "../../store";
 import { useLanguage } from "../../lib/i18n";
+import type { MemberLocation } from "../../types";
 import {
   Navigation,
   Users,
@@ -126,23 +127,24 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
   const eventLng = 23.7361;
 
   // Aggregate data for map
-  const activeLocations = Object.entries(group.membersLocations || {})
-    .filter(([userId, loc]) => Date.now() - loc.timestamp < 60000)
+  const activeLocations = Object.entries(group.membersLocations || {} as Record<string, MemberLocation>)
+    .filter(([userId, loc]) => Date.now() - (loc as MemberLocation).timestamp < 60000)
     .map(([userId, loc]) => {
+      const location = loc as MemberLocation;
       const user = users.find((u) => u.id === userId);
       const dist = getDistanceFromLatLonInMeters(
         eventLat,
         eventLng,
-        loc.lat,
-        loc.lng,
+        location.lat,
+        location.lng,
       );
       return {
         userId,
         name: user?.name || "Unknown",
         photoUrl: user?.photoUrl,
-        lat: loc.lat,
-        lng: loc.lng,
-        sos: loc.sos,
+        lat: location.lat,
+        lng: location.lng,
+        sos: location.sos,
         isOutOfBounds: dist > 500,
         isMe: userId === currentUser.id,
       };

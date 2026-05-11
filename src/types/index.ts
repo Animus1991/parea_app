@@ -56,6 +56,13 @@ export interface Event {
   externalLink?: string;
 }
 
+export interface MemberLocation {
+  lat: number;
+  lng: number;
+  timestamp: number;
+  sos?: boolean;
+}
+
 export interface Group {
   id: string;
   eventId: string;
@@ -66,6 +73,8 @@ export interface Group {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   discountUnlocked: boolean;
   meetingPoint?: string; // Revealed upon confirmation
+  isLiveTrackingActive?: boolean;
+  membersLocations?: Record<string, MemberLocation>;
 }
 
 export interface Ticket {
