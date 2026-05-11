@@ -126,15 +126,15 @@ export default function Home() {
     Exhibitions: t("Εκθεσεις", "Exhibitions"),
     Festivals: t("Φεστιβαλ", "Festivals"),
     "Board games": t("Επιτραπεζια", "Board Games"),
-    "Book clubs": t("Λεσχη Αναγνωσης", "Book Club"),
-    "Language exchange": t("Ανταλλαγη Γλωσσων", "Language Exchange"),
-    "Philosophy/Science": t("Φιλοσοφια/Επιστημη", "Philosophy/Science"),
+    "Book clubs": t("Λεσχη αναγνωσης", "Book Club"),
+    "Language exchange": t("Ανταλλαγη γλωσσων", "Language Exchange"),
+    "Philosophy/Science": t("Φιλοσοφια/επιστημη", "Philosophy/Science"),
     "City walks": t("Περιπατοι", "City Walks"),
     Hiking: t("Πεζοπορία", "Hiking"),
-    "Nearby escapes": t("Κοντινες Αποδρασεις", "Nearby Getaways"),
+    "Nearby escapes": t("Κοντινες αποδρασεις", "Nearby Getaways"),
     "Short day trips": t("Μονοημερες", "Day Trips"),
-    "Nature walks": t("Βολτες στη Φυση", "Nature Walks"),
-    "Light sports": t("Ελαφρια Αθληση", "Light Sports"),
+    "Nature walks": t("Βολτες στη φυση", "Nature Walks"),
+    "Light sports": t("Ελαφρια αθληση", "Light Sports"),
     Workshops: t("Εργαστηρια", "Workshops"),
     "Online events": t("Διαδικτυακα", "Online"),
     "Community events": t("Κοινοτητα", "Community"),
@@ -298,7 +298,7 @@ export default function Home() {
           <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4">
             {t("home.hero.badge", "Νέος Τρόπος Εξόδου")}
           </div>
-          <h1 className="text-lg md:text-2xl font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
+          <h1 className="text-[17.5px] md:text-[23px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
             {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18D8DB] to-cyan-400">
               {t("home.hero.title2", "εμπειρίες")}
