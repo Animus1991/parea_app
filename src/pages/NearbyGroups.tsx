@@ -180,7 +180,7 @@ export default function NearbyGroups() {
     }
   };
 
-  const apiKey = (import.meta as any).env?.VITE_GOOGLE_MAPS_PLATFORM_KEY || "";
+  const apiKey = (import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY || "";
   const hasValidKey =
     Boolean(apiKey) && typeof apiKey === "string" && apiKey.startsWith("AIza");
 

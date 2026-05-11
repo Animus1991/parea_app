@@ -250,7 +250,7 @@ export default function EventDetail() {
   };
 
   // Safely get API key
-  const apiKey = (import.meta as any).env?.VITE_GOOGLE_MAPS_PLATFORM_KEY || '';
+  const apiKey = (import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY || '';
   
   if (isLoading) {
     return <EventDetailSkeleton />;
