@@ -6,8 +6,12 @@ import {
   Users, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { currentUser } from '../../data/mockUsers';
-import { unreadNotificationCount } from '../../data/mockNotifications';
+import { useStore } from '../../store';
+
+function useUnreadCount() {
+  const notifications = useStore(state => state.notifications);
+  return notifications.filter(n => !n.read).length;
+}
 import { useLanguage } from '../../lib/i18n';
 
 // ─────────────────────────────────────────────
@@ -65,6 +69,7 @@ interface NavItemProps {
 }
 
 function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: NavItemProps) {
+  const { t } = useLanguage();
   const containerClass = compact
     ? 'justify-center px-0 py-3 lg:justify-start lg:px-3 lg:py-2'
     : 'justify-start px-3 py-2';
@@ -81,7 +86,7 @@ function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: N
       >
         <Icon className={iconClass} />
         <span className={textClass}>{label}</span>
-        <span className={cn('text-[9px] uppercase tracking-wider font-bold bg-gray-100 px-1.5 py-0.5 rounded text-gray-400', textClass)}>Soon</span>
+      <span className={cn('text-[9px] uppercase tracking-wider font-bold bg-gray-100 px-1.5 py-0.5 rounded text-gray-400', textClass)}>{t('Σύντομα', 'Soon')}</span>
       </div>
     );
   }
@@ -136,44 +141,45 @@ function NavSection({ title, children, compact = false }: NavSectionProps) {
 // NavLinks
 // ─────────────────────────────────────────────
 function NavLinks({ compact = false }: { compact?: boolean }) {
+  const { t } = useLanguage();
   return (
     <>
-      <NavSection title="Εξερεύνηση & Ανακάλυψη" compact={compact}>
-        <NavItem to="/" icon={Compass} label="Ανακάλυψη Εκδηλώσεων" compact={compact} />
-        <NavItem to="/categories" icon={Grid} label="Κατηγορίες" compact={compact} />
-        <NavItem to="/nearby" icon={MapPin} label="Τοπικές Ομάδες" compact={compact} />
+      <NavSection title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact}>
+        <NavItem to="/" icon={Compass} label={t('Ανακάλυψη Εκδηλώσεων', 'Discover Events')} compact={compact} />
+        <NavItem to="/categories" icon={Grid} label={t('Κατηγορίες', 'Categories')} compact={compact} />
+        <NavItem to="/nearby" icon={MapPin} label={t('Τοπικές Ομάδες', 'Local Groups')} compact={compact} />
       </NavSection>
 
-      <NavSection title="Η Εμπειρία μου" compact={compact}>
-        <NavItem to="/agenda" icon={Calendar} label="Το Ημερολόγιό μου" compact={compact} />
-        <NavItem to="/plans" icon={CalendarCheck} label="Τα Σχέδιά μου" compact={compact} />
-        <NavItem to="/saved" icon={Bookmark} label="Αποθηκευμένες" compact={compact} />
-        <NavItem to="/history" icon={History} label="Ιστορικό" compact={compact} />
+      <NavSection title={t('Η Εμπειρία μου', 'My Experience')} compact={compact}>
+        <NavItem to="/agenda" icon={Calendar} label={t('Το Ημερολόγιό μου', 'My Calendar')} compact={compact} />
+        <NavItem to="/plans" icon={CalendarCheck} label={t('Τα Σχέδιά μου', 'My Plans')} compact={compact} />
+        <NavItem to="/saved" icon={Bookmark} label={t('Αποθηκευμένες', 'Saved')} compact={compact} />
+        <NavItem to="/history" icon={History} label={t('Ιστορικό', 'History')} compact={compact} />
       </NavSection>
 
-      <NavSection title="Κοινότητα" compact={compact}>
-        <NavItem to="/connections" icon={Users} label="Οι Nakamas μου" compact={compact} />
-        <NavItem to="/chats" icon={MessageSquare} label="Ομαδικές Συνομιλίες" compact={compact} />
+      <NavSection title={t('Κοινότητα', 'Community')} compact={compact}>
+        <NavItem to="/connections" icon={Users} label={t('Οι Nakamas μου', 'My Nakamas')} compact={compact} />
+        <NavItem to="/chats" icon={MessageSquare} label={t('Ομαδικές Συνομιλίες', 'Group Chats')} compact={compact} />
       </NavSection>
 
-      <NavSection title="Διοργάνωση" compact={compact}>
-        <NavItem to="/manage" icon={TrendingUp} label="Πίνακας Διοργανωτή" compact={compact} />
-        <NavItem to="/create" icon={PlusSquare} label="Δημιουργία Εκδήλωσης" compact={compact} />
-        <NavItem to="/wallet" icon={CreditCard} label="Πορτοφόλι & Κέρδη" compact={compact} />
+      <NavSection title={t('Διοργάνωση', 'Host')} compact={compact}>
+        <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας Διοργανωτή', 'Organizer Dashboard')} compact={compact} />
+        <NavItem to="/create" icon={PlusSquare} label={t('Δημιουργία Εκδήλωσης', 'Create Event')} compact={compact} />
+        <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & Κέρδη', 'Wallet & Earnings')} compact={compact} />
       </NavSection>
 
-      <NavSection title="Εμπιστοσύνη & Ασφάλεια" compact={compact}>
-        <NavItem to="/verification" icon={BadgeCheck} label="Επαλήθευση Ταυτότητας" compact={compact} />
-        <NavItem to="/trust" icon={ShieldCheck} label="Κέντρο Εμπιστοσύνης" compact={compact} />
-        <NavItem to="/report" icon={Flag} label="Αναφορά Προβλήματος" compact={compact} />
+      <NavSection title={t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety')} compact={compact}>
+        <NavItem to="/verification" icon={BadgeCheck} label={t('Επαλήθευση Ταυτότητας', 'Identity Verification')} compact={compact} />
+        <NavItem to="/trust" icon={ShieldCheck} label={t('Κέντρο Εμπιστοσύνης', 'Trust Center')} compact={compact} />
+        <NavItem to="/report" icon={Flag} label={t('Αναφορά Προβλήματος', 'Report Issue')} compact={compact} />
       </NavSection>
 
-      <NavSection title="Λογαριασμός & Ρυθμίσεις" compact={compact}>
-        <NavItem to="/profile" icon={User} label="Το Προφίλ μου" compact={compact} />
-        <NavItem to="/notifications" icon={Bell} label="Ειδοποιήσεις" compact={compact} />
-        <NavItem to="/settings" icon={Settings} label="Ρυθμίσεις & Απόρρητο" compact={compact} />
-        <NavItem to="/help" icon={HelpCircle} label="Κέντρο Βοήθειας" compact={compact} />
-        <NavItem to="/admin" icon={Terminal} label="Διαχείριση & Έλεγχος" compact={compact} />
+      <NavSection title={t('Λογαριασμός & Ρυθμίσεις', 'Account & Settings')} compact={compact}>
+        <NavItem to="/profile" icon={User} label={t('Το Προφίλ μου', 'My Profile')} compact={compact} />
+        <NavItem to="/notifications" icon={Bell} label={t('Ειδοποιήσεις', 'Notifications')} compact={compact} />
+        <NavItem to="/settings" icon={Settings} label={t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')} compact={compact} />
+        <NavItem to="/help" icon={HelpCircle} label={t('Κέντρο Βοήθειας', 'Help Center')} compact={compact} />
+        <NavItem to="/admin" icon={Terminal} label={t('Διαχείριση & Έλεγχος', 'Admin & Moderation')} compact={compact} />
       </NavSection>
     </>
   );
@@ -200,7 +206,10 @@ export function SideNav() {
 // ─────────────────────────────────────────────
 export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   const navigate = useNavigate();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
+  const currentUser = useStore((state) => state.currentUser);
+  const isAuthenticated = useStore((state) => state.isAuthenticated);
+  const unreadNotificationCount = useUnreadCount();
   const [searchValue, setSearchValue] = useState('');
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -216,7 +225,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           <NakamasLogo className="text-[22px]" />
         </div>
         <div className="hidden md:block">
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dashboard</span>
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3">
@@ -226,7 +235,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
             value={searchValue}
             onChange={e => setSearchValue(e.target.value)}
             onKeyDown={handleSearchKeyDown}
-            placeholder="Αναζήτηση εκδηλώσεων..."
+            placeholder={t('Αναζήτηση εκδηλώσεων...', 'Search events...')}
             className="w-64 py-1.5 pl-8 pr-3 text-sm bg-gray-100 border-transparent rounded-md focus:bg-white focus:ring-1 focus:ring-cyan-500 outline-none"
           />
           <Search className="absolute w-4 h-4 text-gray-400 left-2.5 top-2" />
@@ -251,15 +260,30 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           )}
         </NavLink>
 
-        <NavLink to="/profile" className="flex items-center space-x-2">
-          <div className="hidden sm:flex flex-col items-end">
-            <span className="text-[10px] font-bold text-[#0E8B8D] uppercase tracking-wider">Αξιόπιστο Μέλος</span>
-            <span className="text-[11px] font-bold text-[#111827]">{currentUser.name}</span>
-          </div>
-          <div className="w-[28px] h-[28px] rounded-full bg-cyan-100 border border-cyan-200 flex items-center justify-center text-[#0E8B8D] font-bold text-[10px] uppercase">
-            {currentUser.name.substring(0, 2)}
-          </div>
-        </NavLink>
+        <div className="flex items-center space-x-2">
+          {currentUser ? (
+            <NavLink to="/profile" className="flex items-center space-x-2 relative group">
+              <div className="hidden sm:flex flex-col items-end">
+                <span className="text-[10px] font-bold text-[#0E8B8D] uppercase tracking-wider">{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
+                <span className="text-[11px] font-bold text-[#111827]">{currentUser.name}</span>
+              </div>
+              <div className="w-[28px] h-[28px] rounded-full bg-cyan-100 border border-cyan-200 flex items-center justify-center text-[#0E8B8D] font-bold text-[10px] uppercase overflow-hidden">
+                {currentUser.photoUrl ? (
+                  <img src={currentUser.photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
+                ) : (
+                  currentUser.name.substring(0, 2)
+                )}
+              </div>
+            </NavLink>
+          ) : (
+            <button
+              onClick={() => navigate('/login')}
+              className="text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-full transition-colors"
+            >
+              {t('Σύνδεση', 'Login')}
+            </button>
+          )}
+        </div>
 
         <button onClick={onMenuClick} className="text-gray-500 hover:text-[#111827] md:hidden">
           <Menu className="h-[22px] w-[22px]" />
@@ -273,6 +297,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
 // BottomNav
 // ─────────────────────────────────────────────
 export function BottomNav() {
+  const { t } = useLanguage();
   return (
     <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-gray-200 px-2 pb-4 pt-3 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50">
       <NavLink
@@ -282,7 +307,7 @@ export function BottomNav() {
         }
       >
         <Compass className="h-[18px] w-[18px]" strokeWidth={2.2} />
-        <span className="text-[8px] font-medium leading-none">Ανακάλυψη</span>
+        <span className="text-[8px] font-medium leading-none">{t('Ανακάλυψη', 'Discover')}</span>
       </NavLink>
       <NavLink
         to="/plans"
@@ -291,7 +316,7 @@ export function BottomNav() {
         }
       >
         <CalendarCheck className="h-[18px] w-[18px]" strokeWidth={2.2} />
-        <span className="text-[8px] font-medium leading-none">Σχέδια</span>
+        <span className="text-[8px] font-medium leading-none">{t('Σχέδια', 'Plans')}</span>
       </NavLink>
       <div className="flex flex-col items-center justify-center -mt-6">
         <NavLink
@@ -300,7 +325,7 @@ export function BottomNav() {
         >
           <Plus className="h-[20px] w-[20px]" strokeWidth={2.5} />
         </NavLink>
-        <span className="text-[8px] font-medium mt-1 text-gray-500">Δημιουργία</span>
+        <span className="text-[8px] font-medium mt-1 text-gray-500">{t('Δημιουργία', 'Create')}</span>
       </div>
       <NavLink
         to="/trust"
@@ -309,7 +334,7 @@ export function BottomNav() {
         }
       >
         <ShieldCheck className="h-[18px] w-[18px]" strokeWidth={2.2} />
-        <span className="text-[8px] font-medium leading-none">Εμπιστοσύνη</span>
+        <span className="text-[8px] font-medium leading-none">{t('Εμπιστοσύνη', 'Trust')}</span>
       </NavLink>
       <NavLink
         to="/profile"
@@ -318,7 +343,7 @@ export function BottomNav() {
         }
       >
         <User className="h-[18px] w-[18px]" strokeWidth={2.2} />
-        <span className="text-[8px] font-medium leading-none">Προφίλ</span>
+        <span className="text-[8px] font-medium leading-none">{t('Προφίλ', 'Profile')}</span>
       </NavLink>
     </div>
   );
@@ -329,6 +354,7 @@ export function BottomNav() {
 // ─────────────────────────────────────────────
 export function AppShell({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <div className="flex h-screen w-full bg-[#F3F4F6] text-[#111827] font-sans antialiased overflow-hidden select-none">
@@ -361,13 +387,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span>Nakamas v1.0.5-beta</span>
             <span className="flex items-center">
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2" />
-              Σύστημα Λειτουργικό
+              {t('Σύστημα Λειτουργικό', 'System Operational')}
             </span>
           </div>
           <div className="hidden sm:flex space-x-4">
-            <a href="#" className="hover:text-white transition-colors">Πολιτική Απορρήτου</a>
-            <a href="#" className="hover:text-white transition-colors">Αναφορά Προβλημάτων</a>
-            <a href="#" className="hover:text-white transition-colors">Πώς λειτουργεί η αξιοπιστία</a>
+            <a href="#" className="hover:text-white transition-colors">{t('Πολιτική Απορρήτου', 'Privacy Policy')}</a>
+            <a href="#" className="hover:text-white transition-colors">{t('Αναφορά Προβλημάτων', 'Report Issues')}</a>
+            <a href="#" className="hover:text-white transition-colors">{t('Πώς λειτουργεί η αξιοπιστία', 'How trust works')}</a>
           </div>
         </footer>
         <BottomNav />

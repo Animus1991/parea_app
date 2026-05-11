@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   MapPin,
   Search,
@@ -15,30 +15,65 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { mockEvents } from "../data/mockEvents";
+import { useStore } from "../store";
 import { Badge } from "../components/common/Badge";
-import {
-  APIProvider,
-  Map,
-  AdvancedMarker,
-  Pin,
-  InfoWindow,
-} from "@vis.gl/react-google-maps";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import { ErrorBoundary } from "../components/common/ErrorBoundary";
+import { useLanguage } from "../lib/i18n";
 
-const GroupImage = ({ src, alt, className }: { src: string, alt: string, className?: string }) => {
+// Fix for default marker icons in leaflet with react
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
+
+function MapController({ center }: { center: { lat: number; lng: number } }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView([center.lat, center.lng], map.getZoom(), { animate: true });
+  }, [center, map]);
+  return null;
+}
+
+const GroupImage = ({
+  src,
+  alt,
+  className,
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) => {
   const [error, setError] = useState(false);
   return error ? (
-    <div className={`flex items-center justify-center bg-indigo-50 text-indigo-300 ${className}`}>
+    <div
+      className={`flex items-center justify-center bg-indigo-50 text-indigo-300 ${className}`}
+    >
       <MapIcon className="w-8 h-8 opacity-50" />
     </div>
   ) : (
-    <img referrerPolicy="no-referrer" src={src} alt={alt} onError={() => setError(true)} className={className} />
+    <img
+      referrerPolicy="no-referrer"
+      src={src}
+      alt={alt}
+      onError={() => setError(true)}
+      className={className}
+    />
   );
 };
 
 export default function NearbyGroups() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+  const events = useStore((state) => state.events);
   const [radius, setRadius] = useState<number>(5);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [mapCenter, setMapCenter] = useState({ lat: 37.9838, lng: 23.7275 });
@@ -48,7 +83,9 @@ export default function NearbyGroups() {
   } | null>(null);
   const [isPanelExpanded, setIsPanelExpanded] = useState(false);
   const [isMapFullscreen, setIsMapFullscreen] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(() => window.innerWidth < 1024 ? 320 : 384);
+  const [sidebarWidth, setSidebarWidth] = useState(() =>
+    window.innerWidth < 1024 ? 320 : 384,
+  );
   const [isDragging, setIsDragging] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
 
@@ -59,7 +96,8 @@ export default function NearbyGroups() {
       // Adjust min/max bounds based on screen size
       const minBound = window.innerWidth < 1024 ? 280 : 300;
       if (newWidth < minBound) newWidth = minBound;
-      if (newWidth > window.innerWidth - 100) newWidth = window.innerWidth - 100;
+      if (newWidth > window.innerWidth - 100)
+        newWidth = window.innerWidth - 100;
       if (newWidth > 600) newWidth = 600;
       setSidebarWidth(newWidth);
     };
@@ -112,12 +150,22 @@ export default function NearbyGroups() {
           setUserLocation(loc);
         },
         () => {
-          setLocationError("Couldn't get your location. Check browser permissions.");
+          setLocationError(
+            t(
+              "Δεν ήταν δυνατή η εύρεση της τοποθεσίας σας. Ελέγξτε τα δικαιώματα του προγράμματος περιήγησης.",
+              "Couldn't get your location. Check browser permissions.",
+            ),
+          );
           setTimeout(() => setLocationError(null), 4000);
         },
       );
     } else {
-      setLocationError("Geolocation is not supported by your browser.");
+      setLocationError(
+        t(
+          "Η γεωτοποθεσία δεν υποστηρίζεται από το πρόγραμμα περιήγησής σας.",
+          "Geolocation is not supported by your browser.",
+        ),
+      );
       setTimeout(() => setLocationError(null), 4000);
     }
   };
@@ -136,7 +184,7 @@ export default function NearbyGroups() {
   const hasValidKey =
     Boolean(apiKey) && typeof apiKey === "string" && apiKey.startsWith("AIza");
 
-  const localGroups = mockEvents
+  const localGroups = events
     .filter((e) => e.maxParticipants && e.maxParticipants > 0)
     .slice(0, 8)
     .map((e) => ({
@@ -165,7 +213,9 @@ export default function NearbyGroups() {
 
   if (!hasValidKey) {
     return (
-      <div className={`overflow-hidden rounded-none md:rounded-xl lg:rounded-none z-0 ${isMapFullscreen ? "fixed !inset-0 !z-[9999] bg-black" : "absolute inset-0 animate-in fade-in duration-500"}`}>
+      <div
+        className={`overflow-hidden rounded-none md:rounded-xl lg:rounded-none z-0 ${isMapFullscreen ? "fixed !inset-0 !z-[9999] bg-black" : "absolute inset-0 animate-in fade-in duration-500"}`}
+      >
         {/* Map Background Mock */}
         <div className="absolute inset-0 bg-[#e5e3df] z-0 flex items-center justify-center">
           <div
@@ -240,7 +290,7 @@ export default function NearbyGroups() {
                       {group.category}
                     </div>
                     <GroupImage
-                      src={group.imageUrl ?? ''}
+                      src={group.imageUrl ?? ""}
                       alt={group.title}
                       className="w-full h-24 object-cover rounded-md mb-2 shadow-sm"
                     />
@@ -255,7 +305,7 @@ export default function NearbyGroups() {
                       className="w-full bg-[#111827] text-white text-[10px] font-bold uppercase tracking-wider py-1.5 rounded-md hover:bg-black transition-colors"
                       onClick={() => navigate(`/events/${group.id}`)}
                     >
-                      View Event
+                      {t("Προβολή Εκδήλωσης", "View Event")}
                     </button>
                     <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-white"></div>
                   </div>
@@ -283,7 +333,10 @@ export default function NearbyGroups() {
           </div>
 
           <div className="absolute top-[80px] left-[50%] transform -translate-x-1/2 bg-white/90 backdrop-blur text-gray-700 text-xs px-3 py-1.5 rounded-full border border-gray-200 shadow-sm z-10">
-            Interactive map requires Google Maps API Key
+            {t(
+              "Ο διαδραστικός χάρτης απαιτεί API Key της Google Maps",
+              "Interactive map requires Google Maps API Key",
+            )}
           </div>
         </div>
 
@@ -293,7 +346,10 @@ export default function NearbyGroups() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             <input
               type="text"
-              placeholder="Search nearby areas or groups..."
+              placeholder={t(
+                "Αναζήτηση κοντινών περιοχών ή ομάδων...",
+                "Search nearby areas or groups...",
+              )}
               className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-white/95 backdrop-blur shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 text-sm font-medium"
             />
           </div>
@@ -307,9 +363,13 @@ export default function NearbyGroups() {
           <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-3 md:hidden shrink-0"></div>
 
           <div className="p-4 md:p-6 border-b border-gray-100 shrink-0">
-            <h2 className="text-xl font-bold text-[#111827]">Local Groups</h2>
+            <h2 className="text-xl font-bold text-[#111827]">
+              {t("Τοπικές Ομάδες", "Local Groups")}
+            </h2>
             <p className="text-xs text-gray-500 mt-1 font-medium flex items-center gap-1">
-              <Navigation className="h-3 w-3" /> Showing results within {radius}
+              <Navigation className="h-3 w-3" />{" "}
+              {t("Εμφάνιση αποτελεσμάτων εντός", "Showing results within")}{" "}
+              {radius}
               km
             </p>
 
@@ -329,13 +389,13 @@ export default function NearbyGroups() {
 
             <div className="flex gap-2 mt-4 overflow-x-auto noscrollbar pb-1">
               <button className="px-3 py-1.5 bg-indigo-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
-                All Matches
+                {t("Όλα", "All Matches")}
               </button>
               <button className="px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-100">
-                Today
+                {t("Σήμερα", "Today")}
               </button>
               <button className="px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-100">
-                Friends Going
+                {t("Φίλοι Συμμετέχουν", "Friends Going")}
               </button>
             </div>
           </div>
@@ -356,7 +416,7 @@ export default function NearbyGroups() {
               >
                 <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                   <GroupImage
-                    src={group.imageUrl ?? ''}
+                    src={group.imageUrl ?? ""}
                     alt={group.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
@@ -415,7 +475,6 @@ export default function NearbyGroups() {
         } as React.CSSProperties
       }
     >
-      {/* Real Google Map Background */}
       <div className={`absolute inset-0 z-0 bg-[#e5e3df]`}>
         <ErrorBoundary
           fallback={
@@ -424,109 +483,68 @@ export default function NearbyGroups() {
                 <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Map Error</h3>
                 <p className="text-xs text-gray-600">
-                  There was a problem loading Google Maps. Please ensure your
-                  API Key is valid and that the{" "}
-                  <strong>Maps JavaScript API</strong> is enabled in your Google
-                  Cloud Console.
+                  There was a problem loading the map.
                 </p>
               </div>
             </div>
           }
         >
-          <APIProvider
-            apiKey={apiKey}
-            version="weekly"
-            onLoad={() => console.log("Map loaded")}
-            onError={(error) => console.error("Map script error:", error)}
+          <MapContainer
+            center={[mapCenter.lat, mapCenter.lng]}
+            zoom={13}
+            zoomControl={false}
+            style={{ height: "100%", width: "100%", zIndex: 0 }}
           >
-            <Map
-              defaultCenter={mapCenter}
-              center={mapCenter}
-              onCenterChanged={(e) => setMapCenter(e.detail.center)}
-              onClick={() => setSelectedEventId(null)}
-              defaultZoom={12}
-              mapId="DEMO_MAP_ID"
-              internalUsageAttributionIds={["gmp_mcp_codeassist_v1_aistudio"]}
-              style={{ width: "100%", height: "100%" }}
-              disableDefaultUI={false}
-              fullscreenControl={true}
-              zoomControl={true}
-              mapTypeControl={false}
-              streetViewControl={false}
-            >
-              {/* Draw markers for each event */}
-              {localGroups.map((group, idx) => (
-                <AdvancedMarker
-                  key={group.id}
-                  position={{ lat: group.lat, lng: group.lng }}
-                  onClick={() => setSelectedEventId(group.id)}
-                >
-                  <div className="flex flex-col items-center group cursor-pointer">
-                    <div className="bg-white text-gray-900 border border-gray-200 text-xs font-bold px-2 py-1 rounded shadow-lg mb-1 group-hover:-translate-y-1 transition-transform whitespace-nowrap">
-                      {group.category} • {(1.2 + idx * 0.8).toFixed(1)}km
-                    </div>
-                    <Pin
-                      background={getMarkerColor(group.category)}
-                      glyphColor="#fff"
-                      borderColor={getMarkerColor(group.category)}
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <MapController center={mapCenter} />
+
+            {localGroups.map((group, idx) => (
+              <Marker
+                key={group.id}
+                position={[group.lat, group.lng]}
+                eventHandlers={{
+                  click: () => {
+                    setSelectedEventId(group.id);
+                  },
+                }}
+              >
+                <Popup>
+                  <div className="font-bold text-xs text-[#111827] mb-1">
+                    {group.category}
+                  </div>
+                  <div
+                    className="max-w-[180px] cursor-pointer outline-none"
+                    onClick={() => navigate(`/events/${group.id}`)}
+                  >
+                    <GroupImage
+                      src={group.imageUrl ?? ""}
+                      alt={group.title}
+                      className="w-full h-20 object-cover rounded-md mb-2 shadow-sm"
                     />
+                    <h3 className="font-bold text-xs text-[#111827] mb-1 line-clamp-1">
+                      {group.title}
+                    </h3>
+                    <p className="text-[10px] text-gray-500 mb-2 truncate">
+                      <MapPin className="inline w-3 h-3 mr-0.5" />{" "}
+                      {group.locationArea}
+                    </p>
+                    <button className="w-full bg-[#111827] text-white text-[10px] font-bold uppercase tracking-wider py-1.5 rounded-md hover:bg-black transition-colors">
+                      View Event
+                    </button>
                   </div>
-                </AdvancedMarker>
-              ))}
+                </Popup>
+              </Marker>
+            ))}
 
-              {/* Show InfoWindow when a marker is clicked */}
-              {selectedEventId &&
-                (() => {
-                  const evt = localGroups.find((e) => e.id === selectedEventId);
-                  if (!evt) return null;
-                  return (
-                    <InfoWindow
-                      position={{ lat: evt.lat, lng: evt.lng }}
-                      onCloseClick={() => setSelectedEventId(null)}
-                      headerContent={
-                        <div className="font-bold text-sm text-[#111827]">
-                          {evt.category}
-                        </div>
-                      }
-                    >
-                      <div
-                        className="p-2 max-w-[200px] cursor-pointer"
-                        onClick={() => navigate(`/events/${evt.id}`)}
-                      >
-                        <GroupImage
-                          src={evt.imageUrl ?? ''}
-                          alt={evt.title}
-                          className="w-full h-24 object-cover rounded-md mb-2 shadow-sm"
-                        />
-                        <h3 className="font-bold text-sm text-[#111827] mb-1 line-clamp-1">
-                          {evt.title}
-                        </h3>
-                        <p className="text-xs text-gray-500 mb-2 truncate">
-                          <MapPin className="inline w-3 h-3 mr-0.5" />{" "}
-                          {evt.locationArea}
-                        </p>
-                        <button className="w-full bg-[#111827] text-white text-[10px] font-bold uppercase tracking-wider py-1.5 rounded-md hover:bg-black transition-colors">
-                          View Event
-                        </button>
-                      </div>
-                    </InfoWindow>
-                  );
-                })()}
-
-              {/* Current user's location marker */}
-              {userLocation && (
-                <AdvancedMarker position={userLocation} zIndex={100}>
-                  <div className="relative flex flex-col items-center">
-                    <div className="w-8 h-8 bg-blue-500/20 rounded-full animate-ping absolute top-[-8px]"></div>
-                    <div
-                      className="w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-md relative z-10 hover:scale-125 transition-transform"
-                      title="Your Location"
-                    ></div>
-                  </div>
-                </AdvancedMarker>
-              )}
-            </Map>
-          </APIProvider>
+            {userLocation && (
+              <Marker position={[userLocation.lat, userLocation.lng]}>
+                <Popup>{t("Η τοποθεσία σας", "Your Location")}</Popup>
+              </Marker>
+            )}
+          </MapContainer>
         </ErrorBoundary>
       </div>
 
@@ -611,9 +629,13 @@ export default function NearbyGroups() {
         </div>
 
         <div className="p-4 md:p-6 border-b border-gray-100 shrink-0">
-          <h2 className="text-xl font-bold text-[#111827]">Local Groups</h2>
+          <h2 className="text-xl font-bold text-[#111827]">
+            {t("Τοπικές Ομάδες", "Local Groups")}
+          </h2>
           <p className="text-xs text-gray-500 mt-1 font-medium flex items-center gap-1">
-            <Navigation className="h-3 w-3" /> Showing results within {radius}km
+            <Navigation className="h-3 w-3" />{" "}
+            {t("Εμφάνιση αποτελεσμάτων εντός", "Showing results within")}{" "}
+            {radius}km
           </p>
 
           <div className="mt-4 flex items-center gap-3">
@@ -632,13 +654,13 @@ export default function NearbyGroups() {
 
           <div className="flex gap-2 mt-4 overflow-x-auto noscrollbar pb-1">
             <button className="px-3 py-1.5 bg-indigo-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
-              All Matches
+              {t("Όλα", "All Matches")}
             </button>
             <button className="px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-100">
-              Today
+              {t("Σήμερα", "Today")}
             </button>
             <button className="px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-100">
-              Friends Going
+              {t("Φίλοι Συμμετέχουν", "Friends Going")}
             </button>
           </div>
         </div>
@@ -652,7 +674,7 @@ export default function NearbyGroups() {
             >
               <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                 <GroupImage
-                  src={group.imageUrl ?? ''}
+                  src={group.imageUrl ?? ""}
                   alt={group.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
@@ -684,16 +706,19 @@ export default function NearbyGroups() {
               <MapIcon className="h-6 w-6" />
             </div>
             <h3 className="text-sm font-bold text-[#111827]">
-              Expand your radius
+              {t("Επέκταση ακτίνας", "Expand your radius")}
             </h3>
             <p className="text-xs text-gray-500 mt-1 mb-4">
-              Discover more local groups by increasing your search area.
+              {t(
+                "Ανακαλύψτε περισσότερες τοπικές ομάδες αυξάνοντας την περιοχή αναζήτησης.",
+                "Discover more local groups by increasing your search area.",
+              )}
             </p>
             <button
               onClick={() => setRadius(15)}
               className="text-xs font-bold text-white bg-[#111827] px-4 py-2 rounded-full hover:bg-gray-800 transition-colors"
             >
-              Set radius to 15km
+              {t("Ορισμός ακτίνας στα 15km", "Set radius to 15km")}
             </button>
           </div>
         </div>

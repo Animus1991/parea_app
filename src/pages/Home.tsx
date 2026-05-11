@@ -1,38 +1,51 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { mockEvents } from '../data/mockEvents';
-import { EventCard } from '../components/events/EventCard';
-import { EventCardSkeleton } from '../components/common/Skeleton';
-import { Search, ShieldCheck, Map as MapIcon, Grid, CheckCircle2, Users, ArrowDownUp, ChevronDown } from 'lucide-react';
-import { parseISO, isToday, isThisWeek, isThisMonth } from 'date-fns';
-import { useLanguage } from '../lib/i18n';
+import { useState, useMemo, useEffect, useRef } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useStore } from "../store";
+import { motion } from "motion/react";
+import { EventCard } from "../components/events/EventCard";
+import { EventCardSkeleton } from "../components/common/Skeleton";
+import {
+  Search,
+  ShieldCheck,
+  Map as MapIcon,
+  Grid,
+  CheckCircle2,
+  Users,
+  ArrowDownUp,
+  ChevronDown,
+} from "lucide-react";
+import { parseISO, isToday, isThisWeek, isThisMonth } from "date-fns";
+import { useLanguage } from "../lib/i18n";
 
 export default function Home() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialSearch = searchParams.get('search') || '';
+  const initialSearch = searchParams.get("search") || "";
 
   // feedType declared first — used in the useEffect below
-  const [feedType, setFeedType] = useState<'For You' | 'Discover'>('For You');
+  const [feedType, setFeedType] = useState<"For You" | "Discover">("For You");
   const [searchQuery, setSearchQuery] = useState(initialSearch);
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [activeCategory, setActiveCategory] = useState("All");
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const events = useStore((state) => state.events);
 
   const searchSuggestions = [
-    t('Πεζοπορία', 'Hiking'),
-    t('Επιτραπέζια', 'Board Games'),
-    t('Μουσικά Φεστιβάλ', 'Music Festivals'),
-    t('Δικτύωση', 'Networking'),
-    t('Συναυλίες', 'Concerts'),
-    t('Σινεμά', 'Cinema'),
+    t("Πεζοπορία", "Hiking"),
+    t("Επιτραπέζια", "Board Games"),
+    t("Μουσικά Φεστιβάλ", "Music Festivals"),
+    t("Δικτύωση", "Networking"),
+    t("Συναυλίες", "Concerts"),
+    t("Σινεμά", "Cinema"),
   ];
 
   // Sync to 'Discover' feed when the page is loaded with a search query
   useEffect(() => {
     if (initialSearch && searchQuery === initialSearch) {
-      setFeedType('Discover');
+      setFeedType("Discover");
     }
   }, [initialSearch, searchQuery]);
 
@@ -43,8 +56,8 @@ export default function Home() {
         setShowSearchSuggestions(false);
       }
     };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   const handleSearchChange = (val: string) => {
@@ -56,11 +69,19 @@ export default function Home() {
     }
   };
 
-  const [priceFilter, setPriceFilter] = useState<'All' | 'Free' | 'Paid' | 'Group Discount'>('All');
-  const [dateFilter, setDateFilter] = useState<'Any' | 'Today' | 'This Week' | 'This Month'>('Any');
-  const [safetyFilter, setSafetyFilter] = useState<'All' | 'low' | 'medium' | 'high_trust'>('All');
-  const [radiusFilter, setRadiusFilter] = useState<'Any' | '5km' | '10km' | '25km'>('Any');
-  const [tagFilter, setTagFilter] = useState<string>('All');
+  const [priceFilter, setPriceFilter] = useState<
+    "All" | "Free" | "Paid" | "Group Discount"
+  >("All");
+  const [dateFilter, setDateFilter] = useState<
+    "Any" | "Today" | "This Week" | "This Month"
+  >("Any");
+  const [safetyFilter, setSafetyFilter] = useState<
+    "All" | "low" | "medium" | "high_trust"
+  >("All");
+  const [radiusFilter, setRadiusFilter] = useState<
+    "Any" | "5km" | "10km" | "25km"
+  >("Any");
+  const [tagFilter, setTagFilter] = useState<string>("All");
   const [isLoading, setIsLoading] = useState(true);
   const [visibleEventsCount, setVisibleEventsCount] = useState(6);
 
@@ -71,136 +92,257 @@ export default function Home() {
   }, []);
 
   const categories = [
-    'All', 'Theatre', 'Concerts', 'Cinema', 'Stand-up', 'Museums',
-    'Exhibitions', 'Festivals', 'Board games', 'Book clubs', 'Language exchange',
-    'Philosophy/Science', 'City walks', 'Hiking', 'Nearby escapes',
-    'Short day trips', 'Nature walks', 'Light sports', 'Workshops',
-    'Online events', 'Community events', 'Private events',
+    "All",
+    "Theatre",
+    "Concerts",
+    "Cinema",
+    "Stand-up",
+    "Museums",
+    "Exhibitions",
+    "Festivals",
+    "Board games",
+    "Book clubs",
+    "Language exchange",
+    "Philosophy/Science",
+    "City walks",
+    "Hiking",
+    "Nearby escapes",
+    "Short day trips",
+    "Nature walks",
+    "Light sports",
+    "Workshops",
+    "Online events",
+    "Community events",
+    "Private events",
   ];
 
   const categoryTranslations: Record<string, string> = {
-    'All': t('Όλα', 'All'),
-    'Theatre': t('Θέατρο', 'Theatre'),
-    'Concerts': t('Συναυλίες', 'Concerts'),
-    'Cinema': t('Σινεμά', 'Cinema'),
-    'Stand-up': 'Stand-up',
-    'Museums': t('Μουσεία', 'Museums'),
-    'Exhibitions': t('Εκθέσεις', 'Exhibitions'),
-    'Festivals': t('Φεστιβάλ', 'Festivals'),
-    'Board games': t('Επιτραπέζια', 'Board Games'),
-    'Book clubs': t('Λέσχη Ανάγνωσης', 'Book Club'),
-    'Language exchange': t('Ανταλλαγή Γλωσσών', 'Language Exchange'),
-    'Philosophy/Science': t('Φιλοσοφία/Επιστήμη', 'Philosophy/Science'),
-    'City walks': t('Περίπατοι', 'City Walks'),
-    'Hiking': t('Πεζοπορία', 'Hiking'),
-    'Nearby escapes': t('Κοντινές Αποδράσεις', 'Nearby Getaways'),
-    'Short day trips': t('Μονοήμερες', 'Day Trips'),
-    'Nature walks': t('Βόλτες στη Φύση', 'Nature Walks'),
-    'Light sports': t('Ελαφριά Άθληση', 'Light Sports'),
-    'Workshops': t('Εργαστήρια', 'Workshops'),
-    'Online events': t('Διαδικτυακά', 'Online'),
-    'Community events': t('Κοινότητα', 'Community'),
-    'Private events': t('Ιδιωτικά', 'Private'),
+    All: t("Όλα", "All"),
+    Theatre: t("Θέατρο", "Theatre"),
+    Concerts: t("Συναυλίες", "Concerts"),
+    Cinema: t("Σινεμά", "Cinema"),
+    "Stand-up": "Stand-up",
+    Museums: t("Μουσεία", "Museums"),
+    Exhibitions: t("Εκθέσεις", "Exhibitions"),
+    Festivals: t("Φεστιβάλ", "Festivals"),
+    "Board games": t("Επιτραπέζια", "Board Games"),
+    "Book clubs": t("Λέσχη Ανάγνωσης", "Book Club"),
+    "Language exchange": t("Ανταλλαγή Γλωσσών", "Language Exchange"),
+    "Philosophy/Science": t("Φιλοσοφία/Επιστήμη", "Philosophy/Science"),
+    "City walks": t("Περίπατοι", "City Walks"),
+    Hiking: t("Πεζοπορία", "Hiking"),
+    "Nearby escapes": t("Κοντινές Αποδράσεις", "Nearby Getaways"),
+    "Short day trips": t("Μονοήμερες", "Day Trips"),
+    "Nature walks": t("Βόλτες στη Φύση", "Nature Walks"),
+    "Light sports": t("Ελαφριά Άθληση", "Light Sports"),
+    Workshops: t("Εργαστήρια", "Workshops"),
+    "Online events": t("Διαδικτυακά", "Online"),
+    "Community events": t("Κοινότητα", "Community"),
+    "Private events": t("Ιδιωτικά", "Private"),
   };
 
-  const popularTags = ['All', 'music', 'networking', 'outdoor', 'indoor', 'social', 'learning', 'sports'];
+  const popularTags = [
+    "All",
+    "music",
+    "networking",
+    "outdoor",
+    "indoor",
+    "social",
+    "learning",
+    "sports",
+  ];
   const tagTranslations: Record<string, string> = {
-    'All': t('Όλες οι Ετικέτες', 'All Tags'),
-    'music': t('Μουσική', 'Music'),
-    'networking': t('Δικτύωση', 'Networking'),
-    'outdoor': t('Υπαίθρια', 'Outdoor'),
-    'indoor': t('Εσωτερικός Χώρος', 'Indoor'),
-    'social': t('Κοινωνικά', 'Social'),
-    'learning': t('Εκμάθηση', 'Learning'),
-    'sports': t('Αθλητισμός', 'Sports'),
+    All: t("Όλες οι Ετικέτες", "All Tags"),
+    music: t("Μουσική", "Music"),
+    networking: t("Δικτύωση", "Networking"),
+    outdoor: t("Υπαίθρια", "Outdoor"),
+    indoor: t("Εσωτερικός Χώρος", "Indoor"),
+    social: t("Κοινωνικά", "Social"),
+    learning: t("Εκμάθηση", "Learning"),
+    sports: t("Αθλητισμός", "Sports"),
   };
 
   const mockDistances: Record<string, number> = {
-    'e1': 1.2, 'e2': 18.0, 'e3': 2.8, 'e4': 3.6, 'e5': 150.0, 'e6': 0.5,
+    e1: 1.2,
+    e2: 18.0,
+    e3: 2.8,
+    e4: 3.6,
+    e5: 150.0,
+    e6: 0.5,
   };
 
   // Memoized filtering
   const filteredEvents = useMemo(() => {
-    return mockEvents.filter(e => {
+    return events.filter((e) => {
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         const inTitle = e.title.toLowerCase().includes(q);
         const inDesc = e.description?.toLowerCase().includes(q) ?? false;
-        const inTags = (e.tags ?? []).some(tag => tag.toLowerCase().includes(q));
+        const inTags = (e.tags ?? []).some((tag) =>
+          tag.toLowerCase().includes(q),
+        );
         if (!inTitle && !inDesc && !inTags) return false;
       }
 
-      if (feedType === 'For You' && !['e4', 'e1', 'e2', 'e5'].includes(e.id)) return false;
-      if (activeCategory !== 'All' && e.category !== activeCategory) return false;
-      if (tagFilter !== 'All' && !(e.tags ?? []).includes(tagFilter)) return false;
-      if (priceFilter === 'Free' && e.isPaid) return false;
-      if (priceFilter === 'Paid' && !e.isPaid) return false;
-      if (priceFilter === 'Group Discount' && !e.groupDiscount) return false;
-      if (safetyFilter !== 'All' && e.safetyLevel !== safetyFilter) return false;
+      if (feedType === "For You" && !["e4", "e1", "e2", "e5"].includes(e.id))
+        return false;
+      if (activeCategory !== "All" && e.category !== activeCategory)
+        return false;
+      if (tagFilter !== "All" && !(e.tags ?? []).includes(tagFilter))
+        return false;
+      if (priceFilter === "Free" && e.isPaid) return false;
+      if (priceFilter === "Paid" && !e.isPaid) return false;
+      if (priceFilter === "Group Discount" && !e.groupDiscount) return false;
+      if (safetyFilter !== "All" && e.safetyLevel !== safetyFilter)
+        return false;
 
-      if (dateFilter !== 'Any') {
+      if (dateFilter !== "Any") {
         const eDate = parseISO(e.date);
-        if (dateFilter === 'Today' && !isToday(eDate)) return false;
-        if (dateFilter === 'This Week' && !isThisWeek(eDate)) return false;
-        if (dateFilter === 'This Month' && !isThisMonth(eDate)) return false;
+        if (dateFilter === "Today" && !isToday(eDate)) return false;
+        if (dateFilter === "This Week" && !isThisWeek(eDate)) return false;
+        if (dateFilter === "This Month" && !isThisMonth(eDate)) return false;
       }
 
-      if (radiusFilter !== 'Any') {
+      if (radiusFilter !== "Any") {
         const distance = mockDistances[e.id] ?? 5;
-        if (radiusFilter === '5km' && distance > 5) return false;
-        if (radiusFilter === '10km' && distance > 10) return false;
-        if (radiusFilter === '25km' && distance > 25) return false;
+        if (radiusFilter === "5km" && distance > 5) return false;
+        if (radiusFilter === "10km" && distance > 10) return false;
+        if (radiusFilter === "25km" && distance > 25) return false;
       }
 
       return true;
     });
-  }, [searchQuery, feedType, activeCategory, tagFilter, priceFilter, safetyFilter, dateFilter, radiusFilter]);
+  }, [
+    events,
+    searchQuery,
+    feedType,
+    activeCategory,
+    tagFilter,
+    priceFilter,
+    safetyFilter,
+    dateFilter,
+    radiusFilter,
+  ]);
+
+  const currentUser = useStore((state) => state.currentUser);
 
   // URL-based sorting (Relevance / Distance / Group Progress)
-  const sortParam = searchParams.get('sort') || 'Relevance';
+  const sortParam = searchParams.get("sort") || "Relevance";
   const sortedEvents = useMemo(() => {
     return [...filteredEvents].sort((a, b) => {
-      if (sortParam === 'Distance') {
+      if (sortParam === "Distance") {
         return (mockDistances[a.id] ?? 5) - (mockDistances[b.id] ?? 5);
-      } else if (sortParam === 'Group Progress') {
+      } else if (sortParam === "Group Progress") {
         const spacesA = (a.maxParticipants || 40) - 12;
         const spacesB = (b.maxParticipants || 40) - 12;
         return spacesA - spacesB;
       }
-      // Default: Relevance = chronological
+
+      // Default: Relevance (Match Score)
+      const getMatchScore = (ev: (typeof events)[0]) => {
+        if (!currentUser) return 0;
+        const matchCount = (ev.tags ?? []).filter((t) =>
+          (currentUser.interests || []).includes(t),
+        ).length;
+        return Math.min(
+          99,
+          45 + matchCount * 15 + (ev.category === "All" ? 0 : 10),
+        );
+      };
+
+      if (sortParam === "Relevance" && currentUser) {
+        return (
+          getMatchScore(b) - getMatchScore(a) ||
+          new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+      }
+
+      // Chronological fallback
       return new Date(a.date).getTime() - new Date(b.date).getTime();
     });
-  }, [filteredEvents, sortParam]);
+  }, [filteredEvents, sortParam, currentUser]);
 
   const visibleEvents = sortedEvents.slice(0, visibleEventsCount);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (
+          entries[0].isIntersecting &&
+          !isLoading &&
+          visibleEventsCount < sortedEvents.length
+        ) {
+          setVisibleEventsCount((c) => Math.min(c + 6, sortedEvents.length));
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isLoading, visibleEventsCount, sortedEvents.length]);
 
   return (
     <div className="space-y-6 md:space-y-8 pb-10 md:pb-0">
       {/* Hero */}
-      <div className="bg-[#111827] text-white p-6 md:p-10 rounded-[24px] shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="bg-[#111827] text-white p-6 md:p-10 rounded-[24px] shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8"
+      >
         <div className="relative z-10 flex-1">
           <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4">
-            {t('home.hero.badge', 'Νέος Τρόπος Εξόδου')}
+            {t("home.hero.badge", "Νέος Τρόπος Εξόδου")}
           </div>
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
-            {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
+            {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18D8DB] to-cyan-400">
-              {t('home.hero.title2', 'εμπειρίες')}
-            </span>{' '}
-            {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
+              {t("home.hero.title2", "εμπειρίες")}
+            </span>{" "}
+            {t("home.hero.title3", "που ήδη θέλετε να ζήσετε.")}
           </h1>
           <p className="text-gray-400 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6">
-            {t('home.hero.subtitle', 'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.')}
+            {t(
+              "home.hero.subtitle",
+              "Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.",
+            )}
           </p>
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11px] uppercase font-bold tracking-wider text-gray-300 mb-6">
-            <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-[#18D8DB]" /> {t('home.hero.stat1', 'Μικρές ομάδες')}</span>
+            <span className="flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
+              {t("home.hero.stat1", "Μικρές ομάδες")}
+            </span>
             <span className="opacity-20">•</span>
-            <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-[#18D8DB]" /> {t('home.hero.stat2', 'Επαληθευμένη συμμετοχή')}</span>
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
+              {t("home.hero.stat2", "Επαληθευμένη συμμετοχή")}
+            </span>
             <span className="opacity-20">•</span>
-            <span className="flex items-center gap-1.5"><MapIcon className="w-3.5 h-3.5 text-[#18D8DB]" /> {t('home.hero.stat3', 'Δημόσια σημεία')}</span>
+            <span className="flex items-center gap-1.5">
+              <MapIcon className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
+              {t("home.hero.stat3", "Δημόσια σημεία")}
+            </span>
             <span className="opacity-20">•</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-[#18D8DB]" /> Ιδιωτικές αναφορές</span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
+              {t("Ιδιωτικές αναφορές", "Private reports")}
+            </span>
+          </div>
+
+          <div className="flex gap-3 mb-6">
+            <button
+              onClick={() => navigate("/nearby")}
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#18D8DB]/10 text-[#18D8DB] border border-[#18D8DB]/20 hover:bg-[#18D8DB]/20 rounded-xl font-bold text-sm transition-colors"
+              title={t("Εμφάνιση στον Χάρτη", "View on Map")}
+            >
+              <MapIcon className="w-4 h-4" />
+              {t("Αναζήτηση στον Χάρτη", "Search on Map")}
+            </button>
           </div>
 
           {/* Search with suggestions */}
@@ -212,19 +354,27 @@ export default function Home() {
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 onFocus={() => setShowSearchSuggestions(true)}
-                placeholder={t('home.hero.search_placeholder', 'Αναζήτηση εμπειριών...')}
+                placeholder={t(
+                  "home.hero.search_placeholder",
+                  "Αναζήτηση εμπειριών...",
+                )}
                 className="w-full h-11 pl-10 pr-4 rounded-full border-none bg-white/10 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/60 text-sm font-medium backdrop-blur-sm"
               />
               {showSearchSuggestions && !searchQuery && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
                   <div className="px-3 pt-2 pb-1">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Δημοφιλείς Αναζητήσεις</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      {t("Δημοφιλείς Αναζητήσεις", "Popular Searches")}
+                    </span>
                   </div>
-                  {searchSuggestions.map(s => (
+                  {searchSuggestions.map((s) => (
                     <button
                       key={s}
                       onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => { handleSearchChange(s); setShowSearchSuggestions(false); }}
+                      onClick={() => {
+                        handleSearchChange(s);
+                        setShowSearchSuggestions(false);
+                      }}
                       className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-cyan-50 hover:text-[#0E8B8D] transition-colors font-medium flex items-center gap-2"
                     >
                       <Search className="w-3.5 h-3.5 text-gray-400" />
@@ -235,16 +385,16 @@ export default function Home() {
               )}
             </div>
             <button
-              onClick={() => navigate('/trust')}
+              onClick={() => navigate("/trust")}
               className="hidden sm:flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-5 h-11 rounded-full text-xs font-bold transition-colors whitespace-nowrap"
             >
-              {t('home.hero.how_groups', 'Πώς λειτουργούν οι ομάδες')}
+              {t("home.hero.how_groups", "Πώς λειτουργούν οι ομάδες")}
             </button>
           </div>
         </div>
         {/* Decorative */}
         <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
-      </div>
+      </motion.div>
 
       {/* Pending Feedback Alert */}
       <section className="bg-cyan-50 border border-cyan-100 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -253,26 +403,66 @@ export default function Home() {
             <CheckCircle2 className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-[13px] font-bold text-[#111827]">{t('home.pending_feedback.title', 'Εκκρεμής Αξιολόγηση')}</h3>
-            <p className="text-[11px] text-gray-600 font-medium mt-0.5 leading-relaxed">{t('home.pending_feedback.body', 'Αξιολογήστε τα 3 μέλη από το "Comedy Night" για να ξεκλειδώσετε την επόμενη κράτησή σας.')}</p>
+            <h3 className="text-[13px] font-bold text-[#111827]">
+              {t("home.pending_feedback.title", "Εκκρεμής Αξιολόγηση")}
+            </h3>
+            <p className="text-[11px] text-gray-600 font-medium mt-0.5 leading-relaxed">
+              {t(
+                "home.pending_feedback.body",
+                'Αξιολογήστε τα 3 μέλη από το "Comedy Night" για να ξεκλειδώσετε την επόμενη κράτησή σας.',
+              )}
+            </p>
           </div>
         </div>
-        <button onClick={() => navigate('/plans')} className="text-[11px] uppercase tracking-wider font-bold bg-[#111827] text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-black w-full sm:w-auto shadow-sm transition-colors">
-          {t('home.pending_feedback.cta', 'Αξιολόγηση')}
+        <button
+          onClick={() => navigate("/plans")}
+          className="text-[11px] uppercase tracking-wider font-bold bg-[#111827] text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-black w-full sm:w-auto shadow-sm transition-colors"
+        >
+          {t("home.pending_feedback.cta", "Αξιολόγηση")}
         </button>
       </section>
 
       {/* How it works */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {[
-          { step: '1', title: t('home.how.step1.title', 'Διαλέξτε μια εμπειρία'), body: t('home.how.step1.body', 'Επιλέξτε μια εκδήλωση, πεζοπορία ή δραστηριότητα που θέλετε να παρακολουθήσετε.') },
-          { step: '2', title: t('home.how.step2.title', 'Εντάξτε μια μικρή ομάδα'), body: t('home.how.step2.body', 'Συνδεθείτε με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.') },
-          { step: '3', title: t('home.how.step3.title', 'Επιβεβαιώστε & συναντηθείτε'), body: t('home.how.step3.body', 'Ξεκλειδώστε το group chat, ορίστε σημείο συνάντησης και απολαύστε την εμπειρία.') },
+          {
+            step: "1",
+            title: t("home.how.step1.title", "Διαλέξτε μια εμπειρία"),
+            body: t(
+              "home.how.step1.body",
+              "Επιλέξτε μια εκδήλωση, πεζοπορία ή δραστηριότητα που θέλετε να παρακολουθήσετε.",
+            ),
+          },
+          {
+            step: "2",
+            title: t("home.how.step2.title", "Εντάξτε μια μικρή ομάδα"),
+            body: t(
+              "home.how.step2.body",
+              "Συνδεθείτε με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.",
+            ),
+          },
+          {
+            step: "3",
+            title: t("home.how.step3.title", "Επιβεβαιώστε & συναντηθείτε"),
+            body: t(
+              "home.how.step3.body",
+              "Ξεκλειδώστε το group chat, ορίστε σημείο συνάντησης και απολαύστε την εμπειρία.",
+            ),
+          },
         ].map(({ step, title, body }) => (
-          <div key={step} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center">
-            <div className="w-8 h-8 bg-cyan-50 text-[#0E8B8D] rounded-full flex items-center justify-center font-bold text-xs mb-2.5">{step}</div>
-            <h3 className="font-bold text-[#111827] text-[13px] mb-1">{title}</h3>
-            <p className="text-[11px] leading-relaxed text-gray-500 font-medium">{body}</p>
+          <div
+            key={step}
+            className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center"
+          >
+            <div className="w-8 h-8 bg-cyan-50 text-[#0E8B8D] rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
+              {step}
+            </div>
+            <h3 className="font-bold text-[#111827] text-[13px] mb-1">
+              {title}
+            </h3>
+            <p className="text-[11px] leading-relaxed text-gray-500 font-medium">
+              {body}
+            </p>
           </div>
         ))}
       </section>
@@ -281,17 +471,17 @@ export default function Home() {
       <section className="space-y-4">
         <div>
           <h2 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">
-            {t('home.explore_categories', 'Εξερεύνηση Κατηγοριών')}
+            {t("home.explore_categories", "Εξερεύνηση Κατηγοριών")}
           </h2>
           <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar">
-            {categories.map(cat => (
+            {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
                 className={`whitespace-nowrap px-3.5 py-1 rounded-full text-[11px] font-bold shadow-sm transition-colors uppercase tracking-wider ${
                   activeCategory === cat
-                    ? 'bg-[#111827] text-white'
-                    : 'bg-white border border-gray-200 text-gray-500 hover:text-[#111827] hover:bg-gray-50'
+                    ? "bg-[#111827] text-white"
+                    : "bg-white border border-gray-200 text-gray-500 hover:text-[#111827] hover:bg-gray-50"
                 }`}
               >
                 {categoryTranslations[cat] ?? cat}
@@ -302,14 +492,14 @@ export default function Home() {
 
         {/* Tag filter */}
         <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar">
-          {popularTags.map(tag => (
+          {popularTags.map((tag) => (
             <button
               key={tag}
               onClick={() => setTagFilter(tag)}
               className={`whitespace-nowrap px-3 py-1 rounded-full text-[10px] font-bold transition-colors border ${
                 tagFilter === tag
-                  ? 'bg-[#18D8DB]/20 border-[#18D8DB] text-[#0E8B8D]'
-                  : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300 hover:text-[#111827]'
+                  ? "bg-[#18D8DB]/20 border-[#18D8DB] text-[#0E8B8D]"
+                  : "bg-white border-gray-200 text-gray-500 hover:border-gray-300 hover:text-[#111827]"
               }`}
             >
               {tagTranslations[tag] ?? tag}
@@ -322,12 +512,18 @@ export default function Home() {
           <select
             className="text-xs border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer"
             value={priceFilter}
-            onChange={(e) => setPriceFilter(e.target.value as typeof priceFilter)}
+            onChange={(e) =>
+              setPriceFilter(e.target.value as typeof priceFilter)
+            }
           >
-            <option value="All">{t('home.filter.all_types', 'Όλοι οι Τύποι')}</option>
-            <option value="Free">{t('home.filter.free', 'Δωρεάν')}</option>
-            <option value="Paid">{t('home.filter.paid', 'Επί Πληρωμή')}</option>
-            <option value="Group Discount">{t('home.filter.group_discount', 'Ομαδική Έκπτωση')}</option>
+            <option value="All">
+              {t("home.filter.all_types", "Όλοι οι Τύποι")}
+            </option>
+            <option value="Free">{t("home.filter.free", "Δωρεάν")}</option>
+            <option value="Paid">{t("home.filter.paid", "Επί Πληρωμή")}</option>
+            <option value="Group Discount">
+              {t("home.filter.group_discount", "Ομαδική Έκπτωση")}
+            </option>
           </select>
 
           <select
@@ -335,32 +531,52 @@ export default function Home() {
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value as typeof dateFilter)}
           >
-            <option value="Any">{t('home.filter.any_date', 'Οποιαδήποτε Ημ/νία')}</option>
-            <option value="Today">{t('home.filter.today', 'Σήμερα')}</option>
-            <option value="This Week">{t('home.filter.this_week', 'Αυτή την Εβδομάδα')}</option>
-            <option value="This Month">{t('home.filter.this_month', 'Αυτόν τον Μήνα')}</option>
+            <option value="Any">
+              {t("home.filter.any_date", "Οποιαδήποτε Ημ/νία")}
+            </option>
+            <option value="Today">{t("home.filter.today", "Σήμερα")}</option>
+            <option value="This Week">
+              {t("home.filter.this_week", "Αυτή την Εβδομάδα")}
+            </option>
+            <option value="This Month">
+              {t("home.filter.this_month", "Αυτόν τον Μήνα")}
+            </option>
           </select>
 
           <select
             className="text-xs border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer"
             value={safetyFilter}
-            onChange={(e) => setSafetyFilter(e.target.value as typeof safetyFilter)}
+            onChange={(e) =>
+              setSafetyFilter(e.target.value as typeof safetyFilter)
+            }
           >
-            <option value="All">{t('home.filter.all_comfort', 'Όλα τα Επίπεδα')}</option>
-            <option value="low">{t('home.filter.public', 'Δημόσιοι Χώροι')}</option>
-            <option value="medium">{t('home.filter.organized', 'Οργανωμένοι Hosts')}</option>
-            <option value="high_trust">{t('home.filter.verified', 'Επαληθευμένες Ομάδες')}</option>
+            <option value="All">
+              {t("home.filter.all_comfort", "Όλα τα Επίπεδα")}
+            </option>
+            <option value="low">
+              {t("home.filter.public", "Δημόσιοι Χώροι")}
+            </option>
+            <option value="medium">
+              {t("home.filter.organized", "Οργανωμένοι Hosts")}
+            </option>
+            <option value="high_trust">
+              {t("home.filter.verified", "Επαληθευμένες Ομάδες")}
+            </option>
           </select>
 
           <select
             className="text-xs border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer"
             value={radiusFilter}
-            onChange={(e) => setRadiusFilter(e.target.value as typeof radiusFilter)}
+            onChange={(e) =>
+              setRadiusFilter(e.target.value as typeof radiusFilter)
+            }
           >
-            <option value="Any">{t('home.filter.any_distance', 'Οποιαδήποτε Απόσταση')}</option>
-            <option value="5km">{t('home.filter.5km', 'Εντός 5χλμ')}</option>
-            <option value="10km">{t('home.filter.10km', 'Εντός 10χλμ')}</option>
-            <option value="25km">{t('home.filter.25km', 'Εντός 25χλμ')}</option>
+            <option value="Any">
+              {t("home.filter.any_distance", "Οποιαδήποτε Απόσταση")}
+            </option>
+            <option value="5km">{t("home.filter.5km", "Εντός 5χλμ")}</option>
+            <option value="10km">{t("home.filter.10km", "Εντός 10χλμ")}</option>
+            <option value="25km">{t("home.filter.25km", "Εντός 25χλμ")}</option>
           </select>
 
           {/* Sort */}
@@ -370,13 +586,19 @@ export default function Home() {
               value={sortParam}
               onChange={(e) => {
                 const p = new URLSearchParams(searchParams);
-                p.set('sort', e.target.value);
+                p.set("sort", e.target.value);
                 setSearchParams(p);
               }}
             >
-              <option value="Relevance">{t('home.feed.sort.relevance', 'Συνάφεια')}</option>
-              <option value="Distance">{t('home.feed.sort.distance', 'Απόσταση')}</option>
-              <option value="Group Progress">{t('home.feed.sort.group_progress', 'Πρόοδος Ομάδας')}</option>
+              <option value="Relevance">
+                {t("home.feed.sort.relevance", "Συνάφεια")}
+              </option>
+              <option value="Distance">
+                {t("home.feed.sort.distance", "Απόσταση")}
+              </option>
+              <option value="Group Progress">
+                {t("home.feed.sort.group_progress", "Πρόοδος Ομάδας")}
+              </option>
             </select>
             <ArrowDownUp className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
           </div>
@@ -388,16 +610,16 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
           <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
             <button
-              onClick={() => setFeedType('For You')}
-              className={`px-4 py-1.5 rounded-md text-xs font-bold transition-colors ${feedType === 'For You' ? 'bg-white shadow-sm text-[#111827]' : 'text-gray-500 hover:text-[#111827]'}`}
+              onClick={() => setFeedType("For You")}
+              className={`px-4 py-1.5 rounded-md text-xs font-bold transition-colors ${feedType === "For You" ? "bg-white shadow-sm text-[#111827]" : "text-gray-500 hover:text-[#111827]"}`}
             >
-              {t('home.feed.for_you', 'Για Σένα')}
+              {t("home.feed.for_you", "Για Σένα")}
             </button>
             <button
-              onClick={() => setFeedType('Discover')}
-              className={`px-4 py-1.5 rounded-md text-xs font-bold transition-colors ${feedType === 'Discover' ? 'bg-white shadow-sm text-[#111827]' : 'text-gray-500 hover:text-[#111827]'}`}
+              onClick={() => setFeedType("Discover")}
+              className={`px-4 py-1.5 rounded-md text-xs font-bold transition-colors ${feedType === "Discover" ? "bg-white shadow-sm text-[#111827]" : "text-gray-500 hover:text-[#111827]"}`}
             >
-              {t('home.feed.discover', 'Ανακάλυψε')}
+              {t("home.feed.discover", "Ανακάλυψε")}
             </button>
           </div>
 
@@ -406,9 +628,9 @@ export default function Home() {
               <Grid className="w-4 h-4" />
             </button>
             <button
-              onClick={() => navigate('/nearby')}
+              onClick={() => navigate("/nearby")}
               className="p-1.5 rounded-md transition-colors text-gray-500 hover:text-[#111827]"
-              title="Άνοιγμα Χάρτη"
+              title={t("Άνοιγμα Χάρτη", "Open Map")}
             >
               <MapIcon className="w-4 h-4" />
             </button>
@@ -422,25 +644,31 @@ export default function Home() {
             ))
           ) : sortedEvents.length === 0 ? (
             <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-              <p className="text-gray-500 font-medium text-sm">{t('home.feed.no_events', 'Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.')}</p>
+              <p className="text-gray-500 font-medium text-sm">
+                {t(
+                  "home.feed.no_events",
+                  "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.",
+                )}
+              </p>
             </div>
           ) : (
-            visibleEvents.map(event => (
-              <EventCard key={event.id} event={event} />
+            visibleEvents.map((event, index) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+              >
+                <EventCard event={event} />
+              </motion.div>
             ))
           )}
         </div>
 
-        {/* Load More */}
+        {/* Load More Trigger */}
         {!isLoading && visibleEventsCount < sortedEvents.length && (
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={() => setVisibleEventsCount(c => c + 6)}
-              className="flex items-center gap-2 px-6 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-full text-xs font-bold shadow-sm hover:bg-gray-50 hover:border-gray-300 transition-colors"
-            >
-              <ChevronDown className="w-4 h-4" />
-              {t('home.feed.load_more', 'Φόρτωση Περισσότερων')} ({sortedEvents.length - visibleEventsCount})
-            </button>
+          <div ref={loadMoreRef} className="flex justify-center mt-6 py-4">
+            <div className="w-6 h-6 border-2 border-[#18D8DB] border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
       </section>

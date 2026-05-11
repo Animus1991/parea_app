@@ -3,24 +3,28 @@ import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { MessageCircle, MapPin, Search, Calendar, Star, Clock, AlertTriangle, ShieldCheck, CheckCircle } from 'lucide-react';
-import { mockEvents } from '../data/mockEvents';
+import { useStore } from '../store';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 
+import { useLanguage } from '../lib/i18n';
+
 export default function Plans() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'pending' | 'past'>('upcoming');
   const navigate = useNavigate();
+  const events = useStore((state) => state.events);
   
   // Mocks based on events
-  const upcomingEvents = mockEvents.filter(e => e.id === 'e4' || e.id === 'e1');
-  const pendingEvents = mockEvents.filter(e => e.id === 'e5');
-  const pastEvents = mockEvents.filter(e => e.id === 'e2' || e.id === 'e3');
+  const upcomingEvents = events.filter(e => e.id === 'e4' || e.id === 'e1');
+  const pendingEvents = events.filter(e => e.id === 'e5');
+  const pastEvents = events.filter(e => e.id === 'e2' || e.id === 'e3');
 
   return (
     <div className="mx-auto max-w-full space-y-6 md:space-y-8 pb-20 md:pb-0">
       <div>
-        <h1 className="text-xl md:text-2xl font-bold text-[#111827]">My Plans</h1>
-        <p className="mt-1 text-xs text-gray-500 font-medium">Manage your upcoming experiences, pending groups, and past events.</p>
+        <h1 className="text-xl md:text-2xl font-bold text-[#111827]">{t('Τα Πλάνα μου', 'My Plans')}</h1>
+        <p className="mt-1 text-xs text-gray-500 font-medium">{t('Διαχειριστείτε τις προσεχείς σας εμπειρίες, τις εκκρεμείς ομάδες και τις παρελθούσες εκδηλώσεις.', 'Manage your upcoming experiences, pending groups, and past events.')}</p>
       </div>
 
       {/* Action required prompt */}
@@ -28,12 +32,12 @@ export default function Plans() {
         <div className="flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-bold text-[#111827] text-sm mb-1">Verify your identity</h3>
-            <p className="text-xs text-amber-800 font-medium">You need to complete ID verification to join the "Arachova Retreat" you expressed interest in.</p>
+            <h3 className="font-bold text-[#111827] text-sm mb-1">{t('Επαληθεύστε την ταυτότητά σας', 'Verify your identity')}</h3>
+            <p className="text-xs text-amber-800 font-medium">{t('Πρέπει να ολοκληρώσετε την επαλήθευση ταυτότητας για να συμμετάσχετε στο "Arachova Retreat" που εκδηλώσατε ενδιαφέρον.', 'You need to complete ID verification to join the "Arachova Retreat" you expressed interest in.')}</p>
           </div>
         </div>
         <button onClick={() => navigate('/verification')} className="bg-amber-600 text-white px-4 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-amber-700 transition-colors whitespace-nowrap shrink-0 snap-center">
-          Verify Now
+          {t('Επαλήθευση Τώρα', 'Verify Now')}
         </button>
       </Card>
 
@@ -46,7 +50,7 @@ export default function Plans() {
               : 'text-gray-500 hover:text-[#111827]'
           }`}
         >
-          Upcoming Confirmed
+          {t('Προσεχείς', 'Upcoming Confirmed')}
         </button>
         <button 
           onClick={() => setActiveTab('pending')}
@@ -56,7 +60,7 @@ export default function Plans() {
               : 'text-gray-500 hover:text-[#111827]'
           }`}
         >
-          Pending & Waitlists
+          {t('Εκκρεμείς', 'Pending & Waitlists')}
         </button>
         <button 
           onClick={() => setActiveTab('past')}
@@ -66,7 +70,7 @@ export default function Plans() {
               : 'text-gray-500 hover:text-[#111827]'
           }`}
         >
-          Past & Feedback
+          {t('Παρελθόν', 'Past & Feedback')}
         </button>
       </div>
 
@@ -77,7 +81,7 @@ export default function Plans() {
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
               <div className="absolute top-2 left-2 bg-indigo-600 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
-                Confirmed
+                {t('Επιβεβαιώθηκε', 'Confirmed')}
               </div>
             </div>
             
@@ -92,7 +96,7 @@ export default function Plans() {
               
               <div className="flex flex-wrap gap-x-4 gap-y-2 mb-4">
                 <div className="flex items-center text-xs text-gray-600 font-medium">
-                  <MapPin className="w-3.5 h-3.5 mr-1" /> Meeting point active
+                  <MapPin className="w-3.5 h-3.5 mr-1" /> {t('Σημείο συνάντησης ενεργό', 'Meeting point active')}
                 </div>
                 <div className="flex items-center text-xs text-gray-600 font-medium">
                   <Clock className="w-3.5 h-3.5 mr-1" /> {event.duration}
@@ -101,10 +105,10 @@ export default function Plans() {
 
               <div className="mt-auto pt-4 border-t border-gray-100 flex gap-2">
                 <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5">
-                  <MessageCircle className="h-4 w-4" /> Group Chat
+                  <MessageCircle className="h-4 w-4" /> {t('Ομαδικό Chat', 'Group Chat')}
                 </button>
                 <button onClick={() => navigate(`/events/${event.id}`)} className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-xs font-bold transition-colors">
-                  Details
+                  {t('Λεπτομέρειες', 'Details')}
                 </button>
               </div>
             </div>
@@ -113,8 +117,8 @@ export default function Plans() {
         
         {upcomingEvents.length === 0 && (
           <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-            <p className="text-gray-500 font-medium text-sm mb-4">No upcoming confirmed plans.</p>
-            <button className="bg-[#111827] text-white px-5 py-2 rounded-full text-xs font-bold" onClick={() => navigate('/')}>Explore Experiences</button>
+            <p className="text-gray-500 font-medium text-sm mb-4">{t('Δεν υπάρχουν προσεχή επιβεβαιωμένα πλάνα.', 'No upcoming confirmed plans.')}</p>
+            <button className="bg-[#111827] text-white px-5 py-2 rounded-full text-xs font-bold" onClick={() => navigate('/')}>{t('Εξερεύνηση Εμπειριών', 'Explore Experiences')}</button>
           </div>
         )}
       </div>
@@ -127,7 +131,7 @@ export default function Plans() {
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative grayscale">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
               <div className="absolute top-2 left-2 bg-gray-800 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
-                Pending Group
+                {t('Εκκρεμεί', 'Pending Group')}
               </div>
             </div>
             
@@ -140,12 +144,12 @@ export default function Plans() {
               </div>
               
               <p className="text-xs text-gray-500 font-medium mb-4">
-                You expressed interest. Waiting for 2 more people to confirm the group and unlock the meeting point.
+                {t('Η ομάδα περιμένει 2 ακόμη άτομα για να επιβεβαιωθεί.', 'You expressed interest. Waiting for 2 more people to confirm the group and unlock the meeting point.')}
               </p>
 
               <div className="mt-auto pt-4 border-t border-gray-100 flex gap-2">
                 <button onClick={() => navigate(`/events/${event.id}`)} className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-xs font-bold transition-colors">
-                  View Status
+                  {t('Προβολή Κατάστασης', 'View Status')}
                 </button>
               </div>
             </div>
@@ -167,14 +171,14 @@ export default function Plans() {
               
               {index === 0 ? (
                 <div className="bg-indigo-50 border border-indigo-100 p-3 rounded-lg flex items-center justify-between mt-auto">
-                  <div className="text-xs font-bold text-indigo-900">Feedback required</div>
+                  <div className="text-xs font-bold text-indigo-900">{t('Απαιτείται Αξιολόγηση', 'Feedback required')}</div>
                   <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="text-[10px] font-bold bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 uppercase tracking-wider">
-                    Rate Experience
+                    {t('Αξιολόγηση', 'Rate Experience')}
                   </button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 mt-auto text-xs font-bold text-emerald-600">
-                  <CheckCircle className="w-4 h-4" /> Feedback submitted
+                  <CheckCircle className="w-4 h-4" /> {t('Υποβλήθηκε', 'Feedback submitted')}
                 </div>
               )}
             </div>

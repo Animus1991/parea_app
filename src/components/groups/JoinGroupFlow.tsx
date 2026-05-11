@@ -1,18 +1,41 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { mockEvents } from '../../data/mockEvents';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useStore } from '../../store';
 import { Button } from '../common/Button';
 import { Ticket, Users, CheckCircle, Split, ShieldCheck, Tag } from 'lucide-react';
 
 export default function JoinGroupFlow() {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const event = mockEvents.find(e => e.id === eventId);
+  const [searchParams] = useSearchParams();
+  const preSelectedGroupId = searchParams.get('groupId');
+  
+  const events = useStore((state) => state.events);
+  const groups = useStore((state) => state.groups);
+  const joinGroup = useStore((state) => state.joinGroup);
+  const createGroup = useStore((state) => state.createGroup);
+  const event = events.find(e => e.id === eventId);
   const [step, setStep] = useState(1);
-  const [groupType, setGroupType] = useState<'existing' | 'new'>('new');
+  const [groupType, setGroupType] = useState<'existing' | 'new'>(preSelectedGroupId ? 'existing' : 'new');
   const [newGroupSize, setNewGroupSize] = useState(4);
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(preSelectedGroupId);
 
   if (!event) return null;
+
+  const handleConfirm = () => {
+    if (groupType === 'existing') {
+      if (selectedGroupId) {
+        joinGroup(selectedGroupId);
+      } else {
+        // Fallback: join first available group if none selected
+        const firstAvail = groups.find(g => g.eventId === eventId && g.members.length < g.targetSize);
+        if (firstAvail) joinGroup(firstAvail.id);
+      }
+    } else {
+      createGroup(event.id, newGroupSize);
+    }
+    setStep(3);
+  };
 
   return (
     <div className="mx-auto max-w-lg rounded-xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8 mt-8">
@@ -146,7 +169,7 @@ export default function JoinGroupFlow() {
              </div>
           )}
 
-          <Button className="w-full" size="lg" onClick={() => setStep(3)}>
+          <Button className="w-full" size="lg" onClick={handleConfirm}>
             {event.isPaid ? 'Pre-Authorize with Partner' : 'I Commit to Attend'}
           </Button>
         </div>

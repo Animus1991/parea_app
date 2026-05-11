@@ -50,6 +50,7 @@ export interface Event {
   safetyLevel: SafetyLevel;
   minTrustTierAccess: TrustTier;
   maxParticipants: number;
+  participantsCount?: number;
   imageUrl?: string;
   externalLink?: string;
 }
@@ -64,6 +65,8 @@ export interface Group {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   discountUnlocked: boolean;
   meetingPoint?: string; // Revealed upon confirmation
+  membersLocations?: Record<string, { lat: number; lng: number; timestamp: number; sos?: boolean }>;
+  isLiveTrackingActive?: boolean;
 }
 
 export interface Ticket {

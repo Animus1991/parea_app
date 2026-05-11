@@ -1,19 +1,22 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { mockUsers } from '../data/mockUsers';
-import { mockEvents } from '../data/mockEvents';
+import { useStore } from '../store';
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Calendar, MapPin, ShieldCheck, Mail, Globe, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import { useLanguage } from '../lib/i18n';
 
 export default function OrganizerProfile() {
   const { id } = useParams();
+  const { t } = useLanguage();
   const [showContactModal, setShowContactModal] = useState(false);
-  const organizer = mockUsers.find(u => u.id === id);
-  const hostedEvents = mockEvents.filter(e => e.organizerId === id);
+  const events = useStore((state) => state.events);
+  const users = useStore((state) => state.users);
+  const organizer = users.find(u => u.id === id);
+  const hostedEvents = events.filter(e => e.organizerId === id);
 
-  if (!organizer) return <div className="p-8 text-center text-gray-500 font-medium">Organizer not found</div>;
+  if (!organizer) return <div className="p-8 text-center text-gray-500 font-medium">{t('Ο διοργανωτής δεν βρέθηκε', 'Organizer not found')}</div>;
 
   const isVerifiedOrganizer = organizer.idVerified && organizer.reliabilityScore >= 80;
 
@@ -36,17 +39,17 @@ export default function OrganizerProfile() {
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
               {isVerifiedOrganizer && (
                 <Badge variant="outline" icon={<ShieldCheck className="h-3 w-3 text-indigo-600" />}>
-                  Verified Organizer
+                  {t('Επαληθευμένος Διοργανωτής', 'Verified Organizer')}
                 </Badge>
               )}
-              <Badge variant="neutral">Trust Tier {organizer.trustTier.split('_')[0]}</Badge>
+              <Badge variant="neutral">{t('Επίπεδο Εμπιστοσύνης', 'Trust Tier')} {organizer.trustTier.split('_')[0]}</Badge>
             </div>
             <h1 className="text-3xl font-bold text-[#111827]">{organizer.name}</h1>
             <p className="text-sm text-gray-500 font-medium mt-1"><MapPin className="h-3.5 w-3.5 inline mr-1" /> {organizer.city}</p>
           </div>
           
           <p className="text-sm text-gray-600 leading-relaxed max-w-2xl">
-            {organizer.bio || 'This organizer has not provided a biography yet. They are a verified partner of Nakamas managing high-quality group events.'}
+            {organizer.bio || t('Άυτος ο διοργανωτής δεν έχει προσθέσει βιογραφικό ακόμα. Είναι ένας επαληθευμένος συνεργάτης του Nakamas που διαχειρίζεται εξαιρετικές εκδηλώσεις.', 'This organizer has not provided a biography yet. They are a verified partner of Nakamas managing high-quality group events.')}
           </p>
 
           {/* Average Rating Section */}
@@ -60,7 +63,7 @@ export default function OrganizerProfile() {
              </div>
              <div className="text-xs font-bold text-[#111827]">
                4.2 / 5.0 
-               <span className="text-gray-500 font-medium ml-1">(120+ Event Reviews)</span>
+               <span className="text-gray-500 font-medium ml-1">({t('120+ Κριτικές Εκδηλώσεων', '120+ Event Reviews')})</span>
              </div>
           </div>
           
@@ -69,7 +72,7 @@ export default function OrganizerProfile() {
               onClick={() => setShowContactModal(true)}
               className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-indigo-600 transition-colors flex items-center gap-1"
             >
-              <Mail className="h-4 w-4" /> Contact Organizer
+              <Mail className="h-4 w-4" /> {t('Επικοινωνία', 'Contact Organizer')}
             </button>
             <a 
               href="#" 
@@ -77,17 +80,17 @@ export default function OrganizerProfile() {
               rel="noopener noreferrer"
               className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-indigo-600 transition-colors flex items-center gap-1"
             >
-              <Globe className="h-4 w-4" /> Website
+              <Globe className="h-4 w-4" /> {t('Ιστότοπος', 'Website')}
             </a>
           </div>
         </div>
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-lg font-bold text-[#111827]">Upcoming Events by {organizer.name}</h2>
+        <h2 className="text-lg font-bold text-[#111827]">{t('Επερχόμενες Εκδηλώσεις από', 'Upcoming Events by')} {organizer.name}</h2>
         {hostedEvents.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-            <p className="text-gray-500 font-medium text-sm">No upcoming events currently scheduled.</p>
+            <p className="text-gray-500 font-medium text-sm">{t('Δεν έχουν προγραμματιστεί επερχόμενες εκδηλώσεις.', 'No upcoming events currently scheduled.')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -105,11 +108,11 @@ export default function OrganizerProfile() {
                     <p className="text-xs text-gray-500 mt-1">{event.time} • {event.locationArea}</p>
                     <div className="mt-2 flex gap-2">
                       <Badge variant="neutral">{event.category}</Badge>
-                      {event.isPaid ? <Badge variant="outline">€{event.price}</Badge> : <Badge variant="outline">Free</Badge>}
+                      {event.isPaid ? <Badge variant="outline">€{event.price}</Badge> : <Badge variant="outline">{t('Δωρεάν', 'Free')}</Badge>}
                     </div>
                   </div>
                   <div className="hidden sm:flex items-center text-[10px] font-bold uppercase tracking-wider text-indigo-600 self-center">
-                    View &rarr;
+                    {t('Προβολή', 'View')} &rarr;
                   </div>
                 </Card>
               </Link>
@@ -122,34 +125,34 @@ export default function OrganizerProfile() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-[#111827]">Contact {organizer.name}</h3>
+              <h3 className="text-lg font-bold text-[#111827]">{t('Επικοινωνία με', 'Contact')} {organizer.name}</h3>
               <button onClick={() => setShowContactModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
                 <X className="h-5 w-5" />
               </button>
             </div>
             <p className="text-sm text-gray-500 mb-4">
-              Send a secure message to this organizer about their events, tickting issues, or general inquiries.
+              {t('Στείλτε ένα ασφαλές μήνυμα σε αυτόν τον διοργανωτή για τις εκδηλώσεις του, τα εισιτήρια ή γενικές ερωτήσεις.', 'Send a secure message to this organizer about their events, tickting issues, or general inquiries.')}
             </p>
             <textarea 
               className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none mb-4 focus:ring-2 focus:ring-indigo-600 outline-none"
               rows={4}
-              placeholder="Your message..."
+              placeholder={t('Το μήνυμά σας...', 'Your message...')}
             ></textarea>
             <div className="flex justify-end gap-3">
               <button 
                 onClick={() => setShowContactModal(false)}
                 className="px-4 py-2 text-sm font-bold text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                Cancel
+                {t('Ακύρωση', 'Cancel')}
               </button>
               <button 
                 onClick={() => {
-                  alert("Your message has been sent directly to the organizer.");
+                  alert(t('Το μήνυμά σας έχει σταλεί απευθείας στον διοργανωτή.', 'Your message has been sent directly to the organizer.'));
                   setShowContactModal(false);
                 }}
                 className="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
               >
-                Send Message
+                {t('Αποστολή Μηνύματος', 'Send Message')}
               </button>
             </div>
           </div>

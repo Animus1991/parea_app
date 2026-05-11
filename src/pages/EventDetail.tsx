@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
-import { mockEvents } from '../data/mockEvents';
-import { mockGroups } from '../data/mockGroups';
-import { mockUsers, currentUser } from '../data/mockUsers';
+import { motion } from 'motion/react';
+import { useStore } from '../store';
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
@@ -12,26 +11,29 @@ import { Calendar, MapPin, Users, Ticket, ShieldCheck, Clock, CheckCircle, Alert
 import { format, parseISO } from 'date-fns';
 import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 import { ErrorBoundary } from '../components/common/ErrorBoundary';
+import { useLanguage } from '../lib/i18n';
 
 function Group({ group, event, navigate }: { group: any; event: any; navigate: any; key?: any }) {
+  const { t } = useLanguage();
+  const users = useStore((state) => state.users);
   const spotsLeft = group.targetSize - group.members.length;
   const isDiscountEligible = event.groupDiscount && group.targetSize >= event.groupDiscount.minSize;
   const discountUnlockedTemp = event.groupDiscount && group.members.length >= event.groupDiscount.minSize;
   const membersNeededForDiscount = event.groupDiscount ? Math.max(0, event.groupDiscount.minSize - group.members.length) : 0;
   
   const hostId = group.hostId || group.members[0];
-  const groupHost = mockUsers.find(u => u.id === hostId);
+  const groupHost = users.find(u => u.id === hostId);
   
   return (
     <div 
       className="group relative rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer overflow-hidden mt-2" 
-      onClick={() => navigate(`/events/${event.id}/join`)}
+      onClick={() => navigate(`/events/${event.id}/join?groupId=${group.id}`)}
     >
       <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-indigo-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       
       {(group.discountUnlocked || discountUnlockedTemp) && event.groupDiscount && (
         <div className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-sm flex items-center gap-1 uppercase z-10 w-fit">
-           <CheckCircle className="h-3 w-3" /> {event.groupDiscount.percentage}% OFF ACTIVATED
+           <CheckCircle className="h-3 w-3" /> {event.groupDiscount.percentage}% {t('ΕΚΠΤΩΣΗ ΕΝΕΡΓΟΠΟΙΗΘΗΚΕ', 'OFF ACTIVATED')}
         </div>
       )}
       
@@ -39,7 +41,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
         <div>
           <div className="flex items-center gap-1.5 text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
             <Users className="h-3.5 w-3.5" />
-            Group {group.id.replace('g', '#')}
+            {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
           </div>
           <h4 className="text-[13px] font-bold text-gray-900 mb-0.5 line-clamp-1">{event.title}</h4>
           <span className="text-[9px] tracking-widest font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full uppercase mb-2 inline-block shadow-sm">
@@ -47,17 +49,17 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
           </span>
           <div className="flex items-baseline gap-1 mt-1">
              <span className="text-lg font-bold text-gray-900">{group.members.length}</span>
-             <span className="text-xs font-medium text-gray-500">/ {group.targetSize} members</span>
+             <span className="text-xs font-medium text-gray-500">/ {group.targetSize} {t('μέλη', 'members')}</span>
           </div>
         </div>
         
         <div className="flex flex-col items-end gap-2">
           <Badge variant={spotsLeft <= 2 ? 'warning' : 'outline'} className={spotsLeft <= 2 ? "font-bold animate-pulse shadow-sm" : ""}>
-            {spotsLeft === 1 ? '1 Spot!' : spotsLeft + ' Spots'}
+            {spotsLeft === 1 ? t('1 Θέση!', '1 Spot!') : spotsLeft + t(' Θέσεις', ' Spots')}
           </Badge>
           
           {groupHost && (
-            <div className="flex flex-col items-end mr-1 mt-1" title={`Organized by ${groupHost.name} (${groupHost.trustTier})`}>
+            <div className="flex flex-col items-end mr-1 mt-1" title={t(`Οργανώθηκε από $${groupHost.name} ($${groupHost.trustTier})`, `Organized by $${groupHost.name} ($${groupHost.trustTier})`)}>
               <div className="relative">
                 <div className="h-8 w-8 rounded-full bg-gray-200 overflow-hidden shrink-0 border border-gray-200">
                    {groupHost.photoUrl ? (
@@ -78,7 +80,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
                    </div>
                 ) : null}
               </div>
-              <span className="text-[9px] font-bold text-gray-500 uppercase mt-1">Host</span>
+              <span className="text-[9px] font-bold text-gray-500 uppercase mt-1">{t('Οικοδεσποτης', 'Host')}</span>
             </div>
           )}
         </div>
@@ -88,7 +90,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
         <div className="bg-amber-50/80 border border-amber-200/50 p-2.5 rounded-lg mb-4">
           <div className="flex justify-between items-center mb-1.5">
             <p className="text-[10px] text-amber-800 font-bold uppercase tracking-wider">
-              Discount Progress
+              {t('Πρόοδος Έκπτωσης', 'Discount Progress')}
             </p>
             <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">-{event.groupDiscount.percentage}%</span>
           </div>
@@ -96,7 +98,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
             <div className="h-2 flex-1 bg-amber-200/50 rounded-full overflow-hidden">
                <div className="h-full bg-amber-500 rounded-full" style={{ width: `${(group.members.length / event.groupDiscount.minSize) * 100}%` }}></div>
             </div>
-            <span className="text-[10px] font-bold text-amber-700">{membersNeededForDiscount} more</span>
+            <span className="text-[10px] font-bold text-amber-700">{membersNeededForDiscount} {t('ακόμα', 'more')}</span>
           </div>
         </div>
       )}
@@ -104,7 +106,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
       {!isDiscountEligible && (
          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-4 bg-gray-50 p-2 rounded-md border border-gray-100">
            <ShieldCheck className="h-4 w-4 text-gray-400" />
-           <span className="font-medium">Small & private group</span>
+           <span className="font-medium">{t('Μικρή & ιδιωτική ομάδα', 'Small & private group')}</span>
          </div>
       )}
 
@@ -114,7 +116,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
         className="w-full bg-indigo-50 text-indigo-700 border border-indigo-100 hover:bg-indigo-600 hover:text-white transition-colors group-hover:bg-indigo-600 group-hover:text-white font-semibold shadow-sm"
         onClick={(e) => { e.stopPropagation(); navigate(`/events/${event.id}/join`); }}
       >
-        View & Join Group
+        {t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
       </Button>
     </div>
   );
@@ -123,6 +125,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
 export default function EventDetail() {
   const { eventId } = useParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(true);
   const [isCopied, setIsCopied] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -131,15 +134,20 @@ export default function EventDetail() {
   const [discountFilter, setDiscountFilter] = useState(false);
   const [isMapFullscreen, setIsMapFullscreen] = useState(false);
   
+  const events = useStore((state) => state.events);
+  const groups = useStore((state) => state.groups);
+  const users = useStore((state) => state.users);
+  const currentUser = useStore((state) => state.currentUser);
+  
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => setIsLoading(false), 800);
     return () => clearTimeout(timer);
   }, [eventId]);
 
-  const event = mockEvents.find(e => e.id === eventId);
+  const event = events.find(e => e.id === eventId);
   
-  let eventGroups = mockGroups
+  let eventGroups = groups
     .filter(g => g.eventId === eventId)
     .sort((a, b) => {
       if (event?.isPaid && event?.groupDiscount) {
@@ -165,7 +173,7 @@ export default function EventDetail() {
     }
   }
 
-  const organizer = event ? mockUsers.find(u => u.id === event.organizerId) : null;
+  const organizer = event ? users.find(u => u.id === event.organizerId) : null;
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -248,10 +256,14 @@ export default function EventDetail() {
     return <EventDetailSkeleton />;
   }
 
-  if (!event) return <div className="p-8 text-center text-gray-500 font-medium">Event not found</div>;
+  if (!event) return <div className="p-8 text-center text-gray-500 font-medium">{t('Η εκδήλωση δεν βρέθηκε', 'Event not found')}</div>;
 
   return (
-    <div className="mx-auto max-w-full space-y-8 pb-24 md:pb-8">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="mx-auto max-w-full space-y-8 pb-24 md:pb-8"
+    >
       {/* Header */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
@@ -259,7 +271,7 @@ export default function EventDetail() {
             onClick={() => navigate(-1)}
             className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-[#111827]"
           >
-            &larr; Back to Discover
+            &larr; {t('Επιστροφή στην Ανακάλυψη', 'Back to Discover')}
           </button>
           
           <div className="flex gap-2 flex-wrap justify-end">
@@ -268,52 +280,63 @@ export default function EventDetail() {
               className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider transition-colors px-3 py-1 rounded-full ${isSaved ? 'text-indigo-800 bg-indigo-100' : 'text-gray-600 hover:text-indigo-600 bg-gray-50 hover:bg-gray-100'}`}
             >
               <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} />
-              {isSaved ? "Saved" : "Save Event"}
+              {isSaved ? t("Αποθηκεύτηκε", "Saved") : t("Αποθήκευση Εκδήλωσης", "Save Event")}
             </button>
             <button 
               onClick={() => setShowQRCode(true)}
               className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-800 transition-colors bg-indigo-50 px-3 py-1.5 rounded-full"
             >
               <QrCode className="h-3.5 w-3.5" />
-              QR Code
+              {t('Κωδικός QR', 'QR Code')}
             </button>
             <button 
               onClick={handleShare}
               className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-800 transition-colors bg-indigo-50 px-3 py-1.5 rounded-full"
             >
               <Share className="h-3.5 w-3.5" />
-              {isCopied ? "Link Copied!" : "Share Event"}
+              {isCopied ? t("Αντιγράφηκε!", "Link Copied!") : t("Κοινοποίηση", "Share Event")}
             </button>
             <button 
               onClick={handleAddToCalendar}
               className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-600 hover:text-indigo-600 transition-colors bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-full"
             >
               <Calendar className="h-3.5 w-3.5" />
-              Add to Calendar
+              {t('Προσθήκη στο Ημερολόγιο', 'Add to Calendar')}
             </button>
           </div>
         </div>
         
-        <div className="flex flex-wrap gap-2">
+        <div className="relative w-full h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden shadow-sm">
+          <motion.img 
+            layoutId={`event-image-${event.id}`}
+            referrerPolicy="no-referrer"
+            src={event.imageUrl || 'https://picsum.photos/seed/eventdefault/800/600'} 
+            alt={event.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        </div>
+        
+        <div className="flex flex-wrap gap-2 mt-4">
           <Badge variant="neutral">{event.category}</Badge>
           {event.isPaid ? (
             <Badge variant="outline" icon={<Ticket className="h-3 w-3" />}>€{event.price}</Badge>
           ) : (
-            <Badge variant="outline">Free</Badge>
+            <Badge variant="outline">{t('Δωρεάν', 'Free')}</Badge>
           )}
           {event.groupDiscount && (
              <Badge variant="success" icon={<CheckCircle className="h-3 w-3" />}>
-               -{event.groupDiscount.percentage}% off for {event.groupDiscount.minSize}+ people
+               -{event.groupDiscount.percentage}% {t('έκπτωση για', 'off for')} {event.groupDiscount.minSize}+ {t('άτομα', 'people')}
              </Badge>
           )}
           {event.minTrustTierAccess === '3_high_trust' && (
-            <Badge variant="outline" className="text-indigo-700 font-bold bg-indigo-50 border-indigo-100" icon={<ShieldCheck className="h-3 w-3" />}>Verified Access</Badge>
+            <Badge variant="outline" className="text-indigo-700 font-bold bg-indigo-50 border-indigo-100" icon={<ShieldCheck className="h-3 w-3" />}>{t('Πρόσβαση με Επαλήθευση', 'Verified Access')}</Badge>
           )}
           
           {/* Match Score Badge based on User Interests */}
           {event.tags && event.tags.length > 0 && (
             <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700 font-bold" icon={<span className="text-[10px]">🔥</span>}>
-              {Math.min(98, Math.max(15, Math.round((currentUser.interests.filter(i => (event.tags ?? []).includes(i)).length / (event.tags ?? [1]).length) * 100) + 40))}% Match
+              {Math.min(98, Math.max(15, Math.round((currentUser.interests.filter(i => (event.tags ?? []).includes(i)).length / (event.tags ?? [1]).length) * 100) + 40))}% {t('Ταίριασμα', 'Match')}
             </Badge>
           )}
         </div>
@@ -327,33 +350,33 @@ export default function EventDetail() {
              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 text-gray-500 font-bold uppercase tracking-widest text-[10px]">
-                    <Calendar className="h-3.5 w-3.5" /> Date
+                    <Calendar className="h-3.5 w-3.5" /> {t('Ημερομηνία', 'Date')}
                   </div>
                   <p className="font-medium text-[13px]">{format(parseISO(event.date), 'EEEE, MMMM d, yyyy')}</p>
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 text-gray-500 font-bold uppercase tracking-widest text-[10px]">
-                    <Clock className="h-3.5 w-3.5" /> Time
+                    <Clock className="h-3.5 w-3.5" /> {t('Ώρα', 'Time')}
                   </div>
                   <p className="font-medium text-[13px]">{event.time} ({event.duration})</p>
-                  <p className="text-[11px] text-gray-400 mt-0.5 font-medium">{event.timeZone || 'Local Time'}</p>
+                  <p className="text-[11px] text-gray-400 mt-0.5 font-medium">{event.timeZone || t('Τοπική Ώρα', 'Local Time')}</p>
                 </div>
                 <div className="space-y-3 col-span-2 sm:col-span-1">
                   <div className="space-y-1">
                     <div className="flex items-center gap-1.5 text-gray-500 font-bold uppercase tracking-widest text-[10px]">
-                      <MapPin className="h-3.5 w-3.5" /> Location
+                      <MapPin className="h-3.5 w-3.5" /> {t('Τοποθεσία', 'Location')}
                     </div>
                     <p className="font-medium text-[13px]">{event.locationArea}</p>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Exact meeting point revealed upon confirmation.</p>
+                    <p className="text-[11px] text-gray-400 mt-0.5">{t('Το ακριβές σημείο συνάντησης εμφανίζεται μετά την επιβεβαίωση.', 'Exact meeting point revealed upon confirmation.')}</p>
                   </div>
                 </div>
                  <div className="space-y-1 col-span-2 sm:col-span-1">
                   <div className="flex items-center gap-1.5 text-gray-500 font-bold uppercase tracking-widest text-[10px]">
-                    <ShieldCheck className="h-3.5 w-3.5" /> Participation Rules
+                    <ShieldCheck className="h-3.5 w-3.5" /> {t('Κανόνες Συμμετοχής', 'Participation Rules')}
                   </div>
                   <div className="flex items-center gap-2">
-                    <p className="font-medium text-[13px] capitalize">{event.minTrustTierAccess.split('_')[1].replace('high', 'verified')} account required</p>
-                    <Link to="/trust" className="text-[11px] text-indigo-600 font-bold underline">Why?</Link>
+                    <p className="font-medium text-[13px] capitalize">{event.minTrustTierAccess === '3_high_trust' ? t('απαιτείται επαληθευμένος λογαριασμός', 'verified account required') : event.minTrustTierAccess.split('_')[1].replace('high', 'verified') + ' account required'}</p>
+                    <Link to="/trust" className="text-[11px] text-indigo-600 font-bold underline">{t('Γιατί;', 'Why?')}</Link>
                   </div>
                 </div>
              </div>
@@ -370,7 +393,7 @@ export default function EventDetail() {
                       <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] p-4 text-center">
                         <div className="bg-white p-3 rounded-lg shadow-sm border border-red-100">
                           <AlertTriangle className="w-6 h-6 text-red-500 mx-auto mb-2" />
-                          <p className="text-[10px] text-gray-600">Map unavailable. Please check API key.</p>
+                          <p className="text-[10px] text-gray-600">{t('Ο χάρτης δεν είναι διαθέσιμος. Παρακαλώ ελέγξτε το API key.', 'Map unavailable. Please check API key.')}</p>
                         </div>
                       </div>
                     }>
@@ -395,20 +418,20 @@ export default function EventDetail() {
                        <div className="w-24 h-24 sm:w-32 sm:h-32 bg-indigo-600/10 rounded-full flex items-center justify-center animate-pulse relative z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                          <div className="w-4 h-4 bg-indigo-600 rounded-full border-2 border-white shadow-md"></div>
                        </div>
-                       <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur text-gray-500 text-[10px] px-2 py-1 rounded shadow-sm">Map Preview Active</div>
+                       <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur text-gray-500 text-[10px] px-2 py-1 rounded shadow-sm">{t('Ενεργή Προεπισκόπηση Χάρτη', 'Map Preview Active')}</div>
                     </div>
                   )}
              </div>
              
              <div className="pt-5 border-t border-gray-200 mt-5">
-               <h3 className="text-[11px] font-bold text-[#111827] mb-2 uppercase tracking-widest">About the experience</h3>
+               <h3 className="text-[11px] font-bold text-[#111827] mb-2 uppercase tracking-widest">{t('Πληροφορίες για την εμπειρία', 'About the experience')}</h3>
                <p className="text-[13px] text-gray-600 leading-relaxed font-medium">{event.description}</p>
                
                {event.externalLink && (
                  <div className="mt-4 pt-1">
                    <a href={event.externalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors shadow-sm text-xs font-bold uppercase tracking-wider rounded-lg w-full sm:w-auto justify-center">
                      <ExternalLink className="w-3.5 h-3.5" />
-                     Official Event Page
+                     {t('Επίσημη Σελίδα Εκδήλωσης', 'Official Event Page')}
                    </a>
                  </div>
                )}
@@ -428,7 +451,7 @@ export default function EventDetail() {
              {organizer && (
                <div className="pt-5 border-t border-gray-200 mt-5">
                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-[11px] font-bold text-[#111827] uppercase tracking-widest mt-1">Event Organizer</h3>
+                    <h3 className="text-[11px] font-bold text-[#111827] uppercase tracking-widest mt-1">{t('Διοργανωτής Εκδήλωσης', 'Event Organizer')}</h3>
                  </div>
                  <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-white shadow-sm hover:border-indigo-200 transition-colors">
                     <div className="flex items-center gap-4">
@@ -446,18 +469,18 @@ export default function EventDetail() {
                           </Link>
                           {organizer.trustTier && (
                              <Badge variant="outline" className={`text-[9px] py-0 px-1.5 shadow-none ${organizer.trustTier === '3_high_trust' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-gray-50 text-gray-700 border-gray-200'}`}>
-                               {organizer.trustTier === '3_high_trust' ? 'HIGH TRUST' : organizer.trustTier.replace(/_/g, ' ').toUpperCase()}
+                               {organizer.trustTier === '3_high_trust' ? t('ΥΨΗΛΗ ΕΜΠΙΣΤΟΣΥΝΗ', 'HIGH TRUST') : organizer.trustTier.replace(/_/g, ' ').toUpperCase()}
                              </Badge>
                           )}
                           <Badge variant="outline" className="text-[9px] py-0 px-1.5 bg-green-50 text-green-700 border-green-200 shadow-none">
-                            {organizer.reliabilityScore}% RELIABILITY
+                            {organizer.reliabilityScore}% {t('ΑΞΙΟΠΙΣΤΙΑ', 'RELIABILITY')}
                           </Badge>
                         </div>
-                        <p className="text-xs text-gray-500 mt-0.5 font-medium">{organizer.bio || 'Verified Organizer • 12 events hosted'}</p>
+                        <p className="text-xs text-gray-500 mt-0.5 font-medium">{organizer.bio || t('Επαληθευμένος Διοργανωτής • 12 εκδηλώσεις', 'Verified Organizer • 12 events hosted')}</p>
                       </div>
                     </div>
                     <Button variant="outline" size="sm" className="hidden sm:flex" onClick={() => navigate('/profile')}>
-                       View Profile
+                       {t('Προβολή Προφίλ', 'View Profile')}
                     </Button>
                  </div>
                </div>
@@ -466,15 +489,15 @@ export default function EventDetail() {
              {/* High Trust / Outdoor Template Mock */}
              {(event.category === 'Hiking' || event.category === 'Nearby escapes') && (
                <div className="pt-5 border-t border-gray-200 animate-in fade-in slide-in-from-bottom-2 mt-5">
-                 <h3 className="text-[11px] font-bold text-[#111827] mb-3 uppercase tracking-widest">Adventure Details</h3>
+                 <h3 className="text-[11px] font-bold text-[#111827] mb-3 uppercase tracking-widest">{t('Λεπτομέρειες Περιπέτειας', 'Adventure Details')}</h3>
                  <div className="grid grid-cols-2 gap-4">
                    <div className="bg-emerald-50/50 border border-emerald-100 p-4 rounded-xl">
-                     <div className="text-[10px] uppercase font-bold text-emerald-700 mb-1 tracking-wider">Difficulty</div>
-                     <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? 'Moderate / Terrain' : 'Easy / Leisure'}</div>
+                     <div className="text-[10px] uppercase font-bold text-emerald-700 mb-1 tracking-wider">{t('Δυσκολία', 'Difficulty')}</div>
+                     <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? t('Μέτρια / Έδαφος', 'Moderate / Terrain') : t('Εύκολο / Αναψυχή', 'Easy / Leisure')}</div>
                    </div>
                    <div className="bg-amber-50/50 border border-amber-100 p-4 rounded-xl">
-                     <div className="text-[10px] uppercase font-bold text-amber-700 mb-1 tracking-wider">Equipment / Notes</div>
-                     <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? 'Hiking boots required. Bring water.' : 'Overnight stay. Shared expenses.'}</div>
+                     <div className="text-[10px] uppercase font-bold text-amber-700 mb-1 tracking-wider">{t('Εξοπλισμός / Σημειώσεις', 'Equipment / Notes')}</div>
+                     <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? t('Απαιτούνται μποτάκια πεζοπορίας. Φέρτε νερό.', 'Hiking boots required. Bring water.') : t('Διανυκτέρευση. Μοιρασμένα έξοδα.', 'Overnight stay. Shared expenses.')}</div>
                    </div>
                  </div>
                </div>
@@ -483,23 +506,23 @@ export default function EventDetail() {
 
           {/* Contextual Context Note */}
           <section className="rounded-xl border border-gray-100 bg-gray-50/50 p-5 text-sm">
-            <h3 className="text-[11px] font-bold text-[#111827] mb-3 uppercase tracking-widest">Why this group is reliable</h3>
+            <h3 className="text-[11px] font-bold text-[#111827] mb-3 uppercase tracking-widest">{t('Γιατί αυτή η ομάδα είναι αξιόπιστη', 'Why this group is reliable')}</h3>
             <ul className="space-y-2.5 text-gray-600">
               <li className="flex items-start gap-2 text-xs">
                 <Users className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">Small group constraint.</strong> Kept to {event.maxParticipants || '3-6'} people for better coordination and comfort.</span>
+                <span><strong className="text-gray-700">{t('Περιορισμός μικρής ομάδας.', 'Small group constraint.')}</strong> {t('Περιορίζεται σε ', 'Kept to ')}{event.maxParticipants || '3-6'}{t(' άτομα για καλύτερο συντονισμό και άνεση.', ' people for better coordination and comfort.')}</span>
               </li>
               <li className="flex items-start gap-2 text-xs">
                 <ShieldCheck className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">Confirmed participation.</strong> Users must commit to join. No-shows are tracked internally.</span>
+                <span><strong className="text-gray-700">{t('Επιβεβαιωμένη συμμετοχή.', 'Confirmed participation.')}</strong> {t('Οι χρήστες πρέπει να δεσμευτούν για να συμμετάσχουν. Οι μη-εμφανίσεις παρακολουθούνται.', 'Users must commit to join. No-shows are tracked internally.')}</span>
               </li>
               <li className="flex items-start gap-2 text-xs">
                 <MapPin className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">Public meeting point.</strong> Exact meeting location is revealed only after the group is confirmed.</span>
+                <span><strong className="text-gray-700">{t('Δημόσιο σημείο συνάντησης.', 'Public meeting point.')}</strong> {t('Η ακριβής τοποθεσία συνάντησης αποκαλύπτεται μόνο αφού επιβεβαιωθεί η ομάδα.', 'Exact meeting location is revealed only after the group is confirmed.')}</span>
               </li>
               <li className="flex items-start gap-2 text-xs">
                 <CheckCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">Private reports.</strong> Any inappropriate behavior can be reported privately and affects reliability scores.</span>
+                <span><strong className="text-gray-700">{t('Ιδιωτικές αναφορές.', 'Private reports.')}</strong> {t('Οποιαδήποτε ανάρμοστη συμπεριφορά μπορεί να αναφερθεί ιδιωτικά και επηρεάζει τις βαθμολογίες αξιοπιστίας.', 'Any inappropriate behavior can be reported privately and affects reliability scores.')}</span>
               </li>
             </ul>
           </section>
@@ -508,41 +531,41 @@ export default function EventDetail() {
         {/* Right Column: Groups & Actions */}
         <div className="space-y-6 md:col-span-2 lg:col-span-1">
           <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm sticky top-24">
-            <h3 className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest mb-4">Auto-Suggest Small Groups</h3>
+            <h3 className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest mb-4">{t('Αυτόματη προτεινόμενη Μικρών Ομάδων', 'Auto-Suggest Small Groups')}</h3>
             <div className="mb-4 bg-indigo-50 border border-indigo-100 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-sm font-bold text-indigo-900">
-              <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> Overall Event Capacity</span>
-              <span className="text-indigo-600 xl:text-indigo-900 bg-white xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs xl:text-sm border border-indigo-100 xl:border-transparent">{Math.max(0, spotsLeftEvent)} spots left</span>
+              <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική Χωρητικότητα Εκδήλωσης', 'Overall Event Capacity')}</span>
+              <span className="text-indigo-600 xl:text-indigo-900 bg-white xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs xl:text-sm border border-indigo-100 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
             </div>
             
             <div className="flex flex-col gap-3 mb-6">
               <Button className="w-full bg-indigo-600 text-white hover:bg-indigo-700 shadow-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
                 <Users className="w-5 h-5" />
-                Create New Group
+                {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
               </Button>
             </div>
             
             {(eventGroups.length > 0 || groupSizeFilter !== 'All' || discountFilter) && (
               <div className="mb-4 space-y-2">
                 <div className="flex gap-2">
-                  <span className="text-[10px] font-bold uppercase text-gray-500 mt-1.5">Filter by:</span>
+                  <span className="text-[10px] font-bold uppercase text-gray-500 mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
                   <div className="flex flex-wrap gap-2 flex-1">
                     <select 
                       value={groupSizeFilter} 
                       onChange={(e) => setGroupSizeFilter(e.target.value as any)}
                       className="text-xs bg-gray-50 border border-gray-200 rounded p-1 font-medium focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     >
-                      <option value="All">Any Size</option>
-                      <option value="3">3 Members</option>
-                      <option value="4">4 Members</option>
-                      <option value="5">5 Members</option>
-                      <option value="6+">6+ Members</option>
+                      <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>
+                      <option value="3">{t('3 Μέλη', '3 Members')}</option>
+                      <option value="4">{t('4 Μέλη', '4 Members')}</option>
+                      <option value="5">{t('5 Μέλη', '5 Members')}</option>
+                      <option value="6+">{t('6+ Μέλη', '6+ Members')}</option>
                     </select>
                     {event.isPaid && event.groupDiscount && (
                       <button 
                         onClick={() => setDiscountFilter(!discountFilter)}
                         className={`text-xs px-2 py-1 rounded border font-medium transition-colors ${discountFilter ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'}`}
                       >
-                        Discount Only
+                        {t('Μόνο με Έκπτωση', 'Discount Only')}
                       </button>
                     )}
                   </div>
@@ -551,12 +574,12 @@ export default function EventDetail() {
             )}
             
             <p className="text-xs text-gray-600 font-medium mb-4 leading-relaxed">
-              We highly recommend joining or creating groups of 3-5 users to reduce awkwardness and ensure the event happens safely.
+              {t('Συνιστούμε ανεπιφύλακτα να δημιουργήσετε ή να συμμετάσχετε σε ομάδες 3-5 ατόμων.', 'We highly recommend joining or creating groups of 3-5 users to reduce awkwardness and ensure the event happens safely.')}
             </p>
             
             {eventGroups.length === 0 ? (
               <div className="text-xs text-gray-500 mb-6 bg-gray-50 p-4 rounded-xl text-center border border-dashed border-gray-200 font-medium">
-                No groups forming yet. Be the first to start one!
+                {t('Δεν έχουν δημιουργηθεί ομάδες ακόμα. Γίνετε ο πρώτος που θα ξεκινήσει μία!', 'No groups forming yet. Be the first to start one!')}
               </div>
             ) : (
               <div className="space-y-4 mb-6">
@@ -568,16 +591,16 @@ export default function EventDetail() {
             
             <div className="space-y-4 pt-5 border-t border-gray-200">
               <div className="grid grid-cols-1 gap-3">
-                <Button variant="outline" className="w-full border-gray-200 text-gray-700 hover:bg-gray-50" size="lg" onClick={() => alert("Added to waitlist. We will notify you if a spot in a group opens up.")}>
-                  Join Waitlist
+                <Button variant="outline" className="w-full border-gray-200 text-gray-700 hover:bg-gray-50" size="lg" onClick={() => alert(t("Προστέθηκε στη λίστα αναμονής. Θα ειδοποιηθείτε αν ανοίξει θέση.", "Added to waitlist. We will notify you if a spot in a group opens up."))}>
+                  {t('Λίστα Αναμονής', 'Join Waitlist')}
                 </Button>
               </div>
               <div className="text-[10px] text-gray-500 font-medium bg-gray-50 rounded text-center p-3 leading-relaxed uppercase tracking-wider">
-                Create a new 3-5 person group. 
+                {t('Δημιουργήστε νέα ομάδα 3-5 ατόμων. ', 'Create a new 3-5 person group. ')}
                 {event.isPaid ? (
-                  <span className="block mt-1 font-bold text-gray-700">Payment pre-authorized via official partner APIs. Discharges automatically on Group confirmation.</span>
+                  <span className="block mt-1 font-bold text-gray-700">{t('Η πληρωμή προεγκρίνεται. Χρεώνεται μόνο κατά την επιβεβαίωση.', 'Payment pre-authorized via official partner APIs. Discharges automatically on Group confirmation.')}</span>
                 ) : (
-                  <span className="block mt-1 font-bold">Free to start.</span>
+                  <span className="block mt-1 font-bold">{t('Δωρεάν δημιουργία.', 'Free to start.')}</span>
                 )}
               </div>
             </div>
@@ -588,10 +611,10 @@ export default function EventDetail() {
       {/* Mobile Sticky CTA */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden z-50 flex gap-3">
         <Button variant="outline" className="flex-1 border-gray-200 text-gray-700" onClick={() => navigate(`/events/${eventId}/join`)}>
-          Waitlist
+          {t('Λίστα Αναμονής', 'Waitlist')}
         </Button>
         <Button className="flex-[2] bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm" onClick={() => navigate(`/events/${eventId}/join`)}>
-          Create Group
+          {t('Νέα Ομάδα', 'Create Group')}
         </Button>
       </div>
 
@@ -605,8 +628,8 @@ export default function EventDetail() {
             >
               <X className="h-4 w-4" />
             </button>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Share Event</h3>
-            <p className="text-sm text-gray-500 mb-6">Scan this QR code to view the event</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('Κοινοποίηση', 'Share Event')}</h3>
+            <p className="text-sm text-gray-500 mb-6">{t('Σαρώστε αυτό το QR για να δείτε την εκδήλωση', 'Scan this QR code to view the event')}</p>
             <div className="bg-white p-4 rounded-xl shadow-inner border border-gray-100 inline-block">
               <QRCodeSVG 
                 value={window.location.href} 
@@ -620,6 +643,6 @@ export default function EventDetail() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

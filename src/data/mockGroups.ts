@@ -13,7 +13,7 @@ export const mockGroups: Group[] = [
   {
     id: 'g2',
     eventId: 'e4',
-    hostId: 'u2',
+    hostId: 'u1',
     members: ['u2', 'u1', 'u3'],
     pendingMembers: [],
     targetSize: 6,

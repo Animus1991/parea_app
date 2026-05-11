@@ -1,19 +1,22 @@
 import React from 'react';
 import { History as HistoryIcon, MapPin, Calendar, Clock, Star, MessageSquare } from 'lucide-react';
-import { mockEvents } from '../data/mockEvents';
+import { useStore } from '../store';
 import { format, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../lib/i18n';
 
 export default function History() {
-  const pastEvents = mockEvents.slice(0, 3); // Just using some mock data for display
+  const events = useStore((state) => state.events);
+  const pastEvents = events.slice(0, 3); // Just using some mock data for display
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#111827]">Past History</h1>
-          <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">Events and experiences you have attended.</p>
+          <h1 className="text-xl md:text-2xl font-bold text-[#111827]">{t('Ιστορικό', 'Past History')}</h1>
+          <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">{t('Εκδηλώσεις και εμπειρίες που έχετε παρακολουθήσει.', 'Events and experiences you have attended.')}</p>
         </div>
       </div>
 
@@ -24,7 +27,7 @@ export default function History() {
               <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
                 <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
                 <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-white text-[10px] font-bold uppercase tracking-wider">
-                  {index === 0 ? 'Yesterday' : 'Last Week'}
+                  {index === 0 ? t('Χθες', 'Yesterday') : t('Την προηγούμενη εβδομάδα', 'Last Week')}
                 </div>
               </div>
               
@@ -48,11 +51,11 @@ export default function History() {
                   <div className="flex gap-2">
                     <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="flex items-center gap-1.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full hover:bg-indigo-100 transition-colors uppercase tracking-wider">
                       <Star className="w-3 h-3" />
-                      Rate & Review
+                      {t('Αξιολόγηση', 'Rate & Review')}
                     </button>
                   </div>
                   <button className="text-[10px] font-bold text-gray-500 hover:text-[#111827] uppercase tracking-wider transition-colors">
-                    View Details
+                    {t('Λεπτομέρειες', 'View Details')}
                   </button>
                 </div>
               </div>
@@ -62,7 +65,7 @@ export default function History() {
       </div>
       
       <div className="text-center pt-6 pb-2">
-         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">End of History</p>
+         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{t('Τέλος Ιστορικού', 'End of History')}</p>
       </div>
     </div>
   );

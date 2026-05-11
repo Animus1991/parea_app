@@ -2,14 +2,16 @@ import React from 'react';
 import { ShieldCheck, UserCheck, Smartphone, Mail, FileText, CheckCircle2 } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
+import { useLanguage } from '../lib/i18n';
 
 export default function VerificationCenter() {
+  const { t } = useLanguage();
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#111827]">Identity Verification</h1>
-          <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">Build trust within the community.</p>
+          <h1 className="text-xl md:text-2xl font-bold text-[#111827]">{t('Επαλήθευση Ταυτότητας', 'Identity Verification')}</h1>
+          <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">{t('Χτίστε εμπιστοσύνη μέσα στην κοινότητα.', 'Build trust within the community.')}</p>
         </div>
       </div>
 
@@ -18,8 +20,8 @@ export default function VerificationCenter() {
            <ShieldCheck className="w-6 h-6 text-emerald-600" />
         </div>
         <div>
-          <h2 className="font-bold text-emerald-900 text-sm">Your Trust Score is High</h2>
-          <p className="text-xs text-emerald-700 mt-1 mb-3">You've completed the basic verification steps. Complete the remaining steps to unlock hosting capabilities and higher group limits.</p>
+          <h2 className="font-bold text-emerald-900 text-sm">{t('Η Βαθμολογία Εμπιστοσύνης σας είναι υψηλή', 'Your Trust Score is High')}</h2>
+          <p className="text-xs text-emerald-700 mt-1 mb-3">{t('Έχετε ολοκληρώσει τα βασικά βήματα επαλήθευσης. Ολοκληρώστε τα υπόλοιπα για να ξεκλειδώσετε δυνατότητες διοργάνωσης.', 'You\'ve completed the basic verification steps. Complete the remaining steps to unlock hosting capabilities and higher group limits.')}</p>
           <div className="w-full bg-emerald-200 rounded-full h-2">
             <div className="bg-emerald-600 h-2 rounded-full w-2/3"></div>
           </div>
@@ -34,8 +36,8 @@ export default function VerificationCenter() {
                     <Mail className="w-5 h-5" />
                  </div>
                  <div>
-                    <h3 className="font-bold text-sm text-[#111827]">Email Address</h3>
-                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-0.5">Verified</p>
+                    <h3 className="font-bold text-sm text-[#111827]">{t('Διεύθυνση Email', 'Email Address')}</h3>
+                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-0.5">{t('Επαληθεύτηκε', 'Verified')}</p>
                  </div>
               </div>
               <CheckCircle2 className="w-5 h-5 text-emerald-500" />
@@ -49,13 +51,13 @@ export default function VerificationCenter() {
                     <Smartphone className="w-5 h-5" />
                  </div>
                  <div>
-                    <h3 className="font-bold text-sm text-[#111827]">Phone Number</h3>
-                    <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mt-0.5">Not Verified</p>
+                    <h3 className="font-bold text-sm text-[#111827]">{t('Αριθμός Τηλεφώνου', 'Phone Number')}</h3>
+                    <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mt-0.5">{t('Μη επαληθευμένο', 'Not Verified')}</p>
                  </div>
               </div>
            </div>
-           <p className="text-xs text-gray-500 mb-3">Required for joining premium events and receiving host updates.</p>
-           <Button variant="outline" size="sm" className="w-full text-xs">Verify Phone</Button>
+           <p className="text-xs text-gray-500 mb-3">{t('Απαραίτητο για συμμετοχή σε premium εκδηλώσεις.', 'Required for joining premium events and receiving host updates.')}</p>
+           <Button variant="outline" size="sm" className="w-full text-xs">{t('Επαλήθευση Τηλεφώνου', 'Verify Phone')}</Button>
         </Card>
 
         <Card className="p-5 md:col-span-2">
@@ -65,21 +67,21 @@ export default function VerificationCenter() {
                     <FileText className="w-5 h-5" />
                  </div>
                  <div>
-                    <h3 className="font-bold text-sm text-[#111827]">Government ID / KYC</h3>
-                    <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mt-0.5">Not Verified</p>
+                    <h3 className="font-bold text-sm text-[#111827]">{t('Κρατικό Έγγραφο / KYC', 'Government ID / KYC')}</h3>
+                    <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mt-0.5">{t('Μη επαληθευμένο', 'Not Verified')}</p>
                  </div>
               </div>
-              <span className="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Required to Host</span>
+              <span className="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">{t('Απαραίτητο για Διοργάνωση', 'Required to Host')}</span>
            </div>
            <p className="text-sm text-gray-500 mb-4 max-w-xl">
-             To ensure the highest safety standards in our real-world ecosystem, organizers and attendees of private events must verify their government-issued ID. Your data is encrypted and handled by our approved KYC partner.
+             {t('Για να διασφαλίσουμε τα υψηλότερα πρότυπα ασφαλείας, οι διοργανωτές πρέπει να επαληθεύσουν την ταυτότητά τους.', 'To ensure the highest safety standards in our real-world ecosystem, organizers and attendees of private events must verify their government-issued ID. Your data is encrypted and handled by our approved KYC partner.')}
            </p>
            <div className="bg-gray-50 p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-dashed border-gray-200">
              <div className="flex gap-3 text-xs text-gray-500 font-medium">
-                <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4"/> Bank-level security</span>
-                <span className="flex items-center gap-1"><UserCheck className="w-4 h-4"/> Takes 2 minutes</span>
+                <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4"/> {t('Τραπεζική ασφάλεια', 'Bank-level security')}</span>
+                <span className="flex items-center gap-1"><UserCheck className="w-4 h-4"/> {t('Διαρκεί 2 λεπτά', 'Takes 2 minutes')}</span>
              </div>
-             <Button size="sm" className="w-full sm:w-auto shrink-0 shadow-sm">Start ID Verification</Button>
+             <Button size="sm" className="w-full sm:w-auto shrink-0 shadow-sm">{t('Έναρξη Επαλήθευσης', 'Start ID Verification')}</Button>
            </div>
         </Card>
       </div>
