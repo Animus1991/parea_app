@@ -290,7 +290,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 <div className="absolute -bottom-0.5 -right-0.5 bg-green-500 w-2.5 h-2.5 rounded-full border-2 border-white"></div>
               </div>
               <div className="flex flex-col">
-                <span className="text-[10.3px] text-gray-500 font-semibold mb-0.5 capitalize">
+                <span className="text-[10.61px] text-gray-500 font-semibold mb-0.5 capitalize">
                   {t("event_card.organizer", "Organizer")}
                 </span>
                 <button
@@ -316,11 +316,11 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             }}
             className="w-full flex items-center justify-between py-1.5 focus:outline-none"
           >
-            <span className="text-[11.33px] font-bold text-gray-900 flex items-center gap-1.5 capitalize tracking-tight">
+            <span className="text-[11.67px] font-bold text-gray-900 flex items-center gap-1.5 capitalize tracking-tight">
               <ShieldCheck className="w-3.5 h-3.5 text-cyan-600" />
               {t("Άφιξη & Ασφάλεια", "Arrival & Safety")}
             </span>
-            <span className="text-[10.3px] text-gray-400 font-medium">
+            <span className="text-[10.61px] text-gray-400 font-medium">
               {showSafetyPanel ? t("Απόκρυψη", "Hide") : t("Εμφάνιση", "Show")}
             </span>
           </button>
@@ -332,7 +332,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             >
               {/* 1. Arrival Status */}
               <div className="space-y-1.5">
-                <p className="text-[11.33px] font-semibold text-gray-600 tracking-tight capitalize">
+                <p className="text-[11.67px] font-semibold text-gray-600 tracking-tight capitalize">
                   {t("Κατάσταση Άφιξης", "Arrival Status")}
                 </p>
                 <div className="grid grid-cols-2 gap-1.5">
@@ -345,7 +345,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     <button
                       key={status}
                       onClick={() => setArrivalStatus(status)}
-                      className={`text-[9.27px] font-bold py-1.5 px-2 rounded-lg border transition-colors ${arrivalStatus === status ? "bg-cyan-600 text-white border-cyan-600" : "bg-white text-gray-600 border-gray-200 hover:border-cyan-300"}`}
+                      className={`text-[9.55px] font-bold py-1.5 px-2 rounded-lg border transition-colors ${arrivalStatus === status ? "bg-cyan-600 text-white border-cyan-600" : "bg-white text-gray-600 border-gray-200 hover:border-cyan-300"}`}
                     >
                       {status}
                     </button>
@@ -358,14 +358,14 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 <div className="flex gap-1.5">
                   <button
                     onClick={() => setShowEtaPrompt(!showEtaPrompt)}
-                    className="flex-1 text-[10.3px] font-bold py-1.5 px-2 bg-white text-cyan-700 border border-cyan-100 rounded-lg hover:bg-cyan-50 flex items-center justify-center gap-1"
+                    className="flex-1 text-[10.61px] font-bold py-1.5 px-2 bg-white text-cyan-700 border border-cyan-100 rounded-lg hover:bg-cyan-50 flex items-center justify-center gap-1"
                   >
                     <Clock className="w-3 h-3" />{" "}
                     {t("Κοινοποίηση ETA", "Share ETA")}
                   </button>
                   <button
                     onClick={() => setShowSafetyLinkModal(true)}
-                    className="flex-1 text-[10.3px] font-bold py-1.5 px-2 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg hover:bg-emerald-100 flex items-center justify-center gap-1"
+                    className="flex-1 text-[10.61px] font-bold py-1.5 px-2 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg hover:bg-emerald-100 flex items-center justify-center gap-1"
                   >
                     <Link2 className="w-3 h-3" />{" "}
                     {t("Επαφή Εμπιστοσύνης", "Trusted Contact")}
@@ -436,7 +436,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         {/* Group progress + Join */}
         <div className="mt-auto pt-3 border-t border-gray-100">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[11.33px] font-bold text-gray-500 tracking-tight capitalize">
+            <span className="text-[11.67px] font-bold text-gray-500 tracking-tight capitalize">
               {t("event_card.forming", "Forming")}
             </span>
           </div>
@@ -446,7 +446,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
               <button
-                className="text-[10.3px] text-gray-500 hover:text-[#0E8B8D] transition-colors font-medium underline underline-offset-2"
+                className="text-[10.61px] text-gray-500 hover:text-[#0E8B8D] transition-colors font-medium underline underline-offset-2"
                 onClick={getCalendarUrl}
                 title={t(
                   "Προσθήκη στο Google Calendar",
@@ -462,12 +462,12 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   e.stopPropagation();
                   navigate(`/events/${event.id}`);
                 }}
-                className="px-4 py-2 bg-gray-100 text-gray-700 text-[11.33px] font-bold rounded-full hover:bg-gray-200 transition-colors tracking-tight"
+                className="px-4 py-2 bg-gray-100 text-gray-700 text-[11.67px] font-bold rounded-full hover:bg-gray-200 transition-colors tracking-tight"
                 title={t("Λεπτομέρειες", "View Details")}
               >
                 {t("Λεπτομέρειες", "View Details")}
               </button>
-              <button className="px-5 py-2 bg-[#111827] text-white text-[11.33px] font-bold rounded-full shadow-sm hover:bg-black transition-colors tracking-tight">
+              <button className="px-5 py-2 bg-[#111827] text-white text-[11.67px] font-bold rounded-full shadow-sm hover:bg-black transition-colors tracking-tight">
                 {t("event_card.join", "Join")}
               </button>
             </div>

@@ -225,7 +225,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           <NakamasLogo className="text-[22px]" />
         </div>
         <div className="hidden md:block">
-          <span className="text-[13.75px] font-bold text-gray-400 tracking-wide">{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
+          <span className="text-[14.16px] font-bold text-gray-400 tracking-wide">{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3">
