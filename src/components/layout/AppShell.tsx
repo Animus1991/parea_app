@@ -1,17 +1,22 @@
 import React, { ReactNode, useState } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Compass, CalendarCheck, ShieldCheck, Bell, MessageSquare, Menu, X, Search,
-  Grid, Bookmark, History, Flag, Trophy,
-  Users, Settings, HelpCircle, Plus, User, MapPin, Calendar, CreditCard, Globe,
-  LayoutDashboard, BadgeCheck, PlusSquare, TrendingUp
+import { NavLink, useNavigate } from 'react-router-dom';
+import {
+  Compass, CalendarCheck, ShieldCheck, Menu, Bell,
+  Grid, TrendingUp, Bookmark, History, Flag,
+  Users, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { currentUser } from '../../data/mockUsers';
-import { unreadNotificationCount } from '../../data/mockNotifications';
-import { useLanguage } from '../../lib/i18n';
-import type { LucideIcon } from 'lucide-react';
+import { useStore } from '../../store';
 
+function useUnreadCount() {
+  const notifications = useStore(state => state.notifications);
+  return notifications.filter(n => !n.read).length;
+}
+import { useLanguage } from '../../lib/i18n';
+
+// ─────────────────────────────────────────────
+// NakamasLogo — SVG ψάθινο καπέλο με αχυρωτό στέλεχος
+// ─────────────────────────────────────────────
 function NakamasLogo({ className, compact = false }: { className?: string; compact?: boolean }) {
   return (
     <div className={cn("flex items-baseline font-bold tracking-tight text-[#18D8DB] font-['Poppins']", className)}>
@@ -21,15 +26,23 @@ function NakamasLogo({ className, compact = false }: { className?: string; compa
           viewBox="0 0 120 90"
           className="absolute -top-[0.65em] -left-[0.55em] w-[1.8em] h-[1.8em] origin-center -rotate-[8deg] z-10 pointer-events-none drop-shadow-sm"
         >
+          {/* Chin strap back */}
           <path d="M 35 60 C 20 65, 15 75, 25 80" fill="none" stroke="#3F2A1B" strokeWidth="2" strokeLinecap="round" />
+          {/* Brim */}
           <ellipse cx="60" cy="62" rx="55" ry="14" fill="#E4BD70" stroke="#3F2A1B" strokeWidth="3" />
+          {/* Brim texture */}
           <path d="M 15 62 Q 60 76 105 62 M 25 67 Q 60 80 95 67" fill="none" stroke="#C49B50" strokeWidth="1.5" />
+          {/* Dome */}
           <path d="M 32 60 C 32 20, 42 16, 60 16 C 78 16, 88 20, 88 60 Z" fill="#E4BD70" stroke="#3F2A1B" strokeWidth="3" strokeLinejoin="round" />
+          {/* Dome texture lines */}
           <path d="M 45 25 L 45 48 M 60 20 L 60 52 M 75 25 L 75 48" fill="none" stroke="#C49B50" strokeWidth="2" strokeLinecap="round" />
           <path d="M 38 32 C 50 35, 70 35, 82 32 M 36 42 Q 60 48 84 42" fill="none" stroke="#C49B50" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Red Band */}
           <path d="M 31.5 54 C 50 63, 70 63, 88.5 54 L 88.5 60 C 70 70, 50 70, 31.5 60 Z" fill="#D84539" stroke="#3F2A1B" strokeWidth="3" strokeLinejoin="round" />
+          {/* Chin strap front */}
           <path d="M 32 62 C 25 58, 20 62, 22 66" fill="none" stroke="#3F2A1B" strokeWidth="2" strokeLinecap="round" />
           <path d="M 22 66 Q 16 75 20 85" fill="none" stroke="#3F2A1B" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Wheat Straw */}
           <g transform="translate(62, 79) rotate(-12)">
             <path d="M 0 0 Q 34 12 68 -2" fill="none" stroke="#E4BD70" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M 46 4.8 Q 57 2 66 -1.2" fill="none" stroke="#FDE68A" strokeWidth="2.5" strokeLinecap="round" />
@@ -44,29 +57,36 @@ function NakamasLogo({ className, compact = false }: { className?: string; compa
   );
 }
 
+// ─────────────────────────────────────────────
+// NavItem
+// ─────────────────────────────────────────────
 interface NavItemProps {
   to: string;
-  icon: LucideIcon;
+  icon: React.ComponentType<{ className?: string }>;
   label: string;
   disabled?: boolean;
   compact?: boolean;
 }
 
 function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: NavItemProps) {
+  const { t } = useLanguage();
   const containerClass = compact
-    ? 'justify-center px-0 py-2.5 lg:justify-start lg:px-3 lg:py-1.5'
-    : 'justify-start px-3 py-1.5';
+    ? 'justify-center px-0 py-3 lg:justify-start lg:px-3 lg:py-2'
+    : 'justify-start px-3 py-2';
   const iconClass = compact
-    ? 'h-[18px] w-[18px] lg:h-3.5 lg:w-3.5 shrink-0'
-    : 'h-3.5 w-3.5 shrink-0';
+    ? 'h-[22px] w-[22px] lg:h-4 lg:w-4 shrink-0'
+    : 'h-4 w-4 shrink-0';
   const textClass = compact ? 'hidden lg:block' : 'block';
 
   if (disabled) {
     return (
-      <div className={cn('flex items-center gap-2.5 text-[14.2457535px] font-medium text-gray-400 rounded-lg cursor-not-allowed', containerClass)} title={label}>
+      <div
+        className={cn('flex items-center gap-3 text-sm font-medium text-gray-400 rounded-lg cursor-not-allowed', containerClass)}
+        title={label}
+      >
         <Icon className={iconClass} />
         <span className={textClass}>{label}</span>
-        <span className={cn('text-[12.1125px] uppercase tracking-wider font-bold bg-gray-100 px-1 py-0.5 rounded text-gray-400', textClass)}>Soon</span>
+      <span className={cn('text-[9px] uppercase tracking-wider font-bold bg-gray-100 px-1.5 py-0.5 rounded text-gray-400', textClass)}>{t('Σύντομα', 'Soon')}</span>
       </div>
     );
   }
@@ -77,11 +97,11 @@ function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: N
       title={label}
       className={({ isActive }) =>
         cn(
-          'flex items-center gap-2.5 rounded-lg text-[14.2457535px] font-medium transition-colors',
+          'flex items-center gap-3 rounded-xl lg:rounded-lg text-sm font-medium transition-colors group',
           containerClass,
           isActive
             ? 'bg-cyan-50 text-[#0E8B8D] font-bold'
-            : 'text-gray-500 hover:bg-gray-50 hover:text-[#111827]'
+            : 'text-gray-500 lg:text-gray-600 hover:bg-gray-100 lg:hover:bg-gray-50 hover:text-[#111827]'
         )
       }
     >
@@ -91,6 +111,9 @@ function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: N
   );
 }
 
+// ─────────────────────────────────────────────
+// NavSection
+// ─────────────────────────────────────────────
 interface NavSectionProps {
   title: string;
   children: ReactNode;
@@ -99,65 +122,94 @@ interface NavSectionProps {
 
 function NavSection({ title, children, compact = false }: NavSectionProps) {
   return (
-    <div className="mb-3">
-      {compact && <div className="block lg:hidden h-px bg-gray-200 my-3 mx-3" />}
-      <h3 className={cn('px-3 text-[11.2px] font-bold uppercase tracking-widest text-gray-400 mb-1.5', compact ? 'hidden lg:block' : 'block')}>
+    <div className="mb-2 lg:mb-6">
+      {compact && <div className="block lg:hidden h-px bg-gray-200 my-4 mx-4" />}
+      <h3
+        className={cn(
+          'px-3 text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-2',
+          compact ? 'hidden lg:block' : 'block'
+        )}
+      >
         {title}
       </h3>
-      <div className="space-y-0.5">{children}</div>
+      <div className="space-y-1.5 lg:space-y-0.5">{children}</div>
     </div>
   );
 }
 
-function NavLinks({ compact = false, t }: { compact?: boolean; t: (greek: string, english: string) => string }) {
+// ─────────────────────────────────────────────
+// NavLinks
+// ─────────────────────────────────────────────
+function NavLinks({ compact = false }: { compact?: boolean }) {
+  const { t } = useLanguage();
   return (
     <>
-      <NavSection title={t(`Εξερεύνηση & Ανακάλυψη`, `Explore & Discover`)} compact={compact}>
-        <NavItem to="/" icon={Compass} label={t(`Ανακάλυψη Εκδηλώσεων`, `Discover Events`)} compact={compact} />
-        <NavItem to="/categories" icon={Grid} label={t(`Κατηγορίες`, `Categories`)} compact={compact} />
-        <NavItem to="/nearby" icon={MapPin} label={t(`Τοπικές Ομάδες`, `Nearby Groups`)} compact={compact} />
+      <NavSection title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact}>
+        <NavItem to="/" icon={Compass} label={t('Ανακάλυψη Εκδηλώσεων', 'Discover Events')} compact={compact} />
+        <NavItem to="/categories" icon={Grid} label={t('Κατηγορίες', 'Categories')} compact={compact} />
+        <NavItem to="/nearby" icon={MapPin} label={t('Τοπικές Ομάδες', 'Local Groups')} compact={compact} />
       </NavSection>
 
-      <NavSection title={t(`Η Εμπειρία μου`, `My Experience`)} compact={compact}>
-        <NavItem to="/agenda" icon={Calendar} label={t(`Το Ημερολόγιό μου`, `My Calendar`)} compact={compact} />
-        <NavItem to="/plans" icon={CalendarCheck} label={t(`Τα Σχέδιά μου`, `My Plans`)} compact={compact} />
-        <NavItem to="/saved" icon={Bookmark} label={t(`Αποθηκευμένες`, `Saved`)} compact={compact} />
-        <NavItem to="/history" icon={History} label={t(`Ιστορικό`, `History`)} compact={compact} />
+      <NavSection title={t('Η Εμπειρία μου', 'My Experience')} compact={compact}>
+        <NavItem to="/agenda" icon={Calendar} label={t('Το Ημερολόγιό μου', 'My Calendar')} compact={compact} />
+        <NavItem to="/plans" icon={CalendarCheck} label={t('Τα Σχέδιά μου', 'My Plans')} compact={compact} />
+        <NavItem to="/saved" icon={Bookmark} label={t('Αποθηκευμένες', 'Saved')} compact={compact} />
+        <NavItem to="/history" icon={History} label={t('Ιστορικό', 'History')} compact={compact} />
       </NavSection>
 
-      <NavSection title={t(`Κοινότητα`, `Community`)} compact={compact}>
-        <NavItem to="/connections" icon={Users} label={t(`Οι Nakamas μου`, `My Nakamas`)} compact={compact} />
-        <NavItem to="/chats" icon={MessageSquare} label={t(`Ομαδικές Συνομιλίες`, `Group Chats`)} compact={compact} />
+      <NavSection title={t('Κοινότητα', 'Community')} compact={compact}>
+        <NavItem to="/connections" icon={Users} label={t('Οι Nakamas μου', 'My Nakamas')} compact={compact} />
+        <NavItem to="/chats" icon={MessageSquare} label={t('Ομαδικές Συνομιλίες', 'Group Chats')} compact={compact} />
       </NavSection>
 
-      <NavSection title={t(`Διοργάνωση`, `Organize`)} compact={compact}>
-        <NavItem to="/manage" icon={TrendingUp} label={t(`Πίνακας Διοργανωτή`, `Organizer Panel`)} compact={compact} />
-        <NavItem to="/create" icon={PlusSquare} label={t(`Δημιουργία Εκδήλωσης`, `Create Event`)} compact={compact} />
-        <NavItem to="/wallet" icon={CreditCard} label={t(`Πορτοφόλι & Κέρδη`, `Wallet & Earnings`)} compact={compact} />
+      <NavSection title={t('Διοργάνωση', 'Host')} compact={compact}>
+        <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας Διοργανωτή', 'Organizer Dashboard')} compact={compact} />
+        <NavItem to="/create" icon={PlusSquare} label={t('Δημιουργία Εκδήλωσης', 'Create Event')} compact={compact} />
+        <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & Κέρδη', 'Wallet & Earnings')} compact={compact} />
       </NavSection>
 
-      <NavSection title={t(`Εμπιστοσύνη & Ασφάλεια`, `Trust & Safety`)} compact={compact}>
-        <NavItem to="/verification" icon={BadgeCheck} label={t(`Επαλήθευση Ταυτότητας`, `Identity Verification`)} compact={compact} />
-        <NavItem to="/trust" icon={ShieldCheck} label={t(`Κέντρο Εμπιστοσύνης`, `Trust Center`)} compact={compact} />
-        <NavItem to="/report" icon={Flag} label={t(`Αναφορά Προβλήματος`, `Report Issue`)} compact={compact} />
+      <NavSection title={t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety')} compact={compact}>
+        <NavItem to="/verification" icon={BadgeCheck} label={t('Επαλήθευση Ταυτότητας', 'Identity Verification')} compact={compact} />
+        <NavItem to="/trust" icon={ShieldCheck} label={t('Κέντρο Εμπιστοσύνης', 'Trust Center')} compact={compact} />
+        <NavItem to="/report" icon={Flag} label={t('Αναφορά Προβλήματος', 'Report Issue')} compact={compact} />
       </NavSection>
 
-      <NavSection title={t(`Λογαριασμός & Ρυθμίσεις`, `Account & Settings`)} compact={compact}>
-        <NavItem to="/profile" icon={User} label={t(`Το Προφίλ μου`, `My Profile`)} compact={compact} />
-        <NavItem to="/achievements" icon={Trophy} label={t(`Επιτεύγματα`, `Achievements`)} compact={compact} />
-        <NavItem to="/notifications" icon={Bell} label={t(`Ειδοποιήσεις`, `Notifications`)} compact={compact} />
-        <NavItem to="/settings" icon={Settings} label={t(`Ρυθμίσεις & Απόρρητο`, `Settings & Privacy`)} compact={compact} />
-        <NavItem to="/help" icon={HelpCircle} label={t(`Κέντρο Βοήθειας`, `Help Center`)} compact={compact} />
+      <NavSection title={t('Λογαριασμός & Ρυθμίσεις', 'Account & Settings')} compact={compact}>
+        <NavItem to="/profile" icon={User} label={t('Το Προφίλ μου', 'My Profile')} compact={compact} />
+        <NavItem to="/notifications" icon={Bell} label={t('Ειδοποιήσεις', 'Notifications')} compact={compact} />
+        <NavItem to="/settings" icon={Settings} label={t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')} compact={compact} />
+        <NavItem to="/help" icon={HelpCircle} label={t('Κέντρο Βοήθειας', 'Help Center')} compact={compact} />
+        <NavItem to="/admin" icon={Terminal} label={t('Διαχείριση & Έλεγχος', 'Admin & Moderation')} compact={compact} />
       </NavSection>
     </>
   );
 }
 
-export function AppShell({ children }: { children: React.ReactNode }) {
-  const { t, language, setLanguage } = useLanguage();
-  const location = useLocation();
+// ─────────────────────────────────────────────
+// SideNav
+// ─────────────────────────────────────────────
+export function SideNav() {
+  return (
+    <aside className="bg-white border-r border-[#E5E7EB] h-full flex-col shrink-0 hidden md:flex w-[88px] lg:w-64 transition-all duration-300 z-30">
+      <div className="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-[#E5E7EB] shrink-0">
+        <NakamasLogo className="text-[22px] lg:text-[26px]" />
+      </div>
+      <div className="flex-1 overflow-y-auto py-4 lg:py-6 px-2 lg:px-3">
+        <NavLinks compact />
+      </div>
+    </aside>
+  );
+}
+
+// ─────────────────────────────────────────────
+// TopNav
+// ─────────────────────────────────────────────
+export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   const navigate = useNavigate();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
+  const currentUser = useStore((state) => state.currentUser);
+  const isAuthenticated = useStore((state) => state.isAuthenticated);
+  const unreadNotificationCount = useUnreadCount();
   const [searchValue, setSearchValue] = useState('');
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -167,187 +219,184 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="flex h-screen w-full bg-[#F3F4F6] text-[#111827] font-sans antialiased overflow-hidden">
-      {/* Desktop Sidebar — collapsible: icon-only on md, full on lg */}
-      <aside className="bg-white border-r border-gray-200 h-full flex-col shrink-0 hidden md:flex w-[72px] lg:w-60 transition-all duration-300 z-30">
-        <div className="h-14 flex items-center justify-center lg:justify-start lg:px-5 border-b border-gray-100 shrink-0">
-          <NakamasLogo className="text-[25px] lg:text-[27.5px]" compact />
+    <nav className="flex items-center justify-between px-4 lg:px-6 py-3 bg-white border-b border-[#E5E7EB] h-16 shrink-0">
+      <div className="flex items-center space-x-8">
+        <div className="md:hidden">
+          <NakamasLogo className="text-[22px]" />
         </div>
-        <div className="flex-1 overflow-y-auto py-3 px-1.5 lg:px-2.5">
-          <NavLinks compact t={t} />
+        <div className="hidden md:block">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
         </div>
-        <div className="p-2 border-t border-gray-100 hidden lg:block">
-          <button
-            onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
-            className="flex items-center gap-2 px-3 py-1.5 text-[12.5px] font-bold text-gray-500 hover:text-[#0E8B8D] w-full rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <Globe className="w-3.5 h-3.5" />
-            {language === 'el' ? 'English' : 'Ελληνικά'}
-          </button>
+      </div>
+      <div className="flex items-center space-x-3">
+        <div className="relative hidden lg:block">
+          <input
+            type="text"
+            value={searchValue}
+            onChange={e => setSearchValue(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+            placeholder={t('Αναζήτηση εκδηλώσεων...', 'Search events...')}
+            className="w-64 py-1.5 pl-8 pr-3 text-sm bg-gray-100 border-transparent rounded-md focus:bg-white focus:ring-1 focus:ring-cyan-500 outline-none"
+          />
+          <Search className="absolute w-4 h-4 text-gray-400 left-2.5 top-2" />
         </div>
-      </aside>
 
-      {/* Mobile Drawer */}
+        {/* Language Toggle */}
+        <button
+          onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
+          className="flex items-center gap-1 text-[11px] font-bold text-gray-500 hover:text-[#0E8B8D] transition-colors bg-gray-100 hover:bg-cyan-50 px-2.5 py-1.5 rounded-lg"
+          title={language === 'el' ? 'Switch to English' : 'Αλλαγή σε Ελληνικά'}
+        >
+          <Globe className="w-3.5 h-3.5" />
+          {language === 'el' ? 'EN' : 'EL'}
+        </button>
+
+        <NavLink to="/notifications" className="relative text-gray-500 hover:text-[#0E8B8D] transition-colors">
+          <Bell className="h-[18px] w-[18px]" />
+          {unreadNotificationCount > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#18D8DB] text-[9px] text-white font-bold border border-white">
+              {unreadNotificationCount}
+            </span>
+          )}
+        </NavLink>
+
+        <div className="flex items-center space-x-2">
+          {currentUser ? (
+            <NavLink to="/profile" className="flex items-center space-x-2 relative group">
+              <div className="hidden sm:flex flex-col items-end">
+                <span className="text-[10px] font-bold text-[#0E8B8D] uppercase tracking-wider">{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
+                <span className="text-[11px] font-bold text-[#111827]">{currentUser.name}</span>
+              </div>
+              <div className="w-[28px] h-[28px] rounded-full bg-cyan-100 border border-cyan-200 flex items-center justify-center text-[#0E8B8D] font-bold text-[10px] uppercase overflow-hidden">
+                {currentUser.photoUrl ? (
+                  <img src={currentUser.photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
+                ) : (
+                  currentUser.name.substring(0, 2)
+                )}
+              </div>
+            </NavLink>
+          ) : (
+            <button
+              onClick={() => navigate('/login')}
+              className="text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-700 px-3 py-1.5 rounded-full transition-colors"
+            >
+              {t('Σύνδεση', 'Login')}
+            </button>
+          )}
+        </div>
+
+        <button onClick={onMenuClick} className="text-gray-500 hover:text-[#111827] md:hidden">
+          <Menu className="h-[22px] w-[22px]" />
+        </button>
+      </div>
+    </nav>
+  );
+}
+
+// ─────────────────────────────────────────────
+// BottomNav
+// ─────────────────────────────────────────────
+export function BottomNav() {
+  const { t } = useLanguage();
+  return (
+    <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-gray-200 px-2 pb-4 pt-3 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50">
+      <NavLink
+        to="/"
+        className={({ isActive }) =>
+          cn('flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400 hover:text-[#0E8B8D]')
+        }
+      >
+        <Compass className="h-[18px] w-[18px]" strokeWidth={2.2} />
+        <span className="text-[8px] font-medium leading-none">{t('Ανακάλυψη', 'Discover')}</span>
+      </NavLink>
+      <NavLink
+        to="/plans"
+        className={({ isActive }) =>
+          cn('flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400 hover:text-[#0E8B8D]')
+        }
+      >
+        <CalendarCheck className="h-[18px] w-[18px]" strokeWidth={2.2} />
+        <span className="text-[8px] font-medium leading-none">{t('Σχέδια', 'Plans')}</span>
+      </NavLink>
+      <div className="flex flex-col items-center justify-center -mt-6">
+        <NavLink
+          to="/create"
+          className="bg-[#111827] text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-black transition-colors border-[3px] border-white"
+        >
+          <Plus className="h-[20px] w-[20px]" strokeWidth={2.5} />
+        </NavLink>
+        <span className="text-[8px] font-medium mt-1 text-gray-500">{t('Δημιουργία', 'Create')}</span>
+      </div>
+      <NavLink
+        to="/trust"
+        className={({ isActive }) =>
+          cn('flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400 hover:text-[#0E8B8D]')
+        }
+      >
+        <ShieldCheck className="h-[18px] w-[18px]" strokeWidth={2.2} />
+        <span className="text-[8px] font-medium leading-none">{t('Εμπιστοσύνη', 'Trust')}</span>
+      </NavLink>
+      <NavLink
+        to="/profile"
+        className={({ isActive }) =>
+          cn('flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400 hover:text-[#0E8B8D]')
+        }
+      >
+        <User className="h-[18px] w-[18px]" strokeWidth={2.2} />
+        <span className="text-[8px] font-medium leading-none">{t('Προφίλ', 'Profile')}</span>
+      </NavLink>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// AppShell
+// ─────────────────────────────────────────────
+export function AppShell({ children }: { children: ReactNode }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
+
+  return (
+    <div className="flex h-screen w-full bg-[#F3F4F6] text-[#111827] font-sans antialiased overflow-hidden select-none">
+      <SideNav />
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
-          <div className="relative w-64 max-w-[80vw] bg-white h-full shadow-xl flex flex-col z-50">
-            <div className="h-14 flex items-center justify-between px-5 border-b border-gray-100 shrink-0">
-              <NakamasLogo className="text-[25px]" />
+          <div className="relative w-64 max-w-sm bg-white h-full shadow-xl flex flex-col z-50">
+            <div className="h-14 flex items-center justify-between px-6 border-b border-[#E5E7EB] shrink-0">
+              <NakamasLogo className="text-[22px]" />
               <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-500 hover:text-[#111827]">
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto py-4 px-2" onClick={() => setIsMobileMenuOpen(false)}>
-              <NavLinks t={t} />
-            </div>
-            <div className="p-3 border-t border-gray-100">
-              <button
-                onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
-                className="flex items-center gap-2 px-3 py-1.5 text-[12.5px] font-bold text-gray-500 hover:text-[#0E8B8D] w-full rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <Globe className="w-3.5 h-3.5" />
-                {language === 'el' ? 'English' : 'Ελληνικά'}
-              </button>
+            <div className="flex-1 overflow-y-auto py-6 px-3" onClick={() => setIsMobileMenuOpen(false)}>
+              <NavLinks />
             </div>
           </div>
         </div>
       )}
-
-      {/* Right side: TopNav + Main + Footer + BottomNav */}
       <div className="flex flex-col flex-1 h-screen overflow-hidden">
-        {/* TopNav */}
-        <nav className="flex items-center justify-between px-4 lg:px-6 py-2.5 bg-white border-b border-gray-200 h-14 shrink-0 z-40">
-          <div className="flex items-center gap-4">
-            <div className="md:hidden">
-              <NakamasLogo className="text-[25px]" />
-            </div>
-            <div className="hidden md:block">
-              <span className="text-[11.2px] font-bold text-gray-400 uppercase tracking-widest">Dashboard</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {/* Search (desktop) */}
-            <div className="relative hidden lg:block">
-              <input
-                type="text"
-                value={searchValue}
-                onChange={e => setSearchValue(e.target.value)}
-                onKeyDown={handleSearchKeyDown}
-                placeholder={t(`Αναζήτηση εκδηλώσεων...`, `Search events...`)}
-                className="w-52 py-1.5 pl-7 pr-3 text-[13.8px] bg-gray-100 border-transparent rounded-lg focus:bg-white focus:ring-1 focus:ring-cyan-500 outline-none font-medium"
-              />
-              <Search className="absolute w-3.5 h-3.5 text-gray-400 left-2 top-2" />
-            </div>
-
-            {/* Language Toggle */}
-            <button
-              onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
-              className="flex items-center gap-1 text-[12.5px] font-bold text-gray-500 hover:text-[#0E8B8D] transition-colors bg-gray-100 hover:bg-cyan-50 px-2 py-1.5 rounded-lg"
-            >
-              <Globe className="w-3 h-3" />
-              {language === 'el' ? 'EN' : 'EL'}
-            </button>
-
-            {/* Notifications */}
-            <NavLink to="/notifications" className="relative text-gray-500 hover:text-[#0E8B8D] transition-colors p-1.5">
-              <Bell className="h-[16px] w-[16px]" />
-              {unreadNotificationCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#18D8DB] text-[10px] text-white font-bold border border-white">
-                  {unreadNotificationCount}
-                </span>
-              )}
-            </NavLink>
-
-            {/* User avatar */}
-            <NavLink to="/profile" className="flex items-center gap-2">
-              <div className="hidden sm:flex flex-col items-end">
-                <span className="text-[11.2px] font-bold text-[#0E8B8D] uppercase tracking-wider">{t(`Αξιόπιστο Μέλος`, `Trusted Member`)}</span>
-                <span className="text-[12.5px] font-bold text-[#111827]">{currentUser.name}</span>
-              </div>
-              <div className="w-7 h-7 rounded-full bg-cyan-100 border border-cyan-200 flex items-center justify-center text-[#0E8B8D] font-bold text-[11.2px] uppercase">
-                {currentUser.name.substring(0, 2)}
-              </div>
-            </NavLink>
-
-            {/* Mobile menu button */}
-            <button onClick={() => setIsMobileMenuOpen(true)} className="text-gray-500 hover:text-[#111827] md:hidden p-1">
-              <Menu className="h-5 w-5" />
-            </button>
-          </div>
-        </nav>
-
-        {/* Main Content — full width, no max-w constraint */}
+        <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
         <main className="flex-1 overflow-y-auto relative flex flex-col">
-          <div className="mx-auto w-full max-w-full p-4 lg:px-8 lg:py-6 flex-1 pb-24 md:pb-6">
+          <div className="mx-auto w-full max-w-full p-4 lg:px-12 lg:py-8 flex-1 flex flex-col">
             {children}
           </div>
         </main>
-
-        {/* Footer (desktop only) */}
-        <footer className="hidden md:flex h-7 px-6 bg-[#111827] text-[11.2px] text-gray-400 items-center justify-between shrink-0">
+        <footer className="hidden md:flex h-8 px-6 bg-[#111827] text-[10px] text-gray-400 items-center justify-between shrink-0">
           <div className="flex space-x-4">
             <span>Nakamas v1.0.5-beta</span>
             <span className="flex items-center">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5" />
-              {t(`Σύστημα Λειτουργικό`, `System Operational`)}
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2" />
+              {t('Σύστημα Λειτουργικό', 'System Operational')}
             </span>
           </div>
           <div className="hidden sm:flex space-x-4">
-            <a href="#" className="hover:text-white transition-colors">{t(`Πολιτική Απορρήτου`, `Privacy Policy`)}</a>
-            <a href="#" className="hover:text-white transition-colors">{t(`Αναφορά Προβλημάτων`, `Report Issues`)}</a>
+            <a href="#" className="hover:text-white transition-colors">{t('Πολιτική Απορρήτου', 'Privacy Policy')}</a>
+            <a href="#" className="hover:text-white transition-colors">{t('Αναφορά Προβλημάτων', 'Report Issues')}</a>
+            <a href="#" className="hover:text-white transition-colors">{t('Πώς λειτουργεί η αξιοπιστία', 'How trust works')}</a>
           </div>
         </footer>
-
-        {/* Mobile Bottom Nav with FAB */}
-        <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-gray-200 px-2 pb-[env(safe-area-inset-bottom)] pt-2 flex items-center justify-around shadow-[0_-2px_12px_rgba(0,0,0,0.04)] z-50">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              cn('flex flex-col items-center justify-center gap-0.5 transition-colors min-w-[52px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400')
-            }
-          >
-            <Compass className="h-[17px] w-[17px]" strokeWidth={2.2} />
-            <span className="text-[10px] font-medium leading-none">{t(`Ανακάλυψη`, `Discover`)}</span>
-          </NavLink>
-          <NavLink
-            to="/plans"
-            className={({ isActive }) =>
-              cn('flex flex-col items-center justify-center gap-0.5 transition-colors min-w-[52px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400')
-            }
-          >
-            <CalendarCheck className="h-[17px] w-[17px]" strokeWidth={2.2} />
-            <span className="text-[10px] font-medium leading-none">{t(`Σχέδια`, `Plans`)}</span>
-          </NavLink>
-          {/* FAB — Create */}
-          <div className="flex flex-col items-center justify-center -mt-5">
-            <NavLink
-              to="/create"
-              className="bg-[#111827] text-white w-9 h-9 rounded-full flex items-center justify-center shadow-lg hover:bg-black transition-colors border-[3px] border-white"
-            >
-              <Plus className="h-[18px] w-[18px]" strokeWidth={2.5} />
-            </NavLink>
-            <span className="text-[8.8px] font-medium mt-0.5 text-gray-500">{t(`Δημιουργία`, `Create`)}</span>
-          </div>
-          <NavLink
-            to="/trust"
-            className={({ isActive }) =>
-              cn('flex flex-col items-center justify-center gap-0.5 transition-colors min-w-[52px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400')
-            }
-          >
-            <ShieldCheck className="h-[17px] w-[17px]" strokeWidth={2.2} />
-            <span className="text-[10px] font-medium leading-none">{t(`Εμπιστοσύνη`, `Trust`)}</span>
-          </NavLink>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              cn('flex flex-col items-center justify-center gap-0.5 transition-colors min-w-[52px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400')
-            }
-          >
-            <User className="h-[17px] w-[17px]" strokeWidth={2.2} />
-            <span className="text-[10px] font-medium leading-none">{t(`Προφίλ`, `Profile`)}</span>
-          </NavLink>
-        </div>
+        <BottomNav />
       </div>
     </div>
   );

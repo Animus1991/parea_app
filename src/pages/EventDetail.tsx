@@ -1,115 +1,170 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { mockEvents } from '../data/mockEvents';
-import { mockGroups } from '../data/mockGroups';
-import { mockUsers } from '../data/mockUsers';
+import { QRCodeSVG } from 'qrcode.react';
+import { motion } from 'motion/react';
+import { useStore } from '../store';
+import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
-import { EventDetailSkeleton } from '../components/common/Skeleton';
-import { Calendar, MapPin, Users, ShieldCheck, Clock, Share, Bookmark, CheckCircle, Hash, ExternalLink, QrCode, X, Image as ImageIcon, Star, CloudSun, ThumbsUp, Zap } from 'lucide-react';
+import { Skeleton, EventDetailSkeleton } from '../components/common/Skeleton';
+import { Calendar, MapPin, Users, Ticket, ShieldCheck, Clock, CheckCircle, AlertTriangle, Share, Bookmark, Hash, ExternalLink, Maximize, Minimize, QrCode, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { el as elLocale } from 'date-fns/locale';
-import { QRCodeSVG } from 'qrcode.react';
+import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
+import { ErrorBoundary } from '../components/common/ErrorBoundary';
 import { useLanguage } from '../lib/i18n';
 
-function GroupCard({ group, event, navigate, t }: { group: any; event: any; navigate: any; t: any; key?: any }) {
+function Group({ group, event, navigate }: { group: any; event: any; navigate: any; key?: any }) {
+  const { t } = useLanguage();
+  const users = useStore((state) => state.users);
   const spotsLeft = group.targetSize - group.members.length;
   const isDiscountEligible = event.groupDiscount && group.targetSize >= event.groupDiscount.minSize;
-  const discountUnlocked = event.groupDiscount && group.members.length >= event.groupDiscount.minSize;
+  const discountUnlockedTemp = event.groupDiscount && group.members.length >= event.groupDiscount.minSize;
   const membersNeededForDiscount = event.groupDiscount ? Math.max(0, event.groupDiscount.minSize - group.members.length) : 0;
+  
   const hostId = group.hostId || group.members[0];
-  const groupHost = mockUsers.find((u: any) => u.id === hostId);
-
+  const groupHost = users.find(u => u.id === hostId);
+  
   return (
-    <div
-      className="group relative rounded-xl border border-gray-200 bg-white p-3.5 shadow-sm hover:border-cyan-200 hover:shadow-md transition-all cursor-pointer overflow-hidden"
-      onClick={() => navigate(`/events/${event.id}/join`)}
+    <div 
+      className="group relative rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-cyan-300 hover:shadow-md transition-all cursor-pointer overflow-hidden mt-2" 
+      onClick={() => navigate(`/events/${event.id}/join?groupId=${group.id}`)}
     >
-      <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-cyan-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-      {discountUnlocked && event.groupDiscount && (
-        <div className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[11.2px] font-bold px-2 py-0.5 rounded-bl-lg shadow-sm flex items-center gap-1 uppercase z-10">
-          <CheckCircle className="h-2.5 w-2.5" /> -{event.groupDiscount.percentage}%
+      <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-cyan-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      
+      {(group.discountUnlocked || discountUnlockedTemp) && event.groupDiscount && (
+        <div className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-sm flex items-center gap-1 uppercase z-10 w-fit">
+           <CheckCircle className="h-3 w-3" /> {event.groupDiscount.percentage}% {t('ΕΚΠΤΩΣΗ ΕΝΕΡΓΟΠΟΙΗΘΗΚΕ', 'OFF ACTIVATED')}
         </div>
       )}
-
-      <div className="flex justify-between items-start mb-2">
+      
+      <div className="flex justify-between items-start mb-3 mt-1">
         <div>
-          <div className="flex items-center gap-1.5 text-[12.5px] font-bold text-gray-500 uppercase tracking-wider mb-1">
-            <Users className="h-3 w-3" />
-            {t(`Ομάδα`, `Group`)} #{group.id.replace('g', '')}
+          <div className="flex items-center gap-1.5 text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+            <Users className="h-3.5 w-3.5" />
+            {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
           </div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-[20px] font-bold text-gray-900">{group.members.length}</span>
-            <span className="text-[12.5px] font-medium text-gray-500">/ {group.targetSize} {t(`μέλη`, `members`)}</span>
+          <h4 className="text-[13px] font-bold text-gray-900 mb-0.5 line-clamp-1">{event.title}</h4>
+          <span className="text-[9px] tracking-widest font-bold text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded-full uppercase mb-2 inline-block shadow-sm">
+            {event.category}
+          </span>
+          <div className="flex items-baseline gap-1 mt-1">
+             <span className="text-lg font-bold text-gray-900">{group.members.length}</span>
+             <span className="text-xs font-medium text-gray-500">/ {group.targetSize} {t('μέλη', 'members')}</span>
           </div>
         </div>
-        <div className="flex flex-col items-end gap-1.5">
-          <Badge variant={spotsLeft <= 2 ? 'warning' : 'outline'} className={spotsLeft <= 2 ? 'font-bold text-[11.2px]' : 'text-[11.2px]'}>
-            {spotsLeft} {t(`θέσεις`, `spots`)}
+        
+        <div className="flex flex-col items-end gap-2">
+          <Badge variant={spotsLeft <= 2 ? 'warning' : 'outline'} className={spotsLeft <= 2 ? "font-bold animate-pulse shadow-sm" : ""}>
+            {spotsLeft === 1 ? t('1 Θέση!', '1 Spot!') : spotsLeft + t(' Θέσεις', ' Spots')}
           </Badge>
+          
           {groupHost && (
-            <div className="flex items-center gap-1.5">
-              <img referrerPolicy="no-referrer" src={groupHost.photoUrl} alt={groupHost.name} className="w-5 h-5 rounded-full object-cover border border-gray-200" />
-              <span className="text-[11.2px] font-bold text-gray-400 uppercase">Host</span>
+            <div className="flex flex-col items-end mr-1 mt-1" title={t(`Οργανώθηκε από $${groupHost.name} ($${groupHost.trustTier})`, `Organized by $${groupHost.name} ($${groupHost.trustTier})`)}>
+              <div className="relative">
+                <div className="h-8 w-8 rounded-full bg-gray-200 overflow-hidden shrink-0 border border-gray-200">
+                   {groupHost.photoUrl ? (
+                     <img referrerPolicy="no-referrer" src={groupHost.photoUrl} alt={groupHost.name} className="h-full w-full object-cover" />
+                   ) : (
+                     <div className="h-full w-full flex items-center justify-center bg-cyan-100 text-cyan-700 font-bold uppercase text-xs">
+                        {groupHost.name.charAt(0)}
+                     </div>
+                   )}
+                </div>
+                {groupHost.trustTier === '3_high_trust' ? (
+                   <div className="absolute -bottom-1 -right-1 bg-emerald-100 rounded-full p-0.5 border border-white">
+                      <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                   </div>
+                ) : groupHost.trustTier === '2_confirmed' ? (
+                   <div className="absolute -bottom-1 -right-1 bg-blue-100 rounded-full p-0.5 border border-white">
+                      <CheckCircle className="w-3 h-3 text-blue-600" />
+                   </div>
+                ) : null}
+              </div>
+              <span className="text-[9px] font-bold text-gray-500 uppercase mt-1">{t('Οικοδεσποτης', 'Host')}</span>
             </div>
           )}
         </div>
       </div>
-
-      {isDiscountEligible && !discountUnlocked && (
-        <div className="bg-amber-50/80 border border-amber-200/50 p-2 rounded-lg mb-2">
-          <div className="flex justify-between items-center mb-1">
-            <p className="text-[11.2px] text-amber-800 font-bold uppercase tracking-wider">{t(`Πρόοδος Έκπτωσης`, `Discount Progress`)}</p>
-            <span className="text-[11.2px] font-bold text-amber-700 bg-amber-100 px-1 py-0.5 rounded">-{event.groupDiscount.percentage}%</span>
+      
+      {isDiscountEligible && !discountUnlockedTemp && (
+        <div className="bg-amber-50/80 border border-amber-200/50 p-2.5 rounded-lg mb-4">
+          <div className="flex justify-between items-center mb-1.5">
+            <p className="text-[10px] text-amber-800 font-bold uppercase tracking-wider">
+              {t('Πρόοδος Έκπτωσης', 'Discount Progress')}
+            </p>
+            <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">-{event.groupDiscount.percentage}%</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-1.5 flex-1 bg-amber-200/50 rounded-full overflow-hidden">
-              <div className="h-full bg-amber-500 rounded-full" style={{ width: `${(group.members.length / event.groupDiscount.minSize) * 100}%` }} />
+            <div className="h-2 flex-1 bg-amber-200/50 rounded-full overflow-hidden">
+               <div className="h-full bg-amber-500 rounded-full" style={{ width: `${(group.members.length / event.groupDiscount.minSize) * 100}%` }}></div>
             </div>
-            <span className="text-[11.2px] font-bold text-amber-700">{membersNeededForDiscount} {t(`ακόμη`, `more`)}</span>
+            <span className="text-[10px] font-bold text-amber-700">{membersNeededForDiscount} {t('ακόμα', 'more')}</span>
           </div>
         </div>
       )}
+      
+      {!isDiscountEligible && (
+         <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-4 bg-gray-50 p-2 rounded-md border border-gray-100">
+           <ShieldCheck className="h-4 w-4 text-gray-400" />
+           <span className="font-medium">{t('Μικρή & ιδιωτική ομάδα', 'Small & private group')}</span>
+         </div>
+      )}
 
-      <Button
-        variant="primary"
-        size="sm"
-        className="w-full mt-2 text-[12.5px]"
-        onClick={(e: React.MouseEvent) => { e.stopPropagation(); navigate(`/events/${event.id}/join`); }}
+      <Button 
+        variant="primary" 
+        size="sm" 
+        className="w-full bg-cyan-50 text-cyan-700 border border-cyan-100 hover:bg-cyan-600 hover:text-white transition-colors group-hover:bg-cyan-600 group-hover:text-white font-semibold shadow-sm"
+        onClick={(e) => { e.stopPropagation(); navigate(`/events/${event.id}/join`); }}
       >
-        {t(`Προβολή & Συμμετοχή`, `View & Join`)}
+        {t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
       </Button>
     </div>
   );
 }
 
 export default function EventDetail() {
-  const { t } = useLanguage();
-  const { eventId: id } = useParams<{ eventId: string }>();
+  const { eventId } = useParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaved, setIsSaved] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
   const [groupSizeFilter, setGroupSizeFilter] = useState<'All' | '3' | '4' | '5' | '6+'>('All');
-
+  const [discountFilter, setDiscountFilter] = useState(false);
+  const [isMapFullscreen, setIsMapFullscreen] = useState(false);
+  
+  const events = useStore((state) => state.events);
+  const groups = useStore((state) => state.groups);
+  const users = useStore((state) => state.users);
+  const currentUser = useStore((state) => state.currentUser);
+  
   useEffect(() => {
     setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 700);
+    const timer = setTimeout(() => setIsLoading(false), 800);
     return () => clearTimeout(timer);
-  }, [id]);
+  }, [eventId]);
 
-  const event = mockEvents.find(e => e.id === id);
-
-  let eventGroups = mockGroups
-    .filter(g => g.eventId === id)
+  const event = events.find(e => e.id === eventId);
+  
+  let eventGroups = groups
+    .filter(g => g.eventId === eventId)
     .sort((a, b) => {
+      if (event?.isPaid && event?.groupDiscount) {
+         if (a.discountUnlocked && !b.discountUnlocked) return -1;
+         if (!a.discountUnlocked && b.discountUnlocked) return 1;
+      }
       const aSpotsLeft = a.targetSize - a.members.length;
       const bSpotsLeft = b.targetSize - b.members.length;
       return aSpotsLeft - bSpotsLeft;
     });
 
+  const totalMembers = eventGroups.reduce((acc, g) => acc + g.members.length, 0);
+  const spotsLeftEvent = (event?.maxParticipants || 100) - totalMembers;
+
+  if (discountFilter) {
+    eventGroups = eventGroups.filter(g => g.discountUnlocked);
+  }
   if (groupSizeFilter !== 'All') {
     if (groupSizeFilter === '6+') {
       eventGroups = eventGroups.filter(g => g.targetSize >= 6);
@@ -118,7 +173,7 @@ export default function EventDetail() {
     }
   }
 
-  const organizer = event ? mockUsers.find(u => u.id === event.organizerId) : null;
+  const organizer = event ? users.find(u => u.id === event.organizerId) : null;
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -128,13 +183,23 @@ export default function EventDetail() {
 
   const handleAddToCalendar = () => {
     if (!event) return;
+    
+    let startDate = '';
+    let endDate = '';
+    
     try {
       const d = new Date(`${event.date}T${event.time}`);
+      
+      // Format as local time (no 'Z' suffix) so the ICS DTSTART is a floating
+      // time — calendar apps will interpret it in the user's local timezone,
+      // avoiding the UTC-conversion offset bug for Greek users (UTC+2/+3).
       const pad = (n: number) => n.toString().padStart(2, '0');
       const toLocalICS = (dt: Date) =>
         `${dt.getFullYear()}${pad(dt.getMonth() + 1)}${pad(dt.getDate())}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`;
-      const startDate = toLocalICS(d);
-      let addMinutes = 60;
+
+      startDate = toLocalICS(d);
+
+      let addMinutes = 60; // Default 1 hr
       if (event.duration) {
         let parsedMins = 0;
         const hMatch = event.duration.match(/(\d+)h/);
@@ -143,390 +208,441 @@ export default function EventDetail() {
         if (mMatch) parsedMins += parseInt(mMatch[1]);
         if (parsedMins > 0) addMinutes = parsedMins;
       }
+      
       const endD = new Date(d.getTime() + addMinutes * 60000);
-      const endDate = toLocalICS(endD);
-      const title = event.title || 'Parea Event';
-      const description = event.description || '';
-      const location = event.locationArea || '';
-      const icsContent = [
-        'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Parea App//EN', 'BEGIN:VEVENT',
-        `DTSTART:${startDate}`, `DTEND:${endDate}`, `SUMMARY:${title}`,
-        `DESCRIPTION:${description}`, `LOCATION:${location}`, 'END:VEVENT', 'END:VCALENDAR',
-      ].join('\n');
-      const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ics`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(url), 100);
-    } catch (e) {
-      console.error('Invalid date', e);
+      endDate = toLocalICS(endD);
+    } catch(e) {
+       console.error("Invalid date", e);
+       return;
     }
+
+    const title = event.title || 'Parea Event';
+    const description = event.description || '';
+    const location = event.locationArea || '';
+
+    const icsContent = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Parea App//EN",
+      "BEGIN:VEVENT",
+      `DTSTART:${startDate}`,
+      `DTEND:${endDate}`,
+      `SUMMARY:${title}`,
+      `DESCRIPTION:${description}`,
+      `LOCATION:${location}`,
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join('\n');
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ics`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
   };
 
-  if (isLoading) return <EventDetailSkeleton />;
-  if (!event) return (
-    <div className="text-center py-16">
-      <h2 className="text-[20px] font-bold text-gray-700">{t(`Δεν βρέθηκε η εκδήλωση`, `Event not found`)}</h2>
-      <Button variant="outline" className="mt-4" onClick={() => navigate('/')}>{t(`Επιστροφή`, `Go back`)}</Button>
-    </div>
-  );
+  const handleSave = () => {
+    setIsSaved(!isSaved);
+  };
 
-  const totalMembers = eventGroups.reduce((acc, g) => acc + g.members.length, 0);
-  const spotsLeftEvent = (event.maxParticipants || 100) - totalMembers;
+  // Safely get API key
+  const apiKey = (import.meta as any).env?.VITE_GOOGLE_MAPS_PLATFORM_KEY || '';
+  
+  if (isLoading) {
+    return <EventDetailSkeleton />;
+  }
+
+  if (!event) return <div className="p-8 text-center text-gray-500 font-medium">{t('Η εκδήλωση δεν βρέθηκε', 'Event not found')}</div>;
 
   return (
-    <div className="space-y-6 pb-24 md:pb-6">
-      {/* Header actions */}
-      <div className="flex justify-between items-center">
-        <button onClick={() => navigate(-1)} className="text-[12.5px] font-bold uppercase tracking-wider text-gray-500 hover:text-[#111827]">
-          &larr; {t(`Πίσω`, `Back`)}
-        </button>
-        <div className="flex gap-1.5 flex-wrap justify-end">
-          <button
-            onClick={() => setIsSaved(!isSaved)}
-            className={`flex items-center gap-1.5 text-[11.2px] font-bold uppercase tracking-wider transition-colors px-2.5 py-1 rounded-full ${isSaved ? 'text-cyan-800 bg-cyan-100' : 'text-gray-600 bg-gray-50 hover:bg-gray-100'}`}
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="mx-auto max-w-full space-y-8 pb-24 md:pb-8"
+    >
+      {/* Header */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <button 
+            onClick={() => navigate(-1)}
+            className="text-[10px] font-bold uppercase tracking-wider text-gray-500 hover:text-[#111827]"
           >
-            <Bookmark className={`h-3 w-3 ${isSaved ? 'fill-current' : ''}`} />
-            {isSaved ? t(`Αποθηκ.`, `Saved`) : t(`Αποθήκευση`, `Save`)}
+            &larr; {t('Επιστροφή στην Ανακάλυψη', 'Back to Discover')}
           </button>
-          <button onClick={() => setShowQRCode(true)} className="flex items-center gap-1.5 text-[11.2px] font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-full hover:bg-cyan-100 transition-colors">
-            <QrCode className="h-3 w-3" /> QR
-          </button>
-          <button onClick={handleShare} className="flex items-center gap-1.5 text-[11.2px] font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-full hover:bg-cyan-100 transition-colors">
-            <Share className="h-3 w-3" />
-            {isCopied ? t(`Αντιγράφηκε!`, `Copied!`) : t(`Κοινοποίηση`, `Share`)}
-          </button>
-          <button onClick={handleAddToCalendar} className="flex items-center gap-1.5 text-[11.2px] font-bold uppercase tracking-wider text-gray-600 bg-gray-50 px-2.5 py-1 rounded-full hover:bg-gray-100 transition-colors">
-            <Calendar className="h-3 w-3" />
-            {t(`Ημερολόγιο`, `Calendar`)}
-          </button>
-        </div>
-      </div>
-
-      {/* Badges */}
-      <div className="flex flex-wrap gap-1.5">
-        <Badge variant="neutral">{event.category}</Badge>
-        {event.isPaid ? <Badge variant="outline">€{event.price}</Badge> : <Badge variant="outline">{t(`Δωρεάν`, `Free`)}</Badge>}
-        {event.groupDiscount && (
-          <Badge variant="success">
-            <CheckCircle className="h-3 w-3 mr-0.5" />-{event.groupDiscount.percentage}% {t(`για`, `for`)} {event.groupDiscount.minSize}+
-          </Badge>
-        )}
-        {event.minTrustTierAccess === '3_high_trust' && (
-          <Badge variant="outline" className="text-cyan-700 bg-cyan-50 border-cyan-100">
-            <ShieldCheck className="h-3 w-3 mr-0.5" />{t(`Επαληθευμένη Πρόσβαση`, `Verified Access`)}
-          </Badge>
-        )}
-      </div>
-
-      <h1 className="text-[25px] md:text-[30px] font-extrabold text-[#111827] leading-tight">{event.title}</h1>
-
-      {/* Urgency & Social Proof */}
-      <div className="flex flex-wrap gap-2 items-center">
-        <div className="flex items-center gap-1.5 bg-red-50 border border-red-100 px-2.5 py-1 rounded-full">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-          </span>
-          <span className="text-[11.2px] font-bold text-red-700">{t(`12 κοιτάνε τώρα`, `12 viewing now`)}</span>
-        </div>
-        <div className="flex items-center gap-1.5 bg-purple-50 border border-purple-100 px-2.5 py-1 rounded-full">
-          <div className="flex -space-x-1">
-            <img src="https://i.pravatar.cc/16?u=f1" className="w-4 h-4 rounded-full border border-white" alt="" />
-            <img src="https://i.pravatar.cc/16?u=f2" className="w-4 h-4 rounded-full border border-white" alt="" />
+          
+          <div className="flex gap-2 flex-wrap justify-end">
+            <button 
+              onClick={handleSave}
+              className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider transition-colors px-3 py-1 rounded-full ${isSaved ? 'text-cyan-800 bg-cyan-100' : 'text-gray-600 hover:text-cyan-600 bg-gray-50 hover:bg-gray-100'}`}
+            >
+              <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} />
+              {isSaved ? t("Αποθηκεύτηκε", "Saved") : t("Αποθήκευση Εκδήλωσης", "Save Event")}
+            </button>
+            <button 
+              onClick={() => setShowQRCode(true)}
+              className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-cyan-600 hover:text-cyan-800 transition-colors bg-cyan-50 px-3 py-1.5 rounded-full"
+            >
+              <QrCode className="h-3.5 w-3.5" />
+              {t('Κωδικός QR', 'QR Code')}
+            </button>
+            <button 
+              onClick={handleShare}
+              className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-cyan-600 hover:text-cyan-800 transition-colors bg-cyan-50 px-3 py-1.5 rounded-full"
+            >
+              <Share className="h-3.5 w-3.5" />
+              {isCopied ? t("Αντιγράφηκε!", "Link Copied!") : t("Κοινοποίηση", "Share Event")}
+            </button>
+            <button 
+              onClick={handleAddToCalendar}
+              className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-gray-600 hover:text-cyan-600 transition-colors bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-full"
+            >
+              <Calendar className="h-3.5 w-3.5" />
+              {t('Προσθήκη στο Ημερολόγιο', 'Add to Calendar')}
+            </button>
           </div>
-          <span className="text-[11.2px] font-bold text-purple-700">{t(`2 φίλοι ενδιαφέρονται`, `2 friends interested`)}</span>
         </div>
-        <div className="flex items-center gap-1.5 text-[11.2px] font-medium text-gray-400">
-          <ThumbsUp className="w-3 h-3" /> 47 {t(`κοινοποιήσεις`, `shares`)}
+        
+        <div className="relative w-full h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden shadow-sm">
+          <motion.img 
+            layoutId={`event-image-${event.id}`}
+            referrerPolicy="no-referrer"
+            src={event.imageUrl || 'https://picsum.photos/seed/eventdefault/800/600'} 
+            alt={event.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         </div>
+        
+        <div className="flex flex-wrap gap-2 mt-4">
+          <Badge variant="neutral">{event.category}</Badge>
+          {event.isPaid ? (
+            <Badge variant="outline" icon={<Ticket className="h-3 w-3" />}>€{event.price}</Badge>
+          ) : (
+            <Badge variant="outline">{t('Δωρεάν', 'Free')}</Badge>
+          )}
+          {event.groupDiscount && (
+             <Badge variant="success" icon={<CheckCircle className="h-3 w-3" />}>
+               -{event.groupDiscount.percentage}% {t('έκπτωση για', 'off for')} {event.groupDiscount.minSize}+ {t('άτομα', 'people')}
+             </Badge>
+          )}
+          {event.minTrustTierAccess === '3_high_trust' && (
+            <Badge variant="outline" className="text-cyan-700 font-bold bg-cyan-50 border-cyan-100" icon={<ShieldCheck className="h-3 w-3" />}>{t('Πρόσβαση με Επαλήθευση', 'Verified Access')}</Badge>
+          )}
+          
+          {/* Match Score Badge based on User Interests */}
+          {event.tags && event.tags.length > 0 && (
+            <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700 font-bold" icon={<span className="text-[10px]">🔥</span>}>
+              {Math.min(98, Math.max(15, Math.round((currentUser.interests.filter(i => (event.tags ?? []).includes(i)).length / (event.tags ?? [1]).length) * 100) + 40))}% {t('Ταίριασμα', 'Match')}
+            </Badge>
+          )}
+        </div>
+        <h1 className="text-xl md:text-2xl font-extrabold text-[#111827] leading-tight mb-2 md:mb-0">{event.title}</h1>
       </div>
 
-      {/* 2-col layout */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        {/* Left — details */}
-        <div className="space-y-5 md:col-span-3">
-          <section className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-1 text-gray-500 font-bold uppercase tracking-widest text-[11.2px]">
-                  <Calendar className="h-3 w-3" /> {t(`Ημερομηνία`, `Date`)}
+      <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-5 lg:grid-cols-3">
+        {/* Left Column: Details */}
+        <div className="space-y-6 md:space-y-8 md:col-span-3 lg:col-span-2">
+          <section className="space-y-4 text-[13px] text-[#111827] leading-relaxed bg-white rounded-xl border border-gray-200 p-5 md:p-6 shadow-sm">
+             <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 text-gray-500 font-bold uppercase tracking-widest text-[10px]">
+                    <Calendar className="h-3.5 w-3.5" /> {t('Ημερομηνία', 'Date')}
+                  </div>
+                  <p className="font-medium text-[13px]">{format(parseISO(event.date), 'EEEE, MMMM d, yyyy')}</p>
                 </div>
-                <p className="font-medium text-[15px]">{format(parseISO(event.date), 'EEEE, d MMMM yyyy', { locale: elLocale })}</p>
-              </div>
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-1 text-gray-500 font-bold uppercase tracking-widest text-[11.2px]">
-                  <Clock className="h-3 w-3" /> {t(`Ώρα`, `Time`)}
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 text-gray-500 font-bold uppercase tracking-widest text-[10px]">
+                    <Clock className="h-3.5 w-3.5" /> {t('Ώρα', 'Time')}
+                  </div>
+                  <p className="font-medium text-[13px]">{event.time} ({event.duration})</p>
+                  <p className="text-[11px] text-gray-400 mt-0.5 font-medium">{event.timeZone || t('Τοπική Ώρα', 'Local Time')}</p>
                 </div>
-                <p className="font-medium text-[14.85px]">{event.time} ({event.duration})</p>
-              </div>
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-1 text-gray-500 font-bold uppercase tracking-widest text-[11.2px]">
-                  <MapPin className="h-3 w-3" /> {t(`Τοποθεσία`, `Location`)}
-                </div>
-                <p className="font-medium text-[15px]">{event.locationArea}</p>
-                <p className="text-[12.5px] text-gray-400">{t(`Ακριβές σημείο μετά την επιβεβαίωση.`, `Exact point revealed upon confirmation.`)}</p>
-              </div>
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-1 text-gray-500 font-bold uppercase tracking-widest text-[11.2px]">
-                  <ShieldCheck className="h-3 w-3" /> {t(`Κανόνες`, `Rules`)}
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <p className="font-medium text-[15px] capitalize">{event.minTrustTierAccess?.split('_')[1] || 'basic'}</p>
-                  <Link to="/trust" className="text-[12.5px] text-cyan-600 font-bold underline">{t(`Γιατί;`, `Why?`)}</Link>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-gray-100">
-              <h3 className="text-[12.5px] font-bold text-[#111827] mb-1.5 uppercase tracking-widest">{t(`Σχετικά με την εμπειρία`, `About the experience`)}</h3>
-              <p className="text-[15px] text-gray-600 leading-relaxed font-medium">{event.description}</p>
-              {event.externalLink && (
-                <a href={event.externalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 text-[12.5px] font-bold uppercase tracking-wider rounded-lg">
-                  <ExternalLink className="w-3 h-3" /> {t(`Επίσημη Σελίδα`, `Official Page`)}
-                </a>
-              )}
-              {event.tags && event.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-gray-100">
-                  {event.tags.map((tag: string) => (
-                    <Badge key={tag} variant="neutral" className="bg-gray-100 text-gray-600 text-[12.5px] cursor-pointer hover:bg-gray-200" onClick={() => navigate(`/?search=${tag}`)}>
-                      <Hash className="h-3 w-3 mr-0.5 text-gray-400" />{tag}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Organizer */}
-            {organizer && (
-              <div className="pt-4 border-t border-gray-100">
-                <h3 className="text-[12.5px] font-bold text-[#111827] mb-2 uppercase tracking-widest">{t(`Διοργανωτής`, `Organizer`)}</h3>
-                <div className="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-white shadow-sm hover:border-cyan-200 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <img referrerPolicy="no-referrer" src={organizer.photoUrl || `https://i.pravatar.cc/150?u=${organizer.id}`} alt={organizer.name} className="w-10 h-10 rounded-full object-cover border-2 border-white ring-2 ring-gray-100" />
-                    <div>
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <Link to="/profile" className="text-[15px] font-bold text-[#111827] hover:text-cyan-600 transition-colors">{organizer.name}</Link>
-                        <Badge variant="outline" className="text-[10px] py-0 px-1 shadow-none bg-green-50 text-green-700 border-green-200">
-                          {organizer.reliabilityScore}%
-                        </Badge>
-                      </div>
-                      <p className="text-[12.5px] text-gray-500 font-medium">{organizer.bio || t(`Επαληθευμένος Διοργανωτής`, `Verified Organizer`)}</p>
+                <div className="space-y-3 col-span-2 sm:col-span-1">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-gray-500 font-bold uppercase tracking-widest text-[10px]">
+                      <MapPin className="h-3.5 w-3.5" /> {t('Τοποθεσία', 'Location')}
                     </div>
+                    <p className="font-medium text-[13px]">{event.locationArea}</p>
+                    <p className="text-[11px] text-gray-400 mt-0.5">{t('Το ακριβές σημείο συνάντησης εμφανίζεται μετά την επιβεβαίωση.', 'Exact meeting point revealed upon confirmation.')}</p>
                   </div>
-                  <Button variant="outline" size="sm" className="hidden sm:flex text-[11.2px]" onClick={() => navigate('/profile')}>
-                    {t(`Προφίλ`, `Profile`)}
-                  </Button>
                 </div>
-              </div>
-            )}
+                 <div className="space-y-1 col-span-2 sm:col-span-1">
+                  <div className="flex items-center gap-1.5 text-gray-500 font-bold uppercase tracking-widest text-[10px]">
+                    <ShieldCheck className="h-3.5 w-3.5" /> {t('Κανόνες Συμμετοχής', 'Participation Rules')}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-[13px] capitalize">{event.minTrustTierAccess === '3_high_trust' ? t('απαιτείται επαληθευμένος λογαριασμός', 'verified account required') : event.minTrustTierAccess.split('_')[1].replace('high', 'verified') + ' account required'}</p>
+                    <Link to="/trust" className="text-[11px] text-cyan-600 font-bold underline">{t('Γιατί;', 'Why?')}</Link>
+                  </div>
+                </div>
+             </div>
 
-            {/* Hiking/outdoor details */}
-            {(event.category === 'Hiking' || event.category === 'Nearby escapes') && (
-              <div className="pt-4 border-t border-gray-100">
-                <h3 className="text-[12.5px] font-bold text-[#111827] mb-2 uppercase tracking-widest">{t(`Λεπτομέρειες Περιπέτειας`, `Adventure Details`)}</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-emerald-50/50 border border-emerald-100 p-3 rounded-xl">
-                    <div className="text-[11.2px] uppercase font-bold text-emerald-700 mb-0.5 tracking-wider">{t(`Δυσκολία`, `Difficulty`)}</div>
-                    <div className="text-[13.8px] font-bold text-gray-900">{event.category === 'Hiking' ? t(`Μέτρια`, `Moderate`) : t(`Εύκολη`, `Easy`)}</div>
-                  </div>
-                  <div className="bg-amber-50/50 border border-amber-100 p-3 rounded-xl">
-                    <div className="text-[11.2px] uppercase font-bold text-amber-700 mb-0.5 tracking-wider">{t(`Εξοπλισμός`, `Equipment`)}</div>
-                    <div className="text-[13.8px] font-bold text-gray-900">{event.category === 'Hiking' ? t(`Ορειβατικά παπούτσια`, `Hiking boots`) : t(`Κοινά έξοδα`, `Shared expenses`)}</div>
-                  </div>
-                </div>
-              </div>
-            )}
+             <div className={`${isMapFullscreen ? 'fixed !inset-0 !z-[9999] bg-black !m-0 rounded-none !h-[100dvh]' : 'mt-6 w-full h-64 sm:h-80 rounded-lg'} bg-gray-100 overflow-hidden relative border border-gray-200 transition-all duration-300`}>
+                  <button 
+                    onClick={() => setIsMapFullscreen(!isMapFullscreen)}
+                    className="absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur rounded-lg shadow-md text-gray-700 hover:text-cyan-600 transition-colors"
+                  >
+                    {isMapFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+                  </button>
+                  {apiKey ? (
+                    <ErrorBoundary fallback={
+                      <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] p-4 text-center">
+                        <div className="bg-white p-3 rounded-lg shadow-sm border border-red-100">
+                          <AlertTriangle className="w-6 h-6 text-red-500 mx-auto mb-2" />
+                          <p className="text-[10px] text-gray-600">{t('Ο χάρτης δεν είναι διαθέσιμος. Παρακαλώ ελέγξτε το API key.', 'Map unavailable. Please check API key.')}</p>
+                        </div>
+                      </div>
+                    }>
+                      <APIProvider apiKey={apiKey} version="weekly">
+                        <Map
+                          defaultCenter={{ lat: event.lat || 37.9838, lng: event.lng || 23.7275 }}
+                          defaultZoom={15}
+                          mapId="DEMO_MAP_ID"
+                          internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
+                          style={{ width: '100%', height: '100%' }}
+                          disableDefaultUI={true}
+                        >
+                          <AdvancedMarker position={{ lat: event.lat || 37.9838, lng: event.lng || 23.7275 }} zIndex={100}>
+                            <Pin background="#4f46e5" borderColor="#312e81" glyphColor="#fff" />
+                          </AdvancedMarker>
+                        </Map>
+                      </APIProvider>
+                    </ErrorBoundary>
+                  ) : (
+                    <div className="w-full h-full bg-[#e5e3df] relative flex items-center justify-center overflow-hidden">
+                       <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10h80v80h-80z' stroke='%23000' stroke-width='1' fill='none'/%3E%3C/svg%3E")`, backgroundSize: '100px 100px' }} />
+                       <div className="w-24 h-24 sm:w-32 sm:h-32 bg-cyan-600/10 rounded-full flex items-center justify-center animate-pulse relative z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                         <div className="w-4 h-4 bg-cyan-600 rounded-full border-2 border-white shadow-md"></div>
+                       </div>
+                       <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur text-gray-500 text-[10px] px-2 py-1 rounded shadow-sm">{t('Ενεργή Προεπισκόπηση Χάρτη', 'Map Preview Active')}</div>
+                    </div>
+                  )}
+             </div>
+             
+             <div className="pt-5 border-t border-gray-200 mt-5">
+               <h3 className="text-[11px] font-bold text-[#111827] mb-2 uppercase tracking-widest">{t('Πληροφορίες για την εμπειρία', 'About the experience')}</h3>
+               <p className="text-[13px] text-gray-600 leading-relaxed font-medium">{event.description}</p>
+               
+               {event.externalLink && (
+                 <div className="mt-4 pt-1">
+                   <a href={event.externalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 hover:text-cyan-600 hover:border-cyan-200 transition-colors shadow-sm text-xs font-bold uppercase tracking-wider rounded-lg w-full sm:w-auto justify-center">
+                     <ExternalLink className="w-3.5 h-3.5" />
+                     {t('Επίσημη Σελίδα Εκδήλωσης', 'Official Event Page')}
+                   </a>
+                 </div>
+               )}
+
+               {event.tags && event.tags.length > 0 && (
+                 <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
+                   {event.tags.map((tag: string) => (
+                     <Badge key={tag} variant="neutral" className="bg-gray-100 text-gray-600 hover:bg-gray-200 shadow-none border border-gray-200/60 px-3 py-1 text-xs cursor-pointer transition-colors" onClick={() => navigate(`/?search=${tag}`)}>
+                       <Hash className="h-3.5 w-3.5 mr-0.5 text-gray-400" />
+                       {tag}
+                     </Badge>
+                   ))}
+                 </div>
+               )}
+             </div>
+             
+             {organizer && (
+               <div className="pt-5 border-t border-gray-200 mt-5">
+                 <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-[11px] font-bold text-[#111827] uppercase tracking-widest mt-1">{t('Διοργανωτής Εκδήλωσης', 'Event Organizer')}</h3>
+                 </div>
+                 <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-white shadow-sm hover:border-cyan-200 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-full overflow-hidden bg-cyan-50 border-2 border-white ring-2 ring-cyan-50 shrink-0">
+                        {organizer.photoUrl ? (
+                          <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-cyan-500 font-bold text-lg">{organizer.name.substring(0, 2).toUpperCase()}</div>
+                        )}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <Link to={`/profile`} className="text-base font-bold text-[#111827] hover:text-cyan-600 transition-colors">
+                            {organizer.name}
+                          </Link>
+                          {organizer.trustTier && (
+                             <Badge variant="outline" className={`text-[9px] py-0 px-1.5 shadow-none ${organizer.trustTier === '3_high_trust' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-gray-50 text-gray-700 border-gray-200'}`}>
+                               {organizer.trustTier === '3_high_trust' ? t('ΥΨΗΛΗ ΕΜΠΙΣΤΟΣΥΝΗ', 'HIGH TRUST') : organizer.trustTier.replace(/_/g, ' ').toUpperCase()}
+                             </Badge>
+                          )}
+                          <Badge variant="outline" className="text-[9px] py-0 px-1.5 bg-green-50 text-green-700 border-green-200 shadow-none">
+                            {organizer.reliabilityScore}% {t('ΑΞΙΟΠΙΣΤΙΑ', 'RELIABILITY')}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-0.5 font-medium">{organizer.bio || t('Επαληθευμένος Διοργανωτής • 12 εκδηλώσεις', 'Verified Organizer • 12 events hosted')}</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" className="hidden sm:flex" onClick={() => navigate('/profile')}>
+                       {t('Προβολή Προφίλ', 'View Profile')}
+                    </Button>
+                 </div>
+               </div>
+             )}
+             
+             {/* High Trust / Outdoor Template Mock */}
+             {(event.category === 'Hiking' || event.category === 'Nearby escapes') && (
+               <div className="pt-5 border-t border-gray-200 animate-in fade-in slide-in-from-bottom-2 mt-5">
+                 <h3 className="text-[11px] font-bold text-[#111827] mb-3 uppercase tracking-widest">{t('Λεπτομέρειες Περιπέτειας', 'Adventure Details')}</h3>
+                 <div className="grid grid-cols-2 gap-4">
+                   <div className="bg-emerald-50/50 border border-emerald-100 p-4 rounded-xl">
+                     <div className="text-[10px] uppercase font-bold text-emerald-700 mb-1 tracking-wider">{t('Δυσκολία', 'Difficulty')}</div>
+                     <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? t('Μέτρια / Έδαφος', 'Moderate / Terrain') : t('Εύκολο / Αναψυχή', 'Easy / Leisure')}</div>
+                   </div>
+                   <div className="bg-amber-50/50 border border-amber-100 p-4 rounded-xl">
+                     <div className="text-[10px] uppercase font-bold text-amber-700 mb-1 tracking-wider">{t('Εξοπλισμός / Σημειώσεις', 'Equipment / Notes')}</div>
+                     <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? t('Απαιτούνται μποτάκια πεζοπορίας. Φέρτε νερό.', 'Hiking boots required. Bring water.') : t('Διανυκτέρευση. Μοιρασμένα έξοδα.', 'Overnight stay. Shared expenses.')}</div>
+                   </div>
+                 </div>
+               </div>
+             )}
           </section>
 
-          {/* Why reliable */}
-          <section className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
-            <h3 className="text-[12.5px] font-bold text-[#111827] mb-2.5 uppercase tracking-widest">{t(`Γιατί αυτή η ομάδα είναι αξιόπιστη`, `Why this group is reliable`)}</h3>
-            <ul className="space-y-2 text-gray-600">
-              <li className="flex items-start gap-2 text-[13.8px]">
-                <Users className="w-3.5 h-3.5 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">{t(`Μικρές ομάδες.`, `Small groups.`)}</strong> {t(`Μέγιστο`, `Max`)} {event.maxParticipants || '3-6'} {t(`άτομα για καλύτερο συντονισμό.`, `people for better coordination.`)}</span>
+          {/* Contextual Context Note */}
+          <section className="rounded-xl border border-gray-100 bg-gray-50/50 p-5 text-sm">
+            <h3 className="text-[11px] font-bold text-[#111827] mb-3 uppercase tracking-widest">{t('Γιατί αυτή η ομάδα είναι αξιόπιστη', 'Why this group is reliable')}</h3>
+            <ul className="space-y-2.5 text-gray-600">
+              <li className="flex items-start gap-2 text-xs">
+                <Users className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+                <span><strong className="text-gray-700">{t('Περιορισμός μικρής ομάδας.', 'Small group constraint.')}</strong> {t('Περιορίζεται σε ', 'Kept to ')}{event.maxParticipants || '3-6'}{t(' άτομα για καλύτερο συντονισμό και άνεση.', ' people for better coordination and comfort.')}</span>
               </li>
-              <li className="flex items-start gap-2 text-[13.8px]">
-                <ShieldCheck className="w-3.5 h-3.5 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">{t(`Επιβεβαιωμένη συμμετοχή.`, `Confirmed participation.`)}</strong> {t(`Οι αθετήσεις παρακολουθούνται.`, `No-shows are tracked.`)}</span>
+              <li className="flex items-start gap-2 text-xs">
+                <ShieldCheck className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+                <span><strong className="text-gray-700">{t('Επιβεβαιωμένη συμμετοχή.', 'Confirmed participation.')}</strong> {t('Οι χρήστες πρέπει να δεσμευτούν για να συμμετάσχουν. Οι μη-εμφανίσεις παρακολουθούνται.', 'Users must commit to join. No-shows are tracked internally.')}</span>
               </li>
-              <li className="flex items-start gap-2 text-[13.8px]">
-                <MapPin className="w-3.5 h-3.5 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">{t(`Δημόσιο σημείο.`, `Public point.`)}</strong> {t(`Αποκαλύπτεται μόνο μετά την επιβεβαίωση.`, `Revealed only after confirmation.`)}</span>
+              <li className="flex items-start gap-2 text-xs">
+                <MapPin className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+                <span><strong className="text-gray-700">{t('Δημόσιο σημείο συνάντησης.', 'Public meeting point.')}</strong> {t('Η ακριβής τοποθεσία συνάντησης αποκαλύπτεται μόνο αφού επιβεβαιωθεί η ομάδα.', 'Exact meeting location is revealed only after the group is confirmed.')}</span>
               </li>
-              <li className="flex items-start gap-2 text-[13.8px]">
-                <CheckCircle className="w-3.5 h-3.5 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">{t(`Ιδιωτικές αναφορές.`, `Private reports.`)}</strong> {t(`Επηρεάζουν τη βαθμολογία αξιοπιστίας.`, `Affect reliability scores.`)}</span>
+              <li className="flex items-start gap-2 text-xs">
+                <CheckCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+                <span><strong className="text-gray-700">{t('Ιδιωτικές αναφορές.', 'Private reports.')}</strong> {t('Οποιαδήποτε ανάρμοστη συμπεριφορά μπορεί να αναφερθεί ιδιωτικά και επηρεάζει τις βαθμολογίες αξιοπιστίας.', 'Any inappropriate behavior can be reported privately and affects reliability scores.')}</span>
               </li>
             </ul>
           </section>
-
-          {/* Photo Gallery */}
-          <section className="rounded-xl border border-gray-100 bg-white p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[12.5px] font-bold text-[#111827] uppercase tracking-widest">{t(`Φωτογραφίες Συμμετεχόντων`, `Participant Photos`)}</h3>
-              <button className="text-[11.2px] font-bold text-cyan-600 hover:text-cyan-700">{t(`+ Ανέβασμα`, `+ Upload`)}</button>
-            </div>
-            <div className="grid grid-cols-4 gap-1.5">
-              {[1,2,3,4,5,6,7,8].map(i => (
-                <div key={i} className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                  <img src={`https://picsum.photos/seed/gallery${event.id}${i}/200/200`} alt="" className="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
-                </div>
-              ))}
-            </div>
-            <p className="text-[11.2px] text-gray-400 font-medium mt-2 text-center">{t(`Οι φωτογραφίες είναι ορατές μόνο στα μέλη της ομάδας`, `Photos are visible only to group members`)}</p>
-          </section>
-
-          {/* Event Reviews */}
-          <section className="rounded-xl border border-gray-100 bg-white p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[12.5px] font-bold text-[#111827] uppercase tracking-widest">{t(`Αξιολογήσεις`, `Reviews`)}</h3>
-              <div className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                <span className="text-[15px] font-bold text-[#111827]">4.7</span>
-                <span className="text-[11.2px] text-gray-400 font-medium">(23)</span>
-              </div>
-            </div>
-            <div className="space-y-3">
-              {[
-                { name: 'Maria K.', rating: 5, text: t(`Εξαιρετική εμπειρία! Η ομάδα ήταν φανταστική.`, `Amazing experience! The group was fantastic.`), time: t(`Πριν 2 εβδομάδες`, `2 weeks ago`) },
-                { name: 'Nikos P.', rating: 4, text: t(`Πολύ καλή οργάνωση. Θα ξαναπήγαινα!`, `Very well organized. Would go again!`), time: t(`Πριν 1 μήνα`, `1 month ago`) },
-              ].map((review, i) => (
-                <div key={i} className="bg-gray-50/50 rounded-lg p-3 border border-gray-100">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[13.8px] font-bold text-[#111827]">{review.name}</span>
-                    <div className="flex gap-0.5">
-                      {Array.from({ length: review.rating }).map((_, s) => <Star key={s} className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />)}
-                    </div>
-                  </div>
-                  <p className="text-[13.8px] text-gray-600 leading-relaxed">{review.text}</p>
-                  <span className="text-[11.2px] text-gray-400 font-medium mt-1 block">{review.time}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Weather Widget */}
-          <section className="rounded-xl border border-gray-100 bg-gradient-to-br from-sky-50 to-blue-50 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <CloudSun className="w-4 h-4 text-sky-600" />
-              <h3 className="text-[12.5px] font-bold text-[#111827] uppercase tracking-widest">{t(`Πρόβλεψη Καιρού`, `Weather Forecast`)}</h3>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[30px] font-black text-[#111827]">24°C</p>
-                <p className="text-[12.5px] text-gray-600 font-medium">{t(`Αίθριος, ασθενής άνεμος`, `Clear skies, light breeze`)}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-[11.2px] text-gray-500 font-medium">{format(parseISO(event.date), 'EEEE', { locale: elLocale })}</p>
-                <p className="text-[11.2px] text-gray-500 font-medium">{t(`Ιδανικό για εξωτερική δραστηριότητα`, `Ideal for outdoor activity`)}</p>
-              </div>
-            </div>
-          </section>
         </div>
 
-        {/* Right — groups & actions */}
-        <div className="space-y-4 md:col-span-2">
-          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm md:sticky md:top-20">
-            <h3 className="text-[12.5px] font-bold text-gray-500 uppercase tracking-widest mb-3">{t(`Διαθέσιμες Ομάδες`, `Available Groups`)}</h3>
-
-            <div className="mb-3 bg-cyan-50 border border-cyan-100 rounded-lg p-2.5 flex justify-between items-center text-[13.8px] font-bold text-cyan-900">
-              <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {t(`Χωρητικότητα`, `Capacity`)}</span>
-              <span>{Math.max(0, spotsLeftEvent)} {t(`θέσεις`, `spots`)}</span>
+        {/* Right Column: Groups & Actions */}
+        <div className="space-y-6 md:col-span-2 lg:col-span-1">
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm sticky top-24">
+            <h3 className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest mb-4">{t('Αυτόματη προτεινόμενη Μικρών Ομάδων', 'Auto-Suggest Small Groups')}</h3>
+            <div className="mb-4 bg-cyan-50 border border-cyan-100 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-sm font-bold text-cyan-900">
+              <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική Χωρητικότητα Εκδήλωσης', 'Overall Event Capacity')}</span>
+              <span className="text-cyan-600 xl:text-cyan-900 bg-white xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs xl:text-sm border border-cyan-100 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
             </div>
-
-            {/* Smart match suggestion */}
-            <div className="mb-3 bg-gradient-to-r from-purple-50 to-cyan-50 border border-purple-100 rounded-lg p-3">
-              <div className="flex items-center gap-1.5 mb-2">
-                <Zap className="w-3 h-3 text-purple-600" />
-                <span className="text-[11.2px] font-bold text-purple-700 uppercase tracking-wider">{t(`Προτεινόμενη Ομάδα`, `Suggested Match`)}</span>
-              </div>
-              <div className="flex items-center gap-1.5 mb-2">
-                <div className="flex -space-x-1.5">
-                  <img src="https://i.pravatar.cc/24?u=sm1" className="w-5 h-5 rounded-full border border-white" alt="" />
-                  <img src="https://i.pravatar.cc/24?u=sm2" className="w-5 h-5 rounded-full border border-white" alt="" />
-                  <img src="https://i.pravatar.cc/24?u=sm3" className="w-5 h-5 rounded-full border border-white" alt="" />
+            
+            <div className="flex flex-col gap-3 mb-6">
+              <Button className="w-full bg-cyan-600 text-white hover:bg-cyan-700 shadow-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
+                <Users className="w-5 h-5" />
+                {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
+              </Button>
+            </div>
+            
+            {(eventGroups.length > 0 || groupSizeFilter !== 'All' || discountFilter) && (
+              <div className="mb-4 space-y-2">
+                <div className="flex gap-2">
+                  <span className="text-[10px] font-bold uppercase text-gray-500 mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
+                  <div className="flex flex-wrap gap-2 flex-1">
+                    <select 
+                      value={groupSizeFilter} 
+                      onChange={(e) => setGroupSizeFilter(e.target.value as any)}
+                      className="text-xs bg-gray-50 border border-gray-200 rounded p-1 font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                    >
+                      <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>
+                      <option value="3">{t('3 Μέλη', '3 Members')}</option>
+                      <option value="4">{t('4 Μέλη', '4 Members')}</option>
+                      <option value="5">{t('5 Μέλη', '5 Members')}</option>
+                      <option value="6+">{t('6+ Μέλη', '6+ Members')}</option>
+                    </select>
+                    {event.isPaid && event.groupDiscount && (
+                      <button 
+                        onClick={() => setDiscountFilter(!discountFilter)}
+                        className={`text-xs px-2 py-1 rounded border font-medium transition-colors ${discountFilter ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'}`}
+                      >
+                        {t('Μόνο με Έκπτωση', 'Discount Only')}
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <span className="text-[12.5px] text-gray-600 font-medium">{t(`3 συμβατά μέλη βρέθηκαν`, `3 compatible members found`)}</span>
-              </div>
-              <div className="flex gap-1 flex-wrap">
-                <span className="text-[10px] bg-white/80 border border-gray-200 px-1.5 py-0.5 rounded font-medium text-gray-600">{t(`Κοινά ενδιαφέροντα`, `Shared interests`)}</span>
-                <span className="text-[10px] bg-white/80 border border-gray-200 px-1.5 py-0.5 rounded font-medium text-gray-600">{t(`Ίδια ηλικιακή ομάδα`, `Same age group`)}</span>
-              </div>
-            </div>
-
-            <Button className="w-full mb-3" size="sm" onClick={() => navigate(`/events/${id}/join`)}>
-              <Users className="w-3.5 h-3.5 mr-1.5" /> {t(`Δημιουργία Νέας Ομάδας`, `Create New Group`)}
-            </Button>
-
-            {eventGroups.length > 0 && (
-              <div className="flex gap-1.5 mb-3 items-center">
-                <span className="text-[11.2px] font-bold uppercase text-gray-400">{t(`Φίλτρο`, `Filter`)}:</span>
-                <select
-                  value={groupSizeFilter}
-                  onChange={(e) => setGroupSizeFilter(e.target.value as any)}
-                  className="text-[12.5px] bg-gray-50 border border-gray-200 rounded px-1.5 py-0.5 font-medium focus:outline-none"
-                >
-                  <option value="All">{t(`Οποιοδήποτε`, `Any Size`)}</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6+">6+</option>
-                </select>
               </div>
             )}
-
+            
+            <p className="text-xs text-gray-600 font-medium mb-4 leading-relaxed">
+              {t('Συνιστούμε ανεπιφύλακτα να δημιουργήσετε ή να συμμετάσχετε σε ομάδες 3-5 ατόμων.', 'We highly recommend joining or creating groups of 3-5 users to reduce awkwardness and ensure the event happens safely.')}
+            </p>
+            
             {eventGroups.length === 0 ? (
-              <div className="text-[13.8px] text-gray-500 bg-gray-50 p-4 rounded-xl text-center border border-dashed border-gray-200 font-medium">
-                {t(`Δεν υπάρχουν ομάδες ακόμη. Δημιουργήστε πρώτοι!`, `No groups yet. Be the first to start one!`)}
+              <div className="text-xs text-gray-500 mb-6 bg-gray-50 p-4 rounded-xl text-center border border-dashed border-gray-200 font-medium">
+                {t('Δεν έχουν δημιουργηθεί ομάδες ακόμα. Γίνετε ο πρώτος που θα ξεκινήσει μία!', 'No groups forming yet. Be the first to start one!')}
               </div>
             ) : (
-              <div className="space-y-2.5 max-h-[400px] overflow-y-auto">
+              <div className="space-y-4 mb-6">
                 {eventGroups.map(group => (
-                  <GroupCard key={group.id} group={group} event={event} navigate={navigate} t={t} />
+                  <Group key={group.id} group={group} event={event} navigate={navigate} />
                 ))}
               </div>
             )}
-
-            <div className="mt-4 pt-3 border-t border-gray-100">
-              <Button variant="outline" className="w-full text-[12.5px]" size="sm" onClick={() => alert(t(`Προστέθηκε σε λίστα αναμονής`, `Added to waitlist`))}>
-                {t(`Λίστα Αναμονής`, `Join Waitlist`)}
-              </Button>
+            
+            <div className="space-y-4 pt-5 border-t border-gray-200">
+              <div className="grid grid-cols-1 gap-3">
+                <Button variant="outline" className="w-full border-gray-200 text-gray-700 hover:bg-gray-50" size="lg" onClick={() => alert(t("Προστέθηκε στη λίστα αναμονής. Θα ειδοποιηθείτε αν ανοίξει θέση.", "Added to waitlist. We will notify you if a spot in a group opens up."))}>
+                  {t('Λίστα Αναμονής', 'Join Waitlist')}
+                </Button>
+              </div>
+              <div className="text-[10px] text-gray-500 font-medium bg-gray-50 rounded text-center p-3 leading-relaxed uppercase tracking-wider">
+                {t('Δημιουργήστε νέα ομάδα 3-5 ατόμων. ', 'Create a new 3-5 person group. ')}
+                {event.isPaid ? (
+                  <span className="block mt-1 font-bold text-gray-700">{t('Η πληρωμή προεγκρίνεται. Χρεώνεται μόνο κατά την επιβεβαίωση.', 'Payment pre-authorized via official partner APIs. Discharges automatically on Group confirmation.')}</span>
+                ) : (
+                  <span className="block mt-1 font-bold">{t('Δωρεάν δημιουργία.', 'Free to start.')}</span>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Mobile sticky CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden z-50 flex gap-2">
-        <Button variant="outline" className="flex-1 text-[12.5px]" onClick={() => navigate(`/events/${id}/join`)}>
-          {t(`Αναμονή`, `Waitlist`)}
+      
+      {/* Mobile Sticky CTA */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden z-50 flex gap-3">
+        <Button variant="outline" className="flex-1 border-gray-200 text-gray-700" onClick={() => navigate(`/events/${eventId}/join`)}>
+          {t('Λίστα Αναμονής', 'Waitlist')}
         </Button>
-        <Button className="flex-[2] text-[12.5px]" onClick={() => navigate(`/events/${id}/join`)}>
-          {t(`Δημιουργία Ομάδας`, `Create Group`)}
+        <Button className="flex-[2] bg-cyan-600 text-white hover:bg-cyan-700 shadow-sm" onClick={() => navigate(`/events/${eventId}/join`)}>
+          {t('Νέα Ομάδα', 'Create Group')}
         </Button>
       </div>
 
       {/* QR Code Modal */}
       {showQRCode && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4" onClick={() => setShowQRCode(false)}>
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full text-center relative shadow-2xl" onClick={e => e.stopPropagation()}>
-            <button onClick={() => setShowQRCode(false)} className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
+          <div className="bg-white rounded-2xl p-6 md:p-8 max-w-sm w-full text-center relative shadow-2xl" onClick={e => e.stopPropagation()}>
+            <button 
+              onClick={() => setShowQRCode(false)}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+            >
               <X className="h-4 w-4" />
             </button>
-            <h3 className="text-[19.8px] font-bold text-gray-900 mb-1">{t(`Κοινοποίηση Εκδήλωσης`, `Share Event`)}</h3>
-            <p className="text-[13.8px] text-gray-500 mb-4">{t(`Σκανάρετε τον κωδικό QR`, `Scan this QR code`)}</p>
-            <div className="bg-white p-3 rounded-xl shadow-inner border border-gray-100 inline-block">
-              <QRCodeSVG value={window.location.href} size={180} bgColor="#ffffff" fgColor="#111827" level="H" />
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('Κοινοποίηση', 'Share Event')}</h3>
+            <p className="text-sm text-gray-500 mb-6">{t('Σαρώστε αυτό το QR για να δείτε την εκδήλωση', 'Scan this QR code to view the event')}</p>
+            <div className="bg-white p-4 rounded-xl shadow-inner border border-gray-100 inline-block">
+              <QRCodeSVG 
+                value={window.location.href} 
+                size={200}
+                bgColor={"#ffffff"}
+                fgColor={"#111827"}
+                level={"H"}
+                includeMargin={false}
+              />
             </div>
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
