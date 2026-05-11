@@ -84,6 +84,20 @@ export default function Home() {
   const [tagFilter, setTagFilter] = useState<string>("All");
   const [isLoading, setIsLoading] = useState(true);
   const [visibleEventsCount, setVisibleEventsCount] = useState(6);
+  const categoryScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = categoryScrollRef.current;
+    if (!el) return;
+    const handleWheel = (e: WheelEvent) => {
+      if (el.scrollWidth > el.clientWidth) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheel);
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -295,7 +309,7 @@ export default function Home() {
         className="bg-[#111827] text-white p-6 md:p-10 rounded-[24px] shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8"
       >
         <div className="relative z-10 flex-1">
-          <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[11.67px] font-bold tracking-wide mb-4">
+          <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[12.02px] font-bold tracking-wide mb-4">
             {t("home.hero.badge", "Νεος τροπος εξοδου")}
           </div>
           <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
@@ -337,7 +351,7 @@ export default function Home() {
           <div className="flex gap-3 mb-6">
             <button
               onClick={() => navigate("/nearby")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#18D8DB]/10 text-[#18D8DB] border border-[#18D8DB]/20 hover:bg-[#18D8DB]/20 rounded-xl font-bold text-sm transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#18D8DB]/10 text-[#18D8DB] border border-[#18D8DB]/20 hover:bg-[#18D8DB]/20 rounded-xl font-bold text-[13.58px] transition-colors"
               title={t("Εμφάνιση στον Χάρτη", "View on Map")}
             >
               <MapIcon className="w-4 h-4" />
@@ -473,7 +487,7 @@ export default function Home() {
           <h2 className="text-[10.3px] font-bold text-gray-400 tracking-wide mb-3">
             {t("home.explore_categories", "Εξερευνηση κατηγοριων")}
           </h2>
-          <div className="flex flex-nowrap gap-2 overflow-x-auto pb-2 scrollbar-thin" onWheel={(e) => { e.currentTarget.scrollLeft += e.deltaY; e.preventDefault(); }}>
+          <div ref={categoryScrollRef} className="flex flex-nowrap gap-2 overflow-x-auto pb-1 noscrollbar">
             {categories.map((cat) => (
               <button
                 key={cat}

@@ -126,7 +126,7 @@ function NavSection({ title, children, compact = false }: NavSectionProps) {
       {compact && <div className="block lg:hidden h-px bg-gray-200 my-4 mx-4" />}
       <h3
         className={cn(
-          'px-3 text-[10.3px] font-bold tracking-wide text-[#6B7280] mb-2',
+          'px-3 text-[12.36px] font-bold tracking-wide text-[#6B7280] mb-2',
           compact ? 'hidden lg:block' : 'block'
         )}
       >
