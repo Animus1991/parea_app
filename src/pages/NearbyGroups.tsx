@@ -286,7 +286,7 @@ export default function NearbyGroups() {
                     >
                       &times;
                     </button>
-                    <div className="font-bold text-[10px] text-gray-500 uppercase tracking-widest mb-1">
+                    <div className="font-bold text-[10px] text-gray-500 tracking-widest mb-1">
                       {group.category}
                     </div>
                     <GroupImage

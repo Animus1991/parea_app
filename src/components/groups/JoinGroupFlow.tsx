@@ -72,7 +72,7 @@ export default function JoinGroupFlow() {
           
           {groupType === 'new' && (
             <div className="pt-4 space-y-3">
-               <label className="text-xs font-bold text-[#111827] uppercase tracking-wide">Target Group Size</label>
+               <label className="text-xs font-bold text-[#111827] tracking-wide">Target Group Size</label>
                <div className="flex gap-2">
                  {[3,4,5,6].map(size => (
                    <button 

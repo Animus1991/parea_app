@@ -108,7 +108,7 @@ export default function Profile() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-cyan-700 font-bold text-xl uppercase">
+                <span className="text-cyan-700 font-bold text-xl">
                   {currentUser.name.substring(0, 2)}
                 </span>
               )}

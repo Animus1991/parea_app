@@ -37,7 +37,7 @@ export default function VerificationCenter() {
                  </div>
                  <div>
                     <h3 className="font-bold text-[15.083739px] text-[#111827]">{t(`Email Επαλήθευση`, `Email Verification`)}</h3>
-                    <p className="text-[10.90125px] text-gray-500 uppercase font-bold tracking-wider mt-0.5">{t(`Ολοκληρώθηκε`, `Completed`)}</p>
+                    <p className="text-[10.90125px] text-gray-500 font-bold tracking-wider mt-0.5">{t(`Ολοκληρώθηκε`, `Completed`)}</p>
                  </div>
               </div>
               <CheckCircle2 className="w-5 h-5 text-emerald-500" />
@@ -52,7 +52,7 @@ export default function VerificationCenter() {
                  </div>
                  <div>
                     <h3 className="font-bold text-[15.083739px] text-[#111827]">{t(`Τηλέφωνο`, `Phone Number`)}</h3>
-                    <p className="text-[10.90125px] text-gray-400 uppercase font-bold tracking-wider mt-0.5">{t(`Σε εκκρεμότητα`, `Pending`)}</p>
+                    <p className="text-[10.90125px] text-gray-400 font-bold tracking-wider mt-0.5">{t(`Σε εκκρεμότητα`, `Pending`)}</p>
                  </div>
               </div>
            </div>
@@ -68,7 +68,7 @@ export default function VerificationCenter() {
                  </div>
                  <div>
                     <h3 className="font-bold text-[15.083739px] text-[#111827]">{t(`Ταυτότητα / Διαβατήριο`, `Government ID`)}</h3>
-                    <p className="text-[10.90125px] text-gray-400 uppercase font-bold tracking-wider mt-0.5">{t(`Προαιρετικό`, `Optional`)}</p>
+                    <p className="text-[10.90125px] text-gray-400 font-bold tracking-wider mt-0.5">{t(`Προαιρετικό`, `Optional`)}</p>
                  </div>
               </div>
               <span className="bg-gray-100 text-gray-600 text-[10.90125px] font-bold px-2 py-0.5 rounded-full tracking-wide">{t(`Προχωρημένο`, `Advanced`)}</span>

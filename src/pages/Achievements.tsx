@@ -181,15 +181,15 @@ export default function Achievements() {
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center">
                 <p className="text-[23px] font-black text-[#111827]">3</p>
-                <p className="text-[11.2px] text-gray-500 font-medium uppercase">{t(`Τρέχον`, `Current`)}</p>
+                <p className="text-[11.2px] text-gray-500 font-medium">{t(`Τρέχον`, `Current`)}</p>
               </div>
               <div className="text-center">
                 <p className="text-[23px] font-black text-[#111827]">7</p>
-                <p className="text-[11.2px] text-gray-500 font-medium uppercase">{t(`Μέγιστο`, `Longest`)}</p>
+                <p className="text-[11.2px] text-gray-500 font-medium">{t(`Μέγιστο`, `Longest`)}</p>
               </div>
               <div className="text-center">
                 <p className="text-[23px] font-black text-[#111827]">12</p>
-                <p className="text-[11.2px] text-gray-500 font-medium uppercase">{t(`Εκδηλώσεις`, `Events`)}</p>
+                <p className="text-[11.2px] text-gray-500 font-medium">{t(`Εκδηλώσεις`, `Events`)}</p>
               </div>
             </div>
           </Card>

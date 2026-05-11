@@ -43,7 +43,7 @@ export default function PostEventFeedback() {
           <div className="space-y-8">
             {/* Emoji Mood */}
             <div>
-              <h3 className="text-[16.75971px] font-bold text-[#111827] uppercase tracking-wide mb-3">{t(`Πώς νιώσατε;`, `How did you feel?`)}</h3>
+              <h3 className="text-[16.75971px] font-bold text-[#111827] tracking-wide mb-3">{t(`Πώς νιώσατε;`, `How did you feel?`)}</h3>
               <div className="flex gap-3 justify-center">
                 {moods.map(m => (
                   <button
@@ -59,7 +59,7 @@ export default function PostEventFeedback() {
             </div>
 
             <div>
-              <h3 className="text-[16.75971px] font-bold text-[#111827] uppercase tracking-wide mb-4">{t(`Γενική Εντύπωση`, `Overall Experience`)}</h3>
+              <h3 className="text-[16.75971px] font-bold text-[#111827] tracking-wide mb-4">{t(`Γενική Εντύπωση`, `Overall Experience`)}</h3>
               <p className="text-[14.535px] text-gray-500 font-medium mb-3">{t(`Πώς θα βαθμολογούσατε την εκδήλωση;`, `How would you rate the event?`)}</p>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -71,7 +71,7 @@ export default function PostEventFeedback() {
             </div>
 
             <div>
-              <h3 className="text-[16.75971px] font-bold text-[#111827] uppercase tracking-wide mb-4 mt-6">{t(`Ατμόσφαιρα`, `Vibe`)}</h3>
+              <h3 className="text-[16.75971px] font-bold text-[#111827] tracking-wide mb-4 mt-6">{t(`Ατμόσφαιρα`, `Vibe`)}</h3>
               <p className="text-[14.535px] text-gray-500 font-medium mb-3">{t(`Πώς ήταν η ατμόσφαιρα;`, `How was the atmosphere?`)}</p>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -83,7 +83,7 @@ export default function PostEventFeedback() {
             </div>
 
             <div>
-              <h3 className="text-[16.2px] font-bold text-[#111827] uppercase tracking-wide mb-4">{t(`Παρουσία`, `Attendance`)}</h3>
+              <h3 className="text-[16.2px] font-bold text-[#111827] tracking-wide mb-4">{t(`Παρουσία`, `Attendance`)}</h3>
               <p className="text-[15px] text-gray-500 font-medium mb-3">{t(`Ήταν όλοι παρόντες;`, `Was everyone present?`)}</p>
               <div className="space-y-3 mt-4">
                 <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
@@ -98,7 +98,7 @@ export default function PostEventFeedback() {
             </div>
 
             <div>
-              <h3 className="text-[16.2px] font-bold text-[#111827] uppercase tracking-wide mb-4">{t(`Αίσθημα Ασφάλειας`, `Safety Comfort`)}</h3>
+              <h3 className="text-[16.2px] font-bold text-[#111827] tracking-wide mb-4">{t(`Αίσθημα Ασφάλειας`, `Safety Comfort`)}</h3>
               <p className="text-[15px] text-gray-500 font-medium mb-3">{t(`Νιώσατε ασφαλείς;`, `Did you feel safe?`)}</p>
               <div className="space-y-3 mt-4">
                 <label className="flex items-center gap-3 p-3 border border-emerald-200 bg-emerald-50 rounded-lg cursor-pointer">
@@ -115,7 +115,7 @@ export default function PostEventFeedback() {
 
             {/* Optional comment */}
             <div>
-              <h3 className="text-[16.2px] font-bold text-[#111827] uppercase tracking-wide mb-3">{t(`Σχόλιο (προαιρετικό)`, `Comment (optional)`)}</h3>
+              <h3 className="text-[16.2px] font-bold text-[#111827] tracking-wide mb-3">{t(`Σχόλιο (προαιρετικό)`, `Comment (optional)`)}</h3>
               <textarea
                 value={comment}
                 onChange={e => setComment(e.target.value)}

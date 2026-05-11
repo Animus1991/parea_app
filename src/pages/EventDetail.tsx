@@ -32,7 +32,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
       <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-cyan-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       
       {(group.discountUnlocked || discountUnlockedTemp) && event.groupDiscount && (
-        <div className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-sm flex items-center gap-1 uppercase z-10 w-fit">
+        <div className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-sm flex items-center gap-1 z-10 w-fit">
            <CheckCircle className="h-3 w-3" /> {event.groupDiscount.percentage}% {t('ΕΚΠΤΩΣΗ ΕΝΕΡΓΟΠΟΙΗΘΗΚΕ', 'OFF ACTIVATED')}
         </div>
       )}
@@ -44,7 +44,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
             {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
           </div>
           <h4 className="text-[13px] font-bold text-gray-900 mb-0.5 line-clamp-1">{event.title}</h4>
-          <span className="text-[9px] tracking-widest font-bold text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded-full uppercase mb-2 inline-block shadow-sm">
+          <span className="text-[9px] tracking-widest font-bold text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">
             {event.category}
           </span>
           <div className="flex items-baseline gap-1 mt-1">
@@ -65,7 +65,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
                    {groupHost.photoUrl ? (
                      <img referrerPolicy="no-referrer" src={groupHost.photoUrl} alt={groupHost.name} className="h-full w-full object-cover" />
                    ) : (
-                     <div className="h-full w-full flex items-center justify-center bg-cyan-100 text-cyan-700 font-bold uppercase text-xs">
+                     <div className="h-full w-full flex items-center justify-center bg-cyan-100 text-cyan-700 font-bold text-xs">
                         {groupHost.name.charAt(0)}
                      </div>
                    )}
@@ -80,7 +80,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
                    </div>
                 ) : null}
               </div>
-              <span className="text-[9px] font-bold text-gray-500 uppercase mt-1">{t('Οικοδεσποτης', 'Host')}</span>
+              <span className="text-[9px] font-bold text-gray-500 mt-1">{t('Οικοδεσποτης', 'Host')}</span>
             </div>
           )}
         </div>
@@ -492,11 +492,11 @@ export default function EventDetail() {
                  <h3 className="text-[11px] font-bold text-[#111827] mb-3 tracking-wide">{t('Λεπτομέρειες Περιπέτειας', 'Adventure Details')}</h3>
                  <div className="grid grid-cols-2 gap-4">
                    <div className="bg-emerald-50/50 border border-emerald-100 p-4 rounded-xl">
-                     <div className="text-[10px] uppercase font-bold text-emerald-700 mb-1 tracking-wider">{t('Δυσκολία', 'Difficulty')}</div>
+                     <div className="text-[10px] font-bold text-emerald-700 mb-1 tracking-wider">{t('Δυσκολία', 'Difficulty')}</div>
                      <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? t('Μέτρια / Έδαφος', 'Moderate / Terrain') : t('Εύκολο / Αναψυχή', 'Easy / Leisure')}</div>
                    </div>
                    <div className="bg-amber-50/50 border border-amber-100 p-4 rounded-xl">
-                     <div className="text-[10px] uppercase font-bold text-amber-700 mb-1 tracking-wider">{t('Εξοπλισμός / Σημειώσεις', 'Equipment / Notes')}</div>
+                     <div className="text-[10px] font-bold text-amber-700 mb-1 tracking-wider">{t('Εξοπλισμός / Σημειώσεις', 'Equipment / Notes')}</div>
                      <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? t('Απαιτούνται μποτάκια πεζοπορίας. Φέρτε νερό.', 'Hiking boots required. Bring water.') : t('Διανυκτέρευση. Μοιρασμένα έξοδα.', 'Overnight stay. Shared expenses.')}</div>
                    </div>
                  </div>
@@ -547,7 +547,7 @@ export default function EventDetail() {
             {(eventGroups.length > 0 || groupSizeFilter !== 'All' || discountFilter) && (
               <div className="mb-4 space-y-2">
                 <div className="flex gap-2">
-                  <span className="text-[10px] font-bold uppercase text-gray-500 mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
+                  <span className="text-[10px] font-bold text-gray-500 mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
                   <div className="flex flex-wrap gap-2 flex-1">
                     <select 
                       value={groupSizeFilter} 

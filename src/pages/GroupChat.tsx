@@ -323,7 +323,7 @@ export default function GroupChat() {
                     <select
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
-                      className="text-[11px] uppercase font-bold border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-cyan-500 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate"
+                      className="text-[11px] font-bold border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-cyan-500 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate"
                     >
                       <option value="all">
                         {t("Όλοι οι Αποστολείς", "All Senders")}
@@ -615,7 +615,7 @@ export default function GroupChat() {
                     {isGroupAdmin && (
                       <button
                         onClick={() => setShowAddMemberModal(true)}
-                        className="flex items-center gap-1 text-[10px] uppercase font-bold text-cyan-600 hover:text-cyan-700 bg-cyan-50 hover:bg-cyan-100 px-2 py-1 rounded border border-cyan-100 transition-colors"
+                        className="flex items-center gap-1 text-[10px] font-bold text-cyan-600 hover:text-cyan-700 bg-cyan-50 hover:bg-cyan-100 px-2 py-1 rounded border border-cyan-100 transition-colors"
                       >
                         <UserPlus className="w-3 h-3" />{" "}
                         {t("Προσθήκη Μελών", "Add Members")}
@@ -1222,7 +1222,7 @@ export default function GroupChat() {
                       t("Αντιγράφηκε στο πρόχειρο!", "Copied to clipboard!"),
                     );
                   }}
-                  className="text-xs font-bold text-cyan-600 uppercase"
+                  className="text-xs font-bold text-cyan-600"
                 >
                   {t("Αντιγραφή", "Copy")}
                 </button>

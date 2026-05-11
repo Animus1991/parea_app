@@ -50,7 +50,7 @@ export default function SavedEvents() {
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-1.5 text-[10px] uppercase font-bold text-cyan-600 tracking-wider">
+                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-1.5 text-[10px] font-bold text-cyan-600 tracking-wider">
                   {t('Προβολή Λεπτομερειών', 'View Details')} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>

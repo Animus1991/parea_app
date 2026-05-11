@@ -20,7 +20,7 @@ export default function Login() {
     <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-[#FDFCFB]">
       <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-xl border-gray-100">
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center text-4xl font-black tracking-tight text-[#111827] mb-4 font-['Outfit'] uppercase">
+          <div className="flex items-center justify-center text-4xl font-black tracking-tight text-[#111827] mb-4 font-['Outfit']">
              NAKAMAS
           </div>
           <h1 className="text-2xl font-bold text-[#111827]">{t('Καλώς ήρθατε', 'Welcome back')}</h1>
@@ -42,7 +42,7 @@ export default function Login() {
                   {user.photoUrl ? (
                     <img referrerPolicy="no-referrer" src={user.photoUrl} alt={user.name} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-cyan-700 font-bold uppercase">{user.name.substring(0, 2)}</div>
+                    <div className="w-full h-full flex items-center justify-center text-cyan-700 font-bold">{user.name.substring(0, 2)}</div>
                   )}
                 </div>
                 <div>

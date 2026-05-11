@@ -15,22 +15,22 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className="p-4 border-t-4 border-t-blue-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] uppercase tracking-wider">{t(`Ενεργοί`, `Active`)}</h3>
+          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Ενεργοί`, `Active`)}</h3>
           <p className="text-[25px] font-black text-[#111827] mt-1">127</p>
           <p className="text-[11.2px] text-green-500 font-bold flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />+8%</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-cyan-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] uppercase tracking-wider">{t(`Αναφορές`, `Reports`)}</h3>
+          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Αναφορές`, `Reports`)}</h3>
           <p className="text-[25px] font-black text-[#111827] mt-1">4</p>
           <p className="text-[11.2px] text-amber-500 font-bold">{t(`εκκρεμείς`, `pending`)}</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-red-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] uppercase tracking-wider">{t(`Αποκλεισμένοι`, `Banned`)}</h3>
+          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Αποκλεισμένοι`, `Banned`)}</h3>
           <p className="text-[25px] font-black text-[#111827] mt-1">1</p>
           <p className="text-[11.2px] text-gray-400 font-medium">{t(`συνολικά`, `total`)}</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-emerald-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] uppercase tracking-wider">{t(`Εκδηλώσεις`, `Events`)}</h3>
+          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Εκδηλώσεις`, `Events`)}</h3>
           <p className="text-[25px] font-black text-[#111827] mt-1">48</p>
           <p className="text-[11.2px] text-gray-400 font-medium">{t(`αυτή τη βδομάδα`, `this week`)}</p>
         </Card>
@@ -38,7 +38,7 @@ export default function AdminDashboard() {
 
       {/* Platform Health */}
       <Card className="p-4">
-        <h3 className="text-[12.1125px] font-bold text-[#111827] uppercase tracking-widest mb-3">{t(`Υγεία Πλατφόρμας`, `Platform Health`)}</h3>
+        <h3 className="text-[12.1125px] font-bold text-[#111827] tracking-widest mb-3">{t(`Υγεία Πλατφόρμας`, `Platform Health`)}</h3>
         <div className="grid grid-cols-3 gap-4">
           <div>
             <div className="flex items-center justify-between mb-1">
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mt-10">
         
         <div className="md:col-span-7 space-y-6">
-          <h2 className="text-[16.75971px] font-bold text-[#111827] uppercase tracking-wide">{t(`Πρόσφατες Αναφορές`, `Recent Reports`)}</h2>
+          <h2 className="text-[16.75971px] font-bold text-[#111827] tracking-wide">{t(`Πρόσφατες Αναφορές`, `Recent Reports`)}</h2>
           <div className="space-y-4">
             <Card className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div className="flex items-start gap-3">
@@ -100,10 +100,10 @@ export default function AdminDashboard() {
 
         <div className="md:col-span-5 relative">
           <div className="sticky top-24">
-            <h2 className="text-[18px] font-bold text-[#111827] uppercase tracking-wide mb-6 flex items-center gap-2">
+            <h2 className="text-[18px] font-bold text-[#111827] tracking-wide mb-6 flex items-center gap-2">
               <Flag className="h-4 w-4 text-gray-400" />{t(`Γρήγορη Ενέργεια`, `Quick Action`)}</h2>
             <Card className="p-5 bg-gray-50 border-gray-200">
-              <p className="text-[18px] text-gray-500 font-bold uppercase tracking-wide mb-4">{t(`Αναζήτηση Χρήστη`, `Search User`)}</p>
+              <p className="text-[18px] text-gray-500 font-bold tracking-wide mb-4">{t(`Αναζήτηση Χρήστη`, `Search User`)}</p>
               
               <div className="space-y-4">
                 <div>

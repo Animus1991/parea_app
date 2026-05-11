@@ -117,28 +117,28 @@ export default function Home() {
   ];
 
   const categoryTranslations: Record<string, string> = {
-    All: t("Ολα", "All"),
-    Theatre: t("Θεατρο", "Theatre"),
-    Concerts: t("Συναυλιες", "Concerts"),
-    Cinema: t("Σινεμα", "Cinema"),
+    All: t("Όλα", "All"),
+    Theatre: t("Θέατρο", "Theatre"),
+    Concerts: t("Συναυλίες", "Concerts"),
+    Cinema: t("Σινεμά", "Cinema"),
     "Stand-up": "Stand-up",
-    Museums: t("Μουσεια", "Museums"),
-    Exhibitions: t("Εκθεσεις", "Exhibitions"),
-    Festivals: t("Φεστιβαλ", "Festivals"),
-    "Board games": t("Επιτραπεζια", "Board Games"),
-    "Book clubs": t("Λεσχη αναγνωσης", "Book Club"),
-    "Language exchange": t("Ανταλλαγη γλωσσων", "Language Exchange"),
-    "Philosophy/Science": t("Φιλοσοφια/επιστημη", "Philosophy/Science"),
-    "City walks": t("Περιπατοι", "City Walks"),
+    Museums: t("Μουσεία", "Museums"),
+    Exhibitions: t("Εκθέσεις", "Exhibitions"),
+    Festivals: t("Φεστιβάλ", "Festivals"),
+    "Board games": t("Επιτραπέζια", "Board Games"),
+    "Book clubs": t("Λέσχη ανάγνωσης", "Book Club"),
+    "Language exchange": t("Ανταλλαγή γλωσσών", "Language Exchange"),
+    "Philosophy/Science": t("Φιλοσοφία/επιστήμη", "Philosophy/Science"),
+    "City walks": t("Περίπατοι", "City Walks"),
     Hiking: t("Πεζοπορία", "Hiking"),
-    "Nearby escapes": t("Κοντινες αποδρασεις", "Nearby Getaways"),
-    "Short day trips": t("Μονοημερες", "Day Trips"),
-    "Nature walks": t("Βολτες στη φυση", "Nature Walks"),
-    "Light sports": t("Ελαφρια αθληση", "Light Sports"),
-    Workshops: t("Εργαστηρια", "Workshops"),
-    "Online events": t("Διαδικτυακα", "Online"),
-    "Community events": t("Κοινοτητα", "Community"),
-    "Private events": t("Ιδιωτικα", "Private"),
+    "Nearby escapes": t("Κοντινές αποδράσεις", "Nearby Getaways"),
+    "Short day trips": t("Μονοήμερες", "Day Trips"),
+    "Nature walks": t("Βόλτες στη φύση", "Nature Walks"),
+    "Light sports": t("Ελαφριά άθληση", "Light Sports"),
+    Workshops: t("Εργαστήρια", "Workshops"),
+    "Online events": t("Διαδικτυακά", "Online"),
+    "Community events": t("Κοινότητα", "Community"),
+    "Private events": t("Ιδιωτικά", "Private"),
   };
 
   const popularTags = [
@@ -295,8 +295,8 @@ export default function Home() {
         className="bg-[#111827] text-white p-6 md:p-10 rounded-[24px] shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8"
       >
         <div className="relative z-10 flex-1">
-          <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4">
-            {t("home.hero.badge", "Νέος Τρόπος Εξόδου")}
+          <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[11px] font-bold tracking-wide mb-4">
+            {t("home.hero.badge", "Νεος τροπος εξοδου")}
           </div>
           <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
             {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
@@ -312,25 +312,25 @@ export default function Home() {
             )}
           </p>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11px] uppercase font-bold tracking-wider text-gray-300 mb-6">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11px] font-bold tracking-wide text-gray-300 mb-6">
             <span className="flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
-              {t("home.hero.stat1", "Μικρές ομάδες")}
+              {t("home.hero.stat1", "Μικρες ομαδες")}
             </span>
             <span className="opacity-20">•</span>
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
-              {t("home.hero.stat2", "Επαληθευμένη συμμετοχή")}
+              {t("home.hero.stat2", "Επαληθευμενη συμμετοχη")}
             </span>
             <span className="opacity-20">•</span>
             <span className="flex items-center gap-1.5">
               <MapIcon className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
-              {t("home.hero.stat3", "Δημόσια σημεία")}
+              {t("home.hero.stat3", "Δημοσια σημεια")}
             </span>
             <span className="opacity-20">•</span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
-              {t("Ιδιωτικές αναφορές", "Private reports")}
+              {t("Ιδιωτικες αναφορες", "Private reports")}
             </span>
           </div>
 
@@ -363,7 +363,7 @@ export default function Home() {
               {showSearchSuggestions && !searchQuery && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
                   <div className="px-3 pt-2 pb-1">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    <span className="text-[10px] font-bold text-gray-400 tracking-widest">
                       {t("Δημοφιλείς Αναζητήσεις", "Popular Searches")}
                     </span>
                   </div>
@@ -416,7 +416,7 @@ export default function Home() {
         </div>
         <button
           onClick={() => navigate("/plans")}
-          className="text-[11px] uppercase tracking-wider font-bold bg-[#111827] text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-black w-full sm:w-auto shadow-sm transition-colors"
+          className="text-[11px] tracking-wider font-bold bg-[#111827] text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-black w-full sm:w-auto shadow-sm transition-colors"
         >
           {t("home.pending_feedback.cta", "Αξιολόγηση")}
         </button>
@@ -470,8 +470,8 @@ export default function Home() {
       {/* Categories & Filters */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">
-            {t("home.explore_categories", "Εξερεύνηση Κατηγοριών")}
+          <h2 className="text-[10px] font-bold text-gray-400 tracking-wide mb-3">
+            {t("home.explore_categories", "Εξερευνηση κατηγοριων")}
           </h2>
           <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar">
             {categories.map((cat) => (
@@ -496,7 +496,7 @@ export default function Home() {
             <button
               key={tag}
               onClick={() => setTagFilter(tag)}
-              className={`whitespace-nowrap px-3 py-1 rounded-full text-[10px] font-bold transition-colors border ${
+              className={`whitespace-nowrap px-3 py-1 rounded-full text-[10.3px] font-bold transition-colors border ${
                 tagFilter === tag
                   ? "bg-[#18D8DB]/20 border-[#18D8DB] text-[#0E8B8D]"
                   : "bg-white border-gray-200 text-gray-500 hover:border-gray-300 hover:text-[#111827]"

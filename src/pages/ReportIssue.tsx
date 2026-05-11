@@ -39,7 +39,7 @@ export default function ReportIssue() {
 
           <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-5">
             <div>
-              <label className="block text-[10.90125px] font-bold text-[#111827] uppercase tracking-wider mb-2">{t(`Κατηγορία`, `Category`)}</label>
+              <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Κατηγορία`, `Category`)}</label>
               <select className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium" required>
                 <option value="">{t(`Επιλέξτε κατηγορία...`, `Select a category...`)}</option>
                 <option value="user_behavior">{t(`Ανάρμοστη συμπεριφορά`, `Inappropriate behavior`)}</option>
@@ -52,7 +52,7 @@ export default function ReportIssue() {
 
             {/* Severity Level */}
             <div>
-              <label className="block text-[10.90125px] font-bold text-[#111827] uppercase tracking-wider mb-2">{t(`Σοβαρότητα`, `Severity`)}</label>
+              <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Σοβαρότητα`, `Severity`)}</label>
               <div className="grid grid-cols-3 gap-2">
                 <button type="button" className="p-2.5 rounded-lg border border-amber-200 bg-amber-50 text-center hover:ring-2 hover:ring-amber-300 transition-all">
                   <span className="text-[12.1125px] font-bold text-amber-800 block">{t(`Χαμηλή`, `Low`)}</span>
@@ -70,7 +70,7 @@ export default function ReportIssue() {
             </div>
 
             <div>
-              <label className="block text-[10.90125px] font-bold text-[#111827] uppercase tracking-wider mb-2">{t(`Περιγραφή`, `Description`)}</label>
+              <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Περιγραφή`, `Description`)}</label>
               <textarea 
                 className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium resize-none" 
                 rows={5} 
@@ -81,7 +81,7 @@ export default function ReportIssue() {
 
             {/* Evidence Upload */}
             <div>
-              <label className="block text-[12.15px] font-bold text-[#111827] uppercase tracking-wider mb-2">{t(`Αποδεικτικά (προαιρετικά)`, `Evidence (optional)`)}</label>
+              <label className="block text-[12.15px] font-bold text-[#111827] tracking-wider mb-2">{t(`Αποδεικτικά (προαιρετικά)`, `Evidence (optional)`)}</label>
               <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-cyan-300 hover:bg-cyan-50/30 transition-colors cursor-pointer">
                 <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1" />
                 <p className="text-[12.5px] text-gray-500 font-medium">{t(`Ανεβάστε screenshots ή φωτογραφίες`, `Upload screenshots or photos`)}</p>
@@ -112,7 +112,7 @@ export default function ReportIssue() {
           <p className="text-[18px] text-gray-500 max-w-md mx-auto mb-6">{t(`Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.`, `Thank you. We'll review your report and get back to you.`)}</p>
           <button 
             onClick={() => navigate('/')}
-            className="bg-gray-100 text-[#111827] px-5 py-2.5 rounded-full text-[13.5px] font-bold hover:bg-gray-200 transition-colors uppercase tracking-wider"
+            className="bg-gray-100 text-[#111827] px-5 py-2.5 rounded-full text-[13.5px] font-bold hover:bg-gray-200 transition-colors tracking-wider"
           >{t(`Επιστροφή`, `Go Back`)}</button>
         </div>
       )}

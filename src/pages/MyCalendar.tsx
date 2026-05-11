@@ -110,7 +110,7 @@ export default function MyCalendar() {
                 {upcomingEvents.map((event, idx) => (
                   <div key={idx} className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-cyan-100 hover:bg-cyan-50/30 transition-colors cursor-pointer" onClick={() => navigate(`/events/${event.id}`)}>
                     <div className="flex flex-col items-center justify-center w-16 shrink-0 border-r border-gray-100 pr-4">
-                      <span className="text-xs font-bold text-gray-400 uppercase">{format(event.parsedDate, 'MMM')}</span>
+                      <span className="text-xs font-bold text-gray-400">{format(event.parsedDate, 'MMM')}</span>
                       <span className="text-2xl font-black text-[#111827]">{format(event.parsedDate, 'dd')}</span>
                     </div>
                     <div className="flex-1">
@@ -189,7 +189,7 @@ export default function MyCalendar() {
                       className="flex gap-3 items-center text-sm cursor-pointer hover:bg-cyan-50 p-2 rounded-lg transition-colors"
                       onClick={() => navigate(`/events/${event.id}`)}
                     >
-                      <div className="text-[10px] font-bold text-gray-400 uppercase w-12 shrink-0">
+                      <div className="text-[10px] font-bold text-gray-400 w-12 shrink-0">
                         {format(event.parsedDate, 'MMM d')}
                       </div>
                       <div className="w-2 h-2 rounded-full bg-cyan-600 shrink-0" />

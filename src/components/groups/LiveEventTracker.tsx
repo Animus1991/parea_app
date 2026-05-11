@@ -184,7 +184,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
           </Button>
         ) : (
           <div
-            className={`px-2.5 py-1 text-xs font-bold uppercase rounded-full tracking-wider ${isTrackingActive ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-400"}`}
+            className={`px-2.5 py-1 text-xs font-bold rounded-full tracking-wider ${isTrackingActive ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-400"}`}
           >
             {isTrackingActive
               ? t("Ενεργό", "Active")

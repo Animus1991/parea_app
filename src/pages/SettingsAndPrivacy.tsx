@@ -68,7 +68,7 @@ export default function SettingsAndPrivacy() {
 
       {sections.map((section, idx) => (
         <div key={idx}>
-          <h2 className="text-[12.1125px] font-bold uppercase tracking-wider text-gray-400 mb-3">{section.title}</h2>
+          <h2 className="text-[12.1125px] font-bold tracking-wider text-gray-400 mb-3">{section.title}</h2>
           <Card className="divide-y divide-gray-100">
             {section.items.map((item, i) => {
               const Icon = item.icon;
@@ -152,7 +152,7 @@ export default function SettingsAndPrivacy() {
 
       {/* Active Sessions */}
       <div>
-        <h2 className="text-[13.5px] font-bold uppercase tracking-wider text-gray-400 mb-3">{t(`Ενεργές Συνεδρίες`, `Active Sessions`)}</h2>
+        <h2 className="text-[13.5px] font-bold tracking-wider text-gray-400 mb-3">{t(`Ενεργές Συνεδρίες`, `Active Sessions`)}</h2>
         <Card className="divide-y divide-gray-100">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
@@ -179,7 +179,7 @@ export default function SettingsAndPrivacy() {
 
       {/* Data Export */}
       <div>
-        <h2 className="text-[13.5px] font-bold uppercase tracking-wider text-gray-400 mb-3">{t(`Δεδομένα`, `Data`)}</h2>
+        <h2 className="text-[13.5px] font-bold tracking-wider text-gray-400 mb-3">{t(`Δεδομένα`, `Data`)}</h2>
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

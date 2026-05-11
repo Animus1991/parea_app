@@ -267,7 +267,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
                 <span className="text-[10px] font-bold text-[#0E8B8D] tracking-wide">{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
                 <span className="text-[11px] font-bold text-[#111827]">{currentUser.name}</span>
               </div>
-              <div className="w-[28px] h-[28px] rounded-full bg-cyan-100 border border-cyan-200 flex items-center justify-center text-[#0E8B8D] font-bold text-[10px] uppercase overflow-hidden">
+              <div className="w-[28px] h-[28px] rounded-full bg-cyan-100 border border-cyan-200 flex items-center justify-center text-[#0E8B8D] font-bold text-[10px] overflow-hidden">
                 {currentUser.photoUrl ? (
                   <img src={currentUser.photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
                 ) : (

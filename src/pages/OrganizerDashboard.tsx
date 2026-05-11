@@ -64,15 +64,15 @@ export default function OrganizerDashboard() {
         <div className="grid grid-cols-3 gap-3">
           <div className="text-center p-2 bg-emerald-50 rounded-lg border border-emerald-100">
             <p className="text-[23px] font-black text-emerald-700">92%</p>
-            <p className="text-[10px] font-bold text-emerald-600 uppercase">{t(`Θετικές`, `Positive`)}</p>
+            <p className="text-[10px] font-bold text-emerald-600">{t(`Θετικές`, `Positive`)}</p>
           </div>
           <div className="text-center p-2 bg-amber-50 rounded-lg border border-amber-100">
             <p className="text-[23px] font-black text-amber-700">6%</p>
-            <p className="text-[10px] font-bold text-amber-600 uppercase">{t(`Ουδέτερες`, `Neutral`)}</p>
+            <p className="text-[10px] font-bold text-amber-600">{t(`Ουδέτερες`, `Neutral`)}</p>
           </div>
           <div className="text-center p-2 bg-red-50 rounded-lg border border-red-100">
             <p className="text-[23px] font-black text-red-700">2%</p>
-            <p className="text-[10px] font-bold text-red-600 uppercase">{t(`Αρνητικές`, `Negative`)}</p>
+            <p className="text-[10px] font-bold text-red-600">{t(`Αρνητικές`, `Negative`)}</p>
           </div>
         </div>
         <div className="flex items-center gap-2 mt-3 text-[11.2px] text-gray-500 font-medium">
@@ -99,7 +99,7 @@ export default function OrganizerDashboard() {
       </div>
 
       <div className="space-y-6">
-        <h2 className="text-[18px] font-bold text-[#111827] uppercase tracking-wide">{t(`Οι Εκδηλώσεις μου`, `My Events`)}</h2>
+        <h2 className="text-[18px] font-bold text-[#111827] tracking-wide">{t(`Οι Εκδηλώσεις μου`, `My Events`)}</h2>
         
         <Card className="p-0 overflow-hidden border border-gray-200">
           <div className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-gray-100 bg-gray-50/50">
@@ -117,7 +117,7 @@ export default function OrganizerDashboard() {
           
           <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-3 gap-4">
              <div className="md:col-span-2 space-y-3">
-               <h4 className="text-[15px] font-bold text-gray-800 uppercase tracking-wide flex items-center gap-2">
+               <h4 className="text-[15px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
                  <Users className="w-4 h-4 text-gray-400" />{t(`Ομάδες`, `Groups`)}</h4>
                
                <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
@@ -146,7 +146,7 @@ export default function OrganizerDashboard() {
              </div>
 
              <div className="space-y-3">
-               <h4 className="text-[15px] font-bold text-gray-800 uppercase tracking-wide flex items-center gap-2">
+               <h4 className="text-[15px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
                  <Calendar className="w-4 h-4 text-gray-400" />{t(`Ενέργειες`, `Actions`)}</h4>
                <Button variant="outline" className="w-full text-[15px]" size="sm">{t(`Επεξεργασία`, `Edit`)}</Button>
                <Button variant="outline" className="w-full text-[15px]" size="sm">{t(`Αποστολή Ανακοίνωσης`, `Send Announcement`)}</Button>
@@ -172,7 +172,7 @@ export default function OrganizerDashboard() {
           
           <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-3 gap-4">
              <div className="md:col-span-2 space-y-3">
-               <h4 className="text-[15px] font-bold text-gray-800 uppercase tracking-wide flex items-center gap-2">
+               <h4 className="text-[15px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
                  <Users className="w-4 h-4 text-gray-400" />{t(`Ομάδες`, `Groups`)}</h4>
                
                <div className="flex items-center justify-between p-3 bg-cyan-50 rounded border border-cyan-100">
@@ -190,7 +190,7 @@ export default function OrganizerDashboard() {
              </div>
 
              <div className="space-y-3">
-               <h4 className="text-[15px] font-bold text-gray-800 uppercase tracking-wide flex items-center gap-2">
+               <h4 className="text-[15px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
                  <MoreHorizontal className="w-4 h-4 text-gray-400" />{t(`Περισσότερα`, `More`)}</h4>
                <Button variant="outline" className="w-full text-[15px]" size="sm">{t(`Επεξεργασία`, `Edit`)}</Button>
                <Button variant="outline" className="w-full text-[15px]" size="sm">{t(`Αρχειοθέτηση`, `Archive`)}</Button>
