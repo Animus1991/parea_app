@@ -50,6 +50,8 @@ export interface Event {
   safetyLevel: SafetyLevel;
   minTrustTierAccess: TrustTier;
   maxParticipants: number;
+  currentParticipants?: number;
+  isTrending?: boolean;
   imageUrl?: string;
   externalLink?: string;
 }

@@ -11,7 +11,7 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 export function Badge({ children, variant = 'default', className, icon, ...props }: BadgeProps) {
-  const baseClasses = "inline-flex items-center gap-1.5 rounded uppercase tracking-wider px-2 py-0.5 text-[10px] font-bold transition-colors";
+  const baseClasses = "inline-flex items-center gap-1.5 rounded uppercase tracking-wider px-2 py-0.5 text-[12.5px] font-bold transition-colors";
   const variants = {
     default: "bg-gray-100 text-[#111827]",
     outline: "border border-gray-200 text-gray-800 bg-white",

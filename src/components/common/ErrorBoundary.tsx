@@ -11,14 +11,9 @@ interface State {
 }
 
 export class ErrorBoundary extends React.Component<Props, State> {
-  public props: Props;
-  public state: State;
+  public declare props: Props;
+  public state: State = { hasError: false };
 
-  constructor(props: Props) {
-    super(props);
-    this.props = props;
-    this.state = { hasError: false };
-  }
 
   public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
@@ -36,7 +31,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
       return (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
           <h2 className="text-red-800 font-bold mb-2">Something went wrong</h2>
-          <p className="text-sm text-red-600">
+          <p className="text-[18px] text-red-600">
              {this.state.error?.message || 'An unexpected error occurred.'}
           </p>
         </div>

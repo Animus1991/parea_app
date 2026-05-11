@@ -41,8 +41,28 @@ const translations: Record<string, Record<Language, string>> = {
   'home.hero.stat3': { el: 'Δημοσια σημεια', en: 'Public spots' },
   'home.hero.search_placeholder': { el: 'Αναζήτηση εμπειριών...', en: 'Search experiences...' },
   
+  // Pending Feedback
+  'home.pending_feedback.title': { el: 'Εκκρεμής Αξιολόγηση', en: 'Pending Feedback' },
+  'home.pending_feedback.body': { el: 'Αξιολογήστε τα 3 μέλη από το "Comedy Night" για να ξεκλειδώσετε την επόμενη κράτησή σας.', en: 'Please rate the 3 members from "Comedy Night" to unlock your next booking.' },
+  'home.pending_feedback.cta': { el: 'Αξιολόγηση', en: 'Review Event' },
+
+  // How it works
+  'home.how.step1.title': { el: 'Διαλέξτε μια εμπειρία', en: 'Pick an experience' },
+  'home.how.step1.body': { el: 'Επιλέξτε μια εκδήλωση, πεζοπορία ή δραστηριότητα που θέλετε να παρακολουθήσετε.', en: 'Choose an event, hike, or activity you want to attend.' },
+  'home.how.step2.title': { el: 'Εντάξτε μια μικρή ομάδα', en: 'Join a small group' },
+  'home.how.step2.body': { el: 'Συνδεθείτε με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.', en: 'Connect with 3-6 others who share the same intent and schedule.' },
+  'home.how.step3.title': { el: 'Επιβεβαιώστε & συναντηθείτε', en: 'Confirm & meet' },
+  'home.how.step3.body': { el: 'Ξεκλειδώστε το group chat, ορίστε σημείο συνάντησης και απολαύστε την εμπειρία.', en: 'Unlock the group chat, set a meeting point and enjoy the experience.' },
+
   // Create Event Button
   'action.create_event': { el: 'Δημιουργία Εμπειρίας', en: 'Create Experience' },
+  
+  // EventCard
+  'event_card.organizer': { el: 'ΔΙΟΡΓΑΝΩΤΗΣ', en: 'ORGANIZER' },
+  'event_card.free': { el: 'ΔΩΡΕΑΝ', en: 'FREE' },
+  'event_card.join': { el: 'Συμμετοχή', en: 'Join' },
+  'event_card.forming': { el: 'Σχηματισμός', en: 'Forming' },
+  'event_card.copied': { el: 'Ο σύνδεσμος αντιγράφηκε!', en: 'Link copied to clipboard!' },
   
   // General
   'general.language': { el: 'EN', en: 'EL' },

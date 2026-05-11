@@ -21,6 +21,8 @@ export const mockEvents: Event[] = [
     safetyLevel: 'low',
     minTrustTierAccess: '2_confirmed',
     maxParticipants: 300,
+    currentParticipants: 187,
+    isTrending: true,
     tags: ['festival', 'music', 'concert'],
     imageUrl: 'https://picsum.photos/seed/festival/800/600',
     externalLink: 'https://www.releaseathens.gr/'
@@ -43,6 +45,8 @@ export const mockEvents: Event[] = [
     safetyLevel: 'high_trust',
     minTrustTierAccess: '1_explorer',
     maxParticipants: 50,
+    currentParticipants: 32,
+    isTrending: true,
     tags: ['food', 'festival', 'streetfood'],
     imageUrl: 'https://picsum.photos/seed/food/800/600',
     externalLink: 'https://athensstreetfoodfestival.gr/'
@@ -65,6 +69,7 @@ export const mockEvents: Event[] = [
     safetyLevel: 'low',
     minTrustTierAccess: '2_confirmed',
     maxParticipants: 10,
+    currentParticipants: 7,
     tags: ['culture', 'dance', 'theater'],
     imageUrl: 'https://picsum.photos/seed/dance/800/600',
     externalLink: 'https://aefestival.gr/'
@@ -87,6 +92,7 @@ export const mockEvents: Event[] = [
     safetyLevel: 'low',
     minTrustTierAccess: '1_explorer',
     maxParticipants: 10,
+    currentParticipants: 4,
     tags: ['cinema', 'open-air', 'retro'],
     imageUrl: 'https://picsum.photos/seed/cinema/800/600',
     externalLink: 'http://cine-thisio.gr/'
@@ -110,6 +116,8 @@ export const mockEvents: Event[] = [
     safetyLevel: 'medium',
     minTrustTierAccess: '2_confirmed',
     maxParticipants: 100,
+    currentParticipants: 45,
+    isTrending: true,
     tags: ['electronic', 'techno', 'festival'],
     imageUrl: 'https://picsum.photos/seed/dj/800/600',
     externalLink: 'https://addfestival.gr/'
@@ -132,6 +140,7 @@ export const mockEvents: Event[] = [
     safetyLevel: 'low',
     minTrustTierAccess: '1_explorer',
     maxParticipants: 30,
+    currentParticipants: 12,
     tags: ['yoga', 'wellness', 'free'],
     imageUrl: 'https://picsum.photos/seed/yoga/800/600',
     externalLink: 'https://www.snfcc.org/'

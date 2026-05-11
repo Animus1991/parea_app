@@ -72,6 +72,42 @@ export const mockUsers: User[] = [
     idVerified: true,
     isOrganizer: true,
     connections: ['u1', 'u3']
+  },
+  {
+    id: 'org2',
+    name: 'Athens Street Food Festival',
+    ageRange: 'N/A',
+    city: 'Athens',
+    bio: 'The biggest food festival in Greece. We bring together street food vendors, pop-up stores and DJ sets at the iconic Old OSY Depot.',
+    interests: [],
+    trustTier: '3_high_trust',
+    reliabilityScore: 98,
+    badges: ['Organizer verified'],
+    photoUrl: 'https://i.pravatar.cc/200?u=org2',
+    emailVerified: true,
+    phoneVerified: true,
+    paymentVerified: true,
+    idVerified: true,
+    isOrganizer: true,
+    connections: []
+  },
+  {
+    id: 'org3',
+    name: 'ADD Festival',
+    ageRange: 'N/A',
+    city: 'Athens',
+    bio: 'Athens\' biggest electronic dance music festival. A massive industrial setup featuring top international Techno and House DJs over multiple stages.',
+    interests: [],
+    trustTier: '3_high_trust',
+    reliabilityScore: 97,
+    badges: ['Organizer verified'],
+    photoUrl: 'https://i.pravatar.cc/200?u=org3',
+    emailVerified: true,
+    phoneVerified: true,
+    paymentVerified: true,
+    idVerified: true,
+    isOrganizer: true,
+    connections: []
   }
 ];
 

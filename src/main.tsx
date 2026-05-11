@@ -28,11 +28,11 @@ window.addEventListener('unhandledrejection', (e) => {
 import { LanguageProvider } from './lib/i18n';
 
 import React from 'react';
-class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
-  constructor(props: {children: React.ReactNode}) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
+type EBProps = { children: React.ReactNode };
+type EBState = { hasError: boolean; error: any };
+class ErrorBoundary extends React.Component<EBProps, EBState> {
+  public declare props: EBProps;
+  public state: EBState = { hasError: false, error: null };
   static getDerivedStateFromError(error: any) {
     return { hasError: true, error };
   }

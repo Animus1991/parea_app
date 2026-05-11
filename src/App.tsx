@@ -27,6 +27,8 @@ import Wallet from './pages/Wallet';
 import VerificationCenter from './pages/VerificationCenter';
 import SettingsAndPrivacy from './pages/SettingsAndPrivacy';
 import HelpCenter from './pages/HelpCenter';
+import NotFound from './pages/NotFound';
+import Achievements from './pages/Achievements';
 
 export default function App() {
   return (
@@ -61,11 +63,13 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/organizer/:id" element={<OrganizerProfile />} />
         
+        <Route path="/achievements" element={<Achievements />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/settings" element={<SettingsAndPrivacy />} />
         <Route path="/help" element={<HelpCenter />} />
         
         <Route path="/admin" element={<SettingsPage />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AppShell>
   );
