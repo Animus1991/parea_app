@@ -225,7 +225,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           <NakamasLogo className="text-[22px]" />
         </div>
         <div className="hidden md:block">
-          <span className="text-[12.96px] font-bold text-gray-400 tracking-wide">{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
+          <span className="text-[13.35px] font-bold text-gray-400 tracking-wide">{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3">
@@ -236,7 +236,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
             onChange={e => setSearchValue(e.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={t('Αναζήτηση εκδηλώσεων...', 'Search events...')}
-            className="w-64 py-1.5 pl-8 pr-3 text-sm bg-gray-100 border-transparent rounded-md focus:bg-white focus:ring-1 focus:ring-cyan-500 outline-none"
+            className="w-64 py-1.5 pl-8 pr-3 text-[14.42px] bg-gray-100 border-transparent rounded-md focus:bg-white focus:ring-1 focus:ring-cyan-500 outline-none"
           />
           <Search className="absolute w-4 h-4 text-gray-400 left-2.5 top-2" />
         </div>
@@ -244,7 +244,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         {/* Language Toggle */}
         <button
           onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
-          className="flex items-center gap-1 text-[11px] font-bold text-gray-500 hover:text-[#0E8B8D] transition-colors bg-gray-100 hover:bg-cyan-50 px-2.5 py-1.5 rounded-lg"
+          className="flex items-center gap-1 text-[11.33px] font-bold text-gray-500 hover:text-[#0E8B8D] transition-colors bg-gray-100 hover:bg-cyan-50 px-2.5 py-1.5 rounded-lg"
           title={language === 'el' ? 'Switch to English' : 'Αλλαγή σε Ελληνικά'}
         >
           <Globe className="w-3.5 h-3.5" />
@@ -254,7 +254,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         <NavLink to="/notifications" className="relative text-gray-500 hover:text-[#0E8B8D] transition-colors">
           <Bell className="h-[18px] w-[18px]" />
           {unreadNotificationCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#18D8DB] text-[9px] text-white font-bold border border-white">
+            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#18D8DB] text-[9.27px] text-white font-bold border border-white">
               {unreadNotificationCount}
             </span>
           )}
@@ -264,8 +264,8 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           {currentUser ? (
             <NavLink to="/profile" className="flex items-center space-x-2 relative group">
               <div className="hidden sm:flex flex-col items-end">
-                <span className="text-[10px] font-bold text-[#0E8B8D] tracking-wide">{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
-                <span className="text-[11px] font-bold text-[#111827]">{currentUser.name}</span>
+                <span className="text-[10.3px] font-bold text-[#0E8B8D] tracking-wide">{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
+                <span className="text-[11.33px] font-bold text-[#111827]">{currentUser.name}</span>
               </div>
               <div className="w-[28px] h-[28px] rounded-full bg-cyan-100 border border-cyan-200 flex items-center justify-center text-[#0E8B8D] font-bold text-[10px] overflow-hidden">
                 {currentUser.photoUrl ? (

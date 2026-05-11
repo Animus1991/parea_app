@@ -319,7 +319,7 @@ export default function Home() {
             </span>{" "}
             {t("home.hero.title3", "που ήδη θέλετε να ζήσετε.")}
           </h1>
-          <p className="text-gray-400 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6">
+          <p className="text-gray-400 font-medium text-[14.42px] md:text-[16.48px] leading-relaxed max-w-xl mb-6">
             {t(
               "home.hero.subtitle",
               "Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.",
@@ -524,7 +524,7 @@ export default function Home() {
         {/* Secondary filters */}
         <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar items-center flex-wrap">
           <select
-            className="text-xs border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer"
+            className="text-[12.36px] border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer"
             value={priceFilter}
             onChange={(e) =>
               setPriceFilter(e.target.value as typeof priceFilter)
@@ -541,7 +541,7 @@ export default function Home() {
           </select>
 
           <select
-            className="text-xs border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer"
+            className="text-[12.36px] border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value as typeof dateFilter)}
           >
@@ -558,7 +558,7 @@ export default function Home() {
           </select>
 
           <select
-            className="text-xs border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer"
+            className="text-[12.36px] border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer"
             value={safetyFilter}
             onChange={(e) =>
               setSafetyFilter(e.target.value as typeof safetyFilter)
@@ -579,7 +579,7 @@ export default function Home() {
           </select>
 
           <select
-            className="text-xs border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer"
+            className="text-[12.36px] border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer"
             value={radiusFilter}
             onChange={(e) =>
               setRadiusFilter(e.target.value as typeof radiusFilter)
@@ -596,7 +596,7 @@ export default function Home() {
           {/* Sort */}
           <div className="relative ml-auto">
             <select
-              className="text-xs border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none"
+              className="text-[12.36px] border border-gray-200 rounded-full shadow-sm bg-white hover:bg-gray-50 py-1.5 pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none"
               value={sortParam}
               onChange={(e) => {
                 const p = new URLSearchParams(searchParams);
@@ -625,13 +625,13 @@ export default function Home() {
           <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
             <button
               onClick={() => setFeedType("For You")}
-              className={`px-4 py-1.5 rounded-md text-xs font-bold transition-colors ${feedType === "For You" ? "bg-white shadow-sm text-[#111827]" : "text-gray-500 hover:text-[#111827]"}`}
+              className={`px-4 py-1.5 rounded-md text-[12.36px] font-bold transition-colors ${feedType === "For You" ? "bg-white shadow-sm text-[#111827]" : "text-gray-500 hover:text-[#111827]"}`}
             >
               {t("home.feed.for_you", "Για Σένα")}
             </button>
             <button
               onClick={() => setFeedType("Discover")}
-              className={`px-4 py-1.5 rounded-md text-xs font-bold transition-colors ${feedType === "Discover" ? "bg-white shadow-sm text-[#111827]" : "text-gray-500 hover:text-[#111827]"}`}
+              className={`px-4 py-1.5 rounded-md text-[12.36px] font-bold transition-colors ${feedType === "Discover" ? "bg-white shadow-sm text-[#111827]" : "text-gray-500 hover:text-[#111827]"}`}
             >
               {t("home.feed.discover", "Ανακάλυψε")}
             </button>
