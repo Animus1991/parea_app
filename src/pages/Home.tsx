@@ -298,7 +298,7 @@ export default function Home() {
           <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4">
             {t("home.hero.badge", "Νέος Τρόπος Εξόδου")}
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
+          <h1 className="text-base md:text-xl font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
             {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18D8DB] to-cyan-400">
               {t("home.hero.title2", "εμπειρίες")}
