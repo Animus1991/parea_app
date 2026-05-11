@@ -295,7 +295,7 @@ export default function Home() {
         className="bg-[#111827] text-white p-6 md:p-10 rounded-[24px] shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8"
       >
         <div className="relative z-10 flex-1">
-          <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[11.33px] font-bold tracking-wide mb-4">
+          <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[11.67px] font-bold tracking-wide mb-4">
             {t("home.hero.badge", "Νεος τροπος εξοδου")}
           </div>
           <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
@@ -473,7 +473,7 @@ export default function Home() {
           <h2 className="text-[10.3px] font-bold text-gray-400 tracking-wide mb-3">
             {t("home.explore_categories", "Εξερευνηση κατηγοριων")}
           </h2>
-          <div className="flex flex-nowrap gap-2 overflow-x-auto pb-1 noscrollbar">
+          <div className="flex flex-nowrap gap-2 overflow-x-auto pb-2 scrollbar-thin" onWheel={(e) => { e.currentTarget.scrollLeft += e.deltaY; e.preventDefault(); }}>
             {categories.map((cat) => (
               <button
                 key={cat}
