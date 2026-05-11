@@ -309,7 +309,7 @@ export default function Home() {
         className="bg-[#111827] text-white p-6 md:p-10 rounded-[24px] shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8"
       >
         <div className="relative z-10 flex-1">
-          <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[12.63px] font-bold tracking-wide mb-4">
+          <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[13.01px] font-bold tracking-wide mb-4">
             {t("home.hero.badge", "Νεος τροπος εξοδου")}
           </div>
           <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
@@ -417,7 +417,7 @@ export default function Home() {
             <CheckCircle2 className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-[13.39px] font-bold text-[#111827]">
+            <h3 className="text-[13.79px] font-bold text-[#111827]">
               {t("home.pending_feedback.title", "Εκκρεμής Αξιολόγηση")}
             </h3>
             <p className="text-[11px] text-gray-600 font-medium mt-0.5 leading-relaxed">
@@ -430,7 +430,7 @@ export default function Home() {
         </div>
         <button
           onClick={() => navigate("/plans")}
-          className="text-[11.33px] tracking-wider font-bold bg-[#111827] text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-black w-full sm:w-auto shadow-sm transition-colors"
+          className="text-[11.67px] tracking-wider font-bold bg-[#111827] text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-black w-full sm:w-auto shadow-sm transition-colors"
         >
           {t("home.pending_feedback.cta", "Αξιολόγηση")}
         </button>
@@ -471,10 +471,10 @@ export default function Home() {
             <div className="w-8 h-8 bg-cyan-50 text-[#0E8B8D] rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
               {step}
             </div>
-            <h3 className="font-bold text-[#111827] text-[13.39px] mb-1">
+            <h3 className="font-bold text-[#111827] text-[13.79px] mb-1">
               {title}
             </h3>
-            <p className="text-[11.33px] leading-relaxed text-gray-500 font-medium">
+            <p className="text-[11.67px] leading-relaxed text-gray-500 font-medium">
               {body}
             </p>
           </div>
@@ -484,7 +484,7 @@ export default function Home() {
       {/* Categories & Filters */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-[10.61px] font-bold text-gray-400 tracking-wide mb-3">
+          <h2 className="text-[10.93px] font-bold text-gray-400 tracking-wide mb-3">
             {t("home.explore_categories", "Εξερευνηση κατηγοριων")}
           </h2>
           <div ref={categoryScrollRef} className="flex flex-nowrap gap-2 overflow-x-auto pb-1 noscrollbar">
@@ -492,7 +492,7 @@ export default function Home() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`whitespace-nowrap px-3.5 py-1 rounded-full text-[11.67px] font-bold shadow-sm transition-colors tracking-wide ${
+                className={`whitespace-nowrap px-3.5 py-1 rounded-full text-[12.02px] font-bold shadow-sm transition-colors tracking-wide ${
                   activeCategory === cat
                     ? "bg-[#111827] text-white"
                     : "bg-white border border-gray-200 text-gray-500 hover:text-[#111827] hover:bg-gray-50"
@@ -510,7 +510,7 @@ export default function Home() {
             <button
               key={tag}
               onClick={() => setTagFilter(tag)}
-              className={`whitespace-nowrap px-3 py-1 rounded-full text-[10.83px] font-bold transition-colors border ${
+              className={`whitespace-nowrap px-3 py-1 rounded-full text-[11.15px] font-bold transition-colors border ${
                 tagFilter === tag
                   ? "bg-[#18D8DB]/20 border-[#18D8DB] text-[#0E8B8D]"
                   : "bg-white border-gray-200 text-gray-500 hover:border-gray-300 hover:text-[#111827]"

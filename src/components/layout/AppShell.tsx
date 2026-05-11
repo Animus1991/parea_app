@@ -126,7 +126,7 @@ function NavSection({ title, children, compact = false }: NavSectionProps) {
       {compact && <div className="block lg:hidden h-px bg-gray-200 my-4 mx-4" />}
       <h3
         className={cn(
-          'px-3 text-[14.83px] font-bold tracking-wide text-[#6B7280] mb-2',
+          'px-3 text-[13.35px] font-bold tracking-wide text-[#6B7280] mb-2',
           compact ? 'hidden lg:block' : 'block'
         )}
       >
@@ -225,7 +225,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           <NakamasLogo className="text-[22px]" />
         </div>
         <div className="hidden md:block">
-          <span className="text-[14.4px] font-bold text-gray-400 tracking-wide">{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
+          <span className="text-[12.96px] font-bold text-gray-400 tracking-wide">{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3">
