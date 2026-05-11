@@ -302,7 +302,7 @@ export default function NearbyGroups() {
                       {group.locationArea}
                     </p>
                     <button
-                      className="w-full bg-[#111827] text-white text-[10px] font-bold uppercase tracking-wider py-1.5 rounded-md hover:bg-black transition-colors"
+                      className="w-full bg-[#111827] text-white text-[10px] font-bold tracking-wide py-1.5 rounded-md hover:bg-black transition-colors"
                       onClick={() => navigate(`/events/${group.id}`)}
                     >
                       {t("Προβολή Εκδήλωσης", "View Event")}
@@ -531,7 +531,7 @@ export default function NearbyGroups() {
                       <MapPin className="inline w-3 h-3 mr-0.5" />{" "}
                       {group.locationArea}
                     </p>
-                    <button className="w-full bg-[#111827] text-white text-[10px] font-bold uppercase tracking-wider py-1.5 rounded-md hover:bg-black transition-colors">
+                    <button className="w-full bg-[#111827] text-white text-[10px] font-bold tracking-wide py-1.5 rounded-md hover:bg-black transition-colors">
                       View Event
                     </button>
                   </div>

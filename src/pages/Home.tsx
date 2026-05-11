@@ -298,7 +298,7 @@ export default function Home() {
           <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4">
             {t("home.hero.badge", "Νέος Τρόπος Εξόδου")}
           </div>
-          <h1 className="text-[17.5px] md:text-[23px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
+          <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
             {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18D8DB] to-cyan-400">
               {t("home.hero.title2", "εμπειρίες")}
@@ -478,7 +478,7 @@ export default function Home() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`whitespace-nowrap px-3.5 py-1 rounded-full text-[11px] font-bold shadow-sm transition-colors uppercase tracking-wider ${
+                className={`whitespace-nowrap px-3.5 py-1 rounded-full text-[11px] font-bold shadow-sm transition-colors tracking-wide ${
                   activeCategory === cat
                     ? "bg-[#111827] text-white"
                     : "bg-white border border-gray-200 text-gray-500 hover:text-[#111827] hover:bg-gray-50"
