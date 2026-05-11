@@ -436,7 +436,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         {/* Group progress + Join */}
         <div className="mt-auto pt-3 border-t border-gray-100">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[11px] font-bold text-gray-500 tracking-tight capitalize">
+            <span className="text-[11.33px] font-bold text-gray-500 tracking-tight capitalize">
               {t("event_card.forming", "Forming")}
             </span>
           </div>
@@ -446,7 +446,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
               <button
-                className="text-[10px] text-gray-500 hover:text-[#0E8B8D] transition-colors font-medium underline underline-offset-2"
+                className="text-[10.3px] text-gray-500 hover:text-[#0E8B8D] transition-colors font-medium underline underline-offset-2"
                 onClick={getCalendarUrl}
                 title={t(
                   "Προσθήκη στο Google Calendar",
@@ -462,12 +462,12 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   e.stopPropagation();
                   navigate(`/events/${event.id}`);
                 }}
-                className="px-4 py-2 bg-gray-100 text-gray-700 text-[11px] font-bold rounded-full hover:bg-gray-200 transition-colors tracking-tight"
+                className="px-4 py-2 bg-gray-100 text-gray-700 text-[11.33px] font-bold rounded-full hover:bg-gray-200 transition-colors tracking-tight"
                 title={t("Λεπτομέρειες", "View Details")}
               >
                 {t("Λεπτομέρειες", "View Details")}
               </button>
-              <button className="px-5 py-2 bg-[#111827] text-white text-[11px] font-bold rounded-full shadow-sm hover:bg-black transition-colors tracking-tight">
+              <button className="px-5 py-2 bg-[#111827] text-white text-[11.33px] font-bold rounded-full shadow-sm hover:bg-black transition-colors tracking-tight">
                 {t("event_card.join", "Join")}
               </button>
             </div>

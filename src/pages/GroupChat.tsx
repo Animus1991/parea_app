@@ -499,7 +499,7 @@ export default function GroupChat() {
         {showInfo && (
           <div className="w-full md:w-[320px] lg:w-[380px] bg-white shrink-0 flex flex-col absolute md:relative z-30 h-full border-l border-gray-200 animate-in slide-in-from-right-8 duration-200">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
-              <h3 className="font-bold text-[#111827] text-sm tracking-wide">
+              <h3 className="font-bold text-[#111827] text-[14.42px] tracking-wide">
                 {t("Λεπτομέρειες Ομάδας", "Group Details")}
               </h3>
               <button
