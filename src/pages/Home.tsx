@@ -117,28 +117,28 @@ export default function Home() {
   ];
 
   const categoryTranslations: Record<string, string> = {
-    All: t("Όλα", "All"),
-    Theatre: t("Θέατρο", "Theatre"),
-    Concerts: t("Συναυλίες", "Concerts"),
-    Cinema: t("Σινεμά", "Cinema"),
+    All: t("Ολα", "All"),
+    Theatre: t("Θεατρο", "Theatre"),
+    Concerts: t("Συναυλιες", "Concerts"),
+    Cinema: t("Σινεμα", "Cinema"),
     "Stand-up": "Stand-up",
-    Museums: t("Μουσεία", "Museums"),
-    Exhibitions: t("Εκθέσεις", "Exhibitions"),
-    Festivals: t("Φεστιβάλ", "Festivals"),
-    "Board games": t("Επιτραπέζια", "Board Games"),
-    "Book clubs": t("Λέσχη Ανάγνωσης", "Book Club"),
-    "Language exchange": t("Ανταλλαγή Γλωσσών", "Language Exchange"),
-    "Philosophy/Science": t("Φιλοσοφία/Επιστήμη", "Philosophy/Science"),
-    "City walks": t("Περίπατοι", "City Walks"),
+    Museums: t("Μουσεια", "Museums"),
+    Exhibitions: t("Εκθεσεις", "Exhibitions"),
+    Festivals: t("Φεστιβαλ", "Festivals"),
+    "Board games": t("Επιτραπεζια", "Board Games"),
+    "Book clubs": t("Λεσχη Αναγνωσης", "Book Club"),
+    "Language exchange": t("Ανταλλαγη Γλωσσων", "Language Exchange"),
+    "Philosophy/Science": t("Φιλοσοφια/Επιστημη", "Philosophy/Science"),
+    "City walks": t("Περιπατοι", "City Walks"),
     Hiking: t("Πεζοπορία", "Hiking"),
-    "Nearby escapes": t("Κοντινές Αποδράσεις", "Nearby Getaways"),
-    "Short day trips": t("Μονοήμερες", "Day Trips"),
-    "Nature walks": t("Βόλτες στη Φύση", "Nature Walks"),
-    "Light sports": t("Ελαφριά Άθληση", "Light Sports"),
-    Workshops: t("Εργαστήρια", "Workshops"),
-    "Online events": t("Διαδικτυακά", "Online"),
-    "Community events": t("Κοινότητα", "Community"),
-    "Private events": t("Ιδιωτικά", "Private"),
+    "Nearby escapes": t("Κοντινες Αποδρασεις", "Nearby Getaways"),
+    "Short day trips": t("Μονοημερες", "Day Trips"),
+    "Nature walks": t("Βολτες στη Φυση", "Nature Walks"),
+    "Light sports": t("Ελαφρια Αθληση", "Light Sports"),
+    Workshops: t("Εργαστηρια", "Workshops"),
+    "Online events": t("Διαδικτυακα", "Online"),
+    "Community events": t("Κοινοτητα", "Community"),
+    "Private events": t("Ιδιωτικα", "Private"),
   };
 
   const popularTags = [
@@ -298,7 +298,7 @@ export default function Home() {
           <div className="inline-flex items-center gap-2 text-[#18D8DB] border border-[#18D8DB]/30 bg-[#18D8DB]/10 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4">
             {t("home.hero.badge", "Νέος Τρόπος Εξόδου")}
           </div>
-          <h1 className="text-base md:text-xl font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
+          <h1 className="text-lg md:text-2xl font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
             {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18D8DB] to-cyan-400">
               {t("home.hero.title2", "εμπειρίες")}
