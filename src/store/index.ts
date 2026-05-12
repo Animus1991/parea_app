@@ -1,16 +1,20 @@
 import { create } from "zustand";
+import { Event } from "../types";
 import { mockEvents } from "../data/mockEvents";
 import { mockGroups } from "../data/mockGroups";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
+import { fetchTicketmasterEvents, isTicketmasterConfigured } from "../services/eventApi";
 
 interface AppState {
-  events: typeof mockEvents;
+  events: Event[];
   groups: typeof mockGroups;
   users: typeof mockUsers;
   currentUser: typeof currentUser | null;
   isAuthenticated: boolean;
   notifications: typeof mockNotifications;
+  eventsLoading: boolean;
+  eventsSource: 'mock' | 'api' | 'mixed';
 
   // Actions
   login: (userId: string) => void;
@@ -31,10 +35,13 @@ interface AppState {
   triggerSos: (groupId: string, userId: string, active: boolean) => void;
   savedEvents: string[];
   toggleSavedEvent: (eventId: string) => void;
+  fetchExternalEvents: () => Promise<void>;
 }
 
-export const useStore = create<AppState>((set) => ({
+export const useStore = create<AppState>((set, get) => ({
   events: mockEvents,
+  eventsLoading: false,
+  eventsSource: 'mock',
   groups: mockGroups,
   users: mockUsers,
   currentUser: currentUser,
@@ -191,4 +198,26 @@ export const useStore = create<AppState>((set) => ({
           : [...state.savedEvents, eventId],
       };
     }),
+
+  fetchExternalEvents: async () => {
+    if (!isTicketmasterConfigured()) return;
+    set({ eventsLoading: true });
+    try {
+      const tmEvents = await fetchTicketmasterEvents();
+      if (tmEvents.length > 0) {
+        const existing = get().events;
+        const existingIds = new Set(existing.map((e) => e.id));
+        const newEvents = tmEvents.filter((e) => !existingIds.has(e.id));
+        set({
+          events: [...existing, ...newEvents],
+          eventsSource: 'mixed',
+          eventsLoading: false,
+        });
+      } else {
+        set({ eventsLoading: false });
+      }
+    } catch {
+      set({ eventsLoading: false });
+    }
+  },
 }));

@@ -32,6 +32,11 @@ export default function Home() {
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const events = useStore((state) => state.events);
+  const fetchExternalEvents = useStore((state) => state.fetchExternalEvents);
+
+  useEffect(() => {
+    fetchExternalEvents();
+  }, [fetchExternalEvents]);
 
   const searchSuggestions = [
     t("Πεζοπορία", "Hiking"),
@@ -107,83 +112,86 @@ export default function Home() {
 
   const categories = [
     "All",
-    "Theatre",
-    "Concerts",
+    "Live Music",
+    "Electronic Music",
+    "Theater & Dance",
     "Cinema",
     "Stand-up",
+    "Food & Drink",
     "Museums",
     "Exhibitions",
-    "Festivals",
+    "Workshops",
+    "Sports",
+    "Social",
+    "Networking",
+    "Wellness",
     "Board games",
-    "Book clubs",
+    "Book club",
     "Language exchange",
-    "Philosophy/Science",
-    "City walks",
     "Hiking",
     "Nearby escapes",
-    "Short day trips",
-    "Nature walks",
-    "Light sports",
-    "Workshops",
-    "Online events",
+    "Walking tours",
     "Community events",
-    "Private events",
   ];
 
   const categoryTranslations: Record<string, string> = {
     All: t("Όλα", "All"),
-    Theatre: t("Θέατρο", "Theatre"),
-    Concerts: t("Συναυλίες", "Concerts"),
+    "Live Music": t("Ζωντανή Μουσική", "Live Music"),
+    "Electronic Music": t("Ηλεκτρονική Μουσική", "Electronic Music"),
+    "Theater & Dance": t("Θέατρο & Χορός", "Theater & Dance"),
     Cinema: t("Σινεμά", "Cinema"),
     "Stand-up": "Stand-up",
+    "Food & Drink": t("Φαγητό & Ποτό", "Food & Drink"),
     Museums: t("Μουσεία", "Museums"),
     Exhibitions: t("Εκθέσεις", "Exhibitions"),
-    Festivals: t("Φεστιβάλ", "Festivals"),
-    "Board games": t("Επιτραπέζια", "Board Games"),
-    "Book clubs": t("Λέσχη ανάγνωσης", "Book Club"),
-    "Language exchange": t("Ανταλλαγή γλωσσών", "Language Exchange"),
-    "Philosophy/Science": t("Φιλοσοφία/επιστήμη", "Philosophy/Science"),
-    "City walks": t("Περίπατοι", "City Walks"),
-    Hiking: t("Πεζοπορία", "Hiking"),
-    "Nearby escapes": t("Κοντινές αποδράσεις", "Nearby Getaways"),
-    "Short day trips": t("Μονοήμερες", "Day Trips"),
-    "Nature walks": t("Βόλτες στη φύση", "Nature Walks"),
-    "Light sports": t("Ελαφριά άθληση", "Light Sports"),
     Workshops: t("Εργαστήρια", "Workshops"),
-    "Online events": t("Διαδικτυακά", "Online"),
+    Sports: t("Αθλητισμός", "Sports"),
+    Social: t("Κοινωνικά", "Social"),
+    Networking: t("Δικτύωση", "Networking"),
+    Wellness: t("Ευεξία", "Wellness"),
+    "Board games": t("Επιτραπέζια", "Board Games"),
+    "Book club": t("Λέσχη Ανάγνωσης", "Book Club"),
+    "Language exchange": t("Ανταλλαγή Γλωσσών", "Language Exchange"),
+    Hiking: t("Πεζοπορία", "Hiking"),
+    "Nearby escapes": t("Κοντινές Αποδράσεις", "Nearby Getaways"),
+    "Walking tours": t("Ξεναγήσεις", "Walking Tours"),
     "Community events": t("Κοινότητα", "Community"),
-    "Private events": t("Ιδιωτικά", "Private"),
   };
 
   const popularTags = [
     "All",
     "music",
-    "networking",
+    "culture",
+    "food",
     "outdoor",
-    "indoor",
     "social",
-    "learning",
+    "nightlife",
     "sports",
+    "workshop",
+    "free",
   ];
   const tagTranslations: Record<string, string> = {
     All: t("Όλες οι Ετικέτες", "All Tags"),
     music: t("Μουσική", "Music"),
-    networking: t("Δικτύωση", "Networking"),
+    culture: t("Πολιτισμός", "Culture"),
+    food: t("Φαγητό", "Food"),
     outdoor: t("Υπαίθρια", "Outdoor"),
-    indoor: t("Εσωτερικός Χώρος", "Indoor"),
     social: t("Κοινωνικά", "Social"),
-    learning: t("Εκμάθηση", "Learning"),
+    nightlife: t("Νυχτερινή Ζωή", "Nightlife"),
     sports: t("Αθλητισμός", "Sports"),
+    workshop: t("Εργαστήριο", "Workshop"),
+    free: t("Δωρεάν", "Free"),
   };
 
   const mockDistances: Record<string, number> = {
-    e1: 1.2,
-    e2: 18.0,
-    e3: 2.8,
-    e4: 3.6,
-    e5: 150.0,
-    e6: 0.5,
+    e1: 1.2, e2: 18.0, e3: 2.8, e4: 3.6, e5: 150.0, e6: 0.5,
+    e7: 2.1, e8: 4.5, e9: 1.8, e10: 25.0, e11: 1.5, e12: 5.2,
+    e13: 1.0, e14: 0.8, e15: 3.2, e16: 2.5, e17: 3.8, e18: 1.3,
+    e19: 12.0, e20: 6.0, e21: 2.0, e22: 0.9, e23: 2.4, e24: 2.6,
+    e25: 18.0, e26: 3.5, e27: 2.2, e28: 8.5,
   };
+
+  const currentUser = useStore((state) => state.currentUser);
 
   // Memoized filtering
   const filteredEvents = useMemo(() => {
@@ -198,8 +206,12 @@ export default function Home() {
         if (!inTitle && !inDesc && !inTags) return false;
       }
 
-      if (feedType === "For You" && !["e4", "e1", "e2", "e5"].includes(e.id))
-        return false;
+      if (feedType === "For You") {
+        const matchScore = currentUser
+          ? (e.tags ?? []).filter((t) => (currentUser.interests || []).includes(t)).length
+          : 0;
+        if (matchScore === 0 && !e.isTrending && e.id.startsWith('tm_')) return false;
+      }
       if (activeCategory !== "All" && e.category !== activeCategory)
         return false;
       if (tagFilter !== "All" && !(e.tags ?? []).includes(tagFilter))
@@ -234,11 +246,10 @@ export default function Home() {
     tagFilter,
     priceFilter,
     safetyFilter,
+    currentUser,
     dateFilter,
     radiusFilter,
   ]);
-
-  const currentUser = useStore((state) => state.currentUser);
 
   // URL-based sorting (Relevance / Distance / Group Progress)
   const sortParam = searchParams.get("sort") || "Relevance";

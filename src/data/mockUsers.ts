@@ -108,6 +108,42 @@ export const mockUsers: User[] = [
     idVerified: true,
     isOrganizer: true,
     connections: []
+  },
+  {
+    id: 'org4',
+    name: 'Megaron Athens Concert Hall',
+    ageRange: 'N/A',
+    city: 'Athens',
+    bio: 'One of the world\'s finest concert halls hosting classical music, opera, ballet, and cultural events since 1991.',
+    interests: [],
+    trustTier: '3_high_trust',
+    reliabilityScore: 100,
+    badges: ['Organizer verified'],
+    photoUrl: 'https://i.pravatar.cc/200?u=org4',
+    emailVerified: true,
+    phoneVerified: true,
+    paymentVerified: true,
+    idVerified: true,
+    isOrganizer: true,
+    connections: []
+  },
+  {
+    id: 'tm_organizer',
+    name: 'Ticketmaster',
+    ageRange: 'N/A',
+    city: 'Athens',
+    bio: 'Events sourced automatically from Ticketmaster. Verified external listings.',
+    interests: [],
+    trustTier: '3_high_trust',
+    reliabilityScore: 90,
+    badges: ['External source'],
+    photoUrl: 'https://i.pravatar.cc/200?u=tm',
+    emailVerified: true,
+    phoneVerified: true,
+    paymentVerified: true,
+    idVerified: false,
+    isOrganizer: true,
+    connections: []
   }
 ];
 
