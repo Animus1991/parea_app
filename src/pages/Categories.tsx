@@ -16,27 +16,26 @@ export default function Categories() {
   const events = useStore((state) => state.events);
 
   const ALL_CATEGORIES = [
-    { id: '1', name: t('Θεατρο', 'Theatre'), icon: Ticket, count: 12, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100' },
-    { id: '2', name: t('Συναυλιες', 'Concerts'), icon: Music, count: 8, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
-    { id: '3', name: t('Σινεμα', 'Cinema'), icon: Camera, count: 15, color: 'text-cyan-600', bg: 'bg-cyan-50', border: 'border-cyan-100' },
-    { id: '4', name: t('Stand-up', 'Stand-up'), icon: Zap, count: 4, color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-100' },
-    { id: '5', name: t('Μουσεια', 'Museums'), icon: Compass, count: 9, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { id: '6', name: t('Εκθεσεις', 'Exhibitions'), icon: Palette, count: 11, color: 'text-fuchsia-600', bg: 'bg-fuchsia-50', border: 'border-fuchsia-100' },
-    { id: '7', name: t('Φεστιβαλ', 'Festivals'), icon: Star, count: 2, color: 'text-pink-600', bg: 'bg-pink-50', border: 'border-pink-100' },
-    { id: '8', name: t('Επιτραπεζια', 'Board games'), icon: Gamepad2, count: 18, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' },
-    { id: '9', name: t('Λεσχες βιβλιου', 'Book clubs'), icon: BookOpen, count: 6, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    { id: '10', name: t('Ανταλλαγη γλωσσων', 'Language exchange'), icon: Languages, count: 14, color: 'text-cyan-600', bg: 'bg-cyan-50', border: 'border-cyan-100' },
-    { id: '11', name: t('Φιλοσοφια/Επιστημη', 'Philosophy/Science'), icon: BrainCircuit, count: 5, color: 'text-slate-600', bg: 'bg-slate-50', border: 'border-slate-100' },
-    { id: '12', name: t('Περιπατοι στην πολη', 'City walks'), icon: MapPin, count: 20, color: 'text-teal-600', bg: 'bg-teal-50', border: 'border-teal-100' },
-    { id: '13', name: t('Πεζοπορια', 'Hiking'), icon: Mountain || Map, count: 32, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
-    { id: '14', name: t('Κοντινες αποδρασεις', 'Nearby escapes'), icon: Car, count: 7, color: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-100' },
-    { id: '15', name: t('Μονοημερες εκδρομες', 'Short day trips'), icon: Bus, count: 10, color: 'text-lime-600', bg: 'bg-lime-50', border: 'border-lime-100' },
-    { id: '16', name: t('Περιπατοι στη φυση', 'Nature walks'), icon: TreePine || Leaf, count: 25, color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-    { id: '17', name: t('Ελαφρια αθληματα', 'Light sports'), icon: Trophy, count: 19, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
-    { id: '18', name: t('Εργαστηρια', 'Workshops'), icon: Coffee, count: 16, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-    { id: '19', name: t('Online εκδηλωσεις', 'Online events'), icon: Monitor, count: 42, color: 'text-gray-600', bg: 'bg-gray-50', border: 'border-gray-200' },
-    { id: '20', name: t('Κοινοτικες εκδηλωσεις', 'Community events'), icon: HeartHandshake, count: 28, color: 'text-rose-500', bg: 'bg-rose-50', border: 'border-rose-100' },
-    { id: '21', name: t('Ιδιωτικες εκδηλωσεις', 'Private events'), icon: Lock, count: 8, color: 'text-cyan-900', bg: 'bg-cyan-50', border: 'border-cyan-200' }
+    { id: '1', name: 'Live Music', label: t('Ζωντανή Μουσική', 'Live Music'), icon: Music, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+    { id: '2', name: 'Electronic Music', label: t('Ηλεκτρονική Μουσική', 'Electronic Music'), icon: Zap, color: 'text-pink-600', bg: 'bg-pink-50', border: 'border-pink-100' },
+    { id: '3', name: 'Theater & Dance', label: t('Θέατρο & Χορός', 'Theater & Dance'), icon: Ticket, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100' },
+    { id: '4', name: 'Cinema', label: t('Σινεμά', 'Cinema'), icon: Camera, color: 'text-cyan-600', bg: 'bg-cyan-50', border: 'border-cyan-100' },
+    { id: '5', name: 'Stand-up', label: 'Stand-up', icon: Star, color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-100' },
+    { id: '6', name: 'Food & Drink', label: t('Φαγητό & Ποτό', 'Food & Drink'), icon: Coffee, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' },
+    { id: '7', name: 'Museums', label: t('Μουσεία', 'Museums'), icon: Compass, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+    { id: '8', name: 'Exhibitions', label: t('Εκθέσεις', 'Exhibitions'), icon: Palette, color: 'text-fuchsia-600', bg: 'bg-fuchsia-50', border: 'border-fuchsia-100' },
+    { id: '9', name: 'Workshops', label: t('Εργαστήρια', 'Workshops'), icon: Coffee, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+    { id: '10', name: 'Sports', label: t('Αθλητισμός', 'Sports'), icon: Trophy, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
+    { id: '11', name: 'Social', label: t('Κοινωνικά', 'Social'), icon: Users, color: 'text-teal-600', bg: 'bg-teal-50', border: 'border-teal-100' },
+    { id: '12', name: 'Networking', label: t('Δικτύωση', 'Networking'), icon: HeartHandshake, color: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-100' },
+    { id: '13', name: 'Wellness', label: t('Ευεξία', 'Wellness'), icon: Leaf, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    { id: '14', name: 'Board games', label: t('Επιτραπέζια', 'Board Games'), icon: Gamepad2, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' },
+    { id: '15', name: 'Book club', label: t('Λέσχη Ανάγνωσης', 'Book Club'), icon: BookOpen, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    { id: '16', name: 'Language exchange', label: t('Ανταλλαγή Γλωσσών', 'Language Exchange'), icon: Languages, color: 'text-cyan-600', bg: 'bg-cyan-50', border: 'border-cyan-100' },
+    { id: '17', name: 'Hiking', label: t('Πεζοπορία', 'Hiking'), icon: Mountain, color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
+    { id: '18', name: 'Nearby escapes', label: t('Κοντινές Αποδράσεις', 'Nearby Getaways'), icon: Car, color: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-100' },
+    { id: '19', name: 'Walking tours', label: t('Ξεναγήσεις', 'Walking Tours'), icon: MapPin, color: 'text-teal-600', bg: 'bg-teal-50', border: 'border-teal-100' },
+    { id: '20', name: 'Community events', label: t('Κοινότητα', 'Community'), icon: HeartHandshake, color: 'text-rose-500', bg: 'bg-rose-50', border: 'border-rose-100' },
   ];
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -61,9 +60,9 @@ export default function Categories() {
 
   const visibleCategories = ALL_CATEGORIES.map(cat => ({
     ...cat,
-    count: categoryCounts[cat.name] || 0 // Use actual count
+    count: categoryCounts[cat.name] || 0
   })).filter(cat => 
-    cat.name.toLowerCase().includes(searchQuery.toLowerCase())
+    (cat.label || cat.name).toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredEvents = [...events].filter(e => {
@@ -87,7 +86,6 @@ export default function Categories() {
       return progB - progA;
     }
     if (sortBy === 'Distance') {
-      // Dummy logic for distance - assuming mock proximity
       return (a.lat ? 1 : 0) - (b.lat ? 1 : 0);
     }
     return 0; // Default Relevance

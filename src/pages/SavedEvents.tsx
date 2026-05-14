@@ -9,8 +9,8 @@ import { useLanguage } from '../lib/i18n';
 export default function SavedEvents() {
   const { t } = useLanguage();
   const events = useStore((state) => state.events);
-  // Using some mock data for demonstration
-  const savedEvents = events.length >= 3 ? [events[0], events[2]] : events;
+  const savedEventIds = useStore((state) => state.savedEvents);
+  const savedEvents = events.filter((e) => savedEventIds.includes(e.id));
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">

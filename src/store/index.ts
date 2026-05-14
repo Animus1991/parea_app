@@ -7,6 +7,8 @@ import { mockNotifications } from "../data/mockNotifications";
 import { fetchTicketmasterEvents, isTicketmasterConfigured } from "../services/eventApi";
 
 interface AppState {
+  theme: string;
+  setTheme: (theme: string) => void;
   events: Event[];
   groups: typeof mockGroups;
   users: typeof mockUsers;
@@ -39,6 +41,8 @@ interface AppState {
 }
 
 export const useStore = create<AppState>((set, get) => ({
+  theme: 'classic',
+  setTheme: (theme) => set({ theme }),
   events: mockEvents,
   eventsLoading: false,
   eventsSource: 'mock',

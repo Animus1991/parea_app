@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
   Grid, TrendingUp, Bookmark, History, Flag,
-  Users, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare
+  Users, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare, Palette
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
@@ -70,6 +70,7 @@ interface NavItemProps {
 
 function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: NavItemProps) {
   const { t } = useLanguage();
+  const theme = useStore((state) => state.theme);
   const containerClass = compact
     ? 'justify-center px-0 py-3 lg:justify-start lg:px-3 lg:py-2'
     : 'justify-start px-3 py-2';
@@ -81,12 +82,12 @@ function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: N
   if (disabled) {
     return (
       <div
-        className={cn('flex items-center gap-3 text-sm font-medium text-gray-400 rounded-lg cursor-not-allowed', containerClass)}
+        className={cn(`${theme === "bento-dark" ? "text-white" : "text-black"}`, containerClass)}
         title={label}
       >
         <Icon className={iconClass} />
         <span className={textClass}>{label}</span>
-      <span className={cn('text-[9px] tracking-wide font-bold bg-gray-100 px-1.5 py-0.5 rounded text-gray-400', textClass)}>{t('Σύντομα', 'Soon')}</span>
+      <span className={cn(`text-[9px] tracking-wide font-bold bg-gray-100 px-1.5 py-0.5 rounded ${theme === "bento-dark" ? "text-white" : "text-black"}`, textClass)}>{t('Σύντομα', 'Soon')}</span>
       </div>
     );
   }
@@ -99,9 +100,7 @@ function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: N
         cn(
           'flex items-center gap-3 rounded-xl lg:rounded-lg text-sm font-medium transition-colors group',
           containerClass,
-          isActive
-            ? 'bg-cyan-50 text-[#0E8B8D] font-bold'
-            : 'text-gray-500 lg:text-gray-600 hover:bg-gray-100 lg:hover:bg-gray-50 hover:text-[#111827]'
+          isActive ? (theme === "bento-dark" ? "bg-gray-800 text-emerald-400 font-bold" : "bg-cyan-50 text-[#0E8B8D] font-bold") : (theme === "bento-dark" ? "text-white hover:bg-gray-700 hover:text-white" : "text-gray-500 lg:text-gray-600 hover:bg-gray-100 lg:hover:bg-gray-50 hover:text-[#111827]")
         )
       }
     >
@@ -209,6 +208,9 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   const { language, setLanguage, t } = useLanguage();
   const currentUser = useStore((state) => state.currentUser);
   const isAuthenticated = useStore((state) => state.isAuthenticated);
+  const theme = useStore((state) => state.theme);
+  const setTheme = useStore((state) => state.setTheme);
+  const cycleTheme = () => { const themes = ['classic', 'vibrant', 'bento', 'neon', 'vibrant-dark', 'bento-dark', 'neon-dark']; const next = themes[(themes.indexOf(theme) + 1) % themes.length]; setTheme(next); };
   const unreadNotificationCount = useUnreadCount();
   const [searchValue, setSearchValue] = useState('');
 
@@ -219,13 +221,13 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   return (
-    <nav className="flex items-center justify-between px-4 lg:px-6 py-3 bg-white border-b border-[#E5E7EB] h-16 shrink-0">
+    <nav className={cn("flex items-center justify-between px-4 lg:px-6 py-3 border-b h-16 shrink-0", theme === "bento-dark" ? "bg-gray-900 border-gray-800" : "bg-white border-[#E5E7EB]")}>
       <div className="flex items-center space-x-8">
         <div className="md:hidden">
           <NakamasLogo className="text-[22px]" />
         </div>
         <div className="hidden md:block">
-          <span className="text-[14.58px] font-bold text-gray-400 tracking-wide">{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
+          <span className={`text-[14.58px] font-bold ${theme === "bento-dark" ? "text-white" : "text-gray-400"} tracking-wide`}>{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3">
@@ -236,22 +238,28 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
             onChange={e => setSearchValue(e.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={t('Αναζήτηση εκδηλώσεων...', 'Search events...')}
-            className="w-64 py-1.5 pl-8 pr-3 text-[14.42px] bg-gray-100 border-transparent rounded-md focus:bg-white focus:ring-1 focus:ring-cyan-500 outline-none"
+            className={cn("w-64 py-1.5 pl-8 pr-3 text-[14.42px] border-transparent rounded-md focus:ring-1 focus:ring-cyan-500 outline-none", theme === "bento-dark" ? "bg-gray-800 text-white focus:bg-gray-700" : "bg-gray-100 focus:bg-white text-gray-900")}
           />
-          <Search className="absolute w-4 h-4 text-gray-400 left-2.5 top-2" />
+          <Search className={`absolute w-4 h-4 ${theme === "bento-dark" ? "text-white" : "text-gray-400"} left-2.5 top-2`} />
         </div>
+
+        {/* Theme Toggle */}
+        <button onClick={cycleTheme} className={cn("flex items-center gap-1 text-[11.33px] font-bold transition-colors px-2.5 py-1.5 rounded-lg", theme === "bento-dark" ? "bg-gray-800 text-white hover:text-emerald-400 hover:bg-gray-700" : "bg-gray-100 text-gray-500 hover:text-[#0E8B8D] hover:bg-cyan-50")} title="Toggle Theme">
+          <Palette className="w-4 h-4" />
+          <span className="hidden sm:inline capitalize">{theme}</span>
+        </button>
 
         {/* Language Toggle */}
         <button
           onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
-          className="flex items-center gap-1 text-[11.33px] font-bold text-gray-500 hover:text-[#0E8B8D] transition-colors bg-gray-100 hover:bg-cyan-50 px-2.5 py-1.5 rounded-lg"
+          className={cn("flex items-center gap-1 text-[11.33px] font-bold transition-colors px-2.5 py-1.5 rounded-lg", theme === "bento-dark" ? "bg-gray-800 text-white hover:text-emerald-400 hover:bg-gray-700" : "bg-gray-100 text-gray-500 hover:text-[#0E8B8D] hover:bg-cyan-50")}
           title={language === 'el' ? 'Switch to English' : 'Αλλαγή σε Ελληνικά'}
         >
           <Globe className="w-3.5 h-3.5" />
           {language === 'el' ? 'EN' : 'EL'}
         </button>
 
-        <NavLink to="/notifications" className="relative text-gray-500 hover:text-[#0E8B8D] transition-colors">
+        <NavLink to="/notifications" className={cn("relative transition-colors hover:text-[#0E8B8D]", theme === "bento-dark" ? "text-white" : "text-gray-500")}>
           <Bell className="h-[18px] w-[18px]" />
           {unreadNotificationCount > 0 && (
             <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#18D8DB] text-[9.27px] text-white font-bold border border-white">
@@ -285,7 +293,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           )}
         </div>
 
-        <button onClick={onMenuClick} className="text-gray-500 hover:text-[#111827] md:hidden">
+        <button onClick={onMenuClick} className={cn("md:hidden", theme === "bento-dark" ? "text-white hover:text-white" : "text-gray-500 hover:text-[#111827]")}>
           <Menu className="h-[22px] w-[22px]" />
         </button>
       </div>
@@ -296,14 +304,14 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
 // ─────────────────────────────────────────────
 // BottomNav
 // ─────────────────────────────────────────────
-export function BottomNav() {
+export function BottomNav() { const theme = useStore(s=>s.theme);
   const { t } = useLanguage();
   return (
-    <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-gray-200 px-2 pb-4 pt-3 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50">
+    <div className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50", theme === "bento-dark" ? "bg-gray-900/95 border-gray-800" : "bg-white/95 border-gray-200")}>
       <NavLink
         to="/"
         className={({ isActive }) =>
-          cn('flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400 hover:text-[#0E8B8D]')
+          cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]", isActive ? (theme === "bento-dark" ? "text-emerald-400" : "text-[#0E8B8D]") : (theme === "bento-dark" ? "text-white hover:text-emerald-400" : "text-gray-400 hover:text-[#0E8B8D]"))
         }
       >
         <Compass className="h-[18px] w-[18px]" strokeWidth={2.2} />
@@ -312,7 +320,7 @@ export function BottomNav() {
       <NavLink
         to="/plans"
         className={({ isActive }) =>
-          cn('flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400 hover:text-[#0E8B8D]')
+          cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]", isActive ? (theme === "bento-dark" ? "text-emerald-400" : "text-[#0E8B8D]") : (theme === "bento-dark" ? "text-white hover:text-emerald-400" : "text-gray-400 hover:text-[#0E8B8D]"))
         }
       >
         <CalendarCheck className="h-[18px] w-[18px]" strokeWidth={2.2} />
@@ -325,12 +333,12 @@ export function BottomNav() {
         >
           <Plus className="h-[20px] w-[20px]" strokeWidth={2.5} />
         </NavLink>
-        <span className="text-[8px] font-medium mt-1 text-gray-500">{t('Δημιουργία', 'Create')}</span>
+        <span className={`text-[8px] font-medium mt-1 ${theme === "bento-dark" ? "text-white" : "text-gray-500"}`}>{t('Δημιουργία', 'Create')}</span>
       </div>
       <NavLink
         to="/trust"
         className={({ isActive }) =>
-          cn('flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400 hover:text-[#0E8B8D]')
+          cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]", isActive ? (theme === "bento-dark" ? "text-emerald-400" : "text-[#0E8B8D]") : (theme === "bento-dark" ? "text-white hover:text-emerald-400" : "text-gray-400 hover:text-[#0E8B8D]"))
         }
       >
         <ShieldCheck className="h-[18px] w-[18px]" strokeWidth={2.2} />
@@ -339,7 +347,7 @@ export function BottomNav() {
       <NavLink
         to="/profile"
         className={({ isActive }) =>
-          cn('flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]', isActive ? 'text-[#0E8B8D]' : 'text-gray-400 hover:text-[#0E8B8D]')
+          cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]", isActive ? (theme === "bento-dark" ? "text-emerald-400" : "text-[#0E8B8D]") : (theme === "bento-dark" ? "text-white hover:text-emerald-400" : "text-gray-400 hover:text-[#0E8B8D]"))
         }
       >
         <User className="h-[18px] w-[18px]" strokeWidth={2.2} />
@@ -355,17 +363,18 @@ export function BottomNav() {
 export function AppShell({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
+  const theme = useStore((state) => state.theme);
 
   return (
-    <div className="flex h-screen w-full bg-[#F3F4F6] text-[#111827] font-sans antialiased overflow-hidden">
+    <div className={cn("flex h-screen w-full font-sans antialiased overflow-hidden", theme === 'bento-dark' ? 'bg-black text-white' : 'bg-[#F3F4F6] text-[#111827]')}>
       <SideNav />
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
-          <div className="relative w-64 max-w-sm bg-white h-full shadow-xl flex flex-col z-50">
+          <div className={cn("relative w-64 max-w-sm h-full shadow-xl flex flex-col z-50", theme === "bento-dark" ? "bg-gray-900 border-r border-gray-800" : "bg-white")}>
             <div className="h-14 flex items-center justify-between px-6 border-b border-[#E5E7EB] shrink-0">
               <NakamasLogo className="text-[22px]" />
-              <button onClick={() => setIsMobileMenuOpen(false)} className="text-gray-500 hover:text-[#111827]">
+              <button onClick={() => setIsMobileMenuOpen(false)} className={cn(theme === "bento-dark" ? "text-white hover:text-white" : "text-gray-500 hover:text-[#111827]")}>
                 <X className="h-6 w-6" />
               </button>
             </div>
