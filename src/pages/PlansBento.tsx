@@ -44,7 +44,7 @@ export default function PlansBento() {
           onClick={() => setActiveTab('upcoming')}
           className={`pb-3 text-[11.506875px] font-bold tracking-wide transition-colors whitespace-nowrap ${
             activeTab === 'upcoming' 
-              ? 'border-b-2 border-cyan-600 text-cyan-900' 
+              ? 'border-b-2 border-indigo-600 text-indigo-900' 
               : 'text-black hover:text-[#111827]'
           }`}
         >
@@ -54,7 +54,7 @@ export default function PlansBento() {
           onClick={() => setActiveTab('pending')}
           className={`pb-3 text-[11.506875px] font-bold tracking-wide transition-colors whitespace-nowrap ${
             activeTab === 'pending' 
-              ? 'border-b-2 border-cyan-600 text-cyan-900' 
+              ? 'border-b-2 border-indigo-600 text-indigo-900' 
               : 'text-black hover:text-[#111827]'
           }`}
         >
@@ -64,7 +64,7 @@ export default function PlansBento() {
           onClick={() => setActiveTab('past')}
           className={`pb-3 text-[11.506875px] font-bold tracking-wide transition-colors whitespace-nowrap ${
             activeTab === 'past' 
-              ? 'border-b-2 border-cyan-600 text-cyan-900' 
+              ? 'border-b-2 border-indigo-600 text-indigo-900' 
               : 'text-black hover:text-[#111827]'
           }`}
         >
@@ -75,10 +75,10 @@ export default function PlansBento() {
       {activeTab === 'upcoming' && (
       <div className="space-y-4">
         {upcomingEvents.map(event => (
-          <Card key={event.id} className="rounded-xl p-4 sm:p-5 border border-cyan-100 flex flex-col sm:flex-row gap-4">
+          <Card key={event.id} className="rounded-xl p-4 sm:p-5 border border-indigo-100 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
-              <div className="absolute top-2 left-2 bg-cyan-600 text-white px-2 py-0.5 rounded text-[10.6875px] font-bold tracking-wide">
+              <div className="absolute top-2 left-2 bg-indigo-600 text-white px-2 py-0.5 rounded text-[10.6875px] font-bold tracking-wide">
                 {t(`Επιβεβαιωμένο`, `Confirmed`)}
               </div>
             </div>
@@ -93,7 +93,7 @@ export default function PlansBento() {
                     const days = differenceInDays(parseISO(event.date), new Date());
                     const hours = differenceInHours(parseISO(event.date), new Date());
                     if (days <= 0 && hours > 0) return <span className="text-[10.639999999999999px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">{t(`σε`, `in`)} {hours}h</span>;
-                    if (days > 0 && days <= 7) return <span className="text-[10.639999999999999px] font-bold text-cyan-700 bg-cyan-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">{t(`σε`, `in`)} {days} {t(`μέρες`, `days`)}</span>;
+                    if (days > 0 && days <= 7) return <span className="text-[10.639999999999999px] font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">{t(`σε`, `in`)} {days} {t(`μέρες`, `days`)}</span>;
                     return null;
                   })()}
                 </div>
@@ -121,7 +121,7 @@ export default function PlansBento() {
               </div>
 
               <div className="mt-auto pt-4 border-t border-gray-100 flex gap-2">
-                <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-2 rounded-lg text-[12.825px] font-bold transition-colors flex items-center justify-center gap-1.5">
+                <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 py-2 rounded-lg text-[12.825px] font-bold transition-colors flex items-center justify-center gap-1.5">
                   <MessageCircle className="h-4 w-4" /> {t(`Ομαδική Συνομιλία`, `Group Chat`)}
                 </button>
                 <button onClick={() => navigate(`/events/${event.id}`)} className="bg-white border border-gray-200 hover:bg-gray-50 text-black px-4 py-2 rounded-lg text-[12.825px] font-bold transition-colors">
@@ -190,9 +190,9 @@ export default function PlansBento() {
               <h3 className="font-bold text-[19px] text-[#111827] mb-3">{event.title}</h3>
               
               {index === 0 ? (
-                <div className="bg-cyan-50 border border-cyan-100 p-3 rounded-lg flex items-center justify-between mt-auto">
-                  <div className="text-[12.825px] font-bold text-cyan-900">{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
-                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="text-[10.6875px] font-bold bg-cyan-600 text-white px-3 py-1.5 rounded hover:bg-cyan-700 tracking-wide">
+                <div className="bg-indigo-50 border border-indigo-100 p-3 rounded-lg flex items-center justify-between mt-auto">
+                  <div className="text-[12.825px] font-bold text-indigo-900">{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
+                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="text-[10.6875px] font-bold bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 tracking-wide">
                     {t(`Αξιολόγηση`, `Rate Experience`)}
                   </button>
                 </div>

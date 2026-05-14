@@ -323,7 +323,7 @@ export default function GroupChatBento() {
                     <select
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
-                      className="text-[11px] font-bold border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-cyan-500 bg-gray-50 text-black hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate"
+                      className="text-[11px] font-bold border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-gray-50 text-black hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate"
                     >
                       <option value="all">
                         {t("Όλοι οι Αποστολείς", "All Senders")}
@@ -335,13 +335,13 @@ export default function GroupChatBento() {
                       ))}
                     </select>
                     <div className="relative group">
-                      <Search className="h-3.5 w-3.5 text-black absolute left-2.5 top-1/2 -translate-y-1/2 group-focus-within:text-cyan-500 transition-colors" />
+                      <Search className="h-3.5 w-3.5 text-black absolute left-2.5 top-1/2 -translate-y-1/2 group-focus-within:text-indigo-500 transition-colors" />
                       <input
                         type="text"
                         placeholder={t("Αναζήτηση...", "Search...")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-500 w-32 xl:w-48 bg-gray-50 focus:bg-white transition-all"
+                        className="pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 w-32 xl:w-48 bg-gray-50 focus:bg-white transition-all"
                       />
                     </div>
                   </div>
@@ -357,7 +357,7 @@ export default function GroupChatBento() {
                   {/* Info Toggle */}
                   <button
                     onClick={() => setShowInfo(!showInfo)}
-                    className={`transition-colors p-2 rounded-full ${showInfo ? "text-cyan-600 bg-cyan-50" : "text-black hover:text-[#111827] hover:bg-gray-100"}`}
+                    className={`transition-colors p-2 rounded-full ${showInfo ? "text-indigo-600 bg-indigo-50" : "text-black hover:text-[#111827] hover:bg-gray-100"}`}
                   >
                     <Info className="h-5 w-5" />
                   </button>
@@ -534,7 +534,7 @@ export default function GroupChatBento() {
                       {event.tags.map((tag: string) => (
                         <span
                           key={tag}
-                          className="bg-cyan-50 text-cyan-700 px-2.5 py-1 rounded-md text-[9px] font-bold tracking-wide border border-cyan-100"
+                          className="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md text-[9px] font-bold tracking-wide border border-indigo-100"
                         >
                           {tag}
                         </span>
@@ -615,7 +615,7 @@ export default function GroupChatBento() {
                     {isGroupAdmin && (
                       <button
                         onClick={() => setShowAddMemberModal(true)}
-                        className="flex items-center gap-1 text-[10px] font-bold text-cyan-600 hover:text-cyan-700 bg-cyan-50 hover:bg-cyan-100 px-2 py-1 rounded border border-cyan-100 transition-colors"
+                        className="flex items-center gap-1 text-[10px] font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-2 py-1 rounded border border-indigo-100 transition-colors"
                       >
                         <UserPlus className="w-3 h-3" />{" "}
                         {t("Προσθήκη Μελών", "Add Members")}
@@ -659,7 +659,7 @@ export default function GroupChatBento() {
                                 className={`w-full h-full object-cover transition-all ${!isCloseToEvent && member.id !== currentUser.id ? "blur-sm grayscale opacity-80" : ""}`}
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-black font-bold text-xs bg-cyan-50 text-cyan-700">
+                              <div className="w-full h-full flex items-center justify-center text-black font-bold text-xs bg-indigo-50 text-indigo-700">
                                 {member.name.substring(0, 2)}
                               </div>
                             )}
@@ -774,11 +774,11 @@ export default function GroupChatBento() {
 
                     <button
                       onClick={() => setShowLocationConfigModal(true)}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 border rounded-lg transition-colors text-left ${isSharingLocation ? "bg-cyan-50 border-cyan-200 hover:bg-cyan-100" : "bg-gray-50 hover:bg-gray-100 border-gray-200"}`}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 border rounded-lg transition-colors text-left ${isSharingLocation ? "bg-indigo-50 border-indigo-200 hover:bg-indigo-100" : "bg-gray-50 hover:bg-gray-100 border-gray-200"}`}
                     >
                       <div>
                         <p
-                          className={`text-[12px] font-bold ${isSharingLocation ? "text-cyan-700" : "text-[#111827]"}`}
+                          className={`text-[12px] font-bold ${isSharingLocation ? "text-indigo-700" : "text-[#111827]"}`}
                         >
                           {isSharingLocation
                             ? t("Η Τοποθεσία Κοινοποιείται", "Location Shared")
@@ -788,7 +788,7 @@ export default function GroupChatBento() {
                               )}
                         </p>
                         <p
-                          className={`text-[10px] mt-0.5 ${isSharingLocation ? "text-cyan-600/80" : "text-black"}`}
+                          className={`text-[10px] mt-0.5 ${isSharingLocation ? "text-indigo-600/80" : "text-black"}`}
                         >
                           {isSharingLocation
                             ? t("Διαχείριση ή Διακοπή", "Tap to manage or stop")
@@ -799,7 +799,7 @@ export default function GroupChatBento() {
                         </p>
                       </div>
                       <MapPin
-                        className={`w-4 h-4 ${isSharingLocation ? "text-cyan-600" : "text-black"}`}
+                        className={`w-4 h-4 ${isSharingLocation ? "text-indigo-600" : "text-black"}`}
                       />
                     </button>
 
@@ -945,7 +945,7 @@ export default function GroupChatBento() {
             <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-100 animate-in zoom-in-95 duration-200">
               <div className="p-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600">
+                  <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
@@ -967,8 +967,8 @@ export default function GroupChatBento() {
 
               <div className="p-5 space-y-6">
                 {isSharingLocation && (
-                  <div className="bg-cyan-50 border border-cyan-100 rounded-xl p-4 flex flex-col gap-3">
-                    <div className="flex items-center gap-2 text-cyan-700">
+                  <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex flex-col gap-3">
+                    <div className="flex items-center gap-2 text-indigo-700">
                       <Navigation className="w-4 h-4 animate-pulse" />
                       <span className="text-sm font-bold">
                         {t(
@@ -1061,7 +1061,7 @@ export default function GroupChatBento() {
                     {["organizer", "selected", "all"].map((option) => (
                       <label
                         key={option}
-                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${locationConfig.shareWith === option ? "border-cyan-600 bg-cyan-50/30" : "border-gray-200 hover:bg-gray-50"}`}
+                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${locationConfig.shareWith === option ? "border-indigo-600 bg-indigo-50/30" : "border-gray-200 hover:bg-gray-50"}`}
                       >
                         <div className="flex items-center justify-center relative">
                           <input
@@ -1077,7 +1077,7 @@ export default function GroupChatBento() {
                             }
                           />
                           <div
-                            className={`w-5 h-5 rounded-full border flex items-center justify-center ${locationConfig.shareWith === option ? "border-cyan-600 bg-cyan-600" : "border-gray-300"}`}
+                            className={`w-5 h-5 rounded-full border flex items-center justify-center ${locationConfig.shareWith === option ? "border-indigo-600 bg-indigo-600" : "border-gray-300"}`}
                           >
                             {locationConfig.shareWith === option && (
                               <span className="w-2 h-2 rounded-full bg-white"></span>
@@ -1222,7 +1222,7 @@ export default function GroupChatBento() {
                       t("Αντιγράφηκε στο πρόχειρο!", "Copied to clipboard!"),
                     );
                   }}
-                  className="text-xs font-bold text-cyan-600"
+                  className="text-xs font-bold text-indigo-600"
                 >
                   {t("Αντιγραφή", "Copy")}
                 </button>
@@ -1287,7 +1287,7 @@ export default function GroupChatBento() {
         {showDisableEphemeralModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-gray-100 animate-in zoom-in-95 duration-200">
-              <div className="w-12 h-12 bg-cyan-50 rounded-full flex items-center justify-center mx-auto mb-4 text-cyan-600">
+              <div className="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-600">
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#111827] mb-2">
@@ -1435,12 +1435,12 @@ export default function GroupChatBento() {
                     name="eta"
                     type="number"
                     placeholder={t("ETA (λεπτά)", "ETA (mins)")}
-                    className="flex-1 w-full bg-gray-50 border border-gray-200 text-black text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                    className="flex-1 w-full bg-gray-50 border border-gray-200 text-black text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                     min="1"
                   />
                   <button
                     type="submit"
-                    className="px-4 py-3 text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-700 rounded-xl shadow-sm transition-all whitespace-nowrap"
+                    className="px-4 py-3 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm transition-all whitespace-nowrap"
                   >
                     {t("Αποστολή", "Send")}
                   </button>
@@ -1464,7 +1464,7 @@ export default function GroupChatBento() {
                       "Είμαι στο σημείο συνάντησης",
                       "I'm at the meeting point",
                     ),
-                    color: "bg-cyan-600 text-white hover:bg-cyan-700",
+                    color: "bg-indigo-600 text-white hover:bg-indigo-700",
                   },
                 ].map((status, idx) => (
                   <button
@@ -1503,7 +1503,7 @@ export default function GroupChatBento() {
             <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
               <div className="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between bg-white relative z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600">
+                  <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
                     <UserPlus className="w-5 h-5" />
                   </div>
                   <div>
@@ -1541,7 +1541,7 @@ export default function GroupChatBento() {
                     )}
                     value={memberAddSearchQuery}
                     onChange={(e) => setMemberAddSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-600 bg-white transition-all shadow-sm font-medium"
+                    className="w-full pl-9 pr-3 py-2.5 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600 bg-white transition-all shadow-sm font-medium"
                   />
                 </div>
               </div>
@@ -1568,7 +1568,7 @@ export default function GroupChatBento() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-cyan-700 font-bold text-xs bg-cyan-50">
+                              <div className="w-full h-full flex items-center justify-center text-indigo-700 font-bold text-xs bg-indigo-50">
                                 {member.name.substring(0, 2)}
                               </div>
                             )}
@@ -1603,7 +1603,7 @@ export default function GroupChatBento() {
                               },
                             ]);
                           }}
-                          className="text-[12px] font-semibold capitalize tracking-tight px-3 py-1.5 rounded-lg border flex items-center gap-1 transition-all bg-cyan-600 text-white border-cyan-600 hover:bg-cyan-700 shadow-sm"
+                          className="text-[12px] font-semibold capitalize tracking-tight px-3 py-1.5 rounded-lg border flex items-center gap-1 transition-all bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700 shadow-sm"
                         >
                           <UserPlus className="w-3 h-3" />{" "}
                           {t("Προσθήκη", "Add")}

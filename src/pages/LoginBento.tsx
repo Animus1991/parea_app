@@ -17,11 +17,11 @@ export default function LoginBento() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-[#FDFCFB]">
-      <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-xl border-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+      <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-xl border-indigo-100/50">
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center text-4xl font-black tracking-tight text-[#111827] mb-4 font-['Outfit']">
-             NAKAMAS
+          <div className="flex items-center justify-center text-4xl font-black tracking-tight mb-4 font-['Outfit']">
+             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">NAKAMAS</span>
           </div>
           <h1 className="text-2xl font-bold text-[#111827]">{t('Καλώς ήρθατε', 'Welcome back')}</h1>
           <p className="text-xs text-black font-medium">{t('Συνδεθείτε για να ανακαλύψετε αξιόπιστες ομάδες και εμπειρίες.', 'Log in to discover trusted groups and experiences.')}</p>
@@ -36,17 +36,17 @@ export default function LoginBento() {
               <button 
                 key={user.id}
                 onClick={() => handleLogin(user.id)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-white hover:bg-cyan-50 hover:border-cyan-200 transition-colors shadow-sm text-left group"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-white hover:bg-indigo-50 hover:border-indigo-200 transition-colors shadow-sm text-left group"
               >
-                <div className="h-10 w-10 rounded-full overflow-hidden bg-cyan-100 flex-shrink-0">
+                <div className="h-10 w-10 rounded-full overflow-hidden bg-indigo-100 flex-shrink-0">
                   {user.photoUrl ? (
                     <img referrerPolicy="no-referrer" src={user.photoUrl} alt={user.name} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-cyan-700 font-bold">{user.name.substring(0, 2)}</div>
+                    <div className="w-full h-full flex items-center justify-center text-indigo-700 font-bold">{user.name.substring(0, 2)}</div>
                   )}
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-black group-hover:text-cyan-700">{user.name}</div>
+                  <div className="text-sm font-bold text-black group-hover:text-indigo-700">{user.name}</div>
                   <div className="text-[10px] text-black">{user.isOrganizer ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')} • {user.city}</div>
                 </div>
               </button>

@@ -26,10 +26,10 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
   
   return (
     <div 
-      className="group relative rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-cyan-300 hover:shadow-md transition-all cursor-pointer overflow-hidden mt-2" 
+      className="group relative rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer overflow-hidden mt-2" 
       onClick={() => navigate(`/events/${event.id}/join?groupId=${group.id}`)}
     >
-      <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-cyan-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-indigo-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       
       {(group.discountUnlocked || discountUnlockedTemp) && event.groupDiscount && (
         <div className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-sm flex items-center gap-1 z-10 w-fit">
@@ -44,7 +44,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
             {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
           </div>
           <h4 className="text-[13px] font-bold text-black mb-0.5 line-clamp-1">{event.title}</h4>
-          <span className="text-[9px] tracking-widest font-bold text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">
+          <span className="text-[9px] tracking-widest font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">
             {event.category}
           </span>
           <div className="flex items-baseline gap-1 mt-1">
@@ -65,7 +65,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
                    {groupHost.photoUrl ? (
                      <img referrerPolicy="no-referrer" src={groupHost.photoUrl} alt={groupHost.name} className="h-full w-full object-cover" />
                    ) : (
-                     <div className="h-full w-full flex items-center justify-center bg-cyan-100 text-cyan-700 font-bold text-xs">
+                     <div className="h-full w-full flex items-center justify-center bg-indigo-100 text-indigo-700 font-bold text-xs">
                         {groupHost.name.charAt(0)}
                      </div>
                    )}
@@ -113,7 +113,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
       <Button 
         variant="primary" 
         size="sm" 
-        className="w-full bg-cyan-50 text-cyan-700 border border-cyan-100 hover:bg-cyan-600 hover:text-white transition-colors group-hover:bg-cyan-600 group-hover:text-white font-semibold shadow-sm"
+        className="w-full bg-indigo-50 text-indigo-700 border border-indigo-100 hover:bg-indigo-600 hover:text-white transition-colors group-hover:bg-indigo-600 group-hover:text-white font-semibold shadow-sm"
         onClick={(e) => { e.stopPropagation(); navigate(`/events/${event.id}/join`); }}
       >
         {t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
@@ -277,28 +277,28 @@ export default function EventDetailBento() {
           <div className="flex gap-2 flex-wrap justify-end">
             <button 
               onClick={handleSave}
-              className={`flex items-center gap-2 text-[10px] font-bold  tracking-wider transition-colors px-3 py-1 rounded-full ${isSaved ? 'text-cyan-800 bg-cyan-100' : 'text-black hover:text-cyan-600 bg-gray-50 hover:bg-gray-100'}`}
+              className={`flex items-center gap-2 text-[10px] font-bold  tracking-wider transition-colors px-3 py-1 rounded-full ${isSaved ? 'text-indigo-800 bg-indigo-100' : 'text-black hover:text-indigo-600 bg-gray-50 hover:bg-gray-100'}`}
             >
               <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} />
               {isSaved ? t("Αποθηκεύτηκε", "Saved") : t("Αποθήκευση Εκδήλωσης", "Save Event")}
             </button>
             <button 
               onClick={() => setShowQRCode(true)}
-              className="flex items-center gap-2 text-[10px] font-bold tracking-wide text-cyan-600 hover:text-cyan-800 transition-colors bg-cyan-50 px-3 py-1.5 rounded-full"
+              className="flex items-center gap-2 text-[10px] font-bold tracking-wide text-indigo-600 hover:text-indigo-800 transition-colors bg-indigo-50 px-3 py-1.5 rounded-full"
             >
               <QrCode className="h-3.5 w-3.5" />
               {t('Κωδικός QR', 'QR Code')}
             </button>
             <button 
               onClick={handleShare}
-              className="flex items-center gap-2 text-[10px] font-bold  tracking-wider text-cyan-600 hover:text-cyan-800 transition-colors bg-cyan-50 px-3 py-1.5 rounded-full"
+              className="flex items-center gap-2 text-[10px] font-bold  tracking-wider text-indigo-600 hover:text-indigo-800 transition-colors bg-indigo-50 px-3 py-1.5 rounded-full"
             >
               <Share className="h-3.5 w-3.5" />
               {isCopied ? t("Αντιγράφηκε!", "Link Copied!") : t("Κοινοποίηση", "Share Event")}
             </button>
             <button 
               onClick={handleAddToCalendar}
-              className="flex items-center gap-2 text-[10px] font-bold  tracking-wider text-black hover:text-cyan-600 transition-colors bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-full"
+              className="flex items-center gap-2 text-[10px] font-bold  tracking-wider text-black hover:text-indigo-600 transition-colors bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-full"
             >
               <Calendar className="h-3.5 w-3.5" />
               {t('Προσθήκη στο Ημερολόγιο', 'Add to Calendar')}
@@ -330,7 +330,7 @@ export default function EventDetailBento() {
              </Badge>
           )}
           {event.minTrustTierAccess === '3_high_trust' && (
-            <Badge variant="outline" className="text-cyan-700 font-bold bg-cyan-50 border-cyan-100" icon={<ShieldCheck className="h-3 w-3" />}>{t('Πρόσβαση με Επαλήθευση', 'Verified Access')}</Badge>
+            <Badge variant="outline" className="text-indigo-700 font-bold bg-indigo-50 border-indigo-100" icon={<ShieldCheck className="h-3 w-3" />}>{t('Πρόσβαση με Επαλήθευση', 'Verified Access')}</Badge>
           )}
           
           {/* Match Score Badge based on User Interests */}
@@ -376,7 +376,7 @@ export default function EventDetailBento() {
                   </div>
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-[13px] capitalize">{event.minTrustTierAccess === '3_high_trust' ? t('απαιτείται επαληθευμένος λογαριασμός', 'verified account required') : event.minTrustTierAccess.split('_')[1].replace('high', 'verified') + ' account required'}</p>
-                    <Link to="/trust" className="text-[11px] text-cyan-600 font-bold underline">{t('Γιατί;', 'Why?')}</Link>
+                    <Link to="/trust" className="text-[11px] text-indigo-600 font-bold underline">{t('Γιατί;', 'Why?')}</Link>
                   </div>
                 </div>
              </div>
@@ -384,7 +384,7 @@ export default function EventDetailBento() {
              <div className={`${isMapFullscreen ? 'fixed !inset-0 !z-[9999] bg-black !m-0 rounded-none !h-[100dvh]' : 'mt-6 w-full h-64 sm:h-80 rounded-lg'} bg-gray-100 overflow-hidden relative border border-gray-200 transition-all duration-300`}>
                   <button 
                     onClick={() => setIsMapFullscreen(!isMapFullscreen)}
-                    className="absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur rounded-lg shadow-md text-black hover:text-cyan-600 transition-colors"
+                    className="absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur rounded-lg shadow-md text-black hover:text-indigo-600 transition-colors"
                   >
                     {isMapFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
                   </button>
@@ -415,8 +415,8 @@ export default function EventDetailBento() {
                   ) : (
                     <div className="w-full h-full bg-[#e5e3df] relative flex items-center justify-center overflow-hidden">
                        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10h80v80h-80z' stroke='%23000' stroke-width='1' fill='none'/%3E%3C/svg%3E")`, backgroundSize: '100px 100px' }} />
-                       <div className="w-24 h-24 sm:w-32 sm:h-32 bg-cyan-600/10 rounded-full flex items-center justify-center animate-pulse relative z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                         <div className="w-4 h-4 bg-cyan-600 rounded-full border-2 border-white shadow-md"></div>
+                       <div className="w-24 h-24 sm:w-32 sm:h-32 bg-indigo-600/10 rounded-full flex items-center justify-center animate-pulse relative z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                         <div className="w-4 h-4 bg-indigo-600 rounded-full border-2 border-white shadow-md"></div>
                        </div>
                        <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur text-black text-[10px] px-2 py-1 rounded shadow-sm">{t('Ενεργή Προεπισκόπηση Χάρτη', 'Map Preview Active')}</div>
                     </div>
@@ -429,7 +429,7 @@ export default function EventDetailBento() {
                
                {event.externalLink && (
                  <div className="mt-4 pt-1">
-                   <a href={event.externalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 text-black bg-white hover:bg-gray-50 hover:text-cyan-600 hover:border-cyan-200 transition-colors shadow-sm text-xs font-bold tracking-wide rounded-lg w-full sm:w-auto justify-center">
+                   <a href={event.externalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 text-black bg-white hover:bg-gray-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors shadow-sm text-xs font-bold tracking-wide rounded-lg w-full sm:w-auto justify-center">
                      <ExternalLink className="w-3.5 h-3.5" />
                      {t('Επίσημη Σελίδα Εκδήλωσης', 'Official Event Page')}
                    </a>
@@ -453,18 +453,18 @@ export default function EventDetailBento() {
                  <div className="flex items-center justify-between mb-4">
                     <h3 className="text-[11px] font-bold text-[#111827] tracking-wide mt-1">{t('Διοργανωτής Εκδήλωσης', 'Event Organizer')}</h3>
                  </div>
-                 <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-white shadow-sm hover:border-cyan-200 transition-colors">
+                 <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-white shadow-sm hover:border-indigo-200 transition-colors">
                     <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-full overflow-hidden bg-cyan-50 border-2 border-white ring-2 ring-cyan-50 shrink-0">
+                      <div className="w-14 h-14 rounded-full overflow-hidden bg-indigo-50 border-2 border-white ring-2 ring-indigo-50 shrink-0">
                         {organizer.photoUrl ? (
                           <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-cyan-500 font-bold text-lg">{organizer.name.substring(0, 2).toUpperCase()}</div>
+                          <div className="w-full h-full flex items-center justify-center text-indigo-500 font-bold text-lg">{organizer.name.substring(0, 2).toUpperCase()}</div>
                         )}
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <Link to={`/profile`} className="text-base font-bold text-[#111827] hover:text-cyan-600 transition-colors">
+                          <Link to={`/profile`} className="text-base font-bold text-[#111827] hover:text-indigo-600 transition-colors">
                             {organizer.name}
                           </Link>
                           {organizer.trustTier && (
@@ -532,13 +532,13 @@ export default function EventDetailBento() {
         <div className="space-y-6 md:col-span-2 lg:col-span-1">
           <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm sticky top-24">
             <h3 className="text-[11px] font-bold text-black tracking-wide mb-4">{t('Αυτόματη προτεινόμενη Μικρών Ομάδων', 'Auto-Suggest Small Groups')}</h3>
-            <div className="mb-4 bg-cyan-50 border border-cyan-100 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-sm font-bold text-cyan-900">
+            <div className="mb-4 bg-indigo-50 border border-indigo-100 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-sm font-bold text-indigo-900">
               <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική Χωρητικότητα Εκδήλωσης', 'Overall Event Capacity')}</span>
-              <span className="text-cyan-600 xl:text-cyan-900 bg-white xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs xl:text-sm border border-cyan-100 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
+              <span className="text-indigo-600 xl:text-indigo-900 bg-white xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs xl:text-sm border border-indigo-100 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
             </div>
             
             <div className="flex flex-col gap-3 mb-6">
-              <Button className="w-full bg-cyan-600 text-white hover:bg-cyan-700 shadow-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
+              <Button className="w-full bg-indigo-600 text-white hover:bg-indigo-700 shadow-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
                 <Users className="w-5 h-5" />
                 {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
               </Button>
@@ -552,7 +552,7 @@ export default function EventDetailBento() {
                     <select 
                       value={groupSizeFilter} 
                       onChange={(e) => setGroupSizeFilter(e.target.value as any)}
-                      className="text-xs bg-gray-50 border border-gray-200 rounded p-1 font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                      className="text-xs bg-gray-50 border border-gray-200 rounded p-1 font-medium focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     >
                       <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>
                       <option value="3">{t('3 Μέλη', '3 Members')}</option>
@@ -613,7 +613,7 @@ export default function EventDetailBento() {
         <Button variant="outline" className="flex-1 border-gray-200 text-black" onClick={() => navigate(`/events/${eventId}/join`)}>
           {t('Λίστα Αναμονής', 'Waitlist')}
         </Button>
-        <Button className="flex-[2] bg-cyan-600 text-white hover:bg-cyan-700 shadow-sm" onClick={() => navigate(`/events/${eventId}/join`)}>
+        <Button className="flex-[2] bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm" onClick={() => navigate(`/events/${eventId}/join`)}>
           {t('Νέα Ομάδα', 'Create Group')}
         </Button>
       </div>

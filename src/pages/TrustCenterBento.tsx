@@ -41,7 +41,7 @@ export default function TrustCenterBento() {
              <div className="flex items-center justify-between">
                <div className="flex items-center gap-2 text-[13.5px] text-black font-medium">
                  <UserCheck className="h-3.5 w-3.5 text-black" />{t(`Ταυτότητα`, `Government ID`)}</div>
-               <span className="text-[11.2px] text-cyan-600 font-bold cursor-pointer hover:underline tracking-wide">{t(`Επαλήθευση`, `Verify`)}</span>
+               <span className="text-[11.2px] text-indigo-600 font-bold cursor-pointer hover:underline tracking-wide">{t(`Επαλήθευση`, `Verify`)}</span>
              </div>
            </div>
            
@@ -82,7 +82,7 @@ export default function TrustCenterBento() {
       {/* Trust History Timeline */}
       <Card className="p-5">
         <h3 className="text-[12.5px] font-bold text-[#111827] tracking-wide mb-4 flex items-center gap-1.5">
-          <TrendingUp className="w-3.5 h-3.5 text-cyan-600" />{t(`Ιστορικό Εμπιστοσύνης`, `Trust History`)}
+          <TrendingUp className="w-3.5 h-3.5 text-indigo-600" />{t(`Ιστορικό Εμπιστοσύνης`, `Trust History`)}
         </h3>
         <div className="space-y-0">
           {[

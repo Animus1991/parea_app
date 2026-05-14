@@ -21,7 +21,7 @@ export default function OrganizerDashboardBento() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="p-4 border-t-4 border-t-cyan-500">
+        <Card className="p-4 border-t-4 border-t-indigo-500">
           <h3 className="text-[12.1125px] font-bold text-black tracking-wide">{t(`Ενεργές`, `Active`)}</h3>
           <p className="text-[25px] font-black text-[#111827] mt-1">3</p>
           <p className="text-[11.2px] text-black font-medium">{t(`εκδηλώσεις`, `events`)}</p>
@@ -47,10 +47,10 @@ export default function OrganizerDashboardBento() {
       <Card className="p-4">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-[12.1125px] font-bold text-[#111827] tracking-wide">{t(`Ποσοστό Πληρότητας`, `Fill Rate`)}</h3>
-          <span className="text-[12.1125px] font-bold text-cyan-600">72%</span>
+          <span className="text-[12.1125px] font-bold text-indigo-600">72%</span>
         </div>
         <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-          <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 h-full rounded-full" style={{ width: '72%' }} />
+          <div className="bg-gradient-to-r from-indigo-500 to-emerald-500 h-full rounded-full" style={{ width: '72%' }} />
         </div>
         <p className="text-[11.2px] text-black font-medium mt-1">{t(`18 από 25 θέσεις καλύφθηκαν συνολικά`, `18 of 25 spots filled overall`)}</p>
       </Card>
@@ -91,7 +91,7 @@ export default function OrganizerDashboardBento() {
             { label: 'Stand-up', emoji: '🎤' },
             { label: t(`Επιτραπέζια`, `Board Games`), emoji: '🎲' },
           ].map(tpl => (
-            <button key={tpl.label} onClick={() => navigate('/create')} className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-cyan-50 hover:border-cyan-200 transition-colors text-[12.5px] font-bold text-black">
+            <button key={tpl.label} onClick={() => navigate('/create')} className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-indigo-50 hover:border-indigo-200 transition-colors text-[12.5px] font-bold text-black">
               <span>{tpl.emoji}</span> {tpl.label}
             </button>
           ))}
@@ -126,7 +126,7 @@ export default function OrganizerDashboardBento() {
                     <p className="text-[12.5px] text-black mt-0.5">{t(`Επιβεβαιωμένη`, `Confirmed`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-gray-200 hover:bg-cyan-50">
+                    <button className="p-1.5 bg-white text-indigo-600 rounded shadow-sm border border-gray-200 hover:bg-indigo-50">
                       <MessageSquare className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -138,7 +138,7 @@ export default function OrganizerDashboardBento() {
                     <p className="text-[12.5px] text-black mt-0.5">{t(`Αναμένεται 1 ακόμα`, `Waiting for 1 more`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-gray-200 hover:bg-cyan-50">
+                    <button className="p-1.5 bg-white text-indigo-600 rounded shadow-sm border border-gray-200 hover:bg-indigo-50">
                       <MessageSquare className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -175,13 +175,13 @@ export default function OrganizerDashboardBento() {
                <h4 className="text-[15px] font-bold text-black tracking-wide flex items-center gap-2">
                  <Users className="w-4 h-4 text-black" />{t(`Ομάδες`, `Groups`)}</h4>
                
-               <div className="flex items-center justify-between p-3 bg-cyan-50 rounded border border-cyan-100">
+               <div className="flex items-center justify-between p-3 bg-indigo-50 rounded border border-indigo-100">
                   <div>
-                    <p className="text-[15px] font-bold text-cyan-900">{t(`Ομάδα #1`, `Group #1`)} — 3/4</p>
-                    <p className="text-[12.5px] text-cyan-600 mt-0.5">{t(`Νέο μήνυμα`, `New message`)}</p>
+                    <p className="text-[15px] font-bold text-indigo-900">{t(`Ομάδα #1`, `Group #1`)} — 3/4</p>
+                    <p className="text-[12.5px] text-indigo-600 mt-0.5">{t(`Νέο μήνυμα`, `New message`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-cyan-200 hover:bg-cyan-100 relative">
+                    <button className="p-1.5 bg-white text-indigo-600 rounded shadow-sm border border-indigo-200 hover:bg-indigo-100 relative">
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>

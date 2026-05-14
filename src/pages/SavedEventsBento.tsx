@@ -28,7 +28,7 @@ export default function SavedEventsBento() {
               <div className="h-32 bg-gray-200 relative overflow-hidden shrink-0">
                 <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#111827] shadow-sm z-10">
-                  <Bookmark className="w-4 h-4 fill-current text-cyan-600" />
+                  <Bookmark className="w-4 h-4 fill-current text-indigo-600" />
                 </button>
               </div>
               <div className="p-4 flex flex-col flex-1">
@@ -37,7 +37,7 @@ export default function SavedEventsBento() {
                     {event.safetyLevel === 'high_trust' ? t('Υψηλή Εμπιστοσύνη', 'High Trust Req.') : event.safetyLevel === 'medium' ? t('Μεσαία Εμπιστοσύνη', 'Medium Trust') : t('Χαμηλό Ρίσκο • Δημόσια', 'Low Risk • Public')}
                   </Badge>
                 </div>
-                <h3 className="font-bold text-sm text-[#111827] group-hover:text-cyan-600 transition-colors line-clamp-2 mb-2">{event.title}</h3>
+                <h3 className="font-bold text-sm text-[#111827] group-hover:text-indigo-600 transition-colors line-clamp-2 mb-2">{event.title}</h3>
                 
                 <div className="mt-auto space-y-1.5">
                   <div className="flex items-center text-xs text-black font-medium">
@@ -50,7 +50,7 @@ export default function SavedEventsBento() {
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-1.5 text-[10px] font-bold text-cyan-600 tracking-wider">
+                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-1.5 text-[10px] font-bold text-indigo-600 tracking-wider">
                   {t('Προβολή Λεπτομερειών', 'View Details')} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
@@ -62,7 +62,7 @@ export default function SavedEventsBento() {
           <Bookmark className="mx-auto h-10 w-10 text-black mb-3" />
           <h3 className="text-base font-bold text-[#111827]">{t('Δεν υπάρχουν αποθηκευμένες εκδηλώσεις', 'No saved events yet')}</h3>
           <p className="text-sm text-black mt-1 max-w-sm mx-auto">{t('Όταν δείτε μια εκδήλωση που σας αρέσει, προσθέστε τη στους σελιδοδείκτες σας.', 'When you see an event you like, bookmark it to find it easily later.')}</p>
-          <Link to="/" className="inline-flex items-center justify-center px-4 py-2 mt-4 bg-cyan-600 text-white text-xs font-bold rounded-full shadow-sm hover:bg-cyan-700 transition-colors">
+          <Link to="/" className="inline-flex items-center justify-center px-4 py-2 mt-4 bg-indigo-600 text-white text-xs font-bold rounded-full shadow-sm hover:bg-indigo-700 transition-colors">
             {t('Ανακαλύψτε Εκδηλώσεις', 'Discover Events')}
           </Link>
         </div>

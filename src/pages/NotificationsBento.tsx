@@ -23,7 +23,7 @@ export default function NotificationsBento() {
       time: t(`Πριν 1 ώρα`, `1 hour ago`),
       read: false,
       icon: MessageCircle,
-      color: 'bg-cyan-100 text-cyan-600'
+      color: 'bg-indigo-100 text-indigo-600'
     },
     {
       id: 'n3',
@@ -64,7 +64,7 @@ export default function NotificationsBento() {
           <h1 className="text-[22.33807213275px] md:text-[26.7902365993px] font-bold text-[#111827]">{t(`Ειδοποιήσεις`, `Notifications`)}</h1>
           <p className="text-black font-medium text-[13.551608211075px] md:text-[16.25212883329px] mt-1">{t(`Μείνετε ενημερωμένοι`, `Stay up to date`)}</p>
         </div>
-        <button className="text-[14.2457535px] font-bold text-cyan-600 hover:text-cyan-700">
+        <button className="text-[14.2457535px] font-bold text-indigo-600 hover:text-indigo-700">
           {t(`Σήμανση όλων ως αναγνωσμένα`, `Mark all as read`)}
         </button>
       </div>
@@ -76,7 +76,7 @@ export default function NotificationsBento() {
           {todayNotifs.map((notif) => {
             const Icon = notif.icon;
             return (
-              <div key={notif.id} className="flex gap-4 p-4 rounded-xl border border-cyan-100 bg-cyan-50/30">
+              <div key={notif.id} className="flex gap-4 p-4 rounded-xl border border-indigo-100 bg-indigo-50/30">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${notif.color}`}>
                   <Icon className="w-5 h-5" />
                 </div>
@@ -84,17 +84,17 @@ export default function NotificationsBento() {
                   <p className="text-[13.5px] leading-relaxed text-[#111827] font-medium">{notif.message}</p>
                   <span className="text-[11.25px] font-bold text-black tracking-wide mt-1 block">{notif.time}</span>
                   {notif.type === 'match' && (
-                    <button onClick={() => navigate('/plans')} className="mt-2 text-[11.2px] font-bold text-cyan-700 bg-cyan-100 px-2.5 py-1 rounded-full hover:bg-cyan-200 transition-colors inline-flex items-center gap-1">
+                    <button onClick={() => navigate('/plans')} className="mt-2 text-[11.2px] font-bold text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded-full hover:bg-indigo-200 transition-colors inline-flex items-center gap-1">
                       {t(`Δείτε ομάδα`, `View group`)} <ArrowRight className="w-2.5 h-2.5" />
                     </button>
                   )}
                   {notif.type === 'message' && (
-                    <button onClick={() => navigate('/chats')} className="mt-2 text-[11.2px] font-bold text-cyan-700 bg-cyan-100 px-2.5 py-1 rounded-full hover:bg-cyan-200 transition-colors inline-flex items-center gap-1">
+                    <button onClick={() => navigate('/chats')} className="mt-2 text-[11.2px] font-bold text-indigo-700 bg-indigo-100 px-2.5 py-1 rounded-full hover:bg-indigo-200 transition-colors inline-flex items-center gap-1">
                       {t(`Απάντηση`, `Reply`)} <ArrowRight className="w-2.5 h-2.5" />
                     </button>
                   )}
                 </div>
-                <span className="w-2.5 h-2.5 bg-cyan-500 rounded-full shrink-0 mt-2"></span>
+                <span className="w-2.5 h-2.5 bg-indigo-500 rounded-full shrink-0 mt-2"></span>
               </div>
             );
           })}

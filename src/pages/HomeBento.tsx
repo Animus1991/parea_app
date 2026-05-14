@@ -317,10 +317,10 @@ export default function HomeBento() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 text-black p-6 md:p-10 rounded-[24px] shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8"
+        className="bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-indigo-100/50 text-black p-6 md:p-10 rounded-[24px] relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8"
       >
         <div className="relative z-10 flex-1">
-          <div className="text-indigo-600 text-[14.21px] font-bold tracking-wide mb-4">
+          <div className="text-indigo-500 text-[14.21px] font-bold tracking-wide mb-4">
             {t("home.hero.badge", "Νεος τροπος εξοδου")}
           </div>
           <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
@@ -330,14 +330,14 @@ export default function HomeBento() {
             </span>{" "}
             {t("home.hero.title3", "που ήδη θέλετε να ζήσετε.")}
           </h1>
-          <p className="text-gray-200 font-medium text-[14.42px] md:text-[16.48px] leading-relaxed max-w-xl mb-6">
+          <p className="text-gray-500 font-medium text-[14.42px] md:text-[16.48px] leading-relaxed max-w-xl mb-6">
             {t(
               "home.hero.subtitle",
               "Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.",
             )}
           </p>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11.33px] font-bold tracking-wide text-gray-300 mb-6">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11.33px] font-bold tracking-wide text-gray-400 mb-6">
             <span className="flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-indigo-600" />{" "}
               {t("home.hero.stat1", "Μικρες ομαδες")}
@@ -362,7 +362,7 @@ export default function HomeBento() {
           <div className="flex gap-3 mb-6">
             <button
               onClick={() => navigate("/nearby")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#18D8DB]/10 text-indigo-600 border border-[#18D8DB]/20 hover:bg-[#18D8DB]/20 rounded-xl font-bold text-[13.58px] transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 rounded-xl font-bold text-[13.58px] transition-colors"
               title={t("Εμφάνιση στον Χάρτη", "View on Map")}
             >
               <MapIcon className="w-4 h-4" />
@@ -383,7 +383,7 @@ export default function HomeBento() {
                   "home.hero.search_placeholder",
                   "Αναζήτηση εμπειριών...",
                 )}
-                className="w-full h-11 pl-10 pr-4 rounded-full border border-gray-200 bg-gray-50 text-black placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/60 text-sm font-medium"
+                className="w-full h-11 pl-10 pr-4 rounded-full border border-indigo-200 bg-gray-50 text-black placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium"
               />
               {showSearchSuggestions && !searchQuery && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
@@ -400,7 +400,7 @@ export default function HomeBento() {
                         handleSearchChange(s);
                         setShowSearchSuggestions(false);
                       }}
-                      className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-cyan-50 hover:text-[#0E8B8D] transition-colors font-medium flex items-center gap-2"
+                      className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-indigo-50 hover:text-indigo-600 transition-colors font-medium flex items-center gap-2"
                     >
                       <Search className="w-3.5 h-3.5 text-black" />
                       {s}
@@ -418,11 +418,11 @@ export default function HomeBento() {
           </div>
         </div>
         {/* Decorative */}
-        <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
+        <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-indigo-500/10 to-violet-500/15 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
       </motion.div>
 
       {/* Pending Feedback Alert */}
-      <section className="bg-cyan-50 border border-cyan-100 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <section className="bg-indigo-50 border border-indigo-100 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex gap-3 items-center">
           <div className="bg-white p-2 text-amber-500 rounded-full shadow-sm shrink-0">
             <CheckCircle2 className="w-4 h-4" />
@@ -441,7 +441,7 @@ export default function HomeBento() {
         </div>
         <button
           onClick={() => navigate("/plans")}
-          className="text-[12.38px] tracking-wider font-bold bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 text-black px-4 py-2 rounded-full whitespace-nowrap hover:bg-black w-full sm:w-auto shadow-sm transition-colors"
+          className="text-[12.38px] tracking-wider font-bold bg-indigo-600 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-indigo-700 w-full sm:w-auto shadow-sm transition-colors"
         >
           {t("home.pending_feedback.cta", "Αξιολόγηση")}
         </button>
@@ -479,7 +479,7 @@ export default function HomeBento() {
             key={step}
             className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center"
           >
-            <div className="w-8 h-8 bg-cyan-50 text-[#0E8B8D] rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
+            <div className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
               {step}
             </div>
             <h3 className="font-bold text-[#111827] text-[14.63px] mb-1">
@@ -523,8 +523,8 @@ export default function HomeBento() {
               onClick={() => setTagFilter(tag)}
               className={`whitespace-nowrap px-3 py-1 rounded-full text-[11.82px] font-bold transition-colors border ${
                 tagFilter === tag
-                  ? "bg-[#18D8DB]/20 border-[#18D8DB] text-[#0E8B8D]"
-                  : "bg-white border-gray-200 text-black hover:border-gray-300 hover:text-[#111827]"
+                  ? "bg-indigo-100 border-indigo-400 text-indigo-700"
+                  : "bg-white border-gray-200 text-black hover:border-indigo-300 hover:text-indigo-600"
               }`}
             >
               {tagTranslations[tag] ?? tag}
@@ -693,7 +693,7 @@ export default function HomeBento() {
         {/* Load More Trigger */}
         {!isLoading && visibleEventsCount < sortedEvents.length && (
           <div ref={loadMoreRef} className="flex justify-center mt-6 py-4">
-            <div className="w-6 h-6 border-2 border-[#18D8DB] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
       </section>

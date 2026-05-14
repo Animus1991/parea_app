@@ -103,7 +103,7 @@ export default function CreateEventFlowBento() {
           {Array.from({ length: totalSteps }).map((_, i) => (
             <motion.div
               key={i}
-              className={`h-1.5 flex-1 rounded-full ${i < step ? "bg-cyan-600" : "bg-gray-200"}`}
+              className={`h-1.5 flex-1 rounded-full ${i < step ? "bg-indigo-600" : "bg-gray-200"}`}
               initial={false}
               animate={{ backgroundColor: i < step ? "#4f46e5" : "#e5e7eb" }}
             />
@@ -132,7 +132,7 @@ export default function CreateEventFlowBento() {
                     {t("Εικόνα Εκδήλωσης", "Event Image")}
                   </label>
                   <div 
-                    className="w-full h-40 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center text-black hover:bg-gray-50 hover:border-cyan-400 transition-colors cursor-pointer relative overflow-hidden"
+                    className="w-full h-40 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center text-black hover:bg-gray-50 hover:border-indigo-400 transition-colors cursor-pointer relative overflow-hidden"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     {imagePreview ? (
@@ -165,7 +165,7 @@ export default function CreateEventFlowBento() {
                       "π.χ Κοινωνικός Καφές Κυριακής",
                       "e.g. Sunday Morning Hike & Coffee",
                     )}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-cyan-600 focus:border-transparent outline-none transition-all"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all"
                   />
                 </div>
 
@@ -176,7 +176,7 @@ export default function CreateEventFlowBento() {
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-cyan-600 focus:border-transparent outline-none transition-all bg-white"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all bg-white"
                   >
                     <option value="">
                       {t("Επιλέξτε κατηγορία...", "Select a category...")}
@@ -212,7 +212,7 @@ export default function CreateEventFlowBento() {
                       "Τι πρόκειται να κάνουμε; Τι πρέπει να περιμένουν οι συμμετέχοντες;",
                       "What are we going to do? What should people expect?",
                     )}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-cyan-600 focus:border-transparent outline-none transition-all resize-none"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all resize-none"
                   ></textarea>
                 </div>
               </div>
@@ -251,7 +251,7 @@ export default function CreateEventFlowBento() {
                       type="date"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-cyan-600 focus:border-transparent outline-none transition-all"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all"
                     />
                   </div>
                   <div>
@@ -262,7 +262,7 @@ export default function CreateEventFlowBento() {
                       type="time"
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-cyan-600 focus:border-transparent outline-none transition-all"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all"
                     />
                   </div>
                 </div>
@@ -274,7 +274,7 @@ export default function CreateEventFlowBento() {
                   <select
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-cyan-600 focus:border-transparent outline-none transition-all bg-white"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all bg-white"
                   >
                     <option value="1h">1 {t("ώρα", "hour")}</option>
                     <option value="2h">2 {t("ώρες", "hours")}</option>
@@ -286,7 +286,7 @@ export default function CreateEventFlowBento() {
                      <input 
                        type="text" 
                        placeholder={t("Λεπτομέρειες (π.χ. Όλη μέρα)...", "Details (e.g. All day)...")}
-                       className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2 text-sm focus:ring-2 focus:ring-cyan-600 outline-none"
+                       className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-2 text-sm focus:ring-2 focus:ring-indigo-600 outline-none"
                        onChange={(e) => setDuration(e.target.value)}
                      />
                   )}
@@ -306,7 +306,7 @@ export default function CreateEventFlowBento() {
                         "Αναζήτηση χώρου ή διεύθυνσης...",
                         "Search venue or address...",
                       )}
-                      className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-cyan-600 focus:border-transparent outline-none transition-all"
+                      className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all"
                     />
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
                   </div>
@@ -365,11 +365,11 @@ export default function CreateEventFlowBento() {
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <div
-                      className={`border rounded-xl p-4 cursor-pointer transition-all ${visibility === "public" ? "border-cyan-600 bg-cyan-50 shadow-sm" : "border-gray-200 hover:border-cyan-200"}`}
+                      className={`border rounded-xl p-4 cursor-pointer transition-all ${visibility === "public" ? "border-indigo-600 bg-indigo-50 shadow-sm" : "border-gray-200 hover:border-indigo-200"}`}
                       onClick={() => setVisibility("public")}
                     >
                       <Globe
-                        className={`w-5 h-5 mb-2 ${visibility === "public" ? "text-cyan-600" : "text-black"}`}
+                        className={`w-5 h-5 mb-2 ${visibility === "public" ? "text-indigo-600" : "text-black"}`}
                       />
                       <h4 className="text-sm font-bold text-[#111827] mb-1">
                         {t("Δημόσια", "Public")}
@@ -382,11 +382,11 @@ export default function CreateEventFlowBento() {
                       </p>
                     </div>
                     <div
-                      className={`border rounded-xl p-4 cursor-pointer transition-all ${visibility === "private" ? "border-cyan-600 bg-cyan-50 shadow-sm" : "border-gray-200 hover:border-cyan-200"}`}
+                      className={`border rounded-xl p-4 cursor-pointer transition-all ${visibility === "private" ? "border-indigo-600 bg-indigo-50 shadow-sm" : "border-gray-200 hover:border-indigo-200"}`}
                       onClick={() => setVisibility("private")}
                     >
                       <Lock
-                        className={`w-5 h-5 mb-2 ${visibility === "private" ? "text-cyan-600" : "text-black"}`}
+                        className={`w-5 h-5 mb-2 ${visibility === "private" ? "text-indigo-600" : "text-black"}`}
                       />
                       <h4 className="text-sm font-bold text-[#111827] mb-1">
                         {t("Ιδιωτική", "Private")}
@@ -413,7 +413,7 @@ export default function CreateEventFlowBento() {
                       max="50"
                       value={maxAttendees}
                       onChange={(e) => setMaxAttendees(Number(e.target.value))}
-                      className="w-20 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-cyan-600 focus:border-transparent outline-none text-center"
+                      className="w-20 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none text-center"
                     />
                     <span className="text-sm text-black font-medium">
                       {t("άτομα το μέγιστο", "people maximum")}
@@ -447,8 +447,8 @@ export default function CreateEventFlowBento() {
               className="space-y-6"
             >
               <div className="text-center">
-                <div className="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <CheckCircle className="w-6 h-6 text-cyan-600" />
+                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <CheckCircle className="w-6 h-6 text-indigo-600" />
                 </div>
                 <h2 className="text-lg font-bold text-[#111827]">
                   {t("Έτοιμο για Δημοσίευση!", "Ready to Publish!")}
@@ -518,7 +518,7 @@ export default function CreateEventFlowBento() {
                 </Button>
                 <Button
                   onClick={handleSubmit}
-                  className="flex-[2] shadow-cyan-200 shadow-lg"
+                  className="flex-[2] shadow-indigo-200 shadow-lg"
                 >
                   {t("Δημοσίευση Εμπειρίας", "Publish Experience")}
                 </Button>
