@@ -99,7 +99,7 @@ export default function MyCalendarVibrantDark() {
                 {days.map((day, i) => (
                   <div key={i} className="text-center">
                     <div className="text-[10px] font-bold text-white tracking-wide">{format(day, 'EEE')}</div>
-                    <div className={`mt-1 w-8 h-8 mx-auto flex items-center justify-center rounded-full text-sm font-bold ${isToday(day) ? 'bg-cyan-600 text-white' : 'text-white'}`}>
+                    <div className={`mt-1 w-8 h-8 mx-auto flex items-center justify-center rounded-full text-sm font-bold ${isToday(day) ? 'bg-fuchsia-600 text-white' : 'text-white'}`}>
                       {format(day, 'd')}
                     </div>
                   </div>
@@ -108,7 +108,7 @@ export default function MyCalendarVibrantDark() {
               
               <div className="space-y-3 mt-6">
                 {upcomingEvents.map((event, idx) => (
-                  <div key={idx} className="flex gap-4 p-4 rounded-xl border border-gray-800 hover:border-emerald-800 hover:bg-emerald-900/30/30 transition-colors cursor-pointer" onClick={() => navigate(`/events/${event.id}`)}>
+                  <div key={idx} className="flex gap-4 p-4 rounded-xl border border-gray-800 hover:border-fuchsia-800 hover:bg-fuchsia-900/30/30 transition-colors cursor-pointer" onClick={() => navigate(`/events/${event.id}`)}>
                     <div className="flex flex-col items-center justify-center w-16 shrink-0 border-r border-gray-800 pr-4">
                       <span className="text-xs font-bold text-white">{format(event.parsedDate, 'MMM')}</span>
                       <span className="text-2xl font-black text-white">{format(event.parsedDate, 'dd')}</span>
@@ -116,7 +116,7 @@ export default function MyCalendarVibrantDark() {
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
                         <h3 className="font-bold text-white text-sm">{event.title}</h3>
-                        <span className="flex items-center gap-1 text-[10px] font-bold tracking-wide text--400 bg-emerald-50 px-2 py-0.5 rounded-full">
+                        <span className="flex items-center gap-1 text-[10px] font-bold tracking-wide text--400 bg-fuchsia-950 px-2 py-0.5 rounded-full">
                           <CheckCircle className="w-3 h-3" /> {t('Επιβεβαιώθηκε', 'Confirmed')}
                         </span>
                       </div>
@@ -162,9 +162,9 @@ export default function MyCalendarVibrantDark() {
                       key={day.toISOString()}
                       className={`aspect-square flex flex-col items-center justify-center rounded-lg cursor-pointer transition-colors ${
                         isToday(day)
-                          ? 'bg-cyan-600 text-white'
+                          ? 'bg-fuchsia-600 text-white'
                           : dayEvents.length > 0
-                            ? 'bg-emerald-900/30 hover:bg-emerald-900/50'
+                            ? 'bg-fuchsia-900/30 hover:bg-fuchsia-900/50'
                             : 'hover:bg-gray-900'
                       } ${!isCurrentMonth ? 'opacity-30' : ''}`}
                     >
@@ -172,7 +172,7 @@ export default function MyCalendarVibrantDark() {
                         {format(day, 'd')}
                       </span>
                       {dayEvents.length > 0 && (
-                        <div className={`w-1.5 h-1.5 rounded-full mt-0.5 ${isToday(day) ? 'bg-gray-800' : 'bg-cyan-600'}`} />
+                        <div className={`w-1.5 h-1.5 rounded-full mt-0.5 ${isToday(day) ? 'bg-gray-800' : 'bg-fuchsia-600'}`} />
                       )}
                     </div>
                   );
@@ -186,15 +186,15 @@ export default function MyCalendarVibrantDark() {
                   {upcomingEvents.map((event, idx) => (
                     <div
                       key={idx}
-                      className="flex gap-3 items-center text-sm cursor-pointer hover:bg-emerald-900/30 p-2 rounded-lg transition-colors"
+                      className="flex gap-3 items-center text-sm cursor-pointer hover:bg-fuchsia-900/30 p-2 rounded-lg transition-colors"
                       onClick={() => navigate(`/events/${event.id}`)}
                     >
                       <div className="text-[10px] font-bold text-white w-12 shrink-0">
                         {format(event.parsedDate, 'MMM d')}
                       </div>
-                      <div className="w-2 h-2 rounded-full bg-cyan-600 shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-fuchsia-600 shrink-0" />
                       <div className="font-medium text-white text-xs line-clamp-1 flex-1">{event.title}</div>
-                      <span className="text-[10px] text--400 font-bold bg-emerald-50 px-2 py-0.5 rounded-full whitespace-nowrap">{t('Επιβεβαιώθηκε', 'Confirmed')}</span>
+                      <span className="text-[10px] text--400 font-bold bg-fuchsia-950 px-2 py-0.5 rounded-full whitespace-nowrap">{t('Επιβεβαιώθηκε', 'Confirmed')}</span>
                     </div>
                   ))}
                 </div>

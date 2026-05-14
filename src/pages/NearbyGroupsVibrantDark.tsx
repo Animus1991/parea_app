@@ -55,7 +55,7 @@ const GroupImage = ({
   const [error, setError] = useState(false);
   return error ? (
     <div
-      className={`flex items-center justify-center bg-emerald-900/30 text-cyan-300 ${className}`}
+      className={`flex items-center justify-center bg-fuchsia-900/30 text-fuchsia-700 ${className}`}
     >
       <MapIcon className="w-8 h-8 opacity-50" />
     </div>
@@ -350,10 +350,10 @@ export default function NearbyGroupsVibrantDark() {
                 "Αναζήτηση κοντινών περιοχών ή ομάδων...",
                 "Search nearby areas or groups...",
               )}
-              className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-gray-800/95 backdrop-blur shadow-lg focus:outline-none focus:ring-2 focus:ring-cyan-600 text-sm font-medium"
+              className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-gray-800/95 backdrop-blur shadow-lg focus:outline-none focus:ring-2 focus:ring-fuchsia-600 text-sm font-medium"
             />
           </div>
-          <button className="h-11 px-4 bg-gray-800/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-white hover:text-cyan-400 transition-colors pointer-events-auto">
+          <button className="h-11 px-4 bg-gray-800/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-white hover:text-fuchsia-400 transition-colors pointer-events-auto">
             <SlidersHorizontal className="h-5 w-5" />
           </button>
         </div>
@@ -380,15 +380,15 @@ export default function NearbyGroupsVibrantDark() {
                 max="25"
                 value={radius}
                 onChange={(e) => setRadius(parseInt(e.target.value))}
-                className="flex-1 accent-cyan-600"
+                className="flex-1 accent-fuchsia-600"
               />
-              <span className="text-xs font-bold text-cyan-400 w-8">
+              <span className="text-xs font-bold text-fuchsia-400 w-8">
                 {radius}km
               </span>
             </div>
 
             <div className="flex gap-2 mt-4 overflow-x-auto noscrollbar pb-1">
-              <button className="px-3 py-1.5 bg-cyan-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
+              <button className="px-3 py-1.5 bg-fuchsia-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
                 {t("Όλα", "All Matches")}
               </button>
               <button className="px-3 py-1.5 bg-gray-900 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-700">
@@ -404,7 +404,7 @@ export default function NearbyGroupsVibrantDark() {
             {localGroups.map((group, idx) => (
               <div
                 key={idx}
-                className={`p-3 border ${selectedEventId === group.id ? "border-cyan-500 shadow-md ring-1 ring-cyan-500" : "border-gray-800"} rounded-xl hover:border-cyan-300 hover:shadow-md transition-all cursor-pointer group flex gap-3 bg-gray-800`}
+                className={`p-3 border ${selectedEventId === group.id ? "border-fuchsia-9500 shadow-md ring-1 ring-fuchsia-9500" : "border-gray-800"} rounded-xl hover:border-fuchsia-700 hover:shadow-md transition-all cursor-pointer group flex gap-3 bg-gray-800`}
                 onClick={() => {
                   setSelectedEventId(group.id);
                   setMapCenter({ lat: group.lat, lng: group.lng });
@@ -423,7 +423,7 @@ export default function NearbyGroupsVibrantDark() {
                 </div>
                 <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                   <div>
-                    <h3 className="font-bold text-sm text-white line-clamp-1 group-hover:text-cyan-400 transition-colors">
+                    <h3 className="font-bold text-sm text-white line-clamp-1 group-hover:text-fuchsia-400 transition-colors">
                       {group.title}
                     </h3>
                     <p className="text-xs text-white mt-0.5 max-w-[200px] truncate">
@@ -434,7 +434,7 @@ export default function NearbyGroupsVibrantDark() {
                     <Badge variant="neutral" className="text-[9px] px-1.5 py-0">
                       {group.category}
                     </Badge>
-                    <div className="flex items-center text-[10px] font-bold text-cyan-400 bg-emerald-900/30 px-1.5 py-0.5 rounded">
+                    <div className="flex items-center text-[10px] font-bold text-fuchsia-400 bg-fuchsia-900/30 px-1.5 py-0.5 rounded">
                       <MapPin className="h-2.5 w-2.5 mr-1" />{" "}
                       {(1.2 + idx * 0.8).toFixed(1)}km
                     </div>
@@ -444,7 +444,7 @@ export default function NearbyGroupsVibrantDark() {
             ))}
 
             <div className="p-6 text-center border border-dashed border-gray-700 rounded-xl bg-gray-900">
-              <div className="w-12 h-12 bg-emerald-900/50 text-cyan-400 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-fuchsia-900/50 text-fuchsia-400 rounded-full flex items-center justify-center mx-auto mb-3">
                 <MapIcon className="h-6 w-6" />
               </div>
               <h3 className="text-sm font-bold text-white">
@@ -557,21 +557,21 @@ export default function NearbyGroupsVibrantDark() {
             <input
               type="text"
               placeholder="Search nearby areas or groups..."
-              className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-cyan-600 text-sm font-medium"
+              className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-fuchsia-600 text-sm font-medium"
             />
           </div>
         )}
         {!isMapFullscreen && (
           <button
             onClick={() => alert("Search filters coming soon")}
-            className="h-11 px-4 bg-gray-800/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-white hover:text-cyan-400 transition-colors pointer-events-auto shrink-0"
+            className="h-11 px-4 bg-gray-800/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-white hover:text-fuchsia-400 transition-colors pointer-events-auto shrink-0"
           >
             <SlidersHorizontal className="h-5 w-5" />
           </button>
         )}
         <button
           onClick={handleLocateMe}
-          className="h-11 px-4 bg-gray-800/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-cyan-400 hover:text-cyan-400 transition-colors pointer-events-auto shrink-0 ml-auto"
+          className="h-11 px-4 bg-gray-800/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-fuchsia-400 hover:text-fuchsia-400 transition-colors pointer-events-auto shrink-0 ml-auto"
           title="Locate Me"
         >
           <Crosshair className="h-5 w-5" />
@@ -609,7 +609,7 @@ export default function NearbyGroupsVibrantDark() {
           }}
         />
         <div
-          className="absolute top-0 bottom-0 -right-2 w-4 cursor-ew-resize hover:bg-cyan-500/10 transition-all hidden md:block z-50 pointer-events-auto"
+          className="absolute top-0 bottom-0 -right-2 w-4 cursor-ew-resize hover:bg-fuchsia-9500/10 transition-all hidden md:block z-50 pointer-events-auto"
           onMouseDown={() => setIsDragging(true)}
         />
 
@@ -645,15 +645,15 @@ export default function NearbyGroupsVibrantDark() {
               max="25"
               value={radius}
               onChange={(e) => setRadius(parseInt(e.target.value))}
-              className="flex-1 accent-cyan-600"
+              className="flex-1 accent-fuchsia-600"
             />
-            <span className="text-xs font-bold text-cyan-400 w-8">
+            <span className="text-xs font-bold text-fuchsia-400 w-8">
               {radius}km
             </span>
           </div>
 
           <div className="flex gap-2 mt-4 overflow-x-auto noscrollbar pb-1">
-            <button className="px-3 py-1.5 bg-cyan-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
+            <button className="px-3 py-1.5 bg-fuchsia-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
               {t("Όλα", "All Matches")}
             </button>
             <button className="px-3 py-1.5 bg-gray-900 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-700">
@@ -669,7 +669,7 @@ export default function NearbyGroupsVibrantDark() {
           {localGroups.map((group, idx) => (
             <div
               key={idx}
-              className="p-3 border border-gray-800 rounded-xl hover:border-cyan-300 hover:shadow-md transition-all cursor-pointer group flex gap-3 bg-gray-800"
+              className="p-3 border border-gray-800 rounded-xl hover:border-fuchsia-700 hover:shadow-md transition-all cursor-pointer group flex gap-3 bg-gray-800"
               onClick={() => navigate(`/events/${group.id}`)}
             >
               <div className="w-16 h-16 rounded-lg bg-gray-700 overflow-hidden shrink-0">
@@ -681,7 +681,7 @@ export default function NearbyGroupsVibrantDark() {
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                 <div>
-                  <h3 className="font-bold text-sm text-white line-clamp-1 group-hover:text-cyan-400 transition-colors">
+                  <h3 className="font-bold text-sm text-white line-clamp-1 group-hover:text-fuchsia-400 transition-colors">
                     {group.title}
                   </h3>
                   <p className="text-xs text-white mt-0.5 max-w-[200px] truncate">
@@ -692,7 +692,7 @@ export default function NearbyGroupsVibrantDark() {
                   <Badge variant="neutral" className="text-[9px] px-1.5 py-0">
                     {group.category}
                   </Badge>
-                  <div className="flex items-center text-[10px] font-bold text-cyan-400 bg-emerald-900/30 px-1.5 py-0.5 rounded">
+                  <div className="flex items-center text-[10px] font-bold text-fuchsia-400 bg-fuchsia-900/30 px-1.5 py-0.5 rounded">
                     <MapPin className="h-2.5 w-2.5 mr-1" />{" "}
                     {(1.2 + idx * 0.8).toFixed(1)}km
                   </div>
@@ -702,7 +702,7 @@ export default function NearbyGroupsVibrantDark() {
           ))}
 
           <div className="p-6 text-center border border-dashed border-gray-700 rounded-xl bg-gray-900">
-            <div className="w-12 h-12 bg-emerald-900/50 text-cyan-400 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 bg-fuchsia-900/50 text-fuchsia-400 rounded-full flex items-center justify-center mx-auto mb-3">
               <MapIcon className="h-6 w-6" />
             </div>
             <h3 className="text-sm font-bold text-white">

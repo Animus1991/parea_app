@@ -14,7 +14,7 @@ export default function NotificationsVibrantDark() {
       time: t(`Πριν 10 λεπτά`, `10 minutes ago`),
       read: false,
       icon: Users,
-      color: 'bg-emerald-100 text--400'
+      color: 'bg-fuchsia-900 text--400'
     },
     {
       id: 'n2',
@@ -23,7 +23,7 @@ export default function NotificationsVibrantDark() {
       time: t(`Πριν 1 ώρα`, `1 hour ago`),
       read: false,
       icon: MessageCircle,
-      color: 'bg-emerald-900/50 text-cyan-400'
+      color: 'bg-fuchsia-900/50 text-fuchsia-400'
     },
     {
       id: 'n3',
@@ -64,7 +64,7 @@ export default function NotificationsVibrantDark() {
           <h1 className="text-[22.33807213275px] md:text-[26.7902365993px] font-bold text-white">{t(`Ειδοποιήσεις`, `Notifications`)}</h1>
           <p className="text-white font-medium text-[13.551608211075px] md:text-[16.25212883329px] mt-1">{t(`Μείνετε ενημερωμένοι`, `Stay up to date`)}</p>
         </div>
-        <button className="text-[14.2457535px] font-bold text-cyan-400 hover:text-cyan-400">
+        <button className="text-[14.2457535px] font-bold text-fuchsia-400 hover:text-fuchsia-400">
           {t(`Σήμανση όλων ως αναγνωσμένα`, `Mark all as read`)}
         </button>
       </div>
@@ -76,7 +76,7 @@ export default function NotificationsVibrantDark() {
           {todayNotifs.map((notif) => {
             const Icon = notif.icon;
             return (
-              <div key={notif.id} className="flex gap-4 p-4 rounded-xl border border-emerald-800 bg-emerald-900/30/30">
+              <div key={notif.id} className="flex gap-4 p-4 rounded-xl border border-fuchsia-800 bg-fuchsia-900/30/30">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${notif.color}`}>
                   <Icon className="w-5 h-5" />
                 </div>
@@ -84,17 +84,17 @@ export default function NotificationsVibrantDark() {
                   <p className="text-[13.5px] leading-relaxed text-white font-medium">{notif.message}</p>
                   <span className="text-[11.25px] font-bold text-white tracking-wide mt-1 block">{notif.time}</span>
                   {notif.type === 'match' && (
-                    <button onClick={() => navigate('/plans')} className="mt-2 text-[11.2px] font-bold text-cyan-400 bg-emerald-900/50 px-2.5 py-1 rounded-full hover:bg-cyan-200 transition-colors inline-flex items-center gap-1">
+                    <button onClick={() => navigate('/plans')} className="mt-2 text-[11.2px] font-bold text-fuchsia-400 bg-fuchsia-900/50 px-2.5 py-1 rounded-full hover:bg-fuchsia-800 transition-colors inline-flex items-center gap-1">
                       {t(`Δείτε ομάδα`, `View group`)} <ArrowRight className="w-2.5 h-2.5" />
                     </button>
                   )}
                   {notif.type === 'message' && (
-                    <button onClick={() => navigate('/chats')} className="mt-2 text-[11.2px] font-bold text-cyan-400 bg-emerald-900/50 px-2.5 py-1 rounded-full hover:bg-cyan-200 transition-colors inline-flex items-center gap-1">
+                    <button onClick={() => navigate('/chats')} className="mt-2 text-[11.2px] font-bold text-fuchsia-400 bg-fuchsia-900/50 px-2.5 py-1 rounded-full hover:bg-fuchsia-800 transition-colors inline-flex items-center gap-1">
                       {t(`Απάντηση`, `Reply`)} <ArrowRight className="w-2.5 h-2.5" />
                     </button>
                   )}
                 </div>
-                <span className="w-2.5 h-2.5 bg-cyan-500 rounded-full shrink-0 mt-2"></span>
+                <span className="w-2.5 h-2.5 bg-fuchsia-9500 rounded-full shrink-0 mt-2"></span>
               </div>
             );
           })}

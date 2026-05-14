@@ -213,7 +213,7 @@ export default function GroupChatVibrantDark() {
           key={msg.id}
           className="text-center my-6 flex justify-center w-full px-4 animate-in fade-in duration-300"
         >
-          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-100 px-4 py-2.5 rounded-full shadow-sm max-w-sm">
+          <div className="flex items-center gap-2 bg-fuchsia-950 border border-fuchsia-900 px-4 py-2.5 rounded-full shadow-sm max-w-sm">
             <Compass className="h-4 w-4 text--400 animate-pulse" />
             <span className="text-[12px] font-medium text--400 leading-tight">
               {msg.text}
@@ -323,7 +323,7 @@ export default function GroupChatVibrantDark() {
                     <select
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
-                      className="text-[11px] font-bold border border-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-cyan-500 bg-gray-900 text-white hover:bg-gray-700 cursor-pointer transition-colors max-w-[120px] truncate"
+                      className="text-[11px] font-bold border border-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-fuchsia-9500 bg-gray-900 text-white hover:bg-gray-700 cursor-pointer transition-colors max-w-[120px] truncate"
                     >
                       <option value="all">
                         {t("Όλοι οι Αποστολείς", "All Senders")}
@@ -335,13 +335,13 @@ export default function GroupChatVibrantDark() {
                       ))}
                     </select>
                     <div className="relative group">
-                      <Search className="h-3.5 w-3.5 text-white absolute left-2.5 top-1/2 -translate-y-1/2 group-focus-within:text-cyan-400 transition-colors" />
+                      <Search className="h-3.5 w-3.5 text-white absolute left-2.5 top-1/2 -translate-y-1/2 group-focus-within:text-fuchsia-400 transition-colors" />
                       <input
                         type="text"
                         placeholder={t("Αναζήτηση...", "Search...")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-8 pr-3 py-1.5 text-xs border border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-500 w-32 xl:w-48 bg-gray-900 focus:bg-gray-800 transition-all"
+                        className="pl-8 pr-3 py-1.5 text-xs border border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-fuchsia-9500 w-32 xl:w-48 bg-gray-900 focus:bg-gray-800 transition-all"
                       />
                     </div>
                   </div>
@@ -357,7 +357,7 @@ export default function GroupChatVibrantDark() {
                   {/* Info Toggle */}
                   <button
                     onClick={() => setShowInfo(!showInfo)}
-                    className={`transition-colors p-2 rounded-full ${showInfo ? "text-cyan-400 bg-emerald-900/30" : "text-white hover:text-white hover:bg-gray-700"}`}
+                    className={`transition-colors p-2 rounded-full ${showInfo ? "text-fuchsia-400 bg-fuchsia-900/30" : "text-white hover:text-white hover:bg-gray-700"}`}
                   >
                     <Info className="h-5 w-5" />
                   </button>
@@ -401,11 +401,11 @@ export default function GroupChatVibrantDark() {
               <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
                 <button
                   onClick={() => setShowLocationConfigModal(true)}
-                  className="bg-gray-800/90 backdrop-blur-sm border border-emerald-200 text--400 shadow-sm px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2"
+                  className="bg-gray-800/90 backdrop-blur-sm border border-fuchsia-800 text--400 shadow-sm px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2"
                 >
                   <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-fuchsia-9500"></span>
                   </span>
                   {t("Κοινοποίηση Τοποθεσίας", "Sharing Location")}
                 </button>
@@ -431,7 +431,7 @@ export default function GroupChatVibrantDark() {
                 onClick={() => setShowLocationConfigModal(true)}
                 className={`p-2.5 rounded-full transition-all flex items-center justify-center shrink-0 border hidden sm:flex ${
                   isSharingLocation
-                    ? "bg-emerald-50 text--400 border-emerald-200 ring-2 ring-emerald-500/20"
+                    ? "bg-fuchsia-950 text--400 border-fuchsia-800 ring-2 ring-fuchsia-9500/20"
                     : "bg-gray-900 text-white border-gray-700 hover:bg-gray-700 hover:text-white"
                 }`}
                 title={t("Τοποθεσία & Ασφάλεια", "Location & Safety")}
@@ -534,7 +534,7 @@ export default function GroupChatVibrantDark() {
                       {event.tags.map((tag: string) => (
                         <span
                           key={tag}
-                          className="bg-emerald-900/30 text-cyan-400 px-2.5 py-1 rounded-md text-[9px] font-bold tracking-wide border border-emerald-800"
+                          className="bg-fuchsia-900/30 text-fuchsia-400 px-2.5 py-1 rounded-md text-[9px] font-bold tracking-wide border border-fuchsia-800"
                         >
                           {tag}
                         </span>
@@ -576,11 +576,11 @@ export default function GroupChatVibrantDark() {
 
               {event.groupDiscount && (
                 <div
-                  className={`p-4 rounded-xl border shadow-sm ${group.discountUnlocked ? "bg-emerald-50 border-emerald-200" : "bg-gray-800 border-gray-700"}`}
+                  className={`p-4 rounded-xl border shadow-sm ${group.discountUnlocked ? "bg-fuchsia-950 border-fuchsia-800" : "bg-gray-800 border-gray-700"}`}
                 >
                   <div className="flex items-center gap-2.5 mb-2">
                     <div
-                      className={`p-1.5 rounded-full ${group.discountUnlocked ? "bg-emerald-100 text--400" : "bg-gray-700 text-white"}`}
+                      className={`p-1.5 rounded-full ${group.discountUnlocked ? "bg-fuchsia-900 text--400" : "bg-gray-700 text-white"}`}
                     >
                       <Tag className="h-4 w-4" />
                     </div>
@@ -615,7 +615,7 @@ export default function GroupChatVibrantDark() {
                     {isGroupAdmin && (
                       <button
                         onClick={() => setShowAddMemberModal(true)}
-                        className="flex items-center gap-1 text-[10px] font-bold text-cyan-400 hover:text-cyan-400 bg-emerald-900/30 hover:bg-emerald-900/50 px-2 py-1 rounded border border-emerald-800 transition-colors"
+                        className="flex items-center gap-1 text-[10px] font-bold text-fuchsia-400 hover:text-fuchsia-400 bg-fuchsia-900/30 hover:bg-fuchsia-900/50 px-2 py-1 rounded border border-fuchsia-800 transition-colors"
                       >
                         <UserPlus className="w-3 h-3" />{" "}
                         {t("Προσθήκη Μελών", "Add Members")}
@@ -659,7 +659,7 @@ export default function GroupChatVibrantDark() {
                                 className={`w-full h-full object-cover transition-all ${!isCloseToEvent && member.id !== currentUser.id ? "blur-sm grayscale opacity-80" : ""}`}
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-white font-bold text-xs bg-emerald-900/30 text-cyan-400">
+                              <div className="w-full h-full flex items-center justify-center text-white font-bold text-xs bg-fuchsia-900/30 text-fuchsia-400">
                                 {member.name.substring(0, 2)}
                               </div>
                             )}
@@ -686,7 +686,7 @@ export default function GroupChatVibrantDark() {
                             </div>
                             <div className="flex items-center gap-1.5">
                               <span
-                                className={`px-1.5 py-0.5 text-[8px] font-bold flex shrink-0 tracking-wide rounded-md items-center gap-1 border ${member.reliabilityScore >= 80 ? "bg-emerald-50 text--400 border-emerald-100" : member.reliabilityScore >= 50 ? "bg-blue-50 text--400 border-blue-100" : "bg-amber-50 text-amber-700 border-amber-100"}`}
+                                className={`px-1.5 py-0.5 text-[8px] font-bold flex shrink-0 tracking-wide rounded-md items-center gap-1 border ${member.reliabilityScore >= 80 ? "bg-fuchsia-950 text--400 border-fuchsia-900" : member.reliabilityScore >= 50 ? "bg-blue-50 text--400 border-blue-100" : "bg-amber-50 text-amber-700 border-amber-100"}`}
                               >
                                 <ShieldCheck className="h-2.5 w-2.5" />
                                 {member.reliabilityScore}%
@@ -774,11 +774,11 @@ export default function GroupChatVibrantDark() {
 
                     <button
                       onClick={() => setShowLocationConfigModal(true)}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 border rounded-lg transition-colors text-left ${isSharingLocation ? "bg-emerald-900/30 border-cyan-200 hover:bg-emerald-900/50" : "bg-gray-900 hover:bg-gray-700 border-gray-700"}`}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 border rounded-lg transition-colors text-left ${isSharingLocation ? "bg-fuchsia-900/30 border-fuchsia-800 hover:bg-fuchsia-900/50" : "bg-gray-900 hover:bg-gray-700 border-gray-700"}`}
                     >
                       <div>
                         <p
-                          className={`text-[12px] font-bold ${isSharingLocation ? "text-cyan-400" : "text-white"}`}
+                          className={`text-[12px] font-bold ${isSharingLocation ? "text-fuchsia-400" : "text-white"}`}
                         >
                           {isSharingLocation
                             ? t("Η Τοποθεσία Κοινοποιείται", "Location Shared")
@@ -788,7 +788,7 @@ export default function GroupChatVibrantDark() {
                               )}
                         </p>
                         <p
-                          className={`text-[10px] mt-0.5 ${isSharingLocation ? "text-cyan-400/80" : "text-white"}`}
+                          className={`text-[10px] mt-0.5 ${isSharingLocation ? "text-fuchsia-400/80" : "text-white"}`}
                         >
                           {isSharingLocation
                             ? t("Διαχείριση ή Διακοπή", "Tap to manage or stop")
@@ -799,7 +799,7 @@ export default function GroupChatVibrantDark() {
                         </p>
                       </div>
                       <MapPin
-                        className={`w-4 h-4 ${isSharingLocation ? "text-cyan-400" : "text-white"}`}
+                        className={`w-4 h-4 ${isSharingLocation ? "text-fuchsia-400" : "text-white"}`}
                       />
                     </button>
 
@@ -823,7 +823,7 @@ export default function GroupChatVibrantDark() {
 
                     <button
                       onClick={() => setShowSafetyLinkModal(true)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 bg-emerald-50/50 hover:bg-emerald-50 border border-emerald-100 rounded-lg transition-colors text-left text--400"
+                      className="w-full flex items-center justify-between px-3 py-2.5 bg-fuchsia-950/50 hover:bg-fuchsia-950 border border-fuchsia-900 rounded-lg transition-colors text-left text--400"
                     >
                       <div>
                         <p className="text-[12px] font-bold text--400">
@@ -945,7 +945,7 @@ export default function GroupChatVibrantDark() {
             <div className="bg-gray-800 rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-800 animate-in zoom-in-95 duration-200">
               <div className="p-5 border-b border-gray-800 flex items-center justify-between sticky top-0 bg-gray-800/95 backdrop-blur-sm z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-900/30 rounded-full flex items-center justify-center text-cyan-400">
+                  <div className="w-10 h-10 bg-fuchsia-900/30 rounded-full flex items-center justify-center text-fuchsia-400">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
@@ -967,8 +967,8 @@ export default function GroupChatVibrantDark() {
 
               <div className="p-5 space-y-6">
                 {isSharingLocation && (
-                  <div className="bg-emerald-900/30 border border-emerald-800 rounded-xl p-4 flex flex-col gap-3">
-                    <div className="flex items-center gap-2 text-cyan-400">
+                  <div className="bg-fuchsia-900/30 border border-fuchsia-800 rounded-xl p-4 flex flex-col gap-3">
+                    <div className="flex items-center gap-2 text-fuchsia-400">
                       <Navigation className="w-4 h-4 animate-pulse" />
                       <span className="text-sm font-bold">
                         {t(
@@ -1061,7 +1061,7 @@ export default function GroupChatVibrantDark() {
                     {["organizer", "selected", "all"].map((option) => (
                       <label
                         key={option}
-                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${locationConfig.shareWith === option ? "border-cyan-600 bg-emerald-900/30/30" : "border-gray-700 hover:bg-gray-900"}`}
+                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${locationConfig.shareWith === option ? "border-fuchsia-600 bg-fuchsia-900/30/30" : "border-gray-700 hover:bg-gray-900"}`}
                       >
                         <div className="flex items-center justify-center relative">
                           <input
@@ -1077,7 +1077,7 @@ export default function GroupChatVibrantDark() {
                             }
                           />
                           <div
-                            className={`w-5 h-5 rounded-full border flex items-center justify-center ${locationConfig.shareWith === option ? "border-cyan-600 bg-cyan-600" : "border-gray-300"}`}
+                            className={`w-5 h-5 rounded-full border flex items-center justify-center ${locationConfig.shareWith === option ? "border-fuchsia-600 bg-fuchsia-600" : "border-gray-300"}`}
                           >
                             {locationConfig.shareWith === option && (
                               <span className="w-2 h-2 rounded-full bg-gray-800"></span>
@@ -1197,7 +1197,7 @@ export default function GroupChatVibrantDark() {
         {showSafetyLinkModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-gray-800 rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-gray-800 animate-in zoom-in-95 duration-200">
-              <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text--400">
+              <div className="w-12 h-12 bg-fuchsia-950 rounded-full flex items-center justify-center mx-auto mb-4 text--400">
                 <Link2 className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-white mb-2">
@@ -1222,7 +1222,7 @@ export default function GroupChatVibrantDark() {
                       t("Αντιγράφηκε στο πρόχειρο!", "Copied to clipboard!"),
                     );
                   }}
-                  className="text-xs font-bold text-cyan-400"
+                  className="text-xs font-bold text-fuchsia-400"
                 >
                   {t("Αντιγραφή", "Copy")}
                 </button>
@@ -1287,7 +1287,7 @@ export default function GroupChatVibrantDark() {
         {showDisableEphemeralModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-gray-800 rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-gray-800 animate-in zoom-in-95 duration-200">
-              <div className="w-12 h-12 bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-cyan-400">
+              <div className="w-12 h-12 bg-fuchsia-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-fuchsia-400">
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-white mb-2">
@@ -1435,12 +1435,12 @@ export default function GroupChatVibrantDark() {
                     name="eta"
                     type="number"
                     placeholder={t("ETA (λεπτά)", "ETA (mins)")}
-                    className="flex-1 w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                    className="flex-1 w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-fuchsia-9500 focus:border-fuchsia-9500 outline-none"
                     min="1"
                   />
                   <button
                     type="submit"
-                    className="px-4 py-3 text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-700 rounded-xl shadow-sm transition-all whitespace-nowrap"
+                    className="px-4 py-3 text-sm font-bold text-white bg-fuchsia-600 hover:bg-fuchsia-700 rounded-xl shadow-sm transition-all whitespace-nowrap"
                   >
                     {t("Αποστολή", "Send")}
                   </button>
@@ -1453,7 +1453,7 @@ export default function GroupChatVibrantDark() {
                   },
                   {
                     text: t("Έφτασα", "I arrived"),
-                    color: "bg-emerald-600 text-white hover:bg-emerald-700",
+                    color: "bg-fuchsia-600 text-white hover:bg-fuchsia-700",
                   },
                   {
                     text: t("Θα αργήσω λίγο", "I'll be late"),
@@ -1464,7 +1464,7 @@ export default function GroupChatVibrantDark() {
                       "Είμαι στο σημείο συνάντησης",
                       "I'm at the meeting point",
                     ),
-                    color: "bg-cyan-600 text-white hover:bg-cyan-700",
+                    color: "bg-fuchsia-600 text-white hover:bg-fuchsia-700",
                   },
                 ].map((status, idx) => (
                   <button
@@ -1503,7 +1503,7 @@ export default function GroupChatVibrantDark() {
             <div className="bg-gray-800 rounded-2xl shadow-xl max-w-md w-full max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
               <div className="p-4 sm:p-5 border-b border-gray-800 flex items-center justify-between bg-gray-800 relative z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-900/30 rounded-full flex items-center justify-center text-cyan-400">
+                  <div className="w-10 h-10 bg-fuchsia-900/30 rounded-full flex items-center justify-center text-fuchsia-400">
                     <UserPlus className="w-5 h-5" />
                   </div>
                   <div>
@@ -1541,7 +1541,7 @@ export default function GroupChatVibrantDark() {
                     )}
                     value={memberAddSearchQuery}
                     onChange={(e) => setMemberAddSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 text-[13px] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-600 bg-gray-800 transition-all shadow-sm font-medium"
+                    className="w-full pl-9 pr-3 py-2.5 text-[13px] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-fuchsia-600 bg-gray-800 transition-all shadow-sm font-medium"
                   />
                 </div>
               </div>
@@ -1568,7 +1568,7 @@ export default function GroupChatVibrantDark() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-cyan-400 font-bold text-xs bg-emerald-900/30">
+                              <div className="w-full h-full flex items-center justify-center text-fuchsia-400 font-bold text-xs bg-fuchsia-900/30">
                                 {member.name.substring(0, 2)}
                               </div>
                             )}
@@ -1580,7 +1580,7 @@ export default function GroupChatVibrantDark() {
                             <span className="text-[10px] text-white font-medium flex items-center gap-1">
                               {member.city}{" "}
                               {member.badges.includes("Payment verified") && (
-                                <ShieldCheck className="w-3 h-3 text-emerald-500" />
+                                <ShieldCheck className="w-3 h-3 text-fuchsia-9500" />
                               )}
                             </span>
                           </div>
@@ -1603,7 +1603,7 @@ export default function GroupChatVibrantDark() {
                               },
                             ]);
                           }}
-                          className="text-[12px] font-semibold capitalize tracking-tight px-3 py-1.5 rounded-lg border flex items-center gap-1 transition-all bg-cyan-600 text-white border-cyan-600 hover:bg-cyan-700 shadow-sm"
+                          className="text-[12px] font-semibold capitalize tracking-tight px-3 py-1.5 rounded-lg border flex items-center gap-1 transition-all bg-fuchsia-600 text-white border-fuchsia-600 hover:bg-fuchsia-700 shadow-sm"
                         >
                           <UserPlus className="w-3 h-3" />{" "}
                           {t("Προσθήκη", "Add")}

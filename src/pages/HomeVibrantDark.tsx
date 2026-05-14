@@ -320,12 +320,12 @@ export default function HomeVibrantDark() {
         className="bg-gradient-to-br from-slate-950 via-[#0f172a] to-slate-950 text-white p-6 md:p-10 rounded-[24px] shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8"
       >
         <div className="relative z-10 flex-1">
-          <div className="text-white text-[14.21px] font-bold tracking-wide mb-4">
+          <div className="text-fuchsia-300 text-[14.21px] font-bold tracking-wide mb-4">
             {t("home.hero.badge", "Νεος τροπος εξοδου")}
           </div>
           <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
             {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-white">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 to-orange-300">
               {t("home.hero.title2", "εμπειρίες")}
             </span>{" "}
             {t("home.hero.title3", "που ήδη θέλετε να ζήσετε.")}
@@ -339,22 +339,22 @@ export default function HomeVibrantDark() {
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11.33px] font-bold tracking-wide text-white mb-6">
             <span className="flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-white" />{" "}
+              <Users className="w-3.5 h-3.5 text-fuchsia-300" />{" "}
               {t("home.hero.stat1", "Μικρες ομαδες")}
             </span>
             <span className="opacity-20">•</span>
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-white" />{" "}
+              <ShieldCheck className="w-3.5 h-3.5 text-fuchsia-300" />{" "}
               {t("home.hero.stat2", "Επαληθευμενη συμμετοχη")}
             </span>
             <span className="opacity-20">•</span>
             <span className="flex items-center gap-1.5">
-              <MapIcon className="w-3.5 h-3.5 text-white" />{" "}
+              <MapIcon className="w-3.5 h-3.5 text-fuchsia-300" />{" "}
               {t("home.hero.stat3", "Δημοσια σημεια")}
             </span>
             <span className="opacity-20">•</span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-white" />{" "}
+              <CheckCircle2 className="w-3.5 h-3.5 text-fuchsia-300" />{" "}
               {t("Ιδιωτικες αναφορες", "Private reports")}
             </span>
           </div>
@@ -362,7 +362,7 @@ export default function HomeVibrantDark() {
           <div className="flex gap-3 mb-6">
             <button
               onClick={() => navigate("/nearby")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#18D8DB]/10 text-white border border-[#18D8DB]/20 hover:bg-[#18D8DB]/20 rounded-xl font-bold text-[13.58px] transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 bg-fuchsia-500/10 text-fuchsia-300 border border-fuchsia-500/20 hover:bg-fuchsia-500/20 rounded-xl font-bold text-[13.58px] transition-colors"
               title={t("Εμφάνιση στον Χάρτη", "View on Map")}
             >
               <MapIcon className="w-4 h-4" />
@@ -383,7 +383,7 @@ export default function HomeVibrantDark() {
                   "home.hero.search_placeholder",
                   "Αναζήτηση εμπειριών...",
                 )}
-                className="w-full h-11 pl-10 pr-4 rounded-full border-none bg-gray-800/10 text-white placeholder-white/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/60 text-sm font-medium backdrop-blur-sm"
+                className="w-full h-11 pl-10 pr-4 rounded-full border-none bg-white/10 text-white placeholder-white/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500/60 text-sm font-medium backdrop-blur-sm"
               />
               {showSearchSuggestions && !searchQuery && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 rounded-xl shadow-xl border border-gray-800 z-50 overflow-hidden">
@@ -400,7 +400,7 @@ export default function HomeVibrantDark() {
                         handleSearchChange(s);
                         setShowSearchSuggestions(false);
                       }}
-                      className="w-full text-left px-4 py-2.5 text-sm text-white hover:bg-emerald-900/30 hover:text-emerald-400 transition-colors font-medium flex items-center gap-2"
+                      className="w-full text-left px-4 py-2.5 text-sm text-white hover:bg-fuchsia-900/30 hover:text-fuchsia-400 transition-colors font-medium flex items-center gap-2"
                     >
                       <Search className="w-3.5 h-3.5 text-white" />
                       {s}
@@ -418,11 +418,11 @@ export default function HomeVibrantDark() {
           </div>
         </div>
         {/* Decorative */}
-        <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-slate-500/10 to-indigo-500/10 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
+        <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-fuchsia-500/15 to-orange-500/10 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
       </motion.div>
 
       {/* Pending Feedback Alert */}
-      <section className="bg-emerald-900/30 border border-emerald-800 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <section className="bg-fuchsia-900/30 border border-fuchsia-800 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex gap-3 items-center">
           <div className="bg-gray-800 p-2 text-amber-500 rounded-full shadow-sm shrink-0">
             <CheckCircle2 className="w-4 h-4" />
@@ -441,7 +441,7 @@ export default function HomeVibrantDark() {
         </div>
         <button
           onClick={() => navigate("/plans")}
-          className="text-[12.38px] tracking-wider font-bold bg-slate-800 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-slate-700 w-full sm:w-auto shadow-sm transition-colors"
+          className="text-[12.38px] tracking-wider font-bold bg-fuchsia-600 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-fuchsia-700 w-full sm:w-auto shadow-sm transition-colors"
         >
           {t("home.pending_feedback.cta", "Αξιολόγηση")}
         </button>
@@ -479,7 +479,7 @@ export default function HomeVibrantDark() {
             key={step}
             className="bg-gray-800 p-4 rounded-xl border border-gray-800 shadow-sm flex flex-col items-center text-center"
           >
-            <div className="w-8 h-8 bg-emerald-900/30 text-emerald-400 rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
+            <div className="w-8 h-8 bg-fuchsia-900/30 text-fuchsia-400 rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
               {step}
             </div>
             <h3 className="font-bold text-white text-[14.63px] mb-1">
@@ -523,7 +523,7 @@ export default function HomeVibrantDark() {
               onClick={() => setTagFilter(tag)}
               className={`whitespace-nowrap px-3 py-1 rounded-full text-[11.82px] font-bold transition-colors border ${
                 tagFilter === tag
-                  ? "bg-[#18D8DB]/20 border-[#18D8DB] text-emerald-400"
+                  ? "bg-fuchsia-500/20 border-fuchsia-500 text-fuchsia-400"
                   : "bg-gray-800 border-gray-700 text-white hover:border-gray-300 hover:text-white"
               }`}
             >
@@ -693,7 +693,7 @@ export default function HomeVibrantDark() {
         {/* Load More Trigger */}
         {!isLoading && visibleEventsCount < sortedEvents.length && (
           <div ref={loadMoreRef} className="flex justify-center mt-6 py-4">
-            <div className="w-6 h-6 border-2 border-[#18D8DB] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-2 border-fuchsia-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
       </section>

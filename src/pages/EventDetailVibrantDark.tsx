@@ -26,13 +26,13 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
   
   return (
     <div 
-      className="group relative rounded-xl border border-gray-700 bg-gray-800 p-4 shadow-sm hover:border-cyan-300 hover:shadow-md transition-all cursor-pointer overflow-hidden mt-2" 
+      className="group relative rounded-xl border border-gray-700 bg-gray-800 p-4 shadow-sm hover:border-fuchsia-700 hover:shadow-md transition-all cursor-pointer overflow-hidden mt-2" 
       onClick={() => navigate(`/events/${event.id}/join?groupId=${group.id}`)}
     >
-      <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-cyan-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-fuchsia-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       
       {(group.discountUnlocked || discountUnlockedTemp) && event.groupDiscount && (
-        <div className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-sm flex items-center gap-1 z-10 w-fit">
+        <div className="absolute -top-1 -right-1 bg-fuchsia-9500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-sm flex items-center gap-1 z-10 w-fit">
            <CheckCircle className="h-3 w-3" /> {event.groupDiscount.percentage}% {t('ΕΚΠΤΩΣΗ ΕΝΕΡΓΟΠΟΙΗΘΗΚΕ', 'OFF ACTIVATED')}
         </div>
       )}
@@ -44,7 +44,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
             {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
           </div>
           <h4 className="text-[13px] font-bold text-white mb-0.5 line-clamp-1">{event.title}</h4>
-          <span className="text-[9px] tracking-widest font-bold text-cyan-400 bg-emerald-900/30 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">
+          <span className="text-[9px] tracking-widest font-bold text-fuchsia-400 bg-fuchsia-900/30 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">
             {event.category}
           </span>
           <div className="flex items-baseline gap-1 mt-1">
@@ -65,13 +65,13 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
                    {groupHost.photoUrl ? (
                      <img referrerPolicy="no-referrer" src={groupHost.photoUrl} alt={groupHost.name} className="h-full w-full object-cover" />
                    ) : (
-                     <div className="h-full w-full flex items-center justify-center bg-emerald-900/50 text-cyan-400 font-bold text-xs">
+                     <div className="h-full w-full flex items-center justify-center bg-fuchsia-900/50 text-fuchsia-400 font-bold text-xs">
                         {groupHost.name.charAt(0)}
                      </div>
                    )}
                 </div>
                 {groupHost.trustTier === '3_high_trust' ? (
-                   <div className="absolute -bottom-1 -right-1 bg-emerald-100 rounded-full p-0.5 border border-white">
+                   <div className="absolute -bottom-1 -right-1 bg-fuchsia-900 rounded-full p-0.5 border border-white">
                       <ShieldCheck className="w-3 h-3 text--400" />
                    </div>
                 ) : groupHost.trustTier === '2_confirmed' ? (
@@ -113,7 +113,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
       <Button 
         variant="primary" 
         size="sm" 
-        className="w-full bg-emerald-900/30 text-cyan-400 border border-emerald-800 hover:bg-cyan-600 hover:text-white transition-colors group-hover:bg-cyan-600 group-hover:text-white font-semibold shadow-sm"
+        className="w-full bg-fuchsia-900/30 text-fuchsia-400 border border-fuchsia-800 hover:bg-fuchsia-600 hover:text-white transition-colors group-hover:bg-fuchsia-600 group-hover:text-white font-semibold shadow-sm"
         onClick={(e) => { e.stopPropagation(); navigate(`/events/${event.id}/join`); }}
       >
         {t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
@@ -277,28 +277,28 @@ export default function EventDetailVibrantDark() {
           <div className="flex gap-2 flex-wrap justify-end">
             <button 
               onClick={handleSave}
-              className={`flex items-center gap-2 text-[10px] font-bold  tracking-wider transition-colors px-3 py-1 rounded-full ${isSaved ? 'text-cyan-400 bg-emerald-900/50' : 'text-white hover:text-cyan-400 bg-gray-900 hover:bg-gray-700'}`}
+              className={`flex items-center gap-2 text-[10px] font-bold  tracking-wider transition-colors px-3 py-1 rounded-full ${isSaved ? 'text-fuchsia-400 bg-fuchsia-900/50' : 'text-white hover:text-fuchsia-400 bg-gray-900 hover:bg-gray-700'}`}
             >
               <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} />
               {isSaved ? t("Αποθηκεύτηκε", "Saved") : t("Αποθήκευση Εκδήλωσης", "Save Event")}
             </button>
             <button 
               onClick={() => setShowQRCode(true)}
-              className="flex items-center gap-2 text-[10px] font-bold tracking-wide text-cyan-400 hover:text-cyan-400 transition-colors bg-emerald-900/30 px-3 py-1.5 rounded-full"
+              className="flex items-center gap-2 text-[10px] font-bold tracking-wide text-fuchsia-400 hover:text-fuchsia-400 transition-colors bg-fuchsia-900/30 px-3 py-1.5 rounded-full"
             >
               <QrCode className="h-3.5 w-3.5" />
               {t('Κωδικός QR', 'QR Code')}
             </button>
             <button 
               onClick={handleShare}
-              className="flex items-center gap-2 text-[10px] font-bold  tracking-wider text-cyan-400 hover:text-cyan-400 transition-colors bg-emerald-900/30 px-3 py-1.5 rounded-full"
+              className="flex items-center gap-2 text-[10px] font-bold  tracking-wider text-fuchsia-400 hover:text-fuchsia-400 transition-colors bg-fuchsia-900/30 px-3 py-1.5 rounded-full"
             >
               <Share className="h-3.5 w-3.5" />
               {isCopied ? t("Αντιγράφηκε!", "Link Copied!") : t("Κοινοποίηση", "Share Event")}
             </button>
             <button 
               onClick={handleAddToCalendar}
-              className="flex items-center gap-2 text-[10px] font-bold  tracking-wider text-white hover:text-cyan-400 transition-colors bg-gray-900 hover:bg-gray-700 px-3 py-1.5 rounded-full"
+              className="flex items-center gap-2 text-[10px] font-bold  tracking-wider text-white hover:text-fuchsia-400 transition-colors bg-gray-900 hover:bg-gray-700 px-3 py-1.5 rounded-full"
             >
               <Calendar className="h-3.5 w-3.5" />
               {t('Προσθήκη στο Ημερολόγιο', 'Add to Calendar')}
@@ -330,7 +330,7 @@ export default function EventDetailVibrantDark() {
              </Badge>
           )}
           {event.minTrustTierAccess === '3_high_trust' && (
-            <Badge variant="outline" className="text-cyan-400 font-bold bg-emerald-900/30 border-emerald-800" icon={<ShieldCheck className="h-3 w-3" />}>{t('Πρόσβαση με Επαλήθευση', 'Verified Access')}</Badge>
+            <Badge variant="outline" className="text-fuchsia-400 font-bold bg-fuchsia-900/30 border-fuchsia-800" icon={<ShieldCheck className="h-3 w-3" />}>{t('Πρόσβαση με Επαλήθευση', 'Verified Access')}</Badge>
           )}
           
           {/* Match Score Badge based on User Interests */}
@@ -376,7 +376,7 @@ export default function EventDetailVibrantDark() {
                   </div>
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-[13px] capitalize">{event.minTrustTierAccess === '3_high_trust' ? t('απαιτείται επαληθευμένος λογαριασμός', 'verified account required') : event.minTrustTierAccess.split('_')[1].replace('high', 'verified') + ' account required'}</p>
-                    <Link to="/trust" className="text-[11px] text-cyan-400 font-bold underline">{t('Γιατί;', 'Why?')}</Link>
+                    <Link to="/trust" className="text-[11px] text-fuchsia-400 font-bold underline">{t('Γιατί;', 'Why?')}</Link>
                   </div>
                 </div>
              </div>
@@ -384,7 +384,7 @@ export default function EventDetailVibrantDark() {
              <div className={`${isMapFullscreen ? 'fixed !inset-0 !z-[9999] bg-black !m-0 rounded-none !h-[100dvh]' : 'mt-6 w-full h-64 sm:h-80 rounded-lg'} bg-gray-700 overflow-hidden relative border border-gray-700 transition-all duration-300`}>
                   <button 
                     onClick={() => setIsMapFullscreen(!isMapFullscreen)}
-                    className="absolute top-4 right-4 z-10 p-2 bg-gray-800/90 backdrop-blur rounded-lg shadow-md text-white hover:text-cyan-400 transition-colors"
+                    className="absolute top-4 right-4 z-10 p-2 bg-gray-800/90 backdrop-blur rounded-lg shadow-md text-white hover:text-fuchsia-400 transition-colors"
                   >
                     {isMapFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
                   </button>
@@ -415,8 +415,8 @@ export default function EventDetailVibrantDark() {
                   ) : (
                     <div className="w-full h-full bg-[#e5e3df] relative flex items-center justify-center overflow-hidden">
                        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10h80v80h-80z' stroke='%23000' stroke-width='1' fill='none'/%3E%3C/svg%3E")`, backgroundSize: '100px 100px' }} />
-                       <div className="w-24 h-24 sm:w-32 sm:h-32 bg-cyan-600/10 rounded-full flex items-center justify-center animate-pulse relative z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                         <div className="w-4 h-4 bg-cyan-600 rounded-full border-2 border-white shadow-md"></div>
+                       <div className="w-24 h-24 sm:w-32 sm:h-32 bg-fuchsia-600/10 rounded-full flex items-center justify-center animate-pulse relative z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                         <div className="w-4 h-4 bg-fuchsia-600 rounded-full border-2 border-white shadow-md"></div>
                        </div>
                        <div className="absolute bottom-2 right-2 bg-gray-800/90 backdrop-blur text-white text-[10px] px-2 py-1 rounded shadow-sm">{t('Ενεργή Προεπισκόπηση Χάρτη', 'Map Preview Active')}</div>
                     </div>
@@ -429,7 +429,7 @@ export default function EventDetailVibrantDark() {
                
                {event.externalLink && (
                  <div className="mt-4 pt-1">
-                   <a href={event.externalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 border border-gray-700 text-white bg-gray-800 hover:bg-gray-900 hover:text-cyan-400 hover:border-cyan-200 transition-colors shadow-sm text-xs font-bold tracking-wide rounded-lg w-full sm:w-auto justify-center">
+                   <a href={event.externalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 border border-gray-700 text-white bg-gray-800 hover:bg-gray-900 hover:text-fuchsia-400 hover:border-fuchsia-800 transition-colors shadow-sm text-xs font-bold tracking-wide rounded-lg w-full sm:w-auto justify-center">
                      <ExternalLink className="w-3.5 h-3.5" />
                      {t('Επίσημη Σελίδα Εκδήλωσης', 'Official Event Page')}
                    </a>
@@ -453,18 +453,18 @@ export default function EventDetailVibrantDark() {
                  <div className="flex items-center justify-between mb-4">
                     <h3 className="text-[11px] font-bold text-white tracking-wide mt-1">{t('Διοργανωτής Εκδήλωσης', 'Event Organizer')}</h3>
                  </div>
-                 <div className="flex items-center justify-between p-4 rounded-xl border border-gray-700 bg-gray-800 shadow-sm hover:border-cyan-200 transition-colors">
+                 <div className="flex items-center justify-between p-4 rounded-xl border border-gray-700 bg-gray-800 shadow-sm hover:border-fuchsia-800 transition-colors">
                     <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-full overflow-hidden bg-emerald-900/30 border-2 border-white ring-2 ring-cyan-50 shrink-0">
+                      <div className="w-14 h-14 rounded-full overflow-hidden bg-fuchsia-900/30 border-2 border-white ring-2 ring-fuchsia-950 shrink-0">
                         {organizer.photoUrl ? (
                           <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-cyan-400 font-bold text-lg">{organizer.name.substring(0, 2).toUpperCase()}</div>
+                          <div className="w-full h-full flex items-center justify-center text-fuchsia-400 font-bold text-lg">{organizer.name.substring(0, 2).toUpperCase()}</div>
                         )}
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <Link to={`/profile`} className="text-base font-bold text-white hover:text-cyan-400 transition-colors">
+                          <Link to={`/profile`} className="text-base font-bold text-white hover:text-fuchsia-400 transition-colors">
                             {organizer.name}
                           </Link>
                           {organizer.trustTier && (
@@ -491,7 +491,7 @@ export default function EventDetailVibrantDark() {
                <div className="pt-5 border-t border-gray-700 animate-in fade-in slide-in-from-bottom-2 mt-5">
                  <h3 className="text-[11px] font-bold text-white mb-3 tracking-wide">{t('Λεπτομέρειες Περιπέτειας', 'Adventure Details')}</h3>
                  <div className="grid grid-cols-2 gap-4">
-                   <div className="bg-emerald-50/50 border border-emerald-100 p-4 rounded-xl">
+                   <div className="bg-fuchsia-950/50 border border-fuchsia-900 p-4 rounded-xl">
                      <div className="text-[10px] font-bold text--400 mb-1 tracking-wider">{t('Δυσκολία', 'Difficulty')}</div>
                      <div className="text-sm font-bold text-white">{event.category === 'Hiking' ? t('Μέτρια / Έδαφος', 'Moderate / Terrain') : t('Εύκολο / Αναψυχή', 'Easy / Leisure')}</div>
                    </div>
@@ -532,13 +532,13 @@ export default function EventDetailVibrantDark() {
         <div className="space-y-6 md:col-span-2 lg:col-span-1">
           <div className="rounded-xl border border-gray-700 bg-gray-800 p-6 shadow-sm sticky top-24">
             <h3 className="text-[11px] font-bold text-white tracking-wide mb-4">{t('Αυτόματη προτεινόμενη Μικρών Ομάδων', 'Auto-Suggest Small Groups')}</h3>
-            <div className="mb-4 bg-emerald-900/30 border border-emerald-800 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-sm font-bold text-cyan-400">
+            <div className="mb-4 bg-fuchsia-900/30 border border-fuchsia-800 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-sm font-bold text-fuchsia-400">
               <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική Χωρητικότητα Εκδήλωσης', 'Overall Event Capacity')}</span>
-              <span className="text-cyan-400 xl:text-cyan-400 bg-gray-800 xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs xl:text-sm border border-emerald-800 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
+              <span className="text-fuchsia-400 xl:text-fuchsia-400 bg-gray-800 xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs xl:text-sm border border-fuchsia-800 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
             </div>
             
             <div className="flex flex-col gap-3 mb-6">
-              <Button className="w-full bg-cyan-600 text-white hover:bg-cyan-700 shadow-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
+              <Button className="w-full bg-fuchsia-600 text-white hover:bg-fuchsia-700 shadow-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
                 <Users className="w-5 h-5" />
                 {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
               </Button>
@@ -552,7 +552,7 @@ export default function EventDetailVibrantDark() {
                     <select 
                       value={groupSizeFilter} 
                       onChange={(e) => setGroupSizeFilter(e.target.value as any)}
-                      className="text-xs bg-gray-900 border border-gray-700 rounded p-1 font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                      className="text-xs bg-gray-900 border border-gray-700 rounded p-1 font-medium focus:outline-none focus:ring-1 focus:ring-fuchsia-9500"
                     >
                       <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>
                       <option value="3">{t('3 Μέλη', '3 Members')}</option>
@@ -563,7 +563,7 @@ export default function EventDetailVibrantDark() {
                     {event.isPaid && event.groupDiscount && (
                       <button 
                         onClick={() => setDiscountFilter(!discountFilter)}
-                        className={`text-xs px-2 py-1 rounded border font-medium transition-colors ${discountFilter ? 'bg-emerald-100 border-emerald-300 text--400' : 'bg-gray-900 border-gray-700 text-white hover:bg-gray-700'}`}
+                        className={`text-xs px-2 py-1 rounded border font-medium transition-colors ${discountFilter ? 'bg-fuchsia-900 border-fuchsia-300 text--400' : 'bg-gray-900 border-gray-700 text-white hover:bg-gray-700'}`}
                       >
                         {t('Μόνο με Έκπτωση', 'Discount Only')}
                       </button>
@@ -613,7 +613,7 @@ export default function EventDetailVibrantDark() {
         <Button variant="outline" className="flex-1 border-gray-700 text-white" onClick={() => navigate(`/events/${eventId}/join`)}>
           {t('Λίστα Αναμονής', 'Waitlist')}
         </Button>
-        <Button className="flex-[2] bg-cyan-600 text-white hover:bg-cyan-700 shadow-sm" onClick={() => navigate(`/events/${eventId}/join`)}>
+        <Button className="flex-[2] bg-fuchsia-600 text-white hover:bg-fuchsia-700 shadow-sm" onClick={() => navigate(`/events/${eventId}/join`)}>
           {t('Νέα Ομάδα', 'Create Group')}
         </Button>
       </div>

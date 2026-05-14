@@ -25,7 +25,7 @@ export default function HelpCenterVibrantDark() {
 
   const popularTopics = [
     { label: t(`Ασφάλεια`, `Safety`), icon: Shield, color: 'text--400 bg-red-50' },
-    { label: t(`Πληρωμές`, `Payments`), icon: CreditCard, color: 'text--400 bg-emerald-50' },
+    { label: t(`Πληρωμές`, `Payments`), icon: CreditCard, color: 'text--400 bg-fuchsia-950' },
     { label: t(`Ομάδες`, `Groups`), icon: Users, color: 'text--400 bg-blue-50' },
     { label: t(`Γρήγορη Βοήθεια`, `Quick Help`), icon: Zap, color: 'text-amber-600 bg-amber-50' },
   ];
@@ -34,12 +34,12 @@ export default function HelpCenterVibrantDark() {
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
-      <div className="bg-cyan-600 text-white rounded-2xl p-8 text-center shadow-md relative overflow-hidden">
+      <div className="bg-fuchsia-600 text-white rounded-2xl p-8 text-center shadow-md relative overflow-hidden">
         <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-gray-800 opacity-10"></div>
         <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-gray-800 opacity-10"></div>
         
         <h1 className="text-[20.104264919475px] md:text-[26.7902365993px] font-black mb-2 relative z-10">{t(`Κέντρο Βοήθειας`, `Help Center`)}</h1>
-        <p className="text-cyan-100 text-[16.2px] font-medium mb-6 relative z-10">{t(`Πώς μπορούμε να σας βοηθήσουμε;`, `How can we help you?`)}</p>
+        <p className="text-fuchsia-900 text-[16.2px] font-medium mb-6 relative z-10">{t(`Πώς μπορούμε να σας βοηθήσουμε;`, `How can we help you?`)}</p>
         <div className="relative max-w-md mx-auto z-10">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white" />
           <input
@@ -95,9 +95,9 @@ export default function HelpCenterVibrantDark() {
         <h2 className="text-[13.5px] font-bold text-white tracking-wide mb-3">{t(`Άρθρα Βοήθειας`, `Help Articles`)}</h2>
         <div className="space-y-3">
           {filtered.map(article => (
-            <Card key={article.id} className="p-4 flex items-center justify-between hover:border-cyan-200 cursor-pointer transition-colors">
+            <Card key={article.id} className="p-4 flex items-center justify-between hover:border-fuchsia-800 cursor-pointer transition-colors">
               <div>
-                <span className="text-[12.5px] font-bold text-cyan-400 tracking-wide">{article.category}</span>
+                <span className="text-[12.5px] font-bold text-fuchsia-400 tracking-wide">{article.category}</span>
                 <h3 className="font-bold text-[16.2px] text-white mt-0.5">{article.title}</h3>
               </div>
               <ChevronRight className="w-4 h-4 text-white shrink-0" />
@@ -108,7 +108,7 @@ export default function HelpCenterVibrantDark() {
 
       {/* Contact & Live Status */}
       <Card className="p-6 text-center">
-        <MessageCircle className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
+        <MessageCircle className="w-8 h-8 text-fuchsia-400 mx-auto mb-3" />
         <h3 className="font-bold text-white mb-1">{t(`Χρειάζεστε περαιτέρω βοήθεια;`, `Need more help?`)}</h3>
         <p className="text-[13.5px] text-white mb-2">{t(`Επικοινωνήστε μαζί μας`, `Contact our support team`)}</p>
         <div className="flex items-center justify-center gap-1.5 mb-4">
@@ -118,7 +118,7 @@ export default function HelpCenterVibrantDark() {
           </span>
           <span className="text-[12.5px] font-bold text--400">{t(`Online τώρα`, `Online now`)} • ~2min {t(`απόκριση`, `response`)}</span>
         </div>
-        <button className="px-4 py-2 bg-cyan-600 text-white text-[13.5px] font-bold rounded-lg hover:bg-cyan-700 transition-colors">
+        <button className="px-4 py-2 bg-fuchsia-600 text-white text-[13.5px] font-bold rounded-lg hover:bg-fuchsia-700 transition-colors">
           {t(`Αποστολή μηνύματος`, `Send message`)}
         </button>
       </Card>

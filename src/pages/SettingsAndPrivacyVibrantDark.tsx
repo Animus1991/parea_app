@@ -87,7 +87,7 @@ export default function SettingsAndPrivacyVibrantDark() {
       ))}
 
       {show2FASetup && (
-        <Card className="p-5 border-cyan-200 bg-emerald-900/30/30">
+        <Card className="p-5 border-fuchsia-800 bg-fuchsia-900/30/30">
           <h3 className="font-bold text-[16.2px] text-white mb-2">{t(`Ρύθμιση 2FA`, `Setup 2FA`)}</h3>
           <p className="text-[13.5px] text-white mb-4">{t(`Προσθέστε ένα επιπλέον επίπεδο ασφάλειας στον λογαριασμό σας`, `Add an extra layer of security to your account`)}</p>
           <Button size="sm" onClick={() => { setTwoFactorEnabled(true); setShow2FASetup(false); }}>
@@ -111,7 +111,7 @@ export default function SettingsAndPrivacyVibrantDark() {
               ].map(({ key, label }) => (
                 <label key={key} className="flex items-center justify-between">
                   <span className="text-[13.5px] text-white font-medium">{label}</span>
-                  <div className={`relative w-9 h-5 rounded-full transition-colors cursor-pointer ${notificationPrefs[key as keyof typeof notificationPrefs] ? 'bg-cyan-600' : 'bg-gray-300'}`} onClick={() => handleTogglePref(key as keyof typeof notificationPrefs)}>
+                  <div className={`relative w-9 h-5 rounded-full transition-colors cursor-pointer ${notificationPrefs[key as keyof typeof notificationPrefs] ? 'bg-fuchsia-600' : 'bg-gray-300'}`} onClick={() => handleTogglePref(key as keyof typeof notificationPrefs)}>
                     <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-gray-800 shadow transition-transform ${notificationPrefs[key as keyof typeof notificationPrefs] ? 'translate-x-4' : 'translate-x-0.5'}`} />
                   </div>
                 </label>
@@ -138,7 +138,7 @@ export default function SettingsAndPrivacyVibrantDark() {
                   onClick={() => setCategoryPrefs(prev => ({ ...prev, [key]: !prev[key as keyof typeof categoryPrefs] }))}
                   className={`px-3 py-1.5 rounded-full text-[12.5px] font-bold border transition-colors ${
                     categoryPrefs[key as keyof typeof categoryPrefs]
-                      ? 'bg-emerald-900/30 border-cyan-300 text-cyan-400'
+                      ? 'bg-fuchsia-900/30 border-fuchsia-700 text-fuchsia-400'
                       : 'bg-gray-800 border-gray-700 text-white'
                   }`}
                 >
@@ -156,13 +156,13 @@ export default function SettingsAndPrivacyVibrantDark() {
         <Card className="divide-y divide-gray-100">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
-              <Smartphone className="w-4 h-4 text-cyan-400" />
+              <Smartphone className="w-4 h-4 text-fuchsia-400" />
               <div>
                 <span className="text-[16.2px] font-medium text-white">iPhone 15 Pro</span>
                 <p className="text-[12.5px] text-white font-medium">Athens, GR • {t(`Τώρα`, `Now`)}</p>
               </div>
             </div>
-            <span className="text-[11.2px] font-bold text--400 bg-emerald-50 px-2 py-0.5 rounded-full">{t(`Τρέχουσα`, `Current`)}</span>
+            <span className="text-[11.2px] font-bold text--400 bg-fuchsia-950 px-2 py-0.5 rounded-full">{t(`Τρέχουσα`, `Current`)}</span>
           </div>
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
