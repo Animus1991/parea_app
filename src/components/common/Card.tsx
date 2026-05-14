@@ -17,7 +17,7 @@ export function Card({ children, className, onClick, ...props }: HTMLAttributes<
       onClick={onClick}
       className={cn(
         "rounded-xl border shadow-sm",
-        isDark ? "bg-gray-800/80 border-gray-700" : "bg-white border-gray-200",
+        isDark ? "bg-gray-800/60 border-gray-700/60" : "bg-white border-gray-200",
         onClick && cn("cursor-pointer transition-colors", hoverAccent),
         className
       )}

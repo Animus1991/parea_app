@@ -371,7 +371,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const theme = useStore((state) => state.theme);
 
   return (
-    <div className={cn("flex h-screen w-full font-sans antialiased overflow-hidden", theme === 'bento-dark' ? 'bg-black text-white' : theme === 'neon-dark' ? 'bg-[#0a1e14] text-white' : theme === 'vibrant-dark' ? 'bg-[#170a1e] text-white' : theme === 'vibrant' ? 'bg-[#FDF2F8] text-[#111827]' : theme === 'bento' ? 'bg-[#F5F3FF] text-[#111827]' : theme === 'neon' ? 'bg-[#ECFDF5] text-[#111827]' : 'bg-[#F3F4F6] text-[#111827]')}>
+    <div className={cn("flex h-screen w-full font-sans antialiased overflow-hidden", theme === 'bento-dark' ? 'bg-[#131318] text-white' : theme === 'neon-dark' ? 'bg-[#101e17] text-white' : theme === 'vibrant-dark' ? 'bg-[#1a1020] text-white' : theme === 'vibrant' ? 'bg-[#FDF2F8] text-[#111827]' : theme === 'bento' ? 'bg-[#F5F3FF] text-[#111827]' : theme === 'neon' ? 'bg-[#ECFDF5] text-[#111827]' : 'bg-[#F3F4F6] text-[#111827]')}>
       <SideNav />
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
