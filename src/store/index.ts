@@ -38,6 +38,13 @@ interface AppState {
   savedEvents: string[];
   toggleSavedEvent: (eventId: string) => void;
   fetchExternalEvents: () => Promise<void>;
+
+  // Connections
+  connectionRequests: { id: string; fromUserId: string; toUserId: string; message?: string; createdAt: string; status: 'pending' | 'accepted' | 'declined' }[];
+  sendConnectionRequest: (toUserId: string, message?: string) => void;
+  acceptConnectionRequest: (requestId: string) => void;
+  declineConnectionRequest: (requestId: string) => void;
+  removeConnection: (userId: string) => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -200,6 +207,67 @@ export const useStore = create<AppState>((set, get) => ({
         savedEvents: isSaved
           ? state.savedEvents.filter((id) => id !== eventId)
           : [...state.savedEvents, eventId],
+      };
+    }),
+
+  connectionRequests: [
+    { id: 'cr1', fromUserId: 'org2', toUserId: 'u1', message: 'We noticed you attended our events. Let\'s connect!', createdAt: '2024-01-15', status: 'pending' as const },
+    { id: 'cr2', fromUserId: 'org4', toUserId: 'u1', createdAt: '2024-01-14', status: 'pending' as const },
+  ],
+
+  sendConnectionRequest: (toUserId, message) =>
+    set((state) => {
+      if (!state.currentUser) return state;
+      const exists = state.connectionRequests.some(
+        (r) => r.fromUserId === state.currentUser!.id && r.toUserId === toUserId && r.status === 'pending'
+      );
+      if (exists) return state;
+      return {
+        connectionRequests: [
+          ...state.connectionRequests,
+          { id: `cr${Date.now()}`, fromUserId: state.currentUser.id, toUserId, message, createdAt: new Date().toISOString().split('T')[0], status: 'pending' as const },
+        ],
+      };
+    }),
+
+  acceptConnectionRequest: (requestId) =>
+    set((state) => {
+      const req = state.connectionRequests.find((r) => r.id === requestId);
+      if (!req || !state.currentUser) return state;
+      return {
+        connectionRequests: state.connectionRequests.map((r) =>
+          r.id === requestId ? { ...r, status: 'accepted' as const } : r
+        ),
+        users: state.users.map((u) => {
+          if (u.id === req.fromUserId) return { ...u, connections: [...(u.connections || []), req.toUserId] };
+          if (u.id === req.toUserId) return { ...u, connections: [...(u.connections || []), req.fromUserId] };
+          return u;
+        }),
+        currentUser:
+          state.currentUser.id === req.toUserId
+            ? { ...state.currentUser, connections: [...(state.currentUser.connections || []), req.fromUserId] }
+            : state.currentUser,
+      };
+    }),
+
+  declineConnectionRequest: (requestId) =>
+    set((state) => ({
+      connectionRequests: state.connectionRequests.map((r) =>
+        r.id === requestId ? { ...r, status: 'declined' as const } : r
+      ),
+    })),
+
+  removeConnection: (userId) =>
+    set((state) => {
+      if (!state.currentUser) return state;
+      const myId = state.currentUser.id;
+      return {
+        users: state.users.map((u) => {
+          if (u.id === myId) return { ...u, connections: (u.connections || []).filter((id) => id !== userId) };
+          if (u.id === userId) return { ...u, connections: (u.connections || []).filter((id) => id !== myId) };
+          return u;
+        }),
+        currentUser: { ...state.currentUser, connections: (state.currentUser.connections || []).filter((id) => id !== userId) },
       };
     }),
 
