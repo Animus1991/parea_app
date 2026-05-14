@@ -22,13 +22,13 @@ export default function WalletNeon() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-6 bg-cyan-600 text-white border-0 shadow-md">
-          <div className="flex items-center gap-2 text-cyan-100 mb-2">
+        <Card className="p-6 bg-emerald-600 text-white border-0 shadow-md">
+          <div className="flex items-center gap-2 text-emerald-100 mb-2">
             <Euro className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
           <p className="text-4xl font-black mb-4">€345.50</p>
-          <Button className="w-full bg-white text-cyan-900 hover:bg-gray-100 border-0">
+          <Button className="w-full bg-white text-emerald-900 hover:bg-gray-100 border-0">
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
         </Card>

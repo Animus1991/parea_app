@@ -49,7 +49,7 @@ export default function PostEventFeedbackNeon() {
                   <button
                     key={m.emoji}
                     onClick={() => setMood(m.emoji)}
-                    className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all ${mood === m.emoji ? 'border-cyan-500 bg-cyan-50 scale-110 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}
+                    className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all ${mood === m.emoji ? 'border-emerald-500 bg-emerald-50 scale-110 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}
                   >
                     <span className="text-[30px]">{m.emoji}</span>
                     <span className="text-[10.90125px] font-bold text-black">{m.label}</span>
@@ -76,7 +76,7 @@ export default function PostEventFeedbackNeon() {
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button key={`vibe-${star}`} onClick={() => setVibeRating(star)} className="p-2 hover:bg-gray-50 rounded-full transition-colors">
-                    <Star className={`w-8 h-8 transition-colors ${star <= vibeRating ? 'text-cyan-400 fill-cyan-400' : 'text-black hover:text-cyan-400'}`} />
+                    <Star className={`w-8 h-8 transition-colors ${star <= vibeRating ? 'text-emerald-400 fill-emerald-400' : 'text-black hover:text-emerald-400'}`} />
                   </button>
                 ))}
               </div>
@@ -87,11 +87,11 @@ export default function PostEventFeedbackNeon() {
               <p className="text-[15px] text-black font-medium mb-3">{t(`Ήταν όλοι παρόντες;`, `Was everyone present?`)}</p>
               <div className="space-y-3 mt-4">
                 <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                  <input type="radio" name="attendance" className="h-4 w-4 text-cyan-600 rounded-full border-gray-300" />
+                  <input type="radio" name="attendance" className="h-4 w-4 text-emerald-600 rounded-full border-gray-300" />
                   <span className="text-[16.2px] font-medium text-black">{t(`Ναι, ήρθαν όλοι`, `Yes, everyone showed up`)}</span>
                 </label>
                 <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                  <input type="radio" name="attendance" className="h-4 w-4 text-cyan-600 rounded-full border-gray-300" />
+                  <input type="radio" name="attendance" className="h-4 w-4 text-emerald-600 rounded-full border-gray-300" />
                   <span className="text-[16.2px] font-medium text-black">{t(`Όχι, κάποιοι δεν ήρθαν`, `No, some people didn't show up`)}</span>
                 </label>
               </div>
@@ -120,7 +120,7 @@ export default function PostEventFeedbackNeon() {
                 value={comment}
                 onChange={e => setComment(e.target.value)}
                 placeholder={t(`Μοιραστείτε περισσότερα για την εμπειρία σας...`, `Share more about your experience...`)}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
                 rows={3}
               />
               <p className="text-[11.2px] text-black font-medium mt-1">{t(`Αυτό θα είναι ορατό στον διοργανωτή`, `This will be visible to the organizer`)}</p>

@@ -34,12 +34,12 @@ export default function HelpCenterNeon() {
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
-      <div className="bg-cyan-600 text-white rounded-2xl p-8 text-center shadow-md relative overflow-hidden">
+      <div className="bg-emerald-600 text-white rounded-2xl p-8 text-center shadow-md relative overflow-hidden">
         <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10"></div>
         <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white opacity-10"></div>
         
         <h1 className="text-[20.104264919475px] md:text-[26.7902365993px] font-black mb-2 relative z-10">{t(`Κέντρο Βοήθειας`, `Help Center`)}</h1>
-        <p className="text-cyan-100 text-[16.2px] font-medium mb-6 relative z-10">{t(`Πώς μπορούμε να σας βοηθήσουμε;`, `How can we help you?`)}</p>
+        <p className="text-emerald-100 text-[16.2px] font-medium mb-6 relative z-10">{t(`Πώς μπορούμε να σας βοηθήσουμε;`, `How can we help you?`)}</p>
         <div className="relative max-w-md mx-auto z-10">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
           <input
@@ -95,9 +95,9 @@ export default function HelpCenterNeon() {
         <h2 className="text-[13.5px] font-bold text-black tracking-wide mb-3">{t(`Άρθρα Βοήθειας`, `Help Articles`)}</h2>
         <div className="space-y-3">
           {filtered.map(article => (
-            <Card key={article.id} className="p-4 flex items-center justify-between hover:border-cyan-200 cursor-pointer transition-colors">
+            <Card key={article.id} className="p-4 flex items-center justify-between hover:border-emerald-200 cursor-pointer transition-colors">
               <div>
-                <span className="text-[12.5px] font-bold text-cyan-600 tracking-wide">{article.category}</span>
+                <span className="text-[12.5px] font-bold text-emerald-600 tracking-wide">{article.category}</span>
                 <h3 className="font-bold text-[16.2px] text-[#111827] mt-0.5">{article.title}</h3>
               </div>
               <ChevronRight className="w-4 h-4 text-black shrink-0" />
@@ -108,7 +108,7 @@ export default function HelpCenterNeon() {
 
       {/* Contact & Live Status */}
       <Card className="p-6 text-center">
-        <MessageCircle className="w-8 h-8 text-cyan-600 mx-auto mb-3" />
+        <MessageCircle className="w-8 h-8 text-emerald-600 mx-auto mb-3" />
         <h3 className="font-bold text-[#111827] mb-1">{t(`Χρειάζεστε περαιτέρω βοήθεια;`, `Need more help?`)}</h3>
         <p className="text-[13.5px] text-black mb-2">{t(`Επικοινωνήστε μαζί μας`, `Contact our support team`)}</p>
         <div className="flex items-center justify-center gap-1.5 mb-4">
@@ -118,7 +118,7 @@ export default function HelpCenterNeon() {
           </span>
           <span className="text-[12.5px] font-bold text-green-600">{t(`Online τώρα`, `Online now`)} • ~2min {t(`απόκριση`, `response`)}</span>
         </div>
-        <button className="px-4 py-2 bg-cyan-600 text-white text-[13.5px] font-bold rounded-lg hover:bg-cyan-700 transition-colors">
+        <button className="px-4 py-2 bg-emerald-600 text-white text-[13.5px] font-bold rounded-lg hover:bg-emerald-700 transition-colors">
           {t(`Αποστολή μηνύματος`, `Send message`)}
         </button>
       </Card>

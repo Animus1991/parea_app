@@ -40,7 +40,7 @@ export default function ReportIssueNeon() {
           <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-5">
             <div>
               <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Κατηγορία`, `Category`)}</label>
-              <select className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium" required>
+              <select className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent text-[16.2px] font-medium" required>
                 <option value="">{t(`Επιλέξτε κατηγορία...`, `Select a category...`)}</option>
                 <option value="user_behavior">{t(`Ανάρμοστη συμπεριφορά`, `Inappropriate behavior`)}</option>
                 <option value="event_safety">{t(`Ασφάλεια εκδήλωσης`, `Event safety`)}</option>
@@ -72,7 +72,7 @@ export default function ReportIssueNeon() {
             <div>
               <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Περιγραφή`, `Description`)}</label>
               <textarea 
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium resize-none" 
+                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent text-[16.2px] font-medium resize-none" 
                 rows={5} 
                 placeholder={t(`Περιγράψτε τι συνέβη...`, `Describe what happened...`)}
                 required
@@ -82,7 +82,7 @@ export default function ReportIssueNeon() {
             {/* Evidence Upload */}
             <div>
               <label className="block text-[12.15px] font-bold text-[#111827] tracking-wider mb-2">{t(`Αποδεικτικά (προαιρετικά)`, `Evidence (optional)`)}</label>
-              <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-cyan-300 hover:bg-cyan-50/30 transition-colors cursor-pointer">
+              <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-emerald-300 hover:bg-emerald-50/30 transition-colors cursor-pointer">
                 <Upload className="w-5 h-5 text-black mx-auto mb-1" />
                 <p className="text-[12.5px] text-black font-medium">{t(`Ανεβάστε screenshots ή φωτογραφίες`, `Upload screenshots or photos`)}</p>
                 <p className="text-[10px] text-black mt-0.5">PNG, JPG {t(`έως`, `up to`)} 5MB</p>
@@ -90,7 +90,7 @@ export default function ReportIssueNeon() {
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4 flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 text-cyan-600 shrink-0 mt-0.5" />
+              <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
               <p className="text-[13.5px] text-black font-medium leading-relaxed"><span className="font-bold text-[#111827]">{t(`Απόρρητο:`, `Privacy:`)}</span> {t(`Η αναφορά σας είναι εμπιστευτική.`, `Your report is confidential.`)}</p>
             </div>
 

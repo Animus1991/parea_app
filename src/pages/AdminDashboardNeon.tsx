@@ -19,7 +19,7 @@ export default function AdminDashboardNeon() {
           <p className="text-[25px] font-black text-[#111827] mt-1">127</p>
           <p className="text-[11.2px] text-green-500 font-bold flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />+8%</p>
         </Card>
-        <Card className="p-4 border-t-4 border-t-cyan-500">
+        <Card className="p-4 border-t-4 border-t-emerald-500">
           <h3 className="text-[12.1125px] font-bold text-black tracking-wider">{t(`Αναφορές`, `Reports`)}</h3>
           <p className="text-[25px] font-black text-[#111827] mt-1">4</p>
           <p className="text-[11.2px] text-amber-500 font-bold">{t(`εκκρεμείς`, `pending`)}</p>
@@ -57,9 +57,9 @@ export default function AdminDashboardNeon() {
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="text-[11.2px] text-black font-medium">{t(`Επαληθευμένοι`, `Verified`)}</span>
-              <span className="text-[12.5px] font-bold text-cyan-600">72%</span>
+              <span className="text-[12.5px] font-bold text-emerald-600">72%</span>
             </div>
-            <div className="w-full bg-gray-100 h-1.5 rounded-full"><div className="bg-cyan-500 h-full rounded-full" style={{ width: '72%' }} /></div>
+            <div className="w-full bg-gray-100 h-1.5 rounded-full"><div className="bg-emerald-500 h-full rounded-full" style={{ width: '72%' }} /></div>
           </div>
         </div>
       </Card>
@@ -110,13 +110,13 @@ export default function AdminDashboardNeon() {
                   <label className="text-[15px] font-bold text-[#111827] mb-1.5 block">{t(`Email ή ID`, `Email or ID`)}</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black" />
-                    <input type="text" placeholder={t(`Αναζήτηση...`, `Search...`)} className="w-full pl-9 pr-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none" />
+                    <input type="text" placeholder={t(`Αναζήτηση...`, `Search...`)} className="w-full pl-9 pr-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
                   </div>
                 </div>
 
                 <div>
                   <label className="text-[15px] font-bold text-[#111827] mb-1.5 block">{t(`Ενέργεια`, `Action`)}</label>
-                  <select className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none bg-white">
+                  <select className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white">
                     <option>{t(`Προειδοποίηση`, `Warning`)}</option>
                     <option>{t(`Αναστολή 7 ημέρες`, `Suspend 7 days`)}</option>
                     <option>{t(`Μόνιμος αποκλεισμός`, `Permanent ban`)}</option>
@@ -126,7 +126,7 @@ export default function AdminDashboardNeon() {
                 
                 <div>
                   <label className="text-[15px] font-bold text-[#111827] mb-1.5 block">{t(`Σημείωση`, `Note`)}</label>
-                  <textarea rows={3} placeholder={t(`Αιτιολογία...`, `Reason...`)} className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none resize-none"></textarea>
+                  <textarea rows={3} placeholder={t(`Αιτιολογία...`, `Reason...`)} className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none resize-none"></textarea>
                 </div>
                 
                 <Button className="w-full bg-gradient-to-br from-violet-600 via-fuchsia-600 to-orange-500 text-white">{t(`Εφαρμογή`, `Apply`)}</Button>
