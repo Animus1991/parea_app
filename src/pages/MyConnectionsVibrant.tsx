@@ -41,13 +41,13 @@ export default function MyConnectionsVibrant() {
 
       <div className="flex gap-4 border-b border-gray-200">
         <button 
-          className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'all' ? 'border-cyan-600 text-cyan-600' : 'border-transparent text-black hover:text-black'}`}
+          className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'all' ? 'border-fuchsia-600 text-fuchsia-600' : 'border-transparent text-black hover:text-black'}`}
           onClick={() => setActiveTab('all')}
         >
           {t('Συνδέσεις', 'Connections')} ({connections.length})
         </button>
         <button 
-          className={`pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'requests' ? 'border-cyan-600 text-cyan-600' : 'border-transparent text-black hover:text-black'}`}
+          className={`pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'requests' ? 'border-fuchsia-600 text-fuchsia-600' : 'border-transparent text-black hover:text-black'}`}
           onClick={() => setActiveTab('requests')}
         >
           {t('Αιτήματα', 'Requests')}
@@ -61,7 +61,7 @@ export default function MyConnectionsVibrant() {
           <input 
             type="text" 
             placeholder={t('Αναζήτηση συνδέσεων...', 'Search connections...')} 
-            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
           />
         </div>
         <Button variant="outline" className="shrink-0 flex items-center gap-2">
@@ -71,11 +71,11 @@ export default function MyConnectionsVibrant() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
         {connections.map((conn) => (
-          <Card key={conn.id} className="p-4 flex items-center justify-between hover:border-cyan-200 transition-colors cursor-pointer group">
+          <Card key={conn.id} className="p-4 flex items-center justify-between hover:border-fuchsia-200 transition-colors cursor-pointer group">
             <div className="flex items-center gap-3">
               <img referrerPolicy="no-referrer" src={conn.image} alt={conn.name} className="w-12 h-12 rounded-full object-cover bg-gray-100" />
               <div>
-                <h3 className="font-bold text-[#111827] text-sm group-hover:text-cyan-600 transition-colors">{conn.name}</h3>
+                <h3 className="font-bold text-[#111827] text-sm group-hover:text-fuchsia-600 transition-colors">{conn.name}</h3>
                 <p className="text-xs text-black flex items-center gap-1 mt-0.5">
                   <MapPin className="w-3 h-3" /> {conn.location}
                 </p>
@@ -87,7 +87,7 @@ export default function MyConnectionsVibrant() {
             </div>
             
             <div className="flex items-center gap-2">
-              <button className="p-2 text-cyan-600 hover:bg-cyan-50 rounded-full transition-colors" title={t('Μήνυμα', 'Message')}>
+              <button className="p-2 text-fuchsia-600 hover:bg-fuchsia-50 rounded-full transition-colors" title={t('Μήνυμα', 'Message')}>
                 <MessageCircle className="w-5 h-5" />
               </button>
               <button className="p-2 text-black hover:bg-gray-100 rounded-full transition-colors">

@@ -109,7 +109,7 @@ export default function CategoriesVibrant() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={t('Αναζήτηση κατηγοριών...', 'Search categories...')} 
-          className="w-full h-11 pl-10 pr-4 rounded-full border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-sm font-medium transition-shadow hover:shadow-md"
+          className="w-full h-11 pl-10 pr-4 rounded-full border border-fuchsia-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-transparent text-sm font-medium transition-shadow hover:shadow-md"
         />
       </div>
 
@@ -117,21 +117,21 @@ export default function CategoriesVibrant() {
         {visibleCategories.map(cat => (
           <div 
             key={cat.id} 
-            className={`bg-white rounded-xl p-3 border shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col items-center text-center ${activeCategory === cat.name ? 'border-cyan-600 ring-1 ring-cyan-600' : 'border-gray-100 hover:border-gray-200'}`}
+            className={`bg-white rounded-xl p-3 border shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col items-center text-center ${activeCategory === cat.name ? 'border-fuchsia-500 ring-1 ring-fuchsia-500 bg-fuchsia-50/30' : 'border-gray-100 hover:border-fuchsia-200'}`}
             onClick={() => setActiveCategory(activeCategory === cat.name ? null : cat.name)}
           >
             <div className={`w-10 h-10 rounded-full ${cat.bg} ${cat.border} border flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300`}>
               <cat.icon className={`w-5 h-5 ${cat.color}`} />
             </div>
-            <h3 className="font-bold text-[#111827] text-xs group-hover:text-cyan-600 transition-colors line-clamp-1 w-full">{cat.name}</h3>
+            <h3 className="font-bold text-[#111827] text-xs group-hover:text-fuchsia-600 transition-colors line-clamp-1 w-full">{cat.name}</h3>
             <p className="text-[10px] font-semibold text-black mt-1 capitalize tracking-wide">{cat.count} {t('Εκδηλώσεις', 'Events')}</p>
           </div>
         ))}
       </div>
       
       {visibleCategories.length === 0 && (
-         <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-           <p className="text-black font-medium text-sm">{t('Δεν βρέθηκαν κατηγορίες.', 'No categories found matching ')} "{searchQuery}".</p>
+         <div className="text-center py-12 bg-fuchsia-50/50 rounded-2xl border border-dashed border-fuchsia-200">
+           <p className="text-gray-600 font-medium text-sm">{t('Δεν βρέθηκαν κατηγορίες.', 'No categories found matching ')} "{searchQuery}".</p>
          </div>
       )}
 
@@ -143,7 +143,7 @@ export default function CategoriesVibrant() {
           <div className="flex gap-2 overflow-x-auto pb-2 noscrollbar items-center w-full md:w-auto">
             {/* Sort Dropdown */}
             <select 
-              className="text-xs border border-gray-200 rounded-lg shadow-sm focus:border-cyan-500 focus:ring-cyan-500 bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer h-8 shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] pr-7"
+              className="text-xs border border-fuchsia-200 rounded-lg shadow-sm focus:border-fuchsia-500 focus:ring-fuchsia-500 bg-white hover:bg-fuchsia-50/50 py-1.5 px-3 font-medium outline-none cursor-pointer h-8 shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] pr-7"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
             >
@@ -160,7 +160,7 @@ export default function CategoriesVibrant() {
                 <button
                   key={price}
                   onClick={() => setPriceFilter(price as any)}
-                  className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${priceFilter === price ? 'bg-white text-cyan-700 shadow-sm border border-gray-200/50 ring-1 ring-black/5' : 'text-black hover:text-black hover:bg-gray-200/50'}`}
+                  className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${priceFilter === price ? 'bg-white text-fuchsia-700 shadow-sm border border-fuchsia-200/50 ring-1 ring-fuchsia-200' : 'text-gray-600 hover:text-fuchsia-700 hover:bg-fuchsia-50/50'}`}
                 >
                   {price === 'All' ? t('Όλες', 'All') : price === 'Free' ? t('Δωρεάν', 'Free') : price === 'Paid' ? t('Επί πληρωμή', 'Paid') : t('Ομαδική Έκπτωση', 'Group Discount')}
                 </button>
@@ -175,7 +175,7 @@ export default function CategoriesVibrant() {
                 <button
                   key={date}
                   onClick={() => setDateFilter(date as any)}
-                  className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${dateFilter === date ? 'bg-white text-cyan-700 shadow-sm border border-gray-200/50 ring-1 ring-black/5' : 'text-black hover:text-black hover:bg-gray-200/50'}`}
+                  className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${dateFilter === date ? 'bg-white text-fuchsia-700 shadow-sm border border-fuchsia-200/50 ring-1 ring-fuchsia-200' : 'text-gray-600 hover:text-fuchsia-700 hover:bg-fuchsia-50/50'}`}
                 >
                   {date === 'Any' ? t('Οποιαδήποτε', 'Any Date') : date === 'Today' ? t('Σήμερα', 'Today') : date === 'This Week' ? t('Αυτή την εβδ.', 'This Week') : t('Αυτόν τον μήνα', 'This Month')}
                 </button>
@@ -190,8 +190,8 @@ export default function CategoriesVibrant() {
               <EventCardSkeleton key={`skeleton-${i}`} />
             ))
           ) : filteredEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-              <p className="text-black font-medium text-sm">{t('Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.', 'No events found matching your criteria.')}</p>
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-fuchsia-50/50 rounded-2xl border border-dashed border-fuchsia-200">
+              <p className="text-gray-600 font-medium text-sm">{t('Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.', 'No events found matching your criteria.')}</p>
             </div>
           ) : (
             filteredEvents.map(event => (
@@ -201,12 +201,12 @@ export default function CategoriesVibrant() {
         </div>
       </div>
 
-      <div className="mt-8 bg-cyan-50 rounded-2xl p-6 border border-cyan-100 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="mt-8 bg-gradient-to-r from-fuchsia-50 to-orange-50 rounded-2xl p-6 border border-fuchsia-100 flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <h3 className="text-base font-bold text-[#111827]">{t('Δεν βρίσκετε αυτό που ψάχνετε;', 'Can\'t find what you\'re looking for?')}</h3>
-          <p className="text-xs text-black mt-1">{t('Δημιουργήστε τη δική σας εκδήλωση και συγκεντρώστε άτομα με παρόμοια ενδιαφέροντα.', 'Create your own event and gather people with similar interests.')}</p>
+          <p className="text-xs text-gray-600 mt-1">{t('Δημιουργήστε τη δική σας εκδήλωση και συγκεντρώστε άτομα με παρόμοια ενδιαφέροντα.', 'Create your own event and gather people with similar interests.')}</p>
         </div>
-        <button onClick={() => navigate('/create-event')} className="bg-cyan-600 text-white px-5 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-cyan-700 transition-colors whitespace-nowrap shrink-0">
+        <button onClick={() => navigate('/create-event')} className="bg-gradient-to-r from-fuchsia-600 to-orange-500 text-white px-5 py-2 rounded-full text-xs font-bold shadow-sm hover:opacity-90 transition-all whitespace-nowrap shrink-0">
           {t('Δημιουργία Εκδήλωσης', 'Create Event')}
         </button>
       </div>

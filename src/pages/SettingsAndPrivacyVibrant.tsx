@@ -87,7 +87,7 @@ export default function SettingsAndPrivacyVibrant() {
       ))}
 
       {show2FASetup && (
-        <Card className="p-5 border-cyan-200 bg-cyan-50/30">
+        <Card className="p-5 border-fuchsia-200 bg-fuchsia-50/30">
           <h3 className="font-bold text-[16.2px] text-[#111827] mb-2">{t(`Ρύθμιση 2FA`, `Setup 2FA`)}</h3>
           <p className="text-[13.5px] text-black mb-4">{t(`Προσθέστε ένα επιπλέον επίπεδο ασφάλειας στον λογαριασμό σας`, `Add an extra layer of security to your account`)}</p>
           <Button size="sm" onClick={() => { setTwoFactorEnabled(true); setShow2FASetup(false); }}>
@@ -111,7 +111,7 @@ export default function SettingsAndPrivacyVibrant() {
               ].map(({ key, label }) => (
                 <label key={key} className="flex items-center justify-between">
                   <span className="text-[13.5px] text-black font-medium">{label}</span>
-                  <div className={`relative w-9 h-5 rounded-full transition-colors cursor-pointer ${notificationPrefs[key as keyof typeof notificationPrefs] ? 'bg-cyan-600' : 'bg-gray-300'}`} onClick={() => handleTogglePref(key as keyof typeof notificationPrefs)}>
+                  <div className={`relative w-9 h-5 rounded-full transition-colors cursor-pointer ${notificationPrefs[key as keyof typeof notificationPrefs] ? 'bg-fuchsia-600' : 'bg-gray-300'}`} onClick={() => handleTogglePref(key as keyof typeof notificationPrefs)}>
                     <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${notificationPrefs[key as keyof typeof notificationPrefs] ? 'translate-x-4' : 'translate-x-0.5'}`} />
                   </div>
                 </label>
@@ -138,7 +138,7 @@ export default function SettingsAndPrivacyVibrant() {
                   onClick={() => setCategoryPrefs(prev => ({ ...prev, [key]: !prev[key as keyof typeof categoryPrefs] }))}
                   className={`px-3 py-1.5 rounded-full text-[12.5px] font-bold border transition-colors ${
                     categoryPrefs[key as keyof typeof categoryPrefs]
-                      ? 'bg-cyan-50 border-cyan-300 text-cyan-700'
+                      ? 'bg-fuchsia-50 border-fuchsia-300 text-fuchsia-700'
                       : 'bg-white border-gray-200 text-black'
                   }`}
                 >
@@ -156,7 +156,7 @@ export default function SettingsAndPrivacyVibrant() {
         <Card className="divide-y divide-gray-100">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
-              <Smartphone className="w-4 h-4 text-cyan-600" />
+              <Smartphone className="w-4 h-4 text-fuchsia-600" />
               <div>
                 <span className="text-[16.2px] font-medium text-[#111827]">iPhone 15 Pro</span>
                 <p className="text-[12.5px] text-black font-medium">Athens, GR • {t(`Τώρα`, `Now`)}</p>

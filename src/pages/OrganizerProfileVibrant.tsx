@@ -38,7 +38,7 @@ export default function OrganizerProfileVibrant() {
           <div>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
               {isVerifiedOrganizer && (
-                <Badge variant="outline" icon={<ShieldCheck className="h-3 w-3 text-cyan-600" />}>
+                <Badge variant="outline" icon={<ShieldCheck className="h-3 w-3 text-fuchsia-600" />}>
                   {t('Επαληθευμένος Διοργανωτής', 'Verified Organizer')}
                 </Badge>
               )}
@@ -70,7 +70,7 @@ export default function OrganizerProfileVibrant() {
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-2">
             <button 
               onClick={() => setShowContactModal(true)}
-              className="text-[10px] font-bold tracking-wide text-black hover:text-cyan-600 transition-colors flex items-center gap-1"
+              className="text-[10px] font-bold tracking-wide text-black hover:text-fuchsia-600 transition-colors flex items-center gap-1"
             >
               <Mail className="h-4 w-4" /> {t('Επικοινωνία', 'Contact Organizer')}
             </button>
@@ -78,7 +78,7 @@ export default function OrganizerProfileVibrant() {
               href="#" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-[10px] font-bold tracking-wide text-black hover:text-cyan-600 transition-colors flex items-center gap-1"
+              className="text-[10px] font-bold tracking-wide text-black hover:text-fuchsia-600 transition-colors flex items-center gap-1"
             >
               <Globe className="h-4 w-4" /> {t('Ιστότοπος', 'Website')}
             </a>
@@ -96,22 +96,22 @@ export default function OrganizerProfileVibrant() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {hostedEvents.map(event => (
               <Link key={event.id} to={`/events/${event.id}`}>
-                <Card className="flex items-start gap-4 p-4 hover:border-cyan-300 transition-colors cursor-pointer group">
+                <Card className="flex items-start gap-4 p-4 hover:border-fuchsia-300 transition-colors cursor-pointer group">
                   <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden shrink-0">
-                    <div className="w-full h-full bg-cyan-50 flex flex-col items-center justify-center text-cyan-700">
+                    <div className="w-full h-full bg-fuchsia-50 flex flex-col items-center justify-center text-fuchsia-700">
                       <span className="text-[10px] font-bold tracking-wide">{format(parseISO(event.date), 'MMM')}</span>
                       <span className="text-xl font-bold leading-none">{format(parseISO(event.date), 'd')}</span>
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-[#111827] group-hover:text-cyan-600 transition-colors line-clamp-1">{event.title}</h3>
+                    <h3 className="font-bold text-[#111827] group-hover:text-fuchsia-600 transition-colors line-clamp-1">{event.title}</h3>
                     <p className="text-xs text-black mt-1">{event.time} • {event.locationArea}</p>
                     <div className="mt-2 flex gap-2">
                       <Badge variant="neutral">{event.category}</Badge>
                       {event.isPaid ? <Badge variant="outline">€{event.price}</Badge> : <Badge variant="outline">{t('Δωρεάν', 'Free')}</Badge>}
                     </div>
                   </div>
-                  <div className="hidden sm:flex items-center text-[10px] font-bold tracking-wide text-cyan-600 self-center">
+                  <div className="hidden sm:flex items-center text-[10px] font-bold tracking-wide text-fuchsia-600 self-center">
                     {t('Προβολή', 'View')} &rarr;
                   </div>
                 </Card>
@@ -134,7 +134,7 @@ export default function OrganizerProfileVibrant() {
               {t('Στείλτε ένα ασφαλές μήνυμα σε αυτόν τον διοργανωτή για τις εκδηλώσεις του, τα εισιτήρια ή γενικές ερωτήσεις.', 'Send a secure message to this organizer about their events, tickting issues, or general inquiries.')}
             </p>
             <textarea 
-              className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none mb-4 focus:ring-2 focus:ring-cyan-600 outline-none"
+              className="w-full border border-gray-300 rounded-lg p-3 text-sm resize-none mb-4 focus:ring-2 focus:ring-fuchsia-600 outline-none"
               rows={4}
               placeholder={t('Το μήνυμά σας...', 'Your message...')}
             ></textarea>
@@ -150,7 +150,7 @@ export default function OrganizerProfileVibrant() {
                   alert(t('Το μήνυμά σας έχει σταλεί απευθείας στον διοργανωτή.', 'Your message has been sent directly to the organizer.'));
                   setShowContactModal(false);
                 }}
-                className="px-4 py-2 text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-700 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-bold text-white bg-fuchsia-600 hover:bg-fuchsia-700 rounded-lg transition-colors"
               >
                 {t('Αποστολή Μηνύματος', 'Send Message')}
               </button>

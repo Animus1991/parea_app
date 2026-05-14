@@ -99,7 +99,7 @@ export default function MyCalendarVibrant() {
                 {days.map((day, i) => (
                   <div key={i} className="text-center">
                     <div className="text-[10px] font-bold text-black tracking-wide">{format(day, 'EEE')}</div>
-                    <div className={`mt-1 w-8 h-8 mx-auto flex items-center justify-center rounded-full text-sm font-bold ${isToday(day) ? 'bg-cyan-600 text-white' : 'text-[#111827]'}`}>
+                    <div className={`mt-1 w-8 h-8 mx-auto flex items-center justify-center rounded-full text-sm font-bold ${isToday(day) ? 'bg-fuchsia-600 text-white' : 'text-[#111827]'}`}>
                       {format(day, 'd')}
                     </div>
                   </div>
@@ -108,7 +108,7 @@ export default function MyCalendarVibrant() {
               
               <div className="space-y-3 mt-6">
                 {upcomingEvents.map((event, idx) => (
-                  <div key={idx} className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-cyan-100 hover:bg-cyan-50/30 transition-colors cursor-pointer" onClick={() => navigate(`/events/${event.id}`)}>
+                  <div key={idx} className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-fuchsia-100 hover:bg-fuchsia-50/30 transition-colors cursor-pointer" onClick={() => navigate(`/events/${event.id}`)}>
                     <div className="flex flex-col items-center justify-center w-16 shrink-0 border-r border-gray-100 pr-4">
                       <span className="text-xs font-bold text-black">{format(event.parsedDate, 'MMM')}</span>
                       <span className="text-2xl font-black text-[#111827]">{format(event.parsedDate, 'dd')}</span>
@@ -162,9 +162,9 @@ export default function MyCalendarVibrant() {
                       key={day.toISOString()}
                       className={`aspect-square flex flex-col items-center justify-center rounded-lg cursor-pointer transition-colors ${
                         isToday(day)
-                          ? 'bg-cyan-600 text-white'
+                          ? 'bg-fuchsia-600 text-white'
                           : dayEvents.length > 0
-                            ? 'bg-cyan-50 hover:bg-cyan-100'
+                            ? 'bg-fuchsia-50 hover:bg-fuchsia-100'
                             : 'hover:bg-gray-50'
                       } ${!isCurrentMonth ? 'opacity-30' : ''}`}
                     >
@@ -172,7 +172,7 @@ export default function MyCalendarVibrant() {
                         {format(day, 'd')}
                       </span>
                       {dayEvents.length > 0 && (
-                        <div className={`w-1.5 h-1.5 rounded-full mt-0.5 ${isToday(day) ? 'bg-white' : 'bg-cyan-600'}`} />
+                        <div className={`w-1.5 h-1.5 rounded-full mt-0.5 ${isToday(day) ? 'bg-white' : 'bg-fuchsia-600'}`} />
                       )}
                     </div>
                   );
@@ -186,13 +186,13 @@ export default function MyCalendarVibrant() {
                   {upcomingEvents.map((event, idx) => (
                     <div
                       key={idx}
-                      className="flex gap-3 items-center text-sm cursor-pointer hover:bg-cyan-50 p-2 rounded-lg transition-colors"
+                      className="flex gap-3 items-center text-sm cursor-pointer hover:bg-fuchsia-50 p-2 rounded-lg transition-colors"
                       onClick={() => navigate(`/events/${event.id}`)}
                     >
                       <div className="text-[10px] font-bold text-black w-12 shrink-0">
                         {format(event.parsedDate, 'MMM d')}
                       </div>
-                      <div className="w-2 h-2 rounded-full bg-cyan-600 shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-fuchsia-600 shrink-0" />
                       <div className="font-medium text-[#111827] text-xs line-clamp-1 flex-1">{event.title}</div>
                       <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full whitespace-nowrap">{t('Επιβεβαιώθηκε', 'Confirmed')}</span>
                     </div>

@@ -32,7 +32,7 @@ export default function VerificationCenterVibrant() {
         <Card className="p-5">
            <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                 <div className="w-10 h-10 bg-cyan-50 text-cyan-600 rounded-lg flex items-center justify-center">
+                 <div className="w-10 h-10 bg-fuchsia-50 text-fuchsia-600 rounded-lg flex items-center justify-center">
                     <Mail className="w-5 h-5" />
                  </div>
                  <div>
@@ -88,17 +88,17 @@ export default function VerificationCenterVibrant() {
       <Card className="p-5">
         <h3 className="text-[12.5px] font-bold text-[#111827] tracking-wide mb-4">{t(`Τι ξεκλειδώνετε`, `What you unlock`)}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="bg-cyan-50 border border-cyan-100 rounded-lg p-3">
+          <div className="bg-fuchsia-50 border border-fuchsia-100 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
-              <Mail className="w-4 h-4 text-cyan-600" />
-              <span className="text-[13.8px] font-bold text-cyan-900">Email</span>
+              <Mail className="w-4 h-4 text-fuchsia-600" />
+              <span className="text-[13.8px] font-bold text-fuchsia-900">Email</span>
             </div>
             <ul className="space-y-1 text-[12.5px] text-black font-medium">
               <li>• {t(`Βασική πρόσβαση`, `Basic access`)}</li>
               <li>• {t(`Εγγραφή σε ομάδες`, `Join groups`)}</li>
               <li>• {t(`Ομαδικές συνομιλίες`, `Group chats`)}</li>
             </ul>
-            <span className="mt-2 inline-block text-[11.2px] font-bold text-cyan-600 bg-white px-2 py-0.5 rounded-full">~1 {t(`λεπτό`, `min`)}</span>
+            <span className="mt-2 inline-block text-[11.2px] font-bold text-fuchsia-600 bg-white px-2 py-0.5 rounded-full">~1 {t(`λεπτό`, `min`)}</span>
           </div>
           <div className="bg-purple-50 border border-purple-100 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
@@ -129,7 +129,7 @@ export default function VerificationCenterVibrant() {
 
       {/* Trust Score Impact */}
       <Card className="p-4 flex items-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-black text-[18px] shrink-0">72%</div>
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-fuchsia-500 to-emerald-500 flex items-center justify-center text-white font-black text-[18px] shrink-0">72%</div>
         <div className="flex-1">
           <p className="text-[13.8px] font-bold text-[#111827]">{t(`Τρέχον Trust Score`, `Current Trust Score`)}</p>
           <p className="text-[11.2px] text-black font-medium mt-0.5">{t(`Ολοκληρώστε την επαλήθευση τηλεφώνου για +15%`, `Complete phone verification for +15%`)}</p>

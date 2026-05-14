@@ -99,7 +99,7 @@ export default function ProfileVibrant() {
       <Card className="p-6">
         <div className="flex flex-col sm:flex-row items-start gap-4">
           <div className="relative group">
-            <div className="h-20 w-20 sm:h-16 sm:w-16 rounded-full bg-cyan-100 flex items-center justify-center shrink-0 border border-cyan-200 overflow-hidden">
+            <div className="h-20 w-20 sm:h-16 sm:w-16 rounded-full bg-fuchsia-100 flex items-center justify-center shrink-0 border border-fuchsia-200 overflow-hidden">
               {photoUrl ? (
                 <img
                   referrerPolicy="no-referrer"
@@ -108,7 +108,7 @@ export default function ProfileVibrant() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-cyan-700 font-bold text-xl">
+                <span className="text-fuchsia-700 font-bold text-xl">
                   {currentUser.name.substring(0, 2)}
                 </span>
               )}
@@ -136,7 +136,7 @@ export default function ProfileVibrant() {
                     autoFocus
                     value={tempName}
                     onChange={(e) => setTempName(e.target.value)}
-                    className="flex-1 text-lg font-bold text-[#111827] bg-gray-50 border border-gray-200 rounded-md px-2 py-1 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                    className="flex-1 text-lg font-bold text-[#111827] bg-gray-50 border border-gray-200 rounded-md px-2 py-1 focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 outline-none"
                   />
                   <Button
                     size="sm"
@@ -167,7 +167,7 @@ export default function ProfileVibrant() {
                   </h2>
                   <button
                     onClick={() => setIsEditingName(true)}
-                    className="p-1 text-black hover:text-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity rounded-md hover:bg-gray-100"
+                    className="p-1 text-gray-500 hover:text-fuchsia-600 opacity-0 group-hover:opacity-100 transition-opacity rounded-md hover:bg-fuchsia-50"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                   </button>
@@ -186,7 +186,7 @@ export default function ProfileVibrant() {
                   <textarea
                     value={tempBio}
                     onChange={(e) => setTempBio(e.target.value)}
-                    className="w-full text-sm text-black bg-gray-50 border border-gray-200 rounded-md p-2 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none resize-none"
+                    className="w-full text-sm text-black bg-gray-50 border border-gray-200 rounded-md p-2 focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 outline-none resize-none"
                     rows={3}
                   />
                   <div className="flex gap-2">
@@ -219,7 +219,7 @@ export default function ProfileVibrant() {
                   </p>
                   <button
                     onClick={() => setIsEditingBio(true)}
-                    className="absolute top-0 right-0 p-1 text-black hover:text-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity rounded-md hover:bg-gray-100"
+                    className="absolute top-0 right-0 p-1 text-gray-500 hover:text-fuchsia-600 opacity-0 group-hover:opacity-100 transition-opacity rounded-md hover:bg-fuchsia-50"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                   </button>
@@ -238,7 +238,7 @@ export default function ProfileVibrant() {
               </Badge>
               <Badge
                 variant="outline"
-                className={`text-xs py-1 px-2.5 shadow-sm ${currentUser.trustTier === "3_high_trust" ? "text-cyan-700 bg-cyan-50 border-cyan-200" : "text-black bg-gray-50 border-gray-200"}`}
+                className={`text-xs py-1 px-2.5 shadow-sm ${currentUser.trustTier === "3_high_trust" ? "text-fuchsia-700 bg-fuchsia-50 border-fuchsia-200" : "text-gray-700 bg-gray-50 border-gray-200"}`}
               >
                 {currentUser.trustTier === "3_high_trust"
                   ? t("Υψηλό Επίπεδο Εμπιστοσύνης", "High Trust Tier")
@@ -344,21 +344,21 @@ export default function ProfileVibrant() {
             {t("Προτιμήσεις Ομάδας", "Group Preferences")}
           </h3>
           <div className="space-y-4">
-            <label className="flex items-start gap-3 p-3 border border-cyan-200 bg-cyan-50/30 rounded-xl cursor-pointer">
+            <label className="flex items-start gap-3 p-3 border border-fuchsia-200 bg-fuchsia-50/30 rounded-xl cursor-pointer">
               <input
                 type="radio"
                 name="groupsize"
                 defaultChecked
-                className="mt-0.5 h-4 w-4 text-cyan-600 rounded-full border-cyan-300"
+                className="mt-0.5 h-4 w-4 text-fuchsia-600 rounded-full border-fuchsia-300"
               />
               <div>
-                <span className="text-sm font-bold text-cyan-900 block">
+                <span className="text-sm font-bold text-fuchsia-900 block">
                   {t(
                     "Προεπιλογή: Ομάδες (3-5 άτομα)",
                     "Default: Groups (3-5 people)",
                   )}
                 </span>
-                <span className="text-xs text-cyan-700/80 font-medium leading-relaxed block mt-1">
+                <span className="text-xs text-fuchsia-700/80 font-medium leading-relaxed block mt-1">
                   {t(
                     "Συνιστάται. Το Nakamas λειτουργεί καλύτερα σε μικρές ομάδες για ασφάλεια.",
                     "Recommended. Nakamas works best in small groups to remove awkwardness and increase safety.",
@@ -402,14 +402,14 @@ export default function ProfileVibrant() {
               variant="ghost"
               size="sm"
               onClick={() => navigate("/plans")}
-              className="text-cyan-600 font-bold hover:bg-cyan-50"
+              className="text-fuchsia-600 font-bold hover:bg-fuchsia-50"
             >
               {t("Προβολή Όλων", "View All")}
             </Button>
           </div>
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-cyan-100 text-cyan-600 rounded">
+              <div className="p-2 bg-fuchsia-100 text-fuchsia-600 rounded">
                 <History className="h-5 w-5" />
               </div>
               <div>
@@ -484,7 +484,7 @@ export default function ProfileVibrant() {
                   value={newInterest}
                   onChange={(e) => setNewInterest(e.target.value)}
                   placeholder={t("Νέο ενδιαφέρον...", "New interest...")}
-                  className="text-xs border border-gray-200 rounded px-2 py-1 w-28 focus:outline-none focus:border-cyan-500"
+                  className="text-xs border border-gray-200 rounded px-2 py-1 w-28 focus:outline-none focus:border-fuchsia-500"
                   autoFocus
                   onBlur={() => {
                     if (!newInterest.trim()) setIsAddingInterest(false);
@@ -494,7 +494,7 @@ export default function ProfileVibrant() {
                   type="submit"
                   size="sm"
                   variant="ghost"
-                  className="h-6 px-2 text-cyan-600 font-bold capitalize text-[11px]"
+                  className="h-6 px-2 text-fuchsia-600 font-bold capitalize text-[11px]"
                 >
                   {t("Προσθήκη", "Add")}
                 </Button>
@@ -544,7 +544,7 @@ export default function ProfileVibrant() {
               <select 
                 value={settings.profileVisibility}
                 onChange={e => setSettings({...settings, profileVisibility: e.target.value as any})}
-                className="text-xs border-gray-200 rounded-lg shadow-sm focus:border-cyan-500 focus:ring-cyan-500 py-1.5 px-2 bg-gray-50 outline-none"
+                className="text-xs border-gray-200 rounded-lg shadow-sm focus:border-fuchsia-500 focus:ring-fuchsia-500 py-1.5 px-2 bg-gray-50 outline-none"
               >
                 <option value="public">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι χρήστες", "Verified Users Only")}</option>
@@ -560,7 +560,7 @@ export default function ProfileVibrant() {
               <select 
                 value={settings.messagePermission}
                 onChange={e => setSettings({...settings, messagePermission: e.target.value as any})}
-                className="text-xs border-gray-200 rounded-lg shadow-sm focus:border-cyan-500 focus:ring-cyan-500 py-1.5 px-2 bg-gray-50 outline-none"
+                className="text-xs border-gray-200 rounded-lg shadow-sm focus:border-fuchsia-500 focus:ring-fuchsia-500 py-1.5 px-2 bg-gray-50 outline-none"
               >
                 <option value="anyone">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι χρήστες", "Verified Users Only")}</option>
@@ -578,7 +578,7 @@ export default function ProfileVibrant() {
                     shareLocation: e.target.checked,
                   })
                 }
-                className="mt-0.5 h-4 w-4 text-cyan-600 rounded border-gray-300 focus:ring-cyan-500"
+                className="mt-0.5 h-4 w-4 text-fuchsia-600 rounded border-gray-300 focus:ring-fuchsia-500"
               />
               <div>
                 <span className="text-sm font-bold text-black block">
@@ -597,7 +597,7 @@ export default function ProfileVibrant() {
                 onChange={(e) =>
                   setSettings({ ...settings, revealPhoto: e.target.checked })
                 }
-                className="h-4 w-4 text-cyan-600 rounded border-gray-300 focus:ring-cyan-500"
+                className="h-4 w-4 text-fuchsia-600 rounded border-gray-300 focus:ring-fuchsia-500"
               />
               <span className="text-sm text-black font-medium">
                 {t(
@@ -616,7 +616,7 @@ export default function ProfileVibrant() {
                     allowMutualPing: e.target.checked,
                   })
                 }
-                className="h-4 w-4 text-cyan-600 rounded border-gray-300 focus:ring-cyan-500"
+                className="h-4 w-4 text-fuchsia-600 rounded border-gray-300 focus:ring-fuchsia-500"
               />
               <span className="text-sm text-black font-medium">
                 {t(
@@ -635,7 +635,7 @@ export default function ProfileVibrant() {
                     allowOrganizerMsg: e.target.checked,
                   })
                 }
-                className="h-4 w-4 text-cyan-600 rounded border-gray-300 focus:ring-cyan-500"
+                className="h-4 w-4 text-fuchsia-600 rounded border-gray-300 focus:ring-fuchsia-500"
               />
               <span className="text-sm text-black font-medium">
                 {t(

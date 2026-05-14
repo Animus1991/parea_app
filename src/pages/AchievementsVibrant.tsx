@@ -20,7 +20,7 @@ export default function AchievementsVibrant() {
   const [activeTab, setActiveTab] = useState<'badges' | 'streaks' | 'leaderboard'>('badges');
 
   const achievements: Achievement[] = [
-    { id: 'a1', icon: Calendar, title: t(`Πρώτη Εμπειρία`, `First Experience`), description: t(`Συμμετείχατε στην πρώτη σας εκδήλωση`, `Attended your first event`), progress: 1, maxProgress: 1, unlocked: true, xp: 50, color: 'text-cyan-600 bg-cyan-100' },
+    { id: 'a1', icon: Calendar, title: t(`Πρώτη Εμπειρία`, `First Experience`), description: t(`Συμμετείχατε στην πρώτη σας εκδήλωση`, `Attended your first event`), progress: 1, maxProgress: 1, unlocked: true, xp: 50, color: 'text-fuchsia-600 bg-fuchsia-100' },
     { id: 'a2', icon: Users, title: t(`Κοινωνική Πεταλούδα`, `Social Butterfly`), description: t(`Γίνετε μέλος σε 5 διαφορετικές ομάδες`, `Join 5 different groups`), progress: 5, maxProgress: 5, unlocked: true, xp: 100, color: 'text-purple-600 bg-purple-100' },
     { id: 'a3', icon: Star, title: t(`Αστέρι Αξιοπιστίας`, `Reliability Star`), description: t(`Διατηρήστε 95%+ αξιοπιστία`, `Maintain 95%+ reliability score`), progress: 98, maxProgress: 95, unlocked: true, xp: 200, color: 'text-amber-600 bg-amber-100' },
     { id: 'a4', icon: Flame, title: t(`Εβδομαδιαίο Σερί`, `Weekly Streak`), description: t(`Συμμετοχή σε εκδηλώσεις 4 εβδομάδες σερί`, `Attend events for 4 weeks in a row`), progress: 3, maxProgress: 4, unlocked: false, xp: 150, color: 'text-orange-600 bg-orange-100' },
@@ -55,7 +55,7 @@ export default function AchievementsVibrant() {
       <Card className="p-5">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-white font-black text-[18px]">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-fuchsia-500 to-purple-500 flex items-center justify-center text-white font-black text-[18px]">
               {level}
             </div>
             <div>
@@ -69,12 +69,12 @@ export default function AchievementsVibrant() {
           </div>
         </div>
         <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-          <div className="bg-gradient-to-r from-cyan-500 to-purple-500 h-full rounded-full transition-all" style={{ width: `${levelProgress}%` }} />
+          <div className="bg-gradient-to-r from-fuchsia-500 to-purple-500 h-full rounded-full transition-all" style={{ width: `${levelProgress}%` }} />
         </div>
       </Card>
 
       {/* Daily Challenge */}
-      <Card className="p-4 bg-gradient-to-r from-purple-50 to-cyan-50 border border-purple-100">
+      <Card className="p-4 bg-gradient-to-r from-purple-50 to-fuchsia-50 border border-purple-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center">
@@ -105,7 +105,7 @@ export default function AchievementsVibrant() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`pb-3 text-[13.5px] font-bold tracking-wide transition-colors whitespace-nowrap ${
-              activeTab === tab.key ? 'border-b-2 border-cyan-600 text-cyan-900' : 'text-black hover:text-[#111827]'
+              activeTab === tab.key ? 'border-b-2 border-fuchsia-600 text-fuchsia-900' : 'text-black hover:text-[#111827]'
             }`}
           >
             {tab.label}
@@ -132,15 +132,15 @@ export default function AchievementsVibrant() {
                     <p className="text-[12.5px] text-black font-medium mt-0.5 line-clamp-1">{a.description}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <div className="flex-1 bg-gray-100 h-1.5 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full transition-all ${a.unlocked ? 'bg-cyan-500' : 'bg-gray-300'}`} style={{ width: `${pct}%` }} />
+                        <div className={`h-full rounded-full transition-all ${a.unlocked ? 'bg-fuchsia-500' : 'bg-gray-300'}`} style={{ width: `${pct}%` }} />
                       </div>
                       <span className="text-[11.2px] font-bold text-black">{a.progress}/{a.maxProgress}</span>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span className="text-[11.2px] font-bold text-cyan-600 bg-cyan-50 px-1.5 py-0.5 rounded">+{a.xp}XP</span>
+                    <span className="text-[11.2px] font-bold text-fuchsia-600 bg-fuchsia-50 px-1.5 py-0.5 rounded">+{a.xp}XP</span>
                     {a.unlocked && (
-                      <button className="text-[10px] font-bold text-black hover:text-cyan-600 flex items-center gap-0.5 transition-colors">
+                      <button className="text-[10px] font-bold text-black hover:text-fuchsia-600 flex items-center gap-0.5 transition-colors">
                         <Share2 className="w-2.5 h-2.5" />{t(`Κοινοπ.`, `Share`)}
                       </button>
                     )}
@@ -199,7 +199,7 @@ export default function AchievementsVibrant() {
       {activeTab === 'leaderboard' && (
         <Card className="p-0 overflow-hidden">
           {leaderboard.map((entry, i) => (
-            <div key={entry.rank} className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 ${entry.rank === 4 ? 'bg-cyan-50/50' : ''}`}>
+            <div key={entry.rank} className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 ${entry.rank === 4 ? 'bg-fuchsia-50/50' : ''}`}>
               <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[12.5px] font-black ${
                 entry.rank === 1 ? 'bg-amber-100 text-amber-700' :
                 entry.rank === 2 ? 'bg-gray-200 text-black' :
@@ -208,7 +208,7 @@ export default function AchievementsVibrant() {
                 {entry.rank}
               </span>
               <img src={entry.avatar} alt="" className="w-7 h-7 rounded-full border border-gray-200" />
-              <span className={`flex-1 text-[13.5px] font-medium ${entry.rank === 4 ? 'font-bold text-cyan-700' : 'text-[#111827]'}`}>{entry.name}</span>
+              <span className={`flex-1 text-[13.5px] font-medium ${entry.rank === 4 ? 'font-bold text-fuchsia-700' : 'text-[#111827]'}`}>{entry.name}</span>
               <span className="text-[12.5px] font-bold text-black">{entry.xp} XP</span>
               {entry.rank <= 3 && <Trophy className={`w-3.5 h-3.5 ${entry.rank === 1 ? 'text-amber-500' : entry.rank === 2 ? 'text-black' : 'text-orange-400'}`} />}
             </div>
