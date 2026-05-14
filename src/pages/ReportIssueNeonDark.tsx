@@ -27,8 +27,8 @@ export default function ReportIssueNeonDark() {
 
       {step === 1 ? (
         <div className="bg-gray-800 rounded-xl shadow-sm border border-gray-700 overflow-hidden">
-          <div className="p-4 md:p-6 bg-red-50 border-b border-red-100 flex items-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+          <div className="p-4 md:p-6 bg-emerald-950 border-b border-emerald-900 flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full bg-emerald-900 flex items-center justify-center shrink-0">
               <AlertTriangle className="w-5 h-5 text--400" />
             </div>
             <div>
@@ -40,7 +40,7 @@ export default function ReportIssueNeonDark() {
           <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-5">
             <div>
               <label className="block text-[10.90125px] font-bold text-white tracking-wider mb-2">{t(`Κατηγορία`, `Category`)}</label>
-              <select className="w-full h-11 px-3 rounded-lg border border-gray-700 bg-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium" required>
+              <select className="w-full h-11 px-3 rounded-lg border border-gray-700 bg-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent text-[16.2px] font-medium" required>
                 <option value="">{t(`Επιλέξτε κατηγορία...`, `Select a category...`)}</option>
                 <option value="user_behavior">{t(`Ανάρμοστη συμπεριφορά`, `Inappropriate behavior`)}</option>
                 <option value="event_safety">{t(`Ασφάλεια εκδήλωσης`, `Event safety`)}</option>
@@ -62,7 +62,7 @@ export default function ReportIssueNeonDark() {
                   <span className="text-[12.1125px] font-bold text--400 block">{t(`Μέτρια`, `Medium`)}</span>
                   <span className="text-[10px] text--400">{t(`Ανησυχία`, `Concern`)}</span>
                 </button>
-                <button type="button" className="p-2.5 rounded-lg border border-red-200 bg-red-50 text-center hover:ring-2 hover:ring-red-300 transition-all">
+                <button type="button" className="p-2.5 rounded-lg border border-emerald-800 bg-emerald-950 text-center hover:ring-2 hover:ring-emerald-300 transition-all">
                   <span className="text-[12.1125px] font-bold text--400 block">{t(`Υψηλή`, `High`)}</span>
                   <span className="text-[10px] text--400">{t(`Κίνδυνος`, `Danger`)}</span>
                 </button>
@@ -72,7 +72,7 @@ export default function ReportIssueNeonDark() {
             <div>
               <label className="block text-[10.90125px] font-bold text-white tracking-wider mb-2">{t(`Περιγραφή`, `Description`)}</label>
               <textarea 
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-700 bg-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium resize-none" 
+                className="w-full px-3 py-2.5 rounded-lg border border-gray-700 bg-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent text-[16.2px] font-medium resize-none" 
                 rows={5} 
                 placeholder={t(`Περιγράψτε τι συνέβη...`, `Describe what happened...`)}
                 required
@@ -82,7 +82,7 @@ export default function ReportIssueNeonDark() {
             {/* Evidence Upload */}
             <div>
               <label className="block text-[12.15px] font-bold text-white tracking-wider mb-2">{t(`Αποδεικτικά (προαιρετικά)`, `Evidence (optional)`)}</label>
-              <div className="border-2 border-dashed border-gray-700 rounded-xl p-4 text-center hover:border-cyan-300 hover:bg-emerald-900/30/30 transition-colors cursor-pointer">
+              <div className="border-2 border-dashed border-gray-700 rounded-xl p-4 text-center hover:border-emerald-300 hover:bg-emerald-900/30/30 transition-colors cursor-pointer">
                 <Upload className="w-5 h-5 text-white mx-auto mb-1" />
                 <p className="text-[12.5px] text-white font-medium">{t(`Ανεβάστε screenshots ή φωτογραφίες`, `Upload screenshots or photos`)}</p>
                 <p className="text-[10px] text-white mt-0.5">PNG, JPG {t(`έως`, `up to`)} 5MB</p>
@@ -90,7 +90,7 @@ export default function ReportIssueNeonDark() {
             </div>
 
             <div className="bg-gray-900 rounded-lg p-4 flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+              <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
               <p className="text-[13.5px] text-white font-medium leading-relaxed"><span className="font-bold text-white">{t(`Απόρρητο:`, `Privacy:`)}</span> {t(`Η αναφορά σας είναι εμπιστευτική.`, `Your report is confidential.`)}</p>
             </div>
 
@@ -100,7 +100,7 @@ export default function ReportIssueNeonDark() {
               <span>{t(`Αναμενόμενος χρόνος απόκρισης: <24 ώρες`, `Expected response time: <24 hours`)}</span>
             </div>
 
-            <button type="submit" className="w-full bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white py-2.5 rounded-full text-[12.15px] font-bold shadow-sm hover:bg-black transition-colors  tracking-wider">{t(`Υποβολή Αναφοράς`, `Submit Report`)}</button>
+            <button type="submit" className="w-full bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white py-2.5 rounded-full text-[12.15px] font-bold shadow-sm hover:bg-black transition-colors  tracking-wider">{t(`Υποβολή Αναφοράς`, `Submit Report`)}</button>
           </form>
         </div>
       ) : (

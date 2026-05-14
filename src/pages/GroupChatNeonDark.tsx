@@ -235,7 +235,7 @@ export default function GroupChatNeonDark() {
           {isMe && (
             <button
               onClick={() => handleDeleteMessage(msg.id)}
-              className="opacity-0 group-hover:opacity-100 p-1.5 text-white hover:text-red-500 hover:bg-red-50 transition-all rounded-full"
+              className="opacity-0 group-hover:opacity-100 p-1.5 text-white hover:text-emerald-9500 hover:bg-emerald-950 transition-all rounded-full"
               title={t("Διαγραφή μηνύματος", "Delete message")}
             >
               <X className="h-3.5 w-3.5" />
@@ -244,7 +244,7 @@ export default function GroupChatNeonDark() {
           <div
             className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed relative ${
               isMe
-                ? "bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white rounded-tr-sm shadow-sm"
+                ? "bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white rounded-tr-sm shadow-sm"
                 : "bg-gray-800 border border-gray-700 text-white rounded-tl-sm shadow-sm"
             }`}
           >
@@ -323,7 +323,7 @@ export default function GroupChatNeonDark() {
                     <select
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
-                      className="text-[11px] font-bold border border-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-cyan-500 bg-gray-900 text-white hover:bg-gray-700 cursor-pointer transition-colors max-w-[120px] truncate"
+                      className="text-[11px] font-bold border border-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-9500 bg-gray-900 text-white hover:bg-gray-700 cursor-pointer transition-colors max-w-[120px] truncate"
                     >
                       <option value="all">
                         {t("Όλοι οι Αποστολείς", "All Senders")}
@@ -335,13 +335,13 @@ export default function GroupChatNeonDark() {
                       ))}
                     </select>
                     <div className="relative group">
-                      <Search className="h-3.5 w-3.5 text-white absolute left-2.5 top-1/2 -translate-y-1/2 group-focus-within:text-cyan-400 transition-colors" />
+                      <Search className="h-3.5 w-3.5 text-white absolute left-2.5 top-1/2 -translate-y-1/2 group-focus-within:text-emerald-400 transition-colors" />
                       <input
                         type="text"
                         placeholder={t("Αναζήτηση...", "Search...")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-8 pr-3 py-1.5 text-xs border border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-500 w-32 xl:w-48 bg-gray-900 focus:bg-gray-800 transition-all"
+                        className="pl-8 pr-3 py-1.5 text-xs border border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-9500 w-32 xl:w-48 bg-gray-900 focus:bg-gray-800 transition-all"
                       />
                     </div>
                   </div>
@@ -357,7 +357,7 @@ export default function GroupChatNeonDark() {
                   {/* Info Toggle */}
                   <button
                     onClick={() => setShowInfo(!showInfo)}
-                    className={`transition-colors p-2 rounded-full ${showInfo ? "text-cyan-400 bg-emerald-900/30" : "text-white hover:text-white hover:bg-gray-700"}`}
+                    className={`transition-colors p-2 rounded-full ${showInfo ? "text-emerald-400 bg-emerald-900/30" : "text-white hover:text-white hover:bg-gray-700"}`}
                   >
                     <Info className="h-5 w-5" />
                   </button>
@@ -466,8 +466,8 @@ export default function GroupChatNeonDark() {
                 }}
                 className={`p-2.5 rounded-full transition-all flex items-center justify-center shrink-0 border ${
                   group.membersLocations?.[currentUser.id]?.sos
-                    ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500 animate-pulse"
-                    : "bg-red-50 text--400 border-red-200 hover:bg-red-100"
+                    ? "bg-emerald-600 text-white border-emerald-700 ring-2 ring-emerald-9500 animate-pulse"
+                    : "bg-emerald-950 text--400 border-emerald-800 hover:bg-emerald-900"
                 }`}
                 title={t("SOS / Βοήθεια", "SOS / Help")}
               >
@@ -487,7 +487,7 @@ export default function GroupChatNeonDark() {
                 <button
                   type="submit"
                   disabled={!newMessage.trim()}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2 bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white rounded-full hover:bg-gray-800 disabled:opacity-40 disabled:hover:bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white transition-all shadow-sm"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2 bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white rounded-full hover:bg-gray-800 disabled:opacity-40 disabled:hover:bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white transition-all shadow-sm"
                 >
                   <Send className="h-4 w-4 md:h-4.5 md:w-4.5" />
                 </button>
@@ -534,7 +534,7 @@ export default function GroupChatNeonDark() {
                       {event.tags.map((tag: string) => (
                         <span
                           key={tag}
-                          className="bg-emerald-900/30 text-cyan-400 px-2.5 py-1 rounded-md text-[9px] font-bold tracking-wide border border-emerald-800"
+                          className="bg-emerald-900/30 text-emerald-400 px-2.5 py-1 rounded-md text-[9px] font-bold tracking-wide border border-emerald-800"
                         >
                           {tag}
                         </span>
@@ -615,7 +615,7 @@ export default function GroupChatNeonDark() {
                     {isGroupAdmin && (
                       <button
                         onClick={() => setShowAddMemberModal(true)}
-                        className="flex items-center gap-1 text-[10px] font-bold text-cyan-400 hover:text-cyan-400 bg-emerald-900/30 hover:bg-emerald-900/50 px-2 py-1 rounded border border-emerald-800 transition-colors"
+                        className="flex items-center gap-1 text-[10px] font-bold text-emerald-400 hover:text-emerald-400 bg-emerald-900/30 hover:bg-emerald-900/50 px-2 py-1 rounded border border-emerald-800 transition-colors"
                       >
                         <UserPlus className="w-3 h-3" />{" "}
                         {t("Προσθήκη Μελών", "Add Members")}
@@ -659,7 +659,7 @@ export default function GroupChatNeonDark() {
                                 className={`w-full h-full object-cover transition-all ${!isCloseToEvent && member.id !== currentUser.id ? "blur-sm grayscale opacity-80" : ""}`}
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-white font-bold text-xs bg-emerald-900/30 text-cyan-400">
+                              <div className="w-full h-full flex items-center justify-center text-white font-bold text-xs bg-emerald-900/30 text-emerald-400">
                                 {member.name.substring(0, 2)}
                               </div>
                             )}
@@ -737,7 +737,7 @@ export default function GroupChatNeonDark() {
                       }}
                       role="switch"
                       aria-checked={isEphemeral}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#111827] focus:ring-offset-2 ${isEphemeral ? "bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white" : "bg-gray-200"}`}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#111827] focus:ring-offset-2 ${isEphemeral ? "bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white" : "bg-gray-200"}`}
                     >
                       <span className="sr-only">Toggle ephemeral mode</span>
                       <span
@@ -774,11 +774,11 @@ export default function GroupChatNeonDark() {
 
                     <button
                       onClick={() => setShowLocationConfigModal(true)}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 border rounded-lg transition-colors text-left ${isSharingLocation ? "bg-emerald-900/30 border-cyan-200 hover:bg-emerald-900/50" : "bg-gray-900 hover:bg-gray-700 border-gray-700"}`}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 border rounded-lg transition-colors text-left ${isSharingLocation ? "bg-emerald-900/30 border-emerald-800 hover:bg-emerald-900/50" : "bg-gray-900 hover:bg-gray-700 border-gray-700"}`}
                     >
                       <div>
                         <p
-                          className={`text-[12px] font-bold ${isSharingLocation ? "text-cyan-400" : "text-white"}`}
+                          className={`text-[12px] font-bold ${isSharingLocation ? "text-emerald-400" : "text-white"}`}
                         >
                           {isSharingLocation
                             ? t("Η Τοποθεσία Κοινοποιείται", "Location Shared")
@@ -788,7 +788,7 @@ export default function GroupChatNeonDark() {
                               )}
                         </p>
                         <p
-                          className={`text-[10px] mt-0.5 ${isSharingLocation ? "text-cyan-400/80" : "text-white"}`}
+                          className={`text-[10px] mt-0.5 ${isSharingLocation ? "text-emerald-400/80" : "text-white"}`}
                         >
                           {isSharingLocation
                             ? t("Διαχείριση ή Διακοπή", "Tap to manage or stop")
@@ -799,7 +799,7 @@ export default function GroupChatNeonDark() {
                         </p>
                       </div>
                       <MapPin
-                        className={`w-4 h-4 ${isSharingLocation ? "text-cyan-400" : "text-white"}`}
+                        className={`w-4 h-4 ${isSharingLocation ? "text-emerald-400" : "text-white"}`}
                       />
                     </button>
 
@@ -848,7 +848,7 @@ export default function GroupChatNeonDark() {
               <div className="space-y-2 pt-2">
                 <button
                   onClick={() => setShowReportModal(true)}
-                  className="w-full py-2.5 px-4 text-[11px] font-bold tracking-wide text--400 bg-red-50/50 hover:bg-red-50 border border-red-100 rounded-lg transition-colors flex justify-center items-center gap-2"
+                  className="w-full py-2.5 px-4 text-[11px] font-bold tracking-wide text--400 bg-emerald-950/50 hover:bg-emerald-950 border border-emerald-900 rounded-lg transition-colors flex justify-center items-center gap-2"
                 >
                   {t("Αναφορά Προβλήματος", "Report Safety Issue")}
                 </button>
@@ -945,7 +945,7 @@ export default function GroupChatNeonDark() {
             <div className="bg-gray-800 rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-800 animate-in zoom-in-95 duration-200">
               <div className="p-5 border-b border-gray-800 flex items-center justify-between sticky top-0 bg-gray-800/95 backdrop-blur-sm z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-900/30 rounded-full flex items-center justify-center text-cyan-400">
+                  <div className="w-10 h-10 bg-emerald-900/30 rounded-full flex items-center justify-center text-emerald-400">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
@@ -968,7 +968,7 @@ export default function GroupChatNeonDark() {
               <div className="p-5 space-y-6">
                 {isSharingLocation && (
                   <div className="bg-emerald-900/30 border border-emerald-800 rounded-xl p-4 flex flex-col gap-3">
-                    <div className="flex items-center gap-2 text-cyan-400">
+                    <div className="flex items-center gap-2 text-emerald-400">
                       <Navigation className="w-4 h-4 animate-pulse" />
                       <span className="text-sm font-bold">
                         {t(
@@ -996,7 +996,7 @@ export default function GroupChatNeonDark() {
                           },
                         ]);
                       }}
-                      className="w-full bg-gray-800 text--400 border border-red-200 hover:bg-red-50 py-2 rounded-lg text-xs font-bold tracking-wide"
+                      className="w-full bg-gray-800 text--400 border border-emerald-800 hover:bg-emerald-950 py-2 rounded-lg text-xs font-bold tracking-wide"
                     >
                       {t("Διακοπή Κοινοποίησης", "Stop Sharing Now")}
                     </button>
@@ -1061,7 +1061,7 @@ export default function GroupChatNeonDark() {
                     {["organizer", "selected", "all"].map((option) => (
                       <label
                         key={option}
-                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${locationConfig.shareWith === option ? "border-cyan-600 bg-emerald-900/30/30" : "border-gray-700 hover:bg-gray-900"}`}
+                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${locationConfig.shareWith === option ? "border-emerald-600 bg-emerald-900/30/30" : "border-gray-700 hover:bg-gray-900"}`}
                       >
                         <div className="flex items-center justify-center relative">
                           <input
@@ -1077,7 +1077,7 @@ export default function GroupChatNeonDark() {
                             }
                           />
                           <div
-                            className={`w-5 h-5 rounded-full border flex items-center justify-center ${locationConfig.shareWith === option ? "border-cyan-600 bg-cyan-600" : "border-gray-300"}`}
+                            className={`w-5 h-5 rounded-full border flex items-center justify-center ${locationConfig.shareWith === option ? "border-emerald-600 bg-emerald-600" : "border-gray-300"}`}
                           >
                             {locationConfig.shareWith === option && (
                               <span className="w-2 h-2 rounded-full bg-gray-800"></span>
@@ -1183,7 +1183,7 @@ export default function GroupChatNeonDark() {
                       },
                     ]);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
                 >
                   {isSharingLocation
                     ? t("Ενημέρωση Ρυθμίσεων", "Update Configuration")
@@ -1222,14 +1222,14 @@ export default function GroupChatNeonDark() {
                       t("Αντιγράφηκε στο πρόχειρο!", "Copied to clipboard!"),
                     );
                   }}
-                  className="text-xs font-bold text-cyan-400"
+                  className="text-xs font-bold text-emerald-400"
                 >
                   {t("Αντιγραφή", "Copy")}
                 </button>
               </div>
               <button
                 onClick={() => setShowSafetyLinkModal(false)}
-                className="w-full px-4 py-3 text-sm font-bold text-white bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                className="w-full px-4 py-3 text-sm font-bold text-white bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
               >
                 {t("Τέλος", "Done")}
               </button>
@@ -1240,7 +1240,7 @@ export default function GroupChatNeonDark() {
         {showLeaveModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-gray-800 rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-gray-800 animate-in zoom-in-95 duration-200">
-              <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
+              <div className="w-12 h-12 bg-emerald-950 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-9500">
                 <ArrowLeft className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-white mb-2">
@@ -1269,7 +1269,7 @@ export default function GroupChatNeonDark() {
                     setShowLeaveModal(false);
                     navigate(-1);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-all shadow-sm active:scale-[0.98]"
                 >
                   {t("Ναι, Αποχώρηση", "Yes, Leave Group")}
                 </button>
@@ -1287,7 +1287,7 @@ export default function GroupChatNeonDark() {
         {showDisableEphemeralModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-gray-800 rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-gray-800 animate-in zoom-in-95 duration-200">
-              <div className="w-12 h-12 bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-cyan-400">
+              <div className="w-12 h-12 bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-400">
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-white mb-2">
@@ -1316,7 +1316,7 @@ export default function GroupChatNeonDark() {
                     setShowDisableEphemeralModal(false);
                     setShowInfo(false);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
                 >
                   {t("Πρόταση στην Ομάδα", "Propose to Group")}
                 </button>
@@ -1335,7 +1335,7 @@ export default function GroupChatNeonDark() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-gray-800 rounded-2xl shadow-xl max-w-md w-full p-6 border border-gray-800 animate-in zoom-in-95 duration-200">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center text--400 shrink-0">
+                <div className="w-10 h-10 bg-emerald-950 rounded-full flex items-center justify-center text--400 shrink-0">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
@@ -1385,7 +1385,7 @@ export default function GroupChatNeonDark() {
                     );
                     setShowReportModal(false);
                   }}
-                  className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white hover:bg-gray-900 rounded-xl transition-all shadow-sm hover:shadow-md"
+                  className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white hover:bg-gray-900 rounded-xl transition-all shadow-sm hover:shadow-md"
                 >
                   {t("Υποβολή", "Submit Report")}
                 </button>
@@ -1435,12 +1435,12 @@ export default function GroupChatNeonDark() {
                     name="eta"
                     type="number"
                     placeholder={t("ETA (λεπτά)", "ETA (mins)")}
-                    className="flex-1 w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                    className="flex-1 w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-9500 focus:border-emerald-9500 outline-none"
                     min="1"
                   />
                   <button
                     type="submit"
-                    className="px-4 py-3 text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-700 rounded-xl shadow-sm transition-all whitespace-nowrap"
+                    className="px-4 py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition-all whitespace-nowrap"
                   >
                     {t("Αποστολή", "Send")}
                   </button>
@@ -1449,7 +1449,7 @@ export default function GroupChatNeonDark() {
                 {[
                   {
                     text: t("Είμαι στον δρόμο", "I'm on my way"),
-                    color: "bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white hover:bg-gray-900",
+                    color: "bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white hover:bg-gray-900",
                   },
                   {
                     text: t("Έφτασα", "I arrived"),
@@ -1464,7 +1464,7 @@ export default function GroupChatNeonDark() {
                       "Είμαι στο σημείο συνάντησης",
                       "I'm at the meeting point",
                     ),
-                    color: "bg-cyan-600 text-white hover:bg-cyan-700",
+                    color: "bg-emerald-600 text-white hover:bg-emerald-700",
                   },
                 ].map((status, idx) => (
                   <button
@@ -1503,7 +1503,7 @@ export default function GroupChatNeonDark() {
             <div className="bg-gray-800 rounded-2xl shadow-xl max-w-md w-full max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
               <div className="p-4 sm:p-5 border-b border-gray-800 flex items-center justify-between bg-gray-800 relative z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-900/30 rounded-full flex items-center justify-center text-cyan-400">
+                  <div className="w-10 h-10 bg-emerald-900/30 rounded-full flex items-center justify-center text-emerald-400">
                     <UserPlus className="w-5 h-5" />
                   </div>
                   <div>
@@ -1541,7 +1541,7 @@ export default function GroupChatNeonDark() {
                     )}
                     value={memberAddSearchQuery}
                     onChange={(e) => setMemberAddSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 text-[13px] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-600 bg-gray-800 transition-all shadow-sm font-medium"
+                    className="w-full pl-9 pr-3 py-2.5 text-[13px] border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 bg-gray-800 transition-all shadow-sm font-medium"
                   />
                 </div>
               </div>
@@ -1568,7 +1568,7 @@ export default function GroupChatNeonDark() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-cyan-400 font-bold text-xs bg-emerald-900/30">
+                              <div className="w-full h-full flex items-center justify-center text-emerald-400 font-bold text-xs bg-emerald-900/30">
                                 {member.name.substring(0, 2)}
                               </div>
                             )}
@@ -1603,7 +1603,7 @@ export default function GroupChatNeonDark() {
                               },
                             ]);
                           }}
-                          className="text-[12px] font-semibold capitalize tracking-tight px-3 py-1.5 rounded-lg border flex items-center gap-1 transition-all bg-cyan-600 text-white border-cyan-600 hover:bg-cyan-700 shadow-sm"
+                          className="text-[12px] font-semibold capitalize tracking-tight px-3 py-1.5 rounded-lg border flex items-center gap-1 transition-all bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 shadow-sm"
                         >
                           <UserPlus className="w-3 h-3" />{" "}
                           {t("Προσθήκη", "Add")}

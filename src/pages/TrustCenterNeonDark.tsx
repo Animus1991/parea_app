@@ -41,7 +41,7 @@ export default function TrustCenterNeonDark() {
              <div className="flex items-center justify-between">
                <div className="flex items-center gap-2 text-[13.5px] text-white font-medium">
                  <UserCheck className="h-3.5 w-3.5 text-white" />{t(`Ταυτότητα`, `Government ID`)}</div>
-               <span className="text-[11.2px] text-cyan-400 font-bold cursor-pointer hover:underline tracking-wide">{t(`Επαλήθευση`, `Verify`)}</span>
+               <span className="text-[11.2px] text-emerald-400 font-bold cursor-pointer hover:underline tracking-wide">{t(`Επαλήθευση`, `Verify`)}</span>
              </div>
            </div>
            
@@ -82,7 +82,7 @@ export default function TrustCenterNeonDark() {
       {/* Trust History Timeline */}
       <Card className="p-5">
         <h3 className="text-[12.5px] font-bold text-white tracking-wide mb-4 flex items-center gap-1.5">
-          <TrendingUp className="w-3.5 h-3.5 text-cyan-400" />{t(`Ιστορικό Εμπιστοσύνης`, `Trust History`)}
+          <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />{t(`Ιστορικό Εμπιστοσύνης`, `Trust History`)}
         </h3>
         <div className="space-y-0">
           {[
@@ -94,7 +94,7 @@ export default function TrustCenterNeonDark() {
           ].map((item, i) => (
             <div key={i} className="flex gap-3">
               <div className="flex flex-col items-center">
-                <div className={`w-2 h-2 rounded-full mt-1.5 ${item.positive ? 'bg-green-500' : 'bg-red-400'}`} />
+                <div className={`w-2 h-2 rounded-full mt-1.5 ${item.positive ? 'bg-green-500' : 'bg-emerald-400'}`} />
                 {i < 4 && <div className="w-px flex-1 bg-gray-200" />}
               </div>
               <div className="pb-4">

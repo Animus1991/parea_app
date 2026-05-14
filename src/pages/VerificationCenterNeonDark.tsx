@@ -32,7 +32,7 @@ export default function VerificationCenterNeonDark() {
         <Card className="p-5">
            <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                 <div className="w-10 h-10 bg-emerald-900/30 text-cyan-400 rounded-lg flex items-center justify-center">
+                 <div className="w-10 h-10 bg-emerald-900/30 text-emerald-400 rounded-lg flex items-center justify-center">
                     <Mail className="w-5 h-5" />
                  </div>
                  <div>
@@ -90,15 +90,15 @@ export default function VerificationCenterNeonDark() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="bg-emerald-900/30 border border-emerald-800 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
-              <Mail className="w-4 h-4 text-cyan-400" />
-              <span className="text-[13.8px] font-bold text-cyan-400">Email</span>
+              <Mail className="w-4 h-4 text-emerald-400" />
+              <span className="text-[13.8px] font-bold text-emerald-400">Email</span>
             </div>
             <ul className="space-y-1 text-[12.5px] text-white font-medium">
               <li>• {t(`Βασική πρόσβαση`, `Basic access`)}</li>
               <li>• {t(`Εγγραφή σε ομάδες`, `Join groups`)}</li>
               <li>• {t(`Ομαδικές συνομιλίες`, `Group chats`)}</li>
             </ul>
-            <span className="mt-2 inline-block text-[11.2px] font-bold text-cyan-400 bg-gray-800 px-2 py-0.5 rounded-full">~1 {t(`λεπτό`, `min`)}</span>
+            <span className="mt-2 inline-block text-[11.2px] font-bold text-emerald-400 bg-gray-800 px-2 py-0.5 rounded-full">~1 {t(`λεπτό`, `min`)}</span>
           </div>
           <div className="bg-purple-50 border border-purple-100 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
@@ -129,7 +129,7 @@ export default function VerificationCenterNeonDark() {
 
       {/* Trust Score Impact */}
       <Card className="p-4 flex items-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-black text-[18px] shrink-0">72%</div>
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-9500 to-emerald-500 flex items-center justify-center text-white font-black text-[18px] shrink-0">72%</div>
         <div className="flex-1">
           <p className="text-[13.8px] font-bold text-white">{t(`Τρέχον Trust Score`, `Current Trust Score`)}</p>
           <p className="text-[11.2px] text-white font-medium mt-0.5">{t(`Ολοκληρώστε την επαλήθευση τηλεφώνου για +15%`, `Complete phone verification for +15%`)}</p>

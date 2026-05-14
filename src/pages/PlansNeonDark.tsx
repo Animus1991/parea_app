@@ -44,7 +44,7 @@ export default function PlansNeonDark() {
           onClick={() => setActiveTab('upcoming')}
           className={`pb-3 text-[11.506875px] font-bold tracking-wide transition-colors whitespace-nowrap ${
             activeTab === 'upcoming' 
-              ? 'border-b-2 border-cyan-600 text-cyan-400' 
+              ? 'border-b-2 border-emerald-600 text-emerald-400' 
               : 'text-white hover:text-white'
           }`}
         >
@@ -54,7 +54,7 @@ export default function PlansNeonDark() {
           onClick={() => setActiveTab('pending')}
           className={`pb-3 text-[11.506875px] font-bold tracking-wide transition-colors whitespace-nowrap ${
             activeTab === 'pending' 
-              ? 'border-b-2 border-cyan-600 text-cyan-400' 
+              ? 'border-b-2 border-emerald-600 text-emerald-400' 
               : 'text-white hover:text-white'
           }`}
         >
@@ -64,7 +64,7 @@ export default function PlansNeonDark() {
           onClick={() => setActiveTab('past')}
           className={`pb-3 text-[11.506875px] font-bold tracking-wide transition-colors whitespace-nowrap ${
             activeTab === 'past' 
-              ? 'border-b-2 border-cyan-600 text-cyan-400' 
+              ? 'border-b-2 border-emerald-600 text-emerald-400' 
               : 'text-white hover:text-white'
           }`}
         >
@@ -78,7 +78,7 @@ export default function PlansNeonDark() {
           <Card key={event.id} className="rounded-xl p-4 sm:p-5 border border-emerald-800 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-700 rounded-lg overflow-hidden relative">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
-              <div className="absolute top-2 left-2 bg-cyan-600 text-white px-2 py-0.5 rounded text-[10.6875px] font-bold tracking-wide">
+              <div className="absolute top-2 left-2 bg-emerald-600 text-white px-2 py-0.5 rounded text-[10.6875px] font-bold tracking-wide">
                 {t(`Επιβεβαιωμένο`, `Confirmed`)}
               </div>
             </div>
@@ -93,7 +93,7 @@ export default function PlansNeonDark() {
                     const days = differenceInDays(parseISO(event.date), new Date());
                     const hours = differenceInHours(parseISO(event.date), new Date());
                     if (days <= 0 && hours > 0) return <span className="text-[10.639999999999999px] font-bold text--400 bg-orange-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">{t(`σε`, `in`)} {hours}h</span>;
-                    if (days > 0 && days <= 7) return <span className="text-[10.639999999999999px] font-bold text-cyan-400 bg-emerald-900/30 px-1.5 py-0.5 rounded mt-0.5 inline-block">{t(`σε`, `in`)} {days} {t(`μέρες`, `days`)}</span>;
+                    if (days > 0 && days <= 7) return <span className="text-[10.639999999999999px] font-bold text-emerald-400 bg-emerald-900/30 px-1.5 py-0.5 rounded mt-0.5 inline-block">{t(`σε`, `in`)} {days} {t(`μέρες`, `days`)}</span>;
                     return null;
                   })()}
                 </div>
@@ -121,13 +121,13 @@ export default function PlansNeonDark() {
               </div>
 
               <div className="mt-auto pt-4 border-t border-gray-800 flex gap-2">
-                <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 bg-emerald-900/30 hover:bg-emerald-900/50 text-cyan-400 py-2 rounded-lg text-[12.825px] font-bold transition-colors flex items-center justify-center gap-1.5">
+                <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 bg-emerald-900/30 hover:bg-emerald-900/50 text-emerald-400 py-2 rounded-lg text-[12.825px] font-bold transition-colors flex items-center justify-center gap-1.5">
                   <MessageCircle className="h-4 w-4" /> {t(`Ομαδική Συνομιλία`, `Group Chat`)}
                 </button>
                 <button onClick={() => navigate(`/events/${event.id}`)} className="bg-gray-800 border border-gray-700 hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-[12.825px] font-bold transition-colors">
                   {t(`Λεπτομέρειες`, `Details`)}
                 </button>
-                <button className="bg-gray-800 border border-red-200 hover:bg-red-50 text-red-500 px-3 py-2 rounded-lg text-[12.825px] font-bold transition-colors flex items-center gap-1">
+                <button className="bg-gray-800 border border-emerald-800 hover:bg-emerald-950 text-emerald-9500 px-3 py-2 rounded-lg text-[12.825px] font-bold transition-colors flex items-center gap-1">
                   <XCircle className="h-3.5 w-3.5" /> {t(`Αποχώρηση`, `Leave`)}
                 </button>
               </div>
@@ -138,7 +138,7 @@ export default function PlansNeonDark() {
         {upcomingEvents.length === 0 && (
           <div className="text-center py-12 bg-gray-900 rounded-xl border border-dashed border-gray-700">
             <p className="text-white font-medium text-[17.099999999999998px] mb-4">{t(`Δεν υπάρχουν επερχόμενα σχέδια.`, `No upcoming confirmed plans.`)}</p>
-            <button className="bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white px-5 py-2 rounded-full text-[13.5375px] font-bold" onClick={() => navigate('/')}>{t(`Εξερεύνηση`, `Explore Experiences`)}</button>
+            <button className="bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white px-5 py-2 rounded-full text-[13.5375px] font-bold" onClick={() => navigate('/')}>{t(`Εξερεύνηση`, `Explore Experiences`)}</button>
           </div>
         )}
       </div>
@@ -191,8 +191,8 @@ export default function PlansNeonDark() {
               
               {index === 0 ? (
                 <div className="bg-emerald-900/30 border border-emerald-800 p-3 rounded-lg flex items-center justify-between mt-auto">
-                  <div className="text-[12.825px] font-bold text-cyan-400">{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
-                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="text-[10.6875px] font-bold bg-cyan-600 text-white px-3 py-1.5 rounded hover:bg-cyan-700 tracking-wide">
+                  <div className="text-[12.825px] font-bold text-emerald-400">{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
+                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="text-[10.6875px] font-bold bg-emerald-600 text-white px-3 py-1.5 rounded hover:bg-emerald-700 tracking-wide">
                     {t(`Αξιολόγηση`, `Rate Experience`)}
                   </button>
                 </div>

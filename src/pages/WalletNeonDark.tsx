@@ -22,13 +22,13 @@ export default function WalletNeonDark() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-6 bg-cyan-600 text-white border-0 shadow-md">
-          <div className="flex items-center gap-2 text-cyan-100 mb-2">
+        <Card className="p-6 bg-emerald-600 text-white border-0 shadow-md">
+          <div className="flex items-center gap-2 text-emerald-900 mb-2">
             <Euro className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
           <p className="text-4xl font-black mb-4">€345.50</p>
-          <Button className="w-full bg-gray-800 text-cyan-400 hover:bg-gray-700 border-0">
+          <Button className="w-full bg-gray-800 text-emerald-400 hover:bg-gray-700 border-0">
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
         </Card>
@@ -71,7 +71,7 @@ export default function WalletNeonDark() {
           {transactions.map((tx) => (
             <div key={tx.id} className="p-4 md:p-6 flex items-center justify-between hover:bg-gray-900 transition-colors">
               <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${tx.type === 'Payout' ? 'bg-rose-50 text--400' : 'bg-emerald-50 text--400'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${tx.type === 'Payout' ? 'bg-teal-950 text--400' : 'bg-emerald-50 text--400'}`}>
                   {tx.type === 'Payout' ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
                 </div>
                 <div>

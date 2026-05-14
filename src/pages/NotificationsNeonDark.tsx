@@ -23,7 +23,7 @@ export default function NotificationsNeonDark() {
       time: t(`Πριν 1 ώρα`, `1 hour ago`),
       read: false,
       icon: MessageCircle,
-      color: 'bg-emerald-900/50 text-cyan-400'
+      color: 'bg-emerald-900/50 text-emerald-400'
     },
     {
       id: 'n3',
@@ -64,7 +64,7 @@ export default function NotificationsNeonDark() {
           <h1 className="text-[22.33807213275px] md:text-[26.7902365993px] font-bold text-white">{t(`Ειδοποιήσεις`, `Notifications`)}</h1>
           <p className="text-white font-medium text-[13.551608211075px] md:text-[16.25212883329px] mt-1">{t(`Μείνετε ενημερωμένοι`, `Stay up to date`)}</p>
         </div>
-        <button className="text-[14.2457535px] font-bold text-cyan-400 hover:text-cyan-400">
+        <button className="text-[14.2457535px] font-bold text-emerald-400 hover:text-emerald-400">
           {t(`Σήμανση όλων ως αναγνωσμένα`, `Mark all as read`)}
         </button>
       </div>
@@ -84,17 +84,17 @@ export default function NotificationsNeonDark() {
                   <p className="text-[13.5px] leading-relaxed text-white font-medium">{notif.message}</p>
                   <span className="text-[11.25px] font-bold text-white tracking-wide mt-1 block">{notif.time}</span>
                   {notif.type === 'match' && (
-                    <button onClick={() => navigate('/plans')} className="mt-2 text-[11.2px] font-bold text-cyan-400 bg-emerald-900/50 px-2.5 py-1 rounded-full hover:bg-cyan-200 transition-colors inline-flex items-center gap-1">
+                    <button onClick={() => navigate('/plans')} className="mt-2 text-[11.2px] font-bold text-emerald-400 bg-emerald-900/50 px-2.5 py-1 rounded-full hover:bg-emerald-800 transition-colors inline-flex items-center gap-1">
                       {t(`Δείτε ομάδα`, `View group`)} <ArrowRight className="w-2.5 h-2.5" />
                     </button>
                   )}
                   {notif.type === 'message' && (
-                    <button onClick={() => navigate('/chats')} className="mt-2 text-[11.2px] font-bold text-cyan-400 bg-emerald-900/50 px-2.5 py-1 rounded-full hover:bg-cyan-200 transition-colors inline-flex items-center gap-1">
+                    <button onClick={() => navigate('/chats')} className="mt-2 text-[11.2px] font-bold text-emerald-400 bg-emerald-900/50 px-2.5 py-1 rounded-full hover:bg-emerald-800 transition-colors inline-flex items-center gap-1">
                       {t(`Απάντηση`, `Reply`)} <ArrowRight className="w-2.5 h-2.5" />
                     </button>
                   )}
                 </div>
-                <span className="w-2.5 h-2.5 bg-cyan-500 rounded-full shrink-0 mt-2"></span>
+                <span className="w-2.5 h-2.5 bg-emerald-9500 rounded-full shrink-0 mt-2"></span>
               </div>
             );
           })}

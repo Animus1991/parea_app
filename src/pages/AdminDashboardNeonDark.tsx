@@ -19,12 +19,12 @@ export default function AdminDashboardNeonDark() {
           <p className="text-[25px] font-black text-white mt-1">127</p>
           <p className="text-[11.2px] text-green-500 font-bold flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />+8%</p>
         </Card>
-        <Card className="p-4 border-t-4 border-t-cyan-500">
+        <Card className="p-4 border-t-4 border-t-emerald-9500">
           <h3 className="text-[12.1125px] font-bold text-white tracking-wider">{t(`Αναφορές`, `Reports`)}</h3>
           <p className="text-[25px] font-black text-white mt-1">4</p>
           <p className="text-[11.2px] text-amber-500 font-bold">{t(`εκκρεμείς`, `pending`)}</p>
         </Card>
-        <Card className="p-4 border-t-4 border-t-red-500">
+        <Card className="p-4 border-t-4 border-t-emerald-9500">
           <h3 className="text-[12.1125px] font-bold text-white tracking-wider">{t(`Αποκλεισμένοι`, `Banned`)}</h3>
           <p className="text-[25px] font-black text-white mt-1">1</p>
           <p className="text-[11.2px] text-white font-medium">{t(`συνολικά`, `total`)}</p>
@@ -57,9 +57,9 @@ export default function AdminDashboardNeonDark() {
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="text-[11.2px] text-white font-medium">{t(`Επαληθευμένοι`, `Verified`)}</span>
-              <span className="text-[12.5px] font-bold text-cyan-400">72%</span>
+              <span className="text-[12.5px] font-bold text-emerald-400">72%</span>
             </div>
-            <div className="w-full bg-gray-700 h-1.5 rounded-full"><div className="bg-cyan-500 h-full rounded-full" style={{ width: '72%' }} /></div>
+            <div className="w-full bg-gray-700 h-1.5 rounded-full"><div className="bg-emerald-9500 h-full rounded-full" style={{ width: '72%' }} /></div>
           </div>
         </div>
       </Card>
@@ -79,20 +79,20 @@ export default function AdminDashboardNeonDark() {
               </div>
               <div className="flex gap-2">
                 <button className="text-[18px]  tracking-wider bg-gray-700 hover:bg-gray-200 text-white px-3 py-1.5 rounded font-bold transition-colors shadow-sm border border-gray-700">{t(`Εξέταση`, `Review`)}</button>
-                <button className="text-[18px]  tracking-wider bg-red-50 hover:bg-red-100 text--400 px-3 py-1.5 rounded font-bold transition-colors border border-red-200">{t(`Αποκλεισμός`, `Ban`)}</button>
+                <button className="text-[18px]  tracking-wider bg-emerald-950 hover:bg-emerald-900 text--400 px-3 py-1.5 rounded font-bold transition-colors border border-emerald-800">{t(`Αποκλεισμός`, `Ban`)}</button>
               </div>
             </Card>
 
-            <Card className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-red-200 bg-red-50/30">
+            <Card className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-emerald-800 bg-emerald-950/30">
               <div className="flex items-start gap-3">
-                 <div className="mt-1"><ShieldAlert className="h-4 w-4 text-red-500" /></div>
+                 <div className="mt-1"><ShieldAlert className="h-4 w-4 text-emerald-9500" /></div>
                  <div>
                    <p className="font-bold text-white text-[18px]">{t(`Ύποπτος λογαριασμός — πολλαπλές no-shows`, `Suspicious account — multiple no-shows`)}</p>
                    <p className="text-[15px] text-white mt-0.5 leading-relaxed">{t(`3 no-shows τον τελευταίο μήνα`, `3 no-shows in the last month`)}</p>
                  </div>
               </div>
               <div className="flex gap-2 shrink-0">
-                <button className="text-[18px]  tracking-wider bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-bold shadow-sm transition-colors">{t(`Αναστολή`, `Suspend`)}</button>
+                <button className="text-[18px]  tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded font-bold shadow-sm transition-colors">{t(`Αναστολή`, `Suspend`)}</button>
               </div>
             </Card>
           </div>
@@ -110,13 +110,13 @@ export default function AdminDashboardNeonDark() {
                   <label className="text-[15px] font-bold text-white mb-1.5 block">{t(`Email ή ID`, `Email or ID`)}</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white" />
-                    <input type="text" placeholder={t(`Αναζήτηση...`, `Search...`)} className="w-full pl-9 pr-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none" />
+                    <input type="text" placeholder={t(`Αναζήτηση...`, `Search...`)} className="w-full pl-9 pr-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none" />
                   </div>
                 </div>
 
                 <div>
                   <label className="text-[15px] font-bold text-white mb-1.5 block">{t(`Ενέργεια`, `Action`)}</label>
-                  <select className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none bg-gray-800">
+                  <select className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-gray-800">
                     <option>{t(`Προειδοποίηση`, `Warning`)}</option>
                     <option>{t(`Αναστολή 7 ημέρες`, `Suspend 7 days`)}</option>
                     <option>{t(`Μόνιμος αποκλεισμός`, `Permanent ban`)}</option>
@@ -126,10 +126,10 @@ export default function AdminDashboardNeonDark() {
                 
                 <div>
                   <label className="text-[15px] font-bold text-white mb-1.5 block">{t(`Σημείωση`, `Note`)}</label>
-                  <textarea rows={3} placeholder={t(`Αιτιολογία...`, `Reason...`)} className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none resize-none"></textarea>
+                  <textarea rows={3} placeholder={t(`Αιτιολογία...`, `Reason...`)} className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none resize-none"></textarea>
                 </div>
                 
-                <Button className="w-full bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white">{t(`Εφαρμογή`, `Apply`)}</Button>
+                <Button className="w-full bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white">{t(`Εφαρμογή`, `Apply`)}</Button>
               </div>
             </Card>
           </div>

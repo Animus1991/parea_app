@@ -99,7 +99,7 @@ export default function MyCalendarNeonDark() {
                 {days.map((day, i) => (
                   <div key={i} className="text-center">
                     <div className="text-[10px] font-bold text-white tracking-wide">{format(day, 'EEE')}</div>
-                    <div className={`mt-1 w-8 h-8 mx-auto flex items-center justify-center rounded-full text-sm font-bold ${isToday(day) ? 'bg-cyan-600 text-white' : 'text-white'}`}>
+                    <div className={`mt-1 w-8 h-8 mx-auto flex items-center justify-center rounded-full text-sm font-bold ${isToday(day) ? 'bg-emerald-600 text-white' : 'text-white'}`}>
                       {format(day, 'd')}
                     </div>
                   </div>
@@ -162,7 +162,7 @@ export default function MyCalendarNeonDark() {
                       key={day.toISOString()}
                       className={`aspect-square flex flex-col items-center justify-center rounded-lg cursor-pointer transition-colors ${
                         isToday(day)
-                          ? 'bg-cyan-600 text-white'
+                          ? 'bg-emerald-600 text-white'
                           : dayEvents.length > 0
                             ? 'bg-emerald-900/30 hover:bg-emerald-900/50'
                             : 'hover:bg-gray-900'
@@ -172,7 +172,7 @@ export default function MyCalendarNeonDark() {
                         {format(day, 'd')}
                       </span>
                       {dayEvents.length > 0 && (
-                        <div className={`w-1.5 h-1.5 rounded-full mt-0.5 ${isToday(day) ? 'bg-gray-800' : 'bg-cyan-600'}`} />
+                        <div className={`w-1.5 h-1.5 rounded-full mt-0.5 ${isToday(day) ? 'bg-gray-800' : 'bg-emerald-600'}`} />
                       )}
                     </div>
                   );
@@ -192,7 +192,7 @@ export default function MyCalendarNeonDark() {
                       <div className="text-[10px] font-bold text-white w-12 shrink-0">
                         {format(event.parsedDate, 'MMM d')}
                       </div>
-                      <div className="w-2 h-2 rounded-full bg-cyan-600 shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" />
                       <div className="font-medium text-white text-xs line-clamp-1 flex-1">{event.title}</div>
                       <span className="text-[10px] text--400 font-bold bg-emerald-50 px-2 py-0.5 rounded-full whitespace-nowrap">{t('Επιβεβαιώθηκε', 'Confirmed')}</span>
                     </div>

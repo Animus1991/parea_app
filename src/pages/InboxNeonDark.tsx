@@ -73,7 +73,7 @@ export default function InboxNeonDark() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t(`Αναζήτηση συνομιλιών...`, `Search conversations...`)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-700 text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-700 text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-emerald-9500"
           />
         </div>
 
@@ -102,7 +102,7 @@ export default function InboxNeonDark() {
             >
               <div className="relative shrink-0">
                 <img src={chat.image} alt={chat.title} className="w-12 h-12 rounded-full object-cover" />
-                {chat.isPinned && <Pin className="absolute -top-1 -right-1 w-3.5 h-3.5 text-cyan-400 fill-cyan-600" />}
+                {chat.isPinned && <Pin className="absolute -top-1 -right-1 w-3.5 h-3.5 text-emerald-400 fill-emerald-600" />}
                 {chat.online > 0 && (
                   <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
                 )}
@@ -113,11 +113,11 @@ export default function InboxNeonDark() {
                   <span className="text-[11.25px] text-white font-medium shrink-0 ml-2">{chat.time}</span>
                 </div>
                 {chat.isTyping ? (
-                  <p className="text-[13.5px] text-cyan-400 font-medium mt-0.5 flex items-center gap-1">
+                  <p className="text-[13.5px] text-emerald-400 font-medium mt-0.5 flex items-center gap-1">
                     <span className="flex gap-0.5">
-                      <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <span className="w-1 h-1 bg-emerald-9500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-1 h-1 bg-emerald-9500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-1 h-1 bg-emerald-9500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                     </span>
                     {t(`κάποιος γράφει...`, `someone is typing...`)}
                   </p>
@@ -127,11 +127,11 @@ export default function InboxNeonDark() {
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-[11.25px] text-white font-medium">{chat.participants} {t(`μέλη`, `members`)}</span>
                   {chat.online > 0 && <span className="text-[11.25px] text-green-500 font-bold">{chat.online} online</span>}
-                  {chat.timeRemaining && <span className="text-[11.25px] text-cyan-400 font-bold flex items-center gap-0.5"><Clock className="w-3 h-3" />{chat.timeRemaining}</span>}
+                  {chat.timeRemaining && <span className="text-[11.25px] text-emerald-400 font-bold flex items-center gap-0.5"><Clock className="w-3 h-3" />{chat.timeRemaining}</span>}
                 </div>
               </div>
               {chat.unread > 0 && (
-                <span className="bg-cyan-600 text-white text-[12.5px] font-bold w-5 h-5 flex items-center justify-center rounded-full shrink-0">{chat.unread}</span>
+                <span className="bg-emerald-600 text-white text-[12.5px] font-bold w-5 h-5 flex items-center justify-center rounded-full shrink-0">{chat.unread}</span>
               )}
             </div>
           ))
