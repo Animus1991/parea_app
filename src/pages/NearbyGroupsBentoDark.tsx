@@ -55,7 +55,7 @@ const GroupImage = ({
   const [error, setError] = useState(false);
   return error ? (
     <div
-      className={`flex items-center justify-center bg-emerald-900/30 text-cyan-300 ${className}`}
+      className={`flex items-center justify-center bg-emerald-900/30 text-emerald-700 ${className}`}
     >
       <MapIcon className="w-8 h-8 opacity-50" />
     </div>
@@ -350,7 +350,7 @@ export default function NearbyGroupsBentoDark() {
                 "Αναζήτηση κοντινών περιοχών ή ομάδων...",
                 "Search nearby areas or groups...",
               )}
-              className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-gray-800 border-gray-700 text-white/95 backdrop-blur shadow-lg focus:outline-none focus:ring-2 focus:ring-cyan-600 text-sm font-medium"
+              className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-gray-800 border-gray-700 text-white/95 backdrop-blur shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-600 text-sm font-medium"
             />
           </div>
           <button className="h-11 px-4 bg-gray-800 border-gray-700 text-white/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-white hover:text-emerald-400 transition-colors pointer-events-auto">
@@ -380,7 +380,7 @@ export default function NearbyGroupsBentoDark() {
                 max="25"
                 value={radius}
                 onChange={(e) => setRadius(parseInt(e.target.value))}
-                className="flex-1 accent-cyan-600"
+                className="flex-1 accent-emerald-600"
               />
               <span className="text-xs font-bold text-emerald-400 w-8">
                 {radius}km
@@ -388,7 +388,7 @@ export default function NearbyGroupsBentoDark() {
             </div>
 
             <div className="flex gap-2 mt-4 overflow-x-auto noscrollbar pb-1">
-              <button className="px-3 py-1.5 bg-cyan-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
+              <button className="px-3 py-1.5 bg-emerald-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
                 {t("Όλα", "All Matches")}
               </button>
               <button className="px-3 py-1.5 bg-gray-900 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-800 border border-gray-700">
@@ -404,7 +404,7 @@ export default function NearbyGroupsBentoDark() {
             {localGroups.map((group, idx) => (
               <div
                 key={idx}
-                className={`p-3 border ${selectedEventId === group.id ? "border-cyan-500 shadow-md ring-1 ring-cyan-500" : "border-gray-800"} rounded-xl hover:border-cyan-300 hover:shadow-md transition-all cursor-pointer group flex gap-3 bg-gray-800 border-gray-700 text-white`}
+                className={`p-3 border ${selectedEventId === group.id ? "border-emerald-9500 shadow-md ring-1 ring-emerald-9500" : "border-gray-800"} rounded-xl hover:border-emerald-700 hover:shadow-md transition-all cursor-pointer group flex gap-3 bg-gray-800 border-gray-700 text-white`}
                 onClick={() => {
                   setSelectedEventId(group.id);
                   setMapCenter({ lat: group.lat, lng: group.lng });
@@ -557,7 +557,7 @@ export default function NearbyGroupsBentoDark() {
             <input
               type="text"
               placeholder="Search nearby areas or groups..."
-              className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-cyan-600 text-sm font-medium"
+              className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-emerald-600 text-sm font-medium"
             />
           </div>
         )}
@@ -609,7 +609,7 @@ export default function NearbyGroupsBentoDark() {
           }}
         />
         <div
-          className="absolute top-0 bottom-0 -right-2 w-4 cursor-ew-resize hover:bg-cyan-500/10 transition-all hidden md:block z-50 pointer-events-auto"
+          className="absolute top-0 bottom-0 -right-2 w-4 cursor-ew-resize hover:bg-emerald-9500/10 transition-all hidden md:block z-50 pointer-events-auto"
           onMouseDown={() => setIsDragging(true)}
         />
 
@@ -645,7 +645,7 @@ export default function NearbyGroupsBentoDark() {
               max="25"
               value={radius}
               onChange={(e) => setRadius(parseInt(e.target.value))}
-              className="flex-1 accent-cyan-600"
+              className="flex-1 accent-emerald-600"
             />
             <span className="text-xs font-bold text-emerald-400 w-8">
               {radius}km
@@ -653,7 +653,7 @@ export default function NearbyGroupsBentoDark() {
           </div>
 
           <div className="flex gap-2 mt-4 overflow-x-auto noscrollbar pb-1">
-            <button className="px-3 py-1.5 bg-cyan-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
+            <button className="px-3 py-1.5 bg-emerald-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
               {t("Όλα", "All Matches")}
             </button>
             <button className="px-3 py-1.5 bg-gray-900 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-800 border border-gray-700">
@@ -669,7 +669,7 @@ export default function NearbyGroupsBentoDark() {
           {localGroups.map((group, idx) => (
             <div
               key={idx}
-              className="p-3 border border-gray-800 rounded-xl hover:border-cyan-300 hover:shadow-md transition-all cursor-pointer group flex gap-3 bg-gray-800 border-gray-700 text-white"
+              className="p-3 border border-gray-800 rounded-xl hover:border-emerald-700 hover:shadow-md transition-all cursor-pointer group flex gap-3 bg-gray-800 border-gray-700 text-white"
               onClick={() => navigate(`/events/${group.id}`)}
             >
               <div className="w-16 h-16 rounded-lg bg-gray-800 border border-gray-700 overflow-hidden shrink-0">

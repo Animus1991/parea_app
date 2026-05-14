@@ -17,11 +17,11 @@ export default function LoginBentoDark() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-[#FDFCFB]">
-      <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-xl border-gray-800">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-gradient-to-br from-gray-950 via-gray-900 to-emerald-950">
+      <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-2xl border-gray-800 bg-gray-900">
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center text-4xl font-black tracking-tight text-white mb-4 font-['Outfit']">
-             NAKAMAS
+          <div className="flex items-center justify-center text-4xl font-black tracking-tight mb-4 font-['Outfit']">
+             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">NAKAMAS</span>
           </div>
           <h1 className="text-2xl font-bold text-white">{t('Καλώς ήρθατε', 'Welcome back')}</h1>
           <p className="text-xs text-white font-medium">{t('Συνδεθείτε για να ανακαλύψετε αξιόπιστες ομάδες και εμπειρίες.', 'Log in to discover trusted groups and experiences.')}</p>
@@ -36,7 +36,7 @@ export default function LoginBentoDark() {
               <button 
                 key={user.id}
                 onClick={() => handleLogin(user.id)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-700 bg-gray-800 border-gray-700 text-white hover:bg-emerald-900/30 hover:border-cyan-200 transition-colors shadow-sm text-left group"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-700 bg-gray-800 border-gray-700 text-white hover:bg-emerald-900/30 hover:border-emerald-800 transition-colors shadow-sm text-left group"
               >
                 <div className="h-10 w-10 rounded-full overflow-hidden bg-emerald-900/50 flex-shrink-0">
                   {user.photoUrl ? (

@@ -16,9 +16,9 @@ export default function NotFoundBentoDark() {
 
   return (
     <div className="flex flex-col items-center justify-center py-16 px-6 text-center animate-in fade-in duration-500">
-      <div className="w-20 h-20 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center mb-6 relative">
-        <span className="absolute inset-0 rounded-full bg-gray-200 animate-ping opacity-20"></span>
-        <Compass className="w-10 h-10 text-white animate-spin" style={{ animationDuration: '8s' }} />
+      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-900/50 to-teal-900/50 border border-emerald-800 flex items-center justify-center mb-6 relative">
+        <span className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping opacity-20"></span>
+        <Compass className="w-10 h-10 text-emerald-400 animate-spin" style={{ animationDuration: '8s' }} />
       </div>
       <h1 className="text-[25px] font-bold text-white mb-2">
         {t(`Η σελίδα δεν βρέθηκε`, `Page Not Found`)}
@@ -31,7 +31,7 @@ export default function NotFoundBentoDark() {
         {suggestions.map(s => {
           const Icon = s.icon;
           return (
-            <button key={s.path} onClick={() => navigate(s.path)} className="flex items-center gap-2 p-3 rounded-xl border border-gray-700 bg-gray-800 border-gray-700 text-white hover:border-cyan-300 hover:bg-emerald-900/30 transition-all text-left">
+            <button key={s.path} onClick={() => navigate(s.path)} className="flex items-center gap-2 p-3 rounded-xl border border-gray-700 bg-gray-800 border-gray-700 text-white hover:border-emerald-700 hover:bg-emerald-900/30 transition-all text-left">
               <Icon className="w-4 h-4 text-emerald-400" />
               <span className="text-[13.8px] font-bold text-white">{s.label}</span>
             </button>

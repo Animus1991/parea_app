@@ -49,7 +49,7 @@ export default function PostEventFeedbackBentoDark() {
                   <button
                     key={m.emoji}
                     onClick={() => setMood(m.emoji)}
-                    className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all ${mood === m.emoji ? 'border-cyan-500 bg-emerald-900/30 scale-110 shadow-sm' : 'border-gray-700 hover:border-gray-300'}`}
+                    className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all ${mood === m.emoji ? 'border-emerald-9500 bg-emerald-900/30 scale-110 shadow-sm' : 'border-gray-700 hover:border-gray-300'}`}
                   >
                     <span className="text-[30px]">{m.emoji}</span>
                     <span className="text-[10.90125px] font-bold text-white">{m.label}</span>
@@ -76,7 +76,7 @@ export default function PostEventFeedbackBentoDark() {
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button key={`vibe-${star}`} onClick={() => setVibeRating(star)} className="p-2 hover:bg-gray-900 rounded-full transition-colors">
-                    <Star className={`w-8 h-8 transition-colors ${star <= vibeRating ? 'text-cyan-400 fill-cyan-400' : 'text-white hover:text-cyan-400'}`} />
+                    <Star className={`w-8 h-8 transition-colors ${star <= vibeRating ? 'text-emerald-400 fill-emerald-400' : 'text-white hover:text-emerald-400'}`} />
                   </button>
                 ))}
               </div>
@@ -120,7 +120,7 @@ export default function PostEventFeedbackBentoDark() {
                 value={comment}
                 onChange={e => setComment(e.target.value)}
                 placeholder={t(`Μοιραστείτε περισσότερα για την εμπειρία σας...`, `Share more about your experience...`)}
-                className="w-full px-4 py-2.5 border border-gray-700 rounded-xl text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+                className="w-full px-4 py-2.5 border border-gray-700 rounded-xl text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-emerald-9500 resize-none"
                 rows={3}
               />
               <p className="text-[11.2px] text-white font-medium mt-1">{t(`Αυτό θα είναι ορατό στον διοργανωτή`, `This will be visible to the organizer`)}</p>

@@ -44,7 +44,7 @@ export default function PlansBentoDark() {
           onClick={() => setActiveTab('upcoming')}
           className={`pb-3 text-[11.506875px] font-bold tracking-wide transition-colors whitespace-nowrap ${
             activeTab === 'upcoming' 
-              ? 'border-b-2 border-cyan-600 text-emerald-400' 
+              ? 'border-b-2 border-emerald-600 text-emerald-400' 
               : 'text-white hover:text-white'
           }`}
         >
@@ -54,7 +54,7 @@ export default function PlansBentoDark() {
           onClick={() => setActiveTab('pending')}
           className={`pb-3 text-[11.506875px] font-bold tracking-wide transition-colors whitespace-nowrap ${
             activeTab === 'pending' 
-              ? 'border-b-2 border-cyan-600 text-emerald-400' 
+              ? 'border-b-2 border-emerald-600 text-emerald-400' 
               : 'text-white hover:text-white'
           }`}
         >
@@ -64,7 +64,7 @@ export default function PlansBentoDark() {
           onClick={() => setActiveTab('past')}
           className={`pb-3 text-[11.506875px] font-bold tracking-wide transition-colors whitespace-nowrap ${
             activeTab === 'past' 
-              ? 'border-b-2 border-cyan-600 text-emerald-400' 
+              ? 'border-b-2 border-emerald-600 text-emerald-400' 
               : 'text-white hover:text-white'
           }`}
         >
@@ -78,7 +78,7 @@ export default function PlansBentoDark() {
           <Card key={event.id} className="rounded-xl p-4 sm:p-5 border border-emerald-800 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-800 border border-gray-700 rounded-lg overflow-hidden relative">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
-              <div className="absolute top-2 left-2 bg-cyan-600 text-white px-2 py-0.5 rounded text-[10.6875px] font-bold tracking-wide">
+              <div className="absolute top-2 left-2 bg-emerald-600 text-white px-2 py-0.5 rounded text-[10.6875px] font-bold tracking-wide">
                 {t(`Επιβεβαιωμένο`, `Confirmed`)}
               </div>
             </div>
@@ -192,7 +192,7 @@ export default function PlansBentoDark() {
               {index === 0 ? (
                 <div className="bg-emerald-900/30 border border-emerald-800 p-3 rounded-lg flex items-center justify-between mt-auto">
                   <div className="text-[12.825px] font-bold text-emerald-400">{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
-                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="text-[10.6875px] font-bold bg-cyan-600 text-white px-3 py-1.5 rounded hover:bg-cyan-700 tracking-wide">
+                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="text-[10.6875px] font-bold bg-emerald-600 text-white px-3 py-1.5 rounded hover:bg-emerald-700 tracking-wide">
                     {t(`Αξιολόγηση`, `Rate Experience`)}
                   </button>
                 </div>

@@ -40,7 +40,7 @@ export default function ReportIssueBentoDark() {
           <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-5">
             <div>
               <label className="block text-[10.90125px] font-bold text-white tracking-wider mb-2">{t(`Κατηγορία`, `Category`)}</label>
-              <select className="w-full h-11 px-3 rounded-lg border border-gray-700 bg-gray-800 border-gray-700 text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium" required>
+              <select className="w-full h-11 px-3 rounded-lg border border-gray-700 bg-gray-800 border-gray-700 text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent text-[16.2px] font-medium" required>
                 <option value="">{t(`Επιλέξτε κατηγορία...`, `Select a category...`)}</option>
                 <option value="user_behavior">{t(`Ανάρμοστη συμπεριφορά`, `Inappropriate behavior`)}</option>
                 <option value="event_safety">{t(`Ασφάλεια εκδήλωσης`, `Event safety`)}</option>
@@ -72,7 +72,7 @@ export default function ReportIssueBentoDark() {
             <div>
               <label className="block text-[10.90125px] font-bold text-white tracking-wider mb-2">{t(`Περιγραφή`, `Description`)}</label>
               <textarea 
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-700 bg-gray-800 border-gray-700 text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium resize-none" 
+                className="w-full px-3 py-2.5 rounded-lg border border-gray-700 bg-gray-800 border-gray-700 text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent text-[16.2px] font-medium resize-none" 
                 rows={5} 
                 placeholder={t(`Περιγράψτε τι συνέβη...`, `Describe what happened...`)}
                 required
@@ -82,7 +82,7 @@ export default function ReportIssueBentoDark() {
             {/* Evidence Upload */}
             <div>
               <label className="block text-[12.15px] font-bold text-white tracking-wider mb-2">{t(`Αποδεικτικά (προαιρετικά)`, `Evidence (optional)`)}</label>
-              <div className="border-2 border-dashed border-gray-700 rounded-xl p-4 text-center hover:border-cyan-300 hover:bg-emerald-900/30/30 transition-colors cursor-pointer">
+              <div className="border-2 border-dashed border-gray-700 rounded-xl p-4 text-center hover:border-emerald-700 hover:bg-emerald-900/30/30 transition-colors cursor-pointer">
                 <Upload className="w-5 h-5 text-white mx-auto mb-1" />
                 <p className="text-[12.5px] text-white font-medium">{t(`Ανεβάστε screenshots ή φωτογραφίες`, `Upload screenshots or photos`)}</p>
                 <p className="text-[10px] text-white mt-0.5">PNG, JPG {t(`έως`, `up to`)} 5MB</p>

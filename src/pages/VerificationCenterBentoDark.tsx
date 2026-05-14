@@ -129,7 +129,7 @@ export default function VerificationCenterBentoDark() {
 
       {/* Trust Score Impact */}
       <Card className="p-4 flex items-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center text-white font-black text-[18px] shrink-0">72%</div>
+        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-9500 to-emerald-500 flex items-center justify-center text-white font-black text-[18px] shrink-0">72%</div>
         <div className="flex-1">
           <p className="text-[13.8px] font-bold text-white">{t(`Τρέχον Trust Score`, `Current Trust Score`)}</p>
           <p className="text-[11.2px] text-white font-medium mt-0.5">{t(`Ολοκληρώστε την επαλήθευση τηλεφώνου για +15%`, `Complete phone verification for +15%`)}</p>

@@ -362,7 +362,7 @@ export default function HomeBentoDark() {
           <div className="flex gap-3 mb-6">
             <button
               onClick={() => navigate("/nearby")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#18D8DB]/10 text-emerald-400 border border-[#18D8DB]/20 hover:bg-[#18D8DB]/20 rounded-xl font-bold text-[13.58px] transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 rounded-xl font-bold text-[13.58px] transition-colors"
               title={t("Εμφάνιση στον Χάρτη", "View on Map")}
             >
               <MapIcon className="w-4 h-4" />
@@ -383,7 +383,7 @@ export default function HomeBentoDark() {
                   "home.hero.search_placeholder",
                   "Αναζήτηση εμπειριών...",
                 )}
-                className="w-full h-11 pl-10 pr-4 rounded-full border border-gray-600 bg-gray-700 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/60 text-sm font-medium"
+                className="w-full h-11 pl-10 pr-4 rounded-full border border-gray-600 bg-gray-700 text-white placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/60 text-sm font-medium"
               />
               {showSearchSuggestions && !searchQuery && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 border-gray-700 text-white rounded-xl shadow-xl border border-gray-800 z-50 overflow-hidden">
@@ -418,7 +418,7 @@ export default function HomeBentoDark() {
           </div>
         </div>
         {/* Decorative */}
-        <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
+        <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-emerald-500/15 to-teal-500/10 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
       </motion.div>
 
       {/* Pending Feedback Alert */}
@@ -441,7 +441,7 @@ export default function HomeBentoDark() {
         </div>
         <button
           onClick={() => navigate("/plans")}
-          className="text-[12.38px] tracking-wider font-bold bg-gray-800 shadow-[0_8px_30px_rgb(0,0,0,0.5)] border border-gray-700 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-black w-full sm:w-auto shadow-sm transition-colors"
+          className="text-[12.38px] tracking-wider font-bold bg-emerald-600 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-emerald-700 w-full sm:w-auto shadow-sm transition-colors"
         >
           {t("home.pending_feedback.cta", "Αξιολόγηση")}
         </button>
@@ -523,7 +523,7 @@ export default function HomeBentoDark() {
               onClick={() => setTagFilter(tag)}
               className={`whitespace-nowrap px-3 py-1 rounded-full text-[11.82px] font-bold transition-colors border ${
                 tagFilter === tag
-                  ? "bg-[#18D8DB]/20 border-[#18D8DB] text-emerald-400"
+                  ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
                   : "bg-gray-800 border-gray-700 text-white border-gray-700 text-white hover:border-gray-300 hover:text-white"
               }`}
             >
@@ -693,7 +693,7 @@ export default function HomeBentoDark() {
         {/* Load More Trigger */}
         {!isLoading && visibleEventsCount < sortedEvents.length && (
           <div ref={loadMoreRef} className="flex justify-center mt-6 py-4">
-            <div className="w-6 h-6 border-2 border-[#18D8DB] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
       </section>

@@ -41,13 +41,13 @@ export default function MyConnectionsBentoDark() {
 
       <div className="flex gap-4 border-b border-gray-700">
         <button 
-          className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'all' ? 'border-cyan-600 text-emerald-400' : 'border-transparent text-white hover:text-white'}`}
+          className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'all' ? 'border-emerald-600 text-emerald-400' : 'border-transparent text-white hover:text-white'}`}
           onClick={() => setActiveTab('all')}
         >
           {t('Συνδέσεις', 'Connections')} ({connections.length})
         </button>
         <button 
-          className={`pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'requests' ? 'border-cyan-600 text-emerald-400' : 'border-transparent text-white hover:text-white'}`}
+          className={`pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'requests' ? 'border-emerald-600 text-emerald-400' : 'border-transparent text-white hover:text-white'}`}
           onClick={() => setActiveTab('requests')}
         >
           {t('Αιτήματα', 'Requests')}
@@ -61,7 +61,7 @@ export default function MyConnectionsBentoDark() {
           <input 
             type="text" 
             placeholder={t('Αναζήτηση συνδέσεων...', 'Search connections...')} 
-            className="w-full pl-9 pr-4 py-2 border border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            className="w-full pl-9 pr-4 py-2 border border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-9500"
           />
         </div>
         <Button variant="outline" className="shrink-0 flex items-center gap-2">
@@ -71,7 +71,7 @@ export default function MyConnectionsBentoDark() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
         {connections.map((conn) => (
-          <Card key={conn.id} className="p-4 flex items-center justify-between hover:border-cyan-200 transition-colors cursor-pointer group">
+          <Card key={conn.id} className="p-4 flex items-center justify-between hover:border-emerald-800 transition-colors cursor-pointer group">
             <div className="flex items-center gap-3">
               <img referrerPolicy="no-referrer" src={conn.image} alt={conn.name} className="w-12 h-12 rounded-full object-cover bg-gray-800 border border-gray-700" />
               <div>

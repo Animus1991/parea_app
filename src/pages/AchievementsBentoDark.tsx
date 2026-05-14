@@ -55,7 +55,7 @@ export default function AchievementsBentoDark() {
       <Card className="p-5">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-white font-black text-[18px]">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-9500 to-purple-500 flex items-center justify-center text-white font-black text-[18px]">
               {level}
             </div>
             <div>
@@ -69,12 +69,12 @@ export default function AchievementsBentoDark() {
           </div>
         </div>
         <div className="w-full bg-gray-800 border border-gray-700 h-2 rounded-full overflow-hidden">
-          <div className="bg-gradient-to-r from-cyan-500 to-purple-500 h-full rounded-full transition-all" style={{ width: `${levelProgress}%` }} />
+          <div className="bg-gradient-to-r from-emerald-9500 to-purple-500 h-full rounded-full transition-all" style={{ width: `${levelProgress}%` }} />
         </div>
       </Card>
 
       {/* Daily Challenge */}
-      <Card className="p-4 bg-gradient-to-r from-purple-50 to-cyan-50 border border-purple-100">
+      <Card className="p-4 bg-gradient-to-r from-purple-50 to-emerald-950 border border-purple-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-gray-800 border-gray-700 text-white shadow-sm flex items-center justify-center">
@@ -105,7 +105,7 @@ export default function AchievementsBentoDark() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`pb-3 text-[13.5px] font-bold tracking-wide transition-colors whitespace-nowrap ${
-              activeTab === tab.key ? 'border-b-2 border-cyan-600 text-emerald-400' : 'text-white hover:text-white'
+              activeTab === tab.key ? 'border-b-2 border-emerald-600 text-emerald-400' : 'text-white hover:text-white'
             }`}
           >
             {tab.label}
@@ -132,7 +132,7 @@ export default function AchievementsBentoDark() {
                     <p className="text-[12.5px] text-white font-medium mt-0.5 line-clamp-1">{a.description}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <div className="flex-1 bg-gray-800 border border-gray-700 h-1.5 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full transition-all ${a.unlocked ? 'bg-cyan-500' : 'bg-gray-300'}`} style={{ width: `${pct}%` }} />
+                        <div className={`h-full rounded-full transition-all ${a.unlocked ? 'bg-emerald-9500' : 'bg-gray-300'}`} style={{ width: `${pct}%` }} />
                       </div>
                       <span className="text-[11.2px] font-bold text-white">{a.progress}/{a.maxProgress}</span>
                     </div>

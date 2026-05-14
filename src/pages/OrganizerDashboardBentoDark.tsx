@@ -21,7 +21,7 @@ export default function OrganizerDashboardBentoDark() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="p-4 border-t-4 border-t-cyan-500">
+        <Card className="p-4 border-t-4 border-t-emerald-9500">
           <h3 className="text-[12.1125px] font-bold text-white tracking-wide">{t(`Ενεργές`, `Active`)}</h3>
           <p className="text-[25px] font-black text-white mt-1">3</p>
           <p className="text-[11.2px] text-white font-medium">{t(`εκδηλώσεις`, `events`)}</p>
@@ -50,7 +50,7 @@ export default function OrganizerDashboardBentoDark() {
           <span className="text-[12.1125px] font-bold text-emerald-400">72%</span>
         </div>
         <div className="w-full bg-gray-800 border border-gray-700 h-2 rounded-full overflow-hidden">
-          <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 h-full rounded-full" style={{ width: '72%' }} />
+          <div className="bg-gradient-to-r from-emerald-9500 to-emerald-500 h-full rounded-full" style={{ width: '72%' }} />
         </div>
         <p className="text-[11.2px] text-white font-medium mt-1">{t(`18 από 25 θέσεις καλύφθηκαν συνολικά`, `18 of 25 spots filled overall`)}</p>
       </Card>
@@ -91,7 +91,7 @@ export default function OrganizerDashboardBentoDark() {
             { label: 'Stand-up', emoji: '🎤' },
             { label: t(`Επιτραπέζια`, `Board Games`), emoji: '🎲' },
           ].map(tpl => (
-            <button key={tpl.label} onClick={() => navigate('/create')} className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-700 bg-gray-800 border-gray-700 text-white hover:bg-emerald-900/30 hover:border-cyan-200 transition-colors text-[12.5px] font-bold text-white">
+            <button key={tpl.label} onClick={() => navigate('/create')} className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-700 bg-gray-800 border-gray-700 text-white hover:bg-emerald-900/30 hover:border-emerald-800 transition-colors text-[12.5px] font-bold text-white">
               <span>{tpl.emoji}</span> {tpl.label}
             </button>
           ))}
@@ -181,7 +181,7 @@ export default function OrganizerDashboardBentoDark() {
                     <p className="text-[12.5px] text-emerald-400 mt-0.5">{t(`Νέο μήνυμα`, `New message`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-gray-800 border-gray-700 text-white text-emerald-400 rounded shadow-sm border border-cyan-200 hover:bg-emerald-900/50 relative">
+                    <button className="p-1.5 bg-gray-800 border-gray-700 text-white text-emerald-400 rounded shadow-sm border border-emerald-800 hover:bg-emerald-900/50 relative">
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>

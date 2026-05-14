@@ -45,7 +45,7 @@ export default function HistoryBentoDark() {
 
       <div className="space-y-3">
         {pastEvents.map((event) => (
-          <Card key={event.id} className="p-4 hover:border-cyan-200 transition-colors cursor-pointer" onClick={() => navigate(`/history/feedback/${event.id}`)}>
+          <Card key={event.id} className="p-4 hover:border-emerald-800 transition-colors cursor-pointer" onClick={() => navigate(`/history/feedback/${event.id}`)}>
             <div className="flex gap-4">
               <img src={event.imageUrl} alt={event.title} className="w-16 h-16 rounded-xl object-cover shrink-0" />
               <div className="flex-1 min-w-0">
