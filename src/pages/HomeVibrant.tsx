@@ -317,44 +317,44 @@ export default function HomeVibrant() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-gradient-to-br from-slate-900 via-[#1e293b] to-slate-900 text-white p-6 md:p-10 rounded-[24px] shadow-sm relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8"
+        className="bg-gradient-to-br from-[#7c3aed] via-[#db2777] to-[#f97316] text-white p-6 md:p-10 rounded-[24px] shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8"
       >
         <div className="relative z-10 flex-1">
-          <div className="text-orange-200 text-[14.21px] font-bold tracking-wide mb-4">
+          <div className="bg-white/20 backdrop-blur-sm text-white text-[14.21px] font-bold tracking-wide mb-4 px-3 py-1 rounded-full w-fit">
             {t("home.hero.badge", "Νεος τροπος εξοδου")}
           </div>
           <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
             {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-white">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-100">
               {t("home.hero.title2", "εμπειρίες")}
             </span>{" "}
             {t("home.hero.title3", "που ήδη θέλετε να ζήσετε.")}
           </h1>
-          <p className="text-white font-medium text-[14.42px] md:text-[16.48px] leading-relaxed max-w-xl mb-6">
+          <p className="text-white/90 font-medium text-[14.42px] md:text-[16.48px] leading-relaxed max-w-xl mb-6">
             {t(
               "home.hero.subtitle",
               "Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.",
             )}
           </p>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11.33px] font-bold tracking-wide text-white mb-6">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11.33px] font-bold tracking-wide text-white/90 mb-6">
             <span className="flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-orange-200" />{" "}
+              <Users className="w-3.5 h-3.5 text-amber-200" />{" "}
               {t("home.hero.stat1", "Μικρες ομαδες")}
             </span>
-            <span className="opacity-20">•</span>
+            <span className="opacity-30">•</span>
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-orange-200" />{" "}
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-200" />{" "}
               {t("home.hero.stat2", "Επαληθευμενη συμμετοχη")}
             </span>
-            <span className="opacity-20">•</span>
+            <span className="opacity-30">•</span>
             <span className="flex items-center gap-1.5">
-              <MapIcon className="w-3.5 h-3.5 text-orange-200" />{" "}
+              <MapIcon className="w-3.5 h-3.5 text-amber-200" />{" "}
               {t("home.hero.stat3", "Δημοσια σημεια")}
             </span>
-            <span className="opacity-20">•</span>
+            <span className="opacity-30">•</span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-orange-200" />{" "}
+              <CheckCircle2 className="w-3.5 h-3.5 text-amber-200" />{" "}
               {t("Ιδιωτικες αναφορες", "Private reports")}
             </span>
           </div>
@@ -362,7 +362,7 @@ export default function HomeVibrant() {
           <div className="flex gap-3 mb-6">
             <button
               onClick={() => navigate("/nearby")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#18D8DB]/10 text-orange-200 border border-[#18D8DB]/20 hover:bg-[#18D8DB]/20 rounded-xl font-bold text-[13.58px] transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 bg-white/20 text-white border border-white/30 hover:bg-white/30 rounded-xl font-bold text-[13.58px] transition-colors backdrop-blur-sm"
               title={t("Εμφάνιση στον Χάρτη", "View on Map")}
             >
               <MapIcon className="w-4 h-4" />
@@ -373,7 +373,7 @@ export default function HomeVibrant() {
           {/* Search with suggestions */}
           <div className="flex gap-3 items-center">
             <div ref={searchRef} className="relative flex-1 max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/80 z-10" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/70 z-10" />
               <input
                 type="text"
                 value={searchQuery}
@@ -383,12 +383,12 @@ export default function HomeVibrant() {
                   "home.hero.search_placeholder",
                   "Αναζήτηση εμπειριών...",
                 )}
-                className="w-full h-11 pl-10 pr-4 rounded-full border-none bg-white/10 text-white placeholder-white/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/60 text-sm font-medium backdrop-blur-sm"
+                className="w-full h-11 pl-10 pr-4 rounded-full border border-white/20 bg-white/15 text-white placeholder-white/60 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-300/60 text-sm font-medium backdrop-blur-sm"
               />
               {showSearchSuggestions && !searchQuery && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
                   <div className="px-3 pt-2 pb-1">
-                    <span className="text-[10px] font-bold text-black tracking-widest">
+                    <span className="text-[10px] font-bold text-gray-500 tracking-widest">
                       {t("Δημοφιλείς Αναζητήσεις", "Popular Searches")}
                     </span>
                   </div>
@@ -400,9 +400,9 @@ export default function HomeVibrant() {
                         handleSearchChange(s);
                         setShowSearchSuggestions(false);
                       }}
-                      className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-cyan-50 hover:text-[#0E8B8D] transition-colors font-medium flex items-center gap-2"
+                      className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-fuchsia-50 hover:text-fuchsia-700 transition-colors font-medium flex items-center gap-2"
                     >
-                      <Search className="w-3.5 h-3.5 text-black" />
+                      <Search className="w-3.5 h-3.5 text-fuchsia-400" />
                       {s}
                     </button>
                   ))}
@@ -411,27 +411,28 @@ export default function HomeVibrant() {
             </div>
             <button
               onClick={() => navigate("/trust")}
-              className="hidden sm:flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-5 h-11 rounded-full text-xs font-bold transition-colors whitespace-nowrap"
+              className="hidden sm:flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-5 h-11 rounded-full text-xs font-bold transition-colors whitespace-nowrap border border-white/20"
             >
               {t("home.hero.how_groups", "Πώς λειτουργούν οι ομάδες")}
             </button>
           </div>
         </div>
-        {/* Decorative */}
-        <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-slate-500/10 to-indigo-500/10 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
+        {/* Decorative orbs */}
+        <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-yellow-400/20 to-pink-500/20 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
+        <div className="absolute left-0 bottom-0 w-[300px] h-[300px] bg-gradient-to-tr from-violet-600/20 to-transparent rounded-full blur-3xl translate-y-1/3 -translate-x-1/4 pointer-events-none" />
       </motion.div>
 
       {/* Pending Feedback Alert */}
-      <section className="bg-cyan-50 border border-cyan-100 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <section className="bg-gradient-to-r from-orange-50 to-fuchsia-50 border border-orange-200/60 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex gap-3 items-center">
-          <div className="bg-white p-2 text-amber-500 rounded-full shadow-sm shrink-0">
+          <div className="bg-white p-2 text-orange-500 rounded-full shadow-sm shrink-0">
             <CheckCircle2 className="w-4 h-4" />
           </div>
           <div>
             <h3 className="text-[14.63px] font-bold text-[#111827]">
               {t("home.pending_feedback.title", "Εκκρεμής Αξιολόγηση")}
             </h3>
-            <p className="text-[11.33px] text-black font-medium mt-0.5 leading-relaxed">
+            <p className="text-[11.33px] text-gray-600 font-medium mt-0.5 leading-relaxed">
               {t(
                 "home.pending_feedback.body",
                 'Αξιολογήστε τα 3 μέλη από το "Comedy Night" για να ξεκλειδώσετε την επόμενη κράτησή σας.',
@@ -441,7 +442,7 @@ export default function HomeVibrant() {
         </div>
         <button
           onClick={() => navigate("/plans")}
-          className="text-[12.38px] tracking-wider font-bold bg-slate-900 text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-slate-800 w-full sm:w-auto shadow-sm transition-colors"
+          className="text-[12.38px] tracking-wider font-bold bg-gradient-to-r from-fuchsia-600 to-orange-500 text-white px-4 py-2 rounded-full whitespace-nowrap hover:opacity-90 w-full sm:w-auto shadow-sm transition-all"
         >
           {t("home.pending_feedback.cta", "Αξιολόγηση")}
         </button>
@@ -477,15 +478,15 @@ export default function HomeVibrant() {
         ].map(({ step, title, body }) => (
           <div
             key={step}
-            className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center"
+            className="bg-white p-4 rounded-xl border border-fuchsia-100/60 shadow-sm flex flex-col items-center text-center hover:shadow-md hover:border-fuchsia-200/60 transition-all"
           >
-            <div className="w-8 h-8 bg-cyan-50 text-[#0E8B8D] rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
+            <div className="w-8 h-8 bg-gradient-to-br from-fuchsia-500 to-orange-400 text-white rounded-full flex items-center justify-center font-bold text-xs mb-2.5 shadow-sm">
               {step}
             </div>
             <h3 className="font-bold text-[#111827] text-[14.63px] mb-1">
               {title}
             </h3>
-            <p className="text-[12.38px] leading-relaxed text-black font-medium">
+            <p className="text-[12.38px] leading-relaxed text-gray-600 font-medium">
               {body}
             </p>
           </div>
@@ -503,10 +504,10 @@ export default function HomeVibrant() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`whitespace-nowrap px-3.5 py-1 rounded-full text-[12.75px] font-bold shadow-sm transition-colors tracking-wide ${
+                className={`whitespace-nowrap px-3.5 py-1 rounded-full text-[12.75px] font-bold shadow-sm transition-all tracking-wide ${
                   activeCategory === cat
-                    ? "bg-slate-900 text-white"
-                    : "bg-white border border-gray-200 text-black hover:text-[#111827] hover:bg-gray-50"
+                    ? "bg-gradient-to-r from-fuchsia-600 to-violet-600 text-white shadow-fuchsia-200"
+                    : "bg-white border border-gray-200 text-gray-700 hover:text-fuchsia-700 hover:border-fuchsia-200 hover:bg-fuchsia-50/50"
                 }`}
               >
                 {categoryTranslations[cat] ?? cat}
@@ -521,10 +522,10 @@ export default function HomeVibrant() {
             <button
               key={tag}
               onClick={() => setTagFilter(tag)}
-              className={`whitespace-nowrap px-3 py-1 rounded-full text-[11.82px] font-bold transition-colors border ${
+              className={`whitespace-nowrap px-3 py-1 rounded-full text-[11.82px] font-bold transition-all border ${
                 tagFilter === tag
-                  ? "bg-[#18D8DB]/20 border-[#18D8DB] text-[#0E8B8D]"
-                  : "bg-white border-gray-200 text-black hover:border-gray-300 hover:text-[#111827]"
+                  ? "bg-orange-100 border-orange-400 text-orange-700"
+                  : "bg-white border-gray-200 text-gray-600 hover:border-orange-300 hover:text-orange-600 hover:bg-orange-50/50"
               }`}
             >
               {tagTranslations[tag] ?? tag}
@@ -633,28 +634,28 @@ export default function HomeVibrant() {
       {/* Events Grid */}
       <section>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
-          <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
+          <div className="flex bg-fuchsia-50 p-1 rounded-lg w-fit border border-fuchsia-100">
             <button
               onClick={() => setFeedType("For You")}
-              className={`px-4 py-1.5 rounded-md text-[12.73px] font-bold transition-colors ${feedType === "For You" ? "bg-white shadow-sm text-[#111827]" : "text-black hover:text-[#111827]"}`}
+              className={`px-4 py-1.5 rounded-md text-[12.73px] font-bold transition-all ${feedType === "For You" ? "bg-white shadow-sm text-fuchsia-700" : "text-gray-500 hover:text-fuchsia-600"}`}
             >
               {t("home.feed.for_you", "Για Σένα")}
             </button>
             <button
               onClick={() => setFeedType("Discover")}
-              className={`px-4 py-1.5 rounded-md text-[12.73px] font-bold transition-colors ${feedType === "Discover" ? "bg-white shadow-sm text-[#111827]" : "text-black hover:text-[#111827]"}`}
+              className={`px-4 py-1.5 rounded-md text-[12.73px] font-bold transition-all ${feedType === "Discover" ? "bg-white shadow-sm text-fuchsia-700" : "text-gray-500 hover:text-fuchsia-600"}`}
             >
               {t("home.feed.discover", "Ανακάλυψε")}
             </button>
           </div>
 
-          <div className="flex bg-gray-100 p-0.5 rounded-lg w-fit">
-            <button className="p-1.5 rounded-md transition-colors bg-white shadow-sm text-[#111827]">
+          <div className="flex bg-fuchsia-50 p-0.5 rounded-lg w-fit border border-fuchsia-100">
+            <button className="p-1.5 rounded-md transition-all bg-white shadow-sm text-fuchsia-700">
               <Grid className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigate("/nearby")}
-              className="p-1.5 rounded-md transition-colors text-black hover:text-[#111827]"
+              className="p-1.5 rounded-md transition-all text-gray-500 hover:text-fuchsia-600"
               title={t("Άνοιγμα Χάρτη", "Open Map")}
             >
               <MapIcon className="w-4 h-4" />
@@ -668,8 +669,8 @@ export default function HomeVibrant() {
               <EventCardSkeleton key={`skeleton-${i}`} />
             ))
           ) : sortedEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-              <p className="text-black font-medium text-sm">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-fuchsia-50/50 rounded-2xl border border-dashed border-fuchsia-200">
+              <p className="text-gray-600 font-medium text-sm">
                 {t(
                   "home.feed.no_events",
                   "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.",
@@ -693,7 +694,7 @@ export default function HomeVibrant() {
         {/* Load More Trigger */}
         {!isLoading && visibleEventsCount < sortedEvents.length && (
           <div ref={loadMoreRef} className="flex justify-center mt-6 py-4">
-            <div className="w-6 h-6 border-2 border-[#18D8DB] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-2 border-fuchsia-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
       </section>
