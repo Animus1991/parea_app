@@ -35,19 +35,19 @@ export default function MyConnectionsClassic() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-[#111827]">{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
-          <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">{t('Άτομα με τα οποία συνδεθήκατε μέσα από εκδηλώσεις.', 'People you\'ve connected with through events.')}</p>
+          <p className="text-gray-400 font-medium text-xs md:text-sm mt-1">{t('Άτομα με τα οποία συνδεθήκατε μέσα από εκδηλώσεις.', 'People you\'ve connected with through events.')}</p>
         </div>
       </div>
 
       <div className="flex gap-4 border-b border-gray-200">
         <button 
-          className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'all' ? 'border-cyan-600 text-cyan-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+          className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'all' ? 'border-cyan-600 text-[#0E8B8D]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
           onClick={() => setActiveTab('all')}
         >
           {t('Συνδέσεις', 'Connections')} ({connections.length})
         </button>
         <button 
-          className={`pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'requests' ? 'border-cyan-600 text-cyan-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+          className={`pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'requests' ? 'border-cyan-600 text-[#0E8B8D]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
           onClick={() => setActiveTab('requests')}
         >
           {t('Αιτήματα', 'Requests')}

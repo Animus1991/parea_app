@@ -61,7 +61,7 @@ export default function MyConnectionsVibrantDark() {
           <input 
             type="text" 
             placeholder={t('Αναζήτηση συνδέσεων...', 'Search connections...')} 
-            className="w-full pl-9 pr-4 py-2 border border-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-9500"
+            className="w-full pl-9 pr-4 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
           />
         </div>
         <Button variant="outline" className="shrink-0 flex items-center gap-2">
@@ -76,12 +76,12 @@ export default function MyConnectionsVibrantDark() {
               <img referrerPolicy="no-referrer" src={conn.image} alt={conn.name} className="w-12 h-12 rounded-full object-cover bg-gray-700" />
               <div>
                 <h3 className="font-bold text-white text-sm group-hover:text-fuchsia-400 transition-colors">{conn.name}</h3>
-                <p className="text-xs text-white flex items-center gap-1 mt-0.5">
+                <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
                   <MapPin className="w-3 h-3" /> {conn.location}
                 </p>
                 <div className="flex items-center gap-2 mt-1.5">
                   <Badge variant="neutral" className="text-[9px] px-1.5 py-0">{conn.role}</Badge>
-                  <span className="text-[10px] text-white font-medium">{conn.mutual} {t('Κοινοί', 'mutuals')}</span>
+                  <span className="text-[10px] text-gray-400 font-medium">{conn.mutual} {t('Κοινοί', 'mutuals')}</span>
                 </div>
               </div>
             </div>
@@ -90,7 +90,7 @@ export default function MyConnectionsVibrantDark() {
               <button className="p-2 text-fuchsia-400 hover:bg-fuchsia-900/30 rounded-full transition-colors" title={t('Μήνυμα', 'Message')}>
                 <MessageCircle className="w-5 h-5" />
               </button>
-              <button className="p-2 text-white hover:bg-gray-700 rounded-full transition-colors">
+              <button className="p-2 text-gray-400 hover:bg-gray-700 rounded-full transition-colors">
                 <MoreVertical className="w-5 h-5" />
               </button>
             </div>
