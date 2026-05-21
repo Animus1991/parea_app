@@ -162,16 +162,7 @@ export default function MyCalendarClassic() {
                 ))}
               </div>
               
-              {/* Current-time "Now" indicator */}
-              {days.some(d => isToday(d)) && (
-                <div className="flex items-center gap-2 my-2 px-1">
-                  <div className="w-2 h-2 rounded-full bg-red-500 shrink-0 animate-pulse" />
-                  <div className="flex-1 h-px bg-red-400" />
-                  <span className="text-[10px] font-bold text-red-500 shrink-0">{format(now, 'HH:mm')}</span>
-                </div>
-              )}
-
-              <div className="space-y-3 mt-4">
+              <div className="space-y-3 mt-6">
                 {upcomingEvents.map((event, idx) => (
                   <div key={idx} className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-cyan-100 hover:bg-cyan-50/30 transition-colors cursor-pointer" onClick={() => navigate(`/events/${event.id}`)}>
                     <div className="flex flex-col items-center justify-center w-16 shrink-0 border-r border-gray-100 pr-4">
@@ -269,6 +260,5 @@ export default function MyCalendarClassic() {
         </AnimatePresence>
       </div>
     </div>
-  </div>
   );
 }
