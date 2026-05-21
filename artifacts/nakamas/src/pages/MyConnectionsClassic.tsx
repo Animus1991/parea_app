@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Users, Search, MessageCircle, MoreVertical, MapPin, UserPlus, Filter, CheckCircle2, XCircle } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
@@ -6,12 +6,18 @@ import { Badge } from '../components/common/Badge';
 import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export default function MyConnectionsClassic() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'all' | 'requests'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterRole, setFilterRole] = useState<'' | string>('');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [moreMenuOpenId, setMoreMenuOpenId] = useState<string | null>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
 
   const users = useStore(state => state.users);
   const currentUser = useStore(state => state.currentUser);
@@ -19,26 +25,48 @@ export default function MyConnectionsClassic() {
   const acceptConnectionRequest = useStore(state => state.acceptConnectionRequest);
   const declineConnectionRequest = useStore(state => state.declineConnectionRequest);
 
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+        setShowFilterDropdown(false);
+      }
+      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
+        setMoreMenuOpenId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
   const calculateMutualConnections = (userConnections: string[] = []) => {
     const myConnections = currentUser?.connections || [];
     return myConnections.filter(id => userConnections.includes(id) && id !== currentUser?.id).length;
   };
 
+  const getRoleLabel = (u: typeof users[0]) => {
+    if (u.isOrganizer) return t('Διοργανωτής', 'Organizer');
+    if (u.reliabilityScore > 80) return t('Εξερευνητής', 'Explorer');
+    return t('Αρχάριος', 'Newbie');
+  };
+
   const allConnections = users.filter(u => u.id !== currentUser?.id).map(u => ({
     id: u.id,
     name: u.name,
-    role: u.isOrganizer ? t('Διοργανωτής', 'Organizer') : (u.reliabilityScore > 80 ? t('Εξερευνητής', 'Explorer') : t('Αρχάριος', 'Newbie')),
+    role: getRoleLabel(u),
     mutual: calculateMutualConnections(u.connections),
     location: u.city || 'Downtown',
     image: u.photoUrl || `https://i.pravatar.cc/150?u=${u.id}`
   }));
 
-  const filteredConnections = searchQuery.trim()
-    ? allConnections.filter(c =>
-        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.location.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : allConnections;
+  const roleOptions = [...new Set(allConnections.map(c => c.role))];
+
+  const filteredConnections = allConnections.filter(c => {
+    const matchesSearch = !searchQuery.trim() ||
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesRole = !filterRole || c.role === filterRole;
+    return matchesSearch && matchesRole;
+  });
 
   const myPendingRequests = connectionRequests.filter(
     r => r.toUserId === currentUser?.id && r.status === 'pending'
@@ -84,15 +112,40 @@ export default function MyConnectionsClassic() {
                 className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
             </div>
-            <Button variant="outline" className="shrink-0 flex items-center gap-2">
-              <Filter className="w-4 h-4" /> {t('Φίλτρα', 'Filter')}
-            </Button>
+            <div className="relative shrink-0" ref={filterRef}>
+              <Button
+                variant="outline"
+                className={`flex items-center gap-2 ${filterRole ? 'border-cyan-500 text-cyan-700 bg-cyan-50' : ''}`}
+                onClick={() => setShowFilterDropdown(v => !v)}
+              >
+                <Filter className="w-4 h-4" /> {filterRole || t('Φίλτρα', 'Filter')}
+              </Button>
+              {showFilterDropdown && (
+                <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 min-w-[160px] py-1">
+                  <button
+                    onClick={() => { setFilterRole(''); setShowFilterDropdown(false); }}
+                    className={`w-full text-left px-4 py-2 text-sm font-medium transition-colors ${filterRole === '' ? 'text-cyan-700 bg-cyan-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                  >
+                    {t('Όλοι', 'All')}
+                  </button>
+                  {roleOptions.map(role => (
+                    <button
+                      key={role}
+                      onClick={() => { setFilterRole(role); setShowFilterDropdown(false); }}
+                      className={`w-full text-left px-4 py-2 text-sm font-medium transition-colors ${filterRole === role ? 'text-cyan-700 bg-cyan-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                    >
+                      {role}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {filteredConnections.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredConnections.map(conn => (
-                <Card key={conn.id} className="p-4 flex items-center justify-between hover:border-cyan-200 transition-colors cursor-pointer group">
+                <Card key={conn.id} className="p-4 flex items-center justify-between hover:border-cyan-200 transition-colors cursor-pointer group relative">
                   <div className="flex items-center gap-3">
                     <img referrerPolicy="no-referrer" src={conn.image} alt={conn.name} className="w-12 h-12 rounded-full object-cover bg-gray-100" />
                     <div>
@@ -109,20 +162,46 @@ export default function MyConnectionsClassic() {
 
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => navigate(`/chat/${conn.id}`)}
+                      onClick={() => navigate('/inbox')}
                       className="p-2 text-cyan-600 hover:bg-cyan-50 rounded-full transition-colors"
                       title={t('Μήνυμα', 'Message')}
                       aria-label={t('Μήνυμα', 'Message')}
                     >
                       <MessageCircle className="w-5 h-5" />
                     </button>
-                    <button
-                      className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors"
-                      aria-label={t('Περισσότερες επιλογές', 'More options')}
-                      title={t('Περισσότερες επιλογές', 'More options')}
-                    >
-                      <MoreVertical className="w-5 h-5" />
-                    </button>
+                    <div className="relative" ref={moreMenuOpenId === conn.id ? moreMenuRef : undefined}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setMoreMenuOpenId(moreMenuOpenId === conn.id ? null : conn.id); }}
+                        className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors"
+                        aria-label={t('Περισσότερες επιλογές', 'More options')}
+                        title={t('Περισσότερες επιλογές', 'More options')}
+                      >
+                        <MoreVertical className="w-5 h-5" />
+                      </button>
+                      {moreMenuOpenId === conn.id && (
+                        <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 min-w-[160px] py-1">
+                          <button
+                            onClick={() => { navigate('/profile'); setMoreMenuOpenId(null); }}
+                            className="w-full text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                          >
+                            {t('Προβολή Προφίλ', 'View Profile')}
+                          </button>
+                          <button
+                            onClick={() => { toast.success(t('Αίτημα αποστολής!', 'Request sent!')); setMoreMenuOpenId(null); }}
+                            className="w-full text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                          >
+                            {t('Αποστολή Μηνύματος', 'Send Message')}
+                          </button>
+                          <div className="border-t border-gray-100 my-1" />
+                          <button
+                            onClick={() => { toast.success(t('Αφαιρέθηκε από τις συνδέσεις', 'Removed from connections')); setMoreMenuOpenId(null); }}
+                            className="w-full text-left px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+                          >
+                            {t('Αφαίρεση', 'Remove')}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </Card>
               ))}

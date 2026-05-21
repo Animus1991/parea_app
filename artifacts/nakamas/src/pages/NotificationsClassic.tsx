@@ -1,4 +1,5 @@
-import { Bell, MessageCircle, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { Bell, ArrowRight, X } from 'lucide-react';
 import { useLanguage } from "../lib/i18n";
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
@@ -9,11 +10,23 @@ export default function NotificationsClassic() {
   const notifications = useStore(state => state.notifications);
   const markNotificationRead = useStore(state => state.markNotificationRead);
 
-  const unreadNotifs = notifications.filter(n => !n.read);
-  const readNotifs = notifications.filter(n => n.read);
+  const [dismissedIds, setDismissedIds] = useState<string[]>([]);
+
+  const dismiss = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDismissedIds(prev => [...prev, id]);
+  };
+
+  const visibleNotifs = notifications.filter(n => !dismissedIds.includes(n.id));
+  const unreadNotifs = visibleNotifs.filter(n => !n.read);
+  const readNotifs = visibleNotifs.filter(n => n.read);
 
   const handleMarkAllRead = () => {
     unreadNotifs.forEach(n => markNotificationRead(n.id));
+  };
+
+  const handleDismissAllRead = () => {
+    setDismissedIds(prev => [...prev, ...readNotifs.map(n => n.id)]);
   };
 
   return (
@@ -39,13 +52,13 @@ export default function NotificationsClassic() {
               <div
                 key={notif.id}
                 onClick={() => markNotificationRead(notif.id)}
-                className="flex gap-4 p-4 rounded-xl border border-cyan-100 bg-cyan-50/30 cursor-pointer hover:bg-cyan-50 transition-colors"
+                className="flex gap-4 p-4 rounded-xl border border-cyan-100 bg-cyan-50/30 cursor-pointer hover:bg-cyan-50 transition-colors relative"
               >
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${notif.color}`}>
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13.5px] leading-relaxed text-[#111827] font-medium">{t(notif.messageGr, notif.messageEn)}</p>
+                  <p className="text-[13.5px] leading-relaxed text-[#111827] font-medium pr-6">{t(notif.messageGr, notif.messageEn)}</p>
                   <span className="text-[11.25px] font-bold text-gray-400 tracking-wide mt-1 block">{t(notif.timeGr, notif.timeEn)}</span>
                   {notif.type === 'match' && (
                     <button
@@ -57,14 +70,21 @@ export default function NotificationsClassic() {
                   )}
                   {notif.type === 'message' && (
                     <button
-                      onClick={(e) => { e.stopPropagation(); navigate('/chats'); }}
+                      onClick={(e) => { e.stopPropagation(); navigate('/inbox'); }}
                       className="mt-2 text-[11.2px] font-bold text-cyan-700 bg-cyan-100 px-2.5 py-1 rounded-full hover:bg-cyan-200 transition-colors inline-flex items-center gap-1"
                     >
                       {t(`Απάντηση`, `Reply`)} <ArrowRight className="w-2.5 h-2.5" />
                     </button>
                   )}
                 </div>
-                <span className="w-2.5 h-2.5 bg-cyan-500 rounded-full shrink-0 mt-2 self-start"></span>
+                <button
+                  onClick={(e) => dismiss(notif.id, e)}
+                  className="absolute top-3 right-3 p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                  aria-label={t('Απόρριψη', 'Dismiss')}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+                <span className="w-2.5 h-2.5 bg-cyan-500 rounded-full shrink-0 mt-2 self-start absolute top-4 right-8"></span>
               </div>
             );
           })}
@@ -73,25 +93,40 @@ export default function NotificationsClassic() {
 
       {readNotifs.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-[11.2px] font-bold text-gray-400 tracking-wide">{t(`Προηγούμενες`, `Earlier`)}</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-[11.2px] font-bold text-gray-400 tracking-wide">{t(`Προηγούμενες`, `Earlier`)}</h3>
+            <button
+              onClick={handleDismissAllRead}
+              className="text-[11.2px] font-bold text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              {t(`Εκκαθάριση όλων`, `Clear all`)}
+            </button>
+          </div>
           {readNotifs.map((notif) => {
             const Icon = notif.icon;
             return (
-              <div key={notif.id} className="flex gap-4 p-4 rounded-xl border border-gray-100 bg-white">
+              <div key={notif.id} className="flex gap-4 p-4 rounded-xl border border-gray-100 bg-white relative group">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${notif.color}`}>
                   <Icon className="w-5 h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13.5px] leading-relaxed text-gray-600">{t(notif.messageGr, notif.messageEn)}</p>
+                  <p className="text-[13.5px] leading-relaxed text-gray-600 pr-6">{t(notif.messageGr, notif.messageEn)}</p>
                   <span className="text-[11.25px] font-bold text-gray-400 tracking-wide mt-1 block">{t(notif.timeGr, notif.timeEn)}</span>
                 </div>
+                <button
+                  onClick={(e) => dismiss(notif.id, e)}
+                  className="absolute top-3 right-3 p-1 text-gray-300 hover:text-gray-500 hover:bg-gray-100 rounded transition-colors opacity-0 group-hover:opacity-100"
+                  aria-label={t('Απόρριψη', 'Dismiss')}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
               </div>
             );
           })}
         </div>
       )}
 
-      {notifications.length === 0 && (
+      {visibleNotifs.length === 0 && (
         <div className="text-center py-16 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
           <Bell className="mx-auto h-10 w-10 text-gray-300 mb-3" />
           <h3 className="text-base font-bold text-[#111827]">{t('Δεν υπάρχουν ειδοποιήσεις', 'No notifications yet')}</h3>

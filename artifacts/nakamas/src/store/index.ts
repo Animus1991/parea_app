@@ -14,6 +14,8 @@ export interface FeedbackData {
   mood: string;
   comment: string;
   submittedAt: string;
+  attendance?: string;
+  safetyComfort?: string;
 }
 
 interface AppState {

@@ -1,10 +1,11 @@
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
-import { Calendar, Users, MessageSquare, Plus, MoreHorizontal, TrendingUp, Star, DollarSign } from 'lucide-react';
+import { Calendar, Users, MessageSquare, Plus, MoreHorizontal, TrendingUp, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from "../lib/i18n";
 import { useStore } from '../store';
+import { toast } from 'sonner';
 
 export default function OrganizerDashboardClassic() {
   const { t } = useLanguage();
@@ -160,10 +161,10 @@ export default function OrganizerDashboardClassic() {
               <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-400" />{t(`Ενέργειες`, `Actions`)}
               </h4>
-              <Button variant="outline" className="w-full text-[13px]" size="sm">{t(`Επεξεργασία`, `Edit`)}</Button>
-              <Button variant="outline" className="w-full text-[13px]" size="sm">{t(`Αποστολή Ανακοίνωσης`, `Send Announcement`)}</Button>
-              <Button variant="outline" className="w-full text-[13px] bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100" size="sm">{t(`Δημοσίευση Σημείου Συνάντησης`, `Publish Meeting Point`)}</Button>
-              <Button variant="ghost" className="w-full text-[13px] text-red-600 hover:bg-red-50 hover:text-red-700" size="sm">{t(`Ακύρωση`, `Cancel Event`)}</Button>
+              <Button variant="outline" className="w-full text-[13px]" size="sm" onClick={() => navigate('/create')}>{t(`Επεξεργασία`, `Edit`)}</Button>
+              <Button variant="outline" className="w-full text-[13px]" size="sm" onClick={() => toast.success(t('Ανακοίνωση εστάλη στην ομάδα!', 'Announcement sent to group!'))}>{t(`Αποστολή Ανακοίνωσης`, `Send Announcement`)}</Button>
+              <Button variant="outline" className="w-full text-[13px] bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100" size="sm" onClick={() => toast.success(t('Σημείο συνάντησης δημοσιεύτηκε!', 'Meeting point published!'))}>{t(`Δημοσίευση Σημείου Συνάντησης`, `Publish Meeting Point`)}</Button>
+              <Button variant="ghost" className="w-full text-[13px] text-red-600 hover:bg-red-50 hover:text-red-700" size="sm" onClick={() => toast.error(t('Εκδήλωση ακυρώθηκε', 'Event cancelled'))}>{t(`Ακύρωση`, `Cancel Event`)}</Button>
             </div>
           </div>
         </Card>
@@ -203,8 +204,8 @@ export default function OrganizerDashboardClassic() {
               <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
                 <MoreHorizontal className="w-4 h-4 text-gray-400" />{t(`Περισσότερα`, `More`)}
               </h4>
-              <Button variant="outline" className="w-full text-[13px]" size="sm">{t(`Επεξεργασία`, `Edit`)}</Button>
-              <Button variant="outline" className="w-full text-[13px]" size="sm">{t(`Αρχειοθέτηση`, `Archive`)}</Button>
+              <Button variant="outline" className="w-full text-[13px]" size="sm" onClick={() => navigate('/create')}>{t(`Επεξεργασία`, `Edit`)}</Button>
+              <Button variant="outline" className="w-full text-[13px]" size="sm" onClick={() => toast.success(t('Εκδήλωση αρχειοθετήθηκε', 'Event archived'))}>{t(`Αρχειοθέτηση`, `Archive`)}</Button>
             </div>
           </div>
         </Card>

@@ -5,6 +5,7 @@ import { Card } from '../components/common/Card';
 import { Star, ShieldAlert, CheckCircle2, Sparkles, Trophy } from 'lucide-react';
 import { useLanguage } from "../lib/i18n";
 import { useStore } from '../store';
+import { toast } from 'sonner';
 
 export default function PostEventFeedbackClassic() {
   const { t } = useLanguage();
@@ -26,6 +27,30 @@ export default function PostEventFeedbackClassic() {
     { emoji: '😕', label: t(`Έτσι κι έτσι`, `Meh`) },
   ];
 
+  const handleSubmit = () => {
+    if (overallRating === 0) {
+      toast.error(t('Παρακαλώ επιλέξτε βαθμολογία', 'Please select a rating'));
+      return;
+    }
+    if (!mood) {
+      toast.error(t('Παρακαλώ επιλέξτε διάθεση', 'Please select a mood'));
+      return;
+    }
+    if (eventId) {
+      submitFeedback({
+        eventId,
+        overallRating,
+        vibeRating,
+        mood,
+        comment,
+        attendance,
+        safetyComfort,
+        submittedAt: new Date().toISOString(),
+      });
+    }
+    setStep(2);
+  };
+
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div>
@@ -42,10 +67,19 @@ export default function PostEventFeedbackClassic() {
         <Sparkles className="w-4 h-4 text-amber-400" />
       </div>
 
+      {step === 1 && (
+        <div className="flex items-center gap-2 mb-1">
+          <div className="flex gap-1">
+            <div className="w-6 h-1.5 rounded-full bg-cyan-600" />
+            <div className="w-6 h-1.5 rounded-full bg-gray-200" />
+          </div>
+          <span className="text-[11.2px] font-bold text-gray-400">{t('Βήμα 1 από 2', 'Step 1 of 2')}</span>
+        </div>
+      )}
+
       <Card className="p-6">
         {step === 1 && (
           <div className="space-y-8">
-            {/* Emoji Mood */}
             <div>
               <h3 className="text-[16.75971px] font-bold text-[#111827] tracking-wide mb-3">{t(`Πώς νιώσατε;`, `How did you feel?`)}</h3>
               <div className="flex gap-3 justify-center">
@@ -84,6 +118,30 @@ export default function PostEventFeedbackClassic() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <Button className="w-full" size="lg" onClick={() => {
+              if (overallRating === 0) {
+                toast.error(t('Παρακαλώ επιλέξτε βαθμολογία', 'Please select a rating'));
+                return;
+              }
+              if (!mood) {
+                toast.error(t('Παρακαλώ επιλέξτε διάθεση', 'Please select a mood'));
+                return;
+              }
+              setStep(1.5 as any);
+            }}>{t(`Επόμενο`, `Next`)}</Button>
+          </div>
+        )}
+
+        {(step as any) === 1.5 && (
+          <div className="space-y-8">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex gap-1">
+                <div className="w-6 h-1.5 rounded-full bg-cyan-600" />
+                <div className="w-6 h-1.5 rounded-full bg-cyan-600" />
+              </div>
+              <span className="text-[11.2px] font-bold text-gray-400">{t('Βήμα 2 από 2', 'Step 2 of 2')}</span>
             </div>
 
             <div>
@@ -152,25 +210,16 @@ export default function PostEventFeedbackClassic() {
                 value={comment}
                 onChange={e => setComment(e.target.value)}
                 placeholder={t(`Μοιραστείτε περισσότερα για την εμπειρία σας...`, `Share more about your experience...`)}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
                 rows={3}
               />
               <p className="text-[11.2px] text-gray-400 font-medium mt-1">{t(`Αυτό θα είναι ορατό στον διοργανωτή`, `This will be visible to the organizer`)}</p>
             </div>
 
-            <Button className="w-full" size="lg" onClick={() => {
-              if (eventId) {
-                submitFeedback({
-                  eventId,
-                  overallRating,
-                  vibeRating,
-                  mood,
-                  comment,
-                  submittedAt: new Date().toISOString(),
-                });
-              }
-              setStep(2);
-            }}>{t(`Υποβολή Αξιολόγησης`, `Submit Feedback`)}</Button>
+            <div className="flex gap-3">
+              <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>{t(`Πίσω`, `Back`)}</Button>
+              <Button className="flex-1" size="lg" onClick={handleSubmit}>{t(`Υποβολή Αξιολόγησης`, `Submit Feedback`)}</Button>
+            </div>
           </div>
         )}
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapPin, Calendar, Star, CheckCircle2 } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isBefore } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from "../lib/i18n";
 import { Card } from '../components/common/Card';
@@ -11,14 +11,23 @@ export default function HistoryClassic() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const events = useStore(state => state.events);
+  const groups = useStore(state => state.groups);
+  const currentUser = useStore(state => state.currentUser);
   const feedbackSubmitted = useStore(state => state.feedbackSubmitted);
 
-  const pastEvents = events.slice(0, 3);
+  const today = new Date();
+  const pastEvents = events.filter(e => isBefore(parseISO(e.date), today));
 
   const submittedList = Object.values(feedbackSubmitted);
   const avgRating = submittedList.length > 0
     ? (submittedList.reduce((sum, f) => sum + f.overallRating, 0) / submittedList.length).toFixed(1)
     : '—';
+
+  const pastEventIds = new Set(pastEvents.map(e => e.id));
+  const pastGroups = groups.filter(g => pastEventIds.has(g.eventId));
+  const uniqueMemberIds = new Set(pastGroups.flatMap(g => g.members));
+  if (currentUser) uniqueMemberIds.delete(currentUser.id);
+  const peopleMet = uniqueMemberIds.size;
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
@@ -39,13 +48,17 @@ export default function HistoryClassic() {
           <p className="text-[11.2px] text-gray-500 font-medium tracking-wide">{t(`Μ.Ο. Βαθμολογία`, `Avg Rating`)}</p>
         </Card>
         <Card className="p-3 text-center">
-          <p className="text-[23px] font-black text-[#111827]">14</p>
+          <p className="text-[23px] font-black text-[#111827]">{peopleMet}</p>
           <p className="text-[11.2px] text-gray-500 font-medium tracking-wide">{t(`Άτομα`, `People Met`)}</p>
         </Card>
       </div>
 
       <div className="space-y-3">
-        {pastEvents.map((event) => {
+        {pastEvents.length === 0 ? (
+          <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+            <p className="text-gray-500 font-medium text-sm">{t(`Δεν υπάρχουν παρελθόντα events ακόμα.`, `No past events yet.`)}</p>
+          </div>
+        ) : pastEvents.map((event) => {
           const submitted = feedbackSubmitted[event.id];
           return (
             <Card key={event.id} className="p-4 hover:border-cyan-200 transition-colors cursor-pointer" onClick={() => navigate(`/history/feedback/${event.id}`)}>

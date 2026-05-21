@@ -449,16 +449,16 @@ export default function NearbyGroupsClassic() {
                 <MapIcon className="h-6 w-6" />
               </div>
               <h3 className="text-sm font-bold text-[#111827]">
-                Expand your radius
+                {t('Αυξήστε την ακτίνα σας', 'Expand your radius')}
               </h3>
               <p className="text-xs text-gray-500 mt-1 mb-4">
-                Discover more local groups by increasing your search area.
+                {t('Ανακαλύψτε περισσότερες τοπικές ομάδες αυξάνοντας την περιοχή αναζήτησης.', 'Discover more local groups by increasing your search area.')}
               </p>
               <button
                 onClick={() => setRadius(15)}
                 className="text-xs font-bold text-white bg-[#111827] px-4 py-2 rounded-full hover:bg-gray-800 transition-colors"
               >
-                Set radius to 15km
+                {t('Ορισμός ακτίνας 15km', 'Set radius to 15km')}
               </button>
             </div>
           </div>

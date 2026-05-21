@@ -104,7 +104,7 @@ export default function InboxClassic() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t(`Αναζήτηση συνομιλιών...`, `Search conversations...`)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500"
           />
         </div>
 
