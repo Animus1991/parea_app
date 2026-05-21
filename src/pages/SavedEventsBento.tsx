@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Bookmark, MapPin, Calendar, Users, ArrowRight } from 'lucide-react';
 import { useStore } from '../store';
 import { Link } from 'react-router-dom';
@@ -27,7 +27,7 @@ export default function SavedEventsBento() {
             <Link key={event.id} to={`/events/${event.id}`} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all group flex flex-col">
               <div className="h-32 bg-gray-200 relative overflow-hidden shrink-0">
                 <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#111827] shadow-sm z-10">
+                <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#111827] shadow-sm z-10" aria-label={t('Αποθηκευμένο', 'Saved')}>
                   <Bookmark className="w-4 h-4 fill-current text-indigo-600" />
                 </button>
               </div>

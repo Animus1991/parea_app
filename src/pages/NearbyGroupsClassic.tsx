@@ -353,7 +353,7 @@ export default function NearbyGroupsClassic() {
               className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-white/95 backdrop-blur shadow-lg focus:outline-none focus:ring-2 focus:ring-cyan-600 text-sm font-medium"
             />
           </div>
-          <button className="h-11 px-4 bg-white/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-gray-700 hover:text-cyan-600 transition-colors pointer-events-auto">
+          <button className="h-11 px-4 bg-white/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-gray-700 hover:text-cyan-600 transition-colors pointer-events-auto" aria-label={t('Φίλτρα', 'Filters')}>
             <SlidersHorizontal className="h-5 w-5" />
           </button>
         </div>
@@ -532,7 +532,7 @@ export default function NearbyGroupsClassic() {
                       {group.locationArea}
                     </p>
                     <button className="w-full bg-[#111827] text-white text-[10px] font-bold tracking-wide py-1.5 rounded-md hover:bg-black transition-colors">
-                      View Event
+                      {t('Δες Εκδήλωση', 'View Event')}
                     </button>
                   </div>
                 </Popup>

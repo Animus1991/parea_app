@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+ο»Ώimport React, { useState, useRef, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useStore } from "../store";
 import {
@@ -739,7 +739,7 @@ export default function GroupChatBentoDark() {
                       aria-checked={isEphemeral}
                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#111827] focus:ring-offset-2 ${isEphemeral ? "bg-gray-800 text-white border border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.5)]" : "bg-gray-200"}`}
                     >
-                      <span className="sr-only">{t('Εναλλαγή εφήμερης λειτουργίας', 'Toggle ephemeral mode')}</span>
+                      <span className="sr-only">{t('Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® ΞµΟ†Ξ®ΞΌΞµΟΞ·Ο‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚', 'Toggle ephemeral mode')}</span>
                       <span
                         aria-hidden="true"
                         className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-gray-800 border-gray-700 text-white shadow ring-0 transition duration-200 ease-in-out ${isEphemeral ? "translate-x-5" : "translate-x-0"}`}

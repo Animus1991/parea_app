@@ -649,13 +649,14 @@ export default function HomeNeonDark() {
           </div>
 
           <div className="flex bg-gray-700 p-0.5 rounded-lg w-fit">
-            <button className="p-1.5 rounded-md transition-colors bg-gray-800 shadow-sm text-white">
+            <button className="p-1.5 rounded-md transition-colors bg-gray-800 shadow-sm text-white" aria-label={t('Προβολή πλέγματος', 'Grid view')} title={t('Προβολή πλέγματος', 'Grid view')}>
               <Grid className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigate("/nearby")}
               className="p-1.5 rounded-md transition-colors text-white hover:text-white"
               title={t("Άνοιγμα Χάρτη", "Open Map")}
+              aria-label={t("Άνοιγμα Χάρτη", "Open Map")}
             >
               <MapIcon className="w-4 h-4" />
             </button>

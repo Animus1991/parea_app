@@ -126,7 +126,7 @@ export default function OrganizerDashboardBento() {
                     <p className="text-[12.5px] text-black mt-0.5">{t(`Επιβεβαιωμένη`, `Confirmed`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-indigo-600 rounded shadow-sm border border-gray-200 hover:bg-indigo-50">
+                    <button className="p-1.5 bg-white text-indigo-600 rounded shadow-sm border border-gray-200 hover:bg-indigo-50" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
                       <MessageSquare className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -138,7 +138,7 @@ export default function OrganizerDashboardBento() {
                     <p className="text-[12.5px] text-black mt-0.5">{t(`Αναμένεται 1 ακόμα`, `Waiting for 1 more`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-indigo-600 rounded shadow-sm border border-gray-200 hover:bg-indigo-50">
+                    <button className="p-1.5 bg-white text-indigo-600 rounded shadow-sm border border-gray-200 hover:bg-indigo-50" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
                       <MessageSquare className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -181,7 +181,7 @@ export default function OrganizerDashboardBento() {
                     <p className="text-[12.5px] text-indigo-600 mt-0.5">{t(`Νέο μήνυμα`, `New message`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-indigo-600 rounded shadow-sm border border-indigo-200 hover:bg-indigo-100 relative">
+                    <button className="p-1.5 bg-white text-indigo-600 rounded shadow-sm border border-indigo-200 hover:bg-indigo-100 relative" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>

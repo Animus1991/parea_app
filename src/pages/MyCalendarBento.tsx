@@ -73,13 +73,13 @@ export default function MyCalendarBento() {
             {format(currentDate, 'MMMM yyyy')}
           </h2>
           <div className="flex items-center gap-2">
-            <button onClick={prevPeriod} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors">
+            <button onClick={prevPeriod} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" aria-label={t('Προηγούμενη περίοδος', 'Previous period')}>
               <ChevronLeft className="w-5 h-5 text-black" />
             </button>
             <button onClick={() => setCurrentDate(new Date())} className="px-3 py-1 text-xs font-bold bg-gray-100 text-black rounded-md hover:bg-gray-200">
               {t('Σήμερα', 'Today')}
             </button>
-            <button onClick={nextPeriod} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors">
+            <button onClick={nextPeriod} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" aria-label={t('Επόμενη περίοδος', 'Next period')}>
               <ChevronRight className="w-5 h-5 text-black" />
             </button>
           </div>

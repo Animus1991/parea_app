@@ -650,13 +650,14 @@ export default function HomeVibrant() {
           </div>
 
           <div className="flex bg-fuchsia-50 p-0.5 rounded-lg w-fit border border-fuchsia-100">
-            <button className="p-1.5 rounded-md transition-all bg-white shadow-sm text-fuchsia-700">
+            <button className="p-1.5 rounded-md transition-all bg-white shadow-sm text-fuchsia-700" aria-label={t('Προβολή πλέγματος', 'Grid view')} title={t('Προβολή πλέγματος', 'Grid view')}>
               <Grid className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigate("/nearby")}
               className="p-1.5 rounded-md transition-all text-gray-500 hover:text-fuchsia-600"
               title={t("Άνοιγμα Χάρτη", "Open Map")}
+              aria-label={t("Άνοιγμα Χάρτη", "Open Map")}
             >
               <MapIcon className="w-4 h-4" />
             </button>

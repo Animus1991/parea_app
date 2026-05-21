@@ -126,7 +126,7 @@ export default function OrganizerDashboardBentoDark() {
                     <p className="text-[12.5px] text-white mt-0.5">{t(`Επιβεβαιωμένη`, `Confirmed`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-gray-800 border-gray-700 text-white text-emerald-400 rounded shadow-sm border border-gray-700 hover:bg-emerald-900/30">
+                    <button className="p-1.5 bg-gray-800 border-gray-700 text-white text-emerald-400 rounded shadow-sm border border-gray-700 hover:bg-emerald-900/30" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
                       <MessageSquare className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -138,7 +138,7 @@ export default function OrganizerDashboardBentoDark() {
                     <p className="text-[12.5px] text-white mt-0.5">{t(`Αναμένεται 1 ακόμα`, `Waiting for 1 more`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-gray-800 border-gray-700 text-white text-emerald-400 rounded shadow-sm border border-gray-700 hover:bg-emerald-900/30">
+                    <button className="p-1.5 bg-gray-800 border-gray-700 text-white text-emerald-400 rounded shadow-sm border border-gray-700 hover:bg-emerald-900/30" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
                       <MessageSquare className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -181,7 +181,7 @@ export default function OrganizerDashboardBentoDark() {
                     <p className="text-[12.5px] text-emerald-400 mt-0.5">{t(`Νέο μήνυμα`, `New message`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-gray-800 border-gray-700 text-white text-emerald-400 rounded shadow-sm border border-emerald-800 hover:bg-emerald-900/50 relative">
+                    <button className="p-1.5 bg-gray-800 border-gray-700 text-white text-emerald-400 rounded shadow-sm border border-emerald-800 hover:bg-emerald-900/50 relative" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>

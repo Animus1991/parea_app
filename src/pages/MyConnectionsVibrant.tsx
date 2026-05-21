@@ -87,10 +87,10 @@ export default function MyConnectionsVibrant() {
             </div>
             
             <div className="flex items-center gap-2">
-              <button className="p-2 text-fuchsia-600 hover:bg-fuchsia-50 rounded-full transition-colors" title={t('Μήνυμα', 'Message')}>
+              <button className="p-2 text-fuchsia-600 hover:bg-fuchsia-50 rounded-full transition-colors" title={t('Μήνυμα', 'Message')} aria-label={t('Μήνυμα', 'Message')}>
                 <MessageCircle className="w-5 h-5" />
               </button>
-              <button className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors">
+              <button className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors" aria-label={t('Περισσότερες επιλογές', 'More options')} title={t('Περισσότερες επιλογές', 'More options')}>
                 <MoreVertical className="w-5 h-5" />
               </button>
             </div>

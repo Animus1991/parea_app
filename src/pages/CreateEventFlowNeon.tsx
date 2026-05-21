@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+ï»¿import React, { useState } from "react";
 import {
   Camera,
   MapPin,
@@ -136,7 +136,7 @@ export default function CreateEventFlowNeon() {
                     onClick={() => fileInputRef.current?.click()}
                   >
                     {imagePreview ? (
-                       <img src={imagePreview} className="absolute inset-0 w-full h-full object-cover" alt={t('Ðñïåðéóêüðçóç åêäÞëùóçò', 'Event preview')} />
+                       <img src={imagePreview} className="absolute inset-0 w-full h-full object-cover" alt={t('Î ÏÎ¿ÎµÏ€Î¹ÏƒÎºÏŒÏ€Î·ÏƒÎ· ÎµÎºÎ´Î®Î»Ï‰ÏƒÎ·Ï‚', 'Event preview')} />
                     ) : (
                        <>
                          <Camera className="w-8 h-8 mb-2 text-black" />
