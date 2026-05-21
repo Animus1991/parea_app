@@ -102,7 +102,7 @@ export default function AdminDashboardVibrantDark() {
           <div className="sticky top-24">
             <h2 className="text-[18px] font-bold text-white tracking-wide mb-6 flex items-center gap-2">
               <Flag className="h-4 w-4 text-white" />{t(`Γρήγορη Ενέργεια`, `Quick Action`)}</h2>
-            <Card className="p-5 bg-gray-900 border-gray-700">
+            <Card className="p-5 bg-gray-800/70 border-gray-700">
               <p className="text-[18px] text-white font-bold tracking-wide mb-4">{t(`Αναζήτηση Χρήστη`, `Search User`)}</p>
               
               <div className="space-y-4">

@@ -68,11 +68,11 @@ export default function TrustCenterNeonDark() {
               <p className="text-[12.5px] font-bold text-white tracking-wide">{t(`Βαθμός Αξιοπιστίας`, `Reliability Score`)}</p>
             </Card>
 
-            <Card className="p-4 md:p-5 bg-gray-900 border-none shadow-none">
+            <Card className="p-4 md:p-5 bg-gray-800/70 border-none shadow-none">
               <h3 className="text-[12.1964473899675px] font-bold text-white tracking-wide mb-1.5">{t(`Πώς λειτουργεί`, `How It Works`)}</h3>
               <p className="text-[13.8px] md:text-[13.5px] text-white leading-relaxed">{t(`Κάθε επαλήθευση αυξάνει το επίπεδο εμπιστοσύνης σας, ξεκλειδώνοντας πρόσβαση σε εκδηλώσεις υψηλής ασφάλειας.`, `Each verification raises your trust tier, unlocking access to high-safety events.`)}</p>
             </Card>
-            <Card className="p-4 md:p-5 bg-gray-900 border-none shadow-none">
+            <Card className="p-4 md:p-5 bg-gray-800/70 border-none shadow-none">
               <h3 className="text-[12.1964473899675px] font-bold text-white tracking-wide mb-1.5">{t(`Επίπεδα Εμπιστοσύνης`, `Trust Tiers`)}</h3>
               <p className="text-[13.8px] md:text-[13.5px] text-white leading-relaxed">{t(`Newcomer → Verified → Trusted → Super Trusted. Κάθε επίπεδο απαιτεί περισσότερες επαληθεύσεις.`, `Newcomer → Verified → Trusted → Super Trusted. Each tier requires more verifications.`)}</p>
             </Card>

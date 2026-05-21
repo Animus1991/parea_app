@@ -132,7 +132,7 @@ export default function CreateEventFlowVibrantDark() {
                     {t("Εικόνα Εκδήλωσης", "Event Image")}
                   </label>
                   <div 
-                    className="w-full h-40 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center text-white hover:bg-gray-900 hover:border-fuchsia-400 transition-colors cursor-pointer relative overflow-hidden"
+                    className="w-full h-40 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center text-white hover:bg-gray-700/60 hover:border-fuchsia-400 transition-colors cursor-pointer relative overflow-hidden"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     {imagePreview ? (

@@ -58,7 +58,7 @@ export default function SavedEventsVibrantDark() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-gray-900 rounded-2xl border border-dashed border-gray-700">
+        <div className="text-center py-16 bg-gray-800/70 rounded-2xl border border-dashed border-gray-700">
           <Bookmark className="mx-auto h-10 w-10 text-white mb-3" />
           <h3 className="text-base font-bold text-white">{t('Δεν υπάρχουν αποθηκευμένες εκδηλώσεις', 'No saved events yet')}</h3>
           <p className="text-sm text-white mt-1 max-w-sm mx-auto">{t('Όταν δείτε μια εκδήλωση που σας αρέσει, προσθέστε τη στους σελιδοδείκτες σας.', 'When you see an event you like, bookmark it to find it easily later.')}</p>

@@ -165,7 +165,7 @@ export default function MyCalendarBentoDark() {
                           ? 'bg-emerald-600 text-white'
                           : dayEvents.length > 0
                             ? 'bg-emerald-900/30 hover:bg-emerald-900/50'
-                            : 'hover:bg-gray-900'
+                            : 'hover:bg-gray-700/60'
                       } ${!isCurrentMonth ? 'opacity-30' : ''}`}
                     >
                       <span className={`text-xs font-bold ${isToday(day) ? 'text-white' : 'text-white'}`}>

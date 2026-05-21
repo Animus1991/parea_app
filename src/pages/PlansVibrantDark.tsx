@@ -124,7 +124,7 @@ export default function PlansVibrantDark() {
                 <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 bg-fuchsia-900/30 hover:bg-fuchsia-900/50 text-fuchsia-400 py-2 rounded-lg text-[12.825px] font-bold transition-colors flex items-center justify-center gap-1.5">
                   <MessageCircle className="h-4 w-4" /> {t(`Ομαδική Συνομιλία`, `Group Chat`)}
                 </button>
-                <button onClick={() => navigate(`/events/${event.id}`)} className="bg-gray-800 border border-gray-700 hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-[12.825px] font-bold transition-colors">
+                <button onClick={() => navigate(`/events/${event.id}`)} className="bg-gray-800 border border-gray-700 hover:bg-gray-700/60 text-white px-4 py-2 rounded-lg text-[12.825px] font-bold transition-colors">
                   {t(`Λεπτομέρειες`, `Details`)}
                 </button>
                 <button className="bg-gray-800 border border-red-200 hover:bg-red-50 text-red-500 px-3 py-2 rounded-lg text-[12.825px] font-bold transition-colors flex items-center gap-1">
@@ -136,7 +136,7 @@ export default function PlansVibrantDark() {
         ))}
         
         {upcomingEvents.length === 0 && (
-          <div className="text-center py-12 bg-gray-900 rounded-xl border border-dashed border-gray-700">
+          <div className="text-center py-12 bg-gray-800/70 rounded-xl border border-dashed border-gray-700">
             <p className="text-white font-medium text-[17.099999999999998px] mb-4">{t(`Δεν υπάρχουν επερχόμενα σχέδια.`, `No upcoming confirmed plans.`)}</p>
             <button className="bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white px-5 py-2 rounded-full text-[13.5375px] font-bold" onClick={() => navigate('/')}>{t(`Εξερεύνηση`, `Explore Experiences`)}</button>
           </div>
@@ -168,7 +168,7 @@ export default function PlansVibrantDark() {
               </p>
 
               <div className="mt-auto pt-4 border-t border-gray-800 flex gap-2">
-                <button onClick={() => navigate(`/events/${event.id}`)} className="bg-gray-800 border border-gray-700 hover:bg-gray-900 text-white px-4 py-2 rounded-lg text-[12.825px] font-bold transition-colors">
+                <button onClick={() => navigate(`/events/${event.id}`)} className="bg-gray-800 border border-gray-700 hover:bg-gray-700/60 text-white px-4 py-2 rounded-lg text-[12.825px] font-bold transition-colors">
                   {t(`Κατάσταση`, `View Status`)}
                 </button>
               </div>

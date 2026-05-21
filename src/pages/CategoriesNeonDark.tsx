@@ -130,7 +130,7 @@ export default function CategoriesNeonDark() {
       </div>
       
       {visibleCategories.length === 0 && (
-         <div className="text-center py-12 bg-gray-900 rounded-2xl border border-dashed border-gray-700">
+         <div className="text-center py-12 bg-gray-800/70 rounded-2xl border border-dashed border-gray-700">
            <p className="text-white font-medium text-sm">{t('Δεν βρέθηκαν κατηγορίες.', 'No categories found matching ')} "{searchQuery}".</p>
          </div>
       )}
@@ -143,7 +143,7 @@ export default function CategoriesNeonDark() {
           <div className="flex gap-2 overflow-x-auto pb-2 noscrollbar items-center w-full md:w-auto">
             {/* Sort Dropdown */}
             <select 
-              className="text-xs border border-gray-700 rounded-lg shadow-sm focus:border-emerald-9500 focus:ring-emerald-9500 bg-gray-800 hover:bg-gray-900 py-1.5 px-3 font-medium outline-none cursor-pointer h-8 shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] pr-7"
+              className="text-xs border border-gray-700 rounded-lg shadow-sm focus:border-emerald-9500 focus:ring-emerald-9500 bg-gray-800 hover:bg-gray-700/60 py-1.5 px-3 font-medium outline-none cursor-pointer h-8 shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] pr-7"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
             >
@@ -190,7 +190,7 @@ export default function CategoriesNeonDark() {
               <EventCardSkeleton key={`skeleton-${i}`} />
             ))
           ) : filteredEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-gray-900 rounded-2xl border border-dashed border-gray-700">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-gray-800/70 rounded-2xl border border-dashed border-gray-700">
               <p className="text-white font-medium text-sm">{t('Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.', 'No events found matching your criteria.')}</p>
             </div>
           ) : (

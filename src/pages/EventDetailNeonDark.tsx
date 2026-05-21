@@ -104,7 +104,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
       )}
       
       {!isDiscountEligible && (
-         <div className="flex items-center gap-1.5 text-xs text-white mb-4 bg-gray-900 p-2 rounded-md border border-gray-800">
+         <div className="flex items-center gap-1.5 text-xs text-white mb-4 bg-gray-800/70 p-2 rounded-md border border-gray-800">
            <ShieldCheck className="h-4 w-4 text-white" />
            <span className="font-medium">{t('Μικρή & ιδιωτική ομάδα', 'Small & private group')}</span>
          </div>
@@ -277,7 +277,7 @@ export default function EventDetailNeonDark() {
           <div className="flex gap-2 flex-wrap justify-end">
             <button 
               onClick={handleSave}
-              className={`flex items-center gap-2 text-[10px] font-bold  tracking-wider transition-colors px-3 py-1 rounded-full ${isSaved ? 'text-emerald-400 bg-emerald-900/50' : 'text-white hover:text-emerald-400 bg-gray-900 hover:bg-gray-700'}`}
+              className={`flex items-center gap-2 text-[10px] font-bold  tracking-wider transition-colors px-3 py-1 rounded-full ${isSaved ? 'text-emerald-400 bg-emerald-900/50' : 'text-white hover:text-emerald-400 bg-gray-800/70 hover:bg-gray-700'}`}
             >
               <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} />
               {isSaved ? t("Αποθηκεύτηκε", "Saved") : t("Αποθήκευση Εκδήλωσης", "Save Event")}
@@ -298,7 +298,7 @@ export default function EventDetailNeonDark() {
             </button>
             <button 
               onClick={handleAddToCalendar}
-              className="flex items-center gap-2 text-[10px] font-bold  tracking-wider text-white hover:text-emerald-400 transition-colors bg-gray-900 hover:bg-gray-700 px-3 py-1.5 rounded-full"
+              className="flex items-center gap-2 text-[10px] font-bold  tracking-wider text-white hover:text-emerald-400 transition-colors bg-gray-800/70 hover:bg-gray-700 px-3 py-1.5 rounded-full"
             >
               <Calendar className="h-3.5 w-3.5" />
               {t('Προσθήκη στο Ημερολόγιο', 'Add to Calendar')}
@@ -429,7 +429,7 @@ export default function EventDetailNeonDark() {
                
                {event.externalLink && (
                  <div className="mt-4 pt-1">
-                   <a href={event.externalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 border border-gray-700 text-white bg-gray-800 hover:bg-gray-900 hover:text-emerald-400 hover:border-emerald-800 transition-colors shadow-sm text-xs font-bold tracking-wide rounded-lg w-full sm:w-auto justify-center">
+                   <a href={event.externalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 border border-gray-700 text-white bg-gray-800 hover:bg-gray-700/60 hover:text-emerald-400 hover:border-emerald-800 transition-colors shadow-sm text-xs font-bold tracking-wide rounded-lg w-full sm:w-auto justify-center">
                      <ExternalLink className="w-3.5 h-3.5" />
                      {t('Επίσημη Σελίδα Εκδήλωσης', 'Official Event Page')}
                    </a>
@@ -552,7 +552,7 @@ export default function EventDetailNeonDark() {
                     <select 
                       value={groupSizeFilter} 
                       onChange={(e) => setGroupSizeFilter(e.target.value as any)}
-                      className="text-xs bg-gray-900 border border-gray-700 rounded p-1 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-9500"
+                      className="text-xs bg-gray-800/70 border border-gray-700 rounded p-1 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-9500"
                     >
                       <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>
                       <option value="3">{t('3 Μέλη', '3 Members')}</option>
@@ -578,7 +578,7 @@ export default function EventDetailNeonDark() {
             </p>
             
             {eventGroups.length === 0 ? (
-              <div className="text-xs text-white mb-6 bg-gray-900 p-4 rounded-xl text-center border border-dashed border-gray-700 font-medium">
+              <div className="text-xs text-white mb-6 bg-gray-800/70 p-4 rounded-xl text-center border border-dashed border-gray-700 font-medium">
                 {t('Δεν έχουν δημιουργηθεί ομάδες ακόμα. Γίνετε ο πρώτος που θα ξεκινήσει μία!', 'No groups forming yet. Be the first to start one!')}
               </div>
             ) : (
@@ -591,11 +591,11 @@ export default function EventDetailNeonDark() {
             
             <div className="space-y-4 pt-5 border-t border-gray-700">
               <div className="grid grid-cols-1 gap-3">
-                <Button variant="outline" className="w-full border-gray-700 text-white hover:bg-gray-900" size="lg" onClick={() => alert(t("Προστέθηκε στη λίστα αναμονής. Θα ειδοποιηθείτε αν ανοίξει θέση.", "Added to waitlist. We will notify you if a spot in a group opens up."))}>
+                <Button variant="outline" className="w-full border-gray-700 text-white hover:bg-gray-700/60" size="lg" onClick={() => alert(t("Προστέθηκε στη λίστα αναμονής. Θα ειδοποιηθείτε αν ανοίξει θέση.", "Added to waitlist. We will notify you if a spot in a group opens up."))}>
                   {t('Λίστα Αναμονής', 'Join Waitlist')}
                 </Button>
               </div>
-              <div className="text-[10px] text-white font-medium bg-gray-900 rounded text-center p-3 leading-relaxed tracking-wide">
+              <div className="text-[10px] text-white font-medium bg-gray-800/70 rounded text-center p-3 leading-relaxed tracking-wide">
                 {t('Δημιουργήστε νέα ομάδα 3-5 ατόμων. ', 'Create a new 3-5 person group. ')}
                 {event.isPaid ? (
                   <span className="block mt-1 font-bold text-white">{t('Η πληρωμή προεγκρίνεται. Χρεώνεται μόνο κατά την επιβεβαίωση.', 'Payment pre-authorized via official partner APIs. Discharges automatically on Group confirmation.')}</span>

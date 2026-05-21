@@ -12,7 +12,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const theme = useStore((state) => state.theme);
     const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
 
-    const baseClass = "inline-flex items-center justify-center rounded font-bold transition-colors shadow-sm disabled:pointer-events-none disabled:opacity-50";
+    const baseClass = "inline-flex items-center justify-center rounded-lg font-bold transition-colors shadow-sm disabled:pointer-events-none disabled:opacity-50";
+
+    // Accessible focus-visible rings (static Tailwind tokens, chosen per theme)
+    const focusRing = isDark
+      ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+      : "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
     const getVariants = (): Record<string, string> => {
       if (isDark) {
@@ -21,10 +26,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           : { primary: "bg-emerald-600 text-white hover:bg-emerald-700", outline: "border border-emerald-500/40 text-emerald-400 bg-transparent hover:bg-emerald-900/20" };
         return {
           primary: accent.primary,
-          secondary: "bg-gray-700 text-white hover:bg-gray-600",
+          secondary: "bg-gray-700/50 text-white hover:bg-gray-600/60",
           outline: accent.outline,
-          ghost: "bg-transparent text-gray-300 hover:bg-gray-700 shadow-none",
-          danger: "bg-red-900/30 text-red-400 hover:bg-red-900/50 shadow-none"
+          ghost: "bg-transparent text-gray-300 hover:bg-gray-700/40 shadow-none",
+          danger: "bg-red-900/20 text-red-400 hover:bg-red-900/30 shadow-none"
         };
       }
       const accent = theme === 'vibrant'
@@ -54,7 +59,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={cn(baseClass, variants[variant], sizes[size], className)}
+        className={cn(baseClass, focusRing, variants[variant], sizes[size], className)}
         {...props}
       />
     );

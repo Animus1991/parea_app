@@ -44,7 +44,7 @@ export default function WalletNeonDark() {
           </p>
         </Card>
 
-        <Card className="p-6 border border-gray-700 bg-gray-900 flex flex-col justify-center">
+        <Card className="p-6 border border-gray-700 bg-gray-800/70 flex flex-col justify-center">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-gray-800 shadow-sm border border-gray-700 rounded-full flex items-center justify-center text-white">
               <Building2 className="w-5 h-5" />
@@ -69,7 +69,7 @@ export default function WalletNeonDark() {
         </div>
         <div className="divide-y divide-gray-100">
           {transactions.map((tx) => (
-            <div key={tx.id} className="p-4 md:p-6 flex items-center justify-between hover:bg-gray-900 transition-colors">
+            <div key={tx.id} className="p-4 md:p-6 flex items-center justify-between hover:bg-gray-700/60 transition-colors">
               <div className="flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${tx.type === 'Payout' ? 'bg-teal-950 text--400' : 'bg-emerald-50 text--400'}`}>
                   {tx.type === 'Payout' ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}

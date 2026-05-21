@@ -98,7 +98,7 @@ export default function InboxVibrantDark() {
             <div
               key={chat.id}
               onClick={() => navigate(`/chat/${chat.id}`)}
-              className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-900 cursor-pointer transition-colors border border-transparent hover:border-gray-800"
+              className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-700/60 cursor-pointer transition-colors border border-transparent hover:border-gray-800"
             >
               <div className="relative shrink-0">
                 <img src={chat.image} alt={chat.title} className="w-12 h-12 rounded-full object-cover" />

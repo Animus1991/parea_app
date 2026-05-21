@@ -506,7 +506,7 @@ export default function HomeVibrantDark() {
                 className={`whitespace-nowrap px-3.5 py-1 rounded-full text-[12.75px] font-bold shadow-sm transition-colors tracking-wide ${
                   activeCategory === cat
                     ? "bg-slate-800 text-white"
-                    : "bg-gray-800 border border-gray-700 text-white hover:text-white hover:bg-gray-900"
+                    : "bg-gray-800 border border-gray-700 text-white hover:text-white hover:bg-gray-700/60"
                 }`}
               >
                 {categoryTranslations[cat] ?? cat}
@@ -535,7 +535,7 @@ export default function HomeVibrantDark() {
         {/* Secondary filters */}
         <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar items-center flex-wrap">
           <select
-            className="text-[12.73px] border border-gray-700 rounded-full shadow-sm bg-gray-800 hover:bg-gray-900 py-1.5 px-3 font-medium outline-none cursor-pointer"
+            className="text-[12.73px] border border-gray-700 rounded-full shadow-sm bg-gray-800 hover:bg-gray-700/60 py-1.5 px-3 font-medium outline-none cursor-pointer"
             value={priceFilter}
             onChange={(e) =>
               setPriceFilter(e.target.value as typeof priceFilter)
@@ -552,7 +552,7 @@ export default function HomeVibrantDark() {
           </select>
 
           <select
-            className="text-[12.73px] border border-gray-700 rounded-full shadow-sm bg-gray-800 hover:bg-gray-900 py-1.5 px-3 font-medium outline-none cursor-pointer"
+            className="text-[12.73px] border border-gray-700 rounded-full shadow-sm bg-gray-800 hover:bg-gray-700/60 py-1.5 px-3 font-medium outline-none cursor-pointer"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value as typeof dateFilter)}
           >
@@ -569,7 +569,7 @@ export default function HomeVibrantDark() {
           </select>
 
           <select
-            className="text-[12.73px] border border-gray-700 rounded-full shadow-sm bg-gray-800 hover:bg-gray-900 py-1.5 px-3 font-medium outline-none cursor-pointer"
+            className="text-[12.73px] border border-gray-700 rounded-full shadow-sm bg-gray-800 hover:bg-gray-700/60 py-1.5 px-3 font-medium outline-none cursor-pointer"
             value={safetyFilter}
             onChange={(e) =>
               setSafetyFilter(e.target.value as typeof safetyFilter)
@@ -590,7 +590,7 @@ export default function HomeVibrantDark() {
           </select>
 
           <select
-            className="text-[12.73px] border border-gray-700 rounded-full shadow-sm bg-gray-800 hover:bg-gray-900 py-1.5 px-3 font-medium outline-none cursor-pointer"
+            className="text-[12.73px] border border-gray-700 rounded-full shadow-sm bg-gray-800 hover:bg-gray-700/60 py-1.5 px-3 font-medium outline-none cursor-pointer"
             value={radiusFilter}
             onChange={(e) =>
               setRadiusFilter(e.target.value as typeof radiusFilter)
@@ -607,7 +607,7 @@ export default function HomeVibrantDark() {
           {/* Sort */}
           <div className="relative ml-auto">
             <select
-              className="text-[12.73px] border border-gray-700 rounded-full shadow-sm bg-gray-800 hover:bg-gray-900 py-1.5 pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none"
+              className="text-[12.73px] border border-gray-700 rounded-full shadow-sm bg-gray-800 hover:bg-gray-700/60 py-1.5 pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none"
               value={sortParam}
               onChange={(e) => {
                 const p = new URLSearchParams(searchParams);
@@ -668,7 +668,7 @@ export default function HomeVibrantDark() {
               <EventCardSkeleton key={`skeleton-${i}`} />
             ))
           ) : sortedEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-gray-900 rounded-2xl border border-dashed border-gray-700">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-gray-800/70 rounded-2xl border border-dashed border-gray-700">
               <p className="text-white font-medium text-sm">
                 {t(
                   "home.feed.no_events",

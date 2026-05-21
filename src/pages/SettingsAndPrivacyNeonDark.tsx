@@ -73,7 +73,7 @@ export default function SettingsAndPrivacyNeonDark() {
             {section.items.map((item, i) => {
               const Icon = item.icon;
               return (
-                <div key={i} onClick={item.onClick} className={`flex items-center justify-between p-4 ${item.onClick ? 'cursor-pointer hover:bg-gray-900' : ''} transition-colors`}>
+                <div key={i} onClick={item.onClick} className={`flex items-center justify-between p-4 ${item.onClick ? 'cursor-pointer hover:bg-gray-700/60' : ''} transition-colors`}>
                   <div className="flex items-center gap-3">
                     <Icon className="w-4 h-4 text-white" />
                     <span className="text-[14.535px] font-medium text-white">{item.label}</span>

@@ -200,7 +200,7 @@ export default function GroupChatBentoDark() {
           key={msg.id}
           className="text-center my-6 flex justify-center w-full px-4"
         >
-          <span className="text-[11px] font-semibold tracking-tight capitalize text-white bg-gray-900 px-4 py-2 rounded-full shadow-sm max-w-sm text-center leading-relaxed">
+          <span className="text-[11px] font-semibold tracking-tight capitalize text-white bg-gray-800/70 px-4 py-2 rounded-full shadow-sm max-w-sm text-center leading-relaxed">
             {msg.text}
           </span>
         </div>
@@ -286,7 +286,7 @@ export default function GroupChatBentoDark() {
                   placeholder={t("Αναζήτηση συνομιλίας...", "Search chat...")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827] bg-gray-900"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827] bg-gray-800/70"
                 />
                 {searchQuery && (
                   <button
@@ -323,7 +323,7 @@ export default function GroupChatBentoDark() {
                     <select
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
-                      className="text-[11px] font-bold border border-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-9500 bg-gray-900 text-white hover:bg-gray-800 border border-gray-700 cursor-pointer transition-colors max-w-[120px] truncate"
+                      className="text-[11px] font-bold border border-gray-700 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-9500 bg-gray-800/70 text-white hover:bg-gray-800 border border-gray-700 cursor-pointer transition-colors max-w-[120px] truncate"
                     >
                       <option value="all">
                         {t("Όλοι οι Αποστολείς", "All Senders")}
@@ -341,7 +341,7 @@ export default function GroupChatBentoDark() {
                         placeholder={t("Αναζήτηση...", "Search...")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-8 pr-3 py-1.5 text-xs border border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-9500 w-32 xl:w-48 bg-gray-900 focus:bg-gray-800 border-gray-700 text-white transition-all"
+                        className="pl-8 pr-3 py-1.5 text-xs border border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-9500 w-32 xl:w-48 bg-gray-800/70 focus:bg-gray-800 border-gray-700 text-white transition-all"
                       />
                     </div>
                   </div>
@@ -633,7 +633,7 @@ export default function GroupChatBentoDark() {
                     placeholder={t("Αναζήτηση μελών...", "Search members...")}
                     value={memberSearchQuery}
                     onChange={(e) => setMemberSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-[13px] border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827] bg-gray-900 transition-all font-medium"
+                    className="w-full pl-9 pr-3 py-2 text-[13px] border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827] bg-gray-800/70 transition-all font-medium"
                   />
                 </div>
                 <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
@@ -648,7 +648,7 @@ export default function GroupChatBentoDark() {
                       return (
                         <div
                           key={member.id}
-                          className="flex items-center gap-3 p-2 hover:bg-gray-900 rounded-lg transition-colors border border-transparent hover:border-gray-800"
+                          className="flex items-center gap-3 p-2 hover:bg-gray-700/60 rounded-lg transition-colors border border-transparent hover:border-gray-800"
                         >
                           <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0 relative group shadow-sm border border-gray-800">
                             {member.photoUrl ? (
@@ -756,7 +756,7 @@ export default function GroupChatBentoDark() {
                   <div className="space-y-2">
                     <button
                       onClick={() => setShowStatusModal(true)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 border border-gray-700 rounded-lg transition-colors text-left"
+                      className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-800/70 hover:bg-gray-800 border border-gray-700 border border-gray-700 rounded-lg transition-colors text-left"
                     >
                       <div>
                         <p className="text-[12px] font-bold text-white">
@@ -805,7 +805,7 @@ export default function GroupChatBentoDark() {
 
                     <button
                       onClick={() => setShowLiveRadarModal(true)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 border border-gray-700 rounded-lg transition-colors text-left"
+                      className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-800/70 hover:bg-gray-800 border border-gray-700 border border-gray-700 rounded-lg transition-colors text-left"
                     >
                       <div>
                         <p className="text-[12px] font-bold text-white">
@@ -854,7 +854,7 @@ export default function GroupChatBentoDark() {
                 </button>
                 <button
                   onClick={() => setShowLeaveModal(true)}
-                  className="w-full py-2.5 px-4 text-[11px] font-bold tracking-wide text-white bg-gray-800 border-gray-700 text-white hover:bg-gray-900 border border-gray-700 rounded-lg transition-colors"
+                  className="w-full py-2.5 px-4 text-[11px] font-bold tracking-wide text-white bg-gray-800 border-gray-700 text-white hover:bg-gray-700/60 border border-gray-700 rounded-lg transition-colors"
                 >
                   {t("Αποχώρηση", "Leave Group")}
                 </button>
@@ -923,7 +923,7 @@ export default function GroupChatBentoDark() {
                       ]);
                       setShowStatusModal(false);
                     }}
-                    className="w-full flex items-center gap-3 px-4 py-3 bg-gray-900 hover:bg-gray-800 border border-gray-700 border border-gray-700 rounded-xl transition-colors text-sm font-bold text-white"
+                    className="w-full flex items-center gap-3 px-4 py-3 bg-gray-800/70 hover:bg-gray-800 border border-gray-700 border border-gray-700 rounded-xl transition-colors text-sm font-bold text-white"
                   >
                     <span className="text-white">{status.icon}</span>
                     {status.label}
@@ -932,7 +932,7 @@ export default function GroupChatBentoDark() {
               </div>
               <button
                 onClick={() => setShowStatusModal(false)}
-                className="w-full px-4 py-3 text-sm font-bold text-white hover:bg-gray-900 rounded-xl transition-all border border-transparent active:scale-[0.98]"
+                className="w-full px-4 py-3 text-sm font-bold text-white hover:bg-gray-700/60 rounded-xl transition-all border border-transparent active:scale-[0.98]"
               >
                 {t("Ακύρωση", "Cancel")}
               </button>
@@ -1015,7 +1015,7 @@ export default function GroupChatBentoDark() {
                           precision: "approximate",
                         })
                       }
-                      className={`p-3 rounded-xl border text-left flex flex-col h-full transition-all ${locationConfig.precision === "approximate" ? "border-[#111827] bg-gray-900 ring-1 ring-[#111827]" : "border-gray-700 hover:border-gray-300"}`}
+                      className={`p-3 rounded-xl border text-left flex flex-col h-full transition-all ${locationConfig.precision === "approximate" ? "border-[#111827] bg-gray-800/70 ring-1 ring-[#111827]" : "border-gray-700 hover:border-gray-300"}`}
                     >
                       <span
                         className={`text-[13px] font-bold ${locationConfig.precision === "approximate" ? "text-white" : "text-white"}`}
@@ -1036,7 +1036,7 @@ export default function GroupChatBentoDark() {
                           precision: "exact",
                         })
                       }
-                      className={`p-3 rounded-xl border text-left flex flex-col h-full transition-all ${locationConfig.precision === "exact" ? "border-[#111827] bg-gray-900 ring-1 ring-[#111827]" : "border-gray-700 hover:border-gray-300"}`}
+                      className={`p-3 rounded-xl border text-left flex flex-col h-full transition-all ${locationConfig.precision === "exact" ? "border-[#111827] bg-gray-800/70 ring-1 ring-[#111827]" : "border-gray-700 hover:border-gray-300"}`}
                     >
                       <span
                         className={`text-[13px] font-bold ${locationConfig.precision === "exact" ? "text-white" : "text-white"}`}
@@ -1061,7 +1061,7 @@ export default function GroupChatBentoDark() {
                     {["organizer", "selected", "all"].map((option) => (
                       <label
                         key={option}
-                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${locationConfig.shareWith === option ? "border-emerald-600 bg-emerald-900/30/30" : "border-gray-700 hover:bg-gray-900"}`}
+                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${locationConfig.shareWith === option ? "border-emerald-600 bg-emerald-900/30/30" : "border-gray-700 hover:bg-gray-700/60"}`}
                       >
                         <div className="flex items-center justify-center relative">
                           <input
@@ -1183,7 +1183,7 @@ export default function GroupChatBentoDark() {
                       },
                     ]);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gray-800 text-white border border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gray-800 text-white border border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:bg-gray-700/60 rounded-xl transition-all shadow-sm active:scale-[0.98]"
                 >
                   {isSharingLocation
                     ? t("Ενημέρωση Ρυθμίσεων", "Update Configuration")
@@ -1229,7 +1229,7 @@ export default function GroupChatBentoDark() {
               </div>
               <button
                 onClick={() => setShowSafetyLinkModal(false)}
-                className="w-full px-4 py-3 text-sm font-bold text-white bg-gray-800 text-white border border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                className="w-full px-4 py-3 text-sm font-bold text-white bg-gray-800 text-white border border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:bg-gray-700/60 rounded-xl transition-all shadow-sm active:scale-[0.98]"
               >
                 {t("Τέλος", "Done")}
               </button>
@@ -1275,7 +1275,7 @@ export default function GroupChatBentoDark() {
                 </button>
                 <button
                   onClick={() => setShowLeaveModal(false)}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-xl transition-all border border-gray-700 active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gray-800/70 hover:bg-gray-800 border border-gray-700 rounded-xl transition-all border border-gray-700 active:scale-[0.98]"
                 >
                   {t("Ακύρωση", "Cancel")}
                 </button>
@@ -1316,13 +1316,13 @@ export default function GroupChatBentoDark() {
                     setShowDisableEphemeralModal(false);
                     setShowInfo(false);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gray-800 text-white border border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gray-800 text-white border border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:bg-gray-700/60 rounded-xl transition-all shadow-sm active:scale-[0.98]"
                 >
                   {t("Πρόταση στην Ομάδα", "Propose to Group")}
                 </button>
                 <button
                   onClick={() => setShowDisableEphemeralModal(false)}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-xl transition-all border border-gray-700 active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-white bg-gray-800/70 hover:bg-gray-800 border border-gray-700 rounded-xl transition-all border border-gray-700 active:scale-[0.98]"
                 >
                   {t("Ακύρωση", "Cancel")}
                 </button>
@@ -1347,7 +1347,7 @@ export default function GroupChatBentoDark() {
                   </p>
                 </div>
               </div>
-              <p className="text-xs font-medium leading-relaxed text-white mb-4 bg-gray-900 p-3 rounded-lg border border-gray-800">
+              <p className="text-xs font-medium leading-relaxed text-white mb-4 bg-gray-800/70 p-3 rounded-lg border border-gray-800">
                 {t(
                   "Αυτή η αναφορά πηγαίνει απευθείας στην ομάδα ελέγχου. ",
                   "This report goes directly to the Nakamas moderation team. It will ",
@@ -1371,7 +1371,7 @@ export default function GroupChatBentoDark() {
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowReportModal(false)}
-                  className="px-5 py-2.5 text-sm font-bold text-white bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-xl transition-colors border border-gray-700"
+                  className="px-5 py-2.5 text-sm font-bold text-white bg-gray-800/70 hover:bg-gray-800 border border-gray-700 rounded-xl transition-colors border border-gray-700"
                 >
                   {t("Ακύρωση", "Cancel")}
                 </button>
@@ -1385,7 +1385,7 @@ export default function GroupChatBentoDark() {
                     );
                     setShowReportModal(false);
                   }}
-                  className="px-5 py-2.5 text-sm font-bold text-white bg-gray-800 text-white border border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:bg-gray-900 rounded-xl transition-all shadow-sm hover:shadow-md"
+                  className="px-5 py-2.5 text-sm font-bold text-white bg-gray-800 text-white border border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.5)] hover:bg-gray-700/60 rounded-xl transition-all shadow-sm hover:shadow-md"
                 >
                   {t("Υποβολή", "Submit Report")}
                 </button>
@@ -1435,7 +1435,7 @@ export default function GroupChatBentoDark() {
                     name="eta"
                     type="number"
                     placeholder={t("ETA (λεπτά)", "ETA (mins)")}
-                    className="flex-1 w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-9500 focus:border-emerald-9500 outline-none"
+                    className="flex-1 w-full bg-gray-800/70 border border-gray-700 text-white text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-9500 focus:border-emerald-9500 outline-none"
                     min="1"
                   />
                   <button
@@ -1449,7 +1449,7 @@ export default function GroupChatBentoDark() {
                 {[
                   {
                     text: t("Είμαι στον δρόμο", "I'm on my way"),
-                    color: "bg-gray-800 shadow-[0_8px_30px_rgb(0,0,0,0.5)] border border-gray-700 text-white hover:bg-gray-900",
+                    color: "bg-gray-800 shadow-[0_8px_30px_rgb(0,0,0,0.5)] border border-gray-700 text-white hover:bg-gray-700/60",
                   },
                   {
                     text: t("Έφτασα", "I arrived"),
@@ -1490,7 +1490,7 @@ export default function GroupChatBentoDark() {
 
                 <button
                   onClick={() => setShowStatusModal(false)}
-                  className="w-full px-4 py-3 mt-2 text-sm font-bold text-white bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-xl transition-all border border-gray-700 active:scale-[0.98]"
+                  className="w-full px-4 py-3 mt-2 text-sm font-bold text-white bg-gray-800/70 hover:bg-gray-800 border border-gray-700 rounded-xl transition-all border border-gray-700 active:scale-[0.98]"
                 >
                   {t("Ακύρωση", "Cancel")}
                 </button>
@@ -1557,7 +1557,7 @@ export default function GroupChatBentoDark() {
                     .map((member) => (
                       <div
                         key={member.id}
-                        className="flex items-center justify-between p-3 hover:bg-gray-900 rounded-xl transition-colors border border-transparent hover:border-gray-800"
+                        className="flex items-center justify-between p-3 hover:bg-gray-700/60 rounded-xl transition-colors border border-transparent hover:border-gray-800"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0 border border-gray-700">
@@ -1631,7 +1631,7 @@ export default function GroupChatBentoDark() {
                 )}
               </div>
 
-              <div className="p-4 sm:p-5 border-t border-gray-800 bg-gray-900 flex items-center justify-between">
+              <div className="p-4 sm:p-5 border-t border-gray-800 bg-gray-800/70 flex items-center justify-between">
                 <span className="text-xs font-bold text-white">
                   {t("Τρέχον μέγεθος:", "Current size:")} {group.members.length}
                 </span>
@@ -1640,7 +1640,7 @@ export default function GroupChatBentoDark() {
                     setShowAddMemberModal(false);
                     setMemberAddSearchQuery("");
                   }}
-                  className="px-5 py-2.5 text-sm font-bold text-white bg-gray-800 border-gray-700 text-white hover:bg-gray-900 rounded-xl transition-all border border-gray-700 shadow-sm active:scale-[0.98]"
+                  className="px-5 py-2.5 text-sm font-bold text-white bg-gray-800 border-gray-700 text-white hover:bg-gray-700/60 rounded-xl transition-all border border-gray-700 shadow-sm active:scale-[0.98]"
                 >
                   {t("Τέλος", "Done")}
                 </button>

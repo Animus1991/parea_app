@@ -120,7 +120,7 @@ export default function OrganizerDashboardVibrantDark() {
                <h4 className="text-[15px] font-bold text-white tracking-wide flex items-center gap-2">
                  <Users className="w-4 h-4 text-white" />{t(`Ομάδες`, `Groups`)}</h4>
                
-               <div className="flex items-center justify-between p-3 bg-gray-900 rounded border border-gray-800">
+               <div className="flex items-center justify-between p-3 bg-gray-800/70 rounded border border-gray-800">
                   <div>
                     <p className="text-[15px] font-bold text-white">{t(`Ομάδα #1`, `Group #1`)} — 4/4</p>
                     <p className="text-[12.5px] text-white mt-0.5">{t(`Επιβεβαιωμένη`, `Confirmed`)}</p>
@@ -132,7 +132,7 @@ export default function OrganizerDashboardVibrantDark() {
                   </div>
                </div>
 
-               <div className="flex items-center justify-between p-3 bg-gray-900 rounded border border-gray-800">
+               <div className="flex items-center justify-between p-3 bg-gray-800/70 rounded border border-gray-800">
                   <div>
                     <p className="text-[15px] font-bold text-white">{t(`Ομάδα #2`, `Group #2`)} — 3/4</p>
                     <p className="text-[12.5px] text-white mt-0.5">{t(`Αναμένεται 1 ακόμα`, `Waiting for 1 more`)}</p>

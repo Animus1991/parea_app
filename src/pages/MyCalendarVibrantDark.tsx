@@ -165,7 +165,7 @@ export default function MyCalendarVibrantDark() {
                           ? 'bg-fuchsia-600 text-white'
                           : dayEvents.length > 0
                             ? 'bg-fuchsia-900/30 hover:bg-fuchsia-900/50'
-                            : 'hover:bg-gray-900'
+                            : 'hover:bg-gray-700/60'
                       } ${!isCurrentMonth ? 'opacity-30' : ''}`}
                     >
                       <span className={`text-xs font-bold ${isToday(day) ? 'text-white' : 'text-white'}`}>

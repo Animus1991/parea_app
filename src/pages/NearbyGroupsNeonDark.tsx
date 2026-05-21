@@ -391,10 +391,10 @@ export default function NearbyGroupsNeonDark() {
               <button className="px-3 py-1.5 bg-emerald-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
                 {t("Όλα", "All Matches")}
               </button>
-              <button className="px-3 py-1.5 bg-gray-900 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-700">
+              <button className="px-3 py-1.5 bg-gray-800/70 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-700">
                 {t("Σήμερα", "Today")}
               </button>
-              <button className="px-3 py-1.5 bg-gray-900 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-700">
+              <button className="px-3 py-1.5 bg-gray-800/70 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-700">
                 {t("Φίλοι Συμμετέχουν", "Friends Going")}
               </button>
             </div>
@@ -443,7 +443,7 @@ export default function NearbyGroupsNeonDark() {
               </div>
             ))}
 
-            <div className="p-6 text-center border border-dashed border-gray-700 rounded-xl bg-gray-900">
+            <div className="p-6 text-center border border-dashed border-gray-700 rounded-xl bg-gray-800/70">
               <div className="w-12 h-12 bg-emerald-900/50 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-3">
                 <MapIcon className="h-6 w-6" />
               </div>
@@ -656,10 +656,10 @@ export default function NearbyGroupsNeonDark() {
             <button className="px-3 py-1.5 bg-emerald-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
               {t("Όλα", "All Matches")}
             </button>
-            <button className="px-3 py-1.5 bg-gray-900 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-700">
+            <button className="px-3 py-1.5 bg-gray-800/70 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-700">
               {t("Σήμερα", "Today")}
             </button>
-            <button className="px-3 py-1.5 bg-gray-900 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-700">
+            <button className="px-3 py-1.5 bg-gray-800/70 text-white border border-gray-700 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-700">
               {t("Φίλοι Συμμετέχουν", "Friends Going")}
             </button>
           </div>
@@ -701,7 +701,7 @@ export default function NearbyGroupsNeonDark() {
             </div>
           ))}
 
-          <div className="p-6 text-center border border-dashed border-gray-700 rounded-xl bg-gray-900">
+          <div className="p-6 text-center border border-dashed border-gray-700 rounded-xl bg-gray-800/70">
             <div className="w-12 h-12 bg-emerald-900/50 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-3">
               <MapIcon className="h-6 w-6" />
             </div>

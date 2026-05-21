@@ -27,11 +27,11 @@ export function Badge({ children, variant = 'default', className, icon, ...props
   };
 
   const darkVariants = {
-    default: "bg-gray-700 text-gray-200",
-    outline: "border border-gray-600 text-gray-300 bg-transparent",
-    success: theme === 'vibrant-dark' ? "bg-fuchsia-900/30 text-fuchsia-300" : "bg-emerald-900/30 text-emerald-300",
-    warning: "bg-gray-700 text-white",
-    neutral: "bg-gray-700 text-gray-300",
+    default: "bg-gray-700/50 text-gray-200",
+    outline: "border border-gray-600/60 text-gray-300 bg-transparent",
+    success: theme === 'vibrant-dark' ? "bg-fuchsia-900/20 text-fuchsia-300" : "bg-emerald-900/20 text-emerald-300",
+    warning: "bg-gray-700/50 text-white",
+    neutral: "bg-gray-700/50 text-gray-300",
     blue: theme === 'vibrant-dark' ? "bg-fuchsia-900/30 text-fuchsia-300" : "bg-emerald-900/30 text-emerald-300",
   };
 

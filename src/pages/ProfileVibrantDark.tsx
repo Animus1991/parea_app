@@ -136,7 +136,7 @@ export default function ProfileVibrantDark() {
                     autoFocus
                     value={tempName}
                     onChange={(e) => setTempName(e.target.value)}
-                    className="flex-1 text-lg font-bold text-white bg-gray-900 border border-gray-700 rounded-md px-2 py-1 focus:ring-2 focus:ring-fuchsia-9500 focus:border-fuchsia-9500 outline-none"
+                    className="flex-1 text-lg font-bold text-white bg-gray-800/70 border border-gray-700 rounded-md px-2 py-1 focus:ring-2 focus:ring-fuchsia-9500 focus:border-fuchsia-9500 outline-none"
                   />
                   <Button
                     size="sm"
@@ -186,7 +186,7 @@ export default function ProfileVibrantDark() {
                   <textarea
                     value={tempBio}
                     onChange={(e) => setTempBio(e.target.value)}
-                    className="w-full text-sm text-white bg-gray-900 border border-gray-700 rounded-md p-2 focus:ring-2 focus:ring-fuchsia-9500 focus:border-fuchsia-9500 outline-none resize-none"
+                    className="w-full text-sm text-white bg-gray-800/70 border border-gray-700 rounded-md p-2 focus:ring-2 focus:ring-fuchsia-9500 focus:border-fuchsia-9500 outline-none resize-none"
                     rows={3}
                   />
                   <div className="flex gap-2">
@@ -238,7 +238,7 @@ export default function ProfileVibrantDark() {
               </Badge>
               <Badge
                 variant="outline"
-                className={`text-xs py-1 px-2.5 shadow-sm ${currentUser.trustTier === "3_high_trust" ? "text-fuchsia-400 bg-fuchsia-900/30 border-fuchsia-800" : "text-white bg-gray-900 border-gray-700"}`}
+                className={`text-xs py-1 px-2.5 shadow-sm ${currentUser.trustTier === "3_high_trust" ? "text-fuchsia-400 bg-fuchsia-900/30 border-fuchsia-800" : "text-white bg-gray-800/70 border-gray-700"}`}
               >
                 {currentUser.trustTier === "3_high_trust"
                   ? t("Υψηλό Επίπεδο Εμπιστοσύνης", "High Trust Tier")
@@ -407,7 +407,7 @@ export default function ProfileVibrantDark() {
               {t("Προβολή Όλων", "View All")}
             </Button>
           </div>
-          <div className="rounded-xl border border-gray-700 bg-gray-900 p-4 flex items-center justify-between">
+          <div className="rounded-xl border border-gray-700 bg-gray-800/70 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-fuchsia-900/50 text-fuchsia-400 rounded">
                 <History className="h-5 w-5" />
@@ -446,7 +446,7 @@ export default function ProfileVibrantDark() {
               <Badge
                 key={i}
                 variant="neutral"
-                className="pr-1.5 select-none bg-gray-900 border-gray-700 text-white"
+                className="pr-1.5 select-none bg-gray-800/70 border-gray-700 text-white"
               >
                 {i}
                 <button
@@ -544,7 +544,7 @@ export default function ProfileVibrantDark() {
               <select 
                 value={settings.profileVisibility}
                 onChange={e => setSettings({...settings, profileVisibility: e.target.value as any})}
-                className="text-xs border-gray-700 rounded-lg shadow-sm focus:border-fuchsia-9500 focus:ring-fuchsia-9500 py-1.5 px-2 bg-gray-900 outline-none"
+                className="text-xs border-gray-700 rounded-lg shadow-sm focus:border-fuchsia-9500 focus:ring-fuchsia-9500 py-1.5 px-2 bg-gray-800/70 outline-none"
               >
                 <option value="public">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι χρήστες", "Verified Users Only")}</option>
@@ -560,7 +560,7 @@ export default function ProfileVibrantDark() {
               <select 
                 value={settings.messagePermission}
                 onChange={e => setSettings({...settings, messagePermission: e.target.value as any})}
-                className="text-xs border-gray-700 rounded-lg shadow-sm focus:border-fuchsia-9500 focus:ring-fuchsia-9500 py-1.5 px-2 bg-gray-900 outline-none"
+                className="text-xs border-gray-700 rounded-lg shadow-sm focus:border-fuchsia-9500 focus:ring-fuchsia-9500 py-1.5 px-2 bg-gray-800/70 outline-none"
               >
                 <option value="anyone">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι χρήστες", "Verified Users Only")}</option>
@@ -568,7 +568,7 @@ export default function ProfileVibrantDark() {
               </select>
             </div>
 
-            <label className="flex items-start gap-3 p-3 bg-gray-800 border border-gray-800 rounded-xl shadow-sm cursor-pointer hover:bg-gray-900 transition-colors">
+            <label className="flex items-start gap-3 p-3 bg-gray-800 border border-gray-800 rounded-xl shadow-sm cursor-pointer hover:bg-gray-700/60 transition-colors">
               <input
                 type="checkbox"
                 checked={settings.shareLocation}

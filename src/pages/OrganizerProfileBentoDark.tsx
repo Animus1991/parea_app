@@ -53,7 +53,7 @@ export default function OrganizerProfileBentoDark() {
           </p>
 
           {/* Average Rating Section */}
-          <div className="flex items-center gap-4 bg-gray-900 p-3 rounded-lg border border-gray-800 w-fit">
+          <div className="flex items-center gap-4 bg-gray-800/70 p-3 rounded-lg border border-gray-800 w-fit">
              <div className="flex items-center gap-1 text-yellow-500">
                {[1, 2, 3, 4, 5].map(star => (
                  <svg key={star} className={`w-4 h-4 ${star <= 4 ? 'fill-current' : 'text-white'}`} viewBox="0 0 24 24">
@@ -89,7 +89,7 @@ export default function OrganizerProfileBentoDark() {
       <div className="space-y-4">
         <h2 className="text-lg font-bold text-white">{t('Επερχόμενες Εκδηλώσεις από', 'Upcoming Events by')} {organizer.name}</h2>
         {hostedEvents.length === 0 ? (
-          <div className="text-center py-12 bg-gray-900 rounded-xl border border-dashed border-gray-700">
+          <div className="text-center py-12 bg-gray-800/70 rounded-xl border border-dashed border-gray-700">
             <p className="text-white font-medium text-sm">{t('Δεν έχουν προγραμματιστεί επερχόμενες εκδηλώσεις.', 'No upcoming events currently scheduled.')}</p>
           </div>
         ) : (

@@ -63,7 +63,7 @@ export default function PostEventFeedbackNeonDark() {
               <p className="text-[14.535px] text-white font-medium mb-3">{t(`Πώς θα βαθμολογούσατε την εκδήλωση;`, `How would you rate the event?`)}</p>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <button key={star} onClick={() => setOverallRating(star)} className="p-2 hover:bg-gray-900 rounded-full transition-colors">
+                  <button key={star} onClick={() => setOverallRating(star)} className="p-2 hover:bg-gray-700/60 rounded-full transition-colors">
                     <Star className={`w-8 h-8 transition-colors ${star <= overallRating ? 'text-amber-400 fill-amber-400' : 'text-white hover:text-amber-400'}`} />
                   </button>
                 ))}
@@ -75,7 +75,7 @@ export default function PostEventFeedbackNeonDark() {
               <p className="text-[14.535px] text-white font-medium mb-3">{t(`Πώς ήταν η ατμόσφαιρα;`, `How was the atmosphere?`)}</p>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <button key={`vibe-${star}`} onClick={() => setVibeRating(star)} className="p-2 hover:bg-gray-900 rounded-full transition-colors">
+                  <button key={`vibe-${star}`} onClick={() => setVibeRating(star)} className="p-2 hover:bg-gray-700/60 rounded-full transition-colors">
                     <Star className={`w-8 h-8 transition-colors ${star <= vibeRating ? 'text-emerald-400 fill-emerald-400' : 'text-white hover:text-emerald-400'}`} />
                   </button>
                 ))}
@@ -86,11 +86,11 @@ export default function PostEventFeedbackNeonDark() {
               <h3 className="text-[16.2px] font-bold text-white tracking-wide mb-4">{t(`Παρουσία`, `Attendance`)}</h3>
               <p className="text-[15px] text-white font-medium mb-3">{t(`Ήταν όλοι παρόντες;`, `Was everyone present?`)}</p>
               <div className="space-y-3 mt-4">
-                <label className="flex items-center gap-3 p-3 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-900">
+                <label className="flex items-center gap-3 p-3 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700/60">
                   <input type="radio" name="attendance" className="h-4 w-4 text-emerald-400 rounded-full border-gray-300" />
                   <span className="text-[16.2px] font-medium text-white">{t(`Ναι, ήρθαν όλοι`, `Yes, everyone showed up`)}</span>
                 </label>
-                <label className="flex items-center gap-3 p-3 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-900">
+                <label className="flex items-center gap-3 p-3 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700/60">
                   <input type="radio" name="attendance" className="h-4 w-4 text-emerald-400 rounded-full border-gray-300" />
                   <span className="text-[16.2px] font-medium text-white">{t(`Όχι, κάποιοι δεν ήρθαν`, `No, some people didn't show up`)}</span>
                 </label>

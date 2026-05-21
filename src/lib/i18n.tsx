@@ -8,7 +8,7 @@ interface LanguageContextType {
   t: (greekText: string, englishText?: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 const translations: Record<string, Record<Language, string>> = {
   // Navigation / AppShell
