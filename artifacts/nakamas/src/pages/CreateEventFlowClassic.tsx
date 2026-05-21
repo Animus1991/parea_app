@@ -108,7 +108,7 @@ export default function CreateEventFlowClassic() {
               key={i}
               className={`h-1.5 flex-1 rounded-full ${i < step ? "bg-cyan-600" : "bg-gray-200"}`}
               initial={false}
-              animate={{ backgroundColor: i < step ? "#4f46e5" : "#e5e7eb" }}
+              animate={{ backgroundColor: i < step ? "#0E8B8D" : "#e5e7eb" }}
             />
           ))}
         </div>

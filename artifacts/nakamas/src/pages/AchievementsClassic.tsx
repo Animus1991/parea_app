@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 import { Card } from '../components/common/Card';
 import { Trophy, Star, Flame, Users, Calendar, Shield, Target, Zap, Award, TrendingUp, Share2, Sparkles } from 'lucide-react';
 import { useLanguage } from "../lib/i18n";
@@ -93,7 +94,12 @@ export default function AchievementsClassic() {
           </div>
         </div>
         <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-          <div className="bg-gradient-to-r from-cyan-500 to-purple-500 h-full rounded-full transition-all" style={{ width: `${levelProgress}%` }} />
+          <motion.div
+            className="bg-gradient-to-r from-cyan-500 to-purple-500 h-full rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${levelProgress}%` }}
+            transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
+          />
         </div>
       </Card>
 
@@ -139,11 +145,17 @@ export default function AchievementsClassic() {
 
       {activeTab === 'badges' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {achievements.map(a => {
+          {achievements.map((a, idx) => {
             const Icon = a.icon;
             const pct = Math.min(100, (a.progress / a.maxProgress) * 100);
             return (
-              <Card key={a.id} className={`p-4 transition-all ${a.unlocked ? 'border-gray-200' : 'opacity-60'}`}>
+              <motion.div
+                key={a.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: idx * 0.06 }}
+              >
+              <Card className={`p-4 transition-all h-full ${a.unlocked ? 'border-gray-200' : 'opacity-60'}`}>
                 <div className="flex items-start gap-3">
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${a.color}`}>
                     <Icon className="w-4 h-4" />
@@ -156,7 +168,12 @@ export default function AchievementsClassic() {
                     <p className="text-[12.5px] text-gray-500 font-medium mt-0.5 line-clamp-1">{a.description}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <div className="flex-1 bg-gray-100 h-1.5 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full transition-all ${a.unlocked ? 'bg-cyan-500' : 'bg-gray-300'}`} style={{ width: `${pct}%` }} />
+                        <motion.div
+                          className={`h-full rounded-full ${a.unlocked ? 'bg-cyan-500' : 'bg-gray-300'}`}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 0.8, ease: 'easeOut', delay: idx * 0.06 + 0.4 }}
+                        />
                       </div>
                       <span className="text-[11.2px] font-bold text-gray-400">{a.progress}/{a.maxProgress}</span>
                     </div>
@@ -174,6 +191,7 @@ export default function AchievementsClassic() {
                   </div>
                 </div>
               </Card>
+              </motion.div>
             );
           })}
         </div>

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Card } from '../components/common/Card';
-import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { MessageCircle, MapPin, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Users, Bookmark } from 'lucide-react';
 import { useStore } from '../store';
@@ -17,6 +16,7 @@ export default function PlansClassic() {
 
   const events = useStore(state => state.events);
   const groups = useStore(state => state.groups);
+  const users = useStore(state => state.users);
   const currentUser = useStore(state => state.currentUser);
   const waitlistedEvents = useStore(state => state.waitlistedEvents);
   const feedbackSubmitted = useStore(state => state.feedbackSubmitted);
@@ -24,15 +24,16 @@ export default function PlansClassic() {
 
   const today = new Date();
 
-  const myGroupEventIds = groups
-    .filter(g => currentUser && g.members.includes(currentUser.id))
-    .map(g => g.eventId);
+  const myGroups = groups.filter(g => currentUser && g.members.includes(currentUser.id));
+  const myGroupEventIds = myGroups.map(g => g.eventId);
 
   const upcomingEvents = events.filter(
     e => myGroupEventIds.includes(e.id) && !isBefore(parseISO(e.date), today)
   );
   const pendingEvents = events.filter(e => waitlistedEvents.includes(e.id));
-  const pastEvents = events.filter(e => isBefore(parseISO(e.date), today)).slice(0, 5);
+  const pastEvents = events
+    .filter(e => isBefore(parseISO(e.date), today) && myGroupEventIds.includes(e.id))
+    .slice(0, 5);
 
   const needsVerification =
     currentUser &&
@@ -101,68 +102,92 @@ export default function PlansClassic() {
 
       {activeTab === 'upcoming' && (
         <div className="space-y-4">
-          {upcomingEvents.map(event => (
-            <Card key={event.id} className="rounded-xl p-4 sm:p-5 border border-cyan-100 flex flex-col sm:flex-row gap-4">
-              <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
-                <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
-                <div className="absolute top-2 left-2 bg-cyan-600 text-white px-2 py-0.5 rounded text-[11.25px] font-bold tracking-wide">
-                  {t(`Επιβεβαιωμένο`, `Confirmed`)}
-                </div>
-              </div>
+          {upcomingEvents.map(event => {
+            const evGroup = myGroups.find(g => g.eventId === event.id);
+            const memberUsers = (evGroup?.members || []).slice(0, 4).map(mId => users.find(u => u.id === mId)).filter(Boolean);
+            const totalMembers = evGroup?.members.length || 0;
+            const maxSize = event.maxParticipants || 5;
+            const days = differenceInDays(parseISO(event.date), new Date());
+            const hours = differenceInHours(parseISO(event.date), new Date());
 
-              <div className="flex-1 flex flex-col">
-                <div className="flex justify-between items-start gap-2 mb-2">
-                  <h3 className="font-bold text-[15px] text-[#111827]">{event.title}</h3>
-                  <div className="text-right shrink-0">
-                    <div className="text-[14px] font-bold text-gray-900">{format(parseISO(event.date), 'MMM d')}</div>
-                    <div className="text-[13px] font-medium text-gray-500">{event.time}</div>
-                    {(() => {
-                      const days = differenceInDays(parseISO(event.date), new Date());
-                      const hours = differenceInHours(parseISO(event.date), new Date());
-                      if (days <= 0 && hours > 0) return <span className="text-[11.2px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">{t(`σε`, `in`)} {hours}h</span>;
-                      if (days > 0 && days <= 7) return <span className="text-[11.2px] font-bold text-cyan-700 bg-cyan-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">{t(`σε`, `in`)} {days} {t(`μέρες`, `days`)}</span>;
-                      return null;
-                    })()}
+            return (
+              <Card key={event.id} className="rounded-xl p-4 sm:p-5 border border-cyan-100 flex flex-col sm:flex-row gap-4">
+                <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
+                  <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+                  <div className="absolute top-2 left-2 bg-cyan-600 text-white px-2 py-0.5 rounded text-[11.25px] font-bold tracking-wide">
+                    {t(`Επιβεβαιωμένο`, `Confirmed`)}
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-x-4 gap-y-2 mb-4">
-                  <div className="flex items-center text-[13.5px] text-gray-600 font-medium">
-                    <MapPin className="w-3.5 h-3.5 mr-1" /> {t(`Σημείο συνάντησης ενεργό`, `Meeting point active`)}
+                <div className="flex-1 flex flex-col">
+                  <div className="flex justify-between items-start gap-2 mb-2">
+                    <h3 className="font-bold text-[15px] text-[#111827]">{event.title}</h3>
+                    <div className="text-right shrink-0">
+                      <div className="text-[14px] font-bold text-gray-900">{format(parseISO(event.date), 'MMM d')}</div>
+                      <div className="text-[13px] font-medium text-gray-500">{event.time}</div>
+                      {days <= 0 && hours > 0 && (
+                        <span className="text-[11.2px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">
+                          {t(`σε`, `in`)} {hours}h
+                        </span>
+                      )}
+                      {days > 0 && days <= 7 && (
+                        <span className="text-[11.2px] font-bold text-cyan-700 bg-cyan-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">
+                          {t(`σε`, `in`)} {days} {t(`μέρες`, `days`)}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center text-[13.5px] text-gray-600 font-medium">
-                    <Clock className="w-3.5 h-3.5 mr-1" /> {event.duration}
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex -space-x-2">
-                    {['https://i.pravatar.cc/24?u=p1', 'https://i.pravatar.cc/24?u=p2', 'https://i.pravatar.cc/24?u=p3'].map((url, i) => (
-                      <img key={i} src={url} alt="" className="w-6 h-6 rounded-full border-2 border-white object-cover" />
-                    ))}
+                  <div className="flex flex-wrap gap-x-4 gap-y-2 mb-4">
+                    <div className="flex items-center text-[13.5px] text-gray-600 font-medium">
+                      <MapPin className="w-3.5 h-3.5 mr-1" /> {event.locationArea}
+                    </div>
+                    <div className="flex items-center text-[13.5px] text-gray-600 font-medium">
+                      <Clock className="w-3.5 h-3.5 mr-1" /> {event.duration}
+                    </div>
                   </div>
-                  <span className="text-[11.25px] font-medium text-gray-500 flex items-center gap-0.5">
-                    <Users className="w-3 h-3" /> 4/5 {t(`μέλη`, `members`)}
-                  </span>
-                </div>
 
-                <div className="mt-auto pt-4 border-t border-gray-100 flex gap-2">
-                  <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-2 rounded-lg text-[13.5px] font-bold transition-colors flex items-center justify-center gap-1.5">
-                    <MessageCircle className="h-4 w-4" /> {t(`Ομαδική Συνομιλία`, `Group Chat`)}
-                  </button>
-                  <button onClick={() => navigate(`/events/${event.id}`)} className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-[13.5px] font-bold transition-colors">
-                    {t(`Λεπτομέρειες`, `Details`)}
-                  </button>
-                  <button
-                    onClick={() => setLeaveConfirmEventId(event.id)}
-                    className="bg-white border border-red-200 hover:bg-red-50 text-red-500 px-3 py-2 rounded-lg text-[13.5px] font-bold transition-colors flex items-center gap-1"
-                  >
-                    <XCircle className="h-3.5 w-3.5" /> {t(`Αποχώρηση`, `Leave`)}
-                  </button>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex -space-x-2">
+                      {memberUsers.map((u, i) => (
+                        <img
+                          key={i}
+                          src={u!.photoUrl || `https://i.pravatar.cc/24?u=${u!.id}`}
+                          alt={u!.name}
+                          referrerPolicy="no-referrer"
+                          className="w-6 h-6 rounded-full border-2 border-white object-cover"
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[11.25px] font-medium text-gray-500 flex items-center gap-0.5">
+                      <Users className="w-3 h-3" /> {totalMembers}/{maxSize} {t(`μέλη`, `members`)}
+                    </span>
+                  </div>
+
+                  <div className="mt-auto pt-4 border-t border-gray-100 flex gap-2">
+                    <button
+                      onClick={() => navigate(`/chat/${evGroup?.id || event.id}`)}
+                      className="flex-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-2 rounded-lg text-[13.5px] font-bold transition-colors flex items-center justify-center gap-1.5"
+                    >
+                      <MessageCircle className="h-4 w-4" /> {t(`Ομαδική Συνομιλία`, `Group Chat`)}
+                    </button>
+                    <button
+                      onClick={() => navigate(`/events/${event.id}`)}
+                      className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-[13.5px] font-bold transition-colors"
+                    >
+                      {t(`Λεπτομέρειες`, `Details`)}
+                    </button>
+                    <button
+                      onClick={() => setLeaveConfirmEventId(event.id)}
+                      className="bg-white border border-red-200 hover:bg-red-50 text-red-500 px-3 py-2 rounded-lg text-[13.5px] font-bold transition-colors flex items-center gap-1"
+                    >
+                      <XCircle className="h-3.5 w-3.5" /> {t(`Αποχώρηση`, `Leave`)}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
 
           {upcomingEvents.length === 0 && (
             <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">

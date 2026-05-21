@@ -67,7 +67,13 @@ export default function WalletClassic() {
           <p className="text-4xl font-black mb-4">€{availableBalance > 0 ? availableBalance.toFixed(2) : '345.50'}</p>
           <Button
             className="w-full bg-white text-cyan-900 hover:bg-gray-100 border-0"
-            onClick={() => toast.info(t('Ανάληψη σε εξέλιξη...', 'Initiating withdrawal...'), { description: t('Η μεταφορά θα ολοκληρωθεί σε 1-3 εργάσιμες.', 'Transfer completes in 1-3 business days.') })}
+            onClick={() => {
+              if (availableBalance <= 0) {
+                toast.error(t('Ανεπαρκές υπόλοιπο', 'Insufficient balance'), { description: t('Δεν υπάρχει διαθέσιμο υπόλοιπο για ανάληψη.', 'No available balance to withdraw.') });
+                return;
+              }
+              toast.info(t('Ανάληψη σε εξέλιξη...', 'Initiating withdrawal...'), { description: t('Η μεταφορά θα ολοκληρωθεί σε 1-3 εργάσιμες.', 'Transfer completes in 1-3 business days.') });
+            }}
           >
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>

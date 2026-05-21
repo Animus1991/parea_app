@@ -23,9 +23,16 @@ export default function InboxClassic() {
     return {
       id: g.id,
       title: event?.title || t('Ομαδική Συνομιλία', 'Group Chat'),
-      lastMessage: idx === 0
-        ? t('Nikos: Θα συναντηθούμε στην είσοδο;', 'Nikos: Shall we meet at the entrance?')
-        : t('Πατήστε για να δείτε τη συνομιλία', 'Tap to view conversation'),
+      lastMessage: (() => {
+        const snippets = [
+          t('Nikos: Θα συναντηθούμε στην είσοδο;', 'Nikos: Shall we meet at the entrance?'),
+          t('Εσύ: Θα φέρω το Catan!', 'You: I\'ll bring Catan!'),
+          t('Μαρία: Τέλεια διαδρομή, ευχαριστώ!', 'Maria: Great trail, thanks!'),
+          t('Σπύρος: Που παρκάρουμε;', 'Spyros: Where do we park?'),
+          t('Εσύ: Έφτασα στο σημείο!', 'You: I\'m at the meeting point!'),
+        ];
+        return snippets[idx % snippets.length];
+      })(),
       time: idx === 0 ? '12:30 ΜΜ' : t('Χθες', 'Yesterday'),
       unread: idx === 0 ? 3 : 0,
       image: event?.imageUrl || `https://picsum.photos/seed/${g.id}/500/500`,
@@ -95,6 +102,17 @@ export default function InboxClassic() {
             <h1 className="text-[20.104264919475px] md:text-[24.11121293937px] font-bold text-[#111827] tracking-tight">{t(`Μηνύματα`, `Messages`)}</h1>
             <p className="text-gray-500 font-medium text-[12.1964473899675px] md:text-[14.626916949961px] mt-1">{t(`Συνομιλίες ομάδων`, `Group conversations`)}</p>
           </div>
+          {fallbackChats.some(c => c.unread > 0) && (
+            <button
+              onClick={() => {
+                fallbackChats.forEach(c => { c.unread = 0; });
+                toast.success(t('Όλα διαβαστήκαν', 'All marked as read'));
+              }}
+              className="text-[12px] font-bold text-cyan-600 hover:text-cyan-800 bg-cyan-50 px-3 py-1.5 rounded-full border border-cyan-200 hover:bg-cyan-100 transition-colors"
+            >
+              {t('Σήμανση ως αναγνωσμένα', 'Mark all read')}
+            </button>
+          )}
         </div>
 
         <div className="relative mb-4">

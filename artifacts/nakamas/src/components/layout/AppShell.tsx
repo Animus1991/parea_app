@@ -1,5 +1,5 @@
 ﻿import React, { ReactNode, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
   Grid, TrendingUp, Bookmark, History, Flag,
@@ -12,6 +12,16 @@ import { Toaster } from 'sonner';
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
   return notifications.filter(n => !n.read).length;
+}
+
+function UnreadBadge() {
+  const count = useUnreadCount();
+  if (count === 0) return null;
+  return (
+    <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#18D8DB] text-[8px] text-white font-bold border border-white">
+      {count > 9 ? '9+' : count}
+    </span>
+  );
 }
 import { useLanguage } from '../../lib/i18n';
 
@@ -209,8 +219,33 @@ export function SideNav() {
 // ─────────────────────────────────────────────
 // TopNav
 // ─────────────────────────────────────────────
+const PAGE_TITLES: Record<string, [string, string]> = {
+  '/': ['Ανακάλυψη Εκδηλώσεων', 'Discover Events'],
+  '/categories': ['Κατηγορίες', 'Categories'],
+  '/nearby': ['Τοπικές Ομάδες', 'Local Groups'],
+  '/agenda': ['Το Ημερολόγιό μου', 'My Calendar'],
+  '/plans': ['Τα Σχέδιά μου', 'My Plans'],
+  '/saved': ['Αποθηκευμένες', 'Saved'],
+  '/history': ['Ιστορικό', 'History'],
+  '/connections': ['Οι Nakamas μου', 'My Nakamas'],
+  '/chats': ['Ομαδικές Συνομιλίες', 'Group Chats'],
+  '/manage': ['Πίνακας Διοργανωτή', 'Organizer Dashboard'],
+  '/create': ['Δημιουργία Εκδήλωσης', 'Create Event'],
+  '/wallet': ['Πορτοφόλι & Κέρδη', 'Wallet & Earnings'],
+  '/verification': ['Επαλήθευση Ταυτότητας', 'Identity Verification'],
+  '/trust': ['Κέντρο Εμπιστοσύνης', 'Trust Center'],
+  '/report': ['Αναφορά Προβλήματος', 'Report Issue'],
+  '/profile': ['Το Προφίλ μου', 'My Profile'],
+  '/notifications': ['Ειδοποιήσεις', 'Notifications'],
+  '/settings': ['Ρυθμίσεις & Απόρρητο', 'Settings & Privacy'],
+  '/help': ['Κέντρο Βοήθειας', 'Help Center'],
+  '/admin': ['Διαχείριση & Έλεγχος', 'Admin & Moderation'],
+  '/achievements': ['Επιτεύγματα', 'Achievements'],
+};
+
 export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
   const currentUser = useStore((state) => state.currentUser);
   const isAuthenticated = useStore((state) => state.isAuthenticated);
@@ -226,6 +261,18 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
     }
   };
 
+  const routeKey = Object.keys(PAGE_TITLES).find(k => k !== '/' && location.pathname.startsWith(k)) || (location.pathname === '/' ? '/' : null);
+  const pageTitlePair = routeKey ? PAGE_TITLES[routeKey] : null;
+  const pageTitle = pageTitlePair ? t(pageTitlePair[0], pageTitlePair[1]) : t('Πίνακας Ελέγχου', 'Dashboard');
+
+  const tierLabel = currentUser
+    ? currentUser.trustTier === '3_high_trust'
+      ? t('Υψηλή Εμπιστοσύνη', 'High Trust')
+      : currentUser.trustTier === '2_confirmed'
+        ? t('Επιβεβαιωμένο Μέλος', 'Confirmed Member')
+        : t('Explorer', 'Explorer')
+    : '';
+
   return (
     <nav className={cn("flex items-center justify-between px-4 lg:px-6 py-3 border-b h-16 shrink-0", theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-900/80 border-gray-700/50" : theme === "vibrant-dark" ? "bg-gray-900/80 border-gray-700/50" : theme === "vibrant" ? "bg-white border-fuchsia-100" : theme === "bento" ? "bg-white border-indigo-100" : theme === "neon" ? "bg-white border-emerald-100" : "bg-white border-[#E5E7EB]")}>
       <div className="flex items-center space-x-8">
@@ -233,7 +280,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           <NakamasLogo className="text-[22px]" />
         </div>
         <div className="hidden md:block">
-          <span className={`text-[14.58px] font-bold ${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-white" : "text-gray-400"} tracking-wide`}>{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
+          <span className={`text-[14.58px] font-bold ${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-white" : "text-[#111827]"} tracking-wide`}>{pageTitle}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3">
@@ -244,9 +291,14 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
             onChange={e => setSearchValue(e.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={t('Αναζήτηση εκδηλώσεων...', 'Search events...')}
-            className={cn("w-64 py-1.5 pl-8 pr-3 text-[14.42px] border-transparent rounded-md focus:ring-1 outline-none", theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-800/50 text-white placeholder-gray-500 focus:bg-gray-700/60 focus:ring-emerald-500" : theme === "vibrant-dark" ? "bg-gray-800/50 text-white placeholder-gray-500 focus:bg-gray-700/60 focus:ring-fuchsia-500" : theme === "vibrant" ? "bg-fuchsia-50 focus:bg-white text-gray-900 focus:ring-fuchsia-400" : theme === "bento" ? "bg-indigo-50 focus:bg-white text-gray-900 focus:ring-indigo-400" : theme === "neon" ? "bg-emerald-50 focus:bg-white text-gray-900 focus:ring-emerald-400" : "bg-gray-100 focus:bg-white text-gray-900 focus:ring-cyan-500")}
+            className={cn("w-64 py-1.5 pl-8 pr-7 text-[14.42px] border-transparent rounded-md focus:ring-1 outline-none", theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-800/50 text-white placeholder-gray-500 focus:bg-gray-700/60 focus:ring-emerald-500" : theme === "vibrant-dark" ? "bg-gray-800/50 text-white placeholder-gray-500 focus:bg-gray-700/60 focus:ring-fuchsia-500" : theme === "vibrant" ? "bg-fuchsia-50 focus:bg-white text-gray-900 focus:ring-fuchsia-400" : theme === "bento" ? "bg-indigo-50 focus:bg-white text-gray-900 focus:ring-indigo-400" : theme === "neon" ? "bg-emerald-50 focus:bg-white text-gray-900 focus:ring-emerald-400" : "bg-gray-100 focus:bg-white text-gray-900 focus:ring-cyan-500")}
           />
           <Search className={`absolute w-4 h-4 ${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-white" : "text-gray-400"} left-2.5 top-2`} />
+          {searchValue && (
+            <button onClick={() => setSearchValue('')} className="absolute right-2 top-1.5 text-gray-400 hover:text-gray-600">
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         {/* Theme Toggle */}
@@ -278,7 +330,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           {currentUser ? (
             <NavLink to="/profile" className="flex items-center space-x-2 relative group">
               <div className="hidden sm:flex flex-col items-end">
-                <span className={cn("text-[10.3px] font-bold tracking-wide", theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-[#0E8B8D]")}>{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
+                <span className={cn("text-[10.3px] font-bold tracking-wide", theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-[#0E8B8D]")}>{tierLabel}</span>
                 <span className={cn("text-[11.33px] font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-white" : "text-[#111827]")}>{currentUser.name}</span>
               </div>
               <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-[10px] overflow-hidden border", theme === "vibrant-dark" ? "bg-fuchsia-900/30 border-fuchsia-700 text-fuchsia-400" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "vibrant" ? "bg-fuchsia-100 border-fuchsia-200 text-fuchsia-700" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-[#0E8B8D]")}>
@@ -310,8 +362,10 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
 // ─────────────────────────────────────────────
 // BottomNav
 // ─────────────────────────────────────────────
-export function BottomNav() { const theme = useStore(s=>s.theme);
+export function BottomNav() {
+  const theme = useStore(s => s.theme);
   const { t } = useLanguage();
+  const unreadCount = useUnreadCount();
   return (
     <div className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "bg-gray-900/85 border-gray-700/50" : "bg-white/95 border-gray-200")}>
       <NavLink
@@ -353,10 +407,17 @@ export function BottomNav() { const theme = useStore(s=>s.theme);
       <NavLink
         to="/profile"
         className={({ isActive }) =>
-          cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]", isActive ? (theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "vibrant" ? "text-fuchsia-600" : theme === "bento" ? "text-indigo-600" : theme === "neon" ? "text-emerald-600" : "text-[#0E8B8D]") : (theme === "bento-dark" || theme === "neon-dark" ? "text-gray-400 hover:text-emerald-400" : theme === "vibrant-dark" ? "text-gray-400 hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-400 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-400 hover:text-indigo-600" : theme === "neon" ? "text-gray-400 hover:text-emerald-600" : "text-gray-400 hover:text-[#0E8B8D]"))
+          cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px] relative", isActive ? (theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "vibrant" ? "text-fuchsia-600" : theme === "bento" ? "text-indigo-600" : theme === "neon" ? "text-emerald-600" : "text-[#0E8B8D]") : (theme === "bento-dark" || theme === "neon-dark" ? "text-gray-400 hover:text-emerald-400" : theme === "vibrant-dark" ? "text-gray-400 hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-400 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-400 hover:text-indigo-600" : theme === "neon" ? "text-gray-400 hover:text-emerald-600" : "text-gray-400 hover:text-[#0E8B8D]"))
         }
       >
-        <User className="h-[18px] w-[18px]" strokeWidth={2.2} />
+        <div className="relative">
+          <User className="h-[18px] w-[18px]" strokeWidth={2.2} />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#18D8DB] text-[8px] text-white font-bold border border-white">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
+        </div>
         <span className="text-[8px] font-medium leading-none">{t('Προφίλ', 'Profile')}</span>
       </NavLink>
     </div>

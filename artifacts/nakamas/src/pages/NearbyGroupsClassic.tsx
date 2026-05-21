@@ -89,6 +89,7 @@ export default function NearbyGroupsClassic() {
   );
   const [isDragging, setIsDragging] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [filterToday, setFilterToday] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -185,8 +186,10 @@ export default function NearbyGroupsClassic() {
   const hasValidKey =
     Boolean(apiKey) && typeof apiKey === "string" && apiKey.startsWith("AIza");
 
+  const todayStr = new Date().toISOString().slice(0, 10);
   const localGroups = events
     .filter((e) => e.maxParticipants && e.maxParticipants > 0)
+    .filter((e) => !filterToday || (e.date && e.date.slice(0, 10) === todayStr))
     .slice(0, 8)
     .map((e) => ({
       ...e,
@@ -389,10 +392,16 @@ export default function NearbyGroupsClassic() {
             </div>
 
             <div className="flex gap-2 mt-4 overflow-x-auto noscrollbar pb-1">
-              <button className="px-3 py-1.5 bg-cyan-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
+              <button
+                onClick={() => setFilterToday(false)}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap shadow-sm transition-colors ${!filterToday ? 'bg-cyan-600 text-white' : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'}`}
+              >
                 {t("Όλα", "All Matches")}
               </button>
-              <button className="px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-100">
+              <button
+                onClick={() => setFilterToday(true)}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${filterToday ? 'bg-cyan-600 text-white shadow-sm' : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'}`}
+              >
                 {t("Σήμερα", "Today")}
               </button>
               <button className="px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-100">
@@ -402,6 +411,12 @@ export default function NearbyGroupsClassic() {
           </div>
 
           <div className="overflow-y-auto flex-1 p-4 space-y-3 text-left">
+            {localGroups.length === 0 && filterToday && (
+              <div className="text-center py-8">
+                <p className="text-gray-400 font-medium text-sm">{t("Δεν υπάρχουν εκδηλώσεις σήμερα.", "No events happening today.")}</p>
+                <button onClick={() => setFilterToday(false)} className="mt-3 text-cyan-600 text-xs font-bold underline">{t("Εμφάνιση όλων", "Show all")}</button>
+              </div>
+            )}
             {localGroups.map((group, idx) => (
               <div
                 key={idx}

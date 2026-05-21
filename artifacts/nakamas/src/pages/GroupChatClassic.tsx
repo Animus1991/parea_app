@@ -101,6 +101,7 @@ export default function GroupChatClassic() {
   const [showLiveRadarModal, setShowLiveRadarModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [showSafetyLinkModal, setShowSafetyLinkModal] = useState(false);
+  const [showSosConfirm, setShowSosConfirm] = useState(false);
   const [locationConfig, setLocationConfig] = useState({
     precision: "approximate",
     shareWith: "all",
@@ -399,7 +400,7 @@ export default function GroupChatClassic() {
           )}
 
           {/* Messages Virtualized */}
-          <div className="flex-1 min-h-0 bg-[#F9FAFB] relative shadow-inner">
+          <div className="flex-1 min-h-0 relative shadow-inner" style={{ background: '#F9FAFB', backgroundImage: 'radial-gradient(circle, #d1d5db 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
             {isSharingLocation && (
               <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
                 <button
@@ -445,30 +446,9 @@ export default function GroupChatClassic() {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  const isSos = useStore
-                    .getState()
-                    .groups.find((g) => g.id === group.id)?.membersLocations?.[
-                    currentUser.id
-                  ]?.sos;
-                  useStore
-                    .getState()
-                    .triggerSos(group.id, currentUser.id, !isSos);
-                  setMessages((prev) => [
-                    ...prev,
-                    {
-                      id: Date.now().toString(),
-                      senderId: "system",
-                      senderName: "System",
-                      text: !isSos
-                        ? `${currentUser.name} ${t("ενεργοποίησε το SOS Flare! Βρίσκεται σε ανάγκη.", "triggered the SOS flare! They need help.")}`
-                        : `${currentUser.name} ${t("απενεργοποίησε το SOS.", "deactivated the SOS.")}`,
-                      timestamp: new Date().toISOString(),
-                    },
-                  ]);
-                }}
+                onClick={() => setShowSosConfirm(true)}
                 className={`p-2.5 rounded-full transition-all flex items-center justify-center shrink-0 border ${
-                  group.membersLocations?.[currentUser.id]?.sos
+                  group?.membersLocations?.[currentUser.id]?.sos
                     ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500 animate-pulse"
                     : "bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
                 }`}
@@ -1237,6 +1217,49 @@ export default function GroupChatClassic() {
               >
                 {t("Τέλος", "Done")}
               </button>
+            </div>
+          </div>
+        )}
+
+        {showSosConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-red-100 animate-in zoom-in-95 duration-200">
+              <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
+                <AlertTriangle className="w-7 h-7 animate-pulse" />
+              </div>
+              <h3 className="text-lg font-black text-red-600 mb-2">{t('Ενεργοποίηση SOS Flare;', 'Activate SOS Flare?')}</h3>
+              <p className="text-sm font-medium text-gray-600 mb-6 leading-relaxed">
+                {t('Αυτό θα ειδοποιήσει αμέσως όλη την ομάδα σας ότι χρειάζεστε βοήθεια. Χρησιμοποιήστε μόνο σε κατάσταση έκτακτης ανάγκης.', 'This will immediately alert all your group members that you need help. Use only in a real emergency.')}
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowSosConfirm(false)}
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-xl transition-colors text-sm"
+                >
+                  {t('Ακύρωση', 'Cancel')}
+                </button>
+                <button
+                  onClick={() => {
+                    const isSos = useStore.getState().groups.find((g) => g.id === group?.id)?.membersLocations?.[currentUser.id]?.sos;
+                    if (group) {
+                      useStore.getState().triggerSos(group.id, currentUser.id, !isSos);
+                      setMessages((prev) => [...prev, {
+                        id: Date.now().toString(),
+                        senderId: 'system',
+                        senderName: 'System',
+                        text: !isSos
+                          ? `🚨 ${currentUser.name} ${t('ενεργοποίησε το SOS Flare! Βρίσκεται σε ανάγκη.', 'triggered the SOS flare! They need help.')}`
+                          : `${currentUser.name} ${t('απενεργοποίησε το SOS.', 'deactivated the SOS.')}`,
+                        timestamp: new Date().toISOString(),
+                      }]);
+                    }
+                    setShowSosConfirm(false);
+                  }}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl transition-colors text-sm"
+                >
+                  {t('SOS Flare', 'Send SOS')}
+                </button>
+              </div>
             </div>
           </div>
         )}

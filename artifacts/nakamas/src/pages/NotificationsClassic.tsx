@@ -84,7 +84,7 @@ export default function NotificationsClassic() {
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
-                <span className="w-2.5 h-2.5 bg-cyan-500 rounded-full shrink-0 mt-2 self-start absolute top-4 right-8"></span>
+                <span className="w-2.5 h-2.5 bg-cyan-500 rounded-full shrink-0 mt-2 self-start absolute top-4 right-11"></span>
               </div>
             );
           })}

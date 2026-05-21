@@ -1,9 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Card } from '../components/common/Card';
-import { Users } from 'lucide-react';
 import { useLanguage } from '../lib/i18n';
 import { useStore } from '../store';
-import { Button } from '../components/common/Button';
+import { NakamasLogo } from '../components/common/NakamasLogo';
 
 export default function LoginClassic() {
   const navigate = useNavigate();
@@ -20,8 +19,8 @@ export default function LoginClassic() {
     <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-[#FDFCFB]">
       <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-xl border-gray-100">
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center text-4xl font-black tracking-tight text-[#111827] mb-4 font-['Outfit']">
-             NAKAMAS
+          <div className="flex items-center justify-center mb-4">
+            <NakamasLogo className="text-4xl" />
           </div>
           <h1 className="text-2xl font-bold text-[#111827]">{t('Καλώς ήρθατε', 'Welcome back')}</h1>
           <p className="text-xs text-gray-500 font-medium">{t('Συνδεθείτε για να ανακαλύψετε αξιόπιστες ομάδες και εμπειρίες.', 'Log in to discover trusted groups and experiences.')}</p>

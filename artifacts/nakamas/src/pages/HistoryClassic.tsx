@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Calendar, Star, CheckCircle2 } from 'lucide-react';
+import { MapPin, Calendar, Star, CheckCircle2, Users } from 'lucide-react';
 import { format, parseISO, isBefore } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from "../lib/i18n";
@@ -12,6 +12,7 @@ export default function HistoryClassic() {
   const navigate = useNavigate();
   const events = useStore(state => state.events);
   const groups = useStore(state => state.groups);
+  const users = useStore(state => state.users);
   const currentUser = useStore(state => state.currentUser);
   const feedbackSubmitted = useStore(state => state.feedbackSubmitted);
 
@@ -23,9 +24,12 @@ export default function HistoryClassic() {
     ? (submittedList.reduce((sum, f) => sum + f.overallRating, 0) / submittedList.length).toFixed(1)
     : '—';
 
-  const pastEventIds = new Set(pastEvents.map(e => e.id));
-  const pastGroups = groups.filter(g => pastEventIds.has(g.eventId));
-  const uniqueMemberIds = new Set(pastGroups.flatMap(g => g.members));
+  const myPastGroups = groups.filter(g =>
+    currentUser &&
+    g.members.includes(currentUser.id) &&
+    pastEvents.some(e => e.id === g.eventId)
+  );
+  const uniqueMemberIds = new Set(myPastGroups.flatMap(g => g.members));
   if (currentUser) uniqueMemberIds.delete(currentUser.id);
   const peopleMet = uniqueMemberIds.size;
 
@@ -40,7 +44,7 @@ export default function HistoryClassic() {
 
       <div className="grid grid-cols-3 gap-3">
         <Card className="p-3 text-center">
-          <p className="text-[23px] font-black text-[#111827]">{pastEvents.length}</p>
+          <p className="text-[23px] font-black text-[#111827]">{myPastGroups.length}</p>
           <p className="text-[11.2px] text-gray-500 font-medium tracking-wide">{t(`Εκδηλώσεις`, `Events`)}</p>
         </Card>
         <Card className="p-3 text-center">
@@ -75,12 +79,27 @@ export default function HistoryClassic() {
                     <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{event.locationArea}</span>
                     {submitted && submitted.overallRating > 0 && (
                       <span className="flex items-center gap-0.5">
-                        {Array.from({ length: submitted.overallRating }).map((_, s) => (
-                          <Star key={s} className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
+                        {Array.from({ length: 5 }).map((_, s) => (
+                          <Star key={s} className={`w-2.5 h-2.5 ${s < submitted.overallRating ? 'text-amber-500 fill-amber-500' : 'text-gray-200 fill-gray-200'}`} />
                         ))}
                       </span>
                     )}
                   </div>
+                  {(() => {
+                    const evGroup = groups.find(g => g.eventId === event.id && currentUser && g.members.includes(currentUser.id));
+                    const companions = (evGroup?.members || []).filter(id => id !== currentUser?.id).slice(0, 4).map(id => users.find(u => u.id === id)).filter(Boolean);
+                    if (companions.length === 0) return null;
+                    return (
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="flex -space-x-1.5">
+                          {companions.map((u, ci) => (
+                            <img key={ci} src={u!.photoUrl || `https://i.pravatar.cc/20?u=${u!.id}`} alt={u!.name} referrerPolicy="no-referrer" className="w-5 h-5 rounded-full border-2 border-white object-cover" title={u!.name} />
+                          ))}
+                        </div>
+                        <span className="text-[11px] text-gray-400 font-medium flex items-center gap-0.5"><Users className="w-3 h-3" /> {companions.length} {t('Nakamas', 'companions')}</span>
+                      </div>
+                    );
+                  })()}
                 </div>
                 <div className="self-center shrink-0">
                   {submitted ? (

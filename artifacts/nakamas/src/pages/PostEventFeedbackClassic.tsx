@@ -12,7 +12,7 @@ export default function PostEventFeedbackClassic() {
   const navigate = useNavigate();
   const { eventId } = useParams<{ eventId: string }>();
   const submitFeedback = useStore((s) => s.submitFeedback);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState<1 | 1.5 | 2>(1);
   const [overallRating, setOverallRating] = useState(0);
   const [vibeRating, setVibeRating] = useState(0);
   const [mood, setMood] = useState('');
@@ -129,12 +129,12 @@ export default function PostEventFeedbackClassic() {
                 toast.error(t('Παρακαλώ επιλέξτε διάθεση', 'Please select a mood'));
                 return;
               }
-              setStep(1.5 as any);
+              setStep(1.5);
             }}>{t(`Επόμενο`, `Next`)}</Button>
           </div>
         )}
 
-        {(step as any) === 1.5 && (
+        {step === 1.5 && (
           <div className="space-y-8">
             <div className="flex items-center gap-2 mb-2">
               <div className="flex gap-1">

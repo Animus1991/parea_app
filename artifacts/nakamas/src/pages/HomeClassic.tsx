@@ -729,12 +729,20 @@ export default function HomeClassic() {
             ))
           ) : sortedEvents.length === 0 ? (
             <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-              <p className="text-gray-500 font-medium text-sm">
+              <p className="text-gray-500 font-medium text-sm mb-3">
                 {t(
                   "home.feed.no_events",
                   "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.",
                 )}
               </p>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearAllFilters}
+                  className="text-[12px] font-bold text-cyan-600 hover:text-cyan-800 bg-cyan-50 px-3 py-1.5 rounded-full border border-cyan-200 hover:bg-cyan-100 transition-colors"
+                >
+                  ✕ {t('Εκκαθάριση φίλτρων', 'Clear all filters')}
+                </button>
+              )}
             </div>
           ) : (
             visibleEvents.map((event, index) => (

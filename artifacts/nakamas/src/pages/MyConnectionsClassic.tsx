@@ -155,7 +155,7 @@ export default function MyConnectionsClassic() {
                       </p>
                       <div className="flex items-center gap-2 mt-1.5">
                         <Badge variant="neutral" className="text-[9px] px-1.5 py-0">{conn.role}</Badge>
-                        <span className="text-[10px] text-gray-400 font-medium">{conn.mutual} {t('Κοινοί', 'mutuals')}</span>
+                        {conn.mutual > 0 && <span className="text-[10px] text-gray-400 font-medium">{conn.mutual} {t('Κοινοί', 'mutuals')}</span>}
                       </div>
                     </div>
                   </div>
@@ -181,7 +181,7 @@ export default function MyConnectionsClassic() {
                       {moreMenuOpenId === conn.id && (
                         <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 min-w-[160px] py-1">
                           <button
-                            onClick={() => { navigate('/profile'); setMoreMenuOpenId(null); }}
+                            onClick={() => { toast.success(`${t('Προφίλ', 'Profile')}: ${conn.name}`); setMoreMenuOpenId(null); }}
                             className="w-full text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                           >
                             {t('Προβολή Προφίλ', 'View Profile')}

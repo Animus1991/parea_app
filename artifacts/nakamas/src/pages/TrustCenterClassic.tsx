@@ -1,3 +1,5 @@
+import React from 'react';
+import { motion } from 'motion/react';
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
@@ -84,7 +86,7 @@ export default function TrustCenterClassic() {
            <div>
              <h2 className="text-[10.9766035490675px] font-bold text-[#6B7280] tracking-wide mb-3 flex items-center gap-1.5">
                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />{t(`Κατάσταση Επαλήθευσης`, `Verification Status`)}</h2>
-             <p className="text-sm font-bold text-[#111827]">{t(tierLabelGr, tierLabelEn)}</p>
+             <p className="text-sm font-bold text-[#111827]">{t(TIER_LABELS_GR[currentUser.trustTier] || currentUser.trustTier, TIER_LABELS[currentUser.trustTier] || currentUser.trustTier)}</p>
            </div>
            
            <div className="space-y-3">
@@ -133,7 +135,16 @@ export default function TrustCenterClassic() {
             <Card className="p-5 flex flex-col items-center">
               <svg width="120" height="120" viewBox="0 0 120 120" className="mb-2">
                 <circle cx="60" cy="60" r="52" fill="none" stroke="#e5e7eb" strokeWidth="8" />
-                <circle cx="60" cy="60" r="52" fill="none" stroke="#10b981" strokeWidth="8" strokeLinecap="round" strokeDasharray={`${(currentUser.reliabilityScore / 100) * 327} 327`} transform="rotate(-90 60 60)" />
+                <motion.circle
+                  cx="60" cy="60" r="52" fill="none" stroke="#10b981" strokeWidth="8"
+                  strokeLinecap="round"
+                  strokeDasharray="327 327"
+                  initial={{ strokeDashoffset: 327 }}
+                  animate={{ strokeDashoffset: 327 - (currentUser.reliabilityScore / 100) * 327 }}
+                  transition={{ duration: 1.4, ease: 'easeOut', delay: 0.2 }}
+                  transform="rotate(-90 60 60)"
+                  style={{ strokeDashoffset: undefined }}
+                />
                 <text x="60" y="56" textAnchor="middle" className="text-[30px] font-black fill-[#111827]" fontSize="28">{currentUser.reliabilityScore}</text>
                 <text x="60" y="74" textAnchor="middle" className="fill-gray-400" fontSize="10" fontWeight="600">%</text>
               </svg>
