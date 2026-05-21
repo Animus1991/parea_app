@@ -277,6 +277,7 @@ export default function GroupChatClassic() {
                     setSearchQuery("");
                   }}
                   className="p-2 text-gray-400 hover:text-[#111827]"
+                  aria-label={t('Κλείσιμο αναζήτησης', 'Close search')}
                 >
                   <ArrowLeft className="h-5 w-5" />
                 </button>
@@ -292,6 +293,7 @@ export default function GroupChatClassic() {
                   <button
                     onClick={() => setSearchQuery("")}
                     className="p-2 text-gray-400 hover:text-gray-600"
+                    aria-label={t('Εκκαθάριση αναζήτησης', 'Clear search')}
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -303,6 +305,7 @@ export default function GroupChatClassic() {
                   <button
                     onClick={() => navigate(-1)}
                     className="text-gray-400 hover:text-[#111827] transition-colors p-1 shrink-0"
+                    aria-label={t('Πίσω', 'Go back')}
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </button>
@@ -350,6 +353,7 @@ export default function GroupChatClassic() {
                   <button
                     onClick={() => setShowSearchMobile(true)}
                     className="text-gray-400 hover:text-[#111827] hover:bg-gray-100 rounded-full transition-colors p-2 md:hidden"
+                    aria-label={t('Αναζήτηση', 'Search')}
                   >
                     <Search className="h-5 w-5" />
                   </button>
@@ -358,6 +362,7 @@ export default function GroupChatClassic() {
                   <button
                     onClick={() => setShowInfo(!showInfo)}
                     className={`transition-colors p-2 rounded-full ${showInfo ? "text-cyan-600 bg-cyan-50" : "text-gray-400 hover:text-[#111827] hover:bg-gray-100"}`}
+                    aria-label={showInfo ? t('Απόκρυψη πληροφοριών', 'Hide info panel') : t('Εμφάνιση πληροφοριών', 'Show info panel')}
                   >
                     <Info className="h-5 w-5" />
                   </button>
@@ -488,6 +493,7 @@ export default function GroupChatClassic() {
                   type="submit"
                   disabled={!newMessage.trim()}
                   className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2 bg-[#111827] text-white rounded-full hover:bg-gray-800 disabled:opacity-40 disabled:hover:bg-[#111827] transition-all shadow-sm"
+                  aria-label={t('Αποστολή μηνύματος', 'Send message')}
                 >
                   <Send className="h-4 w-4 md:h-4.5 md:w-4.5" />
                 </button>
@@ -739,7 +745,7 @@ export default function GroupChatClassic() {
                       aria-checked={isEphemeral}
                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#111827] focus:ring-offset-2 ${isEphemeral ? "bg-[#111827]" : "bg-gray-200"}`}
                     >
-                      <span className="sr-only">Toggle ephemeral mode</span>
+                      <span className="sr-only">{t('Εναλλαγή εφήμερης λειτουργίας', 'Toggle ephemeral mode')}</span>
                       <span
                         aria-hidden="true"
                         className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isEphemeral ? "translate-x-5" : "translate-x-0"}`}

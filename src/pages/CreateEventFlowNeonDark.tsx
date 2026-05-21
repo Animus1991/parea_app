@@ -136,7 +136,7 @@ export default function CreateEventFlowNeonDark() {
                     onClick={() => fileInputRef.current?.click()}
                   >
                     {imagePreview ? (
-                       <img src={imagePreview} className="absolute inset-0 w-full h-full object-cover" alt="Event preview" />
+                       <img src={imagePreview} className="absolute inset-0 w-full h-full object-cover" alt={t('Προεπισκόπηση εκδήλωσης', 'Event preview')} />
                     ) : (
                        <>
                          <Camera className="w-8 h-8 mb-2 text-white" />

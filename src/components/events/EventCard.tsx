@@ -167,6 +167,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             className="p-2 rounded-full shadow-sm backdrop-blur-md focus:outline-none transition-colors bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900"
             onClick={handleShare}
             title={t("Κοινοποίηση", "Share")}
+            aria-label={t("Κοινοποίηση", "Share")}
           >
             <Share2 className="h-4 w-4" />
           </button>
@@ -174,6 +175,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             className={`p-2 rounded-full shadow-sm backdrop-blur-md focus:outline-none transition-colors ${isSaved ? (accent === 'fuchsia' ? 'bg-fuchsia-500/20 text-fuchsia-600' : accent === 'emerald' ? 'bg-emerald-500/20 text-emerald-600' : accent === 'indigo' ? 'bg-indigo-500/20 text-indigo-600' : 'bg-[#18D8DB]/20 text-[#0E8B8D]') : "bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900"}`}
             onClick={toggleSave}
             title={t("Αποθήκευση", "Save")}
+            aria-label={isSaved ? t("Αφαίρεση αποθήκευσης", "Remove from saved") : t("Αποθήκευση", "Save")}
           >
             <Bookmark
               className="h-4 w-4"
@@ -519,6 +521,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 <button
                   onClick={() => setShowLocationConfigModal(false)}
                   className="text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100"
+                  aria-label={t("Κλείσιμο", "Close")}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -762,7 +765,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   onClick={() => {
                     if (navigator.share) {
                       navigator.share({
-                        title: "Tracking Link",
+                        title: t("Σύνδεσμος Παρακολούθησης", "Tracking Link"),
                         url: "https://nakamas.app/safe/r9x2p",
                       });
                     } else {

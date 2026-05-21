@@ -556,23 +556,25 @@ export default function NearbyGroupsNeonDark() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white" />
             <input
               type="text"
-              placeholder="Search nearby areas or groups..."
+              placeholder={t('Αναζήτηση κοντινών περιοχών ή ομάδων...', 'Search nearby areas or groups...')}
               className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-emerald-600 text-sm font-medium"
             />
           </div>
         )}
         {!isMapFullscreen && (
           <button
-            onClick={() => alert("Search filters coming soon")}
+            onClick={() => alert(t("Τα φίλτρα αναζήτησης έρχονται σύντομα", "Search filters coming soon"))}
             className="h-11 px-4 bg-gray-800/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-white hover:text-emerald-400 transition-colors pointer-events-auto shrink-0"
-          >
+            aria-label={t('Φίλτρα αναζήτησης', 'Search filters')}
+            title={t('Φίλτρα αναζήτησης', 'Search filters')}>
             <SlidersHorizontal className="h-5 w-5" />
           </button>
         )}
         <button
           onClick={handleLocateMe}
           className="h-11 px-4 bg-gray-800/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-emerald-400 hover:text-emerald-400 transition-colors pointer-events-auto shrink-0 ml-auto"
-          title="Locate Me"
+          title={t('Εντοπισμός Τοποθεσίας', 'Locate Me')}
+          aria-label={t('Εντοπισμός Τοποθεσίας', 'Locate Me')}
         >
           <Crosshair className="h-5 w-5" />
         </button>
@@ -584,7 +586,8 @@ export default function NearbyGroupsNeonDark() {
         <button
           onClick={() => setIsMapFullscreen(!isMapFullscreen)}
           className="h-11 px-4 bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-800 text-white rounded-xl shadow-lg flex items-center justify-center hover:bg-black transition-colors pointer-events-auto shrink-0"
-          title={isMapFullscreen ? "Exit Fullscreen" : "Fullscreen Map"}
+          title={isMapFullscreen ? t('Έξοδος από Πλήρη Οθόνη', 'Exit Fullscreen') : t('Πλήρης Οθόνη Χάρτη', 'Fullscreen Map')}
+          aria-label={isMapFullscreen ? t('Έξοδος από Πλήρη Οθόνη', 'Exit Fullscreen') : t('Πλήρης Οθόνη Χάρτη', 'Fullscreen Map')}
         >
           {isMapFullscreen ? (
             <Minimize className="h-5 w-5" />

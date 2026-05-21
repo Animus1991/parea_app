@@ -739,7 +739,7 @@ export default function GroupChatVibrantDark() {
                       aria-checked={isEphemeral}
                       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#111827] focus:ring-offset-2 ${isEphemeral ? "bg-gradient-to-br from-red-900 via-rose-900 to-red-800 text-white" : "bg-gray-200"}`}
                     >
-                      <span className="sr-only">Toggle ephemeral mode</span>
+                      <span className="sr-only">{t('Εναλλαγή εφήμερης λειτουργίας', 'Toggle ephemeral mode')}</span>
                       <span
                         aria-hidden="true"
                         className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-gray-800 shadow ring-0 transition duration-200 ease-in-out ${isEphemeral ? "translate-x-5" : "translate-x-0"}`}
