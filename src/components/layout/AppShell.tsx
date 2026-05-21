@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+﻿import React, { ReactNode, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
@@ -249,7 +249,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         </div>
 
         {/* Theme Toggle */}
-        <button onClick={cycleTheme} className={cn("flex items-center gap-1 text-[11.33px] font-bold transition-colors px-2.5 py-1.5 rounded-lg", theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-800/40 text-gray-300 hover:text-emerald-400 hover:bg-gray-700/50" : theme === "vibrant-dark" ? "bg-gray-800/40 text-gray-300 hover:text-fuchsia-400 hover:bg-gray-700/50" : theme === "vibrant" ? "bg-fuchsia-50 text-fuchsia-600 hover:text-fuchsia-700 hover:bg-fuchsia-100" : theme === "bento" ? "bg-indigo-50 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-100" : theme === "neon" ? "bg-emerald-50 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100" : "bg-gray-100 text-gray-500 hover:text-[#0E8B8D] hover:bg-cyan-50")} title="Toggle Theme">
+        <button onClick={cycleTheme} className={cn("flex items-center gap-1 text-[11.33px] font-bold transition-colors px-2.5 py-1.5 rounded-lg", theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-800/40 text-gray-300 hover:text-emerald-400 hover:bg-gray-700/50" : theme === "vibrant-dark" ? "bg-gray-800/40 text-gray-300 hover:text-fuchsia-400 hover:bg-gray-700/50" : theme === "vibrant" ? "bg-fuchsia-50 text-fuchsia-600 hover:text-fuchsia-700 hover:bg-fuchsia-100" : theme === "bento" ? "bg-indigo-50 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-100" : theme === "neon" ? "bg-emerald-50 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100" : "bg-gray-100 text-gray-500 hover:text-[#0E8B8D] hover:bg-cyan-50")} title={t('Αλλαγή θέματος','Toggle theme')} aria-label={t('Αλλαγή θέματος','Toggle theme')}>
           <Palette className="w-4 h-4" />
           <span className="hidden sm:inline capitalize">{theme}</span>
         </button>
@@ -258,13 +258,13 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         <button
           onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
           className={cn("flex items-center gap-1 text-[11.33px] font-bold transition-colors px-2.5 py-1.5 rounded-lg", theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-800/40 text-gray-300 hover:text-emerald-400 hover:bg-gray-700/50" : theme === "vibrant-dark" ? "bg-gray-800/40 text-gray-300 hover:text-fuchsia-400 hover:bg-gray-700/50" : theme === "vibrant" ? "bg-fuchsia-50 text-fuchsia-600 hover:text-fuchsia-700 hover:bg-fuchsia-100" : theme === "bento" ? "bg-indigo-50 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-100" : theme === "neon" ? "bg-emerald-50 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100" : "bg-gray-100 text-gray-500 hover:text-[#0E8B8D] hover:bg-cyan-50")}
-          title={language === 'el' ? 'Switch to English' : 'Αλλαγή σε Ελληνικά'}
+          aria-label={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')} title={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')}
         >
           <Globe className="w-3.5 h-3.5" />
           {language === 'el' ? 'EN' : 'EL'}
         </button>
 
-        <NavLink to="/notifications" className={cn("relative transition-colors", theme === "bento-dark" || theme === "neon-dark" ? "text-white hover:text-emerald-400" : theme === "vibrant-dark" ? "text-white hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-500 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-500 hover:text-indigo-600" : theme === "neon" ? "text-gray-500 hover:text-emerald-600" : "text-gray-500 hover:text-[#0E8B8D]")}>
+        <NavLink aria-label={unreadNotificationCount > 0 ? `${t('Ειδοποιήσεις','Notifications')} (${unreadNotificationCount})` : t('Ειδοποιήσεις','Notifications')}} to="/notifications" className={cn("relative transition-colors", theme === "bento-dark" || theme === "neon-dark" ? "text-white hover:text-emerald-400" : theme === "vibrant-dark" ? "text-white hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-500 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-500 hover:text-indigo-600" : theme === "neon" ? "text-gray-500 hover:text-emerald-600" : "text-gray-500 hover:text-[#0E8B8D]")}>
           <Bell className="h-[18px] w-[18px]" />
           {unreadNotificationCount > 0 && (
             <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#18D8DB] text-[9.27px] text-white font-bold border border-white">
@@ -298,7 +298,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           )}
         </div>
 
-        <button onClick={onMenuClick} className={cn("md:hidden", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-gray-300 hover:text-white" : "text-gray-500 hover:text-[#111827]")}>
+        <button onClick={onMenuClick} aria-label={t('Άνοιγμα μενού','Open menu')} className={cn("md:hidden", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-gray-300 hover:text-white" : "text-gray-500 hover:text-[#111827]")}>
           <Menu className="h-[22px] w-[22px]" />
         </button>
       </div>
@@ -415,3 +415,4 @@ export function AppShell({ children }: { children: ReactNode }) {
     </div>
   );
 }
+
