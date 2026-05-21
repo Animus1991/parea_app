@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, MapPin, CheckCircle } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, MapPin, CheckCircle, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   format, startOfWeek, addWeeks, subWeeks,
@@ -11,6 +11,22 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
 
+function generateICS(events: { title: string; date: string; time: string; locationArea: string }[]): string {
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Nakamas//Calendar//EN'];
+  for (const ev of events) {
+    const dt = new Date(`${ev.date}T${ev.time || '00:00'}`);
+    const dtStr = isNaN(dt.getTime()) ? '' : dt.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    if (!dtStr) continue;
+    lines.push('BEGIN:VEVENT');
+    lines.push(`DTSTART:${dtStr}`);
+    lines.push(`SUMMARY:${ev.title}`);
+    lines.push(`LOCATION:${ev.locationArea}`);
+    lines.push('END:VEVENT');
+  }
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
 export default function MyCalendarClassic() {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -19,13 +35,23 @@ export default function MyCalendarClassic() {
   
   const events = useStore((state) => state.events);
   const waitlistedEvents = useStore((state) => state.waitlistedEvents);
+  const groups = useStore((state) => state.groups);
+  const currentUser = useStore((state) => state.currentUser);
 
   const now = new Date();
+
+  // Events the user has joined (via groups or waitlist)
+  const userGroupEventIds = currentUser
+    ? new Set(groups.filter(g => g.members.includes(currentUser.id)).map(g => g.eventId))
+    : new Set<string>();
+  const userEventIds = new Set([...waitlistedEvents, ...userGroupEventIds]);
+
   const upcomingEvents = events
     .filter((e) => {
       const d = new Date(e.date);
       if (isNaN(d.getTime())) return false;
-      return d >= now;
+      if (d < now) return false;
+      return userEventIds.size > 0 ? userEventIds.has(e.id) : true;
     })
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, 8)
@@ -51,6 +77,17 @@ export default function MyCalendarClassic() {
   // Leading blank cells so that the grid starts on Monday (getDay 0=Sun,1=Mon,...6=Sat)
   const leadingBlanks = getDay(monthStart) === 0 ? 6 : getDay(monthStart) - 1;
 
+  const handleExportICS = () => {
+    const icsContent = generateICS(upcomingEvents);
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'nakamas-calendar.ics';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -59,6 +96,17 @@ export default function MyCalendarClassic() {
           <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">{t('Διαχειριστείτε το πρόγραμμά σας και τις προσεχείς εμπειρίες.', 'Manage your schedule and upcoming experiences.')}</p>
         </div>
         
+        <div className="flex items-center gap-2">
+          {upcomingEvents.length > 0 && (
+            <button
+              onClick={handleExportICS}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-[12.5px] font-bold text-gray-700 hover:bg-gray-50 hover:border-cyan-200 transition-colors shadow-sm"
+              title={t('Εξαγωγή ως .ics', 'Export as .ics')}
+            >
+              <Download className="w-3.5 h-3.5 text-cyan-600" />
+              {t('Εξαγωγή', 'Export')}
+            </button>
+          )}
         <div className="flex bg-gray-100 p-1 rounded-lg">
           <button 
             className={`px-4 py-1.5 rounded-md text-xs font-bold transition-colors ${view === 'week' ? 'bg-white shadow-sm text-[#111827]' : 'text-gray-500'}`}

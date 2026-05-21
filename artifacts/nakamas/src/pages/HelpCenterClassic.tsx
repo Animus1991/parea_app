@@ -9,6 +9,7 @@ export default function HelpCenterClassic() {
     
   const [search, setSearch] = useState('');
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  const [activeTopicFilter, setActiveTopicFilter] = useState<string | null>(null);
 
   const articles = [
     { id: 1, title: t(`Πώς να αναφέρετε μια μη εμφάνιση (no-show)`, `How to report a no-show`), category: t(`Εμπιστοσύνη & Ασφάλεια`, `Trust & Safety`) },
@@ -25,13 +26,17 @@ export default function HelpCenterClassic() {
   ];
 
   const popularTopics = [
-    { label: t(`Ασφάλεια`, `Safety`), icon: Shield, color: 'text-red-600 bg-red-50' },
-    { label: t(`Πληρωμές`, `Payments`), icon: CreditCard, color: 'text-emerald-600 bg-emerald-50' },
-    { label: t(`Ομάδες`, `Groups`), icon: Users, color: 'text-blue-600 bg-blue-50' },
-    { label: t(`Γρήγορη Βοήθεια`, `Quick Help`), icon: Zap, color: 'text-amber-600 bg-amber-50' },
+    { label: t(`Ασφάλεια`, `Safety`), icon: Shield, color: 'text-red-600 bg-red-50', filter: t(`Εμπιστοσύνη & Ασφάλεια`, `Trust & Safety`) },
+    { label: t(`Πληρωμές`, `Payments`), icon: CreditCard, color: 'text-emerald-600 bg-emerald-50', filter: t(`Πληρωμές`, `Payments`) },
+    { label: t(`Ομάδες`, `Groups`), icon: Users, color: 'text-blue-600 bg-blue-50', filter: t(`Ομάδες`, `Groups`) },
+    { label: t(`Λογαριασμός`, `Account`), icon: Zap, color: 'text-amber-600 bg-amber-50', filter: t(`Λογαριασμός`, `Account`) },
   ];
 
-  const filtered = articles.filter(a => a.title.toLowerCase().includes(search.toLowerCase()));
+  const filtered = articles.filter(a => {
+    const matchesSearch = a.title.toLowerCase().includes(search.toLowerCase());
+    const matchesTopic = !activeTopicFilter || a.category === activeTopicFilter;
+    return matchesSearch && matchesTopic;
+  });
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
@@ -57,12 +62,17 @@ export default function HelpCenterClassic() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {popularTopics.map(topic => {
           const Icon = topic.icon;
+          const isActive = activeTopicFilter === topic.filter;
           return (
-            <button key={topic.label} className={`flex items-center gap-2 p-3 rounded-xl border border-gray-100 bg-white hover:shadow-sm transition-all`}>
+            <button
+              key={topic.label}
+              onClick={() => setActiveTopicFilter(isActive ? null : topic.filter)}
+              className={`flex items-center gap-2 p-3 rounded-xl border transition-all ${isActive ? 'border-cyan-300 bg-cyan-50 shadow-sm' : 'border-gray-100 bg-white hover:shadow-sm'}`}
+            >
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${topic.color}`}>
                 <Icon className="w-4 h-4" />
               </div>
-              <span className="text-[13.8px] font-bold text-[#111827]">{topic.label}</span>
+              <span className={`text-[13.8px] font-bold ${isActive ? 'text-cyan-700' : 'text-[#111827]'}`}>{topic.label}</span>
             </button>
           );
         })}
@@ -93,10 +103,25 @@ export default function HelpCenterClassic() {
 
       {/* Articles */}
       <div>
-        <h2 className="text-[13.5px] font-bold text-gray-400 tracking-wide mb-3">{t(`Άρθρα Βοήθειας`, `Help Articles`)}</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-[13.5px] font-bold text-gray-400 tracking-wide">{t(`Άρθρα Βοήθειας`, `Help Articles`)}</h2>
+          {activeTopicFilter && (
+            <button onClick={() => setActiveTopicFilter(null)} className="text-[11.2px] font-bold text-cyan-600 hover:underline">
+              {t(`Εκκαθάριση φίλτρου`, `Clear filter`)}
+            </button>
+          )}
+        </div>
         <div className="space-y-3">
-          {filtered.map(article => (
-            <Card key={article.id} className="p-4 flex items-center justify-between hover:border-cyan-200 cursor-pointer transition-colors">
+          {filtered.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              <p className="font-medium text-sm">{t('Δεν βρέθηκαν άρθρα', 'No articles found')}</p>
+            </div>
+          ) : filtered.map(article => (
+            <Card
+              key={article.id}
+              className="p-4 flex items-center justify-between hover:border-cyan-200 cursor-pointer transition-colors"
+              onClick={() => toast.info(t(`Άρθρο: ${article.title}`, `Article: ${article.title}`))}
+            >
               <div>
                 <span className="text-[12.5px] font-bold text-cyan-600 tracking-wide">{article.category}</span>
                 <h3 className="font-bold text-sm text-[#111827] mt-0.5">{article.title}</h3>

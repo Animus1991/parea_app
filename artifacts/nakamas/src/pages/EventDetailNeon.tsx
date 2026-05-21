@@ -42,7 +42,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
         <div>
           <div className="flex items-center gap-1.5 text-xs font-bold text-black tracking-wide mb-1">
             <Users className="h-3.5 w-3.5" />
-            {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
+            {t('Ομάδα', 'Group')} {group.id.replace('g', '#')}
           </div>
           <h4 className="text-[13px] font-bold text-black mb-0.5 line-clamp-1">{event.title}</h4>
           <span className="text-[9px] tracking-widest font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">

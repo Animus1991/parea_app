@@ -8,6 +8,8 @@ export default function ReportIssueClassic() {
     const { t } = useLanguage();
   const [step, setStep] = useState(1);
   const [severity, setSeverity] = useState<'low' | 'medium' | 'high' | null>(null);
+  const [category, setCategory] = useState('');
+  const [reportedUser, setReportedUser] = useState('');
   const [fileName, setFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -47,8 +49,19 @@ export default function ReportIssueClassic() {
 
           <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-5">
             <div>
+              <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Αναφερόμενος χρήστης (προαιρετικά)`, `Reported user (optional)`)}</label>
+              <input
+                type="text"
+                value={reportedUser}
+                onChange={e => setReportedUser(e.target.value)}
+                placeholder={t(`Όνομα χρήστη ή @handle`, `Username or @handle`)}
+                className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-sm font-medium"
+              />
+            </div>
+
+            <div>
               <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Κατηγορία`, `Category`)}</label>
-              <select className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-sm font-medium" required>
+              <select value={category} onChange={e => setCategory(e.target.value)} className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-sm font-medium" required>
                 <option value="">{t(`Επιλέξτε κατηγορία...`, `Select a category...`)}</option>
                 <option value="user_behavior">{t(`Ανάρμοστη συμπεριφορά`, `Inappropriate behavior`)}</option>
                 <option value="event_safety">{t(`Ασφάλεια εκδήλωσης`, `Event safety`)}</option>
@@ -135,10 +148,16 @@ export default function ReportIssueClassic() {
           </div>
           <h2 className="text-xl font-bold text-[#111827] mb-2">{t(`Η αναφορά υποβλήθηκε`, `Report Submitted`)}</h2>
           <p className="text-sm text-gray-500 max-w-md mx-auto mb-6">{t(`Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.`, `Thank you. We'll review your report and get back to you.`)}</p>
-          <button 
-            onClick={() => navigate('/')}
-            className="bg-gray-100 text-[#111827] px-5 py-2.5 rounded-full text-[13.5px] font-bold hover:bg-gray-200 transition-colors tracking-wider"
-          >{t(`Επιστροφή`, `Go Back`)}</button>
+          <div className="flex items-center justify-center gap-3">
+            <button 
+              onClick={() => { setStep(1); setSeverity(null); setCategory(''); setReportedUser(''); setFileName(null); }}
+              className="bg-white border border-gray-200 text-[#111827] px-5 py-2.5 rounded-full text-[13.5px] font-bold hover:bg-gray-50 transition-colors tracking-wider"
+            >{t(`Νέα Αναφορά`, `New Report`)}</button>
+            <button 
+              onClick={() => navigate('/')}
+              className="bg-gray-100 text-[#111827] px-5 py-2.5 rounded-full text-[13.5px] font-bold hover:bg-gray-200 transition-colors tracking-wider"
+            >{t(`Αρχική`, `Home`)}</button>
+          </div>
         </div>
       )}
     </div>

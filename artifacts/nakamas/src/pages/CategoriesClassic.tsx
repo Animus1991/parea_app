@@ -115,7 +115,7 @@ export default function CategoriesClassic() {
         {visibleCategories.map(cat => (
           <div 
             key={cat.id} 
-            className={`bg-white rounded-xl p-3 border shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col items-center text-center ${activeCategory === cat.name ? 'border-cyan-600 ring-1 ring-cyan-600' : 'border-gray-100 hover:border-gray-200'}`}
+            className={`bg-white rounded-xl p-3 border shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col items-center text-center ${activeCategory === cat.name ? 'border-cyan-600 ring-1 ring-cyan-600' : 'border-gray-100 hover:border-gray-200'} ${cat.count === 0 ? 'opacity-50 grayscale' : ''}`}
             onClick={() => setActiveCategory(activeCategory === cat.name ? null : cat.name)}
           >
             <div className={`w-10 h-10 rounded-full ${cat.bg} ${cat.border} border flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300`}>

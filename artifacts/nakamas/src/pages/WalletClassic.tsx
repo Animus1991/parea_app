@@ -5,7 +5,7 @@ import { Button } from '../components/common/Button';
 import { useLanguage } from '../lib/i18n';
 import { useStore } from '../store';
 import { toast } from 'sonner';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isThisMonth, subMonths, isAfter, isBefore, startOfMonth, endOfMonth } from 'date-fns';
 
 export default function WalletClassic() {
   const { t } = useLanguage();
@@ -31,9 +31,23 @@ export default function WalletClassic() {
     { id: 'static-1', type: 'Payout' as const, amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: 'Oct 12, 2024', desc: t('Μεταφορά στην τράπεζα με κατάληξη 4092', 'Transfer to Bank ending in 4092') },
   ];
 
-  const transactions = [...dynamicTransactions, ...staticTransactions];
+  const allTransactions = [...dynamicTransactions, ...staticTransactions];
   const totalEarnings = dynamicTransactions.reduce((s, tx) => s + tx.amount, 0);
   const availableBalance = Math.max(0, totalEarnings - 120);
+
+  const now = new Date();
+  const prevMonthStart = startOfMonth(subMonths(now, 1));
+  const prevMonthEnd = endOfMonth(subMonths(now, 1));
+
+  const transactions = allTransactions.filter(tx => {
+    if (txFilter === 'all') return true;
+    try {
+      const d = new Date(tx.date);
+      if (txFilter === 'month') return isThisMonth(d);
+      if (txFilter === 'prev') return isAfter(d, prevMonthStart) && isBefore(d, prevMonthEnd);
+    } catch { return true; }
+    return true;
+  });
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">

@@ -53,15 +53,20 @@ export default function AchievementsClassic() {
   const level = Math.floor(totalXP / 200) + 1;
   const levelProgress = (totalXP % 200) / 200 * 100;
 
-  const streakDays = [true, true, true, false, false, false, false];
+  // Streak: count of attended events in last 7 days (approximate with feedbackCount)
+  const streakCount = Math.min(feedbackCount + eventsJoined, 7);
+  const streakDays = Array.from({ length: 7 }, (_, i) => i < streakCount);
 
-  const leaderboard = [
-    { rank: 1, name: 'Elena M.', xp: 1250, avatar: 'https://i.pravatar.cc/32?u=lb1' },
-    { rank: 2, name: 'Dimitris K.', xp: 980, avatar: 'https://i.pravatar.cc/32?u=lb2' },
-    { rank: 3, name: 'Sofia A.', xp: 870, avatar: 'https://i.pravatar.cc/32?u=lb3' },
-    { rank: 4, name: t(`Εσείς`, `You`), xp: totalXP, avatar: 'https://i.pravatar.cc/32?u=me' },
-    { rank: 5, name: 'Kostas R.', xp: 420, avatar: 'https://i.pravatar.cc/32?u=lb5' },
+  const leaderboardRaw = [
+    { name: 'Elena M.', xp: 1250, avatar: 'https://i.pravatar.cc/32?u=lb1', isMe: false },
+    { name: 'Dimitris K.', xp: 980, avatar: 'https://i.pravatar.cc/32?u=lb2', isMe: false },
+    { name: 'Sofia A.', xp: 870, avatar: 'https://i.pravatar.cc/32?u=lb3', isMe: false },
+    { name: t(`Εσείς`, `You`), xp: totalXP, avatar: currentUser?.photoUrl || 'https://i.pravatar.cc/32?u=me', isMe: true },
+    { name: 'Kostas R.', xp: 420, avatar: 'https://i.pravatar.cc/32?u=lb5', isMe: false },
   ];
+  const leaderboard = leaderboardRaw
+    .sort((a, b) => b.xp - a.xp)
+    .map((entry, i) => ({ ...entry, rank: i + 1 }));
 
   return (
     <div className="mx-auto max-w-full space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
@@ -180,7 +185,7 @@ export default function AchievementsClassic() {
             <div className="flex items-center gap-3 mb-4">
               <Flame className="w-5 h-5 text-orange-500" />
               <div>
-                <p className="text-[18px] font-bold text-[#111827]">3 {t(`ημέρες σερί`, `day streak`)}</p>
+                <p className="text-[18px] font-bold text-[#111827]">{streakCount} {t(`ημέρες σερί`, `day streak`)}</p>
                 <p className="text-[12.5px] text-gray-500 font-medium">{t(`Συνεχίστε να συμμετέχετε!`, `Keep participating!`)}</p>
               </div>
             </div>
@@ -202,15 +207,15 @@ export default function AchievementsClassic() {
             <h3 className="text-[13.5px] font-bold text-[#111827] mb-3">{t(`Στατιστικά Σερί`, `Streak Stats`)}</h3>
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center">
-                <p className="text-[23px] font-black text-[#111827]">3</p>
+                <p className="text-[23px] font-black text-[#111827]">{streakCount}</p>
                 <p className="text-[11.2px] text-gray-500 font-medium">{t(`Τρέχον`, `Current`)}</p>
               </div>
               <div className="text-center">
-                <p className="text-[23px] font-black text-[#111827]">7</p>
+                <p className="text-[23px] font-black text-[#111827]">{Math.max(streakCount, 7)}</p>
                 <p className="text-[11.2px] text-gray-500 font-medium">{t(`Μέγιστο`, `Longest`)}</p>
               </div>
               <div className="text-center">
-                <p className="text-[23px] font-black text-[#111827]">12</p>
+                <p className="text-[23px] font-black text-[#111827]">{eventsJoined + feedbackCount}</p>
                 <p className="text-[11.2px] text-gray-500 font-medium">{t(`Εκδηλώσεις`, `Events`)}</p>
               </div>
             </div>
@@ -220,8 +225,8 @@ export default function AchievementsClassic() {
 
       {activeTab === 'leaderboard' && (
         <Card className="p-0 overflow-hidden">
-          {leaderboard.map((entry, i) => (
-            <div key={entry.rank} className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 ${entry.rank === 4 ? 'bg-cyan-50/50' : ''}`}>
+          {leaderboard.map((entry) => (
+            <div key={entry.rank} className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 ${entry.isMe ? 'bg-cyan-50/50' : ''}`}>
               <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[12.5px] font-black ${
                 entry.rank === 1 ? 'bg-amber-100 text-amber-700' :
                 entry.rank === 2 ? 'bg-gray-200 text-gray-700' :
@@ -230,7 +235,7 @@ export default function AchievementsClassic() {
                 {entry.rank}
               </span>
               <img src={entry.avatar} alt="" className="w-7 h-7 rounded-full border border-gray-200" />
-              <span className={`flex-1 text-[13.5px] font-medium ${entry.rank === 4 ? 'font-bold text-cyan-700' : 'text-[#111827]'}`}>{entry.name}</span>
+              <span className={`flex-1 text-[13.5px] ${entry.isMe ? 'font-bold text-cyan-700' : 'font-medium text-[#111827]'}`}>{entry.name}</span>
               <span className="text-[12.5px] font-bold text-gray-500">{entry.xp} XP</span>
               {entry.rank <= 3 && <Trophy className={`w-3.5 h-3.5 ${entry.rank === 1 ? 'text-amber-500' : entry.rank === 2 ? 'text-gray-400' : 'text-orange-400'}`} />}
             </div>

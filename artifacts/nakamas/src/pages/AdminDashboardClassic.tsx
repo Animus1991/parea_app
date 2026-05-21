@@ -11,12 +11,19 @@ export default function AdminDashboardClassic() {
     const users = useStore((state) => state.users);
     const events = useStore((state) => state.events);
     const groups = useStore((state) => state.groups);
+    const feedbackSubmitted = useStore((state) => state.feedbackSubmitted);
 
     const activeUsers = users.length;
     const thisWeekEvents = events.filter(e => { try { return isThisWeek(parseISO(e.date)); } catch { return false; } }).length;
     const verifiedUsers = users.filter(u => u.idVerified).length;
     const verifiedPct = activeUsers > 0 ? Math.round((verifiedUsers / activeUsers) * 100) : 0;
     const avgReliability = activeUsers > 0 ? Math.round(users.reduce((s, u) => s + (u.reliabilityScore || 0), 0) / activeUsers) : 0;
+
+    const feedbackEntries = Object.values(feedbackSubmitted);
+    const noShowCount = feedbackEntries.filter(f => f.attendance === 'no_show').length;
+    const noShowRate = feedbackEntries.length > 0
+      ? ((noShowCount / feedbackEntries.length) * 100).toFixed(1)
+      : '4.2';
 
   return (
     <div className="mx-auto max-w-full space-y-8 pb-12">
@@ -62,9 +69,9 @@ export default function AdminDashboardClassic() {
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="text-[11.2px] text-gray-500 font-medium">No-show rate</span>
-              <span className="text-[12.5px] font-bold text-amber-600">4.2%</span>
+              <span className="text-[12.5px] font-bold text-amber-600">{noShowRate}%</span>
             </div>
-            <div className="w-full bg-gray-100 h-1.5 rounded-full"><div className="bg-amber-400 h-full rounded-full" style={{ width: '4.2%' }} /></div>
+            <div className="w-full bg-gray-100 h-1.5 rounded-full"><div className="bg-amber-400 h-full rounded-full" style={{ width: `${Math.min(parseFloat(noShowRate), 100)}%` }} /></div>
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">

@@ -118,97 +118,71 @@ export default function OrganizerDashboardClassic() {
       <div className="space-y-6">
         <h2 className="text-[18px] font-bold text-[#111827] tracking-wide">{t(`Οι Εκδηλώσεις μου`, `My Events`)}</h2>
 
-        <Card className="p-0 overflow-hidden border border-gray-200">
-          <div className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-gray-100 bg-gray-50/50">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2 mb-1">
-                <Badge variant="neutral">Stand-up</Badge>
-                <span className="text-[12.5px] text-gray-500 font-bold tracking-wide">{t(`Σε 2 μέρες`, `In 2 days`)}</span>
-              </div>
-              <h3 className="text-[15px] font-bold text-[#111827]">{t(`Stand-up Comedy Night`, `Stand-up Comedy Night`)}</h3>
-            </div>
-            <div className="flex gap-2">
-              <span className="text-[13px] font-bold text-gray-500 bg-white px-2 py-1 rounded shadow-sm border border-gray-100">12/20 {t(`θέσεις`, `spots`)}</span>
-            </div>
+        {myEvents.length === 0 ? (
+          <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+            <Calendar className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500 font-medium text-sm">{t('Δεν έχετε δημιουργήσει εκδηλώσεις ακόμα', 'You have not created any events yet')}</p>
+            <button onClick={() => navigate('/create')} className="mt-3 text-[12.5px] font-bold text-cyan-600 hover:underline">
+              {t('Δημιουργία πρώτης εκδήλωσης →', 'Create your first event →')}
+            </button>
           </div>
-
-          <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2 space-y-3">
-              <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
-                <Users className="w-4 h-4 text-gray-400" />{t(`Ομάδες`, `Groups`)}
-              </h4>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
-                <div>
-                  <p className="text-[13px] font-bold text-gray-700">{t(`Ομάδα #1`, `Group #1`)} — 4/4</p>
-                  <p className="text-[12.5px] text-gray-500 mt-0.5">{t(`Επιβεβαιωμένη`, `Confirmed`)}</p>
+        ) : myEvents.map((event) => {
+          const eventGroups = groups.filter(g => g.eventId === event.id);
+          const filledSpots = eventGroups.reduce((s, g) => s + g.members.length, 0);
+          const maxSpots = event.maxParticipants || 20;
+          return (
+            <Card key={event.id} className="p-0 overflow-hidden border border-gray-200">
+              <div className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-gray-100 bg-gray-50/50">
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge variant="neutral">{event.category}</Badge>
+                    <span className="text-[12.5px] text-gray-500 font-bold tracking-wide">{event.date}</span>
+                  </div>
+                  <h3 className="text-[15px] font-bold text-[#111827]">{event.title}</h3>
                 </div>
-                <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-gray-200 hover:bg-cyan-50" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
-                  <MessageSquare className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
-                <div>
-                  <p className="text-[13px] font-bold text-gray-700">{t(`Ομάδα #2`, `Group #2`)} — 3/4</p>
-                  <p className="text-[12.5px] text-gray-500 mt-0.5">{t(`Αναμένεται 1 ακόμα`, `Waiting for 1 more`)}</p>
+                <div className="flex gap-2">
+                  <span className="text-[13px] font-bold text-gray-500 bg-white px-2 py-1 rounded shadow-sm border border-gray-100">{filledSpots}/{maxSpots} {t(`θέσεις`, `spots`)}</span>
                 </div>
-                <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-gray-200 hover:bg-cyan-50" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
-                  <MessageSquare className="w-3.5 h-3.5" />
-                </button>
               </div>
-            </div>
 
-            <div className="space-y-3">
-              <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gray-400" />{t(`Ενέργειες`, `Actions`)}
-              </h4>
-              <Button variant="outline" className="w-full text-[13px]" size="sm" onClick={() => navigate('/create')}>{t(`Επεξεργασία`, `Edit`)}</Button>
-              <Button variant="outline" className="w-full text-[13px]" size="sm" onClick={() => toast.success(t('Ανακοίνωση εστάλη στην ομάδα!', 'Announcement sent to group!'))}>{t(`Αποστολή Ανακοίνωσης`, `Send Announcement`)}</Button>
-              <Button variant="outline" className="w-full text-[13px] bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100" size="sm" onClick={() => toast.success(t('Σημείο συνάντησης δημοσιεύτηκε!', 'Meeting point published!'))}>{t(`Δημοσίευση Σημείου Συνάντησης`, `Publish Meeting Point`)}</Button>
-              <Button variant="ghost" className="w-full text-[13px] text-red-600 hover:bg-red-50 hover:text-red-700" size="sm" onClick={() => toast.error(t('Εκδήλωση ακυρώθηκε', 'Event cancelled'))}>{t(`Ακύρωση`, `Cancel Event`)}</Button>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-0 overflow-hidden border border-gray-200">
-          <div className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-gray-100 bg-gray-50/50">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2 mb-1">
-                <Badge variant="neutral">Hiking</Badge>
-                <span className="text-[12.5px] text-gray-500 font-bold tracking-wide">{t(`Σε 5 μέρες`, `In 5 days`)}</span>
-              </div>
-              <h3 className="text-[15px] font-bold text-[#111827]">{t(`Πεζοπορία στον Υμηττό`, `Hike on Hymettus`)}</h3>
-            </div>
-            <div className="flex gap-2">
-              <span className="text-[13px] font-bold text-gray-500 bg-white px-2 py-1 rounded shadow-sm border border-gray-100">6/8 {t(`θέσεις`, `spots`)}</span>
-            </div>
-          </div>
-
-          <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2 space-y-3">
-              <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
-                <Users className="w-4 h-4 text-gray-400" />{t(`Ομάδες`, `Groups`)}
-              </h4>
-              <div className="flex items-center justify-between p-3 bg-cyan-50 rounded border border-cyan-100">
-                <div>
-                  <p className="text-[13px] font-bold text-cyan-900">{t(`Ομάδα #1`, `Group #1`)} — 3/4</p>
-                  <p className="text-[12.5px] text-cyan-600 mt-0.5">{t(`Νέο μήνυμα`, `New message`)}</p>
+              <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2 space-y-3">
+                  <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
+                    <Users className="w-4 h-4 text-gray-400" />{t(`Ομάδες`, `Groups`)}
+                  </h4>
+                  {eventGroups.length === 0 ? (
+                    <p className="text-[12.5px] text-gray-400 font-medium">{t('Δεν έχουν σχηματιστεί ομάδες ακόμα', 'No groups formed yet')}</p>
+                  ) : eventGroups.map((group, gi) => (
+                    <div key={group.id} className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
+                      <div>
+                        <p className="text-[13px] font-bold text-gray-700">{t(`Ομάδα`, `Group`)} #{gi + 1} — {group.members.length}/{group.targetSize}</p>
+                        <p className="text-[12.5px] text-gray-500 mt-0.5">{group.members.length >= group.targetSize ? t('Επιβεβαιωμένη', 'Confirmed') : t(`Αναμένεται ${group.targetSize - group.members.length} ακόμα`, `Waiting for ${group.targetSize - group.members.length} more`)}</p>
+                      </div>
+                      <button
+                        onClick={() => navigate(`/chat/${group.id}`)}
+                        className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-gray-200 hover:bg-cyan-50"
+                        aria-label={t('Μήνυμα ομάδας', 'Message group')}
+                        title={t('Μήνυμα ομάδας', 'Message group')}
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
                 </div>
-                <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-cyan-200 hover:bg-cyan-100 relative" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                </button>
-              </div>
-            </div>
 
-            <div className="space-y-3">
-              <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
-                <MoreHorizontal className="w-4 h-4 text-gray-400" />{t(`Περισσότερα`, `More`)}
-              </h4>
-              <Button variant="outline" className="w-full text-[13px]" size="sm" onClick={() => navigate('/create')}>{t(`Επεξεργασία`, `Edit`)}</Button>
-              <Button variant="outline" className="w-full text-[13px]" size="sm" onClick={() => toast.success(t('Εκδήλωση αρχειοθετήθηκε', 'Event archived'))}>{t(`Αρχειοθέτηση`, `Archive`)}</Button>
-            </div>
-          </div>
-        </Card>
+                <div className="space-y-3">
+                  <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-gray-400" />{t(`Ενέργειες`, `Actions`)}
+                  </h4>
+                  <Button variant="outline" className="w-full text-[13px]" size="sm" onClick={() => navigate('/create')}>{t(`Επεξεργασία`, `Edit`)}</Button>
+                  <Button variant="outline" className="w-full text-[13px]" size="sm" onClick={() => toast.success(t('Ανακοίνωση εστάλη στην ομάδα!', 'Announcement sent to group!'))}>{t(`Αποστολή Ανακοίνωσης`, `Send Announcement`)}</Button>
+                  <Button variant="outline" className="w-full text-[13px] bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100" size="sm" onClick={() => toast.success(t('Σημείο συνάντησης δημοσιεύτηκε!', 'Meeting point published!'))}>{t(`Σημείο Συνάντησης`, `Publish Meeting Point`)}</Button>
+                  <Button variant="ghost" className="w-full text-[13px] text-red-600 hover:bg-red-50 hover:text-red-700" size="sm" onClick={() => toast.error(t('Εκδήλωση ακυρώθηκε', 'Event cancelled'))}>{t(`Ακύρωση`, `Cancel`)}</Button>
+                </div>
+              </div>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

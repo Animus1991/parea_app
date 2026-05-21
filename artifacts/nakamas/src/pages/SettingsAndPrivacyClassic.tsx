@@ -4,9 +4,13 @@ import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { useLanguage } from "../lib/i18n";
 import { toast } from 'sonner';
+import { useStore } from '../store';
+import { useNavigate } from 'react-router-dom';
 
 export default function SettingsAndPrivacyClassic() {
     const { t, language, setLanguage } = useLanguage();
+    const logout = useStore(state => state.logout);
+    const navigate = useNavigate();
     
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
@@ -182,7 +186,7 @@ export default function SettingsAndPrivacyClassic() {
                 <p className="text-[12.5px] text-gray-400 font-medium">Athens, GR • 2h {t(`πριν`, `ago`)}</p>
               </div>
             </div>
-            <button className="text-[11.2px] font-bold text-red-500 hover:text-red-700">{t(`Αποσύνδεση`, `Log out`)}</button>
+            <button className="text-[11.2px] font-bold text-red-500 hover:text-red-700" onClick={() => toast.success(t('Συσκευή αποσυνδέθηκε', 'Device logged out'))}>{t(`Αποσύνδεση`, `Log out`)}</button>
           </div>
         </Card>
       </div>
@@ -199,13 +203,13 @@ export default function SettingsAndPrivacyClassic() {
                 <p className="text-[12.5px] text-gray-400 font-medium">{t(`Κατεβάστε αντίγραφο των δεδομένων σας`, `Download a copy of your data`)}</p>
               </div>
             </div>
-            <Button variant="outline" size="sm" className="text-[12.5px]">{t(`Λήψη`, `Download`)}</Button>
+            <Button variant="outline" size="sm" className="text-[12.5px]" onClick={() => toast.info(t('Η εξαγωγή δεδομένων ξεκίνησε. Θα σας σταλεί email.', 'Data export started. You will receive an email.'))}>{t(`Λήψη`, `Download`)}</Button>
           </div>
         </Card>
       </div>
 
       <div className="pt-4 space-y-3">
-        <Button variant="outline" className="w-full text-red-600 border-red-200 hover:bg-red-50">
+        <Button variant="outline" className="w-full text-red-600 border-red-200 hover:bg-red-50" onClick={() => { logout(); navigate('/login'); }}>
           <LogOut className="w-4 h-4 mr-2" /> {t(`Αποσύνδεση`, `Log out`)}
         </Button>
         <button className="w-full text-[13.5px] text-red-400 font-medium hover:text-red-600 transition-colors py-2">
@@ -217,7 +221,7 @@ export default function SettingsAndPrivacyClassic() {
       <div className="text-center pt-2 pb-4">
         <div className="flex items-center justify-center gap-1 text-[12.5px] text-gray-300 font-medium">
           <Info className="w-3 h-3" />
-          <span>Parea v1.2.0 • Build 2024.10</span>
+          <span>Nakamas v1.0.5-beta • 2026</span>
         </div>
       </div>
     </div>

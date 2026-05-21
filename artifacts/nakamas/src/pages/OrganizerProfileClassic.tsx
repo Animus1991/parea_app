@@ -45,7 +45,7 @@ export default function OrganizerProfileClassic() {
               )}
               <Badge variant="neutral">{t('Επίπεδο Εμπιστοσύνης', 'Trust Tier')} {organizer.trustTier.split('_')[0]}</Badge>
             </div>
-            <h1 className="text-3xl font-bold text-[#111827]">{organizer.name}</h1>
+            <h1 className="text-xl font-bold text-[#111827]">{organizer.name}</h1>
             <p className="text-sm text-gray-500 font-medium mt-1"><MapPin className="h-3.5 w-3.5 inline mr-1" /> {organizer.city}</p>
           </div>
           
@@ -75,14 +75,12 @@ export default function OrganizerProfileClassic() {
             >
               <Mail className="h-4 w-4" /> {t('Επικοινωνία', 'Contact Organizer')}
             </button>
-            <a 
-              href="#" 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <button
+              onClick={() => toast.info(t('Δεν έχει καταχωρηθεί ιστότοπος γι\' αυτόν τον διοργανωτή', 'No website on file for this organizer'))}
               className="text-[10px] font-bold tracking-wide text-gray-500 hover:text-cyan-600 transition-colors flex items-center gap-1"
             >
               <Globe className="h-4 w-4" /> {t('Ιστότοπος', 'Website')}
-            </a>
+            </button>
           </div>
         </div>
       </div>

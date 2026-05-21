@@ -11,8 +11,8 @@ export default function VerificationCenterClassic() {
     const currentUser = useStore((state) => state.currentUser);
     const idUploadRef = useRef<HTMLInputElement>(null);
 
-    const emailVerified = true;
-    const phoneVerified = false;
+    const emailVerified = currentUser?.emailVerified ?? true;
+    const phoneVerified = currentUser?.phoneVerified ?? false;
     const idVerified = currentUser?.idVerified ?? false;
     const stepsCompleted = [emailVerified, phoneVerified, idVerified].filter(Boolean).length;
     const totalSteps = 3;
