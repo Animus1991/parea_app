@@ -3,9 +3,21 @@ import { Badge } from '../components/common/Badge';
 import { AlertCircle, UserMinus, ShieldAlert, Flag, Search, CheckCircle, TrendingUp, Clock, Users, Calendar } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { useLanguage } from "../lib/i18n";
+import { useStore } from '../store';
+import { isThisWeek, parseISO } from 'date-fns';
 
 export default function AdminDashboardClassic() {
     const { t } = useLanguage();
+    const users = useStore((state) => state.users);
+    const events = useStore((state) => state.events);
+    const groups = useStore((state) => state.groups);
+
+    const activeUsers = users.length;
+    const thisWeekEvents = events.filter(e => { try { return isThisWeek(parseISO(e.date)); } catch { return false; } }).length;
+    const verifiedUsers = users.filter(u => u.idVerified).length;
+    const verifiedPct = activeUsers > 0 ? Math.round((verifiedUsers / activeUsers) * 100) : 0;
+    const avgReliability = activeUsers > 0 ? Math.round(users.reduce((s, u) => s + (u.reliabilityScore || 0), 0) / activeUsers) : 0;
+
   return (
     <div className="mx-auto max-w-full space-y-8 pb-12">
       <div>
@@ -15,24 +27,24 @@ export default function AdminDashboardClassic() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className="p-4 border-t-4 border-t-blue-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Ενεργοί`, `Active`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">127</p>
-          <p className="text-[11.2px] text-green-500 font-bold flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />+8%</p>
+          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Χρήστες`, `Users`)}</h3>
+          <p className="text-[25px] font-black text-[#111827] mt-1">{activeUsers}</p>
+          <p className="text-[11.2px] text-green-500 font-bold flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />{t('ενεργοί', 'active')}</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-cyan-500">
           <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Αναφορές`, `Reports`)}</h3>
           <p className="text-[25px] font-black text-[#111827] mt-1">4</p>
           <p className="text-[11.2px] text-amber-500 font-bold">{t(`εκκρεμείς`, `pending`)}</p>
         </Card>
-        <Card className="p-4 border-t-4 border-t-red-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Αποκλεισμένοι`, `Banned`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">1</p>
+        <Card className="p-4 border-t-4 border-t-emerald-500">
+          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Ομάδες`, `Groups`)}</h3>
+          <p className="text-[25px] font-black text-[#111827] mt-1">{groups.length}</p>
           <p className="text-[11.2px] text-gray-400 font-medium">{t(`συνολικά`, `total`)}</p>
         </Card>
-        <Card className="p-4 border-t-4 border-t-emerald-500">
+        <Card className="p-4 border-t-4 border-t-purple-500">
           <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Εκδηλώσεις`, `Events`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">48</p>
-          <p className="text-[11.2px] text-gray-400 font-medium">{t(`αυτή τη βδομάδα`, `this week`)}</p>
+          <p className="text-[25px] font-black text-[#111827] mt-1">{thisWeekEvents > 0 ? thisWeekEvents : events.length}</p>
+          <p className="text-[11.2px] text-gray-400 font-medium">{thisWeekEvents > 0 ? t(`αυτή τη βδομάδα`, `this week`) : t('συνολικά', 'total')}</p>
         </Card>
       </div>
 
@@ -43,9 +55,9 @@ export default function AdminDashboardClassic() {
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="text-[11.2px] text-gray-500 font-medium">{t(`Μ.Ο. Αξιοπιστία`, `Avg Reliability`)}</span>
-              <span className="text-[12.5px] font-bold text-emerald-600">87%</span>
+              <span className="text-[12.5px] font-bold text-emerald-600">{avgReliability}%</span>
             </div>
-            <div className="w-full bg-gray-100 h-1.5 rounded-full"><div className="bg-emerald-500 h-full rounded-full" style={{ width: '87%' }} /></div>
+            <div className="w-full bg-gray-100 h-1.5 rounded-full"><div className="bg-emerald-500 h-full rounded-full" style={{ width: `${avgReliability}%` }} /></div>
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
@@ -57,9 +69,9 @@ export default function AdminDashboardClassic() {
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="text-[11.2px] text-gray-500 font-medium">{t(`Επαληθευμένοι`, `Verified`)}</span>
-              <span className="text-[12.5px] font-bold text-cyan-600">72%</span>
+              <span className="text-[12.5px] font-bold text-cyan-600">{verifiedPct}%</span>
             </div>
-            <div className="w-full bg-gray-100 h-1.5 rounded-full"><div className="bg-cyan-500 h-full rounded-full" style={{ width: '72%' }} /></div>
+            <div className="w-full bg-gray-100 h-1.5 rounded-full"><div className="bg-cyan-500 h-full rounded-full" style={{ width: `${verifiedPct}%` }} /></div>
           </div>
         </div>
       </Card>
@@ -73,13 +85,13 @@ export default function AdminDashboardClassic() {
               <div className="flex items-start gap-3">
                  <div className="mt-1"><AlertCircle className="h-4 w-4 text-yellow-500" /></div>
                  <div>
-                   <p className="font-bold text-[#111827] text-[16.75971px]">{t(`Ακατάλληλη συμπεριφορά σε εκδήλωση`, `Inappropriate behavior at event`)}</p>
-                   <p className="text-[14.535px] text-gray-500 mt-0.5 leading-relaxed">{t(`Αναφέρθηκε από 2 συμμετέχοντες`, `Reported by 2 participants`)}</p>
+                   <p className="font-bold text-[#111827] text-sm">{t(`Ακατάλληλη συμπεριφορά σε εκδήλωση`, `Inappropriate behavior at event`)}</p>
+                   <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{t(`Αναφέρθηκε από 2 συμμετέχοντες`, `Reported by 2 participants`)}</p>
                  </div>
               </div>
               <div className="flex gap-2">
-                <button className="text-[18px]  tracking-wider bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded font-bold transition-colors shadow-sm border border-gray-200">{t(`Εξέταση`, `Review`)}</button>
-                <button className="text-[18px]  tracking-wider bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded font-bold transition-colors border border-red-200">{t(`Αποκλεισμός`, `Ban`)}</button>
+                <button className="text-xs tracking-wider bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded font-bold transition-colors shadow-sm border border-gray-200">{t(`Εξέταση`, `Review`)}</button>
+                <button className="text-xs tracking-wider bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded font-bold transition-colors border border-red-200">{t(`Αποκλεισμός`, `Ban`)}</button>
               </div>
             </Card>
 
@@ -87,12 +99,12 @@ export default function AdminDashboardClassic() {
               <div className="flex items-start gap-3">
                  <div className="mt-1"><ShieldAlert className="h-4 w-4 text-red-500" /></div>
                  <div>
-                   <p className="font-bold text-[#111827] text-[18px]">{t(`Ύποπτος λογαριασμός — πολλαπλές no-shows`, `Suspicious account — multiple no-shows`)}</p>
-                   <p className="text-[15px] text-gray-500 mt-0.5 leading-relaxed">{t(`3 no-shows τον τελευταίο μήνα`, `3 no-shows in the last month`)}</p>
+                   <p className="font-bold text-[#111827] text-sm">{t(`Ύποπτος λογαριασμός — πολλαπλές no-shows`, `Suspicious account — multiple no-shows`)}</p>
+                   <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{t(`3 no-shows τον τελευταίο μήνα`, `3 no-shows in the last month`)}</p>
                  </div>
               </div>
               <div className="flex gap-2 shrink-0">
-                <button className="text-[18px]  tracking-wider bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-bold shadow-sm transition-colors">{t(`Αναστολή`, `Suspend`)}</button>
+                <button className="text-xs tracking-wider bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-bold shadow-sm transition-colors">{t(`Αναστολή`, `Suspend`)}</button>
               </div>
             </Card>
           </div>
@@ -100,23 +112,23 @@ export default function AdminDashboardClassic() {
 
         <div className="md:col-span-5 relative">
           <div className="sticky top-24">
-            <h2 className="text-[18px] font-bold text-[#111827] tracking-wide mb-6 flex items-center gap-2">
+            <h2 className="text-sm font-bold text-[#111827] tracking-wide mb-6 flex items-center gap-2">
               <Flag className="h-4 w-4 text-gray-400" />{t(`Γρήγορη Ενέργεια`, `Quick Action`)}</h2>
             <Card className="p-5 bg-gray-50 border-gray-200">
-              <p className="text-[18px] text-gray-500 font-bold tracking-wide mb-4">{t(`Αναζήτηση Χρήστη`, `Search User`)}</p>
+              <p className="text-sm text-gray-500 font-bold tracking-wide mb-4">{t(`Αναζήτηση Χρήστη`, `Search User`)}</p>
               
               <div className="space-y-4">
                 <div>
-                  <label className="text-[15px] font-bold text-[#111827] mb-1.5 block">{t(`Email ή ID`, `Email or ID`)}</label>
+                  <label className="text-xs font-bold text-[#111827] mb-1.5 block">{t(`Email ή ID`, `Email or ID`)}</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input type="text" placeholder={t(`Αναζήτηση...`, `Search...`)} className="w-full pl-9 pr-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none" />
+                    <input type="text" placeholder={t(`Αναζήτηση...`, `Search...`)} className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none" />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-[15px] font-bold text-[#111827] mb-1.5 block">{t(`Ενέργεια`, `Action`)}</label>
-                  <select className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none bg-white">
+                  <label className="text-xs font-bold text-[#111827] mb-1.5 block">{t(`Ενέργεια`, `Action`)}</label>
+                  <select className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none bg-white">
                     <option>{t(`Προειδοποίηση`, `Warning`)}</option>
                     <option>{t(`Αναστολή 7 ημέρες`, `Suspend 7 days`)}</option>
                     <option>{t(`Μόνιμος αποκλεισμός`, `Permanent ban`)}</option>
@@ -125,8 +137,8 @@ export default function AdminDashboardClassic() {
                 </div>
                 
                 <div>
-                  <label className="text-[15px] font-bold text-[#111827] mb-1.5 block">{t(`Σημείωση`, `Note`)}</label>
-                  <textarea rows={3} placeholder={t(`Αιτιολογία...`, `Reason...`)} className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none resize-none"></textarea>
+                  <label className="text-xs font-bold text-[#111827] mb-1.5 block">{t(`Σημείωση`, `Note`)}</label>
+                  <textarea rows={3} placeholder={t(`Αιτιολογία...`, `Reason...`)} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none resize-none"></textarea>
                 </div>
                 
                 <Button className="w-full bg-[#111827]">{t(`Εφαρμογή`, `Apply`)}</Button>

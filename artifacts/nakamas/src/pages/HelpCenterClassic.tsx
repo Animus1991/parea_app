@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Search, Book, MessageCircle, FileText, ChevronRight, ChevronDown, Zap, Shield, CreditCard, Users } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { useLanguage } from "../lib/i18n";
+import { toast } from 'sonner';
 
 export default function HelpCenterClassic() {
     const { t } = useLanguage();
@@ -39,7 +40,7 @@ export default function HelpCenterClassic() {
         <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white opacity-10"></div>
         
         <h1 className="text-[20.104264919475px] md:text-[26.7902365993px] font-black mb-2 relative z-10">{t(`Κέντρο Βοήθειας`, `Help Center`)}</h1>
-        <p className="text-cyan-100 text-[16.2px] font-medium mb-6 relative z-10">{t(`Πώς μπορούμε να σας βοηθήσουμε;`, `How can we help you?`)}</p>
+        <p className="text-cyan-100 text-sm font-medium mb-6 relative z-10">{t(`Πώς μπορούμε να σας βοηθήσουμε;`, `How can we help you?`)}</p>
         <div className="relative max-w-md mx-auto z-10">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
@@ -47,7 +48,7 @@ export default function HelpCenterClassic() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t(`Αναζήτηση άρθρων...`, `Search articles...`)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl text-[16.2px] font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
           />
         </div>
       </div>
@@ -98,7 +99,7 @@ export default function HelpCenterClassic() {
             <Card key={article.id} className="p-4 flex items-center justify-between hover:border-cyan-200 cursor-pointer transition-colors">
               <div>
                 <span className="text-[12.5px] font-bold text-cyan-600 tracking-wide">{article.category}</span>
-                <h3 className="font-bold text-[16.2px] text-[#111827] mt-0.5">{article.title}</h3>
+                <h3 className="font-bold text-sm text-[#111827] mt-0.5">{article.title}</h3>
               </div>
               <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
             </Card>
@@ -118,7 +119,10 @@ export default function HelpCenterClassic() {
           </span>
           <span className="text-[12.5px] font-bold text-green-600">{t(`Online τώρα`, `Online now`)} • ~2min {t(`απόκριση`, `response`)}</span>
         </div>
-        <button className="px-4 py-2 bg-cyan-600 text-white text-[13.5px] font-bold rounded-lg hover:bg-cyan-700 transition-colors">
+        <button
+          onClick={() => toast.success(t(`Μήνυμα εστάλη! Θα απαντήσουμε σύντομα.`, `Message sent! We'll reply shortly.`))}
+          className="px-4 py-2 bg-cyan-600 text-white text-[13.5px] font-bold rounded-lg hover:bg-cyan-700 transition-colors"
+        >
           {t(`Αποστολή μηνύματος`, `Send message`)}
         </button>
       </Card>

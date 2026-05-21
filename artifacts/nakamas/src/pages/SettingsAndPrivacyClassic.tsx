@@ -98,7 +98,7 @@ export default function SettingsAndPrivacyClassic() {
 
       {show2FASetup && (
         <Card className="p-5 border-cyan-200 bg-cyan-50/30">
-          <h3 className="font-bold text-[16.2px] text-[#111827] mb-2">{t(`Ρύθμιση 2FA`, `Setup 2FA`)}</h3>
+          <h3 className="font-bold text-sm text-[#111827] mb-2">{t(`Ρύθμιση 2FA`, `Setup 2FA`)}</h3>
           <p className="text-[13.5px] text-gray-600 mb-4">{t(`Προσθέστε ένα επιπλέον επίπεδο ασφάλειας στον λογαριασμό σας`, `Add an extra layer of security to your account`)}</p>
           <Button size="sm" onClick={() => { setTwoFactorEnabled(true); setShow2FASetup(false); }}>
             {t(`Ενεργοποίηση`, `Enable`)}
@@ -109,7 +109,7 @@ export default function SettingsAndPrivacyClassic() {
       {showNotifications && (
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className="font-bold text-[16.2px] text-[#111827] mb-4">{t(`Γενικές Ειδοποιήσεις`, `General Notifications`)}</h3>
+            <h3 className="font-bold text-sm text-[#111827] mb-4">{t(`Γενικές Ειδοποιήσεις`, `General Notifications`)}</h3>
             <div className="space-y-3">
               {[
                 { key: 'pushMessages', label: t(`Μηνύματα ομάδας`, `Group messages`) },
@@ -130,7 +130,7 @@ export default function SettingsAndPrivacyClassic() {
           </Card>
 
           <Card className="p-5">
-            <h3 className="font-bold text-[16.2px] text-[#111827] mb-1">{t(`Κατηγορίες Ενδιαφέροντος`, `Category Subscriptions`)}</h3>
+            <h3 className="font-bold text-sm text-[#111827] mb-1">{t(`Κατηγορίες Ενδιαφέροντος`, `Category Subscriptions`)}</h3>
             <p className="text-[12.5px] text-gray-500 font-medium mb-4">{t(`Ειδοποίηση μόνο για εκδηλώσεις στις κατηγορίες που σας ενδιαφέρουν`, `Get notified only for events in categories you care about`)}</p>
             <div className="grid grid-cols-2 gap-2">
               {[
@@ -168,7 +168,7 @@ export default function SettingsAndPrivacyClassic() {
             <div className="flex items-center gap-3">
               <Smartphone className="w-4 h-4 text-cyan-600" />
               <div>
-                <span className="text-[16.2px] font-medium text-[#111827]">iPhone 15 Pro</span>
+                <span className="text-sm font-medium text-[#111827]">iPhone 15 Pro</span>
                 <p className="text-[12.5px] text-gray-400 font-medium">Athens, GR • {t(`Τώρα`, `Now`)}</p>
               </div>
             </div>
@@ -178,7 +178,7 @@ export default function SettingsAndPrivacyClassic() {
             <div className="flex items-center gap-3">
               <Laptop className="w-4 h-4 text-gray-400" />
               <div>
-                <span className="text-[16.2px] font-medium text-[#111827]">Chrome • Windows</span>
+                <span className="text-sm font-medium text-[#111827]">Chrome • Windows</span>
                 <p className="text-[12.5px] text-gray-400 font-medium">Athens, GR • 2h {t(`πριν`, `ago`)}</p>
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function SettingsAndPrivacyClassic() {
             <div className="flex items-center gap-3">
               <Download className="w-4 h-4 text-gray-400" />
               <div>
-                <span className="text-[16.2px] font-medium text-[#111827]">{t(`Εξαγωγή δεδομένων`, `Export your data`)}</span>
+                <span className="text-sm font-medium text-[#111827]">{t(`Εξαγωγή δεδομένων`, `Export your data`)}</span>
                 <p className="text-[12.5px] text-gray-400 font-medium">{t(`Κατεβάστε αντίγραφο των δεδομένων σας`, `Download a copy of your data`)}</p>
               </div>
             </div>

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../lib/i18n";
+import { toast } from "sonner";
 
 export default function ProfileClassic() {
   const navigate = useNavigate();
@@ -263,14 +264,9 @@ export default function ProfileClassic() {
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() =>
-                  alert(
-                    t(
-                      "Ανακατεύθυνση στην εγγραφή διοργανωτή...",
-                      "Redirecting to Organizer Registration...",
-                    ),
-                  )
-                }
+                onClick={() => {
+                  toast.info(t("Σύντομα διαθέσιμο", "Coming soon"), { description: t("Η εγγραφή διοργανωτών ανοίγει σύντομα.", "Organizer registration opens soon.") });
+                }}
               >
                 {t("Γίνε Διοργανωτής", "Become an Organizer")}
               </Button>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 import {
   MapPin,
   Search,
@@ -563,7 +564,7 @@ export default function NearbyGroupsClassic() {
         )}
         {!isMapFullscreen && (
           <button
-            onClick={() => alert(t("Τα φίλτρα αναζήτησης έρχονται σύντομα", "Search filters coming soon"))}
+            onClick={() => toast.info(t("Τα φίλτρα αναζήτησης έρχονται σύντομα", "Search filters coming soon"))}
             className="h-11 px-4 bg-white/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-gray-700 hover:text-cyan-600 transition-colors pointer-events-auto shrink-0"
             aria-label={t('Φίλτρα αναζήτησης', 'Search filters')}
             title={t('Φίλτρα αναζήτησης', 'Search filters')}

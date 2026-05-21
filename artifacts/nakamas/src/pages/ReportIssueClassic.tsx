@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Flag, AlertTriangle, ShieldCheck, CheckCircle2, ChevronRight, X, Upload, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from "../lib/i18n";
+import { toast } from 'sonner';
 
 export default function ReportIssueClassic() {
     const { t } = useLanguage();
   const [step, setStep] = useState(1);
+  const [severity, setSeverity] = useState<'low' | 'medium' | 'high' | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!severity) {
+      toast.error(t('Επιλέξτε επίπεδο σοβαρότητας', 'Please select a severity level'));
+      return;
+    }
     setStep(2);
   };
 
@@ -40,7 +48,7 @@ export default function ReportIssueClassic() {
           <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-5">
             <div>
               <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Κατηγορία`, `Category`)}</label>
-              <select className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium" required>
+              <select className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-sm font-medium" required>
                 <option value="">{t(`Επιλέξτε κατηγορία...`, `Select a category...`)}</option>
                 <option value="user_behavior">{t(`Ανάρμοστη συμπεριφορά`, `Inappropriate behavior`)}</option>
                 <option value="event_safety">{t(`Ασφάλεια εκδήλωσης`, `Event safety`)}</option>
@@ -54,15 +62,15 @@ export default function ReportIssueClassic() {
             <div>
               <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Σοβαρότητα`, `Severity`)}</label>
               <div className="grid grid-cols-3 gap-2">
-                <button type="button" className="p-2.5 rounded-lg border border-amber-200 bg-amber-50 text-center hover:ring-2 hover:ring-amber-300 transition-all">
+                <button type="button" onClick={() => setSeverity('low')} className={`p-2.5 rounded-lg border text-center transition-all ${severity === 'low' ? 'border-amber-400 bg-amber-100 ring-2 ring-amber-300' : 'border-amber-200 bg-amber-50 hover:ring-2 hover:ring-amber-300'}`}>
                   <span className="text-[12.1125px] font-bold text-amber-800 block">{t(`Χαμηλή`, `Low`)}</span>
                   <span className="text-[10px] text-amber-600">{t(`Ενόχληση`, `Annoyance`)}</span>
                 </button>
-                <button type="button" className="p-2.5 rounded-lg border border-orange-200 bg-orange-50 text-center hover:ring-2 hover:ring-orange-300 transition-all">
+                <button type="button" onClick={() => setSeverity('medium')} className={`p-2.5 rounded-lg border text-center transition-all ${severity === 'medium' ? 'border-orange-400 bg-orange-100 ring-2 ring-orange-300' : 'border-orange-200 bg-orange-50 hover:ring-2 hover:ring-orange-300'}`}>
                   <span className="text-[12.1125px] font-bold text-orange-800 block">{t(`Μέτρια`, `Medium`)}</span>
                   <span className="text-[10px] text-orange-600">{t(`Ανησυχία`, `Concern`)}</span>
                 </button>
-                <button type="button" className="p-2.5 rounded-lg border border-red-200 bg-red-50 text-center hover:ring-2 hover:ring-red-300 transition-all">
+                <button type="button" onClick={() => setSeverity('high')} className={`p-2.5 rounded-lg border text-center transition-all ${severity === 'high' ? 'border-red-400 bg-red-100 ring-2 ring-red-300' : 'border-red-200 bg-red-50 hover:ring-2 hover:ring-red-300'}`}>
                   <span className="text-[12.1125px] font-bold text-red-800 block">{t(`Υψηλή`, `High`)}</span>
                   <span className="text-[10px] text-red-600">{t(`Κίνδυνος`, `Danger`)}</span>
                 </button>
@@ -72,7 +80,7 @@ export default function ReportIssueClassic() {
             <div>
               <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Περιγραφή`, `Description`)}</label>
               <textarea 
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium resize-none" 
+                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-sm font-medium resize-none" 
                 rows={5} 
                 placeholder={t(`Περιγράψτε τι συνέβη...`, `Describe what happened...`)}
                 required
@@ -82,11 +90,28 @@ export default function ReportIssueClassic() {
             {/* Evidence Upload */}
             <div>
               <label className="block text-[12.15px] font-bold text-[#111827] tracking-wider mb-2">{t(`Αποδεικτικά (προαιρετικά)`, `Evidence (optional)`)}</label>
-              <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-cyan-300 hover:bg-cyan-50/30 transition-colors cursor-pointer">
+              <div
+                className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-cyan-300 hover:bg-cyan-50/30 transition-colors cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
                 <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1" />
-                <p className="text-[12.5px] text-gray-500 font-medium">{t(`Ανεβάστε screenshots ή φωτογραφίες`, `Upload screenshots or photos`)}</p>
+                {fileName ? (
+                  <p className="text-[12.5px] text-cyan-700 font-bold">{fileName}</p>
+                ) : (
+                  <p className="text-[12.5px] text-gray-500 font-medium">{t(`Ανεβάστε screenshots ή φωτογραφίες`, `Upload screenshots or photos`)}</p>
+                )}
                 <p className="text-[10px] text-gray-400 mt-0.5">PNG, JPG {t(`έως`, `up to`)} 5MB</p>
               </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) setFileName(f.name);
+                }}
+              />
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4 flex items-start gap-3">
@@ -108,8 +133,8 @@ export default function ReportIssueClassic() {
           <div className="w-16 h-[58px] rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 className="w-8 h-8 text-emerald-600" />
           </div>
-          <h2 className="text-[25px] font-bold text-[#111827] mb-2">{t(`Η αναφορά υποβλήθηκε`, `Report Submitted`)}</h2>
-          <p className="text-[18px] text-gray-500 max-w-md mx-auto mb-6">{t(`Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.`, `Thank you. We'll review your report and get back to you.`)}</p>
+          <h2 className="text-xl font-bold text-[#111827] mb-2">{t(`Η αναφορά υποβλήθηκε`, `Report Submitted`)}</h2>
+          <p className="text-sm text-gray-500 max-w-md mx-auto mb-6">{t(`Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.`, `Thank you. We'll review your report and get back to you.`)}</p>
           <button 
             onClick={() => navigate('/')}
             className="bg-gray-100 text-[#111827] px-5 py-2.5 rounded-full text-[13.5px] font-bold hover:bg-gray-200 transition-colors tracking-wider"

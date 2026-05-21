@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import React, { useState, useEffect, useRef } from "react";
 import { Card } from "../components/common/Card";
 import { Badge } from "../components/common/Badge";
@@ -264,7 +265,7 @@ export default function ProfileVibrantDark() {
                 size="sm"
                 variant="ghost"
                 onClick={() =>
-                  alert(
+                  toast.info(
                     t(
                       "Ανακατεύθυνση στην εγγραφή διοργανωτή...",
                       "Redirecting to Organizer Registration...",

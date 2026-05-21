@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
@@ -591,7 +592,7 @@ export default function EventDetailBentoDark() {
             
             <div className="space-y-4 pt-5 border-t border-gray-700">
               <div className="grid grid-cols-1 gap-3">
-                <Button variant="outline" className="w-full border-gray-700 text-white hover:bg-gray-700/60" size="lg" onClick={() => alert(t("Προστέθηκε στη λίστα αναμονής. Θα ειδοποιηθείτε αν ανοίξει θέση.", "Added to waitlist. We will notify you if a spot in a group opens up."))}>
+                <Button variant="outline" className="w-full border-gray-700 text-white hover:bg-gray-700/60" size="lg" onClick={() => toast.info(t("Προστέθηκε στη λίστα αναμονής. Θα ειδοποιηθείτε αν ανοίξει θέση.", "Added to waitlist. We will notify you if a spot in a group opens up."))}>
                   {t('Λίστα Αναμονής', 'Join Waitlist')}
                 </Button>
               </div>

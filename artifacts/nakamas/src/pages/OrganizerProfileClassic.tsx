@@ -6,6 +6,7 @@ import { Badge } from '../components/common/Badge';
 import { Calendar, MapPin, ShieldCheck, Mail, Globe, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { useLanguage } from '../lib/i18n';
+import { toast } from 'sonner';
 
 export default function OrganizerProfileClassic() {
   const { id } = useParams();
@@ -147,7 +148,7 @@ export default function OrganizerProfileClassic() {
               </button>
               <button 
                 onClick={() => {
-                  alert(t('Το μήνυμά σας έχει σταλεί απευθείας στον διοργανωτή.', 'Your message has been sent directly to the organizer.'));
+                  toast.success(t('Το μήνυμά σας έχει σταλεί απευθείας στον διοργανωτή.', 'Your message has been sent directly to the organizer.'));
                   setShowContactModal(false);
                 }}
                 className="px-4 py-2 text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-700 rounded-lg transition-colors"

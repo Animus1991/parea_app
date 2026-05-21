@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 ﻿import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useStore } from "../store";
@@ -1218,7 +1219,7 @@ export default function GroupChatVibrant() {
                     navigator.clipboard.writeText(
                       "https://nakamas.app/safe/r9x2p",
                     );
-                    alert(
+                    toast.success(
                       t("Αντιγράφηκε στο πρόχειρο!", "Copied to clipboard!"),
                     );
                   }}
@@ -1260,7 +1261,7 @@ export default function GroupChatVibrant() {
               <div className="flex flex-col gap-2.5">
                 <button
                   onClick={() => {
-                    alert(
+                    toast.info(
                       t(
                         "Αποχωρήσατε από την ομάδα.",
                         "You have left the group.",
@@ -1377,7 +1378,7 @@ export default function GroupChatVibrant() {
                 </button>
                 <button
                   onClick={() => {
-                    alert(
+                    toast.success(
                       t(
                         "Η αναφορά σας υποβλήθηκε με ασφάλεια.",
                         "Your report has been submitted securely.",

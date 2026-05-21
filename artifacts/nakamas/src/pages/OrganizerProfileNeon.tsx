@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useStore } from '../store';
@@ -147,7 +148,7 @@ export default function OrganizerProfileNeon() {
               </button>
               <button 
                 onClick={() => {
-                  alert(t('Το μήνυμά σας έχει σταλεί απευθείας στον διοργανωτή.', 'Your message has been sent directly to the organizer.'));
+                  toast.success(t('Το μήνυμά σας έχει σταλεί απευθείας στον διοργανωτή.', 'Your message has been sent directly to the organizer.'));
                   setShowContactModal(false);
                 }}
                 className="px-4 py-2 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors"

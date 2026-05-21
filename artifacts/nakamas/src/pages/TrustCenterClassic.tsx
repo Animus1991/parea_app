@@ -1,11 +1,15 @@
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { ShieldCheck, Phone, Mail, CreditCard, Award, UserCheck, TrendingUp, Calendar, CheckCircle2 } from 'lucide-react';
-import { currentUser } from '../data/mockUsers';
+import { useStore } from '../store';
 import { useLanguage } from "../lib/i18n";
+import { useNavigate } from 'react-router-dom';
 
 export default function TrustCenterClassic() {
     const { t } = useLanguage();
+    const currentUser = useStore((state) => state.currentUser);
+    const navigate = useNavigate();
+    if (!currentUser) return null;
   return (
     <div className="mx-auto max-w-full space-y-6 md:space-y-8">
       <div>
@@ -39,9 +43,15 @@ export default function TrustCenterClassic() {
                <Badge variant="success" className="text-[11.2px] px-1.5 py-0.5">{t(`Επαληθευμένο`, `Verified`)}</Badge>
              </div>
              <div className="flex items-center justify-between">
-               <div className="flex items-center gap-2 text-[13.5px] text-gray-400 font-medium">
-                 <UserCheck className="h-3.5 w-3.5 text-gray-300" />{t(`Ταυτότητα`, `Government ID`)}</div>
-               <span className="text-[11.2px] text-cyan-600 font-bold cursor-pointer hover:underline tracking-wide">{t(`Επαλήθευση`, `Verify`)}</span>
+               <div className="flex items-center gap-2 text-[13.5px] text-gray-600 font-medium">
+                 <UserCheck className={`h-3.5 w-3.5 ${currentUser.idVerified ? 'text-emerald-500' : 'text-gray-300'}`} />{t(`Ταυτότητα`, `Government ID`)}</div>
+               {currentUser.idVerified
+                 ? <Badge variant="success" className="text-[11.2px] px-1.5 py-0.5">{t(`Επαληθευμένο`, `Verified`)}</Badge>
+                 : <span
+                     className="text-[11.2px] text-cyan-600 font-bold cursor-pointer hover:underline tracking-wide"
+                     onClick={() => navigate('/verification')}
+                   >{t(`Επαλήθευση →`, `Verify →`)}</span>
+               }
              </div>
            </div>
            

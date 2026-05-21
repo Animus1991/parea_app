@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Grid, TrendingUp, Star, Map, Music, Camera, Coffee, Ticket, Gamepad2, Bookmark, ArrowRight, Calendar, Compass, Mountain, Zap, HeartHandshake, BookOpen, Languages, MapPin, Bus, Leaf, Trophy, Palette, Monitor, Users, Lock, Car, TreePine, Plane, BrainCircuit } from 'lucide-react';
+import { Search, Grid, TrendingUp, Star, Map, Music, Camera, Coffee, Ticket, Gamepad2, Bookmark, ArrowRight, Calendar, Compass, Mountain, Zap, HeartHandshake, BookOpen, Languages, MapPin, Bus, Leaf, Trophy, Palette, Monitor, Users, Lock, Car, TreePine, Plane, BrainCircuit, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
 import { Card } from '../components/common/Card';
@@ -135,9 +135,24 @@ export default function CategoriesClassic() {
 
       <div className="mt-8 border-t border-gray-200 pt-8" id="events-list">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <h2 className="text-sm font-bold text-[#111827] capitalize tracking-tight shrink-0">
-            {activeCategory ? `${activeCategory} ${t('Εκδηλώσεις', 'Events')}` : t('Όλες οι Εκδηλώσεις', 'All Events')}
-          </h2>
+          <div className="flex items-center gap-3 shrink-0">
+            <h2 className="text-sm font-bold text-[#111827] capitalize tracking-tight">
+              {activeCategory ? `${activeCategory} ${t('Εκδηλώσεις', 'Events')}` : t('Όλες οι Εκδηλώσεις', 'All Events')}
+            </h2>
+            {!isLoading && (
+              <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                {filteredEvents.length}
+              </span>
+            )}
+            {activeCategory && (
+              <button
+                onClick={() => setActiveCategory(null)}
+                className="text-[10px] font-bold text-cyan-600 hover:text-cyan-700 flex items-center gap-1 bg-cyan-50 border border-cyan-200 px-2 py-0.5 rounded-full transition-colors"
+              >
+                <X className="w-3 h-3" /> {t('Εκκαθάριση', 'Clear')}
+              </button>
+            )}
+          </div>
           <div className="flex gap-2 overflow-x-auto pb-2 noscrollbar items-center w-full md:w-auto">
             {/* Sort Dropdown */}
             <select 

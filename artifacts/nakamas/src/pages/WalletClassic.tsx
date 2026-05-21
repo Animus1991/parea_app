@@ -1,16 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CreditCard, Euro, ArrowUpRight, ArrowDownRight, Clock, Building2, CheckCircle2 } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { useLanguage } from '../lib/i18n';
+import { useStore } from '../store';
+import { toast } from 'sonner';
+import { format, parseISO } from 'date-fns';
 
 export default function WalletClassic() {
   const { t } = useLanguage();
-  const transactions = [
-    { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: 'Oct 12, 2024', desc: t('Μεταφορά στην τράπεζα με κατάληξη 4092', 'Transfer to Bank ending in 4092') },
-    { id: '2', type: 'Earnings', amount: 45.00, status: t('Διαθέσιμο', 'Available'), date: 'Oct 10, 2024', desc: t('Πωλήσεις: Yoga στο Πάρκο', 'Ticket sales: Yoga in the Park') },
-    { id: '3', type: 'Earnings', amount: 25.00, status: t('Σε Επεξεργασία', 'Processing'), date: 'Oct 14, 2024', desc: t('Πωλήσεις: Comedy Night', 'Ticket sales: Comedy Night') },
+  const [txFilter, setTxFilter] = useState<'all' | 'month' | 'prev'>('all');
+  const currentUser = useStore((state) => state.currentUser);
+  const events = useStore((state) => state.events);
+
+  // Build real transactions from organizer events
+  const organizerEvents = currentUser
+    ? events.filter(e => e.organizerId === currentUser.id && e.isPaid)
+    : [];
+
+  const dynamicTransactions = organizerEvents.map((e) => ({
+    id: e.id,
+    type: 'Earnings' as const,
+    amount: (e.price || 0) * (e.currentParticipants || 1),
+    status: t('Διαθέσιμο', 'Available'),
+    date: (() => { try { return format(parseISO(e.date), 'MMM d, yyyy'); } catch { return e.date; } })(),
+    desc: `${t('Πωλήσεις', 'Ticket sales')}: ${e.title}`,
+  }));
+
+  const staticTransactions = [
+    { id: 'static-1', type: 'Payout' as const, amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: 'Oct 12, 2024', desc: t('Μεταφορά στην τράπεζα με κατάληξη 4092', 'Transfer to Bank ending in 4092') },
   ];
+
+  const transactions = [...dynamicTransactions, ...staticTransactions];
+  const totalEarnings = dynamicTransactions.reduce((s, tx) => s + tx.amount, 0);
+  const availableBalance = Math.max(0, totalEarnings - 120);
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
@@ -27,8 +50,11 @@ export default function WalletClassic() {
             <Euro className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
-          <p className="text-4xl font-black mb-4">€345.50</p>
-          <Button className="w-full bg-white text-cyan-900 hover:bg-gray-100 border-0">
+          <p className="text-4xl font-black mb-4">€{availableBalance > 0 ? availableBalance.toFixed(2) : '345.50'}</p>
+          <Button
+            className="w-full bg-white text-cyan-900 hover:bg-gray-100 border-0"
+            onClick={() => toast.info(t('Ανάληψη σε εξέλιξη...', 'Initiating withdrawal...'), { description: t('Η μεταφορά θα ολοκληρωθεί σε 1-3 εργάσιμες.', 'Transfer completes in 1-3 business days.') })}
+          >
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
         </Card>
@@ -38,7 +64,7 @@ export default function WalletClassic() {
             <Clock className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Εκκρεμεί εξόφληση', 'Pending Clearing')}</h3>
           </div>
-          <p className="text-3xl font-bold text-gray-800 mb-2">€85.00</p>
+          <p className="text-3xl font-bold text-gray-800 mb-2">€{dynamicTransactions.length > 0 ? (totalEarnings * 0.2).toFixed(2) : '85.00'}</p>
           <p className="text-[10px] text-gray-400 font-medium leading-tight">
             {t('Έσοδα από πρόσφατες εκδηλώσεις. Εξοφλούνται 3-5 ημέρες μετά την ολοκλήρωση.', 'Revenue from recently completed events. Clears 3-5 days after event completion.')}
           </p>
@@ -61,10 +87,14 @@ export default function WalletClassic() {
       <Card className="mt-8">
         <div className="p-4 md:p-6 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-lg font-bold text-[#111827]">{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
-          <select className="text-xs border border-gray-200 rounded-lg px-2 py-1 outline-none">
-            <option>{t('Όλες', 'All Time')}</option>
-            <option>{t('Αυτόν τον Μήνα', 'This Month')}</option>
-            <option>{t('Προηγούμενο Μήνα', 'Last Month')}</option>
+          <select
+            value={txFilter}
+            onChange={(e) => setTxFilter(e.target.value as any)}
+            className="text-xs border border-gray-200 rounded-lg px-2 py-1 outline-none"
+          >
+            <option value="all">{t('Όλες', 'All Time')}</option>
+            <option value="month">{t('Αυτόν τον Μήνα', 'This Month')}</option>
+            <option value="prev">{t('Προηγούμενο Μήνα', 'Last Month')}</option>
           </select>
         </div>
         <div className="divide-y divide-gray-100">

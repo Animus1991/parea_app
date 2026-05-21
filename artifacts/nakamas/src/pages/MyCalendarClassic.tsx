@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, MapPin, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
-  format, addDays, startOfWeek, addWeeks, subWeeks,
+  format, startOfWeek, addWeeks, subWeeks,
   isSameDay, startOfMonth, endOfMonth, eachDayOfInterval,
   isToday, getDay, addMonths, subMonths, isSameMonth
 } from 'date-fns';
+import { addDays } from 'date-fns';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
@@ -17,11 +18,18 @@ export default function MyCalendarClassic() {
   const [view, setView] = useState<'week' | 'month'>('week');
   
   const events = useStore((state) => state.events);
+  const waitlistedEvents = useStore((state) => state.waitlistedEvents);
 
-  const upcomingEvents = events.slice(0, 3).map((e, idx) => ({
-    ...e,
-    parsedDate: addDays(new Date(), idx * 2)
-  }));
+  const now = new Date();
+  const upcomingEvents = events
+    .filter((e) => {
+      const d = new Date(e.date);
+      if (isNaN(d.getTime())) return false;
+      return d >= now;
+    })
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 8)
+    .map((e) => ({ ...e, parsedDate: new Date(e.date) }));
 
   const prevPeriod = () => {
     if (view === 'week') setCurrentDate(subWeeks(currentDate, 1));

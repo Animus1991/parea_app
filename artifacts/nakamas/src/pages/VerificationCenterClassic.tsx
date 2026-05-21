@@ -1,11 +1,23 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ShieldCheck, UserCheck, Smartphone, Mail, FileText, CheckCircle2 } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { useLanguage } from "../lib/i18n";
+import { useStore } from '../store';
+import { toast } from 'sonner';
 
 export default function VerificationCenterClassic() {
     const { t } = useLanguage();
+    const currentUser = useStore((state) => state.currentUser);
+    const idUploadRef = useRef<HTMLInputElement>(null);
+
+    const emailVerified = true;
+    const phoneVerified = false;
+    const idVerified = currentUser?.idVerified ?? false;
+    const stepsCompleted = [emailVerified, phoneVerified, idVerified].filter(Boolean).length;
+    const totalSteps = 3;
+    const progressPct = Math.round((stepsCompleted / totalSteps) * 100);
+
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -19,11 +31,11 @@ export default function VerificationCenterClassic() {
         <div className="w-12 h-[42px] bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
            <ShieldCheck className="w-6 h-6 text-emerald-600" />
         </div>
-        <div>
+        <div className="flex-1">
           <h2 className="font-bold text-emerald-900 text-[15.083739px]">{t(`Πρόοδος Επαλήθευσης`, `Verification Progress`)}</h2>
-          <p className="text-[13.0815px] text-emerald-700 mt-1 mb-3">{t(`2 από 3 βήματα ολοκληρώθηκαν`, `2 of 3 steps completed`)}</p>
+          <p className="text-[13.0815px] text-emerald-700 mt-1 mb-3">{stepsCompleted} {t(`από`, `of`)} {totalSteps} {t(`βήματα ολοκληρώθηκαν`, `steps completed`)}</p>
           <div className="w-full bg-emerald-200 rounded-full h-2">
-            <div className="bg-emerald-600 h-2 rounded-full w-2/3"></div>
+            <div className="bg-emerald-600 h-2 rounded-full transition-all" style={{ width: `${progressPct}%` }}></div>
           </div>
         </div>
       </div>
@@ -47,40 +59,61 @@ export default function VerificationCenterClassic() {
         <Card className="p-5">
            <div className="flex items-start justify-between border-b border-gray-100 pb-4 mb-4">
               <div className="flex items-center gap-3">
-                 <div className="w-10 h-10 bg-gray-50 text-gray-400 border border-gray-200 rounded-lg flex items-center justify-center">
+                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${phoneVerified ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-50 text-gray-400 border border-gray-200'}`}>
                     <Smartphone className="w-5 h-5" />
                  </div>
                  <div>
                     <h3 className="font-bold text-[15.083739px] text-[#111827]">{t(`Τηλέφωνο`, `Phone Number`)}</h3>
-                    <p className="text-[10.90125px] text-gray-400 font-bold tracking-wider mt-0.5">{t(`Σε εκκρεμότητα`, `Pending`)}</p>
+                    <p className={`text-[10.90125px] font-bold tracking-wider mt-0.5 ${phoneVerified ? 'text-emerald-600' : 'text-gray-400'}`}>{phoneVerified ? t(`Ολοκληρώθηκε`, `Completed`) : t(`Σε εκκρεμότητα`, `Pending`)}</p>
                  </div>
               </div>
+              {phoneVerified && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
            </div>
            <p className="text-[13.0815px] text-gray-500 mb-3">{t(`Θα σας στείλουμε ένα SMS με κωδικό επαλήθευσης.`, `We'll send you an SMS with a verification code.`)}</p>
-           <Button variant="outline" size="sm" className="w-full text-[12.82117815px]">{t(`Επαλήθευση Τώρα`, `Verify Now`)}</Button>
+           {!phoneVerified && (
+             <Button
+               variant="outline"
+               size="sm"
+               className="w-full text-[12.82117815px]"
+               onClick={() => toast.info(t(`Αποστολή SMS...`, `Sending SMS...`), { description: t(`Θα σας στείλουμε κωδικό στο εγγεγραμμένο τηλέφωνο.`, `We'll send a code to your registered number.`) })}
+             >{t(`Επαλήθευση Τώρα`, `Verify Now`)}</Button>
+           )}
         </Card>
 
         <Card className="p-5 md:col-span-2">
            <div className="flex items-start justify-between border-b border-gray-100 pb-4 mb-4">
               <div className="flex items-center gap-3">
-                 <div className="w-10 h-10 bg-gray-50 text-gray-400 border border-gray-200 rounded-lg flex items-center justify-center">
+                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${idVerified ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-50 text-gray-400 border border-gray-200'}`}>
                     <FileText className="w-5 h-5" />
                  </div>
                  <div>
                     <h3 className="font-bold text-[15.083739px] text-[#111827]">{t(`Ταυτότητα / Διαβατήριο`, `Government ID`)}</h3>
-                    <p className="text-[10.90125px] text-gray-400 font-bold tracking-wider mt-0.5">{t(`Προαιρετικό`, `Optional`)}</p>
+                    <p className={`text-[10.90125px] font-bold tracking-wider mt-0.5 ${idVerified ? 'text-emerald-600' : 'text-gray-400'}`}>{idVerified ? t(`Ολοκληρώθηκε`, `Completed`) : t(`Προαιρετικό`, `Optional`)}</p>
                  </div>
               </div>
-              <span className="bg-gray-100 text-gray-600 text-[10.90125px] font-bold px-2 py-0.5 rounded-full tracking-wide">{t(`Προχωρημένο`, `Advanced`)}</span>
+              {idVerified ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <span className="bg-gray-100 text-gray-600 text-[10.90125px] font-bold px-2 py-0.5 rounded-full tracking-wide">{t(`Προχωρημένο`, `Advanced`)}</span>}
            </div>
            <p className="text-[14.908928449356px] text-gray-500 mb-4 max-w-xl">{t(`Ανεβάστε φωτογραφία της ταυτότητάς σας για πρόσβαση σε εκδηλώσεις υψηλής ασφάλειας.`, `Upload a photo of your ID to access high-safety events.`)}</p>
-           <div className="bg-gray-50 p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-dashed border-gray-200">
-             <div className="flex gap-3 text-[14.535px] text-gray-500 font-medium">
-                <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4"/>{t(`Ασφαλές`, `Secure`)}</span>
-                <span className="flex items-center gap-1"><UserCheck className="w-4 h-4"/>{t(`Ιδιωτικό`, `Private`)}</span>
+           {!idVerified && (
+             <div className="bg-gray-50 p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-dashed border-gray-200">
+               <div className="flex gap-3 text-[14.535px] text-gray-500 font-medium">
+                  <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4"/>{t(`Ασφαλές`, `Secure`)}</span>
+                  <span className="flex items-center gap-1"><UserCheck className="w-4 h-4"/>{t(`Ιδιωτικό`, `Private`)}</span>
+               </div>
+               <Button
+                 size="sm"
+                 className="w-full sm:w-auto shrink-0 shadow-sm"
+                 onClick={() => idUploadRef.current?.click()}
+               >{t(`Μεταφόρτωση`, `Upload`)}</Button>
+               <input
+                 ref={idUploadRef}
+                 type="file"
+                 accept="image/*"
+                 className="hidden"
+                 onChange={() => toast.success(t(`Η ταυτότητα μεταφορτώθηκε. Θα ελεγχθεί σε 24 ώρες.`, `ID uploaded. It will be reviewed within 24 hours.`))}
+               />
              </div>
-             <Button size="sm" className="w-full sm:w-auto shrink-0 shadow-sm">{t(`Μεταφόρτωση`, `Upload`)}</Button>
-           </div>
+           )}
         </Card>
       </div>
 

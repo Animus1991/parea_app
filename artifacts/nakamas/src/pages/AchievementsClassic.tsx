@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Card } from '../components/common/Card';
 import { Trophy, Star, Flame, Users, Calendar, Shield, Target, Zap, Award, TrendingUp, Share2, Sparkles } from 'lucide-react';
 import { useLanguage } from "../lib/i18n";
+import { useStore } from '../store';
+import { toast } from 'sonner';
 
 interface Achievement {
   id: string;
@@ -19,15 +21,32 @@ export default function AchievementsClassic() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'badges' | 'streaks' | 'leaderboard'>('badges');
 
+  const currentUser = useStore((state) => state.currentUser);
+  const feedbackSubmitted = useStore((state) => state.feedbackSubmitted);
+  const waitlistedEvents = useStore((state) => state.waitlistedEvents);
+  const savedEvents = useStore((state) => state.savedEvents);
+  const groups = useStore((state) => state.groups);
+  const events = useStore((state) => state.events);
+
+  // Derive real progress from store data
+  const feedbackCount = Object.keys(feedbackSubmitted).length;
+  const eventsJoined = waitlistedEvents.length;
+  const userGroups = currentUser ? groups.filter(g => g.members.includes(currentUser.id)) : [];
+  const uniqueCategories = [...new Set(
+    waitlistedEvents.map(id => events.find(e => e.id === id)?.category).filter(Boolean)
+  )].length;
+  const reliabilityScore = currentUser?.reliabilityScore ?? 0;
+  const verifications = [currentUser?.idVerified, true /* email */, true /* phone */].filter(Boolean).length;
+
   const achievements: Achievement[] = [
-    { id: 'a1', icon: Calendar, title: t(`Πρώτη Εμπειρία`, `First Experience`), description: t(`Συμμετείχατε στην πρώτη σας εκδήλωση`, `Attended your first event`), progress: 1, maxProgress: 1, unlocked: true, xp: 50, color: 'text-cyan-600 bg-cyan-100' },
-    { id: 'a2', icon: Users, title: t(`Κοινωνική Πεταλούδα`, `Social Butterfly`), description: t(`Γίνετε μέλος σε 5 διαφορετικές ομάδες`, `Join 5 different groups`), progress: 5, maxProgress: 5, unlocked: true, xp: 100, color: 'text-purple-600 bg-purple-100' },
-    { id: 'a3', icon: Star, title: t(`Αστέρι Αξιοπιστίας`, `Reliability Star`), description: t(`Διατηρήστε 95%+ αξιοπιστία`, `Maintain 95%+ reliability score`), progress: 98, maxProgress: 95, unlocked: true, xp: 200, color: 'text-amber-600 bg-amber-100' },
-    { id: 'a4', icon: Flame, title: t(`Εβδομαδιαίο Σερί`, `Weekly Streak`), description: t(`Συμμετοχή σε εκδηλώσεις 4 εβδομάδες σερί`, `Attend events for 4 weeks in a row`), progress: 3, maxProgress: 4, unlocked: false, xp: 150, color: 'text-orange-600 bg-orange-100' },
-    { id: 'a5', icon: Shield, title: t(`Αξιόπιστο Μέλος`, `Trusted Member`), description: t(`Επαληθεύστε ταυτότητα + τηλέφωνο + email`, `Verify ID + phone + email`), progress: 2, maxProgress: 3, unlocked: false, xp: 75, color: 'text-green-600 bg-green-100' },
-    { id: 'a6', icon: Target, title: t(`Εξερευνητής`, `Explorer`), description: t(`Δοκιμάστε 4 διαφορετικές κατηγορίες`, `Try 4 different event categories`), progress: 3, maxProgress: 4, unlocked: false, xp: 120, color: 'text-indigo-600 bg-indigo-100' },
-    { id: 'a7', icon: Trophy, title: t(`Πρωτοπόρος`, `Trailblazer`), description: t(`Δημιουργήστε μια ομάδα που γέμισε`, `Create a group that filled up`), progress: 1, maxProgress: 1, unlocked: true, xp: 100, color: 'text-rose-600 bg-rose-100' },
-    { id: 'a8', icon: Zap, title: t(`Αστραπή`, `Lightning`), description: t(`Εγγραφή σε εκδήλωση μέσα σε 1 λεπτό`, `Join an event within 1 minute of posting`), progress: 0, maxProgress: 1, unlocked: false, xp: 80, color: 'text-yellow-600 bg-yellow-100' },
+    { id: 'a1', icon: Calendar, title: t(`Πρώτη Εμπειρία`, `First Experience`), description: t(`Συμμετείχατε στην πρώτη σας εκδήλωση`, `Attended your first event`), progress: Math.min(eventsJoined, 1), maxProgress: 1, unlocked: eventsJoined >= 1, xp: 50, color: 'text-cyan-600 bg-cyan-100' },
+    { id: 'a2', icon: Users, title: t(`Κοινωνική Πεταλούδα`, `Social Butterfly`), description: t(`Γίνετε μέλος σε 5 διαφορετικές ομάδες`, `Join 5 different groups`), progress: Math.min(userGroups.length, 5), maxProgress: 5, unlocked: userGroups.length >= 5, xp: 100, color: 'text-purple-600 bg-purple-100' },
+    { id: 'a3', icon: Star, title: t(`Αστέρι Αξιοπιστίας`, `Reliability Star`), description: t(`Διατηρήστε 95%+ αξιοπιστία`, `Maintain 95%+ reliability score`), progress: reliabilityScore, maxProgress: 95, unlocked: reliabilityScore >= 95, xp: 200, color: 'text-amber-600 bg-amber-100' },
+    { id: 'a4', icon: Flame, title: t(`Εβδομαδιαίο Σερί`, `Weekly Streak`), description: t(`Συμμετοχή σε εκδηλώσεις 4 εβδομάδες σερί`, `Attend events for 4 weeks in a row`), progress: Math.min(eventsJoined, 3), maxProgress: 4, unlocked: false, xp: 150, color: 'text-orange-600 bg-orange-100' },
+    { id: 'a5', icon: Shield, title: t(`Αξιόπιστο Μέλος`, `Trusted Member`), description: t(`Επαληθεύστε ταυτότητα + τηλέφωνο + email`, `Verify ID + phone + email`), progress: verifications, maxProgress: 3, unlocked: verifications >= 3, xp: 75, color: 'text-green-600 bg-green-100' },
+    { id: 'a6', icon: Target, title: t(`Εξερευνητής`, `Explorer`), description: t(`Δοκιμάστε 4 διαφορετικές κατηγορίες`, `Try 4 different event categories`), progress: Math.min(uniqueCategories, 4), maxProgress: 4, unlocked: uniqueCategories >= 4, xp: 120, color: 'text-indigo-600 bg-indigo-100' },
+    { id: 'a7', icon: Trophy, title: t(`Κριτής`, `Reviewer`), description: t(`Υποβάλετε αξιολόγηση για εκδήλωση`, `Submit feedback for an event`), progress: Math.min(feedbackCount, 1), maxProgress: 1, unlocked: feedbackCount >= 1, xp: 100, color: 'text-rose-600 bg-rose-100' },
+    { id: 'a8', icon: Zap, title: t(`Αστραπή`, `Lightning`), description: t(`Αποθηκεύστε 3 εκδηλώσεις`, `Save 3 events to your list`), progress: Math.min(savedEvents.length, 3), maxProgress: 3, unlocked: savedEvents.length >= 3, xp: 80, color: 'text-yellow-600 bg-yellow-100' },
   ];
 
   const totalXP = achievements.filter(a => a.unlocked).reduce((sum, a) => sum + a.xp, 0);
@@ -140,7 +159,10 @@ export default function AchievementsClassic() {
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     <span className="text-[11.2px] font-bold text-cyan-600 bg-cyan-50 px-1.5 py-0.5 rounded">+{a.xp}XP</span>
                     {a.unlocked && (
-                      <button className="text-[10px] font-bold text-gray-400 hover:text-cyan-600 flex items-center gap-0.5 transition-colors">
+                      <button
+                        onClick={() => toast.success(t(`Επίτευγμα κοινοποιήθηκε!`, `Achievement shared!`))}
+                        className="text-[10px] font-bold text-gray-400 hover:text-cyan-600 flex items-center gap-0.5 transition-colors"
+                      >
                         <Share2 className="w-2.5 h-2.5" />{t(`Κοινοπ.`, `Share`)}
                       </button>
                     )}
