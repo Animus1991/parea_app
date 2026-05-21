@@ -635,8 +635,15 @@ export default function EventDetailClassic() {
       
       {/* Mobile Sticky CTA */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden z-50 flex gap-3">
-        <Button variant="outline" className="flex-1 border-gray-200 text-gray-700" onClick={() => navigate(`/events/${eventId}/join`)}>
-          {t('Λίστα Αναμονής', 'Waitlist')}
+        <Button
+          variant="outline"
+          className={`flex-1 border-gray-200 text-gray-700 transition-colors ${isWaitlisted ? 'border-cyan-200 bg-cyan-50 text-cyan-700 hover:bg-cyan-100' : ''}`}
+          onClick={() => {
+            if (!eventId) return;
+            isWaitlisted ? removeFromWaitlist(eventId) : addToWaitlist(eventId);
+          }}
+        >
+          {isWaitlisted ? t('✓ Αναμονή', '✓ Waitlisted') : t('Λίστα Αναμονής', 'Waitlist')}
         </Button>
         <Button className="flex-[2] bg-cyan-600 text-white hover:bg-cyan-700 shadow-sm" onClick={() => navigate(`/events/${eventId}/join`)}>
           {t('Νέα Ομάδα', 'Create Group')}

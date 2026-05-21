@@ -211,6 +211,28 @@ export default function HomeClassic() {
   }, [geo.granted, geo.lat, geo.lng]);
 
   const currentUser = useStore((state) => state.currentUser);
+  const feedbackSubmitted = useStore((state) => state.feedbackSubmitted);
+
+  const hasPendingFeedback = events.slice(0, 3).some(e => !feedbackSubmitted[e.id]);
+
+  const hasActiveFilters =
+    activeCategory !== 'All' ||
+    priceFilter !== 'All' ||
+    dateFilter !== 'Any' ||
+    safetyFilter !== 'All' ||
+    radiusFilter !== 'Any' ||
+    tagFilter !== 'All' ||
+    !!searchQuery;
+
+  const clearAllFilters = () => {
+    setActiveCategory('All');
+    setPriceFilter('All');
+    setDateFilter('Any');
+    setSafetyFilter('All');
+    setRadiusFilter('Any');
+    setTagFilter('All');
+    handleSearchChange('');
+  };
 
   // Memoized filtering
   const filteredEvents = useMemo(() => {
@@ -441,7 +463,8 @@ export default function HomeClassic() {
         <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
       </motion.div>
 
-      {/* Pending Feedback Alert */}
+      {/* Pending Feedback Alert — only shown when there are events without feedback */}
+      {hasPendingFeedback && (
       <section className="bg-cyan-50 border border-cyan-100 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex gap-3 items-center">
           <div className="bg-white p-2 text-amber-500 rounded-full shadow-sm shrink-0">
@@ -466,6 +489,7 @@ export default function HomeClassic() {
           {t("home.pending_feedback.cta", "Αξιολόγηση")}
         </button>
       </section>
+      )}
 
       {/* How it works */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -649,6 +673,21 @@ export default function HomeClassic() {
           </div>
         </div>
       </section>
+
+      {/* Result count + clear filters */}
+      {hasActiveFilters && (
+        <div className="flex items-center gap-3 -mt-2">
+          <span className="text-[13px] font-bold text-gray-500">
+            {sortedEvents.length} {t('αποτελέσματα', 'results')}
+          </span>
+          <button
+            onClick={clearAllFilters}
+            className="text-[12px] font-bold text-cyan-600 hover:text-cyan-800 bg-cyan-50 px-2.5 py-1 rounded-full border border-cyan-200 hover:bg-cyan-100 transition-colors"
+          >
+            ✕ {t('Καθαρισμός φίλτρων', 'Clear filters')}
+          </button>
+        </div>
+      )}
 
       {/* Events Grid */}
       <section>

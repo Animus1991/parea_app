@@ -7,7 +7,7 @@ import { useLanguage } from "../lib/i18n";
 import { useStore } from '../store';
 
 export default function PostEventFeedbackClassic() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { eventId } = useParams<{ eventId: string }>();
   const submitFeedback = useStore((s) => s.submitFeedback);
@@ -16,12 +16,14 @@ export default function PostEventFeedbackClassic() {
   const [vibeRating, setVibeRating] = useState(0);
   const [mood, setMood] = useState('');
   const [comment, setComment] = useState('');
+  const [attendance, setAttendance] = useState('');
+  const [safetyComfort, setSafetyComfort] = useState('');
 
   const moods = [
     { emoji: '🤩', label: t(`Φανταστικά`, `Amazing`) },
     { emoji: '😊', label: t(`Ωραία`, `Good`) },
     { emoji: '😐', label: t(`Μέτρια`, `Okay`) },
-    { emoji: '😕', label: t(`Μέτρια`, `Meh`) },
+    { emoji: '😕', label: t(`Έτσι κι έτσι`, `Meh`) },
   ];
 
   return (
@@ -31,7 +33,6 @@ export default function PostEventFeedbackClassic() {
         <p className="text-gray-500 font-medium text-[13.551608211075px] md:text-[14.626916949961px] mt-1">{t(`Πείτε μας πώς ήταν η εμπειρία σας`, `Tell us about your experience`)}</p>
       </div>
 
-      {/* XP Reward Banner */}
       <div className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3">
         <Trophy className="w-5 h-5 text-amber-600 shrink-0" />
         <div className="flex-1">
@@ -63,7 +64,7 @@ export default function PostEventFeedbackClassic() {
 
             <div>
               <h3 className="text-[16.75971px] font-bold text-[#111827] tracking-wide mb-4">{t(`Γενική Εντύπωση`, `Overall Experience`)}</h3>
-              <p className="text-[14.535px] text-gray-500 font-medium mb-3">{t(`Πώς θα βαθμολογούσατε την εκδήλωση;`, `How would you rate the event?`)}</p>
+              <p className="text-sm text-gray-500 font-medium mb-3">{t(`Πώς θα βαθμολογούσατε την εκδήλωση;`, `How would you rate the event?`)}</p>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button key={star} onClick={() => setOverallRating(star)} className="p-2 hover:bg-gray-50 rounded-full transition-colors">
@@ -75,7 +76,7 @@ export default function PostEventFeedbackClassic() {
 
             <div>
               <h3 className="text-[16.75971px] font-bold text-[#111827] tracking-wide mb-4 mt-6">{t(`Ατμόσφαιρα`, `Vibe`)}</h3>
-              <p className="text-[14.535px] text-gray-500 font-medium mb-3">{t(`Πώς ήταν η ατμόσφαιρα;`, `How was the atmosphere?`)}</p>
+              <p className="text-sm text-gray-500 font-medium mb-3">{t(`Πώς ήταν η ατμόσφαιρα;`, `How was the atmosphere?`)}</p>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button key={`vibe-${star}`} onClick={() => setVibeRating(star)} className="p-2 hover:bg-gray-50 rounded-full transition-colors">
@@ -87,36 +88,64 @@ export default function PostEventFeedbackClassic() {
 
             <div>
               <h3 className="text-[16.2px] font-bold text-[#111827] tracking-wide mb-4">{t(`Παρουσία`, `Attendance`)}</h3>
-              <p className="text-[15px] text-gray-500 font-medium mb-3">{t(`Ήταν όλοι παρόντες;`, `Was everyone present?`)}</p>
+              <p className="text-sm text-gray-500 font-medium mb-3">{t(`Ήταν όλοι παρόντες;`, `Was everyone present?`)}</p>
               <div className="space-y-3 mt-4">
                 <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                  <input type="radio" name="attendance" className="h-4 w-4 text-cyan-600 rounded-full border-gray-300" />
-                  <span className="text-[16.2px] font-medium text-gray-700">{t(`Ναι, ήρθαν όλοι`, `Yes, everyone showed up`)}</span>
+                  <input
+                    type="radio"
+                    name="attendance"
+                    value="yes"
+                    checked={attendance === 'yes'}
+                    onChange={() => setAttendance('yes')}
+                    className="h-4 w-4 text-cyan-600 rounded-full border-gray-300"
+                  />
+                  <span className="text-sm font-medium text-gray-700">{t(`Ναι, ήρθαν όλοι`, `Yes, everyone showed up`)}</span>
                 </label>
                 <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                  <input type="radio" name="attendance" className="h-4 w-4 text-cyan-600 rounded-full border-gray-300" />
-                  <span className="text-[16.2px] font-medium text-gray-700">{t(`Όχι, κάποιοι δεν ήρθαν`, `No, some people didn't show up`)}</span>
+                  <input
+                    type="radio"
+                    name="attendance"
+                    value="no"
+                    checked={attendance === 'no'}
+                    onChange={() => setAttendance('no')}
+                    className="h-4 w-4 text-cyan-600 rounded-full border-gray-300"
+                  />
+                  <span className="text-sm font-medium text-gray-700">{t(`Όχι, κάποιοι δεν ήρθαν`, `No, some people didn't show up`)}</span>
                 </label>
               </div>
             </div>
 
             <div>
               <h3 className="text-[16.2px] font-bold text-[#111827] tracking-wide mb-4">{t(`Αίσθημα Ασφάλειας`, `Safety Comfort`)}</h3>
-              <p className="text-[15px] text-gray-500 font-medium mb-3">{t(`Νιώσατε ασφαλείς;`, `Did you feel safe?`)}</p>
+              <p className="text-sm text-gray-500 font-medium mb-3">{t(`Νιώσατε ασφαλείς;`, `Did you feel safe?`)}</p>
               <div className="space-y-3 mt-4">
                 <label className="flex items-center gap-3 p-3 border border-emerald-200 bg-emerald-50 rounded-lg cursor-pointer">
-                  <input type="radio" name="comfort" className="h-4 w-4 text-emerald-600 rounded-full border-gray-300" />
-                  <span className="text-[16.2px] font-medium text-emerald-800">{t(`Ναι, ένιωσα πλήρως ασφαλής`, `Yes, I felt completely safe`)}</span>
+                  <input
+                    type="radio"
+                    name="comfort"
+                    value="safe"
+                    checked={safetyComfort === 'safe'}
+                    onChange={() => setSafetyComfort('safe')}
+                    className="h-4 w-4 text-emerald-600 rounded-full border-gray-300"
+                  />
+                  <span className="text-sm font-medium text-emerald-800">{t(`Ναι, ένιωσα πλήρως ασφαλής`, `Yes, I felt completely safe`)}</span>
                 </label>
                 <label className="flex items-center gap-3 p-3 border border-amber-200 bg-amber-50 rounded-lg cursor-pointer">
-                  <input type="radio" name="comfort" className="h-4 w-4 text-amber-600 rounded-full border-gray-300" />
-                  <span className="text-[16.2px] font-medium text-amber-800 flex items-center gap-2">
-                    <ShieldAlert className="w-4 h-4" />{t(`Είχα κάποια ανησυχία`, `I had some concerns`)}</span>
+                  <input
+                    type="radio"
+                    name="comfort"
+                    value="concerns"
+                    checked={safetyComfort === 'concerns'}
+                    onChange={() => setSafetyComfort('concerns')}
+                    className="h-4 w-4 text-amber-600 rounded-full border-gray-300"
+                  />
+                  <span className="text-sm font-medium text-amber-800 flex items-center gap-2">
+                    <ShieldAlert className="w-4 h-4" />{t(`Είχα κάποια ανησυχία`, `I had some concerns`)}
+                  </span>
                 </label>
               </div>
             </div>
 
-            {/* Optional comment */}
             <div>
               <h3 className="text-[16.2px] font-bold text-[#111827] tracking-wide mb-3">{t(`Σχόλιο (προαιρετικό)`, `Comment (optional)`)}</h3>
               <textarea
@@ -152,7 +181,7 @@ export default function PostEventFeedbackClassic() {
             </div>
             <div>
               <h2 className="text-[25px] font-bold text-[#111827]">{t(`Ευχαριστούμε!`, `Thank You!`)}</h2>
-              <p className="mt-2 text-[16.2px] text-gray-600 font-medium leading-relaxed max-w-sm mx-auto">{t(`Η αξιολόγησή σας βοηθά στη βελτίωση της εμπειρίας για όλους.`, `Your feedback helps improve the experience for everyone.`)}</p>
+              <p className="mt-2 text-sm text-gray-600 font-medium leading-relaxed max-w-sm mx-auto">{t(`Η αξιολόγησή σας βοηθά στη βελτίωση της εμπειρίας για όλους.`, `Your feedback helps improve the experience for everyone.`)}</p>
             </div>
             <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 max-w-xs mx-auto">
               <div className="flex items-center justify-center gap-2">

@@ -3,9 +3,10 @@ import { Settings, Bell, Lock, Eye, Globe, Shield, CreditCard, LogOut, Trash2, S
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { useLanguage } from "../lib/i18n";
+import { toast } from 'sonner';
 
 export default function SettingsAndPrivacyClassic() {
-    const { t } = useLanguage();
+    const { t, language, setLanguage } = useLanguage();
     
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
@@ -39,7 +40,16 @@ export default function SettingsAndPrivacyClassic() {
     {
       title: t(`Ρυθμίσεις Λογαριασμού`, `Account Settings`),
       items: [
-        { icon: Globe, label: t(`Γλώσσα & Περιοχή`, `Language & Region`), value: t(`Ελληνικά (GR)`, `Greek (GR)`) },
+        {
+          icon: Globe,
+          label: t(`Γλώσσα & Περιοχή`, `Language & Region`),
+          value: language === 'el' ? 'Ελληνικά (GR)' : 'English (EN)',
+          onClick: () => {
+            const next = language === 'el' ? 'en' : 'el';
+            setLanguage(next);
+            toast.success(next === 'el' ? 'Γλώσσα: Ελληνικά' : 'Language: English');
+          }
+        },
         { icon: CreditCard, label: t(`Μέθοδοι Πληρωμής`, `Payment Methods`), value: t(`1 αποθηκευμένη κάρτα`, `1 saved card`) },
       ]
     },

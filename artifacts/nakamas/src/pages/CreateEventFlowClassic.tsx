@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../store";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import { Card } from "../components/common/Card";
 import { Button } from "../components/common/Button";
@@ -72,7 +73,9 @@ export default function CreateEventFlowClassic() {
     };
 
     createEvent(newEvent);
-    // Redirect to home page
+    toast.success(t('Η εκδήλωση δημιουργήθηκε!', 'Experience published!'), {
+      description: title || t('Νέα Εμπειρία', 'New Experience'),
+    });
     navigate("/");
   };
 

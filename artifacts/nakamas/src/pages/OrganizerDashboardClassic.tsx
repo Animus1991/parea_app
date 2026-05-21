@@ -4,10 +4,19 @@ import { Button } from '../components/common/Button';
 import { Calendar, Users, MessageSquare, Plus, MoreHorizontal, TrendingUp, Star, DollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from "../lib/i18n";
+import { useStore } from '../store';
 
 export default function OrganizerDashboardClassic() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
   const navigate = useNavigate();
+  const events = useStore(state => state.events);
+  const groups = useStore(state => state.groups);
+  const currentUser = useStore(state => state.currentUser);
+
+  const myEvents = events.filter(e => e.organizerId === currentUser?.id);
+  const myGroups = groups.filter(g => myEvents.some(e => e.id === g.eventId));
+  const totalParticipants = myGroups.reduce((sum, g) => sum + g.members.length, 0);
+  const activeEventCount = myEvents.length;
 
   return (
     <div className="mx-auto max-w-full space-y-8 pb-12">
@@ -17,18 +26,19 @@ export default function OrganizerDashboardClassic() {
           <p className="mt-1 text-[13.551608211075px] text-gray-500 font-medium">{t(`Διαχείριση εκδηλώσεων & ομάδων`, `Manage events & groups`)}</p>
         </div>
         <Button className="bg-[#111827] text-white flex items-center gap-2 text-[14.2457535px] font-bold px-4 hover:bg-black" onClick={() => navigate('/create')}>
-          <Plus className="w-4 h-4" />{t(`Νέα`, `New`)}</Button>
+          <Plus className="w-4 h-4" />{t(`Νέα`, `New`)}
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className="p-4 border-t-4 border-t-cyan-500">
           <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wide">{t(`Ενεργές`, `Active`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">3</p>
+          <p className="text-[25px] font-black text-[#111827] mt-1">{activeEventCount || 3}</p>
           <p className="text-[11.2px] text-gray-400 font-medium">{t(`εκδηλώσεις`, `events`)}</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-emerald-500">
           <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wide">{t(`Συμμετέχοντες`, `Participants`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">48</p>
+          <p className="text-[25px] font-black text-[#111827] mt-1">{totalParticipants || 48}</p>
           <p className="text-[11.2px] text-green-500 font-bold flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />+12%</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-amber-500">
@@ -47,12 +57,18 @@ export default function OrganizerDashboardClassic() {
       <Card className="p-4">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-[12.1125px] font-bold text-[#111827] tracking-wide">{t(`Ποσοστό Πληρότητας`, `Fill Rate`)}</h3>
-          <span className="text-[12.1125px] font-bold text-cyan-600">72%</span>
+          <span className="text-[12.1125px] font-bold text-cyan-600">
+            {myGroups.length > 0
+              ? Math.round((totalParticipants / Math.max(1, myEvents.reduce((s, e) => s + (e.maxParticipants || 20), 0))) * 100) + '%'
+              : '72%'}
+          </span>
         </div>
         <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-          <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 h-full rounded-full" style={{ width: '72%' }} />
+          <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 h-full rounded-full" style={{ width: myGroups.length > 0 ? `${Math.min(100, Math.round((totalParticipants / Math.max(1, myEvents.reduce((s, e) => s + (e.maxParticipants || 20), 0))) * 100))}%` : '72%' }} />
         </div>
-        <p className="text-[11.2px] text-gray-400 font-medium mt-1">{t(`18 από 25 θέσεις καλύφθηκαν συνολικά`, `18 of 25 spots filled overall`)}</p>
+        <p className="text-[11.2px] text-gray-400 font-medium mt-1">
+          {totalParticipants || 18} {t(`από`, `of`)} {myEvents.reduce((s, e) => s + (e.maxParticipants || 20), 0) || 25} {t(`θέσεις καλύφθηκαν συνολικά`, `spots filled overall`)}
+        </p>
       </Card>
 
       {/* Attendee Satisfaction */}
@@ -100,101 +116,96 @@ export default function OrganizerDashboardClassic() {
 
       <div className="space-y-6">
         <h2 className="text-[18px] font-bold text-[#111827] tracking-wide">{t(`Οι Εκδηλώσεις μου`, `My Events`)}</h2>
-        
+
         <Card className="p-0 overflow-hidden border border-gray-200">
           <div className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-gray-100 bg-gray-50/50">
             <div className="flex flex-col">
-               <div className="flex items-center gap-2 mb-1">
-                 <Badge variant="neutral">Stand-up</Badge>
-                 <span className="text-[12.5px] text-gray-500 font-bold tracking-wide">{t(`Σε 2 μέρες`, `In 2 days`)}</span>
-               </div>
-               <h3 className="text-[18px] font-bold text-[#111827]">{t(`Stand-up Comedy Night`, `Stand-up Comedy Night`)}</h3>
+              <div className="flex items-center gap-2 mb-1">
+                <Badge variant="neutral">Stand-up</Badge>
+                <span className="text-[12.5px] text-gray-500 font-bold tracking-wide">{t(`Σε 2 μέρες`, `In 2 days`)}</span>
+              </div>
+              <h3 className="text-[15px] font-bold text-[#111827]">{t(`Stand-up Comedy Night`, `Stand-up Comedy Night`)}</h3>
             </div>
             <div className="flex gap-2">
-              <span className="text-[15px] font-bold text-gray-500 bg-white px-2 py-1 rounded shadow-sm border border-gray-100">12/20 {t(`θέσεις`, `spots`)}</span>
+              <span className="text-[13px] font-bold text-gray-500 bg-white px-2 py-1 rounded shadow-sm border border-gray-100">12/20 {t(`θέσεις`, `spots`)}</span>
             </div>
           </div>
-          
+
           <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-3 gap-4">
-             <div className="md:col-span-2 space-y-3">
-               <h4 className="text-[15px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
-                 <Users className="w-4 h-4 text-gray-400" />{t(`Ομάδες`, `Groups`)}</h4>
-               
-               <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
-                  <div>
-                    <p className="text-[15px] font-bold text-gray-700">{t(`Ομάδα #1`, `Group #1`)} — 4/4</p>
-                    <p className="text-[12.5px] text-gray-500 mt-0.5">{t(`Επιβεβαιωμένη`, `Confirmed`)}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-gray-200 hover:bg-cyan-50" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
-                      <MessageSquare className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-               </div>
+            <div className="md:col-span-2 space-y-3">
+              <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
+                <Users className="w-4 h-4 text-gray-400" />{t(`Ομάδες`, `Groups`)}
+              </h4>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
+                <div>
+                  <p className="text-[13px] font-bold text-gray-700">{t(`Ομάδα #1`, `Group #1`)} — 4/4</p>
+                  <p className="text-[12.5px] text-gray-500 mt-0.5">{t(`Επιβεβαιωμένη`, `Confirmed`)}</p>
+                </div>
+                <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-gray-200 hover:bg-cyan-50" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
+                  <MessageSquare className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
+                <div>
+                  <p className="text-[13px] font-bold text-gray-700">{t(`Ομάδα #2`, `Group #2`)} — 3/4</p>
+                  <p className="text-[12.5px] text-gray-500 mt-0.5">{t(`Αναμένεται 1 ακόμα`, `Waiting for 1 more`)}</p>
+                </div>
+                <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-gray-200 hover:bg-cyan-50" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
+                  <MessageSquare className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
 
-               <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
-                  <div>
-                    <p className="text-[15px] font-bold text-gray-700">{t(`Ομάδα #2`, `Group #2`)} — 3/4</p>
-                    <p className="text-[12.5px] text-gray-500 mt-0.5">{t(`Αναμένεται 1 ακόμα`, `Waiting for 1 more`)}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-gray-200 hover:bg-cyan-50" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
-                      <MessageSquare className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-               </div>
-             </div>
-
-             <div className="space-y-3">
-               <h4 className="text-[15px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
-                 <Calendar className="w-4 h-4 text-gray-400" />{t(`Ενέργειες`, `Actions`)}</h4>
-               <Button variant="outline" className="w-full text-[15px]" size="sm">{t(`Επεξεργασία`, `Edit`)}</Button>
-               <Button variant="outline" className="w-full text-[15px]" size="sm">{t(`Αποστολή Ανακοίνωσης`, `Send Announcement`)}</Button>
-               <Button variant="outline" className="w-full text-[15px] bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100" size="sm">{t(`Δημοσίευση Σημείου Συνάντησης`, `Publish Meeting Point`)}</Button>
-               <Button variant="ghost" className="w-full text-[15px] text-red-600 hover:bg-red-50 hover:text-red-700" size="sm">{t(`Ακύρωση`, `Cancel Event`)}</Button>
-             </div>
+            <div className="space-y-3">
+              <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gray-400" />{t(`Ενέργειες`, `Actions`)}
+              </h4>
+              <Button variant="outline" className="w-full text-[13px]" size="sm">{t(`Επεξεργασία`, `Edit`)}</Button>
+              <Button variant="outline" className="w-full text-[13px]" size="sm">{t(`Αποστολή Ανακοίνωσης`, `Send Announcement`)}</Button>
+              <Button variant="outline" className="w-full text-[13px] bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100" size="sm">{t(`Δημοσίευση Σημείου Συνάντησης`, `Publish Meeting Point`)}</Button>
+              <Button variant="ghost" className="w-full text-[13px] text-red-600 hover:bg-red-50 hover:text-red-700" size="sm">{t(`Ακύρωση`, `Cancel Event`)}</Button>
+            </div>
           </div>
         </Card>
 
         <Card className="p-0 overflow-hidden border border-gray-200">
           <div className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-gray-100 bg-gray-50/50">
             <div className="flex flex-col">
-               <div className="flex items-center gap-2 mb-1">
-                 <Badge variant="neutral">Hiking</Badge>
-                 <span className="text-[12.5px] text-gray-500 font-bold tracking-wide">{t(`Σε 5 μέρες`, `In 5 days`)}</span>
-               </div>
-               <h3 className="text-[18px] font-bold text-[#111827]">{t(`Πεζοπορία στον Υμηττό`, `Hike on Hymettus`)}</h3>
+              <div className="flex items-center gap-2 mb-1">
+                <Badge variant="neutral">Hiking</Badge>
+                <span className="text-[12.5px] text-gray-500 font-bold tracking-wide">{t(`Σε 5 μέρες`, `In 5 days`)}</span>
+              </div>
+              <h3 className="text-[15px] font-bold text-[#111827]">{t(`Πεζοπορία στον Υμηττό`, `Hike on Hymettus`)}</h3>
             </div>
             <div className="flex gap-2">
-              <span className="text-[15px] font-bold text-gray-500 bg-white px-2 py-1 rounded shadow-sm border border-gray-100">6/8 {t(`θέσεις`, `spots`)}</span>
+              <span className="text-[13px] font-bold text-gray-500 bg-white px-2 py-1 rounded shadow-sm border border-gray-100">6/8 {t(`θέσεις`, `spots`)}</span>
             </div>
           </div>
-          
-          <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-3 gap-4">
-             <div className="md:col-span-2 space-y-3">
-               <h4 className="text-[15px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
-                 <Users className="w-4 h-4 text-gray-400" />{t(`Ομάδες`, `Groups`)}</h4>
-               
-               <div className="flex items-center justify-between p-3 bg-cyan-50 rounded border border-cyan-100">
-                  <div>
-                    <p className="text-[15px] font-bold text-cyan-900">{t(`Ομάδα #1`, `Group #1`)} — 3/4</p>
-                    <p className="text-[12.5px] text-cyan-600 mt-0.5">{t(`Νέο μήνυμα`, `New message`)}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-cyan-200 hover:bg-cyan-100 relative" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
-                      <MessageSquare className="w-3.5 h-3.5" />
-                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                    </button>
-                  </div>
-               </div>
-             </div>
 
-             <div className="space-y-3">
-               <h4 className="text-[15px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
-                 <MoreHorizontal className="w-4 h-4 text-gray-400" />{t(`Περισσότερα`, `More`)}</h4>
-               <Button variant="outline" className="w-full text-[15px]" size="sm">{t(`Επεξεργασία`, `Edit`)}</Button>
-               <Button variant="outline" className="w-full text-[15px]" size="sm">{t(`Αρχειοθέτηση`, `Archive`)}</Button>
-             </div>
+          <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-2 space-y-3">
+              <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
+                <Users className="w-4 h-4 text-gray-400" />{t(`Ομάδες`, `Groups`)}
+              </h4>
+              <div className="flex items-center justify-between p-3 bg-cyan-50 rounded border border-cyan-100">
+                <div>
+                  <p className="text-[13px] font-bold text-cyan-900">{t(`Ομάδα #1`, `Group #1`)} — 3/4</p>
+                  <p className="text-[12.5px] text-cyan-600 mt-0.5">{t(`Νέο μήνυμα`, `New message`)}</p>
+                </div>
+                <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-cyan-200 hover:bg-cyan-100 relative" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="text-[13px] font-bold text-gray-800 tracking-wide flex items-center gap-2">
+                <MoreHorizontal className="w-4 h-4 text-gray-400" />{t(`Περισσότερα`, `More`)}
+              </h4>
+              <Button variant="outline" className="w-full text-[13px]" size="sm">{t(`Επεξεργασία`, `Edit`)}</Button>
+              <Button variant="outline" className="w-full text-[13px]" size="sm">{t(`Αρχειοθέτηση`, `Archive`)}</Button>
+            </div>
           </div>
         </Card>
       </div>

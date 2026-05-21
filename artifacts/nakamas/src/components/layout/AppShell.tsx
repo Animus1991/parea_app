@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
+import { Toaster } from 'sonner';
 
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
@@ -412,6 +413,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </footer>
         <BottomNav />
       </div>
+      <Toaster richColors position="top-center" />
     </div>
   );
 }

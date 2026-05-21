@@ -1,16 +1,44 @@
 import React, { useState } from 'react';
-import { Search, MessageSquare, Flame, CheckCircle2, Ghost, Plus, Pin, Clock, AlertTriangle } from 'lucide-react';
+import { Search, MessageSquare, Clock, Pin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from "../lib/i18n";
+import { useStore } from '../store';
+import { isBefore, parseISO } from 'date-fns';
 
 export default function InboxClassic() {
-    const { t } = useLanguage();
-    
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'active' | 'past'>('active');
 
-  const chats = [
+  const groups = useStore(state => state.groups);
+  const events = useStore(state => state.events);
+  const currentUser = useStore(state => state.currentUser);
+
+  const myGroups = groups.filter(g => currentUser && g.members.includes(currentUser.id));
+
+  const chats = myGroups.map((g, idx) => {
+    const event = events.find(e => e.id === g.eventId);
+    const isPast = event ? isBefore(parseISO(event.date), new Date()) : false;
+    return {
+      id: g.id,
+      title: event?.title || t('Ομαδική Συνομιλία', 'Group Chat'),
+      lastMessage: idx === 0
+        ? t('Nikos: Θα συναντηθούμε στην είσοδο;', 'Nikos: Shall we meet at the entrance?')
+        : t('Πατήστε για να δείτε τη συνομιλία', 'Tap to view conversation'),
+      time: idx === 0 ? '12:30 ΜΜ' : t('Χθες', 'Yesterday'),
+      unread: idx === 0 ? 3 : 0,
+      image: event?.imageUrl || `https://picsum.photos/seed/${g.id}/500/500`,
+      participants: g.members.length,
+      status: isPast ? 'past' as const : 'active' as const,
+      isPinned: idx === 0,
+      timeRemaining: event?.duration || '',
+      online: isPast ? 0 : Math.max(0, g.members.length - 1),
+      isTyping: idx === 0 && !isPast,
+    };
+  });
+
+  const fallbackChats = chats.length === 0 ? [
     {
       id: 'g1',
       title: t(`Παράσταση Κωμωδίας`, `Comedy Show`),
@@ -19,25 +47,25 @@ export default function InboxClassic() {
       unread: 3,
       image: 'https://picsum.photos/seed/comedy/500/500',
       participants: 6,
-      status: 'active',
+      status: 'active' as const,
       isPinned: true,
       timeRemaining: t(`12 ώρες`, `12 hours`),
       online: 4,
-      isTyping: true
+      isTyping: true,
     },
     {
       id: 'g2',
       title: t(`Καφετέρια με Επιτραπέζια`, `Board Game Cafe`),
-      lastMessage: t(`Εσύ: Θα φέρω το Catan!`, `You: I\'ll bring Catan!`),
+      lastMessage: t(`Εσύ: Θα φέρω το Catan!`, `You: I'll bring Catan!`),
       time: t(`Χθες`, `Yesterday`),
       unread: 0,
       image: 'https://picsum.photos/seed/boardgame/500/500',
       participants: 4,
-      status: 'active',
+      status: 'active' as const,
       isPinned: false,
       timeRemaining: t(`2 μέρες`, `2 days`),
       online: 2,
-      isTyping: false
+      isTyping: false,
     },
     {
       id: 'g3',
@@ -47,14 +75,17 @@ export default function InboxClassic() {
       unread: 0,
       image: 'https://picsum.photos/seed/hike/500/500',
       participants: 8,
-      status: 'past',
+      status: 'past' as const,
       isPinned: false,
       online: 0,
-      isTyping: false
+      isTyping: false,
     }
-  ];
+  ] : chats;
 
-  const filteredChats = chats.filter(c => c.status === activeTab && c.title.toLowerCase().includes(search.toLowerCase()));
+  const displayChats = fallbackChats.filter(c =>
+    c.status === activeTab &&
+    c.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="w-full flex flex-col relative pb-20 md:pb-0">
@@ -88,13 +119,14 @@ export default function InboxClassic() {
       </div>
 
       <div className="space-y-2">
-        {filteredChats.length === 0 ? (
+        {displayChats.length === 0 ? (
           <div className="text-center py-12">
             <MessageSquare className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-[18px] text-gray-500 font-medium">{t(`Δεν υπάρχουν συνομιλίες`, `No conversations`)}</p>
+            <p className="text-[16px] text-gray-500 font-medium">{t(`Δεν υπάρχουν συνομιλίες`, `No conversations`)}</p>
+            <p className="text-sm text-gray-400 mt-1">{t(`Συμμετέχετε σε εκδηλώσεις για να ξεκινήσετε συνομιλίες.`, `Join events to start conversations.`)}</p>
           </div>
         ) : (
-          filteredChats.map(chat => (
+          displayChats.map(chat => (
             <div
               key={chat.id}
               onClick={() => navigate(`/chat/${chat.id}`)}

@@ -20,6 +20,7 @@ import { useStore } from "../../store";
 import type { Event } from "../../types";
 import { useLanguage } from "../../lib/i18n";
 import { cn } from "../../lib/utils";
+import { toast } from "sonner";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -90,7 +91,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
       navigator.share({ title: event.title, url }).catch(() => {});
     } else {
       navigator.clipboard.writeText(url);
-      alert(t("event_card.copied", "Link copied to clipboard!"));
+      toast.success(t("event_card.copied", "Link copied to clipboard!"));
     }
   };
 
