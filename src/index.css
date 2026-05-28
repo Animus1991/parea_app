@@ -13,12 +13,103 @@
   --color-accent-50: #fdf5f3;
   --color-accent-500: #e07a5f;
   --color-accent-600: #d65d3d;
+
+  --color-parea-50: #ecfeff;
+  --color-parea-100: #cdfcff;
+  --color-parea-200: #a5f3fc;
+  --color-parea-400: #22d3ee;
+  --color-parea-500: #18D8DB;
+  --color-parea-600: #0E8B8D;
+  --color-parea-700: #0b6d6f;
 }
 
 body {
   font-family: var(--font-sans);
   background-color: #fcfcfb;
   color: #1a1a1a;
+}
+
+/* ─── Design System: Parea Signature Style ─── */
+
+/* Soft shadow system */
+.shadow-soft {
+  box-shadow: 0 2px 8px -2px rgba(14, 139, 141, 0.08), 0 1px 3px -1px rgba(0, 0, 0, 0.04);
+}
+.shadow-soft-md {
+  box-shadow: 0 4px 14px -3px rgba(14, 139, 141, 0.12), 0 2px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.shadow-soft-lg {
+  box-shadow: 0 8px 24px -4px rgba(14, 139, 141, 0.14), 0 4px 10px -3px rgba(0, 0, 0, 0.06);
+}
+
+/* Neutral CTA button — works across all themes */
+.btn-gradient {
+  background: #1f2937;
+  color: white;
+  font-weight: 700;
+  border-radius: 1rem;
+  padding: 0.5rem 1.25rem;
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.18);
+  transition: all 0.2s ease;
+}
+.btn-gradient:hover {
+  background: #111827;
+  box-shadow: 0 4px 12px -3px rgba(0, 0, 0, 0.22);
+  transform: translateY(-0.5px);
+}
+.btn-gradient:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.12);
+}
+
+/* Neutral pill button — works across all themes */
+.btn-pill-active {
+  border: 2px solid #4b5563;
+  border-radius: 9999px;
+  padding: 0.375rem 1rem;
+  font-weight: 700;
+  color: #111827;
+  background: #f3f4f6;
+  transition: all 0.2s ease;
+}
+.btn-pill-inactive {
+  border: 2px solid transparent;
+  border-radius: 9999px;
+  padding: 0.375rem 1rem;
+  font-weight: 600;
+  color: #6b7280;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+.btn-pill-inactive:hover {
+  color: #374151;
+  background: #f3f4f6;
+}
+
+/* Card row style (matching the notification rows in screenshot) */
+.card-row {
+  background: white;
+  border: 1px solid #f1f5f9;
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.03);
+}
+.card-row:hover {
+  border-color: #a5f3fc;
+  box-shadow: 0 4px 14px -3px rgba(14, 139, 141, 0.08);
+}
+
+/* Modal overlay */
+.modal-overlay {
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(4px);
+}
+.modal-panel {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 8px 20px -8px rgba(14, 139, 141, 0.1);
+  border: 1px solid #f1f5f9;
 }
 
 .noscrollbar, .scrollbar-hide {
@@ -42,6 +133,116 @@ body {
 .scrollbar-thin::-webkit-scrollbar-thumb {
   background-color: #d1d5db;
   border-radius: 9999px;
+}
+
+/* ────────────────────────────────────────────────────────
+   ActiveBuddies Theme — Premium Monochrome B&W Fitness
+   ──────────────────────────────────────────────────────── */
+
+/* Light variant */
+.theme-ab {
+  --ab-bg:            hsl(0 0% 99%);
+  --ab-surface:       hsl(0 0% 100%);
+  --ab-surface-hover: hsl(220 14% 96%);
+  --ab-border:        hsl(220 13% 92%);
+  --ab-text:          hsl(220 14% 12%);
+  --ab-muted:         hsl(220 9% 46%);
+  --ab-primary:       hsl(220 14% 12%);
+  --ab-primary-fg:    hsl(0 0% 100%);
+  --ab-ring:          hsl(220 14% 20%);
+
+  background-color: var(--ab-bg);
+  color: var(--ab-text);
+}
+
+/* ── AB light: shadow system — neutral, no cyan tint ── */
+.theme-ab .shadow-soft {
+  box-shadow: 0 1px 3px -1px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04) !important;
+}
+.theme-ab .shadow-soft-md {
+  box-shadow: 0 4px 12px -3px rgba(0,0,0,0.09), 0 2px 5px -2px rgba(0,0,0,0.05) !important;
+}
+.theme-ab .shadow-soft-lg {
+  box-shadow: 0 8px 20px -4px rgba(0,0,0,0.10), 0 3px 8px -3px rgba(0,0,0,0.06) !important;
+}
+
+/* ── AB light: card-row — gray hover, no cyan ── */
+.theme-ab .card-row {
+  border-color: hsl(220 13% 92%) !important;
+  box-shadow: 0 1px 3px -1px rgba(0,0,0,0.05) !important;
+}
+.theme-ab .card-row:hover {
+  border-color: hsl(220 13% 82%) !important;
+  box-shadow: 0 4px 12px -3px rgba(0,0,0,0.09) !important;
+}
+
+/* ── AB light: modal-panel — neutral shadow, AB border ── */
+.theme-ab .modal-panel {
+  border-color: hsl(220 13% 92%) !important;
+  box-shadow: 0 20px 50px -12px rgba(0,0,0,0.12), 0 8px 18px -8px rgba(0,0,0,0.07) !important;
+}
+
+/* ── AB light: heading tracking-tight ── */
+.theme-ab h1, .theme-ab h2, .theme-ab h3, .theme-ab h4 {
+  letter-spacing: -0.025em;
+}
+
+/* ── AB light: focus rings — neutral, no cyan ── */
+.theme-ab *:focus-visible {
+  outline-color: hsl(220 14% 20%) !important;
+}
+.theme-ab input:focus,
+.theme-ab textarea:focus,
+.theme-ab select:focus {
+  --tw-ring-color: hsl(220 14% 20% / 0.35) !important;
+  border-color: hsl(220 13% 72%) !important;
+}
+
+/* ── AB light: scrollbar — gray ── */
+.theme-ab .scrollbar-thin {
+  scrollbar-color: hsl(220 13% 82%) transparent;
+}
+
+/* Dark variant */
+.theme-ab-dark {
+  --ab-bg:            hsl(220 16% 8%);
+  --ab-surface:       hsl(220 16% 11%);
+  --ab-surface-hover: hsl(220 16% 14%);
+  --ab-border:        hsl(220 13% 18%);
+  --ab-text:          hsl(210 20% 92%);
+  --ab-muted:         hsl(220 12% 55%);
+  --ab-primary:       hsl(0 0% 95%);
+  --ab-primary-fg:    hsl(220 14% 12%);
+  --ab-ring:          hsl(0 0% 80%);
+
+  background-color: var(--ab-bg);
+  color: var(--ab-text);
+}
+
+/* AB utility overrides — applied when .theme-ab or .theme-ab-dark is on root */
+.theme-ab .ab-bg,
+.theme-ab-dark .ab-bg {
+  background-color: var(--ab-bg) !important;
+}
+.theme-ab .ab-surface,
+.theme-ab-dark .ab-surface {
+  background-color: var(--ab-surface) !important;
+}
+.theme-ab .ab-surface-hover:hover,
+.theme-ab-dark .ab-surface-hover:hover {
+  background-color: var(--ab-surface-hover) !important;
+}
+.theme-ab .ab-border,
+.theme-ab-dark .ab-border {
+  border-color: var(--ab-border) !important;
+}
+.theme-ab .ab-text,
+.theme-ab-dark .ab-text {
+  color: var(--ab-text) !important;
+}
+.theme-ab .ab-muted,
+.theme-ab-dark .ab-muted {
+  color: var(--ab-muted) !important;
 }
 
 /* Respect users who prefer reduced motion */

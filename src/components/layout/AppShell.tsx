@@ -1,9 +1,11 @@
 ﻿import React, { ReactNode, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
   Grid, TrendingUp, Bookmark, History, Flag,
-  Users, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare, Palette
+  Users, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare, Palette,
+  Trophy, Zap, Sparkles
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
@@ -18,13 +20,15 @@ import { useLanguage } from '../../lib/i18n';
 // NakamasLogo — SVG ψάθινο καπέλο με αχυρωτό στέλεχος
 // ─────────────────────────────────────────────
 function NakamasLogo({ className, compact = false }: { className?: string; compact?: boolean }) {
+  const theme = useStore((state) => state.theme);
+  const logoTextColor = theme === 'activebuddies' ? 'text-[hsl(220_14%_12%)]' : theme === 'activebuddies-dark' ? 'text-[hsl(210_20%_92%)]' : 'text-[#18D8DB]';
   return (
-    <div className={cn("flex items-baseline font-bold tracking-tight text-[#18D8DB] font-['Poppins']", className)}>
+    <div className={cn("flex items-baseline font-bold tracking-tight font-['Poppins']", logoTextColor, className)}>
       <div className="relative inline-block">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 120 90"
-          className="absolute -top-[0.65em] -left-[0.55em] w-[1.8em] h-[1.8em] origin-center -rotate-[8deg] z-10 pointer-events-none drop-shadow-sm"
+          className="absolute -top-[0.65em] -left-[0.55em] w-[1.8em] h-[1.8em] origin-center -rotate-[8deg] z-10 pointer-events-none drop-shadow"
         >
           {/* Chin strap back */}
           <path d="M 35 60 C 20 65, 15 75, 25 80" fill="none" stroke="#3F2A1B" strokeWidth="2" strokeLinecap="round" />
@@ -82,12 +86,12 @@ function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: N
   if (disabled) {
     return (
       <div
-        className={cn(`${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-gray-500" : "text-gray-400"} flex items-center gap-3 text-sm`, containerClass)}
+        className={cn(`${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-gray-500" : "text-gray-400"} flex items-center gap-3 text-sm`, containerClass)}
         title={label}
       >
         <Icon className={iconClass} />
         <span className={textClass}>{label}</span>
-      <span className={cn(`text-[9px] tracking-wide font-bold px-1.5 py-0.5 rounded ${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "bg-gray-700/40 text-gray-500" : "bg-gray-100 text-gray-500"}`, textClass)}>{t('Σύντομα', 'Soon')}</span>
+      <span className={cn(`text-[9px] tracking-wide font-bold px-1.5 py-0.5 rounded ${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "bg-gray-700/40 text-gray-500" : "bg-gray-100 text-gray-500"}`, textClass)}>{t('Σύντομα', 'Soon')}</span>
       </div>
     );
   }
@@ -100,7 +104,7 @@ function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: N
         cn(
           'flex items-center gap-3 rounded-xl lg:rounded-lg text-sm font-medium transition-colors group',
           containerClass,
-          isActive ? (theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-700/40 text-emerald-400 font-bold" : theme === "vibrant-dark" ? "bg-gray-700/40 text-fuchsia-400 font-bold" : theme === "vibrant" ? "bg-fuchsia-50 text-fuchsia-700 font-bold" : theme === "bento" ? "bg-indigo-50 text-indigo-700 font-bold" : theme === "neon" ? "bg-emerald-50 text-emerald-700 font-bold" : "bg-cyan-50 text-[#0E8B8D] font-bold") : (theme === "bento-dark" || theme === "neon-dark" ? "text-gray-300 hover:bg-gray-700/40 hover:text-white" : theme === "vibrant-dark" ? "text-gray-300 hover:bg-gray-700/40 hover:text-white" : theme === "vibrant" ? "text-gray-500 lg:text-gray-600 hover:bg-fuchsia-50/50 lg:hover:bg-fuchsia-50/30 hover:text-fuchsia-700" : theme === "bento" ? "text-gray-500 lg:text-gray-600 hover:bg-indigo-50/50 lg:hover:bg-indigo-50/30 hover:text-indigo-700" : theme === "neon" ? "text-gray-500 lg:text-gray-600 hover:bg-emerald-50/50 lg:hover:bg-emerald-50/30 hover:text-emerald-700" : "text-gray-500 lg:text-gray-600 hover:bg-gray-100 lg:hover:bg-gray-50 hover:text-[#111827]")
+          isActive ? (theme === "activebuddies-dark" ? "bg-gray-700/40 text-white font-bold" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] text-[hsl(220_14%_12%)] font-bold" : theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-700/40 text-emerald-400 font-bold" : theme === "vibrant-dark" ? "bg-gray-700/40 text-fuchsia-400 font-bold" : theme === "vibrant" ? "bg-fuchsia-50 text-fuchsia-700 font-bold" : theme === "bento" ? "bg-indigo-50 text-indigo-700 font-bold" : theme === "neon" ? "bg-emerald-50 text-emerald-700 font-bold" : "bg-cyan-50 text-[#0E8B8D] font-bold") : (theme === "activebuddies-dark" ? "text-gray-300 hover:bg-gray-700/40 hover:text-white" : theme === "activebuddies" ? "text-[hsl(220_9%_46%)] hover:bg-[hsl(220_14%_96%)] hover:text-[hsl(220_14%_12%)]" : theme === "bento-dark" || theme === "neon-dark" ? "text-gray-300 hover:bg-gray-700/40 hover:text-white" : theme === "vibrant-dark" ? "text-gray-300 hover:bg-gray-700/40 hover:text-white" : theme === "vibrant" ? "text-gray-500 lg:text-gray-600 hover:bg-fuchsia-50/50 lg:hover:bg-fuchsia-50/30 hover:text-fuchsia-700" : theme === "bento" ? "text-gray-500 lg:text-gray-600 hover:bg-indigo-50/50 lg:hover:bg-indigo-50/30 hover:text-indigo-700" : theme === "neon" ? "text-gray-500 lg:text-gray-600 hover:bg-emerald-50/50 lg:hover:bg-emerald-50/30 hover:text-emerald-700" : "text-gray-500 lg:text-gray-600 hover:bg-gray-100 lg:hover:bg-gray-50 hover:text-[#111827]")
         )
       }
     >
@@ -121,14 +125,15 @@ interface NavSectionProps {
 
 function NavSection({ title, children, compact = false }: NavSectionProps) {
   const theme = useStore((state) => state.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
+  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark' || theme === 'activebuddies-dark';
+  const isAB = theme === 'activebuddies' || theme === 'activebuddies-dark';
   return (
     <div className="mb-2 lg:mb-6">
       {compact && <div className={cn("block lg:hidden h-px my-4 mx-4", isDark ? "bg-gray-700" : "bg-gray-200")} />}
       <h3
         className={cn(
           'px-3 text-[13.35px] font-bold tracking-wide mb-2',
-          isDark ? 'text-gray-400' : 'text-[#6B7280]',
+          isDark ? 'text-gray-400' : isAB ? 'text-[hsl(220_9%_46%)]' : 'text-[#6B7280]',
           compact ? 'hidden lg:block' : 'block'
         )}
       >
@@ -162,6 +167,8 @@ function NavLinks({ compact = false }: { compact?: boolean }) {
       <NavSection title={t('Κοινότητα', 'Community')} compact={compact}>
         <NavItem to="/connections" icon={Users} label={t('Οι Nakamas μου', 'My Nakamas')} compact={compact} />
         <NavItem to="/chats" icon={MessageSquare} label={t('Ομαδικές Συνομιλίες', 'Group Chats')} compact={compact} />
+        <NavItem to="/leaderboard" icon={Trophy} label={t('Κατάταξη', 'Leaderboard')} compact={compact} />
+        <NavItem to="/challenges" icon={Zap} label={t('Προκλήσεις', 'Challenges')} compact={compact} />
       </NavSection>
 
       <NavSection title={t('Διοργάνωση', 'Host')} compact={compact}>
@@ -182,6 +189,7 @@ function NavLinks({ compact = false }: { compact?: boolean }) {
         <NavItem to="/settings" icon={Settings} label={t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')} compact={compact} />
         <NavItem to="/help" icon={HelpCircle} label={t('Κέντρο Βοήθειας', 'Help Center')} compact={compact} />
         <NavItem to="/admin" icon={Terminal} label={t('Διαχείριση & Έλεγχος', 'Admin & Moderation')} compact={compact} />
+        <NavItem to="/onboarding" icon={Sparkles} label={t('Οδηγός Εισαγωγής', 'Onboarding')} compact={compact} />
       </NavSection>
     </>
   );
@@ -192,10 +200,11 @@ function NavLinks({ compact = false }: { compact?: boolean }) {
 // ─────────────────────────────────────────────
 export function SideNav() {
   const theme = useStore((state) => state.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
+  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark' || theme === 'activebuddies-dark';
+  const isAB = theme === 'activebuddies' || theme === 'activebuddies-dark';
   return (
-    <aside className={cn("h-full flex-col shrink-0 hidden md:flex w-[88px] lg:w-64 transition-all duration-300 z-30 border-r", isDark ? "bg-gray-900/80 border-gray-700/50" : "bg-white border-[#E5E7EB]")}>
-      <div className={cn("h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b shrink-0", isDark ? "border-gray-700/50" : "border-[#E5E7EB]")}>
+    <aside className={cn("h-full flex-col shrink-0 hidden md:flex w-[88px] lg:w-64 transition-all duration-300 z-30 border-r", isDark ? (isAB ? "bg-[hsl(220_16%_8%)] border-[hsl(220_13%_18%)]" : "bg-gray-900/80 border-gray-700/50") : isAB ? "bg-white/50 backdrop-blur-xl border-[hsl(220_13%_92%)]/60" : "bg-white border-[#E5E7EB]")}>
+      <div className={cn("h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b shrink-0", isDark ? (isAB ? "border-[hsl(220_13%_18%)]" : "border-gray-700/50") : isAB ? "border-[hsl(220_13%_92%)]/60" : "border-[#E5E7EB]")}>
         <NakamasLogo className="text-[22px] lg:text-[26px]" />
       </div>
       <div className="flex-1 overflow-y-auto py-4 lg:py-6 px-2 lg:px-3">
@@ -215,7 +224,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   const isAuthenticated = useStore((state) => state.isAuthenticated);
   const theme = useStore((state) => state.theme);
   const setTheme = useStore((state) => state.setTheme);
-  const cycleTheme = () => { const themes = ['classic', 'vibrant', 'bento', 'neon', 'vibrant-dark', 'bento-dark', 'neon-dark']; const next = themes[(themes.indexOf(theme) + 1) % themes.length]; setTheme(next); };
+  const cycleTheme = () => { const themes = ['classic', 'vibrant', 'bento', 'neon', 'vibrant-dark', 'bento-dark', 'neon-dark', 'activebuddies', 'activebuddies-dark']; const next = themes[(themes.indexOf(theme) + 1) % themes.length]; setTheme(next); };
   const unreadNotificationCount = useUnreadCount();
   const [searchValue, setSearchValue] = useState('');
 
@@ -226,13 +235,13 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   return (
-    <nav className={cn("flex items-center justify-between px-4 lg:px-6 py-3 border-b h-16 shrink-0", theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-900/80 border-gray-700/50" : theme === "vibrant-dark" ? "bg-gray-900/80 border-gray-700/50" : theme === "vibrant" ? "bg-white border-fuchsia-100" : theme === "bento" ? "bg-white border-indigo-100" : theme === "neon" ? "bg-white border-emerald-100" : "bg-white border-[#E5E7EB]")}>
+    <nav className={cn("flex items-center justify-between px-4 lg:px-6 py-3 border-b h-16 shrink-0", theme === "activebuddies" ? "bg-white/80 backdrop-blur-xl border-[hsl(220_13%_92%)]/60" : theme === "activebuddies-dark" ? "border-gray-700/50" : theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-900/80 border-gray-700/50" : theme === "vibrant-dark" ? "bg-gray-900/80 border-gray-700/50" : theme === "vibrant" ? "bg-white border-fuchsia-100" : theme === "bento" ? "bg-white border-indigo-100" : theme === "neon" ? "bg-white border-emerald-100" : "bg-white border-[#E5E7EB]")}>
       <div className="flex items-center space-x-8">
         <div className="md:hidden">
           <NakamasLogo className="text-[22px]" />
         </div>
         <div className="hidden md:block">
-          <span className={`text-[14.58px] font-bold ${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-white" : "text-gray-400"} tracking-wide`}>{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
+          <span className={`text-[14.58px] font-bold tracking-wide ${theme === "activebuddies" ? "text-[hsl(220_14%_12%)] tracking-tight" : theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-gray-400"}`}>{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3">
@@ -243,13 +252,18 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
             onChange={e => setSearchValue(e.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={t('Αναζήτηση εκδηλώσεων...', 'Search events...')}
-            className={cn("w-64 py-1.5 pl-8 pr-3 text-[14.42px] border-transparent rounded-md focus:ring-1 outline-none", theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-800/50 text-white placeholder-gray-500 focus:bg-gray-700/60 focus:ring-emerald-500" : theme === "vibrant-dark" ? "bg-gray-800/50 text-white placeholder-gray-500 focus:bg-gray-700/60 focus:ring-fuchsia-500" : theme === "vibrant" ? "bg-fuchsia-50 focus:bg-white text-gray-900 focus:ring-fuchsia-400" : theme === "bento" ? "bg-indigo-50 focus:bg-white text-gray-900 focus:ring-indigo-400" : theme === "neon" ? "bg-emerald-50 focus:bg-white text-gray-900 focus:ring-emerald-400" : "bg-gray-100 focus:bg-white text-gray-900 focus:ring-cyan-500")}
+            className={cn("w-64 py-1.5 pl-8 pr-7 text-[14.42px] border outline-none transition-colors", theme === "activebuddies" ? "h-9 rounded-full border-[hsl(220_13%_92%)] bg-[hsl(220_14%_96%)] text-[hsl(220_14%_12%)] placeholder:text-[hsl(220_9%_60%)] focus:bg-white focus:border-[hsl(220_13%_72%)]" : theme === "activebuddies-dark" ? "rounded-md border-transparent bg-gray-800/50 text-white placeholder-gray-500 focus:bg-gray-700/60 focus:ring-1 focus:ring-gray-400" : theme === "bento-dark" || theme === "neon-dark" ? "rounded-md border-transparent bg-gray-800/50 text-white placeholder-gray-500 focus:bg-gray-700/60 focus:ring-1 focus:ring-emerald-500" : theme === "vibrant-dark" ? "rounded-md border-transparent bg-gray-800/50 text-white placeholder-gray-500 focus:bg-gray-700/60 focus:ring-1 focus:ring-fuchsia-500" : theme === "vibrant" ? "rounded-md border-transparent bg-fuchsia-50 focus:bg-white text-gray-900 focus:ring-1 focus:ring-fuchsia-400" : theme === "bento" ? "rounded-md border-transparent bg-indigo-50 focus:bg-white text-gray-900 focus:ring-1 focus:ring-indigo-400" : theme === "neon" ? "rounded-md border-transparent bg-emerald-50 focus:bg-white text-gray-900 focus:ring-1 focus:ring-emerald-400" : "rounded-md border-transparent bg-gray-100 focus:bg-white text-gray-900 focus:ring-1 focus:ring-cyan-500")}
           />
-          <Search className={`absolute w-4 h-4 ${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-white" : "text-gray-400"} left-2.5 top-2`} />
+          <Search className={`absolute w-4 h-4 ${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-gray-400"} left-2.5 top-2`} />
+          {searchValue && (
+            <button onClick={() => setSearchValue('')} className="absolute right-2 top-1.5 text-gray-400 hover:text-gray-600">
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         {/* Theme Toggle */}
-        <button onClick={cycleTheme} className={cn("flex items-center gap-1 text-[11.33px] font-bold transition-colors px-2.5 py-1.5 rounded-lg", theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-800/40 text-gray-300 hover:text-emerald-400 hover:bg-gray-700/50" : theme === "vibrant-dark" ? "bg-gray-800/40 text-gray-300 hover:text-fuchsia-400 hover:bg-gray-700/50" : theme === "vibrant" ? "bg-fuchsia-50 text-fuchsia-600 hover:text-fuchsia-700 hover:bg-fuchsia-100" : theme === "bento" ? "bg-indigo-50 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-100" : theme === "neon" ? "bg-emerald-50 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100" : "bg-gray-100 text-gray-500 hover:text-[#0E8B8D] hover:bg-cyan-50")} title={t('Αλλαγή θέματος','Toggle theme')} aria-label={t('Αλλαγή θέματος','Toggle theme')}>
+        <button onClick={cycleTheme} className={cn("flex items-center gap-1 text-[11.33px] font-bold transition-colors px-2.5 py-1.5 rounded-lg", theme === "activebuddies-dark" ? "bg-gray-800/40 text-gray-300 hover:text-gray-100 hover:bg-gray-700/50" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] text-[hsl(220_9%_46%)] hover:text-[hsl(220_14%_12%)] hover:bg-[hsl(220_13%_92%)]" : theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-800/40 text-gray-300 hover:text-emerald-400 hover:bg-gray-700/50" : theme === "vibrant-dark" ? "bg-gray-800/40 text-gray-300 hover:text-fuchsia-400 hover:bg-gray-700/50" : theme === "vibrant" ? "bg-fuchsia-50 text-fuchsia-600 hover:text-fuchsia-700 hover:bg-fuchsia-100" : theme === "bento" ? "bg-indigo-50 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-100" : theme === "neon" ? "bg-emerald-50 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100" : "bg-gray-100 text-gray-500 hover:text-[#0E8B8D] hover:bg-cyan-50")} title={t('Αλλαγή θέματος','Toggle theme')} aria-label={t('Αλλαγή θέματος','Toggle theme')}>
           <Palette className="w-4 h-4" />
           <span className="hidden sm:inline capitalize">{theme}</span>
         </button>
@@ -257,17 +271,17 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         {/* Language Toggle */}
         <button
           onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
-          className={cn("flex items-center gap-1 text-[11.33px] font-bold transition-colors px-2.5 py-1.5 rounded-lg", theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-800/40 text-gray-300 hover:text-emerald-400 hover:bg-gray-700/50" : theme === "vibrant-dark" ? "bg-gray-800/40 text-gray-300 hover:text-fuchsia-400 hover:bg-gray-700/50" : theme === "vibrant" ? "bg-fuchsia-50 text-fuchsia-600 hover:text-fuchsia-700 hover:bg-fuchsia-100" : theme === "bento" ? "bg-indigo-50 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-100" : theme === "neon" ? "bg-emerald-50 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100" : "bg-gray-100 text-gray-500 hover:text-[#0E8B8D] hover:bg-cyan-50")}
+          className={cn("flex items-center gap-1 text-[11.33px] font-bold transition-colors px-2.5 py-1.5 rounded-lg", theme === "activebuddies-dark" ? "bg-gray-800/40 text-gray-300 hover:text-gray-100 hover:bg-gray-700/50" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] text-[hsl(220_9%_46%)] hover:text-[hsl(220_14%_12%)] hover:bg-[hsl(220_13%_92%)]" : theme === "bento-dark" || theme === "neon-dark" ? "bg-gray-800/40 text-gray-300 hover:text-emerald-400 hover:bg-gray-700/50" : theme === "vibrant-dark" ? "bg-gray-800/40 text-gray-300 hover:text-fuchsia-400 hover:bg-gray-700/50" : theme === "vibrant" ? "bg-fuchsia-50 text-fuchsia-600 hover:text-fuchsia-700 hover:bg-fuchsia-100" : theme === "bento" ? "bg-indigo-50 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-100" : theme === "neon" ? "bg-emerald-50 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100" : "bg-gray-100 text-gray-500 hover:text-[#0E8B8D] hover:bg-cyan-50")}
           aria-label={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')} title={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')}
         >
           <Globe className="w-3.5 h-3.5" />
           {language === 'el' ? 'EN' : 'EL'}
         </button>
 
-        <NavLink aria-label={unreadNotificationCount > 0 ? `${t('Ειδοποιήσεις','Notifications')} (${unreadNotificationCount})` : t('Ειδοποιήσεις','Notifications')} to="/notifications" className={cn("relative transition-colors", theme === "bento-dark" || theme === "neon-dark" ? "text-white hover:text-emerald-400" : theme === "vibrant-dark" ? "text-white hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-500 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-500 hover:text-indigo-600" : theme === "neon" ? "text-gray-500 hover:text-emerald-600" : "text-gray-500 hover:text-[#0E8B8D]")}>
+        <NavLink aria-label={unreadNotificationCount > 0 ? `${t('Ειδοποιήσεις','Notifications')} (${unreadNotificationCount})` : t('Ειδοποιήσεις','Notifications')} to="/notifications" className={cn("relative transition-colors", theme === "activebuddies-dark" ? "text-white hover:text-gray-300" : theme === "activebuddies" ? "text-[hsl(220_9%_46%)] hover:text-[hsl(220_14%_12%)]" : theme === "bento-dark" || theme === "neon-dark" ? "text-white hover:text-emerald-400" : theme === "vibrant-dark" ? "text-white hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-500 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-500 hover:text-indigo-600" : theme === "neon" ? "text-gray-500 hover:text-emerald-600" : "text-gray-500 hover:text-[#0E8B8D]")}>
           <Bell className="h-[18px] w-[18px]" />
           {unreadNotificationCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#18D8DB] text-[9.27px] text-white font-bold border border-white">
+            <span className={cn("absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-[9.27px] font-bold border", theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] text-white border-white' : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] border-[hsl(220_16%_8%)]' : 'bg-[#18D8DB] text-white border-white')}>
               {unreadNotificationCount}
             </span>
           )}
@@ -277,10 +291,10 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           {currentUser ? (
             <NavLink to="/profile" className="flex items-center space-x-2 relative group">
               <div className="hidden sm:flex flex-col items-end">
-                <span className={cn("text-[10.3px] font-bold tracking-wide", theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-[#0E8B8D]")}>{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
-                <span className={cn("text-[11.33px] font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-white" : "text-[#111827]")}>{currentUser.name}</span>
+                <span className={cn("text-[10.3px] font-bold tracking-wide", theme === "activebuddies" || theme === "activebuddies-dark" ? "text-[hsl(220_9%_46%)]" : theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-[#0E8B8D]")}>{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
+                <span className={cn("text-[11.33px] font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-[#111827]")}>{currentUser.name}</span>
               </div>
-              <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-[10px] overflow-hidden border", theme === "vibrant-dark" ? "bg-fuchsia-900/30 border-fuchsia-700 text-fuchsia-400" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "vibrant" ? "bg-fuchsia-100 border-fuchsia-200 text-fuchsia-700" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-[#0E8B8D]")}>
+              <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-[10px] overflow-hidden border", theme === "activebuddies-dark" ? "bg-gray-700/50 border-gray-600 text-gray-200" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] border-[hsl(220_13%_92%)] text-[hsl(220_14%_12%)]" : theme === "vibrant-dark" ? "bg-fuchsia-900/30 border-fuchsia-700 text-fuchsia-400" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "vibrant" ? "bg-fuchsia-100 border-fuchsia-200 text-fuchsia-700" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-[#0E8B8D]")}>
                 {currentUser.photoUrl ? (
                   <img src={currentUser.photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
                 ) : (
@@ -291,14 +305,14 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           ) : (
             <button
               onClick={() => navigate('/login')}
-              className="text-xs font-bold text-white bg-cyan-600 hover:bg-cyan-700 px-3 py-1.5 rounded-full transition-colors"
+              className={cn("text-xs font-bold text-white px-3 py-1.5 rounded-full transition-colors", theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] hover:bg-black' : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] hover:bg-white' : 'bg-cyan-600 hover:bg-cyan-700')}
             >
               {t('Σύνδεση', 'Login')}
             </button>
           )}
         </div>
 
-        <button onClick={onMenuClick} aria-label={t('Άνοιγμα μενού','Open menu')} className={cn("md:hidden", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-gray-300 hover:text-white" : "text-gray-500 hover:text-[#111827]")}>
+        <button onClick={onMenuClick} aria-label={t('Άνοιγμα μενού','Open menu')} className={cn("md:hidden", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-gray-300 hover:text-white" : "text-gray-500 hover:text-[#111827]")}>
           <Menu className="h-[22px] w-[22px]" />
         </button>
       </div>
@@ -312,52 +326,48 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
 export function BottomNav() { const theme = useStore(s=>s.theme);
   const { t } = useLanguage();
   return (
-    <div className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "bg-gray-900/85 border-gray-700/50" : "bg-white/95 border-gray-200")}>
-      <NavLink
-        to="/"
-        className={({ isActive }) =>
-          cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]", isActive ? (theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "vibrant" ? "text-fuchsia-600" : theme === "bento" ? "text-indigo-600" : theme === "neon" ? "text-emerald-600" : "text-[#0E8B8D]") : (theme === "bento-dark" || theme === "neon-dark" ? "text-gray-400 hover:text-emerald-400" : theme === "vibrant-dark" ? "text-gray-400 hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-400 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-400 hover:text-indigo-600" : theme === "neon" ? "text-gray-400 hover:text-emerald-600" : "text-gray-400 hover:text-[#0E8B8D]"))
-        }
-      >
-        <Compass className="h-[18px] w-[18px]" strokeWidth={2.2} />
-        <span className="text-[8px] font-medium leading-none">{t('Ανακάλυψη', 'Discover')}</span>
-      </NavLink>
-      <NavLink
-        to="/plans"
-        className={({ isActive }) =>
-          cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]", isActive ? (theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "vibrant" ? "text-fuchsia-600" : theme === "bento" ? "text-indigo-600" : theme === "neon" ? "text-emerald-600" : "text-[#0E8B8D]") : (theme === "bento-dark" || theme === "neon-dark" ? "text-gray-400 hover:text-emerald-400" : theme === "vibrant-dark" ? "text-gray-400 hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-400 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-400 hover:text-indigo-600" : theme === "neon" ? "text-gray-400 hover:text-emerald-600" : "text-gray-400 hover:text-[#0E8B8D]"))
-        }
-      >
-        <CalendarCheck className="h-[18px] w-[18px]" strokeWidth={2.2} />
-        <span className="text-[8px] font-medium leading-none">{t('Σχέδια', 'Plans')}</span>
-      </NavLink>
+    <div className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50", theme === "activebuddies-dark" ? "bg-[hsl(220_16%_11%)]/90 border-[hsl(220_13%_18%)]" : theme === "activebuddies" ? "bg-white/95 border-[hsl(220_13%_92%)]" : theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "bg-gray-900/85 border-gray-700/50" : "bg-white/95 border-gray-200")}>
+      {([
+        { to: "/", icon: Compass, labelGr: 'Ανακάλυψη', labelEn: 'Discover' },
+        { to: "/plans", icon: CalendarCheck, labelGr: 'Σχέδια', labelEn: 'Plans' },
+      ] as const).map(({ to, icon: Icon, labelGr, labelEn }) => (
+        <NavLink key={to} to={to}
+          className={({ isActive }) =>
+            cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]",
+              isActive
+                ? theme === "activebuddies-dark" || theme === "activebuddies" ? "text-[hsl(220_14%_12%)] dark:text-white font-bold" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "vibrant" ? "text-fuchsia-600" : theme === "bento" ? "text-indigo-600" : theme === "neon" ? "text-emerald-600" : "text-[#0E8B8D]"
+                : theme === "activebuddies-dark" ? "text-gray-400 hover:text-white" : theme === "activebuddies" ? "text-[hsl(220_9%_46%)] hover:text-[hsl(220_14%_12%)]" : theme === "bento-dark" || theme === "neon-dark" ? "text-gray-400 hover:text-emerald-400" : theme === "vibrant-dark" ? "text-gray-400 hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-400 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-400 hover:text-indigo-600" : theme === "neon" ? "text-gray-400 hover:text-emerald-600" : "text-gray-400 hover:text-[#0E8B8D]")
+          }
+        >
+          <Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
+          <span className="text-[8px] font-medium leading-none">{t(labelGr, labelEn)}</span>
+        </NavLink>
+      ))}
       <div className="flex flex-col items-center justify-center -mt-6">
         <NavLink
           to="/create"
-          className={cn("w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-colors border-[3px] border-white", theme === "vibrant" || theme === "vibrant-dark" ? "bg-gradient-to-br from-fuchsia-600 to-orange-500 text-white hover:opacity-90" : theme === "bento" ? "bg-gradient-to-br from-indigo-600 to-violet-500 text-white hover:opacity-90" : theme === "neon" || theme === "neon-dark" ? "bg-gradient-to-br from-emerald-500 to-teal-500 text-white hover:opacity-90" : "bg-[#111827] text-white hover:bg-black")}
+          className={cn("w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-colors border-[3px] border-white", theme === "activebuddies" || theme === "activebuddies-dark" ? "bg-[hsl(220_14%_12%)] text-white hover:bg-black" : theme === "vibrant" || theme === "vibrant-dark" ? "bg-gradient-to-br from-fuchsia-600 to-orange-500 text-white hover:opacity-90" : theme === "bento" ? "bg-gradient-to-br from-indigo-600 to-violet-500 text-white hover:opacity-90" : theme === "neon" || theme === "neon-dark" ? "bg-gradient-to-br from-emerald-500 to-teal-500 text-white hover:opacity-90" : "bg-[#111827] text-white hover:bg-black")}
         >
           <Plus className="h-[20px] w-[20px]" strokeWidth={2.5} />
         </NavLink>
-        <span className={`text-[8px] font-medium mt-1 ${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-gray-400" : "text-gray-500"}`}>{t('Δημιουργία', 'Create')}</span>
+        <span className={`text-[8px] font-medium mt-1 ${theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-gray-400" : "text-gray-500"}`}>{t('Δημιουργία', 'Create')}</span>
       </div>
-      <NavLink
-        to="/trust"
-        className={({ isActive }) =>
-          cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]", isActive ? (theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "vibrant" ? "text-fuchsia-600" : theme === "bento" ? "text-indigo-600" : theme === "neon" ? "text-emerald-600" : "text-[#0E8B8D]") : (theme === "bento-dark" || theme === "neon-dark" ? "text-gray-400 hover:text-emerald-400" : theme === "vibrant-dark" ? "text-gray-400 hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-400 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-400 hover:text-indigo-600" : theme === "neon" ? "text-gray-400 hover:text-emerald-600" : "text-gray-400 hover:text-[#0E8B8D]"))
-        }
-      >
-        <ShieldCheck className="h-[18px] w-[18px]" strokeWidth={2.2} />
-        <span className="text-[8px] font-medium leading-none">{t('Εμπιστοσύνη', 'Trust')}</span>
-      </NavLink>
-      <NavLink
-        to="/profile"
-        className={({ isActive }) =>
-          cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]", isActive ? (theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "vibrant" ? "text-fuchsia-600" : theme === "bento" ? "text-indigo-600" : theme === "neon" ? "text-emerald-600" : "text-[#0E8B8D]") : (theme === "bento-dark" || theme === "neon-dark" ? "text-gray-400 hover:text-emerald-400" : theme === "vibrant-dark" ? "text-gray-400 hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-400 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-400 hover:text-indigo-600" : theme === "neon" ? "text-gray-400 hover:text-emerald-600" : "text-gray-400 hover:text-[#0E8B8D]"))
-        }
-      >
-        <User className="h-[18px] w-[18px]" strokeWidth={2.2} />
-        <span className="text-[8px] font-medium leading-none">{t('Προφίλ', 'Profile')}</span>
-      </NavLink>
+      {([
+        { to: "/trust", icon: ShieldCheck, labelGr: 'Εμπιστοσύνη', labelEn: 'Trust' },
+        { to: "/profile", icon: User, labelGr: 'Προφίλ', labelEn: 'Profile' },
+      ] as const).map(({ to, icon: Icon, labelGr, labelEn }) => (
+        <NavLink key={to} to={to}
+          className={({ isActive }) =>
+            cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px]",
+              isActive
+                ? theme === "activebuddies-dark" ? "text-white font-bold" : theme === "activebuddies" ? "text-[hsl(220_14%_12%)] font-bold" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "vibrant" ? "text-fuchsia-600" : theme === "bento" ? "text-indigo-600" : theme === "neon" ? "text-emerald-600" : "text-[#0E8B8D]"
+                : theme === "activebuddies-dark" ? "text-gray-400 hover:text-white" : theme === "activebuddies" ? "text-[hsl(220_9%_46%)] hover:text-[hsl(220_14%_12%)]" : theme === "bento-dark" || theme === "neon-dark" ? "text-gray-400 hover:text-emerald-400" : theme === "vibrant-dark" ? "text-gray-400 hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-400 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-400 hover:text-indigo-600" : theme === "neon" ? "text-gray-400 hover:text-emerald-600" : "text-gray-400 hover:text-[#0E8B8D]")
+          }
+        >
+          <Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
+          <span className="text-[8px] font-medium leading-none">{t(labelGr, labelEn)}</span>
+        </NavLink>
+      ))}
     </div>
   );
 }
@@ -371,15 +381,15 @@ export function AppShell({ children }: { children: ReactNode }) {
   const theme = useStore((state) => state.theme);
 
   return (
-    <div className={cn("flex h-screen w-full font-sans antialiased overflow-hidden", theme === 'bento-dark' ? 'bg-[#131318] text-white' : theme === 'neon-dark' ? 'bg-[#101e17] text-white' : theme === 'vibrant-dark' ? 'bg-[#1a1020] text-white' : theme === 'vibrant' ? 'bg-[#FDF2F8] text-[#111827]' : theme === 'bento' ? 'bg-[#F5F3FF] text-[#111827]' : theme === 'neon' ? 'bg-[#ECFDF5] text-[#111827]' : 'bg-[#F3F4F6] text-[#111827]')}>
+    <div className={cn("flex h-screen w-full font-sans antialiased overflow-hidden", theme === 'activebuddies-dark' ? 'theme-ab-dark bg-[hsl(220_16%_8%)] text-[hsl(210_20%_92%)]' : theme === 'activebuddies' ? 'theme-ab bg-[hsl(0_0%_99%)] text-[hsl(220_14%_12%)]' : theme === 'bento-dark' ? 'bg-[#131318] text-white' : theme === 'neon-dark' ? 'bg-[#101e17] text-white' : theme === 'vibrant-dark' ? 'bg-[#1a1020] text-white' : theme === 'vibrant' ? 'bg-[#FDF2F8] text-[#111827]' : theme === 'bento' ? 'bg-[#F5F3FF] text-[#111827]' : theme === 'neon' ? 'bg-[#ECFDF5] text-[#111827]' : 'bg-[#F3F4F6] text-[#111827]')}>
       <SideNav />
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
-          <div className={cn("relative w-64 max-w-sm h-full shadow-xl flex flex-col z-50", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "bg-gray-900/90 border-r border-gray-700/50" : "bg-white")}>
+          <div className={cn("relative w-64 max-w-sm h-full shadow-xl flex flex-col z-50", theme === "activebuddies-dark" ? "bg-[hsl(220_16%_8%)] border-r border-[hsl(220_13%_18%)]" : theme === "activebuddies" ? "bg-white border-r border-[hsl(220_13%_92%)]" : theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "bg-gray-900/90 border-r border-gray-700/50" : "bg-white")}>
             <div className="h-14 flex items-center justify-between px-6 border-b border-[#E5E7EB] shrink-0">
               <NakamasLogo className="text-[22px]" />
-              <button onClick={() => setIsMobileMenuOpen(false)} aria-label={t('Κλείσιμο μενού', 'Close menu')} className={cn(theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" ? "text-white hover:text-white" : "text-gray-500 hover:text-[#111827]")}>
+              <button onClick={() => setIsMobileMenuOpen(false)} aria-label={t('Κλείσιμο μενού', 'Close menu')} className={cn(theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white hover:text-white" : "text-gray-500 hover:text-[#111827]")}>
                 <X className="h-6 w-6" />
               </button>
             </div>
@@ -412,6 +422,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </footer>
         <BottomNav />
       </div>
+      <Toaster position="top-right" richColors closeButton />
     </div>
   );
 }
