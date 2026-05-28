@@ -62,7 +62,7 @@ export default function SettingsAndPrivacyClassic() {
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="mb-2">
-        <h1 className="text-[20.104264919475px] md:text-[26.7902365993px] font-bold text-[#111827]">{t(`Ρυθμίσεις & Απόρρητο`, `Settings & Privacy`)}</h1>
+        <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{t(`Ρυθμίσεις & Απόρρητο`, `Settings & Privacy`)}</h1>
         <p className="text-gray-500 font-medium text-[13.55510121105px] md:text-[14.626916949961px] mt-1">{t(`Διαχειριστείτε τον λογαριασμό σας`, `Manage your account`)}</p>
       </div>
 

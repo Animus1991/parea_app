@@ -150,7 +150,7 @@ export default function AchievementsPageContent() {
       <Card className={cn("p-4 border", a.challengeBg)}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={cn("w-9 h-9 rounded-full flex items-center justify-center shadow-sm", a.isDark ? "bg-gray-800/60" : "bg-white")}>
+            <div className={cn("w-9 h-9 rounded-full flex items-center justify-center shadow-soft", a.isDark ? "bg-gray-800/60" : "bg-white")}>
               <Sparkles className="w-4 h-4 text-purple-500" />
             </div>
             <div>

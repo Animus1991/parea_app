@@ -9,29 +9,29 @@ export default function AdminDashboardClassic() {
   return (
     <div className="mx-auto max-w-full space-y-8 pb-12">
       <div>
-        <h1 className="text-[26.7902365993px] font-bold text-red-700">{t(`Πίνακας Διαχείρισης`, `Admin Dashboard`)}</h1>
+        <h1 className="text-[16px] md:text-[18px] font-bold text-red-700">{t(`Πίνακας Διαχείρισης`, `Admin Dashboard`)}</h1>
         <p className="mt-1 text-[13.551608211075px] text-gray-500 font-medium">{t(`Εποπτεία πλατφόρμας & μετριασμός`, `Platform oversight & moderation`)}</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className="p-4 border-t-4 border-t-blue-500">
           <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Ενεργοί`, `Active`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">127</p>
+          <p className="text-[20px] font-black text-[#111827] mt-1">127</p>
           <p className="text-[11.2px] text-green-500 font-bold flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />+8%</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-cyan-500">
           <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Αναφορές`, `Reports`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">4</p>
+          <p className="text-[20px] font-black text-[#111827] mt-1">4</p>
           <p className="text-[11.2px] text-amber-500 font-bold">{t(`εκκρεμείς`, `pending`)}</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-red-500">
           <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Αποκλεισμένοι`, `Banned`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">1</p>
+          <p className="text-[20px] font-black text-[#111827] mt-1">1</p>
           <p className="text-[11.2px] text-gray-400 font-medium">{t(`συνολικά`, `total`)}</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-emerald-500">
           <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wider">{t(`Εκδηλώσεις`, `Events`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">48</p>
+          <p className="text-[20px] font-black text-[#111827] mt-1">48</p>
           <p className="text-[11.2px] text-gray-400 font-medium">{t(`αυτή τη βδομάδα`, `this week`)}</p>
         </Card>
       </div>
@@ -78,8 +78,8 @@ export default function AdminDashboardClassic() {
                  </div>
               </div>
               <div className="flex gap-2">
-                <button className="text-[18px]  tracking-wider bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded font-bold transition-colors shadow-sm border border-gray-200">{t(`Εξέταση`, `Review`)}</button>
-                <button className="text-[18px]  tracking-wider bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded font-bold transition-colors border border-red-200">{t(`Αποκλεισμός`, `Ban`)}</button>
+                <button className="text-[12px] tracking-wider bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded-2xl font-bold transition-all duration-200 shadow-soft border border-gray-100">{t(`Εξέταση`, `Review`)}</button>
+                <button className="text-[12px] tracking-wider bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded font-bold transition-colors border border-red-200">{t(`Αποκλεισμός`, `Ban`)}</button>
               </div>
             </Card>
 
@@ -87,12 +87,12 @@ export default function AdminDashboardClassic() {
               <div className="flex items-start gap-3">
                  <div className="mt-1"><ShieldAlert className="h-4 w-4 text-red-500" /></div>
                  <div>
-                   <p className="font-bold text-[#111827] text-[18px]">{t(`Ύποπτος λογαριασμός — πολλαπλές no-shows`, `Suspicious account — multiple no-shows`)}</p>
+                   <p className="font-bold text-[#111827] text-[13px]">{t(`Ύποπτος λογαριασμός — πολλαπλές no-shows`, `Suspicious account — multiple no-shows`)}</p>
                    <p className="text-[15px] text-gray-500 mt-0.5 leading-relaxed">{t(`3 no-shows τον τελευταίο μήνα`, `3 no-shows in the last month`)}</p>
                  </div>
               </div>
               <div className="flex gap-2 shrink-0">
-                <button className="text-[18px]  tracking-wider bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded font-bold shadow-sm transition-colors">{t(`Αναστολή`, `Suspend`)}</button>
+                <button className="text-[12px] tracking-wider bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-2xl font-bold shadow-soft transition-all duration-200">{t(`Αναστολή`, `Suspend`)}</button>
               </div>
             </Card>
           </div>
@@ -100,23 +100,23 @@ export default function AdminDashboardClassic() {
 
         <div className="md:col-span-5 relative">
           <div className="sticky top-24">
-            <h2 className="text-[18px] font-bold text-[#111827] tracking-wide mb-6 flex items-center gap-2">
+            <h2 className="text-[14px] font-bold text-[#111827] tracking-wide mb-6 flex items-center gap-2">
               <Flag className="h-4 w-4 text-gray-400" />{t(`Γρήγορη Ενέργεια`, `Quick Action`)}</h2>
             <Card className="p-5 bg-gray-50 border-gray-200">
-              <p className="text-[18px] text-gray-500 font-bold tracking-wide mb-4">{t(`Αναζήτηση Χρήστη`, `Search User`)}</p>
+              <p className="text-[12px] text-gray-500 font-bold tracking-wide mb-4">{t(`Αναζήτηση Χρήστη`, `Search User`)}</p>
               
               <div className="space-y-4">
                 <div>
-                  <label className="text-[15px] font-bold text-[#111827] mb-1.5 block">{t(`Email ή ID`, `Email or ID`)}</label>
+                  <label className="text-[12px] font-bold text-[#111827] mb-1.5 block">{t(`Email ή ID`, `Email or ID`)}</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input type="text" placeholder={t(`Αναζήτηση...`, `Search...`)} className="w-full pl-9 pr-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none" />
+                    <input type="text" placeholder={t(`Αναζήτηση...`, `Search...`)} className="w-full pl-9 pr-3 py-2 text-[13px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none" />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-[15px] font-bold text-[#111827] mb-1.5 block">{t(`Ενέργεια`, `Action`)}</label>
-                  <select className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none bg-white">
+                  <label className="text-[12px] font-bold text-[#111827] mb-1.5 block">{t(`Ενέργεια`, `Action`)}</label>
+                  <select className="w-full px-3 py-2 text-[12px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none bg-white">
                     <option>{t(`Προειδοποίηση`, `Warning`)}</option>
                     <option>{t(`Αναστολή 7 ημέρες`, `Suspend 7 days`)}</option>
                     <option>{t(`Μόνιμος αποκλεισμός`, `Permanent ban`)}</option>
@@ -125,8 +125,8 @@ export default function AdminDashboardClassic() {
                 </div>
                 
                 <div>
-                  <label className="text-[15px] font-bold text-[#111827] mb-1.5 block">{t(`Σημείωση`, `Note`)}</label>
-                  <textarea rows={3} placeholder={t(`Αιτιολογία...`, `Reason...`)} className="w-full px-3 py-2 text-[18px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none resize-none"></textarea>
+                  <label className="text-[12px] font-bold text-[#111827] mb-1.5 block">{t(`Σημείωση`, `Note`)}</label>
+                  <textarea rows={3} placeholder={t(`Αιτιολογία...`, `Reason...`)} className="w-full px-3 py-2 text-[13px] border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none resize-none"></textarea>
                 </div>
                 
                 <Button className="w-full bg-[#111827]">{t(`Εφαρμογή`, `Apply`)}</Button>

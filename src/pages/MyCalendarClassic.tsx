@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, MapPin, CheckCircle } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, MapPin, CheckCircle, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   format, addDays, startOfWeek, addWeeks, subWeeks,
@@ -10,6 +10,22 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
 
+function generateICS(events: { title: string; date: string; time: string; locationArea: string }[]): string {
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Nakamas//Calendar//EN'];
+  for (const ev of events) {
+    const dt = new Date(`${ev.date}T${ev.time || '00:00'}`);
+    const dtStr = isNaN(dt.getTime()) ? '' : dt.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    if (!dtStr) continue;
+    lines.push('BEGIN:VEVENT');
+    lines.push(`DTSTART:${dtStr}`);
+    lines.push(`SUMMARY:${ev.title}`);
+    lines.push(`LOCATION:${ev.locationArea}`);
+    lines.push('END:VEVENT');
+  }
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
 export default function MyCalendarClassic() {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -17,11 +33,27 @@ export default function MyCalendarClassic() {
   const [view, setView] = useState<'week' | 'month'>('week');
   
   const events = useStore((state) => state.events);
+  const waitlistedEvents = useStore((state) => state.waitlistedEvents);
+  const groups = useStore((state) => state.groups);
+  const currentUser = useStore((state) => state.currentUser);
 
-  const upcomingEvents = events.slice(0, 3).map((e, idx) => ({
-    ...e,
-    parsedDate: addDays(new Date(), idx * 2)
-  }));
+  const now = new Date();
+
+  const userGroupEventIds = currentUser
+    ? new Set(groups.filter(g => g.members.includes(currentUser.id)).map(g => g.eventId))
+    : new Set<string>();
+  const userEventIds = new Set([...waitlistedEvents, ...userGroupEventIds]);
+
+  const upcomingEvents = events
+    .filter((e) => {
+      const d = new Date(e.date);
+      if (isNaN(d.getTime())) return false;
+      if (d < now) return false;
+      return userEventIds.size > 0 ? userEventIds.has(e.id) : true;
+    })
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 8)
+    .map((e) => ({ ...e, parsedDate: new Date(e.date) }));
 
   const prevPeriod = () => {
     if (view === 'week') setCurrentDate(subWeeks(currentDate, 1));
@@ -31,6 +63,17 @@ export default function MyCalendarClassic() {
   const nextPeriod = () => {
     if (view === 'week') setCurrentDate(addWeeks(currentDate, 1));
     else setCurrentDate(addMonths(currentDate, 1));
+  };
+
+  const handleExportICS = () => {
+    const icsContent = generateICS(upcomingEvents);
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'nakamas-calendar.ics';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
@@ -47,27 +90,39 @@ export default function MyCalendarClassic() {
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#111827]">{t('Το Ημερολόγιό μου', 'My Calendar')}</h1>
+          <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{t('Το Ημερολόγιό μου', 'My Calendar')}</h1>
           <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">{t('Διαχειριστείτε το πρόγραμμά σας και τις προσεχείς εμπειρίες.', 'Manage your schedule and upcoming experiences.')}</p>
         </div>
         
-        <div className="flex bg-gray-100 p-1 rounded-lg">
+        <div className="flex items-center gap-2">
+          {upcomingEvents.length > 0 && (
+            <button
+              onClick={handleExportICS}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl border border-gray-100 bg-white text-[12.5px] font-bold text-gray-700 hover:bg-gray-50 hover:border-[#a5f3fc] transition-all duration-200 shadow-soft"
+              title={t('Εξαγωγή ως .ics', 'Export as .ics')}
+            >
+              <Download className="w-3.5 h-3.5 text-cyan-600" />
+              {t('Εξαγωγή', 'Export')}
+            </button>
+          )}
+        <div className="flex gap-2">
           <button 
-            className={`px-4 py-1.5 rounded-md text-xs font-bold transition-colors ${view === 'week' ? 'bg-white shadow-sm text-[#111827]' : 'text-gray-500'}`}
+            className={`px-4 py-1.5 text-xs font-bold transition-all duration-200 ${view === 'week' ? 'btn-pill-active' : 'btn-pill-inactive'}`}
             onClick={() => setView('week')}
           >
             {t('Εβδομάδα', 'Week')}
           </button>
           <button 
-            className={`px-4 py-1.5 rounded-md text-xs font-bold transition-colors ${view === 'month' ? 'bg-white shadow-sm text-[#111827]' : 'text-gray-500'}`}
+            className={`px-4 py-1.5 text-xs font-bold transition-all duration-200 ${view === 'month' ? 'btn-pill-active' : 'btn-pill-inactive'}`}
             onClick={() => setView('month')}
           >
             {t('Μήνας', 'Month')}
           </button>
         </div>
+        </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-soft">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h2 className="font-bold text-[#111827] text-lg">
             {format(currentDate, 'MMMM yyyy')}
@@ -76,7 +131,7 @@ export default function MyCalendarClassic() {
             <button onClick={prevPeriod} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" aria-label={t('Προηγούμενη περίοδος', 'Previous period')}>
               <ChevronLeft className="w-5 h-5 text-gray-600" />
             </button>
-            <button onClick={() => setCurrentDate(new Date())} className="px-3 py-1 text-xs font-bold bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+            <button onClick={() => setCurrentDate(new Date())} className="px-3 py-1 text-xs font-bold bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-all duration-200">
               {t('Σήμερα', 'Today')}
             </button>
             <button onClick={nextPeriod} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors" aria-label={t('Επόμενη περίοδος', 'Next period')}>
@@ -108,7 +163,7 @@ export default function MyCalendarClassic() {
               
               <div className="space-y-3 mt-6">
                 {upcomingEvents.map((event, idx) => (
-                  <div key={idx} className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-cyan-100 hover:bg-cyan-50/30 transition-colors cursor-pointer" onClick={() => navigate(`/events/${event.id}`)}>
+                  <div key={idx} className="flex gap-4 p-4 rounded-2xl border border-gray-100 hover:border-[#a5f3fc] hover:bg-cyan-50/30 transition-all duration-200 cursor-pointer shadow-soft" onClick={() => navigate(`/events/${event.id}`)}>
                     <div className="flex flex-col items-center justify-center w-16 shrink-0 border-r border-gray-100 pr-4">
                       <span className="text-xs font-bold text-gray-400">{format(event.parsedDate, 'MMM')}</span>
                       <span className="text-2xl font-black text-[#111827]">{format(event.parsedDate, 'dd')}</span>

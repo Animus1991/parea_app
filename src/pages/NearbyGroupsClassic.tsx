@@ -214,7 +214,7 @@ export default function NearbyGroupsClassic() {
   if (!hasValidKey) {
     return (
       <div
-        className={`overflow-hidden rounded-none md:rounded-xl lg:rounded-none z-0 ${isMapFullscreen ? "fixed !inset-0 !z-[9999] bg-black" : "absolute inset-0 animate-in fade-in duration-500"}`}
+        className={`overflow-hidden rounded-none md:rounded-2xl lg:rounded-none z-0 ${isMapFullscreen ? "fixed !inset-0 !z-[9999] bg-black" : "absolute inset-0 animate-in fade-in duration-500"}`}
       >
         {/* Map Background Mock */}
         <div className="absolute inset-0 bg-[#e5e3df] z-0 flex items-center justify-center">
@@ -276,7 +276,7 @@ export default function NearbyGroupsClassic() {
                 )}
 
                 {isSelected && (
-                  <div className="absolute bottom-full mb-2 bg-white rounded-lg shadow-xl border border-gray-200 p-3 w-48 z-20">
+                  <div className="absolute bottom-full mb-2 bg-white rounded-2xl shadow-soft-lg border border-gray-100 p-3 w-48 z-20">
                     <button
                       className="absolute top-1 right-1 text-gray-400 hover:text-gray-600"
                       onClick={(e) => {
@@ -292,7 +292,7 @@ export default function NearbyGroupsClassic() {
                     <GroupImage
                       src={group.imageUrl ?? ""}
                       alt={group.title}
-                      className="w-full h-24 object-cover rounded-md mb-2 shadow-sm"
+                      className="w-full h-24 object-cover rounded-2xl mb-2 shadow-soft"
                     />
                     <h3 className="font-bold text-sm text-[#111827] mb-1 line-clamp-1">
                       {group.title}
@@ -332,7 +332,7 @@ export default function NearbyGroupsClassic() {
             <div className="w-32 h-32 border border-blue-500/30 rounded-full absolute bg-blue-500/5 pointer-events-none"></div>
           </div>
 
-          <div className="absolute top-[80px] left-[50%] transform -translate-x-1/2 bg-white/90 backdrop-blur text-gray-700 text-xs px-3 py-1.5 rounded-full border border-gray-200 shadow-sm z-10">
+          <div className="absolute top-[80px] left-[50%] transform -translate-x-1/2 bg-white/90 backdrop-blur text-gray-700 text-xs px-3 py-1.5 rounded-full border border-gray-100 shadow-soft z-10">
             {t(
               "Ο διαδραστικός χάρτης απαιτεί API Key της Google Maps",
               "Interactive map requires Google Maps API Key",
@@ -350,10 +350,10 @@ export default function NearbyGroupsClassic() {
                 "Αναζήτηση κοντινών περιοχών ή ομάδων...",
                 "Search nearby areas or groups...",
               )}
-              className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-white/95 backdrop-blur shadow-lg focus:outline-none focus:ring-2 focus:ring-cyan-600 text-sm font-medium"
+              className="w-full h-11 pl-10 pr-4 rounded-2xl border-0 bg-white/95 backdrop-blur shadow-soft-md focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/40 text-sm font-medium"
             />
           </div>
-          <button className="h-11 px-4 bg-white/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-gray-700 hover:text-cyan-600 transition-colors pointer-events-auto" aria-label={t('Φίλτρα', 'Filters')}>
+          <button className="h-11 px-4 bg-white/95 backdrop-blur rounded-2xl shadow-soft-md flex items-center justify-center text-gray-700 hover:text-[#0E8B8D] transition-all duration-200 pointer-events-auto" aria-label={t('Φίλτρα', 'Filters')}>
             <SlidersHorizontal className="h-5 w-5" />
           </button>
         </div>
@@ -388,7 +388,7 @@ export default function NearbyGroupsClassic() {
             </div>
 
             <div className="flex gap-2 mt-4 overflow-x-auto noscrollbar pb-1">
-              <button className="px-3 py-1.5 bg-cyan-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
+              <button className="px-3 py-1.5 bg-[#0E8B8D] text-white rounded-full text-xs font-bold whitespace-nowrap shadow-soft">
                 {t("Όλα", "All Matches")}
               </button>
               <button className="px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-100">
@@ -404,7 +404,7 @@ export default function NearbyGroupsClassic() {
             {localGroups.map((group, idx) => (
               <div
                 key={idx}
-                className={`p-3 border ${selectedEventId === group.id ? "border-cyan-500 shadow-md ring-1 ring-cyan-500" : "border-gray-100"} rounded-xl hover:border-cyan-300 hover:shadow-md transition-all cursor-pointer group flex gap-3 bg-white`}
+                className={`p-3 border ${selectedEventId === group.id ? "border-[#18D8DB] shadow-soft-md ring-1 ring-[#18D8DB]" : "border-gray-100"} rounded-2xl hover:border-[#a5f3fc] hover:shadow-soft-md transition-all duration-200 cursor-pointer group flex gap-3 bg-white`}
                 onClick={() => {
                   setSelectedEventId(group.id);
                   setMapCenter({ lat: group.lat, lng: group.lng });
@@ -414,7 +414,7 @@ export default function NearbyGroupsClassic() {
                   }
                 }}
               >
-                <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+                <div className="w-16 h-16 rounded-2xl bg-gray-100 overflow-hidden shrink-0">
                   <GroupImage
                     src={group.imageUrl ?? ""}
                     alt={group.title}
@@ -443,7 +443,7 @@ export default function NearbyGroupsClassic() {
               </div>
             ))}
 
-            <div className="p-6 text-center border border-dashed border-gray-200 rounded-xl bg-gray-50">
+            <div className="p-6 text-center border border-dashed border-gray-200 rounded-2xl bg-gray-50">
               <div className="w-12 h-12 bg-cyan-100 text-cyan-600 rounded-full flex items-center justify-center mx-auto mb-3">
                 <MapIcon className="h-6 w-6" />
               </div>
@@ -468,7 +468,7 @@ export default function NearbyGroupsClassic() {
 
   return (
     <div
-      className={`overflow-hidden rounded-none md:rounded-xl lg:rounded-none ${isMapFullscreen ? "fixed !inset-0 !z-[9999] bg-black" : "absolute inset-0 animate-in fade-in duration-500"}`}
+      className={`overflow-hidden rounded-none md:rounded-2xl lg:rounded-none ${isMapFullscreen ? "fixed !inset-0 !z-[9999] bg-black" : "absolute inset-0 animate-in fade-in duration-500"}`}
       style={
         {
           "--sidebar-width": isMapFullscreen ? "0px" : `${sidebarWidth}px`,
@@ -479,7 +479,7 @@ export default function NearbyGroupsClassic() {
         <ErrorBoundary
           fallback={
             <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] p-8 text-center">
-              <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm border border-red-100">
+              <div className="bg-white p-6 rounded-2xl shadow-soft-lg max-w-sm border border-red-100">
                 <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Map Error</h3>
                 <p className="text-xs text-gray-600">
@@ -522,7 +522,7 @@ export default function NearbyGroupsClassic() {
                     <GroupImage
                       src={group.imageUrl ?? ""}
                       alt={group.title}
-                      className="w-full h-20 object-cover rounded-md mb-2 shadow-sm"
+                      className="w-full h-20 object-cover rounded-2xl mb-2 shadow-soft"
                     />
                     <h3 className="font-bold text-xs text-[#111827] mb-1 line-clamp-1">
                       {group.title}
@@ -552,19 +552,19 @@ export default function NearbyGroupsClassic() {
         className={`absolute top-4 left-4 right-4 z-10 flex gap-2 pointer-events-none transition-all duration-300 md:left-[calc(var(--sidebar-width)+16px)]`}
       >
         {!isMapFullscreen && (
-          <div className="relative flex-1 max-w-sm pointer-events-auto shadow-lg bg-white/95 backdrop-blur rounded-xl">
+          <div className="relative flex-1 max-w-sm pointer-events-auto shadow-soft-md bg-white/95 backdrop-blur rounded-2xl">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             <input
               type="text"
               placeholder={t('Αναζήτηση κοντινών περιοχών ή ομάδων...', 'Search nearby areas or groups...')}
-              className="w-full h-11 pl-10 pr-4 rounded-xl border-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-cyan-600 text-sm font-medium"
+              className="w-full h-11 pl-10 pr-4 rounded-2xl border-0 bg-transparent focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/40 text-sm font-medium"
             />
           </div>
         )}
         {!isMapFullscreen && (
           <button
             onClick={() => alert(t("Τα φίλτρα αναζήτησης έρχονται σύντομα", "Search filters coming soon"))}
-            className="h-11 px-4 bg-white/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-gray-700 hover:text-cyan-600 transition-colors pointer-events-auto shrink-0"
+            className="h-11 px-4 bg-white/95 backdrop-blur rounded-2xl shadow-soft-md flex items-center justify-center text-gray-700 hover:text-[#0E8B8D] transition-all duration-200 pointer-events-auto shrink-0"
             aria-label={t('Φίλτρα αναζήτησης', 'Search filters')}
             title={t('Φίλτρα αναζήτησης', 'Search filters')}
           >
@@ -573,7 +573,7 @@ export default function NearbyGroupsClassic() {
         )}
         <button
           onClick={handleLocateMe}
-          className="h-11 px-4 bg-white/95 backdrop-blur rounded-xl shadow-lg flex items-center justify-center text-cyan-600 hover:text-cyan-800 transition-colors pointer-events-auto shrink-0 ml-auto"
+          className="h-11 px-4 bg-white/95 backdrop-blur rounded-2xl shadow-soft-md flex items-center justify-center text-[#0E8B8D] hover:text-[#0b6d6f] transition-all duration-200 pointer-events-auto shrink-0 ml-auto"
           title={t('Εντοπισμός Τοποθεσίας', 'Locate Me')}
           aria-label={t('Εντοπισμός Τοποθεσίας', 'Locate Me')}
         >
@@ -586,7 +586,7 @@ export default function NearbyGroupsClassic() {
         )}
         <button
           onClick={() => setIsMapFullscreen(!isMapFullscreen)}
-          className="h-11 px-4 bg-[#111827] text-white rounded-xl shadow-lg flex items-center justify-center hover:bg-black transition-colors pointer-events-auto shrink-0"
+          className="h-11 px-4 bg-[#111827] text-white rounded-2xl shadow-soft-md flex items-center justify-center hover:bg-black transition-all duration-200 pointer-events-auto shrink-0"
           title={isMapFullscreen ? t('Έξοδος από Πλήρη Οθόνη', 'Exit Fullscreen') : t('Πλήρης Οθόνη Χάρτη', 'Fullscreen Map')}
           aria-label={isMapFullscreen ? t('Έξοδος από Πλήρη Οθόνη', 'Exit Fullscreen') : t('Πλήρης Οθόνη Χάρτη', 'Fullscreen Map')}
         >
@@ -657,7 +657,7 @@ export default function NearbyGroupsClassic() {
           </div>
 
           <div className="flex gap-2 mt-4 overflow-x-auto noscrollbar pb-1">
-            <button className="px-3 py-1.5 bg-cyan-600 text-white rounded-full text-xs font-bold whitespace-nowrap shadow-sm">
+            <button className="px-3 py-1.5 bg-[#0E8B8D] text-white rounded-full text-xs font-bold whitespace-nowrap shadow-soft">
               {t("Όλα", "All Matches")}
             </button>
             <button className="px-3 py-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-full text-xs font-bold whitespace-nowrap hover:bg-gray-100">
@@ -673,10 +673,10 @@ export default function NearbyGroupsClassic() {
           {localGroups.map((group, idx) => (
             <div
               key={idx}
-              className="p-3 border border-gray-100 rounded-xl hover:border-cyan-300 hover:shadow-md transition-all cursor-pointer group flex gap-3 bg-white"
+              className="p-3 border border-gray-100 rounded-2xl hover:border-[#a5f3fc] hover:shadow-soft-md transition-all duration-200 cursor-pointer group flex gap-3 bg-white"
               onClick={() => navigate(`/events/${group.id}`)}
             >
-              <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+              <div className="w-16 h-16 rounded-2xl bg-gray-100 overflow-hidden shrink-0">
                 <GroupImage
                   src={group.imageUrl ?? ""}
                   alt={group.title}
@@ -705,7 +705,7 @@ export default function NearbyGroupsClassic() {
             </div>
           ))}
 
-          <div className="p-6 text-center border border-dashed border-gray-200 rounded-xl bg-gray-50">
+          <div className="p-6 text-center border border-dashed border-gray-200 rounded-2xl bg-gray-50">
             <div className="w-12 h-12 bg-cyan-100 text-cyan-600 rounded-full flex items-center justify-center mx-auto mb-3">
               <MapIcon className="h-6 w-6" />
             </div>

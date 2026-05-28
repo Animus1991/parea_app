@@ -10,12 +10,12 @@ export default function VerificationCenterClassic() {
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-[20.104264919475px] md:text-[26.7902365993px] font-bold text-[#111827]">{t(`Κέντρο Επαλήθευσης`, `Verification Center`)}</h1>
+          <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{t(`Κέντρο Επαλήθευσης`, `Verification Center`)}</h1>
           <p className="text-gray-500 font-medium text-[13.551608211075px] md:text-[14.626916949961px] mt-1">{t(`Επαληθεύστε την ταυτότητά σας για μεγαλύτερη ασφάλεια`, `Verify your identity for greater safety`)}</p>
         </div>
       </div>
 
-      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex gap-4 mt-6">
+      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex gap-4 mt-6 shadow-soft">
         <div className="w-12 h-[42px] bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
            <ShieldCheck className="w-6 h-6 text-emerald-600" />
         </div>
@@ -79,7 +79,7 @@ export default function VerificationCenterClassic() {
                 <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4"/>{t(`Ασφαλές`, `Secure`)}</span>
                 <span className="flex items-center gap-1"><UserCheck className="w-4 h-4"/>{t(`Ιδιωτικό`, `Private`)}</span>
              </div>
-             <Button size="sm" className="w-full sm:w-auto shrink-0 shadow-sm">{t(`Μεταφόρτωση`, `Upload`)}</Button>
+             <Button size="sm" className="w-full sm:w-auto shrink-0 shadow-soft">{t(`Μεταφόρτωση`, `Upload`)}</Button>
            </div>
         </Card>
       </div>

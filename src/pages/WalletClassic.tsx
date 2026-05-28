@@ -16,7 +16,7 @@ export default function WalletClassic() {
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#111827]">{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
+          <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
           <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">{t('Διαχειριστείτε τα έσοδα και τις πληρωμές σας.', 'Manage your event revenue and payouts.')}</p>
         </div>
       </div>
@@ -27,7 +27,7 @@ export default function WalletClassic() {
             <Euro className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
-          <p className="text-4xl font-black mb-4">€345.50</p>
+          <p className="text-sm font-black mb-4">€345.50</p>
           <Button className="w-full bg-white text-cyan-900 hover:bg-gray-100 border-0">
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
@@ -38,7 +38,7 @@ export default function WalletClassic() {
             <Clock className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Εκκρεμεί εξόφληση', 'Pending Clearing')}</h3>
           </div>
-          <p className="text-3xl font-bold text-gray-800 mb-2">€85.00</p>
+          <p className="text-sm font-bold text-gray-800 mb-2">€85.00</p>
           <p className="text-[10px] text-gray-400 font-medium leading-tight">
             {t('Έσοδα από πρόσφατες εκδηλώσεις. Εξοφλούνται 3-5 ημέρες μετά την ολοκλήρωση.', 'Revenue from recently completed events. Clears 3-5 days after event completion.')}
           </p>
@@ -46,7 +46,7 @@ export default function WalletClassic() {
 
         <Card className="p-6 border border-gray-200 bg-gray-50 flex flex-col justify-center">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-white shadow-sm border border-gray-200 rounded-full flex items-center justify-center text-gray-500">
+            <div className="w-10 h-10 bg-white shadow-soft border border-gray-100 rounded-full flex items-center justify-center text-gray-500">
               <Building2 className="w-5 h-5" />
             </div>
             <div>
@@ -61,7 +61,7 @@ export default function WalletClassic() {
       <Card className="mt-8">
         <div className="p-4 md:p-6 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-lg font-bold text-[#111827]">{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
-          <select className="text-xs border border-gray-200 rounded-lg px-2 py-1 outline-none">
+          <select className="text-xs border border-gray-100 rounded-2xl px-2 py-1 outline-none shadow-soft">
             <option>{t('Όλες', 'All Time')}</option>
             <option>{t('Αυτόν τον Μήνα', 'This Month')}</option>
             <option>{t('Προηγούμενο Μήνα', 'Last Month')}</option>

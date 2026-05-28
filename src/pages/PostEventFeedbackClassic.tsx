@@ -24,12 +24,12 @@ export default function PostEventFeedbackClassic() {
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div>
-        <h1 className="text-[22.33807213275px] md:text-[24.11121293937px] font-bold tracking-tight text-[#111827]">{t(`Αξιολόγηση Εκδήλωσης`, `Post-Event Feedback`)}</h1>
+        <h1 className="text-[16px] md:text-[18px] font-bold tracking-tight text-[#111827]">{t(`Αξιολόγηση Εκδήλωσης`, `Post-Event Feedback`)}</h1>
         <p className="text-gray-500 font-medium text-[13.551608211075px] md:text-[14.626916949961px] mt-1">{t(`Πείτε μας πώς ήταν η εμπειρία σας`, `Tell us about your experience`)}</p>
       </div>
 
       {/* XP Reward Banner */}
-      <div className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3">
+      <div className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-3 shadow-soft">
         <Trophy className="w-5 h-5 text-amber-600 shrink-0" />
         <div className="flex-1">
           <p className="text-[13.233495595550108784px] font-bold text-amber-900">{t(`Κερδίστε +25 XP`, `Earn +25 XP`)}</p>
@@ -49,7 +49,7 @@ export default function PostEventFeedbackClassic() {
                   <button
                     key={m.emoji}
                     onClick={() => setMood(m.emoji)}
-                    className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all ${mood === m.emoji ? 'border-cyan-500 bg-cyan-50 scale-110 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}
+                    className={`flex flex-col items-center gap-1 p-3 rounded-2xl border transition-all duration-200 ${mood === m.emoji ? 'border-[#18D8DB] bg-cyan-50 scale-110 shadow-soft' : 'border-gray-100 hover:border-[#a5f3fc]'}`}
                   >
                     <span className="text-[30px]">{m.emoji}</span>
                     <span className="text-[10.90125px] font-bold text-gray-600">{m.label}</span>
@@ -120,7 +120,7 @@ export default function PostEventFeedbackClassic() {
                 value={comment}
                 onChange={e => setComment(e.target.value)}
                 placeholder={t(`Μοιραστείτε περισσότερα για την εμπειρία σας...`, `Share more about your experience...`)}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+                className="w-full px-4 py-2.5 border border-gray-100 rounded-2xl text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/40 resize-none shadow-soft transition-all duration-200"
                 rows={3}
               />
               <p className="text-[11.2px] text-gray-400 font-medium mt-1">{t(`Αυτό θα είναι ορατό στον διοργανωτή`, `This will be visible to the organizer`)}</p>
@@ -139,7 +139,7 @@ export default function PostEventFeedbackClassic() {
               <h2 className="text-[25px] font-bold text-[#111827]">{t(`Ευχαριστούμε!`, `Thank You!`)}</h2>
               <p className="mt-2 text-[16.2px] text-gray-600 font-medium leading-relaxed max-w-sm mx-auto">{t(`Η αξιολόγησή σας βοηθά στη βελτίωση της εμπειρίας για όλους.`, `Your feedback helps improve the experience for everyone.`)}</p>
             </div>
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 max-w-xs mx-auto">
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 max-w-xs mx-auto shadow-soft">
               <div className="flex items-center justify-center gap-2">
                 <Trophy className="w-5 h-5 text-amber-600" />
                 <span className="text-[16.2px] font-bold text-amber-900">+25 XP</span>

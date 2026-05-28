@@ -177,7 +177,7 @@ export default function SavedEventsPageContent() {
                 />
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleSavedEvent(event.id); }}
-                  className={cn("absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-sm z-10 transition-colors", a.isDark ? "bg-gray-800/80 hover:bg-gray-700" : "bg-white hover:bg-gray-50")}
+                  className={cn("absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-soft z-10 transition-colors", a.isDark ? "bg-gray-800/80 hover:bg-gray-700" : "bg-white hover:bg-gray-50")}
                   title={t('Αφαίρεση', 'Remove')}
                 >
                   <Bookmark className={cn("w-4 h-4 fill-current", a.bookmarkColor)} />
@@ -224,7 +224,7 @@ export default function SavedEventsPageContent() {
           </p>
           <Link
             to="/"
-            className={cn("inline-flex items-center justify-center px-4 py-2 mt-4 text-white text-xs font-bold rounded-full shadow-sm transition-colors", a.cta)}
+            className={cn("inline-flex items-center justify-center px-4 py-2 mt-4 text-white text-xs font-bold rounded-full shadow-soft transition-colors", a.cta)}
           >
             <Sparkles className="w-3.5 h-3.5 mr-1.5" />
             {t('Ανακαλύψτε Εκδηλώσεις', 'Discover Events')}

@@ -9,8 +9,8 @@ export default function TrustCenterClassic() {
   return (
     <div className="mx-auto max-w-full space-y-6 md:space-y-8">
       <div>
-        <h1 className="text-[20.104264919475px] md:text-[26.7902365993px] font-bold text-[#111827] tracking-tight">{t(`Κέντρο Εμπιστοσύνης`, `Trust Center`)}</h1>
-        <p className="mt-2 text-[16.2px] leading-relaxed text-gray-600 max-w-xl">{t(`Η αξιοπιστία σας βασίζεται στις επαληθεύσεις και τις αξιολογήσεις σας.`, `Your trust score is based on your verifications and reviews.`)}</p>
+        <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827] tracking-tight">{t(`Κέντρο Εμπιστοσύνης`, `Trust Center`)}</h1>
+        <p className="mt-2 text-[13.5px] leading-relaxed text-gray-600 max-w-xl">{t(`Η αξιοπιστία σας βασίζεται στις επαληθεύσεις και τις αξιολογήσεις σας.`, `Your trust score is based on your verifications and reviews.`)}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">

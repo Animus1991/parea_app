@@ -17,16 +17,16 @@ export default function ReportIssueClassic() {
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-[20.104264919475px] md:text-[26.7902365993px] font-bold text-[#111827]">{t(`Αναφορά Προβλήματος`, `Report an Issue`)}</h1>
+          <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{t(`Αναφορά Προβλήματος`, `Report an Issue`)}</h1>
           <p className="text-gray-500 font-medium text-[13.551608211075px] md:text-[16.25212883329px] mt-1">{t(`Βοηθήστε μας να κρατήσουμε την κοινότητα ασφαλή`, `Help us keep the community safe`)}</p>
         </div>
-        <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-[#111827] transition-colors rounded-full p-2 bg-white border border-gray-200 shadow-sm">
+        <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-[#111827] transition-all duration-200 rounded-full p-2 bg-white border border-gray-100 shadow-soft">
           <X className="w-5 h-5" />
         </button>
       </div>
 
       {step === 1 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden">
           <div className="p-4 md:p-6 bg-red-50 border-b border-red-100 flex items-start gap-4">
             <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
               <AlertTriangle className="w-5 h-5 text-red-600" />
@@ -40,7 +40,7 @@ export default function ReportIssueClassic() {
           <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-5">
             <div>
               <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Κατηγορία`, `Category`)}</label>
-              <select className="w-full h-11 px-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium" required>
+              <select className="w-full h-11 px-3 rounded-2xl border border-gray-100 bg-white shadow-soft focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/40 focus:border-transparent text-[16.2px] font-medium transition-all duration-200" required>
                 <option value="">{t(`Επιλέξτε κατηγορία...`, `Select a category...`)}</option>
                 <option value="user_behavior">{t(`Ανάρμοστη συμπεριφορά`, `Inappropriate behavior`)}</option>
                 <option value="event_safety">{t(`Ασφάλεια εκδήλωσης`, `Event safety`)}</option>
@@ -72,7 +72,7 @@ export default function ReportIssueClassic() {
             <div>
               <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Περιγραφή`, `Description`)}</label>
               <textarea 
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-[16.2px] font-medium resize-none" 
+                className="w-full px-3 py-2.5 rounded-2xl border border-gray-100 bg-white shadow-soft focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/40 focus:border-transparent text-[16.2px] font-medium resize-none transition-all duration-200" 
                 rows={5} 
                 placeholder={t(`Περιγράψτε τι συνέβη...`, `Describe what happened...`)}
                 required
@@ -82,7 +82,7 @@ export default function ReportIssueClassic() {
             {/* Evidence Upload */}
             <div>
               <label className="block text-[12.15px] font-bold text-[#111827] tracking-wider mb-2">{t(`Αποδεικτικά (προαιρετικά)`, `Evidence (optional)`)}</label>
-              <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-cyan-300 hover:bg-cyan-50/30 transition-colors cursor-pointer">
+              <div className="border-2 border-dashed border-gray-200 rounded-2xl p-4 text-center hover:border-[#18D8DB] hover:bg-cyan-50/30 transition-all duration-200 cursor-pointer">
                 <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1" />
                 <p className="text-[12.5px] text-gray-500 font-medium">{t(`Ανεβάστε screenshots ή φωτογραφίες`, `Upload screenshots or photos`)}</p>
                 <p className="text-[10px] text-gray-400 mt-0.5">PNG, JPG {t(`έως`, `up to`)} 5MB</p>
@@ -100,11 +100,11 @@ export default function ReportIssueClassic() {
               <span>{t(`Αναμενόμενος χρόνος απόκρισης: <24 ώρες`, `Expected response time: <24 hours`)}</span>
             </div>
 
-            <button type="submit" className="w-full bg-[#111827] text-white py-2.5 rounded-full text-[12.15px] font-bold shadow-sm hover:bg-black transition-colors  tracking-wider">{t(`Υποβολή Αναφοράς`, `Submit Report`)}</button>
+            <button type="submit" className="w-full bg-[#111827] text-white py-2.5 rounded-full text-[12.15px] font-bold shadow-soft hover:bg-black transition-all duration-200 tracking-wider">{t(`Υποβολή Αναφοράς`, `Submit Report`)}</button>
           </form>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+        <div className="bg-white rounded-2xl shadow-soft border border-gray-100 p-8 text-center">
           <div className="w-16 h-[58px] rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 className="w-8 h-8 text-emerald-600" />
           </div>

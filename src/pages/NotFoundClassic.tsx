@@ -31,7 +31,7 @@ export default function NotFoundClassic() {
         {suggestions.map(s => {
           const Icon = s.icon;
           return (
-            <button key={s.path} onClick={() => navigate(s.path)} className="flex items-center gap-2 p-3 rounded-xl border border-gray-200 bg-white hover:border-cyan-300 hover:bg-cyan-50 transition-all text-left">
+            <button key={s.path} onClick={() => navigate(s.path)} className="flex items-center gap-2 p-3 rounded-2xl border border-gray-100 bg-white hover:border-[#a5f3fc] hover:bg-cyan-50 transition-all duration-200 text-left shadow-soft">
               <Icon className="w-4 h-4 text-cyan-600" />
               <span className="text-[13.8px] font-bold text-[#111827]">{s.label}</span>
             </button>

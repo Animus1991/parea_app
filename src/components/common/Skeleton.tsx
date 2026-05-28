@@ -20,7 +20,7 @@ export function EventCardSkeleton() {
   const theme = useStore((s) => s.theme);
   const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
   return (
-    <div className={cn('rounded-2xl border p-4 shadow-sm h-full flex flex-col', isDark ? 'border-gray-700/40 bg-gray-800/60' : 'border-gray-100 bg-white')}>
+    <div className={cn('rounded-2xl border p-4 shadow-soft h-full flex flex-col', isDark ? 'border-gray-700/40 bg-gray-800/60' : 'border-gray-100 bg-white')}>
       <div className="flex justify-between items-start mb-3">
         <Skeleton className="h-6 w-24 rounded-full" />
         <Skeleton className="h-4 w-12" />

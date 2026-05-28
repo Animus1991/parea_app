@@ -15,7 +15,7 @@ function useAccent() {
     muted: isDark ? 'text-gray-500' : 'text-gray-400',
     faqAnswer: isDark ? 'text-gray-400' : 'text-gray-600',
     chevron: isDark ? 'text-gray-500' : 'text-gray-400',
-    topicBg: isDark ? 'border-gray-700/40 bg-gray-800/30 hover:bg-gray-700/30' : 'border-gray-100 bg-white hover:shadow-sm',
+    topicBg: isDark ? 'border-gray-700/40 bg-gray-800/30 hover:bg-gray-700/30' : 'border-gray-100 bg-white hover:shadow-soft',
     topicLabel: isDark ? 'text-white' : 'text-[#111827]',
   };
 

@@ -1,10 +1,22 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { Event } from "../types";
 import { mockEvents } from "../data/mockEvents";
 import { mockGroups } from "../data/mockGroups";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
 import { fetchTicketmasterEvents, isTicketmasterConfigured } from "../services/eventApi";
+
+export interface FeedbackData {
+  eventId: string;
+  overallRating: number;
+  vibeRating: number;
+  mood: string;
+  comment: string;
+  submittedAt: string;
+  attendance?: string;
+  safetyComfort?: string;
+}
 
 interface AppState {
   theme: string;
@@ -39,6 +51,13 @@ interface AppState {
   toggleSavedEvent: (eventId: string) => void;
   fetchExternalEvents: () => Promise<void>;
 
+  waitlistedEvents: string[];
+  addToWaitlist: (eventId: string) => void;
+  removeFromWaitlist: (eventId: string) => void;
+
+  feedbackSubmitted: Record<string, FeedbackData>;
+  submitFeedback: (data: FeedbackData) => void;
+
   // Connections
   connectionRequests: { id: string; fromUserId: string; toUserId: string; message?: string; createdAt: string; status: 'pending' | 'accepted' | 'declined' }[];
   sendConnectionRequest: (toUserId: string, message?: string) => void;
@@ -47,7 +66,9 @@ interface AppState {
   removeConnection: (userId: string) => void;
 }
 
-export const useStore = create<AppState>((set, get) => ({
+export const useStore = create<AppState>()(
+  persist(
+    (set, get) => ({
   theme: 'classic',
   setTheme: (theme) => set({ theme }),
   events: mockEvents,
@@ -59,6 +80,8 @@ export const useStore = create<AppState>((set, get) => ({
   isAuthenticated: true,
   notifications: mockNotifications,
   savedEvents: [],
+  waitlistedEvents: [],
+  feedbackSubmitted: {},
 
   login: (userId) =>
     set((state) => {
@@ -210,6 +233,25 @@ export const useStore = create<AppState>((set, get) => ({
       };
     }),
 
+  addToWaitlist: (eventId) =>
+    set((state) => {
+      if (state.waitlistedEvents.includes(eventId)) return state;
+      return { waitlistedEvents: [...state.waitlistedEvents, eventId] };
+    }),
+
+  removeFromWaitlist: (eventId) =>
+    set((state) => ({
+      waitlistedEvents: state.waitlistedEvents.filter((id) => id !== eventId),
+    })),
+
+  submitFeedback: (data) =>
+    set((state) => ({
+      feedbackSubmitted: {
+        ...state.feedbackSubmitted,
+        [data.eventId]: data,
+      },
+    })),
+
   connectionRequests: [
     { id: 'cr1', fromUserId: 'org2', toUserId: 'u1', message: 'We noticed you attended our events. Let\'s connect!', createdAt: '2024-01-15', status: 'pending' as const },
     { id: 'cr2', fromUserId: 'org4', toUserId: 'u1', createdAt: '2024-01-14', status: 'pending' as const },
@@ -292,4 +334,16 @@ export const useStore = create<AppState>((set, get) => ({
       set({ eventsLoading: false });
     }
   },
-}));
+}),
+    {
+      name: 'nakamas-store-v1',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        savedEvents: state.savedEvents,
+        theme: state.theme,
+        waitlistedEvents: state.waitlistedEvents,
+        feedbackSubmitted: state.feedbackSubmitted,
+      }),
+    },
+  ),
+);

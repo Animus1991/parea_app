@@ -89,7 +89,7 @@ export default function CreateEventFlowClassic() {
       className="max-w-full mx-auto pb-24 md:pb-8"
     >
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#111827]">
+        <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">
           {t("Δημιουργία Εμπειρίας", "Create Experience")}
         </h1>
         <p className="text-gray-500 text-sm mt-1">
@@ -132,7 +132,7 @@ export default function CreateEventFlowClassic() {
                     {t("Εικόνα Εκδήλωσης", "Event Image")}
                   </label>
                   <div 
-                    className="w-full h-40 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-cyan-400 transition-colors cursor-pointer relative overflow-hidden"
+                    className="w-full h-40 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center text-gray-500 hover:bg-gray-50 hover:border-[#18D8DB] transition-all duration-200 cursor-pointer relative overflow-hidden"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     {imagePreview ? (
@@ -365,7 +365,7 @@ export default function CreateEventFlowClassic() {
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <div
-                      className={`border rounded-xl p-4 cursor-pointer transition-all ${visibility === "public" ? "border-cyan-600 bg-cyan-50 shadow-sm" : "border-gray-200 hover:border-cyan-200"}`}
+                      className={`border rounded-2xl p-4 cursor-pointer transition-all duration-200 ${visibility === "public" ? "border-[#18D8DB] bg-cyan-50 shadow-soft ring-1 ring-[#18D8DB]" : "border-gray-100 hover:border-[#a5f3fc]"}`}
                       onClick={() => setVisibility("public")}
                     >
                       <Globe
@@ -382,7 +382,7 @@ export default function CreateEventFlowClassic() {
                       </p>
                     </div>
                     <div
-                      className={`border rounded-xl p-4 cursor-pointer transition-all ${visibility === "private" ? "border-cyan-600 bg-cyan-50 shadow-sm" : "border-gray-200 hover:border-cyan-200"}`}
+                      className={`border rounded-2xl p-4 cursor-pointer transition-all duration-200 ${visibility === "private" ? "border-[#18D8DB] bg-cyan-50 shadow-soft ring-1 ring-[#18D8DB]" : "border-gray-100 hover:border-[#a5f3fc]"}`}
                       onClick={() => setVisibility("private")}
                     >
                       <Lock
@@ -461,7 +461,7 @@ export default function CreateEventFlowClassic() {
                 </p>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-4 space-y-3 text-sm">
+              <div className="bg-gray-50 rounded-2xl p-4 space-y-3 text-sm shadow-soft">
                 <div className="flex justify-between pb-3 border-b border-gray-200">
                   <span className="text-gray-500 font-medium">
                     {t("Τίτλος", "Title")}
@@ -498,7 +498,7 @@ export default function CreateEventFlowClassic() {
                 </div>
               </div>
 
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-3 text-sm text-amber-800">
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex gap-3 text-sm text-amber-800 shadow-soft">
                 <Target className="w-5 h-5 shrink-0 mt-0.5" />
                 <p className="text-xs">
                   {t(

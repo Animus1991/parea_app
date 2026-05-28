@@ -26,13 +26,13 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
   
   return (
     <div 
-      className="group relative rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-cyan-300 hover:shadow-md transition-all cursor-pointer overflow-hidden mt-2" 
+      className="group relative rounded-2xl border border-gray-100 bg-white p-4 shadow-soft hover:border-[#a5f3fc] hover:shadow-soft-md transition-all duration-200 cursor-pointer overflow-hidden mt-2" 
       onClick={() => navigate(`/events/${event.id}/join?groupId=${group.id}`)}
     >
       <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-cyan-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       
       {(group.discountUnlocked || discountUnlockedTemp) && event.groupDiscount && (
-        <div className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-sm flex items-center gap-1 z-10 w-fit">
+        <div className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-2xl shadow-soft flex items-center gap-1 z-10 w-fit">
            <CheckCircle className="h-3 w-3" /> {event.groupDiscount.percentage}% {t('ΕΚΠΤΩΣΗ ΕΝΕΡΓΟΠΟΙΗΘΗΚΕ', 'OFF ACTIVATED')}
         </div>
       )}
@@ -44,7 +44,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
             {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
           </div>
           <h4 className="text-[13px] font-bold text-gray-900 mb-0.5 line-clamp-1">{event.title}</h4>
-          <span className="text-[9px] tracking-widest font-bold text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded-full mb-2 inline-block shadow-sm">
+          <span className="text-[9px] tracking-widest font-bold text-[#0E8B8D] bg-[#18D8DB]/[0.06] px-2 py-0.5 rounded-full mb-2 inline-block shadow-soft">
             {event.category}
           </span>
           <div className="flex items-baseline gap-1 mt-1">
@@ -54,7 +54,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
         </div>
         
         <div className="flex flex-col items-end gap-2">
-          <Badge variant={spotsLeft <= 2 ? 'warning' : 'outline'} className={spotsLeft <= 2 ? "font-bold animate-pulse shadow-sm" : ""}>
+          <Badge variant={spotsLeft <= 2 ? 'warning' : 'outline'} className={spotsLeft <= 2 ? "font-bold animate-pulse shadow-soft" : ""}>
             {spotsLeft === 1 ? t('1 Θέση!', '1 Spot!') : spotsLeft + t(' Θέσεις', ' Spots')}
           </Badge>
           
@@ -113,7 +113,7 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
       <Button 
         variant="primary" 
         size="sm" 
-        className="w-full bg-cyan-50 text-cyan-700 border border-cyan-100 hover:bg-cyan-600 hover:text-white transition-colors group-hover:bg-cyan-600 group-hover:text-white font-semibold shadow-sm"
+        className="w-full bg-[#18D8DB]/[0.06] text-[#0E8B8D] border border-[#a5f3fc]/40 hover:bg-[#0E8B8D] hover:text-white transition-all duration-200 group-hover:bg-[#0E8B8D] group-hover:text-white font-semibold shadow-soft rounded-2xl"
         onClick={(e) => { e.stopPropagation(); navigate(`/events/${event.id}/join`); }}
       >
         {t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
@@ -306,7 +306,7 @@ export default function EventDetailClassic() {
           </div>
         </div>
         
-        <div className="relative w-full h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden shadow-sm">
+        <div className="relative w-full h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden shadow-soft-md">
           <motion.img 
             layoutId={`event-image-${event.id}`}
             referrerPolicy="no-referrer"
@@ -346,7 +346,7 @@ export default function EventDetailClassic() {
       <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-5 lg:grid-cols-3">
         {/* Left Column: Details */}
         <div className="space-y-6 md:space-y-8 md:col-span-3 lg:col-span-2">
-          <section className="space-y-4 text-[13px] text-[#111827] leading-relaxed bg-white rounded-xl border border-gray-200 p-5 md:p-6 shadow-sm">
+          <section className="space-y-4 text-[13px] text-[#111827] leading-relaxed bg-white rounded-2xl border border-gray-100 p-5 md:p-6 shadow-soft">
              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 text-gray-500 font-bold tracking-wide text-[10px]">
@@ -384,14 +384,14 @@ export default function EventDetailClassic() {
              <div className={`${isMapFullscreen ? 'fixed !inset-0 !z-[9999] bg-black !m-0 rounded-none !h-[100dvh]' : 'mt-6 w-full h-64 sm:h-80 rounded-lg'} bg-gray-100 overflow-hidden relative border border-gray-200 transition-all duration-300`}>
                   <button 
                     onClick={() => setIsMapFullscreen(!isMapFullscreen)}
-                    className="absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur rounded-lg shadow-md text-gray-700 hover:text-cyan-600 transition-colors"
+                    className="absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur rounded-2xl shadow-soft text-gray-700 hover:text-[#0E8B8D] transition-colors"
                   >
                     {isMapFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
                   </button>
                   {apiKey ? (
                     <ErrorBoundary fallback={
                       <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] p-4 text-center">
-                        <div className="bg-white p-3 rounded-lg shadow-sm border border-red-100">
+                        <div className="bg-white p-3 rounded-2xl shadow-soft border border-red-100">
                           <AlertTriangle className="w-6 h-6 text-red-500 mx-auto mb-2" />
                           <p className="text-[10px] text-gray-600">{t('Ο χάρτης δεν είναι διαθέσιμος. Παρακαλώ ελέγξτε το API key.', 'Map unavailable. Please check API key.')}</p>
                         </div>
@@ -418,7 +418,7 @@ export default function EventDetailClassic() {
                        <div className="w-24 h-24 sm:w-32 sm:h-32 bg-cyan-600/10 rounded-full flex items-center justify-center animate-pulse relative z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                          <div className="w-4 h-4 bg-cyan-600 rounded-full border-2 border-white shadow-md"></div>
                        </div>
-                       <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur text-gray-500 text-[10px] px-2 py-1 rounded shadow-sm">{t('Ενεργή Προεπισκόπηση Χάρτη', 'Map Preview Active')}</div>
+                       <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur text-gray-500 text-[10px] px-2 py-1 rounded-full shadow-soft">{t('Ενεργή Προεπισκόπηση Χάρτη', 'Map Preview Active')}</div>
                     </div>
                   )}
              </div>
@@ -429,7 +429,7 @@ export default function EventDetailClassic() {
                
                {event.externalLink && (
                  <div className="mt-4 pt-1">
-                   <a href={event.externalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 hover:text-cyan-600 hover:border-cyan-200 transition-colors shadow-sm text-xs font-bold tracking-wide rounded-lg w-full sm:w-auto justify-center">
+                   <a href={event.externalLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 border border-gray-100 text-gray-700 bg-white hover:bg-gray-50 hover:text-[#0E8B8D] hover:border-[#a5f3fc] transition-all duration-200 shadow-soft text-xs font-bold tracking-wide rounded-2xl w-full sm:w-auto justify-center">
                      <ExternalLink className="w-3.5 h-3.5" />
                      {t('Επίσημη Σελίδα Εκδήλωσης', 'Official Event Page')}
                    </a>
@@ -453,7 +453,7 @@ export default function EventDetailClassic() {
                  <div className="flex items-center justify-between mb-4">
                     <h3 className="text-[11px] font-bold text-[#111827] tracking-wide mt-1">{t('Διοργανωτής Εκδήλωσης', 'Event Organizer')}</h3>
                  </div>
-                 <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 bg-white shadow-sm hover:border-cyan-200 transition-colors">
+                 <div className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 bg-white shadow-soft hover:border-[#a5f3fc] transition-all duration-200">
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 rounded-full overflow-hidden bg-cyan-50 border-2 border-white ring-2 ring-cyan-50 shrink-0">
                         {organizer.photoUrl ? (
@@ -491,11 +491,11 @@ export default function EventDetailClassic() {
                <div className="pt-5 border-t border-gray-200 animate-in fade-in slide-in-from-bottom-2 mt-5">
                  <h3 className="text-[11px] font-bold text-[#111827] mb-3 tracking-wide">{t('Λεπτομέρειες Περιπέτειας', 'Adventure Details')}</h3>
                  <div className="grid grid-cols-2 gap-4">
-                   <div className="bg-emerald-50/50 border border-emerald-100 p-4 rounded-xl">
+                   <div className="bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl">
                      <div className="text-[10px] font-bold text-emerald-700 mb-1 tracking-wider">{t('Δυσκολία', 'Difficulty')}</div>
                      <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? t('Μέτρια / Έδαφος', 'Moderate / Terrain') : t('Εύκολο / Αναψυχή', 'Easy / Leisure')}</div>
                    </div>
-                   <div className="bg-amber-50/50 border border-amber-100 p-4 rounded-xl">
+                   <div className="bg-amber-50/50 border border-amber-100 p-4 rounded-2xl">
                      <div className="text-[10px] font-bold text-amber-700 mb-1 tracking-wider">{t('Εξοπλισμός / Σημειώσεις', 'Equipment / Notes')}</div>
                      <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? t('Απαιτούνται μποτάκια πεζοπορίας. Φέρτε νερό.', 'Hiking boots required. Bring water.') : t('Διανυκτέρευση. Μοιρασμένα έξοδα.', 'Overnight stay. Shared expenses.')}</div>
                    </div>
@@ -505,7 +505,7 @@ export default function EventDetailClassic() {
           </section>
 
           {/* Contextual Context Note */}
-          <section className="rounded-xl border border-gray-100 bg-gray-50/50 p-5 text-sm">
+          <section className="rounded-2xl border border-gray-100 bg-gray-50/50 p-5 text-sm">
             <h3 className="text-[11px] font-bold text-[#111827] mb-3 tracking-wide">{t('Γιατί αυτή η ομάδα είναι αξιόπιστη', 'Why this group is reliable')}</h3>
             <ul className="space-y-2.5 text-gray-600">
               <li className="flex items-start gap-2 text-xs">
@@ -530,7 +530,7 @@ export default function EventDetailClassic() {
 
         {/* Right Column: Groups & Actions */}
         <div className="space-y-6 md:col-span-2 lg:col-span-1">
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm sticky top-24">
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-soft sticky top-24">
             <h3 className="text-[11px] font-bold text-[#6B7280] tracking-wide mb-4">{t('Αυτόματη προτεινόμενη Μικρών Ομάδων', 'Auto-Suggest Small Groups')}</h3>
             <div className="mb-4 bg-cyan-50 border border-cyan-100 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-sm font-bold text-cyan-900">
               <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική Χωρητικότητα Εκδήλωσης', 'Overall Event Capacity')}</span>
@@ -578,7 +578,7 @@ export default function EventDetailClassic() {
             </p>
             
             {eventGroups.length === 0 ? (
-              <div className="text-xs text-gray-500 mb-6 bg-gray-50 p-4 rounded-xl text-center border border-dashed border-gray-200 font-medium">
+              <div className="text-xs text-gray-500 mb-6 bg-gray-50 p-4 rounded-2xl text-center border border-dashed border-gray-200 font-medium">
                 {t('Δεν έχουν δημιουργηθεί ομάδες ακόμα. Γίνετε ο πρώτος που θα ξεκινήσει μία!', 'No groups forming yet. Be the first to start one!')}
               </div>
             ) : (
@@ -613,7 +613,7 @@ export default function EventDetailClassic() {
         <Button variant="outline" className="flex-1 border-gray-200 text-gray-700" onClick={() => navigate(`/events/${eventId}/join`)}>
           {t('Λίστα Αναμονής', 'Waitlist')}
         </Button>
-        <Button className="flex-[2] bg-cyan-600 text-white hover:bg-cyan-700 shadow-sm" onClick={() => navigate(`/events/${eventId}/join`)}>
+        <Button className="flex-[2] bg-[#0E8B8D] text-white hover:bg-[#0b6d6f] shadow-soft" onClick={() => navigate(`/events/${eventId}/join`)}>
           {t('Νέα Ομάδα', 'Create Group')}
         </Button>
       </div>
@@ -630,7 +630,7 @@ export default function EventDetailClassic() {
             </button>
             <h3 className="text-xl font-bold text-gray-900 mb-2">{t('Κοινοποίηση', 'Share Event')}</h3>
             <p className="text-sm text-gray-500 mb-6">{t('Σαρώστε αυτό το QR για να δείτε την εκδήλωση', 'Scan this QR code to view the event')}</p>
-            <div className="bg-white p-4 rounded-xl shadow-inner border border-gray-100 inline-block">
+            <div className="bg-white p-4 rounded-2xl shadow-inner border border-gray-100 inline-block">
               <QRCodeSVG 
                 value={window.location.href} 
                 size={200}

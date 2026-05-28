@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Card } from "../components/common/Card";
 import { Badge } from "../components/common/Badge";
 import { Button } from "../components/common/Button";
 import { Skeleton, ProfileSkeleton } from "../components/common/Skeleton";
 import { useStore } from "../store";
+import { parseISO, subWeeks, isWithinInterval, startOfWeek, endOfWeek } from "date-fns";
 import {
   CheckCircle2,
   History,
@@ -13,6 +14,8 @@ import {
   Plus,
   Shield,
   ShieldCheck,
+  Flame,
+  Target,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../lib/i18n";
@@ -45,6 +48,10 @@ export default function ProfileClassic() {
     "Weekends",
     "Weekday Evenings",
   ]);
+
+  const events = useStore((state) => state.events);
+  const groups = useStore((state) => state.groups);
+  const feedbackSubmitted = useStore((state) => state.feedbackSubmitted);
 
   const [settings, setSettings] = useState({
     revealPhoto: true,
@@ -85,7 +92,7 @@ export default function ProfileClassic() {
   return (
     <div className="mx-auto max-w-5xl space-y-8 pb-12">
       <div>
-        <h1 className="text-xl md:text-2xl font-extrabold tracking-tight text-[#111827]">
+        <h1 className="text-[16px] md:text-[18px] font-extrabold tracking-tight text-[#111827]">
           {t("Προφίλ", "Profile")}
         </h1>
         <p className="mt-1 text-xs text-gray-500 font-medium leading-relaxed">
@@ -95,6 +102,94 @@ export default function ProfileClassic() {
           )}
         </p>
       </div>
+
+      {/* ── Activity Streak Dots + Goals Progress ── */}
+      {(() => {
+        const userGroupIds = currentUser
+          ? groups.filter((g) => g.members.includes(currentUser.id)).map((g) => g.eventId)
+          : [];
+        const now = new Date();
+        const WEEKS = 12;
+        const weekDots = Array.from({ length: WEEKS }, (_, i) => {
+          const weekStart = startOfWeek(subWeeks(now, WEEKS - 1 - i), { weekStartsOn: 1 });
+          const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
+          const hasEvent = events.some((e) => {
+            if (!userGroupIds.includes(e.id)) return false;
+            try { return isWithinInterval(parseISO(e.date), { start: weekStart, end: weekEnd }); }
+            catch { return false; }
+          });
+          return hasEvent;
+        });
+        const streak = (() => {
+          let s = 0;
+          for (let i = weekDots.length - 1; i >= 0; i--) {
+            if (weekDots[i]) s++; else break;
+          }
+          return s;
+        })();
+        const totalAttended = Object.keys(feedbackSubmitted).length;
+        const xp = totalAttended * 50 + (currentUser?.reliabilityScore ?? 80);
+        const goals = [
+          { labelGr: '5 Εκδηλώσεις / μήνα', labelEn: '5 Events / month', current: Math.min(totalAttended, 5), goal: 5, color: 'bg-cyan-500' },
+          { labelGr: 'Σκορ Αξιοπιστίας 90%', labelEn: '90% Reliability Score', current: currentUser?.reliabilityScore ?? 50, goal: 90, color: 'bg-green-500' },
+          { labelGr: '500 XP', labelEn: '500 XP', current: Math.min(xp, 500), goal: 500, color: 'bg-amber-500' },
+          { labelGr: '5 Nakamas', labelEn: '5 Connections', current: Math.min((currentUser?.connections ?? []).length, 5), goal: 5, color: 'bg-purple-500' },
+        ];
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Streak dots */}
+            <Card className="p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Flame className="w-4 h-4 text-orange-500" />
+                  <span className="text-[13px] font-bold text-[#111827]">{t('Σερί Δραστηριότητας', 'Activity Streak')}</span>
+                </div>
+                <span className="text-[12px] font-black text-orange-500">{streak} {t('εβδ.', 'wks')}</span>
+              </div>
+              <div className="flex gap-1.5 flex-wrap">
+                {weekDots.map((active, i) => (
+                  <div
+                    key={i}
+                    title={`W-${WEEKS - i}`}
+                    className={`w-5 h-5 rounded-full border-2 transition-all ${
+                      active
+                        ? 'bg-orange-400 border-orange-300'
+                        : 'bg-gray-100 border-gray-200'
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="text-[10.5px] text-gray-400 font-medium leading-snug">
+                {t('Κάθε κύκλος αντιστοιχεί σε μία εβδομάδα (τελευταίες 12).', 'Each dot = one week (last 12 weeks).')}
+              </p>
+            </Card>
+
+            {/* Goals progress */}
+            <Card className="p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Target className="w-4 h-4 text-[#0E8B8D]" />
+                <span className="text-[13px] font-bold text-[#111827]">{t('Στόχοι', 'Goals')}</span>
+              </div>
+              <div className="space-y-2.5">
+                {goals.map((g) => {
+                  const pct = Math.round((g.current / g.goal) * 100);
+                  return (
+                    <div key={g.labelEn}>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-[11.5px] font-semibold text-gray-600">{t(g.labelGr, g.labelEn)}</span>
+                        <span className="text-[11px] font-bold text-gray-400">{g.current}/{g.goal}</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full transition-all duration-700 ${g.color}`} style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+          </div>
+        );
+      })()}
 
       <Card className="p-6">
         <div className="flex flex-col sm:flex-row items-start gap-4">
@@ -230,7 +325,7 @@ export default function ProfileClassic() {
             <div className="mt-4 flex flex-wrap gap-2">
               <Badge
                 variant="outline"
-                className={`text-xs py-1 px-2.5 shadow-sm ${currentUser.reliabilityScore >= 80 ? "text-green-700 bg-green-50 border-green-200" : currentUser.reliabilityScore >= 50 ? "text-blue-700 bg-blue-50 border-blue-200" : "text-amber-700 bg-amber-50 border-amber-200"}`}
+                className={`text-xs py-1 px-2.5 shadow-soft ${currentUser.reliabilityScore >= 80 ? "text-green-700 bg-green-50 border-green-200" : currentUser.reliabilityScore >= 50 ? "text-blue-700 bg-blue-50 border-blue-200" : "text-amber-700 bg-amber-50 border-amber-200"}`}
               >
                 <ShieldCheck className="h-4 w-4 mr-1.5 inline" />
                 {currentUser.reliabilityScore}%{" "}
@@ -238,7 +333,7 @@ export default function ProfileClassic() {
               </Badge>
               <Badge
                 variant="outline"
-                className={`text-xs py-1 px-2.5 shadow-sm ${currentUser.trustTier === "3_high_trust" ? "text-cyan-700 bg-cyan-50 border-cyan-200" : "text-gray-700 bg-gray-50 border-gray-200"}`}
+                className={`text-xs py-1 px-2.5 shadow-soft ${currentUser.trustTier === "3_high_trust" ? "text-cyan-700 bg-cyan-50 border-cyan-200" : "text-gray-700 bg-gray-50 border-gray-200"}`}
               >
                 {currentUser.trustTier === "3_high_trust"
                   ? t("Υψηλό Επίπεδο Εμπιστοσύνης", "High Trust Tier")
@@ -344,7 +439,7 @@ export default function ProfileClassic() {
             {t("Προτιμήσεις Ομάδας", "Group Preferences")}
           </h3>
           <div className="space-y-4">
-            <label className="flex items-start gap-3 p-3 border border-cyan-200 bg-cyan-50/30 rounded-xl cursor-pointer">
+            <label className="flex items-start gap-3 p-3 border border-cyan-200 bg-cyan-50/30 rounded-2xl cursor-pointer">
               <input
                 type="radio"
                 name="groupsize"
@@ -366,7 +461,7 @@ export default function ProfileClassic() {
                 </span>
               </div>
             </label>
-            <label className="flex items-start gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer opacity-75">
+            <label className="flex items-start gap-3 p-3 border border-gray-200 rounded-2xl cursor-pointer opacity-75">
               <input
                 type="radio"
                 name="groupsize"
@@ -407,7 +502,7 @@ export default function ProfileClassic() {
               {t("Προβολή Όλων", "View All")}
             </Button>
           </div>
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 flex items-center justify-between">
+          <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4 flex items-center justify-between shadow-soft">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-cyan-100 text-cyan-600 rounded">
                 <History className="h-5 w-5" />
@@ -536,7 +631,7 @@ export default function ProfileClassic() {
             {t("Ορατότητα, Συνδέσεις & Απόρρητο", "Visibility, Connections & Privacy")}
           </h3>
           <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 p-3 bg-white border border-gray-100 rounded-2xl shadow-soft">
               <div>
                 <p className="text-sm font-bold text-gray-900">{t("Ορατότητα Προφίλ", "Profile Visibility")}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{t("Επιλέξτε ποιοι μπορούν να δουν το πλήρες προφίλ σας.", "Choose who can see your full profile.")}</p>
@@ -544,7 +639,7 @@ export default function ProfileClassic() {
               <select 
                 value={settings.profileVisibility}
                 onChange={e => setSettings({...settings, profileVisibility: e.target.value as any})}
-                className="text-xs border-gray-200 rounded-lg shadow-sm focus:border-cyan-500 focus:ring-cyan-500 py-1.5 px-2 bg-gray-50 outline-none"
+                className="text-xs border-gray-100 rounded-2xl shadow-soft focus:border-[#18D8DB]/40 focus:ring-[#18D8DB]/40 py-1.5 px-2 bg-gray-50 outline-none"
               >
                 <option value="public">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι χρήστες", "Verified Users Only")}</option>
@@ -552,7 +647,7 @@ export default function ProfileClassic() {
               </select>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 p-3 bg-white border border-gray-100 rounded-2xl shadow-soft">
               <div>
                 <p className="text-sm font-bold text-gray-900">{t("Ποιοι μπορούν να μου στείλουν μήνυμα", "Who can message me")}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{t("Διαχειριστείτε ποιοι μπορούν να ξεκινήσουν συνομιλία μαζί σας.", "Manage who can initiate a chat with you.")}</p>
@@ -560,7 +655,7 @@ export default function ProfileClassic() {
               <select 
                 value={settings.messagePermission}
                 onChange={e => setSettings({...settings, messagePermission: e.target.value as any})}
-                className="text-xs border-gray-200 rounded-lg shadow-sm focus:border-cyan-500 focus:ring-cyan-500 py-1.5 px-2 bg-gray-50 outline-none"
+                className="text-xs border-gray-100 rounded-2xl shadow-soft focus:border-[#18D8DB]/40 focus:ring-[#18D8DB]/40 py-1.5 px-2 bg-gray-50 outline-none"
               >
                 <option value="anyone">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι χρήστες", "Verified Users Only")}</option>
@@ -568,7 +663,7 @@ export default function ProfileClassic() {
               </select>
             </div>
 
-            <label className="flex items-start gap-3 p-3 bg-white border border-gray-100 rounded-xl shadow-sm cursor-pointer hover:bg-gray-50 transition-colors">
+            <label className="flex items-start gap-3 p-3 bg-white border border-gray-100 rounded-2xl shadow-soft cursor-pointer hover:bg-gray-50 transition-all duration-200">
               <input
                 type="checkbox"
                 checked={settings.shareLocation}

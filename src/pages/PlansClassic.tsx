@@ -2,31 +2,53 @@ import { useState } from 'react';
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
-import { MessageCircle, MapPin, Search, Calendar, Star, Clock, AlertTriangle, ShieldCheck, CheckCircle, XCircle, Users } from 'lucide-react';
-import { mockEvents } from '../data/mockEvents';
+import { MessageCircle, MapPin, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Users, Bookmark } from 'lucide-react';
+import { useStore } from '../store';
 import { useNavigate } from 'react-router-dom';
-import { format, parseISO, differenceInDays, differenceInHours } from 'date-fns';
+import { format, parseISO, differenceInDays, differenceInHours, isBefore } from 'date-fns';
+import { toast } from 'sonner';
 import { useLanguage } from "../lib/i18n";
+import { TabBar } from '../components/common/TabBar';
 
 export default function PlansClassic() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'pending' | 'past'>('upcoming');
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState<string | null>(null);
   const navigate = useNavigate();
-  
-  // Mocks based on events
-  const upcomingEvents = mockEvents.filter(e => e.id === 'e4' || e.id === 'e1');
-  const pendingEvents = mockEvents.filter(e => e.id === 'e5');
-  const pastEvents = mockEvents.filter(e => e.id === 'e2' || e.id === 'e3');
+
+  const events = useStore((s) => s.events);
+  const groups = useStore((s) => s.groups);
+  const currentUser = useStore((s) => s.currentUser);
+  const waitlistedEvents = useStore((s) => s.waitlistedEvents);
+  const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
+  const leaveGroup = useStore((s) => s.leaveGroup);
+
+  const now = new Date();
+  const userGroupEventIds = currentUser
+    ? groups.filter(g => g.members.includes(currentUser.id)).map(g => g.eventId)
+    : [];
+
+  const upcomingEvents = events.filter(e => {
+    const d = new Date(e.date);
+    return !isNaN(d.getTime()) && !isBefore(d, now) && userGroupEventIds.includes(e.id);
+  }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  const pendingEvents = events.filter(e => waitlistedEvents.includes(e.id) && !userGroupEventIds.includes(e.id));
+
+  const pastEvents = events.filter(e => {
+    const d = new Date(e.date);
+    return !isNaN(d.getTime()) && isBefore(d, now) && userGroupEventIds.includes(e.id);
+  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
     <div className="mx-auto max-w-full space-y-6 md:space-y-8 pb-20 md:pb-0">
       <div>
-        <h1 className="text-[22.33807213275px] md:text-[26.7902365993px] font-bold text-[#111827]">{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
+        <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
         <p className="mt-1 text-[13.551608211075px] text-gray-500 font-medium">{t(`Διαχείριση επερχόμενων, εκκρεμών και παρελθόντων εκδηλώσεων.`, `Manage your upcoming experiences, pending groups, and past events.`)}</p>
       </div>
 
       {/* Action required prompt */}
-      <Card className="rounded-xl p-4 border border-amber-200 bg-amber-50 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <Card className="!rounded-2xl p-4 !border-amber-200 !bg-amber-50 shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div>
@@ -34,51 +56,28 @@ export default function PlansClassic() {
             <p className="text-[14.535px] text-amber-800 font-medium">{t(`Πρέπει να ολοκληρώσετε την επαλήθευση για να συμμετάσχετε στο "Arachova Retreat".`, `You need to complete ID verification to join the "Arachova Retreat" you expressed interest in.`)}</p>
           </div>
         </div>
-        <button onClick={() => navigate('/trust')} className="bg-amber-600 text-white px-4 py-2 rounded-full text-[14.2457535px] font-bold shadow-sm hover:bg-amber-700 transition-colors whitespace-nowrap shrink-0 snap-center">
+        <button onClick={() => navigate('/trust')} className="bg-amber-600 text-white px-5 py-2.5 rounded-2xl text-[13.5px] font-bold shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0">
           {t(`Επαλήθευση`, `Verify Now`)}
         </button>
       </Card>
 
-      <div className="flex gap-4 border-b border-gray-200 overflow-x-auto noscrollbar">
-        <button 
-          onClick={() => setActiveTab('upcoming')}
-          className={`pb-3 text-[12.1125px] font-bold tracking-wide transition-colors whitespace-nowrap ${
-            activeTab === 'upcoming' 
-              ? 'border-b-2 border-cyan-600 text-cyan-900' 
-              : 'text-gray-500 hover:text-[#111827]'
-          }`}
-        >
-          {t(`Επερχόμενα`, `Upcoming Confirmed`)}
-        </button>
-        <button 
-          onClick={() => setActiveTab('pending')}
-          className={`pb-3 text-[12.1125px] font-bold tracking-wide transition-colors whitespace-nowrap ${
-            activeTab === 'pending' 
-              ? 'border-b-2 border-cyan-600 text-cyan-900' 
-              : 'text-gray-500 hover:text-[#111827]'
-          }`}
-        >
-          {t(`Εκκρεμή`, `Pending & Waitlists`)}
-        </button>
-        <button 
-          onClick={() => setActiveTab('past')}
-          className={`pb-3 text-[12.1125px] font-bold tracking-wide transition-colors whitespace-nowrap ${
-            activeTab === 'past' 
-              ? 'border-b-2 border-cyan-600 text-cyan-900' 
-              : 'text-gray-500 hover:text-[#111827]'
-          }`}
-        >
-          {t(`Ιστορικό`, `Past & Feedback`)}
-        </button>
-      </div>
+      <TabBar
+        tabs={[
+          { id: 'upcoming', label: t('Επερχόμενα', 'Upcoming'), count: upcomingEvents.length },
+          { id: 'pending', label: t('Εκκρεμή', 'Pending'), count: pendingEvents.length },
+          { id: 'past', label: t('Ιστορικό', 'Past'), count: pastEvents.length },
+        ]}
+        activeTab={activeTab}
+        onChange={(id) => setActiveTab(id as 'upcoming' | 'pending' | 'past')}
+      />
 
       {activeTab === 'upcoming' && (
       <div className="space-y-4">
         {upcomingEvents.map(event => (
-          <Card key={event.id} className="rounded-xl p-4 sm:p-5 border border-cyan-100 flex flex-col sm:flex-row gap-4">
+          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 !border-[#a5f3fc]/40 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
-              <div className="absolute top-2 left-2 bg-cyan-600 text-white px-2 py-0.5 rounded text-[11.25px] font-bold tracking-wide">
+              <div className="absolute top-2 left-2 bg-[#0E8B8D] text-white px-2.5 py-0.5 rounded-full text-[11.25px] font-bold tracking-wide">
                 {t(`Επιβεβαιωμένο`, `Confirmed`)}
               </div>
             </div>
@@ -121,13 +120,16 @@ export default function PlansClassic() {
               </div>
 
               <div className="mt-auto pt-4 border-t border-gray-100 flex gap-2">
-                <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-2 rounded-lg text-[13.5px] font-bold transition-colors flex items-center justify-center gap-1.5">
+                <button onClick={() => navigate(`/chat/${event.id}`)} className="flex-1 btn-gradient !py-2 flex items-center justify-center gap-1.5 !text-[13.5px]">
                   <MessageCircle className="h-4 w-4" /> {t(`Ομαδική Συνομιλία`, `Group Chat`)}
                 </button>
-                <button onClick={() => navigate(`/events/${event.id}`)} className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-[13.5px] font-bold transition-colors">
+                <button onClick={() => navigate(`/events/${event.id}`)} className="bg-white border-2 border-gray-100 hover:border-[#a5f3fc] hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-2xl text-[13.5px] font-bold transition-all duration-200">
                   {t(`Λεπτομέρειες`, `Details`)}
                 </button>
-                <button className="bg-white border border-red-200 hover:bg-red-50 text-red-500 px-3 py-2 rounded-lg text-[13.5px] font-bold transition-colors flex items-center gap-1">
+                <button
+                  onClick={() => setShowLeaveConfirm(event.id)}
+                  className="bg-white border-2 border-red-100 hover:bg-red-50 text-red-500 px-3 py-2 rounded-2xl text-[13.5px] font-bold transition-all duration-200 flex items-center gap-1"
+                >
                   <XCircle className="h-3.5 w-3.5" /> {t(`Αποχώρηση`, `Leave`)}
                 </button>
               </div>
@@ -136,9 +138,9 @@ export default function PlansClassic() {
         ))}
         
         {upcomingEvents.length === 0 && (
-          <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+          <div className="text-center py-12 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
             <p className="text-gray-500 font-medium text-[18px] mb-4">{t(`Δεν υπάρχουν επερχόμενα σχέδια.`, `No upcoming confirmed plans.`)}</p>
-            <button className="bg-[#111827] text-white px-5 py-2 rounded-full text-[14.25px] font-bold" onClick={() => navigate('/')}>{t(`Εξερεύνηση`, `Explore Experiences`)}</button>
+            <button className="btn-gradient" onClick={() => navigate('/')}>{t(`Εξερεύνηση`, `Explore Experiences`)}</button>
           </div>
         )}
       </div>
@@ -147,10 +149,10 @@ export default function PlansClassic() {
       {activeTab === 'pending' && (
       <div className="space-y-4">
         {pendingEvents.map(event => (
-          <Card key={event.id} className="rounded-xl p-4 sm:p-5 border border-gray-200 flex flex-col sm:flex-row gap-4 opacity-75 hover:opacity-100 transition-opacity">
+          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 opacity-75 hover:opacity-100 transition-all duration-200 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative grayscale">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
-              <div className="absolute top-2 left-2 bg-gray-800 text-white px-2 py-0.5 rounded text-[11.25px] font-bold tracking-wide">
+              <div className="absolute top-2 left-2 bg-gray-800 text-white px-2.5 py-0.5 rounded-full text-[11.25px] font-bold tracking-wide">
                 {t(`Εκκρεμής Ομάδα`, `Pending Group`)}
               </div>
             </div>
@@ -168,7 +170,7 @@ export default function PlansClassic() {
               </p>
 
               <div className="mt-auto pt-4 border-t border-gray-100 flex gap-2">
-                <button onClick={() => navigate(`/events/${event.id}`)} className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-[13.5px] font-bold transition-colors">
+                <button onClick={() => navigate(`/events/${event.id}`)} className="bg-white border-2 border-gray-100 hover:border-[#a5f3fc] hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-2xl text-[13.5px] font-bold transition-all duration-200">
                   {t(`Κατάσταση`, `View Status`)}
                 </button>
               </div>
@@ -181,7 +183,7 @@ export default function PlansClassic() {
       {activeTab === 'past' && (
       <div className="space-y-4">
         {pastEvents.map((event, index) => (
-          <Card key={event.id} className="rounded-xl p-4 sm:p-5 border border-gray-200 flex flex-col sm:flex-row gap-4">
+          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-2 mb-1.5 text-[13.5px] font-bold text-gray-400">
                 <Calendar className="w-3.5 h-3.5" />
@@ -189,10 +191,10 @@ export default function PlansClassic() {
               </div>
               <h3 className="font-bold text-[20px] text-[#111827] mb-3">{event.title}</h3>
               
-              {index === 0 ? (
-                <div className="bg-cyan-50 border border-cyan-100 p-3 rounded-lg flex items-center justify-between mt-auto">
-                  <div className="text-[13.5px] font-bold text-cyan-900">{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
-                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="text-[11.25px] font-bold bg-cyan-600 text-white px-3 py-1.5 rounded hover:bg-cyan-700 tracking-wide">
+              {!feedbackSubmitted[event.id] ? (
+                <div className="bg-[#18D8DB]/[0.04] border border-[#a5f3fc]/40 p-3 rounded-2xl flex items-center justify-between mt-auto">
+                  <div className="text-[13.5px] font-bold text-[#0E8B8D]">{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
+                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="btn-gradient !py-1.5 !px-4 !text-[11.5px]">
                     {t(`Αξιολόγηση`, `Rate Experience`)}
                   </button>
                 </div>
@@ -205,6 +207,36 @@ export default function PlansClassic() {
           </Card>
         ))}
       </div>
+      )}
+
+      {showLeaveConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+          <div className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
+            <h3 className="text-lg font-bold text-[#111827] mb-2">{t('Αποχώρηση από ομάδα', 'Leave Group')}</h3>
+            <p className="text-xs font-medium text-gray-500 mb-6">
+              {t('Είστε σίγουροι ότι θέλετε να αποχωρήσετε; Μπορεί να μην μπορέσετε να ξαναμπείτε.', 'Are you sure you want to leave? You might not be able to rejoin.')}
+            </p>
+            <div className="flex flex-col gap-2.5">
+              <button
+                onClick={() => {
+                  const group = groups.find(g => g.eventId === showLeaveConfirm);
+                  if (group) leaveGroup(group.id);
+                  toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'));
+                  setShowLeaveConfirm(null);
+                }}
+                className="w-full px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
+              >
+                {t('Ναι, Αποχώρηση', 'Yes, Leave')}
+              </button>
+              <button
+                onClick={() => setShowLeaveConfirm(null)}
+                className="w-full px-4 py-3 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 border border-gray-100"
+              >
+                {t('Ακύρωση', 'Cancel')}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

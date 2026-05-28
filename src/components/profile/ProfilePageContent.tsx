@@ -211,7 +211,7 @@ export default function ProfilePageContent() {
           <div className="flex flex-col sm:flex-row items-start gap-5">
             {/* Avatar */}
             <div className="relative group">
-              <div className={`h-20 w-20 rounded-2xl flex items-center justify-center shrink-0 border-2 overflow-hidden shadow-sm ${a.avatarBg}`}>
+              <div className={`h-20 w-20 rounded-2xl flex items-center justify-center shrink-0 border-2 overflow-hidden shadow-soft ${a.avatarBg}`}>
                 {photoUrl ? (
                   <img referrerPolicy="no-referrer" src={photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
                 ) : (

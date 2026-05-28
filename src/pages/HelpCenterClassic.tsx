@@ -38,8 +38,8 @@ export default function HelpCenterClassic() {
         <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10"></div>
         <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white opacity-10"></div>
         
-        <h1 className="text-[20.104264919475px] md:text-[26.7902365993px] font-black mb-2 relative z-10">{t(`Κέντρο Βοήθειας`, `Help Center`)}</h1>
-        <p className="text-cyan-100 text-[16.2px] font-medium mb-6 relative z-10">{t(`Πώς μπορούμε να σας βοηθήσουμε;`, `How can we help you?`)}</p>
+        <h1 className="text-[16px] md:text-[18px] font-black mb-2 relative z-10">{t(`Κέντρο Βοήθειας`, `Help Center`)}</h1>
+        <p className="text-cyan-100 text-[13px] font-medium mb-6 relative z-10">{t(`Πώς μπορούμε να σας βοηθήσουμε;`, `How can we help you?`)}</p>
         <div className="relative max-w-md mx-auto z-10">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
@@ -47,7 +47,7 @@ export default function HelpCenterClassic() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t(`Αναζήτηση άρθρων...`, `Search articles...`)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl text-[16.2px] font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
+            className="w-full pl-10 pr-4 py-2.5 rounded-2xl text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-white/60 shadow-soft"
           />
         </div>
       </div>
@@ -57,7 +57,7 @@ export default function HelpCenterClassic() {
         {popularTopics.map(topic => {
           const Icon = topic.icon;
           return (
-            <button key={topic.label} className={`flex items-center gap-2 p-3 rounded-xl border border-gray-100 bg-white hover:shadow-sm transition-all`}>
+            <button key={topic.label} className={`flex items-center gap-2 p-3 rounded-2xl border border-gray-100 bg-white hover:shadow-soft transition-all duration-200 hover:border-[#a5f3fc]`}>
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${topic.color}`}>
                 <Icon className="w-4 h-4" />
               </div>

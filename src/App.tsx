@@ -36,6 +36,9 @@ const VerificationCenter = lazy(() => import("./pages/VerificationCenter"));
 const SettingsAndPrivacy = lazy(() => import("./pages/SettingsAndPrivacy"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
 const Achievements = lazy(() => import("./pages/Achievements"));
+const Leaderboard = lazy(() => import("./pages/Leaderboard"));
+const Challenges = lazy(() => import("./pages/Challenges"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
 
 export default function App() {
   const location = useLocation();
@@ -107,6 +110,9 @@ export default function App() {
 
             <Route path="/admin" element={<ErrorBoundary><SettingsPage /></ErrorBoundary>} />
             <Route path="/achievements" element={<ErrorBoundary><Achievements /></ErrorBoundary>} />
+            <Route path="/leaderboard" element={<ErrorBoundary><Leaderboard /></ErrorBoundary>} />
+            <Route path="/challenges" element={<ErrorBoundary><Challenges /></ErrorBoundary>} />
+            <Route path="/onboarding" element={<ErrorBoundary><Onboarding /></ErrorBoundary>} />
 
             {/* 404 catch-all */}
             <Route path="*" element={<ErrorBoundary><NotFound /></ErrorBoundary>} />

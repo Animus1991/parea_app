@@ -16,7 +16,7 @@ export default function SavedEventsClassic() {
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#111827]">{t('Αποθηκευμένα', 'Saved Events')}</h1>
+          <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{t('Αποθηκευμένα', 'Saved Events')}</h1>
           <p className="text-gray-500 font-medium text-xs md:text-sm mt-1">{t('Εμπειρίες που έχετε προσθέσει στους σελιδοδείκτες σας.', 'Experiences you\'ve bookmarked for later.')}</p>
         </div>
       </div>
@@ -24,10 +24,10 @@ export default function SavedEventsClassic() {
       {savedEvents.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {savedEvents.map(event => (
-            <Link key={event.id} to={`/events/${event.id}`} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all group flex flex-col">
+            <Link key={event.id} to={`/events/${event.id}`} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-soft hover:shadow-soft-md transition-all duration-200 group flex flex-col">
               <div className="h-32 bg-gray-200 relative overflow-hidden shrink-0">
                 <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#111827] shadow-sm z-10" aria-label={t('Αποθηκευμένο', 'Saved')}>
+                <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#111827] shadow-soft z-10" aria-label={t('Αποθηκευμένο', 'Saved')}>
                   <Bookmark className="w-4 h-4 fill-current text-cyan-600" />
                 </button>
               </div>
@@ -62,7 +62,7 @@ export default function SavedEventsClassic() {
           <Bookmark className="mx-auto h-10 w-10 text-gray-300 mb-3" />
           <h3 className="text-base font-bold text-[#111827]">{t('Δεν υπάρχουν αποθηκευμένες εκδηλώσεις', 'No saved events yet')}</h3>
           <p className="text-sm text-gray-500 mt-1 max-w-sm mx-auto">{t('Όταν δείτε μια εκδήλωση που σας αρέσει, προσθέστε τη στους σελιδοδείκτες σας.', 'When you see an event you like, bookmark it to find it easily later.')}</p>
-          <Link to="/" className="inline-flex items-center justify-center px-4 py-2 mt-4 bg-cyan-600 text-white text-xs font-bold rounded-full shadow-sm hover:bg-cyan-700 transition-colors">
+          <Link to="/" className="inline-flex items-center justify-center mt-4 btn-gradient">
             {t('Ανακαλύψτε Εκδηλώσεις', 'Discover Events')}
           </Link>
         </div>

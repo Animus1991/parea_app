@@ -61,7 +61,7 @@ export default function InboxClassic() {
       <div className="shrink-0 mb-6">
         <div className="flex items-end justify-between mb-4">
           <div>
-            <h1 className="text-[20.104264919475px] md:text-[24.11121293937px] font-bold text-[#111827] tracking-tight">{t(`Μηνύματα`, `Messages`)}</h1>
+            <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827] tracking-tight">{t(`Μηνύματα`, `Messages`)}</h1>
             <p className="text-gray-500 font-medium text-[12.1964473899675px] md:text-[14.626916949961px] mt-1">{t(`Συνομιλίες ομάδων`, `Group conversations`)}</p>
           </div>
         </div>
@@ -73,15 +73,15 @@ export default function InboxClassic() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t(`Αναζήτηση συνομιλιών...`, `Search conversations...`)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-gray-100 text-[16.2px] font-medium focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/40 shadow-soft transition-all duration-200"
           />
         </div>
 
-        <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
-          <button onClick={() => setActiveTab('active')} className={`px-4 py-1.5 rounded-md text-[13.5px] font-bold transition-colors ${activeTab === 'active' ? 'bg-white shadow-sm text-[#111827]' : 'text-gray-500'}`}>
+        <div className="flex gap-2">
+          <button onClick={() => setActiveTab('active')} className={`px-4 py-1.5 rounded-full text-[13.5px] font-bold transition-all duration-200 ${activeTab === 'active' ? 'btn-pill-active' : 'btn-pill-inactive'}`}>
             {t(`Ενεργές`, `Active`)}
           </button>
-          <button onClick={() => setActiveTab('past')} className={`px-4 py-1.5 rounded-md text-[13.5px] font-bold transition-colors ${activeTab === 'past' ? 'bg-white shadow-sm text-[#111827]' : 'text-gray-500'}`}>
+          <button onClick={() => setActiveTab('past')} className={`px-4 py-1.5 rounded-full text-[13.5px] font-bold transition-all duration-200 ${activeTab === 'past' ? 'btn-pill-active' : 'btn-pill-inactive'}`}>
             {t(`Παλαιότερες`, `Past`)}
           </button>
         </div>
@@ -98,7 +98,7 @@ export default function InboxClassic() {
             <div
               key={chat.id}
               onClick={() => navigate(`/chat/${chat.id}`)}
-              className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-100"
+              className="card-row flex items-center gap-3 cursor-pointer"
             >
               <div className="relative shrink-0">
                 <img src={chat.image} alt={chat.title} className="w-12 h-12 rounded-full object-cover" />
@@ -131,7 +131,7 @@ export default function InboxClassic() {
                 </div>
               </div>
               {chat.unread > 0 && (
-                <span className="bg-cyan-600 text-white text-[12.5px] font-bold w-5 h-5 flex items-center justify-center rounded-full shrink-0">{chat.unread}</span>
+                <span className="bg-[#0E8B8D] text-white text-[12.5px] font-bold w-5 h-5 flex items-center justify-center rounded-full shrink-0 shadow-soft">{chat.unread}</span>
               )}
             </div>
           ))

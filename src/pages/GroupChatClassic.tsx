@@ -22,6 +22,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { Virtuoso } from "react-virtuoso";
+import { toast } from "sonner";
 import { useLanguage } from "../lib/i18n";
 import { LiveEventTracker } from "../components/groups/LiveEventTracker";
 
@@ -109,7 +110,7 @@ export default function GroupChatClassic() {
   const [memberSearchQuery, setMemberSearchQuery] = useState("");
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [memberAddSearchQuery, setMemberAddSearchQuery] = useState("");
-  const [renderTrigger, setRenderTrigger] = useState(0);
+  const [showSosConfirm, setShowSosConfirm] = useState(false);
   const [senderFilter, setSenderFilter] = useState<string>("all");
   const virtuosoRef = useRef<any>(null);
 
@@ -180,8 +181,6 @@ export default function GroupChatClassic() {
     currentUser.id === event.organizerId ||
     currentUser.isOrganizer;
 
-  // Track the actual members. We depend on renderTrigger to update
-  const currentMembersStr = group.members.join(",");
   const groupMembersDetailed = group.members.map(
     (mId) => users.find((u) => u.id === mId) || currentUser,
   );
@@ -200,7 +199,7 @@ export default function GroupChatClassic() {
           key={msg.id}
           className="text-center my-6 flex justify-center w-full px-4"
         >
-          <span className="text-[11px] font-semibold tracking-tight capitalize text-[#111827] bg-[#F3F4F6] px-4 py-2 rounded-full shadow-sm max-w-sm text-center leading-relaxed">
+          <span className="text-[11px] font-semibold tracking-tight capitalize text-[#111827] bg-[#F3F4F6] px-4 py-2 rounded-full shadow-soft max-w-sm text-center leading-relaxed">
             {msg.text}
           </span>
         </div>
@@ -213,7 +212,7 @@ export default function GroupChatClassic() {
           key={msg.id}
           className="text-center my-6 flex justify-center w-full px-4 animate-in fade-in duration-300"
         >
-          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-100 px-4 py-2.5 rounded-full shadow-sm max-w-sm">
+          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-100 px-4 py-2.5 rounded-full shadow-soft max-w-sm">
             <Compass className="h-4 w-4 text-emerald-600 animate-pulse" />
             <span className="text-[12px] font-medium text-emerald-800 leading-tight">
               {msg.text}
@@ -244,8 +243,8 @@ export default function GroupChatClassic() {
           <div
             className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed relative ${
               isMe
-                ? "bg-[#111827] text-white rounded-tr-sm shadow-sm"
-                : "bg-white border border-gray-200 text-[#111827] rounded-tl-sm shadow-sm"
+                ? "bg-[#111827] text-white rounded-tr-sm shadow-soft"
+                : "bg-white border border-gray-100 text-[#111827] rounded-tl-sm shadow-soft"
             }`}
           >
             {msg.text}
@@ -263,7 +262,7 @@ export default function GroupChatClassic() {
 
   return (
     <div className="w-full h-full px-[5px] md:px-0 mx-auto max-w-[1200px]">
-      <div className="w-full h-[calc(100dvh-5rem)] md:h-[calc(100dvh-6rem)] flex bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden relative">
+      <div className="w-full h-[calc(100dvh-5rem)] md:h-[calc(100dvh-6rem)] flex bg-white border border-gray-100 rounded-2xl shadow-soft overflow-hidden relative">
         <div
           className={`flex flex-col flex-1 h-full min-w-0 ${showInfo ? "hidden md:flex border-r border-gray-200" : "flex"}`}
         >
@@ -373,7 +372,7 @@ export default function GroupChatClassic() {
 
           {/* Ephemeral Notice */}
           {isEphemeral && showEphemeralBanner && (
-            <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 px-2 py-2 sm:px-3 text-center shadow-sm z-10 backdrop-blur-sm flex items-center justify-center relative">
+            <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 px-2 py-2 sm:px-3 text-center shadow-soft z-10 backdrop-blur-sm flex items-center justify-center relative">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-[10px] sm:text-[11px] font-bold tracking-wide text-amber-800 pr-6 w-full">
                 <span className="flex items-center justify-center gap-1.5 whitespace-nowrap">
                   <ShieldCheck className="h-3.5 w-3.5 shrink-0" />{" "}
@@ -406,7 +405,7 @@ export default function GroupChatClassic() {
               <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
                 <button
                   onClick={() => setShowLocationConfigModal(true)}
-                  className="bg-white/90 backdrop-blur-sm border border-emerald-200 text-emerald-700 shadow-sm px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2"
+                  className="bg-white/90 backdrop-blur-sm border border-emerald-200 text-emerald-700 shadow-soft px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2"
                 >
                   <span className="flex h-2 w-2 relative">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -447,28 +446,7 @@ export default function GroupChatClassic() {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  const isSos = useStore
-                    .getState()
-                    .groups.find((g) => g.id === group.id)?.membersLocations?.[
-                    currentUser.id
-                  ]?.sos;
-                  useStore
-                    .getState()
-                    .triggerSos(group.id, currentUser.id, !isSos);
-                  setMessages((prev) => [
-                    ...prev,
-                    {
-                      id: Date.now().toString(),
-                      senderId: "system",
-                      senderName: "System",
-                      text: !isSos
-                        ? `${currentUser.name} ${t("ενεργοποίησε το SOS Flare! Βρίσκεται σε ανάγκη.", "triggered the SOS flare! They need help.")}`
-                        : `${currentUser.name} ${t("απενεργοποίησε το SOS.", "deactivated the SOS.")}`,
-                      timestamp: new Date().toISOString(),
-                    },
-                  ]);
-                }}
+                onClick={() => setShowSosConfirm(true)}
                 className={`p-2.5 rounded-full transition-all flex items-center justify-center shrink-0 border ${
                   group.membersLocations?.[currentUser.id]?.sos
                     ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500 animate-pulse"
@@ -487,12 +465,12 @@ export default function GroupChatClassic() {
                     "Πληκτρολογήστε ένα μήνυμα...",
                     "Type a message...",
                   )}
-                  className="w-full bg-gray-100 border border-transparent rounded-full py-3 md:py-3.5 pl-5 pr-14 text-sm focus:bg-white focus:ring-2 focus:ring-[#111827] focus:border-[#111827] outline-none transition-all shadow-sm"
+                  className="w-full bg-gray-100 border border-transparent rounded-full py-3 md:py-3.5 pl-5 pr-14 text-sm focus:bg-white focus:ring-2 focus:ring-[#111827] focus:border-[#111827] outline-none transition-all shadow-soft"
                 />
                 <button
                   type="submit"
                   disabled={!newMessage.trim()}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2 bg-[#111827] text-white rounded-full hover:bg-gray-800 disabled:opacity-40 disabled:hover:bg-[#111827] transition-all shadow-sm"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2 bg-[#111827] text-white rounded-full hover:bg-gray-800 disabled:opacity-40 disabled:hover:bg-[#111827] transition-all shadow-soft"
                   aria-label={t('Αποστολή μηνύματος', 'Send message')}
                 >
                   <Send className="h-4 w-4 md:h-4.5 md:w-4.5" />
@@ -504,7 +482,7 @@ export default function GroupChatClassic() {
 
         {showInfo && (
           <div className="w-full md:w-[320px] lg:w-[380px] bg-white shrink-0 flex flex-col absolute md:relative z-30 h-full border-l border-gray-200 animate-in slide-in-from-right-8 duration-200">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10 shadow-soft">
               <h3 className="font-bold text-[#111827] text-[14.85px] tracking-wide">
                 {t("Λεπτομέρειες Ομάδας", "Group Details")}
               </h3>
@@ -518,7 +496,7 @@ export default function GroupChatClassic() {
 
             <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-6 bg-gray-50/50">
               {/* Event Summary */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden">
                 <div className="relative h-28 w-full group">
                   <img
                     referrerPolicy="no-referrer"
@@ -582,7 +560,7 @@ export default function GroupChatClassic() {
 
               {event.groupDiscount && (
                 <div
-                  className={`p-4 rounded-xl border shadow-sm ${group.discountUnlocked ? "bg-emerald-50 border-emerald-200" : "bg-white border-gray-200"}`}
+                  className={`p-4 rounded-2xl border shadow-soft ${group.discountUnlocked ? "bg-emerald-50 border-emerald-200" : "bg-white border-gray-100"}`}
                 >
                   <div className="flex items-center gap-2.5 mb-2">
                     <div
@@ -612,7 +590,7 @@ export default function GroupChatClassic() {
                 </div>
               )}
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+              <div className="bg-white rounded-2xl shadow-soft border border-gray-100 p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="font-bold text-[13px] capitalize tracking-tight text-[#111827]">
                     {t("Μέλη Ομάδας", "Group Members")}
@@ -656,7 +634,7 @@ export default function GroupChatClassic() {
                           key={member.id}
                           className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-100"
                         >
-                          <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0 relative group shadow-sm border border-gray-100">
+                          <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0 relative group shadow-soft border border-gray-100">
                             {member.photoUrl ? (
                               <img
                                 referrerPolicy="no-referrer"
@@ -715,7 +693,7 @@ export default function GroupChatClassic() {
               </div>
 
               {/* Chat Settings */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 space-y-5">
+              <div className="bg-white rounded-2xl shadow-soft border border-gray-100 p-4 space-y-5">
                 <div>
                   <h4 className="font-bold text-[13px] capitalize tracking-tight text-[#111827] mb-3 flex items-center gap-1.5">
                     <ShieldCheck className="h-3.5 w-3.5 text-gray-400" />{" "}
@@ -870,8 +848,8 @@ export default function GroupChatClassic() {
         )}
 
         {showStatusModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-gray-100 animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+            <div className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
               <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-[#111827]">
                 <Clock className="w-6 h-6" />
               </div>
@@ -929,7 +907,7 @@ export default function GroupChatClassic() {
                       ]);
                       setShowStatusModal(false);
                     }}
-                    className="w-full flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-colors text-sm font-bold text-gray-700"
+                    className="w-full flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-2xl transition-all duration-200 text-sm font-bold text-gray-700"
                   >
                     <span className="text-gray-400">{status.icon}</span>
                     {status.label}
@@ -938,7 +916,7 @@ export default function GroupChatClassic() {
               </div>
               <button
                 onClick={() => setShowStatusModal(false)}
-                className="w-full px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 rounded-xl transition-all border border-transparent active:scale-[0.98]"
+                className="w-full px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 rounded-2xl transition-all duration-200 border border-transparent active:scale-[0.98]"
               >
                 {t("Ακύρωση", "Cancel")}
               </button>
@@ -947,8 +925,8 @@ export default function GroupChatClassic() {
         )}
 
         {showLocationConfigModal && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-100 animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+            <div className="modal-panel max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-200">
               <div className="p-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm z-10">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600">
@@ -973,7 +951,7 @@ export default function GroupChatClassic() {
 
               <div className="p-5 space-y-6">
                 {isSharingLocation && (
-                  <div className="bg-cyan-50 border border-cyan-100 rounded-xl p-4 flex flex-col gap-3">
+                  <div className="bg-cyan-50 border border-[#a5f3fc]/40 rounded-2xl p-4 flex flex-col gap-3 shadow-soft">
                     <div className="flex items-center gap-2 text-cyan-700">
                       <Navigation className="w-4 h-4 animate-pulse" />
                       <span className="text-sm font-bold">
@@ -1021,7 +999,7 @@ export default function GroupChatClassic() {
                           precision: "approximate",
                         })
                       }
-                      className={`p-3 rounded-xl border text-left flex flex-col h-full transition-all ${locationConfig.precision === "approximate" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827]" : "border-gray-200 hover:border-gray-300"}`}
+                      className={`p-3 rounded-2xl border text-left flex flex-col h-full transition-all duration-200 ${locationConfig.precision === "approximate" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827] shadow-soft" : "border-gray-100 hover:border-[#a5f3fc]"}`}
                     >
                       <span
                         className={`text-[13px] font-bold ${locationConfig.precision === "approximate" ? "text-[#111827]" : "text-gray-700"}`}
@@ -1042,7 +1020,7 @@ export default function GroupChatClassic() {
                           precision: "exact",
                         })
                       }
-                      className={`p-3 rounded-xl border text-left flex flex-col h-full transition-all ${locationConfig.precision === "exact" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827]" : "border-gray-200 hover:border-gray-300"}`}
+                      className={`p-3 rounded-2xl border text-left flex flex-col h-full transition-all duration-200 ${locationConfig.precision === "exact" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827] shadow-soft" : "border-gray-100 hover:border-[#a5f3fc]"}`}
                     >
                       <span
                         className={`text-[13px] font-bold ${locationConfig.precision === "exact" ? "text-[#111827]" : "text-gray-700"}`}
@@ -1067,7 +1045,7 @@ export default function GroupChatClassic() {
                     {["organizer", "selected", "all"].map((option) => (
                       <label
                         key={option}
-                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${locationConfig.shareWith === option ? "border-cyan-600 bg-cyan-50/30" : "border-gray-200 hover:bg-gray-50"}`}
+                        className={`flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all duration-200 ${locationConfig.shareWith === option ? "border-[#18D8DB] bg-cyan-50/30 shadow-soft" : "border-gray-100 hover:bg-gray-50 hover:border-[#a5f3fc]"}`}
                       >
                         <div className="flex items-center justify-center relative">
                           <input
@@ -1133,7 +1111,7 @@ export default function GroupChatClassic() {
                         duration: e.target.value,
                       })
                     }
-                    className="w-full border border-gray-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-[#111827] bg-white outline-none"
+                    className="w-full border border-gray-100 rounded-2xl p-3 text-sm font-medium focus:ring-2 focus:ring-[#18D8DB]/40 bg-white outline-none shadow-soft"
                   >
                     <option value="arrival">
                       {t(
@@ -1189,7 +1167,7 @@ export default function GroupChatClassic() {
                       },
                     ]);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-[#111827] hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-white bg-[#111827] hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
                 >
                   {isSharingLocation
                     ? t("Ενημέρωση Ρυθμίσεων", "Update Configuration")
@@ -1201,8 +1179,8 @@ export default function GroupChatClassic() {
         )}
 
         {showSafetyLinkModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-gray-100 animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+            <div className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
               <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
                 <Link2 className="w-6 h-6" />
               </div>
@@ -1224,7 +1202,7 @@ export default function GroupChatClassic() {
                     navigator.clipboard.writeText(
                       "https://nakamas.app/safe/r9x2p",
                     );
-                    alert(
+                    toast.success(
                       t("Αντιγράφηκε στο πρόχειρο!", "Copied to clipboard!"),
                     );
                   }}
@@ -1235,7 +1213,7 @@ export default function GroupChatClassic() {
               </div>
               <button
                 onClick={() => setShowSafetyLinkModal(false)}
-                className="w-full px-4 py-3 text-sm font-bold text-white bg-[#111827] hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                className="w-full px-4 py-3 text-sm font-bold text-white bg-[#111827] hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
               >
                 {t("Τέλος", "Done")}
               </button>
@@ -1244,8 +1222,8 @@ export default function GroupChatClassic() {
         )}
 
         {showLeaveModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-gray-100 animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+            <div className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
               <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
                 <ArrowLeft className="w-6 h-6" />
               </div>
@@ -1266,7 +1244,7 @@ export default function GroupChatClassic() {
               <div className="flex flex-col gap-2.5">
                 <button
                   onClick={() => {
-                    alert(
+                    toast.info(
                       t(
                         "Αποχωρήσατε από την ομάδα.",
                         "You have left the group.",
@@ -1275,13 +1253,13 @@ export default function GroupChatClassic() {
                     setShowLeaveModal(false);
                     navigate(-1);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
                 >
                   {t("Ναι, Αποχώρηση", "Yes, Leave Group")}
                 </button>
                 <button
                   onClick={() => setShowLeaveModal(false)}
-                  className="w-full px-4 py-3 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all border border-gray-200 active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 border border-gray-100 active:scale-[0.98]"
                 >
                   {t("Ακύρωση", "Cancel")}
                 </button>
@@ -1291,8 +1269,8 @@ export default function GroupChatClassic() {
         )}
 
         {showDisableEphemeralModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-gray-100 animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+            <div className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
               <div className="w-12 h-12 bg-cyan-50 rounded-full flex items-center justify-center mx-auto mb-4 text-cyan-600">
                 <ShieldCheck className="w-6 h-6" />
               </div>
@@ -1322,13 +1300,13 @@ export default function GroupChatClassic() {
                     setShowDisableEphemeralModal(false);
                     setShowInfo(false);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-[#111827] hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-white bg-[#111827] hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
                 >
                   {t("Πρόταση στην Ομάδα", "Propose to Group")}
                 </button>
                 <button
                   onClick={() => setShowDisableEphemeralModal(false)}
-                  className="w-full px-4 py-3 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all border border-gray-200 active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 border border-gray-100 active:scale-[0.98]"
                 >
                   {t("Ακύρωση", "Cancel")}
                 </button>
@@ -1338,8 +1316,8 @@ export default function GroupChatClassic() {
         )}
 
         {showReportModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 border border-gray-100 animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+            <div className="modal-panel max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center text-red-600 shrink-0">
                   <ShieldCheck className="w-5 h-5" />
@@ -1367,7 +1345,7 @@ export default function GroupChatClassic() {
                 )}
               </p>
               <textarea
-                className="w-full border border-gray-200 rounded-xl p-3 text-sm resize-none mb-5 focus:ring-2 focus:ring-[#111827] outline-none shadow-sm font-medium transition-all"
+                className="w-full border border-gray-100 rounded-2xl p-3 text-sm resize-none mb-5 focus:ring-2 focus:ring-[#18D8DB]/40 outline-none shadow-soft font-medium transition-all duration-200"
                 rows={4}
                 placeholder={t(
                   "Παρακαλώ περιγράψτε το πρόβλημα με λεπτομέρεια...",
@@ -1377,13 +1355,13 @@ export default function GroupChatClassic() {
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowReportModal(false)}
-                  className="px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors border border-gray-200"
+                  className="px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 border border-gray-100"
                 >
                   {t("Ακύρωση", "Cancel")}
                 </button>
                 <button
                   onClick={() => {
-                    alert(
+                    toast.success(
                       t(
                         "Η αναφορά σας υποβλήθηκε με ασφάλεια.",
                         "Your report has been submitted securely.",
@@ -1391,7 +1369,7 @@ export default function GroupChatClassic() {
                     );
                     setShowReportModal(false);
                   }}
-                  className="px-5 py-2.5 text-sm font-bold text-white bg-[#111827] hover:bg-gray-900 rounded-xl transition-all shadow-sm hover:shadow-md"
+                  className="px-5 py-2.5 text-sm font-bold text-white bg-[#111827] hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft hover:shadow-soft-md"
                 >
                   {t("Υποβολή", "Submit Report")}
                 </button>
@@ -1401,8 +1379,8 @@ export default function GroupChatClassic() {
         )}
 
         {showStatusModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-gray-100 animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+            <div className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
               <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
                 <Clock className="w-6 h-6" />
               </div>
@@ -1441,12 +1419,12 @@ export default function GroupChatClassic() {
                     name="eta"
                     type="number"
                     placeholder={t("ETA (λεπτά)", "ETA (mins)")}
-                    className="flex-1 w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                    className="flex-1 w-full bg-gray-50 border border-gray-100 text-gray-900 text-sm rounded-2xl px-4 py-3 focus:ring-2 focus:ring-[#18D8DB]/40 focus:border-[#18D8DB] outline-none shadow-soft"
                     min="1"
                   />
                   <button
                     type="submit"
-                    className="px-4 py-3 text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-700 rounded-xl shadow-sm transition-all whitespace-nowrap"
+                    className="px-4 py-3 text-sm font-bold text-white bg-[#0E8B8D] hover:bg-[#0b6d6f] rounded-2xl shadow-soft transition-all duration-200 whitespace-nowrap"
                   >
                     {t("Αποστολή", "Send")}
                   </button>
@@ -1488,7 +1466,7 @@ export default function GroupChatClassic() {
                       ]);
                       setShowStatusModal(false);
                     }}
-                    className={`w-full px-4 py-3 text-sm font-bold rounded-xl transition-all shadow-sm active:scale-[0.98] ${status.color}`}
+                    className={`w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
                   >
                     {status.text}
                   </button>
@@ -1496,7 +1474,7 @@ export default function GroupChatClassic() {
 
                 <button
                   onClick={() => setShowStatusModal(false)}
-                  className="w-full px-4 py-3 mt-2 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all border border-gray-200 active:scale-[0.98]"
+                  className="w-full px-4 py-3 mt-2 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 border border-gray-100 active:scale-[0.98]"
                 >
                   {t("Ακύρωση", "Cancel")}
                 </button>
@@ -1505,8 +1483,8 @@ export default function GroupChatClassic() {
           </div>
         )}
         {showAddMemberModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+            <div className="modal-panel max-w-md w-full max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
               <div className="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between bg-white relative z-10">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600">
@@ -1547,7 +1525,7 @@ export default function GroupChatClassic() {
                     )}
                     value={memberAddSearchQuery}
                     onChange={(e) => setMemberAddSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-600 bg-white transition-all shadow-sm font-medium"
+                    className="w-full pl-9 pr-3 py-2.5 text-[13px] border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/40 bg-white transition-all duration-200 shadow-soft font-medium"
                   />
                 </div>
               </div>
@@ -1563,7 +1541,7 @@ export default function GroupChatClassic() {
                     .map((member) => (
                       <div
                         key={member.id}
-                        className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors border border-transparent hover:border-gray-100"
+                        className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-2xl transition-all duration-200 border border-transparent hover:border-gray-100"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0 border border-gray-200">
@@ -1593,10 +1571,8 @@ export default function GroupChatClassic() {
                         </div>
                         <button
                           onClick={() => {
-                            // Mutate the mockGroup's members directly for the demo
+                            // Add member to the group (demo)
                             group.members.push(member.id);
-                            // Trigger re-render
-                            setRenderTrigger((prev) => prev + 1);
                             // Post a system message in the chat
                             setMessages((prev) => [
                               ...prev,
@@ -1609,7 +1585,7 @@ export default function GroupChatClassic() {
                               },
                             ]);
                           }}
-                          className="text-[12px] font-semibold capitalize tracking-tight px-3 py-1.5 rounded-lg border flex items-center gap-1 transition-all bg-cyan-600 text-white border-cyan-600 hover:bg-cyan-700 shadow-sm"
+                          className="text-[12px] font-semibold capitalize tracking-tight px-3 py-1.5 rounded-full border flex items-center gap-1 transition-all duration-200 bg-[#0E8B8D] text-white border-[#0E8B8D] hover:bg-[#0b6d6f] shadow-soft"
                         >
                           <UserPlus className="w-3 h-3" />{" "}
                           {t("Προσθήκη", "Add")}
@@ -1646,7 +1622,7 @@ export default function GroupChatClassic() {
                     setShowAddMemberModal(false);
                     setMemberAddSearchQuery("");
                   }}
-                  className="px-5 py-2.5 text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 rounded-xl transition-all border border-gray-200 shadow-sm active:scale-[0.98]"
+                  className="px-5 py-2.5 text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 rounded-2xl transition-all duration-200 border border-gray-100 shadow-soft active:scale-[0.98]"
                 >
                   {t("Τέλος", "Done")}
                 </button>
@@ -1655,15 +1631,76 @@ export default function GroupChatClassic() {
           </div>
         )}
         {showLiveRadarModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-gray-100 animate-in zoom-in-95 duration-200 overflow-hidden relative">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+            <div className="modal-panel w-full max-w-4xl max-h-[90vh] flex flex-col animate-in zoom-in-95 duration-200 overflow-hidden relative">
               <button
                 onClick={() => setShowLiveRadarModal(false)}
-                className="absolute top-4 right-4 z-[200] bg-white rounded-full p-2 shadow-sm border border-gray-200 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute top-4 right-4 z-[200] bg-white rounded-full p-2 shadow-soft border border-gray-100 text-gray-400 hover:text-gray-600 transition-all duration-200"
               >
                 <X className="w-5 h-5" />
               </button>
               <LiveEventTracker groupId={group.id} />
+            </div>
+          </div>
+        )}
+
+        {showSosConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+            <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-red-100 animate-in zoom-in-95 duration-200">
+              <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
+                <AlertTriangle className="w-7 h-7 animate-pulse" />
+              </div>
+              <h3 className="text-lg font-bold text-[#111827] mb-2">
+                {group?.membersLocations?.[currentUser.id]?.sos
+                  ? t('Απενεργοποίηση SOS', 'Deactivate SOS')
+                  : t('Ενεργοποίηση SOS Flare', 'Activate SOS Flare')}
+              </h3>
+              <p className="text-xs font-medium leading-relaxed text-gray-500 mb-6">
+                {group?.membersLocations?.[currentUser.id]?.sos
+                  ? t('Αυτό θα ενημερώσει την ομάδα ότι είστε ασφαλείς.', 'This will notify the group that you are safe.')
+                  : t('Αυτό θα ειδοποιήσει αμέσως όλα τα μέλη της ομάδας ότι χρειάζεστε βοήθεια.', 'This will immediately notify all group members that you need help.')}
+              </p>
+              <div className="flex flex-col gap-2.5">
+                <button
+                  onClick={() => {
+                    const isSos = group?.membersLocations?.[currentUser.id]?.sos;
+                    useStore.getState().triggerSos(group.id, currentUser.id, !isSos);
+                    setMessages((prev) => [
+                      ...prev,
+                      {
+                        id: Date.now().toString(),
+                        senderId: "system",
+                        senderName: "System",
+                        text: !isSos
+                          ? `${currentUser.name} ${t("ενεργοποίησε το SOS Flare! Βρίσκεται σε ανάγκη.", "triggered the SOS flare! They need help.")}`
+                          : `${currentUser.name} ${t("απενεργοποίησε το SOS.", "deactivated the SOS.")}`,
+                        timestamp: new Date().toISOString(),
+                      },
+                    ]);
+                    setShowSosConfirm(false);
+                    if (!isSos) {
+                      toast.error(t('SOS Flare ενεργοποιήθηκε!', 'SOS Flare activated!'));
+                    } else {
+                      toast.info(t('SOS απενεργοποιήθηκε.', 'SOS deactivated.'));
+                    }
+                  }}
+                  className={`w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${
+                    group?.membersLocations?.[currentUser.id]?.sos
+                      ? 'text-white bg-emerald-600 hover:bg-emerald-700'
+                      : 'text-white bg-red-600 hover:bg-red-700'
+                  }`}
+                >
+                  {group?.membersLocations?.[currentUser.id]?.sos
+                    ? t('Απενεργοποίηση', 'Deactivate')
+                    : t('Ενεργοποίηση SOS', 'Activate SOS')}
+                </button>
+                <button
+                  onClick={() => setShowSosConfirm(false)}
+                  className="w-full px-4 py-3 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 border border-gray-100 active:scale-[0.98]"
+                >
+                  {t('Ακύρωση', 'Cancel')}
+                </button>
+              </div>
             </div>
           </div>
         )}

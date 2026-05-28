@@ -27,7 +27,7 @@ function useAccent() {
     withdrawBtn: isDark ? 'bg-white/10 text-white hover:bg-white/20 border-0' : 'bg-white text-fuchsia-900 hover:bg-gray-100 border-0',
     pendingBg: isDark ? '' : '',
     bankBg: isDark ? 'border-gray-700/40 bg-gray-800/30' : 'border-gray-200 bg-gray-50',
-    bankIcon: isDark ? 'bg-gray-700/40 border-gray-600 text-gray-400' : 'bg-white shadow-sm border-gray-200 text-gray-500',
+    bankIcon: isDark ? 'bg-gray-700/40 border-gray-600 text-gray-400' : 'bg-white shadow-soft border-gray-100 text-gray-500',
   };
   if (theme === 'neon' || theme === 'neon-dark' || theme === 'bento-dark') return {
     ...base,
@@ -36,7 +36,7 @@ function useAccent() {
     withdrawBtn: isDark ? 'bg-white/10 text-white hover:bg-white/20 border-0' : 'bg-white text-emerald-900 hover:bg-gray-100 border-0',
     pendingBg: '',
     bankBg: isDark ? 'border-gray-700/40 bg-gray-800/30' : 'border-gray-200 bg-gray-50',
-    bankIcon: isDark ? 'bg-gray-700/40 border-gray-600 text-gray-400' : 'bg-white shadow-sm border-gray-200 text-gray-500',
+    bankIcon: isDark ? 'bg-gray-700/40 border-gray-600 text-gray-400' : 'bg-white shadow-soft border-gray-100 text-gray-500',
   };
   if (theme === 'bento') return {
     ...base,
@@ -45,7 +45,7 @@ function useAccent() {
     withdrawBtn: 'bg-white text-indigo-900 hover:bg-gray-100 border-0',
     pendingBg: '',
     bankBg: 'border-gray-200 bg-gray-50',
-    bankIcon: 'bg-white shadow-sm border-gray-200 text-gray-500',
+    bankIcon: 'bg-white shadow-soft border-gray-100 text-gray-500',
   };
   // Classic
   return {
@@ -55,7 +55,7 @@ function useAccent() {
     withdrawBtn: 'bg-white text-cyan-900 hover:bg-gray-100 border-0',
     pendingBg: '',
     bankBg: 'border-gray-200 bg-gray-50',
-    bankIcon: 'bg-white shadow-sm border-gray-200 text-gray-500',
+    bankIcon: 'bg-white shadow-soft border-gray-100 text-gray-500',
   };
 }
 

@@ -123,7 +123,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
 
   return (
     <Card
-      className={cn("flex h-full flex-col overflow-hidden cursor-pointer relative group border-0 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-2xl p-0", isDark ? "shadow-[0_2px_15px_-3px_rgba(0,0,0,0.3)] bg-gray-800/60" : "shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] bg-white")}
+      className={cn("flex h-full flex-col overflow-hidden cursor-pointer relative group border-0 hover:shadow-soft-lg hover:-translate-y-1 transition-all duration-300 rounded-2xl p-0", isDark ? "shadow-[0_2px_15px_-3px_rgba(0,0,0,0.3)] bg-gray-800/60" : "shadow-soft-md bg-white")}
       onClick={() => navigate(`/events/${event.id}`)}
     >
       {/* Image Section */}
@@ -152,7 +152,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0" />
 
         {/* Date Badge — top left */}
-        <div className="absolute top-3 left-3 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm rounded-xl w-12 h-[50px] shadow-sm border border-white/20 z-10">
+        <div className="absolute top-3 left-3 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm rounded-2xl w-12 h-[50px] shadow-soft border border-white/20 z-10">
           <span className={cn("text-[10.61px] font-extrabold tracking-wide leading-none mb-0.5", accent === 'fuchsia' ? 'text-fuchsia-600' : accent === 'indigo' ? 'text-indigo-600' : accent === 'emerald' ? 'text-emerald-600' : 'text-[#0E8B8D]')}>
             {month}
           </span>
@@ -164,7 +164,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         {/* Action buttons — top right */}
         <div className="absolute top-3 right-3 z-10 flex gap-2">
           <button
-            className="p-2 rounded-full shadow-sm backdrop-blur-md focus:outline-none transition-colors bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900"
+            className="p-2 rounded-full shadow-soft backdrop-blur-md focus:outline-none transition-all duration-200 bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900"
             onClick={handleShare}
             title={t("Κοινοποίηση", "Share")}
             aria-label={t("Κοινοποίηση", "Share")}
@@ -172,7 +172,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             <Share2 className="h-4 w-4" />
           </button>
           <button
-            className={`p-2 rounded-full shadow-sm backdrop-blur-md focus:outline-none transition-colors ${isSaved ? (accent === 'fuchsia' ? 'bg-fuchsia-500/20 text-fuchsia-600' : accent === 'emerald' ? 'bg-emerald-500/20 text-emerald-600' : accent === 'indigo' ? 'bg-indigo-500/20 text-indigo-600' : 'bg-[#18D8DB]/20 text-[#0E8B8D]') : "bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900"}`}
+            className={`p-2 rounded-full shadow-soft backdrop-blur-md focus:outline-none transition-all duration-200 ${isSaved ? (accent === 'fuchsia' ? 'bg-fuchsia-500/20 text-fuchsia-600' : accent === 'emerald' ? 'bg-emerald-500/20 text-emerald-600' : accent === 'indigo' ? 'bg-indigo-500/20 text-indigo-600' : 'bg-[#18D8DB]/20 text-[#0E8B8D]') : "bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900"}`}
             onClick={toggleSave}
             title={t("Αποθήκευση", "Save")}
             aria-label={isSaved ? t("Αφαίρεση αποθήκευσης", "Remove from saved") : t("Αποθήκευση", "Save")}
@@ -190,13 +190,13 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             {(event.tags ?? []).slice(0, 2).map((tag: string) => (
               <span
                 key={tag}
-                className="bg-black/50 backdrop-blur-md text-white/95 border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[10.61px] font-semibold capitalize tracking-wide shadow-sm whitespace-nowrap truncate max-w-[100px]"
+                className="bg-black/50 backdrop-blur-md text-white/95 border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10.61px] font-semibold capitalize tracking-wide shadow-soft whitespace-nowrap truncate max-w-[100px]"
               >
                 {tag}
               </span>
             ))}
           </div>
-          <div className="bg-white/95 backdrop-blur-sm px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg shadow-lg font-black text-[#111827] text-[11.67px] sm:text-[12.73px] tracking-tight flex flex-col items-end shrink-0 border border-white/60">
+          <div className="bg-white/95 backdrop-blur-sm px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-2xl shadow-soft-md font-black text-[#111827] text-[11.67px] sm:text-[12.73px] tracking-tight flex flex-col items-end shrink-0 border border-white/60">
             {event.isPaid ? `€${event.price}` : t("event_card.free", "Free")}
             {event.isPaid && event.groupDiscount && (
               <span className="text-[9.55px] text-[#0E8B8D] leading-none block mt-0.5 font-bold">
@@ -292,14 +292,14 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
 
         {/* Organizer */}
         {organizer && (
-          <div className={cn("flex items-center justify-between mb-4 rounded-xl p-2.5 border transition-colors", isDark ? "bg-gray-800/30 border-gray-700/40 hover:bg-gray-800/50" : "bg-gray-50/50 border-gray-100 hover:bg-gray-50")}>
+          <div className={cn("flex items-center justify-between mb-4 rounded-2xl p-2.5 border transition-all duration-200", isDark ? "bg-gray-800/30 border-gray-700/40 hover:bg-gray-800/50" : "bg-gray-50/50 border-gray-100 hover:bg-gray-50")}>
             <div className="flex items-center gap-2.5">
               <div className="relative">
                 <img
                   referrerPolicy="no-referrer"
                   src={organizer.photoUrl}
                   alt={organizer.name}
-                  className={cn("w-8 h-8 rounded-full object-cover border-2 shadow-sm", isDark ? "border-gray-700" : "border-white")}
+                  className={cn("w-8 h-8 rounded-full object-cover border-2 shadow-soft", isDark ? "border-gray-700" : "border-white")}
                 />
                 <div className={cn("absolute -bottom-0.5 -right-0.5 bg-green-500 w-2.5 h-2.5 rounded-full border-2", isDark ? "border-gray-800" : "border-white")}></div>
               </div>
@@ -341,7 +341,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
 
           {showSafetyPanel && (
             <div
-              className={cn("mt-2 space-y-3 p-3 border rounded-xl", isDark ? "bg-gray-800/30 border-gray-700/40" : "bg-gray-50 border-gray-100")}
+              className={cn("mt-2 space-y-3 p-3 border rounded-2xl", isDark ? "bg-gray-800/30 border-gray-700/40" : "bg-gray-50 border-gray-100")}
               onClick={(e) => e.stopPropagation()}
             >
               {/* 1. Arrival Status */}
@@ -386,7 +386,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   </button>
                 </div>
                 {showEtaPrompt && (
-                  <div className={cn("flex gap-2 items-center p-2 rounded border mt-1.5 shadow-sm", isDark ? "bg-gray-800/50 border-gray-700/50" : "bg-white border-gray-200")}>
+                  <div className={cn("flex gap-2 items-center p-2 rounded-2xl border mt-1.5 shadow-soft", isDark ? "bg-gray-800/50 border-gray-700/50" : "bg-white border-gray-100")}>
                     <input
                       type="text"
                       value={etaValue}
@@ -411,7 +411,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               <div className="pt-1.5">
                 <button
                   onClick={() => setShowLocationConfigModal(true)}
-                  className={cn("w-full flex items-center justify-between px-3 py-2 border rounded-lg transition-colors text-left shadow-sm", isSharingLocation ? (isDark ? "bg-cyan-900/20 border-cyan-800 hover:bg-cyan-900/30" : "bg-cyan-50 border-cyan-200 hover:bg-cyan-100") : (isDark ? "bg-gray-800/50 hover:bg-gray-700/40 border-gray-700/50" : "bg-white hover:bg-gray-50 border-gray-200"))}
+                  className={cn("w-full flex items-center justify-between px-3 py-2 border rounded-2xl transition-all duration-200 text-left shadow-soft", isSharingLocation ? (isDark ? "bg-cyan-900/20 border-cyan-800 hover:bg-cyan-900/30" : "bg-cyan-50 border-[#a5f3fc] hover:bg-cyan-100") : (isDark ? "bg-gray-800/50 hover:bg-gray-700/40 border-gray-700/50" : "bg-white hover:bg-gray-50 border-gray-100"))}
                 >
                   <div>
                     <p
@@ -481,7 +481,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               >
                 {t("Λεπτομέρειες", "View Details")}
               </button>
-              <button className={cn("px-5 py-2 text-white text-[12.02px] font-bold rounded-full shadow-sm transition-colors tracking-tight", accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-[#111827] hover:bg-black')}>
+              <button className={cn("px-5 py-2 text-white text-[12.02px] font-bold rounded-full shadow-soft transition-all duration-200 tracking-tight", accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-[#111827] hover:bg-black')}>
                 {t("event_card.join", "Join")}
               </button>
             </div>
@@ -494,11 +494,11 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         typeof document !== "undefined" &&
         createPortal(
           <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div
-              className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-gray-100 animate-in zoom-in-95 duration-200"
+              className="modal-panel max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-200"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm z-10">
@@ -529,7 +529,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
 
               <div className="p-5 space-y-6">
                 {isSharingLocation && (
-                  <div className="bg-cyan-50 border border-cyan-100 rounded-xl p-4 flex flex-col gap-3">
+                  <div className="bg-cyan-50 border border-[#a5f3fc]/40 rounded-2xl p-4 flex flex-col gap-3 shadow-soft">
                     <div className="flex items-center gap-2 text-cyan-700">
                       <Navigation className="w-4 h-4 animate-pulse" />
                       <span className="text-sm font-bold">
@@ -563,7 +563,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                           precision: "approximate",
                         })
                       }
-                      className={`p-3 rounded-xl border text-left flex flex-col h-full transition-all ${locationConfig.precision === "approximate" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827]" : "border-gray-200 hover:border-gray-300"}`}
+                      className={`p-3 rounded-2xl border text-left flex flex-col h-full transition-all duration-200 ${locationConfig.precision === "approximate" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827] shadow-soft" : "border-gray-100 hover:border-[#a5f3fc]"}`}
                     >
                       <span
                         className={`text-[13px] font-bold ${locationConfig.precision === "approximate" ? "text-[#111827]" : "text-gray-700"}`}
@@ -584,7 +584,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                           precision: "exact",
                         })
                       }
-                      className={`p-3 rounded-xl border text-left flex flex-col h-full transition-all ${locationConfig.precision === "exact" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827]" : "border-gray-200 hover:border-gray-300"}`}
+                      className={`p-3 rounded-2xl border text-left flex flex-col h-full transition-all duration-200 ${locationConfig.precision === "exact" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827] shadow-soft" : "border-gray-100 hover:border-[#a5f3fc]"}`}
                     >
                       <span
                         className={`text-[13px] font-bold ${locationConfig.precision === "exact" ? "text-[#111827]" : "text-gray-700"}`}
@@ -609,7 +609,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     {["organizer", "selected", "all"].map((option) => (
                       <label
                         key={option}
-                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${locationConfig.shareWith === option ? "border-cyan-600 bg-cyan-50/30" : "border-gray-200 hover:bg-gray-50"}`}
+                        className={`flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all duration-200 ${locationConfig.shareWith === option ? "border-[#18D8DB] bg-cyan-50/30 shadow-soft" : "border-gray-100 hover:bg-gray-50 hover:border-[#a5f3fc]"}`}
                       >
                         <div className="flex items-center justify-center relative">
                           <input
@@ -678,7 +678,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                         duration: e.target.value,
                       })
                     }
-                    className="w-full border border-gray-200 rounded-xl p-3 text-sm font-medium focus:ring-2 focus:ring-[#111827] bg-white outline-none"
+                    className="w-full border border-gray-100 rounded-2xl p-3 text-sm font-medium focus:ring-2 focus:ring-[#18D8DB]/40 bg-white outline-none shadow-soft"
                   >
                     <option value="arrival">
                       {t(
@@ -703,7 +703,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     setIsSharingLocation(true);
                     setShowLocationConfigModal(false);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-[#111827] hover:bg-gray-900 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-sm font-bold text-white bg-[#111827] hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
                 >
                   {isSharingLocation
                     ? t("Ενημέρωση", "Update Configuration")
@@ -719,11 +719,11 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         typeof document !== "undefined" &&
         createPortal(
           <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div
-              className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-gray-100 animate-in zoom-in-95 duration-200"
+              className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
@@ -757,7 +757,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowSafetyLinkModal(false)}
-                  className="flex-1 px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 rounded-xl transition-all active:scale-[0.98]"
+                  className="flex-1 px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 rounded-2xl transition-all duration-200 active:scale-[0.98]"
                 >
                   {t("Ακύρωση", "Cancel")}
                 </button>
@@ -776,7 +776,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     }
                     setShowSafetyLinkModal(false);
                   }}
-                  className="flex-1 px-4 py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                  className="flex-1 px-4 py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
                 >
                   {t("Κοινοποιηση", "Share")}
                 </button>

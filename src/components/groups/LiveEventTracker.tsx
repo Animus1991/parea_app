@@ -151,7 +151,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
     });
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[500px]">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-soft overflow-hidden flex flex-col h-[500px]">
       <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
         <div>
           <h3 className="font-bold text-[#111827] flex items-center gap-2">

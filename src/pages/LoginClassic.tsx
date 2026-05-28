@@ -36,7 +36,7 @@ export default function LoginClassic() {
               <button 
                 key={user.id}
                 onClick={() => handleLogin(user.id)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-white hover:bg-cyan-50 hover:border-cyan-200 transition-colors shadow-sm text-left group"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl border border-gray-100 bg-white hover:bg-cyan-50 hover:border-[#a5f3fc] transition-all duration-200 shadow-soft text-left group"
               >
                 <div className="h-10 w-10 rounded-full overflow-hidden bg-cyan-100 flex-shrink-0">
                   {user.photoUrl ? (
@@ -64,7 +64,7 @@ export default function LoginClassic() {
 
           <button 
             onClick={() => handleLogin(users[0].id)}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border border-gray-200 bg-white text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border border-gray-100 bg-white text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all duration-200 shadow-soft"
           >
             <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
             {t('Συνέχεια με Google', 'Continue with Google')}

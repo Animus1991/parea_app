@@ -95,7 +95,7 @@ export default function CategoriesClassic() {
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-extrabold tracking-tight text-[#111827]">{t('Κατηγορίες', 'Categories')}</h1>
+          <h1 className="text-[16px] md:text-[18px] font-extrabold tracking-tight text-[#111827]">{t('Κατηγορίες', 'Categories')}</h1>
           <p className="text-gray-500 font-medium text-[13px] mt-1.5">{t('Εξερευνήστε όλο το φάσμα των εμπειριών μας.', 'Explore our full range of curated experiences.')}</p>
         </div>
       </div>
@@ -107,7 +107,7 @@ export default function CategoriesClassic() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={t('Αναζήτηση κατηγοριών...', 'Search categories...')} 
-          className="w-full h-11 pl-10 pr-4 rounded-full border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent text-sm font-medium transition-shadow hover:shadow-md"
+          className="w-full h-11 pl-10 pr-4 rounded-full border border-gray-100 bg-white shadow-soft focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/40 focus:border-transparent text-sm font-medium transition-all duration-200 hover:shadow-soft-md"
         />
       </div>
 
@@ -115,7 +115,7 @@ export default function CategoriesClassic() {
         {visibleCategories.map(cat => (
           <div 
             key={cat.id} 
-            className={`bg-white rounded-xl p-3 border shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col items-center text-center ${activeCategory === cat.name ? 'border-cyan-600 ring-1 ring-cyan-600' : 'border-gray-100 hover:border-gray-200'}`}
+            className={`bg-white rounded-2xl p-3 border shadow-soft hover:shadow-soft-md transition-all duration-200 cursor-pointer group flex flex-col items-center text-center ${activeCategory === cat.name ? 'border-[#18D8DB] ring-1 ring-[#18D8DB]' : 'border-gray-100 hover:border-[#a5f3fc]'}`}
             onClick={() => setActiveCategory(activeCategory === cat.name ? null : cat.name)}
           >
             <div className={`w-10 h-10 rounded-full ${cat.bg} ${cat.border} border flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300`}>
@@ -141,7 +141,7 @@ export default function CategoriesClassic() {
           <div className="flex gap-2 overflow-x-auto pb-2 noscrollbar items-center w-full md:w-auto">
             {/* Sort Dropdown */}
             <select 
-              className="text-xs border border-gray-200 rounded-lg shadow-sm focus:border-cyan-500 focus:ring-cyan-500 bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer h-8 shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] pr-7"
+              className="text-xs border border-gray-100 rounded-2xl shadow-soft focus:border-[#18D8DB] focus:ring-[#18D8DB]/40 bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer h-8 shrink-0 appearance-none transition-all duration-200 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] pr-7"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
             >
@@ -153,12 +153,12 @@ export default function CategoriesClassic() {
             <div className="w-px h-6 bg-gray-200 shrink-0 mx-1"></div>
 
             {/* Price Pills */}
-            <div className="flex gap-1 shrink-0 bg-gray-100/80 p-0.5 rounded-lg border border-gray-200/50">
+            <div className="flex gap-1 shrink-0 bg-gray-50 p-0.5 rounded-full border border-gray-100">
               {['All', 'Free', 'Paid', 'Group Discount'].map((price) => (
                 <button
                   key={price}
                   onClick={() => setPriceFilter(price as any)}
-                  className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${priceFilter === price ? 'bg-white text-cyan-700 shadow-sm border border-gray-200/50 ring-1 ring-black/5' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50'}`}
+                  className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 whitespace-nowrap ${priceFilter === price ? 'bg-white text-[#0E8B8D] shadow-soft border border-[#a5f3fc]/40' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}
                 >
                   {price === 'All' ? t('Όλες', 'All') : price === 'Free' ? t('Δωρεάν', 'Free') : price === 'Paid' ? t('Επί πληρωμή', 'Paid') : t('Ομαδική Έκπτωση', 'Group Discount')}
                 </button>
@@ -168,12 +168,12 @@ export default function CategoriesClassic() {
             <div className="w-px h-6 bg-gray-200 shrink-0 mx-1"></div>
 
             {/* Date Pills */}
-            <div className="flex gap-1 shrink-0 bg-gray-100/80 p-0.5 rounded-lg border border-gray-200/50">
+            <div className="flex gap-1 shrink-0 bg-gray-50 p-0.5 rounded-full border border-gray-100">
               {['Any', 'Today', 'This Week', 'This Month'].map((date) => (
                 <button
                   key={date}
                   onClick={() => setDateFilter(date as any)}
-                  className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${dateFilter === date ? 'bg-white text-cyan-700 shadow-sm border border-gray-200/50 ring-1 ring-black/5' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50'}`}
+                  className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 whitespace-nowrap ${dateFilter === date ? 'bg-white text-[#0E8B8D] shadow-soft border border-[#a5f3fc]/40' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}
                 >
                   {date === 'Any' ? t('Οποιαδήποτε', 'Any Date') : date === 'Today' ? t('Σήμερα', 'Today') : date === 'This Week' ? t('Αυτή την εβδ.', 'This Week') : t('Αυτόν τον μήνα', 'This Month')}
                 </button>
@@ -204,7 +204,7 @@ export default function CategoriesClassic() {
           <h3 className="text-base font-bold text-[#111827]">{t('Δεν βρίσκετε αυτό που ψάχνετε;', 'Can\'t find what you\'re looking for?')}</h3>
           <p className="text-xs text-gray-600 mt-1">{t('Δημιουργήστε τη δική σας εκδήλωση και συγκεντρώστε άτομα με παρόμοια ενδιαφέροντα.', 'Create your own event and gather people with similar interests.')}</p>
         </div>
-        <button onClick={() => navigate('/create-event')} className="bg-cyan-600 text-white px-5 py-2 rounded-full text-xs font-bold shadow-sm hover:bg-cyan-700 transition-colors whitespace-nowrap shrink-0">
+        <button onClick={() => navigate('/create-event')} className="btn-gradient whitespace-nowrap shrink-0">
           {t('Δημιουργία Εκδήλωσης', 'Create Event')}
         </button>
       </div>

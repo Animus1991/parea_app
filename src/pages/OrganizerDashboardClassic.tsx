@@ -13,7 +13,7 @@ export default function OrganizerDashboardClassic() {
     <div className="mx-auto max-w-full space-y-8 pb-12">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-[26.7902365993px] font-bold text-[#111827]">{t(`Πίνακας Διοργανωτή`, `Organizer Dashboard`)}</h1>
+          <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{t(`Πίνακας Διοργανωτή`, `Organizer Dashboard`)}</h1>
           <p className="mt-1 text-[13.551608211075px] text-gray-500 font-medium">{t(`Διαχείριση εκδηλώσεων & ομάδων`, `Manage events & groups`)}</p>
         </div>
         <Button className="bg-[#111827] text-white flex items-center gap-2 text-[14.2457535px] font-bold px-4 hover:bg-black" onClick={() => navigate('/create')}>
@@ -111,7 +111,7 @@ export default function OrganizerDashboardClassic() {
                <h3 className="text-[18px] font-bold text-[#111827]">{t(`Stand-up Comedy Night`, `Stand-up Comedy Night`)}</h3>
             </div>
             <div className="flex gap-2">
-              <span className="text-[15px] font-bold text-gray-500 bg-white px-2 py-1 rounded shadow-sm border border-gray-100">12/20 {t(`θέσεις`, `spots`)}</span>
+              <span className="text-[15px] font-bold text-gray-500 bg-white px-2 py-1 rounded-full shadow-soft border border-gray-100">12/20 {t(`θέσεις`, `spots`)}</span>
             </div>
           </div>
           
@@ -126,7 +126,7 @@ export default function OrganizerDashboardClassic() {
                     <p className="text-[12.5px] text-gray-500 mt-0.5">{t(`Επιβεβαιωμένη`, `Confirmed`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-gray-200 hover:bg-cyan-50" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
+                    <button className="p-1.5 bg-white text-[#0E8B8D] rounded-2xl shadow-soft border border-gray-100 hover:bg-cyan-50 transition-all duration-200" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
                       <MessageSquare className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -138,7 +138,7 @@ export default function OrganizerDashboardClassic() {
                     <p className="text-[12.5px] text-gray-500 mt-0.5">{t(`Αναμένεται 1 ακόμα`, `Waiting for 1 more`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-gray-200 hover:bg-cyan-50" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
+                    <button className="p-1.5 bg-white text-[#0E8B8D] rounded-2xl shadow-soft border border-gray-100 hover:bg-cyan-50 transition-all duration-200" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
                       <MessageSquare className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -166,7 +166,7 @@ export default function OrganizerDashboardClassic() {
                <h3 className="text-[18px] font-bold text-[#111827]">{t(`Πεζοπορία στον Υμηττό`, `Hike on Hymettus`)}</h3>
             </div>
             <div className="flex gap-2">
-              <span className="text-[15px] font-bold text-gray-500 bg-white px-2 py-1 rounded shadow-sm border border-gray-100">6/8 {t(`θέσεις`, `spots`)}</span>
+              <span className="text-[15px] font-bold text-gray-500 bg-white px-2 py-1 rounded-full shadow-soft border border-gray-100">6/8 {t(`θέσεις`, `spots`)}</span>
             </div>
           </div>
           
@@ -181,7 +181,7 @@ export default function OrganizerDashboardClassic() {
                     <p className="text-[12.5px] text-cyan-600 mt-0.5">{t(`Νέο μήνυμα`, `New message`)}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-1.5 bg-white text-cyan-600 rounded shadow-sm border border-cyan-200 hover:bg-cyan-100 relative" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
+                    <button className="p-1.5 bg-white text-[#0E8B8D] rounded-2xl shadow-soft border border-[#a5f3fc] hover:bg-cyan-100 transition-all duration-200 relative" aria-label={t('Μήνυμα ομάδας', 'Message group')} title={t('Μήνυμα ομάδας', 'Message group')}>
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>

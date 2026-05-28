@@ -38,7 +38,7 @@ export default function JoinGroupFlow() {
   };
 
   return (
-    <div className="mx-auto max-w-lg rounded-xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8 mt-8">
+    <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-6 shadow-soft sm:p-8 mt-8">
       {step === 1 && (
         <div className="space-y-6">
           <div>
@@ -54,7 +54,7 @@ export default function JoinGroupFlow() {
           <div className="grid grid-cols-2 gap-3 mt-4">
             <button 
               onClick={() => setGroupType('existing')}
-              className={`p-4 rounded-xl border text-left transition-all ${groupType === 'existing' ? 'border-cyan-600 bg-cyan-50 shadow-sm ring-1 ring-cyan-600' : 'border-gray-200 hover:border-gray-300'}`}
+              className={`p-4 rounded-2xl border text-left transition-all duration-200 ${groupType === 'existing' ? 'border-[#18D8DB] bg-cyan-50 shadow-soft ring-1 ring-[#18D8DB]' : 'border-gray-100 hover:border-[#a5f3fc]'}`}
             >
               <Users className={`h-5 w-5 mb-2 ${groupType === 'existing' ? 'text-cyan-600' : 'text-gray-400'}`} />
               <p className="font-bold text-sm text-[#111827]">Join Existing</p>
@@ -62,7 +62,7 @@ export default function JoinGroupFlow() {
             </button>
             <button 
               onClick={() => setGroupType('new')}
-              className={`p-4 rounded-xl border text-left transition-all ${groupType === 'new' ? 'border-cyan-600 bg-cyan-50 shadow-sm ring-1 ring-cyan-600' : 'border-gray-200 hover:border-gray-300'}`}
+              className={`p-4 rounded-2xl border text-left transition-all duration-200 ${groupType === 'new' ? 'border-[#18D8DB] bg-cyan-50 shadow-soft ring-1 ring-[#18D8DB]' : 'border-gray-100 hover:border-[#a5f3fc]'}`}
             >
               <Split className={`h-5 w-5 mb-2 ${groupType === 'new' ? 'text-cyan-600' : 'text-gray-400'}`} />
               <p className="font-bold text-sm text-[#111827]">Start New Group</p>
@@ -78,7 +78,7 @@ export default function JoinGroupFlow() {
                    <button 
                      key={size}
                      onClick={() => setNewGroupSize(size)}
-                     className={`flex-1 py-2 text-xs font-bold rounded border ${newGroupSize === size ? 'bg-cyan-600 text-white border-cyan-600 shadow-sm' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                     className={`flex-1 py-2 text-xs font-bold rounded-full border transition-all duration-200 ${newGroupSize === size ? 'bg-[#0E8B8D] text-white border-[#0E8B8D] shadow-soft' : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50 hover:border-[#a5f3fc]'}`}
                    >
                      {size} People
                      {event.isPaid && event.groupDiscount && size >= event.groupDiscount.minSize && <Tag className="h-3 w-3 inline ml-1" />}
@@ -86,7 +86,7 @@ export default function JoinGroupFlow() {
                  ))}
                </div>
                
-               <div className="mt-4 flex items-center justify-center p-3 bg-cyan-50 border border-cyan-100 rounded-xl shadow-inner">
+               <div className="mt-4 flex items-center justify-center p-3 bg-cyan-50 border border-[#a5f3fc]/40 rounded-2xl shadow-soft">
                  <div className="text-center">
                    <p className="text-[10px] font-bold text-cyan-400 tracking-wide mb-0.5">Selected Target Size</p>
                    <div className="flex items-center justify-center gap-1.5 text-cyan-900 font-bold text-lg">
@@ -96,7 +96,7 @@ export default function JoinGroupFlow() {
                  </div>
                </div>
                {event.isPaid && event.groupDiscount && newGroupSize >= event.groupDiscount.minSize && (
-                 <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3 shadow-sm transform transition-all duration-300 scale-100">
+                 <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-start gap-3 shadow-soft transform transition-all duration-300 scale-100">
                    <div className="p-2.5 bg-emerald-100 rounded-full text-emerald-600 shrink-0">
                      <Tag className="h-5 w-5" />
                    </div>
@@ -129,7 +129,7 @@ export default function JoinGroupFlow() {
           </div>
 
           {event.isPaid ? (
-            <div className="space-y-4 rounded-xl border border-gray-200 p-4">
+            <div className="space-y-4 rounded-2xl border border-gray-100 p-4 shadow-soft">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Base Ticket Price</span>
                 <span className="font-bold">€{event.price.toFixed(2)}</span>
@@ -157,10 +157,10 @@ export default function JoinGroupFlow() {
             </div>
           ) : (
              <div className="space-y-4">
-               <div className="text-xs text-gray-600 font-medium bg-cyan-50 border border-cyan-200 p-4 rounded-xl" style={{ backgroundColor: "rgb(254 242 242)", borderColor: "rgb(252 165 165)", color: "rgb(153 27 27)" }}>
+               <div className="text-xs text-gray-600 font-medium bg-cyan-50 border border-cyan-200 p-4 rounded-2xl" style={{ backgroundColor: "rgb(254 242 242)", borderColor: "rgb(252 165 165)", color: "rgb(153 27 27)" }}>
                  <strong>Mandatory Commitment:</strong> This is a free event, but your spot is valuable. By confirming below, you make a strict commitment to attend. If you fail to show up without a valid reason, your internal reliability score will severely decrease, which may limit your access to future events and high-trust activities.
                </div>
-               <div className="rounded-xl border border-gray-200 p-4">
+               <div className="rounded-2xl border border-gray-100 p-4 shadow-soft">
                  <div className="flex justify-between text-sm font-bold text-cyan-600">
                    <span>Registration Status</span>
                    <span>Pending Confirmation</span>
@@ -209,7 +209,7 @@ export default function JoinGroupFlow() {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-3">
-                   <Button className="w-full sm:w-auto bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl text-[13px] py-2 px-5 shadow-lg shadow-cyan-200 transition-all" onClick={() => navigate('/verification')}>
+                   <Button className="w-full sm:w-auto bg-[#0E8B8D] hover:bg-[#0b6d6f] text-white font-bold rounded-2xl text-[13px] py-2 px-5 shadow-soft-md transition-all duration-200" onClick={() => navigate('/verification')}>
                      Secure my Verified Badge (~60s)
                    </Button>
                 </div>

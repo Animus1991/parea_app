@@ -138,7 +138,7 @@ export default function VerificationCenterPageContent() {
               <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4" />{t('Ασφαλές', 'Secure')}</span>
               <span className="flex items-center gap-1"><UserCheck className="w-4 h-4" />{t('Ιδιωτικό', 'Private')}</span>
             </div>
-            <Button size="sm" className="w-full sm:w-auto shrink-0 shadow-sm">{t('Μεταφόρτωση', 'Upload')}</Button>
+            <Button size="sm" className="w-full sm:w-auto shrink-0 shadow-soft">{t('Μεταφόρτωση', 'Upload')}</Button>
           </div>
         </Card>
       </div>

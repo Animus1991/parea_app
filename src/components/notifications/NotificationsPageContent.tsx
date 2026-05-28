@@ -212,7 +212,7 @@ export default function NotificationsPageContent() {
                   <div
                     key={notif.id}
                     onClick={() => handleNotifClick(notif)}
-                    className={cn("flex gap-3.5 p-3.5 rounded-xl border cursor-pointer transition-all group", a.unreadBg, "hover:shadow-sm")}
+                    className={cn("flex gap-3.5 p-3.5 rounded-xl border cursor-pointer transition-all group", a.unreadBg, "hover:shadow-soft")}
                   >
                     <div className={cn("w-9 h-9 rounded-full flex items-center justify-center shrink-0", getIconColor(notif.type, false))}>
                       <Icon className="w-4 h-4" />
@@ -259,7 +259,7 @@ export default function NotificationsPageContent() {
                   <div
                     key={notif.id}
                     onClick={() => handleNotifClick(notif)}
-                    className={cn("flex gap-3.5 p-3.5 rounded-xl border cursor-pointer transition-all group", a.readBg, "hover:shadow-sm")}
+                    className={cn("flex gap-3.5 p-3.5 rounded-xl border cursor-pointer transition-all group", a.readBg, "hover:shadow-soft")}
                   >
                     <div className={cn("w-9 h-9 rounded-full flex items-center justify-center shrink-0", getIconColor(notif.type, true))}>
                       <Icon className="w-4 h-4" />

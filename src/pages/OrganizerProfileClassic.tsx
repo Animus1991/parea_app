@@ -23,7 +23,7 @@ export default function OrganizerProfileClassic() {
   return (
     <div className="mx-auto max-w-full space-y-8 relative">
       {/* Profile Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm text-center sm:text-left sm:flex sm:items-start gap-8">
+      <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-soft text-center sm:text-left sm:flex sm:items-start gap-8">
         <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 mx-auto sm:mx-0 shrink-0 border-4 border-white shadow-md">
           {organizer.photoUrl ? (
             <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />
@@ -44,7 +44,7 @@ export default function OrganizerProfileClassic() {
               )}
               <Badge variant="neutral">{t('Επίπεδο Εμπιστοσύνης', 'Trust Tier')} {organizer.trustTier.split('_')[0]}</Badge>
             </div>
-            <h1 className="text-3xl font-bold text-[#111827]">{organizer.name}</h1>
+            <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{organizer.name}</h1>
             <p className="text-sm text-gray-500 font-medium mt-1"><MapPin className="h-3.5 w-3.5 inline mr-1" /> {organizer.city}</p>
           </div>
           
@@ -89,7 +89,7 @@ export default function OrganizerProfileClassic() {
       <div className="space-y-4">
         <h2 className="text-lg font-bold text-[#111827]">{t('Επερχόμενες Εκδηλώσεις από', 'Upcoming Events by')} {organizer.name}</h2>
         {hostedEvents.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+          <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
             <p className="text-gray-500 font-medium text-sm">{t('Δεν έχουν προγραμματιστεί επερχόμενες εκδηλώσεις.', 'No upcoming events currently scheduled.')}</p>
           </div>
         ) : (
@@ -123,7 +123,7 @@ export default function OrganizerProfileClassic() {
 
       {showContactModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-[#111827]">{t('Επικοινωνία με', 'Contact')} {organizer.name}</h3>
               <button onClick={() => setShowContactModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
