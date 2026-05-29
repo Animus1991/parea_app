@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Trophy, Star, Flame, Users, Calendar, Shield, Target, Zap, Award, TrendingUp, Share2, Sparkles } from 'lucide-react';
 import { Card } from '../common/Card';
-import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
+import { usePageContrast } from '../../hooks/usePageContrast';
 
 interface Achievement {
   id: string;
@@ -18,79 +18,9 @@ interface Achievement {
   darkColor: string;
 }
 
-function useAccent() {
-  const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
-
-  const base = {
-    isDark,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-500',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    borderB: isDark ? 'border-gray-700/40' : 'border-gray-200',
-    progressBg: isDark ? 'bg-gray-700/40' : 'bg-gray-100',
-    streakOff: isDark ? 'bg-gray-700/30 text-gray-500' : 'bg-gray-100 text-gray-400',
-    lbBorder: isDark ? 'border-gray-700/30' : 'border-gray-50',
-  };
-
-  if (theme === 'vibrant' || theme === 'vibrant-dark') return {
-    ...base,
-    tabActive: isDark ? 'border-fuchsia-500 text-fuchsia-400' : 'border-fuchsia-600 text-fuchsia-900',
-    tabInactive: isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-900',
-    xpBadge: isDark ? 'text-fuchsia-400 bg-fuchsia-900/20' : 'text-fuchsia-600 bg-fuchsia-50',
-    barFill: 'bg-fuchsia-500',
-    gradientFrom: 'from-fuchsia-500',
-    gradientTo: 'to-orange-500',
-    highlightRow: isDark ? 'bg-fuchsia-900/10' : 'bg-fuchsia-50/50',
-    highlightText: isDark ? 'text-fuchsia-400' : 'text-fuchsia-700',
-    challengeBg: isDark ? 'bg-gradient-to-r from-fuchsia-900/20 to-orange-900/20 border-fuchsia-800/30' : 'bg-gradient-to-r from-fuchsia-50 to-orange-50 border-fuchsia-100',
-    shareHover: isDark ? 'text-gray-500 hover:text-fuchsia-400' : 'text-gray-400 hover:text-fuchsia-600',
-  };
-  if (theme === 'neon' || theme === 'neon-dark' || theme === 'bento-dark') return {
-    ...base,
-    tabActive: isDark ? 'border-emerald-500 text-emerald-400' : 'border-emerald-600 text-emerald-900',
-    tabInactive: isDark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-900',
-    xpBadge: isDark ? 'text-emerald-400 bg-emerald-900/20' : 'text-emerald-600 bg-emerald-50',
-    barFill: 'bg-emerald-500',
-    gradientFrom: 'from-emerald-500',
-    gradientTo: 'to-teal-500',
-    highlightRow: isDark ? 'bg-emerald-900/10' : 'bg-emerald-50/50',
-    highlightText: isDark ? 'text-emerald-400' : 'text-emerald-700',
-    challengeBg: isDark ? 'bg-gradient-to-r from-purple-900/20 to-emerald-900/20 border-emerald-800/30' : 'bg-gradient-to-r from-purple-50 to-emerald-50 border-emerald-100',
-    shareHover: isDark ? 'text-gray-500 hover:text-emerald-400' : 'text-gray-400 hover:text-emerald-600',
-  };
-  if (theme === 'bento') return {
-    ...base,
-    tabActive: 'border-indigo-600 text-indigo-900',
-    tabInactive: 'text-gray-500 hover:text-gray-900',
-    xpBadge: 'text-indigo-600 bg-indigo-50',
-    barFill: 'bg-indigo-500',
-    gradientFrom: 'from-indigo-500',
-    gradientTo: 'to-violet-500',
-    highlightRow: 'bg-indigo-50/50',
-    highlightText: 'text-indigo-700',
-    challengeBg: 'bg-gradient-to-r from-purple-50 to-indigo-50 border-indigo-100',
-    shareHover: 'text-gray-400 hover:text-indigo-600',
-  };
-  // Classic
-  return {
-    ...base,
-    tabActive: 'border-cyan-600 text-cyan-900',
-    tabInactive: 'text-gray-500 hover:text-gray-900',
-    xpBadge: 'text-cyan-600 bg-cyan-50',
-    barFill: 'bg-cyan-500',
-    gradientFrom: 'from-cyan-500',
-    gradientTo: 'to-purple-500',
-    highlightRow: 'bg-cyan-50/50',
-    highlightText: 'text-cyan-700',
-    challengeBg: 'bg-gradient-to-r from-purple-50 to-cyan-50 border-purple-100',
-    shareHover: 'text-gray-400 hover:text-cyan-600',
-  };
-}
-
 export default function AchievementsPageContent() {
   const { t } = useLanguage();
-  const a = useAccent();
+  const a = usePageContrast();
   const [activeTab, setActiveTab] = useState<'badges' | 'streaks' | 'leaderboard'>('badges');
 
   const achievements: Achievement[] = [

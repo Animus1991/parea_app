@@ -5,6 +5,7 @@ import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { Card } from '../common/Card';
+import { usePageContrast } from '../../hooks/usePageContrast';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
 
@@ -16,76 +17,10 @@ const iconMap: Record<string, React.ElementType> = {
   achievement: CheckCircle2,
 };
 
-function useAccent() {
-  const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
-
-  if (theme === 'vibrant' || theme === 'vibrant-dark') return {
-    isDark,
-    accent: 'fuchsia' as const,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-600',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    link: isDark ? 'text-fuchsia-400 hover:text-fuchsia-300' : 'text-fuchsia-600 hover:text-fuchsia-700',
-    tabActive: isDark ? 'bg-fuchsia-900/30 text-fuchsia-400 border-fuchsia-500' : 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-500',
-    tabInactive: isDark ? 'text-gray-400 border-transparent hover:text-gray-200' : 'text-gray-400 border-transparent hover:text-gray-600',
-    unreadBg: isDark ? 'border-fuchsia-800/40 bg-fuchsia-900/10' : 'border-fuchsia-100 bg-fuchsia-50/30',
-    readBg: isDark ? 'border-gray-700/40 bg-gray-800/30' : 'border-gray-100 bg-white',
-    dot: 'bg-fuchsia-500',
-    actionBtn: isDark ? 'text-fuchsia-400 bg-fuchsia-900/20 hover:bg-fuchsia-900/30' : 'text-fuchsia-700 bg-fuchsia-100 hover:bg-fuchsia-200',
-  };
-
-  if (theme === 'neon' || theme === 'neon-dark' || theme === 'bento-dark') return {
-    isDark,
-    accent: 'emerald' as const,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-600',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    link: isDark ? 'text-emerald-400 hover:text-emerald-300' : 'text-emerald-600 hover:text-emerald-700',
-    tabActive: isDark ? 'bg-emerald-900/30 text-emerald-400 border-emerald-500' : 'bg-emerald-50 text-emerald-700 border-emerald-500',
-    tabInactive: isDark ? 'text-gray-400 border-transparent hover:text-gray-200' : 'text-gray-400 border-transparent hover:text-gray-600',
-    unreadBg: isDark ? 'border-emerald-800/40 bg-emerald-900/10' : 'border-emerald-100 bg-emerald-50/30',
-    readBg: isDark ? 'border-gray-700/40 bg-gray-800/30' : 'border-gray-100 bg-white',
-    dot: 'bg-emerald-500',
-    actionBtn: isDark ? 'text-emerald-400 bg-emerald-900/20 hover:bg-emerald-900/30' : 'text-emerald-700 bg-emerald-100 hover:bg-emerald-200',
-  };
-
-  if (theme === 'bento') return {
-    isDark: false,
-    accent: 'indigo' as const,
-    head: 'text-[#111827]',
-    sub: 'text-gray-600',
-    muted: 'text-gray-400',
-    link: 'text-indigo-600 hover:text-indigo-700',
-    tabActive: 'bg-indigo-50 text-indigo-700 border-indigo-500',
-    tabInactive: 'text-gray-400 border-transparent hover:text-gray-600',
-    unreadBg: 'border-indigo-100 bg-indigo-50/30',
-    readBg: 'border-gray-100 bg-white',
-    dot: 'bg-indigo-500',
-    actionBtn: 'text-indigo-700 bg-indigo-100 hover:bg-indigo-200',
-  };
-
-  // Classic
-  return {
-    isDark: false,
-    accent: 'cyan' as const,
-    head: 'text-[#111827]',
-    sub: 'text-gray-600',
-    muted: 'text-gray-400',
-    link: 'text-cyan-600 hover:text-cyan-700',
-    tabActive: 'bg-cyan-50 text-cyan-700 border-cyan-500',
-    tabInactive: 'text-gray-400 border-transparent hover:text-gray-600',
-    unreadBg: 'border-cyan-100 bg-cyan-50/30',
-    readBg: 'border-gray-100 bg-white',
-    dot: 'bg-cyan-500',
-    actionBtn: 'text-cyan-700 bg-cyan-100 hover:bg-cyan-200',
-  };
-}
-
 export default function NotificationsPageContent() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const a = useAccent();
+  const a = usePageContrast();
 
   const notifications = useStore((s) => s.notifications);
   const markNotificationRead = useStore((s) => s.markNotificationRead);

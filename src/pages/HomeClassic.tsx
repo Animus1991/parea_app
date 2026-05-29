@@ -18,10 +18,19 @@ import {
   Calendar,
   Trophy,
   Lightbulb,
+  Crown,
 } from "lucide-react";
 import { parseISO, isToday, isThisWeek, isThisMonth } from "date-fns";
 import { useLanguage } from "../lib/i18n";
 import { useGeolocation, haversineDistance } from "../hooks/useGeolocation";
+import { useDebounce } from "../hooks/useDebounce";
+import { FilterBottomSheet } from "../components/common/FilterBottomSheet";
+import { EmptyState } from "../components/common/EmptyState";
+import { CalendarX, SlidersHorizontal } from "lucide-react";
+import { useHomeTheme } from "../hooks/useHomeTheme";
+import { useThemeStyles } from "../hooks/useThemeStyles";
+import { EventStories } from "../components/home/EventStories";
+import { cn } from "../lib/utils";
 
 function getTimeGreeting(name: string, t: (gr: string, en: string) => string): string {
   const h = new Date().getHours();
@@ -57,14 +66,19 @@ const DAILY_TIPS_EN = [
 
 export default function HomeClassic() {
   const { t } = useLanguage();
+  const h = useHomeTheme();
+  const tok = useThemeStyles();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialSearch = searchParams.get("search") || "";
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const addRecentSearch = useStore((s) => s.addRecentSearch);
+  const recentSearches = useStore((s) => s.recentSearches);
 
   // feedType declared first — used in the useEffect below
   const [feedType, setFeedType] = useState<"For You" | "Discover">("For You");
   const [searchQuery, setSearchQuery] = useState(initialSearch);
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState(() => searchParams.get("cat") || "All");
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -106,28 +120,38 @@ export default function HomeClassic() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleSearchChange = (val: string) => {
-    setSearchQuery(val);
-    if (val) {
-      setSearchParams({ search: val });
-    } else {
-      setSearchParams({});
-    }
-  };
-
   const [priceFilter, setPriceFilter] = useState<
     "All" | "Free" | "Paid" | "Group Discount"
-  >("All");
+  >(() => (searchParams.get("price") as "All" | "Free" | "Paid" | "Group Discount") || "All");
   const [dateFilter, setDateFilter] = useState<
     "Any" | "Today" | "This Week" | "This Month"
-  >("Any");
+  >(() => (searchParams.get("date") as "Any" | "Today" | "This Week" | "This Month") || "Any");
   const [safetyFilter, setSafetyFilter] = useState<
     "All" | "low" | "medium" | "high_trust"
-  >("All");
+  >(() => (searchParams.get("safety") as "All" | "low" | "medium" | "high_trust") || "All");
   const [radiusFilter, setRadiusFilter] = useState<
     "Any" | "5km" | "10km" | "25km"
-  >("Any");
-  const [tagFilter, setTagFilter] = useState<string>("All");
+  >(() => (searchParams.get("dist") as "Any" | "5km" | "10km" | "25km") || "Any");
+  const [tagFilter, setTagFilter] = useState<string>(() => searchParams.get("tag") || "All");
+  const [seekingHostOnly, setSeekingHostOnly] = useState(false);
+  const debouncedSearch = useDebounce(searchQuery, 400);
+
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val);
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (debouncedSearch) params.set("search", debouncedSearch);
+    if (activeCategory !== "All") params.set("cat", activeCategory);
+    if (tagFilter !== "All") params.set("tag", tagFilter);
+    if (priceFilter !== "All") params.set("price", priceFilter);
+    if (dateFilter !== "Any") params.set("date", dateFilter);
+    if (safetyFilter !== "All") params.set("safety", safetyFilter);
+    if (radiusFilter !== "Any") params.set("dist", radiusFilter);
+    setSearchParams(params, { replace: true });
+    if (debouncedSearch.trim()) addRecentSearch(debouncedSearch.trim());
+  }, [debouncedSearch, activeCategory, tagFilter, priceFilter, dateFilter, safetyFilter, radiusFilter, setSearchParams, addRecentSearch]);
   const [isLoading, setIsLoading] = useState(true);
   const [visibleEventsCount, setVisibleEventsCount] = useState(6);
   const categoryScrollRef = useRef<HTMLDivElement>(null);
@@ -276,7 +300,35 @@ export default function HomeClassic() {
     return new Date(e.date) < new Date();
   });
 
-  const hasActiveFilters = activeCategory !== 'All' || tagFilter !== 'All' || priceFilter !== 'All' || dateFilter !== 'Any' || safetyFilter !== 'All' || radiusFilter !== 'Any' || searchQuery.length > 0;
+  // Platform-curated events that still have no group host — anyone can step up.
+  const isSeekingHost = (e: (typeof events)[number]) =>
+    !!e.isPlatformEvent && !groups.find((g) => g.eventId === e.id && g.hostId);
+  const seekingHostEvents = useMemo(
+    () => events.filter(isSeekingHost),
+    [events, groups],
+  );
+
+  // Ordered list for the story rail: events seeking a host first, then trending,
+  // then the rest — so the most actionable items lead the reel.
+  const storyEvents = useMemo(() => {
+    const rank = (e: (typeof events)[number]) =>
+      isSeekingHost(e) ? 0 : e.isTrending ? 1 : 2;
+    return [...events].sort(
+      (a, b) =>
+        rank(a) - rank(b) ||
+        new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
+  }, [events, groups]);
+
+  const hasActiveFilters = activeCategory !== 'All' || tagFilter !== 'All' || priceFilter !== 'All' || dateFilter !== 'Any' || safetyFilter !== 'All' || radiusFilter !== 'Any' || searchQuery.length > 0 || seekingHostOnly;
+  const activeFilterCount = [
+    priceFilter !== 'All',
+    dateFilter !== 'Any',
+    safetyFilter !== 'All',
+    radiusFilter !== 'Any',
+    tagFilter !== 'All',
+    seekingHostOnly,
+  ].filter(Boolean).length;
 
   const clearAllFilters = () => {
     setActiveCategory('All');
@@ -285,6 +337,7 @@ export default function HomeClassic() {
     setDateFilter('Any');
     setSafetyFilter('All');
     setRadiusFilter('Any');
+    setSeekingHostOnly(false);
     handleSearchChange('');
   };
 
@@ -331,10 +384,13 @@ export default function HomeClassic() {
         if (radiusFilter === "25km" && distance > 25) return false;
       }
 
+      if (seekingHostOnly && !isSeekingHost(e)) return false;
+
       return true;
     });
   }, [
     events,
+    groups,
     searchQuery,
     feedType,
     activeCategory,
@@ -344,6 +400,7 @@ export default function HomeClassic() {
     currentUser,
     dateFilter,
     radiusFilter,
+    seekingHostOnly,
   ]);
 
   // URL-based sorting (Relevance / Distance / Group Progress)
@@ -412,56 +469,51 @@ export default function HomeClassic() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-[#111827] text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8"
+        className={`${h.hero} flex flex-col md:flex-row md:items-center justify-between gap-8`}
       >
-        <div className="relative z-10 flex-1">
-          <div className="text-[#18D8DB] text-[14.21px] font-bold tracking-wide mb-1">
+        <div className="relative z-0 flex-1">
+          <div className={`${h.heroGreeting} mb-1`}>
             {getTimeGreeting(currentUser?.name?.split(' ')[0] || t('φίλε', 'there'), t)}
           </div>
-          <p className="text-gray-400 text-[12px] font-medium mb-4">{getMotivation(t)}</p>
-          <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
+          <p className={`${h.heroMotivation} mb-4`}>{getMotivation(t)}</p>
+          <h1 className={`${h.heroTitle} max-w-2xl`}>
             {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18D8DB] to-cyan-400">
+            <span className={h.heroTitleAccent}>
               {t("home.hero.title2", "εμπειρίες")}
             </span>{" "}
             {t("home.hero.title3", "που ήδη θέλετε να ζήσετε.")}
           </h1>
-          <p className="text-gray-400 font-medium text-[14.42px] md:text-[16.48px] leading-relaxed max-w-xl mb-6">
+          <p className={`${h.heroSubtitle} max-w-xl mb-6`}>
             {t(
               "home.hero.subtitle",
               "Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.",
             )}
           </p>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11.33px] font-bold tracking-wide text-gray-300 mb-6">
-            <span className="flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
-              {t("home.hero.stat1", "Μικρες ομαδες")}
-            </span>
-            <span className="opacity-20">•</span>
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
-              {t("home.hero.stat2", "Επαληθευμενη συμμετοχη")}
-            </span>
-            <span className="opacity-20">•</span>
-            <span className="flex items-center gap-1.5">
-              <MapIcon className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
-              {t("home.hero.stat3", "Δημοσια σημεια")}
-            </span>
-            <span className="opacity-20">•</span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#18D8DB]" />{" "}
-              {t("Ιδιωτικες αναφορες", "Private reports")}
-            </span>
+          <div className="flex flex-wrap items-center gap-2 mb-6">
+            {([
+              { icon: Users, label: t("home.hero.stat1", "Μικρές ομάδες") },
+              { icon: ShieldCheck, label: t("home.hero.stat2", "Επαληθευμένη συμμετοχή") },
+              { icon: MapIcon, label: t("home.hero.stat3", "Δημόσια σημεία") },
+              { icon: CheckCircle2, label: t("Ιδιωτικές αναφορές", "Private reports") },
+            ] as const).map(({ icon: Icon, label }) => (
+              <span
+                key={label}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12.5px] font-bold tracking-wide bg-white/10 border border-white/10 backdrop-blur-sm ${h.heroStat}`}
+              >
+                <Icon className={`w-3.5 h-3.5 ${h.heroStatIcon}`} />
+                {label}
+              </span>
+            ))}
           </div>
 
           <div className="flex gap-3 mb-6">
             <button
               onClick={() => navigate("/nearby")}
-              className="btn-gradient flex items-center gap-2 !rounded-2xl"
+              className="btn-gradient flex items-center gap-1.5 !rounded-xl !text-[12px] !px-3 !py-1.5"
               title={t("Εμφάνιση στον Χάρτη", "View on Map")}
             >
-              <MapIcon className="w-4 h-4" />
+              <MapIcon className="w-3.5 h-3.5" />
               {t("Αναζήτηση στον Χάρτη", "Search on Map")}
             </button>
           </div>
@@ -469,7 +521,7 @@ export default function HomeClassic() {
           {/* Search with suggestions */}
           <div className="flex gap-3 items-center">
             <div ref={searchRef} className="relative flex-1 max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
+              <Search className={`absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 z-10 opacity-70`} />
               <input
                 type="text"
                 value={searchQuery}
@@ -479,12 +531,12 @@ export default function HomeClassic() {
                   "home.hero.search_placeholder",
                   "Αναζήτηση εμπειριών...",
                 )}
-                className="w-full h-11 pl-10 pr-4 rounded-2xl border-none bg-white/10 text-white placeholder-gray-400 shadow-soft focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/60 text-sm font-medium backdrop-blur-sm"
+                className={`${h.heroSearchInput} text-sm font-medium shadow-soft focus:outline-none backdrop-blur-sm`}
               />
               {showSearchSuggestions && !searchQuery && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-soft-lg border border-gray-100 z-50 overflow-hidden">
+                <div className={`absolute top-full left-0 right-0 mt-2 rounded-2xl shadow-soft-lg overflow-hidden ${h.heroSearchDropdown}`}>
                   <div className="px-3 pt-2 pb-1">
-                    <span className="text-[10px] font-bold text-gray-400 tracking-widest">
+                    <span className={`text-[11px] font-bold tracking-widest ${h.heroSearchDropdownLabel}`}>
                       {t("Δημοφιλείς Αναζητήσεις", "Popular Searches")}
                     </span>
                   </div>
@@ -496,9 +548,9 @@ export default function HomeClassic() {
                         handleSearchChange(s);
                         setShowSearchSuggestions(false);
                       }}
-                      className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-cyan-50 hover:text-[#0E8B8D] transition-colors font-medium flex items-center gap-2"
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors font-medium flex items-center gap-2 ${h.heroSearchItem} ${h.heroSearchItemHover}`}
                     >
-                      <Search className="w-3.5 h-3.5 text-gray-400" />
+                      <Search className="w-3.5 h-3.5 opacity-60" />
                       {s}
                     </button>
                   ))}
@@ -507,86 +559,91 @@ export default function HomeClassic() {
             </div>
             <button
               onClick={() => navigate("/trust")}
-              className="hidden sm:flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-5 h-11 rounded-2xl text-xs font-bold transition-all duration-200 whitespace-nowrap border border-white/10"
+              className={`hidden sm:flex items-center justify-center text-xs font-bold transition-all duration-200 whitespace-nowrap ${h.heroOutlineBtn}`}
             >
               {t("home.hero.how_groups", "Πώς λειτουργούν οι ομάδες")}
             </button>
           </div>
         </div>
         {/* Decorative */}
-        <div className="absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
+        <div className={`absolute right-0 top-0 w-[500px] h-[500px] bg-gradient-to-br ${h.heroDecor} rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none`} />
       </motion.div>
+
+      {/* ── Event Stories rail ── */}
+      <EventStories events={storyEvents} />
 
       {/* ── Quick Stats Bar ── */}
       <div className="grid grid-cols-3 gap-3">
-        {[
-          {
-            icon: Flame,
-            label: t('Σερί', 'Streak'),
-            value: `${currentStreak}`,
-            unit: t('εβδ.', 'wks'),
-            sub: t('Συνεχόμενες εβδομάδες', 'Consecutive weeks'),
-            color: 'text-orange-500',
-            bg: 'bg-orange-50',
-          },
-          {
-            icon: Calendar,
-            label: t('Αυτόν τον μήνα', 'This month'),
-            value: `${eventsThisMonth}`,
-            unit: t('εκδ.', 'events'),
-            sub: t('Εκδηλώσεις που παρακολούθησες', 'Events attended'),
-            color: 'text-cyan-600',
-            bg: 'bg-cyan-50',
-          },
-          {
-            icon: Trophy,
-            label: t('Επίπεδο', 'Level'),
-            value: `${communityLevel}`,
-            unit: `${xpTotal} XP`,
-            sub: t('Κατάταξη κοινότητας', 'Community rank'),
-            color: 'text-amber-500',
-            bg: 'bg-amber-50',
-          },
-        ].map(({ icon: Icon, label, value, unit, sub, color, bg }) => (
-          <div key={label} className="bg-white rounded-2xl p-3.5 border border-gray-100 shadow-soft flex flex-col gap-1">
+        {(
+          [
+            {
+              icon: Flame,
+              label: t('Σερί', 'Streak'),
+              value: `${currentStreak}`,
+              unit: t('εβδ.', 'wks'),
+              sub: t('Συνεχόμενες εβδομάδες', 'Consecutive weeks'),
+              iconBg: h.statIconBg.streak,
+              iconColor: h.statIconColor.streak,
+            },
+            {
+              icon: Calendar,
+              label: t('Αυτόν τον μήνα', 'This month'),
+              value: `${eventsThisMonth}`,
+              unit: t('εκδ.', 'events'),
+              sub: t('Εκδηλώσεις που παρακολούθησες', 'Events attended'),
+              iconBg: h.statIconBg.month,
+              iconColor: h.statIconColor.month,
+            },
+            {
+              icon: Trophy,
+              label: t('Επίπεδο', 'Level'),
+              value: `${communityLevel}`,
+              unit: `${xpTotal} XP`,
+              sub: t('Κατάταξη κοινότητας', 'Community rank'),
+              iconBg: h.statIconBg.level,
+              iconColor: h.statIconColor.level,
+            },
+          ] as const
+        ).map(({ icon: Icon, label, value, unit, sub, iconBg, iconColor }) => (
+          <div key={label} className={`rounded-2xl p-3.5 flex flex-col gap-1 ${h.card}`}>
             <div className="flex items-center gap-1.5">
-              <div className={`w-6 h-6 rounded-full ${bg} flex items-center justify-center shrink-0`}>
-                <Icon className={`w-3.5 h-3.5 ${color}`} />
+              <div className={`w-6 h-6 rounded-full ${iconBg} flex items-center justify-center shrink-0`}>
+                <Icon className={`w-3.5 h-3.5 ${iconColor}`} />
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 truncate">{label}</span>
+              <span className={`text-[10px] font-bold uppercase tracking-wider truncate ${h.labelMuted}`}>{label}</span>
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="text-[22px] font-black text-[#111827] leading-none tabular-nums">{value}</span>
-              <span className="text-[10px] font-semibold text-gray-400">{unit}</span>
+              <span className={`text-[22px] font-black leading-none tabular-nums ${h.statValue}`}>{value}</span>
+              <span className={`text-[10px] font-semibold ${h.statUnit}`}>{unit}</span>
             </div>
-            <span className="text-[10px] text-gray-400 font-medium leading-tight">{sub}</span>
+            <span className={`text-[10px] font-medium leading-tight ${h.labelMuted}`}>{sub}</span>
           </div>
         ))}
       </div>
 
       {/* ── Daily Tip Banner ── */}
-      <div className="bg-white border border-gray-100 rounded-2xl px-4 py-3 flex items-start gap-3 shadow-soft">
-        <div className="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center shrink-0 mt-0.5">
-          <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+      <div className={`rounded-2xl px-4 py-3 flex items-start gap-3 ${h.tipBanner}`}>
+        <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+          <Lightbulb className="w-3.5 h-3.5 text-amber-700" />
         </div>
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500 block mb-0.5">{t('Συμβουλή Ημέρας', 'Tip of the Day')}</span>
-          <p className="text-[12.5px] text-gray-600 font-medium leading-relaxed">{t(DAILY_TIPS_GR[tipIndex], DAILY_TIPS_EN[tipIndex])}</p>
+          <span className={`text-[10px] font-bold uppercase tracking-widest block mb-0.5 ${h.tipLabel}`}>{t('Συμβουλή Ημέρας', 'Tip of the Day')}</span>
+          <p className={`text-[12.5px] font-medium leading-relaxed ${h.tipBody}`}>{t(DAILY_TIPS_GR[tipIndex], DAILY_TIPS_EN[tipIndex])}</p>
         </div>
       </div>
 
       {/* Pending Feedback Alert */}
       {pendingFeedbackEvent && (
-      <section className="bg-cyan-50 border border-[#a5f3fc]/40 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-soft">
+      <section className={`rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-soft ${h.feedbackBanner}`}>
         <div className="flex gap-3 items-center">
-          <div className="bg-white p-2 text-amber-500 rounded-full shadow-soft shrink-0">
+          <div className={`p-2 text-amber-600 rounded-full shadow-soft shrink-0 ${tok.isDark ? 'bg-gray-800' : 'bg-white'}`}>
             <CheckCircle2 className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-[14.63px] font-bold text-[#111827]">
+            <h3 className={`text-[14.63px] font-bold ${h.feedbackTitle}`}>
               {t("Εκκρεμής Αξιολόγηση", "Pending Feedback")}
             </h3>
-            <p className="text-[11.33px] text-gray-600 font-medium mt-0.5 leading-relaxed">
+            <p className={`text-[11.33px] font-medium mt-0.5 leading-relaxed ${h.feedbackBody}`}>
               {t(
                 `Αξιολογήστε τα μέλη από το "${pendingFeedbackEvent.title}" για να ξεκλειδώσετε την επόμενη κράτησή σας.`,
                 `Rate the members from "${pendingFeedbackEvent.title}" to unlock your next booking.`,
@@ -596,11 +653,48 @@ export default function HomeClassic() {
         </div>
         <button
           onClick={() => navigate(`/history/feedback/${pendingFeedbackEvent.id}`)}
-          className="text-[12.38px] tracking-wider font-bold bg-[#111827] text-white px-4 py-2 rounded-full whitespace-nowrap hover:bg-black w-full sm:w-auto shadow-soft transition-all duration-200"
+          className={`text-[12.38px] tracking-wider font-bold px-4 py-2 rounded-full whitespace-nowrap w-full sm:w-auto shadow-soft transition-all duration-200 ${h.feedbackBtn}`}
         >
           {t("Αξιολόγηση", "Rate Now")}
         </button>
       </section>
+      )}
+
+      {/* Platform events seeking an organizer */}
+      {seekingHostEvents.length > 0 && (
+        <section className={`rounded-2xl p-4 space-y-3.5 border ${tok.isDark ? 'bg-amber-950/20 border-amber-800/40' : 'bg-amber-50/70 border-amber-200/70'}`}>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                <Crown className="w-4 h-4 text-amber-700" />
+              </div>
+              <div>
+                <h2 className={`text-[14.63px] font-bold leading-tight ${h.heading}`}>
+                  {t('Αναζητούν διοργανωτή', 'Looking for an organizer')}
+                </h2>
+                <p className={`text-[12px] font-medium mt-0.5 ${h.labelMuted}`}>
+                  {t(
+                    'Εκδηλώσεις από το Nakamas — γίνε εσύ ο διοργανωτής της παρέας.',
+                    'Events by Nakamas — step up and organize the group.',
+                  )}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setSeekingHostOnly((v) => !v)}
+              className={`shrink-0 text-[12px] font-bold px-3 py-1.5 rounded-full transition-all duration-200 ${seekingHostOnly ? h.chipActive : h.chipInactive}`}
+            >
+              {seekingHostOnly ? t('Όλες οι εκδηλώσεις', 'All events') : `${t('Δες όλες', 'See all')} (${seekingHostEvents.length})`}
+            </button>
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 noscrollbar">
+            {seekingHostEvents.map((event) => (
+              <div key={event.id} className="w-[290px] sm:w-[320px] shrink-0">
+                <EventCard event={event} />
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* How it works */}
@@ -633,15 +727,15 @@ export default function HomeClassic() {
         ].map(({ step, title, body }) => (
           <div
             key={step}
-            className="bg-white p-5 rounded-2xl border border-gray-100 shadow-soft flex flex-col items-center text-center"
+            className={`p-5 rounded-2xl shadow-soft flex flex-col items-center text-center ${h.card}`}
           >
-            <div className="w-8 h-8 bg-cyan-50 text-[#0E8B8D] rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs mb-2.5 ${h.stepBadge}`}>
               {step}
             </div>
-            <h3 className="font-bold text-[#111827] text-[14.63px] mb-1">
+            <h3 className={`font-bold text-[14.63px] mb-1 ${h.stepTitle}`}>
               {title}
             </h3>
-            <p className="text-[12.38px] leading-relaxed text-gray-500 font-medium">
+            <p className={`text-[12.38px] leading-relaxed font-medium ${h.stepBody}`}>
               {body}
             </p>
           </div>
@@ -650,19 +744,30 @@ export default function HomeClassic() {
 
       {/* Categories & Filters */}
       <section className="space-y-4">
-        <div>
-          <h2 className="text-[11.6px] font-bold text-gray-400 tracking-wide mb-3">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className={`text-[11.6px] font-bold tracking-wide ${h.sectionLabel}`}>
             {t("home.explore_categories", "Εξερευνηση κατηγοριων")}
           </h2>
+          <button
+            type="button"
+            onClick={() => setFilterSheetOpen(true)}
+            className={`md:hidden flex items-center gap-1.5 px-3 py-2 min-h-11 rounded-full text-[12px] font-bold shadow-soft ${h.filterBtn}`}
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            {t('Φίλτρα', 'Filters')}
+            {activeFilterCount > 0 && (
+              <span className={`text-[10px] px-1.5 rounded-full ${h.filterBadge}`}>{activeFilterCount}</span>
+            )}
+          </button>
+        </div>
+        <div>
           <div ref={categoryScrollRef} className="flex flex-nowrap gap-2 overflow-x-auto pb-1 noscrollbar">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
                 className={`whitespace-nowrap px-4 py-1.5 rounded-full text-[12.75px] font-bold shadow-soft transition-all duration-200 tracking-wide ${
-                  activeCategory === cat
-                    ? "bg-[#111827] text-white"
-                    : "bg-white border border-gray-100 text-gray-500 hover:text-[#0E8B8D] hover:border-[#a5f3fc]"
+                  activeCategory === cat ? h.chipActive : h.chipInactive
                 }`}
               >
                 {categoryTranslations[cat] ?? cat}
@@ -678,9 +783,7 @@ export default function HomeClassic() {
               key={tag}
               onClick={() => setTagFilter(tag)}
               className={`whitespace-nowrap px-3.5 py-1 rounded-full text-[11.82px] font-bold transition-all duration-200 border ${
-                tagFilter === tag
-                  ? "bg-[#18D8DB]/20 border-[#18D8DB] text-[#0E8B8D]"
-                  : "bg-white border-gray-200 text-gray-500 hover:border-gray-300 hover:text-[#111827]"
+                tagFilter === tag ? h.tagActive : h.tagInactive
               }`}
             >
               {tagTranslations[tag] ?? tag}
@@ -691,7 +794,7 @@ export default function HomeClassic() {
         {/* Secondary filters */}
         <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar items-center flex-wrap">
           <select
-            className="text-[12.73px] border border-gray-100 rounded-2xl shadow-soft bg-white hover:bg-gray-50 py-1.5 px-4 font-medium outline-none cursor-pointer transition-all duration-200"
+            className={`text-[12.73px] outline-none cursor-pointer transition-all duration-200 ${h.select}`}
             value={priceFilter}
             onChange={(e) =>
               setPriceFilter(e.target.value as typeof priceFilter)
@@ -708,7 +811,7 @@ export default function HomeClassic() {
           </select>
 
           <select
-            className="text-[12.73px] border border-gray-100 rounded-2xl shadow-soft bg-white hover:bg-gray-50 py-1.5 px-4 font-medium outline-none cursor-pointer transition-all duration-200"
+            className={`text-[12.73px] outline-none cursor-pointer transition-all duration-200 ${h.select}`}
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value as typeof dateFilter)}
           >
@@ -725,7 +828,7 @@ export default function HomeClassic() {
           </select>
 
           <select
-            className="text-[12.73px] border border-gray-100 rounded-2xl shadow-soft bg-white hover:bg-gray-50 py-1.5 px-4 font-medium outline-none cursor-pointer transition-all duration-200"
+            className={`text-[12.73px] outline-none cursor-pointer transition-all duration-200 ${h.select}`}
             value={safetyFilter}
             onChange={(e) =>
               setSafetyFilter(e.target.value as typeof safetyFilter)
@@ -746,7 +849,7 @@ export default function HomeClassic() {
           </select>
 
           <select
-            className="text-[12.73px] border border-gray-100 rounded-2xl shadow-soft bg-white hover:bg-gray-50 py-1.5 px-4 font-medium outline-none cursor-pointer transition-all duration-200"
+            className={`text-[12.73px] outline-none cursor-pointer transition-all duration-200 ${h.select}`}
             value={radiusFilter}
             onChange={(e) =>
               setRadiusFilter(e.target.value as typeof radiusFilter)
@@ -760,10 +863,21 @@ export default function HomeClassic() {
             <option value="25km">{t("home.filter.25km", "Εντός 25χλμ")}</option>
           </select>
 
+          {seekingHostEvents.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setSeekingHostOnly((v) => !v)}
+              className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-1 rounded-full text-[11.82px] font-bold transition-all duration-200 border ${seekingHostOnly ? h.tagActive : h.tagInactive}`}
+            >
+              <Crown className="w-3.5 h-3.5" />
+              {t("Χωρίς διοργανωτή", "Seeking organizer")}
+            </button>
+          )}
+
           {/* Sort */}
           <div className="relative ml-auto">
             <select
-              className="text-[12.73px] border border-gray-100 rounded-2xl shadow-soft bg-white hover:bg-gray-50 py-1.5 pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none transition-all duration-200"
+              className={`text-[12.73px] pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none transition-all duration-200 ${h.select}`}
               value={sortParam}
               onChange={(e) => {
                 const p = new URLSearchParams(searchParams);
@@ -781,7 +895,7 @@ export default function HomeClassic() {
                 {t("home.feed.sort.group_progress", "Πρόοδος Ομάδας")}
               </option>
             </select>
-            <ArrowDownUp className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+            <ArrowDownUp className={`absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none opacity-60 ${h.labelMuted}`} />
           </div>
 
           {hasActiveFilters && (
@@ -802,25 +916,25 @@ export default function HomeClassic() {
           <div className="flex gap-2">
             <button
               onClick={() => setFeedType("For You")}
-              className={`px-4 py-1.5 text-[12.73px] font-bold transition-all duration-200 ${feedType === "For You" ? "btn-pill-active" : "btn-pill-inactive"}`}
+              className={`px-4 py-1.5 text-[12.73px] font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
             >
               {t("home.feed.for_you", "Για Σένα")}
             </button>
             <button
               onClick={() => setFeedType("Discover")}
-              className={`px-4 py-1.5 text-[12.73px] font-bold transition-all duration-200 ${feedType === "Discover" ? "btn-pill-active" : "btn-pill-inactive"}`}
+              className={`px-4 py-1.5 text-[12.73px] font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
             >
               {t("home.feed.discover", "Ανακάλυψε")}
             </button>
           </div>
 
-          <div className="flex bg-gray-50 p-0.5 rounded-full w-fit border border-gray-100">
-            <button className="p-1.5 rounded-full transition-all duration-200 bg-white shadow-soft text-[#111827]" aria-label={t('Προβολή πλέγματος', 'Grid view')} title={t('Προβολή πλέγματος', 'Grid view')}>
+          <div className={cn('flex p-0.5 rounded-full w-fit border', tok.isDark ? 'bg-gray-800/50 border-gray-600/50' : 'bg-gray-50 border-gray-100')}>
+            <button className={cn('p-1.5 rounded-full transition-all duration-200 shadow-soft', tok.isDark ? 'bg-gray-700 text-white' : 'bg-white', h.heading)} aria-label={t('Προβολή πλέγματος', 'Grid view')} title={t('Προβολή πλέγματος', 'Grid view')}>
               <Grid className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigate("/nearby")}
-              className="p-1.5 rounded-md transition-colors text-gray-500 hover:text-[#111827]"
+              className={cn('p-1.5 rounded-md transition-colors', h.feedTabInactive)}
               title={t("Άνοιγμα Χάρτη", "Open Map")}
               aria-label={t("Άνοιγμα Χάρτη", "Open Map")}
             >
@@ -835,13 +949,14 @@ export default function HomeClassic() {
               <EventCardSkeleton key={`skeleton-${i}`} />
             ))
           ) : sortedEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-              <p className="text-gray-500 font-medium text-sm">
-                {t(
-                  "home.feed.no_events",
-                  "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.",
-                )}
-              </p>
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3">
+              <EmptyState
+                icon={CalendarX}
+                title={t("home.feed.no_events", "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.")}
+                description={t('Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία.', 'Try changing filters or category.')}
+                actionLabel={hasActiveFilters ? t('Εκκαθάριση φίλτρων', 'Clear filters') : undefined}
+                onAction={hasActiveFilters ? clearAllFilters : undefined}
+              />
             </div>
           ) : (
             visibleEvents.map((event, index) => (
@@ -860,10 +975,50 @@ export default function HomeClassic() {
         {/* Load More Trigger */}
         {!isLoading && visibleEventsCount < sortedEvents.length && (
           <div ref={loadMoreRef} className="flex justify-center mt-6 py-4">
-            <div className="w-6 h-6 border-2 border-[#18D8DB] border-t-transparent rounded-full animate-spin"></div>
+            <div className={cn('w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin', tok.accentText)} />
           </div>
         )}
       </section>
+
+      <FilterBottomSheet
+        open={filterSheetOpen}
+        onClose={() => setFilterSheetOpen(false)}
+        activeCount={activeFilterCount}
+        onClear={() => { clearAllFilters(); setFilterSheetOpen(false); }}
+      >
+        <div className="space-y-4">
+          <div>
+            <p className={`text-xs font-bold mb-2 ${h.labelMuted}`}>{t('Τιμή', 'Price')}</p>
+            <div className="flex flex-wrap gap-2">
+              {(['All', 'Free', 'Paid', 'Group Discount'] as const).map((p) => (
+                <button key={p} type="button" onClick={() => setPriceFilter(p)} className={`px-3 py-2 min-h-11 rounded-full text-xs font-bold ${priceFilter === p ? h.chipActive : h.chipInactive}`}>
+                  {p === 'All' ? t('Όλα', 'All') : p === 'Free' ? t('Δωρεάν', 'Free') : p === 'Paid' ? t('Επί πληρωμή', 'Paid') : t('Ομαδική έκπτωση', 'Group discount')}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className={`text-xs font-bold mb-2 ${h.labelMuted}`}>{t('Ημερομηνία', 'Date')}</p>
+            <div className="flex flex-wrap gap-2">
+              {(['Any', 'Today', 'This Week', 'This Month'] as const).map((d) => (
+                <button key={d} type="button" onClick={() => setDateFilter(d)} className={`px-3 py-2 min-h-11 rounded-full text-xs font-bold ${dateFilter === d ? h.chipActive : h.chipInactive}`}>
+                  {d === 'Any' ? t('Οποτεδήποτε', 'Any') : d === 'Today' ? t('Σήμερα', 'Today') : d === 'This Week' ? t('Αυτή την εβδομάδα', 'This week') : t('Αυτόν τον μήνα', 'This month')}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className={`text-xs font-bold mb-2 ${h.labelMuted}`}>{t('Απόσταση', 'Distance')}</p>
+            <div className="flex flex-wrap gap-2">
+              {(['Any', '5km', '10km', '25km'] as const).map((r) => (
+                <button key={r} type="button" onClick={() => setRadiusFilter(r)} className={`px-3 py-2 min-h-11 rounded-full text-xs font-bold ${radiusFilter === r ? h.chipActive : h.chipInactive}`}>
+                  {r === 'Any' ? t('Οποιαδήποτε', 'Any') : r}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </FilterBottomSheet>
     </div>
   );
 }

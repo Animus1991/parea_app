@@ -6,80 +6,14 @@ import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
-
-function useAccent() {
-  const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
-
-  const base = {
-    isDark,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-600',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    sectionHead: isDark ? 'text-gray-500' : 'text-gray-400',
-    itemHover: isDark ? 'hover:bg-gray-700/20' : 'hover:bg-gray-50',
-    divider: isDark ? 'divide-gray-700/40' : 'divide-gray-100',
-    borderT: isDark ? 'border-gray-700/40' : 'border-gray-100',
-    inputBg: isDark ? 'bg-gray-800/50 border-gray-700/50 text-white' : 'bg-white border-gray-200',
-  };
-
-  if (theme === 'vibrant' || theme === 'vibrant-dark') return {
-    ...base,
-    toggleOn: 'bg-fuchsia-600',
-    link: isDark ? 'text-fuchsia-400' : 'text-fuchsia-600',
-    catOn: isDark ? 'bg-fuchsia-900/30 border-fuchsia-700 text-fuchsia-400' : 'bg-fuchsia-50 border-fuchsia-300 text-fuchsia-700',
-    catOff: isDark ? 'bg-gray-800/50 border-gray-700 text-gray-400' : 'bg-white border-gray-200 text-gray-500',
-    twofaBg: isDark ? 'border-fuchsia-800/40 bg-fuchsia-900/10' : 'border-fuchsia-200 bg-fuchsia-50/30',
-    sessionBadge: isDark ? 'text-emerald-400 bg-emerald-900/20' : 'text-emerald-600 bg-emerald-50',
-    iconColor: isDark ? 'text-fuchsia-400' : 'text-fuchsia-600',
-  };
-  if (theme === 'neon' || theme === 'neon-dark' || theme === 'bento-dark') return {
-    ...base,
-    toggleOn: 'bg-emerald-600',
-    link: isDark ? 'text-emerald-400' : 'text-emerald-600',
-    catOn: isDark ? 'bg-emerald-900/30 border-emerald-700 text-emerald-400' : 'bg-emerald-50 border-emerald-300 text-emerald-700',
-    catOff: isDark ? 'bg-gray-800/50 border-gray-700 text-gray-400' : 'bg-white border-gray-200 text-gray-500',
-    twofaBg: isDark ? 'border-emerald-800/40 bg-emerald-900/10' : 'border-emerald-200 bg-emerald-50/30',
-    sessionBadge: isDark ? 'text-emerald-400 bg-emerald-900/20' : 'text-emerald-600 bg-emerald-50',
-    iconColor: isDark ? 'text-emerald-400' : 'text-emerald-600',
-  };
-  if (theme === 'bento') return {
-    ...base,
-    toggleOn: 'bg-indigo-600',
-    link: 'text-indigo-600',
-    catOn: 'bg-indigo-50 border-indigo-300 text-indigo-700',
-    catOff: 'bg-white border-gray-200 text-gray-500',
-    twofaBg: 'border-indigo-200 bg-indigo-50/30',
-    sessionBadge: 'text-emerald-600 bg-emerald-50',
-    iconColor: 'text-indigo-600',
-  };
-  // Classic
-  return {
-    ...base,
-    toggleOn: 'bg-cyan-600',
-    link: 'text-cyan-600',
-    catOn: 'bg-cyan-50 border-cyan-300 text-cyan-700',
-    catOff: 'bg-white border-gray-200 text-gray-500',
-    twofaBg: 'border-cyan-200 bg-cyan-50/30',
-    sessionBadge: 'text-emerald-600 bg-emerald-50',
-    iconColor: 'text-cyan-600',
-  };
-}
-
-const THEMES = [
-  { id: 'classic' as const, label: 'Classic', color: 'bg-cyan-500' },
-  { id: 'vibrant' as const, label: 'Vibrant', color: 'bg-fuchsia-500' },
-  { id: 'vibrant-dark' as const, label: 'Vibrant Dark', color: 'bg-fuchsia-700' },
-  { id: 'neon' as const, label: 'Neon', color: 'bg-emerald-500' },
-  { id: 'neon-dark' as const, label: 'Neon Dark', color: 'bg-emerald-700' },
-  { id: 'bento' as const, label: 'Bento', color: 'bg-indigo-500' },
-  { id: 'bento-dark' as const, label: 'Bento Dark', color: 'bg-indigo-700' },
-];
+import { ThemePicker } from '../common/ThemePicker';
+import { THEME_LABELS, type ThemeId } from '../../lib/themes';
+import { usePageContrast } from '../../hooks/usePageContrast';
 
 export default function SettingsPageContent() {
   const { t, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
-  const a = useAccent();
+  const a = usePageContrast();
 
   const theme = useStore((s) => s.theme);
   const setTheme = useStore((s) => s.setTheme);
@@ -119,7 +53,7 @@ export default function SettingsPageContent() {
       title: t('Ρυθμίσεις Λογαριασμού', 'Account Settings'),
       items: [
         { icon: Globe, label: t('Γλώσσα', 'Language'), value: language === 'el' ? 'Ελληνικά' : 'English', onClick: () => setLanguage(language === 'el' ? 'en' : 'el') },
-        { icon: Palette, label: t('Θέμα', 'Theme'), value: THEMES.find(th => th.id === theme)?.label || 'Classic', onClick: () => setShowThemePicker(!showThemePicker) },
+        { icon: Palette, label: t('Εμφάνιση & Θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
         { icon: CreditCard, label: t('Μέθοδοι Πληρωμής', 'Payment Methods'), value: t('1 κάρτα', '1 card') },
       ],
     },
@@ -172,24 +106,8 @@ export default function SettingsPageContent() {
       {showThemePicker && (
         <Card className="p-5">
           <h3 className={cn("font-bold text-base mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {THEMES.map(th => (
-              <button
-                key={th.id}
-                onClick={() => { setTheme(th.id); setShowThemePicker(false); }}
-                className={cn(
-                  "flex items-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all",
-                  theme === th.id
-                    ? cn(a.isDark ? "border-white/30 bg-white/5" : "border-gray-900/20 bg-gray-50", a.head)
-                    : cn(a.isDark ? "border-gray-700/40 hover:border-gray-600" : "border-gray-200 hover:border-gray-300", a.sub)
-                )}
-              >
-                <span className={cn("w-4 h-4 rounded-full shrink-0", th.color)} />
-                {th.label}
-                {theme === th.id && <CheckCircle2 className={cn("w-3.5 h-3.5 ml-auto", a.link)} />}
-              </button>
-            ))}
-          </div>
+          <p className={cn("text-xs font-medium mb-4", a.sub)}>{t('9 επαγγελματικά θέματα — επιλέξτε αυτό που σας ταιριάζει', '9 polished themes — pick what fits you best')}</p>
+          <ThemePicker variant="grid" />
         </Card>
       )}
 

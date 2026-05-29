@@ -12,6 +12,8 @@ import {
   Navigation,
   Link2,
   X,
+  Sparkles,
+  Crown,
 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { el as elLocale } from "date-fns/locale";
@@ -20,6 +22,10 @@ import { useStore } from "../../store";
 import type { Event } from "../../types";
 import { useLanguage } from "../../lib/i18n";
 import { cn } from "../../lib/utils";
+import { computeMatchScore, getMatchingPreview } from "../../lib/matching";
+import { getEventGroupProgress } from "../../lib/groupUtils";
+import { GroupProgressBar } from "./GroupProgressBar";
+import { toast } from "sonner";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -47,7 +53,11 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
   const theme = useStore((state) => state.theme);
   const savedEvents = useStore((state) => state.savedEvents) || [];
   const toggleSavedEvent = useStore((state) => state.toggleSavedEvent);
+  const canJoinEvent = useStore((state) => state.canJoinEvent);
   const isSaved = savedEvents.includes(event.id);
+  const groupProgress = getEventGroupProgress(event, groups);
+  const matchScore = currentUser ? computeMatchScore(currentUser, event) : null;
+  const matchingPreview = getMatchingPreview(event, groups, users, currentUser);
   const [imgError, setImgError] = useState(false);
 
   const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
@@ -77,6 +87,17 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
   const [showSafetyLinkModal, setShowSafetyLinkModal] = useState(false);
 
   const organizer = users.find((u) => u.id === event.organizerId);
+  const hostGroup = groups.find((g) => g.eventId === event.id && g.hostId);
+  const hostUser = hostGroup ? users.find((u) => u.id === hostGroup.hostId) : undefined;
+  const displayOrganizer = organizer ?? hostUser;
+  const seeksHost = !!event.isPlatformEvent && !displayOrganizer;
+  const becomeEventHost = useStore((state) => state.becomeEventHost);
+  const handleBecomeHost = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!currentUser) { navigate('/login'); return; }
+    becomeEventHost(event.id);
+    toast.success(t('Έγινες ο διοργανωτής της ομάδας! 🎉', "You're now the group's organizer! 🎉"));
+  };
 
   const toggleSave = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -86,11 +107,12 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
     const url = `${window.location.origin}/events/${event.id}`;
+    const shareUrl = `${url}?ref=${currentUser?.id ?? "guest"}`;
     if (navigator.share) {
-      navigator.share({ title: event.title, url }).catch(() => {});
+      navigator.share({ title: event.title, url: shareUrl }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(url);
-      alert(t("event_card.copied", "Link copied to clipboard!"));
+      navigator.clipboard.writeText(shareUrl);
+      toast.success(t("event_card.copied", "Link copied to clipboard!"));
     }
   };
 
@@ -213,19 +235,10 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           <h3 className={cn("font-bold text-[15.91px] leading-snug transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? 'group-hover:text-fuchsia-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? 'group-hover:text-fuchsia-600' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-[#0E8B8D]'))}>
             {event.title}
           </h3>
-          {currentUser && (
+          {currentUser && matchScore != null && (
             <div className="flex flex-col items-end shrink-0">
               <span className={cn("text-[12.73px] font-black leading-none", accentText)}>
-                {Math.min(
-                  99,
-                  45 +
-                    (event.tags ?? []).filter((t) =>
-                      (currentUser.interests || []).includes(t),
-                    ).length *
-                      15 +
-                    (event.category === "All" ? 0 : 10),
-                )}
-                %
+                {matchScore}%
               </span>
               <span className={cn("text-[9.55px] font-semibold capitalize tracking-wide", mutedColor)}>
                 {t("Ταίριασμα", "Match")}
@@ -268,10 +281,15 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               </span>
             </div>
           )}
+          {matchingPreview && (
+            <p className={cn("text-[11px] font-semibold rounded-lg px-2.5 py-1.5", accentBg, accentText)}>
+              {t(matchingPreview.labelEl, matchingPreview.labelEn)}
+            </p>
+          )}
           <div className={cn("flex items-center text-[12.73px] font-medium mt-2", subColor)}>
             <Users className={cn("w-3.5 h-3.5 mr-2 shrink-0", mutedColor)} />
             <span>
-              {(event.maxParticipants || 40) - 12}{" "}
+              {groupProgress.spotsLeft}{" "}
               {t("θέσεις έμειναν", "spots left")}
             </span>
           </div>
@@ -291,33 +309,57 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         </div>
 
         {/* Organizer */}
-        {organizer && (
+        {displayOrganizer && (
           <div className={cn("flex items-center justify-between mb-4 rounded-2xl p-2.5 border transition-all duration-200", isDark ? "bg-gray-800/30 border-gray-700/40 hover:bg-gray-800/50" : "bg-gray-50/50 border-gray-100 hover:bg-gray-50")}>
             <div className="flex items-center gap-2.5">
               <div className="relative">
                 <img
                   referrerPolicy="no-referrer"
-                  src={organizer.photoUrl}
-                  alt={organizer.name}
+                  src={displayOrganizer.photoUrl}
+                  alt={displayOrganizer.name}
                   className={cn("w-8 h-8 rounded-full object-cover border-2 shadow-soft", isDark ? "border-gray-700" : "border-white")}
                 />
                 <div className={cn("absolute -bottom-0.5 -right-0.5 bg-green-500 w-2.5 h-2.5 rounded-full border-2", isDark ? "border-gray-800" : "border-white")}></div>
               </div>
               <div className="flex flex-col">
                 <span className={cn("text-[10.93px] font-semibold mb-0.5 capitalize", mutedColor)}>
-                  {t("event_card.organizer", "Organizer")}
+                  {hostUser && !organizer ? t('Διοργανωτής ομάδας', 'Group host') : t("event_card.organizer", "Organizer")}
                 </span>
                 <button
                   className={cn("text-xs font-bold text-left transition-colors line-clamp-1", headColor, isDark ? (accent === 'fuchsia' ? 'hover:text-fuchsia-400' : accent === 'emerald' ? 'hover:text-emerald-400' : 'hover:text-cyan-400') : 'hover:text-cyan-600')}
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate(`/organizer/${organizer.id}`);
+                    navigate(`/organizer/${displayOrganizer.id}`);
                   }}
                 >
-                  {organizer.name}
+                  {displayOrganizer.name}
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Platform event — seeks a group organizer */}
+        {seeksHost && (
+          <div className={cn("mb-4 rounded-2xl p-3 border", isDark ? "bg-amber-500/10 border-amber-500/25" : "bg-amber-50 border-amber-200")}>
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className={cn("w-4 h-4 shrink-0", isDark ? "text-amber-400" : "text-amber-600")} />
+              <div className="flex flex-col">
+                <span className={cn("text-[10.93px] font-semibold capitalize", isDark ? "text-amber-300/90" : "text-amber-700")}>
+                  {t('Προσφέρεται από Nakamas', 'Offered by Nakamas')}
+                </span>
+                <span className={cn("text-xs font-bold", isDark ? "text-amber-100" : "text-amber-900")}>
+                  {t('Αναζητείται διοργανωτής', 'Looking for an organizer')}
+                </span>
+              </div>
+            </div>
+            <button
+              onClick={handleBecomeHost}
+              className={cn("w-full py-2 rounded-xl text-[12.73px] font-bold transition-colors flex items-center justify-center gap-1.5", isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
+            >
+              <Crown className="w-3.5 h-3.5" />
+              {t('Γίνε Διοργανωτής Παρέας', 'Become group organizer')}
+            </button>
           </div>
         )}
 
@@ -449,40 +491,53 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
 
         {/* Group progress + Join */}
         <div className={cn("mt-auto pt-3 border-t", borderSub)}>
-          <div className="flex items-center justify-between mb-1.5">
-            <span className={cn("text-[12.02px] font-bold tracking-tight capitalize", mutedColor)}>
-              {t("event_card.forming", "Forming")}
-            </span>
-          </div>
-          <div className={cn("w-full h-1.5 rounded-full overflow-hidden mb-3", isDark ? "bg-gray-700/50" : "bg-gray-100")}>
-            <div className={cn("h-full w-[45%] rounded-full", accent === 'fuchsia' ? 'bg-fuchsia-500' : accent === 'emerald' ? 'bg-emerald-500' : accent === 'indigo' ? 'bg-indigo-500' : 'bg-[#18D8DB]')} />
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex gap-2">
+          <GroupProgressBar
+            current={groupProgress.current}
+            target={groupProgress.target}
+            className="mb-3"
+          />
+          {groupProgress.discountUnlocked && event.groupDiscount && (
+            <p className={cn("text-[10px] font-bold mb-2", isDark ? "text-emerald-400" : "text-emerald-600")}>
+              -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
+            </p>
+          )}
+          <div className="flex items-center justify-between gap-2">
+            <button
+              className={cn("text-[10.93px] min-h-11 px-2 transition-colors font-medium underline underline-offset-2", isDark ? "text-gray-500 hover:text-gray-300" : "text-gray-500 hover:text-[#0E8B8D]")}
+              onClick={getCalendarUrl}
+              type="button"
+            >
+              + Cal
+            </button>
+            <div className="flex items-center gap-2 flex-1 justify-end">
               <button
-                className={cn("text-[10.93px] transition-colors font-medium underline underline-offset-2", isDark ? "text-gray-500 hover:text-gray-300" : "text-gray-500 hover:text-[#0E8B8D]")}
-                onClick={getCalendarUrl}
-                title={t(
-                  "Προσθήκη στο Google Calendar",
-                  "Add to Google Calendar",
-                )}
-              >
-                + Cal
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/events/${event.id}`);
+                  toggleSave(e);
                 }}
-                className={cn("px-4 py-2 text-[12.02px] font-bold rounded-full transition-colors tracking-tight", isDark ? "bg-gray-700/40 text-gray-300 hover:bg-gray-700/60" : "bg-gray-100 text-gray-700 hover:bg-gray-200")}
-                title={t("Λεπτομέρειες", "View Details")}
+                className={cn("px-3 py-2 min-h-11 text-[12.02px] font-bold rounded-full", isDark ? "bg-gray-700/40 text-gray-300" : "bg-gray-100 text-gray-600")}
               >
-                {t("Λεπτομέρειες", "View Details")}
+                {isSaved ? t("Αποθηκευμένο", "Saved") : t("Αποθήκευση", "Save")}
               </button>
-              <button className={cn("px-5 py-2 text-white text-[12.02px] font-bold rounded-full shadow-soft transition-all duration-200 tracking-tight", accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-[#111827] hover:bg-black')}>
-                {t("event_card.join", "Join")}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const gate = canJoinEvent(event.id);
+                  if (!gate.ok) {
+                    toast.error(t(gate.messageEl, gate.messageEn));
+                    if (gate.messageEn.includes("feedback")) {
+                      const pending = useStore.getState().getPendingFeedbackEventId();
+                      if (pending) navigate(`/history/feedback/${pending}`);
+                    }
+                    return;
+                  }
+                  navigate(`/events/${event.id}/join`);
+                }}
+                className={cn("px-5 py-2 min-h-11 text-white text-[12.02px] font-bold rounded-full shadow-soft", accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-[#111827] hover:bg-black')}
+              >
+                {t("Βρες παρέα", "Find company")}
               </button>
             </div>
           </div>

@@ -12,6 +12,10 @@ import { format, parseISO } from 'date-fns';
 import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 import { ErrorBoundary } from '../components/common/ErrorBoundary';
 import { useLanguage } from '../lib/i18n';
+import { getGoogleMapsApiKey, isGoogleMapsConfigured } from '../lib/maps';
+import { shouldRevealMemberPhoto, getPhotoPlaceholder } from '../lib/photoReveal';
+import { computeDiscountedPrice } from '../lib/groupUtils';
+import { toast } from 'sonner';
 
 function Group({ group, event, navigate }: { group: any; event: any; navigate: any; key?: any }) {
   const { t } = useLanguage();
@@ -62,11 +66,11 @@ function Group({ group, event, navigate }: { group: any; event: any; navigate: a
             <div className="flex flex-col items-end mr-1 mt-1" title={t(`Οργανώθηκε από $${groupHost.name} ($${groupHost.trustTier})`, `Organized by $${groupHost.name} ($${groupHost.trustTier})`)}>
               <div className="relative">
                 <div className="h-8 w-8 rounded-full bg-gray-200 overflow-hidden shrink-0 border border-gray-200">
-                   {groupHost.photoUrl ? (
+                   {groupHost.photoUrl && shouldRevealMemberPhoto(event.date, event.time, group, groupHost.id, false) ? (
                      <img referrerPolicy="no-referrer" src={groupHost.photoUrl} alt={groupHost.name} className="h-full w-full object-cover" />
                    ) : (
-                     <div className="h-full w-full flex items-center justify-center bg-cyan-100 text-cyan-700 font-bold text-xs">
-                        {groupHost.name.charAt(0)}
+                     <div className="h-full w-full flex items-center justify-center bg-cyan-100 text-cyan-700 font-bold text-xs" title={t('Φωτογραφία μετά την επιβεβαίωση', 'Photo revealed after confirmation')}>
+                        {getPhotoPlaceholder(groupHost.name)}
                      </div>
                    )}
                 </div>
@@ -138,6 +142,10 @@ export default function EventDetailClassic() {
   const groups = useStore((state) => state.groups);
   const users = useStore((state) => state.users);
   const currentUser = useStore((state) => state.currentUser);
+  const savedEvents = useStore((state) => state.savedEvents);
+  const toggleSavedEvent = useStore((state) => state.toggleSavedEvent);
+  const canJoinEvent = useStore((state) => state.canJoinEvent);
+  const getPendingFeedbackEventId = useStore((state) => state.getPendingFeedbackEventId);
   
   useEffect(() => {
     setIsLoading(true);
@@ -246,11 +254,29 @@ export default function EventDetailClassic() {
   };
 
   const handleSave = () => {
-    setIsSaved(!isSaved);
+    if (!eventId) return;
+    toggleSavedEvent(eventId);
+    setIsSaved(!savedEvents.includes(eventId));
   };
 
-  // Safely get API key
-  const apiKey = (import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY || '';
+  useEffect(() => {
+    if (eventId) setIsSaved(savedEvents.includes(eventId));
+  }, [eventId, savedEvents]);
+
+  const apiKey = getGoogleMapsApiKey();
+  const mapsReady = isGoogleMapsConfigured();
+
+  const handlePrimaryJoin = () => {
+    if (!eventId) return;
+    const gate = canJoinEvent(eventId);
+    if (!gate.ok) {
+      toast.error(t(gate.messageEl, gate.messageEn));
+      const pending = getPendingFeedbackEventId();
+      if (pending) navigate(`/history/feedback/${pending}`);
+      return;
+    }
+    navigate(`/events/${eventId}/join`);
+  };
   
   if (isLoading) {
     return <EventDetailSkeleton />;
@@ -388,7 +414,7 @@ export default function EventDetailClassic() {
                   >
                     {isMapFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
                   </button>
-                  {apiKey ? (
+                  {mapsReady ? (
                     <ErrorBoundary fallback={
                       <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] p-4 text-center">
                         <div className="bg-white p-3 rounded-2xl shadow-soft border border-red-100">
@@ -608,13 +634,13 @@ export default function EventDetailClassic() {
         </div>
       </div>
       
-      {/* Mobile Sticky CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden z-50 flex gap-3">
-        <Button variant="outline" className="flex-1 border-gray-200 text-gray-700" onClick={() => navigate(`/events/${eventId}/join`)}>
-          {t('Λίστα Αναμονής', 'Waitlist')}
+      {/* Mobile Sticky CTA — primary: Find company */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden z-50 flex gap-3 pb-safe">
+        <Button variant="outline" className="flex-1 min-h-11 border-gray-200 text-gray-700" onClick={handleSave}>
+          {isSaved ? t('Αποθηκευμένο', 'Saved') : t('Αποθήκευση', 'Save')}
         </Button>
-        <Button className="flex-[2] bg-[#0E8B8D] text-white hover:bg-[#0b6d6f] shadow-soft" onClick={() => navigate(`/events/${eventId}/join`)}>
-          {t('Νέα Ομάδα', 'Create Group')}
+        <Button className="flex-[2] min-h-11 bg-[#0E8B8D] text-white hover:bg-[#0b6d6f] shadow-soft" onClick={handlePrimaryJoin}>
+          {t('Βρες παρέα', 'Find company')}
         </Button>
       </div>
 

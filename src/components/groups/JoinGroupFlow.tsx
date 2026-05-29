@@ -3,33 +3,76 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useStore } from '../../store';
 import { Button } from '../common/Button';
 import { Ticket, Users, CheckCircle, Split, ShieldCheck, Tag } from 'lucide-react';
+import { useLanguage } from '../../lib/i18n';
+import { canAccessEvent } from '../../lib/trust';
+import { computeDiscountedPrice } from '../../lib/groupUtils';
+import { toast } from 'sonner';
 
 export default function JoinGroupFlow() {
   const { eventId } = useParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const preSelectedGroupId = searchParams.get('groupId');
-  
+
   const events = useStore((state) => state.events);
   const groups = useStore((state) => state.groups);
+  const currentUser = useStore((state) => state.currentUser);
   const joinGroup = useStore((state) => state.joinGroup);
   const createGroup = useStore((state) => state.createGroup);
-  const event = events.find(e => e.id === eventId);
+  const placeCommitmentHold = useStore((state) => state.placeCommitmentHold);
+  const hasCommitmentHold = useStore((state) => state.hasCommitmentHold);
+  const canJoinEvent = useStore((state) => state.canJoinEvent);
+
+  const event = events.find((e) => e.id === eventId);
   const [step, setStep] = useState(1);
-  const [groupType, setGroupType] = useState<'existing' | 'new'>(preSelectedGroupId ? 'existing' : 'new');
+  const [groupType, setGroupType] = useState<'existing' | 'new'>(
+    preSelectedGroupId ? 'existing' : 'new',
+  );
   const [newGroupSize, setNewGroupSize] = useState(4);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(preSelectedGroupId);
+  const [commitmentAccepted, setCommitmentAccepted] = useState(false);
 
-  if (!event) return null;
+  if (!event || !eventId) return null;
+
+  const gate = canAccessEvent(currentUser, event);
+  const storeGate = canJoinEvent(eventId);
+  const needsCommitment = !event.isPaid && !hasCommitmentHold(eventId);
+
+  const availableGroups = groups.filter(
+    (g) => g.eventId === eventId && g.members.length < g.targetSize,
+  );
+
+  const discountedPrice =
+    event.isPaid && event.groupDiscount
+      ? computeDiscountedPrice(event, event.groupDiscount.minSize)
+      : event.price;
 
   const handleConfirm = () => {
+    if (!gate.allowed) {
+      toast.error(t(gate.messageEl, gate.messageEn));
+      return;
+    }
+    if (!storeGate.ok) {
+      toast.error(t(storeGate.messageEl, storeGate.messageEn));
+      return;
+    }
+    if (needsCommitment && !commitmentAccepted) {
+      toast.error(
+        t(
+          'Αποδεχτείτε τη δέσμευση συμμετοχής για δωρεάν εκδηλώσεις.',
+          'Accept the participation commitment for free events.',
+        ),
+      );
+      return;
+    }
+    if (needsCommitment) placeCommitmentHold(eventId);
+
     if (groupType === 'existing') {
-      if (selectedGroupId) {
-        joinGroup(selectedGroupId);
-      } else {
-        // Fallback: join first available group if none selected
-        const firstAvail = groups.find(g => g.eventId === eventId && g.members.length < g.targetSize);
-        if (firstAvail) joinGroup(firstAvail.id);
+      if (selectedGroupId) joinGroup(selectedGroupId);
+      else {
+        const first = availableGroups[0];
+        if (first) joinGroup(first.id);
       }
     } else {
       createGroup(event.id, newGroupSize);
@@ -39,188 +82,136 @@ export default function JoinGroupFlow() {
 
   return (
     <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-6 shadow-soft sm:p-8 mt-8">
+      {!gate.allowed && (
+        <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm font-medium flex gap-2">
+          <ShieldCheck className="w-5 h-5 shrink-0" />
+          {t(gate.messageEl, gate.messageEn)}
+        </div>
+      )}
+
       {step === 1 && (
         <div className="space-y-6">
           <div>
-            <h2 className="text-xl font-bold text-[#111827]">Join or Create a Group</h2>
+            <h2 className="text-xl font-bold text-[#111827]">
+              {t('Συμμετοχή ή δημιουργία ομάδας', 'Join or Create a Group')}
+            </h2>
             <p className="mt-1 text-sm text-gray-500 font-medium">{event.title}</p>
-            <p className="text-xs text-gray-400 font-medium mt-0.5">Time Zone: {event.timeZone || 'Local Time'}</p>
           </div>
-          
-          <p className="text-xs text-gray-600 font-medium mt-2 p-3 bg-cyan-50 border border-cyan-100 rounded text-cyan-900 leading-relaxed">
-            Nakamas highly recommends groups of 3-5 people. Groups are less awkward, safer{event.isPaid && event.groupDiscount ? `, and groups of ${event.groupDiscount.minSize} or more receive an automatic ${event.groupDiscount.percentage}% discount on paid tickets once confirmed!` : '!'}
+
+          <p className="text-xs text-gray-600 font-medium p-3 bg-cyan-50 border border-cyan-100 rounded-xl text-cyan-900 leading-relaxed">
+            {t(
+              'Συνιστάμε ομάδες 3–5 ατόμων — πιο ασφαλές και άνετο.',
+              'We recommend groups of 3–5 people — safer and more comfortable.',
+            )}
+            {event.isPaid && event.groupDiscount
+              ? ` ${t('Έκπτωση', 'Discount')} -${event.groupDiscount.percentage}% ${t('από', 'from')} ${event.groupDiscount.minSize}+ ${t('μέλη', 'members')}.`
+              : ''}
           </p>
 
-          <div className="grid grid-cols-2 gap-3 mt-4">
-            <button 
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
               onClick={() => setGroupType('existing')}
-              className={`p-4 rounded-2xl border text-left transition-all duration-200 ${groupType === 'existing' ? 'border-[#18D8DB] bg-cyan-50 shadow-soft ring-1 ring-[#18D8DB]' : 'border-gray-100 hover:border-[#a5f3fc]'}`}
+              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'existing' ? 'border-[#18D8DB] bg-cyan-50 ring-1 ring-[#18D8DB]' : 'border-gray-100'}`}
             >
               <Users className={`h-5 w-5 mb-2 ${groupType === 'existing' ? 'text-cyan-600' : 'text-gray-400'}`} />
-              <p className="font-bold text-sm text-[#111827]">Join Existing</p>
-              <p className="text-sm text-gray-500 font-medium mt-1">Jump into a small group that's already gathering.</p>
+              <p className="font-bold text-sm">{t('Υπάρχουσα ομάδα', 'Join Existing')}</p>
             </button>
-            <button 
+            <button
+              type="button"
               onClick={() => setGroupType('new')}
-              className={`p-4 rounded-2xl border text-left transition-all duration-200 ${groupType === 'new' ? 'border-[#18D8DB] bg-cyan-50 shadow-soft ring-1 ring-[#18D8DB]' : 'border-gray-100 hover:border-[#a5f3fc]'}`}
+              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'new' ? 'border-[#18D8DB] bg-cyan-50 ring-1 ring-[#18D8DB]' : 'border-gray-100'}`}
             >
               <Split className={`h-5 w-5 mb-2 ${groupType === 'new' ? 'text-cyan-600' : 'text-gray-400'}`} />
-              <p className="font-bold text-sm text-[#111827]">Start New Group</p>
-              <p className="text-sm text-gray-500 font-medium mt-1">Gather a fresh group of users to attend.</p>
+              <p className="font-bold text-sm">{t('Νέα ομάδα', 'Start New Group')}</p>
             </button>
           </div>
-          
+
           {groupType === 'new' && (
-            <div className="pt-4 space-y-3">
-               <label className="text-xs font-bold text-[#111827] tracking-wide">Target Group Size</label>
-               <div className="flex gap-2">
-                 {[3,4,5,6].map(size => (
-                   <button 
-                     key={size}
-                     onClick={() => setNewGroupSize(size)}
-                     className={`flex-1 py-2 text-xs font-bold rounded-full border transition-all duration-200 ${newGroupSize === size ? 'bg-[#0E8B8D] text-white border-[#0E8B8D] shadow-soft' : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50 hover:border-[#a5f3fc]'}`}
-                   >
-                     {size} People
-                     {event.isPaid && event.groupDiscount && size >= event.groupDiscount.minSize && <Tag className="h-3 w-3 inline ml-1" />}
-                   </button>
-                 ))}
-               </div>
-               
-               <div className="mt-4 flex items-center justify-center p-3 bg-cyan-50 border border-[#a5f3fc]/40 rounded-2xl shadow-soft">
-                 <div className="text-center">
-                   <p className="text-[10px] font-bold text-cyan-400 tracking-wide mb-0.5">Selected Target Size</p>
-                   <div className="flex items-center justify-center gap-1.5 text-cyan-900 font-bold text-lg">
-                     <Users className="w-4 h-4 text-cyan-600" />
-                     {newGroupSize} <span className="text-xs font-medium text-cyan-700">Members</span>
-                   </div>
-                 </div>
-               </div>
-               {event.isPaid && event.groupDiscount && newGroupSize >= event.groupDiscount.minSize && (
-                 <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-start gap-3 shadow-soft transform transition-all duration-300 scale-100">
-                   <div className="p-2.5 bg-emerald-100 rounded-full text-emerald-600 shrink-0">
-                     <Tag className="h-5 w-5" />
-                   </div>
-                   <div>
-                     <h4 className="text-sm font-bold text-emerald-800 tracking-wide leading-tight">Discount Unlocked!</h4>
-                     <p className="text-xs text-emerald-700 font-medium mt-1">
-                       Awesome! By starting a group of {newGroupSize}, everyone (including you) gets <span className="font-bold text-emerald-800 bg-emerald-100 px-1 py-0.5 rounded">{event.groupDiscount.percentage}% OFF</span> the ticket price.
-                     </p>
-                   </div>
-                 </div>
-               )}
+            <div className="flex gap-2">
+              {[3, 4, 5, 6].map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => setNewGroupSize(size)}
+                  className={`flex-1 py-2 min-h-11 rounded-xl font-bold text-sm ${newGroupSize === size ? 'bg-[#111827] text-white' : 'bg-gray-100 text-gray-600'}`}
+                >
+                  {size}
+                </button>
+              ))}
             </div>
           )}
 
-          <Button className="w-full mt-6" size="lg" onClick={() => setStep(2)}>
-            Continue
+          <Button className="w-full min-h-11" onClick={() => setStep(2)} disabled={!gate.allowed}>
+            {t('Συνέχεια', 'Continue')}
           </Button>
         </div>
       )}
 
       {step === 2 && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-xl font-bold text-[#111827]">
-               {event.isPaid ? 'Secure Your Spot via Partner' : 'Commitment Confirmation'}
-            </h2>
-            <p className="mt-1 text-xs text-gray-500 font-medium bg-gray-50 p-2 rounded inline-block mt-2">
-               {groupType === 'new' ? `Starting new group of ${newGroupSize}` : 'Joining existing group'}
-            </p>
-          </div>
+        <div className="space-y-5">
+          <h3 className="font-bold text-lg">{t('Επιβεβαίωση', 'Confirmation')}</h3>
 
           {event.isPaid ? (
-            <div className="space-y-4 rounded-2xl border border-gray-100 p-4 shadow-soft">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Base Ticket Price</span>
-                <span className="font-bold">€{event.price.toFixed(2)}</span>
+            <div className="p-4 rounded-xl border border-gray-100 bg-gray-50 space-y-2">
+              <div className="flex justify-between text-sm font-medium">
+                <span>{t('Τιμή', 'Price')}</span>
+                <span>€{event.price}</span>
               </div>
-              
-              {event.groupDiscount && newGroupSize >= event.groupDiscount.minSize && (
-                <div className="flex justify-between text-sm text-emerald-600 font-medium">
-                  <span className="flex items-center gap-1.5"><Tag className="h-4 w-4" /> Group Booking Discount ({event.groupDiscount.percentage}%)</span>
-                  <span>-€{(event.price * (event.groupDiscount.percentage / 100)).toFixed(2)}</span>
+              {event.groupDiscount && (
+                <div className="flex justify-between text-sm font-bold text-emerald-700">
+                  <span className="flex items-center gap-1">
+                    <Tag className="w-4 h-4" />
+                    {t('Με ομαδική έκπτωση', 'With group discount')}
+                  </span>
+                  <span>€{discountedPrice}</span>
                 </div>
               )}
-              
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Nakamas Coordination Fee</span>
-                <span className="font-bold">€1.50</span>
-              </div>
-              <div className="border-t border-gray-200 pt-3 flex justify-between font-bold text-lg text-cyan-600">
-                <span>Total Charge</span>
-                <span>€{((event.groupDiscount && newGroupSize >= event.groupDiscount.minSize ? event.price * (1 - event.groupDiscount.percentage / 100) : event.price) + 1.5).toFixed(2)}</span>
-              </div>
-              <div className="bg-yellow-50 text-yellow-800 text-sm p-3 rounded font-bold tracking-wide flex items-start gap-2 mt-4 leading-relaxed">
-                <ShieldCheck className="h-4 w-4 shrink-0" />
-                No Web Scraping! Payment is pre-authorized and processed through official API affiliate integration (e.g. more.com) once the group is confirmed.
-              </div>
+              <p className="text-[10px] text-gray-500">
+                {t(
+                  'Προεξουσιοδότηση — χρέωση μόνο μετά την επιβεβαίωση της ομάδας.',
+                  'Pre-authorization — charged only after group confirmation.',
+                )}
+              </p>
             </div>
           ) : (
-             <div className="space-y-4">
-               <div className="text-xs text-gray-600 font-medium bg-cyan-50 border border-cyan-200 p-4 rounded-2xl" style={{ backgroundColor: "rgb(254 242 242)", borderColor: "rgb(252 165 165)", color: "rgb(153 27 27)" }}>
-                 <strong>Mandatory Commitment:</strong> This is a free event, but your spot is valuable. By confirming below, you make a strict commitment to attend. If you fail to show up without a valid reason, your internal reliability score will severely decrease, which may limit your access to future events and high-trust activities.
-               </div>
-               <div className="rounded-2xl border border-gray-100 p-4 shadow-soft">
-                 <div className="flex justify-between text-sm font-bold text-cyan-600">
-                   <span>Registration Status</span>
-                   <span>Pending Confirmation</span>
-                 </div>
-               </div>
-             </div>
+            <label className="flex gap-3 p-4 rounded-xl border border-cyan-100 bg-cyan-50/50 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={commitmentAccepted}
+                onChange={(e) => setCommitmentAccepted(e.target.checked)}
+                className="mt-1 h-4 w-4"
+              />
+              <span className="text-xs font-medium text-cyan-900 leading-relaxed">
+                {t(
+                  'Αποδέχομαι δέσμευση συμμετοχής (hold) για δωρεάν εκδήλωση — ακύρωση εντός 24ω πριν χωρίς ποινή.',
+                  'I accept a participation commitment hold for this free event — cancel 24h before without penalty.',
+                )}
+              </span>
+            </label>
           )}
 
-          <Button className="w-full" size="lg" onClick={handleConfirm}>
-            {event.isPaid ? 'Pre-Authorize with Partner' : 'I Commit to Attend'}
-          </Button>
+          <div className="flex gap-3">
+            <Button variant="outline" className="flex-1 min-h-11" onClick={() => setStep(1)}>
+              {t('Πίσω', 'Back')}
+            </Button>
+            <Button variant="primary" className="flex-[2] min-h-11" onClick={handleConfirm}>
+              {t('Επιβεβαίωση συμμετοχής', 'Confirm join')}
+            </Button>
+          </div>
         </div>
       )}
 
       {step === 3 && (
-        <div className="space-y-6 text-center py-4 animate-in fade-in zoom-in duration-500">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 mb-2">
-            <CheckCircle className="h-8 w-8 text-emerald-600" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-extrabold text-[#111827]">You're In!</h2>
-            <p className="mt-2 text-sm text-gray-600 font-medium leading-relaxed max-w-[280px] mx-auto">
-              Your {event.isPaid && 'payment hold is active and your'} spot is reserved. We'll send you the exact meeting location 24h prior.
-            </p>
-          </div>
-
-          {/* Psychological Push: Social Proof & Consistency */}
-          <div className="mt-8 bg-gradient-to-br from-cyan-50/80 to-white border border-cyan-100/50 rounded-2xl p-6 text-left relative overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
-             <div className="absolute top-0 right-0 p-5">
-                <span className="flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-                </span>
-             </div>
-             
-             <div className="relative z-10">
-                <div className="flex items-center gap-2.5 mb-3">
-                  <div className="bg-cyan-100/50 p-1.5 rounded-lg text-cyan-700">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
-                  <h3 className="text-sm font-bold text-cyan-950">One last, quick thing for your group</h3>
-                </div>
-                
-                <p className="text-[13px] text-gray-600 font-medium mb-5 leading-relaxed pr-4">
-                  Your new group is excited to meet you! Customarily, to keep our community safe and ensure everyone feels perfectly comfortable collaborating, <strong className="text-cyan-900 font-bold">over 85% of members</strong> claim their Verified Badge before their first event.
-                </p>
-                
-                <div className="flex flex-col sm:flex-row gap-3">
-                   <Button className="w-full sm:w-auto bg-[#0E8B8D] hover:bg-[#0b6d6f] text-white font-bold rounded-2xl text-[13px] py-2 px-5 shadow-soft-md transition-all duration-200" onClick={() => navigate('/verification')}>
-                     Secure my Verified Badge (~60s)
-                   </Button>
-                </div>
-             </div>
-          </div>
-
-          <div className="pt-4 space-y-3">
-             <Button variant="ghost" className="w-full text-gray-500 font-bold hover:bg-gray-50 text-sm h-11" onClick={() => navigate('/plans')}>
-               Skip for now, go to My Plans
-             </Button>
-          </div>
+        <div className="text-center space-y-4 py-4">
+          <CheckCircle className="w-14 h-14 text-emerald-500 mx-auto" />
+          <h3 className="text-xl font-bold">{t('Είστε μέσα!', "You're in!")}</h3>
+          <p className="text-sm text-gray-500 font-medium">
+            {t('Το group chat ξεκλειδώνει όταν η ομάδα επιβεβαιωθεί.', 'Group chat unlocks when the group is confirmed.')}
+          </p>
+          <Button className="w-full min-h-11" onClick={() => navigate(`/events/${eventId}`)}>
+            {t('Επιστροφή στην εκδήλωση', 'Back to event')}
+          </Button>
         </div>
       )}
     </div>

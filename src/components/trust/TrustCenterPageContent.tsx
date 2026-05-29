@@ -6,73 +6,12 @@ import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
-
-function useAccent() {
-  const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
-
-  if (theme === 'vibrant' || theme === 'vibrant-dark') return {
-    isDark,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-600',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    link: isDark ? 'text-fuchsia-400 hover:underline' : 'text-fuchsia-600 hover:underline',
-    iconAccent: isDark ? 'text-fuchsia-400' : 'text-fuchsia-600',
-    scoreStroke: '#d946ef',
-    scoreFill: isDark ? 'fill-white' : 'fill-[#111827]',
-    timelineDot: 'bg-fuchsia-500',
-    timelineLine: isDark ? 'bg-gray-700' : 'bg-gray-200',
-    infoBg: isDark ? 'bg-gray-800/30 border-none shadow-none' : 'bg-gray-50 border-none shadow-none',
-  };
-
-  if (theme === 'neon' || theme === 'neon-dark' || theme === 'bento-dark') return {
-    isDark,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-600',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    link: isDark ? 'text-emerald-400 hover:underline' : 'text-emerald-600 hover:underline',
-    iconAccent: isDark ? 'text-emerald-400' : 'text-emerald-600',
-    scoreStroke: '#10b981',
-    scoreFill: isDark ? 'fill-white' : 'fill-[#111827]',
-    timelineDot: 'bg-emerald-500',
-    timelineLine: isDark ? 'bg-gray-700' : 'bg-gray-200',
-    infoBg: isDark ? 'bg-gray-800/30 border-none shadow-none' : 'bg-gray-50 border-none shadow-none',
-  };
-
-  if (theme === 'bento') return {
-    isDark: false,
-    head: 'text-[#111827]',
-    sub: 'text-gray-600',
-    muted: 'text-gray-400',
-    link: 'text-indigo-600 hover:underline',
-    iconAccent: 'text-indigo-600',
-    scoreStroke: '#6366f1',
-    scoreFill: 'fill-[#111827]',
-    timelineDot: 'bg-indigo-500',
-    timelineLine: 'bg-gray-200',
-    infoBg: 'bg-gray-50 border-none shadow-none',
-  };
-
-  // Classic
-  return {
-    isDark: false,
-    head: 'text-[#111827]',
-    sub: 'text-gray-600',
-    muted: 'text-gray-400',
-    link: 'text-cyan-600 hover:underline',
-    iconAccent: 'text-emerald-600',
-    scoreStroke: '#10b981',
-    scoreFill: 'fill-[#111827]',
-    timelineDot: 'bg-green-500',
-    timelineLine: 'bg-gray-200',
-    infoBg: 'bg-gray-50 border-none shadow-none',
-  };
-}
+import { usePageContrast } from '../../hooks/usePageContrast';
 
 export default function TrustCenterPageContent() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const a = useAccent();
+  const a = usePageContrast();
   const currentUser = useStore((s) => s.currentUser);
 
   if (!currentUser) return null;

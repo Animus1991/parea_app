@@ -7,77 +7,12 @@ import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
-
-function useAccent() {
-  const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
-
-  if (theme === 'vibrant' || theme === 'vibrant-dark') return {
-    isDark,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-500',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    link: isDark ? 'text-fuchsia-400' : 'text-fuchsia-600',
-    cardHover: isDark ? 'hover:border-fuchsia-700' : 'hover:border-fuchsia-200',
-    cta: isDark ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : 'bg-fuchsia-600 hover:bg-fuchsia-700',
-    tabActive: isDark ? 'bg-fuchsia-900/30 text-fuchsia-400' : 'bg-fuchsia-50 text-fuchsia-700',
-    tabInactive: isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600',
-    inputBg: isDark ? 'bg-gray-800/50 border-gray-700/50 text-white placeholder-gray-500' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400',
-    emptyBg: isDark ? 'bg-gray-800/30 border-gray-700/40' : 'bg-gray-50 border-gray-200',
-    bookmarkColor: isDark ? 'text-fuchsia-400' : 'text-fuchsia-600',
-  };
-
-  if (theme === 'neon' || theme === 'neon-dark' || theme === 'bento-dark') return {
-    isDark,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-500',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    link: isDark ? 'text-emerald-400' : 'text-emerald-600',
-    cardHover: isDark ? 'hover:border-emerald-700' : 'hover:border-emerald-200',
-    cta: isDark ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-emerald-600 hover:bg-emerald-700',
-    tabActive: isDark ? 'bg-emerald-900/30 text-emerald-400' : 'bg-emerald-50 text-emerald-700',
-    tabInactive: isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600',
-    inputBg: isDark ? 'bg-gray-800/50 border-gray-700/50 text-white placeholder-gray-500' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400',
-    emptyBg: isDark ? 'bg-gray-800/30 border-gray-700/40' : 'bg-gray-50 border-gray-200',
-    bookmarkColor: isDark ? 'text-emerald-400' : 'text-emerald-600',
-  };
-
-  if (theme === 'bento') return {
-    isDark: false,
-    head: 'text-[#111827]',
-    sub: 'text-gray-500',
-    muted: 'text-gray-400',
-    link: 'text-indigo-600',
-    cardHover: 'hover:border-indigo-200',
-    cta: 'bg-indigo-600 hover:bg-indigo-700',
-    tabActive: 'bg-indigo-50 text-indigo-700',
-    tabInactive: 'text-gray-400 hover:text-gray-600',
-    inputBg: 'bg-white border-gray-200 text-gray-900 placeholder-gray-400',
-    emptyBg: 'bg-gray-50 border-gray-200',
-    bookmarkColor: 'text-indigo-600',
-  };
-
-  // Classic
-  return {
-    isDark: false,
-    head: 'text-[#111827]',
-    sub: 'text-gray-500',
-    muted: 'text-gray-400',
-    link: 'text-cyan-600',
-    cardHover: 'hover:border-cyan-200',
-    cta: 'bg-cyan-600 hover:bg-cyan-700',
-    tabActive: 'bg-cyan-50 text-cyan-700',
-    tabInactive: 'text-gray-400 hover:text-gray-600',
-    inputBg: 'bg-white border-gray-200 text-gray-900 placeholder-gray-400',
-    emptyBg: 'bg-gray-50 border-gray-200',
-    bookmarkColor: 'text-cyan-600',
-  };
-}
+import { usePageContrast } from '../../hooks/usePageContrast';
 
 export default function SavedEventsPageContent() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const a = useAccent();
+  const a = usePageContrast();
 
   const events = useStore((s) => s.events);
   const savedEventIds = useStore((s) => s.savedEvents) || [];
@@ -180,7 +115,7 @@ export default function SavedEventsPageContent() {
                   className={cn("absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-soft z-10 transition-colors", a.isDark ? "bg-gray-800/80 hover:bg-gray-700" : "bg-white hover:bg-gray-50")}
                   title={t('Αφαίρεση', 'Remove')}
                 >
-                  <Bookmark className={cn("w-4 h-4 fill-current", a.bookmarkColor)} />
+                  <Bookmark className={cn("w-4 h-4 fill-current", a.statVal)} />
                 </button>
               </div>
               <div className="p-4 flex flex-col flex-1">
@@ -216,7 +151,7 @@ export default function SavedEventsPageContent() {
           <p className={cn("text-xs mt-1", a.muted)}>{t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search term.')}</p>
         </Card>
       ) : (
-        <div className={cn("text-center py-16 rounded-2xl border border-dashed", a.emptyBg)}>
+        <div className={cn("text-center py-16 rounded-2xl border border-dashed", a.bankBg)}>
           <Bookmark className={cn("mx-auto h-10 w-10 mb-3", a.muted)} />
           <h3 className={cn("text-base font-bold", a.head)}>{t('Δεν υπάρχουν αποθηκευμένες', 'No saved events yet')}</h3>
           <p className={cn("text-sm mt-1 max-w-sm mx-auto", a.muted)}>
@@ -224,7 +159,7 @@ export default function SavedEventsPageContent() {
           </p>
           <Link
             to="/"
-            className={cn("inline-flex items-center justify-center px-4 py-2 mt-4 text-white text-xs font-bold rounded-full shadow-soft transition-colors", a.cta)}
+            className={cn("inline-flex items-center justify-center px-4 py-2 mt-4 text-white text-xs font-bold rounded-full shadow-soft transition-colors", a.contactBtn)}
           >
             <Sparkles className="w-3.5 h-3.5 mr-1.5" />
             {t('Ανακαλύψτε Εκδηλώσεις', 'Discover Events')}

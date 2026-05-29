@@ -4,17 +4,20 @@ import { Button } from '../components/common/Button';
 import { Calendar, Users, MessageSquare, Plus, MoreHorizontal, TrendingUp, Star, DollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from "../lib/i18n";
+import { usePageContrast } from '../hooks/usePageContrast';
+import { cn } from '../lib/utils';
 
 export default function OrganizerDashboardClassic() {
     const { t } = useLanguage();
+  const p = usePageContrast();
   const navigate = useNavigate();
 
   return (
     <div className="mx-auto max-w-full space-y-8 pb-12">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{t(`Πίνακας Διοργανωτή`, `Organizer Dashboard`)}</h1>
-          <p className="mt-1 text-[13.551608211075px] text-gray-500 font-medium">{t(`Διαχείριση εκδηλώσεων & ομάδων`, `Manage events & groups`)}</p>
+          <h1 className={cn('text-[16px] md:text-[18px] font-bold', p.head)}>{t(`Πίνακας Διοργανωτή`, `Organizer Dashboard`)}</h1>
+          <p className={cn('mt-1 text-[13.551608211075px] font-medium', p.sub)}>{t(`Διαχείριση εκδηλώσεων & ομάδων`, `Manage events & groups`)}</p>
         </div>
         <Button className="bg-[#111827] text-white flex items-center gap-2 text-[14.2457535px] font-bold px-4 hover:bg-black" onClick={() => navigate('/create')}>
           <Plus className="w-4 h-4" />{t(`Νέα`, `New`)}</Button>
@@ -22,37 +25,37 @@ export default function OrganizerDashboardClassic() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className="p-4 border-t-4 border-t-cyan-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wide">{t(`Ενεργές`, `Active`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">3</p>
-          <p className="text-[11.2px] text-gray-400 font-medium">{t(`εκδηλώσεις`, `events`)}</p>
+          <h3 className={cn('text-[12.1125px] font-bold tracking-wide', p.muted)}>{t(`Ενεργές`, `Active`)}</h3>
+          <p className={cn('text-[25px] font-black mt-1', p.head)}>3</p>
+          <p className={cn('text-[11.2px] font-medium', p.muted)}>{t(`εκδηλώσεις`, `events`)}</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-emerald-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wide">{t(`Συμμετέχοντες`, `Participants`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">48</p>
+          <h3 className={cn('text-[12.1125px] font-bold tracking-wide', p.muted)}>{t(`Συμμετέχοντες`, `Participants`)}</h3>
+          <p className={cn('text-[25px] font-black mt-1', p.head)}>48</p>
           <p className="text-[11.2px] text-green-500 font-bold flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />+12%</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-amber-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wide">{t(`Βαθμολογία`, `Rating`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1 flex items-center gap-1">4.8 <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /></p>
-          <p className="text-[11.2px] text-gray-400 font-medium">23 {t(`αξιολογήσεις`, `reviews`)}</p>
+          <h3 className={cn('text-[12.1125px] font-bold tracking-wide', p.muted)}>{t(`Βαθμολογία`, `Rating`)}</h3>
+          <p className={cn('text-[25px] font-black mt-1 flex items-center gap-1', p.head)}>4.8 <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /></p>
+          <p className={cn('text-[11.2px] font-medium', p.muted)}>23 {t(`αξιολογήσεις`, `reviews`)}</p>
         </Card>
         <Card className="p-4 border-t-4 border-t-purple-500">
-          <h3 className="text-[12.1125px] font-bold text-[#6B7280] tracking-wide">{t(`Έσοδα`, `Revenue`)}</h3>
-          <p className="text-[25px] font-black text-[#111827] mt-1">€340</p>
-          <p className="text-[11.2px] text-gray-400 font-medium">{t(`αυτόν τον μήνα`, `this month`)}</p>
+          <h3 className={cn('text-[12.1125px] font-bold tracking-wide', p.muted)}>{t(`Έσοδα`, `Revenue`)}</h3>
+          <p className={cn('text-[25px] font-black mt-1', p.head)}>€340</p>
+          <p className={cn('text-[11.2px] font-medium', p.muted)}>{t(`αυτόν τον μήνα`, `this month`)}</p>
         </Card>
       </div>
 
       {/* Fill rate bar */}
       <Card className="p-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-[12.1125px] font-bold text-[#111827] tracking-wide">{t(`Ποσοστό Πληρότητας`, `Fill Rate`)}</h3>
+          <h3 className={cn('text-[12.1125px] font-bold tracking-wide', p.head)}>{t(`Ποσοστό Πληρότητας`, `Fill Rate`)}</h3>
           <span className="text-[12.1125px] font-bold text-cyan-600">72%</span>
         </div>
         <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
           <div className="bg-gradient-to-r from-cyan-500 to-emerald-500 h-full rounded-full" style={{ width: '72%' }} />
         </div>
-        <p className="text-[11.2px] text-gray-400 font-medium mt-1">{t(`18 από 25 θέσεις καλύφθηκαν συνολικά`, `18 of 25 spots filled overall`)}</p>
+        <p className={cn('text-[11.2px] font-medium mt-1', p.sub)}>{t(`18 από 25 θέσεις καλύφθηκαν συνολικά`, `18 of 25 spots filled overall`)}</p>
       </Card>
 
       {/* Attendee Satisfaction */}

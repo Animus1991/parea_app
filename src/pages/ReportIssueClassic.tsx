@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
-import { Flag, AlertTriangle, ShieldCheck, CheckCircle2, ChevronRight, X, Upload, Clock } from 'lucide-react';
+import { AlertTriangle, ShieldCheck, CheckCircle2, X, Upload, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from "../lib/i18n";
+import { cn } from '../lib/utils';
+import { usePageContrast } from '../hooks/usePageContrast';
+import { useContrastTheme } from '../hooks/useContrastTheme';
 
 export default function ReportIssueClassic() {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
+  const p = usePageContrast();
+  const c = useContrastTheme();
   const [step, setStep] = useState(1);
+  const [severity, setSeverity] = useState<'low' | 'medium' | 'high' | null>(null);
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -13,34 +19,52 @@ export default function ReportIssueClassic() {
     setStep(2);
   };
 
+  const inputClass = cn(
+    'w-full rounded-2xl border shadow-soft focus:outline-none focus:ring-2 text-[16.2px] font-medium transition-all duration-200',
+    c.inputBg,
+    c.inputFg,
+    c.placeholder,
+    p.ring,
+  );
+
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{t(`Αναφορά Προβλήματος`, `Report an Issue`)}</h1>
-          <p className="text-gray-500 font-medium text-[13.551608211075px] md:text-[16.25212883329px] mt-1">{t(`Βοηθήστε μας να κρατήσουμε την κοινότητα ασφαλή`, `Help us keep the community safe`)}</p>
+          <h1 className={cn('text-[16px] md:text-[18px] font-bold', p.head)}>{t(`Αναφορά Προβλήματος`, `Report an Issue`)}</h1>
+          <p className={cn('font-medium text-[13.55px] md:text-[16.25px] mt-1', p.sub)}>{t(`Βοηθήστε μας να κρατήσουμε την κοινότητα ασφαλή`, `Help us keep the community safe`)}</p>
         </div>
-        <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-[#111827] transition-all duration-200 rounded-full p-2 bg-white border border-gray-100 shadow-soft">
+        <button
+          onClick={() => navigate(-1)}
+          className={cn(
+            'transition-all duration-200 rounded-full p-2 border shadow-soft',
+            c.surfaceElevated,
+            c.border,
+            p.muted,
+            p.isDark ? 'hover:text-white' : 'hover:text-[#111827]',
+          )}
+          aria-label={t('Κλείσιμο', 'Close')}
+        >
           <X className="w-5 h-5" />
         </button>
       </div>
 
       {step === 1 ? (
-        <div className="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden">
-          <div className="p-4 md:p-6 bg-red-50 border-b border-red-100 flex items-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-5 h-5 text-red-600" />
+        <div className={cn('rounded-2xl shadow-soft border overflow-hidden', c.surfaceElevated, c.border)}>
+          <div className={cn('p-4 md:p-6 border-b flex items-start gap-4', p.isDark ? 'bg-red-950/30 border-red-900/40' : 'bg-red-50 border-red-100')}>
+            <div className={cn('w-10 h-10 rounded-full flex items-center justify-center shrink-0', p.isDark ? 'bg-red-900/40' : 'bg-red-100')}>
+              <AlertTriangle className={cn('w-5 h-5', p.isDark ? 'text-red-300' : 'text-red-600')} />
             </div>
             <div>
-              <h3 className="font-bold text-[#111827] text-[16.75971px]">{t(`Αναφορά Ζητήματος Ασφαλείας`, `Report a Safety Concern`)}</h3>
-              <p className="text-[14.535px] text-red-800 mt-1 leading-relaxed">{t(`Η αναφορά σας θα εξεταστεί από την ομάδα μας εντός 24 ωρών.`, `Your report will be reviewed by our team within 24 hours.`)}</p>
+              <h3 className={cn('font-bold text-[16.76px]', p.head)}>{t(`Αναφορά Ζητήματος Ασφαλείας`, `Report a Safety Concern`)}</h3>
+              <p className={cn('text-[14.5px] mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>{t(`Η αναφορά σας θα εξεταστεί από την ομάδα μας εντός 24 ωρών.`, `Your report will be reviewed by our team within 24 hours.`)}</p>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-5">
             <div>
-              <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Κατηγορία`, `Category`)}</label>
-              <select className="w-full h-11 px-3 rounded-2xl border border-gray-100 bg-white shadow-soft focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/40 focus:border-transparent text-[16.2px] font-medium transition-all duration-200" required>
+              <label className={cn('block text-[10.9px] font-bold tracking-wider mb-2', p.head)}>{t(`Κατηγορία`, `Category`)}</label>
+              <select className={cn(inputClass, 'h-11 px-3')} required>
                 <option value="">{t(`Επιλέξτε κατηγορία...`, `Select a category...`)}</option>
                 <option value="user_behavior">{t(`Ανάρμοστη συμπεριφορά`, `Inappropriate behavior`)}</option>
                 <option value="event_safety">{t(`Ασφάλεια εκδήλωσης`, `Event safety`)}</option>
@@ -52,28 +76,55 @@ export default function ReportIssueClassic() {
 
             {/* Severity Level */}
             <div>
-              <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Σοβαρότητα`, `Severity`)}</label>
+              <label className={cn('block text-[10.9px] font-bold tracking-wider mb-2', p.head)}>{t(`Σοβαρότητα`, `Severity`)}</label>
               <div className="grid grid-cols-3 gap-2">
-                <button type="button" className="p-2.5 rounded-lg border border-amber-200 bg-amber-50 text-center hover:ring-2 hover:ring-amber-300 transition-all">
-                  <span className="text-[12.1125px] font-bold text-amber-800 block">{t(`Χαμηλή`, `Low`)}</span>
-                  <span className="text-[10px] text-amber-600">{t(`Ενόχληση`, `Annoyance`)}</span>
+                <button
+                  type="button"
+                  onClick={() => setSeverity('low')}
+                  aria-pressed={severity === 'low'}
+                  className={cn(
+                    'p-2.5 rounded-lg border text-center transition-all hover:ring-2 hover:ring-amber-300',
+                    p.isDark ? 'border-amber-800/50 bg-amber-950/30' : 'border-amber-200 bg-amber-50',
+                    severity === 'low' && 'ring-2 ring-amber-400',
+                  )}
+                >
+                  <span className={cn('text-[12.1px] font-bold block', p.isDark ? 'text-amber-200' : 'text-amber-800')}>{t(`Χαμηλή`, `Low`)}</span>
+                  <span className={cn('text-[10px]', p.isDark ? 'text-amber-300/80' : 'text-amber-600')}>{t(`Ενόχληση`, `Annoyance`)}</span>
                 </button>
-                <button type="button" className="p-2.5 rounded-lg border border-orange-200 bg-orange-50 text-center hover:ring-2 hover:ring-orange-300 transition-all">
-                  <span className="text-[12.1125px] font-bold text-orange-800 block">{t(`Μέτρια`, `Medium`)}</span>
-                  <span className="text-[10px] text-orange-600">{t(`Ανησυχία`, `Concern`)}</span>
+                <button
+                  type="button"
+                  onClick={() => setSeverity('medium')}
+                  aria-pressed={severity === 'medium'}
+                  className={cn(
+                    'p-2.5 rounded-lg border text-center transition-all hover:ring-2 hover:ring-orange-300',
+                    p.isDark ? 'border-orange-800/50 bg-orange-950/30' : 'border-orange-200 bg-orange-50',
+                    severity === 'medium' && 'ring-2 ring-orange-400',
+                  )}
+                >
+                  <span className={cn('text-[12.1px] font-bold block', p.isDark ? 'text-orange-200' : 'text-orange-800')}>{t(`Μέτρια`, `Medium`)}</span>
+                  <span className={cn('text-[10px]', p.isDark ? 'text-orange-300/80' : 'text-orange-600')}>{t(`Ανησυχία`, `Concern`)}</span>
                 </button>
-                <button type="button" className="p-2.5 rounded-lg border border-red-200 bg-red-50 text-center hover:ring-2 hover:ring-red-300 transition-all">
-                  <span className="text-[12.1125px] font-bold text-red-800 block">{t(`Υψηλή`, `High`)}</span>
-                  <span className="text-[10px] text-red-600">{t(`Κίνδυνος`, `Danger`)}</span>
+                <button
+                  type="button"
+                  onClick={() => setSeverity('high')}
+                  aria-pressed={severity === 'high'}
+                  className={cn(
+                    'p-2.5 rounded-lg border text-center transition-all hover:ring-2 hover:ring-red-300',
+                    p.isDark ? 'border-red-800/50 bg-red-950/30' : 'border-red-200 bg-red-50',
+                    severity === 'high' && 'ring-2 ring-red-400',
+                  )}
+                >
+                  <span className={cn('text-[12.1px] font-bold block', p.isDark ? 'text-red-200' : 'text-red-800')}>{t(`Υψηλή`, `High`)}</span>
+                  <span className={cn('text-[10px]', p.isDark ? 'text-red-300/80' : 'text-red-600')}>{t(`Κίνδυνος`, `Danger`)}</span>
                 </button>
               </div>
             </div>
 
             <div>
-              <label className="block text-[10.90125px] font-bold text-[#111827] tracking-wider mb-2">{t(`Περιγραφή`, `Description`)}</label>
-              <textarea 
-                className="w-full px-3 py-2.5 rounded-2xl border border-gray-100 bg-white shadow-soft focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/40 focus:border-transparent text-[16.2px] font-medium resize-none transition-all duration-200" 
-                rows={5} 
+              <label className={cn('block text-[10.9px] font-bold tracking-wider mb-2', p.head)}>{t(`Περιγραφή`, `Description`)}</label>
+              <textarea
+                className={cn(inputClass, 'px-3 py-2.5 resize-none')}
+                rows={5}
                 placeholder={t(`Περιγράψτε τι συνέβη...`, `Describe what happened...`)}
                 required
               ></textarea>
@@ -81,38 +132,38 @@ export default function ReportIssueClassic() {
 
             {/* Evidence Upload */}
             <div>
-              <label className="block text-[12.15px] font-bold text-[#111827] tracking-wider mb-2">{t(`Αποδεικτικά (προαιρετικά)`, `Evidence (optional)`)}</label>
-              <div className="border-2 border-dashed border-gray-200 rounded-2xl p-4 text-center hover:border-[#18D8DB] hover:bg-cyan-50/30 transition-all duration-200 cursor-pointer">
-                <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1" />
-                <p className="text-[12.5px] text-gray-500 font-medium">{t(`Ανεβάστε screenshots ή φωτογραφίες`, `Upload screenshots or photos`)}</p>
-                <p className="text-[10px] text-gray-400 mt-0.5">PNG, JPG {t(`έως`, `up to`)} 5MB</p>
+              <label className={cn('block text-[12.15px] font-bold tracking-wider mb-2', p.head)}>{t(`Αποδεικτικά (προαιρετικά)`, `Evidence (optional)`)}</label>
+              <div className={cn('border-2 border-dashed rounded-2xl p-4 text-center transition-all duration-200 cursor-pointer', p.uploadArea, p.cardHover)}>
+                <Upload className={cn('w-5 h-5 mx-auto mb-1', p.muted)} />
+                <p className={cn('text-[12.5px] font-medium', p.uploadText)}>{t(`Ανεβάστε screenshots ή φωτογραφίες`, `Upload screenshots or photos`)}</p>
+                <p className={cn('text-[10px] mt-0.5', p.muted)}>PNG, JPG {t(`έως`, `up to`)} 5MB</p>
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4 flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 text-cyan-600 shrink-0 mt-0.5" />
-              <p className="text-[13.5px] text-gray-600 font-medium leading-relaxed"><span className="font-bold text-[#111827]">{t(`Απόρρητο:`, `Privacy:`)}</span> {t(`Η αναφορά σας είναι εμπιστευτική.`, `Your report is confidential.`)}</p>
+            <div className={cn('rounded-lg p-4 flex items-start gap-3', p.infoBg)}>
+              <ShieldCheck className={cn('w-5 h-5 shrink-0 mt-0.5', p.iconAccent)} />
+              <p className={cn('text-[13.5px] font-medium leading-relaxed', p.sub)}><span className={cn('font-bold', p.head)}>{t(`Απόρρητο:`, `Privacy:`)}</span> {t(`Η αναφορά σας είναι εμπιστευτική.`, `Your report is confidential.`)}</p>
             </div>
 
             {/* Expected response time */}
-            <div className="flex items-center gap-2 justify-center text-[12.5px] text-gray-500 font-medium">
+            <div className={cn('flex items-center gap-2 justify-center text-[12.5px] font-medium', p.muted)}>
               <Clock className="w-3.5 h-3.5" />
               <span>{t(`Αναμενόμενος χρόνος απόκρισης: <24 ώρες`, `Expected response time: <24 hours`)}</span>
             </div>
 
-            <button type="submit" className="w-full bg-[#111827] text-white py-2.5 rounded-full text-[12.15px] font-bold shadow-soft hover:bg-black transition-all duration-200 tracking-wider">{t(`Υποβολή Αναφοράς`, `Submit Report`)}</button>
+            <button type="submit" className={cn('w-full py-2.5 rounded-full text-[12.15px] font-bold shadow-soft transition-all duration-200 tracking-wider', p.chipActive, p.isDark ? '' : 'hover:opacity-90')}>{t(`Υποβολή Αναφοράς`, `Submit Report`)}</button>
           </form>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl shadow-soft border border-gray-100 p-8 text-center">
-          <div className="w-16 h-[58px] rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-            <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+        <div className={cn('rounded-2xl shadow-soft border p-8 text-center', c.surfaceElevated, c.border)}>
+          <div className={cn('w-16 h-[58px] rounded-full flex items-center justify-center mx-auto mb-4', p.isDark ? 'bg-emerald-900/40' : 'bg-emerald-100')}>
+            <CheckCircle2 className={cn('w-8 h-8', p.isDark ? 'text-emerald-300' : 'text-emerald-600')} />
           </div>
-          <h2 className="text-[25px] font-bold text-[#111827] mb-2">{t(`Η αναφορά υποβλήθηκε`, `Report Submitted`)}</h2>
-          <p className="text-[18px] text-gray-500 max-w-md mx-auto mb-6">{t(`Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.`, `Thank you. We'll review your report and get back to you.`)}</p>
-          <button 
+          <h2 className={cn('text-[25px] font-bold mb-2', p.head)}>{t(`Η αναφορά υποβλήθηκε`, `Report Submitted`)}</h2>
+          <p className={cn('text-[18px] max-w-md mx-auto mb-6', p.sub)}>{t(`Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.`, `Thank you. We'll review your report and get back to you.`)}</p>
+          <button
             onClick={() => navigate('/')}
-            className="bg-gray-100 text-[#111827] px-5 py-2.5 rounded-full text-[13.5px] font-bold hover:bg-gray-200 transition-colors tracking-wider"
+            className={cn('px-5 py-2.5 rounded-full text-[13.5px] font-bold transition-colors tracking-wider', p.chipInactive)}
           >{t(`Επιστροφή`, `Go Back`)}</button>
         </div>
       )}

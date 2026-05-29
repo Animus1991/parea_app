@@ -1,78 +1,13 @@
 import React, { useState } from 'react';
 import { Search, Book, MessageCircle, FileText, ChevronRight, ChevronDown, Zap, Shield, CreditCard, Users } from 'lucide-react';
 import { Card } from '../common/Card';
-import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
-
-function useAccent() {
-  const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
-  const base = {
-    isDark,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-600',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    faqAnswer: isDark ? 'text-gray-400' : 'text-gray-600',
-    chevron: isDark ? 'text-gray-500' : 'text-gray-400',
-    topicBg: isDark ? 'border-gray-700/40 bg-gray-800/30 hover:bg-gray-700/30' : 'border-gray-100 bg-white hover:shadow-soft',
-    topicLabel: isDark ? 'text-white' : 'text-[#111827]',
-  };
-
-  if (theme === 'vibrant' || theme === 'vibrant-dark') return {
-    ...base,
-    heroBg: isDark ? 'bg-fuchsia-800/60' : 'bg-fuchsia-600',
-    heroSub: isDark ? 'text-fuchsia-300' : 'text-fuchsia-100',
-    heroCircle: 'bg-white opacity-10',
-    inputBg: 'bg-white text-gray-900 focus:ring-white',
-    sectionHead: isDark ? 'text-gray-500' : 'text-gray-400',
-    articleCat: isDark ? 'text-fuchsia-400' : 'text-fuchsia-600',
-    articleHover: isDark ? 'hover:border-fuchsia-700' : 'hover:border-fuchsia-200',
-    contactIcon: isDark ? 'text-fuchsia-400' : 'text-fuchsia-600',
-    contactBtn: isDark ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : 'bg-fuchsia-600 hover:bg-fuchsia-700',
-  };
-  if (theme === 'neon' || theme === 'neon-dark' || theme === 'bento-dark') return {
-    ...base,
-    heroBg: isDark ? 'bg-emerald-800/50' : 'bg-emerald-600',
-    heroSub: isDark ? 'text-emerald-300' : 'text-emerald-100',
-    heroCircle: 'bg-white opacity-10',
-    inputBg: 'bg-white text-gray-900 focus:ring-white',
-    sectionHead: isDark ? 'text-gray-500' : 'text-gray-400',
-    articleCat: isDark ? 'text-emerald-400' : 'text-emerald-600',
-    articleHover: isDark ? 'hover:border-emerald-700' : 'hover:border-emerald-200',
-    contactIcon: isDark ? 'text-emerald-400' : 'text-emerald-600',
-    contactBtn: isDark ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-emerald-600 hover:bg-emerald-700',
-  };
-  if (theme === 'bento') return {
-    ...base,
-    heroBg: 'bg-indigo-600',
-    heroSub: 'text-indigo-100',
-    heroCircle: 'bg-white opacity-10',
-    inputBg: 'bg-white text-gray-900 focus:ring-white',
-    sectionHead: 'text-gray-400',
-    articleCat: 'text-indigo-600',
-    articleHover: 'hover:border-indigo-200',
-    contactIcon: 'text-indigo-600',
-    contactBtn: 'bg-indigo-600 hover:bg-indigo-700',
-  };
-  // Classic
-  return {
-    ...base,
-    heroBg: 'bg-cyan-600',
-    heroSub: 'text-cyan-100',
-    heroCircle: 'bg-white opacity-10',
-    inputBg: 'bg-white text-gray-900 focus:ring-white',
-    sectionHead: 'text-gray-400',
-    articleCat: 'text-cyan-600',
-    articleHover: 'hover:border-cyan-200',
-    contactIcon: 'text-cyan-600',
-    contactBtn: 'bg-cyan-600 hover:bg-cyan-700',
-  };
-}
+import { usePageContrast } from '../../hooks/usePageContrast';
 
 export default function HelpCenterPageContent() {
   const { t } = useLanguage();
-  const a = useAccent();
+  const a = usePageContrast();
   const [search, setSearch] = useState('');
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
 

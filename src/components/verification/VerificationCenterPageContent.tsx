@@ -2,65 +2,13 @@ import React from 'react';
 import { ShieldCheck, UserCheck, Smartphone, Mail, FileText, CheckCircle2 } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
-import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
-
-function useAccent() {
-  const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
-  const base = {
-    isDark,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-500',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    borderB: isDark ? 'border-gray-700/40' : 'border-gray-100',
-    pendingIcon: isDark ? 'bg-gray-700/30 text-gray-400 border-gray-600' : 'bg-gray-50 text-gray-400 border-gray-200',
-    pendingLabel: isDark ? 'text-gray-500' : 'text-gray-400',
-    uploadArea: isDark ? 'bg-gray-800/30 border-gray-600' : 'bg-gray-50 border-gray-200',
-    uploadText: isDark ? 'text-gray-400' : 'text-gray-500',
-    advBadge: isDark ? 'bg-gray-700/40 text-gray-400' : 'bg-gray-100 text-gray-600',
-    scoreBg: 'bg-gradient-to-br from-cyan-500 to-emerald-500',
-    tierListText: isDark ? 'text-gray-400' : 'text-gray-600',
-  };
-
-  if (theme === 'vibrant' || theme === 'vibrant-dark') return {
-    ...base,
-    progressBg: isDark ? 'bg-fuchsia-900/20 border-fuchsia-800/30' : 'bg-fuchsia-50 border-fuchsia-200',
-    progressIcon: isDark ? 'bg-fuchsia-900/30' : 'bg-fuchsia-100',
-    progressIconColor: isDark ? 'text-fuchsia-400' : 'text-fuchsia-600',
-    progressHead: isDark ? 'text-fuchsia-300' : 'text-fuchsia-900',
-    progressSub: isDark ? 'text-fuchsia-400' : 'text-fuchsia-700',
-    progressBar: isDark ? 'bg-fuchsia-800/30' : 'bg-fuchsia-200',
-    progressFill: 'bg-fuchsia-500',
-    completedIcon: isDark ? 'bg-cyan-900/30 text-cyan-400' : 'bg-cyan-50 text-cyan-600',
-    tierEmail: isDark ? 'bg-cyan-900/20 border-cyan-800/30' : 'bg-cyan-50 border-cyan-100',
-    tierPhone: isDark ? 'bg-purple-900/20 border-purple-800/30' : 'bg-purple-50 border-purple-100',
-    tierId: isDark ? 'bg-amber-900/20 border-amber-800/30' : 'bg-amber-50 border-amber-100',
-    tierTimeBg: isDark ? 'bg-gray-800/50' : 'bg-white',
-  };
-
-  // Default + neon + bento variants
-  return {
-    ...base,
-    progressBg: isDark ? 'bg-emerald-900/20 border-emerald-800/30' : 'bg-emerald-50 border-emerald-200',
-    progressIcon: isDark ? 'bg-emerald-900/30' : 'bg-emerald-100',
-    progressIconColor: isDark ? 'text-emerald-400' : 'text-emerald-600',
-    progressHead: isDark ? 'text-emerald-300' : 'text-emerald-900',
-    progressSub: isDark ? 'text-emerald-400' : 'text-emerald-700',
-    progressBar: isDark ? 'bg-emerald-800/30' : 'bg-emerald-200',
-    progressFill: 'bg-emerald-500',
-    completedIcon: isDark ? 'bg-cyan-900/30 text-cyan-400' : 'bg-cyan-50 text-cyan-600',
-    tierEmail: isDark ? 'bg-cyan-900/20 border-cyan-800/30' : 'bg-cyan-50 border-cyan-100',
-    tierPhone: isDark ? 'bg-purple-900/20 border-purple-800/30' : 'bg-purple-50 border-purple-100',
-    tierId: isDark ? 'bg-amber-900/20 border-amber-800/30' : 'bg-amber-50 border-amber-100',
-    tierTimeBg: isDark ? 'bg-gray-800/50' : 'bg-white',
-  };
-}
+import { usePageContrast } from '../../hooks/usePageContrast';
 
 export default function VerificationCenterPageContent() {
   const { t } = useLanguage();
-  const a = useAccent();
+  const a = usePageContrast();
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">

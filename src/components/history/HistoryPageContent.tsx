@@ -7,73 +7,12 @@ import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
-
-function useAccent() {
-  const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
-
-  if (theme === 'vibrant' || theme === 'vibrant-dark') return {
-    isDark,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-500',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    link: isDark ? 'text-fuchsia-400' : 'text-fuchsia-600',
-    cardHover: isDark ? 'hover:border-fuchsia-700' : 'hover:border-fuchsia-200',
-    statBg: isDark ? 'bg-fuchsia-900/20 border-fuchsia-800/30' : 'bg-fuchsia-50 border-fuchsia-100',
-    statVal: isDark ? 'text-fuchsia-400' : 'text-fuchsia-600',
-    inputBg: isDark ? 'bg-gray-800/50 border-gray-700/50 text-white placeholder-gray-500' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400',
-    tabActive: isDark ? 'bg-fuchsia-900/30 text-fuchsia-400' : 'bg-fuchsia-50 text-fuchsia-700',
-    tabInactive: isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600',
-  };
-
-  if (theme === 'neon' || theme === 'neon-dark' || theme === 'bento-dark') return {
-    isDark,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-500',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    link: isDark ? 'text-emerald-400' : 'text-emerald-600',
-    cardHover: isDark ? 'hover:border-emerald-700' : 'hover:border-emerald-200',
-    statBg: isDark ? 'bg-emerald-900/20 border-emerald-800/30' : 'bg-emerald-50 border-emerald-100',
-    statVal: isDark ? 'text-emerald-400' : 'text-emerald-600',
-    inputBg: isDark ? 'bg-gray-800/50 border-gray-700/50 text-white placeholder-gray-500' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400',
-    tabActive: isDark ? 'bg-emerald-900/30 text-emerald-400' : 'bg-emerald-50 text-emerald-700',
-    tabInactive: isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600',
-  };
-
-  if (theme === 'bento') return {
-    isDark: false,
-    head: 'text-[#111827]',
-    sub: 'text-gray-500',
-    muted: 'text-gray-400',
-    link: 'text-indigo-600',
-    cardHover: 'hover:border-indigo-200',
-    statBg: 'bg-indigo-50 border-indigo-100',
-    statVal: 'text-indigo-600',
-    inputBg: 'bg-white border-gray-200 text-gray-900 placeholder-gray-400',
-    tabActive: 'bg-indigo-50 text-indigo-700',
-    tabInactive: 'text-gray-400 hover:text-gray-600',
-  };
-
-  // Classic
-  return {
-    isDark: false,
-    head: 'text-[#111827]',
-    sub: 'text-gray-500',
-    muted: 'text-gray-400',
-    link: 'text-cyan-600',
-    cardHover: 'hover:border-cyan-200',
-    statBg: 'bg-cyan-50 border-cyan-100',
-    statVal: 'text-cyan-600',
-    inputBg: 'bg-white border-gray-200 text-gray-900 placeholder-gray-400',
-    tabActive: 'bg-cyan-50 text-cyan-700',
-    tabInactive: 'text-gray-400 hover:text-gray-600',
-  };
-}
+import { usePageContrast } from '../../hooks/usePageContrast';
 
 export default function HistoryPageContent() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const a = useAccent();
+  const a = usePageContrast();
 
   const events = useStore((s) => s.events);
   const currentUser = useStore((s) => s.currentUser);

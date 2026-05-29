@@ -30,87 +30,13 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../lib/i18n";
-
-// ─── Theme accent helper ─────────────────────────────────────
-function useAccent() {
-  const theme = useStore((s) => s.theme);
-  const isDark = theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark";
-
-  if (theme === "vibrant" || theme === "vibrant-dark") return {
-    isDark,
-    accent: isDark ? "text-fuchsia-400" : "text-fuchsia-600",
-    accentBg: isDark ? "bg-fuchsia-900/20" : "bg-fuchsia-50",
-    accentBorder: isDark ? "border-fuchsia-800" : "border-fuchsia-200",
-    accentLight: isDark ? "text-fuchsia-300" : "text-fuchsia-700",
-    ring: "focus:ring-fuchsia-500 focus:border-fuchsia-500",
-    checkbox: isDark ? "text-fuchsia-400" : "text-fuchsia-600",
-    radioActive: isDark ? "border-fuchsia-600 bg-fuchsia-900/20" : "border-fuchsia-200 bg-fuchsia-50/30",
-    radioText: isDark ? "text-fuchsia-300" : "text-fuchsia-900",
-    radioSub: isDark ? "text-fuchsia-400/80" : "text-fuchsia-700/80",
-    tierHighlight: isDark ? "border-fuchsia-700 bg-fuchsia-900/20" : "border-emerald-200 bg-emerald-50/50",
-    tierHighlightText: isDark ? "text-fuchsia-300" : "text-emerald-800",
-    tierHighlightSub: isDark ? "text-fuchsia-400/80" : "text-emerald-600/80",
-    btnAccent: isDark ? "text-fuchsia-400 hover:bg-fuchsia-900/30" : "text-fuchsia-600 hover:bg-fuchsia-50",
-    historyIcon: isDark ? "bg-fuchsia-900/30 text-fuchsia-400" : "bg-fuchsia-100 text-fuchsia-600",
-    selectBg: isDark ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200",
-    selectRing: isDark ? "focus:border-fuchsia-500 focus:ring-fuchsia-500" : "focus:border-fuchsia-500 focus:ring-fuchsia-500",
-    settingCard: isDark ? "bg-gray-800/50 border-gray-700/50" : "bg-white border-gray-100",
-    avatarBg: isDark ? "bg-fuchsia-900/30 border-fuchsia-700" : "bg-fuchsia-100 border-fuchsia-200",
-    avatarText: isDark ? "text-fuchsia-400" : "text-fuchsia-700",
-  };
-
-  if (theme === "bento") return {
-    isDark: false,
-    accent: "text-indigo-600", accentBg: "bg-indigo-50", accentBorder: "border-indigo-200", accentLight: "text-indigo-700",
-    ring: "focus:ring-indigo-500 focus:border-indigo-500", checkbox: "text-indigo-600",
-    radioActive: "border-indigo-200 bg-indigo-50/30", radioText: "text-indigo-900", radioSub: "text-indigo-700/80",
-    tierHighlight: "border-emerald-200 bg-emerald-50/50", tierHighlightText: "text-emerald-800", tierHighlightSub: "text-emerald-600/80",
-    btnAccent: "text-indigo-600 hover:bg-indigo-50", historyIcon: "bg-indigo-100 text-indigo-600",
-    selectBg: "bg-gray-50 border-gray-200", selectRing: "focus:border-indigo-500 focus:ring-indigo-500",
-    settingCard: "bg-white border-gray-100", avatarBg: "bg-indigo-100 border-indigo-200", avatarText: "text-indigo-700",
-  };
-
-  if (theme === "neon" || theme === "neon-dark" || theme === "bento-dark") return {
-    isDark,
-    accent: isDark ? "text-emerald-400" : "text-emerald-600",
-    accentBg: isDark ? "bg-emerald-900/20" : "bg-emerald-50",
-    accentBorder: isDark ? "border-emerald-800" : "border-emerald-200",
-    accentLight: isDark ? "text-emerald-300" : "text-emerald-700",
-    ring: "focus:ring-emerald-500 focus:border-emerald-500",
-    checkbox: isDark ? "text-emerald-400" : "text-emerald-600",
-    radioActive: isDark ? "border-emerald-700 bg-emerald-900/20" : "border-emerald-200 bg-emerald-50/30",
-    radioText: isDark ? "text-emerald-300" : "text-emerald-900",
-    radioSub: isDark ? "text-emerald-400/80" : "text-emerald-700/80",
-    tierHighlight: isDark ? "border-emerald-700 bg-emerald-900/20" : "border-emerald-200 bg-emerald-50/50",
-    tierHighlightText: isDark ? "text-emerald-300" : "text-emerald-800",
-    tierHighlightSub: isDark ? "text-emerald-400/80" : "text-emerald-600/80",
-    btnAccent: isDark ? "text-emerald-400 hover:bg-emerald-900/30" : "text-emerald-600 hover:bg-emerald-50",
-    historyIcon: isDark ? "bg-emerald-900/30 text-emerald-400" : "bg-emerald-100 text-emerald-600",
-    selectBg: isDark ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200",
-    selectRing: isDark ? "focus:border-emerald-500 focus:ring-emerald-500" : "focus:border-emerald-500 focus:ring-emerald-500",
-    settingCard: isDark ? "bg-gray-800/50 border-gray-700/50" : "bg-white border-gray-100",
-    avatarBg: isDark ? "bg-emerald-900/30 border-emerald-700" : "bg-emerald-100 border-emerald-200",
-    avatarText: isDark ? "text-emerald-400" : "text-emerald-700",
-  };
-
-  // Classic
-  return {
-    isDark: false,
-    accent: "text-[#0E8B8D]", accentBg: "bg-cyan-50", accentBorder: "border-cyan-200", accentLight: "text-cyan-700",
-    ring: "focus:ring-cyan-500 focus:border-cyan-500", checkbox: "text-cyan-600",
-    radioActive: "border-cyan-200 bg-cyan-50/30", radioText: "text-cyan-900", radioSub: "text-cyan-700/80",
-    tierHighlight: "border-emerald-200 bg-emerald-50/50", tierHighlightText: "text-emerald-800", tierHighlightSub: "text-emerald-600/80",
-    btnAccent: "text-cyan-600 hover:bg-cyan-50", historyIcon: "bg-cyan-100 text-cyan-600",
-    selectBg: "bg-gray-50 border-gray-200", selectRing: "focus:border-cyan-500 focus:ring-cyan-500",
-    settingCard: "bg-white border-gray-100", avatarBg: "bg-cyan-100 border-cyan-200", avatarText: "text-cyan-700",
-  };
-}
+import { useProfileContrast } from "../../hooks/usePageContrast";
 
 // ─── Main component ──────────────────────────────────────────
 export default function ProfilePageContent() {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const a = useAccent();
+  const a = useProfileContrast();
   const currentUser = useStore((state) => state.currentUser);
   const updateUser = useStore((state) => state.updateUser);
   const logout = useStore((state) => state.logout);

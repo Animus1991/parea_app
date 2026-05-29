@@ -57,6 +57,7 @@ export default function OnboardingClassic() {
   const navigate = useNavigate();
   const currentUser = useStore((s) => s.currentUser);
   const updateUser = useStore((s) => s.updateUser);
+  const completeOnboarding = useStore((s) => s.completeOnboarding);
 
   const [step, setStep] = useState(0);
   const [dir, setDir] = useState(1);
@@ -91,6 +92,12 @@ export default function OnboardingClassic() {
         name: name || currentUser.name,
       });
     }
+    completeOnboarding();
+    navigate('/');
+  };
+
+  const handleSkip = () => {
+    completeOnboarding();
     navigate('/');
   };
 
@@ -365,7 +372,7 @@ export default function OnboardingClassic() {
         {/* Navigation buttons */}
         <div className="flex items-center justify-between mt-5">
           <button
-            onClick={step === 0 ? () => navigate('/') : goPrev}
+            onClick={step === 0 ? handleSkip : goPrev}
             className="flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-gray-200 text-[13px] font-bold text-gray-500 hover:text-[#111827] hover:border-gray-300 transition-all duration-200"
           >
             <ChevronLeft className="w-4 h-4" />

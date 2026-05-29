@@ -47,8 +47,8 @@ body {
   background: #1f2937;
   color: white;
   font-weight: 700;
-  border-radius: 1rem;
-  padding: 0.5rem 1.25rem;
+  border-radius: 0.75rem;
+  padding: 0.45rem 1.1rem;
   box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.18);
   transition: all 0.2s ease;
 }
@@ -66,7 +66,7 @@ body {
 .btn-pill-active {
   border: 2px solid #4b5563;
   border-radius: 9999px;
-  padding: 0.375rem 1rem;
+  padding: 0.3rem 0.85rem;
   font-weight: 700;
   color: #111827;
   background: #f3f4f6;
@@ -75,7 +75,7 @@ body {
 .btn-pill-inactive {
   border: 2px solid transparent;
   border-radius: 9999px;
-  padding: 0.375rem 1rem;
+  padding: 0.3rem 0.85rem;
   font-weight: 600;
   color: #6b7280;
   background: transparent;
@@ -84,6 +84,38 @@ body {
 .btn-pill-inactive:hover {
   color: #374151;
   background: #f3f4f6;
+}
+
+/* Theme-aware pill tabs (Inbox, Calendar, etc.) */
+[data-theme$="-dark"] .btn-pill-active,
+.theme-ab-dark .btn-pill-active {
+  color: #f9fafb;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+[data-theme$="-dark"] .btn-pill-inactive,
+.theme-ab-dark .btn-pill-inactive {
+  color: #d1d5db;
+}
+[data-theme$="-dark"] .btn-pill-inactive:hover,
+.theme-ab-dark .btn-pill-inactive:hover {
+  color: #f3f4f6;
+  background: rgba(255, 255, 255, 0.08);
+}
+[data-theme="activebuddies"] .btn-pill-active,
+.theme-ab .btn-pill-active {
+  color: hsl(220 14% 12%);
+  background: hsl(220 14% 96%);
+  border-color: hsl(220 13% 72%);
+}
+[data-theme="activebuddies"] .btn-pill-inactive,
+.theme-ab .btn-pill-inactive {
+  color: hsl(220 9% 40%);
+}
+[data-theme="activebuddies"] .btn-pill-inactive:hover,
+.theme-ab .btn-pill-inactive:hover {
+  color: hsl(220 14% 12%);
+  background: hsl(220 14% 96%);
 }
 
 /* Card row style (matching the notification rows in screenshot) */
@@ -243,6 +275,229 @@ body {
 .theme-ab .ab-muted,
 .theme-ab-dark .ab-muted {
   color: var(--ab-muted) !important;
+}
+
+/* ── Dark themes: fix hardcoded light-theme text on dark surfaces ── */
+[data-theme="activebuddies-dark"] .text-\[\#111827\],
+[data-theme="activebuddies-dark"] .text-\[\#6B7280\],
+[data-theme="vibrant-dark"] .text-\[\#111827\],
+[data-theme="bento-dark"] .text-\[\#111827\],
+[data-theme="neon-dark"] .text-\[\#111827\] {
+  color: hsl(210 20% 92%) !important;
+}
+
+[data-theme="activebuddies-dark"] .text-\[\#0E8B8D\],
+[data-theme="vibrant-dark"] .text-\[\#0E8B8D\],
+[data-theme="bento-dark"] .text-\[\#0E8B8D\],
+[data-theme="neon-dark"] .text-\[\#0E8B8D\] {
+  color: hsl(210 20% 88%) !important;
+}
+
+[data-theme$="-dark"] .text-gray-900,
+[data-theme="activebuddies-dark"] .text-gray-900 {
+  color: hsl(210 20% 92%) !important;
+}
+
+[data-theme$="-dark"] .text-gray-800,
+[data-theme="activebuddies-dark"] .text-gray-800 {
+  color: hsl(220 12% 85%) !important;
+}
+
+[data-theme$="-dark"] .text-gray-700,
+[data-theme="activebuddies-dark"] .text-gray-700 {
+  color: hsl(220 12% 78%) !important;
+}
+
+[data-theme$="-dark"] .text-gray-600,
+[data-theme="activebuddies-dark"] .text-gray-600 {
+  color: hsl(220 13% 78%) !important;
+}
+
+[data-theme$="-dark"] .text-gray-500,
+[data-theme="activebuddies-dark"] .text-gray-500 {
+  color: hsl(220 13% 74%) !important;
+}
+
+[data-theme$="-dark"] .text-gray-400,
+[data-theme="activebuddies-dark"] .text-gray-400 {
+  color: hsl(220 13% 70%) !important;
+}
+
+[data-theme$="-dark"] .text-gray-300,
+[data-theme="activebuddies-dark"] .text-gray-300 {
+  color: hsl(220 14% 82%) !important;
+}
+
+/* Genuine white panels in vibrant/bento/neon dark → keep dark, readable text */
+[data-theme="vibrant-dark"] .bg-white,
+[data-theme="bento-dark"] .bg-white,
+[data-theme="neon-dark"] .bg-white {
+  color: rgb(17 24 39);
+}
+[data-theme="vibrant-dark"] .bg-white .text-gray-400,
+[data-theme="bento-dark"] .bg-white .text-gray-400,
+[data-theme="neon-dark"] .bg-white .text-gray-400 {
+  color: rgb(107 114 128) !important;
+}
+[data-theme="vibrant-dark"] .bg-white .text-gray-500,
+[data-theme="bento-dark"] .bg-white .text-gray-500,
+[data-theme="neon-dark"] .bg-white .text-gray-500 {
+  color: rgb(75 85 99) !important;
+}
+
+/* Text/icons on translucent-WHITE chips (event date badge, floating action
+   buttons, image overlays) must stay dark in ALL dark themes — these chips
+   remain light. Only high-opacity whites (≥70%); low-opacity bg-white/10|5
+   are dark-surface overlays and must keep their light text. */
+[data-theme$="-dark"] .bg-white\/70,
+[data-theme$="-dark"] .bg-white\/80,
+[data-theme$="-dark"] .bg-white\/90,
+[data-theme$="-dark"] .bg-white\/95,
+[data-theme="activebuddies-dark"] .bg-white\/70,
+[data-theme="activebuddies-dark"] .bg-white\/80,
+[data-theme="activebuddies-dark"] .bg-white\/90,
+[data-theme="activebuddies-dark"] .bg-white\/95 {
+  color: #111827 !important;
+}
+[data-theme$="-dark"] .bg-white\/70 [class*="text-gray-"],
+[data-theme$="-dark"] .bg-white\/80 [class*="text-gray-"],
+[data-theme$="-dark"] .bg-white\/90 [class*="text-gray-"],
+[data-theme$="-dark"] .bg-white\/95 [class*="text-gray-"],
+[data-theme="activebuddies-dark"] .bg-white\/70 [class*="text-gray-"],
+[data-theme="activebuddies-dark"] .bg-white\/80 [class*="text-gray-"],
+[data-theme="activebuddies-dark"] .bg-white\/90 [class*="text-gray-"],
+[data-theme="activebuddies-dark"] .bg-white\/95 [class*="text-gray-"] {
+  color: #1f2937 !important;
+}
+
+/* Modals on dark themes */
+[data-theme="activebuddies-dark"] .modal-panel,
+.theme-ab-dark .modal-panel {
+  background: hsl(220 16% 14%) !important;
+  border-color: hsl(220 13% 22%) !important;
+  color: hsl(210 20% 92%) !important;
+}
+
+[data-theme="vibrant-dark"] .modal-panel,
+[data-theme="bento-dark"] .modal-panel,
+[data-theme="neon-dark"] .modal-panel {
+  background: rgb(17 24 39) !important;
+  border-color: rgb(75 85 99) !important;
+  color: rgb(243 244 246) !important;
+}
+
+[data-theme$="-dark"] .modal-overlay,
+[data-theme="activebuddies-dark"] .modal-overlay {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Card rows on dark */
+[data-theme="activebuddies-dark"] .card-row,
+.theme-ab-dark .card-row {
+  background: hsl(220 16% 14%) !important;
+  border-color: hsl(220 13% 22%) !important;
+  color: hsl(210 20% 92%) !important;
+}
+
+[data-theme$="-dark"] .card-row {
+  background: rgba(31, 41, 55, 0.6) !important;
+  border-color: rgba(75, 85, 99, 0.5) !important;
+  color: rgb(243 244 246) !important;
+}
+
+/* ── Faint grays (gray-400/500) are low-contrast on light surfaces.
+   Darken them in LIGHT themes for readability (WCAG AA). ── */
+[data-theme="classic"] .text-gray-400,
+[data-theme="vibrant"] .text-gray-400,
+[data-theme="bento"] .text-gray-400,
+[data-theme="neon"] .text-gray-400,
+[data-theme="activebuddies"] .text-gray-400 {
+  color: rgb(82 91 105);
+}
+[data-theme="classic"] .text-gray-500,
+[data-theme="vibrant"] .text-gray-500,
+[data-theme="bento"] .text-gray-500,
+[data-theme="neon"] .text-gray-500,
+[data-theme="activebuddies"] .text-gray-500 {
+  color: rgb(71 80 94);
+}
+/* Slightly darken placeholders too, but keep them lighter than text */
+[data-theme="classic"] .placeholder-gray-400::placeholder,
+[data-theme="vibrant"] .placeholder-gray-400::placeholder,
+[data-theme="bento"] .placeholder-gray-400::placeholder,
+[data-theme="neon"] .placeholder-gray-400::placeholder,
+[data-theme="activebuddies"] .placeholder-gray-400::placeholder {
+  color: rgb(107 114 128);
+}
+
+/* Protect light grays that sit on DARK containers within light themes
+   (footer, dark hero, dark cards) — keep them light & readable. */
+[data-theme] .bg-gray-900 .text-gray-400,
+[data-theme] .bg-gray-800 .text-gray-400,
+[data-theme] .bg-\[\#111827\] .text-gray-400,
+[data-theme] .bg-gray-900 .text-gray-500,
+[data-theme] .bg-gray-800 .text-gray-500,
+[data-theme] .bg-\[\#111827\] .text-gray-500 {
+  color: rgb(156 163 175);
+}
+[data-theme] footer.text-gray-400,
+[data-theme] footer .text-gray-400 {
+  color: rgb(156 163 175);
+}
+
+/* Broken codemod artifact class — empty accent left "text--400".
+   Only present in *Dark variant files (dark backgrounds), so make readable. */
+.text--400 {
+  color: hsl(220 13% 78%);
+}
+[data-theme$="-dark"] .bg-red-50 .text--400,
+[data-theme$="-dark"] .bg-red-100 .text--400 {
+  color: rgb(248 113 113);
+}
+
+/* Light alert chips/banners rendered inside dark-variant pages → darken */
+[data-theme$="-dark"] .bg-red-50 { background-color: rgba(127, 29, 29, 0.25) !important; border-color: rgba(153, 27, 27, 0.4) !important; }
+[data-theme$="-dark"] .bg-amber-50 { background-color: rgba(120, 53, 15, 0.22) !important; border-color: rgba(146, 64, 14, 0.4) !important; }
+[data-theme$="-dark"] .bg-orange-50 { background-color: rgba(124, 45, 18, 0.22) !important; border-color: rgba(154, 52, 18, 0.4) !important; }
+[data-theme$="-dark"] .bg-emerald-50 { background-color: rgba(6, 78, 59, 0.22) !important; border-color: rgba(6, 95, 70, 0.4) !important; }
+[data-theme$="-dark"] .bg-green-50 { background-color: rgba(5, 78, 51, 0.22) !important; border-color: rgba(6, 95, 70, 0.4) !important; }
+
+[data-theme$="-dark"] .bg-red-50 .text-red-800,
+[data-theme$="-dark"] .bg-red-100 .text-red-800 { color: rgb(252 165 165) !important; }
+[data-theme$="-dark"] .bg-amber-50 .text-amber-800 { color: rgb(252 211 77) !important; }
+[data-theme$="-dark"] .bg-orange-50 .text-orange-800 { color: rgb(253 186 116) !important; }
+
+/* ── activebuddies-dark falls back to light *Classic pages, so convert
+   their hardcoded light surfaces to dark elevated surfaces. ── */
+[data-theme="activebuddies-dark"] .bg-white {
+  background-color: hsl(220 16% 14%) !important;
+  color: hsl(210 20% 92%) !important;
+  border-color: hsl(220 13% 22%);
+}
+[data-theme="activebuddies-dark"] .bg-gray-50,
+[data-theme="activebuddies-dark"] .bg-gray-100,
+[data-theme="activebuddies-dark"] .bg-\[\#F3F4F6\] {
+  background-color: hsl(220 16% 16%) !important;
+  color: hsl(210 20% 90%) !important;
+}
+[data-theme="activebuddies-dark"] .border-gray-100,
+[data-theme="activebuddies-dark"] .border-gray-200 {
+  border-color: hsl(220 13% 22%) !important;
+}
+/* Cyan accents from Classic pages → neutral light on AB-dark */
+[data-theme="activebuddies-dark"] .text-\[\#0E8B8D\],
+[data-theme="activebuddies-dark"] .text-cyan-600,
+[data-theme="activebuddies-dark"] .text-cyan-700 {
+  color: hsl(210 18% 86%) !important;
+}
+[data-theme="activebuddies-dark"] .bg-cyan-50,
+[data-theme="activebuddies-dark"] .bg-cyan-100 {
+  background-color: hsl(220 16% 18%) !important;
+}
+[data-theme="activebuddies-dark"] .border-\[\#a5f3fc\],
+[data-theme="activebuddies-dark"] .border-\[\#18D8DB\],
+[data-theme="activebuddies-dark"] .ring-\[\#18D8DB\] {
+  border-color: hsl(220 13% 40%) !important;
 }
 
 /* Respect users who prefer reduced motion */

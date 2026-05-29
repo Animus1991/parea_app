@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react';
-import { Trophy, Flame, Calendar, Star } from 'lucide-react';
+import { Trophy, Flame, Calendar, Star, TrendingUp, ChevronUp } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { TabBar } from '../components/common/TabBar';
 import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
+import { usePageContrast } from '../hooks/usePageContrast';
+import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 
 type Period = 'week' | 'month' | 'alltime';
@@ -19,11 +21,11 @@ function computeXP(
   return base + badgesBonus + eventsBonus;
 }
 
-function RankIcon({ rank }: { rank: number }) {
+function RankIcon({ rank, mutedClass }: { rank: number; mutedClass: string }) {
   if (rank === 1) return <span className="text-2xl leading-none select-none">🥇</span>;
   if (rank === 2) return <span className="text-2xl leading-none select-none">🥈</span>;
   if (rank === 3) return <span className="text-2xl leading-none select-none">🥉</span>;
-  return <span className="text-[14px] font-black text-gray-400 tabular-nums w-8 text-center">#{rank}</span>;
+  return <span className={cn('text-[14px] font-black tabular-nums w-8 text-center', mutedClass)}>#{rank}</span>;
 }
 
 const BADGES_CATALOGUE = [
@@ -39,6 +41,7 @@ const BADGES_CATALOGUE = [
 
 export default function LeaderboardClassic() {
   const { t } = useLanguage();
+  const p = usePageContrast();
   const [period, setPeriod] = useState<Period>('month');
   const [activeTab, setActiveTab] = useState('global');
 
@@ -86,6 +89,11 @@ export default function LeaderboardClassic() {
   const displayEntries = activeTab === 'friends' ? friendsEntries : allEntries;
   const myRank = allEntries.findIndex((e) => e.isMe) + 1;
   const myEntry = allEntries.find((e) => e.isMe);
+  const aheadEntry = myRank > 1 ? allEntries[myRank - 2] : null;
+  const xpToNext = aheadEntry && myEntry ? Math.max(0, aheadEntry.xp - myEntry.xp) : 0;
+  const nextPct = aheadEntry && myEntry && aheadEntry.xp > 0
+    ? Math.max(6, Math.min(100, Math.round((myEntry.xp / aheadEntry.xp) * 100)))
+    : 100;
 
   const tabs = [
     { id: 'global', label: t('Παγκόσμια', 'Global') },
@@ -97,21 +105,24 @@ export default function LeaderboardClassic() {
     <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">{t('Κατάταξη', 'Leaderboard')}</h1>
-          <p className="text-gray-500 font-medium text-[13px] md:text-sm mt-1">
+          <h1 className={cn('text-[16px] md:text-[18px] font-bold', p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>
+          <p className={cn('font-medium text-[13px] md:text-sm mt-1', p.sub)}>
             {t('Δες πού βρίσκεσαι μέσα στην κοινότητα', 'See where you stand in the community')}
           </p>
         </div>
-        <div className="flex gap-1 bg-gray-100 rounded-xl p-1 self-start">
-          {(['week', 'month', 'alltime'] as Period[]).map((p) => (
+        <div className={cn('flex gap-1 rounded-xl p-1 self-start', p.isDark ? 'bg-white/5' : 'bg-gray-100')}>
+          {(['week', 'month', 'alltime'] as Period[]).map((per) => (
             <button
-              key={p}
-              onClick={() => setPeriod(p)}
-              className={`px-3 py-1.5 rounded-lg text-[12px] font-bold transition-all duration-200 whitespace-nowrap ${
-                period === p ? 'bg-white text-[#111827] shadow-soft' : 'text-gray-500 hover:text-gray-700'
-              }`}
+              key={per}
+              onClick={() => setPeriod(per)}
+              className={cn(
+                'px-3 py-1.5 rounded-lg text-[12px] font-bold transition-all duration-200 whitespace-nowrap',
+                period === per
+                  ? cn(p.cardSurface, p.head, 'shadow-soft')
+                  : cn(p.muted, p.hoverText),
+              )}
             >
-              {p === 'week' ? t('Εβδομάδα', 'Week') : p === 'month' ? t('Μήνας', 'Month') : t('Όλα', 'All Time')}
+              {per === 'week' ? t('Εβδομάδα', 'Week') : per === 'month' ? t('Μήνας', 'Month') : t('Όλα', 'All Time')}
             </button>
           ))}
         </div>
@@ -120,38 +131,63 @@ export default function LeaderboardClassic() {
       {/* My rank summary card */}
       {myEntry && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-          <Card className="p-4 bg-gradient-to-r from-cyan-50 to-white border-[#a5f3fc]/70">
+          <Card className={cn('p-4', p.highlightRow)}>
             <div className="flex items-center gap-4">
               <div className="relative shrink-0">
                 <img
                   referrerPolicy="no-referrer"
                   src={myEntry.avatar}
                   alt={myEntry.name}
-                  className="w-14 h-14 rounded-full object-cover ring-2 ring-[#18D8DB]/40"
+                  className={cn('w-14 h-14 rounded-full object-cover ring-2', p.isDark ? 'ring-white/20' : 'ring-[#18D8DB]/40')}
                 />
                 <div className="absolute -bottom-1 -right-1 bg-[#111827] text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white">
                   #{myRank}
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-[#111827] text-[13.5px]">
+                <p className={cn('font-bold text-[13.5px]', p.head)}>
                   {t('Η κατάταξή σου', 'Your rank')} —{' '}
-                  <span className="text-[#0E8B8D]">#{myRank}</span>
+                  <span className={p.statVal}>#{myRank}</span>
                 </p>
                 <div className="flex flex-wrap items-center gap-3 mt-1.5">
-                  <span className="text-[12px] text-gray-500 flex items-center gap-1 font-medium">
+                  <span className={cn('text-[12px] flex items-center gap-1 font-medium', p.muted)}>
                     <Trophy className="w-3.5 h-3.5 text-amber-500" /> {myEntry.xp} XP
                   </span>
-                  <span className="text-[12px] text-gray-500 flex items-center gap-1 font-medium">
+                  <span className={cn('text-[12px] flex items-center gap-1 font-medium', p.muted)}>
                     <Flame className="w-3.5 h-3.5 text-orange-500" /> {myEntry.streak} {t('εβδ. σερί', 'wk streak')}
                   </span>
-                  <span className="text-[12px] text-gray-500 flex items-center gap-1 font-medium">
+                  <span className={cn('text-[12px] flex items-center gap-1 font-medium', p.muted)}>
                     <Calendar className="w-3.5 h-3.5 text-cyan-600" /> {myEntry.eventsCount}{' '}
                     {t('εκδηλώσεις', 'events')}
                   </span>
                 </div>
               </div>
             </div>
+
+            {/* Progress to next rank */}
+            {aheadEntry ? (
+              <div className={cn('mt-4 pt-3 border-t', p.borderT)}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className={cn('text-[11.5px] font-semibold flex items-center gap-1', p.muted)}>
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    {t(`${xpToNext} XP για #${myRank - 1}`, `${xpToNext} XP to reach #${myRank - 1}`)}
+                  </span>
+                  <span className={cn('text-[11.5px] font-bold', p.statVal)}>{nextPct}%</span>
+                </div>
+                <div className={cn('h-2 rounded-full overflow-hidden', p.progressBg)}>
+                  <motion.div
+                    className={cn('h-full rounded-full', p.progressFill)}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${nextPct}%` }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className={cn('mt-4 pt-3 border-t flex items-center gap-1.5 text-[12px] font-bold', p.borderT, p.statVal)}>
+                <ChevronUp className="w-4 h-4" /> {t('Είσαι στην κορυφή! 🏆', "You're at the top! 🏆")}
+              </div>
+            )}
           </Card>
         </motion.div>
       )}
@@ -174,51 +210,48 @@ export default function LeaderboardClassic() {
                 transition={{ duration: 0.2, delay: index * 0.03 }}
               >
                 <Card
-                  className={`p-3 flex items-center gap-3 transition-colors ${
-                    entry.isMe ? 'border-[#18D8DB]/50 bg-cyan-50/40' : 'hover:border-gray-200'
-                  }`}
+                  className={cn(
+                    'p-3 flex items-center gap-3 transition-colors',
+                    entry.isMe ? p.highlightRow : p.cardHover,
+                  )}
                 >
                   <div className="w-8 flex items-center justify-center shrink-0">
-                    <RankIcon rank={rank} />
+                    <RankIcon rank={rank} mutedClass={p.muted} />
                   </div>
                   <img
                     referrerPolicy="no-referrer"
                     src={entry.avatar}
                     alt={entry.name}
-                    className="w-10 h-10 rounded-full object-cover shrink-0 ring-1 ring-gray-100"
+                    className={cn('w-10 h-10 rounded-full object-cover shrink-0 ring-1', p.isDark ? 'ring-white/10' : 'ring-gray-100')}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span
-                        className={`font-bold text-[13.5px] truncate ${
-                          entry.isMe ? 'text-[#0E8B8D]' : 'text-[#111827]'
-                        }`}
-                      >
+                      <span className={cn('font-bold text-[13.5px] truncate', entry.isMe ? p.statVal : p.head)}>
                         {entry.name}
                       </span>
                       {entry.isMe && (
-                        <span className="text-[10px] font-bold text-[#18D8DB] bg-cyan-50 px-1.5 py-0.5 rounded-full shrink-0">
+                        <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0', p.statBg, p.statVal)}>
                           {t('Εσύ', 'You')}
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">
-                      <span className="text-[11px] text-gray-400 font-medium flex items-center gap-0.5">
+                      <span className={cn('text-[11px] font-medium flex items-center gap-0.5', p.muted)}>
                         <Flame className="w-2.5 h-2.5 text-orange-400" /> {entry.streak}w
                       </span>
-                      <span className="text-[11px] text-gray-400 font-medium flex items-center gap-0.5">
+                      <span className={cn('text-[11px] font-medium flex items-center gap-0.5', p.muted)}>
                         <Calendar className="w-2.5 h-2.5 text-cyan-400" /> {entry.eventsCount}
                       </span>
-                      <span className="text-[11px] text-gray-400 font-medium flex items-center gap-0.5">
+                      <span className={cn('text-[11px] font-medium flex items-center gap-0.5', p.muted)}>
                         <Star className="w-2.5 h-2.5 text-amber-400" /> {entry.reliabilityScore}%
                       </span>
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className="font-black text-[#111827] text-[17px] tabular-nums leading-none">
+                    <p className={cn('font-black text-[17px] tabular-nums leading-none', p.head)}>
                       {entry.xp}
                     </p>
-                    <p className="text-[10px] text-gray-400 font-semibold mt-0.5">XP</p>
+                    <p className={cn('text-[10px] font-semibold mt-0.5', p.muted)}>XP</p>
                   </div>
                 </Card>
               </motion.div>
@@ -226,7 +259,7 @@ export default function LeaderboardClassic() {
           })}
           {displayEntries.length === 0 && (
             <Card className="p-8 text-center">
-              <p className="text-gray-400 text-sm font-medium">
+              <p className={cn('text-sm font-medium', p.muted)}>
                 {t('Δεν βρέθηκαν εγγραφές.', 'No entries found.')}
               </p>
             </Card>
@@ -245,25 +278,28 @@ export default function LeaderboardClassic() {
               transition={{ duration: 0.2, delay: i * 0.04 }}
             >
               <Card
-                className={`p-4 flex flex-col items-center text-center gap-2 transition-colors ${
-                  badge.unlocked ? 'border-amber-200 bg-amber-50/30' : 'opacity-50 grayscale'
-                }`}
+                className={cn(
+                  'p-4 flex flex-col items-center text-center gap-2 transition-colors',
+                  badge.unlocked
+                    ? (p.isDark ? 'border-amber-500/30 bg-amber-500/10' : 'border-amber-200 bg-amber-50/30')
+                    : 'opacity-50 grayscale',
+                )}
               >
                 <span className="text-3xl leading-none">{badge.emoji}</span>
                 <div>
-                  <p className={`font-bold text-[13px] ${badge.unlocked ? 'text-[#111827]' : 'text-gray-400'}`}>
+                  <p className={cn('font-bold text-[13px]', badge.unlocked ? p.head : p.muted)}>
                     {t(badge.gr, badge.en)}
                   </p>
-                  <p className="text-[11px] text-gray-400 font-medium mt-0.5 leading-snug">
+                  <p className={cn('text-[11px] font-medium mt-0.5 leading-snug', p.muted)}>
                     {t(badge.dgr, badge.den)}
                   </p>
                 </div>
                 {badge.unlocked ? (
-                  <span className="text-[10px] font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
+                  <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full', p.isDark ? 'text-amber-300 bg-amber-500/20' : 'text-amber-600 bg-amber-100')}>
                     {t('Ξεκλείδωτο ✓', 'Unlocked ✓')}
                   </span>
                 ) : (
-                  <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                  <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full', p.statBg, p.muted)}>
                     {t('Κλειδωμένο', 'Locked')}
                   </span>
                 )}

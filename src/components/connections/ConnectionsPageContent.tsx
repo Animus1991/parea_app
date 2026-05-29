@@ -6,74 +6,13 @@ import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
-
-// ─── Theme color helper ────────────────────────────────────────
-function useAccent() {
-  const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
-
-  if (theme === 'vibrant' || theme === 'vibrant-dark') return {
-    isDark,
-    tabActive: isDark ? 'border-fuchsia-500 text-fuchsia-400' : 'border-fuchsia-600 text-fuchsia-600',
-    tabInactive: isDark ? 'border-transparent text-gray-400 hover:text-gray-200' : 'border-transparent text-gray-400 hover:text-gray-600',
-    hoverText: isDark ? 'group-hover:text-fuchsia-400' : 'group-hover:text-fuchsia-600',
-    msgIcon: isDark ? 'text-fuchsia-400 hover:bg-fuchsia-900/30' : 'text-fuchsia-600 hover:bg-fuchsia-50',
-    cardHover: isDark ? 'hover:border-fuchsia-700' : 'hover:border-fuchsia-200',
-    ring: 'focus:ring-fuchsia-500',
-    acceptBtn: isDark ? 'bg-fuchsia-600 hover:bg-fuchsia-700 text-white' : 'bg-fuchsia-600 hover:bg-fuchsia-700 text-white',
-    tagBg: isDark ? 'bg-fuchsia-900/20 text-fuchsia-300 border-fuchsia-800' : 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200',
-    trustHigh: isDark ? 'text-fuchsia-400' : 'text-fuchsia-600',
-    requestBadge: 'bg-fuchsia-500',
-  };
-
-  if (theme === 'bento') return {
-    isDark: false,
-    tabActive: 'border-indigo-600 text-indigo-600',
-    tabInactive: 'border-transparent text-gray-400 hover:text-gray-600',
-    hoverText: 'group-hover:text-indigo-600',
-    msgIcon: 'text-indigo-600 hover:bg-indigo-50',
-    cardHover: 'hover:border-indigo-200',
-    ring: 'focus:ring-indigo-500',
-    acceptBtn: 'bg-indigo-600 hover:bg-indigo-700 text-white',
-    tagBg: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-    trustHigh: 'text-indigo-600',
-    requestBadge: 'bg-indigo-500',
-  };
-
-  if (theme === 'neon' || theme === 'neon-dark' || theme === 'bento-dark') return {
-    isDark,
-    tabActive: isDark ? 'border-emerald-500 text-emerald-400' : 'border-emerald-600 text-emerald-600',
-    tabInactive: isDark ? 'border-transparent text-gray-400 hover:text-gray-200' : 'border-transparent text-gray-400 hover:text-gray-600',
-    hoverText: isDark ? 'group-hover:text-emerald-400' : 'group-hover:text-emerald-600',
-    msgIcon: isDark ? 'text-emerald-400 hover:bg-emerald-900/30' : 'text-emerald-600 hover:bg-emerald-50',
-    cardHover: isDark ? 'hover:border-emerald-700' : 'hover:border-emerald-200',
-    ring: 'focus:ring-emerald-500',
-    acceptBtn: isDark ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-emerald-600 hover:bg-emerald-700 text-white',
-    tagBg: isDark ? 'bg-emerald-900/20 text-emerald-300 border-emerald-800' : 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    trustHigh: isDark ? 'text-emerald-400' : 'text-emerald-600',
-    requestBadge: 'bg-emerald-500',
-  };
-
-  // Classic
-  return {
-    isDark: false,
-    tabActive: 'border-cyan-600 text-[#0E8B8D]',
-    tabInactive: 'border-transparent text-gray-400 hover:text-gray-600',
-    hoverText: 'group-hover:text-cyan-600',
-    msgIcon: 'text-cyan-600 hover:bg-cyan-50',
-    cardHover: 'hover:border-cyan-200',
-    ring: 'focus:ring-cyan-500',
-    acceptBtn: 'bg-cyan-600 hover:bg-cyan-700 text-white',
-    tagBg: 'bg-cyan-50 text-cyan-700 border-cyan-200',
-    trustHigh: 'text-cyan-600',
-    requestBadge: 'bg-cyan-600',
-  };
-}
+import { usePageContrast } from '../../hooks/usePageContrast';
+import { cn } from '../../lib/utils';
 
 // ─── More dropdown ──────────────────────────────────────────────
 function MoreMenu({ connId, onViewProfile, onRemove, onReport, onInvite }: { connId: string; onViewProfile: () => void; onRemove: () => void; onReport: () => void; onInvite: () => void }) {
   const { t } = useLanguage();
-  const a = useAccent();
+  const a = usePageContrast();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -111,7 +50,7 @@ function MoreMenu({ connId, onViewProfile, onRemove, onReport, onInvite }: { con
 
 // ─── Trust tier icon ─────────────────────────────────────────────
 function TrustBadge({ tier, isDark }: { tier: string; isDark: boolean }) {
-  const a = useAccent();
+  const a = usePageContrast();
   if (tier === '3_high_trust') return <ShieldCheck className={`w-3.5 h-3.5 ${a.trustHigh}`} />;
   if (tier === '2_confirmed') return <ShieldCheck className={`w-3.5 h-3.5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />;
   return null;
@@ -121,7 +60,7 @@ function TrustBadge({ tier, isDark }: { tier: string; isDark: boolean }) {
 export default function ConnectionsPageContent() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const a = useAccent();
+  const a = usePageContrast();
 
   const currentUser = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
@@ -208,19 +147,17 @@ export default function ConnectionsPageContent() {
   };
 
   // ─── Render ──────────────────────────────────────────────
-  const headingColor = a.isDark ? 'text-white' : 'text-[#111827]';
-  const subColor = a.isDark ? 'text-gray-400' : 'text-gray-400';
+  const subColor = a.sub;
   const inputClasses = a.isDark
     ? `bg-gray-800 border-gray-700 text-white placeholder-gray-400 ${a.ring}`
     : `bg-white border-gray-200 text-gray-900 placeholder-gray-400 ${a.ring}`;
-  const borderColor = a.isDark ? 'border-gray-700' : 'border-gray-200';
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={`text-xl md:text-2xl font-bold ${headingColor}`}>{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
+          <h1 className={`text-xl md:text-2xl font-bold ${a.head}`}>{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
           <p className={`font-medium text-xs md:text-sm mt-1 ${subColor}`}>{t('Άτομα με τα οποία συνδεθήκατε μέσα από εκδηλώσεις.', 'People you\'ve connected with through events.')}</p>
         </div>
         <Button variant="primary" size="sm" className="flex items-center gap-2" onClick={() => navigate('/nearby')}>
@@ -228,18 +165,28 @@ export default function ConnectionsPageContent() {
         </Button>
       </div>
 
-      {/* Tabs */}
-      <div className={`flex gap-4 border-b ${borderColor}`}>
-        <button className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'all' ? a.tabActive : a.tabInactive}`} onClick={() => setActiveTab('all')}>
-          {t('Συνδέσεις', 'Connections')} ({connections.length})
+      {/* Tabs — rounded pills */}
+      <div className="flex gap-2 flex-wrap">
+        <button
+          className={cn('px-3.5 py-1.5 rounded-full text-[13px] font-bold transition-colors flex items-center gap-1.5', activeTab === 'all' ? a.chipActive : a.chipInactive)}
+          onClick={() => setActiveTab('all')}
+        >
+          {t('Συνδέσεις', 'Connections')}
+          <span className="opacity-70">({connections.length})</span>
         </button>
-        <button className={`pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'requests' ? a.tabActive : a.tabInactive}`} onClick={() => setActiveTab('requests')}>
+        <button
+          className={cn('px-3.5 py-1.5 rounded-full text-[13px] font-bold transition-colors flex items-center gap-1.5', activeTab === 'requests' ? a.chipActive : a.chipInactive)}
+          onClick={() => setActiveTab('requests')}
+        >
           {t('Αιτήματα', 'Requests')}
-          {pendingRequests.length > 0 && <span className={`${a.requestBadge} text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center`}>{pendingRequests.length}</span>}
+          {pendingRequests.length > 0 && <span className={`${a.requestBadge} text-white text-[10px] min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{pendingRequests.length}</span>}
         </button>
-        <button className={`pb-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'suggested' ? a.tabActive : a.tabInactive}`} onClick={() => setActiveTab('suggested')}>
+        <button
+          className={cn('px-3.5 py-1.5 rounded-full text-[13px] font-bold transition-colors flex items-center gap-1.5', activeTab === 'suggested' ? a.chipActive : a.chipInactive)}
+          onClick={() => setActiveTab('suggested')}
+        >
           <Sparkles className="w-3.5 h-3.5" /> {t('Προτάσεις', 'Suggested')}
-          {suggested.length > 0 && <span className={`${a.isDark ? 'bg-gray-600' : 'bg-gray-300'} text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center`}>{suggested.length}</span>}
+          {suggested.length > 0 && <span className={`${a.isDark ? 'bg-gray-600' : 'bg-gray-400'} text-white text-[10px] min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{suggested.length}</span>}
         </button>
       </div>
 
@@ -247,7 +194,7 @@ export default function ConnectionsPageContent() {
       {activeTab === 'all' && (
         <div className="flex flex-col sm:flex-row justify-between gap-3">
           <div className="relative flex-1">
-            <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${a.isDark ? 'text-gray-400' : 'text-gray-400'}`} />
+            <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${a.muted}`} />
             <input
               type="text" value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder={t('Αναζήτηση συνδέσεων...', 'Search connections...')}
@@ -261,7 +208,7 @@ export default function ConnectionsPageContent() {
             {filterOpen && (
               <div className={`absolute right-0 top-full mt-1 w-56 rounded-lg border shadow-lg z-50 p-3 space-y-3 ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
                 <div>
-                  <label className={`text-[10px] font-bold uppercase tracking-wider ${a.isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('Ρόλος', 'Role')}</label>
+                  <label className={`text-[10px] font-bold uppercase tracking-wider ${a.muted}`}>{t('Ρόλος', 'Role')}</label>
                   <div className="flex gap-1 mt-1">
                     {(['all', 'organizer', 'user'] as const).map((r) => (
                       <button key={r} onClick={() => setRoleFilter(r)} className={`px-2 py-1 rounded text-[11px] font-bold transition-colors ${roleFilter === r ? a.acceptBtn : (a.isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}`}>
@@ -271,7 +218,7 @@ export default function ConnectionsPageContent() {
                   </div>
                 </div>
                 <div>
-                  <label className={`text-[10px] font-bold uppercase tracking-wider ${a.isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('Ταξινόμηση', 'Sort')}</label>
+                  <label className={`text-[10px] font-bold uppercase tracking-wider ${a.muted}`}>{t('Ταξινόμηση', 'Sort')}</label>
                   <div className="flex gap-1 mt-1">
                     {(['name', 'mutual', 'trust'] as const).map((s) => (
                       <button key={s} onClick={() => setSortBy(s)} className={`px-2 py-1 rounded text-[11px] font-bold transition-colors ${sortBy === s ? a.acceptBtn : (a.isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}`}>
@@ -290,7 +237,7 @@ export default function ConnectionsPageContent() {
       {activeTab === 'all' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredConnections.length === 0 && (
-            <div className={`col-span-full text-center py-12 ${a.isDark ? 'text-gray-400' : 'text-gray-400'}`}>
+            <div className={`col-span-full text-center py-12 ${a.muted}`}>
               <Users className="w-10 h-10 mx-auto mb-3 opacity-40" />
               <p className="font-bold text-sm">{search ? t('Δεν βρέθηκαν αποτελέσματα', 'No results found') : t('Δεν έχετε συνδέσεις ακόμα', 'No connections yet')}</p>
               <p className="text-xs mt-1">{t('Βρείτε Nakamas στις εκδηλώσεις!', 'Find Nakamas at events!')}</p>
@@ -304,20 +251,20 @@ export default function ConnectionsPageContent() {
                   <TrustBadge tier={conn.trustTier} isDark={a.isDark} />
                 </div>
                 <div className="min-w-0">
-                  <h3 className={`font-bold text-sm truncate ${headingColor} ${a.hoverText} transition-colors`}>{conn.name}</h3>
-                  <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>{conn.name}</h3>
+                  <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.muted}`}>
                     <MapPin className="w-3 h-3 shrink-0" /> {conn.city}
                   </p>
                   <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                     <Badge variant="neutral" className="text-[9px] px-1.5 py-0">{conn.role}</Badge>
-                    <span className={`text-[10px] font-medium ${a.isDark ? 'text-gray-400' : 'text-gray-400'}`}>{conn.mutual} {t('Κοινοί', 'mutuals')}</span>
+                    <span className={`text-[10px] font-medium ${a.muted}`}>{conn.mutual} {t('Κοινοί', 'mutuals')}</span>
                   </div>
                   {conn.sharedInterests.length > 0 && (
                     <div className="flex gap-1 mt-2 flex-wrap">
                       {conn.sharedInterests.slice(0, 3).map((interest) => (
                         <span key={interest} className={`text-[9px] px-1.5 py-0.5 rounded-full border font-medium ${a.tagBg}`}>{interest}</span>
                       ))}
-                      {conn.sharedInterests.length > 3 && <span className={`text-[9px] font-medium ${a.isDark ? 'text-gray-500' : 'text-gray-400'}`}>+{conn.sharedInterests.length - 3}</span>}
+                      {conn.sharedInterests.length > 3 && <span className={`text-[9px] font-medium ${a.muted}`}>+{conn.sharedInterests.length - 3}</span>}
                     </div>
                   )}
                 </div>
@@ -343,7 +290,7 @@ export default function ConnectionsPageContent() {
       {activeTab === 'requests' && (
         <div className="space-y-4">
           {pendingRequests.length === 0 && (
-            <div className={`text-center py-12 ${a.isDark ? 'text-gray-400' : 'text-gray-400'}`}>
+            <div className={`text-center py-12 ${a.muted}`}>
               <UserPlus className="w-10 h-10 mx-auto mb-3 opacity-40" />
               <p className="font-bold text-sm">{t('Δεν υπάρχουν αιτήματα', 'No pending requests')}</p>
               <p className="text-xs mt-1">{t('Θα ειδοποιηθείτε όταν κάποιος θέλει να συνδεθεί.', 'You\'ll be notified when someone wants to connect.')}</p>
@@ -356,10 +303,10 @@ export default function ConnectionsPageContent() {
                   <img referrerPolicy="no-referrer" src={req.user.photoUrl || `https://i.pravatar.cc/150?u=${req.user.id}`} alt={req.user.name} className={`w-12 h-12 rounded-full object-cover shrink-0 ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className={`font-bold text-sm ${headingColor}`}>{req.user.name}</h3>
+                      <h3 className={`font-bold text-sm ${a.head}`}>{req.user.name}</h3>
                       {req.user.isOrganizer && <Badge variant="neutral" className="text-[9px] px-1.5 py-0">{t('Διοργανωτής', 'Organizer')}</Badge>}
                     </div>
-                    <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.muted}`}>
                       <MapPin className="w-3 h-3" /> {req.user.city}
                     </p>
                     {req.message && <p className={`text-xs mt-1.5 italic ${a.isDark ? 'text-gray-300' : 'text-gray-600'}`}>"{req.message}"</p>}
@@ -383,7 +330,7 @@ export default function ConnectionsPageContent() {
       {activeTab === 'suggested' && (
         <div className="space-y-4">
           {suggested.length === 0 && (
-            <div className={`text-center py-12 ${a.isDark ? 'text-gray-400' : 'text-gray-400'}`}>
+            <div className={`text-center py-12 ${a.muted}`}>
               <Sparkles className="w-10 h-10 mx-auto mb-3 opacity-40" />
               <p className="font-bold text-sm">{t('Δεν υπάρχουν προτάσεις', 'No suggestions yet')}</p>
               <p className="text-xs mt-1">{t('Συμμετέχετε σε εκδηλώσεις για να βρείτε Nakamas!', 'Join events to find Nakamas!')}</p>
@@ -396,8 +343,8 @@ export default function ConnectionsPageContent() {
                   <div className="flex items-center gap-3 min-w-0">
                     <img referrerPolicy="no-referrer" src={user.photoUrl || `https://i.pravatar.cc/150?u=${user.id}`} alt={user.name} className={`w-12 h-12 rounded-full object-cover shrink-0 ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
                     <div className="min-w-0">
-                      <h3 className={`font-bold text-sm truncate ${headingColor} ${a.hoverText} transition-colors`}>{user.name}</h3>
-                      <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>{user.name}</h3>
+                      <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.muted}`}>
                         <MapPin className="w-3 h-3" /> {user.city}
                         {user.isOrganizer && <> · <Badge variant="neutral" className="text-[9px] px-1.5 py-0">{t('Διοργανωτής', 'Organizer')}</Badge></>}
                       </p>

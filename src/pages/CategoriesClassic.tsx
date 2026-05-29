@@ -9,10 +9,13 @@ import { Skeleton, EventCardSkeleton } from '../components/common/Skeleton';
 import { format, parseISO, isToday, isThisWeek, isThisMonth } from 'date-fns';
 
 import { useLanguage } from '../lib/i18n';
+import { usePageContrast } from '../hooks/usePageContrast';
+import { cn } from '../lib/utils';
 
 export default function CategoriesClassic() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const p = usePageContrast();
   const events = useStore((state) => state.events);
 
   const ALL_CATEGORIES = [
@@ -95,19 +98,19 @@ export default function CategoriesClassic() {
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-[16px] md:text-[18px] font-extrabold tracking-tight text-[#111827]">{t('Κατηγορίες', 'Categories')}</h1>
-          <p className="text-gray-500 font-medium text-[13px] mt-1.5">{t('Εξερευνήστε όλο το φάσμα των εμπειριών μας.', 'Explore our full range of curated experiences.')}</p>
+          <h1 className={cn('text-[16px] md:text-[18px] font-extrabold tracking-tight', p.head)}>{t('Κατηγορίες', 'Categories')}</h1>
+          <p className={cn('font-medium text-[13px] mt-1.5', p.sub)}>{t('Εξερευνήστε όλο το φάσμα των εμπειριών μας.', 'Explore our full range of curated experiences.')}</p>
         </div>
       </div>
 
       <div className="relative mb-6 max-w-md">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Search className={cn('absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4', p.muted)} />
         <input 
           type="text" 
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={t('Αναζήτηση κατηγοριών...', 'Search categories...')} 
-          className="w-full h-11 pl-10 pr-4 rounded-full border border-gray-100 bg-white shadow-soft focus:outline-none focus:ring-2 focus:ring-[#18D8DB]/40 focus:border-transparent text-sm font-medium transition-all duration-200 hover:shadow-soft-md"
+          className={cn('w-full h-11 pl-10 pr-4 rounded-full border shadow-soft focus:outline-none focus:ring-2 focus:border-transparent text-sm font-medium transition-all duration-200 hover:shadow-soft-md', p.inputBg, p.ring)}
         />
       </div>
 
@@ -115,33 +118,33 @@ export default function CategoriesClassic() {
         {visibleCategories.map(cat => (
           <div 
             key={cat.id} 
-            className={`bg-white rounded-2xl p-3 border shadow-soft hover:shadow-soft-md transition-all duration-200 cursor-pointer group flex flex-col items-center text-center ${activeCategory === cat.name ? 'border-[#18D8DB] ring-1 ring-[#18D8DB]' : 'border-gray-100 hover:border-[#a5f3fc]'}`}
+            className={cn('rounded-xl p-3 border shadow-soft hover:shadow-soft-md transition-all duration-200 cursor-pointer group flex flex-col items-center text-center', p.cardSurface, activeCategory === cat.name ? `ring-1 ${p.statBg}` : cn(p.borderB, p.cardHover))}
             onClick={() => setActiveCategory(activeCategory === cat.name ? null : cat.name)}
           >
             <div className={`w-10 h-10 rounded-full ${cat.bg} ${cat.border} border flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300`}>
               <cat.icon className={`w-5 h-5 ${cat.color}`} />
             </div>
-            <h3 className="font-bold text-[#111827] text-xs group-hover:text-cyan-600 transition-colors line-clamp-1 w-full">{cat.name}</h3>
-            <p className="text-[10px] font-semibold text-gray-400 mt-1 capitalize tracking-wide">{cat.count} {t('Εκδηλώσεις', 'Events')}</p>
+            <h3 className={cn('font-bold text-xs transition-colors line-clamp-1 w-full', p.head, p.hoverText)}>{cat.name}</h3>
+            <p className={cn('text-[10px] font-semibold mt-1 capitalize tracking-wide', p.muted)}>{cat.count} {t('Εκδηλώσεις', 'Events')}</p>
           </div>
         ))}
       </div>
       
       {visibleCategories.length === 0 && (
-         <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-           <p className="text-gray-500 font-medium text-sm">{t('Δεν βρέθηκαν κατηγορίες.', 'No categories found matching ')} "{searchQuery}".</p>
+         <div className={cn('text-center py-12 rounded-xl border border-dashed', p.cardSurface, p.borderB)}>
+           <p className={cn('font-medium text-sm', p.muted)}>{t('Δεν βρέθηκαν κατηγορίες.', 'No categories found matching ')} "{searchQuery}".</p>
          </div>
       )}
 
-      <div className="mt-8 border-t border-gray-200 pt-8" id="events-list">
+      <div className={cn('mt-8 border-t pt-8', p.borderT)} id="events-list">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <h2 className="text-sm font-bold text-[#111827] capitalize tracking-tight shrink-0">
+          <h2 className={cn('text-sm font-bold capitalize tracking-tight shrink-0', p.head)}>
             {activeCategory ? `${activeCategory} ${t('Εκδηλώσεις', 'Events')}` : t('Όλες οι Εκδηλώσεις', 'All Events')}
           </h2>
           <div className="flex gap-2 overflow-x-auto pb-2 noscrollbar items-center w-full md:w-auto">
             {/* Sort Dropdown */}
             <select 
-              className="text-xs border border-gray-100 rounded-2xl shadow-soft focus:border-[#18D8DB] focus:ring-[#18D8DB]/40 bg-white hover:bg-gray-50 py-1.5 px-3 font-medium outline-none cursor-pointer h-8 shrink-0 appearance-none transition-all duration-200 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] pr-7"
+              className={cn("text-xs border rounded-xl shadow-soft focus:outline-none py-1.5 px-3 font-medium cursor-pointer h-8 shrink-0 appearance-none transition-all duration-200 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239ca3af%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] pr-7", p.isDark ? 'bg-[hsl(220_16%_16%)] border-white/10 text-gray-100' : 'bg-white border-gray-100 hover:bg-gray-50 text-gray-800')}
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
             >
@@ -150,30 +153,30 @@ export default function CategoriesClassic() {
               <option value="Group Progress">{t('Πρόοδος Ομάδας', 'Group Progress')}</option>
             </select>
 
-            <div className="w-px h-6 bg-gray-200 shrink-0 mx-1"></div>
+            <div className={cn('w-px h-6 shrink-0 mx-1', p.isDark ? 'bg-white/10' : 'bg-gray-200')}></div>
 
             {/* Price Pills */}
-            <div className="flex gap-1 shrink-0 bg-gray-50 p-0.5 rounded-full border border-gray-100">
+            <div className={cn('flex gap-1 shrink-0 p-0.5 rounded-full border', p.isDark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-100')}>
               {['All', 'Free', 'Paid', 'Group Discount'].map((price) => (
                 <button
                   key={price}
                   onClick={() => setPriceFilter(price as any)}
-                  className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 whitespace-nowrap ${priceFilter === price ? 'bg-white text-[#0E8B8D] shadow-soft border border-[#a5f3fc]/40' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}
+                  className={cn('text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 whitespace-nowrap', priceFilter === price ? cn('shadow-soft', p.isDark ? 'bg-white/15 text-white' : `bg-white ${p.statVal} border border-[#a5f3fc]/40`) : cn(p.muted, p.isDark ? 'hover:bg-white/10' : 'hover:text-gray-900 hover:bg-gray-100'))}
                 >
                   {price === 'All' ? t('Όλες', 'All') : price === 'Free' ? t('Δωρεάν', 'Free') : price === 'Paid' ? t('Επί πληρωμή', 'Paid') : t('Ομαδική Έκπτωση', 'Group Discount')}
                 </button>
               ))}
             </div>
 
-            <div className="w-px h-6 bg-gray-200 shrink-0 mx-1"></div>
+            <div className={cn('w-px h-6 shrink-0 mx-1', p.isDark ? 'bg-white/10' : 'bg-gray-200')}></div>
 
             {/* Date Pills */}
-            <div className="flex gap-1 shrink-0 bg-gray-50 p-0.5 rounded-full border border-gray-100">
+            <div className={cn('flex gap-1 shrink-0 p-0.5 rounded-full border', p.isDark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-100')}>
               {['Any', 'Today', 'This Week', 'This Month'].map((date) => (
                 <button
                   key={date}
                   onClick={() => setDateFilter(date as any)}
-                  className={`text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 whitespace-nowrap ${dateFilter === date ? 'bg-white text-[#0E8B8D] shadow-soft border border-[#a5f3fc]/40' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}
+                  className={cn('text-[10px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 whitespace-nowrap', dateFilter === date ? cn('shadow-soft', p.isDark ? 'bg-white/15 text-white' : `bg-white ${p.statVal} border border-[#a5f3fc]/40`) : cn(p.muted, p.isDark ? 'hover:bg-white/10' : 'hover:text-gray-900 hover:bg-gray-100'))}
                 >
                   {date === 'Any' ? t('Οποιαδήποτε', 'Any Date') : date === 'Today' ? t('Σήμερα', 'Today') : date === 'This Week' ? t('Αυτή την εβδ.', 'This Week') : t('Αυτόν τον μήνα', 'This Month')}
                 </button>
@@ -188,8 +191,8 @@ export default function CategoriesClassic() {
               <EventCardSkeleton key={`skeleton-${i}`} />
             ))
           ) : filteredEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-              <p className="text-gray-500 font-medium text-sm">{t('Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.', 'No events found matching your criteria.')}</p>
+            <div className={cn('col-span-1 sm:col-span-2 lg:col-span-3 text-center py-12 rounded-xl border border-dashed', p.cardSurface, p.borderB)}>
+              <p className={cn('font-medium text-sm', p.muted)}>{t('Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.', 'No events found matching your criteria.')}</p>
             </div>
           ) : (
             filteredEvents.map(event => (
@@ -199,10 +202,10 @@ export default function CategoriesClassic() {
         </div>
       </div>
 
-      <div className="mt-8 bg-cyan-50 rounded-2xl p-6 border border-cyan-100 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className={cn('mt-8 rounded-xl p-6 border flex flex-col md:flex-row items-center justify-between gap-4', p.highlightRow)}>
         <div>
-          <h3 className="text-base font-bold text-[#111827]">{t('Δεν βρίσκετε αυτό που ψάχνετε;', 'Can\'t find what you\'re looking for?')}</h3>
-          <p className="text-xs text-gray-600 mt-1">{t('Δημιουργήστε τη δική σας εκδήλωση και συγκεντρώστε άτομα με παρόμοια ενδιαφέροντα.', 'Create your own event and gather people with similar interests.')}</p>
+          <h3 className={cn('text-base font-bold', p.head)}>{t('Δεν βρίσκετε αυτό που ψάχνετε;', 'Can\'t find what you\'re looking for?')}</h3>
+          <p className={cn('text-xs mt-1', p.body)}>{t('Δημιουργήστε τη δική σας εκδήλωση και συγκεντρώστε άτομα με παρόμοια ενδιαφέροντα.', 'Create your own event and gather people with similar interests.')}</p>
         </div>
         <button onClick={() => navigate('/create-event')} className="btn-gradient whitespace-nowrap shrink-0">
           {t('Δημιουργία Εκδήλωσης', 'Create Event')}

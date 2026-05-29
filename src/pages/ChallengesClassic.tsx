@@ -13,6 +13,8 @@ import { Card } from '../components/common/Card';
 import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
 import { motion } from 'motion/react';
+import { usePageContrast } from '../hooks/usePageContrast';
+import { cn } from '../lib/utils';
 
 interface Challenge {
   id: string;
@@ -36,6 +38,7 @@ type FilterType = (typeof FILTER_TYPES)[number];
 
 export default function ChallengesClassic() {
   const { t } = useLanguage();
+  const p = usePageContrast();
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [joinedIds, setJoinedIds] = useState<Set<string>>(new Set(['c1', 'c2']));
 
@@ -179,10 +182,10 @@ export default function ChallengesClassic() {
     <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-[16px] md:text-[18px] font-bold text-[#111827]">
+          <h1 className={cn('text-[16px] md:text-[18px] font-bold', p.head)}>
             {t('Προκλήσεις', 'Challenges')}
           </h1>
-          <p className="text-gray-500 font-medium text-[13px] md:text-sm mt-1">
+          <p className={cn('font-medium text-[13px] md:text-sm mt-1', p.sub)}>
             {t('Κέρδισε XP και αποκλείδωσε badges', 'Earn XP and unlock badges')}
           </p>
         </div>
@@ -201,11 +204,10 @@ export default function ChallengesClassic() {
           <button
             key={f}
             onClick={() => setFilterType(f)}
-            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-[12px] font-bold transition-all duration-200 border ${
-              filterType === f
-                ? 'bg-[#111827] text-white border-[#111827]'
-                : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300 hover:text-[#111827]'
-            }`}
+            className={cn(
+              'whitespace-nowrap px-4 py-1.5 rounded-full text-[12px] font-bold transition-all duration-200 border',
+              filterType === f ? p.chipActive : p.chipInactive,
+            )}
           >
             {t(filterLabels[f].gr, filterLabels[f].en)}
           </button>
@@ -235,7 +237,7 @@ export default function ChallengesClassic() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-bold text-[#111827] text-[14px]">
+                      <h3 className={cn('font-bold text-[14px]', p.head)}>
                         {t(c.titleGr, c.titleEn)}
                       </h3>
                       {done && (
@@ -244,7 +246,7 @@ export default function ChallengesClassic() {
                         </span>
                       )}
                     </div>
-                    <p className="text-[12px] text-gray-500 font-medium mt-0.5 leading-snug">
+                    <p className={cn('text-[12px] font-medium mt-0.5 leading-snug', p.sub)}>
                       {t(c.descGr, c.descEn)}
                     </p>
                   </div>

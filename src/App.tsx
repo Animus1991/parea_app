@@ -5,6 +5,7 @@ import { AnimatePresence } from "motion/react";
 import { AppShell } from "./components/layout/AppShell";
 import { useStore } from "./store";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
+import { PageLoading } from "./components/common/PageLoading";
 import { useLanguage } from "./lib/i18n";
 
 // Route-level code-splitting (lazy-loaded pages)
@@ -14,7 +15,7 @@ const EventDetail = lazy(() => import("./pages/EventDetail"));
 const Plans = lazy(() => import("./pages/Plans"));
 const TrustCenter = lazy(() => import("./pages/TrustCenter"));
 const Profile = lazy(() => import("./pages/Profile"));
-const SettingsPage = lazy(() => import("./pages/AdminDashboard")); // using as Settings mock
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const OrganizerDashboard = lazy(() => import("./pages/OrganizerDashboard"));
 const JoinGroupFlow = lazy(() => import("./components/groups/JoinGroupFlow"));
 const GroupChat = lazy(() => import("./pages/GroupChat"));
@@ -44,6 +45,7 @@ export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const currentUser = useStore((state) => state.currentUser);
+  const onboardingCompleted = useStore((state) => state.onboardingCompleted);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -52,6 +54,17 @@ export default function App() {
     }
   }, [currentUser, location.pathname, navigate]);
 
+  useEffect(() => {
+    if (
+      currentUser &&
+      !onboardingCompleted &&
+      location.pathname !== "/onboarding" &&
+      location.pathname !== "/login"
+    ) {
+      navigate("/onboarding");
+    }
+  }, [currentUser, onboardingCompleted, location.pathname, navigate]);
+
   if (!currentUser && location.pathname !== "/login") {
     return null; // wait for redirect
   }
@@ -59,7 +72,7 @@ export default function App() {
   if (location.pathname === "/login") {
     return (
       <AnimatePresence mode="popLayout">
-        <Suspense fallback={<div className="p-4 text-[13.8px]">{t('Φόρτωση…', 'Loading…')}</div>}>
+        <Suspense fallback={<PageLoading />}>
           <Routes location={location} key={location.pathname}>
             <Route path="/login" element={<ErrorBoundary><Login /></ErrorBoundary>} />
           </Routes>
@@ -71,7 +84,7 @@ export default function App() {
   return (
     <AppShell>
       <AnimatePresence mode="popLayout">
-        <Suspense fallback={<div className="p-4 text-[13.8px]">{t('Φόρτωση…', 'Loading…')}</div>}>
+        <Suspense fallback={<PageLoading />}>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<ErrorBoundary><Home /></ErrorBoundary>} />
             <Route path="/categories" element={<ErrorBoundary><Categories /></ErrorBoundary>} />
@@ -108,7 +121,7 @@ export default function App() {
             <Route path="/settings" element={<ErrorBoundary><SettingsAndPrivacy /></ErrorBoundary>} />
             <Route path="/help" element={<ErrorBoundary><HelpCenter /></ErrorBoundary>} />
 
-            <Route path="/admin" element={<ErrorBoundary><SettingsPage /></ErrorBoundary>} />
+            <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
             <Route path="/achievements" element={<ErrorBoundary><Achievements /></ErrorBoundary>} />
             <Route path="/leaderboard" element={<ErrorBoundary><Leaderboard /></ErrorBoundary>} />
             <Route path="/challenges" element={<ErrorBoundary><Challenges /></ErrorBoundary>} />

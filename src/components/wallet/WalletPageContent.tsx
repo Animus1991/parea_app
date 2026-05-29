@@ -5,63 +5,11 @@ import { Button } from '../common/Button';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
-
-function useAccent() {
-  const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
-  const base = {
-    isDark,
-    head: isDark ? 'text-white' : 'text-[#111827]',
-    sub: isDark ? 'text-gray-400' : 'text-gray-500',
-    muted: isDark ? 'text-gray-500' : 'text-gray-400',
-    divider: isDark ? 'divide-gray-700/40' : 'divide-gray-100',
-    borderB: isDark ? 'border-gray-700/40' : 'border-gray-100',
-    txHover: isDark ? 'hover:bg-gray-700/20' : 'hover:bg-gray-50',
-    selectBg: isDark ? 'bg-gray-800/50 border-gray-700/50 text-white' : 'bg-white border-gray-200',
-  };
-
-  if (theme === 'vibrant' || theme === 'vibrant-dark') return {
-    ...base,
-    balanceBg: isDark ? 'bg-fuchsia-800/60 border-fuchsia-700/40' : 'bg-fuchsia-600 border-0',
-    balanceLabel: isDark ? 'text-fuchsia-300' : 'text-fuchsia-100',
-    withdrawBtn: isDark ? 'bg-white/10 text-white hover:bg-white/20 border-0' : 'bg-white text-fuchsia-900 hover:bg-gray-100 border-0',
-    pendingBg: isDark ? '' : '',
-    bankBg: isDark ? 'border-gray-700/40 bg-gray-800/30' : 'border-gray-200 bg-gray-50',
-    bankIcon: isDark ? 'bg-gray-700/40 border-gray-600 text-gray-400' : 'bg-white shadow-soft border-gray-100 text-gray-500',
-  };
-  if (theme === 'neon' || theme === 'neon-dark' || theme === 'bento-dark') return {
-    ...base,
-    balanceBg: isDark ? 'bg-emerald-800/50 border-emerald-700/40' : 'bg-emerald-600 border-0',
-    balanceLabel: isDark ? 'text-emerald-300' : 'text-emerald-100',
-    withdrawBtn: isDark ? 'bg-white/10 text-white hover:bg-white/20 border-0' : 'bg-white text-emerald-900 hover:bg-gray-100 border-0',
-    pendingBg: '',
-    bankBg: isDark ? 'border-gray-700/40 bg-gray-800/30' : 'border-gray-200 bg-gray-50',
-    bankIcon: isDark ? 'bg-gray-700/40 border-gray-600 text-gray-400' : 'bg-white shadow-soft border-gray-100 text-gray-500',
-  };
-  if (theme === 'bento') return {
-    ...base,
-    balanceBg: 'bg-indigo-600 border-0',
-    balanceLabel: 'text-indigo-100',
-    withdrawBtn: 'bg-white text-indigo-900 hover:bg-gray-100 border-0',
-    pendingBg: '',
-    bankBg: 'border-gray-200 bg-gray-50',
-    bankIcon: 'bg-white shadow-soft border-gray-100 text-gray-500',
-  };
-  // Classic
-  return {
-    ...base,
-    balanceBg: 'bg-cyan-600 border-0',
-    balanceLabel: 'text-cyan-100',
-    withdrawBtn: 'bg-white text-cyan-900 hover:bg-gray-100 border-0',
-    pendingBg: '',
-    bankBg: 'border-gray-200 bg-gray-50',
-    bankIcon: 'bg-white shadow-soft border-gray-100 text-gray-500',
-  };
-}
+import { usePageContrast } from '../../hooks/usePageContrast';
 
 export default function WalletPageContent() {
   const { t } = useLanguage();
-  const a = useAccent();
+  const a = usePageContrast();
 
   const transactions = [
     { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: 'Oct 12, 2024', desc: t('Μεταφορά στην τράπεζα 4092', 'Transfer to Bank ****4092') },

@@ -54,6 +54,9 @@ export interface Event {
   isTrending?: boolean;
   imageUrl?: string;
   externalLink?: string;
+  /** Platform-curated/advertised event with no group organizer yet.
+   *  Any member can step up to host a group for it. */
+  isPlatformEvent?: boolean;
 }
 
 export interface MemberLocation {

@@ -25,6 +25,7 @@ import { Virtuoso } from "react-virtuoso";
 import { toast } from "sonner";
 import { useLanguage } from "../lib/i18n";
 import { LiveEventTracker } from "../components/groups/LiveEventTracker";
+import { ChatIcebreakers } from "../components/groups/ChatIcebreakers";
 
 interface ChatMessage {
   id: string;
@@ -357,10 +358,18 @@ export default function GroupChatClassic() {
                     <Search className="h-5 w-5" />
                   </button>
 
+                  {event && (
+                    <ChatIcebreakers
+                      eventTitle={event.title}
+                      interests={currentUser?.interests ?? []}
+                      onSuggest={(text) => setNewMessage(text)}
+                    />
+                  )}
+
                   {/* Info Toggle */}
                   <button
                     onClick={() => setShowInfo(!showInfo)}
-                    className={`transition-colors p-2 rounded-full ${showInfo ? "text-cyan-600 bg-cyan-50" : "text-gray-400 hover:text-[#111827] hover:bg-gray-100"}`}
+                    className={`transition-colors p-2 rounded-full min-h-11 min-w-11 ${showInfo ? "text-cyan-600 bg-cyan-50" : "text-gray-400 hover:text-[#111827] hover:bg-gray-100"}`}
                     aria-label={showInfo ? t('Απόκρυψη πληροφοριών', 'Hide info panel') : t('Εμφάνιση πληροφοριών', 'Show info panel')}
                   >
                     <Info className="h-5 w-5" />
