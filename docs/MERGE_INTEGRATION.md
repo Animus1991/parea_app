@@ -72,6 +72,8 @@
 - `scripts/patch-event-detail-meta-organizer.mjs` — meta + organizer extraction helper
 - Themed pages keep adventure block, reliability note, groups column — **no removals**
 
+See **`docs/ZIP_PAGE_AUDIT.md`** for full page-by-page ZIP comparison and phases 10+ backlog.
+
 ## Explicitly not merged (by design)
 - Replacing 9× Home with single ZIP `Home.tsx`
 - ZIP `App.tsx` (loses lazy routes + onboarding guard)
