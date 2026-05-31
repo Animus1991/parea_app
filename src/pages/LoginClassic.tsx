@@ -4,6 +4,7 @@ import { Users } from 'lucide-react';
 import { useLanguage } from '../lib/i18n';
 import { useStore } from '../store';
 import { Button } from '../components/common/Button';
+import { HomeGuestHero } from '../components/home/HomeGuestHero';
 
 export default function LoginClassic() {
   const navigate = useNavigate();
@@ -17,7 +18,8 @@ export default function LoginClassic() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-[#FDFCFB]">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-10 bg-[#FDFCFB]">
+      <HomeGuestHero />
       <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-xl border-gray-100">
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center text-4xl font-black tracking-tight text-[#111827] mb-4 font-['Outfit']">

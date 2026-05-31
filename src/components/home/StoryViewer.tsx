@@ -16,10 +16,17 @@ interface StoryViewerProps {
   events: Event[];
   startIndex: number;
   onClose: () => void;
+  /** Calendar double-click flow: open hourly schedule for the focused day */
+  onOpenDaySchedule?: () => void;
 }
 
 /** Full-screen, tap-through story viewer (Instagram-style) for the event rail. */
-export function StoryViewer({ events, startIndex, onClose }: StoryViewerProps) {
+export function StoryViewer({
+  events,
+  startIndex,
+  onClose,
+  onOpenDaySchedule,
+}: StoryViewerProps) {
   const [index, setIndex] = useState(startIndex);
   const [progress, setProgress] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -194,18 +201,30 @@ export function StoryViewer({ events, startIndex, onClose }: StoryViewerProps) {
               {event.locationArea}
             </div>
           )}
-          <div className="flex gap-2 pt-1.5">
+          <div className="flex gap-2 pt-1.5 flex-wrap">
             <button
               onClick={openEvent}
-              className="flex-1 bg-white text-gray-900 font-bold rounded-xl py-2.5 text-[13.5px] flex items-center justify-center gap-1.5 hover:bg-gray-100 transition-colors"
+              className="flex-1 min-w-[120px] bg-white text-gray-900 font-bold rounded-xl py-2.5 text-[13.5px] flex items-center justify-center gap-1.5 hover:bg-gray-100 transition-colors"
             >
               {t("Δες εκδήλωση", "View event")}
               <ChevronRight className="w-4 h-4" />
             </button>
+            {onOpenDaySchedule && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenDaySchedule();
+                }}
+                className="flex-1 min-w-[120px] bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl py-2.5 text-[13.5px] transition-colors"
+              >
+                {t("Πρόγραμμα Ημέρας", "Day Schedule")}
+              </button>
+            )}
             {seeksHost && (
               <button
                 onClick={handleBecomeHost}
-                className="flex-1 bg-amber-400 text-amber-950 font-bold rounded-xl py-2.5 text-[13.5px] flex items-center justify-center gap-1.5 hover:bg-amber-300 transition-colors"
+                className="flex-1 min-w-[120px] bg-amber-400 text-amber-950 font-bold rounded-xl py-2.5 text-[13.5px] flex items-center justify-center gap-1.5 hover:bg-amber-300 transition-colors"
               >
                 <Crown className="w-4 h-4" />
                 {t("Γίνε Διοργανωτής", "Organize")}

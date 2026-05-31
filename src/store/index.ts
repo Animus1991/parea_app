@@ -27,9 +27,13 @@ export interface CommitmentHold {
   amount: number;
 }
 
+export type HomeHeroMode = 'light' | 'balanced' | 'rich';
+
 interface AppState {
   theme: string;
   setTheme: (theme: string) => void;
+  homeHeroMode: HomeHeroMode;
+  setHomeHeroMode: (mode: HomeHeroMode) => void;
   events: Event[];
   groups: typeof mockGroups;
   users: typeof mockUsers;
@@ -103,11 +107,14 @@ export const useStore = create<AppState>()(
     (set, get) => ({
   theme: 'classic',
   setTheme: (theme) => set({ theme }),
+  homeHeroMode: 'balanced',
+  setHomeHeroMode: (homeHeroMode) => set({ homeHeroMode }),
   events: mockEvents,
   eventsLoading: false,
   eventsSource: 'mock',
   groups: mockGroups,
   users: mockUsers,
+  // Prototype: mock user until backend auth (see src/lib/runtimeMode.ts, docs/ARCHITECTURE.md).
   currentUser: currentUser,
   isAuthenticated: true,
   notifications: mockNotifications,
@@ -472,6 +479,7 @@ export const useStore = create<AppState>()(
       };
     }),
 
+  /** Merges Ticketmaster events (ids prefixed tm_) when VITE_TICKETMASTER_API_KEY is set. */
   fetchExternalEvents: async () => {
     if (!isTicketmasterConfigured()) return;
     set({ eventsLoading: true });
@@ -500,6 +508,7 @@ export const useStore = create<AppState>()(
       partialize: (state) => ({
         savedEvents: state.savedEvents,
         theme: state.theme,
+        homeHeroMode: state.homeHeroMode,
         waitlistedEvents: state.waitlistedEvents,
         feedbackSubmitted: state.feedbackSubmitted,
         onboardingCompleted: state.onboardingCompleted,

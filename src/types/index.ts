@@ -19,6 +19,13 @@ export interface User {
   idVerified: boolean;
   isOrganizer: boolean;
   connections?: string[];
+  /** Saved from OnboardingClassic (group size, schedule, location, activity). */
+  discoveryPrefs?: {
+    groupSize?: string;
+    activityLevel?: string;
+    schedule?: string[];
+    locationPref?: string;
+  };
 }
 
 export interface Notification {

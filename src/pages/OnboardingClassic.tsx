@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
+import {
+  buildPostOnboardingHomePath,
+  markOnboardingWelcomeSession,
+} from '../lib/onboardingHomeBridge';
 import { motion, AnimatePresence } from 'motion/react';
 
 const INTERESTS = [
@@ -90,10 +94,22 @@ export default function OnboardingClassic() {
         interests: selectedInterests,
         bio: bio || currentUser.bio,
         name: name || currentUser.name,
+        discoveryPrefs: {
+          groupSize: selectedGroupSize,
+          activityLevel: selectedActivity,
+          schedule: selectedSchedule,
+          locationPref: selectedLocation,
+        },
       });
     }
     completeOnboarding();
-    navigate('/');
+    markOnboardingWelcomeSession();
+    navigate(
+      buildPostOnboardingHomePath({
+        interests: selectedInterests,
+        locationPref: selectedLocation,
+      }),
+    );
   };
 
   const handleSkip = () => {

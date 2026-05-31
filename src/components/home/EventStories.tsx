@@ -8,6 +8,7 @@ import { useStore } from "../../store";
 import { useThemeStyles } from "../../hooks/useThemeStyles";
 import { useHomeTheme } from "../../hooks/useHomeTheme";
 import { cn } from "../../lib/utils";
+import { isEventSeekingHost } from "../../lib/storyEventOrdering";
 import { StoryViewer } from "./StoryViewer";
 
 const RING_BY_ACCENT: Record<string, string> = {
@@ -52,9 +53,7 @@ export function EventStories({ events }: EventStoriesProps) {
 
       <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 noscrollbar">
         {events.map((e, idx) => {
-          const seeksHost =
-            !!e.isPlatformEvent &&
-            !groups.find((g) => g.eventId === e.id && g.hostId);
+          const seeksHost = isEventSeekingHost(e, groups);
           const seen = savedEvents.includes(e.id);
 
           let day = "";

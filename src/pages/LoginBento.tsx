@@ -4,6 +4,7 @@ import { Users } from 'lucide-react';
 import { useLanguage } from '../lib/i18n';
 import { useStore } from '../store';
 import { Button } from '../components/common/Button';
+import { LoginGuestHeroStrip } from '../components/auth/LoginGuestHeroStrip';
 
 export default function LoginBento() {
   const navigate = useNavigate();
@@ -17,7 +18,8 @@ export default function LoginBento() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-10 bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+      <LoginGuestHeroStrip accentClass="bg-indigo-50 text-indigo-600" />
       <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-xl border-indigo-100/50">
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center text-4xl font-black tracking-tight mb-4 font-['Outfit']">

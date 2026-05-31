@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Settings, Bell, Lock, Eye, Globe, Shield, CreditCard, LogOut, Trash2, Smartphone, Mail, Download, Laptop, Info, Palette, CheckCircle2 } from 'lucide-react';
+import { Settings, Bell, Lock, Eye, Globe, Shield, CreditCard, LogOut, Trash2, Smartphone, Mail, Download, Laptop, Info, Palette, CheckCircle2, LayoutGrid } from 'lucide-react';
+import { HomeHeroModeSetting } from './HomeHeroModeSetting';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { useStore } from '../../store';
@@ -23,6 +24,8 @@ export default function SettingsPageContent() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showThemePicker, setShowThemePicker] = useState(false);
+  const [showHomeLayout, setShowHomeLayout] = useState(false);
+  const homeHeroMode = useStore((s) => s.homeHeroMode);
 
   const [notificationPrefs, setNotificationPrefs] = useState({
     pushMessages: true,
@@ -54,6 +57,7 @@ export default function SettingsPageContent() {
       items: [
         { icon: Globe, label: t('Γλώσσα', 'Language'), value: language === 'el' ? 'Ελληνικά' : 'English', onClick: () => setLanguage(language === 'el' ? 'en' : 'el') },
         { icon: Palette, label: t('Εμφάνιση & Θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
+        { icon: LayoutGrid, label: t('Προβολή αρχικής', 'Home layout'), value: homeHeroMode === 'light' ? t('Σύντομο', 'Compact') : homeHeroMode === 'rich' ? t('Πλήρες', 'Full') : t('Ισορροπημένο', 'Balanced'), onClick: () => setShowHomeLayout(!showHomeLayout) },
         { icon: CreditCard, label: t('Μέθοδοι Πληρωμής', 'Payment Methods'), value: t('1 κάρτα', '1 card') },
       ],
     },
@@ -101,6 +105,19 @@ export default function SettingsPageContent() {
           </Card>
         </div>
       ))}
+
+      {showHomeLayout && (
+        <Card className="p-5">
+          <h3 className={cn("font-bold text-base mb-1", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
+          <p className={cn("text-xs font-medium mb-4", a.sub)}>
+            {t(
+              'Επιλέξτε πόσο πλούσιο είναι το hero στην αρχική — ισχύει σε όλα τα θέματα.',
+              'Choose how rich the home hero is — applies across all themes.',
+            )}
+          </p>
+          <HomeHeroModeSetting />
+        </Card>
+      )}
 
       {/* Theme Picker */}
       {showThemePicker && (

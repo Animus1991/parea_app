@@ -1,4 +1,5 @@
 import { Event } from "../types";
+import { RUNTIME_MODE } from "../lib/runtimeMode";
 
 const TICKETMASTER_API_KEY = import.meta.env.VITE_TICKETMASTER_API_KEY || "";
 const TICKETMASTER_BASE = "https://app.ticketmaster.com/discovery/v2";
@@ -60,7 +61,7 @@ function mapTmEvent(e: TmEvent): Event {
   if (!tags.length) tags.push(segment.toLowerCase().replace(/\s+/g, "-"));
 
   return {
-    id: `tm_${e.id}`,
+    id: `${RUNTIME_MODE.externalEventIdPrefix}${e.id}`,
     title: e.name,
     category: categoryMap[segment] || "Social",
     description: e.info || e.description || `${e.name} at ${venue?.name || "Athens"}`,
