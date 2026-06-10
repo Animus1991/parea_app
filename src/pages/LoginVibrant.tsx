@@ -5,6 +5,7 @@ import { useLanguage } from '../lib/i18n';
 import { useStore } from '../store';
 import { Button } from '../components/common/Button';
 import { LoginGuestHeroStrip } from '../components/auth/LoginGuestHeroStrip';
+import { LoginExploreDemoButton } from '../components/auth/LoginExploreDemoButton';
 
 export default function LoginVibrant() {
   const navigate = useNavigate();
@@ -30,6 +31,8 @@ export default function LoginVibrant() {
         </div>
 
         <div className="space-y-4 pt-4">
+          <LoginExploreDemoButton />
+
           <div className="text-center text-xs font-bold text-black tracking-wide mb-4">
             {t('Επιλέξτε Λογαριασμό (Demo)', 'Select Account (Demo)')}
           </div>

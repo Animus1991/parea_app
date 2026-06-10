@@ -107,7 +107,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroMotivation: 'text-gray-300 text-[15px] md:text-[16px] font-medium mb-4',
     heroTitle: 'text-white text-[16px] md:text-[18px] font-bold tracking-tight mb-3 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-300',
-    heroSubtitle: 'text-gray-300 font-medium text-[13.5px] md:text-[14.5px] leading-relaxed max-w-xl mb-6',
+    heroSubtitle: 'text-gray-300 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-cyan-400',
     heroSearchInput:
@@ -248,7 +248,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroMotivation: 'text-gray-300 text-[15px] md:text-[16px] font-medium mb-4',
     heroTitle: 'text-white text-[16px] md:text-[18px] font-bold tracking-tight mb-3 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 to-orange-300',
-    heroSubtitle: 'text-gray-300 font-medium text-[13.5px] md:text-[14.5px] leading-relaxed max-w-xl mb-6',
+    heroSubtitle: 'text-gray-300 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-fuchsia-400',
     heroSearchInput:
@@ -283,7 +283,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroMotivation: 'text-gray-300 text-[15px] md:text-[16px] font-medium mb-4',
     heroTitle: 'text-white text-[16px] md:text-[18px] font-bold tracking-tight mb-3 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-violet-300',
-    heroSubtitle: 'text-gray-300 font-medium text-[13.5px] md:text-[14.5px] leading-relaxed max-w-xl mb-6',
+    heroSubtitle: 'text-gray-300 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-indigo-400',
     heroSearchInput:
@@ -318,7 +318,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroMotivation: 'text-gray-300 text-[15px] md:text-[16px] font-medium mb-4',
     heroTitle: 'text-white text-[16px] md:text-[18px] font-bold tracking-tight mb-3 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-300',
-    heroSubtitle: 'text-gray-300 font-medium text-[13.5px] md:text-[14.5px] leading-relaxed max-w-xl mb-6',
+    heroSubtitle: 'text-gray-300 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-emerald-400',
     heroSearchInput:

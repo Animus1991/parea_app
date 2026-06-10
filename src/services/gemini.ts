@@ -1,13 +1,14 @@
 /**
- * Optional Gemini integration for event copy and group icebreakers.
- * Requires GEMINI_API_KEY in .env / AI Studio secrets.
+ * Gemini integration — routes through server proxy when configured (P2 security).
  */
+import { appEnv } from '../lib/config/env';
 
-const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const DIRECT_API =
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
-function getApiKey(): string {
+function getClientApiKey(): string {
   return (
-    (import.meta.env.VITE_GEMINI_API_KEY as string | undefined) ||
+    appEnv.geminiApiKey ||
     (typeof process !== 'undefined' &&
       (process as { env?: { GEMINI_API_KEY?: string } }).env?.GEMINI_API_KEY) ||
     ''
@@ -15,16 +16,29 @@ function getApiKey(): string {
 }
 
 export function isGeminiConfigured(): boolean {
-  const key = getApiKey();
+  if (appEnv.aiUseProxy) return true;
+  const key = getClientApiKey();
   return key.length > 10 && !key.includes('MY_GEMINI');
 }
 
 async function generateText(prompt: string): Promise<string | null> {
-  const key = getApiKey();
   if (!isGeminiConfigured()) return null;
 
   try {
-    const res = await fetch(`${API_BASE}?key=${encodeURIComponent(key)}`, {
+    if (appEnv.aiUseProxy) {
+      const base = appEnv.apiBaseUrl || '';
+      const res = await fetch(`${base}/api/ai/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, model: 'gemini-2.0-flash' }),
+      });
+      if (!res.ok) return null;
+      const data = (await res.json()) as { text?: string };
+      return typeof data.text === 'string' ? data.text.trim() : null;
+    }
+
+    const key = getClientApiKey();
+    const res = await fetch(`${DIRECT_API}?key=${encodeURIComponent(key)}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -64,7 +78,7 @@ export async function generateGroupIcebreakers(
   if (!text) return null;
   return text
     .split(/\n/)
-    .map((l) => l.replace(/^\d+[\).\]]\s*/, '').trim())
+    .map((l) => l.replace(/^\d+[.)\\]]\s*/, '').trim())
     .filter(Boolean)
     .slice(0, 3);
 }

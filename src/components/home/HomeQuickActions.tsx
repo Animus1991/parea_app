@@ -10,6 +10,7 @@ import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { cn } from '../../lib/utils';
+import { HomeNextBestAction } from './HomeNextBestAction';
 
 interface HomeQuickActionsProps {
   useClassicTokens?: boolean;
@@ -76,6 +77,7 @@ export function HomeQuickActions({
   if (useClassicTokens) {
     return (
       <section className="space-y-4">
+        <HomeNextBestAction />
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {shortcuts.map(({ icon: Icon, label, onClick, key }) => (
             <button
@@ -110,8 +112,8 @@ export function HomeQuickActions({
               <div className="w-9 h-9 rounded-2xl bg-cyan-50 flex items-center justify-center mb-2">
                 <Icon className="w-4 h-4 text-cyan-600" />
               </div>
-              <h3 className={cn('font-bold text-[14px] mb-1', h.heading)}>{title}</h3>
-              <p className={cn('text-[12px] font-medium', h.labelMuted)}>{body}</p>
+              <h3 className={cn('font-bold text-sm mb-1', h.heading)}>{title}</h3>
+              <p className={cn('text-xs font-medium', h.labelMuted)}>{body}</p>
             </button>
           ))}
         </div>
@@ -121,6 +123,7 @@ export function HomeQuickActions({
 
   return (
     <section className="space-y-6">
+      <HomeNextBestAction />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {shortcuts.map(({ icon: Icon, label, onClick, key }) => (
           <button
@@ -167,8 +170,8 @@ export function HomeQuickActions({
             >
               <Icon className="w-5 h-5" />
             </div>
-            <h3 className={cn('font-bold text-[14px] mb-1', p.head)}>{title}</h3>
-            <p className={cn('text-[12px] font-medium', p.sub)}>{body}</p>
+            <h3 className={cn('font-bold text-sm mb-1', p.head)}>{title}</h3>
+            <p className={cn('text-xs font-medium', p.sub)}>{body}</p>
           </button>
         ))}
       </div>

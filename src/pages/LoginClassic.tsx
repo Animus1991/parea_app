@@ -3,8 +3,8 @@ import { Card } from '../components/common/Card';
 import { Users } from 'lucide-react';
 import { useLanguage } from '../lib/i18n';
 import { useStore } from '../store';
-import { Button } from '../components/common/Button';
 import { HomeGuestHero } from '../components/home/HomeGuestHero';
+import { LoginExploreDemoButton } from '../components/auth/LoginExploreDemoButton';
 
 export default function LoginClassic() {
   const navigate = useNavigate();
@@ -30,6 +30,8 @@ export default function LoginClassic() {
         </div>
 
         <div className="space-y-4 pt-4">
+          <LoginExploreDemoButton />
+
           <div className="text-center text-xs font-bold text-gray-400 tracking-wide mb-4">
             {t('Επιλέξτε Λογαριασμό (Demo)', 'Select Account (Demo)')}
           </div>

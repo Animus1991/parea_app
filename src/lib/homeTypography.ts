@@ -1,14 +1,15 @@
 /**
- * Fractional type scale aligned with HomeClassic (Phase 16+).
- * Use on non-Classic Home theme pages for consistent rhythm.
+ * Home hero density type scale — use instead of arbitrary text-[N.Npx].
  */
 export const HOME_TYPO = {
-  heroBadge: 'text-[14.21px] font-bold tracking-wide',
-  heroTitle: 'text-[17.33px] md:text-[22.77px] font-bold tracking-tight leading-[1.1]',
-  heroSubtitle: 'text-[14.42px] md:text-[16.48px] font-medium leading-relaxed',
-  heroStats: 'text-[11.33px] font-bold tracking-wide',
-  heroMapBtn: 'font-bold text-[13.58px]',
-  stepTitle: 'font-bold text-[14.63px]',
-  stepBody: 'text-[12.38px] leading-relaxed font-medium',
-  feedTab: 'text-[12.73px] font-bold',
+  heroBadge: 'text-sm font-bold tracking-wide',
+  heroTitle: 'text-lg md:text-2xl font-bold tracking-tight leading-tight',
+  heroSubtitle: 'text-sm md:text-base font-medium leading-relaxed',
+  heroStats: 'text-xs font-bold tracking-wide',
+  heroMapBtn: 'text-sm font-bold',
+  stepTitle: 'text-sm font-bold',
+  stepBody: 'text-xs leading-relaxed font-medium',
+  feedTab: 'text-xs font-bold',
 } as const;
+
+export { APP_TYPO, EVENT_CARD_TYPO } from './typographyTokens';

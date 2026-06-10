@@ -11,11 +11,17 @@ export const appEnv = {
     (import.meta.env.VITE_GOOGLE_MAPS_PLATFORM_KEY as string | undefined) ??
     '',
   enableAnalytics: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
+  /** When true (default in dev with server.ts), Gemini calls go through /api/ai/generate. */
+  aiUseProxy: import.meta.env.VITE_AI_USE_PROXY !== 'false',
+  wsUrl: (import.meta.env.VITE_WS_URL as string | undefined) ?? '',
 } as const;
 
 export function validateEnv(): string[] {
   const warnings: string[] = [];
-  if (appEnv.mode === 'production' && !appEnv.geminiApiKey) {
+  if (appEnv.mode === 'production' && appEnv.aiUseProxy && !appEnv.apiBaseUrl) {
+    warnings.push('Production AI proxy enabled but VITE_API_BASE_URL is empty — using same-origin.');
+  }
+  if (appEnv.mode === 'production' && !appEnv.aiUseProxy && !appEnv.geminiApiKey) {
     warnings.push('VITE_GEMINI_API_KEY is not set — AI features will be disabled.');
   }
   if (appEnv.mode === 'production' && !appEnv.googleMapsKey) {

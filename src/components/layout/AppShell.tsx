@@ -16,6 +16,8 @@ import { PlansFormingSidebarReopenTab } from '../buddySeek/PlansFormingSidebar';
 import { PlansFormingBottomSheet } from '../buddySeek/PlansFormingBottomSheet';
 import { PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
 import { PopupChatRoot } from '../chat/PopupChatRoot';
+import { DemoModeBanner } from '../common/DemoModeBanner';
+import { useRealtimeChat } from '../../hooks/useRealtimeChat';
 
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
@@ -396,7 +398,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
   const theme = useStore((s) => s.theme);
+  const demoMode = useStore((s) => s.demoMode);
+  const currentUser = useStore((s) => s.currentUser);
   const tok = useThemeStyles();
+
+  useRealtimeChat(currentUser?.id);
 
   return (
     <div
@@ -409,6 +415,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         {t('Μετάβαση στο περιεχόμενο', 'Skip to content')}
       </a>
+      <DemoModeBanner />
       <SideNav />
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
@@ -427,7 +434,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       )}
       <div className="flex flex-1 h-screen overflow-hidden min-w-0">
-        <div className="flex flex-col flex-1 min-w-0 h-screen overflow-hidden">
+        <div className={cn("flex flex-col flex-1 min-w-0 h-screen overflow-hidden", demoMode && "pt-8")}>
           <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
           <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none">
             <div className="mx-auto w-full max-w-full p-4 lg:px-8 lg:py-6 flex-1 pb-24 md:pb-6">

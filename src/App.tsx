@@ -9,7 +9,8 @@ import { CommandPalette } from "./components/common/CommandPalette";
 import { useStore } from "./store";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { PageLoading } from "./components/common/PageLoading";
-import { useLanguage } from "./lib/i18n";
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './lib/queryClient';
 
 // Route-level code-splitting (lazy-loaded pages)
 const Home = lazy(() => import("./pages/Home"));
@@ -50,7 +51,7 @@ export default function App() {
   const navigate = useNavigate();
   const currentUser = useStore((state) => state.currentUser);
   const onboardingCompleted = useStore((state) => state.onboardingCompleted);
-  const { t } = useLanguage();
+  const demoMode = useStore((state) => state.demoMode);
 
   useEffect(() => {
     if (!currentUser && location.pathname !== "/login") {
@@ -61,13 +62,14 @@ export default function App() {
   useEffect(() => {
     if (
       currentUser &&
+      !demoMode &&
       !onboardingCompleted &&
       location.pathname !== "/onboarding" &&
       location.pathname !== "/login"
     ) {
       navigate("/onboarding");
     }
-  }, [currentUser, onboardingCompleted, location.pathname, navigate]);
+  }, [currentUser, onboardingCompleted, demoMode, location.pathname, navigate]);
 
   if (!currentUser && location.pathname !== "/login") {
     return null; // wait for redirect
@@ -75,7 +77,7 @@ export default function App() {
 
   if (location.pathname === "/login") {
     return (
-      <>
+      <QueryClientProvider client={queryClient}>
         <RouteLifecycle />
         <OfflineBanner />
         <AnimatePresence mode="popLayout">
@@ -85,12 +87,12 @@ export default function App() {
           </Routes>
         </Suspense>
       </AnimatePresence>
-      </>
+      </QueryClientProvider>
     );
   }
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <RouteLifecycle />
       <OfflineBanner />
       <CommandPalette />
@@ -147,6 +149,6 @@ export default function App() {
         </Suspense>
       </AnimatePresence>
     </AppShell>
-    </>
+    </QueryClientProvider>
   );
 }

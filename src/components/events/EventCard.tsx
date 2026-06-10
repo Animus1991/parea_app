@@ -22,6 +22,7 @@ import { useStore } from "../../store";
 import type { Event } from "../../types";
 import { useLanguage } from "../../lib/i18n";
 import { cn } from "../../lib/utils";
+import { EVENT_CARD_TYPO } from "../../lib/typographyTokens";
 import { computeMatchScore, getMatchingPreview } from "../../lib/matching";
 import { MatchExplainChips } from "./MatchExplainChips";
 import { getEventGroupProgress } from "../../lib/groupUtils";
@@ -176,7 +177,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
 
         {/* Date Badge — top left */}
         <div className="absolute top-3 left-3 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm rounded-2xl w-12 h-[50px] shadow-soft border border-white/20 z-10">
-          <span className={cn("text-[10.61px] font-extrabold tracking-wide leading-none mb-0.5", accent === 'fuchsia' ? 'text-fuchsia-600' : accent === 'indigo' ? 'text-indigo-600' : accent === 'emerald' ? 'text-emerald-600' : 'text-[#0E8B8D]')}>
+          <span className={cn(EVENT_CARD_TYPO.badge, "mb-0.5", accent === 'fuchsia' ? 'text-fuchsia-600' : accent === 'indigo' ? 'text-indigo-600' : accent === 'emerald' ? 'text-emerald-600' : 'text-[#0E8B8D]')}>
             {month}
           </span>
           <span className="text-lg font-black text-gray-900 leading-none">
@@ -213,16 +214,16 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             {(event.tags ?? []).slice(0, 2).map((tag: string) => (
               <span
                 key={tag}
-                className="bg-black/50 backdrop-blur-md text-white/95 border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10.61px] font-semibold capitalize tracking-wide shadow-soft whitespace-nowrap truncate max-w-[100px]"
+                className="bg-black/50 backdrop-blur-md text-white/95 border border-white/20 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-semibold capitalize tracking-wide shadow-soft whitespace-nowrap truncate max-w-[100px] text-xs"
               >
                 {tag}
               </span>
             ))}
           </div>
-          <div className="bg-white/95 backdrop-blur-sm px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-2xl shadow-soft-md font-black text-[#111827] text-[11.67px] sm:text-[12.73px] tracking-tight flex flex-col items-end shrink-0 border border-white/60">
+          <div className={cn("bg-white/95 backdrop-blur-sm px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-2xl shadow-soft-md font-black text-[#111827] tracking-tight flex flex-col items-end shrink-0 border border-white/60", EVENT_CARD_TYPO.dateBadge)}>
             {event.isPaid ? `€${event.price}` : t("event_card.free", "Free")}
             {event.isPaid && event.groupDiscount && (
-              <span className="text-[9.55px] text-[#0E8B8D] leading-none block mt-0.5 font-bold">
+              <span className={cn(EVENT_CARD_TYPO.dateSub, "text-[#0E8B8D] block mt-0.5")}>
                 -{event.groupDiscount.percentage}% GRP
               </span>
             )}
@@ -233,15 +234,15 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
       {/* Content Section */}
       <div className="p-4 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-3 mb-2">
-          <h3 className={cn("font-bold text-[15.91px] leading-snug transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? 'group-hover:text-fuchsia-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? 'group-hover:text-fuchsia-600' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-[#0E8B8D]'))}>
+          <h3 className={cn(EVENT_CARD_TYPO.title, "transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? 'group-hover:text-fuchsia-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? 'group-hover:text-fuchsia-600' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-[#0E8B8D]'))}>
             {event.title}
           </h3>
           {currentUser && matchScore != null && (
             <div className="flex flex-col items-end shrink-0">
-              <span className={cn("text-[12.73px] font-black leading-none", accentText)}>
+              <span className={cn(EVENT_CARD_TYPO.matchScore, accentText)}>
                 {matchScore}%
               </span>
-              <span className={cn("text-[9.55px] font-semibold capitalize tracking-wide", mutedColor)}>
+              <span className={cn(EVENT_CARD_TYPO.matchLabel, mutedColor)}>
                 {t("Ταίριασμα", "Match")}
               </span>
             </div>
@@ -249,7 +250,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         </div>
 
         <div className="flex flex-col gap-2 mb-4">
-          <div className={cn("flex flex-wrap items-center gap-x-4 gap-y-2 text-[12.73px] font-medium", subColor)}>
+          <div className={cn("flex flex-wrap items-center gap-x-4 gap-y-2 font-medium", EVENT_CARD_TYPO.meta, subColor)}>
             <div className={cn("flex items-center px-2 py-1 rounded-md", chipBg)}>
               <Clock className={cn("w-3.5 h-3.5 mr-1.5 shrink-0", accentText)} />
               <span>{weekday}, {event.time}</span>
@@ -283,14 +284,14 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             </div>
           )}
           {matchingPreview && (
-            <p className={cn("text-[11px] font-semibold rounded-lg px-2.5 py-1.5", accentBg, accentText)}>
+            <p className={cn(EVENT_CARD_TYPO.hint, "rounded-lg px-2.5 py-1.5", accentBg, accentText)}>
               {t(matchingPreview.labelEl, matchingPreview.labelEn)}
             </p>
           )}
           {currentUser && (
             <MatchExplainChips user={currentUser} event={event} className="mt-1" />
           )}
-          <div className={cn("flex items-center text-[12.73px] font-medium mt-2", subColor)}>
+          <div className={cn("flex items-center font-medium mt-2", EVENT_CARD_TYPO.meta, subColor)}>
             <Users className={cn("w-3.5 h-3.5 mr-2 shrink-0", mutedColor)} />
             <span>
               {groupProgress.spotsLeft}{" "}
@@ -304,7 +305,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                  e.stopPropagation();
                  navigate(`/chat/${userGroup.id}`);
                }}
-               className={cn("mt-3 w-full py-2 rounded-2xl text-[12.73px] font-bold transition-colors flex items-center justify-center gap-2 border shadow-soft", isDark ? (accent === 'fuchsia' ? 'bg-fuchsia-900/20 hover:bg-fuchsia-900/30 text-fuchsia-400 border-fuchsia-800' : accent === 'emerald' ? 'bg-emerald-900/20 hover:bg-emerald-900/30 text-emerald-400 border-emerald-800' : 'bg-cyan-900/20 hover:bg-cyan-900/30 text-cyan-400 border-cyan-800') : 'bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border-cyan-100')}
+               className={cn("mt-3 w-full py-2 rounded-2xl font-bold transition-colors flex items-center justify-center gap-2 border shadow-soft", EVENT_CARD_TYPO.cta, isDark ? (accent === 'fuchsia' ? 'bg-fuchsia-900/20 hover:bg-fuchsia-900/30 text-fuchsia-400 border-fuchsia-800' : accent === 'emerald' ? 'bg-emerald-900/20 hover:bg-emerald-900/30 text-emerald-400 border-emerald-800' : 'bg-cyan-900/20 hover:bg-cyan-900/30 text-cyan-400 border-cyan-800') : 'bg-cyan-50 hover:bg-cyan-100 text-cyan-700 border-cyan-100')}
             >
                <Users className="w-4 h-4" />
                {t('Μετάβαση στο Group Chat', 'View Group Chat')}
@@ -326,7 +327,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 <div className={cn("absolute -bottom-0.5 -right-0.5 bg-green-500 w-2.5 h-2.5 rounded-full border-2", isDark ? "border-gray-800" : "border-white")}></div>
               </div>
               <div className="flex flex-col">
-                <span className={cn("text-[10.93px] font-semibold mb-0.5 capitalize", mutedColor)}>
+                <span className={cn(EVENT_CARD_TYPO.avatarLabel, "mb-0.5 capitalize", mutedColor)}>
                   {hostUser && !organizer ? t('Διοργανωτής ομάδας', 'Group host') : t("event_card.organizer", "Organizer")}
                 </span>
                 <button
@@ -349,7 +350,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className={cn("w-4 h-4 shrink-0", isDark ? "text-amber-400" : "text-amber-600")} />
               <div className="flex flex-col">
-                <span className={cn("text-[10.93px] font-semibold capitalize", isDark ? "text-amber-300/90" : "text-amber-700")}>
+                <span className={cn(EVENT_CARD_TYPO.avatarLabel, "capitalize", isDark ? "text-amber-300/90" : "text-amber-700")}>
                   {t('Προσφέρεται από Nakamas', 'Offered by Nakamas')}
                 </span>
                 <span className={cn("text-xs font-bold", isDark ? "text-amber-100" : "text-amber-900")}>
@@ -359,7 +360,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             </div>
             <button
               onClick={handleBecomeHost}
-              className={cn("w-full py-2 rounded-2xl text-[12.73px] font-bold transition-colors flex items-center justify-center gap-1.5 shadow-soft", isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
+              className={cn("w-full py-2 rounded-2xl font-bold transition-colors flex items-center justify-center gap-1.5 shadow-soft", EVENT_CARD_TYPO.cta, isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
             >
               <Crown className="w-3.5 h-3.5" />
               {t('Γίνε Διοργανωτής Παρέας', 'Become group organizer')}
@@ -376,11 +377,11 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             }}
             className="w-full flex items-center justify-between py-1.5 focus:outline-none"
           >
-            <span className={cn("text-[12.02px] font-bold flex items-center gap-1.5 capitalize tracking-tight", headColor)}>
+            <span className={cn(EVENT_CARD_TYPO.progressTitle, "flex items-center gap-1.5 capitalize tracking-tight", headColor)}>
               <ShieldCheck className={cn("w-3.5 h-3.5", accentText)} />
               {t("Άφιξη & Ασφάλεια", "Arrival & Safety")}
             </span>
-            <span className={cn("text-[10.93px] font-medium", mutedColor)}>
+            <span className={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}>
               {showSafetyPanel ? t("Απόκρυψη", "Hide") : t("Εμφάνιση", "Show")}
             </span>
           </button>
@@ -392,7 +393,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             >
               {/* 1. Arrival Status */}
               <div className="space-y-1.5">
-                <p className={cn("text-[12.02px] font-semibold tracking-tight capitalize", subColor)}>
+                <p className={cn(EVENT_CARD_TYPO.progressTitle, "tracking-tight capitalize", subColor)}>
                   {t("Κατάσταση Άφιξης", "Arrival Status")}
                 </p>
                 <div className="grid grid-cols-2 gap-1.5">
@@ -405,7 +406,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     <button
                       key={status}
                       onClick={() => setArrivalStatus(status)}
-                      className={cn("text-[9.84px] font-bold py-1.5 px-2 rounded-2xl border transition-colors shadow-soft", arrivalStatus === status ? (accent === 'fuchsia' ? 'bg-fuchsia-600 text-white border-fuchsia-600' : accent === 'emerald' ? 'bg-emerald-600 text-white border-emerald-600' : accent === 'indigo' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-cyan-600 text-white border-cyan-600') : isDark ? 'bg-gray-800/50 text-gray-300 border-gray-700/50 hover:border-gray-600' : 'bg-white text-gray-600 border-gray-200 hover:border-cyan-300')}
+                      className={cn(EVENT_CARD_TYPO.statusBtn, "py-1.5 px-2 rounded-2xl border transition-colors shadow-soft", arrivalStatus === status ? (accent === 'fuchsia' ? 'bg-fuchsia-600 text-white border-fuchsia-600' : accent === 'emerald' ? 'bg-emerald-600 text-white border-emerald-600' : accent === 'indigo' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-cyan-600 text-white border-cyan-600') : isDark ? 'bg-gray-800/50 text-gray-300 border-gray-700/50 hover:border-gray-600' : 'bg-white text-gray-600 border-gray-200 hover:border-cyan-300')}
                     >
                       {status}
                     </button>
@@ -418,14 +419,14 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 <div className="flex gap-1.5">
                   <button
                     onClick={() => setShowEtaPrompt(!showEtaPrompt)}
-                    className={cn("flex-1 text-[10.93px] font-bold py-1.5 px-2 rounded-2xl flex items-center justify-center gap-1 border shadow-soft", isDark ? "bg-gray-800/50 text-gray-300 border-gray-700/50 hover:bg-gray-700/40" : "bg-white text-cyan-700 border-cyan-100 hover:bg-cyan-50")}
+                    className={cn("flex-1 py-1.5 px-2 rounded-2xl flex items-center justify-center gap-1 border shadow-soft", EVENT_CARD_TYPO.statusBtn, isDark ? "bg-gray-800/50 text-gray-300 border-gray-700/50 hover:bg-gray-700/40" : "bg-white text-cyan-700 border-cyan-100 hover:bg-cyan-50")}
                   >
                     <Clock className="w-3 h-3" />{" "}
                     {t("Κοινοποίηση ETA", "Share ETA")}
                   </button>
                   <button
                     onClick={() => setShowSafetyLinkModal(true)}
-                    className={cn("flex-1 text-[10.93px] font-bold py-1.5 px-2 rounded-2xl flex items-center justify-center gap-1 border shadow-soft", isDark ? "bg-emerald-900/20 text-emerald-400 border-emerald-800 hover:bg-emerald-900/30" : "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100")}
+                    className={cn("flex-1 py-1.5 px-2 rounded-2xl flex items-center justify-center gap-1 border shadow-soft", EVENT_CARD_TYPO.statusBtn, isDark ? "bg-emerald-900/20 text-emerald-400 border-emerald-800 hover:bg-emerald-900/30" : "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100")}
                   >
                     <Link2 className="w-3 h-3" />{" "}
                     {t("Επαφή Εμπιστοσύνης", "Trusted Contact")}
@@ -437,7 +438,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                       type="text"
                       value={etaValue}
                       onChange={(e) => setEtaValue(e.target.value)}
-                      className={cn("flex-1 text-[11px] font-medium p-1 border-b outline-none bg-transparent", isDark ? "border-gray-700 focus:border-gray-500 text-white placeholder-gray-500" : "border-gray-200 focus:border-cyan-600")}
+                      className={cn(EVENT_CARD_TYPO.etaInput, "p-1 border-b outline-none bg-transparent", isDark ? "border-gray-700 focus:border-gray-500 text-white placeholder-gray-500" : "border-gray-200 focus:border-cyan-600")}
                       placeholder={t("π.χ. 15 λεπτά", "e.g. 15 mins")}
                     />
                     <button
@@ -445,7 +446,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                         setArrivalStatus(`${t("ETA")}: ${etaValue}`);
                         setShowEtaPrompt(false);
                       }}
-                      className={cn("text-[10px] font-bold text-white px-3 py-1 rounded", accent === 'fuchsia' ? 'bg-fuchsia-600' : accent === 'emerald' ? 'bg-emerald-600' : accent === 'indigo' ? 'bg-indigo-600' : 'bg-cyan-600')}
+                      className={cn(EVENT_CARD_TYPO.etaSubmit, "text-white px-3 py-1 rounded", accent === 'fuchsia' ? 'bg-fuchsia-600' : accent === 'emerald' ? 'bg-emerald-600' : accent === 'indigo' ? 'bg-indigo-600' : 'bg-cyan-600')}
                     >
                       {t("Αποστολή", "Send")}
                     </button>
@@ -461,7 +462,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 >
                   <div>
                     <p
-                      className={cn("text-[11px] font-bold", isSharingLocation ? (isDark ? "text-cyan-400" : "text-cyan-700") : headColor)}
+                      className={cn(EVENT_CARD_TYPO.toggleLabel, isSharingLocation ? (isDark ? "text-cyan-400" : "text-cyan-700") : headColor)}
                     >
                       {isSharingLocation
                         ? t("Η τοποθεσία κοινοποιείται", "Location Shared")
@@ -471,7 +472,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                           )}
                     </p>
                     <p
-                      className={cn("text-[9px] mt-0.5", isSharingLocation ? (isDark ? "text-cyan-500/80" : "text-cyan-600/80") : mutedColor)}
+                      className={cn(EVENT_CARD_TYPO.toggleHint, "mt-0.5", isSharingLocation ? (isDark ? "text-cyan-500/80" : "text-cyan-600/80") : mutedColor)}
                     >
                       {isSharingLocation
                         ? t(
@@ -501,13 +502,13 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             className="mb-3"
           />
           {groupProgress.discountUnlocked && event.groupDiscount && (
-            <p className={cn("text-[10px] font-bold mb-2", isDark ? "text-emerald-400" : "text-emerald-600")}>
+            <p className={cn(EVENT_CARD_TYPO.safetyLabel, "mb-2", isDark ? "text-emerald-400" : "text-emerald-600")}>
               -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
             </p>
           )}
           <div className="flex items-center justify-between gap-2">
             <button
-              className={cn("text-[10.93px] min-h-11 px-2 transition-colors font-medium underline underline-offset-2", isDark ? "text-gray-500 hover:text-gray-300" : "text-gray-500 hover:text-[#0E8B8D]")}
+              className={cn(EVENT_CARD_TYPO.safetyLink, "min-h-11 px-2 transition-colors", isDark ? "text-gray-500 hover:text-gray-300" : "text-gray-500 hover:text-[#0E8B8D]")}
               onClick={getCalendarUrl}
               type="button"
               aria-label={t('Προσθήκη στο ημερολόγιο', 'Add to calendar')}
@@ -522,7 +523,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   e.stopPropagation();
                   toggleSave(e);
                 }}
-                className={cn("px-3 py-2 min-h-11 text-[12.02px] font-bold rounded-full", isDark ? "bg-gray-700/40 text-gray-300" : "bg-gray-100 text-gray-600")}
+                className={cn("px-3 py-2 min-h-11 font-bold rounded-full", EVENT_CARD_TYPO.modalBtn, isDark ? "bg-gray-700/40 text-gray-300" : "bg-gray-100 text-gray-600")}
               >
                 {isSaved ? t("Αποθηκευμένο", "Saved") : t("Αποθήκευση", "Save")}
               </button>
@@ -541,7 +542,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   }
                   navigate(`/events/${event.id}/join`);
                 }}
-                className={cn("px-5 py-2 min-h-11 text-white text-[12.02px] font-bold rounded-full shadow-soft", accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-[#111827] hover:bg-black')}
+                className={cn("px-5 py-2 min-h-11 text-white font-bold rounded-full shadow-soft", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-[#111827] hover:bg-black')}
               >
                 {t("Βρες παρέα", "Find company")}
               </button>
@@ -574,7 +575,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                         "Live Location Sharing",
                       )}
                     </h3>
-                    <p className="text-[11px] font-medium text-gray-500">
+                    <p className={cn(EVENT_CARD_TYPO.hint, "font-medium text-gray-500")}>
                       {t("Προαιρετικό & Προσωρινό", "Optional & temporary")}
                     </p>
                   </div>
@@ -605,7 +606,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                         setIsSharingLocation(false);
                         setShowLocationConfigModal(false);
                       }}
-                      className="w-full bg-white text-red-600 border border-red-200 hover:bg-red-50 py-2 rounded-2xl text-[11px] font-bold tracking-tight capitalize shadow-soft"
+                      className={cn("w-full bg-white text-red-600 border border-red-200 hover:bg-red-50 py-2 rounded-2xl font-bold tracking-tight capitalize shadow-soft", EVENT_CARD_TYPO.link)}
                     >
                       {t("Διακοπή Κοινοποίησης", "Stop Sharing Now")}
                     </button>
@@ -627,11 +628,11 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                       className={`p-3 rounded-2xl border text-left flex flex-col h-full transition-all duration-200 ${locationConfig.precision === "approximate" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827] shadow-soft" : "border-gray-100 hover:border-[#a5f3fc]"}`}
                     >
                       <span
-                        className={`text-[13px] font-bold ${locationConfig.precision === "approximate" ? "text-[#111827]" : "text-gray-700"}`}
+                        className={cn(EVENT_CARD_TYPO.locationTitle, locationConfig.precision === "approximate" ? "text-[#111827]" : "text-gray-700")}
                       >
                         {t("Κατά προσέγγιση", "Approximate")}
                       </span>
-                      <span className="text-[10px] text-gray-500 mt-1 leading-relaxed">
+                      <span className={cn(EVENT_CARD_TYPO.locationHint, "text-gray-500 mt-1")}>
                         {t(
                           "Μόνο απόσταση & ETA, χωρίς χάρτη",
                           "Distance & ETA only, no map pin",
@@ -648,11 +649,11 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                       className={`p-3 rounded-2xl border text-left flex flex-col h-full transition-all duration-200 ${locationConfig.precision === "exact" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827] shadow-soft" : "border-gray-100 hover:border-[#a5f3fc]"}`}
                     >
                       <span
-                        className={`text-[13px] font-bold ${locationConfig.precision === "exact" ? "text-[#111827]" : "text-gray-700"}`}
+                        className={cn(EVENT_CARD_TYPO.locationTitle, locationConfig.precision === "exact" ? "text-[#111827]" : "text-gray-700")}
                       >
                         {t("Ακριβής", "Exact")}
                       </span>
-                      <span className="text-[10px] text-gray-500 mt-1 leading-relaxed">
+                      <span className={cn(EVENT_CARD_TYPO.locationHint, "text-gray-500 mt-1")}>
                         {t(
                           "Ακριβής παρακολούθηση GPS",
                           "Precise GPS live tracking",
@@ -706,7 +707,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                               )}
                           </span>
                           {option === "organizer" && (
-                            <span className="text-[10px] text-gray-500 leading-relaxed">
+                            <span className={cn(EVENT_CARD_TYPO.locationHint, "text-gray-500")}>
                               {t(
                                 "Ιδανικό για ξεναγήσεις & πεζοπορίες",
                                 "Best for guided hikes or escapes",
@@ -714,7 +715,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                             </span>
                           )}
                           {option === "all" && (
-                            <span className="text-[10px] text-amber-600 leading-relaxed">
+                            <span className={cn(EVENT_CARD_TYPO.locationHint, "text-amber-600")}>
                               {t(
                                 "Όλοι σε αυτό το chat βλέπουν την τοποθεσία σας",
                                 "Everyone in this chat will see your location",
@@ -810,7 +811,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     );
                     toast.success(t("Ο σύνδεσμος αντιγράφηκε", "Copied to clipboard"));
                   }}
-                  className="text-[#0E8B8D] font-bold text-[11px] hover:bg-cyan-50 px-2 py-1 rounded transition-colors"
+                  className={cn("text-[#0E8B8D] font-bold hover:bg-cyan-50 px-2 py-1 rounded transition-colors", EVENT_CARD_TYPO.link)}
                 >
                   {t("Αντιγραφη", "Copy")}
                 </button>

@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { Conversation, ChatMessage, ChatPrivacySettings } from '../types/chat';
 import { DEFAULT_CHAT_PRIVACY } from '../types/chat';
 import { mockConversations, mockChatMessages } from '../data/mockChatData';
+import { emitChatMessage, joinChatRoom } from '../lib/realtime/socket';
 
 export interface ChatReport {
   id: string;
@@ -117,6 +118,8 @@ export const useChatStore = create<ChatState>()(
               : c,
           ),
         }));
+        joinChatRoom(conversationId);
+        emitChatMessage(conversationId, senderId, body);
       },
 
       receiveMessage: (conversationId, body, senderId, type = 'text') => {

@@ -121,6 +121,9 @@ interface AppState {
   users: typeof mockUsers;
   currentUser: typeof currentUser | null;
   isAuthenticated: boolean;
+  demoMode: boolean;
+  enterDemoMode: () => void;
+  exitDemoMode: () => void;
   notifications: typeof mockNotifications;
   eventsLoading: boolean;
   eventsSource: 'mock' | 'api' | 'mixed';
@@ -268,7 +271,8 @@ export const useStore = create<AppState>()(
   users: mockUsers,
   // Prototype: mock user until backend auth (see src/lib/runtimeMode.ts, docs/ARCHITECTURE.md).
   currentUser: currentUser,
-  isAuthenticated: true,
+  isAuthenticated: Boolean(currentUser),
+  demoMode: false,
   notifications: mockNotifications,
   savedEvents: ['e4', 'e3'],
   waitlistedEvents: [],
@@ -360,10 +364,24 @@ export const useStore = create<AppState>()(
     set((state) => {
       const user = state.users.find((u) => u.id === userId);
       if (!user) return state;
-      return { currentUser: user, isAuthenticated: true };
+      return { currentUser: user, isAuthenticated: true, demoMode: false };
     }),
 
-  logout: () => set({ currentUser: null, isAuthenticated: false }),
+  logout: () => set({ currentUser: null, isAuthenticated: false, demoMode: false }),
+
+  enterDemoMode: () =>
+    set((state) => {
+      const user = state.users.find((u) => u.id === 'u1') ?? state.users[0];
+      if (!user) return state;
+      return {
+        demoMode: true,
+        currentUser: user,
+        isAuthenticated: true,
+        onboardingCompleted: true,
+      };
+    }),
+
+  exitDemoMode: () => set({ demoMode: false, currentUser: null, isAuthenticated: false }),
 
   joinGroup: (groupId) =>
     set((state) => {
@@ -1280,6 +1298,7 @@ export const useStore = create<AppState>()(
         userSettings: state.userSettings,
         bonusXp: state.bonusXp,
         challengesJoined: state.challengesJoined,
+        demoMode: state.demoMode,
       }),
       merge: (persisted, current) => {
         const p = persisted as Record<string, unknown> | undefined;
@@ -1352,6 +1371,7 @@ export const useStore = create<AppState>()(
           connectionRequests,
           currentUser: currentUserResolved,
           isAuthenticated: Boolean(currentUserResolved),
+          demoMode: Boolean(p.demoMode),
           userSettings,
         };
       },

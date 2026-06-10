@@ -5,6 +5,7 @@ import { filterHomeEvents, sortHomeEvents } from '../lib/homeEventFeed';
 import { getHomeMoodById } from '../lib/homeMoodConstants';
 import { useHomeUrlFilters } from './useHomeUrlFilters';
 import { useHomeGeoDistance } from './useHomeGeoDistance';
+import { useEventsQuery } from './useEventsQuery';
 
 export interface UseHomeEventFeedOptions {
   feedType: 'For You' | 'Discover';
@@ -17,7 +18,7 @@ export function useHomeEventFeed({
   seekingHostOnly,
   isSeekingHost,
 }: UseHomeEventFeedOptions) {
-  const events = useStore((s) => s.events);
+  const { data: events = [] } = useEventsQuery();
   const currentUser = useStore((s) => s.currentUser);
   const filters = useHomeUrlFilters();
   const { getDistance } = useHomeGeoDistance(filters.radiusFilter);

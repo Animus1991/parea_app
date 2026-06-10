@@ -8,7 +8,12 @@ import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
 import { CompanyRequestModerationPanel } from '../buddySeek/CompanyRequestModerationPanel';
 import { ChatModerationPanel } from '../chat/ChatModerationPanel';
+import { AdminAutomationPanel } from './AdminAutomationPanel';
+import { AdminBrandingPanel } from './AdminBrandingPanel';
+import { AdminSSOPanel } from './AdminSSOPanel';
 import { toast } from 'sonner';
+
+type AdminTab = 'moderation' | 'automation' | 'branding' | 'sso';
 
 export default function AdminDashboardPageContent() {
   const { t } = useLanguage();
@@ -19,6 +24,7 @@ export default function AdminDashboardPageContent() {
   const resolveIssueReport = useStore((s) => s.resolveIssueReport);
   const logAdminAction = useStore((s) => s.logAdminAction);
 
+  const [adminTab, setAdminTab] = useState<AdminTab>('moderation');
   const [searchUser, setSearchUser] = useState('');
   const [adminAction, setAdminAction] = useState('warning');
   const [adminNote, setAdminNote] = useState('');
@@ -71,37 +77,67 @@ export default function AdminDashboardPageContent() {
   return (
     <div className="mx-auto max-w-full space-y-8 pb-12 animate-in fade-in duration-500">
       <div>
-        <h1 className={cn('text-[16px] md:text-[18px] font-bold', a.isDark ? 'text-red-400' : 'text-red-700')}>
+        <h1 className={cn('text-base md:text-lg font-bold', a.isDark ? 'text-red-400' : 'text-red-700')}>
           {t('Πίνακας Διαχείρισης', 'Admin Dashboard')}
         </h1>
         <p className={cn('mt-1 text-sm font-medium', a.sub)}>
           {t('Εποπτεία πλατφόρμας & μετριασμός', 'Platform oversight & moderation')}
         </p>
+        <div className="flex flex-wrap gap-2 mt-4">
+          {(
+            [
+              ['moderation', t('Μετριασμός', 'Moderation')],
+              ['automation', t('Automation', 'Automation')],
+              ['branding', t('Branding', 'Branding')],
+              ['sso', 'SSO'],
+            ] as const
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setAdminTab(key)}
+              className={cn(
+                'px-3 py-1.5 rounded-full text-xs font-bold border transition-colors',
+                adminTab === key
+                  ? 'bg-gray-900 text-white border-gray-900'
+                  : cn(a.borderB, a.sub, 'hover:opacity-80'),
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
+      {adminTab === 'automation' && <AdminAutomationPanel />}
+      {adminTab === 'branding' && <AdminBrandingPanel />}
+      {adminTab === 'sso' && <AdminSSOPanel />}
+
+      {adminTab === 'moderation' && (
+      <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className={cn('p-4 border-t-4 border-t-blue-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Ενεργοί', 'Active')}</h3>
-          <p className={cn('text-[20px] font-black mt-1', a.head)}>{users.length}</p>
-          <p className="text-[11px] text-green-500 font-bold flex items-center gap-0.5">
+          <p className={cn('text-xl font-black mt-1', a.head)}>{users.length}</p>
+          <p className="text-xs text-green-500 font-bold flex items-center gap-0.5">
             <TrendingUp className="w-2.5 h-2.5" />
             {t('χρήστες', 'users')}
           </p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-cyan-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Αναφορές', 'Reports')}</h3>
-          <p className={cn('text-[20px] font-black mt-1', a.head)}>{pendingReports.length}</p>
-          <p className="text-[11px] text-amber-500 font-bold">{t('εκκρεμείς', 'pending')}</p>
+          <p className={cn('text-xl font-black mt-1', a.head)}>{pendingReports.length}</p>
+          <p className="text-xs text-amber-500 font-bold">{t('εκκρεμείς', 'pending')}</p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-red-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Επιλύθηκαν', 'Resolved')}</h3>
-          <p className={cn('text-[20px] font-black mt-1', a.head)}>{resolvedCount}</p>
-          <p className={cn('text-[11px] font-medium', a.muted)}>{t('συνολικά', 'total')}</p>
+          <p className={cn('text-xl font-black mt-1', a.head)}>{resolvedCount}</p>
+          <p className={cn('text-xs font-medium', a.muted)}>{t('συνολικά', 'total')}</p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-emerald-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Εκδηλώσεις', 'Events')}</h3>
-          <p className={cn('text-[20px] font-black mt-1', a.head)}>{events.length}</p>
-          <p className={cn('text-[11px] font-medium', a.muted)}>{t('στη βάση', 'in catalog')}</p>
+          <p className={cn('text-xl font-black mt-1', a.head)}>{events.length}</p>
+          <p className={cn('text-xs font-medium', a.muted)}>{t('στη βάση', 'in catalog')}</p>
         </Card>
       </div>
 
@@ -110,8 +146,8 @@ export default function AdminDashboardPageContent() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className={cn('text-[11px] font-medium', a.muted)}>{t('Μ.Ο. Αξιοπιστία', 'Avg Reliability')}</span>
-              <span className="text-[12.5px] font-bold text-emerald-600">{avgReliability}%</span>
+              <span className={cn('text-xs font-medium', a.muted)}>{t('Μ.Ο. Αξιοπιστία', 'Avg Reliability')}</span>
+              <span className="text-sm font-bold text-emerald-600">{avgReliability}%</span>
             </div>
             <div className={cn('w-full h-1.5 rounded-full', a.progressBg)}>
               <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${avgReliability}%` }} />
@@ -119,8 +155,8 @@ export default function AdminDashboardPageContent() {
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className={cn('text-[11px] font-medium', a.muted)}>{t('No-show rate', 'No-show rate')}</span>
-              <span className="text-[12.5px] font-bold text-amber-600">4.2%</span>
+              <span className={cn('text-xs font-medium', a.muted)}>{t('No-show rate', 'No-show rate')}</span>
+              <span className="text-sm font-bold text-amber-600">4.2%</span>
             </div>
             <div className={cn('w-full h-1.5 rounded-full', a.progressBg)}>
               <div className="bg-amber-400 h-full rounded-full" style={{ width: '4.2%' }} />
@@ -128,8 +164,8 @@ export default function AdminDashboardPageContent() {
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className={cn('text-[11px] font-medium', a.muted)}>{t('Επαληθευμένοι', 'Verified')}</span>
-              <span className="text-[12.5px] font-bold text-cyan-600">{verifiedPct}%</span>
+              <span className={cn('text-xs font-medium', a.muted)}>{t('Επαληθευμένοι', 'Verified')}</span>
+              <span className="text-sm font-bold text-cyan-600">{verifiedPct}%</span>
             </div>
             <div className={cn('w-full h-1.5 rounded-full', a.progressBg)}>
               <div className="bg-cyan-500 h-full rounded-full" style={{ width: `${verifiedPct}%` }} />
@@ -160,7 +196,7 @@ export default function AdminDashboardPageContent() {
                       <p className={cn('text-sm mt-0.5 leading-relaxed', a.sub)}>
                         {report.description || t('Χωρίς περιγραφή', 'No description')}
                       </p>
-                      <p className={cn('text-[11px] mt-1', a.muted)}>
+                      <p className={cn('text-xs mt-1', a.muted)}>
                         {report.severity} • {new Date(report.createdAt).toLocaleDateString()}
                       </p>
                     </div>
@@ -264,6 +300,8 @@ export default function AdminDashboardPageContent() {
 
       <CompanyRequestModerationPanel />
       <ChatModerationPanel />
+      </>
+      )}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import type { EventDetailMapAccent } from '../components/events/EventDetailMapSection';
+import { APP_TYPO } from './typographyTokens';
 
 /** Classic-first typography & radii — accent colors vary per theme. */
 export interface EventDetailSurfaceTokens {
@@ -42,18 +43,18 @@ export function getEventDetailSurfaceTokens(
   if (darkSurface) {
     return {
       sectionBorder: 'border-gray-700',
-      sectionHeading: 'text-[11px] font-bold text-white tracking-wide',
-      body: 'text-[13px] text-white font-medium',
-      muted: 'text-[13px] text-gray-300 font-medium',
+      sectionHeading: APP_TYPO.sectionLabel + ' text-white',
+      body: APP_TYPO.bodyMedium + ' text-white',
+      muted: APP_TYPO.bodyMedium + ' text-gray-300',
       card: 'rounded-2xl border border-gray-700 bg-gray-800/80 p-4 md:p-5',
       innerCard: 'rounded-2xl border p-4',
-      labelMicro: 'text-[10px] font-bold tracking-wider',
+      labelMicro: APP_TYPO.micro + ' font-bold tracking-wider',
       listText: 'text-xs text-gray-200',
       listStrong: 'text-white',
       iconMuted: 'text-gray-400',
       shadow: 'shadow-sm',
-      primaryBtn: `text-xs font-bold py-2 px-4 rounded-2xl transition-all duration-200 ${btn.on}`,
-      primaryBtnStop: `text-xs font-bold py-2 px-4 rounded-2xl transition-all duration-200 ${btn.off}`,
+      primaryBtn: `${APP_TYPO.micro} font-bold py-2 px-4 rounded-2xl transition-all duration-200 ${btn.on}`,
+      primaryBtnStop: `${APP_TYPO.micro} font-bold py-2 px-4 rounded-2xl transition-all duration-200 ${btn.off}`,
       verifiedIcon: 'text-emerald-400',
       verifiedBg: 'bg-emerald-950/40 border-emerald-900',
     };
@@ -61,9 +62,9 @@ export function getEventDetailSurfaceTokens(
 
   return {
     sectionBorder: 'border-gray-200',
-    sectionHeading: 'text-[11px] font-bold text-[#111827] tracking-wide',
-    body: 'text-[13px] text-[#111827] font-medium',
-    muted: 'text-[13px] text-gray-600 font-medium',
+    sectionHeading: APP_TYPO.sectionLabel + ' text-[#111827]',
+    body: APP_TYPO.bodyMedium + ' text-[#111827]',
+    muted: APP_TYPO.bodyMedium + ' text-gray-600',
     card: 'rounded-2xl border border-gray-100 bg-white p-4 md:p-5 shadow-soft',
     innerCard: 'rounded-2xl border p-4',
     labelMicro: 'text-[10px] font-bold tracking-wider',
@@ -71,8 +72,8 @@ export function getEventDetailSurfaceTokens(
     listStrong: 'text-gray-700',
     iconMuted: 'text-gray-400',
     shadow: 'shadow-soft',
-    primaryBtn: `text-xs font-bold py-2 px-4 rounded-2xl transition-all duration-200 shadow-soft ${btn.on}`,
-    primaryBtnStop: `text-xs font-bold py-2 px-4 rounded-2xl transition-all duration-200 ${btn.off}`,
+    primaryBtn: `${APP_TYPO.micro} font-bold py-2 px-4 rounded-2xl transition-all duration-200 shadow-soft ${btn.on}`,
+    primaryBtnStop: `${APP_TYPO.micro} font-bold py-2 px-4 rounded-2xl transition-all duration-200 ${btn.off}`,
     verifiedIcon: 'text-emerald-600',
     verifiedBg: 'bg-emerald-50/80 border-emerald-100',
   };
@@ -210,6 +211,6 @@ export function getEventDetailGroupsSidebarShell(darkSurface: boolean): string {
 
 export function getEventDetailGroupsSidebarHeading(darkSurface: boolean): string {
   return darkSurface
-    ? 'text-[11px] font-bold text-white tracking-wide mb-4'
-    : 'text-[11px] font-bold text-[#6B7280] tracking-wide mb-4';
+    ? APP_TYPO.sectionLabel + ' text-white mb-4'
+    : APP_TYPO.sectionLabel + ' text-[#6B7280] mb-4';
 }
