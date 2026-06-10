@@ -403,6 +403,12 @@ export function AppShell({ children }: { children: ReactNode }) {
       data-theme={theme}
       className={cn("flex h-screen w-full font-sans antialiased overflow-hidden", tok.shell)}
     >
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[110] focus:px-4 focus:py-2 focus:bg-gray-900 focus:text-white focus:rounded-xl focus:text-sm focus:font-semibold"
+      >
+        {t('Μετάβαση στο περιεχόμενο', 'Skip to content')}
+      </a>
       <SideNav />
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
@@ -423,7 +429,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="flex flex-1 h-screen overflow-hidden min-w-0">
         <div className="flex flex-col flex-1 min-w-0 h-screen overflow-hidden">
           <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
-          <main className="flex-1 overflow-y-auto relative flex flex-col min-w-0">
+          <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none">
             <div className="mx-auto w-full max-w-full p-4 lg:px-8 lg:py-6 flex-1 pb-24 md:pb-6">
               {children}
             </div>

@@ -23,6 +23,7 @@ import type { Event } from "../../types";
 import { useLanguage } from "../../lib/i18n";
 import { cn } from "../../lib/utils";
 import { computeMatchScore, getMatchingPreview } from "../../lib/matching";
+import { MatchExplainChips } from "./MatchExplainChips";
 import { getEventGroupProgress } from "../../lib/groupUtils";
 import { GroupProgressBar } from "./GroupProgressBar";
 import { toast } from "sonner";
@@ -285,6 +286,9 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             <p className={cn("text-[11px] font-semibold rounded-lg px-2.5 py-1.5", accentBg, accentText)}>
               {t(matchingPreview.labelEl, matchingPreview.labelEn)}
             </p>
+          )}
+          {currentUser && (
+            <MatchExplainChips user={currentUser} event={event} className="mt-1" />
           )}
           <div className={cn("flex items-center text-[12.73px] font-medium mt-2", subColor)}>
             <Users className={cn("w-3.5 h-3.5 mr-2 shrink-0", mutedColor)} />

@@ -3,7 +3,10 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import './index.css';
+import { bootstrap } from './lib/bootstrap';
 import { LanguageProvider } from './lib/i18n';
+
+bootstrap();
 
 // Suppress unhandled Google Maps script errors in dev overlay
 window.addEventListener('error', (e) => {

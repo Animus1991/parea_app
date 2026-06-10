@@ -1,4 +1,5 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react';
+import { Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
 import { isDarkTheme, isActiveBuddiesTheme } from '../../lib/themes';
@@ -6,16 +7,17 @@ import { isDarkTheme, isActiveBuddiesTheme } from '../../lib/themes';
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'gradient';
   size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
+  ({ className, variant = 'primary', size = 'md', loading = false, disabled, children, ...props }, ref) => {
     const theme = useStore((state) => state.theme);
     const isDark = isDarkTheme(theme);
     const isABDark = theme === 'activebuddies-dark';
     const isABLight = isActiveBuddiesTheme(theme) && !isDark;
 
-    const baseClass = "inline-flex items-center justify-center font-bold transition-all duration-200 disabled:pointer-events-none disabled:opacity-50";
+    const baseClass = "inline-flex items-center justify-center font-bold transition-all duration-200 active:scale-[0.97] active:duration-75 disabled:pointer-events-none disabled:opacity-50 disabled:scale-100";
 
     const focusRing = isDark || isABDark
       ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
@@ -71,17 +73,22 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const variants = getVariants();
 
     const sizes = {
-      sm: "h-8 px-4 text-[12.5px] gap-1.5",
-      md: "h-9 px-5 text-[13.8px] gap-2",
-      lg: "h-11 px-6 text-[15px] gap-2"
+      sm: "h-8 px-4 text-xs gap-1.5",
+      md: "h-9 px-5 text-sm gap-2",
+      lg: "h-11 px-6 text-base gap-2"
     };
 
     return (
       <button
         ref={ref}
         className={cn(baseClass, focusRing, variants[variant], sizes[size], className)}
+        disabled={disabled || loading}
+        aria-busy={loading || undefined}
         {...props}
-      />
+      >
+        {loading ? <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden /> : null}
+        {children}
+      </button>
     );
   }
 );

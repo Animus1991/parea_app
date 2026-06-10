@@ -1,15 +1,15 @@
+import React from 'react';
 import { LucideIcon } from 'lucide-react';
 import { Button } from './Button';
-import { useThemeStyles } from '../../hooks/useThemeStyles';
-import { useContrastTheme } from '../../hooks/useContrastTheme';
 import { cn } from '../../lib/utils';
 
 interface EmptyStateProps {
-  icon: LucideIcon;
+  icon?: LucideIcon;
   title: string;
   description?: string;
   actionLabel?: string;
   onAction?: () => void;
+  className?: string;
 }
 
 export function EmptyState({
@@ -18,31 +18,26 @@ export function EmptyState({
   description,
   actionLabel,
   onAction,
+  className,
 }: EmptyStateProps) {
-  const tok = useThemeStyles();
-  const c = useContrastTheme();
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center rounded-2xl border border-dashed p-10 text-center',
-        c.border,
-        tok.isDark ? 'bg-gray-800/30' : 'bg-gray-50/80',
+        'flex flex-col items-center justify-center py-16 px-6 text-center rounded-2xl border border-dashed border-gray-200 dark:border-gray-700',
+        className,
       )}
     >
-      <div
-        className={cn(
-          'mb-4 flex h-14 w-14 items-center justify-center rounded-2xl',
-          tok.accentBg,
-        )}
-      >
-        <Icon className={cn('h-7 w-7', tok.accentText)} aria-hidden />
-      </div>
-      <h3 className={cn('text-base font-bold', tok.head)}>{title}</h3>
+      {Icon && (
+        <div className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+          <Icon className="w-7 h-7 text-gray-400" aria-hidden />
+        </div>
+      )}
+      <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
       {description && (
-        <p className={cn('mt-2 max-w-sm text-sm font-medium', tok.sub)}>{description}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm mt-1 mb-6">{description}</p>
       )}
       {actionLabel && onAction && (
-        <Button variant="primary" size="md" className="mt-5 min-h-11" onClick={onAction}>
+        <Button variant="primary" size="md" onClick={onAction}>
           {actionLabel}
         </Button>
       )}

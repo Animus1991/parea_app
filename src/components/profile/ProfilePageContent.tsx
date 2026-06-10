@@ -33,6 +33,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../lib/i18n";
 import { useProfileContrast } from "../../hooks/usePageContrast";
+import { ProfileCompletionMeter } from "./ProfileCompletionMeter";
 
 // ─── Main component ──────────────────────────────────────────
 export default function ProfilePageContent() {
@@ -123,6 +124,8 @@ export default function ProfilePageContent() {
           </Button>
         </div>
       </div>
+
+      <ProfileCompletionMeter />
 
       {/* ═══ Quick Stats ═══ */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

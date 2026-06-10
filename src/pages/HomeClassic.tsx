@@ -20,6 +20,7 @@ import { EventStories } from "../components/home/EventStories";
 import { HomeLoggedInHero } from "../components/home/HomeLoggedInHero";
 import { ActiveBuddiesRail } from "../components/home/ActiveBuddiesRail";
 import { HomeQuickActions } from "../components/home/HomeQuickActions";
+import { HomeNextBestAction } from "../components/home/HomeNextBestAction";
 import { HomeQuickStatsBar } from "../components/home/HomeQuickStatsBar";
 import { HomeDailyTip } from "../components/home/HomeDailyTip";
 import { HomePendingFeedbackBanner } from "../components/home/HomePendingFeedbackBanner";
@@ -182,6 +183,7 @@ export default function HomeClassic() {
       )}
 
       <HomeQuickActions useClassicTokens onScrollToCategories={scrollToFilters} />
+      <HomeNextBestAction />
       <ActiveBuddiesRail useClassicTokens />
 
       <HomeQuickStatsBar />

@@ -3,6 +3,9 @@ import { useEffect, lazy, Suspense } from "react";
 import { Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
 import { AppShell } from "./components/layout/AppShell";
+import { RouteLifecycle } from "./components/common/RouteLifecycle";
+import { OfflineBanner } from "./components/common/OfflineBanner";
+import { CommandPalette } from "./components/common/CommandPalette";
 import { useStore } from "./store";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { PageLoading } from "./components/common/PageLoading";
@@ -72,18 +75,26 @@ export default function App() {
 
   if (location.pathname === "/login") {
     return (
-      <AnimatePresence mode="popLayout">
+      <>
+        <RouteLifecycle />
+        <OfflineBanner />
+        <AnimatePresence mode="popLayout">
         <Suspense fallback={<PageLoading />}>
           <Routes location={location} key={location.pathname}>
             <Route path="/login" element={<ErrorBoundary><Login /></ErrorBoundary>} />
           </Routes>
         </Suspense>
       </AnimatePresence>
+      </>
     );
   }
 
   return (
-    <AppShell>
+    <>
+      <RouteLifecycle />
+      <OfflineBanner />
+      <CommandPalette />
+      <AppShell>
       <AnimatePresence mode="popLayout">
         <Suspense fallback={<PageLoading />}>
           <Routes location={location} key={location.pathname}>
@@ -136,5 +147,6 @@ export default function App() {
         </Suspense>
       </AnimatePresence>
     </AppShell>
+    </>
   );
 }
