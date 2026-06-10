@@ -25,6 +25,7 @@ import type { BuddySeekIntent, BuddySeekPreferences } from "../types/buddySeek";
 import { legacyVisibilityToMode } from "../types/buddySeek";
 import type { AppNotification } from "../data/mockNotifications";
 import { normalizeAppNotification } from "../lib/notificationsUtil";
+import { createEventOnApi, updateEventOnApi } from "../services/eventsApi";
 
 export interface FeedbackData {
   eventId: string;
@@ -147,7 +148,8 @@ interface AppState {
   leaveGroup: (groupId: string) => void;
   createGroup: (eventId: string, targetSize: number) => void;
   becomeEventHost: (eventId: string) => void;
-  createEvent: (event: any) => void;
+  createEvent: (event: Partial<Event> & { title: string }) => void;
+  updateEvent: (eventId: string, patch: Partial<Event>) => void;
   cancelEvent: (eventId: string) => void;
   archiveEvent: (eventId: string) => void;
   publishMeetingPoint: (groupId: string, meetingPoint: string) => void;
@@ -478,26 +480,36 @@ export const useStore = create<AppState>()(
       };
     }),
 
-  createEvent: (event) =>
-    set((state) => {
-      if (!state.currentUser) return state;
-      const newEvent = { ...event, id: `e${Date.now()}` };
-      const newGroup = {
-        id: `g${Date.now()}`,
-        eventId: newEvent.id,
-        hostId: state.currentUser.id,
-        targetSize: event.maxAttendees || 5,
-        status: "pending" as const,
-        members: [state.currentUser.id],
-        pendingMembers: [],
-        discountUnlocked: false,
-        chatId: `chat_${Date.now()}`,
-      };
-      return {
-        events: [...state.events, newEvent],
-        groups: [...state.groups, newGroup],
-      };
-    }),
+  createEvent: (event) => {
+    const state = get();
+    if (!state.currentUser) return;
+    const newEvent = { ...event, id: event.id ?? `e${Date.now()}` } as Event;
+    const newGroup = {
+      id: `g${Date.now()}`,
+      eventId: newEvent.id,
+      hostId: state.currentUser.id,
+      targetSize: event.maxParticipants || 5,
+      status: "pending" as const,
+      members: [state.currentUser.id],
+      pendingMembers: [],
+      discountUnlocked: false,
+      chatId: `chat_${Date.now()}`,
+    };
+    set({
+      events: [...state.events, newEvent],
+      groups: [...state.groups, newGroup],
+      eventsSource: 'mixed',
+    });
+    void createEventOnApi(newEvent).catch(() => undefined);
+  },
+
+  updateEvent: (eventId, patch) => {
+    set((state) => ({
+      events: state.events.map((e) => (e.id === eventId ? { ...e, ...patch } : e)),
+      eventsSource: 'mixed',
+    }));
+    void updateEventOnApi(eventId, patch).catch(() => undefined);
+  },
 
   cancelEvent: (eventId) =>
     set((state) => ({

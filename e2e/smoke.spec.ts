@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('public auth surface', () => {
   test('login page renders with Nakamas title', async ({ page }) => {
     await page.goto('/login');
-    await expect(page).toHaveTitle(/Σύνδεση|Sign in/);
+    await expect(page).toHaveTitle(/Nakamas|Σύνδεση|Sign in/i);
     await expect(page.getByText('NAKAMAS', { exact: true })).toBeVisible();
   });
 

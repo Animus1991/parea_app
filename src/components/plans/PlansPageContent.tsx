@@ -9,6 +9,7 @@ import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { TabBar } from '../common/TabBar';
 import { cn } from '../../lib/utils';
+import { PLANS_TYPO } from '../../lib/typographyTokens';
 import type { Group } from '../../types';
 
 function getUserGroupForEvent(eventId: string, groups: Group[], userId: string | undefined) {
@@ -77,7 +78,7 @@ export default function PlansPageContent() {
   }, [showLeaveConfirm]);
 
   const secondaryBtn = cn(
-    'px-4 py-2 rounded-2xl text-[13.5px] font-bold transition-all duration-200 border-2',
+    'px-4 py-2 rounded-2xl transition-all duration-200 border-2 text-sm font-bold',
     p.isDark
       ? 'border-white/10 hover:border-white/25 text-gray-100 hover:bg-white/5'
       : 'border-gray-100 hover:border-[#a5f3fc] hover:bg-gray-50 text-gray-700',
@@ -86,8 +87,8 @@ export default function PlansPageContent() {
   return (
     <div className="mx-auto max-w-full space-y-6 md:space-y-7 pb-20 md:pb-0 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div>
-        <h1 className={cn('text-[16px] md:text-[18px] font-bold', p.head)}>{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
-        <p className={cn('mt-1 text-[13.5px] font-medium', p.sub)}>{t(`Διαχείριση επερχόμενων, εκκρεμών και παρελθόντων εκδηλώσεων.`, `Manage your upcoming experiences, pending groups, and past events.`)}</p>
+        <h1 className={cn(PLANS_TYPO.pageTitle, p.head)}>{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
+        <p className={cn(PLANS_TYPO.pageSub, 'mt-1', p.sub)}>{t(`Διαχείριση επερχόμενων, εκκρεμών και παρελθόντων εκδηλώσεων.`, `Manage your upcoming experiences, pending groups, and past events.`)}</p>
       </div>
 
       {/* Summary stats — also act as quick tab switches */}
@@ -107,7 +108,7 @@ export default function PlansPageContent() {
               <s.icon className={cn('w-5 h-5', p.statVal)} />
             </div>
             <p className={cn('text-2xl font-black tabular-nums leading-none', p.head)}>{s.count}</p>
-            <p className={cn('text-[11px] font-semibold mt-1', p.muted)}>{s.label}</p>
+            <p className={cn('text-xs font-semibold mt-1', p.muted)}>{s.label}</p>
           </button>
         ))}
       </div>
@@ -119,10 +120,10 @@ export default function PlansPageContent() {
             <CalendarClock className={cn('w-5 h-5', p.statVal)} />
           </div>
           <div className="min-w-0 flex-1">
-            <p className={cn('text-[11px] font-bold uppercase tracking-wide', p.muted)}>{t('Επόμενη εκδήλωση', 'Next up')}</p>
-            <p className={cn('font-bold text-[15px] truncate', p.head)}>{nextEvent.title}</p>
+            <p className={cn('text-xs font-bold uppercase tracking-wide', p.muted)}>{t('Επόμενη εκδήλωση', 'Next up')}</p>
+            <p className={cn('font-bold text-base truncate', p.head)}>{nextEvent.title}</p>
           </div>
-          <span className={cn('shrink-0 text-[12px] font-bold px-2.5 py-1 rounded-full', p.statBg, p.statVal)}>
+          <span className={cn('shrink-0 text-sm font-bold px-2.5 py-1 rounded-full', p.statBg, p.statVal)}>
             {nextEventDays <= 0 ? t('Σήμερα', 'Today') : `${t('σε', 'in')} ${nextEventDays}${t('μ', 'd')}`}
           </span>
         </Card>
@@ -137,11 +138,11 @@ export default function PlansPageContent() {
           <div className="flex items-start gap-3">
             <AlertTriangle className={cn('w-5 h-5 shrink-0 mt-0.5', p.isDark ? 'text-amber-400' : 'text-amber-600')} />
             <div>
-              <h3 className={cn('font-bold text-[15.5px] mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
-              <p className={cn('text-[13.5px] font-medium', p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
+              <h3 className={cn('font-bold text-base mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
+              <p className={cn('text-sm font-medium', p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
             </div>
           </div>
-          <button onClick={() => navigate('/trust')} className="bg-amber-600 text-white px-5 py-2.5 rounded-2xl text-[13.5px] font-bold shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0">
+          <button onClick={() => navigate('/trust')} className="bg-amber-600 text-white px-5 py-2.5 rounded-2xl text-sm font-bold shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0">
             {t(`Επαλήθευση`, `Verify Now`)}
           </button>
         </Card>
@@ -173,16 +174,16 @@ export default function PlansPageContent() {
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
               {isConfirmed ? (
-                <div className="absolute top-2 left-2 bg-[#0E8B8D] text-white px-2.5 py-0.5 rounded-full text-[11.25px] font-bold tracking-wide">
+                <div className="absolute top-2 left-2 bg-[#0E8B8D] text-white px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide">
                   {t('Επιβεβαιωμένο', 'Confirmed')}
                 </div>
               ) : (
-                <div className="absolute top-2 left-2 bg-amber-600 text-white px-2.5 py-0.5 rounded-full text-[11.25px] font-bold tracking-wide">
+                <div className="absolute top-2 left-2 bg-amber-600 text-white px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide">
                   {t('Εκκρεμής', 'Pending')}
                 </div>
               )}
               {group && isPlansFormingGroupId(group.id) && (
-                <div className="absolute bottom-2 left-2 right-2 bg-cyan-900/90 text-white px-2 py-0.5 rounded-full text-[10px] font-bold text-center truncate">
+                <div className="absolute bottom-2 left-2 right-2 bg-cyan-900/90 text-white px-2 py-0.5 rounded-full text-xs font-bold text-center truncate">
                   {t('Από Σχέδια που σχηματίζονται', 'From Plans forming')}
                 </div>
               )}
@@ -190,15 +191,15 @@ export default function PlansPageContent() {
 
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-start gap-2 mb-2">
-                <h3 className={cn('font-bold text-[20px]', p.head)}>{event.title}</h3>
+                <h3 className={cn('font-bold text-xl', p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
-                  <div className={cn('text-[18px] font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
-                  <div className={cn('text-[14.85px] font-medium', p.muted)}>{event.time}</div>
+                  <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
+                  <div className={cn('text-sm font-medium', p.muted)}>{event.time}</div>
                   {(() => {
                     const days = differenceInDays(parseISO(event.date), new Date());
                     const hours = differenceInHours(parseISO(event.date), new Date());
-                    if (days <= 0 && hours > 0) return <span className="text-[11.2px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">{t('σε', 'in')} {hours}h</span>;
-                    if (days > 0 && days <= 7) return <span className={cn('text-[11.2px] font-bold px-1.5 py-0.5 rounded mt-0.5 inline-block', p.statBg, p.statVal)}>{t('σε', 'in')} {days} {t('μέρες', 'days')}</span>;
+                    if (days <= 0 && hours > 0) return <span className="text-xs font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">{t('σε', 'in')} {hours}h</span>;
+                    if (days > 0 && days <= 7) return <span className={cn('text-xs font-bold px-1.5 py-0.5 rounded mt-0.5 inline-block', p.statBg, p.statVal)}>{t('σε', 'in')} {days} {t('μέρες', 'days')}</span>;
                     return null;
                   })()}
                 </div>
@@ -206,7 +207,7 @@ export default function PlansPageContent() {
 
               <div className="flex flex-wrap gap-x-4 gap-y-2 mb-4">
                 <div className={cn(
-                  'flex items-center text-[13.5px] font-medium',
+                  'flex items-center text-sm font-medium',
                   hasMeetingPoint ? p.body : p.muted,
                 )}>
                   <MapPin className="w-3.5 h-3.5 mr-1" />
@@ -214,7 +215,7 @@ export default function PlansPageContent() {
                     ? t('Σημείο συνάντησης ενεργό', 'Meeting point active')
                     : t('Σημείο συνάντησης — εκκρεμεί', 'Meeting point — pending')}
                 </div>
-                <div className={cn('flex items-center text-[13.5px] font-medium', p.body)}>
+                <div className={cn('flex items-center text-sm font-medium', p.body)}>
                   <Clock className="w-3.5 h-3.5 mr-1" /> {event.duration}
                 </div>
               </div>
@@ -231,7 +232,7 @@ export default function PlansPageContent() {
                       />
                     ))}
                   </div>
-                  <span className={cn('text-[11.25px] font-medium flex items-center gap-0.5', p.muted)}>
+                  <span className={cn('text-xs font-medium flex items-center gap-0.5', p.muted)}>
                     <Users className="w-3 h-3" /> {group.members.length}/{group.targetSize} {t('μέλη', 'members')}
                   </span>
                 </div>
@@ -241,7 +242,7 @@ export default function PlansPageContent() {
                 <button
                   onClick={() => group && navigate(`/chat/${group.id}`)}
                   disabled={!group}
-                  className="flex-1 btn-gradient !py-2 flex items-center justify-center gap-1.5 !text-[13.5px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 btn-gradient !py-2 flex items-center justify-center gap-1.5 !text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <MessageCircle className="h-4 w-4" /> {t('Ομαδική Συνομιλία', 'Group Chat')}
                 </button>
@@ -251,7 +252,7 @@ export default function PlansPageContent() {
                 <button
                   onClick={() => setShowLeaveConfirm(event.id)}
                   className={cn(
-                    'px-3 py-2 rounded-2xl text-[13.5px] font-bold transition-all duration-200 flex items-center gap-1 border-2',
+                    'px-3 py-2 rounded-2xl text-sm font-bold transition-all duration-200 flex items-center gap-1 border-2',
                     p.isDark ? 'border-red-500/30 hover:bg-red-500/10 text-red-400' : 'border-red-100 hover:bg-red-50 text-red-500',
                   )}
                 >
@@ -286,20 +287,20 @@ export default function PlansPageContent() {
           <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 opacity-80 hover:opacity-100 transition-all duration-200 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative grayscale">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
-              <div className="absolute top-2 left-2 bg-gray-800 text-white px-2.5 py-0.5 rounded-full text-[11.25px] font-bold tracking-wide">
+              <div className="absolute top-2 left-2 bg-gray-800 text-white px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide">
                 {t(`Εκκρεμής Ομάδα`, `Pending Group`)}
               </div>
             </div>
 
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-start gap-2 mb-2">
-                <h3 className={cn('font-bold text-[20px]', p.head)}>{event.title}</h3>
+                <h3 className={cn('font-bold text-xl', p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
-                  <div className={cn('text-[18px] font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
+                  <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
                 </div>
               </div>
 
-              <p className={cn('text-[13.5px] font-medium mb-4', p.sub)}>
+              <p className={cn('text-sm font-medium mb-4', p.sub)}>
                 {needed === 1
                   ? t(
                       'Εκδηλώσατε ενδιαφέρον. Αναμονή για 1 ακόμα άτομο για να επιβεβαιωθεί η ομάδα.',
@@ -345,21 +346,21 @@ export default function PlansPageContent() {
         {pastEvents.map((event) => (
           <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
             <div className="flex-1 flex flex-col">
-              <div className={cn('flex items-center gap-2 mb-1.5 text-[13.5px] font-bold', p.muted)}>
+              <div className={cn('flex items-center gap-2 mb-1.5 text-sm font-bold', p.muted)}>
                 <Calendar className="w-3.5 h-3.5" />
                 {format(parseISO(event.date), 'MMMM d, yyyy')}
               </div>
-              <h3 className={cn('font-bold text-[20px] mb-3', p.head)}>{event.title}</h3>
+              <h3 className={cn('font-bold text-xl mb-3', p.head)}>{event.title}</h3>
 
               {!feedbackSubmitted[event.id] ? (
                 <div className={cn('p-3 rounded-2xl flex items-center justify-between mt-auto border', p.statBg)}>
-                  <div className={cn('text-[13.5px] font-bold', p.statVal)}>{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
+                  <div className={cn('text-sm font-bold', p.statVal)}>{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
                   <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="btn-gradient !py-1.5 !px-4 !text-[11.5px]">
                     {t(`Αξιολόγηση`, `Rate Experience`)}
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 mt-auto text-[13.5px] font-bold text-emerald-600">
+                <div className="flex items-center gap-2 mt-auto text-sm font-bold text-emerald-600">
                   <CheckCircle className="w-4 h-4" /> {t(`Αξιολόγηση υποβλήθηκε`, `Feedback submitted`)}
                 </div>
               )}

@@ -11,6 +11,7 @@ import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
+import { INBOX_TYPO } from '../../lib/typographyTokens';
 import { isBefore, parseISO } from 'date-fns';
 
 type InboxTab = 'messages' | 'notifications';
@@ -65,10 +66,10 @@ export default function InboxPageContent() {
   return (
     <div className="w-full max-w-full min-w-0 flex flex-col relative pb-20 md:pb-0 animate-in fade-in duration-500">
       <div className="shrink-0 mb-6">
-        <h1 className={cn('text-[16px] md:text-[18px] font-bold tracking-tight', p.head)}>
+        <h1 className={cn(INBOX_TYPO.pageTitle, p.head)}>
           {t('Μηνύματα', 'Messages')}
         </h1>
-        <p className={cn('font-medium text-[13px] mt-1', p.sub)}>
+        <p className={cn(INBOX_TYPO.pageSub, 'mt-1', p.sub)}>
           {t('Συνομιλίες ομάδων & ειδοποιήσεις', 'Group conversations & notifications')}
         </p>
 
@@ -82,7 +83,8 @@ export default function InboxPageContent() {
             type="button"
             onClick={() => setActiveTab('messages')}
             className={cn(
-              'flex-1 rounded-xl font-bold text-[12px] transition-all flex items-center justify-center gap-2',
+              'flex-1 rounded-xl transition-all flex items-center justify-center gap-2',
+              INBOX_TYPO.tab,
               activeTab === 'messages'
                 ? p.isDark
                   ? 'bg-[hsl(220_16%_22%)] text-white shadow-soft'
@@ -96,7 +98,8 @@ export default function InboxPageContent() {
             type="button"
             onClick={() => setActiveTab('notifications')}
             className={cn(
-              'flex-1 rounded-xl font-bold text-[12px] transition-all flex items-center justify-center gap-2',
+              'flex-1 rounded-xl transition-all flex items-center justify-center gap-2',
+              INBOX_TYPO.tab,
               activeTab === 'notifications'
                 ? p.isDark
                   ? 'bg-[hsl(220_16%_22%)] text-white shadow-soft'
@@ -106,7 +109,7 @@ export default function InboxPageContent() {
           >
             <Bell className="w-4 h-4" /> {t('Ειδοποιήσεις', 'Notifications')}
             {unreadNotifications > 0 && (
-              <span className="bg-cyan-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px]">
+              <span className={cn('bg-cyan-600 text-white px-1.5 py-0.5 rounded-full min-w-[18px]', INBOX_TYPO.badge)}>
                 {unreadNotifications}
               </span>
             )}
@@ -124,7 +127,8 @@ export default function InboxPageContent() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('Αναζήτηση συνομιλιών...', 'Search conversations...')}
               className={cn(
-                'w-full pl-10 pr-4 py-2.5 rounded-2xl border text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft transition-all',
+                'w-full pl-10 pr-4 py-2.5 rounded-2xl border focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft transition-all',
+                INBOX_TYPO.search,
                 p.inputBg,
                 p.borderB,
               )}
@@ -138,7 +142,8 @@ export default function InboxPageContent() {
                 type="button"
                 onClick={() => setChatFilter(key)}
                 className={cn(
-                  'px-4 py-1.5 rounded-full text-[12px] font-bold transition-all shadow-soft',
+                  'px-4 py-1.5 rounded-full transition-all shadow-soft',
+                  INBOX_TYPO.filter,
                   chatFilter === key
                     ? 'bg-cyan-600 text-white'
                     : p.isDark
@@ -161,7 +166,7 @@ export default function InboxPageContent() {
                 <button
                   type="button"
                   onClick={() => navigate('/')}
-                  className="mt-4 px-5 py-2.5 rounded-2xl font-bold bg-cyan-600 hover:bg-cyan-700 text-white text-[13px] shadow-soft"
+                  className={cn('mt-4 px-5 py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white shadow-soft', INBOX_TYPO.cta)}
                 >
                   {t('Αναζήτηση Εκδηλώσεων', 'Browse Events')}
                 </button>
@@ -205,29 +210,29 @@ export default function InboxPageContent() {
                       <div className="flex items-center justify-between gap-2">
                         <h3
                           className={cn(
-                            'text-[14px] truncate',
+                            INBOX_TYPO.rowTitle,
                             chat.unread > 0 ? 'font-bold' : 'font-medium',
                             p.head,
                           )}
                         >
                           {chat.title}
                         </h3>
-                        <span className={cn('text-[11px] font-medium shrink-0', p.muted)}>
+                        <span className={cn(INBOX_TYPO.rowMeta, 'shrink-0', p.muted)}>
                           {chat.members} {t('μέλη', 'members')}
                         </span>
                       </div>
                       {chat.isTyping ? (
-                        <p className="text-[12px] text-cyan-600 font-medium mt-0.5">
+                        <p className={cn('text-cyan-600 font-medium mt-0.5', INBOX_TYPO.rowPreview)}>
                           {t('κάποιος γράφει...', 'someone is typing...')}
                         </p>
                       ) : (
-                        <p className={cn('text-[12px] truncate mt-0.5', p.sub)}>
+                        <p className={cn(INBOX_TYPO.rowPreview, 'mt-0.5', p.sub)}>
                           {t('Πατήστε για συνομιλία', 'Tap to open chat')}
                         </p>
                       )}
                     </div>
                     {chat.unread > 0 && (
-                      <span className="bg-[#0E8B8D] text-white text-[11px] font-bold min-w-[20px] h-5 flex items-center justify-center rounded-full shrink-0 shadow-soft">
+                      <span className={cn('bg-[#0E8B8D] text-white min-w-[20px] h-5 flex items-center justify-center rounded-full shrink-0 shadow-soft', INBOX_TYPO.unread)}>
                         {chat.unread}
                       </span>
                     )}
@@ -256,7 +261,7 @@ export default function InboxPageContent() {
           <button
             type="button"
             onClick={() => navigate('/notifications')}
-            className="mt-2 px-5 py-2.5 rounded-2xl font-bold bg-cyan-600 hover:bg-cyan-700 text-white text-[13px] shadow-soft"
+            className={cn('mt-2 px-5 py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white shadow-soft', INBOX_TYPO.cta)}
           >
             {t('Όλες οι Ειδοποιήσεις', 'All Notifications')}
           </button>

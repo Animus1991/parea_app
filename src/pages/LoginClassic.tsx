@@ -5,6 +5,7 @@ import { useLanguage } from '../lib/i18n';
 import { useStore } from '../store';
 import { HomeGuestHero } from '../components/home/HomeGuestHero';
 import { LoginExploreDemoButton } from '../components/auth/LoginExploreDemoButton';
+import { tryGoogleSignIn } from '../lib/loginHandlers';
 
 export default function LoginClassic() {
   const navigate = useNavigate();
@@ -15,6 +16,11 @@ export default function LoginClassic() {
   const handleLogin = (userId: string) => {
     login(userId);
     navigate('/');
+  };
+
+  const handleGoogleLogin = async () => {
+    const viaFirebase = await tryGoogleSignIn();
+    if (!viaFirebase) handleLogin(users[0].id);
   };
 
   return (
@@ -67,7 +73,8 @@ export default function LoginClassic() {
           </div>
 
           <button 
-            onClick={() => handleLogin(users[0].id)}
+            type="button"
+            onClick={() => void handleGoogleLogin()}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border border-gray-100 bg-white text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all duration-200 shadow-soft"
           >
             <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />

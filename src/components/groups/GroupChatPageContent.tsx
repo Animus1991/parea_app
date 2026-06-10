@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useStore } from "../store";
+import { useStore } from "../../store";
 import {
   Send,
   Users,
@@ -23,20 +23,13 @@ import {
 } from "lucide-react";
 import { Virtuoso } from "react-virtuoso";
 import { toast } from "sonner";
-import { useLanguage } from "../lib/i18n";
-import { LiveEventTracker } from "../components/groups/LiveEventTracker";
-import { ChatIcebreakers } from "../components/groups/ChatIcebreakers";
+import { useLanguage } from "../../lib/i18n";
+import { usePageContrast } from "../../hooks/usePageContrast";
+import { useGroupChatMessages, type GroupChatMessage } from "../../hooks/useGroupChatMessages";
+import { LiveEventTracker } from "./LiveEventTracker";
+import { ChatIcebreakers } from "./ChatIcebreakers";
 
-interface ChatMessage {
-  id: string;
-  senderId: string;
-  senderName: string;
-  text: string;
-  timestamp: string;
-  type?: "text" | "system" | "location";
-}
-
-export default function GroupChatClassic() {
+export default function GroupChatPageContent() {
   const { t } = useLanguage();
   const { groupId } = useParams();
   const navigate = useNavigate();
@@ -44,6 +37,7 @@ export default function GroupChatClassic() {
   const groups = useStore((state) => state.groups);
   const users = useStore((state) => state.users);
   const currentUser = useStore((state) => state.currentUser);
+  const p = usePageContrast();
 
   // Ensure we default to an array even if map fails, though mock data shouldn't
   const group =
@@ -51,9 +45,9 @@ export default function GroupChatClassic() {
     groups.find((g) => g.eventId === groupId); // Fallback if routing passes eventId
   const event = events.find((e) => e.id === group?.eventId);
 
-  // Lazy initializer: the 1000-message array is built only once on mount
-  const [messages, setMessages] = useState<ChatMessage[]>(() => {
-    const msgs: ChatMessage[] = Array.from({ length: 1000 }).map((_, i) => ({
+  const buildSeedMessages = (): GroupChatMessage[] => {
+    if (!currentUser) return [];
+    const msgs: GroupChatMessage[] = Array.from({ length: 1000 }).map((_, i) => ({
       id: `m${i}`,
       senderId: i % 2 === 0 ? "u2" : i % 3 === 0 ? "u3" : currentUser.id,
       senderName:
@@ -87,7 +81,12 @@ export default function GroupChatClassic() {
       },
     );
     return msgs;
-  });
+  };
+
+  const { messages, setMessages, appendMessage } = useGroupChatMessages(
+    groupId,
+    buildSeedMessages,
+  );
   const [newMessage, setNewMessage] = useState("");
   const [showInfo, setShowInfo] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
@@ -117,9 +116,9 @@ export default function GroupChatClassic() {
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !currentUser) return;
 
-    const msg: ChatMessage = {
+    const msg: GroupChatMessage = {
       id: Date.now().toString(),
       senderId: currentUser.id,
       senderName: currentUser.name,
@@ -189,7 +188,7 @@ export default function GroupChatClassic() {
     (u) => !group.members.includes(u.id) && !u.isOrganizer,
   );
 
-  const renderMessage = (index: number, msg: ChatMessage) => {
+  const renderMessage = (index: number, msg: GroupChatMessage) => {
     const isSystem = msg.senderId === "system" && msg.type !== "location";
     const isLocationMsg = msg.type === "location";
     const isMe = msg.senderId === currentUser.id;

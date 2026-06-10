@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import { Server } from 'socket.io';
 import { createServer as createViteServer } from 'vite';
+import { createEvent, listEvents, updateEvent } from './server/eventsCatalog.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -45,17 +46,41 @@ async function startServer() {
 
   app.get('/api/events', async (_req, res) => {
     try {
-      const { mockEvents } = await import('./src/data/mockEvents.ts');
-      const { mockCalendarPlanEvents } = await import('./src/data/mockCalendarPlan.ts');
+      const events = await listEvents();
       res.json({
-        events: [...mockEvents, ...mockCalendarPlanEvents],
+        events,
         source: 'api',
-        count: mockEvents.length + mockCalendarPlanEvents.length,
+        count: events.length,
         ts: new Date().toISOString(),
       });
     } catch (err) {
       console.error('GET /api/events failed:', err);
       res.status(500).json({ error: 'Failed to load events catalog' });
+    }
+  });
+
+  app.post('/api/events', async (req, res) => {
+    try {
+      const body = req.body ?? {};
+      if (!body.title || typeof body.title !== 'string') {
+        return res.status(400).json({ error: 'title is required' });
+      }
+      const event = await createEvent(body);
+      res.status(201).json({ event, ts: new Date().toISOString() });
+    } catch (err) {
+      console.error('POST /api/events failed:', err);
+      res.status(500).json({ error: 'Failed to create event' });
+    }
+  });
+
+  app.put('/api/events/:id', async (req, res) => {
+    try {
+      const updated = await updateEvent(req.params.id, req.body ?? {});
+      if (!updated) return res.status(404).json({ error: 'Event not found' });
+      res.json({ event: updated, ts: new Date().toISOString() });
+    } catch (err) {
+      console.error('PUT /api/events/:id failed:', err);
+      res.status(500).json({ error: 'Failed to update event' });
     }
   });
 

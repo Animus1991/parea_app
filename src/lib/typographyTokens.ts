@@ -36,7 +36,7 @@ export const CHAT_TYPO = {
 } as const;
 
 /** Plans forming / BuddySeek shared chips */
-export const PLANS_TYPO = {
+export const PLANS_FORMING_TYPO = {
   statChip: 'text-xs font-bold',
   cardTitle: 'text-sm font-bold',
   cardMeta: 'text-xs font-medium',
@@ -59,6 +59,40 @@ export const GROUP_CHAT_TYPO = {
   panelTitle: 'text-sm font-bold tracking-wide',
   panelBody: 'text-sm font-medium',
   microBadge: 'text-xs font-bold tracking-wide',
+} as const;
+
+/** Inbox list density */
+export const INBOX_TYPO = {
+  pageTitle: 'text-base md:text-lg font-bold tracking-tight',
+  pageSub: 'text-sm font-medium',
+  tab: 'text-sm font-bold',
+  badge: 'text-xs font-bold',
+  search: 'text-sm font-medium',
+  filter: 'text-sm font-bold',
+  rowTitle: 'text-base truncate',
+  rowMeta: 'text-xs font-medium',
+  rowPreview: 'text-sm truncate',
+  unread: 'text-xs font-bold',
+  cta: 'text-sm font-bold',
+} as const;
+
+/** Plans page density */
+export const PLANS_TYPO = {
+  pageTitle: 'text-base md:text-lg font-bold',
+  pageSub: 'text-sm font-medium',
+  statLabel: 'text-xs font-semibold',
+  nextLabel: 'text-xs font-bold uppercase tracking-wide',
+  nextTitle: 'text-base font-bold truncate',
+  nextBadge: 'text-sm font-bold',
+  bannerTitle: 'text-base font-bold',
+  bannerBody: 'text-sm font-medium',
+  bannerCta: 'text-sm font-bold',
+  cardTitle: 'text-xl font-bold',
+  cardDate: 'text-lg font-bold',
+  cardTime: 'text-sm font-medium',
+  cardMeta: 'text-sm font-medium',
+  chip: 'text-xs font-bold',
+  cta: 'text-sm font-bold',
 } as const;
 
 /** Event card density (high-traffic feed) */

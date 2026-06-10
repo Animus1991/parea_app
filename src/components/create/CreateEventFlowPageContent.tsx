@@ -37,7 +37,7 @@ export default function CreateEventFlowPageContent() {
     p.ring,
   );
   const labelClass = cn(
-    "block text-[13px] font-semibold capitalize tracking-tight mb-2",
+    "block text-sm font-semibold capitalize tracking-tight mb-2",
     p.head,
   );
   const progressFill = p.iconAccent.replace("text-", "bg-");
@@ -88,12 +88,11 @@ export default function CreateEventFlowPageContent() {
       price: 0,
       organizerId: currentUser.id,
       timeZone: "EET (Athens)",
-      safetyLevel: "low",
-      minTrustTierAccess: visibility === "private" ? "2_confirmed" : "none",
+      safetyLevel: "low" as const,
+      minTrustTierAccess: (visibility === "private" ? "2_confirmed" : "1_explorer") as import("../../types").TrustTier,
       maxParticipants: maxAttendees,
       tags: ["social"],
       imageUrl: imagePreview || `https://picsum.photos/seed/${Date.now()}/800/600`,
-      participantsCount: 1,
     };
 
     createEvent(newEvent);

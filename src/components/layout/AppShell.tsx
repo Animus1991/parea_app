@@ -18,6 +18,7 @@ import { PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
 import { PopupChatRoot } from '../chat/PopupChatRoot';
 import { DemoModeBanner } from '../common/DemoModeBanner';
 import { useRealtimeChat } from '../../hooks/useRealtimeChat';
+import { useFirebaseAuth } from '../../hooks/useFirebaseAuth';
 
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
@@ -403,6 +404,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const tok = useThemeStyles();
 
   useRealtimeChat(currentUser?.id);
+  useFirebaseAuth();
 
   return (
     <div
