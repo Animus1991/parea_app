@@ -10,6 +10,7 @@ import { MeetingPointPanel } from './MeetingPointPanel';
 import { QuickReplies } from './QuickReplies';
 import { ReportConversationModal } from './ReportConversationModal';
 import { cn } from '../../lib/utils';
+import { CHAT_TYPO } from '../../lib/typographyTokens';
 
 function typeBadge(c: Conversation, t: (el: string, en: string) => string) {
   if (c.type === 'organizer_announcement') return t('Ανάγνωση μόνο', 'Read only');
@@ -148,9 +149,9 @@ function ChatWindowInner({
     <div className="relative flex flex-col h-full min-h-0">
       <header className="flex items-center gap-2 px-3 py-2.5 border-b border-white/10 shrink-0">
         <div className="min-w-0 flex-1">
-          <p className="text-[12px] font-bold truncate">{conversation.title}</p>
-          {eventTitle && <p className="text-[10px] text-gray-500 truncate">{eventTitle}</p>}
-          {badge && <p className="text-[9px] text-cyan-400 font-bold">{badge}</p>}
+          <p className={cn(CHAT_TYPO.title, 'truncate')}>{conversation.title}</p>
+          {eventTitle && <p className={cn(CHAT_TYPO.subtitle, 'truncate')}>{eventTitle}</p>}
+          {badge && <p className={CHAT_TYPO.badge}>{badge}</p>}
         </div>
         <button type="button" onClick={() => setMenuOpen(!menuOpen)} className="p-1.5 rounded-lg hover:bg-white/10" aria-label={t('Ενέργειες', 'Actions')}>
           <MoreVertical className="w-4 h-4" />
@@ -163,7 +164,7 @@ function ChatWindowInner({
         </button>
       </header>
       {menuOpen && (
-        <div className="absolute right-3 top-12 z-10 rounded-xl border border-white/10 bg-[#1a2030] py-1 text-[11px] shadow-xl">
+        <div className={cn('absolute right-3 top-12 z-10 rounded-xl border border-white/10 bg-[#1a2030] py-1 shadow-xl', CHAT_TYPO.menu)}>
           <button type="button" className="block w-full text-left px-4 py-2 hover:bg-white/5" onClick={onMute}>
             {conversation.muted ? t('Ξεσίγαση', 'Unmute') : t('Σίγαση', 'Mute')}
           </button>
@@ -185,7 +186,7 @@ function ChatWindowInner({
       )}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2 min-h-0">
         {!perm.canRead && perm.reasonIfLocked && (
-          <div className="rounded-xl border border-amber-500/30 bg-amber-950/30 p-3 text-[11px] text-amber-100">
+          <div className={cn('rounded-xl border border-amber-500/30 bg-amber-950/30 p-3', CHAT_TYPO.lockNotice)}>
             {t(perm.reasonIfLocked.el, perm.reasonIfLocked.en)}
           </div>
         )}
@@ -199,12 +200,13 @@ function ChatWindowInner({
                 className={cn('flex flex-col max-w-[90%]', mine ? 'ml-auto items-end' : 'items-start', isSystem && 'mx-auto items-center max-w-full')}
               >
                 {!isSystem && !mine && (
-                  <span className="text-[9px] text-gray-500 mb-0.5">{nameFor(m.senderId)}</span>
+                  <span className={CHAT_TYPO.sender}>{nameFor(m.senderId)}</span>
                 )}
                 <div
                   className={cn(
-                    'rounded-2xl px-3 py-2 text-[12px] leading-relaxed break-words',
-                    isSystem && 'bg-white/5 text-gray-400 text-[10px] text-center',
+                    CHAT_TYPO.bubble,
+                    'rounded-2xl px-3 py-2',
+                    isSystem && cn('bg-white/5 text-gray-400', CHAT_TYPO.systemBubble),
                     mine && 'bg-cyan-600 text-white',
                     !mine && !isSystem && 'bg-white/10 text-gray-100',
                   )}
@@ -229,15 +231,15 @@ function ChatWindowInner({
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={t('Μήνυμα…', 'Message…')}
-            className="flex-1 min-h-10 rounded-xl bg-white/5 border border-white/10 px-3 text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
+            className={cn('flex-1 min-h-10 rounded-xl bg-white/5 border border-white/10 px-3 focus:outline-none focus:ring-2 focus:ring-cyan-500/40', CHAT_TYPO.input)}
             aria-label={t('Σύνθεση μηνύματος', 'Compose message')}
           />
-          <button type="submit" className="min-h-10 px-4 rounded-xl bg-cyan-600 font-bold text-[12px]">
+          <button type="submit" className={cn('min-h-10 px-4 rounded-xl bg-cyan-600', CHAT_TYPO.sendBtn)}>
             {t('Αποστολή', 'Send')}
           </button>
         </form>
       ) : (
-        <div className="p-3 border-t border-white/10 text-[10px] text-gray-500 shrink-0 flex items-center gap-2">
+        <div className={cn('p-3 border-t border-white/10 shrink-0 flex items-center gap-2', CHAT_TYPO.footer)}>
           <Info className="w-3.5 h-3.5 shrink-0" />
           {perm.reasonIfLocked ? t(perm.reasonIfLocked.el, perm.reasonIfLocked.en) : t('Η συνομιλία είναι κλειδωμένη', 'Conversation is locked')}
         </div>

@@ -14,6 +14,16 @@ export const appEnv = {
   /** When true (default in dev with server.ts), Gemini calls go through /api/ai/generate. */
   aiUseProxy: import.meta.env.VITE_AI_USE_PROXY !== 'false',
   wsUrl: (import.meta.env.VITE_WS_URL as string | undefined) ?? '',
+  firebase: {
+    projectId: (import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined) ?? '',
+    appId: (import.meta.env.VITE_FIREBASE_APP_ID as string | undefined) ?? '',
+    apiKey: (import.meta.env.VITE_FIREBASE_API_KEY as string | undefined) ?? '',
+    authDomain: (import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string | undefined) ?? '',
+    firestoreDatabaseId: (import.meta.env.VITE_FIREBASE_FIRESTORE_DB_ID as string | undefined) ?? '',
+    storageBucket: (import.meta.env.VITE_FIREBASE_STORAGE_BUCKET as string | undefined) ?? '',
+    messagingSenderId: (import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID as string | undefined) ?? '',
+    measurementId: (import.meta.env.VITE_FIREBASE_MEASUREMENT_ID as string | undefined) ?? '',
+  },
 } as const;
 
 export function validateEnv(): string[] {

@@ -4,7 +4,7 @@ test.describe('public auth surface', () => {
   test('login page renders with Nakamas title', async ({ page }) => {
     await page.goto('/login');
     await expect(page).toHaveTitle(/Σύνδεση|Sign in/);
-    await expect(page.getByText(/NAKAMAS|Nakamas/i)).toBeVisible();
+    await expect(page.getByText('NAKAMAS', { exact: true })).toBeVisible();
   });
 
   test('demo explore reaches home', async ({ page }) => {

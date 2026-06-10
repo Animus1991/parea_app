@@ -127,6 +127,8 @@ interface AppState {
   notifications: typeof mockNotifications;
   eventsLoading: boolean;
   eventsSource: 'mock' | 'api' | 'mixed';
+  hydrateEventsFromApi: (events: Event[]) => void;
+  setEventsLoading: (loading: boolean) => void;
 
   onboardingCompleted: boolean;
   recentSearches: string[];
@@ -267,6 +269,9 @@ export const useStore = create<AppState>()(
   events: [...mockEvents, ...mockCalendarPlanEvents],
   eventsLoading: false,
   eventsSource: 'mock',
+  hydrateEventsFromApi: (events) =>
+    set({ events, eventsSource: 'api', eventsLoading: false }),
+  setEventsLoading: (eventsLoading) => set({ eventsLoading }),
   groups: [...mockGroups, ...mockCalendarPlanGroups],
   users: mockUsers,
   // Prototype: mock user until backend auth (see src/lib/runtimeMode.ts, docs/ARCHITECTURE.md).

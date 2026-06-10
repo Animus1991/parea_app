@@ -5,9 +5,13 @@ import {
   disconnectChatSocket,
   joinChatRoom,
 } from '../lib/realtime/socket';
-import { isFirebaseChatEnabled, subscribeFirebaseRoom } from '../lib/realtime/firebaseChat';
+import {
+  isFirebaseChatEnabled,
+  subscribeFirebaseRoom,
+} from '../lib/realtime/firebaseChat';
+
 /**
- * Mount once when authenticated — bridges Socket.IO to chatStore (CofounderBay pattern).
+ * Mount once when authenticated — Firebase Firestore or Socket.IO (CoFounderBay dual-transport).
  */
 export function useRealtimeChat(userId: string | undefined) {
   const receiveMessage = useChatStore((s) => s.receiveMessage);
@@ -25,7 +29,6 @@ export function useRealtimeChat(userId: string | undefined) {
     let cancelled = false;
 
     const setupFirebase = async () => {
-      if (!isFirebaseChatEnabled()) return;
       firebaseUnsubs.current.forEach((fn) => fn());
       firebaseUnsubs.current = [];
       for (const c of conversations) {
@@ -41,14 +44,19 @@ export function useRealtimeChat(userId: string | undefined) {
       }
     };
 
-    void setupFirebase();
+    if (isFirebaseChatEnabled()) {
+      void setupFirebase();
+      return () => {
+        cancelled = true;
+        firebaseUnsubs.current.forEach((fn) => fn());
+        firebaseUnsubs.current = [];
+      };
+    }
 
     const socket = connectChatSocket(userId);
     if (!socket) {
       return () => {
         cancelled = true;
-        firebaseUnsubs.current.forEach((fn) => fn());
-        firebaseUnsubs.current = [];
       };
     }
 
@@ -67,8 +75,6 @@ export function useRealtimeChat(userId: string | undefined) {
       cancelled = true;
       socket.off('receive_message', onReceive);
       disconnectChatSocket();
-      firebaseUnsubs.current.forEach((fn) => fn());
-      firebaseUnsubs.current = [];
     };
   }, [userId, receiveMessage, conversations.length]);
 }

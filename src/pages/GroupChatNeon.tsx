@@ -201,7 +201,7 @@ export default function GroupChatNeon() {
           key={msg.id}
           className="text-center my-6 flex justify-center w-full px-4"
         >
-          <span className="text-[11px] font-semibold tracking-tight capitalize text-[#111827] bg-[#F3F4F6] px-4 py-2 rounded-full shadow-sm max-w-sm text-center leading-relaxed">
+          <span className="text-xs font-semibold tracking-tight capitalize text-[#111827] bg-[#F3F4F6] px-4 py-2 rounded-full shadow-sm max-w-sm text-center leading-relaxed">
             {msg.text}
           </span>
         </div>
@@ -216,7 +216,7 @@ export default function GroupChatNeon() {
         >
           <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-100 px-4 py-2.5 rounded-full shadow-sm max-w-sm">
             <Compass className="h-4 w-4 text-emerald-600 animate-pulse" />
-            <span className="text-[12px] font-medium text-emerald-800 leading-tight">
+            <span className="text-sm font-medium text-emerald-800 leading-tight">
               {msg.text}
             </span>
           </div>
@@ -229,7 +229,7 @@ export default function GroupChatNeon() {
         key={msg.id}
         className={`flex flex-col group py-2.5 w-full px-4 md:px-6 ${isMe ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
       >
-        <span className="text-[11px] font-semibold tracking-tight capitalize text-black ml-1 mb-1">
+        <span className="text-xs font-semibold tracking-tight capitalize text-black ml-1 mb-1">
           {isMe ? t("Εσείς", "You") : msg.senderName}
         </span>
         <div className="flex items-center gap-2">
@@ -243,7 +243,7 @@ export default function GroupChatNeon() {
             </button>
           )}
           <div
-            className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed relative ${
+            className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-2.5 text-base leading-relaxed relative ${
               isMe
                 ? "bg-gradient-to-br from-violet-600 via-fuchsia-600 to-orange-500 text-white rounded-tr-sm shadow-sm"
                 : "bg-white border border-gray-200 text-[#111827] rounded-tl-sm shadow-sm"
@@ -252,7 +252,7 @@ export default function GroupChatNeon() {
             {msg.text}
           </div>
         </div>
-        <span className="text-[10px] text-black mt-1 mr-1 font-medium tracking-wide">
+        <span className="text-xs text-black mt-1 mr-1 font-medium tracking-wide">
           {new Date(msg.timestamp).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
@@ -311,7 +311,7 @@ export default function GroupChatNeon() {
                     <h2 className="text-sm md:text-base font-bold text-[#111827] truncate">
                       {event.title}
                     </h2>
-                    <p className="text-[10px] md:text-[11px] text-black tracking-wide font-bold truncate flex items-center gap-1.5 mt-0.5">
+                    <p className="text-xs md:text-xs text-black tracking-wide font-bold truncate flex items-center gap-1.5 mt-0.5">
                       <Users className="h-3 w-3 shrink-0" />{" "}
                       {group.members.length} {t("Μέλη", "Members")}
                     </p>
@@ -324,7 +324,7 @@ export default function GroupChatNeon() {
                     <select
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
-                      className="text-[11px] font-bold border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-gray-50 text-black hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate"
+                      className="text-xs font-bold border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-gray-50 text-black hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate"
                     >
                       <option value="all">
                         {t("Όλοι οι Αποστολείς", "All Senders")}
@@ -370,7 +370,7 @@ export default function GroupChatNeon() {
           {/* Ephemeral Notice */}
           {isEphemeral && showEphemeralBanner && (
             <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 px-2 py-2 sm:px-3 text-center shadow-sm z-10 backdrop-blur-sm flex items-center justify-center relative">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-[10px] sm:text-[11px] font-bold tracking-wide text-amber-800 pr-6 w-full">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-xs sm:text-xs font-bold tracking-wide text-amber-800 pr-6 w-full">
                 <span className="flex items-center justify-center gap-1.5 whitespace-nowrap">
                   <ShieldCheck className="h-3.5 w-3.5 shrink-0" />{" "}
                   {t("Εφήμερη Λειτουργία", "Ephemeral Mode")}
@@ -500,7 +500,7 @@ export default function GroupChatNeon() {
         {showInfo && (
           <div className="w-full md:w-[320px] lg:w-[380px] bg-white shrink-0 flex flex-col absolute md:relative z-30 h-full border-l border-gray-200 animate-in slide-in-from-right-8 duration-200">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
-              <h3 className="font-bold text-[#111827] text-[14.85px] tracking-wide">
+              <h3 className="font-bold text-[#111827] text-sm tracking-wide">
                 {t("Λεπτομέρειες Ομάδας", "Group Details")}
               </h3>
               <button
@@ -535,7 +535,7 @@ export default function GroupChatNeon() {
                       {event.tags.map((tag: string) => (
                         <span
                           key={tag}
-                          className="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md text-[9px] font-bold tracking-wide border border-emerald-100"
+                          className="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md text-xs font-bold tracking-wide border border-emerald-100"
                         >
                           {tag}
                         </span>
@@ -543,7 +543,7 @@ export default function GroupChatNeon() {
                     </div>
                   )}
 
-                  <div className="space-y-2.5 text-[13px] font-medium text-black">
+                  <div className="space-y-2.5 text-sm font-medium text-black">
                     <div className="flex items-start gap-3">
                       <div className="p-1.5 bg-gray-100 rounded-md text-black shrink-0">
                         <Calendar className="h-3.5 w-3.5" />
@@ -565,7 +565,7 @@ export default function GroupChatNeon() {
 
                   <div className="mt-4 bg-blue-50/80 text-blue-800 p-3 rounded-lg border border-blue-100 flex items-start gap-2">
                     <Info className="h-4 w-4 shrink-0 mt-0.5 text-blue-600" />
-                    <span className="text-[11px] font-semibold tracking-wide">
+                    <span className="text-xs font-semibold tracking-wide">
                       {t(
                         "’φιξη: 20 λεπτά πριν την εκδήλωση",
                         "Target Arrival: 20 mins before event",
@@ -609,20 +609,20 @@ export default function GroupChatNeon() {
 
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-bold text-[13px] capitalize tracking-tight text-[#111827]">
+                  <h4 className="font-bold text-sm capitalize tracking-tight text-[#111827]">
                     {t("Μέλη Ομάδας", "Group Members")}
                   </h4>
                   <div className="flex items-center gap-2">
                     {isGroupAdmin && (
                       <button
                         onClick={() => setShowAddMemberModal(true)}
-                        className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded border border-emerald-100 transition-colors"
+                        className="flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded border border-emerald-100 transition-colors"
                       >
                         <UserPlus className="w-3 h-3" />{" "}
                         {t("Προσθήκη Μελών", "Add Members")}
                       </button>
                     )}
-                    <span className="text-[11px] font-bold text-black bg-gray-100 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-bold text-black bg-gray-100 px-2 py-0.5 rounded-full">
                       {group.members.length}/{group.targetSize}
                     </span>
                   </div>
@@ -634,7 +634,7 @@ export default function GroupChatNeon() {
                     placeholder={t("Αναζήτηση μελών...", "Search members...")}
                     value={memberSearchQuery}
                     onChange={(e) => setMemberSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-[13px] border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827] bg-gray-50 transition-all font-medium"
+                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111827] bg-gray-50 transition-all font-medium"
                   />
                 </div>
                 <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
@@ -676,7 +676,7 @@ export default function GroupChatNeon() {
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2 mb-0.5">
-                              <p className="text-[13px] font-bold text-[#111827] truncate">
+                              <p className="text-sm font-bold text-[#111827] truncate">
                                 {member.name}{" "}
                                 {member.id === currentUser.id && (
                                   <span className="text-black font-medium ml-1">
@@ -693,7 +693,7 @@ export default function GroupChatNeon() {
                                 {member.reliabilityScore}%
                               </span>
                               <p
-                                className={`text-[9px] font-bold tracking-wide truncate ${member.reliabilityScore >= 80 ? "text-emerald-600" : member.reliabilityScore >= 50 ? "text-blue-600" : "text-amber-600"}`}
+                                className={`text-xs font-bold tracking-wide truncate ${member.reliabilityScore >= 80 ? "text-emerald-600" : member.reliabilityScore >= 50 ? "text-blue-600" : "text-amber-600"}`}
                               >
                                 {member.reliabilityScore >= 80
                                   ? t("Υψηλή Αξιοπιστία", "Highly Reliable")
@@ -712,16 +712,16 @@ export default function GroupChatNeon() {
               {/* Chat Settings */}
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 space-y-5">
                 <div>
-                  <h4 className="font-bold text-[13px] capitalize tracking-tight text-[#111827] mb-3 flex items-center gap-1.5">
+                  <h4 className="font-bold text-sm capitalize tracking-tight text-[#111827] mb-3 flex items-center gap-1.5">
                     <ShieldCheck className="h-3.5 w-3.5 text-black" />{" "}
                     {t("Ιδιωτικότητα Συνομιλίας", "Chat Privacy")}
                   </h4>
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex-1">
-                      <p className="text-[13px] font-bold text-[#111827]">
+                      <p className="text-sm font-bold text-[#111827]">
                         {t("Εφήμερη Λειτουργία", "Ephemeral Mode")}
                       </p>
-                      <p className="text-[11px] text-black mt-1 leading-relaxed">
+                      <p className="text-xs text-black mt-1 leading-relaxed">
                         {t(
                           "Το ιστορικό διαγράφεται 24 ώρες μετά. Πρέπει να συμφωνήσουν όλοι για διατήρηση.",
                           "Chat history deletes automatically 24h after the event. All members must agree to keep it permanently.",
@@ -750,7 +750,7 @@ export default function GroupChatNeon() {
                 </div>
 
                 <div className="pt-4 border-t border-gray-100">
-                  <h4 className="font-bold text-[13px] capitalize tracking-tight text-[#111827] mb-3 flex items-center gap-1.5">
+                  <h4 className="font-bold text-sm capitalize tracking-tight text-[#111827] mb-3 flex items-center gap-1.5">
                     <Navigation className="h-3.5 w-3.5 text-black" />{" "}
                     {t("’φιξη & Ασφάλεια", "Arrival & Safety")}
                   </h4>
@@ -760,10 +760,10 @@ export default function GroupChatNeon() {
                       className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors text-left"
                     >
                       <div>
-                        <p className="text-[12px] font-bold text-[#111827]">
+                        <p className="text-sm font-bold text-[#111827]">
                           {t("Κατάσταση ’φιξης", "Share Arrival Status")}
                         </p>
-                        <p className="text-[10px] text-black mt-0.5">
+                        <p className="text-xs text-black mt-0.5">
                           {t(
                             "Γρήγορη ενημέρωση χωρίς χάρτη",
                             "Quickly update the group without map",
@@ -779,7 +779,7 @@ export default function GroupChatNeon() {
                     >
                       <div>
                         <p
-                          className={`text-[12px] font-bold ${isSharingLocation ? "text-emerald-700" : "text-[#111827]"}`}
+                          className={`text-sm font-bold ${isSharingLocation ? "text-emerald-700" : "text-[#111827]"}`}
                         >
                           {isSharingLocation
                             ? t("Η Τοποθεσία Κοινοποιείται", "Location Shared")
@@ -789,7 +789,7 @@ export default function GroupChatNeon() {
                               )}
                         </p>
                         <p
-                          className={`text-[10px] mt-0.5 ${isSharingLocation ? "text-emerald-600/80" : "text-black"}`}
+                          className={`text-xs mt-0.5 ${isSharingLocation ? "text-emerald-600/80" : "text-black"}`}
                         >
                           {isSharingLocation
                             ? t("Διαχείριση ή Διακοπή", "Tap to manage or stop")
@@ -809,10 +809,10 @@ export default function GroupChatNeon() {
                       className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors text-left"
                     >
                       <div>
-                        <p className="text-[12px] font-bold text-[#111827]">
+                        <p className="text-sm font-bold text-[#111827]">
                           {t("Nakama Safety Shield", "Nakama Safety Shield")}
                         </p>
-                        <p className="text-[10px] text-black mt-0.5">
+                        <p className="text-xs text-black mt-0.5">
                           {t(
                             "Χάρτης ασφαλείας & SOS Flare",
                             "Safety map & SOS Flare",
@@ -827,13 +827,13 @@ export default function GroupChatNeon() {
                       className="w-full flex items-center justify-between px-3 py-2.5 bg-emerald-50/50 hover:bg-emerald-50 border border-emerald-100 rounded-lg transition-colors text-left text-emerald-800"
                     >
                       <div>
-                        <p className="text-[12px] font-bold text-emerald-800">
+                        <p className="text-sm font-bold text-emerald-800">
                           {t(
                             "Σύνδεσμος Έμπιστης Επαφής",
                             "Trusted Contact Link",
                           )}
                         </p>
-                        <p className="text-[10px] text-emerald-600/80 mt-0.5">
+                        <p className="text-xs text-emerald-600/80 mt-0.5">
                           {t(
                             "Ασφαλής κοινοποίηση εκτός εφαρμογής",
                             "Share securely outside app",
@@ -849,13 +849,13 @@ export default function GroupChatNeon() {
               <div className="space-y-2 pt-2">
                 <button
                   onClick={() => setShowReportModal(true)}
-                  className="w-full py-2.5 px-4 text-[11px] font-bold tracking-wide text-red-600 bg-red-50/50 hover:bg-red-50 border border-red-100 rounded-lg transition-colors flex justify-center items-center gap-2"
+                  className="w-full py-2.5 px-4 text-xs font-bold tracking-wide text-red-600 bg-red-50/50 hover:bg-red-50 border border-red-100 rounded-lg transition-colors flex justify-center items-center gap-2"
                 >
                   {t("Αναφορά Προβλήματος", "Report Safety Issue")}
                 </button>
                 <button
                   onClick={() => setShowLeaveModal(true)}
-                  className="w-full py-2.5 px-4 text-[11px] font-bold tracking-wide text-black bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors"
+                  className="w-full py-2.5 px-4 text-xs font-bold tracking-wide text-black bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors"
                 >
                   {t("Αποχώρηση", "Leave Group")}
                 </button>
@@ -953,7 +953,7 @@ export default function GroupChatNeon() {
                     <h3 className="text-base font-bold text-[#111827]">
                       {t("Live Τοποθεσία", "Live Location Sharing")}
                     </h3>
-                    <p className="text-[11px] font-medium text-black">
+                    <p className="text-xs font-medium text-black">
                       {t("Προαιρετικό & προσωρινό", "Optional & temporary")}
                     </p>
                   </div>
@@ -1005,7 +1005,7 @@ export default function GroupChatNeon() {
                 )}
 
                 <div className="space-y-3">
-                  <h4 className="text-[11px] font-bold tracking-wide text-black">
+                  <h4 className="text-xs font-bold tracking-wide text-black">
                     1. {t("Ακρίβεια", "Precision")}
                   </h4>
                   <div className="grid grid-cols-2 gap-3">
@@ -1019,11 +1019,11 @@ export default function GroupChatNeon() {
                       className={`p-3 rounded-xl border text-left flex flex-col h-full transition-all ${locationConfig.precision === "approximate" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827]" : "border-gray-200 hover:border-gray-300"}`}
                     >
                       <span
-                        className={`text-[13px] font-bold ${locationConfig.precision === "approximate" ? "text-[#111827]" : "text-black"}`}
+                        className={`text-sm font-bold ${locationConfig.precision === "approximate" ? "text-[#111827]" : "text-black"}`}
                       >
                         {t("Κατά προσέγγιση", "Approximate")}
                       </span>
-                      <span className="text-[10px] text-black mt-1 leading-relaxed">
+                      <span className="text-xs text-black mt-1 leading-relaxed">
                         {t(
                           "Μόνο απόσταση & ETA, όχι live τοποθεσία",
                           "Distance & ETA only, no map pin",
@@ -1040,11 +1040,11 @@ export default function GroupChatNeon() {
                       className={`p-3 rounded-xl border text-left flex flex-col h-full transition-all ${locationConfig.precision === "exact" ? "border-[#111827] bg-gray-50 ring-1 ring-[#111827]" : "border-gray-200 hover:border-gray-300"}`}
                     >
                       <span
-                        className={`text-[13px] font-bold ${locationConfig.precision === "exact" ? "text-[#111827]" : "text-black"}`}
+                        className={`text-sm font-bold ${locationConfig.precision === "exact" ? "text-[#111827]" : "text-black"}`}
                       >
                         {t("Ακριβής", "Exact")}
                       </span>
-                      <span className="text-[10px] text-black mt-1 leading-relaxed">
+                      <span className="text-xs text-black mt-1 leading-relaxed">
                         {t(
                           "Ακριβές GPS live tracking",
                           "Precise GPS live tracking",
@@ -1055,7 +1055,7 @@ export default function GroupChatNeon() {
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="text-[11px] font-bold tracking-wide text-black">
+                  <h4 className="text-xs font-bold tracking-wide text-black">
                     2. {t("Ορατότητα", "Share With")}
                   </h4>
                   <div className="flex flex-col gap-2">
@@ -1095,7 +1095,7 @@ export default function GroupChatNeon() {
                               t("Ολόκληρη η Ομάδα", "Entire Confirmed Group")}
                           </span>
                           {option === "organizer" && (
-                            <span className="text-[10px] text-black leading-relaxed">
+                            <span className="text-xs text-black leading-relaxed">
                               {t(
                                 "Ιδανικό για ξεναγήσεις ή πεζοπορίες",
                                 "Best for guided hikes or escapes",
@@ -1103,7 +1103,7 @@ export default function GroupChatNeon() {
                             </span>
                           )}
                           {option === "all" && (
-                            <span className="text-[10px] text-amber-600 leading-relaxed">
+                            <span className="text-xs text-amber-600 leading-relaxed">
                               {t(
                                 "Όλοι θα βλέπουν την τοποθεσία σας",
                                 "Everyone in this chat will see your location",
@@ -1117,7 +1117,7 @@ export default function GroupChatNeon() {
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="text-[11px] font-bold tracking-wide text-black">
+                  <h4 className="text-xs font-bold tracking-wide text-black">
                     3. {t("Αυτόματη Λήξη", "Auto-Expiry")}
                   </h4>
                   <select
@@ -1499,7 +1499,7 @@ export default function GroupChatNeon() {
                     <h3 className="text-base font-bold text-[#111827]">
                       {t("Προσθήκη Μελών", "Add Members")}
                     </h3>
-                    <p className="text-[11px] font-medium text-black">
+                    <p className="text-xs font-medium text-black">
                       {t(
                         "Μπορείτε να προσθέσετε όσα άτομα θέλετε σε αυτή την ομάδα.",
                         "You can add as many people as you wish to this group.",
@@ -1530,7 +1530,7 @@ export default function GroupChatNeon() {
                     )}
                     value={memberAddSearchQuery}
                     onChange={(e) => setMemberAddSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 text-[13px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 bg-white transition-all shadow-sm font-medium"
+                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 bg-white transition-all shadow-sm font-medium"
                   />
                 </div>
               </div>
@@ -1563,10 +1563,10 @@ export default function GroupChatNeon() {
                             )}
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-[13px] font-bold text-[#111827]">
+                            <span className="text-sm font-bold text-[#111827]">
                               {member.name}
                             </span>
-                            <span className="text-[10px] text-black font-medium flex items-center gap-1">
+                            <span className="text-xs text-black font-medium flex items-center gap-1">
                               {member.city}{" "}
                               {member.badges.includes("Payment verified") && (
                                 <ShieldCheck className="w-3 h-3 text-emerald-500" />
@@ -1592,7 +1592,7 @@ export default function GroupChatNeon() {
                               },
                             ]);
                           }}
-                          className="text-[12px] font-semibold capitalize tracking-tight px-3 py-1.5 rounded-lg border flex items-center gap-1 transition-all bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 shadow-sm"
+                          className="text-sm font-semibold capitalize tracking-tight px-3 py-1.5 rounded-lg border flex items-center gap-1 transition-all bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 shadow-sm"
                         >
                           <UserPlus className="w-3 h-3" />{" "}
                           {t("Προσθήκη", "Add")}
@@ -1604,13 +1604,13 @@ export default function GroupChatNeon() {
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3 text-black">
                       <Check className="w-6 h-6" />
                     </div>
-                    <p className="text-[13px] font-bold text-[#111827]">
+                    <p className="text-sm font-bold text-[#111827]">
                       {t(
                         "Όλα τα διαθέσιμα άτομα είναι ήδη στην ομάδα!",
                         "All available people are in this group!",
                       )}
                     </p>
-                    <p className="text-[11px] mt-1">
+                    <p className="text-xs mt-1">
                       {t(
                         "Ελέγξτε ξανά αργότερα ή προσκαλέστε με σύνδεσμο.",
                         "Check back later or invite via link.",

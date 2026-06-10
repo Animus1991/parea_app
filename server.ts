@@ -43,6 +43,32 @@ async function startServer() {
     res.json({ ok: true, app: 'nakamas', ts: new Date().toISOString() });
   });
 
+  app.get('/api/events', async (_req, res) => {
+    try {
+      const { mockEvents } = await import('./src/data/mockEvents.ts');
+      const { mockCalendarPlanEvents } = await import('./src/data/mockCalendarPlan.ts');
+      res.json({
+        events: [...mockEvents, ...mockCalendarPlanEvents],
+        source: 'api',
+        count: mockEvents.length + mockCalendarPlanEvents.length,
+        ts: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error('GET /api/events failed:', err);
+      res.status(500).json({ error: 'Failed to load events catalog' });
+    }
+  });
+
+  app.get('/api/notifications', async (_req, res) => {
+    try {
+      const { mockNotifications } = await import('./src/data/mockNotifications.ts');
+      res.json({ notifications: mockNotifications, ts: new Date().toISOString() });
+    } catch (err) {
+      console.error('GET /api/notifications failed:', err);
+      res.status(500).json({ error: 'Failed to load notifications' });
+    }
+  });
+
   // ── AI Proxy (keeps GEMINI_API_KEY server-side) ─────────────────────────
   const aiRateBuckets = new Map<string, { count: number; resetAt: number }>();
   const AI_RATE_LIMIT = parseInt(process.env.AI_RATE_LIMIT_PER_MINUTE || '30', 10);

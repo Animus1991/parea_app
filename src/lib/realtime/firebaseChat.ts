@@ -1,7 +1,20 @@
 /**
- * Firebase chat adapter stub — swap in when VITE_FIREBASE_* env is configured.
- * Today Socket.IO relay (server.ts) is the active transport.
+ * Firebase chat adapter — onSnapshot when configured; Socket.IO fallback otherwise.
  */
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  limit,
+  addDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
+import { getFirebaseDb, isFirebaseConfigured } from '../firebase';
+import { createLogger } from '../logger';
+
+const log = createLogger('firebaseChat');
+
 export interface FirebaseChatMessage {
   conversationId: string;
   senderId: string;
@@ -12,28 +25,64 @@ export interface FirebaseChatMessage {
 export type FirebaseMessageHandler = (msg: FirebaseChatMessage) => void;
 
 export function isFirebaseChatEnabled(): boolean {
-  const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined;
-  const apiKey = import.meta.env.VITE_FIREBASE_API_KEY as string | undefined;
-  return Boolean(projectId && apiKey);
+  return isFirebaseConfigured();
 }
 
-/** No-op until Firebase SDK is wired; callers fall back to Socket.IO. */
 export async function subscribeFirebaseRoom(
-  _conversationId: string,
-  _onMessage: FirebaseMessageHandler,
+  conversationId: string,
+  onMessage: FirebaseMessageHandler,
 ): Promise<() => void> {
-  if (!isFirebaseChatEnabled()) {
-    return () => undefined;
-  }
-  // Future: onSnapshot(collection(db, 'rooms', conversationId, 'messages'), ...)
-  return () => undefined;
+  const db = getFirebaseDb();
+  if (!db) return () => undefined;
+
+  const q = query(
+    collection(db, 'chatRooms', conversationId, 'messages'),
+    orderBy('createdAt', 'asc'),
+    limit(200),
+  );
+
+  const unsub = onSnapshot(
+    q,
+    (snap) => {
+      snap.docChanges().forEach((change) => {
+        if (change.type !== 'added') return;
+        const data = change.doc.data();
+        const body = String(data.body ?? '');
+        const senderId = String(data.senderId ?? '');
+        if (!body || !senderId) return;
+        onMessage({
+          conversationId,
+          senderId,
+          body,
+          createdAt:
+            typeof data.createdAt?.toDate === 'function'
+              ? data.createdAt.toDate().toISOString()
+              : new Date().toISOString(),
+        });
+      });
+    },
+    (err) => log.error('chat subscription failed', { conversationId, err }),
+  );
+
+  return unsub;
 }
 
 export async function sendFirebaseMessage(
-  _conversationId: string,
-  _senderId: string,
-  _body: string,
+  conversationId: string,
+  senderId: string,
+  body: string,
 ): Promise<boolean> {
-  if (!isFirebaseChatEnabled()) return false;
-  return false;
+  const db = getFirebaseDb();
+  if (!db) return false;
+  try {
+    await addDoc(collection(db, 'chatRooms', conversationId, 'messages'), {
+      senderId,
+      body,
+      createdAt: serverTimestamp(),
+    });
+    return true;
+  } catch (err) {
+    log.error('send failed', { conversationId, err });
+    return false;
+  }
 }
