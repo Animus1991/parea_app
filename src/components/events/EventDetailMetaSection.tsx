@@ -30,29 +30,29 @@ export function EventDetailMetaSection({
       <div className="space-y-1">
         <div
           className={cn(
-            'flex items-center gap-1.5 font-bold tracking-wide text-[10px]',
+            'flex items-center gap-1.5 font-bold tracking-wide text-xs',
             content.metaLabel,
           )}
         >
           <Calendar className="h-3.5 w-3.5" /> {t('Ημερομηνία', 'Date')}
         </div>
-        <p className={cn('font-medium text-[13px]', content.metaValue)}>
+        <p className={cn('font-medium text-sm', content.metaValue)}>
           {format(parseISO(event.date), 'EEEE, MMMM d, yyyy')}
         </p>
       </div>
       <div className="space-y-1">
         <div
           className={cn(
-            'flex items-center gap-1.5 font-bold tracking-wide text-[10px]',
+            'flex items-center gap-1.5 font-bold tracking-wide text-xs',
             content.metaLabel,
           )}
         >
           <Clock className="h-3.5 w-3.5" /> {t('Ώρα', 'Time')}
         </div>
-        <p className={cn('font-medium text-[13px]', content.metaValue)}>
+        <p className={cn('font-medium text-sm', content.metaValue)}>
           {event.time} ({event.duration})
         </p>
-        <p className={cn('text-[11px] mt-0.5 font-medium', content.metaMuted)}>
+        <p className={cn('text-xs mt-0.5 font-medium', content.metaMuted)}>
           {event.timeZone || t('Τοπική Ώρα', 'Local Time')}
         </p>
       </div>
@@ -60,14 +60,14 @@ export function EventDetailMetaSection({
         <div className="space-y-1">
           <div
             className={cn(
-              'flex items-center gap-1.5 font-bold tracking-wide text-[10px]',
+              'flex items-center gap-1.5 font-bold tracking-wide text-xs',
               content.metaLabel,
             )}
           >
             <MapPin className="h-3.5 w-3.5" /> {t('Τοποθεσία', 'Location')}
           </div>
-          <p className={cn('font-medium text-[13px]', content.metaValue)}>{event.locationArea}</p>
-          <p className={cn('text-[11px] mt-0.5', content.metaMuted)}>
+          <p className={cn('font-medium text-sm', content.metaValue)}>{event.locationArea}</p>
+          <p className={cn('text-xs mt-0.5', content.metaMuted)}>
             {t(
               'Το ακριβές σημείο συνάντησης εμφανίζεται μετά την επιβεβαίωση.',
               'Exact meeting point revealed upon confirmation.',
@@ -78,7 +78,7 @@ export function EventDetailMetaSection({
       <div className="space-y-1 col-span-2 sm:col-span-1">
         <div
           className={cn(
-            'flex items-center gap-1.5 font-bold tracking-wide text-[10px]',
+            'flex items-center gap-1.5 font-bold tracking-wide text-xs',
             content.metaLabel,
           )}
         >
@@ -86,10 +86,10 @@ export function EventDetailMetaSection({
           {t('Κανόνες Συμμετοχής', 'Participation Rules')}
         </div>
         <div className="flex items-center gap-2">
-          <p className={cn('font-medium text-[13px] capitalize', content.metaValue)}>{ruleText}</p>
+          <p className={cn('font-medium text-sm capitalize', content.metaValue)}>{ruleText}</p>
           <Link
             to="/trust"
-            className={cn('text-[11px] font-bold underline', content.trustLink)}
+            className={cn('text-xs font-bold underline', content.trustLink)}
           >
             {t('Γιατί;', 'Why?')}
           </Link>

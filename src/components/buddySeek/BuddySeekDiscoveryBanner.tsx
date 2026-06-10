@@ -72,25 +72,25 @@ export function BuddySeekDiscoveryBanner({ item, compact, className }: BuddySeek
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-cyan-400/90 flex items-center gap-1 mb-0.5">
+          <p className="text-xs font-bold uppercase tracking-widest text-cyan-400/90 flex items-center gap-1 mb-0.5">
             <Sparkles className="w-3 h-3" />
             {t('Σχέδια που σχηματίζονται', 'Plans forming')}
           </p>
-          <p className={cn('font-bold text-white leading-snug', compact ? 'text-[12px]' : 'text-[13px]')}>
+          <p className={cn('font-bold text-white leading-snug', compact ? 'text-sm' : 'text-sm')}>
             {displayName}
           </p>
-          <p className={cn('text-gray-300 font-medium line-clamp-2 mt-0.5', compact ? 'text-[11px]' : 'text-[12px]')}>
+          <p className={cn('text-gray-300 font-medium line-clamp-2 mt-0.5', compact ? 'text-xs' : 'text-sm')}>
             {item.event.title}
           </p>
           {item.intent.message && !compact && (
-            <p className="text-[11px] text-gray-400 mt-1.5 italic line-clamp-2">"{item.intent.message}"</p>
+            <p className="text-xs text-gray-400 mt-1.5 italic line-clamp-2">"{item.intent.message}"</p>
           )}
           {prefs.showInterestsInDiscovery && shared.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
               {shared.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-white/10 text-cyan-100"
+                  className="text-xs font-bold px-1.5 py-0.5 rounded-md bg-white/10 text-cyan-100"
                 >
                   {tag}
                 </span>
@@ -105,7 +105,7 @@ export function BuddySeekDiscoveryBanner({ item, compact, className }: BuddySeek
           type="button"
           onClick={() => navigate(`/events/${item.event.id}`)}
           className={cn(
-            'flex-1 min-h-10 rounded-2xl text-[11px] font-bold border border-white/15 text-white hover:bg-white/10 transition-colors flex items-center justify-center gap-1',
+            'flex-1 min-h-10 rounded-2xl text-xs font-bold border border-white/15 text-white hover:bg-white/10 transition-colors flex items-center justify-center gap-1',
           )}
         >
           {t('Δες εκδήλωση', 'View event')}
@@ -114,7 +114,7 @@ export function BuddySeekDiscoveryBanner({ item, compact, className }: BuddySeek
         <button
           type="button"
           onClick={() => setPreviewOpen(true)}
-          className="flex-1 min-h-10 rounded-2xl text-[11px] font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition-colors"
+          className="flex-1 min-h-10 rounded-2xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition-colors"
         >
           {t('Αίτημα συμμετοχής', 'Ask to join')}
         </button>
@@ -132,7 +132,7 @@ export function BuddySeekDiscoveryBanner({ item, compact, className }: BuddySeek
         }}
       />
 
-      <p className="text-[9px] text-gray-500 mt-2 flex items-center gap-1">
+      <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
         <Shield className="w-3 h-3 shrink-0" />
         {t('Κοινότητα · όχι διαφήμιση', 'Community · not an ad')}
       </p>

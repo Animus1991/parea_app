@@ -24,7 +24,8 @@ import {
 import { Virtuoso } from "react-virtuoso";
 import { toast } from "sonner";
 import { useLanguage } from "../../lib/i18n";
-import { usePageContrast } from "../../hooks/usePageContrast";
+import { useGroupChatContrast } from "../../hooks/useGroupChatContrast";
+import { cn } from "../../lib/utils";
 import { useGroupChatMessages, type GroupChatMessage } from "../../hooks/useGroupChatMessages";
 import { LiveEventTracker } from "./LiveEventTracker";
 import { ChatIcebreakers } from "./ChatIcebreakers";
@@ -37,7 +38,7 @@ export default function GroupChatPageContent() {
   const groups = useStore((state) => state.groups);
   const users = useStore((state) => state.users);
   const currentUser = useStore((state) => state.currentUser);
-  const p = usePageContrast();
+  const gc = useGroupChatContrast();
 
   // Ensure we default to an array even if map fails, though mock data shouldn't
   const group =
@@ -47,7 +48,7 @@ export default function GroupChatPageContent() {
 
   const buildSeedMessages = (): GroupChatMessage[] => {
     if (!currentUser) return [];
-    const msgs: GroupChatMessage[] = Array.from({ length: 1000 }).map((_, i) => ({
+    const msgs: GroupChatMessage[] = Array.from({ length: 50 }).map((_, i) => ({
       id: `m${i}`,
       senderId: i % 2 === 0 ? "u2" : i % 3 === 0 ? "u3" : currentUser.id,
       senderName:
@@ -56,7 +57,7 @@ export default function GroupChatPageContent() {
         `Μήνυμα ${i} από προηγούμενες συνομιλίες. ${i % 5 === 0 ? "Ανυπομονώ!" : ""}`,
         `Test message ${i} from previous conversations. ${i % 5 === 0 ? "Looking forward to it!" : ""}`,
       ),
-      timestamp: new Date(Date.now() - (1000 - i) * 60000).toISOString(),
+      timestamp: new Date(Date.now() - (50 - i) * 60000).toISOString(),
     }));
     msgs.push(
       {
@@ -325,7 +326,7 @@ export default function GroupChatPageContent() {
                     <select
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
-                      className="text-xs font-bold border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-cyan-500 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate"
+                      className={cn("text-xs font-bold border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate", gc.focusRing)}
                     >
                       <option value="all">
                         {t("Όλοι οι Αποστολείς", "All Senders")}
@@ -337,13 +338,13 @@ export default function GroupChatPageContent() {
                       ))}
                     </select>
                     <div className="relative group">
-                      <Search className="h-3.5 w-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2 group-focus-within:text-cyan-500 transition-colors" />
+                      <Search className={cn("h-3.5 w-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2 transition-colors", gc.focusIcon)} />
                       <input
                         type="text"
                         placeholder={t("Αναζήτηση...", "Search...")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-cyan-500 w-32 xl:w-48 bg-gray-50 focus:bg-white transition-all"
+                        className={cn("pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 w-32 xl:w-48 bg-gray-50 focus:bg-white transition-all", gc.focusRing)}
                       />
                     </div>
                   </div>
@@ -368,7 +369,7 @@ export default function GroupChatPageContent() {
                   {/* Info Toggle */}
                   <button
                     onClick={() => setShowInfo(!showInfo)}
-                    className={`transition-colors p-2 rounded-full min-h-11 min-w-11 ${showInfo ? "text-cyan-600 bg-cyan-50" : "text-gray-400 hover:text-[#111827] hover:bg-gray-100"}`}
+                    className={cn("transition-colors p-2 rounded-full min-h-11 min-w-11", showInfo ? gc.infoActive : "text-gray-400 hover:text-[#111827] hover:bg-gray-100")}
                     aria-label={showInfo ? t('Απόκρυψη πληροφοριών', 'Hide info panel') : t('Εμφάνιση πληροφοριών', 'Show info panel')}
                   >
                     <Info className="h-5 w-5" />
@@ -526,7 +527,7 @@ export default function GroupChatPageContent() {
                       {event.tags.map((tag: string) => (
                         <span
                           key={tag}
-                          className="bg-cyan-50 text-cyan-700 px-2.5 py-1 rounded-md text-xs font-bold tracking-wide border border-cyan-100"
+                          className={cn("px-2.5 py-1 rounded-md text-xs font-bold tracking-wide border", gc.tagBadge)}
                         >
                           {tag}
                         </span>
@@ -607,7 +608,7 @@ export default function GroupChatPageContent() {
                     {isGroupAdmin && (
                       <button
                         onClick={() => setShowAddMemberModal(true)}
-                        className="flex items-center gap-1 text-xs font-bold text-cyan-600 hover:text-cyan-700 bg-cyan-50 hover:bg-cyan-100 px-2 py-1 rounded border border-cyan-100 transition-colors"
+                        className={cn("flex items-center gap-1 text-xs font-bold px-2 py-1 rounded border transition-colors", gc.linkBtn)}
                       >
                         <UserPlus className="w-3 h-3" />{" "}
                         {t("Προσθήκη Μελών", "Add Members")}
@@ -651,7 +652,7 @@ export default function GroupChatPageContent() {
                                 className={`w-full h-full object-cover transition-all ${!isCloseToEvent && member.id !== currentUser.id ? "blur-sm grayscale opacity-80" : ""}`}
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-500 font-bold text-xs bg-cyan-50 text-cyan-700">
+                              <div className={cn("w-full h-full flex items-center justify-center font-bold text-xs", gc.avatarPlaceholder)}>
                                 {member.name.substring(0, 2)}
                               </div>
                             )}
@@ -659,7 +660,7 @@ export default function GroupChatPageContent() {
                               member.id !== currentUser.id && (
                                 <div className="absolute inset-0 bg-black/20 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[1px]">
                                   <ShieldCheck className="w-4 h-4 text-white mb-0.5" />
-                                  <span className="text-[7px] font-bold text-white tracking-wide text-center px-1">
+                                  <span className="text-xs font-bold text-white tracking-wide text-center px-1">
                                     {t("Κρυφό", "Hidden")}
                                   </span>
                                 </div>
@@ -678,7 +679,7 @@ export default function GroupChatPageContent() {
                             </div>
                             <div className="flex items-center gap-1.5">
                               <span
-                                className={`px-1.5 py-0.5 text-[8px] font-bold flex shrink-0 tracking-wide rounded-md items-center gap-1 border ${member.reliabilityScore >= 80 ? "bg-emerald-50 text-emerald-700 border-emerald-100" : member.reliabilityScore >= 50 ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-amber-50 text-amber-700 border-amber-100"}`}
+                                className={`px-1.5 py-0.5 text-xs font-bold flex shrink-0 tracking-wide rounded-md items-center gap-1 border ${member.reliabilityScore >= 80 ? "bg-emerald-50 text-emerald-700 border-emerald-100" : member.reliabilityScore >= 50 ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-amber-50 text-amber-700 border-amber-100"}`}
                               >
                                 <ShieldCheck className="h-2.5 w-2.5" />
                                 {member.reliabilityScore}%
@@ -766,11 +767,11 @@ export default function GroupChatPageContent() {
 
                     <button
                       onClick={() => setShowLocationConfigModal(true)}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 border rounded-lg transition-colors text-left ${isSharingLocation ? "bg-cyan-50 border-cyan-200 hover:bg-cyan-100" : "bg-gray-50 hover:bg-gray-100 border-gray-200"}`}
+                      className={cn("w-full flex items-center justify-between px-3 py-2.5 border rounded-lg transition-colors text-left", isSharingLocation ? gc.shareActive : "bg-gray-50 hover:bg-gray-100 border-gray-200")}
                     >
                       <div>
                         <p
-                          className={`text-sm font-bold ${isSharingLocation ? "text-cyan-700" : "text-[#111827]"}`}
+                          className={cn("text-sm font-bold", isSharingLocation ? gc.shareActiveText : "text-[#111827]")}
                         >
                           {isSharingLocation
                             ? t("Η Τοποθεσία Κοινοποιείται", "Location Shared")
@@ -780,7 +781,7 @@ export default function GroupChatPageContent() {
                               )}
                         </p>
                         <p
-                          className={`text-xs mt-0.5 ${isSharingLocation ? "text-cyan-600/80" : "text-gray-500"}`}
+                          className={cn("text-xs mt-0.5", isSharingLocation ? gc.shareMutedText : "text-gray-500")}
                         >
                           {isSharingLocation
                             ? t("Διαχείριση ή Διακοπή", "Tap to manage or stop")
@@ -791,7 +792,7 @@ export default function GroupChatPageContent() {
                         </p>
                       </div>
                       <MapPin
-                        className={`w-4 h-4 ${isSharingLocation ? "text-cyan-600" : "text-gray-400"}`}
+                        className={cn("w-4 h-4", isSharingLocation ? gc.accentText : "text-gray-400")}
                       />
                     </button>
 
@@ -937,7 +938,7 @@ export default function GroupChatPageContent() {
             <div className="modal-panel max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-200">
               <div className="p-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600">
+                  <div className={cn("w-10 h-10 rounded-full flex items-center justify-center", gc.panelAccent)}>
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
@@ -959,8 +960,8 @@ export default function GroupChatPageContent() {
 
               <div className="p-5 space-y-6">
                 {isSharingLocation && (
-                  <div className="bg-cyan-50 border border-[#a5f3fc]/40 rounded-2xl p-4 flex flex-col gap-3 shadow-soft">
-                    <div className="flex items-center gap-2 text-cyan-700">
+                  <div className={cn("rounded-2xl p-4 flex flex-col gap-3 shadow-soft border", gc.panelSoft)}>
+                    <div className={cn("flex items-center gap-2", gc.shareActiveText)}>
                       <Navigation className="w-4 h-4 animate-pulse" />
                       <span className="text-sm font-bold">
                         {t(
@@ -1053,7 +1054,7 @@ export default function GroupChatPageContent() {
                     {["organizer", "selected", "all"].map((option) => (
                       <label
                         key={option}
-                        className={`flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all duration-200 ${locationConfig.shareWith === option ? "border-[#18D8DB] bg-cyan-50/30 shadow-soft" : "border-gray-100 hover:bg-gray-50 hover:border-[#a5f3fc]"}`}
+                        className={cn("flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all duration-200", locationConfig.shareWith === option ? cn(gc.selectedRow, "shadow-soft") : "border-gray-100 hover:bg-gray-50 hover:border-gray-200")}
                       >
                         <div className="flex items-center justify-center relative">
                           <input
@@ -1069,7 +1070,7 @@ export default function GroupChatPageContent() {
                             }
                           />
                           <div
-                            className={`w-5 h-5 rounded-full border flex items-center justify-center ${locationConfig.shareWith === option ? "border-cyan-600 bg-cyan-600" : "border-gray-300"}`}
+                            className={cn("w-5 h-5 rounded-full border flex items-center justify-center", locationConfig.shareWith === option ? gc.radioOn : "border-gray-300")}
                           >
                             {locationConfig.shareWith === option && (
                               <span className="w-2 h-2 rounded-full bg-white"></span>
@@ -1214,7 +1215,7 @@ export default function GroupChatPageContent() {
                       t("Αντιγράφηκε στο πρόχειρο!", "Copied to clipboard!"),
                     );
                   }}
-                  className="text-xs font-bold text-cyan-600"
+                  className={cn("text-xs font-bold", gc.accentText)}
                 >
                   {t("Αντιγραφή", "Copy")}
                 </button>
@@ -1279,7 +1280,7 @@ export default function GroupChatPageContent() {
         {showDisableEphemeralModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
             <div className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
-              <div className="w-12 h-12 bg-cyan-50 rounded-full flex items-center justify-center mx-auto mb-4 text-cyan-600">
+              <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4", gc.panelAccent)}>
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-[#111827] mb-2">
@@ -1456,7 +1457,7 @@ export default function GroupChatPageContent() {
                       "Είμαι στο σημείο συνάντησης",
                       "I'm at the meeting point",
                     ),
-                    color: "bg-cyan-600 text-white hover:bg-cyan-700",
+                    color: gc.primaryBtn,
                   },
                 ].map((status, idx) => (
                   <button
@@ -1495,7 +1496,7 @@ export default function GroupChatPageContent() {
             <div className="modal-panel max-w-md w-full max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
               <div className="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between bg-white relative z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600">
+                  <div className={cn("w-10 h-10 rounded-full flex items-center justify-center", gc.panelAccent)}>
                     <UserPlus className="w-5 h-5" />
                   </div>
                   <div>
@@ -1560,7 +1561,7 @@ export default function GroupChatPageContent() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-cyan-700 font-bold text-xs bg-cyan-50">
+                              <div className={cn("w-full h-full flex items-center justify-center font-bold text-xs", gc.avatarPlaceholder)}>
                                 {member.name.substring(0, 2)}
                               </div>
                             )}

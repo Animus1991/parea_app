@@ -2,6 +2,7 @@ import { Users } from "lucide-react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Event } from "../types";
+import type { User } from "../types";
 import { mockEvents } from "../data/mockEvents";
 import { mockGroups } from "../data/mockGroups";
 import { mockCalendarPlanEvents, mockCalendarPlanGroups } from "../data/mockCalendarPlan";
@@ -136,6 +137,7 @@ interface AppState {
   commitmentHolds: Record<string, CommitmentHold>;
 
   login: (userId: string) => void;
+  loginWithUser: (user: User) => void;
   logout: () => void;
   completeOnboarding: () => void;
   addRecentSearch: (query: string) => void;
@@ -372,6 +374,19 @@ export const useStore = create<AppState>()(
       const user = state.users.find((u) => u.id === userId);
       if (!user) return state;
       return { currentUser: user, isAuthenticated: true, demoMode: false };
+    }),
+
+  loginWithUser: (user) =>
+    set((state) => {
+      const exists = state.users.some((u) => u.id === user.id);
+      return {
+        currentUser: user,
+        isAuthenticated: true,
+        demoMode: false,
+        users: exists
+          ? state.users.map((u) => (u.id === user.id ? { ...u, ...user } : u))
+          : [...state.users, user],
+      };
     }),
 
   logout: () => set({ currentUser: null, isAuthenticated: false, demoMode: false }),

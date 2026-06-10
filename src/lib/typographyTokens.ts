@@ -95,6 +95,34 @@ export const PLANS_TYPO = {
   cta: 'text-sm font-bold',
 } as const;
 
+/** BuddySeek card density */
+export const BUDDY_SEEK_TYPO = {
+  title: 'text-base font-bold leading-snug',
+  meta: 'text-sm font-medium',
+  label: 'text-xs font-bold tracking-wide',
+  chip: 'text-xs font-semibold',
+  body: 'text-sm leading-relaxed',
+  cta: 'text-sm font-bold',
+  micro: 'text-xs font-medium',
+} as const;
+
+/** App shell nav density */
+export const SHELL_TYPO = {
+  logo: 'text-xl lg:text-2xl',
+  logoMobile: 'text-xl',
+  sectionLabel: 'text-sm font-bold tracking-wide',
+  dashboard: 'text-sm font-bold tracking-wide',
+  search: 'text-sm',
+  createBtn: 'text-sm font-bold',
+  langBtn: 'text-xs font-bold',
+  badge: 'text-xs font-bold',
+  userLabel: 'text-xs font-bold tracking-wide',
+  userName: 'text-xs font-bold',
+  avatar: 'text-xs',
+  tabLabel: 'text-xs font-medium leading-none',
+  soon: 'text-xs font-bold tracking-wide',
+} as const;
+
 /** Event card density (high-traffic feed) */
 export const EVENT_CARD_TYPO = {
   badge: 'text-xs font-extrabold tracking-wide leading-none',

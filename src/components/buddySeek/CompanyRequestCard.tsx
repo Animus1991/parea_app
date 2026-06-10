@@ -76,14 +76,14 @@ export function CompanyRequestCard({
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <p className={cn('text-[10px] font-bold uppercase tracking-wide', darkSurface ? 'text-cyan-400' : 'text-cyan-700')}>
+          <p className={cn('text-xs font-bold uppercase tracking-wide', darkSurface ? 'text-cyan-400' : 'text-cyan-700')}>
             {t('Σχέδια που σχηματίζονται', 'Plans forming')}
           </p>
-          <p className={cn('text-[13px] font-bold truncate', darkSurface ? 'text-white' : 'text-gray-900')}>
+          <p className={cn('text-sm font-bold truncate', darkSurface ? 'text-white' : 'text-gray-900')}>
             {title}
           </p>
           {request.message && (
-            <p className={cn('text-[11px] mt-0.5 line-clamp-2', darkSurface ? 'text-gray-400' : 'text-gray-500')}>
+            <p className={cn('text-xs mt-0.5 line-clamp-2', darkSurface ? 'text-gray-400' : 'text-gray-500')}>
               {request.message}
             </p>
           )}
@@ -93,7 +93,7 @@ export function CompanyRequestCard({
                 <span
                   key={tag}
                   className={cn(
-                    'text-[9px] font-bold px-1.5 py-0.5 rounded-md',
+                    'text-xs font-bold px-1.5 py-0.5 rounded-md',
                     darkSurface ? 'bg-white/10 text-gray-200' : 'bg-gray-100 text-gray-700',
                   )}
                 >
@@ -103,12 +103,12 @@ export function CompanyRequestCard({
             </div>
           )}
           {(request.preferredGroupMin || request.preferredGroupMax) && (
-            <p className={cn('text-[10px] mt-1', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
+            <p className={cn('text-xs mt-1', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
               {t('Μέγεθος', 'Size')}: {request.preferredGroupMin ?? '—'}–{request.preferredGroupMax ?? '—'}
             </p>
           )}
           {reason && (
-            <p className={cn('text-[10px] mt-1 line-clamp-2', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
+            <p className={cn('text-xs mt-1 line-clamp-2', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
               {t(reason.el, reason.en)}
             </p>
           )}
@@ -120,7 +120,7 @@ export function CompanyRequestCard({
           type="button"
           onClick={onAskToJoin}
           className={cn(
-            'flex-1 min-h-9 rounded-xl text-[11px] font-bold text-white',
+            'flex-1 min-h-9 rounded-xl text-xs font-bold text-white',
             darkSurface ? 'bg-cyan-600 hover:bg-cyan-500' : 'bg-cyan-600 hover:bg-cyan-700',
           )}
         >
@@ -130,7 +130,7 @@ export function CompanyRequestCard({
           type="button"
           onClick={() => navigate(`/events/${event.id}`)}
           className={cn(
-            'px-3 min-h-9 rounded-xl text-[11px] font-bold border',
+            'px-3 min-h-9 rounded-xl text-xs font-bold border',
             darkSurface ? 'border-gray-600 text-gray-300' : 'border-gray-200 text-gray-700',
           )}
         >
@@ -160,17 +160,17 @@ export function CompanyRequestCard({
       </div>
 
       <div className="flex items-center gap-3 mt-2">
-        <p className={cn('text-[9px] flex items-center gap-1', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
+        <p className={cn('text-xs flex items-center gap-1', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
           <Shield className="w-3 h-3" />
           {t('Όχι διαφήμιση · privacy-first', 'Not an ad · privacy-first')}
         </p>
         {onHide && (
-          <button type="button" onClick={onHide} className="text-[9px] text-gray-500 flex items-center gap-0.5">
+          <button type="button" onClick={onHide} className="text-xs text-gray-500 flex items-center gap-0.5">
             <EyeOff className="w-3 h-3" /> {t('Απόκρυψη', 'Hide')}
           </button>
         )}
         {onReport && (
-          <button type="button" onClick={onReport} className="text-[9px] text-gray-500 flex items-center gap-0.5">
+          <button type="button" onClick={onReport} className="text-xs text-gray-500 flex items-center gap-0.5">
             <Flag className="w-3 h-3" /> {t('Αναφορά', 'Report')}
           </button>
         )}

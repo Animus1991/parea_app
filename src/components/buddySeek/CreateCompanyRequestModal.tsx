@@ -109,7 +109,7 @@ export function CreateCompanyRequestModal({
       <div className={cn('relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl border shadow-2xl max-h-[92vh] flex flex-col', shell)}>
         <div className="p-4 border-b border-inherit shrink-0">
           <h2 className="text-base font-bold">{t('Ψάχνετε παρέα;', 'Looking for company?')}</h2>
-          <p className="text-[11px] opacity-70 mt-0.5">
+          <p className="text-xs opacity-70 mt-0.5">
             {t('Βήμα', 'Step')} {step + 1}/{STEPS} · {event.title}
           </p>
           <div className="flex gap-1 mt-2">
@@ -122,7 +122,7 @@ export function CreateCompanyRequestModal({
         <div className="p-4 overflow-y-auto flex-1 space-y-4">
           {step === 0 && (
             <div className="space-y-2">
-              <p className="text-[12px] font-bold">{t('Τι ψάχνετε;', 'What are you looking for?')}</p>
+              <p className="text-sm font-bold">{t('Τι ψάχνετε;', 'What are you looking for?')}</p>
               {(
                 [
                   ['join_group', 'Ένταξη σε υπάρχουσα ομάδα', 'Join an existing group'],
@@ -132,7 +132,7 @@ export function CreateCompanyRequestModal({
                   ['open_to_suggestions', 'Ανοιχτός/ή σε προτάσεις', 'Open to suggestions'],
                 ] as const
               ).map(([val, el, en]) => (
-                <label key={val} className="flex items-center gap-2 text-[12px] cursor-pointer">
+                <label key={val} className="flex items-center gap-2 text-sm cursor-pointer">
                   <input type="radio" name="lft" checked={lookingForType === val} onChange={() => setLookingForType(val)} />
                   {t(el, en)}
                 </label>
@@ -142,7 +142,7 @@ export function CreateCompanyRequestModal({
 
           {step === 1 && (
             <div className="space-y-2">
-              <p className="text-[12px] font-bold">{t('Ποιος μπορεί να το δει;', 'Who can see this?')}</p>
+              <p className="text-sm font-bold">{t('Ποιος μπορεί να το δει;', 'Who can see this?')}</p>
               {(
                 [
                   'private',
@@ -152,12 +152,12 @@ export function CreateCompanyRequestModal({
                   'public_event_page',
                 ] as VisibilityMode[]
               ).map((mode) => (
-                <label key={mode} className="flex items-center gap-2 text-[12px] cursor-pointer">
+                <label key={mode} className="flex items-center gap-2 text-sm cursor-pointer">
                   <input type="radio" checked={visibilityMode === mode} onChange={() => setVisibilityMode(mode)} />
                   {audienceSummary(mode, t)}
                 </label>
               ))}
-              <p className="text-[10px] opacity-60 flex items-center gap-1">
+              <p className="text-xs opacity-60 flex items-center gap-1">
                 <Shield className="w-3 h-3" />
                 {t('Το αίτημά σας δεν είναι δημόσιο από προεπιλογή.', 'Your request is not public by default.')}
               </p>
@@ -166,11 +166,11 @@ export function CreateCompanyRequestModal({
 
           {step === 2 && (
             <div className="space-y-2">
-              <p className="text-[12px] font-bold">{t('Τι θα εμφανίζεται;', 'What will be shown?')}</p>
+              <p className="text-sm font-bold">{t('Τι θα εμφανίζεται;', 'What will be shown?')}</p>
               {(
                 ['anonymous', 'nickname', 'interests_only', 'trust_badges', 'optional_photo', 'mini_profile'] as ProfileExposure[]
               ).map((ex) => (
-                <label key={ex} className="flex items-center gap-2 text-[12px] cursor-pointer">
+                <label key={ex} className="flex items-center gap-2 text-sm cursor-pointer">
                   <input type="radio" checked={profileExposure === ex} onChange={() => setProfileExposure(ex)} />
                   {exposureSummary(ex, t)}
                 </label>
@@ -180,9 +180,9 @@ export function CreateCompanyRequestModal({
 
           {step === 3 && (
             <div className="space-y-3">
-              <p className="text-[12px] font-bold">{t('Μέγεθος & διαθεσιμότητα', 'Size & availability')}</p>
+              <p className="text-sm font-bold">{t('Μέγεθος & διαθεσιμότητα', 'Size & availability')}</p>
               <div className="flex gap-3">
-                <label className="text-[11px]">
+                <label className="text-xs">
                   Min
                   <input
                     type="number"
@@ -192,7 +192,7 @@ export function CreateCompanyRequestModal({
                     className="block w-16 mt-1 rounded-lg border px-2 py-1 text-sm"
                   />
                 </label>
-                <label className="text-[11px]">
+                <label className="text-xs">
                   Max
                   <input
                     type="number"
@@ -203,14 +203,14 @@ export function CreateCompanyRequestModal({
                   />
                 </label>
               </div>
-              <label className="flex items-center gap-2 text-[12px]">
+              <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" checked={flexibleDates} onChange={(e) => setFlexibleDates(e.target.checked)} />
                 {t('Ευέλικτες ημερομηνίες', 'Flexible dates')}
               </label>
               <select
                 value={meetingPreference}
                 onChange={(e) => setMeetingPreference(e.target.value as MeetingPreference)}
-                className="w-full rounded-xl border px-3 py-2 text-[12px]"
+                className="w-full rounded-xl border px-3 py-2 text-sm"
               >
                 <option value="at_venue">{t('Στον χώρο', 'At venue')}</option>
                 <option value="coffee_before">{t('Καφές πριν', 'Coffee before')}</option>
@@ -221,15 +221,15 @@ export function CreateCompanyRequestModal({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t('Προαιρετικό μήνυμα…', 'Optional message…')}
-                className="w-full rounded-xl border px-3 py-2 text-[12px] min-h-[72px]"
+                className="w-full rounded-xl border px-3 py-2 text-sm min-h-[72px]"
               />
             </div>
           )}
 
           {step === 4 && (
             <div className="space-y-3">
-              <p className="text-[12px] font-bold">{t('Έλεγχος πριν τη δημοσίευση', 'Review before publishing')}</p>
-              <ul className="text-[11px] space-y-1 opacity-80">
+              <p className="text-sm font-bold">{t('Έλεγχος πριν τη δημοσίευση', 'Review before publishing')}</p>
+              <ul className="text-xs space-y-1 opacity-80">
                 <li>
                   {t('Ορατό σε', 'Visible to')}: {audienceSummary(visibilityMode, t)}
                 </li>
@@ -254,7 +254,7 @@ export function CreateCompanyRequestModal({
             <button
               type="button"
               onClick={() => setStep((s) => s - 1)}
-              className="min-h-11 px-4 rounded-2xl border text-[12px] font-bold flex items-center gap-1"
+              className="min-h-11 px-4 rounded-2xl border text-sm font-bold flex items-center gap-1"
             >
               <ChevronLeft className="w-4 h-4" /> {t('Πίσω', 'Back')}
             </button>
@@ -263,16 +263,16 @@ export function CreateCompanyRequestModal({
             <button
               type="button"
               onClick={() => setStep((s) => s + 1)}
-              className="flex-1 min-h-11 rounded-2xl bg-cyan-600 text-white text-[12px] font-bold flex items-center justify-center gap-1"
+              className="flex-1 min-h-11 rounded-2xl bg-cyan-600 text-white text-sm font-bold flex items-center justify-center gap-1"
             >
               {t('Συνέχεια', 'Continue')} <ChevronRight className="w-4 h-4" />
             </button>
           ) : (
             <>
-              <button type="button" onClick={saveAsDraft} className="min-h-11 px-3 rounded-2xl border text-[11px] font-bold">
+              <button type="button" onClick={saveAsDraft} className="min-h-11 px-3 rounded-2xl border text-xs font-bold">
                 {t('Πρόχειρο', 'Draft')}
               </button>
-              <button type="button" onClick={publishNow} className="flex-1 min-h-11 rounded-2xl bg-cyan-600 text-white text-[12px] font-bold">
+              <button type="button" onClick={publishNow} className="flex-1 min-h-11 rounded-2xl bg-cyan-600 text-white text-sm font-bold">
                 {t('Δημοσίευση αιτήματος', 'Publish request')}
               </button>
             </>

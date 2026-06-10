@@ -88,7 +88,7 @@ export function LookingForCompanyPanel({
             <Users className="w-4 h-4 inline mr-1.5 opacity-80" />
             {t('Looking for company', 'Looking for company')}
           </h2>
-          <p className={cn(tok.muted, 'text-[11px] mt-1 leading-relaxed')}>
+          <p className={cn(tok.muted, 'text-xs mt-1 leading-relaxed')}>
             {t(
               'Εκδήλωση πρώτα · πρόθεση δεύτερη · ελέγχετε την ορατότητα.',
               'Event first · intention second · you control visibility.',
@@ -112,7 +112,7 @@ export function LookingForCompanyPanel({
               type="button"
               onClick={() => setTab('requests')}
               className={cn(
-                'flex-1 py-2 rounded-lg text-[11px] font-bold',
+                'flex-1 py-2 rounded-lg text-xs font-bold',
                 tab === 'requests' ? 'bg-cyan-600 text-white' : tok.muted,
               )}
             >
@@ -122,7 +122,7 @@ export function LookingForCompanyPanel({
               type="button"
               onClick={() => setTab('groups')}
               className={cn(
-                'flex-1 py-2 rounded-lg text-[11px] font-bold',
+                'flex-1 py-2 rounded-lg text-xs font-bold',
                 tab === 'groups' ? 'bg-cyan-600 text-white' : tok.muted,
               )}
             >
@@ -134,7 +134,7 @@ export function LookingForCompanyPanel({
             <button
               type="button"
               onClick={() => setCreateOpen(true)}
-              className="inline-flex items-center gap-1.5 min-h-10 px-4 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white text-[11px] font-bold"
+              className="inline-flex items-center gap-1.5 min-h-10 px-4 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold"
             >
               <Plus className="w-3.5 h-3.5" />
               {myRequest ? t('Επεξεργασία αιτήματος', 'Edit request') : t('Δημιουργία αιτήματος', 'Create request')}
@@ -143,7 +143,7 @@ export function LookingForCompanyPanel({
               type="button"
               onClick={() => navigate('/buddy-seek')}
               className={cn(
-                'min-h-10 px-3 rounded-2xl text-[11px] font-bold border',
+                'min-h-10 px-3 rounded-2xl text-xs font-bold border',
                 darkSurface ? 'border-gray-600 text-gray-300' : 'border-gray-200 text-gray-700',
               )}
             >
@@ -153,10 +153,10 @@ export function LookingForCompanyPanel({
 
           {myRequest && (
             <div className={cn(tok.innerCard, darkSurface ? 'border-gray-600' : 'border-cyan-100')}>
-              <p className={cn('text-[12px] font-bold', darkSurface ? 'text-white' : 'text-gray-900')}>
+              <p className={cn('text-sm font-bold', darkSurface ? 'text-white' : 'text-gray-900')}>
                 {t('Το αίτημά σας', 'Your request')} · {myRequest.status}
               </p>
-              <p className={cn('text-[11px] mt-1', tok.muted)}>
+              <p className={cn('text-xs mt-1', tok.muted)}>
                 {audienceSummary(myRequest.visibilityMode, t)}
               </p>
               <div className="flex gap-2 mt-2">
@@ -166,7 +166,7 @@ export function LookingForCompanyPanel({
                     pauseRequest(myRequest.id);
                     toast.message(t('Σε παύση', 'Paused'));
                   }}
-                  className="text-[10px] font-bold flex items-center gap-1 opacity-70"
+                  className="text-xs font-bold flex items-center gap-1 opacity-70"
                 >
                   <Pause className="w-3 h-3" /> {t('Παύση', 'Pause')}
                 </button>
@@ -176,7 +176,7 @@ export function LookingForCompanyPanel({
                     deleteRequest(myRequest.id);
                     toast.message(t('Διαγράφηκε', 'Deleted'));
                   }}
-                  className="text-[10px] font-bold flex items-center gap-1 text-red-500"
+                  className="text-xs font-bold flex items-center gap-1 text-red-500"
                 >
                   <Trash2 className="w-3 h-3" /> {t('Διαγραφή', 'Delete')}
                 </button>
@@ -186,7 +186,7 @@ export function LookingForCompanyPanel({
 
           {pendingForMe.length > 0 && (
             <div className={cn('rounded-2xl border p-3', darkSurface ? 'border-amber-800 bg-amber-950/20' : 'border-amber-200 bg-amber-50')}>
-              <p className="text-[11px] font-bold text-amber-800 dark:text-amber-200">
+              <p className="text-xs font-bold text-amber-800 dark:text-amber-200">
                 {t(`${pendingForMe.length} αιτήματα συμμετοχής`, `${pendingForMe.length} join requests`)}
               </p>
               {pendingForMe.map((j) => {
@@ -199,7 +199,7 @@ export function LookingForCompanyPanel({
                     onClick={() =>
                       setPreview({ seekerId: from.id, requestId: j.companyRequestId, mode: 'owner_review', joinId: j.id })
                     }
-                    className="mt-2 w-full text-left text-[11px] font-medium underline"
+                    className="mt-2 w-full text-left text-xs font-medium underline"
                   >
                     {t('Έλεγχος από', 'Review from')} {from.name.split(' ')[0]}
                   </button>
@@ -214,21 +214,21 @@ export function LookingForCompanyPanel({
                 <button
                   type="button"
                   onClick={() => setFilterOpen(filterOpen === 'spots' ? null : 'spots')}
-                  className={cn('text-[10px] font-bold px-2 py-1 rounded-lg border', filterOpen === 'spots' && 'bg-cyan-600 text-white border-cyan-600')}
+                  className={cn('text-xs font-bold px-2 py-1 rounded-lg border', filterOpen === 'spots' && 'bg-cyan-600 text-white border-cyan-600')}
                 >
                   {t('Ανοιχτές θέσεις', 'Open spots')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setFilterOpen(filterOpen === 'verified' ? null : 'verified')}
-                  className={cn('text-[10px] font-bold px-2 py-1 rounded-lg border', filterOpen === 'verified' && 'bg-cyan-600 text-white border-cyan-600')}
+                  className={cn('text-xs font-bold px-2 py-1 rounded-lg border', filterOpen === 'verified' && 'bg-cyan-600 text-white border-cyan-600')}
                 >
                   {t('Επαληθευμένοι', 'Verified only')}
                 </button>
               </div>
 
               {filteredRequests.length === 0 ? (
-                <p className={cn('text-[12px]', tok.muted)}>
+                <p className={cn('text-sm', tok.muted)}>
                   {t('Κανείς άλλος δεν εμφανίζεται με τις τρέχουσες ρυθμίσεις ορατότητας.', 'No one else visible with current visibility rules.')}
                 </p>
               ) : (
@@ -255,14 +255,14 @@ export function LookingForCompanyPanel({
 
               {suggestions.length > 0 && (
                 <div>
-                  <p className={cn('text-[11px] font-bold mb-2', tok.sectionHeading)}>
+                  <p className={cn('text-xs font-bold mb-2', tok.sectionHeading)}>
                     {t('Συμβατές προτάσεις', 'Compatible suggestions')}
                   </p>
                   <ul className="space-y-2">
                     {suggestions.slice(0, 4).map((s) => (
                       <li
                         key={`${s.kind}-${s.groupId ?? s.seekerIntentId}`}
-                        className={cn('text-[11px] rounded-xl border p-2.5', darkSurface ? 'border-gray-700' : 'border-gray-100')}
+                        className={cn('text-xs rounded-xl border p-2.5', darkSurface ? 'border-gray-700' : 'border-gray-100')}
                       >
                         {t(s.labelEl, s.labelEn)}
                         {s.groupId && (
@@ -285,7 +285,7 @@ export function LookingForCompanyPanel({
           {tab === 'groups' && (
             <div className="space-y-2">
               {eventGroups.length === 0 ? (
-                <p className={cn('text-[12px]', tok.muted)}>{t('Δεν υπάρχουν ομάδες ακόμα.', 'No groups yet.')}</p>
+                <p className={cn('text-sm', tok.muted)}>{t('Δεν υπάρχουν ομάδες ακόμα.', 'No groups yet.')}</p>
               ) : (
                 eventGroups.map((g) => {
                   const spots = g.targetSize - g.members.length;
@@ -295,10 +295,10 @@ export function LookingForCompanyPanel({
                       className={cn('rounded-xl border p-3 flex justify-between items-center', darkSurface ? 'border-gray-700' : 'border-gray-100')}
                     >
                       <div>
-                        <p className={cn('text-[12px] font-bold', darkSurface ? 'text-white' : 'text-gray-900')}>
+                        <p className={cn('text-sm font-bold', darkSurface ? 'text-white' : 'text-gray-900')}>
                           {g.isRecruiting ? t('Ομάδα σε σχηματισμό', 'Group forming') : t('Ομάδα', 'Group')}
                         </p>
-                        <p className={cn('text-[10px]', tok.muted)}>
+                        <p className={cn('text-xs', tok.muted)}>
                           {g.members.length}/{g.targetSize} · {spots} {t('θέσεις', 'spots')}
                         </p>
                       </div>
@@ -307,7 +307,7 @@ export function LookingForCompanyPanel({
                           <button
                             type="button"
                             onClick={() => navigate(`/events/${event.id}/join?group=${g.id}`)}
-                            className="text-[10px] font-bold text-cyan-600"
+                            className="text-xs font-bold text-cyan-600"
                           >
                             {t('Αίτημα συμμετοχής', 'Ask to join')}
                           </button>
@@ -316,7 +316,7 @@ export function LookingForCompanyPanel({
                           <button
                             type="button"
                             onClick={() => setMergePair({ from: myGroups[0], to: g })}
-                            className="text-[10px] font-bold text-emerald-600"
+                            className="text-xs font-bold text-emerald-600"
                           >
                             {t('Συγχώνευση', 'Suggest merge')}
                           </button>
@@ -327,7 +327,7 @@ export function LookingForCompanyPanel({
                 })
               )}
               {canRecruit && myGroups[0] && (
-                <label className={cn('flex items-center gap-2 text-[11px] mt-2', tok.muted)}>
+                <label className={cn('flex items-center gap-2 text-xs mt-2', tok.muted)}>
                   <input
                     type="checkbox"
                     checked={!!myGroups[0].isRecruiting}
@@ -339,7 +339,7 @@ export function LookingForCompanyPanel({
             </div>
           )}
 
-          <p className={cn('text-[10px] flex items-start gap-1.5', tok.muted)}>
+          <p className={cn('text-xs flex items-start gap-1.5', tok.muted)}>
             <Shield className="w-3.5 h-3.5 shrink-0 mt-0.5" />
             {t(
               'Σχεδιασμένο με privacy controls. Μόνο τα πεδία που επιλέγετε εμφανίζονται. Δεν είναι διαφήμιση.',

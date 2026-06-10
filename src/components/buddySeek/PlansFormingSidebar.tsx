@@ -35,7 +35,7 @@ export function PlansFormingSidebarReopenTab() {
       title={t('Σχέδια που σχηματίζονται', 'Plans forming')}
     >
       <Sparkles className="w-4 h-4 shrink-0" />
-      <span className="text-[9px] font-bold [writing-mode:vertical-rl] rotate-180 tracking-wide">
+      <span className="text-xs font-bold [writing-mode:vertical-rl] rotate-180 tracking-wide">
         {t('Σχέδια', 'Plans')}
       </span>
     </button>
@@ -80,7 +80,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
             <h2 className={cn('text-xs font-bold uppercase tracking-wide', isDark ? 'text-cyan-300' : 'text-cyan-800')}>
               {t('Σχέδια που σχηματίζονται', 'Plans forming')}
             </h2>
-            <p className={cn('text-[11px] mt-0.5', isDark ? 'text-gray-400' : 'text-gray-600')}>
+            <p className={cn('text-xs mt-0.5', isDark ? 'text-gray-400' : 'text-gray-600')}>
               {t('Παρέα για εκδηλώσεις', 'Company for events')}
             </p>
           </div>
@@ -110,7 +110,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
               isDark ? 'bg-amber-950/40 border-amber-700/40 text-amber-200' : 'bg-amber-50 border-amber-200 text-amber-900',
             )}
           >
-            <span className="flex items-center gap-2 text-[11px] font-bold">
+            <span className="flex items-center gap-2 text-xs font-bold">
               <Inbox className="w-4 h-4" />
               {t(
                 `${feed.insights.pendingJoinsToReview} αιτήματα προς έλεγχο`,
@@ -124,7 +124,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
         <button
           type="button"
           onClick={() => navigate('/buddy-seek')}
-          className="w-full min-h-10 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1 bg-cyan-600 hover:bg-cyan-500 text-white"
+          className="w-full min-h-10 rounded-xl text-xs font-bold flex items-center justify-center gap-1 bg-cyan-600 hover:bg-cyan-500 text-white"
         >
           {t('Όλα τα σχέδια', 'All plans')}
           <ChevronRight className="w-3.5 h-3.5" />
@@ -218,7 +218,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
                   isDark ? 'border-white/10 bg-white/[0.02]' : 'border-gray-200 bg-white',
                 )}
               >
-                <p className={cn('text-[11px] font-semibold mb-2', isDark ? 'text-gray-300' : 'text-gray-700')}>
+                <p className={cn('text-xs font-semibold mb-2', isDark ? 'text-gray-300' : 'text-gray-700')}>
                   {t('Αποθηκευμένες εκδηλώσεις', 'Saved events')}
                 </p>
                 <ul className="space-y-1.5">
@@ -228,7 +228,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
                         type="button"
                         onClick={() => navigate(`/events/${event.id}`)}
                         className={cn(
-                          'w-full text-left text-[11px] font-medium flex justify-between gap-2 hover:text-cyan-600',
+                          'w-full text-left text-xs font-medium flex justify-between gap-2 hover:text-cyan-600',
                           isDark ? 'text-gray-300' : 'text-gray-800',
                         )}
                       >
@@ -247,7 +247,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
       </div>
 
       <footer className={cn('p-3 border-t', isDark ? 'border-white/10' : 'border-gray-200')}>
-        <p className={cn('text-[10px] leading-relaxed text-center', isDark ? 'text-gray-500' : 'text-gray-500')}>
+        <p className={cn('text-xs leading-relaxed text-center', isDark ? 'text-gray-500' : 'text-gray-500')}>
           {t('Privacy-first · όχι διαφήμιση', 'Privacy-first · not an ad')}
         </p>
       </footer>

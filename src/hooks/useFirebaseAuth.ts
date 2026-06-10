@@ -1,16 +1,16 @@
 import { useEffect } from 'react';
 import { isFirebaseAuthAvailable, subscribeFirebaseAuth } from '../services/firebaseAuth';
+import { resolveFirebaseUser } from '../services/firebaseUserProfile';
 import { useStore } from '../store';
 import { createLogger } from '../lib/logger';
 
 const log = createLogger('useFirebaseAuth');
 
 /**
- * Bridges Firebase Auth → mock user store when VITE_FIREBASE_* is configured.
- * Maps Firebase uid to local user u1 for prototype parity.
+ * Bridges Firebase Auth + Firestore profile → Nakamas user store (CoFounderBay pattern).
  */
 export function useFirebaseAuth() {
-  const login = useStore((s) => s.login);
+  const loginWithUser = useStore((s) => s.loginWithUser);
   const logout = useStore((s) => s.logout);
   const demoMode = useStore((s) => s.demoMode);
 
@@ -18,12 +18,21 @@ export function useFirebaseAuth() {
     if (!isFirebaseAuthAvailable() || demoMode) return;
 
     return subscribeFirebaseAuth((firebaseUser) => {
-      if (firebaseUser) {
-        log.info('firebase user signed in', { uid: firebaseUser.uid });
-        login('u1');
+      if (!firebaseUser) {
+        logout();
+        return;
       }
+
+      void resolveFirebaseUser(firebaseUser)
+        .then((user) => {
+          log.info('firebase profile resolved', { uid: user.id, name: user.name });
+          loginWithUser(user);
+        })
+        .catch((err) => {
+          log.error('firebase profile resolve failed', err);
+        });
     });
-  }, [login, demoMode]);
+  }, [loginWithUser, logout, demoMode]);
 
   useEffect(() => {
     if (!isFirebaseAuthAvailable()) return;

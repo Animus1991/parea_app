@@ -140,7 +140,7 @@ export default function BuddySeekPageContent() {
             type="button"
             onClick={() => navigate('/settings')}
             className={cn(
-              'inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-2 rounded-xl border',
+              'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
               a.borderB,
               a.sub,
             )}
@@ -152,7 +152,7 @@ export default function BuddySeekPageContent() {
             type="button"
             onClick={() => setEventPickerOpen(true)}
             className={cn(
-              'inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-2 rounded-xl border',
+              'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
               a.borderB,
               a.sub,
             )}
@@ -167,10 +167,10 @@ export default function BuddySeekPageContent() {
         <div className={cn('rounded-2xl border p-4 flex gap-3', a.cardSurface, 'border-cyan-200 bg-cyan-50/60 dark:bg-cyan-950/20 dark:border-cyan-800')}>
           <Info className="w-5 h-5 shrink-0 text-cyan-600 dark:text-cyan-400 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className={cn('text-[13px] font-bold', a.head)}>
+            <p className={cn('text-sm font-bold', a.head)}>
               {t('Τι είναι τα Σχέδια που σχηματίζονται;', 'What are Plans forming?')}
             </p>
-            <p className={cn('text-[12px] font-medium mt-1 leading-relaxed', a.sub)}>
+            <p className={cn('text-sm font-medium mt-1 leading-relaxed', a.sub)}>
               {t(
                 'Δηλώνετε ότι ψάχνετε παρέα για μια εκδήλωση — με έλεγχο ορατότητας. Άλλοι χρήστες μπορούν να σας στείλουν αίτημα ή να ενωθούν σε ομάδα.',
                 'You signal you want company for an event — with privacy controls. Others can send join requests or form a group with you.',
@@ -210,7 +210,7 @@ export default function BuddySeekPageContent() {
                   setPreview(plan);
                   setPreviewJoinId(j.id);
                 }}
-                className="w-full text-left rounded-xl border border-amber-200 bg-white dark:bg-gray-900 px-3 py-2.5 text-[12px] font-medium hover:shadow-sm"
+                className="w-full text-left rounded-xl border border-amber-200 bg-white dark:bg-gray-900 px-3 py-2.5 text-sm font-medium hover:shadow-sm"
               >
                 {t('Από', 'From')} <strong>{from.name.split(' ')[0]}</strong> — {plan.event.title}
               </button>
@@ -230,7 +230,7 @@ export default function BuddySeekPageContent() {
               <div
                 key={j.id}
                 className={cn(
-                  'rounded-xl border px-3 py-2.5 text-[12px] font-medium flex items-center justify-between gap-2',
+                  'rounded-xl border px-3 py-2.5 text-sm font-medium flex items-center justify-between gap-2',
                   a.borderB,
                 )}
               >
@@ -240,7 +240,7 @@ export default function BuddySeekPageContent() {
                 </span>
                 <span
                   className={cn(
-                    'shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full',
+                    'shrink-0 text-xs font-bold px-2 py-0.5 rounded-full',
                     j.status === 'pending' && 'bg-amber-100 text-amber-800',
                     j.status === 'accepted' && 'bg-emerald-100 text-emerald-800',
                     j.status === 'declined' && 'bg-red-100 text-red-700',
@@ -258,7 +258,7 @@ export default function BuddySeekPageContent() {
       <div className={cn('rounded-2xl border p-3 space-y-3', a.cardSurface, a.borderB)}>
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 opacity-60" />
-          <span className={cn('text-[12px] font-bold', a.head)}>{t('Φίλτρα', 'Filters')}</span>
+          <span className={cn('text-sm font-bold', a.head)}>{t('Φίλτρα', 'Filters')}</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {(
@@ -277,13 +277,13 @@ export default function BuddySeekPageContent() {
               type="button"
               onClick={() => setFilter(key)}
               className={cn(
-                'text-[11px] font-bold px-3 py-1.5 rounded-xl border transition-colors inline-flex items-center gap-1',
+                'text-xs font-bold px-3 py-1.5 rounded-xl border transition-colors inline-flex items-center gap-1',
                 filter === key ? 'bg-cyan-600 text-white border-cyan-600' : a.borderB,
               )}
             >
               {t(el, en)}
               {count != null && count > 0 && (
-                <span className={cn('text-[9px] px-1 rounded-md', filter === key ? 'bg-white/20' : 'bg-cyan-100 text-cyan-800')}>
+                <span className={cn('text-xs px-1 rounded-md', filter === key ? 'bg-white/20' : 'bg-cyan-100 text-cyan-800')}>
                   {count}
                 </span>
               )}
@@ -329,7 +329,7 @@ export default function BuddySeekPageContent() {
         </>
       )}
 
-      <p className={cn('text-[11px] flex items-start gap-2', a.sub)}>
+      <p className={cn('text-xs flex items-start gap-2', a.sub)}>
         <Shield className="w-4 h-4 shrink-0" />
         {t(
           'Λεπτομερής ορατότητα · σχεδιασμένο με έλεγχο απορρήτου. Τα ενδιαφέροντα χρησιμοποιούνται για σχετικότητα, όχι για δημόσια έκθεση.',
@@ -362,12 +362,12 @@ export default function BuddySeekPageContent() {
                     setEventPickerOpen(false);
                   }}
                   className={cn(
-                    'w-full text-left rounded-xl border px-3 py-2.5 text-[13px] font-medium hover:border-cyan-400 transition-colors',
+                    'w-full text-left rounded-xl border px-3 py-2.5 text-sm font-medium hover:border-cyan-400 transition-colors',
                     a.borderB,
                   )}
                 >
                   <span className={cn('font-bold block', a.head)}>{event.title}</span>
-                  <span className={cn('text-[11px]', a.muted)}>{event.date} · {event.locationArea}</span>
+                  <span className={cn('text-xs', a.muted)}>{event.date} · {event.locationArea}</span>
                 </button>
               ))}
               {upcomingEvents.length === 0 && (

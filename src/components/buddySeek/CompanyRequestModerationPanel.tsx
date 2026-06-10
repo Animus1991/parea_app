@@ -28,28 +28,28 @@ export function CompanyRequestModerationPanel() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
         <div className={cn('rounded-xl border p-3', a.borderB)}>
           <p className="text-lg font-black">{active.length}</p>
-          <p className="text-[10px] font-bold opacity-60">{t('Ενεργά', 'Active')}</p>
+          <p className="text-xs font-bold opacity-60">{t('Ενεργά', 'Active')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
           <p className="text-lg font-black">{reported.length}</p>
-          <p className="text-[10px] font-bold opacity-60">{t('Αναφερμένα', 'Reported')}</p>
+          <p className="text-xs font-bold opacity-60">{t('Αναφερμένα', 'Reported')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
           <p className="text-lg font-black">{reports.length}</p>
-          <p className="text-[10px] font-bold opacity-60">{t('Αναφορές', 'Reports')}</p>
+          <p className="text-xs font-bold opacity-60">{t('Αναφορές', 'Reports')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
           <p className="text-lg font-black">2</p>
-          <p className="text-[10px] font-bold opacity-60">{t('Ύποπτα', 'Suspicious')}</p>
+          <p className="text-xs font-bold opacity-60">{t('Ύποπτα', 'Suspicious')}</p>
         </div>
       </div>
 
       <ul className="space-y-2 max-h-64 overflow-y-auto">
         {reported.length === 0 ? (
-          <li className={cn('text-[12px]', a.sub)}>{t('Καμία αναφερμένη αίτηση.', 'No reported requests.')}</li>
+          <li className={cn('text-sm', a.sub)}>{t('Καμία αναφερμένη αίτηση.', 'No reported requests.')}</li>
         ) : (
           reported.map((r) => (
-            <li key={r.id} className={cn('flex items-center justify-between gap-2 rounded-xl border p-3 text-[11px]', a.borderB)}>
+            <li key={r.id} className={cn('flex items-center justify-between gap-2 rounded-xl border p-3 text-xs', a.borderB)}>
               <span className="font-mono truncate">{r.id}</span>
               <span className="opacity-60">{r.reportCountInternal} reports</span>
               <div className="flex gap-1 shrink-0">
@@ -75,7 +75,7 @@ export function CompanyRequestModerationPanel() {
         )}
       </ul>
 
-      <p className={cn('text-[10px] flex items-center gap-1', a.sub)}>
+      <p className={cn('text-xs flex items-center gap-1', a.sub)}>
         <Flag className="w-3 h-3" />
         {t('Εσωτερικό mock — χωρίς δημόσια counts αναφορών.', 'Internal mock — no public report counts.')}
       </p>

@@ -57,7 +57,7 @@ export function EventDetailCalendarActions({
 
   const btn = cn(
     'inline-flex items-center gap-2 font-bold tracking-wide transition-colors rounded-2xl shadow-soft min-h-11',
-    compact ? 'text-[10px] px-3 py-1.5' : 'text-[11px] px-4 py-2',
+    compact ? 'text-xs px-3 py-1.5' : 'text-xs px-4 py-2',
     darkSurface
       ? 'bg-gray-800/80 text-white hover:bg-gray-700 border border-gray-600'
       : 'bg-white text-gray-800 hover:bg-gray-50 border border-gray-200',
@@ -101,7 +101,7 @@ export function EventDetailCalendarActions({
         </button>
       </div>
       {!availability.ok && (
-        <p className={cn('text-[11px] font-medium', content.metaLabel)}>
+        <p className={cn('text-xs font-medium', content.metaLabel)}>
           {t(availability.reasonEl, availability.reasonEn)}
         </p>
       )}
@@ -169,7 +169,7 @@ function EventDetailQuickInfoBlock({
 
   return (
     <div className={cn(shell, className)} role="region" aria-label={t('Γρήγορες πληροφορίες', 'Quick info')}>
-      <p className={cn('text-[11px] font-bold tracking-wide uppercase mb-3', content.metaLabel)}>
+      <p className={cn('text-xs font-bold tracking-wide uppercase mb-3', content.metaLabel)}>
         {t('Γρήγορες πληροφορίες', 'Quick info')}
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -177,14 +177,14 @@ function EventDetailQuickInfoBlock({
           <div key={label} className="flex items-start gap-2.5 min-w-0">
             <Icon className={cn('w-4 h-4 shrink-0 mt-0.5', content.metaLabel)} />
             <div className="min-w-0">
-              <p className={cn('text-[10px] font-bold tracking-wide', content.metaLabel)}>{label}</p>
-              <p className={cn('text-[13px] font-bold', content.metaValue)}>{value}</p>
+              <p className={cn('text-xs font-bold tracking-wide', content.metaLabel)}>{label}</p>
+              <p className={cn('text-sm font-bold', content.metaValue)}>{value}</p>
             </div>
           </div>
         ))}
       </div>
       {isParticipant && meetingPoint && (
-        <p className={cn('text-[12px] font-medium mt-3 pt-3 border-t border-cyan-200/50', content.metaLabel)}>
+        <p className={cn('text-sm font-medium mt-3 pt-3 border-t border-cyan-200/50', content.metaLabel)}>
           {t('Σημείο συνάντησης', 'Meeting point')}: {meetingPoint}
         </p>
       )}
@@ -255,7 +255,7 @@ function EventDetailHostOrganizationRating({
       <div className={cn(shell, className)}>
         <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
           <CheckCircle2 className="w-5 h-5 shrink-0" />
-          <p className={cn('text-[13px] font-bold', content.metaValue)}>
+          <p className={cn('text-sm font-bold', content.metaValue)}>
             {t('Η αξιολόγηση οργάνωσης καταχωρήθηκε', 'Organization feedback submitted')}
           </p>
         </div>
@@ -270,10 +270,10 @@ function EventDetailHostOrganizationRating({
 
   return (
     <div className={cn(shell, className)}>
-      <p className={cn('text-[11px] font-bold tracking-wide uppercase mb-1', content.metaLabel)}>
+      <p className={cn('text-xs font-bold tracking-wide uppercase mb-1', content.metaLabel)}>
         {t('Αξιολογήστε την οργάνωση του διοργανωτή', "Rate the host's organization")}
       </p>
-      <p className={cn('text-[13px] font-medium mb-4', content.metaValue)}>
+      <p className={cn('text-sm font-medium mb-4', content.metaValue)}>
         {t('Πόσο καλά συντονίστηκε αυτή η εκδήλωση;', 'How well was this event coordinated?')}
       </p>
       <div

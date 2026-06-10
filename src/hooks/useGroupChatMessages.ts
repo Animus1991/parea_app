@@ -17,7 +17,7 @@ function storageKey(groupId: string) {
 
 function readStored(groupId: string): GroupChatMessage[] | null {
   try {
-    const raw = sessionStorage.getItem(storageKey(groupId));
+    const raw = localStorage.getItem(storageKey(groupId));
     if (!raw) return null;
     const parsed = JSON.parse(raw) as GroupChatMessage[];
     return Array.isArray(parsed) ? parsed : null;
@@ -28,13 +28,13 @@ function readStored(groupId: string): GroupChatMessage[] | null {
 
 function writeStored(groupId: string, messages: GroupChatMessage[]) {
   try {
-    sessionStorage.setItem(storageKey(groupId), JSON.stringify(messages.slice(-500)));
+    localStorage.setItem(storageKey(groupId), JSON.stringify(messages.slice(-500)));
   } catch {
     /* quota */
   }
 }
 
-/** Session-persisted group chat messages (survives refresh within tab). */
+/** Persisted group chat messages (localStorage — survives refresh & new tabs). */
 export function useGroupChatMessages(
   groupId: string | undefined,
   seedFactory: () => GroupChatMessage[],

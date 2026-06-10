@@ -35,7 +35,7 @@ export function PlansFormingMobileFab() {
       type="button"
       onClick={() => setOpen(true)}
       className={cn(
-        'xl:hidden fixed left-1/2 -translate-x-1/2 z-[55] flex items-center gap-2 min-h-11 pl-4 pr-3 rounded-full shadow-lg border font-bold text-[12px] transition-transform active:scale-[0.98] motion-reduce:transition-none',
+        'xl:hidden fixed left-1/2 -translate-x-1/2 z-[55] flex items-center gap-2 min-h-11 pl-4 pr-3 rounded-full shadow-lg border font-bold text-sm transition-transform active:scale-[0.98] motion-reduce:transition-none',
         'bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))]',
         hasPending
           ? 'bg-amber-500 border-amber-400 text-white animate-pulse motion-reduce:animate-none'
@@ -48,7 +48,7 @@ export function PlansFormingMobileFab() {
       {hasPending ? <Sparkles className="w-4 h-4" aria-hidden /> : <Users className="w-4 h-4" aria-hidden />}
       <span>{label}</span>
       {badge != null && (
-        <span className="bg-white/25 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
+        <span className="bg-white/25 text-white text-xs font-black px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
           {badge}
         </span>
       )}

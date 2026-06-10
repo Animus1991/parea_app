@@ -43,7 +43,7 @@ export function JoinRequestPreviewModal({
                 : t('Αίτημα συμμετοχής', 'Join request')}
             </h2>
           </div>
-          <p className="text-[12px] text-gray-500 mt-1 leading-relaxed">
+          <p className="text-sm text-gray-500 mt-1 leading-relaxed">
             {t(
               'Η άμεση συνομιλία ξεκλειδώνεται μόνο μετά την αποδοχή και των δύο πλευρών.',
               'Direct chat unlocks only after both sides accept.',
@@ -52,8 +52,8 @@ export function JoinRequestPreviewModal({
         </div>
 
         <div className="p-5 space-y-3">
-          <p className="text-[12px] font-bold text-gray-900 dark:text-white">{event.title}</p>
-          <p className="text-[11px] text-gray-500">
+          <p className="text-sm font-bold text-gray-900 dark:text-white">{event.title}</p>
+          <p className="text-xs text-gray-500">
             {mode === 'send'
               ? t(`Προς ${seeker.name.split(' ')[0]}`, `To ${seeker.name.split(' ')[0]}`)
               : t(`Από ${seeker.name.split(' ')[0]}`, `From ${seeker.name.split(' ')[0]}`)}
@@ -64,7 +64,7 @@ export function JoinRequestPreviewModal({
               <div
                 key={i}
                 className={cn(
-                  'text-[11px] rounded-xl px-3 py-2 max-w-[90%]',
+                  'text-xs rounded-xl px-3 py-2 max-w-[90%]',
                   m.from === 'you'
                     ? 'ml-auto bg-cyan-600 text-white'
                     : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600',
@@ -74,7 +74,7 @@ export function JoinRequestPreviewModal({
               </div>
             ))}
             {message && (
-              <p className="text-[11px] italic text-gray-500 border-t border-gray-200 dark:border-gray-700 pt-2">
+              <p className="text-xs italic text-gray-500 border-t border-gray-200 dark:border-gray-700 pt-2">
                 {t('Το μήνυμά σας', 'Your note')}: {message}
               </p>
             )}
@@ -82,7 +82,7 @@ export function JoinRequestPreviewModal({
 
           <div className="flex items-start gap-2 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3">
             <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <p className="text-[10px] text-amber-900 dark:text-amber-200 leading-relaxed">
+            <p className="text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
               {t(
                 'Αυτή είναι προεπισκόπηση — όχι πραγματική συνομιλία. Σχεδιασμένο με privacy controls.',
                 'This is a preview — not a live chat. Designed with privacy controls.',
@@ -95,7 +95,7 @@ export function JoinRequestPreviewModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 min-h-11 rounded-2xl border border-gray-200 dark:border-gray-600 text-[12px] font-bold text-gray-700 dark:text-gray-300"
+            className="flex-1 min-h-11 rounded-2xl border border-gray-200 dark:border-gray-600 text-sm font-bold text-gray-700 dark:text-gray-300"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
@@ -106,7 +106,7 @@ export function JoinRequestPreviewModal({
                 onSendRequest(message);
                 onClose();
               }}
-              className="flex-1 min-h-11 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white text-[12px] font-bold"
+              className="flex-1 min-h-11 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-bold"
             >
               {t('Αποστολή αιτήματος', 'Send request')}
             </button>
@@ -118,14 +118,14 @@ export function JoinRequestPreviewModal({
                   onAccept?.();
                   onClose();
                 }}
-                className="flex-1 min-h-11 rounded-2xl bg-emerald-600 text-white text-[12px] font-bold flex items-center justify-center gap-1"
+                className="flex-1 min-h-11 rounded-2xl bg-emerald-600 text-white text-sm font-bold flex items-center justify-center gap-1"
               >
                 <Check className="w-4 h-4" /> {t('Αποδοχή', 'Accept')}
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="min-h-11 px-4 rounded-2xl border border-gray-200 text-[12px] font-bold flex items-center gap-1"
+                className="min-h-11 px-4 rounded-2xl border border-gray-200 text-sm font-bold flex items-center gap-1"
               >
                 <X className="w-4 h-4" /> {t('Απόρριψη', 'Decline')}
               </button>

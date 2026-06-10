@@ -24,16 +24,16 @@ export function PlansFormingScarcityPromoCard({
           : 'border-amber-200 bg-amber-50/90',
       )}
     >
-      <p className={cn('text-[9px] font-bold uppercase tracking-wider', isDark ? 'text-amber-400' : 'text-amber-800')}>
+      <p className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-amber-400' : 'text-amber-800')}>
         {t('Σχεδόν πλήρης ομάδα', 'Group nearly full')}
       </p>
-      <h3 className={cn('text-[14px] font-bold leading-snug line-clamp-2', isDark ? 'text-white' : 'text-gray-900')}>
+      <h3 className={cn('text-base font-bold leading-snug line-clamp-2', isDark ? 'text-white' : 'text-gray-900')}>
         {promo.eventTitle}
       </h3>
-      <p className={cn('text-[11px] font-semibold leading-snug', isDark ? 'text-amber-100/90' : 'text-amber-950')}>
+      <p className={cn('text-xs font-semibold leading-snug', isDark ? 'text-amber-100/90' : 'text-amber-950')}>
         {t(promo.scheduleFull.el, promo.scheduleFull.en)}
       </p>
-      <div className={cn('flex items-center gap-2 text-[11px] font-bold', isDark ? 'text-amber-200' : 'text-amber-900')}>
+      <div className={cn('flex items-center gap-2 text-xs font-bold', isDark ? 'text-amber-200' : 'text-amber-900')}>
         <Users className="w-3.5 h-3.5 shrink-0" />
         <span>
           {promo.filled}/{promo.target}{' '}
@@ -47,7 +47,7 @@ export function PlansFormingScarcityPromoCard({
         </span>
       </div>
       {promo.location && (
-        <p className={cn('text-[10px] flex items-center gap-1 truncate', isDark ? 'text-gray-400' : 'text-gray-600')}>
+        <p className={cn('text-xs flex items-center gap-1 truncate', isDark ? 'text-gray-400' : 'text-gray-600')}>
           <MapPin className="w-3 h-3 shrink-0" />
           {promo.location}
         </p>
@@ -58,13 +58,13 @@ export function PlansFormingScarcityPromoCard({
           navigate(promo.groupId ? `/events/${promo.eventId}/join?group=${promo.groupId}` : `/events/${promo.eventId}`)
         }
         className={cn(
-          'w-full min-h-10 rounded-xl text-[11px] font-bold transition-colors',
+          'w-full min-h-10 rounded-xl text-xs font-bold transition-colors',
           isDark ? 'bg-amber-600/90 hover:bg-amber-500 text-white' : 'bg-amber-700 hover:bg-amber-800 text-white',
         )}
       >
         {t('Κλείστε τη θέση σας', 'Secure your spot')}
       </button>
-      <p className={cn('text-[9px] flex items-center gap-1', isDark ? 'text-gray-500' : 'text-gray-500')}>
+      <p className={cn('text-xs flex items-center gap-1', isDark ? 'text-gray-500' : 'text-gray-500')}>
         <Calendar className="w-3 h-3" />
         {t('Μικρή ομάδα · event-first', 'Small group · event-first')}
       </p>

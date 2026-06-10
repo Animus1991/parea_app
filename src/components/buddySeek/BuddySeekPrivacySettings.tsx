@@ -23,7 +23,7 @@ export function BuddySeekPrivacySettings() {
         <h3 className={cn('text-sm font-bold', a.head)}>
           {t('Looking for company — απόρρητο', 'Looking for company — privacy')}
         </h3>
-        <p className={cn('text-[12px] mt-1 leading-relaxed', a.sub)}>
+        <p className={cn('text-sm mt-1 leading-relaxed', a.sub)}>
           {t(
             'Granular sharing settings · privacy-first visibility. Δεν είναι νομική συμβουλή.',
             'Granular sharing settings · privacy-first visibility. Not legal advice.',
@@ -32,7 +32,7 @@ export function BuddySeekPrivacySettings() {
       </div>
 
       <div>
-        <label className={cn('text-[11px] font-bold mb-1 block', a.head)}>
+        <label className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Προεπιλεγμένη ορατότητα αιτήματος', 'Default request visibility')}
         </label>
         <select
@@ -51,7 +51,7 @@ export function BuddySeekPrivacySettings() {
       </div>
 
       <div>
-        <label className={cn('text-[11px] font-bold mb-1 block', a.head)}>
+        <label className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Προεπιλεγμένη έκθεση προφίλ', 'Default profile exposure')}
         </label>
         <select
@@ -70,7 +70,7 @@ export function BuddySeekPrivacySettings() {
       </div>
 
       <div>
-        <label className={cn('text-[11px] font-bold mb-1 block', a.head)}>
+        <label className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Φωτογραφία', 'Photo')}
         </label>
         <select
@@ -86,7 +86,7 @@ export function BuddySeekPrivacySettings() {
       </div>
 
       <div>
-        <label className={cn('text-[11px] font-bold mb-1 block', a.head)}>
+        <label className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Ενδιαφέροντα', 'Interests')}
         </label>
         <select
@@ -110,7 +110,7 @@ export function BuddySeekPrivacySettings() {
           ['showInterestsInDiscovery', 'Εμφάνιση ενδιαφερόντων στην ανακάλυψη', 'Show interests in discovery'],
         ] as const
       ).map(([key, el, en]) => (
-        <label key={key} className={cn('flex items-center gap-2 text-[12px] font-medium cursor-pointer', a.head)}>
+        <label key={key} className={cn('flex items-center gap-2 text-sm font-medium cursor-pointer', a.head)}>
           <input
             type="checkbox"
             checked={prefs[key]}
@@ -120,7 +120,7 @@ export function BuddySeekPrivacySettings() {
         </label>
       ))}
 
-      <p className={cn('text-[11px] leading-relaxed', a.sub)}>
+      <p className={cn('text-xs leading-relaxed', a.sub)}>
         {t(
           'Η φωτογραφία είναι προαιρετική και δεν εμφανίζεται από προεπιλογή. Μπορείτε να παύσετε ή να διαγράψετε αιτήματα ανά πάσα στιγμή.',
           'Your photo is optional and never shown by default. You can pause or delete requests anytime.',
