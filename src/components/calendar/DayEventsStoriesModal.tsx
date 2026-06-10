@@ -120,7 +120,7 @@ export function DayEventsStoriesModal({
   };
 
   const actionBtn =
-    'flex items-center justify-center gap-2 rounded-2xl font-bold transition-colors min-h-11 text-[12px]';
+    'flex items-center justify-center gap-2 rounded-2xl font-bold transition-colors min-h-11 text-sm';
   const outlineBtn = cn(actionBtn, 'border border-white/15 bg-white/5 text-white hover:bg-white/10');
   const primaryBtn = cn(actionBtn, 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-soft');
 
@@ -145,10 +145,10 @@ export function DayEventsStoriesModal({
       <div className="relative w-full max-w-lg h-full md:h-auto md:max-h-[90vh] flex flex-col bg-[#0f1419] md:rounded-2xl overflow-hidden shadow-soft border border-white/10">
         <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#151b22] shrink-0">
           <div className="min-w-0 pr-2">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-cyan-400 truncate">
+            <p className="text-xs font-bold uppercase tracking-widest text-cyan-400 truncate">
               {headerDayLabel}
             </p>
-            <p className="text-[12px] text-gray-400 font-medium">
+            <p className="text-sm text-gray-400 font-medium">
               {index + 1} / {events.length} {t('εκδηλώσεις', 'events')}
             </p>
           </div>
@@ -212,50 +212,50 @@ export function DayEventsStoriesModal({
           )}
 
           <div className="absolute bottom-0 inset-x-0 p-4 md:p-5 space-y-1.5 z-[1]">
-            <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-cyan-200 bg-cyan-950/90 border border-cyan-800/50 px-2 py-0.5 rounded-lg">
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-cyan-200 bg-cyan-950/90 border border-cyan-800/50 px-2 py-0.5 rounded-lg">
               {ev.category}
             </span>
             <h2 id="day-stories-title" className="text-lg md:text-xl font-extrabold text-white leading-tight">
               {ev.title}
             </h2>
-            <p className="text-[13px] text-gray-200 flex items-center gap-1.5">
+            <p className="text-sm text-gray-200 flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 shrink-0 text-cyan-400" />
               <span className="truncate">{ev.locationName}</span>
             </p>
-            <p className="text-[12px] text-gray-400 font-medium">
+            <p className="text-sm text-gray-400 font-medium">
               {format(parseISO(ev.event.date), 'PPP', { locale })} · {ev.time}
             </p>
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#151b22]">
-          <div className="grid grid-cols-2 gap-2 text-[11px]">
+          <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
               <p className="text-gray-500 font-bold uppercase tracking-wide mb-1 flex items-center gap-1">
                 <ShieldCheck className="w-3 h-3 shrink-0" /> {t('Εμπιστοσύνη', 'Trust')}
               </p>
-              <p className="text-white font-bold text-[12px]">{tierLabel}</p>
+              <p className="text-white font-bold text-sm">{tierLabel}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
               <p className="text-gray-500 font-bold uppercase tracking-wide mb-1 flex items-center gap-1">
                 <Users className="w-3 h-3 shrink-0" /> {t('Ομάδα', 'Group')}
               </p>
-              <p className="text-white font-bold text-[12px]">{groupLabel}</p>
+              <p className="text-white font-bold text-sm">{groupLabel}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-3 col-span-2">
               <p className="text-gray-500 font-bold uppercase tracking-wide mb-1 flex items-center gap-1">
                 <Ticket className="w-3 h-3 shrink-0" /> {t('Εισιτήριο', 'Ticket')}
               </p>
-              <p className="text-white font-bold text-[12px]">{ticketLabel}</p>
+              <p className="text-white font-bold text-sm">{ticketLabel}</p>
             </div>
           </div>
 
           {ev.meetingPoint && (
             <div className="rounded-2xl border border-cyan-800/40 bg-cyan-950/30 p-3">
-              <p className="text-cyan-400/90 font-bold text-[10px] uppercase tracking-wide mb-1">
+              <p className="text-cyan-400/90 font-bold text-xs uppercase tracking-wide mb-1">
                 {t('Σημείο συνάντησης', 'Meeting point')}
               </p>
-              <p className="text-white text-[12px] font-medium leading-snug">{ev.meetingPoint}</p>
+              <p className="text-white text-sm font-medium leading-snug">{ev.meetingPoint}</p>
             </div>
           )}
 
@@ -265,16 +265,16 @@ export function DayEventsStoriesModal({
                 <MapPin className="w-5 h-5 text-cyan-400" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 mb-0.5">
+                <p className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-0.5">
                   {t('Τοποθεσία', 'Location')}
                 </p>
-                <p className="text-[12px] text-white font-medium leading-snug">
+                <p className="text-sm text-white font-medium leading-snug">
                   {ev.address || ev.locationName}
                 </p>
               </div>
             </div>
           ) : (
-            <p className="text-[11px] text-gray-500 font-medium text-center py-2 rounded-2xl border border-dashed border-white/10">
+            <p className="text-xs text-gray-500 font-medium text-center py-2 rounded-2xl border border-dashed border-white/10">
               {t(
                 'Η τοποθεσία θα είναι διαθέσιμη μετά την επιβεβαίωση',
                 'Location will be available after confirmation',
@@ -315,14 +315,14 @@ export function DayEventsStoriesModal({
             )}
 
             <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-2 space-y-2">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 px-1">
+              <p className="text-xs font-bold uppercase tracking-widest text-gray-500 px-1">
                 {t('Προσθήκη στο ημερολόγιο', 'Add to calendar')}
               </p>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => openGoogleCalendar(ev.event, { meetingPoint: ev.meetingPoint })}
-                  className={cn(outlineBtn, 'w-full text-[11px]')}
+                  className={cn(outlineBtn, 'w-full text-xs')}
                 >
                   <Calendar className="w-4 h-4 shrink-0" />
                   {t('Google Calendar', 'Google Calendar')}
@@ -330,7 +330,7 @@ export function DayEventsStoriesModal({
                 <button
                   type="button"
                   onClick={() => downloadICS(ev.event, { meetingPoint: ev.meetingPoint })}
-                  className={cn(outlineBtn, 'w-full text-[11px]')}
+                  className={cn(outlineBtn, 'w-full text-xs')}
                 >
                   <Download className="w-4 h-4 shrink-0" />
                   {t('Λήψη .ics', 'Download .ics')}

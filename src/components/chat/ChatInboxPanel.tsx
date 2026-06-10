@@ -61,7 +61,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
       <header className="flex items-center justify-between px-4 py-3 border-b border-white/10 shrink-0">
         <div>
           <h2 className="text-sm font-bold">{t('Nakamas Chat', 'Nakamas Chat')}</h2>
-          <p className="text-[10px] text-gray-500">
+          <p className="text-xs text-gray-500">
             {t('Μόνο μετά από αποδοχή αιτήματος ή ομάδας', 'Only after request or group acceptance')}
           </p>
         </div>
@@ -75,7 +75,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
           if (!items.length) return null;
           return (
             <section key={sec.key}>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-cyan-500/80 px-2 mb-1.5">{sec.title}</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-cyan-500/80 px-2 mb-1.5">{sec.title}</p>
               <ul className="space-y-1">
                 {items.map((c) => {
                   const Icon = TYPE_ICON[c.type];
@@ -89,18 +89,18 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
                       >
                         <Icon className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
                         <div className="min-w-0 flex-1">
-                          <p className="text-[12px] font-bold truncate">{c.title}</p>
-                          <p className="text-[10px] text-gray-500 truncate">
+                          <p className="text-sm font-bold truncate">{c.title}</p>
+                          <p className="text-xs text-gray-500 truncate">
                             {t(c.lastMessagePreview.el, c.lastMessagePreview.en)}
                           </p>
                           {!perm.canSend && perm.reasonIfLocked && (
-                            <p className="text-[9px] text-amber-400/90 mt-0.5">
+                            <p className="text-xs text-amber-400/90 mt-0.5">
                               {t(perm.reasonIfLocked.el, perm.reasonIfLocked.en)}
                             </p>
                           )}
                         </div>
                         {c.unreadCount > 0 && (
-                          <span className="shrink-0 min-w-[20px] h-5 rounded-full bg-cyan-600 text-[10px] font-bold flex items-center justify-center px-1">
+                          <span className="shrink-0 min-w-[20px] h-5 rounded-full bg-cyan-600 text-xs font-bold flex items-center justify-center px-1">
                             {c.unreadCount}
                           </span>
                         )}
@@ -113,7 +113,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
           );
         })}
       </div>
-      <footer className="px-4 py-2 border-t border-white/10 text-[9px] text-gray-500 text-center shrink-0">
+      <footer className="px-4 py-2 border-t border-white/10 text-xs text-gray-500 text-center shrink-0">
         {t('Προσωρινά event chats · σχεδιασμένα με privacy controls', 'Temporary event chats · designed with privacy controls')}
       </footer>
     </div>

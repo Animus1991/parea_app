@@ -89,7 +89,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
                           : 'bg-cyan-50 border-cyan-200 hover:border-cyan-400',
                       )}
                     >
-                      <span className="text-[10px] font-bold text-cyan-500 mb-1">{ev.time}</span>
+                      <span className="text-xs font-bold text-cyan-500 mb-1">{ev.time}</span>
                       <p className={cn('text-sm font-bold', p.head)}>{ev.title}</p>
                       <p className={cn('text-xs flex items-center gap-1 mt-1', p.muted)}>
                         <MapPin className="w-3 h-3" />

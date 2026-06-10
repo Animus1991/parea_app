@@ -39,7 +39,7 @@ export function HomeSearchDropdown({
           <div className="px-3 pt-2 pb-1">
             <span
               className={cn(
-                'text-[10px] font-bold tracking-widest flex items-center gap-1',
+                'text-xs font-bold tracking-widest flex items-center gap-1',
                 h.heroSearchDropdownLabel,
               )}
             >
@@ -66,7 +66,7 @@ export function HomeSearchDropdown({
         </>
       )}
       <div className={cn('px-3 pt-2 pb-1', hasRecent && 'border-t border-white/10')}>
-        <span className={cn('text-[10px] font-bold tracking-widest', h.heroSearchDropdownLabel)}>
+        <span className={cn('text-xs font-bold tracking-widest', h.heroSearchDropdownLabel)}>
           {t('Δημοφιλείς Αναζητήσεις', 'Popular Searches')}
         </span>
       </div>

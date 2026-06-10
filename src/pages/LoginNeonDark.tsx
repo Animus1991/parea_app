@@ -52,7 +52,7 @@ export default function LoginNeonDark() {
                 </div>
                 <div>
                   <div className="text-sm font-bold text-white group-hover:text-emerald-400">{user.name}</div>
-                  <div className="text-[10px] text-white">{user.isOrganizer ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')} • {user.city}</div>
+                  <div className="text-xs text-white">{user.isOrganizer ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')} • {user.city}</div>
                 </div>
               </button>
             ))}
@@ -63,7 +63,7 @@ export default function LoginNeonDark() {
               <div className="w-full border-t border-gray-700"></div>
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-gray-800 px-2 text-[10px] text-white tracking-wide">{t('Ή συνεχίστε με', 'Or continue with')}</span>
+              <span className="bg-gray-800 px-2 text-xs text-white tracking-wide">{t('Ή συνεχίστε με', 'Or continue with')}</span>
             </div>
           </div>
 
@@ -77,7 +77,7 @@ export default function LoginNeonDark() {
         </div>
 
         <div className="text-center mt-6">
-          <p className="text-[10px] text-white font-medium leading-relaxed">
+          <p className="text-xs text-white font-medium leading-relaxed">
             {t('Συνεχίζοντας, συμφωνείτε με τους Όρους Χρήσης και την Πολιτική Απορρήτου του Nakamas.', 'By continuing, you agree to Nakamas\'s Terms of Service and Privacy Policy.')}<br/>
             {t('Ίσως απαιτείται επαλήθευση για ορισμένες εκδηλώσεις υψηλής εμπιστοσύνης.', 'Verification may be required for certain high-trust events.')}
           </p>

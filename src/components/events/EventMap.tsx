@@ -91,12 +91,12 @@ function InteractiveEventMarker({
       {infoOpen && (
         <InfoWindow position={{ lat, lng }} onCloseClick={() => setInfoOpen(false)}>
           <div className="max-w-[220px] p-1">
-            <p className="text-[13px] font-bold text-gray-900 leading-tight">{title}</p>
+            <p className="text-sm font-bold text-gray-900 leading-tight">{title}</p>
             {locationLine && (
-              <p className="text-[11px] text-gray-600 mt-1 font-medium">{locationLine}</p>
+              <p className="text-xs text-gray-600 mt-1 font-medium">{locationLine}</p>
             )}
             {meetingPoint && (
-              <p className="text-[11px] text-cyan-800 mt-1 font-bold">
+              <p className="text-xs text-cyan-800 mt-1 font-bold">
                 {t('Σημείο συνάντησης', 'Meeting point')}: {meetingPoint}
               </p>
             )}
@@ -146,7 +146,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
   if (!hasCoords) {
     return (
       <div className={cn('mt-6 space-y-2', className)}>
-        <p className={cn('text-[10px] font-bold tracking-wide', tok.badge)}>
+        <p className={cn('text-xs font-bold tracking-wide', tok.badge)}>
           {t('Τοποθεσία', 'Location')}
         </p>
         <div
@@ -157,7 +157,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
           )}
         >
           <MapPin className={cn('w-8 h-8 mx-auto mb-2 opacity-50', accentText)} />
-          <p className={cn('text-[13px] font-bold', darkSurface ? 'text-white' : 'text-gray-800')}>
+          <p className={cn('text-sm font-bold', darkSurface ? 'text-white' : 'text-gray-800')}>
             {event.exactLocation || event.locationArea
               ? t('Ο χάρτης δεν είναι διαθέσιμος για αυτή την εκδήλωση', 'Map unavailable for this event')
               : t(
@@ -166,7 +166,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
                 )}
           </p>
           {event.locationArea && (
-            <p className={cn('text-[12px] font-medium mt-2', tok.badge)}>{event.locationArea}</p>
+            <p className={cn('text-sm font-medium mt-2', tok.badge)}>{event.locationArea}</p>
           )}
         </div>
       </div>
@@ -175,7 +175,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
 
   return (
     <div className={cn('mt-6 space-y-2', className)}>
-      <p className={cn('text-[10px] font-bold tracking-wide', tok.badge)}>
+      <p className={cn('text-xs font-bold tracking-wide', tok.badge)}>
         {t('Τοποθεσία', 'Location')} — {t('Πατήστε τον δείκτη για εστίαση', 'Tap marker to focus')}
       </p>
       <div
@@ -212,7 +212,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
               <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] p-4 text-center">
                 <div className="bg-white p-3 rounded-2xl shadow-sm border border-red-100">
                   <AlertTriangle className="w-6 h-6 text-red-500 mx-auto mb-2" />
-                  <p className="text-[10px] text-gray-600">
+                  <p className="text-xs text-gray-600">
                     {t(
                       'Ο χάρτης δεν είναι διαθέσιμος. Παρακαλώ ελέγξτε το API key.',
                       'Map unavailable. Please check API key.',
@@ -255,19 +255,19 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
               )}
             >
               <MapPin className={cn('w-8 h-8', accentText)} />
-              <p className={cn('text-[13px] font-bold text-center', tok.badge)}>{event.title}</p>
+              <p className={cn('text-sm font-bold text-center', tok.badge)}>{event.title}</p>
               {locationLine && (
-                <p className={cn('text-[11px] font-medium text-center max-w-xs', tok.badge)}>
+                <p className={cn('text-xs font-medium text-center max-w-xs', tok.badge)}>
                   {locationLine}
                 </p>
               )}
               {meetingPoint && (
-                <p className="text-[11px] font-bold text-cyan-800 text-center">
+                <p className="text-xs font-bold text-cyan-800 text-center">
                   {t('Σημείο συνάντησης', 'Meeting point')}: {meetingPoint}
                 </p>
               )}
             </button>
-            <p className={cn('text-[10px] mt-3 font-medium', tok.badge)}>
+            <p className={cn('text-xs mt-3 font-medium', tok.badge)}>
               {t('Προεπισκόπηση χάρτη (χωρίς API key)', 'Map preview (no API key)')}
             </p>
           </div>

@@ -9,3 +9,4 @@ coverage/
 
 test-results/
 data/runtime/events.json
+data/runtime/events.db

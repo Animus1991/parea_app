@@ -60,9 +60,9 @@ function EventThumb({
       )}
       <div className="absolute inset-0 bg-black/45" />
       <div className="absolute inset-x-0 bottom-0 px-1 py-0.5 bg-gradient-to-t from-black/85 to-transparent">
-        <p className="text-[7px] md:text-[8px] text-white truncate font-bold leading-tight">{ev.title}</p>
+        <p className="text-xs md:text-xs text-white truncate font-bold leading-tight">{ev.title}</p>
         {showTime && (
-          <p className="text-[6px] md:text-[7px] text-white/85 truncate leading-tight">{ev.time}</p>
+          <p className="text-[6px] md:text-xs text-white/85 truncate leading-tight">{ev.time}</p>
         )}
         {showLocation && (
           <p className="text-[6px] text-white/75 truncate hidden lg:block">{ev.locationName}</p>
@@ -131,7 +131,7 @@ function DesktopEventLayout({ events }: { events: PlannedEvent[] }) {
       ))}
       {overflow > 0 && (
         <div className="flex items-center justify-center bg-cyan-900/90 border-r border-b border-white/20">
-          <span className="text-white font-bold text-[9px] md:text-[10px]">+{overflow}</span>
+          <span className="text-white font-bold text-xs md:text-xs">+{overflow}</span>
         </div>
       )}
     </div>
@@ -221,7 +221,7 @@ export function CalendarDayCell({
 
       {hasEvents && (
         <div className="md:hidden relative z-10 mt-1 flex flex-col items-center gap-1">
-          <span className="flex items-center justify-center bg-amber-500 text-white rounded-full min-w-[20px] h-5 px-1.5 text-[10px] font-bold shadow-soft">
+          <span className="flex items-center justify-center bg-amber-500 text-white rounded-full min-w-[20px] h-5 px-1.5 text-xs font-bold shadow-soft">
             {events.length}
           </span>
           <div className="flex gap-0.5">

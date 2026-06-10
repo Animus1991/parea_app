@@ -166,7 +166,7 @@ export default function PostEventFeedbackPageContent() {
             </p>
             <p
               className={cn(
-                'text-[11px] font-bold mt-0.5',
+                'text-xs font-bold mt-0.5',
                 p.isDark ? 'text-amber-500/80' : 'text-amber-700',
               )}
             >
@@ -188,7 +188,7 @@ export default function PostEventFeedbackPageContent() {
           )}
         >
           <div>
-            <h3 className={cn('text-[13px] font-bold uppercase tracking-widest pl-1 mb-4', p.head)}>
+            <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-4', p.head)}>
               {t('Πώς νιώσατε;', 'How did you feel?')}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -212,7 +212,7 @@ export default function PostEventFeedbackPageContent() {
                   <span className="text-4xl drop-shadow-sm">{m.emoji}</span>
                   <span
                     className={cn(
-                      'text-[11px] font-bold',
+                      'text-xs font-bold',
                       mood === m.emoji ? (p.isDark ? 'text-cyan-400' : 'text-cyan-700') : p.muted,
                     )}
                   >
@@ -227,7 +227,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h3 className={cn('text-[13px] font-bold uppercase tracking-widest pl-1 mb-2', p.head)}>
+              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-2', p.head)}>
                 {t('Γενική Εντύπωση', 'Overall Experience')}
               </h3>
               <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
@@ -255,7 +255,7 @@ export default function PostEventFeedbackPageContent() {
             </div>
 
             <div>
-              <h3 className={cn('text-[13px] font-bold uppercase tracking-widest pl-1 mb-2', p.head)}>
+              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-2', p.head)}>
                 {t('Ατμόσφαιρα', 'Vibe')}
               </h3>
               <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
@@ -287,7 +287,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div className="space-y-6">
             <div>
-              <h3 className={cn('text-[13px] font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
+              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
                 {t('Παρουσία', 'Attendance')}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -359,7 +359,7 @@ export default function PostEventFeedbackPageContent() {
             </div>
 
             <div>
-              <h3 className={cn('text-[13px] font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
+              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
                 {t('Αίσθημα Ασφάλειας', 'Safety Comfort')}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -445,7 +445,7 @@ export default function PostEventFeedbackPageContent() {
           <hr className={cn('border-t', p.borderB)} />
 
           <div>
-            <h3 className={cn('text-[13px] font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
+            <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
               {t('Σχόλιο (Προαιρετικό)', 'Comment (Optional)')}
             </h3>
             <textarea
@@ -456,7 +456,7 @@ export default function PostEventFeedbackPageContent() {
                 'Share more about your experience...',
               )}
               className={cn(
-                'w-full px-4 py-3 border rounded-2xl text-[14px] focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all resize-none shadow-soft',
+                'w-full px-4 py-3 border rounded-2xl text-base focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all resize-none shadow-soft',
                 c.inputBg,
                 c.inputFg,
                 c.placeholder,
@@ -464,7 +464,7 @@ export default function PostEventFeedbackPageContent() {
               )}
               rows={4}
             />
-            <p className={cn('text-[11px] font-medium mt-2 flex items-center justify-between', p.muted)}>
+            <p className={cn('text-xs font-medium mt-2 flex items-center justify-between', p.muted)}>
               <span>{t('Ορατό στον διοργανωτή', 'Visible to organizer')}</span>
               <span>
                 {comment.length}/{COMMENT_MAX}
@@ -506,7 +506,7 @@ export default function PostEventFeedbackPageContent() {
           <h2 className={cn('text-3xl font-extrabold tracking-tight mb-3', p.head)}>
             {t('Ευχαριστούμε!', 'Thank You!')}
           </h2>
-          <p className={cn('text-[15px] font-medium max-w-sm mx-auto mb-8 leading-relaxed', p.sub)}>
+          <p className={cn('text-base font-medium max-w-sm mx-auto mb-8 leading-relaxed', p.sub)}>
             {t(
               'Η αξιολόγησή σας βοηθά σημαντικά στη βελτίωση της εμπειρίας για όλη την κοινότητα.',
               'Your feedback significantly helps improve the experience for the entire community.',
@@ -537,7 +537,7 @@ export default function PostEventFeedbackPageContent() {
               </p>
               <p
                 className={cn(
-                  'text-[11px] font-bold uppercase tracking-widest mt-0.5',
+                  'text-xs font-bold uppercase tracking-widest mt-0.5',
                   p.isDark ? 'text-amber-500/80' : 'text-amber-700',
                 )}
               >

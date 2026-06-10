@@ -150,3 +150,56 @@ export const EVENT_CARD_TYPO = {
   locationHint: 'text-xs leading-relaxed',
   link: 'text-xs font-bold',
 } as const;
+
+/** Calendar / agenda density */
+export const CALENDAR_TYPO = {
+  pageTitle: 'text-base md:text-lg font-bold tracking-tight',
+  pageSub: 'text-sm font-medium',
+  dayLabel: 'text-xs font-bold',
+  dayNumber: 'text-sm font-bold',
+  eventTitle: 'text-sm font-bold leading-snug',
+  eventMeta: 'text-xs font-medium',
+  hourLabel: 'text-xs font-semibold',
+  modalTitle: 'text-lg font-bold',
+  modalSub: 'text-sm font-medium',
+  chip: 'text-xs font-bold',
+  cta: 'text-sm font-bold',
+} as const;
+
+/** Home feed density */
+export const HOME_TYPO = {
+  heroTitle: 'text-lg md:text-2xl font-bold tracking-tight leading-tight',
+  heroSub: 'text-sm md:text-base font-medium',
+  sectionLabel: 'text-xs font-bold tracking-wide uppercase',
+  filterChip: 'text-xs font-bold',
+  statValue: 'text-sm font-bold',
+  statLabel: 'text-xs font-medium',
+  cardTitle: 'text-base font-bold',
+  cardMeta: 'text-sm font-medium',
+  hint: 'text-xs font-medium',
+  cta: 'text-sm font-bold',
+} as const;
+
+/** Report / trust issue flow */
+export const REPORT_TYPO = {
+  pageTitle: 'text-base md:text-lg font-bold',
+  pageSub: 'text-sm font-medium',
+  sectionLabel: 'text-xs font-bold tracking-wide uppercase',
+  fieldLabel: 'text-sm font-bold',
+  fieldHint: 'text-xs font-medium leading-relaxed',
+  option: 'text-sm font-medium',
+  chip: 'text-xs font-bold',
+  cta: 'text-sm font-bold',
+} as const;
+
+/** Onboarding wizard density */
+export const ONBOARDING_TYPO = {
+  stepLabel: 'text-xs font-bold tracking-wide uppercase',
+  title: 'text-lg md:text-2xl font-bold leading-tight',
+  subtitle: 'text-sm md:text-base font-medium leading-relaxed',
+  optionTitle: 'text-sm font-bold',
+  optionBody: 'text-xs font-medium leading-relaxed',
+  chip: 'text-xs font-semibold',
+  cta: 'text-sm font-bold',
+  skip: 'text-xs font-bold',
+} as const;

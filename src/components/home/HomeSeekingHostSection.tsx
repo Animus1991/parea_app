@@ -35,7 +35,7 @@ export function HomeSeekingHostSection({
             <h2 className={`text-[14.63px] font-bold leading-tight ${h.heading}`}>
               {t('Αναζητούν διοργανωτή', 'Looking for an organizer')}
             </h2>
-            <p className={`text-[12px] font-medium mt-0.5 ${h.labelMuted}`}>
+            <p className={`text-sm font-medium mt-0.5 ${h.labelMuted}`}>
               {t(
                 'Εκδηλώσεις από το Nakamas — γίνε εσύ ο διοργανωτής της παρέας.',
                 'Events by Nakamas — step up and organize the group.',
@@ -46,7 +46,7 @@ export function HomeSeekingHostSection({
         <button
           type="button"
           onClick={onToggleSeekingHostOnly}
-          className={`shrink-0 text-[12px] font-bold px-3 py-1.5 rounded-full transition-all duration-200 ${seekingHostOnly ? h.chipActive : h.chipInactive}`}
+          className={`shrink-0 text-sm font-bold px-3 py-1.5 rounded-full transition-all duration-200 ${seekingHostOnly ? h.chipActive : h.chipInactive}`}
         >
           {seekingHostOnly
             ? t('Όλες οι εκδηλώσεις', 'All events')

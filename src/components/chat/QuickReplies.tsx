@@ -21,7 +21,7 @@ export function QuickReplies({ onSelect, disabled }: { onSelect: (text: string) 
           type="button"
           role="listitem"
           onClick={() => onSelect(t(r.el, r.en))}
-          className="shrink-0 text-[10px] font-bold px-2.5 py-1.5 rounded-full border border-white/15 bg-white/5 hover:bg-cyan-600/20 text-gray-300"
+          className="shrink-0 text-xs font-bold px-2.5 py-1.5 rounded-full border border-white/15 bg-white/5 hover:bg-cyan-600/20 text-gray-300"
         >
           {t(r.el, r.en)}
         </button>

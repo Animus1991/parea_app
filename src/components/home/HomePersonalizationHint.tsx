@@ -24,7 +24,7 @@ export function HomePersonalizationHint({ useClassicTokens = false }: HomePerson
   return (
     <p
       className={cn(
-        'flex items-center gap-2 text-[11px] font-semibold',
+        'flex items-center gap-2 text-xs font-semibold',
         useClassicTokens ? h.labelMuted : p.sub,
       )}
     >

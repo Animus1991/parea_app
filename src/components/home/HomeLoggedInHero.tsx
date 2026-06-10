@@ -158,7 +158,7 @@ export function HomeLoggedInHero({
               <span
                 key={label}
                 className={cn(
-                  'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-bold bg-white/10 border border-white/10',
+                  'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-bold bg-white/10 border border-white/10',
                   h.heroStat,
                 )}
               >
@@ -201,7 +201,7 @@ export function HomeLoggedInHero({
                 <span
                   key={label}
                   className={cn(
-                    'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12.5px] font-bold tracking-wide bg-white/10 border border-white/10 backdrop-blur-sm',
+                    'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-bold tracking-wide bg-white/10 border border-white/10 backdrop-blur-sm',
                     h.heroStat,
                   )}
                 >
@@ -214,7 +214,7 @@ export function HomeLoggedInHero({
               <button
                 type="button"
                 onClick={() => navigate('/nearby')}
-                className="btn-gradient flex items-center gap-1.5 !rounded-2xl !text-[12px] !px-3 !py-1.5"
+                className="btn-gradient flex items-center gap-1.5 !rounded-2xl !text-sm !px-3 !py-1.5"
               >
                 <MapIcon className="w-3.5 h-3.5" />
                 {t('Αναζήτηση στον Χάρτη', 'Search on Map')}
@@ -227,7 +227,7 @@ export function HomeLoggedInHero({
               <div className="w-16 h-16 rounded-full border-4 border-white/30 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-xl shadow-soft">
                 {score}
               </div>
-              <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider flex items-center gap-1">
+              <span className="text-xs font-bold text-white/80 uppercase tracking-wider flex items-center gap-1">
                 <Sparkles className="w-3 h-3" />
                 {t('Αξιοπιστία', 'Reliability')}
               </span>

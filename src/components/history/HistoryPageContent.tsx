@@ -152,10 +152,10 @@ export default function HistoryPageContent() {
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <Badge variant="neutral" className="text-[11px]">{event.category}</Badge>
-                    <Badge variant="success" className="text-[11px]">{t('Ολοκληρώθηκε', 'Completed')}</Badge>
+                    <Badge variant="neutral" className="text-xs">{event.category}</Badge>
+                    <Badge variant="success" className="text-xs">{t('Ολοκληρώθηκε', 'Completed')}</Badge>
                   </div>
-                  <h3 className={cn("font-bold text-[15px] truncate", a.head)}>{event.title}</h3>
+                  <h3 className={cn("font-bold text-base truncate", a.head)}>{event.title}</h3>
                   <div className={cn("flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium", a.sub)}>
                     <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{format(parseISO(event.date), 'dd MMM yyyy')}</span>
                     <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{event.locationArea}</span>

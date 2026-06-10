@@ -31,7 +31,7 @@ type DateFilter = 'Any' | 'Today' | 'This Week' | 'This Month' | 'Weekend';
 type SortBy = 'Relevance' | 'Trending' | 'Distance' | 'Group Progress';
 
 const SELECT_CLASS =
-  "text-[12px] border rounded-2xl shadow-soft focus:outline-none py-1.5 px-3 font-bold h-9 shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239ca3af%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] pr-7 transition-colors";
+  "text-sm border rounded-2xl shadow-soft focus:outline-none py-1.5 px-3 font-bold h-9 shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239ca3af%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] pr-7 transition-colors";
 
 /** Unified categories (ZIP parity + Classic design tokens via usePageContrast). */
 export default function CategoriesPageContent() {
@@ -165,7 +165,7 @@ export default function CategoriesPageContent() {
               {t('εμπειρία σας', 'experience')}
             </span>
           </h1>
-          <p className="text-[13px] md:text-base font-medium text-gray-300 leading-relaxed mb-6">
+          <p className="text-sm md:text-base font-medium text-gray-300 leading-relaxed mb-6">
             {t(
               'Ανακαλύψτε επιλεγμένες εκδηλώσεις που ταιριάζουν στα ενδιαφέροντά σας.',
               'Discover handpicked events matching your interests.',
@@ -181,7 +181,7 @@ export default function CategoriesPageContent() {
                 'Αναζήτηση κατηγοριών ή θεμάτων...',
                 'Search categories or topics...',
               )}
-              className="w-full h-12 pl-12 pr-4 rounded-2xl border-0 bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium backdrop-blur-md transition-all text-[13px]"
+              className="w-full h-12 pl-12 pr-4 rounded-2xl border-0 bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium backdrop-blur-md transition-all text-sm"
             />
           </div>
         </div>
@@ -192,7 +192,7 @@ export default function CategoriesPageContent() {
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className={cn('w-4 h-4', p.iconAccent)} />
-            <span className={cn('text-[11px] font-bold uppercase tracking-wider', p.sub)}>
+            <span className={cn('text-xs font-bold uppercase tracking-wider', p.sub)}>
               {t('Δημοφιλή Τώρα', 'Trending Now')}
             </span>
           </div>
@@ -220,8 +220,8 @@ export default function CategoriesPageContent() {
                     <cat.icon className={cn('w-5 h-5', cat.color)} />
                   </div>
                   <div>
-                    <h3 className={cn('font-bold text-[13px]', p.head)}>{cat.displayName}</h3>
-                    <p className={cn('text-[10px] font-semibold tracking-wide', p.muted)}>
+                    <h3 className={cn('font-bold text-sm', p.head)}>{cat.displayName}</h3>
+                    <p className={cn('text-xs font-semibold tracking-wide', p.muted)}>
                       {cat.count} {t('ενεργές', 'active')}
                     </p>
                   </div>
@@ -254,7 +254,7 @@ export default function CategoriesPageContent() {
                 setActiveCategory(null);
               }}
               className={cn(
-                'px-5 py-3 whitespace-nowrap text-[13px] font-bold rounded-2xl transition-all flex-1 text-center min-w-[120px]',
+                'px-5 py-3 whitespace-nowrap text-sm font-bold rounded-2xl transition-all flex-1 text-center min-w-[120px]',
                 activeTab === tab
                   ? p.isDark
                     ? 'bg-[hsl(220_16%_18%)] text-white shadow-soft'
@@ -301,7 +301,7 @@ export default function CategoriesPageContent() {
             </div>
             <h3
               className={cn(
-                'font-bold text-[12px] sm:text-[13px] leading-tight line-clamp-1 w-full',
+                'font-bold text-sm sm:text-sm leading-tight line-clamp-1 w-full',
                 p.head,
                 p.hoverText,
               )}
@@ -310,7 +310,7 @@ export default function CategoriesPageContent() {
             </h3>
             <p
               className={cn(
-                'text-[10px] font-semibold mt-1.5 px-2 py-0.5 rounded-md',
+                'text-xs font-semibold mt-1.5 px-2 py-0.5 rounded-md',
                 p.isDark ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500',
               )}
             >
@@ -337,7 +337,7 @@ export default function CategoriesPageContent() {
           >
             <Search className={cn('w-6 h-6', p.muted)} />
           </div>
-          <p className={cn('font-bold text-[15px]', p.head)}>
+          <p className={cn('font-bold text-base', p.head)}>
             {t('Δεν βρέθηκαν αποτελέσματα', 'No categories match your search')}
           </p>
           <Button variant="outline" className="mt-4" onClick={() => setSearchQuery('')}>
@@ -367,14 +367,14 @@ export default function CategoriesPageContent() {
               )}
             </div>
             <div>
-              <h2 className={cn('text-[16px] md:text-[18px] font-extrabold tracking-tight', p.head)}>
+              <h2 className={cn('text-base md:text-lg font-extrabold tracking-tight', p.head)}>
                 {activeCategory
                   ? language === 'el'
                     ? CATEGORY_CATALOG.find((c) => c.name === activeCategory)?.labelGr
                     : CATEGORY_CATALOG.find((c) => c.name === activeCategory)?.labelEn
                   : t('Όλες οι Εκδηλώσεις', 'All Discoveries')}
               </h2>
-              <p className={cn('text-[11px] font-bold uppercase tracking-wider mt-0.5', p.muted)}>
+              <p className={cn('text-xs font-bold uppercase tracking-wider mt-0.5', p.muted)}>
                 {filteredEvents.length} {t('αποτελέσματα', 'results found')}
               </p>
             </div>
@@ -433,7 +433,7 @@ export default function CategoriesPageContent() {
                   )}
                 >
                   <Bookmark className={cn('w-6 h-6 mb-3', p.muted)} />
-                  <p className={cn('font-bold text-[15px]', p.head)}>
+                  <p className={cn('font-bold text-base', p.head)}>
                     {t('Δεν βρέθηκαν εκδηλώσεις', 'No events found')}
                   </p>
                   <Button
@@ -473,7 +473,7 @@ export default function CategoriesPageContent() {
         <h3 className={cn('text-xl md:text-2xl font-extrabold tracking-tight', p.head)}>
           {t('Μην βρήκατε αυτό που ψάχνατε;', "Couldn't find what you wanted?")}
         </h3>
-        <p className={cn('text-[13px] max-w-lg mx-auto font-medium leading-relaxed', p.sub)}>
+        <p className={cn('text-sm max-w-lg mx-auto font-medium leading-relaxed', p.sub)}>
           {t(
             'Δημιουργήστε τη δική σας εκδήλωση και συγκεντρώστε ανθρώπους με παρόμοια ενδιαφέροντα.',
             'Create your own event and gather people with similar passions.',

@@ -149,7 +149,7 @@ export default function SettingsPageContent() {
 
       {sections.map((section, idx) => (
         <div key={idx}>
-          <h2 className={cn("text-[11px] font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{section.title}</h2>
+          <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{section.title}</h2>
           <Card className={a.divider}>
             <div className={cn("divide-y", a.divider)}>
               {section.items.map((item, i) => {
@@ -160,7 +160,7 @@ export default function SettingsPageContent() {
                       <Icon className={cn("w-4 h-4", a.muted)} />
                       <span className={cn("text-sm font-medium", a.head)}>{item.label}</span>
                     </div>
-                    <span className={cn("text-[13px] font-medium", a.sub)}>{item.value}</span>
+                    <span className={cn("text-sm font-medium", a.sub)}>{item.value}</span>
                   </div>
                 );
               })}
@@ -267,7 +267,7 @@ export default function SettingsPageContent() {
       )}
 
       <div>
-        <h2 className={cn("text-[11px] font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Διαθεσιμότητα', 'Availability')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Διαθεσιμότητα', 'Availability')}</h2>
         <Card className={a.divider}>
           <div
             className={cn("flex items-center justify-between p-4 cursor-pointer transition-colors", a.itemHover)}
@@ -302,7 +302,7 @@ export default function SettingsPageContent() {
 
       {/* Active Sessions */}
       <div>
-        <h2 className={cn("text-[11px] font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Ενεργές Συνεδρίες', 'Active Sessions')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Ενεργές Συνεδρίες', 'Active Sessions')}</h2>
         <Card>
           <div className={cn("divide-y", a.divider)}>
             <div className="flex items-center justify-between p-4">
@@ -337,7 +337,7 @@ export default function SettingsPageContent() {
 
       {/* Data Export */}
       <div>
-        <h2 className={cn("text-[11px] font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Δεδομένα', 'Data')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Δεδομένα', 'Data')}</h2>
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

@@ -231,7 +231,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           </div>
         </div>
 
-        <p className={cn('text-[11px] font-medium px-4 md:px-8 py-2 border-b', p.borderB, p.muted)}>
+        <p className={cn('text-xs font-medium px-4 md:px-8 py-2 border-b', p.borderB, p.muted)}>
           {t(
             'Πάτημα: προεπισκόπηση · Διπλό πάτημα: ωριαίο πρόγραμμα',
             'Tap: preview · Double-tap: hourly schedule',
@@ -252,7 +252,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
                   <div
                     key={label}
                     className={cn(
-                      'text-center text-[10px] md:text-xs font-bold uppercase tracking-widest py-1',
+                      'text-center text-xs md:text-xs font-bold uppercase tracking-widest py-1',
                       p.muted,
                     )}
                   >
@@ -277,7 +277,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
                   <div
                     key={label}
                     className={cn(
-                      'text-center text-[10px] font-bold uppercase tracking-widest py-1 rounded-lg',
+                      'text-center text-xs font-bold uppercase tracking-widest py-1 rounded-lg',
                       p.isDark ? 'bg-white/5 text-gray-400' : 'bg-gray-50 text-gray-500',
                     )}
                   >

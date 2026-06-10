@@ -1,6 +1,8 @@
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import type { User as FirebaseUser } from 'firebase/auth';
 import { getFirebaseDb } from '../lib/firebase';
+import { mockUsers } from '../data/mockUsers';
+import { resolveMockUserIdByEmail } from '../data/mockUserEmails';
 import type { TrustTier, User } from '../types';
 import { createLogger } from '../lib/logger';
 
@@ -16,13 +18,31 @@ export interface NakamasFirestoreProfile {
   interests?: string[];
   trustTier?: TrustTier;
   isOrganizer?: boolean;
+  /** When email matches a demo seed account, retain mock user id for groups. */
+  linkedUserId?: string | null;
   updatedAt?: unknown;
   createdAt?: unknown;
 }
 
 function mapToUser(uid: string, data: NakamasFirestoreProfile): User {
+  const linkedId = data.linkedUserId ?? uid;
+  const mockSeed = data.linkedUserId
+    ? mockUsers.find((u) => u.id === data.linkedUserId)
+    : undefined;
+
+  if (mockSeed) {
+    return {
+      ...mockSeed,
+      id: linkedId,
+      name: data.name || mockSeed.name,
+      photoUrl: data.photoUrl || mockSeed.photoUrl,
+      bio: data.bio || mockSeed.bio,
+      emailVerified: Boolean(data.email ?? mockSeed.emailVerified),
+    };
+  }
+
   return {
-    id: uid,
+    id: linkedId,
     name: data.name || 'Member',
     ageRange: '25-34',
     city: data.city || 'Athens',
@@ -42,44 +62,65 @@ function mapToUser(uid: string, data: NakamasFirestoreProfile): User {
 }
 
 function buildSeedProfile(fb: FirebaseUser): NakamasFirestoreProfile {
+  const linkedUserId = resolveMockUserIdByEmail(fb.email);
+  const mockSeed = linkedUserId ? mockUsers.find((u) => u.id === linkedUserId) : undefined;
+
   return {
     uid: fb.uid,
-    name: fb.displayName?.split(' ')[0] || fb.email?.split('@')[0] || 'Member',
+    name: fb.displayName?.split(' ')[0] || mockSeed?.name || fb.email?.split('@')[0] || 'Member',
     email: fb.email,
-    photoUrl: fb.photoURL,
-    city: 'Athens',
-    bio: '',
-    interests: ['Social'],
-    trustTier: '1_explorer',
-    isOrganizer: false,
+    photoUrl: fb.photoURL || mockSeed?.photoUrl,
+    city: mockSeed?.city || 'Athens',
+    bio: mockSeed?.bio || '',
+    interests: mockSeed?.interests?.length ? mockSeed.interests : ['Social'],
+    trustTier: mockSeed?.trustTier || '1_explorer',
+    isOrganizer: Boolean(mockSeed?.isOrganizer),
+    linkedUserId: linkedUserId ?? null,
   };
 }
 
 /** Fetch or create Firestore profile — maps to Nakamas User (CoFounderBay pattern). */
 export async function resolveFirebaseUser(fb: FirebaseUser): Promise<User> {
   const db = getFirebaseDb();
+  const fallback = buildSeedProfile(fb);
+
   if (!db) {
-    return mapToUser(fb.uid, buildSeedProfile(fb));
+    return mapToUser(fb.uid, fallback);
   }
 
   const ref = doc(db, 'profiles', fb.uid);
   try {
     const snap = await getDoc(ref);
     if (snap.exists()) {
-      return mapToUser(fb.uid, snap.data() as NakamasFirestoreProfile);
+      const data = snap.data() as NakamasFirestoreProfile;
+      if (!data.linkedUserId && fb.email) {
+        const linked = resolveMockUserIdByEmail(fb.email);
+        if (linked) {
+          data.linkedUserId = linked;
+          await setDoc(ref, { linkedUserId: linked, updatedAt: serverTimestamp() }, { merge: true });
+          log.info('linked firebase profile to mock user', { uid: fb.uid, linkedUserId: linked });
+        }
+      }
+      return mapToUser(fb.uid, data);
     }
 
-    const seed = buildSeedProfile(fb);
     await setDoc(ref, {
-      ...seed,
+      ...fallback,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
-    log.info('created firestore profile', { uid: fb.uid });
-    return mapToUser(fb.uid, seed);
+    if (fallback.linkedUserId) {
+      log.info('created firestore profile linked to mock user', {
+        uid: fb.uid,
+        linkedUserId: fallback.linkedUserId,
+      });
+    } else {
+      log.info('created firestore profile', { uid: fb.uid });
+    }
+    return mapToUser(fb.uid, fallback);
   } catch (err) {
     log.error('profile resolve failed', err);
-    return mapToUser(fb.uid, buildSeedProfile(fb));
+    return mapToUser(fb.uid, fallback);
   }
 }
 

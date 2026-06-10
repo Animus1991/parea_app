@@ -16,7 +16,7 @@ function RankIcon({ rank, mutedClass }: { rank: number; mutedClass: string }) {
   if (rank === 1) return <span className="text-2xl leading-none select-none">🥇</span>;
   if (rank === 2) return <span className="text-2xl leading-none select-none">🥈</span>;
   if (rank === 3) return <span className="text-2xl leading-none select-none">🥉</span>;
-  return <span className={cn('text-[14px] font-black tabular-nums w-8 text-center', mutedClass)}>#{rank}</span>;
+  return <span className={cn('text-base font-black tabular-nums w-8 text-center', mutedClass)}>#{rank}</span>;
 }
 
 export default function LeaderboardClassic() {
@@ -94,8 +94,8 @@ export default function LeaderboardClassic() {
     <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn('text-[16px] md:text-[18px] font-bold', p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>
-          <p className={cn('font-medium text-[13px] md:text-sm mt-1', p.sub)}>
+          <h1 className={cn('text-base md:text-lg font-bold', p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>
+          <p className={cn('font-medium text-sm md:text-sm mt-1', p.sub)}>
             {t('Δες πού βρίσκεσαι μέσα στην κοινότητα', 'See where you stand in the community')}
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function LeaderboardClassic() {
               key={per}
               onClick={() => setPeriod(per)}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-[12px] font-bold transition-all duration-200 whitespace-nowrap',
+                'px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-200 whitespace-nowrap',
                 period === per
                   ? cn(p.cardSurface, p.head, 'shadow-soft')
                   : cn(p.muted, p.hoverText),
@@ -129,7 +129,7 @@ export default function LeaderboardClassic() {
                   alt={myEntry.name}
                   className={cn('w-14 h-14 rounded-full object-cover ring-2', p.isDark ? 'ring-white/20' : 'ring-[#18D8DB]/40')}
                 />
-                <div className="absolute -bottom-1 -right-1 bg-[#111827] text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white">
+                <div className="absolute -bottom-1 -right-1 bg-[#111827] text-white text-xs font-black px-1.5 py-0.5 rounded-full border-2 border-white">
                   #{myRank}
                 </div>
               </div>
@@ -139,13 +139,13 @@ export default function LeaderboardClassic() {
                   <span className={p.statVal}>#{myRank}</span>
                 </p>
                 <div className="flex flex-wrap items-center gap-3 mt-1.5">
-                  <span className={cn('text-[12px] flex items-center gap-1 font-medium', p.muted)}>
+                  <span className={cn('text-sm flex items-center gap-1 font-medium', p.muted)}>
                     <Trophy className="w-3.5 h-3.5 text-amber-500" /> {myEntry.xp} XP
                   </span>
-                  <span className={cn('text-[12px] flex items-center gap-1 font-medium', p.muted)}>
+                  <span className={cn('text-sm flex items-center gap-1 font-medium', p.muted)}>
                     <Flame className="w-3.5 h-3.5 text-orange-500" /> {myEntry.streak} {t('εβδ. σερί', 'wk streak')}
                   </span>
-                  <span className={cn('text-[12px] flex items-center gap-1 font-medium', p.muted)}>
+                  <span className={cn('text-sm flex items-center gap-1 font-medium', p.muted)}>
                     <Calendar className="w-3.5 h-3.5 text-cyan-600" /> {myEntry.eventsCount}{' '}
                     {t('εκδηλώσεις', 'events')}
                   </span>
@@ -173,7 +173,7 @@ export default function LeaderboardClassic() {
                 </div>
               </div>
             ) : (
-              <div className={cn('mt-4 pt-3 border-t flex items-center gap-1.5 text-[12px] font-bold', p.borderT, p.statVal)}>
+              <div className={cn('mt-4 pt-3 border-t flex items-center gap-1.5 text-sm font-bold', p.borderT, p.statVal)}>
                 <ChevronUp className="w-4 h-4" /> {t('Είσαι στην κορυφή! 🏆', "You're at the top! 🏆")}
               </div>
             )}
@@ -219,19 +219,19 @@ export default function LeaderboardClassic() {
                         {entry.name}
                       </span>
                       {entry.isMe && (
-                        <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0', p.statBg, p.statVal)}>
+                        <span className={cn('text-xs font-bold px-1.5 py-0.5 rounded-full shrink-0', p.statBg, p.statVal)}>
                           {t('Εσύ', 'You')}
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">
-                      <span className={cn('text-[11px] font-medium flex items-center gap-0.5', p.muted)}>
+                      <span className={cn('text-xs font-medium flex items-center gap-0.5', p.muted)}>
                         <Flame className="w-2.5 h-2.5 text-orange-400" /> {entry.streak}w
                       </span>
-                      <span className={cn('text-[11px] font-medium flex items-center gap-0.5', p.muted)}>
+                      <span className={cn('text-xs font-medium flex items-center gap-0.5', p.muted)}>
                         <Calendar className="w-2.5 h-2.5 text-cyan-400" /> {entry.eventsCount}
                       </span>
-                      <span className={cn('text-[11px] font-medium flex items-center gap-0.5', p.muted)}>
+                      <span className={cn('text-xs font-medium flex items-center gap-0.5', p.muted)}>
                         <Star className="w-2.5 h-2.5 text-amber-400" /> {entry.reliabilityScore}%
                       </span>
                     </div>
@@ -240,7 +240,7 @@ export default function LeaderboardClassic() {
                     <p className={cn('font-black text-[17px] tabular-nums leading-none', p.head)}>
                       {entry.xp}
                     </p>
-                    <p className={cn('text-[10px] font-semibold mt-0.5', p.muted)}>XP</p>
+                    <p className={cn('text-xs font-semibold mt-0.5', p.muted)}>XP</p>
                   </div>
                 </Card>
               </motion.div>
@@ -276,19 +276,19 @@ export default function LeaderboardClassic() {
               >
                 <span className="text-3xl leading-none">{badge.emoji}</span>
                 <div>
-                  <p className={cn('font-bold text-[13px]', badge.unlocked ? p.head : p.muted)}>
+                  <p className={cn('font-bold text-sm', badge.unlocked ? p.head : p.muted)}>
                     {t(badge.labelEl, badge.labelEn)}
                   </p>
-                  <p className={cn('text-[11px] font-medium mt-0.5 leading-snug', p.muted)}>
+                  <p className={cn('text-xs font-medium mt-0.5 leading-snug', p.muted)}>
                     {t(badge.descriptionEl, badge.descriptionEn)}
                   </p>
                 </div>
                 {badge.unlocked ? (
-                  <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full', p.isDark ? 'text-amber-300 bg-amber-500/20' : 'text-amber-600 bg-amber-100')}>
+                  <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full', p.isDark ? 'text-amber-300 bg-amber-500/20' : 'text-amber-600 bg-amber-100')}>
                     {t('Ξεκλείδωτο ✓', 'Unlocked ✓')}
                   </span>
                 ) : (
-                  <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full', p.statBg, p.muted)}>
+                  <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full', p.statBg, p.muted)}>
                     {t('Κλειδωμένο', 'Locked')}
                   </span>
                 )}

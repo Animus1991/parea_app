@@ -28,7 +28,7 @@ export function HomePendingFeedbackBanner() {
           <h3 className={`text-[14.63px] font-bold ${h.feedbackTitle}`}>
             {t('Εκκρεμής Αξιολόγηση', 'Pending Feedback')}
           </h3>
-          <p className={`text-[11.33px] font-medium mt-0.5 leading-relaxed ${h.feedbackBody}`}>
+          <p className={`text-xs font-medium mt-0.5 leading-relaxed ${h.feedbackBody}`}>
             {t(
               `Αξιολογήστε τα μέλη από το "${pendingFeedbackEvent.title}" για να ξεκλειδώσετε την επόμενη κράτησή σας.`,
               `Rate the members from "${pendingFeedbackEvent.title}" to unlock your next booking.`,

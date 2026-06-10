@@ -12,7 +12,7 @@ export function HomeHeroModeBar({ className }: { className?: string }) {
 
   return (
     <div className={cn('flex flex-wrap items-center justify-between gap-3', className)}>
-      <span className={cn('text-[10px] font-bold uppercase tracking-widest', h.sectionLabel)}>
+      <span className={cn('text-xs font-bold uppercase tracking-widest', h.sectionLabel)}>
         {t('Προβολή αρχικής', 'Home layout')}
       </span>
       <div
@@ -26,7 +26,7 @@ export function HomeHeroModeBar({ className }: { className?: string }) {
             type="button"
             onClick={() => setHomeHeroMode(id)}
             className={cn(
-              'px-3 py-1 rounded-full text-[11px] font-bold transition-all',
+              'px-3 py-1 rounded-full text-xs font-bold transition-all',
               homeHeroMode === id
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-white/90 hover:bg-white/15',

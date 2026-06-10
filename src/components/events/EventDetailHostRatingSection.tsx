@@ -79,7 +79,7 @@ export function EventDetailHostRatingSection({
       <div className={cn(shell, className)}>
         <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
           <CheckCircle2 className="w-5 h-5 shrink-0" />
-          <p className={cn('text-[13px] font-bold', content.metaValue)}>
+          <p className={cn('text-sm font-bold', content.metaValue)}>
             {t('Έχετε αξιολογήσει αυτή την εκδήλωση', 'You rated this event')}
           </p>
         </div>
@@ -90,7 +90,7 @@ export function EventDetailHostRatingSection({
         </div>
         <button
           type="button"
-          className={cn('mt-3 text-[12px] font-bold underline', content.metaLabel)}
+          className={cn('mt-3 text-sm font-bold underline', content.metaLabel)}
           onClick={() => navigate(`/history/feedback/${event.id}`)}
         >
           {t('Πλήρης φόρμα αξιολόγησης', 'Full feedback form')}
@@ -101,14 +101,14 @@ export function EventDetailHostRatingSection({
 
   return (
     <div className={cn(shell, className)}>
-      <p className={cn('text-[11px] font-bold tracking-wide uppercase mb-1', content.metaLabel)}>
+      <p className={cn('text-xs font-bold tracking-wide uppercase mb-1', content.metaLabel)}>
         {t('Η εκδήλωση ολοκληρώθηκε', 'Event completed')}
       </p>
-      <p className={cn('text-[13px] font-bold mb-1', content.metaValue)}>
+      <p className={cn('text-sm font-bold mb-1', content.metaValue)}>
         {t('Πώς ήταν η εμπειρία σας;', 'How was your experience?')}
       </p>
       {organizer && (
-        <p className={cn('text-[12px] font-medium mb-3', content.metaLabel)}>
+        <p className={cn('text-sm font-medium mb-3', content.metaLabel)}>
           {t('Αξιολογήστε τον διοργανωτή', 'Rate the host')}: {organizer.name}
         </p>
       )}

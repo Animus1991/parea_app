@@ -154,7 +154,7 @@ export function HomeLoggedInHeroContrast({
               <span
                 key={label}
                 className={cn(
-                  'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-bold bg-white/10 border border-white/10',
+                  'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-bold bg-white/10 border border-white/10',
                   h.heroStat,
                 )}
               >

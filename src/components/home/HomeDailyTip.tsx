@@ -15,10 +15,10 @@ export function HomeDailyTip() {
         <Lightbulb className="w-3.5 h-3.5 text-amber-700" />
       </div>
       <div>
-        <span className={`text-[10px] font-bold uppercase tracking-widest block mb-0.5 ${h.tipLabel}`}>
+        <span className={`text-xs font-bold uppercase tracking-widest block mb-0.5 ${h.tipLabel}`}>
           {t('Συμβουλή Ημέρας', 'Tip of the Day')}
         </span>
-        <p className={`text-[12.5px] font-medium leading-relaxed ${h.tipBody}`}>
+        <p className={`text-sm font-medium leading-relaxed ${h.tipBody}`}>
           {t(DAILY_TIPS_GR[tipIndex], DAILY_TIPS_EN[tipIndex])}
         </p>
       </div>

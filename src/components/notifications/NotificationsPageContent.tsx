@@ -135,7 +135,7 @@ export default function NotificationsPageContent() {
         <div className="flex-1 min-w-0">
           <p
             className={cn(
-              'text-[13px] leading-relaxed',
+              'text-sm leading-relaxed',
               isUnread ? cn('font-medium', a.head) : a.sub,
             )}
           >
@@ -242,7 +242,7 @@ export default function NotificationsPageContent() {
             {tab.key === 'unread' && unreadCount > 0 && (
               <span
                 className={cn(
-                  'ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-[9px] text-white font-bold',
+                  'ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-xs text-white font-bold',
                   a.dot,
                 )}
               >
@@ -272,7 +272,7 @@ export default function NotificationsPageContent() {
         <div className="space-y-5">
           {todayNotifs.length > 0 && (
             <div className="space-y-2">
-              <h3 className={cn('text-[11px] font-bold tracking-wider uppercase', a.muted)}>
+              <h3 className={cn('text-xs font-bold tracking-wider uppercase', a.muted)}>
                 {t('Νέες', 'New')} ({todayNotifs.length})
               </h3>
               {todayNotifs.map((notif) => renderNotifRow(notif, true))}
@@ -280,7 +280,7 @@ export default function NotificationsPageContent() {
           )}
           {earlierNotifs.length > 0 && (
             <div className="space-y-2">
-              <h3 className={cn('text-[11px] font-bold tracking-wider uppercase', a.muted)}>
+              <h3 className={cn('text-xs font-bold tracking-wider uppercase', a.muted)}>
                 {t('Προηγούμενες', 'Earlier')}
               </h3>
               {earlierNotifs.map((notif) => renderNotifRow(notif, false))}

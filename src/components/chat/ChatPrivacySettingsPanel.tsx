@@ -18,8 +18,8 @@ function Toggle({
   return (
     <label className={cn('flex items-start justify-between gap-3 py-3 border-b cursor-pointer', a.borderB)}>
       <span>
-        <span className={cn('text-[13px] font-medium block', a.head)}>{label}</span>
-        {hint && <span className={cn('text-[11px] block mt-0.5', a.sub)}>{hint}</span>}
+        <span className={cn('text-sm font-medium block', a.head)}>{label}</span>
+        {hint && <span className={cn('text-xs block mt-0.5', a.sub)}>{hint}</span>}
       </span>
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="mt-1" />
     </label>
@@ -35,7 +35,7 @@ export function ChatPrivacySettingsPanel() {
   return (
     <section className={cn('rounded-2xl border p-4 mt-6', a.cardSurface, a.borderB)}>
       <h2 className={cn('text-sm font-bold mb-1', a.head)}>{t('Nakamas Chat — ρυθμίσεις', 'Nakamas Chat — settings')}</h2>
-      <p className={cn('text-[11px] mb-3', a.sub)}>
+      <p className={cn('text-xs mb-3', a.sub)}>
         {t(
           'Relationship-based messaging · προσωρινά event chats από προεπιλογή',
           'Relationship-based messaging · temporary event chats by default',

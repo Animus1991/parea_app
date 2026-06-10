@@ -35,7 +35,7 @@ export function HomeHeroModeSetting() {
           {homeHeroMode === id && (
             <span
               className={cn(
-                'text-[10px] font-bold uppercase tracking-wider shrink-0 px-2 py-1 rounded-full',
+                'text-xs font-bold uppercase tracking-wider shrink-0 px-2 py-1 rounded-full',
                 a.isDark ? 'bg-cyan-500/20 text-cyan-300' : 'bg-cyan-100 text-cyan-700',
               )}
             >

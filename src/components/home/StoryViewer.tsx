@@ -202,22 +202,22 @@ export function StoryViewer({
         {/* bottom content */}
         <div className="absolute bottom-0 left-0 right-0 p-5 space-y-2.5 z-20">
           {seeksHost && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400 text-amber-950 text-[11px] font-bold">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400 text-amber-950 text-xs font-bold">
               <Crown className="w-3.5 h-3.5" />
               {t("Αναζητά διοργανωτή", "Seeking organizer")}
             </span>
           )}
-          <div className="flex items-center gap-1.5 text-white/85 text-[12.5px] font-semibold">
+          <div className="flex items-center gap-1.5 text-white/85 text-sm font-semibold">
             <CalendarDays className="w-3.5 h-3.5" />
             <span className="capitalize">
               {weekday} {day} {mon}
             </span>
           </div>
-          <h2 className="text-white text-[20px] font-extrabold leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+          <h2 className="text-white text-xl font-extrabold leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
             {event.title}
           </h2>
           {event.locationArea && (
-            <div className="flex items-center gap-1.5 text-white/85 text-[13px] font-medium">
+            <div className="flex items-center gap-1.5 text-white/85 text-sm font-medium">
               <MapPin className="w-3.5 h-3.5" />
               {event.locationArea}
             </div>

@@ -46,7 +46,7 @@ export default function TrustCenterPageContent() {
         {/* Verification Status */}
         <Card className="p-5 space-y-5">
           <div>
-            <h2 className={cn("text-[11px] font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5", a.muted)}>
+            <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5", a.muted)}>
               <ShieldCheck className={cn("h-3.5 w-3.5", a.iconAccent)} />{t('Κατάσταση Επαλήθευσης', 'Verification Status')}
             </h2>
             <p className={cn("text-base font-bold", a.head)}>{trustTierLabel}</p>
@@ -54,34 +54,34 @@ export default function TrustCenterPageContent() {
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className={cn("flex items-center gap-2 text-[13px] font-medium", a.sub)}>
+              <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
                 <Mail className={cn("h-3.5 w-3.5", a.muted)} /> Email
               </div>
-              <Badge variant={currentUser.emailVerified ? 'success' : 'neutral'} className="text-[11px] px-1.5 py-0.5">
+              <Badge variant={currentUser.emailVerified ? 'success' : 'neutral'} className="text-xs px-1.5 py-0.5">
                 {currentUser.emailVerified ? t('Επαληθευμένο', 'Verified') : t('Εκκρεμεί', 'Pending')}
               </Badge>
             </div>
             <div className="flex items-center justify-between">
-              <div className={cn("flex items-center gap-2 text-[13px] font-medium", a.sub)}>
+              <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
                 <Phone className={cn("h-3.5 w-3.5", a.muted)} />{t('Τηλέφωνο', 'Phone')}
               </div>
-              <Badge variant={currentUser.phoneVerified ? 'success' : 'neutral'} className="text-[11px] px-1.5 py-0.5">
+              <Badge variant={currentUser.phoneVerified ? 'success' : 'neutral'} className="text-xs px-1.5 py-0.5">
                 {currentUser.phoneVerified ? t('Επαληθευμένο', 'Verified') : t('Εκκρεμεί', 'Pending')}
               </Badge>
             </div>
             <div className="flex items-center justify-between">
-              <div className={cn("flex items-center gap-2 text-[13px] font-medium", a.sub)}>
+              <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
                 <CreditCard className={cn("h-3.5 w-3.5", a.muted)} />{t('Πληρωμή', 'Payment')}
               </div>
-              <Badge variant={currentUser.paymentVerified ? 'success' : 'neutral'} className="text-[11px] px-1.5 py-0.5">
+              <Badge variant={currentUser.paymentVerified ? 'success' : 'neutral'} className="text-xs px-1.5 py-0.5">
                 {currentUser.paymentVerified ? t('Επαληθευμένο', 'Verified') : t('Εκκρεμεί', 'Pending')}
               </Badge>
             </div>
             <div className="flex items-center justify-between">
-              <div className={cn("flex items-center gap-2 text-[13px] font-medium", a.muted)}>
+              <div className={cn("flex items-center gap-2 text-sm font-medium", a.muted)}>
                 <UserCheck className="h-3.5 w-3.5" />{t('Ταυτότητα', 'Government ID')}
               </div>
-              <button onClick={() => navigate('/verification')} className={cn("text-[11px] font-bold cursor-pointer tracking-wide", a.link)}>
+              <button onClick={() => navigate('/verification')} className={cn("text-xs font-bold cursor-pointer tracking-wide", a.link)}>
                 {t('Επαλήθευση', 'Verify')}
               </button>
             </div>
@@ -145,7 +145,7 @@ export default function TrustCenterPageContent() {
               </div>
               <div className="pb-4">
                 <p className={cn("text-sm font-medium", a.head)}>{item.event}</p>
-                <span className={cn("text-[11px] font-medium", a.muted)}>{item.date}</span>
+                <span className={cn("text-xs font-medium", a.muted)}>{item.date}</span>
               </div>
             </div>
           ))}

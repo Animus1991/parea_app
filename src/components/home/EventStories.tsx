@@ -47,7 +47,7 @@ export function EventStories({ events }: EventStoriesProps) {
         <h2 className={`text-[11.6px] font-bold uppercase tracking-wide ${h.sectionLabel}`}>
           {t("Εκδηλώσεις σε στιγμιότυπα", "Events in stories")}
         </h2>
-        <span className={`text-[11px] font-semibold ${h.labelMuted}`}>
+        <span className={`text-xs font-semibold ${h.labelMuted}`}>
           {events.length} {t("εκδηλώσεις", "events")}
         </span>
       </div>
@@ -101,7 +101,7 @@ export function EventStories({ events }: EventStoriesProps) {
                     <span className="text-[8.5px] font-extrabold uppercase text-[#0E8B8D] leading-none">
                       {mon}
                     </span>
-                    <span className="text-[12px] font-black text-gray-900 leading-none">
+                    <span className="text-sm font-black text-gray-900 leading-none">
                       {day}
                     </span>
                   </div>

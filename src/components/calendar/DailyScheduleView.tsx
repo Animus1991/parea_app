@@ -84,7 +84,7 @@ export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewPro
         <div className={cn('p-5 flex items-center justify-between border-b shrink-0', p.borderB)}>
           <div>
             <h3 className={cn('font-bold text-lg', p.head)}>{format(day, 'd MMMM yyyy')}</h3>
-            <p className={cn('text-[11px] font-bold uppercase tracking-widest', p.muted)}>
+            <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
               {t('Ημερήσιο πρόγραμμα', 'Daily schedule')}
             </p>
           </div>
@@ -115,7 +115,7 @@ export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewPro
                     <div
                       key={hour}
                       className={cn(
-                        'absolute right-0 text-[10px] font-bold -translate-y-1/2',
+                        'absolute right-0 text-xs font-bold -translate-y-1/2',
                         p.muted,
                       )}
                       style={{ top: i * HOUR_PX }}
@@ -164,15 +164,15 @@ export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewPro
                         marginLeft: 2,
                       }}
                     >
-                      <span className="text-[10px] font-bold text-cyan-600 block">{block.time}</span>
-                      <p className={cn('text-[12px] font-bold line-clamp-2 leading-tight', p.head)}>
+                      <span className="text-xs font-bold text-cyan-600 block">{block.time}</span>
+                      <p className={cn('text-sm font-bold line-clamp-2 leading-tight', p.head)}>
                         {block.title}
                       </p>
-                      <p className={cn('text-[10px] flex items-center gap-0.5 mt-0.5 truncate', p.muted)}>
+                      <p className={cn('text-xs flex items-center gap-0.5 mt-0.5 truncate', p.muted)}>
                         <MapPin className="w-2.5 h-2.5 shrink-0" />
                         {block.locationName}
                       </p>
-                      <span className={cn('text-[9px] font-medium', p.muted)}>
+                      <span className={cn('text-xs font-medium', p.muted)}>
                         {format(block.endDateTime, 'HH:mm')} ·{' '}
                         {Math.round(
                           (block.endDateTime.getTime() - block.startDateTime.getTime()) / 60_000,

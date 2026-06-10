@@ -48,17 +48,17 @@ export function HomeQuickStatsBar() {
             >
               <Icon className={`w-3.5 h-3.5 ${iconColor}`} />
             </div>
-            <span className={`text-[10px] font-bold uppercase tracking-wider truncate ${h.labelMuted}`}>
+            <span className={`text-xs font-bold uppercase tracking-wider truncate ${h.labelMuted}`}>
               {label}
             </span>
           </div>
           <div className="flex items-baseline gap-1">
-            <span className={`text-[22px] font-black leading-none tabular-nums ${h.statValue}`}>
+            <span className={`text-xl font-black leading-none tabular-nums ${h.statValue}`}>
               {value}
             </span>
-            <span className={`text-[10px] font-semibold ${h.statUnit}`}>{unit}</span>
+            <span className={`text-xs font-semibold ${h.statUnit}`}>{unit}</span>
           </div>
-          <span className={`text-[10px] font-medium leading-tight ${h.labelMuted}`}>{sub}</span>
+          <span className={`text-xs font-medium leading-tight ${h.labelMuted}`}>{sub}</span>
         </div>
       ))}
     </div>

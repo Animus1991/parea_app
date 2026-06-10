@@ -21,11 +21,11 @@ export function HomeDiscoveryPrefsChips({ useClassicTokens = false }: HomeDiscov
 
   const chipClass = useClassicTokens
     ? cn(
-        'whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border',
+        'whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold border',
         h.tagInactive,
       )
     : cn(
-        'whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border',
+        'whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold border',
         p.borderB,
         p.sub,
       );

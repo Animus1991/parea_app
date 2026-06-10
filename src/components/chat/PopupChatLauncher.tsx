@@ -29,14 +29,14 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
       <span className="relative">
         <MessageCircle className="w-5 h-5 text-cyan-400" />
         {unread > 0 && (
-          <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-cyan-500 text-[10px] font-bold flex items-center justify-center px-1">
+          <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-cyan-500 text-xs font-bold flex items-center justify-center px-1">
             {unread > 9 ? '9+' : unread}
           </span>
         )}
       </span>
-      <span className="text-[12px] font-bold hidden sm:inline">{t('Συνομιλίες', 'Chats')}</span>
+      <span className="text-sm font-bold hidden sm:inline">{t('Συνομιλίες', 'Chats')}</span>
       {activeCount > 0 && (
-        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-white/10 text-cyan-200 hidden sm:inline">
+        <span className="text-xs font-bold px-1.5 py-0.5 rounded-md bg-white/10 text-cyan-200 hidden sm:inline">
           {activeCount} {t('ανοιχτές', 'open')}
         </span>
       )}

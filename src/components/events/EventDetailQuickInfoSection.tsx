@@ -30,35 +30,35 @@ export function EventDetailQuickInfoSection({
 
   return (
     <div className={cn(shell, className)} role="region" aria-label={t('Γρήγορες πληροφορίες', 'Quick info')}>
-      <p className={cn('text-[11px] font-bold tracking-wide uppercase mb-3', content.metaLabel)}>
+      <p className={cn('text-xs font-bold tracking-wide uppercase mb-3', content.metaLabel)}>
         {t('Γρήγορες πληροφορίες', 'Quick info')}
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="flex items-start gap-2.5 min-w-0">
           <Tag className={cn('w-4 h-4 shrink-0 mt-0.5', content.metaLabel)} />
           <div className="min-w-0">
-            <p className={cn('text-[10px] font-bold tracking-wide', content.metaLabel)}>
+            <p className={cn('text-xs font-bold tracking-wide', content.metaLabel)}>
               {t('Κατηγορία', 'Category')}
             </p>
-            <p className={cn('text-[13px] font-bold truncate', content.metaValue)}>{event.category}</p>
+            <p className={cn('text-sm font-bold truncate', content.metaValue)}>{event.category}</p>
           </div>
         </div>
         <div className="flex items-start gap-2.5 min-w-0">
           <ShieldCheck className={cn('w-4 h-4 shrink-0 mt-0.5', content.metaLabel)} />
           <div className="min-w-0">
-            <p className={cn('text-[10px] font-bold tracking-wide', content.metaLabel)}>
+            <p className={cn('text-xs font-bold tracking-wide', content.metaLabel)}>
               {t('Επίπεδο εμπιστοσύνης', 'Trust level required')}
             </p>
-            <p className={cn('text-[13px] font-bold', content.metaValue)}>{tierLabel}</p>
+            <p className={cn('text-sm font-bold', content.metaValue)}>{tierLabel}</p>
           </div>
         </div>
         <div className="flex items-start gap-2.5 min-w-0">
           <Ticket className={cn('w-4 h-4 shrink-0 mt-0.5', content.metaLabel)} />
           <div>
-            <p className={cn('text-[10px] font-bold tracking-wide', content.metaLabel)}>
+            <p className={cn('text-xs font-bold tracking-wide', content.metaLabel)}>
               {t('Κόστος', 'Cost')}
             </p>
-            <p className={cn('text-[13px] font-bold', content.metaValue)}>
+            <p className={cn('text-sm font-bold', content.metaValue)}>
               {event.isPaid ? `€${event.price}` : t('Δωρεάν', 'Free')}
             </p>
           </div>
@@ -66,10 +66,10 @@ export function EventDetailQuickInfoSection({
         <div className="flex items-start gap-2.5 min-w-0">
           <AlertCircle className={cn('w-4 h-4 shrink-0 mt-0.5', content.metaLabel)} />
           <div>
-            <p className={cn('text-[10px] font-bold tracking-wide', content.metaLabel)}>
+            <p className={cn('text-xs font-bold tracking-wide', content.metaLabel)}>
               {t('Ασφάλεια', 'Safety')}
             </p>
-            <p className={cn('text-[13px] font-bold', content.metaValue)}>
+            <p className={cn('text-sm font-bold', content.metaValue)}>
               {event.safetyLevel === 'high_trust'
                 ? t('Υψηλής εμπιστοσύνης', 'High trust')
                 : event.safetyLevel === 'medium'

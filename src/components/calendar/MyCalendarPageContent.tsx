@@ -146,10 +146,10 @@ export default function MyCalendarPageContent() {
               >
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
-                  <p className="text-[10px] text-white truncate font-bold">
+                  <p className="text-xs text-white truncate font-bold">
                     {dayEvents[0].title}
                   </p>
-                  <p className="text-[8px] text-white/80 truncate">
+                  <p className="text-xs text-white/80 truncate">
                     {dayEvents[0].time} • {dayEvents[0].locationArea}
                   </p>
                 </div>
@@ -168,7 +168,7 @@ export default function MyCalendarPageContent() {
                 >
                   <div className="absolute inset-0 bg-black/40" />
                   <div className="absolute top-1 right-1 max-w-[60%] text-right">
-                    <p className="text-[9px] text-white truncate font-bold">
+                    <p className="text-xs text-white truncate font-bold">
                       {dayEvents[0].title}
                     </p>
                     <p className="text-[7.5px] text-white/80 truncate">
@@ -187,7 +187,7 @@ export default function MyCalendarPageContent() {
                 >
                   <div className="absolute inset-0 bg-black/40" />
                   <div className="absolute bottom-1 left-1 max-w-[60%] text-left">
-                    <p className="text-[9px] text-white truncate font-bold">
+                    <p className="text-xs text-white truncate font-bold">
                       {dayEvents[1].title}
                     </p>
                     <p className="text-[7.5px] text-white/80 truncate">
@@ -220,7 +220,7 @@ export default function MyCalendarPageContent() {
                           "linear-gradient(transparent, rgba(0,0,0,0.8))",
                       }}
                     >
-                      <p className="text-[8px] text-white truncate font-bold leading-tight">
+                      <p className="text-xs text-white truncate font-bold leading-tight">
                         {ev.title}
                       </p>
                     </div>
@@ -273,7 +273,7 @@ export default function MyCalendarPageContent() {
                   >
                     <div className="absolute inset-0 bg-black/40" />
                     <div className="absolute inset-x-0 bottom-0 px-1 py-px" style={{ background: "linear-gradient(transparent, rgba(0,0,0,0.8))" }}>
-                      <p className="text-[7px] text-white truncate font-bold leading-tight">
+                      <p className="text-xs text-white truncate font-bold leading-tight">
                         {ev.title}
                       </p>
                     </div>
@@ -281,7 +281,7 @@ export default function MyCalendarPageContent() {
                 ))}
                 {dayEvents.length > 5 && (
                   <div className="w-1/3 h-1/2 flex items-center justify-center bg-cyan-900 border-r border-b border-black/30 shadow-inner">
-                    <span className="text-white font-bold text-[10px] drop-shadow-md">+{dayEvents.length - 5}</span>
+                    <span className="text-white font-bold text-xs drop-shadow-md">+{dayEvents.length - 5}</span>
                   </div>
                 )}
               </div>
@@ -301,7 +301,7 @@ export default function MyCalendarPageContent() {
         </span>
 
         {dayEvents.length > 0 && (
-          <div className="md:hidden relative z-10 flex items-center justify-center bg-amber-500 text-white rounded-full w-[18px] h-[18px] text-[10px] font-bold mt-1 shadow-sm">
+          <div className="md:hidden relative z-10 flex items-center justify-center bg-amber-500 text-white rounded-full w-[18px] h-[18px] text-xs font-bold mt-1 shadow-sm">
             {dayEvents.length}
           </div>
         )}
@@ -479,7 +479,7 @@ export default function MyCalendarPageContent() {
           </div>
         </div>
 
-        <p className={cn("text-[11px] font-medium px-6 md:px-8 py-2 border-b", p.borderB, p.muted)}>
+        <p className={cn("text-xs font-medium px-6 md:px-8 py-2 border-b", p.borderB, p.muted)}>
           {t(
             "Πάτημα: προεπισκόπηση · Διπλό πάτημα: ωριαίο πρόγραμμα",
             "Tap: preview · Double-tap: hourly schedule",
@@ -509,7 +509,7 @@ export default function MyCalendarPageContent() {
                   <div key={i} className="text-center group cursor-default">
                     <div
                       className={cn(
-                        "text-[10px] md:text-xs font-bold uppercase tracking-widest mb-1 transition-colors",
+                        "text-xs md:text-xs font-bold uppercase tracking-widest mb-1 transition-colors",
                         isToday(days[i]) ? p.iconAccent : p.muted,
                       )}
                     >
@@ -548,7 +548,7 @@ export default function MyCalendarPageContent() {
                   <div
                     key={d}
                     className={cn(
-                      "text-center text-[10px] md:text-xs font-bold uppercase tracking-widest py-2 rounded-lg",
+                      "text-center text-xs md:text-xs font-bold uppercase tracking-widest py-2 rounded-lg",
                       p.isDark
                         ? "bg-white/5 text-gray-400"
                         : "bg-gray-50 text-gray-500",
@@ -581,7 +581,7 @@ export default function MyCalendarPageContent() {
                 <div className={cn("mt-8 border-t pt-6 space-y-3", p.borderB)}>
                   <h4
                     className={cn(
-                      "text-[11px] font-bold uppercase tracking-widest pl-1 mb-4",
+                      "text-xs font-bold uppercase tracking-widest pl-1 mb-4",
                       p.head,
                     )}
                   >
@@ -617,7 +617,7 @@ export default function MyCalendarPageContent() {
                       </div>
                       <span
                         className={cn(
-                          "text-[9px] uppercase tracking-widest font-black px-2 py-1 flex items-center justify-center rounded-md shrink-0",
+                          "text-xs uppercase tracking-widest font-black px-2 py-1 flex items-center justify-center rounded-md shrink-0",
                           p.isDark
                             ? "bg-emerald-900/30 text-emerald-400"
                             : "bg-emerald-50 text-emerald-600",

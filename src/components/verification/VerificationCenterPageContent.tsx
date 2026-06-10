@@ -80,7 +80,7 @@ export default function VerificationCenterPageContent() {
               </div>
               <div>
                 <h3 className={cn('font-bold text-sm', a.head)}>{t('Email Επαλήθευση', 'Email Verification')}</h3>
-                <p className={cn('text-[10px] font-bold tracking-wider mt-0.5', currentUser.emailVerified ? (a.isDark ? 'text-emerald-400' : 'text-emerald-600') : a.pendingLabel)}>
+                <p className={cn('text-xs font-bold tracking-wider mt-0.5', currentUser.emailVerified ? (a.isDark ? 'text-emerald-400' : 'text-emerald-600') : a.pendingLabel)}>
                   {currentUser.emailVerified ? t('Ολοκληρώθηκε', 'Completed') : t('Σε εκκρεμότητα', 'Pending')}
                 </p>
               </div>
@@ -97,7 +97,7 @@ export default function VerificationCenterPageContent() {
               </div>
               <div>
                 <h3 className={cn('font-bold text-sm', a.head)}>{t('Τηλέφωνο', 'Phone Number')}</h3>
-                <p className={cn('text-[10px] font-bold tracking-wider mt-0.5', currentUser.phoneVerified ? (a.isDark ? 'text-emerald-400' : 'text-emerald-600') : a.pendingLabel)}>
+                <p className={cn('text-xs font-bold tracking-wider mt-0.5', currentUser.phoneVerified ? (a.isDark ? 'text-emerald-400' : 'text-emerald-600') : a.pendingLabel)}>
                   {currentUser.phoneVerified ? t('Ολοκληρώθηκε', 'Completed') : t('Σε εκκρεμότητα', 'Pending')}
                 </p>
               </div>
@@ -122,12 +122,12 @@ export default function VerificationCenterPageContent() {
               </div>
               <div>
                 <h3 className={cn('font-bold text-sm', a.head)}>{t('Ταυτότητα / Διαβατήριο', 'Government ID')}</h3>
-                <p className={cn('text-[10px] font-bold tracking-wider mt-0.5', currentUser.idVerified ? (a.isDark ? 'text-emerald-400' : 'text-emerald-600') : a.pendingLabel)}>
+                <p className={cn('text-xs font-bold tracking-wider mt-0.5', currentUser.idVerified ? (a.isDark ? 'text-emerald-400' : 'text-emerald-600') : a.pendingLabel)}>
                   {currentUser.idVerified ? t('Ολοκληρώθηκε', 'Completed') : t('Προαιρετικό', 'Optional')}
                 </p>
               </div>
             </div>
-            <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide', a.advBadge)}>{t('Προχωρημένο', 'Advanced')}</span>
+            <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full tracking-wide', a.advBadge)}>{t('Προχωρημένο', 'Advanced')}</span>
           </div>
           <p className={cn('text-sm mb-4 max-w-xl', a.sub)}>
             {t('Ανεβάστε φωτογραφία ταυτότητας για εκδηλώσεις υψηλής ασφάλειας.', 'Upload a photo of your ID to access high-safety events.')}
@@ -163,7 +163,7 @@ export default function VerificationCenterPageContent() {
                 <Icon className={cn('w-5 h-5', item.color)} />
                 <div>
                   <p className={cn('text-sm font-bold', a.head)}>{item.label}</p>
-                  <p className={cn('text-[10px] font-bold', item.done ? 'text-emerald-600' : a.muted)}>
+                  <p className={cn('text-xs font-bold', item.done ? 'text-emerald-600' : a.muted)}>
                     {item.done ? t('Ξεκλείδωτο', 'Unlocked') : t('Κλειδωμένο', 'Locked')}
                   </p>
                 </div>

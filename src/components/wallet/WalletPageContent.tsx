@@ -49,7 +49,7 @@ export default function WalletPageContent() {
             <h3 className="text-xs font-bold tracking-wide">{t('Εκκρεμεί', 'Pending')}</h3>
           </div>
           <p className={cn("text-3xl font-bold mb-2", a.head)}>€85.00</p>
-          <p className={cn("text-[10px] font-medium leading-tight", a.muted)}>
+          <p className={cn("text-xs font-medium leading-tight", a.muted)}>
             {t('Εξοφλούνται 3-5 ημέρες μετά.', 'Clears 3-5 days after event.')}
           </p>
         </Card>
@@ -97,9 +97,9 @@ export default function WalletPageContent() {
                   <div>
                     <h4 className={cn("font-bold text-sm", a.head)}>{tx.desc}</h4>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className={cn("text-[10px] font-bold tracking-wide", a.muted)}>{tx.date}</span>
-                      <span className={cn("text-[10px]", a.muted)}>•</span>
-                      <span className={cn("text-[10px] font-medium flex items-center gap-1", a.sub)}>
+                      <span className={cn("text-xs font-bold tracking-wide", a.muted)}>{tx.date}</span>
+                      <span className={cn("text-xs", a.muted)}>•</span>
+                      <span className={cn("text-xs font-medium flex items-center gap-1", a.sub)}>
                         {tx.status === t('Ολοκληρώθηκε', 'Completed') || tx.status === t('Διαθέσιμο', 'Available')
                           ? <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                           : <Clock className="w-3 h-3 text-amber-500" />}

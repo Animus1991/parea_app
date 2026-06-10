@@ -20,7 +20,7 @@ export function MoodSelector({ activeMood, onSelectMood, className = '' }: MoodS
     <div className={cn('space-y-3', className)}>
       <div className="flex items-center gap-2 mb-2">
         <Sparkles className={cn('w-4 h-4', tok.isDark ? 'text-amber-400' : 'text-amber-500')} />
-        <h3 className={cn('text-[13px] font-bold tracking-wide', h.sectionLabel)}>
+        <h3 className={cn('text-sm font-bold tracking-wide', h.sectionLabel)}>
           {t('Πώς νιώθεις σήμερα;', 'How are you feeling today?')}
         </h3>
       </div>
@@ -49,7 +49,7 @@ export function MoodSelector({ activeMood, onSelectMood, className = '' }: MoodS
               )}
             >
               <Icon className="w-4 h-4 shrink-0" />
-              <span className="text-[13px] font-bold tracking-wide">
+              <span className="text-sm font-bold tracking-wide">
                 {t(mood.labelGr, mood.labelEn)}
               </span>
             </button>

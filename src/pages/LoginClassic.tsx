@@ -57,7 +57,7 @@ export default function LoginClassic() {
                 </div>
                 <div>
                   <div className="text-sm font-bold text-gray-900 group-hover:text-cyan-700">{user.name}</div>
-                  <div className="text-[10px] text-gray-500">{user.isOrganizer ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')} • {user.city}</div>
+                  <div className="text-xs text-gray-500">{user.isOrganizer ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')} • {user.city}</div>
                 </div>
               </button>
             ))}
@@ -68,7 +68,7 @@ export default function LoginClassic() {
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white px-2 text-[10px] text-gray-400 tracking-wide">{t('Ή συνεχίστε με', 'Or continue with')}</span>
+              <span className="bg-white px-2 text-xs text-gray-400 tracking-wide">{t('Ή συνεχίστε με', 'Or continue with')}</span>
             </div>
           </div>
 
@@ -83,7 +83,7 @@ export default function LoginClassic() {
         </div>
 
         <div className="text-center mt-6">
-          <p className="text-[10px] text-gray-400 font-medium leading-relaxed">
+          <p className="text-xs text-gray-400 font-medium leading-relaxed">
             {t('Συνεχίζοντας, συμφωνείτε με τους Όρους Χρήσης και την Πολιτική Απορρήτου του Nakamas.', 'By continuing, you agree to Nakamas\'s Terms of Service and Privacy Policy.')}<br/>
             {t('Ίσως απαιτείται επαλήθευση για ορισμένες εκδηλώσεις υψηλής εμπιστοσύνης.', 'Verification may be required for certain high-trust events.')}
           </p>

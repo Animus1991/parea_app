@@ -51,7 +51,7 @@ export function ReportConversationModal({
         <ul className="space-y-1 max-h-48 overflow-y-auto">
           {REASONS.map((r) => (
             <li key={r.en}>
-              <label className="flex items-center gap-2 text-[11px] py-2 cursor-pointer">
+              <label className="flex items-center gap-2 text-xs py-2 cursor-pointer">
                 <input type="radio" name="reason" checked={reason === r.en} onChange={() => setReason(r.en)} />
                 {t(r.el, r.en)}
               </label>
@@ -65,11 +65,11 @@ export function ReportConversationModal({
             toast.success(t('Η αναφορά υποβλήθηκε', 'Report submitted'));
             onClose();
           }}
-          className={cn('w-full min-h-10 rounded-xl text-[11px] font-bold bg-red-600/90 hover:bg-red-600')}
+          className={cn('w-full min-h-10 rounded-xl text-xs font-bold bg-red-600/90 hover:bg-red-600')}
         >
           {t('Υποβολή αναφοράς', 'Submit report')}
         </button>
-        <button type="button" onClick={onClose} className="w-full text-[11px] text-gray-500">
+        <button type="button" onClick={onClose} className="w-full text-xs text-gray-500">
           {t('Άκυρο', 'Cancel')}
         </button>
       </div>

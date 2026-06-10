@@ -253,13 +253,13 @@ export default function OrganizerDashboardPageContent() {
               <span className={cn('w-8 h-8 rounded-lg flex items-center justify-center', stat.iconWrap)}>
                 <stat.icon className={cn('w-4 h-4', stat.iconColor)} />
               </span>
-              <span className={cn('text-[10px] font-bold uppercase tracking-widest', p.muted)}>
+              <span className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
                 {t(stat.labelEl, stat.labelEn)}
               </span>
             </div>
             <div>
               <p className={cn('text-3xl font-black', p.head)}>{stat.val}</p>
-              <p className={cn('text-[11px] font-bold mt-1', stat.trendColor)}>
+              <p className={cn('text-xs font-bold mt-1', stat.trendColor)}>
                 {t(stat.trendEl, stat.trendEn)}
               </p>
             </div>
@@ -284,13 +284,13 @@ export default function OrganizerDashboardPageContent() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-indigo-500" />
-                <span className={cn('text-[10px] uppercase font-bold', p.muted)}>
+                <span className={cn('text-xs uppercase font-bold', p.muted)}>
                   {t('Προβολές', 'Views')}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                <span className={cn('text-[10px] uppercase font-bold', p.muted)}>
+                <span className={cn('text-xs uppercase font-bold', p.muted)}>
                   {t('Κλικ', 'Clicks')}
                 </span>
               </div>
@@ -386,7 +386,7 @@ export default function OrganizerDashboardPageContent() {
                 </p>
                 <p
                   className={cn(
-                    'text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mt-1',
+                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
                     p.isDark ? 'text-emerald-500' : 'text-emerald-600',
                   )}
                 >
@@ -404,7 +404,7 @@ export default function OrganizerDashboardPageContent() {
                 </p>
                 <p
                   className={cn(
-                    'text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mt-1',
+                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
                     p.isDark ? 'text-amber-500' : 'text-amber-600',
                   )}
                 >
@@ -422,7 +422,7 @@ export default function OrganizerDashboardPageContent() {
                 </p>
                 <p
                   className={cn(
-                    'text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mt-1',
+                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
                     p.isDark ? 'text-red-500' : 'text-red-600',
                   )}
                 >
@@ -527,7 +527,7 @@ export default function OrganizerDashboardPageContent() {
               <div className="flex items-center gap-4">
                 <div className={cn('text-right border-r pr-4', p.borderB)}>
                   <p className={cn('text-2xl font-black', p.head)}>{ev.spots}</p>
-                  <p className={cn('text-[10px] font-bold uppercase tracking-widest', p.muted)}>
+                  <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
                     {t('Θέσεις', 'Spots')}
                   </p>
                 </div>
@@ -569,7 +569,7 @@ export default function OrganizerDashboardPageContent() {
                           </p>
                           <span
                             className={cn(
-                              'text-[10px] font-black px-1.5 py-0.5 rounded-md',
+                              'text-xs font-black px-1.5 py-0.5 rounded-md',
                               grp.full
                                 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400'
                                 : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',

@@ -14,7 +14,7 @@ export function EphemeralChatBanner({ conversationId }: { conversationId: string
 
   return (
     <>
-      <div className="mx-3 mt-2 flex items-start gap-2 rounded-xl border border-cyan-500/25 bg-cyan-950/40 px-3 py-2 text-[10px] text-cyan-100">
+      <div className="mx-3 mt-2 flex items-start gap-2 rounded-xl border border-cyan-500/25 bg-cyan-950/40 px-3 py-2 text-xs text-cyan-100">
         <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
         <p className="flex-1 leading-relaxed">
           {t(

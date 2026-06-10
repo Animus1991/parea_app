@@ -53,7 +53,7 @@ export default function ReportIssuePageContent() {
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className={cn('text-[16px] md:text-[18px] font-bold', p.head)}>
+          <h1 className={cn('text-base md:text-lg font-bold', p.head)}>
             {t('Αναφορά Προβλήματος', 'Report an Issue')}
           </h1>
           <p className={cn('font-medium text-[13.55px] md:text-[16.25px] mt-1', p.sub)}>
@@ -143,7 +143,7 @@ export default function ReportIssuePageContent() {
                   <span className={cn('text-[12.1px] font-bold block', p.isDark ? 'text-amber-200' : 'text-amber-800')}>
                     {t('Χαμηλή', 'Low')}
                   </span>
-                  <span className={cn('text-[10px]', p.isDark ? 'text-amber-300/80' : 'text-amber-600')}>
+                  <span className={cn('text-xs', p.isDark ? 'text-amber-300/80' : 'text-amber-600')}>
                     {t('Ενόχληση', 'Annoyance')}
                   </span>
                 </button>
@@ -162,7 +162,7 @@ export default function ReportIssuePageContent() {
                   >
                     {t('Μέτρια', 'Medium')}
                   </span>
-                  <span className={cn('text-[10px]', p.isDark ? 'text-orange-300/80' : 'text-orange-600')}>
+                  <span className={cn('text-xs', p.isDark ? 'text-orange-300/80' : 'text-orange-600')}>
                     {t('Ανησυχία', 'Concern')}
                   </span>
                 </button>
@@ -179,7 +179,7 @@ export default function ReportIssuePageContent() {
                   <span className={cn('text-[12.1px] font-bold block', p.isDark ? 'text-red-200' : 'text-red-800')}>
                     {t('Υψηλή', 'High')}
                   </span>
-                  <span className={cn('text-[10px]', p.isDark ? 'text-red-300/80' : 'text-red-600')}>
+                  <span className={cn('text-xs', p.isDark ? 'text-red-300/80' : 'text-red-600')}>
                     {t('Κίνδυνος', 'Danger')}
                   </span>
                 </button>
@@ -230,10 +230,10 @@ export default function ReportIssuePageContent() {
                 )}
               >
                 <Upload className={cn('w-5 h-5 mx-auto mb-1', p.muted)} />
-                <p className={cn('text-[12.5px] font-medium', p.uploadText)}>
+                <p className={cn('text-sm font-medium', p.uploadText)}>
                   {t('Ανεβάστε screenshots ή φωτογραφίες', 'Upload screenshots or photos')}
                 </p>
-                <p className={cn('text-[10px] mt-0.5', p.muted)}>
+                <p className={cn('text-xs mt-0.5', p.muted)}>
                   PNG, JPG {t('έως', 'up to')} 5MB
                 </p>
               </div>
@@ -243,7 +243,7 @@ export default function ReportIssuePageContent() {
                     <li
                       key={name}
                       className={cn(
-                        'flex items-center justify-between gap-2 rounded-lg px-3 py-1.5 text-[12px]',
+                        'flex items-center justify-between gap-2 rounded-lg px-3 py-1.5 text-sm',
                         p.isDark ? 'bg-gray-800/50' : 'bg-gray-50',
                       )}
                     >
@@ -271,7 +271,7 @@ export default function ReportIssuePageContent() {
             </div>
 
             {/* Expected response time */}
-            <div className={cn('flex items-center gap-2 justify-center text-[12.5px] font-medium', p.muted)}>
+            <div className={cn('flex items-center gap-2 justify-center text-sm font-medium', p.muted)}>
               <Clock className="w-3.5 h-3.5" />
               <span>
                 {t('Αναμενόμενος χρόνος απόκρισης: <24 ώρες', 'Expected response time: <24 hours')}
@@ -302,7 +302,7 @@ export default function ReportIssuePageContent() {
             <CheckCircle2 className={cn('w-8 h-8', p.isDark ? 'text-emerald-300' : 'text-emerald-600')} />
           </div>
           <h2 className={cn('text-[25px] font-bold mb-2', p.head)}>{t('Η αναφορά υποβλήθηκε', 'Report Submitted')}</h2>
-          <p className={cn('text-[18px] max-w-md mx-auto mb-6', p.sub)}>
+          <p className={cn('text-lg max-w-md mx-auto mb-6', p.sub)}>
             {t(
               'Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.',
               "Thank you. We'll review your report and get back to you.",

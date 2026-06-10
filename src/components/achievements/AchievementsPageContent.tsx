@@ -170,7 +170,7 @@ export default function AchievementsPageContent() {
                     {ach.unlocked && (
                       <button
                         type="button"
-                        className={cn("text-[10px] font-bold flex items-center gap-0.5 transition-colors", a.shareHover)}
+                        className={cn("text-xs font-bold flex items-center gap-0.5 transition-colors", a.shareHover)}
                         onClick={() => handleShareBadge(ach.title)}
                         aria-label={t('Κοινοποίηση badge', 'Share badge')}
                       >

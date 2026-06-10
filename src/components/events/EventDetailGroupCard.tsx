@@ -184,7 +184,7 @@ export function EventDetailGroupCard({
       {group.isRecruiting && (
         <div
           className={cn(
-            'absolute top-2 right-2 bg-cyan-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-lg z-10',
+            'absolute top-2 right-2 bg-cyan-600 text-white text-xs font-bold px-2 py-0.5 rounded-lg z-10',
           )}
         >
           {t('Δέχεται μέλη', 'Recruiting')}
@@ -194,7 +194,7 @@ export function EventDetailGroupCard({
       {(group.discountUnlocked || discountUnlockedTemp) && event.groupDiscount && (
         <div
           className={cn(
-            'absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 flex items-center gap-1 z-10 w-fit',
+            'absolute -top-1 -right-1 bg-emerald-500 text-white text-xs font-bold px-2 py-1 flex items-center gap-1 z-10 w-fit',
             tok.discountCorner,
           )}
         >
@@ -209,10 +209,10 @@ export function EventDetailGroupCard({
             <Users className="h-3.5 w-3.5" />
             {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
           </div>
-          <h4 className={cn('text-[13px] font-bold mb-0.5 line-clamp-1', tok.title)}>{event.title}</h4>
+          <h4 className={cn('text-sm font-bold mb-0.5 line-clamp-1', tok.title)}>{event.title}</h4>
           <span
             className={cn(
-              'text-[9px] tracking-widest font-bold px-2 py-0.5 rounded-full mb-2 inline-block',
+              'text-xs tracking-widest font-bold px-2 py-0.5 rounded-full mb-2 inline-block',
               tok.category,
             )}
           >
@@ -279,7 +279,7 @@ export function EventDetailGroupCard({
                   </div>
                 ) : null}
               </div>
-              <span className={cn('text-[9px] font-bold mt-1', tok.hostLabel)}>
+              <span className={cn('text-xs font-bold mt-1', tok.hostLabel)}>
                 {t('Οικοδεσποτης', 'Host')}
               </span>
             </div>
@@ -290,10 +290,10 @@ export function EventDetailGroupCard({
       {isDiscountEligible && !discountUnlockedTemp && (
         <div className="bg-amber-50/80 border border-amber-200/50 p-2.5 rounded-lg mb-4">
           <div className="flex justify-between items-center mb-1.5">
-            <p className="text-[10px] text-amber-800 font-bold tracking-wide">
+            <p className="text-xs text-amber-800 font-bold tracking-wide">
               {t('Πρόοδος Έκπτωσης', 'Discount Progress')}
             </p>
-            <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
+            <span className="text-xs font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
               -{event.groupDiscount!.percentage}%
             </span>
           </div>
@@ -306,7 +306,7 @@ export function EventDetailGroupCard({
                 }}
               />
             </div>
-            <span className="text-[10px] font-bold text-amber-700">
+            <span className="text-xs font-bold text-amber-700">
               {membersNeededForDiscount} {t('ακόμα', 'more')}
             </span>
           </div>

@@ -95,12 +95,12 @@ export function HomeFiltersSection({
         <button
           type="button"
           onClick={onOpenMobileFilters}
-          className={`md:hidden flex items-center gap-1.5 px-3 py-2 min-h-11 rounded-full text-[12px] font-bold shadow-soft ${h.filterBtn}`}
+          className={`md:hidden flex items-center gap-1.5 px-3 py-2 min-h-11 rounded-full text-sm font-bold shadow-soft ${h.filterBtn}`}
         >
           <SlidersHorizontal className="w-4 h-4" />
           {t('Φίλτρα', 'Filters')}
           {activeFilterCount > 0 && (
-            <span className={`text-[10px] px-1.5 rounded-full ${h.filterBadge}`}>
+            <span className={`text-xs px-1.5 rounded-full ${h.filterBadge}`}>
               {activeFilterCount}
             </span>
           )}

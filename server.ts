@@ -41,7 +41,12 @@ async function startServer() {
   app.options('*', (_req, res) => res.sendStatus(200));
 
   app.get('/api/health', (_req, res) => {
-    res.json({ ok: true, app: 'nakamas', ts: new Date().toISOString() });
+    res.json({
+      ok: true,
+      app: 'nakamas',
+      eventsStore: 'sqlite',
+      ts: new Date().toISOString(),
+    });
   });
 
   app.get('/api/events', async (_req, res) => {
