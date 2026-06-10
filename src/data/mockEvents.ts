@@ -437,7 +437,7 @@ export const mockEvents: Event[] = [
     minTrustTierAccess: '1_explorer',
     maxParticipants: 12,
     tags: ['running', 'sports', 'free'],
-    imageUrl: 'https://images.unsplash.com/photo-1461896836934-bd45ba6343fe?w=800&h=600&fit=crop'
+    imageUrl: 'https://picsum.photos/seed/e20-marathon/800/600'
   },
   {
     id: 'e21',

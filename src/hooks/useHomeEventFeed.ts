@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useStore } from '../store';
 import type { Event } from '../types';
 import { filterHomeEvents, sortHomeEvents } from '../lib/homeEventFeed';
+import { getHomeMoodById } from '../lib/homeMoodConstants';
 import { useHomeUrlFilters } from './useHomeUrlFilters';
 import { useHomeGeoDistance } from './useHomeGeoDistance';
 
@@ -34,6 +35,7 @@ export function useHomeEventFeed({
         dateFilter: filters.dateFilter,
         safetyFilter: filters.safetyFilter,
         radiusFilter: filters.radiusFilter,
+        moodCategories: filters.moodCategories,
         seekingHostOnly,
         isSeekingHost,
         getDistance,
@@ -49,6 +51,7 @@ export function useHomeEventFeed({
       filters.dateFilter,
       filters.safetyFilter,
       filters.radiusFilter,
+      filters.moodCategories,
       seekingHostOnly,
       isSeekingHost,
       getDistance,
@@ -76,8 +79,33 @@ export function useHomeEventFeed({
     filters.clearUrlFilters();
   };
 
+  const setActiveCategory = (cat: string) => {
+    if (cat !== 'All') filters.clearMood();
+    filters.setActiveCategory(cat);
+  };
+
+  const setTagFilter = (tag: string) => {
+    if (tag !== 'All') filters.clearMood();
+    filters.setTagFilter(tag);
+  };
+
+  const handleSelectMood = (moodId: string | null, _categories: string[]) => {
+    const mood = getHomeMoodById(moodId);
+    if (!moodId || !mood) {
+      filters.clearMood();
+      return;
+    }
+    filters.setActiveMood(moodId);
+    filters.setActiveCategory('All');
+    filters.setTagFilter('All');
+    document.getElementById('home-filters')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return {
     ...filters,
+    setActiveCategory,
+    setTagFilter,
+    handleSelectMood,
     currentUser,
     filteredEvents,
     sortedEvents,

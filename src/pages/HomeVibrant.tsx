@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "../lib/i18n";
 import { EventStories } from "../components/home/EventStories";
+import { HomeBuddySeekStrip } from "../components/buddySeek/HomeBuddySeekStrip";
 import { ActiveBuddiesRail } from "../components/home/ActiveBuddiesRail";
 import { HomeQuickActions } from "../components/home/HomeQuickActions";
 import { HomeHeroModeBar } from "../components/home/HomeHeroModeBar";
@@ -30,6 +31,8 @@ import { useStoryEvents } from "../hooks/useStoryEvents";
 import { useHomeExternalEvents } from "../hooks/useHomeExternalEvents";
 import { useHomeScrollToFilters } from "../hooks/useHomeScrollToFilters";
 import { useHomeEventFeed } from "../hooks/useHomeEventFeed";
+import { HOME_TYPO } from "../lib/homeTypography";
+import { cn } from "../lib/utils";
 
 export default function HomeVibrant() {
   const { t } = useLanguage();
@@ -73,6 +76,8 @@ export default function HomeVibrant() {
     hasActiveFilters,
     activeFilterCount,
     clearAllFilters,
+    activeMood,
+    handleSelectMood,
   } = feed;
 
   const currentUser = feed.currentUser;
@@ -161,24 +166,24 @@ export default function HomeVibrant() {
       >
         <HomeHeroModeBar className="relative z-10" />
         <div className="relative z-10 flex-1 w-full">
-          <div className="bg-white/20 backdrop-blur-sm text-white text-[14.21px] font-bold tracking-wide mb-4 px-3 py-1 rounded-full w-fit">
+          <div className={cn("bg-white/20 backdrop-blur-sm text-white mb-4 px-3 py-1 rounded-full w-fit", HOME_TYPO.heroBadge)}>
             {t("home.hero.badge", "Νεος τροπος εξοδου")}
           </div>
-          <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
+          <h1 className={cn(HOME_TYPO.heroTitle, "mb-4 max-w-2xl")}>
             {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-100">
               {t("home.hero.title2", "εμπειρίες")}
             </span>{" "}
             {t("home.hero.title3", "που ήδη θέλετε να ζήσετε.")}
           </h1>
-          <p className="text-white/90 font-medium text-[14.42px] md:text-[16.48px] leading-relaxed max-w-xl mb-6">
+          <p className={cn("text-white/90 max-w-xl mb-6", HOME_TYPO.heroSubtitle)}>
             {t(
               "home.hero.subtitle",
               "Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.",
             )}
           </p>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11.33px] font-bold tracking-wide text-white/90 mb-6">
+          <div className={cn("flex flex-wrap items-center gap-x-4 gap-y-3 text-white/90 mb-6", HOME_TYPO.heroStats)}>
             <span className="flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-amber-200" />{" "}
               {t("home.hero.stat1", "Μικρες ομαδες")}
@@ -203,7 +208,7 @@ export default function HomeVibrant() {
           <div className="flex gap-3 mb-6">
             <button
               onClick={() => navigate("/nearby")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-white/20 text-white border border-white/30 hover:bg-white/30 rounded-xl font-bold text-[13.58px] transition-colors backdrop-blur-sm"
+              className={cn("flex items-center gap-2 px-5 py-2.5 bg-white/20 text-white border border-white/30 hover:bg-white/30 rounded-xl transition-colors backdrop-blur-sm", HOME_TYPO.heroMapBtn)}
               title={t("Εμφάνιση στον Χάρτη", "View on Map")}
             >
               <MapIcon className="w-4 h-4" />
@@ -250,6 +255,8 @@ export default function HomeVibrant() {
 
       <EventStories events={storyEvents} />
 
+      <HomeBuddySeekStrip />
+
       <HomeQuickActions onScrollToCategories={scrollToFilters} />
       <ActiveBuddiesRail />
 
@@ -294,10 +301,10 @@ export default function HomeVibrant() {
             <div className="w-8 h-8 bg-gradient-to-br from-fuchsia-500 to-orange-400 text-white rounded-full flex items-center justify-center font-bold text-xs mb-2.5 shadow-sm">
               {step}
             </div>
-            <h3 className="font-bold text-[#111827] text-[14.63px] mb-1">
+            <h3 className={cn(HOME_TYPO.stepTitle, "text-[#111827] mb-1")}>
               {title}
             </h3>
-            <p className="text-[12.38px] leading-relaxed text-gray-600 font-medium">
+            <p className={cn(HOME_TYPO.stepBody, "text-gray-600")}>
               {body}
             </p>
           </div>
@@ -326,6 +333,8 @@ export default function HomeVibrant() {
         onClearAll={handleClearAll}
         onOpenMobileFilters={() => setFilterSheetOpen(true)}
         activeFilterCount={activeFilterCount}
+        activeMood={activeMood}
+        onSelectMood={handleSelectMood}
       />
 
       {/* Events Grid */}
@@ -334,13 +343,13 @@ export default function HomeVibrant() {
           <div className="flex bg-fuchsia-50 p-1 rounded-lg w-fit border border-fuchsia-100">
             <button
               onClick={() => setFeedType("For You")}
-              className={`px-4 py-1.5 rounded-md text-[12.73px] font-bold transition-all ${feedType === "For You" ? "bg-white shadow-sm text-fuchsia-700" : "text-gray-500 hover:text-fuchsia-600"}`}
+              className={cn("px-4 py-1.5 rounded-md transition-all", HOME_TYPO.feedTab, feedType === "For You" ? "bg-white shadow-sm text-fuchsia-700" : "text-gray-500 hover:text-fuchsia-600")}
             >
               {t("home.feed.for_you", "Για Σένα")}
             </button>
             <button
               onClick={() => setFeedType("Discover")}
-              className={`px-4 py-1.5 rounded-md text-[12.73px] font-bold transition-all ${feedType === "Discover" ? "bg-white shadow-sm text-fuchsia-700" : "text-gray-500 hover:text-fuchsia-600"}`}
+              className={cn("px-4 py-1.5 rounded-md transition-all", HOME_TYPO.feedTab, feedType === "Discover" ? "bg-white shadow-sm text-fuchsia-700" : "text-gray-500 hover:text-fuchsia-600")}
             >
               {t("home.feed.discover", "Ανακάλυψε")}
             </button>

@@ -74,6 +74,65 @@
 
 See **`docs/ZIP_PAGE_AUDIT.md`** for full page-by-page ZIP comparison and phases 10+ backlog.
 
+### Phase 10 — EventDetail safety, adventure, reliability (Classic-normalized)
+- `EventDetailSafetySection` — verified event + Share Live Location (`toast`, group membership guard)
+- `EventDetailAdventureSection` — Hiking / Nearby escapes (`rounded-2xl` inner cards)
+- `EventDetailReliabilityNote` — trust bullets (sibling section, Classic shell)
+- `eventDetailDesignTokens.ts` — shared typography/radii (Classic-first across accents)
+- Themed EventDetail left-column shells → `rounded-2xl` + `shadow-soft` (6 non-Classic pages)
+- Home polish: `HomeQuickActions`, `HomeSearchDropdown`, `HomeOnboardingWelcomeBanner` radii
+- See **`docs/LOCAL_DESIGN_AUDIT.md`** for local page-by-page design audit
+
+### Phase 11 — Design polish & Categories (functional)
+- `eventDetailDesignTokens.ts` — `getEventDetailContentTokens`, groups sidebar shell/heading helpers
+- `EventDetailMetaSection` / `EventDetailAboutSection` — DRY via content tokens (`rounded-2xl`, `shadow-soft`)
+- EventDetail **right column** groups card → `rounded-2xl shadow-soft` on all 7 themes (`patch-event-detail-groups-sidebar.mjs`)
+- `EventDetailGroupCard` / `EventDetailOrganizerSection` — inner cards `rounded-2xl shadow-soft`
+- `HomeQuickActions` themed branch — `rounded-2xl`, `shadow-soft`, Classic typography
+- `HomeLoggedInHero` CTA, `ActiveBuddiesRail` shell — Classic radii/shadows
+- **Categories:** `categoriesCatalog.ts`, `CategoriesPageContent` (group tabs, `?c=`, Weekend filter, Trending sort); 7 thin `Categories*.tsx` wrappers
+- **Route:** `/calendar` → `/agenda` redirect (additive)
+
+### Phase 12 — PostEventFeedback & OrganizerDashboard (shared content)
+- `PostEventFeedbackPageContent` — ZIP parity: event context card, mood grid, dual star ratings, attendance/safety toggles, comment counter, XP banners; wired to `useParams` + `submitFeedback` + store events
+- `OrganizerDashboardPageContent` — ZIP parity: hero workspace, stats, traffic chart (recharts), fill rate + satisfaction, quick-create templates, group management UI
+- **Preserved local:** 2nd organizer event (Hike on Hymettus), Edit/Archive actions, unread group message dot
+- All 7 themed wrappers per page → thin imports of shared content (`usePageContrast`)
+
+### Phase 14 — Mood URL deep links & EventCard CTA polish
+- `?mood=chill|active|social|learn|explore` synced via `useHomeUrlFilters` (back/forward + shareable links)
+- `homePathWithMood()` in `homeDeepLinks.ts`
+- `EventCard` primary CTAs → `rounded-2xl` + `shadow-soft` (tracking, host, arrival, location actions)
+
+### Phase 13 — MoodSelector & calendar visual pass
+- `MoodSelector` + `homeMoodConstants` + `useHomeMoodFilter` — mood chips filter feed by category groups; wired in `HomeFiltersSection` on all 7 Home variants via `useHomeEventFeed`
+- Selecting a mood clears category/tag filters, scrolls to `#home-filters`; category/tag selection clears mood
+- `MyCalendarPageContent` / `CalendarHourlySchedule` / `StoryViewer` — `rounded-xl`/`rounded-3xl` → `rounded-2xl`, `shadow-soft` where applicable
+
+### Phase 15 — NearbyGroups, History, Plans, Inbox (shared content)
+- **`NearbyGroupsPageContent`** — ZIP Leaflet map + filters (All/Available/Full/My Events), satellite layer, resizable sidebar, intersection observer; sidebar list uses `filteredLocalGroups`; Classic tokens (`rounded-2xl`, `shadow-soft`); all 7 `NearbyGroups*.tsx` → thin wrappers
+- **`HistoryPageContent`** — removed mock `feedbackStatus`; past events from store groups + `feedbackSubmitted`; `rounded-2xl` inputs/thumbnails
+- **`PlansPageContent`** — extracted from `PlansClassic` (not ZIP subscription `Plans.tsx`); upcoming/pending/past tabs, leave group, feedback CTA; 7 thin wrappers
+- **`InboxPageContent`** — hybrid: store-driven groups + active/past tabs, typing/pin UX; navigates to `/chat/:groupId`; messages/notifications tabs
+- **`TrustCenterPageContent`** — tier label i18n via `tierLabelEl` / `tierLabelEn`
+
+### Phase 16+ — Shared page content & polish
+- `CreateEventFlowPageContent` — 7× create-flow themes re-export shared content (`usePageContrast` / `useProfileContrast`, `rounded-2xl` inputs)
+- `ReportIssuePageContent` — 7× report themes re-export shared content
+- Saved / Help / Profile / Wallet — form `select` & `input` use `rounded-2xl`
+- `HOME_TYPO` (`src/lib/homeTypography.ts`) — fractional scale on 6 non-Classic Home variants
+
+### Phase 16 — Planned Events Calendar (web/mobile)
+- `PlannedEventsCalendar`, `CalendarDayCell`, `DayEventsStoriesModal`, `DailyScheduleView`
+- `usePlannedEvents` + `mockCalendarPlan` demo seed (June 2026, user `u1`)
+- Web/tablet: multi-event cell layouts; mobile: count + category dots
+- Single tap → day stories; double tap / button → hourly schedule
+
+### ZIP verification — Home, Calendar, Trust (no regressions)
+- **Home (`/`)** — local 9× themed Home is a strict superset of ZIP `Home.tsx` (mood filters, personalization, Active Buddies, etc.); do not replace with ZIP single page
+- **Calendar (`/agenda`)** — `MyCalendarPageContent` has ZIP-equivalent features via refactor (week/month, hourly modal, ICS, stories, `usePageContrast`)
+- **Trust (`/trust`)** — ~parity with ZIP; tier labels now localized
+
 ## Explicitly not merged (by design)
 - Replacing 9× Home with single ZIP `Home.tsx`
 - ZIP `App.tsx` (loses lazy routes + onboarding guard)

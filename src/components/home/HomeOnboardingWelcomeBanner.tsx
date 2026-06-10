@@ -29,7 +29,7 @@ export function HomeOnboardingWelcomeBanner({
     >
       <div
         className={cn(
-          'shrink-0 w-10 h-10 rounded-xl flex items-center justify-center',
+          'shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center',
           useClassicTokens ? 'bg-cyan-100 text-cyan-700' : cn(p.isDark ? 'bg-cyan-900/40 text-cyan-400' : 'bg-cyan-50 text-cyan-600'),
         )}
       >

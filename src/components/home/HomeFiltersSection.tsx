@@ -6,6 +6,7 @@ import { HOME_CATEGORIES, HOME_POPULAR_TAGS } from '../../lib/homeFeedConstants'
 import { getHomeCategoryTranslations, getHomeTagTranslations } from '../../lib/homeCategoryLabels';
 import { HomePersonalizationHint } from './HomePersonalizationHint';
 import { HomeDiscoveryPrefsChips } from './HomeDiscoveryPrefsChips';
+import { MoodSelector } from './MoodSelector';
 import type {
   HomeDateFilter,
   HomePriceFilter,
@@ -36,6 +37,8 @@ export interface HomeFiltersSectionProps {
   onClearAll: () => void;
   onOpenMobileFilters: () => void;
   activeFilterCount: number;
+  activeMood?: string | null;
+  onSelectMood?: (moodId: string | null, categories: string[]) => void;
 }
 
 export function HomeFiltersSection({
@@ -60,6 +63,8 @@ export function HomeFiltersSection({
   onClearAll,
   onOpenMobileFilters,
   activeFilterCount,
+  activeMood = null,
+  onSelectMood,
 }: HomeFiltersSectionProps) {
   const { t } = useLanguage();
   const h = useHomeTheme();
@@ -104,6 +109,10 @@ export function HomeFiltersSection({
 
       <HomePersonalizationHint useClassicTokens />
       <HomeDiscoveryPrefsChips useClassicTokens />
+
+      {onSelectMood && (
+        <MoodSelector activeMood={activeMood} onSelectMood={onSelectMood} />
+      )}
 
       <div
         ref={categoryScrollRef}

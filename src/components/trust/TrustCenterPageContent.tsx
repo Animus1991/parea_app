@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { tierLabelEl, tierLabelEn } from '../../lib/trust';
+import type { TrustTier } from '../../types';
 
 export default function TrustCenterPageContent() {
   const { t } = useLanguage();
@@ -16,7 +18,9 @@ export default function TrustCenterPageContent() {
 
   if (!currentUser) return null;
 
-  const trustTier = currentUser.trustTier || 'Newcomer';
+  const trustTierLabel = currentUser.trustTier
+    ? t(tierLabelEl(currentUser.trustTier as TrustTier), tierLabelEn(currentUser.trustTier as TrustTier))
+    : t('Νέος', 'Newcomer');
   const reliabilityScore = currentUser.reliabilityScore ?? 85;
   const circumference = 2 * Math.PI * 52;
   const strokeDash = (reliabilityScore / 100) * circumference;
@@ -45,7 +49,7 @@ export default function TrustCenterPageContent() {
             <h2 className={cn("text-[11px] font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5", a.muted)}>
               <ShieldCheck className={cn("h-3.5 w-3.5", a.iconAccent)} />{t('Κατάσταση Επαλήθευσης', 'Verification Status')}
             </h2>
-            <p className={cn("text-base font-bold", a.head)}>{trustTier}</p>
+            <p className={cn("text-base font-bold", a.head)}>{trustTierLabel}</p>
           </div>
 
           <div className="space-y-3">
@@ -53,19 +57,25 @@ export default function TrustCenterPageContent() {
               <div className={cn("flex items-center gap-2 text-[13px] font-medium", a.sub)}>
                 <Mail className={cn("h-3.5 w-3.5", a.muted)} /> Email
               </div>
-              <Badge variant="success" className="text-[11px] px-1.5 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
+              <Badge variant={currentUser.emailVerified ? 'success' : 'neutral'} className="text-[11px] px-1.5 py-0.5">
+                {currentUser.emailVerified ? t('Επαληθευμένο', 'Verified') : t('Εκκρεμεί', 'Pending')}
+              </Badge>
             </div>
             <div className="flex items-center justify-between">
               <div className={cn("flex items-center gap-2 text-[13px] font-medium", a.sub)}>
                 <Phone className={cn("h-3.5 w-3.5", a.muted)} />{t('Τηλέφωνο', 'Phone')}
               </div>
-              <Badge variant="success" className="text-[11px] px-1.5 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
+              <Badge variant={currentUser.phoneVerified ? 'success' : 'neutral'} className="text-[11px] px-1.5 py-0.5">
+                {currentUser.phoneVerified ? t('Επαληθευμένο', 'Verified') : t('Εκκρεμεί', 'Pending')}
+              </Badge>
             </div>
             <div className="flex items-center justify-between">
               <div className={cn("flex items-center gap-2 text-[13px] font-medium", a.sub)}>
                 <CreditCard className={cn("h-3.5 w-3.5", a.muted)} />{t('Πληρωμή', 'Payment')}
               </div>
-              <Badge variant="success" className="text-[11px] px-1.5 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
+              <Badge variant={currentUser.paymentVerified ? 'success' : 'neutral'} className="text-[11px] px-1.5 py-0.5">
+                {currentUser.paymentVerified ? t('Επαληθευμένο', 'Verified') : t('Εκκρεμεί', 'Pending')}
+              </Badge>
             </div>
             <div className="flex items-center justify-between">
               <div className={cn("flex items-center gap-2 text-[13px] font-medium", a.muted)}>

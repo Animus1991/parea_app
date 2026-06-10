@@ -32,7 +32,7 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
   const card = useClassicTokens
     ? cn('rounded-2xl p-4 space-y-3.5 border shadow-soft', h.card)
     : cn(
-        'p-[19.6px] md:p-[23.5px] rounded-3xl border shadow-sm',
+        'p-[19.6px] md:p-[23.5px] rounded-2xl border shadow-soft',
         p.cardSurface,
         p.borderB,
       );

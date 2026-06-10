@@ -7,6 +7,8 @@ import {
   CheckCircle,
   Download,
   CalendarCheck,
+  CalendarClock,
+  Compass,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -114,6 +116,23 @@ export default function MyCalendarPageContent() {
           !isCurrentPeriod && "opacity-30 pointer-events-none",
         )}
       >
+        {dayEvents.length > 0 && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setHourlyViewDay(day);
+            }}
+            className={cn(
+              "absolute top-1.5 right-1.5 z-20 p-1 rounded-lg min-h-8 min-w-8 flex items-center justify-center",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500",
+              "bg-black/40 hover:bg-black/55 text-white",
+            )}
+            aria-label={t("Ημερήσιο πρόγραμμα", "Daily schedule")}
+          >
+            <CalendarClock className="w-3.5 h-3.5" />
+          </button>
+        )}
         {dayEvents.length > 0 && (
           <div className="hidden md:block absolute inset-0 z-0">
             {dayEvents.length === 1 && (
@@ -291,7 +310,7 @@ export default function MyCalendarPageContent() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="w-full max-w-full min-w-0 space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 border-b border-white/5 pb-4 md:pb-6">
         <div className="flex items-center gap-4">
@@ -376,6 +395,34 @@ export default function MyCalendarPageContent() {
         </div>
       </div>
 
+      {upcomingEvents.length === 0 && (
+        <div
+          className={cn(
+            "text-center py-8 px-6 rounded-2xl border border-dashed",
+            p.cardSurface,
+            p.borderB,
+          )}
+        >
+          <Compass className={cn("w-8 h-8 mx-auto mb-3", p.iconAccent)} />
+          <p className={cn("font-bold", p.head)}>
+            {t("Δεν έχετε προγραμματισμένες εκδηλώσεις", "No planned events yet")}
+          </p>
+          <p className={cn("text-sm font-medium mt-2", p.muted)}>
+            {t(
+              "Εξερευνήστε εκδηλώσεις και μπείτε σε ομάδα — θα εμφανίζονται στο ημερολόγιο.",
+              "Explore events and join a group — they will show on your calendar.",
+            )}
+          </p>
+          <button
+            type="button"
+            className="btn-gradient mt-4"
+            onClick={() => navigate("/")}
+          >
+            {t("Εξερεύνησε εκδηλώσεις", "Explore experiences")}
+          </button>
+        </div>
+      )}
+
       <div
         className={cn(
           "rounded-3xl border overflow-hidden shadow-soft",
@@ -431,6 +478,13 @@ export default function MyCalendarPageContent() {
             </button>
           </div>
         </div>
+
+        <p className={cn("text-[11px] font-medium px-6 md:px-8 py-2 border-b", p.borderB, p.muted)}>
+          {t(
+            "Πάτημα: προεπισκόπηση · Διπλό πάτημα: ωριαίο πρόγραμμα",
+            "Tap: preview · Double-tap: hourly schedule",
+          )}
+        </p>
 
         <AnimatePresence mode="wait">
           {view === "week" && (

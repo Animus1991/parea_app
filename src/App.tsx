@@ -1,6 +1,6 @@
 // Entry point for our pages
 import { useEffect, lazy, Suspense } from "react";
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
 import { AnimatePresence } from "motion/react";
 import { AppShell } from "./components/layout/AppShell";
 import { useStore } from "./store";
@@ -40,6 +40,7 @@ const Achievements = lazy(() => import("./pages/Achievements"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 const Challenges = lazy(() => import("./pages/Challenges"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
+const BuddySeek = lazy(() => import("./pages/BuddySeek"));
 
 export default function App() {
   const location = useLocation();
@@ -94,7 +95,9 @@ export default function App() {
             <Route path="/events/:eventId/join" element={<ErrorBoundary><JoinGroupFlow /></ErrorBoundary>} />
 
             <Route path="/agenda" element={<ErrorBoundary><MyCalendar /></ErrorBoundary>} />
+            <Route path="/calendar" element={<Navigate to="/agenda" replace />} />
             <Route path="/plans" element={<ErrorBoundary><Plans /></ErrorBoundary>} />
+            <Route path="/buddy-seek" element={<ErrorBoundary><BuddySeek /></ErrorBoundary>} />
             <Route path="/history" element={<ErrorBoundary><History /></ErrorBoundary>} />
             <Route
               path="/history/feedback/:eventId"

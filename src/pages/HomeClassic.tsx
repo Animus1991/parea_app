@@ -24,6 +24,7 @@ import { HomeQuickStatsBar } from "../components/home/HomeQuickStatsBar";
 import { HomeDailyTip } from "../components/home/HomeDailyTip";
 import { HomePendingFeedbackBanner } from "../components/home/HomePendingFeedbackBanner";
 import { HomeSeekingHostSection } from "../components/home/HomeSeekingHostSection";
+import { HomeBuddySeekStrip } from "../components/buddySeek/HomeBuddySeekStrip";
 import { getTimeGreeting, getMotivation } from "../lib/homeGreeting";
 import { getDefaultHomeSearchSuggestions } from "../lib/homeSearchSuggestions";
 import { HomeSearchDropdown } from "../components/home/HomeSearchDropdown";
@@ -82,6 +83,8 @@ export default function HomeClassic() {
     hasActiveFilters,
     activeFilterCount,
     clearAllFilters,
+    activeMood,
+    handleSelectMood,
   } = feed;
 
   const currentUser = feed.currentUser;
@@ -172,6 +175,8 @@ export default function HomeClassic() {
 
       <EventStories events={storyEvents} />
 
+      <HomeBuddySeekStrip />
+
       {showWelcome && (
         <HomeOnboardingWelcomeBanner useClassicTokens onDismiss={dismissWelcome} />
       )}
@@ -255,6 +260,8 @@ export default function HomeClassic() {
         onClearAll={handleClearAll}
         onOpenMobileFilters={() => setFilterSheetOpen(true)}
         activeFilterCount={activeFilterCount}
+        activeMood={activeMood}
+        onSelectMood={handleSelectMood}
       />
 
       {/* Events Grid */}

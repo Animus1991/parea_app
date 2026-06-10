@@ -4,6 +4,8 @@ import { Badge } from "../common/Badge";
 import { Button } from "../common/Button";
 import { ProfileSkeleton } from "../common/Skeleton";
 import { useStore } from "../../store";
+import { tierLabelEl, tierLabelEn } from "../../lib/trust";
+import type { TrustTier } from "../../types";
 import {
   CheckCircle2,
   History,
@@ -41,6 +43,10 @@ export default function ProfilePageContent() {
   const updateUser = useStore((state) => state.updateUser);
   const logout = useStore((state) => state.logout);
   const users = useStore((state) => state.users);
+  const events = useStore((state) => state.events);
+  const feedbackSubmitted = useStore((state) => state.feedbackSubmitted);
+  const userSettings = useStore((state) => state.userSettings);
+  const updatePrivacySettings = useStore((state) => state.updatePrivacySettings);
 
   const [isLoading, setIsLoading] = useState(true);
   const [photoUrl, setPhotoUrl] = useState(currentUser?.photoUrl);
@@ -53,12 +59,16 @@ export default function ProfilePageContent() {
   const [interests, setInterests] = useState(currentUser?.interests || []);
   const [isAddingInterest, setIsAddingInterest] = useState(false);
   const [newInterest, setNewInterest] = useState("");
-  const [settings, setSettings] = useState({
-    revealPhoto: true, allowMutualPing: true, allowOrganizerMsg: false,
-    profileVisibility: "public" as "public" | "verified" | "private",
-    messagePermission: "anyone" as "anyone" | "verified" | "friends",
-    shareLocation: false,
-  });
+
+  const profileVisibilityUi =
+    userSettings.privacy.profileVisibility === 'connections' ? 'verified' : userSettings.privacy.profileVisibility;
+  const messagePermissionUi =
+    userSettings.privacy.messagePermission === 'everyone' ? 'anyone'
+      : userSettings.privacy.messagePermission === 'groups' ? 'friends' : 'verified';
+
+  const patchPrivacy = (patch: Partial<typeof userSettings.privacy>) => {
+    updatePrivacySettings(patch);
+  };
 
   useEffect(() => {
     if (!currentUser) { navigate("/login"); return; }
@@ -81,6 +91,8 @@ export default function ProfilePageContent() {
   // Computed
   const connectionCount = (currentUser.connections || []).length;
   const connectedUsers = users.filter((u) => (currentUser.connections || []).includes(u.id));
+  const attendedEventsCount = Object.keys(feedbackSubmitted).length;
+  const tierLabel = t(tierLabelEl(currentUser.trustTier as TrustTier), tierLabelEn(currentUser.trustTier as TrustTier));
 
   const heading = a.isDark ? "text-white" : "text-[#111827]";
   const sub = a.isDark ? "text-gray-400" : "text-gray-500";
@@ -116,9 +128,9 @@ export default function ProfilePageContent() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           { icon: Users, label: t("Nakamas", "Nakamas"), value: connectionCount, to: "/connections", color: a.accent },
-          { icon: Calendar, label: t("Εκδηλώσεις", "Events"), value: 12, to: "/plans", color: a.accent },
+          { icon: Calendar, label: t("Εκδηλώσεις", "Events"), value: attendedEventsCount, to: "/plans", color: a.accent },
           { icon: TrendingUp, label: t("Αξιοπιστία", "Reliability"), value: `${currentUser.reliabilityScore}%`, to: "/trust", color: currentUser.reliabilityScore >= 80 ? (a.isDark ? "text-green-400" : "text-green-600") : a.accent },
-          { icon: Award, label: t("Επίπεδο", "Tier"), value: currentUser.trustTier === "3_high_trust" ? "3" : currentUser.trustTier === "2_confirmed" ? "2" : "1", to: "/trust", color: a.accent },
+          { icon: Award, label: t("Επίπεδο", "Tier"), value: tierLabel, to: "/trust", color: a.accent },
         ].map((stat) => (
           <Card key={stat.label} className="p-4 cursor-pointer group" onClick={() => navigate(stat.to)}>
             <div className="flex items-center justify-between">
@@ -156,7 +168,7 @@ export default function ProfilePageContent() {
                 {isEditingName ? (
                   <div className="flex w-full items-center gap-2">
                     <input autoFocus value={tempName} onChange={(e) => setTempName(e.target.value)}
-                      className={`flex-1 text-lg font-bold rounded-lg px-3 py-1.5 focus:ring-2 outline-none ${inputBg} ${a.ring}`} />
+                      className={`flex-1 text-lg font-bold rounded-2xl px-3 py-1.5 focus:ring-2 outline-none ${inputBg} ${a.ring}`} />
                     <Button size="sm" onClick={() => { if (tempName.trim()) { updateUser(currentUser.id, { name: tempName }); setIsEditingName(false); } }}>{t("Αποθήκευση", "Save")}</Button>
                     <Button size="sm" variant="ghost" onClick={() => { setTempName(currentUser.name); setIsEditingName(false); }}><X className="w-4 h-4" /></Button>
                   </div>
@@ -176,7 +188,7 @@ export default function ProfilePageContent() {
               <div className="mt-3">
                 {isEditingBio ? (
                   <div className="space-y-2">
-                    <textarea value={tempBio} onChange={(e) => setTempBio(e.target.value)} className={`w-full text-sm rounded-lg p-3 focus:ring-2 outline-none resize-none ${inputBg} ${a.ring}`} rows={3} />
+                    <textarea value={tempBio} onChange={(e) => setTempBio(e.target.value)} className={`w-full text-sm rounded-2xl p-3 focus:ring-2 outline-none resize-none ${inputBg} ${a.ring}`} rows={3} />
                     <div className="flex gap-2">
                       <Button size="sm" onClick={() => { setBio(tempBio); setIsEditingBio(false); updateUser(currentUser.id, { bio: tempBio }); }}>{t("Αποθήκευση", "Save")}</Button>
                       <Button size="sm" variant="outline" onClick={() => { setTempBio(bio); setIsEditingBio(false); }}>{t("Ακύρωση", "Cancel")}</Button>
@@ -197,7 +209,7 @@ export default function ProfilePageContent() {
                   <ShieldCheck className="h-3.5 w-3.5 mr-1 inline" />{currentUser.reliabilityScore}% {t("Αξιοπιστία", "Reliability")}
                 </Badge>
                 <Badge variant="outline" className={`text-xs py-1 px-2.5 rounded-lg ${currentUser.trustTier === "3_high_trust" ? (a.isDark ? "text-emerald-300 bg-emerald-900/20 border-emerald-700/50" : "text-cyan-700 bg-cyan-50 border-cyan-200") : (a.isDark ? "text-gray-300 bg-gray-800/40 border-gray-600/50" : "text-gray-700 bg-gray-50 border-gray-200")}`}>
-                  {currentUser.trustTier === "3_high_trust" ? t("Υψηλό Επίπεδο Εμπιστοσύνης", "High Trust Tier") : currentUser.trustTier.replace(/_/g, " ").toUpperCase() + " " + t("Επίπεδο", "Tier")}
+                  {tierLabel}
                 </Badge>
               </div>
             </div>
@@ -328,8 +340,12 @@ export default function ProfilePageContent() {
         <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
           <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Προτιμήσεις Διαθεσιμότητας", "Availability Preferences")}</h3>
           <div className="flex flex-wrap gap-2">
-            <Badge variant="neutral">{t("Σαββατοκύριακα", "Weekends")}</Badge>
-            <Badge variant="neutral">{t("Βράδια Καθημερινών", "Weekday Evenings")}</Badge>
+            {userSettings.availability.includes('weekends') && <Badge variant="neutral">{t("Σαββατοκύριακα", "Weekends")}</Badge>}
+            {userSettings.availability.includes('weekday_evenings') && <Badge variant="neutral">{t("Βράδια Καθημερινών", "Weekday Evenings")}</Badge>}
+            {userSettings.availability.includes('weekday_mornings') && <Badge variant="neutral">{t("Πρωινά καθημερινών", "Weekday mornings")}</Badge>}
+            {userSettings.availability.length === 0 && (
+              <span className={`text-xs ${sub}`}>{t('Δεν έχετε ορίσει διαθεσιμότητα', 'No availability set yet')}</span>
+            )}
             <Button variant="ghost" size="sm" className={`${a.isDark ? "bg-gray-800 border border-gray-700 text-gray-300" : "bg-gray-50 border border-gray-200"}`} onClick={() => navigate("/settings")}>
               + {t("Επεξεργασία", "Edit")}
             </Button>
@@ -349,8 +365,16 @@ export default function ProfilePageContent() {
                   <p className={`text-xs mt-0.5 ${sub}`}>{t("Ποιοι βλέπουν το πλήρες προφίλ σας.", "Who can see your full profile.")}</p>
                 </div>
               </div>
-              <select value={settings.profileVisibility} onChange={(e) => setSettings({ ...settings, profileVisibility: e.target.value as any })}
-                className={`text-xs rounded-lg py-1.5 px-3 outline-none border ${a.selectBg} ${a.selectRing}`}>
+              <select
+                value={profileVisibilityUi}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  patchPrivacy({
+                    profileVisibility: v === 'verified' ? 'connections' : (v as 'public' | 'private'),
+                  });
+                }}
+                className={`text-xs rounded-2xl py-1.5 px-3 outline-none border ${a.selectBg} ${a.selectRing}`}
+              >
                 <option value="public">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι", "Verified Only")}</option>
                 <option value="private">{t("Ιδιωτικό", "Private")}</option>
@@ -366,8 +390,16 @@ export default function ProfilePageContent() {
                   <p className={`text-xs mt-0.5 ${sub}`}>{t("Ποιοι μπορούν να ξεκινήσουν συνομιλία.", "Who can start a chat with you.")}</p>
                 </div>
               </div>
-              <select value={settings.messagePermission} onChange={(e) => setSettings({ ...settings, messagePermission: e.target.value as any })}
-                className={`text-xs rounded-lg py-1.5 px-3 outline-none border ${a.selectBg} ${a.selectRing}`}>
+              <select
+                value={messagePermissionUi}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  patchPrivacy({
+                    messagePermission: v === 'anyone' ? 'everyone' : v === 'friends' ? 'groups' : 'connections',
+                  });
+                }}
+                className={`text-xs rounded-2xl py-1.5 px-3 outline-none border ${a.selectBg} ${a.selectRing}`}
+              >
                 <option value="anyone">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι", "Verified Only")}</option>
                 <option value="friends">{t("Μόνο Nakamas", "Nakamas Only")}</option>
@@ -381,8 +413,12 @@ export default function ProfilePageContent() {
                 <span className={`text-sm font-bold block ${heading}`}>{t("Κοινοποίηση Τοποθεσίας", "Share Location")}</span>
                 <span className={`text-xs font-medium leading-relaxed block mt-0.5 ${sub}`}>{t("Για καλύτερες προτάσεις εκδηλώσεων και ζωντανή παρακολούθηση.", "For better event recommendations and live tracking.")}</span>
               </div>
-              <input type="checkbox" checked={settings.shareLocation} onChange={(e) => setSettings({ ...settings, shareLocation: e.target.checked })}
-                className={`mt-1 h-4 w-4 rounded border-gray-300 ${a.checkbox} focus:ring-2`} />
+              <input
+                type="checkbox"
+                checked={userSettings.privacy.shareLocation}
+                onChange={(e) => patchPrivacy({ shareLocation: e.target.checked })}
+                className={`mt-1 h-4 w-4 rounded border-gray-300 ${a.checkbox} focus:ring-2`}
+              />
             </label>
 
             {/* Toggle Checkboxes */}
@@ -401,8 +437,12 @@ export default function ProfilePageContent() {
                     <opt.icon className={`w-3.5 h-3.5 shrink-0 ${sub}`} />
                     <span className={`text-sm font-medium ${bodyText}`}>{opt.label}</span>
                   </div>
-                  <input type="checkbox" checked={(settings as any)[opt.key]} onChange={(e) => setSettings({ ...settings, [opt.key]: e.target.checked })}
-                    className={`h-4 w-4 rounded border-gray-300 shrink-0 ${a.checkbox} focus:ring-2`} />
+                  <input
+                    type="checkbox"
+                    checked={userSettings.privacy[opt.key as keyof typeof userSettings.privacy] as boolean}
+                    onChange={(e) => patchPrivacy({ [opt.key]: e.target.checked } as Partial<typeof userSettings.privacy>)}
+                    className={`h-4 w-4 rounded border-gray-300 shrink-0 ${a.checkbox} focus:ring-2`}
+                  />
                 </label>
               ))}
             </div>

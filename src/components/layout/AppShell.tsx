@@ -1,5 +1,5 @@
 ﻿import React, { ReactNode, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
@@ -11,6 +11,11 @@ import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { ThemePicker } from '../common/ThemePicker';
+import { PlansFormingSidebar } from '../buddySeek/PlansFormingSidebar';
+import { PlansFormingSidebarReopenTab } from '../buddySeek/PlansFormingSidebar';
+import { PlansFormingBottomSheet } from '../buddySeek/PlansFormingBottomSheet';
+import { PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
+import { PopupChatRoot } from '../chat/PopupChatRoot';
 
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
@@ -162,6 +167,7 @@ function NavLinks({ compact = false }: { compact?: boolean }) {
       <NavSection title={t('Η Εμπειρία μου', 'My Experience')} compact={compact}>
         <NavItem to="/agenda" icon={Calendar} label={t('Το Ημερολόγιό μου', 'My Calendar')} compact={compact} />
         <NavItem to="/plans" icon={CalendarCheck} label={t('Τα Σχέδιά μου', 'My Plans')} compact={compact} />
+        <NavItem to="/buddy-seek" icon={Users} label={t('Σχέδια που σχηματίζονται', 'Plans forming')} compact={compact} />
         <NavItem to="/saved" icon={Bookmark} label={t('Αποθηκευμένες', 'Saved')} compact={compact} />
         <NavItem to="/history" icon={History} label={t('Ιστορικό', 'History')} compact={compact} />
       </NavSection>
@@ -234,7 +240,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   return (
-    <nav className={cn("relative z-[100] flex items-center justify-between px-4 lg:px-6 py-3 border-b h-16 shrink-0 overflow-visible", tok.topNav)}>
+    <nav className={cn("relative z-[100] flex items-center justify-between px-4 lg:px-6 py-[10px] border-b h-[59px] shrink-0 overflow-visible", tok.topNav)}>
       <div className="flex items-center space-x-8">
         <div className="md:hidden">
           <NakamasLogo className="text-[22px]" />
@@ -251,11 +257,11 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
             onChange={e => setSearchValue(e.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={t('Αναζήτηση εκδηλώσεων...', 'Search events...')}
-            className={cn("w-64 py-1.5 pl-8 pr-7 text-[14.42px] border outline-none transition-colors min-h-11", tok.searchInput)}
+            className={cn("w-64 py-1.5 pl-8 pr-7 text-[14.42px] border outline-none transition-colors min-h-[39px]", tok.searchInput)}
           />
-          <Search className={cn("absolute w-4 h-4 left-2.5 top-2.5", tok.isDark ? "text-gray-400" : "text-gray-400")} />
+          <Search className={cn("absolute w-4 h-4 left-2.5 top-[11px]", tok.isDark ? "text-gray-400" : "text-gray-400")} />
           {searchValue && (
-            <button onClick={() => setSearchValue('')} className="absolute right-2 top-1.5 text-gray-400 hover:text-gray-600">
+            <button onClick={() => setSearchValue('')} className="absolute right-2 top-[7px] text-gray-400 hover:text-gray-600">
               <X className="w-4 h-4" />
             </button>
           )}
@@ -267,7 +273,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
           title={t('Δημιουργία εκδήλωσης', 'Create event')}
           className={cn(
-            "hidden sm:inline-flex items-center gap-1.5 text-[12.5px] font-bold rounded-full transition-all duration-200 px-3 py-2 min-h-11 shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]",
+            "hidden sm:inline-flex items-center gap-1.5 text-[12.5px] font-bold rounded-full transition-all duration-200 px-3 py-2 min-h-[39px] shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]",
             theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] text-white hover:bg-black'
               : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] hover:bg-white'
               : theme === 'vibrant' || theme === 'vibrant-dark' ? 'bg-fuchsia-600 text-white hover:bg-fuchsia-700'
@@ -285,7 +291,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         {/* Language Toggle */}
         <button
           onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
-          className={cn("flex items-center gap-1 text-[11.33px] font-bold transition-colors px-2.5 py-2 rounded-lg min-h-11 min-w-11", tok.chipButton)}
+          className={cn("flex items-center gap-1 text-[11.33px] font-bold transition-colors px-2.5 py-2 rounded-lg min-h-[39px] min-w-[39px]", tok.chipButton)}
           aria-label={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')} title={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')}
         >
           <Globe className="w-3.5 h-3.5" />
@@ -414,13 +420,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
       )}
-      <div className="flex flex-col flex-1 h-screen overflow-hidden">
-        <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
-        <main className="flex-1 overflow-y-auto relative flex flex-col">
-          <div className="mx-auto w-full max-w-full p-4 lg:px-8 lg:py-6 flex-1 pb-24 md:pb-6">
-            {children}
-          </div>
-        </main>
+      <div className="flex flex-1 h-screen overflow-hidden min-w-0">
+        <div className="flex flex-col flex-1 min-w-0 h-screen overflow-hidden">
+          <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
+          <main className="flex-1 overflow-y-auto relative flex flex-col min-w-0">
+            <div className="mx-auto w-full max-w-full p-4 lg:px-8 lg:py-6 flex-1 pb-24 md:pb-6">
+              {children}
+            </div>
+          </main>
         <footer className="hidden md:flex h-8 px-6 bg-[#111827] text-[10px] text-gray-400 items-center justify-between shrink-0">
           <div className="flex space-x-4">
             <span>Nakamas v1.0.5-beta</span>
@@ -430,13 +437,19 @@ export function AppShell({ children }: { children: ReactNode }) {
             </span>
           </div>
           <div className="hidden sm:flex space-x-4">
-            <a href="#" className="hover:text-white transition-colors">{t('Πολιτική Απορρήτου', 'Privacy Policy')}</a>
-            <a href="#" className="hover:text-white transition-colors">{t('Αναφορά Προβλημάτων', 'Report Issues')}</a>
-            <a href="#" className="hover:text-white transition-colors">{t('Πώς λειτουργεί η αξιοπιστία', 'How trust works')}</a>
+            <Link to="/settings" className="hover:text-white transition-colors">{t('Πολιτική Απορρήτου', 'Privacy Policy')}</Link>
+            <Link to="/report" className="hover:text-white transition-colors">{t('Αναφορά Προβλημάτων', 'Report Issues')}</Link>
+            <Link to="/trust" className="hover:text-white transition-colors">{t('Πώς λειτουργεί η αξιοπιστία', 'How trust works')}</Link>
           </div>
         </footer>
-        <BottomNav />
+          <BottomNav />
+          <PlansFormingMobileFab />
+        </div>
+        <PlansFormingSidebar />
+        <PlansFormingSidebarReopenTab />
       </div>
+      <PlansFormingBottomSheet />
+      <PopupChatRoot />
       <Toaster position="top-right" richColors closeButton />
     </div>
   );

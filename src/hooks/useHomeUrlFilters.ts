@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDebounce } from './useDebounce';
 import { useStore } from '../store';
+import { getMoodCategories, parseHomeMoodParam } from '../lib/homeMoodConstants';
 import type {
   HomeDateFilter,
   HomePriceFilter,
@@ -33,6 +34,12 @@ export function useHomeUrlFilters() {
     () => (searchParams.get('dist') as HomeRadiusFilter) || 'Any',
   );
   const [tagFilter, setTagFilter] = useState(() => searchParams.get('tag') || 'All');
+  const [activeMood, setActiveMood] = useState<string | null>(() =>
+    parseHomeMoodParam(searchParams.get('mood')),
+  );
+
+  const moodCategories = useMemo(() => getMoodCategories(activeMood), [activeMood]);
+  const hasMoodFilter = activeMood !== null && moodCategories.length > 0;
 
   const debouncedSearch = useDebounce(searchQuery, 400);
   const sortParam = (searchParams.get('sort') as HomeSortParam) || 'Relevance';
@@ -46,6 +53,10 @@ export function useHomeUrlFilters() {
     [searchParams, setSearchParams],
   );
 
+  const clearMood = useCallback(() => {
+    setActiveMood(null);
+  }, []);
+
   // Keep filter state in sync when URL changes (browser back/forward, shared links).
   useEffect(() => {
     const cat = searchParams.get('cat') || 'All';
@@ -54,6 +65,7 @@ export function useHomeUrlFilters() {
     const date = (searchParams.get('date') as HomeDateFilter) || 'Any';
     const safety = (searchParams.get('safety') as HomeSafetyFilter) || 'All';
     const dist = (searchParams.get('dist') as HomeRadiusFilter) || 'Any';
+    const mood = parseHomeMoodParam(searchParams.get('mood'));
 
     if (cat !== activeCategory) setActiveCategory(cat);
     if (tag !== tagFilter) setTagFilter(tag);
@@ -61,6 +73,7 @@ export function useHomeUrlFilters() {
     if (date !== dateFilter) setDateFilter(date);
     if (safety !== safetyFilter) setSafetyFilter(safety);
     if (dist !== radiusFilter) setRadiusFilter(dist);
+    if (mood !== activeMood) setActiveMood(mood);
 
     const urlSearch = searchParams.get('search') || '';
     if (urlSearch !== debouncedSearch && searchQuery === debouncedSearch) {
@@ -74,6 +87,7 @@ export function useHomeUrlFilters() {
     dateFilter,
     safetyFilter,
     radiusFilter,
+    activeMood,
     debouncedSearch,
     searchQuery,
   ]);
@@ -88,6 +102,7 @@ export function useHomeUrlFilters() {
     if (safetyFilter !== 'All') params.set('safety', safetyFilter);
     if (radiusFilter !== 'Any') params.set('dist', radiusFilter);
     if (sortParam !== 'Relevance') params.set('sort', sortParam);
+    if (activeMood) params.set('mood', activeMood);
     setSearchParams(params, { replace: true });
     if (debouncedSearch.trim()) addRecentSearch(debouncedSearch.trim());
   }, [
@@ -99,6 +114,7 @@ export function useHomeUrlFilters() {
     safetyFilter,
     radiusFilter,
     sortParam,
+    activeMood,
     setSearchParams,
     addRecentSearch,
   ]);
@@ -115,6 +131,7 @@ export function useHomeUrlFilters() {
       dateFilter !== 'Any' ||
       safetyFilter !== 'All' ||
       radiusFilter !== 'Any' ||
+      hasMoodFilter ||
       searchQuery.length > 0,
     [
       activeCategory,
@@ -123,6 +140,7 @@ export function useHomeUrlFilters() {
       dateFilter,
       safetyFilter,
       radiusFilter,
+      hasMoodFilter,
       searchQuery,
     ],
   );
@@ -135,8 +153,9 @@ export function useHomeUrlFilters() {
         safetyFilter !== 'All',
         radiusFilter !== 'Any',
         tagFilter !== 'All',
+        hasMoodFilter,
       ].filter(Boolean).length,
-    [priceFilter, dateFilter, safetyFilter, radiusFilter, tagFilter],
+    [priceFilter, dateFilter, safetyFilter, radiusFilter, tagFilter, hasMoodFilter],
   );
 
   const clearUrlFilters = useCallback(() => {
@@ -147,6 +166,7 @@ export function useHomeUrlFilters() {
     setSafetyFilter('All');
     setRadiusFilter('Any');
     setSearchQuery('');
+    setActiveMood(null);
   }, []);
 
   return {
@@ -171,6 +191,11 @@ export function useHomeUrlFilters() {
     setTagFilter,
     sortParam,
     setSortParam,
+    activeMood,
+    setActiveMood,
+    moodCategories,
+    hasMoodFilter,
+    clearMood,
     hasActiveFilters,
     activeFilterCount,
     clearUrlFilters,

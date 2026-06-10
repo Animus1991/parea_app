@@ -30,7 +30,7 @@ export function HomeSearchDropdown({
   return (
     <div
       className={cn(
-        'absolute top-full left-0 right-0 mt-2 rounded-xl shadow-xl z-50 overflow-hidden',
+        'absolute top-full left-0 right-0 mt-2 rounded-2xl shadow-soft z-50 overflow-hidden',
         h.heroSearchDropdown,
       )}
     >

@@ -13,13 +13,19 @@ import { computeDiscountedPrice } from '../lib/groupUtils';
 import { toast } from 'sonner';
 import { navigateBack } from '../lib/smartBackNavigation';
 import { useEventDetailActions } from '../hooks/useEventDetailActions';
+import { useEventWaitlist } from '../hooks/useEventWaitlist';
 import { EventDetailActionBar } from '../components/events/EventDetailActionBar';
 import { EventDetailGroupCard } from '../components/events/EventDetailGroupCard';
-import { EventDetailMapSection } from '../components/events/EventDetailMapSection';
+import { EventMap } from '../components/events/EventMap';
 import { EventDetailAboutSection } from '../components/events/EventDetailAboutSection';
 import { EventDetailOrganizerSection } from '../components/events/EventDetailOrganizerSection';
+import { EventDetailReliabilityNote } from '../components/events/EventDetailReliabilityNote';
+import { EventDetailAdventureSection } from '../components/events/EventDetailAdventureSection';
+import { EventDetailSafetySection } from '../components/events/EventDetailSafetySection';
 import { EventDetailMetaSection } from '../components/events/EventDetailMetaSection';
 import { EventDetailQrModal } from '../components/events/EventDetailQrModal';
+import EventDetailPageContent from '../components/events/EventDetailPageContent';
+import { EventDetailBuddySeekPanel } from '../components/buddySeek/EventDetailBuddySeekPanel';
 
 function Group({ group, event, navigate }: { group: import('../types').Group; event: import('../types').Event; navigate: import('react-router-dom').NavigateFunction }) {
   return <EventDetailGroupCard group={group} event={event} navigate={navigate} accent="classic" />;
@@ -83,8 +89,12 @@ export default function EventDetailClassic() {
     setShowQRCode,
     isCopied,
     handleShare,
-    handleAddToCalendar,
+    handleAddToGoogleCalendar,
+    handleDownloadIcs,
+    calendarAvailability,
   } = useEventDetailActions(eventId, event);
+
+  const { isWaitlisted, handleJoinWaitlist } = useEventWaitlist(eventId ?? '');
 
   const handlePrimaryJoin = () => {
     if (!eventId) return;
@@ -127,7 +137,9 @@ export default function EventDetailClassic() {
             onQr={() => setShowQRCode(true)}
             onShare={handleShare}
             isCopied={isCopied}
-            onAddToCalendar={handleAddToCalendar}
+            onAddToGoogleCalendar={handleAddToGoogleCalendar}
+            onDownloadIcs={handleDownloadIcs}
+            calendarAvailability={calendarAvailability}
           />
         </div>
         
@@ -159,13 +171,14 @@ export default function EventDetailClassic() {
           )}
           
           {/* Match Score Badge based on User Interests */}
-          {event.tags && event.tags.length > 0 && (
+          {currentUser && event.tags && event.tags.length > 0 && (
             <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700 font-bold" icon={<span className="text-[10px]">🔥</span>}>
-              {Math.min(98, Math.max(15, Math.round((currentUser.interests.filter(i => (event.tags ?? []).includes(i)).length / (event.tags ?? [1]).length) * 100) + 40))}% {t('Ταίριασμα', 'Match')}
+              {Math.min(98, Math.max(15, Math.round(((currentUser?.interests ?? []).filter(i => (event.tags ?? []).includes(i)).length / (event.tags ?? [1]).length) * 100) + 40))}% {t('Ταίριασμα', 'Match')}
             </Badge>
           )}
         </div>
         <h1 className="text-xl md:text-2xl font-extrabold text-[#111827] leading-tight mb-2 md:mb-0">{event.title}</h1>
+        <EventDetailPageContent event={event} accent="classic" className="mt-4" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-5 lg:grid-cols-3">
@@ -173,56 +186,27 @@ export default function EventDetailClassic() {
         <div className="space-y-6 md:space-y-8 md:col-span-3 lg:col-span-2">
           <section className="space-y-4 text-[13px] text-[#111827] leading-relaxed bg-white rounded-2xl border border-gray-100 p-5 md:p-6 shadow-soft">
              <EventDetailMetaSection event={event} accent="classic" />
-             <EventDetailMapSection event={event} accent="classic" />
+             <EventMap event={event} accent="classic" />
              <EventDetailAboutSection event={event} accent="classic" />
              <EventDetailOrganizerSection organizer={organizer} accent="classic" />
-
-             {/* High Trust / Outdoor Template Mock */}
-             {(event.category === 'Hiking' || event.category === 'Nearby escapes') && (
-               <div className="pt-5 border-t border-gray-200 animate-in fade-in slide-in-from-bottom-2 mt-5">
-                 <h3 className="text-[11px] font-bold text-[#111827] mb-3 tracking-wide">{t('Λεπτομέρειες Περιπέτειας', 'Adventure Details')}</h3>
-                 <div className="grid grid-cols-2 gap-4">
-                   <div className="bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl">
-                     <div className="text-[10px] font-bold text-emerald-700 mb-1 tracking-wider">{t('Δυσκολία', 'Difficulty')}</div>
-                     <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? t('Μέτρια / Έδαφος', 'Moderate / Terrain') : t('Εύκολο / Αναψυχή', 'Easy / Leisure')}</div>
-                   </div>
-                   <div className="bg-amber-50/50 border border-amber-100 p-4 rounded-2xl">
-                     <div className="text-[10px] font-bold text-amber-700 mb-1 tracking-wider">{t('Εξοπλισμός / Σημειώσεις', 'Equipment / Notes')}</div>
-                     <div className="text-sm font-bold text-gray-900">{event.category === 'Hiking' ? t('Απαιτούνται μποτάκια πεζοπορίας. Φέρτε νερό.', 'Hiking boots required. Bring water.') : t('Διανυκτέρευση. Μοιρασμένα έξοδα.', 'Overnight stay. Shared expenses.')}</div>
-                   </div>
-                 </div>
-               </div>
-             )}
+             <EventDetailSafetySection event={event} accent="classic" />
+             <EventDetailAdventureSection event={event} accent="classic" />
           </section>
-
-          {/* Contextual Context Note */}
-          <section className="rounded-2xl border border-gray-100 bg-gray-50/50 p-5 text-sm">
-            <h3 className="text-[11px] font-bold text-[#111827] mb-3 tracking-wide">{t('Γιατί αυτή η ομάδα είναι αξιόπιστη', 'Why this group is reliable')}</h3>
-            <ul className="space-y-2.5 text-gray-600">
-              <li className="flex items-start gap-2 text-xs">
-                <Users className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">{t('Περιορισμός μικρής ομάδας.', 'Small group constraint.')}</strong> {t('Περιορίζεται σε ', 'Kept to ')}{event.maxParticipants || '3-6'}{t(' άτομα για καλύτερο συντονισμό και άνεση.', ' people for better coordination and comfort.')}</span>
-              </li>
-              <li className="flex items-start gap-2 text-xs">
-                <ShieldCheck className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">{t('Επιβεβαιωμένη συμμετοχή.', 'Confirmed participation.')}</strong> {t('Οι χρήστες πρέπει να δεσμευτούν για να συμμετάσχουν. Οι μη-εμφανίσεις παρακολουθούνται.', 'Users must commit to join. No-shows are tracked internally.')}</span>
-              </li>
-              <li className="flex items-start gap-2 text-xs">
-                <MapPin className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">{t('Δημόσιο σημείο συνάντησης.', 'Public meeting point.')}</strong> {t('Η ακριβής τοποθεσία συνάντησης αποκαλύπτεται μόνο αφού επιβεβαιωθεί η ομάδα.', 'Exact meeting location is revealed only after the group is confirmed.')}</span>
-              </li>
-              <li className="flex items-start gap-2 text-xs">
-                <CheckCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                <span><strong className="text-gray-700">{t('Ιδιωτικές αναφορές.', 'Private reports.')}</strong> {t('Οποιαδήποτε ανάρμοστη συμπεριφορά μπορεί να αναφερθεί ιδιωτικά και επηρεάζει τις βαθμολογίες αξιοπιστίας.', 'Any inappropriate behavior can be reported privately and affects reliability scores.')}</span>
-              </li>
-            </ul>
-          </section>
+          <EventDetailReliabilityNote event={event} accent="classic" />
         </div>
 
         {/* Right Column: Groups & Actions */}
         <div className="space-y-6 md:col-span-2 lg:col-span-1">
           <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-soft sticky top-24">
-            <h3 className="text-[11px] font-bold text-[#6B7280] tracking-wide mb-4">{t('Αυτόματη προτεινόμενη Μικρών Ομάδων', 'Auto-Suggest Small Groups')}</h3>
+            <EventDetailBuddySeekPanel event={event} accent="classic" />
+
+            <h3 className="text-[11px] font-bold text-[#6B7280] tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
+            <p className="text-[10px] text-gray-500 font-medium mb-3 -mt-2">
+              {t(
+                'Πολλές ομάδες μπορούν να υπάρχουν παράλληλα· μέγεθος από τον διοργανωτή.',
+                'Multiple groups can run in parallel; size is set by the organizer.',
+              )}
+            </p>
             <div className="mb-4 bg-cyan-50 border border-cyan-100 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-sm font-bold text-cyan-900">
               <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική Χωρητικότητα Εκδήλωσης', 'Overall Event Capacity')}</span>
               <span className="text-cyan-600 xl:text-cyan-900 bg-white xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs xl:text-sm border border-cyan-100 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
@@ -282,8 +266,8 @@ export default function EventDetailClassic() {
             
             <div className="space-y-4 pt-5 border-t border-gray-200">
               <div className="grid grid-cols-1 gap-3">
-                <Button variant="outline" className="w-full border-gray-200 text-gray-700 hover:bg-gray-50" size="lg" onClick={() => alert(t("Προστέθηκε στη λίστα αναμονής. Θα ειδοποιηθείτε αν ανοίξει θέση.", "Added to waitlist. We will notify you if a spot in a group opens up."))}>
-                  {t('Λίστα Αναμονής', 'Join Waitlist')}
+                <Button variant="outline" className="w-full border-gray-200 text-gray-700 hover:bg-gray-50" size="lg" disabled={isWaitlisted} onClick={handleJoinWaitlist}>
+                  {isWaitlisted ? t('Στη λίστα αναμονής ✓', 'On waitlist ✓') : t('Λίστα Αναμονής', 'Join Waitlist')}
                 </Button>
               </div>
               <div className="text-[10px] text-gray-500 font-medium bg-gray-50 rounded text-center p-3 leading-relaxed tracking-wide">

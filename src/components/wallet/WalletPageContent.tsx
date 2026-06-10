@@ -1,21 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CreditCard, Euro, ArrowUpRight, ArrowDownRight, Clock, Building2, CheckCircle2 } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
-import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { toast } from 'sonner';
 
 export default function WalletPageContent() {
   const { t } = useLanguage();
   const a = usePageContrast();
+  const [txFilter, setTxFilter] = useState<'all' | 'month' | 'last'>('all');
+  const [showWithdraw, setShowWithdraw] = useState(false);
+  const [showPayouts, setShowPayouts] = useState(false);
 
   const transactions = [
     { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: 'Oct 12, 2024', desc: t('Μεταφορά στην τράπεζα 4092', 'Transfer to Bank ****4092') },
     { id: '2', type: 'Earnings', amount: 45.00, status: t('Διαθέσιμο', 'Available'), date: 'Oct 10, 2024', desc: t('Πωλήσεις: Yoga στο Πάρκο', 'Ticket sales: Yoga in the Park') },
     { id: '3', type: 'Earnings', amount: 25.00, status: t('Σε Επεξεργασία', 'Processing'), date: 'Oct 14, 2024', desc: t('Πωλήσεις: Comedy Night', 'Ticket sales: Comedy Night') },
   ];
+
+  const filteredTx = txFilter === 'all'
+    ? transactions
+    : transactions.filter((tx) => txFilter === 'month' ? tx.date.includes('Oct') : tx.date.includes('Sep'));
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
@@ -31,7 +38,7 @@ export default function WalletPageContent() {
             <h3 className="text-xs font-bold tracking-wide">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
           <p className="text-4xl font-black mb-4">€345.50</p>
-          <Button className={cn("w-full", a.withdrawBtn)}>
+          <Button className={cn("w-full", a.withdrawBtn)} onClick={() => setShowWithdraw(true)}>
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
         </Card>
@@ -57,14 +64,19 @@ export default function WalletPageContent() {
               <p className={cn("text-xs font-medium", a.sub)}>Chase ****4092</p>
             </div>
           </div>
-          <Button variant="outline" size="sm" className="w-full text-xs">{t('Διαχείριση', 'Manage Payouts')}</Button>
+          <Button variant="outline" size="sm" className="w-full text-xs" onClick={() => setShowPayouts(true)}>{t('Διαχείριση', 'Manage Payouts')}</Button>
         </Card>
       </div>
 
       <Card className="mt-2">
         <div className={cn("p-4 md:p-6 border-b flex items-center justify-between", a.borderB)}>
           <h2 className={cn("text-base font-bold", a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
-          <select className={cn("text-xs border rounded-lg px-2 py-1 outline-none", a.selectBg)}>
+          <select
+            className={cn("text-xs border rounded-2xl px-2 py-1 outline-none", a.selectBg)}
+            value={txFilter}
+            onChange={(e) => setTxFilter(e.target.value as typeof txFilter)}
+            aria-label={t('Φίλτρο συναλλαγών', 'Transaction filter')}
+          >
             <option>{t('Όλες', 'All Time')}</option>
             <option>{t('Αυτόν τον Μήνα', 'This Month')}</option>
             <option>{t('Προηγούμενο', 'Last Month')}</option>
@@ -72,7 +84,7 @@ export default function WalletPageContent() {
         </div>
         <div className={a.divider}>
           <div className={cn("divide-y", a.divider)}>
-            {transactions.map((tx) => (
+            {filteredTx.map((tx) => (
               <div key={tx.id} className={cn("p-4 md:p-6 flex items-center justify-between transition-colors", a.txHover)}>
                 <div className="flex items-center gap-4">
                   <div className={cn("w-10 h-10 rounded-full flex items-center justify-center shrink-0",
@@ -106,6 +118,29 @@ export default function WalletPageContent() {
           </div>
         </div>
       </Card>
+
+      {showWithdraw && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" onClick={() => setShowWithdraw(false)}>
+          <Card className="max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className={cn('font-bold text-lg mb-2', a.head)}>{t('Ανάληψη χρημάτων', 'Withdraw Funds')}</h3>
+            <p className={cn('text-sm mb-4', a.sub)}>{t('Demo ροή — η ανάληψη καταγράφεται τοπικά.', 'Demo flow — withdrawal is logged locally only.')}</p>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setShowWithdraw(false)}>{t('Ακύρωση', 'Cancel')}</Button>
+              <Button onClick={() => { setShowWithdraw(false); toast.success(t('Η ανάληψη υποβλήθηκε (demo)', 'Withdrawal submitted (demo)')); }}>{t('Επιβεβαίωση', 'Confirm')}</Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {showPayouts && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" onClick={() => setShowPayouts(false)}>
+          <Card className="max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className={cn('font-bold text-lg mb-2', a.head)}>{t('Διαχείριση πληρωμών', 'Manage Payouts')}</h3>
+            <p className={cn('text-sm mb-4', a.sub)}>{t('Demo — ενημέρωση τραπεζικού λογαριασμού σύντομα.', 'Demo — bank account update coming soon.')}</p>
+            <Button className="w-full" onClick={() => { setShowPayouts(false); toast.info(t('Αποθηκεύτηκε (demo)', 'Saved (demo)')); }}>{t('Κλείσιμο', 'Close')}</Button>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

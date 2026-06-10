@@ -214,7 +214,7 @@ export function HomeLoggedInHero({
               <button
                 type="button"
                 onClick={() => navigate('/nearby')}
-                className="btn-gradient flex items-center gap-1.5 !rounded-xl !text-[12px] !px-3 !py-1.5"
+                className="btn-gradient flex items-center gap-1.5 !rounded-2xl !text-[12px] !px-3 !py-1.5"
               >
                 <MapIcon className="w-3.5 h-3.5" />
                 {t('Αναζήτηση στον Χάρτη', 'Search on Map')}

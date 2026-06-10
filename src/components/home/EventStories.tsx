@@ -10,6 +10,7 @@ import { useHomeTheme } from "../../hooks/useHomeTheme";
 import { cn } from "../../lib/utils";
 import { isEventSeekingHost } from "../../lib/storyEventOrdering";
 import { StoryViewer } from "./StoryViewer";
+import { HorizontalScrollArrows } from "../ui/HorizontalScrollArrows";
 
 const RING_BY_ACCENT: Record<string, string> = {
   cyan: "from-cyan-400 via-teal-400 to-emerald-400",
@@ -51,7 +52,10 @@ export function EventStories({ events }: EventStoriesProps) {
         </span>
       </div>
 
-      <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 noscrollbar">
+      <HorizontalScrollArrows
+        itemCount={events.length}
+        scrollClassName="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 noscrollbar"
+      >
         {events.map((e, idx) => {
           const seeksHost = isEventSeekingHost(e, groups);
           const seen = savedEvents.includes(e.id);
@@ -121,7 +125,7 @@ export function EventStories({ events }: EventStoriesProps) {
             </button>
           );
         })}
-      </div>
+      </HorizontalScrollArrows>
 
       {viewerIndex !== null && (
         <StoryViewer

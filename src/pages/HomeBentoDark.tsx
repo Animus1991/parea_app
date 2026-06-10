@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "../lib/i18n";
 import { EventStories } from "../components/home/EventStories";
+import { HomeBuddySeekStrip } from "../components/buddySeek/HomeBuddySeekStrip";
 import { ActiveBuddiesRail } from "../components/home/ActiveBuddiesRail";
 import { HomeQuickActions } from "../components/home/HomeQuickActions";
 import { HomeHeroModeBar } from "../components/home/HomeHeroModeBar";
@@ -29,6 +30,8 @@ import { useStoryEvents } from "../hooks/useStoryEvents";
 import { useHomeExternalEvents } from "../hooks/useHomeExternalEvents";
 import { useHomeScrollToFilters } from "../hooks/useHomeScrollToFilters";
 import { useHomeEventFeed } from "../hooks/useHomeEventFeed";
+import { HOME_TYPO } from "../lib/homeTypography";
+import { cn } from "../lib/utils";
 
 export default function HomeBentoDark() {
   const { t } = useLanguage();
@@ -72,6 +75,8 @@ export default function HomeBentoDark() {
     hasActiveFilters,
     activeFilterCount,
     clearAllFilters,
+    activeMood,
+    handleSelectMood,
   } = feed;
 
   const currentUser = feed.currentUser;
@@ -161,24 +166,24 @@ export default function HomeBentoDark() {
       >
         <HomeHeroModeBar className="relative z-10" />
         <div className="relative z-10 flex-1 w-full">
-          <div className="text-emerald-400 text-[14.21px] font-bold tracking-wide mb-4">
+          <div className={cn("text-emerald-400 mb-4", HOME_TYPO.heroBadge)}>
             {t("home.hero.badge", "Νεος τροπος εξοδου")}
           </div>
-          <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
+          <h1 className={cn(HOME_TYPO.heroTitle, "mb-4 max-w-2xl")}>
             {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">
               {t("home.hero.title2", "εμπειρίες")}
             </span>{" "}
             {t("home.hero.title3", "που ήδη θέλετε να ζήσετε.")}
           </h1>
-          <p className="text-white font-medium text-[14.42px] md:text-[16.48px] leading-relaxed max-w-xl mb-6">
+          <p className={cn("text-white max-w-xl mb-6", HOME_TYPO.heroSubtitle)}>
             {t(
               "home.hero.subtitle",
               "Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.",
             )}
           </p>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11.33px] font-bold tracking-wide text-white mb-6">
+          <div className={cn("flex flex-wrap items-center gap-x-4 gap-y-3 text-white mb-6", HOME_TYPO.heroStats)}>
             <span className="flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-emerald-400" />{" "}
               {t("home.hero.stat1", "Μικρες ομαδες")}
@@ -203,7 +208,7 @@ export default function HomeBentoDark() {
           <div className="flex gap-3 mb-6">
             <button
               onClick={() => navigate("/nearby")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 rounded-xl font-bold text-[13.58px] transition-colors"
+              className={cn("flex items-center gap-2 px-5 py-2.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 rounded-xl transition-colors", HOME_TYPO.heroMapBtn)}
               title={t("Εμφάνιση στον Χάρτη", "View on Map")}
             >
               <MapIcon className="w-4 h-4" />
@@ -249,6 +254,8 @@ export default function HomeBentoDark() {
 
       <EventStories events={storyEvents} />
 
+      <HomeBuddySeekStrip />
+
       <HomeQuickActions onScrollToCategories={scrollToFilters} />
       <ActiveBuddiesRail />
 
@@ -293,10 +300,10 @@ export default function HomeBentoDark() {
             <div className="w-8 h-8 bg-emerald-900/30 text-emerald-400 rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
               {step}
             </div>
-            <h3 className="font-bold text-white text-[14.63px] mb-1">
+            <h3 className={cn(HOME_TYPO.stepTitle, "text-white mb-1")}>
               {title}
             </h3>
-            <p className="text-[12.38px] leading-relaxed text-white font-medium">
+            <p className={cn(HOME_TYPO.stepBody, "text-white")}>
               {body}
             </p>
           </div>
@@ -325,6 +332,8 @@ export default function HomeBentoDark() {
         onClearAll={handleClearAll}
         onOpenMobileFilters={() => setFilterSheetOpen(true)}
         activeFilterCount={activeFilterCount}
+        activeMood={activeMood}
+        onSelectMood={handleSelectMood}
       />
 
 
@@ -334,13 +343,13 @@ export default function HomeBentoDark() {
           <div className="flex bg-gray-800 border border-gray-700 p-1 rounded-lg w-fit">
             <button
               onClick={() => setFeedType("For You")}
-              className={`px-4 py-1.5 rounded-md text-[12.73px] font-bold transition-colors ${feedType === "For You" ? "bg-gray-800 border-gray-700 text-white shadow-sm text-white" : "text-white hover:text-white"}`}
+              className={cn("px-4 py-1.5 rounded-md transition-colors", HOME_TYPO.feedTab, feedType === "For You" ? "bg-gray-800 border-gray-700 text-white shadow-sm" : "text-white hover:text-white")}
             >
               {t("home.feed.for_you", "Για Σένα")}
             </button>
             <button
               onClick={() => setFeedType("Discover")}
-              className={`px-4 py-1.5 rounded-md text-[12.73px] font-bold transition-colors ${feedType === "Discover" ? "bg-gray-800 border-gray-700 text-white shadow-sm text-white" : "text-white hover:text-white"}`}
+              className={cn("px-4 py-1.5 rounded-md transition-colors", HOME_TYPO.feedTab, feedType === "Discover" ? "bg-gray-800 border-gray-700 text-white shadow-sm" : "text-white hover:text-white")}
             >
               {t("home.feed.discover", "Ανακάλυψε")}
             </button>

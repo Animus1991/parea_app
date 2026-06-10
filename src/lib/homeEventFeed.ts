@@ -26,6 +26,7 @@ export interface HomeEventFilterInput {
   dateFilter: HomeDateFilter;
   safetyFilter: HomeSafetyFilter;
   radiusFilter: HomeRadiusFilter;
+  moodCategories?: string[];
   seekingHostOnly: boolean;
   isSeekingHost: (event: Event) => boolean;
   getDistance: (eventId: string, lat?: number, lng?: number) => number | null;
@@ -43,6 +44,7 @@ export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
     dateFilter,
     safetyFilter,
     radiusFilter,
+    moodCategories = [],
     seekingHostOnly,
     isSeekingHost,
     getDistance,
@@ -74,6 +76,7 @@ export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
     }
 
     if (activeCategory !== 'All' && e.category !== activeCategory) return false;
+    if (moodCategories.length > 0 && !moodCategories.includes(e.category)) return false;
     if (tagFilter !== 'All' && !(e.tags ?? []).includes(tagFilter)) return false;
     if (priceFilter === 'Free' && e.isPaid) return false;
     if (priceFilter === 'Paid' && !e.isPaid) return false;

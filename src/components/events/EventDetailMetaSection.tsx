@@ -3,75 +3,10 @@ import { Calendar, Clock, MapPin, ShieldCheck } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { useLanguage } from '../../lib/i18n';
 import { getEventParticipationRuleText } from '../../lib/eventParticipationRule';
+import { getEventDetailContentTokens } from '../../lib/eventDetailDesignTokens';
 import { cn } from '../../lib/utils';
 import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventDetailMapSection';
-
-interface MetaTokens {
-  label: string;
-  value: string;
-  muted: string;
-  trustLink: string;
-}
-
-const TOKENS: Record<EventDetailMapAccent, { light: MetaTokens; dark: MetaTokens }> = {
-  classic: {
-    light: {
-      label: 'text-gray-500',
-      value: 'text-[#111827]',
-      muted: 'text-gray-400',
-      trustLink: 'text-cyan-600',
-    },
-    dark: {
-      label: 'text-gray-300',
-      value: 'text-white',
-      muted: 'text-gray-400',
-      trustLink: 'text-cyan-400',
-    },
-  },
-  vibrant: {
-    light: {
-      label: 'text-gray-500',
-      value: 'text-[#111827]',
-      muted: 'text-gray-400',
-      trustLink: 'text-fuchsia-600',
-    },
-    dark: {
-      label: 'text-white',
-      value: 'text-white',
-      muted: 'text-white',
-      trustLink: 'text-fuchsia-400',
-    },
-  },
-  neon: {
-    light: {
-      label: 'text-gray-500',
-      value: 'text-[#111827]',
-      muted: 'text-gray-400',
-      trustLink: 'text-emerald-600',
-    },
-    dark: {
-      label: 'text-white',
-      value: 'text-white',
-      muted: 'text-white',
-      trustLink: 'text-emerald-400',
-    },
-  },
-  bento: {
-    light: {
-      label: 'text-black',
-      value: 'text-[#111827]',
-      muted: 'text-black',
-      trustLink: 'text-indigo-600',
-    },
-    dark: {
-      label: 'text-white',
-      value: 'text-white',
-      muted: 'text-white',
-      trustLink: 'text-indigo-400',
-    },
-  },
-};
 
 export interface EventDetailMetaSectionProps {
   event: Event;
@@ -87,7 +22,7 @@ export function EventDetailMetaSection({
   className,
 }: EventDetailMetaSectionProps) {
   const { t } = useLanguage();
-  const tok = darkSurface ? TOKENS[accent].dark : TOKENS[accent].light;
+  const { content } = getEventDetailContentTokens(accent, darkSurface);
   const ruleText = getEventParticipationRuleText(event.minTrustTierAccess, t);
 
   return (
@@ -96,12 +31,12 @@ export function EventDetailMetaSection({
         <div
           className={cn(
             'flex items-center gap-1.5 font-bold tracking-wide text-[10px]',
-            tok.label,
+            content.metaLabel,
           )}
         >
           <Calendar className="h-3.5 w-3.5" /> {t('Ημερομηνία', 'Date')}
         </div>
-        <p className={cn('font-medium text-[13px]', tok.value)}>
+        <p className={cn('font-medium text-[13px]', content.metaValue)}>
           {format(parseISO(event.date), 'EEEE, MMMM d, yyyy')}
         </p>
       </div>
@@ -109,15 +44,15 @@ export function EventDetailMetaSection({
         <div
           className={cn(
             'flex items-center gap-1.5 font-bold tracking-wide text-[10px]',
-            tok.label,
+            content.metaLabel,
           )}
         >
           <Clock className="h-3.5 w-3.5" /> {t('Ώρα', 'Time')}
         </div>
-        <p className={cn('font-medium text-[13px]', tok.value)}>
+        <p className={cn('font-medium text-[13px]', content.metaValue)}>
           {event.time} ({event.duration})
         </p>
-        <p className={cn('text-[11px] mt-0.5 font-medium', tok.muted)}>
+        <p className={cn('text-[11px] mt-0.5 font-medium', content.metaMuted)}>
           {event.timeZone || t('Τοπική Ώρα', 'Local Time')}
         </p>
       </div>
@@ -126,13 +61,13 @@ export function EventDetailMetaSection({
           <div
             className={cn(
               'flex items-center gap-1.5 font-bold tracking-wide text-[10px]',
-              tok.label,
+              content.metaLabel,
             )}
           >
             <MapPin className="h-3.5 w-3.5" /> {t('Τοποθεσία', 'Location')}
           </div>
-          <p className={cn('font-medium text-[13px]', tok.value)}>{event.locationArea}</p>
-          <p className={cn('text-[11px] mt-0.5', tok.muted)}>
+          <p className={cn('font-medium text-[13px]', content.metaValue)}>{event.locationArea}</p>
+          <p className={cn('text-[11px] mt-0.5', content.metaMuted)}>
             {t(
               'Το ακριβές σημείο συνάντησης εμφανίζεται μετά την επιβεβαίωση.',
               'Exact meeting point revealed upon confirmation.',
@@ -144,17 +79,17 @@ export function EventDetailMetaSection({
         <div
           className={cn(
             'flex items-center gap-1.5 font-bold tracking-wide text-[10px]',
-            tok.label,
+            content.metaLabel,
           )}
         >
           <ShieldCheck className="h-3.5 w-3.5" />{' '}
           {t('Κανόνες Συμμετοχής', 'Participation Rules')}
         </div>
         <div className="flex items-center gap-2">
-          <p className={cn('font-medium text-[13px] capitalize', tok.value)}>{ruleText}</p>
+          <p className={cn('font-medium text-[13px] capitalize', content.metaValue)}>{ruleText}</p>
           <Link
             to="/trust"
-            className={cn('text-[11px] font-bold underline', tok.trustLink)}
+            className={cn('text-[11px] font-bold underline', content.trustLink)}
           >
             {t('Γιατί;', 'Why?')}
           </Link>

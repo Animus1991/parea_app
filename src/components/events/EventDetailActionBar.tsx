@@ -1,6 +1,7 @@
-import { Calendar, Bookmark, QrCode, Share } from 'lucide-react';
+import { Calendar, Bookmark, QrCode, Share, Download } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
+import type { EventCalendarAvailability } from '../../lib/eventCalendarExport';
 
 export type EventDetailAccent = 'classic' | 'vibrant' | 'neon' | 'bento';
 
@@ -61,7 +62,9 @@ export interface EventDetailActionBarProps {
   onQr: () => void;
   onShare: () => void;
   isCopied: boolean;
-  onAddToCalendar: () => void;
+  onAddToGoogleCalendar: () => void;
+  onDownloadIcs: () => void;
+  calendarAvailability?: EventCalendarAvailability;
   className?: string;
 }
 
@@ -72,17 +75,21 @@ export function EventDetailActionBar({
   onQr,
   onShare,
   isCopied,
-  onAddToCalendar,
+  onAddToGoogleCalendar,
+  onDownloadIcs,
+  calendarAvailability,
   className,
   darkSurface = false,
 }: EventDetailActionBarProps) {
   const { t } = useLanguage();
   const a = (darkSurface ? ACCENT_DARK : ACCENT_LIGHT)[accent];
+  const calendarOk = calendarAvailability?.ok !== false;
 
   const btn = 'flex items-center gap-2 text-[10px] font-bold tracking-wider transition-colors px-3 py-1.5 rounded-full';
 
   return (
-    <div className={cn('flex gap-2 flex-wrap justify-end', className)}>
+    <div className={cn('flex flex-col items-end gap-1', className)}>
+    <div className="flex gap-2 flex-wrap justify-end">
       <button type="button" onClick={onSave} className={cn(btn, isSaved ? a.saved : a.neutral)}>
         <Bookmark className={cn('h-3.5 w-3.5', isSaved && 'fill-current')} />
         {isSaved ? t('Αποθηκεύτηκε', 'Saved') : t('Αποθήκευση Εκδήλωσης', 'Save Event')}
@@ -95,10 +102,30 @@ export function EventDetailActionBar({
         <Share className="h-3.5 w-3.5" />
         {isCopied ? t('Αντιγράφηκε!', 'Link Copied!') : t('Κοινοποίηση', 'Share Event')}
       </button>
-      <button type="button" onClick={onAddToCalendar} className={cn(btn, a.neutral)}>
+      <button
+        type="button"
+        onClick={onAddToGoogleCalendar}
+        disabled={!calendarOk}
+        className={cn(btn, a.action, !calendarOk && 'opacity-50 cursor-not-allowed')}
+      >
         <Calendar className="h-3.5 w-3.5" />
-        {t('Προσθήκη στο Ημερολόγιο', 'Add to Calendar')}
+        {t('Google Calendar', 'Google Calendar')}
       </button>
+      <button
+        type="button"
+        onClick={onDownloadIcs}
+        disabled={!calendarOk}
+        className={cn(btn, a.neutral, !calendarOk && 'opacity-50 cursor-not-allowed')}
+      >
+        <Download className="h-3.5 w-3.5" />
+        {t('Λήψη .ics', 'Download ICS')}
+      </button>
+    </div>
+    {!calendarOk && calendarAvailability && (
+      <p className="text-[10px] font-medium text-gray-500 text-right max-w-xs">
+        {t(calendarAvailability.reasonEl, calendarAvailability.reasonEn)}
+      </p>
+    )}
     </div>
   );
 }

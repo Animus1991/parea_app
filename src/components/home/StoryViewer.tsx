@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { el as elLocale } from "date-fns/locale";
 import { X, MapPin, Crown, ChevronRight, CalendarDays } from "lucide-react";
+import { SlideNavArrows } from "../ui/SlideNavArrows";
 import { toast } from "sonner";
 import type { Event } from "../../types";
 import { useLanguage } from "../../lib/i18n";
@@ -36,16 +37,19 @@ export function StoryViewer({
   const currentUser = useStore((s) => s.currentUser);
   const becomeEventHost = useStore((s) => s.becomeEventHost);
 
-  const goNext = useCallback(() => {
-    setProgress(0);
-    setIndex((i) => {
-      if (i >= events.length - 1) {
-        onClose();
-        return i;
-      }
-      return i + 1;
-    });
-  }, [events.length, onClose]);
+  const goNext = useCallback(
+    (opts?: { fromAuto?: boolean }) => {
+      setProgress(0);
+      setIndex((i) => {
+        if (i >= events.length - 1) {
+          if (opts?.fromAuto) onClose();
+          return i;
+        }
+        return i + 1;
+      });
+    },
+    [events.length, onClose],
+  );
 
   const goPrev = useCallback(() => {
     setProgress(0);
@@ -61,7 +65,7 @@ export function StoryViewer({
       setProgress(p);
       if (p >= 1) {
         clearInterval(id);
-        goNext();
+        goNext({ fromAuto: true });
       }
     }, TICK_MS);
     return () => clearInterval(id);
@@ -121,8 +125,19 @@ export function StoryViewer({
     navigate(`/events/${event.id}`);
   };
 
+  const hasMultiple = events.length > 1;
+
   return createPortal(
     <div className="fixed inset-0 z-[120] bg-black flex items-center justify-center select-none">
+      {hasMultiple && (
+        <SlideNavArrows
+          placement="outside"
+          canPrev={index > 0}
+          canNext={index < events.length - 1}
+          onPrev={goPrev}
+          onNext={() => goNext()}
+        />
+      )}
       <div className="relative w-full h-full max-w-md mx-auto overflow-hidden">
         {event.imageUrl ? (
           <img
@@ -162,21 +177,27 @@ export function StoryViewer({
           <X className="w-5 h-5" />
         </button>
 
-        {/* tap zones (avoid bottom CTA area) */}
-        <button
-          aria-label={t("Προηγούμενο", "Previous")}
-          onClick={goPrev}
-          onPointerDown={() => setPaused(true)}
-          onPointerUp={() => setPaused(false)}
-          className="absolute left-0 top-12 bottom-44 w-1/3 z-10"
-        />
-        <button
-          aria-label={t("Επόμενο", "Next")}
-          onClick={goNext}
-          onPointerDown={() => setPaused(true)}
-          onPointerUp={() => setPaused(false)}
-          className="absolute right-0 top-12 bottom-44 w-1/3 z-10"
-        />
+        {/* tap zones on mobile (avoid bottom CTA area) */}
+        {hasMultiple && (
+          <>
+            <button
+              type="button"
+              aria-label={t("Προηγούμενο", "Previous")}
+              onClick={goPrev}
+              onPointerDown={() => setPaused(true)}
+              onPointerUp={() => setPaused(false)}
+              className="absolute left-0 top-12 bottom-44 w-1/3 z-10 md:hidden"
+            />
+            <button
+              type="button"
+              aria-label={t("Επόμενο", "Next")}
+              onClick={() => goNext()}
+              onPointerDown={() => setPaused(true)}
+              onPointerUp={() => setPaused(false)}
+              className="absolute right-0 top-12 bottom-44 w-1/3 z-10 md:hidden"
+            />
+          </>
+        )}
 
         {/* bottom content */}
         <div className="absolute bottom-0 left-0 right-0 p-5 space-y-2.5 z-20">
@@ -204,7 +225,7 @@ export function StoryViewer({
           <div className="flex gap-2 pt-1.5 flex-wrap">
             <button
               onClick={openEvent}
-              className="flex-1 min-w-[120px] bg-white text-gray-900 font-bold rounded-xl py-2.5 text-[13.5px] flex items-center justify-center gap-1.5 hover:bg-gray-100 transition-colors"
+              className="flex-1 min-w-[120px] bg-white text-gray-900 font-bold rounded-2xl py-2.5 text-[13.5px] flex items-center justify-center gap-1.5 hover:bg-gray-100 transition-colors"
             >
               {t("Δες εκδήλωση", "View event")}
               <ChevronRight className="w-4 h-4" />
@@ -216,7 +237,7 @@ export function StoryViewer({
                   onClose();
                   onOpenDaySchedule();
                 }}
-                className="flex-1 min-w-[120px] bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl py-2.5 text-[13.5px] transition-colors"
+                className="flex-1 min-w-[120px] bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-2xl py-2.5 text-[13.5px] transition-colors"
               >
                 {t("Πρόγραμμα Ημέρας", "Day Schedule")}
               </button>
@@ -224,7 +245,7 @@ export function StoryViewer({
             {seeksHost && (
               <button
                 onClick={handleBecomeHost}
-                className="flex-1 min-w-[120px] bg-amber-400 text-amber-950 font-bold rounded-xl py-2.5 text-[13.5px] flex items-center justify-center gap-1.5 hover:bg-amber-300 transition-colors"
+                className="flex-1 min-w-[120px] bg-amber-400 text-amber-950 font-bold rounded-2xl py-2.5 text-[13.5px] flex items-center justify-center gap-1.5 hover:bg-amber-300 transition-colors"
               >
                 <Crown className="w-4 h-4" />
                 {t("Γίνε Διοργανωτής", "Organize")}

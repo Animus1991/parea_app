@@ -45,7 +45,7 @@ const LIGHT: Record<EventDetailGroupAccent, AccentTokens> = {
     discountCorner: 'rounded-bl-2xl shadow-soft',
   },
   vibrant: {
-    card: 'rounded-xl border border-gray-200 bg-white p-4 shadow-sm',
+    card: 'rounded-2xl border border-gray-200 bg-white p-4 shadow-soft',
     hoverBorder: 'hover:border-fuchsia-300 hover:shadow-md',
     bar: 'from-fuchsia-400 to-purple-400',
     label: 'text-black',
@@ -56,12 +56,12 @@ const LIGHT: Record<EventDetailGroupAccent, AccentTokens> = {
     avatarBorder: 'border-gray-200',
     avatarFallback: 'bg-fuchsia-100 text-fuchsia-700',
     privateBox: 'text-black bg-gray-50 border-gray-100',
-    cta: 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-100 hover:bg-fuchsia-600 hover:text-white group-hover:bg-fuchsia-600 group-hover:text-white shadow-sm',
-    rounded: 'rounded-bl-lg shadow-sm',
-    discountCorner: 'rounded-bl-lg shadow-sm',
+    cta: 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-100 hover:bg-fuchsia-600 hover:text-white group-hover:bg-fuchsia-600 group-hover:text-white shadow-soft',
+    rounded: 'rounded-bl-lg shadow-soft',
+    discountCorner: 'rounded-bl-lg shadow-soft',
   },
   neon: {
-    card: 'rounded-xl border border-gray-200 bg-white p-4 shadow-sm',
+    card: 'rounded-2xl border border-gray-200 bg-white p-4 shadow-soft',
     hoverBorder: 'hover:border-emerald-300 hover:shadow-md',
     bar: 'from-emerald-400 to-purple-400',
     label: 'text-black',
@@ -72,12 +72,12 @@ const LIGHT: Record<EventDetailGroupAccent, AccentTokens> = {
     avatarBorder: 'border-gray-200',
     avatarFallback: 'bg-emerald-100 text-emerald-700',
     privateBox: 'text-black bg-gray-50 border-gray-100',
-    cta: 'bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-600 hover:text-white group-hover:bg-emerald-600 group-hover:text-white shadow-sm',
-    rounded: 'rounded-bl-lg shadow-sm',
-    discountCorner: 'rounded-bl-lg shadow-sm',
+    cta: 'bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-600 hover:text-white group-hover:bg-emerald-600 group-hover:text-white shadow-soft',
+    rounded: 'rounded-bl-lg shadow-soft',
+    discountCorner: 'rounded-bl-lg shadow-soft',
   },
   bento: {
-    card: 'rounded-xl border border-gray-200 bg-white p-4 shadow-sm',
+    card: 'rounded-2xl border border-gray-200 bg-white p-4 shadow-soft',
     hoverBorder: 'hover:border-indigo-300 hover:shadow-md',
     bar: 'from-indigo-400 to-purple-400',
     label: 'text-black',
@@ -88,9 +88,9 @@ const LIGHT: Record<EventDetailGroupAccent, AccentTokens> = {
     avatarBorder: 'border-gray-200',
     avatarFallback: 'bg-indigo-100 text-indigo-700',
     privateBox: 'text-black bg-gray-50 border-gray-100',
-    cta: 'bg-indigo-50 text-indigo-700 border border-indigo-100 hover:bg-indigo-600 hover:text-white group-hover:bg-indigo-600 group-hover:text-white shadow-sm',
-    rounded: 'rounded-bl-lg shadow-sm',
-    discountCorner: 'rounded-bl-lg shadow-sm',
+    cta: 'bg-indigo-50 text-indigo-700 border border-indigo-100 hover:bg-indigo-600 hover:text-white group-hover:bg-indigo-600 group-hover:text-white shadow-soft',
+    rounded: 'rounded-bl-lg shadow-soft',
+    discountCorner: 'rounded-bl-lg shadow-soft',
   },
 };
 
@@ -98,7 +98,7 @@ const DARK: Record<EventDetailGroupAccent, AccentTokens> = {
   classic: LIGHT.classic,
   vibrant: {
     ...LIGHT.vibrant,
-    card: 'rounded-xl border border-gray-700 bg-gray-800 p-4 shadow-sm',
+    card: 'rounded-2xl border border-gray-700 bg-gray-800 p-4 shadow-soft',
     hoverBorder: 'hover:border-fuchsia-300 hover:shadow-md',
     label: 'text-white',
     title: 'text-white',
@@ -110,7 +110,7 @@ const DARK: Record<EventDetailGroupAccent, AccentTokens> = {
   },
   neon: {
     ...LIGHT.neon,
-    card: 'rounded-xl border border-gray-700 bg-gray-800 p-4 shadow-sm',
+    card: 'rounded-2xl border border-gray-700 bg-gray-800 p-4 shadow-soft',
     hoverBorder: 'hover:border-emerald-300 hover:shadow-md',
     label: 'text-white',
     title: 'text-white',
@@ -122,7 +122,7 @@ const DARK: Record<EventDetailGroupAccent, AccentTokens> = {
   },
   bento: {
     ...LIGHT.bento,
-    card: 'rounded-xl border border-gray-700 bg-gray-800 p-4 shadow-sm',
+    card: 'rounded-2xl border border-gray-700 bg-gray-800 p-4 shadow-soft',
     hoverBorder: 'hover:border-emerald-300 hover:shadow-md',
     label: 'text-white',
     title: 'text-white',
@@ -180,6 +180,16 @@ export function EventDetailGroupCard({
           tok.bar,
         )}
       />
+
+      {group.isRecruiting && (
+        <div
+          className={cn(
+            'absolute top-2 right-2 bg-cyan-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-lg z-10',
+          )}
+        >
+          {t('Δέχεται μέλη', 'Recruiting')}
+        </div>
+      )}
 
       {(group.discountUnlocked || discountUnlockedTemp) && event.groupDiscount && (
         <div

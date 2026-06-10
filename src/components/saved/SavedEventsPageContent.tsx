@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Bookmark, MapPin, Calendar, Users, ArrowRight, Search, SlidersHorizontal, BookmarkX, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useNavigate, Link } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
@@ -61,13 +62,13 @@ export default function SavedEventsPageContent() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder={t('Αναζήτηση αποθηκευμένων...', 'Search saved...')}
-                className={cn("w-full pl-9 pr-4 py-2 rounded-xl border text-sm font-medium outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
+                className={cn("w-full pl-9 pr-4 py-2 rounded-2xl border text-sm font-medium outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
               />
             </div>
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as 'date' | 'name')}
-              className={cn("px-3 py-2 rounded-xl border text-sm font-medium outline-none cursor-pointer", a.inputBg)}
+              className={cn("px-3 py-2 rounded-2xl border text-sm font-medium outline-none cursor-pointer", a.inputBg)}
             >
               <option value="date">{t('Ημερομηνία', 'By Date')}</option>
               <option value="name">{t('Όνομα', 'By Name')}</option>
@@ -100,8 +101,17 @@ export default function SavedEventsPageContent() {
           {savedEvents.map(event => (
             <Card
               key={event.id}
-              className={cn("overflow-hidden flex flex-col group cursor-pointer transition-all", a.cardHover)}
+              className={cn("overflow-hidden flex flex-col group cursor-pointer transition-all focus-visible:ring-2 focus-visible:ring-cyan-500", a.cardHover)}
               onClick={() => navigate(`/events/${event.id}`)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e: React.KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate(`/events/${event.id}`);
+                }
+              }}
+              aria-label={t(`Άνοιγμα εκδήλωσης ${event.title}`, `Open event ${event.title}`)}
             >
               <div className={cn("h-32 relative overflow-hidden shrink-0", a.isDark ? "bg-gray-700/30" : "bg-gray-200")}>
                 <img
@@ -111,9 +121,19 @@ export default function SavedEventsPageContent() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <button
-                  onClick={(e) => { e.stopPropagation(); toggleSavedEvent(event.id); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleSavedEvent(event.id);
+                    toast.info(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'), {
+                      action: {
+                        label: t('Αναίρεση', 'Undo'),
+                        onClick: () => toggleSavedEvent(event.id),
+                      },
+                    });
+                  }}
                   className={cn("absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-soft z-10 transition-colors", a.isDark ? "bg-gray-800/80 hover:bg-gray-700" : "bg-white hover:bg-gray-50")}
                   title={t('Αφαίρεση', 'Remove')}
+                  aria-label={t('Αφαίρεση από τα αποθηκευμένα', 'Remove from saved')}
                 >
                   <Bookmark className={cn("w-4 h-4 fill-current", a.statVal)} />
                 </button>

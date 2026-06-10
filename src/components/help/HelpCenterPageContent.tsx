@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Search, Book, MessageCircle, FileText, ChevronRight, ChevronDown, Zap, Shield, CreditCard, Users } from 'lucide-react';
 import { Card } from '../common/Card';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export default function HelpCenterPageContent() {
   const { t } = useLanguage();
   const a = usePageContrast();
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  const [expandedArticle, setExpandedArticle] = useState<number | null>(null);
+  const [topicFilter, setTopicFilter] = useState<string | null>(null);
 
   const articles = [
     { id: 1, title: t('Πώς να αναφέρετε μια μη εμφάνιση', 'How to report a no-show'), category: t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety') },
@@ -32,7 +37,22 @@ export default function HelpCenterPageContent() {
     { label: t('Γρήγορη Βοήθεια', 'Quick Help'), icon: Zap, color: a.isDark ? 'text-amber-400 bg-amber-900/20' : 'text-amber-600 bg-amber-50' },
   ];
 
-  const filtered = articles.filter(ar => ar.title.toLowerCase().includes(search.toLowerCase()));
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase();
+    return articles.filter((ar) => {
+      const matchesSearch = !q || ar.title.toLowerCase().includes(q) || ar.category.toLowerCase().includes(q);
+      const matchesTopic = !topicFilter || ar.category.toLowerCase().includes(topicFilter.toLowerCase());
+      return matchesSearch && matchesTopic;
+    });
+  }, [articles, search, topicFilter]);
+
+  const filteredFaqs = useMemo(() => {
+    const q = search.toLowerCase();
+    if (!q) return faqs;
+    return faqs.filter((f) => f.q.toLowerCase().includes(q) || f.a.toLowerCase().includes(q));
+  }, [faqs, search]);
+
+  const hasResults = filtered.length > 0 || filteredFaqs.length > 0;
 
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
@@ -49,7 +69,7 @@ export default function HelpCenterPageContent() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t('Αναζήτηση άρθρων...', 'Search articles...')}
-            className={cn("w-full pl-10 pr-4 py-2.5 rounded-xl text-base font-medium focus:outline-none focus:ring-2", a.inputBg)}
+            className={cn("w-full pl-10 pr-4 py-2.5 rounded-2xl text-base font-medium focus:outline-none focus:ring-2", a.inputBg)}
           />
         </div>
       </div>
@@ -59,7 +79,12 @@ export default function HelpCenterPageContent() {
         {popularTopics.map(topic => {
           const Icon = topic.icon;
           return (
-            <button key={topic.label} className={cn("flex items-center gap-2 p-3 rounded-xl border transition-all", a.topicBg)}>
+            <button
+              key={topic.label}
+              type="button"
+              onClick={() => setTopicFilter(topicFilter === topic.label ? null : topic.label)}
+              className={cn("flex items-center gap-2 p-3 rounded-xl border transition-all w-full", a.topicBg, topicFilter === topic.label && 'ring-2 ring-cyan-500/40')}
+            >
               <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", topic.color)}>
                 <Icon className="w-4 h-4" />
               </div>
@@ -73,7 +98,7 @@ export default function HelpCenterPageContent() {
       <div>
         <h2 className={cn("text-[11px] font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Συχνές Ερωτήσεις', 'FAQ')}</h2>
         <div className="space-y-2">
-          {faqs.map(faq => (
+          {filteredFaqs.map(faq => (
             <Card key={faq.id} className="overflow-hidden">
               <button
                 onClick={() => setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)}
@@ -97,16 +122,31 @@ export default function HelpCenterPageContent() {
         <h2 className={cn("text-[11px] font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Άρθρα Βοήθειας', 'Help Articles')}</h2>
         <div className="space-y-3">
           {filtered.map(article => (
-            <Card key={article.id} className={cn("p-4 flex items-center justify-between cursor-pointer transition-colors", a.articleHover)}>
+            <Card
+              key={article.id}
+              className={cn("p-4 flex items-center justify-between cursor-pointer transition-colors", a.articleHover)}
+              onClick={() => setExpandedArticle(expandedArticle === article.id ? null : article.id)}
+            >
               <div>
                 <span className={cn("text-xs font-bold tracking-wide", a.articleCat)}>{article.category}</span>
                 <h3 className={cn("font-bold text-base mt-0.5", a.head)}>{article.title}</h3>
               </div>
-              <ChevronRight className={cn("w-4 h-4 shrink-0", a.chevron)} />
+              <ChevronRight className={cn("w-4 h-4 shrink-0", a.chevron, expandedArticle === article.id && 'rotate-90')} />
             </Card>
           ))}
+          {filtered.length === 0 && (
+            <Card className="p-6 text-center">
+              <p className={cn('text-sm font-medium', a.muted)}>{t('Κανένα άρθρο δεν ταιριάζει.', 'No articles match your search.')}</p>
+            </Card>
+          )}
         </div>
       </div>
+
+      {!hasResults && search && (
+        <Card className="p-6 text-center">
+          <p className={cn('text-sm font-medium', a.muted)}>{t('Δεν βρέθηκαν αποτελέσματα. Δοκιμάστε άλλους όρους.', 'No results found. Try different terms.')}</p>
+        </Card>
+      )}
 
       {/* Contact */}
       <Card className="p-6 text-center">
@@ -118,9 +158,13 @@ export default function HelpCenterPageContent() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
           </span>
-          <span className="text-xs font-bold text-green-500">{t('Online τώρα', 'Online now')} • ~2min</span>
+          <span className="text-xs font-bold text-green-500">{t('Υποστήριξη demo', 'Demo support')} • ~2min</span>
         </div>
-        <button className={cn("px-4 py-2 text-white text-sm font-bold rounded-lg transition-colors", a.contactBtn)}>
+        <button
+          type="button"
+          className={cn("px-4 py-2 text-white text-sm font-bold rounded-lg transition-colors", a.contactBtn)}
+          onClick={() => { toast.success(t('Το μήνυμα στάλθηκε (demo)', 'Message sent (demo)')); navigate('/report'); }}
+        >
           {t('Αποστολή μηνύματος', 'Send message')}
         </button>
       </Card>

@@ -107,7 +107,7 @@ export function HomeQuickActions({
                 h.card,
               )}
             >
-              <div className="w-9 h-9 rounded-xl bg-cyan-50 flex items-center justify-center mb-2">
+              <div className="w-9 h-9 rounded-2xl bg-cyan-50 flex items-center justify-center mb-2">
                 <Icon className="w-4 h-4 text-cyan-600" />
               </div>
               <h3 className={cn('font-bold text-[14px] mb-1', h.heading)}>{title}</h3>
@@ -128,7 +128,7 @@ export function HomeQuickActions({
             type="button"
             onClick={onClick}
             className={cn(
-              'flex flex-col items-center justify-center p-3 rounded-3xl border transition-all hover:-translate-y-1 shadow-sm',
+              'flex flex-col items-center justify-center p-3 rounded-2xl border transition-all hover:-translate-y-0.5 shadow-soft',
               p.cardSurface,
               p.borderB,
               p.cardHover,
@@ -153,7 +153,7 @@ export function HomeQuickActions({
             type="button"
             onClick={() => navigate(to)}
             className={cn(
-              'p-5 rounded-3xl border text-left transition-all hover:-translate-y-0.5 shadow-sm',
+              'p-5 rounded-2xl border text-left transition-all hover:-translate-y-0.5 shadow-soft',
               p.cardSurface,
               p.borderB,
               p.cardHover,
@@ -167,8 +167,8 @@ export function HomeQuickActions({
             >
               <Icon className="w-5 h-5" />
             </div>
-            <h3 className={cn('text-sm font-extrabold mb-1', p.head)}>{title}</h3>
-            <p className={cn('text-xs font-medium', p.sub)}>{body}</p>
+            <h3 className={cn('font-bold text-[14px] mb-1', p.head)}>{title}</h3>
+            <p className={cn('text-[12px] font-medium', p.sub)}>{body}</p>
           </button>
         ))}
       </div>

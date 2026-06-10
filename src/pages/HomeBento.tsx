@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "../lib/i18n";
 import { EventStories } from "../components/home/EventStories";
+import { HomeBuddySeekStrip } from "../components/buddySeek/HomeBuddySeekStrip";
 import { ActiveBuddiesRail } from "../components/home/ActiveBuddiesRail";
 import { HomeQuickActions } from "../components/home/HomeQuickActions";
 import { HomeHeroModeBar } from "../components/home/HomeHeroModeBar";
@@ -29,6 +30,8 @@ import { useStoryEvents } from "../hooks/useStoryEvents";
 import { useHomeExternalEvents } from "../hooks/useHomeExternalEvents";
 import { useHomeScrollToFilters } from "../hooks/useHomeScrollToFilters";
 import { useHomeEventFeed } from "../hooks/useHomeEventFeed";
+import { HOME_TYPO } from "../lib/homeTypography";
+import { cn } from "../lib/utils";
 
 export default function HomeBento() {
   const { t } = useLanguage();
@@ -72,6 +75,8 @@ export default function HomeBento() {
     hasActiveFilters,
     activeFilterCount,
     clearAllFilters,
+    activeMood,
+    handleSelectMood,
   } = feed;
 
   const currentUser = feed.currentUser;
@@ -161,24 +166,24 @@ export default function HomeBento() {
       >
         <HomeHeroModeBar className="relative z-10" />
         <div className="relative z-10 flex-1 w-full">
-          <div className="text-indigo-500 text-[14.21px] font-bold tracking-wide mb-4">
+          <div className={cn("text-indigo-500 mb-4", HOME_TYPO.heroBadge)}>
             {t("home.hero.badge", "Νεος τροπος εξοδου")}
           </div>
-          <h1 className="text-[17.33px] md:text-[22.77px] font-bold tracking-tight mb-4 leading-[1.1] max-w-2xl">
+          <h1 className={cn(HOME_TYPO.heroTitle, "mb-4 max-w-2xl")}>
             {t("home.hero.title1", "Βρείτε παρέα για τις")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">
               {t("home.hero.title2", "εμπειρίες")}
             </span>{" "}
             {t("home.hero.title3", "που ήδη θέλετε να ζήσετε.")}
           </h1>
-          <p className="text-gray-500 font-medium text-[14.42px] md:text-[16.48px] leading-relaxed max-w-xl mb-6">
+          <p className={cn("text-gray-500 max-w-xl mb-6", HOME_TYPO.heroSubtitle)}>
             {t(
               "home.hero.subtitle",
               "Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.",
             )}
           </p>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-[11.33px] font-bold tracking-wide text-gray-400 mb-6">
+          <div className={cn("flex flex-wrap items-center gap-x-4 gap-y-3 text-gray-400 mb-6", HOME_TYPO.heroStats)}>
             <span className="flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-indigo-600" />{" "}
               {t("home.hero.stat1", "Μικρες ομαδες")}
@@ -203,7 +208,7 @@ export default function HomeBento() {
           <div className="flex gap-3 mb-6">
             <button
               onClick={() => navigate("/nearby")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 rounded-xl font-bold text-[13.58px] transition-colors"
+              className={cn("flex items-center gap-2 px-5 py-2.5 bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100 rounded-xl transition-colors", HOME_TYPO.heroMapBtn)}
               title={t("Εμφάνιση στον Χάρτη", "View on Map")}
             >
               <MapIcon className="w-4 h-4" />
@@ -249,6 +254,8 @@ export default function HomeBento() {
 
       <EventStories events={storyEvents} />
 
+      <HomeBuddySeekStrip />
+
       <HomeQuickActions onScrollToCategories={scrollToFilters} />
       <ActiveBuddiesRail />
 
@@ -293,10 +300,10 @@ export default function HomeBento() {
             <div className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
               {step}
             </div>
-            <h3 className="font-bold text-[#111827] text-[14.63px] mb-1">
+            <h3 className={cn(HOME_TYPO.stepTitle, "text-[#111827] mb-1")}>
               {title}
             </h3>
-            <p className="text-[12.38px] leading-relaxed text-black font-medium">
+            <p className={cn(HOME_TYPO.stepBody, "text-black")}>
               {body}
             </p>
           </div>
@@ -325,6 +332,8 @@ export default function HomeBento() {
         onClearAll={handleClearAll}
         onOpenMobileFilters={() => setFilterSheetOpen(true)}
         activeFilterCount={activeFilterCount}
+        activeMood={activeMood}
+        onSelectMood={handleSelectMood}
       />
 
 
@@ -334,13 +343,13 @@ export default function HomeBento() {
           <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
             <button
               onClick={() => setFeedType("For You")}
-              className={`px-4 py-1.5 rounded-md text-[12.73px] font-bold transition-colors ${feedType === "For You" ? "bg-white shadow-sm text-[#111827]" : "text-black hover:text-[#111827]"}`}
+              className={cn("px-4 py-1.5 rounded-md transition-colors", HOME_TYPO.feedTab, feedType === "For You" ? "bg-white shadow-sm text-[#111827]" : "text-black hover:text-[#111827]")}
             >
               {t("home.feed.for_you", "Για Σένα")}
             </button>
             <button
               onClick={() => setFeedType("Discover")}
-              className={`px-4 py-1.5 rounded-md text-[12.73px] font-bold transition-colors ${feedType === "Discover" ? "bg-white shadow-sm text-[#111827]" : "text-black hover:text-[#111827]"}`}
+              className={cn("px-4 py-1.5 rounded-md transition-colors", HOME_TYPO.feedTab, feedType === "Discover" ? "bg-white shadow-sm text-[#111827]" : "text-black hover:text-[#111827]")}
             >
               {t("home.feed.discover", "Ανακάλυψε")}
             </button>

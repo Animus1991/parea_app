@@ -13,6 +13,12 @@ export interface CalendarHourlyScheduleProps {
   onClose: () => void;
 }
 
+/**
+ * @deprecated Legacy hourly modal kept for backwards compatibility (Φ21).
+ * The calendar uses `DailyScheduleView` (see `DailyScheduleView.tsx`) — prefer
+ * that component for any new usage.
+ */
+
 export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyScheduleProps) {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -27,7 +33,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
     >
       <div
         className={cn(
-          'w-full max-w-lg rounded-3xl shadow-xl flex flex-col h-[80vh] overflow-hidden border',
+          'w-full max-w-lg rounded-2xl shadow-soft flex flex-col h-[80vh] overflow-hidden border',
           p.isDark ? 'bg-[hsl(220_16%_16%)] border-white/10' : 'bg-white border-gray-200',
         )}
       >
@@ -41,7 +47,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
           <button
             type="button"
             className={cn(
-              'p-2 rounded-xl transition-colors min-h-11 min-w-11 flex items-center justify-center',
+              'p-2 rounded-2xl transition-colors min-h-11 min-w-11 flex items-center justify-center',
               p.isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-gray-100 hover:bg-gray-200',
             )}
             onClick={onClose}
@@ -77,7 +83,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
                       type="button"
                       onClick={() => navigate(`/events/${ev.id}`)}
                       className={cn(
-                        'p-3 rounded-xl border flex flex-col text-left active:scale-95 transition-transform w-full',
+                        'p-3 rounded-2xl border flex flex-col text-left active:scale-95 transition-transform w-full',
                         p.isDark
                           ? 'bg-cyan-900/20 border-cyan-800/40 hover:border-cyan-600/50'
                           : 'bg-cyan-50 border-cyan-200 hover:border-cyan-400',

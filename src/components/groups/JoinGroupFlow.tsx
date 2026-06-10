@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useStore } from '../../store';
 import { Button } from '../common/Button';
@@ -13,7 +13,7 @@ export default function JoinGroupFlow() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [searchParams] = useSearchParams();
-  const preSelectedGroupId = searchParams.get('groupId');
+  const preSelectedGroupId = searchParams.get('group') ?? searchParams.get('groupId');
 
   const events = useStore((state) => state.events);
   const groups = useStore((state) => state.groups);
@@ -33,6 +33,17 @@ export default function JoinGroupFlow() {
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(preSelectedGroupId);
   const [commitmentAccepted, setCommitmentAccepted] = useState(false);
 
+  useEffect(() => {
+    if (!eventId || !preSelectedGroupId) return;
+    const match = groups.find(
+      (g) => g.id === preSelectedGroupId && g.eventId === eventId && g.members.length < g.targetSize,
+    );
+    if (match) {
+      setSelectedGroupId(preSelectedGroupId);
+      setGroupType('existing');
+    }
+  }, [preSelectedGroupId, eventId, groups]);
+
   if (!event || !eventId) return null;
 
   const gate = canAccessEvent(currentUser, event);
@@ -42,6 +53,10 @@ export default function JoinGroupFlow() {
   const availableGroups = groups.filter(
     (g) => g.eventId === eventId && g.members.length < g.targetSize,
   );
+
+  const canContinueStep1 =
+    gate.allowed &&
+    (groupType === 'new' || (availableGroups.length > 0 && Boolean(selectedGroupId)));
 
   const discountedPrice =
     event.isPaid && event.groupDiscount
@@ -127,6 +142,38 @@ export default function JoinGroupFlow() {
             </button>
           </div>
 
+          {groupType === 'existing' && (
+            <div className="space-y-2">
+              {availableGroups.length === 0 ? (
+                <p className="text-sm text-gray-500 font-medium p-3 bg-gray-50 rounded-xl border border-gray-100">
+                  {t('Δεν υπάρχουν διαθέσιμες ομάδες — δημιουργήστε νέα.', 'No available groups — start a new one.')}
+                </p>
+              ) : (
+                availableGroups.map((g) => (
+                  <button
+                    key={g.id}
+                    type="button"
+                    onClick={() => setSelectedGroupId(g.id)}
+                    className={`w-full p-3 rounded-xl border text-left transition-colors ${
+                      selectedGroupId === g.id
+                        ? 'border-[#18D8DB] bg-cyan-50 ring-1 ring-[#18D8DB]'
+                        : 'border-gray-100 hover:border-gray-200'
+                    }`}
+                  >
+                    <p className="font-bold text-sm text-gray-900">
+                      {t('Ομάδα', 'Group')} · {g.members.length}/{g.targetSize} {t('μέλη', 'members')}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {g.status === 'confirmed'
+                        ? t('Επιβεβαιωμένη', 'Confirmed')
+                        : t('Εκκρεμής', 'Pending')}
+                    </p>
+                  </button>
+                ))
+              )}
+            </div>
+          )}
+
           {groupType === 'new' && (
             <div className="flex gap-2">
               {[3, 4, 5, 6].map((size) => (
@@ -142,7 +189,7 @@ export default function JoinGroupFlow() {
             </div>
           )}
 
-          <Button className="w-full min-h-11" onClick={() => setStep(2)} disabled={!gate.allowed}>
+          <Button className="w-full min-h-11" onClick={() => setStep(2)} disabled={!canContinueStep1}>
             {t('Συνέχεια', 'Continue')}
           </Button>
         </div>

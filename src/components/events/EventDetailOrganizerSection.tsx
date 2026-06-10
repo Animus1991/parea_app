@@ -38,7 +38,7 @@ const TOKENS: Record<EventDetailMapAccent, { light: OrganizerTokens; dark: Organ
     dark: {
       sectionBorder: 'border-gray-700',
       heading: 'text-white',
-      card: 'rounded-2xl border border-gray-700 bg-gray-800 shadow-sm hover:border-cyan-800 transition-colors',
+      card: 'rounded-2xl border border-gray-700 bg-gray-800 shadow-soft hover:border-cyan-800 transition-colors',
       avatarWrap: 'bg-cyan-900/30 border-white ring-cyan-950',
       avatarFallback: 'text-cyan-400',
       name: 'text-white hover:text-cyan-400',
@@ -52,7 +52,7 @@ const TOKENS: Record<EventDetailMapAccent, { light: OrganizerTokens; dark: Organ
     light: {
       sectionBorder: 'border-gray-200',
       heading: 'text-[#111827]',
-      card: 'rounded-xl border border-gray-200 bg-white shadow-sm hover:border-fuchsia-200 transition-colors',
+      card: 'rounded-2xl border border-gray-200 bg-white shadow-soft hover:border-fuchsia-200 transition-colors',
       avatarWrap: 'bg-fuchsia-50 border-white ring-fuchsia-50',
       avatarFallback: 'text-fuchsia-500',
       name: 'text-[#111827] hover:text-fuchsia-600',
@@ -64,7 +64,7 @@ const TOKENS: Record<EventDetailMapAccent, { light: OrganizerTokens; dark: Organ
     dark: {
       sectionBorder: 'border-gray-700',
       heading: 'text-white',
-      card: 'rounded-xl border border-gray-700 bg-gray-800 shadow-sm hover:border-fuchsia-800 transition-colors',
+      card: 'rounded-2xl border border-gray-700 bg-gray-800 shadow-soft hover:border-fuchsia-800 transition-colors',
       avatarWrap: 'bg-fuchsia-950/50 border-white ring-fuchsia-950',
       avatarFallback: 'text-fuchsia-400',
       name: 'text-white hover:text-fuchsia-400',
@@ -78,7 +78,7 @@ const TOKENS: Record<EventDetailMapAccent, { light: OrganizerTokens; dark: Organ
     light: {
       sectionBorder: 'border-gray-200',
       heading: 'text-[#111827]',
-      card: 'rounded-xl border border-gray-200 bg-white shadow-sm hover:border-emerald-200 transition-colors',
+      card: 'rounded-2xl border border-gray-200 bg-white shadow-soft hover:border-emerald-200 transition-colors',
       avatarWrap: 'bg-emerald-50 border-white ring-emerald-50',
       avatarFallback: 'text-emerald-500',
       name: 'text-[#111827] hover:text-emerald-600',
@@ -90,7 +90,7 @@ const TOKENS: Record<EventDetailMapAccent, { light: OrganizerTokens; dark: Organ
     dark: {
       sectionBorder: 'border-gray-700',
       heading: 'text-white',
-      card: 'rounded-xl border border-gray-700 bg-gray-800 shadow-sm hover:border-emerald-800 transition-colors',
+      card: 'rounded-2xl border border-gray-700 bg-gray-800 shadow-soft hover:border-emerald-800 transition-colors',
       avatarWrap: 'bg-emerald-900/30 border-white ring-emerald-950',
       avatarFallback: 'text-emerald-400',
       name: 'text-white hover:text-emerald-400',
@@ -104,7 +104,7 @@ const TOKENS: Record<EventDetailMapAccent, { light: OrganizerTokens; dark: Organ
     light: {
       sectionBorder: 'border-gray-200',
       heading: 'text-[#111827]',
-      card: 'rounded-xl border border-gray-200 bg-white shadow-sm hover:border-indigo-200 transition-colors',
+      card: 'rounded-2xl border border-gray-200 bg-white shadow-soft hover:border-indigo-200 transition-colors',
       avatarWrap: 'bg-indigo-50 border-white ring-indigo-50',
       avatarFallback: 'text-indigo-500',
       name: 'text-[#111827] hover:text-indigo-600',
@@ -116,7 +116,7 @@ const TOKENS: Record<EventDetailMapAccent, { light: OrganizerTokens; dark: Organ
     dark: {
       sectionBorder: 'border-gray-700',
       heading: 'text-white',
-      card: 'rounded-xl border border-gray-700 bg-gray-800 shadow-sm hover:border-indigo-800 transition-colors',
+      card: 'rounded-2xl border border-gray-700 bg-gray-800 shadow-soft hover:border-indigo-800 transition-colors',
       avatarWrap: 'bg-indigo-900/30 border-white ring-indigo-950',
       avatarFallback: 'text-indigo-400',
       name: 'text-white hover:text-indigo-400',
@@ -200,7 +200,7 @@ export function EventDetailOrganizerSection({
           <div>
             <div className="flex items-center gap-1.5 flex-wrap">
               <Link
-                to="/profile"
+                to={`/organizer/${organizer.id}`}
                 className={cn('text-base font-bold transition-colors', tok.name)}
               >
                 {organizer.name}
@@ -234,7 +234,7 @@ export function EventDetailOrganizerSection({
           variant="outline"
           size="sm"
           className="hidden sm:flex"
-          onClick={() => navigate('/profile')}
+          onClick={() => navigate(`/organizer/${organizer.id}`)}
         >
           {t('Προβολή Προφίλ', 'View Profile')}
         </Button>

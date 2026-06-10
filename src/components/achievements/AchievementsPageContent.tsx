@@ -4,6 +4,9 @@ import { Card } from '../common/Card';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { useStore } from '../../store';
+import { computeUserXp, levelForXp } from '../../lib/gamification';
+import { toast } from 'sonner';
 
 interface Achievement {
   id: string;
@@ -22,6 +25,36 @@ export default function AchievementsPageContent() {
   const { t } = useLanguage();
   const a = usePageContrast();
   const [activeTab, setActiveTab] = useState<'badges' | 'streaks' | 'leaderboard'>('badges');
+  const currentUser = useStore((s) => s.currentUser);
+  const bonusXp = useStore((s) => s.bonusXp);
+  const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
+  const awardXp = useStore((s) => s.awardXp);
+  const feedbackCount = Object.keys(feedbackSubmitted).length;
+
+  const totalXP = currentUser
+    ? computeUserXp(currentUser, true, feedbackCount, bonusXp)
+    : 0;
+  const { level, titleEl, titleEn, nextAt } = levelForXp(totalXP);
+  const levelProgress = ((totalXP % 200) / 200) * 100;
+
+  const handleShareBadge = async (title: string) => {
+    const text = t(`Ξεκλείδωσα το badge «${title}» στο Nakamas!`, `I unlocked the "${title}" badge on Nakamas!`);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Nakamas', text });
+      } else {
+        await navigator.clipboard.writeText(text);
+        toast.success(t('Αντιγράφηκε στο πρόχειρο', 'Copied to clipboard'));
+      }
+    } catch {
+      toast.info(t('Η κοινοποίηση ακυρώθηκε', 'Share cancelled'));
+    }
+  };
+
+  const handleDailyChallenge = () => {
+    awardXp(30, 'Ημερήσια πρόκληση', 'Daily challenge');
+    toast.success(t('+30 XP — ημερήσια πρόκληση', '+30 XP — daily challenge'));
+  };
 
   const achievements: Achievement[] = [
     { id: 'a1', icon: Calendar, title: t('Πρώτη Εμπειρία', 'First Experience'), description: t('Συμμετείχατε στην πρώτη σας εκδήλωση', 'Attended your first event'), progress: 1, maxProgress: 1, unlocked: true, xp: 50, color: 'text-cyan-600 bg-cyan-100', darkColor: 'text-cyan-400 bg-cyan-900/30' },
@@ -34,9 +67,6 @@ export default function AchievementsPageContent() {
     { id: 'a8', icon: Zap, title: t('Αστραπή', 'Lightning'), description: t('Εγγραφή σε 1 λεπτό', 'Join within 1 minute'), progress: 0, maxProgress: 1, unlocked: false, xp: 80, color: 'text-yellow-600 bg-yellow-100', darkColor: 'text-yellow-400 bg-yellow-900/30' },
   ];
 
-  const totalXP = achievements.filter(ach => ach.unlocked).reduce((sum, ach) => sum + ach.xp, 0);
-  const level = Math.floor(totalXP / 200) + 1;
-  const levelProgress = (totalXP % 200) / 200 * 100;
   const streakDays = [true, true, true, false, false, false, false];
 
   const leaderboard = [
@@ -62,13 +92,13 @@ export default function AchievementsPageContent() {
               {level}
             </div>
             <div>
-              <p className={cn("text-lg font-bold", a.head)}>{t('Επίπεδο', 'Level')} {level}</p>
+              <p className={cn("text-lg font-bold", a.head)}>{t('Επίπεδο', 'Level')} {level} — {t(titleEl, titleEn)}</p>
               <p className={cn("text-xs font-medium", a.sub)}>{totalXP} XP {t('συνολικά', 'total')}</p>
             </div>
           </div>
           <div className="text-right">
             <p className={cn("text-xs font-bold tracking-wide", a.muted)}>{t('Επόμενο', 'Next level')}</p>
-            <p className={cn("text-sm font-bold", a.head)}>{200 - (totalXP % 200)} XP</p>
+            <p className={cn("text-sm font-bold", a.head)}>{nextAt - totalXP} XP</p>
           </div>
         </div>
         <div className={cn("w-full h-2 rounded-full overflow-hidden", a.progressBg)}>
@@ -77,7 +107,7 @@ export default function AchievementsPageContent() {
       </Card>
 
       {/* Daily Challenge */}
-      <Card className={cn("p-4 border", a.challengeBg)}>
+      <Card className={cn("p-4 border cursor-pointer", a.challengeBg)} onClick={handleDailyChallenge} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && handleDailyChallenge()}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className={cn("w-9 h-9 rounded-full flex items-center justify-center shadow-soft", a.isDark ? "bg-gray-800/60" : "bg-white")}>
@@ -138,7 +168,12 @@ export default function AchievementsPageContent() {
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     <span className={cn("text-[10.5px] font-bold px-1.5 py-0.5 rounded", a.xpBadge)}>+{ach.xp}XP</span>
                     {ach.unlocked && (
-                      <button className={cn("text-[10px] font-bold flex items-center gap-0.5 transition-colors", a.shareHover)}>
+                      <button
+                        type="button"
+                        className={cn("text-[10px] font-bold flex items-center gap-0.5 transition-colors", a.shareHover)}
+                        onClick={() => handleShareBadge(ach.title)}
+                        aria-label={t('Κοινοποίηση badge', 'Share badge')}
+                      >
                         <Share2 className="w-2.5 h-2.5" />{t('Κοινοπ.', 'Share')}
                       </button>
                     )}

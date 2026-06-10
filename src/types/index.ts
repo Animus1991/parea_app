@@ -64,6 +64,8 @@ export interface Event {
   /** Platform-curated/advertised event with no group organizer yet.
    *  Any member can step up to host a group for it. */
   isPlatformEvent?: boolean;
+  /** Lifecycle status set by the organizer dashboard (Φ20.1); absent = active. */
+  status?: 'active' | 'cancelled' | 'archived';
 }
 
 export interface MemberLocation {
@@ -85,6 +87,11 @@ export interface Group {
   meetingPoint?: string; // Revealed upon confirmation
   isLiveTrackingActive?: boolean;
   membersLocations?: Record<string, MemberLocation>;
+  /** Host marked group as openly recruiting more members (buddy matching). */
+  isRecruiting?: boolean;
+  recruitingNote?: string;
+  /** Latest organizer announcement (Φ20.1). */
+  lastAnnouncement?: { textEl: string; textEn: string; at: string };
 }
 
 export interface Ticket {

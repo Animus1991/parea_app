@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Trophy, Flame, Calendar, Star, TrendingUp, ChevronUp } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { TabBar } from '../components/common/TabBar';
@@ -10,16 +10,7 @@ import { motion } from 'motion/react';
 
 type Period = 'week' | 'month' | 'alltime';
 
-function computeXP(
-  user: { reliabilityScore?: number; badges?: string[]; connections?: string[] },
-  isMe: boolean,
-  feedbackCount: number,
-): number {
-  const base = (user.reliabilityScore ?? 50) * 2;
-  const badgesBonus = (user.badges?.length ?? 0) * 50;
-  const eventsBonus = isMe ? feedbackCount * 50 : Math.floor((user.reliabilityScore ?? 50) / 10) * 30;
-  return base + badgesBonus + eventsBonus;
-}
+import { computeUserXp, BADGES_CATALOGUE } from '../lib/gamification';
 
 function RankIcon({ rank, mutedClass }: { rank: number; mutedClass: string }) {
   if (rank === 1) return <span className="text-2xl leading-none select-none">🥇</span>;
@@ -27,17 +18,6 @@ function RankIcon({ rank, mutedClass }: { rank: number; mutedClass: string }) {
   if (rank === 3) return <span className="text-2xl leading-none select-none">🥉</span>;
   return <span className={cn('text-[14px] font-black tabular-nums w-8 text-center', mutedClass)}>#{rank}</span>;
 }
-
-const BADGES_CATALOGUE = [
-  { id: 'b1', emoji: '🏅', gr: 'Πρώτη Εμπειρία', en: 'First Timer', dgr: 'Παρακολούθησες 1η εκδήλωση', den: 'Attended your first event', unlocked: true },
-  { id: 'b2', emoji: '🦋', gr: 'Κοινωνική Πεταλούδα', en: 'Social Butterfly', dgr: 'Εντάχθηκες σε 3 ομάδες', den: 'Joined 3 different groups', unlocked: true },
-  { id: 'b3', emoji: '⭐', gr: 'Αστέρι Αξιοπιστίας', en: 'Reliability Star', dgr: 'Διατήρησε 90%+ αξιοπιστία', den: 'Maintained 90%+ reliability', unlocked: false },
-  { id: 'b4', emoji: '🔥', gr: 'Φλόγα', en: 'On Fire', dgr: 'Ενεργός 4 εβδομάδες σερί', den: '4 consecutive active weeks', unlocked: false },
-  { id: 'b5', emoji: '🌍', gr: 'Εξερευνητής', en: 'Explorer', dgr: 'Δοκίμασες 4 κατηγορίες', den: 'Tried 4 different categories', unlocked: true },
-  { id: 'b6', emoji: '🎯', gr: 'Πρωτοπόρος', en: 'Trailblazer', dgr: 'Δημιούργησες γεμάτη ομάδα', den: 'Created a full group', unlocked: false },
-  { id: 'b7', emoji: '⚡', gr: 'Αστραπή', en: 'Lightning', dgr: 'Εγγραφή εντός 1 λεπτού', den: 'Joined within 1 minute of posting', unlocked: false },
-  { id: 'b8', emoji: '🏆', gr: 'Πρωταθλητής', en: 'Champion', dgr: 'Top 3 στη κατάταξη', den: 'Top 3 on leaderboard', unlocked: false },
-];
 
 export default function LeaderboardClassic() {
   const { t } = useLanguage();
@@ -47,30 +27,39 @@ export default function LeaderboardClassic() {
 
   const users = useStore((s) => s.users);
   const currentUser = useStore((s) => s.currentUser);
+  const bonusXp = useStore((s) => s.bonusXp);
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
+  const feedbackCount = useMemo(() => Object.keys(feedbackSubmitted).length, [feedbackSubmitted]);
 
-  const feedbackCount = Object.keys(feedbackSubmitted).length;
+  const xpForUser = useCallback(
+    (u: (typeof users)[number], isMe: boolean) =>
+      computeUserXp(u, isMe, isMe ? feedbackCount : Math.floor((u.reliabilityScore ?? 50) / 10), isMe ? bonusXp : 0),
+    [feedbackCount, bonusXp],
+  );
 
   const allEntries = useMemo(() => {
     const multiplier = period === 'week' ? 0.15 : period === 'month' ? 0.45 : 1;
 
-    const list = users.map((u) => ({
-      id: u.id,
-      name: u.name,
-      avatar: u.photoUrl || `https://i.pravatar.cc/150?u=${u.id}`,
-      xp: Math.round(computeXP(u, u.id === currentUser?.id, feedbackCount) * multiplier),
-      streak: Math.min((u.connections?.length ?? 0) * 2, 14),
-      eventsCount: u.id === currentUser?.id ? feedbackCount : Math.floor((u.reliabilityScore ?? 50) / 10),
-      reliabilityScore: u.reliabilityScore ?? 50,
-      isMe: u.id === currentUser?.id,
-    }));
+    const list = users.map((u) => {
+      const isMe = u.id === currentUser?.id;
+      return {
+        id: u.id,
+        name: u.name,
+        avatar: u.photoUrl || `https://i.pravatar.cc/150?u=${u.id}`,
+        xp: Math.round(xpForUser(u, isMe) * multiplier),
+        streak: Math.min((isMe ? feedbackCount : (u.connections?.length ?? 0)) * 2, 14),
+        eventsCount: isMe ? feedbackCount : Math.floor((u.reliabilityScore ?? 50) / 10),
+        reliabilityScore: u.reliabilityScore ?? 50,
+        isMe,
+      };
+    });
 
     if (currentUser && !users.find((u) => u.id === currentUser.id)) {
       list.push({
         id: currentUser.id,
         name: currentUser.name,
         avatar: currentUser.photoUrl || `https://i.pravatar.cc/150?u=${currentUser.id}`,
-        xp: Math.round(computeXP(currentUser, true, feedbackCount) * multiplier),
+        xp: Math.round(xpForUser(currentUser, true) * multiplier),
         streak: Math.min(feedbackCount * 2, 14),
         eventsCount: feedbackCount,
         reliabilityScore: currentUser.reliabilityScore ?? 80,
@@ -79,7 +68,7 @@ export default function LeaderboardClassic() {
     }
 
     return list.sort((a, b) => b.xp - a.xp);
-  }, [users, currentUser, feedbackCount, period]);
+  }, [users, currentUser, feedbackCount, period, xpForUser]);
 
   const friendsEntries = useMemo(
     () => allEntries.filter((e) => e.isMe || (currentUser?.connections ?? []).includes(e.id)),
@@ -288,10 +277,10 @@ export default function LeaderboardClassic() {
                 <span className="text-3xl leading-none">{badge.emoji}</span>
                 <div>
                   <p className={cn('font-bold text-[13px]', badge.unlocked ? p.head : p.muted)}>
-                    {t(badge.gr, badge.en)}
+                    {t(badge.labelEl, badge.labelEn)}
                   </p>
                   <p className={cn('text-[11px] font-medium mt-0.5 leading-snug', p.muted)}>
-                    {t(badge.dgr, badge.den)}
+                    {t(badge.descriptionEl, badge.descriptionEn)}
                   </p>
                 </div>
                 {badge.unlocked ? (

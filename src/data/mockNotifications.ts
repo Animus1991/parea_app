@@ -9,8 +9,10 @@ export interface AppNotification {
   timeEn: string;
   timeGr: string;
   read: boolean;
-  icon: LucideIcon;
-  color: string;
+  /** Optional: components are not serializable, so persisted notifications
+   *  derive their icon from `type` in the UI instead. */
+  icon?: LucideIcon;
+  color?: string;
 }
 
 export const mockNotifications: AppNotification[] = [

@@ -15,31 +15,46 @@ export default function HistoryPageContent() {
   const a = usePageContrast();
 
   const events = useStore((s) => s.events);
+  const groups = useStore((s) => s.groups);
   const currentUser = useStore((s) => s.currentUser);
+  const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState<'all' | 'reviewed' | 'pending'>('all');
 
-  // Simulated past events (first 5 events as "attended")
-  const feedbackStatus: Record<string, { given: boolean; rating?: number }> = {
-    'e1': { given: true, rating: 5 },
-    'e2': { given: true, rating: 4 },
-    'e3': { given: false },
-    'e4': { given: true, rating: 3 },
-    'e5': { given: false },
-  };
-
   const pastEvents = useMemo(() => {
-    let list = events.slice(0, 5);
-    if (search) list = list.filter(e => e.title.toLowerCase().includes(search.toLowerCase()));
-    if (tab === 'reviewed') list = list.filter(e => feedbackStatus[e.id]?.given);
-    if (tab === 'pending') list = list.filter(e => !feedbackStatus[e.id]?.given);
+    if (!currentUser) return [];
+    const userEventIds = new Set(
+      groups.filter((g) => g.members.includes(currentUser.id)).map((g) => g.eventId),
+    );
+    const now = new Date();
+    let list = events.filter((e) => {
+      const d = parseISO(e.date);
+      return userEventIds.has(e.id) && !isNaN(d.getTime()) && d < now;
+    });
+    list.sort((a, b) => parseISO(b.date).getTime() - parseISO(a.date).getTime());
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(
+        (e) =>
+          e.title.toLowerCase().includes(q) ||
+          e.locationArea.toLowerCase().includes(q),
+      );
+    }
+    if (tab === 'reviewed') list = list.filter((e) => Boolean(feedbackSubmitted[e.id]));
+    if (tab === 'pending') list = list.filter((e) => !feedbackSubmitted[e.id]);
     return list;
-  }, [events, search, tab]);
+  }, [events, groups, currentUser, feedbackSubmitted, search, tab]);
 
-  const totalAttended = 5;
-  const avgRating = 4.0;
-  const peopleMet = 22;
-  const reviewedCount = Object.values(feedbackStatus).filter(f => f.given).length;
+  const totalAttended = pastEvents.length;
+  const reviewedCount = pastEvents.filter((e) => feedbackSubmitted[e.id]).length;
+  const ratings = pastEvents
+    .map((e) => feedbackSubmitted[e.id]?.overallRating)
+    .filter((r): r is number => typeof r === 'number' && r > 0);
+  const avgRating =
+    ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
+  const peopleMet = groups
+    .filter((g) => currentUser && g.members.includes(currentUser.id))
+    .reduce((acc, g) => acc + Math.max(0, g.members.length - 1), 0);
 
   return (
     <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
@@ -84,10 +99,10 @@ export default function HistoryPageContent() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t('Αναζήτηση ιστορικού...', 'Search history...')}
-            className={cn("w-full pl-9 pr-4 py-2 rounded-xl border text-sm font-medium outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
+            className={cn("w-full pl-9 pr-4 py-2 rounded-2xl border text-sm font-medium outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft", a.inputBg, a.borderB)}
           />
         </div>
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5" role="tablist" aria-label={t('Φίλτρο ιστορικού', 'History filter')}>
           {([
             { key: 'all' as const, label: t('Όλα', 'All') },
             { key: 'reviewed' as const, label: t('Αξιολογημένα', 'Reviewed') },
@@ -95,6 +110,8 @@ export default function HistoryPageContent() {
           ]).map(tb => (
             <button
               key={tb.key}
+              role="tab"
+              aria-selected={tab === tb.key}
               onClick={() => setTab(tb.key)}
               className={cn("whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-bold transition-colors", tab === tb.key ? a.tabActive : a.tabInactive)}
             >
@@ -110,15 +127,28 @@ export default function HistoryPageContent() {
           {pastEvents.map((event) => (
             <Card
               key={event.id}
-              className={cn("p-4 transition-colors cursor-pointer", a.cardHover)}
+              className={cn("p-4 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-cyan-500", a.cardHover)}
               onClick={() => navigate(`/history/feedback/${event.id}`)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e: React.KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate(`/history/feedback/${event.id}`);
+                }
+              }}
+              aria-label={
+                feedbackSubmitted[event.id]
+                  ? t(`Προβολή αξιολόγησης για ${event.title}`, `View review for ${event.title}`)
+                  : t(`Αξιολόγηση της εκδήλωσης ${event.title}`, `Rate the event ${event.title}`)
+              }
             >
               <div className="flex gap-4">
                 <img
                   referrerPolicy="no-referrer"
                   src={event.imageUrl}
                   alt={event.title}
-                  className={cn("w-16 h-16 rounded-xl object-cover shrink-0", a.isDark && "opacity-90")}
+                  className={cn("w-16 h-16 rounded-2xl object-cover shrink-0 shadow-soft", a.isDark && "opacity-90")}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -129,15 +159,17 @@ export default function HistoryPageContent() {
                   <div className={cn("flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium", a.sub)}>
                     <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{format(parseISO(event.date), 'dd MMM yyyy')}</span>
                     <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{event.locationArea}</span>
-                    {feedbackStatus[event.id]?.given && feedbackStatus[event.id]?.rating && (
+                    {feedbackSubmitted[event.id] && (
                       <span className="flex items-center gap-0.5">
-                        {Array.from({ length: feedbackStatus[event.id]!.rating! }).map((_, s) => <Star key={s} className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />)}
+                        {Array.from({ length: feedbackSubmitted[event.id].overallRating }).map((_, s) => (
+                          <Star key={s} className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
+                        ))}
                       </span>
                     )}
                   </div>
                 </div>
                 <div className="self-center shrink-0">
-                  {feedbackStatus[event.id]?.given ? (
+                  {feedbackSubmitted[event.id] ? (
                     <span className={cn("flex items-center gap-1 text-[10.5px] font-bold px-2 py-1 rounded-full", a.isDark ? "text-green-400 bg-green-900/20" : "text-green-600 bg-green-50")}>
                       <CheckCircle2 className="w-3 h-3" />{t('Αξιολογήθηκε', 'Reviewed')}
                     </span>
