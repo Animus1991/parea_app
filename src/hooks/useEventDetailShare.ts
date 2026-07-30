@@ -7,7 +7,7 @@ export function useEventDetailShare(eventTitle?: string) {
 
   const handleShare = useCallback(async () => {
     const url = window.location.href;
-    const title = eventTitle || t('Εκδήλωση Parea', 'Parea Event');
+    const title = eventTitle || t('Εκδήλωση Nakamas', 'Nakamas Event');
 
     try {
       if (typeof navigator.share === 'function') {

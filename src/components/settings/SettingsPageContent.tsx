@@ -391,7 +391,7 @@ export default function SettingsPageContent() {
       <div className="text-center pt-2 pb-4">
         <div className={cn("flex items-center justify-center gap-1 text-xs font-medium", a.isDark ? "text-gray-600" : "text-gray-300")}>
           <Info className="w-3 h-3" />
-          <span>Parea v1.2.0 • Build 2024.10</span>
+          <span>Nakamas v1.2.0 • Build 2026.07</span>
         </div>
       </div>
     </div>

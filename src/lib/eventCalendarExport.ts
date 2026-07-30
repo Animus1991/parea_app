@@ -168,7 +168,7 @@ export function buildICSContent(
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Parea App//EN',
+    'PRODID:-//Nakamas App//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',

@@ -18,7 +18,7 @@ import { useStore } from '../../store';
 export type EventDetailMapAccent = 'classic' | 'vibrant' | 'neon' | 'bento';
 
 const PIN: Record<EventDetailMapAccent, { bg: string; border: string }> = {
-  classic: { bg: '#0E8B8D', border: '#0b6d6f' },
+  classic: { bg: 'var(--color-brand)', border: 'var(--color-brand-strong)' },
   vibrant: { bg: '#c026d3', border: '#86198f' },
   neon: { bg: '#059669', border: '#047857' },
   bento: { bg: '#4f46e5', border: '#312e81' },

@@ -12,7 +12,7 @@ export function buildCalendarIcs(events: CalendarIcsEvent[]): string {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Parea//Calendar//EN',
+    'PRODID:-//Nakamas//Calendar//EN',
   ];
   for (const ev of events) {
     const dt = parseISO(`${ev.date}T${ev.time || '00:00'}`);

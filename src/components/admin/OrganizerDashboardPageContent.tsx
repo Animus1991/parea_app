@@ -322,7 +322,7 @@ export default function OrganizerDashboardPageContent() {
                     borderRadius: '12px',
                     boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
                   }}
-                  labelStyle={{ fontWeight: 'bold', color: p.isDark ? '#f3f4f6' : '#111827' }}
+                  labelStyle={{ fontWeight: 'bold', color: 'var(--color-ink)' }}
                 />
                 <Area
                   type="monotone"
