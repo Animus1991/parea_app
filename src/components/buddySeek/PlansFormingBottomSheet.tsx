@@ -1,8 +1,10 @@
+import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Inbox } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useContrastTheme } from '../../hooks/useContrastTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
+import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import { usePlansFormingFeed } from '../../hooks/usePlansFormingFeed';
 import { useStore } from '../../store';
 import { PlansFormingCard, PlansFormingGroupCard } from './PlansFormingCard';
@@ -27,6 +29,8 @@ export function PlansFormingBottomSheet() {
   const feed = usePlansFormingFeed(10);
   const dismiss = useStore((s) => s.dismissCompanyRequest);
   const undismiss = useStore((s) => s.undismissCompanyRequest);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useOverlayBehavior(open, () => setOpen(false), panelRef);
 
   if (!open) return null;
 
@@ -39,8 +43,10 @@ export function PlansFormingBottomSheet() {
         aria-label={t('Κλείσιμο', 'Close')}
       />
       <div
+        ref={panelRef}
+        tabIndex={-1}
         className={cn(
-          'absolute bottom-0 left-0 right-0 max-h-[92vh] flex flex-col rounded-t-3xl border-t shadow-soft-lg animate-in slide-in-from-bottom duration-300 motion-reduce:animate-none',
+          'absolute bottom-0 left-0 right-0 max-h-[92vh] flex flex-col rounded-t-3xl border-t shadow-soft-lg animate-in slide-in-from-bottom duration-300 motion-reduce:animate-none outline-none',
           c.modalPanel,
         )}
       >
