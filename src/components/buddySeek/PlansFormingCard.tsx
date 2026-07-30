@@ -13,7 +13,6 @@ import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { projectRequestForViewer } from '../../lib/companyRequestUtils';
-import { getPhotoPlaceholder } from '../../lib/photoReveal';
 import { JoinRequestPreviewModal } from './JoinRequestPreviewModal';
 import { cn } from '../../lib/utils';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
@@ -80,7 +79,7 @@ export function PlansFormingCard({
         <div
           className={cn(
             'px-3 py-1.5 flex items-center justify-between gap-2 border-b text-xs font-bold',
-            isSidebar ? (darkCard ? 'border-white/10 bg-cyan-500/10 text-cyan-300' : 'border-cyan-100 bg-cyan-50 text-cyan-800') : 'border-cyan-100 bg-cyan-50 text-cyan-800',
+            isSidebar ? (darkCard ? 'border-white/10 bg-cyan-500/10 text-cyan-300' : 'border-cyan-100 bg-cyan-50 text-cyan-800') : 'border-cyan-100 bg-cyan-50 text-cyan-800 dark:border-cyan-500/30 dark:bg-cyan-500/10 dark:text-cyan-200',
           )}
         >
           <span className="flex items-center gap-1">
@@ -180,7 +179,7 @@ export function PlansFormingCard({
               {t(item.roleLabel.el, item.roleLabel.en)}
             </span>
           )}
-          <div className={cn('flex flex-wrap gap-x-2 gap-y-0.5 text-xs', isSidebar ? 'text-gray-500' : 'text-gray-500')}>
+          <div className={cn('flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-gray-500', !isSidebar && 'dark:text-gray-400')}>
             {!isSidebar && (
               <span className="inline-flex items-center gap-0.5 font-semibold text-gray-700 dark:text-gray-300">
                 <Clock className="w-3 h-3 shrink-0" />
@@ -211,8 +210,7 @@ export function PlansFormingCard({
             key={tag}
             className={cn(
               'text-xs font-bold px-1.5 py-0.5 rounded-lg',
-              darkCard ? 'bg-cyan-900/40 text-cyan-200' : 'bg-cyan-50 text-cyan-800',
-              !darkCard && !isSidebar && 'bg-cyan-50 text-cyan-800',
+              darkCard ? 'bg-cyan-900/40 text-cyan-200' : 'bg-cyan-50 text-cyan-800 dark:bg-cyan-500/15 dark:text-cyan-200',
             )}
           >
             {tag}
@@ -241,7 +239,7 @@ export function PlansFormingCard({
       )}
 
       {!isSidebar && (
-        <p className="px-3 pb-2 text-xs leading-snug text-gray-500">
+        <p className="px-3 pb-2 text-xs leading-snug text-gray-500 dark:text-gray-400">
           {t(item.matchReason.el, item.matchReason.en)}
         </p>
       )}
@@ -259,7 +257,7 @@ export function PlansFormingCard({
           onClick={() => navigate(`/events/${item.event.id}`)}
           className={cn(
             'px-3 min-h-10 rounded-xl text-xs font-bold border',
-            darkCard ? 'border-white/15 text-gray-200 hover:bg-white/5' : 'border-gray-200 text-gray-700 hover:bg-gray-50',
+            darkCard ? 'border-white/15 text-gray-200 hover:bg-white/5' : 'border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-white/15 dark:text-gray-200 dark:hover:bg-white/5',
           )}
         >
           {t('Εκδήλωση', 'Event')}
@@ -277,7 +275,7 @@ export function PlansFormingCard({
           }}
           className={cn(
             'min-h-10 min-w-10 rounded-xl border flex items-center justify-center',
-            darkCard ? 'border-white/15 text-cyan-400' : 'border-gray-200 text-gray-600',
+            darkCard ? 'border-white/15 text-cyan-400' : 'border-gray-200 text-gray-600 dark:border-white/15 dark:text-cyan-400',
             isSaved && 'bg-cyan-600/20 border-cyan-500/40',
           )}
           aria-label={t('Αποθήκευση σχεδίου', 'Save plan')}
@@ -326,7 +324,7 @@ function MetaChip({
     <span
       className={cn(
         'inline-flex items-center gap-0.5 text-xs font-bold px-1.5 py-0.5 rounded-lg border',
-        isDark ? 'bg-white/5 border-white/10 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600',
+        isDark ? 'bg-white/5 border-white/10 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600 dark:bg-white/5 dark:border-white/10 dark:text-gray-300',
       )}
     >
       {Icon && <Icon className="w-2.5 h-2.5" />}
@@ -368,30 +366,30 @@ export function PlansFormingGroupCard({
           <img src={event.imageUrl} alt="" className="w-14 h-14 rounded-xl object-cover shrink-0" />
         )}
         <div className="min-w-0 flex-1 space-y-1">
-          <p className="text-xs font-bold uppercase tracking-wide text-emerald-500">
+          <p className="text-xs font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
             {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
           </p>
-          <p className={cn('text-base font-bold leading-snug line-clamp-2', darkCard ? 'text-white' : 'text-gray-900')}>
+          <p className={cn('text-base font-bold leading-snug line-clamp-2', darkCard ? 'text-white' : 'text-gray-900 dark:text-white')}>
             {event.title}
           </p>
-          <p className={cn('text-sm font-semibold leading-snug', darkCard ? 'text-emerald-100/90' : 'text-gray-700')}>
+          <p className={cn('text-sm font-semibold leading-snug', darkCard ? 'text-emerald-100/90' : 'text-gray-700 dark:text-gray-200')}>
             {t(meta.scheduleFull.el, meta.scheduleFull.en)}
           </p>
           <span
             className={cn(
               'inline-block text-xs font-semibold px-2 py-0.5 rounded-lg border',
-              darkCard ? 'bg-emerald-500/15 text-emerald-200 border-emerald-500/30' : 'bg-emerald-100 text-emerald-800 border-emerald-200',
+              darkCard ? 'bg-emerald-500/15 text-emerald-200 border-emerald-500/30' : 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-200 dark:border-emerald-500/30',
             )}
           >
             {t('Οργανώνει ομάδα', 'Group host')}
           </span>
           {meta.hostFirstName && (
-            <p className={cn('text-xs font-medium', darkCard ? 'text-gray-300' : 'text-gray-700')}>
+            <p className={cn('text-xs font-medium', darkCard ? 'text-gray-300' : 'text-gray-700 dark:text-gray-300')}>
               {meta.hostFirstName}
             </p>
           )}
           {meta.location && (
-            <p className={cn('text-xs flex items-center gap-1', darkCard ? 'text-gray-400' : 'text-gray-600')}>
+            <p className={cn('text-xs flex items-center gap-1', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
               <MapPin className="w-3 h-3 shrink-0" />
               {meta.location}
             </p>
@@ -401,18 +399,18 @@ export function PlansFormingGroupCard({
 
       <div className="px-3 pb-2">
         <div className="flex justify-between text-xs font-bold mb-1">
-          <span className={darkCard ? 'text-emerald-400' : 'text-emerald-700'}>
+          <span className={darkCard ? 'text-emerald-400' : 'text-emerald-700 dark:text-emerald-300'}>
             {meta.filled}/{meta.target} {t('μέλη', 'members')}
           </span>
-          <span className={darkCard ? 'text-gray-400' : 'text-gray-600'}>
+          <span className={darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'}>
             {meta.spots} {t('ανοιχτές θέσεις', 'open spots')}
           </span>
         </div>
-        <div className={cn('h-1.5 rounded-full overflow-hidden', darkCard ? 'bg-white/10' : 'bg-gray-200')}>
+        <div className={cn('h-1.5 rounded-full overflow-hidden', darkCard ? 'bg-white/10' : 'bg-gray-200 dark:bg-white/10')}>
           <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${meta.progress}%` }} />
         </div>
         {meta.note && (
-          <p className={cn('text-xs mt-2 line-clamp-2', darkCard ? 'text-gray-400' : 'text-gray-600')}>
+          <p className={cn('text-xs mt-2 line-clamp-2', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
             «{meta.note}»
           </p>
         )}
@@ -432,7 +430,7 @@ export function PlansFormingGroupCard({
             onClick={onSuggestMerge}
             className={cn(
               'px-3 min-h-9 rounded-xl text-xs font-bold border',
-              darkCard ? 'border-emerald-600/40 text-emerald-300' : 'border-emerald-300 text-emerald-800',
+              darkCard ? 'border-emerald-600/40 text-emerald-300' : 'border-emerald-300 text-emerald-800 dark:border-emerald-600/40 dark:text-emerald-300',
             )}
           >
             {t('Συγχώνευση', 'Merge')}

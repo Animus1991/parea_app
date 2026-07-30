@@ -11,7 +11,7 @@ import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 
 export function HomeNextBestAction() {
-  const { t, language } = useLanguage();
+  const { tu, language } = useLanguage();
   const navigate = useNavigate();
   const a = usePageContrast();
   const user = useStore((s) => s.currentUser);
@@ -62,7 +62,7 @@ export function HomeNextBestAction() {
         </div>
         <div className="flex-1 min-w-0">
           <p className={cn('text-xs font-bold uppercase tracking-wider mb-0.5', a.muted)}>
-            {t('Επόμενη καλύτερη ενέργεια', 'Next best action')}
+            {tu('Επόμενη καλύτερη ενέργεια', 'Next best action')}
           </p>
           <p className={cn('text-sm font-bold', a.head)}>
             {language === 'el' ? action.titleEl : action.titleEn}
