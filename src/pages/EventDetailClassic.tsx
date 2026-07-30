@@ -288,7 +288,7 @@ export default function EventDetailClassic() {
           {isSaved ? t('Αποθηκευμένο', 'Saved') : t('Αποθήκευση', 'Save')}
         </Button>
         <Button className="flex-[2] min-h-11 bg-brand text-white hover:bg-[#0b6d6f] shadow-soft" onClick={handlePrimaryJoin}>
-          {t('Βρες παρέα', 'Find company')}
+          {t('Βρες Nakamas', 'Find Nakamas')}
         </Button>
       </div>
 

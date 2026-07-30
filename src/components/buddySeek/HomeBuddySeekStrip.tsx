@@ -61,8 +61,8 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
           <Users className="w-8 h-8 mx-auto text-cyan-600/50 mb-2" />
           <p className="text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed">
             {t(
-              'Δεν βλέπετε σχέδια ακόμα; Αποθηκεύστε εκδηλώσεις ή δηλώστε ότι ψάχνετε παρέα.',
-              'No plans visible yet? Save events or declare that you are looking for company.',
+              'Δεν βλέπετε σχέδια ακόμα; Αποθηκεύστε εκδηλώσεις ή δηλώστε ότι ψάχνετε Nakamas.',
+              'No plans visible yet? Save events or declare that you are looking for Nakamas.',
             )}
           </p>
           <button

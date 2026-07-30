@@ -147,8 +147,8 @@ export function planRoleLabel(request: CompanyRequest): { el: string; en: string
     return { el: 'Συντονισμός ομάδων', en: 'Coordinating groups', kind: 'coordinator' };
   }
   return {
-    el: 'Ψάχνει παρέα',
-    en: 'Looking for company',
+    el: 'Ψάχνει Nakamas',
+    en: 'Looking for Nakamas',
     kind: 'seeker',
   };
 }

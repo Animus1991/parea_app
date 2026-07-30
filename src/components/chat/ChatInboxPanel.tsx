@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { X, Users, User, Megaphone, LifeBuoy, GitMerge, Lock } from 'lucide-react';
+import { X, Users, User, Megaphone, LifeBuoy, GitMerge, Lock, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
+import { EmptyState } from '../common/EmptyState';
 import { useChatStore } from '../../store/chatStore';
 import { useStore } from '../../store';
 import { canOpenConversation } from '../../lib/chatPermissions';
@@ -70,6 +71,14 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
         </button>
       </header>
       <div className="flex-1 overflow-y-auto p-2 space-y-4">
+        {conversations.length === 0 && (
+          <EmptyState
+            icon={MessageCircle}
+            title={t('Καμία συνομιλία ακόμα', 'No conversations yet')}
+            description={t('Οι συνομιλίες ξεκλειδώνουν μετά από αποδοχή αιτήματος ή ομάδας.', 'Conversations unlock after a request or group is accepted.')}
+            className="m-2 border-0 bg-transparent"
+          />
+        )}
         {sections.map((sec) => {
           const items = conversations.filter((c) => sectionFor(c) === sec.key);
           if (!items.length) return null;

@@ -21,7 +21,7 @@ export function PlansFormingMobileFab() {
     : feed.myActivePlan
       ? t('Το σχέδιό σας', 'Your plan')
       : showTeaser
-        ? t('Ψάχνετε παρέα;', 'Need company?')
+        ? t('Ψάχνετε Nakamas;', 'Need Nakamas?')
         : t('Σχέδια', 'Plans');
 
   const badge = hasPending

@@ -112,8 +112,8 @@ export function getNextBestActions(input: OptimizerInput): NextBestAction[] {
 
   actions.push({
     id: 'buddy-seek',
-    titleEl: 'Ψάξε παρέα (Buddy Seek)',
-    titleEn: 'Find company (Buddy Seek)',
+    titleEl: 'Βρες Nakamas (Buddy Seek)',
+    titleEn: 'Find Nakamas (Buddy Seek)',
     descriptionEl: 'Δες ποιος ψάχνει συνοδεία για τις ίδιες εκδηλώσεις.',
     descriptionEn: 'See who is looking for company for the same events.',
     path: '/buddy-seek',

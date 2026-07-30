@@ -46,8 +46,8 @@ export function CompanyRequestCard({
   const title =
     projection.variant === 'anonymous'
       ? t(
-          `Κάποιος ψάχνει παρέα για «${event.title}»`,
-          `Someone looking for company for "${event.title}"`,
+          `Κάποιος ψάχνει Nakamas για «${event.title}»`,
+          `Someone looking for Nakamas for "${event.title}"`,
         )
       : projection.displayName || t('Χρήστης', 'Member');
 

@@ -253,7 +253,7 @@ export function PlansFormingValueHero({ isDark, insights }: { isDark?: boolean; 
           `${insights.compatiblePlans} συμβατά σχέδια τώρα`,
           `${insights.compatiblePlans} compatible plans right now`,
         )
-      : t('Βρείτε παρέα για εκδήλωση', 'Find company for events');
+      : t('Βρείτε Nakamas για εκδήλωση', 'Find Nakamas for events');
 
   return (
     <div className="space-y-2">

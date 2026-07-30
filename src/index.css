@@ -71,6 +71,7 @@
   --color-surface: #F3F4F6;
   --color-surface-raised: #ffffff;
   --color-border: #E5E7EB;
+  --color-border-strong: #D1D5DB;
   --color-brand: #0E8B8D;
   --color-brand-strong: #0b6d6f;
   --color-brand-soft: #ecfeff;
@@ -88,6 +89,7 @@
   --color-ink-muted: #6E5F6B;
   --color-surface: #FCF8FB;
   --color-border: #EBDEE8;
+  --color-border-strong: #DCC7D6;
   --color-accent: #c026d3;
   --color-accent-strong: #a21caf;
   --color-accent-soft: #FDF2FA;
@@ -114,6 +116,7 @@
   --color-ink-faint: #d1d5db;
   --color-surface-raised: #111827;
   --color-border: rgb(55 65 81 / 0.5);
+  --color-border-strong: rgb(75 85 96 / 0.7);
   --color-brand: #18D8DB;
   --color-brand-strong: #22d3ee;
   --color-brand-soft: rgb(22 78 99 / 0.2);
@@ -127,6 +130,7 @@
   --color-surface: #1C141B;
   --color-surface-raised: #261B25;
   --color-border: #3E2E3B;
+  --color-border-strong: #554050;
   /* V2-T3: −20% chroma έναντι light (oklch 0.62 0.16 330) — anti-glow σε dark */
   --color-accent: #D444E0;
   --color-accent-strong: #E879F9;

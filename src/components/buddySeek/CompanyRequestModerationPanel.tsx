@@ -21,7 +21,7 @@ export function CompanyRequestModerationPanel() {
       <div className="flex items-center gap-2">
         <ShieldAlert className="w-5 h-5 text-red-500" />
         <h2 className={cn('text-sm font-bold', a.head)}>
-          {t('Αναζήτηση παρέας — εποπτεία', 'Looking for company — moderation')}
+          {t('Αναζήτηση Nakamas — εποπτεία', 'Looking for Nakamas — moderation')}
         </h2>
       </div>
 

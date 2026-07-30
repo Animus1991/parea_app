@@ -86,7 +86,7 @@ export function LookingForCompanyPanel({
         <div>
           <h2 className={tok.sectionHeading}>
             <Users className="w-4 h-4 inline mr-1.5 opacity-80" />
-            {t('Αναζήτηση παρέας', 'Looking for company')}
+            {t('Αναζήτηση Nakamas', 'Looking for Nakamas')}
           </h2>
           <p className={cn(tok.muted, 'text-xs mt-1 leading-relaxed')}>
             {t(

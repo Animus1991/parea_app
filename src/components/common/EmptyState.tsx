@@ -12,6 +12,7 @@ interface EmptyStateProps {
   className?: string;
 }
 
+/** Token-driven empty state: soft brand icon well, title, optional description + CTA. */
 export function EmptyState({
   icon: Icon,
   title,
@@ -23,18 +24,18 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center py-16 px-6 text-center rounded-2xl border border-dashed border-gray-200 dark:border-gray-700',
+        'flex flex-col items-center justify-center py-16 px-6 text-center rounded-2xl border border-dashed border-border bg-surface-raised',
         className,
       )}
     >
       {Icon && (
-        <div className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-          <Icon className="w-7 h-7 text-gray-400" aria-hidden />
+        <div className="w-14 h-14 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mb-4">
+          <Icon className="w-7 h-7" aria-hidden />
         </div>
       )}
-      <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
+      <h3 className="text-base font-bold text-ink">{title}</h3>
       {description && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm mt-1 mb-6">{description}</p>
+        <p className="text-sm font-medium text-ink-muted max-w-sm mt-1 mb-6 leading-relaxed">{description}</p>
       )}
       {actionLabel && onAction && (
         <Button variant="primary" size="md" onClick={onAction}>

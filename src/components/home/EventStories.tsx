@@ -11,6 +11,7 @@ import { cn } from "../../lib/utils";
 import { isEventSeekingHost } from "../../lib/storyEventOrdering";
 import { StoryViewer } from "./StoryViewer";
 import { HorizontalScrollArrows } from "../ui/HorizontalScrollArrows";
+import { SectionLabel } from "../common/SectionLabel";
 
 const RING_BY_ACCENT: Record<string, string> = {
   cyan: "from-cyan-400 via-teal-400 to-emerald-400",
@@ -35,7 +36,7 @@ interface EventStoriesProps {
  * events seeking a host get a crown badge; trending events get a flame.
  */
 export function EventStories({ events }: EventStoriesProps) {
-  const { t, tu, language } = useLanguage();
+  const { t, language } = useLanguage();
   const groups = useStore((s) => s.groups);
   const savedEvents = useStore((s) => s.savedEvents) || [];
   const tok = useThemeStyles();
@@ -50,9 +51,7 @@ export function EventStories({ events }: EventStoriesProps) {
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <h2 className={`text-xs font-bold uppercase tracking-wide ${h.sectionLabel}`}>
-          {tu("Εκδηλώσεις σε στιγμιότυπα", "Events in stories")}
-        </h2>
+        <SectionLabel el="Εκδηλώσεις σε στιγμιότυπα" en="Events in stories" />
         <span className={`text-xs font-semibold ${h.labelMuted}`}>
           {events.length} {t("εκδηλώσεις", "events")}
         </span>

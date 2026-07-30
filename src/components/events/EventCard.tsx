@@ -365,7 +365,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               className={cn("w-full py-2 rounded-2xl font-bold transition-colors flex items-center justify-center gap-1.5 shadow-soft", EVENT_CARD_TYPO.cta, isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
             >
               <Crown className="w-3.5 h-3.5" />
-              {t('Γίνε Διοργανωτής Παρέας', 'Become group organizer')}
+              {t('Γίνε Διοργανωτής Nakamas', 'Become Nakamas organizer')}
             </button>
           </div>
         )}
@@ -546,7 +546,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 }}
                 className={cn("px-5 py-2 min-h-11 text-white font-bold rounded-full shadow-soft", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-ink hover:bg-black')}
               >
-                {t("Βρες παρέα", "Find company")}
+                {t("Βρες Nakamas", "Find Nakamas")}
               </button>
             </div>
           </div>

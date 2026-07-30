@@ -42,7 +42,7 @@ export default function InboxPageContent() {
         return {
           group: g,
           event,
-          title: event?.title ?? t('Παρέα Εκδήλωσης', 'Event Group'),
+          title: event?.title ?? t('Nakamas Εκδήλωσης', 'Event Nakamas'),
           imageUrl: event?.imageUrl,
           isPast,
           members: g.members.length,

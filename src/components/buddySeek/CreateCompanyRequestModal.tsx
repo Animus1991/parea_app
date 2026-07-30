@@ -108,7 +108,7 @@ export function CreateCompanyRequestModal({
       <button type="button" className="absolute inset-0 bg-black/50" onClick={onClose} aria-label="Close" />
       <div className={cn('relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl border shadow-soft-lg max-h-[92vh] flex flex-col', shell)}>
         <div className="p-4 border-b border-inherit shrink-0">
-          <h2 className="text-base font-bold">{t('Ψάχνετε παρέα;', 'Looking for company?')}</h2>
+          <h2 className="text-base font-bold">{t('Ψάχνετε Nakamas;', 'Looking for Nakamas?')}</h2>
           <p className="text-xs opacity-70 mt-0.5">
             {t('Βήμα', 'Step')} {step + 1}/{STEPS} · {event.title}
           </p>

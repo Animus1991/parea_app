@@ -172,8 +172,8 @@ export default function BuddySeekPageContent() {
             </p>
             <p className={cn('text-sm font-medium mt-1 leading-relaxed', a.sub)}>
               {t(
-                'Δηλώνετε ότι ψάχνετε παρέα για μια εκδήλωση — με έλεγχο ορατότητας. Άλλοι χρήστες μπορούν να σας στείλουν αίτημα ή να ενωθούν σε ομάδα.',
-                'You signal you want company for an event — with privacy controls. Others can send join requests or form a group with you.',
+                'Δηλώνετε ότι ψάχνετε Nakamas για μια εκδήλωση — με έλεγχο ορατότητας. Άλλοι χρήστες μπορούν να σας στείλουν αίτημα ή να ενωθούν σε ομάδα.',
+                'You signal you want Nakamas for an event — with privacy controls. Others can send join requests or form a group with you.',
               )}
             </p>
           </div>
@@ -299,7 +299,7 @@ export default function BuddySeekPageContent() {
           {filtered.length > 0 && (
             <section className="space-y-3">
               <PlansFormingSectionTitle
-                title={t('Αιτήματα παρέας', 'Company requests')}
+                title={t('Αιτήματα Nakamas', 'Nakama requests')}
                 subtitle={t(`${filtered.length} αποτελέσματα`, `${filtered.length} results`)}
               />
               {filtered.map((item) => (

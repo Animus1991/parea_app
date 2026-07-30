@@ -21,7 +21,7 @@ export function BuddySeekPrivacySettings() {
     <div className={cn('rounded-2xl border p-4 space-y-4', a.cardSurface, a.borderB)}>
       <div>
         <h3 className={cn('text-sm font-bold', a.head)}>
-          {t('Αναζήτηση παρέας — απόρρητο', 'Looking for company — privacy')}
+          {t('Αναζήτηση Nakamas — απόρρητο', 'Looking for Nakamas — privacy')}
         </h3>
         <p className={cn('text-sm mt-1 leading-relaxed', a.sub)}>
           {t(

@@ -28,7 +28,7 @@ const translations: Record<string, Record<Language, string>> = {
 
   // Home Page Hero
   'home.hero.badge': { el: 'Νέος Τρόπος Εξόδου', en: 'New Way to Go Out' },
-  'home.hero.title1': { el: 'Βρείτε παρέα για τις', en: 'Find company for the' },
+  'home.hero.title1': { el: 'Βρείτε Nakamas για τις', en: 'Find Nakamas for the' },
   'home.hero.title2': { el: 'εμπειρίες', en: 'experiences' },
   'home.hero.title3': { el: 'που ήδη θέλετε να ζήσετε.', en: 'you already want to live.' },
   'home.hero.subtitle': { el: 'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.', en: 'Join small groups for events, activities and nearby getaways — based on shared interests and availability.' },
