@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card } from '../common/Card';
 import { MessageCircle, MapPin, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass } from 'lucide-react';
 import { useStore } from '../../store';
@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { TabBar } from '../common/TabBar';
+import { Modal } from '../common/Modal';
 import { cn } from '../../lib/utils';
 import { PLANS_TYPO } from '../../lib/typographyTokens';
 import type { Group } from '../../types';
@@ -67,15 +68,6 @@ export default function PlansPageContent() {
     { id: 'pending', label: t('Εκκρεμή', 'Pending'), count: pendingEvents.length, icon: Clock },
     { id: 'past', label: t('Ολοκληρωμένα', 'Completed'), count: pastEvents.length, icon: CalendarCheck },
   ];
-
-  useEffect(() => {
-    if (!showLeaveConfirm) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setShowLeaveConfirm(null);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [showLeaveConfirm]);
 
   const secondaryBtn = cn(
     'px-4 py-2 rounded-2xl transition-all duration-200 border-2 text-sm font-bold',
@@ -379,44 +371,38 @@ export default function PlansPageContent() {
       </div>
       )}
 
-      {showLeaveConfirm && (
-        <div
-          className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200"
-          onClick={() => setShowLeaveConfirm(null)}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="leave-group-title"
-            className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
+      <Modal
+        open={Boolean(showLeaveConfirm)}
+        onClose={() => setShowLeaveConfirm(null)}
+        title={t('Αποχώρηση από ομάδα', 'Leave Group')}
+        size="sm"
+      >
+        <p className="text-xs font-medium mb-6 text-ink-muted">
+          {t('Είστε σίγουροι ότι θέλετε να αποχωρήσετε; Μπορεί να μην μπορέσετε να ξαναμπείτε.', 'Are you sure you want to leave? You might not be able to rejoin.')}
+        </p>
+        <div className="flex flex-col gap-2.5">
+          <button
+            type="button"
+            data-autofocus
+            onClick={() => {
+              const group = groups.find(g => g.eventId === showLeaveConfirm);
+              if (group) leaveGroup(group.id);
+              toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'));
+              setShowLeaveConfirm(null);
+            }}
+            className="w-full px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
           >
-            <h3 id="leave-group-title" className={cn('text-lg font-bold mb-2', p.head)}>{t('Αποχώρηση από ομάδα', 'Leave Group')}</h3>
-            <p className={cn('text-xs font-medium mb-6', p.sub)}>
-              {t('Είστε σίγουροι ότι θέλετε να αποχωρήσετε; Μπορεί να μην μπορέσετε να ξαναμπείτε.', 'Are you sure you want to leave? You might not be able to rejoin.')}
-            </p>
-            <div className="flex flex-col gap-2.5">
-              <button
-                onClick={() => {
-                  const group = groups.find(g => g.eventId === showLeaveConfirm);
-                  if (group) leaveGroup(group.id);
-                  toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'));
-                  setShowLeaveConfirm(null);
-                }}
-                className="w-full px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
-              >
-                {t('Ναι, Αποχώρηση', 'Yes, Leave')}
-              </button>
-              <button
-                onClick={() => setShowLeaveConfirm(null)}
-                className={cn('w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 border', secondaryBtn)}
-              >
-                {t('Ακύρωση', 'Cancel')}
-              </button>
-            </div>
-          </div>
+            {t('Ναι, Αποχώρηση', 'Yes, Leave')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowLeaveConfirm(null)}
+            className={cn('w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 border', secondaryBtn)}
+          >
+            {t('Ακύρωση', 'Cancel')}
+          </button>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

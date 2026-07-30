@@ -14,6 +14,7 @@ import { ThemePicker } from '../common/ThemePicker';
 import { THEME_LABELS, type ThemeId } from '../../lib/themes';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
+import { Modal } from '../common/Modal';
 
 const CATEGORY_KEYS = ['liveMusic', 'theater', 'hiking', 'cinema', 'boardGames', 'wellness', 'festivals', 'workshops'] as const;
 
@@ -370,22 +371,30 @@ export default function SettingsPageContent() {
         </button>
       </div>
 
-      {showDeleteModal && (
-        <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" onClick={() => setShowDeleteModal(false)}>
-          <Card className="max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className={cn('font-bold text-lg mb-2', a.head)}>{t('Διαγραφή λογαριασμού;', 'Delete account?')}</h3>
-            <p className={cn('text-sm mb-4', a.sub)}>
-              {t('Αυτή είναι demo ροή — καμία πραγματική διαγραφή δεν γίνεται.', 'This is a demo flow — no real deletion occurs.')}
-            </p>
-            <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setShowDeleteModal(false)}>{t('Ακύρωση', 'Cancel')}</Button>
-              <Button variant="outline" className="text-red-600 border-red-200" onClick={() => { setShowDeleteModal(false); toast.info(t('Η διαγραφή ακυρώθηκε (demo)', 'Deletion cancelled (demo)')); }}>
-                {t('Επιβεβαίωση demo', 'Confirm demo')}
-              </Button>
-            </div>
-          </Card>
+      <Modal
+        open={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title={t('Διαγραφή λογαριασμού;', 'Delete account?')}
+        size="md"
+      >
+        <p className="text-sm mb-4 text-ink-muted">
+          {t('Αυτή είναι demo ροή — καμία πραγματική διαγραφή δεν γίνεται.', 'This is a demo flow — no real deletion occurs.')}
+        </p>
+        <div className="flex gap-2 justify-end">
+          <Button variant="outline" onClick={() => setShowDeleteModal(false)}>{t('Ακύρωση', 'Cancel')}</Button>
+          <Button
+            variant="outline"
+            className="text-red-600 border-red-200"
+            data-autofocus
+            onClick={() => {
+              setShowDeleteModal(false);
+              toast.info(t('Η διαγραφή ακυρώθηκε (demo)', 'Deletion cancelled (demo)'));
+            }}
+          >
+            {t('Επιβεβαίωση demo', 'Confirm demo')}
+          </Button>
         </div>
-      )}
+      </Modal>
 
       {/* Version */}
       <div className="text-center pt-2 pb-4">

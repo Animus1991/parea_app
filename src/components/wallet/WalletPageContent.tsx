@@ -6,6 +6,7 @@ import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
+import { Modal } from '../common/Modal';
 
 export default function WalletPageContent() {
   const { t } = useLanguage();
@@ -119,28 +120,45 @@ export default function WalletPageContent() {
         </div>
       </Card>
 
-      {showWithdraw && (
-        <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" onClick={() => setShowWithdraw(false)}>
-          <Card className="max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className={cn('font-bold text-lg mb-2', a.head)}>{t('Ανάληψη χρημάτων', 'Withdraw Funds')}</h3>
-            <p className={cn('text-sm mb-4', a.sub)}>{t('Demo ροή — η ανάληψη καταγράφεται τοπικά.', 'Demo flow — withdrawal is logged locally only.')}</p>
-            <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setShowWithdraw(false)}>{t('Ακύρωση', 'Cancel')}</Button>
-              <Button onClick={() => { setShowWithdraw(false); toast.success(t('Η ανάληψη υποβλήθηκε (demo)', 'Withdrawal submitted (demo)')); }}>{t('Επιβεβαίωση', 'Confirm')}</Button>
-            </div>
-          </Card>
+      <Modal
+        open={showWithdraw}
+        onClose={() => setShowWithdraw(false)}
+        title={t('Ανάληψη χρημάτων', 'Withdraw Funds')}
+        size="md"
+      >
+        <p className="text-sm mb-4 text-ink-muted">{t('Demo ροή — η ανάληψη καταγράφεται τοπικά.', 'Demo flow — withdrawal is logged locally only.')}</p>
+        <div className="flex gap-2 justify-end">
+          <Button variant="outline" onClick={() => setShowWithdraw(false)}>{t('Ακύρωση', 'Cancel')}</Button>
+          <Button
+            data-autofocus
+            onClick={() => {
+              setShowWithdraw(false);
+              toast.success(t('Η ανάληψη υποβλήθηκε (demo)', 'Withdrawal submitted (demo)'));
+            }}
+          >
+            {t('Επιβεβαίωση', 'Confirm')}
+          </Button>
         </div>
-      )}
+      </Modal>
 
-      {showPayouts && (
-        <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" onClick={() => setShowPayouts(false)}>
-          <Card className="max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className={cn('font-bold text-lg mb-2', a.head)}>{t('Διαχείριση πληρωμών', 'Manage Payouts')}</h3>
-            <p className={cn('text-sm mb-4', a.sub)}>{t('Demo — ενημέρωση τραπεζικού λογαριασμού σύντομα.', 'Demo — bank account update coming soon.')}</p>
-            <Button className="w-full" onClick={() => { setShowPayouts(false); toast.info(t('Αποθηκεύτηκε (demo)', 'Saved (demo)')); }}>{t('Κλείσιμο', 'Close')}</Button>
-          </Card>
-        </div>
-      )}
+      <Modal
+        open={showPayouts}
+        onClose={() => setShowPayouts(false)}
+        title={t('Διαχείριση πληρωμών', 'Manage Payouts')}
+        size="md"
+      >
+        <p className="text-sm mb-4 text-ink-muted">{t('Demo — ενημέρωση τραπεζικού λογαριασμού σύντομα.', 'Demo — bank account update coming soon.')}</p>
+        <Button
+          className="w-full"
+          data-autofocus
+          onClick={() => {
+            setShowPayouts(false);
+            toast.info(t('Αποθηκεύτηκε (demo)', 'Saved (demo)'));
+          }}
+        >
+          {t('Κλείσιμο', 'Close')}
+        </Button>
+      </Modal>
     </div>
   );
 }

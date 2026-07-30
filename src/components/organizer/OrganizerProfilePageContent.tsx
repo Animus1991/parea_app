@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useStore } from '../../store';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
-import { Calendar, MapPin, ShieldCheck, Mail, Globe, X } from 'lucide-react';
+import { Modal } from '../common/Modal';
+import { Calendar, MapPin, ShieldCheck, Mail, Globe } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -28,15 +29,6 @@ export default function OrganizerProfilePageContent() {
     setShowContactModal(false);
     setContactMessage('');
   }, []);
-
-  useEffect(() => {
-    if (!showContactModal) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeContactModal();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [showContactModal, closeContactModal]);
 
   if (!organizer) {
     return (
@@ -193,63 +185,43 @@ export default function OrganizerProfilePageContent() {
         )}
       </div>
 
-      {showContactModal && (
-        <div
-          className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="organizer-contact-title"
-          onClick={closeContactModal}
-        >
-          <div
-            className={cn('rounded-2xl shadow-soft-lg max-w-md w-full p-6', p.cardSurface)}
-            onClick={(e) => e.stopPropagation()}
+      <Modal
+        open={showContactModal}
+        onClose={closeContactModal}
+        title={`${t('Επικοινωνία με', 'Contact')} ${organizer.name}`}
+        size="md"
+      >
+        <p className="text-sm mb-4 text-ink-muted">
+          {t(
+            'Στείλτε ένα ασφαλές μήνυμα σε αυτόν τον διοργανωτή για τις εκδηλώσεις του, τα εισιτήρια ή γενικές ερωτήσεις.',
+            'Send a secure message to this organizer about their events, ticketing issues, or general inquiries.',
+          )}
+        </p>
+        <textarea
+          data-autofocus
+          value={contactMessage}
+          onChange={(e) => setContactMessage(e.target.value)}
+          className="w-full border border-border rounded-lg p-3 text-sm resize-none mb-4 outline-none focus:ring-2 focus:ring-accent bg-surface-raised text-ink"
+          rows={4}
+          placeholder={t('Το μήνυμά σας...', 'Your message...')}
+        />
+        <div className="flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={closeContactModal}
+            className="px-4 py-2 text-sm font-bold rounded-lg transition-colors text-ink-muted hover:bg-surface"
           >
-            <div className="flex justify-between items-center mb-4">
-              <h3 id="organizer-contact-title" className={cn('text-lg font-bold', p.head)}>
-                {t('Επικοινωνία με', 'Contact')} {organizer.name}
-              </h3>
-              <button
-                type="button"
-                onClick={closeContactModal}
-                className={cn('transition-colors', p.muted, p.hoverText)}
-                aria-label={t('Κλείσιμο', 'Close')}
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <p className={cn('text-sm mb-4', p.sub)}>
-              {t(
-                'Στείλτε ένα ασφαλές μήνυμα σε αυτόν τον διοργανωτή για τις εκδηλώσεις του, τα εισιτήρια ή γενικές ερωτήσεις.',
-                'Send a secure message to this organizer about their events, ticketing issues, or general inquiries.',
-              )}
-            </p>
-            <textarea
-              value={contactMessage}
-              onChange={(e) => setContactMessage(e.target.value)}
-              className={cn('w-full border rounded-lg p-3 text-sm resize-none mb-4 outline-none focus:ring-2 focus:ring-cyan-600', p.isDark ? 'bg-gray-800 border-gray-700 text-white' : 'border-gray-300')}
-              rows={4}
-              placeholder={t('Το μήνυμά σας...', 'Your message...')}
-            />
-            <div className="flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={closeContactModal}
-                className={cn('px-4 py-2 text-sm font-bold rounded-lg transition-colors', p.muted, p.isDark ? 'hover:bg-white/10' : 'hover:bg-gray-100')}
-              >
-                {t('Ακύρωση', 'Cancel')}
-              </button>
-              <button
-                type="button"
-                onClick={handleSendMessage}
-                className="px-4 py-2 text-sm font-bold text-white bg-cyan-600 hover:bg-cyan-700 rounded-lg transition-colors"
-              >
-                {t('Αποστολή Μηνύματος', 'Send Message')}
-              </button>
-            </div>
-          </div>
+            {t('Ακύρωση', 'Cancel')}
+          </button>
+          <button
+            type="button"
+            onClick={handleSendMessage}
+            className="px-4 py-2 text-sm font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-lg transition-colors"
+          >
+            {t('Αποστολή Μηνύματος', 'Send Message')}
+          </button>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }
