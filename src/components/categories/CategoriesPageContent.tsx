@@ -153,7 +153,7 @@ export default function CategoriesPageContent() {
           </Badge>
           <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-3 leading-tight">
             {t('Βρείτε την επόμενη', 'Find your next')}{' '}
-            <span className="underline decoration-hero-fg/40 underline-offset-4">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-hero-accent-from to-hero-accent-to">
               {t('εμπειρία σας', 'experience')}
             </span>
           </h1>

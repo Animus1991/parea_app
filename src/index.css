@@ -84,6 +84,9 @@
   --color-hero-from: #111827;
   --color-hero-to: #1f2937;
   --color-hero-fg: #ffffff;
+  /* Accent gradient για το highlighted span μέσα στο hero */
+  --color-hero-accent-from: #22d3ee;
+  --color-hero-accent-to: #34d399;
 }
 
 /* ── Per-theme semantic token remapping ── */
@@ -99,6 +102,8 @@
   --color-accent-soft: #FDF2FA;
   --color-hero-from: #c026d3;
   --color-hero-to: #a21caf;
+  --color-hero-accent-from: #fae8ff;
+  --color-hero-accent-to: #fce7f3;
 }
 [data-theme="bento"] {
   --color-surface: #F5F3FF;
@@ -108,6 +113,8 @@
   --color-accent-soft: #eef2ff;
   --color-hero-from: #4f46e5;
   --color-hero-to: #4338ca;
+  --color-hero-accent-from: #e0e7ff;
+  --color-hero-accent-to: #ede9fe;
 }
 [data-theme="neon"] {
   --color-surface: #ECFDF5;
@@ -117,6 +124,8 @@
   --color-accent-soft: #ecfdf5;
   --color-hero-from: #059669;
   --color-hero-to: #047857;
+  --color-hero-accent-from: #d1fae5;
+  --color-hero-accent-to: #ccfbf1;
 }
 [data-theme="vibrant-dark"],
 [data-theme="bento-dark"],
@@ -153,6 +162,8 @@
   /* Deep magenta hero: anti-glow, AA-safe (≥6.3:1 με λευκό) */
   --color-hero-from: #a21caf;
   --color-hero-to: #86198f;
+  --color-hero-accent-from: #f0abfc;
+  --color-hero-accent-to: #f9a8d4;
 }
 [data-theme="bento-dark"] {
   --color-surface: #131318;
@@ -162,6 +173,8 @@
   /* Deep indigo hero */
   --color-hero-from: #4338ca;
   --color-hero-to: #3730a3;
+  --color-hero-accent-from: #a5b4fc;
+  --color-hero-accent-to: #c4b5fd;
 }
 [data-theme="neon-dark"] {
   --color-surface: #101e17;
@@ -171,6 +184,8 @@
   /* Deep emerald hero: AA-safe (5.0–6.9:1 με λευκό), όχι φωτεινό */
   --color-hero-from: #047857;
   --color-hero-to: #065f46;
+  --color-hero-accent-from: #a7f3d0;
+  --color-hero-accent-to: #99f6e4;
 }
 [data-theme="activebuddies"] {
   --color-ink: hsl(220 14% 12%);
@@ -189,6 +204,8 @@
   --color-accent-fg: #ffffff;
   --color-hero-from: #12161c;
   --color-hero-to: #1c2129;
+  --color-hero-accent-from: #ffffff;
+  --color-hero-accent-to: #d1d5db;
   --shadow-soft: 0 1px 3px -1px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --shadow-soft-md: 0 4px 12px -3px rgba(0,0,0,0.09), 0 2px 5px -2px rgba(0,0,0,0.05);
   --shadow-soft-lg: 0 8px 20px -4px rgba(0,0,0,0.10), 0 3px 8px -3px rgba(0,0,0,0.06);
@@ -211,6 +228,8 @@
   --color-hero-from: #1a1e24;
   --color-hero-to: #12161c;
   --color-hero-fg: #ffffff;
+  --color-hero-accent-from: #ffffff;
+  --color-hero-accent-to: #d1d5db;
 }
 
 body {
