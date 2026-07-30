@@ -35,7 +35,7 @@ export function PlansFormingSidebarReopenTab() {
         tok.isDark ? 'bg-[#0c1016]/95 border-white/10 text-cyan-300' : 'bg-white border-gray-200 text-cyan-700',
       )}
       aria-label={t('Άνοιγμα sidebar σχεδίων', 'Open plans sidebar')}
-      title={t('Σχέδια που σχηματίζονται', 'Plans forming')}
+      title={t('Βρες Nakamas', 'Find Nakamas')}
     >
       <Sparkles className="w-4 h-4 shrink-0" />
       <span className="text-xs font-bold [writing-mode:vertical-rl] rotate-180 tracking-wide">
@@ -67,7 +67,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
         shell,
         className,
       )}
-      aria-label={t('Σχέδια που σχηματίζονται', 'Plans forming')}
+      aria-label={t('Βρες Nakamas', 'Find Nakamas')}
     >
       <header
         className={cn(
@@ -81,7 +81,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
           </div>
           <div className="min-w-0 flex-1">
             <h2 className={cn('text-xs font-bold uppercase tracking-wide', isDark ? 'text-cyan-300' : 'text-cyan-800')}>
-              {tu('Σχέδια που σχηματίζονται', 'Plans forming')}
+              {tu('Βρες Nakamas', 'Find Nakamas')}
             </h2>
             <p className={cn('text-xs mt-0.5', isDark ? 'text-gray-400' : 'text-gray-600')}>
               {t('Παρέα για εκδηλώσεις', 'Company for events')}

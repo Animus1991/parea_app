@@ -132,7 +132,7 @@ export default function BuddySeekPageContent() {
   return (
     <div className="w-full max-w-full min-w-0 space-y-6 pb-16 pt-6">
       <header className="space-y-3">
-        <h1 className={cn('text-2xl font-bold', a.head)}>{t('Σχέδια που σχηματίζονται', 'Plans forming')}</h1>
+        <h1 className={cn('text-2xl font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
         <PlansFormingValueHero insights={feed.insights} />
         <PlansFormingStatsBar insights={feed.insights} />
         <div className="flex flex-wrap gap-2">
@@ -168,7 +168,7 @@ export default function BuddySeekPageContent() {
           <Info className="w-5 h-5 shrink-0 text-cyan-600 dark:text-cyan-400 mt-0.5" />
           <div className="flex-1 min-w-0">
             <p className={cn('text-sm font-bold', a.head)}>
-              {t('Τι είναι τα Σχέδια που σχηματίζονται;', 'What are Plans forming?')}
+              {t('Τι είναι το Βρες Nakamas;', 'What is Find Nakamas?')}
             </p>
             <p className={cn('text-sm font-medium mt-1 leading-relaxed', a.sub)}>
               {t(

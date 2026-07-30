@@ -56,7 +56,7 @@ export function PlansFormingBottomSheet() {
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <h2 id="plans-forming-sheet-title" className={cn('text-base font-bold', tok.head)}>
-                {t('Σχέδια που σχηματίζονται', 'Plans forming')}
+                {t('Βρες Nakamas', 'Find Nakamas')}
               </h2>
               <PlansFormingValueHero insights={feed.insights} />
             </div>

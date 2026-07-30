@@ -77,7 +77,7 @@ export function CompanyRequestCard({
         )}
         <div className="min-w-0 flex-1">
           <p className={cn('text-xs font-bold uppercase tracking-wide', darkSurface ? 'text-cyan-400' : 'text-cyan-700')}>
-            {tu('Σχέδια που σχηματίζονται', 'Plans forming')}
+            {tu('Βρες Nakamas', 'Find Nakamas')}
           </p>
           <p className={cn('text-sm font-bold truncate', darkSurface ? 'text-white' : 'text-gray-900')}>
             {title}

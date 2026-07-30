@@ -184,7 +184,7 @@ export default function PlansPageContent() {
               )}
               {group && isPlansFormingGroupId(group.id) && (
                 <div className="absolute bottom-2 left-2 right-2 bg-cyan-900/90 text-white px-2 py-0.5 rounded-full text-xs font-bold text-center truncate">
-                  {t('Από Σχέδια που σχηματίζονται', 'From Plans forming')}
+                  {t('Από Βρες Nakamas', 'From Find Nakamas')}
                 </div>
               )}
             </div>

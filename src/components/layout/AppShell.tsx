@@ -4,7 +4,7 @@ import { Toaster } from 'sonner';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
   Grid, TrendingUp, Bookmark, History, Flag,
-  Users, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare,
+  Users, UserPlus, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare,
   Trophy, Zap, Sparkles, ChevronsLeft, ChevronsRight
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -78,14 +78,12 @@ interface NavItemProps {
   to: string;
   icon: React.ComponentType<{ className?: string }>;
   label: string;
-  disabled?: boolean;
   compact?: boolean;
   /** Icon-only rail σε όλα τα widths (collapsed sidebar). */
   rail?: boolean;
 }
 
-function NavItem({ to, icon: Icon, label, disabled = false, compact = false, rail = false }: NavItemProps) {
-  const { t } = useLanguage();
+function NavItem({ to, icon: Icon, label, compact = false, rail = false }: NavItemProps) {
   const tok = useThemeStyles();
   const containerClass = rail
     ? 'justify-center px-0 py-3'
@@ -98,19 +96,6 @@ function NavItem({ to, icon: Icon, label, disabled = false, compact = false, rai
       ? 'h-[22px] w-[22px] lg:h-4 lg:w-4 shrink-0'
       : 'h-4 w-4 shrink-0';
   const textClass = rail ? 'hidden' : compact ? 'hidden lg:block' : 'block';
-
-  if (disabled) {
-    return (
-      <div
-        className={cn(`${tok.navDisabled} flex items-center gap-3 text-sm min-h-11`, containerClass)}
-        title={label}
-      >
-        <Icon className={iconClass} />
-        <span className={textClass}>{label}</span>
-      <span className={cn(`text-xs tracking-wide font-bold px-1.5 py-0.5 rounded-lg ${tok.isDark ? "bg-gray-700/40 text-gray-500" : "bg-gray-100 text-gray-500"}`, textClass)}>{t('Σύντομα', 'Soon')}</span>
-      </div>
-    );
-  }
 
   return (
     <NavLink
@@ -166,6 +151,10 @@ function NavSection({ title, children, compact = false, rail = false }: NavSecti
 // ─────────────────────────────────────────────
 function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?: boolean }) {
   const { t } = useLanguage();
+  const currentUser = useStore((s) => s.currentUser);
+  /** Ίδιο predicate με CommandPalette — δεν υπάρχει ξεχωριστό isAdmin flag. */
+  const isAdmin = Boolean(currentUser?.isOrganizer);
+
   return (
     <>
       <NavSection title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
@@ -177,7 +166,7 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
       <NavSection title={t('Η Εμπειρία μου', 'My Experience')} compact={compact} rail={rail}>
         <NavItem to="/agenda" icon={Calendar} label={t('Το Ημερολόγιό μου', 'My Calendar')} compact={compact} rail={rail} />
         <NavItem to="/plans" icon={CalendarCheck} label={t('Τα Σχέδιά μου', 'My Plans')} compact={compact} rail={rail} />
-        <NavItem to="/buddy-seek" icon={Users} label={t('Σχέδια που σχηματίζονται', 'Plans forming')} compact={compact} rail={rail} />
+        <NavItem to="/buddy-seek" icon={UserPlus} label={t('Βρες Nakamas', 'Find Nakamas')} compact={compact} rail={rail} />
         <NavItem to="/saved" icon={Bookmark} label={t('Αποθηκευμένες', 'Saved')} compact={compact} rail={rail} />
         <NavItem to="/history" icon={History} label={t('Ιστορικό', 'History')} compact={compact} rail={rail} />
       </NavSection>
@@ -205,8 +194,13 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
         <NavItem to="/profile" icon={User} label={t('Το Προφίλ μου', 'My Profile')} compact={compact} rail={rail} />
         <NavItem to="/notifications" icon={Bell} label={t('Ειδοποιήσεις', 'Notifications')} compact={compact} rail={rail} />
         <NavItem to="/settings" icon={Settings} label={t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')} compact={compact} rail={rail} />
+        {isAdmin && (
+          <NavItem to="/admin" icon={Terminal} label={t('Διαχείριση & Έλεγχος', 'Admin & Moderation')} compact={compact} rail={rail} />
+        )}
+      </NavSection>
+
+      <NavSection title={t('Υποστήριξη', 'Support')} compact={compact} rail={rail}>
         <NavItem to="/help" icon={HelpCircle} label={t('Κέντρο Βοήθειας', 'Help Center')} compact={compact} rail={rail} />
-        <NavItem to="/admin" icon={Terminal} label={t('Διαχείριση & Έλεγχος', 'Admin & Moderation')} compact={compact} rail={rail} />
         <NavItem to="/onboarding" icon={Sparkles} label={t('Οδηγός Εισαγωγής', 'Onboarding')} compact={compact} rail={rail} />
       </NavSection>
     </>

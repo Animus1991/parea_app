@@ -13,7 +13,7 @@ const ROUTE_TITLES: Record<string, [string, string]> = {
   '/nearby': ['Κοντά μου', 'Nearby'],
   '/agenda': ['Ημερολόγιο', 'My Calendar'],
   '/plans': ['Πλάνα', 'Plans'],
-  '/buddy-seek': ['Buddy Seek', 'Buddy Seek'],
+  '/buddy-seek': ['Βρες Nakamas', 'Find Nakamas'],
   '/history': ['Ιστορικό', 'History'],
   '/saved': ['Αποθηκευμένα', 'Saved'],
   '/connections': ['Συνδέσεις', 'Connections'],

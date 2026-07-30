@@ -31,7 +31,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
             className="text-sm font-bold uppercase tracking-wide text-accent-strong flex items-center gap-1.5"
           >
             <Sparkles className="w-4 h-4" />
-            {tu('Σχέδια που σχηματίζονται', 'Plans forming')}
+            {tu('Βρες Nakamas', 'Find Nakamas')}
           </h2>
           <PlansFormingValueHero insights={feed.insights} />
           <PlansFormingStatsBar insights={feed.insights} compact />
