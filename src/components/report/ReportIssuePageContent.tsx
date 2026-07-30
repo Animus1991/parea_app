@@ -50,7 +50,7 @@ export default function ReportIssuePageContent() {
   );
 
   return (
-    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className={cn('text-base md:text-lg font-bold', p.head)}>

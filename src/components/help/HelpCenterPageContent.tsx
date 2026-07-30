@@ -55,7 +55,7 @@ export default function HelpCenterPageContent() {
   const hasResults = filtered.length > 0 || filteredFaqs.length > 0;
 
   return (
-    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Hero */}
       <div className={cn("text-white rounded-2xl p-8 text-center shadow-soft-md relative overflow-hidden", a.heroBg)}>
         <div className={cn("absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full", a.heroCircle)}></div>

@@ -136,7 +136,7 @@ export default function CategoriesPageContent() {
     : 'bg-white border-gray-200 text-gray-800 cursor-pointer';
 
   return (
-    <div className="max-w-full mx-auto space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="max-w-full mx-auto space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div
         className={cn(
           'p-6 md:p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative shadow-soft',

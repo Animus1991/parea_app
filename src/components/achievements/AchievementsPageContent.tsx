@@ -78,7 +78,7 @@ export default function AchievementsPageContent() {
   ];
 
   return (
-    <div className="mx-auto max-w-full space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="mx-auto max-w-full space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
         <h1 className={cn("text-xl md:text-2xl font-bold", a.head)}>{t('Επιτεύγματα', 'Achievements')}</h1>
         <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Κερδίστε badges και XP μέσα από συμμετοχές', 'Earn badges and XP through participation')}</p>

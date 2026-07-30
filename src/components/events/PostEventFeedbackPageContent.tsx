@@ -92,7 +92,7 @@ export default function PostEventFeedbackPageContent() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="max-w-2xl mx-auto space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
         <h1 className={cn('text-2xl md:text-3xl font-extrabold tracking-tight', p.head)}>
           {t('Αξιολόγηση Εκδήλωσης', 'Post-Event Feedback')}

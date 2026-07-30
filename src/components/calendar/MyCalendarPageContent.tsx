@@ -310,7 +310,7 @@ export default function MyCalendarPageContent() {
   };
 
   return (
-    <div className="w-full max-w-full min-w-0 space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="w-full max-w-full min-w-0 space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 border-b border-white/5 pb-4 md:pb-6">
         <div className="flex items-center gap-4">

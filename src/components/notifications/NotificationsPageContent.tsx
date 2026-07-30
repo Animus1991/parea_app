@@ -198,7 +198,7 @@ export default function NotificationsPageContent() {
   };
 
   return (
-    <div className="mx-auto max-w-full space-y-5 pb-20 md:pb-0 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="mx-auto max-w-full space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="flex justify-between items-end">
         <div>
           <h1 className={cn('text-xl md:text-2xl font-bold', a.head)}>

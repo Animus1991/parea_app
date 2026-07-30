@@ -223,7 +223,7 @@ export function SideNav() {
   const setCollapsed = useStore((s) => s.setSidebarCollapsed);
   return (
     <aside className={cn("h-full flex-col shrink-0 hidden md:flex transition-all duration-300 z-sidenav border-r", collapsed ? "w-[88px]" : "w-[88px] lg:w-64", tok.sideNav)}>
-      <div className={cn("h-16 flex items-center border-b shrink-0", collapsed ? "justify-center" : "justify-center lg:justify-start lg:px-6", tok.sideNavBorder)}>
+      <div className={cn("h-header flex items-center border-b shrink-0", collapsed ? "justify-center" : "justify-center lg:justify-start lg:px-6", tok.sideNavBorder)}>
         <NakamasLogo compact={collapsed} className={collapsed ? "text-xl" : "text-xl lg:text-3xl"} />
       </div>
       <div className="flex-1 overflow-y-auto py-4 lg:py-6 px-2 lg:px-3">
@@ -265,7 +265,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   return (
-    <nav className={cn("relative z-topnav flex items-center justify-between px-4 lg:px-6 py-[10px] border-b h-[59px] shrink-0 overflow-visible", tok.topNav)}>
+    <nav className={cn("relative z-topnav flex items-center justify-between px-4 lg:px-6 py-[10px] border-b h-header shrink-0 overflow-visible", tok.topNav)}>
       <div className="flex items-center space-x-8">
         <div className="md:hidden">
           <NakamasLogo className="text-xl" />
@@ -445,7 +445,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="md:hidden fixed inset-0 z-modal flex">
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
           <div className={cn("relative w-64 max-w-sm h-full shadow-soft-lg flex flex-col z-modal", tok.sideNav)}>
-            <div className="h-14 flex items-center justify-between px-6 border-b border-[#E5E7EB] shrink-0">
+            <div className="h-header flex items-center justify-between px-6 border-b border-[#E5E7EB] shrink-0">
               <NakamasLogo className="text-xl" />
               <button onClick={() => setIsMobileMenuOpen(false)} aria-label={t('Κλείσιμο μενού', 'Close menu')} className={cn(tok.isDark ? "text-white hover:text-white" : "text-gray-500 hover:text-ink")}>
                 <X className="h-6 w-6" />
@@ -461,7 +461,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className={cn("flex flex-col flex-1 min-w-0 h-screen overflow-hidden", demoMode && "pt-8")}>
           <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
           <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none">
-            <div className="mx-auto w-full max-w-full p-4 lg:px-8 lg:py-6 flex-1 pb-24 md:pb-6">
+            <div className="mx-auto w-full max-w-full p-4 lg:px-8 lg:py-6 flex-1 pb-safe md:pb-6">
               {children}
             </div>
           </main>

@@ -87,6 +87,27 @@
   /* Accent gradient για το highlighted span μέσα στο hero */
   --color-hero-accent-from: #22d3ee;
   --color-hero-accent-to: #34d399;
+  /* Layout chrome metrics (P2-T5/T6): single source για header/bottom-edge spacing */
+  --header-h: 60px;
+  --bottom-nav-h: 62px;
+  /* Ζώνη πάνω από το BottomNav + προεξοχή του center FAB (24px) + gap (8px) */
+  --safe-bottom: calc(var(--bottom-nav-h) + 32px);
+}
+
+@utility h-header {
+  height: var(--header-h);
+}
+
+@utility pb-safe {
+  padding-bottom: calc(var(--safe-bottom) + env(safe-area-inset-bottom, 0px));
+}
+
+@utility bottom-nav-clear {
+  bottom: calc(var(--bottom-nav-h) + 8px + env(safe-area-inset-bottom, 0px));
+}
+
+@utility bottom-fab-zone {
+  bottom: calc(var(--safe-bottom) + env(safe-area-inset-bottom, 0px));
 }
 
 /* ── Per-theme semantic token remapping ── */

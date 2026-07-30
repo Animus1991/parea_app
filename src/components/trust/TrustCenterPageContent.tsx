@@ -34,7 +34,7 @@ export default function TrustCenterPageContent() {
   ];
 
   return (
-    <div className="mx-auto max-w-full space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="mx-auto max-w-full space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
         <h1 className={cn("text-xl md:text-2xl font-bold tracking-tight", a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
         <p className={cn("mt-2 text-sm leading-relaxed max-w-xl", a.sub)}>

@@ -64,7 +64,7 @@ export default function InboxPageContent() {
   const unreadNotifications = notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="w-full max-w-full min-w-0 flex flex-col relative pb-20 md:pb-0 animate-in fade-in duration-500">
+    <div className="w-full max-w-full min-w-0 flex flex-col relative animate-in fade-in duration-500">
       <div className="shrink-0 mb-6">
         <h1 className={cn(INBOX_TYPO.pageTitle, p.head)}>
           {t('Μηνύματα', 'Messages')}

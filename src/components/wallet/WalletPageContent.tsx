@@ -25,7 +25,7 @@ export default function WalletPageContent() {
     : transactions.filter((tx) => txFilter === 'month' ? tx.date.includes('Oct') : tx.date.includes('Sep'));
 
   return (
-    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
+    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
         <h1 className={cn("text-xl md:text-2xl font-bold", a.head)}>{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
         <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Διαχειριστείτε τα έσοδα και τις πληρωμές σας.', 'Manage your event revenue and payouts.')}</p>

@@ -85,7 +85,7 @@ export default function PlansPageContent() {
   );
 
   return (
-    <div className="mx-auto max-w-full space-y-6 md:space-y-7 pb-20 md:pb-0 animate-in fade-in slide-in-from-bottom-2 duration-500">
+    <div className="mx-auto max-w-full space-y-6 md:space-y-7 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div>
         <h1 className={cn(PLANS_TYPO.pageTitle, p.head)}>{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
         <p className={cn(PLANS_TYPO.pageSub, 'mt-1', p.sub)}>{t(`Διαχείριση επερχόμενων, εκκρεμών και παρελθόντων εκδηλώσεων.`, `Manage your upcoming experiences, pending groups, and past events.`)}</p>
