@@ -27,7 +27,7 @@ const NOTIF_MAP: Record<string, keyof import('../../store').UserSettings['notifi
 };
 
 export default function SettingsPageContent() {
-  const { t, language, setLanguage } = useLanguage();
+  const { t, tu, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
   const a = usePageContrast();
 
@@ -267,7 +267,7 @@ export default function SettingsPageContent() {
       )}
 
       <div>
-        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Διαθεσιμότητα', 'Availability')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Διαθεσιμότητα', 'Availability')}</h2>
         <Card className={a.divider}>
           <div
             className={cn("flex items-center justify-between p-4 cursor-pointer transition-colors", a.itemHover)}
@@ -302,7 +302,7 @@ export default function SettingsPageContent() {
 
       {/* Active Sessions */}
       <div>
-        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Ενεργές Συνεδρίες', 'Active Sessions')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Ενεργές Συνεδρίες', 'Active Sessions')}</h2>
         <Card>
           <div className={cn("divide-y", a.divider)}>
             <div className="flex items-center justify-between p-4">
@@ -337,7 +337,7 @@ export default function SettingsPageContent() {
 
       {/* Data Export */}
       <div>
-        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Δεδομένα', 'Data')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Δεδομένα', 'Data')}</h2>
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

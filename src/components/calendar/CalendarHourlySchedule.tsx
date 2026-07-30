@@ -21,7 +21,7 @@ export interface CalendarHourlyScheduleProps {
 
 export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyScheduleProps) {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const p = usePageContrast();
 
   return (
@@ -41,7 +41,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
           <div>
             <h3 className={cn('font-bold text-lg', p.head)}>{format(day, 'd MMMM yyyy')}</h3>
             <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
-              {t('Ημερήσιο Πρόγραμμα', 'Daily Schedule')}
+              {tu('Ημερήσιο Πρόγραμμα', 'Daily Schedule')}
             </p>
           </div>
           <button

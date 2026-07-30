@@ -42,7 +42,7 @@ export function PlansFormingCard({
   isDarkSurface?: boolean;
   onDismiss?: () => void;
 }) {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const navigate = useNavigate();
   const currentUser = useStore((s) => s.currentUser);
   const prefs = useStore((s) => s.companyRequestPreferences);
@@ -157,10 +157,10 @@ export function PlansFormingCard({
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex flex-wrap items-center gap-1">
             <span className="text-xs font-bold uppercase tracking-wide text-cyan-500 dark:text-cyan-400">
-              {t(item.intentLabel.el, item.intentLabel.en)}
+              {tu(item.intentLabel.el, item.intentLabel.en)}
             </span>
             {item.isSavedEvent && (
-              <span className="text-xs font-bold px-1.5 py-0.5 rounded-lg bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30">
+              <span className="text-xs font-bold px-1.5 py-0.5 rounded-lg bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200 dark:bg-fuchsia-500/20 dark:text-fuchsia-300 dark:border-fuchsia-500/30">
                 {t('Αποθηκευμένη', 'Saved')}
               </span>
             )}
@@ -346,7 +346,7 @@ export function PlansFormingGroupCard({
   isDarkSurface?: boolean;
   onSuggestMerge?: () => void;
 }) {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const navigate = useNavigate();
   const isSidebar = variant === 'sidebar';
   const darkCard = isSidebar && isDarkSurface;
@@ -369,7 +369,7 @@ export function PlansFormingGroupCard({
         )}
         <div className="min-w-0 flex-1 space-y-1">
           <p className="text-xs font-bold uppercase tracking-wide text-emerald-500">
-            {t('Ομάδα δέχεται μέλη', 'Group recruiting')}
+            {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
           </p>
           <p className={cn('text-base font-bold leading-snug line-clamp-2', darkCard ? 'text-white' : 'text-gray-900')}>
             {event.title}

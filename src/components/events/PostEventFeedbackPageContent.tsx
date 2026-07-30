@@ -22,7 +22,7 @@ import type { FeedbackData } from '../../store';
 const COMMENT_MAX = 500;
 
 export default function PostEventFeedbackPageContent() {
-  const { t, language } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const navigate = useNavigate();
   const { eventId } = useParams<{ eventId: string }>();
   const p = usePageContrast();
@@ -189,7 +189,7 @@ export default function PostEventFeedbackPageContent() {
         >
           <div>
             <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-4', p.head)}>
-              {t('Πώς νιώσατε;', 'How did you feel?')}
+              {tu('Πώς νιώσατε;', 'How did you feel?')}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {moods.map((m) => (
@@ -228,7 +228,7 @@ export default function PostEventFeedbackPageContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-2', p.head)}>
-                {t('Γενική Εντύπωση', 'Overall Experience')}
+                {tu('Γενική Εντύπωση', 'Overall Experience')}
               </h3>
               <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
                 {t('Πώς θα βαθμολογούσατε την εκδήλωση;', 'How would you rate the event?')}
@@ -256,7 +256,7 @@ export default function PostEventFeedbackPageContent() {
 
             <div>
               <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-2', p.head)}>
-                {t('Ατμόσφαιρα', 'Vibe')}
+                {tu('Ατμόσφαιρα', 'Vibe')}
               </h3>
               <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
                 {t('Πώς ήταν η ατμόσφαιρα της ομάδας;', 'How was the group atmosphere?')}
@@ -288,7 +288,7 @@ export default function PostEventFeedbackPageContent() {
           <div className="space-y-6">
             <div>
               <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
-                {t('Παρουσία', 'Attendance')}
+                {tu('Παρουσία', 'Attendance')}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
@@ -360,7 +360,7 @@ export default function PostEventFeedbackPageContent() {
 
             <div>
               <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
-                {t('Αίσθημα Ασφάλειας', 'Safety Comfort')}
+                {tu('Αίσθημα Ασφάλειας', 'Safety Comfort')}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
@@ -446,7 +446,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div>
             <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
-              {t('Σχόλιο (Προαιρετικό)', 'Comment (Optional)')}
+              {tu('Σχόλιο (Προαιρετικό)', 'Comment (Optional)')}
             </h3>
             <textarea
               value={comment}

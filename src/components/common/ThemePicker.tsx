@@ -15,7 +15,7 @@ interface ThemePickerProps {
 }
 
 export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
-  const { t, language } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const theme = useStore((s) => s.theme);
   const setTheme = useStore((s) => s.setTheme);
   const tok = useThemeStyles();
@@ -99,7 +99,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
                     tok.muted,
                   )}
                 >
-                  {t('Εμφάνιση', 'Appearance')}
+                  {tu('Εμφάνιση', 'Appearance')}
                 </p>
                 {THEME_IDS.map((id) => (
                   <button

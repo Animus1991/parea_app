@@ -46,7 +46,7 @@ export function PlansFormingSidebarReopenTab() {
 }
 
 export function PlansFormingSidebar({ className }: { className?: string }) {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const navigate = useNavigate();
   const tok = useThemeStyles();
   const feed = usePlansFormingFeed(6);
@@ -81,7 +81,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
           </div>
           <div className="min-w-0 flex-1">
             <h2 className={cn('text-xs font-bold uppercase tracking-wide', isDark ? 'text-cyan-300' : 'text-cyan-800')}>
-              {t('Σχέδια που σχηματίζονται', 'Plans forming')}
+              {tu('Σχέδια που σχηματίζονται', 'Plans forming')}
             </h2>
             <p className={cn('text-xs mt-0.5', isDark ? 'text-gray-400' : 'text-gray-600')}>
               {t('Παρέα για εκδηλώσεις', 'Company for events')}

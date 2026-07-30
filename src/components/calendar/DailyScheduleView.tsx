@@ -57,7 +57,7 @@ export interface DailyScheduleViewProps {
 
 export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewProps) {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const p = usePageContrast();
 
   const dayEvents = useMemo(
@@ -85,7 +85,7 @@ export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewPro
           <div>
             <h3 className={cn('font-bold text-lg', p.head)}>{format(day, 'd MMMM yyyy')}</h3>
             <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
-              {t('Ημερήσιο πρόγραμμα', 'Daily schedule')}
+              {tu('Ημερήσιο πρόγραμμα', 'Daily schedule')}
             </p>
           </div>
           <button

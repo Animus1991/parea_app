@@ -35,7 +35,7 @@ interface EventStoriesProps {
  * events seeking a host get a crown badge; trending events get a flame.
  */
 export function EventStories({ events }: EventStoriesProps) {
-  const { t, language } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const groups = useStore((s) => s.groups);
   const savedEvents = useStore((s) => s.savedEvents) || [];
   const tok = useThemeStyles();
@@ -51,7 +51,7 @@ export function EventStories({ events }: EventStoriesProps) {
     <section className="space-y-3">
       <div className="flex items-center justify-between gap-2">
         <h2 className={`text-xs font-bold uppercase tracking-wide ${h.sectionLabel}`}>
-          {t("Εκδηλώσεις σε στιγμιότυπα", "Events in stories")}
+          {tu("Εκδηλώσεις σε στιγμιότυπα", "Events in stories")}
         </h2>
         <span className={`text-xs font-semibold ${h.labelMuted}`}>
           {events.length} {t("εκδηλώσεις", "events")}

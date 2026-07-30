@@ -4,14 +4,14 @@ import { HOME_HERO_MODES } from '../../lib/homeHeroModes';
 import { cn } from '../../lib/utils';
 
 export function HomeHeroModeBar({ className }: { className?: string }) {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const homeHeroMode = useStore((s) => s.homeHeroMode);
   const setHomeHeroMode = useStore((s) => s.setHomeHeroMode);
 
   return (
     <div className={cn('flex flex-wrap items-center justify-between gap-3', className)}>
       <span className="text-xs font-bold uppercase tracking-widest text-white/80">
-        {t('Προβολή αρχικής', 'Home layout')}
+        {tu('Προβολή αρχικής', 'Home layout')}
       </span>
       <div
         className="flex p-0.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm"

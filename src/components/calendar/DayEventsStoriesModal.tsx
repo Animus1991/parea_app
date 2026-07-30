@@ -42,7 +42,7 @@ export function DayEventsStoriesModal({
 }: DayEventsStoriesModalProps) {
   const [index, setIndex] = useState(startIndex);
   const navigate = useNavigate();
-  const { t, language } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const locale = language === 'el' ? elLocale : enUS;
   const ev = events[index];
 
@@ -232,19 +232,19 @@ export function DayEventsStoriesModal({
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
               <p className="text-gray-500 font-bold uppercase tracking-wide mb-1 flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 shrink-0" /> {t('Εμπιστοσύνη', 'Trust')}
+                <ShieldCheck className="w-3 h-3 shrink-0" /> {tu('Εμπιστοσύνη', 'Trust')}
               </p>
               <p className="text-white font-bold text-sm">{tierLabel}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
               <p className="text-gray-500 font-bold uppercase tracking-wide mb-1 flex items-center gap-1">
-                <Users className="w-3 h-3 shrink-0" /> {t('Ομάδα', 'Group')}
+                <Users className="w-3 h-3 shrink-0" /> {tu('Ομάδα', 'Group')}
               </p>
               <p className="text-white font-bold text-sm">{groupLabel}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-3 col-span-2">
               <p className="text-gray-500 font-bold uppercase tracking-wide mb-1 flex items-center gap-1">
-                <Ticket className="w-3 h-3 shrink-0" /> {t('Εισιτήριο', 'Ticket')}
+                <Ticket className="w-3 h-3 shrink-0" /> {tu('Εισιτήριο', 'Ticket')}
               </p>
               <p className="text-white font-bold text-sm">{ticketLabel}</p>
             </div>
@@ -253,7 +253,7 @@ export function DayEventsStoriesModal({
           {ev.meetingPoint && (
             <div className="rounded-2xl border border-cyan-800/40 bg-cyan-950/30 p-3">
               <p className="text-cyan-400/90 font-bold text-xs uppercase tracking-wide mb-1">
-                {t('Σημείο συνάντησης', 'Meeting point')}
+                {tu('Σημείο συνάντησης', 'Meeting point')}
               </p>
               <p className="text-white text-sm font-medium leading-snug">{ev.meetingPoint}</p>
             </div>
@@ -266,7 +266,7 @@ export function DayEventsStoriesModal({
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-0.5">
-                  {t('Τοποθεσία', 'Location')}
+                  {tu('Τοποθεσία', 'Location')}
                 </p>
                 <p className="text-sm text-white font-medium leading-snug">
                   {ev.address || ev.locationName}
@@ -316,7 +316,7 @@ export function DayEventsStoriesModal({
 
             <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-2 space-y-2">
               <p className="text-xs font-bold uppercase tracking-widest text-gray-500 px-1">
-                {t('Προσθήκη στο ημερολόγιο', 'Add to calendar')}
+                {tu('Προσθήκη στο ημερολόγιο', 'Add to calendar')}
               </p>
               <div className="grid grid-cols-2 gap-2">
                 <button

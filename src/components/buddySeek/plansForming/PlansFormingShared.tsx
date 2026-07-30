@@ -86,7 +86,7 @@ export function PlansFormingYourPlanBanner({
   isDark?: boolean;
   onManage?: () => void;
 }) {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const navigate = useNavigate();
 
   return (
@@ -97,7 +97,7 @@ export function PlansFormingYourPlanBanner({
       )}
     >
       <p className={cn(PLANS_FORMING_TYPO.sectionLabel, 'uppercase', isDark ? 'text-cyan-300' : 'text-cyan-700')}>
-        {t('Το σχέδιό σας', 'Your plan')}
+        {tu('Το σχέδιό σας', 'Your plan')}
       </p>
       <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'truncate', isDark ? 'text-white' : 'text-gray-900')}>
         {plan.event.title}

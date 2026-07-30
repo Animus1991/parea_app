@@ -31,7 +31,7 @@ export function CompanyRequestCard({
   onReport?: () => void;
   onSave?: () => void;
 }) {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const navigate = useNavigate();
   const currentUser = useStore((s) => s.currentUser);
   const prefs = useStore((s) => s.companyRequestPreferences);
@@ -77,7 +77,7 @@ export function CompanyRequestCard({
         )}
         <div className="min-w-0 flex-1">
           <p className={cn('text-xs font-bold uppercase tracking-wide', darkSurface ? 'text-cyan-400' : 'text-cyan-700')}>
-            {t('Σχέδια που σχηματίζονται', 'Plans forming')}
+            {tu('Σχέδια που σχηματίζονται', 'Plans forming')}
           </p>
           <p className={cn('text-sm font-bold truncate', darkSurface ? 'text-white' : 'text-gray-900')}>
             {title}

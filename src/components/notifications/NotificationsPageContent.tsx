@@ -28,7 +28,7 @@ function notifTime(notif: AppNotification, t: (el: string, en: string) => string
 }
 
 export default function NotificationsPageContent() {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const navigate = useNavigate();
   const a = usePageContrast();
 
@@ -273,7 +273,7 @@ export default function NotificationsPageContent() {
           {todayNotifs.length > 0 && (
             <div className="space-y-2">
               <h3 className={cn('text-xs font-bold tracking-wider uppercase', a.muted)}>
-                {t('Νέες', 'New')} ({todayNotifs.length})
+                {tu('Νέες', 'New')} ({todayNotifs.length})
               </h3>
               {todayNotifs.map((notif) => renderNotifRow(notif, true))}
             </div>
@@ -281,7 +281,7 @@ export default function NotificationsPageContent() {
           {earlierNotifs.length > 0 && (
             <div className="space-y-2">
               <h3 className={cn('text-xs font-bold tracking-wider uppercase', a.muted)}>
-                {t('Προηγούμενες', 'Earlier')}
+                {tu('Προηγούμενες', 'Earlier')}
               </h3>
               {earlierNotifs.map((notif) => renderNotifRow(notif, false))}
             </div>

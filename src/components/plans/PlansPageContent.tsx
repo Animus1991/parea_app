@@ -26,7 +26,7 @@ function isPlansFormingGroupId(groupId: string) {
 }
 
 export default function PlansPageContent() {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const p = usePageContrast();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'pending' | 'past'>('upcoming');
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<string | null>(null);
@@ -120,7 +120,7 @@ export default function PlansPageContent() {
             <CalendarClock className={cn('w-5 h-5', p.statVal)} />
           </div>
           <div className="min-w-0 flex-1">
-            <p className={cn('text-xs font-bold uppercase tracking-wide', p.muted)}>{t('Επόμενη εκδήλωση', 'Next up')}</p>
+            <p className={cn('text-xs font-bold uppercase tracking-wide', p.muted)}>{tu('Επόμενη εκδήλωση', 'Next up')}</p>
             <p className={cn('font-bold text-base truncate', p.head)}>{nextEvent.title}</p>
           </div>
           <span className={cn('shrink-0 text-sm font-bold px-2.5 py-1 rounded-full', p.statBg, p.statVal)}>

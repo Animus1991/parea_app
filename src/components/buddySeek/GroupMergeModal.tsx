@@ -21,7 +21,7 @@ export function GroupMergeModal({
   toGroup: Group;
   event: Event;
 }) {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const navigate = useNavigate();
   const suggestMerge = useStore((s) => s.suggestGroupMerge);
   const respondMerge = useStore((s) => s.respondGroupMerge);
@@ -71,14 +71,14 @@ export function GroupMergeModal({
         <div className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl border p-3 dark:border-gray-700">
-              <p className="text-xs font-bold uppercase text-gray-500">{t('Η ομάδα σας', 'Your group')}</p>
+              <p className="text-xs font-bold uppercase text-gray-500">{tu('Η ομάδα σας', 'Your group')}</p>
               <p className="text-lg font-black flex items-center gap-1 mt-1">
                 <Users className="w-4 h-4" />
                 {fromGroup.members.length}
               </p>
             </div>
             <div className="rounded-2xl border p-3 dark:border-gray-700">
-              <p className="text-xs font-bold uppercase text-gray-500">{t('Άλλη ομάδα', 'Other group')}</p>
+              <p className="text-xs font-bold uppercase text-gray-500">{tu('Άλλη ομάδα', 'Other group')}</p>
               <p className="text-lg font-black flex items-center gap-1 mt-1">
                 <Users className="w-4 h-4" />
                 {toGroup.members.length}

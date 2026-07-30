@@ -57,7 +57,7 @@ const LOCATION_PREFS = [
 const TOTAL_STEPS = 7;
 
 export default function OnboardingClassic() {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const navigate = useNavigate();
   const currentUser = useStore((s) => s.currentUser);
   const updateUser = useStore((s) => s.updateUser);
@@ -145,7 +145,7 @@ export default function OnboardingClassic() {
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-              {t('Βήμα', 'Step')} {step + 1} / {TOTAL_STEPS}
+              {tu('Βήμα', 'Step')} {step + 1} / {TOTAL_STEPS}
             </span>
             <span className="text-xs font-bold text-brand">{progressPct}%</span>
           </div>
@@ -334,7 +334,7 @@ export default function OnboardingClassic() {
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
-                    {t('Όνομα', 'Name')}
+                    {tu('Όνομα', 'Name')}
                   </label>
                   <input
                     type="text"
@@ -346,7 +346,7 @@ export default function OnboardingClassic() {
                 </div>
                 <div>
                   <label className="text-sm font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
-                    {t('Σύντομο Bio', 'Short Bio')}
+                    {tu('Σύντομο Bio', 'Short Bio')}
                   </label>
                   <textarea
                     value={bio}
@@ -365,7 +365,7 @@ export default function OnboardingClassic() {
                 {/* Summary */}
                 <div className="bg-gray-50 rounded-2xl p-3 space-y-1.5 border border-gray-100">
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                    {t('Σύνοψη επιλογών', 'Your selections')}
+                    {tu('Σύνοψη επιλογών', 'Your selections')}
                   </p>
                   <p className="text-sm text-gray-600 font-medium">
                     🎯 {selectedInterests.length} {t('ενδιαφέροντα', 'interests')}

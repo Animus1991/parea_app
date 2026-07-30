@@ -35,7 +35,7 @@ const SELECT_CLASS =
 /** Unified categories (ZIP parity + Classic design tokens via usePageContrast). */
 export default function CategoriesPageContent() {
   const navigate = useNavigate();
-  const { t, language } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const p = usePageContrast();
   const events = useStore((s) => s.events);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -185,7 +185,7 @@ export default function CategoriesPageContent() {
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className={cn('w-4 h-4', p.iconAccent)} />
             <span className={cn('text-xs font-bold uppercase tracking-wider', p.sub)}>
-              {t('Δημοφιλή Τώρα', 'Trending Now')}
+              {tu('Δημοφιλή Τώρα', 'Trending Now')}
             </span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -367,7 +367,7 @@ export default function CategoriesPageContent() {
                   : t('Όλες οι Εκδηλώσεις', 'All Discoveries')}
               </h2>
               <p className={cn('text-xs font-bold uppercase tracking-wider mt-0.5', p.muted)}>
-                {filteredEvents.length} {t('αποτελέσματα', 'results found')}
+                {filteredEvents.length} {tu('αποτελέσματα', 'results found')}
               </p>
             </div>
           </div>

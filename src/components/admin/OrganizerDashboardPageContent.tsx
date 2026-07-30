@@ -162,7 +162,7 @@ const ORGANIZER_EVENTS: OrganizerEvent[] = [
 ];
 
 export default function OrganizerDashboardPageContent() {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const p = usePageContrast();
   const navigate = useNavigate();
   const cancelEvent = useStore((s) => s.cancelEvent);
@@ -254,7 +254,7 @@ export default function OrganizerDashboardPageContent() {
                 <stat.icon className={cn('w-4 h-4', stat.iconColor)} />
               </span>
               <span className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
-                {t(stat.labelEl, stat.labelEn)}
+                {tu(stat.labelEl, stat.labelEn)}
               </span>
             </div>
             <div>
@@ -285,13 +285,13 @@ export default function OrganizerDashboardPageContent() {
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-indigo-500" />
                 <span className={cn('text-xs uppercase font-bold', p.muted)}>
-                  {t('Προβολές', 'Views')}
+                  {tu('Προβολές', 'Views')}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-cyan-400" />
                 <span className={cn('text-xs uppercase font-bold', p.muted)}>
-                  {t('Κλικ', 'Clicks')}
+                  {tu('Κλικ', 'Clicks')}
                 </span>
               </div>
             </div>
@@ -372,7 +372,7 @@ export default function OrganizerDashboardPageContent() {
 
           <div>
             <h3 className={cn('text-sm font-bold uppercase tracking-wider mb-4', p.head)}>
-              {t('Ικανοποίηση Κοινού', 'Audience Satisfaction')}
+              {tu('Ικανοποίηση Κοινού', 'Audience Satisfaction')}
             </h3>
             <div className="grid grid-cols-3 gap-3">
               <div
@@ -528,7 +528,7 @@ export default function OrganizerDashboardPageContent() {
                 <div className={cn('text-right border-r pr-4', p.borderB)}>
                   <p className={cn('text-2xl font-black', p.head)}>{ev.spots}</p>
                   <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
-                    {t('Θέσεις', 'Spots')}
+                    {tu('Θέσεις', 'Spots')}
                   </p>
                 </div>
                 {ev.showSettings && (
