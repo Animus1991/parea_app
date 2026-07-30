@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Card } from "../common/Card";
 import { Badge } from "../common/Badge";
 import { Button } from "../common/Button";
-import { ProfileSkeleton } from "../common/Skeleton";
 import { useStore } from "../../store";
 import { tierLabelEl, tierLabelEn } from "../../lib/trust";
 import type { TrustTier } from "../../types";
@@ -49,7 +48,6 @@ export default function ProfilePageContent() {
   const userSettings = useStore((state) => state.userSettings);
   const updatePrivacySettings = useStore((state) => state.updatePrivacySettings);
 
-  const [isLoading, setIsLoading] = useState(true);
   const [photoUrl, setPhotoUrl] = useState(currentUser?.photoUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [bio, setBio] = useState(currentUser?.bio || "");
@@ -73,8 +71,6 @@ export default function ProfilePageContent() {
 
   useEffect(() => {
     if (!currentUser) { navigate("/login"); return; }
-    const timer = setTimeout(() => setIsLoading(false), 500);
-    return () => clearTimeout(timer);
   }, [currentUser, navigate]);
 
   if (!currentUser) return null;
@@ -86,8 +82,6 @@ export default function ProfilePageContent() {
       updateUser(currentUser.id, { photoUrl: newUrl });
     }
   };
-
-  if (isLoading) return <div className="mx-auto max-w-full px-4 py-8"><ProfileSkeleton /></div>;
 
   // Computed
   const connectionCount = (currentUser.connections || []).length;

@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useStore } from '../../store';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
-import { EventDetailSkeleton } from '../common/Skeleton';
 import { Users, Ticket, ShieldCheck, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { toast } from 'sonner';
@@ -40,7 +39,6 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
   const { eventId } = useParams();
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const [isLoading, setIsLoading] = useState(true);
   const [groupSizeFilter, setGroupSizeFilter] = useState<'All' | '3' | '4' | '5' | '6+'>('All');
   const [discountFilter, setDiscountFilter] = useState(false);
 
@@ -50,12 +48,6 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
   const currentUser = useStore((state) => state.currentUser);
   const canJoinEvent = useStore((state) => state.canJoinEvent);
   const getPendingFeedbackEventId = useStore((state) => state.getPendingFeedbackEventId);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, [eventId]);
 
   const event = events.find(e => e.id === eventId);
 
@@ -112,10 +104,6 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
     }
     navigate(`/events/${eventId}/join`);
   };
-
-  if (isLoading) {
-    return <EventDetailSkeleton />;
-  }
 
   if (!event) return <div className="p-8 text-center text-ink-muted font-medium">{t('Η εκδήλωση δεν βρέθηκε', 'Event not found')}</div>;
 

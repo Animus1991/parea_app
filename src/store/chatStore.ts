@@ -46,6 +46,18 @@ interface ChatState {
   requestKeepChat: (conversationId: string, userId: string) => void;
   /** Φ17 — "I arrived" at the meeting point: arrival system message. */
   announceArrival: (conversationId: string, userId: string) => void;
+  /**
+   * P3 — bridge από main-store Groups → popup chatStore.
+   * Δημιουργεί (ή επιστρέφει υπάρχουσα) event_group Conversation για groupId.
+   */
+  ensureEventGroupConversation: (input: {
+    groupId: string;
+    eventId: string;
+    title: string;
+    participantUserIds: string[];
+    meetingPoint?: string;
+    openWindow?: boolean;
+  }) => string;
 }
 
 const MAX_WINDOWS = 2;
@@ -245,6 +257,59 @@ export const useChatStore = create<ChatState>()(
               : c,
           ),
         }));
+      },
+
+      ensureEventGroupConversation: ({
+        groupId,
+        eventId,
+        title,
+        participantUserIds,
+        meetingPoint,
+        openWindow = false,
+      }) => {
+        const existing = get().conversations.find((c) => c.groupId === groupId);
+        if (existing) {
+          if (openWindow) get().openConversation(existing.id);
+          return existing.id;
+        }
+
+        const conversationId = `conv_${groupId}`;
+        const now = new Date().toISOString();
+        const conversation: Conversation = {
+          id: conversationId,
+          type: 'event_group',
+          title,
+          eventId,
+          groupId,
+          participantUserIds: [...new Set(participantUserIds)],
+          status: 'active',
+          isEphemeral: true,
+          canPersist: true,
+          unreadCount: 0,
+          lastMessageAt: now,
+          lastMessagePreview: {
+            el: 'Η συνομιλία συντονισμού ξεκίνησε',
+            en: 'Coordination chat started',
+          },
+          meetingPoint,
+        };
+        const sysMsg: ChatMessage = {
+          id: `m_sys_${groupId}`,
+          conversationId,
+          senderId: 'system',
+          senderType: 'system',
+          type: 'system',
+          body: 'Coordination chat unlocked after mutual accept.',
+          createdAt: now,
+        };
+
+        set((s) => ({
+          conversations: [conversation, ...s.conversations],
+          messages: [...s.messages, sysMsg],
+        }));
+
+        if (openWindow) get().openConversation(conversationId);
+        return conversationId;
       },
     }),
     {

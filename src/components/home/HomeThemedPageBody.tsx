@@ -75,6 +75,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     clearAllFilters,
     activeMood,
     handleSelectMood,
+    isLoading,
+    isError,
   } = feed;
 
   const currentUser = feed.currentUser;
@@ -107,14 +109,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const [isLoading, setIsLoading] = useState(true);
   const [visibleEventsCount, setVisibleEventsCount] = useState(6);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
 
   const visibleEvents = sortedEvents.slice(0, visibleEventsCount);
 
@@ -290,6 +285,14 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
             Array.from({ length: 6 }).map((_, i) => (
               <EventCardSkeleton key={`skeleton-${i}`} />
             ))
+          ) : isError && sortedEvents.length === 0 ? (
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3">
+              <EmptyState
+                icon={CalendarX}
+                title={t('Αδυναμία φόρτωσης εκδηλώσεων', 'Could not load events')}
+                description={t('Εμφανίζονται τα αποθηκευμένα δεδομένα όταν είναι διαθέσιμα.', 'Cached data is shown when available.')}
+              />
+            </div>
           ) : sortedEvents.length === 0 ? (
             <div className="col-span-1 sm:col-span-2 lg:col-span-3">
               <EmptyState

@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Filter, Shield, Settings, Plus, X, Info } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -7,7 +7,6 @@ import { usePlansFormingFeed } from '../../hooks/usePlansFormingFeed';
 import { PlansFormingCard, PlansFormingGroupCard } from './PlansFormingCard';
 import { JoinRequestPreviewModal } from './JoinRequestPreviewModal';
 import { CreateCompanyRequestModal } from './CreateCompanyRequestModal';
-import { PlansFormingSkeleton } from './PlansFormingSkeleton';
 import {
   PlansFormingEmptyState,
   PlansFormingSectionTitle,
@@ -63,15 +62,9 @@ export default function BuddySeekPageContent() {
   const [previewJoinId, setPreviewJoinId] = useState<string | null>(null);
   const [eventPickerOpen, setEventPickerOpen] = useState(false);
   const [createEvent, setCreateEvent] = useState<Event | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [showExplainer, setShowExplainer] = useState(
     () => typeof window !== 'undefined' && !localStorage.getItem(EXPLAINER_KEY),
   );
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setIsLoading(false), 350);
-    return () => window.clearTimeout(timer);
-  }, []);
 
   const dismissExplainer = () => {
     localStorage.setItem(EXPLAINER_KEY, '1');
@@ -120,14 +113,6 @@ export default function BuddySeekPageContent() {
     }),
     [feed.items],
   );
-
-  if (isLoading) {
-    return (
-      <div className="w-full max-w-full min-w-0 space-y-6 pb-16 pt-6">
-        <PlansFormingSkeleton count={3} variant="inline" />
-      </div>
-    );
-  }
 
   return (
     <div className="w-full max-w-full min-w-0 space-y-6 pb-16 pt-6">

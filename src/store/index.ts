@@ -13,6 +13,7 @@ import { canAccessEvent } from "../lib/trust";
 import { shouldUnlockGroupDiscount } from "../lib/groupUtils";
 import { computeReliabilityDelta } from "../lib/trust";
 import { mockCompanyRequests } from "../data/mockCompanyRequests";
+import { useChatStore } from "./chatStore";
 import { normalizeCompanyRequest, rateLimitOk } from "../lib/companyRequestUtils";
 import type {
   CompanyJoinRequest,
@@ -1063,6 +1064,20 @@ export const useStore = create<AppState>()(
         ],
       };
     });
+    if (coordinationGroupId) {
+      const snap = get();
+      const group = snap.groups.find((g) => g.id === coordinationGroupId);
+      const event = group ? snap.events.find((e) => e.id === group.eventId) : undefined;
+      if (group) {
+        useChatStore.getState().ensureEventGroupConversation({
+          groupId: group.id,
+          eventId: group.eventId,
+          title: event?.title ?? 'Nakamas',
+          participantUserIds: group.members,
+          meetingPoint: event?.locationArea,
+        });
+      }
+    }
     return coordinationGroupId;
   },
 
@@ -1195,6 +1210,20 @@ export const useStore = create<AppState>()(
         ),
       };
     });
+    if (resultGroupId) {
+      const snap = get();
+      const group = snap.groups.find((g) => g.id === resultGroupId);
+      const event = group ? snap.events.find((e) => e.id === group.eventId) : undefined;
+      if (group) {
+        useChatStore.getState().ensureEventGroupConversation({
+          groupId: group.id,
+          eventId: group.eventId,
+          title: event?.title ?? 'Nakamas',
+          participantUserIds: group.members,
+          meetingPoint: event?.locationArea,
+        });
+      }
+    }
     return resultGroupId;
   },
 

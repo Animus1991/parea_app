@@ -10,6 +10,7 @@ import {
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { useChatStore } from '../../store/chatStore';
 import { cn } from '../../lib/utils';
 import { INBOX_TYPO } from '../../lib/typographyTokens';
 import { isBefore, parseISO } from 'date-fns';
@@ -24,6 +25,7 @@ export default function InboxPageContent() {
   const events = useStore((s) => s.events);
   const currentUser = useStore((s) => s.currentUser);
   const notifications = useStore((s) => s.notifications);
+  const conversations = useChatStore((s) => s.conversations);
 
   const [activeTab, setActiveTab] = useState<InboxTab>('messages');
   const [search, setSearch] = useState('');
@@ -46,12 +48,12 @@ export default function InboxPageContent() {
           imageUrl: event?.imageUrl,
           isPast,
           members: g.members.length,
-          unread: g.id === 'g1' ? 3 : 0,
-          isPinned: g.id === 'g1',
-          isTyping: g.id === 'g1' && !isPast,
+          unread: conversations.find((c) => c.groupId === g.id)?.unreadCount ?? 0,
+          isPinned: false,
+          isTyping: false,
         };
       });
-  }, [groups, events, currentUser, now, t]);
+  }, [groups, events, currentUser, now, t, conversations]);
 
   const filteredChats = useMemo(() => {
     return myGroups.filter((c) => {
