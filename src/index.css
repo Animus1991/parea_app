@@ -83,11 +83,14 @@
 
 /* ── Per-theme semantic token remapping ── */
 [data-theme="vibrant"] {
-  --color-surface: #FDF2F8;
-  --color-border: #fae8ff;
+  /* V2-T2: mauve-tinted neutrals (2–3% magenta chroma) αντί για pure pink/blue-gray */
+  --color-ink: #241A22;
+  --color-ink-muted: #6E5F6B;
+  --color-surface: #FCF8FB;
+  --color-border: #EBDEE8;
   --color-accent: #c026d3;
   --color-accent-strong: #a21caf;
-  --color-accent-soft: #fdf4ff;
+  --color-accent-soft: #FDF2FA;
 }
 [data-theme="bento"] {
   --color-surface: #F5F3FF;
@@ -118,10 +121,17 @@
   --color-accent-fg: #ffffff;
 }
 [data-theme="vibrant-dark"] {
-  --color-surface: #1a1020;
-  --color-accent: #e879f9;
-  --color-accent-strong: #f0abfc;
-  --color-accent-soft: rgb(112 26 117 / 0.2);
+  /* V2-T2: mauve-tinted dark neutrals */
+  --color-ink: #F5EFF4;
+  --color-ink-muted: #C4B6C2;
+  --color-surface: #1C141B;
+  --color-surface-raised: #261B25;
+  --color-border: #3E2E3B;
+  /* V2-T3: −20% chroma έναντι light (oklch 0.62 0.16 330) — anti-glow σε dark */
+  --color-accent: #D444E0;
+  --color-accent-strong: #E879F9;
+  --color-accent-soft: #3D1A3A;
+  --color-accent-fg: #2A0A2E;
 }
 [data-theme="bento-dark"] {
   --color-surface: #131318;

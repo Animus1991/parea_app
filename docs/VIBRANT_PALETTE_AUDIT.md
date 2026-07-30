@@ -106,8 +106,8 @@
 |---|---|---|
 | V2-T0 | FAB gradient → solid (WCAG fix) | ✅ 2026-07-30 |
 | V2-T1 | Accent softening σε content surfaces (EventCard, chips, badges, steps, spinners, TopNav chrome) | ✅ 2026-07-30 |
-| V2-T2 | Tinted neutrals: αντικατάσταση shell/surface/ink tokens του vibrant+vibrant-dark με mauve-tinted τιμές (index.css `[data-theme]` blocks) | Pending |
-| V2-T3 | Dark chroma throttling: προσαρμογή `--color-accent` vibrant-dark σε −20% chroma equivalent | Pending |
+| V2-T2 | Tinted neutrals: αντικατάσταση shell/surface/ink tokens του vibrant+vibrant-dark με mauve-tinted τιμές (index.css `[data-theme]` blocks) | ✅ 2026-07-30 |
+| V2-T3 | Dark chroma throttling: προσαρμογή `--color-accent` vibrant-dark σε −20% chroma equivalent | ✅ 2026-07-30 |
 | V2-T4 | APCA sweep (Lc ≥ 60 text) ως συμπλήρωμα του WCAG — spot-check 20 ζεύγη | Pending |
 | V2-T5 | OKLCH migration ολόκληρου του token layer (author OKLCH + `@supports` hex fallback) | Backlog (στρατηγικό) |
 

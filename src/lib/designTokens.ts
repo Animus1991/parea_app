@@ -623,10 +623,10 @@ export function getThemeTokens(theme: string): ThemeTokens {
 
   const shellMap: Partial<Record<ThemeId, string>> = {
     classic: 'bg-[#F3F4F6] text-ink',
-    vibrant: 'bg-[#FDF2F8] text-ink',
+    vibrant: 'bg-surface text-ink',
     bento: 'bg-[#F5F3FF] text-ink',
     neon: 'bg-[#ECFDF5] text-ink',
-    'vibrant-dark': 'bg-[#1a1020] text-white',
+    'vibrant-dark': 'bg-surface text-ink',
     'bento-dark': 'bg-[#131318] text-white',
     'neon-dark': 'bg-[#101e17] text-white',
     activebuddies: 'theme-ab bg-[hsl(0_0%_99%)] text-[hsl(220_14%_12%)]',
@@ -1320,7 +1320,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
 
   'vibrant-dark': {
     ...darkBase,
-    hero: 'bg-gradient-to-br from-[#1a1020] to-fuchsia-950 text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden border border-fuchsia-800/40',
+    hero: 'bg-gradient-to-br from-[#1C141B] to-fuchsia-950 text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden border border-fuchsia-800/40',
     heroGreeting: 'text-fuchsia-300 text-2xl md:text-3xl font-extrabold tracking-tight mb-1.5',
     heroMotivation: 'text-gray-300 text-base md:text-lg font-medium mb-4',
     heroTitle: 'text-white text-lg md:text-xl font-bold tracking-tight mb-3 leading-snug',
