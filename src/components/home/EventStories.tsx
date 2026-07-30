@@ -14,10 +14,15 @@ import { HorizontalScrollArrows } from "../ui/HorizontalScrollArrows";
 
 const RING_BY_ACCENT: Record<string, string> = {
   cyan: "from-cyan-400 via-teal-400 to-emerald-400",
-  fuchsia: "from-fuchsia-500 via-pink-500 to-orange-400",
+  fuchsia: "from-fuchsia-500/65 via-pink-500/65 to-orange-400/65",
   indigo: "from-indigo-500 via-violet-500 to-fuchsia-400",
   emerald: "from-emerald-400 via-teal-400 to-cyan-400",
   ab: "from-slate-400 via-slate-500 to-slate-600",
+};
+
+const RING_BY_ACCENT_DARK: Record<string, string> = {
+  ...RING_BY_ACCENT,
+  fuchsia: "from-fuchsia-500/50 via-pink-500/50 to-orange-400/50",
 };
 
 interface EventStoriesProps {
@@ -39,7 +44,8 @@ export function EventStories({ events }: EventStoriesProps) {
 
   if (!events.length) return null;
 
-  const activeRing = RING_BY_ACCENT[tok.accent] ?? RING_BY_ACCENT.cyan;
+  const ringMap = tok.isDark ? RING_BY_ACCENT_DARK : RING_BY_ACCENT;
+  const activeRing = ringMap[tok.accent] ?? ringMap.cyan;
 
   return (
     <section className="space-y-3">
