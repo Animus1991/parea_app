@@ -1,7 +1,8 @@
-import React, { useState, memo } from "react";
+import React, { useState, memo, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
 import { Card } from "../common/Card";
+import { Modal } from "../common/Modal";
 import {
   Bookmark,
   Share2,
@@ -29,6 +30,7 @@ import { MatchExplainChips } from "./MatchExplainChips";
 import { getEventGroupProgress } from "../../lib/groupUtils";
 import { GroupProgressBar } from "./GroupProgressBar";
 import { toast } from "sonner";
+import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -88,6 +90,8 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
     duration: "event_end",
   });
   const [showSafetyLinkModal, setShowSafetyLinkModal] = useState(false);
+  const locationPanelRef = useRef<HTMLDivElement>(null);
+  useOverlayBehavior(showLocationConfigModal, () => setShowLocationConfigModal(false), locationPanelRef);
 
   const organizer = users.find((u) => u.id === event.organizerId);
   const hostGroup = groups.find((g) => g.eventId === event.id && g.hostId);
@@ -559,10 +563,21 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         createPortal(
           <div
             className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200"
+            role="dialog"
+            aria-modal="true"
             onClick={(e) => e.stopPropagation()}
           >
+            <button
+              type="button"
+              tabIndex={-1}
+              className="absolute inset-0"
+              aria-label={t("Κλείσιμο", "Close")}
+              onClick={() => setShowLocationConfigModal(false)}
+            />
             <div
-              className="modal-panel max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-200"
+              ref={locationPanelRef}
+              tabIndex={-1}
+              className="relative modal-panel max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-200 outline-none"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm z-10">
@@ -779,76 +794,67 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           document.body,
         )}
 
-      {showSafetyLinkModal &&
-        typeof document !== "undefined" &&
-        createPortal(
-          <div
-            className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div
-              className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200"
-              onClick={(e) => e.stopPropagation()}
+      <Modal
+        open={showSafetyLinkModal}
+        onClose={() => setShowSafetyLinkModal(false)}
+        title={t("Σύνδεσμος Επαφής Εμπιστοσύνης", "Trusted Contact Link")}
+        size="sm"
+      >
+        <div className="text-center">
+          <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-500/15 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
+            <Link2 className="w-6 h-6" />
+          </div>
+          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+            {t(
+              "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ένα φίλο. Θα βλέπει την τοποθεσία σας μέχρι το τέλος της εκδήλωσης.",
+              "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They will see your live location until the event ends.",
+            )}
+          </p>
+          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-6 text-left">
+            <span className="text-xs font-medium text-ink truncate mr-2">
+              https://nakamas.app/safe/r9x2p
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText("https://nakamas.app/safe/r9x2p");
+                toast.success(t("Ο σύνδεσμος αντιγράφηκε", "Copied to clipboard"));
+              }}
+              className={cn("text-brand font-bold hover:bg-accent-soft px-2 py-1 rounded-lg transition-colors", EVENT_CARD_TYPO.link)}
             >
-              <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
-                <Link2 className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-ink mb-2">
-                {t("Σύνδεσμος Επαφής Εμπιστοσύνης", "Trusted Contact Link")}
-              </h3>
-              <p className="text-xs font-medium leading-relaxed text-gray-500 mb-6">
-                {t(
-                  "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ένα φίλο. Θα βλέπει την τοποθεσία σας μέχρι το τέλος της εκδήλωσης.",
-                  "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They will see your live location until the event ends.",
-                )}
-              </p>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-center justify-between mb-6">
-                <span className="text-xs font-medium text-gray-700 truncate mr-2">
-                  https://nakamas.app/safe/r9x2p
-                </span>
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                      "https://nakamas.app/safe/r9x2p",
-                    );
-                    toast.success(t("Ο σύνδεσμος αντιγράφηκε", "Copied to clipboard"));
-                  }}
-                  className={cn("text-brand font-bold hover:bg-cyan-50 px-2 py-1 rounded-lg transition-colors", EVENT_CARD_TYPO.link)}
-                >
-                  {t("Αντιγραφη", "Copy")}
-                </button>
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowSafetyLinkModal(false)}
-                  className="flex-1 px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 rounded-2xl transition-all duration-200 active:scale-[0.98]"
-                >
-                  {t("Ακύρωση", "Cancel")}
-                </button>
-                <button
-                  onClick={() => {
-                    if (navigator.share) {
-                      navigator.share({
-                        title: t("Σύνδεσμος Παρακολούθησης", "Tracking Link"),
-                        url: "https://nakamas.app/safe/r9x2p",
-                      });
-                    } else {
-                      navigator.clipboard.writeText(
-                        "https://nakamas.app/safe/r9x2p",
-                      );
-                      toast.success(t("Ο σύνδεσμος αντιγράφηκε", "Copied"));
-                    }
-                    setShowSafetyLinkModal(false);
-                  }}
-                  className="flex-1 px-4 py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
-                >
-                  {t("Κοινοποιηση", "Share")}
-                </button>
-              </div>
-            </div>
-          </div>,
-          document.body,
-        )}
+              {t("Αντιγραφη", "Copy")}
+            </button>
+          </div>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setShowSafetyLinkModal(false)}
+              className="flex-1 px-4 py-3 text-sm font-bold text-ink hover:bg-surface rounded-2xl transition-all duration-200 active:scale-[0.98]"
+            >
+              {t("Ακύρωση", "Cancel")}
+            </button>
+            <button
+              type="button"
+              data-autofocus
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({
+                    title: t("Σύνδεσμος Παρακολούθησης", "Tracking Link"),
+                    url: "https://nakamas.app/safe/r9x2p",
+                  });
+                } else {
+                  navigator.clipboard.writeText("https://nakamas.app/safe/r9x2p");
+                  toast.success(t("Ο σύνδεσμος αντιγράφηκε", "Copied"));
+                }
+                setShowSafetyLinkModal(false);
+              }}
+              className="flex-1 px-4 py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+            >
+              {t("Κοινοποιηση", "Share")}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </Card>
   );
 });

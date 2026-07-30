@@ -1,6 +1,9 @@
+import { useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { MessageSquare, Lock, Check, X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
+import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import type { Event, User } from '../../types';
 
 const MOCK_PREVIEW = [
@@ -28,14 +31,25 @@ export function JoinRequestPreviewModal({
   mode: 'send' | 'owner_review';
 }) {
   const { t } = useLanguage();
+  const panelRef = useRef<HTMLDivElement>(null);
+  useOverlayBehavior(open, onClose, panelRef);
+
   if (!open) return null;
 
-  return (
-    <div className="fixed inset-0 z-modal flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <button type="button" className="absolute inset-0 bg-black/50" aria-label="Close" onClick={onClose} />
-      <div className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-soft-lg max-h-[90vh] overflow-y-auto">
-        <div className="p-5 border-b border-gray-100 dark:border-gray-800">
-          <div className="flex items-center gap-2 text-cyan-700 dark:text-cyan-400">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-modal flex items-end sm:items-center justify-center p-0 sm:p-4"
+      role="dialog"
+      aria-modal="true"
+    >
+      <button type="button" tabIndex={-1} className="absolute inset-0 bg-black/50" aria-label={t('Κλείσιμο', 'Close')} onClick={onClose} />
+      <div
+        ref={panelRef}
+        tabIndex={-1}
+        className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl bg-surface-raised text-ink border border-border shadow-soft-lg max-h-[90vh] overflow-y-auto outline-none"
+      >
+        <div className="p-5 border-b border-border">
+          <div className="flex items-center gap-2 text-accent-strong">
             <MessageSquare className="w-4 h-4" />
             <h2 className="text-sm font-bold">
               {mode === 'send'
@@ -43,7 +57,7 @@ export function JoinRequestPreviewModal({
                 : t('Αίτημα συμμετοχής', 'Join request')}
             </h2>
           </div>
-          <p className="text-sm text-gray-500 mt-1 leading-relaxed">
+          <p className="text-sm text-ink-muted mt-1 leading-relaxed">
             {t(
               'Η άμεση συνομιλία ξεκλειδώνεται μόνο μετά την αποδοχή και των δύο πλευρών.',
               'Direct chat unlocks only after both sides accept.',
@@ -52,29 +66,29 @@ export function JoinRequestPreviewModal({
         </div>
 
         <div className="p-5 space-y-3">
-          <p className="text-sm font-bold text-gray-900 dark:text-white">{event.title}</p>
-          <p className="text-xs text-gray-500">
+          <p className="text-sm font-bold text-ink">{event.title}</p>
+          <p className="text-xs text-ink-muted">
             {mode === 'send'
               ? t(`Προς ${seeker.name.split(' ')[0]}`, `To ${seeker.name.split(' ')[0]}`)
               : t(`Από ${seeker.name.split(' ')[0]}`, `From ${seeker.name.split(' ')[0]}`)}
           </p>
 
-          <div className="rounded-2xl bg-gray-50 dark:bg-gray-800/50 p-3 space-y-2">
+          <div className="rounded-2xl bg-surface p-3 space-y-2">
             {MOCK_PREVIEW.map((m, i) => (
               <div
                 key={i}
                 className={cn(
                   'text-xs rounded-xl px-3 py-2 max-w-[90%]',
                   m.from === 'you'
-                    ? 'ml-auto bg-cyan-600 text-white'
-                    : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600',
+                    ? 'ml-auto bg-accent text-accent-fg'
+                    : 'bg-surface-raised text-ink border border-border',
                 )}
               >
                 {t(m.textEl, m.textEn)}
               </div>
             ))}
             {message && (
-              <p className="text-xs italic text-gray-500 border-t border-gray-200 dark:border-gray-700 pt-2">
+              <p className="text-xs italic text-ink-muted border-t border-border pt-2">
                 {t('Το μήνυμά σας', 'Your note')}: {message}
               </p>
             )}
@@ -91,22 +105,23 @@ export function JoinRequestPreviewModal({
           </div>
         </div>
 
-        <div className="p-5 border-t border-gray-100 dark:border-gray-800 flex gap-2">
+        <div className="p-5 border-t border-border flex gap-2">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 min-h-11 rounded-2xl border border-gray-200 dark:border-gray-600 text-sm font-bold text-gray-700 dark:text-gray-300"
+            className="flex-1 min-h-11 rounded-2xl border border-border text-sm font-bold text-ink"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
           {mode === 'send' ? (
             <button
               type="button"
+              data-autofocus
               onClick={() => {
                 onSendRequest(message);
                 onClose();
               }}
-              className="flex-1 min-h-11 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-bold"
+              className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold"
             >
               {t('Αποστολή αιτήματος', 'Send request')}
             </button>
@@ -114,6 +129,7 @@ export function JoinRequestPreviewModal({
             <>
               <button
                 type="button"
+                data-autofocus
                 onClick={() => {
                   onAccept?.();
                   onClose();
@@ -125,7 +141,7 @@ export function JoinRequestPreviewModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="min-h-11 px-4 rounded-2xl border border-gray-200 text-sm font-bold flex items-center gap-1"
+                className="min-h-11 px-4 rounded-2xl border border-border text-sm font-bold flex items-center gap-1"
               >
                 <X className="w-4 h-4" /> {t('Απόρριψη', 'Decline')}
               </button>
@@ -133,6 +149,7 @@ export function JoinRequestPreviewModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
@@ -6,6 +7,7 @@ import { useStore } from '../../store';
 import { audienceSummary, exposureSummary } from '../../lib/companyRequestUtils';
 import { CompanyRequestCard } from './CompanyRequestCard';
 import { cn } from '../../lib/utils';
+import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import type { Event } from '../../types';
 import type {
   LookingForType,
@@ -28,6 +30,9 @@ export function CreateCompanyRequestModal({
   darkSurface?: boolean;
 }) {
   const { t } = useLanguage();
+  const panelRef = useRef<HTMLDivElement>(null);
+  useOverlayBehavior(open, onClose, panelRef);
+
   const currentUser = useStore((s) => s.currentUser);
   const prefs = useStore((s) => s.companyRequestPreferences);
   const publish = useStore((s) => s.publishCompanyRequest);
@@ -101,12 +106,20 @@ export function CreateCompanyRequestModal({
     onClose();
   };
 
-  const shell = darkSurface ? 'bg-gray-900 border-gray-700 text-white' : 'bg-white border-gray-200';
+  const shell = darkSurface ? 'bg-gray-900 border-gray-700 text-white' : 'bg-surface-raised border-border text-ink';
 
-  return (
-    <div className="fixed inset-0 z-modal flex items-end sm:items-center justify-center sm:p-4">
-      <button type="button" className="absolute inset-0 bg-black/50" onClick={onClose} aria-label="Close" />
-      <div className={cn('relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl border shadow-soft-lg max-h-[92vh] flex flex-col', shell)}>
+  return createPortal(
+    <div
+      className="fixed inset-0 z-modal flex items-end sm:items-center justify-center sm:p-4"
+      role="dialog"
+      aria-modal="true"
+    >
+      <button type="button" tabIndex={-1} className="absolute inset-0 bg-black/50" onClick={onClose} aria-label={t('Κλείσιμο', 'Close')} />
+      <div
+        ref={panelRef}
+        tabIndex={-1}
+        className={cn('relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl border shadow-soft-lg max-h-[92vh] flex flex-col outline-none', shell)}
+      >
         <div className="p-4 border-b border-inherit shrink-0">
           <h2 className="text-base font-bold">{t('Ψάχνετε Nakamas;', 'Looking for Nakamas?')}</h2>
           <p className="text-xs opacity-70 mt-0.5">
@@ -114,7 +127,7 @@ export function CreateCompanyRequestModal({
           </p>
           <div className="flex gap-1 mt-2">
             {Array.from({ length: STEPS }).map((_, i) => (
-              <div key={i} className={cn('h-1 flex-1 rounded-full', i <= step ? 'bg-cyan-500' : 'bg-gray-300 dark:bg-gray-700')} />
+              <div key={i} className={cn('h-1 flex-1 rounded-full', i <= step ? 'bg-accent' : 'bg-border')} />
             ))}
           </div>
         </div>
@@ -189,7 +202,7 @@ export function CreateCompanyRequestModal({
                     min={1}
                     value={preferredGroupMin}
                     onChange={(e) => setPreferredGroupMin(Number(e.target.value))}
-                    className="block w-16 mt-1 rounded-lg border px-2 py-1 text-sm"
+                    className="block w-16 mt-1 rounded-lg border border-border px-2 py-1 text-sm bg-surface-raised"
                   />
                 </label>
                 <label className="text-xs">
@@ -199,7 +212,7 @@ export function CreateCompanyRequestModal({
                     min={2}
                     value={preferredGroupMax}
                     onChange={(e) => setPreferredGroupMax(Number(e.target.value))}
-                    className="block w-16 mt-1 rounded-lg border px-2 py-1 text-sm"
+                    className="block w-16 mt-1 rounded-lg border border-border px-2 py-1 text-sm bg-surface-raised"
                   />
                 </label>
               </div>
@@ -210,7 +223,7 @@ export function CreateCompanyRequestModal({
               <select
                 value={meetingPreference}
                 onChange={(e) => setMeetingPreference(e.target.value as MeetingPreference)}
-                className="w-full rounded-xl border px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-border px-3 py-2 text-sm bg-surface-raised"
               >
                 <option value="at_venue">{t('Στον χώρο', 'At venue')}</option>
                 <option value="coffee_before">{t('Καφές πριν', 'Coffee before')}</option>
@@ -221,7 +234,7 @@ export function CreateCompanyRequestModal({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t('Προαιρετικό μήνυμα…', 'Optional message…')}
-                className="w-full rounded-xl border px-3 py-2 text-sm min-h-[72px]"
+                className="w-full rounded-xl border border-border px-3 py-2 text-sm min-h-[72px] bg-surface-raised"
               />
             </div>
           )}
@@ -254,7 +267,7 @@ export function CreateCompanyRequestModal({
             <button
               type="button"
               onClick={() => setStep((s) => s - 1)}
-              className="min-h-11 px-4 rounded-2xl border text-sm font-bold flex items-center gap-1"
+              className="min-h-11 px-4 rounded-2xl border border-border text-sm font-bold flex items-center gap-1"
             >
               <ChevronLeft className="w-4 h-4" /> {t('Πίσω', 'Back')}
             </button>
@@ -262,23 +275,30 @@ export function CreateCompanyRequestModal({
           {step < STEPS - 1 ? (
             <button
               type="button"
+              data-autofocus
               onClick={() => setStep((s) => s + 1)}
-              className="flex-1 min-h-11 rounded-2xl bg-cyan-600 text-white text-sm font-bold flex items-center justify-center gap-1"
+              className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold flex items-center justify-center gap-1"
             >
               {t('Συνέχεια', 'Continue')} <ChevronRight className="w-4 h-4" />
             </button>
           ) : (
             <>
-              <button type="button" onClick={saveAsDraft} className="min-h-11 px-3 rounded-2xl border text-xs font-bold">
+              <button type="button" onClick={saveAsDraft} className="min-h-11 px-3 rounded-2xl border border-border text-xs font-bold">
                 {t('Πρόχειρο', 'Draft')}
               </button>
-              <button type="button" onClick={publishNow} className="flex-1 min-h-11 rounded-2xl bg-cyan-600 text-white text-sm font-bold">
+              <button
+                type="button"
+                data-autofocus
+                onClick={publishNow}
+                className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold"
+              >
                 {t('Δημοσίευση αιτήματος', 'Publish request')}
               </button>
             </>
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

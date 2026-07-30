@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { GitMerge, Users, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
+import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import type { GroupMergeMode } from '../../types/companyRequest';
 import type { Event, Group } from '../../types';
-import { cn } from '../../lib/utils';
 
 export function GroupMergeModal({
   open,
@@ -23,6 +24,9 @@ export function GroupMergeModal({
 }) {
   const { t, tu } = useLanguage();
   const navigate = useNavigate();
+  const panelRef = useRef<HTMLDivElement>(null);
+  useOverlayBehavior(open, onClose, panelRef);
+
   const suggestMerge = useStore((s) => s.suggestGroupMerge);
   const respondMerge = useStore((s) => s.respondGroupMerge);
   const pending = useStore((s) =>
@@ -56,29 +60,37 @@ export function GroupMergeModal({
     if (groupId) navigate(`/chat/${groupId}`);
   };
 
-  return (
-    <div className="fixed inset-0 z-modal flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <button type="button" className="absolute inset-0 bg-black/50" onClick={onClose} aria-label="Close" />
-      <div className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-soft-lg max-h-[90vh] overflow-y-auto">
-        <div className="p-5 border-b border-gray-100 dark:border-gray-800">
-          <div className="flex items-center gap-2 text-cyan-700 dark:text-cyan-400">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-modal flex items-end sm:items-center justify-center p-0 sm:p-4"
+      role="dialog"
+      aria-modal="true"
+    >
+      <button type="button" tabIndex={-1} className="absolute inset-0 bg-black/50" onClick={onClose} aria-label={t('Κλείσιμο', 'Close')} />
+      <div
+        ref={panelRef}
+        tabIndex={-1}
+        className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl bg-surface-raised text-ink border border-border shadow-soft-lg max-h-[90vh] overflow-y-auto outline-none"
+      >
+        <div className="p-5 border-b border-border">
+          <div className="flex items-center gap-2 text-accent-strong">
             <GitMerge className="w-5 h-5" />
             <h2 className="text-base font-bold">{t('Πρόταση συγχώνευσης ομάδων', 'Suggest group merge')}</h2>
           </div>
-          <p className="text-sm text-gray-500 mt-1">{event.title}</p>
+          <p className="text-sm text-ink-muted mt-1">{event.title}</p>
         </div>
 
         <div className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border p-3 dark:border-gray-700">
-              <p className="text-xs font-bold uppercase text-gray-500">{tu('Η ομάδα σας', 'Your group')}</p>
+            <div className="rounded-2xl border border-border p-3">
+              <p className="text-xs font-bold uppercase text-ink-muted">{tu('Η ομάδα σας', 'Your group')}</p>
               <p className="text-lg font-black flex items-center gap-1 mt-1">
                 <Users className="w-4 h-4" />
                 {fromGroup.members.length}
               </p>
             </div>
-            <div className="rounded-2xl border p-3 dark:border-gray-700">
-              <p className="text-xs font-bold uppercase text-gray-500">{tu('Άλλη ομάδα', 'Other group')}</p>
+            <div className="rounded-2xl border border-border p-3">
+              <p className="text-xs font-bold uppercase text-ink-muted">{tu('Άλλη ομάδα', 'Other group')}</p>
               <p className="text-lg font-black flex items-center gap-1 mt-1">
                 <Users className="w-4 h-4" />
                 {toGroup.members.length}
@@ -86,17 +98,18 @@ export function GroupMergeModal({
             </div>
           </div>
 
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-ink-muted">
             {t('Συνδυασμένο μέγεθος', 'Combined size')}: ~{combined} · {t('Δεν γίνεται αυτόματα', 'Not automatic')}
           </p>
 
           {pending ? (
-            <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 p-3">
+            <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3">
               <p className="text-sm font-bold text-amber-900 dark:text-amber-200">
                 {t('Εκκρεμής πρόταση', 'Pending suggestion')}
               </p>
               <button
                 type="button"
+                data-autofocus
                 onClick={acceptPending}
                 className="mt-2 w-full min-h-10 rounded-xl bg-emerald-600 text-white text-sm font-bold"
               >
@@ -106,7 +119,7 @@ export function GroupMergeModal({
           ) : (
             <>
               <fieldset className="space-y-2">
-                <legend className="text-sm font-bold text-gray-900 dark:text-white">
+                <legend className="text-sm font-bold text-ink">
                   {t('Τρόπος συντονισμού', 'Coordination mode')}
                 </legend>
                 {(
@@ -128,36 +141,38 @@ export function GroupMergeModal({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t('Προαιρετικό μήνυμα…', 'Optional message…')}
-                className="w-full rounded-2xl border px-3 py-2 text-sm min-h-[72px] dark:bg-gray-800 dark:border-gray-700"
+                className="w-full rounded-2xl border border-border bg-surface-raised px-3 py-2 text-sm min-h-[72px]"
               />
             </>
           )}
 
-          <p className="text-xs text-gray-500 flex items-start gap-1.5">
+          <p className="text-xs text-ink-muted flex items-start gap-1.5">
             <Shield className="w-3.5 h-3.5 shrink-0" />
             {t('Η άλλη ομάδα πρέπει να αποδεχτεί. Όχι αναγκαστική συγχώνευση.', 'The other group must accept. Never forced.')}
           </p>
         </div>
 
-        <div className="p-5 border-t flex gap-2 sticky bottom-0 bg-white dark:bg-gray-900">
+        <div className="p-5 border-t border-border flex gap-2 sticky bottom-0 bg-surface-raised">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 min-h-11 rounded-2xl border text-sm font-bold text-gray-700 dark:text-gray-300"
+            className="flex-1 min-h-11 rounded-2xl border border-border text-sm font-bold text-ink"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
           {!pending && (
             <button
               type="button"
+              data-autofocus
               onClick={send}
-              className="flex-[2] min-h-11 rounded-2xl bg-cyan-600 text-white text-sm font-bold"
+              className="flex-[2] min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold"
             >
               {t('Αποστολή πρότασης', 'Send suggestion')}
             </button>
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
