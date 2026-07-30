@@ -140,31 +140,31 @@ export default function CategoriesPageContent() {
       <div
         className={cn(
           'p-6 md:p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative shadow-soft',
-          p.isDark ? 'bg-[hsl(220_16%_14%)]' : 'bg-gradient-to-br from-gray-900 to-gray-800 text-white',
+          'bg-gradient-to-br from-accent to-accent-strong text-accent-fg',
         )}
       >
         <div className="relative z-10 w-full md:max-w-2xl text-center md:text-left">
           <Badge
             variant="outline"
-            className="mb-4 border-white/20 bg-white/10 text-white backdrop-blur-md"
+            className="mb-4 border-accent-fg/20 bg-accent-fg/10 text-accent-fg backdrop-blur-md"
           >
             <Compass className="w-3.5 h-3.5 mr-1" />{' '}
             {t('Εξερευνηση Δραστηριοτήτων', 'Activity Explorer')}
           </Badge>
-          <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-3 text-white leading-tight">
+          <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-3 leading-tight">
             {t('Βρείτε την επόμενη', 'Find your next')}{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
+            <span className="underline decoration-accent-fg/40 underline-offset-4">
               {t('εμπειρία σας', 'experience')}
             </span>
           </h1>
-          <p className="text-sm md:text-base font-medium text-gray-300 leading-relaxed mb-6">
+          <p className="text-sm md:text-base font-medium text-accent-fg/80 leading-relaxed mb-6">
             {t(
               'Ανακαλύψτε επιλεγμένες εκδηλώσεις που ταιριάζουν στα ενδιαφέροντά σας.',
               'Discover handpicked events matching your interests.',
             )}
           </p>
           <div className="relative w-full max-w-md mx-auto md:mx-0">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-accent-fg/60" />
             <input
               type="text"
               value={searchQuery}
@@ -173,11 +173,11 @@ export default function CategoriesPageContent() {
                 'Αναζήτηση κατηγοριών ή θεμάτων...',
                 'Search categories or topics...',
               )}
-              className="w-full h-12 pl-12 pr-4 rounded-2xl border-0 bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 font-medium backdrop-blur-md transition-all text-sm"
+              className="w-full h-12 pl-12 pr-4 rounded-2xl border-0 bg-accent-fg/10 text-accent-fg placeholder:text-accent-fg/60 focus:outline-none focus:ring-2 focus:ring-accent-fg/40 font-medium backdrop-blur-md transition-all text-sm"
             />
           </div>
         </div>
-        <div className="absolute right-0 top-0 w-64 h-64 bg-cyan-500/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        <div className="absolute right-0 top-0 w-64 h-64 bg-accent-fg/15 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       </div>
 
       {!searchQuery && !activeCategory && (
