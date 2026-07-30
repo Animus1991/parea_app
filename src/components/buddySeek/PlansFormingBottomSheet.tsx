@@ -31,7 +31,7 @@ export function PlansFormingBottomSheet() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[70] xl:hidden" role="dialog" aria-modal="true" aria-labelledby="plans-forming-sheet-title">
+    <div className="fixed inset-0 z-sheet xl:hidden" role="dialog" aria-modal="true" aria-labelledby="plans-forming-sheet-title">
       <button
         type="button"
         className={cn('absolute inset-0 backdrop-blur-sm', c.modalOverlay)}
@@ -40,7 +40,7 @@ export function PlansFormingBottomSheet() {
       />
       <div
         className={cn(
-          'absolute bottom-0 left-0 right-0 max-h-[92vh] flex flex-col rounded-t-3xl border-t shadow-2xl animate-in slide-in-from-bottom duration-300 motion-reduce:animate-none',
+          'absolute bottom-0 left-0 right-0 max-h-[92vh] flex flex-col rounded-t-3xl border-t shadow-soft-lg animate-in slide-in-from-bottom duration-300 motion-reduce:animate-none',
           c.modalPanel,
         )}
       >

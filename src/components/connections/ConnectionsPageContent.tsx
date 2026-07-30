@@ -28,7 +28,7 @@ function MoreMenu({ connId, onViewProfile, onRemove, onReport, onInvite }: { con
         <MoreVertical className="w-5 h-5" />
       </button>
       {open && (
-        <div className={`absolute right-0 top-full mt-1 w-48 rounded-lg border shadow-lg z-50 py-1 text-sm ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+        <div className={`absolute right-0 top-full mt-1 w-48 rounded-lg border shadow-soft-lg z-fab py-1 text-sm ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <button onClick={() => { onViewProfile(); setOpen(false); }} className={`w-full px-3 py-2 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
             <Eye className="w-4 h-4" /> {t('Προβολή Προφίλ', 'View Profile')}
           </button>
@@ -165,7 +165,7 @@ export default function ConnectionsPageContent() {
         </Button>
       </div>
 
-      {/* Tabs — rounded pills */}
+      {/* Tabs — rounded-lg pills */}
       <div className="flex gap-2 flex-wrap">
         <button
           className={cn('px-3.5 py-1.5 rounded-full text-sm font-bold transition-colors flex items-center gap-1.5', activeTab === 'all' ? a.chipActive : a.chipInactive)}
@@ -206,12 +206,12 @@ export default function ConnectionsPageContent() {
               <Filter className="w-4 h-4" /> {t('Φίλτρα', 'Filter')} <ChevronDown className="w-3 h-3" />
             </Button>
             {filterOpen && (
-              <div className={`absolute right-0 top-full mt-1 w-56 rounded-lg border shadow-lg z-50 p-3 space-y-3 ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+              <div className={`absolute right-0 top-full mt-1 w-56 rounded-lg border shadow-soft-lg z-fab p-3 space-y-3 ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
                 <div>
                   <label className={`text-xs font-bold uppercase tracking-wider ${a.muted}`}>{t('Ρόλος', 'Role')}</label>
                   <div className="flex gap-1 mt-1">
                     {(['all', 'organizer', 'user'] as const).map((r) => (
-                      <button key={r} onClick={() => setRoleFilter(r)} className={`px-2 py-1 rounded text-xs font-bold transition-colors ${roleFilter === r ? a.acceptBtn : (a.isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}`}>
+                      <button key={r} onClick={() => setRoleFilter(r)} className={`px-2 py-1 rounded-lg text-xs font-bold transition-colors ${roleFilter === r ? a.acceptBtn : (a.isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}`}>
                         {r === 'all' ? t('Όλοι', 'All') : r === 'organizer' ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')}
                       </button>
                     ))}
@@ -221,7 +221,7 @@ export default function ConnectionsPageContent() {
                   <label className={`text-xs font-bold uppercase tracking-wider ${a.muted}`}>{t('Ταξινόμηση', 'Sort')}</label>
                   <div className="flex gap-1 mt-1">
                     {(['name', 'mutual', 'trust'] as const).map((s) => (
-                      <button key={s} onClick={() => setSortBy(s)} className={`px-2 py-1 rounded text-xs font-bold transition-colors ${sortBy === s ? a.acceptBtn : (a.isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}`}>
+                      <button key={s} onClick={() => setSortBy(s)} className={`px-2 py-1 rounded-lg text-xs font-bold transition-colors ${sortBy === s ? a.acceptBtn : (a.isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}`}>
                         {s === 'name' ? t('Όνομα', 'Name') : s === 'mutual' ? t('Κοινοί', 'Mutual') : t('Εμπιστοσύνη', 'Trust')}
                       </button>
                     ))}

@@ -23,12 +23,12 @@ export function GroupChatSosModal({
   const isSos = Boolean(group.membersLocations?.[currentUserId]?.sos);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center border border-red-100 animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+      <div className="bg-white rounded-2xl shadow-soft-lg max-w-sm w-full p-6 text-center border border-red-100 animate-in zoom-in-95 duration-200">
         <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
           <AlertTriangle className="w-7 h-7 animate-pulse" />
         </div>
-        <h3 className="text-lg font-bold text-[#111827] mb-2">
+        <h3 className="text-lg font-bold text-ink mb-2">
           {isSos ? t('Απενεργοποίηση SOS', 'Deactivate SOS') : t('Ενεργοποίηση SOS Flare', 'Activate SOS Flare')}
         </h3>
         <p className="text-xs font-medium leading-relaxed text-gray-500 mb-6">

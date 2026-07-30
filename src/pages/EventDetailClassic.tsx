@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useStore } from '../store';
-import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
-import { Skeleton, EventDetailSkeleton } from '../components/common/Skeleton';
+import { EventDetailSkeleton } from '../components/common/Skeleton';
 import { Users, Ticket, ShieldCheck, MapPin, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../lib/i18n';
 import { shouldRevealMemberPhoto, getPhotoPlaceholder } from '../lib/photoReveal';
@@ -25,7 +24,7 @@ import { EventDetailSafetySection } from '../components/events/EventDetailSafety
 import { EventDetailMetaSection } from '../components/events/EventDetailMetaSection';
 import { EventDetailQrModal } from '../components/events/EventDetailQrModal';
 import EventDetailPageContent from '../components/events/EventDetailPageContent';
-import { EventDetailBuddySeekPanel } from '../components/buddySeek/EventDetailBuddySeekPanel';
+import { LookingForCompanyPanel } from '../components/buddySeek/LookingForCompanyPanel';
 
 function Group({ group, event, navigate }: { group: import('../types').Group; event: import('../types').Event; navigate: import('react-router-dom').NavigateFunction }) {
   return <EventDetailGroupCard group={group} event={event} navigate={navigate} accent="classic" />;
@@ -125,7 +124,7 @@ export default function EventDetailClassic() {
         <div className="flex justify-between items-center">
           <button 
             onClick={() => navigateBack(navigate)}
-            className="text-[10px] font-bold tracking-wide text-gray-500 hover:text-[#111827]"
+            className="text-2xs font-bold tracking-wide text-gray-500 hover:text-ink"
           >
             &larr; {t('Επιστροφή στην Ανακάλυψη', 'Back to Discover')}
           </button>
@@ -172,19 +171,19 @@ export default function EventDetailClassic() {
           
           {/* Match Score Badge based on User Interests */}
           {currentUser && event.tags && event.tags.length > 0 && (
-            <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700 font-bold" icon={<span className="text-[10px]">🔥</span>}>
+            <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700 font-bold" icon={<span className="text-2xs">🔥</span>}>
               {Math.min(98, Math.max(15, Math.round(((currentUser?.interests ?? []).filter(i => (event.tags ?? []).includes(i)).length / (event.tags ?? [1]).length) * 100) + 40))}% {t('Ταίριασμα', 'Match')}
             </Badge>
           )}
         </div>
-        <h1 className="text-xl md:text-2xl font-extrabold text-[#111827] leading-tight mb-2 md:mb-0">{event.title}</h1>
+        <h1 className="text-xl md:text-2xl font-extrabold text-ink leading-tight mb-2 md:mb-0">{event.title}</h1>
         <EventDetailPageContent event={event} accent="classic" className="mt-4" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-5 lg:grid-cols-3">
         {/* Left Column: Details */}
         <div className="space-y-6 md:space-y-8 md:col-span-3 lg:col-span-2">
-          <section className="space-y-4 text-[13px] text-[#111827] leading-relaxed bg-white rounded-2xl border border-gray-100 p-5 md:p-6 shadow-soft">
+          <section className="space-y-4 text-sm text-ink leading-relaxed bg-white rounded-2xl border border-gray-100 p-5 md:p-6 shadow-soft">
              <EventDetailMetaSection event={event} accent="classic" />
              <EventMap event={event} accent="classic" />
              <EventDetailAboutSection event={event} accent="classic" />
@@ -198,10 +197,10 @@ export default function EventDetailClassic() {
         {/* Right Column: Groups & Actions */}
         <div className="space-y-6 md:col-span-2 lg:col-span-1">
           <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-soft sticky top-24">
-            <EventDetailBuddySeekPanel event={event} accent="classic" />
+            <LookingForCompanyPanel event={event} accent="classic" />
 
-            <h3 className="text-[11px] font-bold text-[#6B7280] tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
-            <p className="text-[10px] text-gray-500 font-medium mb-3 -mt-2">
+            <h3 className="text-xs font-bold text-[#6B7280] tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
+            <p className="text-2xs text-gray-500 font-medium mb-3 -mt-2">
               {t(
                 'Πολλές ομάδες μπορούν να υπάρχουν παράλληλα· μέγεθος από τον διοργανωτή.',
                 'Multiple groups can run in parallel; size is set by the organizer.',
@@ -213,7 +212,7 @@ export default function EventDetailClassic() {
             </div>
             
             <div className="flex flex-col gap-3 mb-6">
-              <Button className="w-full bg-cyan-600 text-white hover:bg-cyan-700 shadow-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
+              <Button className="w-full bg-cyan-600 text-white hover:bg-cyan-700 shadow-soft-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
                 <Users className="w-5 h-5" />
                 {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
               </Button>
@@ -222,12 +221,12 @@ export default function EventDetailClassic() {
             {(eventGroups.length > 0 || groupSizeFilter !== 'All' || discountFilter) && (
               <div className="mb-4 space-y-2">
                 <div className="flex gap-2">
-                  <span className="text-[10px] font-bold text-gray-500 mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
+                  <span className="text-2xs font-bold text-gray-500 mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
                   <div className="flex flex-wrap gap-2 flex-1">
                     <select 
                       value={groupSizeFilter} 
                       onChange={(e) => setGroupSizeFilter(e.target.value as any)}
-                      className="text-xs bg-gray-50 border border-gray-200 rounded p-1 font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                      className="text-xs bg-gray-50 border border-gray-200 rounded-lg p-1 font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500"
                     >
                       <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>
                       <option value="3">{t('3 Μέλη', '3 Members')}</option>
@@ -238,7 +237,7 @@ export default function EventDetailClassic() {
                     {event.isPaid && event.groupDiscount && (
                       <button 
                         onClick={() => setDiscountFilter(!discountFilter)}
-                        className={`text-xs px-2 py-1 rounded border font-medium transition-colors ${discountFilter ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'}`}
+                        className={`text-xs px-2 py-1 rounded-lg border font-medium transition-colors ${discountFilter ? 'bg-emerald-100 border-emerald-300 text-emerald-800' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'}`}
                       >
                         {t('Μόνο με Έκπτωση', 'Discount Only')}
                       </button>
@@ -270,7 +269,7 @@ export default function EventDetailClassic() {
                   {isWaitlisted ? t('Στη λίστα αναμονής ✓', 'On waitlist ✓') : t('Λίστα Αναμονής', 'Join Waitlist')}
                 </Button>
               </div>
-              <div className="text-[10px] text-gray-500 font-medium bg-gray-50 rounded text-center p-3 leading-relaxed tracking-wide">
+              <div className="text-2xs text-gray-500 font-medium bg-gray-50 rounded-lg text-center p-3 leading-relaxed tracking-wide">
                 {t('Δημιουργήστε νέα ομάδα 3-5 ατόμων. ', 'Create a new 3-5 person group. ')}
                 {event.isPaid ? (
                   <span className="block mt-1 font-bold text-gray-700">{t('Η πληρωμή προεγκρίνεται. Χρεώνεται μόνο κατά την επιβεβαίωση.', 'Payment pre-authorized via official partner APIs. Discharges automatically on Group confirmation.')}</span>
@@ -284,11 +283,11 @@ export default function EventDetailClassic() {
       </div>
       
       {/* Mobile Sticky CTA — primary: Find company */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden z-50 flex gap-3 pb-safe">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 p-4 shadow-soft-up md:hidden z-fab flex gap-3 pb-safe">
         <Button variant="outline" className="flex-1 min-h-11 border-gray-200 text-gray-700" onClick={handleSave}>
           {isSaved ? t('Αποθηκευμένο', 'Saved') : t('Αποθήκευση', 'Save')}
         </Button>
-        <Button className="flex-[2] min-h-11 bg-[#0E8B8D] text-white hover:bg-[#0b6d6f] shadow-soft" onClick={handlePrimaryJoin}>
+        <Button className="flex-[2] min-h-11 bg-brand text-white hover:bg-[#0b6d6f] shadow-soft" onClick={handlePrimaryJoin}>
           {t('Βρες παρέα', 'Find company')}
         </Button>
       </div>

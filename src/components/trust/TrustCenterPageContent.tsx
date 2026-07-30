@@ -106,7 +106,7 @@ export default function TrustCenterPageContent() {
             <svg width="120" height="120" viewBox="0 0 120 120" className="mb-2">
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.isDark ? '#374151' : '#e5e7eb'} strokeWidth="8" />
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.scoreStroke} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${strokeDash} ${circumference}`} transform="rotate(-90 60 60)" />
-              <text x="60" y="56" textAnchor="middle" className={cn("text-[30px] font-black", a.scoreFill)} fontSize="28">{reliabilityScore}</text>
+              <text x="60" y="56" textAnchor="middle" className={cn("text-4xl font-black", a.scoreFill)} fontSize="28">{reliabilityScore}</text>
               <text x="60" y="74" textAnchor="middle" className="fill-gray-400" fontSize="10" fontWeight="600">%</text>
             </svg>
             <p className={cn("text-xs font-bold tracking-wide", a.muted)}>{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}</p>

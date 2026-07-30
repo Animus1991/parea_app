@@ -128,7 +128,7 @@ export function DayEventsStoriesModal({
 
   const content = (
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center p-0 md:p-6 bg-black/70 backdrop-blur-md"
+      className="fixed inset-0 z-modal-high flex items-center justify-center p-0 md:p-6 bg-black/70 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
       aria-labelledby="day-stories-title"

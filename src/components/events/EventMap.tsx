@@ -181,7 +181,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
       <div
         className={cn(
           isMapFullscreen
-            ? 'fixed !inset-0 !z-[9999] bg-black !m-0 rounded-none !h-[100dvh]'
+            ? 'fixed !inset-0 !z-fullscreen bg-black !m-0 rounded-none !h-[100dvh]'
             : 'w-full h-64 sm:h-80 rounded-2xl',
           'bg-gray-100 overflow-hidden relative border transition-all duration-300 shadow-soft',
           tok.frame,
@@ -192,7 +192,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
           type="button"
           onClick={() => setIsMapFullscreen((v) => !v)}
           className={cn(
-            'absolute top-4 right-4 z-10 p-2 backdrop-blur rounded-2xl shadow-sm transition-colors min-h-11 min-w-11 flex items-center justify-center',
+            'absolute top-4 right-4 z-10 p-2 backdrop-blur rounded-2xl shadow-soft transition-colors min-h-11 min-w-11 flex items-center justify-center',
             tok.toggle,
             accentText,
             tok.toggleHover,
@@ -210,7 +210,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
           <ErrorBoundary
             fallback={
               <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] p-4 text-center">
-                <div className="bg-white p-3 rounded-2xl shadow-sm border border-red-100">
+                <div className="bg-white p-3 rounded-2xl shadow-soft border border-red-100">
                   <AlertTriangle className="w-6 h-6 text-red-500 mx-auto mb-2" />
                   <p className="text-xs text-gray-600">
                     {t(

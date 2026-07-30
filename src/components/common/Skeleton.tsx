@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStore } from '../../store';
 import { cn } from '../../lib/utils';
+import { isDarkTheme } from '../../lib/themes';
 
 interface SkeletonProps {
   className?: string;
@@ -8,17 +9,17 @@ interface SkeletonProps {
 
 export function Skeleton({ className = '' }: SkeletonProps) {
   const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
+  const isDark = isDarkTheme(theme);
   return (
     <div
-      className={cn('animate-pulse rounded-md', isDark ? 'bg-gray-700/40' : 'bg-gray-200', className)}
+      className={cn('animate-pulse rounded-lg', isDark ? 'bg-gray-700/40' : 'bg-gray-200', className)}
     />
   );
 }
 
 export function EventCardSkeleton() {
   const theme = useStore((s) => s.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
+  const isDark = isDarkTheme(theme);
   return (
     <div className={cn('rounded-2xl border p-4 shadow-soft h-full flex flex-col', isDark ? 'border-gray-700/40 bg-gray-800/60' : 'border-gray-100 bg-white')}>
       <div className="flex justify-between items-start mb-3">
@@ -64,7 +65,7 @@ export function ProfileSkeleton() {
 export function EventDetailSkeleton() {
   return (
     <div className="space-y-6">
-      <Skeleton className="h-6 h-w-24 mb-4" />
+      <Skeleton className="h-6 w-24 mb-4" />
       <div className="space-y-3">
         <Skeleton className="h-8 w-3/4" />
         <div className="flex gap-2">

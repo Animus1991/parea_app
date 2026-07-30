@@ -5,6 +5,8 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
   /* Density-tuned type scale (Linear/GitHub convention — CoFounderBay crosswalk) */
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 1.45;
   --text-xs: 0.6875rem;
   --text-xs--line-height: 1.45;
   --text-sm: 0.8125rem;
@@ -21,7 +23,25 @@
   --text-3xl--line-height: 1.25;
   --text-4xl: 1.875rem;
   --text-4xl--line-height: 1.15;
-  
+
+  /* Named z-index scale — overlays always beat persistent chrome.
+     Local in-component stacking keeps Tailwind defaults (z-0/10/20/30). */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sidenav: 30;
+  --z-bottomnav: 40;
+  --z-fab: 50;
+  --z-chat: 60;
+  --z-chat-scrim: 65;
+  --z-sheet: 70;
+  --z-banner: 80;
+  --z-topnav: 90;
+  --z-modal: 100;
+  --z-modal-high: 110;
+  --z-fullscreen: 120;
+  --z-palette: 130;
+  --z-toast: 140;
+
   --color-brand-50: #f4f6f5;
   --color-brand-100: #e4e9e6;
   --color-brand-500: #2a3b32;
@@ -39,6 +59,116 @@
   --color-parea-500: #18D8DB;
   --color-parea-600: #0E8B8D;
   --color-parea-700: #0b6d6f;
+
+  /* ── Semantic color tokens (canonical layer) ─────────────
+     Defaults below = classic light theme. Every other theme
+     remaps these via [data-theme] rules right after @theme,
+     so utilities (text-ink, bg-surface, border-border, …)
+     adapt at runtime with zero markup changes. */
+  --color-ink: #111827;
+  --color-ink-muted: rgb(71 80 94);
+  --color-ink-faint: rgb(82 91 105);
+  --color-surface: #F3F4F6;
+  --color-surface-raised: #ffffff;
+  --color-border: #E5E7EB;
+  --color-brand: #0E8B8D;
+  --color-brand-strong: #0b6d6f;
+  --color-brand-soft: #ecfeff;
+  --color-brand-fg: #ffffff;
+  --color-accent: #0E8B8D;
+  --color-accent-strong: #0b6d6f;
+  --color-accent-soft: #ecfeff;
+  --color-accent-fg: #ffffff;
+}
+
+/* ── Per-theme semantic token remapping ── */
+[data-theme="vibrant"] {
+  --color-surface: #FDF2F8;
+  --color-border: #fae8ff;
+  --color-accent: #c026d3;
+  --color-accent-strong: #a21caf;
+  --color-accent-soft: #fdf4ff;
+}
+[data-theme="bento"] {
+  --color-surface: #F5F3FF;
+  --color-border: #e0e7ff;
+  --color-accent: #4f46e5;
+  --color-accent-strong: #4338ca;
+  --color-accent-soft: #eef2ff;
+}
+[data-theme="neon"] {
+  --color-surface: #ECFDF5;
+  --color-border: #d1fae5;
+  --color-accent: #059669;
+  --color-accent-strong: #047857;
+  --color-accent-soft: #ecfdf5;
+}
+[data-theme="vibrant-dark"],
+[data-theme="bento-dark"],
+[data-theme="neon-dark"] {
+  --color-ink: #ffffff;
+  --color-ink-muted: #e5e7eb;
+  --color-ink-faint: #d1d5db;
+  --color-surface-raised: #111827;
+  --color-border: rgb(55 65 81 / 0.5);
+  --color-brand: #18D8DB;
+  --color-brand-strong: #22d3ee;
+  --color-brand-soft: rgb(22 78 99 / 0.2);
+  --color-brand-fg: #083344;
+  --color-accent-fg: #ffffff;
+}
+[data-theme="vibrant-dark"] {
+  --color-surface: #1a1020;
+  --color-accent: #e879f9;
+  --color-accent-strong: #f0abfc;
+  --color-accent-soft: rgb(112 26 117 / 0.2);
+}
+[data-theme="bento-dark"] {
+  --color-surface: #131318;
+  --color-accent: #818cf8;
+  --color-accent-strong: #a5b4fc;
+  --color-accent-soft: rgb(49 46 129 / 0.2);
+}
+[data-theme="neon-dark"] {
+  --color-surface: #101e17;
+  --color-accent: #34d399;
+  --color-accent-strong: #6ee7b7;
+  --color-accent-soft: rgb(6 78 59 / 0.2);
+}
+[data-theme="activebuddies"] {
+  --color-ink: hsl(220 14% 12%);
+  --color-ink-muted: hsl(220 9% 46%);
+  --color-ink-faint: hsl(220 9% 52%);
+  --color-surface: hsl(0 0% 99%);
+  --color-surface-raised: #ffffff;
+  --color-border: hsl(220 13% 92%);
+  --color-brand: hsl(220 14% 12%);
+  --color-brand-strong: #000000;
+  --color-brand-soft: hsl(220 14% 96%);
+  --color-brand-fg: #ffffff;
+  --color-accent: hsl(220 14% 12%);
+  --color-accent-strong: #000000;
+  --color-accent-soft: hsl(220 14% 96%);
+  --color-accent-fg: #ffffff;
+  --shadow-soft: 0 1px 3px -1px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-soft-md: 0 4px 12px -3px rgba(0,0,0,0.09), 0 2px 5px -2px rgba(0,0,0,0.05);
+  --shadow-soft-lg: 0 8px 20px -4px rgba(0,0,0,0.10), 0 3px 8px -3px rgba(0,0,0,0.06);
+}
+[data-theme="activebuddies-dark"] {
+  --color-ink: hsl(210 20% 92%);
+  --color-ink-muted: hsl(220 12% 55%);
+  --color-ink-faint: hsl(220 10% 48%);
+  --color-surface: hsl(220 16% 8%);
+  --color-surface-raised: hsl(220 16% 11%);
+  --color-border: hsl(220 13% 18%);
+  --color-brand: hsl(0 0% 95%);
+  --color-brand-strong: #ffffff;
+  --color-brand-soft: hsl(220 16% 18%);
+  --color-brand-fg: hsl(220 14% 12%);
+  --color-accent: hsl(0 0% 95%);
+  --color-accent-strong: #ffffff;
+  --color-accent-soft: hsl(220 16% 18%);
+  --color-accent-fg: hsl(220 14% 12%);
 }
 
 body {
@@ -64,17 +194,6 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 }
 
 /* ─── Design System: Parea Signature Style ─── */
-
-/* Soft shadow system */
-.shadow-soft {
-  box-shadow: 0 2px 8px -2px rgba(14, 139, 141, 0.08), 0 1px 3px -1px rgba(0, 0, 0, 0.04);
-}
-.shadow-soft-md {
-  box-shadow: 0 4px 14px -3px rgba(14, 139, 141, 0.12), 0 2px 6px -2px rgba(0, 0, 0, 0.05);
-}
-.shadow-soft-lg {
-  box-shadow: 0 8px 24px -4px rgba(14, 139, 141, 0.14), 0 4px 10px -3px rgba(0, 0, 0, 0.06);
-}
 
 /* Neutral CTA button — works across all themes */
 .btn-gradient {
@@ -166,6 +285,40 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   box-shadow: 0 4px 14px -3px rgba(14, 139, 141, 0.08);
 }
 
+/* dark: follows the app's data-theme, not the OS/browser color-scheme */
+@custom-variant dark (&:where([data-theme$="-dark"], [data-theme$="-dark"] *));
+
+/* Elevation scale — runtime vars so [data-theme] remaps apply (mono themes go neutral) */
+:root {
+  --shadow-soft: 0 2px 8px -2px rgba(14, 139, 141, 0.08), 0 1px 3px -1px rgba(0, 0, 0, 0.04);
+  --shadow-soft-md: 0 4px 14px -3px rgba(14, 139, 141, 0.12), 0 2px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-soft-lg: 0 8px 24px -4px rgba(14, 139, 141, 0.14), 0 4px 10px -3px rgba(0, 0, 0, 0.06);
+  --shadow-soft-up: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-soft-up-lg: 0 -4px 20px rgba(0, 0, 0, 0.05);
+}
+@utility shadow-soft { box-shadow: var(--shadow-soft); }
+@utility shadow-soft-md { box-shadow: var(--shadow-soft-md); }
+@utility shadow-soft-lg { box-shadow: var(--shadow-soft-lg); }
+@utility shadow-soft-up { box-shadow: var(--shadow-soft-up); }
+@utility shadow-soft-up-lg { box-shadow: var(--shadow-soft-up-lg); }
+
+/* Named z-index utilities backed by the --z-* token scale */
+@utility z-base { z-index: var(--z-base); }
+@utility z-raised { z-index: var(--z-raised); }
+@utility z-sidenav { z-index: var(--z-sidenav); }
+@utility z-bottomnav { z-index: var(--z-bottomnav); }
+@utility z-fab { z-index: var(--z-fab); }
+@utility z-chat { z-index: var(--z-chat); }
+@utility z-chat-scrim { z-index: var(--z-chat-scrim); }
+@utility z-sheet { z-index: var(--z-sheet); }
+@utility z-banner { z-index: var(--z-banner); }
+@utility z-topnav { z-index: var(--z-topnav); }
+@utility z-modal { z-index: var(--z-modal); }
+@utility z-modal-high { z-index: var(--z-modal-high); }
+@utility z-fullscreen { z-index: var(--z-fullscreen); }
+@utility z-palette { z-index: var(--z-palette); }
+@utility z-toast { z-index: var(--z-toast); }
+
 /* Modal overlay */
 .modal-overlay {
   background: rgba(15, 23, 42, 0.3);
@@ -222,15 +375,6 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 }
 
 /* ── AB light: shadow system — neutral, no cyan tint ── */
-.theme-ab .shadow-soft {
-  box-shadow: 0 1px 3px -1px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04) !important;
-}
-.theme-ab .shadow-soft-md {
-  box-shadow: 0 4px 12px -3px rgba(0,0,0,0.09), 0 2px 5px -2px rgba(0,0,0,0.05) !important;
-}
-.theme-ab .shadow-soft-lg {
-  box-shadow: 0 8px 20px -4px rgba(0,0,0,0.10), 0 3px 8px -3px rgba(0,0,0,0.06) !important;
-}
 
 /* ── AB light: card-row — gray hover, no cyan ── */
 .theme-ab .card-row {
@@ -477,16 +621,6 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 [data-theme] footer.text-gray-400,
 [data-theme] footer .text-gray-400 {
   color: rgb(156 163 175);
-}
-
-/* Broken codemod artifact class — empty accent left "text--400".
-   Only present in *Dark variant files (dark backgrounds), so make readable. */
-.text--400 {
-  color: hsl(220 13% 78%);
-}
-[data-theme$="-dark"] .bg-red-50 .text--400,
-[data-theme$="-dark"] .bg-red-100 .text--400 {
-  color: rgb(248 113 113);
 }
 
 /* Light alert chips/banners rendered inside dark-variant pages → darken */

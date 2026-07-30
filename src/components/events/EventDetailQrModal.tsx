@@ -21,14 +21,14 @@ export function EventDetailQrModal({ open, onClose, value }: EventDetailQrModalP
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+      className="fixed inset-0 z-modal flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label={t('Κοινοποίηση εκδήλωσης', 'Share event')}
     >
       <div
-        className={cn('rounded-2xl p-6 md:p-8 max-w-sm w-full text-center relative shadow-2xl', c.modalPanel)}
+        className={cn('rounded-2xl p-6 md:p-8 max-w-sm w-full text-center relative shadow-soft-lg', c.modalPanel)}
         onClick={(e) => e.stopPropagation()}
       >
         <button

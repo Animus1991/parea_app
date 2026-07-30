@@ -265,12 +265,12 @@ export default function ChallengesClassic() {
                     <span className="text-xs font-semibold text-gray-500">
                       {c.progress} / {c.goal} {c.unit}
                     </span>
-                    <span className="text-xs font-bold text-[#0E8B8D]">{pct}%</span>
+                    <span className="text-xs font-bold text-brand">{pct}%</span>
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${
-                        done ? 'bg-green-500' : 'bg-gradient-to-r from-[#18D8DB] to-cyan-400'
+                        done ? 'bg-green-500' : 'bg-gradient-to-r from-accent to-cyan-400'
                       }`}
                       style={{ width: `${pct}%` }}
                     />
@@ -289,7 +289,7 @@ export default function ChallengesClassic() {
                       className={`text-sm font-bold px-4 py-1.5 rounded-full transition-all duration-200 ${
                         joined
                           ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                          : 'bg-[#111827] text-white hover:bg-black'
+                          : 'bg-ink text-white hover:bg-black'
                       }`}
                     >
                       {joined ? t('Αποχώρηση', 'Leave') : t('Συμμετοχή', 'Join')}

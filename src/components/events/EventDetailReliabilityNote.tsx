@@ -3,7 +3,7 @@ import { useLanguage } from '../../lib/i18n';
 import {
   getEventDetailReliabilityShell,
   getEventDetailSurfaceTokens,
-} from '../../lib/eventDetailDesignTokens';
+} from '../../lib/designTokens';
 import { cn } from '../../lib/utils';
 import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventDetailMapSection';

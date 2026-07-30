@@ -21,12 +21,12 @@ export default function LoginVibrant() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-10 bg-gradient-to-br from-fuchsia-50 via-white to-orange-50">
       <LoginGuestHeroStrip accentClass="bg-fuchsia-50 text-fuchsia-600" />
-      <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-xl border-fuchsia-100/50">
+      <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-soft-lg border-fuchsia-100/50">
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center text-4xl font-black tracking-tight mb-4 font-['Outfit']">
              <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-orange-500">NAKAMAS</span>
           </div>
-          <h1 className="text-2xl font-bold text-[#111827]">{t('Καλώς ήρθατε', 'Welcome back')}</h1>
+          <h1 className="text-2xl font-bold text-ink">{t('Καλώς ήρθατε', 'Welcome back')}</h1>
           <p className="text-xs text-black font-medium">{t('Συνδεθείτε για να ανακαλύψετε αξιόπιστες ομάδες και εμπειρίες.', 'Log in to discover trusted groups and experiences.')}</p>
         </div>
 
@@ -41,7 +41,7 @@ export default function LoginVibrant() {
               <button 
                 key={user.id}
                 onClick={() => handleLogin(user.id)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-white hover:bg-fuchsia-50 hover:border-fuchsia-200 transition-colors shadow-sm text-left group"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-white hover:bg-fuchsia-50 hover:border-fuchsia-200 transition-colors shadow-soft text-left group"
               >
                 <div className="h-10 w-10 rounded-full overflow-hidden bg-fuchsia-100 flex-shrink-0">
                   {user.photoUrl ? (
@@ -69,7 +69,7 @@ export default function LoginVibrant() {
 
           <button 
             onClick={() => handleLogin(users[0].id)}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border border-gray-200 bg-white text-sm font-bold text-black hover:bg-gray-50 transition-colors shadow-sm"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border border-gray-200 bg-white text-sm font-bold text-black hover:bg-gray-50 transition-colors shadow-soft"
           >
             <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
             {t('Συνέχεια με Google', 'Continue with Google')}

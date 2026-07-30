@@ -7,7 +7,6 @@ import {
   Search,
   ShieldCheck,
   Map as MapIcon,
-  Grid,
   CheckCircle2,
   Users,
 } from "lucide-react";
@@ -228,10 +227,10 @@ export default function HomeClassic() {
             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs mb-2.5 ${h.stepBadge}`}>
               {step}
             </div>
-            <h3 className={`font-bold text-[14.63px] mb-1 ${h.stepTitle}`}>
+            <h3 className={`font-bold text-base mb-1 ${h.stepTitle}`}>
               {title}
             </h3>
-            <p className={`text-[12.38px] leading-relaxed font-medium ${h.stepBody}`}>
+            <p className={`text-sm leading-relaxed font-medium ${h.stepBody}`}>
               {body}
             </p>
           </div>
@@ -270,25 +269,22 @@ export default function HomeClassic() {
           <div className="flex gap-2">
             <button
               onClick={() => setFeedType("For You")}
-              className={`px-4 py-1.5 text-[12.73px] font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
+              className={`px-4 py-1.5 text-sm font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
             >
               {t("home.feed.for_you", "Για Σένα")}
             </button>
             <button
               onClick={() => setFeedType("Discover")}
-              className={`px-4 py-1.5 text-[12.73px] font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
+              className={`px-4 py-1.5 text-sm font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
             >
               {t("home.feed.discover", "Ανακάλυψε")}
             </button>
           </div>
 
           <div className={cn('flex p-0.5 rounded-full w-fit border', tok.isDark ? 'bg-gray-800/50 border-gray-600/50' : 'bg-gray-50 border-gray-100')}>
-            <button className={cn('p-1.5 rounded-full transition-all duration-200 shadow-soft', tok.isDark ? 'bg-gray-700 text-white' : 'bg-white', h.heading)} aria-label={t('Προβολή πλέγματος', 'Grid view')} title={t('Προβολή πλέγματος', 'Grid view')}>
-              <Grid className="w-4 h-4" />
-            </button>
             <button
               onClick={() => navigate("/nearby")}
-              className={cn('p-1.5 rounded-md transition-colors', h.feedTabInactive)}
+              className={cn('p-1.5 rounded-lg transition-colors', h.feedTabInactive)}
               title={t("Άνοιγμα Χάρτη", "Open Map")}
               aria-label={t("Άνοιγμα Χάρτη", "Open Map")}
             >

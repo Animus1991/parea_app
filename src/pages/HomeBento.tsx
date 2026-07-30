@@ -8,7 +8,6 @@ import {
   Search,
   ShieldCheck,
   Map as MapIcon,
-  Grid,
   CheckCircle2,
   Users,
   CalendarX,
@@ -30,7 +29,7 @@ import { useStoryEvents } from "../hooks/useStoryEvents";
 import { useHomeExternalEvents } from "../hooks/useHomeExternalEvents";
 import { useHomeScrollToFilters } from "../hooks/useHomeScrollToFilters";
 import { useHomeEventFeed } from "../hooks/useHomeEventFeed";
-import { HOME_TYPO } from "../lib/homeTypography";
+import { HOME_TYPO } from "../lib/typographyTokens";
 import { cn } from "../lib/utils";
 
 export default function HomeBento() {
@@ -162,7 +161,7 @@ export default function HomeBento() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-indigo-100/50 text-black p-6 md:p-10 rounded-[24px] relative overflow-hidden flex flex-col gap-4"
+        className="bg-white shadow-soft-lg border border-indigo-100/50 text-black p-6 md:p-10 rounded-3xl relative overflow-hidden flex flex-col gap-4"
       >
         <HomeHeroModeBar className="relative z-10" />
         <div className="relative z-10 flex-1 w-full">
@@ -229,7 +228,7 @@ export default function HomeBento() {
                   "home.hero.search_placeholder",
                   "Αναζήτηση εμπειριών...",
                 )}
-                className="w-full h-11 pl-10 pr-4 rounded-full border border-indigo-200 bg-gray-50 text-black placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium"
+                className="w-full h-11 pl-10 pr-4 rounded-full border border-indigo-200 bg-gray-50 text-black placeholder-gray-400 shadow-soft focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm font-medium"
               />
               <HomeSearchDropdown
                 popularSuggestions={searchSuggestions}
@@ -295,12 +294,12 @@ export default function HomeBento() {
         ].map(({ step, title, body }) => (
           <div
             key={step}
-            className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center"
+            className="bg-white p-4 rounded-xl border border-gray-100 shadow-soft flex flex-col items-center text-center"
           >
             <div className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
               {step}
             </div>
-            <h3 className={cn(HOME_TYPO.stepTitle, "text-[#111827] mb-1")}>
+            <h3 className={cn(HOME_TYPO.stepTitle, "text-ink mb-1")}>
               {title}
             </h3>
             <p className={cn(HOME_TYPO.stepBody, "text-black")}>
@@ -343,25 +342,22 @@ export default function HomeBento() {
           <div className="flex bg-gray-100 p-1 rounded-lg w-fit">
             <button
               onClick={() => setFeedType("For You")}
-              className={cn("px-4 py-1.5 rounded-md transition-colors", HOME_TYPO.feedTab, feedType === "For You" ? "bg-white shadow-sm text-[#111827]" : "text-black hover:text-[#111827]")}
+              className={cn("px-4 py-1.5 rounded-lg transition-colors", HOME_TYPO.feedTab, feedType === "For You" ? "bg-white shadow-soft text-ink" : "text-black hover:text-ink")}
             >
               {t("home.feed.for_you", "Για Σένα")}
             </button>
             <button
               onClick={() => setFeedType("Discover")}
-              className={cn("px-4 py-1.5 rounded-md transition-colors", HOME_TYPO.feedTab, feedType === "Discover" ? "bg-white shadow-sm text-[#111827]" : "text-black hover:text-[#111827]")}
+              className={cn("px-4 py-1.5 rounded-lg transition-colors", HOME_TYPO.feedTab, feedType === "Discover" ? "bg-white shadow-soft text-ink" : "text-black hover:text-ink")}
             >
               {t("home.feed.discover", "Ανακάλυψε")}
             </button>
           </div>
 
           <div className="flex bg-gray-100 p-0.5 rounded-lg w-fit">
-            <button className="p-1.5 rounded-md transition-colors bg-white shadow-sm text-[#111827]" aria-label={t('Προβολή πλέγματος', 'Grid view')} title={t('Προβολή πλέγματος', 'Grid view')}>
-              <Grid className="w-4 h-4" />
-            </button>
             <button
               onClick={() => navigate("/nearby")}
-              className="p-1.5 rounded-md transition-colors text-black hover:text-[#111827]"
+              className="p-1.5 rounded-lg transition-colors text-black hover:text-ink"
               title={t("Άνοιγμα Χάρτη", "Open Map")}
               aria-label={t("Άνοιγμα Χάρτη", "Open Map")}
             >

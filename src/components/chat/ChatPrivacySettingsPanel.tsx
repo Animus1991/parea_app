@@ -37,7 +37,7 @@ export function ChatPrivacySettingsPanel() {
       <h2 className={cn('text-sm font-bold mb-1', a.head)}>{t('Nakamas Chat — ρυθμίσεις', 'Nakamas Chat — settings')}</h2>
       <p className={cn('text-xs mb-3', a.sub)}>
         {t(
-          'Relationship-based messaging · προσωρινά event chats από προεπιλογή',
+          'Μηνύματα βάσει σχέσης · προσωρινά event chats από προεπιλογή',
           'Relationship-based messaging · temporary event chats by default',
         )}
       </p>

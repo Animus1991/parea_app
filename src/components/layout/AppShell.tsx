@@ -31,9 +31,9 @@ import { useLanguage } from '../../lib/i18n';
 // ─────────────────────────────────────────────
 function NakamasLogo({ className, compact = false }: { className?: string; compact?: boolean }) {
   const theme = useStore((state) => state.theme);
-  const logoTextColor = theme === 'activebuddies' ? 'text-[hsl(220_14%_12%)]' : theme === 'activebuddies-dark' ? 'text-[hsl(210_20%_92%)]' : 'text-[#18D8DB]';
+  const logoTextColor = theme === 'activebuddies' ? 'text-[hsl(220_14%_12%)]' : theme === 'activebuddies-dark' ? 'text-[hsl(210_20%_92%)]' : theme === 'vibrant' ? 'text-fuchsia-700' : theme === 'vibrant-dark' ? 'text-fuchsia-500' : 'text-accent';
   return (
-    <div className={cn("flex items-baseline font-bold tracking-tight font-['Poppins']", logoTextColor, className)}>
+    <div className={cn("flex items-baseline font-extrabold tracking-tight font-['Poppins']", logoTextColor, className)}>
       <div className="relative inline-block">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +101,7 @@ function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: N
       >
         <Icon className={iconClass} />
         <span className={textClass}>{label}</span>
-      <span className={cn(`text-xs tracking-wide font-bold px-1.5 py-0.5 rounded ${tok.isDark ? "bg-gray-700/40 text-gray-500" : "bg-gray-100 text-gray-500"}`, textClass)}>{t('Σύντομα', 'Soon')}</span>
+      <span className={cn(`text-xs tracking-wide font-bold px-1.5 py-0.5 rounded-lg ${tok.isDark ? "bg-gray-700/40 text-gray-500" : "bg-gray-100 text-gray-500"}`, textClass)}>{t('Σύντομα', 'Soon')}</span>
       </div>
     );
   }
@@ -212,9 +212,9 @@ function NavLinks({ compact = false }: { compact?: boolean }) {
 export function SideNav() {
   const tok = useThemeStyles();
   return (
-    <aside className={cn("h-full flex-col shrink-0 hidden md:flex w-[88px] lg:w-64 transition-all duration-300 z-30 border-r", tok.sideNav)}>
+    <aside className={cn("h-full flex-col shrink-0 hidden md:flex w-[88px] lg:w-64 transition-all duration-300 z-sidenav border-r", tok.sideNav)}>
       <div className={cn("h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b shrink-0", tok.sideNavBorder)}>
-        <NakamasLogo className="text-xl lg:text-2xl" />
+        <NakamasLogo className="text-xl lg:text-3xl" />
       </div>
       <div className="flex-1 overflow-y-auto py-4 lg:py-6 px-2 lg:px-3">
         <NavLinks compact />
@@ -230,7 +230,6 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const currentUser = useStore((state) => state.currentUser);
-  const isAuthenticated = useStore((state) => state.isAuthenticated);
   const theme = useStore((state) => state.theme);
   const tok = useThemeStyles();
   const unreadNotificationCount = useUnreadCount();
@@ -243,7 +242,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   return (
-    <nav className={cn("relative z-[100] flex items-center justify-between px-4 lg:px-6 py-[10px] border-b h-[59px] shrink-0 overflow-visible", tok.topNav)}>
+    <nav className={cn("relative z-topnav flex items-center justify-between px-4 lg:px-6 py-[10px] border-b h-[59px] shrink-0 overflow-visible", tok.topNav)}>
       <div className="flex items-center space-x-8">
         <div className="md:hidden">
           <NakamasLogo className="text-xl" />
@@ -252,7 +251,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           <span className={cn("text-sm font-bold tracking-wide", tok.isDark ? "text-white" : tok.isAB ? "text-[hsl(220_14%_12%)] tracking-tight" : "text-gray-400")}>{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
         </div>
       </div>
-      <div className="flex items-center space-x-3 relative z-[101] overflow-visible">
+      <div className="flex items-center space-x-3 relative z-raised overflow-visible">
         <div className="relative hidden lg:block">
           <input
             type="text"
@@ -282,7 +281,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
               : theme === 'vibrant' || theme === 'vibrant-dark' ? 'bg-fuchsia-600 text-white hover:bg-fuchsia-700'
               : theme === 'bento' || theme === 'bento-dark' ? 'bg-indigo-600 text-white hover:bg-indigo-700'
               : theme === 'neon' || theme === 'neon-dark' ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-              : 'bg-[#0E8B8D] text-white hover:bg-[#0b6d6f]',
+              : 'bg-brand text-white hover:bg-[#0b6d6f]',
           )}
         >
           <Plus className="w-4 h-4" strokeWidth={2.6} />
@@ -301,10 +300,10 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           {language === 'el' ? 'EN' : 'EL'}
         </button>
 
-        <NavLink aria-label={unreadNotificationCount > 0 ? `${t('Ειδοποιήσεις','Notifications')} (${unreadNotificationCount})` : t('Ειδοποιήσεις','Notifications')} to="/notifications" className={cn("relative transition-colors", theme === "activebuddies-dark" ? "text-white hover:text-gray-300" : theme === "activebuddies" ? "text-[hsl(220_11%_34%)] hover:text-[hsl(220_14%_12%)]" : theme === "bento-dark" || theme === "neon-dark" ? "text-white hover:text-emerald-400" : theme === "vibrant-dark" ? "text-white hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-500 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-500 hover:text-indigo-600" : theme === "neon" ? "text-gray-500 hover:text-emerald-600" : "text-gray-500 hover:text-[#0E8B8D]")}>
+        <NavLink aria-label={unreadNotificationCount > 0 ? `${t('Ειδοποιήσεις','Notifications')} (${unreadNotificationCount})` : t('Ειδοποιήσεις','Notifications')} to="/notifications" className={cn("relative transition-colors", theme === "activebuddies-dark" ? "text-white hover:text-gray-300" : theme === "activebuddies" ? "text-[hsl(220_11%_34%)] hover:text-[hsl(220_14%_12%)]" : theme === "bento-dark" || theme === "neon-dark" ? "text-white hover:text-emerald-400" : theme === "vibrant-dark" ? "text-white hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-500 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-500 hover:text-indigo-600" : theme === "neon" ? "text-gray-500 hover:text-emerald-600" : "text-gray-500 hover:text-brand")}>
           <Bell className="h-[18px] w-[18px]" />
           {unreadNotificationCount > 0 && (
-            <span className={cn("absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-xs font-bold border", theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] text-white border-white' : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] border-[hsl(220_16%_8%)]' : 'bg-[#18D8DB] text-white border-white')}>
+            <span className={cn("absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-xs font-bold border", theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] text-white border-white' : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] border-[hsl(220_16%_8%)]' : 'bg-accent text-white border-white')}>
               {unreadNotificationCount}
             </span>
           )}
@@ -314,10 +313,10 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           {currentUser ? (
             <NavLink to="/profile" className="flex items-center space-x-2 relative group">
               <div className="hidden sm:flex flex-col items-end">
-                <span className={cn("text-xs font-bold tracking-wide", theme === "activebuddies" ? "text-[hsl(220_11%_34%)]" : theme === "activebuddies-dark" ? "text-[hsl(220_13%_72%)]" : theme === "vibrant-dark" ? "text-fuchsia-400" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-[#0E8B8D]")}>{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
-                <span className={cn("text-xs font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-[#111827]")}>{currentUser.name}</span>
+                <span className={cn("text-xs font-bold tracking-wide", theme === "activebuddies" ? "text-[hsl(220_11%_34%)]" : theme === "activebuddies-dark" ? "text-[hsl(220_13%_72%)]" : theme === "vibrant-dark" ? "text-gray-400" : theme === "vibrant" ? "text-gray-500" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-brand")}>{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
+                <span className={cn("text-xs font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-ink")}>{currentUser.name}</span>
               </div>
-              <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-xs overflow-hidden border", theme === "activebuddies-dark" ? "bg-gray-700/50 border-gray-600 text-gray-200" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] border-[hsl(220_13%_92%)] text-[hsl(220_14%_12%)]" : theme === "vibrant-dark" ? "bg-fuchsia-900/30 border-fuchsia-700 text-fuchsia-400" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "vibrant" ? "bg-fuchsia-100 border-fuchsia-200 text-fuchsia-700" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-[#0E8B8D]")}>
+              <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-xs overflow-hidden border", theme === "activebuddies-dark" ? "bg-gray-700/50 border-gray-600 text-gray-200" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] border-[hsl(220_13%_92%)] text-[hsl(220_14%_12%)]" : theme === "vibrant-dark" ? "bg-white/10 border-white/15 text-gray-300" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "vibrant" ? "bg-gray-100 border-gray-200 text-gray-600" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-brand")}>
                 {currentUser.photoUrl ? (
                   <img src={currentUser.photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
                 ) : (
@@ -335,7 +334,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           )}
         </div>
 
-        <button onClick={onMenuClick} aria-label={t('Άνοιγμα μενού','Open menu')} className={cn("md:hidden", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-gray-300 hover:text-white" : "text-gray-500 hover:text-[#111827]")}>
+        <button onClick={onMenuClick} aria-label={t('Άνοιγμα μενού','Open menu')} className={cn("md:hidden", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-gray-300 hover:text-white" : "text-gray-500 hover:text-ink")}>
           <Menu className="h-[22px] w-[22px]" />
         </button>
       </div>
@@ -350,7 +349,7 @@ export function BottomNav() {
   const tok = useThemeStyles();
   const { t } = useLanguage();
   return (
-    <div className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50", tok.bottomNav)}>
+    <div className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-soft-up-lg z-bottomnav", tok.bottomNav)}>
       {([
         { to: "/", icon: Compass, labelGr: 'Ανακάλυψη', labelEn: 'Discover' },
         { to: "/plans", icon: CalendarCheck, labelGr: 'Σχέδια', labelEn: 'Plans' },
@@ -368,7 +367,7 @@ export function BottomNav() {
       <div className="flex flex-col items-center justify-center -mt-6">
         <NavLink
           to="/create"
-          className={cn("w-11 h-11 rounded-full flex items-center justify-center shadow-lg transition-colors border-[3px] border-white", tok.fab)}
+          className={cn("w-11 h-11 rounded-full flex items-center justify-center shadow-soft-lg transition-colors border-[3px] border-white", tok.fab)}
         >
           <Plus className="h-[20px] w-[20px]" strokeWidth={2.5} />
         </NavLink>
@@ -413,19 +412,19 @@ export function AppShell({ children }: { children: ReactNode }) {
     >
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[110] focus:px-4 focus:py-2 focus:bg-gray-900 focus:text-white focus:rounded-xl focus:text-sm focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-toast focus:px-4 focus:py-2 focus:bg-gray-900 focus:text-white focus:rounded-xl focus:text-sm focus:font-semibold"
       >
         {t('Μετάβαση στο περιεχόμενο', 'Skip to content')}
       </a>
       <DemoModeBanner />
       <SideNav />
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
+        <div className="md:hidden fixed inset-0 z-modal flex">
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
-          <div className={cn("relative w-64 max-w-sm h-full shadow-xl flex flex-col z-50", tok.sideNav)}>
+          <div className={cn("relative w-64 max-w-sm h-full shadow-soft-lg flex flex-col z-modal", tok.sideNav)}>
             <div className="h-14 flex items-center justify-between px-6 border-b border-[#E5E7EB] shrink-0">
               <NakamasLogo className="text-xl" />
-              <button onClick={() => setIsMobileMenuOpen(false)} aria-label={t('Κλείσιμο μενού', 'Close menu')} className={cn(tok.isDark ? "text-white hover:text-white" : "text-gray-500 hover:text-[#111827]")}>
+              <button onClick={() => setIsMobileMenuOpen(false)} aria-label={t('Κλείσιμο μενού', 'Close menu')} className={cn(tok.isDark ? "text-white hover:text-white" : "text-gray-500 hover:text-ink")}>
                 <X className="h-6 w-6" />
               </button>
             </div>
@@ -443,7 +442,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {children}
             </div>
           </main>
-        <footer className="hidden md:flex h-8 px-6 bg-[#111827] text-xs text-gray-400 items-center justify-between shrink-0">
+        <footer className="hidden md:flex h-8 px-6 bg-ink text-xs text-gray-400 items-center justify-between shrink-0">
           <div className="flex space-x-4">
             <span>Nakamas v1.0.5-beta</span>
             <span className="flex items-center">

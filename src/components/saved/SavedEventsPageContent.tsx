@@ -157,7 +157,7 @@ export default function SavedEventsPageContent() {
                     <span className="truncate">{event.locationArea}</span>
                   </div>
                 </div>
-                <div className={cn("mt-3 pt-3 border-t flex items-center gap-1.5 text-[10px] font-bold tracking-wider", a.isDark ? "border-gray-700/40" : "border-gray-100", a.link)}>
+                <div className={cn("mt-3 pt-3 border-t flex items-center gap-1.5 text-2xs font-bold tracking-wider", a.isDark ? "border-gray-700/40" : "border-gray-100", a.link)}>
                   {t('Προβολή Λεπτομερειών', 'View Details')} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
-import { el as elLocale } from "date-fns/locale";
+import { el as elLocale, enUS as enLocale } from "date-fns/locale";
 import { X, MapPin, Crown, ChevronRight, CalendarDays } from "lucide-react";
 import { SlideNavArrows } from "../ui/SlideNavArrows";
 import { toast } from "sonner";
@@ -32,7 +32,7 @@ export function StoryViewer({
   const [progress, setProgress] = useState(0);
   const [paused, setPaused] = useState(false);
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const groups = useStore((s) => s.groups);
   const currentUser = useStore((s) => s.currentUser);
   const becomeEventHost = useStore((s) => s.becomeEventHost);
@@ -100,8 +100,8 @@ export function StoryViewer({
   try {
     const d = parseISO(event.date);
     day = format(d, "d");
-    mon = format(d, "MMM", { locale: elLocale }).toUpperCase();
-    weekday = format(d, "EEEE", { locale: elLocale });
+    mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale }).toUpperCase();
+    weekday = format(d, "EEEE", { locale: language === 'en' ? enLocale : elLocale });
   } catch {
     /* keep empty on invalid date */
   }
@@ -128,7 +128,7 @@ export function StoryViewer({
   const hasMultiple = events.length > 1;
 
   return createPortal(
-    <div className="fixed inset-0 z-[120] bg-black flex items-center justify-center select-none">
+    <div className="fixed inset-0 z-fullscreen bg-black flex items-center justify-center select-none">
       {hasMultiple && (
         <SlideNavArrows
           placement="outside"
@@ -225,7 +225,7 @@ export function StoryViewer({
           <div className="flex gap-2 pt-1.5 flex-wrap">
             <button
               onClick={openEvent}
-              className="flex-1 min-w-[120px] bg-white text-gray-900 font-bold rounded-2xl py-2.5 text-[13.5px] flex items-center justify-center gap-1.5 hover:bg-gray-100 transition-colors"
+              className="flex-1 min-w-[120px] bg-white text-gray-900 font-bold rounded-2xl py-2.5 text-sm flex items-center justify-center gap-1.5 hover:bg-gray-100 transition-colors"
             >
               {t("Δες εκδήλωση", "View event")}
               <ChevronRight className="w-4 h-4" />
@@ -237,7 +237,7 @@ export function StoryViewer({
                   onClose();
                   onOpenDaySchedule();
                 }}
-                className="flex-1 min-w-[120px] bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-2xl py-2.5 text-[13.5px] transition-colors"
+                className="flex-1 min-w-[120px] bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-2xl py-2.5 text-sm transition-colors"
               >
                 {t("Πρόγραμμα Ημέρας", "Day Schedule")}
               </button>
@@ -245,7 +245,7 @@ export function StoryViewer({
             {seeksHost && (
               <button
                 onClick={handleBecomeHost}
-                className="flex-1 min-w-[120px] bg-amber-400 text-amber-950 font-bold rounded-2xl py-2.5 text-[13.5px] flex items-center justify-center gap-1.5 hover:bg-amber-300 transition-colors"
+                className="flex-1 min-w-[120px] bg-amber-400 text-amber-950 font-bold rounded-2xl py-2.5 text-sm flex items-center justify-center gap-1.5 hover:bg-amber-300 transition-colors"
               >
                 <Crown className="w-4 h-4" />
                 {t("Γίνε Διοργανωτής", "Organize")}

@@ -68,7 +68,7 @@ export function GroupChatLocationModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
       <div className="modal-panel max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-200">
         <div className="p-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm z-10">
           <div className="flex items-center gap-3">
@@ -76,7 +76,7 @@ export function GroupChatLocationModal({
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#111827]">
+              <h3 className="text-base font-bold text-ink">
                 {t('Live Τοποθεσία', 'Live Location Sharing')}
               </h3>
               <p className="text-xs font-medium text-gray-500">
@@ -129,14 +129,14 @@ export function GroupChatLocationModal({
                   className={cn(
                     'p-3 rounded-2xl border text-left flex flex-col h-full transition-all duration-200',
                     locationConfig.precision === precision
-                      ? 'border-[#111827] bg-gray-50 ring-1 ring-[#111827] shadow-soft'
+                      ? 'border-ink bg-gray-50 ring-1 ring-ink shadow-soft'
                       : 'border-gray-100 hover:border-[#a5f3fc]',
                   )}
                 >
                   <span
                     className={cn(
                       'text-sm font-bold',
-                      locationConfig.precision === precision ? 'text-[#111827]' : 'text-gray-700',
+                      locationConfig.precision === precision ? 'text-ink' : 'text-gray-700',
                     )}
                   >
                     {precision === 'approximate'
@@ -188,7 +188,7 @@ export function GroupChatLocationModal({
                     </div>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold text-[#111827]">
+                    <span className="text-sm font-bold text-ink">
                       {option === 'organizer' && t('Μόνο στον Διοργανωτή', 'Organizer Only')}
                       {option === 'selected' && t('Επιλεγμένα Μέλη', 'Selected Members')}
                       {option === 'all' && t('Ολόκληρη η Ομάδα', 'Entire Confirmed Group')}
@@ -216,7 +216,7 @@ export function GroupChatLocationModal({
             <select
               value={locationConfig.duration}
               onChange={(e) => setLocationConfig({ ...locationConfig, duration: e.target.value })}
-              className="w-full border border-gray-100 rounded-2xl p-3 text-sm font-medium focus:ring-2 focus:ring-[#18D8DB]/40 bg-white outline-none shadow-soft"
+              className="w-full border border-gray-100 rounded-2xl p-3 text-sm font-medium focus:ring-2 focus:ring-accent/40 bg-white outline-none shadow-soft"
             >
               <option value="arrival">
                 {t('Μέχρι να φτάσω στο σημείο', 'Until I arrive at meeting point')}
@@ -239,7 +239,7 @@ export function GroupChatLocationModal({
           <button
             type="button"
             onClick={handleConfirm}
-            className="w-full px-4 py-3 text-sm font-bold text-white bg-[#111827] hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+            className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
           >
             {isSharingLocation
               ? t('Ενημέρωση Ρυθμίσεων', 'Update Configuration')

@@ -148,6 +148,7 @@ interface AppState {
 
   joinGroup: (groupId: string) => void;
   leaveGroup: (groupId: string) => void;
+  addMemberToGroup: (groupId: string, userId: string) => void;
   createGroup: (eventId: string, targetSize: number) => void;
   becomeEventHost: (eventId: string) => void;
   createEvent: (event: Partial<Event> & { title: string }) => void;
@@ -433,6 +434,17 @@ export const useStore = create<AppState>()(
             : g,
         ),
       };
+    }),
+
+  addMemberToGroup: (groupId, userId) =>
+    set((state) => {
+      let groups = state.groups.map((g) =>
+        g.id === groupId && !g.members.includes(userId)
+          ? { ...g, members: [...g.members, userId] }
+          : g,
+      );
+      groups = applyGroupDiscount(groups, state.events, groupId);
+      return { groups };
     }),
 
   createGroup: (eventId, targetSize) =>

@@ -21,7 +21,7 @@ export function HomeGuestHero() {
       <p className="text-xs font-bold uppercase tracking-widest text-cyan-600">
         {t('Εξερεύνηση Δραστηριοτήτων', 'Explore Activities')}
       </p>
-      <h1 className="text-2xl md:text-3xl font-black text-[#111827] leading-tight">
+      <h1 className="text-2xl md:text-3xl font-black text-ink leading-tight">
         {t('Βρείτε την επόμενη εμπειρία σας', 'Find your next experience')}
       </h1>
       <p className="text-sm text-gray-600 font-medium leading-relaxed max-w-md mx-auto">

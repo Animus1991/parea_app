@@ -21,11 +21,11 @@ export function BuddySeekPrivacySettings() {
     <div className={cn('rounded-2xl border p-4 space-y-4', a.cardSurface, a.borderB)}>
       <div>
         <h3 className={cn('text-sm font-bold', a.head)}>
-          {t('Looking for company — απόρρητο', 'Looking for company — privacy')}
+          {t('Αναζήτηση παρέας — απόρρητο', 'Looking for company — privacy')}
         </h3>
         <p className={cn('text-sm mt-1 leading-relaxed', a.sub)}>
           {t(
-            'Granular sharing settings · privacy-first visibility. Δεν είναι νομική συμβουλή.',
+            'Λεπτομερείς ρυθμίσεις κοινοποίησης · ορατότητα με σεβασμό στο απόρρητο. Δεν αποτελεί νομική συμβουλή.',
             'Granular sharing settings · privacy-first visibility. Not legal advice.',
           )}
         </p>

@@ -107,7 +107,7 @@ export default function JoinGroupFlow() {
       {step === 1 && (
         <div className="space-y-6">
           <div>
-            <h2 className="text-xl font-bold text-[#111827]">
+            <h2 className="text-xl font-bold text-ink">
               {t('Συμμετοχή ή δημιουργία ομάδας', 'Join or Create a Group')}
             </h2>
             <p className="mt-1 text-sm text-gray-500 font-medium">{event.title}</p>
@@ -127,7 +127,7 @@ export default function JoinGroupFlow() {
             <button
               type="button"
               onClick={() => setGroupType('existing')}
-              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'existing' ? 'border-[#18D8DB] bg-cyan-50 ring-1 ring-[#18D8DB]' : 'border-gray-100'}`}
+              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'existing' ? 'border-accent bg-cyan-50 ring-1 ring-accent' : 'border-gray-100'}`}
             >
               <Users className={`h-5 w-5 mb-2 ${groupType === 'existing' ? 'text-cyan-600' : 'text-gray-400'}`} />
               <p className="font-bold text-sm">{t('Υπάρχουσα ομάδα', 'Join Existing')}</p>
@@ -135,7 +135,7 @@ export default function JoinGroupFlow() {
             <button
               type="button"
               onClick={() => setGroupType('new')}
-              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'new' ? 'border-[#18D8DB] bg-cyan-50 ring-1 ring-[#18D8DB]' : 'border-gray-100'}`}
+              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'new' ? 'border-accent bg-cyan-50 ring-1 ring-accent' : 'border-gray-100'}`}
             >
               <Split className={`h-5 w-5 mb-2 ${groupType === 'new' ? 'text-cyan-600' : 'text-gray-400'}`} />
               <p className="font-bold text-sm">{t('Νέα ομάδα', 'Start New Group')}</p>
@@ -156,7 +156,7 @@ export default function JoinGroupFlow() {
                     onClick={() => setSelectedGroupId(g.id)}
                     className={`w-full p-3 rounded-xl border text-left transition-colors ${
                       selectedGroupId === g.id
-                        ? 'border-[#18D8DB] bg-cyan-50 ring-1 ring-[#18D8DB]'
+                        ? 'border-accent bg-cyan-50 ring-1 ring-accent'
                         : 'border-gray-100 hover:border-gray-200'
                     }`}
                   >
@@ -181,7 +181,7 @@ export default function JoinGroupFlow() {
                   key={size}
                   type="button"
                   onClick={() => setNewGroupSize(size)}
-                  className={`flex-1 py-2 min-h-11 rounded-xl font-bold text-sm ${newGroupSize === size ? 'bg-[#111827] text-white' : 'bg-gray-100 text-gray-600'}`}
+                  className={`flex-1 py-2 min-h-11 rounded-xl font-bold text-sm ${newGroupSize === size ? 'bg-ink text-white' : 'bg-gray-100 text-gray-600'}`}
                 >
                   {size}
                 </button>
@@ -214,7 +214,7 @@ export default function JoinGroupFlow() {
                   <span>€{discountedPrice}</span>
                 </div>
               )}
-              <p className="text-[10px] text-gray-500">
+              <p className="text-2xs text-gray-500">
                 {t(
                   'Προεξουσιοδότηση — χρέωση μόνο μετά την επιβεβαίωση της ομάδας.',
                   'Pre-authorization — charged only after group confirmation.',

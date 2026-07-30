@@ -152,14 +152,14 @@ export function CommandPalette() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[300]"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-palette"
             onClick={() => setOpen(false)}
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: -8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -8 }}
-            className="fixed top-[15vh] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 z-[301] overflow-hidden"
+            className="fixed top-[15vh] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg bg-white dark:bg-gray-900 rounded-2xl shadow-soft-lg border border-gray-200 dark:border-gray-700 z-palette overflow-hidden"
             role="dialog"
             aria-modal="true"
             aria-label={t('Γρήγορη πλοήγηση', 'Quick navigation')}
@@ -173,7 +173,7 @@ export function CommandPalette() {
                 placeholder={t('Αναζήτηση σελίδας…', 'Search pages…')}
                 className="flex-1 h-12 bg-transparent text-sm outline-none placeholder:text-gray-400"
               />
-              <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-[10px] font-medium text-gray-500">
+              <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-2xs font-medium text-gray-500">
                 <Command className="w-3 h-3" />K
               </kbd>
             </div>
@@ -185,7 +185,7 @@ export function CommandPalette() {
               ) : (
                 Array.from(sections.entries()).map(([section, items]) => (
                   <div key={section} className="mb-2">
-                    <p className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                    <p className="px-2 py-1.5 text-2xs font-bold uppercase tracking-wider text-gray-400">
                       {section}
                     </p>
                     {items.map((item) => {

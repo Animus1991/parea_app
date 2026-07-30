@@ -113,7 +113,7 @@ export default function CreateEventFlowPageContent() {
       className="max-w-full mx-auto pb-24 md:pb-8"
     >
       <div className="mb-8">
-        <h1 className={cn("text-[16px] md:text-[18px] font-bold", p.head)}>
+        <h1 className={cn("text-lg md:text-xl font-bold", p.head)}>
           {t("Δημιουργία Εμπειρίας", "Create Experience")}
         </h1>
         <p className={cn("text-sm mt-1", p.muted)}>
@@ -168,13 +168,13 @@ export default function CreateEventFlowPageContent() {
                        <>
                          <Camera className={cn("w-8 h-8 mb-2", p.muted)} />
                          <span className={cn("text-sm font-bold block", p.head)}>{t('Ανέβασμα Εικόνας', 'Upload Image')}</span>
-                         <span className={cn("text-[11px] mt-1 capitalize tracking-tight", p.muted)}>{t('JPG, PNG έως 5MB', 'JPG, PNG up to 5MB')}</span>
+                         <span className={cn("text-xs mt-1 capitalize tracking-tight", p.muted)}>{t('JPG, PNG έως 5MB', 'JPG, PNG up to 5MB')}</span>
                        </>
                     )}
                   </div>
                   <input type="file" ref={fileInputRef} className="hidden" accept="image/jpeg, image/png" onChange={handleImageUpload} />
                   {imagePreview && (
-                     <button onClick={() => setImagePreview(null)} className="text-[11px] text-red-500 font-bold capitalize tracking-tight mt-2 hover:underline">
+                     <button onClick={() => setImagePreview(null)} className="text-xs text-red-500 font-bold capitalize tracking-tight mt-2 hover:underline">
                         {t('Αφαίρεση Εικόνας', 'Remove Image')}
                      </button>
                   )}
@@ -338,7 +338,7 @@ export default function CreateEventFlowPageContent() {
                     <MapPin className={cn("absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4", p.muted)} />
                   </div>
                   <div className="w-full">
-                    <p className={cn("text-[10px] mb-2", p.muted)}>
+                    <p className={cn("text-2xs mb-2", p.muted)}>
                       {t(
                         "Επιλέξτε το ακριβές σημείο στον χάρτη:",
                         "Select exact location on map:",
@@ -401,7 +401,7 @@ export default function CreateEventFlowPageContent() {
                       <h4 className={cn("text-sm font-bold mb-1", p.head)}>
                         {t("Δημόσια", "Public")}
                       </h4>
-                      <p className={cn("text-[10px]", p.muted)}>
+                      <p className={cn("text-2xs", p.muted)}>
                         {t(
                           "Όλοι μπορούν να βρουν και να ζητήσουν να συμμετάσχουν.",
                           "Anyone can find and request to join.",
@@ -418,7 +418,7 @@ export default function CreateEventFlowPageContent() {
                       <h4 className={cn("text-sm font-bold mb-1", p.head)}>
                         {t("Ιδιωτική", "Private")}
                       </h4>
-                      <p className={cn("text-[10px]", p.muted)}>
+                      <p className={cn("text-2xs", p.muted)}>
                         {t(
                           "Ορατή μόνο μέσω απευθείας συνδέσμου πρόσκλησης.",
                           "Only visible via direct invite link.",

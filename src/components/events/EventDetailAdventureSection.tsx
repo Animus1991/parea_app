@@ -1,5 +1,5 @@
 import { useLanguage } from '../../lib/i18n';
-import { getEventDetailSurfaceTokens } from '../../lib/eventDetailDesignTokens';
+import { getEventDetailSurfaceTokens } from '../../lib/designTokens';
 import { cn } from '../../lib/utils';
 import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventDetailMapSection';

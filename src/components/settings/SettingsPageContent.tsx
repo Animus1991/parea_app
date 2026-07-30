@@ -313,7 +313,7 @@ export default function SettingsPageContent() {
                   <p className={cn("text-xs font-medium", a.muted)}>Athens, GR • {t('Τώρα', 'Now')}</p>
                 </div>
               </div>
-              <span className={cn("text-[10.5px] font-bold px-2 py-0.5 rounded-full", a.sessionBadge)}>{t('Τρέχουσα', 'Current')}</span>
+              <span className={cn("text-2xs font-bold px-2 py-0.5 rounded-full", a.sessionBadge)}>{t('Τρέχουσα', 'Current')}</span>
             </div>
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
@@ -325,7 +325,7 @@ export default function SettingsPageContent() {
               </div>
               <button
                 type="button"
-                className="text-[10.5px] font-bold text-red-500 hover:text-red-700"
+                className="text-2xs font-bold text-red-500 hover:text-red-700"
                 onClick={() => toast.success(t('Η συνεδρία τερματίστηκε (demo)', 'Session ended (demo)'))}
               >
                 {t('Αποσύνδεση', 'Log out')}
@@ -371,7 +371,7 @@ export default function SettingsPageContent() {
       </div>
 
       {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" onClick={() => setShowDeleteModal(false)}>
+        <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" onClick={() => setShowDeleteModal(false)}>
           <Card className="max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className={cn('font-bold text-lg mb-2', a.head)}>{t('Διαγραφή λογαριασμού;', 'Delete account?')}</h3>
             <p className={cn('text-sm mb-4', a.sub)}>

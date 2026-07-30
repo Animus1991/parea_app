@@ -1,5 +1,5 @@
 import { useStore } from '../store';
-import { getGlobalContrast } from '../lib/contrastTheme';
+import { getGlobalContrast } from '../lib/designTokens';
 
 export function useContrastTheme() {
   const theme = useStore((s) => s.theme);

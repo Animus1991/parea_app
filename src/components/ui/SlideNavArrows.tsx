@@ -15,7 +15,7 @@ export interface SlideNavArrowsProps {
 const btnBase =
   'items-center justify-center rounded-full border backdrop-blur-md transition-all min-h-11 min-w-11 z-30 disabled:opacity-25 disabled:pointer-events-none hover:scale-105 active:scale-95';
 
-const btnDark = 'bg-black/55 border-white/20 text-white hover:bg-black/70 shadow-lg';
+const btnDark = 'bg-black/55 border-white/20 text-white hover:bg-black/70 shadow-soft-lg';
 
 /**
  * Visible prev/next chevrons on md+ for multi-item story modals.

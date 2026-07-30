@@ -53,7 +53,7 @@ export function CompanyRequestCard({
 
   const shell = darkSurface
     ? 'border-gray-700 bg-gray-800/60'
-    : 'border-gray-200 bg-white shadow-sm';
+    : 'border-gray-200 bg-white shadow-soft';
 
   return (
     <article className={cn('rounded-2xl border p-3', shell, compact && 'p-2.5')}>
@@ -93,7 +93,7 @@ export function CompanyRequestCard({
                 <span
                   key={tag}
                   className={cn(
-                    'text-xs font-bold px-1.5 py-0.5 rounded-md',
+                    'text-xs font-bold px-1.5 py-0.5 rounded-lg',
                     darkSurface ? 'bg-white/10 text-gray-200' : 'bg-gray-100 text-gray-700',
                   )}
                 >

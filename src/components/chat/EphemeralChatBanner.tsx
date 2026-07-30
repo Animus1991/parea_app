@@ -14,7 +14,7 @@ export function EphemeralChatBanner({ conversationId }: { conversationId: string
 
   return (
     <>
-      <div className="mx-3 mt-2 flex items-start gap-2 rounded-xl border border-cyan-500/25 bg-cyan-950/40 px-3 py-2 text-xs text-cyan-100">
+      <div className="mx-3 mt-2 flex items-start gap-2 rounded-xl border border-brand/25 bg-brand-soft px-3 py-2 text-xs text-ink">
         <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
         <p className="flex-1 leading-relaxed">
           {t(
@@ -25,12 +25,12 @@ export function EphemeralChatBanner({ conversationId }: { conversationId: string
         <button
           type="button"
           onClick={() => setKeepOpen(true)}
-          className="shrink-0 font-bold text-cyan-300 hover:underline"
+          className="shrink-0 font-bold text-brand hover:underline"
         >
           {t('Διατήρηση', 'Keep')}
         </button>
         <button type="button" onClick={() => dismiss(conversationId)} aria-label={t('Απόκρυψη', 'Dismiss')}>
-          <X className="w-3.5 h-3.5 text-gray-500" />
+          <X className="w-3.5 h-3.5 text-ink-muted" />
         </button>
       </div>
       <KeepChatRequestModal open={keepOpen} onClose={() => setKeepOpen(false)} conversationId={conversationId} />

@@ -17,10 +17,10 @@ export default function HelpCenterPageContent() {
   const [topicFilter, setTopicFilter] = useState<string | null>(null);
 
   const articles = [
-    { id: 1, title: t('Πώς να αναφέρετε μια μη εμφάνιση', 'How to report a no-show'), category: t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety') },
-    { id: 2, title: t('Επιστροφή χρημάτων για ακυρωμένη εκδήλωση', 'Refund for canceled event'), category: t('Πληρωμές', 'Payments') },
-    { id: 3, title: t('Συμβουλές διοργάνωσης', 'Tips for hosting your first meetup'), category: t('Διοργανωτές', 'Organizers') },
-    { id: 4, title: t('Αλλαγή ειδοποιήσεων', 'Change notification preferences'), category: t('Λογαριασμός', 'Account') },
+    { id: 1, title: t('Πώς να αναφέρετε μια μη εμφάνιση', 'How to report a no-show'), category: t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety'), content: t('Ανοίξτε τη σελίδα της εκδήλωσης και πατήστε «Αναφορά». Καταγράψτε ποιος δεν εμφανίστηκε εντός 24 ωρών. Η ομάδα εμπιστοσύνης εξετάζει την αναφορά και ενημερώνει το Trust Score του χρήστη.', 'Open the event page and tap "Report". Record who didn\'t show up within 24 hours. Our trust team reviews the report and updates the user\'s Trust Score.') },
+    { id: 2, title: t('Επιστροφή χρημάτων για ακυρωμένη εκδήλωση', 'Refund for canceled event'), category: t('Πληρωμές', 'Payments'), content: t('Αν ο διοργανωτής ακυρώσει την εκδήλωση, η προέγκριση πληρωμής ακυρώνεται αυτόματα εντός 3-5 εργάσιμων ημερών. Για χρεώσεις που έχουν ήδη ολοκληρωθεί, η επιστροφή γίνεται στο αρχικό μέσο πληρωμής.', 'If the organizer cancels, the payment pre-authorization is voided automatically within 3-5 business days. For completed charges, refunds go back to the original payment method.') },
+    { id: 3, title: t('Συμβουλές διοργάνωσης', 'Tips for hosting your first meetup'), category: t('Διοργανωτές', 'Organizers'), content: t('Ξεκινήστε με μικρή ομάδα 3-5 ατόμων, ορίστε ξεκάθαρο σημείο συνάντησης, στείλτε ανακοίνωση την προηγούμενη μέρα και επιβεβαιώστε τις παρουσίες μετά το event για να χτίσετε Trust Score.', 'Start with a small 3-5 person group, set a clear meeting point, send an announcement the day before, and confirm attendance after the event to build Trust Score.') },
+    { id: 4, title: t('Αλλαγή ειδοποιήσεων', 'Change notification preferences'), category: t('Λογαριασμός', 'Account'), content: t('Πηγαίνετε Ρυθμίσεις → Ειδοποιήσεις και επιλέξτε ποιες ενημερώσεις θέλετε (νέα μηνύματα, αλλαγές εκδηλώσεων, υπενθυμίσεις). Οι αλλαγές αποθηκεύονται αυτόματα.', 'Go to Settings → Notifications and choose which updates you want (new messages, event changes, reminders). Changes save automatically.') },
   ];
 
   const faqs = [
@@ -57,7 +57,7 @@ export default function HelpCenterPageContent() {
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in pb-20 md:pb-0">
       {/* Hero */}
-      <div className={cn("text-white rounded-2xl p-8 text-center shadow-md relative overflow-hidden", a.heroBg)}>
+      <div className={cn("text-white rounded-2xl p-8 text-center shadow-soft-md relative overflow-hidden", a.heroBg)}>
         <div className={cn("absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full", a.heroCircle)}></div>
         <div className={cn("absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full", a.heroCircle)}></div>
         <h1 className="text-xl md:text-2xl font-black mb-2 relative z-10">{t('Κέντρο Βοήθειας', 'Help Center')}</h1>
@@ -96,7 +96,7 @@ export default function HelpCenterPageContent() {
 
       {/* FAQ */}
       <div>
-        <h2 className={cn("text-[11px] font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Συχνές Ερωτήσεις', 'FAQ')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Συχνές Ερωτήσεις', 'FAQ')}</h2>
         <div className="space-y-2">
           {filteredFaqs.map(faq => (
             <Card key={faq.id} className="overflow-hidden">
@@ -119,19 +119,24 @@ export default function HelpCenterPageContent() {
 
       {/* Articles */}
       <div>
-        <h2 className={cn("text-[11px] font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Άρθρα Βοήθειας', 'Help Articles')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{t('Άρθρα Βοήθειας', 'Help Articles')}</h2>
         <div className="space-y-3">
           {filtered.map(article => (
             <Card
               key={article.id}
-              className={cn("p-4 flex items-center justify-between cursor-pointer transition-colors", a.articleHover)}
+              className={cn("p-4 cursor-pointer transition-colors", a.articleHover)}
               onClick={() => setExpandedArticle(expandedArticle === article.id ? null : article.id)}
             >
-              <div>
-                <span className={cn("text-xs font-bold tracking-wide", a.articleCat)}>{article.category}</span>
-                <h3 className={cn("font-bold text-base mt-0.5", a.head)}>{article.title}</h3>
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className={cn("text-xs font-bold tracking-wide", a.articleCat)}>{article.category}</span>
+                  <h3 className={cn("font-bold text-base mt-0.5", a.head)}>{article.title}</h3>
+                </div>
+                <ChevronRight className={cn("w-4 h-4 shrink-0", a.chevron, expandedArticle === article.id && 'rotate-90')} />
               </div>
-              <ChevronRight className={cn("w-4 h-4 shrink-0", a.chevron, expandedArticle === article.id && 'rotate-90')} />
+              {expandedArticle === article.id && (
+                <p className={cn("text-sm font-medium leading-relaxed mt-3 pt-3 border-t border-gray-100", a.faqAnswer)}>{article.content}</p>
+              )}
             </Card>
           ))}
           {filtered.length === 0 && (

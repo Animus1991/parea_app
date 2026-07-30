@@ -37,7 +37,7 @@ export function OfflineBanner() {
     <div
       role="status"
       aria-live="assertive"
-      className={`fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 z-[200] flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm ${
+      className={`fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 z-banner flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold shadow-soft-lg backdrop-blur-sm ${
         online ? 'bg-emerald-600 text-white' : 'bg-gray-900 text-white'
       }`}
     >

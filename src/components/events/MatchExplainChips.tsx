@@ -24,7 +24,7 @@ export function MatchExplainChips({ user, event, className, max = 3 }: MatchExpl
         <span
           key={`${chip}-${i}`}
           className={cn(
-            'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold tabular-nums',
+            'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold tabular-nums',
             i === 0
               ? 'bg-cyan-600/10 text-cyan-700 dark:text-cyan-300'
               : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300',

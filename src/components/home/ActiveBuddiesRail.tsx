@@ -49,7 +49,7 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
           />
           <h2
             className={cn(
-              'text-[14.63px] font-bold leading-tight',
+              'text-base font-bold leading-tight',
               useClassicTokens ? h.heading : p.head,
             )}
           >

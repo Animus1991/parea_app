@@ -85,7 +85,7 @@ export function EventDetailActionBar({
   const a = (darkSurface ? ACCENT_DARK : ACCENT_LIGHT)[accent];
   const calendarOk = calendarAvailability?.ok !== false;
 
-  const btn = 'flex items-center gap-2 text-[10px] font-bold tracking-wider transition-colors px-3 py-1.5 rounded-full';
+  const btn = 'flex items-center gap-2 text-2xs font-bold tracking-wider transition-colors px-3 py-1.5 rounded-full';
 
   return (
     <div className={cn('flex flex-col items-end gap-1', className)}>
@@ -122,7 +122,7 @@ export function EventDetailActionBar({
       </button>
     </div>
     {!calendarOk && calendarAvailability && (
-      <p className="text-[10px] font-medium text-gray-500 text-right max-w-xs">
+      <p className="text-2xs font-medium text-gray-500 text-right max-w-xs">
         {t(calendarAvailability.reasonEl, calendarAvailability.reasonEn)}
       </p>
     )}

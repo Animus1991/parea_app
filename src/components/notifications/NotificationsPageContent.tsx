@@ -141,7 +141,7 @@ export default function NotificationsPageContent() {
           >
             {notifMessage(notif, t)}
           </p>
-          <span className={cn('text-[10.5px] font-bold tracking-wide mt-1 block', a.muted)}>
+          <span className={cn('text-2xs font-bold tracking-wide mt-1 block', a.muted)}>
             {notifTime(notif, t)}
           </span>
           {notif.type === 'match' && (
@@ -152,7 +152,7 @@ export default function NotificationsPageContent() {
                 navigate('/plans');
               }}
               className={cn(
-                'mt-2 text-[10.5px] font-bold px-2.5 py-1 rounded-full transition-colors inline-flex items-center gap-1',
+                'mt-2 text-2xs font-bold px-2.5 py-1 rounded-full transition-colors inline-flex items-center gap-1',
                 a.actionBtn,
               )}
             >
@@ -167,7 +167,7 @@ export default function NotificationsPageContent() {
                 navigate('/chats');
               }}
               className={cn(
-                'mt-2 text-[10.5px] font-bold px-2.5 py-1 rounded-full transition-colors inline-flex items-center gap-1',
+                'mt-2 text-2xs font-bold px-2.5 py-1 rounded-full transition-colors inline-flex items-center gap-1',
                 a.actionBtn,
               )}
             >
@@ -184,7 +184,7 @@ export default function NotificationsPageContent() {
               handleDismiss(notif.id);
             }}
             className={cn(
-              'opacity-0 group-hover:opacity-100 p-1 rounded-md transition-all',
+              'opacity-0 group-hover:opacity-100 p-1 rounded-lg transition-all',
               a.isDark ? 'hover:bg-gray-700/40 text-gray-500' : 'hover:bg-gray-100 text-gray-400',
             )}
             title={t('Απόρριψη', 'Dismiss')}

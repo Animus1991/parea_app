@@ -71,22 +71,22 @@ export default function HistoryPageContent() {
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <TrendingUp className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
           <p className={cn("text-xl font-black", a.head)}>{totalAttended}</p>
-          <p className={cn("text-[10.5px] font-bold tracking-wide", a.muted)}>{t('Εκδηλώσεις', 'Events')}</p>
+          <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Εκδηλώσεις', 'Events')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Star className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
           <p className={cn("text-xl font-black", a.head)}>{avgRating.toFixed(1)}</p>
-          <p className={cn("text-[10.5px] font-bold tracking-wide", a.muted)}>{t('Μ.Ο. Βαθμολογία', 'Avg Rating')}</p>
+          <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Μ.Ο. Βαθμολογία', 'Avg Rating')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Users className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
           <p className={cn("text-xl font-black", a.head)}>{peopleMet}</p>
-          <p className={cn("text-[10.5px] font-bold tracking-wide", a.muted)}>{t('Άτομα', 'People Met')}</p>
+          <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Άτομα', 'People Met')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Award className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
           <p className={cn("text-xl font-black", a.head)}>{reviewedCount}/{totalAttended}</p>
-          <p className={cn("text-[10.5px] font-bold tracking-wide", a.muted)}>{t('Αξιολογήσεις', 'Reviews')}</p>
+          <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Αξιολογήσεις', 'Reviews')}</p>
         </Card>
       </div>
 
@@ -170,11 +170,11 @@ export default function HistoryPageContent() {
                 </div>
                 <div className="self-center shrink-0">
                   {feedbackSubmitted[event.id] ? (
-                    <span className={cn("flex items-center gap-1 text-[10.5px] font-bold px-2 py-1 rounded-full", a.isDark ? "text-green-400 bg-green-900/20" : "text-green-600 bg-green-50")}>
+                    <span className={cn("flex items-center gap-1 text-2xs font-bold px-2 py-1 rounded-full", a.isDark ? "text-green-400 bg-green-900/20" : "text-green-600 bg-green-50")}>
                       <CheckCircle2 className="w-3 h-3" />{t('Αξιολογήθηκε', 'Reviewed')}
                     </span>
                   ) : (
-                    <span className={cn("flex items-center gap-1 text-[10.5px] font-bold px-2 py-1 rounded-full", a.isDark ? "text-amber-400 bg-amber-900/20" : "text-amber-600 bg-amber-50")}>
+                    <span className={cn("flex items-center gap-1 text-2xs font-bold px-2 py-1 rounded-full", a.isDark ? "text-amber-400 bg-amber-900/20" : "text-amber-600 bg-amber-50")}>
                       <Star className="w-3 h-3" />{t('Εκκρεμεί', 'Pending')}
                     </span>
                   )}

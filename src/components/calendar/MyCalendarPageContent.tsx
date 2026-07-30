@@ -104,8 +104,8 @@ export default function MyCalendarPageContent() {
           "relative min-h-[140px] md:min-h-0 md:aspect-[3/4] lg:aspect-square flex flex-col items-center justify-center rounded-xl md:rounded-2xl cursor-pointer transition-all border overflow-hidden",
           isToday(day)
             ? p.isAB
-              ? "bg-[hsl(220_16%_22%)] text-white border-[hsl(220_13%_30%)] shadow-sm"
-              : "bg-cyan-600 text-white border-cyan-600 shadow-md shadow-cyan-600/20"
+              ? "bg-[hsl(220_16%_22%)] text-white border-[hsl(220_13%_30%)] shadow-soft"
+              : "bg-cyan-600 text-white border-cyan-600 shadow-soft-md shadow-cyan-600/20"
             : dayEvents.length > 0
               ? p.isDark
                 ? "bg-cyan-900/20 border-cyan-800/50 hover:bg-cyan-900/40"
@@ -171,7 +171,7 @@ export default function MyCalendarPageContent() {
                     <p className="text-xs text-white truncate font-bold">
                       {dayEvents[0].title}
                     </p>
-                    <p className="text-[7.5px] text-white/80 truncate">
+                    <p className="text-2xs text-white/80 truncate">
                       {dayEvents[0].time}
                     </p>
                   </div>
@@ -190,7 +190,7 @@ export default function MyCalendarPageContent() {
                     <p className="text-xs text-white truncate font-bold">
                       {dayEvents[1].title}
                     </p>
-                    <p className="text-[7.5px] text-white/80 truncate">
+                    <p className="text-2xs text-white/80 truncate">
                       {dayEvents[1].time}
                     </p>
                   </div>
@@ -247,7 +247,7 @@ export default function MyCalendarPageContent() {
                         background: "linear-gradient(transparent, rgba(0,0,0,0.8))",
                       }}
                     >
-                      <p className="text-[7.5px] text-white truncate font-bold leading-tight">
+                      <p className="text-2xs text-white truncate font-bold leading-tight">
                         {ev.title}
                       </p>
                     </div>
@@ -281,7 +281,7 @@ export default function MyCalendarPageContent() {
                 ))}
                 {dayEvents.length > 5 && (
                   <div className="w-1/3 h-1/2 flex items-center justify-center bg-cyan-900 border-r border-b border-black/30 shadow-inner">
-                    <span className="text-white font-bold text-xs drop-shadow-md">+{dayEvents.length - 5}</span>
+                    <span className="text-white font-bold text-xs drop-shadow-soft-md">+{dayEvents.length - 5}</span>
                   </div>
                 )}
               </div>
@@ -293,7 +293,7 @@ export default function MyCalendarPageContent() {
           className={cn(
             "relative z-10 text-sm md:text-lg font-black",
             isToday(day) || dayEvents.length > 0
-              ? "text-white drop-shadow-md"
+              ? "text-white drop-shadow-soft-md"
               : p.head,
           )}
         >
@@ -301,7 +301,7 @@ export default function MyCalendarPageContent() {
         </span>
 
         {dayEvents.length > 0 && (
-          <div className="md:hidden relative z-10 flex items-center justify-center bg-amber-500 text-white rounded-full w-[18px] h-[18px] text-xs font-bold mt-1 shadow-sm">
+          <div className="md:hidden relative z-10 flex items-center justify-center bg-amber-500 text-white rounded-full w-[18px] h-[18px] text-xs font-bold mt-1 shadow-soft">
             {dayEvents.length}
           </div>
         )}
@@ -316,7 +316,7 @@ export default function MyCalendarPageContent() {
         <div className="flex items-center gap-4">
           <div
             className={cn(
-              "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border",
+              "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-soft border",
               p.isDark
                 ? "bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]"
                 : "bg-white border-gray-100",
@@ -358,7 +358,7 @@ export default function MyCalendarPageContent() {
           )}
           <div
             className={cn(
-              "flex p-1 rounded-xl border relative shadow-sm",
+              "flex p-1 rounded-xl border relative shadow-soft",
               p.isDark
                 ? "bg-[hsl(220_16%_12%)] border-[hsl(220_13%_22%)]"
                 : "bg-gray-100 border-gray-200",
@@ -366,7 +366,7 @@ export default function MyCalendarPageContent() {
           >
             <div
               className={cn(
-                "absolute inset-y-1 w-[calc(50%-4px)] rounded-lg transition-all duration-300 ease-out shadow-sm",
+                "absolute inset-y-1 w-[calc(50%-4px)] rounded-lg transition-all duration-300 ease-out shadow-soft",
                 view === "week" ? "left-1" : "left-[calc(50%+2px)]",
                 p.isDark && p.isAB
                   ? "bg-[hsl(220_16%_22%)] shadow-[inset_0_1px_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.4)]"
@@ -458,7 +458,7 @@ export default function MyCalendarPageContent() {
             <button
               onClick={() => setCurrentDate(new Date())}
               className={cn(
-                "px-4 py-2 text-xs font-bold rounded-xl transition-all shadow-sm border",
+                "px-4 py-2 text-xs font-bold rounded-xl transition-all shadow-soft border",
                 p.isDark
                   ? "bg-[hsl(220_14%_12%)] border-white/5 text-gray-300 hover:bg-[hsl(220_14%_16%)]"
                   : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50",
@@ -591,7 +591,7 @@ export default function MyCalendarPageContent() {
                     <div
                       key={idx}
                       className={cn(
-                        "flex gap-4 items-center cursor-pointer p-4 rounded-xl transition-all border shadow-sm group",
+                        "flex gap-4 items-center cursor-pointer p-4 rounded-xl transition-all border shadow-soft group",
                         p.isDark
                           ? "bg-[hsl(220_16%_14%)] border-white/5 hover:border-cyan-500/50"
                           : "bg-white border-gray-100 hover:border-cyan-300 hover:bg-cyan-50/50",
@@ -617,7 +617,7 @@ export default function MyCalendarPageContent() {
                       </div>
                       <span
                         className={cn(
-                          "text-xs uppercase tracking-widest font-black px-2 py-1 flex items-center justify-center rounded-md shrink-0",
+                          "text-xs uppercase tracking-widest font-black px-2 py-1 flex items-center justify-center rounded-lg shrink-0",
                           p.isDark
                             ? "bg-emerald-900/30 text-emerald-400"
                             : "bg-emerald-50 text-emerald-600",

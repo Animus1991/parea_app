@@ -9,7 +9,6 @@ import {
   Search,
   ShieldCheck,
   Map as MapIcon,
-  Grid,
   CheckCircle2,
   Users,
   CalendarX,
@@ -31,7 +30,7 @@ import { useStoryEvents } from "../hooks/useStoryEvents";
 import { useHomeExternalEvents } from "../hooks/useHomeExternalEvents";
 import { useHomeScrollToFilters } from "../hooks/useHomeScrollToFilters";
 import { useHomeEventFeed } from "../hooks/useHomeEventFeed";
-import { HOME_TYPO } from "../lib/homeTypography";
+import { HOME_TYPO } from "../lib/typographyTokens";
 import { cn } from "../lib/utils";
 
 export default function HomeVibrant() {
@@ -162,7 +161,7 @@ export default function HomeVibrant() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-gradient-to-br from-[#7c3aed] via-[#db2777] to-[#f97316] text-white p-6 md:p-10 rounded-[24px] shadow-xl relative overflow-hidden flex flex-col gap-4"
+        className="bg-gradient-to-br from-[#7c3aed] via-[#db2777] to-[#f97316] text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden flex flex-col gap-4"
       >
         <HomeHeroModeBar className="relative z-10" />
         <div className="relative z-10 flex-1 w-full">
@@ -229,7 +228,7 @@ export default function HomeVibrant() {
                   "home.hero.search_placeholder",
                   "Αναζήτηση εμπειριών...",
                 )}
-                className="w-full h-11 pl-10 pr-4 rounded-full border border-white/20 bg-white/15 text-white placeholder-white/60 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-300/60 text-sm font-medium backdrop-blur-sm"
+                className="w-full h-11 pl-10 pr-4 rounded-full border border-white/20 bg-white/15 text-white placeholder-white/60 shadow-soft focus:outline-none focus:ring-2 focus:ring-amber-300/60 text-sm font-medium backdrop-blur-sm"
               />
               <HomeSearchDropdown
                 popularSuggestions={searchSuggestions}
@@ -296,12 +295,12 @@ export default function HomeVibrant() {
         ].map(({ step, title, body }) => (
           <div
             key={step}
-            className="bg-white p-4 rounded-xl border border-fuchsia-100/60 shadow-sm flex flex-col items-center text-center hover:shadow-md hover:border-fuchsia-200/60 transition-all"
+            className="bg-white p-4 rounded-xl border border-gray-200 shadow-soft flex flex-col items-center text-center hover:shadow-soft-md hover:border-gray-300 transition-all"
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-fuchsia-500 to-orange-400 text-white rounded-full flex items-center justify-center font-bold text-xs mb-2.5 shadow-sm">
+            <div className="w-8 h-8 bg-gray-100 text-gray-700 rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
               {step}
             </div>
-            <h3 className={cn(HOME_TYPO.stepTitle, "text-[#111827] mb-1")}>
+            <h3 className={cn(HOME_TYPO.stepTitle, "text-ink mb-1")}>
               {title}
             </h3>
             <p className={cn(HOME_TYPO.stepBody, "text-gray-600")}>
@@ -340,28 +339,25 @@ export default function HomeVibrant() {
       {/* Events Grid */}
       <section>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
-          <div className="flex bg-fuchsia-50 p-1 rounded-lg w-fit border border-fuchsia-100">
+          <div className="flex bg-gray-100 p-1 rounded-lg w-fit border border-gray-200">
             <button
               onClick={() => setFeedType("For You")}
-              className={cn("px-4 py-1.5 rounded-md transition-all", HOME_TYPO.feedTab, feedType === "For You" ? "bg-white shadow-sm text-fuchsia-700" : "text-gray-500 hover:text-fuchsia-600")}
+              className={cn("px-4 py-1.5 rounded-lg transition-all", HOME_TYPO.feedTab, feedType === "For You" ? "bg-white shadow-soft text-fuchsia-700" : "text-gray-500 hover:text-gray-900")}
             >
               {t("home.feed.for_you", "Για Σένα")}
             </button>
             <button
               onClick={() => setFeedType("Discover")}
-              className={cn("px-4 py-1.5 rounded-md transition-all", HOME_TYPO.feedTab, feedType === "Discover" ? "bg-white shadow-sm text-fuchsia-700" : "text-gray-500 hover:text-fuchsia-600")}
+              className={cn("px-4 py-1.5 rounded-lg transition-all", HOME_TYPO.feedTab, feedType === "Discover" ? "bg-white shadow-soft text-fuchsia-700" : "text-gray-500 hover:text-gray-900")}
             >
               {t("home.feed.discover", "Ανακάλυψε")}
             </button>
           </div>
 
-          <div className="flex bg-fuchsia-50 p-0.5 rounded-lg w-fit border border-fuchsia-100">
-            <button className="p-1.5 rounded-md transition-all bg-white shadow-sm text-fuchsia-700" aria-label={t('Προβολή πλέγματος', 'Grid view')} title={t('Προβολή πλέγματος', 'Grid view')}>
-              <Grid className="w-4 h-4" />
-            </button>
+          <div className="flex bg-gray-100 p-0.5 rounded-lg w-fit border border-gray-200">
             <button
               onClick={() => navigate("/nearby")}
-              className="p-1.5 rounded-md transition-all text-gray-500 hover:text-fuchsia-600"
+              className="p-1.5 rounded-lg transition-all text-gray-500 hover:text-gray-900"
               title={t("Άνοιγμα Χάρτη", "Open Map")}
               aria-label={t("Άνοιγμα Χάρτη", "Open Map")}
             >
@@ -414,7 +410,7 @@ export default function HomeVibrant() {
         {/* Load More Trigger */}
         {!isLoading && visibleEventsCount < sortedEvents.length && (
           <div ref={loadMoreRef} className="flex justify-center mt-6 py-4">
-            <div className="w-6 h-6 border-2 border-fuchsia-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
       </section>

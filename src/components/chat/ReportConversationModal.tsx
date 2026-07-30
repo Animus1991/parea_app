@@ -38,13 +38,13 @@ export function ReportConversationModal({
 
   return (
     <div
-      className="fixed inset-0 z-[90] flex items-end sm:items-center justify-center p-4 bg-black/60"
+      className="fixed inset-0 z-modal flex items-end sm:items-center justify-center p-4 bg-black/60"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-[#141820] border border-white/10 p-4 space-y-3 text-white"
+        className="w-full max-w-sm rounded-2xl bg-surface-raised border border-border p-4 space-y-3 text-ink"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-sm font-bold">{t('Αναφορά συνομιλίας', 'Report conversation')}</h3>
@@ -69,7 +69,7 @@ export function ReportConversationModal({
         >
           {t('Υποβολή αναφοράς', 'Submit report')}
         </button>
-        <button type="button" onClick={onClose} className="w-full text-xs text-gray-500">
+        <button type="button" onClick={onClose} className="w-full text-xs text-ink-muted">
           {t('Άκυρο', 'Cancel')}
         </button>
       </div>

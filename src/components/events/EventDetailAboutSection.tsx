@@ -3,7 +3,7 @@ import { ExternalLink, Hash } from 'lucide-react';
 import { Badge } from '../common/Badge';
 import { useLanguage } from '../../lib/i18n';
 import { homePathWithSearch } from '../../lib/homeDeepLinks';
-import { getEventDetailContentTokens } from '../../lib/eventDetailDesignTokens';
+import { getEventDetailContentTokens } from '../../lib/designTokens';
 import { cn } from '../../lib/utils';
 import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventDetailMapSection';
@@ -30,7 +30,7 @@ export function EventDetailAboutSection({
       <h3 className={cn(surface.sectionHeading, 'mb-2')}>
         {t('Πληροφορίες για την εμπειρία', 'About the experience')}
       </h3>
-      <p className={cn('text-[13px] leading-relaxed font-medium', content.aboutBody)}>
+      <p className={cn('text-sm leading-relaxed font-medium', content.aboutBody)}>
         {event.description}
       </p>
 

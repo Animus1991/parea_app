@@ -127,14 +127,14 @@ export default function LeaderboardClassic() {
                   referrerPolicy="no-referrer"
                   src={myEntry.avatar}
                   alt={myEntry.name}
-                  className={cn('w-14 h-14 rounded-full object-cover ring-2', p.isDark ? 'ring-white/20' : 'ring-[#18D8DB]/40')}
+                  className={cn('w-14 h-14 rounded-full object-cover ring-2', p.isDark ? 'ring-white/20' : 'ring-accent/40')}
                 />
-                <div className="absolute -bottom-1 -right-1 bg-[#111827] text-white text-xs font-black px-1.5 py-0.5 rounded-full border-2 border-white">
+                <div className="absolute -bottom-1 -right-1 bg-ink text-white text-xs font-black px-1.5 py-0.5 rounded-full border-2 border-white">
                   #{myRank}
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <p className={cn('font-bold text-[13.5px]', p.head)}>
+                <p className={cn('font-bold text-sm', p.head)}>
                   {t('Η κατάταξή σου', 'Your rank')} —{' '}
                   <span className={p.statVal}>#{myRank}</span>
                 </p>
@@ -157,11 +157,11 @@ export default function LeaderboardClassic() {
             {aheadEntry ? (
               <div className={cn('mt-4 pt-3 border-t', p.borderT)}>
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className={cn('text-[11.5px] font-semibold flex items-center gap-1', p.muted)}>
+                  <span className={cn('text-xs font-semibold flex items-center gap-1', p.muted)}>
                     <TrendingUp className="w-3.5 h-3.5" />
                     {t(`${xpToNext} XP για #${myRank - 1}`, `${xpToNext} XP to reach #${myRank - 1}`)}
                   </span>
-                  <span className={cn('text-[11.5px] font-bold', p.statVal)}>{nextPct}%</span>
+                  <span className={cn('text-xs font-bold', p.statVal)}>{nextPct}%</span>
                 </div>
                 <div className={cn('h-2 rounded-full overflow-hidden', p.progressBg)}>
                   <motion.div
@@ -215,7 +215,7 @@ export default function LeaderboardClassic() {
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className={cn('font-bold text-[13.5px] truncate', entry.isMe ? p.statVal : p.head)}>
+                      <span className={cn('font-bold text-sm truncate', entry.isMe ? p.statVal : p.head)}>
                         {entry.name}
                       </span>
                       {entry.isMe && (
@@ -237,7 +237,7 @@ export default function LeaderboardClassic() {
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className={cn('font-black text-[17px] tabular-nums leading-none', p.head)}>
+                    <p className={cn('font-black text-lg tabular-nums leading-none', p.head)}>
                       {entry.xp}
                     </p>
                     <p className={cn('text-xs font-semibold mt-0.5', p.muted)}>XP</p>

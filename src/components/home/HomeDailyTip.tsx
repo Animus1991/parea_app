@@ -7,7 +7,10 @@ import { DAILY_TIPS_GR, DAILY_TIPS_EN } from '../../lib/homeGreeting';
 export function HomeDailyTip() {
   const { t } = useLanguage();
   const h = useHomeTheme();
-  const [tipIndex] = useState(() => Math.floor(Math.random() * DAILY_TIPS_GR.length));
+  const [tipIndex] = useState(() => {
+    // Deterministic per calendar day — stable across mounts, rotates at midnight
+    return Math.floor(Date.now() / 86400000) % DAILY_TIPS_GR.length;
+  });
 
   return (
     <div className={`rounded-2xl px-4 py-3 flex items-start gap-3 ${h.tipBanner}`}>

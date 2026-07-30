@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useStore } from '../store';
-import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
-import { Skeleton, EventDetailSkeleton } from '../components/common/Skeleton';
+import { EventDetailSkeleton } from '../components/common/Skeleton';
 import { Users, Ticket, ShieldCheck, MapPin, CheckCircle, AlertTriangle, X } from 'lucide-react';
-import { ErrorBoundary } from '../components/common/ErrorBoundary';
 import { useLanguage } from '../lib/i18n';
 import { navigateBack } from '../lib/smartBackNavigation';
 import { useEventDetailActions } from '../hooks/useEventDetailActions';
@@ -23,7 +21,7 @@ import { EventDetailSafetySection } from '../components/events/EventDetailSafety
 import { EventDetailMetaSection } from '../components/events/EventDetailMetaSection';
 import { EventDetailQrModal } from '../components/events/EventDetailQrModal';
 import EventDetailPageContent from '../components/events/EventDetailPageContent';
-import { EventDetailBuddySeekPanel } from '../components/buddySeek/EventDetailBuddySeekPanel';
+import { LookingForCompanyPanel } from '../components/buddySeek/LookingForCompanyPanel';
 
 function Group({ group, event, navigate }: { group: import('../types').Group; event: import('../types').Event; navigate: import('react-router-dom').NavigateFunction }) {
   return <EventDetailGroupCard group={group} event={event} navigate={navigate} accent="neon" darkSurface />;
@@ -111,7 +109,7 @@ export default function EventDetailNeonDark() {
         <div className="flex justify-between items-center">
           <button 
             onClick={() => navigateBack(navigate)}
-            className="text-[10px] font-bold tracking-wide text-white hover:text-white"
+            className="text-2xs font-bold tracking-wide text-white hover:text-white"
           >
             &larr; {t('Επιστροφή στην Ανακάλυψη', 'Back to Discover')}
           </button>
@@ -130,7 +128,7 @@ export default function EventDetailNeonDark() {
           />
         </div>
         
-        <div className="relative w-full h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden shadow-sm">
+        <div className="relative w-full h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden shadow-soft">
           <motion.img 
             layoutId={`event-image-${event.id}`}
             referrerPolicy="no-referrer"
@@ -159,7 +157,7 @@ export default function EventDetailNeonDark() {
           
           {/* Match Score Badge based on User Interests */}
           {currentUser && event.tags && event.tags.length > 0 && (
-            <Badge variant="outline" className="bg-orange-50 border-orange-200 text--400 font-bold" icon={<span className="text-[10px]">🔥</span>}>
+            <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700 font-bold" icon={<span className="text-2xs">🔥</span>}>
               {Math.min(98, Math.max(15, Math.round(((currentUser?.interests ?? []).filter(i => (event.tags ?? []).includes(i)).length / (event.tags ?? [1]).length) * 100) + 40))}% {t('Ταίριασμα', 'Match')}
             </Badge>
           )}
@@ -171,7 +169,7 @@ export default function EventDetailNeonDark() {
       <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-5 lg:grid-cols-3">
         {/* Left Column: Details */}
         <div className="space-y-6 md:space-y-8 md:col-span-3 lg:col-span-2">
-          <section className="space-y-4 text-[13px] text-white leading-relaxed bg-gray-800 rounded-2xl border border-gray-700 p-5 md:p-6 shadow-soft">
+          <section className="space-y-4 text-sm text-white leading-relaxed bg-gray-800 rounded-2xl border border-gray-700 p-5 md:p-6 shadow-soft">
              <EventDetailMetaSection event={event} accent="neon" darkSurface />
              <EventMap event={event} accent="neon" darkSurface />
              <EventDetailAboutSection event={event} accent="neon" darkSurface />
@@ -185,15 +183,15 @@ export default function EventDetailNeonDark() {
         {/* Right Column: Groups & Actions */}
         <div className="space-y-6 md:col-span-2 lg:col-span-1">
           <div className="rounded-2xl border border-gray-700 bg-gray-800 p-6 shadow-soft sticky top-24">
-            <EventDetailBuddySeekPanel event={event} accent="neon" darkSurface />
-            <h3 className="text-[11px] font-bold text-white tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
+            <LookingForCompanyPanel event={event} accent="neon" darkSurface />
+            <h3 className="text-xs font-bold text-white tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
             <div className="mb-4 bg-emerald-900/30 border border-emerald-800 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-sm font-bold text-emerald-400">
               <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική Χωρητικότητα Εκδήλωσης', 'Overall Event Capacity')}</span>
               <span className="text-emerald-400 xl:text-emerald-400 bg-gray-800 xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs xl:text-sm border border-emerald-800 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
             </div>
             
             <div className="flex flex-col gap-3 mb-6">
-              <Button className="w-full bg-emerald-600 text-white hover:bg-emerald-700 shadow-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
+              <Button className="w-full bg-emerald-600 text-white hover:bg-emerald-700 shadow-soft-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
                 <Users className="w-5 h-5" />
                 {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
               </Button>
@@ -202,12 +200,12 @@ export default function EventDetailNeonDark() {
             {(eventGroups.length > 0 || groupSizeFilter !== 'All' || discountFilter) && (
               <div className="mb-4 space-y-2">
                 <div className="flex gap-2">
-                  <span className="text-[10px] font-bold text-white mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
+                  <span className="text-2xs font-bold text-white mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
                   <div className="flex flex-wrap gap-2 flex-1">
                     <select 
                       value={groupSizeFilter} 
                       onChange={(e) => setGroupSizeFilter(e.target.value as any)}
-                      className="text-xs bg-gray-800/70 border border-gray-700 rounded p-1 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-9500"
+                      className="text-xs bg-gray-800/70 border border-gray-700 rounded-lg p-1 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-500"
                     >
                       <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>
                       <option value="3">{t('3 Μέλη', '3 Members')}</option>
@@ -218,7 +216,7 @@ export default function EventDetailNeonDark() {
                     {event.isPaid && event.groupDiscount && (
                       <button 
                         onClick={() => setDiscountFilter(!discountFilter)}
-                        className={`text-xs px-2 py-1 rounded border font-medium transition-colors ${discountFilter ? 'bg-emerald-100 border-emerald-300 text--400' : 'bg-gray-900 border-gray-700 text-white hover:bg-gray-700'}`}
+                        className={`text-xs px-2 py-1 rounded-lg border font-medium transition-colors ${discountFilter ? 'bg-emerald-900/60 border-emerald-700 text-emerald-300' : 'bg-gray-900 border-gray-700 text-white hover:bg-gray-700'}`}
                       >
                         {t('Μόνο με Έκπτωση', 'Discount Only')}
                       </button>
@@ -250,7 +248,7 @@ export default function EventDetailNeonDark() {
                   {isWaitlisted ? t('Στη λίστα αναμονής ✓', 'On waitlist ✓') : t('Λίστα Αναμονής', 'Join Waitlist')}
                 </Button>
               </div>
-              <div className="text-[10px] text-white font-medium bg-gray-800/70 rounded text-center p-3 leading-relaxed tracking-wide">
+              <div className="text-2xs text-white font-medium bg-gray-800/70 rounded-lg text-center p-3 leading-relaxed tracking-wide">
                 {t('Δημιουργήστε νέα ομάδα 3-5 ατόμων. ', 'Create a new 3-5 person group. ')}
                 {event.isPaid ? (
                   <span className="block mt-1 font-bold text-white">{t('Η πληρωμή προεγκρίνεται. Χρεώνεται μόνο κατά την επιβεβαίωση.', 'Payment pre-authorized via official partner APIs. Discharges automatically on Group confirmation.')}</span>
@@ -264,11 +262,11 @@ export default function EventDetailNeonDark() {
       </div>
       
       {/* Mobile Sticky CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden z-50 flex gap-3">
-        <Button variant="outline" className="flex-1 border-gray-700 text-white" onClick={() => navigate(`/events/${eventId}/join`)}>
-          {t('Λίστα Αναμονής', 'Waitlist')}
+      <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4 shadow-soft-up md:hidden z-fab flex gap-3">
+        <Button variant="outline" className="flex-1 border-gray-700 text-white" disabled={isWaitlisted} onClick={handleJoinWaitlist}>
+          {isWaitlisted ? t('Στη λίστα αναμονής ✓', 'On waitlist ✓') : t('Λίστα Αναμονής', 'Waitlist')}
         </Button>
-        <Button className="flex-[2] bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm" onClick={() => navigate(`/events/${eventId}/join`)}>
+        <Button className="flex-[2] bg-emerald-600 text-white hover:bg-emerald-700 shadow-soft" onClick={() => navigate(`/events/${eventId}/join`)}>
           {t('Νέα Ομάδα', 'Create Group')}
         </Button>
       </div>

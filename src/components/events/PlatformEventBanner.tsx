@@ -54,14 +54,14 @@ export function PlatformEventBanner() {
         </div>
         <div>
           <h3
-            className={`text-[15px] font-bold ${
+            className={`text-base font-bold ${
               tok.isDark ? "text-amber-100" : "text-amber-900"
             }`}
           >
             {t("Προτεινόμενη εκδήλωση από το Nakamas", "Curated by Nakamas")}
           </h3>
           <p
-            className={`text-[12.5px] font-medium mt-0.5 leading-relaxed ${
+            className={`text-sm font-medium mt-0.5 leading-relaxed ${
               tok.isDark ? "text-amber-200/80" : "text-amber-800"
             }`}
           >
@@ -74,7 +74,7 @@ export function PlatformEventBanner() {
       </div>
       <button
         onClick={handleBecomeHost}
-        className="shrink-0 inline-flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold rounded-2xl px-4 py-2.5 text-[13px] transition-colors shadow-soft"
+        className="shrink-0 inline-flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold rounded-2xl px-4 py-2.5 text-sm transition-colors shadow-soft"
       >
         <Crown className="w-4 h-4" />
         {t("Γίνε Διοργανωτής Παρέας", "Become group organizer")}

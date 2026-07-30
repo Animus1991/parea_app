@@ -1,6 +1,7 @@
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
+import { isDarkTheme } from '../../lib/themes';
 
 interface Tab {
   id: string;
@@ -18,7 +19,7 @@ interface TabBarProps {
 export function TabBar({ tabs, activeTab, onChange, className }: TabBarProps) {
   const { t } = useLanguage();
   const theme = useStore((state) => state.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
+  const isDark = isDarkTheme(theme);
 
   const getActiveClass = () =>
     isDark
@@ -43,14 +44,14 @@ export function TabBar({ tabs, activeTab, onChange, className }: TabBarProps) {
           key={tab.id}
           onClick={() => onChange(tab.id)}
           className={cn(
-            "whitespace-nowrap text-[13.8px]",
+            "whitespace-nowrap text-base",
             activeTab === tab.id ? getActiveClass() : getInactiveClass()
           )}
         >
           {tab.label}
           {tab.count != null && tab.count > 0 && (
             <span className={cn(
-              "ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-[11px] font-bold px-1",
+              "ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-xs font-bold px-1",
               activeTab === tab.id ? getActiveCountClass() : getInactiveCountClass()
             )}>
               {tab.count}

@@ -119,7 +119,7 @@ export default function AchievementsPageContent() {
             </div>
           </div>
           <div className="text-right">
-            <span className={cn("text-xs font-black", a.xpBadge, "px-1.5 py-0.5 rounded")}>+30 XP</span>
+            <span className={cn("text-xs font-black", a.xpBadge, "px-1.5 py-0.5 rounded-lg")}>+30 XP</span>
           </div>
         </div>
       </Card>
@@ -162,11 +162,11 @@ export default function AchievementsPageContent() {
                       <div className={cn("flex-1 h-1.5 rounded-full overflow-hidden", a.progressBg)}>
                         <div className={cn("h-full rounded-full transition-all", ach.unlocked ? a.barFill : (a.isDark ? 'bg-gray-600' : 'bg-gray-300'))} style={{ width: `${pct}%` }} />
                       </div>
-                      <span className={cn("text-[10.5px] font-bold", a.muted)}>{ach.progress}/{ach.maxProgress}</span>
+                      <span className={cn("text-2xs font-bold", a.muted)}>{ach.progress}/{ach.maxProgress}</span>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span className={cn("text-[10.5px] font-bold px-1.5 py-0.5 rounded", a.xpBadge)}>+{ach.xp}XP</span>
+                    <span className={cn("text-2xs font-bold px-1.5 py-0.5 rounded-lg", a.xpBadge)}>+{ach.xp}XP</span>
                     {ach.unlocked && (
                       <button
                         type="button"
@@ -201,7 +201,7 @@ export default function AchievementsPageContent() {
                   <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold", streakDays[i] ? 'bg-orange-100 text-orange-600 border-2 border-orange-300' : a.streakOff)}>
                     {streakDays[i] ? <Flame className="w-3.5 h-3.5" /> : ''}
                   </div>
-                  <span className={cn("text-[10.5px] font-medium", a.muted)}>{day}</span>
+                  <span className={cn("text-2xs font-medium", a.muted)}>{day}</span>
                 </div>
               ))}
             </div>
@@ -217,7 +217,7 @@ export default function AchievementsPageContent() {
               ].map(stat => (
                 <div key={stat.label} className="text-center">
                   <p className={cn("text-xl font-black", a.head)}>{stat.val}</p>
-                  <p className={cn("text-[10.5px] font-medium", a.sub)}>{stat.label}</p>
+                  <p className={cn("text-2xs font-medium", a.sub)}>{stat.label}</p>
                 </div>
               ))}
             </div>

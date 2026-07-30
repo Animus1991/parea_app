@@ -23,7 +23,6 @@ type AccentTokens = {
   avatarFallback: string;
   privateBox: string;
   cta: string;
-  rounded: string;
   discountCorner: string;
 };
 
@@ -35,18 +34,17 @@ const LIGHT: Record<EventDetailGroupAccent, AccentTokens> = {
     label: 'text-gray-500',
     title: 'text-gray-900',
     meta: 'text-gray-500',
-    category: 'text-[#0E8B8D] bg-[#18D8DB]/[0.06]',
+    category: 'text-brand bg-accent/[0.06]',
     hostLabel: 'text-gray-500',
     avatarBorder: 'border-gray-200',
     avatarFallback: 'bg-cyan-100 text-cyan-700',
     privateBox: 'text-gray-500 bg-gray-50 border-gray-100',
-    cta: 'bg-[#18D8DB]/[0.06] text-[#0E8B8D] border border-[#a5f3fc]/40 hover:bg-[#0E8B8D] hover:text-white group-hover:bg-[#0E8B8D] group-hover:text-white rounded-2xl shadow-soft',
-    rounded: 'rounded-bl-2xl shadow-soft',
+    cta: 'bg-accent/[0.06] text-brand border border-[#a5f3fc]/40 hover:bg-brand hover:text-white group-hover:bg-brand group-hover:text-white rounded-2xl shadow-soft',
     discountCorner: 'rounded-bl-2xl shadow-soft',
   },
   vibrant: {
     card: 'rounded-2xl border border-gray-200 bg-white p-4 shadow-soft',
-    hoverBorder: 'hover:border-fuchsia-300 hover:shadow-md',
+    hoverBorder: 'hover:border-fuchsia-300 hover:shadow-soft-md',
     bar: 'from-fuchsia-400 to-purple-400',
     label: 'text-black',
     title: 'text-black',
@@ -57,12 +55,11 @@ const LIGHT: Record<EventDetailGroupAccent, AccentTokens> = {
     avatarFallback: 'bg-fuchsia-100 text-fuchsia-700',
     privateBox: 'text-black bg-gray-50 border-gray-100',
     cta: 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-100 hover:bg-fuchsia-600 hover:text-white group-hover:bg-fuchsia-600 group-hover:text-white shadow-soft',
-    rounded: 'rounded-bl-lg shadow-soft',
     discountCorner: 'rounded-bl-lg shadow-soft',
   },
   neon: {
     card: 'rounded-2xl border border-gray-200 bg-white p-4 shadow-soft',
-    hoverBorder: 'hover:border-emerald-300 hover:shadow-md',
+    hoverBorder: 'hover:border-emerald-300 hover:shadow-soft-md',
     bar: 'from-emerald-400 to-purple-400',
     label: 'text-black',
     title: 'text-black',
@@ -73,12 +70,11 @@ const LIGHT: Record<EventDetailGroupAccent, AccentTokens> = {
     avatarFallback: 'bg-emerald-100 text-emerald-700',
     privateBox: 'text-black bg-gray-50 border-gray-100',
     cta: 'bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-600 hover:text-white group-hover:bg-emerald-600 group-hover:text-white shadow-soft',
-    rounded: 'rounded-bl-lg shadow-soft',
     discountCorner: 'rounded-bl-lg shadow-soft',
   },
   bento: {
     card: 'rounded-2xl border border-gray-200 bg-white p-4 shadow-soft',
-    hoverBorder: 'hover:border-indigo-300 hover:shadow-md',
+    hoverBorder: 'hover:border-indigo-300 hover:shadow-soft-md',
     bar: 'from-indigo-400 to-purple-400',
     label: 'text-black',
     title: 'text-black',
@@ -89,7 +85,6 @@ const LIGHT: Record<EventDetailGroupAccent, AccentTokens> = {
     avatarFallback: 'bg-indigo-100 text-indigo-700',
     privateBox: 'text-black bg-gray-50 border-gray-100',
     cta: 'bg-indigo-50 text-indigo-700 border border-indigo-100 hover:bg-indigo-600 hover:text-white group-hover:bg-indigo-600 group-hover:text-white shadow-soft',
-    rounded: 'rounded-bl-lg shadow-soft',
     discountCorner: 'rounded-bl-lg shadow-soft',
   },
 };
@@ -99,7 +94,7 @@ const DARK: Record<EventDetailGroupAccent, AccentTokens> = {
   vibrant: {
     ...LIGHT.vibrant,
     card: 'rounded-2xl border border-gray-700 bg-gray-800 p-4 shadow-soft',
-    hoverBorder: 'hover:border-fuchsia-300 hover:shadow-md',
+    hoverBorder: 'hover:border-fuchsia-300 hover:shadow-soft-md',
     label: 'text-white',
     title: 'text-white',
     meta: 'text-white',
@@ -111,7 +106,7 @@ const DARK: Record<EventDetailGroupAccent, AccentTokens> = {
   neon: {
     ...LIGHT.neon,
     card: 'rounded-2xl border border-gray-700 bg-gray-800 p-4 shadow-soft',
-    hoverBorder: 'hover:border-emerald-300 hover:shadow-md',
+    hoverBorder: 'hover:border-emerald-300 hover:shadow-soft-md',
     label: 'text-white',
     title: 'text-white',
     meta: 'text-white',
@@ -123,7 +118,7 @@ const DARK: Record<EventDetailGroupAccent, AccentTokens> = {
   bento: {
     ...LIGHT.bento,
     card: 'rounded-2xl border border-gray-700 bg-gray-800 p-4 shadow-soft',
-    hoverBorder: 'hover:border-emerald-300 hover:shadow-md',
+    hoverBorder: 'hover:border-emerald-300 hover:shadow-soft-md',
     label: 'text-white',
     title: 'text-white',
     meta: 'text-white',
@@ -293,7 +288,7 @@ export function EventDetailGroupCard({
             <p className="text-xs text-amber-800 font-bold tracking-wide">
               {t('Πρόοδος Έκπτωσης', 'Discount Progress')}
             </p>
-            <span className="text-xs font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
+            <span className="text-xs font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-lg">
               -{event.groupDiscount!.percentage}%
             </span>
           </div>
@@ -314,7 +309,7 @@ export function EventDetailGroupCard({
       )}
 
       {!isDiscountEligible && (
-        <div className={cn('flex items-center gap-1.5 text-xs mb-4 p-2 rounded-md border', tok.privateBox)}>
+        <div className={cn('flex items-center gap-1.5 text-xs mb-4 p-2 rounded-lg border', tok.privateBox)}>
           <ShieldCheck className="h-4 w-4 opacity-60" />
           <span className="font-medium">{t('Μικρή & ιδιωτική ομάδα', 'Small & private group')}</span>
         </div>
@@ -326,7 +321,7 @@ export function EventDetailGroupCard({
         className={cn('w-full font-semibold transition-all duration-200', tok.cta)}
         onClick={(e) => {
           e.stopPropagation();
-          navigate(`/events/${event.id}/join`);
+          navigate(`/events/${event.id}/join?groupId=${group.id}`);
         }}
       >
         {t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}

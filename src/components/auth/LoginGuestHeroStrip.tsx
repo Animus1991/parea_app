@@ -31,7 +31,7 @@ export function LoginGuestHeroStrip({
       </div>
       <p
         className={cn(
-          'text-[10px] font-bold uppercase tracking-widest',
+          'text-2xs font-bold uppercase tracking-widest',
           variant === 'dark' ? 'text-cyan-400' : 'text-cyan-600',
         )}
       >

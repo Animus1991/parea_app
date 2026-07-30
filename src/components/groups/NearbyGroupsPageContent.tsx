@@ -200,7 +200,7 @@ export default function NearbyGroupsPageContent() {
 
   return (
     <div
-      className={cn("overflow-hidden rounded-none md:rounded-2xl lg:rounded-none z-0", isMapFullscreen ? "fixed !inset-0 !z-[9999]" : "absolute inset-0 animate-in fade-in duration-500")}
+      className={cn("overflow-hidden rounded-none md:rounded-2xl lg:rounded-none z-0", isMapFullscreen ? "fixed !inset-0 !z-fullscreen" : "absolute inset-0 animate-in fade-in duration-500")}
       style={{ "--sidebar-width": isMapFullscreen ? "0px" : `${sidebarWidth}px` } as React.CSSProperties}
     >
       {/* Map Area */}
@@ -239,7 +239,7 @@ export default function NearbyGroupsPageContent() {
                 }}
               >
                 <Popup className="custom-popup">
-                  <div className="font-bold text-[10px] uppercase tracking-widest text-cyan-600 dark:text-cyan-400 mb-1">
+                  <div className="font-bold text-2xs uppercase tracking-widest text-cyan-600 dark:text-cyan-400 mb-1">
                     {group.category}
                   </div>
                   <div className="max-w-[200px] cursor-pointer outline-none group" onClick={() => navigate(`/events/${group.id}`)}>
@@ -247,7 +247,7 @@ export default function NearbyGroupsPageContent() {
                        <GroupImage src={group.imageUrl ?? ""} alt={group.title} className="w-full h-24 object-cover transform group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <h3 className="font-bold text-sm text-gray-900 dark:text-white mb-1 line-clamp-1">{group.title}</h3>
-                    <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 mb-3 truncate flex items-center">
+                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-3 truncate flex items-center">
                       <MapPin className="w-3 h-3 mr-1" /> {group.locationArea}
                     </p>
                     <button className="w-full bg-cyan-600 text-white text-xs font-bold py-2 rounded-2xl hover:bg-cyan-700 transition-colors shadow-soft">
@@ -295,7 +295,7 @@ export default function NearbyGroupsPageContent() {
             <button
               type="button"
               onClick={() => setFiltersOpen((v) => !v)}
-              className={cn("h-12 w-12 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-200 pointer-events-auto shrink-0", filtersOpen ? (p.isDark ? "bg-cyan-900/80 text-cyan-400" : "bg-cyan-600 text-white") : (p.isDark ? "bg-gray-800/95 text-gray-300 hover:text-cyan-400" : "bg-white/95 text-gray-600 hover:text-cyan-600"))}
+              className={cn("h-12 w-12 rounded-2xl shadow-soft-lg flex items-center justify-center transition-all duration-200 pointer-events-auto shrink-0", filtersOpen ? (p.isDark ? "bg-cyan-900/80 text-cyan-400" : "bg-cyan-600 text-white") : (p.isDark ? "bg-gray-800/95 text-gray-300 hover:text-cyan-400" : "bg-white/95 text-gray-600 hover:text-cyan-600"))}
               aria-label={t('Φίλτρα', 'Filters')}
               aria-expanded={filtersOpen}
             >
@@ -304,14 +304,14 @@ export default function NearbyGroupsPageContent() {
           )}
           <button
             onClick={handleLocateMe}
-            className={cn("h-12 w-12 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-200 pointer-events-auto shrink-0 ml-auto", p.isDark ? "bg-cyan-900/80 text-cyan-400 hover:bg-cyan-900" : "bg-white/95 text-cyan-600 hover:bg-cyan-50")}
+            className={cn("h-12 w-12 rounded-2xl shadow-soft-lg flex items-center justify-center transition-all duration-200 pointer-events-auto shrink-0 ml-auto", p.isDark ? "bg-cyan-900/80 text-cyan-400 hover:bg-cyan-900" : "bg-white/95 text-cyan-600 hover:bg-cyan-50")}
             title={t('Εντοπισμός', 'Locate')}
           >
             <Crosshair className="h-5 w-5" />
           </button>
           <button
             onClick={() => setIsMapFullscreen(!isMapFullscreen)}
-            className={cn("h-12 w-12 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-200 pointer-events-auto shrink-0", p.isDark ? "bg-gray-800/95 text-white hover:bg-gray-700" : "bg-gray-900 text-white hover:bg-black")}
+            className={cn("h-12 w-12 rounded-2xl shadow-soft-lg flex items-center justify-center transition-all duration-200 pointer-events-auto shrink-0", p.isDark ? "bg-gray-800/95 text-white hover:bg-gray-700" : "bg-gray-900 text-white hover:bg-black")}
             title={isMapFullscreen ? t('Έξοδος', 'Exit') : t('Πλήρης Οθόνη', 'Fullscreen')}
           >
             {isMapFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
@@ -325,7 +325,7 @@ export default function NearbyGroupsPageContent() {
                <button 
                  key={f}
                  onClick={() => setMapFilter(f)}
-                 className={cn("px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap shadow-sm transition-all border shrink-0", mapFilter === f ? (p.isDark ? "bg-cyan-600 border-cyan-500 text-white" : "bg-cyan-600 border-cyan-600 text-white") : (p.isDark ? "bg-gray-800/95 border-gray-700 text-gray-300" : "bg-white/95 border-gray-200 text-gray-700 hover:bg-gray-50"))}
+                 className={cn("px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap shadow-soft transition-all border shrink-0", mapFilter === f ? (p.isDark ? "bg-cyan-600 border-cyan-500 text-white" : "bg-cyan-600 border-cyan-600 text-white") : (p.isDark ? "bg-gray-800/95 border-gray-700 text-gray-300" : "bg-white/95 border-gray-200 text-gray-700 hover:bg-gray-50"))}
                >
                  {t(
                    f === "All" ? "Όλα" : f === "Available" ? "Διαθέσιμα" : f === "Full" ? "Γεμάτα" : "Επιλογές μου", 
@@ -340,14 +340,14 @@ export default function NearbyGroupsPageContent() {
       {/* Slide-up Panel / Sidebar */}
       <div
         className={cn(
-          "absolute bottom-0 left-0 right-0 md:top-0 md:bottom-0 md:right-auto z-20 flex flex-col rounded-t-[2.5rem] md:rounded-none transition-transform duration-300 transform translate-y-0 dynamic-sidebar-width border-r shadow-2xl",
+          "absolute bottom-0 left-0 right-0 md:top-0 md:bottom-0 md:right-auto z-20 flex flex-col rounded-t-3xl md:rounded-none transition-transform duration-300 transform translate-y-0 dynamic-sidebar-width border-r shadow-soft-lg",
           isMapFullscreen ? "translate-y-full md:-translate-x-full" : isPanelExpanded ? "top-0 md:h-full" : "max-h-[60vh] md:max-h-full",
           isDragging ? "transition-none" : "",
           p.isDark ? "bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]" : "bg-white border-transparent md:border-gray-100"
         )}
       >
         <style dangerouslySetInnerHTML={{ __html: `@media (min-width: 768px) { .dynamic-sidebar-width { width: var(--sidebar-width) !important; } } .leaflet-popup-content-wrapper { border-radius: 1rem !important; overflow: hidden; }` }} />
-        <div className="absolute top-0 bottom-0 -right-2 w-4 cursor-ew-resize hover:bg-cyan-500/10 transition-all hidden md:block z-50 pointer-events-auto" onMouseDown={() => setIsDragging(true)} />
+        <div className="absolute top-0 bottom-0 -right-2 w-4 cursor-ew-resize hover:bg-cyan-500/10 transition-all hidden md:block z-fab pointer-events-auto" onMouseDown={() => setIsDragging(true)} />
 
         {/* Mobile handle */}
         <div className="w-full py-4 cursor-pointer flex justify-center items-center md:hidden shrink-0" onClick={() => setIsPanelExpanded(!isPanelExpanded)}>
@@ -371,7 +371,7 @@ export default function NearbyGroupsPageContent() {
               type="button"
               onClick={() => setSidebarFilter("all")}
               className={cn(
-                "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap shadow-sm transition-all",
+                "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap shadow-soft transition-all",
                 sidebarFilter === "all"
                   ? p.isAB ? "bg-[hsl(220_14%_12%)] text-white" : "bg-cyan-600 text-white shadow-cyan-600/20"
                   : cn("border", p.isDark ? "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700" : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"),
@@ -423,12 +423,12 @@ export default function NearbyGroupsPageContent() {
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                 <div>
-                  <h3 className={cn("font-bold text-[15px] leading-tight line-clamp-2 transition-colors", p.head, p.hoverText)}>{group.title}</h3>
+                  <h3 className={cn("font-bold text-base leading-tight line-clamp-2 transition-colors", p.head, p.hoverText)}>{group.title}</h3>
                   <p className={cn("text-xs font-medium mt-1 truncate", p.sub)}>{group.locationArea}</p>
                 </div>
                 <div className="flex items-center justify-between mt-3">
-                  <Badge variant="outline" className={cn("text-[9px] uppercase tracking-widest px-2 py-0.5 border", p.isDark ? "border-gray-700 text-gray-400" : "border-gray-200 text-gray-500")}>{group.category}</Badge>
-                  <div className={cn("flex items-center text-[10px] font-bold px-2 py-1 rounded-2xl", p.isDark ? "bg-cyan-900/30 text-cyan-400" : "bg-cyan-50 text-cyan-700")}>
+                  <Badge variant="outline" className={cn("text-2xs uppercase tracking-widest px-2 py-0.5 border", p.isDark ? "border-gray-700 text-gray-400" : "border-gray-200 text-gray-500")}>{group.category}</Badge>
+                  <div className={cn("flex items-center text-2xs font-bold px-2 py-1 rounded-2xl", p.isDark ? "bg-cyan-900/30 text-cyan-400" : "bg-cyan-50 text-cyan-700")}>
                     <MapPin className="h-3 w-3 mr-1" /> {group.distanceKm.toFixed(1)}km
                   </div>
                 </div>
@@ -441,7 +441,7 @@ export default function NearbyGroupsPageContent() {
               <MapIcon className="h-6 w-6" />
             </div>
             <h3 className={cn("text-base font-bold", p.head)}>{t("Επέκταση ακτίνας", "Expand your radius")}</h3>
-            <p className={cn("text-[13px] font-medium mt-1.5 mb-6", p.sub)}>
+            <p className={cn("text-sm font-medium mt-1.5 mb-6", p.sub)}>
               {t("Δεν βρίσκετε αυτό που ψάχνετε; Αυξήστε την περιοχή αναζήτησης.", "Can't find what you're looking for? Increase your search area.")}
             </p>
             <Button onClick={() => setRadius(15)} variant={p.isAB ? "primary" : "outline"} size="sm" className="font-bold text-xs">

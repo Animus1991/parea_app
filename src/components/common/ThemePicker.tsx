@@ -75,7 +75,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
             <>
               <button
                 type="button"
-                className="fixed inset-0 z-[250] cursor-default bg-black/20 backdrop-blur-[1px]"
+                className="fixed inset-0 z-palette cursor-default bg-black/20 backdrop-blur-[1px]"
                 onClick={() => setOpen(false)}
                 aria-label={t('Κλείσιμο', 'Close')}
               />
@@ -83,7 +83,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
                 role="listbox"
                 aria-label={t('Επιλογή θέματος', 'Choose theme')}
                 className={cn(
-                  'fixed z-[251] rounded-2xl border p-2 shadow-2xl overflow-y-auto overscroll-contain',
+                  'fixed z-palette rounded-2xl border p-2 shadow-soft-lg overflow-y-auto overscroll-contain',
                   tok.isDark ? 'bg-gray-900 border-gray-600' : 'bg-white border-gray-200',
                 )}
                 style={{
@@ -95,7 +95,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
               >
                 <p
                   className={cn(
-                    'px-3 py-2 text-[10px] font-bold uppercase tracking-wider',
+                    'px-3 py-2 text-2xs font-bold uppercase tracking-wider',
                     tok.muted,
                   )}
                 >
@@ -145,9 +145,9 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
           type="button"
           onClick={() => setOpen((v) => !v)}
           className={cn(
-            'flex items-center gap-1.5 text-[11px] font-bold transition-colors px-2.5 py-2 rounded-lg min-h-11',
+            'flex items-center gap-1.5 text-xs font-bold transition-colors px-2.5 py-2 rounded-lg min-h-11',
             tok.chipButton,
-            open && (tok.isDark ? 'ring-2 ring-white/30' : 'ring-2 ring-[#18D8DB]/40'),
+            open && (tok.isDark ? 'ring-2 ring-white/30' : 'ring-2 ring-accent/40'),
           )}
           title={t('Εμφάνιση και θέμα', 'Appearance and theme')}
           aria-label={t('Εμφάνιση και θέμα', 'Appearance and theme')}
@@ -176,7 +176,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
           className={cn(
             'flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all min-h-[52px]',
             theme === id
-              ? 'border-[#18D8DB] ring-2 ring-[#18D8DB]/30 bg-cyan-50/50'
+              ? 'border-accent ring-2 ring-accent/30 bg-cyan-50/50'
               : tok.isDark
                 ? 'border-gray-700 hover:border-gray-600'
                 : 'border-gray-100 hover:border-gray-200',
@@ -184,7 +184,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
         >
           <span
             className={cn(
-              'h-6 w-6 rounded-full shrink-0 ring-2 ring-white shadow-sm',
+              'h-6 w-6 rounded-full shrink-0 ring-2 ring-white shadow-soft',
               THEME_SWATCH[id],
             )}
           />

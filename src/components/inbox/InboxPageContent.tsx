@@ -232,7 +232,7 @@ export default function InboxPageContent() {
                       )}
                     </div>
                     {chat.unread > 0 && (
-                      <span className={cn('bg-[#0E8B8D] text-white min-w-[20px] h-5 flex items-center justify-center rounded-full shrink-0 shadow-soft', INBOX_TYPO.unread)}>
+                      <span className={cn('bg-brand text-white min-w-[20px] h-5 flex items-center justify-center rounded-full shrink-0 shadow-soft', INBOX_TYPO.unread)}>
                         {chat.unread}
                       </span>
                     )}

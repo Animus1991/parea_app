@@ -13,9 +13,9 @@ export function Card({ children, className, onClick, ...props }: HTMLAttributes<
       className={cn(
         'rounded-2xl border',
         p.isAB && !p.isDark
-          ? 'bg-white border-[hsl(220_13%_92%)]/60 shadow-sm'
+          ? 'bg-white border-[hsl(220_13%_92%)]/60 shadow-soft'
           : p.isAB && p.isDark
-            ? 'bg-[hsl(220_16%_11%)] border-[hsl(220_13%_18%)] shadow-sm'
+            ? 'bg-[hsl(220_16%_11%)] border-[hsl(220_13%_18%)] shadow-soft'
             : p.isDark
               ? 'bg-gray-800/60 border-gray-700/50 shadow-soft'
               : 'bg-white border-gray-100 shadow-soft',
@@ -23,7 +23,7 @@ export function Card({ children, className, onClick, ...props }: HTMLAttributes<
         onClick &&
           cn(
             'cursor-pointer transition-all duration-200 hover:-translate-y-[0.5px]',
-            p.isAB || p.isDark ? 'hover:shadow-[0_4px_12px_-3px_rgba(0,0,0,0.09)]' : 'hover:shadow-soft-md',
+            p.isAB || p.isDark ? 'hover:shadow-soft-md' : 'hover:shadow-soft-md',
             hoverAccent,
           ),
         className,

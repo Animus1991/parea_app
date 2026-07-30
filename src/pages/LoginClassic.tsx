@@ -26,12 +26,12 @@ export default function LoginClassic() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-10 bg-[#FDFCFB]">
       <HomeGuestHero />
-      <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-xl border-gray-100">
+      <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-soft-lg border-gray-100">
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center text-4xl font-black tracking-tight text-[#111827] mb-4 font-['Outfit']">
+          <div className="flex items-center justify-center text-4xl font-black tracking-tight text-ink mb-4 font-['Outfit']">
              NAKAMAS
           </div>
-          <h1 className="text-2xl font-bold text-[#111827]">{t('Καλώς ήρθατε', 'Welcome back')}</h1>
+          <h1 className="text-2xl font-bold text-ink">{t('Καλώς ήρθατε', 'Welcome back')}</h1>
           <p className="text-xs text-gray-500 font-medium">{t('Συνδεθείτε για να ανακαλύψετε αξιόπιστες ομάδες και εμπειρίες.', 'Log in to discover trusted groups and experiences.')}</p>
         </div>
 

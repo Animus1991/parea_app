@@ -22,7 +22,7 @@ export function Modal({ open, onClose, title, children, className, showClose = t
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-modal flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <button
         type="button"
         className={cn('absolute inset-0 backdrop-blur-sm', c.modalOverlay)}
@@ -31,7 +31,7 @@ export function Modal({ open, onClose, title, children, className, showClose = t
       />
       <div
         className={cn(
-          'relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-3xl p-6 shadow-2xl animate-in zoom-in-95 duration-200',
+          'relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-3xl p-6 shadow-soft-lg animate-in zoom-in-95 duration-200',
           c.modalPanel,
           className,
         )}

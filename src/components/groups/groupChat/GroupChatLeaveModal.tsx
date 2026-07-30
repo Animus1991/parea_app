@@ -18,12 +18,12 @@ export function GroupChatLeaveModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
       <div className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
         <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
           <ArrowLeft className="w-6 h-6" />
         </div>
-        <h3 className="text-lg font-bold text-[#111827] mb-2">
+        <h3 className="text-lg font-bold text-ink mb-2">
           {t('Αποχώρηση από την ομάδα;', 'Leave Group?')}
         </h3>
         <p className="text-xs font-medium leading-relaxed text-gray-500 mb-6">

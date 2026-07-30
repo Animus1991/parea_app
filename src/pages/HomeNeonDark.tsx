@@ -8,7 +8,6 @@ import {
   Search,
   ShieldCheck,
   Map as MapIcon,
-  Grid,
   CheckCircle2,
   Users,
   CalendarX,
@@ -30,7 +29,7 @@ import { useStoryEvents } from "../hooks/useStoryEvents";
 import { useHomeExternalEvents } from "../hooks/useHomeExternalEvents";
 import { useHomeScrollToFilters } from "../hooks/useHomeScrollToFilters";
 import { useHomeEventFeed } from "../hooks/useHomeEventFeed";
-import { HOME_TYPO } from "../lib/homeTypography";
+import { HOME_TYPO } from "../lib/typographyTokens";
 import { cn } from "../lib/utils";
 
 export default function HomeNeonDark() {
@@ -162,7 +161,7 @@ export default function HomeNeonDark() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-950 text-white p-6 md:p-10 rounded-[24px] shadow-sm relative overflow-hidden flex flex-col gap-4"
+        className="bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-950 text-white p-6 md:p-10 rounded-3xl shadow-soft relative overflow-hidden flex flex-col gap-4"
       >
         <HomeHeroModeBar className="relative z-10" />
         <div className="relative z-10 flex-1 w-full">
@@ -229,7 +228,7 @@ export default function HomeNeonDark() {
                   "home.hero.search_placeholder",
                   "Αναζήτηση εμπειριών...",
                 )}
-                className="w-full h-11 pl-10 pr-4 rounded-full border-none bg-white/10 text-white placeholder-white/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/60 text-sm font-medium backdrop-blur-sm"
+                className="w-full h-11 pl-10 pr-4 rounded-full border-none bg-white/10 text-white placeholder-white/80 shadow-soft focus:outline-none focus:ring-2 focus:ring-emerald-400/60 text-sm font-medium backdrop-blur-sm"
               />
               <HomeSearchDropdown
                 popularSuggestions={searchSuggestions}
@@ -295,7 +294,7 @@ export default function HomeNeonDark() {
         ].map(({ step, title, body }) => (
           <div
             key={step}
-            className="bg-gray-800 p-4 rounded-xl border border-gray-800 shadow-sm flex flex-col items-center text-center"
+            className="bg-gray-800 p-4 rounded-xl border border-gray-800 shadow-soft flex flex-col items-center text-center"
           >
             <div className="w-8 h-8 bg-emerald-900/30 text-emerald-400 rounded-full flex items-center justify-center font-bold text-xs mb-2.5">
               {step}
@@ -343,25 +342,22 @@ export default function HomeNeonDark() {
           <div className="flex bg-gray-700 p-1 rounded-lg w-fit">
             <button
               onClick={() => setFeedType("For You")}
-              className={cn("px-4 py-1.5 rounded-md transition-colors", HOME_TYPO.feedTab, feedType === "For You" ? "bg-gray-800 shadow-sm text-white" : "text-white hover:text-white")}
+              className={cn("px-4 py-1.5 rounded-lg transition-colors", HOME_TYPO.feedTab, feedType === "For You" ? "bg-gray-800 shadow-soft text-white" : "text-white hover:text-white")}
             >
               {t("home.feed.for_you", "Για Σένα")}
             </button>
             <button
               onClick={() => setFeedType("Discover")}
-              className={cn("px-4 py-1.5 rounded-md transition-colors", HOME_TYPO.feedTab, feedType === "Discover" ? "bg-gray-800 shadow-sm text-white" : "text-white hover:text-white")}
+              className={cn("px-4 py-1.5 rounded-lg transition-colors", HOME_TYPO.feedTab, feedType === "Discover" ? "bg-gray-800 shadow-soft text-white" : "text-white hover:text-white")}
             >
               {t("home.feed.discover", "Ανακάλυψε")}
             </button>
           </div>
 
           <div className="flex bg-gray-700 p-0.5 rounded-lg w-fit">
-            <button className="p-1.5 rounded-md transition-colors bg-gray-800 shadow-sm text-white" aria-label={t('Προβολή πλέγματος', 'Grid view')} title={t('Προβολή πλέγματος', 'Grid view')}>
-              <Grid className="w-4 h-4" />
-            </button>
             <button
               onClick={() => navigate("/nearby")}
-              className="p-1.5 rounded-md transition-colors text-white hover:text-white"
+              className="p-1.5 rounded-lg transition-colors text-white hover:text-white"
               title={t("Άνοιγμα Χάρτη", "Open Map")}
               aria-label={t("Άνοιγμα Χάρτη", "Open Map")}
             >

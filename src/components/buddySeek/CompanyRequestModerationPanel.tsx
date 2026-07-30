@@ -21,7 +21,7 @@ export function CompanyRequestModerationPanel() {
       <div className="flex items-center gap-2">
         <ShieldAlert className="w-5 h-5 text-red-500" />
         <h2 className={cn('text-sm font-bold', a.head)}>
-          {t('Looking for company — moderation (mock)', 'Looking for company — moderation (mock)')}
+          {t('Αναζήτηση παρέας — εποπτεία', 'Looking for company — moderation')}
         </h2>
       </div>
 
@@ -51,7 +51,7 @@ export function CompanyRequestModerationPanel() {
           reported.map((r) => (
             <li key={r.id} className={cn('flex items-center justify-between gap-2 rounded-xl border p-3 text-xs', a.borderB)}>
               <span className="font-mono truncate">{r.id}</span>
-              <span className="opacity-60">{r.reportCountInternal} reports</span>
+              <span className="opacity-60">{r.reportCountInternal} {t('αναφορές', 'reports')}</span>
               <div className="flex gap-1 shrink-0">
                 <button
                   type="button"
@@ -77,7 +77,7 @@ export function CompanyRequestModerationPanel() {
 
       <p className={cn('text-xs flex items-center gap-1', a.sub)}>
         <Flag className="w-3 h-3" />
-        {t('Εσωτερικό mock — χωρίς δημόσια counts αναφορών.', 'Internal mock — no public report counts.')}
+        {t('Οι αναφορές δεν εμφανίζονται ποτέ δημόσια.', 'Report counts are never shown publicly.')}
       </p>
     </div>
   );

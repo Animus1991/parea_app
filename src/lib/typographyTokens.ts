@@ -23,16 +23,16 @@ export const APP_TYPO = {
 /** Popup chat window density */
 export const CHAT_TYPO = {
   title: 'text-sm font-bold',
-  subtitle: 'text-xs text-gray-500',
-  badge: 'text-xs text-cyan-400 font-bold',
+  subtitle: 'text-xs text-ink-muted',
+  badge: 'text-xs text-brand font-bold',
   menu: 'text-xs',
-  lockNotice: 'text-xs text-amber-100',
-  sender: 'text-xs text-gray-500 mb-0.5',
+  lockNotice: 'text-xs text-amber-700 dark:text-amber-200',
+  sender: 'text-xs text-ink-muted mb-0.5',
   bubble: 'text-sm leading-relaxed break-words',
   systemBubble: 'text-xs text-center',
   input: 'text-sm',
   sendBtn: 'text-sm font-bold',
-  footer: 'text-xs text-gray-500',
+  footer: 'text-xs text-ink-muted',
 } as const;
 
 /** Plans forming / BuddySeek shared chips */
@@ -43,22 +43,6 @@ export const PLANS_FORMING_TYPO = {
   sectionLabel: 'text-xs font-bold tracking-wide',
   body: 'text-sm font-medium',
   cta: 'text-sm font-bold',
-} as const;
-
-/** Group chat page density (7 theme variants) */
-export const GROUP_CHAT_TYPO = {
-  notice: 'text-xs font-semibold tracking-tight capitalize',
-  systemBanner: 'text-sm font-medium leading-tight',
-  dayLabel: 'text-xs font-semibold tracking-tight capitalize',
-  bubble: 'text-base leading-relaxed',
-  timestamp: 'text-xs font-medium tracking-wide',
-  headerTitle: 'text-sm md:text-base font-bold',
-  headerSub: 'text-xs md:text-sm tracking-wide font-bold',
-  select: 'text-xs font-bold',
-  amberBar: 'text-xs sm:text-sm font-bold tracking-wide',
-  panelTitle: 'text-sm font-bold tracking-wide',
-  panelBody: 'text-sm font-medium',
-  microBadge: 'text-xs font-bold tracking-wide',
 } as const;
 
 /** Inbox list density */
@@ -166,10 +150,17 @@ export const CALENDAR_TYPO = {
   cta: 'text-sm font-bold',
 } as const;
 
-/** Home feed density */
+/** Home feed density (merged with legacy homeTypography.ts — P1-T2) */
 export const HOME_TYPO = {
+  heroBadge: 'text-sm font-bold tracking-wide',
   heroTitle: 'text-lg md:text-2xl font-bold tracking-tight leading-tight',
   heroSub: 'text-sm md:text-base font-medium',
+  heroSubtitle: 'text-sm md:text-base font-medium leading-relaxed',
+  heroStats: 'text-xs font-bold tracking-wide',
+  heroMapBtn: 'text-sm font-bold',
+  stepTitle: 'text-sm font-bold',
+  stepBody: 'text-xs leading-relaxed font-medium',
+  feedTab: 'text-xs font-bold',
   sectionLabel: 'text-xs font-bold tracking-wide uppercase',
   filterChip: 'text-xs font-bold',
   statValue: 'text-sm font-bold',

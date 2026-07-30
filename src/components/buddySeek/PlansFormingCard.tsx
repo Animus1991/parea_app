@@ -71,8 +71,8 @@ export function PlansFormingCard({
         isSidebar
           ? darkCard
             ? 'bg-white/[0.03] border-white/10 hover:border-cyan-500/35 hover:bg-white/[0.05]'
-            : 'bg-white border-gray-200 shadow-sm hover:border-cyan-300 hover:shadow-md'
-          : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md',
+            : 'bg-white border-gray-200 shadow-soft hover:border-cyan-300 hover:shadow-soft-md'
+          : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-soft hover:shadow-soft-md',
         item.isHighMatch && !isSidebar && 'ring-1 ring-cyan-500/20',
       )}
     >
@@ -107,7 +107,7 @@ export function PlansFormingCard({
           </p>
           <span
             className={cn(
-              'inline-block text-xs font-semibold px-2 py-0.5 rounded-md border',
+              'inline-block text-xs font-semibold px-2 py-0.5 rounded-lg border',
               item.roleLabel.kind === 'seeker'
                 ? darkCard
                   ? 'bg-violet-500/15 text-violet-200 border-violet-500/30'
@@ -146,7 +146,7 @@ export function PlansFormingCard({
           )}
           <span
             className={cn(
-              'absolute bottom-1 left-1 right-1 text-center text-xs font-bold px-1 py-0.5 rounded-md backdrop-blur-sm',
+              'absolute bottom-1 left-1 right-1 text-center text-xs font-bold px-1 py-0.5 rounded-lg backdrop-blur-sm',
               urgencyStyle[item.urgency.tone],
             )}
           >
@@ -160,7 +160,7 @@ export function PlansFormingCard({
               {t(item.intentLabel.el, item.intentLabel.en)}
             </span>
             {item.isSavedEvent && (
-              <span className="text-xs font-bold px-1.5 py-0.5 rounded-md bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30">
+              <span className="text-xs font-bold px-1.5 py-0.5 rounded-lg bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30">
                 {t('Αποθηκευμένη', 'Saved')}
               </span>
             )}
@@ -210,7 +210,7 @@ export function PlansFormingCard({
           <span
             key={tag}
             className={cn(
-              'text-xs font-bold px-1.5 py-0.5 rounded-md',
+              'text-xs font-bold px-1.5 py-0.5 rounded-lg',
               darkCard ? 'bg-cyan-900/40 text-cyan-200' : 'bg-cyan-50 text-cyan-800',
               !darkCard && !isSidebar && 'bg-cyan-50 text-cyan-800',
             )}
@@ -250,7 +250,7 @@ export function PlansFormingCard({
         <button
           type="button"
           onClick={() => setPreviewOpen(true)}
-          className="flex-1 min-h-10 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-sm"
+          className="flex-1 min-h-10 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-soft"
         >
           {t('Αίτημα συμμετοχής', 'Ask to join')}
         </button>
@@ -325,7 +325,7 @@ function MetaChip({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-0.5 text-xs font-bold px-1.5 py-0.5 rounded-md border',
+        'inline-flex items-center gap-0.5 text-xs font-bold px-1.5 py-0.5 rounded-lg border',
         isDark ? 'bg-white/5 border-white/10 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600',
       )}
     >
@@ -359,7 +359,7 @@ export function PlansFormingGroupCard({
         darkCard
           ? 'bg-emerald-950/20 border-emerald-700/30'
           : isSidebar
-            ? 'bg-white border-emerald-200 shadow-sm'
+            ? 'bg-white border-emerald-200 shadow-soft'
             : 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800',
       )}
     >
@@ -379,7 +379,7 @@ export function PlansFormingGroupCard({
           </p>
           <span
             className={cn(
-              'inline-block text-xs font-semibold px-2 py-0.5 rounded-md border',
+              'inline-block text-xs font-semibold px-2 py-0.5 rounded-lg border',
               darkCard ? 'bg-emerald-500/15 text-emerald-200 border-emerald-500/30' : 'bg-emerald-100 text-emerald-800 border-emerald-200',
             )}
           >
@@ -440,46 +440,5 @@ export function PlansFormingGroupCard({
         )}
       </div>
     </article>
-  );
-}
-
-/** @deprecated */
-export function PlansFormingGroupRow(props: {
-  eventId: string;
-  eventTitle: string;
-  spots: number;
-  groupId: string;
-  variant?: 'sidebar' | 'sheet';
-  onSuggestMerge?: () => void;
-}) {
-  const entry: PlansFormingGroupItem = {
-    group: {
-      id: props.groupId,
-      eventId: props.eventId,
-      members: [],
-      pendingMembers: [],
-      targetSize: props.spots + 1,
-      status: 'pending',
-      discountUnlocked: false,
-      isRecruiting: true,
-    },
-    event: {
-      id: props.eventId,
-      title: props.eventTitle,
-    } as PlansFormingGroupItem['event'],
-    meta: {
-      spots: props.spots,
-      filled: 1,
-      target: props.spots + 1,
-      progress: 25,
-      hostFirstName: '',
-      note: '',
-      schedule: { el: '', en: '' },
-      scheduleFull: { el: '', en: '' },
-      location: '',
-    },
-  };
-  return (
-    <PlansFormingGroupCard entry={entry} variant={props.variant} onSuggestMerge={props.onSuggestMerge} />
   );
 }

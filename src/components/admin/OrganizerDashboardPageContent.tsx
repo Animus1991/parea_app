@@ -569,7 +569,7 @@ export default function OrganizerDashboardPageContent() {
                           </p>
                           <span
                             className={cn(
-                              'text-xs font-black px-1.5 py-0.5 rounded-md',
+                              'text-xs font-black px-1.5 py-0.5 rounded-lg',
                               grp.full
                                 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400'
                                 : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',

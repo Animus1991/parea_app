@@ -23,10 +23,10 @@ export function GroupProgressBar({
     <div className={className}>
       {showLabel && (
         <div className="flex items-center justify-between mb-1.5">
-          <span className={cn('text-[11px] font-bold tracking-tight', tok.muted)}>
+          <span className={cn('text-xs font-bold tracking-tight', tok.muted)}>
             {t('Πρόοδος ομάδας', 'Group progress')}
           </span>
-          <span className={cn('text-[11px] font-bold', tok.accentText)}>
+          <span className={cn('text-xs font-bold', tok.accentText)}>
             {current}/{target} {t('μέλη', 'members')}
           </span>
         </div>
@@ -46,7 +46,7 @@ export function GroupProgressBar({
             'bg-fuchsia-500': tok.accent === 'fuchsia',
             'bg-indigo-500': tok.accent === 'indigo',
             'bg-emerald-500': tok.accent === 'emerald',
-            'bg-[#18D8DB]': tok.accent === 'cyan',
+            'bg-accent': tok.accent === 'cyan',
             'bg-[hsl(220_14%_12%)]': tok.accent === 'ab',
           })}
           style={{ width: `${percent}%` }}

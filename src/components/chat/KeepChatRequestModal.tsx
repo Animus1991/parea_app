@@ -31,17 +31,17 @@ export function KeepChatRequestModal({
 
   return (
     <div
-      className="fixed inset-0 z-[90] flex items-center justify-center p-4 bg-black/60"
+      className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/60"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-[#141820] border border-white/10 p-4 space-y-3 text-white"
+        className="w-full max-w-sm rounded-2xl bg-surface-raised border border-border p-4 space-y-3 text-ink"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-sm font-bold">{t('Διατήρηση συνομιλίας', 'Keep this chat')}</h3>
-        <p className="text-xs text-gray-400 leading-relaxed">
+        <p className="text-xs text-ink-muted leading-relaxed">
           {t(
             'Απαιτείται αμοιβαία ή ομαδική συναίνεση. Θα σταλεί σύστημα μήνυμα στα μέλη.',
             'Requires mutual or group approval. A system message will be sent to members.',
@@ -56,14 +56,14 @@ export function KeepChatRequestModal({
               toast.success(t('Αίτημα διατήρησης εστάλη', 'Keep request sent'));
               onClose();
             }}
-            className={cn('flex-1 min-h-10 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500')}
+            className={cn('flex-1 min-h-10 rounded-xl text-xs font-bold bg-brand hover:bg-brand-strong text-brand-fg')}
           >
             {t('Αίτημα διατήρησης', 'Request to keep')}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 min-h-10 rounded-xl text-xs font-bold border border-white/15"
+            className="px-4 min-h-10 rounded-xl text-xs font-bold border border-border-strong"
           >
             {t('Άκυρο', 'Cancel')}
           </button>

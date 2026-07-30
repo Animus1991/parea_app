@@ -27,7 +27,7 @@ export function FilterBottomSheet({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] md:hidden" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-sheet md:hidden" role="dialog" aria-modal="true">
       <button
         type="button"
         className={cn('absolute inset-0 backdrop-blur-sm', c.modalOverlay)}
@@ -36,7 +36,7 @@ export function FilterBottomSheet({
       />
       <div
         className={cn(
-          'absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-3xl border-t p-5 pb-28 shadow-2xl animate-in slide-in-from-bottom duration-300',
+          'absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-3xl border-t p-5 pb-28 shadow-soft-lg animate-in slide-in-from-bottom duration-300',
           c.modalPanel,
         )}
       >

@@ -89,7 +89,7 @@ export function HomeFiltersSection({
   return (
     <section id="home-filters" className="space-y-4 scroll-mt-24">
       <div className="flex items-center justify-between gap-2">
-        <h2 className={`text-[11.6px] font-bold tracking-wide ${h.sectionLabel}`}>
+        <h2 className={`text-xs font-bold tracking-wide ${h.sectionLabel}`}>
           {t('home.explore_categories', 'Εξερευνηση κατηγοριων')}
         </h2>
         <button
@@ -123,7 +123,7 @@ export function HomeFiltersSection({
             key={cat}
             type="button"
             onClick={() => setActiveCategory(cat)}
-            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-[12.75px] font-bold shadow-soft transition-all duration-200 tracking-wide ${
+            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold shadow-soft transition-all duration-200 tracking-wide ${
               activeCategory === cat ? h.chipActive : h.chipInactive
             }`}
           >
@@ -138,7 +138,7 @@ export function HomeFiltersSection({
             key={tag}
             type="button"
             onClick={() => setTagFilter(tag)}
-            className={`whitespace-nowrap px-3.5 py-1 rounded-full text-[11.82px] font-bold transition-all duration-200 border ${
+            className={`whitespace-nowrap px-3.5 py-1 rounded-full text-xs font-bold transition-all duration-200 border ${
               tagFilter === tag ? h.tagActive : h.tagInactive
             }`}
           >
@@ -149,7 +149,7 @@ export function HomeFiltersSection({
 
       <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar items-center flex-wrap">
         <select
-          className={`text-[12.73px] outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           value={priceFilter}
           onChange={(e) => setPriceFilter(e.target.value as HomePriceFilter)}
         >
@@ -162,7 +162,7 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`text-[12.73px] outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value as HomeDateFilter)}
         >
@@ -173,7 +173,7 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`text-[12.73px] outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           value={safetyFilter}
           onChange={(e) => setSafetyFilter(e.target.value as HomeSafetyFilter)}
         >
@@ -186,7 +186,7 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`text-[12.73px] outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           value={radiusFilter}
           onChange={(e) => setRadiusFilter(e.target.value as HomeRadiusFilter)}
         >
@@ -200,7 +200,7 @@ export function HomeFiltersSection({
           <button
             type="button"
             onClick={onToggleSeekingHostOnly}
-            className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-1 rounded-full text-[11.82px] font-bold transition-all duration-200 border ${seekingHostOnly ? h.tagActive : h.tagInactive}`}
+            className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-1 rounded-full text-xs font-bold transition-all duration-200 border ${seekingHostOnly ? h.tagActive : h.tagInactive}`}
           >
             <Crown className="w-3.5 h-3.5" />
             {t('Χωρίς διοργανωτή', 'Seeking organizer')}
@@ -209,7 +209,7 @@ export function HomeFiltersSection({
 
         <div className="relative ml-auto">
           <select
-            className={`text-[12.73px] pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none transition-all duration-200 ${h.select}`}
+            className={`text-sm pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none transition-all duration-200 ${h.select}`}
             value={sortParam}
             onChange={(e) => setSortParam(e.target.value as HomeSortParam)}
           >
@@ -228,7 +228,7 @@ export function HomeFiltersSection({
           <button
             type="button"
             onClick={onClearAll}
-            className="flex items-center gap-1 text-[11.82px] font-bold text-red-500 hover:text-red-700 transition-colors whitespace-nowrap"
+            className="flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-700 transition-colors whitespace-nowrap"
           >
             <X className="w-3 h-3" />
             {t('Καθαρισμός', 'Clear')}

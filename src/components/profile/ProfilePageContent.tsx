@@ -95,7 +95,7 @@ export default function ProfilePageContent() {
   const attendedEventsCount = Object.keys(feedbackSubmitted).length;
   const tierLabel = t(tierLabelEl(currentUser.trustTier as TrustTier), tierLabelEn(currentUser.trustTier as TrustTier));
 
-  const heading = a.isDark ? "text-white" : "text-[#111827]";
+  const heading = a.isDark ? "text-white" : "text-ink";
   const sub = a.isDark ? "text-gray-400" : "text-gray-500";
   const label = a.isDark ? "text-gray-400" : "text-[#6B7280]";
   const bodyText = a.isDark ? "text-gray-300" : "text-gray-700";
@@ -137,7 +137,7 @@ export default function ProfilePageContent() {
         ].map((stat) => (
           <Card key={stat.label} className="p-4 cursor-pointer group" onClick={() => navigate(stat.to)}>
             <div className="flex items-center justify-between">
-              <span className={`text-[10px] font-bold uppercase tracking-wider ${sub}`}>{stat.label}</span>
+              <span className={`text-2xs font-bold uppercase tracking-wider ${sub}`}>{stat.label}</span>
               <stat.icon className={`w-4 h-4 ${stat.color}`} />
             </div>
             <p className={`text-2xl font-extrabold mt-2 ${heading}`}>{stat.value}</p>
@@ -245,7 +245,7 @@ export default function ProfilePageContent() {
               </div>
               <div className="flex-1">
                 <p className={`text-sm font-bold ${heading}`}>{t("Επίπεδο 1: Εξερευνητής", "Tier 1: Explorer")}</p>
-                <p className={`text-[10px] capitalize font-medium tracking-wide ${sub}`}>{t("Email/Τηλέφωνο επαληθευμένο. Συμμετοχή σε Δημόσιες Εκδηλώσεις.", "Email/Phone verified. Can join Public Free Events.")}</p>
+                <p className={`text-2xs capitalize font-medium tracking-wide ${sub}`}>{t("Email/Τηλέφωνο επαληθευμένο. Συμμετοχή σε Δημόσιες Εκδηλώσεις.", "Email/Phone verified. Can join Public Free Events.")}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -254,7 +254,7 @@ export default function ProfilePageContent() {
               </div>
               <div className={`flex-1 border p-3 rounded-lg ${a.tierHighlight}`}>
                 <p className={`text-sm font-bold ${a.tierHighlightText}`}>{t("Επίπεδο 2: Επιβεβαιωμένος", "Tier 2: Confirmed")}</p>
-                <p className={`text-[10px] capitalize font-bold tracking-wide ${a.tierHighlightSub}`}>{t("Προσθήκη Μεθόδου Πληρωμής. Συμμετοχή σε Πληρωμένες/Μικρές Ομάδες.", "Payment Method added. Can join Paid/Small Group Events.")}</p>
+                <p className={`text-2xs capitalize font-bold tracking-wide ${a.tierHighlightSub}`}>{t("Προσθήκη Μεθόδου Πληρωμής. Συμμετοχή σε Πληρωμένες/Μικρές Ομάδες.", "Payment Method added. Can join Paid/Small Group Events.")}</p>
               </div>
             </div>
             <div className={`flex items-center gap-3 cursor-pointer p-3 rounded-lg transition-colors ${a.isDark ? "hover:bg-gray-700/30" : "hover:bg-gray-50"}`} onClick={() => navigate("/verification")}>
@@ -263,7 +263,7 @@ export default function ProfilePageContent() {
               </div>
               <div className="flex-1">
                 <p className={`text-sm font-bold ${a.isDark ? "text-gray-300" : "text-gray-700"}`}>{t("Επίπεδο 3: Υψηλή Εμπιστοσύνη", "Tier 3: High Trust")}</p>
-                <p className={`text-[10px] capitalize font-medium tracking-wide ${sub}`}>{t("Ταυτότητα/Selfie + Υψηλή Αξιοπιστία → Ιδιωτικές/Εκδρομές", "ID/Selfie + High Reliability → Private/Trips")}</p>
+                <p className={`text-2xs capitalize font-medium tracking-wide ${sub}`}>{t("Ταυτότητα/Selfie + Υψηλή Αξιοπιστία → Ιδιωτικές/Εκδρομές", "ID/Selfie + High Reliability → Private/Trips")}</p>
               </div>
               <ChevronRight className={`w-4 h-4 shrink-0 ${sub}`} />
             </div>
@@ -286,7 +286,7 @@ export default function ProfilePageContent() {
               <div>
                 <div className="flex items-center gap-2">
                   <span className={`text-sm font-bold block ${a.isDark ? "text-gray-300" : "text-gray-700"}`}>{t("1-προς-1 Εμπειρίες", "1-on-1 Experiences")}</span>
-                  <Badge variant="neutral" className="rounded-md">{t("Επίπεδο 3", "Tier 3")}</Badge>
+                  <Badge variant="neutral" className="rounded-lg">{t("Επίπεδο 3", "Tier 3")}</Badge>
                 </div>
                 <span className={`text-xs font-medium leading-relaxed block mt-1 ${sub}`}>{t("Απαιτεί Υψηλό Επίπεδο Εμπιστοσύνης.", "Requires High Trust Tier.")}</span>
               </div>
@@ -328,8 +328,8 @@ export default function ProfilePageContent() {
             {isAddingInterest ? (
               <form onSubmit={(e) => { e.preventDefault(); if (newInterest.trim() && !interests.includes(newInterest.trim())) { const updated = [...interests, newInterest.trim()]; setInterests(updated); updateUser(currentUser.id, { interests: updated }); setNewInterest(""); setIsAddingInterest(false); } }} className="flex items-center gap-2">
                 <input type="text" value={newInterest} onChange={(e) => setNewInterest(e.target.value)} placeholder={t("Νέο ενδιαφέρον...", "New interest...")}
-                  className={`text-xs border rounded px-2 py-1 w-28 focus:outline-none ${inputBg} ${a.ring}`} autoFocus onBlur={() => { if (!newInterest.trim()) setIsAddingInterest(false); }} />
-                <Button type="submit" size="sm" variant="ghost" className={`h-6 px-2 font-bold capitalize text-[11px] ${a.accent}`}>{t("Προσθήκη", "Add")}</Button>
+                  className={`text-xs border rounded-lg px-2 py-1 w-28 focus:outline-none ${inputBg} ${a.ring}`} autoFocus onBlur={() => { if (!newInterest.trim()) setIsAddingInterest(false); }} />
+                <Button type="submit" size="sm" variant="ghost" className={`h-6 px-2 font-bold capitalize text-xs ${a.accent}`}>{t("Προσθήκη", "Add")}</Button>
               </form>
             ) : (
               <Button variant="ghost" size="sm" className={`h-6 px-2 text-xs font-medium flex items-center gap-1 ${a.isDark ? "bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700" : "bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100"}`} onClick={() => setIsAddingInterest(true)}>
@@ -420,7 +420,7 @@ export default function ProfilePageContent() {
                 type="checkbox"
                 checked={userSettings.privacy.shareLocation}
                 onChange={(e) => patchPrivacy({ shareLocation: e.target.checked })}
-                className={`mt-1 h-4 w-4 rounded border-gray-300 ${a.checkbox} focus:ring-2`}
+                className={`mt-1 h-4 w-4 rounded-lg border-gray-300 ${a.checkbox} focus:ring-2`}
               />
             </label>
 
@@ -444,7 +444,7 @@ export default function ProfilePageContent() {
                     type="checkbox"
                     checked={userSettings.privacy[opt.key as keyof typeof userSettings.privacy] as boolean}
                     onChange={(e) => patchPrivacy({ [opt.key]: e.target.checked } as Partial<typeof userSettings.privacy>)}
-                    className={`h-4 w-4 rounded border-gray-300 shrink-0 ${a.checkbox} focus:ring-2`}
+                    className={`h-4 w-4 rounded-lg border-gray-300 shrink-0 ${a.checkbox} focus:ring-2`}
                   />
                 </label>
               ))}
@@ -464,7 +464,7 @@ export default function ProfilePageContent() {
                 <div key={u.id} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group" onClick={() => u.isOrganizer ? navigate(`/organizer/${u.id}`) : navigate("/connections")}>
                   <img referrerPolicy="no-referrer" src={u.photoUrl || `https://i.pravatar.cc/80?u=${u.id}`} alt={u.name}
                     className={`w-11 h-11 rounded-xl object-cover border-2 transition-all ${a.isDark ? "border-gray-700/50 group-hover:border-gray-500" : "border-gray-200 group-hover:border-gray-300"} group-hover:scale-105`} />
-                  <span className={`text-[10px] font-bold truncate max-w-[64px] ${a.isDark ? "text-gray-300" : "text-gray-700"}`}>{u.name}</span>
+                  <span className={`text-2xs font-bold truncate max-w-[64px] ${a.isDark ? "text-gray-300" : "text-gray-700"}`}>{u.name}</span>
                 </div>
               ))}
             </div>
@@ -487,14 +487,14 @@ export default function ProfilePageContent() {
               <ChevronRight className={`w-3.5 h-3.5 ${sub} opacity-0 group-hover:opacity-100 transition-opacity`} />
             </div>
             <p className={`text-sm font-bold mt-2 ${heading}`}>{link.label}</p>
-            <p className={`text-[10px] font-medium mt-0.5 ${sub}`}>{link.desc}</p>
+            <p className={`text-2xs font-medium mt-0.5 ${sub}`}>{link.desc}</p>
           </Card>
         ))}
       </div>
 
       {/* Sign Out */}
       <div className="flex justify-center">
-        <Button onClick={() => { logout(); navigate("/login"); }} variant="ghost" className="text-gray-400 hover:text-red-500 font-bold capitalize tracking-wide text-[11px]">
+        <Button onClick={() => { logout(); navigate("/login"); }} variant="ghost" className="text-gray-400 hover:text-red-500 font-bold capitalize tracking-wide text-xs">
           <LogOut className="w-3.5 h-3.5 mr-1.5" /> {t("Αποσύνδεση", "Sign Out")}
         </Button>
       </div>

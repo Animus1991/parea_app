@@ -25,11 +25,11 @@ const TOKENS: Record<EventDetailMapAccent, { light: OrganizerTokens; dark: Organ
   classic: {
     light: {
       sectionBorder: 'border-gray-200',
-      heading: 'text-[#111827]',
+      heading: 'text-ink',
       card: 'rounded-2xl border border-gray-100 bg-white shadow-soft hover:border-[#a5f3fc] transition-all duration-200',
       avatarWrap: 'bg-cyan-50 border-white ring-cyan-50',
       avatarFallback: 'text-cyan-500',
-      name: 'text-[#111827] hover:text-cyan-600',
+      name: 'text-ink hover:text-cyan-600',
       bio: 'text-gray-500',
       trustBadgeHigh: 'bg-blue-50 text-blue-700 border-blue-200',
       trustBadgeDefault: 'bg-gray-50 text-gray-700 border-gray-200',
@@ -51,11 +51,11 @@ const TOKENS: Record<EventDetailMapAccent, { light: OrganizerTokens; dark: Organ
   vibrant: {
     light: {
       sectionBorder: 'border-gray-200',
-      heading: 'text-[#111827]',
+      heading: 'text-ink',
       card: 'rounded-2xl border border-gray-200 bg-white shadow-soft hover:border-fuchsia-200 transition-colors',
       avatarWrap: 'bg-fuchsia-50 border-white ring-fuchsia-50',
       avatarFallback: 'text-fuchsia-500',
-      name: 'text-[#111827] hover:text-fuchsia-600',
+      name: 'text-ink hover:text-fuchsia-600',
       bio: 'text-black',
       trustBadgeHigh: 'bg-blue-50 text-blue-700 border-blue-200',
       trustBadgeDefault: 'bg-gray-50 text-black border-gray-200',
@@ -77,11 +77,11 @@ const TOKENS: Record<EventDetailMapAccent, { light: OrganizerTokens; dark: Organ
   neon: {
     light: {
       sectionBorder: 'border-gray-200',
-      heading: 'text-[#111827]',
+      heading: 'text-ink',
       card: 'rounded-2xl border border-gray-200 bg-white shadow-soft hover:border-emerald-200 transition-colors',
       avatarWrap: 'bg-emerald-50 border-white ring-emerald-50',
       avatarFallback: 'text-emerald-500',
-      name: 'text-[#111827] hover:text-emerald-600',
+      name: 'text-ink hover:text-emerald-600',
       bio: 'text-black',
       trustBadgeHigh: 'bg-blue-50 text-blue-700 border-blue-200',
       trustBadgeDefault: 'bg-gray-50 text-black border-gray-200',
@@ -103,11 +103,11 @@ const TOKENS: Record<EventDetailMapAccent, { light: OrganizerTokens; dark: Organ
   bento: {
     light: {
       sectionBorder: 'border-gray-200',
-      heading: 'text-[#111827]',
+      heading: 'text-ink',
       card: 'rounded-2xl border border-gray-200 bg-white shadow-soft hover:border-indigo-200 transition-colors',
       avatarWrap: 'bg-indigo-50 border-white ring-indigo-50',
       avatarFallback: 'text-indigo-500',
-      name: 'text-[#111827] hover:text-indigo-600',
+      name: 'text-ink hover:text-indigo-600',
       bio: 'text-black',
       trustBadgeHigh: 'bg-blue-50 text-blue-700 border-blue-200',
       trustBadgeDefault: 'bg-gray-50 text-black border-gray-200',
@@ -167,7 +167,7 @@ export function EventDetailOrganizerSection({
   return (
     <div className={cn('pt-5 border-t mt-5', tok.sectionBorder, className)}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className={cn('text-[11px] font-bold tracking-wide mt-1', tok.heading)}>
+        <h3 className={cn('text-xs font-bold tracking-wide mt-1', tok.heading)}>
           {t('Διοργανωτής Εκδήλωσης', 'Event Organizer')}
         </h3>
       </div>
@@ -209,7 +209,7 @@ export function EventDetailOrganizerSection({
                 <Badge
                   variant="outline"
                   className={cn(
-                    'text-[9px] py-0 px-1.5 shadow-none',
+                    'text-2xs py-0 px-1.5 shadow-none',
                     organizer.trustTier === '3_high_trust'
                       ? tok.trustBadgeHigh
                       : tok.trustBadgeDefault,
@@ -220,7 +220,7 @@ export function EventDetailOrganizerSection({
               )}
               <Badge
                 variant="outline"
-                className={cn('text-[9px] py-0 px-1.5 shadow-none', tok.reliabilityBadge)}
+                className={cn('text-2xs py-0 px-1.5 shadow-none', tok.reliabilityBadge)}
               >
                 {organizer.reliabilityScore}% {t('ΑΞΙΟΠΙΣΤΙΑ', 'RELIABILITY')}
               </Badge>

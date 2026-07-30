@@ -202,7 +202,7 @@ export function PlansFormingEmptyState({
           onClick={() => navigate(`/events/${suggestedEvent.id}`)}
           className={cn(
             'w-full text-left rounded-xl border p-3',
-            isDark ? 'border-white/10 bg-white/5 hover:bg-white/10' : 'border-gray-200 bg-white hover:shadow-sm',
+            isDark ? 'border-white/10 bg-white/5 hover:bg-white/10' : 'border-gray-200 bg-white hover:shadow-soft',
           )}
         >
           <p className={cn(PLANS_FORMING_TYPO.statChip, 'text-cyan-600')}>{t('Πρόταση για εσάς', 'Suggested for you')}</p>

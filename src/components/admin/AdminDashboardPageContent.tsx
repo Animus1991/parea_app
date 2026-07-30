@@ -212,7 +212,7 @@ export default function AdminDashboardPageContent() {
                     <button
                       type="button"
                       onClick={() => handleBanFromReport(report.id)}
-                      className="text-xs tracking-wider bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded font-bold transition-colors border border-red-200"
+                      className="text-xs tracking-wider bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg font-bold transition-colors border border-red-200"
                     >
                       {t('Αποκλεισμός', 'Ban')}
                     </button>

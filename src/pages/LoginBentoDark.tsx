@@ -21,7 +21,7 @@ export default function LoginBentoDark() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-10 bg-gradient-to-br from-gray-950 via-gray-900 to-emerald-950">
       <LoginGuestHeroStrip variant="dark" accentClass="bg-indigo-900/40 text-indigo-400" />
-      <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-2xl border-gray-800 bg-gray-800/70">
+      <Card className="w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-soft-lg border-gray-800 bg-gray-800/70">
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center text-4xl font-black tracking-tight mb-4 font-['Outfit']">
              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">NAKAMAS</span>
@@ -41,7 +41,7 @@ export default function LoginBentoDark() {
               <button 
                 key={user.id}
                 onClick={() => handleLogin(user.id)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-700 bg-gray-800 border-gray-700 text-white hover:bg-emerald-900/30 hover:border-emerald-800 transition-colors shadow-sm text-left group"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-700 bg-gray-800 border-gray-700 text-white hover:bg-emerald-900/30 hover:border-emerald-800 transition-colors shadow-soft text-left group"
               >
                 <div className="h-10 w-10 rounded-full overflow-hidden bg-emerald-900/50 flex-shrink-0">
                   {user.photoUrl ? (
@@ -69,7 +69,7 @@ export default function LoginBentoDark() {
 
           <button 
             onClick={() => handleLogin(users[0].id)}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border border-gray-700 bg-gray-800 border-gray-700 text-white text-sm font-bold text-white hover:bg-gray-700/60 transition-colors shadow-sm"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border border-gray-700 bg-gray-800 border-gray-700 text-white text-sm font-bold text-white hover:bg-gray-700/60 transition-colors shadow-soft"
           >
             <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
             {t('Συνέχεια με Google', 'Continue with Google')}

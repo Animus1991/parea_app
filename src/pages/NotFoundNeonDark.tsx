@@ -20,10 +20,10 @@ export default function NotFoundNeonDark() {
         <span className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping opacity-20"></span>
         <Compass className="w-10 h-10 text-emerald-400 animate-spin" style={{ animationDuration: '8s' }} />
       </div>
-      <h1 className="text-[25px] font-bold text-white mb-2">
+      <h1 className="text-3xl font-bold text-white mb-2">
         {t(`Η σελίδα δεν βρέθηκε`, `Page Not Found`)}
       </h1>
-      <p className="text-[18px] text-white font-medium mb-6 max-w-xs">
+      <p className="text-xl text-white font-medium mb-6 max-w-xs">
         {t(`Η σελίδα που αναζητάτε δεν υπάρχει ή έχει μετακινηθεί.`, `The page you're looking for doesn't exist or has been moved.`)}
       </p>
 
@@ -33,7 +33,7 @@ export default function NotFoundNeonDark() {
           return (
             <button key={s.path} onClick={() => navigate(s.path)} className="flex items-center gap-2 p-3 rounded-xl border border-gray-700 bg-gray-800 hover:border-emerald-300 hover:bg-emerald-900/30 transition-all text-left">
               <Icon className="w-4 h-4 text-emerald-400" />
-              <span className="text-[13.8px] font-bold text-white">{s.label}</span>
+              <span className="text-base font-bold text-white">{s.label}</span>
             </button>
           );
         })}

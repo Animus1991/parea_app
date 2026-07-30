@@ -154,7 +154,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
     <div className="bg-white rounded-2xl border border-gray-100 shadow-soft overflow-hidden flex flex-col h-[500px]">
       <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
         <div>
-          <h3 className="font-bold text-[#111827] flex items-center gap-2">
+          <h3 className="font-bold text-ink flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
             {t("Nakama Safety Shield", "Nakama Safety Shield")}
           </h3>
@@ -195,7 +195,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
 
       <div className="flex-1 relative bg-gray-100">
         {isHost && activeLocations.some((l) => l.isOutOfBounds) && (
-          <div className="absolute top-4 left-4 right-4 z-[1000] bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl shadow-lg flex items-start gap-3 pointer-events-auto">
+          <div className="absolute top-4 left-4 right-4 z-[1000] bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl shadow-soft-lg flex items-start gap-3 pointer-events-auto">
             <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
             <div>
               <p className="text-sm font-bold m-0">
@@ -223,7 +223,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
         ) : !isSharing && !isHost ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-white/80 backdrop-blur-sm z-10">
             <Users className="w-12 h-12 text-indigo-200 mb-4" />
-            <h4 className="font-bold text-[#111827] mb-2">
+            <h4 className="font-bold text-ink mb-2">
               {t("Συνδεθείτε στον Χάρτη", "Join the Map")}
             </h4>
             <p className="text-xs text-gray-500 mb-4 max-w-[250px]">
@@ -235,14 +235,14 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
             <div className="flex flex-col gap-2 w-full max-w-[200px]">
               <Button
                 onClick={() => setIsSharing(true)}
-                className="w-full text-[11px]"
+                className="w-full text-xs"
               >
                 {t("Κοινοποίηση (30 Λεπτά)", "Share (30 Mins)")}
               </Button>
               <Button
                 onClick={() => setIsSharing(true)}
                 variant="outline"
-                className="w-full text-[11px]"
+                className="w-full text-xs"
               >
                 {t("Κοινοποίηση μέχρι το τέλος", "Share until event ends")}
               </Button>
@@ -282,10 +282,10 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                     )}
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-[#111827] leading-none mb-1">
+                    <p className="text-xs font-bold text-ink leading-none mb-1">
                       {loc.name} {loc.isMe ? "(Εσείς)" : ""}
                     </p>
-                    <p className="text-[9px] text-emerald-600 font-bold tracking-wide flex items-center gap-1">
+                    <p className="text-2xs text-emerald-600 font-bold tracking-wide flex items-center gap-1">
                       <span
                         className={`w-1.5 h-1.5 rounded-full ${loc.sos ? "bg-red-500" : loc.isOutOfBounds ? "bg-amber-500" : "bg-emerald-500"} animate-pulse`}
                       ></span>
@@ -304,9 +304,9 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
 
         {isTrackingActive && (isSharing || isHost) && (
           <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end pointer-events-none z-[1000]">
-            <div className="bg-white/90 backdrop-blur-md px-3 py-2 rounded-xl shadow-lg border border-gray-100 pointer-events-auto flex items-center gap-2">
+            <div className="bg-white/90 backdrop-blur-md px-3 py-2 rounded-xl shadow-soft-lg border border-gray-100 pointer-events-auto flex items-center gap-2">
               <Users className="w-4 h-4 text-indigo-600" />
-              <span className="text-xs font-bold text-[#111827]">
+              <span className="text-xs font-bold text-ink">
                 {activeLocations.length} / {group.members.length}{" "}
                 {t("Ορατοί", "Visible")}
               </span>

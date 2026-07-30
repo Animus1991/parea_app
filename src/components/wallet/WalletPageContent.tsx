@@ -32,7 +32,7 @@ export default function WalletPageContent() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className={cn("p-6 text-white shadow-md", a.balanceBg)}>
+        <Card className={cn("p-6 text-white shadow-soft-md", a.balanceBg)}>
           <div className={cn("flex items-center gap-2 mb-2", a.balanceLabel)}>
             <Euro className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
@@ -77,9 +77,9 @@ export default function WalletPageContent() {
             onChange={(e) => setTxFilter(e.target.value as typeof txFilter)}
             aria-label={t('Φίλτρο συναλλαγών', 'Transaction filter')}
           >
-            <option>{t('Όλες', 'All Time')}</option>
-            <option>{t('Αυτόν τον Μήνα', 'This Month')}</option>
-            <option>{t('Προηγούμενο', 'Last Month')}</option>
+            <option value="all">{t('Όλες', 'All Time')}</option>
+            <option value="month">{t('Αυτόν τον Μήνα', 'This Month')}</option>
+            <option value="last">{t('Προηγούμενο', 'Last Month')}</option>
           </select>
         </div>
         <div className={a.divider}>
@@ -120,7 +120,7 @@ export default function WalletPageContent() {
       </Card>
 
       {showWithdraw && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" onClick={() => setShowWithdraw(false)}>
+        <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" onClick={() => setShowWithdraw(false)}>
           <Card className="max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className={cn('font-bold text-lg mb-2', a.head)}>{t('Ανάληψη χρημάτων', 'Withdraw Funds')}</h3>
             <p className={cn('text-sm mb-4', a.sub)}>{t('Demo ροή — η ανάληψη καταγράφεται τοπικά.', 'Demo flow — withdrawal is logged locally only.')}</p>
@@ -133,7 +133,7 @@ export default function WalletPageContent() {
       )}
 
       {showPayouts && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" onClick={() => setShowPayouts(false)}>
+        <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" onClick={() => setShowPayouts(false)}>
           <Card className="max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className={cn('font-bold text-lg mb-2', a.head)}>{t('Διαχείριση πληρωμών', 'Manage Payouts')}</h3>
             <p className={cn('text-sm mb-4', a.sub)}>{t('Demo — ενημέρωση τραπεζικού λογαριασμού σύντομα.', 'Demo — bank account update coming soon.')}</p>

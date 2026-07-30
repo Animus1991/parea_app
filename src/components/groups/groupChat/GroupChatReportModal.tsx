@@ -12,14 +12,14 @@ export function GroupChatReportModal({ open, onClose }: GroupChatReportModalProp
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
       <div className="modal-panel max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center text-red-600 shrink-0">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-[#111827]">
+            <h3 className="text-base font-bold text-ink">
               {t('Ιδιωτική Αναφορά Ασφαλείας', 'Private Safety Report')}
             </h3>
             <p className="text-xs font-semibold text-gray-600 tracking-tight capitalize mt-0.5">
@@ -39,7 +39,7 @@ export function GroupChatReportModal({ open, onClose }: GroupChatReportModalProp
           )}
         </p>
         <textarea
-          className="w-full border border-gray-100 rounded-2xl p-3 text-sm resize-none mb-5 focus:ring-2 focus:ring-[#18D8DB]/40 outline-none shadow-soft font-medium transition-all duration-200"
+          className="w-full border border-gray-100 rounded-2xl p-3 text-sm resize-none mb-5 focus:ring-2 focus:ring-accent/40 outline-none shadow-soft font-medium transition-all duration-200"
           rows={4}
           placeholder={t(
             'Παρακαλώ περιγράψτε το πρόβλημα με λεπτομέρεια...',

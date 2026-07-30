@@ -209,7 +209,7 @@ export default function PostEventFeedbackPageContent() {
                         ),
                   )}
                 >
-                  <span className="text-4xl drop-shadow-sm">{m.emoji}</span>
+                  <span className="text-4xl drop-shadow-soft">{m.emoji}</span>
                   <span
                     className={cn(
                       'text-xs font-bold',

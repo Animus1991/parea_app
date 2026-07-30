@@ -73,7 +73,7 @@ export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewPro
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 40 }}
-      className="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm"
+      className="fixed inset-0 z-modal-high flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm"
     >
       <div
         className={cn(

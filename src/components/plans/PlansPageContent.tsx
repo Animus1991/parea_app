@@ -174,7 +174,7 @@ export default function PlansPageContent() {
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
               {isConfirmed ? (
-                <div className="absolute top-2 left-2 bg-[#0E8B8D] text-white px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide">
+                <div className="absolute top-2 left-2 bg-brand text-white px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide">
                   {t('Επιβεβαιωμένο', 'Confirmed')}
                 </div>
               ) : (
@@ -198,8 +198,8 @@ export default function PlansPageContent() {
                   {(() => {
                     const days = differenceInDays(parseISO(event.date), new Date());
                     const hours = differenceInHours(parseISO(event.date), new Date());
-                    if (days <= 0 && hours > 0) return <span className="text-xs font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">{t('σε', 'in')} {hours}h</span>;
-                    if (days > 0 && days <= 7) return <span className={cn('text-xs font-bold px-1.5 py-0.5 rounded mt-0.5 inline-block', p.statBg, p.statVal)}>{t('σε', 'in')} {days} {t('μέρες', 'days')}</span>;
+                    if (days <= 0 && hours > 0) return <span className="text-xs font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-lg mt-0.5 inline-block">{t('σε', 'in')} {hours}h</span>;
+                    if (days > 0 && days <= 7) return <span className={cn('text-xs font-bold px-1.5 py-0.5 rounded-lg mt-0.5 inline-block', p.statBg, p.statVal)}>{t('σε', 'in')} {days} {t('μέρες', 'days')}</span>;
                     return null;
                   })()}
                 </div>
@@ -338,7 +338,7 @@ export default function PlansPageContent() {
       {activeTab === 'past' && (
       <div className="space-y-4">
         {needsRating > 0 && (
-          <div className={cn('text-[12.5px] font-semibold flex items-center gap-1.5', p.muted)}>
+          <div className={cn('text-sm font-semibold flex items-center gap-1.5', p.muted)}>
             <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
             {t(`${needsRating} εκδηλώσεις περιμένουν την αξιολόγησή σας`, `${needsRating} event(s) awaiting your feedback`)}
           </div>
@@ -355,7 +355,7 @@ export default function PlansPageContent() {
               {!feedbackSubmitted[event.id] ? (
                 <div className={cn('p-3 rounded-2xl flex items-center justify-between mt-auto border', p.statBg)}>
                   <div className={cn('text-sm font-bold', p.statVal)}>{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
-                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="btn-gradient !py-1.5 !px-4 !text-[11.5px]">
+                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="btn-gradient !py-1.5 !px-4 !text-xs">
                     {t(`Αξιολόγηση`, `Rate Experience`)}
                   </button>
                 </div>
@@ -381,7 +381,7 @@ export default function PlansPageContent() {
 
       {showLeaveConfirm && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200"
+          className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200"
           onClick={() => setShowLeaveConfirm(null)}
         >
           <div
@@ -441,8 +441,8 @@ function EmptyTab({
       <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3', p.statBg)}>
         <Icon className={cn('w-6 h-6', p.statVal)} />
       </div>
-      <p className={cn('font-bold text-[16px]', p.head)}>{title}</p>
-      <p className={cn('text-[13px] font-medium mt-1 max-w-sm mx-auto', p.muted)}>{hint}</p>
+      <p className={cn('font-bold text-lg', p.head)}>{title}</p>
+      <p className={cn('text-sm font-medium mt-1 max-w-sm mx-auto', p.muted)}>{hint}</p>
       {ctaLabel && onCta && (
         <button className="btn-gradient mt-4" onClick={onCta}>{ctaLabel}</button>
       )}

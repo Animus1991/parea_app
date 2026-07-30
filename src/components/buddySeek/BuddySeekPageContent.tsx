@@ -210,7 +210,7 @@ export default function BuddySeekPageContent() {
                   setPreview(plan);
                   setPreviewJoinId(j.id);
                 }}
-                className="w-full text-left rounded-xl border border-amber-200 bg-white dark:bg-gray-900 px-3 py-2.5 text-sm font-medium hover:shadow-sm"
+                className="w-full text-left rounded-xl border border-amber-200 bg-white dark:bg-gray-900 px-3 py-2.5 text-sm font-medium hover:shadow-soft"
               >
                 {t('Από', 'From')} <strong>{from.name.split(' ')[0]}</strong> — {plan.event.title}
               </button>
@@ -283,7 +283,7 @@ export default function BuddySeekPageContent() {
             >
               {t(el, en)}
               {count != null && count > 0 && (
-                <span className={cn('text-xs px-1 rounded-md', filter === key ? 'bg-white/20' : 'bg-cyan-100 text-cyan-800')}>
+                <span className={cn('text-xs px-1 rounded-lg', filter === key ? 'bg-white/20' : 'bg-cyan-100 text-cyan-800')}>
                   {count}
                 </span>
               )}
@@ -339,7 +339,7 @@ export default function BuddySeekPageContent() {
 
       {eventPickerOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 modal-overlay"
+          className="fixed inset-0 z-modal flex items-end sm:items-center justify-center p-4 modal-overlay"
           onClick={() => setEventPickerOpen(false)}
         >
           <div

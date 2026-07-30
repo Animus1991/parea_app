@@ -1,6 +1,7 @@
 import { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
+import { isDarkTheme } from '../../lib/themes';
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   children?: ReactNode;
@@ -13,12 +14,12 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 
 export function Badge({ children, variant = 'default', className, icon, ...props }: BadgeProps) {
   const theme = useStore((state) => state.theme);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark';
+  const isDark = isDarkTheme(theme);
 
-  const baseClasses = "inline-flex items-center gap-1.5 rounded-full tracking-wide px-2.5 py-0.5 text-[12.5px] font-bold transition-colors";
+  const baseClasses = "inline-flex items-center gap-1.5 rounded-full tracking-wide px-2.5 py-0.5 text-sm font-bold transition-colors";
 
   const lightVariants = {
-    default: "bg-gray-100 text-[#111827]",
+    default: "bg-gray-100 text-ink",
     outline: "border border-gray-200 text-gray-800 bg-white",
     success: theme === 'vibrant' ? "bg-fuchsia-50 text-fuchsia-700" : theme === 'neon' ? "bg-emerald-50 text-emerald-700" : theme === 'bento' ? "bg-indigo-50 text-indigo-700" : "bg-cyan-50 text-cyan-700",
     warning: "bg-gray-800 text-white",

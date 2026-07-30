@@ -25,7 +25,7 @@ export function HomePendingFeedbackBanner() {
           <CheckCircle2 className="w-4 h-4" />
         </div>
         <div>
-          <h3 className={`text-[14.63px] font-bold ${h.feedbackTitle}`}>
+          <h3 className={`text-base font-bold ${h.feedbackTitle}`}>
             {t('Εκκρεμής Αξιολόγηση', 'Pending Feedback')}
           </h3>
           <p className={`text-xs font-medium mt-0.5 leading-relaxed ${h.feedbackBody}`}>
@@ -39,7 +39,7 @@ export function HomePendingFeedbackBanner() {
       <button
         type="button"
         onClick={() => navigate(`/history/feedback/${pendingFeedbackEvent.id}`)}
-        className={`text-[12.38px] tracking-wider font-bold px-4 py-2 rounded-full whitespace-nowrap w-full sm:w-auto shadow-soft transition-all duration-200 ${h.feedbackBtn}`}
+        className={`text-sm tracking-wider font-bold px-4 py-2 rounded-full whitespace-nowrap w-full sm:w-auto shadow-soft transition-all duration-200 ${h.feedbackBtn}`}
       >
         {t('Αξιολόγηση', 'Rate Now')}
       </button>

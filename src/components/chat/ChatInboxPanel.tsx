@@ -50,22 +50,22 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
   return (
     <div
       className={cn(
-        'fixed z-[70] flex flex-col border shadow-2xl overflow-hidden',
-        'bg-[#0c1016] border-white/10 text-white',
+        'fixed z-sheet flex flex-col border shadow-soft-lg overflow-hidden',
+        'bg-surface border-border text-ink',
         'inset-x-0 bottom-0 top-auto max-h-[85vh] rounded-t-2xl',
         'md:inset-auto md:bottom-20 md:right-6 md:w-[360px] md:max-h-[min(520px,70vh)] md:rounded-2xl',
       )}
       role="dialog"
       aria-label={t('Nakamas Chat', 'Nakamas Chat')}
     >
-      <header className="flex items-center justify-between px-4 py-3 border-b border-white/10 shrink-0">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
         <div>
           <h2 className="text-sm font-bold">{t('Nakamas Chat', 'Nakamas Chat')}</h2>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-ink-muted">
             {t('Μόνο μετά από αποδοχή αιτήματος ή ομάδας', 'Only after request or group acceptance')}
           </p>
         </div>
-        <button type="button" onClick={onClose} className="p-2 rounded-lg hover:bg-white/10" aria-label={t('Κλείσιμο', 'Close')}>
+        <button type="button" onClick={onClose} className="p-2 rounded-lg hover:bg-ink/10" aria-label={t('Κλείσιμο', 'Close')}>
           <X className="w-5 h-5" />
         </button>
       </header>
@@ -75,7 +75,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
           if (!items.length) return null;
           return (
             <section key={sec.key}>
-              <p className="text-xs font-bold uppercase tracking-wider text-cyan-500/80 px-2 mb-1.5">{sec.title}</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-brand/80 px-2 mb-1.5">{sec.title}</p>
               <ul className="space-y-1">
                 {items.map((c) => {
                   const Icon = TYPE_ICON[c.type];
@@ -85,12 +85,12 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
                       <button
                         type="button"
                         onClick={() => openConversation(c.id)}
-                        className="w-full text-left rounded-xl px-3 py-2.5 hover:bg-white/5 flex gap-3 items-start"
+                        className="w-full text-left rounded-xl px-3 py-2.5 hover:bg-ink/5 flex gap-3 items-start"
                       >
-                        <Icon className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                        <Icon className="w-4 h-4 text-brand shrink-0 mt-0.5" />
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-bold truncate">{c.title}</p>
-                          <p className="text-xs text-gray-500 truncate">
+                          <p className="text-xs text-ink-muted truncate">
                             {t(c.lastMessagePreview.el, c.lastMessagePreview.en)}
                           </p>
                           {!perm.canSend && perm.reasonIfLocked && (
@@ -100,7 +100,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
                           )}
                         </div>
                         {c.unreadCount > 0 && (
-                          <span className="shrink-0 min-w-[20px] h-5 rounded-full bg-cyan-600 text-xs font-bold flex items-center justify-center px-1">
+                          <span className="shrink-0 min-w-[20px] h-5 rounded-full bg-brand text-brand-fg text-xs font-bold flex items-center justify-center px-1">
                             {c.unreadCount}
                           </span>
                         )}
@@ -113,7 +113,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
           );
         })}
       </div>
-      <footer className="px-4 py-2 border-t border-white/10 text-xs text-gray-500 text-center shrink-0">
+      <footer className="px-4 py-2 border-t border-border text-xs text-ink-muted text-center shrink-0">
         {t('Προσωρινά event chats · σχεδιασμένα με privacy controls', 'Temporary event chats · designed with privacy controls')}
       </footer>
     </div>

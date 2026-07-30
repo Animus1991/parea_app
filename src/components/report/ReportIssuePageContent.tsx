@@ -42,7 +42,7 @@ export default function ReportIssuePageContent() {
   };
 
   const inputClass = cn(
-    'w-full rounded-2xl border shadow-soft focus:outline-none focus:ring-2 text-[16.2px] font-medium transition-all duration-200',
+    'w-full rounded-2xl border shadow-soft focus:outline-none focus:ring-2 text-lg font-medium transition-all duration-200',
     c.inputBg,
     c.inputFg,
     c.placeholder,
@@ -56,7 +56,7 @@ export default function ReportIssuePageContent() {
           <h1 className={cn('text-base md:text-lg font-bold', p.head)}>
             {t('Αναφορά Προβλήματος', 'Report an Issue')}
           </h1>
-          <p className={cn('font-medium text-[13.55px] md:text-[16.25px] mt-1', p.sub)}>
+          <p className={cn('font-medium text-sm md:text-lg mt-1', p.sub)}>
             {t('Βοηθήστε μας να κρατήσουμε την κοινότητα ασφαλή', 'Help us keep the community safe')}
           </p>
         </div>
@@ -67,7 +67,7 @@ export default function ReportIssuePageContent() {
             c.surfaceElevated,
             c.border,
             p.muted,
-            p.isDark ? 'hover:text-white' : 'hover:text-[#111827]',
+            p.isDark ? 'hover:text-white' : 'hover:text-ink',
           )}
           aria-label={t('Κλείσιμο', 'Close')}
         >
@@ -92,10 +92,10 @@ export default function ReportIssuePageContent() {
               <AlertTriangle className={cn('w-5 h-5', p.isDark ? 'text-red-300' : 'text-red-600')} />
             </div>
             <div>
-              <h3 className={cn('font-bold text-[16.76px]', p.head)}>
+              <h3 className={cn('font-bold text-lg', p.head)}>
                 {t('Αναφορά Ζητήματος Ασφαλείας', 'Report a Safety Concern')}
               </h3>
-              <p className={cn('text-[14.5px] mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>
+              <p className={cn('text-base mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>
                 {t(
                   'Η αναφορά σας θα εξεταστεί από την ομάδα μας εντός 24 ωρών.',
                   'Your report will be reviewed by our team within 24 hours.',
@@ -106,7 +106,7 @@ export default function ReportIssuePageContent() {
 
           <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-5">
             <div>
-              <label className={cn('block text-[10.9px] font-bold tracking-wider mb-2', p.head)}>
+              <label className={cn('block text-xs font-bold tracking-wider mb-2', p.head)}>
                 {t('Κατηγορία', 'Category')}
               </label>
               <select
@@ -126,7 +126,7 @@ export default function ReportIssuePageContent() {
 
             {/* Severity Level */}
             <div>
-              <label className={cn('block text-[10.9px] font-bold tracking-wider mb-2', p.head)}>
+              <label className={cn('block text-xs font-bold tracking-wider mb-2', p.head)}>
                 {t('Σοβαρότητα', 'Severity')}
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -140,7 +140,7 @@ export default function ReportIssuePageContent() {
                     severity === 'low' && 'ring-2 ring-amber-400',
                   )}
                 >
-                  <span className={cn('text-[12.1px] font-bold block', p.isDark ? 'text-amber-200' : 'text-amber-800')}>
+                  <span className={cn('text-sm font-bold block', p.isDark ? 'text-amber-200' : 'text-amber-800')}>
                     {t('Χαμηλή', 'Low')}
                   </span>
                   <span className={cn('text-xs', p.isDark ? 'text-amber-300/80' : 'text-amber-600')}>
@@ -158,7 +158,7 @@ export default function ReportIssuePageContent() {
                   )}
                 >
                   <span
-                    className={cn('text-[12.1px] font-bold block', p.isDark ? 'text-orange-200' : 'text-orange-800')}
+                    className={cn('text-sm font-bold block', p.isDark ? 'text-orange-200' : 'text-orange-800')}
                   >
                     {t('Μέτρια', 'Medium')}
                   </span>
@@ -176,7 +176,7 @@ export default function ReportIssuePageContent() {
                     severity === 'high' && 'ring-2 ring-red-400',
                   )}
                 >
-                  <span className={cn('text-[12.1px] font-bold block', p.isDark ? 'text-red-200' : 'text-red-800')}>
+                  <span className={cn('text-sm font-bold block', p.isDark ? 'text-red-200' : 'text-red-800')}>
                     {t('Υψηλή', 'High')}
                   </span>
                   <span className={cn('text-xs', p.isDark ? 'text-red-300/80' : 'text-red-600')}>
@@ -187,7 +187,7 @@ export default function ReportIssuePageContent() {
             </div>
 
             <div>
-              <label className={cn('block text-[10.9px] font-bold tracking-wider mb-2', p.head)}>
+              <label className={cn('block text-xs font-bold tracking-wider mb-2', p.head)}>
                 {t('Περιγραφή', 'Description')}
               </label>
               <textarea
@@ -202,7 +202,7 @@ export default function ReportIssuePageContent() {
 
             {/* Evidence Upload */}
             <div>
-              <label className={cn('block text-[12.15px] font-bold tracking-wider mb-2', p.head)}>
+              <label className={cn('block text-sm font-bold tracking-wider mb-2', p.head)}>
                 {t('Αποδεικτικά (προαιρετικά)', 'Evidence (optional)')}
               </label>
               <input
@@ -251,7 +251,7 @@ export default function ReportIssuePageContent() {
                       <button
                         type="button"
                         onClick={() => removeEvidence(name)}
-                        className={cn('shrink-0 p-0.5 rounded', p.muted, 'hover:text-red-500')}
+                        className={cn('shrink-0 p-0.5 rounded-lg', p.muted, 'hover:text-red-500')}
                         aria-label={t('Αφαίρεση', 'Remove')}
                       >
                         <X className="w-3.5 h-3.5" />
@@ -264,7 +264,7 @@ export default function ReportIssuePageContent() {
 
             <div className={cn('rounded-lg p-4 flex items-start gap-3', p.infoBg)}>
               <ShieldCheck className={cn('w-5 h-5 shrink-0 mt-0.5', p.iconAccent)} />
-              <p className={cn('text-[13.5px] font-medium leading-relaxed', p.sub)}>
+              <p className={cn('text-sm font-medium leading-relaxed', p.sub)}>
                 <span className={cn('font-bold', p.head)}>{t('Απόρρητο:', 'Privacy:')}</span>{' '}
                 {t('Η αναφορά σας είναι εμπιστευτική.', 'Your report is confidential.')}
               </p>
@@ -282,7 +282,7 @@ export default function ReportIssuePageContent() {
               type="submit"
               disabled={!category || !severity || !description.trim()}
               className={cn(
-                'w-full py-2.5 rounded-full text-[12.15px] font-bold shadow-soft transition-all duration-200 tracking-wider disabled:opacity-50',
+                'w-full py-2.5 rounded-full text-sm font-bold shadow-soft transition-all duration-200 tracking-wider disabled:opacity-50',
                 p.chipActive,
                 p.isDark ? '' : 'hover:opacity-90',
               )}
@@ -301,7 +301,7 @@ export default function ReportIssuePageContent() {
           >
             <CheckCircle2 className={cn('w-8 h-8', p.isDark ? 'text-emerald-300' : 'text-emerald-600')} />
           </div>
-          <h2 className={cn('text-[25px] font-bold mb-2', p.head)}>{t('Η αναφορά υποβλήθηκε', 'Report Submitted')}</h2>
+          <h2 className={cn('text-3xl font-bold mb-2', p.head)}>{t('Η αναφορά υποβλήθηκε', 'Report Submitted')}</h2>
           <p className={cn('text-lg max-w-md mx-auto mb-6', p.sub)}>
             {t(
               'Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.',
@@ -310,7 +310,7 @@ export default function ReportIssuePageContent() {
           </p>
           <button
             onClick={() => navigate('/')}
-            className={cn('px-5 py-2.5 rounded-full text-[13.5px] font-bold transition-colors tracking-wider', p.chipInactive)}
+            className={cn('px-5 py-2.5 rounded-full text-sm font-bold transition-colors tracking-wider', p.chipInactive)}
           >
             {t('Επιστροφή', 'Go Back')}
           </button>

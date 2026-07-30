@@ -15,7 +15,6 @@ import { useStore } from '../../store';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { EventCard } from '../events/EventCard';
-import { EventCardSkeleton } from '../common/Skeleton';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
@@ -47,7 +46,6 @@ export default function CategoriesPageContent() {
   const [priceFilter, setPriceFilter] = useState<PriceFilter>('All');
   const [dateFilter, setDateFilter] = useState<DateFilter>('Any');
   const [sortBy, setSortBy] = useState<SortBy>('Trending');
-  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -56,12 +54,6 @@ export default function CategoriesPageContent() {
     else next.delete('c');
     setSearchParams(next, { replace: true });
   }, [activeCategory, searchParams, setSearchParams]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, [activeCategory, activeTab, priceFilter, dateFilter, sortBy, searchQuery]);
 
   const categoryCounts = useMemo(() => {
     return events.reduce<Record<string, number>>((acc, event) => {
@@ -258,7 +250,7 @@ export default function CategoriesPageContent() {
                 activeTab === tab
                   ? p.isDark
                     ? 'bg-[hsl(220_16%_18%)] text-white shadow-soft'
-                    : 'bg-gray-100 text-[#111827] shadow-soft'
+                    : 'bg-gray-100 text-ink shadow-soft'
                   : cn(
                       'hover:bg-gray-50',
                       p.isDark ? 'text-gray-400 hover:bg-white/5' : 'text-gray-500 hover:text-gray-900',
@@ -310,7 +302,7 @@ export default function CategoriesPageContent() {
             </h3>
             <p
               className={cn(
-                'text-xs font-semibold mt-1.5 px-2 py-0.5 rounded-md',
+                'text-xs font-semibold mt-1.5 px-2 py-0.5 rounded-lg',
                 p.isDark ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500',
               )}
             >
@@ -419,11 +411,7 @@ export default function CategoriesPageContent() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {isLoading
-            ? Array.from({ length: 8 }).map((_, i) => (
-                <EventCardSkeleton key={`skeleton-${i}`} />
-              ))
-            : filteredEvents.length === 0
+          {filteredEvents.length === 0
               ? (
                 <div
                   className={cn(

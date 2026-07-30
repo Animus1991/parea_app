@@ -7,7 +7,7 @@ import { useStore } from '../../store';
 import { useMyBuddySeekForEvent, useCompanyRequestsForEvent } from '../../hooks/useBuddySeekDiscovery';
 import { buildBuddySeekSuggestions } from '../../lib/buddySeekMatching';
 import { audienceSummary } from '../../lib/companyRequestUtils';
-import { getEventDetailSurfaceTokens } from '../../lib/eventDetailDesignTokens';
+import { getEventDetailSurfaceTokens } from '../../lib/designTokens';
 import { cn } from '../../lib/utils';
 import { CompanyRequestCard } from './CompanyRequestCard';
 import { CreateCompanyRequestModal } from './CreateCompanyRequestModal';
@@ -86,7 +86,7 @@ export function LookingForCompanyPanel({
         <div>
           <h2 className={tok.sectionHeading}>
             <Users className="w-4 h-4 inline mr-1.5 opacity-80" />
-            {t('Looking for company', 'Looking for company')}
+            {t('Αναζήτηση παρέας', 'Looking for company')}
           </h2>
           <p className={cn(tok.muted, 'text-xs mt-1 leading-relaxed')}>
             {t(

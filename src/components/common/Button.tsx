@@ -21,7 +21,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const focusRing = isDark || isABDark
       ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
-      : "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#18D8DB]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+      : "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white";
 
     const getVariants = (): Record<string, string> => {
       if (isABDark) return {
@@ -59,10 +59,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ? { primary: "bg-indigo-600 text-white hover:bg-indigo-700", outline: "border-2 border-indigo-600 text-indigo-600 bg-transparent hover:bg-indigo-50" }
         : theme === 'neon'
         ? { primary: "bg-emerald-600 text-white hover:bg-emerald-700", outline: "border-2 border-emerald-600 text-emerald-600 bg-transparent hover:bg-emerald-50" }
-        : { primary: "bg-[#0E8B8D] text-white hover:bg-[#0b6d6f]", outline: "border-2 border-[#18D8DB] text-[#0E8B8D] bg-[#18D8DB]/[0.04] hover:bg-[#18D8DB]/10" };
+        : { primary: "bg-brand text-white hover:bg-[#0b6d6f]", outline: "border-2 border-accent text-brand bg-accent/[0.04] hover:bg-accent/10" };
       return {
         primary: `${accent.primary} rounded-xl shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]`,
-        secondary: "bg-[#111827] text-white hover:bg-gray-900 rounded-xl shadow-soft",
+        secondary: "bg-ink text-white hover:bg-gray-900 rounded-xl shadow-soft",
         outline: `${accent.outline} rounded-full`,
         ghost: "bg-transparent text-gray-700 hover:bg-gray-50 rounded-xl",
         danger: "bg-red-50 text-red-700 hover:bg-red-100 rounded-xl",

@@ -62,10 +62,10 @@ function EventThumb({
       <div className="absolute inset-x-0 bottom-0 px-1 py-0.5 bg-gradient-to-t from-black/85 to-transparent">
         <p className="text-xs md:text-xs text-white truncate font-bold leading-tight">{ev.title}</p>
         {showTime && (
-          <p className="text-[6px] md:text-xs text-white/85 truncate leading-tight">{ev.time}</p>
+          <p className="text-xs md:text-xs text-white/85 truncate leading-tight">{ev.time}</p>
         )}
         {showLocation && (
-          <p className="text-[6px] text-white/75 truncate hidden lg:block">{ev.locationName}</p>
+          <p className="text-xs text-white/75 truncate hidden lg:block">{ev.locationName}</p>
         )}
       </div>
     </div>
@@ -160,8 +160,8 @@ export function CalendarDayCell({
         'flex flex-col items-center justify-center rounded-2xl transition-all border overflow-hidden w-full',
         today
           ? isAB
-            ? 'bg-[hsl(220_16%_22%)] text-white border-[hsl(220_13%_30%)] shadow-sm'
-            : 'bg-cyan-600 text-white border-cyan-600 shadow-md shadow-cyan-600/20'
+            ? 'bg-[hsl(220_16%_22%)] text-white border-[hsl(220_13%_30%)] shadow-soft'
+            : 'bg-cyan-600 text-white border-cyan-600 shadow-soft-md shadow-cyan-600/20'
           : hasEvents
             ? isDark
               ? 'bg-cyan-900/20 border-cyan-800/50 hover:bg-cyan-900/40'
@@ -186,7 +186,7 @@ export function CalendarDayCell({
               ? 'bg-black/40 hover:bg-black/55 text-white'
               : isDark
                 ? 'bg-white/10 hover:bg-white/20 text-gray-200'
-                : 'bg-white/90 hover:bg-white text-gray-700 shadow-sm',
+                : 'bg-white/90 hover:bg-white text-gray-700 shadow-soft',
           )}
           aria-label={t('Ημερήσιο πρόγραμμα', 'Daily schedule')}
         >
@@ -212,7 +212,7 @@ export function CalendarDayCell({
       <span
         className={cn(
           'relative z-10 text-sm md:text-lg font-black leading-none',
-          (today || hasEvents) && 'text-white drop-shadow-md',
+          (today || hasEvents) && 'text-white drop-shadow-soft-md',
           !today && !hasEvents && headClass,
         )}
       >

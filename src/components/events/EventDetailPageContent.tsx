@@ -7,19 +7,12 @@ import {
   MapPin,
   Star,
   CheckCircle2,
-  Calendar,
-  Download,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import type { FeedbackData } from '../../store';
-import { getEventDetailContentTokens } from '../../lib/eventDetailDesignTokens';
-import {
-  getEventCalendarAvailability,
-  openGoogleCalendar,
-  downloadICS,
-} from '../../lib/eventCalendarExport';
+import { getEventDetailContentTokens } from '../../lib/designTokens';
 import { buildEventQuickInfo, inferLocationType } from '../../lib/eventQuickInfo';
 import { isEventCompleted, isUserEventParticipant } from '../../lib/eventParticipation';
 import { cn } from '../../lib/utils';
@@ -32,81 +25,6 @@ export interface EventDetailPageContentProps {
   accent: EventDetailMapAccent;
   darkSurface?: boolean;
   className?: string;
-}
-
-export function EventDetailCalendarActions({
-  event,
-  accent,
-  darkSurface = false,
-  compact = false,
-  className,
-}: {
-  event: Event;
-  accent: EventDetailMapAccent;
-  darkSurface?: boolean;
-  compact?: boolean;
-  className?: string;
-}) {
-  const { t } = useLanguage();
-  const users = useStore((s) => s.users);
-  const groups = useStore((s) => s.groups);
-  const availability = getEventCalendarAvailability(event);
-  const host = users.find((u) => u.id === event.organizerId);
-  const meetingPoint = groups.find((g) => g.eventId === event.id && g.meetingPoint)?.meetingPoint;
-  const { content } = getEventDetailContentTokens(accent, darkSurface);
-
-  const btn = cn(
-    'inline-flex items-center gap-2 font-bold tracking-wide transition-colors rounded-2xl shadow-soft min-h-11',
-    compact ? 'text-xs px-3 py-1.5' : 'text-xs px-4 py-2',
-    darkSurface
-      ? 'bg-gray-800/80 text-white hover:bg-gray-700 border border-gray-600'
-      : 'bg-white text-gray-800 hover:bg-gray-50 border border-gray-200',
-  );
-
-  const handleGoogle = () => {
-    if (!availability.ok) return;
-    const ok = openGoogleCalendar(event, {
-      hostName: host?.name,
-      meetingPoint,
-    });
-    if (!ok) toast.error(t(availability.reasonEl, availability.reasonEn));
-  };
-
-  const handleIcs = () => {
-    if (!availability.ok) return;
-    const ok = downloadICS(event, { hostName: host?.name, meetingPoint });
-    if (!ok) toast.error(t(availability.reasonEl, availability.reasonEn));
-  };
-
-  return (
-    <div className={cn('space-y-2', className)}>
-      <div className={cn('flex flex-wrap gap-2', compact && 'justify-end')}>
-        <button
-          type="button"
-          className={cn(btn, !availability.ok && 'opacity-50 cursor-not-allowed')}
-          disabled={!availability.ok}
-          onClick={handleGoogle}
-        >
-          <Calendar className="h-3.5 w-3.5 shrink-0" />
-          {t('Προσθήκη στο Google Calendar', 'Add to Google Calendar')}
-        </button>
-        <button
-          type="button"
-          className={cn(btn, !availability.ok && 'opacity-50 cursor-not-allowed')}
-          disabled={!availability.ok}
-          onClick={handleIcs}
-        >
-          <Download className="h-3.5 w-3.5 shrink-0" />
-          {t('Λήψη .ics', 'Download ICS')}
-        </button>
-      </div>
-      {!availability.ok && (
-        <p className={cn('text-xs font-medium', content.metaLabel)}>
-          {t(availability.reasonEl, availability.reasonEn)}
-        </p>
-      )}
-    </div>
-  );
 }
 
 function EventDetailQuickInfoBlock({

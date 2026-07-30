@@ -23,7 +23,7 @@ export function HomeOnboardingWelcomeBanner({
         'relative flex gap-3 p-4 rounded-2xl border',
         useClassicTokens
           ? cn('bg-cyan-50/80 border-cyan-100 shadow-soft', h.card)
-          : cn(p.cardSurface, p.borderB, 'shadow-sm'),
+          : cn(p.cardSurface, p.borderB, 'shadow-soft'),
       )}
       role="status"
     >

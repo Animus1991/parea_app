@@ -104,9 +104,9 @@ export function CreateCompanyRequestModal({
   const shell = darkSurface ? 'bg-gray-900 border-gray-700 text-white' : 'bg-white border-gray-200';
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-end sm:items-center justify-center sm:p-4">
+    <div className="fixed inset-0 z-modal flex items-end sm:items-center justify-center sm:p-4">
       <button type="button" className="absolute inset-0 bg-black/50" onClick={onClose} aria-label="Close" />
-      <div className={cn('relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl border shadow-2xl max-h-[92vh] flex flex-col', shell)}>
+      <div className={cn('relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl border shadow-soft-lg max-h-[92vh] flex flex-col', shell)}>
         <div className="p-4 border-b border-inherit shrink-0">
           <h2 className="text-base font-bold">{t('Ψάχνετε παρέα;', 'Looking for company?')}</h2>
           <p className="text-xs opacity-70 mt-0.5">

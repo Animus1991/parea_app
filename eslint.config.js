@@ -33,4 +33,45 @@ export default tseslint.config(
     files: ['**/*.test.{ts,tsx}', 'src/test/**'],
     rules: { '@typescript-eslint/no-explicit-any': 'off', 'no-console': 'off' },
   },
+  {
+    // Design-system guards (P1-T10, warn-first rollout → promote to error later).
+    files: ['src/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: 'Literal[value=/text-\\[\\d/]',
+          message: 'Arbitrary font sizes are banned — use the type scale (text-2xs…text-4xl). [P1-T4]',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/text-\\[\\d/]',
+          message: 'Arbitrary font sizes are banned — use the type scale (text-2xs…text-4xl). [P1-T4]',
+        },
+        {
+          selector: 'Literal[value=/\\[(#111827|#0e8b8d|#18d8db)/i]',
+          message: 'Off-brand hex is banned — use semantic tokens (ink / brand / accent). [P1-T3]',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/\\[(#111827|#0e8b8d|#18d8db)/i]',
+          message: 'Off-brand hex is banned — use semantic tokens (ink / brand / accent). [P1-T3]',
+        },
+        {
+          selector: 'Literal[value=/z-\\[(?!1\\]|5\\]|1000\\])\\d/]',
+          message: 'Ad-hoc z-index is banned — use the named scale (z-fab…z-toast). Local stacking: z-0/10/20/30. [P1-T7]',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/z-\\[(?!1\\]|5\\]|1000\\])\\d/]',
+          message: 'Ad-hoc z-index is banned — use the named scale (z-fab…z-toast). Local stacking: z-0/10/20/30. [P1-T7]',
+        },
+        {
+          selector: 'Literal[value=/shadow-(sm|md|lg|xl|2xl)/]',
+          message: 'Default shadows are banned — use the soft elevation scale (shadow-soft / -md / -lg / -up). [P1-T5]',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/shadow-(sm|md|lg|xl|2xl)/]',
+          message: 'Default shadows are banned — use the soft elevation scale (shadow-soft / -md / -lg / -up). [P1-T5]',
+        },
+      ],
+    },
+  },
 );

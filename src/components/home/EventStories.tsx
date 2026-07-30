@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { format, parseISO } from "date-fns";
-import { el as elLocale } from "date-fns/locale";
+import { el as elLocale, enUS as enLocale } from "date-fns/locale";
 import { Crown, Flame } from "lucide-react";
 import type { Event } from "../../types";
 import { useLanguage } from "../../lib/i18n";
@@ -30,7 +30,7 @@ interface EventStoriesProps {
  * events seeking a host get a crown badge; trending events get a flame.
  */
 export function EventStories({ events }: EventStoriesProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const groups = useStore((s) => s.groups);
   const savedEvents = useStore((s) => s.savedEvents) || [];
   const tok = useThemeStyles();
@@ -44,7 +44,7 @@ export function EventStories({ events }: EventStoriesProps) {
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <h2 className={`text-[11.6px] font-bold uppercase tracking-wide ${h.sectionLabel}`}>
+        <h2 className={`text-xs font-bold uppercase tracking-wide ${h.sectionLabel}`}>
           {t("Εκδηλώσεις σε στιγμιότυπα", "Events in stories")}
         </h2>
         <span className={`text-xs font-semibold ${h.labelMuted}`}>
@@ -65,7 +65,7 @@ export function EventStories({ events }: EventStoriesProps) {
           try {
             const d = parseISO(e.date);
             day = format(d, "d");
-            mon = format(d, "MMM", { locale: elLocale }).toUpperCase();
+            mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale }).toUpperCase();
           } catch {
             /* keep empty on invalid date */
           }
@@ -79,11 +79,11 @@ export function EventStories({ events }: EventStoriesProps) {
             >
               <div
                 className={cn(
-                  "p-[2.5px] rounded-[20px] bg-gradient-to-tr transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-95",
+                  "p-[2.5px] rounded-2xl bg-gradient-to-tr transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-95",
                   seen ? "from-gray-300 to-gray-300" : activeRing,
                 )}
               >
-                <div className="relative w-full h-[150px] rounded-[18px] overflow-hidden bg-gray-200">
+                <div className="relative w-full h-[150px] rounded-2xl overflow-hidden bg-gray-200">
                   {e.imageUrl ? (
                     <img
                       src={e.imageUrl}
@@ -98,7 +98,7 @@ export function EventStories({ events }: EventStoriesProps) {
 
                   {/* date chip */}
                   <div className="absolute top-1.5 left-1.5 flex flex-col items-center bg-white/95 rounded-lg px-1.5 py-0.5 leading-none shadow-soft">
-                    <span className="text-[8.5px] font-extrabold uppercase text-[#0E8B8D] leading-none">
+                    <span className="text-2xs font-extrabold uppercase text-brand leading-none">
                       {mon}
                     </span>
                     <span className="text-sm font-black text-gray-900 leading-none">
@@ -117,7 +117,7 @@ export function EventStories({ events }: EventStoriesProps) {
                     </div>
                   ) : null}
 
-                  <p className="absolute bottom-1.5 left-1.5 right-1.5 text-white text-[10.5px] font-bold leading-tight line-clamp-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  <p className="absolute bottom-1.5 left-1.5 right-1.5 text-white text-2xs font-bold leading-tight line-clamp-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                     {e.title}
                   </p>
                 </div>
