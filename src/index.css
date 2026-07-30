@@ -80,6 +80,10 @@
   --color-accent-strong: #0b6d6f;
   --color-accent-soft: #ecfeff;
   --color-accent-fg: #ffffff;
+  /* Hero surface tokens: classic identity = dark slate hero (όχι accent gradient) */
+  --color-hero-from: #111827;
+  --color-hero-to: #1f2937;
+  --color-hero-fg: #ffffff;
 }
 
 /* ── Per-theme semantic token remapping ── */
@@ -93,6 +97,8 @@
   --color-accent: #c026d3;
   --color-accent-strong: #a21caf;
   --color-accent-soft: #FDF2FA;
+  --color-hero-from: #c026d3;
+  --color-hero-to: #a21caf;
 }
 [data-theme="bento"] {
   --color-surface: #F5F3FF;
@@ -100,6 +106,8 @@
   --color-accent: #4f46e5;
   --color-accent-strong: #4338ca;
   --color-accent-soft: #eef2ff;
+  --color-hero-from: #4f46e5;
+  --color-hero-to: #4338ca;
 }
 [data-theme="neon"] {
   --color-surface: #ECFDF5;
@@ -107,6 +115,8 @@
   --color-accent: #059669;
   --color-accent-strong: #047857;
   --color-accent-soft: #ecfdf5;
+  --color-hero-from: #059669;
+  --color-hero-to: #047857;
 }
 [data-theme="vibrant-dark"],
 [data-theme="bento-dark"],
@@ -122,6 +132,10 @@
   --color-brand-soft: rgb(22 78 99 / 0.2);
   --color-brand-fg: #083344;
   --color-accent-fg: #ffffff;
+  /* Dark hero fallback: ουδέτερο dark slate (τα themes το παρακάμπτουν) */
+  --color-hero-from: #1a1e24;
+  --color-hero-to: #111827;
+  --color-hero-fg: #ffffff;
 }
 [data-theme="vibrant-dark"] {
   /* V2-T2: mauve-tinted dark neutrals */
@@ -136,18 +150,27 @@
   --color-accent-strong: #E879F9;
   --color-accent-soft: #3D1A3A;
   --color-accent-fg: #2A0A2E;
+  /* Deep magenta hero: anti-glow, AA-safe (≥6.3:1 με λευκό) */
+  --color-hero-from: #a21caf;
+  --color-hero-to: #86198f;
 }
 [data-theme="bento-dark"] {
   --color-surface: #131318;
   --color-accent: #818cf8;
   --color-accent-strong: #a5b4fc;
   --color-accent-soft: rgb(49 46 129 / 0.2);
+  /* Deep indigo hero */
+  --color-hero-from: #4338ca;
+  --color-hero-to: #3730a3;
 }
 [data-theme="neon-dark"] {
   --color-surface: #101e17;
   --color-accent: #34d399;
   --color-accent-strong: #6ee7b7;
   --color-accent-soft: rgb(6 78 59 / 0.2);
+  /* Deep emerald hero: AA-safe (5.0–6.9:1 με λευκό), όχι φωτεινό */
+  --color-hero-from: #047857;
+  --color-hero-to: #065f46;
 }
 [data-theme="activebuddies"] {
   --color-ink: hsl(220 14% 12%);
@@ -164,6 +187,8 @@
   --color-accent-strong: #000000;
   --color-accent-soft: hsl(220 14% 96%);
   --color-accent-fg: #ffffff;
+  --color-hero-from: #12161c;
+  --color-hero-to: #1c2129;
   --shadow-soft: 0 1px 3px -1px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --shadow-soft-md: 0 4px 12px -3px rgba(0,0,0,0.09), 0 2px 5px -2px rgba(0,0,0,0.05);
   --shadow-soft-lg: 0 8px 20px -4px rgba(0,0,0,0.10), 0 3px 8px -3px rgba(0,0,0,0.06);
@@ -183,6 +208,9 @@
   --color-accent-strong: #ffffff;
   --color-accent-soft: hsl(220 16% 18%);
   --color-accent-fg: hsl(220 14% 12%);
+  --color-hero-from: #1a1e24;
+  --color-hero-to: #12161c;
+  --color-hero-fg: #ffffff;
 }
 
 body {
