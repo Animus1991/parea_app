@@ -5,7 +5,7 @@ import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
   Grid, TrendingUp, Bookmark, History, Flag,
   Users, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare,
-  Trophy, Zap, Sparkles
+  Trophy, Zap, Sparkles, ChevronsLeft, ChevronsRight
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
@@ -66,7 +66,7 @@ function NakamasLogo({ className, compact = false }: { className?: string; compa
         </svg>
         <span className="relative z-0 leading-none">N</span>
       </div>
-      <span className={cn("leading-none", compact && "hidden lg:inline")}>akamas</span>
+      <span className={cn("leading-none", compact && "hidden")}>akamas</span>
     </div>
   );
 }
@@ -80,18 +80,24 @@ interface NavItemProps {
   label: string;
   disabled?: boolean;
   compact?: boolean;
+  /** Icon-only rail σε όλα τα widths (collapsed sidebar). */
+  rail?: boolean;
 }
 
-function NavItem({ to, icon: Icon, label, disabled = false, compact = false }: NavItemProps) {
+function NavItem({ to, icon: Icon, label, disabled = false, compact = false, rail = false }: NavItemProps) {
   const { t } = useLanguage();
   const tok = useThemeStyles();
-  const containerClass = compact
-    ? 'justify-center px-0 py-3 lg:justify-start lg:px-3 lg:py-2'
-    : 'justify-start px-3 py-2';
-  const iconClass = compact
-    ? 'h-[22px] w-[22px] lg:h-4 lg:w-4 shrink-0'
-    : 'h-4 w-4 shrink-0';
-  const textClass = compact ? 'hidden lg:block' : 'block';
+  const containerClass = rail
+    ? 'justify-center px-0 py-3'
+    : compact
+      ? 'justify-center px-0 py-3 lg:justify-start lg:px-3 lg:py-2'
+      : 'justify-start px-3 py-2';
+  const iconClass = rail
+    ? 'h-[22px] w-[22px] shrink-0'
+    : compact
+      ? 'h-[22px] w-[22px] lg:h-4 lg:w-4 shrink-0'
+      : 'h-4 w-4 shrink-0';
+  const textClass = rail ? 'hidden' : compact ? 'hidden lg:block' : 'block';
 
   if (disabled) {
     return (
@@ -131,20 +137,21 @@ interface NavSectionProps {
   title: string;
   children: ReactNode;
   compact?: boolean;
+  rail?: boolean;
 }
 
-function NavSection({ title, children, compact = false }: NavSectionProps) {
+function NavSection({ title, children, compact = false, rail = false }: NavSectionProps) {
   const theme = useStore((state) => state.theme);
   const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark' || theme === 'activebuddies-dark';
   const isAB = theme === 'activebuddies' || theme === 'activebuddies-dark';
   return (
     <div className="mb-2 lg:mb-6">
-      {compact && <div className={cn("block lg:hidden h-px my-4 mx-4", isDark ? "bg-gray-700" : "bg-gray-200")} />}
+      {(compact || rail) && <div className={cn("h-px my-4 mx-4", rail ? "block" : "block lg:hidden", isDark ? "bg-gray-700" : "bg-gray-200")} />}
       <h3
         className={cn(
           'px-3 text-sm font-bold tracking-wide mb-2',
           isDark ? 'text-gray-400' : isAB ? 'text-[hsl(220_11%_34%)]' : 'text-[#6B7280]',
-          compact ? 'hidden lg:block' : 'block'
+          rail ? 'hidden' : compact ? 'hidden lg:block' : 'block'
         )}
       >
         {title}
@@ -157,50 +164,50 @@ function NavSection({ title, children, compact = false }: NavSectionProps) {
 // ─────────────────────────────────────────────
 // NavLinks
 // ─────────────────────────────────────────────
-function NavLinks({ compact = false }: { compact?: boolean }) {
+function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?: boolean }) {
   const { t } = useLanguage();
   return (
     <>
-      <NavSection title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact}>
-        <NavItem to="/" icon={Compass} label={t('Ανακάλυψη Εκδηλώσεων', 'Discover Events')} compact={compact} />
-        <NavItem to="/categories" icon={Grid} label={t('Κατηγορίες', 'Categories')} compact={compact} />
-        <NavItem to="/nearby" icon={MapPin} label={t('Τοπικές Ομάδες', 'Local Groups')} compact={compact} />
+      <NavSection title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
+        <NavItem to="/" icon={Compass} label={t('Ανακάλυψη Εκδηλώσεων', 'Discover Events')} compact={compact} rail={rail} />
+        <NavItem to="/categories" icon={Grid} label={t('Κατηγορίες', 'Categories')} compact={compact} rail={rail} />
+        <NavItem to="/nearby" icon={MapPin} label={t('Τοπικές Ομάδες', 'Local Groups')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection title={t('Η Εμπειρία μου', 'My Experience')} compact={compact}>
-        <NavItem to="/agenda" icon={Calendar} label={t('Το Ημερολόγιό μου', 'My Calendar')} compact={compact} />
-        <NavItem to="/plans" icon={CalendarCheck} label={t('Τα Σχέδιά μου', 'My Plans')} compact={compact} />
-        <NavItem to="/buddy-seek" icon={Users} label={t('Σχέδια που σχηματίζονται', 'Plans forming')} compact={compact} />
-        <NavItem to="/saved" icon={Bookmark} label={t('Αποθηκευμένες', 'Saved')} compact={compact} />
-        <NavItem to="/history" icon={History} label={t('Ιστορικό', 'History')} compact={compact} />
+      <NavSection title={t('Η Εμπειρία μου', 'My Experience')} compact={compact} rail={rail}>
+        <NavItem to="/agenda" icon={Calendar} label={t('Το Ημερολόγιό μου', 'My Calendar')} compact={compact} rail={rail} />
+        <NavItem to="/plans" icon={CalendarCheck} label={t('Τα Σχέδιά μου', 'My Plans')} compact={compact} rail={rail} />
+        <NavItem to="/buddy-seek" icon={Users} label={t('Σχέδια που σχηματίζονται', 'Plans forming')} compact={compact} rail={rail} />
+        <NavItem to="/saved" icon={Bookmark} label={t('Αποθηκευμένες', 'Saved')} compact={compact} rail={rail} />
+        <NavItem to="/history" icon={History} label={t('Ιστορικό', 'History')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection title={t('Κοινότητα', 'Community')} compact={compact}>
-        <NavItem to="/connections" icon={Users} label={t('Οι Nakamas μου', 'My Nakamas')} compact={compact} />
-        <NavItem to="/chats" icon={MessageSquare} label={t('Ομαδικές Συνομιλίες', 'Group Chats')} compact={compact} />
-        <NavItem to="/leaderboard" icon={Trophy} label={t('Κατάταξη', 'Leaderboard')} compact={compact} />
-        <NavItem to="/challenges" icon={Zap} label={t('Προκλήσεις', 'Challenges')} compact={compact} />
+      <NavSection title={t('Κοινότητα', 'Community')} compact={compact} rail={rail}>
+        <NavItem to="/connections" icon={Users} label={t('Οι Nakamas μου', 'My Nakamas')} compact={compact} rail={rail} />
+        <NavItem to="/chats" icon={MessageSquare} label={t('Ομαδικές Συνομιλίες', 'Group Chats')} compact={compact} rail={rail} />
+        <NavItem to="/leaderboard" icon={Trophy} label={t('Κατάταξη', 'Leaderboard')} compact={compact} rail={rail} />
+        <NavItem to="/challenges" icon={Zap} label={t('Προκλήσεις', 'Challenges')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection title={t('Διοργάνωση', 'Host')} compact={compact}>
-        <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας Διοργανωτή', 'Organizer Dashboard')} compact={compact} />
-        <NavItem to="/create" icon={PlusSquare} label={t('Δημιουργία Εκδήλωσης', 'Create Event')} compact={compact} />
-        <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & Κέρδη', 'Wallet & Earnings')} compact={compact} />
+      <NavSection title={t('Διοργάνωση', 'Host')} compact={compact} rail={rail}>
+        <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας Διοργανωτή', 'Organizer Dashboard')} compact={compact} rail={rail} />
+        <NavItem to="/create" icon={PlusSquare} label={t('Δημιουργία Εκδήλωσης', 'Create Event')} compact={compact} rail={rail} />
+        <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & Κέρδη', 'Wallet & Earnings')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection title={t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety')} compact={compact}>
-        <NavItem to="/verification" icon={BadgeCheck} label={t('Επαλήθευση Ταυτότητας', 'Identity Verification')} compact={compact} />
-        <NavItem to="/trust" icon={ShieldCheck} label={t('Κέντρο Εμπιστοσύνης', 'Trust Center')} compact={compact} />
-        <NavItem to="/report" icon={Flag} label={t('Αναφορά Προβλήματος', 'Report Issue')} compact={compact} />
+      <NavSection title={t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety')} compact={compact} rail={rail}>
+        <NavItem to="/verification" icon={BadgeCheck} label={t('Επαλήθευση Ταυτότητας', 'Identity Verification')} compact={compact} rail={rail} />
+        <NavItem to="/trust" icon={ShieldCheck} label={t('Κέντρο Εμπιστοσύνης', 'Trust Center')} compact={compact} rail={rail} />
+        <NavItem to="/report" icon={Flag} label={t('Αναφορά Προβλήματος', 'Report Issue')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection title={t('Λογαριασμός & Ρυθμίσεις', 'Account & Settings')} compact={compact}>
-        <NavItem to="/profile" icon={User} label={t('Το Προφίλ μου', 'My Profile')} compact={compact} />
-        <NavItem to="/notifications" icon={Bell} label={t('Ειδοποιήσεις', 'Notifications')} compact={compact} />
-        <NavItem to="/settings" icon={Settings} label={t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')} compact={compact} />
-        <NavItem to="/help" icon={HelpCircle} label={t('Κέντρο Βοήθειας', 'Help Center')} compact={compact} />
-        <NavItem to="/admin" icon={Terminal} label={t('Διαχείριση & Έλεγχος', 'Admin & Moderation')} compact={compact} />
-        <NavItem to="/onboarding" icon={Sparkles} label={t('Οδηγός Εισαγωγής', 'Onboarding')} compact={compact} />
+      <NavSection title={t('Λογαριασμός & Ρυθμίσεις', 'Account & Settings')} compact={compact} rail={rail}>
+        <NavItem to="/profile" icon={User} label={t('Το Προφίλ μου', 'My Profile')} compact={compact} rail={rail} />
+        <NavItem to="/notifications" icon={Bell} label={t('Ειδοποιήσεις', 'Notifications')} compact={compact} rail={rail} />
+        <NavItem to="/settings" icon={Settings} label={t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')} compact={compact} rail={rail} />
+        <NavItem to="/help" icon={HelpCircle} label={t('Κέντρο Βοήθειας', 'Help Center')} compact={compact} rail={rail} />
+        <NavItem to="/admin" icon={Terminal} label={t('Διαχείριση & Έλεγχος', 'Admin & Moderation')} compact={compact} rail={rail} />
+        <NavItem to="/onboarding" icon={Sparkles} label={t('Οδηγός Εισαγωγής', 'Onboarding')} compact={compact} rail={rail} />
       </NavSection>
     </>
   );
@@ -211,13 +218,29 @@ function NavLinks({ compact = false }: { compact?: boolean }) {
 // ─────────────────────────────────────────────
 export function SideNav() {
   const tok = useThemeStyles();
+  const { t } = useLanguage();
+  const collapsed = useStore((s) => s.sidebarCollapsed);
+  const setCollapsed = useStore((s) => s.setSidebarCollapsed);
   return (
-    <aside className={cn("h-full flex-col shrink-0 hidden md:flex w-[88px] lg:w-64 transition-all duration-300 z-sidenav border-r", tok.sideNav)}>
-      <div className={cn("h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b shrink-0", tok.sideNavBorder)}>
-        <NakamasLogo className="text-xl lg:text-3xl" />
+    <aside className={cn("h-full flex-col shrink-0 hidden md:flex transition-all duration-300 z-sidenav border-r", collapsed ? "w-[88px]" : "w-[88px] lg:w-64", tok.sideNav)}>
+      <div className={cn("h-16 flex items-center border-b shrink-0", collapsed ? "justify-center" : "justify-center lg:justify-start lg:px-6", tok.sideNavBorder)}>
+        <NakamasLogo compact={collapsed} className={collapsed ? "text-xl" : "text-xl lg:text-3xl"} />
       </div>
       <div className="flex-1 overflow-y-auto py-4 lg:py-6 px-2 lg:px-3">
-        <NavLinks compact />
+        <NavLinks compact={!collapsed} rail={collapsed} />
+      </div>
+      {/* Collapse toggle — ορατό μόνο σε lg+ (σε md το sidebar είναι ήδη rail) */}
+      <div className={cn("hidden lg:flex border-t p-3 shrink-0", collapsed ? "justify-center" : "justify-end", tok.sideNavBorder)}>
+        <button
+          type="button"
+          onClick={() => setCollapsed(!collapsed)}
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? t('Επέκταση πλοήγησης', 'Expand sidebar') : t('Σύμπτυξη πλοήγησης', 'Collapse sidebar')}
+          title={collapsed ? t('Επέκταση πλοήγησης', 'Expand sidebar') : t('Σύμπτυξη πλοήγησης', 'Collapse sidebar')}
+          className={cn("p-2 rounded-lg transition-colors min-h-[39px] min-w-[39px] flex items-center justify-center", tok.chipButton)}
+        >
+          {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
+        </button>
       </div>
     </aside>
   );

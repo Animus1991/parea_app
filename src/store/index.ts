@@ -208,8 +208,10 @@ interface AppState {
   dismissedCompanyRequestIds: string[];
   plansFormingSheetOpen: boolean;
   plansFormingSidebarOpen: boolean;
+  sidebarCollapsed: boolean;
   setPlansFormingSheetOpen: (open: boolean) => void;
   setPlansFormingSidebarOpen: (open: boolean) => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
   sendConnectionRequest: (toUserId: string, message?: string) => void;
   acceptConnectionRequest: (requestId: string) => void;
   declineConnectionRequest: (requestId: string) => void;
@@ -300,8 +302,10 @@ export const useStore = create<AppState>()(
   dismissedCompanyRequestIds: [],
   plansFormingSheetOpen: false,
   plansFormingSidebarOpen: true,
+  sidebarCollapsed: false,
   setPlansFormingSheetOpen: (open) => set({ plansFormingSheetOpen: open }),
   setPlansFormingSidebarOpen: (open) => set({ plansFormingSidebarOpen: open }),
+  setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
 
   completeOnboarding: () => set({ onboardingCompleted: true }),
 
@@ -1325,6 +1329,7 @@ export const useStore = create<AppState>()(
         savedCompanyRequestIds: state.savedCompanyRequestIds,
         dismissedCompanyRequestIds: state.dismissedCompanyRequestIds,
         plansFormingSidebarOpen: state.plansFormingSidebarOpen,
+        sidebarCollapsed: state.sidebarCollapsed,
         // Φ16.1 — survive refresh: created events, group membership, profile
         // edits, notifications, connection requests, merges, reports, settings.
         events: state.events,
