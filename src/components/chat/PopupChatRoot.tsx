@@ -35,7 +35,7 @@ export function PopupChatRoot() {
   return (
     <>
       {minimized.length > 0 && (
-        <div className="fixed z-chat flex flex-col items-end gap-2 right-4 bottom-[9.5rem] md:right-6 md:bottom-[5.5rem]">
+        <div className="fixed z-chat flex flex-col items-end gap-2 right-4 bottom-fab-zone md:right-6 md:bottom-20">
           {minimized.map((c) => (
             <button
               key={c.id}

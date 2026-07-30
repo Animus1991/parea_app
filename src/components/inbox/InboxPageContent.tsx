@@ -4,7 +4,6 @@ import {
   Search,
   MessageSquare,
   Bell,
-  Pin,
   CircleDashed,
 } from 'lucide-react';
 import { useStore } from '../../store';
@@ -14,8 +13,22 @@ import { useChatStore } from '../../store/chatStore';
 import { cn } from '../../lib/utils';
 import { INBOX_TYPO } from '../../lib/typographyTokens';
 import { isBefore, parseISO } from 'date-fns';
+import type { Conversation } from '../../types/chat';
 
 type InboxTab = 'messages' | 'notifications';
+
+type InboxRow = {
+  key: string;
+  title: string;
+  imageUrl?: string;
+  previewEl: string;
+  previewEn: string;
+  unread: number;
+  members: number;
+  isPast: boolean;
+  groupId?: string;
+  conversationId: string;
+};
 
 export default function InboxPageContent() {
   const { t } = useLanguage();
@@ -26,42 +39,94 @@ export default function InboxPageContent() {
   const currentUser = useStore((s) => s.currentUser);
   const notifications = useStore((s) => s.notifications);
   const conversations = useChatStore((s) => s.conversations);
+  const openConversation = useChatStore((s) => s.openConversation);
+  const setInboxOpen = useChatStore((s) => s.setInboxOpen);
 
   const [activeTab, setActiveTab] = useState<InboxTab>('messages');
   const [search, setSearch] = useState('');
   const [chatFilter, setChatFilter] = useState<'active' | 'past'>('active');
 
-  const now = new Date();
-
-  const myGroups = useMemo(() => {
+  /** Page density of the same chatStore truth the popup inbox uses. */
+  const inboxRows = useMemo((): InboxRow[] => {
     if (!currentUser) return [];
-    return groups
-      .filter((g) => g.members.includes(currentUser.id))
+    const now = new Date();
+
+    const fromConversations: InboxRow[] = conversations
+      .filter(
+        (c) =>
+          c.status !== 'archived' &&
+          (c.participantUserIds.includes(currentUser.id) || c.type === 'support'),
+      )
+      .map((c: Conversation) => {
+        const group = c.groupId ? groups.find((g) => g.id === c.groupId) : undefined;
+        const event = c.eventId
+          ? events.find((e) => e.id === c.eventId)
+          : group
+            ? events.find((e) => e.id === group.eventId)
+            : undefined;
+        const eventDate = event?.date ? parseISO(event.date) : null;
+        const isPast =
+          c.status === 'expired' || (eventDate ? isBefore(eventDate, now) : false);
+
+        return {
+          key: c.id,
+          title: c.title || event?.title || t('Συνομιλία', 'Conversation'),
+          imageUrl: event?.imageUrl,
+          previewEl: c.lastMessagePreview.el,
+          previewEn: c.lastMessagePreview.en,
+          unread: c.unreadCount,
+          members: group?.members.length ?? c.participantUserIds.length,
+          isPast,
+          groupId: c.groupId,
+          conversationId: c.id,
+        };
+      });
+
+    // Legacy groups without a chatStore conversation yet (pre-bridge memberships).
+    const coveredGroupIds = new Set(
+      fromConversations.map((r) => r.groupId).filter(Boolean) as string[],
+    );
+    const legacyGroups: InboxRow[] = groups
+      .filter((g) => g.members.includes(currentUser.id) && !coveredGroupIds.has(g.id))
       .map((g) => {
         const event = events.find((e) => e.id === g.eventId);
         const eventDate = event?.date ? parseISO(event.date) : null;
         const isPast = eventDate ? isBefore(eventDate, now) : false;
         return {
-          group: g,
-          event,
+          key: `group_${g.id}`,
           title: event?.title ?? t('Nakamas Εκδήλωσης', 'Event Nakamas'),
           imageUrl: event?.imageUrl,
-          isPast,
+          previewEl: 'Πατήστε για συνομιλία',
+          previewEn: 'Tap to open chat',
+          unread: 0,
           members: g.members.length,
-          unread: conversations.find((c) => c.groupId === g.id)?.unreadCount ?? 0,
-          isPinned: false,
-          isTyping: false,
+          isPast,
+          groupId: g.id,
+          conversationId: `conv_${g.id}`,
         };
       });
-  }, [groups, events, currentUser, now, t, conversations]);
+
+    return [...fromConversations, ...legacyGroups].sort(
+      (a, b) => Number(b.unread > 0) - Number(a.unread > 0),
+    );
+  }, [conversations, groups, events, currentUser, t]);
 
   const filteredChats = useMemo(() => {
-    return myGroups.filter((c) => {
+    return inboxRows.filter((c) => {
       if (c.isPast !== (chatFilter === 'past')) return false;
       if (!search.trim()) return true;
       return c.title.toLowerCase().includes(search.toLowerCase());
     });
-  }, [myGroups, chatFilter, search]);
+  }, [inboxRows, chatFilter, search]);
+
+  const openRow = (row: InboxRow) => {
+    if (row.groupId) {
+      navigate(`/chat/${row.groupId}`);
+      return;
+    }
+    setInboxOpen(false);
+    openConversation(row.conversationId);
+  };
 
   const unreadNotifications = notifications.filter((n) => !n.read).length;
 
@@ -177,9 +242,9 @@ export default function InboxPageContent() {
               <div className={cn('divide-y', p.isDark ? 'divide-white/5' : 'divide-gray-100')}>
                 {filteredChats.map((chat) => (
                   <button
-                    key={chat.group.id}
+                    key={chat.key}
                     type="button"
-                    onClick={() => navigate(`/chat/${chat.group.id}`)}
+                    onClick={() => openRow(chat)}
                     className={cn(
                       'w-full flex items-center gap-3 p-4 text-left transition-colors',
                       p.isDark ? 'hover:bg-white/5' : 'hover:bg-gray-50',
@@ -204,9 +269,6 @@ export default function InboxPageContent() {
                           {chat.title.charAt(0)}
                         </div>
                       )}
-                      {chat.isPinned && (
-                        <Pin className="absolute -top-1 -right-1 w-3.5 h-3.5 text-cyan-600 fill-cyan-600" />
-                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
@@ -223,15 +285,9 @@ export default function InboxPageContent() {
                           {chat.members} {t('μέλη', 'members')}
                         </span>
                       </div>
-                      {chat.isTyping ? (
-                        <p className={cn('text-cyan-600 font-medium mt-0.5', INBOX_TYPO.rowPreview)}>
-                          {t('κάποιος γράφει...', 'someone is typing...')}
-                        </p>
-                      ) : (
-                        <p className={cn(INBOX_TYPO.rowPreview, 'mt-0.5', p.sub)}>
-                          {t('Πατήστε για συνομιλία', 'Tap to open chat')}
-                        </p>
-                      )}
+                      <p className={cn(INBOX_TYPO.rowPreview, 'mt-0.5', p.sub)}>
+                        {t(chat.previewEl, chat.previewEn)}
+                      </p>
                     </div>
                     {chat.unread > 0 && (
                       <span className={cn('bg-brand text-white min-w-[20px] h-5 flex items-center justify-center rounded-full shrink-0 shadow-soft', INBOX_TYPO.unread)}>
