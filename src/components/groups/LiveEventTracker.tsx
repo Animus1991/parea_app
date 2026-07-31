@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { LeafletMapHost, LeafletMapReady } from "../common/LeafletMapHost";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useStore } from "../../store";
@@ -250,57 +251,59 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
           </div>
         ) : null}
 
-        <MapContainer
+        <LeafletMapHost
           center={[37.9753, 23.7361]}
           zoom={15}
           style={{ height: "100%", width: "100%", zIndex: 0 }}
           zoomControl={false}
         >
-          <TileLayer
-            attribution="&copy; OpenStreetMap"
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {activeLocations.length > 0 && (
-            <MapBoundsController markers={activeLocations} />
-          )}
+          <LeafletMapReady>
+            <TileLayer
+              attribution="&copy; OpenStreetMap"
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {activeLocations.length > 0 && (
+              <MapBoundsController markers={activeLocations} />
+            )}
 
-          {activeLocations.map((loc) => (
-            <Marker key={loc.userId} position={[loc.lat, loc.lng]}>
-              <Popup className="custom-popup">
-                <div className="flex items-center gap-2 min-w-[120px]">
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-indigo-100 shrink-0">
-                    {loc.photoUrl ? (
-                      <img
-                        src={loc.photoUrl}
-                        alt={loc.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-indigo-600 font-bold text-xs">
-                        {loc.name.substring(0, 2)}
-                      </div>
-                    )}
+            {activeLocations.map((loc) => (
+              <Marker key={loc.userId} position={[loc.lat, loc.lng]}>
+                <Popup className="custom-popup">
+                  <div className="flex items-center gap-2 min-w-[120px]">
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-indigo-100 shrink-0">
+                      {loc.photoUrl ? (
+                        <img
+                          src={loc.photoUrl}
+                          alt={loc.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-indigo-600 font-bold text-xs">
+                          {loc.name.substring(0, 2)}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-ink leading-none mb-1">
+                        {loc.name} {loc.isMe ? "(Εσείς)" : ""}
+                      </p>
+                      <p className="text-2xs text-emerald-600 font-bold tracking-wide flex items-center gap-1">
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${loc.sos ? "bg-red-500" : loc.isOutOfBounds ? "bg-amber-500" : "bg-emerald-500"} animate-pulse`}
+                        ></span>
+                        {loc.sos
+                          ? t("SOS / HELP", "SOS / HELP")
+                          : loc.isOutOfBounds
+                            ? t("ΕΚΤΟΣ ΟΡΙΩΝ", "OUT OF BOUNDS")
+                            : "Live"}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-ink leading-none mb-1">
-                      {loc.name} {loc.isMe ? "(Εσείς)" : ""}
-                    </p>
-                    <p className="text-2xs text-emerald-600 font-bold tracking-wide flex items-center gap-1">
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${loc.sos ? "bg-red-500" : loc.isOutOfBounds ? "bg-amber-500" : "bg-emerald-500"} animate-pulse`}
-                      ></span>
-                      {loc.sos
-                        ? t("SOS / HELP", "SOS / HELP")
-                        : loc.isOutOfBounds
-                          ? t("ΕΚΤΟΣ ΟΡΙΩΝ", "OUT OF BOUNDS")
-                          : "Live"}
-                    </p>
-                  </div>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+                </Popup>
+              </Marker>
+            ))}
+          </LeafletMapReady>
+        </LeafletMapHost>
 
         {isTrackingActive && (isSharing || isHost) && (
           <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end pointer-events-none z-[1000]">

@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { isToday, parseISO } from "date-fns";
 import { useStore } from "../../store";
 import { Badge } from "../common/Badge";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { ErrorBoundary } from "../common/ErrorBoundary";
 import { EmptyState } from "../common/EmptyState";
 import { EventCardSkeleton } from "../common/Skeleton";
 import { ResourceStateGate } from "../common/ResourceStateGate";
+import { LeafletMapHost, LeafletMapReady } from "../common/LeafletMapHost";
 import { useEventsResource } from "../../hooks/useEventsQuery";
 import { useLanguage } from "../../lib/i18n";
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -69,6 +70,7 @@ export default function NearbyGroupsPageContent() {
   const [mapFilter, setMapFilter] = useState<"All" | "Available" | "Full" | "My Events">("All");
   const [mapLayer, setMapLayer] = useState<"standard" | "satellite">("standard");
   const [isMapInView, setIsMapInView] = useState(false);
+  const [mapEpoch, setMapEpoch] = useState(0);
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -192,15 +194,24 @@ export default function NearbyGroupsPageContent() {
     return true;
   });
 
-  const getMarkerColor = (category: string) => {
-    switch (category) {
-      case "Stand-up": return "#8b5cf6"; // purple-500
-      case "Board games": return "#10b981"; // emerald-500
-      case "Hiking": return "#f97316"; // orange-500
-      case "Nearby escapes": return "#0ea5e9"; // sky-500
-      default: return "#ec4899"; // pink-500
-    }
-  };
+  const tile =
+    mapLayer === "satellite"
+      ? {
+          url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          attribution:
+            "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+        }
+      : p.isDark
+        ? {
+            url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          }
+        : {
+            url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          };
 
   return (
     <div
@@ -210,64 +221,88 @@ export default function NearbyGroupsPageContent() {
       {/* Map Area */}
       <div className="absolute inset-0 z-0 bg-[#e5e3df] dark:bg-gray-900 map-container" id="map-container" ref={mapContainerRef}>
         <ErrorBoundary
+          key={mapEpoch}
           fallback={
             <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] dark:bg-gray-900 p-8 text-center">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-soft max-w-sm border border-red-100 dark:border-red-900">
                 <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">{t('Σφάλμα χάρτη', 'Map Error')}</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400">{t('Πρόβλημα κατά τη φόρτωση του χάρτη.', 'There was a problem loading the map.')}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">
+                  {t('Πρόβλημα κατά τη φόρτωση του χάρτη.', 'There was a problem loading the map.')}
+                </p>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => setMapEpoch((n) => n + 1)}
+                >
+                  {t('Δοκιμή ξανά', 'Try again')}
+                </Button>
               </div>
             </div>
           }
         >
-          <MapContainer center={[mapCenter.lat, mapCenter.lng]} zoom={13} zoomControl={false} style={{ height: "100%", width: "100%", zIndex: 0 }}>
-            {mapLayer === "satellite" ? (
-              <TileLayer 
-                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" 
-                attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
-              />
-            ) : p.isDark ? (
-              <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' />
-            ) : (
-              <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            )}
-            <MapController center={mapCenter} />
+          {isMapInView ? (
+            <LeafletMapHost
+              center={[mapCenter.lat, mapCenter.lng]}
+              zoom={13}
+              zoomControl={false}
+              style={{ height: "100%", width: "100%", zIndex: 0 }}
+            >
+              <LeafletMapReady>
+                <TileLayer key={tile.url} url={tile.url} attribution={tile.attribution} />
+                <MapController center={mapCenter} />
 
-            {isMapInView && filteredLocalGroups.map((group, idx) => (
-              <Marker
-                key={group.id}
-                position={[group.lat, group.lng]}
-                eventHandlers={{ 
-                  click: () => setSelectedEventId(group.id),
-                  mouseover: (e) => e.target.openPopup(),
-                }}
-              >
-                <Popup className="custom-popup">
-                  <div className="font-bold text-2xs uppercase tracking-widest text-cyan-600 dark:text-cyan-400 mb-1">
-                    {group.category}
-                  </div>
-                  <div className="max-w-[200px] cursor-pointer outline-none group" onClick={() => navigate(`/events/${group.id}`)}>
-                    <div className="overflow-hidden rounded-2xl mb-2">
-                       <GroupImage src={group.imageUrl ?? ""} alt={group.title} className="w-full h-24 object-cover transform group-hover:scale-110 transition-transform duration-500" />
-                    </div>
-                    <h3 className="font-bold text-sm text-gray-900 dark:text-white mb-1 line-clamp-1">{group.title}</h3>
-                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-3 truncate flex items-center">
-                      <MapPin className="w-3 h-3 mr-1" /> {group.locationArea}
-                    </p>
-                    <button className="w-full bg-cyan-600 text-white text-xs font-bold py-2 rounded-2xl hover:bg-cyan-700 transition-colors shadow-soft">
-                      {t('Δες Εκδήλωση', 'View Event')}
-                    </button>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
+                {filteredLocalGroups.map((group) => (
+                  <Marker
+                    key={group.id}
+                    position={[group.lat, group.lng]}
+                    eventHandlers={{
+                      click: () => setSelectedEventId(group.id),
+                      mouseover: (e) => e.target.openPopup(),
+                    }}
+                  >
+                    <Popup className="custom-popup">
+                      <div className="font-bold text-2xs uppercase tracking-widest text-cyan-600 dark:text-cyan-400 mb-1">
+                        {group.category}
+                      </div>
+                      <div
+                        className="max-w-[200px] cursor-pointer outline-none group"
+                        onClick={() => navigate(`/events/${group.id}`)}
+                      >
+                        <div className="overflow-hidden rounded-2xl mb-2">
+                          <GroupImage
+                            src={group.imageUrl ?? ""}
+                            alt={group.title}
+                            className="w-full h-24 object-cover transform group-hover:scale-110 transition-transform duration-500"
+                          />
+                        </div>
+                        <h3 className="font-bold text-sm text-gray-900 dark:text-white mb-1 line-clamp-1">
+                          {group.title}
+                        </h3>
+                        <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-3 truncate flex items-center">
+                          <MapPin className="w-3 h-3 mr-1" /> {group.locationArea}
+                        </p>
+                        <button
+                          type="button"
+                          className="w-full bg-cyan-600 text-white text-xs font-bold py-2 rounded-2xl hover:bg-cyan-700 transition-colors shadow-soft"
+                        >
+                          {t('Δες Εκδήλωση', 'View Event')}
+                        </button>
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
 
-            {isMapInView && userLocation && (
-              <Marker position={[userLocation.lat, userLocation.lng]}>
-                <Popup>{t("Η τοποθεσία σας", "Your Location")}</Popup>
-              </Marker>
-            )}
-          </MapContainer>
+                {userLocation && (
+                  <Marker position={[userLocation.lat, userLocation.lng]}>
+                    <Popup>{t("Η τοποθεσία σας", "Your Location")}</Popup>
+                  </Marker>
+                )}
+              </LeafletMapReady>
+            </LeafletMapHost>
+          ) : (
+            <div className="h-full w-full bg-[#e5e3df] dark:bg-gray-900" aria-hidden />
+          )}
         </ErrorBoundary>
 
         {/* Floating Action Button for Map Layer Toggle */}

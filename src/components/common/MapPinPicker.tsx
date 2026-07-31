@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import React from "react";
+import { TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { LeafletMapHost, LeafletMapReady } from "./LeafletMapHost";
 
 // Fix for default marker icons in leaflet with react
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -50,19 +51,21 @@ export function MapPinPicker({
       className="rounded-lg overflow-hidden border border-gray-200"
       style={{ height }}
     >
-      <MapContainer
+      <LeafletMapHost
         center={centerPosition}
         zoom={13}
         scrollWheelZoom={true}
         style={{ height: "100%", width: "100%" }}
         className="z-0"
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <LocationMarker location={location} onChange={onChange} />
-      </MapContainer>
+        <LeafletMapReady>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <LocationMarker location={location} onChange={onChange} />
+        </LeafletMapReady>
+      </LeafletMapHost>
     </div>
   );
 }

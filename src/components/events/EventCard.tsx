@@ -31,7 +31,8 @@ import { getEventGroupProgress } from "../../lib/groupUtils";
 import { GroupProgressBar } from "./GroupProgressBar";
 import { toast } from "sonner";
 import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { TileLayer, Marker } from "react-leaflet";
+import { LeafletMapHost, LeafletMapReady } from "../common/LeafletMapHost";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -271,16 +272,19 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               className={cn("h-24 w-full rounded-lg overflow-hidden border mt-1 relative z-0 pointer-events-none", isDark ? "border-gray-700/40" : "border-gray-200")}
               onClick={(e) => e.stopPropagation()}
             >
-              <MapContainer
+              <LeafletMapHost
                 center={[event.lat, event.lng]}
                 zoom={14}
                 zoomControl={false}
                 attributionControl={false}
                 style={{ height: "100%", width: "100%" }}
+                placeholder={<div className="h-full w-full bg-gray-100 dark:bg-gray-800" aria-hidden />}
               >
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <Marker position={[event.lat, event.lng]} />
-              </MapContainer>
+                <LeafletMapReady>
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <Marker position={[event.lat, event.lng]} />
+                </LeafletMapReady>
+              </LeafletMapHost>
             </div>
           ) : (
             <div className={cn("h-24 w-full rounded-lg border flex items-center justify-center mt-2", isDark ? "border-gray-700/40 bg-gray-800/30" : "border-gray-200 bg-gray-50")}>
