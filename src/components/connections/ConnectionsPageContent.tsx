@@ -418,11 +418,20 @@ export default function ConnectionsPageContent() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <button onClick={() => handleAccept(req.id, req.user.name)} className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${a.acceptBtn}`}>
-                    <Check className="w-3.5 h-3.5" /> {t('Αποδοχή', 'Accept')}
+                  <button
+                    type="button"
+                    onClick={() => handleAccept(req.id, req.user.name)}
+                    className={`flex items-center gap-1 px-3 py-2 min-h-10 rounded-lg text-xs font-bold transition-colors ${a.acceptBtn}`}
+                  >
+                    <Check className="w-3.5 h-3.5" aria-hidden /> {t('Αποδοχή', 'Accept')}
                   </button>
-                  <button onClick={() => handleDecline(req.id)} className={`p-1.5 rounded-lg transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}>
-                    <X className="w-4 h-4" />
+                  <button
+                    type="button"
+                    onClick={() => handleDecline(req.id)}
+                    aria-label={t('Απόρριψη αιτήματος', 'Decline request')}
+                    className={`p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}
+                  >
+                    <X className="w-4 h-4" aria-hidden />
                   </button>
                 </div>
               </div>

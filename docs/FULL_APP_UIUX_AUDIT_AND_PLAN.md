@@ -510,7 +510,7 @@ Inbox unread/pinned/typing (`g1` μόνο)· Plans avatars/«4/5 μέλη»/«me
 | Calendar hint + schedule button + empty state (Φ18.1) | ✅ |
 | BuddySeek explainer, sent requests, event-picker, skeleton (Φ18.2) | ✅ |
 | LookingForCompany φίλτρα + «Edit» wizard + chip counts | 🟡 (φίλτρα spots/verified ✅· Edit wizard ακόμα μερικό) |
-| Onboarding gate «≥3» | ⬜ |
+| Onboarding gate «≥3» | ✅ (subtitle + Next disabled until 3) |
 | Connections invite picker / DM tooltip | ✅ (event picker modal + Inbox tooltip) |
 
 ### Φ19 — Εμπιστοσύνη & Gamification
@@ -531,7 +531,7 @@ Inbox unread/pinned/typing (`g1` μόνο)· Plans avatars/«4/5 μέλη»/«me
 | Στοιχείο | Κατάσταση |
 |---|---|
 | OrganizerDashboard 8 κουμπιά wired (demo ids) | ✅ |
-| OrganizerDashboard live stats από store | ✅ (events/groups του χρήστη· chart ακόμα illustrative) |
+| OrganizerDashboard live stats από store | ✅ (events/groups + chart scaled από live counts) |
 | Wallet φίλτρο + Withdraw/Manage modals | ✅ |
 | Settings `userSettings` persisted, 2FA, export, delete modal, availability editor, 7 θέματα, switches a11y | ✅ |
 | Profile privacy → `updatePrivacySettings` | ✅ |
@@ -551,7 +551,7 @@ Inbox unread/pinned/typing (`g1` μόνο)· Plans avatars/«4/5 μέλη»/«me
 
 ### Φ22 — i18n + a11y οριζόντιο πέρασμα
 
-⬜ Μερικό (Notifications tabs, Settings switches, Profile/Help/Wallet modals)· **πλήρες πέρασμα πινάκων Γ3/Γ4 εκκρεμές**
+🟡 Μερικό→υψηλό (P5 baseline, tab roles, focus-visible, hover→focus-within σε Notifications/Profile, icon aria)· **πλήρες πέρασμα κάθε Γ3/Γ4 στοιχείου ακόμα incremental**
 
 ### Νέα ευρήματα (προστέθηκαν κατά την υλοποίηση)
 

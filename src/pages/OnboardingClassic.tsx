@@ -20,8 +20,8 @@ const INTERESTS = [
   { id: 'Exhibitions', gr: 'Εκθέσεις / Τέχνη', en: 'Art & Exhibitions', emoji: '🖼️' },
   { id: 'Tech Meetups', gr: 'Τεχνολογία', en: 'Tech Meetups', emoji: '💻' },
   { id: 'Nearby escapes', gr: 'Εκδρομές', en: 'Day Trips', emoji: '🚌' },
-  { id: 'Wine Tasting', gr: 'Wine Tasting', en: 'Wine Tasting', emoji: '🍷' },
-  { id: 'Escape Rooms', gr: 'Escape Rooms', en: 'Escape Rooms', emoji: '🔐' },
+  { id: 'Wine Tasting', gr: 'Γευσιγνωσία κρασιού', en: 'Wine Tasting', emoji: '🍷' },
+  { id: 'Escape Rooms', gr: 'Δωμάτια απόδρασης', en: 'Escape Rooms', emoji: '🔐' },
   { id: 'Wellness', gr: 'Ευεξία & Yoga', en: 'Wellness & Yoga', emoji: '🧘' },
   { id: 'Language exchange', gr: 'Ανταλλαγή Γλωσσών', en: 'Language Exchange', emoji: '🌐' },
   { id: 'Stand-up', gr: 'Stand-up Comedy', en: 'Stand-up Comedy', emoji: '🎤' },
@@ -202,27 +202,47 @@ export default function OnboardingClassic() {
               </div>
             )}
 
-            {/* Step 1 — Interests */}
+            {/* Step 1 — Interests (gate: ≥3, matches subtitle) */}
             {step === 1 && (
-              <div className="grid grid-cols-2 gap-2">
-                {INTERESTS.map((item) => {
-                  const sel = selectedInterests.includes(item.id);
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => toggleInterest(item.id)}
-                      className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-200 text-left ${
-                        sel
-                          ? 'bg-ink text-white border-ink'
-                          : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
-                      }`}
-                    >
-                      <span className="text-lg leading-none shrink-0">{item.emoji}</span>
-                      <span className="truncate">{t(item.gr, item.en)}</span>
-                      {sel && <CheckCircle2 className="w-3.5 h-3.5 ml-auto shrink-0 text-accent" />}
-                    </button>
-                  );
-                })}
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  {INTERESTS.map((item) => {
+                    const sel = selectedInterests.includes(item.id);
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => toggleInterest(item.id)}
+                        aria-pressed={sel}
+                        className={`flex items-center gap-2 px-3 py-2.5 min-h-10 rounded-xl text-sm font-semibold border transition-all duration-200 text-left ${
+                          sel
+                            ? 'bg-ink text-white border-ink'
+                            : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
+                        }`}
+                      >
+                        <span className="text-lg leading-none shrink-0" aria-hidden>{item.emoji}</span>
+                        <span className="truncate">{t(item.gr, item.en)}</span>
+                        {sel && <CheckCircle2 className="w-3.5 h-3.5 ml-auto shrink-0 text-accent" aria-hidden />}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p
+                  className={`text-xs font-semibold ${
+                    selectedInterests.length >= 3 ? 'text-emerald-600' : 'text-amber-600'
+                  }`}
+                  aria-live="polite"
+                >
+                  {selectedInterests.length >= 3
+                    ? t(
+                        `${selectedInterests.length} επιλεγμένα — μπορείτε να συνεχίσετε`,
+                        `${selectedInterests.length} selected — you can continue`,
+                      )
+                    : t(
+                        `${selectedInterests.length}/3 τουλάχιστον — επιλέξτε ακόμα ${3 - selectedInterests.length}`,
+                        `${selectedInterests.length}/3 minimum — pick ${3 - selectedInterests.length} more`,
+                      )}
+                </p>
               </div>
             )}
 
@@ -397,12 +417,13 @@ export default function OnboardingClassic() {
 
           {step < TOTAL_STEPS - 1 ? (
             <button
+              type="button"
               onClick={goNext}
-              disabled={step === 1 && selectedInterests.length < 1}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-ink text-white text-sm font-bold hover:bg-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={step === 1 && selectedInterests.length < 3}
+              className="flex items-center gap-2 px-6 py-2.5 min-h-10 rounded-2xl bg-ink text-white text-sm font-bold hover:bg-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('Επόμενο', 'Next')}
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4" aria-hidden />
             </button>
           ) : (
             <button

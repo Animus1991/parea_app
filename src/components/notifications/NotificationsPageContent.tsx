@@ -188,13 +188,13 @@ export default function NotificationsPageContent() {
               handleDismiss(notif.id);
             }}
             className={cn(
-              'opacity-0 group-hover:opacity-100 p-1 rounded-lg transition-all',
+              'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 p-1.5 min-h-9 min-w-9 flex items-center justify-center rounded-lg transition-all',
               a.isDark ? 'hover:bg-gray-700/40 text-gray-500' : 'hover:bg-gray-100 text-gray-400',
             )}
             title={t('Απόρριψη', 'Dismiss')}
             aria-label={t('Απόρριψη ειδοποίησης', 'Dismiss notification')}
           >
-            <Trash2 className="w-3 h-3" />
+            <Trash2 className="w-3 h-3" aria-hidden />
           </button>
         </div>
       </div>

@@ -169,10 +169,10 @@ export default function BuddySeekPageContent() {
           <button
             type="button"
             onClick={dismissExplainer}
-            className={cn('p-1.5 rounded-lg shrink-0', a.muted, 'hover:bg-black/5 dark:hover:bg-white/10')}
+            className={cn('p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg shrink-0', a.muted, 'hover:bg-black/5 dark:hover:bg-white/10')}
             aria-label={t('Κλείσιμο', 'Dismiss')}
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" aria-hidden />
           </button>
         </div>
       )}

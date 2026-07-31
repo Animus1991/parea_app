@@ -153,8 +153,14 @@ export default function ProfilePageContent() {
                   <span className={`font-bold text-2xl ${a.avatarText}`}>{currentUser.name.substring(0, 2)}</span>
                 )}
               </div>
-              <button onClick={() => fileInputRef.current?.click()} className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" title={t("Ανέβασμα φωτογραφίας", "Upload photo")}>
-                <Camera className="h-5 w-5 text-white" />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 transition-opacity rounded-2xl"
+                title={t("Ανέβασμα φωτογραφίας", "Upload photo")}
+                aria-label={t("Ανέβασμα φωτογραφίας", "Upload photo")}
+              >
+                <Camera className="h-5 w-5 text-white" aria-hidden />
               </button>
               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handlePhotoUpload} />
             </div>
@@ -172,8 +178,13 @@ export default function ProfilePageContent() {
                 ) : (
                   <div className="group/name relative flex w-full items-center justify-between">
                     <h2 className={`text-xl font-extrabold pr-8 ${heading}`}>{currentUser.name}</h2>
-                    <button onClick={() => setIsEditingName(true)} className={`p-1.5 opacity-0 group-hover/name:opacity-100 transition-opacity rounded-lg ${a.isDark ? "text-gray-400 hover:bg-gray-700/40" : "text-gray-400 hover:bg-white/80"} ${a.accent}`}>
-                      <Edit2 className="w-3.5 h-3.5" />
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingName(true)}
+                      aria-label={t("Επεξεργασία ονόματος", "Edit name")}
+                      className={`p-1.5 min-h-9 min-w-9 flex items-center justify-center opacity-0 group-hover/name:opacity-100 group-focus-within/name:opacity-100 focus-visible:opacity-100 transition-opacity rounded-lg ${a.isDark ? "text-gray-400 hover:bg-gray-700/40" : "text-gray-400 hover:bg-white/80"} ${a.accent}`}
+                    >
+                      <Edit2 className="w-3.5 h-3.5" aria-hidden />
                     </button>
                   </div>
                 )}
@@ -194,8 +205,13 @@ export default function ProfilePageContent() {
                 ) : (
                   <div className="group/bio relative">
                     <p className={`text-sm font-medium pr-8 leading-relaxed ${bodyTextLight}`}>{bio}</p>
-                    <button onClick={() => setIsEditingBio(true)} className={`absolute top-0 right-0 p-1.5 opacity-0 group-hover/bio:opacity-100 transition-opacity rounded-lg ${a.isDark ? "text-gray-400 hover:bg-gray-700/40" : "text-gray-400 hover:bg-white/80"} ${a.accent}`}>
-                      <Edit2 className="w-3.5 h-3.5" />
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingBio(true)}
+                      aria-label={t("Επεξεργασία bio", "Edit bio")}
+                      className={`absolute top-0 right-0 p-1.5 min-h-9 min-w-9 flex items-center justify-center opacity-0 group-hover/bio:opacity-100 group-focus-within/bio:opacity-100 focus-visible:opacity-100 transition-opacity rounded-lg ${a.isDark ? "text-gray-400 hover:bg-gray-700/40" : "text-gray-400 hover:bg-white/80"} ${a.accent}`}
+                    >
+                      <Edit2 className="w-3.5 h-3.5" aria-hidden />
                     </button>
                   </div>
                 )}
