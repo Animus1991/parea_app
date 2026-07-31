@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import type { Event } from "../../types";
 import { useLanguage } from "../../lib/i18n";
 import { useStore } from "../../store";
+import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
 
 const STORY_DURATION_MS = 5000;
 const TICK_MS = 50;
@@ -31,11 +32,14 @@ export function StoryViewer({
   const [index, setIndex] = useState(startIndex);
   const [progress, setProgress] = useState(0);
   const [paused, setPaused] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const groups = useStore((s) => s.groups);
   const currentUser = useStore((s) => s.currentUser);
   const becomeEventHost = useStore((s) => s.becomeEventHost);
+  const event = events[index];
+  useOverlayBehavior(Boolean(event), onClose, panelRef);
 
   const goNext = useCallback(
     (opts?: { fromAuto?: boolean }) => {
@@ -71,23 +75,16 @@ export function StoryViewer({
     return () => clearInterval(id);
   }, [index, paused, goNext]);
 
-  // Keyboard controls + lock body scroll
+  // Arrow keys (Escape / scroll lock via useOverlayBehavior)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowRight") goNext();
+      if (e.key === "ArrowRight") goNext();
       else if (e.key === "ArrowLeft") goPrev();
     };
     window.addEventListener("keydown", onKey);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [goNext, goPrev, onClose]);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [goNext, goPrev]);
 
-  const event = events[index];
   if (!event) return null;
 
   const seeksHost =
@@ -128,7 +125,14 @@ export function StoryViewer({
   const hasMultiple = events.length > 1;
 
   return createPortal(
-    <div className="fixed inset-0 z-fullscreen bg-black flex items-center justify-center select-none">
+    <div
+      ref={panelRef}
+      tabIndex={-1}
+      className="fixed inset-0 z-fullscreen bg-black flex items-center justify-center select-none outline-none"
+      role="dialog"
+      aria-modal="true"
+      aria-label={event.title}
+    >
       {hasMultiple && (
         <SlideNavArrows
           placement="outside"

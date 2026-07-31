@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { format, parseISO, isSameDay } from 'date-fns';
 import { el as elLocale, enUS } from 'date-fns/locale';
@@ -22,6 +22,7 @@ import type { TrustTier } from '../../types';
 import type { PlannedEvent } from '../../types/plannedEvent';
 import { openGoogleCalendar, downloadICS } from '../../lib/eventCalendarExport';
 import { EventCoverImage } from '../events/EventCoverImage';
+import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import { cn } from '../../lib/utils';
 import { SlideNavArrows } from '../ui/SlideNavArrows';
 
@@ -41,10 +42,12 @@ export function DayEventsStoriesModal({
   onOpenDaySchedule,
 }: DayEventsStoriesModalProps) {
   const [index, setIndex] = useState(startIndex);
+  const panelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { t, tu, language } = useLanguage();
   const locale = language === 'el' ? elLocale : enUS;
   const ev = events[index];
+  useOverlayBehavior(Boolean(ev), onClose, panelRef);
 
   const goNext = useCallback(() => {
     setIndex((i) => (i >= events.length - 1 ? i : i + 1));
@@ -60,18 +63,12 @@ export function DayEventsStoriesModal({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-      else if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowRight') goNext();
       else if (e.key === 'ArrowLeft') goPrev();
     };
     window.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [onClose, goNext, goPrev]);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [goNext, goPrev]);
 
   if (!ev) return null;
 
@@ -128,7 +125,9 @@ export function DayEventsStoriesModal({
 
   const content = (
     <div
-      className="fixed inset-0 z-modal-high flex items-center justify-center p-0 md:p-6 bg-black/70 backdrop-blur-md"
+      ref={panelRef}
+      tabIndex={-1}
+      className="fixed inset-0 z-modal-high flex items-center justify-center p-0 md:p-6 bg-black/70 backdrop-blur-md outline-none"
       role="dialog"
       aria-modal="true"
       aria-labelledby="day-stories-title"

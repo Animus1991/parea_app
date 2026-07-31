@@ -29,6 +29,7 @@ import { cn } from "../../lib/utils";
 import { useGroupChatMessages, type GroupChatMessage } from "../../hooks/useGroupChatMessages";
 import { LiveEventTracker } from "./LiveEventTracker";
 import { ChatIcebreakers } from "./ChatIcebreakers";
+import { Modal } from "../common/Modal";
 import { GroupChatLeaveModal } from "./groupChat/GroupChatLeaveModal";
 import { GroupChatReportModal } from "./groupChat/GroupChatReportModal";
 import { GroupChatLocationModal } from "./groupChat/GroupChatLocationModal";
@@ -889,48 +890,46 @@ export default function GroupChatPageContent() {
           setIsSharingLocation={setIsSharingLocation}
         />
 
-        {showSafetyLinkModal && (
-          <div className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
-            <div className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
-              <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
-                <Link2 className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-ink mb-2">
-                {t("Σύνδεσμος Έμπιστης Επαφής", "Trusted Contact Link")}
-              </h3>
-              <p className="text-xs font-medium leading-relaxed text-gray-500 mb-6">
-                {t(
-                  "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ασφάλεια εκτός Nakamas. Θα βλέπουν την τοποθεσία σας μέχρι το τέλος. Ανακαλέστε τον όποτε θέλετε.",
-                  "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They will be able to see your live location until the event ends. You can revoke it anytime.",
-                )}
-              </p>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-center justify-between mb-6">
-                <span className="text-xs font-medium text-gray-700 truncate mr-2">
-                  https://nakamas.app/safe/r9x2p
-                </span>
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                      "https://nakamas.app/safe/r9x2p",
-                    );
-                    toast.success(
-                      t("Αντιγράφηκε στο πρόχειρο!", "Copied to clipboard!"),
-                    );
-                  }}
-                  className={cn("text-xs font-bold", gc.accentText)}
-                >
-                  {t("Αντιγραφή", "Copy")}
-                </button>
-              </div>
-              <button
-                onClick={() => setShowSafetyLinkModal(false)}
-                className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
-              >
-                {t("Τέλος", "Done")}
-              </button>
-            </div>
+        <Modal
+          open={showSafetyLinkModal}
+          onClose={() => setShowSafetyLinkModal(false)}
+          title={t("Σύνδεσμος Έμπιστης Επαφής", "Trusted Contact Link")}
+          size="sm"
+          className="text-center"
+        >
+          <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
+            <Link2 className="w-6 h-6" />
           </div>
-        )}
+          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+            {t(
+              "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ασφάλεια εκτός Nakamas. Θα βλέπουν την τοποθεσία σας μέχρι το τέλος. Ανακαλέστε τον όποτε θέλετε.",
+              "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They will be able to see your live location until the event ends. You can revoke it anytime.",
+            )}
+          </p>
+          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-6">
+            <span className="text-xs font-medium text-ink truncate mr-2">
+              https://nakamas.app/safe/r9x2p
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText("https://nakamas.app/safe/r9x2p");
+                toast.success(t("Αντιγράφηκε στο πρόχειρο!", "Copied to clipboard!"));
+              }}
+              className={cn("text-xs font-bold", gc.accentText)}
+            >
+              {t("Αντιγραφή", "Copy")}
+            </button>
+          </div>
+          <button
+            type="button"
+            data-autofocus
+            onClick={() => setShowSafetyLinkModal(false)}
+            className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+          >
+            {t("Τέλος", "Done")}
+          </button>
+        </Modal>
 
         <GroupChatLeaveModal
           open={showLeaveModal}
@@ -943,319 +942,286 @@ export default function GroupChatPageContent() {
           }}
         />
 
-        {showDisableEphemeralModal && (
-          <div className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
-            <div className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
-              <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4", gc.panelAccent)}>
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-ink mb-2">
-                {t("Διατήρηση Ιστορικού;", "Keep Chat History?")}
-              </h3>
-              <p className="text-xs font-medium leading-relaxed text-gray-500 mb-6">
-                {t(
-                  "Προτείνετε να απενεργοποιηθεί η Εφήμερη Λειτουργία. Αν όλα τα μέλη συμφωνήσουν, η συνομιλία θα διατηρηθεί μόνιμα.",
-                  "You are proposing to turn off Ephemeral Mode. If all group members agree, this chat will be kept permanently instead of being deleted automatically.",
-                )}
-              </p>
-              <div className="flex flex-col gap-2.5">
-                <button
-                  onClick={() => {
-                    setMessages((prev) => [
-                      ...prev,
-                      {
-                        id: Date.now().toString(),
-                        senderId: "system",
-                        senderName: "System",
-                        text: `${currentUser.name} ${t("πρότεινε να απενεργοποιηθεί η Εφήμερη Λειτουργία. Η ψηφοφορία θα ξεκινήσει σύντομα.", "proposed to disable Ephemeral Mode. Voting will begin shortly.")}`,
-                        timestamp: new Date().toISOString(),
-                      },
-                    ]);
-                    setIsEphemeral(false);
-                    setShowDisableEphemeralModal(false);
-                    setShowInfo(false);
-                  }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
-                >
-                  {t("Πρόταση στην Ομάδα", "Propose to Group")}
-                </button>
-                <button
-                  onClick={() => setShowDisableEphemeralModal(false)}
-                  className="w-full px-4 py-3 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 border border-gray-100 active:scale-[0.98]"
-                >
-                  {t("Ακύρωση", "Cancel")}
-                </button>
-              </div>
-            </div>
+        <Modal
+          open={showDisableEphemeralModal}
+          onClose={() => setShowDisableEphemeralModal(false)}
+          title={t("Διατήρηση Ιστορικού;", "Keep Chat History?")}
+          size="sm"
+          className="text-center"
+        >
+          <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4", gc.panelAccent)}>
+            <ShieldCheck className="w-6 h-6" />
           </div>
-        )}
+          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+            {t(
+              "Προτείνετε να απενεργοποιηθεί η Εφήμερη Λειτουργία. Αν όλα τα μέλη συμφωνήσουν, η συνομιλία θα διατηρηθεί μόνιμα.",
+              "You are proposing to turn off Ephemeral Mode. If all group members agree, this chat will be kept permanently instead of being deleted automatically.",
+            )}
+          </p>
+          <div className="flex flex-col gap-2.5">
+            <button
+              type="button"
+              data-autofocus
+              onClick={() => {
+                setMessages((prev) => [
+                  ...prev,
+                  {
+                    id: Date.now().toString(),
+                    senderId: "system",
+                    senderName: "System",
+                    text: `${currentUser.name} ${t("πρότεινε να απενεργοποιηθεί η Εφήμερη Λειτουργία. Η ψηφοφορία θα ξεκινήσει σύντομα.", "proposed to disable Ephemeral Mode. Voting will begin shortly.")}`,
+                    timestamp: new Date().toISOString(),
+                  },
+                ]);
+                setIsEphemeral(false);
+                setShowDisableEphemeralModal(false);
+                setShowInfo(false);
+              }}
+              className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+            >
+              {t("Πρόταση στην Ομάδα", "Propose to Group")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowDisableEphemeralModal(false)}
+              className="w-full px-4 py-3 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+            >
+              {t("Ακύρωση", "Cancel")}
+            </button>
+          </div>
+        </Modal>
 
         <GroupChatReportModal open={showReportModal} onClose={() => setShowReportModal(false)} />
 
-        {showStatusModal && (
-          <div className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
-            <div className="modal-panel max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
-              <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
-                <Clock className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-ink mb-2">
-                {t("Κατάσταση Άφιξης", "Share Arrival Status")}
-              </h3>
-              <p className="text-xs font-medium leading-relaxed text-gray-500 mb-6">
-                {t(
-                  "Ενημερώστε γρήγορα την ομάδα για την κατάστασή σας χωρίς να μοιραστείτε την ακριβή τοποθεσία σας.",
-                  "Quickly update the group on your status without sharing your exact location.",
-                )}
-              </p>
-              <div className="flex flex-col gap-2.5">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.currentTarget);
-                    const eta = formData.get("eta") as string;
-                    if (eta) {
-                      setMessages((prev) => [
-                        ...prev,
-                        {
-                          id: Date.now().toString(),
-                          senderId: "system",
-                          senderName: "System",
-                          text: `${currentUser.name} ${t("ενημέρωσε την κατάστασή του", "updated their ETA")}: ETA ${eta} ${t("λεπτά", "mins")}`,
-                          timestamp: new Date().toISOString(),
-                        },
-                      ]);
-                      setShowStatusModal(false);
-                    }
-                  }}
-                  className="flex gap-2 mb-2"
-                >
-                  <input
-                    name="eta"
-                    type="number"
-                    placeholder={t("ETA (λεπτά)", "ETA (mins)")}
-                    className="flex-1 w-full bg-gray-50 border border-gray-100 text-gray-900 text-sm rounded-2xl px-4 py-3 focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none shadow-soft"
-                    min="1"
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-3 text-sm font-bold text-white bg-brand hover:bg-[#0b6d6f] rounded-2xl shadow-soft transition-all duration-200 whitespace-nowrap"
-                  >
-                    {t("Αποστολή", "Send")}
-                  </button>
-                </form>
-
-                {[
-                  {
-                    text: t("Είμαι στον δρόμο", "I'm on my way"),
-                    color: "bg-ink text-white hover:bg-gray-900",
-                  },
-                  {
-                    text: t("Έφτασα", "I arrived"),
-                    color: "bg-emerald-600 text-white hover:bg-emerald-700",
-                  },
-                  {
-                    text: t("Θα αργήσω λίγο", "I'll be late"),
-                    color: "bg-amber-500 text-white hover:bg-amber-600",
-                  },
-                  {
-                    text: t(
-                      "Είμαι στο σημείο συνάντησης",
-                      "I'm at the meeting point",
-                    ),
-                    color: gc.primaryBtn,
-                  },
-                ].map((status, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setMessages((prev) => [
-                        ...prev,
-                        {
-                          id: Date.now().toString(),
-                          senderId: "system",
-                          senderName: "System",
-                          text: `${currentUser.name} ${t("ενημέρωσε την κατάστασή του", "updated their status")}: "${status.text}"`,
-                          timestamp: new Date().toISOString(),
-                        },
-                      ]);
-                      setShowStatusModal(false);
-                    }}
-                    className={`w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
-                  >
-                    {status.text}
-                  </button>
-                ))}
-
-                <button
-                  onClick={() => setShowStatusModal(false)}
-                  className="w-full px-4 py-3 mt-2 text-sm font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 border border-gray-100 active:scale-[0.98]"
-                >
-                  {t("Ακύρωση", "Cancel")}
-                </button>
-              </div>
-            </div>
+        <Modal
+          open={showStatusModal}
+          onClose={() => setShowStatusModal(false)}
+          title={t("Κατάσταση Άφιξης", "Share Arrival Status")}
+          size="sm"
+          className="text-center"
+        >
+          <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
+            <Clock className="w-6 h-6" />
           </div>
-        )}
-        {showAddMemberModal && (
-          <div className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
-            <div className="modal-panel max-w-md w-full max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-              <div className="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between bg-white relative z-10">
-                <div className="flex items-center gap-3">
-                  <div className={cn("w-10 h-10 rounded-full flex items-center justify-center", gc.panelAccent)}>
-                    <UserPlus className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-ink">
-                      {t("Προσθήκη Μελών", "Add Members")}
-                    </h3>
-                    <p className="text-xs font-medium text-gray-500">
-                      {t(
-                        "Μπορείτε να προσθέσετε όσα άτομα θέλετε σε αυτή την ομάδα.",
-                        "You can add as many people as you wish to this group.",
-                      )}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    setShowAddMemberModal(false);
-                    setMemberAddSearchQuery("");
-                  }}
-                  className="text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
-                  title={t("Κλείσιμο", "Close")}
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="p-4 sm:p-5 bg-gray-50/50 border-b border-gray-100">
-                <div className="relative">
-                  <Search className="h-4 w-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    placeholder={t(
-                      "Αναζήτηση με όνομα ή email...",
-                      "Search by name or email...",
-                    )}
-                    value={memberAddSearchQuery}
-                    onChange={(e) => setMemberAddSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent/40 bg-white transition-all duration-200 shadow-soft font-medium"
-                  />
-                </div>
-              </div>
-
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
-                {potentialNewMembers.length > 0 ? (
-                  potentialNewMembers
-                    .filter((m) =>
-                      m.name
-                        .toLowerCase()
-                        .includes(memberAddSearchQuery.toLowerCase()),
-                    )
-                    .map((member) => (
-                      <div
-                        key={member.id}
-                        className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-2xl transition-all duration-200 border border-transparent hover:border-gray-100"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0 border border-gray-200">
-                            {member.photoUrl ? (
-                              <img
-                                src={member.photoUrl}
-                                alt={member.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className={cn("w-full h-full flex items-center justify-center font-bold text-xs", gc.avatarPlaceholder)}>
-                                {member.name.substring(0, 2)}
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-sm font-bold text-ink">
-                              {member.name}
-                            </span>
-                            <span className="text-xs text-gray-500 font-medium flex items-center gap-1">
-                              {member.city}{" "}
-                              {member.badges.includes("Payment verified") && (
-                                <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => {
-                            useStore.getState().addMemberToGroup(group.id, member.id);
-                            // Post a system message in the chat
-                            setMessages((prev) => [
-                              ...prev,
-                              {
-                                id: Date.now().toString(),
-                                senderId: "system",
-                                senderName: "System",
-                                text: `${member.name} ${t("προστέθηκε στην ομάδα από τον διοργανωτή.", "was added to the group by the organizer.")}`,
-                                timestamp: new Date().toISOString(),
-                              },
-                            ]);
-                          }}
-                          className="text-sm font-semibold capitalize tracking-tight px-3 py-1.5 rounded-full border flex items-center gap-1 transition-all duration-200 bg-brand text-white border-brand hover:bg-[#0b6d6f] shadow-soft"
-                        >
-                          <UserPlus className="w-3 h-3" />{" "}
-                          {t("Προσθήκη", "Add")}
-                        </button>
-                      </div>
-                    ))
-                ) : (
-                  <div className="text-center p-8 text-gray-500 flex flex-col items-center">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3 text-gray-400">
-                      <Check className="w-6 h-6" />
-                    </div>
-                    <p className="text-sm font-bold text-ink">
-                      {t(
-                        "Όλα τα διαθέσιμα άτομα είναι ήδη στην ομάδα!",
-                        "All available people are in this group!",
-                      )}
-                    </p>
-                    <p className="text-xs mt-1">
-                      {t(
-                        "Ελέγξτε ξανά αργότερα ή προσκαλέστε με σύνδεσμο.",
-                        "Check back later or invite via link.",
-                      )}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="p-4 sm:p-5 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
-                <span className="text-xs font-bold text-gray-500">
-                  {t("Τρέχον μέγεθος:", "Current size:")} {group.members.length}
-                </span>
-                <button
-                  onClick={() => {
-                    setShowAddMemberModal(false);
-                    setMemberAddSearchQuery("");
-                  }}
-                  className="px-5 py-2.5 text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 rounded-2xl transition-all duration-200 border border-gray-100 shadow-soft active:scale-[0.98]"
-                >
-                  {t("Τέλος", "Done")}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-        {showLiveRadarModal && (
-          <div className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200">
-            <div className="modal-panel w-full max-w-4xl max-h-[90vh] flex flex-col animate-in zoom-in-95 duration-200 overflow-hidden relative">
+          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+            {t(
+              "Ενημερώστε γρήγορα την ομάδα για την κατάστασή σας χωρίς να μοιραστείτε την ακριβή τοποθεσία σας.",
+              "Quickly update the group on your status without sharing your exact location.",
+            )}
+          </p>
+          <div className="flex flex-col gap-2.5">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const eta = formData.get("eta") as string;
+                if (eta) {
+                  setMessages((prev) => [
+                    ...prev,
+                    {
+                      id: Date.now().toString(),
+                      senderId: "system",
+                      senderName: "System",
+                      text: `${currentUser.name} ${t("ενημέρωσε την κατάστασή του", "updated their ETA")}: ETA ${eta} ${t("λεπτά", "mins")}`,
+                      timestamp: new Date().toISOString(),
+                    },
+                  ]);
+                  setShowStatusModal(false);
+                }
+              }}
+              className="flex gap-2 mb-2"
+            >
+              <input
+                name="eta"
+                type="number"
+                data-autofocus
+                placeholder={t("ETA (λεπτά)", "ETA (mins)")}
+                className="flex-1 w-full bg-surface border border-border text-ink text-sm rounded-2xl px-4 py-3 focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none shadow-soft"
+                min="1"
+              />
               <button
-                onClick={() => setShowLiveRadarModal(false)}
-                className="absolute top-4 right-4 z-raised bg-white rounded-full p-2 shadow-soft border border-gray-100 text-gray-400 hover:text-gray-600 transition-all duration-200"
+                type="submit"
+                className="px-4 py-3 text-sm font-bold text-white bg-brand hover:bg-brand-strong rounded-2xl shadow-soft transition-all duration-200 whitespace-nowrap"
               >
-                <X className="w-5 h-5" />
+                {t("Αποστολή", "Send")}
               </button>
-              <LiveEventTracker groupId={group.id} />
-            </div>
+            </form>
+
+            {[
+              {
+                text: t("Είμαι στον δρόμο", "I'm on my way"),
+                color: "bg-ink text-white hover:bg-gray-900",
+              },
+              {
+                text: t("Έφτασα", "I arrived"),
+                color: "bg-emerald-600 text-white hover:bg-emerald-700",
+              },
+              {
+                text: t("Θα αργήσω λίγο", "I'll be late"),
+                color: "bg-amber-500 text-white hover:bg-amber-600",
+              },
+              {
+                text: t("Είμαι στο σημείο συνάντησης", "I'm at the meeting point"),
+                color: gc.primaryBtn,
+              },
+            ].map((status, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => {
+                  setMessages((prev) => [
+                    ...prev,
+                    {
+                      id: Date.now().toString(),
+                      senderId: "system",
+                      senderName: "System",
+                      text: `${currentUser.name} ${t("ενημέρωσε την κατάστασή του", "updated their status")}: "${status.text}"`,
+                      timestamp: new Date().toISOString(),
+                    },
+                  ]);
+                  setShowStatusModal(false);
+                }}
+                className={`w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
+              >
+                {status.text}
+              </button>
+            ))}
+
+            <button
+              type="button"
+              onClick={() => setShowStatusModal(false)}
+              className="w-full px-4 py-3 mt-2 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+            >
+              {t("Ακύρωση", "Cancel")}
+            </button>
           </div>
-        )}
+        </Modal>
+
+        <Modal
+          open={showAddMemberModal}
+          onClose={() => {
+            setShowAddMemberModal(false);
+            setMemberAddSearchQuery("");
+          }}
+          title={t("Προσθήκη Μελών", "Add Members")}
+          size="md"
+          className="max-h-[85vh] flex flex-col"
+        >
+          <p className="text-xs font-medium text-ink-muted -mt-2 mb-4">
+            {t(
+              "Μπορείτε να προσθέσετε όσα άτομα θέλετε σε αυτή την ομάδα.",
+              "You can add as many people as you wish to this group.",
+            )}
+          </p>
+          <div className="relative mb-3">
+            <Search className="h-4 w-4 text-ink-muted absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              data-autofocus
+              placeholder={t("Αναζήτηση με όνομα ή email...", "Search by name or email...")}
+              value={memberAddSearchQuery}
+              onChange={(e) => setMemberAddSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-2.5 text-sm border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent/40 bg-surface-raised transition-all duration-200 shadow-soft font-medium text-ink"
+            />
+          </div>
+          <div className="max-h-[40vh] overflow-y-auto custom-scrollbar -mx-1 px-1 space-y-1">
+            {potentialNewMembers.length > 0 ? (
+              potentialNewMembers
+                .filter((m) =>
+                  m.name.toLowerCase().includes(memberAddSearchQuery.toLowerCase()),
+                )
+                .map((member) => (
+                  <div
+                    key={member.id}
+                    className="flex items-center justify-between p-3 hover:bg-surface rounded-2xl transition-all duration-200 border border-transparent hover:border-border"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-surface overflow-hidden shrink-0 border border-border">
+                        {member.photoUrl ? (
+                          <img
+                            src={member.photoUrl}
+                            alt={member.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className={cn("w-full h-full flex items-center justify-center font-bold text-xs", gc.avatarPlaceholder)}>
+                            {member.name.substring(0, 2)}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-bold text-ink truncate">{member.name}</span>
+                        <span className="text-xs text-ink-muted font-medium flex items-center gap-1">
+                          {member.city}{" "}
+                          {member.badges.includes("Payment verified") && (
+                            <ShieldCheck className="w-3 h-3 text-emerald-500" />
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        useStore.getState().addMemberToGroup(group.id, member.id);
+                        setMessages((prev) => [
+                          ...prev,
+                          {
+                            id: Date.now().toString(),
+                            senderId: "system",
+                            senderName: "System",
+                            text: `${member.name} ${t("προστέθηκε στην ομάδα από τον διοργανωτή.", "was added to the group by the organizer.")}`,
+                            timestamp: new Date().toISOString(),
+                          },
+                        ]);
+                      }}
+                      className="text-sm font-semibold px-3 py-1.5 rounded-full border flex items-center gap-1 transition-all duration-200 bg-brand text-white border-brand hover:bg-brand-strong shadow-soft shrink-0"
+                    >
+                      <UserPlus className="w-3 h-3" /> {t("Προσθήκη", "Add")}
+                    </button>
+                  </div>
+                ))
+            ) : (
+              <div className="text-center p-8 text-ink-muted flex flex-col items-center">
+                <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center mb-3">
+                  <Check className="w-6 h-6" />
+                </div>
+                <p className="text-sm font-bold text-ink">
+                  {t(
+                    "Όλα τα διαθέσιμα άτομα είναι ήδη στην ομάδα!",
+                    "All available people are in this group!",
+                  )}
+                </p>
+              </div>
+            )}
+          </div>
+          <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+            <span className="text-xs font-bold text-ink-muted">
+              {t("Τρέχον μέγεθος:", "Current size:")} {group.members.length}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setShowAddMemberModal(false);
+                setMemberAddSearchQuery("");
+              }}
+              className="px-5 py-2.5 text-sm font-bold text-ink bg-surface-raised hover:bg-surface rounded-2xl transition-all duration-200 border border-border shadow-soft active:scale-[0.98]"
+            >
+              {t("Τέλος", "Done")}
+            </button>
+          </div>
+        </Modal>
+
+        <Modal
+          open={showLiveRadarModal}
+          onClose={() => setShowLiveRadarModal(false)}
+          title={t("Live Radar", "Live Radar")}
+          size="lg"
+          className="max-w-4xl p-4"
+        >
+          <div className="min-h-[50vh] -mx-1">
+            <LiveEventTracker groupId={group.id} />
+          </div>
+        </Modal>
 
         {currentUser && (
           <GroupChatSosModal

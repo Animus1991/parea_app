@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -25,6 +26,7 @@ import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { trackEvent } from '../../lib/analytics';
 import { useStore } from '../../store';
+import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 
 interface CommandItem {
   id: string;
@@ -43,9 +45,15 @@ export function CommandPalette() {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const currentUser = useStore((s) => s.currentUser);
+  const closePalette = useCallback(() => {
+    setOpen(false);
+    setQuery('');
+  }, []);
+  useOverlayBehavior(open, closePalette, panelRef);
 
   const isAdmin = Boolean(currentUser?.isOrganizer);
 
@@ -103,10 +111,6 @@ export function CommandPalette() {
         });
       }
       if (!open) return;
-      if (e.key === 'Escape') {
-        setOpen(false);
-        setQuery('');
-      }
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         setSelectedIndex((i) => Math.min(i + 1, visible.length - 1));
@@ -125,10 +129,7 @@ export function CommandPalette() {
   }, [open, visible, selectedIndex, run]);
 
   useEffect(() => {
-    if (open) {
-      setSelectedIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
+    if (open) setSelectedIndex(0);
   }, [open, query]);
 
   const sections = useMemo(() => {
@@ -144,7 +145,7 @@ export function CommandPalette() {
 
   let flatIndex = -1;
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && (
         <>
@@ -153,13 +154,15 @@ export function CommandPalette() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-palette"
-            onClick={() => setOpen(false)}
+            onClick={closePalette}
           />
           <motion.div
+            ref={panelRef}
+            tabIndex={-1}
             initial={{ opacity: 0, scale: 0.96, y: -8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -8 }}
-            className="fixed top-[15vh] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg bg-white dark:bg-gray-900 rounded-2xl shadow-soft-lg border border-gray-200 dark:border-gray-700 z-palette overflow-hidden"
+            className="fixed top-[15vh] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-lg bg-white dark:bg-gray-900 rounded-2xl shadow-soft-lg border border-gray-200 dark:border-gray-700 z-palette overflow-hidden outline-none"
             role="dialog"
             aria-modal="true"
             aria-label={t('Γρήγορη πλοήγηση', 'Quick navigation')}
@@ -168,6 +171,7 @@ export function CommandPalette() {
               <Search className="w-4 h-4 text-gray-400 shrink-0" aria-hidden />
               <input
                 ref={inputRef}
+                data-autofocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t('Αναζήτηση σελίδας…', 'Search pages…')}
@@ -218,6 +222,7 @@ export function CommandPalette() {
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

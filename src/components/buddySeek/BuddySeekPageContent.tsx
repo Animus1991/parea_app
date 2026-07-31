@@ -16,6 +16,7 @@ import {
 } from './plansForming/PlansFormingShared';
 import { PlansFormingSkeleton } from './PlansFormingSkeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';
+import { Modal } from '../common/Modal';
 import { useEventsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
@@ -333,55 +334,46 @@ export default function BuddySeekPageContent() {
         )}
       </p>
 
-      {eventPickerOpen && (
-        <div
-          className="fixed inset-0 z-modal flex items-end sm:items-center justify-center p-4 modal-overlay"
-          onClick={() => setEventPickerOpen(false)}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="event-picker-title"
-            className={cn('modal-panel w-full max-w-md max-h-[70vh] overflow-y-auto p-4 rounded-2xl', a.cardSurface)}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 id="event-picker-title" className={cn('text-lg font-bold mb-3', a.head)}>
-              {t('Επιλέξτε εκδήλωση', 'Choose an event')}
-            </h2>
-            <div className="space-y-2">
-              {upcomingEvents.map((event) => (
-                <button
-                  key={event.id}
-                  type="button"
-                  onClick={() => {
-                    setCreateEvent(event);
-                    setEventPickerOpen(false);
-                  }}
-                  className={cn(
-                    'w-full text-left rounded-xl border px-3 py-2.5 text-sm font-medium hover:border-cyan-400 transition-colors',
-                    a.borderB,
-                  )}
-                >
-                  <span className={cn('font-bold block', a.head)}>{event.title}</span>
-                  <span className={cn('text-xs', a.muted)}>{event.date} · {event.locationArea}</span>
-                </button>
-              ))}
-              {upcomingEvents.length === 0 && (
-                <p className={cn('text-sm font-medium py-4 text-center', a.muted)}>
-                  {t('Δεν υπάρχουν επερχόμενες εκδηλώσεις', 'No upcoming events')}
-                </p>
-              )}
-            </div>
+      <Modal
+        open={eventPickerOpen}
+        onClose={() => setEventPickerOpen(false)}
+        title={t('Επιλέξτε εκδήλωση', 'Choose an event')}
+        size="md"
+        className="max-h-[70vh]"
+      >
+        <div className="space-y-2">
+          {upcomingEvents.map((event) => (
             <button
+              key={event.id}
               type="button"
-              onClick={() => setEventPickerOpen(false)}
-              className={cn('w-full mt-3 py-2.5 rounded-xl text-sm font-bold border', a.borderB, a.sub)}
+              data-autofocus={event.id === upcomingEvents[0]?.id ? true : undefined}
+              onClick={() => {
+                setCreateEvent(event);
+                setEventPickerOpen(false);
+              }}
+              className={cn(
+                'w-full text-left rounded-xl border px-3 py-2.5 text-sm font-medium hover:border-accent transition-colors text-ink',
+                a.borderB,
+              )}
             >
-              {t('Ακύρωση', 'Cancel')}
+              <span className={cn('font-bold block', a.head)}>{event.title}</span>
+              <span className={cn('text-xs', a.muted)}>{event.date} · {event.locationArea}</span>
             </button>
-          </div>
+          ))}
+          {upcomingEvents.length === 0 && (
+            <p className={cn('text-sm font-medium py-4 text-center', a.muted)}>
+              {t('Δεν υπάρχουν επερχόμενες εκδηλώσεις', 'No upcoming events')}
+            </p>
+          )}
         </div>
-      )}
+        <button
+          type="button"
+          onClick={() => setEventPickerOpen(false)}
+          className={cn('w-full mt-3 py-2.5 rounded-xl text-sm font-bold border', a.borderB, a.sub)}
+        >
+          {t('Ακύρωση', 'Cancel')}
+        </button>
+      </Modal>
 
       {createEvent && (
         <CreateCompanyRequestModal

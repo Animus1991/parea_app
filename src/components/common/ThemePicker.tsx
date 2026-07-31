@@ -1,10 +1,11 @@
-import { useState, useRef, useLayoutEffect, useEffect } from 'react';
+import { useState, useRef, useLayoutEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Palette, Check } from 'lucide-react';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { THEME_IDS, THEME_LABELS, THEME_SWATCH, type ThemeId } from '../../lib/themes';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
+import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import { cn } from '../../lib/utils';
 
 const MENU_WIDTH = 240;
@@ -21,6 +22,9 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
   const tok = useThemeStyles();
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const closeMenu = useCallback(() => setOpen(false), []);
+  useOverlayBehavior(open, closeMenu, menuRef);
   const [menuStyle, setMenuStyle] = useState<{
     top: number;
     left: number;
@@ -59,15 +63,6 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
     };
   }, [open]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [open]);
-
   if (variant === 'compact') {
     const menu =
       open && menuStyle && typeof document !== 'undefined'
@@ -76,14 +71,16 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
               <button
                 type="button"
                 className="fixed inset-0 z-palette cursor-default bg-black/20 backdrop-blur-[1px]"
-                onClick={() => setOpen(false)}
+                onClick={closeMenu}
                 aria-label={t('Κλείσιμο', 'Close')}
               />
               <div
+                ref={menuRef}
+                tabIndex={-1}
                 role="listbox"
                 aria-label={t('Επιλογή θέματος', 'Choose theme')}
                 className={cn(
-                  'fixed z-palette rounded-2xl border p-2 shadow-soft-lg overflow-y-auto overscroll-contain',
+                  'fixed z-palette rounded-2xl border p-2 shadow-soft-lg overflow-y-auto overscroll-contain outline-none',
                   tok.isDark ? 'bg-gray-900 border-gray-600' : 'bg-white border-gray-200',
                 )}
                 style={{
