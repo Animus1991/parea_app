@@ -30,7 +30,19 @@ export function connectChatSocket(userId: string): Socket | null {
 }
 
 export function disconnectChatSocket(): void {
-  socket?.disconnect();
+  if (!socket) return;
+  try {
+    // Avoid noisy "WebSocket is closed before the connection is established"
+    // during React Strict Mode effect teardown.
+    socket.removeAllListeners();
+    if (socket.connected) {
+      socket.disconnect();
+    } else {
+      socket.close();
+    }
+  } catch {
+    /* ignore teardown races */
+  }
   socket = null;
 }
 

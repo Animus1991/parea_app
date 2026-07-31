@@ -1,4 +1,4 @@
-import React, { useState, memo, useRef } from "react";
+import React, { useState, memo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
 import { Card } from "../common/Card";
@@ -49,6 +49,57 @@ L.Icon.Default.mergeOptions({
 
 interface EventCardProps {
   event: Event;
+}
+
+/** Mount Leaflet only when the mini-map enters the viewport (avoids N× Strict Mode races). */
+function EventCardMiniMap({ lat, lng, isDark }: { lat: number; lng: number; isDark: boolean }) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = hostRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '120px', threshold: 0.01 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={hostRef}
+      className={cn(
+        'h-24 w-full rounded-lg overflow-hidden border mt-1 relative z-0 pointer-events-none',
+        isDark ? 'border-gray-700/40' : 'border-gray-200',
+      )}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {inView ? (
+        <LeafletMapHost
+          center={[lat, lng]}
+          zoom={14}
+          zoomControl={false}
+          attributionControl={false}
+          style={{ height: '100%', width: '100%' }}
+          placeholder={<div className="h-full w-full bg-gray-100 dark:bg-gray-800" aria-hidden />}
+        >
+          <LeafletMapReady>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <Marker position={[lat, lng]} />
+          </LeafletMapReady>
+        </LeafletMapHost>
+      ) : (
+        <div className="h-full w-full bg-gray-100 dark:bg-gray-800" aria-hidden />
+      )}
+    </div>
+  );
 }
 
 export const EventCard = memo(function EventCard({ event }: EventCardProps) {
@@ -269,24 +320,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             </div>
           </div>
           {event.lat && event.lng ? (
-            <div
-              className={cn("h-24 w-full rounded-lg overflow-hidden border mt-1 relative z-0 pointer-events-none", isDark ? "border-gray-700/40" : "border-gray-200")}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <LeafletMapHost
-                center={[event.lat, event.lng]}
-                zoom={14}
-                zoomControl={false}
-                attributionControl={false}
-                style={{ height: "100%", width: "100%" }}
-                placeholder={<div className="h-full w-full bg-gray-100 dark:bg-gray-800" aria-hidden />}
-              >
-                <LeafletMapReady>
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <Marker position={[event.lat, event.lng]} />
-                </LeafletMapReady>
-              </LeafletMapHost>
-            </div>
+            <EventCardMiniMap lat={event.lat} lng={event.lng} isDark={isDark} />
           ) : (
             <div className={cn("h-24 w-full rounded-lg border flex items-center justify-center mt-2", isDark ? "border-gray-700/40 bg-gray-800/30" : "border-gray-200 bg-gray-50")}>
               <span className={cn("text-xs font-bold flex items-center gap-1", mutedColor)}>
