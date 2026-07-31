@@ -25,23 +25,30 @@ function MoreMenu({ connId, onViewProfile, onRemove, onReport, onInvite }: { con
 
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setOpen(!open)} className={`p-2 rounded-full transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}>
-        <MoreVertical className="w-5 h-5" />
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-label={t('Περισσότερες ενέργειες', 'More actions')}
+        className={`p-2 min-h-10 min-w-10 flex items-center justify-center rounded-full transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}
+      >
+        <MoreVertical className="w-5 h-5" aria-hidden />
       </button>
       {open && (
-        <div className={`absolute right-0 top-full mt-1 w-48 rounded-lg border shadow-soft-lg z-fab py-1 text-sm ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-          <button onClick={() => { onViewProfile(); setOpen(false); }} className={`w-full px-3 py-2 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
-            <Eye className="w-4 h-4" /> {t('Προβολή Προφίλ', 'View Profile')}
+        <div role="menu" className={`absolute right-0 top-full mt-1 w-48 rounded-lg border shadow-soft-lg z-fab py-1 text-sm ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <button type="button" role="menuitem" onClick={() => { onViewProfile(); setOpen(false); }} className={`w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
+            <Eye className="w-4 h-4" aria-hidden /> {t('Προβολή Προφίλ', 'View Profile')}
           </button>
-          <button onClick={() => { onInvite(); setOpen(false); }} className={`w-full px-3 py-2 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
-            <CalendarPlus className="w-4 h-4" /> {t('Πρόσκληση σε Εκδήλωση', 'Invite to Event')}
+          <button type="button" role="menuitem" onClick={() => { onInvite(); setOpen(false); }} className={`w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
+            <CalendarPlus className="w-4 h-4" aria-hidden /> {t('Πρόσκληση σε Εκδήλωση', 'Invite to Event')}
           </button>
-          <div className={`my-1 h-px ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
-          <button onClick={() => { onRemove(); setOpen(false); }} className="w-full px-3 py-2 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
-            <UserMinus className="w-4 h-4" /> {t('Αφαίρεση Σύνδεσης', 'Remove Connection')}
+          <div className={`my-1 h-px ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} role="separator" />
+          <button type="button" role="menuitem" onClick={() => { onRemove(); setOpen(false); }} className="w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
+            <UserMinus className="w-4 h-4" aria-hidden /> {t('Αφαίρεση Σύνδεσης', 'Remove Connection')}
           </button>
-          <button onClick={() => { onReport(); setOpen(false); }} className="w-full px-3 py-2 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
-            <Flag className="w-4 h-4" /> {t('Αναφορά', 'Report')}
+          <button type="button" role="menuitem" onClick={() => { onReport(); setOpen(false); }} className="w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
+            <Flag className="w-4 h-4" aria-hidden /> {t('Αναφορά', 'Report')}
           </button>
         </div>
       )}
@@ -167,26 +174,35 @@ export default function ConnectionsPageContent() {
       </div>
 
       {/* Tabs — rounded-lg pills */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 flex-wrap" role="tablist" aria-label={t('Ενότητες συνδέσεων', 'Connections sections')}>
         <button
-          className={cn('px-3.5 py-1.5 rounded-full text-sm font-bold transition-colors flex items-center gap-1.5', activeTab === 'all' ? a.chipActive : a.chipInactive)}
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'all'}
+          className={cn('px-3.5 py-2 min-h-10 rounded-full text-sm font-bold transition-colors flex items-center gap-1.5', activeTab === 'all' ? a.chipActive : a.chipInactive)}
           onClick={() => setActiveTab('all')}
         >
           {t('Συνδέσεις', 'Connections')}
           <span className="opacity-70">({connections.length})</span>
         </button>
         <button
-          className={cn('px-3.5 py-1.5 rounded-full text-sm font-bold transition-colors flex items-center gap-1.5', activeTab === 'requests' ? a.chipActive : a.chipInactive)}
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'requests'}
+          className={cn('px-3.5 py-2 min-h-10 rounded-full text-sm font-bold transition-colors flex items-center gap-1.5', activeTab === 'requests' ? a.chipActive : a.chipInactive)}
           onClick={() => setActiveTab('requests')}
         >
           {t('Αιτήματα', 'Requests')}
           {pendingRequests.length > 0 && <span className={`${a.requestBadge} text-white text-xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{pendingRequests.length}</span>}
         </button>
         <button
-          className={cn('px-3.5 py-1.5 rounded-full text-sm font-bold transition-colors flex items-center gap-1.5', activeTab === 'suggested' ? a.chipActive : a.chipInactive)}
+          type="button"
+          role="tab"
+          aria-selected={activeTab === 'suggested'}
+          className={cn('px-3.5 py-2 min-h-10 rounded-full text-sm font-bold transition-colors flex items-center gap-1.5', activeTab === 'suggested' ? a.chipActive : a.chipInactive)}
           onClick={() => setActiveTab('suggested')}
         >
-          <Sparkles className="w-3.5 h-3.5" /> {t('Προτάσεις', 'Suggested')}
+          <Sparkles className="w-3.5 h-3.5" aria-hidden /> {t('Προτάσεις', 'Suggested')}
           {suggested.length > 0 && <span className={`${a.isDark ? 'bg-gray-600' : 'bg-gray-400'} text-white text-xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{suggested.length}</span>}
         </button>
       </div>

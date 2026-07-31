@@ -142,6 +142,8 @@ export default function InboxPageContent() {
         </p>
 
         <div
+          role="tablist"
+          aria-label={t('Μηνύματα και ειδοποιήσεις', 'Messages and notifications')}
           className={cn(
             'mt-4 flex h-11 rounded-2xl border p-1 shadow-soft',
             p.isDark ? 'bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]' : 'bg-gray-50 border-gray-100',
@@ -149,9 +151,11 @@ export default function InboxPageContent() {
         >
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'messages'}
             onClick={() => setActiveTab('messages')}
             className={cn(
-              'flex-1 rounded-xl transition-all flex items-center justify-center gap-2',
+              'flex-1 rounded-xl transition-all flex items-center justify-center gap-2 min-h-10',
               INBOX_TYPO.tab,
               activeTab === 'messages'
                 ? p.isDark
@@ -160,13 +164,15 @@ export default function InboxPageContent() {
                 : p.muted,
             )}
           >
-            <MessageSquare className="w-4 h-4" /> {t('Μηνύματα', 'Messages')}
+            <MessageSquare className="w-4 h-4" aria-hidden /> {t('Μηνύματα', 'Messages')}
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'notifications'}
             onClick={() => setActiveTab('notifications')}
             className={cn(
-              'flex-1 rounded-xl transition-all flex items-center justify-center gap-2',
+              'flex-1 rounded-xl transition-all flex items-center justify-center gap-2 min-h-10',
               INBOX_TYPO.tab,
               activeTab === 'notifications'
                 ? p.isDark
@@ -175,7 +181,7 @@ export default function InboxPageContent() {
                 : p.muted,
             )}
           >
-            <Bell className="w-4 h-4" /> {t('Ειδοποιήσεις', 'Notifications')}
+            <Bell className="w-4 h-4" aria-hidden /> {t('Ειδοποιήσεις', 'Notifications')}
             {unreadNotifications > 0 && (
               <span className={cn('bg-cyan-600 text-white px-1.5 py-0.5 rounded-full min-w-[18px]', INBOX_TYPO.badge)}>
                 {unreadNotifications}

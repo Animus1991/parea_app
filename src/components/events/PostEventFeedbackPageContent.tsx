@@ -239,7 +239,9 @@ export default function PostEventFeedbackPageContent() {
                     key={`overall-${star}`}
                     type="button"
                     onClick={() => setOverallRating(star)}
-                    className="p-1 hover:scale-110 transition-transform"
+                    aria-label={t(`${star} αστέρια`, `${star} stars`)}
+                    aria-pressed={star === overallRating}
+                    className="p-1 min-h-10 min-w-10 flex items-center justify-center hover:scale-110 focus-visible:scale-110 transition-transform"
                   >
                     <Star
                       className={cn(
@@ -248,6 +250,7 @@ export default function PostEventFeedbackPageContent() {
                           ? 'text-amber-400 fill-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
                           : 'text-gray-300 dark:text-gray-700 hover:text-amber-300',
                       )}
+                      aria-hidden
                     />
                   </button>
                 ))}
@@ -267,7 +270,9 @@ export default function PostEventFeedbackPageContent() {
                     key={`vibe-${star}`}
                     type="button"
                     onClick={() => setVibeRating(star)}
-                    className="p-1 hover:scale-110 transition-transform"
+                    aria-label={t(`${star} αστέρια ατμόσφαιρας`, `${star} vibe stars`)}
+                    aria-pressed={star === vibeRating}
+                    className="p-1 min-h-10 min-w-10 flex items-center justify-center hover:scale-110 focus-visible:scale-110 transition-transform"
                   >
                     <Star
                       className={cn(
@@ -276,6 +281,7 @@ export default function PostEventFeedbackPageContent() {
                           ? 'text-cyan-400 fill-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]'
                           : 'text-gray-300 dark:text-gray-700 hover:text-cyan-300',
                       )}
+                      aria-hidden
                     />
                   </button>
                 ))}

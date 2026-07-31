@@ -180,8 +180,8 @@ export function CalendarDayCell({
             onOpenSchedule();
           }}
           className={cn(
-            'absolute top-1 right-1 z-20 p-1 rounded-lg min-h-8 min-w-8 flex items-center justify-center',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500',
+            'absolute top-1 right-1 z-20 p-1 rounded-lg min-h-10 min-w-10 flex items-center justify-center',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand',
             today || hasEvents
               ? 'bg-black/40 hover:bg-black/55 text-white'
               : isDark

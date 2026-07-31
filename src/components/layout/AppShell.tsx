@@ -231,7 +231,7 @@ export function SideNav() {
           aria-expanded={!collapsed}
           aria-label={collapsed ? t('Επέκταση πλοήγησης', 'Expand sidebar') : t('Σύμπτυξη πλοήγησης', 'Collapse sidebar')}
           title={collapsed ? t('Επέκταση πλοήγησης', 'Expand sidebar') : t('Σύμπτυξη πλοήγησης', 'Collapse sidebar')}
-          className={cn("p-2 rounded-lg transition-colors min-h-[39px] min-w-[39px] flex items-center justify-center", tok.chipButton)}
+          className={cn("p-2 rounded-lg transition-colors min-h-10 min-w-10 flex items-center justify-center", tok.chipButton)}
         >
           {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
         </button>
@@ -276,12 +276,17 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
             onChange={e => setSearchValue(e.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={t('Αναζήτηση εκδηλώσεων...', 'Search events...')}
-            className={cn("w-64 py-1.5 pl-8 pr-7 text-sm border outline-none transition-colors min-h-[39px]", tok.searchInput)}
+            className={cn("w-64 py-1.5 pl-8 pr-7 text-sm border outline-none transition-colors min-h-10", tok.searchInput)}
           />
           <Search className={cn("absolute w-4 h-4 left-2.5 top-[11px]", tok.isDark ? "text-gray-400" : "text-gray-400")} />
           {searchValue && (
-            <button onClick={() => setSearchValue('')} className="absolute right-2 top-[7px] text-gray-400 hover:text-gray-600">
-              <X className="w-4 h-4" />
+            <button
+              type="button"
+              onClick={() => setSearchValue('')}
+              aria-label={t('Καθαρισμός αναζήτησης', 'Clear search')}
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 min-h-9 min-w-9 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" aria-hidden />
             </button>
           )}
         </div>
@@ -292,7 +297,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
           title={t('Δημιουργία εκδήλωσης', 'Create event')}
           className={cn(
-            "hidden sm:inline-flex items-center gap-1.5 text-sm font-bold rounded-full transition-all duration-200 px-3 py-2 min-h-[39px] shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]",
+            "hidden sm:inline-flex items-center gap-1.5 text-sm font-bold rounded-full transition-all duration-200 px-3 py-2 min-h-10 shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]",
             theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] text-white hover:bg-black'
               : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] hover:bg-white'
               : theme === 'vibrant' || theme === 'vibrant-dark' ? 'bg-fuchsia-600 text-white hover:bg-fuchsia-700'
@@ -310,7 +315,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         {/* Language Toggle */}
         <button
           onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
-          className={cn("flex items-center gap-1 text-xs font-bold transition-colors px-2.5 py-2 rounded-lg min-h-[39px] min-w-[39px]", tok.chipButton)}
+          className={cn("flex items-center gap-1 text-xs font-bold transition-colors px-2.5 py-2 rounded-lg min-h-10 min-w-10", tok.chipButton)}
           aria-label={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')} title={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')}
         >
           <Globe className="w-3.5 h-3.5" />
@@ -429,7 +434,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     >
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-toast focus:px-4 focus:py-2 focus:bg-gray-900 focus:text-white focus:rounded-xl focus:text-sm focus:font-semibold"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-toast focus:px-4 focus:py-2.5 focus:min-h-10 focus:bg-brand focus:text-brand-fg focus:rounded-xl focus:text-sm focus:font-semibold focus:shadow-soft"
       >
         {t('Μετάβαση στο περιεχόμενο', 'Skip to content')}
       </a>

@@ -38,8 +38,8 @@ export function StoryViewer({
   const groups = useStore((s) => s.groups);
   const currentUser = useStore((s) => s.currentUser);
   const becomeEventHost = useStore((s) => s.becomeEventHost);
-  const event = events[index];
-  useOverlayBehavior(Boolean(event), onClose, panelRef);
+  const activeEvent = events[index];
+  useOverlayBehavior(Boolean(activeEvent), onClose, panelRef);
 
   const goNext = useCallback(
     (opts?: { fromAuto?: boolean }) => {
@@ -85,17 +85,17 @@ export function StoryViewer({
     return () => window.removeEventListener("keydown", onKey);
   }, [goNext, goPrev]);
 
-  if (!event) return null;
+  if (!activeEvent) return null;
 
   const seeksHost =
-    !!event.isPlatformEvent &&
-    !groups.find((g) => g.eventId === event.id && g.hostId);
+    !!activeEvent.isPlatformEvent &&
+    !groups.find((g) => g.eventId === activeEvent.id && g.hostId);
 
   let day = "";
   let mon = "";
   let weekday = "";
   try {
-    const d = parseISO(event.date);
+    const d = parseISO(activeEvent.date);
     day = format(d, "d");
     mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale }).toUpperCase();
     weekday = format(d, "EEEE", { locale: language === 'en' ? enLocale : elLocale });
@@ -105,7 +105,7 @@ export function StoryViewer({
 
   const openEvent = () => {
     onClose();
-    navigate(`/events/${event.id}`);
+    navigate(`/events/${activeEvent.id}`);
   };
 
   const handleBecomeHost = () => {
@@ -114,12 +114,12 @@ export function StoryViewer({
       navigate("/login");
       return;
     }
-    becomeEventHost(event.id);
+    becomeEventHost(activeEvent.id);
     toast.success(
       t("Έγινες ο διοργανωτής της ομάδας! 🎉", "You're now the group's organizer! 🎉"),
     );
     onClose();
-    navigate(`/events/${event.id}`);
+    navigate(`/events/${activeEvent.id}`);
   };
 
   const hasMultiple = events.length > 1;
@@ -131,7 +131,7 @@ export function StoryViewer({
       className="fixed inset-0 z-fullscreen bg-black flex items-center justify-center select-none outline-none"
       role="dialog"
       aria-modal="true"
-      aria-label={event.title}
+      aria-label={activeEvent.title}
     >
       {hasMultiple && (
         <SlideNavArrows
@@ -143,10 +143,10 @@ export function StoryViewer({
         />
       )}
       <div className="relative w-full h-full max-w-md mx-auto overflow-hidden">
-        {event.imageUrl ? (
+        {activeEvent.imageUrl ? (
           <img
-            src={event.imageUrl}
-            alt={event.title}
+            src={activeEvent.imageUrl}
+            alt={activeEvent.title}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -218,12 +218,12 @@ export function StoryViewer({
             </span>
           </div>
           <h2 className="text-white text-xl font-extrabold leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
-            {event.title}
+            {activeEvent.title}
           </h2>
-          {event.locationArea && (
+          {activeEvent.locationArea && (
             <div className="flex items-center gap-1.5 text-white/85 text-sm font-medium">
               <MapPin className="w-3.5 h-3.5" />
-              {event.locationArea}
+              {activeEvent.locationArea}
             </div>
           )}
           <div className="flex gap-2 pt-1.5 flex-wrap">

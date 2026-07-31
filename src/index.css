@@ -750,13 +750,27 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   border-color: hsl(220 13% 40%) !important;
 }
 
-/* Respect users who prefer reduced motion */
+/* Global keyboard focus ring (P5) — brand token, complements per-component rings */
+:where(a, button, [role='button'], input, select, textarea, summary, [tabindex]:not([tabindex='-1'])):focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* Respect users who prefer reduced motion (P5.1) */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .animate-ping,
+  .animate-bounce,
+  .animate-pulse {
+    animation: none !important;
   }
 }
 

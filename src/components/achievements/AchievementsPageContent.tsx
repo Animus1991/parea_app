@@ -125,16 +125,23 @@ export default function AchievementsPageContent() {
       </Card>
 
       {/* Tabs */}
-      <div className={cn("flex gap-4 border-b", a.borderB)}>
+      <div
+        className={cn("flex gap-4 border-b", a.borderB)}
+        role="tablist"
+        aria-label={t('Ενότητες επιτευγμάτων', 'Achievement sections')}
+      >
         {[
-          { key: 'badges' as const, label: t('Badges', 'Badges') },
+          { key: 'badges' as const, label: t('Διακριτικά', 'Badges') },
           { key: 'streaks' as const, label: t('Σερί', 'Streaks') },
           { key: 'leaderboard' as const, label: t('Κατάταξη', 'Leaderboard') },
         ].map(tab => (
           <button
             key={tab.key}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={cn("pb-3 text-sm font-bold tracking-wide transition-colors whitespace-nowrap", activeTab === tab.key ? cn("border-b-2", a.tabActive) : a.tabInactive)}
+            className={cn("pb-3 min-h-10 text-sm font-bold tracking-wide transition-colors whitespace-nowrap", activeTab === tab.key ? cn("border-b-2", a.tabActive) : a.tabInactive)}
           >
             {tab.label}
           </button>
