@@ -140,6 +140,9 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
             plan={feed.myActivePlan}
             isDark={isDark}
             onManage={() => navigate(`/events/${feed.myActivePlan!.event.id}`)}
+            onEdit={() =>
+              navigate(`/buddy-seek?editRequest=${feed.myActivePlan!.intent.id}`)
+            }
           />
         )}
 

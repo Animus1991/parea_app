@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, Shield } from 'lucide-react';
 import { toast } from 'sonner';
@@ -10,6 +10,7 @@ import { cn } from '../../lib/utils';
 import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import type { Event } from '../../types';
 import type {
+  CompanyRequest,
   LookingForType,
   MeetingPreference,
   ProfileExposure,
@@ -23,11 +24,14 @@ export function CreateCompanyRequestModal({
   open,
   onClose,
   darkSurface,
+  existingRequest,
 }: {
   event: Event;
   open: boolean;
   onClose: () => void;
   darkSurface?: boolean;
+  /** When set, modal edits this request instead of creating a new one. */
+  existingRequest?: CompanyRequest | null;
 }) {
   const { t } = useLanguage();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -37,6 +41,9 @@ export function CreateCompanyRequestModal({
   const prefs = useStore((s) => s.companyRequestPreferences);
   const publish = useStore((s) => s.publishCompanyRequest);
   const saveDraft = useStore((s) => s.saveCompanyRequestDraft);
+  const updateRequest = useStore((s) => s.updateCompanyRequest);
+
+  const isEdit = Boolean(existingRequest);
 
   const [step, setStep] = useState(0);
   const [lookingForType, setLookingForType] = useState<LookingForType>('open_to_suggestions');
@@ -48,10 +55,34 @@ export function CreateCompanyRequestModal({
   const [meetingPreference, setMeetingPreference] = useState<MeetingPreference>('chat_first');
   const [message, setMessage] = useState('');
 
+  useEffect(() => {
+    if (!open) return;
+    setStep(0);
+    if (existingRequest) {
+      setLookingForType(existingRequest.lookingForType);
+      setVisibilityMode(existingRequest.visibilityMode);
+      setProfileExposure(existingRequest.profileExposure);
+      setPreferredGroupMin(existingRequest.preferredGroupMin);
+      setPreferredGroupMax(existingRequest.preferredGroupMax);
+      setFlexibleDates(existingRequest.flexibleDates);
+      setMeetingPreference(existingRequest.meetingPreference);
+      setMessage(existingRequest.message ?? '');
+    } else {
+      setLookingForType('open_to_suggestions');
+      setVisibilityMode(prefs.defaultVisibility);
+      setProfileExposure(prefs.defaultProfileExposure);
+      setPreferredGroupMin(3);
+      setPreferredGroupMax(6);
+      setFlexibleDates(true);
+      setMeetingPreference('chat_first');
+      setMessage('');
+    }
+  }, [open, existingRequest?.id, prefs.defaultVisibility, prefs.defaultProfileExposure]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!open || !currentUser) return null;
 
-  const previewRequest = {
-    id: 'preview',
+  const previewRequest: CompanyRequest = {
+    id: existingRequest?.id ?? 'preview',
     eventId: event.id,
     creatorUserId: currentUser.id,
     lookingForType,
@@ -62,47 +93,63 @@ export function CreateCompanyRequestModal({
     meetingPreference,
     visibilityMode,
     profileExposure,
-    requiredTrustTier: 'none' as const,
-    status: 'active' as const,
-    createdAt: new Date().toISOString(),
+    requiredTrustTier: existingRequest?.requiredTrustTier ?? 'none',
+    status: existingRequest?.status ?? 'active',
+    createdAt: existingRequest?.createdAt ?? new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 
+  const payload = {
+    lookingForType,
+    message: message || undefined,
+    preferredGroupMin,
+    preferredGroupMax,
+    flexibleDates,
+    meetingPreference,
+    visibilityMode,
+    profileExposure,
+    requiredTrustTier: 'none' as const,
+  };
+
   const publishNow = () => {
-    publish({
-      eventId: event.id,
-      creatorUserId: currentUser.id,
-      lookingForType,
-      message: message || undefined,
-      preferredGroupMin,
-      preferredGroupMax,
-      flexibleDates,
-      meetingPreference,
-      visibilityMode,
-      profileExposure,
-      requiredTrustTier: 'none',
-      status: 'active',
-    });
-    toast.success(t('Το αίτημα δημοσιεύτηκε', 'Request published'));
+    if (existingRequest) {
+      updateRequest(existingRequest.id, {
+        ...payload,
+        status: existingRequest.status === 'draft' || existingRequest.status === 'paused'
+          ? 'active'
+          : existingRequest.status,
+        updatedAt: new Date().toISOString(),
+      });
+      toast.success(t('Το αίτημα ενημερώθηκε', 'Request updated'));
+    } else {
+      publish({
+        eventId: event.id,
+        creatorUserId: currentUser.id,
+        ...payload,
+        status: 'active',
+      });
+      toast.success(t('Το αίτημα δημοσιεύτηκε', 'Request published'));
+    }
     onClose();
     setStep(0);
   };
 
   const saveAsDraft = () => {
-    saveDraft({
-      eventId: event.id,
-      creatorUserId: currentUser.id,
-      lookingForType,
-      message: message || undefined,
-      preferredGroupMin,
-      preferredGroupMax,
-      flexibleDates,
-      meetingPreference,
-      visibilityMode,
-      profileExposure,
-      requiredTrustTier: 'none',
-    });
-    toast.message(t('Αποθηκεύτηκε ως πρόχειρο', 'Saved as draft'));
+    if (existingRequest) {
+      updateRequest(existingRequest.id, {
+        ...payload,
+        status: 'draft',
+        updatedAt: new Date().toISOString(),
+      });
+      toast.message(t('Αποθηκεύτηκε ως πρόχειρο', 'Saved as draft'));
+    } else {
+      saveDraft({
+        eventId: event.id,
+        creatorUserId: currentUser.id,
+        ...payload,
+      });
+      toast.message(t('Αποθηκεύτηκε ως πρόχειρο', 'Saved as draft'));
+    }
     onClose();
   };
 
@@ -113,6 +160,7 @@ export function CreateCompanyRequestModal({
       className="fixed inset-0 z-modal flex items-end sm:items-center justify-center sm:p-4"
       role="dialog"
       aria-modal="true"
+      aria-label={isEdit ? t('Επεξεργασία αιτήματος', 'Edit request') : t('Ψάχνετε Nakamas;', 'Looking for Nakamas?')}
     >
       <button type="button" tabIndex={-1} className="absolute inset-0 bg-black/50" onClick={onClose} aria-label={t('Κλείσιμο', 'Close')} />
       <div
@@ -121,7 +169,11 @@ export function CreateCompanyRequestModal({
         className={cn('relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl border shadow-soft-lg max-h-[92vh] flex flex-col outline-none', shell)}
       >
         <div className="p-4 border-b border-inherit shrink-0">
-          <h2 className="text-base font-bold">{t('Ψάχνετε Nakamas;', 'Looking for Nakamas?')}</h2>
+          <h2 className="text-base font-bold">
+            {isEdit
+              ? t('Επεξεργασία αιτήματος', 'Edit request')
+              : t('Ψάχνετε Nakamas;', 'Looking for Nakamas?')}
+          </h2>
           <p className="text-xs opacity-70 mt-0.5">
             {t('Βήμα', 'Step')} {step + 1}/{STEPS} · {event.title}
           </p>
@@ -166,12 +218,12 @@ export function CreateCompanyRequestModal({
                 ] as VisibilityMode[]
               ).map((mode) => (
                 <label key={mode} className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input type="radio" checked={visibilityMode === mode} onChange={() => setVisibilityMode(mode)} />
+                  <input type="radio" name="vis" checked={visibilityMode === mode} onChange={() => setVisibilityMode(mode)} />
                   {audienceSummary(mode, t)}
                 </label>
               ))}
               <p className="text-xs opacity-60 flex items-center gap-1">
-                <Shield className="w-3 h-3" />
+                <Shield className="w-3 h-3" aria-hidden />
                 {t('Το αίτημά σας δεν είναι δημόσιο από προεπιλογή.', 'Your request is not public by default.')}
               </p>
             </div>
@@ -184,7 +236,7 @@ export function CreateCompanyRequestModal({
                 ['anonymous', 'nickname', 'interests_only', 'trust_badges', 'optional_photo', 'mini_profile'] as ProfileExposure[]
               ).map((ex) => (
                 <label key={ex} className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input type="radio" checked={profileExposure === ex} onChange={() => setProfileExposure(ex)} />
+                  <input type="radio" name="exp" checked={profileExposure === ex} onChange={() => setProfileExposure(ex)} />
                   {exposureSummary(ex, t)}
                 </label>
               ))}
@@ -195,24 +247,26 @@ export function CreateCompanyRequestModal({
             <div className="space-y-3">
               <p className="text-sm font-bold">{t('Μέγεθος & διαθεσιμότητα', 'Size & availability')}</p>
               <div className="flex gap-3">
-                <label className="text-xs">
-                  Min
+                <label className="text-xs font-semibold">
+                  {t('Ελάχ.', 'Min')}
                   <input
                     type="number"
                     min={1}
                     value={preferredGroupMin}
                     onChange={(e) => setPreferredGroupMin(Number(e.target.value))}
                     className="block w-16 mt-1 rounded-lg border border-border px-2 py-1 text-sm bg-surface-raised"
+                    aria-label={t('Ελάχιστο μέγεθος ομάδας', 'Minimum group size')}
                   />
                 </label>
-                <label className="text-xs">
-                  Max
+                <label className="text-xs font-semibold">
+                  {t('Μέγ.', 'Max')}
                   <input
                     type="number"
                     min={2}
                     value={preferredGroupMax}
                     onChange={(e) => setPreferredGroupMax(Number(e.target.value))}
                     className="block w-16 mt-1 rounded-lg border border-border px-2 py-1 text-sm bg-surface-raised"
+                    aria-label={t('Μέγιστο μέγεθος ομάδας', 'Maximum group size')}
                   />
                 </label>
               </div>
@@ -241,7 +295,11 @@ export function CreateCompanyRequestModal({
 
           {step === 4 && (
             <div className="space-y-3">
-              <p className="text-sm font-bold">{t('Έλεγχος πριν τη δημοσίευση', 'Review before publishing')}</p>
+              <p className="text-sm font-bold">
+                {isEdit
+                  ? t('Έλεγχος πριν την αποθήκευση', 'Review before saving')
+                  : t('Έλεγχος πριν τη δημοσίευση', 'Review before publishing')}
+              </p>
               <ul className="text-xs space-y-1 opacity-80">
                 <li>
                   {t('Ορατό σε', 'Visible to')}: {audienceSummary(visibilityMode, t)}
@@ -269,7 +327,7 @@ export function CreateCompanyRequestModal({
               onClick={() => setStep((s) => s - 1)}
               className="min-h-11 px-4 rounded-2xl border border-border text-sm font-bold flex items-center gap-1"
             >
-              <ChevronLeft className="w-4 h-4" /> {t('Πίσω', 'Back')}
+              <ChevronLeft className="w-4 h-4" aria-hidden /> {t('Πίσω', 'Back')}
             </button>
           )}
           {step < STEPS - 1 ? (
@@ -279,7 +337,7 @@ export function CreateCompanyRequestModal({
               onClick={() => setStep((s) => s + 1)}
               className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold flex items-center justify-center gap-1"
             >
-              {t('Συνέχεια', 'Continue')} <ChevronRight className="w-4 h-4" />
+              {t('Συνέχεια', 'Continue')} <ChevronRight className="w-4 h-4" aria-hidden />
             </button>
           ) : (
             <>
@@ -292,7 +350,9 @@ export function CreateCompanyRequestModal({
                 onClick={publishNow}
                 className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold"
               >
-                {t('Δημοσίευση αιτήματος', 'Publish request')}
+                {isEdit
+                  ? t('Αποθήκευση αλλαγών', 'Save changes')
+                  : t('Δημοσίευση αιτήματος', 'Publish request')}
               </button>
             </>
           )}

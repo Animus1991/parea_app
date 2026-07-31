@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Filter, Shield, Settings, Plus, X, Info } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
@@ -23,7 +23,7 @@ import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
 import type { Event } from '../../types';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
-import type { CompanyJoinRequestStatus } from '../../types/companyRequest';
+import type { CompanyJoinRequestStatus, CompanyRequest } from '../../types/companyRequest';
 
 type FilterKey = 'all' | 'open_spots' | 'verified' | 'small_groups' | 'flexible' | 'saved_events' | 'high_match';
 
@@ -46,10 +46,13 @@ function joinStatusLabel(status: CompanyJoinRequestStatus, t: (el: string, en: s
   }
 }
 
+type RequestWizard = { event: Event; existing?: CompanyRequest };
+
 export default function BuddySeekPageContent() {
   const { t } = useLanguage();
   const a = usePageContrast();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const feed = usePlansFormingFeed(24);
   const sendJoin = useStore((s) => s.sendCompanyJoinRequest);
   const dismiss = useStore((s) => s.dismissCompanyRequest);
@@ -65,10 +68,21 @@ export default function BuddySeekPageContent() {
   const [preview, setPreview] = useState<PlansFormingEnrichedItem | null>(null);
   const [previewJoinId, setPreviewJoinId] = useState<string | null>(null);
   const [eventPickerOpen, setEventPickerOpen] = useState(false);
-  const [createEvent, setCreateEvent] = useState<Event | null>(null);
+  const [wizard, setWizard] = useState<RequestWizard | null>(null);
   const [showExplainer, setShowExplainer] = useState(
     () => typeof window !== 'undefined' && !localStorage.getItem(EXPLAINER_KEY),
   );
+
+  useEffect(() => {
+    const editId = searchParams.get('editRequest');
+    if (!editId) return;
+    const req = companyRequests.find((r) => r.id === editId);
+    const event = req ? events.find((e) => e.id === req.eventId) : undefined;
+    if (req && event) setWizard({ event, existing: req });
+    const next = new URLSearchParams(searchParams);
+    next.delete('editRequest');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, companyRequests, events, setSearchParams]);
 
   const dismissExplainer = () => {
     localStorage.setItem(EXPLAINER_KEY, '1');
@@ -181,6 +195,12 @@ export default function BuddySeekPageContent() {
         <PlansFormingYourPlanBanner
           plan={feed.myActivePlan}
           onManage={() => navigate(`/events/${feed.myActivePlan!.event.id}`)}
+          onEdit={() =>
+            setWizard({
+              event: feed.myActivePlan!.event,
+              existing: feed.myActivePlan!.intent,
+            })
+          }
         />
       )}
 
@@ -348,7 +368,7 @@ export default function BuddySeekPageContent() {
               type="button"
               data-autofocus={event.id === upcomingEvents[0]?.id ? true : undefined}
               onClick={() => {
-                setCreateEvent(event);
+                setWizard({ event });
                 setEventPickerOpen(false);
               }}
               className={cn(
@@ -375,11 +395,12 @@ export default function BuddySeekPageContent() {
         </button>
       </Modal>
 
-      {createEvent && (
+      {wizard && (
         <CreateCompanyRequestModal
-          event={createEvent}
+          event={wizard.event}
+          existingRequest={wizard.existing}
           open
-          onClose={() => setCreateEvent(null)}
+          onClose={() => setWizard(null)}
         />
       )}
 

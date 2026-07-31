@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 
 export function ChatModerationPanel() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const a = usePageContrast();
   const reports = useChatStore((s) => s.reports);
   const conversations = useChatStore((s) => s.conversations);
@@ -29,7 +29,10 @@ export function ChatModerationPanel() {
               <li key={r.id} className={cn('rounded-xl border p-3 text-xs space-y-1', a.borderB)}>
                 <p className="font-bold">{conv?.title ?? r.conversationId}</p>
                 <p className="opacity-70">{r.reason}</p>
-                <p className="text-xs opacity-50">{r.status} · {new Date(r.createdAt).toLocaleString()}</p>
+                <p className="text-xs opacity-50">
+                  {r.status} ·{' '}
+                  {new Date(r.createdAt).toLocaleString(language === 'en' ? 'en-GB' : 'el-GR')}
+                </p>
               </li>
             );
           })

@@ -187,7 +187,9 @@ export function LookingForCompanyPanel({
           {pendingForMe.length > 0 && (
             <div className={cn('rounded-2xl border p-3', darkSurface ? 'border-amber-800 bg-amber-950/20' : 'border-amber-200 bg-amber-50')}>
               <p className="text-xs font-bold text-amber-800 dark:text-amber-200">
-                {t(`${pendingForMe.length} αιτήματα συμμετοχής`, `${pendingForMe.length} join requests`)}
+                {pendingForMe.length === 1
+                  ? t('1 αίτημα συμμετοχής', '1 join request')
+                  : t(`${pendingForMe.length} αιτήματα συμμετοχής`, `${pendingForMe.length} join requests`)}
               </p>
               {pendingForMe.map((j) => {
                 const from = users.find((u) => u.id === j.fromUserId);
@@ -349,7 +351,13 @@ export function LookingForCompanyPanel({
         </>
       )}
 
-      <CreateCompanyRequestModal event={event} open={createOpen} onClose={() => setCreateOpen(false)} darkSurface={darkSurface} />
+      <CreateCompanyRequestModal
+        event={event}
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        darkSurface={darkSurface}
+        existingRequest={myRequest}
+      />
 
       {preview && previewSeeker && (
         <JoinRequestPreviewModal

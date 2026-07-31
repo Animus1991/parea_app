@@ -73,7 +73,12 @@ export function PlansFormingBottomSheet() {
           {feed.insights.pendingJoinsToReview > 0 && (
             <button
               type="button"
-              className="w-full flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-900"
+              className={cn(
+                'w-full flex items-center gap-2 rounded-xl border px-3 py-2.5 min-h-10 text-xs font-bold',
+                tok.isDark
+                  ? 'border-amber-700/60 bg-amber-950/40 text-amber-100'
+                  : 'border-amber-200 bg-amber-50 text-amber-900',
+              )}
               onClick={() => {
                 setOpen(false);
                 navigate('/buddy-seek');
@@ -95,6 +100,10 @@ export function PlansFormingBottomSheet() {
               onManage={() => {
                 setOpen(false);
                 navigate(`/events/${feed.myActivePlan!.event.id}`);
+              }}
+              onEdit={() => {
+                setOpen(false);
+                navigate(`/buddy-seek?editRequest=${feed.myActivePlan!.intent.id}`);
               }}
             />
           )}

@@ -81,10 +81,14 @@ export function PlansFormingYourPlanBanner({
   plan,
   isDark,
   onManage,
+  onEdit,
 }: {
   plan: PlansFormingEnrichedItem;
   isDark?: boolean;
+  /** Opens event detail / manage surface */
   onManage?: () => void;
+  /** Opens the company-request edit wizard */
+  onEdit?: () => void;
 }) {
   const { t, tu } = useLanguage();
   const navigate = useNavigate();
@@ -108,21 +112,21 @@ export function PlansFormingYourPlanBanner({
       <div className="flex gap-2">
         <button
           type="button"
-          onClick={() => navigate(`/events/${plan.event.id}`)}
+          onClick={() => (onManage ? onManage() : navigate(`/events/${plan.event.id}`))}
           className={cn(
-            'flex-1 min-h-8 rounded-lg',
+            'flex-1 min-h-10 rounded-lg',
             PLANS_FORMING_TYPO.statChip,
             isDark ? 'bg-cyan-600 text-white' : 'bg-cyan-600 text-white',
           )}
         >
           {t('Διαχείριση', 'Manage')}
         </button>
-        {onManage && (
+        {onEdit && (
           <button
             type="button"
-            onClick={onManage}
+            onClick={onEdit}
             className={cn(
-              'px-3 min-h-8 rounded-lg border',
+              'px-3 min-h-10 rounded-lg border',
               PLANS_FORMING_TYPO.statChip,
               isDark ? 'border-white/20 text-gray-200' : 'border-cyan-300 text-cyan-800',
             )}

@@ -14,14 +14,17 @@ export function QuickReplies({ onSelect, disabled }: { onSelect: (text: string) 
   const { t } = useLanguage();
   if (disabled) return null;
   return (
-    <div className="flex gap-1.5 overflow-x-auto px-3 pb-2 scrollbar-none" role="list">
+    <div
+      className="flex gap-1.5 overflow-x-auto px-3 pb-2 scrollbar-none"
+      role="toolbar"
+      aria-label={t('Γρήγορες απαντήσεις', 'Quick replies')}
+    >
       {REPLIES.map((r) => (
         <button
           key={r.en}
           type="button"
-          role="listitem"
           onClick={() => onSelect(t(r.el, r.en))}
-          className="shrink-0 text-xs font-bold px-2.5 py-1.5 rounded-full border border-border-strong bg-ink/5 hover:bg-brand/20 text-ink-muted"
+          className="shrink-0 text-xs font-bold px-2.5 py-1.5 min-h-9 rounded-full border border-border-strong bg-ink/5 hover:bg-brand/20 text-ink-muted"
         >
           {t(r.el, r.en)}
         </button>

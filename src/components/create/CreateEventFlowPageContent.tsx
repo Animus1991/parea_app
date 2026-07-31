@@ -400,13 +400,17 @@ export default function CreateEventFlowPageContent() {
                   <label className={cn(labelClass, "mb-3")}>
                     {t("Ορατότητα", "Visibility")}
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div
-                      className={visibility === "public" ? visSelected : visIdle}
+                  <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label={t("Ορατότητα", "Visibility")}>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={visibility === "public"}
+                      className={cn("text-left", visibility === "public" ? visSelected : visIdle)}
                       onClick={() => setVisibility("public")}
                     >
                       <Globe
                         className={cn("w-5 h-5 mb-2", visibility === "public" ? pc.accent : p.muted)}
+                        aria-hidden
                       />
                       <h4 className={cn("text-sm font-bold mb-1", p.head)}>
                         {t("Δημόσια", "Public")}
@@ -417,13 +421,17 @@ export default function CreateEventFlowPageContent() {
                           "Anyone can find and request to join.",
                         )}
                       </p>
-                    </div>
-                    <div
-                      className={visibility === "private" ? visSelected : visIdle}
+                    </button>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={visibility === "private"}
+                      className={cn("text-left", visibility === "private" ? visSelected : visIdle)}
                       onClick={() => setVisibility("private")}
                     >
                       <Lock
                         className={cn("w-5 h-5 mb-2", visibility === "private" ? pc.accent : p.muted)}
+                        aria-hidden
                       />
                       <h4 className={cn("text-sm font-bold mb-1", p.head)}>
                         {t("Ιδιωτική", "Private")}
@@ -434,7 +442,7 @@ export default function CreateEventFlowPageContent() {
                           "Only visible via direct invite link.",
                         )}
                       </p>
-                    </div>
+                    </button>
                   </div>
                 </div>
 

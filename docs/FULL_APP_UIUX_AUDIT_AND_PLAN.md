@@ -509,7 +509,7 @@ Inbox unread/pinned/typing (`g1` μόνο)· Plans avatars/«4/5 μέλη»/«me
 |---|---|
 | Calendar hint + schedule button + empty state (Φ18.1) | ✅ |
 | BuddySeek explainer, sent requests, event-picker, skeleton (Φ18.2) | ✅ |
-| LookingForCompany φίλτρα + «Edit» wizard + chip counts | 🟡 (φίλτρα spots/verified ✅· Edit wizard ακόμα μερικό) |
+| LookingForCompany φίλτρα + «Edit» wizard + chip counts | ✅ (Edit ανοίγει CreateCompanyRequestModal με prefill) |
 | Onboarding gate «≥3» | ✅ (subtitle + Next disabled until 3) |
 | Connections invite picker / DM tooltip | ✅ (event picker modal + Inbox tooltip) |
 
@@ -551,7 +551,7 @@ Inbox unread/pinned/typing (`g1` μόνο)· Plans avatars/«4/5 μέλη»/«me
 
 ### Φ22 — i18n + a11y οριζόντιο πέρασμα
 
-🟡 Μερικό→υψηλό (P5 baseline, tab roles, focus-visible, hover→focus-within σε Notifications/Profile, icon aria)· **πλήρες πέρασμα κάθε Γ3/Γ4 στοιχείου ακόμα incremental**
+✅ Υψηλή κάλυψη Γ3/Γ4 (Min/Max i18n, typo Έγινε, QuickReplies toolbar, Challenges tabs, CreateEvent visibility radios, History/Saved keyboard cards, BottomSheet amber dark CTA, ChatModeration locale)· residual: λίγα legacy EL==EN labels όπου το copy είναι ήδη δίγλωσσο via `t()`
 
 ### Νέα ευρήματα (προστέθηκαν κατά την υλοποίηση)
 
