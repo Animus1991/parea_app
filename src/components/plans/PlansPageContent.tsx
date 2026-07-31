@@ -9,6 +9,9 @@ import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { TabBar } from '../common/TabBar';
 import { Modal } from '../common/Modal';
+import { EventCardSkeleton } from '../common/Skeleton';
+import { ResourceStateGate } from '../common/ResourceStateGate';
+import { useEventsResource } from '../../hooks/useEventsQuery';
 import { cn } from '../../lib/utils';
 import { PLANS_TYPO } from '../../lib/typographyTokens';
 import type { Group } from '../../types';
@@ -33,7 +36,7 @@ export default function PlansPageContent() {
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const events = useStore((s) => s.events);
+  const { events, isLoading, isError, refetch } = useEventsResource();
   const groups = useStore((s) => s.groups);
   const users = useStore((s) => s.users);
   const currentUser = useStore((s) => s.currentUser);
@@ -150,6 +153,19 @@ export default function PlansPageContent() {
         onChange={(id) => setActiveTab(id as 'upcoming' | 'pending' | 'past')}
       />
 
+      <ResourceStateGate
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={() => void refetch()}
+        loading={
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <EventCardSkeleton key={`plans-sk-${i}`} />
+            ))}
+          </div>
+        }
+        errorTitle={t('Αδυναμία φόρτωσης σχεδίων', 'Could not load plans')}
+      >
       {activeTab === 'upcoming' && (
       <div className="space-y-4">
         {upcomingEvents.map(event => {
@@ -370,6 +386,7 @@ export default function PlansPageContent() {
         )}
       </div>
       )}
+      </ResourceStateGate>
 
       <Modal
         open={Boolean(showLeaveConfirm)}

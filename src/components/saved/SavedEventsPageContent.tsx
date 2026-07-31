@@ -1,11 +1,15 @@
 import React, { useState, useMemo } from 'react';
-import { Bookmark, MapPin, Calendar, Users, ArrowRight, Search, SlidersHorizontal, BookmarkX, Sparkles } from 'lucide-react';
+import { Bookmark, MapPin, Calendar, Users, ArrowRight, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
+import { EmptyState } from '../common/EmptyState';
+import { EventCardSkeleton } from '../common/Skeleton';
+import { ResourceStateGate } from '../common/ResourceStateGate';
+import { useEventsResource } from '../../hooks/useEventsQuery';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -15,7 +19,7 @@ export default function SavedEventsPageContent() {
   const navigate = useNavigate();
   const a = usePageContrast();
 
-  const events = useStore((s) => s.events);
+  const { events, isLoading, isError, refetch } = useEventsResource();
   const savedEventIds = useStore((s) => s.savedEvents) || [];
   const toggleSavedEvent = useStore((s) => s.toggleSavedEvent);
 
@@ -96,6 +100,19 @@ export default function SavedEventsPageContent() {
       )}
 
       {/* Events Grid */}
+      <ResourceStateGate
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={() => void refetch()}
+        loading={
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <EventCardSkeleton key={`saved-sk-${i}`} />
+            ))}
+          </div>
+        }
+        errorTitle={t('Αδυναμία φόρτωσης αποθηκευμένων', 'Could not load saved events')}
+      >
       {savedEvents.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {savedEvents.map(event => (
@@ -165,27 +182,26 @@ export default function SavedEventsPageContent() {
           ))}
         </div>
       ) : savedEventIds.length > 0 && search ? (
-        <Card className="p-8 text-center">
-          <Search className={cn("w-10 h-10 mx-auto mb-3", a.muted)} />
-          <p className={cn("font-bold text-sm", a.head)}>{t('Κανένα αποτέλεσμα', 'No results')}</p>
-          <p className={cn("text-xs mt-1", a.muted)}>{t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search term.')}</p>
-        </Card>
+        <EmptyState
+          icon={Search}
+          title={t('Κανένα αποτέλεσμα', 'No results')}
+          description={t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search term.')}
+          actionLabel={t('Καθαρισμός', 'Clear')}
+          onAction={() => setSearch('')}
+        />
       ) : (
-        <div className={cn("text-center py-16 rounded-2xl border border-dashed", a.bankBg)}>
-          <Bookmark className={cn("mx-auto h-10 w-10 mb-3", a.muted)} />
-          <h3 className={cn("text-base font-bold", a.head)}>{t('Δεν υπάρχουν αποθηκευμένες', 'No saved events yet')}</h3>
-          <p className={cn("text-sm mt-1 max-w-sm mx-auto", a.muted)}>
-            {t('Προσθέστε εκδηλώσεις στους σελιδοδείκτες σας για εύκολη πρόσβαση.', 'Bookmark events to find them easily later.')}
-          </p>
-          <Link
-            to="/"
-            className={cn("inline-flex items-center justify-center px-4 py-2 mt-4 text-white text-xs font-bold rounded-full shadow-soft transition-colors", a.contactBtn)}
-          >
-            <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-            {t('Ανακαλύψτε Εκδηλώσεις', 'Discover Events')}
-          </Link>
-        </div>
+        <EmptyState
+          icon={Bookmark}
+          title={t('Δεν υπάρχουν αποθηκευμένες', 'No saved events yet')}
+          description={t(
+            'Προσθέστε εκδηλώσεις στους σελιδοδείκτες σας για εύκολη πρόσβαση.',
+            'Bookmark events to find them easily later.',
+          )}
+          actionLabel={t('Ανακαλύψτε Εκδηλώσεις', 'Discover Events')}
+          onAction={() => navigate('/')}
+        />
       )}
+      </ResourceStateGate>
     </div>
   );
 }

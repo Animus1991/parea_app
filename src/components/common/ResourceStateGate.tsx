@@ -1,0 +1,53 @@
+import type { ReactNode } from 'react';
+import { AlertTriangle, type LucideIcon } from 'lucide-react';
+import { EmptyState } from './EmptyState';
+import { useLanguage } from '../../lib/i18n';
+
+interface ResourceStateGateProps {
+  isLoading: boolean;
+  isError: boolean;
+  onRetry?: () => void;
+  loading: ReactNode;
+  children: ReactNode;
+  errorIcon?: LucideIcon;
+  errorTitle?: string;
+  errorDescription?: string;
+}
+
+/**
+ * Shared gate for secondary pages: skeleton → error EmptyState → content.
+ */
+export function ResourceStateGate({
+  isLoading,
+  isError,
+  onRetry,
+  loading,
+  children,
+  errorIcon = AlertTriangle,
+  errorTitle,
+  errorDescription,
+}: ResourceStateGateProps) {
+  const { t } = useLanguage();
+
+  if (isLoading) return <>{loading}</>;
+
+  if (isError) {
+    return (
+      <EmptyState
+        icon={errorIcon}
+        title={errorTitle ?? t('Αδυναμία φόρτωσης', 'Could not load')}
+        description={
+          errorDescription ??
+          t(
+            'Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.',
+            'Check your connection and try again.',
+          )
+        }
+        actionLabel={onRetry ? t('Δοκιμή ξανά', 'Try again') : undefined}
+        onAction={onRetry}
+      />
+    );
+  }
+
+  return <>{children}</>;
+}

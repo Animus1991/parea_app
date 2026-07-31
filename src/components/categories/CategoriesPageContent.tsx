@@ -11,10 +11,13 @@ import {
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { isToday, isThisWeek, isThisMonth, parseISO } from 'date-fns';
-import { useStore } from '../../store';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { EventCard } from '../events/EventCard';
+import { EmptyState } from '../common/EmptyState';
+import { EventCardSkeleton } from '../common/Skeleton';
+import { ResourceStateGate } from '../common/ResourceStateGate';
+import { useEventsResource } from '../../hooks/useEventsQuery';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
@@ -37,7 +40,7 @@ export default function CategoriesPageContent() {
   const navigate = useNavigate();
   const { t, tu, language } = useLanguage();
   const p = usePageContrast();
-  const events = useStore((s) => s.events);
+  const { events, isLoading, isError, refetch } = useEventsResource();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const initialCat = searchParams.get('c') || null;
@@ -314,28 +317,12 @@ export default function CategoriesPageContent() {
       </div>
 
       {sortedCategories.length === 0 && (
-        <div
-          className={cn(
-            'text-center py-16 rounded-2xl border border-dashed flex flex-col items-center shadow-soft',
-            p.cardSurface,
-            p.borderB,
-          )}
-        >
-          <div
-            className={cn(
-              'w-16 h-16 rounded-2xl flex items-center justify-center mb-4',
-              p.isDark ? 'bg-gray-800' : 'bg-gray-100',
-            )}
-          >
-            <Search className={cn('w-6 h-6', p.muted)} />
-          </div>
-          <p className={cn('font-bold text-base', p.head)}>
-            {t('Δεν βρέθηκαν αποτελέσματα', 'No categories match your search')}
-          </p>
-          <Button variant="outline" className="mt-4" onClick={() => setSearchQuery('')}>
-            {t('Καθαρισμός', 'Clear search')}
-          </Button>
-        </div>
+        <EmptyState
+          icon={Search}
+          title={t('Δεν βρέθηκαν αποτελέσματα', 'No categories match your search')}
+          actionLabel={t('Καθαρισμός', 'Clear search')}
+          onAction={() => setSearchQuery('')}
+        />
       )}
 
       <div className={cn('mt-10 border-t pt-8 scroll-mt-24', p.borderT)} id="events-area">
@@ -410,37 +397,39 @@ export default function CategoriesPageContent() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredEvents.length === 0
-              ? (
-                <div
-                  className={cn(
-                    'col-span-full text-center py-20 rounded-2xl border border-dashed flex flex-col items-center shadow-soft',
-                    p.cardSurface,
-                    p.borderB,
-                  )}
-                >
-                  <Bookmark className={cn('w-6 h-6 mb-3', p.muted)} />
-                  <p className={cn('font-bold text-base', p.head)}>
-                    {t('Δεν βρέθηκαν εκδηλώσεις', 'No events found')}
-                  </p>
-                  <Button
-                    variant="outline"
-                    className="mt-6"
-                    onClick={() => {
-                      setActiveCategory(null);
-                      setPriceFilter('All');
-                      setDateFilter('Any');
-                    }}
-                  >
-                    {t('Καθαρισμός Φίλτρων', 'Reset Filters')}
-                  </Button>
-                </div>
-              )
-              : filteredEvents.map((event) => (
-                  <EventCard key={event.id} event={event} />
-                ))}
-        </div>
+        <ResourceStateGate
+          isLoading={isLoading}
+          isError={isError}
+          onRetry={() => void refetch()}
+          loading={
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <EventCardSkeleton key={`cat-sk-${i}`} />
+              ))}
+            </div>
+          }
+          errorTitle={t('Αδυναμία φόρτωσης εκδηλώσεων', 'Could not load events')}
+        >
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredEvents.length === 0 ? (
+              <div className="col-span-full">
+                <EmptyState
+                  icon={Bookmark}
+                  title={t('Δεν βρέθηκαν εκδηλώσεις', 'No events found')}
+                  description={t('Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία.', 'Try changing filters or category.')}
+                  actionLabel={t('Καθαρισμός Φίλτρων', 'Reset Filters')}
+                  onAction={() => {
+                    setActiveCategory(null);
+                    setPriceFilter('All');
+                    setDateFilter('Any');
+                  }}
+                />
+              </div>
+            ) : (
+              filteredEvents.map((event) => <EventCard key={event.id} event={event} />)
+            )}
+          </div>
+        </ResourceStateGate>
       </div>
 
       <div

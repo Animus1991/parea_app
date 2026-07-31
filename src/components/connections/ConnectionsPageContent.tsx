@@ -4,6 +4,7 @@ import { Search, MessageCircle, MoreVertical, MapPin, Filter, UserPlus, UserMinu
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
+import { EmptyState } from '../common/EmptyState';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -237,10 +238,14 @@ export default function ConnectionsPageContent() {
       {activeTab === 'all' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredConnections.length === 0 && (
-            <div className={`col-span-full text-center py-12 ${a.muted}`}>
-              <Users className="w-10 h-10 mx-auto mb-3 opacity-40" />
-              <p className="font-bold text-sm">{search ? t('Δεν βρέθηκαν αποτελέσματα', 'No results found') : t('Δεν έχετε συνδέσεις ακόμα', 'No connections yet')}</p>
-              <p className="text-xs mt-1">{t('Βρείτε Nakamas στις εκδηλώσεις!', 'Find Nakamas at events!')}</p>
+            <div className="col-span-full">
+              <EmptyState
+                icon={Users}
+                title={search ? t('Δεν βρέθηκαν αποτελέσματα', 'No results found') : t('Δεν έχετε συνδέσεις ακόμα', 'No connections yet')}
+                description={t('Βρείτε Nakamas στις εκδηλώσεις!', 'Find Nakamas at events!')}
+                actionLabel={search ? t('Καθαρισμός', 'Clear') : t('Εξερεύνηση', 'Explore')}
+                onAction={search ? () => setSearch('') : () => navigate('/')}
+              />
             </div>
           )}
           {filteredConnections.map((conn) => (
@@ -290,11 +295,14 @@ export default function ConnectionsPageContent() {
       {activeTab === 'requests' && (
         <div className="space-y-4">
           {pendingRequests.length === 0 && (
-            <div className={`text-center py-12 ${a.muted}`}>
-              <UserPlus className="w-10 h-10 mx-auto mb-3 opacity-40" />
-              <p className="font-bold text-sm">{t('Δεν υπάρχουν αιτήματα', 'No pending requests')}</p>
-              <p className="text-xs mt-1">{t('Θα ειδοποιηθείτε όταν κάποιος θέλει να συνδεθεί.', 'You\'ll be notified when someone wants to connect.')}</p>
-            </div>
+            <EmptyState
+              icon={UserPlus}
+              title={t('Δεν υπάρχουν αιτήματα', 'No pending requests')}
+              description={t(
+                'Θα ειδοποιηθείτε όταν κάποιος θέλει να συνδεθεί.',
+                "You'll be notified when someone wants to connect.",
+              )}
+            />
           )}
           {pendingRequests.map((req) => (
             <Card key={req.id} className="p-4">
@@ -330,11 +338,13 @@ export default function ConnectionsPageContent() {
       {activeTab === 'suggested' && (
         <div className="space-y-4">
           {suggested.length === 0 && (
-            <div className={`text-center py-12 ${a.muted}`}>
-              <Sparkles className="w-10 h-10 mx-auto mb-3 opacity-40" />
-              <p className="font-bold text-sm">{t('Δεν υπάρχουν προτάσεις', 'No suggestions yet')}</p>
-              <p className="text-xs mt-1">{t('Συμμετέχετε σε εκδηλώσεις για να βρείτε Nakamas!', 'Join events to find Nakamas!')}</p>
-            </div>
+            <EmptyState
+              icon={Sparkles}
+              title={t('Δεν υπάρχουν προτάσεις', 'No suggestions yet')}
+              description={t('Συμμετέχετε σε εκδηλώσεις για να βρείτε Nakamas!', 'Join events to find Nakamas!')}
+              actionLabel={t('Εξερεύνηση', 'Explore')}
+              onAction={() => navigate('/')}
+            />
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {suggested.map((user) => (

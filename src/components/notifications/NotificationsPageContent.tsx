@@ -6,6 +6,10 @@ import type { AppNotification } from '../../data/mockNotifications';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { Card } from '../common/Card';
+import { EmptyState } from '../common/EmptyState';
+import { Skeleton } from '../common/Skeleton';
+import { ResourceStateGate } from '../common/ResourceStateGate';
+import { useNotificationsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
@@ -32,7 +36,7 @@ export default function NotificationsPageContent() {
   const navigate = useNavigate();
   const a = usePageContrast();
 
-  const notifications = useStore((s) => s.notifications);
+  const { notifications, isLoading, isError, refetch } = useNotificationsResource();
   const markNotificationRead = useStore((s) => s.markNotificationRead);
   const markAllNotificationsRead = useStore((s) => s.markAllNotificationsRead);
   const dismissNotification = useStore((s) => s.dismissNotification);
@@ -253,21 +257,32 @@ export default function NotificationsPageContent() {
         ))}
       </div>
 
+      <ResourceStateGate
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={() => void refetch()}
+        loading={
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={`notif-sk-${i}`} className="h-16 w-full rounded-2xl" />
+            ))}
+          </div>
+        }
+        errorTitle={t('Αδυναμία φόρτωσης ειδοποιήσεων', 'Could not load notifications')}
+      >
       {visibleNotifs.length === 0 ? (
-        <Card className="p-8 text-center">
-          <BellOff className={cn('w-10 h-10 mx-auto mb-3', a.muted)} />
-          <p className={cn('font-bold text-sm', a.head)}>
-            {activeTab === 'unread'
+        <EmptyState
+          icon={BellOff}
+          title={
+            activeTab === 'unread'
               ? t('Καμία μη αναγνωσμένη ειδοποίηση', 'No unread notifications')
-              : t('Καμία ειδοποίηση', 'No notifications')}
-          </p>
-          <p className={cn('text-xs mt-1', a.muted)}>
-            {t(
-              'Θα σας ειδοποιήσουμε όταν υπάρξει κάτι νέο.',
-              "We'll notify you when something new happens.",
-            )}
-          </p>
-        </Card>
+              : t('Καμία ειδοποίηση', 'No notifications')
+          }
+          description={t(
+            'Θα σας ειδοποιήσουμε όταν υπάρξει κάτι νέο.',
+            "We'll notify you when something new happens.",
+          )}
+        />
       ) : (
         <div className="space-y-5">
           {todayNotifs.length > 0 && (
@@ -288,6 +303,7 @@ export default function NotificationsPageContent() {
           )}
         </div>
       )}
+      </ResourceStateGate>
     </div>
   );
 }

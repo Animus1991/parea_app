@@ -5,7 +5,7 @@ import { filterHomeEvents, sortHomeEvents } from '../lib/homeEventFeed';
 import { getHomeMoodById } from '../lib/homeMoodConstants';
 import { useHomeUrlFilters } from './useHomeUrlFilters';
 import { useHomeGeoDistance } from './useHomeGeoDistance';
-import { useEventsQuery } from './useEventsQuery';
+import { useEventsResource } from './useEventsQuery';
 
 export interface UseHomeEventFeedOptions {
   feedType: 'For You' | 'Discover';
@@ -18,7 +18,7 @@ export function useHomeEventFeed({
   seekingHostOnly,
   isSeekingHost,
 }: UseHomeEventFeedOptions) {
-  const { data: events = [], isPending, isError, isFetching, isFetched } = useEventsQuery();
+  const { events, isLoading, isError, isRefreshing } = useEventsResource();
   const currentUser = useStore((s) => s.currentUser);
   const filters = useHomeUrlFilters();
   const { getDistance } = useHomeGeoDistance(filters.radiusFilter);
@@ -114,9 +114,8 @@ export function useHomeEventFeed({
     hasActiveFilters,
     activeFilterCount,
     clearAllFilters,
-    /** True only on first fetch when no initialData is already painted — with initialData, rarely true. */
-    isLoading: isPending && !isFetched,
-    isRefreshing: isFetching && isFetched,
+    isLoading,
+    isRefreshing,
     isError,
   };
 }

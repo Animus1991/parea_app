@@ -10,6 +10,7 @@ import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useChatStore } from '../../store/chatStore';
+import { EmptyState } from '../common/EmptyState';
 import { cn } from '../../lib/utils';
 import { INBOX_TYPO } from '../../lib/typographyTokens';
 import { isBefore, parseISO } from 'date-fns';
@@ -225,19 +226,16 @@ export default function InboxPageContent() {
 
           <div className={cn('rounded-2xl border shadow-soft overflow-hidden', p.cardSurface, p.borderB)}>
             {filteredChats.length === 0 ? (
-              <div className="p-12 text-center flex flex-col items-center">
-                <MessageSquare className={cn('w-10 h-10 mb-3 opacity-40', p.muted)} />
-                <p className={cn('font-bold text-sm', p.head)}>
-                  {t('Δεν υπάρχουν συνομιλίες', 'No conversations')}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => navigate('/')}
-                  className={cn('mt-4 px-5 py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white shadow-soft', INBOX_TYPO.cta)}
-                >
-                  {t('Αναζήτηση Εκδηλώσεων', 'Browse Events')}
-                </button>
-              </div>
+              <EmptyState
+                icon={MessageSquare}
+                title={t('Δεν υπάρχουν συνομιλίες', 'No conversations')}
+                description={t(
+                  'Οι συνομιλίες ομάδας εμφανίζονται εδώ μετά από αποδοχή.',
+                  'Group chats appear here after you accept a join.',
+                )}
+                actionLabel={t('Αναζήτηση Εκδηλώσεων', 'Browse Events')}
+                onAction={() => navigate('/')}
+              />
             ) : (
               <div className={cn('divide-y', p.isDark ? 'divide-white/5' : 'divide-gray-100')}>
                 {filteredChats.map((chat) => (

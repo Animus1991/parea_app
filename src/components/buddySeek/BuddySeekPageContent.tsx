@@ -14,6 +14,9 @@ import {
   PlansFormingValueHero,
   PlansFormingYourPlanBanner,
 } from './plansForming/PlansFormingShared';
+import { PlansFormingSkeleton } from './PlansFormingSkeleton';
+import { ResourceStateGate } from '../common/ResourceStateGate';
+import { useEventsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
@@ -53,7 +56,7 @@ export default function BuddySeekPageContent() {
   const acceptJoin = useStore((s) => s.acceptCompanyJoinRequest);
   const companyJoinRequests = useStore((s) => s.companyJoinRequests);
   const companyRequests = useStore((s) => s.companyRequests);
-  const events = useStore((s) => s.events);
+  const { events, isLoading, isError, refetch } = useEventsResource();
   const currentUser = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
 
@@ -277,6 +280,13 @@ export default function BuddySeekPageContent() {
         </div>
       </div>
 
+      <ResourceStateGate
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={() => void refetch()}
+        loading={<PlansFormingSkeleton count={3} variant="inline" />}
+        errorTitle={t('Αδυναμία φόρτωσης αιτημάτων', 'Could not load requests')}
+      >
       {filtered.length === 0 && feed.recruitingGroupItems.length === 0 ? (
         <PlansFormingEmptyState suggestedEvent={feed.suggestedEvent} />
       ) : (
@@ -313,6 +323,7 @@ export default function BuddySeekPageContent() {
           )}
         </>
       )}
+      </ResourceStateGate>
 
       <p className={cn('text-xs flex items-start gap-2', a.sub)}>
         <Shield className="w-4 h-4 shrink-0" />

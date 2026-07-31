@@ -5,6 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
+import { EmptyState } from '../common/EmptyState';
+import { EventCardSkeleton } from '../common/Skeleton';
+import { ResourceStateGate } from '../common/ResourceStateGate';
+import { useEventsResource } from '../../hooks/useEventsQuery';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -14,7 +18,7 @@ export default function HistoryPageContent() {
   const navigate = useNavigate();
   const a = usePageContrast();
 
-  const events = useStore((s) => s.events);
+  const { events, isLoading, isError, refetch } = useEventsResource();
   const groups = useStore((s) => s.groups);
   const currentUser = useStore((s) => s.currentUser);
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
@@ -122,6 +126,19 @@ export default function HistoryPageContent() {
       </div>
 
       {/* Events List */}
+      <ResourceStateGate
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={() => void refetch()}
+        loading={
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <EventCardSkeleton key={`hist-sk-${i}`} />
+            ))}
+          </div>
+        }
+        errorTitle={t('Αδυναμία φόρτωσης ιστορικού', 'Could not load history')}
+      >
       {pastEvents.length > 0 ? (
         <div className="space-y-3">
           {pastEvents.map((event) => (
@@ -184,16 +201,19 @@ export default function HistoryPageContent() {
           ))}
         </div>
       ) : (
-        <Card className="p-8 text-center">
-          <HistoryIcon className={cn("w-10 h-10 mx-auto mb-3", a.muted)} />
-          <p className={cn("font-bold text-sm", a.head)}>
-            {search ? t('Κανένα αποτέλεσμα', 'No results') : t('Δεν υπάρχει ιστορικό ακόμα', 'No history yet')}
-          </p>
-          <p className={cn("text-xs mt-1", a.muted)}>
-            {search ? t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search.') : t('Οι εκδηλώσεις που θα παρακολουθήσετε θα εμφανίζονται εδώ.', 'Events you attend will appear here.')}
-          </p>
-        </Card>
+        <EmptyState
+          icon={HistoryIcon}
+          title={search ? t('Κανένα αποτέλεσμα', 'No results') : t('Δεν υπάρχει ιστορικό ακόμα', 'No history yet')}
+          description={
+            search
+              ? t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search.')
+              : t('Οι εκδηλώσεις που θα παρακολουθήσετε θα εμφανίζονται εδώ.', 'Events you attend will appear here.')
+          }
+          actionLabel={search ? t('Καθαρισμός', 'Clear') : t('Εξερεύνηση', 'Explore')}
+          onAction={search ? () => setSearch('') : () => navigate('/')}
+        />
       )}
+      </ResourceStateGate>
     </div>
   );
 }

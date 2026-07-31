@@ -32,6 +32,10 @@ import { useStore } from "../../store";
 import { useLanguage } from "../../lib/i18n";
 import { usePageContrast } from "../../hooks/usePageContrast";
 import { useUserCalendarEvents } from "../../hooks/useUserCalendarEvents";
+import { useEventsResource } from "../../hooks/useEventsQuery";
+import { EmptyState } from "../common/EmptyState";
+import { EventCardSkeleton } from "../common/Skeleton";
+import { ResourceStateGate } from "../common/ResourceStateGate";
 import { cn } from "../../lib/utils";
 import { useCalendarDayInteraction } from "../../hooks/useCalendarDayInteraction";
 import { sortEventsForStories } from "../../lib/storyEventOrdering";
@@ -52,6 +56,7 @@ export default function MyCalendarPageContent() {
 
   const groups = useStore((state) => state.groups);
   const { upcomingEvents } = useUserCalendarEvents();
+  const { isLoading, isError, refetch } = useEventsResource();
 
   const { handleCellClick } = useCalendarDayInteraction(
     (day, dayEvents) => {
@@ -395,33 +400,32 @@ export default function MyCalendarPageContent() {
         </div>
       </div>
 
+      <ResourceStateGate
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={() => void refetch()}
+        loading={
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <EventCardSkeleton key={`cal-sk-${i}`} />
+            ))}
+          </div>
+        }
+        errorTitle={t("Αδυναμία φόρτωσης ημερολογίου", "Could not load calendar")}
+      >
       {upcomingEvents.length === 0 && (
-        <div
-          className={cn(
-            "text-center py-8 px-6 rounded-2xl border border-dashed",
-            p.cardSurface,
-            p.borderB,
+        <EmptyState
+          icon={Compass}
+          title={t("Δεν έχετε προγραμματισμένες εκδηλώσεις", "No planned events yet")}
+          description={t(
+            "Εξερευνήστε εκδηλώσεις και μπείτε σε ομάδα — θα εμφανίζονται στο ημερολόγιο.",
+            "Explore events and join a group — they will show on your calendar.",
           )}
-        >
-          <Compass className={cn("w-8 h-8 mx-auto mb-3", p.iconAccent)} />
-          <p className={cn("font-bold", p.head)}>
-            {t("Δεν έχετε προγραμματισμένες εκδηλώσεις", "No planned events yet")}
-          </p>
-          <p className={cn("text-sm font-medium mt-2", p.muted)}>
-            {t(
-              "Εξερευνήστε εκδηλώσεις και μπείτε σε ομάδα — θα εμφανίζονται στο ημερολόγιο.",
-              "Explore events and join a group — they will show on your calendar.",
-            )}
-          </p>
-          <button
-            type="button"
-            className="btn-gradient mt-4"
-            onClick={() => navigate("/")}
-          >
-            {t("Εξερεύνησε εκδηλώσεις", "Explore experiences")}
-          </button>
-        </div>
+          actionLabel={t("Εξερεύνησε εκδηλώσεις", "Explore experiences")}
+          onAction={() => navigate("/")}
+        />
       )}
+      </ResourceStateGate>
 
       <div
         className={cn(

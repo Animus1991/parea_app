@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CreditCard, Euro, ArrowUpRight, ArrowDownRight, Clock, Building2, CheckCircle2 } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
+import { EmptyState } from '../common/EmptyState';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -84,6 +85,20 @@ export default function WalletPageContent() {
           </select>
         </div>
         <div className={a.divider}>
+          {filteredTx.length === 0 ? (
+            <div className="p-4">
+              <EmptyState
+                icon={CreditCard}
+                title={t('Καμία συναλλαγή', 'No transactions')}
+                description={t(
+                  'Δεν υπάρχουν συναλλαγές για αυτό το φίλτρο.',
+                  'No transactions match this filter.',
+                )}
+                actionLabel={t('Όλες', 'All Time')}
+                onAction={() => setTxFilter('all')}
+              />
+            </div>
+          ) : (
           <div className={cn("divide-y", a.divider)}>
             {filteredTx.map((tx) => (
               <div key={tx.id} className={cn("p-4 md:p-6 flex items-center justify-between transition-colors", a.txHover)}>
@@ -117,6 +132,7 @@ export default function WalletPageContent() {
               </div>
             ))}
           </div>
+          )}
         </div>
       </Card>
 

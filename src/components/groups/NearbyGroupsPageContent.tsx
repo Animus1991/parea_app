@@ -8,6 +8,10 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { ErrorBoundary } from "../common/ErrorBoundary";
+import { EmptyState } from "../common/EmptyState";
+import { EventCardSkeleton } from "../common/Skeleton";
+import { ResourceStateGate } from "../common/ResourceStateGate";
+import { useEventsResource } from "../../hooks/useEventsQuery";
 import { useLanguage } from "../../lib/i18n";
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
@@ -46,7 +50,7 @@ export default function NearbyGroupsPageContent() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const p = usePageContrast();
-  const events = useStore((state) => state.events);
+  const { events, isLoading, isError, refetch } = useEventsResource();
   const savedEvents = useStore((state) => state.savedEvents);
   const groups = useStore((state) => state.groups);
   const currentUser = useStore((state) => state.currentUser);
@@ -407,7 +411,32 @@ export default function NearbyGroupsPageContent() {
         </div>
 
         <div className="overflow-y-auto flex-1 p-5 space-y-4 text-left">
-          {filteredLocalGroups.map((group) => (
+          <ResourceStateGate
+            isLoading={isLoading}
+            isError={isError}
+            onRetry={() => void refetch()}
+            loading={
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <EventCardSkeleton key={`nearby-sk-${i}`} />
+                ))}
+              </div>
+            }
+            errorTitle={t("Αδυναμία φόρτωσης κοντινών", "Could not load nearby events")}
+          >
+          {filteredLocalGroups.length === 0 ? (
+            <EmptyState
+              icon={MapIcon}
+              title={t("Καμία εκδήλωση στην ακτίνα", "No events in this radius")}
+              description={t(
+                "Δοκιμάστε μεγαλύτερη ακτίνα ή διαφορετικά φίλτρα.",
+                "Try a larger radius or different filters.",
+              )}
+              actionLabel={t("Ορισμός ακτίνας στα 15km", "Set radius to 15km")}
+              onAction={() => setRadius(15)}
+            />
+          ) : (
+            filteredLocalGroups.map((group) => (
             <div
               key={group.id}
               className={cn(`p-4 border rounded-2xl transition-all duration-300 cursor-pointer group flex gap-4 ${selectedEventId === group.id ? (p.isDark ? 'border-cyan-500 bg-cyan-900/10' : 'border-cyan-500 shadow-soft-md bg-cyan-50/30') : p.cardSurface}`, p.borderB, !selectedEventId && p.cardHover)}
@@ -434,8 +463,10 @@ export default function NearbyGroupsPageContent() {
                 </div>
               </div>
             </div>
-          ))}
+            ))
+          )}
 
+          {filteredLocalGroups.length > 0 && (
           <div className={cn("p-8 text-center border border-dashed rounded-2xl mt-6 relative overflow-hidden shadow-soft", p.isDark ? "bg-black/20 border-gray-800" : "bg-gray-50/50 border-gray-200")}>
             <div className={cn("w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 border", p.isDark ? "bg-cyan-900/20 text-cyan-400 border-cyan-800/50" : "bg-cyan-100 text-cyan-600 border-cyan-200")}>
               <MapIcon className="h-6 w-6" />
@@ -448,6 +479,8 @@ export default function NearbyGroupsPageContent() {
               {t("Ορισμός ακτίνας στα 15km", "Set radius to 15km")}
             </Button>
           </div>
+          )}
+          </ResourceStateGate>
         </div>
       </div>
     </div>
