@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   Calendar,
   Users,
@@ -13,12 +14,15 @@ import {
   Clock,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { formatDistanceToNow, parseISO, isValid } from 'date-fns';
+import { el as elLocale, enUS as enLocale } from 'date-fns/locale';
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
+import { EmptyState } from '../common/EmptyState';
 import { useStore } from '../../store';
 import { toast } from 'sonner';
 
@@ -32,53 +36,6 @@ const CHART_DATA = [
   { name: 'Sun', views: 800, clicks: 530 },
 ];
 
-const STATS = [
-  {
-    labelEl: 'Ενεργές',
-    labelEn: 'Active Events',
-    val: '3',
-    trendEl: '+1',
-    trendEn: '+1',
-    icon: Calendar,
-    iconWrap: 'bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-100 dark:border-cyan-800',
-    iconColor: 'text-cyan-600 dark:text-cyan-400',
-    trendColor: 'text-cyan-600 dark:text-cyan-400',
-  },
-  {
-    labelEl: 'Συμμετέχοντες',
-    labelEn: 'Participants',
-    val: '48',
-    trendEl: '+12%',
-    trendEn: '+12%',
-    icon: Users,
-    iconWrap: 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800',
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
-    trendColor: 'text-emerald-600 dark:text-emerald-400',
-  },
-  {
-    labelEl: 'Βαθμολογία',
-    labelEn: 'Rating',
-    val: '4.8',
-    trendEl: '23 αξιολογήσεις',
-    trendEn: '23 reviews',
-    icon: Star,
-    iconWrap: 'bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800',
-    iconColor: 'text-amber-600 dark:text-amber-400',
-    trendColor: 'text-amber-600 dark:text-amber-400',
-  },
-  {
-    labelEl: 'Έσοδα',
-    labelEn: 'Revenue',
-    val: '€340',
-    trendEl: 'Αυτόν τον μήνα',
-    trendEn: 'This month',
-    icon: DollarSign,
-    iconWrap: 'bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800',
-    iconColor: 'text-purple-600 dark:text-purple-400',
-    trendColor: 'text-purple-600 dark:text-purple-400',
-  },
-] as const;
-
 const QUICK_TEMPLATES = [
   { labelEl: 'Πεζοπορία', labelEn: 'Hiking', icon: '🥾' },
   { labelEl: 'Σινεμά', labelEn: 'Cinema', icon: '🎬' },
@@ -86,114 +43,130 @@ const QUICK_TEMPLATES = [
   { labelEl: 'Επιτραπέζια', labelEn: 'Board Games', icon: '🎲' },
 ] as const;
 
-type OrganizerGroup = {
-  nameEl: string;
-  nameEn: string;
-  statusEl: string;
-  statusEn: string;
-  fill: string;
-  full: boolean;
-  highlight?: boolean;
-  hasUnread?: boolean;
-};
-
-type OrganizerEvent = {
-  category: string;
-  whenEl: string;
-  whenEn: string;
-  titleEl: string;
-  titleEn: string;
-  spots: string;
-  groups: OrganizerGroup[];
-  showSettings?: boolean;
-  actions: 'full' | 'compact';
-};
-
-const ORGANIZER_EVENTS: OrganizerEvent[] = [
-  {
-    category: 'Stand-up',
-    whenEl: 'Σε 2 μέρες',
-    whenEn: 'In 2 days',
-    titleEl: 'Stand-up Comedy Night',
-    titleEn: 'Stand-up Comedy Night',
-    spots: '12/20',
-    showSettings: true,
-    actions: 'full',
-    groups: [
-      {
-        nameEl: 'Ομάδα #1',
-        nameEn: 'Group #1',
-        statusEl: 'Επιβεβαιωμένη',
-        statusEn: 'Confirmed',
-        fill: '4/4',
-        full: true,
-      },
-      {
-        nameEl: 'Ομάδα #2',
-        nameEn: 'Group #2',
-        statusEl: 'Αναμένεται 1 ακόμα',
-        statusEn: 'Waiting for 1 more',
-        fill: '3/4',
-        full: false,
-      },
-    ],
-  },
-  {
-    category: 'Hiking',
-    whenEl: 'Σε 5 μέρες',
-    whenEn: 'In 5 days',
-    titleEl: 'Πεζοπορία στον Υμηττό',
-    titleEn: 'Hike on Hymettus',
-    spots: '6/8',
-    actions: 'compact',
-    groups: [
-      {
-        nameEl: 'Ομάδα #1',
-        nameEn: 'Group #1',
-        statusEl: 'Νέο μήνυμα',
-        statusEn: 'New message',
-        fill: '3/4',
-        full: false,
-        highlight: true,
-        hasUnread: true,
-      },
-    ],
-  },
-];
-
 export default function OrganizerDashboardPageContent() {
-  const { t, tu } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const p = usePageContrast();
   const navigate = useNavigate();
+  const currentUser = useStore((s) => s.currentUser);
+  const events = useStore((s) => s.events);
+  const groups = useStore((s) => s.groups);
   const cancelEvent = useStore((s) => s.cancelEvent);
   const archiveEvent = useStore((s) => s.archiveEvent);
   const publishMeetingPoint = useStore((s) => s.publishMeetingPoint);
   const sendGroupAnnouncement = useStore((s) => s.sendGroupAnnouncement);
 
-  const demoEventId = 'e1';
-  const demoGroupId = 'g1';
+  const myEvents = useMemo(() => {
+    if (!currentUser) return [];
+    const hostEventIds = new Set(
+      groups.filter((g) => g.hostId === currentUser.id).map((g) => g.eventId),
+    );
+    return events.filter(
+      (e) =>
+        e.status !== 'cancelled' &&
+        e.status !== 'archived' &&
+        (e.organizerId === currentUser.id || hostEventIds.has(e.id)),
+    );
+  }, [events, groups, currentUser]);
+
+  const liveStats = useMemo(() => {
+    const active = myEvents.filter((e) => e.status !== 'archived').length;
+    const eventIds = new Set(myEvents.map((e) => e.id));
+    const myGroups = groups.filter((g) => eventIds.has(g.eventId) && g.status !== 'cancelled');
+    const participants = myGroups.reduce((sum, g) => sum + g.members.length, 0);
+    const rating = currentUser?.reliabilityScore != null
+      ? (currentUser.reliabilityScore / 20).toFixed(1)
+      : '—';
+    const revenue = myEvents.reduce((sum, e) => {
+      if (!e.isPaid) return sum;
+      const filled = groups
+        .filter((g) => g.eventId === e.id && g.status !== 'cancelled')
+        .reduce((s, g) => s + g.members.length, 0);
+      return sum + filled * (e.price || 0);
+    }, 0);
+    return { active, participants, rating, revenue };
+  }, [myEvents, groups, currentUser]);
+
+  const statsCards = [
+    {
+      labelEl: 'Ενεργές',
+      labelEn: 'Active Events',
+      val: String(liveStats.active),
+      trendEl: t('Από το store', 'From your events'),
+      trendEn: t('Από το store', 'From your events'),
+      icon: Calendar,
+      iconWrap: 'bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-100 dark:border-cyan-800',
+      iconColor: 'text-cyan-600 dark:text-cyan-400',
+      trendColor: 'text-cyan-600 dark:text-cyan-400',
+    },
+    {
+      labelEl: 'Συμμετέχοντες',
+      labelEn: 'Participants',
+      val: String(liveStats.participants),
+      trendEl: t('Σε ομάδες σας', 'Across your groups'),
+      trendEn: t('Σε ομάδες σας', 'Across your groups'),
+      icon: Users,
+      iconWrap: 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800',
+      iconColor: 'text-emerald-600 dark:text-emerald-400',
+      trendColor: 'text-emerald-600 dark:text-emerald-400',
+    },
+    {
+      labelEl: 'Αξιοπιστία',
+      labelEn: 'Reliability',
+      val: liveStats.rating === '—' ? '—' : `${liveStats.rating}/5`,
+      trendEl: t('Βαθμός αξιοπιστίας', 'Reliability score'),
+      trendEn: t('Βαθμός αξιοπιστίας', 'Reliability score'),
+      icon: Star,
+      iconWrap: 'bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800',
+      iconColor: 'text-amber-600 dark:text-amber-400',
+      trendColor: 'text-amber-600 dark:text-amber-400',
+    },
+    {
+      labelEl: 'Έσοδα',
+      labelEn: 'Revenue',
+      val: `€${liveStats.revenue}`,
+      trendEl: t('Από επί πληρωμή', 'From paid events'),
+      trendEn: t('Από επί πληρωμή', 'From paid events'),
+      icon: DollarSign,
+      iconWrap: 'bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800',
+      iconColor: 'text-purple-600 dark:text-purple-400',
+      trendColor: 'text-purple-600 dark:text-purple-400',
+    },
+  ] as const;
 
   const handleMessageGroup = (groupId: string) => {
     navigate(`/chat/${groupId}`);
   };
 
-  const handleEditEvent = () => navigate(`/create?edit=${demoEventId}`);
+  const handleEditEvent = (eventId: string) => navigate(`/create?edit=${eventId}`);
   const handleTemplate = (template: string) => navigate(`/create?template=${template}`);
-  const handleAnnouncement = () => {
-    sendGroupAnnouncement(demoGroupId, 'Νέα ανακοίνωση από τον διοργανωτή', 'New announcement from the organizer');
+  const handleAnnouncement = (groupId: string) => {
+    sendGroupAnnouncement(groupId, 'Νέα ανακοίνωση από τον διοργανωτή', 'New announcement from the organizer');
     toast.success(t('Η ανακοίνωση στάλθηκε στην ομάδα', 'Announcement sent to the group'));
   };
-  const handleMeetingPoint = () => {
-    publishMeetingPoint(demoGroupId, t('Πλατεία Συντάγματος — κύρια είσοδος', 'Syntagma Square — main entrance'));
+  const handleMeetingPoint = (groupId: string) => {
+    publishMeetingPoint(groupId, t('Πλατεία Συντάγματος — κύρια είσοδος', 'Syntagma Square — main entrance'));
     toast.success(t('Το σημείο συνάντησης δημοσιεύτηκε', 'Meeting point published'));
   };
-  const handleCancelEvent = () => {
-    cancelEvent(demoEventId);
-    toast.success(t('Η εκδήλωση ακυρώθηκε (demo)', 'Event cancelled (demo)'));
+  const handleCancelEvent = (eventId: string) => {
+    cancelEvent(eventId);
+    toast.success(t('Η εκδήλωση ακυρώθηκε', 'Event cancelled'));
   };
-  const handleArchiveEvent = () => {
-    archiveEvent(demoEventId);
-    toast.success(t('Η εκδήλωση αρχειοθετήθηκε (demo)', 'Event archived (demo)'));
+  const handleArchiveEvent = (eventId: string) => {
+    archiveEvent(eventId);
+    toast.success(t('Η εκδήλωση αρχειοθετήθηκε', 'Event archived'));
+  };
+
+  const relativeWhen = (dateStr: string) => {
+    try {
+      const d = parseISO(dateStr);
+      if (!isValid(d)) return dateStr;
+      return formatDistanceToNow(d, {
+        addSuffix: true,
+        locale: language === 'en' ? enLocale : elLocale,
+      });
+    } catch {
+      return dateStr;
+    }
   };
 
   return (
@@ -240,7 +213,7 @@ export default function OrganizerDashboardPageContent() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {STATS.map((stat, i) => (
+        {statsCards.map((stat, i) => (
           <div
             key={i}
             className={cn(
@@ -260,7 +233,7 @@ export default function OrganizerDashboardPageContent() {
             <div>
               <p className={cn('text-3xl font-black', p.head)}>{stat.val}</p>
               <p className={cn('text-xs font-bold mt-1', stat.trendColor)}>
-                {t(stat.trendEl, stat.trendEn)}
+                {stat.trendEl}
               </p>
             </div>
           </div>
@@ -276,8 +249,8 @@ export default function OrganizerDashboardPageContent() {
               </h3>
               <p className={cn('text-xs font-medium mt-1', p.muted)}>
                 {t(
-                  'Προβολές και κλικ στις ενεργές σας εκδηλώσεις (Τελ. 7 ημέρες)',
-                  'Views and clicks on your active events (Last 7 days)',
+                  'Ενδεικτικό διάγραμμα (demo) — προβολές/κλικ τελ. 7 ημερών',
+                  'Illustrative chart (demo) — views/clicks last 7 days',
                 )}
               </p>
             </div>
@@ -492,176 +465,200 @@ export default function OrganizerDashboardPageContent() {
           <Calendar className={cn('w-5 h-5', p.iconAccent)} /> {t('Οι Εκδηλώσεις μου', 'My Events')}
         </h2>
 
-        {ORGANIZER_EVENTS.map((ev) => (
-          <div
-            key={ev.titleEn}
-            className={cn('rounded-2xl p-1 shadow-soft border overflow-hidden', p.cardSurface, p.borderB)}
-          >
-            <div
-              className={cn(
-                'p-5 border-b flex flex-col md:flex-row md:items-center justify-between gap-4',
-                p.isDark ? 'bg-black/20 border-white/5' : 'bg-gray-50/50 border-gray-100',
-              )}
-            >
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      p.isDark
-                        ? 'bg-cyan-900/30 text-cyan-400 border-cyan-800'
-                        : 'bg-cyan-50 text-cyan-700 border-cyan-200',
-                    )}
-                  >
-                    {ev.category}
-                  </Badge>
-                  <span className={cn('text-xs font-bold flex items-center gap-1', p.muted)}>
-                    <Clock className="w-3.5 h-3.5" /> {t(ev.whenEl, ev.whenEn)}
-                  </span>
-                </div>
-                <h3 className={cn('text-xl font-bold tracking-tight', p.head)}>
-                  {t(ev.titleEl, ev.titleEn)}
-                </h3>
-              </div>
+        {myEvents.length === 0 ? (
+          <EmptyState
+            icon={Calendar}
+            title={t('Δεν έχετε ακόμα εκδηλώσεις', 'No events yet')}
+            description={t(
+              'Δημιουργήστε την πρώτη σας εμπειρία για να εμφανιστεί εδώ.',
+              'Create your first experience to see it here.',
+            )}
+            actionLabel={t('Νέα Εκδήλωση', 'New Event')}
+            onAction={() => navigate('/create')}
+          />
+        ) : (
+          myEvents.map((ev) => {
+            const eventGroups = groups.filter((g) => g.eventId === ev.id && g.status !== 'cancelled');
+            const memberCount = eventGroups.reduce((s, g) => s + g.members.length, 0);
+            const capacity = ev.maxParticipants || eventGroups.reduce((s, g) => s + g.targetSize, 0) || 0;
+            const primaryGroupId = eventGroups[0]?.id;
+            const actionsMode = eventGroups.length > 0 ? 'full' : 'compact';
 
-              <div className="flex items-center gap-4">
-                <div className={cn('text-right border-r pr-4', p.borderB)}>
-                  <p className={cn('text-2xl font-black', p.head)}>{ev.spots}</p>
-                  <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
-                    {tu('Θέσεις', 'Spots')}
-                  </p>
-                </div>
-                {ev.showSettings && (
-                  <Button variant="outline" size="sm" className="shrink-0 rounded-2xl" onClick={() => navigate('/settings')}>
-                    <Settings className="w-4 h-4 mr-2" />
-                    {t('Ρυθμίσεις', 'Settings')}
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2 space-y-4">
-                <h4 className={cn('text-xs font-bold uppercase tracking-widest flex items-center gap-2', p.muted)}>
-                  <Users className="w-4 h-4" />
-                  {t('Διαχείριση Ομάδων', 'Group Management')}
-                </h4>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {ev.groups.map((grp, i) => (
-                    <div
-                      key={i}
-                      className={cn(
-                        'p-4 rounded-2xl border flex items-center justify-between transition-all hover:shadow-soft',
-                        grp.highlight
-                          ? p.isDark
-                            ? 'bg-cyan-900/20 border-cyan-800'
-                            : 'bg-cyan-50 border-cyan-100'
-                          : p.isDark
-                            ? 'bg-white/5 border-white/10 hover:bg-white/10'
-                            : 'bg-gray-50 border-gray-200 hover:bg-white',
-                      )}
-                    >
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className={cn('font-bold text-sm', p.head)}>
-                            {t(grp.nameEl, grp.nameEn)}
-                          </p>
-                          <span
-                            className={cn(
-                              'text-xs font-black px-1.5 py-0.5 rounded-lg',
-                              grp.full
-                                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400'
-                                : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
-                            )}
-                          >
-                            {grp.fill}
-                          </span>
-                        </div>
-                        <p className={cn('text-xs font-medium', p.muted)}>
-                          {t(grp.statusEl, grp.statusEn)}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
+            return (
+              <div
+                key={ev.id}
+                className={cn('rounded-2xl p-1 shadow-soft border overflow-hidden', p.cardSurface, p.borderB)}
+              >
+                <div
+                  className={cn(
+                    'p-5 border-b flex flex-col md:flex-row md:items-center justify-between gap-4',
+                    p.isDark ? 'bg-black/20 border-white/5' : 'bg-gray-50/50 border-gray-100',
+                  )}
+                >
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <Badge
+                        variant="outline"
                         className={cn(
-                          'relative p-2 rounded-full border shadow-soft transition-colors',
                           p.isDark
-                            ? 'bg-gray-800 border-gray-700 text-cyan-400 hover:bg-gray-700'
-                            : 'bg-white border-gray-200 text-cyan-600 hover:bg-cyan-50',
+                            ? 'bg-cyan-900/30 text-cyan-400 border-cyan-800'
+                            : 'bg-cyan-50 text-cyan-700 border-cyan-200',
                         )}
-                        title={t('Μήνυμα ομάδας', 'Message group')}
-                        aria-label={t('Μήνυμα ομάδας', 'Message group')}
-                        onClick={() => handleMessageGroup(demoGroupId)}
                       >
-                        <MessageSquare className="w-4 h-4" />
-                        {grp.hasUnread && (
-                          <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
-                        )}
-                      </button>
+                        {ev.category}
+                      </Badge>
+                      <span className={cn('text-xs font-bold flex items-center gap-1', p.muted)}>
+                        <Clock className="w-3.5 h-3.5" aria-hidden /> {relativeWhen(ev.date)}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <h3 className={cn('text-xl font-bold tracking-tight', p.head)}>{ev.title}</h3>
+                  </div>
 
-              <div className="space-y-4">
-                <h4 className={cn('text-xs font-bold uppercase tracking-widest flex items-center gap-2', p.muted)}>
-                  {ev.actions === 'full' ? (
-                    <>
-                      <TrendingUp className="w-4 h-4" />
-                      {t('Ενέργειες', 'Actions')}
-                    </>
-                  ) : (
-                    <>
-                      <MoreHorizontal className="w-4 h-4" />
-                      {t('Περισσότερα', 'More')}
-                    </>
-                  )}
-                </h4>
-                <div className="space-y-2">
-                  <Button variant="outline" className="w-full justify-between rounded-2xl" size="sm" onClick={handleEditEvent}>
-                    {t('Επεξεργασία', 'Edit')}
-                    <ArrowRight className="w-3.5 h-3.5 opacity-50" />
-                  </Button>
-                  {ev.actions === 'full' && (
-                    <>
-                      <Button variant="outline" className="w-full justify-between rounded-2xl" size="sm" onClick={handleAnnouncement}>
-                        {t('Αποστολή Ανακοίνωσης', 'Send Announcement')}
-                        <ArrowRight className="w-3.5 h-3.5 opacity-50" />
-                      </Button>
-                      <Button
-                        variant={p.isAB ? 'primary' : 'outline'}
-                        className={cn(
-                          'w-full justify-between rounded-2xl',
-                          !p.isAB &&
-                            'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400',
-                        )}
-                        size="sm"
-                        onClick={handleMeetingPoint}
-                      >
-                        {t('Δημοσίευση Τοποθεσίας', 'Publish Meeting Point')}
-                        <ArrowRight className="w-3.5 h-3.5 opacity-50" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20 mt-2 rounded-2xl"
-                        size="sm"
-                        onClick={handleCancelEvent}
-                      >
-                        {t('Ακύρωση Εκδήλωσης', 'Cancel Event')}
-                      </Button>
-                    </>
-                  )}
-                  {ev.actions === 'compact' && (
-                    <Button variant="outline" className="w-full rounded-2xl" size="sm" onClick={handleArchiveEvent}>
-                      {t('Αρχειοθέτηση', 'Archive')}
+                  <div className="flex items-center gap-4">
+                    <div className={cn('text-right border-r pr-4', p.borderB)}>
+                      <p className={cn('text-2xl font-black', p.head)}>
+                        {memberCount}/{capacity || '—'}
+                      </p>
+                      <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
+                        {tu('Θέσεις', 'Spots')}
+                      </p>
+                    </div>
+                    <Button variant="outline" size="sm" className="shrink-0 rounded-2xl" onClick={() => navigate('/settings')}>
+                      <Settings className="w-4 h-4 mr-2" />
+                      {t('Ρυθμίσεις', 'Settings')}
                     </Button>
-                  )}
+                  </div>
+                </div>
+
+                <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="md:col-span-2 space-y-4">
+                    <h4 className={cn('text-xs font-bold uppercase tracking-widest flex items-center gap-2', p.muted)}>
+                      <Users className="w-4 h-4" />
+                      {t('Διαχείριση Ομάδων', 'Group Management')}
+                    </h4>
+
+                    {eventGroups.length === 0 ? (
+                      <p className={cn('text-sm', p.muted)}>
+                        {t('Δεν υπάρχουν ακόμα ομάδες για αυτή την εκδήλωση.', 'No groups for this event yet.')}
+                      </p>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {eventGroups.map((grp, i) => {
+                          const full = grp.members.length >= grp.targetSize;
+                          const spotsLeft = Math.max(0, grp.targetSize - grp.members.length);
+                          return (
+                            <div
+                              key={grp.id}
+                              className={cn(
+                                'p-4 rounded-2xl border flex items-center justify-between transition-all hover:shadow-soft',
+                                p.isDark
+                                  ? 'bg-white/5 border-white/10 hover:bg-white/10'
+                                  : 'bg-gray-50 border-gray-200 hover:bg-white',
+                              )}
+                            >
+                              <div>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <p className={cn('font-bold text-sm', p.head)}>
+                                    {t(`Ομάδα #${i + 1}`, `Group #${i + 1}`)}
+                                  </p>
+                                  <span
+                                    className={cn(
+                                      'text-xs font-black px-1.5 py-0.5 rounded-lg',
+                                      full
+                                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400'
+                                        : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400',
+                                    )}
+                                  >
+                                    {grp.members.length}/{grp.targetSize}
+                                  </span>
+                                </div>
+                                <p className={cn('text-xs font-medium', p.muted)}>
+                                  {full
+                                    ? t('Επιβεβαιωμένη', 'Confirmed')
+                                    : t(`Αναμένεται ${spotsLeft} ακόμα`, `Waiting for ${spotsLeft} more`)}
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                className={cn(
+                                  'relative p-2 min-h-10 min-w-10 flex items-center justify-center rounded-full border shadow-soft transition-colors',
+                                  p.isDark
+                                    ? 'bg-gray-800 border-gray-700 text-cyan-400 hover:bg-gray-700'
+                                    : 'bg-white border-gray-200 text-cyan-600 hover:bg-cyan-50',
+                                )}
+                                title={t('Μήνυμα ομάδας', 'Message group')}
+                                aria-label={t('Μήνυμα ομάδας', 'Message group')}
+                                onClick={() => handleMessageGroup(grp.id)}
+                              >
+                                <MessageSquare className="w-4 h-4" aria-hidden />
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className={cn('text-xs font-bold uppercase tracking-widest flex items-center gap-2', p.muted)}>
+                      {actionsMode === 'full' ? (
+                        <>
+                          <TrendingUp className="w-4 h-4" />
+                          {t('Ενέργειες', 'Actions')}
+                        </>
+                      ) : (
+                        <>
+                          <MoreHorizontal className="w-4 h-4" />
+                          {t('Περισσότερα', 'More')}
+                        </>
+                      )}
+                    </h4>
+                    <div className="space-y-2">
+                      <Button variant="outline" className="w-full justify-between rounded-2xl" size="sm" onClick={() => handleEditEvent(ev.id)}>
+                        {t('Επεξεργασία', 'Edit')}
+                        <ArrowRight className="w-3.5 h-3.5 opacity-50" />
+                      </Button>
+                      {actionsMode === 'full' && primaryGroupId && (
+                        <>
+                          <Button variant="outline" className="w-full justify-between rounded-2xl" size="sm" onClick={() => handleAnnouncement(primaryGroupId)}>
+                            {t('Αποστολή Ανακοίνωσης', 'Send Announcement')}
+                            <ArrowRight className="w-3.5 h-3.5 opacity-50" />
+                          </Button>
+                          <Button
+                            variant={p.isAB ? 'primary' : 'outline'}
+                            className={cn(
+                              'w-full justify-between rounded-2xl',
+                              !p.isAB &&
+                                'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400',
+                            )}
+                            size="sm"
+                            onClick={() => handleMeetingPoint(primaryGroupId)}
+                          >
+                            {t('Δημοσίευση Τοποθεσίας', 'Publish Meeting Point')}
+                            <ArrowRight className="w-3.5 h-3.5 opacity-50" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20 mt-2 rounded-2xl"
+                            size="sm"
+                            onClick={() => handleCancelEvent(ev.id)}
+                          >
+                            {t('Ακύρωση Εκδήλωσης', 'Cancel Event')}
+                          </Button>
+                        </>
+                      )}
+                      {actionsMode === 'compact' && (
+                        <Button variant="outline" className="w-full rounded-2xl" size="sm" onClick={() => handleArchiveEvent(ev.id)}>
+                          {t('Αρχειοθέτηση', 'Archive')}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        ))}
+            );
+          })
+        )}
       </div>
     </div>
   );

@@ -40,12 +40,14 @@ export default function ChallengesClassic() {
   const { t } = useLanguage();
   const p = usePageContrast();
   const [filterType, setFilterType] = useState<FilterType>('all');
-  const [joinedIds, setJoinedIds] = useState<Set<string>>(new Set(['c1', 'c2']));
 
   const currentUser = useStore((s) => s.currentUser);
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
   const groups = useStore((s) => s.groups);
   const events = useStore((s) => s.events);
+  const challengesJoined = useStore((s) => s.challengesJoined);
+  const toggleChallengeJoined = useStore((s) => s.toggleChallengeJoined);
+  const joinedIds = useMemo(() => new Set(challengesJoined), [challengesJoined]);
 
   const feedbackCount = Object.keys(feedbackSubmitted).length;
   const userGroupIds = currentUser
@@ -161,15 +163,7 @@ export default function ChallengesClassic() {
   const filtered = filterType === 'all' ? challenges : challenges.filter((c) => c.type === filterType);
 
   const toggleJoin = (id: string) => {
-    setJoinedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
+    toggleChallengeJoined(id);
   };
 
   const totalXP = challenges.filter((c) => c.progress >= c.goal).reduce((s, c) => s + c.xp, 0);

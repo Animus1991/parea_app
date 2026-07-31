@@ -704,7 +704,7 @@ export const useStore = create<AppState>()(
       ],
     })),
 
-  challengesJoined: [],
+  challengesJoined: ['c1', 'c2'],
   toggleChallengeJoined: (challengeId) =>
     set((state) => ({
       challengesJoined: state.challengesJoined.includes(challengeId)

@@ -39,12 +39,35 @@ export function HorizontalScrollArrows({
     updateScrollState();
     const el = ref.current;
     if (!el) return;
+
+    /** Vertical mouse-wheel → horizontal scroll while pointer is over the rail (web). */
+    const handleWheel = (e: WheelEvent) => {
+      if (el.scrollWidth <= el.clientWidth) return;
+
+      // Trackpads may already send deltaX; prefer the dominant axis.
+      const delta =
+        Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      if (delta === 0) return;
+
+      const max = el.scrollWidth - el.clientWidth;
+      const atStart = el.scrollLeft <= 0;
+      const atEnd = el.scrollLeft >= max - 1;
+      // Let the page keep scrolling once the rail is at either edge.
+      if ((delta < 0 && atStart) || (delta > 0 && atEnd)) return;
+
+      e.preventDefault();
+      el.scrollLeft += delta;
+      updateScrollState();
+    };
+
     el.addEventListener('scroll', updateScrollState, { passive: true });
+    el.addEventListener('wheel', handleWheel, { passive: false });
     const ro = new ResizeObserver(updateScrollState);
     ro.observe(el);
     window.addEventListener('resize', updateScrollState);
     return () => {
       el.removeEventListener('scroll', updateScrollState);
+      el.removeEventListener('wheel', handleWheel);
       ro.disconnect();
       window.removeEventListener('resize', updateScrollState);
     };

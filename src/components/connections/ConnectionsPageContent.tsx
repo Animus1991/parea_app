@@ -4,7 +4,9 @@ import { Search, MessageCircle, MoreVertical, MapPin, Filter, UserPlus, UserMinu
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
+import { toast } from 'sonner';
 import { EmptyState } from '../common/EmptyState';
+import { Modal } from '../common/Modal';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -72,6 +74,8 @@ export default function ConnectionsPageContent() {
 
   const currentUser = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
+  const events = useStore((s) => s.events);
+  const groups = useStore((s) => s.groups);
   const connectionRequests = useStore((s) => s.connectionRequests);
   const acceptConnectionRequest = useStore((s) => s.acceptConnectionRequest);
   const declineConnectionRequest = useStore((s) => s.declineConnectionRequest);
@@ -84,6 +88,20 @@ export default function ConnectionsPageContent() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [roleFilter, setRoleFilter] = useState<'all' | 'organizer' | 'user'>('all');
   const [sortBy, setSortBy] = useState<'name' | 'mutual' | 'trust'>('name');
+  const [inviteForUserId, setInviteForUserId] = useState<string | null>(null);
+
+  const inviteableEvents = useMemo(() => {
+    if (!currentUser) return [];
+    const memberEventIds = new Set(
+      groups.filter((g) => g.members.includes(currentUser.id)).map((g) => g.eventId),
+    );
+    return events.filter(
+      (e) =>
+        e.status !== 'cancelled' &&
+        e.status !== 'archived' &&
+        (e.organizerId === currentUser.id || memberEventIds.has(e.id)),
+    );
+  }, [events, groups, currentUser]);
 
   // ─── Computed data ───────────────────────────────────────
   const myConnectionIds = currentUser?.connections || [];
@@ -135,7 +153,24 @@ export default function ConnectionsPageContent() {
   }, [users, myConnectionIds, connectionRequests, currentUser]);
 
   // ─── Handlers ────────────────────────────────────────────
-  const handleMessage = (userId: string) => navigate('/chats');
+  const handleMessage = (_userId: string) => {
+    toast.message(
+      t('Οι συνομιλίες είναι ομαδικές ανά εκδήλωση', 'Chats are event-group based'),
+      { description: t('Ανοίξτε το Inbox για τις ομάδες σας.', 'Open Inbox for your groups.') },
+    );
+    navigate('/chats');
+  };
+  const handleInviteToEvent = (eventId: string) => {
+    const ev = events.find((e) => e.id === eventId);
+    const invitee = users.find((u) => u.id === inviteForUserId);
+    toast.success(
+      t(
+        `Πρόσκληση για «${ev?.title ?? eventId}» στάλθηκε${invitee ? ` στον/στην ${invitee.name}` : ''}`,
+        `Invite to “${ev?.title ?? eventId}” sent${invitee ? ` to ${invitee.name}` : ''}`,
+      ),
+    );
+    setInviteForUserId(null);
+  };
   const handleViewProfile = (user: { id: string; isOrganizer: boolean }) => {
     if (user.isOrganizer) navigate(`/organizer/${user.id}`);
     else navigate('/profile');
@@ -291,21 +326,67 @@ export default function ConnectionsPageContent() {
                 </div>
               </div>
               <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
-                <button onClick={() => handleMessage(conn.id)} className={`p-2 rounded-full transition-colors ${a.msgIcon}`} title={t('Μήνυμα', 'Message')}>
-                  <MessageCircle className="w-5 h-5" />
+                <button
+                  type="button"
+                  onClick={() => handleMessage(conn.id)}
+                  className={`p-2 min-h-10 min-w-10 flex items-center justify-center rounded-full transition-colors ${a.msgIcon}`}
+                  title={t('Ομαδικές συνομιλίες — άνοιγμα Inbox', 'Group chats — open Inbox')}
+                  aria-label={t('Ομαδικές συνομιλίες — άνοιγμα Inbox', 'Group chats — open Inbox')}
+                >
+                  <MessageCircle className="w-5 h-5" aria-hidden />
                 </button>
                 <MoreMenu
                   connId={conn.id}
                   onViewProfile={() => handleViewProfile(conn)}
                   onRemove={() => handleRemove(conn.id, conn.name)}
                   onReport={() => navigate('/report')}
-                  onInvite={() => navigate('/create')}
+                  onInvite={() => setInviteForUserId(conn.id)}
                 />
               </div>
             </Card>
           ))}
         </div>
       )}
+
+      <Modal
+        open={inviteForUserId !== null}
+        onClose={() => setInviteForUserId(null)}
+        title={t('Πρόσκληση σε εκδήλωση', 'Invite to event')}
+      >
+        {inviteableEvents.length === 0 ? (
+          <div className="space-y-3">
+            <p className={`text-sm ${a.muted}`}>
+              {t(
+                'Δεν έχετε διαθέσιμες εκδηλώσεις. Δημιουργήστε μία ή μπείτε σε ομάδα.',
+                'No events available. Create one or join a group first.',
+              )}
+            </p>
+            <Button onClick={() => { setInviteForUserId(null); navigate('/create'); }}>
+              {t('Δημιουργία εκδήλωσης', 'Create event')}
+            </Button>
+          </div>
+        ) : (
+          <ul className="space-y-2 max-h-72 overflow-y-auto">
+            {inviteableEvents.map((ev) => (
+              <li key={ev.id}>
+                <button
+                  type="button"
+                  onClick={() => handleInviteToEvent(ev.id)}
+                  className={cn(
+                    'w-full text-left px-3 py-2.5 min-h-10 rounded-xl border text-sm font-semibold transition-colors',
+                    a.isDark ? 'border-gray-700 hover:bg-gray-800 text-gray-100' : 'border-gray-200 hover:bg-gray-50 text-gray-900',
+                  )}
+                >
+                  {ev.title}
+                  <span className={`block text-xs font-medium mt-0.5 ${a.muted}`}>
+                    {ev.date} · {ev.locationArea}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Modal>
 
       {/* ═══ REQUESTS TAB ═══ */}
       {activeTab === 'requests' && (

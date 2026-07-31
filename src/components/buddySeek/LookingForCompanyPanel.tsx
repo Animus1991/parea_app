@@ -72,9 +72,8 @@ export function LookingForCompanyPanel({
 
   const filteredRequests = visibleRequests.filter(({ intent }) => {
     if (hiddenIds.includes(intent.id)) return false;
-    if (filterOpen === 'spots' && intent.lookingForType === 'join_group') return true;
-    if (filterOpen === 'verified' && intent.requiredTrustTier !== 'none') return true;
-    if (!filterOpen) return true;
+    if (filterOpen === 'spots') return intent.openToJoinGroup !== false;
+    if (filterOpen === 'verified') return intent.requiredTrustTier !== 'none';
     return true;
   });
 
@@ -98,10 +97,11 @@ export function LookingForCompanyPanel({
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className={cn('p-2 rounded-xl', darkSurface ? 'hover:bg-white/10' : 'hover:bg-gray-100')}
+          className={cn('p-2 min-h-10 min-w-10 flex items-center justify-center rounded-xl', darkSurface ? 'hover:bg-white/10' : 'hover:bg-gray-100')}
           aria-expanded={expanded}
+          aria-label={expanded ? t('Σύμπτυξη', 'Collapse') : t('Επέκταση', 'Expand')}
         >
-          {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {expanded ? <ChevronUp className="w-4 h-4" aria-hidden /> : <ChevronDown className="w-4 h-4" aria-hidden />}
         </button>
       </div>
 

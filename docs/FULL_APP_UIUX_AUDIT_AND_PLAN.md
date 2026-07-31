@@ -498,9 +498,9 @@ Inbox unread/pinned/typing (`g1` μόνο)· Plans avatars/«4/5 μέλη»/«me
 |---|---|
 | chatStore persist (`conversations`, `messages`, `reports`) | ✅ |
 | `receiveMessage`, `requestKeepChat`, `announceArrival` | ✅ |
-| GroupChat ×7 → chatStore reports, mutation fix, duplicate modal | ⬜ |
+| GroupChat → `GroupChatPageContent` + `useGroupChatMessages` chatStore bridge + `ensureEventGroupConversation` on mount | ✅ |
 | Popup: MeetingPoint, KeepChat, ReportConversation, `allowGroupMergeChats` | ✅ |
-| Popup: mute badge, Inbox unread live | 🟡 |
+| Popup: mute badge, Inbox unread live | ✅ (Inbox reads `unreadCount` from chatStore) |
 | `alert()` → `toast` στα GroupChat themed | ✅ (6 variants) |
 
 ### Φ18 — Αυτοεπεξηγησιμότητα
@@ -509,9 +509,9 @@ Inbox unread/pinned/typing (`g1` μόνο)· Plans avatars/«4/5 μέλη»/«me
 |---|---|
 | Calendar hint + schedule button + empty state (Φ18.1) | ✅ |
 | BuddySeek explainer, sent requests, event-picker, skeleton (Φ18.2) | ✅ |
-| LookingForCompany φίλτρα + «Edit» wizard + chip counts | ⬜ |
+| LookingForCompany φίλτρα + «Edit» wizard + chip counts | 🟡 (φίλτρα spots/verified ✅· Edit wizard ακόμα μερικό) |
 | Onboarding gate «≥3» | ⬜ |
-| Connections invite picker / DM tooltip | ⬜ |
+| Connections invite picker / DM tooltip | ✅ (event picker modal + Inbox tooltip) |
 
 ### Φ19 — Εμπιστοσύνη & Gamification
 
@@ -524,21 +524,21 @@ Inbox unread/pinned/typing (`g1` μόνο)· Plans avatars/«4/5 μέλη»/«me
 | VerificationCenter live flags + mock verify | ✅ |
 | TrustCenter rows από `currentUser.*Verified` | ✅ |
 | Profile tier labels → `lib/trust.ts` | ✅ |
-| Challenges persisted join/leave | ⬜ |
+| Challenges persisted join/leave | ✅ (`challengesJoined` + `toggleChallengeJoined`) |
 
 ### Φ20 — Organizer / Wallet / Settings / Help / Admin
 
 | Στοιχείο | Κατάσταση |
 |---|---|
 | OrganizerDashboard 8 κουμπιά wired (demo ids) | ✅ |
-| OrganizerDashboard live stats από store | ⬜ (ακόμα mock ORGANIZER_EVENTS) |
+| OrganizerDashboard live stats από store | ✅ (events/groups του χρήστη· chart ακόμα illustrative) |
 | Wallet φίλτρο + Withdraw/Manage modals | ✅ |
 | Settings `userSettings` persisted, 2FA, export, delete modal, availability editor, 7 θέματα, switches a11y | ✅ |
 | Profile privacy → `updatePrivacySettings` | ✅ |
 | Help topics/search/FAQ/send message | ✅ |
 | AdminDashboardPageContent + 7 thin wrappers + live reports | ✅ |
 | OrganizerProfilePageContent + 7 thin wrappers + contact toast | ✅ |
-| CreateEventFlow success toast / paid step | ⬜ |
+| CreateEventFlow success toast / paid step | ✅ |
 
 ### Φ21 — Αποπληθωρισμός
 
@@ -546,7 +546,7 @@ Inbox unread/pinned/typing (`g1` μόνο)· Plans avatars/«4/5 μέλη»/«me
 |---|---|
 | `OrganizerProfilePageContent` | ✅ |
 | `AdminDashboardPageContent` | ✅ |
-| `GroupChatPageContent` | ⬜ |
+| `GroupChatPageContent` | ✅ |
 | `CalendarHourlySchedule` @deprecated | ✅ |
 
 ### Φ22 — i18n + a11y οριζόντιο πέρασμα

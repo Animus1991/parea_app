@@ -27,6 +27,7 @@ import { useLanguage } from "../../lib/i18n";
 import { useGroupChatContrast } from "../../hooks/useGroupChatContrast";
 import { cn } from "../../lib/utils";
 import { useGroupChatMessages, type GroupChatMessage } from "../../hooks/useGroupChatMessages";
+import { useChatStore } from "../../store/chatStore";
 import { LiveEventTracker } from "./LiveEventTracker";
 import { ChatIcebreakers } from "./ChatIcebreakers";
 import { Modal } from "../common/Modal";
@@ -43,6 +44,7 @@ export default function GroupChatPageContent() {
   const groups = useStore((state) => state.groups);
   const users = useStore((state) => state.users);
   const currentUser = useStore((state) => state.currentUser);
+  const ensureEventGroupConversation = useChatStore((s) => s.ensureEventGroupConversation);
   const gc = useGroupChatContrast();
 
   // Ensure we default to an array even if map fails, though mock data shouldn't
@@ -50,6 +52,18 @@ export default function GroupChatPageContent() {
     groups.find((g) => g.id === groupId) ||
     groups.find((g) => g.eventId === groupId); // Fallback if routing passes eventId
   const event = events.find((e) => e.id === group?.eventId);
+  const resolvedGroupId = group?.id;
+
+  useEffect(() => {
+    if (!group || !event) return;
+    ensureEventGroupConversation({
+      groupId: group.id,
+      eventId: event.id,
+      title: event.title,
+      participantUserIds: group.members,
+      meetingPoint: group.meetingPoint,
+    });
+  }, [group?.id, event?.id, ensureEventGroupConversation]); // eslint-disable-line react-hooks/exhaustive-deps -- bridge once per group/event
 
   const buildSeedMessages = (): GroupChatMessage[] => {
     if (!currentUser) return [];
@@ -90,7 +104,7 @@ export default function GroupChatPageContent() {
   };
 
   const { messages, setMessages, appendMessage } = useGroupChatMessages(
-    groupId,
+    resolvedGroupId,
     buildSeedMessages,
   );
   const [newMessage, setNewMessage] = useState("");

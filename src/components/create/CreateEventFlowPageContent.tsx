@@ -11,6 +11,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { useStore } from "../../store";
 import { motion, AnimatePresence } from "motion/react";
 import { Card } from "../common/Card";
@@ -58,6 +59,8 @@ export default function CreateEventFlowPageContent() {
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [maxAttendees, setMaxAttendees] = useState(4);
   const [duration, setDuration] = useState("2h");
+  const [isPaid, setIsPaid] = useState(false);
+  const [price, setPrice] = useState(10);
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -84,8 +87,8 @@ export default function CreateEventFlowPageContent() {
       exactLocation: location || "Athens (TBD)",
       lat: coordinates.lat || 37.9838,
       lng: coordinates.lng || 23.7275,
-      isPaid: false,
-      price: 0,
+      isPaid,
+      price: isPaid ? Math.max(0, Number(price) || 0) : 0,
       organizerId: currentUser.id,
       timeZone: "EET (Athens)",
       safetyLevel: "low" as const,
@@ -96,8 +99,15 @@ export default function CreateEventFlowPageContent() {
     };
 
     createEvent(newEvent);
-    // Redirect to home page
-    navigate("/");
+    toast.success(
+      t("Η εμπειρία δημοσιεύτηκε!", "Experience published!"),
+      {
+        description: isPaid
+          ? t(`Τιμή εισόδου €${newEvent.price}`, `Entry price €${newEvent.price}`)
+          : t("Δωρεάν εκδήλωση", "Free event"),
+      },
+    );
+    navigate("/manage");
   };
 
   const stepVariants = {
@@ -447,6 +457,52 @@ export default function CreateEventFlowPageContent() {
                     </span>
                   </div>
                 </div>
+
+                <div>
+                  <label className={cn(labelClass, "mb-3")}>
+                    {t("Τιμολόγηση", "Pricing")}
+                  </label>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsPaid(false)}
+                      className={cn(
+                        "min-h-10 px-4 rounded-2xl text-sm font-bold border transition-colors",
+                        !isPaid ? visSelected : visIdle,
+                      )}
+                    >
+                      {t("Δωρεάν", "Free")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsPaid(true)}
+                      className={cn(
+                        "min-h-10 px-4 rounded-2xl text-sm font-bold border transition-colors",
+                        isPaid ? visSelected : visIdle,
+                      )}
+                    >
+                      {t("Με εισιτήριο", "Paid entry")}
+                    </button>
+                  </div>
+                  {isPaid && (
+                    <div className="flex items-center gap-3">
+                      <span className={cn("text-sm font-bold", p.head)}>€</span>
+                      <input
+                        type="number"
+                        min="1"
+                        max="500"
+                        step="1"
+                        value={price}
+                        onChange={(e) => setPrice(Number(e.target.value))}
+                        className={cn(inputClass, "w-28 px-3 text-center")}
+                        aria-label={t("Τιμή σε ευρώ", "Price in euros")}
+                      />
+                      <span className={cn("text-sm font-medium", p.muted)}>
+                        {t("ανά άτομο (demo)", "per person (demo)")}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex gap-3">
@@ -515,12 +571,22 @@ export default function CreateEventFlowPageContent() {
                       : t("Ιδιωτική", "Private")}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className={cn("flex justify-between pb-3 border-b", p.borderB)}>
                   <span className={cn("font-medium", p.muted)}>
                     {t("Χωρητικότητα", "Capacity")}
                   </span>
                   <span className={cn("font-bold", p.head)}>
                     {maxAttendees} {t("θέσεις", "spots")}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className={cn("font-medium", p.muted)}>
+                    {t("Τιμή", "Price")}
+                  </span>
+                  <span className={cn("font-bold", p.head)}>
+                    {isPaid
+                      ? `€${Math.max(0, Number(price) || 0)}`
+                      : t("Δωρεάν", "Free")}
                   </span>
                 </div>
               </div>
