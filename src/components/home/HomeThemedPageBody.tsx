@@ -8,9 +8,8 @@ import { Map as MapIcon, CalendarX } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { EventStories } from './EventStories';
 import { HomeBuddySeekStrip } from '../buddySeek/HomeBuddySeekStrip';
-import { ActiveBuddiesRail } from './ActiveBuddiesRail';
-import { HomeQuickActions } from './HomeQuickActions';
 import { HomeThemedEnrichment } from './HomeThemedEnrichment';
+import { HomeBelowFold } from './HomeBelowFold';
 import { HomeThemedHeroSwitch } from './HomeThemedHeroSwitch';
 import { HomeRichHero } from './HomeRichHero';
 import { HomeFiltersSection } from './HomeFiltersSection';
@@ -170,59 +169,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
 
       <HomeBuddySeekStrip />
 
-      <HomeQuickActions onScrollToCategories={scrollToFilters} />
-      <ActiveBuddiesRail />
-
-      <HomeThemedEnrichment
-        seekingHostOnly={seekingHostOnly}
-        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
-        onPreferDiscoverFeed={() => setFeedType('Discover')}
-      />
-
-      {/* How it works */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {[
-          {
-            step: '1',
-            title: t('home.how.step1.title', 'Διαλέξτε μια εμπειρία'),
-            body: t(
-              'home.how.step1.body',
-              'Επιλέξτε μια εκδήλωση, πεζοπορία ή δραστηριότητα που θέλετε να παρακολουθήσετε.',
-            ),
-          },
-          {
-            step: '2',
-            title: t('home.how.step2.title', 'Εντάξτε μια μικρή ομάδα'),
-            body: t(
-              'home.how.step2.body',
-              'Συνδεθείτε με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.',
-            ),
-          },
-          {
-            step: '3',
-            title: t('home.how.step3.title', 'Επιβεβαιώστε & συναντηθείτε'),
-            body: t(
-              'home.how.step3.body',
-              'Ξεκλειδώστε το group chat, ορίστε σημείο συνάντησης και απολαύστε την εμπειρία.',
-            ),
-          },
-        ].map(({ step, title, body }) => (
-          <div
-            key={step}
-            className={cn('p-4 rounded-xl border shadow-soft flex flex-col items-center text-center', tok.stepCard)}
-          >
-            <div className={cn('w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs mb-2.5', tok.stepCircle)}>
-              {step}
-            </div>
-            <h3 className={cn(HOME_TYPO.stepTitle, 'mb-1', tok.stepTitle)}>
-              {title}
-            </h3>
-            <p className={cn(HOME_TYPO.stepBody, tok.stepBody)}>
-              {body}
-            </p>
-          </div>
-        ))}
-      </section>
+      <HomeThemedEnrichment onPreferDiscoverFeed={() => setFeedType('Discover')} />
 
       <HomeFiltersSection
         activeCategory={activeCategory}
@@ -253,19 +200,28 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
       {/* Events Grid */}
       <section>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
-          <div className={cn('flex p-1 rounded-lg w-fit', tok.feedTabWrap)}>
-            <button
-              onClick={() => setFeedType('For You')}
-              className={cn('px-4 py-1.5 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'For You' ? tok.feedTabActive : tok.feedTabInactive)}
-            >
-              {t('home.feed.for_you', 'Για Σένα')}
-            </button>
-            <button
-              onClick={() => setFeedType('Discover')}
-              className={cn('px-4 py-1.5 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'Discover' ? tok.feedTabActive : tok.feedTabInactive)}
-            >
-              {t('home.feed.discover', 'Ανακάλυψε')}
-            </button>
+          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
+            <div className={cn('flex p-1 rounded-lg w-fit', tok.feedTabWrap)}>
+              <button
+                onClick={() => setFeedType('For You')}
+                className={cn('px-4 py-1.5 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'For You' ? tok.feedTabActive : tok.feedTabInactive)}
+              >
+                {t('home.feed.for_you', 'Για Σένα')}
+              </button>
+              <button
+                onClick={() => setFeedType('Discover')}
+                className={cn('px-4 py-1.5 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'Discover' ? tok.feedTabActive : tok.feedTabInactive)}
+              >
+                {t('home.feed.discover', 'Ανακάλυψε')}
+              </button>
+            </div>
+            {!isLoading && sortedEvents.length > 0 && (
+              <p className="text-xs font-semibold text-ink-muted">
+                {sortedEvents.length === 1
+                  ? t('1 αποτέλεσμα', '1 result')
+                  : t(`${sortedEvents.length} αποτελέσματα`, `${sortedEvents.length} results`)}
+              </p>
+            )}
           </div>
 
           <div className={cn('flex p-0.5 rounded-lg w-fit', tok.mapBtnWrap)}>
@@ -336,6 +292,17 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           </div>
         )}
       </section>
+
+      <HomeBelowFold
+        onScrollToCategories={scrollToFilters}
+        seekingHostEvents={seekingHostEvents}
+        seekingHostOnly={seekingHostOnly}
+        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
+        stepCardClass={tok.stepCard}
+        stepCircleClass={tok.stepCircle}
+        stepTitleClass={tok.stepTitle}
+        stepBodyClass={tok.stepBody}
+      />
 
       <HomeMobileFilterSheet
         open={filterSheetOpen}

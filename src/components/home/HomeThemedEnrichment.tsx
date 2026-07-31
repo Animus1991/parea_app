@@ -1,26 +1,18 @@
 import { useEffect } from 'react';
-import { useStoryEvents } from '../../hooks/useStoryEvents';
 import { useOnboardingWelcome } from '../../hooks/useOnboardingWelcome';
 import { HomeOnboardingWelcomeBanner } from './HomeOnboardingWelcomeBanner';
-import { HomeQuickStatsBar } from './HomeQuickStatsBar';
-import { HomeDailyTip } from './HomeDailyTip';
 import { HomePendingFeedbackBanner } from './HomePendingFeedbackBanner';
-import { HomeSeekingHostSection } from './HomeSeekingHostSection';
 
 export interface HomeThemedEnrichmentProps {
-  seekingHostOnly: boolean;
-  onToggleSeekingHostOnly: () => void;
   /** Switch to Discover when landing from onboarding (optional). */
   onPreferDiscoverFeed?: () => void;
 }
 
-/** Classic-parity blocks for themed Home pages (additive, no layout removal). */
-export function HomeThemedEnrichment({
-  seekingHostOnly,
-  onToggleSeekingHostOnly,
-  onPreferDiscoverFeed,
-}: HomeThemedEnrichmentProps) {
-  const { seekingHostEvents } = useStoryEvents();
+/**
+ * Above-fold enrichment only (P4): welcome + pending feedback.
+ * Stats / tip / seeking-host moved to HomeBelowFold.
+ */
+export function HomeThemedEnrichment({ onPreferDiscoverFeed }: HomeThemedEnrichmentProps) {
   const { showWelcome, dismissWelcome } = useOnboardingWelcome();
 
   useEffect(() => {
@@ -29,17 +21,8 @@ export function HomeThemedEnrichment({
 
   return (
     <>
-      {showWelcome && (
-        <HomeOnboardingWelcomeBanner onDismiss={dismissWelcome} />
-      )}
-      <HomeQuickStatsBar />
-      <HomeDailyTip />
+      {showWelcome && <HomeOnboardingWelcomeBanner onDismiss={dismissWelcome} />}
       <HomePendingFeedbackBanner />
-      <HomeSeekingHostSection
-        events={seekingHostEvents}
-        seekingHostOnly={seekingHostOnly}
-        onToggleSeekingHostOnly={onToggleSeekingHostOnly}
-      />
     </>
   );
 }

@@ -24,7 +24,7 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
   const connectionIds = new Set(currentUser?.connections ?? []);
 
   const activeBuddies = users
-    .filter((u) => u.id !== currentUser?.id)
+    .filter((u) => u.id !== currentUser?.id && connectionIds.has(u.id))
     .slice(0, 6);
 
   if (activeBuddies.length === 0) return null;
@@ -90,17 +90,8 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
                 )}
               />
               <div
-                className={cn(
-                  'absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white',
-                  connectionIds.has(user.id) || user.id.charCodeAt(0) % 3 !== 0
-                    ? 'bg-emerald-500'
-                    : 'bg-gray-300',
-                )}
-                title={
-                  connectionIds.has(user.id)
-                    ? t('Συνδεδεμένος', 'Connected')
-                    : t('Πρόσφατα ενεργός', 'Recently active')
-                }
+                className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white bg-emerald-500"
+                title={t('Συνδεδεμένος', 'Connected')}
               />
             </div>
             <span

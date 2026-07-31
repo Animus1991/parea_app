@@ -3,26 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { EventCard } from "../components/events/EventCard";
 import { EventCardSkeleton } from "../components/common/Skeleton";
-import {
-  Search,
-  ShieldCheck,
-  Map as MapIcon,
-  CheckCircle2,
-  Users,
-} from "lucide-react";
+import { Map as MapIcon, CalendarX } from "lucide-react";
 import { useLanguage } from "../lib/i18n";
 import { EmptyState } from "../components/common/EmptyState";
-import { CalendarX } from "lucide-react";
 import { useHomeTheme } from "../hooks/useHomeTheme";
 import { useThemeStyles } from "../hooks/useThemeStyles";
 import { EventStories } from "../components/home/EventStories";
 import { HomeLoggedInHero } from "../components/home/HomeLoggedInHero";
-import { ActiveBuddiesRail } from "../components/home/ActiveBuddiesRail";
-import { HomeQuickActions } from "../components/home/HomeQuickActions";
-import { HomeQuickStatsBar } from "../components/home/HomeQuickStatsBar";
-import { HomeDailyTip } from "../components/home/HomeDailyTip";
 import { HomePendingFeedbackBanner } from "../components/home/HomePendingFeedbackBanner";
-import { HomeSeekingHostSection } from "../components/home/HomeSeekingHostSection";
+import { HomeBelowFold } from "../components/home/HomeBelowFold";
 import { HomeBuddySeekStrip } from "../components/buddySeek/HomeBuddySeekStrip";
 import { getTimeGreeting, getMotivation } from "../lib/homeGreeting";
 import { getDefaultHomeSearchSuggestions } from "../lib/homeSearchSuggestions";
@@ -174,63 +163,7 @@ export default function HomeClassic() {
       {showWelcome && (
         <HomeOnboardingWelcomeBanner useClassicTokens onDismiss={dismissWelcome} />
       )}
-
-      <HomeQuickActions useClassicTokens onScrollToCategories={scrollToFilters} />
-      <ActiveBuddiesRail useClassicTokens />
-
-      <HomeQuickStatsBar />
-      <HomeDailyTip />
       <HomePendingFeedbackBanner />
-      <HomeSeekingHostSection
-        events={seekingHostEvents}
-        seekingHostOnly={seekingHostOnly}
-        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
-      />
-
-      {/* How it works */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {[
-          {
-            step: "1",
-            title: t("home.how.step1.title", "Διαλέξτε μια εμπειρία"),
-            body: t(
-              "home.how.step1.body",
-              "Επιλέξτε μια εκδήλωση, πεζοπορία ή δραστηριότητα που θέλετε να παρακολουθήσετε.",
-            ),
-          },
-          {
-            step: "2",
-            title: t("home.how.step2.title", "Εντάξτε μια μικρή ομάδα"),
-            body: t(
-              "home.how.step2.body",
-              "Συνδεθείτε με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.",
-            ),
-          },
-          {
-            step: "3",
-            title: t("home.how.step3.title", "Επιβεβαιώστε & συναντηθείτε"),
-            body: t(
-              "home.how.step3.body",
-              "Ξεκλειδώστε το group chat, ορίστε σημείο συνάντησης και απολαύστε την εμπειρία.",
-            ),
-          },
-        ].map(({ step, title, body }) => (
-          <div
-            key={step}
-            className={`p-5 rounded-2xl shadow-soft flex flex-col items-center text-center ${h.card}`}
-          >
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs mb-2.5 ${h.stepBadge}`}>
-              {step}
-            </div>
-            <h3 className={`font-bold text-base mb-1 ${h.stepTitle}`}>
-              {title}
-            </h3>
-            <p className={`text-sm leading-relaxed font-medium ${h.stepBody}`}>
-              {body}
-            </p>
-          </div>
-        ))}
-      </section>
 
       <HomeFiltersSection
         activeCategory={activeCategory}
@@ -261,19 +194,28 @@ export default function HomeClassic() {
       {/* Events Grid */}
       <section>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setFeedType("For You")}
-              className={`px-4 py-1.5 text-sm font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
-            >
-              {t("home.feed.for_you", "Για Σένα")}
-            </button>
-            <button
-              onClick={() => setFeedType("Discover")}
-              className={`px-4 py-1.5 text-sm font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
-            >
-              {t("home.feed.discover", "Ανακάλυψε")}
-            </button>
+          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setFeedType("For You")}
+                className={`px-4 py-1.5 text-sm font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
+              >
+                {t("home.feed.for_you", "Για Σένα")}
+              </button>
+              <button
+                onClick={() => setFeedType("Discover")}
+                className={`px-4 py-1.5 text-sm font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
+              >
+                {t("home.feed.discover", "Ανακάλυψε")}
+              </button>
+            </div>
+            {!isLoading && sortedEvents.length > 0 && (
+              <p className="text-xs font-semibold text-ink-muted">
+                {sortedEvents.length === 1
+                  ? t("1 αποτέλεσμα", "1 result")
+                  : t(`${sortedEvents.length} αποτελέσματα`, `${sortedEvents.length} results`)}
+              </p>
+            )}
           </div>
 
           <div className={cn('flex p-0.5 rounded-full w-fit border', tok.isDark ? 'bg-gray-800/50 border-gray-600/50' : 'bg-gray-50 border-gray-100')}>
@@ -338,6 +280,18 @@ export default function HomeClassic() {
           </div>
         )}
       </section>
+
+      <HomeBelowFold
+        useClassicTokens
+        onScrollToCategories={scrollToFilters}
+        seekingHostEvents={seekingHostEvents}
+        seekingHostOnly={seekingHostOnly}
+        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
+        stepCardClass={h.card}
+        stepCircleClass={h.stepBadge}
+        stepTitleClass={h.stepTitle}
+        stepBodyClass={h.stepBody}
+      />
 
       <HomeMobileFilterSheet
         open={filterSheetOpen}

@@ -5,7 +5,6 @@ import { Search, ShieldCheck, Map as MapIcon, CheckCircle2, Users } from 'lucide
 import { useLanguage } from '../../lib/i18n';
 import { HOME_TYPO } from '../../lib/typographyTokens';
 import type { HomeThemedTokens } from '../../lib/homeThemedTokens';
-import { HomeHeroModeBar } from './HomeHeroModeBar';
 import { HomeSearchDropdown } from './HomeSearchDropdown';
 import { cn } from '../../lib/utils';
 
@@ -41,7 +40,6 @@ export function HomeRichHero({
       transition={{ duration: 0.6 }}
       className={cn(tok.heroRoot, 'p-6 md:p-10 rounded-3xl relative overflow-hidden flex flex-col gap-4')}
     >
-      <HomeHeroModeBar className="relative z-10" />
       <div className="relative z-10 flex-1 w-full">
         <div className={cn(tok.heroBadge, 'mb-4', HOME_TYPO.heroBadge)}>
           {t('home.hero.badge', 'Νεος τροπος εξοδου')}

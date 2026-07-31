@@ -44,16 +44,8 @@ export function HomeQuickActions({
     { icon: MapIcon, label: t('Κοντά μου', 'Nearby'), onClick: () => navigate('/nearby'), key: 'nearby' },
   ];
 
+  // Buddy-seek lives only in HomeBuddySeekStrip (P4 — one entry above the fold).
   const features = [
-    {
-      icon: Users,
-      title: t('Βρες Παρέα', 'Find Nakamas'),
-      body: t(
-        'Γνώρισε άτομα με κοινά ενδιαφέροντα.',
-        'Meet people with shared interests.',
-      ),
-      to: '/nearby',
-    },
     {
       icon: Calendar,
       title: t('Διοργάνωσε Εκδήλωση', 'Host Event'),
@@ -98,7 +90,7 @@ export function HomeQuickActions({
             </button>
           ))}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {features.map(({ icon: Icon, title, body, to }) => (
             <button
               key={to}
@@ -149,7 +141,7 @@ export function HomeQuickActions({
           </button>
         ))}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {features.map(({ icon: Icon, title, body, to }) => (
           <button
             key={to}

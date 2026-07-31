@@ -12,8 +12,6 @@ import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useStore } from '../../store';
 import { cn } from '../../lib/utils';
-import { HomeHeroModeBar } from './HomeHeroModeBar';
-
 export interface HomeLoggedInHeroContrastProps {
   greeting: string;
   motivation: string;
@@ -97,8 +95,6 @@ export function HomeLoggedInHeroContrast({
       transition={{ duration: 0.6 }}
       className={cn(h.hero, 'flex flex-col gap-6 relative')}
     >
-      <HomeHeroModeBar className="relative z-10" />
-
       {homeHeroMode === 'light' && (
         <div className="relative z-10 space-y-5">
           <div className="flex justify-between items-start gap-4">
