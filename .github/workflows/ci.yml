@@ -24,6 +24,7 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint:eslint
+      - run: npm run audit:contrast
       - run: npm run test
       - run: npm run build
         env:

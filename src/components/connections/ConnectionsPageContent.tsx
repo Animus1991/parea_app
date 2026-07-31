@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { EmptyState } from '../common/EmptyState';
 import { Modal } from '../common/Modal';
 import { useStore } from '../../store';
+import { useChatStore } from '../../store/chatStore';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
@@ -82,6 +83,8 @@ export default function ConnectionsPageContent() {
   const removeConnection = useStore((s) => s.removeConnection);
   const sendConnectionRequest = useStore((s) => s.sendConnectionRequest);
   const addNotification = useStore((s) => s.addNotification);
+  const ensureDirectConversation = useChatStore((s) => s.ensureDirectConversation);
+  const setInboxOpen = useChatStore((s) => s.setInboxOpen);
 
   const [activeTab, setActiveTab] = useState<'all' | 'requests' | 'suggested'>('all');
   const [search, setSearch] = useState('');
@@ -153,12 +156,29 @@ export default function ConnectionsPageContent() {
   }, [users, myConnectionIds, connectionRequests, currentUser]);
 
   // ─── Handlers ────────────────────────────────────────────
-  const handleMessage = (_userId: string) => {
-    toast.message(
-      t('Οι συνομιλίες είναι ομαδικές ανά εκδήλωση', 'Chats are event-group based'),
-      { description: t('Ανοίξτε το Inbox για τις ομάδες σας.', 'Open Inbox for your groups.') },
+  const handleMessage = (userId: string) => {
+    if (!currentUser) {
+      navigate('/login');
+      return;
+    }
+    const peer = users.find((u) => u.id === userId);
+    const convId = ensureDirectConversation({
+      selfUserId: currentUser.id,
+      peerUserId: userId,
+      peerName: peer?.name ?? t('Σύνδεση', 'Connection'),
+      openWindow: true,
+    });
+    if (!convId) {
+      toast.message(
+        t('Οι ιδιωτικές συνομιλίες είναι απενεργοποιημένες', 'Direct chats are disabled'),
+        { description: t('Ενεργοποιήστε τις στις ρυθμίσεις απορρήτου chat.', 'Enable them in chat privacy settings.') },
+      );
+      return;
+    }
+    setInboxOpen(false);
+    toast.success(
+      t(`Συνομιλία με ${peer?.name ?? ''}`, `Chat with ${peer?.name ?? ''}`),
     );
-    navigate('/chats');
   };
   const handleInviteToEvent = (eventId: string) => {
     const ev = events.find((e) => e.id === eventId);
@@ -330,8 +350,8 @@ export default function ConnectionsPageContent() {
                   type="button"
                   onClick={() => handleMessage(conn.id)}
                   className={`p-2 min-h-10 min-w-10 flex items-center justify-center rounded-full transition-colors ${a.msgIcon}`}
-                  title={t('Ομαδικές συνομιλίες — άνοιγμα Inbox', 'Group chats — open Inbox')}
-                  aria-label={t('Ομαδικές συνομιλίες — άνοιγμα Inbox', 'Group chats — open Inbox')}
+                  title={t('Ιδιωτικό μήνυμα', 'Direct message')}
+                  aria-label={t('Ιδιωτικό μήνυμα', 'Direct message')}
                 >
                   <MessageCircle className="w-5 h-5" aria-hidden />
                 </button>

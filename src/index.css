@@ -191,6 +191,8 @@
   --color-accent: #818cf8;
   --color-accent-strong: #a5b4fc;
   --color-accent-soft: rgb(49 46 129 / 0.2);
+  /* Light accent chip → dark fg (shared block sets accent-fg white; override for AA) */
+  --color-accent-fg: #1e1b4b;
   /* Deep indigo hero */
   --color-hero-from: #4338ca;
   --color-hero-to: #3730a3;
@@ -202,6 +204,8 @@
   --color-accent: #34d399;
   --color-accent-strong: #6ee7b7;
   --color-accent-soft: rgb(6 78 59 / 0.2);
+  /* Light accent chip → dark fg for AA on emerald */
+  --color-accent-fg: #022c22;
   /* Deep emerald hero: AA-safe (5.0–6.9:1 με λευκό), όχι φωτεινό */
   --color-hero-from: #047857;
   --color-hero-to: #065f46;

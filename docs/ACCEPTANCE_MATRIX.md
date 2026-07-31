@@ -34,8 +34,8 @@
 | 24 | Admin Review/Ban | ✅ | AdminDashboardPageContent actions |
 | 25 | OrganizerProfile `#` / alert | ✅ | toast + website guard |
 | 26 | Plans Group Chat wrong id | ✅ | groupId |
-| 27 | Connections message ignores user | 🟡 | Inbox + tooltip (no 1:1 DM product yet) |
-| 28 | Login Google = demo | ✅ | label «(Demo)» + toast on fallback |
+| 27 | Connections message → 1:1 DM | ✅ | `ensureDirectConversation` + popup window |
+| 28 | Login Google | 🟡 | Firebase OAuth when configured; else «(Demo)» + toast |
 | 29 | 404 CTA | ✅ | Back to Home |
 
 ---
@@ -96,7 +96,10 @@
 | Focus-visible global ring | ✅ baseline |
 | Reduced motion | ✅ |
 | Touch targets ≥40px (primary controls) | ✅ / 🟡 | Button sizes + many controls; not every legacy control |
-| Contrast AA certification | ⬜ | **not certified** — theme tokens improve contrast; no axe/Lighthouse gate in CI |
+| jsx-a11y in ESLint | ✅ | `eslint-plugin-jsx-a11y` (warn-first on noisy rules) |
+| Axe smoke in CI (Playwright) | ✅ | serious/critical on `/login` + demo `/` (excludes `color-contrast` — see token gate) — **not** full AA certification |
+| Semantic token contrast gate | ✅ | `npm run audit:contrast` per theme in CI |
+| Contrast AA certification (every page × theme) | ⬜ | token audit ≠ axe/pixel audit of every composed surface |
 | Full keyboard audit every page | ⬜ | high-traffic done; residual low-traffic pages incremental |
 | Screen-reader full pass | ⬜ | not performed end-to-end |
 
@@ -108,21 +111,24 @@
 2. Create event → toast → `/manage` → survives refresh.  
 3. BuddySeek Edit → modal prefilled → save updates request.  
 4. Accept join → chat conversation exists in popup + `/chat/:groupId`.  
-5. Login Google (Demo) → toast + demo user when Firebase absent.  
-6. Tab through Notifications dismiss / Profile edit controls without hover.  
-7. Toggle `prefers-reduced-motion` → no ping/bounce.  
-8. EL↔EN on BuddySeek, Login, Organizer, Challenges.  
-9. Nearby map remount (Strict Mode) → no Leaflet crash.  
-10. 404 → «Πίσω στην Αρχική».
+5. Connections → message icon → 1:1 DM popup opens.  
+6. Login Google: Firebase when env configured; else Demo toast + demo user.  
+7. Tab through Notifications dismiss / Profile edit controls without hover.  
+8. Toggle `prefers-reduced-motion` → no ping/bounce.  
+9. EL↔EN on BuddySeek, Login, Organizer, Challenges.  
+10. Nearby map remount (Strict Mode) → no Leaflet crash.  
+11. 404 → «Πίσω στην Αρχική».
 
 ---
 
 ## F. Residual (explicitly out of “closed”)
 
-1. Full WCAG 2.2 AA certification + CI axe.  
-2. Real Google OAuth (Firebase configured).  
-3. Real payment / bank / live support agents.  
-4. 1:1 DM product (Connections → personal chat).  
-5. Pixel-perfect contrast audit of every theme × every page.  
+| # | Item | Engineering status | Still not claimed |
+|---|---|---|---|
+| 1 | WCAG 2.2 AA | Baseline: jsx-a11y + axe smoke CI + token contrast | Full certification / every page pass |
+| 2 | Google OAuth | Code path via Firebase when configured | Production OAuth without Firebase env |
+| 3 | Payments / live support | Honest demo labels | Real bank / live agents |
+| 4 | 1:1 DM | ✅ `ensureDirectConversation` product path | — |
+| 5 | Contrast every theme × page | Token pairs gated in CI | Pixel audit of every composed UI |
 
-Until F1–F5, claims must remain **“engineering acceptance / prototype completeness”**, not **“certified accessible production”**.
+**Verdict:** engineering acceptance for the prototype UI/UX plan ≈ **closed**. Certified production a11y / live payments / always-on OAuth ≠ closed.

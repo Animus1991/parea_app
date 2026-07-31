@@ -58,6 +58,16 @@ interface ChatState {
     meetingPoint?: string;
     openWindow?: boolean;
   }) => string;
+  /**
+   * 1:1 DM between mutual connections (persistent, non-ephemeral).
+   * Returns conversation id, or null when privacy blocks direct chats.
+   */
+  ensureDirectConversation: (input: {
+    selfUserId: string;
+    peerUserId: string;
+    peerName: string;
+    openWindow?: boolean;
+  }) => string | null;
 }
 
 const MAX_WINDOWS = 2;
@@ -300,6 +310,64 @@ export const useChatStore = create<ChatState>()(
           senderType: 'system',
           type: 'system',
           body: 'Coordination chat unlocked after mutual accept.',
+          createdAt: now,
+        };
+
+        set((s) => ({
+          conversations: [conversation, ...s.conversations],
+          messages: [...s.messages, sysMsg],
+        }));
+
+        if (openWindow) get().openConversation(conversationId);
+        return conversationId;
+      },
+
+      ensureDirectConversation: ({
+        selfUserId,
+        peerUserId,
+        peerName,
+        openWindow = true,
+      }) => {
+        const privacy = get().privacy;
+        if (!privacy.allowMutualConnectionChats) return null;
+
+        const pair = [selfUserId, peerUserId].sort();
+        const conversationId = `conv_dm_${pair.join('_')}`;
+        const existing = get().conversations.find(
+          (c) =>
+            c.id === conversationId ||
+            (c.type === 'direct' &&
+              c.participantUserIds.length === 2 &&
+              pair.every((id) => c.participantUserIds.includes(id))),
+        );
+        if (existing) {
+          if (openWindow) get().openConversation(existing.id);
+          return existing.id;
+        }
+
+        const now = new Date().toISOString();
+        const conversation: Conversation = {
+          id: conversationId,
+          type: 'direct',
+          title: peerName,
+          participantUserIds: pair,
+          status: 'persistent',
+          isEphemeral: false,
+          canPersist: true,
+          unreadCount: 0,
+          lastMessageAt: now,
+          lastMessagePreview: {
+            el: 'Ξεκίνησε ιδιωτική συνομιλία',
+            en: 'Direct chat started',
+          },
+        };
+        const sysMsg: ChatMessage = {
+          id: `m_sys_dm_${pair.join('_')}`,
+          conversationId,
+          senderId: 'system',
+          senderType: 'system',
+          type: 'system',
+          body: 'Direct message unlocked between connections.',
           createdAt: now,
         };
 

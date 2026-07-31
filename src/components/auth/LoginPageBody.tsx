@@ -7,6 +7,7 @@ import { HomeGuestHero } from '../home/HomeGuestHero';
 import { LoginGuestHeroStrip } from './LoginGuestHeroStrip';
 import { LoginExploreDemoButton } from './LoginExploreDemoButton';
 import { tryGoogleSignIn } from '../../lib/loginHandlers';
+import { isFirebaseAuthAvailable } from '../../services/firebaseAuth';
 import { cn } from '../../lib/utils';
 
 export type LoginVariant =
@@ -167,10 +168,12 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
     navigate('/');
   };
 
+  const googleOAuthReady = isFirebaseAuthAvailable();
+
   const handleGoogleLogin = async () => {
     const viaFirebase = await tryGoogleSignIn();
     if (!viaFirebase) {
-      // Prototype fallback — not real OAuth until Firebase Google is configured.
+      // Prototype fallback — real OAuth only when Firebase Google is configured.
       toast.info(
         t(
           'Google OAuth μη διαθέσιμο — σύνδεση demo λογαριασμού',
@@ -247,7 +250,9 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
             className={cn('w-full flex items-center justify-center gap-3 px-4 py-3 min-h-11 rounded-full border text-sm font-bold transition-colors shadow-soft', tok.googleBtnClass)}
           >
             <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="" className="w-5 h-5" aria-hidden />
-            {t('Συνέχεια με Google (Demo)', 'Continue with Google (Demo)')}
+            {googleOAuthReady
+              ? t('Συνέχεια με Google', 'Continue with Google')
+              : t('Συνέχεια με Google (Demo)', 'Continue with Google (Demo)')}
           </button>
         </div>
 
