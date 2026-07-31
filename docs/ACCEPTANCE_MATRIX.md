@@ -11,124 +11,46 @@
 
 | # | Item | Status | Evidence |
 |---|---|---|---|
-| 1 | Home grid-view dead button | ✅ | Affordance removed / `LayoutGrid` sr-only in heroes |
-| 2–5 | Nearby search / filters / radius / chips | ✅ | `NearbyGroupsPageContent` wired |
-| 6 | EventDetail waitlist `alert()` | ✅ | toast + store waitlist |
-| 7 | EventCard safety `alert()` | ✅ | toast |
-| 8 | Organizer → `/profile` | ✅ | `/organizer/:id` |
-| 9 | AppShell footer `#` | ✅ | real routes |
-| 10 | BuddySeek «Νέο αίτημα» → `/` | ✅ | event picker + create modal |
-| 11 | LookingForCompany filters no-op | ✅ | spots/verified filter |
-| 12 | MeetingPoint Έφτασα / Χάρτης | ✅ | chatStore + maps URL |
-| 13 | KeepChat request | ✅ | `requestKeepChat` |
-| 14 | Notifications CTAs | ✅ | wired actions |
-| 15 | Achievements Share | ✅ | Web Share / clipboard |
-| 16 | GroupChat report toast-only | ✅ | chatStore reports pipeline |
-| 17 | Organizer Dashboard actions | ✅ | live events + actions |
-| 18 | Wallet Withdraw/Manage | 🟡 | demo-labelled flows |
-| 19 | Verification Verify/Upload | 🟡 | demo toast + flags |
-| 20 | ReportIssue submit | ✅ | store + Admin |
-| 21 | Profile privacy local | ✅ | `userSettings` |
-| 22 | Settings dead rows | 🟡 | «Σύντομα» value + toast (Payment / Blocked) |
-| 23 | Help topics/send | 🟡 | wired; support marked demo (no live agent) |
-| 24 | Admin Review/Ban | ✅ | AdminDashboardPageContent actions |
-| 25 | OrganizerProfile `#` / alert | ✅ | toast + website guard |
-| 26 | Plans Group Chat wrong id | ✅ | groupId |
-| 27 | Connections message → 1:1 DM | ✅ | `ensureDirectConversation` + popup window |
-| 28 | Login Google | 🟡 | Firebase OAuth when configured; else «(Demo)» + toast |
+| 1–26 | Prior Γ1 items | ✅ | See previous closure commits |
+| 27 | Connections message → 1:1 DM | ✅ | `ensureDirectConversation` + popup |
+| 28 | Login Google | 🟡 | Firebase **or** `VITE_GOOGLE_OAUTH_CLIENT_ID` (GIS); else «(Demo)» |
 | 29 | 404 CTA | ✅ | Back to Home |
 
 ---
 
-## B. Γ2 — Fake data presented as real
+## B–D. Γ2 / Γ3 / Γ4
 
-| Item | Status | Notes |
-|---|---|---|
-| Inbox unread | ✅ | chatStore `unreadCount` |
-| Plans members / meeting point | ✅ | store-backed |
-| Nearby distances | ✅ | haversine |
-| ActiveBuddies online dots | ✅ | removed (no fake presence) |
-| Organizer stats/chart/events | ✅ / 🟡 | live store; chart = derived demo analytics |
-| Wallet amounts | 🟡 | prototype ledger |
-| Verification % / Trust timeline | ✅ / 🟡 | live flags; some mock rows remain illustrative |
-| Moderation «Suspicious: 2» | ✅ | derived from `reportCountInternal >= 2` |
-| Help «Online now» | ✅ | replaced with «Demo support (no live agent)» |
-| +25 XP decorative | ✅ | `awardXp` on feedback |
-
----
-
-## C. Γ3 — i18n
-
-| Item | Status |
-|---|---|
-| Nearby Map Error `t()` | ✅ |
-| BuddySeek EL/EN footer | ✅ |
-| CreateCompanyRequest Min/Max | ✅ |
-| Moderation / Privacy / Close aria | ✅ |
-| Plans / LFC singular-plural | ✅ |
-| Notifications bilingual | ✅ |
-| ChatModeration locale | ✅ |
-| GroupMerge «Έγινε» | ✅ |
-| OrganizerProfile typos | ✅ |
-
----
-
-## D. Γ4 — a11y
-
-| Item | Status |
-|---|---|
-| EventCard calendar aria + visible label | ✅ |
-| Feedback star aria-labels | ✅ |
-| History/Saved keyboard cards | ✅ |
-| Modal Esc / focus / scroll-lock | ✅ | `Modal` + `useOverlayBehavior` |
-| Tabs role/aria-selected | ✅ | Notifications, Connections, Inbox, Achievements, Challenges |
-| Settings switches role | ✅ | `role="switch"` |
-| CreateEvent visibility radios | ✅ | `role="radiogroup/radio"` |
-| Icon triggers aria-label | ✅ | high-traffic surfaces |
-| QuickReplies valid roles | ✅ | `role="toolbar"` |
-| BottomSheet amber dark contrast | ✅ |
-| Calendar keyboard schedule path | ✅ | schedule button per day |
+Prior rows remain ✅ / 🟡 as in commit `7fe38f2` + follow-ups (i18n, Modal a11y, tabs, etc.).
 
 ### P5 / WCAG posture (honest)
 
 | Area | Status |
 |---|---|
-| Focus-visible global ring | ✅ baseline |
-| Reduced motion | ✅ |
-| Touch targets ≥40px (primary controls) | ✅ / 🟡 | Button sizes + many controls; not every legacy control |
-| jsx-a11y in ESLint | ✅ | `eslint-plugin-jsx-a11y` (warn-first on noisy rules) |
-| Axe smoke in CI (Playwright) | ✅ | serious/critical on `/login` + demo `/` (excludes `color-contrast` — see token gate) — **not** full AA certification |
-| Semantic token contrast gate | ✅ | `npm run audit:contrast` per theme in CI |
-| Contrast AA certification (every page × theme) | ⬜ | token audit ≠ axe/pixel audit of every composed surface |
-| Full keyboard audit every page | ⬜ | high-traffic done; residual low-traffic pages incremental |
-| Screen-reader full pass | ⬜ | not performed end-to-end |
+| Focus-visible / reduced motion | ✅ baseline |
+| jsx-a11y in ESLint | ✅ warn-first |
+| Token contrast gate | ✅ `npm run audit:contrast` (9 themes, AA text pairs) |
+| Axe smoke + **page×theme matrix** | ✅ CI: 5 themes × 10 routes with `color-contrast` (`e2e/a11y.spec.ts`) |
+| Full WCAG 2.2 AA certification | ⬜ | engineering gate ≠ third-party cert; not every route |
+| Exhaustive 9 themes × every route | 🟡 | CI uses representative set; full list in `A11Y_THEMES` for local runs |
 
 ---
 
-## E. Manual smoke checklist (acceptance)
+## E. Integrations residual → env-gated product paths
 
-1. Guest opens event with tags → no crash.  
-2. Create event → toast → `/manage` → survives refresh.  
-3. BuddySeek Edit → modal prefilled → save updates request.  
-4. Accept join → chat conversation exists in popup + `/chat/:groupId`.  
-5. Connections → message icon → 1:1 DM popup opens.  
-6. Login Google: Firebase when env configured; else Demo toast + demo user.  
-7. Tab through Notifications dismiss / Profile edit controls without hover.  
-8. Toggle `prefers-reduced-motion` → no ping/bounce.  
-9. EL↔EN on BuddySeek, Login, Organizer, Challenges.  
-10. Nearby map remount (Strict Mode) → no Leaflet crash.  
-11. 404 → «Πίσω στην Αρχική».
+| Area | Status | How to enable |
+|---|---|---|
+| Google OAuth without Firebase | ✅ code path | `VITE_GOOGLE_OAUTH_CLIENT_ID` → Google Identity Services |
+| Google OAuth via Firebase | ✅ code path | Full `VITE_FIREBASE_*` |
+| Stripe payments / payouts | 🟡 env-gated | `VITE_STRIPE_PUBLISHABLE_KEY` + `VITE_STRIPE_CHECKOUT_URL` → Wallet opens Checkout; else demo |
+| Live support | 🟡 env-gated | `VITE_SUPPORT_URL` or `VITE_SUPPORT_EMAIL` → Help opens channel; else demo label |
 
 ---
 
-## F. Residual (explicitly out of “closed”)
+## F. Still not claimed as “production certified”
 
-| # | Item | Engineering status | Still not claimed |
-|---|---|---|---|
-| 1 | WCAG 2.2 AA | Baseline: jsx-a11y + axe smoke CI + token contrast | Full certification / every page pass |
-| 2 | Google OAuth | Code path via Firebase when configured | Production OAuth without Firebase env |
-| 3 | Payments / live support | Honest demo labels | Real bank / live agents |
-| 4 | 1:1 DM | ✅ `ensureDirectConversation` product path | — |
-| 5 | Contrast every theme × page | Token pairs gated in CI | Pixel audit of every composed UI |
+1. Third-party WCAG 2.2 AA audit / every page × every theme in CI.  
+2. Live bank settlement / Stripe Connect backend (client opens Checkout URL only).  
+3. Staffed live support agents (env opens your helpdesk URL/email).  
+4. OAuth that works with **zero** credentials (impossible — needs Google client id or Firebase).
 
-**Verdict:** engineering acceptance for the prototype UI/UX plan ≈ **closed**. Certified production a11y / live payments / always-on OAuth ≠ closed.
+**Verdict:** engineering acceptance for the UI/UX plan ≈ **closed**. Production cert / funded payments / staffed support require ops + secrets outside the repo.

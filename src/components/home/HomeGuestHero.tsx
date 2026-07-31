@@ -15,10 +15,10 @@ export function HomeGuestHero() {
       animate={{ opacity: 1, y: 0 }}
       className="w-full max-w-lg mx-auto mb-8 text-center space-y-4"
     >
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-600 mb-2">
+      <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-700 mb-2">
         <Compass className="w-6 h-6" />
       </div>
-      <p className="text-xs font-bold uppercase tracking-widest text-cyan-600">
+      <p className="text-xs font-bold uppercase tracking-widest text-cyan-700">
         {t('Εξερεύνηση Δραστηριοτήτων', 'Explore Activities')}
       </p>
       <h1 className="text-2xl md:text-3xl font-black text-ink leading-tight">

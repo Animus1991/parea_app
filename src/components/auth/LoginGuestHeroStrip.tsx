@@ -13,7 +13,7 @@ interface LoginGuestHeroStripProps {
 /** Compact guest marketing block for themed Login pages (additive; mirrors HomeGuestHero). */
 export function LoginGuestHeroStrip({
   className,
-  accentClass = 'bg-cyan-50 text-cyan-600',
+  accentClass = 'bg-cyan-50 text-cyan-700',
   variant = 'light',
 }: LoginGuestHeroStripProps) {
   const { t } = useLanguage();
@@ -32,7 +32,7 @@ export function LoginGuestHeroStrip({
       <p
         className={cn(
           'text-2xs font-bold uppercase tracking-widest',
-          variant === 'dark' ? 'text-cyan-400' : 'text-cyan-600',
+          variant === 'dark' ? 'text-cyan-300' : 'text-cyan-700',
         )}
       >
         {t('Εξερεύνηση Δραστηριοτήτων', 'Explore Activities')}
@@ -40,7 +40,7 @@ export function LoginGuestHeroStrip({
       <p
         className={cn(
           'text-sm font-medium leading-relaxed px-2',
-          variant === 'dark' ? 'text-gray-400' : 'text-gray-600',
+          variant === 'dark' ? 'text-gray-300' : 'text-gray-600',
         )}
       >
         {t(
@@ -54,8 +54,8 @@ export function LoginGuestHeroStrip({
         className={cn(
           'text-xs font-bold underline-offset-2 hover:underline',
           variant === 'dark'
-            ? 'text-cyan-400 hover:text-cyan-300'
-            : 'text-cyan-600 hover:text-cyan-700',
+            ? 'text-cyan-300 hover:text-cyan-200'
+            : 'text-cyan-700 hover:text-cyan-800',
         )}
       >
         {t('Πώς λειτουργεί το Nakamas', 'How Nakamas works')}

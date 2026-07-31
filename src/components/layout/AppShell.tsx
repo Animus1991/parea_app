@@ -464,7 +464,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {children}
             </div>
           </main>
-        <footer className="hidden md:flex h-8 px-6 bg-ink text-xs text-gray-400 items-center justify-between shrink-0">
+        <footer className="hidden md:flex h-8 px-6 bg-gray-900 text-xs text-gray-300 items-center justify-between shrink-0">
           <div className="flex space-x-4">
             <span>Nakamas v1.0.5-beta</span>
             <span className="flex items-center">

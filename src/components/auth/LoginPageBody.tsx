@@ -6,8 +6,7 @@ import { useStore } from '../../store';
 import { HomeGuestHero } from '../home/HomeGuestHero';
 import { LoginGuestHeroStrip } from './LoginGuestHeroStrip';
 import { LoginExploreDemoButton } from './LoginExploreDemoButton';
-import { tryGoogleSignIn } from '../../lib/loginHandlers';
-import { isFirebaseAuthAvailable } from '../../services/firebaseAuth';
+import { isProductionGoogleOAuthAvailable, tryGoogleSignIn } from '../../lib/loginHandlers';
 import { cn } from '../../lib/utils';
 
 export type LoginVariant =
@@ -17,7 +16,9 @@ export type LoginVariant =
   | 'neon'
   | 'neon-dark'
   | 'bento'
-  | 'bento-dark';
+  | 'bento-dark'
+  | 'activebuddies'
+  | 'activebuddies-dark';
 
 /**
  * Η login σελίδα τρέχει εκτός AppShell (χωρίς data-theme context), οπότε τα
@@ -58,7 +59,7 @@ const TOKENS: Record<LoginVariant, LoginVariantTokens> = {
     nameHoverClass: 'group-hover:text-cyan-700',
     mutedText: 'text-gray-500',
     dividerLine: 'border-gray-200',
-    dividerChip: 'bg-white text-gray-400',
+    dividerChip: 'bg-white text-gray-600',
     googleBtnClass: 'border-gray-100 bg-white text-gray-700 hover:bg-gray-50',
   },
   vibrant: {
@@ -73,7 +74,7 @@ const TOKENS: Record<LoginVariant, LoginVariantTokens> = {
     nameHoverClass: 'group-hover:text-fuchsia-700',
     mutedText: 'text-gray-500',
     dividerLine: 'border-gray-200',
-    dividerChip: 'bg-white text-gray-400',
+    dividerChip: 'bg-white text-gray-600',
     googleBtnClass: 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50',
   },
   'vibrant-dark': {
@@ -104,7 +105,7 @@ const TOKENS: Record<LoginVariant, LoginVariantTokens> = {
     nameHoverClass: 'group-hover:text-emerald-700',
     mutedText: 'text-gray-500',
     dividerLine: 'border-gray-200',
-    dividerChip: 'bg-white text-gray-400',
+    dividerChip: 'bg-white text-gray-600',
     googleBtnClass: 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50',
   },
   'neon-dark': {
@@ -135,7 +136,7 @@ const TOKENS: Record<LoginVariant, LoginVariantTokens> = {
     nameHoverClass: 'group-hover:text-indigo-700',
     mutedText: 'text-gray-500',
     dividerLine: 'border-gray-200',
-    dividerChip: 'bg-white text-gray-400',
+    dividerChip: 'bg-white text-gray-600',
     googleBtnClass: 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50',
   },
   'bento-dark': {
@@ -154,6 +155,40 @@ const TOKENS: Record<LoginVariant, LoginVariantTokens> = {
     dividerChip: 'bg-gray-800 text-gray-300',
     googleBtnClass: 'border-gray-700 bg-gray-800 text-white hover:bg-gray-700/60',
   },
+  activebuddies: {
+    pageBg: 'bg-[hsl(0_0%_99%)]',
+    hero: 'strip',
+    stripAccent: 'bg-[hsl(220_14%_96%)] text-[hsl(220_14%_12%)]',
+    cardClass: 'border-[hsl(220_13%_92%)] bg-white',
+    wordmarkClass: 'text-[hsl(220_14%_12%)]',
+    userBtnClass: cn(LIGHT_USER_BTN, 'border-[hsl(220_13%_92%)] hover:bg-[hsl(220_14%_96%)]'),
+    avatarBg: 'bg-[hsl(220_14%_96%)]',
+    avatarText: 'text-[hsl(220_14%_12%)]',
+    nameHoverClass: 'group-hover:text-black',
+    mutedText: 'text-[hsl(220_9%_40%)]',
+    dividerLine: 'border-[hsl(220_13%_92%)]',
+    dividerChip: 'bg-white text-[hsl(220_9%_40%)]',
+    googleBtnClass: 'border-[hsl(220_13%_92%)] bg-white text-[hsl(220_14%_12%)] hover:bg-[hsl(220_14%_96%)]',
+  },
+  'activebuddies-dark': {
+    pageBg: 'bg-[hsl(220_16%_8%)]',
+    hero: 'strip',
+    stripDark: true,
+    stripAccent: 'bg-[hsl(220_16%_18%)] text-[hsl(210_20%_92%)]',
+    cardClass: 'border-[hsl(220_13%_18%)] bg-[hsl(220_16%_11%)]',
+    wordmarkClass: 'text-[hsl(210_20%_92%)]',
+    userBtnClass: cn(
+      'w-full flex items-center gap-3 px-4 py-3 rounded-2xl border border-[hsl(220_13%_18%)] bg-[hsl(220_16%_14%)] transition-colors shadow-soft text-left group hover:bg-[hsl(220_16%_18%)]',
+    ),
+    avatarBg: 'bg-[hsl(220_16%_18%)]',
+    avatarText: 'text-[hsl(210_20%_92%)]',
+    nameHoverClass: 'group-hover:text-white',
+    mutedText: 'text-[hsl(220_12%_70%)]',
+    dividerLine: 'border-[hsl(220_13%_18%)]',
+    dividerChip: 'bg-[hsl(220_16%_11%)] text-[hsl(220_12%_70%)]',
+    googleBtnClass:
+      'border-[hsl(220_13%_18%)] bg-[hsl(220_16%_14%)] text-[hsl(210_20%_92%)] hover:bg-[hsl(220_16%_18%)]',
+  },
 };
 
 export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
@@ -161,6 +196,7 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
   const { t } = useLanguage();
   const users = useStore((state) => state.users);
   const login = useStore((state) => state.login);
+  const loginWithUser = useStore((state) => state.loginWithUser);
   const tok = TOKENS[variant];
 
   const handleLogin = (userId: string) => {
@@ -168,20 +204,25 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
     navigate('/');
   };
 
-  const googleOAuthReady = isFirebaseAuthAvailable();
+  const googleOAuthReady = isProductionGoogleOAuthAvailable();
 
   const handleGoogleLogin = async () => {
-    const viaFirebase = await tryGoogleSignIn();
-    if (!viaFirebase) {
-      // Prototype fallback — real OAuth only when Firebase Google is configured.
-      toast.info(
-        t(
-          'Google OAuth μη διαθέσιμο — σύνδεση demo λογαριασμού',
-          'Google OAuth unavailable — signing in with demo account',
-        ),
-      );
-      handleLogin(users[0].id);
+    const result = await tryGoogleSignIn();
+    if (result.ok) {
+      if (result.via === 'google_identity') {
+        loginWithUser(result.user);
+        navigate('/');
+      }
+      // Firebase path: useFirebaseAuth bridge updates the store.
+      return;
     }
+    toast.info(
+      t(
+        'Google OAuth μη διαθέσιμο — σύνδεση demo λογαριασμού',
+        'Google OAuth unavailable — signing in with demo account',
+      ),
+    );
+    handleLogin(users[0].id);
   };
 
   return (

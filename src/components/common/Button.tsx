@@ -54,12 +54,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         };
       }
       const accent = theme === 'vibrant'
-        ? { primary: "bg-fuchsia-600 text-white hover:bg-fuchsia-700", outline: "border-2 border-fuchsia-600 text-fuchsia-600 bg-transparent hover:bg-fuchsia-50" }
+        ? { primary: "bg-fuchsia-700 text-white hover:bg-fuchsia-800", outline: "border-2 border-fuchsia-700 text-fuchsia-700 bg-transparent hover:bg-fuchsia-50" }
         : theme === 'bento'
-        ? { primary: "bg-indigo-600 text-white hover:bg-indigo-700", outline: "border-2 border-indigo-600 text-indigo-600 bg-transparent hover:bg-indigo-50" }
+        ? { primary: "bg-indigo-700 text-white hover:bg-indigo-800", outline: "border-2 border-indigo-700 text-indigo-700 bg-transparent hover:bg-indigo-50" }
         : theme === 'neon'
-        ? { primary: "bg-emerald-600 text-white hover:bg-emerald-700", outline: "border-2 border-emerald-600 text-emerald-600 bg-transparent hover:bg-emerald-50" }
-        : { primary: "bg-brand text-white hover:bg-[#0b6d6f]", outline: "border-2 border-accent text-brand bg-accent/[0.04] hover:bg-accent/10" };
+        ? { primary: "bg-emerald-700 text-white hover:bg-emerald-800", outline: "border-2 border-emerald-700 text-emerald-700 bg-transparent hover:bg-emerald-50" }
+        : { primary: "bg-brand text-brand-fg hover:bg-brand-strong", outline: "border-2 border-accent text-brand bg-accent/[0.04] hover:bg-accent/10" };
       return {
         primary: `${accent.primary} rounded-xl shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]`,
         secondary: "bg-ink text-white hover:bg-gray-900 rounded-xl shadow-soft",

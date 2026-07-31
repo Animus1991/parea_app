@@ -1,0 +1,95 @@
+import { expect, type Page } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+
+/** High-traffic routes for page × theme matrix (not every app route). */
+export const A11Y_ROUTES = [
+  { path: '/login', needsAuth: false, name: 'login' },
+  { path: '/', needsAuth: true, name: 'home' },
+  { path: '/connections', needsAuth: true, name: 'connections' },
+  { path: '/chats', needsAuth: true, name: 'chats' },
+  { path: '/settings', needsAuth: true, name: 'settings' },
+  { path: '/help', needsAuth: true, name: 'help' },
+  { path: '/wallet', needsAuth: true, name: 'wallet' },
+  { path: '/nearby', needsAuth: true, name: 'nearby' },
+  { path: '/buddy-seek', needsAuth: true, name: 'buddy-seek' },
+  { path: '/notifications', needsAuth: true, name: 'notifications' },
+] as const;
+
+/**
+ * CI hard-gate themes (contrast + structural).
+ * Full 9-theme sweep: `npx playwright test e2e/a11y.spec.ts -g "theme="`
+ * Representative set keeps CI under ~10m while covering light/dark/AB.
+ */
+export const A11Y_THEMES_CI = [
+  'classic',
+  'bento',
+  'neon',
+  'vibrant-dark',
+  'activebuddies-dark',
+] as const;
+
+/** Full product theme list (local exhaustive runs). */
+export const A11Y_THEMES = [
+  'classic',
+  'vibrant',
+  'bento',
+  'neon',
+  'vibrant-dark',
+  'bento-dark',
+  'neon-dark',
+  'activebuddies',
+  'activebuddies-dark',
+] as const;
+
+const STORE_KEY = 'nakamas-store-v1';
+
+/** Patch persisted zustand theme before first paint. */
+export async function seedTheme(page: Page, theme: string) {
+  await page.addInitScript(
+    ({ key, themeId }) => {
+      try {
+        const raw = localStorage.getItem(key);
+        const data = raw ? JSON.parse(raw) : { state: {}, version: 0 };
+        data.state = { ...(data.state ?? {}), theme: themeId };
+        localStorage.setItem(key, JSON.stringify(data));
+      } catch {
+        localStorage.setItem(key, JSON.stringify({ state: { theme: themeId }, version: 0 }));
+      }
+    },
+    { key: STORE_KEY, themeId: theme },
+  );
+}
+
+export async function enterDemoGuest(page: Page) {
+  await page.goto('/login');
+  await page.getByRole('button', { name: /Explore as guest|Εξερεύνηση ως επισκέπτης/i }).click();
+  await expect(page).toHaveURL('/');
+  await expect(page.locator('#main-content')).toBeVisible();
+}
+
+/**
+ * Axe WCAG tags — serious/critical only.
+ * @param includeColorContrast when true, pixel-level contrast is enforced (matrix).
+ */
+export async function expectNoSeriousAxeViolations(
+  page: Page,
+  opts: { includeColorContrast?: boolean } = {},
+) {
+  let builder = new AxeBuilder({ page }).withTags([
+    'wcag2a',
+    'wcag2aa',
+    'wcag21aa',
+    'wcag22aa',
+  ]);
+  if (!opts.includeColorContrast) {
+    builder = builder.disableRules(['color-contrast']);
+  }
+  const results = await builder.analyze();
+  const serious = results.violations.filter(
+    (v) => v.impact === 'critical' || v.impact === 'serious',
+  );
+  expect(
+    serious,
+    serious.map((v) => `${v.id}: ${v.help} (${v.nodes.length} nodes)`).join('\n'),
+  ).toEqual([]);
+}

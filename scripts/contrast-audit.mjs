@@ -156,8 +156,9 @@ const PAIRS = [
   { fg: 'color-ink', bg: 'color-surface', min: AA_TEXT, label: 'ink on surface' },
   { fg: 'color-ink', bg: 'color-surface-raised', min: AA_TEXT, label: 'ink on surface-raised' },
   { fg: 'color-ink-muted', bg: 'color-surface', min: AA_TEXT, label: 'ink-muted on surface' },
-  { fg: 'color-brand-fg', bg: 'color-brand', min: AA_UI, label: 'brand-fg on brand' },
-  { fg: 'color-accent-fg', bg: 'color-accent', min: AA_UI, label: 'accent-fg on accent' },
+  // Brand/accent chips often carry small bold UI text — require AA text (4.5:1).
+  { fg: 'color-brand-fg', bg: 'color-brand', min: AA_TEXT, label: 'brand-fg on brand' },
+  { fg: 'color-accent-fg', bg: 'color-accent', min: AA_TEXT, label: 'accent-fg on accent' },
   { fg: 'color-hero-fg', bg: 'color-hero-from', min: AA_UI, label: 'hero-fg on hero-from' },
 ];
 

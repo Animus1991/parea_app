@@ -9,7 +9,7 @@ export function DemoModeBanner() {
   if (!demoMode) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-banner bg-amber-500 text-white text-xs font-semibold py-1.5 px-4 flex items-center justify-center gap-4">
+    <div className="fixed top-0 left-0 right-0 z-banner bg-amber-800 text-white text-xs font-semibold py-1.5 px-4 flex items-center justify-center gap-4">
       <span>
         {t(
           'Λειτουργία επίδειξης — οι αλλαγές δεν αποθηκεύονται μόνιμα',

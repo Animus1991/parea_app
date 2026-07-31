@@ -8,6 +8,7 @@ import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
 import { Modal } from '../common/Modal';
+import { isStripeConfigured, openStripeCheckout } from '../../services/payments';
 
 export default function WalletPageContent() {
   const { t } = useLanguage();
@@ -15,6 +16,7 @@ export default function WalletPageContent() {
   const [txFilter, setTxFilter] = useState<'all' | 'month' | 'last'>('all');
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [showPayouts, setShowPayouts] = useState(false);
+  const stripeReady = isStripeConfigured();
 
   const transactions = [
     { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: 'Oct 12, 2024', desc: t('Μεταφορά στην τράπεζα 4092', 'Transfer to Bank ****4092') },
@@ -31,6 +33,11 @@ export default function WalletPageContent() {
       <div>
         <h1 className={cn("text-xl md:text-2xl font-bold", a.head)}>{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
         <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Διαχειριστείτε τα έσοδα και τις πληρωμές σας.', 'Manage your event revenue and payouts.')}</p>
+        <p className={cn('text-xs font-bold mt-2', a.muted)}>
+          {stripeReady
+            ? t('Stripe ενεργό — οι αναλήψεις ανοίγουν Checkout.', 'Stripe enabled — withdrawals open Checkout.')
+            : t('Λειτουργία demo — ορίστε VITE_STRIPE_* για πραγματικές πληρωμές.', 'Demo mode — set VITE_STRIPE_* for real payments.')}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -125,7 +132,7 @@ export default function WalletPageContent() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className={cn("font-bold", tx.type === 'Payout' ? a.head : 'text-emerald-500')}>
+                  <p className={cn("font-bold", tx.type === 'Payout' ? a.head : a.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
                     {tx.type === 'Payout' ? '-' : '+'}€{tx.amount.toFixed(2)}
                   </p>
                 </div>
@@ -142,17 +149,25 @@ export default function WalletPageContent() {
         title={t('Ανάληψη χρημάτων', 'Withdraw Funds')}
         size="md"
       >
-        <p className="text-sm mb-4 text-ink-muted">{t('Demo ροή — η ανάληψη καταγράφεται τοπικά.', 'Demo flow — withdrawal is logged locally only.')}</p>
+        <p className="text-sm mb-4 text-ink-muted">
+          {stripeReady
+            ? t('Θα ανοίξει Stripe Checkout για την ανάληψη.', 'Stripe Checkout will open for this withdrawal.')
+            : t('Demo ροή — η ανάληψη καταγράφεται τοπικά.', 'Demo flow — withdrawal is logged locally only.')}
+        </p>
         <div className="flex gap-2 justify-end">
           <Button variant="outline" onClick={() => setShowWithdraw(false)}>{t('Ακύρωση', 'Cancel')}</Button>
           <Button
             data-autofocus
             onClick={() => {
               setShowWithdraw(false);
+              if (stripeReady && openStripeCheckout('/wallet')) {
+                toast.success(t('Άνοιγμα Stripe Checkout…', 'Opening Stripe Checkout…'));
+                return;
+              }
               toast.success(t('Η ανάληψη υποβλήθηκε (demo)', 'Withdrawal submitted (demo)'));
             }}
           >
-            {t('Επιβεβαίωση', 'Confirm')}
+            {stripeReady ? t('Συνέχεια στο Stripe', 'Continue to Stripe') : t('Επιβεβαίωση', 'Confirm')}
           </Button>
         </div>
       </Modal>
@@ -163,16 +178,24 @@ export default function WalletPageContent() {
         title={t('Διαχείριση πληρωμών', 'Manage Payouts')}
         size="md"
       >
-        <p className="text-sm mb-4 text-ink-muted">{t('Demo — ενημέρωση τραπεζικού λογαριασμού σύντομα.', 'Demo — bank account update coming soon.')}</p>
+        <p className="text-sm mb-4 text-ink-muted">
+          {stripeReady
+            ? t('Άνοιγμα Stripe για ενημέρωση τρόπου πληρωμής.', 'Open Stripe to update payout method.')
+            : t('Demo — ενημέρωση τραπεζικού λογαριασμού σύντομα.', 'Demo — bank account update coming soon.')}
+        </p>
         <Button
           className="w-full"
           data-autofocus
           onClick={() => {
             setShowPayouts(false);
+            if (stripeReady && openStripeCheckout('/wallet')) {
+              toast.success(t('Άνοιγμα Stripe…', 'Opening Stripe…'));
+              return;
+            }
             toast.info(t('Αποθηκεύτηκε (demo)', 'Saved (demo)'));
           }}
         >
-          {t('Κλείσιμο', 'Close')}
+          {stripeReady ? t('Άνοιγμα Stripe', 'Open Stripe') : t('Κλείσιμο', 'Close')}
         </Button>
       </Modal>
     </div>

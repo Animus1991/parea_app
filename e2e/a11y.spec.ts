@@ -1,37 +1,58 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import {
+  A11Y_ROUTES,
+  A11Y_THEMES_CI,
+  enterDemoGuest,
+  expectNoSeriousAxeViolations,
+  seedTheme,
+} from './a11y-helpers';
 
 /**
- * Axe smoke gate — serious/critical structural a11y on high-traffic surfaces.
- * color-contrast is excluded here: token pairs are gated by `npm run audit:contrast`;
- * full page×theme contrast remains residual (not WCAG certification).
+ * Structural a11y smoke (no color-contrast) — fast CI gate.
+ * Pixel contrast is covered by the matrix below + token audit.
  */
-async function expectNoSeriousAxeViolations(page: import('@playwright/test').Page) {
-  const results = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
-    .disableRules(['color-contrast'])
-    .analyze();
-  const serious = results.violations.filter(
-    (v) => v.impact === 'critical' || v.impact === 'serious',
-  );
-  expect(
-    serious,
-    serious.map((v) => `${v.id}: ${v.help} (${v.nodes.length} nodes)`).join('\n'),
-  ).toEqual([]);
-}
-
 test.describe('a11y axe smoke', () => {
-  test('login page has no serious/critical axe violations', async ({ page }) => {
+  test('login page has no serious/critical structural axe violations', async ({ page }) => {
     await page.goto('/login');
     await expect(page.getByText('NAKAMAS', { exact: true })).toBeVisible();
-    await expectNoSeriousAxeViolations(page);
+    await expectNoSeriousAxeViolations(page, { includeColorContrast: false });
   });
 
-  test('home (demo guest) has no serious/critical axe violations', async ({ page }) => {
-    await page.goto('/login');
-    await page.getByRole('button', { name: /Explore as guest|Εξερεύνηση ως επισκέπτης/i }).click();
-    await expect(page).toHaveURL('/');
-    await expect(page.locator('#main-content')).toBeVisible();
-    await expectNoSeriousAxeViolations(page);
+  test('home (demo guest) has no serious/critical structural axe violations', async ({ page }) => {
+    await enterDemoGuest(page);
+    await expectNoSeriousAxeViolations(page, { includeColorContrast: false });
   });
+});
+
+/**
+ * Page × theme matrix with color-contrast enabled.
+ * Not a third-party WCAG certification — engineering gate on high-traffic surfaces.
+ */
+test.describe('a11y page × theme matrix', () => {
+  test.describe.configure({ mode: 'serial' });
+
+  for (const theme of A11Y_THEMES_CI) {
+    test.describe(`theme=${theme}`, () => {
+      test.beforeEach(async ({ page }) => {
+        await seedTheme(page, theme);
+      });
+
+      for (const route of A11Y_ROUTES) {
+        test(`${route.name} (${route.path})`, async ({ page }) => {
+          if (route.path === '/login') {
+            await page.goto('/login');
+            await expect(page.getByText('NAKAMAS', { exact: true })).toBeVisible();
+          } else {
+            await enterDemoGuest(page);
+            if (route.path !== '/') {
+              await page.goto(route.path);
+            }
+            await expect(page.locator('#main-content')).toBeVisible({ timeout: 15_000 });
+          }
+          // Login shell has no data-theme; still run contrast on composed UI.
+          await expectNoSeriousAxeViolations(page, { includeColorContrast: true });
+        });
+      }
+    });
+  }
 });

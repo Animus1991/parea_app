@@ -7,7 +7,6 @@ describe('ensureDirectConversation', () => {
       conversations: [],
       messages: [],
       openConversationIds: [],
-      minimizedConversationIds: [],
       privacy: {
         ...useChatStore.getState().privacy,
         allowMutualConnectionChats: true,

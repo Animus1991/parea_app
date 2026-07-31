@@ -111,82 +111,70 @@ export default function NotificationsPageContent() {
     const iconColor = notif.color && isUnread ? notif.color : getIconColor(notif.type, !isUnread, notif.color);
 
     return (
-      <div
+      <article
         key={notif.id}
-        role="button"
-        tabIndex={0}
-        onClick={() => handleNotifClick(notif)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleNotifClick(notif);
-          }
-        }}
         className={cn(
-          'flex gap-3.5 p-3.5 rounded-xl border cursor-pointer transition-all group focus-visible:ring-2 focus-visible:ring-cyan-500',
+          'flex gap-3.5 p-3.5 rounded-xl border transition-all group',
           isUnread ? a.unreadBg : a.readBg,
           'hover:shadow-soft',
         )}
       >
-        <div
-          className={cn(
-            'w-9 h-9 rounded-full flex items-center justify-center shrink-0',
-            iconColor,
-          )}
+        <button
+          type="button"
+          onClick={() => handleNotifClick(notif)}
+          className="flex flex-1 min-w-0 gap-3.5 text-left rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
         >
-          <Icon className="w-4 h-4" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p
+          <div
             className={cn(
-              'text-sm leading-relaxed',
-              isUnread ? cn('font-medium', a.head) : a.sub,
+              'w-9 h-9 rounded-full flex items-center justify-center shrink-0',
+              iconColor,
             )}
           >
-            {notifMessage(notif, t)}
-          </p>
-          <span className={cn('text-2xs font-bold tracking-wide mt-1 block', a.muted)}>
-            {notifTime(notif, t)}
-          </span>
+            <Icon className="w-4 h-4" aria-hidden />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p
+              className={cn(
+                'text-sm leading-relaxed',
+                isUnread ? cn('font-medium', a.head) : a.sub,
+              )}
+            >
+              {notifMessage(notif, t)}
+            </p>
+            <span className={cn('text-2xs font-bold tracking-wide mt-1 block', a.muted)}>
+              {notifTime(notif, t)}
+            </span>
+          </div>
+        </button>
+        <div className="flex flex-col items-end gap-2 shrink-0">
+          {isUnread && <span className={cn('w-2 h-2 rounded-full', a.dot)} aria-hidden />}
           {notif.type === 'match' && (
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate('/plans');
-              }}
+              onClick={() => navigate('/plans')}
               className={cn(
-                'mt-2 text-2xs font-bold px-2.5 py-1 rounded-full transition-colors inline-flex items-center gap-1',
+                'text-2xs font-bold min-h-6 px-2.5 py-1 rounded-full transition-colors inline-flex items-center gap-1',
                 a.actionBtn,
               )}
             >
-              {t('Δείτε ομάδα', 'View group')} <ArrowRight className="w-2.5 h-2.5" />
+              {t('Δείτε ομάδα', 'View group')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
             </button>
           )}
           {notif.type === 'message' && (
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate('/chats');
-              }}
+              onClick={() => navigate('/chats')}
               className={cn(
-                'mt-2 text-2xs font-bold px-2.5 py-1 rounded-full transition-colors inline-flex items-center gap-1',
+                'text-2xs font-bold min-h-6 px-2.5 py-1 rounded-full transition-colors inline-flex items-center gap-1',
                 a.actionBtn,
               )}
             >
-              {t('Απάντηση', 'Reply')} <ArrowRight className="w-2.5 h-2.5" />
+              {t('Απάντηση', 'Reply')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
             </button>
           )}
-        </div>
-        <div className="flex flex-col items-center gap-2 shrink-0">
-          {isUnread && <span className={cn('w-2 h-2 rounded-full', a.dot)} />}
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDismiss(notif.id);
-            }}
+            onClick={() => handleDismiss(notif.id)}
             className={cn(
               'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 p-1.5 min-h-9 min-w-9 flex items-center justify-center rounded-lg transition-all',
               a.isDark ? 'hover:bg-gray-700/40 text-gray-500' : 'hover:bg-gray-100 text-gray-400',
@@ -197,7 +185,7 @@ export default function NotificationsPageContent() {
             <Trash2 className="w-3 h-3" aria-hidden />
           </button>
         </div>
-      </div>
+      </article>
     );
   };
 

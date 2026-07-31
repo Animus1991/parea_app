@@ -6,6 +6,7 @@ import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { isLiveSupportConfigured, openLiveSupport } from '../../services/support';
 
 export default function HelpCenterPageContent() {
   const { t, tu } = useLanguage();
@@ -15,6 +16,7 @@ export default function HelpCenterPageContent() {
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
   const [expandedArticle, setExpandedArticle] = useState<number | null>(null);
   const [topicFilter, setTopicFilter] = useState<string | null>(null);
+  const liveSupport = isLiveSupportConfigured();
 
   const articles = [
     { id: 1, title: t('Πώς να αναφέρετε μια μη εμφάνιση', 'How to report a no-show'), category: t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety'), content: t('Ανοίξτε τη σελίδα της εκδήλωσης και πατήστε «Αναφορά». Καταγράψτε ποιος δεν εμφανίστηκε εντός 24 ωρών. Η ομάδα εμπιστοσύνης εξετάζει την αναφορά και ενημερώνει το Trust Score του χρήστη.', 'Open the event page and tap "Report". Record who didn\'t show up within 24 hours. Our trust team reviews the report and updates the user\'s Trust Score.') },
@@ -159,18 +161,42 @@ export default function HelpCenterPageContent() {
         <h3 className={cn("font-bold mb-1", a.head)}>{t('Χρειάζεστε βοήθεια;', 'Need more help?')}</h3>
         <p className={cn("text-sm mb-2", a.sub)}>{t('Επικοινωνήστε μαζί μας', 'Contact our support team')}</p>
         <div className="flex items-center justify-center gap-1.5 mb-4">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-          </span>
-          <span className="text-xs font-bold text-ink-muted">{t('Υποστήριξη demo (χωρίς live agent)', 'Demo support (no live agent)')}</span>
+          {liveSupport ? (
+            <>
+              <span className="relative flex h-2 w-2">
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="text-xs font-bold text-ink-muted">
+                {t('Ζωντανή υποστήριξη διαθέσιμη', 'Live support available')}
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+              </span>
+              <span className="text-xs font-bold text-ink-muted">
+                {t('Υποστήριξη demo (χωρίς live agent)', 'Demo support (no live agent)')}
+              </span>
+            </>
+          )}
         </div>
         <button
           type="button"
           className={cn("px-4 py-2 text-white text-sm font-bold rounded-lg transition-colors", a.contactBtn)}
-          onClick={() => { toast.success(t('Το μήνυμα στάλθηκε (demo)', 'Message sent (demo)')); navigate('/report'); }}
+          onClick={() => {
+            if (liveSupport && openLiveSupport()) {
+              toast.success(t('Άνοιγμα καναλιού υποστήριξης…', 'Opening support channel…'));
+              return;
+            }
+            toast.success(t('Το μήνυμα στάλθηκε (demo)', 'Message sent (demo)'));
+            navigate('/report');
+          }}
         >
-          {t('Αποστολή μηνύματος', 'Send message')}
+          {liveSupport
+            ? t('Επικοινωνία με υποστήριξη', 'Contact support')
+            : t('Αποστολή μηνύματος', 'Send message')}
         </button>
       </Card>
     </div>

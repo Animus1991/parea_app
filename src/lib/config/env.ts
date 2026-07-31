@@ -24,6 +24,15 @@ export const appEnv = {
     messagingSenderId: (import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID as string | undefined) ?? '',
     measurementId: (import.meta.env.VITE_FIREBASE_MEASUREMENT_ID as string | undefined) ?? '',
   },
+  /** Google Identity Services client id — OAuth without full Firebase project. */
+  googleOAuthClientId: (import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID as string | undefined) ?? '',
+  /** Stripe publishable key (sandbox/live) — enables non-demo payment CTAs when set. */
+  stripePublishableKey: (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) ?? '',
+  /** Stripe Checkout / Payment Link URL for withdrawals & ticket holds. */
+  stripeCheckoutUrl: (import.meta.env.VITE_STRIPE_CHECKOUT_URL as string | undefined) ?? '',
+  /** Live support: mailto or https helpdesk URL (Crisp/Intercom/Zendesk…). */
+  supportUrl: (import.meta.env.VITE_SUPPORT_URL as string | undefined) ?? '',
+  supportEmail: (import.meta.env.VITE_SUPPORT_EMAIL as string | undefined) ?? '',
 } as const;
 
 export function validateEnv(): string[] {

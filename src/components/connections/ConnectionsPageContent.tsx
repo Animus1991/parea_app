@@ -238,7 +238,7 @@ export default function ConnectionsPageContent() {
           onClick={() => setActiveTab('all')}
         >
           {t('Συνδέσεις', 'Connections')}
-          <span className="opacity-70">({connections.length})</span>
+          <span className="font-semibold">({connections.length})</span>
         </button>
         <button
           type="button"

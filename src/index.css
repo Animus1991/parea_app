@@ -72,12 +72,13 @@
   --color-surface-raised: #ffffff;
   --color-border: #E5E7EB;
   --color-border-strong: #D1D5DB;
-  --color-brand: #0E8B8D;
-  --color-brand-strong: #0b6d6f;
+  /* Brand teal darkened for WCAG AA on white text (≥4.5:1; legacy #0E8B8D was ~4.12) */
+  --color-brand: #0b6d6f;
+  --color-brand-strong: #0a6365;
   --color-brand-soft: #ecfeff;
   --color-brand-fg: #ffffff;
-  --color-accent: #0E8B8D;
-  --color-accent-strong: #0b6d6f;
+  --color-accent: #0b6d6f;
+  --color-accent-strong: #0a6365;
   --color-accent-soft: #ecfeff;
   --color-accent-fg: #ffffff;
   /* Hero surface tokens: classic identity = dark slate hero (όχι accent gradient) */
@@ -140,11 +141,12 @@
 [data-theme="neon"] {
   --color-surface: #ECFDF5;
   --color-border: #d1fae5;
-  --color-accent: #059669;
-  --color-accent-strong: #047857;
+  /* #059669 was 3.77:1 with white — use emerald-700 for AA text on accent */
+  --color-accent: #047857;
+  --color-accent-strong: #065f46;
   --color-accent-soft: #ecfdf5;
-  --color-hero-from: #059669;
-  --color-hero-to: #047857;
+  --color-hero-from: #047857;
+  --color-hero-to: #065f46;
   --color-hero-accent-from: #d1fae5;
   --color-hero-accent-to: #ccfbf1;
 }
@@ -677,6 +679,68 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 [data-theme="neon"] .text-gray-400,
 [data-theme="activebuddies"] .text-gray-400 {
   color: rgb(82 91 105);
+}
+
+/* Login / pre-shell surfaces have no [data-theme] — still remap cyan for AA */
+:root:not(:has([data-theme])) .text-cyan-500,
+:root:not(:has([data-theme])) .text-cyan-600 {
+  color: #0e7490;
+}
+:root:not(:has([data-theme])) .bg-cyan-600 {
+  background-color: #0e7490;
+}
+
+/* Tailwind cyan-500/600 fail AA on white / as white-on-cyan chips — remap on light themes */
+[data-theme="classic"] .text-cyan-500,
+[data-theme="vibrant"] .text-cyan-500,
+[data-theme="bento"] .text-cyan-500,
+[data-theme="neon"] .text-cyan-500,
+[data-theme="activebuddies"] .text-cyan-500,
+[data-theme="classic"] .text-cyan-600,
+[data-theme="vibrant"] .text-cyan-600,
+[data-theme="bento"] .text-cyan-600,
+[data-theme="neon"] .text-cyan-600,
+[data-theme="activebuddies"] .text-cyan-600 {
+  color: #0e7490; /* cyan-700 ≈ 5.2:1 on white */
+}
+/* All themes: *-600 fills with white text need AA (≥4.5) → *-700 */
+[data-theme] .bg-cyan-600 {
+  background-color: #0e7490;
+}
+[data-theme] .hover\:bg-cyan-500:hover {
+  background-color: #0e7490;
+}
+[data-theme] .bg-emerald-600 {
+  background-color: #047857;
+}
+[data-theme] .hover\:bg-emerald-500:hover {
+  background-color: #047857;
+}
+[data-theme] .bg-indigo-600 {
+  background-color: #4338ca;
+}
+[data-theme] .hover\:bg-indigo-500:hover {
+  background-color: #4338ca;
+}
+[data-theme] .bg-fuchsia-600 {
+  background-color: #a21caf;
+}
+[data-theme] .hover\:bg-fuchsia-500:hover {
+  background-color: #a21caf;
+}
+
+/* emerald-500/600 on light surfaces fail AA — remap to emerald-700 */
+[data-theme="classic"] .text-emerald-500,
+[data-theme="vibrant"] .text-emerald-500,
+[data-theme="bento"] .text-emerald-500,
+[data-theme="neon"] .text-emerald-500,
+[data-theme="activebuddies"] .text-emerald-500,
+[data-theme="classic"] .text-emerald-600,
+[data-theme="vibrant"] .text-emerald-600,
+[data-theme="bento"] .text-emerald-600,
+[data-theme="neon"] .text-emerald-600,
+[data-theme="activebuddies"] .text-emerald-600 {
+  color: #047857; /* emerald-700 ≈ 5.5:1 on white */
 }
 [data-theme="classic"] .text-gray-500,
 [data-theme="vibrant"] .text-gray-500,
