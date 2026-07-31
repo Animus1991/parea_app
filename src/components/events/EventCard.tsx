@@ -15,6 +15,7 @@ import {
   X,
   Sparkles,
   Crown,
+  CalendarPlus,
 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { el as elLocale, enUS as enLocale } from "date-fns/locale";
@@ -518,13 +519,14 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           )}
           <div className="flex items-center justify-between gap-2">
             <button
-              className={cn(EVENT_CARD_TYPO.safetyLink, "min-h-11 px-2 transition-colors", isDark ? "text-gray-500 hover:text-gray-300" : "text-gray-500 hover:text-brand")}
+              className={cn(EVENT_CARD_TYPO.safetyLink, "min-h-11 min-w-11 px-2 inline-flex items-center justify-center gap-1 transition-colors", isDark ? "text-gray-400 hover:text-gray-200" : "text-gray-600 hover:text-brand")}
               onClick={getCalendarUrl}
               type="button"
               aria-label={t('Προσθήκη στο ημερολόγιο', 'Add to calendar')}
               title={t('Προσθήκη στο ημερολόγιο', 'Add to calendar')}
             >
-              + Cal
+              <CalendarPlus className="w-4 h-4" aria-hidden />
+              <span className="text-xs font-bold">{t('Ημερ.', 'Cal')}</span>
             </button>
             <div className="flex items-center gap-2 flex-1 justify-end">
               <button

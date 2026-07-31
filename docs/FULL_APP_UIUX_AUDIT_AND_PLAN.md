@@ -566,10 +566,7 @@ Inbox unread/pinned/typing (`g1` μόνο)· Plans avatars/«4/5 μέλη»/«me
 
 ### Επόμενα βήματα (προτεραιότητα)
 
-1. Φ17 GroupChat ×7 — reports pipeline, immutable members, ένα Status modal· Inbox unread live
-2. Φ18 leftovers — LookingForCompany φίλτρα, Edit wizard, Onboarding gate, Connections picker
-3. Φ20 CreateEventFlow success/paid· OrganizerDashboard live events/stats
-4. Φ21 `GroupChatPageContent` extraction
-5. Φ22 πλήρες i18n/a11y πέρασμα (Γ3/Γ4)
-6. Regression χειροκίνητα σενάρια ΜΕΡΟΥΣ Ε
+> **Ενημέρωση 31/07/2026:** Τα παραπάνω Φ17–Φ22 engineering gaps έχουν κλείσει σε μεγάλο βαθμό.  
+> Ζωντανή μήτρα αποδοχής: [`docs/ACCEPTANCE_MATRIX.md`](./ACCEPTANCE_MATRIX.md)  
+> Residual: WCAG certification/CI, real OAuth/payments/live support, 1:1 DM product.
 

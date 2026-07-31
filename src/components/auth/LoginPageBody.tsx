@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { Card } from '../common/Card';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
@@ -168,7 +169,16 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
 
   const handleGoogleLogin = async () => {
     const viaFirebase = await tryGoogleSignIn();
-    if (!viaFirebase) handleLogin(users[0].id);
+    if (!viaFirebase) {
+      // Prototype fallback — not real OAuth until Firebase Google is configured.
+      toast.info(
+        t(
+          'Google OAuth μη διαθέσιμο — σύνδεση demo λογαριασμού',
+          'Google OAuth unavailable — signing in with demo account',
+        ),
+      );
+      handleLogin(users[0].id);
+    }
   };
 
   return (
@@ -234,16 +244,24 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
           <button
             type="button"
             onClick={() => void handleGoogleLogin()}
-            className={cn('w-full flex items-center justify-center gap-3 px-4 py-3 rounded-full border text-sm font-bold transition-colors shadow-soft', tok.googleBtnClass)}
+            className={cn('w-full flex items-center justify-center gap-3 px-4 py-3 min-h-11 rounded-full border text-sm font-bold transition-colors shadow-soft', tok.googleBtnClass)}
           >
-            <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-            {t('Συνέχεια με Google', 'Continue with Google')}
+            <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="" className="w-5 h-5" aria-hidden />
+            {t('Συνέχεια με Google (Demo)', 'Continue with Google (Demo)')}
           </button>
         </div>
 
         <div className="text-center mt-6">
           <p className={cn('text-xs font-medium leading-relaxed', tok.mutedText)}>
-            {t('Συνεχίζοντας, συμφωνείτε με τους Όρους Χρήσης και την Πολιτική Απορρήτου του Nakamas.', "By continuing, you agree to Nakamas's Terms of Service and Privacy Policy.")}
+            {t('Συνεχίζοντας, συμφωνείτε με τους', 'By continuing, you agree to Nakamas')}{' '}
+            <Link to="/help" className="underline font-semibold hover:opacity-80">
+              {t('Όρους Χρήσης', 'Terms of Service')}
+            </Link>
+            {' '}{t('και την', 'and')}{' '}
+            <Link to="/help" className="underline font-semibold hover:opacity-80">
+              {t('Πολιτική Απορρήτου', 'Privacy Policy')}
+            </Link>
+            .
             <br />
             {t('Ίσως απαιτείται επαλήθευση για ορισμένες εκδηλώσεις υψηλής εμπιστοσύνης.', 'Verification may be required for certain high-trust events.')}
           </p>

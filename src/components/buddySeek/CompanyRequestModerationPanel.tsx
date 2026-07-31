@@ -15,6 +15,8 @@ export function CompanyRequestModerationPanel() {
 
   const active = requests.filter((r) => r.status === 'active');
   const reported = requests.filter((r) => (r.reportCountInternal ?? 0) > 0);
+  /** ≥2 internal reports = elevated risk (live, not hardcoded). */
+  const suspicious = reported.filter((r) => (r.reportCountInternal ?? 0) >= 2).length;
 
   return (
     <div className={cn('rounded-2xl border p-4 space-y-4 mt-8', a.cardSurface, a.borderB)}>
@@ -39,7 +41,7 @@ export function CompanyRequestModerationPanel() {
           <p className="text-xs font-bold opacity-60">{t('Αναφορές', 'Reports')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
-          <p className="text-lg font-black">2</p>
+          <p className="text-lg font-black">{suspicious}</p>
           <p className="text-xs font-bold opacity-60">{t('Ύποπτα', 'Suspicious')}</p>
         </div>
       </div>
@@ -56,18 +58,20 @@ export function CompanyRequestModerationPanel() {
                 <button
                   type="button"
                   onClick={() => pauseRequest(r.id)}
-                  className="p-1.5 rounded-lg border"
+                  className="p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg border"
                   title={t('Παύση', 'Pause')}
+                  aria-label={t('Παύση αιτήματος', 'Pause request')}
                 >
-                  <Pause className="w-3.5 h-3.5" />
+                  <Pause className="w-3.5 h-3.5" aria-hidden />
                 </button>
                 <button
                   type="button"
                   onClick={() => deleteRequest(r.id)}
-                  className="p-1.5 rounded-lg border text-red-600"
+                  className="p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg border text-red-600"
                   title={t('Αφαίρεση', 'Remove')}
+                  aria-label={t('Αφαίρεση αιτήματος', 'Remove request')}
                 >
-                  <EyeOff className="w-3.5 h-3.5" />
+                  <EyeOff className="w-3.5 h-3.5" aria-hidden />
                 </button>
               </div>
             </li>

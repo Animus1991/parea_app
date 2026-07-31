@@ -163,7 +163,7 @@ export default function HelpCenterPageContent() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
           </span>
-          <span className="text-xs font-bold text-green-500">{t('Υποστήριξη demo', 'Demo support')} • ~2min</span>
+          <span className="text-xs font-bold text-ink-muted">{t('Υποστήριξη demo (χωρίς live agent)', 'Demo support (no live agent)')}</span>
         </div>
         <button
           type="button"

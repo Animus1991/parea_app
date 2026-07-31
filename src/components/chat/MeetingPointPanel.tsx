@@ -43,7 +43,8 @@ export function MeetingPointPanel({
       <div className="flex gap-2">
         <button
           type="button"
-          className="flex-1 min-h-8 rounded-lg text-xs font-bold bg-brand/80 text-brand-fg"
+          className="flex-1 min-h-10 rounded-lg text-xs font-bold bg-brand/80 text-brand-fg"
+          aria-label={t('Ανακοίνωση άφιξης', 'Announce arrival')}
           onClick={() => {
             if (!viewer) return;
             announceArrival(conversationId, viewer.id);
@@ -54,10 +55,11 @@ export function MeetingPointPanel({
         </button>
         <button
           type="button"
-          className="px-3 min-h-8 rounded-lg text-xs font-bold border border-border-strong flex items-center gap-1"
-          onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${mapQuery}`, '_blank')}
+          className="px-3 min-h-10 rounded-lg text-xs font-bold border border-border-strong flex items-center gap-1"
+          aria-label={t('Άνοιγμα χάρτη', 'Open map')}
+          onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${mapQuery}`, '_blank', 'noopener,noreferrer')}
         >
-          <Navigation className="w-3 h-3" />
+          <Navigation className="w-3 h-3" aria-hidden />
           {t('Χάρτης', 'Map')}
         </button>
       </div>

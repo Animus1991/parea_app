@@ -81,17 +81,13 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
                 src={user.photoUrl || `https://i.pravatar.cc/150?u=${user.id}`}
                 alt={user.name}
                 className={cn(
-                  'w-14 h-14 rounded-full object-cover border-2 transition-transform group-hover:scale-105 shadow-soft',
+                  'w-14 h-14 rounded-full object-cover border-2 transition-transform group-hover:scale-105 focus-visible:scale-105 shadow-soft',
                   useClassicTokens
                     ? 'border-cyan-100'
                     : p.isDark
                       ? 'border-cyan-900'
                       : 'border-cyan-100',
                 )}
-              />
-              <div
-                className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white bg-emerald-500"
-                title={t('Συνδεδεμένος', 'Connected')}
               />
             </div>
             <span

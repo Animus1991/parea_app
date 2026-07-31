@@ -122,14 +122,14 @@ export default function SettingsPageContent() {
         { icon: Globe, label: t('Γλώσσα', 'Language'), value: language === 'el' ? 'Ελληνικά' : 'English', onClick: () => setLanguage(language === 'el' ? 'en' : 'el') },
         { icon: Palette, label: t('Εμφάνιση & Θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
         { icon: LayoutGrid, label: t('Προβολή αρχικής', 'Home layout'), value: homeHeroMode === 'light' ? t('Σύντομο', 'Compact') : homeHeroMode === 'rich' ? t('Πλήρες', 'Full') : t('Ισορροπημένο', 'Balanced'), onClick: () => setShowHomeLayout(!showHomeLayout) },
-        { icon: CreditCard, label: t('Μέθοδοι Πληρωμής', 'Payment Methods'), value: t('1 κάρτα', '1 card'), onClick: () => handleComingSoon(t('Μέθοδοι Πληρωμής', 'Payment Methods')) },
+        { icon: CreditCard, label: t('Μέθοδοι Πληρωμής', 'Payment Methods'), value: t('Σύντομα', 'Soon'), onClick: () => handleComingSoon(t('Μέθοδοι Πληρωμής', 'Payment Methods')) },
       ],
     },
     {
       title: t('Απόρρητο & Ασφάλεια', 'Privacy & Security'),
       items: [
         { icon: Eye, label: t('Ορατότητα Προφίλ', 'Profile Visibility'), value: visibilityLabel, onClick: () => navigate('/profile') },
-        { icon: Shield, label: t('Μπλοκαρισμένοι', 'Blocked Users'), value: t('Κανένας', 'None'), onClick: () => handleComingSoon(t('Μπλοκαρισμένοι', 'Blocked Users')) },
+        { icon: Shield, label: t('Μπλοκαρισμένοι', 'Blocked Users'), value: t('Σύντομα', 'Soon'), onClick: () => handleComingSoon(t('Μπλοκαρισμένοι', 'Blocked Users')) },
         { icon: Lock, label: t('2FA', '2FA'), value: twoFactorEnabled ? t('Ενεργό', 'Active') : t('Ανενεργό', 'Inactive'), onClick: () => setShow2FASetup(!show2FASetup) },
       ],
     },
