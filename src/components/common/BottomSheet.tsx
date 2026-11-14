@@ -59,7 +59,7 @@ export function BottomSheet({
         ref={panelRef}
         tabIndex={-1}
         className={cn(
-          'relative w-full max-h-[85vh] overflow-y-auto rounded-t-2xl border-t border-x border-border bg-surface-raised text-ink shadow-soft-lg px-4 pt-2 pb-8 outline-none',
+          'relative w-full max-h-[85vh] overflow-y-auto rounded-t-2xl border-t border-x border-border bg-surface-raised text-ink shadow-soft-lg px-4 pt-2 pb-5 outline-none',
           'animate-in slide-in-from-bottom duration-300 motion-reduce:animate-none',
           className,
         )}

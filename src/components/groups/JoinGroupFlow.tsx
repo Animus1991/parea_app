@@ -96,7 +96,7 @@ export default function JoinGroupFlow() {
   };
 
   return (
-    <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-6 shadow-soft sm:p-8 mt-8">
+    <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sm:p-5 mt-5">
       {!gate.allowed && (
         <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm font-medium flex gap-2">
           <ShieldCheck className="w-5 h-5 shrink-0" />
@@ -105,7 +105,7 @@ export default function JoinGroupFlow() {
       )}
 
       {step === 1 && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div>
             <h2 className="text-xl font-bold text-ink">
               {t('Συμμετοχή ή δημιουργία ομάδας', 'Join or Create a Group')}
@@ -251,7 +251,7 @@ export default function JoinGroupFlow() {
 
       {step === 3 && (
         <div className="text-center space-y-4 py-4">
-          <CheckCircle className="w-14 h-14 text-emerald-500 mx-auto" />
+          <CheckCircle className="w-11 h-11 text-emerald-500 mx-auto" />
           <h3 className="text-xl font-bold">{t('Είστε μέσα!', "You're in!")}</h3>
           <p className="text-sm text-gray-500 font-medium">
             {t('Το group chat ξεκλειδώνει όταν η ομάδα επιβεβαιωθεί.', 'Group chat unlocks when the group is confirmed.')}

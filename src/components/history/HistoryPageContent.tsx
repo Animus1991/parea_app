@@ -65,7 +65,7 @@ export default function HistoryPageContent() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn("text-xl md:text-2xl font-bold", a.head)}>{t('Ιστορικό', 'History')}</h1>
+          <h1 className={cn("text-sm md:text-base font-bold", a.head)}>{t('Ιστορικό', 'History')}</h1>
           <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Εκδηλώσεις που έχετε παρακολουθήσει', 'Events you\'ve attended')}</p>
         </div>
       </div>
@@ -165,7 +165,7 @@ export default function HistoryPageContent() {
                   referrerPolicy="no-referrer"
                   src={event.imageUrl}
                   alt={event.title}
-                  className={cn("w-16 h-16 rounded-2xl object-cover shrink-0 shadow-soft", a.isDark && "opacity-90")}
+                  className={cn("w-12 h-12 rounded-2xl object-cover shrink-0 shadow-soft", a.isDark && "opacity-90")}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">

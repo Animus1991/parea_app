@@ -33,7 +33,7 @@ export function ChatPrivacySettingsPanel() {
   const setPrivacy = useChatStore((s) => s.setPrivacy);
 
   return (
-    <section className={cn('rounded-2xl border p-4 mt-6', a.cardSurface, a.borderB)}>
+    <section className={cn('rounded-2xl border p-4 mt-4', a.cardSurface, a.borderB)}>
       <h2 className={cn('text-sm font-bold mb-1', a.head)}>{t('Nakamas Chat — ρυθμίσεις', 'Nakamas Chat — settings')}</h2>
       <p className={cn('text-xs mb-3', a.sub)}>
         {t(

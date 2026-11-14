@@ -19,9 +19,9 @@ export function PlansFormingSkeleton({
           )}
         >
           <div className="flex gap-3">
-            <div className={cn('w-14 h-14 rounded-xl', isSidebar ? 'bg-white/10' : 'bg-gray-200 dark:bg-gray-700')} />
+            <div className={cn('w-11 h-11 rounded-xl', isSidebar ? 'bg-white/10' : 'bg-gray-200 dark:bg-gray-700')} />
             <div className="flex-1 space-y-2">
-              <div className={cn('h-2 w-16 rounded-lg', isSidebar ? 'bg-white/10' : 'bg-gray-200')} />
+              <div className={cn('h-2 w-12 rounded-lg', isSidebar ? 'bg-white/10' : 'bg-gray-200')} />
               <div className={cn('h-3 w-full rounded-lg', isSidebar ? 'bg-white/10' : 'bg-gray-200')} />
               <div className={cn('h-2 w-3/4 rounded-lg', isSidebar ? 'bg-white/10' : 'bg-gray-200')} />
             </div>

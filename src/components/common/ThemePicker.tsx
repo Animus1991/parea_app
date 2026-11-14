@@ -171,7 +171,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
           type="button"
           onClick={() => setTheme(id)}
           className={cn(
-            'flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all min-h-[52px]',
+            'flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all min-h-10',
             theme === id
               ? 'border-accent ring-2 ring-accent/30 bg-cyan-50/50'
               : tok.isDark

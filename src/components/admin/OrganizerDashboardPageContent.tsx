@@ -192,19 +192,19 @@ export default function OrganizerDashboardPageContent() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 pb-12 animate-in fade-in duration-500">
+    <div className="mx-auto max-w-7xl space-y-5 pb-4 animate-in fade-in duration-500">
       <div
         className={cn(
-          'relative overflow-hidden p-6 md:p-8 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-soft border',
+          'relative overflow-hidden p-4 md:p-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-soft border',
           p.isDark ? 'bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]' : 'bg-gradient-to-br from-indigo-900 to-purple-900 border-indigo-800 text-white',
         )}
       >
         <div className="flex items-center gap-4 relative z-10">
-          <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-white/10 backdrop-blur-md shadow-soft border border-white/20">
+          <div className="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/10 backdrop-blur-md shadow-soft border border-white/20">
             <Activity className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h1 className={cn('text-2xl md:text-3xl font-extrabold tracking-tight', p.isDark ? p.head : 'text-white')}>
+            <h1 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.isDark ? p.head : 'text-white')}>
               {t('Πίνακας Διοργανωτή', 'Organizer Workspace')}
             </h1>
             <p className={cn('text-sm md:text-base font-medium mt-1', p.isDark ? p.sub : 'text-indigo-200')}>
@@ -220,7 +220,7 @@ export default function OrganizerDashboardPageContent() {
           <Button
             variant={p.isAB ? 'primary' : 'gradient'}
             onClick={() => navigate('/create')}
-            className="w-full md:w-auto font-bold px-6 shadow-soft hover:shadow-soft-md rounded-2xl"
+            className="w-full md:w-auto font-bold px-4 shadow-soft hover:shadow-soft-md rounded-2xl"
           >
             <Plus className="w-5 h-5 mr-1" /> {t('Νέα Εκδήλωση', 'New Event')}
           </Button>
@@ -239,7 +239,7 @@ export default function OrganizerDashboardPageContent() {
           <div
             key={i}
             className={cn(
-              'p-5 md:p-6 rounded-2xl border shadow-soft relative overflow-hidden flex flex-col justify-between',
+              'p-5 md:p-4 rounded-2xl border shadow-soft relative overflow-hidden flex flex-col justify-between',
               p.cardSurface,
               p.borderB,
             )}
@@ -253,7 +253,7 @@ export default function OrganizerDashboardPageContent() {
               </span>
             </div>
             <div>
-              <p className={cn('text-3xl font-black', p.head)}>{stat.val}</p>
+              <p className={cn('text-2xl font-black', p.head)}>{stat.val}</p>
               <p className={cn('text-xs font-bold mt-1', stat.trendColor)}>
                 {stat.trendEl}
               </p>
@@ -275,10 +275,10 @@ export default function OrganizerDashboardPageContent() {
       />
 
       {section === 'events' && (
-        <div role="tabpanel" id="organizer-panel-events" aria-labelledby="organizer-tab-events" className="space-y-8">
+        <div role="tabpanel" id="organizer-panel-events" aria-labelledby="organizer-tab-events" className="space-y-5">
       <div
         className={cn(
-          'p-6 rounded-2xl border shadow-soft flex flex-col md:flex-row items-center justify-between gap-6',
+          'p-4 rounded-2xl border shadow-soft flex flex-col md:flex-row items-center justify-between gap-4',
           p.cardSurface,
           p.borderB,
         )}
@@ -384,7 +384,7 @@ export default function OrganizerDashboardPageContent() {
                   </div>
                 </div>
 
-                <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="md:col-span-2 space-y-4">
                     <h4 className={cn('text-xs font-bold uppercase tracking-widest flex items-center gap-2', p.muted)}>
                       <Users className="w-4 h-4" />
@@ -519,9 +519,9 @@ export default function OrganizerDashboardPageContent() {
 
       {section === 'analytics' && (
         <div role="tabpanel" id="organizer-panel-analytics" aria-labelledby="organizer-tab-analytics">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className={cn('lg:col-span-2 p-6 rounded-2xl border shadow-soft', p.cardSurface, p.borderB)}>
-          <div className="flex items-center justify-between mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className={cn('lg:col-span-2 p-4 rounded-2xl border shadow-soft', p.cardSurface, p.borderB)}>
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className={cn('text-lg font-bold tracking-tight', p.head)}>
                 {t('Επισκεψιμότητα Εκδηλώσεων', 'Event Traffic')}
@@ -599,7 +599,7 @@ export default function OrganizerDashboardPageContent() {
 
         <div
           className={cn(
-            'p-6 rounded-2xl border shadow-soft flex flex-col justify-between space-y-6',
+            'p-4 rounded-2xl border shadow-soft flex flex-col justify-between space-y-4',
             p.cardSurface,
             p.borderB,
           )}
@@ -609,7 +609,7 @@ export default function OrganizerDashboardPageContent() {
               {t('Συνολική Πληρότητα', 'Overall Fill Rate')}
             </h3>
             <div className="flex items-end justify-between mb-2">
-              <span className="text-3xl font-black text-cyan-600 dark:text-cyan-400 leading-none tabular-nums">{liveStats.fillPct}%</span>
+              <span className="text-2xl font-black text-cyan-600 dark:text-cyan-400 leading-none tabular-nums">{liveStats.fillPct}%</span>
               <span className={cn('text-xs font-bold tabular-nums', p.muted)}>
                 {t(`${liveStats.participants}/${liveStats.capacity} θέσεις`, `${liveStats.participants}/${liveStats.capacity} spots`)}
               </span>

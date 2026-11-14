@@ -166,7 +166,7 @@ export function CreateCompanyRequestModal({
       <div
         ref={panelRef}
         tabIndex={-1}
-        className={cn('relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl border shadow-soft-lg max-h-[92vh] flex flex-col outline-none', shell)}
+        className={cn('relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl border shadow-soft-lg max-h-[92vh] flex flex-col outline-none', shell)}
       >
         <div className="p-4 border-b border-inherit shrink-0">
           <h2 className="text-base font-bold">
@@ -254,7 +254,7 @@ export function CreateCompanyRequestModal({
                     min={1}
                     value={preferredGroupMin}
                     onChange={(e) => setPreferredGroupMin(Number(e.target.value))}
-                    className="block w-16 mt-1 rounded-lg border border-border px-2 py-1 text-sm bg-surface-raised"
+                    className="block w-12 mt-1 rounded-lg border border-border px-2 py-1 text-sm bg-surface-raised"
                     aria-label={t('Ελάχιστο μέγεθος ομάδας', 'Minimum group size')}
                   />
                 </label>
@@ -265,7 +265,7 @@ export function CreateCompanyRequestModal({
                     min={2}
                     value={preferredGroupMax}
                     onChange={(e) => setPreferredGroupMax(Number(e.target.value))}
-                    className="block w-16 mt-1 rounded-lg border border-border px-2 py-1 text-sm bg-surface-raised"
+                    className="block w-12 mt-1 rounded-lg border border-border px-2 py-1 text-sm bg-surface-raised"
                     aria-label={t('Μέγιστο μέγεθος ομάδας', 'Maximum group size')}
                   />
                 </label>

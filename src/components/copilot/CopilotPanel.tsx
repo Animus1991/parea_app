@@ -304,7 +304,7 @@ export function CopilotPanel() {
       aria-labelledby={headingId}
       className={cn(
         'hidden lg:flex h-full w-[380px] xl:w-[400px] shrink-0 flex-col border-l border-border bg-surface-raised animate-in slide-in-from-right-4 fade-in duration-200 motion-reduce:animate-none',
-        demoMode && 'pt-8',
+        demoMode && 'pt-5',
       )}
     >
       <CopilotConversation onClose={close} onNavigate={() => undefined} headingId={headingId} />

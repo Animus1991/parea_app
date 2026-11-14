@@ -133,7 +133,7 @@ export default function BuddySeekPageContent() {
   );
 
   return (
-    <div className="w-full max-w-full min-w-0 space-y-6 pb-16 pt-6">
+    <div className="w-full max-w-full min-w-0 space-y-4 pb-16 pt-4">
       <header className="space-y-3">
         <h1 className={cn('text-2xl font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
         <PlansFormingValueHero insights={feed.insights} />

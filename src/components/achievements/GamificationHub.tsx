@@ -98,7 +98,7 @@ export function GamificationSummary({ className }: { className?: string }) {
       className={cn('flex flex-col gap-5 rounded-2xl border border-border bg-surface-raised p-5 shadow-soft md:flex-row md:items-center md:justify-between', className)}
     >
       <div className="flex items-center gap-4">
-        <div className="relative h-16 w-16 shrink-0">
+        <div className="relative h-10 w-10 shrink-0">
           <svg className="h-full w-full -rotate-90" viewBox="0 0 64 64" aria-hidden>
             <circle cx="32" cy="32" r="28" fill="none" strokeWidth="5" className="stroke-border" />
             <circle

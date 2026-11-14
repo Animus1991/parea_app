@@ -66,7 +66,7 @@ export function Modal({
         ref={panelRef}
         tabIndex={-1}
         className={cn(
-          'relative w-full max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-surface-raised text-ink shadow-soft-lg p-6 outline-none',
+          'relative w-full max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-surface-raised text-ink shadow-soft-lg p-4 outline-none',
           'animate-in zoom-in-95 fade-in duration-200 motion-reduce:animate-none',
           SIZE_CLASSES[size],
           className,

@@ -42,9 +42,9 @@ export default function VerificationCenterPageContent() {
   };
 
   return (
-    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn('text-xl md:text-2xl font-bold', a.head)}>{t('Κέντρο Επαλήθευσης', 'Verification Center')}</h1>
+        <h1 className={cn('text-sm md:text-base font-bold', a.head)}>{t('Κέντρο Επαλήθευσης', 'Verification Center')}</h1>
         <p className={cn('font-medium text-sm mt-1', a.sub)}>
           {t(
             'Επαληθεύστε την ταυτότητά σας για μεγαλύτερη ασφάλεια και υψηλότερο Βαθμό Αξιοπιστίας',

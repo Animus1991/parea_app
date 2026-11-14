@@ -42,7 +42,7 @@ export function PlatformEventBanner() {
 
   return (
     <div
-      className={`mb-6 rounded-2xl p-4 sm:p-5 border flex flex-col sm:flex-row sm:items-center gap-4 ${
+      className={`mb-4 rounded-2xl p-4 sm:p-5 border flex flex-col sm:flex-row sm:items-center gap-4 ${
         tok.isDark
           ? "bg-amber-950/25 border-amber-800/40"
           : "bg-amber-50 border-amber-200"

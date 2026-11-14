@@ -139,10 +139,10 @@ export default function OnboardingClassic() {
   ];
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-8">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-5">
       <div className="w-full max-w-lg">
         {/* Progress bar */}
-        <div className="mb-6">
+        <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
               {tu('Βήμα', 'Step')} {step + 1} / {TOTAL_STEPS}
@@ -176,7 +176,7 @@ export default function OnboardingClassic() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: dir * -40 }}
             transition={{ duration: 0.25 }}
-            className="bg-white rounded-3xl p-6 shadow-soft border border-gray-100 space-y-5"
+            className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 space-y-5"
           >
             <div>
               <h2 className="text-xl font-black text-ink leading-tight">
@@ -190,7 +190,7 @@ export default function OnboardingClassic() {
             {/* Step 0 — Welcome */}
             {step === 0 && (
               <div className="space-y-4">
-                <div className="flex flex-col items-center py-6 gap-3">
+                <div className="flex flex-col items-center py-4 gap-3">
                   <span className="text-6xl">👋</span>
                   <p className="text-base text-gray-600 font-medium text-center max-w-xs leading-relaxed">
                     {t(
@@ -420,7 +420,7 @@ export default function OnboardingClassic() {
               type="button"
               onClick={goNext}
               disabled={step === 1 && selectedInterests.length < 3}
-              className="flex items-center gap-2 px-6 py-2.5 min-h-10 rounded-2xl bg-ink text-white text-sm font-bold hover:bg-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2.5 min-h-10 rounded-2xl bg-ink text-white text-sm font-bold hover:bg-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('Επόμενο', 'Next')}
               <ChevronRight className="w-4 h-4" aria-hidden />
@@ -428,7 +428,7 @@ export default function OnboardingClassic() {
           ) : (
             <button
               onClick={handleComplete}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-accent to-cyan-400 text-white text-sm font-bold hover:opacity-90 transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-accent to-cyan-400 text-white text-sm font-bold hover:opacity-90 transition-all duration-200"
             >
               <CheckCircle2 className="w-4 h-4" />
               {t('Ολοκλήρωση!', 'Complete!')}

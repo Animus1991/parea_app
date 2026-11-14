@@ -93,13 +93,13 @@ export function HomeLoggedInHeroContrast({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className={cn(h.hero, 'flex flex-col gap-6 relative')}
+      className={cn(h.hero, 'flex flex-col gap-4 relative')}
     >
       {homeHeroMode === 'light' && (
         <div className="relative z-10 space-y-5">
           <div className="flex justify-between items-start gap-4">
             <div>
-              <h1 className={cn(h.heroGreeting, 'text-xl md:text-2xl font-black mb-1')}>
+              <h1 className={cn(h.heroGreeting, 'text-sm md:text-base font-black mb-1')}>
                 {t('Γειά σου, ', 'Hello, ')}
                 {firstName}!
               </h1>
@@ -129,7 +129,7 @@ export function HomeLoggedInHeroContrast({
             <div className="space-y-2 flex-1">
               <p className={h.heroGreeting}>{greeting}</p>
               <p className={cn(h.heroMotivation, 'text-sm')}>{motivation}</p>
-              <h1 className={cn(h.heroTitle, 'text-lg md:text-xl max-w-2xl')}>
+              <h1 className={cn(h.heroTitle, 'text-sm md:text-base max-w-2xl')}>
                 {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>{t('home.hero.title2', 'εμπειρίες')}</span>{' '}
                 {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}

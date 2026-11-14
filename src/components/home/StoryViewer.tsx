@@ -176,7 +176,7 @@ export function StoryViewer({
         <button
           onClick={onClose}
           aria-label={t("Κλείσιμο", "Close")}
-          className="absolute top-6 right-3 z-30 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+          className="absolute top-4 right-3 z-30 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -190,7 +190,7 @@ export function StoryViewer({
               onClick={goPrev}
               onPointerDown={() => setPaused(true)}
               onPointerUp={() => setPaused(false)}
-              className="absolute left-0 top-12 bottom-44 w-1/3 z-10 md:hidden"
+              className="absolute left-0 top-4 bottom-44 w-1/3 z-10 md:hidden"
             />
             <button
               type="button"
@@ -198,7 +198,7 @@ export function StoryViewer({
               onClick={() => goNext()}
               onPointerDown={() => setPaused(true)}
               onPointerUp={() => setPaused(false)}
-              className="absolute right-0 top-12 bottom-44 w-1/3 z-10 md:hidden"
+              className="absolute right-0 top-4 bottom-44 w-1/3 z-10 md:hidden"
             />
           </>
         )}

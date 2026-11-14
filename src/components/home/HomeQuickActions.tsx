@@ -114,7 +114,7 @@ export function HomeQuickActions({
   }
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-4">
       <HomeNextBestAction />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {shortcuts.map(({ icon: Icon, label, onClick, key }) => (

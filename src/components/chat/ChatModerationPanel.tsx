@@ -11,7 +11,7 @@ export function ChatModerationPanel() {
   const conversations = useChatStore((s) => s.conversations);
 
   return (
-    <div className={cn('rounded-2xl border p-4 space-y-4 mt-8', a.cardSurface, a.borderB)}>
+    <div className={cn('rounded-2xl border p-4 space-y-4 mt-5', a.cardSurface, a.borderB)}>
       <div className="flex items-center gap-2">
         <MessageSquareWarning className="w-5 h-5 text-red-500" />
         <h2 className={cn('text-sm font-bold', a.head)}>{t('Nakamas Chat — εποπτεία', 'Nakamas Chat — moderation')}</h2>

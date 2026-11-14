@@ -70,13 +70,13 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
               <div key={hour} className="flex gap-4">
                 <div
                   className={cn(
-                    'w-14 shrink-0 text-right text-xs font-bold uppercase tracking-wider py-2',
+                    'w-11 shrink-0 text-right text-xs font-bold uppercase tracking-wider py-2',
                     p.muted,
                   )}
                 >
                   {timeString}
                 </div>
-                <div className={cn('flex-1 border-t relative pt-2 pb-6 flex flex-col gap-2', p.borderB)}>
+                <div className={cn('flex-1 border-t relative pt-2 pb-4 flex flex-col gap-2', p.borderB)}>
                   {hourEvents.map((ev) => (
                     <button
                       key={ev.id}

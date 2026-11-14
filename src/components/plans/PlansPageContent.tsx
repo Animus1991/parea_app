@@ -80,7 +80,7 @@ export default function PlansPageContent() {
   );
 
   return (
-    <div className="mx-auto max-w-full space-y-6 md:space-y-7 animate-in fade-in slide-in-from-bottom-2 duration-500">
+    <div className="mx-auto max-w-full space-y-4 md:space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div>
         <h1 className={cn(PLANS_TYPO.pageTitle, p.head)}>{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
         <p className={cn(PLANS_TYPO.pageSub, 'mt-1', p.sub)}>{t(`Διαχείριση επερχόμενων, εκκρεμών και παρελθόντων εκδηλώσεων.`, `Manage your upcoming experiences, pending groups, and past events.`)}</p>
@@ -394,7 +394,7 @@ export default function PlansPageContent() {
         title={t('Αποχώρηση από ομάδα', 'Leave Group')}
         size="sm"
       >
-        <p className="text-xs font-medium mb-6 text-ink-muted">
+        <p className="text-xs font-medium mb-4 text-ink-muted">
           {t('Είστε σίγουροι ότι θέλετε να αποχωρήσετε; Μπορεί να μην μπορέσετε να ξαναμπείτε.', 'Are you sure you want to leave? You might not be able to rejoin.')}
         </p>
         <div className="flex flex-col gap-2.5">
@@ -440,7 +440,7 @@ function EmptyTab({
   p: ReturnType<typeof usePageContrast>;
 }) {
   return (
-    <div className={cn('text-center py-12 px-6 rounded-2xl border border-dashed', p.cardSurface, p.borderB)}>
+    <div className={cn('text-center py-4 px-4 rounded-2xl border border-dashed', p.cardSurface, p.borderB)}>
       <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3', p.statBg)}>
         <Icon className={cn('w-6 h-6', p.statVal)} />
       </div>

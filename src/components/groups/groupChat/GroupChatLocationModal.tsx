@@ -81,7 +81,7 @@ export function GroupChatLocationModal({
         {t('Προαιρετικό & προσωρινό', 'Optional & temporary')}
       </p>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {isSharingLocation && (
           <div className={cn('rounded-2xl p-4 flex flex-col gap-3 shadow-soft border', gc.panelSoft)}>
             <div className={cn('flex items-center gap-2', gc.shareActiveText)}>

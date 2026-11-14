@@ -216,11 +216,11 @@ export default function ConnectionsPageContent() {
     : `bg-white border-gray-200 text-gray-900 placeholder-gray-400 ${a.ring}`;
 
   return (
-    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={`text-xl md:text-2xl font-bold ${a.head}`}>{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
+          <h1 className={`text-sm md:text-base font-bold ${a.head}`}>{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
           <p className={`font-medium text-xs md:text-sm mt-1 ${subColor}`}>{t('Άτομα με τα οποία συνδεθήκατε μέσα από εκδηλώσεις.', 'People you\'ve connected with through events.')}</p>
         </div>
         <Button variant="primary" size="sm" className="flex items-center gap-2" onClick={() => navigate('/nearby')}>

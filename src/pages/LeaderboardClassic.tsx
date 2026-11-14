@@ -96,7 +96,7 @@ export default function LeaderboardClassic() {
       <GamificationHubNav />
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn('text-base md:text-lg font-bold', p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>
+          <h1 className={cn('text-sm md:text-base font-bold', p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>
           <p className={cn('font-medium text-sm md:text-sm mt-1', p.sub)}>
             {t('Δες πού βρίσκεσαι μέσα στην κοινότητα', 'See where you stand in the community')}
           </p>
@@ -129,7 +129,7 @@ export default function LeaderboardClassic() {
                   referrerPolicy="no-referrer"
                   src={myEntry.avatar}
                   alt={myEntry.name}
-                  className={cn('w-14 h-14 rounded-full object-cover ring-2', p.isDark ? 'ring-white/20' : 'ring-accent/40')}
+                  className={cn('w-11 h-11 rounded-full object-cover ring-2', p.isDark ? 'ring-white/20' : 'ring-accent/40')}
                 />
                 <div className="absolute -bottom-1 -right-1 bg-ink text-white text-xs font-black px-1.5 py-0.5 rounded-full border-2 border-white">
                   #{myRank}
@@ -249,7 +249,7 @@ export default function LeaderboardClassic() {
             );
           })}
           {displayEntries.length === 0 && (
-            <Card className="p-8 text-center">
+            <Card className="p-5 text-center">
               <p className={cn('text-sm font-medium', p.muted)}>
                 {t('Δεν βρέθηκαν εγγραφές.', 'No entries found.')}
               </p>
@@ -276,7 +276,7 @@ export default function LeaderboardClassic() {
                     : 'opacity-50 grayscale',
                 )}
               >
-                <span className="text-3xl leading-none">{badge.emoji}</span>
+                <span className="text-2xl leading-none">{badge.emoji}</span>
                 <div>
                   <p className={cn('font-bold text-sm', badge.unlocked ? p.head : p.muted)}>
                     {t(badge.labelEl, badge.labelEn)}

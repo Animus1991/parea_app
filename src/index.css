@@ -4,25 +4,25 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  /* Density-tuned type scale (Linear/GitHub convention — CoFounderBay crosswalk) */
-  --text-2xs: 0.625rem;
-  --text-2xs--line-height: 1.45;
-  --text-xs: 0.6875rem;
-  --text-xs--line-height: 1.45;
-  --text-sm: 0.8125rem;
-  --text-sm--line-height: 1.5;
-  --text-base: 0.875rem;
-  --text-base--line-height: 1.55;
-  --text-lg: 1rem;
+  /* Density-tuned type scale — compact, even steps (~1.125×) for harmony across pages */
+  --text-2xs: 0.5625rem; /* 9px */
+  --text-2xs--line-height: 1.4;
+  --text-xs: 0.625rem; /* 10px */
+  --text-xs--line-height: 1.4;
+  --text-sm: 0.75rem; /* 12px */
+  --text-sm--line-height: 1.45;
+  --text-base: 0.8125rem; /* 13px */
+  --text-base--line-height: 1.5;
+  --text-lg: 0.875rem; /* 14px */
   --text-lg--line-height: 1.45;
-  --text-xl: 1.125rem;
-  --text-xl--line-height: 1.4;
-  --text-2xl: 1.25rem;
+  --text-xl: 1rem; /* 16px */
+  --text-xl--line-height: 1.35;
+  --text-2xl: 1.125rem; /* 18px */
   --text-2xl--line-height: 1.3;
-  --text-3xl: 1.5rem;
+  --text-3xl: 1.3125rem; /* 21px */
   --text-3xl--line-height: 1.25;
-  --text-4xl: 1.875rem;
-  --text-4xl--line-height: 1.15;
+  --text-4xl: 1.5rem; /* 24px */
+  --text-4xl--line-height: 1.2;
 
   /* Named z-index scale — overlays always beat persistent chrome.
      Local in-component stacking keeps Tailwind defaults (z-0/10/20/30). */
@@ -88,11 +88,11 @@
   /* Accent gradient για το highlighted span μέσα στο hero */
   --color-hero-accent-from: #22d3ee;
   --color-hero-accent-to: #34d399;
-  /* Layout chrome metrics (P2-T5/T6): single source για header/bottom-edge spacing */
-  --header-h: 60px;
-  --bottom-nav-h: 62px;
-  /* Ζώνη πάνω από το BottomNav + προεξοχή του center FAB (24px) + gap (8px) */
-  --safe-bottom: calc(var(--bottom-nav-h) + 32px);
+  /* Layout chrome metrics — compact shell */
+  --header-h: 52px;
+  --bottom-nav-h: 56px;
+  /* Ζώνη πάνω από το BottomNav + προεξοχή του center FAB + gap */
+  --safe-bottom: calc(var(--bottom-nav-h) + 28px);
 }
 
 @utility h-header {
@@ -261,6 +261,8 @@
 
 body {
   font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
   background-color: #fcfcfb;
   color: #1a1a1a;
   -webkit-font-smoothing: antialiased;
@@ -288,8 +290,9 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   background: #1f2937;
   color: white;
   font-weight: 700;
-  border-radius: 0.75rem;
-  padding: 0.45rem 1.1rem;
+  font-size: var(--text-sm);
+  border-radius: 0.625rem;
+  padding: 0.35rem 0.9rem;
   box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.18);
   transition: all 0.2s ease;
 }

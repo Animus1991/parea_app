@@ -8,7 +8,7 @@ export function PageLoading({ label }: { label?: string }) {
   const tok = useThemeStyles();
   return (
     <div
-      className="flex min-h-[40vh] flex-col items-center justify-center gap-4 p-8"
+      className="flex min-h-[40vh] flex-col items-center justify-center gap-4 p-5"
       role="status"
       aria-live="polite"
       aria-busy="true"

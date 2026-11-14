@@ -38,7 +38,7 @@ export function HomeRichHero({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className={cn(tok.heroRoot, 'p-6 md:p-10 rounded-3xl relative overflow-hidden flex flex-col gap-4')}
+      className={cn(tok.heroRoot, 'p-4 md:p-5 rounded-2xl relative overflow-hidden flex flex-col gap-4')}
     >
       <div className="relative z-10 flex-1 w-full">
         <div className={cn(tok.heroBadge, 'mb-4', HOME_TYPO.heroBadge)}>
@@ -51,14 +51,14 @@ export function HomeRichHero({
           </span>{' '}
           {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
         </h1>
-        <p className={cn(tok.heroSubtitle, 'max-w-xl mb-6', HOME_TYPO.heroSubtitle)}>
+        <p className={cn(tok.heroSubtitle, 'max-w-xl mb-4', HOME_TYPO.heroSubtitle)}>
           {t(
             'home.hero.subtitle',
             'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.',
           )}
         </p>
 
-        <div className={cn('flex flex-wrap items-center gap-x-4 gap-y-3 mb-6', tok.heroStats, HOME_TYPO.heroStats)}>
+        <div className={cn('flex flex-wrap items-center gap-x-4 gap-y-3 mb-4', tok.heroStats, HOME_TYPO.heroStats)}>
           <span className="flex items-center gap-1.5">
             <Users className={cn('w-3.5 h-3.5', tok.heroStatIcon)} />{' '}
             {t('home.hero.stat1', 'Μικρες ομαδες')}
@@ -80,7 +80,7 @@ export function HomeRichHero({
           </span>
         </div>
 
-        <div className="flex gap-3 mb-6">
+        <div className="flex gap-3 mb-4">
           <button
             onClick={() => navigate('/nearby')}
             className={cn('flex items-center gap-2 px-5 py-2.5 rounded-xl transition-colors', tok.heroMapBtn, HOME_TYPO.heroMapBtn)}

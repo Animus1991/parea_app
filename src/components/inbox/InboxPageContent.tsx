@@ -133,7 +133,7 @@ export default function InboxPageContent() {
 
   return (
     <div className="w-full max-w-full min-w-0 flex flex-col relative animate-in fade-in duration-500">
-      <div className="shrink-0 mb-6">
+      <div className="shrink-0 mb-4">
         <h1 className={cn(INBOX_TYPO.pageTitle, p.head)}>
           {t('Μηνύματα', 'Messages')}
         </h1>
@@ -309,7 +309,7 @@ export default function InboxPageContent() {
       {activeTab === 'notifications' && (
         <div
           className={cn(
-            'rounded-2xl border shadow-soft p-8 text-center flex flex-col items-center',
+            'rounded-2xl border shadow-soft p-5 text-center flex flex-col items-center',
             p.cardSurface,
             p.borderB,
           )}

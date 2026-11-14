@@ -246,10 +246,10 @@ export function SideNav() {
   const setCollapsed = useStore((s) => s.setSidebarCollapsed);
   return (
     <aside className={cn("h-full flex-col shrink-0 hidden md:flex transition-all duration-300 z-sidenav border-r", collapsed ? "w-[88px]" : "w-[88px] lg:w-64", tok.sideNav)}>
-      <div className={cn("h-header flex items-center border-b shrink-0", collapsed ? "justify-center" : "justify-center lg:justify-start lg:px-6", tok.sideNavBorder)}>
-        <NakamasLogo compact={collapsed} className={collapsed ? "text-xl" : "text-xl lg:text-3xl"} />
+      <div className={cn("h-header flex items-center border-b shrink-0", collapsed ? "justify-center" : "justify-center lg:justify-start lg:px-4", tok.sideNavBorder)}>
+        <NakamasLogo compact={collapsed} className={collapsed ? "text-xl" : "text-xl lg:text-2xl"} />
       </div>
-      <div className="flex-1 overflow-y-auto py-4 lg:py-6 px-2 lg:px-3">
+      <div className="flex-1 overflow-y-auto py-4 lg:py-4 px-2 lg:px-3">
         <NavLinks compact={!collapsed} rail={collapsed} />
       </div>
       {/* Collapse toggle — ορατό μόνο σε lg+ (σε md το sidebar είναι ήδη rail) */}
@@ -291,8 +291,8 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   return (
-    <nav className={cn("relative z-topnav flex items-center justify-between px-4 lg:px-6 py-[10px] border-b h-header shrink-0 overflow-visible", tok.topNav)}>
-      <div className="flex items-center space-x-8">
+    <nav className={cn("relative z-topnav flex items-center justify-between px-4 lg:px-4 py-[10px] border-b h-header shrink-0 overflow-visible", tok.topNav)}>
+      <div className="flex items-center space-x-5">
         <div className="md:hidden">
           <NakamasLogo className="text-xl" />
         </div>
@@ -421,7 +421,7 @@ export function BottomNav() {
           <span className="text-xs font-medium leading-none">{t(labelGr, labelEn)}</span>
         </NavLink>
       ))}
-      <div className="flex flex-col items-center justify-center -mt-6">
+      <div className="flex flex-col items-center justify-center -mt-4">
         <NavLink
           to="/create"
           className={cn("w-11 h-11 rounded-full flex items-center justify-center shadow-soft-lg transition-colors border-[3px] border-white", tok.fab)}
@@ -481,23 +481,23 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="md:hidden fixed inset-0 z-modal flex">
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
           <div className={cn("relative w-64 max-w-sm h-full shadow-soft-lg flex flex-col z-modal", tok.sideNav)}>
-            <div className="h-header flex items-center justify-between px-6 border-b border-[#E5E7EB] shrink-0">
+            <div className="h-header flex items-center justify-between px-4 border-b border-[#E5E7EB] shrink-0">
               <NakamasLogo className="text-xl" />
               <button onClick={() => setIsMobileMenuOpen(false)} aria-label={t('Κλείσιμο μενού', 'Close menu')} className={cn(tok.isDark ? "text-white hover:text-white" : "text-gray-500 hover:text-ink")}>
                 <X className="h-6 w-6" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto py-6 px-3" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="flex-1 overflow-y-auto py-4 px-3" onClick={() => setIsMobileMenuOpen(false)}>
               <NavLinks />
             </div>
           </div>
         </div>
       )}
       <div className="flex flex-1 h-screen overflow-hidden min-w-0">
-        <div className={cn("flex flex-col flex-1 min-w-0 h-screen overflow-hidden", demoMode && "pt-8")}>
+        <div className={cn("flex flex-col flex-1 min-w-0 h-screen overflow-hidden", demoMode && "pt-5")}>
           <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
           <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none">
-            <div className="mx-auto w-full max-w-full p-4 lg:px-8 lg:py-6 flex-1 pb-safe md:pb-6">
+            <div className="mx-auto w-full max-w-full p-4 lg:px-5 lg:py-4 flex-1 pb-safe md:pb-4">
               {maintenanceMode && (
                 <p role="status" className="mb-4 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
                   <Settings className="h-4 w-4 shrink-0" aria-hidden />
@@ -507,7 +507,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {children}
             </div>
           </main>
-        <footer className="hidden md:flex h-8 px-6 bg-gray-900 text-xs text-gray-300 items-center justify-between shrink-0">
+        <footer className="hidden md:flex h-8 px-4 bg-gray-900 text-xs text-gray-300 items-center justify-between shrink-0">
           <div className="flex space-x-4">
             <span>Nakamas v1.0.5-beta</span>
             <span className="flex items-center">

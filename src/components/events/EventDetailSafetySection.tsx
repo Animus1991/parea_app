@@ -75,7 +75,7 @@ export function EventDetailSafetySection({
     <div className={cn('pt-5 border-t mt-5', tok.sectionBorder, className)}>
       <div
         className={cn(
-          'flex flex-col md:flex-row md:items-stretch gap-4 md:gap-6',
+          'flex flex-col md:flex-row md:items-stretch gap-4 md:gap-4',
           tok.card,
           tok.shadow,
         )}

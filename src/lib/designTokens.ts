@@ -1179,12 +1179,12 @@ const darkBase = {
 const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
   classic: {
     ...lightBase,
-    hero: 'bg-gray-900 text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden',
-    heroGreeting: 'text-cyan-400 text-2xl md:text-3xl font-extrabold tracking-tight mb-1.5',
-    heroMotivation: 'text-gray-300 text-base md:text-lg font-medium mb-4',
-    heroTitle: 'text-white text-lg md:text-xl font-bold tracking-tight mb-3 leading-snug',
+    hero: 'bg-gray-900 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden',
+    heroGreeting: 'text-cyan-400 text-lg md:text-xl font-extrabold tracking-tight mb-1.5',
+    heroMotivation: 'text-gray-300 text-xs md:text-sm font-medium mb-3',
+    heroTitle: 'text-white text-base md:text-lg font-bold tracking-tight mb-2 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-300',
-    heroSubtitle: 'text-gray-300 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
+    heroSubtitle: 'text-gray-300 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-cyan-400',
     heroSearchInput:
@@ -1215,12 +1215,12 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
 
   vibrant: {
     ...lightBase,
-    hero: 'bg-gradient-to-br from-fuchsia-900 via-fuchsia-800 to-orange-900 text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden',
-    heroGreeting: 'text-fuchsia-200 text-2xl md:text-3xl font-extrabold tracking-tight mb-1.5',
-    heroMotivation: 'text-fuchsia-100/90 text-base md:text-lg font-medium mb-4',
-    heroTitle: 'text-white text-lg md:text-xl font-bold tracking-tight mb-3 leading-snug',
+    hero: 'bg-gradient-to-br from-fuchsia-900 via-fuchsia-800 to-orange-900 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden',
+    heroGreeting: 'text-fuchsia-200 text-lg md:text-xl font-extrabold tracking-tight mb-1.5',
+    heroMotivation: 'text-fuchsia-100/90 text-xs md:text-sm font-medium mb-3',
+    heroTitle: 'text-white text-base md:text-lg font-bold tracking-tight mb-2 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-200 to-orange-200',
-    heroSubtitle: 'text-fuchsia-100 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
+    heroSubtitle: 'text-fuchsia-100 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-fuchsia-100',
     heroStatIcon: 'text-fuchsia-200',
     heroSearchInput:
@@ -1250,12 +1250,12 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
 
   bento: {
     ...lightBase,
-    hero: 'bg-gradient-to-br from-indigo-900 to-violet-900 text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden',
-    heroGreeting: 'text-indigo-200 text-2xl md:text-3xl font-extrabold tracking-tight mb-1.5',
-    heroMotivation: 'text-indigo-100/90 text-base md:text-lg font-medium mb-4',
-    heroTitle: 'text-white text-lg md:text-xl font-bold tracking-tight mb-3 leading-snug',
+    hero: 'bg-gradient-to-br from-indigo-900 to-violet-900 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden',
+    heroGreeting: 'text-indigo-200 text-lg md:text-xl font-extrabold tracking-tight mb-1.5',
+    heroMotivation: 'text-indigo-100/90 text-xs md:text-sm font-medium mb-3',
+    heroTitle: 'text-white text-base md:text-lg font-bold tracking-tight mb-2 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-violet-200',
-    heroSubtitle: 'text-indigo-100 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
+    heroSubtitle: 'text-indigo-100 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-indigo-100',
     heroStatIcon: 'text-indigo-200',
     heroSearchInput:
@@ -1285,12 +1285,12 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
 
   neon: {
     ...lightBase,
-    hero: 'bg-gradient-to-br from-emerald-900 to-teal-900 text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden',
-    heroGreeting: 'text-emerald-200 text-2xl md:text-3xl font-extrabold tracking-tight mb-1.5',
-    heroMotivation: 'text-emerald-100/90 text-base md:text-lg font-medium mb-4',
-    heroTitle: 'text-white text-lg md:text-xl font-bold tracking-tight mb-3 leading-snug',
+    hero: 'bg-gradient-to-br from-emerald-900 to-teal-900 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden',
+    heroGreeting: 'text-emerald-200 text-lg md:text-xl font-extrabold tracking-tight mb-1.5',
+    heroMotivation: 'text-emerald-100/90 text-xs md:text-sm font-medium mb-3',
+    heroTitle: 'text-white text-base md:text-lg font-bold tracking-tight mb-2 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 to-teal-200',
-    heroSubtitle: 'text-emerald-100 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
+    heroSubtitle: 'text-emerald-100 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-emerald-100',
     heroStatIcon: 'text-emerald-200',
     heroSearchInput:
@@ -1320,12 +1320,12 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
 
   'vibrant-dark': {
     ...darkBase,
-    hero: 'bg-gradient-to-br from-[#1C141B] to-fuchsia-950 text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden border border-fuchsia-800/40',
-    heroGreeting: 'text-fuchsia-300 text-2xl md:text-3xl font-extrabold tracking-tight mb-1.5',
-    heroMotivation: 'text-gray-300 text-base md:text-lg font-medium mb-4',
-    heroTitle: 'text-white text-lg md:text-xl font-bold tracking-tight mb-3 leading-snug',
+    hero: 'bg-gradient-to-br from-[#1C141B] to-fuchsia-950 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden border border-fuchsia-800/40',
+    heroGreeting: 'text-fuchsia-300 text-lg md:text-xl font-extrabold tracking-tight mb-1.5',
+    heroMotivation: 'text-gray-300 text-xs md:text-sm font-medium mb-3',
+    heroTitle: 'text-white text-base md:text-lg font-bold tracking-tight mb-2 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 to-orange-300',
-    heroSubtitle: 'text-gray-300 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
+    heroSubtitle: 'text-gray-300 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-fuchsia-400',
     heroSearchInput:
@@ -1355,12 +1355,12 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
 
   'bento-dark': {
     ...darkBase,
-    hero: 'bg-gradient-to-br from-[#131318] to-indigo-950 text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden border border-indigo-800/40',
-    heroGreeting: 'text-indigo-300 text-2xl md:text-3xl font-extrabold tracking-tight mb-1.5',
-    heroMotivation: 'text-gray-300 text-base md:text-lg font-medium mb-4',
-    heroTitle: 'text-white text-lg md:text-xl font-bold tracking-tight mb-3 leading-snug',
+    hero: 'bg-gradient-to-br from-[#131318] to-indigo-950 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden border border-indigo-800/40',
+    heroGreeting: 'text-indigo-300 text-lg md:text-xl font-extrabold tracking-tight mb-1.5',
+    heroMotivation: 'text-gray-300 text-xs md:text-sm font-medium mb-3',
+    heroTitle: 'text-white text-base md:text-lg font-bold tracking-tight mb-2 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-violet-300',
-    heroSubtitle: 'text-gray-300 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
+    heroSubtitle: 'text-gray-300 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-indigo-400',
     heroSearchInput:
@@ -1390,12 +1390,12 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
 
   'neon-dark': {
     ...darkBase,
-    hero: 'bg-gradient-to-br from-[#101e17] to-emerald-950 text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden border border-emerald-800/40',
-    heroGreeting: 'text-emerald-300 text-2xl md:text-3xl font-extrabold tracking-tight mb-1.5',
-    heroMotivation: 'text-gray-300 text-base md:text-lg font-medium mb-4',
-    heroTitle: 'text-white text-lg md:text-xl font-bold tracking-tight mb-3 leading-snug',
+    hero: 'bg-gradient-to-br from-[#101e17] to-emerald-950 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden border border-emerald-800/40',
+    heroGreeting: 'text-emerald-300 text-lg md:text-xl font-extrabold tracking-tight mb-1.5',
+    heroMotivation: 'text-gray-300 text-xs md:text-sm font-medium mb-3',
+    heroTitle: 'text-white text-base md:text-lg font-bold tracking-tight mb-2 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-300',
-    heroSubtitle: 'text-gray-300 font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
+    heroSubtitle: 'text-gray-300 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-emerald-400',
     heroSearchInput:
@@ -1425,13 +1425,13 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
 
   activebuddies: {
     ...lightBase,
-    hero: 'bg-[hsl(220_14%_12%)] text-white p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden border border-[hsl(220_13%_18%)]',
-    heroGreeting: 'text-[hsl(0_0%_88%)] text-2xl md:text-3xl font-extrabold tracking-tight mb-1.5',
-    heroMotivation: 'text-[hsl(220_10%_75%)] text-base md:text-lg font-medium mb-4',
-    heroTitle: 'text-white text-lg md:text-xl font-bold tracking-tight mb-3 leading-snug',
+    hero: 'bg-[hsl(220_14%_12%)] text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden border border-[hsl(220_13%_18%)]',
+    heroGreeting: 'text-[hsl(0_0%_88%)] text-lg md:text-xl font-extrabold tracking-tight mb-1.5',
+    heroMotivation: 'text-[hsl(220_10%_75%)] text-xs md:text-sm font-medium mb-3',
+    heroTitle: 'text-white text-base md:text-lg font-bold tracking-tight mb-2 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-white to-[hsl(220_10%_75%)]',
     heroSubtitle:
-      'text-[hsl(220_10%_80%)] font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
+      'text-[hsl(220_10%_80%)] font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-[hsl(220_10%_78%)]',
     heroStatIcon: 'text-white',
     heroSearchInput:
@@ -1463,13 +1463,13 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
 
   'activebuddies-dark': {
     ...darkBase,
-    hero: 'bg-[hsl(220_16%_11%)] text-[hsl(210_20%_92%)] p-6 md:p-10 rounded-3xl shadow-soft-lg relative overflow-hidden border border-[hsl(220_13%_22%)]',
-    heroGreeting: 'text-[hsl(0_0%_90%)] text-2xl md:text-3xl font-extrabold tracking-tight mb-1.5',
-    heroMotivation: 'text-[hsl(220_12%_70%)] text-base md:text-lg font-medium mb-4',
-    heroTitle: 'text-white text-lg md:text-xl font-bold tracking-tight mb-3 leading-snug',
+    hero: 'bg-[hsl(220_16%_11%)] text-[hsl(210_20%_92%)] p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden border border-[hsl(220_13%_22%)]',
+    heroGreeting: 'text-[hsl(0_0%_90%)] text-lg md:text-xl font-extrabold tracking-tight mb-1.5',
+    heroMotivation: 'text-[hsl(220_12%_70%)] text-xs md:text-sm font-medium mb-3',
+    heroTitle: 'text-white text-base md:text-lg font-bold tracking-tight mb-2 leading-snug',
     heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-white to-[hsl(220_12%_75%)]',
     heroSubtitle:
-      'text-[hsl(220_12%_78%)] font-medium text-sm md:text-base leading-relaxed max-w-xl mb-6',
+      'text-[hsl(220_12%_78%)] font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-[hsl(220_12%_80%)]',
     heroStatIcon: 'text-[hsl(0_0%_95%)]',
     heroSearchInput:
@@ -1644,8 +1644,8 @@ export function getEventDetailSurfaceTokens(
       listStrong: 'text-white',
       iconMuted: 'text-gray-400',
       shadow: 'shadow-soft',
-      primaryBtn: `${APP_TYPO.micro} font-bold py-2 px-4 rounded-2xl transition-all duration-200 ${btnOn}`,
-      primaryBtnStop: `${APP_TYPO.micro} font-bold py-2 px-4 rounded-2xl transition-all duration-200 ${btnOff}`,
+      primaryBtn: `${APP_TYPO.micro} font-bold py-1.5 px-3 rounded-xl transition-all duration-200 ${btnOn}`,
+      primaryBtnStop: `${APP_TYPO.micro} font-bold py-1.5 px-3 rounded-xl transition-all duration-200 ${btnOff}`,
       verifiedIcon: 'text-emerald-400',
       verifiedBg: 'bg-emerald-950/40 border-emerald-900',
     };
@@ -1663,8 +1663,8 @@ export function getEventDetailSurfaceTokens(
     listStrong: 'text-gray-700',
     iconMuted: 'text-gray-400',
     shadow: 'shadow-soft',
-    primaryBtn: `${APP_TYPO.micro} font-bold py-2 px-4 rounded-2xl transition-all duration-200 shadow-soft ${btnOn}`,
-    primaryBtnStop: `${APP_TYPO.micro} font-bold py-2 px-4 rounded-2xl transition-all duration-200 ${btnOff}`,
+    primaryBtn: `${APP_TYPO.micro} font-bold py-1.5 px-3 rounded-xl transition-all duration-200 shadow-soft ${btnOn}`,
+    primaryBtnStop: `${APP_TYPO.micro} font-bold py-1.5 px-3 rounded-xl transition-all duration-200 ${btnOff}`,
     verifiedIcon: 'text-emerald-600',
     verifiedBg: 'bg-emerald-50/80 border-emerald-100',
   };
@@ -1673,8 +1673,8 @@ export function getEventDetailSurfaceTokens(
 /** Outer reliability note — Classic card (all themes). */
 export function getEventDetailReliabilityShell(darkSurface: boolean): string {
   return darkSurface
-    ? 'rounded-2xl border border-gray-700 bg-gray-900/50 p-5 md:p-6 text-sm shadow-soft'
-    : 'rounded-2xl border border-gray-100 bg-gray-50/50 p-5 md:p-6 text-sm shadow-soft';
+    ? 'rounded-xl border border-gray-700 bg-gray-900/50 p-4 md:p-5 text-xs shadow-soft'
+    : 'rounded-xl border border-gray-100 bg-gray-50/50 p-4 md:p-5 text-xs shadow-soft';
 }
 
 interface AccentContentTokens {
@@ -1776,8 +1776,8 @@ export function getEventDetailContentTokens(accent: EventDetailMapAccent, darkSu
 /** Right-column groups card — Classic shell on all themes. */
 export function getEventDetailGroupsSidebarShell(darkSurface: boolean): string {
   return darkSurface
-    ? 'rounded-2xl border border-gray-700 bg-gray-800 p-6 shadow-soft sticky top-24'
-    : 'rounded-2xl border border-gray-100 bg-white p-6 shadow-soft sticky top-24';
+    ? 'rounded-2xl border border-gray-700 bg-gray-800 p-4 shadow-soft sticky top-24'
+    : 'rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sticky top-24';
 }
 
 export function getEventDetailGroupsSidebarHeading(darkSurface: boolean): string {

@@ -60,13 +60,13 @@ export default function HelpCenterPageContent() {
   const hasResults = filtered.length > 0 || filteredFaqs.length > 0;
 
   return (
-    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Hero */}
-      <div className={cn("text-white rounded-2xl p-8 text-center shadow-soft-md relative overflow-hidden", a.heroBg)}>
-        <div className={cn("absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full", a.heroCircle)}></div>
-        <div className={cn("absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full", a.heroCircle)}></div>
-        <h1 className="text-xl md:text-2xl font-black mb-2 relative z-10">{t('Κέντρο Βοήθειας', 'Help Center')}</h1>
-        <p className={cn("text-base font-medium mb-6 relative z-10", a.heroSub)}>{t('Πώς μπορούμε να βοηθήσουμε;', 'How can we help you?')}</p>
+      <div className={cn("text-white rounded-2xl p-5 text-center shadow-soft-md relative overflow-hidden", a.heroBg)}>
+        <div className={cn("absolute top-0 right-0 -mr-8 -mt-5 w-32 h-32 rounded-full", a.heroCircle)}></div>
+        <div className={cn("absolute bottom-0 left-0 -ml-8 -mb-5 w-24 h-24 rounded-full", a.heroCircle)}></div>
+        <h1 className="text-sm md:text-base font-black mb-2 relative z-10">{t('Κέντρο Βοήθειας', 'Help Center')}</h1>
+        <p className={cn("text-base font-medium mb-4 relative z-10", a.heroSub)}>{t('Πώς μπορούμε να βοηθήσουμε;', 'How can we help you?')}</p>
         <div className="relative max-w-md mx-auto z-10">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
@@ -145,7 +145,7 @@ export default function HelpCenterPageContent() {
             </Card>
           ))}
           {filtered.length === 0 && (
-            <Card className="p-6 text-center">
+            <Card className="p-4 text-center">
               <p className={cn('text-sm font-medium', a.muted)}>{t('Κανένα άρθρο δεν ταιριάζει.', 'No articles match your search.')}</p>
             </Card>
           )}
@@ -153,7 +153,7 @@ export default function HelpCenterPageContent() {
       </div>
 
       {!hasResults && search && (
-        <Card className="p-6 text-center">
+        <Card className="p-4 text-center">
           <p className={cn('text-sm font-medium', a.muted)}>{t('Δεν βρέθηκαν αποτελέσματα. Δοκιμάστε άλλους όρους.', 'No results found. Try different terms.')}</p>
           <button
             type="button"
@@ -169,7 +169,7 @@ export default function HelpCenterPageContent() {
       <CopilotInlinePrompt title={{ el: 'Ρώτα το Nakamas AI αντί να ψάχνεις', en: 'Ask Nakamas AI instead of searching' }} />
 
       {/* Contact */}
-      <Card className="p-6 text-center">
+      <Card className="p-4 text-center">
         <MessageCircle className={cn("w-8 h-8 mx-auto mb-3", a.contactIcon)} />
         <h3 className={cn("font-bold mb-1", a.head)}>{t('Χρειάζεστε βοήθεια;', 'Need more help?')}</h3>
         <p className={cn("text-sm mb-2", a.sub)}>{t('Επικοινωνήστε μαζί μας', 'Contact our support team')}</p>

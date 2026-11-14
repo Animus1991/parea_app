@@ -23,7 +23,7 @@ export function GroupChatLeaveModal({
         <div className="w-12 h-12 bg-red-50 dark:bg-red-500/15 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
           <ArrowLeft className="w-6 h-6" />
         </div>
-        <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+        <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
           {t('Είστε σίγουροι ότι θέλετε να αποχωρήσετε από', 'Are you sure you want to leave')}{' '}
           <span className="font-bold text-ink">{eventTitle}</span>?{' '}
           {t(

@@ -139,10 +139,10 @@ export default function CategoriesPageContent() {
     : 'bg-white border-gray-200 text-gray-800 cursor-pointer';
 
   return (
-    <div className="max-w-full mx-auto space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div
         className={cn(
-          'p-6 md:p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative shadow-soft',
+          'p-4 md:p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 overflow-hidden relative shadow-soft',
           'bg-gradient-to-br from-hero-from to-hero-to text-hero-fg',
         )}
       >
@@ -154,13 +154,13 @@ export default function CategoriesPageContent() {
             <Compass className="w-3.5 h-3.5 mr-1" />{' '}
             {t('Εξερευνηση Δραστηριοτήτων', 'Activity Explorer')}
           </Badge>
-          <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-3 leading-tight">
+          <h1 className="text-2xl md:text-2xl font-extrabold tracking-tight mb-3 leading-tight">
             {t('Βρείτε την επόμενη', 'Find your next')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-hero-accent-from to-hero-accent-to">
               {t('εμπειρία σας', 'experience')}
             </span>
           </h1>
-          <p className="text-sm md:text-base font-medium text-hero-fg/80 leading-relaxed mb-6">
+          <p className="text-sm md:text-base font-medium text-hero-fg/80 leading-relaxed mb-4">
             {t(
               'Ανακαλύψτε επιλεγμένες εκδηλώσεις που ταιριάζουν στα ενδιαφέροντά σας.',
               'Discover handpicked events matching your interests.',
@@ -325,8 +325,8 @@ export default function CategoriesPageContent() {
         />
       )}
 
-      <div className={cn('mt-10 border-t pt-8 scroll-mt-24', p.borderT)} id="events-area">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
+      <div className={cn('mt-10 border-t pt-5 scroll-mt-24', p.borderT)} id="events-area">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
           <div className="flex items-center gap-3">
             <div
               className={cn(
@@ -346,7 +346,7 @@ export default function CategoriesPageContent() {
               )}
             </div>
             <div>
-              <h2 className={cn('text-base md:text-lg font-extrabold tracking-tight', p.head)}>
+              <h2 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.head)}>
                 {activeCategory
                   ? language === 'el'
                     ? CATEGORY_CATALOG.find((c) => c.name === activeCategory)?.labelGr
@@ -434,7 +434,7 @@ export default function CategoriesPageContent() {
 
       <div
         className={cn(
-          'mt-12 rounded-2xl p-6 md:p-8 border shadow-soft flex flex-col justify-center items-center text-center gap-5 relative overflow-hidden',
+          'mt-12 rounded-2xl p-4 md:p-5 border shadow-soft flex flex-col justify-center items-center text-center gap-5 relative overflow-hidden',
           p.isDark ? 'bg-[hsl(220_16%_16%)] border-gray-700' : 'bg-cyan-50/50 border-cyan-100',
         )}
       >
@@ -447,7 +447,7 @@ export default function CategoriesPageContent() {
         >
           <Star className="w-3.5 h-3.5 mr-1" /> {t('Γίνε Οικοδεσπότης', 'Become a Host')}
         </Badge>
-        <h3 className={cn('text-xl md:text-2xl font-extrabold tracking-tight', p.head)}>
+        <h3 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.head)}>
           {t('Μην βρήκατε αυτό που ψάχνατε;', "Couldn't find what you wanted?")}
         </h3>
         <p className={cn('text-sm max-w-lg mx-auto font-medium leading-relaxed', p.sub)}>
@@ -456,7 +456,7 @@ export default function CategoriesPageContent() {
             'Create your own event and gather people with similar passions.',
           )}
         </p>
-        <Button onClick={() => navigate('/create')} size="lg" className="font-bold px-8">
+        <Button onClick={() => navigate('/create')} size="lg" className="font-bold px-5">
           {t('Δημιουργία Νέας Εμπειρίας', 'Create New Experience')}
         </Button>
       </div>

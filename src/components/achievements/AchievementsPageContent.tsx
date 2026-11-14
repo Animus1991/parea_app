@@ -77,11 +77,11 @@ export default function AchievementsPageContent() {
   const activeDays = d.weekly.days.filter(Boolean).length;
 
   return (
-    <div className="mx-auto max-w-full space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="mx-auto max-w-full space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <GamificationHubNav />
       <div>
         <div>
-          <h1 className={cn('text-xl md:text-2xl font-bold', a.head)}>{t('Επιτεύγματα', 'Achievements')}</h1>
+          <h1 className={cn('text-sm md:text-base font-bold', a.head)}>{t('Επιτεύγματα', 'Achievements')}</h1>
           <p className={cn('font-medium text-sm mt-1', a.sub)}>
             {t('Κάθε badge βασίζεται στη πραγματική σου δραστηριότητα — πάτα ένα για να δεις πώς το ξεκλειδώνεις.', 'Every badge is based on your real activity — tap one to see how to unlock it.')}
           </p>

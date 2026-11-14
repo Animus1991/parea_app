@@ -65,12 +65,12 @@ export function EventCardSkeleton({ variant = 'default' }: { variant?: 'default'
       <div className={cn('mt-auto pt-3 border-t space-y-2', isDark ? 'border-gray-700/40' : 'border-gray-50')}>
         <div className="flex justify-between items-center mb-1">
           <Skeleton className="h-3 w-20" />
-          <Skeleton className="h-3 w-16" />
+          <Skeleton className="h-3 w-12" />
         </div>
         <Skeleton className="h-1.5 w-full rounded-full" />
         <div className="flex justify-between items-center mt-3 pt-1">
-          <Skeleton className="h-5 w-16" />
-          <Skeleton className="h-8 w-16 rounded-full" />
+          <Skeleton className="h-5 w-12" />
+          <Skeleton className="h-8 w-12 rounded-full" />
         </div>
       </div>
     </Status>
@@ -109,7 +109,7 @@ export function ListItemSkeleton({ variant = 'compact-event' }: { variant?: List
           <div className="flex-1 min-w-0 space-y-2">
             <div className="flex justify-between items-center gap-3">
               <Skeleton className="h-4 w-40" />
-              <Skeleton className="h-3 w-16" />
+              <Skeleton className="h-3 w-12" />
             </div>
             <Skeleton className="h-3.5 w-3/4" />
           </div>
@@ -136,7 +136,7 @@ export function ListItemSkeleton({ variant = 'compact-event' }: { variant?: List
               <Skeleton className="h-3 w-32" />
             </div>
           </div>
-          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-12" />
         </div>
       );
     case 'connection-card':
@@ -158,7 +158,7 @@ export function ListItemSkeleton({ variant = 'compact-event' }: { variant?: List
           <Skeleton className="w-20 h-20 rounded-xl shrink-0" />
           <div className="flex-1 min-w-0 space-y-2 py-0.5">
             <div className="flex gap-2">
-              <Skeleton className="h-4 w-16 rounded-full" />
+              <Skeleton className="h-4 w-12 rounded-full" />
               <Skeleton className="h-4 w-20 rounded-full" />
             </div>
             <Skeleton className="h-4 w-4/5" />
@@ -191,7 +191,7 @@ export function ListViewSkeleton({
 export function ProfileSkeleton() {
   const { t } = useLanguage();
   return (
-    <Status label={t('Φόρτωση προφίλ…', 'Loading profile…')} className="space-y-6">
+    <Status label={t('Φόρτωση προφίλ…', 'Loading profile…')} className="space-y-4">
       <div className="flex items-center gap-4">
         <Skeleton className="w-20 h-20 rounded-full" />
         <div className="space-y-2">
@@ -201,7 +201,7 @@ export function ProfileSkeleton() {
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-16 rounded-xl" />
+          <Skeleton key={i} className="h-12 rounded-xl" />
         ))}
       </div>
       <div className="p-4 border rounded-xl space-y-3">
@@ -216,7 +216,7 @@ export function ProfileSkeleton() {
 export function EventDetailSkeleton() {
   const { t } = useLanguage();
   return (
-    <Status label={t('Φόρτωση εκδήλωσης…', 'Loading event…')} className="space-y-6">
+    <Status label={t('Φόρτωση εκδήλωσης…', 'Loading event…')} className="space-y-4">
       <Skeleton className="h-6 w-24 mb-4" />
       <div className="space-y-3">
         <Skeleton className="h-8 w-3/4" />
@@ -225,13 +225,13 @@ export function EventDetailSkeleton() {
           <Skeleton className="h-6 w-20 rounded-full" />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4 mt-6">
+      <div className="grid grid-cols-2 gap-4 mt-4">
         <Skeleton className="h-12 w-full rounded-lg" />
         <Skeleton className="h-12 w-full rounded-lg" />
         <Skeleton className="h-12 w-full rounded-lg" />
         <Skeleton className="h-12 w-full rounded-lg" />
       </div>
-      <div className="space-y-3 mt-6">
+      <div className="space-y-3 mt-4">
         <Skeleton className="h-5 w-40" />
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-full" />

@@ -46,7 +46,7 @@ export function AdminBrandingPanel() {
               type="color"
               value={primary}
               onChange={(e) => setPrimary(e.target.value)}
-              className="h-10 w-14 rounded-lg border cursor-pointer"
+              className="h-10 w-11 rounded-lg border cursor-pointer"
             />
             <span className={cn('text-sm tabular-nums', a.sub)}>{primary}</span>
           </div>

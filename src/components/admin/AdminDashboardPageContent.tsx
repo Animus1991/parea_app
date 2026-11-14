@@ -147,14 +147,14 @@ export default function AdminDashboardPageContent() {
     : issueReports.slice(0, 2);
 
   return (
-    <div className="mx-auto max-w-full space-y-6 pb-12 animate-in fade-in duration-500">
+    <div className="mx-auto max-w-full space-y-4 pb-4 animate-in fade-in duration-500">
       <div className={cn('p-5 rounded-2xl border flex flex-col md:flex-row md:items-center justify-between gap-4', a.cardSurface, a.borderB)}>
         <div className="flex items-center gap-4">
           <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center border shrink-0', a.isDark ? 'bg-red-950/30 border-red-900/50' : 'bg-red-50 border-red-200')}>
             <ShieldAlert className={cn('w-6 h-6', a.isDark ? 'text-red-400' : 'text-red-600')} aria-hidden />
           </div>
           <div>
-            <h1 className={cn('text-base md:text-lg font-bold', a.isDark ? 'text-red-400' : 'text-red-700')}>
+            <h1 className={cn('text-sm md:text-base font-bold', a.isDark ? 'text-red-400' : 'text-red-700')}>
               {t('Πίνακας Διαχείρισης', 'Admin Dashboard')}
             </h1>
             <p className={cn('mt-0.5 text-sm font-medium', a.sub)}>
@@ -187,7 +187,7 @@ export default function AdminDashboardPageContent() {
         ]}
       />
 
-      <div role="tabpanel" id={`admin-panel-${adminTab}`} aria-labelledby={`admin-tab-${adminTab}`} className="space-y-6">
+      <div role="tabpanel" id={`admin-panel-${adminTab}`} aria-labelledby={`admin-tab-${adminTab}`} className="space-y-4">
       {adminTab === 'automation' && <AdminAutomationPanel />}
       {adminTab === 'branding' && <AdminBrandingPanel />}
       {adminTab === 'sso' && <AdminSSOPanel />}
@@ -312,7 +312,7 @@ export default function AdminDashboardPageContent() {
           </div>
         </div>
         {filteredUsers.length === 0 ? (
-          <p className={cn('p-6 text-center text-sm', a.muted)}>{t('Κανένα μέλος δεν ταιριάζει.', 'No members match.')}</p>
+          <p className={cn('p-4 text-center text-sm', a.muted)}>{t('Κανένα μέλος δεν ταιριάζει.', 'No members match.')}</p>
         ) : (
           <ul className={cn('divide-y', a.isDark ? 'divide-gray-700/40' : 'divide-gray-100')}>
             {filteredUsers.map((u) => {
@@ -409,11 +409,11 @@ export default function AdminDashboardPageContent() {
 
       {adminTab === 'moderation' && (
       <>
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        <div className="md:col-span-7 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+        <div className="md:col-span-7 space-y-4">
           <h2 className={cn('text-base font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>
           {displayReports.length === 0 ? (
-            <Card className={cn('p-6 text-center', a.cardSurface)}>
+            <Card className={cn('p-4 text-center', a.cardSurface)}>
               <p className={cn('text-sm font-medium', a.muted)}>
                 {t('Δεν υπάρχουν αναφορές ακόμα. Οι αναφορές από /report εμφανίζονται εδώ.', 'No reports yet. Reports from /report appear here.')}
               </p>
@@ -481,7 +481,7 @@ export default function AdminDashboardPageContent() {
 
         <div className="md:col-span-5 relative">
           <div className="sticky top-24">
-            <h2 className={cn('text-sm font-bold tracking-wide mb-6 flex items-center gap-2', a.head)}>
+            <h2 className={cn('text-sm font-bold tracking-wide mb-4 flex items-center gap-2', a.head)}>
               <Flag className="h-4 w-4 text-gray-400" />
               {t('Γρήγορη Ενέργεια', 'Quick Action')}
             </h2>

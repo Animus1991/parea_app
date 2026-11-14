@@ -103,7 +103,7 @@ export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewPro
 
         <div className="flex-1 overflow-y-auto p-4">
           {dayEvents.length === 0 ? (
-            <p className={cn('text-center py-12 text-sm font-medium', p.muted)}>
+            <p className={cn('text-center py-4 text-sm font-medium', p.muted)}>
               {t('Δεν υπάρχουν προγραμματισμένες εκδηλώσεις', 'No planned events this day')}
             </p>
           ) : (

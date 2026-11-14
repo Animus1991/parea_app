@@ -145,13 +145,13 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
 
   if (!hasCoords) {
     return (
-      <div className={cn('mt-6 space-y-2', className)}>
+      <div className={cn('mt-4 space-y-2', className)}>
         <p className={cn('text-xs font-bold tracking-wide', tok.badge)}>
           {t('Τοποθεσία', 'Location')}
         </p>
         <div
           className={cn(
-            'w-full rounded-2xl border p-6 text-center shadow-soft',
+            'w-full rounded-2xl border p-4 text-center shadow-soft',
             tok.frame,
             darkSurface ? 'bg-gray-800/50' : 'bg-gray-50',
           )}
@@ -174,7 +174,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
   }
 
   return (
-    <div className={cn('mt-6 space-y-2', className)}>
+    <div className={cn('mt-4 space-y-2', className)}>
       <p className={cn('text-xs font-bold tracking-wide', tok.badge)}>
         {t('Τοποθεσία', 'Location')} — {t('Πατήστε τον δείκτη για εστίαση', 'Tap marker to focus')}
       </p>

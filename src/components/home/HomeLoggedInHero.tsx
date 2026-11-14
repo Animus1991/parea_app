@@ -95,13 +95,13 @@ export function HomeLoggedInHero({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className={cn(h.hero, 'flex flex-col gap-6 relative')}
+      className={cn(h.hero, 'flex flex-col gap-4 relative')}
     >
       {homeHeroMode === 'light' && (
         <div className="relative z-10 space-y-5">
           <div className="flex justify-between items-start gap-4">
             <div>
-              <h1 className={cn(h.heroGreeting, 'text-xl md:text-2xl font-black mb-1')}>
+              <h1 className={cn(h.heroGreeting, 'text-sm md:text-base font-black mb-1')}>
                 {t('Γειά σου, ', 'Hello, ')}
                 {firstName}!
               </h1>
@@ -131,7 +131,7 @@ export function HomeLoggedInHero({
             <div className="space-y-2 flex-1">
               <p className={h.heroGreeting}>{greeting}</p>
               <p className={cn(h.heroMotivation, 'text-sm')}>{motivation}</p>
-              <h1 className={cn(h.heroTitle, 'text-lg md:text-xl max-w-2xl')}>
+              <h1 className={cn(h.heroTitle, 'text-sm md:text-base max-w-2xl')}>
                 {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>
                   {t('home.hero.title2', 'εμπειρίες')}
@@ -168,7 +168,7 @@ export function HomeLoggedInHero({
       )}
 
       {homeHeroMode === 'rich' && (
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="flex-1">
             <p className={cn(h.heroGreeting, 'mb-1')}>{greeting}</p>
             <p className={cn(h.heroMotivation, 'mb-4')}>{motivation}</p>
@@ -179,13 +179,13 @@ export function HomeLoggedInHero({
               </span>{' '}
               {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
             </h1>
-            <p className={cn(h.heroSubtitle, 'max-w-xl mb-6')}>
+            <p className={cn(h.heroSubtitle, 'max-w-xl mb-4')}>
               {t(
                 'home.hero.subtitle',
                 'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.',
               )}
             </p>
-            <div className="flex flex-wrap items-center gap-2 mb-6">
+            <div className="flex flex-wrap items-center gap-2 mb-4">
               {(
                 [
                   { icon: Users, label: t('home.hero.stat1', 'Μικρές ομάδες') },
@@ -206,7 +206,7 @@ export function HomeLoggedInHero({
                 </span>
               ))}
             </div>
-            <div className="flex gap-3 mb-6">
+            <div className="flex gap-3 mb-4">
               <button
                 type="button"
                 onClick={() => navigate('/nearby')}
@@ -220,7 +220,7 @@ export function HomeLoggedInHero({
           </div>
           {currentUser && (
             <div className="hidden md:flex flex-col items-center gap-2 shrink-0">
-              <div className="w-16 h-16 rounded-full border-4 border-white/30 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-xl shadow-soft">
+              <div className="w-12 h-12 rounded-full border-4 border-white/30 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-xl shadow-soft">
                 {score}
               </div>
               <span className="text-xs font-bold text-white/80 uppercase tracking-wider flex items-center gap-1">

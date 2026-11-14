@@ -469,7 +469,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             setShowEtaPrompt(false);
           }}
           title={t("Χάρτης & Ασφάλεια", "Map & Safety")}
-          className="sm:max-w-lg sm:mx-auto sm:mb-6 sm:rounded-2xl sm:border"
+          className="sm:max-w-lg sm:mx-auto sm:mb-4 sm:rounded-2xl sm:border"
         >
           <div className="space-y-4">
             <div>
@@ -660,7 +660,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 </button>
               </div>
 
-              <div className="p-5 space-y-6">
+              <div className="p-5 space-y-4">
                 {isSharingLocation && (
                   <div className="bg-cyan-50 border border-[#a5f3fc]/40 rounded-2xl p-4 flex flex-col gap-3 shadow-soft">
                     <div className="flex items-center gap-2 text-cyan-700">
@@ -858,13 +858,13 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-500/15 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
             <Link2 className="w-6 h-6" />
           </div>
-          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
               "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ένα φίλο. Θα βλέπει την τοποθεσία σας μέχρι το τέλος της εκδήλωσης.",
               "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They will see your live location until the event ends.",
             )}
           </p>
-          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-6 text-left">
+          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-4 text-left">
             <span className="text-xs font-medium text-ink truncate mr-2">
               https://nakamas.app/safe/r9x2p
             </span>

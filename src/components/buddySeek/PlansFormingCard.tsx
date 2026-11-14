@@ -129,7 +129,7 @@ export function PlansFormingCard({
         <button
           type="button"
           onClick={() => navigate(`/events/${item.event.id}`)}
-          className="relative shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 group"
+          className="relative shrink-0 w-12 h-12 rounded-xl overflow-hidden bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 group"
           aria-label={t('Δες εκδήλωση', 'View event')}
         >
           {item.event.imageUrl ? (
@@ -363,7 +363,7 @@ export function PlansFormingGroupCard({
     >
       <div className="flex gap-3 p-3">
         {event.imageUrl && (
-          <img src={event.imageUrl} alt="" className="w-14 h-14 rounded-xl object-cover shrink-0" />
+          <img src={event.imageUrl} alt="" className="w-11 h-11 rounded-xl object-cover shrink-0" />
         )}
         <div className="min-w-0 flex-1 space-y-1">
           <p className="text-xs font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">

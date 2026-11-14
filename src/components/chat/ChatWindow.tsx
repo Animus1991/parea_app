@@ -164,7 +164,7 @@ function ChatWindowInner({
         </button>
       </header>
       {menuOpen && (
-        <div className={cn('absolute right-3 top-12 z-10 rounded-xl border border-border bg-surface-raised py-1 shadow-soft-lg', CHAT_TYPO.menu)}>
+        <div className={cn('absolute right-3 top-4 z-10 rounded-xl border border-border bg-surface-raised py-1 shadow-soft-lg', CHAT_TYPO.menu)}>
           <button type="button" className="block w-full text-left px-4 py-2 hover:bg-ink/5" onClick={onMute}>
             {conversation.muted ? t('Ξεσίγαση', 'Unmute') : t('Σίγαση', 'Mute')}
           </button>

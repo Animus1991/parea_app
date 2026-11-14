@@ -70,7 +70,7 @@ export function GroupMergeModal({
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl bg-surface-raised text-ink border border-border shadow-soft-lg max-h-[90vh] overflow-y-auto outline-none"
+        className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl bg-surface-raised text-ink border border-border shadow-soft-lg max-h-[90vh] overflow-y-auto outline-none"
       >
         <div className="p-5 border-b border-border">
           <div className="flex items-center gap-2 text-accent-strong">

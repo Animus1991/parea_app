@@ -158,14 +158,14 @@ export function PlansFormingBottomSheet() {
               setOpen(false);
               navigate('/buddy-seek');
             }}
-            className={cn('flex-1 min-h-12 rounded-2xl text-sm font-bold text-white', tok.primaryBtn)}
+            className={cn('flex-1 min-h-10 rounded-2xl text-sm font-bold text-white', tok.primaryBtn)}
           >
             {t('Όλα τα σχέδια', 'All plans')}
           </button>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className={cn('min-h-12 px-5 rounded-2xl text-sm font-bold border', c.border, c.fgMuted)}
+            className={cn('min-h-10 px-5 rounded-2xl text-sm font-bold border', c.border, c.fgMuted)}
           >
             {t('Κλείσιμο', 'Close')}
           </button>

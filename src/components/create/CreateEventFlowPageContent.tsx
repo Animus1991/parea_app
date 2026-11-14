@@ -179,16 +179,16 @@ export default function CreateEventFlowPageContent() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-full mx-auto pb-24 md:pb-8"
+      className="max-w-full mx-auto pb-24 md:pb-5"
     >
-      <div className="mb-8">
+      <div className="mb-5">
         {prefilledByAi && (
           <p role="status" className="mb-4 flex items-center gap-2 rounded-xl border border-accent/30 bg-accent-soft px-3 py-2 text-sm font-medium text-ink">
             <Sparkles className="h-4 w-4 shrink-0 text-accent" aria-hidden />
             {t("Το Nakamas AI συμπλήρωσε τη φόρμα. Έλεγξε τα στοιχεία και συνέχισε.", "Nakamas AI pre-filled this form. Review the details and continue.")}
           </p>
         )}
-        <h1 className={cn("text-lg md:text-xl font-bold", p.head)}>
+        <h1 className={cn("text-sm md:text-base font-bold", p.head)}>
           {editEvent ? t("Επεξεργασία Εμπειρίας", "Edit Experience") : t("Δημιουργία Εμπειρίας", "Create Experience")}
         </h1>
         <p className={cn("text-sm mt-1", p.muted)}>
@@ -198,7 +198,7 @@ export default function CreateEventFlowPageContent() {
           )}
         </p>
 
-        <div className="flex items-center gap-2 mt-6">
+        <div className="flex items-center gap-2 mt-4">
           {Array.from({ length: totalSteps }).map((_, i) => (
             <motion.div
               key={i}
@@ -209,7 +209,7 @@ export default function CreateEventFlowPageContent() {
         </div>
       </div>
 
-      <Card className="p-6 md:p-8 overflow-hidden relative min-h-[400px]">
+      <Card className="p-4 md:p-5 overflow-hidden relative min-h-[400px]">
         <AnimatePresence mode="wait">
           {step === 1 && (
             <motion.div
@@ -218,7 +218,7 @@ export default function CreateEventFlowPageContent() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="space-y-6"
+              className="space-y-4"
             >
               <h2 className={cn("text-lg font-bold", p.head)}>
                 {t("Τα Βασικά", "The Basics")}
@@ -341,7 +341,7 @@ export default function CreateEventFlowPageContent() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="space-y-6"
+              className="space-y-4"
             >
               <h2 className={cn("text-lg font-bold", p.head)}>
                 {t("Πότε & Πού", "When & Where")}
@@ -459,13 +459,13 @@ export default function CreateEventFlowPageContent() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="space-y-6"
+              className="space-y-4"
             >
               <h2 className={cn("text-lg font-bold", p.head)}>
                 {t("Δυναμική Ομάδας", "Group Dynamics")}
               </h2>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
                   <label className={cn(labelClass, "mb-3")}>
                     {t("Ορατότητα", "Visibility")}
@@ -605,7 +605,7 @@ export default function CreateEventFlowPageContent() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="space-y-6"
+              className="space-y-4"
             >
               <div className="text-center">
                 <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3", pc.accentBg)}>

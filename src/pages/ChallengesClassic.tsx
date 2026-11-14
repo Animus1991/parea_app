@@ -182,7 +182,7 @@ export default function ChallengesClassic() {
       <GamificationHubNav />
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn('text-base md:text-lg font-bold', p.head)}>
+          <h1 className={cn('text-sm md:text-base font-bold', p.head)}>
             {t('Προκλήσεις', 'Challenges')}
           </h1>
           <p className={cn('font-medium text-sm md:text-sm mt-1', p.sub)}>

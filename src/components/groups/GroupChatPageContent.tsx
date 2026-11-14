@@ -186,7 +186,7 @@ export default function GroupChatPageContent() {
 
   if (!group || !event) {
     return (
-      <div className="p-8 text-center text-gray-500">
+      <div className="p-5 text-center text-gray-500">
         {t(
           "Το Chat δεν βρέθηκε ή η ομάδα δεν επιβεβαιώθηκε.",
           "Chat not found or group not confirmed.",
@@ -245,7 +245,7 @@ export default function GroupChatPageContent() {
     return (
       <div
         key={msg.id}
-        className={`flex flex-col group py-2.5 w-full px-4 md:px-6 ${isMe ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+        className={`flex flex-col group py-2.5 w-full px-4 md:px-4 ${isMe ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
       >
         <span className="text-xs font-semibold tracking-tight capitalize text-gray-500 ml-1 mb-1">
           {isMe ? t("Εσείς", "You") : msg.senderName}
@@ -522,7 +522,7 @@ export default function GroupChatPageContent() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-6 bg-gray-50/50">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4 bg-gray-50/50">
               {/* Event Summary */}
               <div className="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden">
                 <div className="relative h-28 w-full group">
@@ -914,13 +914,13 @@ export default function GroupChatPageContent() {
           <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
             <Link2 className="w-6 h-6" />
           </div>
-          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
               "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ασφάλεια εκτός Nakamas. Θα βλέπουν την τοποθεσία σας μέχρι το τέλος. Ανακαλέστε τον όποτε θέλετε.",
               "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They will be able to see your live location until the event ends. You can revoke it anytime.",
             )}
           </p>
-          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-6">
+          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-4">
             <span className="text-xs font-medium text-ink truncate mr-2">
               https://nakamas.app/safe/r9x2p
             </span>
@@ -966,7 +966,7 @@ export default function GroupChatPageContent() {
           <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4", gc.panelAccent)}>
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
               "Προτείνετε να απενεργοποιηθεί η Εφήμερη Λειτουργία. Αν όλα τα μέλη συμφωνήσουν, η συνομιλία θα διατηρηθεί μόνιμα.",
               "You are proposing to turn off Ephemeral Mode. If all group members agree, this chat will be kept permanently instead of being deleted automatically.",
@@ -1017,7 +1017,7 @@ export default function GroupChatPageContent() {
           <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
             <Clock className="w-6 h-6" />
           </div>
-          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
               "Ενημερώστε γρήγορα την ομάδα για την κατάστασή σας χωρίς να μοιραστείτε την ακριβή τοποθεσία σας.",
               "Quickly update the group on your status without sharing your exact location.",
@@ -1195,7 +1195,7 @@ export default function GroupChatPageContent() {
                   </div>
                 ))
             ) : (
-              <div className="text-center p-8 text-ink-muted flex flex-col items-center">
+              <div className="text-center p-5 text-ink-muted flex flex-col items-center">
                 <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center mb-3">
                   <Check className="w-6 h-6" />
                 </div>

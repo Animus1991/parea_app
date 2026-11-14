@@ -212,7 +212,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
           </div>
         )}
         {!isTrackingActive ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-gray-50/90 z-10">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 bg-gray-50/90 z-10">
             <WifiOff className="w-12 h-12 text-gray-300 mb-3" />
             <p className="text-gray-500 font-medium">
               {t(
@@ -222,7 +222,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
             </p>
           </div>
         ) : !isSharing && !isHost ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-white/80 backdrop-blur-sm z-10">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 bg-white/80 backdrop-blur-sm z-10">
             <Users className="w-12 h-12 text-indigo-200 mb-4" />
             <h4 className="font-bold text-ink mb-2">
               {t("Συνδεθείτε στον Χάρτη", "Join the Map")}

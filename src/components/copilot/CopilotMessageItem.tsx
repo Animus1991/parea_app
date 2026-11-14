@@ -48,9 +48,9 @@ function EventResult({ eventId, index, onNavigate }: { eventId: string; index: n
       </span>
       <button type="button" onClick={open} className="flex min-w-0 flex-1 items-center gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg">
         {event.imageUrl ? (
-          <img src={event.imageUrl} alt="" referrerPolicy="no-referrer" className="h-12 w-12 shrink-0 rounded-lg object-cover" />
+          <img src={event.imageUrl} alt="" referrerPolicy="no-referrer" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
         ) : (
-          <span className="h-12 w-12 shrink-0 rounded-lg bg-accent-soft" />
+          <span className="h-10 w-10 shrink-0 rounded-lg bg-accent-soft" />
         )}
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-semibold text-ink">{event.title}</span>

@@ -202,7 +202,7 @@ export function CommandPalette() {
             </div>
             <div className="max-h-[50vh] overflow-y-auto p-2">
               {visible.length === 0 && !hasAiRow ? (
-                <p className="text-sm text-gray-500 text-center py-8">
+                <p className="text-sm text-gray-500 text-center py-5">
                   {t('Δεν βρέθηκαν αποτελέσματα', 'No results found')}
                 </p>
               ) : (

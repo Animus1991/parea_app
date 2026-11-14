@@ -20,7 +20,7 @@ export function LoginGuestHeroStrip({
   const navigate = useNavigate();
 
   return (
-    <div className={cn('w-full max-w-md mx-auto mb-6 text-center space-y-3', className)}>
+    <div className={cn('w-full max-w-md mx-auto mb-4 text-center space-y-3', className)}>
       <div
         className={cn(
           'inline-flex items-center justify-center w-10 h-10 rounded-xl mb-1',

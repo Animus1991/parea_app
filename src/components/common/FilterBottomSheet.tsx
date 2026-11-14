@@ -50,7 +50,7 @@ export function FilterBottomSheet({
         </button>
       </div>
       <div className="space-y-5 text-ink">{children}</div>
-      <div className="mt-6 flex gap-3">
+      <div className="mt-4 flex gap-3">
         <button
           type="button"
           onClick={onClear}
