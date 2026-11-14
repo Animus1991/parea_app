@@ -115,7 +115,7 @@ export default function AchievementsPageContent() {
               return (
                 <Card key={ach.id} className="p-4">
                   <div className="flex items-start gap-3">
-                    <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0', a.isDark ? meta.darkColor : meta.color, !ach.unlocked && 'opacity-60')}>
+                    <div className={cn('w-9 h-9 rounded-full flex items-center justify-center shrink-0', a.isDark ? meta.darkColor : meta.color, !ach.unlocked && 'opacity-60')}>
                       <Icon className="w-4 h-4" aria-hidden />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -123,8 +123,8 @@ export default function AchievementsPageContent() {
                         <h2 className={cn('text-sm font-bold truncate', a.head)}>{title}</h2>
                         {ach.unlocked && <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" aria-label={t('Ξεκλείδωτο', 'Unlocked')} />}
                       </div>
-                      <p className={cn('text-xs font-medium mt-0.5', a.sub)}>{t(ach.descriptionEl, ach.descriptionEn)}</p>
-                      <div className="flex items-center gap-2 mt-2.5">
+                      <p className={cn('text-xs font-medium mt-0.5 line-clamp-1', a.sub)}>{t(ach.descriptionEl, ach.descriptionEn)}</p>
+                      <div className="flex items-center gap-2 mt-2">
                         <div
                           className={cn('flex-1 h-1.5 rounded-full overflow-hidden', a.progressBg)}
                           role="progressbar"
@@ -145,21 +145,21 @@ export default function AchievementsPageContent() {
                       {ach.unlocked ? (
                         <button
                           type="button"
-                          className={cn('min-h-9 text-xs font-bold flex items-center gap-1 transition-colors', a.shareHover)}
+                          className={cn('text-xs font-bold flex items-center gap-0.5 transition-colors', a.shareHover)}
                           onClick={() => void handleShareBadge(title)}
                           aria-label={`${t('Κοινοποίηση', 'Share')}: ${title}`}
                         >
-                          <Share2 className="w-3 h-3" aria-hidden />
+                          <Share2 className="w-2.5 h-2.5" aria-hidden />
                           {t('Κοινοπ.', 'Share')}
                         </button>
                       ) : (
                         <button
                           type="button"
                           onClick={() => navigate(ach.path)}
-                          className={cn('min-h-9 text-xs font-bold flex items-center gap-0.5 transition-colors', a.shareHover)}
+                          className={cn('text-xs font-bold flex items-center gap-0.5 transition-colors', a.shareHover)}
                           aria-label={`${t('Πώς το ξεκλειδώνω', 'How to unlock')}: ${title}`}
                         >
-                          {t('Ξεκλείδωμα', 'Unlock')} <ChevronRight className="w-3 h-3" aria-hidden />
+                          {t('Ξεκλείδωμα', 'Unlock')} <ChevronRight className="w-2.5 h-2.5" aria-hidden />
                         </button>
                       )}
                     </div>
@@ -189,7 +189,7 @@ export default function AchievementsPageContent() {
                   <li key={day} className="flex flex-col items-center gap-1">
                     <div
                       className={cn(
-                        'w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold',
+                        'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold',
                         d.weekly.days[i] ? 'bg-orange-100 text-orange-600 border-2 border-orange-300' : a.streakOff,
                       )}
                     >

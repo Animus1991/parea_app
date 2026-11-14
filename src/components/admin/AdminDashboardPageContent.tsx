@@ -148,10 +148,10 @@ export default function AdminDashboardPageContent() {
 
   return (
     <div className="mx-auto max-w-full space-y-6 pb-12 animate-in fade-in duration-500">
-      <div className={cn('p-5 rounded-2xl border flex flex-col md:flex-row md:items-center justify-between gap-4', a.cardSurface, a.borderB)}>
+      <div className={cn('p-4 rounded-2xl border flex flex-col md:flex-row md:items-center justify-between gap-3', a.cardSurface, a.borderB)}>
         <div className="flex items-center gap-4">
-          <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center border shrink-0', a.isDark ? 'bg-red-950/30 border-red-900/50' : 'bg-red-50 border-red-200')}>
-            <ShieldAlert className={cn('w-6 h-6', a.isDark ? 'text-red-400' : 'text-red-600')} aria-hidden />
+          <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center border shrink-0', a.isDark ? 'bg-red-950/30 border-red-900/50' : 'bg-red-50 border-red-200')}>
+            <ShieldAlert className={cn('w-4 h-4', a.isDark ? 'text-red-400' : 'text-red-600')} aria-hidden />
           </div>
           <div>
             <h1 className={cn('text-base md:text-lg font-bold', a.isDark ? 'text-red-400' : 'text-red-700')}>
@@ -162,9 +162,9 @@ export default function AdminDashboardPageContent() {
             </p>
           </div>
         </div>
-        <div role="status" className={cn('flex items-center gap-2 px-4 py-2.5 rounded-xl border', a.borderB)}>
+        <div role="status" className={cn('flex items-center gap-2 px-3 py-1.5 rounded-xl border', a.borderB)}>
           <span className={cn('inline-flex h-2 w-2 rounded-full', safeguards.maintenanceMode ? 'bg-amber-500' : 'bg-emerald-500')} aria-hidden />
-          <span className={cn('text-sm font-bold', safeguards.maintenanceMode ? 'text-amber-700 dark:text-amber-400' : 'text-emerald-700 dark:text-emerald-400')}>
+          <span className={cn('text-xs font-bold', safeguards.maintenanceMode ? 'text-amber-700 dark:text-amber-400' : 'text-emerald-700 dark:text-emerald-400')}>
             {safeguards.maintenanceMode ? t('Λειτουργία συντήρησης ενεργή', 'Maintenance mode active') : t('Όλα τα συστήματα λειτουργούν', 'All systems operational')}
           </span>
         </div>

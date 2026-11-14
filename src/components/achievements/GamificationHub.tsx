@@ -74,7 +74,7 @@ export function GamificationHubNav({ className }: { className?: string }) {
           to={item.to}
           className={({ isActive }) =>
             cn(
-              'inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+              'inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
               isActive ? 'bg-accent text-accent-fg shadow-soft' : 'text-ink-muted hover:bg-surface hover:text-ink',
             )
           }
@@ -95,18 +95,18 @@ export function GamificationSummary({ className }: { className?: string }) {
   return (
     <section
       aria-label={t('Η πρόοδός σου', 'Your progress')}
-      className={cn('flex flex-col gap-5 rounded-2xl border border-border bg-surface-raised p-5 shadow-soft md:flex-row md:items-center md:justify-between', className)}
+      className={cn('flex flex-col gap-3 rounded-2xl border border-border bg-surface-raised p-5 shadow-soft md:flex-row md:items-center md:justify-between', className)}
     >
       <div className="flex items-center gap-4">
-        <div className="relative h-16 w-16 shrink-0">
+        <div className="relative h-10 w-10 shrink-0">
           <svg className="h-full w-full -rotate-90" viewBox="0 0 64 64" aria-hidden>
-            <circle cx="32" cy="32" r="28" fill="none" strokeWidth="5" className="stroke-border" />
+            <circle cx="32" cy="32" r="28" fill="none" strokeWidth="6" className="stroke-border" />
             <circle
               cx="32"
               cy="32"
               r="28"
               fill="none"
-              strokeWidth="5"
+              strokeWidth="6"
               strokeLinecap="round"
               className="stroke-accent transition-[stroke-dashoffset] duration-700 motion-reduce:transition-none"
               strokeDasharray={circumference}
@@ -114,8 +114,8 @@ export function GamificationSummary({ className }: { className?: string }) {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-lg font-extrabold leading-none text-ink tabular-nums">{d.level.level}</span>
-            <span className="text-2xs font-semibold text-ink-muted">LVL</span>
+            <span className="text-sm font-black leading-none text-ink tabular-nums">{d.level.level}</span>
+            <span className="sr-only">{t('Επίπεδο', 'Level')}</span>
           </div>
         </div>
         <div>
@@ -134,7 +134,7 @@ export function GamificationSummary({ className }: { className?: string }) {
           { label: t('Σερί ημερών', 'Day streak'), value: `${d.weekly.streak}` },
           { label: t('Θέση', 'Rank'), value: `#${d.rank}` },
         ].map((stat) => (
-          <div key={stat.label} className="flex flex-col-reverse rounded-xl border border-border bg-surface px-3 py-2.5 text-center">
+          <div key={stat.label} className="flex flex-col-reverse rounded-xl border border-border bg-surface px-3 py-1.5 text-center">
             <dt className="text-2xs font-medium text-ink-muted">{stat.label}</dt>
             <dd className="block text-base font-bold text-ink tabular-nums">{stat.value}</dd>
           </div>
@@ -162,8 +162,8 @@ export function DailyChallengeCard({ className }: { className?: string }) {
       className={cn('flex flex-col gap-4 rounded-2xl border border-border bg-surface-raised p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between', className)}
     >
       <div className="flex items-center gap-3.5">
-        <span aria-hidden className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
-          <Sparkles className="h-5 w-5" />
+        <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+          <Sparkles className="h-4 w-4" />
         </span>
         <div>
           <p className="text-xs font-semibold text-accent">
@@ -171,7 +171,7 @@ export function DailyChallengeCard({ className }: { className?: string }) {
           </p>
           <p className="mt-0.5 text-sm font-semibold text-ink">{t('Στείλε μήνυμα σε μια ομάδα σήμερα', 'Send a message in a group today')}</p>
           {!d.dailyClaimed && (
-            <p id="daily-challenge-hint" className="mt-0.5 text-xs text-ink-muted">
+            <p id="daily-challenge-hint" className="sr-only">
               {d.dailyMet ? t('Έτοιμο! Πάρε την ανταμοιβή σου.', 'Done! Claim your reward.') : t('Η ανταμοιβή ξεκλειδώνει μόλις στείλεις ένα μήνυμα.', 'The reward unlocks once you send a message.')}
             </p>
           )}
@@ -187,7 +187,7 @@ export function DailyChallengeCard({ className }: { className?: string }) {
           <button
             type="button"
             onClick={() => navigate('/chats')}
-            className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:flex-initial"
+            className="inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:flex-initial"
           >
             <MessageSquare className="h-3.5 w-3.5" aria-hidden />
             {t('Στις συνομιλίες', 'Go to chats')}
@@ -197,7 +197,8 @@ export function DailyChallengeCard({ className }: { className?: string }) {
             onClick={onClaim}
             disabled={!d.dailyMet}
             aria-describedby="daily-challenge-hint"
-            className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 sm:flex-initial"
+            title={d.dailyMet ? undefined : t('Η ανταμοιβή ξεκλειδώνει μόλις στείλεις ένα μήνυμα.', 'The reward unlocks once you send a message.')}
+            className="inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 sm:flex-initial"
           >
             <Flame className="h-3.5 w-3.5" aria-hidden />
             {t('Πάρε +30 XP', 'Claim +30 XP')}

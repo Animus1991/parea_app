@@ -117,12 +117,11 @@ export function ListItemSkeleton({ variant = 'compact-event' }: { variant?: List
       );
     case 'notification-row':
       return (
-        <div className={cn(card, 'flex gap-3.5 p-3.5')}>
+        <div className={cn(card, 'flex gap-3 p-3 h-16 items-center')}>
           <Skeleton className="w-9 h-9 rounded-full shrink-0" />
           <div className="flex-1 min-w-0 space-y-2">
             <Skeleton className="h-3.5 w-11/12" />
-            <Skeleton className="h-3.5 w-3/5" />
-            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-3 w-3/5" />
           </div>
         </div>
       );
@@ -198,11 +197,6 @@ export function ProfileSkeleton() {
           <Skeleton className="h-6 w-40" />
           <Skeleton className="h-4 w-24" />
         </div>
-      </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-16 rounded-xl" />
-        ))}
       </div>
       <div className="p-4 border rounded-xl space-y-3">
         <Skeleton className="h-5 w-32" />

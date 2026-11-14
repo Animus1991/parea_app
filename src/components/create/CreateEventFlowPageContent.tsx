@@ -304,7 +304,7 @@ export default function CreateEventFlowPageContent() {
                       type="button"
                       onClick={() => void writeDescriptionWithAi()}
                       disabled={aiWriting}
-                      className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-accent-soft px-2.5 text-xs font-semibold text-ink transition-colors hover:bg-accent/15 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      className="-my-1 inline-flex items-center gap-1.5 rounded-lg bg-accent-soft px-2.5 py-1 text-xs font-semibold text-ink transition-colors hover:bg-accent/15 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                     >
                       <Sparkles className="h-3.5 w-3.5 text-accent" aria-hidden />
                       {aiWriting ? t("Γράφω…", "Writing…") : t("Γράψε με AI", "Write with AI")}

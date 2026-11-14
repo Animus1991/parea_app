@@ -159,7 +159,7 @@ function NavSection({ id, title, paths, children, compact = false, rail = false 
           disabled={containsActive}
           title={containsActive ? undefined : collapsed ? title : undefined}
           className={cn(
-            'w-full flex items-center justify-between gap-2 px-3 py-1.5 min-h-9 rounded-lg text-sm font-bold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default',
+            'w-full flex items-center justify-between gap-2 px-3 py-0.5 rounded-lg text-sm font-bold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default',
             isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-white/5' : isAB ? 'text-[hsl(220_11%_34%)] hover:bg-gray-100/70' : 'text-[#6B7280] hover:text-gray-900 hover:bg-gray-50',
           )}
         >

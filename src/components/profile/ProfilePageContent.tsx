@@ -550,9 +550,9 @@ export default function ProfilePageContent() {
       </Card>
 
       {activeTab === "overview" && (
-        <Card className="p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-          <div className={`h-11 w-11 shrink-0 rounded-xl flex items-center justify-center ${a.isDark ? "bg-gray-700/40" : "bg-gray-100"}`}>
-            <Share2 className={`h-5 w-5 ${a.accent}`} aria-hidden />
+        <Card className="p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className={`h-9 w-9 shrink-0 rounded-xl flex items-center justify-center ${a.isDark ? "bg-gray-700/40" : "bg-gray-100"}`}>
+            <Share2 className={`h-4 w-4 ${a.accent}`} aria-hidden />
           </div>
           <div className="flex-1 min-w-0">
             <p className={`text-sm font-bold ${heading}`}>{t("Φέρε τους δικούς σου Nakamas", "Bring your own Nakamas")}</p>
