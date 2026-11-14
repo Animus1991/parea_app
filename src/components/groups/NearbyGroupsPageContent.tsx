@@ -88,6 +88,105 @@ function HideMarkersUnderPanel({
   return null;
 }
 
+type ClusterPoint = { id: string; lat: number; lng: number };
+
+/** Enter / Space on a focused map pin (Leaflet gives pins focus but no keyboard activation). */
+function isActivationKey(e: L.LeafletKeyboardEvent): boolean {
+  const key = e.originalEvent.key;
+  if (key !== 'Enter' && key !== ' ') return false;
+  e.originalEvent.preventDefault();
+  return true;
+}
+
+/** Greedy pixel clustering at the current zoom: points closer than `radius` px share a pin. */
+function clusterByPixels<T extends ClusterPoint>(map: L.Map, points: T[], zoom: number, radius: number): T[][] {
+  const clusters: { center: L.Point; members: T[] }[] = [];
+  for (const point of points) {
+    const px = map.project([point.lat, point.lng], zoom);
+    const hit = clusters.find((c) => c.center.distanceTo(px) < radius);
+    if (hit) hit.members.push(point);
+    else clusters.push({ center: px, members: [point] });
+  }
+  return clusters.map((c) => c.members);
+}
+
+const clusterIconCache = new Map<number, L.DivIcon>();
+function clusterIcon(count: number): L.DivIcon {
+  let icon = clusterIconCache.get(count);
+  if (!icon) {
+    icon = L.divIcon({ className: 'nakamas-cluster', html: `<span>${count}</span>`, iconSize: [36, 36], iconAnchor: [18, 18] });
+    clusterIconCache.set(count, icon);
+  }
+  return icon;
+}
+
+/**
+ * Pins that would overlap at the current zoom become one numbered pin
+ * (tapping it zooms to them), so every target is large and separate.
+ */
+function ClusteredMarkers<T extends ClusterPoint>({
+  points,
+  renderSingle,
+  label,
+  panelRef,
+}: {
+  points: T[];
+  renderSingle: (point: T) => React.ReactNode;
+  label: (count: number) => string;
+  panelRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const map = useMap();
+  const [zoom, setZoom] = useState(() => map.getZoom());
+  useEffect(() => {
+    const onZoom = () => setZoom(map.getZoom());
+    map.on('zoomend', onZoom);
+    return () => {
+      map.off('zoomend', onZoom);
+    };
+  }, [map]);
+  const clusters = useMemo(
+    () => (zoom >= map.getMaxZoom() ? points.map((p) => [p]) : clusterByPixels(map, points, zoom, 44)),
+    [map, points, zoom],
+  );
+  const zoomTo = (members: T[]) => {
+    const box = map.getContainer().getBoundingClientRect();
+    const panel = panelRef.current?.getBoundingClientRect();
+    let topLeft = L.point(48, 48);
+    let bottomRight = L.point(48, 48);
+    if (panel && panel.width >= box.width * 0.9 && panel.top > box.top) bottomRight = L.point(48, box.bottom - panel.top + 24);
+    else if (panel && panel.height >= box.height * 0.9 && panel.right > box.left) topLeft = L.point(panel.right - box.left + 24, 48);
+    map.fitBounds(L.latLngBounds(members.map((m) => [m.lat, m.lng] as [number, number])), {
+      paddingTopLeft: topLeft,
+      paddingBottomRight: bottomRight,
+      maxZoom: map.getMaxZoom(),
+    });
+  };
+  return (
+    <>
+      {clusters.map((members) => {
+        if (members.length === 1) return renderSingle(members[0]);
+        const lat = members.reduce((s, m) => s + m.lat, 0) / members.length;
+        const lng = members.reduce((s, m) => s + m.lng, 0) / members.length;
+        return (
+          <Marker
+            key={`cluster-${members.map((m) => m.id).join('-')}`}
+            position={[lat, lng]}
+            icon={clusterIcon(members.length)}
+            alt={label(members.length)}
+            title={label(members.length)}
+            eventHandlers={{
+              click: () => zoomTo(members),
+              keydown: (e) => {
+                if (isActivationKey(e)) zoomTo(members);
+              },
+            }}
+          />
+        );
+      })}
+    </>
+  );
+}
+
 /**
  * Centers the map in its visible part: above the phone sheet, or right of the
  * desktop sidebar. It used to center behind the sheet, hiding every marker.
@@ -329,7 +428,11 @@ export default function NearbyGroupsPageContent() {
                 <MapController center={mapCenter} panelRef={panelRef} />
                 <HideMarkersUnderPanel panelRef={panelRef} overlayRef={overlayRef} markerCount={filteredLocalGroups.length + (userLocation ? 1 : 0)} />
 
-                {filteredLocalGroups.map((group) => (
+                <ClusteredMarkers
+                  points={filteredLocalGroups}
+                  panelRef={panelRef}
+                  label={(n) => t(`${n} ομάδες εδώ: μεγέθυνση`, `${n} groups here: zoom in`)}
+                  renderSingle={(group) => (
                   <Marker
                     key={group.id}
                     position={[group.lat, group.lng]}
@@ -338,6 +441,24 @@ export default function NearbyGroupsPageContent() {
                     eventHandlers={{
                       click: () => setSelectedEventId(group.id),
                       mouseover: (e) => e.target.openPopup(),
+                      keydown: (e) => {
+                        if (!isActivationKey(e)) return;
+                        setSelectedEventId(group.id);
+                        const marker = e.target as L.Marker;
+                        // Keyboard users land on the popup's action, not back on the map.
+                        // react-leaflet renders the popup body a moment after it opens: retry briefly.
+                        const focusAction = (tries = 30) => {
+                          const button = marker.getPopup()?.getElement()?.querySelector<HTMLElement>('button');
+                          button?.focus();
+                          if (button && document.activeElement === button) return;
+                          if (tries > 0) window.requestAnimationFrame(() => focusAction(tries - 1));
+                        };
+                        if (marker.isPopupOpen()) focusAction();
+                        else {
+                          marker.once('popupopen', () => focusAction());
+                          marker.openPopup();
+                        }
+                      },
                     }}
                   >
                     <Popup className="custom-popup">
@@ -374,7 +495,8 @@ export default function NearbyGroupsPageContent() {
                       </div>
                     </Popup>
                   </Marker>
-                ))}
+                  )}
+                />
 
                 {userLocation && (
                   <Marker position={[userLocation.lat, userLocation.lng]}>
