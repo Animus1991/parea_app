@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "../common/Button";
 
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
@@ -129,7 +129,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
 
   // Aggregate data for map
   const activeLocations = Object.entries(group.membersLocations || {} as Record<string, MemberLocation>)
-    .filter(([userId, loc]) => Date.now() - (loc as MemberLocation).timestamp < 60000)
+    .filter(([, loc]) => Date.now() - (loc as MemberLocation).timestamp < 60000)
     .map(([userId, loc]) => {
       const location = loc as MemberLocation;
       const user = users.find((u) => u.id === userId);

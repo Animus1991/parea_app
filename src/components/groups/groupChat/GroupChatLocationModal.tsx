@@ -186,7 +186,7 @@ export function GroupChatLocationModal({
 
         <div className="space-y-3">
           <h4 className="text-xs font-bold tracking-wide text-ink-muted">3. {t('Αυτόματη Λήξη', 'Auto-Expiry')}</h4>
-          <select
+          <select aria-label={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
             value={locationConfig.duration}
             onChange={(e) => setLocationConfig({ ...locationConfig, duration: e.target.value })}
             className="w-full border border-border rounded-2xl p-3 text-sm font-medium focus:ring-2 focus:ring-accent/40 bg-surface-raised outline-none shadow-soft"

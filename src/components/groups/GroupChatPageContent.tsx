@@ -12,7 +12,6 @@ import {
   Tag,
   X,
   Clock,
-  Filter,
   Search,
   Navigation,
   Link2,
@@ -21,7 +20,7 @@ import {
   Check,
   AlertTriangle,
 } from "lucide-react";
-import { Virtuoso } from "react-virtuoso";
+import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { toast } from "sonner";
 import { useLanguage } from "../../lib/i18n";
 import { useGroupChatContrast } from "../../hooks/useGroupChatContrast";
@@ -104,7 +103,7 @@ export default function GroupChatPageContent() {
     return msgs;
   };
 
-  const { messages, setMessages, appendMessage } = useGroupChatMessages(
+  const { messages, setMessages } = useGroupChatMessages(
     resolvedGroupId,
     buildSeedMessages,
   );
@@ -133,7 +132,7 @@ export default function GroupChatPageContent() {
   const [memberAddSearchQuery, setMemberAddSearchQuery] = useState("");
   const [showSosConfirm, setShowSosConfirm] = useState(false);
   const [senderFilter, setSenderFilter] = useState<string>("all");
-  const virtuosoRef = useRef<any>(null);
+  const virtuosoRef = useRef<VirtuosoHandle>(null);
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
@@ -300,6 +299,7 @@ export default function GroupChatPageContent() {
                   <ArrowLeft className="h-5 w-5" />
                 </button>
                 <input
+                  // eslint-disable-next-line jsx-a11y/no-autofocus -- focus moves only after the user opened this field
                   autoFocus
                   type="text"
                   placeholder={t("Αναζήτηση συνομιλίας...", "Search chat...")}
@@ -328,9 +328,9 @@ export default function GroupChatPageContent() {
                     <ArrowLeft className="h-5 w-5" />
                   </button>
                   <div className="min-w-0">
-                    <h2 className="text-sm md:text-base font-bold text-ink truncate">
+                    <h1 className="text-sm md:text-base font-bold text-ink truncate">
                       {event.title}
-                    </h2>
+                    </h1>
                     <p className="text-xs md:text-xs text-gray-500 tracking-wide font-bold truncate flex items-center gap-1.5 mt-0.5">
                       <Users className="h-3 w-3 shrink-0" />{" "}
                       {group.members.length} {t("Μέλη", "Members")}
@@ -341,7 +341,7 @@ export default function GroupChatPageContent() {
                 <div className="flex items-center justify-end gap-1 sm:gap-2 shrink-0">
                   {/* Desktop Search & Filter */}
                   <div className="hidden md:flex items-center gap-3 mr-2">
-                    <select
+                    <select aria-label={t("Φίλτρο αποστολέα", "Sender filter")}
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
                       className={cn("filter-select border border-gray-200 focus:outline-none focus:ring-1 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate", gc.focusRing)}

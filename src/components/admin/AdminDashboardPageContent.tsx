@@ -539,7 +539,7 @@ export default function AdminDashboardPageContent() {
                 </div>
                 <div>
                   <label className={cn('text-xs font-bold mb-1.5 block', a.head)}>{t('Ενέργεια', 'Action')}</label>
-                  <select
+                  <select aria-label={t("Ενέργεια διαχείρισης", "Moderation action")}
                     value={adminAction}
                     onChange={(e) => setAdminAction(e.target.value)}
                     className={cn('filter-select w-full border focus:ring-2 focus:ring-cyan-600 focus:outline-none', a.inputBg)}

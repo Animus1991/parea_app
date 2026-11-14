@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import {
-  Calendar as CalendarIcon,
-  ChevronLeft,
+  Calendar as ChevronLeft,
   ChevronRight,
-  MapPin,
-  CheckCircle,
   Download,
   CalendarCheck,
   CalendarClock,
@@ -28,6 +25,7 @@ import {
   isSameMonth,
 } from "date-fns";
 import { el as elLocale, enUS } from "date-fns/locale";
+import { pressable } from "../../lib/a11y";
 import { motion, AnimatePresence } from "motion/react";
 import { useStore } from "../../store";
 import { useLanguage } from "../../lib/i18n";
@@ -106,7 +104,8 @@ export default function MyCalendarPageContent() {
     return (
       <div
         key={day.toISOString()}
-        onClick={() => handleCellClick(day, dayEvents)}
+        {...(isCurrentPeriod ? pressable<HTMLDivElement>(() => handleCellClick(day, dayEvents)) : {})}
+        aria-label={`${format(day, "EEEE d MMMM", { locale: dateLocale })}${dayEvents.length ? ` · ${dayEvents.length} ${t("εκδηλώσεις", "events")}` : ""}`}
         className={cn(
           "relative min-h-[140px] md:min-h-0 md:aspect-[3/4] lg:aspect-square flex flex-col items-center justify-center rounded-xl md:rounded-2xl cursor-pointer transition-all border overflow-hidden",
           isToday(day)
@@ -596,13 +595,13 @@ export default function MyCalendarPageContent() {
                   {upcomingEvents.map((event, idx) => (
                     <div
                       key={idx}
+                      {...pressable<HTMLDivElement>(() => navigate(`/events/${event.id}`))}
                       className={cn(
                         "flex gap-4 items-center cursor-pointer p-4 rounded-xl transition-all border shadow-soft group",
                         p.isDark
                           ? "bg-[hsl(220_16%_14%)] border-white/5 hover:border-cyan-500/50"
                           : "bg-white border-gray-100 hover:border-cyan-300 hover:bg-cyan-50/50",
                       )}
-                      onClick={() => navigate(`/events/${event.id}`)}
                     >
                       <div
                         className={cn(

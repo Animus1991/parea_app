@@ -5,7 +5,6 @@ import { useStore } from '../../store';
 import type { AppNotification } from '../../data/mockNotifications';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
-import { Card } from '../common/Card';
 import { EmptyState } from '../common/EmptyState';
 import { ListViewSkeleton } from '../common/Skeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';

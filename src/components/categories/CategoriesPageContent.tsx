@@ -362,7 +362,7 @@ export default function CategoriesPageContent() {
           </div>
 
           <div className="flex flex-wrap gap-2 items-center">
-            <select
+            <select aria-label={t("Φίλτρο κόστους", "Cost filter")}
               className={cn(SELECT_CLASS, selectTone)}
               value={priceFilter}
               onChange={(e) => setPriceFilter(e.target.value as PriceFilter)}
@@ -374,7 +374,7 @@ export default function CategoriesPageContent() {
               </option>
             </select>
 
-            <select
+            <select aria-label={t("Φίλτρο χρόνου", "Time filter")}
               className={cn(SELECT_CLASS, selectTone)}
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value as DateFilter)}
@@ -385,7 +385,7 @@ export default function CategoriesPageContent() {
               <option value="Weekend">{t('Το Σαββατοκύριακο', 'This Weekend')}</option>
             </select>
 
-            <select
+            <select aria-label={t("Ταξινόμηση", "Sort by")}
               className={cn(SELECT_CLASS, selectTone)}
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortBy)}

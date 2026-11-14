@@ -1,3 +1,4 @@
+import type React from 'react';
 import { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
@@ -9,7 +10,7 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: 'default' | 'outline' | 'success' | 'warning' | 'neutral' | 'blue';
   className?: string;
   icon?: ReactNode;
-  onClick?: (e: any) => void;
+  onClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
 export function Badge({ children, variant = 'default', className, icon, ...props }: BadgeProps) {

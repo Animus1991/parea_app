@@ -1,17 +1,17 @@
-﻿import React, { ReactNode, useState } from 'react';
+﻿import React, { ReactNode, useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useUIStore } from '../../store/uiStore';
 import { Toaster } from 'sonner';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
   Grid, TrendingUp, Bookmark, History, Flag,
-  Users, UserPlus, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare,
+  Users, UserPlus, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, MessageSquare,
   Trophy, Zap, ChevronsLeft, ChevronsRight, ChevronDown, BookOpen
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
-import { ThemePicker } from '../common/ThemePicker';
+import { UserMenu } from './UserMenu';
 import { PlansFormingSidebar } from '../buddySeek/PlansFormingSidebar';
 import { PlansFormingSidebarReopenTab } from '../buddySeek/PlansFormingSidebar';
 import { isPlansRailRoute } from '../../lib/plansFormingRail';
@@ -19,6 +19,7 @@ import { pageTitleForPath } from '../../lib/pageTitle';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { PlansFormingBottomSheet } from '../buddySeek/PlansFormingBottomSheet';
 import { PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
+import { MobileDock } from './MobileDock';
 import { PopupChatRoot } from '../chat/PopupChatRoot';
 import { DemoModeBanner } from '../common/DemoModeBanner';
 import { useRealtimeChat } from '../../hooks/useRealtimeChat';
@@ -281,7 +282,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   const navigate = useNavigate();
   const { pathname: currentPath } = useLocation();
   const pageTitle = pageTitleForPath(currentPath);
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const currentUser = useStore((state) => state.currentUser);
   const theme = useStore((state) => state.theme);
   const tok = useThemeStyles();
@@ -351,18 +352,6 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           <span className="hidden lg:inline">{t('Δημιουργία', 'Create')}</span>
         </button>
 
-        <ThemePicker variant="compact" />
-
-        {/* Language Toggle */}
-        <button
-          onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
-          className={cn("flex items-center gap-1 text-xs font-bold transition-colors px-2.5 py-2 rounded-lg min-h-10 min-w-10", tok.chipButton)}
-          aria-label={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')} title={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')}
-        >
-          <Globe className="w-3.5 h-3.5" />
-          {language === 'el' ? 'EN' : 'EL'}
-        </button>
-
         <NavLink aria-label={unreadNotificationCount > 0 ? `${t('Ειδοποιήσεις','Notifications')} (${unreadNotificationCount})` : t('Ειδοποιήσεις','Notifications')} to="/notifications" className={cn("relative transition-colors", theme === "activebuddies-dark" ? "text-white hover:text-gray-300" : theme === "activebuddies" ? "text-[hsl(220_11%_34%)] hover:text-[hsl(220_14%_12%)]" : theme === "bento-dark" || theme === "neon-dark" ? "text-white hover:text-emerald-400" : theme === "vibrant-dark" ? "text-white hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-500 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-500 hover:text-indigo-600" : theme === "neon" ? "text-gray-500 hover:text-emerald-600" : "text-gray-500 hover:text-brand")}>
           <Bell className="h-[18px] w-[18px]" />
           {unreadNotificationCount > 0 && (
@@ -374,26 +363,38 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
 
         <div className="flex items-center space-x-2">
           {currentUser ? (
-            <NavLink to="/profile" className="flex items-center space-x-2 relative group">
+            <UserMenu
+              label={t(`Μενού λογαριασμού: ${currentUser.name}`, `Account menu: ${currentUser.name}`)}
+              showAccountLinks
+              header={
+                <>
+                  <p className={cn("text-sm font-bold truncate", tok.head)}>{currentUser.name}</p>
+                  <p className={cn("text-xs font-medium truncate", tok.muted)}>{t(tierLabelEl(currentUser.trustTier), tierLabelEn(currentUser.trustTier))}</p>
+                </>
+              }
+            >
               <div className={cn("hidden flex-col items-end", copilotDocked ? "2xl:flex" : "sm:flex")}>
                 <span className={cn("text-xs font-bold tracking-wide", theme === "activebuddies" ? "text-[hsl(220_11%_34%)]" : theme === "activebuddies-dark" ? "text-[hsl(220_13%_72%)]" : theme === "vibrant-dark" ? "text-gray-400" : theme === "vibrant" ? "text-gray-500" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-brand")}>{t(tierLabelEl(currentUser.trustTier), tierLabelEn(currentUser.trustTier))}</span>
                 <span className={cn("text-xs font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-ink")}>{currentUser.name}</span>
               </div>
               <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-xs overflow-hidden border", theme === "activebuddies-dark" ? "bg-gray-700/50 border-gray-600 text-gray-200" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] border-[hsl(220_13%_92%)] text-[hsl(220_14%_12%)]" : theme === "vibrant-dark" ? "bg-white/10 border-white/15 text-gray-300" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "vibrant" ? "bg-gray-100 border-gray-200 text-gray-600" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-brand")}>
                 {currentUser.photoUrl ? (
-                  <img src={currentUser.photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
+                  <img src={currentUser.photoUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
                   currentUser.name.substring(0, 2)
                 )}
               </div>
-            </NavLink>
+            </UserMenu>
           ) : (
+            <>
+            <UserMenu label={t('Γλώσσα και εμφάνιση', 'Language and appearance')} />
             <button
               onClick={() => navigate('/login')}
               className={cn("text-xs font-bold text-white px-3 py-1.5 rounded-full transition-colors", theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] hover:bg-black' : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] hover:bg-white' : 'bg-cyan-600 hover:bg-cyan-700')}
             >
               {t('Σύνδεση', 'Login')}
             </button>
+            </>
           )}
         </div>
 
@@ -430,11 +431,13 @@ export function BottomNav() {
       <div className="flex flex-col items-center justify-center -mt-4">
         <NavLink
           to="/create"
+          aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
           className={cn("w-11 h-11 rounded-full flex items-center justify-center shadow-soft-lg transition-colors border-[3px] border-white", tok.fab)}
         >
-          <Plus className="h-[20px] w-[20px]" strokeWidth={2.5} />
+          <Plus className="h-[20px] w-[20px]" strokeWidth={2.5} aria-hidden />
         </NavLink>
-        <span className={cn("text-xs font-medium mt-1", tok.muted)}>{t('Δημιουργία', 'Create')}</span>
+        {/* Visible caption; the link itself carries the name for screen readers. */}
+        <span aria-hidden className={cn("text-xs font-medium mt-1", tok.muted)}>{t('Δημιουργία', 'Create')}</span>
       </div>
       {([
         { to: "/trust", icon: ShieldCheck, labelGr: 'Εμπιστοσύνη', labelEn: 'Trust' },
@@ -466,6 +469,26 @@ export function AppShell({ children }: { children: ReactNode }) {
   const copilotOpen = useCopilotStore((s) => s.open);
   const maintenanceMode = useStore((s) => s.adminSafeguards.maintenanceMode);
   const { pathname } = useLocation();
+  // Escape closes the mobile menu (it had no keyboard way out).
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isMobileMenuOpen]);
+
+  // Browser chrome (mobile address bar) follows the app theme, not the OS setting.
+  const shellRef = React.useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    const el = shellRef.current;
+    if (!meta || !el) return;
+    const bg = getComputedStyle(el).backgroundColor;
+    const usable = bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)';
+    meta.setAttribute('content', usable ? bg : theme.endsWith('-dark') ? '#0f1419' : '#ffffff');
+  }, [theme]);
   // The plans rail is contextual to discovery screens (lib/plansFormingRail.ts).
   const showPlansRail = !copilotOpen && isPlansRailRoute(pathname);
 
@@ -474,6 +497,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div
+      ref={shellRef}
       data-theme={theme}
       className={cn("flex flex-col h-screen w-full font-sans antialiased overflow-hidden", tok.shell)}
     >
@@ -489,7 +513,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <SideNav />
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-modal flex">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
+          <button type="button" tabIndex={-1} aria-hidden="true" className="fixed inset-0 bg-black/50 cursor-default" onClick={() => setIsMobileMenuOpen(false)} />
           <div className={cn("relative w-64 max-w-sm h-full shadow-soft-lg flex flex-col z-modal", tok.sideNav)}>
             <div className="h-header flex items-center justify-between px-4 border-b border-[#E5E7EB] shrink-0">
               <NakamasLogo />
@@ -497,6 +521,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <X className="h-6 w-6" />
               </button>
             </div>
+            {/* Delegation: a click (or Enter, which fires click) on any nav link closes the menu. */}
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
             <div className="flex-1 overflow-y-auto py-4 px-3" onClick={() => setIsMobileMenuOpen(false)}>
               <NavLinks />
             </div>
@@ -533,6 +559,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </footer>
           <BottomNav />
           <PlansFormingMobileFab />
+          <MobileDock />
         </div>
         {/* The docked copilot replaces the plans-forming rail while open (both live on the right edge). */}
         {showPlansRail && <PlansFormingSidebar />}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { MapPin, Search, Navigation, Crosshair, Map as MapIcon, SlidersHorizontal, AlertTriangle, Maximize, Minimize, ChevronUp, ChevronDown } from "lucide-react";
+import { toast } from 'sonner';
+import { MapPin, Search, Navigation, Crosshair, Map as MapIcon, SlidersHorizontal, AlertTriangle, Maximize, Minimize, ChevronUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { isToday, parseISO } from "date-fns";
 import { useStore } from "../../store";
@@ -16,11 +17,12 @@ import { useEventsResource } from "../../hooks/useEventsQuery";
 import { useLanguage } from "../../lib/i18n";
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
+import { pressable } from '../../lib/a11y';
 import { Button } from "../common/Button";
 import { haversineKm, ATHENS_CENTER } from "../../lib/haversine";
 
 // Fix for default marker icons in leaflet with react
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
@@ -66,7 +68,6 @@ export default function NearbyGroupsPageContent() {
   const [isMapFullscreen, setIsMapFullscreen] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(() => window.innerWidth < 1024 ? 320 : 384);
   const [isDragging, setIsDragging] = useState(false);
-  const [locationError, setLocationError] = useState<string | null>(null);
   const [mapFilter, setMapFilter] = useState<"All" | "Available" | "Full" | "My Events">("All");
   const [mapLayer, setMapLayer] = useState<"standard" | "satellite">("standard");
   const [isMapInView, setIsMapInView] = useState(false);
@@ -133,13 +134,11 @@ export default function NearbyGroupsPageContent() {
           setUserLocation(loc);
         },
         () => {
-          setLocationError(t("Δεν ήταν δυνατή η εύρεση της τοποθεσίας σας.", "Couldn't get your location."));
-          setTimeout(() => setLocationError(null), 4000);
+          toast.error(t("Δεν ήταν δυνατή η εύρεση της τοποθεσίας σας.", "Couldn't get your location."));
         }
       );
     } else {
-      setLocationError(t("Η γεωτοποθεσία δεν υποστηρίζεται.", "Geolocation is not supported."));
-      setTimeout(() => setLocationError(null), 4000);
+      toast.error(t("Η γεωτοποθεσία δεν υποστηρίζεται.", "Geolocation is not supported."));
     }
   };
 
@@ -268,8 +267,8 @@ export default function NearbyGroupsPageContent() {
                         {group.category}
                       </div>
                       <div
-                        className="max-w-[200px] cursor-pointer outline-none group"
-                        onClick={() => navigate(`/events/${group.id}`)}
+                        className="max-w-[200px] cursor-pointer outline-none group focus-visible:ring-2 focus-visible:ring-accent rounded-2xl"
+                        {...pressable<HTMLDivElement>(() => navigate(`/events/${group.id}`))}
                       >
                         <div className="overflow-hidden rounded-2xl mb-2">
                           <GroupImage
@@ -388,10 +387,32 @@ export default function NearbyGroupsPageContent() {
         )}
       >
         <style dangerouslySetInnerHTML={{ __html: `@media (min-width: 768px) { .dynamic-sidebar-width { width: var(--sidebar-width) !important; } } .leaflet-popup-content-wrapper { border-radius: 1rem !important; overflow: hidden; }` }} />
-        <div className="absolute top-0 bottom-0 -right-2 w-4 cursor-ew-resize hover:bg-cyan-500/10 transition-all hidden md:block z-fab pointer-events-auto" onMouseDown={() => setIsDragging(true)} />
+        {/* Resize handle: drag with the mouse, or focus it and use the arrow keys.
+            WAI-ARIA window-splitter pattern: a focusable separator is a widget, which the lint rules do not model. */}
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label={t("Αλλαγή πλάτους λίστας", "Resize list")}
+          aria-valuenow={sidebarWidth}
+          aria-valuemin={280}
+          aria-valuemax={600}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          tabIndex={0}
+          className="absolute top-0 bottom-0 -right-2 w-4 cursor-ew-resize hover:bg-cyan-500/10 focus-visible:bg-cyan-500/20 outline-none transition-all hidden md:block z-fab pointer-events-auto"
+          onMouseDown={() => setIsDragging(true)}
+          onKeyDown={(e) => {
+            if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+            e.preventDefault();
+            const step = e.shiftKey ? 64 : 16;
+            const minBound = window.innerWidth < 1024 ? 280 : 300;
+            const maxBound = Math.min(600, window.innerWidth - 100);
+            setSidebarWidth((w) => Math.max(minBound, Math.min(maxBound, w + (e.key === "ArrowRight" ? step : -step))));
+          }}
+        />
 
         {/* Mobile handle */}
-        <div className="w-full py-4 cursor-pointer flex justify-center items-center md:hidden shrink-0" onClick={() => setIsPanelExpanded(!isPanelExpanded)}>
+        <div className="w-full py-4 cursor-pointer flex justify-center items-center md:hidden shrink-0" {...pressable<HTMLDivElement>(() => setIsPanelExpanded(!isPanelExpanded))} aria-expanded={isPanelExpanded} aria-label={isPanelExpanded ? t("Σύμπτυξη λίστας", "Collapse list") : t("Ανάπτυξη λίστας", "Expand list")}>
           <div className={cn("w-11 h-1.5 rounded-full flex items-center justify-center relative transition-colors", p.isDark ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-300 hover:bg-gray-400")}>
              <span className="absolute -top-3.5"><ChevronUp className={cn("w-4 h-4", p.muted)} /></span>
           </div>
@@ -412,7 +433,7 @@ export default function NearbyGroupsPageContent() {
               onChange={(e) => setRadius(parseInt(e.target.value))}
               aria-label={t("Ακτίνα αναζήτησης (χλμ)", "Search radius (km)")}
               aria-valuetext={`${radius} km`}
-              className="flex-1 accent-cyan-500"
+              className="flex-1 h-6 -my-1 accent-cyan-500"
             />
           </div>
 
@@ -486,11 +507,12 @@ export default function NearbyGroupsPageContent() {
             <div
               key={group.id}
               className={cn(`p-4 border rounded-2xl transition-all duration-300 cursor-pointer group flex gap-4 ${selectedEventId === group.id ? (p.isDark ? 'border-cyan-500 bg-cyan-900/10' : 'border-cyan-500 shadow-soft-md bg-cyan-50/30') : p.cardSurface}`, p.borderB, !selectedEventId && p.cardHover)}
-              onClick={() => {
+              aria-pressed={selectedEventId === group.id}
+              {...pressable<HTMLDivElement>(() => {
                 setSelectedEventId(group.id);
                 setMapCenter({ lat: group.lat, lng: group.lng });
                 if (window.innerWidth < 768) window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
+              })}
             >
               <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 border border-white/10 shadow-soft relative">
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10" />

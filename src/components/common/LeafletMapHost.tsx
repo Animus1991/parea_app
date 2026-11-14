@@ -45,6 +45,7 @@ export function LeafletMapHost({
 
   useEffect(() => {
     let cancelled = false;
+    const node = wrapRef.current;
     // Macrotask: runs after React finishes Strict Mode cleanup + DOM commit.
     const timer = window.setTimeout(() => {
       if (cancelled) return;
@@ -56,7 +57,7 @@ export function LeafletMapHost({
       cancelled = true;
       clearTimeout(timer);
       setHostKey(null);
-      scrubLeafletContainer(wrapRef.current);
+      scrubLeafletContainer(node);
     };
   }, []);
 

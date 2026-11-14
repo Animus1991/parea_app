@@ -1,0 +1,93 @@
+import { useMemo } from 'react';
+import { matchPath, useLocation } from 'react-router-dom';
+import { Inbox, MessageCircle, Users } from 'lucide-react';
+import { useLanguage } from '../../lib/i18n';
+import { useThemeStyles } from '../../hooks/useThemeStyles';
+import { useStore } from '../../store';
+import { useChatStore } from '../../store/chatStore';
+import { usePlansFabState } from '../../hooks/usePlansFabState';
+import { cn } from '../../lib/utils';
+
+/**
+ * Phones only: one floating pill for "Plans forming" and "Chats",
+ * instead of two separate floating buttons. Both actions stay one tap away.
+ */
+export function MobileDock() {
+  const { t } = useLanguage();
+  const tok = useThemeStyles();
+  const setPlansOpen = useStore((s) => s.setPlansFormingSheetOpen);
+  const toggleInbox = useChatStore((s) => s.toggleInbox);
+  const conversations = useChatStore((s) => s.conversations);
+  const unread = useMemo(
+    () => conversations.reduce((n, c) => n + (c.status === 'archived' ? 0 : c.unreadCount), 0),
+    [conversations],
+  );
+  const plans = usePlansFabState();
+  // The event page has its own sticky Save / Find Nakamas bar: sit just above it.
+  const { pathname } = useLocation();
+  const aboveEventBar = Boolean(matchPath('/events/:eventId', pathname));
+
+  const segment =
+    'flex items-center gap-2 min-h-11 font-bold text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/70 transition-colors';
+
+  return (
+    <div
+      role="group"
+      aria-label={t('Γρήγορη πρόσβαση', 'Quick access')}
+      className={cn(
+        'md:hidden fixed left-1/2 -translate-x-1/2 z-fab flex items-stretch rounded-full shadow-soft-lg border overflow-hidden text-white',
+        aboveEventBar
+          ? 'bottom-[calc(var(--safe-bottom)+4.5rem+env(safe-area-inset-bottom,0px))]'
+          : 'bottom-fab-zone',
+        plans.visible && plans.hasPending
+          ? 'bg-amber-500 border-amber-400'
+          : tok.isDark
+            ? 'bg-cyan-600 border-cyan-500'
+            : 'bg-cyan-600 border-cyan-700',
+      )}
+    >
+      {plans.visible && (
+        <>
+          <button
+            type="button"
+            onClick={() => setPlansOpen(true)}
+            aria-label={t('Άνοιγμα σχεδίων που σχηματίζονται', 'Open plans forming')}
+            className={cn(segment, 'pl-4 pr-3 active:bg-black/10')}
+          >
+            {plans.hasPending ? <Inbox className="w-4 h-4" aria-hidden /> : <Users className="w-4 h-4" aria-hidden />}
+            <span>{plans.label}</span>
+            {plans.badge != null && (
+              <span
+                className={cn(
+                  'bg-white/25 text-white text-xs font-black px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center',
+                  plans.hasPending && 'animate-pulse motion-reduce:animate-none',
+                )}
+              >
+                {plans.badge}
+              </span>
+            )}
+          </button>
+          <span aria-hidden className="w-px my-2.5 bg-white/30" />
+        </>
+      )}
+      <button
+        type="button"
+        onClick={toggleInbox}
+        aria-label={
+          unread > 0
+            ? t(`Συνομιλίες σχεδίων (${unread} μη αναγνωσμένα)`, `Plan chats (${unread} unread)`)
+            : t('Συνομιλίες σχεδίων', 'Plan chats')
+        }
+        title={t('Συνομιλίες', 'Chats')}
+        className={cn(segment, plans.visible ? 'pl-3 pr-4' : 'px-4', 'active:bg-black/10')}
+      >
+        <MessageCircle className="w-4 h-4" aria-hidden />
+        {unread > 0 && (
+          <span className="bg-white/25 text-white text-xs font-black px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
+            {unread > 9 ? '9+' : unread}
+          </span>
+        )}
+      </button>
+    </div>
+  );
+}

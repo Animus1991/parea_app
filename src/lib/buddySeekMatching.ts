@@ -65,7 +65,6 @@ export function buildBuddySeekSuggestions(
   for (const g of openGroups) {
     if (g.members.includes(viewer.id)) continue;
     const hostId = g.hostId ?? g.members[0];
-    const host = users.find((u) => u.id === hostId);
     const spots = g.targetSize - g.members.length;
     out.push({
       kind: 'person_group',
@@ -118,7 +117,7 @@ export function discoveryScoreForSeeker(
   viewer: User | null,
   seeker: User,
   event: Event,
-  intent: CompanyRequest,
+  _intent: CompanyRequest,
 ): number {
   if (!viewer) return 0;
   return computeMatchScore(viewer, event) + sharedInterestBonus(viewer, seeker, event);

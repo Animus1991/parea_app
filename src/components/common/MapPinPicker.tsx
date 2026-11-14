@@ -5,7 +5,7 @@ import L from "leaflet";
 import { LeafletMapHost, LeafletMapReady } from "./LeafletMapHost";
 
 // Fix for default marker icons in leaflet with react
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:

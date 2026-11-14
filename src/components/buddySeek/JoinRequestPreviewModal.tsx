@@ -19,6 +19,7 @@ export function JoinRequestPreviewModal({
   message,
   onSendRequest,
   onAccept,
+  onDecline,
   mode,
 }: {
   open: boolean;
@@ -28,6 +29,8 @@ export function JoinRequestPreviewModal({
   message?: string;
   onSendRequest: (note?: string) => void;
   onAccept?: () => void;
+  /** Declines the join request. Without it, the button only closes the preview. */
+  onDecline?: () => void;
   mode: 'send' | 'owner_review';
 }) {
   const { t } = useLanguage();
@@ -140,7 +143,10 @@ export function JoinRequestPreviewModal({
               </button>
               <button
                 type="button"
-                onClick={onClose}
+                onClick={() => {
+                  onDecline?.();
+                  onClose();
+                }}
                 className="min-h-11 px-4 rounded-2xl border border-border text-sm font-bold flex items-center gap-1"
               >
                 <X className="w-4 h-4" /> {t('Απόρριψη', 'Decline')}

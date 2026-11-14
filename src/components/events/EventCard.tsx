@@ -26,6 +26,7 @@ import { useStore } from "../../store";
 import type { Event } from "../../types";
 import { useLanguage } from "../../lib/i18n";
 import { cn } from "../../lib/utils";
+import { stopBubbling } from "../../lib/a11y";
 import { EVENT_CARD_TYPO } from "../../lib/typographyTokens";
 import { computeMatchScore, getMatchingPreview } from "../../lib/matching";
 import { isDarkTheme } from "../../lib/themes";
@@ -39,7 +40,7 @@ import { LeafletMapHost, LeafletMapReady } from "../common/LeafletMapHost";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
@@ -82,7 +83,7 @@ function EventCardMiniMap({ lat, lng, isDark, className }: { lat: number; lng: n
         isDark ? 'border-gray-700/40' : 'border-gray-200',
         className,
       )}
-      onClick={(e) => e.stopPropagation()}
+      {...stopBubbling}
     >
       {inView ? (
         <LeafletMapHost
@@ -197,6 +198,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
     window.open(
       `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&details=${details}&location=${location}&dates=${start}/${end}`,
       "_blank",
+      "noopener,noreferrer",
     );
   };
 
@@ -463,7 +465,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
       </div>
 
       {/* «Map & Safety» sheet — wrapper stops React event bubbling from the portal to the card. */}
-      <div onClick={(e) => e.stopPropagation()} className="contents">
+      <div {...stopBubbling} className="contents">
         <BottomSheet
           open={showSafetyPanel}
           onClose={() => {
@@ -617,11 +619,13 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
       {showLocationConfigModal &&
         typeof document !== "undefined" &&
         createPortal(
+          // React events bubble through portals: this wrapper keeps clicks and keys
+          // inside the dialog from reaching the card behind it.
+          <div {...stopBubbling} className="contents">
           <div
             className="fixed inset-0 z-modal flex items-center justify-center p-4 modal-overlay animate-in fade-in duration-200"
             role="dialog"
             aria-modal="true"
-            onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
@@ -634,7 +638,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               ref={locationPanelRef}
               tabIndex={-1}
               className="relative modal-panel max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-200 outline-none"
-              onClick={(e) => e.stopPropagation()}
+              {...stopBubbling}
             >
               <div className="p-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm z-10">
                 <div className="flex items-center gap-3">
@@ -805,7 +809,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   <h4 className="text-xs font-bold capitalize text-gray-600 tracking-tight">
                     {t("3. Αυτόματη Λήξη", "3. Auto-Expiry")}
                   </h4>
-                  <select
+                  <select aria-label={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
                     value={locationConfig.duration}
                     onChange={(e) =>
                       setLocationConfig({
@@ -846,6 +850,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 </button>
               </div>
             </div>
+          </div>
           </div>,
           document.body,
         )}

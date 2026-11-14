@@ -446,7 +446,7 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   border-radius: 9999px;
   padding: 0.3rem 0.85rem;
   font-weight: 600;
-  color: #6b7280;
+  color: #4b5563;
   background: transparent;
   transition: all 0.2s ease;
 }
@@ -980,3 +980,28 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
     margin-right: var(--copilot-dock-w, 0px);
   }
 }
+
+
+/* ── Accent contrast remaps (full-app audit 14/11/2026) ──────────────────
+   axe found -600 accent text under 4.5:1 on tinted light surfaces, and the
+   same -600 classes too dark on dark surfaces. Colour only; no size change.
+   Elements that set their own dark: colour keep it. */
+[data-theme]:not([data-theme$="-dark"]) .text-amber-600 { color: #bb4d00; }
+[data-theme]:not([data-theme$="-dark"]) .text-orange-600 { color: #ca3500; }
+[data-theme]:not([data-theme$="-dark"]) .text-emerald-600 { color: #007a55; }
+[data-theme]:not([data-theme$="-dark"]) .text-fuchsia-600 { color: #a800b7; }
+[data-theme]:not([data-theme$="-dark"]) .text-blue-600 { color: #1447e6; }
+[data-theme]:not([data-theme$="-dark"]) .text-red-600 { color: #c10007; }
+[data-theme]:not([data-theme$="-dark"]) .bg-amber-600.text-white { background-color: #bb4d00; }
+
+[data-theme$="-dark"] .text-indigo-600:not([class*="dark:text-"]) { color: #a3b3ff; }
+[data-theme$="-dark"] .text-cyan-600:not([class*="dark:text-"]) { color: #53eafd; }
+[data-theme$="-dark"] .text-emerald-600:not([class*="dark:text-"]) { color: #5ee9b5; }
+[data-theme$="-dark"] .text-fuchsia-600:not([class*="dark:text-"]) { color: #f4a8ff; }
+[data-theme$="-dark"] .text-amber-600:not([class*="dark:text-"]) { color: #ffd230; }
+[data-theme$="-dark"] .text-orange-600:not([class*="dark:text-"]) { color: #ffb86a; }
+[data-theme$="-dark"] .text-red-600:not([class*="dark:text-"]) { color: #ffa2a2; }
+[data-theme$="-dark"] .text-blue-600:not([class*="dark:text-"]) { color: #8ec5ff; }
+
+/* «Ink» flips to a light colour in dark themes: white text on it would vanish. */
+[data-theme$="-dark"] .bg-ink.text-white { color: var(--color-surface); }

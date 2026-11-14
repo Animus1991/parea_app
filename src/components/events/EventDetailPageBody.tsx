@@ -23,6 +23,7 @@ import { EventDetailMetaSection } from './EventDetailMetaSection';
 import { EventDetailQrModal } from './EventDetailQrModal';
 import EventDetailPageContent from './EventDetailPageContent';
 import { LookingForCompanyPanel } from '../buddySeek/LookingForCompanyPanel';
+import { computeMatchScore } from '../../lib/matching';
 
 interface EventDetailPageBodyProps {
   accent: EventDetailMapAccent;
@@ -142,7 +143,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             layoutId={`event-image-${event.id}`}
             referrerPolicy="no-referrer"
             src={event.imageUrl || 'https://picsum.photos/seed/eventdefault/800/600'}
-            alt={event.title}
+            alt=""
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -156,18 +157,18 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             <Badge variant="outline">{t('Δωρεάν', 'Free')}</Badge>
           )}
           {event.groupDiscount && (
-             <Badge variant="success" icon={<CheckCircle className="h-3 w-3" />}>
+             <Badge variant="outline" icon={<CheckCircle className="h-3 w-3" />}>
                -{event.groupDiscount.percentage}% {t('έκπτωση για', 'off for')} {event.groupDiscount.minSize}+ {t('άτομα', 'people')}
              </Badge>
           )}
           {event.minTrustTierAccess === '3_high_trust' && (
-            <Badge variant="outline" className="text-accent-strong font-bold bg-accent-soft border-accent/20" icon={<ShieldCheck className="h-3 w-3" />}>{t('Πρόσβαση με Επαλήθευση', 'Verified Access')}</Badge>
+            <Badge variant="outline" icon={<ShieldCheck className="h-3 w-3" />}>{t('Πρόσβαση με Επαλήθευση', 'Verified Access')}</Badge>
           )}
 
-          {/* Match Score Badge based on User Interests */}
+          {/* Match score: the same formula as the event card, and the only coloured chip here. */}
           {currentUser && event.tags && event.tags.length > 0 && (
-            <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700 dark:bg-orange-500/15 dark:border-orange-500/40 dark:text-orange-200 font-bold" icon={<span className="text-2xs">🔥</span>}>
-              {Math.min(98, Math.max(15, Math.round(((currentUser?.interests ?? []).filter(i => (event.tags ?? []).includes(i)).length / (event.tags ?? [1]).length) * 100) + 40))}% {t('Ταίριασμα', 'Match')}
+            <Badge variant="outline" className="text-accent-strong font-bold bg-accent-soft border-accent/20">
+              {computeMatchScore(currentUser, event)}% {t('Ταίριασμα', 'Match')}
             </Badge>
           )}
         </div>
@@ -221,7 +222,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                     <select
                       aria-label={t('Μέγεθος ομάδας', 'Group size')}
                       value={groupSizeFilter}
-                      onChange={(e) => setGroupSizeFilter(e.target.value as any)}
+                      onChange={(e) => setGroupSizeFilter(e.target.value as typeof groupSizeFilter)}
                       className="filter-select bg-surface border border-border focus:outline-none focus:ring-1 focus:ring-accent/50"
                     >
                       <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>

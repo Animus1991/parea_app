@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Users,
   CalendarCheck,
-  Bookmark,
   Inbox,
   ChevronRight,
   Plus,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Bell, Lock, Eye, Globe, Shield, CreditCard, LogOut, Trash2, Smartphone, Mail, Download, Laptop, Info, Palette, CheckCircle2, LayoutGrid } from 'lucide-react';
+import { Bell, Lock, Eye, Globe, Shield, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid } from 'lucide-react';
 import { HomeHeroModeSetting } from './HomeHeroModeSetting';
 import { BuddySeekPrivacySettings } from '../buddySeek/BuddySeekPrivacySettings';
 import { ChatPrivacySettingsPanel } from '../chat/ChatPrivacySettingsPanel';
@@ -10,6 +10,7 @@ import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
+import { pressable } from '../../lib/a11y';
 import { ThemePicker } from '../common/ThemePicker';
 import { THEME_LABELS, type ThemeId } from '../../lib/themes';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -33,7 +34,6 @@ export default function SettingsPageContent() {
   const a = usePageContrast();
 
   const theme = useStore((s) => s.theme);
-  const setTheme = useStore((s) => s.setTheme);
   const logout = useStore((s) => s.logout);
   const userSettings = useStore((s) => s.userSettings);
   const updateUserSettings = useStore((s) => s.updateUserSettings);
@@ -156,7 +156,7 @@ export default function SettingsPageContent() {
               {section.items.map((item, i) => {
                 const Icon = item.icon;
                 return (
-                  <div key={i} onClick={item.onClick} className={cn("flex items-center justify-between p-4 transition-colors", item.onClick ? cn("cursor-pointer", a.itemHover) : '')}>
+                  <div key={i} {...(item.onClick ? pressable<HTMLDivElement>(() => item.onClick!()) : {})} className={cn("flex items-center justify-between p-4 transition-colors", item.onClick ? cn("cursor-pointer", a.itemHover) : '')}>
                     <div className="flex items-center gap-3">
                       <Icon className={cn("w-4 h-4", a.muted)} />
                       <span className={cn("text-sm font-medium", a.head)}>{item.label}</span>
@@ -272,7 +272,8 @@ export default function SettingsPageContent() {
         <Card className={a.divider}>
           <div
             className={cn("flex items-center justify-between p-4 cursor-pointer transition-colors", a.itemHover)}
-            onClick={() => setShowAvailability(!showAvailability)}
+            {...pressable<HTMLDivElement>(() => setShowAvailability(!showAvailability))}
+            aria-expanded={showAvailability}
           >
             <span className={cn("text-sm font-medium", a.head)}>{t('Πότε είστε διαθέσιμοι', 'When you are available')}</span>
             <Badge variant="neutral">{userSettings.availability.length} {t('χρονοθήκες', 'slots')}</Badge>

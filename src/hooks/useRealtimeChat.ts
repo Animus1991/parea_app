@@ -13,6 +13,8 @@ import { isFirebaseConfigured as isFirebaseChatEnabled } from '../lib/firebaseCo
 export function useRealtimeChat(userId: string | undefined) {
   const receiveMessage = useChatStore((s) => s.receiveMessage);
   const conversations = useChatStore((s) => s.conversations);
+  // Stable key: the effect re-runs when the set of rooms changes, not on every message.
+  const conversationKey = conversations.map((c) => c.id).join('|');
   const firebaseUnsubs = useRef<Array<() => void>>([]);
 
   useEffect(() => {
@@ -24,14 +26,15 @@ export function useRealtimeChat(userId: string | undefined) {
     }
 
     let cancelled = false;
+    const conversationIds = conversationKey ? conversationKey.split('|') : [];
 
     const setupFirebase = async () => {
       firebaseUnsubs.current.forEach((fn) => fn());
       firebaseUnsubs.current = [];
       const { subscribeFirebaseRoom } = await import('../lib/realtime/firebaseChat');
       if (cancelled) return;
-      for (const c of conversations) {
-        const unsub = await subscribeFirebaseRoom(c.id, (msg) => {
+      for (const id of conversationIds) {
+        const unsub = await subscribeFirebaseRoom(id, (msg) => {
           if (msg.senderId === userId) return;
           receiveMessage(msg.conversationId, msg.body, msg.senderId);
         });
@@ -66,8 +69,8 @@ export function useRealtimeChat(userId: string | undefined) {
 
     socket.on('receive_message', onReceive);
 
-    for (const c of conversations) {
-      joinChatRoom(c.id);
+    for (const id of conversationIds) {
+      joinChatRoom(id);
     }
 
     return () => {
@@ -75,5 +78,5 @@ export function useRealtimeChat(userId: string | undefined) {
       socket.off('receive_message', onReceive);
       disconnectChatSocket();
     };
-  }, [userId, receiveMessage, conversations.length]);
+  }, [userId, receiveMessage, conversationKey]);
 }

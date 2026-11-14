@@ -1,6 +1,8 @@
+import type React from 'react';
 import { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { pressable } from '../../lib/a11y';
 
 export function Card({ children, className, onClick, ...props }: HTMLAttributes<HTMLDivElement> & { children?: ReactNode }) {
   const p = usePageContrast();
@@ -9,7 +11,7 @@ export function Card({ children, className, onClick, ...props }: HTMLAttributes<
 
   return (
     <div
-      onClick={onClick}
+      {...(onClick ? pressable<HTMLDivElement>((e) => onClick(e as React.MouseEvent<HTMLDivElement>)) : {})}
       className={cn(
         'rounded-2xl border',
         p.isAB && !p.isDark

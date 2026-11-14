@@ -4,6 +4,7 @@ import { Badge } from "../common/Badge";
 import { Button } from "../common/Button";
 import { useStore } from "../../store";
 import { tierLabelEl, tierLabelEn } from "../../lib/trust";
+import { pressable } from "../../lib/a11y";
 import type { TrustTier } from "../../types";
 import {
   CheckCircle2,
@@ -22,7 +23,6 @@ import {
   Award,
   Settings,
   LogOut,
-  ExternalLink,
   MessageSquare,
   TrendingUp,
   Eye,
@@ -48,7 +48,6 @@ export default function ProfilePageContent() {
   const updateUser = useStore((state) => state.updateUser);
   const logout = useStore((state) => state.logout);
   const users = useStore((state) => state.users);
-  const events = useStore((state) => state.events);
   const feedbackSubmitted = useStore((state) => state.feedbackSubmitted);
   const userSettings = useStore((state) => state.userSettings);
   const updatePrivacySettings = useStore((state) => state.updatePrivacySettings);
@@ -210,6 +209,7 @@ export default function ProfilePageContent() {
               <div className="flex items-center justify-between">
                 {isEditingName ? (
                   <div className="flex w-full items-center gap-2">
+                    {/* eslint-disable-next-line jsx-a11y/no-autofocus -- focus moves only after the user opened this field */}
                     <input autoFocus value={tempName} onChange={(e) => setTempName(e.target.value)}
                       className={`flex-1 text-lg font-bold rounded-2xl px-3 py-1.5 focus:ring-2 outline-none ${inputBg} ${a.ring}`} />
                     <Button size="sm" onClick={() => { if (tempName.trim()) { updateUser(currentUser.id, { name: tempName }); setIsEditingName(false); } }}>{t("Αποθήκευση", "Save")}</Button>
@@ -302,14 +302,19 @@ export default function ProfilePageContent() {
               <Badge key={i} variant="neutral" className={`pr-1.5 select-none ${a.isDark ? "" : "bg-gray-50 border-gray-200 text-gray-700"}`}>
                 {i}
                 <button onClick={() => { const updated = interests.filter((int) => int !== i); setInterests(updated); updateUser(currentUser.id, { interests: updated }); }}
+                  type="button"
+                  aria-label={t(`Αφαίρεση ενδιαφέροντος ${i}`, `Remove interest ${i}`)}
+                  title={t('Αφαίρεση', 'Remove')}
                   className={`ml-1.5 p-0.5 rounded-full transition-colors ${a.isDark ? "hover:bg-gray-600 text-gray-400 hover:text-gray-200" : "hover:bg-gray-200 text-gray-400 hover:text-gray-600"}`}>
-                  <X className="w-3 h-3" />
+                  <X className="w-3 h-3" aria-hidden="true" />
                 </button>
               </Badge>
             ))}
             {isAddingInterest ? (
               <form onSubmit={(e) => { e.preventDefault(); if (newInterest.trim() && !interests.includes(newInterest.trim())) { const updated = [...interests, newInterest.trim()]; setInterests(updated); updateUser(currentUser.id, { interests: updated }); setNewInterest(""); setIsAddingInterest(false); } }} className="flex items-center gap-2">
                 <input type="text" value={newInterest} onChange={(e) => setNewInterest(e.target.value)} placeholder={t("Νέο ενδιαφέρον...", "New interest...")}
+                  aria-label={t("Νέο ενδιαφέρον", "New interest")}
+                  // eslint-disable-next-line jsx-a11y/no-autofocus -- focus moves only after the user opened this field
                   className={`text-xs border rounded-lg px-2 py-1 w-28 focus:outline-none ${inputBg} ${a.ring}`} autoFocus onBlur={() => { if (!newInterest.trim()) setIsAddingInterest(false); }} />
                 <Button type="submit" size="sm" variant="ghost" className={`h-6 px-2 font-bold capitalize text-xs ${a.accent}`}>{t("Προσθήκη", "Add")}</Button>
               </form>
@@ -364,7 +369,7 @@ export default function ProfilePageContent() {
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
               {connectedUsers.slice(0, 8).map((u) => (
-                <div key={u.id} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group" onClick={() => u.isOrganizer ? navigate(`/organizer/${u.id}`) : navigate("/connections")}>
+                <div key={u.id} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group" {...pressable<HTMLDivElement>(() => (u.isOrganizer ? navigate(`/organizer/${u.id}`) : navigate("/connections")))}>
                   <img referrerPolicy="no-referrer" src={u.photoUrl || `https://i.pravatar.cc/80?u=${u.id}`} alt={u.name}
                     className={`w-11 h-11 rounded-xl object-cover border-2 transition-all ${a.isDark ? "border-gray-700/50 group-hover:border-gray-500" : "border-gray-200 group-hover:border-gray-300"} group-hover:scale-105`} />
                   <span className={`text-2xs font-bold truncate max-w-[64px] ${a.isDark ? "text-gray-300" : "text-gray-700"}`}>{u.name}</span>
@@ -399,7 +404,7 @@ export default function ProfilePageContent() {
                 <p className={`text-2xs capitalize font-bold tracking-wide ${a.tierHighlightSub}`}>{t("Προσθήκη Μεθόδου Πληρωμής. Συμμετοχή σε Πληρωμένες/Μικρές Ομάδες.", "Payment Method added. Can join Paid/Small Group Events.")}</p>
               </div>
             </div>
-            <div className={`flex items-center gap-3 cursor-pointer p-3 rounded-lg transition-colors ${a.isDark ? "hover:bg-gray-700/30" : "hover:bg-gray-50"}`} onClick={() => navigate("/verification")}>
+            <div className={`flex items-center gap-3 cursor-pointer p-3 rounded-lg transition-colors ${a.isDark ? "hover:bg-gray-700/30" : "hover:bg-gray-50"}`} {...pressable<HTMLDivElement>(() => navigate("/verification"))}>
               <div className={`h-7 w-7 rounded-lg border flex items-center justify-center shrink-0 ${a.isDark ? "bg-gray-800/40 border-gray-600/40" : "bg-gray-100 border-gray-200"}`}>
                 <Shield className={`h-4 w-4 ${a.isDark ? "text-gray-500" : "text-gray-400"}`} />
               </div>
@@ -453,7 +458,7 @@ export default function ProfilePageContent() {
                   <p className={`text-xs mt-0.5 ${sub}`}>{t("Ποιοι βλέπουν το πλήρες προφίλ σας.", "Who can see your full profile.")}</p>
                 </div>
               </div>
-              <select
+              <select aria-label={t("Ορατότητα προφίλ", "Profile visibility")}
                 value={profileVisibilityUi}
                 onChange={(e) => {
                   const v = e.target.value;
@@ -478,7 +483,7 @@ export default function ProfilePageContent() {
                   <p className={`text-xs mt-0.5 ${sub}`}>{t("Ποιοι μπορούν να ξεκινήσουν συνομιλία.", "Who can start a chat with you.")}</p>
                 </div>
               </div>
-              <select
+              <select aria-label={t("Ποιος μπορεί να σας στείλει μήνυμα", "Who can message you")}
                 value={messagePermissionUi}
                 onChange={(e) => {
                   const v = e.target.value;

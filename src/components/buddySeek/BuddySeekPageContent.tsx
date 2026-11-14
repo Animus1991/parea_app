@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import type { Event } from '../../types';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
 import type { CompanyJoinRequestStatus, CompanyRequest } from '../../types/companyRequest';
+import { readStorage, writeStorage } from '../../lib/safeUrl';
 
 type FilterKey = 'all' | 'open_spots' | 'verified' | 'small_groups' | 'flexible' | 'saved_events' | 'high_match';
 
@@ -58,6 +59,7 @@ export default function BuddySeekPageContent() {
   const dismiss = useStore((s) => s.dismissCompanyRequest);
   const undismiss = useStore((s) => s.undismissCompanyRequest);
   const acceptJoin = useStore((s) => s.acceptCompanyJoinRequest);
+  const declineJoin = useStore((s) => s.declineCompanyJoinRequest);
   const companyJoinRequests = useStore((s) => s.companyJoinRequests);
   const companyRequests = useStore((s) => s.companyRequests);
   const { events, isLoading, isError, refetch } = useEventsResource();
@@ -70,7 +72,7 @@ export default function BuddySeekPageContent() {
   const [eventPickerOpen, setEventPickerOpen] = useState(false);
   const [wizard, setWizard] = useState<RequestWizard | null>(null);
   const [showExplainer, setShowExplainer] = useState(
-    () => typeof window !== 'undefined' && !localStorage.getItem(EXPLAINER_KEY),
+    () => !readStorage(EXPLAINER_KEY),
   );
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function BuddySeekPageContent() {
   }, [searchParams, companyRequests, events, setSearchParams]);
 
   const dismissExplainer = () => {
-    localStorage.setItem(EXPLAINER_KEY, '1');
+    writeStorage(EXPLAINER_KEY, '1');
     setShowExplainer(false);
   };
 
@@ -425,6 +427,11 @@ export default function BuddySeekPageContent() {
               toast.success(t('Αποδεχτήκατε — άνοιγμα chat', 'Accepted — opening chat'));
               navigate(`/chat/${groupId}`);
             }
+          }}
+          onDecline={() => {
+            if (!previewJoinId) return;
+            declineJoin(previewJoinId);
+            toast.info(t('Το αίτημα απορρίφθηκε', 'Request declined'));
           }}
         />
       )}

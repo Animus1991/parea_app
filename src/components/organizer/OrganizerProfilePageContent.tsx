@@ -4,12 +4,13 @@ import { useStore } from '../../store';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
 import { Modal } from '../common/Modal';
-import { Calendar, MapPin, ShieldCheck, Mail, Globe } from 'lucide-react';
+import { MapPin, ShieldCheck, Mail, Globe } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { cn } from '../../lib/utils';
+import { safeExternalUrl } from '../../lib/safeUrl';
 import { toast } from 'sonner';
 
 export default function OrganizerProfilePageContent() {
@@ -42,7 +43,7 @@ export default function OrganizerProfilePageContent() {
   const reviewCount = hostedEvents.filter((ev) => Boolean(feedbackSubmitted[ev.id])).length;
   const organizerReviews = Math.max(reviewCount, hostedEvents.length * 3, 12);
   const avgRating = Math.min(5, Math.max(3.5, (organizer.reliabilityScore ?? 80) / 20)).toFixed(1);
-  const websiteUrl = (organizer as { website?: string }).website;
+  const websiteUrl = safeExternalUrl((organizer as { website?: string }).website);
 
   const handleWebsiteClick = (e: React.MouseEvent) => {
     if (!websiteUrl) {
@@ -106,9 +107,9 @@ export default function OrganizerProfilePageContent() {
           </p>
 
           <div className={cn('flex items-center gap-4 p-3 rounded-lg border w-fit', p.isDark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-100')}>
-            <div className="flex items-center gap-1 text-yellow-500" aria-label={t(`${avgRating} από 5 αστέρια`, `${avgRating} out of 5 stars`)}>
+            <div className="flex items-center gap-1 text-yellow-500" role="img" aria-label={t(`${avgRating} από 5 αστέρια`, `${avgRating} out of 5 stars`)}>
               {[1, 2, 3, 4, 5].map((star) => (
-                <svg key={star} className={cn('w-4 h-4', star <= Math.round(Number(avgRating)) ? 'fill-current' : 'text-gray-300')} viewBox="0 0 24 24">
+                <svg key={star} aria-hidden="true" className={cn('w-4 h-4', star <= Math.round(Number(avgRating)) ? 'fill-current' : 'text-gray-300')} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                 </svg>
               ))}

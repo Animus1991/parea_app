@@ -1,41 +1,25 @@
 import { Inbox, Users } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
-import { usePlansFormingFeed } from '../../hooks/usePlansFormingFeed';
+import { usePlansFabState } from '../../hooks/usePlansFabState';
 import { useStore } from '../../store';
 import { cn } from '../../lib/utils';
 
+/** Plans shortcut for tablets (md to xl). Phones use the combined dock in layout/MobileDock. */
 export function PlansFormingMobileFab() {
   const { t } = useLanguage();
   const tok = useThemeStyles();
   const setOpen = useStore((s) => s.setPlansFormingSheetOpen);
-  const feed = usePlansFormingFeed(8);
-  const total = feed.insights.compatiblePlans + feed.insights.recruitingGroups;
-  const hasPending = feed.insights.pendingJoinsToReview > 0;
-  const showTeaser = !feed.hasContent && !feed.myActivePlan;
+  const { visible, label, badge, hasPending } = usePlansFabState();
 
-  if (!total && !hasPending && !showTeaser && !feed.myActivePlan) return null;
-
-  const label = hasPending
-    ? t('Αιτήματα', 'Requests')
-    : feed.myActivePlan
-      ? t('Το σχέδιό σας', 'Your plan')
-      : showTeaser
-        ? t('Ψάχνετε Nakamas;', 'Need Nakamas?')
-        : t('Σχέδια', 'Plans');
-
-  const badge = hasPending
-    ? feed.insights.pendingJoinsToReview
-    : total > 0
-      ? total
-      : null;
+  if (!visible) return null;
 
   return (
     <button
       type="button"
       onClick={() => setOpen(true)}
       className={cn(
-        'xl:hidden fixed left-1/2 -translate-x-1/2 z-fab flex items-center gap-2 min-h-11 pl-4 pr-3 rounded-full shadow-soft-lg border font-bold text-xs transition-transform active:scale-[0.98] motion-reduce:transition-none',
+        'hidden md:flex xl:hidden fixed left-1/2 -translate-x-1/2 z-fab items-center gap-2 min-h-11 pl-4 pr-3 rounded-full shadow-soft-lg border font-bold text-xs transition-transform active:scale-[0.98] motion-reduce:transition-none',
         'bottom-fab-zone',
         hasPending
           ? 'bg-amber-500 border-amber-400 text-white animate-pulse motion-reduce:animate-none'

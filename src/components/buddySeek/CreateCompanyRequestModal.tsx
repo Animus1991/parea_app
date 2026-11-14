@@ -274,7 +274,7 @@ export function CreateCompanyRequestModal({
                 <input type="checkbox" checked={flexibleDates} onChange={(e) => setFlexibleDates(e.target.checked)} />
                 {t('Ευέλικτες ημερομηνίες', 'Flexible dates')}
               </label>
-              <select
+              <select aria-label={t("Σημείο συνάντησης", "Meeting preference")}
                 value={meetingPreference}
                 onChange={(e) => setMeetingPreference(e.target.value as MeetingPreference)}
                 className="w-full rounded-xl border border-border px-3 py-2 text-sm bg-surface-raised"

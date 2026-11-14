@@ -140,6 +140,7 @@ export default function OnboardingClassic() {
 
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-5">
+      <h1 className="sr-only">{tu('Ρύθμιση προφίλ', 'Profile setup')}</h1>
       <div className="w-full max-w-lg">
         {/* Progress bar */}
         <div className="mb-4">

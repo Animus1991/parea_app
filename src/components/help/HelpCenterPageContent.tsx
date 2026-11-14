@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { openCopilot } from '../../ai/copilot';
 import { Bot } from 'lucide-react';
-import { Search, Book, MessageCircle, FileText, ChevronRight, ChevronDown, Zap, Shield, CreditCard, Users } from 'lucide-react';
+import { Search, MessageCircle, ChevronRight, ChevronDown, Zap, Shield, CreditCard, Users } from 'lucide-react';
 import { Card } from '../common/Card';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
@@ -21,19 +21,19 @@ export default function HelpCenterPageContent() {
   const [topicFilter, setTopicFilter] = useState<string | null>(null);
   const liveSupport = isLiveSupportConfigured();
 
-  const articles = [
+  const articles = useMemo(() => [
     { id: 1, title: t('Πώς να αναφέρετε μια μη εμφάνιση', 'How to report a no-show'), category: t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety'), content: t('Ανοίξτε τη σελίδα της εκδήλωσης και πατήστε «Αναφορά». Καταγράψτε ποιος δεν εμφανίστηκε εντός 24 ωρών. Η ομάδα εμπιστοσύνης εξετάζει την αναφορά και ενημερώνει το Trust Score του χρήστη.', 'Open the event page and tap "Report". Record who didn\'t show up within 24 hours. Our trust team reviews the report and updates the user\'s Trust Score.') },
     { id: 2, title: t('Επιστροφή χρημάτων για ακυρωμένη εκδήλωση', 'Refund for canceled event'), category: t('Πληρωμές', 'Payments'), content: t('Αν ο διοργανωτής ακυρώσει την εκδήλωση, η προέγκριση πληρωμής ακυρώνεται αυτόματα εντός 3-5 εργάσιμων ημερών. Για χρεώσεις που έχουν ήδη ολοκληρωθεί, η επιστροφή γίνεται στο αρχικό μέσο πληρωμής.', 'If the organizer cancels, the payment pre-authorization is voided automatically within 3-5 business days. For completed charges, refunds go back to the original payment method.') },
     { id: 3, title: t('Συμβουλές διοργάνωσης', 'Tips for hosting your first meetup'), category: t('Διοργανωτές', 'Organizers'), content: t('Ξεκινήστε με μικρή ομάδα 3-5 ατόμων, ορίστε ξεκάθαρο σημείο συνάντησης, στείλτε ανακοίνωση την προηγούμενη μέρα και επιβεβαιώστε τις παρουσίες μετά το event για να χτίσετε Trust Score.', 'Start with a small 3-5 person group, set a clear meeting point, send an announcement the day before, and confirm attendance after the event to build Trust Score.') },
     { id: 4, title: t('Αλλαγή ειδοποιήσεων', 'Change notification preferences'), category: t('Λογαριασμός', 'Account'), content: t('Πηγαίνετε Ρυθμίσεις → Ειδοποιήσεις και επιλέξτε ποιες ενημερώσεις θέλετε (νέα μηνύματα, αλλαγές εκδηλώσεων, υπενθυμίσεις). Οι αλλαγές αποθηκεύονται αυτόματα.', 'Go to Settings → Notifications and choose which updates you want (new messages, event changes, reminders). Changes save automatically.') },
-  ];
+  ], [t]);
 
-  const faqs = [
+  const faqs = useMemo(() => [
     { id: 1, q: t('Πώς λειτουργούν οι ομάδες;', 'How do groups work?'), a: t('Οι ομάδες σχηματίζονται αυτόματα όταν αρκετά άτομα εκδηλώσουν ενδιαφέρον. Μόλις γεμίσει η ομάδα, αποκαλύπτεται το σημείο συνάντησης.', 'Groups form automatically when enough people express interest. Once the group fills up, the meeting point is revealed.') },
     { id: 2, q: t('Τι γίνεται αν κάποιος δεν εμφανιστεί;', 'What if someone doesn\'t show up?'), a: t('Η αξιοπιστία του μειώνεται και μπορεί να λάβει προσωρινό αποκλεισμό.', 'Their reliability score decreases and they may receive a temporary ban.') },
     { id: 3, q: t('Πώς αυξάνω το Trust Score;', 'How to increase Trust Score?'), a: t('Επαληθεύστε email, τηλέφωνο, ταυτότητα. Παρακολουθήστε εκδηλώσεις τακτικά.', 'Verify email, phone and ID. Attend events regularly.') },
     { id: 4, q: t('Μπορώ να ακυρώσω συμμετοχή;', 'Can I cancel?'), a: t('Ναι, μέχρι 24 ώρες πριν. Αργότερη ακύρωση επηρεάζει το score σας.', 'Yes, up to 24 hours before. Later cancellation affects your score.') },
-  ];
+  ], [t]);
 
   const popularTopics = [
     { label: t('Ασφάλεια', 'Safety'), icon: Shield, color: a.isDark ? 'text-red-400 bg-red-900/20' : 'text-red-600 bg-red-50' },

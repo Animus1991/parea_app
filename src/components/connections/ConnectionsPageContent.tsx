@@ -12,9 +12,10 @@ import { useChatStore } from '../../store/chatStore';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
+import { stopBubbling, pressable } from '../../lib/a11y';
 
 // ─── More dropdown ──────────────────────────────────────────────
-function MoreMenu({ connId, onViewProfile, onRemove, onReport, onInvite }: { connId: string; onViewProfile: () => void; onRemove: () => void; onReport: () => void; onInvite: () => void }) {
+function MoreMenu({ connId: _connId, onViewProfile, onRemove, onReport, onInvite }: { connId: string; onViewProfile: () => void; onRemove: () => void; onReport: () => void; onInvite: () => void }) {
   const { t } = useLanguage();
   const a = usePageContrast();
   const [open, setOpen] = useState(false);
@@ -107,7 +108,7 @@ export default function ConnectionsPageContent() {
   }, [events, groups, currentUser]);
 
   // ─── Computed data ───────────────────────────────────────
-  const myConnectionIds = currentUser?.connections || [];
+  const myConnectionIds = useMemo(() => currentUser?.connections ?? [], [currentUser?.connections]);
 
   const connections = useMemo(() => {
     return users
@@ -345,7 +346,7 @@ export default function ConnectionsPageContent() {
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-1 shrink-0" {...stopBubbling}>
                 <button
                   type="button"
                   onClick={() => handleMessage(conn.id)}
@@ -424,7 +425,7 @@ export default function ConnectionsPageContent() {
           {pendingRequests.map((req) => (
             <Card key={req.id} className="p-4">
               <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3 min-w-0 cursor-pointer" onClick={() => handleViewProfile(req.user)}>
+                <div className="flex items-center gap-3 min-w-0 cursor-pointer rounded-lg" {...pressable<HTMLDivElement>(() => handleViewProfile(req.user))}>
                   <img referrerPolicy="no-referrer" src={req.user.photoUrl || `https://i.pravatar.cc/150?u=${req.user.id}`} alt={req.user.name} className={`w-12 h-12 rounded-full object-cover shrink-0 ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">

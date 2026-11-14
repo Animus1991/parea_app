@@ -381,6 +381,11 @@ export function LookingForCompanyPanel({
               toast.success(t('Αποδεχτήκατε', 'Accepted'));
             }
           }}
+          onDecline={() => {
+            if (!preview.joinId) return;
+            declineJoin(preview.joinId);
+            toast.info(t('Το αίτημα απορρίφθηκε', 'Request declined'));
+          }}
         />
       )}
 

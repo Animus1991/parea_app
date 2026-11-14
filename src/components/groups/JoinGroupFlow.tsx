@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useStore } from '../../store';
 import { Button } from '../common/Button';
-import { Ticket, Users, CheckCircle, Split, ShieldCheck, Tag } from 'lucide-react';
+import { Users, CheckCircle, Split, ShieldCheck, Tag } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { canAccessEvent } from '../../lib/trust';
 import { computeDiscountedPrice } from '../../lib/groupUtils';
@@ -97,6 +97,7 @@ export default function JoinGroupFlow() {
 
   return (
     <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sm:p-5 mt-5">
+      <h1 className="sr-only">{t('Συμμετοχή σε ομάδα', 'Join a group')}: {event.title}</h1>
       {!gate.allowed && (
         <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm font-medium flex gap-2">
           <ShieldCheck className="w-5 h-5 shrink-0" />
@@ -113,7 +114,7 @@ export default function JoinGroupFlow() {
             <p className="mt-1 text-sm text-gray-500 font-medium">{event.title}</p>
           </div>
 
-          <p className="text-xs text-gray-600 font-medium p-3 bg-cyan-50 border border-cyan-100 rounded-xl text-cyan-900 leading-relaxed">
+          <p className="text-xs font-medium p-3 bg-cyan-50 border border-cyan-100 rounded-xl text-cyan-900 leading-relaxed dark:bg-cyan-950/40 dark:border-cyan-800/50 dark:text-cyan-100">
             {t(
               'Συνιστάμε ομάδες 3–5 ατόμων — πιο ασφαλές και άνετο.',
               'We recommend groups of 3–5 people — safer and more comfortable.',
@@ -222,7 +223,7 @@ export default function JoinGroupFlow() {
               </p>
             </div>
           ) : (
-            <label className="flex gap-3 p-4 rounded-xl border border-cyan-100 bg-cyan-50/50 cursor-pointer">
+            <label className="flex gap-3 p-4 rounded-xl border border-cyan-100 bg-cyan-50/50 cursor-pointer dark:border-cyan-800/50 dark:bg-cyan-950/30">
               <input
                 type="checkbox"
                 checked={commitmentAccepted}

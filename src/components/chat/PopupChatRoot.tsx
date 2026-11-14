@@ -35,7 +35,7 @@ export function PopupChatRoot() {
   return (
     <>
       {minimized.length > 0 && (
-        <div className="fixed z-chat flex flex-col items-end gap-2 right-4 bottom-fab-zone md:right-6 md:bottom-20 copilot-shift">
+        <div className="fixed z-chat flex flex-col items-end gap-2 right-4 bottom-[calc(var(--safe-bottom)+3.5rem+env(safe-area-inset-bottom,0px))] md:right-6 md:bottom-20 copilot-shift">
           {minimized.map((c) => (
             <button
               key={c.id}
@@ -56,7 +56,8 @@ export function PopupChatRoot() {
           ))}
         </div>
       )}
-      <PopupChatLauncher onClick={toggleInbox} />
+      {/* Phones reach chats from the shared dock (layout/MobileDock). */}
+      <PopupChatLauncher onClick={toggleInbox} className="hidden md:flex" />
       {inboxOpen && (
         <>
           <button

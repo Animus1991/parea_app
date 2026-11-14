@@ -1,4 +1,4 @@
-import { HOME_CATEGORIES, HOME_POPULAR_TAGS } from './homeFeedConstants';
+import { HOME_CATEGORIES } from './homeFeedConstants';
 
 export function getHomeCategoryTranslations(
   t: (gr: string, en: string) => string,

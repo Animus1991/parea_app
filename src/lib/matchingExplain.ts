@@ -80,7 +80,7 @@ export function explainEventMatch(
   };
 }
 
-export function formatExplainChips(explanation: MatchExplanation, lang: 'el' | 'en'): string[] {
+export function formatExplainChips(explanation: MatchExplanation, _lang: 'el' | 'en'): string[] {
   const chips: string[] = [`${explanation.score}%`];
   for (const s of explanation.sharedStrengths.slice(0, 2)) chips.push(s);
   for (const m of explanation.mismatchFlags.slice(0, 1)) chips.push(m);

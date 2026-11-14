@@ -173,7 +173,7 @@ interface AppState {
   archiveEvent: (eventId: string) => void;
   publishMeetingPoint: (groupId: string, meetingPoint: string) => void;
   sendGroupAnnouncement: (groupId: string, textEl: string, textEn: string) => void;
-  addNotification: (notification: any) => void;
+  addNotification: (notification: Partial<AppNotification> & Record<string, unknown>) => void;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
   dismissNotification: (id: string) => void;

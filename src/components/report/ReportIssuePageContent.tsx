@@ -109,7 +109,7 @@ export default function ReportIssuePageContent() {
               <label className={cn('block text-xs font-bold tracking-wider mb-2', p.head)}>
                 {t('Κατηγορία', 'Category')}
               </label>
-              <select
+              <select aria-label={t("Κατηγορία προβλήματος", "Problem category")}
                 className={cn(inputClass, 'h-11 px-3')}
                 required
                 value={category}

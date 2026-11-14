@@ -19,6 +19,7 @@ import { Button } from "../common/Button";
 import { useLanguage } from "../../lib/i18n";
 import { MapPinPicker } from "../common/MapPinPicker";
 import { cn } from "../../lib/utils";
+import { pressable } from "../../lib/a11y";
 import { usePageContrast } from "../../hooks/usePageContrast";
 import { useProfileContrast } from "../../hooks/usePageContrast";
 import { getHomeCategoryTranslations } from "../../lib/homeCategoryLabels";
@@ -235,7 +236,8 @@ export default function CreateEventFlowPageContent() {
                       p.uploadArea,
                       p.cardHover,
                     )}
-                    onClick={() => fileInputRef.current?.click()}
+                    {...pressable<HTMLDivElement>(() => fileInputRef.current?.click())}
+                    aria-label={t("Ανέβασμα εικόνας εκδήλωσης", "Upload event image")}
                   >
                     {imagePreview ? (
                        <img src={imagePreview} className="absolute inset-0 w-full h-full object-cover" alt={t('Προεπισκόπηση εκδήλωσης', 'Event preview')} />

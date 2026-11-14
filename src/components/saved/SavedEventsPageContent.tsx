@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { Bookmark, MapPin, Calendar, Users, ArrowRight, Search } from 'lucide-react';
+import { Bookmark, MapPin, Calendar, ArrowRight, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
@@ -14,13 +14,15 @@ import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 
+const NO_IDS: string[] = [];
+
 export default function SavedEventsPageContent() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const a = usePageContrast();
 
   const { events, isLoading, isError, refetch } = useEventsResource();
-  const savedEventIds = useStore((s) => s.savedEvents) || [];
+  const savedEventIds = useStore((s) => s.savedEvents ?? NO_IDS);
   const toggleSavedEvent = useStore((s) => s.toggleSavedEvent);
 
   const [search, setSearch] = useState('');
@@ -69,7 +71,7 @@ export default function SavedEventsPageContent() {
                 className={cn("search-control w-full h-9 pl-9 pr-3 rounded-xl border outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
               />
             </div>
-            <select
+            <select aria-label={t("Ταξινόμηση", "Sort by")}
               value={sortBy}
               onChange={e => setSortBy(e.target.value as 'date' | 'name')}
               className={cn("filter-select border outline-none cursor-pointer", a.inputBg)}
@@ -118,23 +120,13 @@ export default function SavedEventsPageContent() {
           {savedEvents.map(event => (
             <Card
               key={event.id}
-              className={cn("overflow-hidden flex flex-col group cursor-pointer transition-all focus-visible:ring-2 focus-visible:ring-cyan-500", a.cardHover)}
-              onClick={() => navigate(`/events/${event.id}`)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e: React.KeyboardEvent) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  navigate(`/events/${event.id}`);
-                }
-              }}
-              aria-label={t(`Άνοιγμα εκδήλωσης ${event.title}`, `Open event ${event.title}`)}
+              className={cn("relative overflow-hidden flex flex-col group cursor-pointer transition-all duration-200 hover:-translate-y-[0.5px] hover:shadow-soft-md focus-within:ring-2 focus-within:ring-cyan-500", a.cardHover)}
             >
               <div className={cn("h-32 relative overflow-hidden shrink-0", a.isDark ? "bg-gray-700/30" : "bg-gray-200")}>
                 <img
                   referrerPolicy="no-referrer"
                   src={event.imageUrl}
-                  alt={event.title}
+                  alt=""
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <button
@@ -162,7 +154,13 @@ export default function SavedEventsPageContent() {
                   </Badge>
                 </div>
                 <h3 className={cn("font-bold text-sm transition-colors line-clamp-2 mb-2", a.head, a.isDark ? 'group-hover:text-gray-300' : 'group-hover:text-gray-600')}>
-                  {event.title}
+                  {/* Stretched link: the whole card opens the event, while the remove button stays a separate control. */}
+                  <Link
+                    to={`/events/${event.id}`}
+                    className="outline-none after:absolute after:inset-0 after:content-['']"
+                  >
+                    {event.title}
+                  </Link>
                 </h3>
                 <div className="mt-auto space-y-1.5">
                   <div className={cn("flex items-center text-xs font-medium", a.sub)}>

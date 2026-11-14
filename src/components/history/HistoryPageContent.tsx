@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { History as HistoryIcon, MapPin, Calendar, Clock, Star, CheckCircle2, Search, Filter, TrendingUp, Users, Award } from 'lucide-react';
+import { History as HistoryIcon, MapPin, Calendar, Star, CheckCircle2, Search, TrendingUp, Users, Award } from 'lucide-react';
 import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
