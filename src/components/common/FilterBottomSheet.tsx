@@ -33,7 +33,7 @@ export function FilterBottomSheet({
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-ink">
           <SlidersHorizontal className="h-5 w-5 text-accent" />
-          <h2 className="text-base font-bold">
+          <h2 className="text-sm font-bold">
             {t('Φίλτρα', 'Filters')}
             {activeCount > 0 && (
               <span className="ml-2 text-xs font-bold text-accent">({activeCount})</span>
@@ -43,7 +43,7 @@ export function FilterBottomSheet({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full px-3 py-2 min-h-11 text-sm font-bold text-ink-muted hover:bg-surface"
+          className="rounded-full px-3 py-2 min-h-10 text-sm font-bold text-ink-muted hover:bg-surface"
           aria-label={t('Κλείσιμο', 'Close')}
         >
           {t('Κλείσιμο', 'Close')}
@@ -54,7 +54,7 @@ export function FilterBottomSheet({
         <button
           type="button"
           onClick={onClear}
-          className="flex-1 min-h-11 rounded-2xl border border-border text-sm font-bold text-ink-muted"
+          className="flex-1 min-h-10 rounded-2xl border border-border text-sm font-bold text-ink-muted"
         >
           {t('Εκκαθάριση', 'Clear all')}
         </button>
@@ -62,7 +62,7 @@ export function FilterBottomSheet({
           type="button"
           data-autofocus
           onClick={onClose}
-          className={cn('flex-[2] min-h-11 rounded-2xl text-sm font-bold bg-accent text-accent-fg hover:bg-accent-strong')}
+          className={cn('flex-[2] min-h-10 rounded-2xl text-sm font-bold bg-accent text-accent-fg hover:bg-accent-strong')}
         >
           {t('Εφαρμογή', 'Apply')}
         </button>

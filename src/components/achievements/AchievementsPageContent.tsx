@@ -81,7 +81,7 @@ export default function AchievementsPageContent() {
       <GamificationHubNav />
       <div>
         <div>
-          <h1 className={cn('text-xl md:text-2xl font-bold', a.head)}>{t('Επιτεύγματα', 'Achievements')}</h1>
+          <h1 className={cn('text-base md:text-lg font-bold', a.head)}>{t('Επιτεύγματα', 'Achievements')}</h1>
           <p className={cn('font-medium text-sm mt-1', a.sub)}>
             {t('Κάθε badge βασίζεται στη πραγματική σου δραστηριότητα — πάτα ένα για να δεις πώς το ξεκλειδώνεις.', 'Every badge is based on your real activity — tap one to see how to unlock it.')}
           </p>
@@ -214,7 +214,7 @@ export default function AchievementsPageContent() {
                 ].map((stat) => (
                   <div key={stat.label} className="flex flex-col-reverse items-center text-center">
                     <dt className={cn('text-2xs font-medium', a.sub)}>{stat.label}</dt>
-                    <dd className={cn('text-xl font-black tabular-nums', a.head)}>{stat.val}</dd>
+                    <dd className={cn('text-lg font-black tabular-nums', a.head)}>{stat.val}</dd>
                   </div>
                 ))}
               </dl>
@@ -244,7 +244,7 @@ export default function AchievementsPageContent() {
             <button
               type="button"
               onClick={() => navigate('/leaderboard')}
-              className={cn('w-full flex items-center justify-center gap-1 py-3 text-xs font-bold border-t transition-colors', a.lbBorder, a.shareHover)}
+              className={cn('w-full flex items-center justify-center gap-1 py-2.5 text-xs font-bold border-t transition-colors', a.lbBorder, a.shareHover)}
             >
               {t('Πλήρης κατάταξη', 'Full leaderboard')} <ChevronRight className="w-3.5 h-3.5" aria-hidden />
             </button>

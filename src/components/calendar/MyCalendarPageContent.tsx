@@ -331,11 +331,11 @@ export default function MyCalendarPageContent() {
           </div>
           <div>
             <h1
-              className={cn(
-                "text-2xl md:text-3xl font-extrabold tracking-tight",
-                p.head,
-              )}
-            >
+ className={cn(
+ "text-base md:text-lg font-extrabold tracking-tight",
+ p.head,
+ )}
+ >
               {t("Το Ημερολόγιό μου", "My Calendar")}
             </h1>
             <p className={cn("text-sm md:text-base font-medium mt-1", p.sub)}>
@@ -441,11 +441,11 @@ export default function MyCalendarPageContent() {
           )}
         >
           <h2
-            className={cn(
-              "font-extrabold text-xl md:text-2xl tracking-tight capitalize",
-              p.head,
-            )}
-          >
+ className={cn(
+ "font-extrabold text-sm tracking-tight capitalize",
+ p.head,
+ )}
+ >
             {format(currentDate, "MMMM yyyy")}
           </h2>
           <div className="flex items-center gap-1.5 md:gap-3">
@@ -498,7 +498,7 @@ export default function MyCalendarPageContent() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.2 }}
-              className="p-4 md:p-8"
+              className="p-4"
             >
               <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2 md:mb-4">
                 {[
@@ -536,7 +536,7 @@ export default function MyCalendarPageContent() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.2 }}
-              className="p-4 md:p-8"
+              className="p-4"
             >
               {/* Day-of-week headers */}
               <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2 md:mb-4">

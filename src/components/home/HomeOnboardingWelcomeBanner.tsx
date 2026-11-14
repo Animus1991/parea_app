@@ -50,7 +50,7 @@ export function HomeOnboardingWelcomeBanner({
         type="button"
         onClick={onDismiss}
         className={cn(
-          'absolute top-3 right-3 p-2 rounded-full min-h-11 min-w-11 flex items-center justify-center transition-colors',
+          'absolute top-3 right-3 p-2 rounded-full min-h-10 min-w-10 flex items-center justify-center transition-colors',
           useClassicTokens ? 'hover:bg-cyan-100 text-gray-500' : cn(p.muted, 'hover:opacity-80'),
         )}
         aria-label={t('Κλείσιμο', 'Close')}

@@ -204,7 +204,7 @@ function EventDetailHostOrganizationRating({
           <button
             key={n}
             type="button"
-            className="p-1 min-h-11 min-w-11 flex items-center justify-center rounded-2xl transition-transform hover:scale-110"
+            className="p-1 min-h-10 min-w-10 flex items-center justify-center rounded-2xl transition-transform hover:scale-110"
             onMouseEnter={() => setHover(n)}
             onClick={() => setRating(n)}
             aria-label={`${n}`}
@@ -220,7 +220,7 @@ function EventDetailHostOrganizationRating({
       </div>
       <Button
         type="button"
-        className="rounded-2xl shadow-soft min-h-11"
+        className="rounded-2xl shadow-soft min-h-10"
         onClick={handleSubmit}
         disabled={rating < 1}
       >

@@ -11,7 +11,7 @@ interface PageTitleProps {
 export function PageTitle({ children, subtitle, className }: PageTitleProps) {
   return (
     <div className={cn('space-y-1', className)}>
-      <h1 className="text-xl md:text-2xl font-extrabold tracking-tight text-ink">{children}</h1>
+      <h1 className="text-base md:text-lg font-extrabold tracking-tight text-ink">{children}</h1>
       {subtitle && <p className="text-sm font-medium text-ink-muted">{subtitle}</p>}
     </div>
   );

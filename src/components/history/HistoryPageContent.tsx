@@ -65,7 +65,7 @@ export default function HistoryPageContent() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn("text-xl md:text-2xl font-bold", a.head)}>{t('Ιστορικό', 'History')}</h1>
+          <h1 className={cn("text-base md:text-lg font-bold", a.head)}>{t('Ιστορικό', 'History')}</h1>
           <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Εκδηλώσεις που έχετε παρακολουθήσει', 'Events you\'ve attended')}</p>
         </div>
       </div>
@@ -74,22 +74,22 @@ export default function HistoryPageContent() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <TrendingUp className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-xl font-black", a.head)}>{totalAttended}</p>
+          <p className={cn("text-lg font-black", a.head)}>{totalAttended}</p>
           <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Εκδηλώσεις', 'Events')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Star className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-xl font-black", a.head)}>{avgRating.toFixed(1)}</p>
+          <p className={cn("text-lg font-black", a.head)}>{avgRating.toFixed(1)}</p>
           <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Μ.Ο. Βαθμολογία', 'Avg Rating')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Users className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-xl font-black", a.head)}>{peopleMet}</p>
+          <p className={cn("text-lg font-black", a.head)}>{peopleMet}</p>
           <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Άτομα', 'People Met')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Award className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-xl font-black", a.head)}>{reviewedCount}/{totalAttended}</p>
+          <p className={cn("text-lg font-black", a.head)}>{reviewedCount}/{totalAttended}</p>
           <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Αξιολογήσεις', 'Reviews')}</p>
         </Card>
       </div>
@@ -172,7 +172,7 @@ export default function HistoryPageContent() {
                     <Badge variant="neutral" className="text-xs">{event.category}</Badge>
                     <Badge variant="success" className="text-xs">{t('Ολοκληρώθηκε', 'Completed')}</Badge>
                   </div>
-                  <h3 className={cn("font-bold text-base truncate", a.head)}>{event.title}</h3>
+                  <h3 className={cn("font-bold text-sm truncate", a.head)}>{event.title}</h3>
                   <div className={cn("flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium", a.sub)}>
                     <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{format(parseISO(event.date), 'dd MMM yyyy')}</span>
                     <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{event.locationArea}</span>

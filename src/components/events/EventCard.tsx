@@ -410,7 +410,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               }}
               aria-haspopup="dialog"
               className={cn(
-                "inline-flex items-center gap-1.5 px-3 min-h-11 rounded-full text-xs font-bold border transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                "inline-flex items-center gap-1.5 px-3 min-h-10 rounded-full text-xs font-bold border transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                 arrivalStatus || isSharingLocation
                   ? isDark ? "bg-emerald-950/50 border-emerald-800 text-emerald-300" : "bg-emerald-50 border-emerald-200 text-emerald-700"
                   : isDark ? "bg-white/[0.03] border-white/10 text-gray-300 hover:bg-white/[0.07]" : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100",
@@ -431,7 +431,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   }}
                   aria-label={t('Μετάβαση στο Group Chat', 'View Group Chat')}
                   title={t('Ομαδική συνομιλία', 'Group chat')}
-                  className={cn("min-h-11 min-w-11 rounded-full flex items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent", accentBg, accentText, isDark ? "border-white/10" : "border-transparent")}
+                  className={cn("min-h-10 min-w-10 rounded-full flex items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent", accentBg, accentText, isDark ? "border-white/10" : "border-transparent")}
                 >
                   <MessageSquare className="w-4 h-4" aria-hidden />
                 </button>
@@ -451,7 +451,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   }
                   navigate(`/events/${event.id}/join`);
                 }}
-                className={cn("px-5 py-2 min-h-11 text-white font-bold rounded-full shadow-soft", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
+                className={cn("px-5 py-2 min-h-10 text-white font-bold rounded-full shadow-soft", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
               >
                 {t("Βρες Nakamas", "Find Nakamas")}
               </button>
@@ -491,7 +491,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               <button
                 type="button"
                 onClick={getCalendarUrl}
-                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-bold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-bold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 <CalendarPlus className="w-4 h-4" aria-hidden /> {t('Προσθήκη στο ημερολόγιο', 'Add to calendar')}
               </button>
@@ -501,7 +501,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   setShowSafetyPanel(false);
                   navigate(`/events/${event.id}`);
                 }}
-                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-bold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-bold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
                 {t('Πλήρης σελίδα', 'Full event page')}
               </button>
@@ -640,7 +640,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-ink">
+                    <h3 className="text-sm font-bold text-ink">
                       {t(
                         "Κοινοποίηση Ζωντανής Τοποθεσίας",
                         "Live Location Sharing",
@@ -836,7 +836,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     setIsSharingLocation(true);
                     setShowLocationConfigModal(false);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+                  className="w-full px-4 py-2.5 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
                 >
                   {isSharingLocation
                     ? t("Ενημέρωση", "Update Configuration")
@@ -883,7 +883,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             <button
               type="button"
               onClick={() => setShowSafetyLinkModal(false)}
-              className="flex-1 px-4 py-3 text-sm font-bold text-ink hover:bg-surface rounded-2xl transition-all duration-200 active:scale-[0.98]"
+              className="flex-1 px-4 py-2.5 text-sm font-bold text-ink hover:bg-surface rounded-2xl transition-all duration-200 active:scale-[0.98]"
             >
               {t("Ακύρωση", "Cancel")}
             </button>
@@ -902,7 +902,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 }
                 setShowSafetyLinkModal(false);
               }}
-              className="flex-1 px-4 py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+              className="flex-1 px-4 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
             >
               {t("Κοινοποιηση", "Share")}
             </button>

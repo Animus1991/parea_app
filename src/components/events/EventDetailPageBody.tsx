@@ -105,7 +105,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
     navigate(`/events/${eventId}/join`);
   };
 
-  if (!event) return <div className="p-8 text-center text-ink-muted font-medium">{t('Η εκδήλωση δεν βρέθηκε', 'Event not found')}</div>;
+  if (!event) return <div className="p-5 text-center text-ink-muted font-medium">{t('Η εκδήλωση δεν βρέθηκε', 'Event not found')}</div>;
 
   return (
     <motion.div
@@ -171,14 +171,14 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             </Badge>
           )}
         </div>
-        <h1 className="text-xl md:text-2xl font-extrabold text-ink leading-tight mb-2 md:mb-0">{event.title}</h1>
+        <h1 className="text-base md:text-lg font-extrabold text-ink leading-tight mb-2 md:mb-0">{event.title}</h1>
         <EventDetailPageContent event={event} accent={accent} darkSurface={darkSurface} className="mt-4" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-5 lg:grid-cols-3">
         {/* Left Column: Details */}
         <div className="space-y-6 md:space-y-8 md:col-span-3 lg:col-span-2">
-          <section className="space-y-4 text-sm text-ink leading-relaxed bg-surface-raised rounded-2xl border border-border p-5 md:p-6 shadow-soft">
+          <section className="space-y-4 text-sm text-ink leading-relaxed bg-surface-raised rounded-2xl border border-border p-5 shadow-soft">
              <EventDetailMetaSection event={event} accent={accent} darkSurface={darkSurface} />
              <EventMap event={event} accent={accent} darkSurface={darkSurface} />
              <EventDetailAboutSection event={event} accent={accent} darkSurface={darkSurface} />
@@ -191,7 +191,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
         {/* Right Column: Groups & Actions */}
         <div className="space-y-6 md:col-span-2 lg:col-span-1">
-          <div className="rounded-2xl border border-border bg-surface-raised p-6 shadow-soft sticky top-24">
+          <div className="rounded-2xl border border-border bg-surface-raised p-5 shadow-soft sticky top-24">
             <LookingForCompanyPanel event={event} accent={accent} darkSurface={darkSurface} />
 
             <h3 className="text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
@@ -279,10 +279,10 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
       {/* Mobile Sticky CTA — primary: Find Nakamas (gated) */}
       <div className="fixed bottom-0 left-0 right-0 bg-surface-raised/95 backdrop-blur-md border-t border-border p-4 shadow-soft-up md:hidden z-fab flex gap-3 pb-safe">
-        <Button variant="outline" className="flex-1 min-h-11 border-border text-ink" onClick={handleSave}>
+        <Button variant="outline" className="flex-1 min-h-10 border-border text-ink" onClick={handleSave}>
           {isSaved ? t('Αποθηκευμένο', 'Saved') : t('Αποθήκευση', 'Save')}
         </Button>
-        <Button className="flex-[2] min-h-11 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
+        <Button className="flex-[2] min-h-10 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
           {t('Βρες Nakamas', 'Find Nakamas')}
         </Button>
       </div>

@@ -102,7 +102,7 @@ export default function PlansPageContent() {
             <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center mb-2', p.statBg)}>
               <s.icon className={cn('w-5 h-5', p.statVal)} />
             </div>
-            <p className={cn('text-2xl font-black tabular-nums leading-none', p.head)}>{s.count}</p>
+            <p className={cn('text-lg font-black tabular-nums leading-none', p.head)}>{s.count}</p>
             <p className={cn('text-xs font-semibold mt-1', p.muted)}>{s.label}</p>
           </button>
         ))}
@@ -133,7 +133,7 @@ export default function PlansPageContent() {
           <div className="flex items-start gap-3">
             <AlertTriangle className={cn('w-5 h-5 shrink-0 mt-0.5', p.isDark ? 'text-amber-400' : 'text-amber-600')} />
             <div>
-              <h3 className={cn('font-bold text-base mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
+              <h3 className={cn('font-bold text-sm mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
               <p className={cn('text-sm font-medium', p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
             </div>
           </div>
@@ -199,7 +199,7 @@ export default function PlansPageContent() {
 
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-start gap-2 mb-2">
-                <h3 className={cn('font-bold text-xl', p.head)}>{event.title}</h3>
+                <h3 className={cn('font-bold text-sm', p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
                   <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
                   <div className={cn('text-sm font-medium', p.muted)}>{event.time}</div>
@@ -302,7 +302,7 @@ export default function PlansPageContent() {
 
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-start gap-2 mb-2">
-                <h3 className={cn('font-bold text-xl', p.head)}>{event.title}</h3>
+                <h3 className={cn('font-bold text-sm', p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
                   <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
                 </div>
@@ -358,7 +358,7 @@ export default function PlansPageContent() {
                 <Calendar className="w-3.5 h-3.5" />
                 {format(parseISO(event.date), 'MMMM d, yyyy')}
               </div>
-              <h3 className={cn('font-bold text-xl mb-3', p.head)}>{event.title}</h3>
+              <h3 className={cn('font-bold text-sm mb-3', p.head)}>{event.title}</h3>
 
               {!feedbackSubmitted[event.id] ? (
                 <div className={cn('p-3 rounded-2xl flex items-center justify-between mt-auto border', p.statBg)}>
@@ -407,14 +407,14 @@ export default function PlansPageContent() {
               toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'));
               setShowLeaveConfirm(null);
             }}
-            className="w-full px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
+            className="w-full px-4 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
           >
             {t('Ναι, Αποχώρηση', 'Yes, Leave')}
           </button>
           <button
             type="button"
             onClick={() => setShowLeaveConfirm(null)}
-            className={cn('w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 border', secondaryBtn)}
+            className={cn('w-full px-4 py-2.5 text-sm font-bold rounded-2xl transition-all duration-200 border', secondaryBtn)}
           >
             {t('Ακύρωση', 'Cancel')}
           </button>

@@ -142,7 +142,7 @@ export default function CategoriesPageContent() {
     <div className="max-w-full mx-auto space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div
         className={cn(
-          'p-6 md:p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative shadow-soft',
+          'p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative shadow-soft',
           'bg-gradient-to-br from-hero-from to-hero-to text-hero-fg',
         )}
       >
@@ -154,7 +154,7 @@ export default function CategoriesPageContent() {
             <Compass className="w-3.5 h-3.5 mr-1" />{' '}
             {t('Εξερευνηση Δραστηριοτήτων', 'Activity Explorer')}
           </Badge>
-          <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-3 leading-tight">
+          <h1 className="text-base md:text-lg font-extrabold tracking-tight mb-3 leading-tight">
             {t('Βρείτε την επόμενη', 'Find your next')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-hero-accent-from to-hero-accent-to">
               {t('εμπειρία σας', 'experience')}
@@ -176,7 +176,7 @@ export default function CategoriesPageContent() {
                 'Αναζήτηση κατηγοριών ή θεμάτων...',
                 'Search categories or topics...',
               )}
-              className="w-full h-12 pl-12 pr-4 rounded-2xl border-0 bg-hero-fg/10 text-hero-fg placeholder:text-hero-fg/60 focus:outline-none focus:ring-2 focus:ring-hero-fg/40 font-medium backdrop-blur-md transition-all text-sm"
+              className="w-full h-9 pl-12 pr-4 rounded-2xl border-0 bg-hero-fg/10 text-hero-fg placeholder:text-hero-fg/60 focus:outline-none focus:ring-2 focus:ring-hero-fg/40 font-medium backdrop-blur-md transition-all text-sm"
             />
           </div>
         </div>
@@ -249,7 +249,7 @@ export default function CategoriesPageContent() {
                 setActiveCategory(null);
               }}
               className={cn(
-                'px-5 py-3 whitespace-nowrap text-sm font-bold rounded-2xl transition-all flex-1 text-center min-w-[120px]',
+                'px-5 py-2.5 whitespace-nowrap text-sm font-bold rounded-2xl transition-all flex-1 text-center min-w-[120px]',
                 activeTab === tab
                   ? p.isDark
                     ? 'bg-[hsl(220_16%_18%)] text-white shadow-soft'
@@ -346,7 +346,7 @@ export default function CategoriesPageContent() {
               )}
             </div>
             <div>
-              <h2 className={cn('text-base md:text-lg font-extrabold tracking-tight', p.head)}>
+              <h2 className={cn('text-sm font-extrabold tracking-tight', p.head)}>
                 {activeCategory
                   ? language === 'el'
                     ? CATEGORY_CATALOG.find((c) => c.name === activeCategory)?.labelGr
@@ -434,7 +434,7 @@ export default function CategoriesPageContent() {
 
       <div
         className={cn(
-          'mt-12 rounded-2xl p-6 md:p-8 border shadow-soft flex flex-col justify-center items-center text-center gap-5 relative overflow-hidden',
+          'mt-12 rounded-2xl p-5 border shadow-soft flex flex-col justify-center items-center text-center gap-5 relative overflow-hidden',
           p.isDark ? 'bg-[hsl(220_16%_16%)] border-gray-700' : 'bg-cyan-50/50 border-cyan-100',
         )}
       >
@@ -447,7 +447,7 @@ export default function CategoriesPageContent() {
         >
           <Star className="w-3.5 h-3.5 mr-1" /> {t('Γίνε Οικοδεσπότης', 'Become a Host')}
         </Badge>
-        <h3 className={cn('text-xl md:text-2xl font-extrabold tracking-tight', p.head)}>
+        <h3 className={cn('text-sm font-extrabold tracking-tight', p.head)}>
           {t('Μην βρήκατε αυτό που ψάχνατε;', "Couldn't find what you wanted?")}
         </h3>
         <p className={cn('text-sm max-w-lg mx-auto font-medium leading-relaxed', p.sub)}>

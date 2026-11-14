@@ -244,7 +244,7 @@ export default function ChallengesClassic() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className={cn('font-bold text-base', p.head)}>
+                      <h3 className={cn('font-bold text-sm', p.head)}>
                         {t(c.titleGr, c.titleEn)}
                       </h3>
                       {done && (

@@ -54,10 +54,10 @@ export function PlatformEventBanner() {
         </div>
         <div>
           <h3
-            className={`text-base font-bold ${
-              tok.isDark ? "text-amber-100" : "text-amber-900"
-            }`}
-          >
+ className={`text-sm font-bold ${
+ tok.isDark ? "text-amber-100" : "text-amber-900"
+ }`}
+ >
             {t("Προτεινόμενη εκδήλωση από το Nakamas", "Curated by Nakamas")}
           </h3>
           <p

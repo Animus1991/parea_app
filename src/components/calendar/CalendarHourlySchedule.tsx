@@ -39,7 +39,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
       >
         <div className={cn('p-5 flex items-center justify-between border-b', p.borderB)}>
           <div>
-            <h3 className={cn('font-bold text-lg', p.head)}>{format(day, 'd MMMM yyyy')}</h3>
+            <h3 className={cn('font-bold text-sm', p.head)}>{format(day, 'd MMMM yyyy')}</h3>
             <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
               {tu('Ημερήσιο Πρόγραμμα', 'Daily Schedule')}
             </p>
@@ -47,7 +47,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
           <button
             type="button"
             className={cn(
-              'p-2 rounded-2xl transition-colors min-h-11 min-w-11 flex items-center justify-center',
+              'p-2 rounded-2xl transition-colors min-h-10 min-w-10 flex items-center justify-center',
               p.isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-gray-100 hover:bg-gray-200',
             )}
             onClick={onClose}

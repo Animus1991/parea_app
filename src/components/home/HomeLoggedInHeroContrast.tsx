@@ -65,7 +65,7 @@ export function HomeLoggedInHeroContrast({
           type="button"
           onClick={() => navigate('/nearby')}
           className={cn(
-            'flex items-center justify-center gap-2 px-4 h-11 rounded-2xl border font-bold text-sm transition-all shadow-soft shrink-0',
+            'flex items-center justify-center gap-2 px-4 h-10 rounded-2xl border font-bold text-sm transition-all shadow-soft shrink-0',
             h.heroSearchInput,
           )}
           title={t('Άνοιγμα Χάρτη', 'Open Map')}
@@ -99,7 +99,7 @@ export function HomeLoggedInHeroContrast({
         <div className="relative z-10 space-y-5">
           <div className="flex justify-between items-start gap-4">
             <div>
-              <h1 className={cn(h.heroGreeting, 'text-xl md:text-2xl font-black mb-1')}>
+              <h1 className={cn(h.heroGreeting, 'text-base md:text-lg font-black mb-1')}>
                 {t('Γειά σου, ', 'Hello, ')}
                 {firstName}!
               </h1>
@@ -129,7 +129,7 @@ export function HomeLoggedInHeroContrast({
             <div className="space-y-2 flex-1">
               <p className={h.heroGreeting}>{greeting}</p>
               <p className={cn(h.heroMotivation, 'text-sm')}>{motivation}</p>
-              <h1 className={cn(h.heroTitle, 'text-lg md:text-xl max-w-2xl')}>
+              <h1 className={cn(h.heroTitle, 'text-base md:text-lg max-w-2xl')}>
                 {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>{t('home.hero.title2', 'εμπειρίες')}</span>{' '}
                 {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}

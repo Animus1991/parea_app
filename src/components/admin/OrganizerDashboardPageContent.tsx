@@ -195,7 +195,7 @@ export default function OrganizerDashboardPageContent() {
     <div className="mx-auto max-w-7xl space-y-8 pb-12 animate-in fade-in duration-500">
       <div
         className={cn(
-          'relative overflow-hidden p-6 md:p-8 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-soft border',
+          'relative overflow-hidden p-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-soft border',
           p.isDark ? 'bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]' : 'bg-gradient-to-br from-indigo-900 to-purple-900 border-indigo-800 text-white',
         )}
       >
@@ -204,7 +204,7 @@ export default function OrganizerDashboardPageContent() {
             <Activity className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h1 className={cn('text-2xl md:text-3xl font-extrabold tracking-tight', p.isDark ? p.head : 'text-white')}>
+            <h1 className={cn('text-base md:text-lg font-extrabold tracking-tight', p.isDark ? p.head : 'text-white')}>
               {t('Πίνακας Διοργανωτή', 'Organizer Workspace')}
             </h1>
             <p className={cn('text-sm md:text-base font-medium mt-1', p.isDark ? p.sub : 'text-indigo-200')}>
@@ -239,21 +239,21 @@ export default function OrganizerDashboardPageContent() {
           <div
             key={i}
             className={cn(
-              'p-5 md:p-6 rounded-2xl border shadow-soft relative overflow-hidden flex flex-col justify-between',
+              'p-5 rounded-2xl border shadow-soft relative overflow-hidden flex flex-col justify-between',
               p.cardSurface,
               p.borderB,
             )}
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between gap-2 mb-4">
               <span className={cn('w-8 h-8 rounded-lg flex items-center justify-center', stat.iconWrap)}>
                 <stat.icon className={cn('w-4 h-4', stat.iconColor)} />
               </span>
-              <span className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
+              <span className={cn('min-w-0 truncate text-xs font-bold uppercase tracking-wide', p.muted)}>
                 {tu(stat.labelEl, stat.labelEn)}
               </span>
             </div>
             <div>
-              <p className={cn('text-3xl font-black', p.head)}>{stat.val}</p>
+              <p className={cn('text-lg font-black', p.head)}>{stat.val}</p>
               <p className={cn('text-xs font-bold mt-1', stat.trendColor)}>
                 {stat.trendEl}
               </p>
@@ -278,13 +278,13 @@ export default function OrganizerDashboardPageContent() {
         <div role="tabpanel" id="organizer-panel-events" aria-labelledby="organizer-tab-events" className="space-y-8">
       <div
         className={cn(
-          'p-6 rounded-2xl border shadow-soft flex flex-col md:flex-row items-center justify-between gap-6',
+          'p-5 rounded-2xl border shadow-soft flex flex-col md:flex-row items-center justify-between gap-6',
           p.cardSurface,
           p.borderB,
         )}
       >
         <div>
-          <h3 className={cn('text-lg font-bold tracking-tight', p.head)}>
+          <h3 className={cn('text-sm font-bold tracking-tight', p.head)}>
             {t('Γρήγορη Δημιουργία', 'Quick Create')}
           </h3>
           <p className={cn('text-sm font-medium mt-1', p.muted)}>
@@ -315,7 +315,7 @@ export default function OrganizerDashboardPageContent() {
       </div>
 
       <div className="space-y-4">
-        <h2 className={cn('text-xl font-extrabold tracking-tight flex items-center gap-2', p.head)}>
+        <h2 className={cn('text-sm font-extrabold tracking-tight flex items-center gap-2', p.head)}>
           <Calendar className={cn('w-5 h-5', p.iconAccent)} /> {t('Οι Εκδηλώσεις μου', 'My Events')}
         </h2>
 
@@ -365,12 +365,12 @@ export default function OrganizerDashboardPageContent() {
                         <Clock className="w-3.5 h-3.5" aria-hidden /> {relativeWhen(ev.date)}
                       </span>
                     </div>
-                    <h3 className={cn('text-xl font-bold tracking-tight', p.head)}>{ev.title}</h3>
+                    <h3 className={cn('text-sm font-bold tracking-tight', p.head)}>{ev.title}</h3>
                   </div>
 
                   <div className="flex items-center gap-4">
                     <div className={cn('text-right border-r pr-4', p.borderB)}>
-                      <p className={cn('text-2xl font-black', p.head)}>
+                      <p className={cn('text-lg font-black', p.head)}>
                         {memberCount}/{capacity || '—'}
                       </p>
                       <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
@@ -520,10 +520,10 @@ export default function OrganizerDashboardPageContent() {
       {section === 'analytics' && (
         <div role="tabpanel" id="organizer-panel-analytics" aria-labelledby="organizer-tab-analytics">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className={cn('lg:col-span-2 p-6 rounded-2xl border shadow-soft', p.cardSurface, p.borderB)}>
+        <div className={cn('lg:col-span-2 p-5 rounded-2xl border shadow-soft', p.cardSurface, p.borderB)}>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className={cn('text-lg font-bold tracking-tight', p.head)}>
+              <h3 className={cn('text-sm font-bold tracking-tight', p.head)}>
                 {t('Επισκεψιμότητα Εκδηλώσεων', 'Event Traffic')}
               </h3>
               <p className={cn('text-xs font-medium mt-1', p.muted)}>
@@ -599,17 +599,17 @@ export default function OrganizerDashboardPageContent() {
 
         <div
           className={cn(
-            'p-6 rounded-2xl border shadow-soft flex flex-col justify-between space-y-6',
+            'p-5 rounded-2xl border shadow-soft flex flex-col justify-between space-y-6',
             p.cardSurface,
             p.borderB,
           )}
         >
           <div>
-            <h3 className={cn('text-lg font-bold tracking-tight mb-4', p.head)}>
+            <h3 className={cn('text-sm font-bold tracking-tight mb-4', p.head)}>
               {t('Συνολική Πληρότητα', 'Overall Fill Rate')}
             </h3>
             <div className="flex items-end justify-between mb-2">
-              <span className="text-3xl font-black text-cyan-600 dark:text-cyan-400 leading-none tabular-nums">{liveStats.fillPct}%</span>
+              <span className="text-lg font-black text-cyan-600 dark:text-cyan-400 leading-none tabular-nums">{liveStats.fillPct}%</span>
               <span className={cn('text-xs font-bold tabular-nums', p.muted)}>
                 {t(`${liveStats.participants}/${liveStats.capacity} θέσεις`, `${liveStats.participants}/${liveStats.capacity} spots`)}
               </span>
@@ -633,7 +633,7 @@ export default function OrganizerDashboardPageContent() {
                   p.isDark ? 'bg-emerald-900/10 border-emerald-900/30' : 'bg-emerald-50 border-emerald-100',
                 )}
               >
-                <p className={cn('text-xl sm:text-2xl font-black', p.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
+                <p className={cn('text-lg font-black', p.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
                   {liveStats.reviews ? `${liveStats.positive}%` : '—'}
                 </p>
                 <p
@@ -651,7 +651,7 @@ export default function OrganizerDashboardPageContent() {
                   p.isDark ? 'bg-amber-900/10 border-amber-900/30' : 'bg-amber-50 border-amber-100',
                 )}
               >
-                <p className={cn('text-xl sm:text-2xl font-black', p.isDark ? 'text-amber-400' : 'text-amber-700')}>
+                <p className={cn('text-lg font-black', p.isDark ? 'text-amber-400' : 'text-amber-700')}>
                   {liveStats.reviews ? `${liveStats.neutral}%` : '—'}
                 </p>
                 <p
@@ -669,7 +669,7 @@ export default function OrganizerDashboardPageContent() {
                   p.isDark ? 'bg-red-900/10 border-red-900/30' : 'bg-red-50 border-red-100',
                 )}
               >
-                <p className={cn('text-xl sm:text-2xl font-black', p.isDark ? 'text-red-400' : 'text-red-700')}>
+                <p className={cn('text-lg font-black', p.isDark ? 'text-red-400' : 'text-red-700')}>
                   {liveStats.reviews ? `${liveStats.negative}%` : '—'}
                 </p>
                 <p

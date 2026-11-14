@@ -144,7 +144,7 @@ export default function SettingsPageContent() {
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="mb-2">
-        <h1 className={cn("text-xl md:text-2xl font-bold", a.head)}>{t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')}</h1>
+        <h1 className={cn("text-base md:text-lg font-bold", a.head)}>{t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')}</h1>
         <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Διαχειριστείτε τον λογαριασμό σας', 'Manage your account')}</p>
       </div>
 
@@ -175,7 +175,7 @@ export default function SettingsPageContent() {
 
       {showHomeLayout && (
         <Card className="p-5">
-          <h3 className={cn("font-bold text-base mb-1", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
+          <h3 className={cn("font-bold text-sm mb-1", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
           <p className={cn("text-xs font-medium mb-4", a.sub)}>
             {t(
               'Επιλέξτε πόσο πλούσιο είναι το hero στην αρχική — ισχύει σε όλα τα θέματα.',
@@ -189,7 +189,7 @@ export default function SettingsPageContent() {
       {/* Theme Picker */}
       {showThemePicker && (
         <Card className="p-5">
-          <h3 className={cn("font-bold text-base mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
+          <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
           <p className={cn("text-xs font-medium mb-4", a.sub)}>{t('7 επαγγελματικά θέματα — επιλέξτε αυτό που σας ταιριάζει', '7 polished themes — pick what fits you best')}</p>
           <ThemePicker variant="grid" />
         </Card>
@@ -198,7 +198,7 @@ export default function SettingsPageContent() {
       {/* 2FA Setup */}
       {show2FASetup && (
         <Card className={cn("p-5 border", a.twofaBg)}>
-          <h3 className={cn("font-bold text-base mb-2", a.head)}>{t('Ρύθμιση 2FA', 'Setup 2FA')}</h3>
+          <h3 className={cn("font-bold text-sm mb-2", a.head)}>{t('Ρύθμιση 2FA', 'Setup 2FA')}</h3>
           <p className={cn("text-sm mb-4", a.sub)}>{t('Προσθέστε ένα επιπλέον επίπεδο ασφάλειας', 'Add an extra layer of security')}</p>
           <Button size="sm" onClick={() => { updateUserSettings({ twoFactorEnabled: true }); setShow2FASetup(false); toast.success(t('Το 2FA ενεργοποιήθηκε', '2FA enabled')); }}>
             {t('Ενεργοποίηση', 'Enable')}
@@ -210,7 +210,7 @@ export default function SettingsPageContent() {
       {showNotifications && (
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className={cn("font-bold text-base mb-4", a.head)}>{t('Γενικές Ειδοποιήσεις', 'General Notifications')}</h3>
+            <h3 className={cn("font-bold text-sm mb-4", a.head)}>{t('Γενικές Ειδοποιήσεις', 'General Notifications')}</h3>
             <div className="space-y-3">
               {[
                 { key: 'pushMessages', label: t('Μηνύματα ομάδας', 'Group messages') },
@@ -238,7 +238,7 @@ export default function SettingsPageContent() {
           </Card>
 
           <Card className="p-5">
-            <h3 className={cn("font-bold text-base mb-1", a.head)}>{t('Κατηγορίες', 'Categories')}</h3>
+            <h3 className={cn("font-bold text-sm mb-1", a.head)}>{t('Κατηγορίες', 'Categories')}</h3>
             <p className={cn("text-xs mb-4", a.muted)}>{t('Ειδοποίηση μόνο για αυτές τις κατηγορίες', 'Get notified for these categories only')}</p>
             <div className="grid grid-cols-2 gap-2">
               {[

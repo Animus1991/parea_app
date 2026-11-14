@@ -38,7 +38,7 @@ export function HomeRichHero({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className={cn(tok.heroRoot, 'p-6 md:p-10 rounded-3xl relative overflow-hidden flex flex-col gap-4')}
+      className={cn(tok.heroRoot, 'p-5 rounded-3xl relative overflow-hidden flex flex-col gap-4')}
     >
       <div className="relative z-10 flex-1 w-full">
         <div className={cn(tok.heroBadge, 'mb-4', HOME_TYPO.heroBadge)}>
@@ -101,7 +101,7 @@ export function HomeRichHero({
               onChange={(e) => onSearchChange(e.target.value)}
               onFocus={onSearchFocus}
               placeholder={t('home.hero.search_placeholder', 'Αναζήτηση εμπειριών...')}
-              className={cn('w-full h-11 pl-10 pr-4 rounded-full shadow-soft focus:outline-none focus:ring-2 text-sm font-medium', tok.heroSearchInput)}
+              className={cn('w-full h-9 pl-10 pr-4 rounded-full shadow-soft focus:outline-none focus:ring-2 text-sm font-medium', tok.heroSearchInput)}
             />
             <HomeSearchDropdown
               popularSuggestions={searchSuggestions}
@@ -112,7 +112,7 @@ export function HomeRichHero({
           </div>
           <button
             onClick={() => navigate('/trust')}
-            className={cn('hidden sm:flex items-center justify-center px-5 h-11 rounded-full text-xs font-bold transition-colors whitespace-nowrap', tok.heroTrustBtn)}
+            className={cn('hidden sm:flex items-center justify-center px-5 h-10 rounded-full text-xs font-bold transition-colors whitespace-nowrap', tok.heroTrustBtn)}
           >
             {t('home.hero.how_groups', 'Πώς λειτουργούν οι ομάδες')}
           </button>

@@ -135,7 +135,7 @@ export default function BuddySeekPageContent() {
   return (
     <div className="w-full max-w-full min-w-0 space-y-6 pb-16 pt-6">
       <header className="space-y-3">
-        <h1 className={cn('text-2xl font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
+        <h1 className={cn('text-base md:text-lg font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
         <PlansFormingValueHero insights={feed.insights} />
         <PlansFormingStatsBar insights={feed.insights} />
         <div className="flex flex-wrap gap-2">

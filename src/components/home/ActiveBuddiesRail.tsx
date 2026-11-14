@@ -48,11 +48,11 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
             )}
           />
           <h2
-            className={cn(
-              'text-base font-bold leading-tight',
-              useClassicTokens ? h.heading : p.head,
-            )}
-          >
+ className={cn(
+ 'text-sm font-bold leading-tight',
+ useClassicTokens ? h.heading : p.head,
+ )}
+ >
             {t('Ενεργοί Φίλοι', 'Active Buddies')}
           </h2>
         </div>

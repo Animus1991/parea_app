@@ -17,7 +17,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const isABDark = theme === 'activebuddies-dark';
     const isABLight = isActiveBuddiesTheme(theme) && !isDark;
 
-    const baseClass = "inline-flex items-center justify-center font-bold transition-all duration-200 active:scale-[0.97] active:duration-75 disabled:pointer-events-none disabled:opacity-50 disabled:scale-100";
+    const baseClass = "inline-flex items-center justify-center whitespace-nowrap font-bold transition-all duration-200 active:scale-[0.97] active:duration-75 disabled:pointer-events-none disabled:opacity-50 disabled:scale-100";
 
     const focusRing = isDark || isABDark
       ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"

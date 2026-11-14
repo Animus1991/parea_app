@@ -50,7 +50,7 @@ export function ChatIcebreakers({ eventTitle, interests, onSuggest }: ChatIcebre
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className="text-gray-400 hover:text-brand hover:bg-cyan-50 rounded-full transition-colors p-2 min-h-11 min-w-11 flex items-center justify-center disabled:opacity-50"
+      className="text-gray-400 hover:text-brand hover:bg-cyan-50 rounded-full transition-colors p-2 min-h-10 min-w-10 flex items-center justify-center disabled:opacity-50"
       title={t('Πρόταση icebreaker (AI)', 'AI icebreaker suggestion')}
       aria-label={t('Πρόταση icebreaker', 'Icebreaker suggestion')}
     >

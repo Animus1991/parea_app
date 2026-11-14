@@ -197,7 +197,7 @@ export default function AdminDashboardPageContent() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className={cn('p-4 border-t-4 border-t-blue-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Ενεργοί', 'Active')}</h3>
-          <p className={cn('text-xl font-black mt-1', a.head)}>{users.length}</p>
+          <p className={cn('text-lg font-black mt-1', a.head)}>{users.length}</p>
           <p className="text-xs text-green-500 font-bold flex items-center gap-0.5">
             <TrendingUp className="w-2.5 h-2.5" />
             {t('χρήστες', 'users')}
@@ -205,17 +205,17 @@ export default function AdminDashboardPageContent() {
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-cyan-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Αναφορές', 'Reports')}</h3>
-          <p className={cn('text-xl font-black mt-1', a.head)}>{pendingReports.length}</p>
+          <p className={cn('text-lg font-black mt-1', a.head)}>{pendingReports.length}</p>
           <p className="text-xs text-amber-500 font-bold">{t('εκκρεμείς', 'pending')}</p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-red-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Επιλύθηκαν', 'Resolved')}</h3>
-          <p className={cn('text-xl font-black mt-1', a.head)}>{resolvedCount}</p>
+          <p className={cn('text-lg font-black mt-1', a.head)}>{resolvedCount}</p>
           <p className={cn('text-xs font-medium', a.muted)}>{t('συνολικά', 'total')}</p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-emerald-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Εκδηλώσεις', 'Events')}</h3>
-          <p className={cn('text-xl font-black mt-1', a.head)}>{events.length}</p>
+          <p className={cn('text-lg font-black mt-1', a.head)}>{events.length}</p>
           <p className={cn('text-xs font-medium', a.muted)}>{t('στη βάση', 'in catalog')}</p>
         </Card>
       </div>
@@ -312,7 +312,7 @@ export default function AdminDashboardPageContent() {
           </div>
         </div>
         {filteredUsers.length === 0 ? (
-          <p className={cn('p-6 text-center text-sm', a.muted)}>{t('Κανένα μέλος δεν ταιριάζει.', 'No members match.')}</p>
+          <p className={cn('p-5 text-center text-sm', a.muted)}>{t('Κανένα μέλος δεν ταιριάζει.', 'No members match.')}</p>
         ) : (
           <ul className={cn('divide-y', a.isDark ? 'divide-gray-700/40' : 'divide-gray-100')}>
             {filteredUsers.map((u) => {
@@ -411,9 +411,9 @@ export default function AdminDashboardPageContent() {
       <>
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
         <div className="md:col-span-7 space-y-6">
-          <h2 className={cn('text-base font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>
+          <h2 className={cn('text-sm font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>
           {displayReports.length === 0 ? (
-            <Card className={cn('p-6 text-center', a.cardSurface)}>
+            <Card className={cn('p-5 text-center', a.cardSurface)}>
               <p className={cn('text-sm font-medium', a.muted)}>
                 {t('Δεν υπάρχουν αναφορές ακόμα. Οι αναφορές από /report εμφανίζονται εδώ.', 'No reports yet. Reports from /report appear here.')}
               </p>

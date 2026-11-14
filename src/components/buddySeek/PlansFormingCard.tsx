@@ -97,7 +97,7 @@ export function PlansFormingCard({
             onClick={() => navigate(`/events/${item.event.id}`)}
             className="text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-lg"
           >
-            <h3 className={cn('text-base font-bold leading-snug line-clamp-3', darkCard ? 'text-white' : 'text-gray-900')}>
+            <h3 className={cn('text-sm font-bold leading-snug line-clamp-3', darkCard ? 'text-white' : 'text-gray-900')}>
               {item.event.title}
             </h3>
           </button>

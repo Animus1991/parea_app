@@ -30,7 +30,7 @@ export function PlansFormingSidebarReopenTab() {
       onClick={() => setOpen(true)}
       className={cn(
         'hidden xl:flex fixed right-0 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-1',
-        'rounded-l-xl border border-r-0 py-3 px-1.5 shadow-soft-md min-w-[36px]',
+        'rounded-l-xl border border-r-0 py-2.5 px-1.5 shadow-soft-md min-w-[36px]',
         'transition-colors hover:bg-cyan-50',
         tok.isDark ? 'bg-[#0c1016]/95 border-white/10 text-cyan-300' : 'bg-white border-gray-200 text-cyan-700',
       )}

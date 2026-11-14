@@ -68,7 +68,7 @@ export function BottomSheet({
         {(title || showClose) && (
           <div className="mb-3 flex items-start justify-between gap-3">
             {title && (
-              <h2 id={titleId} className="text-lg font-bold text-ink">
+              <h2 id={titleId} className="text-sm font-bold text-ink">
                 {title}
               </h2>
             )}
@@ -76,7 +76,7 @@ export function BottomSheet({
               <button
                 type="button"
                 onClick={onClose}
-                className="ml-auto rounded-full p-2 min-h-11 min-w-11 flex items-center justify-center shrink-0 text-ink-muted hover:bg-surface hover:text-ink transition-colors"
+                className="ml-auto rounded-full p-2 min-h-10 min-w-10 flex items-center justify-center shrink-0 text-ink-muted hover:bg-surface hover:text-ink transition-colors"
                 aria-label={t('Κλείσιμο', 'Close')}
               >
                 <X className="h-5 w-5" />

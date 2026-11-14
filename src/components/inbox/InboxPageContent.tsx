@@ -201,7 +201,7 @@ export default function InboxPageContent() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('Αναζήτηση συνομιλιών...', 'Search conversations...')}
               className={cn(
-                'w-full pl-10 pr-4 py-2.5 rounded-2xl border focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft transition-all',
+                'w-full pl-10 pr-4 py-2 rounded-2xl border focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft transition-all',
                 INBOX_TYPO.search,
                 p.inputBg,
                 p.borderB,
@@ -309,7 +309,7 @@ export default function InboxPageContent() {
       {activeTab === 'notifications' && (
         <div
           className={cn(
-            'rounded-2xl border shadow-soft p-8 text-center flex flex-col items-center',
+            'rounded-2xl border shadow-soft p-5 text-center flex flex-col items-center',
             p.cardSurface,
             p.borderB,
           )}

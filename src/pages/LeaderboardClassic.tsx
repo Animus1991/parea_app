@@ -14,9 +14,9 @@ type Period = 'week' | 'month' | 'alltime';
 import { computeUserXp, BADGES_CATALOGUE } from '../lib/gamification';
 
 function RankIcon({ rank, mutedClass }: { rank: number; mutedClass: string }) {
-  if (rank === 1) return <span className="text-2xl leading-none select-none">🥇</span>;
-  if (rank === 2) return <span className="text-2xl leading-none select-none">🥈</span>;
-  if (rank === 3) return <span className="text-2xl leading-none select-none">🥉</span>;
+  if (rank === 1) return <span className="text-lg leading-none select-none">🥇</span>;
+  if (rank === 2) return <span className="text-lg leading-none select-none">🥈</span>;
+  if (rank === 3) return <span className="text-lg leading-none select-none">🥉</span>;
   return <span className={cn('text-base font-black tabular-nums w-8 text-center', mutedClass)}>#{rank}</span>;
 }
 
@@ -249,7 +249,7 @@ export default function LeaderboardClassic() {
             );
           })}
           {displayEntries.length === 0 && (
-            <Card className="p-8 text-center">
+            <Card className="p-5 text-center">
               <p className={cn('text-sm font-medium', p.muted)}>
                 {t('Δεν βρέθηκαν εγγραφές.', 'No entries found.')}
               </p>
@@ -276,7 +276,7 @@ export default function LeaderboardClassic() {
                     : 'opacity-50 grayscale',
                 )}
               >
-                <span className="text-3xl leading-none">{badge.emoji}</span>
+                <span className="text-lg leading-none">{badge.emoji}</span>
                 <div>
                   <p className={cn('font-bold text-sm', badge.unlocked ? p.head : p.muted)}>
                     {t(badge.labelEl, badge.labelEn)}

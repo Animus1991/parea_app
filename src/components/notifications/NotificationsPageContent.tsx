@@ -193,7 +193,7 @@ export default function NotificationsPageContent() {
     <div className="mx-auto max-w-full space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className={cn('text-xl md:text-2xl font-bold', a.head)}>
+          <h1 className={cn('text-base md:text-lg font-bold', a.head)}>
             {t('Ειδοποιήσεις', 'Notifications')}
           </h1>
           <p className={cn('font-medium text-sm mt-1', a.sub)}>

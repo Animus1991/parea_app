@@ -71,7 +71,7 @@ export default function TrustCenterPageContent() {
   return (
     <div className="mx-auto max-w-full space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn("text-xl md:text-2xl font-bold tracking-tight", a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
+        <h1 className={cn("text-base md:text-lg font-bold tracking-tight", a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
         <p className={cn("mt-2 text-sm leading-relaxed max-w-xl", a.sub)}>
           {t('Η αξιοπιστία σας βασίζεται στις επαληθεύσεις και τις αξιολογήσεις σας.', 'Your trust score is based on your verifications and reviews.')}
         </p>
@@ -155,7 +155,7 @@ export default function TrustCenterPageContent() {
             <svg width="120" height="120" viewBox="0 0 120 120" className="mb-2">
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.isDark ? '#374151' : '#e5e7eb'} strokeWidth="8" />
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.scoreStroke} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${strokeDash} ${circumference}`} transform="rotate(-90 60 60)" />
-              <text x="60" y="56" textAnchor="middle" className={cn("text-4xl font-black", a.scoreFill)} fontSize="28">{reliabilityScore}</text>
+              <text x="60" y="56" textAnchor="middle" className={cn("text-lg font-black", a.scoreFill)} fontSize="28">{reliabilityScore}</text>
               <text x="60" y="74" textAnchor="middle" className="fill-gray-400" fontSize="10" fontWeight="600">%</text>
             </svg>
             <p className={cn("text-xs font-bold tracking-wide", a.muted)}>{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}</p>

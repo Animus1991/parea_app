@@ -20,10 +20,10 @@ export default function NotFoundNeonDark() {
         <span className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping opacity-20"></span>
         <Compass className="w-10 h-10 text-emerald-400 animate-spin" style={{ animationDuration: '8s' }} />
       </div>
-      <h1 className="text-3xl font-bold text-white mb-2">
+      <h1 className="text-base md:text-lg font-bold text-white mb-2">
         {t(`Η σελίδα δεν βρέθηκε`, `Page Not Found`)}
       </h1>
-      <p className="text-xl text-white font-medium mb-6 max-w-xs">
+      <p className="text-lg text-white font-medium mb-6 max-w-xs">
         {t(`Η σελίδα που αναζητάτε δεν υπάρχει ή έχει μετακινηθεί.`, `The page you're looking for doesn't exist or has been moved.`)}
       </p>
 

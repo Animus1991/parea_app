@@ -30,7 +30,7 @@ export function CopilotInlinePrompt({ className, title, suggestions, maxChips = 
       <button
         type="button"
         onClick={() => openCopilot()}
-        className="flex min-h-11 min-w-0 items-center gap-3 rounded-xl px-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent @4xl:max-w-[42%] @4xl:shrink-0"
+        className="flex min-h-10 min-w-0 items-center gap-3 rounded-xl px-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent @4xl:max-w-[42%] @4xl:shrink-0"
       >
         <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent text-accent-fg">
           <Sparkles className="h-4 w-4" />

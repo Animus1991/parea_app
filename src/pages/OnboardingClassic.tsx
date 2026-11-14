@@ -176,10 +176,10 @@ export default function OnboardingClassic() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: dir * -40 }}
             transition={{ duration: 0.25 }}
-            className="bg-white rounded-3xl p-6 shadow-soft border border-gray-100 space-y-5"
+            className="bg-white rounded-3xl p-5 shadow-soft border border-gray-100 space-y-5"
           >
             <div>
-              <h2 className="text-xl font-black text-ink leading-tight">
+              <h2 className="text-sm font-black text-ink leading-tight">
                 {t(stepTitles[step].gr, stepTitles[step].en)}
               </h2>
               <p className="text-sm text-gray-500 font-medium mt-1">
@@ -259,7 +259,7 @@ export default function OnboardingClassic() {
                         : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
                     }`}
                   >
-                    <span className="text-2xl leading-none">{gs.emoji}</span>
+                    <span className="text-lg leading-none">{gs.emoji}</span>
                     <span className="font-semibold text-base">{t(gs.gr, gs.en)}</span>
                     {selectedGroupSize === gs.id && (
                       <CheckCircle2 className="w-4 h-4 ml-auto text-accent" />
@@ -282,7 +282,7 @@ export default function OnboardingClassic() {
                         : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
                     }`}
                   >
-                    <span className="text-2xl leading-none mt-0.5">{al.emoji}</span>
+                    <span className="text-lg leading-none mt-0.5">{al.emoji}</span>
                     <div className="text-left">
                       <p className="font-bold text-base">{t(al.gr, al.en)}</p>
                       <p
@@ -310,13 +310,13 @@ export default function OnboardingClassic() {
                     <button
                       key={sc.id}
                       onClick={() => toggleSchedule(sc.id)}
-                      className={`flex items-center gap-2 px-3 py-3 rounded-2xl border transition-all duration-200 ${
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-2xl border transition-all duration-200 ${
                         sel
                           ? 'bg-ink text-white border-ink'
                           : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
                       }`}
                     >
-                      <span className="text-xl leading-none">{sc.emoji}</span>
+                      <span className="text-lg leading-none">{sc.emoji}</span>
                       <span className="font-semibold text-sm text-left leading-snug">
                         {t(sc.gr, sc.en)}
                       </span>
@@ -339,7 +339,7 @@ export default function OnboardingClassic() {
                         : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
                     }`}
                   >
-                    <span className="text-2xl leading-none">{lp.emoji}</span>
+                    <span className="text-lg leading-none">{lp.emoji}</span>
                     <span className="font-semibold text-base">{t(lp.gr, lp.en)}</span>
                     {selectedLocation === lp.id && (
                       <CheckCircle2 className="w-4 h-4 ml-auto text-accent" />
@@ -361,7 +361,7 @@ export default function OnboardingClassic() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={t('Το όνομά σου...', 'Your name...')}
-                    className="w-full h-11 px-4 rounded-2xl border border-gray-200 bg-gray-50 text-base font-medium text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all"
+                    className="w-full h-9 px-4 rounded-2xl border border-gray-200 bg-gray-50 text-base font-medium text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all"
                   />
                 </div>
                 <div>

@@ -75,7 +75,7 @@ export function GroupMergeModal({
         <div className="p-5 border-b border-border">
           <div className="flex items-center gap-2 text-accent-strong">
             <GitMerge className="w-5 h-5" />
-            <h2 className="text-base font-bold">{t('Πρόταση συγχώνευσης ομάδων', 'Suggest group merge')}</h2>
+            <h2 className="text-sm font-bold">{t('Πρόταση συγχώνευσης ομάδων', 'Suggest group merge')}</h2>
           </div>
           <p className="text-sm text-ink-muted mt-1">{event.title}</p>
         </div>
@@ -156,7 +156,7 @@ export function GroupMergeModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 min-h-11 rounded-2xl border border-border text-sm font-bold text-ink"
+            className="flex-1 min-h-10 rounded-2xl border border-border text-sm font-bold text-ink"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
@@ -165,7 +165,7 @@ export function GroupMergeModal({
               type="button"
               data-autofocus
               onClick={send}
-              className="flex-[2] min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold"
+              className="flex-[2] min-h-10 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold"
             >
               {t('Αποστολή πρότασης', 'Send suggestion')}
             </button>

@@ -32,7 +32,7 @@ export default function OrganizerProfilePageContent() {
 
   if (!organizer) {
     return (
-      <div className={cn('p-8 text-center font-medium', p.muted)}>
+      <div className={cn('p-5 text-center font-medium', p.muted)}>
         {t('Ο διοργανωτής δεν βρέθηκε', 'Organizer not found')}
       </div>
     );
@@ -68,12 +68,12 @@ export default function OrganizerProfilePageContent() {
 
   return (
     <div className="mx-auto max-w-full space-y-8 relative">
-      <div className={cn('rounded-2xl border p-8 shadow-soft text-center sm:text-left sm:flex sm:items-start gap-8', p.cardSurface, p.borderB)}>
+      <div className={cn('rounded-2xl border p-5 shadow-soft text-center sm:text-left sm:flex sm:items-start gap-8', p.cardSurface, p.borderB)}>
         <div className={cn('w-32 h-32 rounded-full overflow-hidden mx-auto sm:mx-0 shrink-0 border-4 shadow-soft-md', p.isDark ? 'border-gray-700 bg-gray-800' : 'border-white bg-gray-100')}>
           {organizer.photoUrl ? (
             <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />
           ) : (
-            <div className={cn('w-full h-full flex items-center justify-center text-3xl font-bold', p.muted)}>
+            <div className={cn('w-full h-full flex items-center justify-center text-lg font-bold', p.muted)}>
               {organizer.name.substring(0, 2).toUpperCase()}
             </div>
           )}
@@ -91,7 +91,7 @@ export default function OrganizerProfilePageContent() {
                 {t('Επίπεδο Εμπιστοσύνης', 'Trust Tier')}: {t(tierLabelEl(organizer.trustTier), tierLabelEn(organizer.trustTier))}
               </Badge>
             </div>
-            <h1 className={cn('text-lg md:text-xl font-bold', p.head)}>{organizer.name}</h1>
+            <h1 className={cn('text-base md:text-lg font-bold', p.head)}>{organizer.name}</h1>
             <p className={cn('text-sm font-medium mt-1', p.sub)}>
               <MapPin className="h-3.5 w-3.5 inline mr-1" /> {organizer.city}
             </p>
@@ -145,7 +145,7 @@ export default function OrganizerProfilePageContent() {
       </div>
 
       <div className="space-y-4">
-        <h2 className={cn('text-lg font-bold', p.head)}>
+        <h2 className={cn('text-sm font-bold', p.head)}>
           {t('Επερχόμενες Εκδηλώσεις από', 'Upcoming Events by')} {organizer.name}
         </h2>
         {hostedEvents.length === 0 ? (
@@ -162,7 +162,7 @@ export default function OrganizerProfilePageContent() {
                   <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0">
                     <div className={cn('w-full h-full flex flex-col items-center justify-center', p.isDark ? 'bg-cyan-900/30 text-cyan-300' : 'bg-cyan-50 text-cyan-700')}>
                       <span className="text-2xs font-bold tracking-wide">{format(parseISO(event.date), 'MMM')}</span>
-                      <span className="text-xl font-bold leading-none">{format(parseISO(event.date), 'd')}</span>
+                      <span className="text-lg font-bold leading-none">{format(parseISO(event.date), 'd')}</span>
                     </div>
                   </div>
                   <div className="flex-1">

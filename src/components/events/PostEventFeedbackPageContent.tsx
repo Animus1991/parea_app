@@ -94,7 +94,7 @@ export default function PostEventFeedbackPageContent() {
   return (
     <div className="max-w-2xl mx-auto space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn('text-2xl md:text-3xl font-extrabold tracking-tight', p.head)}>
+        <h1 className={cn('text-base md:text-lg font-extrabold tracking-tight', p.head)}>
           {t('Αξιολόγηση Εκδήλωσης', 'Post-Event Feedback')}
         </h1>
         <p className={cn('text-sm md:text-base font-medium mt-1', p.sub)}>
@@ -107,7 +107,7 @@ export default function PostEventFeedbackPageContent() {
 
       <div
         className={cn(
-          'rounded-2xl p-4 md:p-6 shadow-soft flex items-start gap-4 border',
+          'rounded-2xl p-4 shadow-soft flex items-start gap-4 border',
           p.cardSurface,
           p.borderB,
         )}
@@ -118,7 +118,7 @@ export default function PostEventFeedbackPageContent() {
           </div>
         )}
         <div className="min-w-0">
-          <h3 className={cn('text-lg font-bold truncate', p.head)}>{event.title}</h3>
+          <h3 className={cn('text-sm font-bold truncate', p.head)}>{event.title}</h3>
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5">
             {eventDateLabel && (
               <span className={cn('text-xs font-bold flex items-center gap-1', p.muted)}>
@@ -182,7 +182,7 @@ export default function PostEventFeedbackPageContent() {
       {step === 1 ? (
         <div
           className={cn(
-            'rounded-2xl p-6 md:p-8 shadow-soft border space-y-8',
+            'rounded-2xl p-5 shadow-soft border space-y-8',
             p.cardSurface,
             p.borderB,
           )}
@@ -209,7 +209,7 @@ export default function PostEventFeedbackPageContent() {
                         ),
                   )}
                 >
-                  <span className="text-4xl drop-shadow-soft">{m.emoji}</span>
+                  <span className="text-lg drop-shadow-soft">{m.emoji}</span>
                   <span
                     className={cn(
                       'text-xs font-bold',
@@ -492,7 +492,7 @@ export default function PostEventFeedbackPageContent() {
       ) : (
         <div
           className={cn(
-            'rounded-2xl shadow-soft border p-8 md:p-12 text-center flex flex-col items-center justify-center',
+            'rounded-2xl shadow-soft border p-5 text-center flex flex-col items-center justify-center',
             p.cardSurface,
             p.borderB,
           )}
@@ -509,7 +509,7 @@ export default function PostEventFeedbackPageContent() {
             />
           </div>
 
-          <h2 className={cn('text-3xl font-extrabold tracking-tight mb-3', p.head)}>
+          <h2 className={cn('text-sm font-extrabold tracking-tight mb-3', p.head)}>
             {t('Ευχαριστούμε!', 'Thank You!')}
           </h2>
           <p className={cn('text-base font-medium max-w-sm mx-auto mb-8 leading-relaxed', p.sub)}>
@@ -538,7 +538,7 @@ export default function PostEventFeedbackPageContent() {
               <Trophy className="w-6 h-6" />
             </div>
             <div>
-              <p className={cn('text-xl font-black', p.isDark ? 'text-amber-400' : 'text-amber-900')}>
+              <p className={cn('text-lg font-black', p.isDark ? 'text-amber-400' : 'text-amber-900')}>
                 +25 XP
               </p>
               <p

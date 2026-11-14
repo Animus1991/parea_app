@@ -31,7 +31,7 @@ export default function WalletPageContent() {
   return (
     <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn("text-xl md:text-2xl font-bold", a.head)}>{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
+        <h1 className={cn("text-base md:text-lg font-bold", a.head)}>{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
         <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Διαχειριστείτε τα έσοδα και τις πληρωμές σας.', 'Manage your event revenue and payouts.')}</p>
         <p className={cn('text-xs font-bold mt-2', a.muted)}>
           {stripeReady
@@ -41,29 +41,29 @@ export default function WalletPageContent() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className={cn("p-6 text-white shadow-soft-md", a.balanceBg)}>
+        <Card className={cn("p-5 text-white shadow-soft-md", a.balanceBg)}>
           <div className={cn("flex items-center gap-2 mb-2", a.balanceLabel)}>
             <Euro className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
-          <p className="text-4xl font-black mb-4">€345.50</p>
+          <p className="text-lg font-black mb-4">€345.50</p>
           <Button className={cn("w-full", a.withdrawBtn)} onClick={() => setShowWithdraw(true)}>
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-5">
           <div className={cn("flex items-center gap-2 mb-2", a.sub)}>
             <Clock className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Εκκρεμεί', 'Pending')}</h3>
           </div>
-          <p className={cn("text-3xl font-bold mb-2", a.head)}>€85.00</p>
+          <p className={cn("text-lg font-bold mb-2", a.head)}>€85.00</p>
           <p className={cn("text-xs font-medium leading-tight", a.muted)}>
             {t('Εξοφλούνται 3-5 ημέρες μετά.', 'Clears 3-5 days after event.')}
           </p>
         </Card>
 
-        <Card className={cn("p-6 flex flex-col justify-center border", a.bankBg)}>
+        <Card className={cn("p-5 flex flex-col justify-center border", a.bankBg)}>
           <div className="flex items-center gap-3 mb-3">
             <div className={cn("w-10 h-10 rounded-full flex items-center justify-center border", a.bankIcon)}>
               <Building2 className="w-5 h-5" />
@@ -78,8 +78,8 @@ export default function WalletPageContent() {
       </div>
 
       <Card className="mt-2">
-        <div className={cn("p-4 md:p-6 border-b flex items-center justify-between", a.borderB)}>
-          <h2 className={cn("text-base font-bold", a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
+        <div className={cn("p-4 border-b flex items-center justify-between", a.borderB)}>
+          <h2 className={cn("text-sm font-bold", a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
           <select
             className={cn("text-xs border rounded-2xl px-2 py-1 outline-none", a.selectBg)}
             value={txFilter}
@@ -108,7 +108,7 @@ export default function WalletPageContent() {
           ) : (
           <div className={cn("divide-y", a.divider)}>
             {filteredTx.map((tx) => (
-              <div key={tx.id} className={cn("p-4 md:p-6 flex items-center justify-between transition-colors", a.txHover)}>
+              <div key={tx.id} className={cn("p-4 flex items-center justify-between transition-colors", a.txHover)}>
                 <div className="flex items-center gap-4">
                   <div className={cn("w-10 h-10 rounded-full flex items-center justify-center shrink-0",
                     tx.type === 'Payout'
