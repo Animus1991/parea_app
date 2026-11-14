@@ -289,18 +289,30 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   border-radius: 0.625rem;
 }
 
-/* Compact text fields (onboarding, forms, settings) */
+/* Compact text fields (onboarding, forms, settings) — +10% vs --text-xs */
 .field-control {
-  font-size: var(--text-xs);
+  font-size: calc(var(--text-xs) * 1.1); /* ~11px */
   line-height: var(--text-xs--line-height);
   font-weight: 500;
 }
 
-/* Compact search bars + placeholders (pair with h-9 in Tailwind) */
+/* Compact search bars + placeholders — +10% vs --text-xs */
 .search-control {
-  font-size: var(--text-xs);
+  font-size: calc(var(--text-xs) * 1.1); /* ~11px */
   line-height: var(--text-xs--line-height);
   font-weight: 500;
+}
+
+/* Greeting titles e.g. «Καλό απόγευμα, Alex» — +10% vs base/lg */
+.hero-greeting {
+  font-size: calc(var(--text-base) * 1.1); /* ~14.3px */
+  line-height: var(--text-base--line-height);
+}
+@media (min-width: 768px) {
+  .hero-greeting {
+    font-size: calc(var(--text-lg) * 1.1); /* ~15.4px */
+    line-height: var(--text-lg--line-height);
+  }
 }
 
 [data-sticky-nav-offset] {

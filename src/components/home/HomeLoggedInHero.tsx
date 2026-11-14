@@ -100,7 +100,7 @@ export function HomeLoggedInHero({
         <div className="relative z-10 space-y-5">
           <div className="flex justify-between items-start gap-4">
             <div>
-              <h1 className={cn(h.heroGreeting, 'text-sm md:text-base font-black mb-1')}>
+              <h1 className={cn(h.heroGreeting, 'font-black mb-1')}>
                 {t('Γειά σου, ', 'Hello, ')}
                 {firstName}!
               </h1>
