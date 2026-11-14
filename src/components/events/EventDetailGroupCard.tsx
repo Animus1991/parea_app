@@ -215,7 +215,7 @@ export function EventDetailGroupCard({
           </span>
           <div className="flex items-baseline gap-1 mt-1">
             <span className={cn('text-lg font-bold', tok.title)}>{group.members.length}</span>
-            <span className={cn('text-xs font-medium', tok.meta)}>
+            <span className={cn('card-copy font-medium', tok.meta)}>
               / {group.targetSize} {t('μέλη', 'members')}
             </span>
           </div>

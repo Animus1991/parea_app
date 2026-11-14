@@ -356,10 +356,10 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               />
               <span className={cn("absolute -bottom-0.5 -right-0.5 bg-green-500 w-2.5 h-2.5 rounded-full border-2", isDark ? "border-gray-800" : "border-white")} aria-hidden />
             </span>
-            <span className={cn("text-xs font-medium", mutedColor)}>
+            <span className={cn("card-copy font-medium", mutedColor)}>
               {hostUser && !organizer ? t('Διοργανωτής ομάδας', 'Group host') : t('Διοργανωτής', 'Organizer')}:
             </span>
-            <span className={cn("text-xs font-bold truncate max-w-[140px] group-hover/org:underline", headColor)}>
+            <span className={cn("card-copy font-bold truncate max-w-[140px] group-hover/org:underline", headColor)}>
               {displayOrganizer.name}
             </span>
           </button>
@@ -474,7 +474,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           <div className="space-y-4">
             <div>
               <p className="text-sm font-bold text-ink line-clamp-2">{event.title}</p>
-              <p className="text-xs font-medium text-ink-muted capitalize">
+              <p className="card-copy font-medium text-ink-muted capitalize">
                 {weekday}, {event.time} · {event.locationArea}
               </p>
             </div>
@@ -858,14 +858,14 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-500/15 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
             <Link2 className="w-6 h-6" />
           </div>
-          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
+          <p className="card-copy font-medium leading-relaxed text-ink-muted mb-4">
             {t(
               "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ένα φίλο. Θα βλέπει την τοποθεσία σας μέχρι το τέλος της εκδήλωσης.",
               "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They will see your live location until the event ends.",
             )}
           </p>
           <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-4 text-left">
-            <span className="text-xs font-medium text-ink truncate mr-2">
+            <span className="card-copy font-medium text-ink truncate mr-2">
               https://nakamas.app/safe/r9x2p
             </span>
             <button

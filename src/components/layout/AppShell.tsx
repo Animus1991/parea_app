@@ -38,7 +38,7 @@ function NakamasLogo({ className, compact = false }: { className?: string; compa
   const theme = useStore((state) => state.theme);
   const logoTextColor = theme === 'activebuddies' ? 'text-[hsl(220_14%_12%)]' : theme === 'activebuddies-dark' ? 'text-[hsl(210_20%_92%)]' : theme === 'vibrant' ? 'text-fuchsia-700' : theme === 'vibrant-dark' ? 'text-fuchsia-500' : 'text-accent';
   return (
-    <div className={cn("flex items-baseline font-extrabold tracking-tight font-['Poppins']", logoTextColor, className)}>
+    <div className={cn("nakamas-logo flex items-baseline font-extrabold tracking-tight font-['Poppins']", logoTextColor, className)}>
       <div className="relative inline-block">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -247,7 +247,7 @@ export function SideNav() {
   return (
     <aside className={cn("h-full flex-col shrink-0 hidden md:flex transition-all duration-300 z-sidenav border-r", collapsed ? "w-[88px]" : "w-[88px] lg:w-64", tok.sideNav)}>
       <div className={cn("h-header flex items-center border-b shrink-0", collapsed ? "justify-center" : "justify-center lg:justify-start lg:px-4", tok.sideNavBorder)}>
-        <NakamasLogo compact={collapsed} className={collapsed ? "text-base" : "text-base lg:text-lg"} />
+        <NakamasLogo compact={collapsed} className={collapsed ? undefined : "nakamas-logo--lg"} />
       </div>
       <div className="flex-1 overflow-y-auto py-4 lg:py-4 px-2 lg:px-3">
         <NavLinks compact={!collapsed} rail={collapsed} />
@@ -294,7 +294,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
     <nav className={cn("relative z-topnav flex items-center justify-between px-4 lg:px-4 py-[10px] border-b h-header shrink-0 overflow-visible", tok.topNav)}>
       <div className="flex items-center space-x-5">
         <div className="md:hidden">
-          <NakamasLogo className="text-base" />
+          <NakamasLogo />
         </div>
         <div className={cn("hidden whitespace-nowrap", copilotDocked ? "2xl:block" : "md:block")}>
           <span className={cn("text-sm font-bold tracking-wide", tok.isDark ? "text-white" : tok.isAB ? "text-[hsl(220_14%_12%)] tracking-tight" : "text-gray-400")}>{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
@@ -482,7 +482,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
           <div className={cn("relative w-64 max-w-sm h-full shadow-soft-lg flex flex-col z-modal", tok.sideNav)}>
             <div className="h-header flex items-center justify-between px-4 border-b border-[#E5E7EB] shrink-0">
-              <NakamasLogo className="text-base" />
+              <NakamasLogo />
               <button onClick={() => setIsMobileMenuOpen(false)} aria-label={t('Κλείσιμο μενού', 'Close menu')} className={cn(tok.isDark ? "text-white hover:text-white" : "text-gray-500 hover:text-ink")}>
                 <X className="h-6 w-6" />
               </button>

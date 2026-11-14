@@ -172,7 +172,7 @@ export function PlansFormingCard({
           {isSidebar ? (
             <p className={cn('text-sm font-bold', darkCard ? 'text-gray-100' : 'text-gray-900')}>{displayName}</p>
           ) : (
-            <p className="text-xs font-medium text-gray-700 dark:text-gray-300">{displayName}</p>
+            <p className="card-copy font-medium text-gray-700 dark:text-gray-300">{displayName}</p>
           )}
           {!isSidebar && (
             <span className="text-xs font-bold text-violet-600 dark:text-violet-300">
@@ -232,14 +232,14 @@ export function PlansFormingCard({
           )}
         >
           <MessageCircle className={cn('w-3.5 h-3.5 shrink-0 mt-0.5', darkCard ? 'text-gray-400' : 'text-gray-500')} />
-          <p className={cn('text-xs line-clamp-2 leading-relaxed', darkCard ? 'text-gray-300' : 'text-gray-700')}>
+          <p className={cn('card-copy line-clamp-2 leading-relaxed', darkCard ? 'text-gray-300' : 'text-gray-700')}>
             «{item.intent.message}»
           </p>
         </div>
       )}
 
       {!isSidebar && (
-        <p className="px-3 pb-2 text-xs leading-snug text-gray-500 dark:text-gray-400">
+        <p className="px-3 pb-2 card-copy leading-snug text-gray-500 dark:text-gray-400">
           {t(item.matchReason.el, item.matchReason.en)}
         </p>
       )}
@@ -384,12 +384,12 @@ export function PlansFormingGroupCard({
             {t('Οργανώνει ομάδα', 'Group host')}
           </span>
           {meta.hostFirstName && (
-            <p className={cn('text-xs font-medium', darkCard ? 'text-gray-300' : 'text-gray-700 dark:text-gray-300')}>
+            <p className={cn('card-copy font-medium', darkCard ? 'text-gray-300' : 'text-gray-700 dark:text-gray-300')}>
               {meta.hostFirstName}
             </p>
           )}
           {meta.location && (
-            <p className={cn('text-xs flex items-center gap-1', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
+            <p className={cn('card-copy flex items-center gap-1', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
               <MapPin className="w-3 h-3 shrink-0" />
               {meta.location}
             </p>

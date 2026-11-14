@@ -289,16 +289,16 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   border-radius: 0.625rem;
 }
 
-/* Compact text fields (onboarding, forms, settings) — +10% vs --text-xs */
+/* Compact text fields (onboarding, forms, settings) — +21% vs --text-xs (stacked +10%×2) */
 .field-control {
-  font-size: calc(var(--text-xs) * 1.1); /* ~11px */
+  font-size: calc(var(--text-xs) * 1.21); /* ~12.1px */
   line-height: var(--text-xs--line-height);
   font-weight: 500;
 }
 
-/* Compact search bars + placeholders — +10% vs --text-xs */
+/* Compact search bars + placeholders — +21% vs --text-xs */
 .search-control {
-  font-size: calc(var(--text-xs) * 1.1); /* ~11px */
+  font-size: calc(var(--text-xs) * 1.21); /* ~12.1px */
   line-height: var(--text-xs--line-height);
   font-weight: 500;
 }
@@ -313,6 +313,31 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
     font-size: calc(var(--text-lg) * 1.1); /* ~15.4px */
     line-height: var(--text-lg--line-height);
   }
+}
+
+/* Nakamas wordmark + straw hat — +20% (hat scales with em) */
+.nakamas-logo {
+  font-size: calc(var(--text-base) * 1.2); /* ~15.6px */
+  line-height: 1;
+}
+@media (min-width: 1024px) {
+  .nakamas-logo--lg {
+    font-size: calc(var(--text-lg) * 1.2); /* ~16.8px */
+  }
+}
+
+/* Card body / meta copy — +10% (not titles or subtitles) */
+.card-copy {
+  font-size: calc(var(--text-xs) * 1.1); /* ~11px */
+  line-height: var(--text-xs--line-height);
+}
+.card-copy-sm {
+  font-size: calc(var(--text-sm) * 1.1); /* ~13.2px */
+  line-height: var(--text-sm--line-height);
+}
+.card-copy-micro {
+  font-size: calc(var(--text-2xs) * 1.1); /* ~9.9px */
+  line-height: var(--text-2xs--line-height);
 }
 
 [data-sticky-nav-offset] {

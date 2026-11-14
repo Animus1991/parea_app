@@ -39,9 +39,9 @@ export const CHAT_TYPO = {
 export const PLANS_FORMING_TYPO = {
   statChip: 'text-2xs font-bold',
   cardTitle: 'text-sm font-bold',
-  cardMeta: 'text-2xs font-medium',
+  cardMeta: 'card-copy-micro font-medium',
   sectionLabel: 'text-2xs font-bold tracking-wide',
-  body: 'text-sm font-medium',
+  body: 'card-copy-sm font-medium',
   cta: 'text-sm font-bold',
 } as const;
 
@@ -73,8 +73,8 @@ export const PLANS_TYPO = {
   bannerCta: 'text-xs font-bold',
   cardTitle: 'text-base font-bold',
   cardDate: 'text-sm font-bold',
-  cardTime: 'text-xs font-medium',
-  cardMeta: 'text-xs font-medium',
+  cardTime: 'card-copy font-medium',
+  cardMeta: 'card-copy font-medium',
   chip: 'text-2xs font-bold',
   cta: 'text-xs font-bold',
 } as const;
@@ -82,18 +82,18 @@ export const PLANS_TYPO = {
 /** BuddySeek card density */
 export const BUDDY_SEEK_TYPO = {
   title: 'text-sm font-bold leading-snug',
-  meta: 'text-xs font-medium',
+  meta: 'card-copy font-medium',
   label: 'text-2xs font-bold tracking-wide',
   chip: 'text-2xs font-semibold',
-  body: 'text-xs leading-relaxed',
+  body: 'card-copy leading-relaxed',
   cta: 'text-xs font-bold',
-  micro: 'text-2xs font-medium',
+  micro: 'card-copy-micro font-medium',
 } as const;
 
 /** App shell nav density */
 export const SHELL_TYPO = {
-  logo: 'text-base lg:text-lg',
-  logoMobile: 'text-sm',
+  logo: 'nakamas-logo nakamas-logo--lg',
+  logoMobile: 'nakamas-logo',
   sectionLabel: 'text-xs font-bold tracking-wide',
   dashboard: 'text-xs font-bold tracking-wide',
   search: 'text-xs',
@@ -115,23 +115,23 @@ export const EVENT_CARD_TYPO = {
   dateSub: 'text-2xs leading-none font-bold',
   title: 'text-sm font-bold leading-snug',
   matchScore: 'text-xs font-black leading-none',
-  matchLabel: 'text-2xs font-semibold capitalize tracking-wide',
-  meta: 'text-xs font-medium',
-  hint: 'text-2xs font-semibold',
+  matchLabel: 'card-copy-micro font-semibold capitalize tracking-wide',
+  meta: 'card-copy font-medium',
+  hint: 'card-copy-micro font-semibold',
   cta: 'text-xs font-bold',
-  avatarLabel: 'text-2xs font-semibold capitalize',
+  avatarLabel: 'card-copy-micro font-semibold capitalize',
   progressTitle: 'text-xs font-bold capitalize tracking-tight',
-  progressSub: 'text-2xs font-medium',
+  progressSub: 'card-copy-micro font-medium',
   statusBtn: 'text-2xs font-bold',
   etaInput: 'text-2xs font-medium',
   etaSubmit: 'text-2xs font-bold',
   toggleLabel: 'text-2xs font-bold',
-  toggleHint: 'text-2xs',
+  toggleHint: 'card-copy-micro',
   safetyLabel: 'text-2xs font-bold',
-  safetyLink: 'text-2xs font-medium underline underline-offset-2',
+  safetyLink: 'card-copy-micro font-medium underline underline-offset-2',
   modalBtn: 'text-xs font-bold',
   locationTitle: 'text-xs font-bold',
-  locationHint: 'text-2xs leading-relaxed',
+  locationHint: 'card-copy-micro leading-relaxed',
   link: 'text-2xs font-bold',
 } as const;
 
@@ -168,8 +168,8 @@ export const HOME_TYPO = {
   statValue: 'text-xs font-bold',
   statLabel: 'text-2xs font-medium',
   cardTitle: 'text-sm font-bold',
-  cardMeta: 'text-xs font-medium',
-  hint: 'text-2xs font-medium',
+  cardMeta: 'card-copy font-medium',
+  hint: 'card-copy-micro font-medium',
   cta: 'text-xs font-bold',
 } as const;
 
