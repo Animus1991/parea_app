@@ -257,14 +257,6 @@ export default function ProfilePageContent() {
                 )}
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                <Badge variant="outline" className={`text-xs py-1 px-2.5 rounded-lg ${currentUser.reliabilityScore >= 80 ? (a.isDark ? "text-green-400 bg-green-900/20 border-green-700/50" : "text-green-700 bg-green-50 border-green-200") : currentUser.reliabilityScore >= 50 ? (a.isDark ? "text-blue-400 bg-blue-900/20 border-blue-700/50" : "text-blue-700 bg-blue-50 border-blue-200") : (a.isDark ? "text-amber-400 bg-amber-900/20 border-amber-700/50" : "text-amber-700 bg-amber-50 border-amber-200")}`}>
-                  <ShieldCheck className="h-3.5 w-3.5 mr-1 inline" />{currentUser.reliabilityScore}% {t("Αξιοπιστία", "Reliability")}
-                </Badge>
-                <Badge variant="outline" className={`text-xs py-1 px-2.5 rounded-lg ${currentUser.trustTier === "3_high_trust" ? (a.isDark ? "text-emerald-300 bg-emerald-900/20 border-emerald-700/50" : "text-cyan-700 bg-cyan-50 border-cyan-200") : (a.isDark ? "text-gray-300 bg-gray-800/40 border-gray-600/50" : "text-gray-700 bg-gray-50 border-gray-200")}`}>
-                  {tierLabel}
-                </Badge>
-              </div>
             </div>
 
             {/* Action buttons */}

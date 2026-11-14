@@ -137,7 +137,7 @@ export default function BuddySeekPageContent() {
       <header className="space-y-3">
         <h1 className={cn('text-lg font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
         <PlansFormingValueHero insights={feed.insights} />
-        <PlansFormingStatsBar insights={feed.insights} />
+        <PlansFormingStatsBar plain insights={feed.insights} />
         <div className="flex flex-wrap gap-2">
           <button
             type="button"

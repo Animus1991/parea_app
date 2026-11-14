@@ -69,7 +69,7 @@ export function PlansFormingBottomSheet() {
               <X className="h-5 w-5" />
             </button>
           </div>
-          <PlansFormingStatsBar insights={feed.insights} />
+          <PlansFormingStatsBar plain insights={feed.insights} />
           {feed.insights.pendingJoinsToReview > 0 && (
             <button
               type="button"

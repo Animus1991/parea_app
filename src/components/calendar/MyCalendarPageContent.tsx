@@ -27,6 +27,7 @@ import {
   subMonths,
   isSameMonth,
 } from "date-fns";
+import { el as elLocale, enUS } from "date-fns/locale";
 import { motion, AnimatePresence } from "motion/react";
 import { useStore } from "../../store";
 import { useLanguage } from "../../lib/i18n";
@@ -46,7 +47,8 @@ import type { Event } from "../../types";
 
 export default function MyCalendarPageContent() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const dateLocale = language === "el" ? elLocale : enUS;
   const p = usePageContrast();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<"week" | "month">("week");
@@ -446,7 +448,7 @@ export default function MyCalendarPageContent() {
               p.head,
             )}
           >
-            {format(currentDate, "MMMM yyyy")}
+            {format(currentDate, "LLLL yyyy", { locale: dateLocale })}
           </h2>
           <div className="flex items-center gap-1.5 md:gap-3">
             <button
@@ -608,7 +610,7 @@ export default function MyCalendarPageContent() {
                           p.muted,
                         )}
                       >
-                        {format(event.parsedDate, "MMM d")}
+                        {format(event.parsedDate, "d MMM", { locale: dateLocale })}
                       </div>
                       <div className="w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)] shrink-0" />
                       <div

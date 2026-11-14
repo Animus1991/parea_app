@@ -39,7 +39,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
             {tu('Βρες Nakamas', 'Find Nakamas')}
           </h2>
           <PlansFormingValueHero insights={feed.insights} />
-          <PlansFormingStatsBar insights={feed.insights} compact />
+          <PlansFormingStatsBar plain insights={feed.insights} compact />
         </div>
         <div className="flex flex-col items-end gap-1.5 shrink-0">
           <button

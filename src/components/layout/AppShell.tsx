@@ -517,7 +517,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {children}
             </div>
           </main>
-        <footer className="hidden md:flex h-8 px-4 bg-gray-900 text-xs text-gray-300 items-center justify-between shrink-0">
+        <footer className="hidden md:flex h-8 px-4 border-t border-border bg-surface text-xs text-ink-muted items-center justify-between shrink-0">
           <div className="flex space-x-4">
             <span>Nakamas v1.0.5-beta</span>
             <span className="flex items-center">
@@ -526,9 +526,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             </span>
           </div>
           <div className="hidden sm:flex space-x-4">
-            <Link to="/settings" className="hover:text-white transition-colors">{t('Πολιτική Απορρήτου', 'Privacy Policy')}</Link>
-            <Link to="/report" className="hover:text-white transition-colors">{t('Αναφορά Προβλημάτων', 'Report Issues')}</Link>
-            <Link to="/trust" className="hover:text-white transition-colors">{t('Πώς λειτουργεί η αξιοπιστία', 'How trust works')}</Link>
+            <Link to="/settings" className="hover:text-ink transition-colors">{t('Πολιτική Απορρήτου', 'Privacy Policy')}</Link>
+            <Link to="/report" className="hover:text-ink transition-colors">{t('Αναφορά Προβλημάτων', 'Report Issues')}</Link>
+            <Link to="/trust" className="hover:text-ink transition-colors">{t('Πώς λειτουργεί η αξιοπιστία', 'How trust works')}</Link>
           </div>
         </footer>
           <BottomNav />

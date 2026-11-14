@@ -246,7 +246,10 @@ export function PlansFormingCard({
         <button
           type="button"
           onClick={() => setPreviewOpen(true)}
-          className="flex-1 min-h-10 rounded-xl card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors"
+          className={cn(
+            'flex-1 min-h-10 rounded-xl card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors',
+            variant === 'page' && 'sm:flex-none sm:px-6',
+          )}
         >
           {t('Αίτημα συμμετοχής', 'Ask to join')}
         </button>

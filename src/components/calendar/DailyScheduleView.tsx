@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { format } from 'date-fns';
+import { el as elLocale, enUS } from 'date-fns/locale';
 import { motion } from 'motion/react';
 import { MapPin, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -57,7 +58,7 @@ export interface DailyScheduleViewProps {
 
 export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewProps) {
   const navigate = useNavigate();
-  const { t, tu } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const p = usePageContrast();
 
   const dayEvents = useMemo(
@@ -83,7 +84,7 @@ export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewPro
       >
         <div className={cn('p-5 flex items-center justify-between border-b shrink-0', p.borderB)}>
           <div>
-            <h3 className={cn('font-bold text-lg', p.head)}>{format(day, 'd MMMM yyyy')}</h3>
+            <h3 className={cn('font-bold text-lg', p.head)}>{format(day, 'd MMMM yyyy', { locale: language === 'el' ? elLocale : enUS })}</h3>
             <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
               {tu('Ημερήσιο πρόγραμμα', 'Daily schedule')}
             </p>

@@ -146,7 +146,7 @@ export default function NotificationsPageContent() {
             </span>
           </div>
         </button>
-        <div className="flex flex-col items-end gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0 self-start">
           {isUnread && <span className={cn('w-2 h-2 rounded-full', a.dot)} aria-hidden />}
           {notif.type === 'match' && (
             <button
