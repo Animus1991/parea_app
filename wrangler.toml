@@ -1,0 +1,5 @@
+# Cloudflare Pages — static SPA (vite build → dist)
+# Deploy: npx wrangler pages deploy dist --project-name=nakamas
+name = "nakamas"
+compatibility_date = "2026-11-01"
+pages_build_output_dir = "dist"

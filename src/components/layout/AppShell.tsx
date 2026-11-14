@@ -6,7 +6,7 @@ import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
   Grid, TrendingUp, Bookmark, History, Flag,
   Users, UserPlus, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare,
-  Trophy, Zap, Sparkles, ChevronsLeft, ChevronsRight, ChevronDown
+  Trophy, Zap, ChevronsLeft, ChevronsRight, ChevronDown, BookOpen
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
@@ -38,12 +38,12 @@ function NakamasLogo({ className, compact = false }: { className?: string; compa
   const theme = useStore((state) => state.theme);
   const logoTextColor = theme === 'activebuddies' ? 'text-[hsl(220_14%_12%)]' : theme === 'activebuddies-dark' ? 'text-[hsl(210_20%_92%)]' : theme === 'vibrant' ? 'text-fuchsia-700' : theme === 'vibrant-dark' ? 'text-fuchsia-500' : 'text-accent';
   return (
-    <div className={cn("flex items-baseline font-extrabold tracking-tight font-['Poppins']", logoTextColor, className)}>
+    <div className={cn("nakamas-logo flex items-baseline font-extrabold tracking-tight font-['Poppins']", logoTextColor, className)}>
       <div className="relative inline-block">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 120 90"
-          className="absolute -top-[0.65em] -left-[0.55em] w-[1.8em] h-[1.8em] origin-center -rotate-[8deg] z-10 pointer-events-none drop-shadow"
+          className="absolute -top-[0.83em] -left-[0.55em] w-[1.8em] h-[1.8em] origin-center -rotate-[8deg] z-10 pointer-events-none drop-shadow"
         >
           {/* Chin strap back */}
           <path d="M 35 60 C 20 65, 15 75, 25 80" fill="none" stroke="#3F2A1B" strokeWidth="2" strokeLinecap="round" />
@@ -159,7 +159,7 @@ function NavSection({ id, title, paths, children, compact = false, rail = false 
           disabled={containsActive}
           title={containsActive ? undefined : collapsed ? title : undefined}
           className={cn(
-            'w-full flex items-center justify-between gap-2 px-3 py-0.5 rounded-lg text-sm font-bold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default',
+            'w-full flex items-center justify-between gap-2 px-3 py-1.5 min-h-9 rounded-lg text-sm font-bold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default',
             isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-white/5' : isAB ? 'text-[hsl(220_11%_34%)] hover:bg-gray-100/70' : 'text-[#6B7280] hover:text-gray-900 hover:bg-gray-50',
           )}
         >
@@ -230,7 +230,7 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
 
       <NavSection id="support" paths={['/help', '/onboarding']} title={t('Υποστήριξη', 'Support')} compact={compact} rail={rail}>
         <NavItem to="/help" icon={HelpCircle} label={t('Κέντρο Βοήθειας', 'Help Center')} compact={compact} rail={rail} />
-        <NavItem to="/onboarding" icon={Sparkles} label={t('Οδηγός Εισαγωγής', 'Onboarding')} compact={compact} rail={rail} />
+        <NavItem to="/onboarding" icon={BookOpen} label={t('Οδηγός Εισαγωγής', 'Onboarding')} compact={compact} rail={rail} />
       </NavSection>
     </>
   );
@@ -246,10 +246,10 @@ export function SideNav() {
   const setCollapsed = useStore((s) => s.setSidebarCollapsed);
   return (
     <aside className={cn("h-full flex-col shrink-0 hidden md:flex transition-all duration-300 z-sidenav border-r", collapsed ? "w-[88px]" : "w-[88px] lg:w-64", tok.sideNav)}>
-      <div className={cn("h-header flex items-center border-b shrink-0", collapsed ? "justify-center" : "justify-center lg:justify-start lg:px-6", tok.sideNavBorder)}>
-        <NakamasLogo compact={collapsed} className={collapsed ? "text-xl" : "text-xl lg:text-3xl"} />
+      <div className={cn("h-header flex items-center border-b shrink-0", collapsed ? "justify-center" : "justify-center lg:justify-start lg:px-4", tok.sideNavBorder)}>
+        <NakamasLogo compact={collapsed} className={collapsed ? undefined : "nakamas-logo--lg"} />
       </div>
-      <div className="flex-1 overflow-y-auto py-4 lg:py-6 px-2 lg:px-3">
+      <div className="flex-1 overflow-y-auto py-4 lg:py-4 px-2 lg:px-3">
         <NavLinks compact={!collapsed} rail={collapsed} />
       </div>
       {/* Collapse toggle — ορατό μόνο σε lg+ (σε md το sidebar είναι ήδη rail) */}
@@ -291,10 +291,10 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   return (
-    <nav className={cn("relative z-topnav flex items-center justify-between px-4 lg:px-6 py-[10px] border-b h-header shrink-0 overflow-visible", tok.topNav)}>
-      <div className="flex items-center space-x-8">
+    <nav className={cn("relative z-topnav flex items-center justify-between px-4 lg:px-4 py-[10px] border-b h-header shrink-0 overflow-visible", tok.topNav)}>
+      <div className="flex items-center space-x-5">
         <div className="md:hidden">
-          <NakamasLogo className="text-xl" />
+          <NakamasLogo />
         </div>
         <div className={cn("hidden whitespace-nowrap", copilotDocked ? "2xl:block" : "md:block")}>
           <span className={cn("text-sm font-bold tracking-wide", tok.isDark ? "text-white" : tok.isAB ? "text-[hsl(220_14%_12%)] tracking-tight" : "text-gray-400")}>{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
@@ -308,9 +308,9 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
             onChange={e => setSearchValue(e.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={t('Αναζήτηση εκδηλώσεων...', 'Search events...')}
-            className={cn("w-64 py-1.5 pl-8 pr-7 text-sm border outline-none transition-colors min-h-10", tok.searchInput)}
+            className={cn("search-control w-64 h-9 py-1.5 pl-8 pr-7 border outline-none transition-colors", tok.searchInput)}
           />
-          <Search className={cn("absolute w-4 h-4 left-2.5 top-[11px]", tok.isDark ? "text-gray-400" : "text-gray-400")} />
+          <Search className={cn("absolute w-3.5 h-3.5 left-2.5 top-1/2 -translate-y-1/2", tok.isDark ? "text-gray-400" : "text-gray-400")} />
           {searchValue && (
             <button
               type="button"
@@ -421,7 +421,7 @@ export function BottomNav() {
           <span className="text-xs font-medium leading-none">{t(labelGr, labelEn)}</span>
         </NavLink>
       ))}
-      <div className="flex flex-col items-center justify-center -mt-6">
+      <div className="flex flex-col items-center justify-center -mt-4">
         <NavLink
           to="/create"
           className={cn("w-11 h-11 rounded-full flex items-center justify-center shadow-soft-lg transition-colors border-[3px] border-white", tok.fab)}
@@ -481,23 +481,23 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="md:hidden fixed inset-0 z-modal flex">
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
           <div className={cn("relative w-64 max-w-sm h-full shadow-soft-lg flex flex-col z-modal", tok.sideNav)}>
-            <div className="h-header flex items-center justify-between px-6 border-b border-[#E5E7EB] shrink-0">
-              <NakamasLogo className="text-xl" />
+            <div className="h-header flex items-center justify-between px-4 border-b border-[#E5E7EB] shrink-0">
+              <NakamasLogo />
               <button onClick={() => setIsMobileMenuOpen(false)} aria-label={t('Κλείσιμο μενού', 'Close menu')} className={cn(tok.isDark ? "text-white hover:text-white" : "text-gray-500 hover:text-ink")}>
                 <X className="h-6 w-6" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto py-6 px-3" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="flex-1 overflow-y-auto py-4 px-3" onClick={() => setIsMobileMenuOpen(false)}>
               <NavLinks />
             </div>
           </div>
         </div>
       )}
       <div className="flex flex-1 h-screen overflow-hidden min-w-0">
-        <div className={cn("flex flex-col flex-1 min-w-0 h-screen overflow-hidden", demoMode && "pt-8")}>
+        <div className={cn("flex flex-col flex-1 min-w-0 h-screen overflow-hidden", demoMode && "pt-5")}>
           <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
           <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none">
-            <div className="mx-auto w-full max-w-full p-4 lg:px-8 lg:py-6 flex-1 pb-safe md:pb-6">
+            <div className="mx-auto w-full max-w-full p-4 lg:px-5 lg:py-4 flex-1 pb-safe md:pb-4">
               {maintenanceMode && (
                 <p role="status" className="mb-4 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
                   <Settings className="h-4 w-4 shrink-0" aria-hidden />
@@ -507,7 +507,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {children}
             </div>
           </main>
-        <footer className="hidden md:flex h-8 px-6 bg-gray-900 text-xs text-gray-300 items-center justify-between shrink-0">
+        <footer className="hidden md:flex h-8 px-4 bg-gray-900 text-xs text-gray-300 items-center justify-between shrink-0">
           <div className="flex space-x-4">
             <span>Nakamas v1.0.5-beta</span>
             <span className="flex items-center">

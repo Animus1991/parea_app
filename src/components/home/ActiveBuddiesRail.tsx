@@ -48,11 +48,11 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
             )}
           />
           <h2
- className={cn(
- 'text-sm font-bold leading-tight',
- useClassicTokens ? h.heading : p.head,
- )}
- >
+            className={cn(
+              'text-base font-bold leading-tight',
+              useClassicTokens ? h.heading : p.head,
+            )}
+          >
             {t('Ενεργοί Φίλοι', 'Active Buddies')}
           </h2>
         </div>
@@ -81,7 +81,7 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
                 src={user.photoUrl || `https://i.pravatar.cc/150?u=${user.id}`}
                 alt={user.name}
                 className={cn(
-                  'w-14 h-14 rounded-full object-cover border-2 transition-transform group-hover:scale-105 focus-visible:scale-105 shadow-soft',
+                  'w-11 h-11 rounded-full object-cover border-2 transition-transform group-hover:scale-105 focus-visible:scale-105 shadow-soft',
                   useClassicTokens
                     ? 'border-cyan-100'
                     : p.isDark

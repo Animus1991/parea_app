@@ -1,0 +1,1 @@
+/*\n  X-Frame-Options: DENY\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Permissions-Policy: camera=(), microphone=(self), geolocation=(self)\n\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable

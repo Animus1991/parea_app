@@ -115,7 +115,7 @@ export function HorizontalScrollArrows({
         ref={ref}
         className={cn(
           scrollClassName,
-          showArrows && 'md:px-10',
+          showArrows && 'md:px-5',
         )}
       >
         {children}

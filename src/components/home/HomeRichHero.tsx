@@ -38,7 +38,7 @@ export function HomeRichHero({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className={cn(tok.heroRoot, 'p-5 rounded-3xl relative overflow-hidden flex flex-col gap-4')}
+      className={cn(tok.heroRoot, 'p-4 md:p-5 rounded-2xl relative overflow-hidden flex flex-col gap-4')}
     >
       <div className="relative z-10 flex-1 w-full">
         <div className={cn(tok.heroBadge, 'mb-4', HOME_TYPO.heroBadge)}>
@@ -51,14 +51,14 @@ export function HomeRichHero({
           </span>{' '}
           {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
         </h1>
-        <p className={cn(tok.heroSubtitle, 'max-w-xl mb-6', HOME_TYPO.heroSubtitle)}>
+        <p className={cn(tok.heroSubtitle, 'max-w-xl mb-4', HOME_TYPO.heroSubtitle)}>
           {t(
             'home.hero.subtitle',
             'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.',
           )}
         </p>
 
-        <div className={cn('flex flex-wrap items-center gap-x-4 gap-y-3 mb-6', tok.heroStats, HOME_TYPO.heroStats)}>
+        <div className={cn('flex flex-wrap items-center gap-x-4 gap-y-3 mb-4', tok.heroStats, HOME_TYPO.heroStats)}>
           <span className="flex items-center gap-1.5">
             <Users className={cn('w-3.5 h-3.5', tok.heroStatIcon)} />{' '}
             {t('home.hero.stat1', 'Μικρες ομαδες')}
@@ -80,7 +80,7 @@ export function HomeRichHero({
           </span>
         </div>
 
-        <div className="flex gap-3 mb-6">
+        <div className="flex gap-3 mb-4">
           <button
             onClick={() => navigate('/nearby')}
             className={cn('flex items-center gap-2 px-5 py-2.5 rounded-xl transition-colors', tok.heroMapBtn, HOME_TYPO.heroMapBtn)}
@@ -94,14 +94,14 @@ export function HomeRichHero({
         {/* Search with suggestions */}
         <div className="flex gap-3 items-center">
           <div ref={searchRef} className="relative flex-1 max-w-md">
-            <Search className={cn('absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 z-10', tok.heroSearchIcon)} />
+            <Search className={cn('absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 z-10', tok.heroSearchIcon)} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               onFocus={onSearchFocus}
               placeholder={t('home.hero.search_placeholder', 'Αναζήτηση εμπειριών...')}
-              className={cn('w-full h-9 pl-10 pr-4 rounded-full shadow-soft focus:outline-none focus:ring-2 text-sm font-medium', tok.heroSearchInput)}
+              className={cn('search-control w-full h-9 pl-9 pr-3 rounded-full shadow-soft focus:outline-none focus:ring-2', tok.heroSearchInput)}
             />
             <HomeSearchDropdown
               popularSuggestions={searchSuggestions}
@@ -112,7 +112,7 @@ export function HomeRichHero({
           </div>
           <button
             onClick={() => navigate('/trust')}
-            className={cn('hidden sm:flex items-center justify-center px-5 h-10 rounded-full text-xs font-bold transition-colors whitespace-nowrap', tok.heroTrustBtn)}
+            className={cn('hidden sm:flex items-center justify-center px-5 h-11 rounded-full text-xs font-bold transition-colors whitespace-nowrap', tok.heroTrustBtn)}
           >
             {t('home.hero.how_groups', 'Πώς λειτουργούν οι ομάδες')}
           </button>

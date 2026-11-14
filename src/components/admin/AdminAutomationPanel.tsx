@@ -35,7 +35,7 @@ export function AdminAutomationPanel() {
   };
 
   return (
-    <Card className={cn('p-4 space-y-4', a.cardSurface)}>
+    <Card className={cn('p-5 space-y-4', a.cardSurface)}>
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Zap className={cn('w-5 h-5', a.iconAccent)} />
@@ -69,14 +69,14 @@ export function AdminAutomationPanel() {
               aria-checked={enabled[rule.id]}
               onClick={() => toggle(rule.id)}
               className={cn(
-                'relative w-10 h-6 rounded-full transition-colors',
+                'relative w-11 h-6 rounded-full transition-colors',
                 enabled[rule.id] ? 'bg-cyan-600' : 'bg-gray-300',
               )}
             >
               <span
                 className={cn(
                   'absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform',
-                  enabled[rule.id] ? 'translate-x-[18px]' : 'translate-x-0.5',
+                  enabled[rule.id] ? 'translate-x-5' : 'translate-x-0.5',
                 )}
               />
             </button>

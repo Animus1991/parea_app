@@ -46,7 +46,7 @@ export default function SavedEventsPageContent() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn("text-base md:text-lg font-bold", a.head)}>{t('Αποθηκευμένα', 'Saved Events')}</h1>
+          <h1 className={cn("text-sm md:text-base font-bold", a.head)}>{t('Αποθηκευμένα', 'Saved Events')}</h1>
           <p className={cn("font-medium text-sm mt-1", a.sub)}>
             {savedEventIds.length > 0
               ? t(`${savedEventIds.length} αποθηκευμένες εκδηλώσεις`, `${savedEventIds.length} saved events`)
@@ -66,13 +66,13 @@ export default function SavedEventsPageContent() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder={t('Αναζήτηση αποθηκευμένων...', 'Search saved...')}
-                className={cn("w-full pl-9 pr-4 py-2 rounded-2xl border text-sm font-medium outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
+                className={cn("search-control w-full h-9 pl-9 pr-3 rounded-xl border outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
               />
             </div>
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as 'date' | 'name')}
-              className={cn("px-3 py-2 rounded-2xl border text-sm font-medium outline-none cursor-pointer", a.inputBg)}
+              className={cn("filter-select border outline-none cursor-pointer", a.inputBg)}
             >
               <option value="date">{t('Ημερομηνία', 'By Date')}</option>
               <option value="name">{t('Όνομα', 'By Name')}</option>

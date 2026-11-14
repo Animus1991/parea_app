@@ -135,7 +135,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
   }, [isLoading, visibleEventsCount, sortedEvents.length]);
 
   return (
-    <div className="space-y-6 md:space-y-8 pb-10 md:pb-0">
+    <div className="space-y-4 md:space-y-5 pb-5 md:pb-0">
       <HomeThemedHeroSwitch
         greeting={greeting}
         motivation={motivation}
@@ -207,13 +207,13 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
             <div className={cn('flex p-1 rounded-lg w-fit', tok.feedTabWrap)}>
               <button
                 onClick={() => setFeedType('For You')}
-                className={cn('px-4 py-1.5 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'For You' ? tok.feedTabActive : tok.feedTabInactive)}
+                className={cn(HOME_TYPO.filterChip, 'px-4 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'For You' ? tok.feedTabActive : tok.feedTabInactive)}
               >
                 {t('home.feed.for_you', 'Για Σένα')}
               </button>
               <button
                 onClick={() => setFeedType('Discover')}
-                className={cn('px-4 py-1.5 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'Discover' ? tok.feedTabActive : tok.feedTabInactive)}
+                className={cn(HOME_TYPO.filterChip, 'px-4 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'Discover' ? tok.feedTabActive : tok.feedTabInactive)}
               >
                 {t('home.feed.discover', 'Ανακάλυψε')}
               </button>
@@ -290,7 +290,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
 
         {/* Load More Trigger */}
         {!isLoading && visibleEventsCount < sortedEvents.length && (
-          <div ref={loadMoreRef} className="flex justify-center mt-6 py-4">
+          <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
             <div className={cn('w-6 h-6 border-2 border-t-transparent rounded-full animate-spin', tok.spinner)} />
           </div>
         )}

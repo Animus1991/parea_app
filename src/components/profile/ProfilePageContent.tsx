@@ -132,11 +132,11 @@ export default function ProfilePageContent() {
   const subtleBg = a.isDark ? "bg-gray-800/30" : "bg-gray-50/50";
 
   return (
-    <div className="mx-auto max-w-full space-y-6 pb-20 md:pb-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="mx-auto max-w-full space-y-4 pb-20 md:pb-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
-          <h1 className={`text-base md:text-lg font-extrabold tracking-tight ${heading}`}>{t("Προφίλ", "Profile")}</h1>
+          <h1 className={`text-sm md:text-base font-extrabold tracking-tight ${heading}`}>{t("Προφίλ", "Profile")}</h1>
           <p className={`mt-1 text-xs font-medium leading-relaxed ${sub}`}>
             {t("Διαχειριστείτε τις ρυθμίσεις εμπιστοσύνης, τις επαληθεύσεις και το ιστορικό σας.", "Manage your trust settings, verifications, and history.")}
           </p>
@@ -182,7 +182,7 @@ export default function ProfilePageContent() {
       {/* ═══ Profile Card ═══ */}
       <Card className="p-0 overflow-hidden">
         {/* Profile header band */}
-        <div className={`px-6 pt-6 pb-5 ${subtleBg}`}>
+        <div className={`px-4 pt-4 pb-5 ${subtleBg}`}>
           <div className="flex flex-col sm:flex-row items-start gap-5">
             {/* Avatar */}
             <div className="relative group">
@@ -217,7 +217,7 @@ export default function ProfilePageContent() {
                   </div>
                 ) : (
                   <div className="group/name relative flex w-full items-center justify-between">
-                    <h2 className={`text-sm font-extrabold pr-8 ${heading}`}>{currentUser.name}</h2>
+                    <h2 className={`text-lg font-extrabold pr-8 ${heading}`}>{currentUser.name}</h2>
                     <button
                       type="button"
                       onClick={() => setIsEditingName(true)}
@@ -301,9 +301,9 @@ export default function ProfilePageContent() {
 
       <Card className="p-4" role="tabpanel" id={`profile-panel-${activeTab}`} aria-labelledby={`profile-tab-${activeTab}`}>
         {activeTab === "overview" && (
-          <div className="space-y-8 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
+          <div className="space-y-5 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
         {/* ─── Interests ─── */}
-        <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
+        <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
           <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Ενδιαφέροντα", "Interests")}</h3>
           <div className="flex flex-wrap gap-2 items-center">
             {interests.map((i) => (
@@ -330,7 +330,7 @@ export default function ProfilePageContent() {
         </div>
 
         {/* ─── Availability ─── */}
-        <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
+        <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
           <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Προτιμήσεις Διαθεσιμότητας", "Availability Preferences")}</h3>
           <div className="flex flex-wrap gap-2">
             {userSettings.availability.includes('weekends') && <Badge variant="neutral">{t("Σαββατοκύριακα", "Weekends")}</Badge>}
@@ -346,7 +346,7 @@ export default function ProfilePageContent() {
         </div>
 
         {/* ─── History & Reviews ─── */}
-        <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
+        <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
           <div className="flex items-center justify-between mb-4">
             <h3 className={`text-xs font-bold capitalize tracking-wide ${label}`}>{t("Ιστορικό & Αξιολογήσεις", "History & Reviews")}</h3>
             <Button variant="ghost" size="sm" onClick={() => navigate("/history")} className={`font-bold ${a.btnAccent}`}>{t("Προβολή Όλων", "View All")}</Button>
@@ -365,7 +365,7 @@ export default function ProfilePageContent() {
 
         {/* ─── Connected Nakamas Preview ─── */}
         {connectedUsers.length > 0 && (
-          <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
+          <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
             <div className="flex items-center justify-between mb-4">
               <h3 className={`text-xs font-bold capitalize tracking-wide ${label}`}>{t("Οι Nakamas μου", "My Nakamas")} <span className={`ml-1 ${sub}`}>({connectionCount})</span></h3>
               <Button variant="ghost" size="sm" onClick={() => navigate("/connections")} className={`font-bold ${a.btnAccent}`}>{t("Προβολή Όλων", "View All")}</Button>
@@ -384,9 +384,9 @@ export default function ProfilePageContent() {
           </div>
         )}
         {activeTab === "trust" && (
-          <div className="space-y-8 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
+          <div className="space-y-5 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
         {/* ─── Identity Tiers ─── */}
-        <div className={`mt-6 pt-6 border-t ${sectionBorder}`}>
+        <div className={`mt-4 pt-4 border-t ${sectionBorder}`}>
           <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Επίπεδα Ταυτότητας & Δικαιώματα", "Identity Tiers & Permissions")}</h3>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -421,7 +421,7 @@ export default function ProfilePageContent() {
         </div>
 
         {/* ─── Group Preferences ─── */}
-        <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
+        <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
           <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Προτιμήσεις Ομάδας", "Group Preferences")}</h3>
           <div className="space-y-3">
             <label className={`flex items-start gap-3 p-4 border rounded-2xl cursor-pointer transition-colors ${a.radioActive}`}>
@@ -447,9 +447,9 @@ export default function ProfilePageContent() {
           </div>
         )}
         {activeTab === "privacy" && (
-          <div className="space-y-8 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
+          <div className="space-y-5 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
         {/* ─── Privacy Settings ─── */}
-        <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
+        <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
           <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Ορατότητα, Συνδέσεις & Απόρρητο", "Visibility, Connections & Privacy")}</h3>
           <div className="space-y-3">
             {/* Profile Visibility */}
@@ -469,7 +469,7 @@ export default function ProfilePageContent() {
                     profileVisibility: v === 'verified' ? 'connections' : (v as 'public' | 'private'),
                   });
                 }}
-                className={`text-xs rounded-2xl py-1.5 px-3 outline-none border ${a.selectBg} ${a.selectRing}`}
+                className={`filter-select outline-none border ${a.selectBg} ${a.selectRing}`}
               >
                 <option value="public">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι", "Verified Only")}</option>
@@ -494,7 +494,7 @@ export default function ProfilePageContent() {
                     messagePermission: v === 'anyone' ? 'everyone' : v === 'friends' ? 'groups' : 'connections',
                   });
                 }}
-                className={`text-xs rounded-2xl py-1.5 px-3 outline-none border ${a.selectBg} ${a.selectRing}`}
+                className={`filter-select outline-none border ${a.selectBg} ${a.selectRing}`}
               >
                 <option value="anyone">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι", "Verified Only")}</option>
@@ -550,9 +550,9 @@ export default function ProfilePageContent() {
       </Card>
 
       {activeTab === "overview" && (
-        <Card className="p-4 flex flex-col sm:flex-row sm:items-center gap-3">
-          <div className={`h-9 w-9 shrink-0 rounded-xl flex items-center justify-center ${a.isDark ? "bg-gray-700/40" : "bg-gray-100"}`}>
-            <Share2 className={`h-4 w-4 ${a.accent}`} aria-hidden />
+        <Card className="p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className={`h-11 w-11 shrink-0 rounded-xl flex items-center justify-center ${a.isDark ? "bg-gray-700/40" : "bg-gray-100"}`}>
+            <Share2 className={`h-5 w-5 ${a.accent}`} aria-hidden />
           </div>
           <div className="flex-1 min-w-0">
             <p className={`text-sm font-bold ${heading}`}>{t("Φέρε τους δικούς σου Nakamas", "Bring your own Nakamas")}</p>

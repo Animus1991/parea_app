@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { openCopilot } from '../../ai/copilot';
-import { Sparkles } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import { Search, Book, MessageCircle, FileText, ChevronRight, ChevronDown, Zap, Shield, CreditCard, Users } from 'lucide-react';
 import { Card } from '../common/Card';
 import { useLanguage } from '../../lib/i18n';
@@ -60,13 +60,13 @@ export default function HelpCenterPageContent() {
   const hasResults = filtered.length > 0 || filteredFaqs.length > 0;
 
   return (
-    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Hero */}
-      <div className={cn("text-white rounded-2xl p-4 text-center shadow-soft-md relative overflow-hidden", a.heroBg)}>
-        <div className={cn("absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full", a.heroCircle)}></div>
-        <div className={cn("absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full", a.heroCircle)}></div>
-        <h1 className="text-base md:text-lg font-black mb-2 relative z-10">{t('Κέντρο Βοήθειας', 'Help Center')}</h1>
-        <p className={cn("text-base font-medium mb-6 relative z-10", a.heroSub)}>{t('Πώς μπορούμε να βοηθήσουμε;', 'How can we help you?')}</p>
+      <div className={cn("text-white rounded-2xl p-5 text-center shadow-soft-md relative overflow-hidden", a.heroBg)}>
+        <div className={cn("absolute top-0 right-0 -mr-8 -mt-5 w-32 h-32 rounded-full", a.heroCircle)}></div>
+        <div className={cn("absolute bottom-0 left-0 -ml-8 -mb-5 w-24 h-24 rounded-full", a.heroCircle)}></div>
+        <h1 className="text-sm md:text-base font-black mb-2 relative z-10">{t('Κέντρο Βοήθειας', 'Help Center')}</h1>
+        <p className={cn("text-base font-medium mb-4 relative z-10", a.heroSub)}>{t('Πώς μπορούμε να βοηθήσουμε;', 'How can we help you?')}</p>
         <div className="relative max-w-md mx-auto z-10">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
@@ -74,7 +74,7 @@ export default function HelpCenterPageContent() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t('Αναζήτηση άρθρων...', 'Search articles...')}
-            className={cn("w-full pl-10 pr-4 py-2 rounded-2xl text-base font-medium focus:outline-none focus:ring-2", a.inputBg)}
+            className={cn("search-control w-full h-9 pl-9 pr-3 rounded-xl focus:outline-none focus:ring-2", a.inputBg)}
           />
         </div>
       </div>
@@ -135,7 +135,7 @@ export default function HelpCenterPageContent() {
               <div className="flex items-center justify-between">
                 <div>
                   <span className={cn("text-xs font-bold tracking-wide", a.articleCat)}>{article.category}</span>
-                  <h3 className={cn("font-bold text-sm mt-0.5", a.head)}>{article.title}</h3>
+                  <h3 className={cn("font-bold text-base mt-0.5", a.head)}>{article.title}</h3>
                 </div>
                 <ChevronRight className={cn("w-4 h-4 shrink-0", a.chevron, expandedArticle === article.id && 'rotate-90')} />
               </div>
@@ -160,7 +160,7 @@ export default function HelpCenterPageContent() {
             onClick={() => openCopilot(search)}
             className="mt-3 inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-accent px-4 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
-            <Sparkles className="h-4 w-4" aria-hidden />
+            <Bot className="h-4 w-4" aria-hidden />
             {t('Ρώτα το Nakamas AI', 'Ask Nakamas AI')}
           </button>
         </Card>

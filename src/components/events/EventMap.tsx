@@ -145,7 +145,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
 
   if (!hasCoords) {
     return (
-      <div className={cn('mt-6 space-y-2', className)}>
+      <div className={cn('mt-4 space-y-2', className)}>
         <p className={cn('text-xs font-bold tracking-wide', tok.badge)}>
           {t('Τοποθεσία', 'Location')}
         </p>
@@ -174,7 +174,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
   }
 
   return (
-    <div className={cn('mt-6 space-y-2', className)}>
+    <div className={cn('mt-4 space-y-2', className)}>
       <p className={cn('text-xs font-bold tracking-wide', tok.badge)}>
         {t('Τοποθεσία', 'Location')} — {t('Πατήστε τον δείκτη για εστίαση', 'Tap marker to focus')}
       </p>
@@ -192,7 +192,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
           type="button"
           onClick={() => setIsMapFullscreen((v) => !v)}
           className={cn(
-            'absolute top-4 right-4 z-10 p-2 backdrop-blur rounded-2xl shadow-soft transition-colors min-h-10 min-w-10 flex items-center justify-center',
+            'absolute top-4 right-4 z-10 p-2 backdrop-blur rounded-2xl shadow-soft transition-colors min-h-11 min-w-11 flex items-center justify-center',
             tok.toggle,
             accentText,
             tok.toggleHover,
@@ -249,7 +249,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
               type="button"
               onClick={() => setMarkerFocused(true)}
               className={cn(
-                'flex flex-col items-center gap-2 rounded-2xl p-4 transition-all min-h-10',
+                'flex flex-col items-center gap-2 rounded-2xl p-4 transition-all min-h-11',
                 tok.pulse,
                 markerFocused && 'ring-4 ring-cyan-500/40 scale-105',
               )}

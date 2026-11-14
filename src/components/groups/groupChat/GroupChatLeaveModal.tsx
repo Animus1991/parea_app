@@ -23,7 +23,7 @@ export function GroupChatLeaveModal({
         <div className="w-12 h-12 bg-red-50 dark:bg-red-500/15 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
           <ArrowLeft className="w-6 h-6" />
         </div>
-        <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+        <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
           {t('Είστε σίγουροι ότι θέλετε να αποχωρήσετε από', 'Are you sure you want to leave')}{' '}
           <span className="font-bold text-ink">{eventTitle}</span>?{' '}
           {t(
@@ -36,14 +36,14 @@ export function GroupChatLeaveModal({
             type="button"
             data-autofocus
             onClick={onConfirm}
-            className="w-full px-4 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+            className="w-full px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
           >
             {t('Ναι, Αποχώρηση', 'Yes, Leave Group')}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="w-full px-4 py-2.5 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+            className="w-full px-4 py-3 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>

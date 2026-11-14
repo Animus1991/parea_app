@@ -320,13 +320,13 @@ export default function NearbyGroupsPageContent() {
         <div className="flex gap-2 w-full">
           {!isMapFullscreen && (
             <div className="relative flex-1 max-w-sm pointer-events-auto">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('Αναζήτηση ομάδων...', 'Search groups...')}
-                className={cn("w-full h-9 pl-12 pr-4 rounded-2xl border-0 shadow-soft focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm font-bold transition-all", p.isDark ? "bg-gray-800/95 backdrop-blur text-white" : "bg-white/95 backdrop-blur text-gray-900")}
+                className={cn("search-control w-full h-9 pl-9 pr-3 rounded-xl border-0 shadow-soft focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all", p.isDark ? "bg-gray-800/95 backdrop-blur text-white" : "bg-white/95 backdrop-blur text-gray-900")}
               />
             </div>
           )}
@@ -364,7 +364,7 @@ export default function NearbyGroupsPageContent() {
                <button 
                  key={f}
                  onClick={() => setMapFilter(f)}
-                 className={cn("px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap shadow-soft transition-all border shrink-0", mapFilter === f ? (p.isDark ? "bg-cyan-600 border-cyan-500 text-white" : "bg-cyan-600 border-cyan-600 text-white") : (p.isDark ? "bg-gray-800/95 border-gray-700 text-gray-300" : "bg-white/95 border-gray-200 text-gray-700 hover:bg-gray-50"))}
+                 className={cn("filter-chip px-4 rounded-full text-xs font-bold whitespace-nowrap shadow-soft transition-all border shrink-0", mapFilter === f ? (p.isDark ? "bg-cyan-600 border-cyan-500 text-white" : "bg-cyan-600 border-cyan-600 text-white") : (p.isDark ? "bg-gray-800/95 border-gray-700 text-gray-300" : "bg-white/95 border-gray-200 text-gray-700 hover:bg-gray-50"))}
                >
                  {t(
                    f === "All" ? "Όλα" : f === "Available" ? "Διαθέσιμα" : f === "Full" ? "Γεμάτα" : "Επιλογές μου", 
@@ -390,18 +390,18 @@ export default function NearbyGroupsPageContent() {
 
         {/* Mobile handle */}
         <div className="w-full py-4 cursor-pointer flex justify-center items-center md:hidden shrink-0" onClick={() => setIsPanelExpanded(!isPanelExpanded)}>
-          <div className={cn("w-14 h-1.5 rounded-full flex items-center justify-center relative transition-colors", p.isDark ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-300 hover:bg-gray-400")}>
+          <div className={cn("w-11 h-1.5 rounded-full flex items-center justify-center relative transition-colors", p.isDark ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-300 hover:bg-gray-400")}>
              <span className="absolute -top-3.5"><ChevronUp className={cn("w-4 h-4", p.muted)} /></span>
           </div>
         </div>
 
-        <div className={cn("p-5 border-b shrink-0", p.borderB)}>
-          <h2 className={cn("text-sm font-extrabold tracking-tight", p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
+        <div className={cn("p-5 md:p-5 border-b shrink-0", p.borderB)}>
+          <h2 className={cn("text-lg font-extrabold tracking-tight", p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
           <p className={cn("text-sm font-medium mt-1.5 flex items-center gap-1.5", p.muted)}>
             <Navigation className="h-4 w-4" /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius}km</span>
           </p>
 
-          <div className="mt-6 flex items-center gap-4">
+          <div className="mt-4 flex items-center gap-4">
             <input
               type="range"
               min="1"
@@ -414,12 +414,12 @@ export default function NearbyGroupsPageContent() {
             />
           </div>
 
-          <div className="flex gap-2.5 mt-6 overflow-x-auto noscrollbar pb-1">
+          <div className="flex gap-2.5 mt-4 overflow-x-auto noscrollbar pb-1">
             <button
               type="button"
               onClick={() => setSidebarFilter("all")}
               className={cn(
-                "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap shadow-soft transition-all",
+                "filter-chip px-4 rounded-full text-xs font-bold whitespace-nowrap shadow-soft transition-all",
                 sidebarFilter === "all"
                   ? p.isAB ? "bg-[hsl(220_14%_12%)] text-white" : "bg-cyan-600 text-white shadow-cyan-600/20"
                   : cn("border", p.isDark ? "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700" : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"),
@@ -431,7 +431,7 @@ export default function NearbyGroupsPageContent() {
               type="button"
               onClick={() => setSidebarFilter("today")}
               className={cn(
-                "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border",
+                "filter-chip px-4 rounded-full text-xs font-bold whitespace-nowrap transition-all border",
                 sidebarFilter === "today"
                   ? p.isAB ? "bg-[hsl(220_14%_12%)] text-white border-transparent" : "bg-cyan-600 text-white border-cyan-600"
                   : p.isDark ? "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700" : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100",
@@ -443,7 +443,7 @@ export default function NearbyGroupsPageContent() {
               type="button"
               onClick={() => setSidebarFilter("friends")}
               className={cn(
-                "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border",
+                "filter-chip px-4 rounded-full text-xs font-bold whitespace-nowrap transition-all border",
                 sidebarFilter === "friends"
                   ? p.isAB ? "bg-[hsl(220_14%_12%)] text-white border-transparent" : "bg-cyan-600 text-white border-cyan-600"
                   : p.isDark ? "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700" : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100",
@@ -496,7 +496,7 @@ export default function NearbyGroupsPageContent() {
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                 <div>
-                  <h3 className={cn("font-bold text-sm leading-tight line-clamp-2 transition-colors", p.head, p.hoverText)}>{group.title}</h3>
+                  <h3 className={cn("font-bold text-base leading-tight line-clamp-2 transition-colors", p.head, p.hoverText)}>{group.title}</h3>
                   <p className={cn("text-xs font-medium mt-1 truncate", p.sub)}>{group.locationArea}</p>
                 </div>
                 <div className="flex items-center justify-between mt-3">
@@ -511,12 +511,12 @@ export default function NearbyGroupsPageContent() {
           )}
 
           {filteredLocalGroups.length > 0 && (
-          <div className={cn("p-4 text-center border border-dashed rounded-2xl mt-6 relative overflow-hidden shadow-soft", p.isDark ? "bg-black/20 border-gray-800" : "bg-gray-50/50 border-gray-200")}>
-            <div className={cn("w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 border", p.isDark ? "bg-cyan-900/20 text-cyan-400 border-cyan-800/50" : "bg-cyan-100 text-cyan-600 border-cyan-200")}>
+          <div className={cn("p-5 text-center border border-dashed rounded-2xl mt-4 relative overflow-hidden shadow-soft", p.isDark ? "bg-black/20 border-gray-800" : "bg-gray-50/50 border-gray-200")}>
+            <div className={cn("w-11 h-11 rounded-full flex items-center justify-center mx-auto mb-4 border", p.isDark ? "bg-cyan-900/20 text-cyan-400 border-cyan-800/50" : "bg-cyan-100 text-cyan-600 border-cyan-200")}>
               <MapIcon className="h-6 w-6" />
             </div>
-            <h3 className={cn("text-sm font-bold", p.head)}>{t("Επέκταση ακτίνας", "Expand your radius")}</h3>
-            <p className={cn("text-sm font-medium mt-1.5 mb-6", p.sub)}>
+            <h3 className={cn("text-base font-bold", p.head)}>{t("Επέκταση ακτίνας", "Expand your radius")}</h3>
+            <p className={cn("text-sm font-medium mt-1.5 mb-4", p.sub)}>
               {t("Δεν βρίσκετε αυτό που ψάχνετε; Αυξήστε την περιοχή αναζήτησης.", "Can't find what you're looking for? Increase your search area.")}
             </p>
             <Button onClick={() => setRadius(15)} variant={p.isAB ? "primary" : "outline"} size="sm" className="font-bold text-xs">

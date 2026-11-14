@@ -33,7 +33,7 @@ type DateFilter = 'Any' | 'Today' | 'This Week' | 'This Month' | 'Weekend';
 type SortBy = 'Relevance' | 'Trending' | 'Distance' | 'Group Progress';
 
 const SELECT_CLASS =
-  "text-sm border rounded-2xl shadow-soft focus:outline-none py-1.5 px-3 font-bold h-9 shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239ca3af%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.5rem_center] pr-7 transition-colors";
+  "filter-select border shadow-soft focus:outline-none shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239ca3af%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.4rem_center] pr-6 transition-colors";
 
 /** Unified categories (ZIP parity + Classic design tokens via usePageContrast). */
 export default function CategoriesPageContent() {
@@ -139,10 +139,10 @@ export default function CategoriesPageContent() {
     : 'bg-white border-gray-200 text-gray-800 cursor-pointer';
 
   return (
-    <div className="max-w-full mx-auto space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div
         className={cn(
-          'p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative shadow-soft',
+          'p-4 md:p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 overflow-hidden relative shadow-soft',
           'bg-gradient-to-br from-hero-from to-hero-to text-hero-fg',
         )}
       >
@@ -160,14 +160,14 @@ export default function CategoriesPageContent() {
               {t('εμπειρία σας', 'experience')}
             </span>
           </h1>
-          <p className="text-sm md:text-base font-medium text-hero-fg/80 leading-relaxed mb-6">
+          <p className="text-sm md:text-base font-medium text-hero-fg/80 leading-relaxed mb-4">
             {t(
               'Ανακαλύψτε επιλεγμένες εκδηλώσεις που ταιριάζουν στα ενδιαφέροντά σας.',
               'Discover handpicked events matching your interests.',
             )}
           </p>
           <div className="relative w-full max-w-md mx-auto md:mx-0">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-hero-fg/60" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-hero-fg/60" />
             <input
               type="text"
               value={searchQuery}
@@ -176,7 +176,7 @@ export default function CategoriesPageContent() {
                 'Αναζήτηση κατηγοριών ή θεμάτων...',
                 'Search categories or topics...',
               )}
-              className="w-full h-9 pl-12 pr-4 rounded-2xl border-0 bg-hero-fg/10 text-hero-fg placeholder:text-hero-fg/60 focus:outline-none focus:ring-2 focus:ring-hero-fg/40 font-medium backdrop-blur-md transition-all text-sm"
+              className="search-control w-full h-9 pl-9 pr-3 rounded-xl border-0 bg-hero-fg/10 text-hero-fg placeholder:text-hero-fg/60 focus:outline-none focus:ring-2 focus:ring-hero-fg/40 backdrop-blur-md transition-all"
             />
           </div>
         </div>
@@ -239,19 +239,17 @@ export default function CategoriesPageContent() {
           p.isDark ? 'bg-[hsl(220_16%_14%)] border-gray-700/50' : 'bg-white border-gray-100',
         )}
       >
-        <div role="tablist" className="flex overflow-x-auto noscrollbar min-w-full">
+        <div className="flex overflow-x-auto noscrollbar min-w-full">
           {CATEGORY_GROUP_TABS.map((tab) => (
             <button
               key={tab}
               type="button"
-              role="tab"
-              aria-selected={activeTab === tab}
               onClick={() => {
                 setActiveTab(tab);
                 setActiveCategory(null);
               }}
               className={cn(
-                'px-4 py-2.5 whitespace-nowrap text-xs font-semibold rounded-2xl transition-all flex-1 text-center min-w-fit',
+                'px-5 py-3 whitespace-nowrap text-sm font-bold rounded-2xl transition-all flex-1 text-center min-w-[120px]',
                 activeTab === tab
                   ? p.isDark
                     ? 'bg-[hsl(220_16%_18%)] text-white shadow-soft'
@@ -277,7 +275,7 @@ export default function CategoriesPageContent() {
               setActiveCategory(activeCategory === cat.name ? null : cat.name)
             }
             className={cn(
-              'rounded-2xl p-4 border shadow-soft hover:shadow-soft transition-all duration-300 group flex flex-col items-center text-center',
+              'rounded-2xl p-4 sm:p-5 border shadow-soft hover:shadow-soft transition-all duration-300 group flex flex-col items-center text-center',
               p.cardSurface,
               activeCategory === cat.name
                 ? cn(
@@ -327,8 +325,8 @@ export default function CategoriesPageContent() {
         />
       )}
 
-      <div className={cn('mt-10 border-t pt-8 scroll-mt-24', p.borderT)} id="events-area">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
+      <div className={cn('mt-10 border-t pt-5 scroll-mt-24', p.borderT)} id="events-area">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
           <div className="flex items-center gap-3">
             <div
               className={cn(
@@ -348,7 +346,7 @@ export default function CategoriesPageContent() {
               )}
             </div>
             <div>
-              <h2 className={cn('text-sm font-extrabold tracking-tight', p.head)}>
+              <h2 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.head)}>
                 {activeCategory
                   ? language === 'el'
                     ? CATEGORY_CATALOG.find((c) => c.name === activeCategory)?.labelGr
@@ -436,7 +434,7 @@ export default function CategoriesPageContent() {
 
       <div
         className={cn(
-          'mt-12 rounded-2xl p-4 border shadow-soft flex flex-col justify-center items-center text-center gap-5 relative overflow-hidden',
+          'mt-12 rounded-2xl p-4 md:p-5 border shadow-soft flex flex-col justify-center items-center text-center gap-5 relative overflow-hidden',
           p.isDark ? 'bg-[hsl(220_16%_16%)] border-gray-700' : 'bg-cyan-50/50 border-cyan-100',
         )}
       >
@@ -449,7 +447,7 @@ export default function CategoriesPageContent() {
         >
           <Star className="w-3.5 h-3.5 mr-1" /> {t('Γίνε Οικοδεσπότης', 'Become a Host')}
         </Badge>
-        <h3 className={cn('text-sm font-extrabold tracking-tight', p.head)}>
+        <h3 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.head)}>
           {t('Μην βρήκατε αυτό που ψάχνατε;', "Couldn't find what you wanted?")}
         </h3>
         <p className={cn('text-sm max-w-lg mx-auto font-medium leading-relaxed', p.sub)}>
@@ -458,7 +456,7 @@ export default function CategoriesPageContent() {
             'Create your own event and gather people with similar passions.',
           )}
         </p>
-        <Button onClick={() => navigate('/create')} size="lg" className="font-bold px-8">
+        <Button onClick={() => navigate('/create')} size="lg" className="font-bold px-5">
           {t('Δημιουργία Νέας Εμπειρίας', 'Create New Experience')}
         </Button>
       </div>

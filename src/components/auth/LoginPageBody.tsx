@@ -226,18 +226,18 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
   };
 
   return (
-    <div className={cn('flex flex-col items-center justify-center min-h-screen px-4 py-10', tok.pageBg)}>
+    <div className={cn('flex flex-col items-center justify-center min-h-screen px-4 py-5', tok.pageBg)}>
       {tok.hero === 'full' ? (
         <HomeGuestHero />
       ) : (
         <LoginGuestHeroStrip variant={tok.stripDark ? 'dark' : undefined} accentClass={tok.stripAccent ?? ''} />
       )}
-      <Card className={cn('w-full max-w-md p-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 shadow-soft-lg', tok.cardClass)}>
+      <Card className={cn('w-full max-w-md p-5 space-y-4 animate-in fade-in slide-in-from-bottom-4 shadow-soft-lg', tok.cardClass)}>
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center text-4xl font-black tracking-tight mb-4 font-['Outfit']">
+          <div className="flex items-center justify-center text-lg font-black tracking-tight mb-4 font-['Outfit']">
             <span className={tok.wordmarkClass}>NAKAMAS</span>
           </div>
-          <h1 className={cn('text-2xl font-bold', tok.stripDark ? 'text-white' : 'text-ink')}>{t('Καλώς ήρθατε', 'Welcome back')}</h1>
+          <h1 className={cn('text-lg font-bold', tok.stripDark ? 'text-white' : 'text-ink')}>{t('Καλώς ήρθατε', 'Welcome back')}</h1>
           <p className={cn('text-xs font-medium', tok.mutedText)}>
             {t('Συνδεθείτε για να ανακαλύψετε αξιόπιστες ομάδες και εμπειρίες.', 'Log in to discover trusted groups and experiences.')}
           </p>
@@ -297,7 +297,7 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
           </button>
         </div>
 
-        <div className="text-center mt-6">
+        <div className="text-center mt-4">
           <p className={cn('text-xs font-medium leading-relaxed', tok.mutedText)}>
             {t('Συνεχίζοντας, συμφωνείτε με τους', 'By continuing, you agree to Nakamas')}{' '}
             <Link to="/help" className="underline font-semibold hover:opacity-80">

@@ -48,5 +48,5 @@ export function CardDescription({ children, className }: { children: ReactNode; 
 
 export function CardMuted({ children, className }: { children: ReactNode; className?: string }) {
   const p = usePageContrast();
-  return <p className={cn('text-xs font-medium', p.muted, className)}>{children}</p>;
+  return <p className={cn('card-copy font-medium', p.muted, className)}>{children}</p>;
 }

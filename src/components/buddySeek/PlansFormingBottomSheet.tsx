@@ -55,7 +55,7 @@ export function PlansFormingBottomSheet() {
         <div className="px-5 pt-2 pb-3 border-b border-inherit shrink-0 space-y-3">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h2 id="plans-forming-sheet-title" className={cn('text-sm font-bold', tok.head)}>
+              <h2 id="plans-forming-sheet-title" className={cn('text-base font-bold', tok.head)}>
                 {t('Βρες Nakamas', 'Find Nakamas')}
               </h2>
               <PlansFormingValueHero insights={feed.insights} />
@@ -63,7 +63,7 @@ export function PlansFormingBottomSheet() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className={cn('rounded-full p-2 min-h-10 min-w-10 flex items-center justify-center shrink-0', tok.chipButton)}
+              className={cn('rounded-full p-2 min-h-11 min-w-11 flex items-center justify-center shrink-0', tok.chipButton)}
               aria-label={t('Κλείσιμο', 'Close')}
             >
               <X className="h-5 w-5" />

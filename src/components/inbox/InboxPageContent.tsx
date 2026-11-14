@@ -133,7 +133,7 @@ export default function InboxPageContent() {
 
   return (
     <div className="w-full max-w-full min-w-0 flex flex-col relative animate-in fade-in duration-500">
-      <div className="shrink-0 mb-6">
+      <div className="shrink-0 mb-4">
         <h1 className={cn(INBOX_TYPO.pageTitle, p.head)}>
           {t('Μηνύματα', 'Messages')}
         </h1>
@@ -201,7 +201,7 @@ export default function InboxPageContent() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('Αναζήτηση συνομιλιών...', 'Search conversations...')}
               className={cn(
-                'w-full pl-10 pr-4 py-2 rounded-2xl border focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft transition-all',
+                'search-control w-full h-9 pl-9 pr-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft transition-all',
                 INBOX_TYPO.search,
                 p.inputBg,
                 p.borderB,
@@ -309,7 +309,7 @@ export default function InboxPageContent() {
       {activeTab === 'notifications' && (
         <div
           className={cn(
-            'rounded-2xl border shadow-soft p-4 text-center flex flex-col items-center',
+            'rounded-2xl border shadow-soft p-5 text-center flex flex-col items-center',
             p.cardSurface,
             p.borderB,
           )}

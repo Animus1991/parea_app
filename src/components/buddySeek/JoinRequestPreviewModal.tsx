@@ -46,7 +46,7 @@ export function JoinRequestPreviewModal({
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl bg-surface-raised text-ink border border-border shadow-soft-lg max-h-[90vh] overflow-y-auto outline-none"
+        className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl bg-surface-raised text-ink border border-border shadow-soft-lg max-h-[90vh] overflow-y-auto outline-none"
       >
         <div className="p-5 border-b border-border">
           <div className="flex items-center gap-2 text-accent-strong">
@@ -109,7 +109,7 @@ export function JoinRequestPreviewModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 min-h-10 rounded-2xl border border-border text-sm font-bold text-ink"
+            className="flex-1 min-h-11 rounded-2xl border border-border text-sm font-bold text-ink"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
@@ -121,7 +121,7 @@ export function JoinRequestPreviewModal({
                 onSendRequest(message);
                 onClose();
               }}
-              className="flex-1 min-h-10 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold"
+              className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold"
             >
               {t('Αποστολή αιτήματος', 'Send request')}
             </button>
@@ -134,14 +134,14 @@ export function JoinRequestPreviewModal({
                   onAccept?.();
                   onClose();
                 }}
-                className="flex-1 min-h-10 rounded-2xl bg-emerald-600 text-white text-sm font-bold flex items-center justify-center gap-1"
+                className="flex-1 min-h-11 rounded-2xl bg-emerald-600 text-white text-sm font-bold flex items-center justify-center gap-1"
               >
                 <Check className="w-4 h-4" /> {t('Αποδοχή', 'Accept')}
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="min-h-10 px-4 rounded-2xl border border-border text-sm font-bold flex items-center gap-1"
+                className="min-h-11 px-4 rounded-2xl border border-border text-sm font-bold flex items-center gap-1"
               >
                 <X className="w-4 h-4" /> {t('Απόρριψη', 'Decline')}
               </button>

@@ -80,7 +80,7 @@ export default function PlansPageContent() {
   );
 
   return (
-    <div className="mx-auto max-w-full space-y-6 md:space-y-7 animate-in fade-in slide-in-from-bottom-2 duration-500">
+    <div className="mx-auto max-w-full space-y-4 md:space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div>
         <h1 className={cn(PLANS_TYPO.pageTitle, p.head)}>{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
         <p className={cn(PLANS_TYPO.pageSub, 'mt-1', p.sub)}>{t(`Διαχείριση επερχόμενων, εκκρεμών και παρελθόντων εκδηλώσεων.`, `Manage your upcoming experiences, pending groups, and past events.`)}</p>
@@ -133,7 +133,7 @@ export default function PlansPageContent() {
           <div className="flex items-start gap-3">
             <AlertTriangle className={cn('w-5 h-5 shrink-0 mt-0.5', p.isDark ? 'text-amber-400' : 'text-amber-600')} />
             <div>
-              <h3 className={cn('font-bold text-sm mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
+              <h3 className={cn('font-bold text-base mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
               <p className={cn('text-sm font-medium', p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function PlansPageContent() {
           const hasMeetingPoint = Boolean(group?.meetingPoint);
 
           return (
-          <Card key={event.id} className="!rounded-2xl p-4 flex flex-col sm:flex-row gap-4">
+          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
               {isConfirmed ? (
@@ -199,7 +199,7 @@ export default function PlansPageContent() {
 
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-start gap-2 mb-2">
-                <h3 className={cn('font-bold text-sm', p.head)}>{event.title}</h3>
+                <h3 className={cn('font-bold text-lg', p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
                   <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
                   <div className={cn('text-sm font-medium', p.muted)}>{event.time}</div>
@@ -292,7 +292,7 @@ export default function PlansPageContent() {
           const needed = group ? Math.max(0, group.targetSize - group.members.length) : 0;
 
           return (
-          <Card key={event.id} className="!rounded-2xl p-4 opacity-80 hover:opacity-100 transition-all duration-200 flex flex-col sm:flex-row gap-4">
+          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 opacity-80 hover:opacity-100 transition-all duration-200 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative grayscale">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
               <div className="absolute top-2 left-2 bg-gray-800 text-white px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide">
@@ -302,7 +302,7 @@ export default function PlansPageContent() {
 
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-start gap-2 mb-2">
-                <h3 className={cn('font-bold text-sm', p.head)}>{event.title}</h3>
+                <h3 className={cn('font-bold text-lg', p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
                   <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
                 </div>
@@ -352,13 +352,13 @@ export default function PlansPageContent() {
           </div>
         )}
         {pastEvents.map((event) => (
-          <Card key={event.id} className="!rounded-2xl p-4 flex flex-col sm:flex-row gap-4">
+          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
             <div className="flex-1 flex flex-col">
               <div className={cn('flex items-center gap-2 mb-1.5 text-sm font-bold', p.muted)}>
                 <Calendar className="w-3.5 h-3.5" />
                 {format(parseISO(event.date), 'MMMM d, yyyy')}
               </div>
-              <h3 className={cn('font-bold text-sm mb-3', p.head)}>{event.title}</h3>
+              <h3 className={cn('font-bold text-lg mb-3', p.head)}>{event.title}</h3>
 
               {!feedbackSubmitted[event.id] ? (
                 <div className={cn('p-3 rounded-2xl flex items-center justify-between mt-auto border', p.statBg)}>
@@ -394,7 +394,7 @@ export default function PlansPageContent() {
         title={t('Αποχώρηση από ομάδα', 'Leave Group')}
         size="sm"
       >
-        <p className="text-xs font-medium mb-6 text-ink-muted">
+        <p className="text-xs font-medium mb-4 text-ink-muted">
           {t('Είστε σίγουροι ότι θέλετε να αποχωρήσετε; Μπορεί να μην μπορέσετε να ξαναμπείτε.', 'Are you sure you want to leave? You might not be able to rejoin.')}
         </p>
         <div className="flex flex-col gap-2.5">
@@ -407,14 +407,14 @@ export default function PlansPageContent() {
               toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'));
               setShowLeaveConfirm(null);
             }}
-            className="w-full px-4 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
+            className="w-full px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
           >
             {t('Ναι, Αποχώρηση', 'Yes, Leave')}
           </button>
           <button
             type="button"
             onClick={() => setShowLeaveConfirm(null)}
-            className={cn('w-full px-4 py-2.5 text-sm font-bold rounded-2xl transition-all duration-200 border', secondaryBtn)}
+            className={cn('w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 border', secondaryBtn)}
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
@@ -440,7 +440,7 @@ function EmptyTab({
   p: ReturnType<typeof usePageContrast>;
 }) {
   return (
-    <div className={cn('text-center py-12 px-6 rounded-2xl border border-dashed', p.cardSurface, p.borderB)}>
+    <div className={cn('text-center py-4 px-4 rounded-2xl border border-dashed', p.cardSurface, p.borderB)}>
       <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3', p.statBg)}>
         <Icon className={cn('w-6 h-6', p.statVal)} />
       </div>

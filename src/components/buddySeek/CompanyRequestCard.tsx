@@ -76,14 +76,14 @@ export function CompanyRequestCard({
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <p className={cn('text-xs font-bold uppercase tracking-wide', darkSurface ? 'text-cyan-400' : 'text-cyan-700')}>
+          <p className={cn('card-badge font-bold uppercase tracking-wide', darkSurface ? 'text-cyan-400' : 'text-cyan-700')}>
             {tu('Βρες Nakamas', 'Find Nakamas')}
           </p>
-          <p className={cn('text-sm font-bold truncate', darkSurface ? 'text-white' : 'text-gray-900')}>
+          <p className={cn('card-heading font-bold truncate', darkSurface ? 'text-white' : 'text-gray-900')}>
             {title}
           </p>
           {request.message && (
-            <p className={cn('text-xs mt-0.5 line-clamp-2', darkSurface ? 'text-gray-400' : 'text-gray-500')}>
+            <p className={cn('card-copy mt-0.5 line-clamp-2', darkSurface ? 'text-gray-400' : 'text-gray-500')}>
               {request.message}
             </p>
           )}
@@ -93,7 +93,7 @@ export function CompanyRequestCard({
                 <span
                   key={tag}
                   className={cn(
-                    'text-xs font-bold px-1.5 py-0.5 rounded-lg',
+                    'card-copy font-bold px-1.5 py-0.5 rounded-lg',
                     darkSurface ? 'bg-white/10 text-gray-200' : 'bg-gray-100 text-gray-700',
                   )}
                 >
@@ -103,12 +103,12 @@ export function CompanyRequestCard({
             </div>
           )}
           {(request.preferredGroupMin || request.preferredGroupMax) && (
-            <p className={cn('text-xs mt-1', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
+            <p className={cn('card-meta mt-1', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
               {t('Μέγεθος', 'Size')}: {request.preferredGroupMin ?? '—'}–{request.preferredGroupMax ?? '—'}
             </p>
           )}
           {reason && (
-            <p className={cn('text-xs mt-1 line-clamp-2', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
+            <p className={cn('card-copy mt-1 line-clamp-2', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
               {t(reason.el, reason.en)}
             </p>
           )}
@@ -120,7 +120,7 @@ export function CompanyRequestCard({
           type="button"
           onClick={onAskToJoin}
           className={cn(
-            'flex-1 min-h-9 rounded-xl text-xs font-bold text-white',
+            'flex-1 min-h-9 rounded-xl card-cta text-white',
             darkSurface ? 'bg-cyan-600 hover:bg-cyan-500' : 'bg-cyan-600 hover:bg-cyan-700',
           )}
         >
@@ -130,7 +130,7 @@ export function CompanyRequestCard({
           type="button"
           onClick={() => navigate(`/events/${event.id}`)}
           className={cn(
-            'px-3 min-h-9 rounded-xl text-xs font-bold border',
+            'px-3 min-h-9 rounded-xl card-cta border',
             darkSurface ? 'border-gray-600 text-gray-300' : 'border-gray-200 text-gray-700',
           )}
         >

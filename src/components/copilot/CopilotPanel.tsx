@@ -1,7 +1,7 @@
 import { FormEvent, KeyboardEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
-import { ArrowUp, Cloud, Cpu, Mic, MicOff, Sparkles, Trash2, X } from 'lucide-react';
+import { ArrowUp, Bot, Cloud, Cpu, Mic, MicOff, Trash2, X } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
@@ -98,7 +98,7 @@ function CopilotConversation({ onClose, onNavigate, headingId }: { onClose: () =
       {/* Header */}
       <div className="flex h-header shrink-0 items-center gap-2.5 border-b border-border px-4">
         <span aria-hidden className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent text-accent-fg">
-          <Sparkles className="h-4 w-4" />
+          <Bot className="h-4 w-4" />
         </span>
         <div className="min-w-0 flex-1">
           <h2 id={headingId} className="text-sm font-bold leading-tight text-ink">
@@ -133,7 +133,7 @@ function CopilotConversation({ onClose, onNavigate, headingId }: { onClose: () =
         {messages.length === 0 ? (
           <div className="space-y-4 pt-2">
             <div>
-              <p className="text-base font-bold text-ink">
+              <p className="text-lg font-bold text-ink">
                 {userName ? t(`Γεια σου, ${userName}!`, `Hi ${userName}!`) : t('Γεια σου!', 'Hi there!')}
               </p>
               <p className="mt-1 text-sm leading-relaxed text-ink-muted">
@@ -151,7 +151,7 @@ function CopilotConversation({ onClose, onNavigate, headingId }: { onClose: () =
                     onClick={() => submit(t(s.el, s.en))}
                     className="flex w-full items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-sm font-medium text-ink transition-colors hover:border-accent/50 hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   >
-                    <Sparkles className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden />
+                    <Bot className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden />
                     {t(s.el, s.en)}
                   </button>
                 </li>
@@ -304,7 +304,7 @@ export function CopilotPanel() {
       aria-labelledby={headingId}
       className={cn(
         'hidden lg:flex h-full w-[380px] xl:w-[400px] shrink-0 flex-col border-l border-border bg-surface-raised animate-in slide-in-from-right-4 fade-in duration-200 motion-reduce:animate-none',
-        demoMode && 'pt-8',
+        demoMode && 'pt-5',
       )}
     >
       <CopilotConversation onClose={close} onNavigate={() => undefined} headingId={headingId} />

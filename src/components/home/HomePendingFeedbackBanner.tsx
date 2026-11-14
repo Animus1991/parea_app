@@ -25,7 +25,7 @@ export function HomePendingFeedbackBanner() {
           <CheckCircle2 className="w-4 h-4" />
         </div>
         <div>
-          <h3 className={`text-sm font-bold ${h.feedbackTitle}`}>
+          <h3 className={`text-base font-bold ${h.feedbackTitle}`}>
             {t('Εκκρεμής Αξιολόγηση', 'Pending Feedback')}
           </h3>
           <p className={`text-xs font-medium mt-0.5 leading-relaxed ${h.feedbackBody}`}>

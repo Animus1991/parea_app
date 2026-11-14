@@ -139,10 +139,10 @@ export default function OnboardingClassic() {
   ];
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-8">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-5">
       <div className="w-full max-w-lg">
         {/* Progress bar */}
-        <div className="mb-6">
+        <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
               {tu('Βήμα', 'Step')} {step + 1} / {TOTAL_STEPS}
@@ -176,10 +176,10 @@ export default function OnboardingClassic() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: dir * -40 }}
             transition={{ duration: 0.25 }}
-            className="bg-white rounded-3xl p-4 shadow-soft border border-gray-100 space-y-5"
+            className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 space-y-5"
           >
             <div>
-              <h2 className="text-sm font-black text-ink leading-tight">
+              <h2 className="text-lg font-black text-ink leading-tight">
                 {t(stepTitles[step].gr, stepTitles[step].en)}
               </h2>
               <p className="text-sm text-gray-500 font-medium mt-1">
@@ -190,7 +190,7 @@ export default function OnboardingClassic() {
             {/* Step 0 — Welcome */}
             {step === 0 && (
               <div className="space-y-4">
-                <div className="flex flex-col items-center py-6 gap-3">
+                <div className="flex flex-col items-center py-4 gap-3">
                   <span className="text-6xl">👋</span>
                   <p className="text-base text-gray-600 font-medium text-center max-w-xs leading-relaxed">
                     {t(
@@ -310,7 +310,7 @@ export default function OnboardingClassic() {
                     <button
                       key={sc.id}
                       onClick={() => toggleSchedule(sc.id)}
-                      className={`flex items-center gap-2 px-3 py-2.5 rounded-2xl border transition-all duration-200 ${
+                      className={`flex items-center gap-2 px-3 py-3 rounded-2xl border transition-all duration-200 ${
                         sel
                           ? 'bg-ink text-white border-ink'
                           : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
@@ -353,7 +353,7 @@ export default function OnboardingClassic() {
             {step === 6 && (
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
+                  <label className="text-2xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
                     {tu('Όνομα', 'Name')}
                   </label>
                   <input
@@ -361,11 +361,11 @@ export default function OnboardingClassic() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={t('Το όνομά σου...', 'Your name...')}
-                    className="w-full h-9 px-4 rounded-2xl border border-gray-200 bg-gray-50 text-base font-medium text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all"
+                    className="field-control w-full h-9 px-3 rounded-xl border border-gray-200 bg-gray-50 text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
+                  <label className="text-2xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
                     {tu('Σύντομο Bio', 'Short Bio')}
                   </label>
                   <textarea
@@ -375,10 +375,10 @@ export default function OnboardingClassic() {
                       'Πες μας λίγα πράγματα για σένα...',
                       'Tell us a bit about yourself...',
                     )}
-                    rows={4}
-                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-base font-medium text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all resize-none"
+                    rows={3}
+                    className="field-control w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all resize-none"
                   />
-                  <p className="text-xs text-gray-400 font-medium mt-1">
+                  <p className="text-2xs text-gray-400 font-medium mt-1">
                     {bio.length}/160 {t('χαρακτήρες', 'characters')}
                   </p>
                 </div>
@@ -420,7 +420,7 @@ export default function OnboardingClassic() {
               type="button"
               onClick={goNext}
               disabled={step === 1 && selectedInterests.length < 3}
-              className="flex items-center gap-2 px-6 py-2.5 min-h-10 rounded-2xl bg-ink text-white text-sm font-bold hover:bg-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2.5 min-h-10 rounded-2xl bg-ink text-white text-sm font-bold hover:bg-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('Επόμενο', 'Next')}
               <ChevronRight className="w-4 h-4" aria-hidden />
@@ -428,7 +428,7 @@ export default function OnboardingClassic() {
           ) : (
             <button
               onClick={handleComplete}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-accent to-cyan-400 text-white text-sm font-bold hover:opacity-90 transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-accent to-cyan-400 text-white text-sm font-bold hover:opacity-90 transition-all duration-200"
             >
               <CheckCircle2 className="w-4 h-4" />
               {t('Ολοκλήρωση!', 'Complete!')}

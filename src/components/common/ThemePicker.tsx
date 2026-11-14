@@ -109,7 +109,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
                       setOpen(false);
                     }}
                     className={cn(
-                      'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium min-h-10 transition-colors',
+                      'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium min-h-11 transition-colors',
                       theme === id
                         ? tok.navActive
                         : cn(
@@ -142,7 +142,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
           type="button"
           onClick={() => setOpen((v) => !v)}
           className={cn(
-            'flex items-center gap-1.5 text-xs font-bold transition-colors px-2.5 py-2 rounded-lg min-h-10',
+            'flex items-center gap-1.5 text-xs font-bold transition-colors px-2.5 py-2 rounded-lg min-h-11',
             tok.chipButton,
             open && (tok.isDark ? 'ring-2 ring-white/30' : 'ring-2 ring-accent/40'),
           )}
@@ -171,7 +171,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
           type="button"
           onClick={() => setTheme(id)}
           className={cn(
-            'flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all min-h-[52px]',
+            'flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all min-h-10',
             theme === id
               ? 'border-accent ring-2 ring-accent/30 bg-cyan-50/50'
               : tok.isDark

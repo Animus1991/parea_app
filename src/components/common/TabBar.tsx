@@ -38,12 +38,12 @@ export function TabBar({ tabs, activeTab, onChange, className, ariaLabel, idBase
 
   const getActiveClass = () =>
     isDark
-      ? 'border-2 border-gray-400 text-gray-100 bg-gray-700/50 rounded-full px-4 py-1.5 font-bold transition-all duration-200'
+      ? 'border border-gray-400 text-gray-100 bg-gray-700/50 rounded-full px-3 py-1 font-bold transition-all duration-200'
       : 'btn-pill-active';
 
   const getInactiveClass = () =>
     isDark
-      ? 'border-2 border-transparent text-gray-400 hover:text-gray-200 hover:bg-white/5 rounded-full px-4 py-1.5 font-semibold transition-all duration-200'
+      ? 'border border-transparent text-gray-400 hover:text-gray-200 hover:bg-white/5 rounded-full px-3 py-1 font-semibold transition-all duration-200'
       : 'btn-pill-inactive';
 
   const getActiveCountClass = () => (isDark ? 'bg-gray-500 text-white' : 'bg-gray-600 text-white');
@@ -105,7 +105,7 @@ export function TabBar({ tabs, activeTab, onChange, className, ariaLabel, idBase
               'whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1',
               segmented
                 ? cn(
-                    'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors',
+                    'inline-flex min-h-8 items-center gap-1 rounded-md px-2.5 text-2xs font-semibold transition-colors',
                     selected ? 'bg-accent text-accent-fg shadow-soft' : 'text-ink-muted hover:bg-surface hover:text-ink',
                   )
                 : cn('text-base', selected ? getActiveClass() : getInactiveClass()),

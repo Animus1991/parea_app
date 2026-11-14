@@ -39,7 +39,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
       >
         <div className={cn('p-5 flex items-center justify-between border-b', p.borderB)}>
           <div>
-            <h3 className={cn('font-bold text-sm', p.head)}>{format(day, 'd MMMM yyyy')}</h3>
+            <h3 className={cn('font-bold text-lg', p.head)}>{format(day, 'd MMMM yyyy')}</h3>
             <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
               {tu('Ημερήσιο Πρόγραμμα', 'Daily Schedule')}
             </p>
@@ -47,7 +47,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
           <button
             type="button"
             className={cn(
-              'p-2 rounded-2xl transition-colors min-h-10 min-w-10 flex items-center justify-center',
+              'p-2 rounded-2xl transition-colors min-h-11 min-w-11 flex items-center justify-center',
               p.isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-gray-100 hover:bg-gray-200',
             )}
             onClick={onClose}
@@ -70,13 +70,13 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
               <div key={hour} className="flex gap-4">
                 <div
                   className={cn(
-                    'w-14 shrink-0 text-right text-xs font-bold uppercase tracking-wider py-2',
+                    'w-11 shrink-0 text-right text-xs font-bold uppercase tracking-wider py-2',
                     p.muted,
                   )}
                 >
                   {timeString}
                 </div>
-                <div className={cn('flex-1 border-t relative pt-2 pb-6 flex flex-col gap-2', p.borderB)}>
+                <div className={cn('flex-1 border-t relative pt-2 pb-4 flex flex-col gap-2', p.borderB)}>
                   {hourEvents.map((ev) => (
                     <button
                       key={ev.id}

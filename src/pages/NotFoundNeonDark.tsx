@@ -15,19 +15,19 @@ export default function NotFoundNeonDark() {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-6 text-center animate-in fade-in duration-500">
-      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-900/50 to-teal-900/50 border border-emerald-800 flex items-center justify-center mb-6 relative">
+    <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-in fade-in duration-500">
+      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-900/50 to-teal-900/50 border border-emerald-800 flex items-center justify-center mb-4 relative">
         <span className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping opacity-20"></span>
         <Compass className="w-10 h-10 text-emerald-400 animate-spin" style={{ animationDuration: '8s' }} />
       </div>
-      <h1 className="text-base md:text-lg font-bold text-white mb-2">
+      <h1 className="text-lg font-bold text-white mb-2">
         {t(`Η σελίδα δεν βρέθηκε`, `Page Not Found`)}
       </h1>
-      <p className="text-lg text-white font-medium mb-6 max-w-xs">
+      <p className="text-lg text-white font-medium mb-4 max-w-xs">
         {t(`Η σελίδα που αναζητάτε δεν υπάρχει ή έχει μετακινηθεί.`, `The page you're looking for doesn't exist or has been moved.`)}
       </p>
 
-      <div className="grid grid-cols-2 gap-2 mb-6 w-full max-w-xs">
+      <div className="grid grid-cols-2 gap-2 mb-4 w-full max-w-xs">
         {suggestions.map(s => {
           const Icon = s.icon;
           return (

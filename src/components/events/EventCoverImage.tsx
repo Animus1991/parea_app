@@ -55,7 +55,7 @@ export function EventCoverImage({
           )}
           aria-hidden
         >
-          <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20">
+          <div className="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20">
             <Calendar className="w-7 h-7 text-white/80" />
           </div>
           <span className="text-2xs font-bold uppercase tracking-widest text-white/70 px-4 text-center">

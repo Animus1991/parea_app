@@ -315,13 +315,13 @@ export default function MyCalendarPageContent() {
   };
 
   return (
-    <div className="w-full max-w-full min-w-0 space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="w-full max-w-full min-w-0 space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 border-b border-white/5 pb-4 md:pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 border-b border-white/5 pb-4 md:pb-4">
         <div className="flex items-center gap-4">
           <div
             className={cn(
-              "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-soft border",
+              "w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-soft border",
               p.isDark
                 ? "bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]"
                 : "bg-white border-gray-100",
@@ -331,11 +331,11 @@ export default function MyCalendarPageContent() {
           </div>
           <div>
             <h1
- className={cn(
- "text-base md:text-lg font-extrabold tracking-tight",
- p.head,
- )}
- >
+              className={cn(
+                "text-sm md:text-base font-extrabold tracking-tight",
+                p.head,
+              )}
+            >
               {t("Το Ημερολόγιό μου", "My Calendar")}
             </h1>
             <p className={cn("text-sm md:text-base font-medium mt-1", p.sub)}>
@@ -389,7 +389,7 @@ export default function MyCalendarPageContent() {
             </button>
             <button
               className={cn(
-                "relative z-10 px-6 py-2 text-xs font-bold transition-all duration-200 select-none",
+                "relative z-10 px-4 py-2 text-xs font-bold transition-all duration-200 select-none",
                 view === "month" ? p.head : p.muted,
               )}
               onClick={() => setView("month")}
@@ -429,23 +429,23 @@ export default function MyCalendarPageContent() {
 
       <div
         className={cn(
-          "rounded-3xl border overflow-hidden shadow-soft",
+          "rounded-2xl border overflow-hidden shadow-soft",
           p.cardSurface,
           p.borderB,
         )}
       >
         <div
           className={cn(
-            "flex items-center justify-between px-6 py-5 md:px-8 border-b",
+            "flex items-center justify-between px-4 py-5 md:px-5 border-b",
             p.borderB,
           )}
         >
           <h2
- className={cn(
- "font-extrabold text-sm tracking-tight capitalize",
- p.head,
- )}
- >
+            className={cn(
+              "font-extrabold text-sm md:text-base tracking-tight capitalize",
+              p.head,
+            )}
+          >
             {format(currentDate, "MMMM yyyy")}
           </h2>
           <div className="flex items-center gap-1.5 md:gap-3">
@@ -483,7 +483,7 @@ export default function MyCalendarPageContent() {
           </div>
         </div>
 
-        <p className={cn("text-xs font-medium px-6 md:px-8 py-2 border-b", p.borderB, p.muted)}>
+        <p className={cn("text-xs font-medium px-4 md:px-5 py-2 border-b", p.borderB, p.muted)}>
           {t(
             "Πάτημα: προεπισκόπηση · Διπλό πάτημα: ωριαίο πρόγραμμα",
             "Tap: preview · Double-tap: hourly schedule",
@@ -498,7 +498,7 @@ export default function MyCalendarPageContent() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.2 }}
-              className="p-4"
+              className="p-4 md:p-5"
             >
               <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2 md:mb-4">
                 {[
@@ -523,7 +523,7 @@ export default function MyCalendarPageContent() {
                 ))}
               </div>
 
-              <div className="grid grid-cols-7 gap-1 md:gap-2 mb-6">
+              <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4">
                 {days.map((day) => renderDayCell(day, true))}
               </div>
             </motion.div>
@@ -536,7 +536,7 @@ export default function MyCalendarPageContent() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.2 }}
-              className="p-4"
+              className="p-4 md:p-5"
             >
               {/* Day-of-week headers */}
               <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2 md:mb-4">
@@ -582,7 +582,7 @@ export default function MyCalendarPageContent() {
 
               {/* Upcoming events list below the grid */}
               {upcomingEvents.length > 0 && (
-                <div className={cn("mt-8 border-t pt-6 space-y-3", p.borderB)}>
+                <div className={cn("mt-5 border-t pt-4 space-y-3", p.borderB)}>
                   <h4
                     className={cn(
                       "text-xs font-bold uppercase tracking-widest pl-1 mb-4",
@@ -604,7 +604,7 @@ export default function MyCalendarPageContent() {
                     >
                       <div
                         className={cn(
-                          "text-xs font-bold w-14 shrink-0 uppercase tracking-widest text-center",
+                          "text-xs font-bold w-11 shrink-0 uppercase tracking-widest text-center",
                           p.muted,
                         )}
                       >

@@ -67,8 +67,8 @@ export default function OrganizerProfilePageContent() {
   };
 
   return (
-    <div className="mx-auto max-w-full space-y-8 relative">
-      <div className={cn('rounded-2xl border p-4 shadow-soft text-center sm:text-left sm:flex sm:items-start gap-8', p.cardSurface, p.borderB)}>
+    <div className="mx-auto max-w-full space-y-5 relative">
+      <div className={cn('rounded-2xl border p-5 shadow-soft text-center sm:text-left sm:flex sm:items-start gap-5', p.cardSurface, p.borderB)}>
         <div className={cn('w-32 h-32 rounded-full overflow-hidden mx-auto sm:mx-0 shrink-0 border-4 shadow-soft-md', p.isDark ? 'border-gray-700 bg-gray-800' : 'border-white bg-gray-100')}>
           {organizer.photoUrl ? (
             <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />
@@ -79,7 +79,7 @@ export default function OrganizerProfilePageContent() {
           )}
         </div>
 
-        <div className="mt-6 sm:mt-0 flex-1 space-y-4">
+        <div className="mt-4 sm:mt-0 flex-1 space-y-4">
           <div>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
               {isVerifiedOrganizer && (
@@ -91,7 +91,7 @@ export default function OrganizerProfilePageContent() {
                 {t('Επίπεδο Εμπιστοσύνης', 'Trust Tier')}: {t(tierLabelEl(organizer.trustTier), tierLabelEn(organizer.trustTier))}
               </Badge>
             </div>
-            <h1 className={cn('text-base md:text-lg font-bold', p.head)}>{organizer.name}</h1>
+            <h1 className={cn('text-sm md:text-base font-bold', p.head)}>{organizer.name}</h1>
             <p className={cn('text-sm font-medium mt-1', p.sub)}>
               <MapPin className="h-3.5 w-3.5 inline mr-1" /> {organizer.city}
             </p>
@@ -145,11 +145,11 @@ export default function OrganizerProfilePageContent() {
       </div>
 
       <div className="space-y-4">
-        <h2 className={cn('text-sm font-bold', p.head)}>
+        <h2 className={cn('text-lg font-bold', p.head)}>
           {t('Επερχόμενες Εκδηλώσεις από', 'Upcoming Events by')} {organizer.name}
         </h2>
         {hostedEvents.length === 0 ? (
-          <div className={cn('text-center py-12 rounded-2xl border border-dashed', p.isDark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200')}>
+          <div className={cn('text-center py-4 rounded-2xl border border-dashed', p.isDark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200')}>
             <p className={cn('font-medium text-sm', p.muted)}>
               {t('Δεν έχουν προγραμματιστεί επερχόμενες εκδηλώσεις.', 'No upcoming events currently scheduled.')}
             </p>

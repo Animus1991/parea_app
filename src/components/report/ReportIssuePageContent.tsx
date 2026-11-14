@@ -50,10 +50,10 @@ export default function ReportIssuePageContent() {
   );
 
   return (
-    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
-      <div className="flex justify-between items-center mb-6">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+      <div className="flex justify-between items-center mb-4">
         <div>
-          <h1 className={cn('text-base md:text-lg font-bold', p.head)}>
+          <h1 className={cn('text-sm md:text-base font-bold', p.head)}>
             {t('Αναφορά Προβλήματος', 'Report an Issue')}
           </h1>
           <p className={cn('font-medium text-sm md:text-lg mt-1', p.sub)}>
@@ -79,7 +79,7 @@ export default function ReportIssuePageContent() {
         <div className={cn('rounded-2xl shadow-soft border overflow-hidden', c.surfaceElevated, c.border)}>
           <div
             className={cn(
-              'p-4 border-b flex items-start gap-4',
+              'p-4 md:p-4 border-b flex items-start gap-4',
               p.isDark ? 'bg-red-950/30 border-red-900/40' : 'bg-red-50 border-red-100',
             )}
           >
@@ -92,7 +92,7 @@ export default function ReportIssuePageContent() {
               <AlertTriangle className={cn('w-5 h-5', p.isDark ? 'text-red-300' : 'text-red-600')} />
             </div>
             <div>
-              <h3 className={cn('font-bold text-sm', p.head)}>
+              <h3 className={cn('font-bold text-lg', p.head)}>
                 {t('Αναφορά Ζητήματος Ασφαλείας', 'Report a Safety Concern')}
               </h3>
               <p className={cn('text-base mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>
@@ -104,13 +104,13 @@ export default function ReportIssuePageContent() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-4 space-y-5">
+          <form onSubmit={handleSubmit} className="p-4 md:p-4 space-y-5">
             <div>
               <label className={cn('block text-xs font-bold tracking-wider mb-2', p.head)}>
                 {t('Κατηγορία', 'Category')}
               </label>
               <select
-                className={cn(inputClass, 'h-9 px-3')}
+                className={cn(inputClass, 'h-11 px-3')}
                 required
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -292,17 +292,17 @@ export default function ReportIssuePageContent() {
           </form>
         </div>
       ) : (
-        <div className={cn('rounded-2xl shadow-soft border p-4 text-center', c.surfaceElevated, c.border)}>
+        <div className={cn('rounded-2xl shadow-soft border p-5 text-center', c.surfaceElevated, c.border)}>
           <div
             className={cn(
-              'w-16 h-[58px] rounded-full flex items-center justify-center mx-auto mb-4',
+              'w-12 h-[58px] rounded-full flex items-center justify-center mx-auto mb-4',
               p.isDark ? 'bg-emerald-900/40' : 'bg-emerald-100',
             )}
           >
             <CheckCircle2 className={cn('w-8 h-8', p.isDark ? 'text-emerald-300' : 'text-emerald-600')} />
           </div>
-          <h2 className={cn('text-sm font-bold mb-2', p.head)}>{t('Η αναφορά υποβλήθηκε', 'Report Submitted')}</h2>
-          <p className={cn('text-lg max-w-md mx-auto mb-6', p.sub)}>
+          <h2 className={cn('text-lg font-bold mb-2', p.head)}>{t('Η αναφορά υποβλήθηκε', 'Report Submitted')}</h2>
+          <p className={cn('text-lg max-w-md mx-auto mb-4', p.sub)}>
             {t(
               'Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.',
               "Thank you. We'll review your report and get back to you.",

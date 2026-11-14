@@ -97,7 +97,7 @@ export function HomeQuickActions({
               type="button"
               onClick={() => navigate(to)}
               className={cn(
-                'p-4 rounded-2xl border text-left transition-all hover:-translate-y-0.5 shadow-soft',
+                'p-5 rounded-2xl border text-left transition-all hover:-translate-y-0.5 shadow-soft',
                 h.card,
               )}
             >
@@ -114,7 +114,7 @@ export function HomeQuickActions({
   }
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-4">
       <HomeNextBestAction />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {shortcuts.map(({ icon: Icon, label, onClick, key }) => (
@@ -148,7 +148,7 @@ export function HomeQuickActions({
             type="button"
             onClick={() => navigate(to)}
             className={cn(
-              'p-4 rounded-2xl border text-left transition-all hover:-translate-y-0.5 shadow-soft',
+              'p-5 rounded-2xl border text-left transition-all hover:-translate-y-0.5 shadow-soft',
               p.cardSurface,
               p.borderB,
               p.cardHover,

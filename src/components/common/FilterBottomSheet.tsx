@@ -36,25 +36,25 @@ export function FilterBottomSheet({
           <h2 className="text-sm font-bold">
             {t('Φίλτρα', 'Filters')}
             {activeCount > 0 && (
-              <span className="ml-2 text-xs font-bold text-accent">({activeCount})</span>
+              <span className="ml-2 text-2xs font-bold text-accent">({activeCount})</span>
             )}
           </h2>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full px-3 py-2 min-h-10 text-sm font-bold text-ink-muted hover:bg-surface"
+          className="rounded-full px-3 py-2 min-h-11 text-xs font-bold text-ink-muted hover:bg-surface"
           aria-label={t('Κλείσιμο', 'Close')}
         >
           {t('Κλείσιμο', 'Close')}
         </button>
       </div>
       <div className="space-y-5 text-ink">{children}</div>
-      <div className="mt-6 flex gap-3">
+      <div className="mt-4 flex gap-3">
         <button
           type="button"
           onClick={onClear}
-          className="flex-1 min-h-10 rounded-2xl border border-border text-sm font-bold text-ink-muted"
+          className="flex-1 min-h-11 rounded-2xl border border-border text-xs font-bold text-ink-muted"
         >
           {t('Εκκαθάριση', 'Clear all')}
         </button>
@@ -62,7 +62,7 @@ export function FilterBottomSheet({
           type="button"
           data-autofocus
           onClick={onClose}
-          className={cn('flex-[2] min-h-10 rounded-2xl text-sm font-bold bg-accent text-accent-fg hover:bg-accent-strong')}
+          className={cn('flex-[2] min-h-11 rounded-2xl text-xs font-bold bg-accent text-accent-fg hover:bg-accent-strong')}
         >
           {t('Εφαρμογή', 'Apply')}
         </button>

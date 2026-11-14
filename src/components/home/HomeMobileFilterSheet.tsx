@@ -51,7 +51,7 @@ export function HomeMobileFilterSheet({
                 key={p}
                 type="button"
                 onClick={() => setPriceFilter(p)}
-                className={`px-3 py-2 min-h-10 rounded-full text-xs font-bold ${priceFilter === p ? h.chipActive : h.chipInactive}`}
+                className={`px-3 py-2 min-h-11 rounded-full text-xs font-bold ${priceFilter === p ? h.chipActive : h.chipInactive}`}
               >
                 {p === 'All'
                   ? t('Όλα', 'All')
@@ -72,7 +72,7 @@ export function HomeMobileFilterSheet({
                 key={d}
                 type="button"
                 onClick={() => setDateFilter(d)}
-                className={`px-3 py-2 min-h-10 rounded-full text-xs font-bold ${dateFilter === d ? h.chipActive : h.chipInactive}`}
+                className={`px-3 py-2 min-h-11 rounded-full text-xs font-bold ${dateFilter === d ? h.chipActive : h.chipInactive}`}
               >
                 {d === 'Any'
                   ? t('Οποτεδήποτε', 'Any')
@@ -93,7 +93,7 @@ export function HomeMobileFilterSheet({
                 key={r}
                 type="button"
                 onClick={() => setRadiusFilter(r)}
-                className={`px-3 py-2 min-h-10 rounded-full text-xs font-bold ${radiusFilter === r ? h.chipActive : h.chipInactive}`}
+                className={`px-3 py-2 min-h-11 rounded-full text-xs font-bold ${radiusFilter === r ? h.chipActive : h.chipInactive}`}
               >
                 {r === 'Any' ? t('Οποιαδήποτε', 'Any') : r}
               </button>

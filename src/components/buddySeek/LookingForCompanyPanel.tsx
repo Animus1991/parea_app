@@ -112,7 +112,7 @@ export function LookingForCompanyPanel({
               type="button"
               onClick={() => setTab('requests')}
               className={cn(
-                'flex-1 min-w-0 h-9 px-2 truncate rounded-lg text-xs font-bold',
+                'flex-1 py-2 rounded-lg text-xs font-bold',
                 tab === 'requests' ? 'bg-cyan-600 text-white' : tok.muted,
               )}
             >
@@ -122,7 +122,7 @@ export function LookingForCompanyPanel({
               type="button"
               onClick={() => setTab('groups')}
               className={cn(
-                'flex-1 min-w-0 h-9 px-2 truncate rounded-lg text-xs font-bold',
+                'flex-1 py-2 rounded-lg text-xs font-bold',
                 tab === 'groups' ? 'bg-cyan-600 text-white' : tok.muted,
               )}
             >
@@ -309,7 +309,7 @@ export function LookingForCompanyPanel({
                           <button
                             type="button"
                             onClick={() => navigate(`/events/${event.id}/join?group=${g.id}`)}
-                            className="text-xs font-bold text-cyan-600"
+                            className="card-cta text-cyan-600"
                           >
                             {t('Αίτημα συμμετοχής', 'Ask to join')}
                           </button>
@@ -318,7 +318,7 @@ export function LookingForCompanyPanel({
                           <button
                             type="button"
                             onClick={() => setMergePair({ from: myGroups[0], to: g })}
-                            className="text-xs font-bold text-emerald-600"
+                            className="card-cta text-emerald-600"
                           >
                             {t('Συγχώνευση', 'Suggest merge')}
                           </button>

@@ -32,7 +32,7 @@ export function HomeSeekingHostSection({
             <Crown className="w-4 h-4 text-amber-700" />
           </div>
           <div>
-            <h2 className={`text-sm font-bold leading-tight ${h.heading}`}>
+            <h2 className={`text-base font-bold leading-tight ${h.heading}`}>
               {t('Αναζητούν διοργανωτή', 'Looking for an organizer')}
             </h2>
             <p className={`text-sm font-medium mt-0.5 ${h.labelMuted}`}>
@@ -46,7 +46,7 @@ export function HomeSeekingHostSection({
         <button
           type="button"
           onClick={onToggleSeekingHostOnly}
-          className={`shrink-0 text-sm font-bold px-3 py-1.5 rounded-full transition-all duration-200 ${seekingHostOnly ? h.chipActive : h.chipInactive}`}
+          className={`filter-chip shrink-0 text-xs font-bold px-3 rounded-full transition-all duration-200 ${seekingHostOnly ? h.chipActive : h.chipInactive}`}
         >
           {seekingHostOnly
             ? t('Όλες οι εκδηλώσεις', 'All events')

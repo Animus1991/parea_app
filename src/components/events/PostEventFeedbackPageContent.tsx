@@ -7,8 +7,8 @@ import {
   Star,
   ShieldAlert,
   CheckCircle2,
-  Sparkles,
   Trophy,
+  Zap,
   MapPin,
   Calendar,
 } from 'lucide-react';
@@ -80,7 +80,7 @@ export default function PostEventFeedbackPageContent() {
 
   if (!eventId || !event) {
     return (
-      <div className="max-w-2xl mx-auto py-12 text-center space-y-4">
+      <div className="max-w-2xl mx-auto py-4 text-center space-y-4">
         <p className={cn('text-sm font-medium', p.sub)}>
           {t('Η εκδήλωση δεν βρέθηκε.', 'Event not found.')}
         </p>
@@ -92,9 +92,9 @@ export default function PostEventFeedbackPageContent() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-2xl mx-auto space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn('text-base md:text-lg font-extrabold tracking-tight', p.head)}>
+        <h1 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.head)}>
           {t('Αξιολόγηση Εκδήλωσης', 'Post-Event Feedback')}
         </h1>
         <p className={cn('text-sm md:text-base font-medium mt-1', p.sub)}>
@@ -107,18 +107,18 @@ export default function PostEventFeedbackPageContent() {
 
       <div
         className={cn(
-          'rounded-2xl p-4 shadow-soft flex items-start gap-4 border',
+          'rounded-2xl p-4 md:p-4 shadow-soft flex items-start gap-4 border',
           p.cardSurface,
           p.borderB,
         )}
       >
         {event.imageUrl && (
-          <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0 border border-white/10 hidden sm:block">
+          <div className="w-12 h-12 rounded-2xl overflow-hidden shrink-0 border border-white/10 hidden sm:block">
             <img src={event.imageUrl} alt="" className="w-full h-full object-cover" />
           </div>
         )}
         <div className="min-w-0">
-          <h3 className={cn('text-sm font-bold truncate', p.head)}>{event.title}</h3>
+          <h3 className={cn('text-lg font-bold truncate', p.head)}>{event.title}</h3>
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5">
             {eventDateLabel && (
               <span className={cn('text-xs font-bold flex items-center gap-1', p.muted)}>
@@ -139,7 +139,7 @@ export default function PostEventFeedbackPageContent() {
       {step === 1 && (
         <div
           className={cn(
-            'flex flex-col sm:flex-row items-center sm:justify-center text-center sm:text-left gap-3 md:gap-4 rounded-2xl p-4 shadow-soft border',
+            'flex flex-col sm:flex-row items-center sm:justify-center text-center sm:text-left gap-3 md:gap-4 rounded-2xl p-4 md:p-5 shadow-soft border',
             p.isDark
               ? 'bg-amber-900/10 border-amber-800/50'
               : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200',
@@ -162,7 +162,7 @@ export default function PostEventFeedbackPageContent() {
                 p.isDark ? 'text-amber-400' : 'text-amber-900',
               )}
             >
-              {t('Κερδίστε +25 XP', 'Earn +25 XP')} <Sparkles className="w-3.5 h-3.5" />
+              {t('Κερδίστε +25 XP', 'Earn +25 XP')} <Zap className="w-3.5 h-3.5" />
             </p>
             <p
               className={cn(
@@ -182,7 +182,7 @@ export default function PostEventFeedbackPageContent() {
       {step === 1 ? (
         <div
           className={cn(
-            'rounded-2xl p-4 shadow-soft border space-y-8',
+            'rounded-2xl p-4 md:p-5 shadow-soft border space-y-5',
             p.cardSurface,
             p.borderB,
           )}
@@ -225,7 +225,7 @@ export default function PostEventFeedbackPageContent() {
 
           <hr className={cn('border-t', p.borderB)} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-2', p.head)}>
                 {tu('Γενική Εντύπωση', 'Overall Experience')}
@@ -291,7 +291,7 @@ export default function PostEventFeedbackPageContent() {
 
           <hr className={cn('border-t', p.borderB)} />
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
               <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
                 {tu('Παρουσία', 'Attendance')}
@@ -480,7 +480,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div className="pt-2">
             <Button
-              className="w-full h-14 text-base font-bold rounded-2xl shadow-soft"
+              className="w-full h-11 text-base font-bold rounded-2xl shadow-soft"
               variant={p.isAB ? 'primary' : 'gradient'}
               onClick={handleSubmit}
               disabled={overallRating === 0}
@@ -492,14 +492,14 @@ export default function PostEventFeedbackPageContent() {
       ) : (
         <div
           className={cn(
-            'rounded-2xl shadow-soft border p-4 text-center flex flex-col items-center justify-center',
+            'rounded-2xl shadow-soft border p-5 md:p-4 text-center flex flex-col items-center justify-center',
             p.cardSurface,
             p.borderB,
           )}
         >
           <div
             className={cn(
-              'w-20 h-20 rounded-full flex items-center justify-center mb-6 border shadow-soft relative overflow-hidden',
+              'w-20 h-20 rounded-full flex items-center justify-center mb-4 border shadow-soft relative overflow-hidden',
               p.isDark ? 'bg-emerald-900/20 border-emerald-800' : 'bg-emerald-50 border-emerald-100',
             )}
           >
@@ -509,10 +509,10 @@ export default function PostEventFeedbackPageContent() {
             />
           </div>
 
-          <h2 className={cn('text-sm font-extrabold tracking-tight mb-3', p.head)}>
+          <h2 className={cn('text-lg font-extrabold tracking-tight mb-3', p.head)}>
             {t('Ευχαριστούμε!', 'Thank You!')}
           </h2>
-          <p className={cn('text-base font-medium max-w-sm mx-auto mb-8 leading-relaxed', p.sub)}>
+          <p className={cn('text-base font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
             {t(
               'Η αξιολόγησή σας βοηθά σημαντικά στη βελτίωση της εμπειρίας για όλη την κοινότητα.',
               'Your feedback significantly helps improve the experience for the entire community.',
@@ -521,7 +521,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div
             className={cn(
-              'flex items-center gap-3 md:gap-4 rounded-2xl p-4 shadow-soft border mb-8 text-left w-full max-w-sm',
+              'flex items-center gap-3 md:gap-4 rounded-2xl p-4 md:p-5 shadow-soft border mb-5 text-left w-full max-w-sm',
               p.isDark
                 ? 'bg-amber-900/10 border-amber-800/50'
                 : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200',
@@ -556,7 +556,7 @@ export default function PostEventFeedbackPageContent() {
             onClick={() => navigate('/history')}
             variant={p.isAB ? 'primary' : 'outline'}
             size="lg"
-            className="rounded-2xl px-8 font-bold text-sm"
+            className="rounded-2xl px-5 font-bold text-sm"
           >
             {t('Επιστροφή στο Ιστορικό', 'Back to History')}
           </Button>

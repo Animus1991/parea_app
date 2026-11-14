@@ -82,12 +82,12 @@ export async function expectNoSeriousAxeViolations(
   await page
     .waitForFunction(() => document.getAnimations().every((a) => a.playState !== 'running'), undefined, { timeout: 3000 })
     .catch(() => undefined);
-  let builder = new AxeBuilder({ page }).withTags([
-    'wcag2a',
-    'wcag2aa',
-    'wcag21aa',
-    'wcag22aa',
-  ]);
+  let builder = new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+    // Leaflet pins overlap by design on dense maps — not app chrome controls.
+    .exclude('.leaflet-marker-icon')
+    .exclude('.leaflet-control-zoom a')
+    .exclude('.leaflet-control-attribution');
   if (!opts.includeColorContrast) {
     builder = builder.disableRules(['color-contrast']);
   }

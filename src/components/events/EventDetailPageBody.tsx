@@ -111,7 +111,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="mx-auto max-w-full space-y-8 pb-24 md:pb-8"
+      className="mx-auto max-w-full space-y-5 pb-24 md:pb-5"
     >
       {/* Header */}
       <div className="space-y-4">
@@ -171,14 +171,14 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             </Badge>
           )}
         </div>
-        <h1 className="text-base md:text-lg font-extrabold text-ink leading-tight mb-2 md:mb-0">{event.title}</h1>
+        <h1 className="text-sm md:text-base font-extrabold text-ink leading-tight mb-2 md:mb-0">{event.title}</h1>
         <EventDetailPageContent event={event} accent={accent} darkSurface={darkSurface} className="mt-4" />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-5 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:gap-5 md:grid-cols-5 lg:grid-cols-3">
         {/* Left Column: Details */}
-        <div className="space-y-6 md:space-y-8 md:col-span-3 lg:col-span-2">
-          <section className="space-y-4 text-sm text-ink leading-relaxed bg-surface-raised rounded-2xl border border-border p-4 shadow-soft">
+        <div className="space-y-4 md:space-y-5 md:col-span-3 lg:col-span-2">
+          <section className="space-y-4 text-sm text-ink leading-relaxed bg-surface-raised rounded-2xl border border-border p-5 md:p-4 shadow-soft">
              <EventDetailMetaSection event={event} accent={accent} darkSurface={darkSurface} />
              <EventMap event={event} accent={accent} darkSurface={darkSurface} />
              <EventDetailAboutSection event={event} accent={accent} darkSurface={darkSurface} />
@@ -190,7 +190,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         </div>
 
         {/* Right Column: Groups & Actions */}
-        <div className="space-y-6 md:col-span-2 lg:col-span-1">
+        <div className="space-y-4 md:col-span-2 lg:col-span-1">
           <div className="rounded-2xl border border-border bg-surface-raised p-4 shadow-soft sticky top-24">
             <LookingForCompanyPanel event={event} accent={accent} darkSurface={darkSurface} />
 
@@ -206,7 +206,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               <span className="text-accent bg-surface-raised xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs xl:text-sm border border-accent/20 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
             </div>
 
-            <div className="flex flex-col gap-3 mb-6">
+            <div className="flex flex-col gap-3 mb-4">
               <Button className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
                 <Users className="w-5 h-5" />
                 {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
@@ -221,7 +221,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                     <select
                       value={groupSizeFilter}
                       onChange={(e) => setGroupSizeFilter(e.target.value as any)}
-                      className="text-xs bg-surface border border-border rounded-lg p-1 font-medium focus:outline-none focus:ring-1 focus:ring-accent/50"
+                      className="filter-select bg-surface border border-border focus:outline-none focus:ring-1 focus:ring-accent/50"
                     >
                       <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>
                       <option value="3">{t('3 Μέλη', '3 Members')}</option>
@@ -247,11 +247,11 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             </p>
 
             {eventGroups.length === 0 ? (
-              <div className="text-xs text-ink-muted mb-6 bg-surface p-4 rounded-2xl text-center border border-dashed border-border font-medium">
+              <div className="text-xs text-ink-muted mb-4 bg-surface p-4 rounded-2xl text-center border border-dashed border-border font-medium">
                 {t('Δεν έχουν δημιουργηθεί ομάδες ακόμα. Γίνετε ο πρώτος που θα ξεκινήσει μία!', 'No groups forming yet. Be the first to start one!')}
               </div>
             ) : (
-              <div className="space-y-4 mb-6">
+              <div className="space-y-4 mb-4">
                 {eventGroups.map(group => (
                   <EventDetailGroupCard key={group.id} group={group} event={event} navigate={navigate} accent={accent} darkSurface={darkSurface} />
                 ))}
@@ -279,10 +279,10 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
       {/* Mobile Sticky CTA — primary: Find Nakamas (gated) */}
       <div className="fixed bottom-0 left-0 right-0 bg-surface-raised/95 backdrop-blur-md border-t border-border p-4 shadow-soft-up md:hidden z-fab flex gap-3 pb-safe">
-        <Button variant="outline" className="flex-1 min-h-10 border-border text-ink" onClick={handleSave}>
+        <Button variant="outline" className="flex-1 min-h-11 border-border text-ink" onClick={handleSave}>
           {isSaved ? t('Αποθηκευμένο', 'Saved') : t('Αποθήκευση', 'Save')}
         </Button>
-        <Button className="flex-[2] min-h-10 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
+        <Button className="flex-[2] min-h-11 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
           {t('Βρες Nakamas', 'Find Nakamas')}
         </Button>
       </div>

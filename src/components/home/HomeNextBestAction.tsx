@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Compass, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { getNextBestActions } from '../../lib/behavioralOptimizer';
 import { trackEvent } from '../../lib/analytics';
@@ -58,7 +58,7 @@ export function HomeNextBestAction() {
     >
       <div className="flex items-start gap-3">
         <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0', a.statBg)}>
-          <Sparkles className={cn('w-5 h-5', a.iconAccent)} aria-hidden />
+          <Compass className={cn('w-5 h-5', a.iconAccent)} aria-hidden />
         </div>
         <div className="flex-1 min-w-0">
           <p className={cn('text-xs font-bold uppercase tracking-wider mb-0.5', a.muted)}>

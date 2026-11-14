@@ -40,7 +40,7 @@ export function HomeBelowFold({
   const { t } = useLanguage();
 
   return (
-    <div className="space-y-6 md:space-y-8 pt-4 border-t border-border">
+    <div className="space-y-4 md:space-y-5 pt-4 border-t border-border">
       <p className="text-xs font-bold uppercase tracking-wider text-ink-muted">
         {t('Περισσότερα', 'More')}
       </p>

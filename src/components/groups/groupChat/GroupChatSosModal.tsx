@@ -29,10 +29,10 @@ export function GroupChatSosModal({
       size="sm"
     >
       <div className="text-center">
-        <div className="w-14 h-14 bg-red-100 dark:bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
+        <div className="w-11 h-11 bg-red-100 dark:bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
           <AlertTriangle className="w-7 h-7 animate-pulse motion-reduce:animate-none" />
         </div>
-        <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+        <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
           {isSos
             ? t('Αυτό θα ενημερώσει την ομάδα ότι είστε ασφαλείς.', 'This will notify the group that you are safe.')
             : t(
@@ -45,7 +45,7 @@ export function GroupChatSosModal({
             type="button"
             data-autofocus
             onClick={onConfirm}
-            className={`w-full px-4 py-2.5 text-sm font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${
+            className={`w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${
               isSos ? 'text-white bg-emerald-600 hover:bg-emerald-700' : 'text-white bg-red-600 hover:bg-red-700'
             }`}
           >
@@ -54,7 +54,7 @@ export function GroupChatSosModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full px-4 py-2.5 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+            className="w-full px-4 py-3 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>

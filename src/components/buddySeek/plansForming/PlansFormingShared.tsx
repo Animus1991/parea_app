@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import {
-  Sparkles,
   Users,
   CalendarCheck,
   Bookmark,
@@ -9,6 +8,7 @@ import {
   Plus,
   MapPin,
   Shield,
+  CircleDot,
 } from 'lucide-react';
 import { useLanguage } from '../../../lib/i18n';
 import { cn } from '../../../lib/utils';
@@ -41,7 +41,7 @@ export function PlansFormingStatsBar({
       show: insights.recruitingGroups > 0,
     },
     {
-      icon: Sparkles,
+      icon: CircleDot,
       value: insights.openSpots,
       label: t('Θέσεις', 'Spots'),
       show: insights.openSpots > 0,
@@ -62,14 +62,14 @@ export function PlansFormingStatsBar({
         <div
           key={label}
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 border',
+            'inline-flex items-center gap-1.5 rounded-lg px-2 py-1',
             PLANS_FORMING_TYPO.statChip,
-            isDark ? 'bg-white/5 border-white/10 text-gray-200' : 'bg-white border-gray-200 text-gray-700',
-            compact && 'px-2 py-1',
+            isDark ? 'bg-white/5 text-gray-200' : 'bg-white/70 text-gray-700',
+            compact && 'px-1.5 py-0.5',
           )}
         >
-          <Icon className="w-3 h-3 text-cyan-500 shrink-0" aria-hidden />
-          <span className="text-cyan-600 dark:text-cyan-400">{value}</span>
+          <Icon className="w-3 h-3 text-cyan-600/70 dark:text-cyan-400/80 shrink-0" aria-hidden />
+          <span className="font-semibold text-cyan-700 dark:text-cyan-300">{value}</span>
           <span className={cn('font-medium', isDark ? 'text-gray-400' : 'text-gray-500')}>{label}</span>
         </div>
       ))}
@@ -177,7 +177,7 @@ export function PlansFormingEmptyState({
   return (
     <div
       className={cn(
-        'rounded-2xl border border-dashed p-4 text-center space-y-3',
+        'rounded-2xl border border-dashed p-5 text-center space-y-3',
         isDark ? 'border-white/15 bg-white/[0.02]' : 'border-gray-300 bg-gray-50/50',
       )}
     >
@@ -260,7 +260,7 @@ export function PlansFormingValueHero({ isDark, insights }: { isDark?: boolean; 
       : t('Βρείτε Nakamas για εκδήλωση', 'Find Nakamas for events');
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'leading-snug', isDark ? 'text-white' : 'text-gray-900')}>{headline}</p>
       <p className={cn(PLANS_FORMING_TYPO.body, 'leading-relaxed', isDark ? 'text-gray-400' : 'text-gray-600')}>
         {t(

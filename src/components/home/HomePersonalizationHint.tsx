@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
@@ -28,7 +28,7 @@ export function HomePersonalizationHint({ useClassicTokens = false }: HomePerson
         useClassicTokens ? h.labelMuted : p.sub,
       )}
     >
-      <Sparkles
+      <Heart
         className={cn(
           'w-3.5 h-3.5 shrink-0',
           useClassicTokens ? 'text-cyan-600' : p.iconAccent,

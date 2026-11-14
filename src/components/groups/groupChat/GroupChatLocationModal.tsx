@@ -81,7 +81,7 @@ export function GroupChatLocationModal({
         {t('Προαιρετικό & προσωρινό', 'Optional & temporary')}
       </p>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {isSharingLocation && (
           <div className={cn('rounded-2xl p-4 flex flex-col gap-3 shadow-soft border', gc.panelSoft)}>
             <div className={cn('flex items-center gap-2', gc.shareActiveText)}>
@@ -206,7 +206,7 @@ export function GroupChatLocationModal({
           type="button"
           data-autofocus
           onClick={handleConfirm}
-          className="w-full px-4 py-2.5 text-sm font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+          className="w-full px-4 py-3 text-sm font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
         >
           {isSharingLocation
             ? t('Ενημέρωση Ρυθμίσεων', 'Update Configuration')

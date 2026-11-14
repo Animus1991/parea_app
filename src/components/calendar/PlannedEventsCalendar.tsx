@@ -112,8 +112,8 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
   return (
     <div className={cn('space-y-4', className)}>
       {plannedEvents.length === 0 ? (
-        <div className={cn('text-center py-16 px-6 rounded-2xl border border-dashed', p.cardSurface, p.borderB)}>
-          <div className={cn('w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4', p.statBg)}>
+        <div className={cn('text-center py-16 px-4 rounded-2xl border border-dashed', p.cardSurface, p.borderB)}>
+          <div className={cn('w-11 h-11 rounded-2xl flex items-center justify-center mx-auto mb-4', p.statBg)}>
             <Compass className={cn('w-7 h-7', p.statVal)} />
           </div>
           <p className={cn('font-bold text-lg', p.head)}>
@@ -125,7 +125,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               'When you join a group, your events will appear here.',
             )}
           </p>
-          <button type="button" className="btn-gradient mt-6" onClick={() => navigate('/')}>
+          <button type="button" className="btn-gradient mt-4" onClick={() => navigate('/')}>
             {t('Εξερεύνησε εκδηλώσεις', 'Explore experiences')}
           </button>
         </div>
@@ -137,7 +137,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
             type="button"
             onClick={handleExport}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all border min-h-10',
+              'flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all border min-h-11',
               p.cardSurface,
               p.borderB,
               p.cardHover,
@@ -166,7 +166,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           <button
             type="button"
             className={cn(
-              'relative z-10 px-5 py-2 text-xs font-bold min-h-10',
+              'relative z-10 px-5 py-2 text-xs font-bold min-h-11',
               view === 'week' ? p.head : p.muted,
             )}
             onClick={() => setView('week')}
@@ -176,7 +176,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           <button
             type="button"
             className={cn(
-              'relative z-10 px-6 py-2 text-xs font-bold min-h-10',
+              'relative z-10 px-4 py-2 text-xs font-bold min-h-11',
               view === 'month' ? p.head : p.muted,
             )}
             onClick={() => setView('month')}
@@ -189,11 +189,11 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
       <div className={cn('rounded-2xl border overflow-hidden shadow-soft', p.cardSurface, p.borderB)}>
         <div
           className={cn(
-            'flex items-center justify-between px-4 md:px-8 py-4 border-b gap-2',
+            'flex items-center justify-between px-4 md:px-5 py-4 border-b gap-2',
             p.borderB,
           )}
         >
-          <h2 className={cn('font-extrabold text-sm capitalize', p.head)}>
+          <h2 className={cn('font-extrabold text-base md:text-lg capitalize', p.head)}>
             {format(currentDate, 'MMMM yyyy')}
           </h2>
           <div className="flex items-center gap-1">
@@ -202,7 +202,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               onClick={() =>
                 setCurrentDate(view === 'week' ? subWeeks(currentDate, 1) : subMonths(currentDate, 1))
               }
-              className={cn('p-2 rounded-2xl min-h-10 min-w-10', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
+              className={cn('p-2 rounded-2xl min-h-11 min-w-11', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
               aria-label={t('Προηγούμενη', 'Previous')}
             >
               <ChevronLeft className={cn('w-5 h-5', p.head)} />
@@ -211,7 +211,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               type="button"
               onClick={() => setCurrentDate(new Date())}
               className={cn(
-                'px-3 py-2 text-xs font-bold rounded-2xl border min-h-10',
+                'px-3 py-2 text-xs font-bold rounded-2xl border min-h-11',
                 p.isDark ? 'border-white/10' : 'border-gray-200',
                 p.head,
               )}
@@ -223,7 +223,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               onClick={() =>
                 setCurrentDate(view === 'week' ? addWeeks(currentDate, 1) : addMonths(currentDate, 1))
               }
-              className={cn('p-2 rounded-2xl min-h-10 min-w-10', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
+              className={cn('p-2 rounded-2xl min-h-11 min-w-11', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
               aria-label={t('Επόμενη', 'Next')}
             >
               <ChevronRight className={cn('w-5 h-5', p.head)} />
@@ -231,7 +231,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           </div>
         </div>
 
-        <p className={cn('text-xs font-medium px-4 md:px-8 py-2 border-b', p.borderB, p.muted)}>
+        <p className={cn('text-xs font-medium px-4 md:px-5 py-2 border-b', p.borderB, p.muted)}>
           {t(
             'Πάτημα: προεπισκόπηση · Διπλό πάτημα: ωριαίο πρόγραμμα',
             'Tap: preview · Double-tap: hourly schedule',
@@ -245,7 +245,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-3 overflow-x-hidden"
+              className="p-3 md:p-4 overflow-x-hidden"
             >
               <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2">
                 {weekdays.map((label) => (
@@ -270,7 +270,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-3 overflow-x-hidden"
+              className="p-3 md:p-4 overflow-x-hidden"
             >
               <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2">
                 {weekdays.map((label) => (

@@ -21,7 +21,7 @@ import {
   User,
   Command,
   ArrowRight,
-  Sparkles,
+  Bot,
 } from 'lucide-react';
 import { openCopilot } from '../../ai/copilot';
 import { cn } from '../../lib/utils';
@@ -68,7 +68,7 @@ export function CommandPalette() {
       { id: 'plans', labelEl: 'Τα Σχέδιά μου', labelEn: 'My Plans', icon: Calendar, path: '/plans', sectionEl: 'Πλοήγηση', sectionEn: 'Navigation' },
       { id: 'buddy-seek', labelEl: 'Βρες Nakamas', labelEn: 'Find Nakamas', icon: UserPlus, path: '/buddy-seek', sectionEl: 'Πλοήγηση', sectionEn: 'Navigation', keywords: ['parea', 'company', 'buddy'] },
       { id: 'chats', labelEl: 'Μηνύματα', labelEn: 'Messages', icon: MessageSquare, path: '/chats', sectionEl: 'Πλοήγηση', sectionEn: 'Navigation', keywords: ['inbox', 'chat'] },
-      { id: 'ai', labelEl: 'Nakamas AI — ο βοηθός σου', labelEn: 'Nakamas AI — your assistant', icon: Sparkles, path: '#ai', sectionEl: 'Ενέργειες', sectionEn: 'Actions', keywords: ['ai', 'assistant', 'copilot', 'βοηθ', 'gemini'] },
+      { id: 'ai', labelEl: 'Nakamas AI — ο βοηθός σου', labelEn: 'Nakamas AI — your assistant', icon: Bot, path: '#ai', sectionEl: 'Ενέργειες', sectionEn: 'Actions', keywords: ['ai', 'assistant', 'copilot', 'βοηθ', 'gemini'] },
       { id: 'create', labelEl: 'Δημιουργία εκδήλωσης', labelEn: 'Create event', icon: PlusSquare, path: '/create', sectionEl: 'Ενέργειες', sectionEn: 'Actions' },
       { id: 'saved', labelEl: 'Αποθηκευμένα', labelEn: 'Saved', icon: Bookmark, path: '/saved', sectionEl: 'Ενέργειες', sectionEn: 'Actions' },
       { id: 'history', labelEl: 'Ιστορικό', labelEn: 'History', icon: History, path: '/history', sectionEl: 'Ενέργειες', sectionEn: 'Actions' },
@@ -194,7 +194,7 @@ export function CommandPalette() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t('Αναζήτηση σελίδας ή ερώτηση στο AI…', 'Search pages or ask the AI…')}
-                className="flex-1 h-9 bg-transparent text-sm outline-none placeholder:text-gray-400"
+                className="flex-1 h-12 bg-transparent text-xs outline-none placeholder:text-gray-400"
               />
               <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-2xs font-medium text-gray-500">
                 <Command className="w-3 h-3" />K
@@ -202,7 +202,7 @@ export function CommandPalette() {
             </div>
             <div className="max-h-[50vh] overflow-y-auto p-2">
               {visible.length === 0 && !hasAiRow ? (
-                <p className="text-sm text-gray-500 text-center py-8">
+                <p className="text-sm text-gray-500 text-center py-5">
                   {t('Δεν βρέθηκαν αποτελέσματα', 'No results found')}
                 </p>
               ) : (
@@ -248,7 +248,7 @@ export function CommandPalette() {
                       : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700',
                   )}
                 >
-                  <Sparkles className="w-4 h-4 shrink-0 text-cyan-600 dark:text-cyan-400" aria-hidden />
+                  <Bot className="w-4 h-4 shrink-0 text-cyan-600 dark:text-cyan-400" aria-hidden />
                   <span className="flex-1 font-medium truncate">
                     {t('Ρώτα το Nakamas AI:', 'Ask Nakamas AI:')} <span className="font-semibold">«{query.trim()}»</span>
                   </span>

@@ -245,7 +245,7 @@ export default function GroupChatPageContent() {
     return (
       <div
         key={msg.id}
-        className={`flex flex-col group py-2.5 w-full px-4 md:px-6 ${isMe ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+        className={`flex flex-col group py-2.5 w-full px-4 md:px-4 ${isMe ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
       >
         <span className="text-xs font-semibold tracking-tight capitalize text-gray-500 ml-1 mb-1">
           {isMe ? t("Εσείς", "You") : msg.senderName}
@@ -329,7 +329,7 @@ export default function GroupChatPageContent() {
                     <ArrowLeft className="h-5 w-5" />
                   </button>
                   <div className="min-w-0">
-                    <h2 className="text-sm font-bold text-ink truncate">
+                    <h2 className="text-sm md:text-base font-bold text-ink truncate">
                       {event.title}
                     </h2>
                     <p className="text-xs md:text-xs text-gray-500 tracking-wide font-bold truncate flex items-center gap-1.5 mt-0.5">
@@ -345,7 +345,7 @@ export default function GroupChatPageContent() {
                     <select
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
-                      className={cn("text-xs font-bold border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate", gc.focusRing)}
+                      className={cn("filter-select border border-gray-200 focus:outline-none focus:ring-1 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate", gc.focusRing)}
                     >
                       <option value="all">
                         {t("Όλοι οι Αποστολείς", "All Senders")}
@@ -388,7 +388,7 @@ export default function GroupChatPageContent() {
                   {/* Info Toggle */}
                   <button
                     onClick={() => setShowInfo(!showInfo)}
-                    className={cn("transition-colors p-2 rounded-full min-h-10 min-w-10", showInfo ? gc.infoActive : "text-gray-400 hover:text-ink hover:bg-gray-100")}
+                    className={cn("transition-colors p-2 rounded-full min-h-11 min-w-11", showInfo ? gc.infoActive : "text-gray-400 hover:text-ink hover:bg-gray-100")}
                     aria-label={showInfo ? t('Απόκρυψη πληροφοριών', 'Hide info panel') : t('Εμφάνιση πληροφοριών', 'Show info panel')}
                   >
                     <Info className="h-5 w-5" />
@@ -493,7 +493,7 @@ export default function GroupChatPageContent() {
                     "Πληκτρολογήστε ένα μήνυμα...",
                     "Type a message...",
                   )}
-                  className="w-full bg-gray-100 border border-transparent rounded-full py-2 md:py-3.5 pl-5 pr-14 text-sm focus:bg-white focus:ring-2 focus:ring-ink focus:border-ink outline-none transition-all shadow-soft"
+                  className="w-full bg-gray-100 border border-transparent rounded-full py-3 md:py-3.5 pl-5 pr-14 text-sm focus:bg-white focus:ring-2 focus:ring-ink focus:border-ink outline-none transition-all shadow-soft"
                 />
                 <button
                   type="submit"
@@ -522,7 +522,7 @@ export default function GroupChatPageContent() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-6 bg-gray-50/50">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4 bg-gray-50/50">
               {/* Event Summary */}
               <div className="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden">
                 <div className="relative h-28 w-full group">
@@ -749,7 +749,7 @@ export default function GroupChatPageContent() {
                       }}
                       role="switch"
                       aria-checked={isEphemeral}
-                      className={`relative inline-flex h-6 w-10 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 ${isEphemeral ? "bg-ink" : "bg-gray-200"}`}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 ${isEphemeral ? "bg-ink" : "bg-gray-200"}`}
                     >
                       <span className="sr-only">{t('Εναλλαγή εφήμερης λειτουργίας', 'Toggle ephemeral mode')}</span>
                       <span
@@ -914,13 +914,13 @@ export default function GroupChatPageContent() {
           <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
             <Link2 className="w-6 h-6" />
           </div>
-          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
               "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ασφάλεια εκτός Nakamas. Θα βλέπουν την τοποθεσία σας μέχρι το τέλος. Ανακαλέστε τον όποτε θέλετε.",
               "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They will be able to see your live location until the event ends. You can revoke it anytime.",
             )}
           </p>
-          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-6">
+          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-4">
             <span className="text-xs font-medium text-ink truncate mr-2">
               https://nakamas.app/safe/r9x2p
             </span>
@@ -939,7 +939,7 @@ export default function GroupChatPageContent() {
             type="button"
             data-autofocus
             onClick={() => setShowSafetyLinkModal(false)}
-            className="w-full px-4 py-2.5 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+            className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
           >
             {t("Τέλος", "Done")}
           </button>
@@ -966,7 +966,7 @@ export default function GroupChatPageContent() {
           <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4", gc.panelAccent)}>
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
               "Προτείνετε να απενεργοποιηθεί η Εφήμερη Λειτουργία. Αν όλα τα μέλη συμφωνήσουν, η συνομιλία θα διατηρηθεί μόνιμα.",
               "You are proposing to turn off Ephemeral Mode. If all group members agree, this chat will be kept permanently instead of being deleted automatically.",
@@ -991,14 +991,14 @@ export default function GroupChatPageContent() {
                 setShowDisableEphemeralModal(false);
                 setShowInfo(false);
               }}
-              className="w-full px-4 py-2.5 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+              className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
             >
               {t("Πρόταση στην Ομάδα", "Propose to Group")}
             </button>
             <button
               type="button"
               onClick={() => setShowDisableEphemeralModal(false)}
-              className="w-full px-4 py-2.5 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+              className="w-full px-4 py-3 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
             >
               {t("Ακύρωση", "Cancel")}
             </button>
@@ -1017,7 +1017,7 @@ export default function GroupChatPageContent() {
           <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
             <Clock className="w-6 h-6" />
           </div>
-          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-6">
+          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
               "Ενημερώστε γρήγορα την ομάδα για την κατάστασή σας χωρίς να μοιραστείτε την ακριβή τοποθεσία σας.",
               "Quickly update the group on your status without sharing your exact location.",
@@ -1050,12 +1050,12 @@ export default function GroupChatPageContent() {
                 type="number"
                 data-autofocus
                 placeholder={t("ETA (λεπτά)", "ETA (mins)")}
-                className="flex-1 w-full bg-surface border border-border text-ink text-sm rounded-2xl px-4 py-2 focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none shadow-soft"
+                className="flex-1 w-full bg-surface border border-border text-ink text-sm rounded-2xl px-4 py-3 focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none shadow-soft"
                 min="1"
               />
               <button
                 type="submit"
-                className="px-4 py-2.5 text-sm font-bold text-white bg-brand hover:bg-brand-strong rounded-2xl shadow-soft transition-all duration-200 whitespace-nowrap"
+                className="px-4 py-3 text-sm font-bold text-white bg-brand hover:bg-brand-strong rounded-2xl shadow-soft transition-all duration-200 whitespace-nowrap"
               >
                 {t("Αποστολή", "Send")}
               </button>
@@ -1095,7 +1095,7 @@ export default function GroupChatPageContent() {
                   ]);
                   setShowStatusModal(false);
                 }}
-                className={`w-full px-4 py-2.5 text-sm font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
+                className={`w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
               >
                 {status.text}
               </button>
@@ -1104,7 +1104,7 @@ export default function GroupChatPageContent() {
             <button
               type="button"
               onClick={() => setShowStatusModal(false)}
-              className="w-full px-4 py-2.5 mt-2 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+              className="w-full px-4 py-3 mt-2 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
             >
               {t("Ακύρωση", "Cancel")}
             </button>
@@ -1135,7 +1135,7 @@ export default function GroupChatPageContent() {
               placeholder={t("Αναζήτηση με όνομα ή email...", "Search by name or email...")}
               value={memberAddSearchQuery}
               onChange={(e) => setMemberAddSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent/40 bg-surface-raised transition-all duration-200 shadow-soft font-medium text-ink"
+              className="w-full pl-9 pr-3 py-2.5 text-sm border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent/40 bg-surface-raised transition-all duration-200 shadow-soft font-medium text-ink"
             />
           </div>
           <div className="max-h-[40vh] overflow-y-auto custom-scrollbar -mx-1 px-1 space-y-1">

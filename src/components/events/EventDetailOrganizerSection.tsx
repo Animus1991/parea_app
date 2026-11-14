@@ -175,7 +175,7 @@ export function EventDetailOrganizerSection({
         <div className="flex items-center gap-4">
           <div
             className={cn(
-              'w-14 h-14 rounded-full overflow-hidden border-2 ring-2 shrink-0',
+              'w-11 h-11 rounded-full overflow-hidden border-2 ring-2 shrink-0',
               tok.avatarWrap,
             )}
           >

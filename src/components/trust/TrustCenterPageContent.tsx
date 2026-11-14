@@ -69,9 +69,9 @@ export default function TrustCenterPageContent() {
 
 
   return (
-    <div className="mx-auto max-w-full space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="mx-auto max-w-full space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn("text-base md:text-lg font-bold tracking-tight", a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
+        <h1 className={cn("text-sm md:text-base font-bold tracking-tight", a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
         <p className={cn("mt-2 text-sm leading-relaxed max-w-xl", a.sub)}>
           {t('Η αξιοπιστία σας βασίζεται στις επαληθεύσεις και τις αξιολογήσεις σας.', 'Your trust score is based on your verifications and reviews.')}
         </p>
@@ -90,10 +90,10 @@ export default function TrustCenterPageContent() {
       />
 
       {tab === 'status' && (
-      <div role="tabpanel" id="trust-panel-status" aria-labelledby="trust-tab-status" className="space-y-6">
+      <div role="tabpanel" id="trust-panel-status" aria-labelledby="trust-tab-status" className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
         {/* Verification Status */}
-        <Card className="p-4 space-y-5">
+        <Card className="p-5 space-y-5">
           <div>
             <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5", a.muted)}>
               <ShieldCheck className={cn("h-3.5 w-3.5", a.iconAccent)} />{t('Κατάσταση Επαλήθευσης', 'Verification Status')}
@@ -151,11 +151,11 @@ export default function TrustCenterPageContent() {
 
         {/* Radial Score + Info */}
         <div className="space-y-3">
-          <Card className="p-4 flex flex-col items-center">
+          <Card className="p-5 flex flex-col items-center">
             <svg width="120" height="120" viewBox="0 0 120 120" className="mb-2">
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.isDark ? '#374151' : '#e5e7eb'} strokeWidth="8" />
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.scoreStroke} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${strokeDash} ${circumference}`} transform="rotate(-90 60 60)" />
-              <text x="60" y="56" textAnchor="middle" className={cn("text-lg font-black", a.scoreFill)} fontSize="28">{reliabilityScore}</text>
+              <text x="60" y="56" textAnchor="middle" className={cn("text-lg font-black", a.scoreFill)} fontSize="18">{reliabilityScore}</text>
               <text x="60" y="74" textAnchor="middle" className="fill-gray-400" fontSize="10" fontWeight="600">%</text>
             </svg>
             <p className={cn("text-xs font-bold tracking-wide", a.muted)}>{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}</p>
@@ -196,7 +196,7 @@ export default function TrustCenterPageContent() {
       )}
 
       {tab === 'history' && (
-      <Card className="p-4" role="tabpanel" id="trust-panel-history" aria-labelledby="trust-tab-history">
+      <Card className="p-5" role="tabpanel" id="trust-panel-history" aria-labelledby="trust-tab-history">
         <h2 className={cn("text-xs font-bold tracking-wide mb-4 flex items-center gap-1.5", a.head)}>
           <TrendingUp className={cn("w-3.5 h-3.5", a.iconAccent)} aria-hidden />{t('Ιστορικό Εμπιστοσύνης', 'Trust History')}
         </h2>

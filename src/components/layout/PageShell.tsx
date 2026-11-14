@@ -34,10 +34,10 @@ export function PageShell({
     <div className={cn('min-h-full w-full', !noPadding && 'pb-4', className)}>
       <div className={cn('mx-auto w-full min-w-0', maxWidthClass[maxWidth])}>
         {(title || actions) && (
-          <div className="flex items-start justify-between gap-4 mb-6">
+          <div className="flex items-start justify-between gap-4 mb-4">
             <div>
               {title && (
-                <h1 className="text-base md:text-lg font-bold tracking-tight text-gray-900 dark:text-gray-100">
+                <h1 className="text-sm md:text-base font-bold tracking-tight text-gray-900 dark:text-gray-100">
                   {title}
                 </h1>
               )}
@@ -78,7 +78,7 @@ interface StatCardProps {
 
 export function StatCard({ label, value, sub, icon: Icon }: StatCardProps) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 shadow-soft">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 shadow-soft">
       <div className="flex items-start justify-between">
         <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">{label}</p>
         {Icon && <Icon className="w-4 h-4 text-gray-300" aria-hidden />}

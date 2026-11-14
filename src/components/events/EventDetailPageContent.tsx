@@ -56,8 +56,8 @@ function EventDetailQuickInfoBlock({
           : t('Αποκαλύπτεται μετά την επιβεβαίωση', 'Revealed after confirmation');
 
   const shell = darkSurface
-    ? 'rounded-2xl border border-cyan-800/40 bg-cyan-950/30 shadow-soft p-4'
-    : 'rounded-2xl border border-cyan-100 bg-cyan-50/80 shadow-soft p-4';
+    ? 'rounded-2xl border border-cyan-800/40 bg-cyan-950/30 shadow-soft p-4 md:p-5'
+    : 'rounded-2xl border border-cyan-100 bg-cyan-50/80 shadow-soft p-4 md:p-5';
 
   const rows: { icon: typeof Tag; label: string; value: string }[] = [
     { icon: Tag, label: t('Κατηγορία', 'Category'), value: info.category },
@@ -142,8 +142,8 @@ function EventDetailHostOrganizationRating({
   if (!canRate) return null;
 
   const shell = darkSurface
-    ? 'rounded-2xl border border-amber-900/40 bg-amber-950/20 shadow-soft p-4'
-    : 'rounded-2xl border border-amber-100 bg-amber-50/90 shadow-soft p-4';
+    ? 'rounded-2xl border border-amber-900/40 bg-amber-950/20 shadow-soft p-4 md:p-5'
+    : 'rounded-2xl border border-amber-100 bg-amber-50/90 shadow-soft p-4 md:p-5';
 
   const handleSubmit = () => {
     if (rating < 1) {
@@ -204,7 +204,7 @@ function EventDetailHostOrganizationRating({
           <button
             key={n}
             type="button"
-            className="p-1 min-h-10 min-w-10 flex items-center justify-center rounded-2xl transition-transform hover:scale-110"
+            className="p-1 min-h-11 min-w-11 flex items-center justify-center rounded-2xl transition-transform hover:scale-110"
             onMouseEnter={() => setHover(n)}
             onClick={() => setRating(n)}
             aria-label={`${n}`}
@@ -220,7 +220,7 @@ function EventDetailHostOrganizationRating({
       </div>
       <Button
         type="button"
-        className="rounded-2xl shadow-soft min-h-10"
+        className="rounded-2xl shadow-soft min-h-11"
         onClick={handleSubmit}
         disabled={rating < 1}
       >

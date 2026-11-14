@@ -96,7 +96,7 @@ export default function JoinGroupFlow() {
   };
 
   return (
-    <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-4 shadow-soft mt-8">
+    <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sm:p-5 mt-5">
       {!gate.allowed && (
         <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm font-medium flex gap-2">
           <ShieldCheck className="w-5 h-5 shrink-0" />
@@ -105,9 +105,9 @@ export default function JoinGroupFlow() {
       )}
 
       {step === 1 && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div>
-            <h2 className="text-sm font-bold text-ink">
+            <h2 className="text-lg font-bold text-ink">
               {t('Συμμετοχή ή δημιουργία ομάδας', 'Join or Create a Group')}
             </h2>
             <p className="mt-1 text-sm text-gray-500 font-medium">{event.title}</p>
@@ -181,7 +181,7 @@ export default function JoinGroupFlow() {
                   key={size}
                   type="button"
                   onClick={() => setNewGroupSize(size)}
-                  className={`flex-1 py-2 min-h-10 rounded-xl font-bold text-sm ${newGroupSize === size ? 'bg-ink text-white' : 'bg-gray-100 text-gray-600'}`}
+                  className={`flex-1 py-2 min-h-11 rounded-xl font-bold text-sm ${newGroupSize === size ? 'bg-ink text-white' : 'bg-gray-100 text-gray-600'}`}
                 >
                   {size}
                 </button>
@@ -189,7 +189,7 @@ export default function JoinGroupFlow() {
             </div>
           )}
 
-          <Button className="w-full min-h-10" onClick={() => setStep(2)} disabled={!canContinueStep1}>
+          <Button className="w-full min-h-11" onClick={() => setStep(2)} disabled={!canContinueStep1}>
             {t('Συνέχεια', 'Continue')}
           </Button>
         </div>
@@ -197,7 +197,7 @@ export default function JoinGroupFlow() {
 
       {step === 2 && (
         <div className="space-y-5">
-          <h3 className="font-bold text-sm">{t('Επιβεβαίωση', 'Confirmation')}</h3>
+          <h3 className="font-bold text-lg">{t('Επιβεβαίωση', 'Confirmation')}</h3>
 
           {event.isPaid ? (
             <div className="p-4 rounded-xl border border-gray-100 bg-gray-50 space-y-2">
@@ -239,10 +239,10 @@ export default function JoinGroupFlow() {
           )}
 
           <div className="flex gap-3">
-            <Button variant="outline" className="flex-1 min-h-10" onClick={() => setStep(1)}>
+            <Button variant="outline" className="flex-1 min-h-11" onClick={() => setStep(1)}>
               {t('Πίσω', 'Back')}
             </Button>
-            <Button variant="primary" className="flex-[2] min-h-10" onClick={handleConfirm}>
+            <Button variant="primary" className="flex-[2] min-h-11" onClick={handleConfirm}>
               {t('Επιβεβαίωση συμμετοχής', 'Confirm join')}
             </Button>
           </div>
@@ -251,12 +251,12 @@ export default function JoinGroupFlow() {
 
       {step === 3 && (
         <div className="text-center space-y-4 py-4">
-          <CheckCircle className="w-14 h-14 text-emerald-500 mx-auto" />
-          <h3 className="text-sm font-bold">{t('Είστε μέσα!', "You're in!")}</h3>
+          <CheckCircle className="w-11 h-11 text-emerald-500 mx-auto" />
+          <h3 className="text-lg font-bold">{t('Είστε μέσα!', "You're in!")}</h3>
           <p className="text-sm text-gray-500 font-medium">
             {t('Το group chat ξεκλειδώνει όταν η ομάδα επιβεβαιωθεί.', 'Group chat unlocks when the group is confirmed.')}
           </p>
-          <Button className="w-full min-h-10" onClick={() => navigate(`/events/${eventId}`)}>
+          <Button className="w-full min-h-11" onClick={() => navigate(`/events/${eventId}`)}>
             {t('Επιστροφή στην εκδήλωση', 'Back to event')}
           </Button>
         </div>

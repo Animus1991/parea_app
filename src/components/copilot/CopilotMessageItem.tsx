@@ -7,7 +7,7 @@ import {
   ChevronRight,
   RotateCcw,
   ShieldAlert,
-  Sparkles,
+  Bot,
   X,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -48,9 +48,9 @@ function EventResult({ eventId, index, onNavigate }: { eventId: string; index: n
       </span>
       <button type="button" onClick={open} className="flex min-w-0 flex-1 items-center gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg">
         {event.imageUrl ? (
-          <img src={event.imageUrl} alt="" referrerPolicy="no-referrer" className="h-12 w-12 shrink-0 rounded-lg object-cover" />
+          <img src={event.imageUrl} alt="" referrerPolicy="no-referrer" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
         ) : (
-          <span className="h-12 w-12 shrink-0 rounded-lg bg-accent-soft" />
+          <span className="h-10 w-10 shrink-0 rounded-lg bg-accent-soft" />
         )}
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-semibold text-ink">{event.title}</span>
@@ -108,7 +108,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
         )}
       >
         <p className="flex items-center gap-1.5 text-xs font-semibold text-ink">
-          {destructive ? <ShieldAlert className="h-3.5 w-3.5 text-red-600 dark:text-red-400" /> : <Sparkles className="h-3.5 w-3.5 text-accent" />}
+          {destructive ? <ShieldAlert className="h-3.5 w-3.5 text-red-600 dark:text-red-400" /> : <Bot className="h-3.5 w-3.5 text-accent" />}
           {body}
         </p>
         <p className="mt-1.5 font-semibold text-ink">{preview}</p>
@@ -125,7 +125,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
               data-autofocus
               onClick={() => void confirmAction(message.id)}
               className={cn(
-                'inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+                'inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
                 destructive ? 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500' : 'bg-accent text-accent-fg hover:bg-accent-strong focus-visible:ring-accent',
               )}
             >
@@ -134,7 +134,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
             <button
               type="button"
               onClick={() => cancelAction(message.id)}
-              className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface-raised px-3 text-xs font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface-raised px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <X className="h-4 w-4" /> {t('Άκυρο', 'Cancel')}
             </button>
@@ -161,7 +161,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
   return (
     <div className="flex gap-2">
       <span aria-hidden className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
-        <Sparkles className="h-3.5 w-3.5" />
+        <Bot className="h-3.5 w-3.5" />
       </span>
       <div className="min-w-0 flex-1 space-y-2">
         {body && (

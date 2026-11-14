@@ -65,7 +65,7 @@ export default function HistoryPageContent() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn("text-base md:text-lg font-bold", a.head)}>{t('Ιστορικό', 'History')}</h1>
+          <h1 className={cn("text-sm md:text-base font-bold", a.head)}>{t('Ιστορικό', 'History')}</h1>
           <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Εκδηλώσεις που έχετε παρακολουθήσει', 'Events you\'ve attended')}</p>
         </div>
       </div>
@@ -103,7 +103,7 @@ export default function HistoryPageContent() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t('Αναζήτηση ιστορικού...', 'Search history...')}
-            className={cn("w-full pl-9 pr-4 py-2 rounded-2xl border text-sm font-medium outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft", a.inputBg, a.borderB)}
+            className={cn("search-control w-full h-9 pl-9 pr-3 rounded-xl border outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft", a.inputBg, a.borderB)}
           />
         </div>
         <div className="flex gap-1.5" role="tablist" aria-label={t('Φίλτρο ιστορικού', 'History filter')}>
@@ -165,14 +165,14 @@ export default function HistoryPageContent() {
                   referrerPolicy="no-referrer"
                   src={event.imageUrl}
                   alt={event.title}
-                  className={cn("w-16 h-16 rounded-2xl object-cover shrink-0 shadow-soft", a.isDark && "opacity-90")}
+                  className={cn("w-12 h-12 rounded-2xl object-cover shrink-0 shadow-soft", a.isDark && "opacity-90")}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <Badge variant="neutral" className="text-xs">{event.category}</Badge>
                     <Badge variant="success" className="text-xs">{t('Ολοκληρώθηκε', 'Completed')}</Badge>
                   </div>
-                  <h3 className={cn("font-bold text-sm truncate", a.head)}>{event.title}</h3>
+                  <h3 className={cn("font-bold text-base truncate", a.head)}>{event.title}</h3>
                   <div className={cn("flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium", a.sub)}>
                     <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{format(parseISO(event.date), 'dd MMM yyyy')}</span>
                     <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{event.locationArea}</span>

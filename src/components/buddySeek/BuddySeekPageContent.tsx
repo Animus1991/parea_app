@@ -133,9 +133,9 @@ export default function BuddySeekPageContent() {
   );
 
   return (
-    <div className="w-full max-w-full min-w-0 space-y-6 pb-16 pt-6">
+    <div className="w-full max-w-full min-w-0 space-y-4 pb-16 pt-4">
       <header className="space-y-3">
-        <h1 className={cn('text-base md:text-lg font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
+        <h1 className={cn('text-lg font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
         <PlansFormingValueHero insights={feed.insights} />
         <PlansFormingStatsBar insights={feed.insights} />
         <div className="flex flex-wrap gap-2">
@@ -286,7 +286,7 @@ export default function BuddySeekPageContent() {
               type="button"
               onClick={() => setFilter(key)}
               className={cn(
-                'text-xs font-bold px-3 py-1.5 rounded-xl border transition-colors inline-flex items-center gap-1',
+                'filter-chip text-xs font-bold px-3 rounded-xl border transition-colors gap-1',
                 filter === key ? 'bg-cyan-600 text-white border-cyan-600' : a.borderB,
               )}
             >

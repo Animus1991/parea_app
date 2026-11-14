@@ -215,7 +215,7 @@ export function EventDetailGroupCard({
           </span>
           <div className="flex items-baseline gap-1 mt-1">
             <span className={cn('text-lg font-bold', tok.title)}>{group.members.length}</span>
-            <span className={cn('text-xs font-medium', tok.meta)}>
+            <span className={cn('card-copy font-medium', tok.meta)}>
               / {group.targetSize} {t('μέλη', 'members')}
             </span>
           </div>
@@ -318,13 +318,13 @@ export function EventDetailGroupCard({
       <Button
         variant="primary"
         size="sm"
-        className={cn('w-full min-w-0 font-semibold transition-all duration-200', tok.cta)}
+        className={cn('w-full font-semibold transition-all duration-200', tok.cta)}
         onClick={(e) => {
           e.stopPropagation();
           navigate(`/events/${event.id}/join?groupId=${group.id}`);
         }}
       >
-        <span className="min-w-0 truncate">{t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}</span>
+        {t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
       </Button>
     </div>
   );

@@ -135,7 +135,7 @@ export default function HomeClassic() {
   }, [isLoading, visibleEventsCount, sortedEvents.length]);
 
   return (
-    <div className="space-y-6 md:space-y-8 pb-10 md:pb-0">
+    <div className="space-y-4 md:space-y-5 pb-5 md:pb-0">
       <HomeLoggedInHero
         greeting={getTimeGreeting(currentUser?.name?.split(' ')[0] || t('φίλε', 'there'), t)}
         motivation={getMotivation(t)}
@@ -201,13 +201,13 @@ export default function HomeClassic() {
             <div className="flex gap-2">
               <button
                 onClick={() => setFeedType("For You")}
-                className={`px-4 py-1.5 text-sm font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
+                className={`filter-chip px-4 text-xs font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
               >
                 {t("home.feed.for_you", "Για Σένα")}
               </button>
               <button
                 onClick={() => setFeedType("Discover")}
-                className={`px-4 py-1.5 text-sm font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
+                className={`filter-chip px-4 text-xs font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
               >
                 {t("home.feed.discover", "Ανακάλυψε")}
               </button>
@@ -278,7 +278,7 @@ export default function HomeClassic() {
 
         {/* Load More Trigger */}
         {!isLoading && visibleEventsCount < sortedEvents.length && (
-          <div ref={loadMoreRef} className="flex justify-center mt-6 py-4">
+          <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
             <div className={cn('w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin', tok.accentText)} />
           </div>
         )}

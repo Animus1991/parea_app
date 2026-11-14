@@ -29,9 +29,9 @@ export default function WalletPageContent() {
     : transactions.filter((tx) => txFilter === 'month' ? tx.date.includes('Oct') : tx.date.includes('Sep'));
 
   return (
-    <div className="max-w-full mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn("text-base md:text-lg font-bold", a.head)}>{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
+        <h1 className={cn("text-sm md:text-base font-bold", a.head)}>{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
         <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Διαχειριστείτε τα έσοδα και τις πληρωμές σας.', 'Manage your event revenue and payouts.')}</p>
         <p className={cn('text-xs font-bold mt-2', a.muted)}>
           {stripeReady
@@ -78,10 +78,10 @@ export default function WalletPageContent() {
       </div>
 
       <Card className="mt-2">
-        <div className={cn("p-4 border-b flex items-center justify-between", a.borderB)}>
-          <h2 className={cn("text-sm font-bold", a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
+        <div className={cn("p-4 md:p-4 border-b flex items-center justify-between", a.borderB)}>
+          <h2 className={cn("text-base font-bold", a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
           <select
-            className={cn("text-xs border rounded-2xl px-2 py-1 outline-none", a.selectBg)}
+            className={cn("filter-select border outline-none", a.selectBg)}
             value={txFilter}
             onChange={(e) => setTxFilter(e.target.value as typeof txFilter)}
             aria-label={t('Φίλτρο συναλλαγών', 'Transaction filter')}
@@ -108,7 +108,7 @@ export default function WalletPageContent() {
           ) : (
           <div className={cn("divide-y", a.divider)}>
             {filteredTx.map((tx) => (
-              <div key={tx.id} className={cn("p-4 flex items-center justify-between transition-colors", a.txHover)}>
+              <div key={tx.id} className={cn("p-4 md:p-4 flex items-center justify-between transition-colors", a.txHover)}>
                 <div className="flex items-center gap-4">
                   <div className={cn("w-10 h-10 rounded-full flex items-center justify-center shrink-0",
                     tx.type === 'Payout'
