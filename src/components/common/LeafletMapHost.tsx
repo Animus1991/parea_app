@@ -46,6 +46,9 @@ export function LeafletMapHost({
 
   useEffect(() => {
     let cancelled = false;
+    // The wrapper div is rendered for the component's whole life (only its
+    // children change), so reading it here is the same node cleanup will scrub.
+    const node = wrapRef.current;
     // Macrotask: runs after React finishes Strict Mode cleanup + DOM commit.
     const timer = window.setTimeout(() => {
       if (cancelled) return;
@@ -56,8 +59,6 @@ export function LeafletMapHost({
     return () => {
       cancelled = true;
       clearTimeout(timer);
-      // Capture before hostKey null unmounts MapContainer and may clear children.
-      const node = wrapRef.current;
       setHostKey(null);
       // Defer scrub until after MapContainer's effect cleanup calls map.remove().
       // Synchronous scrub here races remove() and crashes the ErrorBoundary on
