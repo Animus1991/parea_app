@@ -305,6 +305,18 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   box-sizing: border-box;
 }
 
+/* Equal-width home filter row controls («Όλοι οι Τύποι» … «Συνάφεια») */
+.filter-control-equal {
+  width: 12rem;
+  min-width: 12rem;
+  max-width: 12rem;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
 /* Compact text fields (onboarding, forms, settings) — +21% vs --text-xs (stacked +10%×2) */
 .field-control {
   font-size: calc(var(--text-xs) * 1.21); /* ~12.1px */

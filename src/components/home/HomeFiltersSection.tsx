@@ -155,7 +155,11 @@ export function HomeFiltersSection({
 
       <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar items-center flex-wrap">
         <select
-          className={`outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={cn(
+            'outline-none cursor-pointer transition-all duration-200',
+            HOME_TYPO.filterControlEqual,
+            h.select,
+          )}
           aria-label={t('Φίλτρο τιμής', 'Price filter')}
           value={priceFilter}
           onChange={(e) => setPriceFilter(e.target.value as HomePriceFilter)}
@@ -169,7 +173,11 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={cn(
+            'outline-none cursor-pointer transition-all duration-200',
+            HOME_TYPO.filterControlEqual,
+            h.select,
+          )}
           aria-label={t('Φίλτρο ημερομηνίας', 'Date filter')}
           value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value as HomeDateFilter)}
@@ -181,7 +189,11 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={cn(
+            'outline-none cursor-pointer transition-all duration-200',
+            HOME_TYPO.filterControlEqual,
+            h.select,
+          )}
           aria-label={t('Φίλτρο άνεσης & ασφάλειας', 'Comfort & safety filter')}
           value={safetyFilter}
           onChange={(e) => setSafetyFilter(e.target.value as HomeSafetyFilter)}
@@ -195,7 +207,11 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={cn(
+            'outline-none cursor-pointer transition-all duration-200',
+            HOME_TYPO.filterControlEqual,
+            h.select,
+          )}
           aria-label={t('Φίλτρο απόστασης', 'Distance filter')}
           value={radiusFilter}
           onChange={(e) => setRadiusFilter(e.target.value as HomeRadiusFilter)}
@@ -212,18 +228,22 @@ export function HomeFiltersSection({
             onClick={onToggleSeekingHostOnly}
             className={cn(
               HOME_TYPO.filterChip,
-              'gap-1.5 whitespace-nowrap px-3.5 rounded-full transition-all duration-200 border',
+              HOME_TYPO.filterControlEqual,
+              'gap-1.5 px-3.5 rounded-full transition-all duration-200 border',
               seekingHostOnly ? h.tagActive : h.tagInactive,
             )}
           >
-            <Crown className="w-3.5 h-3.5" />
-            {t('Χωρίς διοργανωτή', 'Seeking organizer')}
+            <Crown className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">{t('Χωρίς διοργανωτή', 'Seeking organizer')}</span>
           </button>
         )}
 
-        <div className="relative ml-auto">
+        <div className={cn('relative', HOME_TYPO.filterControlEqual)}>
           <select
-            className={`pl-6 pr-2 outline-none cursor-pointer appearance-none transition-all duration-200 ${h.select}`}
+            className={cn(
+              'w-full pl-6 pr-2 outline-none cursor-pointer appearance-none transition-all duration-200',
+              h.select,
+            )}
             aria-label={t('Ταξινόμηση', 'Sort by')}
             value={sortParam}
             onChange={(e) => setSortParam(e.target.value as HomeSortParam)}
