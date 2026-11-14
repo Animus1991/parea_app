@@ -45,7 +45,7 @@ export function MoodSelector({ activeMood, onSelectMood, className = '' }: MoodS
                       'ring-2 ring-offset-2 scale-[1.02]',
                       tok.isDark ? 'ring-offset-gray-900 ring-white' : 'ring-ink ring-offset-white',
                     )
-                  : 'opacity-90 hover:opacity-100 hover:scale-[1.02]',
+                  : 'hover:scale-[1.02]',
               )}
             >
               <Icon className="w-4 h-4 shrink-0" />

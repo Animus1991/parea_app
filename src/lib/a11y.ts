@@ -30,3 +30,12 @@ export const stopBubbling = {
   onClick: (e: MouseEvent) => e.stopPropagation(),
   onKeyDown: (e: KeyboardEvent) => e.stopPropagation(),
 };
+
+/**
+ * Mouse shortcut for a container whose keyboard path is a real control inside it
+ * (a title link or a primary button). The container itself stays non-interactive,
+ * so it never nests interactive elements.
+ */
+export function redundantClick<T extends HTMLElement>(onPress: (e: MouseEvent<T>) => void) {
+  return { onClick: onPress };
+}

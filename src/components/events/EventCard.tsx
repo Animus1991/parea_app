@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { el as elLocale, enUS as enLocale } from "date-fns/locale";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../../store";
 import type { Event } from "../../types";
 import { useLanguage } from "../../lib/i18n";
@@ -212,6 +212,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
     <Card
       className={cn("flex h-full flex-col overflow-hidden cursor-pointer relative group border border-gray-100/80 hover:border-gray-200 hover:shadow-soft-md transition-all duration-300 rounded-2xl p-0", isDark ? "border-white/5 shadow-[0_2px_12px_-3px_rgba(0,0,0,0.25)] bg-gray-800/60 hover:border-white/10" : "shadow-soft bg-white")}
       onClick={() => navigate(`/events/${event.id}`)}
+      containsControls
     >
       {/* Image Section */}
       <div className="relative h-48 w-full overflow-hidden bg-gray-100 shrink-0">
@@ -298,7 +299,13 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
       <div className="p-4 flex flex-col flex-1 gap-0">
         <div className="flex items-start justify-between gap-3 mb-1.5">
           <h3 className={cn(EVENT_CARD_TYPO.title, "transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-brand'))}>
-            {event.title}
+            <Link
+              to={`/events/${event.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+            >
+              {event.title}
+            </Link>
           </h3>
           {currentUser && matchScore != null && (
             <div className="flex flex-col items-end shrink-0 pt-0.5" title={t("Ταίριασμα", "Match")}>

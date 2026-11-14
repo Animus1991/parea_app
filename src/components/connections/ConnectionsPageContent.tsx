@@ -321,14 +321,18 @@ export default function ConnectionsPageContent() {
             </div>
           )}
           {filteredConnections.map((conn) => (
-            <Card key={conn.id} className={`p-4 flex items-center justify-between ${a.cardHover} transition-colors cursor-pointer group`} onClick={() => handleViewProfile(conn)}>
+            <Card key={conn.id} className={`p-4 flex items-center justify-between ${a.cardHover} transition-colors cursor-pointer group`} onClick={() => handleViewProfile(conn)} containsControls>
               <div className="flex items-center gap-3 min-w-0">
                 <div className="relative shrink-0">
                   <img referrerPolicy="no-referrer" src={conn.photoUrl || `https://i.pravatar.cc/150?u=${conn.id}`} alt={conn.name} className={`w-12 h-12 rounded-full object-cover ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
                   <TrustBadge tier={conn.trustTier} isDark={a.isDark} />
                 </div>
                 <div className="min-w-0">
-                  <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>{conn.name}</h3>
+                  <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>
+                    <button type="button" className="max-w-full truncate text-left rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current" onClick={(e) => { e.stopPropagation(); handleViewProfile(conn); }}>
+                      {conn.name}
+                    </button>
+                  </h3>
                   <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.muted}`}>
                     <MapPin className="w-3 h-3 shrink-0" /> {conn.city}
                   </p>
@@ -475,12 +479,16 @@ export default function ConnectionsPageContent() {
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {suggested.map((user) => (
-              <Card key={user.id} className={`p-4 ${a.cardHover} transition-colors cursor-pointer group`} onClick={() => handleViewProfile(user)}>
+              <Card key={user.id} className={`p-4 ${a.cardHover} transition-colors cursor-pointer group`} onClick={() => handleViewProfile(user)} containsControls>
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <img referrerPolicy="no-referrer" src={user.photoUrl || `https://i.pravatar.cc/150?u=${user.id}`} alt={user.name} className={`w-12 h-12 rounded-full object-cover shrink-0 ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
                     <div className="min-w-0">
-                      <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>{user.name}</h3>
+                      <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>
+                        <button type="button" className="max-w-full truncate text-left rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current" onClick={(e) => { e.stopPropagation(); handleViewProfile(user); }}>
+                          {user.name}
+                        </button>
+                      </h3>
                       <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.muted}`}>
                         <MapPin className="w-3 h-3" /> {user.city}
                         {user.isOrganizer && <> · <Badge variant="neutral" className="text-xs px-1.5 py-0">{t('Διοργανωτής', 'Organizer')}</Badge></>}

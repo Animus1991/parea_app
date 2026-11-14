@@ -6,7 +6,7 @@ import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { shouldRevealMemberPhoto, getPhotoPlaceholder } from '../../lib/photoReveal';
 import { cn } from '../../lib/utils';
-import { pressable } from '../../lib/a11y';
+import { redundantClick } from '../../lib/a11y';
 import type { Event, Group } from '../../types';
 
 export type EventDetailGroupAccent = 'classic' | 'vibrant' | 'neon' | 'bento';
@@ -168,7 +168,7 @@ export function EventDetailGroupCard({
         tok.card,
         tok.hoverBorder,
       )}
-      {...pressable<HTMLDivElement>(() => navigate(`/events/${event.id}/join?groupId=${group.id}`))}
+      {...redundantClick<HTMLDivElement>(() => navigate(`/events/${event.id}/join?groupId=${group.id}`))}
     >
       <div
         className={cn(

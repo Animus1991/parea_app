@@ -985,23 +985,89 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 /* ── Accent contrast remaps (full-app audit 14/11/2026) ──────────────────
    axe found -600 accent text under 4.5:1 on tinted light surfaces, and the
    same -600 classes too dark on dark surfaces. Colour only; no size change.
-   Elements that set their own dark: colour keep it. */
+   Elements that set their own dark: colour keep it. Text on a light chip
+   (bg-*-50/100) or on a white panel kept light in a dark theme gets the
+   darker AA tone, not the light one. */
 [data-theme]:not([data-theme$="-dark"]) .text-amber-600 { color: #bb4d00; }
 [data-theme]:not([data-theme$="-dark"]) .text-orange-600 { color: #ca3500; }
 [data-theme]:not([data-theme$="-dark"]) .text-emerald-600 { color: #007a55; }
 [data-theme]:not([data-theme$="-dark"]) .text-fuchsia-600 { color: #a800b7; }
 [data-theme]:not([data-theme$="-dark"]) .text-blue-600 { color: #1447e6; }
 [data-theme]:not([data-theme$="-dark"]) .text-red-600 { color: #c10007; }
-[data-theme]:not([data-theme$="-dark"]) .bg-amber-600.text-white { background-color: #bb4d00; }
+[data-theme]:not([data-theme$="-dark"]) .text-green-600 { color: #008236; }
+[data-theme] .bg-amber-600.text-white { background-color: #bb4d00; }
 
-[data-theme$="-dark"] .text-indigo-600:not([class*="dark:text-"]) { color: #a3b3ff; }
-[data-theme$="-dark"] .text-cyan-600:not([class*="dark:text-"]) { color: #53eafd; }
-[data-theme$="-dark"] .text-emerald-600:not([class*="dark:text-"]) { color: #5ee9b5; }
-[data-theme$="-dark"] .text-fuchsia-600:not([class*="dark:text-"]) { color: #f4a8ff; }
-[data-theme$="-dark"] .text-amber-600:not([class*="dark:text-"]) { color: #ffd230; }
-[data-theme$="-dark"] .text-orange-600:not([class*="dark:text-"]) { color: #ffb86a; }
-[data-theme$="-dark"] .text-red-600:not([class*="dark:text-"]) { color: #ffa2a2; }
-[data-theme$="-dark"] .text-blue-600:not([class*="dark:text-"]) { color: #8ec5ff; }
+[data-theme$="-dark"] .text-indigo-600:not([class*="dark:text-"]):not(.bg-indigo-50):not(.bg-indigo-100):not(.bg-white) { color: #a3b3ff; }
+[data-theme$="-dark"] .text-cyan-600:not([class*="dark:text-"]):not(.bg-cyan-50):not(.bg-cyan-100):not(.bg-white) { color: #53eafd; }
+[data-theme$="-dark"] .text-emerald-600:not([class*="dark:text-"]):not(.bg-emerald-50):not(.bg-emerald-100):not(.bg-white) { color: #5ee9b5; }
+[data-theme$="-dark"] .text-fuchsia-600:not([class*="dark:text-"]):not(.bg-fuchsia-50):not(.bg-fuchsia-100):not(.bg-white) { color: #f4a8ff; }
+[data-theme$="-dark"] .text-amber-600:not([class*="dark:text-"]):not(.bg-amber-50):not(.bg-amber-100):not(.bg-white) { color: #ffd230; }
+[data-theme$="-dark"] .text-orange-600:not([class*="dark:text-"]):not(.bg-orange-50):not(.bg-orange-100):not(.bg-white) { color: #ffb86a; }
+[data-theme$="-dark"] .text-red-600:not([class*="dark:text-"]):not(.bg-red-50):not(.bg-red-100):not(.bg-white) { color: #ffa2a2; }
+[data-theme$="-dark"] .text-blue-600:not([class*="dark:text-"]):not(.bg-blue-50):not(.bg-blue-100):not(.bg-white) { color: #8ec5ff; }
+[data-theme$="-dark"] .text-green-600:not([class*="dark:text-"]):not(.bg-green-50):not(.bg-green-100):not(.bg-white) { color: #7bf1a8; }
+[data-theme$="-dark"] .text-amber-700:not([class*="dark:text-"]):not(.bg-amber-100):not(.bg-white) { color: #ffd230; }
+
+[data-theme$="-dark"] .text-indigo-600.bg-indigo-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-indigo-600.bg-indigo-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-indigo-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-indigo-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-indigo-600:not([class*="dark:text-"]) { color: #4f39f6; }
+[data-theme$="-dark"] .text-cyan-600.bg-cyan-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-cyan-600.bg-cyan-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-cyan-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-cyan-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-cyan-600:not([class*="dark:text-"]) { color: #007595; }
+[data-theme$="-dark"] .text-emerald-600.bg-emerald-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-emerald-600.bg-emerald-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-emerald-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-emerald-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-emerald-600:not([class*="dark:text-"]) { color: #007a55; }
+[data-theme$="-dark"] .text-fuchsia-600.bg-fuchsia-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-fuchsia-600.bg-fuchsia-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-fuchsia-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-fuchsia-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-fuchsia-600:not([class*="dark:text-"]) { color: #a800b7; }
+[data-theme$="-dark"] .text-amber-600.bg-amber-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-amber-600.bg-amber-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-amber-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-amber-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-amber-600:not([class*="dark:text-"]) { color: #bb4d00; }
+[data-theme$="-dark"] .text-orange-600.bg-orange-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-orange-600.bg-orange-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-orange-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-orange-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-orange-600:not([class*="dark:text-"]) { color: #ca3500; }
+[data-theme$="-dark"] .text-red-600.bg-red-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-red-600.bg-red-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-red-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-red-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-red-600:not([class*="dark:text-"]) { color: #c10007; }
+[data-theme$="-dark"] .text-blue-600.bg-blue-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-blue-600.bg-blue-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-blue-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-blue-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-blue-600:not([class*="dark:text-"]) { color: #1447e6; }
+[data-theme$="-dark"] .text-green-600.bg-green-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-green-600.bg-green-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-green-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-green-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-green-600:not([class*="dark:text-"]) { color: #008236; }
 
 /* «Ink» flips to a light colour in dark themes: white text on it would vanish. */
 [data-theme$="-dark"] .bg-ink.text-white { color: var(--color-surface); }
+
+/* White panels kept light inside vibrant/bento/neon dark: theme ink and greys must stay dark there. */
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-ink,
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-ink,
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-ink {
+  color: rgb(17 24 39) !important;
+}
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-600,
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-600,
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-600,
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-700,
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-700,
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-700 {
+  color: rgb(55 65 81) !important;
+}

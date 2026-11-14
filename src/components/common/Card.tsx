@@ -2,16 +2,33 @@ import type React from 'react';
 import { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
-import { pressable } from '../../lib/a11y';
+import { pressable, redundantClick } from '../../lib/a11y';
 
-export function Card({ children, className, onClick, ...props }: HTMLAttributes<HTMLDivElement> & { children?: ReactNode }) {
+export function Card({
+  children,
+  className,
+  onClick,
+  containsControls = false,
+  ...props
+}: HTMLAttributes<HTMLDivElement> & {
+  children?: ReactNode;
+  /**
+   * The card holds its own buttons or links. The click stays as a mouse shortcut and
+   * keyboard users reach the same action through a control inside (no nested buttons).
+   */
+  containsControls?: boolean;
+}) {
   const p = usePageContrast();
 
   const hoverAccent = onClick ? p.cardHover : '';
 
   return (
     <div
-      {...(onClick ? pressable<HTMLDivElement>((e) => onClick(e as React.MouseEvent<HTMLDivElement>)) : {})}
+      {...(onClick
+        ? containsControls
+          ? redundantClick<HTMLDivElement>(onClick)
+          : pressable<HTMLDivElement>((e) => onClick(e as React.MouseEvent<HTMLDivElement>))
+        : {})}
       className={cn(
         'rounded-2xl border',
         p.isAB && !p.isDark

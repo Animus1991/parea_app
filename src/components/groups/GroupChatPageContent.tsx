@@ -399,14 +399,14 @@ export default function GroupChatPageContent() {
 
           {/* Ephemeral Notice */}
           {isEphemeral && showEphemeralBanner && (
-            <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 px-2 py-2 sm:px-3 text-center shadow-soft z-10 backdrop-blur-sm flex items-center justify-center relative">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-xs sm:text-xs font-bold tracking-wide text-amber-800 pr-6 w-full">
+            <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 dark:border-amber-800/40 dark:bg-amber-950/40 px-2 py-2 sm:px-3 text-center shadow-soft z-10 backdrop-blur-sm flex items-center justify-center relative">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-xs sm:text-xs font-bold tracking-wide text-amber-800 dark:text-amber-200 pr-6 w-full">
                 <span className="flex items-center justify-center gap-1.5 whitespace-nowrap">
                   <ShieldCheck className="h-3.5 w-3.5 shrink-0" />{" "}
                   {t("Εφήμερη Λειτουργία", "Ephemeral Mode")}
                 </span>
                 <span className="hidden sm:inline w-1 h-1 rounded-full bg-amber-300 opacity-60 shrink-0"></span>
-                <span className="font-medium text-amber-700/80 flex items-center justify-center gap-1 leading-tight w-full max-w-full overflow-hidden">
+                <span className="font-medium text-amber-700 dark:text-amber-300 flex items-center justify-center gap-1 leading-tight w-full max-w-full overflow-hidden">
                   <Clock className="h-3 w-3 shrink-0" />{" "}
                   <span className="truncate whitespace-normal sm:whitespace-nowrap">
                     {t(

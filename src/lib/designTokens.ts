@@ -259,7 +259,50 @@ const INDIGO_LIGHT: AccentTone = {
 };
 
 /* Quirk (preserved): indigo has no dark tone — bento-dark uses the light tone. */
-const INDIGO_DARK: AccentTone = INDIGO_LIGHT;
+// Bento dark: same structure as the other dark tones (it reused the light set, which painted light tiles on dark pages).
+const INDIGO_DARK: AccentTone = {
+  ...INDIGO_LIGHT,
+  tabActive: 'bg-indigo-900/30 text-indigo-300 border-indigo-500',
+  tabInactive: 'text-gray-400 border-transparent hover:text-gray-200',
+  tabActiveBorder: 'border-indigo-500 text-indigo-400',
+  tabInactiveBorder: 'border-transparent text-gray-400 hover:text-gray-200',
+  statBg: 'bg-indigo-900/20 border-indigo-800/30',
+  statVal: 'text-indigo-400',
+  cardHover: 'hover:border-indigo-700',
+  chipInactive: 'bg-gray-800/50 border-gray-600 text-gray-300',
+  iconColor: 'text-indigo-400',
+  actionBtn: 'text-indigo-400 bg-indigo-900/20 hover:bg-indigo-900/30',
+  msgIcon: 'text-indigo-400 hover:bg-indigo-900/30',
+  trustHigh: 'text-indigo-400',
+  tagBg: 'bg-indigo-900/20 text-indigo-300 border-indigo-800',
+  hoverText: 'group-hover:text-indigo-400',
+  articleCat: 'text-indigo-400',
+  contactIcon: 'text-indigo-400',
+  heroBg: 'bg-indigo-800/50',
+  heroSub: 'text-indigo-300',
+  balanceBg: 'bg-indigo-800/50 border-indigo-700/40',
+  balanceLabel: 'text-indigo-300',
+  withdrawBtn: 'bg-white/10 text-white hover:bg-white/20 border-0',
+  iconAccent: 'text-indigo-400',
+  scoreFill: 'fill-white',
+  accent: 'text-indigo-400',
+  accentBg: 'bg-indigo-900/20',
+  accentBorder: 'border-indigo-800',
+  accentLight: 'text-indigo-300',
+  checkbox: 'text-indigo-400',
+  radioActive: 'border-indigo-600 bg-indigo-900/20',
+  radioText: 'text-indigo-300',
+  radioSub: 'text-indigo-400/80',
+  tierHighlight: 'border-indigo-700 bg-indigo-900/20',
+  tierHighlightText: 'text-indigo-300',
+  tierHighlightSub: 'text-indigo-400/80',
+  btnAccent: 'text-indigo-400 hover:bg-indigo-900/30',
+  historyIcon: 'bg-indigo-900/30 text-indigo-400',
+  profileSelectBg: 'bg-gray-800 border-gray-700',
+  settingCard: 'bg-gray-800/50 border-gray-700/50',
+  avatarBg: 'bg-indigo-900/30 border-indigo-700',
+  avatarText: 'text-indigo-400',
+};
 
 const EMERALD_LIGHT: AccentTone = {
   tabActive: 'bg-emerald-50 text-emerald-700 border-emerald-500',

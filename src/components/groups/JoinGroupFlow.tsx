@@ -96,7 +96,7 @@ export default function JoinGroupFlow() {
   };
 
   return (
-    <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sm:p-5 mt-5">
+    <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sm:p-5 mt-5 dark:bg-surface-raised dark:border-border">
       <h1 className="sr-only">{t('Συμμετοχή σε ομάδα', 'Join a group')}: {event.title}</h1>
       {!gate.allowed && (
         <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm font-medium flex gap-2">
@@ -128,7 +128,7 @@ export default function JoinGroupFlow() {
             <button
               type="button"
               onClick={() => setGroupType('existing')}
-              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'existing' ? 'border-accent bg-cyan-50 ring-1 ring-accent' : 'border-gray-100'}`}
+              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'existing' ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 dark:border-border'}`}
             >
               <Users className={`h-5 w-5 mb-2 ${groupType === 'existing' ? 'text-cyan-600' : 'text-gray-400'}`} />
               <p className="font-bold text-sm">{t('Υπάρχουσα ομάδα', 'Join Existing')}</p>
@@ -136,7 +136,7 @@ export default function JoinGroupFlow() {
             <button
               type="button"
               onClick={() => setGroupType('new')}
-              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'new' ? 'border-accent bg-cyan-50 ring-1 ring-accent' : 'border-gray-100'}`}
+              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'new' ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 dark:border-border'}`}
             >
               <Split className={`h-5 w-5 mb-2 ${groupType === 'new' ? 'text-cyan-600' : 'text-gray-400'}`} />
               <p className="font-bold text-sm">{t('Νέα ομάδα', 'Start New Group')}</p>
@@ -157,7 +157,7 @@ export default function JoinGroupFlow() {
                     onClick={() => setSelectedGroupId(g.id)}
                     className={`w-full p-3 rounded-xl border text-left transition-colors ${
                       selectedGroupId === g.id
-                        ? 'border-accent bg-cyan-50 ring-1 ring-accent'
+                        ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent'
                         : 'border-gray-100 hover:border-gray-200'
                     }`}
                   >
