@@ -56,7 +56,7 @@ export function ChatWindow({
     <>
       <div
         className={cn(
-          'fixed z-modal md:z-sheet flex flex-col overflow-hidden shadow-soft-lg',
+          'fixed z-modal md:z-sheet flex flex-col overflow-hidden shadow-soft-lg copilot-shift',
           'bg-surface border-border text-ink',
           'inset-0 md:inset-auto md:bottom-6 md:h-[420px] md:w-[320px] md:rounded-2xl md:border',
           stackIndex === 0 && 'md:right-6',

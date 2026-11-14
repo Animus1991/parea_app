@@ -842,3 +842,12 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   }
 }
 
+
+
+/* Φ24 — while Nakamas AI is docked (≥1024px) bottom-right floating chat UI
+   moves left of the panel instead of covering its composer. */
+@media (min-width: 1024px) {
+  html[data-copilot-docked] .copilot-shift {
+    margin-right: var(--copilot-dock-w, 0px);
+  }
+}

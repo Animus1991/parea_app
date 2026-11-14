@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, ReactNode } from 'react';
 import { toUpperNoAccents } from './greekText';
+import { useLanguageStore } from '../store/languageStore';
 
 type Language = 'el' | 'en';
 
@@ -90,7 +91,12 @@ const translations: Record<string, Record<Language, string>> = {
 };
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('el');
+  const language = useLanguageStore((s) => s.language);
+  const setLanguage = useLanguageStore((s) => s.setLanguage);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') document.documentElement.lang = language;
+  }, [language]);
 
   const t = (greekText: string, englishText?: string): string => {
     const entry = translations[greekText];

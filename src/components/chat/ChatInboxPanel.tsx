@@ -51,7 +51,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
   return (
     <div
       className={cn(
-        'fixed z-sheet flex flex-col border shadow-soft-lg overflow-hidden',
+        'fixed z-sheet flex flex-col border shadow-soft-lg overflow-hidden copilot-shift',
         'bg-surface border-border text-ink',
         'inset-x-0 bottom-0 top-auto max-h-[85vh] rounded-t-2xl',
         'md:inset-auto md:bottom-20 md:right-6 md:w-[360px] md:max-h-[min(520px,70vh)] md:rounded-2xl',

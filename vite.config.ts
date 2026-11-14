@@ -12,7 +12,9 @@ export default defineConfig(({mode}) => {
   return {
     plugins: [react(), tailwindcss()],
     define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      // Security (Ε1): GEMINI_API_KEY is intentionally NOT defined here — it must
+      // never be inlined into the client bundle. AI calls go through server.ts
+      // (/api/ai/*). For a client-only key, opt in explicitly via VITE_GEMINI_API_KEY.
       'process.env.GOOGLE_MAPS_PLATFORM_KEY': JSON.stringify(googleMapsKey),
       'import.meta.env.VITE_GOOGLE_MAPS_API_KEY': JSON.stringify(googleMapsKey),
       'import.meta.env.VITE_GOOGLE_MAPS_PLATFORM_KEY': JSON.stringify(googleMapsKey),

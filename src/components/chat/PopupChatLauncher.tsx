@@ -21,7 +21,7 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
       className={cn(
         'fixed z-chat flex items-center gap-2 rounded-full shadow-soft-lg border min-h-12 px-4',
         'bg-surface border-brand/40 text-ink hover:border-brand/60 transition-colors',
-        'bottom-nav-clear right-4 md:bottom-6 md:right-6',
+        'bottom-nav-clear right-4 md:bottom-6 md:right-6 copilot-shift',
         className,
       )}
     >

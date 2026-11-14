@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { EventCard } from '../events/EventCard';
@@ -166,6 +167,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
       />
 
       <EventStories events={storyEvents} />
+
+      <CopilotInlinePrompt />
 
       <HomeBuddySeekStrip />
 

@@ -10,7 +10,7 @@ import {
   Globe,
   CheckCircle,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useStore } from "../../store";
 import { motion, AnimatePresence } from "motion/react";
@@ -21,11 +21,14 @@ import { MapPinPicker } from "../common/MapPinPicker";
 import { cn } from "../../lib/utils";
 import { usePageContrast } from "../../hooks/usePageContrast";
 import { useProfileContrast } from "../../hooks/usePageContrast";
+import { getHomeCategoryTranslations } from "../../lib/homeCategoryLabels";
+import { generateEventBlurb } from "../../services/gemini";
+import { Sparkles } from "lucide-react";
 
 export default function CreateEventFlowPageContent() {
   const [step, setStep] = useState(1);
   const totalSteps = 4;
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const createEvent = useStore((state) => state.createEvent);
   const currentUser = useStore((state) => state.currentUser);
@@ -48,21 +51,58 @@ export default function CreateEventFlowPageContent() {
     p.isDark ? "border-white/10 hover:border-white/20" : "border-gray-100 hover:border-gray-200",
   );
 
-  // Form State
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [location, setLocation] = useState("");
+  // Form State — Φ24: Nakamas AI can pre-fill via /create?ai=1&title=…&category=…
+  const [params] = useSearchParams();
+  const prefilledByAi = params.get("ai") === "1";
+  const categoryLabels = getHomeCategoryTranslations(t);
+  // Organizer dashboard deep links: ?edit=<eventId> updates in place, ?template=<slug> pre-selects a category.
+  const editId = params.get("edit");
+  const editEvent = useStore((state) => (editId ? state.events.find((e) => e.id === editId) : undefined));
+  const updateEvent = useStore((state) => state.updateEvent);
+  const TEMPLATE_CATEGORY: Record<string, string> = { hiking: "Hiking", cinema: "Cinema", "stand-up": "Stand-up", "board-games": "Board games" };
+  const templateCategory = TEMPLATE_CATEGORY[params.get("template") ?? ""];
+  const [title, setTitle] = useState(
+    params.get("title") ?? editEvent?.title ?? (templateCategory ? `${categoryLabels[templateCategory] ?? templateCategory} ${t("με Nakamas", "with Nakamas")}` : ""),
+  );
+  const [category, setCategory] = useState(params.get("category") ?? editEvent?.category ?? templateCategory ?? "");
+  const [description, setDescription] = useState(params.get("description") ?? editEvent?.description ?? "");
+  const [date, setDate] = useState(params.get("date") ?? editEvent?.date ?? "");
+  const [time, setTime] = useState(params.get("time") ?? editEvent?.time ?? "");
+  const [location, setLocation] = useState(params.get("location") ?? editEvent?.locationArea ?? "");
+  const [aiWriting, setAiWriting] = useState(false);
   const [coordinates, setCoordinates] = useState({ lat: 0, lng: 0 });
   const [visibility, setVisibility] = useState<"public" | "private">("public");
-  const [maxAttendees, setMaxAttendees] = useState(4);
+  const [maxAttendees, setMaxAttendees] = useState(() => {
+    const n = Number(params.get("max") ?? editEvent?.maxParticipants);
+    return Number.isFinite(n) && n >= 2 && n <= 12 ? n : 4;
+  });
   const [duration, setDuration] = useState("2h");
-  const [isPaid, setIsPaid] = useState(false);
-  const [price, setPrice] = useState(10);
+  const [isPaid, setIsPaid] = useState(() => Number(params.get("price")) > 0 || Boolean(editEvent?.isPaid));
+  const [price, setPrice] = useState(() => {
+    const fromUrl = Number(params.get("price"));
+    if (fromUrl > 0) return fromUrl;
+    return editEvent?.isPaid && editEvent.price > 0 ? editEvent.price : 10;
+  });
 
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  /** Φ24 — AI description: Gemini via the server proxy, deterministic bilingual template otherwise. */
+  const writeDescriptionWithAi = async () => {
+    if (!title.trim()) {
+      toast.info(t("Γράψε πρώτα έναν τίτλο.", "Add a title first."));
+      return;
+    }
+    setAiWriting(true);
+    const catLabel = category ? categoryLabels[category] ?? category : t("κοινωνική έξοδος", "social outing");
+    const ai = await generateEventBlurb(title.trim(), catLabel, language).catch(() => null);
+    const fallback = t(
+      `${title.trim()}: μια χαλαρή ${catLabel.toLowerCase()} σε μικρή παρέα ${maxAttendees} ατόμων. Συναντιόμαστε σε δημόσιο σημείο, γνωριζόμαστε και περνάμε όμορφα — ιδανικό και αν έρχεσαι μόνος/η.`,
+      `${title.trim()}: a relaxed ${catLabel.toLowerCase()} in a small group of ${maxAttendees}. We meet at a public spot, get to know each other and have a good time — perfect if you're coming solo.`,
+    );
+    setDescription(ai || fallback);
+    setAiWriting(false);
+    toast.success(t("Η περιγραφή γράφτηκε — προσάρμοσέ τη ελεύθερα.", "Description drafted — feel free to edit it."));
+  };
+
+  const [imagePreview, setImagePreview] = useState<string | null>(editEvent?.imageUrl ?? null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,6 +114,25 @@ export default function CreateEventFlowPageContent() {
   const handleSubmit = () => {
     if (!currentUser) {
       navigate("/login");
+      return;
+    }
+    if (editEvent) {
+      updateEvent(editEvent.id, {
+        title: title || editEvent.title,
+        category: category || editEvent.category,
+        description: description || editEvent.description,
+        date: date || editEvent.date,
+        time: time || editEvent.time,
+        duration,
+        locationArea: location || editEvent.locationArea,
+        isPaid,
+        price: isPaid ? Math.max(0, Number(price) || 0) : 0,
+        maxParticipants: maxAttendees,
+        minTrustTierAccess: visibility === "private" ? "2_confirmed" : editEvent.minTrustTierAccess,
+        imageUrl: imagePreview || editEvent.imageUrl,
+      });
+      toast.success(t("Η εκδήλωση ενημερώθηκε", "Event updated"));
+      navigate("/manage");
       return;
     }
     const newEvent = {
@@ -123,8 +182,14 @@ export default function CreateEventFlowPageContent() {
       className="max-w-full mx-auto pb-24 md:pb-8"
     >
       <div className="mb-8">
+        {prefilledByAi && (
+          <p role="status" className="mb-4 flex items-center gap-2 rounded-xl border border-accent/30 bg-accent-soft px-3 py-2 text-sm font-medium text-ink">
+            <Sparkles className="h-4 w-4 shrink-0 text-accent" aria-hidden />
+            {t("Το Nakamas AI συμπλήρωσε τη φόρμα. Έλεγξε τα στοιχεία και συνέχισε.", "Nakamas AI pre-filled this form. Review the details and continue.")}
+          </p>
+        )}
         <h1 className={cn("text-lg md:text-xl font-bold", p.head)}>
-          {t("Δημιουργία Εμπειρίας", "Create Experience")}
+          {editEvent ? t("Επεξεργασία Εμπειρίας", "Edit Experience") : t("Δημιουργία Εμπειρίας", "Create Experience")}
         </h1>
         <p className={cn("text-sm mt-1", p.muted)}>
           {t(
@@ -218,30 +283,35 @@ export default function CreateEventFlowPageContent() {
                     <option value="">
                       {t("Επιλέξτε κατηγορία...", "Select a category...")}
                     </option>
-                    <option value="Hiking & Outdoors">
-                      {t("Πεζοπορία & Εξόρμηση", "Hiking & Outdoors")}
-                    </option>
-                    <option value="Board Games">
-                      {t("Επιτραπέζια", "Board Games")}
-                    </option>
-                    <option value="Stand-up Comedy">
-                      {t("Stand-up κωμωδία", "Stand-up Comedy")}
-                    </option>
-                    <option value="Theatre">{t("Θέατρο", "Theatre")}</option>
-                    <option value="Live Music">
-                      {t("Ζωντανή Μουσική", "Live Music")}
-                    </option>
-                    <option value="Social">
-                      {t("Κοινωνικό / Social", "Social")}
-                    </option>
+                    {/* Canonical feed categories → created events show up under the same Home / Categories filters. */}
+                    {Object.entries(categoryLabels)
+                      .filter(([key]) => key !== 'All')
+                      .map(([key, label]) => (
+                        <option key={key} value={key}>
+                          {label}
+                        </option>
+                      ))}
+                    {category && !(category in categoryLabels) && <option value={category}>{category}</option>}
                   </select>
                 </div>
 
                 <div>
-                  <label className={labelClass}>
-                    {t("Περιγραφή", "Description")}
-                  </label>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <label htmlFor="create-description" className={cn(labelClass, "mb-0")}>
+                      {t("Περιγραφή", "Description")}
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => void writeDescriptionWithAi()}
+                      disabled={aiWriting}
+                      className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-accent-soft px-2.5 text-xs font-semibold text-ink transition-colors hover:bg-accent/15 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    >
+                      <Sparkles className="h-3.5 w-3.5 text-accent" aria-hidden />
+                      {aiWriting ? t("Γράφω…", "Writing…") : t("Γράψε με AI", "Write with AI")}
+                    </button>
+                  </div>
                   <textarea
+                    id="create-description"
                     rows={4}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -542,7 +612,7 @@ export default function CreateEventFlowPageContent() {
                   <CheckCircle className={cn("w-6 h-6", pc.accent)} />
                 </div>
                 <h2 className={cn("text-lg font-bold", p.head)}>
-                  {t("Έτοιμο για Δημοσίευση!", "Ready to Publish!")}
+                  {editEvent ? t("Έτοιμο για αποθήκευση!", "Ready to save!") : t("Έτοιμο για Δημοσίευση!", "Ready to Publish!")}
                 </h2>
                 <p className={cn("text-sm mt-1", p.muted)}>
                   {t(
@@ -621,7 +691,7 @@ export default function CreateEventFlowPageContent() {
                   onClick={handleSubmit}
                   className="flex-[2]"
                 >
-                  {t("Δημοσίευση Εμπειρίας", "Publish Experience")}
+                  {editEvent ? t("Αποθήκευση αλλαγών", "Save changes") : t("Δημοσίευση Εμπειρίας", "Publish Experience")}
                 </Button>
               </div>
             </motion.div>

@@ -18,3 +18,12 @@ View your app in AI Studio: https://ai.studio/apps/ed9f9c59-7d05-4060-a12f-31b2a
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Nakamas AI (copilot)
+
+Open it with the **AI** button in the top bar or **Ctrl/⌘ J**, then type or dictate in Greek or English, for example
+«βρες μου δωρεάν πεζοπορία αυτό το Σαββατοκύριακο», «αποθήκευσε το δεύτερο» or "switch to dark mode".
+
+- **Without any key** it runs a bilingual on-device engine (search, save, calendar, agenda, theme, language, privacy, notifications, group messages, drafting events, explanations).
+- **With Gemini**: set `GEMINI_API_KEY` (and optionally `GEMINI_MODEL`) for `npm run dev` / `server.ts`. Requests go through `/api/ai/copilot`, so the key never reaches the browser.
+- Anything that sends, publishes or changes privacy asks for confirmation first, and every change can be undone.

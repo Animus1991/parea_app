@@ -6,6 +6,7 @@ import { AppShell } from "./components/layout/AppShell";
 import { RouteLifecycle } from "./components/common/RouteLifecycle";
 import { OfflineBanner } from "./components/common/OfflineBanner";
 import { CommandPalette } from "./components/common/CommandPalette";
+import { CopilotBridge } from "./components/copilot/CopilotBridge";
 import { useStore } from "./store";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { PageLoading } from "./components/common/PageLoading";
@@ -96,6 +97,7 @@ export default function App() {
       <RouteLifecycle />
       <OfflineBanner />
       <CommandPalette />
+      <CopilotBridge />
       <AppShell>
       <AnimatePresence mode="popLayout">
         <Suspense fallback={<PageLoading />}>

@@ -103,18 +103,82 @@ async function startServer() {
   const aiRateBuckets = new Map<string, { count: number; resetAt: number }>();
   const AI_RATE_LIMIT = parseInt(process.env.AI_RATE_LIMIT_PER_MINUTE || '30', 10);
 
-  app.post('/api/ai/generate', async (req, res) => {
+  const COPILOT_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  const getServerApiKey = () => {
+    const key = process.env.GEMINI_API_KEY;
+    return key && !key.includes('MY_GEMINI') ? key : null;
+  };
+  /** Returns a retry delay (ms) when the caller exceeded the per-minute budget, else null. */
+  const rateLimited = (req: express.Request): number | null => {
     const ip = req.ip || req.socket.remoteAddress || 'unknown';
     const now = Date.now();
     const bucket = aiRateBuckets.get(ip);
     if (!bucket || bucket.resetAt < now) {
       aiRateBuckets.set(ip, { count: 1, resetAt: now + 60_000 });
-    } else if (++bucket.count > AI_RATE_LIMIT) {
-      return res.status(429).json({ error: 'Rate limit exceeded', retryAfterMs: bucket.resetAt - now });
+      return null;
     }
+    bucket.count += 1;
+    return bucket.count > AI_RATE_LIMIT ? bucket.resetAt - now : null;
+  };
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey.includes('MY_GEMINI')) {
+  // Φ23 — copilot engine discovery (never exposes the key itself).
+  app.get('/api/ai/status', (_req, res) => {
+    const configured = Boolean(getServerApiKey());
+    res.json({ configured, model: configured ? COPILOT_MODEL : null });
+  });
+
+  // Φ23 — copilot function calling. The client sends the tool declarations,
+  // the system instruction and the conversation; tools execute client-side
+  // against the user's own state, so the server only relays to Gemini.
+  app.post('/api/ai/copilot', async (req, res) => {
+    const retry = rateLimited(req);
+    if (retry !== null) return res.status(429).json({ error: 'Rate limit exceeded', retryAfterMs: retry });
+    const apiKey = getServerApiKey();
+    if (!apiKey) return res.status(503).json({ error: 'AI proxy not configured — set GEMINI_API_KEY on the server' });
+
+    const { system, contents, tools } = req.body ?? {};
+    const size = JSON.stringify(req.body ?? {}).length;
+    if (
+      typeof system !== 'string' ||
+      !Array.isArray(contents) ||
+      contents.length === 0 ||
+      contents.length > 40 ||
+      !Array.isArray(tools) ||
+      tools.length === 0 ||
+      tools.length > 64 ||
+      size > 120_000
+    ) {
+      return res.status(400).json({ error: 'Invalid copilot payload' });
+    }
+    try {
+      const { GoogleGenAI } = await import('@google/genai');
+      const ai = new GoogleGenAI({ apiKey });
+      const response = await ai.models.generateContent({
+        model: COPILOT_MODEL,
+        contents,
+        config: {
+          systemInstruction: system.slice(0, 24_000),
+          tools: [{ functionDeclarations: tools }],
+          temperature: 0.3,
+          maxOutputTokens: 1024,
+        },
+      });
+      const content = response.candidates?.[0]?.content;
+      const functionCalls = (response.functionCalls ?? []).map((fc) => ({ id: fc.id, name: fc.name, args: fc.args ?? {} }));
+      const text = functionCalls.length ? '' : (response.text ?? '');
+      return res.json({ text, functionCalls, content });
+    } catch (err) {
+      console.error('AI copilot error:', err);
+      return res.status(502).json({ error: 'Upstream AI provider error' });
+    }
+  });
+
+  app.post('/api/ai/generate', async (req, res) => {
+    const retry = rateLimited(req);
+    if (retry !== null) return res.status(429).json({ error: 'Rate limit exceeded', retryAfterMs: retry });
+
+    const apiKey = getServerApiKey();
+    if (!apiKey) {
       return res.status(503).json({ error: 'AI proxy not configured — set GEMINI_API_KEY on the server' });
     }
 

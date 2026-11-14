@@ -1,0 +1,41 @@
+import { describe, expect, it } from 'vitest';
+import { computeAchievements, dailyChallengeMet, weeklyActivity } from './achievements';
+import type { Event, Group, User } from '../types';
+
+const user = {
+  id: 'u1', name: 'A', ageRange: '25-34', city: 'Athens', interests: [], trustTier: '2_confirmed', reliabilityScore: 96,
+  badges: [], emailVerified: true, phoneVerified: true, paymentVerified: false, idVerified: false, isOrganizer: false, connections: ['u2'],
+} as User;
+const ev = (id: string, date: string, category: string) => ({ id, date, category, title: id } as Event);
+const grp = (id: string, eventId: string, members: string[], hostId?: string, targetSize = 4) =>
+  ({ id, eventId, members, hostId, targetSize, status: 'pending', pendingMembers: [], discountUnlocked: false } as Group);
+
+describe('live achievements', () => {
+  it('derives progress from real memberships, categories, weeks and verifications', () => {
+    const events = [ev('a', '2026-06-01', 'Hiking'), ev('b', '2026-06-08', 'Cinema'), ev('c', '2026-06-15', 'Cinema')];
+    const groups = [grp('g1', 'a', ['u1']), grp('g2', 'b', ['u1']), grp('g3', 'c', ['u1', 'x', 'y', 'z'], 'u1')];
+    const list = computeAchievements({ user, events, groups, feedbackEventIds: [] });
+    const by = Object.fromEntries(list.map((a) => [a.id, a]));
+    expect(by.first_experience.unlocked).toBe(true);
+    expect(by.social_butterfly.progress).toBe(3);
+    expect(by.reliability_star.unlocked).toBe(true);
+    expect(by.weekly_streak.progress).toBe(3);
+    expect(by.trusted_member.progress).toBe(2);
+    expect(by.explorer.progress).toBe(2);
+    expect(by.trailblazer.unlocked).toBe(true);
+    expect(by.connector.progress).toBe(1);
+  });
+
+  it('computes the current week and day streak', () => {
+    const now = new Date('2026-11-13T12:00:00'); // Friday
+    const { days, streak } = weeklyActivity(['2026-11-11', '2026-11-12', '2026-11-13'], now);
+    expect(days).toEqual([false, false, true, true, true, false, false]);
+    expect(streak).toBe(3);
+  });
+
+  it('requires a real message today for the daily challenge', () => {
+    const now = new Date('2026-11-13T12:00:00');
+    expect(dailyChallengeMet(['2026-11-12T10:00:00'], now)).toBe(false);
+    expect(dailyChallengeMet(['2026-11-13T09:30:00'], now)).toBe(true);
+  });
+});
