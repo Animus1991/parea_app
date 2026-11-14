@@ -341,23 +341,23 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   line-height: var(--text-xs--line-height);
 }
 
-/* Role / schedule lines (e.g. «Ψάχνει Nakamas», date) — +10% then −2% */
+/* Role / schedule / location (e.g. «Ψάχνει Nakamas», date, area) — +10% −2% +1% */
 .card-meta {
-  font-size: calc(var(--text-xs) * 1.1 * 0.98); /* ~10.78px */
+  font-size: calc(var(--text-xs) * 1.1 * 0.98 * 1.01); /* ~10.89px */
   line-height: var(--text-xs--line-height);
 }
 .card-meta-sm {
-  font-size: calc(var(--text-sm) * 1.1 * 0.98); /* ~12.94px */
+  font-size: calc(var(--text-sm) * 1.1 * 0.98 * 1.01); /* ~13.07px */
   line-height: var(--text-sm--line-height);
 }
 
-/* Card body (name, quote, chips) — +10% */
+/* Card body name (e.g. «Nikos») and similar — +10% then +1% */
 .card-copy {
-  font-size: calc(var(--text-xs) * 1.1); /* ~11px */
+  font-size: calc(var(--text-xs) * 1.1 * 1.01); /* ~11.11px */
   line-height: var(--text-xs--line-height);
 }
 .card-copy-sm {
-  font-size: calc(var(--text-sm) * 1.1); /* ~13.2px */
+  font-size: calc(var(--text-sm) * 1.1 * 1.01); /* ~13.33px */
   line-height: var(--text-sm--line-height);
 }
 .card-copy-micro {
