@@ -33,6 +33,8 @@
 | `AUTH_OPTIONAL` | `true` αφήνει το AI και το chat ανοιχτά χωρίς token. Δεν συνιστάται |
 | `VITE_DEMO_LOGIN` | Λογαριασμοί demo στη σελίδα σύνδεσης. Προεπιλογή: εμφανίζονται, εκτός από build παραγωγής με Firebase |
 | `AUTH_TEST_JWKS_FILE` | Μόνο εκτός παραγωγής: τοπικά κλειδιά για δοκιμές end-to-end χωρίς Google |
+| `CSP_MODE` | `enforce` (προεπιλογή), `report-only` ή `off` για το Content-Security-Policy |
+| `CSP_CONNECT_SRC` | Επιπλέον origins για `connect-src`, χωρισμένα με κενό |
 
 ## 3. Τι επαληθεύτηκε
 
@@ -74,8 +76,25 @@
 | Ζωντανός server με υπογεγραμμένα tokens | 21/21 σενάρια: τα παραπάνω δικαιώματα, πλαστά και ληγμένα tokens, socket χωρίς token, απόδοση μηνύματος στο uid |
 | Ζωντανός server χωρίς Firebase | Ίδια συμπεριφορά με πριν: εγγραφή στο development 201, AI χωρίς κλειδί 503 |
 
-## 5. Τι μένει ανοιχτό
+## 5. Content-Security-Policy
+
+Ο server παραγωγής και το στατικό build (`dist/_headers`) στέλνουν το ίδιο CSP (`server/csp.ts`).
+Οι κανόνες βγήκαν από απογραφή όλων των εξωτερικών πηγών της εφαρμογής.
+
+| Οδηγία | Τιμή |
+|---|---|
+| `script-src` | Μόνο η εφαρμογή και τα σενάρια σύνδεσης της Google. Χωρίς `unsafe-inline` και `unsafe-eval` |
+| `connect-src` | Η εφαρμογή, Firebase και Google APIs, Ticketmaster, και αυτόματα το `VITE_API_BASE_URL` και το `VITE_WS_URL` |
+| `frame-src` | Σύνδεση Google και το iframe του Firebase Auth, μαζί με το `authDomain` |
+| `img-src` | `https:`, γιατί οι φωτογραφίες εκδηλώσεων έρχονται από πολλές πηγές |
+| `object-src`, `frame-ancestors` | `'none'` |
+
+Οι παραβιάσεις καταγράφονται στο `/api/csp-report`. Η καταγραφή έχει όριο ρυθμού και δεν αποθηκεύεται.
+Επαλήθευση: build παραγωγής, 30 διαδρομές σε υπολογιστή και κινητό, 0 παραβιάσεις και 0 σφάλματα σελίδας. Επίσης 4 unit tests, μεταξύ των οποίων η απόρριψη κακόβουλων τιμών στις ρυθμίσεις.
+
+## 6. Τι μένει ανοιχτό
 
 - Τα `memberIds` των δωματίων chat στο Firestore πρέπει να τα γράφει Cloud Function. Δεν υπάρχει project Functions στο αποθετήριο.
 - Οι κανόνες Firestore δεν έχουν ελεγχθεί με τον emulator, γιατί δεν υπάρχει στο περιβάλλον.
 - Ορισμός ρόλων: χρειάζεται μια μικρή εργασία διαχείρισης με το Admin SDK (`setCustomUserClaims`) στο περιβάλλον του έργου.
+- Οι ροές σύνδεσης Firebase και Google δεν δοκιμάστηκαν ζωντανά με το CSP, γιατί δεν υπάρχει project Firebase στο περιβάλλον. Σε περίπτωση προβλήματος, το `CSP_MODE=report-only` δείχνει τι μπλοκάρεται χωρίς να το εμποδίζει.

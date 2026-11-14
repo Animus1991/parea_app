@@ -1,7 +1,29 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import fs from 'fs';
 import path from 'path';
-import {defineConfig, loadEnv} from 'vite';
+import {defineConfig, loadEnv, type Plugin} from 'vite';
+import {buildCsp, cspHeaderName, cspMode} from './server/csp';
+
+/**
+ * Static hosting (Cloudflare Pages): add the same Content-Security-Policy as
+ * server.ts to dist/_headers, built from this build's VITE_* settings.
+ */
+function staticCspHeaders(env: Record<string, string>): Plugin {
+  return {
+    name: 'nakamas-static-csp',
+    apply: 'build',
+    closeBundle() {
+      const header = cspHeaderName(cspMode(env));
+      const file = path.resolve(__dirname, 'dist/_headers');
+      if (!header || !fs.existsSync(file)) return;
+      const current = fs.readFileSync(file, 'utf8');
+      if (current.includes('Content-Security-Policy')) return;
+      const next = current.replace(/^\/\*\n/m, `/*\n  ${header}: ${buildCsp(env)}\n`);
+      fs.writeFileSync(file, next);
+    },
+  };
+}
 
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
@@ -10,7 +32,7 @@ export default defineConfig(({mode}) => {
     env.VITE_GOOGLE_MAPS_PLATFORM_KEY ||
     '';
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), staticCspHeaders(env)],
     define: {
       // Security (Ε1): GEMINI_API_KEY is intentionally NOT defined here — it must
       // never be inlined into the client bundle. AI calls go through server.ts

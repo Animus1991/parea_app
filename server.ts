@@ -19,6 +19,7 @@ import {
   ownEventPayload,
   type AuthUser,
 } from './server/auth.ts';
+import { buildCsp, cspHeaderName, cspMode } from './server/csp.ts';
 import {
   EVENT_ID_PATTERN,
   RateLimiter,
@@ -72,10 +73,35 @@ async function startServer() {
   // Honour X-Forwarded-For only when a proxy is declared (Cloudflare, Render…), so rate limits key on the real client.
   if (process.env.TRUST_PROXY) app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 1 : process.env.TRUST_PROXY);
 
+  // CSP only for the production bundle: the Vite dev server injects inline scripts for HMR.
+  const CSP_HEADER = IS_PRODUCTION ? cspHeaderName(cspMode(process.env)) : null;
+  const CSP_VALUE = buildCsp(process.env, { reportUri: '/api/csp-report' });
   app.use((_req, res, next) => {
     for (const [k, v] of Object.entries(SECURITY_HEADERS)) res.setHeader(k, v);
+    if (CSP_HEADER) res.setHeader(CSP_HEADER, CSP_VALUE);
     next();
   });
+
+  // Browsers report CSP violations here (logged, never stored). Accepts the
+  // legacy application/csp-report body and the Reporting API format.
+  const cspReportLimiter = new RateLimiter(30, 60_000);
+  app.post(
+    '/api/csp-report',
+    express.json({ type: ['application/csp-report', 'application/reports+json', 'application/json'], limit: '16kb' }),
+    (req, res) => {
+      if (cspReportLimiter.hit(req.ip || 'unknown') === null) {
+        const body = req.body as Record<string, unknown> | unknown[];
+        const report = Array.isArray(body) ? (body[0] as { body?: unknown })?.body : (body as { 'csp-report'?: unknown })?.['csp-report'];
+        const r = (report ?? {}) as Record<string, unknown>;
+        console.warn('CSP violation', {
+          directive: r['effective-directive'] ?? r.effectiveDirective ?? r['violated-directive'],
+          blocked: String(r['blocked-uri'] ?? r.blockedURL ?? '').slice(0, 200),
+          page: String(r['document-uri'] ?? r.documentURL ?? '').slice(0, 200),
+        });
+      }
+      res.sendStatus(204);
+    },
+  );
 
   app.use(express.json({ limit: '200kb' }));
 
