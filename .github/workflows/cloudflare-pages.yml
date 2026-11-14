@@ -12,7 +12,7 @@ concurrency:
 jobs:
   deploy:
     name: Build & deploy Pages
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
       contents: read
@@ -29,11 +29,14 @@ jobs:
         env:
           VITE_GEMINI_API_KEY: ''
       - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        # Skip cleanly when CF secrets are not configured (audit/dev forks).
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: nakamas
-          directory: dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.head_ref || github.ref_name }}
+          command: pages deploy dist --project-name=nakamas --branch=${{ github.head_ref || github.ref_name }}
+      - name: Notice when secrets missing
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN == '' || secrets.CLOUDFLARE_ACCOUNT_ID == '' }}
+        run: |
+          echo "::notice::Cloudflare deploy skipped — add repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID for pages.dev previews."

@@ -32,7 +32,8 @@ jobs:
 
   e2e:
     name: E2E (Playwright)
-    runs-on: ubuntu-latest
+    # Playwright 1.60 does not support Chromium on ubuntu26.04 (ubuntu-latest as of 2026-11).
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
