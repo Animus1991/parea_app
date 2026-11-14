@@ -32,8 +32,11 @@ test.describe('Nakamas AI copilot', () => {
 
   test('asks for confirmation before changing privacy', async ({ page }) => {
     await enterDemoGuest(page);
-    await page.keyboard.press('Control+j');
+    // Open via the launcher: under parallel load an early Ctrl+J can land before
+    // the shortcut listener mounts (the shortcut itself is covered above).
+    await page.getByRole('button', { name: /Nakamas AI/ }).first().click();
     const input = page.locator('#copilot-input');
+    await expect(input).toBeVisible();
     await input.fill('κάνε το προφίλ μου ιδιωτικό');
     await input.press('Enter');
     const confirm = page.getByRole('button', { name: /Επιβεβαίωση|Confirm/ }).last();

@@ -166,7 +166,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
           {/* Match Score Badge based on User Interests */}
           {currentUser && event.tags && event.tags.length > 0 && (
-            <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700 font-bold" icon={<span className="text-2xs">🔥</span>}>
+            <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700 dark:bg-orange-500/15 dark:border-orange-500/40 dark:text-orange-200 font-bold" icon={<span className="text-2xs">🔥</span>}>
               {Math.min(98, Math.max(15, Math.round(((currentUser?.interests ?? []).filter(i => (event.tags ?? []).includes(i)).length / (event.tags ?? [1]).length) * 100) + 40))}% {t('Ταίριασμα', 'Match')}
             </Badge>
           )}
@@ -219,6 +219,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                   <span className="text-2xs font-bold text-ink-muted mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
                   <div className="flex flex-wrap gap-2 flex-1">
                     <select
+                      aria-label={t('Μέγεθος ομάδας', 'Group size')}
                       value={groupSizeFilter}
                       onChange={(e) => setGroupSizeFilter(e.target.value as any)}
                       className="filter-select bg-surface border border-border focus:outline-none focus:ring-1 focus:ring-accent/50"

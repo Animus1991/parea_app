@@ -16,6 +16,7 @@ import { getEventDetailContentTokens } from '../../lib/designTokens';
 import { buildEventQuickInfo, inferLocationType } from '../../lib/eventQuickInfo';
 import { isEventCompleted, isUserEventParticipant } from '../../lib/eventParticipation';
 import { cn } from '../../lib/utils';
+import { isDarkTheme } from '../../lib/themes';
 import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventMap';
 import { Button } from '../common/Button';
@@ -237,13 +238,18 @@ export default function EventDetailPageContent({
   darkSurface = false,
   className,
 }: EventDetailPageContentProps) {
+  // Themes without a dedicated event page (e.g. activebuddies-dark) render the
+  // classic variant; their global text remaps are light, so these info panels
+  // must use the dark surface too or the text becomes unreadable.
+  const theme = useStore((s) => s.theme);
+  const panelDark = darkSurface || isDarkTheme(theme);
   return (
     <div className={cn('space-y-4', className)}>
-      <EventDetailQuickInfoBlock event={event} accent={accent} darkSurface={darkSurface} />
+      <EventDetailQuickInfoBlock event={event} accent={accent} darkSurface={panelDark} />
       <EventDetailHostOrganizationRating
         event={event}
         accent={accent}
-        darkSurface={darkSurface}
+        darkSurface={panelDark}
       />
     </div>
   );

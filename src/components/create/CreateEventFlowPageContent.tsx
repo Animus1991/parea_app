@@ -272,10 +272,11 @@ export default function CreateEventFlowPageContent() {
                 </div>
 
                 <div>
-                  <label className={labelClass}>
+                  <label htmlFor="create-category" className={labelClass}>
                     {t("Κατηγορία", "Category")}
                   </label>
                   <select
+                    id="create-category"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     className={cn(inputClass, "bg-transparent")}
@@ -375,10 +376,11 @@ export default function CreateEventFlowPageContent() {
                 </div>
 
                 <div>
-                  <label className={cn(labelClass, "flex items-center gap-1.5")}>
+                  <label htmlFor="create-duration" className={cn(labelClass, "flex items-center gap-1.5")}>
                     <Clock className="w-3.5 h-3.5" /> {t("Διάρκεια", "Duration")}
                   </label>
                   <select
+                    id="create-duration"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
                     className={cn(inputClass, "bg-transparent")}

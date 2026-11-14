@@ -250,7 +250,9 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
             {t('Επιλέξτε Λογαριασμό (Demo)', 'Select Account (Demo)')}
           </div>
           <div className="grid grid-cols-1 gap-3">
-            {users.slice(0, 3).map((user) => (
+            {/* Three member accounts plus one seeded moderator, so Admin stays demo-able
+                now that hosting no longer grants admin rights. */}
+            {[...users.slice(0, 3), ...users.filter((u) => u.isAdmin).slice(0, 1)].map((user) => (
               <button
                 key={user.id}
                 type="button"
@@ -269,7 +271,7 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
                 <div>
                   <div className={cn('text-sm font-bold', tok.stripDark ? 'text-white' : 'text-gray-900', tok.nameHoverClass)}>{user.name}</div>
                   <div className={cn('text-xs', tok.mutedText)}>
-                    {user.isOrganizer ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')} • {user.city}
+                    {user.isAdmin ? t('Συντονιστής', 'Moderator') : user.isOrganizer ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')} • {user.city}
                   </div>
                 </div>
               </button>

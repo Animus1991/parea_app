@@ -13,6 +13,11 @@ export const A11Y_ROUTES = [
   { path: '/nearby', needsAuth: true, name: 'nearby' },
   { path: '/buddy-seek', needsAuth: true, name: 'buddy-seek' },
   { path: '/notifications', needsAuth: true, name: 'notifications' },
+  // Added after the 2026-11-14 audit (§8 #7): detail, calendar, create, admin.
+  { path: '/events/e1', needsAuth: true, name: 'event-detail' },
+  { path: '/agenda', needsAuth: true, name: 'agenda' },
+  { path: '/create', needsAuth: true, name: 'create' },
+  { path: '/admin', needsAuth: true, name: 'admin', asAdmin: true },
 ] as const;
 
 /**
@@ -58,6 +63,21 @@ export async function seedTheme(page: Page, theme: string) {
     },
     { key: STORE_KEY, themeId: theme },
   );
+}
+
+/** Signs in with the seeded demo moderator (the only demo account with Admin access). */
+export async function enterDemoAdmin(page: Page) {
+  await page.goto('/login');
+  // Demo accounts go through onboarding first; mark it done so the test lands in the app.
+  await page.evaluate((key) => {
+    const raw = localStorage.getItem(key);
+    const data = raw ? JSON.parse(raw) : { state: {}, version: 0 };
+    data.state = { ...(data.state ?? {}), onboardingCompleted: true };
+    localStorage.setItem(key, JSON.stringify(data));
+  }, STORE_KEY);
+  await page.reload();
+  await page.getByRole('button', { name: /Συντονιστής|Moderator/ }).first().click();
+  await expect(page.locator('#main-content')).toBeVisible();
 }
 
 export async function enterDemoGuest(page: Page) {
