@@ -292,7 +292,7 @@ export default function ReportIssuePageContent() {
           </form>
         </div>
       ) : (
-        <div className={cn('rounded-2xl shadow-soft border p-5 text-center', c.surfaceElevated, c.border)}>
+        <div className={cn('rounded-2xl shadow-soft border p-4 text-center', c.surfaceElevated, c.border)}>
           <div
             className={cn(
               'w-16 h-[58px] rounded-full flex items-center justify-center mx-auto mb-4',

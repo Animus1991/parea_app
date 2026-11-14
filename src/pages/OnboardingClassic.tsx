@@ -176,7 +176,7 @@ export default function OnboardingClassic() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: dir * -40 }}
             transition={{ duration: 0.25 }}
-            className="bg-white rounded-3xl p-5 shadow-soft border border-gray-100 space-y-5"
+            className="bg-white rounded-3xl p-4 shadow-soft border border-gray-100 space-y-5"
           >
             <div>
               <h2 className="text-sm font-black text-ink leading-tight">

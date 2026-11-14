@@ -133,7 +133,7 @@ function CopilotConversation({ onClose, onNavigate, headingId }: { onClose: () =
         {messages.length === 0 ? (
           <div className="space-y-4 pt-2">
             <div>
-              <p className="text-lg font-bold text-ink">
+              <p className="text-base font-bold text-ink">
                 {userName ? t(`Γεια σου, ${userName}!`, `Hi ${userName}!`) : t('Γεια σου!', 'Hi there!')}
               </p>
               <p className="mt-1 text-sm leading-relaxed text-ink-muted">

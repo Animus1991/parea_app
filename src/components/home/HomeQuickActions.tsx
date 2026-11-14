@@ -97,7 +97,7 @@ export function HomeQuickActions({
               type="button"
               onClick={() => navigate(to)}
               className={cn(
-                'p-5 rounded-2xl border text-left transition-all hover:-translate-y-0.5 shadow-soft',
+                'p-4 rounded-2xl border text-left transition-all hover:-translate-y-0.5 shadow-soft',
                 h.card,
               )}
             >
@@ -148,7 +148,7 @@ export function HomeQuickActions({
             type="button"
             onClick={() => navigate(to)}
             className={cn(
-              'p-5 rounded-2xl border text-left transition-all hover:-translate-y-0.5 shadow-soft',
+              'p-4 rounded-2xl border text-left transition-all hover:-translate-y-0.5 shadow-soft',
               p.cardSurface,
               p.borderB,
               p.cardHover,

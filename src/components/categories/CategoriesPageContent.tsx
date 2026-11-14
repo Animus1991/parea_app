@@ -142,7 +142,7 @@ export default function CategoriesPageContent() {
     <div className="max-w-full mx-auto space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div
         className={cn(
-          'p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative shadow-soft',
+          'p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative shadow-soft',
           'bg-gradient-to-br from-hero-from to-hero-to text-hero-fg',
         )}
       >
@@ -239,17 +239,19 @@ export default function CategoriesPageContent() {
           p.isDark ? 'bg-[hsl(220_16%_14%)] border-gray-700/50' : 'bg-white border-gray-100',
         )}
       >
-        <div className="flex overflow-x-auto noscrollbar min-w-full">
+        <div role="tablist" className="flex overflow-x-auto noscrollbar min-w-full">
           {CATEGORY_GROUP_TABS.map((tab) => (
             <button
               key={tab}
               type="button"
+              role="tab"
+              aria-selected={activeTab === tab}
               onClick={() => {
                 setActiveTab(tab);
                 setActiveCategory(null);
               }}
               className={cn(
-                'px-5 py-2.5 whitespace-nowrap text-sm font-bold rounded-2xl transition-all flex-1 text-center min-w-[120px]',
+                'px-4 py-2.5 whitespace-nowrap text-xs font-semibold rounded-2xl transition-all flex-1 text-center min-w-fit',
                 activeTab === tab
                   ? p.isDark
                     ? 'bg-[hsl(220_16%_18%)] text-white shadow-soft'
@@ -275,7 +277,7 @@ export default function CategoriesPageContent() {
               setActiveCategory(activeCategory === cat.name ? null : cat.name)
             }
             className={cn(
-              'rounded-2xl p-4 sm:p-5 border shadow-soft hover:shadow-soft transition-all duration-300 group flex flex-col items-center text-center',
+              'rounded-2xl p-4 border shadow-soft hover:shadow-soft transition-all duration-300 group flex flex-col items-center text-center',
               p.cardSurface,
               activeCategory === cat.name
                 ? cn(
@@ -434,7 +436,7 @@ export default function CategoriesPageContent() {
 
       <div
         className={cn(
-          'mt-12 rounded-2xl p-5 border shadow-soft flex flex-col justify-center items-center text-center gap-5 relative overflow-hidden',
+          'mt-12 rounded-2xl p-4 border shadow-soft flex flex-col justify-center items-center text-center gap-5 relative overflow-hidden',
           p.isDark ? 'bg-[hsl(220_16%_16%)] border-gray-700' : 'bg-cyan-50/50 border-cyan-100',
         )}
       >

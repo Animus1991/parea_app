@@ -172,7 +172,7 @@ export default function AchievementsPageContent() {
 
         {activeTab === 'streaks' && (
           <div className="space-y-4">
-            <Card className="p-5">
+            <Card className="p-4">
               <div className="flex items-center gap-3 mb-4">
                 <Flame className="w-5 h-5 text-orange-500" aria-hidden />
                 <div>
@@ -204,7 +204,7 @@ export default function AchievementsPageContent() {
               </ol>
             </Card>
 
-            <Card className="p-5">
+            <Card className="p-4">
               <h2 className={cn('text-sm font-bold mb-3', a.head)}>{t('Στατιστικά', 'Stats')}</h2>
               <dl className="grid grid-cols-3 gap-3">
                 {[

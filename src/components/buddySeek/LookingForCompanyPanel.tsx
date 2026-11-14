@@ -112,7 +112,7 @@ export function LookingForCompanyPanel({
               type="button"
               onClick={() => setTab('requests')}
               className={cn(
-                'flex-1 py-2 rounded-lg text-xs font-bold',
+                'flex-1 min-w-0 h-9 px-2 truncate rounded-lg text-xs font-bold',
                 tab === 'requests' ? 'bg-cyan-600 text-white' : tok.muted,
               )}
             >
@@ -122,7 +122,7 @@ export function LookingForCompanyPanel({
               type="button"
               onClick={() => setTab('groups')}
               className={cn(
-                'flex-1 py-2 rounded-lg text-xs font-bold',
+                'flex-1 min-w-0 h-9 px-2 truncate rounded-lg text-xs font-bold',
                 tab === 'groups' ? 'bg-cyan-600 text-white' : tok.muted,
               )}
             >

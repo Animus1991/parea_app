@@ -78,7 +78,7 @@ interface StatCardProps {
 
 export function StatCard({ label, value, sub, icon: Icon }: StatCardProps) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 shadow-soft">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 shadow-soft">
       <div className="flex items-start justify-between">
         <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">{label}</p>
         {Icon && <Icon className="w-4 h-4 text-gray-300" aria-hidden />}

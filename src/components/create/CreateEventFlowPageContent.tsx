@@ -209,7 +209,7 @@ export default function CreateEventFlowPageContent() {
         </div>
       </div>
 
-      <Card className="p-5 overflow-hidden relative min-h-[400px]">
+      <Card className="p-4 overflow-hidden relative min-h-[400px]">
         <AnimatePresence mode="wait">
           {step === 1 && (
             <motion.div

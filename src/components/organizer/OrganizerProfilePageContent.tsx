@@ -68,7 +68,7 @@ export default function OrganizerProfilePageContent() {
 
   return (
     <div className="mx-auto max-w-full space-y-8 relative">
-      <div className={cn('rounded-2xl border p-5 shadow-soft text-center sm:text-left sm:flex sm:items-start gap-8', p.cardSurface, p.borderB)}>
+      <div className={cn('rounded-2xl border p-4 shadow-soft text-center sm:text-left sm:flex sm:items-start gap-8', p.cardSurface, p.borderB)}>
         <div className={cn('w-32 h-32 rounded-full overflow-hidden mx-auto sm:mx-0 shrink-0 border-4 shadow-soft-md', p.isDark ? 'border-gray-700 bg-gray-800' : 'border-white bg-gray-100')}>
           {organizer.photoUrl ? (
             <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />

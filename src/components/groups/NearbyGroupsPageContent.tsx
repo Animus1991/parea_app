@@ -224,7 +224,7 @@ export default function NearbyGroupsPageContent() {
           key={mapEpoch}
           fallback={
             <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] dark:bg-gray-900 p-5 text-center">
-              <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-soft max-w-sm border border-red-100 dark:border-red-900">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-soft max-w-sm border border-red-100 dark:border-red-900">
                 <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">{t('Σφάλμα χάρτη', 'Map Error')}</h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">
@@ -511,7 +511,7 @@ export default function NearbyGroupsPageContent() {
           )}
 
           {filteredLocalGroups.length > 0 && (
-          <div className={cn("p-5 text-center border border-dashed rounded-2xl mt-6 relative overflow-hidden shadow-soft", p.isDark ? "bg-black/20 border-gray-800" : "bg-gray-50/50 border-gray-200")}>
+          <div className={cn("p-4 text-center border border-dashed rounded-2xl mt-6 relative overflow-hidden shadow-soft", p.isDark ? "bg-black/20 border-gray-800" : "bg-gray-50/50 border-gray-200")}>
             <div className={cn("w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 border", p.isDark ? "bg-cyan-900/20 text-cyan-400 border-cyan-800/50" : "bg-cyan-100 text-cyan-600 border-cyan-200")}>
               <MapIcon className="h-6 w-6" />
             </div>

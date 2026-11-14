@@ -178,7 +178,7 @@ export default function PlansPageContent() {
           const hasMeetingPoint = Boolean(group?.meetingPoint);
 
           return (
-          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
+          <Card key={event.id} className="!rounded-2xl p-4 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
               {isConfirmed ? (
@@ -292,7 +292,7 @@ export default function PlansPageContent() {
           const needed = group ? Math.max(0, group.targetSize - group.members.length) : 0;
 
           return (
-          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 opacity-80 hover:opacity-100 transition-all duration-200 flex flex-col sm:flex-row gap-4">
+          <Card key={event.id} className="!rounded-2xl p-4 opacity-80 hover:opacity-100 transition-all duration-200 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative grayscale">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
               <div className="absolute top-2 left-2 bg-gray-800 text-white px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide">
@@ -352,7 +352,7 @@ export default function PlansPageContent() {
           </div>
         )}
         {pastEvents.map((event) => (
-          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
+          <Card key={event.id} className="!rounded-2xl p-4 flex flex-col sm:flex-row gap-4">
             <div className="flex-1 flex flex-col">
               <div className={cn('flex items-center gap-2 mb-1.5 text-sm font-bold', p.muted)}>
                 <Calendar className="w-3.5 h-3.5" />

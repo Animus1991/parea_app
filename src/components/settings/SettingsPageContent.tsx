@@ -174,7 +174,7 @@ export default function SettingsPageContent() {
       <ChatPrivacySettingsPanel />
 
       {showHomeLayout && (
-        <Card className="p-5">
+        <Card className="p-4">
           <h3 className={cn("font-bold text-sm mb-1", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
           <p className={cn("text-xs font-medium mb-4", a.sub)}>
             {t(
@@ -188,7 +188,7 @@ export default function SettingsPageContent() {
 
       {/* Theme Picker */}
       {showThemePicker && (
-        <Card className="p-5">
+        <Card className="p-4">
           <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
           <p className={cn("text-xs font-medium mb-4", a.sub)}>{t('7 επαγγελματικά θέματα — επιλέξτε αυτό που σας ταιριάζει', '7 polished themes — pick what fits you best')}</p>
           <ThemePicker variant="grid" />
@@ -197,7 +197,7 @@ export default function SettingsPageContent() {
 
       {/* 2FA Setup */}
       {show2FASetup && (
-        <Card className={cn("p-5 border", a.twofaBg)}>
+        <Card className={cn("p-4 border", a.twofaBg)}>
           <h3 className={cn("font-bold text-sm mb-2", a.head)}>{t('Ρύθμιση 2FA', 'Setup 2FA')}</h3>
           <p className={cn("text-sm mb-4", a.sub)}>{t('Προσθέστε ένα επιπλέον επίπεδο ασφάλειας', 'Add an extra layer of security')}</p>
           <Button size="sm" onClick={() => { updateUserSettings({ twoFactorEnabled: true }); setShow2FASetup(false); toast.success(t('Το 2FA ενεργοποιήθηκε', '2FA enabled')); }}>
@@ -209,7 +209,7 @@ export default function SettingsPageContent() {
       {/* Notifications Prefs */}
       {showNotifications && (
         <div className="space-y-4">
-          <Card className="p-5">
+          <Card className="p-4">
             <h3 className={cn("font-bold text-sm mb-4", a.head)}>{t('Γενικές Ειδοποιήσεις', 'General Notifications')}</h3>
             <div className="space-y-3">
               {[
@@ -237,7 +237,7 @@ export default function SettingsPageContent() {
             </div>
           </Card>
 
-          <Card className="p-5">
+          <Card className="p-4">
             <h3 className={cn("font-bold text-sm mb-1", a.head)}>{t('Κατηγορίες', 'Categories')}</h3>
             <p className={cn("text-xs mb-4", a.muted)}>{t('Ειδοποίηση μόνο για αυτές τις κατηγορίες', 'Get notified for these categories only')}</p>
             <div className="grid grid-cols-2 gap-2">

@@ -95,7 +95,7 @@ export function GamificationSummary({ className }: { className?: string }) {
   return (
     <section
       aria-label={t('Η πρόοδός σου', 'Your progress')}
-      className={cn('flex flex-col gap-3 rounded-2xl border border-border bg-surface-raised p-5 shadow-soft md:flex-row md:items-center md:justify-between', className)}
+      className={cn('flex flex-col gap-3 rounded-2xl border border-border bg-surface-raised p-4 shadow-soft md:flex-row md:items-center md:justify-between', className)}
     >
       <div className="flex items-center gap-4">
         <div className="relative h-10 w-10 shrink-0">

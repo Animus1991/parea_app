@@ -177,7 +177,7 @@ export function PlansFormingEmptyState({
   return (
     <div
       className={cn(
-        'rounded-2xl border border-dashed p-5 text-center space-y-3',
+        'rounded-2xl border border-dashed p-4 text-center space-y-3',
         isDark ? 'border-white/15 bg-white/[0.02]' : 'border-gray-300 bg-gray-50/50',
       )}
     >

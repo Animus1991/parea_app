@@ -253,7 +253,7 @@ export default function AdminDashboardPageContent() {
         </div>
       </Card>
 
-      <Card className={cn('p-5', a.cardSurface)}>
+      <Card className={cn('p-4', a.cardSurface)}>
         <div className="flex items-center justify-between gap-3 mb-4">
           <h2 className={cn('text-sm font-bold', a.head)}>{t('Εκδηλώσεις & συμμετοχές ανά εβδομάδα', 'Events & participants per week')}</h2>
           <label className="sr-only" htmlFor="admin-chart-range">{t('Εύρος', 'Range')}</label>
@@ -357,7 +357,7 @@ export default function AdminDashboardPageContent() {
 
       {adminTab === 'system' && (
       <>
-      <Card className={cn('p-5 space-y-4', a.cardSurface)}>
+      <Card className={cn('p-4 space-y-4', a.cardSurface)}>
         <div>
           <h2 className={cn('text-sm font-bold', a.head)}>{t('Κανόνες ασφάλειας & πλατφόρμας', 'Safety & platform safeguards')}</h2>
           <p className={cn('text-xs mt-0.5', a.muted)}>{t('Κάθε αλλαγή αποθηκεύεται και καταγράφεται στο ιστορικό ενεργειών.', 'Every change is saved and written to the action log.')}</p>
@@ -389,7 +389,7 @@ export default function AdminDashboardPageContent() {
           })}
         </div>
       </Card>
-      <Card className={cn('p-5', a.cardSurface)}>
+      <Card className={cn('p-4', a.cardSurface)}>
         <h2 className={cn('text-sm font-bold mb-3', a.head)}>{t('Ιστορικό ενεργειών διαχείρισης', 'Admin action log')}</h2>
         {adminActions.length === 0 ? (
           <p className={cn('text-sm', a.muted)}>{t('Δεν υπάρχουν ενέργειες ακόμη.', 'No actions yet.')}</p>
@@ -413,7 +413,7 @@ export default function AdminDashboardPageContent() {
         <div className="md:col-span-7 space-y-6">
           <h2 className={cn('text-sm font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>
           {displayReports.length === 0 ? (
-            <Card className={cn('p-5 text-center', a.cardSurface)}>
+            <Card className={cn('p-4 text-center', a.cardSurface)}>
               <p className={cn('text-sm font-medium', a.muted)}>
                 {t('Δεν υπάρχουν αναφορές ακόμα. Οι αναφορές από /report εμφανίζονται εδώ.', 'No reports yet. Reports from /report appear here.')}
               </p>
@@ -485,7 +485,7 @@ export default function AdminDashboardPageContent() {
               <Flag className="h-4 w-4 text-gray-400" />
               {t('Γρήγορη Ενέργεια', 'Quick Action')}
             </h2>
-            <Card className={cn('p-5', a.isDark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200')}>
+            <Card className={cn('p-4', a.isDark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200')}>
               <p className={cn('text-xs font-bold tracking-wide mb-4', a.muted)}>{t('Αναζήτηση Χρήστη', 'Search User')}</p>
               <div className="space-y-4">
                 <div>

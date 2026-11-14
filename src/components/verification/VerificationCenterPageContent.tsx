@@ -72,7 +72,7 @@ export default function VerificationCenterPageContent() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="p-5">
+        <Card className="p-4">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', a.completedIcon)}>
@@ -89,7 +89,7 @@ export default function VerificationCenterPageContent() {
           </div>
         </Card>
 
-        <Card className="p-5">
+        <Card className="p-4">
           <div className={cn('flex items-start justify-between border-b pb-4 mb-4', a.borderB)}>
             <div className="flex items-center gap-3">
               <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center border', a.pendingIcon)}>
@@ -114,7 +114,7 @@ export default function VerificationCenterPageContent() {
           )}
         </Card>
 
-        <Card className="p-5 md:col-span-2">
+        <Card className="p-4 md:col-span-2">
           <div className={cn('flex items-start justify-between border-b pb-4 mb-4', a.borderB)}>
             <div className="flex items-center gap-3">
               <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center border', a.pendingIcon)}>
@@ -149,7 +149,7 @@ export default function VerificationCenterPageContent() {
         </Card>
       </div>
 
-      <Card className="p-5">
+      <Card className="p-4">
         <h3 className={cn('text-xs font-bold tracking-wide mb-4', a.head)}>{t('Τι ξεκλειδώνετε', 'What you unlock')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[

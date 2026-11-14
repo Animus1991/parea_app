@@ -299,7 +299,7 @@ export default function ProfilePageContent() {
         ]}
       />
 
-      <Card className="p-5" role="tabpanel" id={`profile-panel-${activeTab}`} aria-labelledby={`profile-tab-${activeTab}`}>
+      <Card className="p-4" role="tabpanel" id={`profile-panel-${activeTab}`} aria-labelledby={`profile-tab-${activeTab}`}>
         {activeTab === "overview" && (
           <div className="space-y-8 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
         {/* ─── Interests ─── */}

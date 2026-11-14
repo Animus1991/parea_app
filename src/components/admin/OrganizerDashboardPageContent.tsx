@@ -195,7 +195,7 @@ export default function OrganizerDashboardPageContent() {
     <div className="mx-auto max-w-7xl space-y-8 pb-12 animate-in fade-in duration-500">
       <div
         className={cn(
-          'relative overflow-hidden p-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-soft border',
+          'relative overflow-hidden p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-soft border',
           p.isDark ? 'bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]' : 'bg-gradient-to-br from-indigo-900 to-purple-900 border-indigo-800 text-white',
         )}
       >
@@ -239,7 +239,7 @@ export default function OrganizerDashboardPageContent() {
           <div
             key={i}
             className={cn(
-              'p-5 rounded-2xl border shadow-soft relative overflow-hidden flex flex-col justify-between',
+              'p-4 rounded-2xl border shadow-soft relative overflow-hidden flex flex-col justify-between',
               p.cardSurface,
               p.borderB,
             )}
@@ -278,7 +278,7 @@ export default function OrganizerDashboardPageContent() {
         <div role="tabpanel" id="organizer-panel-events" aria-labelledby="organizer-tab-events" className="space-y-8">
       <div
         className={cn(
-          'p-5 rounded-2xl border shadow-soft flex flex-col md:flex-row items-center justify-between gap-6',
+          'p-4 rounded-2xl border shadow-soft flex flex-col md:flex-row items-center justify-between gap-6',
           p.cardSurface,
           p.borderB,
         )}
@@ -520,7 +520,7 @@ export default function OrganizerDashboardPageContent() {
       {section === 'analytics' && (
         <div role="tabpanel" id="organizer-panel-analytics" aria-labelledby="organizer-tab-analytics">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className={cn('lg:col-span-2 p-5 rounded-2xl border shadow-soft', p.cardSurface, p.borderB)}>
+        <div className={cn('lg:col-span-2 p-4 rounded-2xl border shadow-soft', p.cardSurface, p.borderB)}>
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className={cn('text-sm font-bold tracking-tight', p.head)}>
@@ -599,7 +599,7 @@ export default function OrganizerDashboardPageContent() {
 
         <div
           className={cn(
-            'p-5 rounded-2xl border shadow-soft flex flex-col justify-between space-y-6',
+            'p-4 rounded-2xl border shadow-soft flex flex-col justify-between space-y-6',
             p.cardSurface,
             p.borderB,
           )}

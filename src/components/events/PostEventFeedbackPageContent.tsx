@@ -139,7 +139,7 @@ export default function PostEventFeedbackPageContent() {
       {step === 1 && (
         <div
           className={cn(
-            'flex flex-col sm:flex-row items-center sm:justify-center text-center sm:text-left gap-3 md:gap-4 rounded-2xl p-4 md:p-5 shadow-soft border',
+            'flex flex-col sm:flex-row items-center sm:justify-center text-center sm:text-left gap-3 md:gap-4 rounded-2xl p-4 shadow-soft border',
             p.isDark
               ? 'bg-amber-900/10 border-amber-800/50'
               : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200',
@@ -182,7 +182,7 @@ export default function PostEventFeedbackPageContent() {
       {step === 1 ? (
         <div
           className={cn(
-            'rounded-2xl p-5 shadow-soft border space-y-8',
+            'rounded-2xl p-4 shadow-soft border space-y-8',
             p.cardSurface,
             p.borderB,
           )}
@@ -492,7 +492,7 @@ export default function PostEventFeedbackPageContent() {
       ) : (
         <div
           className={cn(
-            'rounded-2xl shadow-soft border p-5 text-center flex flex-col items-center justify-center',
+            'rounded-2xl shadow-soft border p-4 text-center flex flex-col items-center justify-center',
             p.cardSurface,
             p.borderB,
           )}
@@ -521,7 +521,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div
             className={cn(
-              'flex items-center gap-3 md:gap-4 rounded-2xl p-4 md:p-5 shadow-soft border mb-8 text-left w-full max-w-sm',
+              'flex items-center gap-3 md:gap-4 rounded-2xl p-4 shadow-soft border mb-8 text-left w-full max-w-sm',
               p.isDark
                 ? 'bg-amber-900/10 border-amber-800/50'
                 : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200',

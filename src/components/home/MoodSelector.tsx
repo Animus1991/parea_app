@@ -38,7 +38,7 @@ export function MoodSelector({ activeMood, onSelectMood, className = '' }: MoodS
                 onSelectMood(isActive ? null : mood.id, isActive ? [] : mood.categories)
               }
               className={cn(
-                'flex items-center gap-2 px-4 py-2.5 rounded-2xl border transition-all duration-300 shrink-0 shadow-soft',
+                'flex items-center gap-2 px-4 h-10 rounded-2xl border transition-all duration-300 shrink-0 shadow-soft',
                 palette,
                 isActive
                   ? cn(

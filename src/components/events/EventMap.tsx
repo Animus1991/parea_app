@@ -151,7 +151,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
         </p>
         <div
           className={cn(
-            'w-full rounded-2xl border p-5 text-center shadow-soft',
+            'w-full rounded-2xl border p-4 text-center shadow-soft',
             tok.frame,
             darkSurface ? 'bg-gray-800/50' : 'bg-gray-50',
           )}

@@ -318,13 +318,13 @@ export function EventDetailGroupCard({
       <Button
         variant="primary"
         size="sm"
-        className={cn('w-full font-semibold transition-all duration-200', tok.cta)}
+        className={cn('w-full min-w-0 font-semibold transition-all duration-200', tok.cta)}
         onClick={(e) => {
           e.stopPropagation();
           navigate(`/events/${event.id}/join?groupId=${group.id}`);
         }}
       >
-        {t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
+        <span className="min-w-0 truncate">{t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}</span>
       </Button>
     </div>
   );

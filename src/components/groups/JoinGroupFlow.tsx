@@ -96,7 +96,7 @@ export default function JoinGroupFlow() {
   };
 
   return (
-    <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-5 shadow-soft mt-8">
+    <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-4 shadow-soft mt-8">
       {!gate.allowed && (
         <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm font-medium flex gap-2">
           <ShieldCheck className="w-5 h-5 shrink-0" />

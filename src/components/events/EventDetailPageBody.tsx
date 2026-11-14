@@ -178,7 +178,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
       <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-5 lg:grid-cols-3">
         {/* Left Column: Details */}
         <div className="space-y-6 md:space-y-8 md:col-span-3 lg:col-span-2">
-          <section className="space-y-4 text-sm text-ink leading-relaxed bg-surface-raised rounded-2xl border border-border p-5 shadow-soft">
+          <section className="space-y-4 text-sm text-ink leading-relaxed bg-surface-raised rounded-2xl border border-border p-4 shadow-soft">
              <EventDetailMetaSection event={event} accent={accent} darkSurface={darkSurface} />
              <EventMap event={event} accent={accent} darkSurface={darkSurface} />
              <EventDetailAboutSection event={event} accent={accent} darkSurface={darkSurface} />
@@ -191,7 +191,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
         {/* Right Column: Groups & Actions */}
         <div className="space-y-6 md:col-span-2 lg:col-span-1">
-          <div className="rounded-2xl border border-border bg-surface-raised p-5 shadow-soft sticky top-24">
+          <div className="rounded-2xl border border-border bg-surface-raised p-4 shadow-soft sticky top-24">
             <LookingForCompanyPanel event={event} accent={accent} darkSurface={darkSurface} />
 
             <h3 className="text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>

@@ -309,7 +309,7 @@ export default function InboxPageContent() {
       {activeTab === 'notifications' && (
         <div
           className={cn(
-            'rounded-2xl border shadow-soft p-5 text-center flex flex-col items-center',
+            'rounded-2xl border shadow-soft p-4 text-center flex flex-col items-center',
             p.cardSurface,
             p.borderB,
           )}

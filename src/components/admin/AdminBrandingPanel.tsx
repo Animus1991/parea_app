@@ -21,7 +21,7 @@ export function AdminBrandingPanel() {
   const previewThemes = (Object.keys(THEME_LABELS) as ThemeId[]).slice(0, 4);
 
   return (
-    <Card className={cn('p-5 space-y-4', a.cardSurface)}>
+    <Card className={cn('p-4 space-y-4', a.cardSurface)}>
       <div className="flex items-center gap-2">
         <Palette className={cn('w-5 h-5', a.iconAccent)} />
         <h2 className={cn('text-sm font-bold', a.head)}>{t('Branding & Θέμα', 'Branding & Theme')}</h2>

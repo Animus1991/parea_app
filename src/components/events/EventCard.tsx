@@ -381,10 +381,10 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             </div>
             <button
               onClick={handleBecomeHost}
-              className={cn("w-full py-2 rounded-2xl font-bold transition-colors flex items-center justify-center gap-1.5 shadow-soft", EVENT_CARD_TYPO.cta, isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
+              className={cn("w-full min-w-0 h-10 px-2 rounded-2xl text-xs font-semibold whitespace-nowrap transition-colors flex items-center justify-center gap-1.5 shadow-soft", isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
             >
-              <Crown className="w-3.5 h-3.5" />
-              {t('Γίνε Διοργανωτής Nakamas', 'Become Nakamas organizer')}
+              <Crown className="w-3.5 h-3.5 shrink-0" />
+              <span className="min-w-0 truncate">{t('Γίνε Διοργανωτής Nakamas', 'Become Nakamas organizer')}</span>
             </button>
           </div>
         )}
@@ -451,7 +451,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   }
                   navigate(`/events/${event.id}/join`);
                 }}
-                className={cn("px-5 py-2 min-h-10 text-white font-bold rounded-full shadow-soft", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
+                className={cn("px-4 h-10 text-xs font-semibold whitespace-nowrap text-white rounded-full shadow-soft", accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
               >
                 {t("Βρες Nakamas", "Find Nakamas")}
               </button>

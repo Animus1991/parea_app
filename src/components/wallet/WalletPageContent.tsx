@@ -41,7 +41,7 @@ export default function WalletPageContent() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className={cn("p-5 text-white shadow-soft-md", a.balanceBg)}>
+        <Card className={cn("p-4 text-white shadow-soft-md", a.balanceBg)}>
           <div className={cn("flex items-center gap-2 mb-2", a.balanceLabel)}>
             <Euro className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
@@ -52,7 +52,7 @@ export default function WalletPageContent() {
           </Button>
         </Card>
 
-        <Card className="p-5">
+        <Card className="p-4">
           <div className={cn("flex items-center gap-2 mb-2", a.sub)}>
             <Clock className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Εκκρεμεί', 'Pending')}</h3>
@@ -63,7 +63,7 @@ export default function WalletPageContent() {
           </p>
         </Card>
 
-        <Card className={cn("p-5 flex flex-col justify-center border", a.bankBg)}>
+        <Card className={cn("p-4 flex flex-col justify-center border", a.bankBg)}>
           <div className="flex items-center gap-3 mb-3">
             <div className={cn("w-10 h-10 rounded-full flex items-center justify-center border", a.bankIcon)}>
               <Building2 className="w-5 h-5" />

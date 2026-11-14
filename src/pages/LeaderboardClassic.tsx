@@ -249,7 +249,7 @@ export default function LeaderboardClassic() {
             );
           })}
           {displayEntries.length === 0 && (
-            <Card className="p-5 text-center">
+            <Card className="p-4 text-center">
               <p className={cn('text-sm font-medium', p.muted)}>
                 {t('Δεν βρέθηκαν εγγραφές.', 'No entries found.')}
               </p>
