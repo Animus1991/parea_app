@@ -73,7 +73,7 @@ export default function OrganizerProfilePageContent() {
           {organizer.photoUrl ? (
             <img referrerPolicy="no-referrer" src={organizer.photoUrl} alt={organizer.name} className="w-full h-full object-cover" />
           ) : (
-            <div className={cn('w-full h-full flex items-center justify-center text-2xl font-bold', p.muted)}>
+            <div className={cn('w-full h-full flex items-center justify-center text-lg font-bold', p.muted)}>
               {organizer.name.substring(0, 2).toUpperCase()}
             </div>
           )}
@@ -162,7 +162,7 @@ export default function OrganizerProfilePageContent() {
                   <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0">
                     <div className={cn('w-full h-full flex flex-col items-center justify-center', p.isDark ? 'bg-cyan-900/30 text-cyan-300' : 'bg-cyan-50 text-cyan-700')}>
                       <span className="text-2xs font-bold tracking-wide">{format(parseISO(event.date), 'MMM')}</span>
-                      <span className="text-xl font-bold leading-none">{format(parseISO(event.date), 'd')}</span>
+                      <span className="text-lg font-bold leading-none">{format(parseISO(event.date), 'd')}</span>
                     </div>
                   </div>
                   <div className="flex-1">

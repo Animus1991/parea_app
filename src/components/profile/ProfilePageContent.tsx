@@ -174,7 +174,7 @@ export default function ProfilePageContent() {
               <span className={`text-2xs font-bold uppercase tracking-wider ${sub}`}>{stat.label}</span>
               <stat.icon className={`w-4 h-4 ${stat.color}`} aria-hidden />
             </div>
-            <p className={`text-2xl font-extrabold mt-2 tabular-nums ${heading}`}>{stat.value}</p>
+            <p className={`text-lg font-extrabold mt-2 tabular-nums ${heading}`}>{stat.value}</p>
           </button>
         ))}
       </div>
@@ -190,7 +190,7 @@ export default function ProfilePageContent() {
                 {photoUrl ? (
                   <img referrerPolicy="no-referrer" src={photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
                 ) : (
-                  <span className={`font-bold text-2xl ${a.avatarText}`}>{currentUser.name.substring(0, 2)}</span>
+                  <span className={`font-bold text-lg ${a.avatarText}`}>{currentUser.name.substring(0, 2)}</span>
                 )}
               </div>
               <button
@@ -217,7 +217,7 @@ export default function ProfilePageContent() {
                   </div>
                 ) : (
                   <div className="group/name relative flex w-full items-center justify-between">
-                    <h2 className={`text-xl font-extrabold pr-8 ${heading}`}>{currentUser.name}</h2>
+                    <h2 className={`text-lg font-extrabold pr-8 ${heading}`}>{currentUser.name}</h2>
                     <button
                       type="button"
                       onClick={() => setIsEditingName(true)}

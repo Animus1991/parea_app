@@ -209,7 +209,7 @@ export default function PostEventFeedbackPageContent() {
                         ),
                   )}
                 >
-                  <span className="text-2xl drop-shadow-soft">{m.emoji}</span>
+                  <span className="text-lg drop-shadow-soft">{m.emoji}</span>
                   <span
                     className={cn(
                       'text-xs font-bold',
@@ -509,7 +509,7 @@ export default function PostEventFeedbackPageContent() {
             />
           </div>
 
-          <h2 className={cn('text-2xl font-extrabold tracking-tight mb-3', p.head)}>
+          <h2 className={cn('text-lg font-extrabold tracking-tight mb-3', p.head)}>
             {t('Ευχαριστούμε!', 'Thank You!')}
           </h2>
           <p className={cn('text-base font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
@@ -538,7 +538,7 @@ export default function PostEventFeedbackPageContent() {
               <Trophy className="w-6 h-6" />
             </div>
             <div>
-              <p className={cn('text-xl font-black', p.isDark ? 'text-amber-400' : 'text-amber-900')}>
+              <p className={cn('text-lg font-black', p.isDark ? 'text-amber-400' : 'text-amber-900')}>
                 +25 XP
               </p>
               <p

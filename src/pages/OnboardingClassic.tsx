@@ -179,7 +179,7 @@ export default function OnboardingClassic() {
             className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 space-y-5"
           >
             <div>
-              <h2 className="text-xl font-black text-ink leading-tight">
+              <h2 className="text-lg font-black text-ink leading-tight">
                 {t(stepTitles[step].gr, stepTitles[step].en)}
               </h2>
               <p className="text-sm text-gray-500 font-medium mt-1">
@@ -259,7 +259,7 @@ export default function OnboardingClassic() {
                         : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
                     }`}
                   >
-                    <span className="text-2xl leading-none">{gs.emoji}</span>
+                    <span className="text-lg leading-none">{gs.emoji}</span>
                     <span className="font-semibold text-base">{t(gs.gr, gs.en)}</span>
                     {selectedGroupSize === gs.id && (
                       <CheckCircle2 className="w-4 h-4 ml-auto text-accent" />
@@ -282,7 +282,7 @@ export default function OnboardingClassic() {
                         : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
                     }`}
                   >
-                    <span className="text-2xl leading-none mt-0.5">{al.emoji}</span>
+                    <span className="text-lg leading-none mt-0.5">{al.emoji}</span>
                     <div className="text-left">
                       <p className="font-bold text-base">{t(al.gr, al.en)}</p>
                       <p
@@ -316,7 +316,7 @@ export default function OnboardingClassic() {
                           : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
                       }`}
                     >
-                      <span className="text-xl leading-none">{sc.emoji}</span>
+                      <span className="text-lg leading-none">{sc.emoji}</span>
                       <span className="font-semibold text-sm text-left leading-snug">
                         {t(sc.gr, sc.en)}
                       </span>
@@ -339,7 +339,7 @@ export default function OnboardingClassic() {
                         : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
                     }`}
                   >
-                    <span className="text-2xl leading-none">{lp.emoji}</span>
+                    <span className="text-lg leading-none">{lp.emoji}</span>
                     <span className="font-semibold text-base">{t(lp.gr, lp.en)}</span>
                     {selectedLocation === lp.id && (
                       <CheckCircle2 className="w-4 h-4 ml-auto text-accent" />

@@ -396,7 +396,7 @@ export default function NearbyGroupsPageContent() {
         </div>
 
         <div className={cn("p-5 md:p-5 border-b shrink-0", p.borderB)}>
-          <h2 className={cn("text-2xl font-extrabold tracking-tight", p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
+          <h2 className={cn("text-lg font-extrabold tracking-tight", p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
           <p className={cn("text-sm font-medium mt-1.5 flex items-center gap-1.5", p.muted)}>
             <Navigation className="h-4 w-4" /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius}km</span>
           </p>

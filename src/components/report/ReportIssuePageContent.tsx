@@ -301,7 +301,7 @@ export default function ReportIssuePageContent() {
           >
             <CheckCircle2 className={cn('w-8 h-8', p.isDark ? 'text-emerald-300' : 'text-emerald-600')} />
           </div>
-          <h2 className={cn('text-2xl font-bold mb-2', p.head)}>{t('Η αναφορά υποβλήθηκε', 'Report Submitted')}</h2>
+          <h2 className={cn('text-lg font-bold mb-2', p.head)}>{t('Η αναφορά υποβλήθηκε', 'Report Submitted')}</h2>
           <p className={cn('text-lg max-w-md mx-auto mb-4', p.sub)}>
             {t(
               'Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.',

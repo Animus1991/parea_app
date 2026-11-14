@@ -107,7 +107,7 @@ export default function JoinGroupFlow() {
       {step === 1 && (
         <div className="space-y-4">
           <div>
-            <h2 className="text-xl font-bold text-ink">
+            <h2 className="text-lg font-bold text-ink">
               {t('Συμμετοχή ή δημιουργία ομάδας', 'Join or Create a Group')}
             </h2>
             <p className="mt-1 text-sm text-gray-500 font-medium">{event.title}</p>
@@ -252,7 +252,7 @@ export default function JoinGroupFlow() {
       {step === 3 && (
         <div className="text-center space-y-4 py-4">
           <CheckCircle className="w-11 h-11 text-emerald-500 mx-auto" />
-          <h3 className="text-xl font-bold">{t('Είστε μέσα!', "You're in!")}</h3>
+          <h3 className="text-lg font-bold">{t('Είστε μέσα!', "You're in!")}</h3>
           <p className="text-sm text-gray-500 font-medium">
             {t('Το group chat ξεκλειδώνει όταν η ομάδα επιβεβαιωθεί.', 'Group chat unlocks when the group is confirmed.')}
           </p>

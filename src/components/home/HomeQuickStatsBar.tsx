@@ -53,7 +53,7 @@ export function HomeQuickStatsBar() {
             </span>
           </div>
           <div className="flex items-baseline gap-1">
-            <span className={`text-xl font-black leading-none tabular-nums ${h.statValue}`}>
+            <span className={`text-lg font-black leading-none tabular-nums ${h.statValue}`}>
               {value}
             </span>
             <span className={`text-xs font-semibold ${h.statUnit}`}>{unit}</span>

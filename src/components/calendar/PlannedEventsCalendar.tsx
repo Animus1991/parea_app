@@ -193,7 +193,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
             p.borderB,
           )}
         >
-          <h2 className={cn('font-extrabold text-lg md:text-2xl capitalize', p.head)}>
+          <h2 className={cn('font-extrabold text-base md:text-lg capitalize', p.head)}>
             {format(currentDate, 'MMMM yyyy')}
           </h2>
           <div className="flex items-center gap-1">

@@ -15,8 +15,8 @@ export const APP_TYPO = {
   cardTitle: 'text-sm font-bold leading-snug',
   /** Modal / panel titles */
   panelTitle: 'text-base font-bold',
-  /** Hero / page titles */
-  pageTitle: 'text-base md:text-xl font-bold tracking-tight leading-tight',
+  /** Hero / page titles — capped near body for harmony */
+  pageTitle: 'text-base md:text-lg font-bold tracking-tight leading-tight',
   heroSubtitle: 'text-xs md:text-sm font-medium leading-relaxed',
 } as const;
 
@@ -92,8 +92,8 @@ export const BUDDY_SEEK_TYPO = {
 
 /** App shell nav density */
 export const SHELL_TYPO = {
-  logo: 'text-lg lg:text-xl',
-  logoMobile: 'text-base',
+  logo: 'text-base lg:text-lg',
+  logoMobile: 'text-sm',
   sectionLabel: 'text-xs font-bold tracking-wide',
   dashboard: 'text-xs font-bold tracking-wide',
   search: 'text-xs',
@@ -153,7 +153,7 @@ export const CALENDAR_TYPO = {
 /** Home feed density */
 export const HOME_TYPO = {
   heroBadge: 'text-xs font-bold tracking-wide',
-  heroTitle: 'text-base md:text-xl font-bold tracking-tight leading-tight',
+  heroTitle: 'text-base md:text-lg font-bold tracking-tight leading-tight',
   heroSub: 'text-xs md:text-sm font-medium',
   heroSubtitle: 'text-xs md:text-sm font-medium leading-relaxed',
   heroStats: 'text-2xs font-bold tracking-wide',
@@ -186,7 +186,7 @@ export const REPORT_TYPO = {
 /** Onboarding wizard density */
 export const ONBOARDING_TYPO = {
   stepLabel: 'text-2xs font-bold tracking-wide uppercase',
-  title: 'text-base md:text-xl font-bold leading-tight',
+  title: 'text-base md:text-lg font-bold leading-tight',
   subtitle: 'text-xs md:text-sm font-medium leading-relaxed',
   optionTitle: 'text-xs font-bold',
   optionBody: 'text-2xs font-medium leading-relaxed',

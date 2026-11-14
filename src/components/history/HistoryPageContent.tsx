@@ -74,22 +74,22 @@ export default function HistoryPageContent() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <TrendingUp className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-xl font-black", a.head)}>{totalAttended}</p>
+          <p className={cn("text-lg font-black", a.head)}>{totalAttended}</p>
           <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Εκδηλώσεις', 'Events')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Star className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-xl font-black", a.head)}>{avgRating.toFixed(1)}</p>
+          <p className={cn("text-lg font-black", a.head)}>{avgRating.toFixed(1)}</p>
           <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Μ.Ο. Βαθμολογία', 'Avg Rating')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Users className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-xl font-black", a.head)}>{peopleMet}</p>
+          <p className={cn("text-lg font-black", a.head)}>{peopleMet}</p>
           <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Άτομα', 'People Met')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Award className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-xl font-black", a.head)}>{reviewedCount}/{totalAttended}</p>
+          <p className={cn("text-lg font-black", a.head)}>{reviewedCount}/{totalAttended}</p>
           <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Αξιολογήσεις', 'Reviews')}</p>
         </Card>
       </div>

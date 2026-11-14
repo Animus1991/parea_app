@@ -220,7 +220,7 @@ export function HomeLoggedInHero({
           </div>
           {currentUser && (
             <div className="hidden md:flex flex-col items-center gap-2 shrink-0">
-              <div className="w-12 h-12 rounded-full border-4 border-white/30 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-xl shadow-soft">
+              <div className="w-12 h-12 rounded-full border-4 border-white/30 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-lg shadow-soft">
                 {score}
               </div>
               <span className="text-xs font-bold text-white/80 uppercase tracking-wider flex items-center gap-1">

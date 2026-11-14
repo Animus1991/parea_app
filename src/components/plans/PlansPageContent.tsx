@@ -102,7 +102,7 @@ export default function PlansPageContent() {
             <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center mb-2', p.statBg)}>
               <s.icon className={cn('w-5 h-5', p.statVal)} />
             </div>
-            <p className={cn('text-2xl font-black tabular-nums leading-none', p.head)}>{s.count}</p>
+            <p className={cn('text-lg font-black tabular-nums leading-none', p.head)}>{s.count}</p>
             <p className={cn('text-xs font-semibold mt-1', p.muted)}>{s.label}</p>
           </button>
         ))}
@@ -199,7 +199,7 @@ export default function PlansPageContent() {
 
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-start gap-2 mb-2">
-                <h3 className={cn('font-bold text-xl', p.head)}>{event.title}</h3>
+                <h3 className={cn('font-bold text-lg', p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
                   <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
                   <div className={cn('text-sm font-medium', p.muted)}>{event.time}</div>
@@ -302,7 +302,7 @@ export default function PlansPageContent() {
 
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-start gap-2 mb-2">
-                <h3 className={cn('font-bold text-xl', p.head)}>{event.title}</h3>
+                <h3 className={cn('font-bold text-lg', p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
                   <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
                 </div>
@@ -358,7 +358,7 @@ export default function PlansPageContent() {
                 <Calendar className="w-3.5 h-3.5" />
                 {format(parseISO(event.date), 'MMMM d, yyyy')}
               </div>
-              <h3 className={cn('font-bold text-xl mb-3', p.head)}>{event.title}</h3>
+              <h3 className={cn('font-bold text-lg mb-3', p.head)}>{event.title}</h3>
 
               {!feedbackSubmitted[event.id] ? (
                 <div className={cn('p-3 rounded-2xl flex items-center justify-between mt-auto border', p.statBg)}>
