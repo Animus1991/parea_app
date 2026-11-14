@@ -54,3 +54,19 @@ Prior rows remain ✅ / 🟡 as in commit `7fe38f2` + follow-ups (i18n, Modal a1
 4. OAuth that works with **zero** credentials (impossible — needs Google client id or Firebase).
 
 **Verdict:** engineering acceptance for the UI/UX plan ≈ **closed**. Production cert / funded payments / staffed support require ops + secrets outside the repo.
+
+---
+
+## G. AI-first upgrade (Φ23–Φ25, 14/11/2026)
+
+Full detail: [`docs/AI_FIRST_AUDIT_AND_PLAN.md`](./AI_FIRST_AUDIT_AND_PLAN.md) §Ι.
+
+| Area | Status | Evidence |
+|---|---|---|
+| Nakamas AI copilot acts across the app (33 tools, confirm + undo) | ✅ | `src/ai/*`, `e2e/copilot.spec.ts` |
+| Works with zero keys (on-device bilingual engine) | ✅ | `src/ai/localEngine.test.ts` (24 cases) |
+| Gemini function calling via server proxy | 🟡 | code path ready; needs `GEMINI_API_KEY` on the server |
+| Gemini key no longer inlined in the client bundle | ✅ | `vite.config.ts` |
+| Copilot panel axe-clean (results + confirmation) in 5 CI themes | ✅ | `e2e/copilot.spec.ts` |
+| Gamification, admin, organizer, trust numbers are live (no hardcoded metrics) | ✅ | `src/lib/achievements.ts`, admin/organizer/trust page contents |
+| a11y page × theme matrix runs to completion | ✅ | 50/50 (was stopping at test 1 on animation flake) |

@@ -29,6 +29,8 @@ See `docs/MERGE_INTEGRATION.md` for ZIP merge phase log.
 
 **Event detail groups:** `EventDetailGroupCard` shared across themed pages (thin `Group` wrapper per theme file).
 
+**Nakamas AI copilot (Φ23–Φ24):** `src/ai/` holds a single action registry (`actions.ts`, risk tiers `safe` / `confirm` / `destructive`, undo) that maps natural-language requests onto existing store actions and routes. Two engines produce the same tool calls: Gemini function calling through `server.ts` (`/api/ai/status`, `/api/ai/copilot`, key server-side only) and a deterministic Greek/English on-device engine (`localEngine.ts`) used whenever no key or network is available. UI: `components/copilot/*` (docked panel ≥1024px, full-screen dialog on phones, `Ctrl/⌘ J`, palette bridge, inline prompts). Language now lives in a persisted `languageStore` so the AI (and refreshes) can change it. See `docs/AI_FIRST_AUDIT_AND_PLAN.md`.
+
 Dev-only scripts live in `scripts/`; legacy AI Studio repair tools in `app/applet/` are not part of the build. 
 
 ## Mermaid System Architecture Diagram
