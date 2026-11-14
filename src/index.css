@@ -598,20 +598,21 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   color: hsl(220 14% 82%) !important;
 }
 
-/* Genuine white panels in vibrant/bento/neon dark → keep dark, readable text */
-[data-theme="vibrant-dark"] .bg-white,
-[data-theme="bento-dark"] .bg-white,
-[data-theme="neon-dark"] .bg-white {
+/* Genuine white panels in vibrant/bento/neon dark → keep dark, readable text.
+   Skip shells that also declare dark:bg-* (they paint dark in dark themes). */
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) {
   color: rgb(17 24 39);
 }
-[data-theme="vibrant-dark"] .bg-white .text-gray-400,
-[data-theme="bento-dark"] .bg-white .text-gray-400,
-[data-theme="neon-dark"] .bg-white .text-gray-400 {
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-400,
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-400,
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-400 {
   color: rgb(107 114 128) !important;
 }
-[data-theme="vibrant-dark"] .bg-white .text-gray-500,
-[data-theme="bento-dark"] .bg-white .text-gray-500,
-[data-theme="neon-dark"] .bg-white .text-gray-500 {
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-500,
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-500,
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-500 {
   color: rgb(75 85 99) !important;
 }
 
