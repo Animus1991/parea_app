@@ -34,6 +34,7 @@ test.describe('a11y page × theme matrix', () => {
   for (const theme of A11Y_THEMES_CI) {
     test.describe(`theme=${theme}`, () => {
       test.beforeEach(async ({ page }) => {
+        await page.emulateMedia({ reducedMotion: 'reduce' });
         await seedTheme(page, theme);
       });
 

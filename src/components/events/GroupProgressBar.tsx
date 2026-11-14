@@ -37,9 +37,11 @@ export function GroupProgressBar({
           tok.isDark ? 'bg-gray-700/50' : 'bg-gray-100',
         )}
         role="progressbar"
+        aria-label={t('Πρόοδος ομάδας', 'Group progress')}
         aria-valuenow={current}
         aria-valuemin={0}
         aria-valuemax={target}
+        aria-valuetext={t(`${current} από ${target} μέλη`, `${current} of ${target} members`)}
       >
         <div
           className={cn('h-full rounded-full transition-all duration-500', {

@@ -75,6 +75,13 @@ export async function expectNoSeriousAxeViolations(
   page: Page,
   opts: { includeColorContrast?: boolean } = {},
 ) {
+  // Entrance animations (fade/slide-in) make axe sample half-transparent colours and
+  // report flaky contrast failures. The app honours prefers-reduced-motion globally,
+  // so scanning under reduced motion measures the final, user-visible colours.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page
+    .waitForFunction(() => document.getAnimations().every((a) => a.playState !== 'running'), undefined, { timeout: 3000 })
+    .catch(() => undefined);
   let builder = new AxeBuilder({ page }).withTags([
     'wcag2a',
     'wcag2aa',

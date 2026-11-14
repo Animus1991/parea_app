@@ -5,6 +5,7 @@ import App from './App.tsx';
 import './index.css';
 import { bootstrap } from './lib/bootstrap';
 import { LanguageProvider } from './lib/i18n';
+import { MotionConfig } from 'motion/react';
 
 bootstrap();
 
@@ -53,7 +54,10 @@ createRoot(document.getElementById('root')!).render(
     <ErrorBoundary>
       <BrowserRouter>
         <LanguageProvider>
-          <App />
+          {/* WCAG 2.3.3 — JS-driven (motion) animations also honour prefers-reduced-motion, like the CSS ones. */}
+          <MotionConfig reducedMotion="user">
+            <App />
+          </MotionConfig>
         </LanguageProvider>
       </BrowserRouter>
     </ErrorBoundary>

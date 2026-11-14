@@ -402,7 +402,16 @@ export default function NearbyGroupsPageContent() {
           </p>
 
           <div className="mt-6 flex items-center gap-4">
-            <input type="range" min="1" max="25" value={radius} onChange={(e) => setRadius(parseInt(e.target.value))} className="flex-1 accent-cyan-500" />
+            <input
+              type="range"
+              min="1"
+              max="25"
+              value={radius}
+              onChange={(e) => setRadius(parseInt(e.target.value))}
+              aria-label={t("Ακτίνα αναζήτησης (χλμ)", "Search radius (km)")}
+              aria-valuetext={`${radius} km`}
+              className="flex-1 accent-cyan-500"
+            />
           </div>
 
           <div className="flex gap-2.5 mt-6 overflow-x-auto noscrollbar pb-1">

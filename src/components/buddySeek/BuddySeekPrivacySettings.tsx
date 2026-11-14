@@ -32,10 +32,11 @@ export function BuddySeekPrivacySettings() {
       </div>
 
       <div>
-        <label className={cn('text-xs font-bold mb-1 block', a.head)}>
+        <label htmlFor="bs-visibility" className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Προεπιλεγμένη ορατότητα αιτήματος', 'Default request visibility')}
         </label>
         <select
+          id="bs-visibility"
           value={prefs.defaultVisibility}
           onChange={(e) => setPrefs({ defaultVisibility: e.target.value as VisibilityMode })}
           className={inputClass}
@@ -51,10 +52,11 @@ export function BuddySeekPrivacySettings() {
       </div>
 
       <div>
-        <label className={cn('text-xs font-bold mb-1 block', a.head)}>
+        <label htmlFor="bs-exposure" className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Προεπιλεγμένη έκθεση προφίλ', 'Default profile exposure')}
         </label>
         <select
+          id="bs-exposure"
           value={prefs.defaultProfileExposure}
           onChange={(e) => setPrefs({ defaultProfileExposure: e.target.value as ProfileExposure })}
           className={inputClass}
@@ -70,10 +72,11 @@ export function BuddySeekPrivacySettings() {
       </div>
 
       <div>
-        <label className={cn('text-xs font-bold mb-1 block', a.head)}>
+        <label htmlFor="bs-photo" className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Φωτογραφία', 'Photo')}
         </label>
         <select
+          id="bs-photo"
           value={prefs.photoRevealPolicy}
           onChange={(e) => setPrefs({ photoRevealPolicy: e.target.value as PhotoRevealPolicy })}
           className={inputClass}
@@ -86,10 +89,11 @@ export function BuddySeekPrivacySettings() {
       </div>
 
       <div>
-        <label className={cn('text-xs font-bold mb-1 block', a.head)}>
+        <label htmlFor="bs-interests" className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Ενδιαφέροντα', 'Interests')}
         </label>
         <select
+          id="bs-interests"
           value={prefs.interestVisibility}
           onChange={(e) => setPrefs({ interestVisibility: e.target.value as InterestVisibilityMode })}
           className={inputClass}

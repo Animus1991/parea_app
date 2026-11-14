@@ -160,6 +160,14 @@ const PAIRS = [
   { fg: 'color-brand-fg', bg: 'color-brand', min: AA_TEXT, label: 'brand-fg on brand' },
   { fg: 'color-accent-fg', bg: 'color-accent', min: AA_TEXT, label: 'accent-fg on accent' },
   { fg: 'color-hero-fg', bg: 'color-hero-from', min: AA_UI, label: 'hero-fg on hero-from' },
+  // Φ24/Φ25 — pairs relied on by token-only components (Nakamas AI panel, segmented tabs,
+  // gamification hub). Accent is used as TEXT only on surface-raised; on accent-soft and
+  // surface it is reserved for icons (non-text, 3:1) with ink text. Muted text is never
+  // placed on accent-soft (fails AA in Active Buddies themes).
+  { fg: 'color-ink-muted', bg: 'color-surface-raised', min: AA_TEXT, label: 'ink-muted on surface-raised' },
+  { fg: 'color-accent', bg: 'color-surface-raised', min: AA_TEXT, label: 'accent text on surface-raised' },
+  { fg: 'color-ink', bg: 'color-accent-soft', min: AA_TEXT, label: 'ink on accent-soft' },
+  { fg: 'color-accent', bg: 'color-accent-soft', min: AA_UI, label: 'accent icon on accent-soft' },
 ];
 
 const failures = [];

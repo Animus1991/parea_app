@@ -150,6 +150,7 @@ export function HomeFiltersSection({
       <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar items-center flex-wrap">
         <select
           className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          aria-label={t('Φίλτρο τιμής', 'Price filter')}
           value={priceFilter}
           onChange={(e) => setPriceFilter(e.target.value as HomePriceFilter)}
         >
@@ -163,6 +164,7 @@ export function HomeFiltersSection({
 
         <select
           className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          aria-label={t('Φίλτρο ημερομηνίας', 'Date filter')}
           value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value as HomeDateFilter)}
         >
@@ -174,6 +176,7 @@ export function HomeFiltersSection({
 
         <select
           className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          aria-label={t('Φίλτρο άνεσης & ασφάλειας', 'Comfort & safety filter')}
           value={safetyFilter}
           onChange={(e) => setSafetyFilter(e.target.value as HomeSafetyFilter)}
         >
@@ -187,6 +190,7 @@ export function HomeFiltersSection({
 
         <select
           className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          aria-label={t('Φίλτρο απόστασης', 'Distance filter')}
           value={radiusFilter}
           onChange={(e) => setRadiusFilter(e.target.value as HomeRadiusFilter)}
         >
@@ -210,7 +214,8 @@ export function HomeFiltersSection({
         <div className="relative ml-auto">
           <select
             className={`text-sm pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none transition-all duration-200 ${h.select}`}
-            value={sortParam}
+            aria-label={t('Ταξινόμηση', 'Sort by')}
+          value={sortParam}
             onChange={(e) => setSortParam(e.target.value as HomeSortParam)}
           >
             <option value="Relevance">{t('home.feed.sort.relevance', 'Συνάφεια')}</option>
