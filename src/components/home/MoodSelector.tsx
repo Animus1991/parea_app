@@ -2,6 +2,7 @@ import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { HOME_MOODS } from '../../lib/homeMoodConstants';
+import { HOME_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 
 interface MoodSelectorProps {
@@ -36,7 +37,8 @@ export function MoodSelector({ activeMood, onSelectMood, className = '' }: MoodS
                 onSelectMood(isActive ? null : mood.id, isActive ? [] : mood.categories)
               }
               className={cn(
-                'flex items-center gap-2 px-4 py-2.5 rounded-2xl border transition-all duration-300 shrink-0 shadow-soft',
+                HOME_TYPO.filterChipMood,
+                'gap-2 px-4 rounded-2xl border transition-all duration-300 shrink-0 shadow-soft tracking-wide',
                 palette,
                 isActive
                   ? cn(
@@ -47,7 +49,7 @@ export function MoodSelector({ activeMood, onSelectMood, className = '' }: MoodS
               )}
             >
               <Icon className="w-4 h-4 shrink-0" />
-              <span className="text-xs font-bold tracking-wide">
+              <span>
                 {t(mood.labelGr, mood.labelEn)}
               </span>
             </button>

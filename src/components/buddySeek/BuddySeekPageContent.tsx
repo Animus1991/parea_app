@@ -286,7 +286,7 @@ export default function BuddySeekPageContent() {
               type="button"
               onClick={() => setFilter(key)}
               className={cn(
-                'text-xs font-bold px-3 py-1.5 rounded-xl border transition-colors inline-flex items-center gap-1',
+                'filter-chip text-xs font-bold px-3 rounded-xl border transition-colors gap-1',
                 filter === key ? 'bg-cyan-600 text-white border-cyan-600' : a.borderB,
               )}
             >

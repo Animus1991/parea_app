@@ -279,14 +279,30 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 /* Density wins over the old iOS 16px zoom floor — inputs/search/textarea
    follow the compact type scale. Prefer .field-control / .search-control. */
 
-/* Filter / chip-style native selects — match mood chips («Χαλαρά» = text-xs) */
+/* Unified filter / chip height — match category «Όλα» (text-xs + py-1.5 ≈ 1.75rem) */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.75rem;
+  box-sizing: border-box;
+}
+
+/* Mood chips with icons («Χαλαρά», «Δράση»…) — slightly taller for comfort */
+.filter-chip--mood {
+  height: 2.25rem;
+}
+
+/* Filter / chip-style native selects — same height as «Όλα» */
 .filter-select {
   font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);
   font-weight: 700;
-  padding: 0.25rem 0.625rem;
+  padding: 0 0.625rem;
+  height: 1.75rem;
   min-height: 1.75rem;
   border-radius: 0.625rem;
+  box-sizing: border-box;
 }
 
 /* Compact text fields (onboarding, forms, settings) — +21% vs --text-xs (stacked +10%×2) */

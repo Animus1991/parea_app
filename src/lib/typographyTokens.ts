@@ -162,9 +162,11 @@ export const HOME_TYPO = {
   stepBody: 'text-2xs leading-relaxed font-medium',
   feedTab: 'text-xs font-bold',
   sectionLabel: 'text-2xs font-bold tracking-wide uppercase',
-  /** Mood / category / tag / filter chips — same size as «Χαλαρά» */
-  filterChip: 'text-xs font-bold',
-  /** Native filter / sort dropdowns — same size as mood chips */
+  /** Category / tag / feed / filter chips — same type + height as «Όλα» */
+  filterChip: 'filter-chip text-xs font-bold',
+  /** Mood chips with icons («Χαλαρά»…) — same type, slightly taller */
+  filterChipMood: 'filter-chip filter-chip--mood text-xs font-bold',
+  /** Native filter / sort dropdowns — same height as «Όλα» */
   filterSelect: 'filter-select',
   statValue: 'text-xs font-bold',
   statLabel: 'text-2xs font-medium',

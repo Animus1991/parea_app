@@ -7,6 +7,7 @@ import { getHomeCategoryTranslations, getHomeTagTranslations } from '../../lib/h
 import { HomePersonalizationHint } from './HomePersonalizationHint';
 import { HomeDiscoveryPrefsChips } from './HomeDiscoveryPrefsChips';
 import { MoodSelector } from './MoodSelector';
+import { HOME_TYPO } from '../../lib/typographyTokens';
 import type {
   HomeDateFilter,
   HomePriceFilter,
@@ -14,6 +15,7 @@ import type {
   HomeSafetyFilter,
   HomeSortParam,
 } from '../../lib/homeFeedConstants';
+import { cn } from '../../lib/utils';
 
 export interface HomeFiltersSectionProps {
   activeCategory: string;
@@ -123,9 +125,11 @@ export function HomeFiltersSection({
             key={cat}
             type="button"
             onClick={() => setActiveCategory(cat)}
-            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold shadow-soft transition-all duration-200 tracking-wide ${
-              activeCategory === cat ? h.chipActive : h.chipInactive
-            }`}
+            className={cn(
+              HOME_TYPO.filterChip,
+              'whitespace-nowrap px-4 rounded-full shadow-soft transition-all duration-200 tracking-wide',
+              activeCategory === cat ? h.chipActive : h.chipInactive,
+            )}
           >
             {categoryTranslations[cat] ?? cat}
           </button>
@@ -138,9 +142,11 @@ export function HomeFiltersSection({
             key={tag}
             type="button"
             onClick={() => setTagFilter(tag)}
-            className={`whitespace-nowrap px-3.5 py-1 rounded-full text-xs font-bold transition-all duration-200 border ${
-              tagFilter === tag ? h.tagActive : h.tagInactive
-            }`}
+            className={cn(
+              HOME_TYPO.filterChip,
+              'whitespace-nowrap px-3.5 rounded-full transition-all duration-200 border',
+              tagFilter === tag ? h.tagActive : h.tagInactive,
+            )}
           >
             {tagTranslations[tag] ?? tag}
           </button>
@@ -204,7 +210,11 @@ export function HomeFiltersSection({
           <button
             type="button"
             onClick={onToggleSeekingHostOnly}
-            className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-1 rounded-full text-xs font-bold transition-all duration-200 border ${seekingHostOnly ? h.tagActive : h.tagInactive}`}
+            className={cn(
+              HOME_TYPO.filterChip,
+              'gap-1.5 whitespace-nowrap px-3.5 rounded-full transition-all duration-200 border',
+              seekingHostOnly ? h.tagActive : h.tagInactive,
+            )}
           >
             <Crown className="w-3.5 h-3.5" />
             {t('Χωρίς διοργανωτή', 'Seeking organizer')}
@@ -215,7 +225,7 @@ export function HomeFiltersSection({
           <select
             className={`pl-6 pr-2 outline-none cursor-pointer appearance-none transition-all duration-200 ${h.select}`}
             aria-label={t('Ταξινόμηση', 'Sort by')}
-          value={sortParam}
+            value={sortParam}
             onChange={(e) => setSortParam(e.target.value as HomeSortParam)}
           >
             <option value="Relevance">{t('home.feed.sort.relevance', 'Συνάφεια')}</option>

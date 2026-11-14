@@ -207,13 +207,13 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
             <div className={cn('flex p-1 rounded-lg w-fit', tok.feedTabWrap)}>
               <button
                 onClick={() => setFeedType('For You')}
-                className={cn('px-4 py-1.5 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'For You' ? tok.feedTabActive : tok.feedTabInactive)}
+                className={cn(HOME_TYPO.filterChip, 'px-4 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'For You' ? tok.feedTabActive : tok.feedTabInactive)}
               >
                 {t('home.feed.for_you', 'Για Σένα')}
               </button>
               <button
                 onClick={() => setFeedType('Discover')}
-                className={cn('px-4 py-1.5 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'Discover' ? tok.feedTabActive : tok.feedTabInactive)}
+                className={cn(HOME_TYPO.filterChip, 'px-4 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'Discover' ? tok.feedTabActive : tok.feedTabInactive)}
               >
                 {t('home.feed.discover', 'Ανακάλυψε')}
               </button>

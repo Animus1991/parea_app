@@ -46,7 +46,7 @@ export function HomeSeekingHostSection({
         <button
           type="button"
           onClick={onToggleSeekingHostOnly}
-          className={`shrink-0 text-xs font-bold px-3 py-1.5 rounded-full transition-all duration-200 ${seekingHostOnly ? h.chipActive : h.chipInactive}`}
+          className={`filter-chip shrink-0 text-xs font-bold px-3 rounded-full transition-all duration-200 ${seekingHostOnly ? h.chipActive : h.chipInactive}`}
         >
           {seekingHostOnly
             ? t('Όλες οι εκδηλώσεις', 'All events')
