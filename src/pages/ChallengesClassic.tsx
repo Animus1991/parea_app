@@ -282,7 +282,7 @@ export default function ChallengesClassic() {
 
                 {/* Footer */}
                 <div className="flex items-center justify-between mt-auto pt-1">
-                  <span className="text-xs text-gray-400 font-medium flex items-center gap-1">
+                  <span className="text-xs text-gray-500 font-medium flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {c.daysLeft} {t('ημέρες απομένουν', 'days left')}
                   </span>
@@ -291,7 +291,7 @@ export default function ChallengesClassic() {
                       onClick={() => toggleJoin(c.id)}
                       className={`text-sm font-bold px-4 py-1.5 rounded-full transition-all duration-200 ${
                         joined
-                          ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/15'
                           : 'bg-ink text-white hover:bg-black'
                       }`}
                     >

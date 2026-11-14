@@ -1071,3 +1071,4 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 [data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-700 {
   color: rgb(55 65 81) !important;
 }
+

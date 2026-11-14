@@ -245,7 +245,7 @@ export default function GroupChatPageContent() {
         key={msg.id}
         className={`flex flex-col group py-2.5 w-full px-4 md:px-4 ${isMe ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
       >
-        <span className="text-xs font-semibold tracking-tight capitalize text-gray-500 ml-1 mb-1">
+        <span className="text-xs font-semibold tracking-tight capitalize text-[#4b5563] ml-1 mb-1">
           {isMe ? t("Εσείς", "You") : msg.senderName}
         </span>
         <div className="flex items-center gap-2">
@@ -268,7 +268,7 @@ export default function GroupChatPageContent() {
             {msg.text}
           </div>
         </div>
-        <span className="text-xs text-gray-400 mt-1 mr-1 font-medium tracking-wide">
+        <span className="text-xs text-[#6b7280] mt-1 mr-1 font-medium tracking-wide">
           {new Date(msg.timestamp).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
@@ -399,14 +399,14 @@ export default function GroupChatPageContent() {
 
           {/* Ephemeral Notice */}
           {isEphemeral && showEphemeralBanner && (
-            <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 dark:border-amber-800/40 dark:bg-amber-950/40 px-2 py-2 sm:px-3 text-center shadow-soft z-10 backdrop-blur-sm flex items-center justify-center relative">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-xs sm:text-xs font-bold tracking-wide text-amber-800 dark:text-amber-200 pr-6 w-full">
+            <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 px-2 py-2 sm:px-3 text-center shadow-soft z-10 backdrop-blur-sm flex items-center justify-center relative">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-xs sm:text-xs font-bold tracking-wide text-[#7b3306] pr-6 w-full">
                 <span className="flex items-center justify-center gap-1.5 whitespace-nowrap">
                   <ShieldCheck className="h-3.5 w-3.5 shrink-0" />{" "}
                   {t("Εφήμερη Λειτουργία", "Ephemeral Mode")}
                 </span>
                 <span className="hidden sm:inline w-1 h-1 rounded-full bg-amber-300 opacity-60 shrink-0"></span>
-                <span className="font-medium text-amber-700 dark:text-amber-300 flex items-center justify-center gap-1 leading-tight w-full max-w-full overflow-hidden">
+                <span className="font-medium text-[#973c00] flex items-center justify-center gap-1 leading-tight w-full max-w-full overflow-hidden">
                   <Clock className="h-3 w-3 shrink-0" />{" "}
                   <span className="truncate whitespace-normal sm:whitespace-nowrap">
                     {t(
