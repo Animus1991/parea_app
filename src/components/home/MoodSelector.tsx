@@ -1,4 +1,3 @@
-import { Sparkles } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
@@ -19,7 +18,6 @@ export function MoodSelector({ activeMood, onSelectMood, className = '' }: MoodS
   return (
     <div className={cn('space-y-3', className)}>
       <div className="flex items-center gap-2 mb-2">
-        <Sparkles className={cn('w-4 h-4', tok.isDark ? 'text-amber-400' : 'text-amber-500')} />
         <h3 className={cn('text-xs font-bold tracking-wide', h.sectionLabel)}>
           {t('Πώς νιώθεις σήμερα;', 'How are you feeling today?')}
         </h3>

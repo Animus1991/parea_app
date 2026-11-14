@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Award, CheckCircle2, Flame, MessageSquare, Sparkles, Trophy, Zap } from 'lucide-react';
+import { Award, CheckCircle2, Flame, MessageSquare, Trophy, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
@@ -163,7 +163,7 @@ export function DailyChallengeCard({ className }: { className?: string }) {
     >
       <div className="flex items-center gap-3.5">
         <span aria-hidden className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
-          <Sparkles className="h-5 w-5" />
+          <Flame className="h-5 w-5" />
         </span>
         <div>
           <p className="text-xs font-semibold text-accent">

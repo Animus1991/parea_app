@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   MapPin,
   LayoutGrid,
-  Sparkles,
 } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
@@ -224,7 +223,7 @@ export function HomeLoggedInHero({
                 {score}
               </div>
               <span className="text-xs font-bold text-white/80 uppercase tracking-wider flex items-center gap-1">
-                <Sparkles className="w-3 h-3" />
+                <ShieldCheck className="w-3 h-3" />
                 {t('Αξιοπιστία', 'Reliability')}
               </span>
             </div>

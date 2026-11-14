@@ -1,4 +1,4 @@
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Bot } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
@@ -33,7 +33,7 @@ export function CopilotInlinePrompt({ className, title, suggestions, maxChips = 
         className="flex min-h-11 min-w-0 items-center gap-3 rounded-xl px-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent @4xl:max-w-[42%] @4xl:shrink-0"
       >
         <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent text-accent-fg">
-          <Sparkles className="h-4 w-4" />
+          <Bot className="h-4 w-4" />
         </span>
         <span className="min-w-0">
           <span className="block text-sm font-bold text-ink">

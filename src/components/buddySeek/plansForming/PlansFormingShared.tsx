@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import {
-  Sparkles,
   Users,
   CalendarCheck,
   Bookmark,
@@ -9,6 +8,7 @@ import {
   Plus,
   MapPin,
   Shield,
+  CircleDot,
 } from 'lucide-react';
 import { useLanguage } from '../../../lib/i18n';
 import { cn } from '../../../lib/utils';
@@ -41,7 +41,7 @@ export function PlansFormingStatsBar({
       show: insights.recruitingGroups > 0,
     },
     {
-      icon: Sparkles,
+      icon: CircleDot,
       value: insights.openSpots,
       label: t('Θέσεις', 'Spots'),
       show: insights.openSpots > 0,

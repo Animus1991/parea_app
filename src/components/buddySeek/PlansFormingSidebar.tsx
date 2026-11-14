@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, Inbox, Sparkles, PanelRightClose } from 'lucide-react';
+import { ChevronRight, Inbox, Users, PanelRightClose } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { usePlansFormingFeed } from '../../hooks/usePlansFormingFeed';
@@ -37,7 +37,7 @@ export function PlansFormingSidebarReopenTab() {
       aria-label={t('Άνοιγμα sidebar σχεδίων', 'Open plans sidebar')}
       title={t('Βρες Nakamas', 'Find Nakamas')}
     >
-      <Sparkles className="w-4 h-4 shrink-0" />
+      <Users className="w-4 h-4 shrink-0" />
       <span className="text-xs font-bold [writing-mode:vertical-rl] rotate-180 tracking-wide">
         {t('Σχέδια', 'Plans')}
       </span>
@@ -77,7 +77,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
       >
         <div className="flex items-start gap-2">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-600/30 to-indigo-600/20 flex items-center justify-center border border-cyan-500/20 shrink-0">
-            <Sparkles className="w-4 h-4 text-cyan-500" />
+            <Users className="w-4 h-4 text-cyan-500" />
           </div>
           <div className="min-w-0 flex-1">
             <h2 className={cn('text-xs font-bold uppercase tracking-wide', isDark ? 'text-cyan-300' : 'text-cyan-800')}>

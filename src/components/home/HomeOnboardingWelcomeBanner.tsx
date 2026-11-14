@@ -1,4 +1,4 @@
-import { Sparkles, X } from 'lucide-react';
+import { CheckCircle2, X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -33,7 +33,7 @@ export function HomeOnboardingWelcomeBanner({
           useClassicTokens ? 'bg-cyan-100 text-cyan-700' : cn(p.isDark ? 'bg-cyan-900/40 text-cyan-400' : 'bg-cyan-50 text-cyan-600'),
         )}
       >
-        <Sparkles className="w-5 h-5" />
+        <CheckCircle2 className="w-5 h-5" />
       </div>
       <div className="flex-1 min-w-0 pr-8">
         <p className={cn('text-sm font-bold', useClassicTokens ? h.heading : p.head)}>

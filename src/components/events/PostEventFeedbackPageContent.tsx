@@ -7,8 +7,8 @@ import {
   Star,
   ShieldAlert,
   CheckCircle2,
-  Sparkles,
   Trophy,
+  Zap,
   MapPin,
   Calendar,
 } from 'lucide-react';
@@ -162,7 +162,7 @@ export default function PostEventFeedbackPageContent() {
                 p.isDark ? 'text-amber-400' : 'text-amber-900',
               )}
             >
-              {t('Κερδίστε +25 XP', 'Earn +25 XP')} <Sparkles className="w-3.5 h-3.5" />
+              {t('Κερδίστε +25 XP', 'Earn +25 XP')} <Zap className="w-3.5 h-3.5" />
             </p>
             <p
               className={cn(

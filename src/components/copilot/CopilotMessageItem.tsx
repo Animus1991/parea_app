@@ -7,7 +7,7 @@ import {
   ChevronRight,
   RotateCcw,
   ShieldAlert,
-  Sparkles,
+  Bot,
   X,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -108,7 +108,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
         )}
       >
         <p className="flex items-center gap-1.5 text-xs font-semibold text-ink">
-          {destructive ? <ShieldAlert className="h-3.5 w-3.5 text-red-600 dark:text-red-400" /> : <Sparkles className="h-3.5 w-3.5 text-accent" />}
+          {destructive ? <ShieldAlert className="h-3.5 w-3.5 text-red-600 dark:text-red-400" /> : <Bot className="h-3.5 w-3.5 text-accent" />}
           {body}
         </p>
         <p className="mt-1.5 font-semibold text-ink">{preview}</p>
@@ -161,7 +161,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
   return (
     <div className="flex gap-2">
       <span aria-hidden className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
-        <Sparkles className="h-3.5 w-3.5" />
+        <Bot className="h-3.5 w-3.5" />
       </span>
       <div className="min-w-0 flex-1 space-y-2">
         {body && (

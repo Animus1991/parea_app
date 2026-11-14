@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { useCopilotStore } from '../../store/copilotStore';
@@ -22,7 +22,7 @@ export function CopilotLauncher({ className }: { className?: string }) {
         className,
       )}
     >
-      <Sparkles className={cn('h-4 w-4', !open && 'text-accent')} aria-hidden />
+      <Bot className={cn('h-4 w-4', !open && 'text-accent')} aria-hidden />
       <span className="hidden sm:inline">AI</span>
     </button>
   );

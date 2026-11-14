@@ -14,8 +14,8 @@ import {
   Navigation,
   Link2,
   X,
-  Sparkles,
   Crown,
+  UserPlus,
   CalendarPlus,
   MessageSquare,
 } from "lucide-react";
@@ -369,7 +369,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         {seeksHost && (
           <div className={cn("mt-3 rounded-2xl p-3 border", isDark ? "bg-amber-500/10 border-amber-500/25" : "bg-amber-50 border-amber-200")}>
             <div className="flex items-center gap-2 mb-2">
-              <Sparkles className={cn("w-4 h-4 shrink-0", isDark ? "text-amber-400" : "text-amber-600")} />
+              <UserPlus className={cn("w-4 h-4 shrink-0", isDark ? "text-amber-400" : "text-amber-600")} />
               <div className="flex flex-col">
                 <span className={cn(EVENT_CARD_TYPO.avatarLabel, "capitalize", isDark ? "text-amber-300/90" : "text-amber-700")}>
                   {t('Προσφέρεται από Nakamas', 'Offered by Nakamas')}

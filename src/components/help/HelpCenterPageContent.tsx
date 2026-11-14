@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { openCopilot } from '../../ai/copilot';
-import { Sparkles } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import { Search, Book, MessageCircle, FileText, ChevronRight, ChevronDown, Zap, Shield, CreditCard, Users } from 'lucide-react';
 import { Card } from '../common/Card';
 import { useLanguage } from '../../lib/i18n';
@@ -160,7 +160,7 @@ export default function HelpCenterPageContent() {
             onClick={() => openCopilot(search)}
             className="mt-3 inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-accent px-4 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
-            <Sparkles className="h-4 w-4" aria-hidden />
+            <Bot className="h-4 w-4" aria-hidden />
             {t('Ρώτα το Nakamas AI', 'Ask Nakamas AI')}
           </button>
         </Card>

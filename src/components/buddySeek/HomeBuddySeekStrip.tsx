@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, Sparkles, Users } from 'lucide-react';
+import { ChevronRight, Users } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { usePlansFormingFeed } from '../../hooks/usePlansFormingFeed';
 import { useStore } from '../../store';
@@ -30,7 +30,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
             id="home-plans-forming"
             className="text-sm font-bold uppercase tracking-wide text-accent-strong flex items-center gap-1.5"
           >
-            <Sparkles className="w-4 h-4" />
+            <Users className="w-4 h-4" />
             {tu('Βρες Nakamas', 'Find Nakamas')}
           </h2>
           <PlansFormingValueHero insights={feed.insights} />

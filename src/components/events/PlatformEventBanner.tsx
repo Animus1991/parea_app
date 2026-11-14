@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Crown, Sparkles } from "lucide-react";
+import { Crown } from "lucide-react";
 import { toast } from "sonner";
 import { useStore } from "../../store";
 import { useLanguage } from "../../lib/i18n";
@@ -50,7 +50,7 @@ export function PlatformEventBanner() {
     >
       <div className="flex items-start gap-3 flex-1">
         <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-          <Sparkles className="w-5 h-5 text-amber-700" />
+          <Crown className="w-5 h-5 text-amber-700" />
         </div>
         <div>
           <h3

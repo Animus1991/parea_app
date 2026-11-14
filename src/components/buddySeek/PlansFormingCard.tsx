@@ -6,7 +6,7 @@ import {
   Clock,
   MessageCircle,
   Shield,
-  Sparkles,
+  Heart,
   Users,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -83,7 +83,7 @@ export function PlansFormingCard({
           )}
         >
           <span className="flex items-center gap-1">
-            <Sparkles className="w-3 h-3" />
+            <Heart className="w-3 h-3" />
             {t('Υψηλή συμβατότητα', 'High match')}
           </span>
           <span>{item.matchPercent}%</span>

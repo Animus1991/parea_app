@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MessageCircle, MoreVertical, MapPin, Filter, UserPlus, UserMinus, Flag, Eye, CalendarPlus, Check, X, ChevronDown, Sparkles, Users, ShieldCheck } from 'lucide-react';
+import { Search, MessageCircle, MoreVertical, MapPin, Filter, UserPlus, UserMinus, Flag, Eye, CalendarPlus, Check, X, ChevronDown, Users, ShieldCheck } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
@@ -257,7 +257,7 @@ export default function ConnectionsPageContent() {
           className={cn('px-3.5 py-2 min-h-10 rounded-full text-sm font-bold transition-colors flex items-center gap-1.5', activeTab === 'suggested' ? a.chipActive : a.chipInactive)}
           onClick={() => setActiveTab('suggested')}
         >
-          <Sparkles className="w-3.5 h-3.5" aria-hidden /> {t('Προτάσεις', 'Suggested')}
+          <UserPlus className="w-3.5 h-3.5" aria-hidden /> {t('Προτάσεις', 'Suggested')}
           {suggested.length > 0 && <span className={`${a.isDark ? 'bg-gray-600' : 'bg-gray-400'} text-white text-xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{suggested.length}</span>}
         </button>
       </div>
@@ -465,7 +465,7 @@ export default function ConnectionsPageContent() {
         <div className="space-y-4">
           {suggested.length === 0 && (
             <EmptyState
-              icon={Sparkles}
+              icon={Users}
               title={t('Δεν υπάρχουν προτάσεις', 'No suggestions yet')}
               description={t('Συμμετέχετε σε εκδηλώσεις για να βρείτε Nakamas!', 'Join events to find Nakamas!')}
               actionLabel={t('Εξερεύνηση', 'Explore')}
