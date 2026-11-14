@@ -106,7 +106,7 @@ export function PlansFormingCard({
           </p>
           <span
             className={cn(
-              'inline-block card-meta font-semibold px-2 py-0.5 rounded-lg border',
+              'inline-block card-role font-semibold px-2 py-0.5 rounded-lg border',
               item.roleLabel.kind === 'seeker'
                 ? darkCard
                   ? 'bg-violet-500/15 text-violet-200 border-violet-500/30'
@@ -175,7 +175,7 @@ export function PlansFormingCard({
             <p className="card-copy font-medium text-gray-700 dark:text-gray-300">{displayName}</p>
           )}
           {!isSidebar && (
-            <span className="card-meta font-bold text-violet-600 dark:text-violet-300">
+            <span className="card-role font-bold text-violet-600 dark:text-violet-300">
               {t(item.roleLabel.el, item.roleLabel.en)}
             </span>
           )}
@@ -377,7 +377,7 @@ export function PlansFormingGroupCard({
           </p>
           <span
             className={cn(
-              'inline-block card-meta font-semibold px-2 py-0.5 rounded-lg border',
+              'inline-block card-role font-semibold px-2 py-0.5 rounded-lg border',
               darkCard ? 'bg-emerald-500/15 text-emerald-200 border-emerald-500/30' : 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-200 dark:border-emerald-500/30',
             )}
           >

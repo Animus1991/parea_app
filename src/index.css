@@ -326,22 +326,28 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   }
 }
 
-/* Card titles (e.g. «Summer Cinema…») — +5% then −2% */
+/* Card titles (e.g. «Summer Cinema…») — +5% −2% −1% */
 .card-heading {
-  font-size: calc(var(--text-sm) * 1.05 * 0.98); /* ~12.35px */
+  font-size: calc(var(--text-sm) * 1.05 * 0.98 * 0.99); /* ~12.22px */
   line-height: var(--text-sm--line-height);
 }
 .card-heading-lg {
-  font-size: calc(var(--text-base) * 1.05 * 0.98); /* ~13.38px */
+  font-size: calc(var(--text-base) * 1.05 * 0.98 * 0.99); /* ~13.24px */
   line-height: var(--text-base--line-height);
 }
-/* Card status badges (e.g. «ΑΝΟΙΧΤΟ ΣΕ ΙΔΕΕΣ», «Αποθηκευμένη») — +5% then −2% */
+/* Card status badges (e.g. «ΑΝΟΙΧΤΟ ΣΕ ΙΔΕΕΣ», «Αποθηκευμένη») — +5% −2% −1% */
 .card-badge {
-  font-size: calc(var(--text-xs) * 1.05 * 0.98); /* ~10.29px */
+  font-size: calc(var(--text-xs) * 1.05 * 0.98 * 0.99); /* ~10.19px */
   line-height: var(--text-xs--line-height);
 }
 
-/* Role / schedule / location (e.g. «Ψάχνει Nakamas», date, area) — +10% −2% +1% */
+/* Role line only (e.g. «Ψάχνει Nakamas») — meta scale then −1% */
+.card-role {
+  font-size: calc(var(--text-xs) * 1.1 * 0.98 * 1.01 * 0.99); /* ~10.78px */
+  line-height: var(--text-xs--line-height);
+}
+
+/* Schedule / location (date, area) — +10% −2% +1% (unchanged this pass) */
 .card-meta {
   font-size: calc(var(--text-xs) * 1.1 * 0.98 * 1.01); /* ~10.89px */
   line-height: var(--text-xs--line-height);
