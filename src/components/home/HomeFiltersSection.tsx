@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ArrowDownUp, Crown, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, Crown, SlidersHorizontal, X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { HOME_CATEGORIES, HOME_POPULAR_TAGS } from '../../lib/homeFeedConstants';
@@ -240,10 +240,7 @@ export function HomeFiltersSection({
 
         <div className={cn('relative', HOME_TYPO.filterControlEqual)}>
           <select
-            className={cn(
-              'w-full pl-6 pr-2 outline-none cursor-pointer appearance-none transition-all duration-200',
-              h.select,
-            )}
+            className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
             aria-label={t('Ταξινόμηση', 'Sort by')}
             value={sortParam}
             onChange={(e) => setSortParam(e.target.value as HomeSortParam)}
@@ -254,9 +251,22 @@ export function HomeFiltersSection({
               {t('home.feed.sort.group_progress', 'Πρόοδος Ομάδας')}
             </option>
           </select>
-          <ArrowDownUp
-            className={`absolute left-1.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 pointer-events-none opacity-60 ${h.labelMuted}`}
-          />
+          <div
+            aria-hidden
+            className={cn(
+              'pointer-events-none flex h-full w-full items-center justify-center gap-1.5 px-2',
+              h.select,
+            )}
+          >
+            <ChevronDown className={cn('w-3 h-3 shrink-0 opacity-70', h.labelMuted)} />
+            <span className="truncate">
+              {sortParam === 'Distance'
+                ? t('home.feed.sort.distance', 'Απόσταση')
+                : sortParam === 'Group Progress'
+                  ? t('home.feed.sort.group_progress', 'Πρόοδος Ομάδας')
+                  : t('home.feed.sort.relevance', 'Συνάφεια')}
+            </span>
+          </div>
         </div>
 
         {hasActiveFilters && (
