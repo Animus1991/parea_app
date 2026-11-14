@@ -239,17 +239,19 @@ export default function CategoriesPageContent() {
           p.isDark ? 'bg-[hsl(220_16%_14%)] border-gray-700/50' : 'bg-white border-gray-100',
         )}
       >
-        <div className="flex overflow-x-auto noscrollbar min-w-full">
+        <div role="tablist" aria-label={t('Ομάδες κατηγοριών', 'Category groups')} className="flex overflow-x-auto noscrollbar min-w-full">
           {CATEGORY_GROUP_TABS.map((tab) => (
             <button
               key={tab}
               type="button"
+              role="tab"
+              aria-selected={activeTab === tab}
               onClick={() => {
                 setActiveTab(tab);
                 setActiveCategory(null);
               }}
               className={cn(
-                'px-5 py-3 whitespace-nowrap text-sm font-bold rounded-2xl transition-all flex-1 text-center min-w-[120px]',
+                'px-5 py-3 whitespace-nowrap text-sm font-bold rounded-2xl transition-all flex-1 text-center min-w-fit',
                 activeTab === tab
                   ? p.isDark
                     ? 'bg-[hsl(220_16%_18%)] text-white shadow-soft'
