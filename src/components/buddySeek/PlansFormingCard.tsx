@@ -155,11 +155,11 @@ export function PlansFormingCard({
 
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-            <span className="card-badge font-semibold uppercase tracking-wide text-cyan-700/80 dark:text-cyan-400/90">
+            <span className="card-badge font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-400">
               {tu(item.intentLabel.el, item.intentLabel.en)}
             </span>
             {item.isSavedEvent && (
-              <span className="card-badge font-medium text-fuchsia-700/80 dark:text-fuchsia-300/90">
+              <span className="card-badge font-medium text-fuchsia-700 dark:text-fuchsia-300">
                 · {t('Αποθηκευμένη', 'Saved')}
               </span>
             )}
@@ -175,7 +175,7 @@ export function PlansFormingCard({
             <p className="card-copy text-gray-600 dark:text-gray-300">
               <span className="font-semibold text-gray-800 dark:text-gray-100">{displayName}</span>
               <span className="text-gray-400 dark:text-gray-500" aria-hidden> · </span>
-              <span className="card-role font-medium text-violet-700/80 dark:text-violet-300/90">
+              <span className="card-role font-medium text-violet-700 dark:text-violet-300">
                 {t(item.roleLabel.el, item.roleLabel.en)}
               </span>
             </p>

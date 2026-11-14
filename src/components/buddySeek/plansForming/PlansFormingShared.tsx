@@ -69,7 +69,7 @@ export function PlansFormingStatsBar({
           )}
         >
           <Icon className="w-3 h-3 text-cyan-600/70 dark:text-cyan-400/80 shrink-0" aria-hidden />
-          <span className="font-semibold text-cyan-700/90 dark:text-cyan-300/90">{value}</span>
+          <span className="font-semibold text-cyan-700 dark:text-cyan-300">{value}</span>
           <span className={cn('font-medium', isDark ? 'text-gray-400' : 'text-gray-500')}>{label}</span>
         </div>
       ))}

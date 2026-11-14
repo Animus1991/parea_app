@@ -26,7 +26,7 @@ export function MatchExplainChips({ user, event, className, max = 3 }: MatchExpl
           className={cn(
             'inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium tabular-nums',
             i === 0
-              ? 'bg-cyan-600/8 text-cyan-800/80 dark:text-cyan-300/90'
+              ? 'bg-cyan-600/8 text-cyan-800 dark:text-cyan-300'
               : 'bg-gray-50 text-gray-600 dark:bg-white/5 dark:text-gray-300',
           )}
           title={explanation.mismatchFlags.join(' · ') || undefined}

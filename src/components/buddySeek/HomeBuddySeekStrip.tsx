@@ -87,7 +87,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
 
       {feed.recruitingGroupItems.length > 0 && (
         <p className="text-xs text-ink-muted leading-relaxed">
-          <span className="font-semibold text-emerald-700/90 dark:text-emerald-400/90">
+          <span className="font-semibold text-emerald-700 dark:text-emerald-400">
             {feed.insights.openSpots}
           </span>{' '}
           {t('ανοιχτές θέσεις σε ομάδες αυτή τη στιγμή', 'open group spots right now')}
