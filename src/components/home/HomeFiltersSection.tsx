@@ -138,7 +138,7 @@ export function HomeFiltersSection({
             key={tag}
             type="button"
             onClick={() => setTagFilter(tag)}
-            className={`whitespace-nowrap px-3.5 py-1 rounded-full text-2xs font-bold transition-all duration-200 border ${
+            className={`whitespace-nowrap px-3.5 py-1 rounded-full text-xs font-bold transition-all duration-200 border ${
               tagFilter === tag ? h.tagActive : h.tagInactive
             }`}
           >
@@ -204,7 +204,7 @@ export function HomeFiltersSection({
           <button
             type="button"
             onClick={onToggleSeekingHostOnly}
-            className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-1 rounded-full text-2xs font-bold transition-all duration-200 border ${seekingHostOnly ? h.tagActive : h.tagInactive}`}
+            className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-1 rounded-full text-xs font-bold transition-all duration-200 border ${seekingHostOnly ? h.tagActive : h.tagInactive}`}
           >
             <Crown className="w-3.5 h-3.5" />
             {t('Χωρίς διοργανωτή', 'Seeking organizer')}

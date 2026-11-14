@@ -279,10 +279,10 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 /* Density wins over the old iOS 16px zoom floor — inputs/search/textarea
    follow the compact type scale. Prefer .field-control / .search-control. */
 
-/* Compact filter / chip-style native selects (home, categories, sorts, …) */
+/* Filter / chip-style native selects — match mood chips («Χαλαρά» = text-xs) */
 .filter-select {
-  font-size: var(--text-2xs);
-  line-height: var(--text-2xs--line-height);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
   font-weight: 700;
   padding: 0.25rem 0.625rem;
   min-height: 1.75rem;

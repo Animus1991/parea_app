@@ -364,7 +364,7 @@ export default function NearbyGroupsPageContent() {
                <button 
                  key={f}
                  onClick={() => setMapFilter(f)}
-                 className={cn("px-4 py-2 rounded-full text-2xs font-bold whitespace-nowrap shadow-soft transition-all border shrink-0", mapFilter === f ? (p.isDark ? "bg-cyan-600 border-cyan-500 text-white" : "bg-cyan-600 border-cyan-600 text-white") : (p.isDark ? "bg-gray-800/95 border-gray-700 text-gray-300" : "bg-white/95 border-gray-200 text-gray-700 hover:bg-gray-50"))}
+                 className={cn("px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap shadow-soft transition-all border shrink-0", mapFilter === f ? (p.isDark ? "bg-cyan-600 border-cyan-500 text-white" : "bg-cyan-600 border-cyan-600 text-white") : (p.isDark ? "bg-gray-800/95 border-gray-700 text-gray-300" : "bg-white/95 border-gray-200 text-gray-700 hover:bg-gray-50"))}
                >
                  {t(
                    f === "All" ? "Όλα" : f === "Available" ? "Διαθέσιμα" : f === "Full" ? "Γεμάτα" : "Επιλογές μου", 
@@ -419,7 +419,7 @@ export default function NearbyGroupsPageContent() {
               type="button"
               onClick={() => setSidebarFilter("all")}
               className={cn(
-                "px-4 py-2 rounded-full text-2xs font-bold whitespace-nowrap shadow-soft transition-all",
+                "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap shadow-soft transition-all",
                 sidebarFilter === "all"
                   ? p.isAB ? "bg-[hsl(220_14%_12%)] text-white" : "bg-cyan-600 text-white shadow-cyan-600/20"
                   : cn("border", p.isDark ? "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700" : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"),
@@ -431,7 +431,7 @@ export default function NearbyGroupsPageContent() {
               type="button"
               onClick={() => setSidebarFilter("today")}
               className={cn(
-                "px-4 py-2 rounded-full text-2xs font-bold whitespace-nowrap transition-all border",
+                "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border",
                 sidebarFilter === "today"
                   ? p.isAB ? "bg-[hsl(220_14%_12%)] text-white border-transparent" : "bg-cyan-600 text-white border-cyan-600"
                   : p.isDark ? "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700" : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100",
@@ -443,7 +443,7 @@ export default function NearbyGroupsPageContent() {
               type="button"
               onClick={() => setSidebarFilter("friends")}
               className={cn(
-                "px-4 py-2 rounded-full text-2xs font-bold whitespace-nowrap transition-all border",
+                "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border",
                 sidebarFilter === "friends"
                   ? p.isAB ? "bg-[hsl(220_14%_12%)] text-white border-transparent" : "bg-cyan-600 text-white border-cyan-600"
                   : p.isDark ? "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700" : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100",

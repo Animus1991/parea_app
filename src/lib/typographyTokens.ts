@@ -160,10 +160,11 @@ export const HOME_TYPO = {
   heroMapBtn: 'text-xs font-bold',
   stepTitle: 'text-xs font-bold',
   stepBody: 'text-2xs leading-relaxed font-medium',
-  feedTab: 'text-2xs font-bold',
+  feedTab: 'text-xs font-bold',
   sectionLabel: 'text-2xs font-bold tracking-wide uppercase',
-  filterChip: 'text-2xs font-bold',
-  /** Native filter / sort dropdowns (chip-sized) */
+  /** Mood / category / tag / filter chips — same size as «Χαλαρά» */
+  filterChip: 'text-xs font-bold',
+  /** Native filter / sort dropdowns — same size as mood chips */
   filterSelect: 'filter-select',
   statValue: 'text-xs font-bold',
   statLabel: 'text-2xs font-medium',
