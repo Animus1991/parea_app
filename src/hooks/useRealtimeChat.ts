@@ -5,10 +5,7 @@ import {
   disconnectChatSocket,
   joinChatRoom,
 } from '../lib/realtime/socket';
-import {
-  isFirebaseChatEnabled,
-  subscribeFirebaseRoom,
-} from '../lib/realtime/firebaseChat';
+import { isFirebaseConfigured as isFirebaseChatEnabled } from '../lib/firebaseConfig';
 
 /**
  * Mount once when authenticated — Firebase Firestore or Socket.IO (CoFounderBay dual-transport).
@@ -31,6 +28,8 @@ export function useRealtimeChat(userId: string | undefined) {
     const setupFirebase = async () => {
       firebaseUnsubs.current.forEach((fn) => fn());
       firebaseUnsubs.current = [];
+      const { subscribeFirebaseRoom } = await import('../lib/realtime/firebaseChat');
+      if (cancelled) return;
       for (const c of conversations) {
         const unsub = await subscribeFirebaseRoom(c.id, (msg) => {
           if (msg.senderId === userId) return;

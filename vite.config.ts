@@ -27,5 +27,20 @@ export default defineConfig(({mode}) => {
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
     },
+    build: {
+      rollupOptions: {
+        output: {
+          // Long-lived vendor chunks: they change rarely, so browsers keep them
+          // cached across app deploys. Firebase is already loaded on demand.
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return undefined;
+            if (/node_modules\/(react|react-dom|scheduler|react-router|react-router-dom)\//.test(id)) return 'vendor-react';
+            if (/node_modules\/(motion|motion-dom|motion-utils|framer-motion)\//.test(id)) return 'vendor-motion';
+            if (/node_modules\/(date-fns)\//.test(id)) return 'vendor-date';
+            return undefined;
+          },
+        },
+      },
+    },
   };
 });

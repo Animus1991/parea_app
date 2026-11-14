@@ -4,7 +4,7 @@ import type { Conversation, ChatMessage, ChatPrivacySettings } from '../types/ch
 import { DEFAULT_CHAT_PRIVACY } from '../types/chat';
 import { mockConversations, mockChatMessages } from '../data/mockChatData';
 import { emitChatMessage, joinChatRoom } from '../lib/realtime/socket';
-import { isFirebaseChatEnabled, sendFirebaseMessage } from '../lib/realtime/firebaseChat';
+import { isFirebaseConfigured as isFirebaseChatEnabled } from '../lib/firebaseConfig';
 
 export interface ChatReport {
   id: string;
@@ -142,7 +142,7 @@ export const useChatStore = create<ChatState>()(
           ),
         }));
         if (isFirebaseChatEnabled()) {
-          void sendFirebaseMessage(conversationId, senderId, body);
+          void import('../lib/realtime/firebaseChat').then(({ sendFirebaseMessage }) => sendFirebaseMessage(conversationId, senderId, body));
         } else {
           joinChatRoom(conversationId);
           emitChatMessage(conversationId, senderId, body);

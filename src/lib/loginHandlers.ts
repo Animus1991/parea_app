@@ -1,4 +1,4 @@
-import { isFirebaseAuthAvailable, signInWithGoogle } from '../services/firebaseAuth';
+import { isFirebaseConfigured as isFirebaseAuthAvailable } from './firebaseConfig';
 import {
   isGoogleIdentityConfigured,
   signInWithGoogleIdentity,
@@ -58,6 +58,7 @@ export function isProductionGoogleOAuthAvailable(): boolean {
 export async function tryGoogleSignIn(): Promise<GoogleSignInResult> {
   if (isFirebaseAuthAvailable()) {
     try {
+      const { signInWithGoogle } = await import('../services/firebaseAuth');
       await signInWithGoogle();
       return { ok: true, via: 'firebase' };
     } catch {

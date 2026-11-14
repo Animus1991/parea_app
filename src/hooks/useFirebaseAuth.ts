@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { isFirebaseAuthAvailable, subscribeFirebaseAuth } from '../services/firebaseAuth';
-import { resolveFirebaseUser } from '../services/firebaseUserProfile';
+import { isFirebaseConfigured as isFirebaseAuthAvailable } from '../lib/firebaseConfig';
 import { useStore } from '../store';
 import { createLogger } from '../lib/logger';
 
@@ -17,21 +16,33 @@ export function useFirebaseAuth() {
   useEffect(() => {
     if (!isFirebaseAuthAvailable() || demoMode) return;
 
-    return subscribeFirebaseAuth((firebaseUser) => {
-      if (!firebaseUser) {
-        logout();
-        return;
-      }
+    // The Firebase SDK is loaded on demand, only when it is configured.
+    let unsubscribe: (() => void) | undefined;
+    let cancelled = false;
+    void Promise.all([import('../services/firebaseAuth'), import('../services/firebaseUserProfile')])
+      .then(([{ subscribeFirebaseAuth }, { resolveFirebaseUser }]) => {
+        if (cancelled) return;
+        unsubscribe = subscribeFirebaseAuth((firebaseUser) => {
+          if (!firebaseUser) {
+            logout();
+            return;
+          }
 
-      void resolveFirebaseUser(firebaseUser)
-        .then((user) => {
-          log.info('firebase profile resolved', { uid: user.id, name: user.name });
-          loginWithUser(user);
-        })
-        .catch((err) => {
-          log.error('firebase profile resolve failed', err);
+          void resolveFirebaseUser(firebaseUser)
+            .then((user) => {
+              log.info('firebase profile resolved', { uid: user.id, name: user.name });
+              loginWithUser(user);
+            })
+            .catch((err) => {
+              log.error('firebase profile resolve failed', err);
+            });
         });
-    });
+      })
+      .catch((err) => log.error('firebase auth module failed to load', err));
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
   }, [loginWithUser, logout, demoMode]);
 
   useEffect(() => {
