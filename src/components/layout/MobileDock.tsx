@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { Inbox, MessageCircle, Users } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -26,6 +26,23 @@ export function MobileDock() {
   // The event page has its own sticky Save / Find Nakamas bar: sit just above it.
   const { pathname } = useLocation();
   const aboveEventBar = Boolean(matchPath('/events/:eventId', pathname));
+  // On the event page the dock waits until the title has scrolled away, so the
+  // first glance shows the event and its action bar only.
+  const [pastHeader, setPastHeader] = useState(false);
+  useEffect(() => {
+    setPastHeader(false);
+    if (!aboveEventBar) return;
+    const main = document.getElementById('main-content');
+    if (!main) return;
+    const onScroll = () => setPastHeader(main.scrollTop > 280);
+    onScroll();
+    main.addEventListener('scroll', onScroll, { passive: true });
+    return () => main.removeEventListener('scroll', onScroll);
+  }, [aboveEventBar, pathname]);
+  const waiting = aboveEventBar && !pastHeader;
+
+  // A group chat owns the bottom of the screen (composer); chats are one tap back.
+  if (pathname.startsWith('/chat/')) return null;
 
   const segment =
     'flex items-center gap-2 min-h-11 font-bold text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/70 transition-colors';
@@ -34,10 +51,14 @@ export function MobileDock() {
     <div
       role="group"
       aria-label={t('Γρήγορη πρόσβαση', 'Quick access')}
+      aria-hidden={waiting || undefined}
+      inert={waiting || undefined}
       className={cn(
+        'transition-[opacity,transform] duration-200 motion-reduce:transition-none',
+        waiting && 'opacity-0 translate-y-3 pointer-events-none',
         'md:hidden fixed left-1/2 -translate-x-1/2 z-fab flex items-stretch rounded-full shadow-soft-lg border overflow-hidden text-white',
         aboveEventBar
-          ? 'bottom-[calc(var(--safe-bottom)+4.5rem+env(safe-area-inset-bottom,0px))]'
+          ? 'bottom-[calc(var(--bottom-nav-total)+5.25rem+env(safe-area-inset-bottom,0px))]'
           : 'bottom-fab-zone',
         plans.visible && plans.hasPending
           ? 'bg-amber-500 border-amber-400'

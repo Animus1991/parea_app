@@ -18,11 +18,12 @@ import { AdminBrandingPanel } from './AdminBrandingPanel';
 import { AdminSSOPanel } from './AdminSSOPanel';
 import { toast } from 'sonner';
 import { useAiAuditStore, type AiAuditStatus } from '../../store/aiAuditStore';
+import { intlLocale } from '../../lib/dateLocale';
 
 type AdminTab = 'overview' | 'moderation' | 'users' | 'system' | 'automation' | 'branding' | 'sso';
 
 export default function AdminDashboardPageContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const a = usePageContrast();
   const users = useStore((s) => s.users);
   const currentUserId = useStore((s) => s.currentUser?.id);
@@ -400,7 +401,7 @@ export default function AdminDashboardPageContent() {
             {adminActions.slice(0, 8).map((act) => (
               <li key={act.id} className={cn('flex items-center justify-between gap-3 text-xs', a.sub)}>
                 <span className="font-mono truncate">{act.action}{act.targetId ? ` → ${act.targetId}` : ''}</span>
-                <time dateTime={act.createdAt} className={cn('shrink-0 tabular-nums', a.muted)}>{new Date(act.createdAt).toLocaleString()}</time>
+                <time dateTime={act.createdAt} className={cn('shrink-0 tabular-nums', a.muted)}>{new Date(act.createdAt).toLocaleString(intlLocale(language))}</time>
               </li>
             ))}
           </ol>
@@ -433,7 +434,7 @@ export default function AdminDashboardPageContent() {
                     {who}
                     {e.risk !== 'safe' && e.risk !== 'unknown' ? ` · ${e.risk}` : ''}
                   </span>
-                  <time dateTime={e.at} className={cn('shrink-0 tabular-nums', a.muted)}>{new Date(e.at).toLocaleString()}</time>
+                  <time dateTime={e.at} className={cn('shrink-0 tabular-nums', a.muted)}>{new Date(e.at).toLocaleString(intlLocale(language))}</time>
                 </li>
               );
             })}
@@ -468,7 +469,7 @@ export default function AdminDashboardPageContent() {
                         {report.description || t('Χωρίς περιγραφή', 'No description')}
                       </p>
                       <p className={cn('text-xs mt-1', a.muted)}>
-                        {report.severity} • {new Date(report.createdAt).toLocaleDateString()}
+                        {report.severity} • {new Date(report.createdAt).toLocaleDateString(intlLocale(language))}
                       </p>
                     </div>
                   </div>

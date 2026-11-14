@@ -92,6 +92,8 @@
   /* Layout chrome metrics — compact shell */
   --header-h: 52px;
   --bottom-nav-h: 56px;
+  /* Rendered height of <BottomNav> (padding + raised create button + label). */
+  --bottom-nav-total: 75px;
   /* Ζώνη πάνω από το BottomNav + προεξοχή του center FAB + gap */
   --safe-bottom: calc(var(--bottom-nav-h) + 28px);
 }

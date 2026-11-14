@@ -15,6 +15,7 @@ import { useEventsResource } from '../../hooks/useEventsQuery';
 import { cn } from '../../lib/utils';
 import { PLANS_TYPO } from '../../lib/typographyTokens';
 import type { Group } from '../../types';
+import { dateFnsLocale, shortDayMonthPattern } from '../../lib/dateLocale';
 
 function getUserGroupForEvent(eventId: string, groups: Group[], userId: string | undefined) {
   if (!userId) return undefined;
@@ -30,7 +31,8 @@ function isPlansFormingGroupId(groupId: string) {
 }
 
 export default function PlansPageContent() {
-  const { t, tu } = useLanguage();
+  const { t, tu, language } = useLanguage();
+  const dateLocale = dateFnsLocale(language);
   const p = usePageContrast();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'pending' | 'past'>('upcoming');
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<string | null>(null);
@@ -201,7 +203,7 @@ export default function PlansPageContent() {
               <div className="flex justify-between items-start gap-2 mb-2">
                 <h3 className={cn('font-bold text-lg', p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
-                  <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
+                  <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
                   <div className={cn('text-sm font-medium', p.muted)}>{event.time}</div>
                   {(() => {
                     const days = differenceInDays(parseISO(event.date), new Date());
@@ -304,7 +306,7 @@ export default function PlansPageContent() {
               <div className="flex justify-between items-start gap-2 mb-2">
                 <h3 className={cn('font-bold text-lg', p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
-                  <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), 'MMM d')}</div>
+                  <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
                 </div>
               </div>
 
@@ -356,7 +358,7 @@ export default function PlansPageContent() {
             <div className="flex-1 flex flex-col">
               <div className={cn('flex items-center gap-2 mb-1.5 text-sm font-bold', p.muted)}>
                 <Calendar className="w-3.5 h-3.5" />
-                {format(parseISO(event.date), 'MMMM d, yyyy')}
+                {format(parseISO(event.date), 'PPP', { locale: dateLocale })}
               </div>
               <h3 className={cn('font-bold text-lg mb-3', p.head)}>{event.title}</h3>
 

@@ -17,7 +17,7 @@ import { useEventsResource } from "../../hooks/useEventsQuery";
 import { useLanguage } from "../../lib/i18n";
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
-import { pressable } from '../../lib/a11y';
+import { pressable, redundantClick } from '../../lib/a11y';
 import { Button } from "../common/Button";
 import { haversineKm, ATHENS_CENTER } from "../../lib/haversine";
 
@@ -30,11 +30,84 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-function MapController({ center }: { center: { lat: number; lng: number } }) {
+/**
+ * Markers whose point lies under the list panel are covered, yet stayed in the
+ * Tab order (focus landed on invisible markers, WCAG 2.4.11). Hide those and
+ * take them out of the Tab order; visible markers stay fully usable.
+ */
+function HideMarkersUnderPanel({
+  panelRef,
+  overlayRef,
+  markerCount,
+}: {
+  panelRef: React.RefObject<HTMLDivElement | null>;
+  /** Floating search and filter controls over the map: markers under them are covered too. */
+  overlayRef: React.RefObject<HTMLDivElement | null>;
+  markerCount: number;
+}) {
   const map = useMap();
   useEffect(() => {
-    map.setView([center.lat, center.lng], map.getZoom(), { animate: true });
-  }, [center, map]);
+    const pane = map.getPane('markerPane');
+    const panel = panelRef.current;
+    if (!pane || !panel) return;
+    let frame = 0;
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const covers = [panel.getBoundingClientRect()];
+        overlayRef.current
+          ?.querySelectorAll<HTMLElement>('button, input, select, a[href]')
+          .forEach((control) => covers.push(control.getBoundingClientRect()));
+        const shown = covers.filter((c) => c.width > 0 && c.height > 0);
+        pane.querySelectorAll<HTMLElement>('.leaflet-marker-icon').forEach((icon) => {
+          const r = icon.getBoundingClientRect();
+          const overlaps = (c: DOMRect) => r.left < c.right && r.right > c.left && r.top < c.bottom && r.bottom > c.top;
+          const tipX = r.left + r.width / 2;
+          const tipY = r.bottom;
+          const under =
+            (shown[0] === covers[0] && tipX >= covers[0].left && tipX <= covers[0].right && tipY >= covers[0].top && tipY <= covers[0].bottom) ||
+            shown.slice(shown[0] === covers[0] ? 1 : 0).some(overlaps);
+          icon.style.visibility = under ? 'hidden' : '';
+          if (under) icon.setAttribute('tabindex', '-1');
+          else if (icon.getAttribute('tabindex') === '-1') icon.setAttribute('tabindex', '0');
+        });
+      });
+    };
+    update();
+    map.on('move zoom resize', update);
+    const ro = new ResizeObserver(update);
+    ro.observe(panel);
+    panel.addEventListener('transitionend', update);
+    return () => {
+      cancelAnimationFrame(frame);
+      map.off('move zoom resize', update);
+      ro.disconnect();
+      panel.removeEventListener('transitionend', update);
+    };
+  }, [map, panelRef, overlayRef, markerCount]);
+  return null;
+}
+
+/**
+ * Centers the map in its visible part: above the phone sheet, or right of the
+ * desktop sidebar. It used to center behind the sheet, hiding every marker.
+ */
+function MapController({ center, panelRef }: { center: { lat: number; lng: number }; panelRef: React.RefObject<HTMLDivElement | null> }) {
+  const map = useMap();
+  useEffect(() => {
+    const zoom = map.getZoom();
+    const box = map.getContainer().getBoundingClientRect();
+    const panel = panelRef.current?.getBoundingClientRect();
+    let offset = L.point(0, 0);
+    if (panel && panel.width > 0 && panel.height > 0) {
+      const coversBottom = panel.width >= box.width * 0.9 && panel.top > box.top && panel.top < box.bottom;
+      const coversLeft = panel.height >= box.height * 0.9 && panel.right > box.left && panel.right < box.right;
+      if (coversBottom) offset = L.point(0, (box.bottom - panel.top) / 2);
+      else if (coversLeft) offset = L.point(-(panel.right - box.left) / 2, 0);
+    }
+    const target = map.unproject(map.project([center.lat, center.lng], zoom).add(offset), zoom);
+    map.setView(target, zoom, { animate: true });
+  }, [center, map, panelRef]);
   return null;
 }
 
@@ -73,6 +146,8 @@ export default function NearbyGroupsPageContent() {
   const [isMapInView, setIsMapInView] = useState(false);
   const [mapEpoch, setMapEpoch] = useState(0);
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -251,12 +326,15 @@ export default function NearbyGroupsPageContent() {
             >
               <LeafletMapReady>
                 <TileLayer key={tile.url} url={tile.url} attribution={tile.attribution} />
-                <MapController center={mapCenter} />
+                <MapController center={mapCenter} panelRef={panelRef} />
+                <HideMarkersUnderPanel panelRef={panelRef} overlayRef={overlayRef} markerCount={filteredLocalGroups.length + (userLocation ? 1 : 0)} />
 
                 {filteredLocalGroups.map((group) => (
                   <Marker
                     key={group.id}
                     position={[group.lat, group.lng]}
+                    alt={group.title}
+                    title={group.title}
                     eventHandlers={{
                       click: () => setSelectedEventId(group.id),
                       mouseover: (e) => e.target.openPopup(),
@@ -267,8 +345,8 @@ export default function NearbyGroupsPageContent() {
                         {group.category}
                       </div>
                       <div
-                        className="max-w-[200px] cursor-pointer outline-none group focus-visible:ring-2 focus-visible:ring-accent rounded-2xl"
-                        {...pressable<HTMLDivElement>(() => navigate(`/events/${group.id}`))}
+                        className="max-w-[200px] cursor-pointer group rounded-2xl"
+                        {...redundantClick<HTMLDivElement>(() => navigate(`/events/${group.id}`))}
                       >
                         <div className="overflow-hidden rounded-2xl mb-2">
                           <GroupImage
@@ -285,6 +363,10 @@ export default function NearbyGroupsPageContent() {
                         </p>
                         <button
                           type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/events/${group.id}`);
+                          }}
                           className="w-full bg-cyan-600 text-white text-xs font-bold py-2 rounded-2xl hover:bg-cyan-700 transition-colors shadow-soft"
                         >
                           {t('Δες Εκδήλωση', 'View Event')}
@@ -317,7 +399,7 @@ export default function NearbyGroupsPageContent() {
       </div>
 
       {/* Floating HUD */}
-      <div className={cn("absolute top-4 left-4 right-4 z-10 flex flex-col gap-2 pointer-events-none transition-all duration-300 md:left-[calc(var(--sidebar-width)+16px)]")}>
+      <div ref={overlayRef} className={cn("absolute top-4 left-4 right-4 z-10 flex flex-col gap-2 pointer-events-none transition-all duration-300 md:left-[calc(var(--sidebar-width)+16px)]")}>
         <div className="flex gap-2 w-full">
           {!isMapFullscreen && (
             <div className="relative flex-1 max-w-sm pointer-events-auto">
@@ -379,6 +461,7 @@ export default function NearbyGroupsPageContent() {
 
       {/* Slide-up Panel / Sidebar */}
       <div
+        ref={panelRef}
         className={cn(
           "absolute bottom-0 left-0 right-0 md:top-0 md:bottom-0 md:right-auto z-20 flex flex-col rounded-t-3xl md:rounded-none transition-transform duration-300 transform translate-y-0 dynamic-sidebar-width border-r shadow-soft-lg",
           isMapFullscreen ? "translate-y-full md:-translate-x-full" : isPanelExpanded ? "top-0 md:h-full" : "max-h-[60vh] md:max-h-full",

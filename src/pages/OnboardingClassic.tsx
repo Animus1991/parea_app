@@ -150,7 +150,7 @@ export default function OnboardingClassic() {
             </span>
             <span className="text-xs font-bold text-brand">{progressPct}%</span>
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-gray-100 dark:bg-white/10 rounded-full h-2 overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-accent to-cyan-400 rounded-full transition-all duration-500"
               style={{ width: `${progressPct}%` }}
@@ -161,7 +161,7 @@ export default function OnboardingClassic() {
               <div
                 key={i}
                 className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                  i <= step ? 'bg-accent' : 'bg-gray-100'
+                  i <= step ? 'bg-accent' : 'bg-gray-100 dark:bg-white/10'
                 }`}
               />
             ))}
@@ -177,7 +177,7 @@ export default function OnboardingClassic() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: dir * -40 }}
             transition={{ duration: 0.25 }}
-            className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 space-y-5"
+            className="bg-white dark:bg-surface-raised rounded-2xl p-4 shadow-soft border border-gray-100 dark:border-border space-y-5"
           >
             <div>
               <h2 className="text-lg font-black text-ink leading-tight">
@@ -218,7 +218,7 @@ export default function OnboardingClassic() {
                         className={`flex items-center gap-2 px-3 py-2.5 min-h-10 rounded-xl text-sm font-semibold border transition-all duration-200 text-left ${
                           sel
                             ? 'bg-ink text-white border-ink'
-                            : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
+                            : 'bg-white dark:bg-surface-raised border-gray-200 dark:border-border text-gray-600 hover:border-gray-300 dark:hover:border-border-strong hover:text-ink'
                         }`}
                       >
                         <span className="text-lg leading-none shrink-0" aria-hidden>{item.emoji}</span>
@@ -257,7 +257,7 @@ export default function OnboardingClassic() {
                     className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition-all duration-200 ${
                       selectedGroupSize === gs.id
                         ? 'bg-ink text-white border-ink'
-                        : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
+                        : 'bg-white dark:bg-surface-raised border-gray-200 dark:border-border text-gray-600 hover:border-gray-300 dark:hover:border-border-strong hover:text-ink'
                     }`}
                   >
                     <span className="text-lg leading-none">{gs.emoji}</span>
@@ -280,7 +280,7 @@ export default function OnboardingClassic() {
                     className={`w-full flex items-start gap-3 px-4 py-3.5 rounded-2xl border transition-all duration-200 ${
                       selectedActivity === al.id
                         ? 'bg-ink text-white border-ink'
-                        : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
+                        : 'bg-white dark:bg-surface-raised border-gray-200 dark:border-border text-gray-600 hover:border-gray-300 dark:hover:border-border-strong hover:text-ink'
                     }`}
                   >
                     <span className="text-lg leading-none mt-0.5">{al.emoji}</span>
@@ -314,7 +314,7 @@ export default function OnboardingClassic() {
                       className={`flex items-center gap-2 px-3 py-3 rounded-2xl border transition-all duration-200 ${
                         sel
                           ? 'bg-ink text-white border-ink'
-                          : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
+                          : 'bg-white dark:bg-surface-raised border-gray-200 dark:border-border text-gray-600 hover:border-gray-300 dark:hover:border-border-strong hover:text-ink'
                       }`}
                     >
                       <span className="text-lg leading-none">{sc.emoji}</span>
@@ -337,7 +337,7 @@ export default function OnboardingClassic() {
                     className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition-all duration-200 ${
                       selectedLocation === lp.id
                         ? 'bg-ink text-white border-ink'
-                        : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:text-ink'
+                        : 'bg-white dark:bg-surface-raised border-gray-200 dark:border-border text-gray-600 hover:border-gray-300 dark:hover:border-border-strong hover:text-ink'
                     }`}
                   >
                     <span className="text-lg leading-none">{lp.emoji}</span>
@@ -362,7 +362,7 @@ export default function OnboardingClassic() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={t('Το όνομά σου...', 'Your name...')}
-                    className="field-control w-full h-9 px-3 rounded-xl border border-gray-200 bg-gray-50 text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all"
+                    className="field-control w-full h-9 px-3 rounded-xl border border-gray-200 dark:border-border bg-gray-50 dark:bg-white/5 text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white dark:focus:bg-surface-raised transition-all"
                   />
                 </div>
                 <div>
@@ -377,14 +377,14 @@ export default function OnboardingClassic() {
                       'Tell us a bit about yourself...',
                     )}
                     rows={3}
-                    className="field-control w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all resize-none"
+                    className="field-control w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-border bg-gray-50 dark:bg-white/5 text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white dark:focus:bg-surface-raised transition-all resize-none"
                   />
                   <p className="text-2xs text-gray-400 font-medium mt-1">
                     {bio.length}/160 {t('χαρακτήρες', 'characters')}
                   </p>
                 </div>
                 {/* Summary */}
-                <div className="bg-gray-50 rounded-2xl p-3 space-y-1.5 border border-gray-100">
+                <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-3 space-y-1.5 border border-gray-100 dark:border-border">
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                     {tu('Σύνοψη επιλογών', 'Your selections')}
                   </p>
@@ -410,7 +410,7 @@ export default function OnboardingClassic() {
         <div className="flex items-center justify-between mt-5">
           <button
             onClick={step === 0 ? handleSkip : goPrev}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-gray-200 text-sm font-bold text-gray-500 hover:text-ink hover:border-gray-300 transition-all duration-200"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-gray-200 dark:border-border text-sm font-bold text-gray-500 hover:text-ink hover:border-gray-300 dark:hover:border-border-strong transition-all duration-200"
           >
             <ChevronLeft className="w-4 h-4" />
             {step === 0 ? t('Παράλειψη', 'Skip') : t('Πίσω', 'Back')}

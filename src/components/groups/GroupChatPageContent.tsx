@@ -35,9 +35,13 @@ import { GroupChatReportModal } from "./groupChat/GroupChatReportModal";
 import { GroupChatLocationModal } from "./groupChat/GroupChatLocationModal";
 import { GroupChatSosModal } from "./groupChat/GroupChatSosModal";
 import { canModerateGroup } from "../../lib/roles";
+import { intlLocale } from '../../lib/dateLocale';
+
+/** Room under the newest message so the floating chats button (desktop) never covers it. */
+const VIRTUOSO_COMPONENTS = { Footer: () => <div aria-hidden className="h-2 md:h-14" /> };
 
 export default function GroupChatPageContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { groupId } = useParams();
   const navigate = useNavigate();
   const events = useStore((state) => state.events);
@@ -217,7 +221,7 @@ export default function GroupChatPageContent() {
           key={msg.id}
           className="text-center my-6 flex justify-center w-full px-4"
         >
-          <span className="text-xs font-semibold tracking-tight capitalize text-ink bg-[#F3F4F6] px-4 py-2 rounded-full shadow-soft max-w-sm text-center leading-relaxed">
+          <span className="text-xs font-semibold tracking-tight capitalize text-ink bg-[#F3F4F6] dark:bg-white/10 px-4 py-2 rounded-full shadow-soft max-w-sm text-center leading-relaxed">
             {msg.text}
           </span>
         </div>
@@ -230,9 +234,9 @@ export default function GroupChatPageContent() {
           key={msg.id}
           className="text-center my-6 flex justify-center w-full px-4 animate-in fade-in duration-300"
         >
-          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-100 px-4 py-2.5 rounded-full shadow-soft max-w-sm">
-            <Compass className="h-4 w-4 text-emerald-600 animate-pulse" />
-            <span className="text-sm font-medium text-emerald-800 leading-tight">
+          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-100 dark:bg-emerald-950/40 dark:border-emerald-800/50 px-4 py-2.5 rounded-full shadow-soft max-w-sm">
+            <Compass className="h-4 w-4 text-emerald-600 dark:text-emerald-400 animate-pulse" />
+            <span className="text-sm font-medium text-emerald-800 dark:text-emerald-200 leading-tight">
               {msg.text}
             </span>
           </div>
@@ -245,7 +249,7 @@ export default function GroupChatPageContent() {
         key={msg.id}
         className={`flex flex-col group py-2.5 w-full px-4 md:px-4 ${isMe ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
       >
-        <span className="text-xs font-semibold tracking-tight capitalize text-[#4b5563] ml-1 mb-1">
+        <span className="text-xs font-semibold tracking-tight capitalize text-[#4b5563] dark:text-ink-muted ml-1 mb-1">
           {isMe ? t("Εσείς", "You") : msg.senderName}
         </span>
         <div className="flex items-center gap-2">
@@ -262,13 +266,13 @@ export default function GroupChatPageContent() {
             className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-2.5 text-base leading-relaxed relative ${
               isMe
                 ? "bg-ink text-white rounded-tr-sm shadow-soft"
-                : "bg-white border border-gray-100 text-ink rounded-tl-sm shadow-soft"
+                : "bg-white dark:bg-surface-raised border border-gray-100 dark:border-border text-ink rounded-tl-sm shadow-soft"
             }`}
           >
             {msg.text}
           </div>
         </div>
-        <span className="text-xs text-[#6b7280] mt-1 mr-1 font-medium tracking-wide">
+        <span className="text-xs text-[#6b7280] dark:text-ink-muted mt-1 mr-1 font-medium tracking-wide">
           {new Date(msg.timestamp).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
@@ -280,12 +284,12 @@ export default function GroupChatPageContent() {
 
   return (
     <div className="w-full h-full px-[5px] md:px-0 mx-auto max-w-[1200px]">
-      <div className="w-full h-[calc(100dvh-5rem)] md:h-[calc(100dvh-6rem)] flex bg-white border border-gray-100 rounded-2xl shadow-soft overflow-hidden relative">
+      <div className="w-full h-full min-h-[420px] flex bg-white dark:bg-surface-raised border border-gray-100 dark:border-border rounded-2xl shadow-soft overflow-hidden relative">
         <div
-          className={`flex flex-col flex-1 h-full min-w-0 ${showInfo ? "hidden md:flex border-r border-gray-200" : "flex"}`}
+          className={`flex flex-col flex-1 h-full min-w-0 ${showInfo ? "hidden md:flex border-r border-gray-200 dark:border-border" : "flex"}`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-3 md:px-5 py-3 border-b border-gray-200 bg-white shrink-0 relative z-20">
+          <div className="flex items-center justify-between px-3 md:px-5 py-3 border-b border-gray-200 dark:border-border bg-white dark:bg-surface-raised shrink-0 relative z-20">
             {showSearchMobile ? (
               <div className="flex items-center gap-2 w-full animate-in fade-in slide-in-from-right-4 duration-200">
                 <button
@@ -305,7 +309,7 @@ export default function GroupChatPageContent() {
                   placeholder={t("Αναζήτηση συνομιλίας...", "Search chat...")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-ink bg-gray-50"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-ink bg-gray-50 dark:bg-white/5"
                 />
                 {searchQuery && (
                   <button
@@ -344,7 +348,7 @@ export default function GroupChatPageContent() {
                     <select aria-label={t("Φίλτρο αποστολέα", "Sender filter")}
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
-                      className={cn("filter-select border border-gray-200 focus:outline-none focus:ring-1 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate", gc.focusRing)}
+                      className={cn("filter-select border border-gray-200 dark:border-border focus:outline-none focus:ring-1 bg-gray-50 dark:bg-white/5 text-gray-600 hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer transition-colors max-w-[120px] truncate", gc.focusRing)}
                     >
                       <option value="all">
                         {t("Όλοι οι Αποστολείς", "All Senders")}
@@ -362,7 +366,7 @@ export default function GroupChatPageContent() {
                         placeholder={t("Αναζήτηση...", "Search...")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className={cn("pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 w-32 xl:w-48 bg-gray-50 focus:bg-white transition-all", gc.focusRing)}
+                        className={cn("pl-8 pr-3 py-1.5 text-xs border border-gray-200 dark:border-border rounded-lg focus:outline-none focus:ring-1 w-32 xl:w-48 bg-gray-50 dark:bg-white/5 focus:bg-white dark:focus:bg-surface-raised transition-all", gc.focusRing)}
                       />
                     </div>
                   </div>
@@ -370,7 +374,7 @@ export default function GroupChatPageContent() {
                   {/* Mobile Search Toggle */}
                   <button
                     onClick={() => setShowSearchMobile(true)}
-                    className="text-gray-400 hover:text-ink hover:bg-gray-100 rounded-full transition-colors p-2 md:hidden"
+                    className="text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors p-2 md:hidden"
                     aria-label={t('Αναζήτηση', 'Search')}
                   >
                     <Search className="h-5 w-5" />
@@ -387,7 +391,7 @@ export default function GroupChatPageContent() {
                   {/* Info Toggle */}
                   <button
                     onClick={() => setShowInfo(!showInfo)}
-                    className={cn("transition-colors p-2 rounded-full min-h-11 min-w-11", showInfo ? gc.infoActive : "text-gray-400 hover:text-ink hover:bg-gray-100")}
+                    className={cn("transition-colors p-2 rounded-full min-h-11 min-w-11", showInfo ? gc.infoActive : "text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10")}
                     aria-label={showInfo ? t('Απόκρυψη πληροφοριών', 'Hide info panel') : t('Εμφάνιση πληροφοριών', 'Show info panel')}
                   >
                     <Info className="h-5 w-5" />
@@ -399,14 +403,14 @@ export default function GroupChatPageContent() {
 
           {/* Ephemeral Notice */}
           {isEphemeral && showEphemeralBanner && (
-            <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 px-2 py-2 sm:px-3 text-center shadow-soft z-10 backdrop-blur-sm flex items-center justify-center relative">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-xs sm:text-xs font-bold tracking-wide text-[#7b3306] pr-6 w-full">
+            <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 dark:border-amber-800/40 dark:bg-amber-950/40 px-2 py-2 sm:px-3 text-center shadow-soft z-10 backdrop-blur-sm flex items-center justify-center relative">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-xs sm:text-xs font-bold tracking-wide text-[#7b3306] dark:text-amber-200 pr-6 w-full">
                 <span className="flex items-center justify-center gap-1.5 whitespace-nowrap">
                   <ShieldCheck className="h-3.5 w-3.5 shrink-0" />{" "}
                   {t("Εφήμερη Λειτουργία", "Ephemeral Mode")}
                 </span>
                 <span className="hidden sm:inline w-1 h-1 rounded-full bg-amber-300 opacity-60 shrink-0"></span>
-                <span className="font-medium text-[#973c00] flex items-center justify-center gap-1 leading-tight w-full max-w-full overflow-hidden">
+                <span className="font-medium text-[#973c00] dark:text-amber-300 flex items-center justify-center gap-1 leading-tight w-full max-w-full overflow-hidden">
                   <Clock className="h-3 w-3 shrink-0" />{" "}
                   <span className="truncate whitespace-normal sm:whitespace-nowrap">
                     {t(
@@ -427,12 +431,12 @@ export default function GroupChatPageContent() {
           )}
 
           {/* Messages Virtualized */}
-          <div className="flex-1 min-h-0 bg-[#F9FAFB] relative shadow-inner">
+          <div className="flex-1 min-h-0 bg-[#F9FAFB] dark:bg-surface relative shadow-inner">
             {isSharingLocation && (
               <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
                 <button
                   onClick={() => setShowLocationConfigModal(true)}
-                  className="bg-white/90 backdrop-blur-sm border border-emerald-200 text-emerald-700 shadow-soft px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2"
+                  className="bg-white/90 dark:bg-surface-raised/90 backdrop-blur-sm border border-emerald-200 text-emerald-700 dark:border-emerald-800/60 dark:text-emerald-300 shadow-soft px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2"
                 >
                   <span className="flex h-2 w-2 relative">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -448,13 +452,14 @@ export default function GroupChatPageContent() {
               itemContent={renderMessage}
               className="h-full w-full custom-scrollbar"
               alignToBottom={true}
+              components={VIRTUOSO_COMPONENTS}
             />
           </div>
 
           {/* Input */}
           <form
             onSubmit={handleSend}
-            className="p-3 sm:p-4 border-t border-gray-200 bg-white shrink-0 relative z-20"
+            className="p-3 sm:p-4 border-t border-gray-200 dark:border-border bg-white dark:bg-surface-raised shrink-0 relative z-20"
           >
             <div className="flex items-center gap-2 md:gap-3 max-w-4xl mx-auto w-full relative">
               <button
@@ -463,7 +468,7 @@ export default function GroupChatPageContent() {
                 className={`p-2.5 rounded-full transition-all flex items-center justify-center shrink-0 border hidden sm:flex ${
                   isSharingLocation
                     ? "bg-emerald-50 text-emerald-600 border-emerald-200 ring-2 ring-emerald-500/20"
-                    : "bg-gray-50 text-gray-400 border-gray-200 hover:bg-gray-100 hover:text-gray-600"
+                    : "bg-gray-50 dark:bg-white/5 text-gray-400 border-gray-200 dark:border-border hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-600"
                 }`}
                 title={t("Τοποθεσία & Ασφάλεια", "Location & Safety")}
               >
@@ -492,7 +497,7 @@ export default function GroupChatPageContent() {
                     "Πληκτρολογήστε ένα μήνυμα...",
                     "Type a message...",
                   )}
-                  className="w-full bg-gray-100 border border-transparent rounded-full py-3 md:py-3.5 pl-5 pr-14 text-sm focus:bg-white focus:ring-2 focus:ring-ink focus:border-ink outline-none transition-all shadow-soft"
+                  className="w-full bg-gray-100 dark:bg-white/10 border border-transparent rounded-full py-3 md:py-3.5 pl-5 pr-14 text-sm focus:bg-white dark:focus:bg-surface-raised focus:ring-2 focus:ring-ink focus:border-ink outline-none transition-all shadow-soft"
                 />
                 <button
                   type="submit"
@@ -508,22 +513,22 @@ export default function GroupChatPageContent() {
         </div>
 
         {showInfo && (
-          <div className="w-full md:w-[320px] lg:w-[380px] bg-white shrink-0 flex flex-col absolute md:relative z-30 h-full border-l border-gray-200 animate-in slide-in-from-right-8 duration-200">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white sticky top-0 z-10 shadow-soft">
+          <div className="w-full md:w-[320px] lg:w-[380px] bg-white dark:bg-surface-raised shrink-0 flex flex-col absolute md:relative z-30 h-full border-l border-gray-200 dark:border-border animate-in slide-in-from-right-8 duration-200">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-border bg-white dark:bg-surface-raised sticky top-0 z-10 shadow-soft">
               <h3 className="font-bold text-ink text-sm tracking-wide">
                 {t("Λεπτομέρειες Ομάδας", "Group Details")}
               </h3>
               <button
                 onClick={() => setShowInfo(false)}
-                className="text-gray-400 hover:text-ink p-1 rounded-full hover:bg-gray-100 transition-colors"
+                className="text-gray-400 hover:text-ink p-1 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4 bg-gray-50/50">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4 bg-gray-50/50 dark:bg-white/5">
               {/* Event Summary */}
-              <div className="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden">
+              <div className="bg-white dark:bg-surface-raised rounded-2xl shadow-soft border border-gray-100 dark:border-border overflow-hidden">
                 <div className="relative h-28 w-full group">
                   <img
                     referrerPolicy="no-referrer"
@@ -555,16 +560,16 @@ export default function GroupChatPageContent() {
 
                   <div className="space-y-2.5 text-sm font-medium text-gray-600">
                     <div className="flex items-start gap-3">
-                      <div className="p-1.5 bg-gray-100 rounded-lg text-gray-500 shrink-0">
+                      <div className="p-1.5 bg-gray-100 dark:bg-white/10 rounded-lg text-gray-500 shrink-0">
                         <Calendar className="h-3.5 w-3.5" />
                       </div>
                       <span className="pt-0.5">
-                        {new Date(event.date).toLocaleDateString()}{" "}
+                        {new Date(event.date).toLocaleDateString(intlLocale(language))}{" "}
                         {t("στις", "at")} {event.time}
                       </span>
                     </div>
                     <div className="flex items-start gap-3">
-                      <div className="p-1.5 bg-gray-100 rounded-lg text-gray-500 shrink-0">
+                      <div className="p-1.5 bg-gray-100 dark:bg-white/10 rounded-lg text-gray-500 shrink-0">
                         <MapPin className="h-3.5 w-3.5" />
                       </div>
                       <span className="pt-0.5 text-ink font-semibold">
@@ -587,11 +592,11 @@ export default function GroupChatPageContent() {
 
               {event.groupDiscount && (
                 <div
-                  className={`p-4 rounded-2xl border shadow-soft ${group.discountUnlocked ? "bg-emerald-50 border-emerald-200" : "bg-white border-gray-100"}`}
+                  className={`p-4 rounded-2xl border shadow-soft ${group.discountUnlocked ? "bg-emerald-50 border-emerald-200" : "bg-white dark:bg-surface-raised border-gray-100 dark:border-border"}`}
                 >
                   <div className="flex items-center gap-2.5 mb-2">
                     <div
-                      className={`p-1.5 rounded-full ${group.discountUnlocked ? "bg-emerald-100 text-emerald-600" : "bg-gray-100 text-gray-500"}`}
+                      className={`p-1.5 rounded-full ${group.discountUnlocked ? "bg-emerald-100 text-emerald-600" : "bg-gray-100 dark:bg-white/10 text-gray-500"}`}
                     >
                       <Tag className="h-4 w-4" />
                     </div>
@@ -617,7 +622,7 @@ export default function GroupChatPageContent() {
                 </div>
               )}
 
-              <div className="bg-white rounded-2xl shadow-soft border border-gray-100 p-4">
+              <div className="bg-white dark:bg-surface-raised rounded-2xl shadow-soft border border-gray-100 dark:border-border p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="font-bold text-sm capitalize tracking-tight text-ink">
                     {t("Μέλη Ομάδας", "Group Members")}
@@ -632,7 +637,7 @@ export default function GroupChatPageContent() {
                         {t("Προσθήκη Μελών", "Add Members")}
                       </button>
                     )}
-                    <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-bold text-gray-500 bg-gray-100 dark:bg-white/10 px-2 py-0.5 rounded-full">
                       {group.members.length}/{group.targetSize}
                     </span>
                   </div>
@@ -644,7 +649,7 @@ export default function GroupChatPageContent() {
                     placeholder={t("Αναζήτηση μελών...", "Search members...")}
                     value={memberSearchQuery}
                     onChange={(e) => setMemberSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-ink bg-gray-50 transition-all font-medium"
+                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 dark:border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ink bg-gray-50 dark:bg-white/5 transition-all font-medium"
                   />
                 </div>
                 <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
@@ -659,9 +664,9 @@ export default function GroupChatPageContent() {
                       return (
                         <div
                           key={member.id}
-                          className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-100"
+                          className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors border border-transparent hover:border-gray-100 dark:hover:border-border"
                         >
-                          <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0 relative group shadow-soft border border-gray-100">
+                          <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/15 overflow-hidden shrink-0 relative group shadow-soft border border-gray-100 dark:border-border">
                             {member.photoUrl ? (
                               <img
                                 referrerPolicy="no-referrer"
@@ -720,7 +725,7 @@ export default function GroupChatPageContent() {
               </div>
 
               {/* Chat Settings */}
-              <div className="bg-white rounded-2xl shadow-soft border border-gray-100 p-4 space-y-5">
+              <div className="bg-white dark:bg-surface-raised rounded-2xl shadow-soft border border-gray-100 dark:border-border p-4 space-y-5">
                 <div>
                   <h4 className="font-bold text-sm capitalize tracking-tight text-ink mb-3 flex items-center gap-1.5">
                     <ShieldCheck className="h-3.5 w-3.5 text-gray-400" />{" "}
@@ -748,18 +753,18 @@ export default function GroupChatPageContent() {
                       }}
                       role="switch"
                       aria-checked={isEphemeral}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 ${isEphemeral ? "bg-ink" : "bg-gray-200"}`}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 ${isEphemeral ? "bg-ink" : "bg-gray-200 dark:bg-white/15"}`}
                     >
                       <span className="sr-only">{t('Εναλλαγή εφήμερης λειτουργίας', 'Toggle ephemeral mode')}</span>
                       <span
                         aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isEphemeral ? "translate-x-5" : "translate-x-0"}`}
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white dark:bg-surface-raised shadow ring-0 transition duration-200 ease-in-out ${isEphemeral ? "translate-x-5" : "translate-x-0"}`}
                       />
                     </button>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-gray-100">
+                <div className="pt-4 border-t border-gray-100 dark:border-border">
                   <h4 className="font-bold text-sm capitalize tracking-tight text-ink mb-3 flex items-center gap-1.5">
                     <Navigation className="h-3.5 w-3.5 text-gray-400" />{" "}
                     {t("Άφιξη & Ασφάλεια", "Arrival & Safety")}
@@ -767,7 +772,7 @@ export default function GroupChatPageContent() {
                   <div className="space-y-2">
                     <button
                       onClick={() => setShowStatusModal(true)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors text-left"
+                      className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-200 dark:border-border rounded-lg transition-colors text-left"
                     >
                       <div>
                         <p className="text-sm font-bold text-ink">
@@ -785,7 +790,7 @@ export default function GroupChatPageContent() {
 
                     <button
                       onClick={() => setShowLocationConfigModal(true)}
-                      className={cn("w-full flex items-center justify-between px-3 py-2.5 border rounded-lg transition-colors text-left", isSharingLocation ? gc.shareActive : "bg-gray-50 hover:bg-gray-100 border-gray-200")}
+                      className={cn("w-full flex items-center justify-between px-3 py-2.5 border rounded-lg transition-colors text-left", isSharingLocation ? gc.shareActive : "bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 border-gray-200 dark:border-border")}
                     >
                       <div>
                         <p
@@ -816,7 +821,7 @@ export default function GroupChatPageContent() {
 
                     <button
                       onClick={() => setShowLiveRadarModal(true)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors text-left"
+                      className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-200 dark:border-border rounded-lg transition-colors text-left"
                     >
                       <div>
                         <p className="text-sm font-bold text-ink">
@@ -865,7 +870,7 @@ export default function GroupChatPageContent() {
                 </button>
                 <button
                   onClick={() => setShowLeaveModal(true)}
-                  className="w-full py-2.5 px-4 text-xs font-bold tracking-wide text-gray-500 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors"
+                  className="w-full py-2.5 px-4 text-xs font-bold tracking-wide text-gray-500 bg-white dark:bg-surface-raised hover:bg-gray-50 dark:hover:bg-white/5 border border-gray-200 dark:border-border rounded-lg transition-colors"
                 >
                   {t("Αποχώρηση", "Leave Group")}
                 </button>

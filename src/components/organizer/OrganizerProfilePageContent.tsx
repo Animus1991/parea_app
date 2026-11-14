@@ -12,10 +12,11 @@ import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { cn } from '../../lib/utils';
 import { safeExternalUrl } from '../../lib/safeUrl';
 import { toast } from 'sonner';
+import { dateFnsLocale } from '../../lib/dateLocale';
 
 export default function OrganizerProfilePageContent() {
   const { id } = useParams();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const p = usePageContrast();
   const [showContactModal, setShowContactModal] = useState(false);
   const [contactMessage, setContactMessage] = useState('');
@@ -162,7 +163,7 @@ export default function OrganizerProfilePageContent() {
                 <Card className={cn('flex items-start gap-4 p-4 transition-colors cursor-pointer group', p.cardHover)}>
                   <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0">
                     <div className={cn('w-full h-full flex flex-col items-center justify-center', p.isDark ? 'bg-cyan-900/30 text-cyan-300' : 'bg-cyan-50 text-cyan-700')}>
-                      <span className="text-2xs font-bold tracking-wide">{format(parseISO(event.date), 'MMM')}</span>
+                      <span className="text-2xs font-bold tracking-wide">{format(parseISO(event.date), 'LLL', { locale: dateFnsLocale(language) })}</span>
                       <span className="text-lg font-bold leading-none">{format(parseISO(event.date), 'd')}</span>
                     </div>
                   </div>

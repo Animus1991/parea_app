@@ -12,9 +12,10 @@ import { useEventsResource } from '../../hooks/useEventsQuery';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { dateFnsLocale } from '../../lib/dateLocale';
 
 export default function HistoryPageContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const a = usePageContrast();
 
@@ -174,7 +175,7 @@ export default function HistoryPageContent() {
                   </div>
                   <h3 className={cn("font-bold text-base truncate", a.head)}>{event.title}</h3>
                   <div className={cn("flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium", a.sub)}>
-                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{format(parseISO(event.date), 'dd MMM yyyy')}</span>
+                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{format(parseISO(event.date), 'dd MMM yyyy', { locale: dateFnsLocale(language) })}</span>
                     <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{event.locationArea}</span>
                     {feedbackSubmitted[event.id] && (
                       <span className="flex items-center gap-0.5">

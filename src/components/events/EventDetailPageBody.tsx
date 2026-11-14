@@ -279,8 +279,9 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         </div>
       </div>
 
-      {/* Mobile Sticky CTA — primary: Find Nakamas (gated) */}
-      <div className="fixed bottom-0 left-0 right-0 bg-surface-raised/95 backdrop-blur-md border-t border-border p-4 shadow-soft-up md:hidden z-fab flex gap-3 pb-safe">
+      {/* Mobile Sticky CTA — primary: Find Nakamas (gated). It sits on top of the
+          bottom navigation (it used to cover it, so the nav could not be tapped). */}
+      <div className="fixed left-0 right-0 bottom-[calc(var(--bottom-nav-total)+env(safe-area-inset-bottom,0px))] bg-surface-raised/95 backdrop-blur-md border-t border-border p-4 shadow-soft-up md:hidden z-fab flex gap-3">
         <Button variant="outline" className="flex-1 min-h-11 border-border text-ink" onClick={handleSave}>
           {isSaved ? t('Αποθηκευμένο', 'Saved') : t('Αποθήκευση', 'Save')}
         </Button>

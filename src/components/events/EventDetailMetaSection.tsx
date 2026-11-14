@@ -7,6 +7,7 @@ import { getEventDetailContentTokens } from '../../lib/designTokens';
 import { cn } from '../../lib/utils';
 import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventDetailMapSection';
+import { dateFnsLocale } from '../../lib/dateLocale';
 
 export interface EventDetailMetaSectionProps {
   event: Event;
@@ -21,7 +22,7 @@ export function EventDetailMetaSection({
   darkSurface = false,
   className,
 }: EventDetailMetaSectionProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { content } = getEventDetailContentTokens(accent, darkSurface);
   const ruleText = getEventParticipationRuleText(event.minTrustTierAccess, t);
 
@@ -37,7 +38,7 @@ export function EventDetailMetaSection({
           <Calendar className="h-3.5 w-3.5" /> {t('Ημερομηνία', 'Date')}
         </div>
         <p className={cn('font-medium text-sm', content.metaValue)}>
-          {format(parseISO(event.date), 'EEEE, MMMM d, yyyy')}
+          {format(parseISO(event.date), 'EEEE, PPP', { locale: dateFnsLocale(language) })}
         </p>
       </div>
       <div className="space-y-1">

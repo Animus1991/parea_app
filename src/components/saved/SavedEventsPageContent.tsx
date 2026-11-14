@@ -13,11 +13,12 @@ import { useEventsResource } from '../../hooks/useEventsQuery';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { dateFnsLocale } from '../../lib/dateLocale';
 
 const NO_IDS: string[] = [];
 
 export default function SavedEventsPageContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const a = usePageContrast();
 
@@ -165,7 +166,7 @@ export default function SavedEventsPageContent() {
                 <div className="mt-auto space-y-1.5">
                   <div className={cn("flex items-center text-xs font-medium", a.sub)}>
                     <Calendar className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-                    <span className="truncate">{format(parseISO(event.date), 'MMM d, yyyy')} • {event.time}</span>
+                    <span className="truncate">{format(parseISO(event.date), 'PP', { locale: dateFnsLocale(language) })} • {event.time}</span>
                   </div>
                   <div className={cn("flex items-center text-xs font-medium", a.sub)}>
                     <MapPin className="w-3.5 h-3.5 mr-1.5 shrink-0" />

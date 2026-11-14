@@ -32,6 +32,7 @@ import { CalendarDayCell } from './CalendarDayCell';
 import { DayEventsStoriesModal } from './DayEventsStoriesModal';
 import { DailyScheduleView } from './DailyScheduleView';
 import type { PlannedEvent } from '../../types/plannedEvent';
+import { dateFnsLocale } from '../../lib/dateLocale';
 
 const WEEKDAY_LABELS = (t: (el: string, en: string) => string) => [
   t('Δευ', 'Mon'),
@@ -48,7 +49,7 @@ export interface PlannedEventsCalendarProps {
 }
 
 export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const p = usePageContrast();
   const navigate = useNavigate();
   const { plannedEvents } = usePlannedEvents();
@@ -194,7 +195,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           )}
         >
           <h2 className={cn('font-extrabold text-base md:text-lg capitalize', p.head)}>
-            {format(currentDate, 'MMMM yyyy')}
+            {format(currentDate, 'LLLL yyyy', { locale: dateFnsLocale(language) })}
           </h2>
           <div className="flex items-center gap-1">
             <button
