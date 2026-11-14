@@ -1,18 +1,7 @@
-import React, { createContext, useContext, useEffect, ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { toUpperNoAccents } from './greekText';
 import { useLanguageStore } from '../store/languageStore';
-
-type Language = 'el' | 'en';
-
-interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (greekText: string, englishText?: string) => string;
-  /** Like t(), but returns uppercase text with Greek tonos stripped — for labels styled all-caps. */
-  tu: (greekText: string, englishText?: string) => string;
-}
-
-export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+import { LanguageContext, type Language } from './i18n';
 
 const translations: Record<string, Record<Language, string>> = {
   // Navigation / AppShell
@@ -119,15 +108,4 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       {children}
     </LanguageContext.Provider>
   );
-}
-
-export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (context === undefined) {
-    // Safe fallback to avoid runtime crashes if a component renders before the provider (e.g., HMR edge cases)
-    const t = (greekText: string, englishText?: string) => (englishText ?? greekText);
-    const tu = (greekText: string, englishText?: string) => toUpperNoAccents(englishText ?? greekText);
-    return { language: 'el', setLanguage: () => {}, t, tu } as const;
-  }
-  return context;
 }

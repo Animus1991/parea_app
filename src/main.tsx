@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import './index.css';
 import { bootstrap } from './lib/bootstrap';
-import { LanguageProvider } from './lib/i18n';
+import { LanguageProvider } from './lib/LanguageProvider';
 import { MotionConfig } from 'motion/react';
 
 bootstrap();

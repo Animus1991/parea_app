@@ -10,7 +10,8 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { useStore } from '../../store';
 import { computeUserXp } from '../../lib/gamification';
 import type { AchievementId } from '../../lib/achievements';
-import { DailyChallengeCard, GamificationHubNav, GamificationSummary, useGamificationData } from './GamificationHub';
+import { DailyChallengeCard, GamificationHubNav, GamificationSummary } from './GamificationHub';
+import { useGamificationData } from '../../hooks/useGamificationData';
 
 const ICONS: Record<AchievementId, { icon: React.ElementType; color: string; darkColor: string }> = {
   first_experience: { icon: Calendar, color: 'text-cyan-600 bg-cyan-100', darkColor: 'text-cyan-400 bg-cyan-900/30' },
