@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react';
-import { ChevronDown, Crown, SlidersHorizontal, X } from 'lucide-react';
+import { Crown, SlidersHorizontal, X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { HOME_CATEGORIES, HOME_POPULAR_TAGS } from '../../lib/homeFeedConstants';
 import { getHomeCategoryTranslations, getHomeTagTranslations } from '../../lib/homeCategoryLabels';
 import { HomePersonalizationHint } from './HomePersonalizationHint';
 import { HomeDiscoveryPrefsChips } from './HomeDiscoveryPrefsChips';
+import { HomeFilterSelect } from './HomeFilterSelect';
 import { MoodSelector } from './MoodSelector';
 import { HOME_TYPO } from '../../lib/typographyTokens';
 import type {
@@ -154,73 +155,53 @@ export function HomeFiltersSection({
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        <select
-          className={cn(
-            'outline-none cursor-pointer transition-all duration-200',
-            HOME_TYPO.filterControlEqual,
-            h.select,
-          )}
-          aria-label={t('Φίλτρο τιμής', 'Price filter')}
+        <HomeFilterSelect
+          ariaLabel={t('Φίλτρο τιμής', 'Price filter')}
           value={priceFilter}
-          onChange={(e) => setPriceFilter(e.target.value as HomePriceFilter)}
-        >
-          <option value="All">{t('home.filter.all_types', 'Όλοι οι Τύποι')}</option>
-          <option value="Free">{t('home.filter.free', 'Δωρεάν')}</option>
-          <option value="Paid">{t('home.filter.paid', 'Επί Πληρωμή')}</option>
-          <option value="Group Discount">
-            {t('home.filter.group_discount', 'Ομαδική Έκπτωση')}
-          </option>
-        </select>
+          onValueChange={setPriceFilter}
+          options={[
+            { value: 'All', label: t('home.filter.all_types', 'Όλοι οι Τύποι') },
+            { value: 'Free', label: t('home.filter.free', 'Δωρεάν') },
+            { value: 'Paid', label: t('home.filter.paid', 'Επί Πληρωμή') },
+            { value: 'Group Discount', label: t('home.filter.group_discount', 'Ομαδική Έκπτωση') },
+          ]}
+        />
 
-        <select
-          className={cn(
-            'outline-none cursor-pointer transition-all duration-200',
-            HOME_TYPO.filterControlEqual,
-            h.select,
-          )}
-          aria-label={t('Φίλτρο ημερομηνίας', 'Date filter')}
+        <HomeFilterSelect
+          ariaLabel={t('Φίλτρο ημερομηνίας', 'Date filter')}
           value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value as HomeDateFilter)}
-        >
-          <option value="Any">{t('home.filter.any_date', 'Οποιαδήποτε Ημ/νία')}</option>
-          <option value="Today">{t('home.filter.today', 'Σήμερα')}</option>
-          <option value="This Week">{t('home.filter.this_week', 'Αυτή την Εβδομάδα')}</option>
-          <option value="This Month">{t('home.filter.this_month', 'Αυτόν τον Μήνα')}</option>
-        </select>
+          onValueChange={setDateFilter}
+          options={[
+            { value: 'Any', label: t('home.filter.any_date', 'Οποιαδήποτε Ημ/νία') },
+            { value: 'Today', label: t('home.filter.today', 'Σήμερα') },
+            { value: 'This Week', label: t('home.filter.this_week', 'Αυτή την Εβδομάδα') },
+            { value: 'This Month', label: t('home.filter.this_month', 'Αυτόν τον Μήνα') },
+          ]}
+        />
 
-        <select
-          className={cn(
-            'outline-none cursor-pointer transition-all duration-200',
-            HOME_TYPO.filterControlEqual,
-            h.select,
-          )}
-          aria-label={t('Φίλτρο άνεσης & ασφάλειας', 'Comfort & safety filter')}
+        <HomeFilterSelect
+          ariaLabel={t('Φίλτρο άνεσης & ασφάλειας', 'Comfort & safety filter')}
           value={safetyFilter}
-          onChange={(e) => setSafetyFilter(e.target.value as HomeSafetyFilter)}
-        >
-          <option value="All">{t('home.filter.all_comfort', 'Όλα τα Επίπεδα')}</option>
-          <option value="low">{t('home.filter.public', 'Δημόσιοι Χώροι')}</option>
-          <option value="medium">{t('home.filter.organized', 'Οργανωμένοι Hosts')}</option>
-          <option value="high_trust">
-            {t('home.filter.verified', 'Επαληθευμένες Ομάδες')}
-          </option>
-        </select>
+          onValueChange={setSafetyFilter}
+          options={[
+            { value: 'All', label: t('home.filter.all_comfort', 'Όλα τα Επίπεδα') },
+            { value: 'low', label: t('home.filter.public', 'Δημόσιοι Χώροι') },
+            { value: 'medium', label: t('home.filter.organized', 'Οργανωμένοι Hosts') },
+            { value: 'high_trust', label: t('home.filter.verified', 'Επαληθευμένες Ομάδες') },
+          ]}
+        />
 
-        <select
-          className={cn(
-            'outline-none cursor-pointer transition-all duration-200',
-            HOME_TYPO.filterControlEqual,
-            h.select,
-          )}
-          aria-label={t('Φίλτρο απόστασης', 'Distance filter')}
+        <HomeFilterSelect
+          ariaLabel={t('Φίλτρο απόστασης', 'Distance filter')}
           value={radiusFilter}
-          onChange={(e) => setRadiusFilter(e.target.value as HomeRadiusFilter)}
-        >
-          <option value="Any">{t('home.filter.any_distance', 'Οποιαδήποτε Απόσταση')}</option>
-          <option value="5km">{t('home.filter.5km', 'Εντός 5χλμ')}</option>
-          <option value="10km">{t('home.filter.10km', 'Εντός 10χλμ')}</option>
-          <option value="25km">{t('home.filter.25km', 'Εντός 25χλμ')}</option>
-        </select>
+          onValueChange={setRadiusFilter}
+          options={[
+            { value: 'Any', label: t('home.filter.any_distance', 'Οποιαδήποτε Απόσταση') },
+            { value: '5km', label: t('home.filter.5km', 'Εντός 5χλμ') },
+            { value: '10km', label: t('home.filter.10km', 'Εντός 10χλμ') },
+            { value: '25km', label: t('home.filter.25km', 'Εντός 25χλμ') },
+          ]}
+        />
 
         {showSeekingHostChip && (
           <button
@@ -238,36 +219,17 @@ export function HomeFiltersSection({
           </button>
         )}
 
-        <div className={cn('relative', HOME_TYPO.filterControlEqual)}>
-          <select
-            className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
-            aria-label={t('Ταξινόμηση', 'Sort by')}
-            value={sortParam}
-            onChange={(e) => setSortParam(e.target.value as HomeSortParam)}
-          >
-            <option value="Relevance">{t('home.feed.sort.relevance', 'Συνάφεια')}</option>
-            <option value="Distance">{t('home.feed.sort.distance', 'Απόσταση')}</option>
-            <option value="Group Progress">
-              {t('home.feed.sort.group_progress', 'Πρόοδος Ομάδας')}
-            </option>
-          </select>
-          <div
-            aria-hidden
-            className={cn(
-              'pointer-events-none flex h-full w-full items-center justify-center gap-1.5 px-2',
-              h.select,
-            )}
-          >
-            <ChevronDown className={cn('w-3 h-3 shrink-0 opacity-70', h.labelMuted)} />
-            <span className="truncate">
-              {sortParam === 'Distance'
-                ? t('home.feed.sort.distance', 'Απόσταση')
-                : sortParam === 'Group Progress'
-                  ? t('home.feed.sort.group_progress', 'Πρόοδος Ομάδας')
-                  : t('home.feed.sort.relevance', 'Συνάφεια')}
-            </span>
-          </div>
-        </div>
+        <HomeFilterSelect
+          ariaLabel={t('Ταξινόμηση', 'Sort by')}
+          value={sortParam}
+          onValueChange={setSortParam}
+          showLeadingChevron
+          options={[
+            { value: 'Relevance', label: t('home.feed.sort.relevance', 'Συνάφεια') },
+            { value: 'Distance', label: t('home.feed.sort.distance', 'Απόσταση') },
+            { value: 'Group Progress', label: t('home.feed.sort.group_progress', 'Πρόοδος Ομάδας') },
+          ]}
+        />
 
         {hasActiveFilters && (
           <button
