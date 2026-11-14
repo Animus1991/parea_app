@@ -13,10 +13,10 @@
 |---|---|---|
 | Συνολική ωριμότητα προϊόντος (demo/prototype) | **7.6** | Πολύ ώριμο client prototype· όχι production backend |
 | Αρχιτεκτονική frontend | **8.2** | Lazy routes, ErrorBoundaries, tokens, AI registry |
-| Ασφάλεια (ως SPA demo) | **5.5** | Καλά για AI key· κενά σε admin/API/CORS |
+| Ασφάλεια (ως SPA demo) | **4.5** | Main Gemini OK· Critical: unauth writes, client RBAC, Firestore |
 | A11y / i18n | **8.0** | Contrast + axe matrix· όχι πλήρες WCAG cert |
-| Testing / CI | **7.5** | 47 unit + Playwright· CI μόνο σε `main`/`master` |
-| Production readiness | **4.0** | Mock-first· unauthenticated APIs· χωρίς πραγματικό RBAC |
+| Testing / CI | **7.0** | 47 unit + ~63 e2e· CI ήταν μόνο `main` (διορθώνεται σε αυτό το PR) |
+| Production readiness | **3.5** | Mock-first· unauth APIs· client-only roles· demo login |
 
 **Verdict:** Το `ccr-*` branch είναι το σωστό «source of truth» έναντι του `main` (Ιούλιος 2026). Η εφαρμογή είναι **demo-ready / investor-demo-ready** με ισχυρό AI copilot και a11y gates. **Δεν είναι production-ready** χωρίς backend authz, hardened APIs και dependency hygiene.
 
@@ -77,23 +77,32 @@ Commits πάνω από main: AI copilot, progressive disclosure από nakamas 
 - Theme explosion: 7–9 αντίγραφα σελίδων αντί για 1 content + theme tokens  
 - Main JS chunk ~1.4 MB (gzip ~401 KB) — κακό για mobile TTI  
 - `ARCHITECTURE.md` overstates backend maturity  
-- CI triggers μόνο `main`/`master` — το `ccr-*` δεν τρέχει GitHub Actions  
+- CI triggers μόνο `main`/`master` στο upstream HEAD — **αυτό το PR** επεκτείνει σε `ccr-*` / `cursor/**`  
 - Unauthenticated `POST/PUT /api/events`  
+- `OrganizerDashboardPageContent` κάτω από `components/admin/` · `Dummy.tsx` orphan · διπλά mobile hooks · ημιτελή Modal migrations  
+- Fat Classic pages (`HomeClassic`, `OnboardingClassic`, …) + 34 scripts (πολλά one-off)
 
 ---
 
 ## 4. Ασφάλεια (ευρήματα)
 
+> Βαθύτερη ανασκόπηση από [Security & secrets audit](bc-b08766e7-369f-536f-9ed6-8a9680ce2590) + [Architecture & quality audit](bc-a4d2a36e-a743-5c24-82d9-6a214dff8a99). Δεν βρέθηκαν hardcoded live secrets στο source.
+
 | Sev | Εύρημα | Evidence | Σύσταση |
 |---|---|---|---|
-| **High** | `/admin` χωρίς server/role gate — κάθε authenticated (ή demo) χρήστης | `App.tsx` route· δεν υπάρχει `isAdmin` στο `User` | Route guard + server RBAC πριν production |
-| **High** | Events API χωρίς auth | `server.ts` POST/PUT `/api/events` | Auth middleware· ή disable σε public deploy |
-| **High** | CORS / Socket.IO `origin: '*'` | `server.ts` | Restrict origins |
-| **Medium** | AI proxy: client-supplied tools/system· rate limit ανά IP εύκολα spoofable πίσω από proxy | `server.ts` `/api/ai/*` | Auth session· trust `X-Forwarded-For` προσεκτικά (`proxy-addr` CVE στο audit) |
-| **Medium** | `npm audit`: critical σε `proxy-addr`, `tinypool`/`vitest`· high σε `ws`/`engine.io`, `react-router`, `firebase` chain | `npm audit` | Upgrade path· διαχώρισε prod vs dev vulns |
-| **Low** | Firestore rules: οποιοσδήποτε auth user διαβάζει όλα τα profiles/chatRooms | `firestore.rules` | Membership-scoped reads |
-| **Info** | `GEMINI_API_KEY` **δεν** μπαίνει πλέον στο client bundle | `vite.config.ts` Ε1 | Διατήρηση |
-| **Info** | `dangerouslySetInnerHTML` μόνο για στατικό CSS (chart/map) | 2 σημεία | OK αν παραμένει μη-user-controlled |
+| **Critical** | Unauth `POST`/`PUT /api/events` → SQLite poisoning | `server.ts` · `eventsCatalog.ts` | Auth + schema validation |
+| **Critical** | Admin/organizer authz μόνο client/`localStorage` (`nakamas-store-v1`)· `/admin` χωρίς guard· `becomeEventHost` elevates | `App.tsx` · `AppShell.tsx` · `store/index.ts` | Server claims· ποτέ trust client `isOrganizer` |
+| **Critical** | Firestore: owner μπορεί να γράψει `isOrganizer`· οποιοσδήποτε auth διαβάζει όλα profiles/chats | `firestore.rules` · `firebaseUserProfile.ts` | Deny privileged fields· membership reads |
+| **High** | Unauth AI proxy + client-controlled `/api/ai/generate` (model/contents) | `server.ts` | Auth + lock model· drop open `/generate` |
+| **High** | CORS / Socket.IO `*` · spoofable `senderId` | `server.ts` · `socket.ts` | Origin allowlist· socket auth |
+| **High** → ✅ | Legacy `app/applet/vite.config.ts` έκανε `define` το `GEMINI_API_KEY` | διορθώθηκε σε αυτό το PR | Ίδιο pattern με root Ε1 |
+| **High** | Optional `VITE_GEMINI_API_KEY` / `VITE_AI_USE_PROXY=false` | `.env.example` · `geminiClient.ts` | Απαγόρευση σε production |
+| **Medium** | Demo login impersonation (συμπ. organizers) σε shipped UI | `LoginPageBody.tsx` | DEV-only / feature flag |
+| **Medium** | GIS ID token μόνο base64 decode (χωρίς verify) | `googleIdentityAuth.ts` | Server-side token verify |
+| **Medium** | Weak in-memory AI rate limit· unvalidated `externalLink` / checkout URLs | `server.ts` · EventDetail / payments | Redis limits· `https:` allowlist |
+| **Medium** | `npm audit`: critical `proxy-addr`, `tinypool`/`vitest`· high `ws`, `react-router`, firebase chain | `npm audit` | Targeted upgrades |
+| **Low** | Limited `dangerouslySetInnerHTML` (static CSS)· no CSP on Express | chart / NearbyGroups | Helmet + CSP |
+| **Info** | Main app `vite.config.ts` **δεν** inlines Gemini key (Ε1) | `vite.config.ts` | Διατήρηση |
 
 ---
 
@@ -135,21 +144,21 @@ Commits πάνω από main: AI copilot, progressive disclosure από nakamas 
 
 ## 8. Προτεραιότητες (Top 15)
 
-1. Admin route + API authz  
-2. Lock down CORS / Socket.IO origins  
-3. Auth on `/api/events` και AI endpoints  
-4. Reduce main bundle (manualChunks / trim recharts/leaflet)  
-5. Extend CI to `ccr-*` / all PRs  
-6. `npm audit` remediation (proxy-addr, ws, react-router, vitest)  
-7. Firestore membership rules  
-8. Security headers on Express (Pages `_headers` ήδη προστέθηκαν)  
-9. Permanent Cloudflare Pages project + secrets  
-10. Consolidate theme page variants  
-11. Align ARCHITECTURE.md with reality  
-12. E2E against CF preview URL in CI  
-13. Gemini live schema verification with real key  
-14. Proactive AI (Φ26) μόνο μετά από audit log  
-15. Production secrets via platform (όχι VITE_ για ιδιωτικά κλειδιά)
+1. Authz σε `/api/events` + `/api/ai/*` (Critical/High)  
+2. Server-verified roles· guard `/admin`· μην εμπιστεύεσαι `localStorage` `isOrganizer`  
+3. Firestore rules: deny self-escalation + membership-scoped chat/profile reads  
+4. Lock CORS / Socket.IO · authenticate sockets  
+5. Αφαίρεση `GEMINI_API_KEY` define από `app/applet/vite.config.ts`  
+6. Demo login / GIS verify μόνο σε DEV· production OAuth πραγματικό  
+7. Extend CI to `ccr-*` (**σε αυτό το PR**) + axe για `/events`, `/agenda`, `/create`, `/chat`, `/admin`  
+8. Reduce 1.4 MB main chunk  
+9. `npm audit` remediation  
+10. Finish Modal migration · consolidate `useIsMobile`/`useMediaQuery` · move organizer out of `admin/`  
+11. Delete `Dummy.tsx` · quarantine one-off `scripts/fix_*.cjs`  
+12. Permanent Cloudflare Pages + secrets  
+13. Align ARCHITECTURE.md με πραγματικότητα · transport banner (mock/Firebase/socket)  
+14. Gemini live key verification σε staging  
+15. Φ26 proactive AI μόνο μετά από audit log + authz
 
 ---
 
