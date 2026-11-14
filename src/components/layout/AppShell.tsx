@@ -14,6 +14,9 @@ import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { ThemePicker } from '../common/ThemePicker';
 import { PlansFormingSidebar } from '../buddySeek/PlansFormingSidebar';
 import { PlansFormingSidebarReopenTab } from '../buddySeek/PlansFormingSidebar';
+import { isPlansRailRoute } from '../../lib/plansFormingRail';
+import { pageTitleForPath } from '../../lib/pageTitle';
+import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { PlansFormingBottomSheet } from '../buddySeek/PlansFormingBottomSheet';
 import { PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
 import { PopupChatRoot } from '../chat/PopupChatRoot';
@@ -276,6 +279,8 @@ export function SideNav() {
 export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   const isDesktopDock = useMediaQuery(DESKTOP_DOCK_QUERY);
   const navigate = useNavigate();
+  const { pathname: currentPath } = useLocation();
+  const pageTitle = pageTitleForPath(currentPath);
   const { language, setLanguage, t } = useLanguage();
   const currentUser = useStore((state) => state.currentUser);
   const theme = useStore((state) => state.theme);
@@ -298,7 +303,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           <NakamasLogo />
         </div>
         <div className={cn("hidden whitespace-nowrap", copilotDocked ? "2xl:block" : "md:block")}>
-          <span className={cn("text-sm font-bold tracking-wide", tok.isDark ? "text-white" : tok.isAB ? "text-[hsl(220_14%_12%)] tracking-tight" : "text-gray-400")}>{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
+          <span className={cn("text-sm font-bold tracking-wide", tok.isDark ? "text-white" : tok.isAB ? "text-[hsl(220_14%_12%)] tracking-tight" : "text-gray-400")}>{t(pageTitle.el, pageTitle.en)}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3 relative z-raised overflow-visible">
@@ -371,7 +376,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           {currentUser ? (
             <NavLink to="/profile" className="flex items-center space-x-2 relative group">
               <div className={cn("hidden flex-col items-end", copilotDocked ? "2xl:flex" : "sm:flex")}>
-                <span className={cn("text-xs font-bold tracking-wide", theme === "activebuddies" ? "text-[hsl(220_11%_34%)]" : theme === "activebuddies-dark" ? "text-[hsl(220_13%_72%)]" : theme === "vibrant-dark" ? "text-gray-400" : theme === "vibrant" ? "text-gray-500" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-brand")}>{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
+                <span className={cn("text-xs font-bold tracking-wide", theme === "activebuddies" ? "text-[hsl(220_11%_34%)]" : theme === "activebuddies-dark" ? "text-[hsl(220_13%_72%)]" : theme === "vibrant-dark" ? "text-gray-400" : theme === "vibrant" ? "text-gray-500" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-brand")}>{t(tierLabelEl(currentUser.trustTier), tierLabelEn(currentUser.trustTier))}</span>
                 <span className={cn("text-xs font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-ink")}>{currentUser.name}</span>
               </div>
               <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-xs overflow-hidden border", theme === "activebuddies-dark" ? "bg-gray-700/50 border-gray-600 text-gray-200" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] border-[hsl(220_13%_92%)] text-[hsl(220_14%_12%)]" : theme === "vibrant-dark" ? "bg-white/10 border-white/15 text-gray-300" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "vibrant" ? "bg-gray-100 border-gray-200 text-gray-600" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-brand")}>
@@ -456,11 +461,13 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
   const theme = useStore((s) => s.theme);
-  const demoMode = useStore((s) => s.demoMode);
   const currentUser = useStore((s) => s.currentUser);
   const tok = useThemeStyles();
   const copilotOpen = useCopilotStore((s) => s.open);
   const maintenanceMode = useStore((s) => s.adminSafeguards.maintenanceMode);
+  const { pathname } = useLocation();
+  // The plans rail is contextual to discovery screens (lib/plansFormingRail.ts).
+  const showPlansRail = !copilotOpen && isPlansRailRoute(pathname);
 
   useRealtimeChat(currentUser?.id);
   useFirebaseAuth();
@@ -468,7 +475,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div
       data-theme={theme}
-      className={cn("flex h-screen w-full font-sans antialiased overflow-hidden", tok.shell)}
+      className={cn("flex flex-col h-screen w-full font-sans antialiased overflow-hidden", tok.shell)}
     >
       <a
         href="#main-content"
@@ -476,7 +483,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         {t('Μετάβαση στο περιεχόμενο', 'Skip to content')}
       </a>
+      {/* In the layout flow (not fixed), so it never covers the logo, header or rails. */}
       <DemoModeBanner />
+      <div className="flex flex-1 min-h-0 w-full">
       <SideNav />
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-modal flex">
@@ -494,8 +503,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
       )}
-      <div className="flex flex-1 h-screen overflow-hidden min-w-0">
-        <div className={cn("flex flex-col flex-1 min-w-0 h-screen overflow-hidden", demoMode && "pt-5")}>
+      <div className="flex flex-1 h-full overflow-hidden min-w-0">
+        <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
           <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
           <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none">
             <div className="mx-auto w-full max-w-full p-4 lg:px-5 lg:py-4 flex-1 pb-safe md:pb-4">
@@ -526,9 +535,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <PlansFormingMobileFab />
         </div>
         {/* The docked copilot replaces the plans-forming rail while open (both live on the right edge). */}
-        {!copilotOpen && <PlansFormingSidebar />}
-        {!copilotOpen && <PlansFormingSidebarReopenTab />}
+        {showPlansRail && <PlansFormingSidebar />}
+        {showPlansRail && <PlansFormingSidebarReopenTab />}
         <CopilotPanel />
+      </div>
       </div>
       <PlansFormingBottomSheet />
       <PopupChatRoot />

@@ -21,10 +21,13 @@ export function PlansFormingStatsBar({
   insights,
   compact,
   isDark,
+  plain,
 }: {
   insights: PlansFormingInsights;
   compact?: boolean;
   isDark?: boolean;
+  /** One quiet line of text («4 σχέδια · 1 ομάδα · 3 θέσεις») instead of chips. */
+  plain?: boolean;
 }) {
   const { t } = useLanguage();
   const chips = [
@@ -32,29 +35,48 @@ export function PlansFormingStatsBar({
       icon: Users,
       value: insights.compatiblePlans,
       label: t('Σχέδια', 'Plans'),
+      one: t('σχέδιο', 'plan'),
       show: true,
     },
     {
       icon: CalendarCheck,
       value: insights.recruitingGroups,
       label: t('Ομάδες', 'Groups'),
+      one: t('ομάδα', 'group'),
       show: insights.recruitingGroups > 0,
     },
     {
       icon: CircleDot,
       value: insights.openSpots,
       label: t('Θέσεις', 'Spots'),
+      one: t('θέση', 'spot'),
       show: insights.openSpots > 0,
     },
     {
       icon: Inbox,
       value: insights.pendingJoinsToReview,
       label: t('Αιτήματα', 'Requests'),
+      one: t('αίτημα', 'request'),
       show: insights.pendingJoinsToReview > 0,
     },
   ].filter((c) => c.show);
 
   if (chips.length === 0) return null;
+
+  if (plain) {
+    return (
+      <p className={cn(PLANS_FORMING_TYPO.statChip, 'flex flex-wrap items-center gap-x-1.5', isDark ? 'text-gray-400' : 'text-gray-500')}>
+        {chips.map(({ value, label, one }, i) => (
+          <span key={label} className="inline-flex items-center gap-1.5">
+            {i > 0 && <span aria-hidden>·</span>}
+            <span>
+              <span className={cn('font-semibold', isDark ? 'text-gray-200' : 'text-gray-800')}>{value}</span> {value === 1 ? one : label.toLocaleLowerCase()}
+            </span>
+          </span>
+        ))}
+      </p>
+    );
+  }
 
   return (
     <div className={cn('flex flex-wrap gap-2', compact && 'gap-1.5')}>

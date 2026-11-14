@@ -333,7 +333,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           </p>
         )}
         {currentUser && (
-          <MatchExplainChips user={currentUser} event={event} className="mt-2" />
+          <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className="mt-2" />
         )}
 
         {/* Organizer — compact row */}
@@ -408,19 +408,22 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 setShowSafetyPanel(true);
               }}
               aria-haspopup="dialog"
+              aria-label={arrivalStatus ?? (isSharingLocation ? t("Ζωντανό GPS", "Live GPS") : t("Χάρτης & Ασφάλεια", "Map & Safety"))}
+              title={t("Χάρτης & Ασφάλεια", "Map & Safety")}
               className={cn(
-                "inline-flex items-center gap-1.5 px-3 min-h-10 rounded-full text-xs font-semibold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                "inline-flex min-w-0 shrink items-center gap-1.5 px-3 min-h-10 rounded-full text-xs font-semibold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                 arrivalStatus || isSharingLocation
                   ? isDark ? "bg-emerald-950/40 text-emerald-300" : "bg-emerald-50 text-emerald-700"
                   : isDark ? "text-gray-300 hover:bg-white/[0.06]" : "text-gray-600 hover:bg-gray-50",
               )}
             >
               <ShieldCheck className={cn("w-3.5 h-3.5 shrink-0 opacity-80", accentText)} aria-hidden />
-              <span className="truncate max-w-[110px]">
-                {arrivalStatus ?? (isSharingLocation ? t("Ζωντανό GPS", "Live GPS") : t("Χάρτης & Ασφάλεια", "Map & Safety"))}
+              {/* With the chat button present the card is tight: icon only (name stays in aria-label). */}
+              <span className={cn("truncate max-w-[110px]", userGroup && "sr-only")}>
+                {arrivalStatus ?? (isSharingLocation ? t("Ζωντανό GPS", "Live GPS") : t("Ασφάλεια", "Safety"))}
               </span>
             </button>
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-2">
               {userGroup && (
                 <button
                   type="button"
@@ -450,7 +453,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   }
                   navigate(`/events/${event.id}/join`);
                 }}
-                className={cn("px-5 py-2 min-h-11 text-white font-bold rounded-full shadow-soft", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
+                className={cn("px-4 py-2 min-h-11 shrink-0 whitespace-nowrap text-white font-bold rounded-full shadow-soft", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
               >
                 {t("Βρες Nakamas", "Find Nakamas")}
               </button>

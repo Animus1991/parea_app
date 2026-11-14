@@ -268,7 +268,6 @@ export function CopilotPanel() {
   const headingId = useId();
   const close = useCallback(() => setOpen(false), [setOpen]);
   const asideRef = useRef<HTMLElement>(null);
-  const demoMode = useStore((s) => s.demoMode);
 
   useEffect(() => {
     if (!open || !isDesktop) return;
@@ -304,7 +303,6 @@ export function CopilotPanel() {
       aria-labelledby={headingId}
       className={cn(
         'hidden lg:flex h-full w-[380px] xl:w-[400px] shrink-0 flex-col border-l border-border bg-surface-raised animate-in slide-in-from-right-4 fade-in duration-200 motion-reduce:animate-none',
-        demoMode && 'pt-5',
       )}
     >
       <CopilotConversation onClose={close} onNavigate={() => undefined} headingId={headingId} />

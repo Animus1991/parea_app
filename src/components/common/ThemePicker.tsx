@@ -152,7 +152,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
           aria-haspopup="listbox"
         >
           <Palette className="w-4 h-4 shrink-0" />
-          <span className="hidden sm:inline max-w-[88px] truncate">
+          <span className="hidden 2xl:inline max-w-[88px] truncate">
             {language === 'el'
               ? THEME_LABELS[theme as ThemeId]?.el ?? theme
               : THEME_LABELS[theme as ThemeId]?.en ?? theme}

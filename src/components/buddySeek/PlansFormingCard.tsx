@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bookmark,
+  EyeOff,
   MapPin,
   Clock,
-  MessageCircle,
   Shield,
   Heart,
   Users,
@@ -18,16 +18,16 @@ import { cn } from '../../lib/utils';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
 import type { PlansFormingGroupItem } from '../../hooks/usePlansFormingFeed';
 
-const URGENCY_STYLES = {
-  soon: 'bg-amber-500/20 text-amber-200 border-amber-500/30',
-  normal: 'bg-white/10 text-gray-300 border-white/15',
-  flexible: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
+/** Urgency is a quiet chip; only «soon» keeps a colour because it is time-sensitive. */
+const URGENCY_TEXT = {
+  soon: 'text-amber-800 dark:text-amber-300',
+  normal: '',
+  flexible: '',
 };
-
-const URGENCY_STYLES_LIGHT = {
-  soon: 'bg-amber-100 text-amber-800 border-amber-200',
-  normal: 'bg-gray-100 text-gray-700 border-gray-200',
-  flexible: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+const URGENCY_TEXT_DARK = {
+  soon: 'text-amber-300',
+  normal: '',
+  flexible: '',
 };
 
 export function PlansFormingCard({
@@ -61,7 +61,8 @@ export function PlansFormingCard({
 
   const isSidebar = variant === 'sidebar';
   const darkCard = isSidebar && isDarkSurface;
-  const urgencyStyle = darkCard ? URGENCY_STYLES : URGENCY_STYLES_LIGHT;
+  const urgencyText = darkCard ? URGENCY_TEXT_DARK : URGENCY_TEXT;
+  const roleText = darkCard ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300';
 
   return (
     <article
@@ -76,22 +77,22 @@ export function PlansFormingCard({
       )}
     >
       {item.isHighMatch && (
-        <div
+        <p
           className={cn(
-            'px-3 py-1.5 flex items-center justify-between gap-2 border-b text-xs font-bold',
-            isSidebar ? (darkCard ? 'border-white/10 bg-cyan-500/10 text-cyan-300' : 'border-cyan-100 bg-cyan-50 text-cyan-800') : 'border-cyan-100 bg-cyan-50 text-cyan-800 dark:border-cyan-500/30 dark:bg-cyan-500/10 dark:text-cyan-200',
+            'px-3.5 pt-3 -mb-1 flex items-center gap-1 text-xs font-semibold',
+            darkCard ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300',
           )}
         >
-          <span className="flex items-center gap-1">
-            <Heart className="w-3 h-3" />
-            {t('Υψηλή συμβατότητα', 'High match')}
-          </span>
-          <span>{item.matchPercent}%</span>
-        </div>
+          <Heart className="w-3 h-3" aria-hidden />
+          {t('Υψηλή συμβατότητα', 'High match')}
+          <span aria-hidden>·</span>
+          <span className="tabular-nums">{item.matchPercent}%</span>
+        </p>
       )}
 
       {isSidebar && (
-        <div className={cn('px-3 pt-3 pb-2 space-y-1.5 border-b', darkCard ? 'border-white/10' : 'border-gray-100')}>
+        <div className="px-3.5 pt-3 flex items-start gap-1">
+          <div className="min-w-0 flex-1 space-y-0.5">
           <button
             type="button"
             onClick={() => navigate(`/events/${item.event.id}`)}
@@ -104,24 +105,23 @@ export function PlansFormingCard({
           <p className={cn('card-meta-sm font-semibold leading-snug', darkCard ? 'text-gray-200' : 'text-gray-700')}>
             {t(item.scheduleFull.el, item.scheduleFull.en)}
           </p>
-          <span
-            className={cn(
-              'inline-block card-role font-semibold px-2 py-0.5 rounded-lg border',
-              item.roleLabel.kind === 'seeker'
-                ? darkCard
-                  ? 'bg-violet-500/15 text-violet-200 border-violet-500/30'
-                  : 'bg-violet-100 text-violet-800 border-violet-200'
-                : item.roleLabel.kind === 'group_builder'
-                  ? darkCard
-                    ? 'bg-cyan-500/15 text-cyan-200 border-cyan-500/30'
-                    : 'bg-cyan-100 text-cyan-800 border-cyan-200'
-                  : darkCard
-                    ? 'bg-indigo-500/15 text-indigo-200 border-indigo-500/30'
-                    : 'bg-indigo-100 text-indigo-800 border-indigo-200',
-            )}
-          >
-            {t(item.roleLabel.el, item.roleLabel.en)}
-          </span>
+          </div>
+          {onDismiss && (
+            <div className="-mr-2 -mt-1.5 shrink-0">
+              <button
+                type="button"
+                onClick={onDismiss}
+                aria-label={t('Απόκρυψη σχεδίου', 'Hide plan')}
+                title={t('Απόκρυψη', 'Hide')}
+                className={cn(
+                  'min-h-9 min-w-9 rounded-xl flex items-center justify-center transition-colors',
+                  darkCard ? 'text-gray-400 hover:bg-white/5' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5',
+                )}
+              >
+                <EyeOff className="w-4 h-4" aria-hidden />
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -143,23 +143,15 @@ export function PlansFormingCard({
               {item.event.category?.slice(0, 2) ?? 'EV'}
             </div>
           )}
-          <span
-            className={cn(
-              'absolute bottom-0.5 left-0.5 right-0.5 text-center text-xs font-semibold px-1 py-0.5 rounded-md backdrop-blur-sm border',
-              urgencyStyle[item.urgency.tone],
-            )}
-          >
-            {t(item.urgency.el, item.urgency.en)}
-          </span>
         </button>
 
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-            <span className="card-badge font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-400">
+            <span className={cn('card-badge font-semibold uppercase tracking-wide', darkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400')}>
               {tu(item.intentLabel.el, item.intentLabel.en)}
             </span>
             {item.isSavedEvent && (
-              <span className="card-badge font-medium text-fuchsia-700 dark:text-fuchsia-300">
+              <span className={cn('card-badge font-medium', darkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400')}>
                 · {t('Αποθηκευμένη', 'Saved')}
               </span>
             )}
@@ -170,12 +162,16 @@ export function PlansFormingCard({
             </p>
           )}
           {isSidebar ? (
-            <p className={cn('card-copy-sm font-semibold', darkCard ? 'text-gray-100' : 'text-gray-900')}>{displayName}</p>
+            <p className={cn('card-copy-sm', darkCard ? 'text-gray-300' : 'text-gray-600')}>
+              <span className={cn('font-semibold', darkCard ? 'text-gray-100' : 'text-gray-900')}>{displayName}</span>
+              <span className={darkCard ? 'text-gray-500' : 'text-gray-400'} aria-hidden> · </span>
+              <span className={cn('card-role font-semibold', roleText)}>{t(item.roleLabel.el, item.roleLabel.en)}</span>
+            </p>
           ) : (
             <p className="card-copy text-gray-600 dark:text-gray-300">
               <span className="font-semibold text-gray-800 dark:text-gray-100">{displayName}</span>
               <span className="text-gray-400 dark:text-gray-500" aria-hidden> · </span>
-              <span className="card-role font-medium text-violet-700 dark:text-violet-300">
+              <span className={cn('card-role font-medium', roleText)}>
                 {t(item.roleLabel.el, item.roleLabel.en)}
               </span>
             </p>
@@ -203,15 +199,16 @@ export function PlansFormingCard({
         </div>
       </div>
 
-      <div className="px-3.5 pb-2 flex flex-wrap gap-1.5">
+      <div className="px-3.5 pb-2 flex flex-wrap gap-x-3 gap-y-1">
+        <MetaChip isDark={darkCard} label={t(item.urgency.el, item.urgency.en)} icon={Clock} className={urgencyText[item.urgency.tone]} />
         <MetaChip isDark={darkCard} label={t(item.groupSizeLabel.el, item.groupSizeLabel.en)} icon={Users} />
         <MetaChip isDark={darkCard} label={t(item.meetingLabel.el, item.meetingLabel.en)} />
         {item.sharedInterestTags.slice(0, 2).map((tag) => (
           <span
             key={tag}
             className={cn(
-              'card-copy font-medium px-1.5 py-0.5 rounded-md',
-              darkCard ? 'bg-white/5 text-gray-300' : 'bg-gray-50 text-gray-600 dark:bg-white/5 dark:text-gray-300',
+              'card-copy font-medium',
+              darkCard ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300',
             )}
           >
             {tag}
@@ -223,6 +220,7 @@ export function PlansFormingCard({
             label={t(`${item.sharedInterestCount} κοινά`, `${item.sharedInterestCount} shared`)}
           />
         )}
+        {onDismiss && <MetaChip isDark={darkCard} label={t('Κοινότητα', 'Community')} icon={Shield} />}
       </div>
 
       {item.intent.message && (
@@ -232,7 +230,6 @@ export function PlansFormingCard({
             darkCard ? 'border-l-white/20 text-gray-300' : 'border-l-gray-200 dark:border-l-white/15',
           )}
         >
-          <MessageCircle className={cn('w-3.5 h-3.5 shrink-0 mt-0.5 opacity-60', darkCard ? 'text-gray-400' : 'text-gray-500')} aria-hidden />
           <p className={cn('card-copy line-clamp-2 leading-relaxed', darkCard ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300')}>
             «{item.intent.message}»
           </p>
@@ -280,22 +277,25 @@ export function PlansFormingCard({
             isSaved && (darkCard ? 'text-cyan-400 bg-cyan-500/10' : 'text-cyan-700 bg-cyan-50 dark:text-cyan-300 dark:bg-cyan-500/10'),
           )}
           aria-label={t('Αποθήκευση σχεδίου', 'Save plan')}
+          title={t('Αποθήκευση σχεδίου', 'Save plan')}
         >
           <Bookmark className={cn('w-4 h-4', isSaved && 'fill-current')} />
         </button>
-      </div>
-
-      {onDismiss && (
-        <div className="px-3 pb-2 flex justify-between items-center border-t border-inherit pt-2 mx-3">
-          <span className={cn('text-xs flex items-center gap-1', darkCard ? 'text-gray-500' : 'text-gray-400')}>
-            <Shield className="w-3 h-3" />
-            {t('Κοινότητα', 'Community')}
-          </span>
-          <button type="button" onClick={onDismiss} className="text-xs text-gray-500 hover:text-gray-300 font-medium">
-            {t('Απόκρυψη', 'Hide')}
+        {onDismiss && !isSidebar && (
+          <button
+            type="button"
+            onClick={onDismiss}
+            aria-label={t('Απόκρυψη σχεδίου', 'Hide plan')}
+            title={t('Απόκρυψη', 'Hide')}
+            className={cn(
+              'min-h-9 min-w-9 rounded-xl flex items-center justify-center transition-colors',
+              darkCard ? 'text-gray-400 hover:bg-white/5' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5',
+            )}
+          >
+            <EyeOff className="w-4 h-4" aria-hidden />
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
       <JoinRequestPreviewModal
         open={previewOpen}
@@ -316,16 +316,19 @@ function MetaChip({
   label,
   icon: Icon,
   isDark,
+  className,
 }: {
   label: string;
   icon?: typeof Users;
   isDark?: boolean;
+  className?: string;
 }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 card-copy font-medium px-1.5 py-0.5 rounded-md',
-        isDark ? 'bg-white/5 text-gray-400' : 'bg-gray-50 text-gray-600 dark:bg-white/5 dark:text-gray-300',
+        'inline-flex items-center gap-1 card-copy font-medium',
+        isDark ? 'text-gray-400' : 'text-gray-600 dark:text-gray-300',
+        className,
       )}
     >
       {Icon && <Icon className="w-2.5 h-2.5 opacity-70" aria-hidden />}
@@ -358,7 +361,7 @@ export function PlansFormingGroupCard({
         darkCard
           ? 'bg-emerald-950/20 border-emerald-700/30'
           : isSidebar
-            ? 'bg-white border-emerald-200 shadow-soft'
+            ? 'bg-white border-gray-200/80 shadow-soft'
             : 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800',
       )}
     >
@@ -376,19 +379,17 @@ export function PlansFormingGroupCard({
           <p className={cn('card-meta-sm font-semibold leading-snug', darkCard ? 'text-emerald-100/90' : 'text-gray-700 dark:text-gray-200')}>
             {t(meta.scheduleFull.el, meta.scheduleFull.en)}
           </p>
-          <span
-            className={cn(
-              'inline-block card-role font-semibold px-2 py-0.5 rounded-lg border',
-              darkCard ? 'bg-emerald-500/15 text-emerald-200 border-emerald-500/30' : 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-200 dark:border-emerald-500/30',
+          <p className={cn('card-copy', darkCard ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300')}>
+            {meta.hostFirstName && (
+              <>
+                <span className={cn('font-semibold', darkCard ? 'text-gray-100' : 'text-gray-900 dark:text-gray-100')}>{meta.hostFirstName}</span>
+                <span className={darkCard ? 'text-gray-500' : 'text-gray-400'} aria-hidden> · </span>
+              </>
             )}
-          >
-            {t('Οργανώνει ομάδα', 'Group host')}
-          </span>
-          {meta.hostFirstName && (
-            <p className={cn('card-copy font-medium', darkCard ? 'text-gray-300' : 'text-gray-700 dark:text-gray-300')}>
-              {meta.hostFirstName}
-            </p>
-          )}
+            <span className={cn('card-role font-semibold', darkCard ? 'text-emerald-300' : 'text-emerald-700 dark:text-emerald-300')}>
+              {t('Οργανώνει ομάδα', 'Group host')}
+            </span>
+          </p>
           {meta.location && (
             <p className={cn('card-copy flex items-center gap-1', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
               <MapPin className="w-3 h-3 shrink-0" />

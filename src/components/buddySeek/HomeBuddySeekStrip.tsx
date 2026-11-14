@@ -7,18 +7,24 @@ import { PlansFormingCard } from './PlansFormingCard';
 import { PlansFormingStatsBar, PlansFormingValueHero } from './plansForming/PlansFormingShared';
 import { HorizontalScrollArrows } from '../ui/HorizontalScrollArrows';
 import { cn } from '../../lib/utils';
+import { useCopilotStore } from '../../store/copilotStore';
 
 export function HomeBuddySeekStrip({ className }: { className?: string }) {
   const { t, tu } = useLanguage();
   const navigate = useNavigate();
   const setSheetOpen = useStore((s) => s.setPlansFormingSheetOpen);
   const feed = usePlansFormingFeed(6);
+  // ≥1280px the «Βρες Nakamas» rail shows this same feed: don't repeat it on Home.
+  const railOpen = useStore((s) => s.plansFormingSidebarOpen);
+  const copilotOpen = useCopilotStore((s) => s.open);
+  const railVisible = railOpen && !copilotOpen;
 
   return (
     <section
       className={cn(
         'rounded-2xl border p-4 space-y-3.5',
         'bg-accent-soft/40 border-accent/15',
+        railVisible && 'xl:hidden',
         className,
       )}
       aria-labelledby="home-plans-forming"

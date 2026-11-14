@@ -79,8 +79,8 @@ export function HomeLoggedInHero({
           type="button"
           onClick={() => navigate('/trust')}
           className={cn(
-            'hidden sm:flex items-center justify-center text-xs font-bold transition-all duration-200 whitespace-nowrap',
-            h.heroOutlineBtn,
+            'hidden sm:flex items-center justify-center text-xs font-semibold whitespace-nowrap px-2 min-h-9 rounded-lg underline-offset-4 hover:underline opacity-90 hover:opacity-100',
+            h.heroStat,
           )}
         >
           {t('home.hero.how_groups', 'Πώς λειτουργούν οι ομάδες')}
@@ -113,10 +113,12 @@ export function HomeLoggedInHero({
             </div>
             {currentUser && (
               <div
+                role="img"
+                aria-label={t(`Αξιοπιστία ${score}%`, `Reliability ${score}%`)}
                 title={t('Η βαθμολογία αξιοπιστίας σας', 'Your reliability score')}
                 className="w-12 h-12 rounded-full border-2 border-white bg-amber-400 text-amber-950 flex items-center justify-center font-black text-sm shadow-soft shrink-0"
               >
-                {score}
+                {score}%
               </div>
             )}
           </div>
@@ -139,12 +141,17 @@ export function HomeLoggedInHero({
               </h1>
             </div>
             {currentUser && (
-              <div className="w-11 h-11 rounded-full border-2 border-white/80 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-xs shadow-soft shrink-0">
-                {score}
+              <div
+                role="img"
+                aria-label={t(`Αξιοπιστία ${score}%`, `Reliability ${score}%`)}
+                title={t('Η βαθμολογία αξιοπιστίας σας', 'Your reliability score')}
+                className="w-11 h-11 rounded-full border-2 border-white/80 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-xs shadow-soft shrink-0"
+              >
+                {score}%
               </div>
             )}
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
             {[
               { icon: Users, label: t('home.hero.stat1', 'Μικρές ομάδες') },
               { icon: ShieldCheck, label: t('home.hero.stat2', 'Επαληθευμένη συμμετοχή') },
@@ -152,10 +159,7 @@ export function HomeLoggedInHero({
             ].map(({ icon: Icon, label }) => (
               <span
                 key={label}
-                className={cn(
-                  'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-bold bg-white/10 border border-white/10',
-                  h.heroStat,
-                )}
+                className={cn('inline-flex items-center gap-1.5 text-sm font-semibold', h.heroStat)}
               >
                 <Icon className={cn('w-3.5 h-3.5', h.heroStatIcon)} />
                 {label}
@@ -184,7 +188,7 @@ export function HomeLoggedInHero({
                 'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.',
               )}
             </p>
-            <div className="flex flex-wrap items-center gap-2 mb-4">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4">
               {(
                 [
                   { icon: Users, label: t('home.hero.stat1', 'Μικρές ομάδες') },
@@ -195,10 +199,7 @@ export function HomeLoggedInHero({
               ).map(({ icon: Icon, label }) => (
                 <span
                   key={label}
-                  className={cn(
-                    'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-bold tracking-wide bg-white/10 border border-white/10 backdrop-blur-sm',
-                    h.heroStat,
-                  )}
+                  className={cn('inline-flex items-center gap-1.5 text-sm font-semibold', h.heroStat)}
                 >
                   <Icon className={cn('w-3.5 h-3.5', h.heroStatIcon)} />
                   {label}
