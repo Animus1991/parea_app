@@ -46,7 +46,7 @@ export function HomeLoggedInHeroContrast({
   const searchBlock = (
     <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
       <div ref={searchRef} className="relative flex-1 max-w-md">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 z-10 opacity-70" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 z-10 opacity-70" />
         <input
           type="search"
           value={searchQuery}
@@ -55,7 +55,7 @@ export function HomeLoggedInHeroContrast({
           placeholder={t('home.hero.search_placeholder', 'Αναζήτηση εμπειριών...')}
           className={cn(
             h.heroSearchInput,
-            'text-xs font-medium shadow-soft focus:outline-none backdrop-blur-sm w-full',
+            'search-control shadow-soft focus:outline-none backdrop-blur-sm w-full',
           )}
         />
         {showSearchSuggestions && !searchQuery && searchDropdown}
@@ -65,12 +65,12 @@ export function HomeLoggedInHeroContrast({
           type="button"
           onClick={() => navigate('/nearby')}
           className={cn(
-            'flex items-center justify-center gap-2 px-4 h-11 rounded-2xl border font-bold text-sm transition-all shadow-soft shrink-0',
+            'flex items-center justify-center gap-2 px-3 h-9 rounded-xl border font-bold text-xs transition-all shadow-soft shrink-0',
             h.heroSearchInput,
           )}
           title={t('Άνοιγμα Χάρτη', 'Open Map')}
         >
-          <MapPin className="w-5 h-5" />
+          <MapPin className="w-4 h-4" />
           <span className="hidden sm:inline">{t('Στον Χάρτη', 'On Map')}</span>
         </button>
       ) : (

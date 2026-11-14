@@ -201,7 +201,7 @@ export default function InboxPageContent() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('Αναζήτηση συνομιλιών...', 'Search conversations...')}
               className={cn(
-                'w-full pl-10 pr-4 py-2.5 rounded-2xl border focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft transition-all',
+                'search-control w-full h-9 pl-9 pr-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft transition-all',
                 INBOX_TYPO.search,
                 p.inputBg,
                 p.borderB,

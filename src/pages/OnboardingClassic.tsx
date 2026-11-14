@@ -353,7 +353,7 @@ export default function OnboardingClassic() {
             {step === 6 && (
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
+                  <label className="text-2xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
                     {tu('Όνομα', 'Name')}
                   </label>
                   <input
@@ -361,11 +361,11 @@ export default function OnboardingClassic() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={t('Το όνομά σου...', 'Your name...')}
-                    className="w-full h-11 px-4 rounded-2xl border border-gray-200 bg-gray-50 text-base font-medium text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all"
+                    className="field-control w-full h-9 px-3 rounded-xl border border-gray-200 bg-gray-50 text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
+                  <label className="text-2xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
                     {tu('Σύντομο Bio', 'Short Bio')}
                   </label>
                   <textarea
@@ -375,10 +375,10 @@ export default function OnboardingClassic() {
                       'Πες μας λίγα πράγματα για σένα...',
                       'Tell us a bit about yourself...',
                     )}
-                    rows={4}
-                    className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-base font-medium text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all resize-none"
+                    rows={3}
+                    className="field-control w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-ink focus:outline-none focus:ring-2 focus:ring-accent/50 focus:bg-white transition-all resize-none"
                   />
-                  <p className="text-xs text-gray-400 font-medium mt-1">
+                  <p className="text-2xs text-gray-400 font-medium mt-1">
                     {bio.length}/160 {t('χαρακτήρες', 'characters')}
                   </p>
                 </div>

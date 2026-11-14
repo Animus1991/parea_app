@@ -66,7 +66,7 @@ export default function SavedEventsPageContent() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder={t('Αναζήτηση αποθηκευμένων...', 'Search saved...')}
-                className={cn("w-full pl-9 pr-4 py-2 rounded-2xl border text-xs font-medium outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
+                className={cn("search-control w-full h-9 pl-9 pr-3 rounded-xl border outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
               />
             </div>
             <select

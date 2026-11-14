@@ -94,14 +94,14 @@ export function HomeRichHero({
         {/* Search with suggestions */}
         <div className="flex gap-3 items-center">
           <div ref={searchRef} className="relative flex-1 max-w-md">
-            <Search className={cn('absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 z-10', tok.heroSearchIcon)} />
+            <Search className={cn('absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 z-10', tok.heroSearchIcon)} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               onFocus={onSearchFocus}
               placeholder={t('home.hero.search_placeholder', 'Αναζήτηση εμπειριών...')}
-              className={cn('w-full h-11 pl-10 pr-4 rounded-full shadow-soft focus:outline-none focus:ring-2 text-xs font-medium', tok.heroSearchInput)}
+              className={cn('search-control w-full h-9 pl-9 pr-3 rounded-full shadow-soft focus:outline-none focus:ring-2', tok.heroSearchInput)}
             />
             <HomeSearchDropdown
               popularSuggestions={searchSuggestions}

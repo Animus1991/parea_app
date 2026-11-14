@@ -1188,7 +1188,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-cyan-400',
     heroSearchInput:
-      'w-full h-11 pl-10 pr-4 rounded-2xl border border-white/10 bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-cyan-400/60',
+      'w-full h-9 pl-9 pr-3 text-xs rounded-2xl border border-white/10 bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-cyan-400/60',
     heroSearchDropdown: 'bg-white rounded-2xl shadow-soft-lg border border-gray-200 z-fab',
     heroSearchDropdownLabel: 'text-gray-600',
     heroSearchItem: 'text-gray-800',
@@ -1224,7 +1224,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroStat: 'text-fuchsia-100',
     heroStatIcon: 'text-fuchsia-200',
     heroSearchInput:
-      'w-full h-11 pl-10 pr-4 rounded-2xl border border-white/15 bg-white/10 text-white placeholder-fuchsia-200/70 focus:ring-2 focus:ring-fuchsia-300/50',
+      'w-full h-9 pl-9 pr-3 text-xs rounded-2xl border border-white/15 bg-white/10 text-white placeholder-fuchsia-200/70 focus:ring-2 focus:ring-fuchsia-300/50',
     heroSearchDropdown: 'bg-white rounded-2xl shadow-soft-lg border border-fuchsia-100 z-fab',
     heroSearchDropdownLabel: 'text-gray-600',
     heroSearchItem: 'text-gray-800',
@@ -1259,7 +1259,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroStat: 'text-indigo-100',
     heroStatIcon: 'text-indigo-200',
     heroSearchInput:
-      'w-full h-11 pl-10 pr-4 rounded-2xl border border-white/15 bg-white/10 text-white placeholder-indigo-200/70 focus:ring-2 focus:ring-indigo-300/50',
+      'w-full h-9 pl-9 pr-3 text-xs rounded-2xl border border-white/15 bg-white/10 text-white placeholder-indigo-200/70 focus:ring-2 focus:ring-indigo-300/50',
     heroSearchDropdown: 'bg-white rounded-2xl shadow-soft-lg border border-indigo-100 z-fab',
     heroSearchDropdownLabel: 'text-gray-600',
     heroSearchItem: 'text-gray-800',
@@ -1294,7 +1294,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroStat: 'text-emerald-100',
     heroStatIcon: 'text-emerald-200',
     heroSearchInput:
-      'w-full h-11 pl-10 pr-4 rounded-2xl border border-white/15 bg-white/10 text-white placeholder-emerald-200/70 focus:ring-2 focus:ring-emerald-300/50',
+      'w-full h-9 pl-9 pr-3 text-xs rounded-2xl border border-white/15 bg-white/10 text-white placeholder-emerald-200/70 focus:ring-2 focus:ring-emerald-300/50',
     heroSearchDropdown: 'bg-white rounded-2xl shadow-soft-lg border border-emerald-100 z-fab',
     heroSearchDropdownLabel: 'text-gray-600',
     heroSearchItem: 'text-gray-800',
@@ -1329,7 +1329,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-fuchsia-400',
     heroSearchInput:
-      'w-full h-11 pl-10 pr-4 rounded-2xl border border-gray-600 bg-gray-900/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-fuchsia-500/50',
+      'w-full h-9 pl-9 pr-3 text-xs rounded-2xl border border-gray-600 bg-gray-900/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-fuchsia-500/50',
     heroSearchDropdown: 'bg-gray-900 rounded-2xl shadow-soft-lg border border-gray-600 z-fab',
     heroSearchDropdownLabel: 'text-gray-400',
     heroSearchItem: 'text-gray-100',
@@ -1364,7 +1364,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-indigo-400',
     heroSearchInput:
-      'w-full h-11 pl-10 pr-4 rounded-2xl border border-gray-600 bg-gray-900/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500/50',
+      'w-full h-9 pl-9 pr-3 text-xs rounded-2xl border border-gray-600 bg-gray-900/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500/50',
     heroSearchDropdown: 'bg-gray-900 rounded-2xl shadow-soft-lg border border-gray-600 z-fab',
     heroSearchDropdownLabel: 'text-gray-400',
     heroSearchItem: 'text-gray-100',
@@ -1399,7 +1399,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-emerald-400',
     heroSearchInput:
-      'w-full h-11 pl-10 pr-4 rounded-2xl border border-gray-600 bg-gray-900/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500/50',
+      'w-full h-9 pl-9 pr-3 text-xs rounded-2xl border border-gray-600 bg-gray-900/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500/50',
     heroSearchDropdown: 'bg-gray-900 rounded-2xl shadow-soft-lg border border-gray-600 z-fab',
     heroSearchDropdownLabel: 'text-gray-400',
     heroSearchItem: 'text-gray-100',
@@ -1435,7 +1435,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroStat: 'text-[hsl(220_10%_78%)]',
     heroStatIcon: 'text-white',
     heroSearchInput:
-      'w-full h-11 pl-10 pr-4 rounded-full border border-[hsl(220_13%_30%)] bg-white/10 text-white placeholder-[hsl(220_10%_65%)] focus:ring-2 focus:ring-white/40 focus:bg-white/15',
+      'w-full h-9 pl-9 pr-3 text-xs rounded-full border border-[hsl(220_13%_30%)] bg-white/10 text-white placeholder-[hsl(220_10%_65%)] focus:ring-2 focus:ring-white/40 focus:bg-white/15',
     heroSearchDropdown: 'bg-white rounded-2xl shadow-soft-lg border border-[hsl(220_13%_88%)] z-fab',
     heroSearchDropdownLabel: 'text-gray-600',
     heroSearchItem: 'text-gray-900',
@@ -1473,7 +1473,7 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
     heroStat: 'text-[hsl(220_12%_80%)]',
     heroStatIcon: 'text-[hsl(0_0%_95%)]',
     heroSearchInput:
-      'w-full h-11 pl-10 pr-4 rounded-full border border-[hsl(220_13%_28%)] bg-[hsl(220_16%_16%)] text-white placeholder-[hsl(220_12%_55%)] focus:ring-2 focus:ring-white/30',
+      'w-full h-9 pl-9 pr-3 text-xs rounded-full border border-[hsl(220_13%_28%)] bg-[hsl(220_16%_16%)] text-white placeholder-[hsl(220_12%_55%)] focus:ring-2 focus:ring-white/30',
     heroSearchDropdown: 'bg-[hsl(220_16%_14%)] rounded-2xl shadow-soft-lg border border-[hsl(220_13%_22%)] z-fab',
     heroSearchDropdownLabel: 'text-[hsl(220_13%_74%)]',
     heroSearchItem: 'text-[hsl(210_20%_92%)]',

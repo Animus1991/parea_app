@@ -320,13 +320,13 @@ export default function NearbyGroupsPageContent() {
         <div className="flex gap-2 w-full">
           {!isMapFullscreen && (
             <div className="relative flex-1 max-w-sm pointer-events-auto">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('Αναζήτηση ομάδων...', 'Search groups...')}
-                className={cn("w-full h-12 pl-12 pr-4 rounded-2xl border-0 shadow-soft focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xs font-bold transition-all", p.isDark ? "bg-gray-800/95 backdrop-blur text-white" : "bg-white/95 backdrop-blur text-gray-900")}
+                className={cn("search-control w-full h-9 pl-9 pr-3 rounded-xl border-0 shadow-soft focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all", p.isDark ? "bg-gray-800/95 backdrop-blur text-white" : "bg-white/95 backdrop-blur text-gray-900")}
               />
             </div>
           )}
