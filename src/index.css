@@ -326,22 +326,32 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   }
 }
 
-/* Card titles (e.g. «Summer Cinema: Cine Thisio») — +5% */
+/* Card titles (e.g. «Summer Cinema…») — +5% then −2% */
 .card-heading {
-  font-size: calc(var(--text-sm) * 1.05); /* ~12.6px */
+  font-size: calc(var(--text-sm) * 1.05 * 0.98); /* ~12.35px */
   line-height: var(--text-sm--line-height);
 }
 .card-heading-lg {
-  font-size: calc(var(--text-base) * 1.05); /* ~13.65px */
+  font-size: calc(var(--text-base) * 1.05 * 0.98); /* ~13.38px */
   line-height: var(--text-base--line-height);
 }
-/* Card status badges (e.g. «ΑΝΟΙΧΤΟ ΣΕ ΙΔΕΕΣ», «Αποθηκευμένη») — +5% */
+/* Card status badges (e.g. «ΑΝΟΙΧΤΟ ΣΕ ΙΔΕΕΣ», «Αποθηκευμένη») — +5% then −2% */
 .card-badge {
-  font-size: calc(var(--text-xs) * 1.05); /* ~10.5px */
+  font-size: calc(var(--text-xs) * 1.05 * 0.98); /* ~10.29px */
   line-height: var(--text-xs--line-height);
 }
 
-/* Card body / meta (name, role, date, location, quote, chips) — +10% */
+/* Role / schedule lines (e.g. «Ψάχνει Nakamas», date) — +10% then −2% */
+.card-meta {
+  font-size: calc(var(--text-xs) * 1.1 * 0.98); /* ~10.78px */
+  line-height: var(--text-xs--line-height);
+}
+.card-meta-sm {
+  font-size: calc(var(--text-sm) * 1.1 * 0.98); /* ~12.94px */
+  line-height: var(--text-sm--line-height);
+}
+
+/* Card body (name, quote, chips) — +10% */
 .card-copy {
   font-size: calc(var(--text-xs) * 1.1); /* ~11px */
   line-height: var(--text-xs--line-height);
@@ -353,6 +363,13 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 .card-copy-micro {
   font-size: calc(var(--text-2xs) * 1.1); /* ~9.9px */
   line-height: var(--text-2xs--line-height);
+}
+
+/* Card action buttons (e.g. «Αίτημα συμμετοχής», «Εκδήλωση») — +2% */
+.card-cta {
+  font-size: calc(var(--text-xs) * 1.02); /* ~10.2px */
+  line-height: var(--text-xs--line-height);
+  font-weight: 700;
 }
 
 [data-sticky-nav-offset] {

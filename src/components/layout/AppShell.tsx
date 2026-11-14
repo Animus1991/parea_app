@@ -43,7 +43,7 @@ function NakamasLogo({ className, compact = false }: { className?: string; compa
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 120 90"
-          className="absolute -top-[0.68em] -left-[0.55em] w-[1.8em] h-[1.8em] origin-center -rotate-[8deg] z-10 pointer-events-none drop-shadow"
+          className="absolute -top-[0.73em] -left-[0.55em] w-[1.8em] h-[1.8em] origin-center -rotate-[8deg] z-10 pointer-events-none drop-shadow"
         >
           {/* Chin strap back */}
           <path d="M 35 60 C 20 65, 15 75, 25 80" fill="none" stroke="#3F2A1B" strokeWidth="2" strokeLinecap="round" />

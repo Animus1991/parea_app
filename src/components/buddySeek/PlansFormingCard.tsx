@@ -101,12 +101,12 @@ export function PlansFormingCard({
               {item.event.title}
             </h3>
           </button>
-          <p className={cn('card-copy-sm font-semibold leading-snug', darkCard ? 'text-gray-200' : 'text-gray-700')}>
+          <p className={cn('card-meta-sm font-semibold leading-snug', darkCard ? 'text-gray-200' : 'text-gray-700')}>
             {t(item.scheduleFull.el, item.scheduleFull.en)}
           </p>
           <span
             className={cn(
-              'inline-block card-copy font-semibold px-2 py-0.5 rounded-lg border',
+              'inline-block card-meta font-semibold px-2 py-0.5 rounded-lg border',
               item.roleLabel.kind === 'seeker'
                 ? darkCard
                   ? 'bg-violet-500/15 text-violet-200 border-violet-500/30'
@@ -175,11 +175,11 @@ export function PlansFormingCard({
             <p className="card-copy font-medium text-gray-700 dark:text-gray-300">{displayName}</p>
           )}
           {!isSidebar && (
-            <span className="card-copy font-bold text-violet-600 dark:text-violet-300">
+            <span className="card-meta font-bold text-violet-600 dark:text-violet-300">
               {t(item.roleLabel.el, item.roleLabel.en)}
             </span>
           )}
-          <div className={cn('flex flex-wrap gap-x-2 gap-y-0.5 card-copy text-gray-500', !isSidebar && 'dark:text-gray-400')}>
+          <div className={cn('flex flex-wrap gap-x-2 gap-y-0.5 card-meta text-gray-500', !isSidebar && 'dark:text-gray-400')}>
             {!isSidebar && (
               <span className="inline-flex items-center gap-0.5 font-semibold text-gray-700 dark:text-gray-300">
                 <Clock className="w-3 h-3 shrink-0" />
@@ -248,7 +248,7 @@ export function PlansFormingCard({
         <button
           type="button"
           onClick={() => setPreviewOpen(true)}
-          className="flex-1 min-h-10 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-soft"
+          className="flex-1 min-h-10 rounded-xl card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-soft"
         >
           {t('Αίτημα συμμετοχής', 'Ask to join')}
         </button>
@@ -256,7 +256,7 @@ export function PlansFormingCard({
           type="button"
           onClick={() => navigate(`/events/${item.event.id}`)}
           className={cn(
-            'px-3 min-h-10 rounded-xl text-xs font-bold border',
+            'px-3 min-h-10 rounded-xl card-cta border',
             darkCard ? 'border-white/15 text-gray-200 hover:bg-white/5' : 'border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-white/15 dark:text-gray-200 dark:hover:bg-white/5',
           )}
         >
@@ -372,12 +372,12 @@ export function PlansFormingGroupCard({
           <p className={cn('card-heading-lg font-bold leading-snug line-clamp-2', darkCard ? 'text-white' : 'text-gray-900 dark:text-white')}>
             {event.title}
           </p>
-          <p className={cn('card-copy-sm font-semibold leading-snug', darkCard ? 'text-emerald-100/90' : 'text-gray-700 dark:text-gray-200')}>
+          <p className={cn('card-meta-sm font-semibold leading-snug', darkCard ? 'text-emerald-100/90' : 'text-gray-700 dark:text-gray-200')}>
             {t(meta.scheduleFull.el, meta.scheduleFull.en)}
           </p>
           <span
             className={cn(
-              'inline-block card-copy font-semibold px-2 py-0.5 rounded-lg border',
+              'inline-block card-meta font-semibold px-2 py-0.5 rounded-lg border',
               darkCard ? 'bg-emerald-500/15 text-emerald-200 border-emerald-500/30' : 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-200 dark:border-emerald-500/30',
             )}
           >
@@ -420,7 +420,7 @@ export function PlansFormingGroupCard({
         <button
           type="button"
           onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
-          className="flex-1 min-h-9 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white"
+          className="flex-1 min-h-9 rounded-xl card-cta bg-emerald-600 hover:bg-emerald-500 text-white"
         >
           {t('Αίτημα συμμετοχής', 'Ask to join')}
         </button>
@@ -429,7 +429,7 @@ export function PlansFormingGroupCard({
             type="button"
             onClick={onSuggestMerge}
             className={cn(
-              'px-3 min-h-9 rounded-xl text-xs font-bold border',
+              'px-3 min-h-9 rounded-xl card-cta border',
               darkCard ? 'border-emerald-600/40 text-emerald-300' : 'border-emerald-300 text-emerald-800 dark:border-emerald-600/40 dark:text-emerald-300',
             )}
           >

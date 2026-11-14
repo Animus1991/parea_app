@@ -39,10 +39,10 @@ export const CHAT_TYPO = {
 export const PLANS_FORMING_TYPO = {
   statChip: 'card-copy-micro font-bold',
   cardTitle: 'card-heading font-bold',
-  cardMeta: 'card-copy font-medium',
+  cardMeta: 'card-meta font-medium',
   sectionLabel: 'text-2xs font-bold tracking-wide',
   body: 'card-copy-sm font-medium',
-  cta: 'text-sm font-bold',
+  cta: 'card-cta',
 } as const;
 
 /** Inbox list density */
@@ -73,20 +73,20 @@ export const PLANS_TYPO = {
   bannerCta: 'text-xs font-bold',
   cardTitle: 'card-heading-lg font-bold',
   cardDate: 'card-heading font-bold',
-  cardTime: 'card-copy font-medium',
-  cardMeta: 'card-copy font-medium',
+  cardTime: 'card-meta font-medium',
+  cardMeta: 'card-meta font-medium',
   chip: 'card-copy-micro font-bold',
-  cta: 'text-xs font-bold',
+  cta: 'card-cta',
 } as const;
 
 /** BuddySeek card density */
 export const BUDDY_SEEK_TYPO = {
   title: 'card-heading font-bold leading-snug',
-  meta: 'card-copy font-medium',
+  meta: 'card-meta font-medium',
   label: 'card-badge font-bold tracking-wide',
   chip: 'card-copy-micro font-semibold',
   body: 'card-copy leading-relaxed',
-  cta: 'text-xs font-bold',
+  cta: 'card-cta',
   micro: 'card-copy-micro font-medium',
 } as const;
 
@@ -116,9 +116,9 @@ export const EVENT_CARD_TYPO = {
   title: 'card-heading font-bold leading-snug',
   matchScore: 'text-xs font-black leading-none',
   matchLabel: 'card-copy-micro font-semibold capitalize tracking-wide',
-  meta: 'card-copy font-medium',
+  meta: 'card-meta font-medium',
   hint: 'card-copy-micro font-semibold',
-  cta: 'text-xs font-bold',
+  cta: 'card-cta',
   avatarLabel: 'card-copy-micro font-semibold capitalize',
   progressTitle: 'text-xs font-bold capitalize tracking-tight',
   progressSub: 'card-copy-micro font-medium',
@@ -168,9 +168,9 @@ export const HOME_TYPO = {
   statValue: 'text-xs font-bold',
   statLabel: 'text-2xs font-medium',
   cardTitle: 'card-heading font-bold',
-  cardMeta: 'card-copy font-medium',
+  cardMeta: 'card-meta font-medium',
   hint: 'card-copy-micro font-medium',
-  cta: 'text-xs font-bold',
+  cta: 'card-cta',
 } as const;
 
 /** Report / trust issue flow */

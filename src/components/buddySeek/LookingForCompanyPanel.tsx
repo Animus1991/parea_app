@@ -309,7 +309,7 @@ export function LookingForCompanyPanel({
                           <button
                             type="button"
                             onClick={() => navigate(`/events/${event.id}/join?group=${g.id}`)}
-                            className="text-xs font-bold text-cyan-600"
+                            className="card-cta text-cyan-600"
                           >
                             {t('Αίτημα συμμετοχής', 'Ask to join')}
                           </button>
@@ -318,7 +318,7 @@ export function LookingForCompanyPanel({
                           <button
                             type="button"
                             onClick={() => setMergePair({ from: myGroups[0], to: g })}
-                            className="text-xs font-bold text-emerald-600"
+                            className="card-cta text-emerald-600"
                           >
                             {t('Συγχώνευση', 'Suggest merge')}
                           </button>
