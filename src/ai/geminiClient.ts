@@ -6,6 +6,7 @@
  * with `VITE_AI_USE_PROXY=false` + `VITE_GEMINI_API_KEY`.
  */
 import { appEnv } from '../lib/config/env';
+import { authHeaders } from '../lib/authToken';
 
 export interface GeminiFunctionCall {
   id?: string;
@@ -92,11 +93,12 @@ export async function callCopilotModel(input: {
   if (!status.available) throw new Error('copilot model unavailable');
 
   if (status.via === 'proxy') {
+    const identity = await authHeaders();
     const res = await withTimeout(
       (signal) =>
         fetch(`${appEnv.apiBaseUrl}/api/ai/copilot`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...identity },
           body: JSON.stringify(input),
           signal,
         }),

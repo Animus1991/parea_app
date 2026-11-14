@@ -6,6 +6,7 @@ import { useStore } from '../../store';
 import { HomeGuestHero } from '../home/HomeGuestHero';
 import { LoginGuestHeroStrip } from './LoginGuestHeroStrip';
 import { LoginExploreDemoButton } from './LoginExploreDemoButton';
+import { appEnv } from '../../lib/config/env';
 import { isProductionGoogleOAuthAvailable, tryGoogleSignIn } from '../../lib/loginHandlers';
 import { cn } from '../../lib/utils';
 
@@ -205,6 +206,7 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
   };
 
   const googleOAuthReady = isProductionGoogleOAuthAvailable();
+  const demoLogin = appEnv.demoLogin;
 
   const handleGoogleLogin = async () => {
     const result = await tryGoogleSignIn();
@@ -214,6 +216,11 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
         navigate('/');
       }
       // Firebase path: useFirebaseAuth bridge updates the store.
+      return;
+    }
+    if (!demoLogin) {
+      // Real sign-in only: never fall back to a demo identity.
+      toast.error(t('Η σύνδεση με Google απέτυχε. Δοκιμάστε ξανά.', 'Google sign-in failed. Please try again.'));
       return;
     }
     toast.info(
@@ -244,6 +251,8 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
         </div>
 
         <div className="space-y-4 pt-4">
+          {demoLogin && (
+            <>
           <LoginExploreDemoButton />
 
           <div className={cn('text-center text-xs font-bold tracking-wide mb-4', tok.mutedText)}>
@@ -278,6 +287,10 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
             ))}
           </div>
 
+            </>
+          )}
+
+          {demoLogin && (
           <div className="relative py-4">
             <div className="absolute inset-0 flex items-center">
               <div className={cn('w-full border-t', tok.dividerLine)} />
@@ -286,6 +299,7 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
               <span className={cn('px-2 text-xs tracking-wide', tok.dividerChip)}>{t('Ή συνεχίστε με', 'Or continue with')}</span>
             </div>
           </div>
+          )}
 
           <button
             type="button"

@@ -50,6 +50,11 @@ export async function eventExists(id: string): Promise<boolean> {
   return listEventsFromDb().some((e) => e.id === id);
 }
 
+export async function getEvent(id: string): Promise<Event | null> {
+  await ensureCatalog();
+  return listEventsFromDb().find((e) => e.id === id) ?? null;
+}
+
 export async function updateEvent(id: string, patch: Partial<Event>): Promise<Event | null> {
   await ensureCatalog();
   return updateEventDb(id, patch);

@@ -3,6 +3,7 @@
  */
 import { appEnv } from './config/env';
 import { createLogger } from './logger';
+import { authHeaders } from './authToken';
 
 const log = createLogger('api');
 
@@ -51,12 +52,15 @@ export async function apiRequest<T = unknown>(
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
+    // Same-origin API calls carry the signed-in user's ID token; absolute URLs never do.
+    const identity = /^https?:\/\//.test(path) ? {} : await authHeaders();
     const res = await fetch(resolveUrl(path, query), {
       ...rest,
       method,
       signal: controller.signal,
       headers: {
         ...(json ? { 'Content-Type': 'application/json' } : {}),
+        ...identity,
         ...headers,
       },
       body: json !== undefined ? JSON.stringify(json) : body,

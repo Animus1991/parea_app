@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { isFirebaseConfigured as isFirebaseAuthAvailable } from '../lib/firebaseConfig';
 import { useStore } from '../store';
 import { createLogger } from '../lib/logger';
+import { setAuthTokenProvider } from '../lib/authToken';
 
 const log = createLogger('useFirebaseAuth');
 
@@ -24,14 +25,23 @@ export function useFirebaseAuth() {
         if (cancelled) return;
         unsubscribe = subscribeFirebaseAuth((firebaseUser) => {
           if (!firebaseUser) {
+            setAuthTokenProvider(null);
             logout();
             return;
           }
+          // Every server call now carries a fresh ID token (the SDK refreshes it).
+          setAuthTokenProvider(() => firebaseUser.getIdToken(), firebaseUser.uid);
 
-          void resolveFirebaseUser(firebaseUser)
-            .then((user) => {
+          void Promise.all([resolveFirebaseUser(firebaseUser), firebaseUser.getIdTokenResult().catch(() => null)])
+            .then(([user, tokenResult]) => {
+              // The server enforces signed custom claims only. The UI also keeps a
+              // backend-set Firestore flag (firestore.rules) so existing setups still work.
+              const claims = (tokenResult?.claims ?? {}) as Record<string, unknown>;
+              const isAdmin =
+                user.isAdmin === true || claims.admin === true || claims.role === 'admin' || claims.role === 'moderator';
+              const isOrganizer = user.isOrganizer || claims.role === 'organizer' || claims.organizer === true;
               log.info('firebase profile resolved', { uid: user.id, name: user.name });
-              loginWithUser(user);
+              loginWithUser({ ...user, isAdmin, isOrganizer });
             })
             .catch((err) => {
               log.error('firebase profile resolve failed', err);
@@ -42,6 +52,7 @@ export function useFirebaseAuth() {
     return () => {
       cancelled = true;
       unsubscribe?.();
+      setAuthTokenProvider(null);
     };
   }, [loginWithUser, logout, demoMode]);
 

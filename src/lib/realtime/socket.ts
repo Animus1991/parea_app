@@ -1,5 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 import { appEnv } from '../config/env';
+import { getAuthToken } from '../authToken';
 
 let socket: Socket | null = null;
 
@@ -22,7 +23,11 @@ export function connectChatSocket(userId: string): Socket | null {
 
   socket = io(url, {
     transports: ['websocket', 'polling'],
-    auth: { userId },
+    // Resolved on every (re)connect so a refreshed ID token is used. The server
+    // trusts the verified token; the plain userId only counts in demo mode.
+    auth: (cb) => {
+      void getAuthToken().then((token) => cb(token ? { userId, token } : { userId }));
+    },
     autoConnect: true,
   });
 

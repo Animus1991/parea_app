@@ -6,6 +6,7 @@ import {
   joinChatRoom,
 } from '../lib/realtime/socket';
 import { isFirebaseConfigured as isFirebaseChatEnabled } from '../lib/firebaseConfig';
+import { getAuthUid } from '../lib/authToken';
 
 /**
  * Mount once when authenticated — Firebase Firestore or Socket.IO (CoFounderBay dual-transport).
@@ -63,7 +64,8 @@ export function useRealtimeChat(userId: string | undefined) {
     }
 
     const onReceive = (data: { conversationId: string; senderId: string; body: string }) => {
-      if (!data?.conversationId || data.senderId === userId) return;
+      // Own echo: the server attributes verified messages to the Firebase uid.
+      if (!data?.conversationId || data.senderId === userId || data.senderId === getAuthUid()) return;
       receiveMessage(data.conversationId, data.body, data.senderId);
     };
 

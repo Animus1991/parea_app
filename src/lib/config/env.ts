@@ -33,6 +33,18 @@ export const appEnv = {
   /** Live support: mailto or https helpdesk URL (Crisp/Intercom/Zendesk…). */
   supportUrl: (import.meta.env.VITE_SUPPORT_URL as string | undefined) ?? '',
   supportEmail: (import.meta.env.VITE_SUPPORT_EMAIL as string | undefined) ?? '',
+  /**
+   * Demo accounts and "Explore as guest" on the login page. Default: on, except in a
+   * production build with Firebase configured (real sign-in only). VITE_DEMO_LOGIN overrides.
+   */
+  demoLogin:
+    import.meta.env.VITE_DEMO_LOGIN === 'true' ||
+    (import.meta.env.VITE_DEMO_LOGIN !== 'false' &&
+      !(
+        import.meta.env.MODE === 'production' &&
+        Boolean(import.meta.env.VITE_FIREBASE_PROJECT_ID) &&
+        Boolean(import.meta.env.VITE_FIREBASE_API_KEY)
+      )),
 } as const;
 
 export function validateEnv(): string[] {

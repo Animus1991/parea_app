@@ -2,6 +2,7 @@
  * Gemini integration — routes through server proxy when configured (P2 security).
  */
 import { appEnv } from '../lib/config/env';
+import { authHeaders } from '../lib/authToken';
 
 const DIRECT_API =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
@@ -29,7 +30,7 @@ async function generateText(prompt: string): Promise<string | null> {
       const base = appEnv.apiBaseUrl || '';
       const res = await fetch(`${base}/api/ai/generate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
         // The server chooses the model (GEMINI_TEXT_MODEL); only the prompt is sent.
         body: JSON.stringify({ prompt }),
       });

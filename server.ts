@@ -9,7 +9,16 @@ import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import { Server } from 'socket.io';
 import { createServer as createViteServer } from 'vite';
-import { createEvent, listEvents, updateEvent, eventExists } from './server/eventsCatalog.ts';
+import { createEvent, listEvents, updateEvent, eventExists, getEvent } from './server/eventsCatalog.ts';
+import {
+  authConfig,
+  bearerToken,
+  verifierKeys,
+  canEditEvent,
+  createFirebaseVerifier,
+  ownEventPayload,
+  type AuthUser,
+} from './server/auth.ts';
 import {
   EVENT_ID_PATTERN,
   RateLimiter,
@@ -34,6 +43,10 @@ const ORIGIN_POLICY: OriginPolicy = {
   allowed: parseAllowedOrigins(process.env.ALLOWED_ORIGINS),
   isProduction: IS_PRODUCTION,
 };
+// Firebase ID-token verification when a project id is configured (server/auth.ts).
+const AUTH = authConfig(process.env);
+const verifyIdToken =
+  AUTH.mode === 'firebase' ? createFirebaseVerifier(AUTH.projectId as string, verifierKeys(process.env)) : null;
 
 interface RealtimeMessage {
   id: string;
@@ -82,21 +95,62 @@ async function startServer() {
     next();
   });
 
-  const writeLimiter = new RateLimiter(parseInt(process.env.EVENTS_WRITE_LIMIT_PER_MINUTE || '20', 10), 60_000);
-  const clientKey = (req: express.Request) => req.ip || req.socket.remoteAddress || 'unknown';
+  // Identity: a verified Firebase user, or null. Never trusted from the body.
+  app.use('/api', async (req, res, next) => {
+    res.locals.user = null;
+    const token = bearerToken(req.headers.authorization);
+    if (token && verifyIdToken) res.locals.user = await verifyIdToken(token);
+    next();
+  });
+  const currentUser = (res: express.Response): AuthUser | null => (res.locals.user as AuthUser | null) ?? null;
 
-  /** Event writes: token, explicit open mode, or development only (audit §4 Critical). */
+  /** With Firebase configured, AI and other personal endpoints need a verified user. */
+  const requireUser: express.RequestHandler = (_req, res, next) => {
+    if (!AUTH.required || currentUser(res)) return next();
+    return res.status(401).json({ error: 'Sign-in required' });
+  };
+
+  const writeLimiter = new RateLimiter(parseInt(process.env.EVENTS_WRITE_LIMIT_PER_MINUTE || '20', 10), 60_000);
+  const ipKey = (req: express.Request) => req.ip || req.socket.remoteAddress || 'unknown';
+  /** Rate limits follow the person when known, so shared IPs do not share a budget. */
+  const clientKey = (req: express.Request, res?: express.Response) => {
+    const user = res ? currentUser(res) : null;
+    return user ? `uid:${user.uid}` : ipKey(req);
+  };
+
+  /**
+   * Event writes (audit §4 Critical):
+   * 1. the service token (EVENTS_WRITE_TOKEN) for trusted back-office jobs;
+   * 2. with Firebase configured, a verified non-guest user, limited to their own events;
+   * 3. otherwise the previous modes: open, development, or closed.
+   */
   const guardEventWrite: express.RequestHandler = (req, res, next) => {
+    const serviceToken = process.env.EVENTS_WRITE_TOKEN;
+    const limit = () => {
+      const retry = writeLimiter.hit(clientKey(req, res));
+      if (retry !== null) return res.status(429).json({ error: 'Rate limit exceeded', retryAfterMs: retry });
+      next();
+    };
+    if (serviceToken && serviceToken.length >= 16 && bearerMatches(req.headers.authorization, serviceToken)) {
+      res.locals.writer = 'service';
+      return limit();
+    }
+    if (AUTH.mode === 'firebase') {
+      const user = currentUser(res);
+      if (!user) return res.status(401).json({ error: 'Sign-in required' });
+      if (user.anonymous) return res.status(403).json({ error: 'Guest accounts cannot publish events' });
+      res.locals.writer = 'user';
+      return limit();
+    }
     const mode = eventsWriteMode(process.env, IS_PRODUCTION);
     if (mode === 'closed') {
-      return res.status(403).json({ error: 'Event writes are disabled on this server (set EVENTS_WRITE_TOKEN)' });
+      return res.status(403).json({ error: 'Event writes are disabled on this server (set EVENTS_WRITE_TOKEN or FIREBASE_PROJECT_ID)' });
     }
-    if (mode === 'token' && !bearerMatches(req.headers.authorization, process.env.EVENTS_WRITE_TOKEN as string)) {
+    if (mode === 'token') {
       return res.status(401).json({ error: 'Missing or invalid write token' });
     }
-    const retry = writeLimiter.hit(clientKey(req));
-    if (retry !== null) return res.status(429).json({ error: 'Rate limit exceeded', retryAfterMs: retry });
-    next();
+    res.locals.writer = 'open';
+    return limit();
   };
 
   app.get('/api/health', (_req, res) => {
@@ -104,8 +158,14 @@ async function startServer() {
       ok: true,
       app: 'nakamas',
       eventsStore: 'sqlite',
+      auth: AUTH.mode,
       ts: new Date().toISOString(),
     });
+  });
+
+  // The verified identity as the server sees it (role from signed custom claims).
+  app.get('/api/auth/me', (_req, res) => {
+    res.json({ mode: AUTH.mode, user: currentUser(res) });
   });
 
   app.get('/api/events', async (_req, res) => {
@@ -132,7 +192,9 @@ async function startServer() {
       if (requestedId && (await eventExists(requestedId))) {
         return res.status(409).json({ error: 'Event id already exists' });
       }
-      const event = await createEvent({ ...(value as object), id: requestedId } as Parameters<typeof createEvent>[0]);
+      const user = currentUser(res);
+      const owned = res.locals.writer === 'user' && user ? ownEventPayload(user, value as Record<string, unknown>, true) : value;
+      const event = await createEvent({ ...(owned as object), id: requestedId } as Parameters<typeof createEvent>[0]);
       res.status(201).json({ event, ts: new Date().toISOString() });
     } catch (err) {
       console.error('POST /api/events failed:', err);
@@ -145,7 +207,15 @@ async function startServer() {
       if (!EVENT_ID_PATTERN.test(req.params.id)) return res.status(400).json({ error: 'Invalid event id' });
       const { ok, value, errors } = sanitizeEventInput(req.body, true);
       if (!ok) return res.status(400).json({ error: 'Invalid event', details: errors });
-      const updated = await updateEvent(req.params.id, value);
+      let patch = value;
+      const user = currentUser(res);
+      if (res.locals.writer === 'user' && user) {
+        const existing = await getEvent(req.params.id);
+        if (!existing) return res.status(404).json({ error: 'Event not found' });
+        if (!canEditEvent(user, existing)) return res.status(403).json({ error: 'Only the organizer or a moderator can edit this event' });
+        patch = ownEventPayload(user, value as Record<string, unknown>, false);
+      }
+      const updated = await updateEvent(req.params.id, patch);
       if (!updated) return res.status(404).json({ error: 'Event not found' });
       res.json({ event: updated, ts: new Date().toISOString() });
     } catch (err) {
@@ -174,7 +244,7 @@ async function startServer() {
     return key && !key.includes('MY_GEMINI') ? key : null;
   };
   /** Returns a retry delay (ms) when the caller exceeded the per-minute budget, else null. */
-  const rateLimited = (req: express.Request): number | null => aiLimiter.hit(clientKey(req));
+  const rateLimited = (req: express.Request, res: express.Response): number | null => aiLimiter.hit(clientKey(req, res));
 
   // Φ23 — copilot engine discovery (never exposes the key itself).
   app.get('/api/ai/status', (_req, res) => {
@@ -185,8 +255,8 @@ async function startServer() {
   // Φ23 — copilot function calling. The client sends the tool declarations,
   // the system instruction and the conversation; tools execute client-side
   // against the user's own state, so the server only relays to Gemini.
-  app.post('/api/ai/copilot', async (req, res) => {
-    const retry = rateLimited(req);
+  app.post('/api/ai/copilot', requireUser, async (req, res) => {
+    const retry = rateLimited(req, res);
     if (retry !== null) return res.status(429).json({ error: 'Rate limit exceeded', retryAfterMs: retry });
     const apiKey = getServerApiKey();
     if (!apiKey) return res.status(503).json({ error: 'AI proxy not configured — set GEMINI_API_KEY on the server' });
@@ -232,8 +302,8 @@ async function startServer() {
 
   // Short text helpers (event blurbs, icebreakers). Prompt only: the model and
   // generation settings are fixed server-side (was client-controlled).
-  app.post('/api/ai/generate', async (req, res) => {
-    const retry = rateLimited(req);
+  app.post('/api/ai/generate', requireUser, async (req, res) => {
+    const retry = rateLimited(req, res);
     if (retry !== null) return res.status(429).json({ error: 'Rate limit exceeded', retryAfterMs: retry });
 
     const apiKey = getServerApiKey();
@@ -265,9 +335,23 @@ async function startServer() {
   // someone else by changing senderId per message (audit §4 High). Without
   // real sessions the handshake id is still self-declared; see docs.
   const chatLimiter = new RateLimiter(20, 10_000);
+  // With Firebase configured the socket identity is the verified uid; a
+  // self-declared userId is only honoured in demo mode (no project id).
+  io.use(async (socket, next) => {
+    const raw = (socket.handshake.auth as { token?: unknown } | undefined)?.token;
+    const verified = typeof raw === 'string' && verifyIdToken ? await verifyIdToken(raw) : null;
+    if (AUTH.required && !verified) return next(new Error('unauthorized'));
+    socket.data.user = verified;
+    next();
+  });
   io.on('connection', (socket) => {
+    const verified = socket.data.user as AuthUser | null;
     const declared = (socket.handshake.auth as { userId?: unknown } | undefined)?.userId;
-    const userId = typeof declared === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(declared) ? declared : undefined;
+    const userId = verified
+      ? verified.uid
+      : AUTH.mode === 'off' && typeof declared === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(declared)
+        ? declared
+        : undefined;
     const joined = new Set<string>();
 
     socket.on('join_room', (conversationId: unknown) => {
@@ -278,7 +362,11 @@ async function startServer() {
     });
 
     socket.on('send_message', (data: unknown) => {
-      const check = checkChatSend(data, userId, joined);
+      // A verified socket always speaks as its uid (the client may know itself by a
+      // linked demo id). Unverified demo sockets must declare their own id exactly.
+      const payload =
+        verified && data && typeof data === 'object' ? { ...(data as Record<string, unknown>), senderId: verified.uid } : data;
+      const check = checkChatSend(payload, userId, joined);
       if (!check.ok) return;
       if (chatLimiter.hit(socket.id) !== null) return;
       const d = data as { conversationId: string; body: string };
