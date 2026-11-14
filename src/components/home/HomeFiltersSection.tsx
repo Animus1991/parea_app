@@ -153,7 +153,7 @@ export function HomeFiltersSection({
         ))}
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar items-center flex-wrap">
+      <div className="grid grid-cols-2 gap-2">
         <select
           className={cn(
             'outline-none cursor-pointer transition-all duration-200',
@@ -263,7 +263,7 @@ export function HomeFiltersSection({
           <button
             type="button"
             onClick={onClearAll}
-            className="flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-700 transition-colors whitespace-nowrap"
+            className="col-span-2 flex items-center justify-center gap-1 text-xs font-bold text-red-500 hover:text-red-700 transition-colors whitespace-nowrap"
           >
             <X className="w-3 h-3" />
             {t('Καθαρισμός', 'Clear')}

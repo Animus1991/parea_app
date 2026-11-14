@@ -305,12 +305,10 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   box-sizing: border-box;
 }
 
-/* Equal-width home filter row controls («Όλοι οι Τύποι» … «Συνάφεια») */
+/* Equal-width home meta filters in a 2-column grid («Όλοι οι Τύποι» … «Συνάφεια») */
 .filter-control-equal {
-  width: 12rem;
-  min-width: 12rem;
-  max-width: 12rem;
-  flex-shrink: 0;
+  width: 100%;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

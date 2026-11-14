@@ -168,7 +168,7 @@ export const HOME_TYPO = {
   filterChipMood: 'filter-chip filter-chip--mood text-xs font-bold',
   /** Native filter / sort dropdowns — same height as «Όλα» */
   filterSelect: 'filter-select',
-  /** Equal width for home meta filters (type / date / comfort / distance / host / sort) */
+  /** Full-width cells in the home meta-filter 2-column grid */
   filterControlEqual: 'filter-control-equal',
   statValue: 'text-xs font-bold',
   statLabel: 'text-2xs font-medium',
