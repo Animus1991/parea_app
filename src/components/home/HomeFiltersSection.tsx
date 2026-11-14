@@ -149,7 +149,7 @@ export function HomeFiltersSection({
 
       <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar items-center flex-wrap">
         <select
-          className={`text-xs outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           aria-label={t('Φίλτρο τιμής', 'Price filter')}
           value={priceFilter}
           onChange={(e) => setPriceFilter(e.target.value as HomePriceFilter)}
@@ -163,7 +163,7 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`text-xs outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           aria-label={t('Φίλτρο ημερομηνίας', 'Date filter')}
           value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value as HomeDateFilter)}
@@ -175,7 +175,7 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`text-xs outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           aria-label={t('Φίλτρο άνεσης & ασφάλειας', 'Comfort & safety filter')}
           value={safetyFilter}
           onChange={(e) => setSafetyFilter(e.target.value as HomeSafetyFilter)}
@@ -189,7 +189,7 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`text-xs outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           aria-label={t('Φίλτρο απόστασης', 'Distance filter')}
           value={radiusFilter}
           onChange={(e) => setRadiusFilter(e.target.value as HomeRadiusFilter)}
@@ -213,7 +213,7 @@ export function HomeFiltersSection({
 
         <div className="relative ml-auto">
           <select
-            className={`text-xs pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none transition-all duration-200 ${h.select}`}
+            className={`pl-6 pr-2 outline-none cursor-pointer appearance-none transition-all duration-200 ${h.select}`}
             aria-label={t('Ταξινόμηση', 'Sort by')}
           value={sortParam}
             onChange={(e) => setSortParam(e.target.value as HomeSortParam)}
@@ -225,7 +225,7 @@ export function HomeFiltersSection({
             </option>
           </select>
           <ArrowDownUp
-            className={`absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none opacity-60 ${h.labelMuted}`}
+            className={`absolute left-1.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 pointer-events-none opacity-60 ${h.labelMuted}`}
           />
         </div>
 

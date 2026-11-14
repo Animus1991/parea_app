@@ -345,7 +345,7 @@ export default function GroupChatPageContent() {
                     <select
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
-                      className={cn("text-xs font-bold border border-gray-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate", gc.focusRing)}
+                      className={cn("filter-select border border-gray-200 focus:outline-none focus:ring-1 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors max-w-[120px] truncate", gc.focusRing)}
                     >
                       <option value="all">
                         {t("Όλοι οι Αποστολείς", "All Senders")}

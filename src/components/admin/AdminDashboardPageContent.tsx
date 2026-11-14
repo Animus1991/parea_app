@@ -261,7 +261,7 @@ export default function AdminDashboardPageContent() {
             id="admin-chart-range"
             value={chartRange}
             onChange={(e) => setChartRange(e.target.value as '8w' | 'all')}
-            className={cn('text-xs font-semibold rounded-lg px-3 py-1.5 border outline-none min-h-9', a.inputBg)}
+            className={cn('filter-select border outline-none', a.inputBg)}
           >
             <option value="8w">{t('Τελευταίες 8 εβδομάδες', 'Last 8 weeks')}</option>
             <option value="all">{t('Όλο το διάστημα', 'All time')}</option>
@@ -506,7 +506,7 @@ export default function AdminDashboardPageContent() {
                   <select
                     value={adminAction}
                     onChange={(e) => setAdminAction(e.target.value)}
-                    className={cn('w-full px-3 py-2 text-xs border rounded-lg focus:ring-2 focus:ring-cyan-600 focus:outline-none', a.inputBg)}
+                    className={cn('filter-select w-full border focus:ring-2 focus:ring-cyan-600 focus:outline-none', a.inputBg)}
                   >
                     <option value="warning">{t('Προειδοποίηση', 'Warning')}</option>
                     <option value="suspend_7d">{t('Αναστολή 7 ημέρες', 'Suspend 7 days')}</option>

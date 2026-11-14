@@ -221,7 +221,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                     <select
                       value={groupSizeFilter}
                       onChange={(e) => setGroupSizeFilter(e.target.value as any)}
-                      className="text-xs bg-surface border border-border rounded-lg p-1 font-medium focus:outline-none focus:ring-1 focus:ring-accent/50"
+                      className="filter-select bg-surface border border-border focus:outline-none focus:ring-1 focus:ring-accent/50"
                     >
                       <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>
                       <option value="3">{t('3 Μέλη', '3 Members')}</option>

@@ -81,7 +81,7 @@ export default function WalletPageContent() {
         <div className={cn("p-4 md:p-4 border-b flex items-center justify-between", a.borderB)}>
           <h2 className={cn("text-base font-bold", a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
           <select
-            className={cn("text-xs border rounded-2xl px-2 py-1 outline-none", a.selectBg)}
+            className={cn("filter-select border outline-none", a.selectBg)}
             value={txFilter}
             onChange={(e) => setTxFilter(e.target.value as typeof txFilter)}
             aria-label={t('Φίλτρο συναλλαγών', 'Transaction filter')}

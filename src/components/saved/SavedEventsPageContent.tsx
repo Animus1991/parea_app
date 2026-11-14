@@ -72,7 +72,7 @@ export default function SavedEventsPageContent() {
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as 'date' | 'name')}
-              className={cn("px-3 py-2 rounded-2xl border text-xs font-medium outline-none cursor-pointer", a.inputBg)}
+              className={cn("filter-select border outline-none cursor-pointer", a.inputBg)}
             >
               <option value="date">{t('Ημερομηνία', 'By Date')}</option>
               <option value="name">{t('Όνομα', 'By Name')}</option>

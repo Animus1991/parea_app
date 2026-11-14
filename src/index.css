@@ -276,8 +276,23 @@ p { text-wrap: pretty; }
 
 time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 
+/* iOS zoom guard — text fields only. Native filter <select>s stay on the
+   density type scale so chip-like dropdowns don't tower over UI chrome. */
 @media (max-width: 640px) {
-  input, select, textarea { font-size: max(16px, 1em); }
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* Compact filter / chip-style native selects (home, categories, sorts, …) */
+.filter-select {
+  font-size: var(--text-2xs);
+  line-height: var(--text-2xs--line-height);
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  min-height: 1.75rem;
+  border-radius: 0.625rem;
 }
 
 [data-sticky-nav-offset] {

@@ -163,6 +163,8 @@ export const HOME_TYPO = {
   feedTab: 'text-2xs font-bold',
   sectionLabel: 'text-2xs font-bold tracking-wide uppercase',
   filterChip: 'text-2xs font-bold',
+  /** Native filter / sort dropdowns (chip-sized) */
+  filterSelect: 'filter-select',
   statValue: 'text-xs font-bold',
   statLabel: 'text-2xs font-medium',
   cardTitle: 'text-sm font-bold',

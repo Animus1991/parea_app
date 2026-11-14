@@ -469,7 +469,7 @@ export default function ProfilePageContent() {
                     profileVisibility: v === 'verified' ? 'connections' : (v as 'public' | 'private'),
                   });
                 }}
-                className={`text-xs rounded-2xl py-1.5 px-3 outline-none border ${a.selectBg} ${a.selectRing}`}
+                className={`filter-select outline-none border ${a.selectBg} ${a.selectRing}`}
               >
                 <option value="public">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι", "Verified Only")}</option>
@@ -494,7 +494,7 @@ export default function ProfilePageContent() {
                     messagePermission: v === 'anyone' ? 'everyone' : v === 'friends' ? 'groups' : 'connections',
                   });
                 }}
-                className={`text-xs rounded-2xl py-1.5 px-3 outline-none border ${a.selectBg} ${a.selectRing}`}
+                className={`filter-select outline-none border ${a.selectBg} ${a.selectRing}`}
               >
                 <option value="anyone">{t("Όλοι", "Everyone")}</option>
                 <option value="verified">{t("Μόνο επαληθευμένοι", "Verified Only")}</option>

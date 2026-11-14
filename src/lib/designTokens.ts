@@ -1145,7 +1145,7 @@ const lightBase = {
   labelMuted: 'text-gray-600',
   chipInactive: 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 hover:text-gray-900',
   select:
-    'text-gray-800 border border-gray-200 rounded-2xl shadow-soft bg-white hover:bg-gray-50 py-1.5 px-4 font-medium',
+    'filter-select text-gray-800 border border-gray-200 shadow-soft bg-white hover:bg-gray-50',
   filterBtn: 'bg-white border border-gray-200 text-gray-800 shadow-soft',
   stepTitle: 'text-gray-900',
   stepBody: 'text-gray-600',
@@ -1166,7 +1166,7 @@ const darkBase = {
   chipInactive:
     'bg-gray-800/50 border border-gray-600/50 text-gray-200 hover:border-gray-500 hover:text-white',
   select:
-    'text-gray-100 border border-gray-600/50 rounded-2xl bg-gray-800/50 hover:bg-gray-700/50 py-1.5 px-4 font-medium',
+    'filter-select text-gray-100 border border-gray-600/50 bg-gray-800/50 hover:bg-gray-700/50',
   filterBtn: 'bg-gray-800/50 border border-gray-600/50 text-gray-100 shadow-soft',
   stepTitle: 'text-white',
   stepBody: 'text-gray-300',
