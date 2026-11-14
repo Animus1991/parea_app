@@ -308,7 +308,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
             onChange={e => setSearchValue(e.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={t('Αναζήτηση εκδηλώσεων...', 'Search events...')}
-            className={cn("w-64 py-1.5 pl-8 pr-7 text-sm border outline-none transition-colors min-h-10", tok.searchInput)}
+            className={cn("w-64 py-1.5 pl-8 pr-7 text-xs border outline-none transition-colors min-h-10", tok.searchInput)}
           />
           <Search className={cn("absolute w-4 h-4 left-2.5 top-[11px]", tok.isDark ? "text-gray-400" : "text-gray-400")} />
           {searchValue && (

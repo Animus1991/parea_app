@@ -30,8 +30,8 @@ export const CHAT_TYPO = {
   sender: 'text-2xs text-ink-muted mb-0.5',
   bubble: 'text-sm leading-relaxed break-words',
   systemBubble: 'text-2xs text-center',
-  input: 'text-sm',
-  sendBtn: 'text-sm font-bold',
+  input: 'text-xs',
+  sendBtn: 'text-xs font-bold',
   footer: 'text-2xs text-ink-muted',
 } as const;
 
@@ -51,8 +51,8 @@ export const INBOX_TYPO = {
   pageSub: 'text-xs font-medium',
   tab: 'text-xs font-bold',
   badge: 'text-2xs font-bold',
-  search: 'text-sm font-medium',
-  filter: 'text-xs font-bold',
+  search: 'text-xs font-medium',
+  filter: 'text-2xs font-bold',
   rowTitle: 'text-sm truncate',
   rowMeta: 'text-2xs font-medium',
   rowPreview: 'text-xs truncate',

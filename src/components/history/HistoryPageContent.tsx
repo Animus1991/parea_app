@@ -103,7 +103,7 @@ export default function HistoryPageContent() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t('Αναζήτηση ιστορικού...', 'Search history...')}
-            className={cn("w-full pl-9 pr-4 py-2 rounded-2xl border text-sm font-medium outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft", a.inputBg, a.borderB)}
+            className={cn("w-full pl-9 pr-4 py-2 rounded-2xl border text-xs font-medium outline-none focus:ring-2 focus:ring-cyan-500 shadow-soft", a.inputBg, a.borderB)}
           />
         </div>
         <div className="flex gap-1.5" role="tablist" aria-label={t('Φίλτρο ιστορικού', 'History filter')}>

@@ -201,13 +201,13 @@ export default function HomeClassic() {
             <div className="flex gap-2">
               <button
                 onClick={() => setFeedType("For You")}
-                className={`px-4 py-1.5 text-sm font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
+                className={`px-4 py-1.5 text-xs font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
               >
                 {t("home.feed.for_you", "Για Σένα")}
               </button>
               <button
                 onClick={() => setFeedType("Discover")}
-                className={`px-4 py-1.5 text-sm font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
+                className={`px-4 py-1.5 text-xs font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
               >
                 {t("home.feed.discover", "Ανακάλυψε")}
               </button>

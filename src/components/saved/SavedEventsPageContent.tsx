@@ -66,13 +66,13 @@ export default function SavedEventsPageContent() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder={t('Αναζήτηση αποθηκευμένων...', 'Search saved...')}
-                className={cn("w-full pl-9 pr-4 py-2 rounded-2xl border text-sm font-medium outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
+                className={cn("w-full pl-9 pr-4 py-2 rounded-2xl border text-xs font-medium outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
               />
             </div>
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as 'date' | 'name')}
-              className={cn("px-3 py-2 rounded-2xl border text-sm font-medium outline-none cursor-pointer", a.inputBg)}
+              className={cn("px-3 py-2 rounded-2xl border text-xs font-medium outline-none cursor-pointer", a.inputBg)}
             >
               <option value="date">{t('Ημερομηνία', 'By Date')}</option>
               <option value="name">{t('Όνομα', 'By Name')}</option>

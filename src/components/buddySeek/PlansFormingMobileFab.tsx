@@ -35,7 +35,7 @@ export function PlansFormingMobileFab() {
       type="button"
       onClick={() => setOpen(true)}
       className={cn(
-        'xl:hidden fixed left-1/2 -translate-x-1/2 z-fab flex items-center gap-2 min-h-11 pl-4 pr-3 rounded-full shadow-soft-lg border font-bold text-sm transition-transform active:scale-[0.98] motion-reduce:transition-none',
+        'xl:hidden fixed left-1/2 -translate-x-1/2 z-fab flex items-center gap-2 min-h-11 pl-4 pr-3 rounded-full shadow-soft-lg border font-bold text-xs transition-transform active:scale-[0.98] motion-reduce:transition-none',
         'bottom-fab-zone',
         hasPending
           ? 'bg-amber-500 border-amber-400 text-white animate-pulse motion-reduce:animate-none'

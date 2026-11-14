@@ -74,7 +74,7 @@ export default function HelpCenterPageContent() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t('Αναζήτηση άρθρων...', 'Search articles...')}
-            className={cn("w-full pl-10 pr-4 py-2.5 rounded-2xl text-base font-medium focus:outline-none focus:ring-2", a.inputBg)}
+            className={cn("w-full pl-10 pr-4 py-2.5 rounded-2xl text-xs font-medium focus:outline-none focus:ring-2", a.inputBg)}
           />
         </div>
       </div>

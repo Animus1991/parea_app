@@ -101,7 +101,7 @@ export function HomeRichHero({
               onChange={(e) => onSearchChange(e.target.value)}
               onFocus={onSearchFocus}
               placeholder={t('home.hero.search_placeholder', 'Αναζήτηση εμπειριών...')}
-              className={cn('w-full h-11 pl-10 pr-4 rounded-full shadow-soft focus:outline-none focus:ring-2 text-sm font-medium', tok.heroSearchInput)}
+              className={cn('w-full h-11 pl-10 pr-4 rounded-full shadow-soft focus:outline-none focus:ring-2 text-xs font-medium', tok.heroSearchInput)}
             />
             <HomeSearchDropdown
               popularSuggestions={searchSuggestions}

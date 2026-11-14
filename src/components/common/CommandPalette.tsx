@@ -194,7 +194,7 @@ export function CommandPalette() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t('Αναζήτηση σελίδας ή ερώτηση στο AI…', 'Search pages or ask the AI…')}
-                className="flex-1 h-12 bg-transparent text-sm outline-none placeholder:text-gray-400"
+                className="flex-1 h-12 bg-transparent text-xs outline-none placeholder:text-gray-400"
               />
               <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-2xs font-medium text-gray-500">
                 <Command className="w-3 h-3" />K

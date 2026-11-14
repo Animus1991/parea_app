@@ -55,7 +55,7 @@ export function HomeLoggedInHeroContrast({
           placeholder={t('home.hero.search_placeholder', 'Αναζήτηση εμπειριών...')}
           className={cn(
             h.heroSearchInput,
-            'text-sm font-medium shadow-soft focus:outline-none backdrop-blur-sm w-full',
+            'text-xs font-medium shadow-soft focus:outline-none backdrop-blur-sm w-full',
           )}
         />
         {showSearchSuggestions && !searchQuery && searchDropdown}

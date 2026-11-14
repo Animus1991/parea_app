@@ -95,7 +95,7 @@ export function HomeFiltersSection({
         <button
           type="button"
           onClick={onOpenMobileFilters}
-          className={`md:hidden flex items-center gap-1.5 px-3 py-2 min-h-11 rounded-full text-sm font-bold shadow-soft ${h.filterBtn}`}
+          className={`md:hidden flex items-center gap-1.5 px-3 py-2 min-h-11 rounded-full text-xs font-bold shadow-soft ${h.filterBtn}`}
         >
           <SlidersHorizontal className="w-4 h-4" />
           {t('Φίλτρα', 'Filters')}
@@ -123,7 +123,7 @@ export function HomeFiltersSection({
             key={cat}
             type="button"
             onClick={() => setActiveCategory(cat)}
-            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold shadow-soft transition-all duration-200 tracking-wide ${
+            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold shadow-soft transition-all duration-200 tracking-wide ${
               activeCategory === cat ? h.chipActive : h.chipInactive
             }`}
           >
@@ -138,7 +138,7 @@ export function HomeFiltersSection({
             key={tag}
             type="button"
             onClick={() => setTagFilter(tag)}
-            className={`whitespace-nowrap px-3.5 py-1 rounded-full text-xs font-bold transition-all duration-200 border ${
+            className={`whitespace-nowrap px-3.5 py-1 rounded-full text-2xs font-bold transition-all duration-200 border ${
               tagFilter === tag ? h.tagActive : h.tagInactive
             }`}
           >
@@ -149,7 +149,7 @@ export function HomeFiltersSection({
 
       <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar items-center flex-wrap">
         <select
-          className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`text-xs outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           aria-label={t('Φίλτρο τιμής', 'Price filter')}
           value={priceFilter}
           onChange={(e) => setPriceFilter(e.target.value as HomePriceFilter)}
@@ -163,7 +163,7 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`text-xs outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           aria-label={t('Φίλτρο ημερομηνίας', 'Date filter')}
           value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value as HomeDateFilter)}
@@ -175,7 +175,7 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`text-xs outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           aria-label={t('Φίλτρο άνεσης & ασφάλειας', 'Comfort & safety filter')}
           value={safetyFilter}
           onChange={(e) => setSafetyFilter(e.target.value as HomeSafetyFilter)}
@@ -189,7 +189,7 @@ export function HomeFiltersSection({
         </select>
 
         <select
-          className={`text-sm outline-none cursor-pointer transition-all duration-200 ${h.select}`}
+          className={`text-xs outline-none cursor-pointer transition-all duration-200 ${h.select}`}
           aria-label={t('Φίλτρο απόστασης', 'Distance filter')}
           value={radiusFilter}
           onChange={(e) => setRadiusFilter(e.target.value as HomeRadiusFilter)}
@@ -204,7 +204,7 @@ export function HomeFiltersSection({
           <button
             type="button"
             onClick={onToggleSeekingHostOnly}
-            className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-1 rounded-full text-xs font-bold transition-all duration-200 border ${seekingHostOnly ? h.tagActive : h.tagInactive}`}
+            className={`flex items-center gap-1.5 whitespace-nowrap px-3.5 py-1 rounded-full text-2xs font-bold transition-all duration-200 border ${seekingHostOnly ? h.tagActive : h.tagInactive}`}
           >
             <Crown className="w-3.5 h-3.5" />
             {t('Χωρίς διοργανωτή', 'Seeking organizer')}
@@ -213,7 +213,7 @@ export function HomeFiltersSection({
 
         <div className="relative ml-auto">
           <select
-            className={`text-sm pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none transition-all duration-200 ${h.select}`}
+            className={`text-xs pl-7 pr-3 font-medium outline-none cursor-pointer appearance-none transition-all duration-200 ${h.select}`}
             aria-label={t('Ταξινόμηση', 'Sort by')}
           value={sortParam}
             onChange={(e) => setSortParam(e.target.value as HomeSortParam)}
