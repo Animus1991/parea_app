@@ -66,13 +66,13 @@ export function PlansFormingCard({
   return (
     <article
       className={cn(
-        'rounded-2xl border transition-all duration-200 focus-within:ring-2 focus-within:ring-cyan-500/40',
+        'rounded-2xl border transition-colors duration-200 focus-within:ring-2 focus-within:ring-cyan-500/30',
         isSidebar
           ? darkCard
-            ? 'bg-white/[0.03] border-white/10 hover:border-cyan-500/35 hover:bg-white/[0.05]'
-            : 'bg-white border-gray-200 shadow-soft hover:border-cyan-300 hover:shadow-soft-md'
-          : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-soft hover:shadow-soft-md',
-        item.isHighMatch && !isSidebar && 'ring-1 ring-cyan-500/20',
+            ? 'bg-white/[0.03] border-white/10 hover:border-white/20'
+            : 'bg-white border-gray-200/80 shadow-soft hover:border-gray-300'
+          : 'bg-white dark:bg-gray-900 border-gray-200/80 dark:border-gray-700/80 shadow-soft',
+        item.isHighMatch && !isSidebar && 'border-cyan-200/70 dark:border-cyan-500/25',
       )}
     >
       {item.isHighMatch && (
@@ -125,7 +125,7 @@ export function PlansFormingCard({
         </div>
       )}
 
-      <div className="flex gap-3 p-3">
+      <div className="flex gap-3 px-3.5 pt-3.5 pb-2">
         <button
           type="button"
           onClick={() => navigate(`/events/${item.event.id}`)}
@@ -145,7 +145,7 @@ export function PlansFormingCard({
           )}
           <span
             className={cn(
-              'absolute bottom-1 left-1 right-1 text-center text-xs font-bold px-1 py-0.5 rounded-lg backdrop-blur-sm',
+              'absolute bottom-0.5 left-0.5 right-0.5 text-center text-xs font-semibold px-1 py-0.5 rounded-md backdrop-blur-sm border',
               urgencyStyle[item.urgency.tone],
             )}
           >
@@ -154,13 +154,13 @@ export function PlansFormingCard({
         </button>
 
         <div className="min-w-0 flex-1 space-y-1">
-          <div className="flex flex-wrap items-center gap-1">
-            <span className="card-badge font-bold uppercase tracking-wide text-cyan-500 dark:text-cyan-400">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+            <span className="card-badge font-semibold uppercase tracking-wide text-cyan-700/80 dark:text-cyan-400/90">
               {tu(item.intentLabel.el, item.intentLabel.en)}
             </span>
             {item.isSavedEvent && (
-              <span className="card-badge font-bold px-1.5 py-0.5 rounded-lg bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200 dark:bg-fuchsia-500/20 dark:text-fuchsia-300 dark:border-fuchsia-500/30">
-                {t('Αποθηκευμένη', 'Saved')}
+              <span className="card-badge font-medium text-fuchsia-700/80 dark:text-fuchsia-300/90">
+                · {t('Αποθηκευμένη', 'Saved')}
               </span>
             )}
           </div>
@@ -170,31 +170,32 @@ export function PlansFormingCard({
             </p>
           )}
           {isSidebar ? (
-            <p className={cn('card-copy-sm font-bold', darkCard ? 'text-gray-100' : 'text-gray-900')}>{displayName}</p>
+            <p className={cn('card-copy-sm font-semibold', darkCard ? 'text-gray-100' : 'text-gray-900')}>{displayName}</p>
           ) : (
-            <p className="card-copy font-medium text-gray-700 dark:text-gray-300">{displayName}</p>
+            <p className="card-copy text-gray-600 dark:text-gray-300">
+              <span className="font-semibold text-gray-800 dark:text-gray-100">{displayName}</span>
+              <span className="text-gray-400 dark:text-gray-500" aria-hidden> · </span>
+              <span className="card-role font-medium text-violet-700/80 dark:text-violet-300/90">
+                {t(item.roleLabel.el, item.roleLabel.en)}
+              </span>
+            </p>
           )}
-          {!isSidebar && (
-            <span className="card-role font-bold text-violet-600 dark:text-violet-300">
-              {t(item.roleLabel.el, item.roleLabel.en)}
-            </span>
-          )}
-          <div className={cn('flex flex-wrap gap-x-2 gap-y-0.5 card-meta text-gray-500', !isSidebar && 'dark:text-gray-400')}>
+          <div className={cn('flex flex-wrap gap-x-2.5 gap-y-0.5 card-meta text-gray-500', !isSidebar && 'dark:text-gray-400')}>
             {!isSidebar && (
-              <span className="inline-flex items-center gap-0.5 font-semibold text-gray-700 dark:text-gray-300">
-                <Clock className="w-3 h-3 shrink-0" />
+              <span className="inline-flex items-center gap-1 font-medium text-gray-600 dark:text-gray-300">
+                <Clock className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
                 {t(item.scheduleFull.el, item.scheduleFull.en)}
               </span>
             )}
             {isSidebar && item.location && (
-              <span className={cn('inline-flex items-center gap-0.5', darkCard ? 'text-gray-400' : 'text-gray-600')}>
-                <MapPin className="w-3 h-3 shrink-0" />
+              <span className={cn('inline-flex items-center gap-1', darkCard ? 'text-gray-400' : 'text-gray-600')}>
+                <MapPin className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
                 {item.location}
               </span>
             )}
             {!isSidebar && item.location && (
-              <span className="inline-flex items-center gap-0.5 truncate max-w-[140px]">
-                <MapPin className="w-3 h-3 shrink-0" />
+              <span className="inline-flex items-center gap-1 truncate max-w-[160px] font-medium text-gray-600 dark:text-gray-300">
+                <MapPin className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
                 {item.location}
               </span>
             )}
@@ -202,15 +203,15 @@ export function PlansFormingCard({
         </div>
       </div>
 
-      <div className={cn('px-3 pb-2 flex flex-wrap gap-1.5')}>
+      <div className="px-3.5 pb-2 flex flex-wrap gap-1.5">
         <MetaChip isDark={darkCard} label={t(item.groupSizeLabel.el, item.groupSizeLabel.en)} icon={Users} />
         <MetaChip isDark={darkCard} label={t(item.meetingLabel.el, item.meetingLabel.en)} />
         {item.sharedInterestTags.slice(0, 2).map((tag) => (
           <span
             key={tag}
             className={cn(
-              'card-copy font-bold px-1.5 py-0.5 rounded-lg',
-              darkCard ? 'bg-cyan-900/40 text-cyan-200' : 'bg-cyan-50 text-cyan-800 dark:bg-cyan-500/15 dark:text-cyan-200',
+              'card-copy font-medium px-1.5 py-0.5 rounded-md',
+              darkCard ? 'bg-white/5 text-gray-300' : 'bg-gray-50 text-gray-600 dark:bg-white/5 dark:text-gray-300',
             )}
           >
             {tag}
@@ -227,28 +228,28 @@ export function PlansFormingCard({
       {item.intent.message && (
         <div
           className={cn(
-            'mx-3 mb-2 px-2.5 py-2 rounded-xl flex gap-2',
-            darkCard ? 'bg-black/20' : isSidebar ? 'bg-gray-50' : 'bg-gray-50 dark:bg-gray-800/60',
+            'mx-3.5 mb-2 pl-2.5 pr-2 py-1.5 flex gap-2 border-l-2',
+            darkCard ? 'border-l-white/20 text-gray-300' : 'border-l-gray-200 dark:border-l-white/15',
           )}
         >
-          <MessageCircle className={cn('w-3.5 h-3.5 shrink-0 mt-0.5', darkCard ? 'text-gray-400' : 'text-gray-500')} />
-          <p className={cn('card-copy line-clamp-2 leading-relaxed', darkCard ? 'text-gray-300' : 'text-gray-700')}>
+          <MessageCircle className={cn('w-3.5 h-3.5 shrink-0 mt-0.5 opacity-60', darkCard ? 'text-gray-400' : 'text-gray-500')} aria-hidden />
+          <p className={cn('card-copy line-clamp-2 leading-relaxed', darkCard ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300')}>
             «{item.intent.message}»
           </p>
         </div>
       )}
 
       {!isSidebar && (
-        <p className="px-3 pb-2 card-copy leading-snug text-gray-500 dark:text-gray-400">
+        <p className="px-3.5 pb-2 card-copy leading-snug text-gray-400 dark:text-gray-500">
           {t(item.matchReason.el, item.matchReason.en)}
         </p>
       )}
 
-      <div className="flex gap-2 px-3 pb-3">
+      <div className="flex gap-2 px-3.5 pb-3.5 pt-0.5">
         <button
           type="button"
           onClick={() => setPreviewOpen(true)}
-          className="flex-1 min-h-10 rounded-xl card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors shadow-soft"
+          className="flex-1 min-h-10 rounded-xl card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors"
         >
           {t('Αίτημα συμμετοχής', 'Ask to join')}
         </button>
@@ -256,8 +257,8 @@ export function PlansFormingCard({
           type="button"
           onClick={() => navigate(`/events/${item.event.id}`)}
           className={cn(
-            'px-3 min-h-10 rounded-xl card-cta border',
-            darkCard ? 'border-white/15 text-gray-200 hover:bg-white/5' : 'border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-white/15 dark:text-gray-200 dark:hover:bg-white/5',
+            'px-3 min-h-10 rounded-xl card-cta transition-colors',
+            darkCard ? 'text-gray-300 hover:bg-white/5' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/5',
           )}
         >
           {t('Εκδήλωση', 'Event')}
@@ -274,9 +275,9 @@ export function PlansFormingCard({
             );
           }}
           className={cn(
-            'min-h-10 min-w-10 rounded-xl border flex items-center justify-center',
-            darkCard ? 'border-white/15 text-cyan-400' : 'border-gray-200 text-gray-600 dark:border-white/15 dark:text-cyan-400',
-            isSaved && 'bg-cyan-600/20 border-cyan-500/40',
+            'min-h-10 min-w-10 rounded-xl flex items-center justify-center transition-colors',
+            darkCard ? 'text-gray-400 hover:bg-white/5' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5',
+            isSaved && (darkCard ? 'text-cyan-400 bg-cyan-500/10' : 'text-cyan-700 bg-cyan-50 dark:text-cyan-300 dark:bg-cyan-500/10'),
           )}
           aria-label={t('Αποθήκευση σχεδίου', 'Save plan')}
         >
@@ -323,11 +324,11 @@ function MetaChip({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-0.5 card-copy font-bold px-1.5 py-0.5 rounded-lg border',
-        isDark ? 'bg-white/5 border-white/10 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600 dark:bg-white/5 dark:border-white/10 dark:text-gray-300',
+        'inline-flex items-center gap-1 card-copy font-medium px-1.5 py-0.5 rounded-md',
+        isDark ? 'bg-white/5 text-gray-400' : 'bg-gray-50 text-gray-600 dark:bg-white/5 dark:text-gray-300',
       )}
     >
-      {Icon && <Icon className="w-2.5 h-2.5" />}
+      {Icon && <Icon className="w-2.5 h-2.5 opacity-70" aria-hidden />}
       {label}
     </span>
   );

@@ -62,14 +62,14 @@ export function PlansFormingStatsBar({
         <div
           key={label}
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 border',
+            'inline-flex items-center gap-1.5 rounded-lg px-2 py-1',
             PLANS_FORMING_TYPO.statChip,
-            isDark ? 'bg-white/5 border-white/10 text-gray-200' : 'bg-white border-gray-200 text-gray-700',
-            compact && 'px-2 py-1',
+            isDark ? 'bg-white/5 text-gray-200' : 'bg-white/70 text-gray-700',
+            compact && 'px-1.5 py-0.5',
           )}
         >
-          <Icon className="w-3 h-3 text-cyan-500 shrink-0" aria-hidden />
-          <span className="text-cyan-600 dark:text-cyan-400">{value}</span>
+          <Icon className="w-3 h-3 text-cyan-600/70 dark:text-cyan-400/80 shrink-0" aria-hidden />
+          <span className="font-semibold text-cyan-700/90 dark:text-cyan-300/90">{value}</span>
           <span className={cn('font-medium', isDark ? 'text-gray-400' : 'text-gray-500')}>{label}</span>
         </div>
       ))}
@@ -260,7 +260,7 @@ export function PlansFormingValueHero({ isDark, insights }: { isDark?: boolean; 
       : t('Βρείτε Nakamas για εκδήλωση', 'Find Nakamas for events');
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'leading-snug', isDark ? 'text-white' : 'text-gray-900')}>{headline}</p>
       <p className={cn(PLANS_FORMING_TYPO.body, 'leading-relaxed', isDark ? 'text-gray-400' : 'text-gray-600')}>
         {t(
