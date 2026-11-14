@@ -18,6 +18,8 @@ export interface User {
   paymentVerified: boolean;
   idVerified: boolean;
   isOrganizer: boolean;
+  /** Platform moderator. Only trusted seed data sets this (see lib/roles.ts). */
+  isAdmin?: boolean;
   connections?: string[];
   /** Saved from OnboardingClassic (group size, schedule, location, activity). */
   discoveryPrefs?: {

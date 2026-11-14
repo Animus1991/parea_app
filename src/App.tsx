@@ -6,6 +6,7 @@ import { AppShell } from "./components/layout/AppShell";
 import { RouteLifecycle } from "./components/common/RouteLifecycle";
 import { OfflineBanner } from "./components/common/OfflineBanner";
 import { CommandPalette } from "./components/common/CommandPalette";
+import { RequireAdmin } from "./components/auth/RequireAdmin";
 import { CopilotBridge } from "./components/copilot/CopilotBridge";
 import { useStore } from "./store";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
@@ -139,7 +140,7 @@ export default function App() {
             <Route path="/settings" element={<ErrorBoundary><SettingsAndPrivacy /></ErrorBoundary>} />
             <Route path="/help" element={<ErrorBoundary><HelpCenter /></ErrorBoundary>} />
 
-            <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+            <Route path="/admin" element={<ErrorBoundary><RequireAdmin><AdminDashboard /></RequireAdmin></ErrorBoundary>} />
             <Route path="/achievements" element={<ErrorBoundary><Achievements /></ErrorBoundary>} />
             <Route path="/leaderboard" element={<ErrorBoundary><Leaderboard /></ErrorBoundary>} />
             <Route path="/challenges" element={<ErrorBoundary><Challenges /></ErrorBoundary>} />

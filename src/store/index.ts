@@ -761,8 +761,10 @@ export const useStore = create<AppState>()(
     get().logAdminAction(`safeguard_${key}_${value ? 'on' : 'off'}`);
   },
 
-  updateUser: (userId, data) =>
+  updateUser: (userId, rawData) =>
     set((state) => {
+      // The admin role is never changed from the client (see lib/roles.ts).
+      const { isAdmin: _ignoredAdmin, ...data } = (rawData ?? {}) as Partial<typeof currentUser> & { isAdmin?: boolean };
       const isCurrentUser = state.currentUser?.id === userId;
       return {
         users: state.users.map((u) =>
@@ -1460,7 +1462,10 @@ export const useStore = create<AppState>()(
 
         const events = mergeById(current.events, p.events);
         const groups = mergeById(current.groups, p.groups);
-        const users = mergeById(current.users, p.users);
+        // isAdmin comes only from the trusted seeds, never from persisted
+        // (user-editable) localStorage state.
+        const seedAdmin = new Map(current.users.map((u) => [u.id, Boolean(u.isAdmin)]));
+        const users = mergeById(current.users, p.users).map((u) => ({ ...u, isAdmin: seedAdmin.get(u.id) ?? false }));
         const notifications = Array.isArray(p.notifications)
           ? (p.notifications as typeof current.notifications)
           : current.notifications;

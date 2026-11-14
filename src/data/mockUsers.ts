@@ -89,6 +89,8 @@ export const mockUsers: User[] = [
     paymentVerified: true,
     idVerified: true,
     isOrganizer: true,
+    // Demo: seeded venue accounts double as platform moderators.
+    isAdmin: true,
     connections: ['u1', 'u3']
   },
   {
@@ -107,6 +109,8 @@ export const mockUsers: User[] = [
     paymentVerified: true,
     idVerified: true,
     isOrganizer: true,
+    // Demo: seeded venue accounts double as platform moderators.
+    isAdmin: true,
     connections: []
   },
   {
@@ -125,6 +129,8 @@ export const mockUsers: User[] = [
     paymentVerified: true,
     idVerified: true,
     isOrganizer: true,
+    // Demo: seeded venue accounts double as platform moderators.
+    isAdmin: true,
     connections: []
   },
   {
@@ -143,6 +149,8 @@ export const mockUsers: User[] = [
     paymentVerified: true,
     idVerified: true,
     isOrganizer: true,
+    // Demo: seeded venue accounts double as platform moderators.
+    isAdmin: true,
     connections: []
   },
   {

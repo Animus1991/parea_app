@@ -35,6 +35,7 @@ import { GroupChatLeaveModal } from "./groupChat/GroupChatLeaveModal";
 import { GroupChatReportModal } from "./groupChat/GroupChatReportModal";
 import { GroupChatLocationModal } from "./groupChat/GroupChatLocationModal";
 import { GroupChatSosModal } from "./groupChat/GroupChatSosModal";
+import { canModerateGroup } from "../../lib/roles";
 
 export default function GroupChatPageContent() {
   const { t } = useLanguage();
@@ -196,10 +197,8 @@ export default function GroupChatPageContent() {
   }
 
   // Determine if the current user is an admin of the group
-  const isGroupAdmin =
-    currentUser.id === group.hostId ||
-    currentUser.id === event.organizerId ||
-    currentUser.isOrganizer;
+  // Host or event organizer only: being an organizer elsewhere grants nothing here.
+  const isGroupAdmin = canModerateGroup(currentUser, group, event);
 
   const groupMembersDetailed = group.members.map(
     (mId) => users.find((u) => u.id === mId) || currentUser,

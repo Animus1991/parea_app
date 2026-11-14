@@ -29,6 +29,7 @@ import { useLanguage } from '../../lib/i18n';
 import { trackEvent } from '../../lib/analytics';
 import { useStore } from '../../store';
 import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
+import { isPlatformAdmin } from '../../lib/roles';
 
 interface CommandItem {
   id: string;
@@ -57,7 +58,7 @@ export function CommandPalette() {
   }, []);
   useOverlayBehavior(open, closePalette, panelRef);
 
-  const isAdmin = Boolean(currentUser?.isOrganizer);
+  const isAdmin = isPlatformAdmin(currentUser);
 
   const commands: CommandItem[] = useMemo(
     () => [

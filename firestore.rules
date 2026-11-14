@@ -1,25 +1,65 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // User profiles — owner read/write (CoFounderBay pattern)
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Set only by a trusted backend (Admin SDK / Cloud Functions), never by the client.
+    function privilegedKeys() {
+      return ['isOrganizer', 'trustTier', 'linkedUserId', 'isAdmin', 'reliabilityScore', 'badges', 'idVerified'];
+    }
+
+    function validProfile(data) {
+      return data.uid == request.auth.uid
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 60
+        && (!('bio' in data) || (data.bio is string && data.bio.size() <= 500))
+        && (!('city' in data) || (data.city is string && data.city.size() <= 80))
+        && (!('interests' in data) || (data.interests is list && data.interests.size() <= 30));
+    }
+
+    // Profiles: only the owner reads or writes their own document, and can
+    // never grant themselves organizer/admin/trust fields (audit §4 Critical).
     match /profiles/{userId} {
-      allow read: if request.auth != null;
-      allow create, update: if request.auth != null && request.auth.uid == userId;
+      allow read: if signedIn() && request.auth.uid == userId;
+      allow create: if signedIn() && request.auth.uid == userId
+        && !request.resource.data.keys().hasAny(privilegedKeys())
+        && validProfile(request.resource.data);
+      allow update: if signedIn() && request.auth.uid == userId
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(privilegedKeys())
+        && validProfile(request.resource.data);
       allow delete: if false;
     }
 
-    // Chat rooms
+    // Chat: rooms carry `memberIds`, maintained by a trusted backend.
+    // Once a room document exists, only its members can read or post.
+    // Rooms without a document (local demo conversations) keep the previous
+    // signed-in behaviour until the backend starts creating them.
+    function roomPath(roomId) {
+      return /databases/$(database)/documents/chatRooms/$(roomId);
+    }
+
+    function canUseRoom(roomId) {
+      return signedIn() && (
+        !exists(roomPath(roomId))
+        || request.auth.uid in get(roomPath(roomId)).data.memberIds
+      );
+    }
+
     match /chatRooms/{roomId}/messages/{messageId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null
+      allow read: if canUseRoom(roomId);
+      allow create: if canUseRoom(roomId)
+        && request.resource.data.keys().hasOnly(['senderId', 'body', 'createdAt'])
         && request.resource.data.senderId == request.auth.uid
         && request.resource.data.body is string
+        && request.resource.data.body.size() > 0
         && request.resource.data.body.size() <= 4000;
       allow update, delete: if false;
     }
 
     match /chatRooms/{roomId} {
-      allow read: if request.auth != null;
+      allow read: if signedIn() && exists(roomPath(roomId)) && request.auth.uid in resource.data.memberIds;
       allow write: if false;
     }
 

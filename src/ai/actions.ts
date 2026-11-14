@@ -21,6 +21,7 @@ import { extractDateRange, CATEGORY_SYNONYMS } from './entities';
 import { normalize } from './text';
 import { resolveEventRef, searchEvents } from './eventSearch';
 import type { ActionArgs, ActionResult, ActionRuntime, CopilotAction, ParamSchema } from './types';
+import { isPlatformAdmin } from '../lib/roles';
 
 /* ───────────────────────── helpers ───────────────────────── */
 
@@ -179,7 +180,7 @@ const navigateAction: CopilotAction = {
   run: (args, rt) => {
     const route = routeById(String(args.page ?? ''));
     if (!route) return fail('Δεν βρήκα αυτή τη σελίδα.', "I couldn't find that page.");
-    if (route.adminOnly && !state().currentUser?.isOrganizer) {
+    if (route.adminOnly && !isPlatformAdmin(state().currentUser)) {
       return fail('Η σελίδα διαχείρισης είναι μόνο για διαχειριστές.', 'The admin page is for admins only.');
     }
     rt.navigate(route.path);
@@ -1145,7 +1146,7 @@ export function getAction(name: string): CopilotAction | undefined {
 
 /** Actions visible to the current user (least privilege: admin tools hidden from members). */
 export function availableActions(): CopilotAction[] {
-  const isAdmin = Boolean(state().currentUser?.isOrganizer);
+  const isAdmin = isPlatformAdmin(state().currentUser);
   return COPILOT_ACTIONS.filter((a) => !a.adminOnly || isAdmin);
 }
 

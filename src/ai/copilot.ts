@@ -11,6 +11,8 @@ import { callCopilotModel, getEngineStatus, markEngineUnavailable, type GeminiCo
 import { planLocal, UNDO_CALL } from './localEngine';
 import { detectLanguage } from './text';
 import type { ActionArgs, ActionResult, ActionRuntime, AiLang, PlannedCall } from './types';
+import { isPlatformAdmin } from '../lib/roles';
+import { useAiAuditStore, type AiAuditStatus } from '../store/aiAuditStore';
 
 /* ───────────── navigation bridge (set by <CopilotBridge/> inside the router) ───────────── */
 
@@ -59,12 +61,25 @@ function runtime(lang: AiLang): ActionRuntime {
 }
 
 function isAdmin(): boolean {
-  return Boolean(useStore.getState().currentUser?.isOrganizer);
+  return isPlatformAdmin(useStore.getState().currentUser);
 }
 
 function sayBoth(el: string, en: string, lang: AiLang, engine: CopilotEngine, extra: Partial<Parameters<ReturnType<typeof store>['append']>[0]> = {}) {
   return store().append({ role: 'assistant', el, en, lang, engine, ...extra });
 }
+
+function audit(action: string, risk: AiAuditEntryRisk, status: AiAuditStatus, engine: CopilotEngine, args: ActionArgs | undefined, messageId?: string) {
+  useAiAuditStore.getState().record({
+    userId: useStore.getState().currentUser?.id ?? null,
+    action,
+    risk,
+    status,
+    engine,
+    argKeys: Object.keys(args ?? {}).slice(0, 12),
+    messageId,
+  });
+}
+type AiAuditEntryRisk = 'safe' | 'confirm' | 'destructive' | 'unknown';
 
 function applyResult(messageId: string, result: ActionResult) {
   if (result.eventIds && result.eventIds.length > 0) store().setLastEventIds(result.eventIds);
@@ -86,6 +101,7 @@ async function executeCall(callIn: PlannedCall, lang: AiLang, engine: CopilotEng
   }
   const action = getAction(callIn.name);
   if (!action || (action.adminOnly && !isAdmin())) {
+    audit(callIn.name.slice(0, 64), action?.risk ?? 'unknown', 'denied', engine, callIn.args);
     sayBoth('Δεν μπορώ να κάνω αυτή την ενέργεια.', "I can't perform that action.", lang, engine, { error: true });
     return { ok: false, error: 'unknown_or_forbidden_action' };
   }
@@ -115,6 +131,7 @@ async function executeCall(callIn: PlannedCall, lang: AiLang, engine: CopilotEng
     action: { name: action.name, args: callIn.args, risk: action.risk, status: result.ok ? 'done' : 'failed' },
   });
   applyResult(id, result);
+  audit(action.name, action.risk, result.ok ? 'done' : 'failed', engine, callIn.args, id);
   return argsSummary(result);
 }
 
@@ -136,12 +153,14 @@ export async function confirmAction(messageId: string): Promise<void> {
   if (!result.ok) store().updateAction(messageId, { status: 'failed' });
   const id = sayBoth(result.el, result.en, lang, msg.engine ?? 'local', { eventIds: result.eventIds, link: result.link, error: !result.ok });
   applyResult(id, result);
+  audit(action.name, action.risk, result.ok ? 'done' : 'failed', msg.engine ?? 'local', msg.action.args, id);
 }
 
 export function cancelAction(messageId: string): void {
   const msg = store().messages.find((m) => m.id === messageId);
   if (!msg?.action || msg.action.status !== 'pending') return;
   store().updateAction(messageId, { status: 'cancelled' });
+  audit(msg.action.name, msg.action.risk ?? 'unknown', 'cancelled', msg.engine ?? 'local', msg.action.args);
   const lang = msg.lang ?? useLanguageStore.getState().language;
   sayBoth('Εντάξει, ακύρωσα — δεν έγινε καμία αλλαγή.', "Okay, cancelled — nothing was changed.", lang, msg.engine ?? 'local', { compact: true });
 }
@@ -155,6 +174,7 @@ export function undoAction(messageId: string): boolean {
   if (idx >= 0) undoStack.splice(idx, 1);
   store().update(messageId, { undone: true });
   store().updateAction(messageId, { status: 'undone' });
+  useAiAuditStore.getState().markUndone(messageId);
   return true;
 }
 

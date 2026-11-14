@@ -8,6 +8,25 @@ import { createLogger } from '../lib/logger';
 
 const log = createLogger('firebaseUserProfile');
 
+/**
+ * Fields only a trusted backend (Admin SDK / Cloud Function) may set. The
+ * client never writes them and firestore.rules rejects them (no self-escalation).
+ */
+export const PRIVILEGED_PROFILE_FIELDS = ['isOrganizer', 'trustTier', 'linkedUserId', 'isAdmin', 'reliabilityScore', 'badges', 'idVerified'] as const;
+
+/** The subset of a profile the signed-in user may write about themselves. */
+export function ownerWritableProfile(p: Partial<NakamasFirestoreProfile>): Partial<NakamasFirestoreProfile> {
+  const out: Partial<NakamasFirestoreProfile> = {};
+  if (p.uid !== undefined) out.uid = p.uid;
+  if (p.name !== undefined) out.name = p.name;
+  if (p.email !== undefined) out.email = p.email;
+  if (p.photoUrl !== undefined) out.photoUrl = p.photoUrl;
+  if (p.city !== undefined) out.city = p.city;
+  if (p.bio !== undefined) out.bio = p.bio;
+  if (p.interests !== undefined) out.interests = p.interests;
+  return out;
+}
+
 export interface NakamasFirestoreProfile {
   uid: string;
   name: string;
@@ -18,6 +37,8 @@ export interface NakamasFirestoreProfile {
   interests?: string[];
   trustTier?: TrustTier;
   isOrganizer?: boolean;
+  /** Set only by a trusted backend; see firestore.rules. */
+  isAdmin?: boolean;
   /** When email matches a demo seed account, retain mock user id for groups. */
   linkedUserId?: string | null;
   updatedAt?: unknown;
@@ -57,6 +78,7 @@ function mapToUser(uid: string, data: NakamasFirestoreProfile): User {
     paymentVerified: false,
     idVerified: false,
     isOrganizer: Boolean(data.isOrganizer),
+    isAdmin: Boolean(data.isAdmin),
     connections: [],
   };
 }
@@ -93,19 +115,13 @@ export async function resolveFirebaseUser(fb: FirebaseUser): Promise<User> {
     const snap = await getDoc(ref);
     if (snap.exists()) {
       const data = snap.data() as NakamasFirestoreProfile;
-      if (!data.linkedUserId && fb.email) {
-        const linked = resolveMockUserIdByEmail(fb.email);
-        if (linked) {
-          data.linkedUserId = linked;
-          await setDoc(ref, { linkedUserId: linked, updatedAt: serverTimestamp() }, { merge: true });
-          log.info('linked firebase profile to mock user', { uid: fb.uid, linkedUserId: linked });
-        }
-      }
+      // Demo link is derived locally from the email (never written by the client).
+      if (!data.linkedUserId && fb.email) data.linkedUserId = resolveMockUserIdByEmail(fb.email) ?? null;
       return mapToUser(fb.uid, data);
     }
 
     await setDoc(ref, {
-      ...fallback,
+      ...ownerWritableProfile(fallback),
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
@@ -131,5 +147,5 @@ export async function upsertFirebaseProfile(
   const db = getFirebaseDb();
   if (!db) return;
   const ref = doc(db, 'profiles', uid);
-  await setDoc(ref, { ...patch, uid, updatedAt: serverTimestamp() }, { merge: true });
+  await setDoc(ref, { ...ownerWritableProfile(patch), uid, updatedAt: serverTimestamp() }, { merge: true });
 }

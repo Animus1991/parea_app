@@ -23,6 +23,7 @@ import { useFirebaseAuth } from '../../hooks/useFirebaseAuth';
 import { CopilotLauncher } from '../copilot/CopilotLauncher';
 import { CopilotPanel } from '../copilot/CopilotPanel';
 import { useCopilotStore } from '../../store/copilotStore';
+import { isPlatformAdmin } from '../../lib/roles';
 import { DESKTOP_DOCK_QUERY, useMediaQuery } from '../../hooks/useMediaQuery';
 
 function useUnreadCount() {
@@ -181,8 +182,8 @@ function NavSection({ id, title, paths, children, compact = false, rail = false 
 function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?: boolean }) {
   const { t } = useLanguage();
   const currentUser = useStore((s) => s.currentUser);
-  /** Ίδιο predicate με CommandPalette — δεν υπάρχει ξεχωριστό isAdmin flag. */
-  const isAdmin = Boolean(currentUser?.isOrganizer);
+  // Same predicate as CommandPalette and the copilot (lib/roles.ts).
+  const isAdmin = isPlatformAdmin(currentUser);
 
   return (
     <>

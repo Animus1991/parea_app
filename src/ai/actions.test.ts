@@ -36,9 +36,23 @@ describe('copilot action registry', () => {
 
   it('hides admin-only tools from non-admin users (least privilege)', () => {
     const prev = useStore.getState().currentUser;
-    useStore.setState({ currentUser: prev ? { ...prev, isOrganizer: false } : prev });
+    // An organizer is not an admin: hosting events grants no moderation tools.
+    useStore.setState({ currentUser: prev ? { ...prev, isOrganizer: true, isAdmin: false } : prev });
     expect(availableActions().some((a) => a.name === 'resolve_report')).toBe(false);
+    useStore.setState({ currentUser: prev ? { ...prev, isAdmin: true } : prev });
+    expect(availableActions().some((a) => a.name === 'resolve_report')).toBe(true);
     useStore.setState({ currentUser: prev });
+  });
+
+  it('becoming a host never grants the admin role', () => {
+    const s = useStore.getState();
+    const uid = s.currentUser!.id;
+    s.updateUser(uid, { isAdmin: true } as never);
+    expect(useStore.getState().currentUser?.isAdmin ?? false).toBe(false);
+    const event = s.events.find((e) => !s.groups.some((g) => g.eventId === e.id && g.hostId));
+    if (event) useStore.getState().becomeEventHost(event.id);
+    expect(useStore.getState().currentUser?.isOrganizer).toBe(true);
+    expect(useStore.getState().currentUser?.isAdmin ?? false).toBe(false);
   });
 
   it('saves an event and undoes it', async () => {

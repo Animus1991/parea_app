@@ -17,6 +17,7 @@ import { AdminAutomationPanel } from './AdminAutomationPanel';
 import { AdminBrandingPanel } from './AdminBrandingPanel';
 import { AdminSSOPanel } from './AdminSSOPanel';
 import { toast } from 'sonner';
+import { useAiAuditStore, type AiAuditStatus } from '../../store/aiAuditStore';
 
 type AdminTab = 'overview' | 'moderation' | 'users' | 'system' | 'automation' | 'branding' | 'sso';
 
@@ -33,6 +34,7 @@ export default function AdminDashboardPageContent() {
   const [adminTab, setAdminTab] = useState<AdminTab>('overview');
   const groups = useStore((s) => s.groups);
   const adminActions = useStore((s) => s.adminActions);
+  const aiAudit = useAiAuditStore((s) => s.entries);
   const suspendedUserIds = useStore((s) => s.suspendedUserIds);
   const toggleUserSuspended = useStore((s) => s.toggleUserSuspended);
   const safeguards = useStore((s) => s.adminSafeguards);
@@ -401,6 +403,40 @@ export default function AdminDashboardPageContent() {
                 <time dateTime={act.createdAt} className={cn('shrink-0 tabular-nums', a.muted)}>{new Date(act.createdAt).toLocaleString()}</time>
               </li>
             ))}
+          </ol>
+        )}
+      </Card>
+      {/* Every action Nakamas AI executed, was refused or had cancelled (privacy-minimised). */}
+      <Card className={cn('p-5', a.cardSurface)}>
+        <h2 className={cn('text-sm font-bold mb-3', a.head)}>{t('Ιστορικό ενεργειών Nakamas AI', 'Nakamas AI action log')}</h2>
+        {aiAudit.length === 0 ? (
+          <p className={cn('text-sm', a.muted)}>{t('Το AI δεν έχει εκτελέσει ενέργειες ακόμη.', 'Nakamas AI has not performed any actions yet.')}</p>
+        ) : (
+          <ol className="space-y-2">
+            {aiAudit.slice(0, 10).map((e) => {
+              const who = users.find((u) => u.id === e.userId)?.name ?? e.userId ?? '—';
+              const statusLabel: Record<AiAuditStatus, [string, string]> = {
+                done: ['εκτελέστηκε', 'done'],
+                failed: ['απέτυχε', 'failed'],
+                cancelled: ['ακυρώθηκε', 'cancelled'],
+                undone: ['αναιρέθηκε', 'undone'],
+                denied: ['απορρίφθηκε', 'denied'],
+              };
+              const [el, en] = statusLabel[e.status];
+              return (
+                <li key={e.id} className={cn('flex items-center justify-between gap-3 text-xs', a.sub)}>
+                  <span className="min-w-0 truncate">
+                    <span className="font-mono">{e.action}</span>
+                    {' · '}
+                    <span className={e.status === 'denied' || e.status === 'failed' ? 'font-semibold text-red-700 dark:text-red-300' : undefined}>{t(el, en)}</span>
+                    {' · '}
+                    {who}
+                    {e.risk !== 'safe' && e.risk !== 'unknown' ? ` · ${e.risk}` : ''}
+                  </span>
+                  <time dateTime={e.at} className={cn('shrink-0 tabular-nums', a.muted)}>{new Date(e.at).toLocaleString()}</time>
+                </li>
+              );
+            })}
           </ol>
         )}
       </Card>
