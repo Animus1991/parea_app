@@ -19,6 +19,19 @@ View your app in AI Studio: https://ai.studio/apps/ed9f9c59-7d05-4060-a12f-31b2a
 3. Run the app:
    `npm run dev`
 
+## Cloudflare Pages
+
+Static SPA deploy from `vite build` → `dist` (see `wrangler.toml`).
+
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name=nakamas
+```
+
+GitHub Actions: `.github/workflows/cloudflare-pages.yml` (needs repo secrets `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`). SPA fallback + security headers: `public/_redirects`, `public/_headers`.
+
+Latest audit: [`docs/COMPREHENSIVE_AUDIT_2026-11-14.md`](docs/COMPREHENSIVE_AUDIT_2026-11-14.md).
+
 ## Nakamas AI (copilot)
 
 Open it with the **AI** button in the top bar or **Ctrl/⌘ J**, then type or dictate in Greek or English, for example
