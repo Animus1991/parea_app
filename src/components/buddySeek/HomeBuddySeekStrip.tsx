@@ -39,7 +39,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
           <button
             type="button"
             onClick={() => navigate('/buddy-seek')}
-            className="text-xs font-semibold text-accent/90 hover:text-accent flex items-center gap-0.5"
+            className="text-xs font-semibold text-accent hover:opacity-90 flex items-center gap-0.5"
           >
             {t('Όλα', 'See all')}
             <ChevronRight className="w-3.5 h-3.5" />
