@@ -326,7 +326,22 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   }
 }
 
-/* Card body / meta copy — +10% (not titles or subtitles) */
+/* Card titles (e.g. «Summer Cinema: Cine Thisio») — +5% */
+.card-heading {
+  font-size: calc(var(--text-sm) * 1.05); /* ~12.6px */
+  line-height: var(--text-sm--line-height);
+}
+.card-heading-lg {
+  font-size: calc(var(--text-base) * 1.05); /* ~13.65px */
+  line-height: var(--text-base--line-height);
+}
+/* Card status badges (e.g. «ΑΝΟΙΧΤΟ ΣΕ ΙΔΕΕΣ», «Αποθηκευμένη») — +5% */
+.card-badge {
+  font-size: calc(var(--text-xs) * 1.05); /* ~10.5px */
+  line-height: var(--text-xs--line-height);
+}
+
+/* Card body / meta (name, role, date, location, quote, chips) — +10% */
 .card-copy {
   font-size: calc(var(--text-xs) * 1.1); /* ~11px */
   line-height: var(--text-xs--line-height);

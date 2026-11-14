@@ -97,16 +97,16 @@ export function PlansFormingCard({
             onClick={() => navigate(`/events/${item.event.id}`)}
             className="text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-lg"
           >
-            <h3 className={cn('text-base font-bold leading-snug line-clamp-3', darkCard ? 'text-white' : 'text-gray-900')}>
+            <h3 className={cn('card-heading-lg font-bold leading-snug line-clamp-3', darkCard ? 'text-white' : 'text-gray-900')}>
               {item.event.title}
             </h3>
           </button>
-          <p className={cn('text-sm font-semibold leading-snug', darkCard ? 'text-gray-200' : 'text-gray-700')}>
+          <p className={cn('card-copy-sm font-semibold leading-snug', darkCard ? 'text-gray-200' : 'text-gray-700')}>
             {t(item.scheduleFull.el, item.scheduleFull.en)}
           </p>
           <span
             className={cn(
-              'inline-block text-xs font-semibold px-2 py-0.5 rounded-lg border',
+              'inline-block card-copy font-semibold px-2 py-0.5 rounded-lg border',
               item.roleLabel.kind === 'seeker'
                 ? darkCard
                   ? 'bg-violet-500/15 text-violet-200 border-violet-500/30'
@@ -155,31 +155,31 @@ export function PlansFormingCard({
 
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex flex-wrap items-center gap-1">
-            <span className="text-xs font-bold uppercase tracking-wide text-cyan-500 dark:text-cyan-400">
+            <span className="card-badge font-bold uppercase tracking-wide text-cyan-500 dark:text-cyan-400">
               {tu(item.intentLabel.el, item.intentLabel.en)}
             </span>
             {item.isSavedEvent && (
-              <span className="text-xs font-bold px-1.5 py-0.5 rounded-lg bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200 dark:bg-fuchsia-500/20 dark:text-fuchsia-300 dark:border-fuchsia-500/30">
+              <span className="card-badge font-bold px-1.5 py-0.5 rounded-lg bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200 dark:bg-fuchsia-500/20 dark:text-fuchsia-300 dark:border-fuchsia-500/30">
                 {t('Αποθηκευμένη', 'Saved')}
               </span>
             )}
           </div>
           {!isSidebar && (
-            <p className="text-sm font-bold leading-snug line-clamp-2 text-gray-900 dark:text-white">
+            <p className="card-heading font-bold leading-snug line-clamp-2 text-gray-900 dark:text-white">
               {item.event.title}
             </p>
           )}
           {isSidebar ? (
-            <p className={cn('text-sm font-bold', darkCard ? 'text-gray-100' : 'text-gray-900')}>{displayName}</p>
+            <p className={cn('card-copy-sm font-bold', darkCard ? 'text-gray-100' : 'text-gray-900')}>{displayName}</p>
           ) : (
             <p className="card-copy font-medium text-gray-700 dark:text-gray-300">{displayName}</p>
           )}
           {!isSidebar && (
-            <span className="text-xs font-bold text-violet-600 dark:text-violet-300">
+            <span className="card-copy font-bold text-violet-600 dark:text-violet-300">
               {t(item.roleLabel.el, item.roleLabel.en)}
             </span>
           )}
-          <div className={cn('flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-gray-500', !isSidebar && 'dark:text-gray-400')}>
+          <div className={cn('flex flex-wrap gap-x-2 gap-y-0.5 card-copy text-gray-500', !isSidebar && 'dark:text-gray-400')}>
             {!isSidebar && (
               <span className="inline-flex items-center gap-0.5 font-semibold text-gray-700 dark:text-gray-300">
                 <Clock className="w-3 h-3 shrink-0" />
@@ -209,7 +209,7 @@ export function PlansFormingCard({
           <span
             key={tag}
             className={cn(
-              'text-xs font-bold px-1.5 py-0.5 rounded-lg',
+              'card-copy font-bold px-1.5 py-0.5 rounded-lg',
               darkCard ? 'bg-cyan-900/40 text-cyan-200' : 'bg-cyan-50 text-cyan-800 dark:bg-cyan-500/15 dark:text-cyan-200',
             )}
           >
@@ -323,7 +323,7 @@ function MetaChip({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-0.5 text-xs font-bold px-1.5 py-0.5 rounded-lg border',
+        'inline-flex items-center gap-0.5 card-copy font-bold px-1.5 py-0.5 rounded-lg border',
         isDark ? 'bg-white/5 border-white/10 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600 dark:bg-white/5 dark:border-white/10 dark:text-gray-300',
       )}
     >
@@ -366,18 +366,18 @@ export function PlansFormingGroupCard({
           <img src={event.imageUrl} alt="" className="w-11 h-11 rounded-xl object-cover shrink-0" />
         )}
         <div className="min-w-0 flex-1 space-y-1">
-          <p className="text-xs font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
+          <p className="card-badge font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
             {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
           </p>
-          <p className={cn('text-base font-bold leading-snug line-clamp-2', darkCard ? 'text-white' : 'text-gray-900 dark:text-white')}>
+          <p className={cn('card-heading-lg font-bold leading-snug line-clamp-2', darkCard ? 'text-white' : 'text-gray-900 dark:text-white')}>
             {event.title}
           </p>
-          <p className={cn('text-sm font-semibold leading-snug', darkCard ? 'text-emerald-100/90' : 'text-gray-700 dark:text-gray-200')}>
+          <p className={cn('card-copy-sm font-semibold leading-snug', darkCard ? 'text-emerald-100/90' : 'text-gray-700 dark:text-gray-200')}>
             {t(meta.scheduleFull.el, meta.scheduleFull.en)}
           </p>
           <span
             className={cn(
-              'inline-block text-xs font-semibold px-2 py-0.5 rounded-lg border',
+              'inline-block card-copy font-semibold px-2 py-0.5 rounded-lg border',
               darkCard ? 'bg-emerald-500/15 text-emerald-200 border-emerald-500/30' : 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-200 dark:border-emerald-500/30',
             )}
           >
@@ -398,7 +398,7 @@ export function PlansFormingGroupCard({
       </div>
 
       <div className="px-3 pb-2">
-        <div className="flex justify-between text-xs font-bold mb-1">
+        <div className="flex justify-between card-copy font-bold mb-1">
           <span className={darkCard ? 'text-emerald-400' : 'text-emerald-700 dark:text-emerald-300'}>
             {meta.filled}/{meta.target} {t('μέλη', 'members')}
           </span>

@@ -12,7 +12,7 @@ export const APP_TYPO = {
   /** Body medium emphasis */
   bodyMedium: 'text-sm font-medium',
   /** Card titles */
-  cardTitle: 'text-sm font-bold leading-snug',
+  cardTitle: 'card-heading font-bold leading-snug',
   /** Modal / panel titles */
   panelTitle: 'text-base font-bold',
   /** Hero / page titles — capped near body for harmony */
@@ -37,9 +37,9 @@ export const CHAT_TYPO = {
 
 /** Plans forming / BuddySeek shared chips */
 export const PLANS_FORMING_TYPO = {
-  statChip: 'text-2xs font-bold',
-  cardTitle: 'text-sm font-bold',
-  cardMeta: 'card-copy-micro font-medium',
+  statChip: 'card-copy-micro font-bold',
+  cardTitle: 'card-heading font-bold',
+  cardMeta: 'card-copy font-medium',
   sectionLabel: 'text-2xs font-bold tracking-wide',
   body: 'card-copy-sm font-medium',
   cta: 'text-sm font-bold',
@@ -71,20 +71,20 @@ export const PLANS_TYPO = {
   bannerTitle: 'text-sm font-bold',
   bannerBody: 'text-xs font-medium',
   bannerCta: 'text-xs font-bold',
-  cardTitle: 'text-base font-bold',
-  cardDate: 'text-sm font-bold',
+  cardTitle: 'card-heading-lg font-bold',
+  cardDate: 'card-heading font-bold',
   cardTime: 'card-copy font-medium',
   cardMeta: 'card-copy font-medium',
-  chip: 'text-2xs font-bold',
+  chip: 'card-copy-micro font-bold',
   cta: 'text-xs font-bold',
 } as const;
 
 /** BuddySeek card density */
 export const BUDDY_SEEK_TYPO = {
-  title: 'text-sm font-bold leading-snug',
+  title: 'card-heading font-bold leading-snug',
   meta: 'card-copy font-medium',
-  label: 'text-2xs font-bold tracking-wide',
-  chip: 'text-2xs font-semibold',
+  label: 'card-badge font-bold tracking-wide',
+  chip: 'card-copy-micro font-semibold',
   body: 'card-copy leading-relaxed',
   cta: 'text-xs font-bold',
   micro: 'card-copy-micro font-medium',
@@ -109,11 +109,11 @@ export const SHELL_TYPO = {
 
 /** Event card density (high-traffic feed) */
 export const EVENT_CARD_TYPO = {
-  badge: 'text-2xs font-extrabold tracking-wide leading-none',
-  chip: 'text-2xs font-semibold capitalize tracking-wide',
+  badge: 'card-badge font-extrabold tracking-wide leading-none',
+  chip: 'card-badge font-semibold capitalize tracking-wide',
   dateBadge: 'text-2xs sm:text-xs font-black tracking-tight',
   dateSub: 'text-2xs leading-none font-bold',
-  title: 'text-sm font-bold leading-snug',
+  title: 'card-heading font-bold leading-snug',
   matchScore: 'text-xs font-black leading-none',
   matchLabel: 'card-copy-micro font-semibold capitalize tracking-wide',
   meta: 'card-copy font-medium',
@@ -167,7 +167,7 @@ export const HOME_TYPO = {
   filterSelect: 'filter-select',
   statValue: 'text-xs font-bold',
   statLabel: 'text-2xs font-medium',
-  cardTitle: 'text-sm font-bold',
+  cardTitle: 'card-heading font-bold',
   cardMeta: 'card-copy font-medium',
   hint: 'card-copy-micro font-medium',
   cta: 'text-xs font-bold',
