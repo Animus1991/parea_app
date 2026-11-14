@@ -45,6 +45,11 @@ export async function createEvent(payload: Omit<Event, 'id'> & { id?: string }):
   return event;
 }
 
+export async function eventExists(id: string): Promise<boolean> {
+  await ensureCatalog();
+  return listEventsFromDb().some((e) => e.id === id);
+}
+
 export async function updateEvent(id: string, patch: Partial<Event>): Promise<Event | null> {
   await ensureCatalog();
   return updateEventDb(id, patch);

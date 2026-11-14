@@ -30,7 +30,8 @@ async function generateText(prompt: string): Promise<string | null> {
       const res = await fetch(`${base}/api/ai/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, model: 'gemini-2.0-flash' }),
+        // The server chooses the model (GEMINI_TEXT_MODEL); only the prompt is sent.
+        body: JSON.stringify({ prompt }),
       });
       if (!res.ok) return null;
       const data = (await res.json()) as { text?: string };

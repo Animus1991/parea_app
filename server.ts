@@ -9,12 +9,31 @@ import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import { Server } from 'socket.io';
 import { createServer as createViteServer } from 'vite';
-import { createEvent, listEvents, updateEvent } from './server/eventsCatalog.ts';
+import { createEvent, listEvents, updateEvent, eventExists } from './server/eventsCatalog.ts';
+import {
+  EVENT_ID_PATTERN,
+  RateLimiter,
+  SECURITY_HEADERS,
+  allowedModels,
+  bearerMatches,
+  checkChatSend,
+  eventsWriteMode,
+  isOriginAllowed,
+  isValidToolDeclaration,
+  parseAllowedOrigins,
+  sanitizeEventInput,
+  type OriginPolicy,
+} from './server/security.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const ORIGIN_POLICY: OriginPolicy = {
+  allowed: parseAllowedOrigins(process.env.ALLOWED_ORIGINS),
+  isProduction: IS_PRODUCTION,
+};
 
 interface RealtimeMessage {
   id: string;
@@ -27,18 +46,58 @@ interface RealtimeMessage {
 async function startServer() {
   const app = express();
   const httpServer = createHttpServer(app);
-  const io = new Server(httpServer, { cors: { origin: '*' } });
+  // Socket.IO: same origin-policy as HTTP (was `origin: '*'`).
+  const io = new Server(httpServer, {
+    cors: {
+      origin: (origin, cb) => cb(null, isOriginAllowed(origin, undefined, ORIGIN_POLICY)),
+    },
+    allowRequest: (req, cb) => cb(null, isOriginAllowed(req.headers.origin, req.headers.host, ORIGIN_POLICY)),
+    maxHttpBufferSize: 16_000,
+  });
 
-  app.use(express.json({ limit: '1mb' }));
+  app.disable('x-powered-by');
+  // Honour X-Forwarded-For only when a proxy is declared (Cloudflare, Render…), so rate limits key on the real client.
+  if (process.env.TRUST_PROXY) app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 1 : process.env.TRUST_PROXY);
 
   app.use((_req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    for (const [k, v] of Object.entries(SECURITY_HEADERS)) res.setHeader(k, v);
     next();
   });
 
-  app.options('*', (_req, res) => res.sendStatus(200));
+  app.use(express.json({ limit: '200kb' }));
+
+  // CORS: same-origin always; cross-origin only from ALLOWED_ORIGINS (and localhost in dev).
+  app.use('/api', (req, res, next) => {
+    const origin = req.headers.origin;
+    if (!isOriginAllowed(origin, req.headers.host, ORIGIN_POLICY)) {
+      return res.status(403).json({ error: 'Origin not allowed' });
+    }
+    if (origin) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Vary', 'Origin');
+      res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    }
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+    next();
+  });
+
+  const writeLimiter = new RateLimiter(parseInt(process.env.EVENTS_WRITE_LIMIT_PER_MINUTE || '20', 10), 60_000);
+  const clientKey = (req: express.Request) => req.ip || req.socket.remoteAddress || 'unknown';
+
+  /** Event writes: token, explicit open mode, or development only (audit §4 Critical). */
+  const guardEventWrite: express.RequestHandler = (req, res, next) => {
+    const mode = eventsWriteMode(process.env, IS_PRODUCTION);
+    if (mode === 'closed') {
+      return res.status(403).json({ error: 'Event writes are disabled on this server (set EVENTS_WRITE_TOKEN)' });
+    }
+    if (mode === 'token' && !bearerMatches(req.headers.authorization, process.env.EVENTS_WRITE_TOKEN as string)) {
+      return res.status(401).json({ error: 'Missing or invalid write token' });
+    }
+    const retry = writeLimiter.hit(clientKey(req));
+    if (retry !== null) return res.status(429).json({ error: 'Rate limit exceeded', retryAfterMs: retry });
+    next();
+  };
 
   app.get('/api/health', (_req, res) => {
     res.json({
@@ -64,13 +123,16 @@ async function startServer() {
     }
   });
 
-  app.post('/api/events', async (req, res) => {
+  app.post('/api/events', guardEventWrite, async (req, res) => {
     try {
-      const body = req.body ?? {};
-      if (!body.title || typeof body.title !== 'string') {
-        return res.status(400).json({ error: 'title is required' });
+      const { ok, value, errors } = sanitizeEventInput(req.body, false);
+      if (!ok) return res.status(400).json({ error: 'Invalid event', details: errors });
+      // Client ids are kept so later PUTs line up, but may never overwrite an existing event.
+      const requestedId = typeof req.body?.id === 'string' && EVENT_ID_PATTERN.test(req.body.id) ? req.body.id : undefined;
+      if (requestedId && (await eventExists(requestedId))) {
+        return res.status(409).json({ error: 'Event id already exists' });
       }
-      const event = await createEvent(body);
+      const event = await createEvent({ ...(value as object), id: requestedId } as Parameters<typeof createEvent>[0]);
       res.status(201).json({ event, ts: new Date().toISOString() });
     } catch (err) {
       console.error('POST /api/events failed:', err);
@@ -78,9 +140,12 @@ async function startServer() {
     }
   });
 
-  app.put('/api/events/:id', async (req, res) => {
+  app.put('/api/events/:id', guardEventWrite, async (req, res) => {
     try {
-      const updated = await updateEvent(req.params.id, req.body ?? {});
+      if (!EVENT_ID_PATTERN.test(req.params.id)) return res.status(400).json({ error: 'Invalid event id' });
+      const { ok, value, errors } = sanitizeEventInput(req.body, true);
+      if (!ok) return res.status(400).json({ error: 'Invalid event', details: errors });
+      const updated = await updateEvent(req.params.id, value);
       if (!updated) return res.status(404).json({ error: 'Event not found' });
       res.json({ event: updated, ts: new Date().toISOString() });
     } catch (err) {
@@ -100,26 +165,16 @@ async function startServer() {
   });
 
   // ── AI Proxy (keeps GEMINI_API_KEY server-side) ─────────────────────────
-  const aiRateBuckets = new Map<string, { count: number; resetAt: number }>();
-  const AI_RATE_LIMIT = parseInt(process.env.AI_RATE_LIMIT_PER_MINUTE || '30', 10);
-
-  const COPILOT_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  const aiLimiter = new RateLimiter(parseInt(process.env.AI_RATE_LIMIT_PER_MINUTE || '30', 10), 60_000);
+  // The server picks the model; clients can no longer request arbitrary ones (audit §4 High).
+  const MODELS = allowedModels(process.env);
+  const COPILOT_MODEL = MODELS.copilot;
   const getServerApiKey = () => {
     const key = process.env.GEMINI_API_KEY;
     return key && !key.includes('MY_GEMINI') ? key : null;
   };
   /** Returns a retry delay (ms) when the caller exceeded the per-minute budget, else null. */
-  const rateLimited = (req: express.Request): number | null => {
-    const ip = req.ip || req.socket.remoteAddress || 'unknown';
-    const now = Date.now();
-    const bucket = aiRateBuckets.get(ip);
-    if (!bucket || bucket.resetAt < now) {
-      aiRateBuckets.set(ip, { count: 1, resetAt: now + 60_000 });
-      return null;
-    }
-    bucket.count += 1;
-    return bucket.count > AI_RATE_LIMIT ? bucket.resetAt - now : null;
-  };
+  const rateLimited = (req: express.Request): number | null => aiLimiter.hit(clientKey(req));
 
   // Φ23 — copilot engine discovery (never exposes the key itself).
   app.get('/api/ai/status', (_req, res) => {
@@ -146,6 +201,8 @@ async function startServer() {
       !Array.isArray(tools) ||
       tools.length === 0 ||
       tools.length > 64 ||
+      !tools.every(isValidToolDeclaration) ||
+      !contents.every((c: unknown) => c && typeof c === 'object' && ['user', 'model'].includes((c as { role?: string }).role ?? '')) ||
       size > 120_000
     ) {
       return res.status(400).json({ error: 'Invalid copilot payload' });
@@ -173,6 +230,8 @@ async function startServer() {
     }
   });
 
+  // Short text helpers (event blurbs, icebreakers). Prompt only: the model and
+  // generation settings are fixed server-side (was client-controlled).
   app.post('/api/ai/generate', async (req, res) => {
     const retry = rateLimited(req);
     if (retry !== null) return res.status(429).json({ error: 'Rate limit exceeded', retryAfterMs: retry });
@@ -182,31 +241,18 @@ async function startServer() {
       return res.status(503).json({ error: 'AI proxy not configured — set GEMINI_API_KEY on the server' });
     }
 
-    const { model, contents, config, prompt } = req.body ?? {};
-    if (prompt && typeof prompt === 'string') {
-      try {
-        const { GoogleGenAI } = await import('@google/genai');
-        const ai = new GoogleGenAI({ apiKey });
-        const response = await ai.models.generateContent({
-          model: model || 'gemini-2.0-flash',
-          contents: prompt,
-          config: config ?? { maxOutputTokens: 256, temperature: 0.7 },
-        });
-        return res.json({ text: response.text ?? '' });
-      } catch (err) {
-        console.error('AI proxy error:', err);
-        return res.status(502).json({ error: 'Upstream AI provider error' });
-      }
+    const { prompt } = req.body ?? {};
+    if (typeof prompt !== 'string' || !prompt.trim() || prompt.length > 4000) {
+      return res.status(400).json({ error: '`prompt` (1–4000 characters) is required' });
     }
-
-    if (typeof model !== 'string' || contents === undefined) {
-      return res.status(400).json({ error: '`prompt` or (`model` + `contents`) required' });
-    }
-
     try {
       const { GoogleGenAI } = await import('@google/genai');
       const ai = new GoogleGenAI({ apiKey });
-      const response = await ai.models.generateContent({ model, contents, config });
+      const response = await ai.models.generateContent({
+        model: MODELS.text,
+        contents: prompt,
+        config: { maxOutputTokens: 300, temperature: 0.7 },
+      });
       return res.json({ text: response.text ?? '' });
     } catch (err) {
       console.error('AI proxy error:', err);
@@ -215,21 +261,35 @@ async function startServer() {
   });
 
   // ── Socket.IO group chat relay (dev/mock realtime) ─────────────────────
+  // Identity is fixed at connection time: a socket can no longer send as
+  // someone else by changing senderId per message (audit §4 High). Without
+  // real sessions the handshake id is still self-declared; see docs.
+  const chatLimiter = new RateLimiter(20, 10_000);
   io.on('connection', (socket) => {
-    socket.on('join_room', (conversationId: string) => {
-      if (typeof conversationId === 'string') socket.join(conversationId);
+    const declared = (socket.handshake.auth as { userId?: unknown } | undefined)?.userId;
+    const userId = typeof declared === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(declared) ? declared : undefined;
+    const joined = new Set<string>();
+
+    socket.on('join_room', (conversationId: unknown) => {
+      if (typeof conversationId !== 'string' || !/^[A-Za-z0-9:_-]{1,128}$/.test(conversationId)) return;
+      if (joined.size >= 200) return;
+      joined.add(conversationId);
+      socket.join(conversationId);
     });
 
-    socket.on('send_message', (data: { conversationId: string; senderId: string; body: string }) => {
-      if (!data?.conversationId || !data?.senderId || !data?.body) return;
+    socket.on('send_message', (data: unknown) => {
+      const check = checkChatSend(data, userId, joined);
+      if (!check.ok) return;
+      if (chatLimiter.hit(socket.id) !== null) return;
+      const d = data as { conversationId: string; body: string };
       const msg: RealtimeMessage = {
         id: `rt_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-        conversationId: data.conversationId,
-        senderId: data.senderId,
-        body: data.body,
+        conversationId: d.conversationId,
+        senderId: userId as string,
+        body: d.body.trim(),
         createdAt: new Date().toISOString(),
       };
-      io.to(data.conversationId).emit('receive_message', msg);
+      io.to(d.conversationId).emit('receive_message', msg);
     });
   });
 
