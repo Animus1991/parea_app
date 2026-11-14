@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
+import { GamificationHubNav } from '../components/achievements/GamificationHub';
 import { Trophy, Flame, Calendar, Star, TrendingUp, ChevronUp } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { TabBar } from '../components/common/TabBar';
@@ -92,6 +93,7 @@ export default function LeaderboardClassic() {
 
   return (
     <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+      <GamificationHubNav />
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className={cn('text-base md:text-lg font-bold', p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>

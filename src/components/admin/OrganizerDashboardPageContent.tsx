@@ -1,4 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { TabBar } from '../common/TabBar';
+import { BarChart3 } from 'lucide-react';
 import {
   Calendar,
   Users,
@@ -38,6 +40,7 @@ export default function OrganizerDashboardPageContent() {
   const p = usePageContrast();
   const navigate = useNavigate();
   const currentUser = useStore((s) => s.currentUser);
+  const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
   const events = useStore((s) => s.events);
   const groups = useStore((s) => s.groups);
   const cancelEvent = useStore((s) => s.cancelEvent);
@@ -73,8 +76,18 @@ export default function OrganizerDashboardPageContent() {
         .reduce((s, g) => s + g.members.length, 0);
       return sum + filled * (e.price || 0);
     }, 0);
-    return { active, participants, rating, revenue };
-  }, [myEvents, groups, currentUser]);
+    // Φ25 — fill rate & satisfaction from real groups / feedback (previously fixed 72% · 92/6/2).
+    const capacity = myGroups.reduce((sum, g) => sum + g.targetSize, 0);
+    const fillPct = capacity > 0 ? Math.round((participants / capacity) * 100) : 0;
+    const reviews = Object.values(feedbackSubmitted).filter((f) => eventIds.has(f.eventId));
+    const pct = (n: number) => (reviews.length ? Math.round((n / reviews.length) * 100) : 0);
+    const positive = pct(reviews.filter((f) => f.overallRating >= 4).length);
+    const negative = pct(reviews.filter((f) => f.overallRating <= 2).length);
+    const neutral = reviews.length ? Math.max(0, 100 - positive - negative) : 0;
+    const quote = [...reviews].sort((a, b) => b.submittedAt.localeCompare(a.submittedAt)).find((f) => f.comment?.trim())?.comment ?? null;
+    return { active, participants, rating, revenue, capacity, fillPct, reviews: reviews.length, positive, neutral, negative, quote };
+  }, [myEvents, groups, currentUser, feedbackSubmitted]);
+  const [section, setSection] = useState<'events' | 'analytics'>('events');
 
   /** Deterministic 7-day series scaled from live organizer counts (demo analytics, not fake constants). */
   const chartData = useMemo(() => {
@@ -249,188 +262,20 @@ export default function OrganizerDashboardPageContent() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className={cn('lg:col-span-2 p-6 rounded-2xl border shadow-soft', p.cardSurface, p.borderB)}>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className={cn('text-lg font-bold tracking-tight', p.head)}>
-                {t('Επισκεψιμότητα Εκδηλώσεων', 'Event Traffic')}
-              </h3>
-              <p className={cn('text-xs font-medium mt-1', p.muted)}>
-                {t(
-                  'Εκτίμηση 7 ημερών από τις εκδηλώσεις/μέλη σας (demo analytics)',
-                  '7-day estimate from your events/members (demo analytics)',
-                )}
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-indigo-500" />
-                <span className={cn('text-xs uppercase font-bold', p.muted)}>
-                  {tu('Προβολές', 'Views')}
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                <span className={cn('text-xs uppercase font-bold', p.muted)}>
-                  {tu('Κλικ', 'Clicks')}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={p.isDark ? '#6366f1' : '#4f46e5'} stopOpacity={0.3} />
-                    <stop offset="95%" stopColor={p.isDark ? '#6366f1' : '#4f46e5'} stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={p.isDark ? '#22d3ee' : '#06b6d4'} stopOpacity={0.3} />
-                    <stop offset="95%" stopColor={p.isDark ? '#22d3ee' : '#06b6d4'} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 10, fill: p.isDark ? '#9ca3af' : '#6b7280' }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: p.isDark ? '#1f2937' : '#ffffff',
-                    border: 'none',
-                    borderRadius: '12px',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                  }}
-                  labelStyle={{ fontWeight: 'bold', color: 'var(--color-ink)' }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="views"
-                  stroke={p.isDark ? '#6366f1' : '#4f46e5'}
-                  strokeWidth={3}
-                  fillOpacity={1}
-                  fill="url(#colorViews)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="clicks"
-                  stroke={p.isDark ? '#22d3ee' : '#06b6d4'}
-                  strokeWidth={3}
-                  fillOpacity={1}
-                  fill="url(#colorClicks)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+      <TabBar
+        variant="segmented"
+        idBase="organizer"
+        ariaLabel={t('Ενότητες διοργανωτή', 'Organizer sections')}
+        activeTab={section}
+        onChange={(id) => setSection(id as 'events' | 'analytics')}
+        tabs={[
+          { id: 'events', label: t('Εκδηλώσεις & γρήγορη δημιουργία', 'Events & quick create'), icon: Calendar, count: myEvents.length },
+          { id: 'analytics', label: t('Analytics & ικανοποίηση', 'Analytics & satisfaction'), icon: BarChart3 },
+        ]}
+      />
 
-        <div
-          className={cn(
-            'p-6 rounded-2xl border shadow-soft flex flex-col justify-between space-y-6',
-            p.cardSurface,
-            p.borderB,
-          )}
-        >
-          <div>
-            <h3 className={cn('text-lg font-bold tracking-tight mb-4', p.head)}>
-              {t('Συνολική Πληρότητα', 'Overall Fill Rate')}
-            </h3>
-            <div className="flex items-end justify-between mb-2">
-              <span className="text-3xl font-black text-cyan-600 dark:text-cyan-400 leading-none">72%</span>
-              <span className={cn('text-xs font-bold', p.muted)}>
-                {t('18/25 θέσεις', '18/25 spots')}
-              </span>
-            </div>
-            <div className="w-full bg-gray-100 dark:bg-gray-800 h-2.5 rounded-full overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-cyan-500 to-emerald-500 h-full rounded-full"
-                style={{ width: '72%' }}
-              />
-            </div>
-          </div>
-
-          <div>
-            <h3 className={cn('text-sm font-bold uppercase tracking-wider mb-4', p.head)}>
-              {tu('Ικανοποίηση Κοινού', 'Audience Satisfaction')}
-            </h3>
-            <div className="grid grid-cols-3 gap-3">
-              <div
-                className={cn(
-                  'text-center p-3 rounded-2xl border',
-                  p.isDark ? 'bg-emerald-900/10 border-emerald-900/30' : 'bg-emerald-50 border-emerald-100',
-                )}
-              >
-                <p className={cn('text-xl sm:text-2xl font-black', p.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
-                  92%
-                </p>
-                <p
-                  className={cn(
-                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
-                    p.isDark ? 'text-emerald-500' : 'text-emerald-600',
-                  )}
-                >
-                  {t('Θετικές', 'Positive')}
-                </p>
-              </div>
-              <div
-                className={cn(
-                  'text-center p-3 rounded-2xl border',
-                  p.isDark ? 'bg-amber-900/10 border-amber-900/30' : 'bg-amber-50 border-amber-100',
-                )}
-              >
-                <p className={cn('text-xl sm:text-2xl font-black', p.isDark ? 'text-amber-400' : 'text-amber-700')}>
-                  6%
-                </p>
-                <p
-                  className={cn(
-                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
-                    p.isDark ? 'text-amber-500' : 'text-amber-600',
-                  )}
-                >
-                  {t('Ουδέτερες', 'Neutral')}
-                </p>
-              </div>
-              <div
-                className={cn(
-                  'text-center p-3 rounded-2xl border',
-                  p.isDark ? 'bg-red-900/10 border-red-900/30' : 'bg-red-50 border-red-100',
-                )}
-              >
-                <p className={cn('text-xl sm:text-2xl font-black', p.isDark ? 'text-red-400' : 'text-red-700')}>
-                  2%
-                </p>
-                <p
-                  className={cn(
-                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
-                    p.isDark ? 'text-red-500' : 'text-red-600',
-                  )}
-                >
-                  {t('Αρνητικές', 'Negative')}
-                </p>
-              </div>
-            </div>
-
-            <div
-              className={cn(
-                'p-4 rounded-2xl border mt-4 flex items-start gap-3',
-                p.isDark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100',
-              )}
-            >
-              <Star className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0 mt-0.5" />
-              <p className={cn('text-xs font-medium italic leading-relaxed', p.muted)}>
-                {t(
-                  '«Εξαιρετική οργάνωση, ο οικοδεσπότης ήταν φοβερός και περάσαμε τέλεια!»',
-                  '"Excellent organization, the host was amazing and we had a great time!"',
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      {section === 'events' && (
+        <div role="tabpanel" id="organizer-panel-events" aria-labelledby="organizer-tab-events" className="space-y-8">
       <div
         className={cn(
           'p-6 rounded-2xl border shadow-soft flex flex-col md:flex-row items-center justify-between gap-6',
@@ -669,6 +514,197 @@ export default function OrganizerDashboardPageContent() {
           })
         )}
       </div>
+        </div>
+      )}
+
+      {section === 'analytics' && (
+        <div role="tabpanel" id="organizer-panel-analytics" aria-labelledby="organizer-tab-analytics">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className={cn('lg:col-span-2 p-6 rounded-2xl border shadow-soft', p.cardSurface, p.borderB)}>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className={cn('text-lg font-bold tracking-tight', p.head)}>
+                {t('Επισκεψιμότητα Εκδηλώσεων', 'Event Traffic')}
+              </h3>
+              <p className={cn('text-xs font-medium mt-1', p.muted)}>
+                {t(
+                  'Εκτίμηση 7 ημερών από τις εκδηλώσεις/μέλη σας (demo analytics)',
+                  '7-day estimate from your events/members (demo analytics)',
+                )}
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                <span className={cn('text-xs uppercase font-bold', p.muted)}>
+                  {tu('Προβολές', 'Views')}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                <span className={cn('text-xs uppercase font-bold', p.muted)}>
+                  {tu('Κλικ', 'Clicks')}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={p.isDark ? '#6366f1' : '#4f46e5'} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={p.isDark ? '#6366f1' : '#4f46e5'} stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={p.isDark ? '#22d3ee' : '#06b6d4'} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={p.isDark ? '#22d3ee' : '#06b6d4'} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10, fill: p.isDark ? '#9ca3af' : '#6b7280' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: p.isDark ? '#1f2937' : '#ffffff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  }}
+                  labelStyle={{ fontWeight: 'bold', color: 'var(--color-ink)' }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="views"
+                  stroke={p.isDark ? '#6366f1' : '#4f46e5'}
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill="url(#colorViews)"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="clicks"
+                  stroke={p.isDark ? '#22d3ee' : '#06b6d4'}
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill="url(#colorClicks)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div
+          className={cn(
+            'p-6 rounded-2xl border shadow-soft flex flex-col justify-between space-y-6',
+            p.cardSurface,
+            p.borderB,
+          )}
+        >
+          <div>
+            <h3 className={cn('text-lg font-bold tracking-tight mb-4', p.head)}>
+              {t('Συνολική Πληρότητα', 'Overall Fill Rate')}
+            </h3>
+            <div className="flex items-end justify-between mb-2">
+              <span className="text-3xl font-black text-cyan-600 dark:text-cyan-400 leading-none tabular-nums">{liveStats.fillPct}%</span>
+              <span className={cn('text-xs font-bold tabular-nums', p.muted)}>
+                {t(`${liveStats.participants}/${liveStats.capacity} θέσεις`, `${liveStats.participants}/${liveStats.capacity} spots`)}
+              </span>
+            </div>
+            <div className="w-full bg-gray-100 dark:bg-gray-800 h-2.5 rounded-full overflow-hidden">
+              <div
+                className="bg-gradient-to-r from-cyan-500 to-emerald-500 h-full rounded-full"
+                style={{ width: `${liveStats.fillPct}%` }}
+              />
+            </div>
+          </div>
+
+          <div>
+            <h3 className={cn('text-sm font-bold uppercase tracking-wider mb-4', p.head)}>
+              {tu('Ικανοποίηση Κοινού', 'Audience Satisfaction')}
+            </h3>
+            <div className="grid grid-cols-3 gap-3">
+              <div
+                className={cn(
+                  'text-center p-3 rounded-2xl border',
+                  p.isDark ? 'bg-emerald-900/10 border-emerald-900/30' : 'bg-emerald-50 border-emerald-100',
+                )}
+              >
+                <p className={cn('text-xl sm:text-2xl font-black', p.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
+                  {liveStats.reviews ? `${liveStats.positive}%` : '—'}
+                </p>
+                <p
+                  className={cn(
+                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
+                    p.isDark ? 'text-emerald-500' : 'text-emerald-600',
+                  )}
+                >
+                  {t('Θετικές', 'Positive')}
+                </p>
+              </div>
+              <div
+                className={cn(
+                  'text-center p-3 rounded-2xl border',
+                  p.isDark ? 'bg-amber-900/10 border-amber-900/30' : 'bg-amber-50 border-amber-100',
+                )}
+              >
+                <p className={cn('text-xl sm:text-2xl font-black', p.isDark ? 'text-amber-400' : 'text-amber-700')}>
+                  {liveStats.reviews ? `${liveStats.neutral}%` : '—'}
+                </p>
+                <p
+                  className={cn(
+                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
+                    p.isDark ? 'text-amber-500' : 'text-amber-600',
+                  )}
+                >
+                  {t('Ουδέτερες', 'Neutral')}
+                </p>
+              </div>
+              <div
+                className={cn(
+                  'text-center p-3 rounded-2xl border',
+                  p.isDark ? 'bg-red-900/10 border-red-900/30' : 'bg-red-50 border-red-100',
+                )}
+              >
+                <p className={cn('text-xl sm:text-2xl font-black', p.isDark ? 'text-red-400' : 'text-red-700')}>
+                  {liveStats.reviews ? `${liveStats.negative}%` : '—'}
+                </p>
+                <p
+                  className={cn(
+                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
+                    p.isDark ? 'text-red-500' : 'text-red-600',
+                  )}
+                >
+                  {t('Αρνητικές', 'Negative')}
+                </p>
+              </div>
+            </div>
+
+            <div
+              className={cn(
+                'p-4 rounded-2xl border mt-4 flex items-start gap-3',
+                p.isDark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100',
+              )}
+            >
+              <Star className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0 mt-0.5" />
+              <p className={cn('text-xs font-medium italic leading-relaxed', p.muted)}>
+                {liveStats.quote
+                  ? `«${liveStats.quote}»`
+                  : t(
+                      `Δεν υπάρχουν ακόμη σχόλια (${liveStats.reviews} αξιολογήσεις). Τα σχόλια των συμμετεχόντων θα εμφανίζονται εδώ.`,
+                      `No comments yet (${liveStats.reviews} reviews). Participant comments will appear here.`,
+                    )}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        </div>
+      )}
     </div>
   );
 }

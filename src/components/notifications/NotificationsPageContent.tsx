@@ -7,7 +7,7 @@ import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { Card } from '../common/Card';
 import { EmptyState } from '../common/EmptyState';
-import { Skeleton } from '../common/Skeleton';
+import { ListViewSkeleton } from '../common/Skeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';
 import { useNotificationsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -249,13 +249,7 @@ export default function NotificationsPageContent() {
         isLoading={isLoading}
         isError={isError}
         onRetry={() => void refetch()}
-        loading={
-          <div className="space-y-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={`notif-sk-${i}`} className="h-16 w-full rounded-2xl" />
-            ))}
-          </div>
-        }
+        loading={<ListViewSkeleton count={4} variant="notification-row" />}
         errorTitle={t('Αδυναμία φόρτωσης ειδοποιήσεων', 'Could not load notifications')}
       >
       {visibleNotifs.length === 0 ? (

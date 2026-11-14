@@ -1,11 +1,12 @@
 ﻿import React, { ReactNode, useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useUIStore } from '../../store/uiStore';
 import { Toaster } from 'sonner';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
   Grid, TrendingUp, Bookmark, History, Flag,
   Users, UserPlus, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare,
-  Trophy, Zap, Sparkles, ChevronsLeft, ChevronsRight
+  Trophy, Zap, Sparkles, ChevronsLeft, ChevronsRight, ChevronDown
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
@@ -19,6 +20,10 @@ import { PopupChatRoot } from '../chat/PopupChatRoot';
 import { DemoModeBanner } from '../common/DemoModeBanner';
 import { useRealtimeChat } from '../../hooks/useRealtimeChat';
 import { useFirebaseAuth } from '../../hooks/useFirebaseAuth';
+import { CopilotLauncher } from '../copilot/CopilotLauncher';
+import { CopilotPanel } from '../copilot/CopilotPanel';
+import { useCopilotStore } from '../../store/copilotStore';
+import { DESKTOP_DOCK_QUERY, useMediaQuery } from '../../hooks/useMediaQuery';
 
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
@@ -119,29 +124,53 @@ function NavItem({ to, icon: Icon, label, compact = false, rail = false }: NavIt
 // NavSection
 // ─────────────────────────────────────────────
 interface NavSectionProps {
+  /** Stable id (persisted collapse state). */
+  id: string;
   title: string;
+  /** Routes inside the section — the section auto-opens when one is active. */
+  paths: string[];
   children: ReactNode;
   compact?: boolean;
   rail?: boolean;
 }
 
-function NavSection({ title, children, compact = false, rail = false }: NavSectionProps) {
+function NavSection({ id, title, paths, children, compact = false, rail = false }: NavSectionProps) {
   const theme = useStore((state) => state.theme);
+  const { pathname } = useLocation();
+  const collapsedIds = useUIStore((s) => s.navCollapsed);
+  const toggle = useUIStore((s) => s.toggleNavSection);
   const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark' || theme === 'activebuddies-dark';
   const isAB = theme === 'activebuddies' || theme === 'activebuddies-dark';
+  const containsActive = paths.some((p) => (p === '/' ? pathname === '/' : pathname === p || pathname.startsWith(`${p}/`)));
+  const collapsed = collapsedIds.includes(id) && !containsActive;
+  const listId = `nav-section-${id}`;
+  const count = Array.isArray(children) ? children.filter(Boolean).length : 1;
+  // Collapsing only applies where titles are visible (full drawer, or lg+ when not a rail).
+  const listHidden = rail ? '' : compact ? (collapsed ? 'lg:hidden' : '') : collapsed ? 'hidden' : '';
   return (
-    <div className="mb-2 lg:mb-6">
+    <div className="mb-2 lg:mb-4">
       {(compact || rail) && <div className={cn("h-px my-4 mx-4", rail ? "block" : "block lg:hidden", isDark ? "bg-gray-700" : "bg-gray-200")} />}
-      <h3
-        className={cn(
-          'px-3 text-sm font-bold tracking-wide mb-2',
-          isDark ? 'text-gray-400' : isAB ? 'text-[hsl(220_11%_34%)]' : 'text-[#6B7280]',
-          rail ? 'hidden' : compact ? 'hidden lg:block' : 'block'
-        )}
-      >
-        {title}
+      <h3 className={cn('mb-1', rail ? 'hidden' : compact ? 'hidden lg:block' : 'block')}>
+        <button
+          type="button"
+          onClick={() => toggle(id)}
+          aria-expanded={!collapsed}
+          aria-controls={listId}
+          disabled={containsActive}
+          title={containsActive ? undefined : collapsed ? title : undefined}
+          className={cn(
+            'w-full flex items-center justify-between gap-2 px-3 py-1.5 min-h-9 rounded-lg text-sm font-bold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default',
+            isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-white/5' : isAB ? 'text-[hsl(220_11%_34%)] hover:bg-gray-100/70' : 'text-[#6B7280] hover:text-gray-900 hover:bg-gray-50',
+          )}
+        >
+          <span className="truncate text-left">{title}</span>
+          <span className="flex items-center gap-1.5 shrink-0">
+            {collapsed && <span className="text-2xs font-semibold tabular-nums opacity-70">{count}</span>}
+            <ChevronDown className={cn('w-3.5 h-3.5 transition-transform duration-200 motion-reduce:transition-none', collapsed ? '-rotate-90' : 'rotate-0', containsActive && 'opacity-40')} aria-hidden />
+          </span>
+        </button>
       </h3>
-      <div className="space-y-1.5 lg:space-y-0.5">{children}</div>
+      <div id={listId} className={cn("space-y-1.5 lg:space-y-0.5", listHidden)}>{children}</div>
     </div>
   );
 }
@@ -157,13 +186,13 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
 
   return (
     <>
-      <NavSection title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
+      <NavSection id="explore" paths={['/', '/categories', '/nearby']} title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
         <NavItem to="/" icon={Compass} label={t('Ανακάλυψη Εκδηλώσεων', 'Discover Events')} compact={compact} rail={rail} />
         <NavItem to="/categories" icon={Grid} label={t('Κατηγορίες', 'Categories')} compact={compact} rail={rail} />
         <NavItem to="/nearby" icon={MapPin} label={t('Τοπικές Ομάδες', 'Local Groups')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection title={t('Η Εμπειρία μου', 'My Experience')} compact={compact} rail={rail}>
+      <NavSection id="experience" paths={['/agenda', '/plans', '/buddy-seek', '/saved', '/history']} title={t('Η Εμπειρία μου', 'My Experience')} compact={compact} rail={rail}>
         <NavItem to="/agenda" icon={Calendar} label={t('Το Ημερολόγιό μου', 'My Calendar')} compact={compact} rail={rail} />
         <NavItem to="/plans" icon={CalendarCheck} label={t('Τα Σχέδιά μου', 'My Plans')} compact={compact} rail={rail} />
         <NavItem to="/buddy-seek" icon={UserPlus} label={t('Βρες Nakamas', 'Find Nakamas')} compact={compact} rail={rail} />
@@ -171,26 +200,26 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
         <NavItem to="/history" icon={History} label={t('Ιστορικό', 'History')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection title={t('Κοινότητα', 'Community')} compact={compact} rail={rail}>
+      <NavSection id="community" paths={['/connections', '/chats', '/chat', '/leaderboard', '/challenges', '/achievements']} title={t('Κοινότητα', 'Community')} compact={compact} rail={rail}>
         <NavItem to="/connections" icon={Users} label={t('Οι Nakamas μου', 'My Nakamas')} compact={compact} rail={rail} />
         <NavItem to="/chats" icon={MessageSquare} label={t('Ομαδικές Συνομιλίες', 'Group Chats')} compact={compact} rail={rail} />
         <NavItem to="/leaderboard" icon={Trophy} label={t('Κατάταξη', 'Leaderboard')} compact={compact} rail={rail} />
         <NavItem to="/challenges" icon={Zap} label={t('Προκλήσεις', 'Challenges')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection title={t('Διοργάνωση', 'Host')} compact={compact} rail={rail}>
+      <NavSection id="host" paths={['/manage', '/create', '/wallet']} title={t('Διοργάνωση', 'Host')} compact={compact} rail={rail}>
         <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας Διοργανωτή', 'Organizer Dashboard')} compact={compact} rail={rail} />
         <NavItem to="/create" icon={PlusSquare} label={t('Δημιουργία Εκδήλωσης', 'Create Event')} compact={compact} rail={rail} />
         <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & Κέρδη', 'Wallet & Earnings')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection title={t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety')} compact={compact} rail={rail}>
+      <NavSection id="trust" paths={['/verification', '/trust', '/report']} title={t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety')} compact={compact} rail={rail}>
         <NavItem to="/verification" icon={BadgeCheck} label={t('Επαλήθευση Ταυτότητας', 'Identity Verification')} compact={compact} rail={rail} />
         <NavItem to="/trust" icon={ShieldCheck} label={t('Κέντρο Εμπιστοσύνης', 'Trust Center')} compact={compact} rail={rail} />
         <NavItem to="/report" icon={Flag} label={t('Αναφορά Προβλήματος', 'Report Issue')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection title={t('Λογαριασμός & Ρυθμίσεις', 'Account & Settings')} compact={compact} rail={rail}>
+      <NavSection id="account" paths={['/profile', '/notifications', '/settings', '/admin']} title={t('Λογαριασμός & Ρυθμίσεις', 'Account & Settings')} compact={compact} rail={rail}>
         <NavItem to="/profile" icon={User} label={t('Το Προφίλ μου', 'My Profile')} compact={compact} rail={rail} />
         <NavItem to="/notifications" icon={Bell} label={t('Ειδοποιήσεις', 'Notifications')} compact={compact} rail={rail} />
         <NavItem to="/settings" icon={Settings} label={t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')} compact={compact} rail={rail} />
@@ -199,7 +228,7 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
         )}
       </NavSection>
 
-      <NavSection title={t('Υποστήριξη', 'Support')} compact={compact} rail={rail}>
+      <NavSection id="support" paths={['/help', '/onboarding']} title={t('Υποστήριξη', 'Support')} compact={compact} rail={rail}>
         <NavItem to="/help" icon={HelpCircle} label={t('Κέντρο Βοήθειας', 'Help Center')} compact={compact} rail={rail} />
         <NavItem to="/onboarding" icon={Sparkles} label={t('Οδηγός Εισαγωγής', 'Onboarding')} compact={compact} rail={rail} />
       </NavSection>
@@ -244,6 +273,7 @@ export function SideNav() {
 // TopNav
 // ─────────────────────────────────────────────
 export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
+  const isDesktopDock = useMediaQuery(DESKTOP_DOCK_QUERY);
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const currentUser = useStore((state) => state.currentUser);
@@ -251,6 +281,8 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   const tok = useThemeStyles();
   const unreadNotificationCount = useUnreadCount();
   const [searchValue, setSearchValue] = useState('');
+  // While Nakamas AI is docked the main column is narrower: secondary chrome waits for 2xl.
+  const copilotDocked = useCopilotStore((s) => s.open) && isDesktopDock;
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchValue.trim()) {
@@ -264,12 +296,12 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         <div className="md:hidden">
           <NakamasLogo className="text-xl" />
         </div>
-        <div className="hidden md:block">
+        <div className={cn("hidden whitespace-nowrap", copilotDocked ? "2xl:block" : "md:block")}>
           <span className={cn("text-sm font-bold tracking-wide", tok.isDark ? "text-white" : tok.isAB ? "text-[hsl(220_14%_12%)] tracking-tight" : "text-gray-400")}>{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3 relative z-raised overflow-visible">
-        <div className="relative hidden lg:block">
+        <div className={cn("relative hidden", copilotDocked ? "2xl:block" : "lg:block")}>
           <input
             type="text"
             value={searchValue}
@@ -290,6 +322,9 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
             </button>
           )}
         </div>
+
+        {/* Nakamas AI — the copilot that can act anywhere in the app (Φ24) */}
+        <CopilotLauncher />
 
         {/* Quick action — create an event */}
         <button
@@ -334,7 +369,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         <div className="flex items-center space-x-2">
           {currentUser ? (
             <NavLink to="/profile" className="flex items-center space-x-2 relative group">
-              <div className="hidden sm:flex flex-col items-end">
+              <div className={cn("hidden flex-col items-end", copilotDocked ? "2xl:flex" : "sm:flex")}>
                 <span className={cn("text-xs font-bold tracking-wide", theme === "activebuddies" ? "text-[hsl(220_11%_34%)]" : theme === "activebuddies-dark" ? "text-[hsl(220_13%_72%)]" : theme === "vibrant-dark" ? "text-gray-400" : theme === "vibrant" ? "text-gray-500" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-brand")}>{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
                 <span className={cn("text-xs font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-ink")}>{currentUser.name}</span>
               </div>
@@ -423,6 +458,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const demoMode = useStore((s) => s.demoMode);
   const currentUser = useStore((s) => s.currentUser);
   const tok = useThemeStyles();
+  const copilotOpen = useCopilotStore((s) => s.open);
+  const maintenanceMode = useStore((s) => s.adminSafeguards.maintenanceMode);
 
   useRealtimeChat(currentUser?.id);
   useFirebaseAuth();
@@ -461,6 +498,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
           <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none">
             <div className="mx-auto w-full max-w-full p-4 lg:px-8 lg:py-6 flex-1 pb-safe md:pb-6">
+              {maintenanceMode && (
+                <p role="status" className="mb-4 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
+                  <Settings className="h-4 w-4 shrink-0" aria-hidden />
+                  {t('Γίνεται προγραμματισμένη συντήρηση — κάποιες λειτουργίες μπορεί να καθυστερούν.', 'Scheduled maintenance in progress — some features may be slower.')}
+                </p>
+              )}
               {children}
             </div>
           </main>
@@ -481,8 +524,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <BottomNav />
           <PlansFormingMobileFab />
         </div>
-        <PlansFormingSidebar />
-        <PlansFormingSidebarReopenTab />
+        {/* The docked copilot replaces the plans-forming rail while open (both live on the right edge). */}
+        {!copilotOpen && <PlansFormingSidebar />}
+        {!copilotOpen && <PlansFormingSidebarReopenTab />}
+        <CopilotPanel />
       </div>
       <PlansFormingBottomSheet />
       <PopupChatRoot />

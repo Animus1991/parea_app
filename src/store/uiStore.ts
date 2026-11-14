@@ -8,6 +8,9 @@ interface UIState {
   toggleSideNav: () => void;
   setCommandPaletteOpen: (v: boolean) => void;
   toggleCommandPalette: () => void;
+  /** Φ25 (port from nakamas): ids of side-nav sections the user collapsed. */
+  navCollapsed: string[];
+  toggleNavSection: (id: string) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -19,10 +22,16 @@ export const useUIStore = create<UIState>()(
       toggleSideNav: () => set((s) => ({ sideNavCollapsed: !s.sideNavCollapsed })),
       setCommandPaletteOpen: (commandPaletteOpen) => set({ commandPaletteOpen }),
       toggleCommandPalette: () => set((s) => ({ commandPaletteOpen: !s.commandPaletteOpen })),
+      // Less frequent destinations start collapsed; the active section always opens.
+      navCollapsed: ['host', 'trust', 'support'],
+      toggleNavSection: (id) =>
+        set((s) => ({
+          navCollapsed: s.navCollapsed.includes(id) ? s.navCollapsed.filter((x) => x !== id) : [...s.navCollapsed, id],
+        })),
     }),
     {
       name: 'nakamas-ui',
-      partialize: (s) => ({ sideNavCollapsed: s.sideNavCollapsed }),
+      partialize: (s) => ({ sideNavCollapsed: s.sideNavCollapsed, navCollapsed: s.navCollapsed }),
     },
   ),
 );

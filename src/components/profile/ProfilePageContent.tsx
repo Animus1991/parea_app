@@ -28,8 +28,13 @@ import {
   Eye,
   Lock,
   ChevronRight,
+  Share2,
+  User as UserIcon,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
+import { TabBar } from "../common/TabBar";
+import { cn } from "../../lib/utils";
 import { useLanguage } from "../../lib/i18n";
 import { useProfileContrast } from "../../hooks/usePageContrast";
 import { ProfileCompletionMeter } from "./ProfileCompletionMeter";
@@ -58,6 +63,33 @@ export default function ProfilePageContent() {
   const [interests, setInterests] = useState(currentUser?.interests || []);
   const [isAddingInterest, setIsAddingInterest] = useState(false);
   const [newInterest, setNewInterest] = useState("");
+
+  // Φ25 (port from nakamas): progressive disclosure — one purpose per tab, deep-linkable via ?tab=.
+  type ProfileTab = "overview" | "trust" | "privacy";
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const activeTab: ProfileTab = tabParam === "trust" || tabParam === "privacy" ? tabParam : "overview";
+  const setActiveTab = (id: string) => {
+    const next = new URLSearchParams(searchParams);
+    if (id === "overview") next.delete("tab");
+    else next.set("tab", id);
+    setSearchParams(next, { replace: true });
+  };
+
+  const handleInvite = async () => {
+    const url = `${window.location.origin}/login?ref=${encodeURIComponent(currentUser?.id ?? "")}`;
+    const text = t("Έλα στο Nakamas — βρίσκουμε παρέα για εκδηλώσεις!", "Join me on Nakamas — we find company for events!");
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Nakamas", text, url });
+        return;
+      }
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      toast.success(t("Ο σύνδεσμος πρόσκλησης αντιγράφηκε", "Invite link copied"));
+    } catch {
+      toast.info(t("Η κοινοποίηση ακυρώθηκε", "Share cancelled"));
+    }
+  };
 
   const profileVisibilityUi =
     userSettings.privacy.profileVisibility === 'connections' ? 'verified' : userSettings.privacy.profileVisibility;
@@ -129,13 +161,21 @@ export default function ProfilePageContent() {
           { icon: TrendingUp, label: t("Αξιοπιστία", "Reliability"), value: `${currentUser.reliabilityScore}%`, to: "/trust", color: currentUser.reliabilityScore >= 80 ? (a.isDark ? "text-green-400" : "text-green-600") : a.accent },
           { icon: Award, label: t("Επίπεδο", "Tier"), value: tierLabel, to: "/trust", color: a.accent },
         ].map((stat) => (
-          <Card key={stat.label} className="p-4 cursor-pointer group" onClick={() => navigate(stat.to)}>
+          <button
+            key={stat.label}
+            type="button"
+            onClick={() => navigate(stat.to)}
+            className={cn(
+              "rounded-2xl border p-4 text-left shadow-soft transition-all duration-200 hover:-translate-y-[0.5px] hover:shadow-soft-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+              a.isDark ? "bg-gray-800/60 border-gray-700/50" : "bg-white border-gray-100",
+            )}
+          >
             <div className="flex items-center justify-between">
               <span className={`text-2xs font-bold uppercase tracking-wider ${sub}`}>{stat.label}</span>
-              <stat.icon className={`w-4 h-4 ${stat.color}`} />
+              <stat.icon className={`w-4 h-4 ${stat.color}`} aria-hidden />
             </div>
-            <p className={`text-2xl font-extrabold mt-2 ${heading}`}>{stat.value}</p>
-          </Card>
+            <p className={`text-2xl font-extrabold mt-2 tabular-nums ${heading}`}>{stat.value}</p>
+          </button>
         ))}
       </div>
 
@@ -243,8 +283,108 @@ export default function ProfilePageContent() {
           </div>
         </div>
 
-        <div className="px-6 pb-6">
+      </Card>
 
+      {/* ═══ Progressive disclosure (Φ25, from nakamas) ═══ */}
+      <TabBar
+        variant="segmented"
+        idBase="profile"
+        ariaLabel={t("Ενότητες προφίλ", "Profile sections")}
+        activeTab={activeTab}
+        onChange={setActiveTab}
+        tabs={[
+          { id: "overview", label: t("Ενδιαφέροντα & Δίκτυο", "Interests & Network"), icon: UserIcon },
+          { id: "trust", label: t("Επίπεδα & Ομάδες", "Tiers & Group Prefs"), icon: ShieldCheck },
+          { id: "privacy", label: t("Ορατότητα & Απόρρητο", "Visibility & Privacy"), icon: Lock },
+        ]}
+      />
+
+      <Card className="p-6" role="tabpanel" id={`profile-panel-${activeTab}`} aria-labelledby={`profile-tab-${activeTab}`}>
+        {activeTab === "overview" && (
+          <div className="space-y-8 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
+        {/* ─── Interests ─── */}
+        <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
+          <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Ενδιαφέροντα", "Interests")}</h3>
+          <div className="flex flex-wrap gap-2 items-center">
+            {interests.map((i) => (
+              <Badge key={i} variant="neutral" className={`pr-1.5 select-none ${a.isDark ? "" : "bg-gray-50 border-gray-200 text-gray-700"}`}>
+                {i}
+                <button onClick={() => { const updated = interests.filter((int) => int !== i); setInterests(updated); updateUser(currentUser.id, { interests: updated }); }}
+                  className={`ml-1.5 p-0.5 rounded-full transition-colors ${a.isDark ? "hover:bg-gray-600 text-gray-400 hover:text-gray-200" : "hover:bg-gray-200 text-gray-400 hover:text-gray-600"}`}>
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
+            ))}
+            {isAddingInterest ? (
+              <form onSubmit={(e) => { e.preventDefault(); if (newInterest.trim() && !interests.includes(newInterest.trim())) { const updated = [...interests, newInterest.trim()]; setInterests(updated); updateUser(currentUser.id, { interests: updated }); setNewInterest(""); setIsAddingInterest(false); } }} className="flex items-center gap-2">
+                <input type="text" value={newInterest} onChange={(e) => setNewInterest(e.target.value)} placeholder={t("Νέο ενδιαφέρον...", "New interest...")}
+                  className={`text-xs border rounded-lg px-2 py-1 w-28 focus:outline-none ${inputBg} ${a.ring}`} autoFocus onBlur={() => { if (!newInterest.trim()) setIsAddingInterest(false); }} />
+                <Button type="submit" size="sm" variant="ghost" className={`h-6 px-2 font-bold capitalize text-xs ${a.accent}`}>{t("Προσθήκη", "Add")}</Button>
+              </form>
+            ) : (
+              <Button variant="ghost" size="sm" className={`h-6 px-2 text-xs font-medium flex items-center gap-1 ${a.isDark ? "bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700" : "bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100"}`} onClick={() => setIsAddingInterest(true)}>
+                <Plus className="w-3 h-3" /> {t("Προσθήκη", "Add Interest")}
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* ─── Availability ─── */}
+        <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
+          <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Προτιμήσεις Διαθεσιμότητας", "Availability Preferences")}</h3>
+          <div className="flex flex-wrap gap-2">
+            {userSettings.availability.includes('weekends') && <Badge variant="neutral">{t("Σαββατοκύριακα", "Weekends")}</Badge>}
+            {userSettings.availability.includes('weekday_evenings') && <Badge variant="neutral">{t("Βράδια Καθημερινών", "Weekday Evenings")}</Badge>}
+            {userSettings.availability.includes('weekday_mornings') && <Badge variant="neutral">{t("Πρωινά καθημερινών", "Weekday mornings")}</Badge>}
+            {userSettings.availability.length === 0 && (
+              <span className={`text-xs ${sub}`}>{t('Δεν έχετε ορίσει διαθεσιμότητα', 'No availability set yet')}</span>
+            )}
+            <Button variant="ghost" size="sm" className={`${a.isDark ? "bg-gray-800 border border-gray-700 text-gray-300" : "bg-gray-50 border border-gray-200"}`} onClick={() => navigate("/settings")}>
+              + {t("Επεξεργασία", "Edit")}
+            </Button>
+          </div>
+        </div>
+
+        {/* ─── History & Reviews ─── */}
+        <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className={`text-xs font-bold capitalize tracking-wide ${label}`}>{t("Ιστορικό & Αξιολογήσεις", "History & Reviews")}</h3>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/history")} className={`font-bold ${a.btnAccent}`}>{t("Προβολή Όλων", "View All")}</Button>
+          </div>
+          <div className={`rounded-2xl border p-4 flex items-center justify-between gap-3 ${historyBg}`}>
+            <div className="flex items-center gap-3 min-w-0">
+              <div className={`p-2.5 rounded-xl shrink-0 ${a.historyIcon}`}><History className="h-5 w-5" /></div>
+              <div className="min-w-0">
+                <p className={`text-sm font-bold ${heading}`}>{t("Παρελθούσες Εκδηλώσεις & Ιδιωτική Αξιολόγηση", "Past Events & Private Feedback")}</p>
+                <p className={`text-xs font-medium ${sub}`}>{t("Αξιολογήστε τις εμπειρίες σας ιδιωτικά", "Review your experiences privately")}</p>
+              </div>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => navigate("/history")} className="shrink-0">{t("Αξιολόγηση", "Review")}</Button>
+          </div>
+        </div>
+
+        {/* ─── Connected Nakamas Preview ─── */}
+        {connectedUsers.length > 0 && (
+          <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className={`text-xs font-bold capitalize tracking-wide ${label}`}>{t("Οι Nakamas μου", "My Nakamas")} <span className={`ml-1 ${sub}`}>({connectionCount})</span></h3>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/connections")} className={`font-bold ${a.btnAccent}`}>{t("Προβολή Όλων", "View All")}</Button>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
+              {connectedUsers.slice(0, 8).map((u) => (
+                <div key={u.id} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group" onClick={() => u.isOrganizer ? navigate(`/organizer/${u.id}`) : navigate("/connections")}>
+                  <img referrerPolicy="no-referrer" src={u.photoUrl || `https://i.pravatar.cc/80?u=${u.id}`} alt={u.name}
+                    className={`w-11 h-11 rounded-xl object-cover border-2 transition-all ${a.isDark ? "border-gray-700/50 group-hover:border-gray-500" : "border-gray-200 group-hover:border-gray-300"} group-hover:scale-105`} />
+                  <span className={`text-2xs font-bold truncate max-w-[64px] ${a.isDark ? "text-gray-300" : "text-gray-700"}`}>{u.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+          </div>
+        )}
+        {activeTab === "trust" && (
+          <div className="space-y-8 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
         {/* ─── Identity Tiers ─── */}
         <div className={`mt-6 pt-6 border-t ${sectionBorder}`}>
           <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Επίπεδα Ταυτότητας & Δικαιώματα", "Identity Tiers & Permissions")}</h3>
@@ -304,67 +444,10 @@ export default function ProfilePageContent() {
           </div>
         </div>
 
-        {/* ─── History & Reviews ─── */}
-        <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className={`text-xs font-bold capitalize tracking-wide ${label}`}>{t("Ιστορικό & Αξιολογήσεις", "History & Reviews")}</h3>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/history")} className={`font-bold ${a.btnAccent}`}>{t("Προβολή Όλων", "View All")}</Button>
           </div>
-          <div className={`rounded-2xl border p-4 flex items-center justify-between gap-3 ${historyBg}`}>
-            <div className="flex items-center gap-3 min-w-0">
-              <div className={`p-2.5 rounded-xl shrink-0 ${a.historyIcon}`}><History className="h-5 w-5" /></div>
-              <div className="min-w-0">
-                <p className={`text-sm font-bold ${heading}`}>{t("Παρελθούσες Εκδηλώσεις & Ιδιωτική Αξιολόγηση", "Past Events & Private Feedback")}</p>
-                <p className={`text-xs font-medium ${sub}`}>{t("Αξιολογήστε τις εμπειρίες σας ιδιωτικά", "Review your experiences privately")}</p>
-              </div>
-            </div>
-            <Button variant="outline" size="sm" onClick={() => navigate("/history")} className="shrink-0">{t("Αξιολόγηση", "Review")}</Button>
-          </div>
-        </div>
-
-        {/* ─── Interests ─── */}
-        <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
-          <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Ενδιαφέροντα", "Interests")}</h3>
-          <div className="flex flex-wrap gap-2 items-center">
-            {interests.map((i) => (
-              <Badge key={i} variant="neutral" className={`pr-1.5 select-none ${a.isDark ? "" : "bg-gray-50 border-gray-200 text-gray-700"}`}>
-                {i}
-                <button onClick={() => { const updated = interests.filter((int) => int !== i); setInterests(updated); updateUser(currentUser.id, { interests: updated }); }}
-                  className={`ml-1.5 p-0.5 rounded-full transition-colors ${a.isDark ? "hover:bg-gray-600 text-gray-400 hover:text-gray-200" : "hover:bg-gray-200 text-gray-400 hover:text-gray-600"}`}>
-                  <X className="w-3 h-3" />
-                </button>
-              </Badge>
-            ))}
-            {isAddingInterest ? (
-              <form onSubmit={(e) => { e.preventDefault(); if (newInterest.trim() && !interests.includes(newInterest.trim())) { const updated = [...interests, newInterest.trim()]; setInterests(updated); updateUser(currentUser.id, { interests: updated }); setNewInterest(""); setIsAddingInterest(false); } }} className="flex items-center gap-2">
-                <input type="text" value={newInterest} onChange={(e) => setNewInterest(e.target.value)} placeholder={t("Νέο ενδιαφέρον...", "New interest...")}
-                  className={`text-xs border rounded-lg px-2 py-1 w-28 focus:outline-none ${inputBg} ${a.ring}`} autoFocus onBlur={() => { if (!newInterest.trim()) setIsAddingInterest(false); }} />
-                <Button type="submit" size="sm" variant="ghost" className={`h-6 px-2 font-bold capitalize text-xs ${a.accent}`}>{t("Προσθήκη", "Add")}</Button>
-              </form>
-            ) : (
-              <Button variant="ghost" size="sm" className={`h-6 px-2 text-xs font-medium flex items-center gap-1 ${a.isDark ? "bg-gray-800 border border-gray-700 text-gray-300 hover:bg-gray-700" : "bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100"}`} onClick={() => setIsAddingInterest(true)}>
-                <Plus className="w-3 h-3" /> {t("Προσθήκη", "Add Interest")}
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* ─── Availability ─── */}
-        <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
-          <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Προτιμήσεις Διαθεσιμότητας", "Availability Preferences")}</h3>
-          <div className="flex flex-wrap gap-2">
-            {userSettings.availability.includes('weekends') && <Badge variant="neutral">{t("Σαββατοκύριακα", "Weekends")}</Badge>}
-            {userSettings.availability.includes('weekday_evenings') && <Badge variant="neutral">{t("Βράδια Καθημερινών", "Weekday Evenings")}</Badge>}
-            {userSettings.availability.includes('weekday_mornings') && <Badge variant="neutral">{t("Πρωινά καθημερινών", "Weekday mornings")}</Badge>}
-            {userSettings.availability.length === 0 && (
-              <span className={`text-xs ${sub}`}>{t('Δεν έχετε ορίσει διαθεσιμότητα', 'No availability set yet')}</span>
-            )}
-            <Button variant="ghost" size="sm" className={`${a.isDark ? "bg-gray-800 border border-gray-700 text-gray-300" : "bg-gray-50 border border-gray-200"}`} onClick={() => navigate("/settings")}>
-              + {t("Επεξεργασία", "Edit")}
-            </Button>
-          </div>
-        </div>
-
+        )}
+        {activeTab === "privacy" && (
+          <div className="space-y-8 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
         {/* ─── Privacy Settings ─── */}
         <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
           <h3 className={`text-xs font-bold capitalize tracking-wide mb-4 ${label}`}>{t("Ορατότητα, Συνδέσεις & Απόρρητο", "Visibility, Connections & Privacy")}</h3>
@@ -462,26 +545,24 @@ export default function ProfilePageContent() {
           </div>
         </div>
 
-        {/* ─── Connected Nakamas Preview ─── */}
-        {connectedUsers.length > 0 && (
-          <div className={`mt-8 pt-6 border-t ${sectionBorder}`}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className={`text-xs font-bold capitalize tracking-wide ${label}`}>{t("Οι Nakamas μου", "My Nakamas")} <span className={`ml-1 ${sub}`}>({connectionCount})</span></h3>
-              <Button variant="ghost" size="sm" onClick={() => navigate("/connections")} className={`font-bold ${a.btnAccent}`}>{t("Προβολή Όλων", "View All")}</Button>
-            </div>
-            <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
-              {connectedUsers.slice(0, 8).map((u) => (
-                <div key={u.id} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group" onClick={() => u.isOrganizer ? navigate(`/organizer/${u.id}`) : navigate("/connections")}>
-                  <img referrerPolicy="no-referrer" src={u.photoUrl || `https://i.pravatar.cc/80?u=${u.id}`} alt={u.name}
-                    className={`w-11 h-11 rounded-xl object-cover border-2 transition-all ${a.isDark ? "border-gray-700/50 group-hover:border-gray-500" : "border-gray-200 group-hover:border-gray-300"} group-hover:scale-105`} />
-                  <span className={`text-2xs font-bold truncate max-w-[64px] ${a.isDark ? "text-gray-300" : "text-gray-700"}`}>{u.name}</span>
-                </div>
-              ))}
-            </div>
           </div>
         )}
-        </div>
       </Card>
+
+      {activeTab === "overview" && (
+        <Card className="p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className={`h-11 w-11 shrink-0 rounded-xl flex items-center justify-center ${a.isDark ? "bg-gray-700/40" : "bg-gray-100"}`}>
+            <Share2 className={`h-5 w-5 ${a.accent}`} aria-hidden />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className={`text-sm font-bold ${heading}`}>{t("Φέρε τους δικούς σου Nakamas", "Bring your own Nakamas")}</p>
+            <p className={`text-xs font-medium mt-0.5 ${sub}`}>{t("Οι φίλοι που προσκαλείς μπαίνουν κατευθείαν στο δίκτυό σου — πιο εύκολα σχηματίζονται ομάδες.", "Friends you invite join your network directly — groups form faster.")}</p>
+          </div>
+          <Button size="sm" onClick={() => void handleInvite()} className="flex items-center gap-1.5 shrink-0">
+            <Share2 className="w-3.5 h-3.5" aria-hidden /> {t("Πρόσκληση φίλων", "Invite friends")}
+          </Button>
+        </Card>
+      )}
 
       {/* ═══ Quick Links ═══ */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -491,14 +572,22 @@ export default function ProfilePageContent() {
           { icon: Bookmark, label: t("Αποθηκευμένα", "Saved"), desc: t("Αγαπημένες εκδηλώσεις", "Favorite events"), to: "/saved" },
           { icon: MessageSquare, label: t("Συνομιλίες", "Chats"), desc: t("Ομαδικά μηνύματα", "Group messages"), to: "/chats" },
         ].map((link) => (
-          <Card key={link.to} className="p-4 cursor-pointer group" onClick={() => navigate(link.to)}>
+          <button
+            key={link.to}
+            type="button"
+            onClick={() => navigate(link.to)}
+            className={cn(
+              "group rounded-2xl border p-4 text-left shadow-soft transition-all duration-200 hover:-translate-y-[0.5px] hover:shadow-soft-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+              a.isDark ? "bg-gray-800/60 border-gray-700/50" : "bg-white border-gray-100",
+            )}
+          >
             <div className="flex items-center justify-between">
-              <link.icon className={`w-4 h-4 ${a.accent}`} />
-              <ChevronRight className={`w-3.5 h-3.5 ${sub} opacity-0 group-hover:opacity-100 transition-opacity`} />
+              <link.icon className={`w-4 h-4 ${a.accent}`} aria-hidden />
+              <ChevronRight className={`w-3.5 h-3.5 ${sub} opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity`} aria-hidden />
             </div>
             <p className={`text-sm font-bold mt-2 ${heading}`}>{link.label}</p>
             <p className={`text-2xs font-medium mt-0.5 ${sub}`}>{link.desc}</p>
-          </Card>
+          </button>
         ))}
       </div>
 

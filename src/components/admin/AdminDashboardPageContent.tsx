@@ -1,6 +1,11 @@
 import { useMemo, useState } from 'react';
 import { Card } from '../common/Card';
-import { AlertCircle, ShieldAlert, Flag, Search, TrendingUp } from 'lucide-react';
+import { AlertCircle, ShieldAlert, Flag, Search, TrendingUp, Activity, Users as UsersIcon, Settings2, Ban, RotateCcw, Wand2, Palette, KeyRound, ShieldCheck } from 'lucide-react';
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { format, parseISO, startOfWeek } from 'date-fns';
+import { TabBar } from '../common/TabBar';
+import { tierLabelEl, tierLabelEn } from '../../lib/trust';
+import type { AdminSafeguards } from '../../store';
 import { Button } from '../common/Button';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -13,18 +18,85 @@ import { AdminBrandingPanel } from './AdminBrandingPanel';
 import { AdminSSOPanel } from './AdminSSOPanel';
 import { toast } from 'sonner';
 
-type AdminTab = 'moderation' | 'automation' | 'branding' | 'sso';
+type AdminTab = 'overview' | 'moderation' | 'users' | 'system' | 'automation' | 'branding' | 'sso';
 
 export default function AdminDashboardPageContent() {
   const { t } = useLanguage();
   const a = usePageContrast();
   const users = useStore((s) => s.users);
+  const currentUserId = useStore((s) => s.currentUser?.id);
   const events = useStore((s) => s.events);
   const issueReports = useStore((s) => s.issueReports);
   const resolveIssueReport = useStore((s) => s.resolveIssueReport);
   const logAdminAction = useStore((s) => s.logAdminAction);
 
-  const [adminTab, setAdminTab] = useState<AdminTab>('moderation');
+  const [adminTab, setAdminTab] = useState<AdminTab>('overview');
+  const groups = useStore((s) => s.groups);
+  const adminActions = useStore((s) => s.adminActions);
+  const suspendedUserIds = useStore((s) => s.suspendedUserIds);
+  const toggleUserSuspended = useStore((s) => s.toggleUserSuspended);
+  const safeguards = useStore((s) => s.adminSafeguards);
+  const setAdminSafeguard = useStore((s) => s.setAdminSafeguard);
+  const [userQuery, setUserQuery] = useState('');
+  const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
+  /** Φ25 — no-show rate from attendance answers in reviews (was a fixed 4.2%). */
+  const noShowPct = useMemo(() => {
+    const answers = Object.values(feedbackSubmitted).filter((f) => f.attendance);
+    if (answers.length === 0) return null;
+    const missed = answers.filter((f) => f.attendance === 'no_show' || f.attendance === 'late_cancel').length;
+    return Math.round((missed / answers.length) * 1000) / 10;
+  }, [feedbackSubmitted]);
+  const [chartRange, setChartRange] = useState<'8w' | 'all'>('8w');
+  const reduceMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+  /** Real activity: events & participants per week across the catalogue. */
+  const activity = useMemo(() => {
+    const buckets = new Map<string, { week: string; events: number; participants: number }>();
+    for (const e of events) {
+      let monday: Date;
+      try {
+        monday = startOfWeek(parseISO(e.date), { weekStartsOn: 1 });
+      } catch {
+        continue;
+      }
+      const key = format(monday, 'yyyy-MM-dd');
+      const b = buckets.get(key) ?? { week: format(monday, 'd/M'), events: 0, participants: 0 };
+      b.events += 1;
+      b.participants += groups.filter((g) => g.eventId === e.id).reduce((n, g) => n + g.members.length, 0);
+      buckets.set(key, b);
+    }
+    const sorted = [...buckets.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([, v]) => v);
+    return chartRange === '8w' ? sorted.slice(-8) : sorted;
+  }, [events, groups, chartRange]);
+
+  const filteredUsers = useMemo(() => {
+    const q = userQuery.trim().toLowerCase();
+    if (!q) return users;
+    return users.filter((u) => u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q) || u.city?.toLowerCase().includes(q));
+  }, [users, userQuery]);
+
+  const SAFEGUARDS: { key: keyof AdminSafeguards; title: string; desc: string }[] = [
+    {
+      key: 'autoSuspendNoShow',
+      title: t('Αυτόματη αναστολή (3+ no-shows)', 'Auto-suspend (3+ no-shows)'),
+      desc: t('Προσωρινός περιορισμός συμμετοχής μετά από επαναλαμβανόμενες αδικαιολόγητες απουσίες.', 'Temporarily restrict joining after repeated unexplained no-shows.'),
+    },
+    {
+      key: 'requireIdForOrganizers',
+      title: t('Ταυτότητα για διοργανωτές', 'Require ID for organizers'),
+      desc: t('Επαλήθευση ταυτότητας πριν τη δημοσίευση εκδηλώσεων επί πληρωμή.', 'Verify identity before publishing paid experiences.'),
+    },
+    {
+      key: 'strictAntiSpam',
+      title: t('Αυστηρό φίλτρο spam', 'Strict anti-spam shield'),
+      desc: t('Φιλτράρει ύποπτους συνδέσμους και μαζικά μηνύματα στις ομαδικές συνομιλίες.', 'Filters suspicious links and bulk messages in group chats.'),
+    },
+    {
+      key: 'maintenanceMode',
+      title: t('Λειτουργία συντήρησης', 'Maintenance mode'),
+      desc: t('Εμφανίζει σε όλους τους χρήστες ειδοποίηση συντήρησης κατά τις αναβαθμίσεις.', 'Shows every user a maintenance notice during upgrades.'),
+    },
+  ];
   const [searchUser, setSearchUser] = useState('');
   const [adminAction, setAdminAction] = useState('warning');
   const [adminNote, setAdminNote] = useState('');
@@ -75,45 +147,52 @@ export default function AdminDashboardPageContent() {
     : issueReports.slice(0, 2);
 
   return (
-    <div className="mx-auto max-w-full space-y-8 pb-12 animate-in fade-in duration-500">
-      <div>
-        <h1 className={cn('text-base md:text-lg font-bold', a.isDark ? 'text-red-400' : 'text-red-700')}>
-          {t('Πίνακας Διαχείρισης', 'Admin Dashboard')}
-        </h1>
-        <p className={cn('mt-1 text-sm font-medium', a.sub)}>
-          {t('Εποπτεία πλατφόρμας & μετριασμός', 'Platform oversight & moderation')}
-        </p>
-        <div className="flex flex-wrap gap-2 mt-4">
-          {(
-            [
-              ['moderation', t('Μετριασμός', 'Moderation')],
-              ['automation', t('Automation', 'Automation')],
-              ['branding', t('Branding', 'Branding')],
-              ['sso', 'SSO'],
-            ] as const
-          ).map(([key, label]) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setAdminTab(key)}
-              className={cn(
-                'px-3 py-1.5 rounded-full text-xs font-bold border transition-colors',
-                adminTab === key
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : cn(a.borderB, a.sub, 'hover:opacity-80'),
-              )}
-            >
-              {label}
-            </button>
-          ))}
+    <div className="mx-auto max-w-full space-y-6 pb-12 animate-in fade-in duration-500">
+      <div className={cn('p-5 rounded-2xl border flex flex-col md:flex-row md:items-center justify-between gap-4', a.cardSurface, a.borderB)}>
+        <div className="flex items-center gap-4">
+          <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center border shrink-0', a.isDark ? 'bg-red-950/30 border-red-900/50' : 'bg-red-50 border-red-200')}>
+            <ShieldAlert className={cn('w-6 h-6', a.isDark ? 'text-red-400' : 'text-red-600')} aria-hidden />
+          </div>
+          <div>
+            <h1 className={cn('text-base md:text-lg font-bold', a.isDark ? 'text-red-400' : 'text-red-700')}>
+              {t('Πίνακας Διαχείρισης', 'Admin Dashboard')}
+            </h1>
+            <p className={cn('mt-0.5 text-sm font-medium', a.sub)}>
+              {t('Εποπτεία πλατφόρμας & μετριασμός', 'Platform oversight & moderation')}
+            </p>
+          </div>
+        </div>
+        <div role="status" className={cn('flex items-center gap-2 px-4 py-2.5 rounded-xl border', a.borderB)}>
+          <span className={cn('inline-flex h-2 w-2 rounded-full', safeguards.maintenanceMode ? 'bg-amber-500' : 'bg-emerald-500')} aria-hidden />
+          <span className={cn('text-sm font-bold', safeguards.maintenanceMode ? 'text-amber-700 dark:text-amber-400' : 'text-emerald-700 dark:text-emerald-400')}>
+            {safeguards.maintenanceMode ? t('Λειτουργία συντήρησης ενεργή', 'Maintenance mode active') : t('Όλα τα συστήματα λειτουργούν', 'All systems operational')}
+          </span>
         </div>
       </div>
 
+      <TabBar
+        variant="segmented"
+        idBase="admin"
+        ariaLabel={t('Ενότητες διαχείρισης', 'Admin sections')}
+        activeTab={adminTab}
+        onChange={(id) => setAdminTab(id as AdminTab)}
+        tabs={[
+          { id: 'overview', label: t('Γενική εικόνα', 'Overview'), icon: Activity },
+          { id: 'moderation', label: t('Μετριασμός', 'Moderation'), icon: Flag, count: pendingReports.length },
+          { id: 'users', label: t('Χρήστες', 'Users'), icon: UsersIcon, count: suspendedUserIds.length },
+          { id: 'system', label: t('Σύστημα', 'System'), icon: Settings2 },
+          { id: 'automation', label: 'Automation', icon: Wand2 },
+          { id: 'branding', label: 'Branding', icon: Palette },
+          { id: 'sso', label: 'SSO', icon: KeyRound },
+        ]}
+      />
+
+      <div role="tabpanel" id={`admin-panel-${adminTab}`} aria-labelledby={`admin-tab-${adminTab}`} className="space-y-6">
       {adminTab === 'automation' && <AdminAutomationPanel />}
       {adminTab === 'branding' && <AdminBrandingPanel />}
       {adminTab === 'sso' && <AdminSSOPanel />}
 
-      {adminTab === 'moderation' && (
+      {adminTab === 'overview' && (
       <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className={cn('p-4 border-t-4 border-t-blue-500', a.cardSurface)}>
@@ -156,10 +235,10 @@ export default function AdminDashboardPageContent() {
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className={cn('text-xs font-medium', a.muted)}>{t('No-show rate', 'No-show rate')}</span>
-              <span className="text-sm font-bold text-amber-600">4.2%</span>
+              <span className="text-sm font-bold text-amber-600 tabular-nums">{noShowPct === null ? '—' : `${noShowPct}%`}</span>
             </div>
             <div className={cn('w-full h-1.5 rounded-full', a.progressBg)}>
-              <div className="bg-amber-400 h-full rounded-full" style={{ width: '4.2%' }} />
+              <div className="bg-amber-400 h-full rounded-full" style={{ width: `${noShowPct ?? 0}%` }} />
             </div>
           </div>
           <div>
@@ -174,6 +253,162 @@ export default function AdminDashboardPageContent() {
         </div>
       </Card>
 
+      <Card className={cn('p-5', a.cardSurface)}>
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <h2 className={cn('text-sm font-bold', a.head)}>{t('Εκδηλώσεις & συμμετοχές ανά εβδομάδα', 'Events & participants per week')}</h2>
+          <label className="sr-only" htmlFor="admin-chart-range">{t('Εύρος', 'Range')}</label>
+          <select
+            id="admin-chart-range"
+            value={chartRange}
+            onChange={(e) => setChartRange(e.target.value as '8w' | 'all')}
+            className={cn('text-xs font-semibold rounded-lg px-3 py-1.5 border outline-none min-h-9', a.inputBg)}
+          >
+            <option value="8w">{t('Τελευταίες 8 εβδομάδες', 'Last 8 weeks')}</option>
+            <option value="all">{t('Όλο το διάστημα', 'All time')}</option>
+          </select>
+        </div>
+        <div className="h-56 w-full" role="img" aria-label={t(`Γράφημα δραστηριότητας: ${activity.reduce((n, b) => n + b.events, 0)} εκδηλώσεις`, `Activity chart: ${activity.reduce((n, b) => n + b.events, 0)} events`)}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={activity} margin={{ top: 8, right: 8, left: -24, bottom: 0 }}>
+              <defs>
+                <linearGradient id="adminActivity" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--color-ink-muted)' }} />
+              <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--color-ink-muted)' }} />
+              <Tooltip
+                contentStyle={{ backgroundColor: 'var(--color-surface-raised)', border: '1px solid var(--color-border)', borderRadius: 12, color: 'var(--color-ink)' }}
+                formatter={(value, name) => [value, name === 'events' ? t('Εκδηλώσεις', 'Events') : t('Συμμετέχοντες', 'Participants')]}
+              />
+              <Area type="monotone" dataKey="participants" stroke="var(--color-ink-muted)" strokeWidth={1.5} fill="none" animationDuration={reduceMotion ? 0 : 500} />
+              <Area type="monotone" dataKey="events" stroke="var(--color-accent)" strokeWidth={2.5} fill="url(#adminActivity)" animationDuration={reduceMotion ? 0 : 500} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+      </>
+      )}
+
+      {adminTab === 'users' && (
+      <Card className={cn('p-0 overflow-hidden', a.cardSurface)}>
+        <div className={cn('p-5 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4', a.borderB)}>
+          <div>
+            <h2 className={cn('text-sm font-bold', a.head)}>{t('Λογαριασμοί χρηστών', 'User accounts')}</h2>
+            <p className={cn('text-xs mt-0.5', a.muted)}>{t('Βαθμίδα εμπιστοσύνης, αξιοπιστία και πρόσβαση', 'Trust tier, reliability and access')}</p>
+          </div>
+          <div className="relative w-full sm:w-64">
+            <Search className={cn('absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4', a.muted)} aria-hidden />
+            <label htmlFor="admin-user-search" className="sr-only">{t('Αναζήτηση μέλους', 'Search member')}</label>
+            <input
+              id="admin-user-search"
+              type="search"
+              value={userQuery}
+              onChange={(e) => setUserQuery(e.target.value)}
+              placeholder={t('Όνομα, id ή πόλη…', 'Name, id or city…')}
+              className={cn('w-full pl-9 pr-3 py-2 text-sm rounded-xl border outline-none focus:ring-2 focus:ring-cyan-600', a.inputBg)}
+            />
+          </div>
+        </div>
+        {filteredUsers.length === 0 ? (
+          <p className={cn('p-6 text-center text-sm', a.muted)}>{t('Κανένα μέλος δεν ταιριάζει.', 'No members match.')}</p>
+        ) : (
+          <ul className={cn('divide-y', a.isDark ? 'divide-gray-700/40' : 'divide-gray-100')}>
+            {filteredUsers.map((u) => {
+              const suspended = suspendedUserIds.includes(u.id);
+              return (
+                <li key={u.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <img src={u.photoUrl || `https://i.pravatar.cc/80?u=${u.id}`} alt="" referrerPolicy="no-referrer" className="w-10 h-10 rounded-full object-cover shrink-0" />
+                    <div className="min-w-0">
+                      <p className={cn('font-bold text-sm flex items-center gap-2 flex-wrap', a.head)}>
+                        {u.name}
+                        <span className={cn('text-2xs font-semibold px-2 py-0.5 rounded-md', suspended ? 'bg-red-500/15 text-red-700 dark:text-red-300' : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300')}>
+                          {suspended ? t('Σε αναστολή', 'Suspended') : t('Ενεργός', 'Active')}
+                        </span>
+                        {u.idVerified && <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" aria-label={t('Επαληθευμένη ταυτότητα', 'ID verified')} />}
+                      </p>
+                      <p className={cn('text-xs mt-0.5', a.muted)}>
+                        {u.city} · {t(tierLabelEl(u.trustTier), tierLabelEn(u.trustTier))} · {t('Αξιοπιστία', 'Reliability')} {u.reliabilityScore}%
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant={suspended ? 'outline' : 'danger'}
+                    disabled={u.id === currentUserId}
+                    onClick={() => {
+                      toggleUserSuspended(u.id);
+                      toast.success(suspended ? t(`Ο λογαριασμός ${u.name} επανήλθε`, `${u.name} restored`) : t(`Ο λογαριασμός ${u.name} τέθηκε σε αναστολή`, `${u.name} suspended`));
+                    }}
+                    className="self-end sm:self-auto flex items-center gap-1.5"
+                  >
+                    {suspended ? <RotateCcw className="w-3.5 h-3.5" aria-hidden /> : <Ban className="w-3.5 h-3.5" aria-hidden />}
+                    {suspended ? t('Επαναφορά', 'Restore') : t('Αναστολή', 'Suspend')}
+                  </Button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Card>
+      )}
+
+      {adminTab === 'system' && (
+      <>
+      <Card className={cn('p-5 space-y-4', a.cardSurface)}>
+        <div>
+          <h2 className={cn('text-sm font-bold', a.head)}>{t('Κανόνες ασφάλειας & πλατφόρμας', 'Safety & platform safeguards')}</h2>
+          <p className={cn('text-xs mt-0.5', a.muted)}>{t('Κάθε αλλαγή αποθηκεύεται και καταγράφεται στο ιστορικό ενεργειών.', 'Every change is saved and written to the action log.')}</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {SAFEGUARDS.map((item) => {
+            const on = safeguards[item.key];
+            return (
+              <button
+                key={item.key}
+                type="button"
+                role="switch"
+                aria-checked={on}
+                onClick={() => {
+                  setAdminSafeguard(item.key, !on);
+                  toast.success(t('Η ρύθμιση ενημερώθηκε', 'Policy updated'));
+                }}
+                className={cn('p-4 rounded-xl border flex items-center justify-between gap-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent', a.borderB, a.isDark ? 'hover:bg-white/5' : 'hover:bg-gray-50')}
+              >
+                <span>
+                  <span className={cn('block text-sm font-bold', a.head)}>{item.title}</span>
+                  <span className={cn('block text-xs mt-1 leading-relaxed', a.muted)}>{item.desc}</span>
+                </span>
+                <span aria-hidden className={cn('w-11 h-6 rounded-full p-0.5 shrink-0 flex items-center transition-colors', on ? 'bg-accent' : 'bg-gray-300 dark:bg-gray-600')}>
+                  <span className={cn('w-5 h-5 rounded-full bg-white shadow-soft transition-transform', on ? 'translate-x-5' : 'translate-x-0')} />
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+      <Card className={cn('p-5', a.cardSurface)}>
+        <h2 className={cn('text-sm font-bold mb-3', a.head)}>{t('Ιστορικό ενεργειών διαχείρισης', 'Admin action log')}</h2>
+        {adminActions.length === 0 ? (
+          <p className={cn('text-sm', a.muted)}>{t('Δεν υπάρχουν ενέργειες ακόμη.', 'No actions yet.')}</p>
+        ) : (
+          <ol className="space-y-2">
+            {adminActions.slice(0, 8).map((act) => (
+              <li key={act.id} className={cn('flex items-center justify-between gap-3 text-xs', a.sub)}>
+                <span className="font-mono truncate">{act.action}{act.targetId ? ` → ${act.targetId}` : ''}</span>
+                <time dateTime={act.createdAt} className={cn('shrink-0 tabular-nums', a.muted)}>{new Date(act.createdAt).toLocaleString()}</time>
+              </li>
+            ))}
+          </ol>
+        )}
+      </Card>
+      </>
+      )}
+
+      {adminTab === 'moderation' && (
+      <>
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
         <div className="md:col-span-7 space-y-6">
           <h2 className={cn('text-base font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>
@@ -302,6 +537,7 @@ export default function AdminDashboardPageContent() {
       <ChatModerationPanel />
       </>
       )}
+      </div>
     </div>
   );
 }

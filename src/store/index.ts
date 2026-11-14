@@ -69,6 +69,21 @@ export interface AdminAction {
   createdAt: string;
 }
 
+/** Φ25 — platform policies toggled from Admin › System (persisted, audited). */
+export interface AdminSafeguards {
+  autoSuspendNoShow: boolean;
+  requireIdForOrganizers: boolean;
+  strictAntiSpam: boolean;
+  maintenanceMode: boolean;
+}
+
+export const DEFAULT_ADMIN_SAFEGUARDS: AdminSafeguards = {
+  autoSuspendNoShow: true,
+  requireIdForOrganizers: true,
+  strictAntiSpam: true,
+  maintenanceMode: false,
+};
+
 /** Φ20.6 — messages sent to organizers from their public profile. */
 export interface OrganizerMessage {
   id: string;
@@ -179,6 +194,15 @@ interface AppState {
   awardXp: (amount: number, reasonEl: string, reasonEn: string) => void;
   challengesJoined: string[];
   toggleChallengeJoined: (challengeId: string) => void;
+  /** Φ25 — yyyy-MM-dd of the last claimed daily challenge (one claim per day). */
+  dailyChallengeClaimedOn: string | null;
+  claimDailyChallenge: (amount: number) => boolean;
+
+  /** Φ25 (port from nakamas, now persisted) — admin user moderation & platform safeguards. */
+  suspendedUserIds: string[];
+  toggleUserSuspended: (userId: string) => void;
+  adminSafeguards: AdminSafeguards;
+  setAdminSafeguard: (key: keyof AdminSafeguards, value: boolean) => void;
   updateUser: (userId: string, data: Partial<typeof currentUser>) => void;
   toggleLiveTracking: (groupId: string, enabled: boolean) => void;
   updateMemberLocation: (
@@ -647,7 +671,7 @@ export const useStore = create<AppState>()(
   logAdminAction: (action, targetId, note) =>
     set((state) => ({
       adminActions: [
-        { id: `aa_${Date.now()}`, action, targetId, note, createdAt: new Date().toISOString() },
+        { id: `aa_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`, action, targetId, note, createdAt: new Date().toISOString() },
         ...state.adminActions,
       ],
     })),
@@ -711,6 +735,31 @@ export const useStore = create<AppState>()(
         ? state.challengesJoined.filter((id) => id !== challengeId)
         : [...state.challengesJoined, challengeId],
     })),
+
+  dailyChallengeClaimedOn: null,
+  claimDailyChallenge: (amount) => {
+    const today = new Date().toISOString().slice(0, 10);
+    if (get().dailyChallengeClaimedOn === today) return false;
+    set({ dailyChallengeClaimedOn: today });
+    get().awardXp(amount, 'Ημερήσια πρόκληση', 'Daily challenge');
+    return true;
+  },
+
+  suspendedUserIds: [],
+  toggleUserSuspended: (userId) => {
+    const suspended = get().suspendedUserIds.includes(userId);
+    set((state) => ({
+      suspendedUserIds: suspended
+        ? state.suspendedUserIds.filter((id) => id !== userId)
+        : [...state.suspendedUserIds, userId],
+    }));
+    get().logAdminAction(suspended ? 'restore_user' : 'suspend_user', userId);
+  },
+  adminSafeguards: { ...DEFAULT_ADMIN_SAFEGUARDS },
+  setAdminSafeguard: (key, value) => {
+    set((state) => ({ adminSafeguards: { ...state.adminSafeguards, [key]: value } }));
+    get().logAdminAction(`safeguard_${key}_${value ? 'on' : 'off'}`);
+  },
 
   updateUser: (userId, data) =>
     set((state) => {
@@ -1376,6 +1425,9 @@ export const useStore = create<AppState>()(
         userSettings: state.userSettings,
         bonusXp: state.bonusXp,
         challengesJoined: state.challengesJoined,
+        dailyChallengeClaimedOn: state.dailyChallengeClaimedOn,
+        suspendedUserIds: state.suspendedUserIds,
+        adminSafeguards: state.adminSafeguards,
         demoMode: state.demoMode,
       }),
       merge: (persisted, current) => {
@@ -1451,6 +1503,8 @@ export const useStore = create<AppState>()(
           isAuthenticated: Boolean(currentUserResolved),
           demoMode: Boolean(p.demoMode),
           userSettings,
+          adminSafeguards: { ...DEFAULT_ADMIN_SAFEGUARDS, ...(p.adminSafeguards as object) },
+          suspendedUserIds: Array.isArray(p.suspendedUserIds) ? (p.suspendedUserIds as string[]) : [],
         };
       },
     },
