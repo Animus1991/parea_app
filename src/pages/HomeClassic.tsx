@@ -23,6 +23,7 @@ import { useHomeEventFeed } from "../hooks/useHomeEventFeed";
 import { useHomeScrollToFilters } from "../hooks/useHomeScrollToFilters";
 import { useOnboardingWelcome } from "../hooks/useOnboardingWelcome";
 import { HomeOnboardingWelcomeBanner } from "../components/home/HomeOnboardingWelcomeBanner";
+import { HomeContinueStrip } from "../components/home/HomeContinueStrip";
 import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
 import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
 import { cn } from "../lib/utils";
@@ -157,6 +158,8 @@ export default function HomeClassic() {
         }
       />
 
+      <HomeContinueStrip />
+
       <EventStories events={storyEvents} />
 
       <CopilotInlinePrompt />
@@ -251,14 +254,29 @@ export default function HomeClassic() {
               <EmptyState
                 icon={CalendarX}
                 title={t("home.feed.no_events", "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.")}
-                description={t('Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία.', 'Try changing filters or category.')}
+                description={t(
+                  'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
+                  'Try changing filters or category — or see what’s nearby.',
+                )}
                 actionLabel={
                   hasActiveFilters || seekingHostOnly
                     ? t('Εκκαθάριση φίλτρων', 'Clear filters')
-                    : undefined
+                    : t('Στον χάρτη', 'On the map')
                 }
                 onAction={
-                  hasActiveFilters || seekingHostOnly ? handleClearAll : undefined
+                  hasActiveFilters || seekingHostOnly
+                    ? handleClearAll
+                    : () => navigate('/nearby')
+                }
+                secondaryLabel={
+                  hasActiveFilters || seekingHostOnly
+                    ? t('Στον χάρτη', 'On the map')
+                    : t('Κατηγορίες', 'Categories')
+                }
+                onSecondary={
+                  hasActiveFilters || seekingHostOnly
+                    ? () => navigate('/nearby')
+                    : () => navigate('/categories')
                 }
               />
             </div>

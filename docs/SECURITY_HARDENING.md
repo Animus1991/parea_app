@@ -46,7 +46,13 @@
 | Socket.IO | Πλαστός αποστολέας και δωμάτιο χωρίς join απορρίπτονται. Ξένο origin δεν συνδέεται |
 | Playwright | `/admin` κλειστό σε μέλη, ανοιχτό στον συντονιστή επίδειξης |
 
-Δεν επαληθεύτηκε: οι κανόνες Firestore με τον emulator. Δεν υπάρχει στο περιβάλλον.
+Οι κανόνες Firestore επαληθεύονται πλέον με emulator:
+
+| Έλεγχος | Πώς |
+|---|---|
+| `npm run test:rules` | `firebase-tools` emulator + `server/firestore.rules.test.ts` |
+| CI job `Firestore rules (emulator)` | `.github/workflows/ci.yml` |
+| Ανάθεση ρόλων | `npm run set-role` → `scripts/set-role.ts` / `server/roleAdmin.ts` |
 
 ## 4. Ταυτότητα στον server (δεύτερος γύρος, 14/11/2026)
 
@@ -94,7 +100,6 @@
 
 ## 6. Τι μένει ανοιχτό
 
-- Τα `memberIds` των δωματίων chat στο Firestore πρέπει να τα γράφει Cloud Function. Δεν υπάρχει project Functions στο αποθετήριο.
-- Οι κανόνες Firestore δεν έχουν ελεγχθεί με τον emulator, γιατί δεν υπάρχει στο περιβάλλον.
-- Ορισμός ρόλων: χρειάζεται μια μικρή εργασία διαχείρισης με το Admin SDK (`setCustomUserClaims`) στο περιβάλλον του έργου.
-- Οι ροές σύνδεσης Firebase και Google δεν δοκιμάστηκαν ζωντανά με το CSP, γιατί δεν υπάρχει project Firebase στο περιβάλλον. Σε περίπτωση προβλήματος, το `CSP_MODE=report-only` δείχνει τι μπλοκάρεται χωρίς να το εμποδίζει.
+- Τα `memberIds` των δωματίων chat στο Firestore πρέπει να τα γράφει Cloud Function. Stub + οδηγίες: `functions/` (το demo chat συνεχίζει χωρίς να χαθεί λειτουργικότητα).
+- Ορισμός ρόλων σε live project: `npm run set-role -- <uid> moderator|admin|member` όταν υπάρχουν Admin SDK credentials.
+- Οι ροές σύνδεσης Firebase και Google με πραγματικό project × CSP: δοκίμασε πρώτα `CSP_MODE=report-only`. Το UI δείχνει μία ήρεμη ειδοποίηση αν ο browser αναφέρει CSP violation (`CspViolationToast`).

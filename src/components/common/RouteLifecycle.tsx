@@ -3,6 +3,8 @@ import { useLocation, useNavigationType } from 'react-router-dom';
 import { trackPage } from '../../lib/analytics';
 import { useLanguage } from '../../lib/i18n';
 import { pageTitleForPath } from '../../lib/pageTitle';
+import { isResumeWorthyPath } from '../../lib/resumePath';
+import { useStore } from '../../store';
 
 const APP_NAME = 'Nakamas';
 /** How long a back/forward restore waits for lazy content to grow tall enough. */
@@ -18,6 +20,7 @@ export function RouteLifecycle() {
   const { pathname, key } = useLocation();
   const navigationType = useNavigationType();
   const { language } = useLanguage();
+  const setLastResumePath = useStore((s) => s.setLastResumePath);
   const [announcement, setAnnouncement] = useState('');
   const positions = useRef(new Map<string, number>());
 
@@ -32,7 +35,10 @@ export function RouteLifecycle() {
       pathname === '/' ? `${APP_NAME} — ${pageTitle}` : pageTitle === APP_NAME ? APP_NAME : `${pageTitle} · ${APP_NAME}`;
     trackPage(pathname, { title: pageTitle });
     setAnnouncement(pageTitle);
-  }, [pathname, language]);
+    if (isResumeWorthyPath(pathname)) {
+      setLastResumePath(pathname);
+    }
+  }, [pathname, language, setLastResumePath]);
 
   // Remember the scroll position of every history entry.
   useEffect(() => {

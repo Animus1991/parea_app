@@ -11,6 +11,7 @@ import { EventStories } from './EventStories';
 import { HomeBuddySeekStrip } from '../buddySeek/HomeBuddySeekStrip';
 import { HomeThemedEnrichment } from './HomeThemedEnrichment';
 import { HomeBelowFold } from './HomeBelowFold';
+import { HomeContinueStrip } from './HomeContinueStrip';
 import { HomeThemedHeroSwitch } from './HomeThemedHeroSwitch';
 import { HomeRichHero } from './HomeRichHero';
 import { HomeFiltersSection } from './HomeFiltersSection';
@@ -166,6 +167,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         }
       />
 
+      <HomeContinueStrip />
+
       <EventStories events={storyEvents} />
 
       <CopilotInlinePrompt />
@@ -261,16 +264,28 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
                   'Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.',
                 )}
                 description={t(
-                  'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία.',
-                  'Try changing filters or category.',
+                  'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
+                  'Try changing filters or category — or see what’s nearby.',
                 )}
                 actionLabel={
                   hasActiveFilters || seekingHostOnly
                     ? t('Εκκαθάριση φίλτρων', 'Clear filters')
-                    : undefined
+                    : t('Στον χάρτη', 'On the map')
                 }
                 onAction={
-                  hasActiveFilters || seekingHostOnly ? handleClearAll : undefined
+                  hasActiveFilters || seekingHostOnly
+                    ? handleClearAll
+                    : () => navigate('/nearby')
+                }
+                secondaryLabel={
+                  hasActiveFilters || seekingHostOnly
+                    ? t('Στον χάρτη', 'On the map')
+                    : t('Κατηγορίες', 'Categories')
+                }
+                onSecondary={
+                  hasActiveFilters || seekingHostOnly
+                    ? () => navigate('/nearby')
+                    : () => navigate('/categories')
                 }
               />
             </div>

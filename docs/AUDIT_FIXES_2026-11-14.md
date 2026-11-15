@@ -172,8 +172,18 @@ Branch: `ccr-4a44ddef-fgcwnr`, πάνω στο πιο πρόσφατο branch τ
 
 ## 6. Τι μένει, με ειλικρίνεια
 
-| Θέμα | Γιατί δεν έγινε εδώ |
+| Θέμα | Κατάσταση |
 |---|---|
-| `memberIds` δωματίων chat στο Firestore από Cloud Function | Δεν υπάρχει project Functions στο αποθετήριο |
-| Δοκιμή κανόνων Firestore με emulator | Ο emulator δεν υπάρχει στο περιβάλλον |
-| Ζωντανή δοκιμή σύνδεσης Firebase και Google με το CSP | Δεν υπάρχει project Firebase στο περιβάλλον. Αν χρειαστεί, το `CSP_MODE=report-only` καταγράφει χωρίς να μπλοκάρει |
+| `memberIds` δωματίων chat στο Firestore από Cloud Function | Stub + οδηγίες στο `functions/` · χρειάζεται live Firebase project |
+| Δοκιμή κανόνων Firestore με emulator | Έγινε: `npm run test:rules` + CI job |
+| Ανάθεση ρόλων (claims) | `npm run set-role` · χρειάζονται Admin SDK credentials στο περιβάλλον |
+| Ζωντανή δοκιμή σύνδεσης Firebase/Google × CSP | Χωρίς live project· `CSP_MODE=report-only` + `CspViolationToast` στο UI |
+
+## 7. Pass 3 (loyalty + hardening, 15/11/2026)
+
+- Resume strip στην Αρχική (`lastResumePath`) — συνέχεια χωρίς νέο θόρυβο στο hero.
+- Καθαρότερα empty states με δεύτερο ήσυχο CTA.
+- Theme routers που ήδη είχαν `*PageContent` δείχνουν απευθείας το content (λιγότερο dead code στο entry).
+- Vite: επιπλέον vendor chunks (radix, icons, query, state, socket).
+- Contrast audit: σύνθεση ημιδιαφανών `accent-soft` πάνω στο surface (λιγότερα skips).
+- ESLint: 0 warnings από `no-console`.

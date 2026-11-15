@@ -59,6 +59,12 @@ export default defineConfig(({mode}) => {
             if (/node_modules\/(react|react-dom|scheduler|react-router|react-router-dom)\//.test(id)) return 'vendor-react';
             if (/node_modules\/(motion|motion-dom|motion-utils|framer-motion)\//.test(id)) return 'vendor-motion';
             if (/node_modules\/(date-fns)\//.test(id)) return 'vendor-date';
+            // Split heavy, slowly-changing libs out of the main index chunk for mobile TTI.
+            if (/node_modules\/@radix-ui\//.test(id)) return 'vendor-radix';
+            if (/node_modules\/lucide-react\//.test(id)) return 'vendor-icons';
+            if (/node_modules\/@tanstack\//.test(id)) return 'vendor-query';
+            if (/node_modules\/(zustand|immer)\//.test(id)) return 'vendor-state';
+            if (/node_modules\/(socket\.io-client|engine\.io-client)\//.test(id)) return 'vendor-socket';
             return undefined;
           },
         },

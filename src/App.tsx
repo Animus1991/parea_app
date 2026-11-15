@@ -5,6 +5,7 @@ import { AnimatePresence } from "motion/react";
 import { AppShell } from "./components/layout/AppShell";
 import { RouteLifecycle } from "./components/common/RouteLifecycle";
 import { OfflineBanner } from "./components/common/OfflineBanner";
+import { CspViolationToast } from "./components/common/CspViolationToast";
 import { CommandPalette } from "./components/common/CommandPalette";
 import { RequireAdmin } from "./components/auth/RequireAdmin";
 import { CopilotBridge } from "./components/copilot/CopilotBridge";
@@ -93,6 +94,7 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <RouteLifecycle />
         <OfflineBanner />
+        <CspViolationToast />
         <AnimatePresence mode="popLayout">
         <Suspense fallback={<PageLoading />}>
           <Routes location={location} key={location.pathname}>
@@ -108,6 +110,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <RouteLifecycle />
       <OfflineBanner />
+      <CspViolationToast />
       <CommandPalette />
       <CopilotBridge />
       <AppShell>
