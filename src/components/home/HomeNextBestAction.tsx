@@ -18,6 +18,7 @@ export function HomeNextBestAction() {
   const onboardingCompleted = useStore((s) => s.onboardingCompleted);
   const notifications = useStore((s) => s.notifications);
   const savedEvents = useStore((s) => s.savedEvents);
+  const lastResumePath = useStore((s) => s.lastResumePath);
   const conversations = useChatStore((s) => s.conversations);
   const { plannedEvents } = usePlannedEvents();
 
@@ -36,9 +37,11 @@ export function HomeNextBestAction() {
       savedEventsCount: savedEvents.length,
       profileInterestsCount: user?.interests?.length ?? 0,
       hasBio: Boolean(user?.bio?.trim()),
+      lastResumePath,
     });
-    return list[0] ?? null;
-  }, [user, onboardingCompleted, notifications, unreadChats, plannedEvents.length, savedEvents.length]);
+    // Prefer a concrete next step over resume when both exist (resume has its own strip).
+    return list.find((a) => a.id !== 'resume-last') ?? list[0] ?? null;
+  }, [user, onboardingCompleted, notifications, unreadChats, plannedEvents.length, savedEvents.length, lastResumePath]);
 
   if (!action || !user) return null;
 

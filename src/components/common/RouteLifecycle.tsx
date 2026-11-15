@@ -3,12 +3,15 @@ import { useLocation } from 'react-router-dom';
 import { trackPage } from '../../lib/analytics';
 import { useLanguage } from '../../lib/i18n';
 import { pageTitleForPath } from '../../lib/pageTitle';
+import { isResumeWorthyPath } from '../../lib/resumePath';
+import { useStore } from '../../store';
 
 const APP_NAME = 'Nakamas';
 
 export function RouteLifecycle() {
   const { pathname } = useLocation();
   const { language } = useLanguage();
+  const setLastResumePath = useStore((s) => s.setLastResumePath);
   const [announcement, setAnnouncement] = useState('');
 
   useEffect(() => {
@@ -22,7 +25,10 @@ export function RouteLifecycle() {
 
     trackPage(pathname, { title: pageTitle });
     setAnnouncement(pageTitle);
-  }, [pathname, language]);
+    if (isResumeWorthyPath(pathname)) {
+      setLastResumePath(pathname);
+    }
+  }, [pathname, language, setLastResumePath]);
 
   return (
     <div aria-live="polite" role="status" className="sr-only">
