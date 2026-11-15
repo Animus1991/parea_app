@@ -139,12 +139,16 @@ export default function TrustCenterPageContent() {
               )}
             </div>
             <div className="flex items-center justify-between">
-              <div className={cn("flex items-center gap-2 text-sm font-medium", a.muted)}>
-                <UserCheck className="h-3.5 w-3.5" />{t('Ταυτότητα', 'Government ID')}
+              <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
+                <UserCheck className={cn("h-3.5 w-3.5", a.muted)} />{t('Ταυτότητα', 'Government ID')}
               </div>
-              <button onClick={() => navigate('/verification')} className={cn("text-xs font-bold cursor-pointer tracking-wide", a.link)}>
-                {t('Επαλήθευση', 'Verify')}
-              </button>
+              {currentUser.idVerified ? (
+                <Badge variant="success" className="text-xs px-1.5 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
+              ) : (
+                <button type="button" onClick={() => navigate('/verification')} className={cn("text-xs font-bold cursor-pointer tracking-wide", a.link)}>
+                  {t('Επαλήθευση', 'Verify')}
+                </button>
+              )}
             </div>
           </div>
 

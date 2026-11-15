@@ -78,6 +78,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     handleSelectMood,
     isLoading,
     isError,
+    refetch,
   } = feed;
 
   const currentUser = feed.currentUser;
@@ -253,6 +254,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
                 icon={CalendarX}
                 title={t('Αδυναμία φόρτωσης εκδηλώσεων', 'Could not load events')}
                 description={t('Εμφανίζονται τα αποθηκευμένα δεδομένα όταν είναι διαθέσιμα.', 'Cached data is shown when available.')}
+                actionLabel={t('Επανάληψη', 'Retry')}
+                onAction={() => { void refetch(); }}
               />
             </div>
           ) : sortedEvents.length === 0 ? (

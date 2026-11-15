@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useOnboardingWelcome } from '../../hooks/useOnboardingWelcome';
 import { HomeOnboardingWelcomeBanner } from './HomeOnboardingWelcomeBanner';
 import { HomePendingFeedbackBanner } from './HomePendingFeedbackBanner';
+import { HomeVerifyBanner } from './HomeVerifyBanner';
 
 export interface HomeThemedEnrichmentProps {
   /** Switch to Discover when landing from onboarding (optional). */
@@ -9,7 +10,7 @@ export interface HomeThemedEnrichmentProps {
 }
 
 /**
- * Above-fold enrichment only (P4): welcome + pending feedback.
+ * Above-fold enrichment only (P4): welcome + verify nudge + pending feedback.
  * Stats / tip / seeking-host moved to HomeBelowFold.
  */
 export function HomeThemedEnrichment({ onPreferDiscoverFeed }: HomeThemedEnrichmentProps) {
@@ -22,6 +23,7 @@ export function HomeThemedEnrichment({ onPreferDiscoverFeed }: HomeThemedEnrichm
   return (
     <>
       {showWelcome && <HomeOnboardingWelcomeBanner onDismiss={dismissWelcome} />}
+      <HomeVerifyBanner />
       <HomePendingFeedbackBanner />
     </>
   );

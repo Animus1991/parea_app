@@ -193,22 +193,33 @@ export default function ConnectionsPageContent() {
     );
     setInviteForUserId(null);
   };
-  const handleViewProfile = (user: { id: string; isOrganizer: boolean }) => {
-    if (user.isOrganizer) navigate(`/organizer/${user.id}`);
-    else navigate('/profile');
+  const handleViewProfile = (user: { id: string; isOrganizer?: boolean }) => {
+    // Organizer page loads any user id from the store — use it for everyone so
+    // “View Profile” never dumps into the viewer’s own /profile.
+    navigate(`/organizer/${user.id}`);
   };
   const handleRemove = (userId: string, name: string) => {
     removeConnection(userId);
     addNotification({ message: t(`Αφαιρέθηκε η σύνδεση με ${name}`, `Removed connection with ${name}`), type: 'system', time: 'now' });
+    toast.success(t(`Αφαιρέθηκε η σύνδεση με ${name}`, `Removed connection with ${name}`));
   };
   const handleAccept = (requestId: string, name: string) => {
     acceptConnectionRequest(requestId);
     addNotification({ message: t(`Αποδεχτήκατε τη σύνδεση με ${name}`, `Accepted connection with ${name}`), type: 'system', time: 'now' });
+    toast.success(t(`Αποδεχτήκατε τη σύνδεση με ${name}`, `Accepted connection with ${name}`));
   };
-  const handleDecline = (requestId: string) => declineConnectionRequest(requestId);
+  const handleDecline = (requestId: string, name?: string) => {
+    declineConnectionRequest(requestId);
+    toast.info(
+      name
+        ? t(`Απορρίφθηκε το αίτημα από ${name}`, `Declined request from ${name}`)
+        : t('Το αίτημα απορρίφθηκε', 'Request declined'),
+    );
+  };
   const handleConnect = (userId: string, name: string) => {
     sendConnectionRequest(userId);
     addNotification({ message: t(`Στάλθηκε αίτημα σύνδεσης στο ${name}`, `Connection request sent to ${name}`), type: 'system', time: 'now' });
+    toast.success(t(`Στάλθηκε αίτημα σύνδεσης στο ${name}`, `Connection request sent to ${name}`));
   };
 
   // ─── Render ──────────────────────────────────────────────
@@ -456,7 +467,7 @@ export default function ConnectionsPageContent() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleDecline(req.id)}
+                    onClick={() => handleDecline(req.id, req.user.name)}
                     aria-label={t('Απόρριψη αιτήματος', 'Decline request')}
                     className={`p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}
                   >

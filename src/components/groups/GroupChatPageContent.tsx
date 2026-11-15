@@ -255,11 +255,13 @@ export default function GroupChatPageContent() {
         <div className="flex items-center gap-2">
           {isMe && (
             <button
+              type="button"
               onClick={() => handleDeleteMessage(msg.id)}
               className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all rounded-full"
               title={t("Διαγραφή μηνύματος", "Delete message")}
+              aria-label={t("Διαγραφή μηνύματος", "Delete message")}
             >
-              <X className="h-3.5 w-3.5" />
+              <X className="h-3.5 w-3.5" aria-hidden />
             </button>
           )}
           <div
@@ -421,11 +423,13 @@ export default function GroupChatPageContent() {
                 </span>
               </div>
               <button
+                type="button"
                 onClick={() => setShowEphemeralBanner(false)}
                 className="p-1.5 text-amber-600/80 hover:bg-amber-200 hover:text-amber-800 rounded-full transition-colors absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 shrink-0"
                 title={t("Κλείσιμο Ειδοποίησης", "Close Banner")}
+                aria-label={t("Κλείσιμο Ειδοποίησης", "Close Banner")}
               >
-                <X className="h-4 w-4 sm:h-5 sm:w-5" />
+                <X className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden />
               </button>
             </div>
           )}
@@ -471,9 +475,11 @@ export default function GroupChatPageContent() {
                     : "bg-gray-50 dark:bg-white/5 text-gray-400 border-gray-200 dark:border-border hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-600"
                 }`}
                 title={t("Τοποθεσία & Ασφάλεια", "Location & Safety")}
+                aria-label={t("Τοποθεσία & Ασφάλεια", "Location & Safety")}
               >
                 <Compass
                   className={`h-5 w-5 ${isSharingLocation ? "animate-pulse" : ""}`}
+                  aria-hidden
                 />
               </button>
               <button
@@ -485,8 +491,9 @@ export default function GroupChatPageContent() {
                     : "bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
                 }`}
                 title={t("SOS / Βοήθεια", "SOS / Help")}
+                aria-label={t("SOS / Βοήθεια", "SOS / Help")}
               >
-                <AlertTriangle className="h-5 w-5" />
+                <AlertTriangle className="h-5 w-5" aria-hidden />
               </button>
               <div className="flex-1 relative">
                 <input
