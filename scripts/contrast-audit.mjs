@@ -59,14 +59,29 @@ function parseHex(hex) {
   ];
 }
 
+function parseAlpha(raw) {
+  if (raw == null) return 1;
+  return raw.endsWith('%') ? parseFloat(raw) / 100 : parseFloat(raw);
+}
+
+/** Alpha-composite `fg` over opaque `bg` (sRGB 0–255). */
+function compositeOver(fg, bg, alpha) {
+  const a = clamp01(alpha);
+  return [
+    Math.round(fg[0] * a + bg[0] * (1 - a)),
+    Math.round(fg[1] * a + bg[1] * (1 - a)),
+    Math.round(fg[2] * a + bg[2] * (1 - a)),
+  ];
+}
+
 function parseRgb(str) {
   const m = str.match(
     /rgba?\(\s*([\d.]+)\s*[, ]\s*([\d.]+)\s*[, ]\s*([\d.]+)(?:\s*[,/]\s*([\d.]+%?))?\s*\)/i,
   );
   if (!m) return null;
-  const a = m[4] == null ? 1 : m[4].endsWith('%') ? parseFloat(m[4]) / 100 : parseFloat(m[4]);
-  if (a < 1) return null; // skip translucent — cannot resolve without composite bg
-  return [Number(m[1]), Number(m[2]), Number(m[3])];
+  const rgb = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const a = parseAlpha(m[4]);
+  return { rgb, a };
 }
 
 function parseHsl(str) {
@@ -81,8 +96,7 @@ function parseHsl(str) {
     : null;
   const g = m || m2;
   if (!g) return null;
-  const a = g[4] == null ? 1 : g[4].endsWith('%') ? parseFloat(g[4]) / 100 : parseFloat(g[4]);
-  if (a < 1) return null;
+  const a = parseAlpha(g[4]);
   const h = Number(g[1]);
   const s = Number(g[2]) / 100;
   const l = Number(g[3]) / 100;
@@ -98,20 +112,29 @@ function parseHsl(str) {
   else if (h < 240) [r, g0, b] = [0, x, c];
   else if (h < 300) [r, g0, b] = [x, 0, c];
   else [r, g0, b] = [c, 0, x];
-  return [
+  const rgb = [
     Math.round((r + m0) * 255),
     Math.round((g0 + m0) * 255),
     Math.round((b + m0) * 255),
   ];
+  return { rgb, a };
 }
 
-function parseColor(raw) {
+/**
+ * Parse a CSS color. When alpha < 1, composite over `fallbackBg` (theme surface)
+ * so translucent token pairs (accent-soft) are still audited instead of skipped.
+ */
+function parseColor(raw, fallbackBg = null) {
   if (!raw) return null;
   const v = raw.trim();
   if (v.startsWith('#')) return parseHex(v);
-  if (v.startsWith('rgb')) return parseRgb(v);
-  if (v.startsWith('hsl')) return parseHsl(v);
-  return null;
+  let parsed = null;
+  if (v.startsWith('rgb')) parsed = parseRgb(v);
+  else if (v.startsWith('hsl')) parsed = parseHsl(v);
+  if (!parsed) return null;
+  if (parsed.a >= 1 - 1e-6) return parsed.rgb;
+  if (!fallbackBg) return null;
+  return compositeOver(parsed.rgb, fallbackBg, parsed.a);
 }
 
 function extractVars(block) {
@@ -176,6 +199,8 @@ let checks = 0;
 
 for (const themeId of THEME_IDS) {
   const vars = resolveTheme(themeId);
+  // Opaque surface used as composite backdrop for translucent accent-soft tokens.
+  const surface = parseColor(vars['color-surface'] || '#ffffff');
   for (const pair of PAIRS) {
     const fgRaw = vars[pair.fg];
     const bgRaw = vars[pair.bg];
@@ -183,8 +208,8 @@ for (const themeId of THEME_IDS) {
       skipped.push(`${themeId}: missing ${pair.fg}/${pair.bg}`);
       continue;
     }
-    const fg = parseColor(fgRaw);
-    const bg = parseColor(bgRaw);
+    const bg = parseColor(bgRaw, surface);
+    const fg = parseColor(fgRaw, bg || surface);
     if (!fg || !bg) {
       skipped.push(`${themeId}: unparsed ${pair.label} (${fgRaw} / ${bgRaw})`);
       continue;

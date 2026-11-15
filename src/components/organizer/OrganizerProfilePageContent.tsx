@@ -169,15 +169,17 @@ export default function OrganizerProfilePageContent() {
                   </div>
                   <div className="flex-1">
                     <h3 className={cn('font-bold line-clamp-1 group-hover:text-cyan-600 transition-colors', p.head)}>{event.title}</h3>
-                    <p className={cn('text-xs mt-1', p.muted)}>
-                      {event.time} • {event.locationArea}
+                    <p className={cn('card-meta mt-1', p.muted)}>
+                      <span className="capitalize">{event.category}</span>
+                      <span aria-hidden className="opacity-40"> · </span>
+                      {event.time}
+                      <span aria-hidden className="opacity-40"> · </span>
+                      {event.locationArea}
+                      <span aria-hidden className="opacity-40"> · </span>
+                      {event.isPaid ? `€${event.price}` : t('Δωρεάν', 'Free')}
                     </p>
-                    <div className="mt-2 flex gap-2">
-                      <Badge variant="neutral">{event.category}</Badge>
-                      {event.isPaid ? <Badge variant="outline">€{event.price}</Badge> : <Badge variant="outline">{t('Δωρεάν', 'Free')}</Badge>}
-                    </div>
                   </div>
-                  <div className={cn('hidden sm:flex items-center text-2xs font-bold tracking-wide text-cyan-600 self-center')}>
+                  <div className={cn('hidden sm:flex items-center card-meta font-semibold text-cyan-600 self-center')}>
                     {t('Προβολή', 'View')} &rarr;
                   </div>
                 </Card>

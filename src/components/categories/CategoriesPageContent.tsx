@@ -305,12 +305,7 @@ export default function CategoriesPageContent() {
             >
               {cat.displayName}
             </h3>
-            <p
-              className={cn(
-                'text-xs font-semibold mt-1.5 px-2 py-0.5 rounded-lg',
-                p.isDark ? 'bg-gray-800 text-gray-400' : 'bg-gray-100 text-gray-500',
-              )}
-            >
+            <p className={cn('card-meta font-medium mt-1.5', p.muted)}>
               {cat.count}{' '}
               {cat.count === 1 ? t('Εκδήλωση', 'Event') : t('Εκδηλώσεις', 'Events')}
             </p>

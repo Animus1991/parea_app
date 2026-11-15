@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, MessageCircle, MoreVertical, MapPin, Filter, UserPlus, UserMinus, Flag, Eye, CalendarPlus, Check, X, ChevronDown, Users, ShieldCheck } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
-import { Badge } from '../common/Badge';
+import { CardInterestLine } from '../common/CardInterestLine';
 import { toast } from 'sonner';
 import { EmptyState } from '../common/EmptyState';
 import { Modal } from '../common/Modal';
@@ -333,20 +333,19 @@ export default function ConnectionsPageContent() {
                       {conn.name}
                     </button>
                   </h3>
-                  <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.muted}`}>
-                    <MapPin className="w-3 h-3 shrink-0" /> {conn.city}
+                  <p className={`card-meta flex items-center gap-1 mt-0.5 ${a.muted}`}>
+                    <MapPin className="w-3 h-3 shrink-0" aria-hidden /> {conn.city}
+                    <span aria-hidden className="opacity-40">·</span>
+                    <span className="capitalize">{conn.role}</span>
+                    <span aria-hidden className="opacity-40">·</span>
+                    <span>{conn.mutual} {t('Κοινοί', 'mutuals')}</span>
                   </p>
-                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    <Badge variant="neutral" className="text-xs px-1.5 py-0">{conn.role}</Badge>
-                    <span className={`text-xs font-medium ${a.muted}`}>{conn.mutual} {t('Κοινοί', 'mutuals')}</span>
-                  </div>
                   {conn.sharedInterests.length > 0 && (
-                    <div className="flex gap-1 mt-2 flex-wrap">
-                      {conn.sharedInterests.slice(0, 3).map((interest) => (
-                        <span key={interest} className={`text-xs px-1.5 py-0.5 rounded-full border font-medium ${a.tagBg}`}>{interest}</span>
-                      ))}
-                      {conn.sharedInterests.length > 3 && <span className={`text-xs font-medium ${a.muted}`}>+{conn.sharedInterests.length - 3}</span>}
-                    </div>
+                    <CardInterestLine
+                      items={conn.sharedInterests}
+                      max={3}
+                      className={`mt-1.5 ${a.muted}`}
+                    />
                   )}
                 </div>
               </div>
@@ -434,10 +433,12 @@ export default function ConnectionsPageContent() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className={`font-bold text-sm ${a.head}`}>{req.user.name}</h3>
-                      {req.user.isOrganizer && <Badge variant="neutral" className="text-xs px-1.5 py-0">{t('Διοργανωτής', 'Organizer')}</Badge>}
+                      {req.user.isOrganizer && (
+                        <span className={`card-meta font-medium ${a.muted}`}>{t('Διοργανωτής', 'Organizer')}</span>
+                      )}
                     </div>
-                    <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.muted}`}>
-                      <MapPin className="w-3 h-3" /> {req.user.city}
+                    <p className={`card-meta flex items-center gap-1 mt-0.5 ${a.muted}`}>
+                      <MapPin className="w-3 h-3 shrink-0" aria-hidden /> {req.user.city}
                     </p>
                     {req.message && <p className={`text-xs mt-1.5 italic ${a.isDark ? 'text-gray-300' : 'text-gray-600'}`}>"{req.message}"</p>}
                   </div>
@@ -489,15 +490,18 @@ export default function ConnectionsPageContent() {
                           {user.name}
                         </button>
                       </h3>
-                      <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.muted}`}>
-                        <MapPin className="w-3 h-3" /> {user.city}
-                        {user.isOrganizer && <> · <Badge variant="neutral" className="text-xs px-1.5 py-0">{t('Διοργανωτής', 'Organizer')}</Badge></>}
+                      <p className={`card-meta flex items-center gap-1 mt-0.5 ${a.muted}`}>
+                        <MapPin className="w-3 h-3 shrink-0" aria-hidden /> {user.city}
+                        {user.isOrganizer && (
+                          <>
+                            <span aria-hidden className="opacity-40">·</span>
+                            <span>{t('Διοργανωτής', 'Organizer')}</span>
+                          </>
+                        )}
                       </p>
-                      <div className="flex gap-1 mt-2 flex-wrap">
-                        {user.sharedInterests.slice(0, 3).map((interest) => (
-                          <span key={interest} className={`text-xs px-1.5 py-0.5 rounded-full border font-medium ${a.tagBg}`}>{interest}</span>
-                        ))}
-                      </div>
+                      {user.sharedInterests.length > 0 && (
+                        <CardInterestLine items={user.sharedInterests} max={3} className={`mt-1.5 ${a.muted}`} />
+                      )}
                     </div>
                   </div>
                   <button

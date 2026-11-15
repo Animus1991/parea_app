@@ -205,7 +205,20 @@ Branch: `ccr-4a44ddef-fgcwnr`, πάνω στο πιο πρόσφατο branch τ
 
 ## 7. Τι μένει, με ειλικρίνεια
 
-| Θέμα | Γιατί δεν έγινε εδώ |
+| Θέμα | Κατάσταση |
 |---|---|
 | Μέλη δωματίων chat (`memberIds`) από έμπιστο backend | Οι ομάδες ζουν μόνο στον client, οπότε κανένας server δεν ξέρει με βεβαιότητα ποιος είναι μέλος. Χρειάζεται πρώτα να μεταφερθούν οι ομάδες στον server ή στο Firestore. Αν γράφονταν μέλη χωρίς τέτοια πηγή, θα ήταν ψεύτικη ασφάλεια |
 | Ζωντανή δοκιμή σύνδεσης Firebase και Google με το CSP | Δεν υπάρχει project Firebase στο περιβάλλον. Αν χρειαστεί, το `CSP_MODE=report-only` καταγράφει χωρίς να μπλοκάρει |
+| Cloud Function για `memberIds` | Υπάρχει προσχέδιο και οδηγίες στο `functions/`. Χρειάζεται έμπιστη πηγή ομάδων και πραγματικό project Firebase |
+
+## 8. Τρίτο πέρασμα του άλλου μοντέλου (15/11/2026, συγχωνεύτηκε)
+
+- Resume strip στην Αρχική (`lastResumePath`) — συνέχεια χωρίς νέο θόρυβο στο hero.
+- Καθαρότερα empty states με δεύτερο ήσυχο CTA.
+- Theme routers που ήδη είχαν `*PageContent` δείχνουν απευθείας το content (λιγότερο dead code στο entry).
+- Vite: επιπλέον vendor chunks (radix, icons, query, state, socket).
+- Contrast audit: σύνθεση ημιδιαφανών `accent-soft` πάνω στο surface (λιγότερα skips).
+- ESLint: 0 warnings από `no-console`.
+- Ήσυχη εμφάνιση καρτών σε όλες τις λίστες (`CardMetaLine`, `CardInterestLine`).
+- Ειδοποίηση παραβίασης CSP στο UI (`CspViolationToast`).
+- Προσχέδιο Cloud Function για τα μέλη δωματίων chat (`functions/`).

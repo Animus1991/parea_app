@@ -4,7 +4,6 @@ import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { Card } from '../common/Card';
-import { Badge } from '../common/Badge';
 import { EmptyState } from '../common/EmptyState';
 import { EventCardSkeleton } from '../common/Skeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';
@@ -169,31 +168,39 @@ export default function HistoryPageContent() {
                   className={cn("w-12 h-12 rounded-2xl object-cover shrink-0 shadow-soft", a.isDark && "opacity-90")}
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <Badge variant="neutral" className="text-xs">{event.category}</Badge>
-                    <Badge variant="success" className="text-xs">{t('Ολοκληρώθηκε', 'Completed')}</Badge>
-                  </div>
                   <h3 className={cn("font-bold text-base truncate", a.head)}>{event.title}</h3>
-                  <div className={cn("flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium", a.sub)}>
-                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{format(parseISO(event.date), 'dd MMM yyyy', { locale: dateFnsLocale(language) })}</span>
-                    <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{event.locationArea}</span>
+                  <p className={cn("card-meta mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5", a.sub)}>
+                    <span className="capitalize">{event.category}</span>
+                    <span aria-hidden className="opacity-40">·</span>
+                    <span className="inline-flex items-center gap-1">
+                      <Calendar className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
+                      {format(parseISO(event.date), 'dd MMM yyyy', { locale: dateFnsLocale(language) })}
+                    </span>
+                    <span aria-hidden className="opacity-40">·</span>
+                    <span className="inline-flex items-center gap-1 min-w-0">
+                      <MapPin className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
+                      <span className="truncate">{event.locationArea}</span>
+                    </span>
                     {feedbackSubmitted[event.id] && (
-                      <span className="flex items-center gap-0.5">
-                        {Array.from({ length: feedbackSubmitted[event.id].overallRating }).map((_, s) => (
-                          <Star key={s} className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
-                        ))}
-                      </span>
+                      <>
+                        <span aria-hidden className="opacity-40">·</span>
+                        <span className="inline-flex items-center gap-0.5" aria-label={t('Αξιολόγηση', 'Rating')}>
+                          {Array.from({ length: feedbackSubmitted[event.id].overallRating }).map((_, s) => (
+                            <Star key={s} className="w-2.5 h-2.5 text-amber-500 fill-amber-500" aria-hidden />
+                          ))}
+                        </span>
+                      </>
                     )}
-                  </div>
+                  </p>
                 </div>
                 <div className="self-center shrink-0">
                   {feedbackSubmitted[event.id] ? (
-                    <span className={cn("flex items-center gap-1 text-2xs font-bold px-2 py-1 rounded-full", a.isDark ? "text-green-400 bg-green-900/20" : "text-green-600 bg-green-50")}>
-                      <CheckCircle2 className="w-3 h-3" />{t('Αξιολογήθηκε', 'Reviewed')}
+                    <span className={cn("flex items-center gap-1 card-meta font-semibold", a.isDark ? "text-green-400" : "text-green-700")}>
+                      <CheckCircle2 className="w-3.5 h-3.5" aria-hidden />{t('Αξιολογήθηκε', 'Reviewed')}
                     </span>
                   ) : (
-                    <span className={cn("flex items-center gap-1 text-2xs font-bold px-2 py-1 rounded-full", a.isDark ? "text-amber-400 bg-amber-900/20" : "text-amber-600 bg-amber-50")}>
-                      <Star className="w-3 h-3" />{t('Εκκρεμεί', 'Pending')}
+                    <span className={cn("flex items-center gap-1 card-meta font-semibold", a.isDark ? "text-amber-400" : "text-amber-700")}>
+                      <Star className="w-3.5 h-3.5" aria-hidden />{t('Εκκρεμεί', 'Pending')}
                     </span>
                   )}
                 </div>

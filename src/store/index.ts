@@ -150,6 +150,10 @@ interface AppState {
 
   onboardingCompleted: boolean;
   recentSearches: string[];
+  /** Last meaningful path for "continue where you left off" on Home. */
+  lastResumePath: string | null;
+  setLastResumePath: (path: string | null) => void;
+  clearLastResumePath: () => void;
   commitmentHolds: Record<string, CommitmentHold>;
 
   login: (userId: string) => void;
@@ -316,6 +320,9 @@ export const useStore = create<AppState>()(
   feedbackSubmitted: {},
   onboardingCompleted: false,
   recentSearches: [],
+  lastResumePath: null,
+  setLastResumePath: (path) => set({ lastResumePath: path }),
+  clearLastResumePath: () => set({ lastResumePath: null }),
   commitmentHolds: {},
   companyRequests: [...mockCompanyRequests],
   companyJoinRequests: [],
@@ -1402,6 +1409,7 @@ export const useStore = create<AppState>()(
         feedbackSubmitted: state.feedbackSubmitted,
         onboardingCompleted: state.onboardingCompleted,
         recentSearches: state.recentSearches,
+        lastResumePath: state.lastResumePath,
         commitmentHolds: state.commitmentHolds,
         companyRequests: state.companyRequests,
         companyRequestPreferences: state.companyRequestPreferences,

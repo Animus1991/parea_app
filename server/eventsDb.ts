@@ -42,7 +42,7 @@ function migrateFromLegacyJson(): void {
     for (const event of events) {
       insert.run(event.id, JSON.stringify(event));
     }
-    console.info(`[eventsDb] migrated ${events.length} events from legacy JSON`);
+    console.warn(`[eventsDb] migrated ${events.length} events from legacy JSON`);
   } catch {
     /* no legacy file */
   }

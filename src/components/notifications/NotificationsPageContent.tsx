@@ -152,11 +152,11 @@ export default function NotificationsPageContent() {
               type="button"
               onClick={() => navigate('/plans')}
               className={cn(
-                'text-2xs font-bold min-h-6 px-2.5 py-1 rounded-full transition-colors inline-flex items-center gap-1',
-                a.actionBtn,
+                'card-meta font-semibold min-h-9 px-2 inline-flex items-center gap-1 rounded-lg transition-colors',
+                a.link,
               )}
             >
-              {t('Δείτε ομάδα', 'View group')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
+              {t('Δείτε ομάδα', 'View group')} <ArrowRight className="w-3 h-3" aria-hidden />
             </button>
           )}
           {notif.type === 'message' && (
@@ -164,11 +164,11 @@ export default function NotificationsPageContent() {
               type="button"
               onClick={() => navigate('/chats')}
               className={cn(
-                'text-2xs font-bold min-h-6 px-2.5 py-1 rounded-full transition-colors inline-flex items-center gap-1',
-                a.actionBtn,
+                'card-meta font-semibold min-h-9 px-2 inline-flex items-center gap-1 rounded-lg transition-colors',
+                a.link,
               )}
             >
-              {t('Απάντηση', 'Reply')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
+              {t('Απάντηση', 'Reply')} <ArrowRight className="w-3 h-3" aria-hidden />
             </button>
           )}
           <button

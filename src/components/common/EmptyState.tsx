@@ -9,6 +9,9 @@ interface EmptyStateProps {
   description?: string;
   actionLabel?: string;
   onAction?: () => void;
+  /** Optional quieter second path — never replaces the primary CTA. */
+  secondaryLabel?: string;
+  onSecondary?: () => void;
   className?: string;
 }
 
@@ -19,6 +22,8 @@ export function EmptyState({
   description,
   actionLabel,
   onAction,
+  secondaryLabel,
+  onSecondary,
   className,
 }: EmptyStateProps) {
   return (
@@ -37,11 +42,20 @@ export function EmptyState({
       {description && (
         <p className="text-sm font-medium text-ink-muted max-w-sm mt-1 mb-4 leading-relaxed">{description}</p>
       )}
-      {actionLabel && onAction && (
-        <Button variant="primary" size="md" onClick={onAction}>
-          {actionLabel}
-        </Button>
-      )}
+      {(actionLabel && onAction) || (secondaryLabel && onSecondary) ? (
+        <div className="flex flex-wrap items-center justify-center gap-2 mt-1">
+          {actionLabel && onAction && (
+            <Button variant="primary" size="md" onClick={onAction}>
+              {actionLabel}
+            </Button>
+          )}
+          {secondaryLabel && onSecondary && (
+            <Button variant="ghost" size="md" onClick={onSecondary}>
+              {secondaryLabel}
+            </Button>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -142,7 +142,7 @@ export default function AchievementsPageContent() {
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-1.5 shrink-0">
-                      <span className={cn('text-2xs font-bold px-1.5 py-0.5 rounded-lg', a.xpBadge)}>+{ach.xp} XP</span>
+                      <span className={cn('card-meta font-bold tabular-nums', a.isDark ? 'text-amber-300' : 'text-amber-700')}>+{ach.xp} XP</span>
                       {ach.unlocked ? (
                         <button
                           type="button"
