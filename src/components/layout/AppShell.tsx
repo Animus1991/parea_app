@@ -490,6 +490,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   // Browser chrome (mobile address bar) follows the app theme, not the OS setting.
   const shellRef = React.useRef<HTMLDivElement>(null);
   useEffect(() => {
+    // Keep CSS `[data-theme]` remaps available for portals (menus, sheets, toasts).
+    document.documentElement.dataset.theme = theme;
     const meta = document.querySelector('meta[name="theme-color"]');
     const el = shellRef.current;
     if (!meta || !el) return;

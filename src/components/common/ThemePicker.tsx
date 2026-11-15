@@ -1,6 +1,7 @@
 import { useState, useRef, useLayoutEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Palette, Check } from 'lucide-react';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { THEME_IDS, THEME_LABELS, THEME_SWATCH, type ThemeId } from '../../lib/themes';
@@ -21,6 +22,18 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
   const setTheme = useStore((s) => s.setTheme);
   const tok = useThemeStyles();
   const [open, setOpen] = useState(false);
+
+  const applyTheme = (id: ThemeId) => {
+    setTheme(id);
+    if (typeof document !== 'undefined') {
+      document.documentElement.dataset.theme = id;
+    }
+    toast.message(
+      language === 'el'
+        ? `Θέμα: ${THEME_LABELS[id].el}`
+        : `Theme: ${THEME_LABELS[id].en}`,
+    );
+  };
   const anchorRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const closeMenu = useCallback(() => setOpen(false), []);
@@ -105,7 +118,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
                     role="option"
                     aria-selected={theme === id}
                     onClick={() => {
-                      setTheme(id);
+                      applyTheme(id);
                       setOpen(false);
                     }}
                     className={cn(
@@ -169,11 +182,17 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
         <button
           key={id}
           type="button"
-          onClick={() => setTheme(id)}
+          onClick={() => applyTheme(id)}
+          aria-pressed={theme === id}
           className={cn(
             'flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all min-h-10',
             theme === id
-              ? 'border-accent ring-2 ring-accent/30 bg-cyan-50/50'
+              ? cn(
+                  'ring-2',
+                  tok.isDark
+                    ? 'border-cyan-400/60 ring-cyan-400/25 bg-white/5'
+                    : 'border-accent ring-accent/30 bg-cyan-50/50',
+                )
               : tok.isDark
                 ? 'border-gray-700 hover:border-gray-600'
                 : 'border-gray-100 hover:border-gray-200',

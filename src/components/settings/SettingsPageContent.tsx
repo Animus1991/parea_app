@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bell, Lock, Eye, Globe, Shield, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid } from 'lucide-react';
 import { HomeHeroModeSetting } from './HomeHeroModeSetting';
 import { BuddySeekPrivacySettings } from '../buddySeek/BuddySeekPrivacySettings';
@@ -12,7 +12,7 @@ import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { pressable } from '../../lib/a11y';
 import { ThemePicker } from '../common/ThemePicker';
-import { THEME_LABELS, type ThemeId } from '../../lib/themes';
+import { THEME_IDS, THEME_LABELS, type ThemeId } from '../../lib/themes';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
 import { Modal } from '../common/Modal';
@@ -46,6 +46,18 @@ export default function SettingsPageContent() {
   const [showAvailability, setShowAvailability] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const homeHeroMode = useStore((s) => s.homeHeroMode);
+  const themePanelRef = useRef<HTMLDivElement>(null);
+  const homeLayoutPanelRef = useRef<HTMLDivElement>(null);
+
+  // Keep the expandable panels next to the row that opened them (not below the fold).
+  useEffect(() => {
+    if (!showThemePicker) return;
+    themePanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [showThemePicker]);
+  useEffect(() => {
+    if (!showHomeLayout) return;
+    homeLayoutPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [showHomeLayout]);
 
   const twoFactorEnabled = userSettings.twoFactorEnabled;
 
@@ -149,7 +161,7 @@ export default function SettingsPageContent() {
       </div>
 
       {sections.map((section, idx) => (
-        <div key={idx}>
+        <div key={idx} className="space-y-3">
           <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{section.title}</h2>
           <Card className={a.divider}>
             <div className={cn("divide-y", a.divider)}>
@@ -167,33 +179,41 @@ export default function SettingsPageContent() {
               })}
             </div>
           </Card>
+
+          {/* Expandables sit under Account Settings so theme/layout are visible on first tap. */}
+          {idx === 0 && showThemePicker && (
+            <div ref={themePanelRef} className="scroll-mt-24">
+              <Card className="p-5">
+                <h3 className={cn("font-bold text-base mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
+                <p className={cn("text-xs font-medium mb-4", a.sub)}>
+                  {t(
+                    `${THEME_IDS.length} επαγγελματικά θέματα — επιλέξτε αυτό που σας ταιριάζει`,
+                    `${THEME_IDS.length} polished themes — pick what fits you best`,
+                  )}
+                </p>
+                <ThemePicker variant="grid" />
+              </Card>
+            </div>
+          )}
+          {idx === 0 && showHomeLayout && (
+            <div ref={homeLayoutPanelRef} className="scroll-mt-24">
+              <Card className="p-5">
+                <h3 className={cn("font-bold text-base mb-1", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
+                <p className={cn("text-xs font-medium mb-4", a.sub)}>
+                  {t(
+                    'Επιλέξτε πόσο πλούσιο είναι το hero στην αρχική — ισχύει σε όλα τα θέματα.',
+                    'Choose how rich the home hero is — applies across all themes.',
+                  )}
+                </p>
+                <HomeHeroModeSetting />
+              </Card>
+            </div>
+          )}
         </div>
       ))}
 
       <BuddySeekPrivacySettings />
       <ChatPrivacySettingsPanel />
-
-      {showHomeLayout && (
-        <Card className="p-5">
-          <h3 className={cn("font-bold text-base mb-1", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
-          <p className={cn("text-xs font-medium mb-4", a.sub)}>
-            {t(
-              'Επιλέξτε πόσο πλούσιο είναι το hero στην αρχική — ισχύει σε όλα τα θέματα.',
-              'Choose how rich the home hero is — applies across all themes.',
-            )}
-          </p>
-          <HomeHeroModeSetting />
-        </Card>
-      )}
-
-      {/* Theme Picker */}
-      {showThemePicker && (
-        <Card className="p-5">
-          <h3 className={cn("font-bold text-base mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
-          <p className={cn("text-xs font-medium mb-4", a.sub)}>{t('7 επαγγελματικά θέματα — επιλέξτε αυτό που σας ταιριάζει', '7 polished themes — pick what fits you best')}</p>
-          <ThemePicker variant="grid" />
-        </Card>
-      )}
 
       {/* 2FA Setup */}
       {show2FASetup && (
