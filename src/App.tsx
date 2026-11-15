@@ -13,40 +13,41 @@ import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { PageLoading } from "./components/common/PageLoading";
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient';
+import { routeLoaders, prefetchWhenIdle } from './lib/routeLoaders';
 
 // Route-level code-splitting (lazy-loaded pages)
-const Home = lazy(() => import("./pages/Home"));
-const NotFound = lazy(() => import("./pages/not-found"));
-const EventDetail = lazy(() => import("./pages/EventDetail"));
-const Plans = lazy(() => import("./pages/Plans"));
-const TrustCenter = lazy(() => import("./pages/TrustCenter"));
-const Profile = lazy(() => import("./pages/Profile"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-const OrganizerDashboard = lazy(() => import("./pages/OrganizerDashboard"));
-const JoinGroupFlow = lazy(() => import("./components/groups/JoinGroupFlow"));
-const GroupChat = lazy(() => import("./pages/GroupChat"));
-const OrganizerProfile = lazy(() => import("./pages/OrganizerProfile"));
-const Notifications = lazy(() => import("./pages/Notifications"));
-const Categories = lazy(() => import("./pages/Categories"));
-const NearbyGroups = lazy(() => import("./pages/NearbyGroups"));
-const History = lazy(() => import("./pages/History"));
-const SavedEvents = lazy(() => import("./pages/SavedEvents"));
-const ReportIssue = lazy(() => import("./pages/ReportIssue"));
-const PostEventFeedback = lazy(() => import("./pages/PostEventFeedback"));
-const Login = lazy(() => import("./pages/Login"));
-const MyCalendar = lazy(() => import("./pages/MyCalendar"));
-const MyConnections = lazy(() => import("./pages/MyConnections"));
-const Inbox = lazy(() => import("./pages/Inbox"));
-const CreateEventFlow = lazy(() => import("./pages/CreateEventFlow"));
-const Wallet = lazy(() => import("./pages/Wallet"));
-const VerificationCenter = lazy(() => import("./pages/VerificationCenter"));
-const SettingsAndPrivacy = lazy(() => import("./pages/SettingsAndPrivacy"));
-const HelpCenter = lazy(() => import("./pages/HelpCenter"));
-const Achievements = lazy(() => import("./pages/Achievements"));
-const Leaderboard = lazy(() => import("./pages/Leaderboard"));
-const Challenges = lazy(() => import("./pages/Challenges"));
-const Onboarding = lazy(() => import("./pages/Onboarding"));
-const BuddySeek = lazy(() => import("./pages/BuddySeek"));
+const Home = lazy(routeLoaders.home);
+const NotFound = lazy(routeLoaders.notFound);
+const EventDetail = lazy(routeLoaders.eventDetail);
+const Plans = lazy(routeLoaders.plans);
+const TrustCenter = lazy(routeLoaders.trustCenter);
+const Profile = lazy(routeLoaders.profile);
+const AdminDashboard = lazy(routeLoaders.adminDashboard);
+const OrganizerDashboard = lazy(routeLoaders.organizerDashboard);
+const JoinGroupFlow = lazy(routeLoaders.joinGroupFlow);
+const GroupChat = lazy(routeLoaders.groupChat);
+const OrganizerProfile = lazy(routeLoaders.organizerProfile);
+const Notifications = lazy(routeLoaders.notifications);
+const Categories = lazy(routeLoaders.categories);
+const NearbyGroups = lazy(routeLoaders.nearbyGroups);
+const History = lazy(routeLoaders.history);
+const SavedEvents = lazy(routeLoaders.savedEvents);
+const ReportIssue = lazy(routeLoaders.reportIssue);
+const PostEventFeedback = lazy(routeLoaders.postEventFeedback);
+const Login = lazy(routeLoaders.login);
+const MyCalendar = lazy(routeLoaders.myCalendar);
+const MyConnections = lazy(routeLoaders.myConnections);
+const Inbox = lazy(routeLoaders.inbox);
+const CreateEventFlow = lazy(routeLoaders.createEventFlow);
+const Wallet = lazy(routeLoaders.wallet);
+const VerificationCenter = lazy(routeLoaders.verificationCenter);
+const SettingsAndPrivacy = lazy(routeLoaders.settingsAndPrivacy);
+const HelpCenter = lazy(routeLoaders.helpCenter);
+const Achievements = lazy(routeLoaders.achievements);
+const Leaderboard = lazy(routeLoaders.leaderboard);
+const Challenges = lazy(routeLoaders.challenges);
+const Onboarding = lazy(routeLoaders.onboarding);
+const BuddySeek = lazy(routeLoaders.buddySeek);
 
 export default function App() {
   const location = useLocation();
@@ -54,6 +55,16 @@ export default function App() {
   const currentUser = useStore((state) => state.currentUser);
   const onboardingCompleted = useStore((state) => state.onboardingCompleted);
   const demoMode = useStore((state) => state.demoMode);
+
+  // Instant navigation: while the browser is idle, fetch the pages people open
+  // next (Home from the login page; the main destinations once signed in).
+  const onLogin = location.pathname === "/login";
+  const signedIn = Boolean(currentUser);
+  useEffect(() => {
+    if (onLogin) return prefetchWhenIdle(["/"]);
+    if (!signedIn) return;
+    return prefetchWhenIdle(["/", "/events/_", "/categories", "/plans", "/buddy-seek", "/saved", "/chats", "/profile", "/notifications"]);
+  }, [onLogin, signedIn]);
 
   useEffect(() => {
     if (!currentUser && location.pathname !== "/login") {

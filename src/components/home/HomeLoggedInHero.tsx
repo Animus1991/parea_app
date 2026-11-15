@@ -14,6 +14,7 @@ import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useStore } from '../../store';
 import { cn } from '../../lib/utils';
+import { HomeReturnLine } from './HomeReturnLine';
 export interface HomeLoggedInHeroProps {
   greeting: string;
   motivation: string;
@@ -131,7 +132,7 @@ export function HomeLoggedInHero({
           <div className="flex justify-between items-start gap-4">
             <div className="space-y-2 flex-1">
               <p className={h.heroGreeting}>{greeting}</p>
-              <p className={cn(h.heroMotivation, 'text-sm')}>{motivation}</p>
+              <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
               <h1 className={cn(h.heroTitle, 'text-sm md:text-base max-w-2xl')}>
                 {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>
@@ -174,7 +175,7 @@ export function HomeLoggedInHero({
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="flex-1">
             <p className={cn(h.heroGreeting, 'mb-1')}>{greeting}</p>
-            <p className={cn(h.heroMotivation, 'mb-4')}>{motivation}</p>
+            <HomeReturnLine className={cn(h.heroMotivation, 'mb-4')} fallback={motivation} />
             <h1 className={cn(h.heroTitle, 'max-w-2xl')}>
               {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
               <span className={h.heroTitleAccent}>

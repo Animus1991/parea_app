@@ -41,3 +41,44 @@ test.describe('client-side navigation', () => {
     expect(errors.filter((m) => /Map container|reused/i.test(m))).toEqual([]);
   });
 });
+
+test.describe('scroll position', () => {
+  // Back from an event returns to the same place in the feed (it used to jump to the top).
+  test('Back restores the feed position; language switch keeps it', async ({ page }) => {
+    await page.goto('/login');
+    await page.getByRole('button', { name: /Explore as guest|Εξερεύνηση ως επισκέπτης/i }).click();
+    await expect(page.getByRole('button', { name: /Μενού λογαριασμού|Account menu/ })).toBeVisible();
+    const main = page.locator('#main-content');
+    await expect.poll(() => main.evaluate((el) => el.scrollHeight - el.clientHeight)).toBeGreaterThan(1200);
+    await main.evaluate((el) => el.scrollTo(0, 1200));
+    await expect.poll(() => main.evaluate((el) => Math.round(el.scrollTop))).toBe(1200);
+    const link = page.locator('#main-content a[href^="/events/"]');
+    const count = await link.count();
+    for (let i = 0; i < count; i++) {
+      const box = await link.nth(i).boundingBox();
+      if (box && box.y > 80 && box.y < 800) {
+        await link.nth(i).click();
+        break;
+      }
+    }
+    await expect(page).toHaveURL(/\/events\//);
+    await page.goBack();
+    await expect(page).toHaveURL('/');
+    await expect.poll(() => main.evaluate((el) => Math.round(el.scrollTop))).toBe(1200);
+  });
+});
+
+test.describe('welcome back', () => {
+  test('a return visit shows what is new, one tap away', async ({ page }) => {
+    await page.addInitScript(() => {
+      // A previous visit two hours ago, in a fresh browser session.
+      localStorage.setItem('nakamas-last-visit:u1', String(Date.now() - 2 * 3600 * 1000));
+    });
+    await page.goto('/login');
+    await page.getByRole('button', { name: /Explore as guest|Εξερεύνηση ως επισκέπτης/i }).click();
+    const line = page.locator('#main-content p').filter({ hasText: /Από την τελευταία σου επίσκεψη|Since your last visit/ });
+    await expect(line).toBeVisible();
+    await line.getByRole('button').first().click();
+    await expect(page).toHaveURL(/\/(chats|notifications|buddy-seek|events\/)/);
+  });
+});

@@ -20,6 +20,7 @@ import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { PlansFormingBottomSheet } from '../buddySeek/PlansFormingBottomSheet';
 import { PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
 import { MobileDock } from './MobileDock';
+import { prefetchPath } from '../../lib/routeLoaders';
 import { PopupChatRoot } from '../chat/PopupChatRoot';
 import { DemoModeBanner } from '../common/DemoModeBanner';
 import { useRealtimeChat } from '../../hooks/useRealtimeChat';
@@ -111,6 +112,9 @@ function NavItem({ to, icon: Icon, label, compact = false, rail = false }: NavIt
     <NavLink
       to={to}
       title={label}
+      // Start loading the page while the pointer or focus is on its link.
+      onMouseEnter={() => prefetchPath(to)}
+      onFocus={() => prefetchPath(to)}
       className={({ isActive }) =>
         cn(
           'flex items-center gap-3 rounded-xl lg:rounded-lg text-sm font-medium transition-colors group min-h-11',
@@ -419,6 +423,8 @@ export function BottomNav() {
         { to: "/plans", icon: CalendarCheck, labelGr: 'Σχέδια', labelEn: 'Plans' },
       ] as const).map(({ to, icon: Icon, labelGr, labelEn }) => (
         <NavLink key={to} to={to}
+          onTouchStart={() => prefetchPath(to)}
+          onFocus={() => prefetchPath(to)}
           className={({ isActive }) =>
             cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px] min-h-11",
               isActive ? tok.navActive : tok.navInactive)
@@ -444,6 +450,8 @@ export function BottomNav() {
         { to: "/profile", icon: User, labelGr: 'Προφίλ', labelEn: 'Profile' },
       ] as const).map(({ to, icon: Icon, labelGr, labelEn }) => (
         <NavLink key={to} to={to}
+          onTouchStart={() => prefetchPath(to)}
+          onFocus={() => prefetchPath(to)}
           className={({ isActive }) =>
             cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px] min-h-11",
               isActive ? tok.navActive : tok.navInactive)

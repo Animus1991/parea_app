@@ -12,6 +12,7 @@ import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useStore } from '../../store';
 import { cn } from '../../lib/utils';
+import { HomeReturnLine } from './HomeReturnLine';
 export interface HomeLoggedInHeroContrastProps {
   greeting: string;
   motivation: string;
@@ -130,7 +131,7 @@ export function HomeLoggedInHeroContrast({
           <div className="flex justify-between items-start gap-4">
             <div className="space-y-2 flex-1">
               <p className={h.heroGreeting}>{greeting}</p>
-              <p className={cn(h.heroMotivation, 'text-sm')}>{motivation}</p>
+              <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
               <h1 className={cn(h.heroTitle, 'text-sm md:text-base max-w-2xl')}>
                 {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>{t('home.hero.title2', 'εμπειρίες')}</span>{' '}
