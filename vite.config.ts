@@ -48,6 +48,8 @@ export default defineConfig(({mode}) => {
     },
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
+      // Cloudflare quick tunnels / preview hosts (not localhost).
+      allowedHosts: true,
     },
     build: {
       rollupOptions: {
