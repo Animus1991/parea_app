@@ -30,6 +30,23 @@ jobs:
         env:
           VITE_GEMINI_API_KEY: placeholder
 
+  rules:
+    name: Firestore rules (emulator)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - run: npm run test:rules
+
   e2e:
     name: E2E (Playwright)
     # Playwright 1.60 does not support Chromium on ubuntu26.04 (ubuntu-latest as of 2026-11).

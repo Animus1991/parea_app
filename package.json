@@ -17,7 +17,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "validate": "npm run typecheck && npm run lint:eslint && npm run audit:contrast && npm run test"
+    "validate": "npm run typecheck && npm run lint:eslint && npm run audit:contrast && npm run test",
+    "test:rules": "npx -y firebase-tools@14 emulators:exec --only firestore --project nakamas-rules-test \"vitest run server/firestore.rules.test.ts\"",
+    "set-role": "tsx scripts/set-role.ts"
   },
   "dependencies": {
     "@google/genai": "^1.52.0",
@@ -92,6 +94,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
     "@eslint/js": "^9.17.0",
+    "@firebase/rules-unit-testing": "^4.0.1",
     "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@types/express": "^4.17.21",
