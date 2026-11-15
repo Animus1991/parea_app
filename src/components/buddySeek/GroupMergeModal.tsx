@@ -75,7 +75,7 @@ export function GroupMergeModal({
         <div className="p-5 border-b border-border">
           <div className="flex items-center gap-2 text-accent-strong">
             <GitMerge className="w-5 h-5" />
-            <h2 className="text-base font-bold">{t('Πρόταση συγχώνευσης ομάδων', 'Suggest group merge')}</h2>
+            <h2 className="text-sm md:text-base font-bold">{t('Πρόταση συγχώνευσης ομάδων', 'Suggest group merge')}</h2>
           </div>
           <p className="text-sm text-ink-muted mt-1">{event.title}</p>
         </div>

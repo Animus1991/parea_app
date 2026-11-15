@@ -63,7 +63,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
     >
       <header className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
         <div>
-          <h2 className="text-sm font-bold">{t('Nakamas Chat', 'Nakamas Chat')}</h2>
+          <h2 className="text-sm md:text-base font-bold">{t('Nakamas Chat', 'Nakamas Chat')}</h2>
           <p className="text-xs text-ink-muted">
             {t('Μόνο μετά από αποδοχή αιτήματος ή ομάδας', 'Only after request or group acceptance')}
           </p>

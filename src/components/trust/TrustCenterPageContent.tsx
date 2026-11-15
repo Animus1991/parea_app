@@ -71,8 +71,8 @@ export default function TrustCenterPageContent() {
   return (
     <div className="mx-auto max-w-full space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn("text-sm md:text-base font-bold tracking-tight", a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
-        <p className={cn("mt-2 text-sm leading-relaxed max-w-xl", a.sub)}>
+        <h1 className={cn("text-sm md:text-base font-bold tracking-tight leading-tight", a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
+        <p className={cn("mt-2 text-sm font-medium leading-relaxed max-w-xl", a.sub)}>
           {t('Η αξιοπιστία σας βασίζεται στις επαληθεύσεις και τις αξιολογήσεις σας.', 'Your trust score is based on your verifications and reviews.')}
         </p>
       </div>
@@ -157,7 +157,7 @@ export default function TrustCenterPageContent() {
               <div className={cn("flex items-center gap-2 text-sm font-bold", a.head)}>
                 <Award className="h-4 w-4 text-amber-500" />{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}
               </div>
-              <span className="text-base font-bold text-emerald-600">{reliabilityScore}%</span>
+              <span className="text-sm md:text-base font-black tabular-nums leading-none text-emerald-600">{reliabilityScore}%</span>
             </div>
             <p className={cn("text-sm mt-1.5 font-medium leading-relaxed", a.sub)}>
               {t('Βασίζεται στις παρουσίες, αξιολογήσεις και συμπεριφορά σας.', 'Based on your attendance, reviews, and behavior.')}

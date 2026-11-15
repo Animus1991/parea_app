@@ -239,7 +239,7 @@ export default function LeaderboardClassic() {
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className={cn('font-black text-lg tabular-nums leading-none', p.head)}>
+                    <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.head)}>
                       {entry.xp}
                     </p>
                     <p className={cn('text-xs font-semibold mt-0.5', p.muted)}>XP</p>

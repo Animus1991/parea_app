@@ -33,7 +33,7 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
           </span>
         )}
       </span>
-      <span className="text-sm font-bold hidden sm:inline">{t('Συνομιλίες', 'Chats')}</span>
+      <span className="text-xs font-bold hidden sm:inline">{t('Συνομιλίες', 'Chats')}</span>
       {activeCount > 0 && (
         <span className="text-xs font-bold px-1.5 py-0.5 rounded-lg bg-ink/10 text-brand hidden sm:inline">
           {activeCount} {t('ανοιχτές', 'open')}

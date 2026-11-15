@@ -3,6 +3,7 @@ import { Award, CheckCircle2, Flame, MessageSquare, Trophy, Zap } from 'lucide-r
 import { toast } from 'sonner';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { useStore } from '../../store';
 import { DAILY_CHALLENGE_XP } from '../../lib/achievements';
 import { useGamificationData } from '../../hooks/useGamificationData';
@@ -63,12 +64,12 @@ export function GamificationSummary({ className }: { className?: string }) {
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-lg font-extrabold leading-none text-ink tabular-nums">{d.level.level}</span>
+            <span className={cn(APP_TYPO.statValue, 'text-ink')}>{d.level.level}</span>
             <span className="text-2xs font-semibold text-ink-muted">LVL</span>
           </div>
         </div>
         <div>
-          <p className="flex flex-wrap items-center gap-2 text-base font-bold text-ink">
+          <p className={cn('flex flex-wrap items-center gap-2 text-ink', APP_TYPO.panelTitle)}>
             {t('Επίπεδο', 'Level')} {d.level.level} · {t(d.level.titleEl, d.level.titleEn)}
             <span className="rounded-lg bg-accent-soft px-2 py-0.5 text-xs font-bold text-ink tabular-nums">{d.xp} XP</span>
           </p>
@@ -84,8 +85,8 @@ export function GamificationSummary({ className }: { className?: string }) {
           { label: t('Θέση', 'Rank'), value: `#${d.rank}` },
         ].map((stat) => (
           <div key={stat.label} className="flex flex-col-reverse rounded-xl border border-border bg-surface px-3 py-2.5 text-center">
-            <dt className="text-2xs font-medium text-ink-muted">{stat.label}</dt>
-            <dd className="block text-base font-bold text-ink tabular-nums">{stat.value}</dd>
+            <dt className={cn(APP_TYPO.sectionLabel, 'text-ink-muted')}>{stat.label}</dt>
+            <dd className={cn('block text-ink', APP_TYPO.statValue)}>{stat.value}</dd>
           </div>
         ))}
       </dl>

@@ -7,6 +7,7 @@ import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useStore } from '../../store';
 import { toast } from 'sonner';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 export default function VerificationCenterPageContent() {
   const { t } = useLanguage();
@@ -49,8 +50,8 @@ export default function VerificationCenterPageContent() {
   return (
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn('text-sm md:text-base font-bold', a.head)}>{t('Κέντρο Επαλήθευσης', 'Verification Center')}</h1>
-        <p className={cn('font-medium text-sm mt-1', a.sub)}>
+        <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Κέντρο Επαλήθευσης', 'Verification Center')}</h1>
+        <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>
           {t(
             'Επαληθεύστε την ταυτότητά σας για μεγαλύτερη ασφάλεια και υψηλότερο Βαθμό Αξιοπιστίας',
             'Verify your identity for greater safety and a higher Reliability Score',
