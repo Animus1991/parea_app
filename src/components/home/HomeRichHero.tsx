@@ -111,7 +111,8 @@ export function HomeRichHero({
             />
           </div>
           <button
-            onClick={() => navigate('/trust')}
+            type="button"
+            onClick={() => navigate('/help?topic=groups')}
             className={cn('hidden sm:flex items-center justify-center px-5 h-11 rounded-full text-xs font-bold transition-colors whitespace-nowrap', tok.heroTrustBtn)}
           >
             {t('home.hero.how_groups', 'Πώς λειτουργούν οι ομάδες')}

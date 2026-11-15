@@ -234,13 +234,37 @@ export default function InboxPageContent() {
             {filteredChats.length === 0 ? (
               <EmptyState
                 icon={MessageSquare}
-                title={t('Δεν υπάρχουν συνομιλίες', 'No conversations')}
-                description={t(
-                  'Οι συνομιλίες ομάδας εμφανίζονται εδώ μετά από αποδοχή.',
-                  'Group chats appear here after you accept a join.',
-                )}
-                actionLabel={t('Αναζήτηση Εκδηλώσεων', 'Browse Events')}
-                onAction={() => navigate('/')}
+                title={
+                  search
+                    ? t('Καμία συνομιλία για την αναζήτηση', 'No conversations match your search')
+                    : chatFilter === 'past'
+                      ? t('Δεν υπάρχουν παλαιότερες συνομιλίες', 'No past conversations')
+                      : t('Δεν υπάρχουν συνομιλίες', 'No conversations')
+                }
+                description={
+                  search
+                    ? t('Δοκιμάστε άλλο όρο ή καθαρίστε την αναζήτηση.', 'Try another term or clear the search.')
+                    : chatFilter === 'past'
+                      ? t('Οι ολοκληρωμένες συνομιλίες εμφανίζονται εδώ.', 'Completed conversations appear here.')
+                      : t(
+                          'Οι συνομιλίες ομάδας εμφανίζονται εδώ μετά από αποδοχή.',
+                          'Group chats appear here after you accept a join.',
+                        )
+                }
+                actionLabel={
+                  search
+                    ? t('Καθαρισμός αναζήτησης', 'Clear search')
+                    : chatFilter === 'past'
+                      ? t('Εμφάνιση ενεργών', 'Show active')
+                      : t('Αναζήτηση Εκδηλώσεων', 'Browse Events')
+                }
+                onAction={
+                  search
+                    ? () => setSearch('')
+                    : chatFilter === 'past'
+                      ? () => setChatFilter('active')
+                      : () => navigate('/')
+                }
               />
             ) : (
               <div className={cn('divide-y', p.isDark ? 'divide-white/5' : 'divide-gray-100')}>

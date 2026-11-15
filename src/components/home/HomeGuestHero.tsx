@@ -33,7 +33,7 @@ export function HomeGuestHero() {
       <Button
         variant="primary"
         className="!rounded-full"
-        onClick={() => navigate('/trust')}
+        onClick={() => navigate('/help')}
       >
         {t('Πώς λειτουργεί το Nakamas', 'How Nakamas works')}
       </Button>

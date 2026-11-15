@@ -139,7 +139,7 @@ export default function PlansPageContent() {
               <p className={cn(PLANS_TYPO.bannerBody, p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
             </div>
           </div>
-          <button onClick={() => navigate('/trust')} className={cn('bg-amber-600 text-white px-5 py-2.5 rounded-2xl shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0', PLANS_TYPO.bannerCta)}>
+          <button type="button" onClick={() => navigate('/verification')} className={cn('bg-amber-600 text-white px-5 py-2.5 rounded-2xl shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0', PLANS_TYPO.bannerCta)}>
             {t(`Επαλήθευση`, `Verify Now`)}
           </button>
         </Card>

@@ -167,6 +167,7 @@ export default function GroupChatPageContent() {
 
   const handleDeleteMessage = (id: string) => {
     setMessages(messages.filter((m) => m.id !== id));
+    toast.success(t("Το μήνυμα διαγράφηκε", "Message deleted"));
   };
 
   const filteredMessages = useMemo(() => {
@@ -1195,11 +1196,14 @@ export default function GroupChatPageContent() {
                           {
                             id: Date.now().toString(),
                             senderId: "system",
-                            senderName: "System",
+                            senderName: t("Σύστημα", "System"),
                             text: `${member.name} ${t("προστέθηκε στην ομάδα από τον διοργανωτή.", "was added to the group by the organizer.")}`,
                             timestamp: new Date().toISOString(),
                           },
                         ]);
+                        toast.success(
+                          t(`${member.name} προστέθηκε`, `${member.name} added`),
+                        );
                       }}
                       className="text-xs font-semibold px-3 py-1.5 rounded-full border flex items-center gap-1 transition-all duration-200 bg-brand text-white border-brand hover:bg-brand-strong shadow-soft shrink-0"
                     >

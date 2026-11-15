@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   AlertTriangle,
   Bookmark,
@@ -59,7 +60,17 @@ function EventResult({ eventId, index, onNavigate }: { eventId: string; index: n
       </button>
       <button
         type="button"
-        onClick={() => toggleSaved(event.id)}
+        onClick={() => {
+          const nextSaved = !saved;
+          toggleSaved(event.id);
+          if (nextSaved) {
+            toast.success(t('Αποθηκεύτηκε', 'Saved'), {
+              action: { label: t('Αποθηκευμένα', 'Saved'), onClick: () => navigate('/saved') },
+            });
+          } else {
+            toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'));
+          }
+        }}
         aria-pressed={saved}
         aria-label={saved ? t('Αφαίρεση από αποθηκευμένες', 'Remove from saved') : t('Αποθήκευση', 'Save')}
         title={saved ? t('Αποθηκευμένη', 'Saved') : t('Αποθήκευση', 'Save')}

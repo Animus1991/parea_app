@@ -19,14 +19,14 @@ export default function WalletPageContent() {
   const stripeReady = isStripeConfigured();
 
   const transactions = [
-    { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: 'Oct 12, 2024', desc: t('Μεταφορά στην τράπεζα 4092', 'Transfer to Bank ****4092') },
-    { id: '2', type: 'Earnings', amount: 45.00, status: t('Διαθέσιμο', 'Available'), date: 'Oct 10, 2024', desc: t('Πωλήσεις: Yoga στο Πάρκο', 'Ticket sales: Yoga in the Park') },
-    { id: '3', type: 'Earnings', amount: 25.00, status: t('Σε Επεξεργασία', 'Processing'), date: 'Oct 14, 2024', desc: t('Πωλήσεις: Comedy Night', 'Ticket sales: Comedy Night') },
+    { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: t('12 Οκτ 2024', 'Oct 12, 2024'), monthKey: 'Oct', desc: t('Μεταφορά στην τράπεζα 4092 (demo)', 'Transfer to Bank ****4092 (demo)') },
+    { id: '2', type: 'Earnings', amount: 45.00, status: t('Διαθέσιμο', 'Available'), date: t('10 Οκτ 2024', 'Oct 10, 2024'), monthKey: 'Oct', desc: t('Πωλήσεις: Yoga στο Πάρκο', 'Ticket sales: Yoga in the Park') },
+    { id: '3', type: 'Earnings', amount: 25.00, status: t('Σε Επεξεργασία', 'Processing'), date: t('14 Οκτ 2024', 'Oct 14, 2024'), monthKey: 'Oct', desc: t('Πωλήσεις: Comedy Night', 'Ticket sales: Comedy Night') },
   ];
 
   const filteredTx = txFilter === 'all'
     ? transactions
-    : transactions.filter((tx) => txFilter === 'month' ? tx.date.includes('Oct') : tx.date.includes('Sep'));
+    : transactions.filter((tx) => txFilter === 'month' ? tx.monthKey === 'Oct' : tx.monthKey === 'Sep');
 
   return (
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
@@ -70,7 +70,7 @@ export default function WalletPageContent() {
             </div>
             <div>
               <h3 className={cn("font-bold text-sm", a.head)}>{t('Τραπεζικός λογαριασμός', 'Bank Account')}</h3>
-              <p className={cn("text-xs font-medium", a.sub)}>Chase ****4092</p>
+              <p className={cn("text-xs font-medium", a.sub)}>{t('Chase ****4092 (demo)', 'Chase ****4092 (demo)')}</p>
             </div>
           </div>
           <Button variant="outline" size="sm" className="w-full text-xs" onClick={() => setShowPayouts(true)}>{t('Διαχείριση', 'Manage Payouts')}</Button>

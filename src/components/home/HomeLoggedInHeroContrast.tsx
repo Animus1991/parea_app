@@ -77,7 +77,7 @@ export function HomeLoggedInHeroContrast({
       ) : (
         <button
           type="button"
-          onClick={() => navigate('/trust')}
+          onClick={() => navigate('/help?topic=groups')}
           className={cn(
             'hidden sm:flex items-center justify-center text-xs font-semibold whitespace-nowrap px-2 min-h-9 rounded-lg underline-offset-4 hover:underline opacity-90 hover:opacity-100',
             h.heroStat,
