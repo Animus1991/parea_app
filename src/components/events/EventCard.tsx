@@ -164,7 +164,15 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
 
   const toggleSave = (e: React.MouseEvent) => {
     e.stopPropagation();
+    const nextSaved = !isSaved;
     toggleSavedEvent(event.id);
+    if (nextSaved) {
+      toast.success(t('Αποθηκεύτηκε', 'Saved'), {
+        action: { label: t('Αποθηκευμένα', 'Saved'), onClick: () => navigate('/saved') },
+      });
+    } else {
+      toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'));
+    }
   };
 
   const handleShare = (e: React.MouseEvent) => {

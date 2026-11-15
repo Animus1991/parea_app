@@ -36,26 +36,38 @@ export default function HelpCenterPageContent() {
   ], [t]);
 
   const popularTopics = [
-    { label: t('Ασφάλεια', 'Safety'), icon: Shield, color: a.isDark ? 'text-red-400 bg-red-900/20' : 'text-red-600 bg-red-50' },
-    { label: t('Πληρωμές', 'Payments'), icon: CreditCard, color: a.isDark ? 'text-emerald-400 bg-emerald-900/20' : 'text-emerald-600 bg-emerald-50' },
-    { label: t('Ομάδες', 'Groups'), icon: Users, color: a.isDark ? 'text-blue-400 bg-blue-900/20' : 'text-blue-600 bg-blue-50' },
-    { label: t('Γρήγορη Βοήθεια', 'Quick Help'), icon: Zap, color: a.isDark ? 'text-amber-400 bg-amber-900/20' : 'text-amber-600 bg-amber-50' },
+    { id: 'safety', label: t('Ασφάλεια', 'Safety'), match: t('Ασφάλεια', 'Safety'), icon: Shield, color: a.isDark ? 'text-red-400 bg-red-900/20' : 'text-red-600 bg-red-50' },
+    { id: 'payments', label: t('Πληρωμές', 'Payments'), match: t('Πληρωμές', 'Payments'), icon: CreditCard, color: a.isDark ? 'text-emerald-400 bg-emerald-900/20' : 'text-emerald-600 bg-emerald-50' },
+    // Maps to Organizers articles + group FAQs (no article category named "Groups").
+    { id: 'groups', label: t('Ομάδες', 'Groups'), match: t('Διοργανωτές', 'Organizers'), icon: Users, color: a.isDark ? 'text-blue-400 bg-blue-900/20' : 'text-blue-600 bg-blue-50' },
+    { id: 'quick', label: t('Γρήγορη Βοήθεια', 'Quick Help'), match: null as string | null, icon: Zap, color: a.isDark ? 'text-amber-400 bg-amber-900/20' : 'text-amber-600 bg-amber-50' },
   ];
+
+  const activeTopic = popularTopics.find((topic) => topic.label === topicFilter) ?? null;
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return articles.filter((ar) => {
       const matchesSearch = !q || ar.title.toLowerCase().includes(q) || ar.category.toLowerCase().includes(q);
-      const matchesTopic = !topicFilter || ar.category.toLowerCase().includes(topicFilter.toLowerCase());
+      const matchKey = activeTopic?.match;
+      const matchesTopic = !topicFilter || !matchKey || ar.category.toLowerCase().includes(matchKey.toLowerCase());
       return matchesSearch && matchesTopic;
     });
-  }, [articles, search, topicFilter]);
+  }, [articles, search, topicFilter, activeTopic]);
 
   const filteredFaqs = useMemo(() => {
     const q = search.toLowerCase();
-    if (!q) return faqs;
-    return faqs.filter((f) => f.q.toLowerCase().includes(q) || f.a.toLowerCase().includes(q));
-  }, [faqs, search]);
+    let list = faqs;
+    if (activeTopic?.id === 'groups') {
+      list = faqs.filter((f) => /ομάδ|group/i.test(f.q) || /ομάδ|group/i.test(f.a));
+    } else if (activeTopic?.id === 'safety') {
+      list = faqs.filter((f) => /trust|αξιοπιστ|εμφανισ|show up|score/i.test(f.q) || /trust|αξιοπιστ|εμφανισ|show up|score/i.test(f.a));
+    } else if (activeTopic?.id === 'payments') {
+      list = faqs.filter((f) => /ακυρ|cancel|πληρωμ|payment|refund/i.test(f.q) || /ακυρ|cancel|πληρωμ|payment|refund/i.test(f.a));
+    }
+    if (!q) return list;
+    return list.filter((f) => f.q.toLowerCase().includes(q) || f.a.toLowerCase().includes(q));
+  }, [faqs, search, activeTopic]);
 
   const hasResults = filtered.length > 0 || filteredFaqs.length > 0;
 
@@ -85,9 +97,16 @@ export default function HelpCenterPageContent() {
           const Icon = topic.icon;
           return (
             <button
-              key={topic.label}
+              key={topic.id}
               type="button"
-              onClick={() => setTopicFilter(topicFilter === topic.label ? null : topic.label)}
+              onClick={() => {
+                if (topic.id === 'quick') {
+                  setTopicFilter(null);
+                  openCopilot();
+                  return;
+                }
+                setTopicFilter(topicFilter === topic.label ? null : topic.label);
+              }}
               className={cn("flex items-center gap-2 p-3 rounded-xl border transition-all w-full", a.topicBg, topicFilter === topic.label && 'ring-2 ring-cyan-500/40')}
             >
               <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", topic.color)}>
@@ -145,24 +164,54 @@ export default function HelpCenterPageContent() {
             </Card>
           ))}
           {filtered.length === 0 && (
-            <Card className="p-4 text-center">
+            <Card className="p-4 text-center space-y-3">
               <p className={cn('text-sm font-medium', a.muted)}>{t('Κανένα άρθρο δεν ταιριάζει.', 'No articles match your search.')}</p>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {topicFilter && (
+                  <button
+                    type="button"
+                    onClick={() => setTopicFilter(null)}
+                    className={cn('inline-flex min-h-10 items-center rounded-xl border px-4 text-xs font-semibold', a.borderB, a.sub)}
+                  >
+                    {t('Καθαρισμός φίλτρου', 'Clear filter')}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => openCopilot(search || topicFilter || undefined)}
+                  className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-accent px-4 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                >
+                  <Bot className="h-4 w-4" aria-hidden />
+                  {t('Ρώτα το Nakamas AI', 'Ask Nakamas AI')}
+                </button>
+              </div>
             </Card>
           )}
         </div>
       </div>
 
-      {!hasResults && search && (
+      {!hasResults && (search || topicFilter) && (
         <Card className="p-4 text-center">
           <p className={cn('text-sm font-medium', a.muted)}>{t('Δεν βρέθηκαν αποτελέσματα. Δοκιμάστε άλλους όρους.', 'No results found. Try different terms.')}</p>
-          <button
-            type="button"
-            onClick={() => openCopilot(search)}
-            className="mt-3 inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-accent px-4 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-          >
-            <Bot className="h-4 w-4" aria-hidden />
-            {t('Ρώτα το Nakamas AI', 'Ask Nakamas AI')}
-          </button>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+            {topicFilter && (
+              <button
+                type="button"
+                onClick={() => setTopicFilter(null)}
+                className={cn('inline-flex min-h-10 items-center rounded-xl border px-4 text-xs font-semibold', a.borderB, a.sub)}
+              >
+                {t('Καθαρισμός φίλτρου', 'Clear filter')}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => openCopilot(search || topicFilter || undefined)}
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-accent px-4 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            >
+              <Bot className="h-4 w-4" aria-hidden />
+              {t('Ρώτα το Nakamas AI', 'Ask Nakamas AI')}
+            </button>
+          </div>
         </Card>
       )}
 

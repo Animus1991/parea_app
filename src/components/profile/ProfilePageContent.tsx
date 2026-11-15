@@ -100,6 +100,7 @@ export default function ProfilePageContent() {
 
   const patchPrivacy = (patch: Partial<typeof userSettings.privacy>) => {
     updatePrivacySettings(patch);
+    toast.success(t('Οι ρυθμίσεις απορρήτου αποθηκεύτηκαν', 'Privacy settings saved'));
   };
 
   useEffect(() => {
@@ -339,7 +340,7 @@ export default function ProfilePageContent() {
             {userSettings.availability.length === 0 && (
               <span className={`text-xs ${sub}`}>{t('Δεν έχετε ορίσει διαθεσιμότητα', 'No availability set yet')}</span>
             )}
-            <Button variant="ghost" size="sm" className={`${a.isDark ? "bg-gray-800 border border-gray-700 text-gray-300" : "bg-gray-50 border border-gray-200"}`} onClick={() => navigate("/settings")}>
+            <Button variant="ghost" size="sm" className={`${a.isDark ? "bg-gray-800 border border-gray-700 text-gray-300" : "bg-gray-50 border border-gray-200"}`} onClick={() => navigate("/settings?availability=1")}>
               + {t("Επεξεργασία", "Edit")}
             </Button>
           </div>

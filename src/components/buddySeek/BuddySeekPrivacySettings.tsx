@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { audienceSummary, exposureSummary } from '../../lib/companyRequestUtils';
@@ -9,7 +10,11 @@ export function BuddySeekPrivacySettings() {
   const { t } = useLanguage();
   const a = usePageContrast();
   const prefs = useStore((s) => s.companyRequestPreferences);
-  const setPrefs = useStore((s) => s.setCompanyRequestPreferences);
+  const setPrefsStore = useStore((s) => s.setCompanyRequestPreferences);
+  const setPrefs = (patch: Parameters<typeof setPrefsStore>[0]) => {
+    setPrefsStore(patch);
+    toast.success(t('Οι ρυθμίσεις απορρήτου αποθηκεύτηκαν', 'Privacy settings saved'));
+  };
 
   const inputClass = cn(
     'w-full rounded-2xl border px-3 py-2 text-sm font-medium outline-none focus:ring-2',

@@ -1,4 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useStore } from '../store';
 import {
   getEventCalendarAvailability,
@@ -6,12 +8,15 @@ import {
   downloadICS,
 } from '../lib/eventCalendarExport';
 import { useEventDetailShare } from './useEventDetailShare';
+import { useLanguage } from '../lib/i18n';
 import type { Event } from '../types';
 
 /**
  * Share, QR, calendar export, and persisted save — synced with store.savedEvents.
  */
 export function useEventDetailActions(eventId: string | undefined, event?: Event | null) {
+  const { t } = useLanguage();
+  const navigate = useNavigate();
   const savedEvents = useStore((s) => s.savedEvents) || [];
   const toggleSavedEvent = useStore((s) => s.toggleSavedEvent);
   const groups = useStore((s) => s.groups);
@@ -34,8 +39,17 @@ export function useEventDetailActions(eventId: string | undefined, event?: Event
   }, [event, users, groups]);
 
   const handleSave = useCallback(() => {
-    if (eventId) toggleSavedEvent(eventId);
-  }, [eventId, toggleSavedEvent]);
+    if (!eventId) return;
+    const nextSaved = !savedEvents.includes(eventId);
+    toggleSavedEvent(eventId);
+    if (nextSaved) {
+      toast.success(t('Αποθηκεύτηκε', 'Saved'), {
+        action: { label: t('Αποθηκευμένα', 'Saved'), onClick: () => navigate('/saved') },
+      });
+    } else {
+      toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'));
+    }
+  }, [eventId, savedEvents, toggleSavedEvent, t, navigate]);
 
   const handleAddToGoogleCalendar = useCallback(() => {
     if (event && calendarAvailability.ok) {
