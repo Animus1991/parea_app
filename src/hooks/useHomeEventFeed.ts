@@ -18,7 +18,7 @@ export function useHomeEventFeed({
   seekingHostOnly,
   isSeekingHost,
 }: UseHomeEventFeedOptions) {
-  const { events, isLoading, isError, isRefreshing } = useEventsResource();
+  const { events, isLoading, isError, isRefreshing, refetch } = useEventsResource();
   const currentUser = useStore((s) => s.currentUser);
   const filters = useHomeUrlFilters();
   const { getDistance } = useHomeGeoDistance(filters.radiusFilter);
@@ -117,5 +117,6 @@ export function useHomeEventFeed({
     isLoading,
     isRefreshing,
     isError,
+    refetch,
   };
 }

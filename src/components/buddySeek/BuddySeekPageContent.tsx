@@ -143,7 +143,7 @@ export default function BuddySeekPageContent() {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/settings?section=buddy-seek')}
             className={cn(
               'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
               a.borderB,

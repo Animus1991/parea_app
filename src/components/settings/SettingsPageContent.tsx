@@ -7,7 +7,7 @@ import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
 import { useStore } from '../../store';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { pressable } from '../../lib/a11y';
@@ -31,6 +31,7 @@ const NOTIF_MAP: Record<string, keyof import('../../store').UserSettings['notifi
 export default function SettingsPageContent() {
   const { t, tu, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const a = usePageContrast();
 
   const theme = useStore((s) => s.theme);
@@ -48,6 +49,8 @@ export default function SettingsPageContent() {
   const homeHeroMode = useStore((s) => s.homeHeroMode);
   const themePanelRef = useRef<HTMLDivElement>(null);
   const homeLayoutPanelRef = useRef<HTMLDivElement>(null);
+  const availabilityPanelRef = useRef<HTMLDivElement>(null);
+  const buddySeekSectionRef = useRef<HTMLDivElement>(null);
 
   // Keep the expandable panels next to the row that opened them (not below the fold).
   useEffect(() => {
@@ -58,6 +61,31 @@ export default function SettingsPageContent() {
     if (!showHomeLayout) return;
     homeLayoutPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [showHomeLayout]);
+
+  // Deep-links: ?availability=1 opens slots; ?section=buddy-seek scrolls privacy panel.
+  useEffect(() => {
+    const openAvailability =
+      searchParams.get('availability') === '1' || searchParams.get('section') === 'availability';
+    const openBuddySeek = searchParams.get('section') === 'buddy-seek';
+    if (!openAvailability && !openBuddySeek) return;
+
+    if (openAvailability) {
+      setShowAvailability(true);
+      requestAnimationFrame(() => {
+        availabilityPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+    if (openBuddySeek) {
+      requestAnimationFrame(() => {
+        buddySeekSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    const next = new URLSearchParams(searchParams);
+    next.delete('availability');
+    if (openBuddySeek || openAvailability) next.delete('section');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   const twoFactorEnabled = userSettings.twoFactorEnabled;
 
@@ -90,6 +118,7 @@ export default function SettingsPageContent() {
       ? userSettings.categoryPrefs.filter((c) => c !== key)
       : [...userSettings.categoryPrefs, key];
     updateUserSettings({ categoryPrefs: next });
+    toast.success(t('Οι προτιμήσεις κατηγοριών αποθηκεύτηκαν', 'Category preferences saved'));
   };
 
   const toggleAvailability = (slot: string) => {
@@ -253,17 +282,46 @@ export default function SettingsPageContent() {
         </div>
       ))}
 
-      <BuddySeekPrivacySettings />
+      <div ref={buddySeekSectionRef}>
+        <BuddySeekPrivacySettings />
+      </div>
       <ChatPrivacySettingsPanel />
 
-      {/* 2FA Setup */}
+      {/* 2FA Setup / Disable */}
       {show2FASetup && (
         <Card className={cn("p-5 border", a.twofaBg)}>
-          <h3 className={cn("font-bold text-sm mb-2", a.head)}>{t('Ρύθμιση 2FA', 'Setup 2FA')}</h3>
-          <p className={cn("card-copy mb-4", a.sub)}>{t('Προσθέστε ένα επιπλέον επίπεδο ασφάλειας', 'Add an extra layer of security')}</p>
-          <Button size="sm" onClick={() => { updateUserSettings({ twoFactorEnabled: true }); setShow2FASetup(false); toast.success(t('Το 2FA ενεργοποιήθηκε', '2FA enabled')); }}>
-            {t('Ενεργοποίηση', 'Enable')}
-          </Button>
+          <h3 className={cn("font-bold text-sm mb-2", a.head)}>
+            {twoFactorEnabled ? t('Διαχείριση 2FA', 'Manage 2FA') : t('Ρύθμιση 2FA', 'Setup 2FA')}
+          </h3>
+          <p className={cn("card-copy mb-4", a.sub)}>
+            {twoFactorEnabled
+              ? t('Το 2FA είναι ενεργό. Μπορείτε να το απενεργοποιήσετε αν χρειαστεί.', '2FA is active. You can disable it if needed.')
+              : t('Προσθέστε ένα επιπλέον επίπεδο ασφάλειας', 'Add an extra layer of security')}
+          </p>
+          {twoFactorEnabled ? (
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                updateUserSettings({ twoFactorEnabled: false });
+                setShow2FASetup(false);
+                toast.success(t('Το 2FA απενεργοποιήθηκε', '2FA disabled'));
+              }}
+            >
+              {t('Απενεργοποίηση', 'Disable')}
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => {
+                updateUserSettings({ twoFactorEnabled: true });
+                setShow2FASetup(false);
+                toast.success(t('Το 2FA ενεργοποιήθηκε', '2FA enabled'));
+              }}
+            >
+              {t('Ενεργοποίηση', 'Enable')}
+            </Button>
+          )}
         </Card>
       )}
 
@@ -328,7 +386,7 @@ export default function SettingsPageContent() {
         </div>
       )}
 
-      <div>
+      <div ref={availabilityPanelRef}>
         <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Διαθεσιμότητα', 'Availability')}</h2>
         <Card className={a.divider}>
           <div

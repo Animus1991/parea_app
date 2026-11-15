@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
 import { cn } from '../../lib/utils';
@@ -30,7 +31,11 @@ export function ChatPrivacySettingsPanel() {
   const { t } = useLanguage();
   const a = usePageContrast();
   const privacy = useChatStore((s) => s.privacy);
-  const setPrivacy = useChatStore((s) => s.setPrivacy);
+  const setPrivacyStore = useChatStore((s) => s.setPrivacy);
+  const setPrivacy = (patch: Parameters<typeof setPrivacyStore>[0]) => {
+    setPrivacyStore(patch);
+    toast.success(t('Οι ρυθμίσεις απορρήτου αποθηκεύτηκαν', 'Privacy settings saved'));
+  };
 
   return (
     <section className={cn('rounded-2xl border p-4 mt-4', a.cardSurface, a.borderB)}>

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, Users, User, Megaphone, LifeBuoy, GitMerge, Lock, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { EmptyState } from '../common/EmptyState';
@@ -29,6 +30,7 @@ function sectionFor(c: Conversation): 'active' | 'pending' | 'groups' | 'connect
 
 export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const allConversations = useChatStore((s) => s.conversations);
   const conversations = useMemo(
     () => allConversations.filter((c) => c.status !== 'archived'),
@@ -77,6 +79,16 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
             title={t('Καμία συνομιλία ακόμα', 'No conversations yet')}
             description={t('Οι συνομιλίες ξεκλειδώνουν μετά από αποδοχή αιτήματος ή ομάδας.', 'Conversations unlock after a request or group is accepted.')}
             className="m-2 border-0 bg-transparent"
+            actionLabel={t('Περιήγηση εκδηλώσεων', 'Browse Events')}
+            onAction={() => {
+              onClose();
+              navigate('/');
+            }}
+            secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+            onSecondary={() => {
+              onClose();
+              navigate('/buddy-seek');
+            }}
           />
         )}
         {sections.map((sec) => {

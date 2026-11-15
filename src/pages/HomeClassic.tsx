@@ -12,6 +12,7 @@ import { useThemeStyles } from "../hooks/useThemeStyles";
 import { EventStories } from "../components/home/EventStories";
 import { HomeLoggedInHero } from "../components/home/HomeLoggedInHero";
 import { HomePendingFeedbackBanner } from "../components/home/HomePendingFeedbackBanner";
+import { HomeVerifyBanner } from "../components/home/HomeVerifyBanner";
 import { HomeBelowFold } from "../components/home/HomeBelowFold";
 import { HomeBuddySeekStrip } from "../components/buddySeek/HomeBuddySeekStrip";
 import { getTimeGreeting, getMotivation } from "../lib/homeGreeting";
@@ -77,6 +78,7 @@ export default function HomeClassic() {
     handleSelectMood,
     isLoading,
     isError,
+    refetch,
   } = feed;
 
   const currentUser = feed.currentUser;
@@ -169,6 +171,7 @@ export default function HomeClassic() {
       {showWelcome && (
         <HomeOnboardingWelcomeBanner useClassicTokens onDismiss={dismissWelcome} />
       )}
+      <HomeVerifyBanner />
       <HomePendingFeedbackBanner />
 
       <HomeFiltersSection
@@ -247,6 +250,8 @@ export default function HomeClassic() {
                 icon={CalendarX}
                 title={t("Αδυναμία φόρτωσης εκδηλώσεων", "Could not load events")}
                 description={t("Εμφανίζονται τα αποθηκευμένα δεδομένα όταν είναι διαθέσιμα.", "Cached data is shown when available.")}
+                actionLabel={t("Επανάληψη", "Retry")}
+                onAction={() => { void refetch(); }}
               />
             </div>
           ) : sortedEvents.length === 0 ? (
