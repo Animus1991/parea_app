@@ -4,6 +4,7 @@ import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { resumeLabel } from '../../lib/resumePath';
 import { trackEvent } from '../../lib/analytics';
+import { prefetchPath } from '../../lib/routeLoaders';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useReturnSummary } from '../../hooks/useReturnSummary';
@@ -43,6 +44,8 @@ export function HomeContinueStrip() {
           trackEvent({ name: 'resume_strip_continue', path });
           navigate(path);
         }}
+        onMouseEnter={() => prefetchPath(path)}
+        onFocus={() => prefetchPath(path)}
         className="flex flex-1 items-center gap-2.5 min-w-0 text-left rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
         <span className="flex-1 min-w-0">

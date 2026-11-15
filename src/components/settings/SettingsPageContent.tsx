@@ -116,8 +116,18 @@ export default function SettingsPageContent() {
     toast.success(t('Η εξαγωγή ξεκίνησε', 'Export started'));
   };
 
-  const handleComingSoon = (label: string) => {
-    toast.info(t(`${label} — σύντομα διαθέσιμο`, `${label} — coming soon`));
+  /** Stub rows stay visible; toast points to an existing useful surface meanwhile. */
+  const handleComingSoon = (
+    label: string,
+    bridge: { path: string; actionLabel: string; hintEl: string; hintEn: string },
+  ) => {
+    toast.message(t(`${label} — σύντομα διαθέσιμο`, `${label} — coming soon`), {
+      description: t(bridge.hintEl, bridge.hintEn),
+      action: {
+        label: bridge.actionLabel,
+        onClick: () => navigate(bridge.path),
+      },
+    });
   };
 
   const visibilityLabel =
@@ -131,17 +141,48 @@ export default function SettingsPageContent() {
     {
       title: t('Ρυθμίσεις Λογαριασμού', 'Account Settings'),
       items: [
-        { icon: Globe, label: t('Γλώσσα', 'Language'), value: language === 'el' ? 'Ελληνικά' : 'English', onClick: () => setLanguage(language === 'el' ? 'en' : 'el') },
+        {
+          icon: Globe,
+          label: t('Γλώσσα', 'Language'),
+          value: language === 'el' ? 'Ελληνικά' : 'English',
+          onClick: () => {
+            const next = language === 'el' ? 'en' : 'el';
+            setLanguage(next);
+            toast.message(next === 'el' ? 'Γλώσσα: Ελληνικά' : 'Language: English');
+          },
+        },
         { icon: Palette, label: t('Εμφάνιση & Θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
         { icon: LayoutGrid, label: t('Προβολή αρχικής', 'Home layout'), value: homeHeroMode === 'light' ? t('Σύντομο', 'Compact') : homeHeroMode === 'rich' ? t('Πλήρες', 'Full') : t('Ισορροπημένο', 'Balanced'), onClick: () => setShowHomeLayout(!showHomeLayout) },
-        { icon: CreditCard, label: t('Μέθοδοι Πληρωμής', 'Payment Methods'), value: t('Σύντομα', 'Soon'), onClick: () => handleComingSoon(t('Μέθοδοι Πληρωμής', 'Payment Methods')) },
+        {
+          icon: CreditCard,
+          label: t('Μέθοδοι Πληρωμής', 'Payment Methods'),
+          value: t('Σύντομα', 'Soon'),
+          onClick: () =>
+            handleComingSoon(t('Μέθοδοι Πληρωμής', 'Payment Methods'), {
+              path: '/wallet',
+              actionLabel: t('Πορτοφόλι', 'Wallet'),
+              hintEl: 'Εν τω μεταξύ δες το πορτοφόλι και τις κινήσεις σου.',
+              hintEn: 'Meanwhile, open your wallet and activity.',
+            }),
+        },
       ],
     },
     {
       title: t('Απόρρητο & Ασφάλεια', 'Privacy & Security'),
       items: [
         { icon: Eye, label: t('Ορατότητα Προφίλ', 'Profile Visibility'), value: visibilityLabel, onClick: () => navigate('/profile') },
-        { icon: Shield, label: t('Μπλοκαρισμένοι', 'Blocked Users'), value: t('Σύντομα', 'Soon'), onClick: () => handleComingSoon(t('Μπλοκαρισμένοι', 'Blocked Users')) },
+        {
+          icon: Shield,
+          label: t('Μπλοκαρισμένοι', 'Blocked Users'),
+          value: t('Σύντομα', 'Soon'),
+          onClick: () =>
+            handleComingSoon(t('Μπλοκαρισμένοι', 'Blocked Users'), {
+              path: '/trust',
+              actionLabel: t('Κέντρο εμπιστοσύνης', 'Trust Center'),
+              hintEl: 'Για ασφάλεια τώρα, άνοιξε το Κέντρο εμπιστοσύνης ή κάνε αναφορά.',
+              hintEn: 'For safety now, open the Trust Center or file a report.',
+            }),
+        },
         { icon: Lock, label: t('2FA', '2FA'), value: twoFactorEnabled ? t('Ενεργό', 'Active') : t('Ανενεργό', 'Inactive'), onClick: () => setShow2FASetup(!show2FASetup) },
       ],
     },
@@ -417,11 +458,11 @@ export default function SettingsPageContent() {
         </div>
       </Modal>
 
-      {/* Version */}
+      {/* Version — bilingual label; build stamp stays technical */}
       <div className="text-center pt-2 pb-4">
         <div className={cn("flex items-center justify-center gap-1 text-xs font-medium", a.isDark ? "text-gray-600" : "text-gray-300")}>
-          <Info className="w-3 h-3" />
-          <span>Nakamas v1.2.0 • Build 2026.07</span>
+          <Info className="w-3 h-3" aria-hidden />
+          <span>{t('Nakamas έκδ. 1.2.0 · Build 2026.07', 'Nakamas v1.2.0 · Build 2026.07')}</span>
         </div>
       </div>
     </div>

@@ -1,10 +1,10 @@
 import { useState, useRef, useLayoutEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Palette, Check } from 'lucide-react';
-import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { THEME_IDS, THEME_LABELS, THEME_SWATCH, type ThemeId } from '../../lib/themes';
+import { applyThemeSelection } from '../../lib/applyTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import { cn } from '../../lib/utils';
@@ -24,15 +24,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
   const [open, setOpen] = useState(false);
 
   const applyTheme = (id: ThemeId) => {
-    setTheme(id);
-    if (typeof document !== 'undefined') {
-      document.documentElement.dataset.theme = id;
-    }
-    toast.message(
-      language === 'el'
-        ? `Θέμα: ${THEME_LABELS[id].el}`
-        : `Theme: ${THEME_LABELS[id].en}`,
-    );
+    applyThemeSelection(id, setTheme, language === 'el' ? 'el' : 'en', theme);
   };
   const anchorRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
