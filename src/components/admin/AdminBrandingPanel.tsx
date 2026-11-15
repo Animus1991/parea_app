@@ -7,10 +7,11 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
 import { THEME_LABELS, type ThemeId } from '../../lib/themes';
+import { applyThemeSelection } from '../../lib/applyTheme';
 import { toast } from 'sonner';
 
 export function AdminBrandingPanel() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const a = usePageContrast();
   const theme = useStore((s) => s.theme);
   const setTheme = useStore((s) => s.setTheme);
@@ -61,13 +62,13 @@ export function AdminBrandingPanel() {
             <button
               key={id}
               type="button"
-              onClick={() => setTheme(id)}
+              onClick={() => applyThemeSelection(id, setTheme, language === 'el' ? 'el' : 'en', theme)}
               className={cn(
                 'px-3 py-1.5 rounded-full text-xs font-bold border transition-colors',
                 theme === id ? 'bg-cyan-600 text-white border-cyan-600' : cn(a.borderB, a.sub),
               )}
             >
-              {THEME_LABELS[id]?.el ?? id}
+              {language === 'el' ? THEME_LABELS[id]?.el ?? id : THEME_LABELS[id]?.en ?? id}
             </button>
           ))}
         </div>

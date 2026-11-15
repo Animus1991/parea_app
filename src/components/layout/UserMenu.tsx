@@ -2,9 +2,11 @@ import { useCallback, useLayoutEffect, useRef, useState, type KeyboardEvent, typ
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { Check, Settings2, SlidersHorizontal, UserRound } from 'lucide-react';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
-import { THEME_IDS, THEME_LABELS, THEME_SWATCH } from '../../lib/themes';
+import { THEME_IDS, THEME_LABELS, THEME_SWATCH, type ThemeId } from '../../lib/themes';
+import { applyThemeSelection } from '../../lib/applyTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import { cn } from '../../lib/utils';
@@ -80,6 +82,16 @@ export function UserMenu({ children, label, header, showAccountLinks = false }: 
     navigate(path);
   };
 
+  const pickLanguage = (id: 'el' | 'en') => {
+    if (language === id) return;
+    setLanguage(id);
+    toast.message(id === 'el' ? 'Γλώσσα: Ελληνικά' : 'Language: English');
+  };
+
+  const pickTheme = (id: ThemeId) => {
+    applyThemeSelection(id, setTheme, language === 'el' ? 'el' : 'en', theme);
+  };
+
   const itemBase = cn(
     'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium min-h-11 transition-colors outline-none',
     'focus-visible:ring-2',
@@ -142,7 +154,7 @@ export function UserMenu({ children, label, header, showAccountLinks = false }: 
                       aria-checked={language === opt.id}
                       lang={opt.id}
                       data-autofocus={!showAccountLinks && i === 0 ? true : undefined}
-                      onClick={() => setLanguage(opt.id)}
+                      onClick={() => pickLanguage(opt.id)}
                       className={cn(itemBase, 'justify-center px-2', language === opt.id ? tok.navActive : itemIdle)}
                     >
                       {opt.label}
@@ -161,7 +173,7 @@ export function UserMenu({ children, label, header, showAccountLinks = false }: 
                     type="button"
                     role="menuitemradio"
                     aria-checked={theme === id}
-                    onClick={() => setTheme(id)}
+                    onClick={() => pickTheme(id)}
                     className={cn(itemBase, theme === id ? tok.navActive : itemIdle)}
                   >
                     <span className={cn('h-4 w-4 rounded-full shrink-0 ring-2 ring-white/80', THEME_SWATCH[id])} aria-hidden />
