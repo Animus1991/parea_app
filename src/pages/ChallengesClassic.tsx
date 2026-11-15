@@ -253,7 +253,7 @@ export default function ChallengesClassic() {
                         </span>
                       )}
                     </div>
-                    <p className={cn('card-copy-sm font-medium mt-0.5 leading-snug', p.sub)}>
+                    <p className={cn('text-sm font-medium mt-0.5 leading-snug', p.sub)}>
                       {t(c.descGr, c.descEn)}
                     </p>
                   </div>
