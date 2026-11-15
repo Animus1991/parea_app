@@ -52,10 +52,14 @@ const BY_ROUTE: Record<string, CopilotSuggestion[]> = {
     S('Πόσα XP έχω;', 'How much XP do I have?'),
     S('Σταμάτα την κοινοποίηση τοποθεσίας', 'Stop sharing my location'),
   ],
-  trust: [S('Πώς ανεβαίνει η αξιοπιστία μου;', 'How does my reliability go up?'), S('Τι είναι οι βαθμίδες εμπιστοσύνης;', 'What are trust tiers?')],
-  verification: [
-    S('Ξεκίνα επαλήθευση email', 'Start email verification'),
+  trust: [
+    S('Σύνοψη αξιοπιστίας και κενών', 'Summarise my trust and gaps'),
+    S('Πώς ανεβαίνει η αξιοπιστία μου;', 'How does my reliability go up?'),
     S('Τι είναι οι βαθμίδες εμπιστοσύνης;', 'What are trust tiers?'),
+  ],
+  verification: [
+    S('Σύνοψη αξιοπιστίας και κενών', 'Summarise my trust and gaps'),
+    S('Ξεκίνα επαλήθευση email', 'Start email verification'),
     S('Πώς ανεβαίνει η αξιοπιστία μου;', 'How does my reliability go up?'),
   ],
   achievements: [S('Πόσα XP έχω;', 'How much XP do I have?'), S('Πώς κερδίζω XP;', 'How do I earn XP?')],

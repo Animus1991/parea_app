@@ -163,6 +163,21 @@ describe('copilot action registry', () => {
     expect(res.link?.path).toBe('/wallet');
   });
 
+  it('summarises trust gaps and deep-links verification', async () => {
+    useStore.getState().login('u1');
+    const uid = useStore.getState().currentUser!.id;
+    useStore.getState().updateUser(uid, {
+      emailVerified: false,
+      phoneVerified: true,
+      idVerified: true,
+      reliabilityScore: 80,
+    } as never);
+    const res = await run('summarize_trust', {});
+    expect(res.ok).toBe(true);
+    expect(navigated.at(-1)).toBe('/verification?method=email');
+    expect(res.link?.path).toBe('/verification?method=email');
+  });
+
   it('joins a challenge with undo', async () => {
     useStore.getState().login('u1');
     useStore.setState({ challengesJoined: [] });

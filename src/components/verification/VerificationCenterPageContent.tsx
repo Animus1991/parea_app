@@ -9,13 +9,14 @@ import { useStore } from '../../store';
 import { toast } from 'sonner';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { verifyDemo } from '../../lib/verifyDemo';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function VerificationCenterPageContent() {
   const { t } = useLanguage();
   const a = usePageContrast();
   const currentUser = useStore((s) => s.currentUser);
   const fileRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const highlight = searchParams.get('method');
 
@@ -68,14 +69,19 @@ export default function VerificationCenterPageContent() {
 
   return (
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
-      <div>
-        <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Κέντρο Επαλήθευσης', 'Verification Center')}</h1>
-        <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>
-          {t(
-            'Επαληθεύστε την ταυτότητά σας για μεγαλύτερη ασφάλεια και υψηλότερο Βαθμό Αξιοπιστίας',
-            'Verify your identity for greater safety and a higher Reliability Score',
-          )}
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Κέντρο Επαλήθευσης', 'Verification Center')}</h1>
+          <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>
+            {t(
+              'Επαληθεύστε την ταυτότητά σας για μεγαλύτερη ασφάλεια και υψηλότερο Βαθμό Αξιοπιστίας',
+              'Verify your identity for greater safety and a higher Reliability Score',
+            )}
+          </p>
+        </div>
+        <Button variant="outline" size="sm" className="shrink-0" onClick={() => navigate('/trust')}>
+          {t('Κέντρο Εμπιστοσύνης', 'Trust Center')}
+        </Button>
       </div>
 
       <div className={cn('rounded-xl p-4 flex gap-4 border', a.progressBg)}>

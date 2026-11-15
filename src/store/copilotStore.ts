@@ -35,6 +35,8 @@ export interface CopilotMessage {
   /** The effect of this message was reverted with Undo. */
   undone?: boolean;
   error?: boolean;
+  /** Optional thumbs feedback on assistant answers (Wave C). */
+  feedback?: 'up' | 'down';
   createdAt: number;
 }
 

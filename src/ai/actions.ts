@@ -1438,6 +1438,46 @@ const summarizeWalletAction: CopilotAction = {
   },
 };
 
+/** Live trust/verify gaps — bridges to Trust or the next Verification method (no second verify mutate). */
+const summarizeTrustAction: CopilotAction = {
+  name: 'summarize_trust',
+  description:
+    'Summarise reliability score and open verification gaps, then bridge to Trust Center or Verification.',
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: (_args, rt) => {
+    const user = state().currentUser;
+    if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const score = user.reliabilityScore ?? 0;
+    const stars = (score / 20).toFixed(1);
+    const gap = nextVerifyGap(user);
+    const labels = {
+      email: ['email', 'email'],
+      phone: ['τηλέφωνο', 'phone'],
+      id: ['ταυτότητα', 'ID'],
+    } as const;
+    if (!gap) {
+      rt.navigate('/trust');
+      return {
+        ok: true,
+        el: `Αξιοπιστία ${stars}/5 (${score}/100). Όλα τα βασικά βήματα επαλήθευσης είναι ολοκληρωμένα — άνοιξα το Κέντρο Εμπιστοσύνης.`,
+        en: `Reliability ${stars}/5 (${score}/100). All core verification steps are done — opened Trust Center.`,
+        link: { path: '/trust', el: 'Εμπιστοσύνη', en: 'Trust' },
+        data: { score, gap: null },
+      };
+    }
+    const path = `/verification?method=${gap}`;
+    rt.navigate(path);
+    return {
+      ok: true,
+      el: `Αξιοπιστία ${stars}/5 (${score}/100). Επόμενο κενό: ${labels[gap][0]} — άνοιξα την επαλήθευση.`,
+      en: `Reliability ${stars}/5 (${score}/100). Next gap: ${labels[gap][1]} — opened Verification.`,
+      link: { path, el: 'Επαλήθευση', en: 'Verification' },
+      data: { score, gap },
+    };
+  },
+};
+
 const listFormingAction: CopilotAction = {
   name: 'list_forming_plans',
   description: 'List active Find-Nakamas company requests (plans forming) the user can join or review.',
@@ -1573,9 +1613,9 @@ const capabilitiesAction: CopilotAction = {
   run: () => ({
     ok: true,
     el:
-      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα, τις ειδοποιήσεις και το πορτοφόλι σου\n• Να εξάγω όλο το ημερολόγιο σε .ics και να ανοίξω εκκρεμή αξιολόγηση\n• Να ξεκινήσω επαλήθευση και να σου πω τι νέο υπάρχει (και κενά εμπιστοσύνης)\n• Να δείξω σχέδια που σχηματίζονται και να απαντήσω σε αιτήματα παρέας\n• Να απαντήσω «πού …;» με where_is και να προτείνω πρόχειρα φόρμας (εκδήλωση/προφίλ)\n• Να μπω σε προκλήσεις, να στείλω μήνυμα ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\nΌ,τι κάνω αναιρείται με ένα κλικ.',
+      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα, τις ειδοποιήσεις, το πορτοφόλι και την αξιοπιστία σου\n• Να εξάγω όλο το ημερολόγιο σε .ics και να ανοίξω εκκρεμή αξιολόγηση\n• Να ξεκινήσω επαλήθευση και να σου πω τι νέο υπάρχει (και κενά εμπιστοσύνης)\n• Να δείξω σχέδια που σχηματίζονται και να απαντήσω σε αιτήματα παρέας\n• Να απαντήσω «πού …;» με where_is και να προτείνω πρόχειρα φόρμας (εκδήλωση/προφίλ)\n• Να μπω σε προκλήσεις, να στείλω μήνυμα ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\nΌ,τι κάνω αναιρείται με ένα κλικ.',
     en:
-      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule, notifications and wallet\n• Export the whole calendar as .ics and open a pending review\n• Start verification and catch you up on what’s new (including trust gaps)\n• List plans forming and respond to company join requests\n• Answer “where do I …?” and propose form drafts (event/profile)\n• Join challenges, message your group or create an event (with confirmation)\n• Change theme, language, privacy, notifications, interests\nEverything I do can be undone in one click.',
+      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule, notifications, wallet and trust\n• Export the whole calendar as .ics and open a pending review\n• Start verification and catch you up on what’s new (including trust gaps)\n• List plans forming and respond to company join requests\n• Answer “where do I …?” and propose form drafts (event/profile)\n• Join challenges, message your group or create an event (with confirmation)\n• Change theme, language, privacy, notifications, interests\nEverything I do can be undone in one click.',
   }),
 };
 
@@ -1633,6 +1673,7 @@ export const COPILOT_ACTIONS: CopilotAction[] = [
   startVerificationAction,
   openFeedbackAction,
   summarizeWalletAction,
+  summarizeTrustAction,
   joinChallengeAction,
   themeAction,
   languageAction,

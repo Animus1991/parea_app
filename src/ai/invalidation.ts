@@ -23,7 +23,7 @@ const ACTION_TOPICS: Record<string, InvalidationTopic[]> = {
   unsave_event: ['saved', 'events'],
   join_waitlist: ['events', 'groups'],
   start_join_flow: ['groups', 'events'],
-  leave_group: ['groups', 'events', 'chat'],
+  leave_group: ['groups', 'events', 'chat', 'company'],
   create_event: ['events'],
   draft_event: ['events'],
   send_group_message: ['chat'],
@@ -47,6 +47,7 @@ const ACTION_TOPICS: Record<string, InvalidationTopic[]> = {
   open_feedback: ['events'],
   join_challenge: ['challenges', 'profile'],
   summarize_wallet: ['wallet'],
+  summarize_trust: ['profile', 'settings'],
   export_agenda: ['events'],
   whats_new: ['notifications', 'company', 'chat'],
 };

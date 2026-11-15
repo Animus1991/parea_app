@@ -306,10 +306,27 @@ export default function ProfilePageContent() {
                 <Edit2 className="w-3 h-3" /> {t("Επεξεργασία", "Edit")}
               </Button>
               {currentUser.isOrganizer ? (
-                <Button size="sm" onClick={() => navigate(`/organizer/${currentUser.id}`)}>{t("Προφίλ Διοργανωτή", "Organizer Profile")}</Button>
+                <>
+                  <Button size="sm" onClick={() => navigate(`/organizer/${currentUser.id}`)}>
+                    {t('Προφίλ Διοργανωτή', 'Organizer Profile')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => navigate('/manage')}
+                    className="flex items-center gap-1.5"
+                  >
+                    <Star className="w-3 h-3" /> {t('Πίνακας Διοργανωτή', 'Organizer Workspace')}
+                  </Button>
+                </>
               ) : (
-                <Button size="sm" variant="ghost" onClick={() => navigate("/manage")} className="flex items-center gap-1.5">
-                  <Star className="w-3 h-3" /> {t("Γίνε Διοργανωτής", "Become Organizer")}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => navigate('/create')}
+                  className="flex items-center gap-1.5"
+                >
+                  <Star className="w-3 h-3" /> {t('Γίνε Διοργανωτής', 'Become Organizer')}
                 </Button>
               )}
             </div>

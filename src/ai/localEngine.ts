@@ -140,6 +140,13 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
     return { calls: [call('summarize_wallet')] };
   }
   if (
+    (hasAny(p, ['αξιοπιστ', 'reliability', 'εμπιστοσ', 'trust']) &&
+      hasAny(p, ['συνοψ', 'summar', 'κενα', 'gap', 'βαθμο', 'score', 'πως ειμαι', 'how am i', 'τι μου λειπ'])) ||
+    hasAny(p, ['κενά εμπιστοσύνης', 'trust gaps', 'fix my trust', 'διορθωσε την αξιοπιστια'])
+  ) {
+    return { calls: [call('summarize_trust')] };
+  }
+  if (
     hasAny(p, ['εξαγωγ', 'εξηγαγ', 'export', 'κατεβασ', 'download']) &&
     hasAny(p, ['ημερολογ', 'calendar', 'ατζεντα', 'agenda', 'ics', 'ολα τα σχεδια', 'all my plans'])
   ) {

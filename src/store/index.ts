@@ -458,17 +458,39 @@ export const useStore = create<AppState>()(
   leaveGroup: (groupId) =>
     set((state) => {
       if (!state.currentUser) return state;
+      const uid = state.currentUser.id;
+      // Keep Plans / BuddySeek in sync: company joins coordinated via this
+      // group become withdrawn when the member leaves.
+      const reopenedRequestIds = new Set<string>();
+      const companyJoinRequests = state.companyJoinRequests.map((j) => {
+        const tied =
+          j.coordinationGroupId === groupId ||
+          j.fromGroupId === groupId ||
+          j.targetGroupId === groupId;
+        if (!tied) return j;
+        if (j.fromUserId !== uid && j.targetUserId !== uid) return j;
+        if (j.status !== 'pending' && j.status !== 'accepted') return j;
+        reopenedRequestIds.add(j.companyRequestId);
+        return { ...j, status: 'withdrawn' as const };
+      });
+      const companyRequests = state.companyRequests.map((r) =>
+        r.matchedGroupId === groupId && r.status === 'matched'
+          ? { ...r, status: 'active' as const, matchedGroupId: undefined, updatedAt: new Date().toISOString() }
+          : reopenedRequestIds.has(r.id) && r.status === 'matched'
+            ? { ...r, status: 'active' as const, matchedGroupId: undefined, updatedAt: new Date().toISOString() }
+            : r,
+      );
       return {
         groups: state.groups.map((g) =>
           g.id === groupId
             ? {
                 ...g,
-                members: g.members.filter(
-                  (mId) => state.currentUser && mId !== state.currentUser.id,
-                ),
+                members: g.members.filter((mId) => mId !== uid),
               }
             : g,
         ),
+        companyJoinRequests,
+        companyRequests,
       };
     }),
 
