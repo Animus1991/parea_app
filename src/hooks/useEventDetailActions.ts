@@ -11,13 +11,16 @@ import { useEventDetailShare } from './useEventDetailShare';
 import { useLanguage } from '../lib/i18n';
 import type { Event } from '../types';
 
+/** Stable fallback so hook dependencies do not change on every render. */
+const NO_SAVED_EVENTS: string[] = [];
+
 /**
  * Share, QR, calendar export, and persisted save — synced with store.savedEvents.
  */
 export function useEventDetailActions(eventId: string | undefined, event?: Event | null) {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const savedEvents = useStore((s) => s.savedEvents) || [];
+  const savedEvents = useStore((s) => s.savedEvents) ?? NO_SAVED_EVENTS;
   const toggleSavedEvent = useStore((s) => s.toggleSavedEvent);
   const groups = useStore((s) => s.groups);
   const users = useStore((s) => s.users);
