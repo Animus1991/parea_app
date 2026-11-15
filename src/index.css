@@ -354,13 +354,16 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   }
 }
 
-/* Card titles (e.g. «Summer Cinema…») — +5% −2% −1% */
+/*
+ * Card type hierarchy — title must always be ≥ subtitle/body.
+ * (card-copy-sm / card-meta-sm previously outgrew card-heading; sizes swapped.)
+ */
 .card-heading {
-  font-size: calc(var(--text-sm) * 1.05 * 0.98 * 0.99); /* ~12.22px */
+  font-size: calc(var(--text-sm) * 1.1 * 1.01); /* ~13.33px — was card-copy-sm */
   line-height: var(--text-sm--line-height);
 }
 .card-heading-lg {
-  font-size: calc(var(--text-base) * 1.05 * 0.98 * 0.99); /* ~13.24px */
+  font-size: calc(var(--text-base) * 1.1 * 1.01); /* ~14.74px — stays above heading */
   line-height: var(--text-base--line-height);
 }
 /* Card status badges (e.g. «ΑΝΟΙΧΤΟ ΣΕ ΙΔΕΕΣ», «Αποθηκευμένη») — +5% −2% −1% */
@@ -375,23 +378,23 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   line-height: var(--text-xs--line-height);
 }
 
-/* Schedule / location (date, area) — +10% −2% +1% (unchanged this pass) */
+/* Schedule / location (date, area) */
 .card-meta {
   font-size: calc(var(--text-xs) * 1.1 * 0.98 * 1.01); /* ~10.89px */
   line-height: var(--text-xs--line-height);
 }
 .card-meta-sm {
-  font-size: calc(var(--text-sm) * 1.1 * 0.98 * 1.01); /* ~13.07px */
+  font-size: calc(var(--text-sm) * 1.05 * 0.98 * 0.99); /* ~12.22px — was card-heading; ≤ title */
   line-height: var(--text-sm--line-height);
 }
 
-/* Card body name (e.g. «Nikos») and similar — +10% then +1% */
+/* Card body / subtitle under titles */
 .card-copy {
   font-size: calc(var(--text-xs) * 1.1 * 1.01); /* ~11.11px */
   line-height: var(--text-xs--line-height);
 }
 .card-copy-sm {
-  font-size: calc(var(--text-sm) * 1.1 * 1.01); /* ~13.33px */
+  font-size: calc(var(--text-sm) * 1.05 * 0.98 * 0.99); /* ~12.22px — was card-heading; ≤ title */
   line-height: var(--text-sm--line-height);
 }
 .card-copy-micro {

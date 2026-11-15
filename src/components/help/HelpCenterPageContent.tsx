@@ -66,7 +66,7 @@ export default function HelpCenterPageContent() {
         <div className={cn("absolute top-0 right-0 -mr-8 -mt-5 w-32 h-32 rounded-full", a.heroCircle)}></div>
         <div className={cn("absolute bottom-0 left-0 -ml-8 -mb-5 w-24 h-24 rounded-full", a.heroCircle)}></div>
         <h1 className="text-sm md:text-base font-black mb-2 relative z-10">{t('Κέντρο Βοήθειας', 'Help Center')}</h1>
-        <p className={cn("text-base font-medium mb-4 relative z-10", a.heroSub)}>{t('Πώς μπορούμε να βοηθήσουμε;', 'How can we help you?')}</p>
+        <p className={cn("text-sm font-medium mb-4 relative z-10", a.heroSub)}>{t('Πώς μπορούμε να βοηθήσουμε;', 'How can we help you?')}</p>
         <div className="relative max-w-md mx-auto z-10">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
