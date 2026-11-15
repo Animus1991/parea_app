@@ -88,10 +88,10 @@ export function EventDetailSafetySection({
         >
           <ShieldCheck className={cn('w-8 h-8 shrink-0', tok.verifiedIcon)} />
           <div>
-            <h3 className={cn('font-bold text-sm', darkSurface ? 'text-white' : 'text-ink')}>
+            <h3 className={cn('card-heading font-bold', darkSurface ? 'text-white' : 'text-ink')}>
               {t('Επαληθευμένη Εκδήλωση', 'Verified Event')}
             </h3>
-            <p className={cn('mt-1 text-balance leading-relaxed', tok.muted)}>
+            <p className={cn('card-copy mt-1 text-balance leading-relaxed', tok.muted)}>
               {t(
                 'Αυτή η εκδήλωση πληροί τα πρότυπα ασφάλειας και αξιοπιστίας της κοινότητάς μας.',
                 'This event meets our community safety and reliability standards.',
@@ -103,11 +103,11 @@ export function EventDetailSafetySection({
         <div className="hidden md:block w-px bg-gray-200 dark:bg-gray-700 shrink-0" />
 
         <div className="flex-1 min-w-0">
-          <h3 className={cn('font-bold flex items-center gap-2 text-sm', darkSurface ? 'text-white' : 'text-ink')}>
+          <h3 className={cn('card-heading font-bold flex items-center gap-2', darkSurface ? 'text-white' : 'text-ink')}>
             <Navigation2 className="w-4 h-4 shrink-0" />
             {t('Ασφάλεια Τοποθεσίας', 'Location Safety')}
           </h3>
-          <p className={cn('mt-1 mb-3 text-balance leading-relaxed', tok.muted)}>
+          <p className={cn('card-copy mt-1 mb-3 text-balance leading-relaxed', tok.muted)}>
             {t(
               'Κοινοποιήστε τη ζωντανή τοποθεσία σας στα μέλη της ομάδας σας (μετά την ένταξη σε ομάδα).',
               'Share your live location with group members (after joining a group).',

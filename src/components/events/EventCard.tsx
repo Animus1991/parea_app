@@ -230,7 +230,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-cyan-100 to-purple-50 flex items-center justify-center p-4 text-center">
-            <span className="text-cyan-600 font-bold text-sm md:text-base capitalize tracking-tight">
+            <span className="text-cyan-600 font-bold card-heading capitalize tracking-tight">
               {event.category}
             </span>
           </div>
@@ -244,7 +244,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           <span className={cn(EVENT_CARD_TYPO.badge, "mb-0.5", accent === 'fuchsia' ? 'text-gray-500' : accent === 'indigo' ? 'text-indigo-600' : accent === 'emerald' ? 'text-emerald-600' : 'text-brand')}>
             {month}
           </span>
-          <span className="text-base font-extrabold text-gray-900 leading-none">
+          <span className="text-sm font-extrabold text-gray-900 leading-none">
             {day}
           </span>
         </div>
@@ -486,7 +486,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         >
           <div className="space-y-4">
             <div>
-              <p className="text-sm font-bold text-ink line-clamp-2">{event.title}</p>
+              <p className="card-heading font-bold text-ink line-clamp-2">{event.title}</p>
               <p className="card-copy font-medium text-ink-muted capitalize">
                 {weekday}, {event.time} · {event.locationArea}
               </p>
@@ -655,7 +655,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-ink">
+                    <h3 className="card-heading-lg font-bold text-ink">
                       {t(
                         "Κοινοποίηση Ζωντανής Τοποθεσίας",
                         "Live Location Sharing",
@@ -680,7 +680,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   <div className="bg-cyan-50 border border-[#a5f3fc]/40 rounded-2xl p-4 flex flex-col gap-3 shadow-soft">
                     <div className="flex items-center gap-2 text-cyan-700">
                       <Navigation className="w-4 h-4 animate-pulse" />
-                      <span className="text-sm font-bold">
+                      <span className="card-heading font-bold">
                         {t(
                           "Αυτή τη στιγμή κοινοποιείτε την τοποθεσία σας",
                           "You are currently sharing location",
@@ -781,7 +781,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                           </div>
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-sm font-bold text-ink">
+                          <span className="card-heading font-bold text-ink">
                             {option === "organizer" &&
                               t("Μόνο Διοργανωτής", "Organizer Only")}
                             {option === "selected" &&
@@ -826,7 +826,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                         duration: e.target.value,
                       })
                     }
-                    className="w-full border border-gray-100 rounded-2xl p-3 text-sm font-medium focus:ring-2 focus:ring-accent/40 bg-white outline-none shadow-soft"
+                    className="w-full border border-gray-100 rounded-2xl p-3 text-xs font-medium focus:ring-2 focus:ring-accent/40 bg-white outline-none shadow-soft"
                   >
                     <option value="arrival">
                       {t(
@@ -851,7 +851,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     setIsSharingLocation(true);
                     setShowLocationConfigModal(false);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
                 >
                   {isSharingLocation
                     ? t("Ενημέρωση", "Update Configuration")
@@ -899,7 +899,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             <button
               type="button"
               onClick={() => setShowSafetyLinkModal(false)}
-              className="flex-1 px-4 py-3 text-sm font-bold text-ink hover:bg-surface rounded-2xl transition-all duration-200 active:scale-[0.98]"
+              className="flex-1 px-4 py-3 text-xs font-bold text-ink hover:bg-surface rounded-2xl transition-all duration-200 active:scale-[0.98]"
             >
               {t("Ακύρωση", "Cancel")}
             </button>
@@ -918,7 +918,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 }
                 setShowSafetyLinkModal(false);
               }}
-              className="flex-1 px-4 py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+              className="flex-1 px-4 py-3 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
             >
               {t("Κοινοποιηση", "Share")}
             </button>

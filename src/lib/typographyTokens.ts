@@ -15,6 +15,10 @@ export const APP_TYPO = {
   bodyMedium: 'text-sm font-medium',
   /** Card titles */
   cardTitle: 'card-heading font-bold leading-snug',
+  /** Card subtitle under the title — always ≤ cardTitle */
+  cardSub: 'card-copy-sm font-medium',
+  /** Central card content / values / descriptions — always ≤ cardSub */
+  cardBody: 'card-copy font-medium',
   /** Modal / panel titles — same as page title scale */
   panelTitle: 'text-sm md:text-base font-bold',
   /** Page / hero titles — Home standard */
@@ -22,8 +26,13 @@ export const APP_TYPO = {
   /** Page subtitle under the title */
   pageSub: 'text-sm font-medium',
   heroSubtitle: 'text-sm font-medium leading-relaxed',
-  /** Big KPI numerals only (HomeQuickStatsBar) */
-  statValue: 'text-lg font-black tabular-nums leading-none',
+  /** KPI numerals — capped at page-title scale so in-card stats never outgrow the page */
+  statValue: 'text-sm md:text-base font-black tabular-nums leading-none',
+  /**
+   * Canonical button / CTA label size — matches Plans → Ιστορικό → «Αξιολόγηση»
+   * (.btn-gradient / Button md). Use for every action button across the app.
+   */
+  btn: 'text-xs font-bold',
 } as const;
 
 /** Popup chat window density */

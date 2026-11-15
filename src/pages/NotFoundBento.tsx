@@ -33,7 +33,7 @@ export default function NotFoundBento() {
           return (
             <button key={s.path} onClick={() => navigate(s.path)} className="flex items-center gap-2 p-3 rounded-xl border border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-50 transition-all text-left">
               <Icon className="w-4 h-4 text-indigo-600" />
-              <span className="text-sm font-bold text-ink">{s.label}</span>
+              <span className="text-xs font-bold text-ink">{s.label}</span>
             </button>
           );
         })}

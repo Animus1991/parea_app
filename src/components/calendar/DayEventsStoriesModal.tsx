@@ -117,7 +117,7 @@ export function DayEventsStoriesModal({
   };
 
   const actionBtn =
-    'flex items-center justify-center gap-2 rounded-2xl font-bold transition-colors min-h-11 text-sm';
+    'flex items-center justify-center gap-2 rounded-2xl font-bold transition-colors min-h-11 text-xs';
   const outlineBtn = cn(actionBtn, 'border border-white/15 bg-white/5 text-white hover:bg-white/10');
   const primaryBtn = cn(actionBtn, 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-soft');
 

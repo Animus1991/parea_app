@@ -325,7 +325,7 @@ export function CreateCompanyRequestModal({
             <button
               type="button"
               onClick={() => setStep((s) => s - 1)}
-              className="min-h-11 px-4 rounded-2xl border border-border text-sm font-bold flex items-center gap-1"
+              className="min-h-11 px-4 rounded-2xl border border-border text-xs font-bold flex items-center gap-1"
             >
               <ChevronLeft className="w-4 h-4" aria-hidden /> {t('Πίσω', 'Back')}
             </button>
@@ -335,7 +335,7 @@ export function CreateCompanyRequestModal({
               type="button"
               data-autofocus
               onClick={() => setStep((s) => s + 1)}
-              className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold flex items-center justify-center gap-1"
+              className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold flex items-center justify-center gap-1"
             >
               {t('Συνέχεια', 'Continue')} <ChevronRight className="w-4 h-4" aria-hidden />
             </button>
@@ -348,7 +348,7 @@ export function CreateCompanyRequestModal({
                 type="button"
                 data-autofocus
                 onClick={publishNow}
-                className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold"
+                className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold"
               >
                 {isEdit
                   ? t('Αποθήκευση αλλαγών', 'Save changes')

@@ -214,7 +214,7 @@ export default function SettingsPageContent() {
                       <Icon className={cn("w-4 h-4", a.muted)} />
                       <span className={cn("text-sm font-medium", a.head)}>{item.label}</span>
                     </div>
-                    <span className={cn("text-sm font-medium", a.sub)}>{item.value}</span>
+                    <span className={cn("card-copy font-medium", a.sub)}>{item.value}</span>
                   </div>
                 );
               })}
@@ -225,7 +225,7 @@ export default function SettingsPageContent() {
           {idx === 0 && showThemePicker && (
             <div ref={themePanelRef} className="scroll-mt-24">
               <Card className="p-5">
-                <h3 className={cn("font-bold text-base mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
+                <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
                 <p className={cn("text-xs font-medium mb-4", a.sub)}>
                   {t(
                     `${THEME_IDS.length} επαγγελματικά θέματα — επιλέξτε αυτό που σας ταιριάζει`,
@@ -239,7 +239,7 @@ export default function SettingsPageContent() {
           {idx === 0 && showHomeLayout && (
             <div ref={homeLayoutPanelRef} className="scroll-mt-24">
               <Card className="p-5">
-                <h3 className={cn("font-bold text-base mb-1", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
+                <h3 className={cn("font-bold text-sm mb-1", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
                 <p className={cn("text-xs font-medium mb-4", a.sub)}>
                   {t(
                     'Επιλέξτε πόσο πλούσιο είναι το hero στην αρχική — ισχύει σε όλα τα θέματα.',
@@ -259,8 +259,8 @@ export default function SettingsPageContent() {
       {/* 2FA Setup */}
       {show2FASetup && (
         <Card className={cn("p-5 border", a.twofaBg)}>
-          <h3 className={cn("font-bold text-base mb-2", a.head)}>{t('Ρύθμιση 2FA', 'Setup 2FA')}</h3>
-          <p className={cn("text-sm mb-4", a.sub)}>{t('Προσθέστε ένα επιπλέον επίπεδο ασφάλειας', 'Add an extra layer of security')}</p>
+          <h3 className={cn("font-bold text-sm mb-2", a.head)}>{t('Ρύθμιση 2FA', 'Setup 2FA')}</h3>
+          <p className={cn("card-copy mb-4", a.sub)}>{t('Προσθέστε ένα επιπλέον επίπεδο ασφάλειας', 'Add an extra layer of security')}</p>
           <Button size="sm" onClick={() => { updateUserSettings({ twoFactorEnabled: true }); setShow2FASetup(false); toast.success(t('Το 2FA ενεργοποιήθηκε', '2FA enabled')); }}>
             {t('Ενεργοποίηση', 'Enable')}
           </Button>
@@ -271,7 +271,7 @@ export default function SettingsPageContent() {
       {showNotifications && (
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className={cn("font-bold text-base mb-4", a.head)}>{t('Γενικές Ειδοποιήσεις', 'General Notifications')}</h3>
+            <h3 className={cn("font-bold text-sm mb-4", a.head)}>{t('Γενικές Ειδοποιήσεις', 'General Notifications')}</h3>
             <div className="space-y-3">
               {[
                 { key: 'pushMessages', label: t('Μηνύματα ομάδας', 'Group messages') },
@@ -299,7 +299,7 @@ export default function SettingsPageContent() {
           </Card>
 
           <Card className="p-5">
-            <h3 className={cn("font-bold text-base mb-1", a.head)}>{t('Κατηγορίες', 'Categories')}</h3>
+            <h3 className={cn("font-bold text-sm mb-1", a.head)}>{t('Κατηγορίες', 'Categories')}</h3>
             <p className={cn("text-xs mb-4", a.muted)}>{t('Ειδοποίηση μόνο για αυτές τις κατηγορίες', 'Get notified for these categories only')}</p>
             <div className="grid grid-cols-2 gap-2">
               {[
@@ -439,7 +439,7 @@ export default function SettingsPageContent() {
         title={t('Διαγραφή λογαριασμού;', 'Delete account?')}
         size="md"
       >
-        <p className="text-sm mb-4 text-ink-muted">
+        <p className="card-copy mb-4 text-ink-muted">
           {t('Αυτή είναι demo ροή — καμία πραγματική διαγραφή δεν γίνεται.', 'This is a demo flow — no real deletion occurs.')}
         </p>
         <div className="flex gap-2 justify-end">

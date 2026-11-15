@@ -32,7 +32,7 @@ export function EventDetailAboutSection({
       <h3 className={cn(surface.sectionHeading, 'mb-2')}>
         {t('Πληροφορίες για την εμπειρία', 'About the experience')}
       </h3>
-      <p className={cn('text-sm leading-relaxed font-medium', content.aboutBody)}>
+      <p className={cn('card-copy leading-relaxed font-medium', content.aboutBody)}>
         {event.description}
       </p>
 

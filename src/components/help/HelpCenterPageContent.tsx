@@ -93,7 +93,7 @@ export default function HelpCenterPageContent() {
               <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", topic.color)}>
                 <Icon className="w-4 h-4" />
               </div>
-              <span className={cn("text-sm font-bold", a.topicLabel)}>{topic.label}</span>
+              <span className={cn("card-heading font-bold", a.topicLabel)}>{topic.label}</span>
             </button>
           );
         })}
@@ -109,12 +109,12 @@ export default function HelpCenterPageContent() {
                 onClick={() => setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)}
                 className="w-full p-4 flex items-center justify-between text-left"
               >
-                <span className={cn("font-bold text-sm pr-4", a.head)}>{faq.q}</span>
+                <span className={cn("card-heading font-bold pr-4", a.head)}>{faq.q}</span>
                 <ChevronDown className={cn("w-4 h-4 shrink-0 transition-transform", a.chevron, expandedFAQ === faq.id && 'rotate-180')} />
               </button>
               {expandedFAQ === faq.id && (
                 <div className="px-4 pb-4 -mt-1">
-                  <p className={cn("text-sm font-medium leading-relaxed", a.faqAnswer)}>{faq.a}</p>
+                  <p className={cn("card-copy font-medium leading-relaxed", a.faqAnswer)}>{faq.a}</p>
                 </div>
               )}
             </Card>
@@ -135,12 +135,12 @@ export default function HelpCenterPageContent() {
               <div className="flex items-center justify-between">
                 <div>
                   <span className={cn("text-xs font-bold tracking-wide", a.articleCat)}>{article.category}</span>
-                  <h3 className={cn("font-bold text-base mt-0.5", a.head)}>{article.title}</h3>
+                  <h3 className={cn("card-heading-lg font-bold mt-0.5", a.head)}>{article.title}</h3>
                 </div>
                 <ChevronRight className={cn("w-4 h-4 shrink-0", a.chevron, expandedArticle === article.id && 'rotate-90')} />
               </div>
               {expandedArticle === article.id && (
-                <p className={cn("text-sm font-medium leading-relaxed mt-3 pt-3 border-t border-gray-100", a.faqAnswer)}>{article.content}</p>
+                <p className={cn("card-copy font-medium leading-relaxed mt-3 pt-3 border-t border-gray-100", a.faqAnswer)}>{article.content}</p>
               )}
             </Card>
           ))}
@@ -158,7 +158,7 @@ export default function HelpCenterPageContent() {
           <button
             type="button"
             onClick={() => openCopilot(search)}
-            className="mt-3 inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-accent px-4 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            className="mt-3 inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-accent px-4 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             <Bot className="h-4 w-4" aria-hidden />
             {t('Ρώτα το Nakamas AI', 'Ask Nakamas AI')}
@@ -172,7 +172,7 @@ export default function HelpCenterPageContent() {
       <Card className="p-4 text-center">
         <MessageCircle className={cn("w-8 h-8 mx-auto mb-3", a.contactIcon)} />
         <h3 className={cn("font-bold mb-1", a.head)}>{t('Χρειάζεστε βοήθεια;', 'Need more help?')}</h3>
-        <p className={cn("text-sm mb-2", a.sub)}>{t('Επικοινωνήστε μαζί μας', 'Contact our support team')}</p>
+        <p className={cn("card-copy mb-2", a.sub)}>{t('Επικοινωνήστε μαζί μας', 'Contact our support team')}</p>
         <div className="flex items-center justify-center gap-1.5 mb-4">
           {liveSupport ? (
             <>
@@ -197,7 +197,7 @@ export default function HelpCenterPageContent() {
         </div>
         <button
           type="button"
-          className={cn("px-4 py-2 text-white text-sm font-bold rounded-lg transition-colors", a.contactBtn)}
+          className={cn("px-4 py-2 text-white text-xs font-bold rounded-lg transition-colors", a.contactBtn)}
           onClick={() => {
             if (liveSupport && openLiveSupport()) {
               toast.success(t('Άνοιγμα καναλιού υποστήριξης…', 'Opening support channel…'));

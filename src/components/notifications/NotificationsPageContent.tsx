@@ -205,7 +205,7 @@ export default function NotificationsPageContent() {
           <button
             type="button"
             onClick={handleMarkAllRead}
-            className={cn('text-sm font-bold transition-colors', a.link)}
+            className={cn('text-xs font-bold transition-colors', a.link)}
           >
             {t('Σήμανση όλων', 'Mark all read')}
           </button>

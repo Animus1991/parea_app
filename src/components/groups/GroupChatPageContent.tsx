@@ -943,7 +943,7 @@ export default function GroupChatPageContent() {
             type="button"
             data-autofocus
             onClick={() => setShowSafetyLinkModal(false)}
-            className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+            className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
           >
             {t("Τέλος", "Done")}
           </button>
@@ -995,14 +995,14 @@ export default function GroupChatPageContent() {
                 setShowDisableEphemeralModal(false);
                 setShowInfo(false);
               }}
-              className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+              className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
             >
               {t("Πρόταση στην Ομάδα", "Propose to Group")}
             </button>
             <button
               type="button"
               onClick={() => setShowDisableEphemeralModal(false)}
-              className="w-full px-4 py-3 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+              className="w-full px-4 py-3 text-xs font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
             >
               {t("Ακύρωση", "Cancel")}
             </button>
@@ -1059,7 +1059,7 @@ export default function GroupChatPageContent() {
               />
               <button
                 type="submit"
-                className="px-4 py-3 text-sm font-bold text-white bg-brand hover:bg-brand-strong rounded-2xl shadow-soft transition-all duration-200 whitespace-nowrap"
+                className="px-4 py-3 text-xs font-bold text-white bg-brand hover:bg-brand-strong rounded-2xl shadow-soft transition-all duration-200 whitespace-nowrap"
               >
                 {t("Αποστολή", "Send")}
               </button>
@@ -1099,7 +1099,7 @@ export default function GroupChatPageContent() {
                   ]);
                   setShowStatusModal(false);
                 }}
-                className={`w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
+                className={`w-full px-4 py-3 text-xs font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
               >
                 {status.text}
               </button>
@@ -1108,7 +1108,7 @@ export default function GroupChatPageContent() {
             <button
               type="button"
               onClick={() => setShowStatusModal(false)}
-              className="w-full px-4 py-3 mt-2 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+              className="w-full px-4 py-3 mt-2 text-xs font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
             >
               {t("Ακύρωση", "Cancel")}
             </button>
@@ -1192,7 +1192,7 @@ export default function GroupChatPageContent() {
                           },
                         ]);
                       }}
-                      className="text-sm font-semibold px-3 py-1.5 rounded-full border flex items-center gap-1 transition-all duration-200 bg-brand text-white border-brand hover:bg-brand-strong shadow-soft shrink-0"
+                      className="text-xs font-semibold px-3 py-1.5 rounded-full border flex items-center gap-1 transition-all duration-200 bg-brand text-white border-brand hover:bg-brand-strong shadow-soft shrink-0"
                     >
                       <UserPlus className="w-3 h-3" /> {t("Προσθήκη", "Add")}
                     </button>
@@ -1222,7 +1222,7 @@ export default function GroupChatPageContent() {
                 setShowAddMemberModal(false);
                 setMemberAddSearchQuery("");
               }}
-              className="px-5 py-2.5 text-sm font-bold text-ink bg-surface-raised hover:bg-surface rounded-2xl transition-all duration-200 border border-border shadow-soft active:scale-[0.98]"
+              className="px-5 py-2.5 text-xs font-bold text-ink bg-surface-raised hover:bg-surface rounded-2xl transition-all duration-200 border border-border shadow-soft active:scale-[0.98]"
             >
               {t("Τέλος", "Done")}
             </button>

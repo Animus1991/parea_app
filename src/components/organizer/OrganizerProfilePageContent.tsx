@@ -99,7 +99,7 @@ export default function OrganizerProfilePageContent() {
             </p>
           </div>
 
-          <p className={cn('text-sm leading-relaxed max-w-2xl', p.sub)}>
+          <p className={cn('card-copy leading-relaxed max-w-2xl', p.sub)}>
             {organizer.bio ||
               t(
                 'Αυτός ο διοργανωτής δεν έχει προσθέσει βιογραφικό ακόμα. Είναι συνεργάτης του Nakamas που διαχειρίζεται ομαδικές εκδηλώσεις.',
@@ -168,7 +168,7 @@ export default function OrganizerProfilePageContent() {
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h3 className={cn('font-bold line-clamp-1 group-hover:text-cyan-600 transition-colors', p.head)}>{event.title}</h3>
+                    <h3 className={cn('card-heading font-bold line-clamp-1 group-hover:text-cyan-600 transition-colors', p.head)}>{event.title}</h3>
                     <p className={cn('card-meta mt-1', p.muted)}>
                       <span className="capitalize">{event.category}</span>
                       <span aria-hidden className="opacity-40"> · </span>
@@ -195,7 +195,7 @@ export default function OrganizerProfilePageContent() {
         title={`${t('Επικοινωνία με', 'Contact')} ${organizer.name}`}
         size="md"
       >
-        <p className="text-sm mb-4 text-ink-muted">
+        <p className="card-copy mb-4 text-ink-muted">
           {t(
             'Στείλτε ένα ασφαλές μήνυμα σε αυτόν τον διοργανωτή για τις εκδηλώσεις του, τα εισιτήρια ή γενικές ερωτήσεις.',
             'Send a secure message to this organizer about their events, ticketing issues, or general inquiries.',
@@ -213,14 +213,14 @@ export default function OrganizerProfilePageContent() {
           <button
             type="button"
             onClick={closeContactModal}
-            className="px-4 py-2 text-sm font-bold rounded-lg transition-colors text-ink-muted hover:bg-surface"
+            className="px-4 py-2 text-xs font-bold rounded-lg transition-colors text-ink-muted hover:bg-surface"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
           <button
             type="button"
             onClick={handleSendMessage}
-            className="px-4 py-2 text-sm font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-lg transition-colors"
+            className="px-4 py-2 text-xs font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-lg transition-colors"
           >
             {t('Αποστολή Μηνύματος', 'Send Message')}
           </button>

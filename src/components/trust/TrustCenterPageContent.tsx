@@ -98,7 +98,7 @@ export default function TrustCenterPageContent() {
             <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5", a.muted)}>
               <ShieldCheck className={cn("h-3.5 w-3.5", a.iconAccent)} />{t('Κατάσταση Επαλήθευσης', 'Verification Status')}
             </h2>
-            <p className={cn("text-base font-bold", a.head)}>{trustTierLabel}</p>
+            <p className={cn("card-heading-lg font-bold", a.head)}>{trustTierLabel}</p>
           </div>
 
           <div className="space-y-3">
@@ -155,7 +155,7 @@ export default function TrustCenterPageContent() {
             <svg width="120" height="120" viewBox="0 0 120 120" className="mb-2">
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.isDark ? '#374151' : '#e5e7eb'} strokeWidth="8" />
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.scoreStroke} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${strokeDash} ${circumference}`} transform="rotate(-90 60 60)" />
-              <text x="60" y="56" textAnchor="middle" className={cn("text-lg font-black", a.scoreFill)} fontSize="18">{reliabilityScore}</text>
+              <text x="60" y="56" textAnchor="middle" className={cn("text-sm md:text-base font-black", a.scoreFill)} fontSize="14">{reliabilityScore}</text>
               <text x="60" y="74" textAnchor="middle" className="fill-gray-400" fontSize="10" fontWeight="600">%</text>
             </svg>
             <p className={cn("text-xs font-bold tracking-wide", a.muted)}>{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}</p>
@@ -164,7 +164,7 @@ export default function TrustCenterPageContent() {
           <Card className={a.infoBg}>
             <div className="p-4 md:p-5">
               <h3 className={cn("text-xs font-bold tracking-wide mb-1.5", a.head)}>{t('Πώς υπολογίζεται η αξιοπιστία', 'How reliability is calculated')}</h3>
-              <p className={cn("text-sm leading-relaxed", a.sub)}>
+              <p className={cn("card-copy leading-relaxed", a.sub)}>
                 {t('Κάθε επαλήθευση αυξάνει το επίπεδο εμπιστοσύνης σας, ξεκλειδώνοντας πρόσβαση σε εκδηλώσεις υψηλής ασφάλειας.', 'Each verification raises your trust tier, unlocking access to high-safety events.')}
               </p>
               <ul className={cn("mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-medium tabular-nums", a.sub)}>
@@ -178,7 +178,7 @@ export default function TrustCenterPageContent() {
           <Card className={a.infoBg}>
             <div className="p-4 md:p-5">
               <h3 className={cn("text-xs font-bold tracking-wide mb-1.5", a.head)}>{t('Τα 3 επίπεδα εμπιστοσύνης', 'The 3 trust tiers')}</h3>
-              <ol className={cn("text-sm leading-relaxed space-y-1", a.sub)}>
+              <ol className={cn("card-copy leading-relaxed space-y-1", a.sub)}>
                 <li><strong className={a.head}>1 · {t(tierLabelEl('1_explorer'), tierLabelEn('1_explorer'))}:</strong> {t('δωρεάν δημόσιες εκδηλώσεις.', 'free public events.')}</li>
                 <li><strong className={a.head}>2 · {t(tierLabelEl('2_confirmed'), tierLabelEn('2_confirmed'))}:</strong> {t('μικρές ομάδες 3–5 & εκδηλώσεις με εισιτήριο.', 'small groups of 3–5 & ticketed events.')}</li>
                 <li><strong className={a.head}>3 · {t(tierLabelEl('3_high_trust'), tierLabelEn('3_high_trust'))}:</strong> {t('εκδρομές, ιδιωτικές συναντήσεις & διοργάνωση.', 'trips, private meetups & hosting.')}</li>

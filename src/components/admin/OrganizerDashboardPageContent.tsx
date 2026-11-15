@@ -253,7 +253,7 @@ export default function OrganizerDashboardPageContent() {
               </span>
             </div>
             <div>
-              <p className={cn('text-lg font-black tabular-nums leading-none', p.head)}>{stat.val}</p>
+              <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.head)}>{stat.val}</p>
               <p className={cn('text-xs font-bold mt-1', stat.trendColor)}>
                 {stat.trendEl}
               </p>
@@ -370,7 +370,7 @@ export default function OrganizerDashboardPageContent() {
 
                   <div className="flex items-center gap-4">
                     <div className={cn('text-right border-r pr-4', p.borderB)}>
-                      <p className={cn('text-lg font-black tabular-nums leading-none', p.head)}>
+                      <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.head)}>
                         {memberCount}/{capacity || '—'}
                       </p>
                       <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
@@ -609,7 +609,7 @@ export default function OrganizerDashboardPageContent() {
               {t('Συνολική Πληρότητα', 'Overall Fill Rate')}
             </h3>
             <div className="flex items-end justify-between mb-2">
-              <span className="text-lg font-black text-cyan-600 dark:text-cyan-400 leading-none tabular-nums">{liveStats.fillPct}%</span>
+              <span className="text-sm md:text-base font-black text-cyan-600 dark:text-cyan-400 leading-none tabular-nums">{liveStats.fillPct}%</span>
               <span className={cn('text-xs font-bold tabular-nums', p.muted)}>
                 {t(`${liveStats.participants}/${liveStats.capacity} θέσεις`, `${liveStats.participants}/${liveStats.capacity} spots`)}
               </span>
@@ -633,7 +633,7 @@ export default function OrganizerDashboardPageContent() {
                   p.isDark ? 'bg-emerald-900/10 border-emerald-900/30' : 'bg-emerald-50 border-emerald-100',
                 )}
               >
-                <p className={cn('text-lg font-black tabular-nums leading-none', p.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
+                <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
                   {liveStats.reviews ? `${liveStats.positive}%` : '—'}
                 </p>
                 <p
@@ -651,7 +651,7 @@ export default function OrganizerDashboardPageContent() {
                   p.isDark ? 'bg-amber-900/10 border-amber-900/30' : 'bg-amber-50 border-amber-100',
                 )}
               >
-                <p className={cn('text-lg font-black tabular-nums leading-none', p.isDark ? 'text-amber-400' : 'text-amber-700')}>
+                <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.isDark ? 'text-amber-400' : 'text-amber-700')}>
                   {liveStats.reviews ? `${liveStats.neutral}%` : '—'}
                 </p>
                 <p
@@ -669,7 +669,7 @@ export default function OrganizerDashboardPageContent() {
                   p.isDark ? 'bg-red-900/10 border-red-900/30' : 'bg-red-50 border-red-100',
                 )}
               >
-                <p className={cn('text-lg font-black tabular-nums leading-none', p.isDark ? 'text-red-400' : 'text-red-700')}>
+                <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.isDark ? 'text-red-400' : 'text-red-700')}>
                   {liveStats.reviews ? `${liveStats.negative}%` : '—'}
                 </p>
                 <p

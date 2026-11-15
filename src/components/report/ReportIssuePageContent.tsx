@@ -95,7 +95,7 @@ export default function ReportIssuePageContent() {
               <h3 className={cn('font-bold text-sm md:text-base', p.head)}>
                 {t('Αναφορά Ζητήματος Ασφαλείας', 'Report a Safety Concern')}
               </h3>
-              <p className={cn('text-sm mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>
+              <p className={cn('card-copy mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>
                 {t(
                   'Η αναφορά σας θα εξεταστεί από την ομάδα μας εντός 24 ωρών.',
                   'Your report will be reviewed by our team within 24 hours.',
@@ -230,7 +230,7 @@ export default function ReportIssuePageContent() {
                 )}
               >
                 <Upload className={cn('w-5 h-5 mx-auto mb-1', p.muted)} />
-                <p className={cn('text-sm font-medium', p.uploadText)}>
+                <p className={cn('card-copy font-medium', p.uploadText)}>
                   {t('Ανεβάστε screenshots ή φωτογραφίες', 'Upload screenshots or photos')}
                 </p>
                 <p className={cn('text-xs mt-0.5', p.muted)}>
@@ -264,7 +264,7 @@ export default function ReportIssuePageContent() {
 
             <div className={cn('rounded-lg p-4 flex items-start gap-3', p.infoBg)}>
               <ShieldCheck className={cn('w-5 h-5 shrink-0 mt-0.5', p.iconAccent)} />
-              <p className={cn('text-sm font-medium leading-relaxed', p.sub)}>
+              <p className={cn('card-copy font-medium leading-relaxed', p.sub)}>
                 <span className={cn('font-bold', p.head)}>{t('Απόρρητο:', 'Privacy:')}</span>{' '}
                 {t('Η αναφορά σας είναι εμπιστευτική.', 'Your report is confidential.')}
               </p>
@@ -282,7 +282,7 @@ export default function ReportIssuePageContent() {
               type="submit"
               disabled={!category || !severity || !description.trim()}
               className={cn(
-                'w-full py-2.5 rounded-full text-sm font-bold shadow-soft transition-all duration-200 tracking-wider disabled:opacity-50',
+                'w-full py-2.5 rounded-full text-xs font-bold shadow-soft transition-all duration-200 tracking-wider disabled:opacity-50',
                 p.chipActive,
                 p.isDark ? '' : 'hover:opacity-90',
               )}
@@ -310,7 +310,7 @@ export default function ReportIssuePageContent() {
           </p>
           <button
             onClick={() => navigate('/')}
-            className={cn('px-5 py-2.5 rounded-full text-sm font-bold transition-colors tracking-wider', p.chipInactive)}
+            className={cn('px-5 py-2.5 rounded-full text-xs font-bold transition-colors tracking-wider', p.chipInactive)}
           >
             {t('Επιστροφή', 'Go Back')}
           </button>

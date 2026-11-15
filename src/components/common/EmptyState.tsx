@@ -38,9 +38,10 @@ export function EmptyState({
           <Icon className="w-7 h-7" aria-hidden />
         </div>
       )}
-      <h3 className="text-base font-bold text-ink">{title}</h3>
+      {/* Inside-card type ≤ page title (text-sm); subtitle < title */}
+      <h3 className="text-sm font-bold text-ink">{title}</h3>
       {description && (
-        <p className="text-sm font-medium text-ink-muted max-w-sm mt-1 mb-4 leading-relaxed">{description}</p>
+        <p className="text-xs font-medium text-ink-muted max-w-sm mt-1 mb-4 leading-relaxed">{description}</p>
       )}
       {(actionLabel && onAction) || (secondaryLabel && onSecondary) ? (
         <div className="flex flex-wrap items-center justify-center gap-2 mt-1">

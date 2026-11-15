@@ -17,7 +17,7 @@ function RankIcon({ rank, mutedClass }: { rank: number; mutedClass: string }) {
   if (rank === 1) return <span className="text-lg leading-none select-none">🥇</span>;
   if (rank === 2) return <span className="text-lg leading-none select-none">🥈</span>;
   if (rank === 3) return <span className="text-lg leading-none select-none">🥉</span>;
-  return <span className={cn('text-base font-black tabular-nums w-8 text-center', mutedClass)}>#{rank}</span>;
+  return <span className={cn('card-heading font-black tabular-nums w-8 text-center', mutedClass)}>#{rank}</span>;
 }
 
 export default function LeaderboardClassic() {
@@ -107,7 +107,7 @@ export default function LeaderboardClassic() {
               key={per}
               onClick={() => setPeriod(per)}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-200 whitespace-nowrap',
+                'px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 whitespace-nowrap',
                 period === per
                   ? cn(p.cardSurface, p.head, 'shadow-soft')
                   : cn(p.muted, p.hoverText),
@@ -141,13 +141,13 @@ export default function LeaderboardClassic() {
                   <span className={p.statVal}>#{myRank}</span>
                 </p>
                 <div className="flex flex-wrap items-center gap-3 mt-1.5">
-                  <span className={cn('text-sm flex items-center gap-1 font-medium', p.muted)}>
+                  <span className={cn('card-copy flex items-center gap-1 font-medium', p.muted)}>
                     <Trophy className="w-3.5 h-3.5 text-amber-500" /> {myEntry.xp} XP
                   </span>
-                  <span className={cn('text-sm flex items-center gap-1 font-medium', p.muted)}>
+                  <span className={cn('card-copy flex items-center gap-1 font-medium', p.muted)}>
                     <Flame className="w-3.5 h-3.5 text-orange-500" /> {myEntry.streak} {t('εβδ. σερί', 'wk streak')}
                   </span>
-                  <span className={cn('text-sm flex items-center gap-1 font-medium', p.muted)}>
+                  <span className={cn('card-copy flex items-center gap-1 font-medium', p.muted)}>
                     <Calendar className="w-3.5 h-3.5 text-cyan-600" /> {myEntry.eventsCount}{' '}
                     {t('εκδηλώσεις', 'events')}
                   </span>
@@ -217,7 +217,7 @@ export default function LeaderboardClassic() {
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className={cn('font-bold text-sm truncate', entry.isMe ? p.statVal : p.head)}>
+                      <span className={cn('card-heading font-bold truncate', entry.isMe ? p.statVal : p.head)}>
                         {entry.name}
                       </span>
                       {entry.isMe && (
@@ -250,7 +250,7 @@ export default function LeaderboardClassic() {
           })}
           {displayEntries.length === 0 && (
             <Card className="p-5 text-center">
-              <p className={cn('text-sm font-medium', p.muted)}>
+              <p className={cn('card-copy font-medium', p.muted)}>
                 {t('Δεν βρέθηκαν εγγραφές.', 'No entries found.')}
               </p>
             </Card>

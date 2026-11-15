@@ -201,7 +201,7 @@ export function EventDetailOrganizerSection({
             <div className="flex items-center gap-1.5 flex-wrap">
               <Link
                 to={`/organizer/${organizer.id}`}
-                className={cn('text-base font-bold transition-colors', tok.name)}
+                className={cn('card-heading-lg font-bold transition-colors', tok.name)}
               >
                 {organizer.name}
               </Link>

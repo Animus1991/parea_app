@@ -251,7 +251,7 @@ export default function CategoriesPageContent() {
                 setActiveCategory(null);
               }}
               className={cn(
-                'px-5 py-3 whitespace-nowrap text-sm font-bold rounded-2xl transition-all flex-1 text-center min-w-fit',
+                'px-5 py-3 whitespace-nowrap text-xs font-bold rounded-2xl transition-all flex-1 text-center min-w-fit',
                 activeTab === tab
                   ? p.isDark
                     ? 'bg-[hsl(220_16%_18%)] text-white shadow-soft'

@@ -50,7 +50,7 @@ export function GroupChatReportModal({ open, onClose }: GroupChatReportModalProp
         <button
           type="button"
           onClick={onClose}
-          className="px-5 py-2.5 text-sm font-bold text-ink-muted bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border"
+          className="px-5 py-2.5 text-xs font-bold text-ink-muted bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border"
         >
           {t('Ακύρωση', 'Cancel')}
         </button>
@@ -62,7 +62,7 @@ export function GroupChatReportModal({ open, onClose }: GroupChatReportModalProp
             );
             onClose();
           }}
-          className="px-5 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
+          className="px-5 py-2.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
         >
           {t('Υποβολή Αναφοράς', 'Submit Report')}
         </button>

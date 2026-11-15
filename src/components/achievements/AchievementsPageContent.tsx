@@ -215,7 +215,7 @@ export default function AchievementsPageContent() {
                 ].map((stat) => (
                   <div key={stat.label} className="flex flex-col-reverse items-center text-center">
                     <dt className={cn('text-2xs font-medium', a.sub)}>{stat.label}</dt>
-                    <dd className={cn('text-lg font-black tabular-nums', a.head)}>{stat.val}</dd>
+                    <dd className={cn('text-sm md:text-base font-black tabular-nums', a.head)}>{stat.val}</dd>
                   </div>
                 ))}
               </dl>
@@ -237,7 +237,7 @@ export default function AchievementsPageContent() {
                     {entry.rank}
                   </span>
                   <img src={entry.avatar} alt="" referrerPolicy="no-referrer" className={cn('w-7 h-7 rounded-full border', a.isDark ? 'border-gray-700' : 'border-gray-200')} />
-                  <span className={cn('flex-1 text-sm font-medium', entry.isMe ? cn('font-bold', a.highlightText) : a.head)}>{entry.name}</span>
+                  <span className={cn('flex-1 card-copy font-medium', entry.isMe ? cn('font-bold', a.highlightText) : a.head)}>{entry.name}</span>
                   <span className={cn('text-xs font-bold tabular-nums', a.sub)}>{entry.xp} XP</span>
                 </li>
               ))}

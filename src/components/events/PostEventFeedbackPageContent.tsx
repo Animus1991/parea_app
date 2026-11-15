@@ -556,7 +556,7 @@ export default function PostEventFeedbackPageContent() {
             onClick={() => navigate('/history')}
             variant={p.isAB ? 'primary' : 'outline'}
             size="lg"
-            className="rounded-2xl px-5 font-bold text-sm"
+            className="rounded-2xl px-5 font-bold text-xs"
           >
             {t('Επιστροφή στο Ιστορικό', 'Back to History')}
           </Button>

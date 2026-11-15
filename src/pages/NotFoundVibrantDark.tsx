@@ -33,7 +33,7 @@ export default function NotFoundVibrantDark() {
           return (
             <button key={s.path} onClick={() => navigate(s.path)} className="flex items-center gap-2 p-3 rounded-xl border border-gray-700 bg-gray-800 hover:border-fuchsia-700 hover:bg-fuchsia-900/30 transition-all text-left">
               <Icon className="w-4 h-4 text-fuchsia-400" />
-              <span className="text-sm font-bold text-white">{s.label}</span>
+              <span className="text-xs font-bold text-white">{s.label}</span>
             </button>
           );
         })}

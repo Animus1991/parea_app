@@ -72,10 +72,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = getVariants();
 
+    // Font size locked to Αξιολόγηση / .btn-gradient canonical (text-xs) across all sizes.
+    // Size variants only change height and padding.
     const sizes = {
-      sm: "min-h-10 h-10 px-4 text-2xs gap-1.5",
+      sm: "min-h-10 h-10 px-4 text-xs gap-1.5",
       md: "min-h-10 h-10 px-5 text-xs gap-2",
-      lg: "min-h-11 h-11 px-4 text-sm gap-2"
+      lg: "min-h-11 h-11 px-4 text-xs gap-2"
     };
 
     return (
