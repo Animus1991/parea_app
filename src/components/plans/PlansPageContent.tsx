@@ -75,7 +75,7 @@ export default function PlansPageContent() {
   ];
 
   const secondaryBtn = cn(
-    'px-4 py-2 rounded-2xl transition-all duration-200 border-2 text-sm font-bold',
+    'px-4 py-2 rounded-2xl transition-all duration-200 border-2 text-xs font-bold',
     p.isDark
       ? 'border-white/10 hover:border-white/25 text-gray-100 hover:bg-white/5'
       : 'border-gray-100 hover:border-[#a5f3fc] hover:bg-gray-50 text-gray-700',
@@ -104,8 +104,8 @@ export default function PlansPageContent() {
             <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center mb-2', p.statBg)}>
               <s.icon className={cn('w-5 h-5', p.statVal)} />
             </div>
-            <p className={cn('text-lg font-black tabular-nums leading-none', p.head)}>{s.count}</p>
-            <p className={cn('text-xs font-semibold mt-1', p.muted)}>{s.label}</p>
+            <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.head)}>{s.count}</p>
+            <p className={cn('text-2xs font-semibold mt-1', p.muted)}>{s.label}</p>
           </button>
         ))}
       </div>
@@ -120,7 +120,7 @@ export default function PlansPageContent() {
             <p className={cn('text-xs font-bold uppercase tracking-wide', p.muted)}>{tu('Επόμενη εκδήλωση', 'Next up')}</p>
             <p className={cn(PLANS_TYPO.nextTitle, p.head)}>{nextEvent.title}</p>
           </div>
-          <span className={cn('shrink-0 text-sm font-bold px-2.5 py-1 rounded-full', p.statBg, p.statVal)}>
+          <span className={cn('shrink-0 text-xs font-bold px-2.5 py-1 rounded-full', p.statBg, p.statVal)}>
             {nextEventDays <= 0 ? t('Σήμερα', 'Today') : `${t('σε', 'in')} ${nextEventDays}${t('μ', 'd')}`}
           </span>
         </Card>
@@ -136,10 +136,10 @@ export default function PlansPageContent() {
             <AlertTriangle className={cn('w-5 h-5 shrink-0 mt-0.5', p.isDark ? 'text-amber-400' : 'text-amber-600')} />
             <div>
               <h3 className={cn(PLANS_TYPO.bannerTitle, 'mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
-              <p className={cn('text-sm font-medium', p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
+              <p className={cn(PLANS_TYPO.bannerBody, p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
             </div>
           </div>
-          <button onClick={() => navigate('/trust')} className="bg-amber-600 text-white px-5 py-2.5 rounded-2xl text-sm font-bold shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0">
+          <button onClick={() => navigate('/trust')} className={cn('bg-amber-600 text-white px-5 py-2.5 rounded-2xl shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0', PLANS_TYPO.bannerCta)}>
             {t(`Επαλήθευση`, `Verify Now`)}
           </button>
         </Card>
@@ -231,7 +231,7 @@ export default function PlansPageContent() {
 
               <div className="flex flex-wrap gap-x-4 gap-y-2 mb-4">
                 <div className={cn(
-                  'flex items-center text-sm font-medium',
+                  'flex items-center text-xs font-medium',
                   hasMeetingPoint ? p.body : p.muted,
                 )}>
                   <MapPin className="w-3.5 h-3.5 mr-1" />
@@ -239,7 +239,7 @@ export default function PlansPageContent() {
                     ? t('Σημείο συνάντησης ενεργό', 'Meeting point active')
                     : t('Σημείο συνάντησης — εκκρεμεί', 'Meeting point — pending')}
                 </div>
-                <div className={cn('flex items-center text-sm font-medium', p.body)}>
+                <div className={cn('flex items-center text-xs font-medium', p.body)}>
                   <Clock className="w-3.5 h-3.5 mr-1" /> {event.duration}
                 </div>
               </div>
@@ -266,7 +266,7 @@ export default function PlansPageContent() {
                 <button
                   onClick={() => group && navigate(`/chat/${group.id}`)}
                   disabled={!group}
-                  className="flex-1 btn-gradient !py-2 flex items-center justify-center gap-1.5 !text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 btn-gradient !py-2 flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <MessageCircle className="h-4 w-4" /> {t('Ομαδική Συνομιλία', 'Group Chat')}
                 </button>
@@ -276,7 +276,7 @@ export default function PlansPageContent() {
                 <button
                   onClick={() => setShowLeaveConfirm(event.id)}
                   className={cn(
-                    'px-3 py-2 rounded-2xl text-sm font-bold transition-all duration-200 flex items-center gap-1 border-2',
+                    'px-3 py-2 rounded-2xl text-xs font-bold transition-all duration-200 flex items-center gap-1 border-2',
                     p.isDark ? 'border-red-500/30 hover:bg-red-500/10 text-red-400' : 'border-red-100 hover:bg-red-50 text-red-500',
                   )}
                 >
@@ -362,7 +362,7 @@ export default function PlansPageContent() {
       {activeTab === 'past' && (
       <div className="space-y-4">
         {needsRating > 0 && (
-          <div className={cn('text-sm font-semibold flex items-center gap-1.5', p.muted)}>
+          <div className={cn('text-xs font-semibold flex items-center gap-1.5', p.muted)}>
             <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
             {t(`${needsRating} εκδηλώσεις περιμένουν την αξιολόγησή σας`, `${needsRating} event(s) awaiting your feedback`)}
           </div>
@@ -370,7 +370,7 @@ export default function PlansPageContent() {
         {pastEvents.map((event) => (
           <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
             <div className="flex-1 flex flex-col">
-              <div className={cn('flex items-center gap-2 mb-1.5 text-sm font-bold', p.muted)}>
+              <div className={cn('flex items-center gap-2 mb-1.5 text-xs font-bold', p.muted)}>
                 <Calendar className="w-3.5 h-3.5" />
                 {format(parseISO(event.date), 'PPP', { locale: dateLocale })}
               </div>
@@ -378,13 +378,13 @@ export default function PlansPageContent() {
 
               {!feedbackSubmitted[event.id] ? (
                 <div className={cn('p-3 rounded-2xl flex items-center justify-between mt-auto border', p.statBg)}>
-                  <div className={cn('text-sm font-bold', p.statVal)}>{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
-                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="btn-gradient !py-1.5 !px-4 !text-xs">
+                  <div className={cn('text-xs font-bold', p.statVal)}>{t(`Απαιτείται αξιολόγηση`, `Feedback required`)}</div>
+                  <button onClick={() => navigate(`/history/feedback/${event.id}`)} className="btn-gradient !py-1.5 !px-4">
                     {t(`Αξιολόγηση`, `Rate Experience`)}
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 mt-auto text-sm font-bold text-emerald-600">
+                <div className="flex items-center gap-2 mt-auto text-xs font-bold text-emerald-600">
                   <CheckCircle className="w-4 h-4" /> {t(`Αξιολόγηση υποβλήθηκε`, `Feedback submitted`)}
                 </div>
               )}
@@ -461,9 +461,9 @@ function EmptyTab({
         <Icon className={cn('w-6 h-6', p.statVal)} />
       </div>
       <p className={cn(PLANS_TYPO.cardTitle, p.head)}>{title}</p>
-      <p className={cn('text-sm font-medium mt-1 max-w-sm mx-auto', p.muted)}>{hint}</p>
+      <p className={cn(PLANS_TYPO.bannerBody, 'mt-1 max-w-sm mx-auto', p.muted)}>{hint}</p>
       {ctaLabel && onCta && (
-        <button className="btn-gradient mt-4" onClick={onCta}>{ctaLabel}</button>
+        <button className={cn('btn-gradient mt-4', PLANS_TYPO.bannerCta)} onClick={onCta}>{ctaLabel}</button>
       )}
     </div>
   );

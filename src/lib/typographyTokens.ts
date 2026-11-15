@@ -22,8 +22,8 @@ export const APP_TYPO = {
   /** Page subtitle under the title */
   pageSub: 'text-sm font-medium',
   heroSubtitle: 'text-sm font-medium leading-relaxed',
-  /** Big KPI numerals only (HomeQuickStatsBar) */
-  statValue: 'text-lg font-black tabular-nums leading-none',
+  /** KPI numerals — capped at page-title scale so in-card stats never outgrow the page */
+  statValue: 'text-sm md:text-base font-black tabular-nums leading-none',
 } as const;
 
 /** Popup chat window density */

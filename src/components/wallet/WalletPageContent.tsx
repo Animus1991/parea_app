@@ -46,7 +46,7 @@ export default function WalletPageContent() {
             <Euro className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
-          <p className="text-lg font-black mb-4">€345.50</p>
+          <p className="text-sm md:text-base font-black mb-4">€345.50</p>
           <Button className={cn("w-full", a.withdrawBtn)} onClick={() => setShowWithdraw(true)}>
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
@@ -57,7 +57,7 @@ export default function WalletPageContent() {
             <Clock className="w-4 h-4" />
             <h3 className="text-xs font-bold tracking-wide">{t('Εκκρεμεί', 'Pending')}</h3>
           </div>
-          <p className={cn("text-lg font-bold mb-2", a.head)}>€85.00</p>
+          <p className={cn("text-sm md:text-base font-bold mb-2", a.head)}>€85.00</p>
           <p className={cn("text-xs font-medium leading-tight", a.muted)}>
             {t('Εξοφλούνται 3-5 ημέρες μετά.', 'Clears 3-5 days after event.')}
           </p>

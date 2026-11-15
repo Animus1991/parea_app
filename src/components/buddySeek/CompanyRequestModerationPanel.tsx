@@ -29,19 +29,19 @@ export function CompanyRequestModerationPanel() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
         <div className={cn('rounded-xl border p-3', a.borderB)}>
-          <p className="text-lg font-black">{active.length}</p>
+          <p className="text-sm md:text-base font-black">{active.length}</p>
           <p className="text-xs font-bold opacity-60">{t('Ενεργά', 'Active')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
-          <p className="text-lg font-black">{reported.length}</p>
+          <p className="text-sm md:text-base font-black">{reported.length}</p>
           <p className="text-xs font-bold opacity-60">{t('Αναφερμένα', 'Reported')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
-          <p className="text-lg font-black">{reports.length}</p>
+          <p className="text-sm md:text-base font-black">{reports.length}</p>
           <p className="text-xs font-bold opacity-60">{t('Αναφορές', 'Reports')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
-          <p className="text-lg font-black">{suspicious}</p>
+          <p className="text-sm md:text-base font-black">{suspicious}</p>
           <p className="text-xs font-bold opacity-60">{t('Ύποπτα', 'Suspicious')}</p>
         </div>
       </div>

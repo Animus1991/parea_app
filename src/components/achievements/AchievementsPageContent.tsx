@@ -215,7 +215,7 @@ export default function AchievementsPageContent() {
                 ].map((stat) => (
                   <div key={stat.label} className="flex flex-col-reverse items-center text-center">
                     <dt className={cn('text-2xs font-medium', a.sub)}>{stat.label}</dt>
-                    <dd className={cn('text-lg font-black tabular-nums', a.head)}>{stat.val}</dd>
+                    <dd className={cn('text-sm md:text-base font-black tabular-nums', a.head)}>{stat.val}</dd>
                   </div>
                 ))}
               </dl>
