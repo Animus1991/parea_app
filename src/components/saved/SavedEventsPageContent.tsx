@@ -182,13 +182,19 @@ export default function SavedEventsPageContent() {
             </Card>
           ))}
         </div>
-      ) : savedEventIds.length > 0 && search ? (
+      ) : savedEventIds.length > 0 && (search || catFilter !== 'All') ? (
         <EmptyState
           icon={Search}
           title={t('Κανένα αποτέλεσμα', 'No results')}
-          description={t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search term.')}
-          actionLabel={t('Καθαρισμός', 'Clear')}
-          onAction={() => setSearch('')}
+          description={t(
+            'Δεν υπάρχουν αποθηκευμένες με αυτά τα φίλτρα.',
+            'No saved events match these filters.',
+          )}
+          actionLabel={t('Καθαρισμός φίλτρων', 'Clear filters')}
+          onAction={() => {
+            setSearch('');
+            setCatFilter('All');
+          }}
         />
       ) : (
         <EmptyState

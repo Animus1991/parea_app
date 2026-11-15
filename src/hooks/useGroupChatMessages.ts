@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useChatStore } from '../store/chatStore';
 import { useStore } from '../store';
+import { useLanguage } from '../lib/i18n';
 import { toChatMessage, toGroupChatMessage } from '../lib/chatMessageAdapters';
 
 export interface GroupChatMessage {
@@ -46,6 +47,8 @@ export function useGroupChatMessages(
   groupId: string | undefined,
   seedFactory: () => GroupChatMessage[],
 ) {
+  const { t } = useLanguage();
+  const systemLabel = t('Σύστημα', 'System');
   const users = useStore((s) => s.users);
   const conversation = useChatStore((s) =>
     groupId ? s.conversations.find((c) => c.groupId === groupId) : undefined,
@@ -79,8 +82,8 @@ export function useGroupChatMessages(
     if (!conversation) return null;
     return storeMessages
       .filter((m) => m.conversationId === conversation.id)
-      .map((m) => toGroupChatMessage(m, resolveName));
-  }, [conversation, storeMessages, resolveName]);
+      .map((m) => toGroupChatMessage(m, resolveName, systemLabel));
+  }, [conversation, storeMessages, resolveName, systemLabel]);
 
   const messages = unifiedFromStore ?? localMessages;
 

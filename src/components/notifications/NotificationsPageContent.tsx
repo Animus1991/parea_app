@@ -40,6 +40,7 @@ export default function NotificationsPageContent() {
   const markNotificationRead = useStore((s) => s.markNotificationRead);
   const markAllNotificationsRead = useStore((s) => s.markAllNotificationsRead);
   const dismissNotification = useStore((s) => s.dismissNotification);
+  const addNotification = useStore((s) => s.addNotification);
 
   const [activeTab, setActiveTab] = useState<TabFilter>('all');
 
@@ -74,7 +75,16 @@ export default function NotificationsPageContent() {
   };
 
   const handleDismiss = (id: string) => {
+    const snapshot = notifications.find((n) => n.id === id);
     dismissNotification(id);
+    toast.info(t('Η ειδοποίηση αποκρύφθηκε', 'Notification dismissed'), {
+      action: {
+        label: t('Αναίρεση', 'Undo'),
+        onClick: () => {
+          if (snapshot) addNotification({ ...(snapshot as AppNotification & Record<string, unknown>) });
+        },
+      },
+    });
   };
 
   const handleNotifClick = (notif: AppNotification) => {
@@ -259,19 +269,25 @@ export default function NotificationsPageContent() {
           title={
             activeTab === 'unread'
               ? t('Καμία μη αναγνωσμένη ειδοποίηση', 'No unread notifications')
-              : t('Καμία ειδοποίηση', 'No notifications')
+              : activeTab === 'matches'
+                ? t('Καμία ειδοποίηση ταιριάσματος', 'No match notifications')
+                : activeTab === 'messages'
+                  ? t('Καμία ειδοποίηση μηνύματος', 'No message notifications')
+                  : activeTab === 'system'
+                    ? t('Καμία ειδοποίηση συστήματος', 'No system notifications')
+                    : t('Καμία ειδοποίηση', 'No notifications')
           }
           description={t(
             'Θα σας ειδοποιήσουμε όταν υπάρξει κάτι νέο.',
             "We'll notify you when something new happens.",
           )}
           actionLabel={
-            activeTab === 'unread'
+            activeTab !== 'all' && notifications.length > 0
               ? t('Προβολή όλων', 'Show all')
               : t('Εξερεύνηση', 'Explore')
           }
           onAction={
-            activeTab === 'unread'
+            activeTab !== 'all' && notifications.length > 0
               ? () => setActiveTab('all')
               : () => navigate('/')
           }

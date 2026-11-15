@@ -40,6 +40,7 @@ interface ChatState {
   archiveConversation: (id: string) => void;
   reportConversation: (conversationId: string, reason: string, messageId?: string) => void;
   dismissEphemeralBanner: (conversationId: string) => void;
+  undismissEphemeralBanner: (conversationId: string) => void;
   setPrivacy: (patch: Partial<ChatPrivacySettings>) => void;
   totalUnread: () => number;
   /** Φ17 — real keep-chat request: flags the conversation + system message. */
@@ -216,6 +217,11 @@ export const useChatStore = create<ChatState>()(
       dismissEphemeralBanner: (conversationId) =>
         set((s) => ({
           dismissedEphemeralBanners: [...new Set([...s.dismissedEphemeralBanners, conversationId])],
+        })),
+
+      undismissEphemeralBanner: (conversationId) =>
+        set((s) => ({
+          dismissedEphemeralBanners: s.dismissedEphemeralBanners.filter((id) => id !== conversationId),
         })),
 
       setPrivacy: (patch) => set((s) => ({ privacy: { ...s.privacy, ...patch } })),

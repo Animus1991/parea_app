@@ -57,14 +57,16 @@ export function useEventDetailActions(eventId: string | undefined, event?: Event
   const handleAddToGoogleCalendar = useCallback(() => {
     if (event && calendarAvailability.ok) {
       openGoogleCalendar(event, calendarOptions);
+      toast.info(t('Άνοιγμα Google Calendar', 'Opening Google Calendar'));
     }
-  }, [event, calendarAvailability.ok, calendarOptions]);
+  }, [event, calendarAvailability.ok, calendarOptions, t]);
 
   const handleDownloadIcs = useCallback(() => {
     if (event && calendarAvailability.ok) {
       downloadICS(event, calendarOptions);
+      toast.success(t('Το ημερολόγιο εξήχθη', 'Calendar exported'));
     }
-  }, [event, calendarAvailability.ok, calendarOptions]);
+  }, [event, calendarAvailability.ok, calendarOptions, t]);
 
   return {
     isSaved,
