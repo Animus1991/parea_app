@@ -248,27 +248,27 @@ export default function ChallengesClassic() {
                         {t(c.titleGr, c.titleEn)}
                       </h3>
                       {done && (
-                        <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full flex items-center gap-0.5 shrink-0">
-                          <CheckCircle2 className="w-2.5 h-2.5" /> {t('Ολοκληρώθηκε', 'Done')}
+                        <span className="card-meta font-semibold text-green-700 dark:text-green-400 inline-flex items-center gap-0.5 shrink-0">
+                          <CheckCircle2 className="w-3 h-3" aria-hidden /> {t('Ολοκληρώθηκε', 'Done')}
                         </span>
                       )}
                     </div>
-                    <p className={cn('text-sm font-medium mt-0.5 leading-snug', p.sub)}>
+                    <p className={cn('card-copy-sm font-medium mt-0.5 leading-snug', p.sub)}>
                       {t(c.descGr, c.descEn)}
                     </p>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className="text-xs font-bold text-amber-600">+{c.xp} XP</p>
+                    <p className="card-meta font-bold text-amber-700 dark:text-amber-400">+{c.xp} XP</p>
                   </div>
                 </div>
 
                 {/* Progress bar */}
                 <div>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs font-semibold text-gray-500">
+                    <span className={cn('card-meta font-medium', p.muted)}>
                       {c.progress} / {c.goal} {c.unit}
                     </span>
-                    <span className="text-xs font-bold text-brand">{pct}%</span>
+                    <span className="card-meta font-bold text-brand">{pct}%</span>
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
                     <div
@@ -282,8 +282,8 @@ export default function ChallengesClassic() {
 
                 {/* Footer */}
                 <div className="flex items-center justify-between mt-auto pt-1">
-                  <span className="text-xs text-gray-500 font-medium flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
+                  <span className={cn('card-meta font-medium flex items-center gap-1', p.muted)}>
+                    <Clock className="w-3 h-3" aria-hidden />
                     {c.daysLeft} {t('ημέρες απομένουν', 'days left')}
                   </span>
                   {!done && (

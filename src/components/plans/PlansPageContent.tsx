@@ -184,32 +184,46 @@ export default function PlansPageContent() {
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
               {isConfirmed ? (
-                <div className="absolute top-2 left-2 bg-brand text-white px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide">
+                <div className="absolute top-2 left-2 bg-brand/95 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
                   {t('Επιβεβαιωμένο', 'Confirmed')}
                 </div>
               ) : (
-                <div className="absolute top-2 left-2 bg-amber-600 text-white px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide">
+                <div className="absolute top-2 left-2 bg-amber-600/95 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
                   {t('Εκκρεμής', 'Pending')}
-                </div>
-              )}
-              {group && isPlansFormingGroupId(group.id) && (
-                <div className="absolute bottom-2 left-2 right-2 bg-cyan-900/90 text-white px-2 py-0.5 rounded-full text-xs font-bold text-center truncate">
-                  {t('Από Βρες Nakamas', 'From Find Nakamas')}
                 </div>
               )}
             </div>
 
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-start gap-2 mb-2">
-                <h3 className={cn('font-bold text-lg', p.head)}>{event.title}</h3>
+                <div className="min-w-0">
+                  <h3 className={cn('font-bold text-lg', p.head)}>{event.title}</h3>
+                  {group && isPlansFormingGroupId(group.id) && (
+                    <p className={cn('card-meta mt-0.5', p.muted)}>
+                      {t('Από Βρες Nakamas', 'From Find Nakamas')}
+                    </p>
+                  )}
+                </div>
                 <div className="text-right shrink-0">
-                  <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
-                  <div className={cn('text-sm font-medium', p.muted)}>{event.time}</div>
+                  <div className={cn('text-base font-bold', p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
+                  <div className={cn('card-meta', p.muted)}>{event.time}</div>
                   {(() => {
                     const days = differenceInDays(parseISO(event.date), new Date());
                     const hours = differenceInHours(parseISO(event.date), new Date());
-                    if (days <= 0 && hours > 0) return <span className="text-xs font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-lg mt-0.5 inline-block">{t('σε', 'in')} {hours}h</span>;
-                    if (days > 0 && days <= 7) return <span className={cn('text-xs font-bold px-1.5 py-0.5 rounded-lg mt-0.5 inline-block', p.statBg, p.statVal)}>{t('σε', 'in')} {days} {t('μέρες', 'days')}</span>;
+                    if (days <= 0 && hours > 0) {
+                      return (
+                        <span className={cn('card-meta font-semibold mt-0.5 inline-block', p.isDark ? 'text-orange-300' : 'text-orange-700')}>
+                          {t('σε', 'in')} {hours}h
+                        </span>
+                      );
+                    }
+                    if (days > 0 && days <= 7) {
+                      return (
+                        <span className={cn('card-meta font-semibold mt-0.5 inline-block', p.statVal)}>
+                          {t('σε', 'in')} {days} {t('μέρες', 'days')}
+                        </span>
+                      );
+                    }
                     return null;
                   })()}
                 </div>
@@ -297,7 +311,7 @@ export default function PlansPageContent() {
           <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 opacity-80 hover:opacity-100 transition-all duration-200 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative grayscale">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
-              <div className="absolute top-2 left-2 bg-gray-800 text-white px-2.5 py-0.5 rounded-full text-xs font-bold tracking-wide">
+              <div className="absolute top-2 left-2 bg-gray-800/90 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
                 {t(`Εκκρεμής Ομάδα`, `Pending Group`)}
               </div>
             </div>
@@ -306,11 +320,11 @@ export default function PlansPageContent() {
               <div className="flex justify-between items-start gap-2 mb-2">
                 <h3 className={cn('font-bold text-lg', p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
-                  <div className={cn('text-lg font-bold', p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
+                  <div className={cn('text-base font-bold', p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
                 </div>
               </div>
 
-              <p className={cn('text-sm font-medium mb-4', p.sub)}>
+              <p className={cn('card-copy-sm font-medium mb-4', p.sub)}>
                 {needed === 1
                   ? t(
                       'Εκδηλώσατε ενδιαφέρον. Αναμονή για 1 ακόμα άτομο για να επιβεβαιωθεί η ομάδα.',

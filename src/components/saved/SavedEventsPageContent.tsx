@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { Link, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
-import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
 import { EmptyState } from '../common/EmptyState';
 import { EventCardSkeleton } from '../common/Skeleton';
@@ -149,12 +148,7 @@ export default function SavedEventsPageContent() {
                 </button>
               </div>
               <div className="p-4 flex flex-col flex-1">
-                <div className="mb-2">
-                  <Badge variant={event.safetyLevel === 'high_trust' ? 'warning' : 'outline'}>
-                    {event.safetyLevel === 'high_trust' ? t('Υψηλή Εμπιστοσύνη', 'High Trust') : event.safetyLevel === 'medium' ? t('Μεσαία', 'Medium Trust') : t('Δημόσια', 'Public')}
-                  </Badge>
-                </div>
-                <h3 className={cn("font-bold text-sm transition-colors line-clamp-2 mb-2", a.head, a.isDark ? 'group-hover:text-gray-300' : 'group-hover:text-gray-600')}>
+                <h3 className={cn("font-bold text-sm transition-colors line-clamp-2", a.head, a.isDark ? 'group-hover:text-gray-300' : 'group-hover:text-gray-600')}>
                   {/* Stretched link: the whole card opens the event, while the remove button stays a separate control. */}
                   <Link
                     to={`/events/${event.id}`}
@@ -163,18 +157,26 @@ export default function SavedEventsPageContent() {
                     {event.title}
                   </Link>
                 </h3>
-                <div className="mt-auto space-y-1.5">
-                  <div className={cn("flex items-center text-xs font-medium", a.sub)}>
-                    <Calendar className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-                    <span className="truncate">{format(parseISO(event.date), 'PP', { locale: dateFnsLocale(language) })} • {event.time}</span>
-                  </div>
-                  <div className={cn("flex items-center text-xs font-medium", a.sub)}>
-                    <MapPin className="w-3.5 h-3.5 mr-1.5 shrink-0" />
+                <p className={cn('card-meta mt-1.5', a.muted)}>
+                  {event.safetyLevel === 'high_trust'
+                    ? t('Υψηλή Εμπιστοσύνη', 'High Trust')
+                    : event.safetyLevel === 'medium'
+                      ? t('Μεσαία', 'Medium Trust')
+                      : t('Δημόσια', 'Public')}
+                </p>
+                <p className={cn('card-meta mt-auto pt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5', a.sub)}>
+                  <span className="inline-flex items-center gap-1 min-w-0">
+                    <Calendar className="w-3.5 h-3.5 shrink-0 opacity-70" aria-hidden />
+                    <span className="truncate">{format(parseISO(event.date), 'PP', { locale: dateFnsLocale(language) })} · {event.time}</span>
+                  </span>
+                  <span aria-hidden className="opacity-40">·</span>
+                  <span className="inline-flex items-center gap-1 min-w-0">
+                    <MapPin className="w-3.5 h-3.5 shrink-0 opacity-70" aria-hidden />
                     <span className="truncate">{event.locationArea}</span>
-                  </div>
-                </div>
-                <div className={cn("mt-3 pt-3 border-t flex items-center gap-1.5 text-2xs font-bold tracking-wider", a.isDark ? "border-gray-700/40" : "border-gray-100", a.link)}>
-                  {t('Προβολή Λεπτομερειών', 'View Details')} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </p>
+                <div className={cn("mt-3 pt-3 border-t flex items-center gap-1.5 card-meta font-semibold", a.isDark ? "border-gray-700/40" : "border-gray-100", a.link)}>
+                  {t('Προβολή Λεπτομερειών', 'View Details')} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" aria-hidden />
                 </div>
               </div>
             </Card>

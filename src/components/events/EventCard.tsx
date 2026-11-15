@@ -336,13 +336,15 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           </span>
         </p>
 
-        {matchingPreview && (
+        {/* One quiet reason line — matchingPreview wins; else MatchExplainChips reasons (no double chrome). */}
+        {matchingPreview ? (
           <p className={cn(EVENT_CARD_TYPO.hint, "mt-2 font-medium", accentText, "opacity-90")}>
             {t(matchingPreview.labelEl, matchingPreview.labelEn)}
           </p>
-        )}
-        {currentUser && (
-          <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className="mt-2" />
+        ) : (
+          currentUser && (
+            <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className="mt-2" />
+          )
         )}
 
         {/* Organizer — compact row */}

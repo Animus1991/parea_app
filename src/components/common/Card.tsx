@@ -57,15 +57,18 @@ export function Card({
 /** Default typography inside cards when children omit explicit colors. */
 export function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
   const p = usePageContrast();
-  return <h3 className={cn('font-bold', p.head, className)}>{children}</h3>;
+  return <h3 className={cn('card-heading font-bold', p.head, className)}>{children}</h3>;
 }
 
 export function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
   const p = usePageContrast();
-  return <p className={cn('text-sm font-medium', p.sub, className)}>{children}</p>;
+  return <p className={cn('card-copy-sm font-medium', p.sub, className)}>{children}</p>;
 }
 
 export function CardMuted({ children, className }: { children: ReactNode; className?: string }) {
   const p = usePageContrast();
-  return <p className={cn('card-copy font-medium', p.muted, className)}>{children}</p>;
+  return <p className={cn('card-meta font-medium', p.muted, className)}>{children}</p>;
 }
+
+export { CardInterestLine } from './CardInterestLine';
+export { CardMetaLine, CardMetaDot } from './CardMetaLine';

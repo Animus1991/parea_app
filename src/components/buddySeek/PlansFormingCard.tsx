@@ -199,29 +199,45 @@ export function PlansFormingCard({
         </div>
       </div>
 
-      <div className="px-3.5 pb-2 flex flex-wrap gap-x-3 gap-y-1">
-        <MetaChip isDark={darkCard} label={t(item.urgency.el, item.urgency.en)} icon={Clock} className={urgencyText[item.urgency.tone]} />
-        <MetaChip isDark={darkCard} label={t(item.groupSizeLabel.el, item.groupSizeLabel.en)} icon={Users} />
-        <MetaChip isDark={darkCard} label={t(item.meetingLabel.el, item.meetingLabel.en)} />
-        {item.sharedInterestTags.slice(0, 2).map((tag) => (
-          <span
-            key={tag}
-            className={cn(
-              'card-copy font-medium',
-              darkCard ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300',
-            )}
-          >
-            {tag}
-          </span>
-        ))}
-        {item.sharedInterestCount > 0 && item.sharedInterestTags.length === 0 && (
-          <MetaChip
-            isDark={darkCard}
-            label={t(`${item.sharedInterestCount} κοινά`, `${item.sharedInterestCount} shared`)}
-          />
+      <p
+        className={cn(
+          'px-3.5 pb-2 card-meta flex flex-wrap items-center gap-x-2 gap-y-0.5',
+          darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-300',
         )}
-        {onDismiss && <MetaChip isDark={darkCard} label={t('Κοινότητα', 'Community')} icon={Shield} />}
-      </div>
+      >
+        <span className={cn('inline-flex items-center gap-1 font-semibold', urgencyText[item.urgency.tone])}>
+          <Clock className="w-2.5 h-2.5 opacity-70" aria-hidden />
+          {t(item.urgency.el, item.urgency.en)}
+        </span>
+        <span aria-hidden className="opacity-40">·</span>
+        <span className="inline-flex items-center gap-1">
+          <Users className="w-2.5 h-2.5 opacity-70" aria-hidden />
+          {t(item.groupSizeLabel.el, item.groupSizeLabel.en)}
+        </span>
+        <span aria-hidden className="opacity-40">·</span>
+        <span>{t(item.meetingLabel.el, item.meetingLabel.en)}</span>
+        {item.sharedInterestTags.slice(0, 2).length > 0 && (
+          <>
+            <span aria-hidden className="opacity-40">·</span>
+            <span className="line-clamp-1">{item.sharedInterestTags.slice(0, 2).join(' · ')}</span>
+          </>
+        )}
+        {item.sharedInterestCount > 0 && item.sharedInterestTags.length === 0 && (
+          <>
+            <span aria-hidden className="opacity-40">·</span>
+            <span>{t(`${item.sharedInterestCount} κοινά`, `${item.sharedInterestCount} shared`)}</span>
+          </>
+        )}
+        {onDismiss && (
+          <>
+            <span aria-hidden className="opacity-40">·</span>
+            <span className="inline-flex items-center gap-1">
+              <Shield className="w-2.5 h-2.5 opacity-70" aria-hidden />
+              {t('Κοινότητα', 'Community')}
+            </span>
+          </>
+        )}
+      </p>
 
       {item.intent.message && (
         <div
@@ -312,31 +328,6 @@ export function PlansFormingCard({
         }}
       />
     </article>
-  );
-}
-
-function MetaChip({
-  label,
-  icon: Icon,
-  isDark,
-  className,
-}: {
-  label: string;
-  icon?: typeof Users;
-  isDark?: boolean;
-  className?: string;
-}) {
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-1 card-copy font-medium',
-        isDark ? 'text-gray-400' : 'text-gray-600 dark:text-gray-300',
-        className,
-      )}
-    >
-      {Icon && <Icon className="w-2.5 h-2.5 opacity-70" aria-hidden />}
-      {label}
-    </span>
   );
 }
 

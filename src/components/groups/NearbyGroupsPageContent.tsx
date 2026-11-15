@@ -4,7 +4,6 @@ import { MapPin, Search, Navigation, Crosshair, Map as MapIcon, SlidersHorizonta
 import { useNavigate } from "react-router-dom";
 import { isToday, parseISO } from "date-fns";
 import { useStore } from "../../store";
-import { Badge } from "../common/Badge";
 import { TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -726,13 +725,16 @@ export default function NearbyGroupsPageContent() {
               <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                 <div>
                   <h3 className={cn("font-bold text-base leading-tight line-clamp-2 transition-colors", p.head, p.hoverText)}>{group.title}</h3>
-                  <p className={cn("text-xs font-medium mt-1 truncate", p.sub)}>{group.locationArea}</p>
-                </div>
-                <div className="flex items-center justify-between mt-3">
-                  <Badge variant="outline" className={cn("text-2xs uppercase tracking-widest px-2 py-0.5 border", p.isDark ? "border-gray-700 text-gray-400" : "border-gray-200 text-gray-500")}>{group.category}</Badge>
-                  <div className={cn("flex items-center text-2xs font-bold px-2 py-1 rounded-2xl", p.isDark ? "bg-cyan-900/30 text-cyan-400" : "bg-cyan-50 text-cyan-700")}>
-                    <MapPin className="h-3 w-3 mr-1" /> {group.distanceKm.toFixed(1)}km
-                  </div>
+                  <p className={cn("card-meta mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5", p.sub)}>
+                    <span className="capitalize">{group.category}</span>
+                    <span aria-hidden className="opacity-40">·</span>
+                    <span className="truncate">{group.locationArea}</span>
+                    <span aria-hidden className="opacity-40">·</span>
+                    <span className={cn("inline-flex items-center gap-1 font-semibold", p.isDark ? "text-cyan-400" : "text-cyan-700")}>
+                      <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+                      {group.distanceKm.toFixed(1)}km
+                    </span>
+                  </p>
                 </div>
               </div>
             </div>
