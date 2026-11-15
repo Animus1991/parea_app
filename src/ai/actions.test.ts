@@ -148,7 +148,7 @@ describe('copilot action registry', () => {
     const res = await run('start_verification', { method: 'email' });
     expect(res.ok).toBe(true);
     expect(useStore.getState().currentUser?.emailVerified).toBe(true);
-    expect(navigated.at(-1)).toBe('/verification');
+    expect(navigated.at(-1)).toBe('/verification?method=email');
     res.undo?.();
     expect(useStore.getState().currentUser?.emailVerified).toBe(false);
   });
