@@ -7,26 +7,8 @@ import {
   buildPostOnboardingHomePath,
   markOnboardingWelcomeSession,
 } from '../lib/onboardingHomeBridge';
+import { INTERESTS } from '../lib/interests';
 import { motion, AnimatePresence } from 'motion/react';
-
-const INTERESTS = [
-  { id: 'Theatre', gr: 'Θέατρο', en: 'Theatre', emoji: '🎭' },
-  { id: 'Cinema', gr: 'Σινεμά', en: 'Cinema', emoji: '🎬' },
-  { id: 'Hiking', gr: 'Πεζοπορία', en: 'Hiking', emoji: '🥾' },
-  { id: 'Concerts', gr: 'Συναυλίες', en: 'Concerts', emoji: '🎵' },
-  { id: 'Board games', gr: 'Επιτραπέζια', en: 'Board Games', emoji: '🎲' },
-  { id: 'Food & Drink', gr: 'Γαστρονομία', en: 'Food & Dining', emoji: '🍽️' },
-  { id: 'Sports', gr: 'Αθλητισμός', en: 'Sports', emoji: '⚽' },
-  { id: 'Exhibitions', gr: 'Εκθέσεις / Τέχνη', en: 'Art & Exhibitions', emoji: '🖼️' },
-  { id: 'Tech Meetups', gr: 'Τεχνολογία', en: 'Tech Meetups', emoji: '💻' },
-  { id: 'Nearby escapes', gr: 'Εκδρομές', en: 'Day Trips', emoji: '🚌' },
-  { id: 'Wine Tasting', gr: 'Γευσιγνωσία κρασιού', en: 'Wine Tasting', emoji: '🍷' },
-  { id: 'Escape Rooms', gr: 'Δωμάτια απόδρασης', en: 'Escape Rooms', emoji: '🔐' },
-  { id: 'Wellness', gr: 'Ευεξία & Yoga', en: 'Wellness & Yoga', emoji: '🧘' },
-  { id: 'Language exchange', gr: 'Ανταλλαγή Γλωσσών', en: 'Language Exchange', emoji: '🌐' },
-  { id: 'Stand-up', gr: 'Stand-up Comedy', en: 'Stand-up Comedy', emoji: '🎤' },
-  { id: 'Photography', gr: 'Φωτογραφία', en: 'Photography', emoji: '📷' },
-];
 
 const GROUP_SIZES = [
   { id: 'tiny', gr: '2–3 άτομα', en: '2–3 people', emoji: '👥' },

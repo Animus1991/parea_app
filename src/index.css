@@ -355,15 +355,17 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 }
 
 /*
- * Card type hierarchy — title must always be ≥ subtitle/body.
- * (card-copy-sm / card-meta-sm previously outgrew card-heading; sizes swapped.)
+ * Card type hierarchy: a title is never smaller than the text under it.
+ * card-copy-sm / card-meta-sm used to outgrow card-heading; they now share its
+ * size and the title leads by weight. Titles keep their size (no element grows).
+ * Guarded by e2e/typography.spec.ts (docs/AUDIT_FIXES §9).
  */
 .card-heading {
-  font-size: calc(var(--text-sm) * 1.1 * 1.01); /* ~13.33px — was card-copy-sm */
+  font-size: calc(var(--text-sm) * 1.05 * 0.98 * 0.99); /* ~12.22px */
   line-height: var(--text-sm--line-height);
 }
 .card-heading-lg {
-  font-size: calc(var(--text-base) * 1.1 * 1.01); /* ~14.74px — stays above heading */
+  font-size: calc(var(--text-base) * 1.05 * 0.98 * 0.99); /* ~13.24px, above card-meta-sm */
   line-height: var(--text-base--line-height);
 }
 /* Card status badges (e.g. «ΑΝΟΙΧΤΟ ΣΕ ΙΔΕΕΣ», «Αποθηκευμένη») — +5% −2% −1% */
@@ -384,7 +386,7 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   line-height: var(--text-xs--line-height);
 }
 .card-meta-sm {
-  font-size: calc(var(--text-sm) * 1.05 * 0.98 * 0.99); /* ~12.22px — was card-heading; ≤ title */
+  font-size: calc(var(--text-sm) * 1.05 * 0.98 * 0.99); /* ~12.22px, never above card-heading */
   line-height: var(--text-sm--line-height);
 }
 
@@ -394,7 +396,7 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   line-height: var(--text-xs--line-height);
 }
 .card-copy-sm {
-  font-size: calc(var(--text-sm) * 1.05 * 0.98 * 0.99); /* ~12.22px — was card-heading; ≤ title */
+  font-size: calc(var(--text-sm) * 1.05 * 0.98 * 0.99); /* ~12.22px, never above card-heading */
   line-height: var(--text-sm--line-height);
 }
 .card-copy-micro {

@@ -24,6 +24,7 @@ import type { ActionArgs, ActionResult, ActionRuntime, CopilotAction, ParamSchem
 import { isPlatformAdmin } from '../lib/roles';
 import { buildReturnSummary, describeReturnPart, returnPartPath } from '../lib/returnVisit';
 import { previousVisitAt } from '../lib/visitClock';
+import { interestLabel } from '../lib/interests';
 
 /* ───────────────────────── helpers ───────────────────────── */
 
@@ -281,11 +282,13 @@ const recommendAction: CopilotAction = {
     const joined = new Set(myGroups().map((g) => g.eventId));
     const pool = s.events.filter((e) => !joined.has(e.id));
     const result = searchEvents(pool, s.currentUser, { limit: num(args.limit) ?? 4 });
-    const interests = (s.currentUser?.interests ?? []).slice(0, 3).join(', ');
+    const top = (s.currentUser?.interests ?? []).slice(0, 3);
+    const interestsEl = top.map((i) => interestLabel(i, 'el')).join(', ');
+    const interestsEn = top.map((i) => interestLabel(i, 'en')).join(', ');
     return {
       ok: true,
-      el: interests ? `Με βάση τα ενδιαφέροντά σου (${interests}), προτείνω:` : 'Αυτές ξεχωρίζουν αυτή τη στιγμή:',
-      en: interests ? `Based on your interests (${interests}), I suggest:` : 'These stand out right now:',
+      el: top.length ? `Με βάση τα ενδιαφέροντά σου (${interestsEl}), προτείνω:` : 'Αυτές ξεχωρίζουν αυτή τη στιγμή:',
+      en: top.length ? `Based on your interests (${interestsEn}), I suggest:` : 'These stand out right now:',
       eventIds: result.events.map((e) => e.id),
       data: { events: result.events.map(eventData) },
     };

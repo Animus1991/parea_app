@@ -7,6 +7,7 @@ function requestUserId(r: CompanyRequest): string {
   return r.creatorUserId;
 }
 import type { Event, Group, User } from '../types';
+import { sameInterest } from './interests';
 
 export function getActiveBuddySeeksForEvent(
   intents: CompanyRequest[],
@@ -107,7 +108,7 @@ function sharedInterestBonus(viewer: User, seeker: User, event: Event): number {
   const tags = event.tags ?? [];
   const overlap = (seeker.interests ?? []).filter((i) =>
     (viewer.interests ?? []).some(
-      (vi) => vi.toLowerCase() === i.toLowerCase() || tags.some((t) => t.toLowerCase() === i.toLowerCase()),
+      (vi) => sameInterest(vi, i) || tags.some((t) => t.toLowerCase() === i.toLowerCase()),
     ),
   ).length;
   return overlap * 8;

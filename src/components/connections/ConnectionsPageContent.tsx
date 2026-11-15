@@ -13,6 +13,7 @@ import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
 import { stopBubbling, pressable } from '../../lib/a11y';
+import { sameInterest } from '../../lib/interests';
 
 // ─── More dropdown ──────────────────────────────────────────────
 function MoreMenu({ connId: _connId, onViewProfile, onRemove, onReport, onInvite }: { connId: string; onViewProfile: () => void; onRemove: () => void; onReport: () => void; onInvite: () => void }) {
@@ -117,7 +118,7 @@ export default function ConnectionsPageContent() {
         const myConns = currentUser?.connections || [];
         const theirConns = u.connections || [];
         const mutual = myConns.filter((id) => theirConns.includes(id) && id !== currentUser?.id && id !== u.id).length;
-        const sharedInterests = (currentUser?.interests || []).filter((i) => (u.interests || []).includes(i));
+        const sharedInterests = (currentUser?.interests || []).filter((i) => (u.interests || []).some((x) => sameInterest(x, i)));
         return { ...u, mutual, sharedInterests, role: u.isOrganizer ? t('Διοργανωτής', 'Organizer') : (u.reliabilityScore > 80 ? t('Εξερευνητής', 'Explorer') : t('Αρχάριος', 'Newbie')) };
       });
   }, [users, myConnectionIds, currentUser, t]);
@@ -149,7 +150,7 @@ export default function ConnectionsPageContent() {
     return users
       .filter((u) => u.id !== currentUser?.id && !connIds.has(u.id) && !pendingIds.has(u.id))
       .map((u) => {
-        const sharedInterests = (currentUser?.interests || []).filter((i) => (u.interests || []).includes(i));
+        const sharedInterests = (currentUser?.interests || []).filter((i) => (u.interests || []).some((x) => sameInterest(x, i)));
         return { ...u, sharedInterests };
       })
       .filter((u) => u.sharedInterests.length > 0)

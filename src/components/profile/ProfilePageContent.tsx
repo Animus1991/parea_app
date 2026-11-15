@@ -36,13 +36,14 @@ import { toast } from "sonner";
 import { TabBar } from "../common/TabBar";
 import { cn } from "../../lib/utils";
 import { useLanguage } from "../../lib/i18n";
+import { canonicalInterest, interestLabel, sameInterest } from "../../lib/interests";
 import { useProfileContrast } from "../../hooks/usePageContrast";
 import { ProfileCompletionMeter } from "./ProfileCompletionMeter";
 
 // ─── Main component ──────────────────────────────────────────
 export default function ProfilePageContent() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const a = useProfileContrast();
   const currentUser = useStore((state) => state.currentUser);
   const updateUser = useStore((state) => state.updateUser);
@@ -300,10 +301,10 @@ export default function ProfilePageContent() {
           <div className="flex flex-wrap gap-2 items-center">
             {interests.map((i) => (
               <Badge key={i} variant="neutral" className={`pr-1.5 select-none ${a.isDark ? "" : "bg-gray-50 border-gray-200 text-gray-700"}`}>
-                {i}
+                {interestLabel(i, language)}
                 <button onClick={() => { const updated = interests.filter((int) => int !== i); setInterests(updated); updateUser(currentUser.id, { interests: updated }); }}
                   type="button"
-                  aria-label={t(`Αφαίρεση ενδιαφέροντος ${i}`, `Remove interest ${i}`)}
+                  aria-label={t(`Αφαίρεση ενδιαφέροντος ${interestLabel(i, 'el')}`, `Remove interest ${interestLabel(i, 'en')}`)}
                   title={t('Αφαίρεση', 'Remove')}
                   className={`ml-1.5 p-0.5 rounded-full transition-colors ${a.isDark ? "hover:bg-gray-600 text-gray-400 hover:text-gray-200" : "hover:bg-gray-200 text-gray-400 hover:text-gray-600"}`}>
                   <X className="w-3 h-3" aria-hidden="true" />
@@ -311,7 +312,7 @@ export default function ProfilePageContent() {
               </Badge>
             ))}
             {isAddingInterest ? (
-              <form onSubmit={(e) => { e.preventDefault(); if (newInterest.trim() && !interests.includes(newInterest.trim())) { const updated = [...interests, newInterest.trim()]; setInterests(updated); updateUser(currentUser.id, { interests: updated }); setNewInterest(""); setIsAddingInterest(false); } }} className="flex items-center gap-2">
+              <form onSubmit={(e) => { e.preventDefault(); if (!newInterest.trim()) return; if (interests.some((x) => sameInterest(x, newInterest))) { toast.message(t(`Το «${interestLabel(newInterest, "el")}» υπάρχει ήδη`, `«${interestLabel(newInterest, "en")}» is already in your interests`)); return; } const updated = [...interests, canonicalInterest(newInterest)]; setInterests(updated); updateUser(currentUser.id, { interests: updated }); setNewInterest(""); setIsAddingInterest(false); }} className="flex items-center gap-2">
                 <input type="text" value={newInterest} onChange={(e) => setNewInterest(e.target.value)} placeholder={t("Νέο ενδιαφέρον...", "New interest...")}
                   aria-label={t("Νέο ενδιαφέρον", "New interest")}
                   // eslint-disable-next-line jsx-a11y/no-autofocus -- focus moves only after the user opened this field

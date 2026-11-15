@@ -97,7 +97,7 @@ export default function LeaderboardClassic() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className={cn('text-sm md:text-base font-bold', p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>
-          <p className={cn('font-medium text-sm md:text-sm mt-1', p.sub)}>
+          <p className={cn('font-medium text-sm mt-1', p.sub)}>
             {t('Δες πού βρίσκεσαι μέσα στην κοινότητα', 'See where you stand in the community')}
           </p>
         </div>
