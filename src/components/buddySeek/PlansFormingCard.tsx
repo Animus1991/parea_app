@@ -67,7 +67,7 @@ export function PlansFormingCard({
   return (
     <article
       className={cn(
-        'rounded-2xl border transition-colors duration-200 focus-within:ring-2 focus-within:ring-cyan-500/30',
+        'nakamas-card rounded-2xl border transition-colors duration-200 focus-within:ring-2 focus-within:ring-cyan-500/30',
         isSidebar
           ? darkCard
             ? 'bg-white/[0.03] border-white/10 hover:border-white/20'

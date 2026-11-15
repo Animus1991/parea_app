@@ -99,7 +99,7 @@ export default function OrganizerProfilePageContent() {
             </p>
           </div>
 
-          <p className={cn('text-sm leading-relaxed max-w-2xl', p.sub)}>
+          <p className={cn('card-copy leading-relaxed max-w-2xl', p.sub)}>
             {organizer.bio ||
               t(
                 'Αυτός ο διοργανωτής δεν έχει προσθέσει βιογραφικό ακόμα. Είναι συνεργάτης του Nakamas που διαχειρίζεται ομαδικές εκδηλώσεις.',
@@ -195,7 +195,7 @@ export default function OrganizerProfilePageContent() {
         title={`${t('Επικοινωνία με', 'Contact')} ${organizer.name}`}
         size="md"
       >
-        <p className="text-sm mb-4 text-ink-muted">
+        <p className="card-copy mb-4 text-ink-muted">
           {t(
             'Στείλτε ένα ασφαλές μήνυμα σε αυτόν τον διοργανωτή για τις εκδηλώσεις του, τα εισιτήρια ή γενικές ερωτήσεις.',
             'Send a secure message to this organizer about their events, ticketing issues, or general inquiries.',

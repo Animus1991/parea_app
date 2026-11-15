@@ -97,13 +97,13 @@ function EventDetailQuickInfoBlock({
             <Icon className={cn('w-4 h-4 shrink-0 mt-0.5', content.metaLabel)} />
             <div className="min-w-0">
               <p className={cn('text-xs font-bold tracking-wide', content.metaLabel)}>{label}</p>
-              <p className={cn('text-sm font-bold', content.metaValue)}>{value}</p>
+              <p className={cn('card-heading font-bold', content.metaValue)}>{value}</p>
             </div>
           </div>
         ))}
       </div>
       {isParticipant && meetingPoint && (
-        <p className={cn('text-sm font-medium mt-3 pt-3 border-t border-cyan-200/50', content.metaLabel)}>
+        <p className={cn('card-copy-sm font-medium mt-3 pt-3 border-t border-cyan-200/50', content.metaLabel)}>
           {t('Σημείο συνάντησης', 'Meeting point')}: {meetingPoint}
         </p>
       )}
@@ -174,7 +174,7 @@ function EventDetailHostOrganizationRating({
       <div className={cn(shell, className)}>
         <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
           <CheckCircle2 className="w-5 h-5 shrink-0" />
-          <p className={cn('text-sm font-bold', content.metaValue)}>
+          <p className={cn('card-heading font-bold', content.metaValue)}>
             {t('Η αξιολόγηση οργάνωσης καταχωρήθηκε', 'Organization feedback submitted')}
           </p>
         </div>
@@ -192,7 +192,7 @@ function EventDetailHostOrganizationRating({
       <p className={cn('text-xs font-bold tracking-wide uppercase mb-1', content.metaLabel)}>
         {t('Αξιολογήστε την οργάνωση του διοργανωτή', "Rate the host's organization")}
       </p>
-      <p className={cn('text-sm font-medium mb-4', content.metaValue)}>
+      <p className={cn('card-copy font-medium mb-4', content.metaValue)}>
         {t('Πόσο καλά συντονίστηκε αυτή η εκδήλωση;', 'How well was this event coordinated?')}
       </p>
       <div

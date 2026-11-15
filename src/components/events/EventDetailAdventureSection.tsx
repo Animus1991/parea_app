@@ -49,7 +49,7 @@ export function EventDetailAdventureSection({
           <div className={cn(tok.labelMicro, 'text-emerald-700 mb-1', darkSurface && 'text-emerald-400')}>
             {t('Δυσκολία', 'Difficulty')}
           </div>
-          <div className={cn('text-sm font-bold', darkSurface ? 'text-white' : 'text-gray-900')}>
+          <div className={cn('card-heading font-bold', darkSurface ? 'text-white' : 'text-gray-900')}>
             {isHiking
               ? t('Μέτρια / Έδαφος', 'Moderate / Terrain')
               : t('Εύκολο / Αναψυχή', 'Easy / Leisure')}
@@ -66,7 +66,7 @@ export function EventDetailAdventureSection({
           <div className={cn(tok.labelMicro, 'text-amber-700 mb-1', darkSurface && 'text-amber-400')}>
             {t('Εξοπλισμός / Σημειώσεις', 'Equipment / Notes')}
           </div>
-          <div className={cn('text-sm font-bold', darkSurface ? 'text-white' : 'text-gray-900')}>
+          <div className={cn('card-heading font-bold', darkSurface ? 'text-white' : 'text-gray-900')}>
             {isHiking
               ? t(
                   'Απαιτούνται μποτάκια πεζοπορίας. Φέρτε νερό.',

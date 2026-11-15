@@ -88,7 +88,7 @@ export function EventDetailSafetySection({
         >
           <ShieldCheck className={cn('w-8 h-8 shrink-0', tok.verifiedIcon)} />
           <div>
-            <h3 className={cn('font-bold text-sm', darkSurface ? 'text-white' : 'text-ink')}>
+            <h3 className={cn('card-heading font-bold', darkSurface ? 'text-white' : 'text-ink')}>
               {t('Επαληθευμένη Εκδήλωση', 'Verified Event')}
             </h3>
             <p className={cn('mt-1 text-balance leading-relaxed', tok.muted)}>
@@ -103,7 +103,7 @@ export function EventDetailSafetySection({
         <div className="hidden md:block w-px bg-gray-200 dark:bg-gray-700 shrink-0" />
 
         <div className="flex-1 min-w-0">
-          <h3 className={cn('font-bold flex items-center gap-2 text-sm', darkSurface ? 'text-white' : 'text-ink')}>
+          <h3 className={cn('card-heading font-bold flex items-center gap-2', darkSurface ? 'text-white' : 'text-ink')}>
             <Navigation2 className="w-4 h-4 shrink-0" />
             {t('Ασφάλεια Τοποθεσίας', 'Location Safety')}
           </h3>

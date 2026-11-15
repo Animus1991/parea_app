@@ -98,7 +98,7 @@ export default function TrustCenterPageContent() {
             <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5", a.muted)}>
               <ShieldCheck className={cn("h-3.5 w-3.5", a.iconAccent)} />{t('Κατάσταση Επαλήθευσης', 'Verification Status')}
             </h2>
-            <p className={cn("text-base font-bold", a.head)}>{trustTierLabel}</p>
+            <p className={cn("card-heading-lg font-bold", a.head)}>{trustTierLabel}</p>
           </div>
 
           <div className="space-y-3">

@@ -30,7 +30,7 @@ export function Card({
           : pressable<HTMLDivElement>((e) => onClick(e as React.MouseEvent<HTMLDivElement>))
         : {})}
       className={cn(
-        'rounded-2xl border',
+        'nakamas-card rounded-2xl border',
         p.isAB && !p.isDark
           ? 'bg-white border-[hsl(220_13%_92%)]/60 shadow-soft'
           : p.isAB && p.isDark

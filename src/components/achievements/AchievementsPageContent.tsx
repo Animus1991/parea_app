@@ -237,7 +237,7 @@ export default function AchievementsPageContent() {
                     {entry.rank}
                   </span>
                   <img src={entry.avatar} alt="" referrerPolicy="no-referrer" className={cn('w-7 h-7 rounded-full border', a.isDark ? 'border-gray-700' : 'border-gray-200')} />
-                  <span className={cn('flex-1 text-sm font-medium', entry.isMe ? cn('font-bold', a.highlightText) : a.head)}>{entry.name}</span>
+                  <span className={cn('flex-1 card-copy font-medium', entry.isMe ? cn('font-bold', a.highlightText) : a.head)}>{entry.name}</span>
                   <span className={cn('text-xs font-bold tabular-nums', a.sub)}>{entry.xp} XP</span>
                 </li>
               ))}

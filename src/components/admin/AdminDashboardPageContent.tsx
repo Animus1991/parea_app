@@ -448,10 +448,10 @@ export default function AdminDashboardPageContent() {
       <>
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
         <div className="md:col-span-7 space-y-4">
-          <h2 className={cn('text-base font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>
+          <h2 className={cn('card-heading-lg font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>
           {displayReports.length === 0 ? (
             <Card className={cn('p-4 text-center', a.cardSurface)}>
-              <p className={cn('text-sm font-medium', a.muted)}>
+              <p className={cn('card-copy font-medium', a.muted)}>
                 {t('Δεν υπάρχουν αναφορές ακόμα. Οι αναφορές από /report εμφανίζονται εδώ.', 'No reports yet. Reports from /report appear here.')}
               </p>
             </Card>
@@ -465,7 +465,7 @@ export default function AdminDashboardPageContent() {
                     </div>
                     <div>
                       <p className={cn('font-bold text-sm', a.head)}>{report.category}</p>
-                      <p className={cn('text-sm mt-0.5 leading-relaxed', a.sub)}>
+                      <p className={cn('card-copy mt-0.5 leading-relaxed', a.sub)}>
                         {report.description || t('Χωρίς περιγραφή', 'No description')}
                       </p>
                       <p className={cn('text-xs mt-1', a.muted)}>
@@ -501,7 +501,7 @@ export default function AdminDashboardPageContent() {
                 <p className={cn('font-bold text-sm', a.head)}>
                   {t('Ύποπτος λογαριασμός — πολλαπλές no-shows', 'Suspicious account — multiple no-shows')}
                 </p>
-                <p className={cn('text-sm mt-0.5', a.sub)}>
+                <p className={cn('card-copy mt-0.5', a.sub)}>
                   {t('3 no-shows τον τελευταίο μήνα (demo)', '3 no-shows in the last month (demo)')}
                 </p>
               </div>
