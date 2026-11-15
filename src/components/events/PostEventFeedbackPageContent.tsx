@@ -512,7 +512,7 @@ export default function PostEventFeedbackPageContent() {
           <h2 className={cn('text-sm md:text-base font-extrabold tracking-tight mb-3', p.head)}>
             {t('Ευχαριστούμε!', 'Thank You!')}
           </h2>
-          <p className={cn('text-base font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
+          <p className={cn('text-sm font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
             {t(
               'Η αξιολόγησή σας βοηθά σημαντικά στη βελτίωση της εμπειρίας για όλη την κοινότητα.',
               'Your feedback significantly helps improve the experience for the entire community.',
