@@ -379,7 +379,7 @@ export default function ConnectionsPageContent() {
       >
         {inviteableEvents.length === 0 ? (
           <div className="space-y-3">
-            <p className={`text-sm ${a.muted}`}>
+            <p className={`card-copy ${a.muted}`}>
               {t(
                 'Δεν έχετε διαθέσιμες εκδηλώσεις. Δημιουργήστε μία ή μπείτε σε ομάδα.',
                 'No events available. Create one or join a group first.',

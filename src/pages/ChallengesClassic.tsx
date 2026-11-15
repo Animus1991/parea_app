@@ -193,7 +193,7 @@ export default function ChallengesClassic() {
           <Trophy className="w-4 h-4 text-amber-500 shrink-0" />
           <div>
             <p className="text-xs text-amber-600 font-bold">{t('XP Ολοκληρωμένων', 'Completed XP')}</p>
-            <p className="text-base font-black text-amber-700 leading-none">{totalXP}</p>
+            <p className="card-heading-lg font-black text-amber-700 leading-none">{totalXP}</p>
           </div>
         </div>
       </div>
@@ -253,7 +253,7 @@ export default function ChallengesClassic() {
                         </span>
                       )}
                     </div>
-                    <p className={cn('text-sm font-medium mt-0.5 leading-snug', p.sub)}>
+                    <p className={cn('card-copy font-medium mt-0.5 leading-snug', p.sub)}>
                       {t(c.descGr, c.descEn)}
                     </p>
                   </div>

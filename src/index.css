@@ -355,9 +355,17 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 }
 
 /*
- * Card type hierarchy:
+ * Card type hierarchy (inside every card / nakamas-card):
  * 1) Never larger than page titles outside cards (text-sm / md:text-base).
- * 2) Title ≥ subtitle/body inside the same card.
+ * 2) Title ≥ subtitle inside the same card.
+ * 3) Central content (body / values / descriptions) ≤ title AND ≤ subtitle.
+ *
+ *   card-heading-lg  → title (max)
+ *   card-heading     → title
+ *   card-copy-sm     → subtitle
+ *   card-copy        → central content (≤ subtitle)
+ *   card-meta*       → schedule / muted meta
+ *   card-copy-micro  → micro hints
  */
 .card-heading {
   font-size: calc(var(--text-sm) * 0.92); /* ~12.9px — under page title */
@@ -381,26 +389,38 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Schedule / location (date, area) */
 .card-meta {
-  font-size: calc(var(--text-xs) * 1.1 * 0.98 * 1.01); /* ~10.89px */
+  font-size: calc(var(--text-xs) * 1.05); /* ~10.5px — ≤ subtitle */
   line-height: var(--text-xs--line-height);
 }
 .card-meta-sm {
-  font-size: calc(var(--text-xs) * 1.1 * 1.01); /* ~11.11px — ≤ card-heading */
+  font-size: calc(var(--text-xs) * 1.05); /* ~10.5px — ≤ subtitle */
   line-height: var(--text-xs--line-height);
 }
 
-/* Card body / subtitle under titles */
-.card-copy {
-  font-size: calc(var(--text-xs) * 1.1 * 1.01); /* ~11.11px */
+/* Subtitle under card titles — ≤ card-heading, ≥ body */
+.card-copy-sm {
+  font-size: var(--text-xs); /* 10px — ≤ card-heading (~12.9) */
   line-height: var(--text-xs--line-height);
 }
-.card-copy-sm {
-  font-size: calc(var(--text-xs) * 1.1 * 1.01); /* ~11.11px — ≤ card-heading */
+
+/* Central card content — ≤ subtitle / field labels (text-xs) */
+.card-copy,
+.card-body {
+  font-size: var(--text-xs); /* equals subtitle max; never above titles */
   line-height: var(--text-xs--line-height);
 }
 .card-copy-micro {
   font-size: calc(var(--text-2xs) * 1.1); /* ~9.9px */
   line-height: var(--text-2xs--line-height);
+}
+
+/*
+ * Default inherit for Nakamas cards: undescribed text lands at content size.
+ * Explicit .card-heading* / utilities still win for titles.
+ */
+.nakamas-card {
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
 }
 
 /* Card action buttons — same type size as .btn-gradient / Αξιολόγηση */

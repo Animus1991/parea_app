@@ -57,7 +57,7 @@ export function CompanyRequestCard({
     : 'border-gray-200 bg-white shadow-soft';
 
   return (
-    <article className={cn('rounded-2xl border p-3', shell, compact && 'p-2.5')}>
+    <article className={cn('nakamas-card rounded-2xl border p-3', shell, compact && 'p-2.5')}>
       <div className="flex gap-2.5">
         {projection.showPhoto && seeker.photoUrl ? (
           <img

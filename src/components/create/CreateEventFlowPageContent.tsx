@@ -192,7 +192,7 @@ export default function CreateEventFlowPageContent() {
         <h1 className={cn("text-sm md:text-base font-bold", p.head)}>
           {editEvent ? t("Επεξεργασία Εμπειρίας", "Edit Experience") : t("Δημιουργία Εμπειρίας", "Create Experience")}
         </h1>
-        <p className={cn("text-sm mt-1", p.muted)}>
+        <p className={cn("text-sm font-medium mt-1", p.muted)}>
           {t(
             "Σχεδιάστε την τέλεια συνάντησή σας.",
             "Design your perfect real-world gathering.",
@@ -618,7 +618,7 @@ export default function CreateEventFlowPageContent() {
                 <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
                   {editEvent ? t("Έτοιμο για αποθήκευση!", "Ready to save!") : t("Έτοιμο για Δημοσίευση!", "Ready to Publish!")}
                 </h2>
-                <p className={cn("text-sm mt-1", p.muted)}>
+                <p className={cn("text-sm font-medium mt-1", p.muted)}>
                   {t(
                     "Αναθεωρήστε τις λεπτομέρειες πριν τη δημοσίευση.",
                     "Review your event details before sharing.",
@@ -626,7 +626,7 @@ export default function CreateEventFlowPageContent() {
                 </p>
               </div>
 
-              <div className={cn("rounded-2xl p-4 space-y-3 text-sm shadow-soft", p.infoBg)}>
+              <div className={cn("nakamas-card rounded-2xl p-4 space-y-3 shadow-soft", p.infoBg)}>
                 <div className={cn("flex justify-between pb-3 border-b", p.borderB)}>
                   <span className={cn("font-medium", p.muted)}>
                     {t("Τίτλος", "Title")}
@@ -673,7 +673,7 @@ export default function CreateEventFlowPageContent() {
                 </div>
               </div>
 
-              <div className={cn("rounded-2xl p-3 flex gap-3 text-sm shadow-soft border", p.isDark ? "bg-amber-950/30 border-amber-800/40 text-amber-200" : "bg-amber-50 border-amber-200 text-amber-800")}>
+              <div className={cn("nakamas-card rounded-2xl p-3 flex gap-3 shadow-soft border", p.isDark ? "bg-amber-950/30 border-amber-800/40 text-amber-200" : "bg-amber-50 border-amber-200 text-amber-800")}>
                 <Target className="w-5 h-5 shrink-0 mt-0.5" />
                 <p className="text-xs">
                   {t(

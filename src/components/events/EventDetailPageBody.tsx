@@ -179,7 +179,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
       <div className="grid grid-cols-1 gap-4 md:gap-5 md:grid-cols-5 lg:grid-cols-3">
         {/* Left Column: Details */}
         <div className="space-y-4 md:space-y-5 md:col-span-3 lg:col-span-2">
-          <section className="space-y-4 text-sm text-ink leading-relaxed bg-surface-raised rounded-2xl border border-border p-5 md:p-4 shadow-soft">
+          <section className="nakamas-card space-y-4 text-ink leading-relaxed bg-surface-raised rounded-2xl border border-border p-5 md:p-4 shadow-soft">
              <EventDetailMetaSection event={event} accent={accent} darkSurface={darkSurface} />
              <EventMap event={event} accent={accent} darkSurface={darkSurface} />
              <EventDetailAboutSection event={event} accent={accent} darkSurface={darkSurface} />
@@ -202,9 +202,9 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                 'Multiple groups can run in parallel; size is set by the organizer.',
               )}
             </p>
-            <div className="mb-4 bg-accent-soft border border-accent/20 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-sm font-bold text-accent-strong">
+            <div className="mb-4 bg-accent-soft border border-accent/20 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-xs font-bold text-accent-strong">
               <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική Χωρητικότητα Εκδήλωσης', 'Overall Event Capacity')}</span>
-              <span className="text-accent bg-surface-raised xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs xl:text-sm border border-accent/20 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
+              <span className="text-accent bg-surface-raised xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs border border-accent/20 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
             </div>
 
             <div className="flex flex-col gap-3 mb-4">

@@ -79,7 +79,7 @@ export default function WalletPageContent() {
 
       <Card className="mt-2">
         <div className={cn("p-4 md:p-4 border-b flex items-center justify-between", a.borderB)}>
-          <h2 className={cn("text-base font-bold", a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
+          <h2 className={cn("card-heading-lg font-bold", a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
           <select
             className={cn("filter-select border outline-none", a.selectBg)}
             value={txFilter}
@@ -149,7 +149,7 @@ export default function WalletPageContent() {
         title={t('Ανάληψη χρημάτων', 'Withdraw Funds')}
         size="md"
       >
-        <p className="text-sm mb-4 text-ink-muted">
+        <p className="card-copy mb-4 text-ink-muted">
           {stripeReady
             ? t('Θα ανοίξει Stripe Checkout για την ανάληψη.', 'Stripe Checkout will open for this withdrawal.')
             : t('Demo ροή — η ανάληψη καταγράφεται τοπικά.', 'Demo flow — withdrawal is logged locally only.')}
@@ -178,7 +178,7 @@ export default function WalletPageContent() {
         title={t('Διαχείριση πληρωμών', 'Manage Payouts')}
         size="md"
       >
-        <p className="text-sm mb-4 text-ink-muted">
+        <p className="card-copy mb-4 text-ink-muted">
           {stripeReady
             ? t('Άνοιγμα Stripe για ενημέρωση τρόπου πληρωμής.', 'Open Stripe to update payout method.')
             : t('Demo — ενημέρωση τραπεζικού λογαριασμού σύντομα.', 'Demo — bank account update coming soon.')}

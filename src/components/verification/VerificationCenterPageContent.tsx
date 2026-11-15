@@ -106,7 +106,7 @@ export default function VerificationCenterPageContent() {
           </div>
           {!currentUser.phoneVerified && (
             <>
-              <p className={cn('text-sm mb-3', a.sub)}>{t('Θα σας στείλουμε SMS με κωδικό.', "We'll send you an SMS code.")}</p>
+              <p className={cn('card-copy mb-3', a.sub)}>{t('Θα σας στείλουμε SMS με κωδικό.', "We'll send you an SMS code.")}</p>
               <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleVerifyPhone}>
                 {t('Επαλήθευση Τώρα', 'Verify Now')}
               </Button>
@@ -129,11 +129,11 @@ export default function VerificationCenterPageContent() {
             </div>
             <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full tracking-wide', a.advBadge)}>{t('Προχωρημένο', 'Advanced')}</span>
           </div>
-          <p className={cn('text-sm mb-4 max-w-xl', a.sub)}>
+          <p className={cn('card-copy mb-4 max-w-xl', a.sub)}>
             {t('Ανεβάστε φωτογραφία ταυτότητας για εκδηλώσεις υψηλής ασφάλειας.', 'Upload a photo of your ID to access high-safety events.')}
           </p>
           <div className={cn('p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-dashed', a.uploadArea)}>
-            <div className={cn('flex gap-3 text-sm font-medium', a.uploadText)}>
+            <div className={cn('flex gap-3 card-copy font-medium', a.uploadText)}>
               <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4" />{t('Ασφαλές', 'Secure')}</span>
               <span className="flex items-center gap-1"><UserCheck className="w-4 h-4" />{t('Ιδιωτικό', 'Private')}</span>
             </div>
@@ -162,7 +162,7 @@ export default function VerificationCenterPageContent() {
               <div key={item.label} className={cn('p-3 rounded-xl border flex items-center gap-3', item.bg)}>
                 <Icon className={cn('w-5 h-5', item.color)} />
                 <div>
-                  <p className={cn('text-sm font-bold', a.head)}>{item.label}</p>
+                  <p className={cn('card-heading font-bold', a.head)}>{item.label}</p>
                   <p className={cn('text-xs font-bold', item.done ? 'text-emerald-600' : a.muted)}>
                     {item.done ? t('Ξεκλείδωτο', 'Unlocked') : t('Κλειδωμένο', 'Locked')}
                   </p>

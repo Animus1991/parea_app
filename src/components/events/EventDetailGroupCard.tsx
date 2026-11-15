@@ -201,10 +201,10 @@ export function EventDetailGroupCard({
             <Users className="h-3.5 w-3.5" aria-hidden />
             {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
           </div>
-          <h4 className={cn('text-sm font-bold mb-0.5 line-clamp-1', tok.title)}>{event.title}</h4>
+          <h4 className={cn('card-heading-lg font-bold mb-0.5 line-clamp-1', tok.title)}>{event.title}</h4>
           <p className={cn('card-meta capitalize mb-1', tok.meta)}>{event.category}</p>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className={cn('text-base font-bold', tok.title)}>{group.members.length}</span>
+            <span className={cn('card-heading font-bold', tok.title)}>{group.members.length}</span>
             <span className={cn('card-copy font-medium', tok.meta)}>
               / {group.targetSize} {t('μέλη', 'members')}
             </span>

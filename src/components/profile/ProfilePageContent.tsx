@@ -244,7 +244,7 @@ export default function ProfilePageContent() {
                   </div>
                 ) : (
                   <div className="group/bio relative">
-                    <p className={`text-sm font-medium pr-8 leading-relaxed ${bodyTextLight}`}>{bio}</p>
+                    <p className={`card-copy font-medium pr-8 leading-relaxed ${bodyTextLight}`}>{bio}</p>
                     <button
                       type="button"
                       onClick={() => setIsEditingBio(true)}
@@ -528,7 +528,7 @@ export default function ProfilePageContent() {
                 <label key={opt.key} className={`flex items-center justify-between gap-3 py-2 cursor-pointer ${a.isDark ? "border-gray-700/30" : "border-gray-100"}`}>
                   <div className="flex items-center gap-3 min-w-0">
                     <opt.icon className={`w-3.5 h-3.5 shrink-0 ${sub}`} />
-                    <span className={`text-sm font-medium ${bodyText}`}>{opt.label}</span>
+                    <span className={`card-copy font-medium ${bodyText}`}>{opt.label}</span>
                   </div>
                   <input
                     type="checkbox"
