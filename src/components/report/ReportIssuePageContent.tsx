@@ -282,7 +282,7 @@ export default function ReportIssuePageContent() {
               type="submit"
               disabled={!category || !severity || !description.trim()}
               className={cn(
-                'w-full py-2.5 rounded-full text-sm font-bold shadow-soft transition-all duration-200 tracking-wider disabled:opacity-50',
+                'w-full py-2.5 rounded-full text-xs font-bold shadow-soft transition-all duration-200 tracking-wider disabled:opacity-50',
                 p.chipActive,
                 p.isDark ? '' : 'hover:opacity-90',
               )}
@@ -310,7 +310,7 @@ export default function ReportIssuePageContent() {
           </p>
           <button
             onClick={() => navigate('/')}
-            className={cn('px-5 py-2.5 rounded-full text-sm font-bold transition-colors tracking-wider', p.chipInactive)}
+            className={cn('px-5 py-2.5 rounded-full text-xs font-bold transition-colors tracking-wider', p.chipInactive)}
           >
             {t('Επιστροφή', 'Go Back')}
           </button>

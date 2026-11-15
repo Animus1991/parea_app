@@ -391,7 +391,7 @@ export default function BuddySeekPageContent() {
         <button
           type="button"
           onClick={() => setEventPickerOpen(false)}
-          className={cn('w-full mt-3 py-2.5 rounded-xl text-sm font-bold border', a.borderB, a.sub)}
+          className={cn('w-full mt-3 py-2.5 rounded-xl text-xs font-bold border', a.borderB, a.sub)}
         >
           {t('Ακύρωση', 'Cancel')}
         </button>

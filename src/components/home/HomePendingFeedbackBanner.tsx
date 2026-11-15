@@ -39,7 +39,7 @@ export function HomePendingFeedbackBanner() {
       <button
         type="button"
         onClick={() => navigate(`/history/feedback/${pendingFeedbackEvent.id}`)}
-        className={`text-sm tracking-wider font-bold px-4 py-2 rounded-full whitespace-nowrap w-full sm:w-auto shadow-soft transition-all duration-200 ${h.feedbackBtn}`}
+        className={`text-xs tracking-wider font-bold px-4 py-2 rounded-full whitespace-nowrap w-full sm:w-auto shadow-soft transition-all duration-200 ${h.feedbackBtn}`}
       >
         {t('Αξιολόγηση', 'Rate Now')}
       </button>

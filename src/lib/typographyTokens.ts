@@ -24,6 +24,11 @@ export const APP_TYPO = {
   heroSubtitle: 'text-sm font-medium leading-relaxed',
   /** KPI numerals — capped at page-title scale so in-card stats never outgrow the page */
   statValue: 'text-sm md:text-base font-black tabular-nums leading-none',
+  /**
+   * Canonical button / CTA label size — matches Plans → Ιστορικό → «Αξιολόγηση»
+   * (.btn-gradient / Button md). Use for every action button across the app.
+   */
+  btn: 'text-xs font-bold',
 } as const;
 
 /** Popup chat window density */

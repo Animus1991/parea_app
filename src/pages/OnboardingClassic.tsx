@@ -410,7 +410,7 @@ export default function OnboardingClassic() {
         <div className="flex items-center justify-between mt-5">
           <button
             onClick={step === 0 ? handleSkip : goPrev}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-gray-200 dark:border-border text-sm font-bold text-gray-500 hover:text-ink hover:border-gray-300 dark:hover:border-border-strong transition-all duration-200"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-gray-200 dark:border-border text-xs font-bold text-gray-500 hover:text-ink hover:border-gray-300 dark:hover:border-border-strong transition-all duration-200"
           >
             <ChevronLeft className="w-4 h-4" />
             {step === 0 ? t('Παράλειψη', 'Skip') : t('Πίσω', 'Back')}
@@ -421,7 +421,7 @@ export default function OnboardingClassic() {
               type="button"
               onClick={goNext}
               disabled={step === 1 && selectedInterests.length < 3}
-              className="flex items-center gap-2 px-4 py-2.5 min-h-10 rounded-2xl bg-ink text-white text-sm font-bold hover:bg-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2.5 min-h-10 rounded-2xl bg-ink text-white text-xs font-bold hover:bg-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('Επόμενο', 'Next')}
               <ChevronRight className="w-4 h-4" aria-hidden />
@@ -429,7 +429,7 @@ export default function OnboardingClassic() {
           ) : (
             <button
               onClick={handleComplete}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-accent to-cyan-400 text-white text-sm font-bold hover:opacity-90 transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-accent to-cyan-400 text-white text-xs font-bold hover:opacity-90 transition-all duration-200"
             >
               <CheckCircle2 className="w-4 h-4" />
               {t('Ολοκλήρωση!', 'Complete!')}

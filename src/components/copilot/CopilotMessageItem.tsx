@@ -125,7 +125,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
               data-autofocus
               onClick={() => void confirmAction(message.id)}
               className={cn(
-                'inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+                'inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
                 destructive ? 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500' : 'bg-accent text-accent-fg hover:bg-accent-strong focus-visible:ring-accent',
               )}
             >
@@ -134,7 +134,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
             <button
               type="button"
               onClick={() => cancelAction(message.id)}
-              className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface-raised px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface-raised px-3 text-xs font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <X className="h-4 w-4" /> {t('Άκυρο', 'Cancel')}
             </button>

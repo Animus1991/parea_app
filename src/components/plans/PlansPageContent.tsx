@@ -423,14 +423,14 @@ export default function PlansPageContent() {
               toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'));
               setShowLeaveConfirm(null);
             }}
-            className="w-full px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
+            className="w-full px-4 py-3 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
           >
             {t('Ναι, Αποχώρηση', 'Yes, Leave')}
           </button>
           <button
             type="button"
             onClick={() => setShowLeaveConfirm(null)}
-            className={cn('w-full px-4 py-3 text-sm font-bold rounded-2xl transition-all duration-200 border', secondaryBtn)}
+            className={cn('w-full px-4 py-3 text-xs font-bold rounded-2xl transition-all duration-200 border', secondaryBtn)}
           >
             {t('Ακύρωση', 'Cancel')}
           </button>

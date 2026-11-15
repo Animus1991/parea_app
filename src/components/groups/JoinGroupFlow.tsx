@@ -182,7 +182,7 @@ export default function JoinGroupFlow() {
                   key={size}
                   type="button"
                   onClick={() => setNewGroupSize(size)}
-                  className={`flex-1 py-2 min-h-11 rounded-xl font-bold text-sm ${newGroupSize === size ? 'bg-ink text-white' : 'bg-gray-100 text-gray-600'}`}
+                  className={`flex-1 py-2 min-h-11 rounded-xl font-bold text-xs ${newGroupSize === size ? 'bg-ink text-white' : 'bg-gray-100 text-gray-600'}`}
                 >
                   {size}
                 </button>
