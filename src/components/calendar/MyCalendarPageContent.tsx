@@ -8,6 +8,7 @@ import {
   Compass,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   format,
   addDays,
@@ -88,6 +89,7 @@ export default function MyCalendarPageContent() {
       })),
       "parea-calendar.ics",
     );
+    toast.success(t("Το ημερολόγιο εξήχθη", "Calendar exported"));
   };
 
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });

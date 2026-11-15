@@ -305,7 +305,12 @@ export default function ProfilePageContent() {
             {interests.map((i) => (
               <Badge key={i} variant="neutral" className={`pr-1.5 select-none ${a.isDark ? "" : "bg-gray-50 border-gray-200 text-gray-700"}`}>
                 {interestLabel(i, language)}
-                <button onClick={() => { const updated = interests.filter((int) => int !== i); setInterests(updated); updateUser(currentUser.id, { interests: updated }); }}
+                <button onClick={() => {
+                    const updated = interests.filter((int) => int !== i);
+                    setInterests(updated);
+                    updateUser(currentUser.id, { interests: updated });
+                    toast.success(t('Το ενδιαφέρον αφαιρέθηκε', 'Interest removed'));
+                  }}
                   type="button"
                   aria-label={t(`Αφαίρεση ενδιαφέροντος ${interestLabel(i, 'el')}`, `Remove interest ${interestLabel(i, 'en')}`)}
                   title={t('Αφαίρεση', 'Remove')}
@@ -315,7 +320,7 @@ export default function ProfilePageContent() {
               </Badge>
             ))}
             {isAddingInterest ? (
-              <form onSubmit={(e) => { e.preventDefault(); if (!newInterest.trim()) return; if (interests.some((x) => sameInterest(x, newInterest))) { toast.message(t(`Το «${interestLabel(newInterest, "el")}» υπάρχει ήδη`, `«${interestLabel(newInterest, "en")}» is already in your interests`)); return; } const updated = [...interests, canonicalInterest(newInterest)]; setInterests(updated); updateUser(currentUser.id, { interests: updated }); setNewInterest(""); setIsAddingInterest(false); }} className="flex items-center gap-2">
+              <form onSubmit={(e) => { e.preventDefault(); if (!newInterest.trim()) return; if (interests.some((x) => sameInterest(x, newInterest))) { toast.message(t(`Το «${interestLabel(newInterest, "el")}» υπάρχει ήδη`, `«${interestLabel(newInterest, "en")}» is already in your interests`)); return; } const updated = [...interests, canonicalInterest(newInterest)]; setInterests(updated); updateUser(currentUser.id, { interests: updated }); setNewInterest(""); setIsAddingInterest(false); toast.success(t('Το ενδιαφέρον προστέθηκε', 'Interest added')); }} className="flex items-center gap-2">
                 <input type="text" value={newInterest} onChange={(e) => setNewInterest(e.target.value)} placeholder={t("Νέο ενδιαφέρον...", "New interest...")}
                   aria-label={t("Νέο ενδιαφέρον", "New interest")}
                   // eslint-disable-next-line jsx-a11y/no-autofocus -- focus moves only after the user opened this field

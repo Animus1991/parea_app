@@ -510,12 +510,14 @@ export default function NearbyGroupsPageContent() {
         </ErrorBoundary>
 
         {/* Floating Action Button for Map Layer Toggle */}
-        <button 
+        <button
+          type="button"
           onClick={() => setMapLayer(prev => prev === "standard" ? "satellite" : "standard")}
           className="absolute bottom-6 right-6 md:right-[calc(var(--sidebar-width)+24px)] z-[1000] h-10 w-10 rounded-full shadow-soft bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 flex items-center justify-center hover:scale-105 transition-transform"
           title={t("Εναλλαγή προβολής δικτύου", "Toggle Layer")}
+          aria-label={t("Εναλλαγή προβολής δικτύου", "Toggle Layer")}
         >
-          <MapIcon className="h-6 w-6" />
+          <MapIcon className="h-6 w-6" aria-hidden />
         </button>
       </div>
 
@@ -546,18 +548,22 @@ export default function NearbyGroupsPageContent() {
             </button>
           )}
           <button
+            type="button"
             onClick={handleLocateMe}
             className={cn("h-10 w-10 rounded-2xl shadow-soft-lg flex items-center justify-center transition-all duration-200 pointer-events-auto shrink-0 ml-auto", p.isDark ? "bg-cyan-900/80 text-cyan-400 hover:bg-cyan-900" : "bg-white/95 text-cyan-600 hover:bg-cyan-50")}
             title={t('Εντοπισμός', 'Locate')}
+            aria-label={t('Εντοπισμός', 'Locate')}
           >
-            <Crosshair className="h-5 w-5" />
+            <Crosshair className="h-5 w-5" aria-hidden />
           </button>
           <button
+            type="button"
             onClick={() => setIsMapFullscreen(!isMapFullscreen)}
             className={cn("h-10 w-10 rounded-2xl shadow-soft-lg flex items-center justify-center transition-all duration-200 pointer-events-auto shrink-0", p.isDark ? "bg-gray-800/95 text-white hover:bg-gray-700" : "bg-gray-900 text-white hover:bg-black")}
             title={isMapFullscreen ? t('Έξοδος', 'Exit') : t('Πλήρης Οθόνη', 'Fullscreen')}
+            aria-label={isMapFullscreen ? t('Έξοδος', 'Exit') : t('Πλήρης Οθόνη', 'Fullscreen')}
           >
-            {isMapFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+            {isMapFullscreen ? <Minimize className="h-5 w-5" aria-hidden /> : <Maximize className="h-5 w-5" aria-hidden />}
           </button>
         </div>
 
@@ -703,8 +709,20 @@ export default function NearbyGroupsPageContent() {
                 "Δοκιμάστε μεγαλύτερη ακτίνα ή διαφορετικά φίλτρα.",
                 "Try a larger radius or different filters.",
               )}
-              actionLabel={t("Ορισμός ακτίνας στα 15km", "Set radius to 15km")}
-              onAction={() => setRadius(15)}
+              actionLabel={
+                radius < 15
+                  ? t("Ορισμός ακτίνας στα 15km", "Set radius to 15km")
+                  : radius < 25
+                    ? t("Ορισμός ακτίνας στα 25km", "Set radius to 25km")
+                    : t("Αναζήτηση Εκδηλώσεων", "Browse Events")
+              }
+              onAction={
+                radius < 15
+                  ? () => setRadius(15)
+                  : radius < 25
+                    ? () => setRadius(25)
+                    : () => navigate('/')
+              }
             />
           ) : (
             filteredLocalGroups.map((group) => (
@@ -750,8 +768,18 @@ export default function NearbyGroupsPageContent() {
             <p className={cn("text-sm font-medium mt-1.5 mb-4", p.sub)}>
               {t("Δεν βρίσκετε αυτό που ψάχνετε; Αυξήστε την περιοχή αναζήτησης.", "Can't find what you're looking for? Increase your search area.")}
             </p>
-            <Button onClick={() => setRadius(15)} variant={p.isAB ? "primary" : "outline"} size="sm" className="font-bold text-xs">
-              {t("Ορισμός ακτίνας στα 15km", "Set radius to 15km")}
+            <Button
+              onClick={() => setRadius(radius < 15 ? 15 : 25)}
+              variant={p.isAB ? "primary" : "outline"}
+              size="sm"
+              className="font-bold text-xs"
+              disabled={radius >= 25}
+            >
+              {radius < 15
+                ? t("Ορισμός ακτίνας στα 15km", "Set radius to 15km")
+                : radius < 25
+                  ? t("Ορισμός ακτίνας στα 25km", "Set radius to 25km")
+                  : t("Μέγιστη ακτίνα", "Max radius")}
             </Button>
           </div>
           )}

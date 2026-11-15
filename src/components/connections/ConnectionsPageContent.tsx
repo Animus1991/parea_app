@@ -173,7 +173,13 @@ export default function ConnectionsPageContent() {
     if (!convId) {
       toast.message(
         t('Οι ιδιωτικές συνομιλίες είναι απενεργοποιημένες', 'Direct chats are disabled'),
-        { description: t('Ενεργοποιήστε τις στις ρυθμίσεις απορρήτου chat.', 'Enable them in chat privacy settings.') },
+        {
+          description: t('Ενεργοποιήστε τις στις ρυθμίσεις απορρήτου chat.', 'Enable them in chat privacy settings.'),
+          action: {
+            label: t('Ρυθμίσεις chat', 'Chat settings'),
+            onClick: () => navigate('/settings?section=chat'),
+          },
+        },
       );
       return;
     }

@@ -51,6 +51,7 @@ export default function SettingsPageContent() {
   const homeLayoutPanelRef = useRef<HTMLDivElement>(null);
   const availabilityPanelRef = useRef<HTMLDivElement>(null);
   const buddySeekSectionRef = useRef<HTMLDivElement>(null);
+  const chatPrivacySectionRef = useRef<HTMLDivElement>(null);
 
   // Keep the expandable panels next to the row that opened them (not below the fold).
   useEffect(() => {
@@ -62,12 +63,13 @@ export default function SettingsPageContent() {
     homeLayoutPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [showHomeLayout]);
 
-  // Deep-links: ?availability=1 opens slots; ?section=buddy-seek scrolls privacy panel.
+  // Deep-links: ?availability=1 / ?section=buddy-seek / ?section=chat
   useEffect(() => {
     const openAvailability =
       searchParams.get('availability') === '1' || searchParams.get('section') === 'availability';
     const openBuddySeek = searchParams.get('section') === 'buddy-seek';
-    if (!openAvailability && !openBuddySeek) return;
+    const openChat = searchParams.get('section') === 'chat';
+    if (!openAvailability && !openBuddySeek && !openChat) return;
 
     if (openAvailability) {
       setShowAvailability(true);
@@ -80,10 +82,15 @@ export default function SettingsPageContent() {
         buddySeekSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
+    if (openChat) {
+      requestAnimationFrame(() => {
+        chatPrivacySectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
 
     const next = new URLSearchParams(searchParams);
     next.delete('availability');
-    if (openBuddySeek || openAvailability) next.delete('section');
+    if (openBuddySeek || openAvailability || openChat) next.delete('section');
     setSearchParams(next, { replace: true });
   }, [searchParams, setSearchParams]);
 
@@ -285,7 +292,9 @@ export default function SettingsPageContent() {
       <div ref={buddySeekSectionRef}>
         <BuddySeekPrivacySettings />
       </div>
-      <ChatPrivacySettingsPanel />
+      <div ref={chatPrivacySectionRef}>
+        <ChatPrivacySettingsPanel />
+      </div>
 
       {/* 2FA Setup / Disable */}
       {show2FASetup && (
@@ -430,8 +439,8 @@ export default function SettingsPageContent() {
               <div className="flex items-center gap-3">
                 <Smartphone className={cn("w-4 h-4", a.iconColor)} />
                 <div>
-                  <span className={cn("text-sm font-medium", a.head)}>iPhone 15 Pro</span>
-                  <p className={cn("text-xs font-medium", a.muted)}>Athens, GR • {t('Τώρα', 'Now')}</p>
+                  <span className={cn("text-sm font-medium", a.head)}>{t('iPhone 15 Pro (demo)', 'iPhone 15 Pro (demo)')}</span>
+                  <p className={cn("text-xs font-medium", a.muted)}>{t('Αθήνα, GR', 'Athens, GR')} • {t('Τώρα', 'Now')}</p>
                 </div>
               </div>
               <span className={cn("text-2xs font-bold px-2 py-0.5 rounded-full", a.sessionBadge)}>{t('Τρέχουσα', 'Current')}</span>
@@ -440,8 +449,8 @@ export default function SettingsPageContent() {
               <div className="flex items-center gap-3">
                 <Laptop className={cn("w-4 h-4", a.muted)} />
                 <div>
-                  <span className={cn("text-sm font-medium", a.head)}>Chrome • Windows</span>
-                  <p className={cn("text-xs font-medium", a.muted)}>Athens, GR • 2h {t('πριν', 'ago')}</p>
+                  <span className={cn("text-sm font-medium", a.head)}>{t('Chrome • Windows (demo)', 'Chrome • Windows (demo)')}</span>
+                  <p className={cn("text-xs font-medium", a.muted)}>{t('Αθήνα, GR', 'Athens, GR')} • 2h {t('πριν', 'ago')}</p>
                 </div>
               </div>
               <button

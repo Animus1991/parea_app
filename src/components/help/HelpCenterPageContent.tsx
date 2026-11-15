@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { openCopilot } from '../../ai/copilot';
 import { Bot } from 'lucide-react';
@@ -7,7 +7,7 @@ import { Card } from '../common/Card';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { isLiveSupportConfigured, openLiveSupport } from '../../services/support';
 
@@ -15,6 +15,7 @@ export default function HelpCenterPageContent() {
   const { t, tu } = useLanguage();
   const a = usePageContrast();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
   const [expandedArticle, setExpandedArticle] = useState<number | null>(null);
@@ -42,6 +43,24 @@ export default function HelpCenterPageContent() {
     { id: 'groups', label: t('Ομάδες', 'Groups'), match: t('Διοργανωτές', 'Organizers'), icon: Users, color: a.isDark ? 'text-blue-400 bg-blue-900/20' : 'text-blue-600 bg-blue-50' },
     { id: 'quick', label: t('Γρήγορη Βοήθεια', 'Quick Help'), match: null as string | null, icon: Zap, color: a.isDark ? 'text-amber-400 bg-amber-900/20' : 'text-amber-600 bg-amber-50' },
   ];
+
+  // Deep-link: /help?topic=groups|safety|payments|quick
+  useEffect(() => {
+    const topic = searchParams.get('topic');
+    if (!topic) return;
+    const match = popularTopics.find((item) => item.id === topic);
+    if (!match) return;
+    if (match.id === 'quick') {
+      openCopilot();
+    } else {
+      setTopicFilter(match.label);
+    }
+    const next = new URLSearchParams(searchParams);
+    next.delete('topic');
+    setSearchParams(next, { replace: true });
+    // popularTopics rebuilt each render via t(); topic param is the trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional one-shot deep-link
+  }, [searchParams, setSearchParams]);
 
   const activeTopic = popularTopics.find((topic) => topic.label === topicFilter) ?? null;
 

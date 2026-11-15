@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { Minus, X, MoreVertical, Info } from 'lucide-react';
+import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
 import { useStore } from '../../store';
@@ -86,7 +87,15 @@ export function ChatWindow({
           onClose={() => closeConversation(conversation.id)}
           onMinimize={() => minimizeConversation(conversation.id)}
           onReport={() => setReportOpen(true)}
-          onMute={() => muteConversation(conversation.id, !conversation.muted)}
+          onMute={() => {
+            const nextMuted = !conversation.muted;
+            muteConversation(conversation.id, nextMuted);
+            toast.success(
+              nextMuted
+                ? t('Η συνομιλία σε σίγαση', 'Conversation muted')
+                : t('Η σίγαση απενεργοποιήθηκε', 'Unmuted'),
+            );
+          }}
           users={users}
           viewerId={viewer?.id}
           bottomRef={bottomRef}

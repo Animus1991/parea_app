@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   ChevronLeft,
   ChevronRight,
@@ -91,6 +92,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
       })),
       'parea-planned-events.ics',
     );
+    toast.success(t('Το ημερολόγιο εξήχθη', 'Calendar exported'));
   };
 
   const renderCell = (day: Date, inPeriod: boolean) => {
