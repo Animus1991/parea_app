@@ -1,9 +1,34 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import {defineConfig, loadEnv, type Plugin} from 'vite';
 import {buildCsp, cspHeaderName, cspMode} from './server/csp';
+
+/** Lists the build's JS/CSS for the service worker to cache on install (public/sw.js). */
+function swAssetList(): Plugin {
+  return {
+    name: 'nakamas-sw-asset-list',
+    apply: 'build',
+    closeBundle() {
+      const dir = path.resolve(__dirname, 'dist/assets');
+      if (!fs.existsSync(dir)) return;
+      const files = fs
+        .readdirSync(dir)
+        .filter((f) => /\.(js|css)$/.test(f))
+        .sort()
+        .map((f) => `/assets/${f}`);
+      fs.writeFileSync(path.resolve(__dirname, 'dist/sw-assets.json'), JSON.stringify(files));
+      // A new build id changes sw.js, so browsers install the new worker on the next visit.
+      const sw = path.resolve(__dirname, 'dist/sw.js');
+      if (fs.existsSync(sw)) {
+        const id = crypto.createHash('sha256').update(files.join('|')).digest('hex').slice(0, 12);
+        fs.writeFileSync(sw, fs.readFileSync(sw, 'utf8').replace('__BUILD_ID__', id));
+      }
+    },
+  };
+}
 
 /**
  * Static hosting (Cloudflare Pages): add the same Content-Security-Policy as
@@ -32,7 +57,7 @@ export default defineConfig(({mode}) => {
     env.VITE_GOOGLE_MAPS_PLATFORM_KEY ||
     '';
   return {
-    plugins: [react(), tailwindcss(), staticCspHeaders(env)],
+    plugins: [react(), tailwindcss(), staticCspHeaders(env), swAssetList()],
     define: {
       // Security (Ε1): GEMINI_API_KEY is intentionally NOT defined here — it must
       // never be inlined into the client bundle. AI calls go through server.ts

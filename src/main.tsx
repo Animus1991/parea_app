@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import './index.css';
 import { bootstrap } from './lib/bootstrap';
+import { registerServiceWorker } from './lib/serviceWorker';
 import { LanguageProvider } from './lib/LanguageProvider';
 import { MotionConfig } from 'motion/react';
 
@@ -63,3 +64,5 @@ createRoot(document.getElementById('root')!).render(
     </ErrorBoundary>
   </StrictMode>,
 );
+
+registerServiceWorker();
