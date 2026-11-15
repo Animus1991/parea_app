@@ -33,7 +33,7 @@ export function FilterBottomSheet({
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-ink">
           <SlidersHorizontal className="h-5 w-5 text-accent" />
-          <h2 className="text-sm font-bold">
+          <h2 className="text-sm md:text-base font-bold">
             {t('Φίλτρα', 'Filters')}
             {activeCount > 0 && (
               <span className="ml-2 text-2xs font-bold text-accent">({activeCount})</span>

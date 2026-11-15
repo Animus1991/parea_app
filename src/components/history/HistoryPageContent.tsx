@@ -9,6 +9,7 @@ import { EventCardSkeleton } from '../common/Skeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';
 import { useEventsResource } from '../../hooks/useEventsQuery';
 import { useLanguage } from '../../lib/i18n';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { dateFnsLocale } from '../../lib/dateLocale';
@@ -70,8 +71,8 @@ export default function HistoryPageContent() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn("text-sm md:text-base font-bold", a.head)}>{t('Ιστορικό', 'History')}</h1>
-          <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Εκδηλώσεις που έχετε παρακολουθήσει', 'Events you\'ve attended')}</p>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Ιστορικό', 'History')}</h1>
+          <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>{t('Εκδηλώσεις που έχετε παρακολουθήσει', 'Events you\'ve attended')}</p>
         </div>
       </div>
 
@@ -79,23 +80,23 @@ export default function HistoryPageContent() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <TrendingUp className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-sm md:text-base font-black", a.head)}>{totalAttended}</p>
-          <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Εκδηλώσεις', 'Events')}</p>
+          <p className={cn(APP_TYPO.statValue, a.head)}>{totalAttended}</p>
+          <p className={cn(APP_TYPO.sectionLabel, a.muted)}>{t('Εκδηλώσεις', 'Events')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Star className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-sm md:text-base font-black", a.head)}>{avgRating.toFixed(1)}</p>
-          <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Μ.Ο. Βαθμολογία', 'Avg Rating')}</p>
+          <p className={cn(APP_TYPO.statValue, a.head)}>{avgRating.toFixed(1)}</p>
+          <p className={cn(APP_TYPO.sectionLabel, a.muted)}>{t('Μ.Ο. Βαθμολογία', 'Avg Rating')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Users className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-sm md:text-base font-black", a.head)}>{peopleMet}</p>
-          <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Άτομα', 'People Met')}</p>
+          <p className={cn(APP_TYPO.statValue, a.head)}>{peopleMet}</p>
+          <p className={cn(APP_TYPO.sectionLabel, a.muted)}>{t('Άτομα', 'People Met')}</p>
         </Card>
         <Card className={cn("p-3.5 text-center border", a.statBg)}>
           <Award className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn("text-sm md:text-base font-black", a.head)}>{reviewedCount}/{totalAttended}</p>
-          <p className={cn("text-2xs font-bold tracking-wide", a.muted)}>{t('Αξιολογήσεις', 'Reviews')}</p>
+          <p className={cn(APP_TYPO.statValue, a.head)}>{reviewedCount}/{totalAttended}</p>
+          <p className={cn(APP_TYPO.sectionLabel, a.muted)}>{t('Αξιολογήσεις', 'Reviews')}</p>
         </Card>
       </div>
 
@@ -173,7 +174,7 @@ export default function HistoryPageContent() {
                   className={cn("w-12 h-12 rounded-2xl object-cover shrink-0 shadow-soft", a.isDark && "opacity-90")}
                 />
                 <div className="flex-1 min-w-0">
-                  <h3 className={cn("font-bold text-base truncate", a.head)}>{event.title}</h3>
+                  <h3 className={cn(APP_TYPO.rowTitle, 'truncate', a.head)}>{event.title}</h3>
                   <p className={cn("card-meta mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5", a.sub)}>
                     <span className="capitalize">{event.category}</span>
                     <span aria-hidden className="opacity-40">·</span>

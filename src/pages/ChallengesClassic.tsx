@@ -17,6 +17,7 @@ import { motion } from 'motion/react';
 import { usePageContrast } from '../hooks/usePageContrast';
 import { cn } from '../lib/utils';
 import { toast } from 'sonner';
+import { APP_TYPO } from '../lib/typographyTokens';
 
 interface Challenge {
   id: string;
@@ -189,10 +190,10 @@ export default function ChallengesClassic() {
       <GamificationHubNav />
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn('text-sm md:text-base font-bold', p.head)}>
+          <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
             {t('Προκλήσεις', 'Challenges')}
           </h1>
-          <p className={cn('font-medium text-sm mt-1', p.sub)}>
+          <p className={cn(APP_TYPO.pageSub, 'mt-1', p.sub)}>
             {t('Κέρδισε XP και ξεκλείδωσε badges', 'Earn XP and unlock badges')}
           </p>
         </div>

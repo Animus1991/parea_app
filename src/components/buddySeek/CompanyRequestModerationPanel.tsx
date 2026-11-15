@@ -22,7 +22,7 @@ export function CompanyRequestModerationPanel() {
     <div className={cn('rounded-2xl border p-4 space-y-4 mt-5', a.cardSurface, a.borderB)}>
       <div className="flex items-center gap-2">
         <ShieldAlert className="w-5 h-5 text-red-500" />
-        <h2 className={cn('text-sm font-bold', a.head)}>
+        <h2 className={cn('text-sm md:text-base font-bold', a.head)}>
           {t('Αναζήτηση Nakamas — εποπτεία', 'Looking for Nakamas — moderation')}
         </h2>
       </div>
@@ -30,19 +30,19 @@ export function CompanyRequestModerationPanel() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
         <div className={cn('rounded-xl border p-3', a.borderB)}>
           <p className="text-sm md:text-base font-black">{active.length}</p>
-          <p className="text-xs font-bold opacity-60">{t('Ενεργά', 'Active')}</p>
+          <p className="text-xs font-bold tracking-wide opacity-60">{t('Ενεργά', 'Active')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
           <p className="text-sm md:text-base font-black">{reported.length}</p>
-          <p className="text-xs font-bold opacity-60">{t('Αναφερμένα', 'Reported')}</p>
+          <p className="text-xs font-bold tracking-wide opacity-60">{t('Αναφερμένα', 'Reported')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
           <p className="text-sm md:text-base font-black">{reports.length}</p>
-          <p className="text-xs font-bold opacity-60">{t('Αναφορές', 'Reports')}</p>
+          <p className="text-xs font-bold tracking-wide opacity-60">{t('Αναφορές', 'Reports')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
           <p className="text-sm md:text-base font-black">{suspicious}</p>
-          <p className="text-xs font-bold opacity-60">{t('Ύποπτα', 'Suspicious')}</p>
+          <p className="text-xs font-bold tracking-wide opacity-60">{t('Ύποπτα', 'Suspicious')}</p>
         </div>
       </div>
 

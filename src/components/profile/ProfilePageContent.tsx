@@ -37,6 +37,7 @@ import { toast } from "sonner";
 import { TabBar } from "../common/TabBar";
 import { cn } from "../../lib/utils";
 import { useLanguage } from "../../lib/i18n";
+import { APP_TYPO } from "../../lib/typographyTokens";
 import { canonicalInterest, interestLabel, sameInterest } from "../../lib/interests";
 import { useProfileContrast } from "../../hooks/usePageContrast";
 import { ProfileCompletionMeter } from "./ProfileCompletionMeter";
@@ -174,10 +175,10 @@ export default function ProfilePageContent() {
             )}
           >
             <div className="flex items-center justify-between">
-              <span className={`text-2xs font-bold uppercase tracking-wider ${sub}`}>{stat.label}</span>
+              <span className={cn(APP_TYPO.sectionLabel, sub)}>{stat.label}</span>
               <stat.icon className={`w-4 h-4 ${stat.color}`} aria-hidden />
             </div>
-            <p className={`text-lg font-extrabold mt-2 tabular-nums ${heading}`}>{stat.value}</p>
+            <p className={cn(APP_TYPO.statValue, 'mt-2', heading)}>{stat.value}</p>
           </button>
         ))}
       </div>

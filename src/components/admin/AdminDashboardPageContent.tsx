@@ -19,6 +19,7 @@ import { AdminSSOPanel } from './AdminSSOPanel';
 import { toast } from 'sonner';
 import { useAiAuditStore, type AiAuditStatus } from '../../store/aiAuditStore';
 import { intlLocale } from '../../lib/dateLocale';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 type AdminTab = 'overview' | 'moderation' | 'users' | 'system' | 'automation' | 'branding' | 'sso';
 
@@ -157,7 +158,7 @@ export default function AdminDashboardPageContent() {
             <ShieldAlert className={cn('w-6 h-6', a.isDark ? 'text-red-400' : 'text-red-600')} aria-hidden />
           </div>
           <div>
-            <h1 className={cn('text-sm md:text-base font-bold', a.isDark ? 'text-red-400' : 'text-red-700')}>
+            <h1 className={cn(APP_TYPO.pageTitle, a.isDark ? 'text-red-400' : 'text-red-700')}>
               {t('Πίνακας Διαχείρισης', 'Admin Dashboard')}
             </h1>
             <p className={cn('mt-0.5 text-sm font-medium', a.sub)}>

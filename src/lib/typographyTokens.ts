@@ -1,13 +1,14 @@
 /**
- * App-wide density type scale — matches the Home logged-in / guest heroes.
- * Source of truth: HomeGuestHero + HomeLoggedInHero (`text-sm md:text-base` titles,
- * `text-sm` body/sub, `text-xs` chips/section labels, `text-2xs` micro).
+ * App-wide density type scale — matches the Wallet page template (canonical)
+ * and Home logged-in / guest heroes.
+ * Source of truth: WalletPageContent + HomeGuestHero / HomeLoggedInHero
+ * (`text-sm md:text-base` titles, `text-sm` body/sub, `text-xs` chips/section labels).
  * Maps to @theme tokens in src/index.css (--text-2xs through --text-4xl).
  */
 export const APP_TYPO = {
   /** Micro labels, badges, caps */
   micro: 'text-2xs',
-  /** Section headings, KPI labels */
+  /** Section headings, KPI labels — Wallet balance/pending labels */
   sectionLabel: 'text-xs font-bold tracking-wide',
   /** Body, list rows, meta */
   body: 'text-sm',
@@ -21,18 +22,53 @@ export const APP_TYPO = {
   cardBody: 'card-copy font-medium',
   /** Modal / panel titles — same as page title scale */
   panelTitle: 'text-sm md:text-base font-bold',
-  /** Page / hero titles — Home standard */
+  /** Page / hero titles — Wallet / Home standard */
   pageTitle: 'text-sm md:text-base font-bold tracking-tight leading-tight',
-  /** Page subtitle under the title */
+  /** Page subtitle under the title — Wallet pageSub */
   pageSub: 'text-sm font-medium',
   heroSubtitle: 'text-sm font-medium leading-relaxed',
-  /** KPI numerals — capped at page-title scale so in-card stats never outgrow the page */
+  /** KPI numerals — capped at page-title scale (Wallet balance) */
   statValue: 'text-sm md:text-base font-black tabular-nums leading-none',
+  /** Secondary KPI (Wallet pending) */
+  statValueSecondary: 'text-sm md:text-base font-bold tabular-nums leading-none',
+  /** List / bank card row title — Wallet tx / bank account */
+  rowTitle: 'text-sm font-bold',
+  /** List / bank card meta — Wallet status / bank mask */
+  rowMeta: 'text-xs font-medium',
+  /** List date / micro label with tracking — Wallet tx date */
+  rowDate: 'text-xs font-bold tracking-wide',
+  /** KPI helper under a stat — Wallet pending hint */
+  kpiHint: 'text-xs font-medium leading-tight',
+  /** Status / demo note under page sub — Wallet Stripe note */
+  statusNote: 'text-xs font-bold',
+  /** In-card section heading — Wallet “Recent Transactions” */
+  sectionInCard: 'card-heading-lg font-bold',
+  /** Banner titles (verify / feedback) — ≤ page title */
+  bannerTitle: 'text-sm font-bold',
+  /** Banner body */
+  bannerBody: 'text-xs font-medium leading-relaxed',
   /**
-   * Canonical button / CTA label size — matches Plans → Ιστορικό → «Αξιολόγηση»
+   * Canonical button / CTA label size — matches Wallet Button + Plans «Αξιολόγηση»
    * (.btn-gradient / Button md). Use for every action button across the app.
    */
   btn: 'text-xs font-bold',
+} as const;
+
+/** Explicit Wallet page template — aliases of APP_TYPO for page authors. */
+export const WALLET_TYPO = {
+  pageTitle: APP_TYPO.pageTitle,
+  pageSub: APP_TYPO.pageSub,
+  statusNote: APP_TYPO.statusNote,
+  kpiLabel: APP_TYPO.sectionLabel,
+  kpiValue: APP_TYPO.statValue,
+  kpiValueSecondary: APP_TYPO.statValueSecondary,
+  kpiHint: APP_TYPO.kpiHint,
+  rowTitle: APP_TYPO.rowTitle,
+  rowMeta: APP_TYPO.rowMeta,
+  rowDate: APP_TYPO.rowDate,
+  sectionInCard: APP_TYPO.sectionInCard,
+  modalBody: APP_TYPO.cardBody,
+  btn: APP_TYPO.btn,
 } as const;
 
 /** Popup chat window density */

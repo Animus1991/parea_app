@@ -54,7 +54,7 @@ export function JoinRequestPreviewModal({
         <div className="p-5 border-b border-border">
           <div className="flex items-center gap-2 text-accent-strong">
             <MessageSquare className="w-4 h-4" />
-            <h2 className="text-sm font-bold">
+            <h2 className="text-sm md:text-base font-bold">
               {mode === 'send'
                 ? t('Προεπισκόπηση πριν τη σύνδεση', 'Preview before connecting')
                 : t('Αίτημα συμμετοχής', 'Join request')}

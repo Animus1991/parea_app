@@ -11,6 +11,7 @@ import { ResourceStateGate } from '../common/ResourceStateGate';
 import { useNotificationsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
 
@@ -194,10 +195,10 @@ export default function NotificationsPageContent() {
     <div className="mx-auto max-w-full space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className={cn('text-sm md:text-base font-bold', a.head)}>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>
             {t('Ειδοποιήσεις', 'Notifications')}
           </h1>
-          <p className={cn('font-medium text-sm mt-1', a.sub)}>
+          <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>
             {unreadCount > 0
               ? t(`${unreadCount} μη αναγνωσμένες`, `${unreadCount} unread`)
               : t('Είστε ενημερωμένοι!', "You're all caught up!")}
