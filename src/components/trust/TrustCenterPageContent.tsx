@@ -104,27 +104,39 @@ export default function TrustCenterPageContent() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
-                <Mail className={cn("h-3.5 w-3.5", a.muted)} /> Email
+                <Mail className={cn("h-3.5 w-3.5", a.muted)} /> {t('Email', 'Email')}
               </div>
-              <Badge variant={currentUser.emailVerified ? 'success' : 'neutral'} className="text-xs px-1.5 py-0.5">
-                {currentUser.emailVerified ? t('Επαληθευμένο', 'Verified') : t('Εκκρεμεί', 'Pending')}
-              </Badge>
+              {currentUser.emailVerified ? (
+                <Badge variant="success" className="text-xs px-1.5 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
+              ) : (
+                <button type="button" onClick={() => navigate('/verification')} className={cn("text-xs font-bold cursor-pointer tracking-wide", a.link)}>
+                  {t('Επαλήθευση', 'Verify')}
+                </button>
+              )}
             </div>
             <div className="flex items-center justify-between">
               <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
                 <Phone className={cn("h-3.5 w-3.5", a.muted)} />{t('Τηλέφωνο', 'Phone')}
               </div>
-              <Badge variant={currentUser.phoneVerified ? 'success' : 'neutral'} className="text-xs px-1.5 py-0.5">
-                {currentUser.phoneVerified ? t('Επαληθευμένο', 'Verified') : t('Εκκρεμεί', 'Pending')}
-              </Badge>
+              {currentUser.phoneVerified ? (
+                <Badge variant="success" className="text-xs px-1.5 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
+              ) : (
+                <button type="button" onClick={() => navigate('/verification')} className={cn("text-xs font-bold cursor-pointer tracking-wide", a.link)}>
+                  {t('Επαλήθευση', 'Verify')}
+                </button>
+              )}
             </div>
             <div className="flex items-center justify-between">
               <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
                 <CreditCard className={cn("h-3.5 w-3.5", a.muted)} />{t('Πληρωμή', 'Payment')}
               </div>
-              <Badge variant={currentUser.paymentVerified ? 'success' : 'neutral'} className="text-xs px-1.5 py-0.5">
-                {currentUser.paymentVerified ? t('Επαληθευμένο', 'Verified') : t('Εκκρεμεί', 'Pending')}
-              </Badge>
+              {currentUser.paymentVerified ? (
+                <Badge variant="success" className="text-xs px-1.5 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
+              ) : (
+                <button type="button" onClick={() => navigate('/wallet')} className={cn("text-xs font-bold cursor-pointer tracking-wide", a.link)}>
+                  {t('Άνοιγμα πορτοφολιού', 'Open wallet')}
+                </button>
+              )}
             </div>
             <div className="flex items-center justify-between">
               <div className={cn("flex items-center gap-2 text-sm font-medium", a.muted)}>
@@ -201,9 +213,18 @@ export default function TrustCenterPageContent() {
           <TrendingUp className={cn("w-3.5 h-3.5", a.iconAccent)} aria-hidden />{t('Ιστορικό Εμπιστοσύνης', 'Trust History')}
         </h2>
         {history.length === 0 ? (
-          <p className={cn("text-sm", a.muted)}>
-            {t('Δεν υπάρχει ακόμη ιστορικό. Οι συμμετοχές και οι αξιολογήσεις σου θα εμφανίζονται εδώ.', 'No history yet. Your attendance and reviews will appear here.')}
-          </p>
+          <div className="space-y-3">
+            <p className={cn("card-copy", a.muted)}>
+              {t('Δεν υπάρχει ακόμη ιστορικό. Οι συμμετοχές και οι αξιολογήσεις σου θα εμφανίζονται εδώ.', 'No history yet. Your attendance and reviews will appear here.')}
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className={cn("text-xs font-bold tracking-wide", a.link)}
+            >
+              {t('Εξερεύνηση εκδηλώσεων', 'Explore events')}
+            </button>
+          </div>
         ) : (
           <ol className="space-y-0">
             {history.map((item, i) => (

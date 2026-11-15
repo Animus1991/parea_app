@@ -16,6 +16,7 @@ import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useContrastTheme } from '../../hooks/useContrastTheme';
 import { cn } from '../../lib/utils';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import type { FeedbackData } from '../../store';
 
@@ -75,6 +76,7 @@ export default function PostEventFeedbackPageContent() {
     };
     submitFeedback(payload);
     awardXp(25, 'Υποβολή αξιολόγησης', 'Feedback submitted');
+    toast.success(t('Η αξιολόγηση υποβλήθηκε · +25 XP', 'Feedback submitted · +25 XP'));
     setStep(2);
   };
 

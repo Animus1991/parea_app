@@ -424,6 +424,8 @@ export default function ConnectionsPageContent() {
                 'Θα ειδοποιηθείτε όταν κάποιος θέλει να συνδεθεί.',
                 "You'll be notified when someone wants to connect.",
               )}
+              actionLabel={t('Βρες Nakamas', 'Find Nakamas')}
+              onAction={() => navigate('/buddy-seek')}
             />
           )}
           {pendingRequests.map((req) => (
