@@ -30,6 +30,7 @@ import {
   ChevronRight,
   Share2,
   User as UserIcon,
+  CreditCard as CreditCardIcon,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -112,6 +113,7 @@ export default function ProfilePageContent() {
       const newUrl = URL.createObjectURL(e.target.files[0]);
       setPhotoUrl(newUrl);
       updateUser(currentUser.id, { photoUrl: newUrl });
+      toast.success(t('Η φωτογραφία ενημερώθηκε', 'Photo updated'));
     }
   };
 
@@ -137,7 +139,7 @@ export default function ProfilePageContent() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
           <h1 className={`text-sm md:text-base font-extrabold tracking-tight ${heading}`}>{t("Προφίλ", "Profile")}</h1>
-          <p className={`mt-1 text-xs font-medium leading-relaxed ${sub}`}>
+          <p className={`mt-1 text-sm font-medium leading-relaxed ${sub}`}>
             {t("Διαχειριστείτε τις ρυθμίσεις εμπιστοσύνης, τις επαληθεύσεις και το ιστορικό σας.", "Manage your trust settings, verifications, and history.")}
           </p>
         </div>
@@ -213,8 +215,8 @@ export default function ProfilePageContent() {
                     {/* eslint-disable-next-line jsx-a11y/no-autofocus -- focus moves only after the user opened this field */}
                     <input autoFocus value={tempName} onChange={(e) => setTempName(e.target.value)}
                       className={`flex-1 text-sm md:text-base font-bold rounded-2xl px-3 py-1.5 focus:ring-2 outline-none ${inputBg} ${a.ring}`} />
-                    <Button size="sm" onClick={() => { if (tempName.trim()) { updateUser(currentUser.id, { name: tempName }); setIsEditingName(false); } }}>{t("Αποθήκευση", "Save")}</Button>
-                    <Button size="sm" variant="ghost" onClick={() => { setTempName(currentUser.name); setIsEditingName(false); }}><X className="w-4 h-4" /></Button>
+                    <Button size="sm" onClick={() => { if (tempName.trim()) { updateUser(currentUser.id, { name: tempName }); setIsEditingName(false); toast.success(t('Το όνομα αποθηκεύτηκε', 'Name saved')); } }}>{t("Αποθήκευση", "Save")}</Button>
+                    <Button size="sm" variant="ghost" aria-label={t('Ακύρωση', 'Cancel')} onClick={() => { setTempName(currentUser.name); setIsEditingName(false); }}><X className="w-4 h-4" aria-hidden /></Button>
                   </div>
                 ) : (
                   <div className="group/name relative flex w-full items-center justify-between">
@@ -239,7 +241,7 @@ export default function ProfilePageContent() {
                   <div className="space-y-2">
                     <textarea value={tempBio} onChange={(e) => setTempBio(e.target.value)} className={`w-full text-sm rounded-2xl p-3 focus:ring-2 outline-none resize-none ${inputBg} ${a.ring}`} rows={3} />
                     <div className="flex gap-2">
-                      <Button size="sm" onClick={() => { setBio(tempBio); setIsEditingBio(false); updateUser(currentUser.id, { bio: tempBio }); }}>{t("Αποθήκευση", "Save")}</Button>
+                      <Button size="sm" onClick={() => { setBio(tempBio); setIsEditingBio(false); updateUser(currentUser.id, { bio: tempBio }); toast.success(t('Το bio αποθηκεύτηκε', 'Bio saved')); }}>{t("Αποθήκευση", "Save")}</Button>
                       <Button size="sm" variant="outline" onClick={() => { setTempBio(bio); setIsEditingBio(false); }}>{t("Ακύρωση", "Cancel")}</Button>
                     </div>
                   </div>
@@ -396,14 +398,30 @@ export default function ProfilePageContent() {
                 <p className={`text-2xs capitalize font-medium tracking-wide ${sub}`}>{t("Email/Τηλέφωνο επαληθευμένο. Συμμετοχή σε Δημόσιες Εκδηλώσεις.", "Email/Phone verified. Can join Public Free Events.")}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className={`h-7 w-7 rounded-lg flex items-center justify-center shrink-0 ${a.isDark ? "bg-emerald-900/20" : "bg-emerald-100"}`}>
-                <CheckCircle2 className={`h-4 w-4 ${a.isDark ? "text-emerald-400" : "text-emerald-600"}`} />
+            <div
+              className={`flex items-center gap-3 cursor-pointer p-3 rounded-lg transition-colors ${a.isDark ? "hover:bg-gray-700/30" : "hover:bg-gray-50"}`}
+              {...pressable<HTMLDivElement>(() => navigate("/wallet"))}
+            >
+              <div className={`h-7 w-7 rounded-lg flex items-center justify-center shrink-0 ${
+                currentUser.paymentVerified
+                  ? (a.isDark ? "bg-emerald-900/20" : "bg-emerald-100")
+                  : (a.isDark ? "bg-gray-800/40 border border-gray-600/40" : "bg-gray-100 border border-gray-200")
+              }`}>
+                {currentUser.paymentVerified ? (
+                  <CheckCircle2 className={`h-4 w-4 ${a.isDark ? "text-emerald-400" : "text-emerald-600"}`} />
+                ) : (
+                  <CreditCardIcon className={`h-4 w-4 ${a.isDark ? "text-gray-500" : "text-gray-400"}`} />
+                )}
               </div>
-              <div className={`flex-1 border p-3 rounded-lg ${a.tierHighlight}`}>
-                <p className={`text-sm font-bold ${a.tierHighlightText}`}>{t("Επίπεδο 2: Επιβεβαιωμένος", "Tier 2: Confirmed")}</p>
-                <p className={`text-2xs capitalize font-bold tracking-wide ${a.tierHighlightSub}`}>{t("Προσθήκη Μεθόδου Πληρωμής. Συμμετοχή σε Πληρωμένες/Μικρές Ομάδες.", "Payment Method added. Can join Paid/Small Group Events.")}</p>
+              <div className={`flex-1 border p-3 rounded-lg ${currentUser.paymentVerified ? a.tierHighlight : (a.isDark ? "border-gray-700/40" : "border-gray-200")}`}>
+                <p className={`text-sm font-bold ${currentUser.paymentVerified ? a.tierHighlightText : heading}`}>{t("Επίπεδο 2: Επιβεβαιωμένος", "Tier 2: Confirmed")}</p>
+                <p className={`text-2xs capitalize font-bold tracking-wide ${currentUser.paymentVerified ? a.tierHighlightSub : sub}`}>
+                  {currentUser.paymentVerified
+                    ? t("Προσθήκη Μεθόδου Πληρωμής. Συμμετοχή σε Πληρωμένες/Μικρές Ομάδες.", "Payment Method added. Can join Paid/Small Group Events.")
+                    : t("Προσθέστε μέθοδο πληρωμής για πληρωμένες/μικρές ομάδες.", "Add a payment method for paid/small group events.")}
+                </p>
               </div>
+              <ChevronRight className={`w-4 h-4 shrink-0 ${sub}`} aria-hidden />
             </div>
             <div className={`flex items-center gap-3 cursor-pointer p-3 rounded-lg transition-colors ${a.isDark ? "hover:bg-gray-700/30" : "hover:bg-gray-50"}`} {...pressable<HTMLDivElement>(() => navigate("/verification"))}>
               <div className={`h-7 w-7 rounded-lg border flex items-center justify-center shrink-0 ${a.isDark ? "bg-gray-800/40 border-gray-600/40" : "bg-gray-100 border-gray-200"}`}>

@@ -519,10 +519,12 @@ export default function GroupChatPageContent() {
                 {t("Λεπτομέρειες Ομάδας", "Group Details")}
               </h3>
               <button
+                type="button"
                 onClick={() => setShowInfo(false)}
+                aria-label={t('Κλείσιμο', 'Close')}
                 className="text-gray-400 hover:text-ink p-1 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5" aria-hidden />
               </button>
             </div>
 

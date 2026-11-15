@@ -30,6 +30,11 @@ export default function VerificationCenterPageContent() {
     toast.success(t('Το τηλέφωνο επαληθεύτηκε (demo)', 'Phone verified (demo)'));
   };
 
+  const handleVerifyEmail = () => {
+    updateUser(currentUser.id, { emailVerified: true });
+    toast.success(t('Το email επαληθεύτηκε (demo)', 'Email verified (demo)'));
+  };
+
   const handleUploadId = () => {
     fileRef.current?.click();
   };
@@ -87,6 +92,16 @@ export default function VerificationCenterPageContent() {
             </div>
             {currentUser.emailVerified && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
           </div>
+          {!currentUser.emailVerified && (
+            <>
+              <p className={cn('card-copy mt-4 mb-3', a.sub)}>
+                {t('Θα σας στείλουμε σύνδεσμο επιβεβαίωσης στο email σας.', "We'll send a confirmation link to your email.")}
+              </p>
+              <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleVerifyEmail}>
+                {t('Επαλήθευση Τώρα', 'Verify Now')}
+              </Button>
+            </>
+          )}
         </Card>
 
         <Card className="p-5">
@@ -153,7 +168,7 @@ export default function VerificationCenterPageContent() {
         <h3 className={cn('text-xs font-bold tracking-wide mb-4', a.head)}>{t('Τι ξεκλειδώνετε', 'What you unlock')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
-            { icon: Mail, label: 'Email', done: currentUser.emailVerified, color: 'text-cyan-600', bg: a.tierEmail },
+            { icon: Mail, label: t('Email', 'Email'), done: currentUser.emailVerified, color: 'text-cyan-600', bg: a.tierEmail },
             { icon: Smartphone, label: t('Τηλέφωνο', 'Phone'), done: currentUser.phoneVerified, color: 'text-emerald-600', bg: a.tierPhone },
             { icon: FileText, label: t('Ταυτότητα', 'ID'), done: currentUser.idVerified, color: 'text-purple-600', bg: a.tierId },
           ].map((item) => {

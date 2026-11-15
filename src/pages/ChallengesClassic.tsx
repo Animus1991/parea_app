@@ -16,6 +16,7 @@ import { useLanguage } from '../lib/i18n';
 import { motion } from 'motion/react';
 import { usePageContrast } from '../hooks/usePageContrast';
 import { cn } from '../lib/utils';
+import { toast } from 'sonner';
 
 interface Challenge {
   id: string;
@@ -164,7 +165,13 @@ export default function ChallengesClassic() {
   const filtered = filterType === 'all' ? challenges : challenges.filter((c) => c.type === filterType);
 
   const toggleJoin = (id: string) => {
+    const wasJoined = joinedIds.has(id);
     toggleChallengeJoined(id);
+    toast.success(
+      wasJoined
+        ? t('Αποχωρήσατε από την πρόκληση', 'Left the challenge')
+        : t('Συμμετέχετε στην πρόκληση', 'Joined the challenge'),
+    );
   };
 
   const totalXP = challenges.filter((c) => c.progress >= c.goal).reduce((s, c) => s + c.xp, 0);

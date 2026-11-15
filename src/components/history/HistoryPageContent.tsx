@@ -25,17 +25,22 @@ export default function HistoryPageContent() {
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState<'all' | 'reviewed' | 'pending'>('all');
 
-  const pastEvents = useMemo(() => {
+  const allPastEvents = useMemo(() => {
     if (!currentUser) return [];
     const userEventIds = new Set(
       groups.filter((g) => g.members.includes(currentUser.id)).map((g) => g.eventId),
     );
     const now = new Date();
-    let list = events.filter((e) => {
+    const list = events.filter((e) => {
       const d = parseISO(e.date);
       return userEventIds.has(e.id) && !isNaN(d.getTime()) && d < now;
     });
     list.sort((a, b) => parseISO(b.date).getTime() - parseISO(a.date).getTime());
+    return list;
+  }, [events, groups, currentUser]);
+
+  const pastEvents = useMemo(() => {
+    let list = allPastEvents;
     if (search) {
       const q = search.toLowerCase();
       list = list.filter(
@@ -47,11 +52,11 @@ export default function HistoryPageContent() {
     if (tab === 'reviewed') list = list.filter((e) => Boolean(feedbackSubmitted[e.id]));
     if (tab === 'pending') list = list.filter((e) => !feedbackSubmitted[e.id]);
     return list;
-  }, [events, groups, currentUser, feedbackSubmitted, search, tab]);
+  }, [allPastEvents, feedbackSubmitted, search, tab]);
 
-  const totalAttended = pastEvents.length;
-  const reviewedCount = pastEvents.filter((e) => feedbackSubmitted[e.id]).length;
-  const ratings = pastEvents
+  const totalAttended = allPastEvents.length;
+  const reviewedCount = allPastEvents.filter((e) => feedbackSubmitted[e.id]).length;
+  const ratings = allPastEvents
     .map((e) => feedbackSubmitted[e.id]?.overallRating)
     .filter((r): r is number => typeof r === 'number' && r > 0);
   const avgRating =
@@ -211,14 +216,40 @@ export default function HistoryPageContent() {
       ) : (
         <EmptyState
           icon={HistoryIcon}
-          title={search ? t('Κανένα αποτέλεσμα', 'No results') : t('Δεν υπάρχει ιστορικό ακόμα', 'No history yet')}
+          title={
+            search
+              ? t('Κανένα αποτέλεσμα', 'No results')
+              : tab === 'pending'
+                ? t('Καμία εκκρεμής αξιολόγηση', 'No pending reviews')
+                : tab === 'reviewed'
+                  ? t('Καμία αξιολογημένη εκδήλωση ακόμα', 'No reviewed events yet')
+                  : t('Δεν υπάρχει ιστορικό ακόμα', 'No history yet')
+          }
           description={
             search
               ? t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search.')
-              : t('Οι εκδηλώσεις που θα παρακολουθήσετε θα εμφανίζονται εδώ.', 'Events you attend will appear here.')
+              : tab === 'pending'
+                ? t('Όταν ολοκληρώσετε μια εκδήλωση, οι αξιολογήσεις θα εμφανίζονται εδώ.', 'When you finish an event, reviews waiting for you will show up here.')
+                : tab === 'reviewed'
+                  ? t('Οι αξιολογήσεις που υποβάλλετε θα εμφανίζονται σε αυτή την καρτέλα.', 'Reviews you submit will appear in this tab.')
+                  : t('Οι εκδηλώσεις που θα παρακολουθήσετε θα εμφανίζονται εδώ.', 'Events you attend will appear here.')
           }
-          actionLabel={search ? t('Καθαρισμός', 'Clear') : t('Εξερεύνηση', 'Explore')}
-          onAction={search ? () => setSearch('') : () => navigate('/')}
+          actionLabel={
+            search
+              ? t('Καθαρισμός', 'Clear')
+              : tab === 'pending'
+                ? t('Προβολή όλων', 'View all')
+                : tab === 'reviewed'
+                  ? t('Εξερεύνηση', 'Explore')
+                  : t('Εξερεύνηση', 'Explore')
+          }
+          onAction={
+            search
+              ? () => setSearch('')
+              : tab === 'pending'
+                ? () => setTab('all')
+                : () => navigate('/')
+          }
         />
       )}
       </ResourceStateGate>

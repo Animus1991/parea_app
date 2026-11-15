@@ -10,6 +10,7 @@ import { ListViewSkeleton } from '../common/Skeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';
 import { useNotificationsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { toast } from 'sonner';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
 
@@ -69,6 +70,7 @@ export default function NotificationsPageContent() {
 
   const handleMarkAllRead = () => {
     markAllNotificationsRead();
+    toast.success(t('Όλες οι ειδοποιήσεις σημάνθηκαν ως αναγνωσμένες', 'All notifications marked as read'));
   };
 
   const handleDismiss = (id: string) => {
@@ -263,6 +265,16 @@ export default function NotificationsPageContent() {
             'Θα σας ειδοποιήσουμε όταν υπάρξει κάτι νέο.',
             "We'll notify you when something new happens.",
           )}
+          actionLabel={
+            activeTab === 'unread'
+              ? t('Προβολή όλων', 'Show all')
+              : t('Εξερεύνηση', 'Explore')
+          }
+          onAction={
+            activeTab === 'unread'
+              ? () => setActiveTab('all')
+              : () => navigate('/')
+          }
         />
       ) : (
         <div className="space-y-5">

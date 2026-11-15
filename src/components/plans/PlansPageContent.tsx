@@ -397,6 +397,8 @@ export default function PlansPageContent() {
             icon={CalendarCheck}
             title={t('Κανένα ολοκληρωμένο σχέδιο ακόμα.', 'No completed plans yet.')}
             hint={t('Οι εκδηλώσεις που παρακολουθήσατε θα εμφανίζονται εδώ για αξιολόγηση και ιστορικό.', 'Events you attend will appear here for ratings and history.')}
+            ctaLabel={t('Εξερεύνηση', 'Explore')}
+            onCta={() => navigate('/')}
             p={p}
           />
         )}
