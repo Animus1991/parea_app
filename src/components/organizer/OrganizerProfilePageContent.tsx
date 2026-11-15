@@ -213,14 +213,14 @@ export default function OrganizerProfilePageContent() {
           <button
             type="button"
             onClick={closeContactModal}
-            className="px-4 py-2 text-sm font-bold rounded-lg transition-colors text-ink-muted hover:bg-surface"
+            className="px-4 py-2 text-xs font-bold rounded-lg transition-colors text-ink-muted hover:bg-surface"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
           <button
             type="button"
             onClick={handleSendMessage}
-            className="px-4 py-2 text-sm font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-lg transition-colors"
+            className="px-4 py-2 text-xs font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-lg transition-colors"
           >
             {t('Αποστολή Μηνύματος', 'Send Message')}
           </button>

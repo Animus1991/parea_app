@@ -107,7 +107,7 @@ export default function LeaderboardClassic() {
               key={per}
               onClick={() => setPeriod(per)}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-200 whitespace-nowrap',
+                'px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 whitespace-nowrap',
                 period === per
                   ? cn(p.cardSurface, p.head, 'shadow-soft')
                   : cn(p.muted, p.hoverText),

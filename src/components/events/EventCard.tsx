@@ -851,7 +851,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     setIsSharingLocation(true);
                     setShowLocationConfigModal(false);
                   }}
-                  className="w-full px-4 py-3 text-sm font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+                  className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
                 >
                   {isSharingLocation
                     ? t("Ενημέρωση", "Update Configuration")
@@ -899,7 +899,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             <button
               type="button"
               onClick={() => setShowSafetyLinkModal(false)}
-              className="flex-1 px-4 py-3 text-sm font-bold text-ink hover:bg-surface rounded-2xl transition-all duration-200 active:scale-[0.98]"
+              className="flex-1 px-4 py-3 text-xs font-bold text-ink hover:bg-surface rounded-2xl transition-all duration-200 active:scale-[0.98]"
             >
               {t("Ακύρωση", "Cancel")}
             </button>
@@ -918,7 +918,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 }
                 setShowSafetyLinkModal(false);
               }}
-              className="flex-1 px-4 py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+              className="flex-1 px-4 py-3 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
             >
               {t("Κοινοποιηση", "Share")}
             </button>

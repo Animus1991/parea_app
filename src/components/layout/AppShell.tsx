@@ -168,7 +168,7 @@ function NavSection({ id, title, paths, children, compact = false, rail = false 
           disabled={containsActive}
           title={containsActive ? undefined : collapsed ? title : undefined}
           className={cn(
-            'w-full flex items-center justify-between gap-2 px-3 py-1.5 min-h-9 rounded-lg text-sm font-bold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default',
+            'w-full flex items-center justify-between gap-2 px-3 py-1.5 min-h-9 rounded-lg text-xs font-bold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default',
             isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-white/5' : isAB ? 'text-[hsl(220_11%_34%)] hover:bg-gray-100/70' : 'text-[#6B7280] hover:text-gray-900 hover:bg-gray-50',
           )}
         >
@@ -343,7 +343,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
           title={t('Δημιουργία εκδήλωσης', 'Create event')}
           className={cn(
-            "hidden sm:inline-flex items-center gap-1.5 text-sm font-bold rounded-full transition-all duration-200 px-3 py-2 min-h-10 shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]",
+            "hidden sm:inline-flex items-center gap-1.5 text-xs font-bold rounded-full transition-all duration-200 px-3 py-2 min-h-10 shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]",
             theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] text-white hover:bg-black'
               : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] hover:bg-white'
               : theme === 'vibrant' || theme === 'vibrant-dark' ? 'bg-fuchsia-600 text-white hover:bg-fuchsia-700'
@@ -513,7 +513,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     >
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-toast focus:px-4 focus:py-2.5 focus:min-h-10 focus:bg-brand focus:text-brand-fg focus:rounded-xl focus:text-sm focus:font-semibold focus:shadow-soft"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-toast focus:px-4 focus:py-2.5 focus:min-h-10 focus:bg-brand focus:text-brand-fg focus:rounded-xl focus:text-xs focus:font-semibold focus:shadow-soft"
       >
         {t('Μετάβαση στο περιεχόμενο', 'Skip to content')}
       </a>

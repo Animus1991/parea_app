@@ -33,7 +33,7 @@ export default function NotFoundBentoDark() {
           return (
             <button key={s.path} onClick={() => navigate(s.path)} className="flex items-center gap-2 p-3 rounded-xl border border-gray-700 bg-gray-800 border-gray-700 text-white hover:border-emerald-700 hover:bg-emerald-900/30 transition-all text-left">
               <Icon className="w-4 h-4 text-emerald-400" />
-              <span className="text-sm font-bold text-white">{s.label}</span>
+              <span className="text-xs font-bold text-white">{s.label}</span>
             </button>
           );
         })}

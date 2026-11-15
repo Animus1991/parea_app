@@ -33,7 +33,7 @@ export default function NotFoundClassic() {
           return (
             <button key={s.path} onClick={() => navigate(s.path)} className="flex items-center gap-2 p-3 rounded-2xl border border-gray-100 bg-white hover:border-[#a5f3fc] hover:bg-cyan-50 transition-all duration-200 text-left shadow-soft">
               <Icon className="w-4 h-4 text-cyan-600" />
-              <span className="text-sm font-bold text-ink">{s.label}</span>
+              <span className="text-xs font-bold text-ink">{s.label}</span>
             </button>
           );
         })}

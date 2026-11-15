@@ -403,9 +403,9 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   line-height: var(--text-2xs--line-height);
 }
 
-/* Card action buttons (e.g. «Αίτημα συμμετοχής», «Εκδήλωση») */
+/* Card action buttons — same type size as .btn-gradient / Αξιολόγηση */
 .card-cta {
-  font-size: calc(var(--text-xs) * 1.02); /* ~10.2px */
+  font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);
   font-weight: 700;
 }
@@ -421,8 +421,9 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   background: #1f2937;
   color: white;
   font-weight: 700;
-  /* Match Button md / card-cta — must not outgrow page titles when used in cards */
+  /* Canonical CTA type — source: Plans → Ιστορικό → «Αξιολόγηση» */
   font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
   border-radius: 0.625rem;
   padding: 0.35rem 0.9rem;
   box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.18);
