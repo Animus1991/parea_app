@@ -211,7 +211,7 @@ export function CalendarDayCell({
 
       <span
         className={cn(
-          'relative z-10 text-sm md:text-lg font-black leading-none',
+          'relative z-10 text-sm md:text-base font-black leading-none',
           (today || hasEvents) && 'text-white drop-shadow-soft-md',
           !today && !hasEvents && headClass,
         )}

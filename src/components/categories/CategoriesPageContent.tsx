@@ -154,13 +154,13 @@ export default function CategoriesPageContent() {
             <Compass className="w-3.5 h-3.5 mr-1" />{' '}
             {t('Εξερευνηση Δραστηριοτήτων', 'Activity Explorer')}
           </Badge>
-          <h1 className="text-base md:text-lg font-extrabold tracking-tight mb-3 leading-tight">
+          <h1 className="text-sm md:text-base font-extrabold tracking-tight mb-3 leading-tight">
             {t('Βρείτε την επόμενη', 'Find your next')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-hero-accent-from to-hero-accent-to">
               {t('εμπειρία σας', 'experience')}
             </span>
           </h1>
-          <p className="text-sm md:text-base font-medium text-hero-fg/80 leading-relaxed mb-4">
+          <p className="text-sm font-medium text-hero-fg/80 leading-relaxed mb-4">
             {t(
               'Ανακαλύψτε επιλεγμένες εκδηλώσεις που ταιριάζουν στα ενδιαφέροντά σας.',
               'Discover handpicked events matching your interests.',

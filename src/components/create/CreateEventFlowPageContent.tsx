@@ -221,7 +221,7 @@ export default function CreateEventFlowPageContent() {
               exit="exit"
               className="space-y-4"
             >
-              <h2 className={cn("text-lg font-bold", p.head)}>
+              <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
                 {t("Τα Βασικά", "The Basics")}
               </h2>
 
@@ -346,7 +346,7 @@ export default function CreateEventFlowPageContent() {
               exit="exit"
               className="space-y-4"
             >
-              <h2 className={cn("text-lg font-bold", p.head)}>
+              <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
                 {t("Πότε & Πού", "When & Where")}
               </h2>
 
@@ -465,7 +465,7 @@ export default function CreateEventFlowPageContent() {
               exit="exit"
               className="space-y-4"
             >
-              <h2 className={cn("text-lg font-bold", p.head)}>
+              <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
                 {t("Δυναμική Ομάδας", "Group Dynamics")}
               </h2>
 
@@ -615,7 +615,7 @@ export default function CreateEventFlowPageContent() {
                 <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3", pc.accentBg)}>
                   <CheckCircle className={cn("w-6 h-6", pc.accent)} />
                 </div>
-                <h2 className={cn("text-lg font-bold", p.head)}>
+                <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
                   {editEvent ? t("Έτοιμο για αποθήκευση!", "Ready to save!") : t("Έτοιμο για Δημοσίευση!", "Ready to Publish!")}
                 </h2>
                 <p className={cn("text-sm mt-1", p.muted)}>

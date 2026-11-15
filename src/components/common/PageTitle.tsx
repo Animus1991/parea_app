@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { cn } from '../../lib/utils';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 interface PageTitleProps {
   children: ReactNode;
@@ -7,12 +8,12 @@ interface PageTitleProps {
   className?: string;
 }
 
-/** Token-driven page heading (H1) with optional supporting subtitle. */
+/** Token-driven page heading (H1) with optional supporting subtitle — Home scale. */
 export function PageTitle({ children, subtitle, className }: PageTitleProps) {
   return (
     <div className={cn('space-y-1', className)}>
-      <h1 className="text-base md:text-lg font-extrabold tracking-tight text-ink">{children}</h1>
-      {subtitle && <p className="text-sm font-medium text-ink-muted">{subtitle}</p>}
+      <h1 className={cn(APP_TYPO.pageTitle, 'text-ink')}>{children}</h1>
+      {subtitle && <p className={cn(APP_TYPO.pageSub, 'text-ink-muted')}>{subtitle}</p>}
     </div>
   );
 }

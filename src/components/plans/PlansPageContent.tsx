@@ -118,7 +118,7 @@ export default function PlansPageContent() {
           </div>
           <div className="min-w-0 flex-1">
             <p className={cn('text-xs font-bold uppercase tracking-wide', p.muted)}>{tu('Επόμενη εκδήλωση', 'Next up')}</p>
-            <p className={cn('font-bold text-base truncate', p.head)}>{nextEvent.title}</p>
+            <p className={cn(PLANS_TYPO.nextTitle, p.head)}>{nextEvent.title}</p>
           </div>
           <span className={cn('shrink-0 text-sm font-bold px-2.5 py-1 rounded-full', p.statBg, p.statVal)}>
             {nextEventDays <= 0 ? t('Σήμερα', 'Today') : `${t('σε', 'in')} ${nextEventDays}${t('μ', 'd')}`}
@@ -135,7 +135,7 @@ export default function PlansPageContent() {
           <div className="flex items-start gap-3">
             <AlertTriangle className={cn('w-5 h-5 shrink-0 mt-0.5', p.isDark ? 'text-amber-400' : 'text-amber-600')} />
             <div>
-              <h3 className={cn('font-bold text-base mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
+              <h3 className={cn(PLANS_TYPO.bannerTitle, 'mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
               <p className={cn('text-sm font-medium', p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
             </div>
           </div>
@@ -197,7 +197,7 @@ export default function PlansPageContent() {
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-start gap-2 mb-2">
                 <div className="min-w-0">
-                  <h3 className={cn('font-bold text-lg', p.head)}>{event.title}</h3>
+                  <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>{event.title}</h3>
                   {group && isPlansFormingGroupId(group.id) && (
                     <p className={cn('card-meta mt-0.5', p.muted)}>
                       {t('Από Βρες Nakamas', 'From Find Nakamas')}
@@ -205,7 +205,7 @@ export default function PlansPageContent() {
                   )}
                 </div>
                 <div className="text-right shrink-0">
-                  <div className={cn('text-base font-bold', p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
+                  <div className={cn(PLANS_TYPO.cardDate, p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
                   <div className={cn('card-meta', p.muted)}>{event.time}</div>
                   {(() => {
                     const days = differenceInDays(parseISO(event.date), new Date());
@@ -318,9 +318,9 @@ export default function PlansPageContent() {
 
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-start gap-2 mb-2">
-                <h3 className={cn('font-bold text-lg', p.head)}>{event.title}</h3>
+                <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
-                  <div className={cn('text-base font-bold', p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
+                  <div className={cn(PLANS_TYPO.cardDate, p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
                 </div>
               </div>
 
@@ -374,7 +374,7 @@ export default function PlansPageContent() {
                 <Calendar className="w-3.5 h-3.5" />
                 {format(parseISO(event.date), 'PPP', { locale: dateLocale })}
               </div>
-              <h3 className={cn('font-bold text-lg mb-3', p.head)}>{event.title}</h3>
+              <h3 className={cn(PLANS_TYPO.cardTitle, 'mb-3', p.head)}>{event.title}</h3>
 
               {!feedbackSubmitted[event.id] ? (
                 <div className={cn('p-3 rounded-2xl flex items-center justify-between mt-auto border', p.statBg)}>
@@ -460,7 +460,7 @@ function EmptyTab({
       <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3', p.statBg)}>
         <Icon className={cn('w-6 h-6', p.statVal)} />
       </div>
-      <p className={cn('font-bold text-lg', p.head)}>{title}</p>
+      <p className={cn(PLANS_TYPO.cardTitle, p.head)}>{title}</p>
       <p className={cn('text-sm font-medium mt-1 max-w-sm mx-auto', p.muted)}>{hint}</p>
       {ctaLabel && onCta && (
         <button className="btn-gradient mt-4" onClick={onCta}>{ctaLabel}</button>

@@ -132,7 +132,7 @@ export function HomeLoggedInHeroContrast({
             <div className="space-y-2 flex-1">
               <p className={h.heroGreeting}>{greeting}</p>
               <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
-              <h1 className={cn(h.heroTitle, 'text-sm md:text-base max-w-2xl')}>
+              <h1 className={cn(h.heroTitle, 'max-w-2xl')}>
                 {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>{t('home.hero.title2', 'εμπειρίες')}</span>{' '}
                 {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}

@@ -230,7 +230,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-cyan-100 to-purple-50 flex items-center justify-center p-4 text-center">
-            <span className="text-cyan-600 font-bold text-lg capitalize tracking-tight">
+            <span className="text-cyan-600 font-bold text-sm md:text-base capitalize tracking-tight">
               {event.category}
             </span>
           </div>

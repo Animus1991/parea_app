@@ -97,7 +97,7 @@ export default function PostEventFeedbackPageContent() {
         <h1 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.head)}>
           {t('Αξιολόγηση Εκδήλωσης', 'Post-Event Feedback')}
         </h1>
-        <p className={cn('text-sm md:text-base font-medium mt-1', p.sub)}>
+        <p className={cn('text-sm font-medium mt-1', p.sub)}>
           {t(
             'Πείτε μας πώς ήταν η εμπειρία σας στην πρόσφατη εκδήλωση.',
             'Tell us about your experience at the recent event.',
@@ -118,7 +118,7 @@ export default function PostEventFeedbackPageContent() {
           </div>
         )}
         <div className="min-w-0">
-          <h3 className={cn('text-lg font-bold truncate', p.head)}>{event.title}</h3>
+          <h3 className={cn('text-sm md:text-base font-bold truncate', p.head)}>{event.title}</h3>
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5">
             {eventDateLabel && (
               <span className={cn('text-xs font-bold flex items-center gap-1', p.muted)}>
@@ -509,7 +509,7 @@ export default function PostEventFeedbackPageContent() {
             />
           </div>
 
-          <h2 className={cn('text-lg font-extrabold tracking-tight mb-3', p.head)}>
+          <h2 className={cn('text-sm md:text-base font-extrabold tracking-tight mb-3', p.head)}>
             {t('Ευχαριστούμε!', 'Thank You!')}
           </h2>
           <p className={cn('text-base font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
@@ -538,7 +538,7 @@ export default function PostEventFeedbackPageContent() {
               <Trophy className="w-6 h-6" />
             </div>
             <div>
-              <p className={cn('text-lg font-black', p.isDark ? 'text-amber-400' : 'text-amber-900')}>
+              <p className={cn('text-sm md:text-base font-black', p.isDark ? 'text-amber-400' : 'text-amber-900')}>
                 +25 XP
               </p>
               <p

@@ -189,7 +189,7 @@ export default function ProfilePageContent() {
                 {photoUrl ? (
                   <img referrerPolicy="no-referrer" src={photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
                 ) : (
-                  <span className={`font-bold text-lg ${a.avatarText}`}>{currentUser.name.substring(0, 2)}</span>
+                  <span className={`font-bold text-sm md:text-base ${a.avatarText}`}>{currentUser.name.substring(0, 2)}</span>
                 )}
               </div>
               <button
@@ -211,13 +211,13 @@ export default function ProfilePageContent() {
                   <div className="flex w-full items-center gap-2">
                     {/* eslint-disable-next-line jsx-a11y/no-autofocus -- focus moves only after the user opened this field */}
                     <input autoFocus value={tempName} onChange={(e) => setTempName(e.target.value)}
-                      className={`flex-1 text-lg font-bold rounded-2xl px-3 py-1.5 focus:ring-2 outline-none ${inputBg} ${a.ring}`} />
+                      className={`flex-1 text-sm md:text-base font-bold rounded-2xl px-3 py-1.5 focus:ring-2 outline-none ${inputBg} ${a.ring}`} />
                     <Button size="sm" onClick={() => { if (tempName.trim()) { updateUser(currentUser.id, { name: tempName }); setIsEditingName(false); } }}>{t("Αποθήκευση", "Save")}</Button>
                     <Button size="sm" variant="ghost" onClick={() => { setTempName(currentUser.name); setIsEditingName(false); }}><X className="w-4 h-4" /></Button>
                   </div>
                 ) : (
                   <div className="group/name relative flex w-full items-center justify-between">
-                    <h2 className={`text-lg font-extrabold pr-8 ${heading}`}>{currentUser.name}</h2>
+                    <h2 className={`text-sm md:text-base font-extrabold pr-8 ${heading}`}>{currentUser.name}</h2>
                     <button
                       type="button"
                       onClick={() => setIsEditingName(true)}

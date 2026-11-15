@@ -42,7 +42,7 @@ export default function ReportIssuePageContent() {
   };
 
   const inputClass = cn(
-    'w-full rounded-2xl border shadow-soft focus:outline-none focus:ring-2 text-lg font-medium transition-all duration-200',
+    'w-full rounded-2xl border shadow-soft focus:outline-none focus:ring-2 text-sm font-medium transition-all duration-200',
     c.inputBg,
     c.inputFg,
     c.placeholder,
@@ -56,7 +56,7 @@ export default function ReportIssuePageContent() {
           <h1 className={cn('text-sm md:text-base font-bold', p.head)}>
             {t('Αναφορά Προβλήματος', 'Report an Issue')}
           </h1>
-          <p className={cn('font-medium text-sm md:text-lg mt-1', p.sub)}>
+          <p className={cn('font-medium text-sm mt-1', p.sub)}>
             {t('Βοηθήστε μας να κρατήσουμε την κοινότητα ασφαλή', 'Help us keep the community safe')}
           </p>
         </div>
@@ -92,7 +92,7 @@ export default function ReportIssuePageContent() {
               <AlertTriangle className={cn('w-5 h-5', p.isDark ? 'text-red-300' : 'text-red-600')} />
             </div>
             <div>
-              <h3 className={cn('font-bold text-lg', p.head)}>
+              <h3 className={cn('font-bold text-sm md:text-base', p.head)}>
                 {t('Αναφορά Ζητήματος Ασφαλείας', 'Report a Safety Concern')}
               </h3>
               <p className={cn('text-base mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>
@@ -301,8 +301,8 @@ export default function ReportIssuePageContent() {
           >
             <CheckCircle2 className={cn('w-8 h-8', p.isDark ? 'text-emerald-300' : 'text-emerald-600')} />
           </div>
-          <h2 className={cn('text-lg font-bold mb-2', p.head)}>{t('Η αναφορά υποβλήθηκε', 'Report Submitted')}</h2>
-          <p className={cn('text-lg max-w-md mx-auto mb-4', p.sub)}>
+          <h2 className={cn('text-sm md:text-base font-bold mb-2', p.head)}>{t('Η αναφορά υποβλήθηκε', 'Report Submitted')}</h2>
+          <p className={cn('text-sm font-medium max-w-md mx-auto mb-4', p.sub)}>
             {t(
               'Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.',
               "Thank you. We'll review your report and get back to you.",

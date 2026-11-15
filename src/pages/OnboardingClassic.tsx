@@ -180,7 +180,7 @@ export default function OnboardingClassic() {
             className="bg-white dark:bg-surface-raised rounded-2xl p-4 shadow-soft border border-gray-100 dark:border-border space-y-5"
           >
             <div>
-              <h2 className="text-lg font-black text-ink leading-tight">
+              <h2 className="text-sm md:text-base font-black text-ink leading-tight">
                 {t(stepTitles[step].gr, stepTitles[step].en)}
               </h2>
               <p className="text-sm text-gray-500 font-medium mt-1">

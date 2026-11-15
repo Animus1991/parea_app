@@ -40,7 +40,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
       >
         <div className={cn('p-5 flex items-center justify-between border-b', p.borderB)}>
           <div>
-            <h3 className={cn('font-bold text-lg', p.head)}>{format(day, 'd MMMM yyyy', { locale: language === 'el' ? elLocale : enUS })}</h3>
+            <h3 className={cn('font-bold text-sm md:text-base', p.head)}>{format(day, 'd MMMM yyyy', { locale: language === 'el' ? elLocale : enUS })}</h3>
             <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
               {tu('Ημερήσιο Πρόγραμμα', 'Daily Schedule')}
             </p>
