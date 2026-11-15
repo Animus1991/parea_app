@@ -2,6 +2,7 @@ import { canViewerSeeRequest } from './companyRequestUtils';
 import type { BuddySeekIntent, BuddySeekPreferences } from '../types/buddySeek';
 import type { CompanyRequest } from '../types/companyRequest';
 import type { Event, Group, User } from '../types';
+import { sameInterest } from './interests';
 
 function isCompanyRequest(intent: BuddySeekIntent | CompanyRequest): intent is CompanyRequest {
   return 'creatorUserId' in intent;
@@ -32,7 +33,7 @@ export function canViewerSeeBuddySeek(
   const tags = new Set((event.tags ?? []).map((t) => t.toLowerCase()));
   const pool = [...(viewer.interests ?? []), ...tags];
   const shared = (seeker.interests ?? []).filter((i) =>
-    pool.some((p) => p.toLowerCase().includes(i.toLowerCase()) || i.toLowerCase().includes(p.toLowerCase())),
+    pool.some((p) => sameInterest(p, i) || p.toLowerCase().includes(i.toLowerCase()) || i.toLowerCase().includes(p.toLowerCase())),
   ).length;
   return shared > 0;
 }
