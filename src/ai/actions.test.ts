@@ -140,4 +140,48 @@ describe('copilot action registry', () => {
     const res = await run('create_event', { title: 'Test' });
     expect(res.ok).toBe(false);
   });
+
+  it('starts demo email verification and undoes it', async () => {
+    useStore.getState().login('u1');
+    const uid = useStore.getState().currentUser!.id;
+    useStore.getState().updateUser(uid, { emailVerified: false, phoneVerified: true, idVerified: true });
+    const res = await run('start_verification', { method: 'email' });
+    expect(res.ok).toBe(true);
+    expect(useStore.getState().currentUser?.emailVerified).toBe(true);
+    expect(navigated.at(-1)).toBe('/verification');
+    res.undo?.();
+    expect(useStore.getState().currentUser?.emailVerified).toBe(false);
+  });
+
+  it('summarises the wallet demo balances', async () => {
+    useStore.getState().login('u1');
+    const uid = useStore.getState().currentUser!.id;
+    useStore.getState().updateUser(uid, { isOrganizer: true } as never);
+    const res = await run('summarize_wallet', {});
+    expect(res.ok).toBe(true);
+    expect(res.el).toMatch(/345/);
+    expect(res.link?.path).toBe('/wallet');
+  });
+
+  it('joins a challenge with undo', async () => {
+    useStore.getState().login('u1');
+    useStore.setState({ challengesJoined: [] });
+    const res = await run('join_challenge', { challengeId: 'c3' });
+    expect(useStore.getState().challengesJoined).toContain('c3');
+    res.undo?.();
+    expect(useStore.getState().challengesJoined).not.toContain('c3');
+  });
+
+  it('deep-links settings availability via navigate section', async () => {
+    const res = await run('navigate', { page: 'settings', section: 'availability' });
+    expect(res.ok).toBe(true);
+    expect(navigated.at(-1)).toBe('/settings?availability=1');
+  });
+
+  it('lists forming plans', async () => {
+    useStore.getState().login('u1');
+    const res = await run('list_forming_plans', { limit: 3 });
+    expect(res.ok).toBe(true);
+    expect(res.link?.path).toBe('/buddy-seek');
+  });
 });

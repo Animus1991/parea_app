@@ -14,6 +14,7 @@ import { THEME_IDS, THEME_LABELS, isDarkTheme, type ThemeId } from '../lib/theme
 import { computeUserXp, levelForXp } from '../lib/gamification';
 import { computeAchievements } from '../lib/achievements';
 import { downloadICS, openGoogleCalendar } from '../lib/eventCalendarExport';
+import { downloadCalendarIcs } from '../lib/calendarIcs';
 import { homePathWithCategory, homePathWithSearch } from '../lib/homeDeepLinks';
 import { APP_ROUTES, routeById } from './routes';
 import { KNOWLEDGE_TOPICS, findTopic } from './knowledge';
@@ -175,19 +176,30 @@ function themeTarget(raw: string, current: string): ThemeId | null {
 
 /* ───────────────────────── actions ───────────────────────── */
 
+const SETTINGS_SECTIONS = ['availability', 'chat', 'buddy-seek'] as const;
+
 const navigateAction: CopilotAction = {
   name: 'navigate',
-  description: 'Open a page of the app.',
+  description:
+    'Open a page of the app. For settings, optional section deep-links: availability, chat, buddy-seek.',
   risk: 'safe',
-  parameters: OBJ({ page: S('Destination page id', { enum: APP_ROUTES.map((r) => r.id) }) }, ['page']),
+  parameters: OBJ({
+    page: S('Destination page id', { enum: APP_ROUTES.map((r) => r.id) }),
+    section: S('Settings deep-link section', { enum: [...SETTINGS_SECTIONS] }),
+  }, ['page']),
   run: (args, rt) => {
     const route = routeById(String(args.page ?? ''));
     if (!route) return fail('Δεν βρήκα αυτή τη σελίδα.', "I couldn't find that page.");
     if (route.adminOnly && !isPlatformAdmin(state().currentUser)) {
       return fail('Η σελίδα διαχείρισης είναι μόνο για διαχειριστές.', 'The admin page is for admins only.');
     }
-    rt.navigate(route.path);
-    return { ok: true, el: `Άνοιξα: ${route.labelEl}.`, en: `Opened ${route.labelEn}.`, data: { path: route.path } };
+    let path = route.path;
+    const section = str(args.section);
+    if (route.id === 'settings' && section && (SETTINGS_SECTIONS as readonly string[]).includes(section)) {
+      path = section === 'availability' ? '/settings?availability=1' : `/settings?section=${section}`;
+    }
+    rt.navigate(path);
+    return { ok: true, el: `Άνοιξα: ${route.labelEl}.`, en: `Opened ${route.labelEn}.`, data: { path } };
   },
 };
 
@@ -991,7 +1003,8 @@ const notifSummaryAction: CopilotAction = {
 /** Same source as the Home welcome-back line (lib/returnVisit), so both always agree. */
 const whatsNewAction: CopilotAction = {
   name: 'whats_new',
-  description: "Catch the user up: their next plan within two days, new plans for them since the last visit, unread messages and notifications.",
+  description:
+    "Catch the user up: next plan, new plans, unread messages/notifications, pending feedback, verify gaps, incoming company joins.",
   risk: 'safe',
   parameters: OBJ({}),
   run: () => {
@@ -1020,18 +1033,63 @@ const whatsNewAction: CopilotAction = {
       unreadChats,
       unreadNotifications: s.notifications.filter((n) => !n.read).length,
     });
-    if (parts.length === 0) {
+    const extras: { el: string; en: string; path: string }[] = [];
+    const pendingFeedback = s.getPendingFeedbackEventId();
+    if (pendingFeedback) {
+      const title = s.events.find((e) => e.id === pendingFeedback)?.title ?? pendingFeedback;
+      extras.push({
+        el: `Εκκρεμεί αξιολόγηση για «${title}»`,
+        en: `Pending review for "${title}"`,
+        path: `/history/feedback/${pendingFeedback}`,
+      });
+    }
+    const incomingJoins = s.companyJoinRequests.filter((j) => j.targetUserId === user.id && j.status === 'pending').length;
+    if (incomingJoins > 0) {
+      extras.push({
+        el: incomingJoins === 1 ? '1 νέο αίτημα παρέας' : `${incomingJoins} νέα αιτήματα παρέας`,
+        en: incomingJoins === 1 ? '1 company join request' : `${incomingJoins} company join requests`,
+        path: '/buddy-seek',
+      });
+    }
+    const gaps: string[] = [];
+    if (!user.emailVerified) gaps.push('email');
+    if (!user.phoneVerified) gaps.push('phone');
+    if (!user.idVerified) gaps.push('id');
+    if (gaps.length > 0) {
+      extras.push({
+        el: `Λείπει επαλήθευση: ${gaps.join(', ')}`,
+        en: `Verification still needed: ${gaps.join(', ')}`,
+        path: '/verification',
+      });
+    }
+    if (parts.length === 0 && extras.length === 0) {
       return { ok: true, el: 'Είσαι ενημερωμένος: τίποτα νέο αυτή τη στιγμή.', en: "You're all caught up: nothing new right now." };
     }
     const tEl = (g: string) => g;
     const tEn = (_g: string, e: string) => e;
-    const first = parts[0];
+    const firstPath = parts.length > 0 ? returnPartPath(parts[0]) : extras[0]?.path ?? '/';
+    const elLines = [
+      ...parts.map((p) => `• ${describeReturnPart(p, tEl)}`),
+      ...extras.map((e) => `• ${e.el}`),
+    ];
+    const enLines = [
+      ...parts.map((p) => `• ${describeReturnPart(p, tEn)}`),
+      ...extras.map((e) => `• ${e.en}`),
+    ];
     return {
       ok: true,
-      el: `Τι νέο υπάρχει:\n${parts.map((p) => `• ${describeReturnPart(p, tEl)}`).join('\n')}`,
-      en: `What's new:\n${parts.map((p) => `• ${describeReturnPart(p, tEn)}`).join('\n')}`,
-      link: { path: returnPartPath(first), el: 'Άνοιγμα', en: 'Open' },
-      data: { parts: parts.map((p) => p.kind), newPlans, unreadChats },
+      el: `Τι νέο υπάρχει:\n${elLines.join('\n')}`,
+      en: `What's new:\n${enLines.join('\n')}`,
+      link: { path: firstPath, el: 'Άνοιγμα', en: 'Open' },
+      data: {
+        parts: parts.map((p) => p.kind),
+        extras: extras.map((e) => e.path),
+        newPlans,
+        unreadChats,
+        pendingFeedback,
+        incomingJoins,
+        verifyGaps: gaps,
+      },
     };
   },
 };
@@ -1115,6 +1173,299 @@ const explainAction: CopilotAction = {
   },
 };
 
+const startVerificationAction: CopilotAction = {
+  name: 'start_verification',
+  description:
+    'Open Identity Verification and optionally complete a demo email/phone/id step for the signed-in user.',
+  risk: 'safe',
+  parameters: OBJ({
+    method: S('Verification method', { enum: ['email', 'phone', 'id', 'any'] }),
+  }),
+  run: (args, rt) => {
+    const s = state();
+    const user = s.currentUser;
+    if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const method = str(args.method) ?? 'any';
+    const pick =
+      method === 'email' || method === 'phone' || method === 'id'
+        ? method
+        : !user.emailVerified
+          ? 'email'
+          : !user.phoneVerified
+            ? 'phone'
+            : !user.idVerified
+              ? 'id'
+              : null;
+    if (!pick) {
+      rt.navigate('/verification');
+      return {
+        ok: true,
+        el: 'Είσαι ήδη επαληθευμένος σε email, τηλέφωνο και ταυτότητα.',
+        en: 'You are already verified for email, phone and ID.',
+        link: { path: '/verification', el: 'Επαλήθευση', en: 'Verification' },
+      };
+    }
+    const prev = {
+      emailVerified: user.emailVerified,
+      phoneVerified: user.phoneVerified,
+      idVerified: user.idVerified,
+    };
+    if (pick === 'email') s.updateUser(user.id, { emailVerified: true });
+    if (pick === 'phone') s.updateUser(user.id, { phoneVerified: true });
+    if (pick === 'id') s.updateUser(user.id, { idVerified: true });
+    rt.navigate('/verification');
+    const labels = {
+      email: ['email', 'email'],
+      phone: ['τηλέφωνο', 'phone'],
+      id: ['ταυτότητα', 'ID'],
+    } as const;
+    return {
+      ok: true,
+      el: `Ολοκλήρωσα demo επαλήθευση ${labels[pick][0]} και άνοιξα το Κέντρο Επαλήθευσης.`,
+      en: `Completed demo ${labels[pick][1]} verification and opened Verification.`,
+      undo: () => state().updateUser(user.id, prev),
+      link: { path: '/verification', el: 'Επαλήθευση', en: 'Verification' },
+    };
+  },
+};
+
+const openFeedbackAction: CopilotAction = {
+  name: 'open_feedback',
+  description: 'Open the pending post-event feedback form, or History if none is pending.',
+  risk: 'safe',
+  parameters: OBJ({ event: EVENT_REF }),
+  run: (args, rt) => {
+    const s = state();
+    if (!s.currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const explicit = str(args.event);
+    const id =
+      explicit && explicit !== 'this'
+        ? resolveEvent(args.event, rt)?.id
+        : s.getPendingFeedbackEventId() ?? resolveEvent(args.event, rt)?.id;
+    if (!id) {
+      rt.navigate('/history');
+      return {
+        ok: true,
+        el: 'Δεν έχεις εκκρεμή αξιολόγηση — άνοιξα το Ιστορικό.',
+        en: 'No pending review — opened History.',
+        link: { path: '/history', el: 'Ιστορικό', en: 'History' },
+      };
+    }
+    const path = `/history/feedback/${id}`;
+    rt.navigate(path);
+    const title = s.events.find((e) => e.id === id)?.title ?? id;
+    return {
+      ok: true,
+      el: `Άνοιξα την αξιολόγηση για «${title}».`,
+      en: `Opened the review for "${title}".`,
+      link: { path, el: 'Αξιολόγηση', en: 'Review' },
+    };
+  },
+};
+
+const exportAgendaAction: CopilotAction = {
+  name: 'export_agenda',
+  description: 'Download a bulk .ics of the user upcoming joined/saved plans (same as Calendar export).',
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: () => {
+    const s = state();
+    if (!s.currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const uid = s.currentUser.id;
+    const joined = new Set(s.groups.filter((g) => g.members.includes(uid)).map((g) => g.eventId));
+    const now = new Date().toISOString().slice(0, 10);
+    const events = s.events
+      .filter(
+        (e) =>
+          e.status !== 'cancelled' &&
+          e.date >= now &&
+          (joined.has(e.id) || s.savedEvents.includes(e.id) || s.waitlistedEvents.includes(e.id)),
+      )
+      .sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`));
+    if (events.length === 0) {
+      return {
+        ok: true,
+        el: 'Δεν υπάρχουν επερχόμενα σχέδια για εξαγωγή.',
+        en: 'There are no upcoming plans to export.',
+        link: { path: '/agenda', el: 'Ημερολόγιο', en: 'Calendar' },
+      };
+    }
+    downloadCalendarIcs(
+      events.map((e) => ({
+        title: e.title,
+        date: e.date,
+        time: e.time,
+        locationArea: e.locationArea,
+      })),
+      'parea-calendar.ics',
+    );
+    return {
+      ok: true,
+      el: `Εξήγαγα ${events.length} εκδηλώσεις σε .ics.`,
+      en: `Exported ${events.length} events to .ics.`,
+      link: { path: '/agenda', el: 'Ημερολόγιο', en: 'Calendar' },
+      data: { count: events.length },
+    };
+  },
+};
+
+/** Demo wallet figures — must match WalletPageContent KPIs until a real ledger exists. */
+const WALLET_DEMO = { available: 345.5, pending: 85 } as const;
+
+const summarizeWalletAction: CopilotAction = {
+  name: 'summarize_wallet',
+  description: 'Summarise available and pending earnings and offer a bridge to payout management.',
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: (_args, rt) => {
+    const s = state();
+    if (!s.currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    if (!s.currentUser.isOrganizer) {
+      rt.navigate('/wallet');
+      return {
+        ok: true,
+        el: 'Το πορτοφόλι είναι για διοργανωτές — άνοιξα τη σελίδα για να δεις τη demo προβολή.',
+        en: 'Wallet is for organizers — opened the page so you can see the demo view.',
+        link: { path: '/wallet', el: 'Πορτοφόλι', en: 'Wallet' },
+      };
+    }
+    return {
+      ok: true,
+      el: `Διαθέσιμο €${WALLET_DEMO.available.toFixed(2)}, εκκρεμές €${WALLET_DEMO.pending.toFixed(2)}. Θες διαχείριση πληρωμών;`,
+      en: `Available €${WALLET_DEMO.available.toFixed(2)}, pending €${WALLET_DEMO.pending.toFixed(2)}. Want payout management?`,
+      link: { path: '/wallet', el: 'Πορτοφόλι', en: 'Wallet' },
+      data: { ...WALLET_DEMO },
+    };
+  },
+};
+
+const listFormingAction: CopilotAction = {
+  name: 'list_forming_plans',
+  description: 'List active Find-Nakamas company requests (plans forming) the user can join or review.',
+  risk: 'safe',
+  parameters: OBJ({ limit: N('Max items (1-8, default 5).') }),
+  run: (args, rt) => {
+    const s = state();
+    const user = s.currentUser;
+    if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const limit = Math.min(8, Math.max(1, Math.floor(num(args.limit) ?? 5)));
+    const active = s.companyRequests
+      .filter((r) => r.status === 'active')
+      .slice(0, limit);
+    if (active.length === 0) {
+      rt.navigate('/buddy-seek');
+      return {
+        ok: true,
+        el: 'Δεν υπάρχουν ανοιχτά σχέδια αυτή τη στιγμή — άνοιξα το Βρες Nakamas.',
+        en: 'No open plans right now — opened Find Nakamas.',
+        link: { path: '/buddy-seek', el: 'Βρες Nakamas', en: 'Find Nakamas' },
+      };
+    }
+    const lines = (lang: 'el' | 'en') =>
+      active
+        .map((r) => {
+          const e = s.events.find((x) => x.id === r.eventId);
+          const title = e?.title ?? r.eventId;
+          const mine = r.creatorUserId === user.id;
+          return `• ${title}${mine ? (lang === 'el' ? ' (δικό σου)' : ' (yours)') : ''}`;
+        })
+        .join('\n');
+    return {
+      ok: true,
+      el: `Ανοιχτά σχέδια (${active.length}):\n${lines('el')}`,
+      en: `Open plans (${active.length}):\n${lines('en')}`,
+      link: { path: '/buddy-seek', el: 'Βρες Nakamas', en: 'Find Nakamas' },
+      data: { ids: active.map((r) => r.id) },
+    };
+  },
+};
+
+const respondCompanyJoinAction: CopilotAction = {
+  name: 'respond_company_join',
+  description: 'Accept or decline a pending company join request on Find Nakamas (requires confirmation).',
+  risk: 'confirm',
+  parameters: OBJ(
+    {
+      accept: B('true = accept, false = decline'),
+      requestId: S('Join request id, or omit for the newest pending for you.'),
+    },
+    ['accept'],
+  ),
+  preview: (args) => {
+    const accept = bool(args.accept) !== false;
+    return {
+      el: accept ? 'Αποδοχή αιτήματος παρέας' : 'Απόρριψη αιτήματος παρέας',
+      en: accept ? 'Accept company join request' : 'Decline company join request',
+    };
+  },
+  run: (args, rt) => {
+    const s = state();
+    const user = s.currentUser;
+    if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const accept = bool(args.accept) !== false;
+    const id = str(args.requestId);
+    const pending = s.companyJoinRequests.filter((j) => j.targetUserId === user.id && j.status === 'pending');
+    const join = id
+      ? s.companyJoinRequests.find((j) => j.id === id || j.id.endsWith(id))
+      : pending[0];
+    if (!join || join.targetUserId !== user.id || join.status !== 'pending') {
+      return fail('Δεν βρήκα εκκρεμές αίτημα παρέας.', 'No pending company join request found.');
+    }
+    if (accept) {
+      const groupId = s.acceptCompanyJoinRequest(join.id);
+      if (!groupId) return fail('Αποτυχία αποδοχής αιτήματος.', 'Could not accept the request.');
+      rt.navigate(`/chat/${groupId}`);
+      return {
+        ok: true,
+        el: 'Αποδέχτηκα το αίτημα και άνοιξα το chat συντονισμού.',
+        en: 'Accepted the request and opened the coordination chat.',
+        link: { path: `/chat/${groupId}`, el: 'Chat', en: 'Chat' },
+      };
+    }
+    s.declineCompanyJoinRequest(join.id);
+    return {
+      ok: true,
+      el: 'Απέρριψα το αίτημα παρέας.',
+      en: 'Declined the company join request.',
+      link: { path: '/buddy-seek', el: 'Βρες Nakamas', en: 'Find Nakamas' },
+    };
+  },
+};
+
+const joinChallengeAction: CopilotAction = {
+  name: 'join_challenge',
+  description: 'Join or leave a gamification challenge by id (c1, c2, c3, …).',
+  risk: 'safe',
+  parameters: OBJ({ challengeId: S('Challenge id, e.g. c1.'), leave: B('true = leave instead of join') }, ['challengeId']),
+  run: (args) => {
+    const s = state();
+    if (!s.currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const id = str(args.challengeId);
+    if (!id) return fail('Πες μου ποια πρόκληση (π.χ. c1).', 'Tell me which challenge (e.g. c1).');
+    const leave = bool(args.leave) === true;
+    const joined = s.challengesJoined.includes(id);
+    if (leave && !joined) {
+      return { ok: true, el: 'Δεν είσαι σε αυτή την πρόκληση.', en: 'You are not in that challenge.' };
+    }
+    if (!leave && joined) {
+      return {
+        ok: true,
+        el: 'Είσαι ήδη σε αυτή την πρόκληση.',
+        en: 'You are already in that challenge.',
+        link: { path: '/challenges', el: 'Προκλήσεις', en: 'Challenges' },
+      };
+    }
+    s.toggleChallengeJoined(id);
+    return {
+      ok: true,
+      el: leave ? `Έφυγες από την πρόκληση ${id}.` : `Μπήκες στην πρόκληση ${id}.`,
+      en: leave ? `Left challenge ${id}.` : `Joined challenge ${id}.`,
+      undo: () => state().toggleChallengeJoined(id),
+      link: { path: '/challenges', el: 'Προκλήσεις', en: 'Challenges' },
+    };
+  },
+};
+
 const capabilitiesAction: CopilotAction = {
   name: 'capabilities',
   description: 'Explain what the assistant can do.',
@@ -1123,9 +1474,9 @@ const capabilitiesAction: CopilotAction = {
   run: () => ({
     ok: true,
     el:
-      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα και τις ειδοποιήσεις σου\n• Να σου πω τι νέο υπάρχει από την τελευταία σου επίσκεψη: «τι νέο;»\n• Να στείλω μήνυμα στην ομάδα σου ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\n• Να εξηγήσω αξιοπιστία, βαθμίδες, ασφάλεια, XP\nΌ,τι κάνω αναιρείται με ένα κλικ.',
+      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα, τις ειδοποιήσεις και το πορτοφόλι σου\n• Να εξάγω όλο το ημερολόγιο σε .ics και να ανοίξω εκκρεμή αξιολόγηση\n• Να ξεκινήσω επαλήθευση και να σου πω τι νέο υπάρχει (και κενά εμπιστοσύνης)\n• Να δείξω σχέδια που σχηματίζονται και να απαντήσω σε αιτήματα παρέας\n• Να μπω σε προκλήσεις, να στείλω μήνυμα ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\nΌ,τι κάνω αναιρείται με ένα κλικ.',
     en:
-      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule and notifications\n• Catch you up on what is new since your last visit: “what’s new?”\n• Message your group or create an event (with confirmation)\n• Change theme, language, privacy, notifications, interests\n• Explain reliability, tiers, safety and XP\nEverything I do can be undone in one click.',
+      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule, notifications and wallet\n• Export the whole calendar as .ics and open a pending review\n• Start verification and catch you up on what’s new (including trust gaps)\n• List plans forming and respond to company join requests\n• Join challenges, message your group or create an event (with confirmation)\n• Change theme, language, privacy, notifications, interests\nEverything I do can be undone in one click.',
   }),
 };
 
@@ -1169,12 +1520,19 @@ export const COPILOT_ACTIONS: CopilotAction[] = [
   calendarAction,
   leaveGroupAction,
   agendaAction,
+  exportAgendaAction,
   draftEventAction,
   createEventAction,
   messageAction,
   openChatAction,
   connectionAction,
   findCompanyAction,
+  listFormingAction,
+  respondCompanyJoinAction,
+  startVerificationAction,
+  openFeedbackAction,
+  summarizeWalletAction,
+  joinChallengeAction,
   themeAction,
   languageAction,
   homeLayoutAction,

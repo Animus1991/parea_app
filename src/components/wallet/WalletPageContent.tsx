@@ -10,6 +10,8 @@ import { toast } from 'sonner';
 import { Modal } from '../common/Modal';
 import { isStripeConfigured, openStripeCheckout } from '../../services/payments';
 import { WALLET_TYPO } from '../../lib/typographyTokens';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 
 export default function WalletPageContent() {
   const { t } = useLanguage();
@@ -18,6 +20,14 @@ export default function WalletPageContent() {
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [showPayouts, setShowPayouts] = useState(false);
   const stripeReady = isStripeConfigured();
+
+  usePublishPageSnapshot({
+    titleEl: 'Πορτοφόλι & Έσοδα',
+    titleEn: 'Wallet & Earnings',
+    state: txFilter,
+    summaryEl: 'Διαθέσιμο €345.50 · εκκρεμές €85.00',
+    summaryEn: 'Available €345.50 · pending €85.00',
+  });
 
   const transactions = [
     { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: t('12 Οκτ 2024', 'Oct 12, 2024'), monthKey: 'Oct', desc: t('Μεταφορά στην τράπεζα 4092 (demo)', 'Transfer to Bank ****4092 (demo)') },
@@ -40,6 +50,8 @@ export default function WalletPageContent() {
             : t('Λειτουργία demo — ορίστε VITE_STRIPE_* για πραγματικές πληρωμές.', 'Demo mode — set VITE_STRIPE_* for real payments.')}
         </p>
       </div>
+
+      <CopilotInlinePrompt />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className={cn("p-4 text-white shadow-soft-md", a.balanceBg)}>
@@ -104,6 +116,8 @@ export default function WalletPageContent() {
                 )}
                 actionLabel={t('Όλες', 'All Time')}
                 onAction={() => setTxFilter('all')}
+                askAi
+                askPrompt={t('Σύνοψη πορτοφολιού', 'Summarise my wallet')}
               />
             </div>
           ) : (

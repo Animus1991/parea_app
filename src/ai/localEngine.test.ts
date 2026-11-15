@@ -97,6 +97,13 @@ describe('planLocal intents', () => {
     expect(first("what's new?")).toMatchObject({ name: 'whats_new' });
     expect(first('τι νέα ειδοποιήσεις έχω;')).toMatchObject({ name: 'summarize_notifications' });
   });
+  it('plans verification, wallet, export and forming-plan intents', () => {
+    expect(first('ξεκίνα επαλήθευση email')).toMatchObject({ name: 'start_verification', args: { method: 'email' } });
+    expect(first('σύνοψη πορτοφολιού')).toMatchObject({ name: 'summarize_wallet' });
+    expect(first('εξήγαγε το ημερολόγιό μου')).toMatchObject({ name: 'export_agenda' });
+    expect(first('δείξε σχέδια που σχηματίζονται')).toMatchObject({ name: 'list_forming_plans' });
+    expect(first('μπες στην πρόκληση c2')).toMatchObject({ name: 'join_challenge', args: { challengeId: 'c2', leave: false } });
+  });
   it('hides admin routes from members', () => {
     expect(first('open admin')?.args?.page).not.toBe('admin');
   });

@@ -6,6 +6,7 @@
 import { format } from 'date-fns';
 import { useStore } from '../store';
 import { useLanguageStore } from '../store/languageStore';
+import { readPageSnapshot } from '../lib/pageSnapshot';
 import { routeIdForPath } from './routes';
 
 export interface ContextInput {
@@ -20,6 +21,11 @@ export function buildContextSnapshot({ pathname, lastEventIds, now = new Date() 
   const uid = u?.id;
   const titleOf = (id: string) => s.events.find((e) => e.id === id)?.title ?? id;
   const myGroups = uid ? s.groups.filter((g) => g.members.includes(uid) && g.status !== 'cancelled') : [];
+  const pendingFeedbackId = s.getPendingFeedbackEventId();
+  const pendingCompanyJoins = uid
+    ? s.companyJoinRequests.filter((j) => j.targetUserId === uid && j.status === 'pending').length
+    : 0;
+  const page = readPageSnapshot();
 
   const snapshot = {
     today: format(now, 'yyyy-MM-dd (EEEE)'),
@@ -27,6 +33,16 @@ export function buildContextSnapshot({ pathname, lastEventIds, now = new Date() 
     currentEventId: pathname.match(/^\/events\/([^/]+)/)?.[1] ?? null,
     uiLanguage: useLanguageStore.getState().language,
     theme: s.theme,
+    pageSnapshot: page
+      ? {
+          titleEl: page.titleEl,
+          titleEn: page.titleEn,
+          state: page.state,
+          summaryEl: page.summaryEl,
+          summaryEn: page.summaryEn,
+          visibleIds: page.visibleIds?.slice(0, 12),
+        }
+      : null,
     user: u
       ? {
           name: u.name,
@@ -35,8 +51,23 @@ export function buildContextSnapshot({ pathname, lastEventIds, now = new Date() 
           trustTier: u.trustTier,
           reliabilityScore: u.reliabilityScore,
           isOrganizerOrAdmin: u.isOrganizer,
+          emailVerified: !!u.emailVerified,
+          phoneVerified: !!u.phoneVerified,
+          paymentVerified: !!u.paymentVerified,
+          idVerified: !!u.idVerified,
         }
       : null,
+    verifyGaps: u
+      ? (['email', 'phone', 'payment', 'id'] as const).filter((k) => {
+          if (k === 'email') return !u.emailVerified;
+          if (k === 'phone') return !u.phoneVerified;
+          if (k === 'payment') return !u.paymentVerified;
+          return !u.idVerified;
+        })
+      : [],
+    pendingFeedbackEventId: pendingFeedbackId,
+    pendingCompanyJoinRequests: pendingCompanyJoins,
+    walletDemo: { availableEur: 345.5, pendingEur: 85 },
     saved: s.savedEvents.slice(0, 10).map((id) => ({ id, title: titleOf(id) })),
     myGroups: myGroups.slice(0, 10).map((g) => {
       const e = s.events.find((x) => x.id === g.eventId);

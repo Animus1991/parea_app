@@ -107,6 +107,42 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
     return { calls: [call('whats_new')] };
   }
 
+  /* 1c ─ verification / feedback / wallet / export / challenges / forming plans */
+  if (hasAny(p, ['επαληθευ', 'verify', 'verification']) && hasAny(p, ['ξεκινα', 'κανε', 'ολοκληρ', 'start', 'complete', 'do '])) {
+    const method = hasAny(p, ['email', 'ηλεκτρον', 'μαιλ']) ? 'email'
+      : hasAny(p, ['τηλεφων', 'phone', 'sms']) ? 'phone'
+      : hasAny(p, ['ταυτοτ', 'id ', ' identity']) ? 'id'
+      : 'any';
+    return { calls: [call('start_verification', { method })] };
+  }
+  if (hasAny(p, ['αξιολογησ', 'feedback', 'review', 'βαθμολογ']) && hasAny(p, ['εκκρεμ', 'pending', 'ανοιξ', 'open', 'γραψε', 'write'])) {
+    return { calls: [call('open_feedback')] };
+  }
+  if (hasAny(p, ['πορτοφολ', 'wallet', 'κερδη', 'earnings', 'payout']) && hasAny(p, ['συνοψ', 'summar', 'ποσα', 'how much', 'υπολοπ', 'balance'])) {
+    return { calls: [call('summarize_wallet')] };
+  }
+  if (
+    hasAny(p, ['εξαγωγ', 'εξηγαγ', 'export', 'κατεβασ', 'download']) &&
+    hasAny(p, ['ημερολογ', 'calendar', 'ατζεντα', 'agenda', 'ics', 'ολα τα σχεδια', 'all my plans'])
+  ) {
+    return { calls: [call('export_agenda')] };
+  }
+  if (hasAny(p, ['προκλησ', 'challenge']) && hasAny(p, ['μπεσ', 'μπω', 'ενταξ', 'join', 'αφησε', 'φυγε', 'leave'])) {
+    const leave = hasAny(p, ['αφησε', 'φυγε', 'leave', 'αποχωρ']);
+    const idMatch = n.match(/\bc(\d+)\b/);
+    return { calls: [call('join_challenge', { challengeId: idMatch ? `c${idMatch[1]}` : 'c1', leave })] };
+  }
+  if (
+    hasAny(p, ['σχηματιζ', 'forming', 'ανοιχτα σχεδια', 'list plans', 'plans forming']) ||
+    (hasAny(p, ['δειξε σχεδια', 'λιστα σχεδιων', 'show plans']) && hasAny(p, ['σχηματ', 'forming', 'ανοιχτ', 'buddy']))
+  ) {
+    return { calls: [call('list_forming_plans')] };
+  }
+  if (hasAny(p, ['αιτημα παρεασ', 'company join', 'join request']) && hasAny(p, ['αποδεξ', 'δεξου', 'accept', 'απορριψ', 'decline', 'reject'])) {
+    const accept = !hasAny(p, ['απορριψ', 'decline', 'reject']);
+    return { calls: [call('respond_company_join', { accept })] };
+  }
+
   /* 2 ─ undo */
   if (/^(αναιρεσ\S*|undo|ακυρωσε (το )?τελευταιο|revert)/.test(n)) return { calls: [call(UNDO_CALL)] };
 

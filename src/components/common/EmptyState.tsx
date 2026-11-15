@@ -2,6 +2,8 @@ import React from 'react';
 import { LucideIcon } from 'lucide-react';
 import { Button } from './Button';
 import { cn } from '../../lib/utils';
+import { useLanguage } from '../../lib/i18n';
+import { ASK_AI_EMPTY, askCopilot } from '../../lib/askCopilot';
 
 interface EmptyStateProps {
   icon?: LucideIcon;
@@ -12,6 +14,13 @@ interface EmptyStateProps {
   /** Optional quieter second path — never replaces the primary CTA. */
   secondaryLabel?: string;
   onSecondary?: () => void;
+  /**
+   * When true (and no explicit secondary), offer Ask AI as the secondary path.
+   * Pass `askPrompt` to seed the copilot with page-aware wording.
+   */
+  askAi?: boolean;
+  askLabel?: string;
+  askPrompt?: string;
   className?: string;
 }
 
@@ -24,8 +33,24 @@ export function EmptyState({
   onAction,
   secondaryLabel,
   onSecondary,
+  askAi = false,
+  askLabel,
+  askPrompt,
   className,
 }: EmptyStateProps) {
+  const { t } = useLanguage();
+  const resolvedSecondaryLabel =
+    secondaryLabel ??
+    (askAi ? askLabel ?? t(ASK_AI_EMPTY.labelEl, ASK_AI_EMPTY.labelEn) : undefined);
+  const resolvedSecondary =
+    onSecondary ??
+    (askAi
+      ? () =>
+          askCopilot(
+            askPrompt ?? t(ASK_AI_EMPTY.promptEl, ASK_AI_EMPTY.promptEn),
+          )
+      : undefined);
+
   return (
     <div
       className={cn(
@@ -43,16 +68,16 @@ export function EmptyState({
       {description && (
         <p className="text-xs font-medium text-ink-muted max-w-sm mt-1 mb-4 leading-relaxed">{description}</p>
       )}
-      {(actionLabel && onAction) || (secondaryLabel && onSecondary) ? (
+      {(actionLabel && onAction) || (resolvedSecondaryLabel && resolvedSecondary) ? (
         <div className="flex flex-wrap items-center justify-center gap-2 mt-1">
           {actionLabel && onAction && (
             <Button variant="primary" size="md" onClick={onAction}>
               {actionLabel}
             </Button>
           )}
-          {secondaryLabel && onSecondary && (
-            <Button variant="ghost" size="md" onClick={onSecondary}>
-              {secondaryLabel}
+          {resolvedSecondaryLabel && resolvedSecondary && (
+            <Button variant="ghost" size="md" onClick={resolvedSecondary}>
+              {resolvedSecondaryLabel}
             </Button>
           )}
         </div>

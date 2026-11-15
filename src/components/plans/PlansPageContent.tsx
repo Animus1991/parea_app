@@ -16,6 +16,8 @@ import { cn } from '../../lib/utils';
 import { PLANS_TYPO } from '../../lib/typographyTokens';
 import type { Group } from '../../types';
 import { dateFnsLocale, shortDayMonthPattern } from '../../lib/dateLocale';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 
 function getUserGroupForEvent(eventId: string, groups: Group[], userId: string | undefined) {
   if (!userId) return undefined;
@@ -68,6 +70,15 @@ export default function PlansPageContent() {
   const nextEventDays = nextEvent ? differenceInDays(parseISO(nextEvent.date), now) : null;
   const showVerifyBanner = currentUser ? !currentUser.idVerified : false;
 
+  usePublishPageSnapshot({
+    titleEl: 'Τα Σχέδιά μου',
+    titleEn: 'My Plans',
+    state: activeTab,
+    summaryEl: `${upcomingEvents.length} επερχόμενα · ${pendingEvents.length} εκκρεμή · ${needsRating} χωρίς αξιολόγηση`,
+    summaryEn: `${upcomingEvents.length} upcoming · ${pendingEvents.length} pending · ${needsRating} without review`,
+    visibleIds: upcomingEvents.slice(0, 8).map((e) => e.id),
+  });
+
   const stats: { id: 'upcoming' | 'pending' | 'past'; label: string; count: number; icon: typeof Calendar }[] = [
     { id: 'upcoming', label: t('Επερχόμενα', 'Upcoming'), count: upcomingEvents.length, icon: CalendarClock },
     { id: 'pending', label: t('Εκκρεμή', 'Pending'), count: pendingEvents.length, icon: Clock },
@@ -87,6 +98,8 @@ export default function PlansPageContent() {
         <h1 className={cn(PLANS_TYPO.pageTitle, p.head)}>{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
         <p className={cn(PLANS_TYPO.pageSub, 'mt-1', p.sub)}>{t(`Διαχείριση επερχόμενων, εκκρεμών και παρελθόντων εκδηλώσεων.`, `Manage your upcoming experiences, pending groups, and past events.`)}</p>
       </div>
+
+      <CopilotInlinePrompt />
 
       {/* Summary stats — also act as quick tab switches */}
       <div className="grid grid-cols-3 gap-3">

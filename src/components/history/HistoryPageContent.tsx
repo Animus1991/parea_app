@@ -13,6 +13,8 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { dateFnsLocale } from '../../lib/dateLocale';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 
 export default function HistoryPageContent() {
   const { t, language } = useLanguage();
@@ -66,6 +68,15 @@ export default function HistoryPageContent() {
     .filter((g) => currentUser && g.members.includes(currentUser.id))
     .reduce((acc, g) => acc + Math.max(0, g.members.length - 1), 0);
 
+  usePublishPageSnapshot({
+    titleEl: 'Ιστορικό',
+    titleEn: 'History',
+    state: tab,
+    summaryEl: `${totalAttended} εκδηλώσεις · ${totalAttended - reviewedCount} χωρίς αξιολόγηση`,
+    summaryEn: `${totalAttended} events · ${totalAttended - reviewedCount} without review`,
+    visibleIds: pastEvents.slice(0, 8).map((e) => e.id),
+  });
+
   return (
     <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
@@ -75,6 +86,8 @@ export default function HistoryPageContent() {
           <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>{t('Εκδηλώσεις που έχετε παρακολουθήσει', 'Events you\'ve attended')}</p>
         </div>
       </div>
+
+      <CopilotInlinePrompt />
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -251,6 +264,8 @@ export default function HistoryPageContent() {
                 ? () => setTab('all')
                 : () => navigate('/')
           }
+          askAi
+          askPrompt={t('Άνοιξε την εκκρεμή αξιολόγηση', 'Open my pending review')}
         />
       )}
       </ResourceStateGate>

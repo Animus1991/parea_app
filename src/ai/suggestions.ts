@@ -27,11 +27,13 @@ const BY_ROUTE: Record<string, CopilotSuggestion[]> = {
   ],
   agenda: [
     S('Τι έχω αυτή την εβδομάδα;', 'What do I have this week?'),
+    S('Εξήγαγε το ημερολόγιό μου', 'Export my calendar'),
     S('Πρότεινέ μου κάτι για το Σάββατο', 'Suggest something for Saturday'),
   ],
   plans: [
     S('Τι έχω αυτή την εβδομάδα;', 'What do I have this week?'),
     S('Γράψε στην ομάδα ότι θα αργήσω 10 λεπτά', "Tell the group I'll be 10 minutes late"),
+    S('Άνοιξε την εκκρεμή αξιολόγηση', 'Open my pending review'),
   ],
   chats: [S('Γράψε στην ομάδα ότι έφτασα', "Tell the group I've arrived"), S('Τι νέο υπάρχει;', "What's new?")],
   chat: [S('Γράψε στην ομάδα ότι έφτασα', "Tell the group I've arrived"), S('Πώς λειτουργεί η ασφάλεια;', 'How does safety work?')],
@@ -51,20 +53,48 @@ const BY_ROUTE: Record<string, CopilotSuggestion[]> = {
     S('Σταμάτα την κοινοποίηση τοποθεσίας', 'Stop sharing my location'),
   ],
   trust: [S('Πώς ανεβαίνει η αξιοπιστία μου;', 'How does my reliability go up?'), S('Τι είναι οι βαθμίδες εμπιστοσύνης;', 'What are trust tiers?')],
-  verification: [S('Τι είναι οι βαθμίδες εμπιστοσύνης;', 'What are trust tiers?'), S('Πώς ανεβαίνει η αξιοπιστία μου;', 'How does my reliability go up?')],
+  verification: [
+    S('Ξεκίνα επαλήθευση email', 'Start email verification'),
+    S('Τι είναι οι βαθμίδες εμπιστοσύνης;', 'What are trust tiers?'),
+    S('Πώς ανεβαίνει η αξιοπιστία μου;', 'How does my reliability go up?'),
+  ],
   achievements: [S('Πόσα XP έχω;', 'How much XP do I have?'), S('Πώς κερδίζω XP;', 'How do I earn XP?')],
   leaderboard: [S('Πόσα XP έχω;', 'How much XP do I have?'), S('Πώς κερδίζω XP;', 'How do I earn XP?')],
-  challenges: [S('Πόσα XP έχω;', 'How much XP do I have?'), S('Πώς κερδίζω XP;', 'How do I earn XP?')],
+  challenges: [
+    S('Μπες στην πρώτη πρόκληση', 'Join the first challenge'),
+    S('Πόσα XP έχω;', 'How much XP do I have?'),
+    S('Πώς κερδίζω XP;', 'How do I earn XP?'),
+  ],
   notifications: [S('Σημείωσε όλες ως αναγνωσμένες', 'Mark all as read'), S('Τι νέο υπάρχει στις ειδοποιήσεις;', 'Summarise my notifications')],
   help: [
     S('Πώς λειτουργούν οι ομάδες;', 'How do groups work?'),
     S('Πώς λειτουργεί η ασφάλεια;', 'How does safety work?'),
     S('Τι μπορείς να κάνεις;', 'What can you do?'),
   ],
-  'buddy-seek': [S('Πώς λειτουργεί το Βρες Nakamas;', 'How does Find Nakamas work?'), S('Πρότεινέ μου κάτι', 'Recommend something')],
+  'buddy-seek': [
+    S('Δείξε σχέδια που σχηματίζονται', 'List plans that are forming'),
+    S('Πώς λειτουργεί το Βρες Nakamas;', 'How does Find Nakamas work?'),
+    S('Αποδέξου το αίτημα παρέας', 'Accept the company join request'),
+  ],
   connections: [S('Αποδέξου το αίτημα σύνδεσης', 'Accept the connection request'), S('Τι νέο υπάρχει;', "What's new?")],
   manage: [S('Φτιάξε εκδήλωση για επιτραπέζια την Πέμπτη στις 20:00', 'Create a board games night on Thursday at 20:00')],
-  wallet: [S('Πώς λειτουργούν οι πληρωμές;', 'How do payments work?')],
+  wallet: [
+    S('Σύνοψη πορτοφολιού', 'Summarise my wallet'),
+    S('Άνοιξε διαχείριση πληρωμών', 'Open payout management'),
+    S('Πώς λειτουργούν οι πληρωμές;', 'How do payments work?'),
+  ],
+  history: [
+    S('Άνοιξε την εκκρεμή αξιολόγηση', 'Open my pending review'),
+    S('Τι έχω ολοκληρώσει;', 'What have I completed?'),
+  ],
+  saved: [
+    S('Τι έχω αποθηκεύσει;', 'What have I saved?'),
+    S('Πρότεινέ μου κάτι νέο', 'Recommend something new'),
+  ],
+  feedback: [
+    S('Άνοιξε την εκκρεμή αξιολόγηση', 'Open my pending review'),
+    S('Πώς κερδίζω XP;', 'How do I earn XP?'),
+  ],
   report: [S('Πώς λειτουργεί η ασφάλεια;', 'How does safety work?')],
 };
 
