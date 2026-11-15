@@ -207,7 +207,7 @@ export default function OrganizerDashboardPageContent() {
             <h1 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.isDark ? p.head : 'text-white')}>
               {t('Πίνακας Διοργανωτή', 'Organizer Workspace')}
             </h1>
-            <p className={cn('text-sm md:text-base font-medium mt-1', p.isDark ? p.sub : 'text-indigo-200')}>
+            <p className={cn('text-sm font-medium mt-1', p.isDark ? p.sub : 'text-indigo-200')}>
               {t(
                 'Διαχείριση εκδηλώσεων, analytics & επικοινωνία ομάδων',
                 'Manage events, analytics & group communications',
@@ -253,7 +253,7 @@ export default function OrganizerDashboardPageContent() {
               </span>
             </div>
             <div>
-              <p className={cn('text-lg font-black', p.head)}>{stat.val}</p>
+              <p className={cn('text-lg font-black tabular-nums leading-none', p.head)}>{stat.val}</p>
               <p className={cn('text-xs font-bold mt-1', stat.trendColor)}>
                 {stat.trendEl}
               </p>
@@ -284,7 +284,7 @@ export default function OrganizerDashboardPageContent() {
         )}
       >
         <div>
-          <h3 className={cn('text-lg font-bold tracking-tight', p.head)}>
+          <h3 className={cn('text-sm md:text-base font-bold tracking-tight', p.head)}>
             {t('Γρήγορη Δημιουργία', 'Quick Create')}
           </h3>
           <p className={cn('text-sm font-medium mt-1', p.muted)}>
@@ -315,7 +315,7 @@ export default function OrganizerDashboardPageContent() {
       </div>
 
       <div className="space-y-4">
-        <h2 className={cn('text-lg font-extrabold tracking-tight flex items-center gap-2', p.head)}>
+        <h2 className={cn('text-sm md:text-base font-extrabold tracking-tight flex items-center gap-2', p.head)}>
           <Calendar className={cn('w-5 h-5', p.iconAccent)} /> {t('Οι Εκδηλώσεις μου', 'My Events')}
         </h2>
 
@@ -365,12 +365,12 @@ export default function OrganizerDashboardPageContent() {
                         <Clock className="w-3.5 h-3.5" aria-hidden /> {relativeWhen(ev.date)}
                       </span>
                     </div>
-                    <h3 className={cn('text-lg font-bold tracking-tight', p.head)}>{ev.title}</h3>
+                    <h3 className={cn('text-sm md:text-base font-bold tracking-tight', p.head)}>{ev.title}</h3>
                   </div>
 
                   <div className="flex items-center gap-4">
                     <div className={cn('text-right border-r pr-4', p.borderB)}>
-                      <p className={cn('text-lg font-black', p.head)}>
+                      <p className={cn('text-lg font-black tabular-nums leading-none', p.head)}>
                         {memberCount}/{capacity || '—'}
                       </p>
                       <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
@@ -523,7 +523,7 @@ export default function OrganizerDashboardPageContent() {
         <div className={cn('lg:col-span-2 p-4 rounded-2xl border shadow-soft', p.cardSurface, p.borderB)}>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className={cn('text-lg font-bold tracking-tight', p.head)}>
+              <h3 className={cn('text-sm md:text-base font-bold tracking-tight', p.head)}>
                 {t('Επισκεψιμότητα Εκδηλώσεων', 'Event Traffic')}
               </h3>
               <p className={cn('text-xs font-medium mt-1', p.muted)}>
@@ -605,7 +605,7 @@ export default function OrganizerDashboardPageContent() {
           )}
         >
           <div>
-            <h3 className={cn('text-lg font-bold tracking-tight mb-4', p.head)}>
+            <h3 className={cn('text-sm md:text-base font-bold tracking-tight mb-4', p.head)}>
               {t('Συνολική Πληρότητα', 'Overall Fill Rate')}
             </h3>
             <div className="flex items-end justify-between mb-2">
@@ -633,7 +633,7 @@ export default function OrganizerDashboardPageContent() {
                   p.isDark ? 'bg-emerald-900/10 border-emerald-900/30' : 'bg-emerald-50 border-emerald-100',
                 )}
               >
-                <p className={cn('text-base sm:text-lg font-black', p.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
+                <p className={cn('text-lg font-black tabular-nums leading-none', p.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
                   {liveStats.reviews ? `${liveStats.positive}%` : '—'}
                 </p>
                 <p
@@ -651,7 +651,7 @@ export default function OrganizerDashboardPageContent() {
                   p.isDark ? 'bg-amber-900/10 border-amber-900/30' : 'bg-amber-50 border-amber-100',
                 )}
               >
-                <p className={cn('text-base sm:text-lg font-black', p.isDark ? 'text-amber-400' : 'text-amber-700')}>
+                <p className={cn('text-lg font-black tabular-nums leading-none', p.isDark ? 'text-amber-400' : 'text-amber-700')}>
                   {liveStats.reviews ? `${liveStats.neutral}%` : '—'}
                 </p>
                 <p
@@ -669,7 +669,7 @@ export default function OrganizerDashboardPageContent() {
                   p.isDark ? 'bg-red-900/10 border-red-900/30' : 'bg-red-50 border-red-100',
                 )}
               >
-                <p className={cn('text-base sm:text-lg font-black', p.isDark ? 'text-red-400' : 'text-red-700')}>
+                <p className={cn('text-lg font-black tabular-nums leading-none', p.isDark ? 'text-red-400' : 'text-red-700')}>
                   {liveStats.reviews ? `${liveStats.negative}%` : '—'}
                 </p>
                 <p

@@ -297,7 +297,7 @@ export default function MyCalendarPageContent() {
 
         <span
           className={cn(
-            "relative z-10 text-sm md:text-lg font-black",
+            "relative z-10 text-sm md:text-base font-black",
             isToday(day) || dayEvents.length > 0
               ? "text-white drop-shadow-soft-md"
               : p.head,
@@ -339,7 +339,7 @@ export default function MyCalendarPageContent() {
             >
               {t("Το Ημερολόγιό μου", "My Calendar")}
             </h1>
-            <p className={cn("text-sm md:text-base font-medium mt-1", p.sub)}>
+            <p className={cn("text-sm font-medium mt-1", p.sub)}>
               {t("Διαχειριστείτε το πρόγραμμά σας", "Manage your schedule")}
             </p>
           </div>

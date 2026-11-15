@@ -133,7 +133,7 @@ export function HomeLoggedInHero({
             <div className="space-y-2 flex-1">
               <p className={h.heroGreeting}>{greeting}</p>
               <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
-              <h1 className={cn(h.heroTitle, 'text-sm md:text-base max-w-2xl')}>
+              <h1 className={cn(h.heroTitle, 'max-w-2xl')}>
                 {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>
                   {t('home.hero.title2', 'εμπειρίες')}
@@ -221,7 +221,7 @@ export function HomeLoggedInHero({
           </div>
           {currentUser && (
             <div className="hidden md:flex flex-col items-center gap-2 shrink-0">
-              <div className="w-12 h-12 rounded-full border-4 border-white/30 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-lg shadow-soft">
+              <div className="w-12 h-12 rounded-full border-4 border-white/30 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-sm md:text-base shadow-soft">
                 {score}
               </div>
               <span className="text-xs font-bold text-white/80 uppercase tracking-wider flex items-center gap-1">

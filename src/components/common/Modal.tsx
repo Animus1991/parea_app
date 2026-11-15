@@ -75,7 +75,7 @@ export function Modal({
         {(title || showClose) && (
           <div className="mb-4 flex items-start justify-between gap-3">
             {title && (
-              <h2 id={titleId} className="text-lg font-bold text-ink">
+              <h2 id={titleId} className="text-sm md:text-base font-bold text-ink">
                 {title}
               </h2>
             )}

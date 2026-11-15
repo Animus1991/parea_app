@@ -117,7 +117,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           <div className={cn('w-11 h-11 rounded-2xl flex items-center justify-center mx-auto mb-4', p.statBg)}>
             <Compass className={cn('w-7 h-7', p.statVal)} />
           </div>
-          <p className={cn('font-bold text-lg', p.head)}>
+          <p className={cn('font-bold text-sm md:text-base', p.head)}>
             {t('Δεν έχετε προγραμματισμένες εκδηλώσεις', 'No planned events yet')}
           </p>
           <p className={cn('text-sm font-medium mt-2 max-w-sm mx-auto', p.muted)}>
@@ -194,7 +194,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
             p.borderB,
           )}
         >
-          <h2 className={cn('font-extrabold text-base md:text-lg capitalize', p.head)}>
+          <h2 className={cn('font-extrabold text-sm md:text-base capitalize', p.head)}>
             {format(currentDate, 'LLLL yyyy', { locale: dateFnsLocale(language) })}
           </h2>
           <div className="flex items-center gap-1">

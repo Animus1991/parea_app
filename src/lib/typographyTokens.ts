@@ -1,23 +1,29 @@
 /**
- * App-wide density type scale — compact, harmonious roles across every surface.
+ * App-wide density type scale — matches the Home logged-in / guest heroes.
+ * Source of truth: HomeGuestHero + HomeLoggedInHero (`text-sm md:text-base` titles,
+ * `text-sm` body/sub, `text-xs` chips/section labels, `text-2xs` micro).
  * Maps to @theme tokens in src/index.css (--text-2xs through --text-4xl).
  */
 export const APP_TYPO = {
   /** Micro labels, badges, caps */
   micro: 'text-2xs',
   /** Section headings, KPI labels */
-  sectionLabel: 'text-2xs font-bold tracking-wide',
+  sectionLabel: 'text-xs font-bold tracking-wide',
   /** Body, list rows, meta */
   body: 'text-sm',
   /** Body medium emphasis */
   bodyMedium: 'text-sm font-medium',
   /** Card titles */
   cardTitle: 'card-heading font-bold leading-snug',
-  /** Modal / panel titles */
-  panelTitle: 'text-base font-bold',
-  /** Hero / page titles — capped near body for harmony */
-  pageTitle: 'text-base md:text-lg font-bold tracking-tight leading-tight',
-  heroSubtitle: 'text-xs md:text-sm font-medium leading-relaxed',
+  /** Modal / panel titles — same as page title scale */
+  panelTitle: 'text-sm md:text-base font-bold',
+  /** Page / hero titles — Home standard */
+  pageTitle: 'text-sm md:text-base font-bold tracking-tight leading-tight',
+  /** Page subtitle under the title */
+  pageSub: 'text-sm font-medium',
+  heroSubtitle: 'text-sm font-medium leading-relaxed',
+  /** Big KPI numerals only (HomeQuickStatsBar) */
+  statValue: 'text-lg font-black tabular-nums leading-none',
 } as const;
 
 /** Popup chat window density */
@@ -48,7 +54,7 @@ export const PLANS_FORMING_TYPO = {
 /** Inbox list density */
 export const INBOX_TYPO = {
   pageTitle: 'text-sm md:text-base font-bold tracking-tight',
-  pageSub: 'text-xs font-medium',
+  pageSub: 'text-sm font-medium',
   tab: 'text-xs font-bold',
   badge: 'text-2xs font-bold',
   search: 'text-xs font-medium',
@@ -63,7 +69,7 @@ export const INBOX_TYPO = {
 /** Plans page density */
 export const PLANS_TYPO = {
   pageTitle: 'text-sm md:text-base font-bold',
-  pageSub: 'text-xs font-medium',
+  pageSub: 'text-sm font-medium',
   statLabel: 'text-2xs font-semibold',
   nextLabel: 'text-2xs font-bold uppercase tracking-wide',
   nextTitle: 'text-sm font-bold truncate',
@@ -138,30 +144,30 @@ export const EVENT_CARD_TYPO = {
 /** Calendar / agenda density */
 export const CALENDAR_TYPO = {
   pageTitle: 'text-sm md:text-base font-bold tracking-tight',
-  pageSub: 'text-xs font-medium',
+  pageSub: 'text-sm font-medium',
   dayLabel: 'text-2xs font-bold',
   dayNumber: 'text-xs font-bold',
   eventTitle: 'text-xs font-bold leading-snug',
   eventMeta: 'text-2xs font-medium',
   hourLabel: 'text-2xs font-semibold',
-  modalTitle: 'text-base font-bold',
-  modalSub: 'text-xs font-medium',
+  modalTitle: 'text-sm md:text-base font-bold',
+  modalSub: 'text-sm font-medium',
   chip: 'text-2xs font-bold',
   cta: 'text-xs font-bold',
 } as const;
 
-/** Home feed density */
+/** Home feed density — canonical scale for every other page */
 export const HOME_TYPO = {
   heroBadge: 'text-xs font-bold tracking-wide',
-  heroTitle: 'text-base md:text-lg font-bold tracking-tight leading-tight',
-  heroSub: 'text-xs md:text-sm font-medium',
-  heroSubtitle: 'text-xs md:text-sm font-medium leading-relaxed',
+  heroTitle: 'text-sm md:text-base font-bold tracking-tight leading-tight',
+  heroSub: 'text-sm font-medium',
+  heroSubtitle: 'text-sm font-medium leading-relaxed',
   heroStats: 'text-2xs font-bold tracking-wide',
   heroMapBtn: 'text-xs font-bold',
   stepTitle: 'text-xs font-bold',
   stepBody: 'text-2xs leading-relaxed font-medium',
   feedTab: 'text-xs font-bold',
-  sectionLabel: 'text-2xs font-bold tracking-wide uppercase',
+  sectionLabel: 'text-xs font-bold tracking-wide uppercase',
   /** Category / tag / feed / filter chips — same type + height as «Όλα» */
   filterChip: 'filter-chip text-xs font-bold',
   /** Mood chips with icons («Χαλαρά»…) — same type, slightly taller */
@@ -170,6 +176,7 @@ export const HOME_TYPO = {
   filterSelect: 'filter-select',
   /** Full-width cells in the home meta-filter 2-column grid */
   filterControlEqual: 'filter-control-equal',
+  /** Compact inline stats (not the QuickStatsBar numerals) */
   statValue: 'text-xs font-bold',
   statLabel: 'text-2xs font-medium',
   cardTitle: 'card-heading font-bold',
@@ -181,8 +188,8 @@ export const HOME_TYPO = {
 /** Report / trust issue flow */
 export const REPORT_TYPO = {
   pageTitle: 'text-sm md:text-base font-bold',
-  pageSub: 'text-xs font-medium',
-  sectionLabel: 'text-2xs font-bold tracking-wide uppercase',
+  pageSub: 'text-sm font-medium',
+  sectionLabel: 'text-xs font-bold tracking-wide uppercase',
   fieldLabel: 'text-xs font-bold',
   fieldHint: 'text-2xs font-medium leading-relaxed',
   option: 'text-xs font-medium',
@@ -190,11 +197,11 @@ export const REPORT_TYPO = {
   cta: 'text-xs font-bold',
 } as const;
 
-/** Onboarding wizard density */
+/** Onboarding wizard density — same title scale as Home */
 export const ONBOARDING_TYPO = {
   stepLabel: 'text-2xs font-bold tracking-wide uppercase',
-  title: 'text-base md:text-lg font-bold leading-tight',
-  subtitle: 'text-xs md:text-sm font-medium leading-relaxed',
+  title: 'text-sm md:text-base font-bold leading-tight',
+  subtitle: 'text-sm font-medium leading-relaxed',
   optionTitle: 'text-xs font-bold',
   optionBody: 'text-2xs font-medium leading-relaxed',
   chip: 'text-2xs font-semibold',

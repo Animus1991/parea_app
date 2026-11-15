@@ -623,7 +623,7 @@ export default function NearbyGroupsPageContent() {
         </div>
 
         <div className={cn("p-5 md:p-5 border-b shrink-0", p.borderB)}>
-          <h2 className={cn("text-lg font-extrabold tracking-tight", p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
+          <h2 className={cn("text-sm md:text-base font-extrabold tracking-tight", p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
           <p className={cn("text-sm font-medium mt-1.5 flex items-center gap-1.5", p.muted)}>
             <Navigation className="h-4 w-4" /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius}km</span>
           </p>
@@ -724,7 +724,7 @@ export default function NearbyGroupsPageContent() {
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                 <div>
-                  <h3 className={cn("font-bold text-base leading-tight line-clamp-2 transition-colors", p.head, p.hoverText)}>{group.title}</h3>
+                  <h3 className={cn("card-heading font-bold leading-tight line-clamp-2 transition-colors", p.head, p.hoverText)}>{group.title}</h3>
                   <p className={cn("card-meta mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5", p.sub)}>
                     <span className="capitalize">{group.category}</span>
                     <span aria-hidden className="opacity-40">·</span>
@@ -746,7 +746,7 @@ export default function NearbyGroupsPageContent() {
             <div className={cn("w-11 h-11 rounded-full flex items-center justify-center mx-auto mb-4 border", p.isDark ? "bg-cyan-900/20 text-cyan-400 border-cyan-800/50" : "bg-cyan-100 text-cyan-600 border-cyan-200")}>
               <MapIcon className="h-6 w-6" />
             </div>
-            <h3 className={cn("text-base font-bold", p.head)}>{t("Επέκταση ακτίνας", "Expand your radius")}</h3>
+            <h3 className={cn("text-sm md:text-base font-bold", p.head)}>{t("Επέκταση ακτίνας", "Expand your radius")}</h3>
             <p className={cn("text-sm font-medium mt-1.5 mb-4", p.sub)}>
               {t("Δεν βρίσκετε αυτό που ψάχνετε; Αυξήστε την περιοχή αναζήτησης.", "Can't find what you're looking for? Increase your search area.")}
             </p>
