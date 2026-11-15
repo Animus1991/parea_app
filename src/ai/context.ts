@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { useStore } from '../store';
 import { useLanguageStore } from '../store/languageStore';
 import { readPageSnapshot } from '../lib/pageSnapshot';
+import { WALLET_DEMO } from '../lib/walletDemo';
 import { routeIdForPath } from './routes';
 
 export interface ContextInput {
@@ -67,7 +68,7 @@ export function buildContextSnapshot({ pathname, lastEventIds, now = new Date() 
       : [],
     pendingFeedbackEventId: pendingFeedbackId,
     pendingCompanyJoinRequests: pendingCompanyJoins,
-    walletDemo: { availableEur: 345.5, pendingEur: 85 },
+    walletDemo: { availableEur: WALLET_DEMO.availableEur, pendingEur: WALLET_DEMO.pendingEur },
     saved: s.savedEvents.slice(0, 10).map((id) => ({ id, title: titleOf(id) })),
     myGroups: myGroups.slice(0, 10).map((g) => {
       const e = s.events.find((x) => x.id === g.eventId);

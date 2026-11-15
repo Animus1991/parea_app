@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ShieldCheck, UserCheck, Smartphone, Mail, FileText, CheckCircle2 } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
@@ -8,13 +8,30 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { useStore } from '../../store';
 import { toast } from 'sonner';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { verifyDemo } from '../../lib/verifyDemo';
+import { useSearchParams } from 'react-router-dom';
 
 export default function VerificationCenterPageContent() {
   const { t } = useLanguage();
   const a = usePageContrast();
   const currentUser = useStore((s) => s.currentUser);
-  const updateUser = useStore((s) => s.updateUser);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [searchParams] = useSearchParams();
+  const highlight = searchParams.get('method');
+
+  useEffect(() => {
+    if (!highlight) return;
+    const id =
+      highlight === 'email'
+        ? 'verify-email'
+        : highlight === 'phone'
+          ? 'verify-phone'
+          : highlight === 'id'
+            ? 'verify-id'
+            : null;
+    if (!id) return;
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [highlight]);
 
   if (!currentUser) return null;
 
@@ -27,13 +44,11 @@ export default function VerificationCenterPageContent() {
   const progressPct = Math.round((completedSteps / 3) * 100);
 
   const handleVerifyPhone = () => {
-    updateUser(currentUser.id, { phoneVerified: true });
-    toast.success(t('Το τηλέφωνο επαληθεύτηκε (demo)', 'Phone verified (demo)'));
+    if (verifyDemo('phone')) toast.success(t('Το τηλέφωνο επαληθεύτηκε (demo)', 'Phone verified (demo)'));
   };
 
   const handleVerifyEmail = () => {
-    updateUser(currentUser.id, { emailVerified: true });
-    toast.success(t('Το email επαληθεύτηκε (demo)', 'Email verified (demo)'));
+    if (verifyDemo('email')) toast.success(t('Το email επαληθεύτηκε (demo)', 'Email verified (demo)'));
   };
 
   const handleUploadId = () => {
@@ -42,10 +57,14 @@ export default function VerificationCenterPageContent() {
 
   const onIdSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
-    updateUser(currentUser.id, { idVerified: true });
-    toast.success(t('Η ταυτότητα υποβλήθηκε και επαληθεύτηκε (demo)', 'ID uploaded and verified (demo)'));
+    if (verifyDemo('id')) {
+      toast.success(t('Η ταυτότητα υποβλήθηκε και επαληθεύτηκε (demo)', 'ID uploaded and verified (demo)'));
+    }
     e.target.value = '';
   };
+
+  const ringFor = (method: string) =>
+    highlight === method ? 'ring-2 ring-accent ring-offset-2 ring-offset-surface' : '';
 
   return (
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
@@ -78,7 +97,7 @@ export default function VerificationCenterPageContent() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="p-5">
+        <Card id="verify-email" className={cn('p-5', ringFor('email'))}>
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', a.completedIcon)}>
@@ -105,7 +124,7 @@ export default function VerificationCenterPageContent() {
           )}
         </Card>
 
-        <Card className="p-5">
+        <Card id="verify-phone" className={cn('p-5', ringFor('phone'))}>
           <div className={cn('flex items-start justify-between border-b pb-4 mb-4', a.borderB)}>
             <div className="flex items-center gap-3">
               <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center border', a.pendingIcon)}>
@@ -130,7 +149,7 @@ export default function VerificationCenterPageContent() {
           )}
         </Card>
 
-        <Card className="p-5 md:col-span-2">
+        <Card id="verify-id" className={cn('p-5 md:col-span-2', ringFor('id'))}>
           <div className={cn('flex items-start justify-between border-b pb-4 mb-4', a.borderB)}>
             <div className="flex items-center gap-3">
               <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center border', a.pendingIcon)}>

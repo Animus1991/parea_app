@@ -17,6 +17,8 @@ import { downloadICS, openGoogleCalendar } from '../lib/eventCalendarExport';
 import { downloadCalendarIcs } from '../lib/calendarIcs';
 import { FORM_DRAFT_ROUTES, stashFormDraft } from '../lib/formDraft';
 import { homePathWithCategory, homePathWithSearch } from '../lib/homeDeepLinks';
+import { formatWalletEur, WALLET_DEMO } from '../lib/walletDemo';
+import { nextVerifyGap, verifyDemo, verifyDemoSnapshot, type VerifyDemoMethod } from '../lib/verifyDemo';
 import { APP_ROUTES, routeById } from './routes';
 import { KNOWLEDGE_TOPICS, findTopic } from './knowledge';
 import { extractDateRange, CATEGORY_SYNONYMS } from './entities';
@@ -536,6 +538,8 @@ const draftEventAction: CopilotAction = {
   parameters: OBJ(EVENT_FIELDS),
   run: (args, rt) => {
     const d = eventFromArgs(args);
+    // Single prefill channel: form draft stash. `?ai=1` only flags the banner.
+    // Organizer deep-links keep using `?edit=` / `?template=` separately.
     stashFormDraft(
       'event',
       {
@@ -550,17 +554,7 @@ const draftEventAction: CopilotAction = {
       },
       'AI draft',
     );
-    // Query params remain as a fallback for deep links / older clients.
-    const q = new URLSearchParams({ ai: '1' });
-    if (d.title) q.set('title', d.title);
-    q.set('category', d.category);
-    if (d.date) q.set('date', d.date);
-    if (d.time) q.set('time', d.time);
-    if (d.area) q.set('location', d.area);
-    if (d.description) q.set('description', d.description);
-    q.set('max', String(d.maxParticipants));
-    if (d.price > 0) q.set('price', String(d.price));
-    rt.navigate(`${FORM_DRAFT_ROUTES.event}?${q.toString()}`);
+    rt.navigate(`${FORM_DRAFT_ROUTES.event}?ai=1`);
     return {
       ok: true,
       el: 'Άνοιξα τη φόρμα δημιουργίας με τα στοιχεία συμπληρωμένα. Έλεγξέ τα και πάτα «Δημοσίευση».',
@@ -612,23 +606,53 @@ const whereIsAction: CopilotAction = {
     if (!query) return fail('Πες μου τι ψάχνεις — π.χ. «πού εξάγω το ημερολόγιο;».', 'Tell me what you are looking for — e.g. "where do I export the calendar?".');
     const hits = rankWhereIs(query, isPlatformAdmin(state().currentUser), 3);
     if (hits.length === 0) {
-      rt.navigate('/help');
+      const nq = normalize(query);
+      // Bridge to Help deep-links (`?topic=`) or a concrete route when Help has no matching topic.
+      if (/xp|επιτευγμ|badge|επιπεδ/.test(nq)) {
+        rt.navigate('/achievements');
+        return {
+          ok: true,
+          el: 'Άνοιξα τα Επιτεύγματα — εκεί φαίνονται XP και badges.',
+          en: 'Opened Achievements — XP and badges live there.',
+          link: { path: '/achievements', el: 'Επιτεύγματα', en: 'Achievements' },
+        };
+      }
+      const topic = /ομαδ|group/.test(nq)
+        ? 'groups'
+        : /ασφαλει|safety/.test(nq)
+          ? 'safety'
+          : /πληρωμ|payment|wallet|πορτοφ/.test(nq)
+            ? 'payments'
+            : null;
+      const helpPath = topic ? `/help?topic=${topic}` : '/help';
+      rt.navigate(helpPath);
       return {
         ok: true,
         el: 'Δεν βρήκα ακριβή σελίδα — άνοιξα το Κέντρο Βοήθειας. Μπορείς και να με ρωτήσεις διαφορετικά.',
         en: "I couldn't pin a page — opened Help. You can also rephrase the question.",
-        link: { path: '/help', el: 'Βοήθεια', en: 'Help' },
+        link: { path: helpPath, el: 'Βοήθεια', en: 'Help' },
       };
     }
     const top = hits[0];
-    rt.navigate(top.route.path);
+    const nq = normalize(query);
+    const path =
+      top.route.id === 'help'
+        ? /ομαδ|group/.test(nq)
+          ? '/help?topic=groups'
+          : /ασφαλει|safety/.test(nq)
+            ? '/help?topic=safety'
+            : /πληρωμ|payment|wallet|πορτοφ/.test(nq)
+              ? '/help?topic=payments'
+              : top.route.path
+        : top.route.path;
+    rt.navigate(path);
     const linesEl = hits.map((h) => `• ${h.route.labelEl} — ${h.reasonEl}`).join('\n');
     const linesEn = hits.map((h) => `• ${h.route.labelEn} — ${h.reasonEn}`).join('\n');
     return {
       ok: true,
       el: `Το βρήκα εδώ:\n${linesEl}`,
       en: `Here is where:\n${linesEn}`,
-      link: { path: top.route.path, el: top.route.labelEl, en: top.route.labelEn },
+      link: { path, el: top.route.labelEl, en: top.route.labelEn },
       data: { paths: hits.map((h) => h.route.path) },
     };
   },
@@ -1258,26 +1282,19 @@ const explainAction: CopilotAction = {
 const startVerificationAction: CopilotAction = {
   name: 'start_verification',
   description:
-    'Open Identity Verification and optionally complete a demo email/phone/id step for the signed-in user.',
+    'Open Identity Verification and complete one demo email/phone/id step (same helper as the Verification Center buttons).',
   risk: 'safe',
   parameters: OBJ({
     method: S('Verification method', { enum: ['email', 'phone', 'id', 'any'] }),
   }),
   run: (args, rt) => {
-    const s = state();
-    const user = s.currentUser;
+    const user = state().currentUser;
     if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
     const method = str(args.method) ?? 'any';
-    const pick =
+    const pick: VerifyDemoMethod | null =
       method === 'email' || method === 'phone' || method === 'id'
         ? method
-        : !user.emailVerified
-          ? 'email'
-          : !user.phoneVerified
-            ? 'phone'
-            : !user.idVerified
-              ? 'id'
-              : null;
+        : nextVerifyGap(user);
     if (!pick) {
       rt.navigate('/verification');
       return {
@@ -1287,26 +1304,29 @@ const startVerificationAction: CopilotAction = {
         link: { path: '/verification', el: 'Επαλήθευση', en: 'Verification' },
       };
     }
-    const prev = {
-      emailVerified: user.emailVerified,
-      phoneVerified: user.phoneVerified,
-      idVerified: user.idVerified,
-    };
-    if (pick === 'email') s.updateUser(user.id, { emailVerified: true });
-    if (pick === 'phone') s.updateUser(user.id, { phoneVerified: true });
-    if (pick === 'id') s.updateUser(user.id, { idVerified: true });
-    rt.navigate('/verification');
+    const prev = verifyDemoSnapshot(user);
+    const changed = verifyDemo(pick);
+    const path = `/verification?method=${pick}`;
+    rt.navigate(path);
     const labels = {
       email: ['email', 'email'],
       phone: ['τηλέφωνο', 'phone'],
       id: ['ταυτότητα', 'ID'],
     } as const;
+    if (!changed) {
+      return {
+        ok: true,
+        el: `Το ${labels[pick][0]} είναι ήδη επαληθευμένο — άνοιξα το Κέντρο Επαλήθευσης.`,
+        en: `${labels[pick][1]} is already verified — opened Verification.`,
+        link: { path, el: 'Επαλήθευση', en: 'Verification' },
+      };
+    }
     return {
       ok: true,
       el: `Ολοκλήρωσα demo επαλήθευση ${labels[pick][0]} και άνοιξα το Κέντρο Επαλήθευσης.`,
       en: `Completed demo ${labels[pick][1]} verification and opened Verification.`,
       undo: () => state().updateUser(user.id, prev),
-      link: { path: '/verification', el: 'Επαλήθευση', en: 'Verification' },
+      link: { path, el: 'Επαλήθευση', en: 'Verification' },
     };
   },
 };
@@ -1391,9 +1411,6 @@ const exportAgendaAction: CopilotAction = {
   },
 };
 
-/** Demo wallet figures — must match WalletPageContent KPIs until a real ledger exists. */
-const WALLET_DEMO = { available: 345.5, pending: 85 } as const;
-
 const summarizeWalletAction: CopilotAction = {
   name: 'summarize_wallet',
   description: 'Summarise available and pending earnings and offer a bridge to payout management.',
@@ -1413,10 +1430,10 @@ const summarizeWalletAction: CopilotAction = {
     }
     return {
       ok: true,
-      el: `Διαθέσιμο €${WALLET_DEMO.available.toFixed(2)}, εκκρεμές €${WALLET_DEMO.pending.toFixed(2)}. Θες διαχείριση πληρωμών;`,
-      en: `Available €${WALLET_DEMO.available.toFixed(2)}, pending €${WALLET_DEMO.pending.toFixed(2)}. Want payout management?`,
+      el: `Διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)}, εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}. Θες διαχείριση πληρωμών;`,
+      en: `Available ${formatWalletEur(WALLET_DEMO.availableEur)}, pending ${formatWalletEur(WALLET_DEMO.pendingEur)}. Want payout management?`,
       link: { path: '/wallet', el: 'Πορτοφόλι', en: 'Wallet' },
-      data: { ...WALLET_DEMO },
+      data: { available: WALLET_DEMO.availableEur, pending: WALLET_DEMO.pendingEur },
     };
   },
 };

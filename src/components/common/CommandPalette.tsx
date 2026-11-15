@@ -26,6 +26,7 @@ import {
   Wallet,
   HelpCircle,
   Shield,
+  TrendingUp,
 } from 'lucide-react';
 import { openCopilot } from '../../ai/copilot';
 import { APP_ROUTES } from '../../ai/routes';
@@ -102,6 +103,11 @@ export function CommandPalette() {
           help: HelpCircle,
           trust: Shield,
           verification: ShieldCheck,
+          manage: TrendingUp,
+          connections: UserPlus,
+          report: HelpCircle,
+          challenges: Trophy,
+          leaderboard: Trophy,
         };
         return {
           id: r.id,

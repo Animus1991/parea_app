@@ -25,6 +25,8 @@ import { cn } from '../../lib/utils';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { EmptyState } from '../common/EmptyState';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useStore } from '../../store';
 import { toast } from 'sonner';
 
@@ -191,8 +193,17 @@ export default function OrganizerDashboardPageContent() {
     }
   };
 
+  usePublishPageSnapshot({
+    titleEl: 'Πίνακας Διοργανωτή',
+    titleEn: 'Organizer Workspace',
+    state: section,
+    summaryEl: `${liveStats.active} ενεργές · €${liveStats.revenue} έσοδα ομάδων`,
+    summaryEn: `${liveStats.active} active · €${liveStats.revenue} group revenue`,
+    visibleIds: myEvents.slice(0, 8).map((e) => e.id),
+  });
+
   return (
-    <div className="mx-auto max-w-7xl space-y-5 pb-4 animate-in fade-in duration-500">
+    <div className="mx-auto w-full max-w-full min-w-0 space-y-5 pb-4 animate-in fade-in duration-500">
       <div
         className={cn(
           'relative overflow-hidden p-4 md:p-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-soft border',
@@ -234,32 +245,56 @@ export default function OrganizerDashboardPageContent() {
         )}
       </div>
 
+      <CopilotInlinePrompt
+        title={{
+          el: 'Ρώτα το AI για τις εκδηλώσεις και τα έσοδά σου',
+          en: 'Ask AI about your events and earnings',
+        }}
+      />
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {statsCards.map((stat, i) => (
-          <div
-            key={i}
-            className={cn(
-              'p-5 md:p-4 rounded-2xl border shadow-soft relative overflow-hidden flex flex-col justify-between',
-              p.cardSurface,
-              p.borderB,
-            )}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className={cn('w-8 h-8 rounded-lg flex items-center justify-center', stat.iconWrap)}>
-                <stat.icon className={cn('w-4 h-4', stat.iconColor)} />
-              </span>
-              <span className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
-                {tu(stat.labelEl, stat.labelEn)}
-              </span>
+        {statsCards.map((stat, i) => {
+          const isRevenue = stat.labelEn === 'Revenue';
+          const isReliability = stat.labelEn === 'Reliability';
+          const bridge = isRevenue ? '/wallet' : isReliability ? '/trust' : null;
+          const body = (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <span className={cn('w-8 h-8 rounded-lg flex items-center justify-center', stat.iconWrap)}>
+                  <stat.icon className={cn('w-4 h-4', stat.iconColor)} />
+                </span>
+                <span className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
+                  {tu(stat.labelEl, stat.labelEn)}
+                </span>
+              </div>
+              <div>
+                <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.head)}>{stat.val}</p>
+                <p className={cn('text-xs font-bold mt-1', stat.trendColor)}>
+                  {isRevenue
+                    ? t('Άνοιγμα πορτοφολιού', 'Open wallet')
+                    : isReliability
+                      ? t('Κέντρο εμπιστοσύνης', 'Trust center')
+                      : stat.trendEl}
+                </p>
+              </div>
+            </>
+          );
+          const shell = cn(
+            'p-5 md:p-4 rounded-2xl border shadow-soft relative overflow-hidden flex flex-col justify-between text-left w-full',
+            p.cardSurface,
+            p.borderB,
+            bridge && 'cursor-pointer transition-colors hover:border-cyan-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+          );
+          return bridge ? (
+            <button key={i} type="button" onClick={() => navigate(bridge)} className={shell}>
+              {body}
+            </button>
+          ) : (
+            <div key={i} className={shell}>
+              {body}
             </div>
-            <div>
-              <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.head)}>{stat.val}</p>
-              <p className={cn('text-xs font-bold mt-1', stat.trendColor)}>
-                {stat.trendEl}
-              </p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <TabBar

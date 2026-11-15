@@ -77,7 +77,11 @@ const BY_ROUTE: Record<string, CopilotSuggestion[]> = {
     S('Αποδέξου το αίτημα παρέας', 'Accept the company join request'),
   ],
   connections: [S('Αποδέξου το αίτημα σύνδεσης', 'Accept the connection request'), S('Τι νέο υπάρχει;', "What's new?")],
-  manage: [S('Φτιάξε εκδήλωση για επιτραπέζια την Πέμπτη στις 20:00', 'Create a board games night on Thursday at 20:00')],
+  manage: [
+    S('Φτιάξε εκδήλωση για επιτραπέζια την Πέμπτη στις 20:00', 'Create a board games night on Thursday at 20:00'),
+    S('Σύνοψη πορτοφολιού', 'Summarise my wallet'),
+    S('Τι έχω αυτή την εβδομάδα;', 'What do I have this week?'),
+  ],
   wallet: [
     S('Σύνοψη πορτοφολιού', 'Summarise my wallet'),
     S('Άνοιξε διαχείριση πληρωμών', 'Open payout management'),

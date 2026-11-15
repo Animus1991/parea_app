@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { Modal } from '../common/Modal';
 import { isStripeConfigured, openStripeCheckout } from '../../services/payments';
 import { WALLET_TYPO } from '../../lib/typographyTokens';
+import { formatWalletEur, WALLET_DEMO } from '../../lib/walletDemo';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 
@@ -25,8 +26,8 @@ export default function WalletPageContent() {
     titleEl: 'Πορτοφόλι & Έσοδα',
     titleEn: 'Wallet & Earnings',
     state: txFilter,
-    summaryEl: 'Διαθέσιμο €345.50 · εκκρεμές €85.00',
-    summaryEn: 'Available €345.50 · pending €85.00',
+    summaryEl: `Διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)} · εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}`,
+    summaryEn: `Available ${formatWalletEur(WALLET_DEMO.availableEur)} · pending ${formatWalletEur(WALLET_DEMO.pendingEur)}`,
   });
 
   const transactions = [
@@ -59,7 +60,7 @@ export default function WalletPageContent() {
             <Euro className="w-4 h-4" />
             <h3 className={WALLET_TYPO.kpiLabel}>{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
-          <p className={cn(WALLET_TYPO.kpiValue, 'mb-4')}>€345.50</p>
+          <p className={cn(WALLET_TYPO.kpiValue, 'mb-4')}>{formatWalletEur(WALLET_DEMO.availableEur)}</p>
           <Button className={cn("w-full", a.withdrawBtn)} onClick={() => setShowWithdraw(true)}>
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
@@ -70,7 +71,7 @@ export default function WalletPageContent() {
             <Clock className="w-4 h-4" />
             <h3 className={WALLET_TYPO.kpiLabel}>{t('Εκκρεμεί', 'Pending')}</h3>
           </div>
-          <p className={cn(WALLET_TYPO.kpiValueSecondary, 'mb-2', a.head)}>€85.00</p>
+          <p className={cn(WALLET_TYPO.kpiValueSecondary, 'mb-2', a.head)}>{formatWalletEur(WALLET_DEMO.pendingEur)}</p>
           <p className={cn(WALLET_TYPO.kpiHint, a.muted)}>
             {t('Εξοφλούνται 3-5 ημέρες μετά.', 'Clears 3-5 days after event.')}
           </p>
@@ -83,7 +84,7 @@ export default function WalletPageContent() {
             </div>
             <div>
               <h3 className={cn(WALLET_TYPO.rowTitle, a.head)}>{t('Τραπεζικός λογαριασμός', 'Bank Account')}</h3>
-              <p className={cn(WALLET_TYPO.rowMeta, a.sub)}>{t('Chase ****4092 (demo)', 'Chase ****4092 (demo)')}</p>
+              <p className={cn(WALLET_TYPO.rowMeta, a.sub)}>{t(WALLET_DEMO.bankLabelEl, WALLET_DEMO.bankLabelEn)}</p>
             </div>
           </div>
           <Button variant="outline" size="sm" className="w-full text-xs" onClick={() => setShowPayouts(true)}>{t('Διαχείριση', 'Manage Payouts')}</Button>
