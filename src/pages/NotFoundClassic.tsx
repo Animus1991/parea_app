@@ -20,10 +20,10 @@ export default function NotFoundClassic() {
         <span className="absolute inset-0 rounded-full bg-gray-200 animate-ping opacity-20"></span>
         <Compass className="w-10 h-10 text-gray-400 animate-spin" style={{ animationDuration: '8s' }} />
       </div>
-      <h1 className="text-sm md:text-base font-bold text-ink mb-2">
+      <h1 className="text-sm md:text-sm font-bold text-ink mb-2">
         {t(`Η σελίδα δεν βρέθηκε`, `Page Not Found`)}
       </h1>
-      <p className="text-lg text-gray-500 font-medium mb-4 max-w-xs">
+      <p className="text-sm text-gray-500 font-medium mb-4 max-w-xs">
         {t(`Η σελίδα που αναζητάτε δεν υπάρχει ή έχει μετακινηθεί.`, `The page you're looking for doesn't exist or has been moved.`)}
       </p>
 
@@ -33,7 +33,7 @@ export default function NotFoundClassic() {
           return (
             <button key={s.path} onClick={() => navigate(s.path)} className="flex items-center gap-2 p-3 rounded-2xl border border-gray-100 bg-white hover:border-[#a5f3fc] hover:bg-cyan-50 transition-all duration-200 text-left shadow-soft">
               <Icon className="w-4 h-4 text-cyan-600" />
-              <span className="text-base font-bold text-ink">{s.label}</span>
+              <span className="text-sm font-bold text-ink">{s.label}</span>
             </button>
           );
         })}

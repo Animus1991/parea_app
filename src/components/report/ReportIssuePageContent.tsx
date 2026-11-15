@@ -95,7 +95,7 @@ export default function ReportIssuePageContent() {
               <h3 className={cn('font-bold text-sm md:text-base', p.head)}>
                 {t('Αναφορά Ζητήματος Ασφαλείας', 'Report a Safety Concern')}
               </h3>
-              <p className={cn('text-base mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>
+              <p className={cn('text-sm mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>
                 {t(
                   'Η αναφορά σας θα εξεταστεί από την ομάδα μας εντός 24 ωρών.',
                   'Your report will be reviewed by our team within 24 hours.',
