@@ -184,4 +184,19 @@ describe('copilot action registry', () => {
     expect(res.ok).toBe(true);
     expect(res.link?.path).toBe('/buddy-seek');
   });
+
+  it('answers where_is and opens the top page', async () => {
+    const res = await run('where_is', { query: 'πού εξάγω το ημερολόγιο;' });
+    expect(res.ok).toBe(true);
+    expect(navigated.at(-1)).toBe('/agenda');
+  });
+
+  it('drafts a profile proposal without saving', async () => {
+    useStore.getState().login('u1');
+    const before = useStore.getState().currentUser?.bio;
+    const res = await run('draft_profile', { bio: 'AI proposed bio' });
+    expect(res.ok).toBe(true);
+    expect(useStore.getState().currentUser?.bio).toBe(before);
+    expect(navigated.at(-1)).toMatch(/^\/profile/);
+  });
 });

@@ -15,12 +15,14 @@ import { computeUserXp, levelForXp } from '../lib/gamification';
 import { computeAchievements } from '../lib/achievements';
 import { downloadICS, openGoogleCalendar } from '../lib/eventCalendarExport';
 import { downloadCalendarIcs } from '../lib/calendarIcs';
+import { FORM_DRAFT_ROUTES, stashFormDraft } from '../lib/formDraft';
 import { homePathWithCategory, homePathWithSearch } from '../lib/homeDeepLinks';
 import { APP_ROUTES, routeById } from './routes';
 import { KNOWLEDGE_TOPICS, findTopic } from './knowledge';
 import { extractDateRange, CATEGORY_SYNONYMS } from './entities';
 import { normalize } from './text';
 import { resolveEventRef, searchEvents } from './eventSearch';
+import { rankWhereIs } from './whereIs';
 import type { ActionArgs, ActionResult, ActionRuntime, CopilotAction, ParamSchema } from './types';
 import { isPlatformAdmin } from '../lib/roles';
 import { buildReturnSummary, describeReturnPart, returnPartPath } from '../lib/returnVisit';
@@ -534,6 +536,21 @@ const draftEventAction: CopilotAction = {
   parameters: OBJ(EVENT_FIELDS),
   run: (args, rt) => {
     const d = eventFromArgs(args);
+    stashFormDraft(
+      'event',
+      {
+        title: d.title,
+        category: d.category,
+        date: d.date,
+        time: d.time,
+        location: d.area,
+        description: d.description,
+        max: d.maxParticipants,
+        price: d.price,
+      },
+      'AI draft',
+    );
+    // Query params remain as a fallback for deep links / older clients.
     const q = new URLSearchParams({ ai: '1' });
     if (d.title) q.set('title', d.title);
     q.set('category', d.category);
@@ -543,11 +560,76 @@ const draftEventAction: CopilotAction = {
     if (d.description) q.set('description', d.description);
     q.set('max', String(d.maxParticipants));
     if (d.price > 0) q.set('price', String(d.price));
-    rt.navigate(`/create?${q.toString()}`);
+    rt.navigate(`${FORM_DRAFT_ROUTES.event}?${q.toString()}`);
     return {
       ok: true,
       el: 'Άνοιξα τη φόρμα δημιουργίας με τα στοιχεία συμπληρωμένα. Έλεγξέ τα και πάτα «Δημοσίευση».',
       en: 'Opened the create form with the details filled in. Review them and press "Publish".',
+    };
+  },
+};
+
+const draftProfileAction: CopilotAction = {
+  name: 'draft_profile',
+  description: 'Open the profile with bio / name / interests proposed — nothing is saved until the user confirms.',
+  risk: 'safe',
+  parameters: OBJ({
+    bio: S('Proposed bio text.'),
+    name: S('Proposed display name.'),
+    interest: S('Interest to propose adding.'),
+  }),
+  run: (args, rt) => {
+    if (!state().currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const fields: Record<string, string> = {};
+    const bio = str(args.bio);
+    const name = str(args.name);
+    const interest = str(args.interest);
+    if (bio) fields.bio = bio;
+    if (name) fields.name = name;
+    if (interest) fields.interest = interest;
+    if (Object.keys(fields).length === 0) {
+      rt.navigate(FORM_DRAFT_ROUTES.profile);
+      return { ok: true, el: 'Άνοιξα το προφίλ σου.', en: 'Opened your profile.' };
+    }
+    stashFormDraft('profile', fields, 'AI draft');
+    rt.navigate(`${FORM_DRAFT_ROUTES.profile}?aiDraft=1`);
+    return {
+      ok: true,
+      el: 'Πρότεινα αλλαγές στο προφίλ — έλεγξέ τις και πάτα Αποθήκευση.',
+      en: 'Proposed profile changes — review them and press Save.',
+      link: { path: '/profile', el: 'Προφίλ', en: 'Profile' },
+    };
+  },
+};
+
+const whereIsAction: CopilotAction = {
+  name: 'where_is',
+  description: 'Answer "where do I …?" by ranking app pages (and Help) from the route registry.',
+  risk: 'safe',
+  parameters: OBJ({ query: S('The where/how-do-I question.') }, ['query']),
+  run: (args, rt) => {
+    const query = str(args.query) ?? '';
+    if (!query) return fail('Πες μου τι ψάχνεις — π.χ. «πού εξάγω το ημερολόγιο;».', 'Tell me what you are looking for — e.g. "where do I export the calendar?".');
+    const hits = rankWhereIs(query, isPlatformAdmin(state().currentUser), 3);
+    if (hits.length === 0) {
+      rt.navigate('/help');
+      return {
+        ok: true,
+        el: 'Δεν βρήκα ακριβή σελίδα — άνοιξα το Κέντρο Βοήθειας. Μπορείς και να με ρωτήσεις διαφορετικά.',
+        en: "I couldn't pin a page — opened Help. You can also rephrase the question.",
+        link: { path: '/help', el: 'Βοήθεια', en: 'Help' },
+      };
+    }
+    const top = hits[0];
+    rt.navigate(top.route.path);
+    const linesEl = hits.map((h) => `• ${h.route.labelEl} — ${h.reasonEl}`).join('\n');
+    const linesEn = hits.map((h) => `• ${h.route.labelEn} — ${h.reasonEn}`).join('\n');
+    return {
+      ok: true,
+      el: `Το βρήκα εδώ:\n${linesEl}`,
+      en: `Here is where:\n${linesEn}`,
+      link: { path: top.route.path, el: top.route.labelEl, en: top.route.labelEn },
+      data: { paths: hits.map((h) => h.route.path) },
     };
   },
 };
@@ -1474,9 +1556,9 @@ const capabilitiesAction: CopilotAction = {
   run: () => ({
     ok: true,
     el:
-      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα, τις ειδοποιήσεις και το πορτοφόλι σου\n• Να εξάγω όλο το ημερολόγιο σε .ics και να ανοίξω εκκρεμή αξιολόγηση\n• Να ξεκινήσω επαλήθευση και να σου πω τι νέο υπάρχει (και κενά εμπιστοσύνης)\n• Να δείξω σχέδια που σχηματίζονται και να απαντήσω σε αιτήματα παρέας\n• Να μπω σε προκλήσεις, να στείλω μήνυμα ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\nΌ,τι κάνω αναιρείται με ένα κλικ.',
+      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα, τις ειδοποιήσεις και το πορτοφόλι σου\n• Να εξάγω όλο το ημερολόγιο σε .ics και να ανοίξω εκκρεμή αξιολόγηση\n• Να ξεκινήσω επαλήθευση και να σου πω τι νέο υπάρχει (και κενά εμπιστοσύνης)\n• Να δείξω σχέδια που σχηματίζονται και να απαντήσω σε αιτήματα παρέας\n• Να απαντήσω «πού …;» με where_is και να προτείνω πρόχειρα φόρμας (εκδήλωση/προφίλ)\n• Να μπω σε προκλήσεις, να στείλω μήνυμα ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\nΌ,τι κάνω αναιρείται με ένα κλικ.',
     en:
-      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule, notifications and wallet\n• Export the whole calendar as .ics and open a pending review\n• Start verification and catch you up on what’s new (including trust gaps)\n• List plans forming and respond to company join requests\n• Join challenges, message your group or create an event (with confirmation)\n• Change theme, language, privacy, notifications, interests\nEverything I do can be undone in one click.',
+      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule, notifications and wallet\n• Export the whole calendar as .ics and open a pending review\n• Start verification and catch you up on what’s new (including trust gaps)\n• List plans forming and respond to company join requests\n• Answer “where do I …?” and propose form drafts (event/profile)\n• Join challenges, message your group or create an event (with confirmation)\n• Change theme, language, privacy, notifications, interests\nEverything I do can be undone in one click.',
   }),
 };
 
@@ -1522,6 +1604,8 @@ export const COPILOT_ACTIONS: CopilotAction[] = [
   agendaAction,
   exportAgendaAction,
   draftEventAction,
+  draftProfileAction,
+  whereIsAction,
   createEventAction,
   messageAction,
   openChatAction,

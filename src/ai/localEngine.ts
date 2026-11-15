@@ -22,6 +22,7 @@ import { findTopic, isQuestion } from './knowledge';
 import { CATEGORY_CATALOG } from '../lib/categoriesCatalog';
 import { matchRoute } from './routes';
 import { hasAny, normalize } from './text';
+import { isWhereIsQuestion } from './whereIs';
 
 export interface LocalEngineContext {
   /** Language for generated content (e.g. draft titles). */
@@ -105,6 +106,23 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
     !hasAny(p, ['ειδοποιησ', 'notification'])
   ) {
     return { calls: [call('whats_new')] };
+  }
+
+  /* 1b2 ─ where do I …? */
+  if (isWhereIsQuestion(n)) {
+    return { calls: [call('where_is', { query: raw.slice(0, 120) })] };
+  }
+
+  /* 1b3 ─ draft profile proposal */
+  if (
+    hasAny(p, ['προφιλ', 'profile', 'bio', 'βιογραφ']) &&
+    hasAny(p, ['προτειν', 'draft', 'συμπληρωσ', 'γραψε μου', 'propose', 'fill'])
+  ) {
+    const text = extractQuotedOrTail(raw);
+    const args: Record<string, unknown> = {};
+    if (text && hasAny(p, ['bio', 'βιογραφ', 'περιγραφ'])) args.bio = text;
+    else if (text) args.bio = text;
+    return { calls: [call('draft_profile', args)] };
   }
 
   /* 1c ─ verification / feedback / wallet / export / challenges / forming plans */

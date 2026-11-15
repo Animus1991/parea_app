@@ -104,6 +104,11 @@ describe('planLocal intents', () => {
     expect(first('δείξε σχέδια που σχηματίζονται')).toMatchObject({ name: 'list_forming_plans' });
     expect(first('μπες στην πρόκληση c2')).toMatchObject({ name: 'join_challenge', args: { challengeId: 'c2', leave: false } });
   });
+  it('plans where_is and draft_profile', () => {
+    expect(first('πού εξάγω το ημερολόγιο;')).toMatchObject({ name: 'where_is' });
+    expect(first('where do I verify my email?')).toMatchObject({ name: 'where_is' });
+    expect(first('πρότεινε bio για το προφίλ μου: «Λατρεύω πεζοπορία»')).toMatchObject({ name: 'draft_profile' });
+  });
   it('hides admin routes from members', () => {
     expect(first('open admin')?.args?.page).not.toBe('admin');
   });

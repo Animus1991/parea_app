@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Camera,
   MapPin,
@@ -25,6 +25,7 @@ import { useProfileContrast } from "../../hooks/usePageContrast";
 import { getHomeCategoryTranslations } from "../../lib/homeCategoryLabels";
 import { generateEventBlurb } from "../../services/gemini";
 import { Bot } from "lucide-react";
+import { useFormDraft, type FormDraftFields } from "../../lib/formDraft";
 
 export default function CreateEventFlowPageContent() {
   const [step, setStep] = useState(1);
@@ -84,6 +85,32 @@ export default function CreateEventFlowPageContent() {
     if (fromUrl > 0) return fromUrl;
     return editEvent?.isPaid && editEvent.price > 0 ? editEvent.price : 10;
   });
+
+  const applyAiDraft = useCallback((fields: FormDraftFields) => {
+    if (typeof fields.title === "string") setTitle(fields.title);
+    if (typeof fields.category === "string") setCategory(fields.category);
+    if (typeof fields.description === "string") setDescription(fields.description);
+    if (typeof fields.date === "string") setDate(fields.date);
+    if (typeof fields.time === "string") setTime(fields.time);
+    if (typeof fields.location === "string") setLocation(fields.location);
+    if (typeof fields.max === "number" && fields.max >= 2 && fields.max <= 12) setMaxAttendees(fields.max);
+    if (typeof fields.max === "string") {
+      const n = Number(fields.max);
+      if (Number.isFinite(n) && n >= 2 && n <= 12) setMaxAttendees(n);
+    }
+    if (typeof fields.price === "number" && fields.price > 0) {
+      setIsPaid(true);
+      setPrice(fields.price);
+    }
+    if (typeof fields.price === "string") {
+      const n = Number(fields.price);
+      if (n > 0) {
+        setIsPaid(true);
+        setPrice(n);
+      }
+    }
+  }, []);
+  const aiDraft = useFormDraft("event", applyAiDraft, true);
 
   /** Φ24 — AI description: Gemini via the server proxy, deterministic bilingual template otherwise. */
   const writeDescriptionWithAi = async () => {
@@ -183,10 +210,17 @@ export default function CreateEventFlowPageContent() {
       className="max-w-full mx-auto pb-24 md:pb-5"
     >
       <div className="mb-5">
-        {prefilledByAi && (
+        {(prefilledByAi || aiDraft.filled.length > 0) && (
           <p role="status" className="mb-4 flex items-center gap-2 rounded-xl border border-accent/30 bg-accent-soft px-3 py-2 text-sm font-medium text-ink">
             <Bot className="h-4 w-4 shrink-0 text-accent" aria-hidden />
-            {t("Το Nakamas AI συμπλήρωσε τη φόρμα. Έλεγξε τα στοιχεία και συνέχισε.", "Nakamas AI pre-filled this form. Review the details and continue.")}
+            <span className="flex-1">
+              {t("Το Nakamas AI συμπλήρωσε τη φόρμα. Έλεγξε τα στοιχεία και συνέχισε.", "Nakamas AI pre-filled this form. Review the details and continue.")}
+            </span>
+            {aiDraft.filled.length > 0 && (
+              <button type="button" onClick={aiDraft.dismiss} className="text-xs font-bold underline shrink-0">
+                {t("Απόκρυψη", "Dismiss")}
+              </button>
+            )}
           </p>
         )}
         <h1 className={cn("text-sm md:text-base font-bold", p.head)}>

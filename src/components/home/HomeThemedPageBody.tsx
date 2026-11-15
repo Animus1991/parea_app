@@ -1,4 +1,3 @@
-import { useState, useEffect, useRef } from 'react';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -6,7 +5,6 @@ import { EventCard } from '../events/EventCard';
 import { EventCardSkeleton } from '../common/Skeleton';
 import { EmptyState } from '../common/EmptyState';
 import { Map as MapIcon, CalendarX } from 'lucide-react';
-import { useLanguage } from '../../lib/i18n';
 import { EventStories } from './EventStories';
 import { HomeBuddySeekStrip } from '../buddySeek/HomeBuddySeekStrip';
 import { HomeThemedEnrichment } from './HomeThemedEnrichment';
@@ -17,45 +15,44 @@ import { HomeRichHero } from './HomeRichHero';
 import { HomeFiltersSection } from './HomeFiltersSection';
 import { HomeMobileFilterSheet } from './HomeMobileFilterSheet';
 import { getTimeGreeting, getMotivation } from '../../lib/homeGreeting';
-import { getDefaultHomeSearchSuggestions } from '../../lib/homeSearchSuggestions';
-import { useStoryEvents } from '../../hooks/useStoryEvents';
-import { useHomeExternalEvents } from '../../hooks/useHomeExternalEvents';
-import { useHomeScrollToFilters } from '../../hooks/useHomeScrollToFilters';
-import { useHomeEventFeed } from '../../hooks/useHomeEventFeed';
+import { useHomePageController } from '../../hooks/useHomePageController';
 import { HOME_TYPO } from '../../lib/typographyTokens';
 import { HOME_THEMED_TOKENS, type HomeThemedVariant } from '../../lib/homeThemedTokens';
 import { cn } from '../../lib/utils';
 
 /**
  * Canonical themed Home — ONE implementation for vibrant/neon/bento × light/dark.
- * Theme-specific classes come from HOME_THEMED_TOKENS[variant]; classic/activebuddies
- * themes keep their own token-driven HomeClassic lineage.
+ * Shared feed/search/filter state lives in useHomePageController (with HomeClassic).
  */
 export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVariant }) {
   const tok = HOME_THEMED_TOKENS[variant];
-  const { t } = useLanguage();
   const navigate = useNavigate();
-  const [feedType, setFeedType] = useState<'For You' | 'Discover'>('For You');
-  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
-  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
-  const [seekingHostOnly, setSeekingHostOnly] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-
-  useHomeExternalEvents();
-  const scrollToFilters = useHomeScrollToFilters();
-  const { storyEvents, seekingHostEvents, isSeekingHost } = useStoryEvents();
-
-  const feed = useHomeEventFeed({
-    feedType,
-    seekingHostOnly,
-    isSeekingHost,
-  });
-
+  const ctrl = useHomePageController();
   const {
+    t,
+    feedType,
+    setFeedType,
+    showSearchSuggestions,
+    setShowSearchSuggestions,
+    filterSheetOpen,
+    setFilterSheetOpen,
+    seekingHostOnly,
+    setSeekingHostOnly,
+    visibleEvents,
+    hasMoreEvents,
+    searchRef,
+    loadMoreRef,
+    scrollToFilters,
+    storyEvents,
+    seekingHostEvents,
+    feed,
+    searchSuggestions,
+    handleClearAll,
     searchQuery,
     handleSearchChange,
-    initialSearch,
+  } = ctrl;
+
+  const {
     activeCategory,
     setActiveCategory,
     tagFilter,
@@ -73,7 +70,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     sortedEvents,
     hasActiveFilters,
     activeFilterCount,
-    clearAllFilters,
     activeMood,
     handleSelectMood,
     isLoading,
@@ -85,56 +81,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
   const firstName = currentUser?.name?.split(' ')[0] || t('φίλε', 'there');
   const greeting = getTimeGreeting(firstName, t);
   const motivation = getMotivation(t);
-
-  const handleClearAll = () => {
-    clearAllFilters();
-    setSeekingHostOnly(false);
-  };
-
-  const searchSuggestions = getDefaultHomeSearchSuggestions(t);
-
-  // Sync to 'Discover' feed when the page is loaded with a search query
-  useEffect(() => {
-    if (initialSearch && searchQuery === initialSearch) {
-      setFeedType('Discover');
-    }
-  }, [initialSearch, searchQuery]);
-
-  // Close suggestions on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setShowSearchSuggestions(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const [visibleEventsCount, setVisibleEventsCount] = useState(6);
-
-  const visibleEvents = sortedEvents.slice(0, visibleEventsCount);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (
-          entries[0].isIntersecting &&
-          !isLoading &&
-          visibleEventsCount < sortedEvents.length
-        ) {
-          setVisibleEventsCount((c) => Math.min(c + 6, sortedEvents.length));
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [isLoading, visibleEventsCount, sortedEvents.length]);
 
   return (
     <div className="space-y-4 md:space-y-5 pb-5 md:pb-0">
@@ -204,7 +150,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         onSelectMood={handleSelectMood}
       />
 
-      {/* Events Grid */}
       <section>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
           <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
@@ -306,8 +251,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           )}
         </div>
 
-        {/* Load More Trigger */}
-        {!isLoading && visibleEventsCount < sortedEvents.length && (
+        {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
             <div className={cn('w-6 h-6 border-2 border-t-transparent rounded-full animate-spin', tok.spinner)} />
           </div>

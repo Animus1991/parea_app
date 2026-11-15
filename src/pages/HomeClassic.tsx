@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { CopilotInlinePrompt } from '../components/copilot/CopilotInlinePrompt';
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { EventCard } from "../components/events/EventCard";
 import { EventCardSkeleton } from "../components/common/Skeleton";
 import { Map as MapIcon, CalendarX } from "lucide-react";
-import { useLanguage } from "../lib/i18n";
 import { EmptyState } from "../components/common/EmptyState";
 import { useHomeTheme } from "../hooks/useHomeTheme";
 import { useThemeStyles } from "../hooks/useThemeStyles";
@@ -16,46 +15,46 @@ import { HomeVerifyBanner } from "../components/home/HomeVerifyBanner";
 import { HomeBelowFold } from "../components/home/HomeBelowFold";
 import { HomeBuddySeekStrip } from "../components/buddySeek/HomeBuddySeekStrip";
 import { getTimeGreeting, getMotivation } from "../lib/homeGreeting";
-import { getDefaultHomeSearchSuggestions } from "../lib/homeSearchSuggestions";
 import { HomeSearchDropdown } from "../components/home/HomeSearchDropdown";
-import { useStoryEvents } from "../hooks/useStoryEvents";
-import { useHomeExternalEvents } from "../hooks/useHomeExternalEvents";
-import { useHomeEventFeed } from "../hooks/useHomeEventFeed";
-import { useHomeScrollToFilters } from "../hooks/useHomeScrollToFilters";
 import { useOnboardingWelcome } from "../hooks/useOnboardingWelcome";
 import { HomeOnboardingWelcomeBanner } from "../components/home/HomeOnboardingWelcomeBanner";
 import { HomeContinueStrip } from "../components/home/HomeContinueStrip";
 import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
 import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
+import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
 
 export default function HomeClassic() {
-  const { t } = useLanguage();
   const h = useHomeTheme();
   const tok = useThemeStyles();
   const navigate = useNavigate();
-  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
-  const [feedType, setFeedType] = useState<"For You" | "Discover">("For You");
-  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
-  const [seekingHostOnly, setSeekingHostOnly] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-
-  useHomeExternalEvents();
-  const scrollToFilters = useHomeScrollToFilters();
   const { showWelcome, dismissWelcome } = useOnboardingWelcome();
-  const { storyEvents, seekingHostEvents, isSeekingHost } = useStoryEvents();
-
-  const feed = useHomeEventFeed({
-    feedType,
-    seekingHostOnly,
-    isSeekingHost,
-  });
-
+  const ctrl = useHomePageController();
   const {
+    t,
+    feedType,
+    setFeedType,
+    showSearchSuggestions,
+    setShowSearchSuggestions,
+    filterSheetOpen,
+    setFilterSheetOpen,
+    seekingHostOnly,
+    setSeekingHostOnly,
+    visibleEvents,
+    hasMoreEvents,
+    searchRef,
+    loadMoreRef,
+    scrollToFilters,
+    storyEvents,
+    seekingHostEvents,
+    feed,
+    searchSuggestions,
+    handleClearAll,
     searchQuery,
     handleSearchChange,
-    initialSearch,
+  } = ctrl;
+
+  const {
     activeCategory,
     setActiveCategory,
     tagFilter,
@@ -73,7 +72,6 @@ export default function HomeClassic() {
     sortedEvents,
     hasActiveFilters,
     activeFilterCount,
-    clearAllFilters,
     activeMood,
     handleSelectMood,
     isLoading,
@@ -83,59 +81,9 @@ export default function HomeClassic() {
 
   const currentUser = feed.currentUser;
 
-  const handleClearAll = () => {
-    clearAllFilters();
-    setSeekingHostOnly(false);
-  };
-
-  const searchSuggestions = getDefaultHomeSearchSuggestions(t);
-
-  // Sync to 'Discover' feed when the page is loaded with a search query
-  useEffect(() => {
-    if (initialSearch && searchQuery === initialSearch) {
-      setFeedType("Discover");
-    }
-  }, [initialSearch, searchQuery]);
-
   useEffect(() => {
     if (showWelcome) setFeedType("Discover");
-  }, [showWelcome]);
-
-  // Close suggestions on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setShowSearchSuggestions(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  const [visibleEventsCount, setVisibleEventsCount] = useState(6);
-
-  const visibleEvents = sortedEvents.slice(0, visibleEventsCount);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (
-          entries[0].isIntersecting &&
-          !isLoading &&
-          visibleEventsCount < sortedEvents.length
-        ) {
-          setVisibleEventsCount((c) => Math.min(c + 6, sortedEvents.length));
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [isLoading, visibleEventsCount, sortedEvents.length]);
+  }, [showWelcome, setFeedType]);
 
   return (
     <div className="space-y-4 md:space-y-5 pb-5 md:pb-0">
@@ -299,8 +247,7 @@ export default function HomeClassic() {
           )}
         </div>
 
-        {/* Load More Trigger */}
-        {!isLoading && visibleEventsCount < sortedEvents.length && (
+        {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
             <div className={cn('w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin', tok.accentText)} />
           </div>
