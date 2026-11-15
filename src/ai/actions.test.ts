@@ -55,6 +55,20 @@ describe('copilot action registry', () => {
     expect(useStore.getState().currentUser?.isAdmin ?? false).toBe(false);
   });
 
+  it('catches the user up with the same facts as the Home line', async () => {
+    useStore.getState().login('u1');
+    useStore.setState({ notifications: useStore.getState().notifications.map((n, i) => ({ ...n, read: i > 0 })) });
+    const r = await run('whats_new', {});
+    expect(r.ok).toBe(true);
+    expect(r.el).toMatch(/^Τι νέο υπάρχει:/);
+    expect(r.el).toContain('1 ειδοποίηση');
+    expect(r.link?.path).toBeTruthy();
+    useStore.setState({ notifications: useStore.getState().notifications.map((n) => ({ ...n, read: true })) });
+    const caughtUp = await run('whats_new', {});
+    // With no unread notifications the summary can still list messages or plans, never notifications.
+    expect(caughtUp.el).not.toContain('ειδοποίηση');
+  });
+
   it('saves an event and undoes it', async () => {
     const id = useStore.getState().events.find((e) => !useStore.getState().savedEvents.includes(e.id))!.id;
     const res = await run('save_event', { event: id });

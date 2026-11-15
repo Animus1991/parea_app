@@ -91,6 +91,12 @@ describe('planLocal intents', () => {
     expect(first('go to my calendar')).toEqual({ name: 'navigate', args: { page: 'agenda' } });
     expect(first('ειδοποιήσεις')).toMatchObject({ name: 'summarize_notifications' });
   });
+  it('catches the user up on «τι νέο;» but keeps notification questions separate', () => {
+    expect(first('τι νέο υπάρχει;')).toMatchObject({ name: 'whats_new' });
+    expect(first('τι έχασα;')).toMatchObject({ name: 'whats_new' });
+    expect(first("what's new?")).toMatchObject({ name: 'whats_new' });
+    expect(first('τι νέα ειδοποιήσεις έχω;')).toMatchObject({ name: 'summarize_notifications' });
+  });
   it('hides admin routes from members', () => {
     expect(first('open admin')?.args?.page).not.toBe('admin');
   });

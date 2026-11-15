@@ -30,6 +30,15 @@ test.describe('Nakamas AI copilot', () => {
     await expect(page.getByText(/Αποθήκευσα|is already saved|είναι ήδη αποθηκευμένη|Saved/).first()).toBeVisible();
   });
 
+  test('catches the user up on «τι νέο;»', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.getByRole('button', { name: /Nakamas AI/ }).first().click();
+    const input = page.locator('#copilot-input');
+    await input.fill('τι νέο υπάρχει;');
+    await input.press('Enter');
+    await expect(page.getByText(/Τι νέο υπάρχει:|Είσαι ενημερωμένος/).first()).toBeVisible();
+  });
+
   test('asks for confirmation before changing privacy', async ({ page }) => {
     await enterDemoGuest(page);
     // Open via the launcher: under parallel load an early Ctrl+J can land before
@@ -50,7 +59,9 @@ test.describe('Nakamas AI copilot', () => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await seedTheme(page, theme);
       await enterDemoGuest(page);
-      await page.keyboard.press('Control+j');
+      // Launcher, not Ctrl+J: under parallel load an early shortcut can land
+      // before the app is interactive (same as the privacy test above).
+      await page.getByRole('button', { name: /Nakamas AI/ }).first().click();
       const input = page.locator('#copilot-input');
       await expect(input).toBeVisible();
       await input.fill('βρες πεζοπορία');

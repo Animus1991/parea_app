@@ -99,6 +99,14 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
     return reply('Με χαρά! Ό,τι άλλο χρειαστείς, εδώ είμαι.', "You're welcome! I'm here if you need anything else.");
   }
 
+  /* 1b ─ catch me up («τι νέο;», «τι έχασα;») */
+  if (
+    hasAny(p, ['τι νεο', 'τι νεα', 'τι εχασα', 'ενημερωσε με', 'ενημερωση για μενα', 'whats new', 'what s new', 'what is new', 'what did i miss', 'catch me up', 'any news']) &&
+    !hasAny(p, ['ειδοποιησ', 'notification'])
+  ) {
+    return { calls: [call('whats_new')] };
+  }
+
   /* 2 ─ undo */
   if (/^(αναιρεσ\S*|undo|ακυρωσε (το )?τελευταιο|revert)/.test(n)) return { calls: [call(UNDO_CALL)] };
 

@@ -22,6 +22,8 @@ import { normalize } from './text';
 import { resolveEventRef, searchEvents } from './eventSearch';
 import type { ActionArgs, ActionResult, ActionRuntime, CopilotAction, ParamSchema } from './types';
 import { isPlatformAdmin } from '../lib/roles';
+import { buildReturnSummary, describeReturnPart, returnPartPath } from '../lib/returnVisit';
+import { previousVisitAt } from '../lib/visitClock';
 
 /* ───────────────────────── helpers ───────────────────────── */
 
@@ -983,6 +985,54 @@ const notifSummaryAction: CopilotAction = {
   },
 };
 
+/** Same source as the Home welcome-back line (lib/returnVisit), so both always agree. */
+const whatsNewAction: CopilotAction = {
+  name: 'whats_new',
+  description: "Catch the user up: their next plan within two days, new plans for them since the last visit, unread messages and notifications.",
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: () => {
+    const s = state();
+    const user = s.currentUser;
+    if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const now = new Date();
+    const previous = previousVisitAt(user.id);
+    const since = previous ?? now.getTime() - 7 * 24 * 3600 * 1000;
+    const mine = new Set(s.groups.filter((g) => g.members.includes(user.id) || g.pendingMembers?.includes(user.id)).map((g) => g.eventId));
+    const next = s.events
+      .filter((e) => mine.has(e.id))
+      .map((e) => ({ id: e.id, title: e.title, start: new Date(`${e.date}T${/^\d{2}:\d{2}$/.test(e.time ?? '') ? e.time : '12:00'}:00`) }))
+      .filter((e) => !Number.isNaN(e.start.getTime()) && e.start.getTime() >= now.getTime())
+      .sort((a, b) => a.start.getTime() - b.start.getTime())[0] ?? null;
+    const newPlans = s.companyRequests.filter(
+      (r) => r.status === 'active' && r.creatorUserId !== user.id && Date.parse(r.createdAt) > since,
+    ).length;
+    const unreadChats = useChatStore.getState().conversations.reduce((n, c) => n + (c.status === 'archived' ? 0 : c.unreadCount), 0);
+    // Asked directly, so news counts even within the same session.
+    const parts = buildReturnSummary({
+      now,
+      previousVisitAt: 0,
+      nextEvent: next,
+      newPlans,
+      unreadChats,
+      unreadNotifications: s.notifications.filter((n) => !n.read).length,
+    });
+    if (parts.length === 0) {
+      return { ok: true, el: 'Είσαι ενημερωμένος: τίποτα νέο αυτή τη στιγμή.', en: "You're all caught up: nothing new right now." };
+    }
+    const tEl = (g: string) => g;
+    const tEn = (_g: string, e: string) => e;
+    const first = parts[0];
+    return {
+      ok: true,
+      el: `Τι νέο υπάρχει:\n${parts.map((p) => `• ${describeReturnPart(p, tEl)}`).join('\n')}`,
+      en: `What's new:\n${parts.map((p) => `• ${describeReturnPart(p, tEn)}`).join('\n')}`,
+      link: { path: returnPartPath(first), el: 'Άνοιγμα', en: 'Open' },
+      data: { parts: parts.map((p) => p.kind), newPlans, unreadChats },
+    };
+  },
+};
+
 const progressAction: CopilotAction = {
   name: 'show_progress',
   description: "Report the user's XP, level, badges and joined challenges.",
@@ -1070,9 +1120,9 @@ const capabilitiesAction: CopilotAction = {
   run: () => ({
     ok: true,
     el:
-      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα και τις ειδοποιήσεις σου\n• Να στείλω μήνυμα στην ομάδα σου ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\n• Να εξηγήσω αξιοπιστία, βαθμίδες, ασφάλεια, XP\nΌ,τι κάνω αναιρείται με ένα κλικ.',
+      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα και τις ειδοποιήσεις σου\n• Να σου πω τι νέο υπάρχει από την τελευταία σου επίσκεψη: «τι νέο;»\n• Να στείλω μήνυμα στην ομάδα σου ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\n• Να εξηγήσω αξιοπιστία, βαθμίδες, ασφάλεια, XP\nΌ,τι κάνω αναιρείται με ένα κλικ.',
     en:
-      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule and notifications\n• Message your group or create an event (with confirmation)\n• Change theme, language, privacy, notifications, interests\n• Explain reliability, tiers, safety and XP\nEverything I do can be undone in one click.',
+      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule and notifications\n• Catch you up on what is new since your last visit: “what’s new?”\n• Message your group or create an event (with confirmation)\n• Change theme, language, privacy, notifications, interests\n• Explain reliability, tiers, safety and XP\nEverything I do can be undone in one click.',
   }),
 };
 
@@ -1133,6 +1183,7 @@ export const COPILOT_ACTIONS: CopilotAction[] = [
   sidebarAction,
   markReadAction,
   notifSummaryAction,
+  whatsNewAction,
   progressAction,
   reportAction,
   explainAction,
