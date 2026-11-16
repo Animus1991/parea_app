@@ -8,6 +8,7 @@ import { useLanguageStore } from '../store/languageStore';
 import { availableActions, getAction, toFunctionDeclarations } from './actions';
 import { buildContextSnapshot, buildSystemInstruction } from './context';
 import { callCopilotModel, getEngineStatus, markEngineUnavailable, type GeminiContent, type GeminiPart } from './geminiClient';
+import { invalidateAfterAction } from './invalidation';
 import { planLocal, UNDO_CALL } from './localEngine';
 import { detectLanguage } from './text';
 import type { ActionArgs, ActionResult, ActionRuntime, AiLang, PlannedCall } from './types';
@@ -131,6 +132,7 @@ async function executeCall(callIn: PlannedCall, lang: AiLang, engine: CopilotEng
     action: { name: action.name, args: callIn.args, risk: action.risk, status: result.ok ? 'done' : 'failed' },
   });
   applyResult(id, result);
+  if (result.ok) invalidateAfterAction(action.name);
   audit(action.name, action.risk, result.ok ? 'done' : 'failed', engine, callIn.args, id);
   return argsSummary(result);
 }
@@ -153,6 +155,7 @@ export async function confirmAction(messageId: string): Promise<void> {
   if (!result.ok) store().updateAction(messageId, { status: 'failed' });
   const id = sayBoth(result.el, result.en, lang, msg.engine ?? 'local', { eventIds: result.eventIds, link: result.link, error: !result.ok });
   applyResult(id, result);
+  if (result.ok) invalidateAfterAction(action.name);
   audit(action.name, action.risk, result.ok ? 'done' : 'failed', msg.engine ?? 'local', msg.action.args, id);
 }
 

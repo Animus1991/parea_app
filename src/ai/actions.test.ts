@@ -140,4 +140,78 @@ describe('copilot action registry', () => {
     const res = await run('create_event', { title: 'Test' });
     expect(res.ok).toBe(false);
   });
+
+  it('starts demo email verification and undoes it', async () => {
+    useStore.getState().login('u1');
+    const uid = useStore.getState().currentUser!.id;
+    useStore.getState().updateUser(uid, { emailVerified: false, phoneVerified: true, idVerified: true });
+    const res = await run('start_verification', { method: 'email' });
+    expect(res.ok).toBe(true);
+    expect(useStore.getState().currentUser?.emailVerified).toBe(true);
+    expect(navigated.at(-1)).toBe('/verification?method=email');
+    res.undo?.();
+    expect(useStore.getState().currentUser?.emailVerified).toBe(false);
+  });
+
+  it('summarises the wallet demo balances', async () => {
+    useStore.getState().login('u1');
+    const uid = useStore.getState().currentUser!.id;
+    useStore.getState().updateUser(uid, { isOrganizer: true } as never);
+    const res = await run('summarize_wallet', {});
+    expect(res.ok).toBe(true);
+    expect(res.el).toMatch(/345/);
+    expect(res.link?.path).toBe('/wallet');
+  });
+
+  it('summarises trust gaps and deep-links verification', async () => {
+    useStore.getState().login('u1');
+    const uid = useStore.getState().currentUser!.id;
+    useStore.getState().updateUser(uid, {
+      emailVerified: false,
+      phoneVerified: true,
+      idVerified: true,
+      reliabilityScore: 80,
+    } as never);
+    const res = await run('summarize_trust', {});
+    expect(res.ok).toBe(true);
+    expect(navigated.at(-1)).toBe('/verification?method=email');
+    expect(res.link?.path).toBe('/verification?method=email');
+  });
+
+  it('joins a challenge with undo', async () => {
+    useStore.getState().login('u1');
+    useStore.setState({ challengesJoined: [] });
+    const res = await run('join_challenge', { challengeId: 'c3' });
+    expect(useStore.getState().challengesJoined).toContain('c3');
+    res.undo?.();
+    expect(useStore.getState().challengesJoined).not.toContain('c3');
+  });
+
+  it('deep-links settings availability via navigate section', async () => {
+    const res = await run('navigate', { page: 'settings', section: 'availability' });
+    expect(res.ok).toBe(true);
+    expect(navigated.at(-1)).toBe('/settings?availability=1');
+  });
+
+  it('lists forming plans', async () => {
+    useStore.getState().login('u1');
+    const res = await run('list_forming_plans', { limit: 3 });
+    expect(res.ok).toBe(true);
+    expect(res.link?.path).toBe('/buddy-seek');
+  });
+
+  it('answers where_is and opens the top page', async () => {
+    const res = await run('where_is', { query: 'πού εξάγω το ημερολόγιο;' });
+    expect(res.ok).toBe(true);
+    expect(navigated.at(-1)).toBe('/agenda');
+  });
+
+  it('drafts a profile proposal without saving', async () => {
+    useStore.getState().login('u1');
+    const before = useStore.getState().currentUser?.bio;
+    const res = await run('draft_profile', { bio: 'AI proposed bio' });
+    expect(res.ok).toBe(true);
+    expect(useStore.getState().currentUser?.bio).toBe(before);
+    expect(navigated.at(-1)).toMatch(/^\/profile/);
+  });
 });

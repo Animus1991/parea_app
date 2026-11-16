@@ -458,17 +458,39 @@ export const useStore = create<AppState>()(
   leaveGroup: (groupId) =>
     set((state) => {
       if (!state.currentUser) return state;
+      const uid = state.currentUser.id;
+      // Keep Plans / BuddySeek in sync: company joins coordinated via this
+      // group become withdrawn when the member leaves.
+      const reopenedRequestIds = new Set<string>();
+      const companyJoinRequests = state.companyJoinRequests.map((j) => {
+        const tied =
+          j.coordinationGroupId === groupId ||
+          j.fromGroupId === groupId ||
+          j.targetGroupId === groupId;
+        if (!tied) return j;
+        if (j.fromUserId !== uid && j.targetUserId !== uid) return j;
+        if (j.status !== 'pending' && j.status !== 'accepted') return j;
+        reopenedRequestIds.add(j.companyRequestId);
+        return { ...j, status: 'withdrawn' as const };
+      });
+      const companyRequests = state.companyRequests.map((r) =>
+        r.matchedGroupId === groupId && r.status === 'matched'
+          ? { ...r, status: 'active' as const, matchedGroupId: undefined, updatedAt: new Date().toISOString() }
+          : reopenedRequestIds.has(r.id) && r.status === 'matched'
+            ? { ...r, status: 'active' as const, matchedGroupId: undefined, updatedAt: new Date().toISOString() }
+            : r,
+      );
       return {
         groups: state.groups.map((g) =>
           g.id === groupId
             ? {
                 ...g,
-                members: g.members.filter(
-                  (mId) => state.currentUser && mId !== state.currentUser.id,
-                ),
+                members: g.members.filter((mId) => mId !== uid),
               }
             : g,
         ),
+        companyJoinRequests,
+        companyRequests,
       };
     }),
 
@@ -1140,18 +1162,84 @@ export const useStore = create<AppState>()(
   },
 
   declineCompanyJoinRequest: (joinRequestId) =>
-    set((state) => ({
-      companyJoinRequests: state.companyJoinRequests.map((j) =>
-        j.id === joinRequestId ? { ...j, status: 'declined' as const } : j,
-      ),
-    })),
+    set((state) => {
+      const join = state.companyJoinRequests.find((j) => j.id === joinRequestId);
+      if (!join || join.status !== 'pending') {
+        return {
+          companyJoinRequests: state.companyJoinRequests.map((j) =>
+            j.id === joinRequestId ? { ...j, status: 'declined' as const } : j,
+          ),
+        };
+      }
+      const companyRequest = state.companyRequests.find((r) => r.id === join.companyRequestId);
+      const event = companyRequest
+        ? state.events.find((e) => e.id === companyRequest.eventId)
+        : undefined;
+      return {
+        companyJoinRequests: state.companyJoinRequests.map((j) =>
+          j.id === joinRequestId ? { ...j, status: 'declined' as const } : j,
+        ),
+        notifications: [
+          normalizeAppNotification({
+            id: `n_cjr_dec_${Date.now()}`,
+            type: 'buddy_seek',
+            messageEn: event
+              ? `Your join request for "${event.title}" was declined`
+              : 'Your company join request was declined',
+            messageGr: event
+              ? `Το αίτημά σου για «${event.title}» απορρίφθηκε`
+              : 'Το αίτημα παρέας σου απορρίφθηκε',
+            timeEn: 'Just now',
+            timeGr: 'Μόλις τώρα',
+            icon: Users,
+            color: 'bg-rose-100 text-rose-700',
+          }),
+          ...state.notifications,
+        ],
+      };
+    }),
 
   withdrawCompanyJoinRequest: (joinRequestId) =>
-    set((state) => ({
-      companyJoinRequests: state.companyJoinRequests.map((j) =>
-        j.id === joinRequestId ? { ...j, status: 'withdrawn' as const } : j,
-      ),
-    })),
+    set((state) => {
+      const join = state.companyJoinRequests.find((j) => j.id === joinRequestId);
+      if (!join || join.status !== 'pending') {
+        return {
+          companyJoinRequests: state.companyJoinRequests.map((j) =>
+            j.id === joinRequestId ? { ...j, status: 'withdrawn' as const } : j,
+          ),
+        };
+      }
+      const companyRequest = state.companyRequests.find((r) => r.id === join.companyRequestId);
+      const event = companyRequest
+        ? state.events.find((e) => e.id === companyRequest.eventId)
+        : undefined;
+      const targetId = join.targetUserId;
+      return {
+        companyJoinRequests: state.companyJoinRequests.map((j) =>
+          j.id === joinRequestId ? { ...j, status: 'withdrawn' as const } : j,
+        ),
+        // Notify the plan owner that the requester withdrew (same inbox stream).
+        notifications: targetId
+          ? [
+              normalizeAppNotification({
+                id: `n_cjr_wd_${Date.now()}`,
+                type: 'buddy_seek',
+                messageEn: event
+                  ? `Someone withdrew their join request for "${event.title}"`
+                  : 'A company join request was withdrawn',
+                messageGr: event
+                  ? `Κάποιος ανακάλεσε το αίτημα για «${event.title}»`
+                  : 'Ανακλήθηκε αίτημα παρέας',
+                timeEn: 'Just now',
+                timeGr: 'Μόλις τώρα',
+                icon: Users,
+                color: 'bg-amber-100 text-amber-700',
+              }),
+              ...state.notifications,
+            ]
+          : state.notifications,
+      };
+    }),
 
   reportCompanyRequest: (requestId, reason) =>
     set((state) => {

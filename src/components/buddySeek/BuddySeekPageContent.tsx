@@ -25,6 +25,8 @@ import type { Event } from '../../types';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
 import type { CompanyJoinRequestStatus, CompanyRequest } from '../../types/companyRequest';
 import { readStorage, writeStorage } from '../../lib/safeUrl';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 
 type FilterKey = 'all' | 'open_spots' | 'verified' | 'small_groups' | 'flexible' | 'saved_events' | 'high_match';
 
@@ -134,10 +136,20 @@ export default function BuddySeekPageContent() {
     [feed.items],
   );
 
+  usePublishPageSnapshot({
+    titleEl: 'Βρες Nakamas',
+    titleEn: 'Find Nakamas',
+    state: filter,
+    summaryEl: `${filtered.length} σχέδια · ${pendingForMe.length} αιτήματα προς εσένα`,
+    summaryEn: `${filtered.length} plans · ${pendingForMe.length} requests for you`,
+    visibleIds: filtered.slice(0, 8).map((i) => i.intent.id),
+  });
+
   return (
     <div className="w-full max-w-full min-w-0 space-y-4 pb-16 pt-4">
       <header className="space-y-3">
         <h1 className={cn('text-sm md:text-base font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
+        <CopilotInlinePrompt />
         <PlansFormingValueHero insights={feed.insights} />
         <PlansFormingStatsBar plain insights={feed.insights} />
         <div className="flex flex-wrap gap-2">

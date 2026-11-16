@@ -17,7 +17,8 @@ import {
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
-import type { CopilotMessage } from '../../store/copilotStore';
+import { useCopilotStore, type CopilotMessage } from '../../store/copilotStore';
+import { useAiAuditStore } from '../../store/aiAuditStore';
 import { canUndo, cancelAction, confirmAction, undoAction } from '../../ai/copilot';
 import { formatEventLine } from '../../ai/actions';
 import { explainEventMatch } from '../../lib/matchingExplain';
@@ -189,8 +190,30 @@ function EventResult({ eventId, index, onNavigate }: { eventId: string; index: n
 export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMessage; onNavigate: () => void }) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const updateMessage = useCopilotStore((s) => s.update);
+  const recordAudit = useAiAuditStore((s) => s.record);
+  const currentUserId = useStore((s) => s.currentUser?.id ?? null);
   const lang = message.lang ?? language;
   const pick = (el?: string, en?: string) => (lang === 'en' ? en ?? el : el ?? en) ?? '';
+
+  const setFeedback = (value: 'up' | 'down') => {
+    if (message.feedback === value) return;
+    updateMessage(message.id, { feedback: value });
+    recordAudit({
+      userId: currentUserId,
+      action: `answer_feedback_${value}`,
+      risk: 'safe',
+      status: 'done',
+      engine: message.engine ?? 'local',
+      argKeys: ['messageId'],
+      messageId: message.id,
+    });
+    toast.success(
+      value === 'up'
+        ? t('Ευχαριστούμε για το feedback', 'Thanks for the feedback')
+        : t('Θα προσπαθήσουμε καλύτερα', "We'll try to do better"),
+    );
+  };
 
   if (message.role === 'user') {
     return (
@@ -293,7 +316,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
             ))}
           </ol>
         )}
-        {(message.link || undoable || message.undone) && (
+        {(message.link || undoable || message.undone || (!message.error && body)) && (
           <div className="flex flex-wrap items-center gap-2">
             {message.link && (
               <button
@@ -317,6 +340,34 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
               </button>
             )}
             {message.undone && <span className="text-xs font-medium text-ink-muted">{t('Αναιρέθηκε', 'Undone')}</span>}
+            {!message.error && body && (
+              <div className="ml-auto flex items-center gap-0.5" role="group" aria-label={t('Feedback απάντησης', 'Answer feedback')}>
+                <button
+                  type="button"
+                  onClick={() => setFeedback('up')}
+                  aria-pressed={message.feedback === 'up'}
+                  aria-label={t('Χρήσιμη απάντηση', 'Helpful answer')}
+                  className={cn(
+                    'inline-flex h-8 w-8 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+                    message.feedback === 'up' && 'bg-accent-soft text-accent',
+                  )}
+                >
+                  <ThumbsUp className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFeedback('down')}
+                  aria-pressed={message.feedback === 'down'}
+                  aria-label={t('Μη χρήσιμη απάντηση', 'Unhelpful answer')}
+                  className={cn(
+                    'inline-flex h-8 w-8 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+                    message.feedback === 'down' && 'bg-accent-soft text-accent',
+                  )}
+                >
+                  <ThumbsDown className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
           </div>
         )}
         {!message.error && <CopilotFeedback messageId={message.id} />}

@@ -12,6 +12,8 @@ import { useNotificationsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
 
@@ -201,6 +203,15 @@ export default function NotificationsPageContent() {
     );
   };
 
+  usePublishPageSnapshot({
+    titleEl: 'Ειδοποιήσεις',
+    titleEn: 'Notifications',
+    state: activeTab,
+    summaryEl: `${unreadCount} μη αναγνωσμένες`,
+    summaryEn: `${unreadCount} unread`,
+    visibleIds: visibleNotifs.slice(0, 8).map((n) => n.id),
+  });
+
   return (
     <div className="mx-auto max-w-full space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="flex justify-between items-end">
@@ -224,6 +235,8 @@ export default function NotificationsPageContent() {
           </button>
         )}
       </div>
+
+      <CopilotInlinePrompt />
 
       <div
         className="flex gap-1.5 overflow-x-auto pb-1 noscrollbar"
@@ -292,6 +305,8 @@ export default function NotificationsPageContent() {
               ? () => setActiveTab('all')
               : () => navigate('/')
           }
+          askAi
+          askPrompt={t('Τι νέο υπάρχει στις ειδοποιήσεις;', 'Summarise my notifications')}
         />
       ) : (
         <div className="space-y-5">

@@ -10,6 +10,9 @@ import { toast } from 'sonner';
 import { Modal } from '../common/Modal';
 import { isStripeConfigured, openStripeCheckout } from '../../services/payments';
 import { WALLET_TYPO } from '../../lib/typographyTokens';
+import { formatWalletEur, WALLET_DEMO } from '../../lib/walletDemo';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 
 export default function WalletPageContent() {
   const { t } = useLanguage();
@@ -18,6 +21,14 @@ export default function WalletPageContent() {
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [showPayouts, setShowPayouts] = useState(false);
   const stripeReady = isStripeConfigured();
+
+  usePublishPageSnapshot({
+    titleEl: 'Πορτοφόλι & Έσοδα',
+    titleEn: 'Wallet & Earnings',
+    state: txFilter,
+    summaryEl: `Διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)} · εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}`,
+    summaryEn: `Available ${formatWalletEur(WALLET_DEMO.availableEur)} · pending ${formatWalletEur(WALLET_DEMO.pendingEur)}`,
+  });
 
   const transactions = [
     { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: t('12 Οκτ 2024', 'Oct 12, 2024'), monthKey: 'Oct', desc: t('Μεταφορά στην τράπεζα 4092 (demo)', 'Transfer to Bank ****4092 (demo)') },
@@ -41,13 +52,15 @@ export default function WalletPageContent() {
         </p>
       </div>
 
+      <CopilotInlinePrompt />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className={cn("p-4 text-white shadow-soft-md", a.balanceBg)}>
           <div className={cn("flex items-center gap-2 mb-2", a.balanceLabel)}>
             <Euro className="w-4 h-4" />
             <h3 className={WALLET_TYPO.kpiLabel}>{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
-          <p className={cn(WALLET_TYPO.kpiValue, 'mb-4')}>€345.50</p>
+          <p className={cn(WALLET_TYPO.kpiValue, 'mb-4')}>{formatWalletEur(WALLET_DEMO.availableEur)}</p>
           <Button className={cn("w-full", a.withdrawBtn)} onClick={() => setShowWithdraw(true)}>
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
@@ -58,7 +71,7 @@ export default function WalletPageContent() {
             <Clock className="w-4 h-4" />
             <h3 className={WALLET_TYPO.kpiLabel}>{t('Εκκρεμεί', 'Pending')}</h3>
           </div>
-          <p className={cn(WALLET_TYPO.kpiValueSecondary, 'mb-2', a.head)}>€85.00</p>
+          <p className={cn(WALLET_TYPO.kpiValueSecondary, 'mb-2', a.head)}>{formatWalletEur(WALLET_DEMO.pendingEur)}</p>
           <p className={cn(WALLET_TYPO.kpiHint, a.muted)}>
             {t('Εξοφλούνται 3-5 ημέρες μετά.', 'Clears 3-5 days after event.')}
           </p>
@@ -71,7 +84,7 @@ export default function WalletPageContent() {
             </div>
             <div>
               <h3 className={cn(WALLET_TYPO.rowTitle, a.head)}>{t('Τραπεζικός λογαριασμός', 'Bank Account')}</h3>
-              <p className={cn(WALLET_TYPO.rowMeta, a.sub)}>{t('Chase ****4092 (demo)', 'Chase ****4092 (demo)')}</p>
+              <p className={cn(WALLET_TYPO.rowMeta, a.sub)}>{t(WALLET_DEMO.bankLabelEl, WALLET_DEMO.bankLabelEn)}</p>
             </div>
           </div>
           <Button variant="outline" size="sm" className="w-full text-xs" onClick={() => setShowPayouts(true)}>{t('Διαχείριση', 'Manage Payouts')}</Button>
@@ -104,6 +117,8 @@ export default function WalletPageContent() {
                 )}
                 actionLabel={t('Όλες', 'All Time')}
                 onAction={() => setTxFilter('all')}
+                askAi
+                askPrompt={t('Σύνοψη πορτοφολιού', 'Summarise my wallet')}
               />
             </div>
           ) : (

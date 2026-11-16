@@ -43,6 +43,8 @@ import { downloadCalendarIcs } from "../../lib/calendarIcs";
 import { StoryViewer } from "../home/StoryViewer";
 import { CalendarHourlySchedule } from "./CalendarHourlySchedule";
 import type { Event } from "../../types";
+import { CopilotInlinePrompt } from "../copilot/CopilotInlinePrompt";
+import { usePublishPageSnapshot } from "../../hooks/usePublishPageSnapshot";
 
 export default function MyCalendarPageContent() {
   const navigate = useNavigate();
@@ -317,6 +319,15 @@ export default function MyCalendarPageContent() {
     );
   };
 
+  usePublishPageSnapshot({
+    titleEl: "Το Ημερολόγιό μου",
+    titleEn: "My Calendar",
+    state: view,
+    summaryEl: `${upcomingEvents.length} επερχόμενα`,
+    summaryEn: `${upcomingEvents.length} upcoming`,
+    visibleIds: upcomingEvents.slice(0, 8).map((e) => e.id),
+  });
+
   return (
     <div className="w-full max-w-full min-w-0 space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
@@ -403,6 +414,8 @@ export default function MyCalendarPageContent() {
         </div>
       </div>
 
+      <CopilotInlinePrompt />
+
       <ResourceStateGate
         isLoading={isLoading}
         isError={isError}
@@ -426,6 +439,8 @@ export default function MyCalendarPageContent() {
           )}
           actionLabel={t("Εξερεύνησε εκδηλώσεις", "Explore experiences")}
           onAction={() => navigate("/")}
+          askAi
+          askPrompt={t("Τι έχω αυτή την εβδομάδα; Πρότεινέ μου κάτι.", "What do I have this week? Suggest something.")}
         />
       )}
       </ResourceStateGate>

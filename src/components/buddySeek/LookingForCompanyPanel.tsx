@@ -16,6 +16,7 @@ import { GroupMergeModal } from './GroupMergeModal';
 import type { Group } from '../../types';
 import type { Event } from '../../types';
 import type { EventDetailGroupAccent } from '../events/EventDetailGroupCard';
+import { askCopilot } from '../../lib/askCopilot';
 
 type Tab = 'requests' | 'groups';
 
@@ -230,9 +231,45 @@ export function LookingForCompanyPanel({
               </div>
 
               {filteredRequests.length === 0 ? (
-                <p className={cn('text-sm', tok.muted)}>
-                  {t('Κανείς άλλος δεν εμφανίζεται με τις τρέχουσες ρυθμίσεις ορατότητας.', 'No one else visible with current visibility rules.')}
-                </p>
+                <div className={cn('rounded-xl border border-dashed p-4 space-y-3', darkSurface ? 'border-gray-700' : 'border-gray-200')}>
+                  <p className={cn('text-sm', tok.muted)}>
+                    {filterOpen
+                      ? t('Κανείς δεν ταιριάζει με αυτά τα φίλτρα.', 'No one matches these filters.')
+                      : t('Κανείς άλλος δεν εμφανίζεται με τις τρέχουσες ρυθμίσεις ορατότητας.', 'No one else visible with current visibility rules.')}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {filterOpen && (
+                      <button
+                        type="button"
+                        onClick={() => setFilterOpen(null)}
+                        className="text-xs font-bold px-3 py-2 rounded-xl bg-cyan-600 text-white"
+                      >
+                        {t('Καθαρισμός φίλτρων', 'Clear filters')}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => navigate('/buddy-seek')}
+                      className={cn('text-xs font-bold px-3 py-2 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                    >
+                      {t('Περιήγηση σχεδίων', 'Browse plans')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        askCopilot(
+                          t(
+                            'Δείξε σχέδια που σχηματίζονται και βοήθησέ με να βρω παρέα',
+                            'List plans that are forming and help me find company',
+                          ),
+                        )
+                      }
+                      className={cn('text-xs font-bold px-3 py-2 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                    >
+                      {t('Ρώτα το AI', 'Ask AI')}
+                    </button>
+                  </div>
+                </div>
               ) : (
                 <div className="space-y-3">
                   {filteredRequests.map(({ intent, seeker }) => (
@@ -296,7 +333,32 @@ export function LookingForCompanyPanel({
           {tab === 'groups' && (
             <div className="space-y-2">
               {eventGroups.length === 0 ? (
-                <p className={cn('text-sm', tok.muted)}>{t('Δεν υπάρχουν ομάδες ακόμα.', 'No groups yet.')}</p>
+                <div className={cn('rounded-xl border border-dashed p-4 space-y-3', darkSurface ? 'border-gray-700' : 'border-gray-200')}>
+                  <p className={cn('text-sm', tok.muted)}>{t('Δεν υπάρχουν ομάδες ακόμα.', 'No groups yet.')}</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/events/${event.id}/join`)}
+                      className="text-xs font-bold px-3 py-2 rounded-xl bg-cyan-600 text-white"
+                    >
+                      {t('Έναρξη ομάδας', 'Start a group')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        askCopilot(
+                          t(
+                            `Θέλω παρέα για «${event.title}» — τι προτείνεις;`,
+                            `I want company for "${event.title}" — what do you suggest?`,
+                          ),
+                        )
+                      }
+                      className={cn('text-xs font-bold px-3 py-2 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                    >
+                      {t('Ρώτα το AI', 'Ask AI')}
+                    </button>
+                  </div>
+                </div>
               ) : (
                 eventGroups.map((g) => {
                   const spots = g.targetSize - g.members.length;

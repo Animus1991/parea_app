@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Card } from "../common/Card";
 import { Badge } from "../common/Badge";
 import { Button } from "../common/Button";
@@ -31,6 +31,7 @@ import {
   Share2,
   User as UserIcon,
   CreditCard as CreditCardIcon,
+  Bot,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -41,6 +42,7 @@ import { APP_TYPO } from "../../lib/typographyTokens";
 import { canonicalInterest, interestLabel, sameInterest } from "../../lib/interests";
 import { useProfileContrast } from "../../hooks/usePageContrast";
 import { ProfileCompletionMeter } from "./ProfileCompletionMeter";
+import { useFormDraft, type FormDraftFields } from "../../lib/formDraft";
 
 // ─── Main component ──────────────────────────────────────────
 export default function ProfilePageContent() {
@@ -77,6 +79,25 @@ export default function ProfilePageContent() {
     else next.set("tab", id);
     setSearchParams(next, { replace: true });
   };
+
+  const applyProfileDraft = useCallback(
+    (fields: FormDraftFields) => {
+      if (typeof fields.bio === "string") {
+        setTempBio(fields.bio);
+        setIsEditingBio(true);
+      }
+      if (typeof fields.name === "string") {
+        setTempName(fields.name);
+        setIsEditingName(true);
+      }
+      if (typeof fields.interest === "string" && fields.interest.trim()) {
+        setNewInterest(fields.interest);
+        setIsAddingInterest(true);
+      }
+    },
+    [],
+  );
+  const profileDraft = useFormDraft("profile", applyProfileDraft, Boolean(currentUser));
 
   const handleInvite = async () => {
     const url = `${window.location.origin}/login?ref=${encodeURIComponent(currentUser?.id ?? "")}`;
@@ -154,6 +175,21 @@ export default function ProfilePageContent() {
           </Button>
         </div>
       </div>
+
+      {profileDraft.filled.length > 0 && (
+        <p role="status" className="flex items-center gap-2 rounded-xl border border-accent/30 bg-accent-soft px-3 py-2 text-sm font-medium text-ink">
+          <Bot className="h-4 w-4 shrink-0 text-accent" aria-hidden />
+          <span className="flex-1">
+            {t(
+              "Το Nakamas AI πρότεινε αλλαγές — έλεγξέ τις και πάτα Αποθήκευση.",
+              "Nakamas AI proposed changes — review them and press Save.",
+            )}
+          </span>
+          <button type="button" onClick={profileDraft.dismiss} className="text-xs font-bold underline shrink-0">
+            {t("Απόκρυψη", "Dismiss")}
+          </button>
+        </p>
+      )}
 
       <ProfileCompletionMeter />
 
@@ -270,10 +306,27 @@ export default function ProfilePageContent() {
                 <Edit2 className="w-3 h-3" /> {t("Επεξεργασία", "Edit")}
               </Button>
               {currentUser.isOrganizer ? (
-                <Button size="sm" onClick={() => navigate(`/organizer/${currentUser.id}`)}>{t("Προφίλ Διοργανωτή", "Organizer Profile")}</Button>
+                <>
+                  <Button size="sm" onClick={() => navigate(`/organizer/${currentUser.id}`)}>
+                    {t('Προφίλ Διοργανωτή', 'Organizer Profile')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => navigate('/manage')}
+                    className="flex items-center gap-1.5"
+                  >
+                    <Star className="w-3 h-3" /> {t('Πίνακας Διοργανωτή', 'Organizer Workspace')}
+                  </Button>
+                </>
               ) : (
-                <Button size="sm" variant="ghost" onClick={() => navigate("/manage")} className="flex items-center gap-1.5">
-                  <Star className="w-3 h-3" /> {t("Γίνε Διοργανωτής", "Become Organizer")}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => navigate('/create')}
+                  className="flex items-center gap-1.5"
+                >
+                  <Star className="w-3 h-3" /> {t('Γίνε Διοργανωτής', 'Become Organizer')}
                 </Button>
               )}
             </div>
