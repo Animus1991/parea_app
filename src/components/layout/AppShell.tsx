@@ -34,9 +34,10 @@ import { useWallUnreadCount } from '../../hooks/useWallUnreadCount';
 
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
+  const userId = useStore(state => state.currentUser?.id ?? null);
   const wallUnread = useWallUnreadCount();
   // The bell covers wall activity too (comments, reactions, tags) — one place to look.
-  return notifications.filter(n => !n.read).length + wallUnread;
+  return notifications.filter(n => !n.read && (!n.forUserId || n.forUserId === userId)).length + wallUnread;
 }
 import { useLanguage } from '../../lib/i18n';
 

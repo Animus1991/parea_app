@@ -115,9 +115,31 @@ export default function WallFeedPageContent() {
           {focusPost ? (
             <PostCard post={focusPost} highlighted />
           ) : (
-            <p role="status" className="rounded-2xl border border-dashed border-border px-4 py-4 text-sm font-medium text-ink-muted">
-              {t('Αυτή η δημοσίευση δεν είναι πια διαθέσιμη για σένα.', 'This post is no longer available to you.')}
-            </p>
+            <div className="space-y-3 rounded-2xl border border-dashed border-border px-4 py-4">
+              <p role="status" className="text-sm font-medium text-ink-muted">
+                {t('Αυτή η δημοσίευση δεν είναι πια διαθέσιμη για σένα.', 'This post is no longer available to you.')}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = new URLSearchParams(searchParams);
+                    next.delete('post');
+                    setSearchParams(next, { replace: true });
+                  }}
+                  className="inline-flex min-h-9 items-center rounded-full border border-border px-3 text-xs font-bold text-ink"
+                >
+                  {t('Όλη η ροή', 'Whole feed')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/buddy-seek')}
+                  className="inline-flex min-h-9 items-center rounded-full px-3 text-xs font-bold text-ink underline"
+                >
+                  {t('Βρες Nakamas', 'Find Nakamas')}
+                </button>
+              </div>
+            </div>
           )}
         </div>
       )}
@@ -168,22 +190,48 @@ export default function WallFeedPageContent() {
               ? t('Ο τοίχος σου είναι ακόμα άδειος', 'Your wall is still empty')
               : filter === 'network'
                 ? t('Καμία δημόσια δημοσίευση ακόμα', 'No public posts yet')
-                : t('Ήσυχα εδώ προς το παρόν', 'Quiet here for now')
+                : filter === 'connections' && byFilter.all.length > 0
+                  ? t('Καμία δημοσίευση από τους Nakamas σου ακόμα', 'No posts from your Nakamas yet')
+                  : t('Ήσυχα εδώ προς το παρόν', 'Quiet here for now')
           }
           description={
             filter === 'mine'
               ? t('Γράψε τι σχεδιάζεις — οι Nakamas σου μπορούν να έρθουν μαζί.', 'Share what you are planning — your Nakamas can join you.')
-              : t('Σύνδεσου με άτομα από τις εκδηλώσεις σου για να βλέπεις τα σχέδιά τους.', 'Connect with people from your events to see their plans.')
+              : filter === 'connections' && byFilter.all.length > 0
+                ? t('Δείξε όλη τη ροή ή γράψε κάτι δικό σου.', 'Show the whole feed or write something of your own.')
+                : t('Σύνδεσου με άτομα από τις εκδηλώσεις σου για να βλέπεις τα σχέδιά τους.', 'Connect with people from your events to see their plans.')
           }
-          actionLabel={filter === 'mine' ? t('Γράψε δημοσίευση', 'Write a post') : t('Βρες Nakamas', 'Find Nakamas')}
+          actionLabel={
+            filter === 'mine' || filter === 'all'
+              ? t('Γράψε δημοσίευση', 'Write a post')
+              : filter === 'connections' && byFilter.all.length > 0
+                ? t('Δείξε όλα', 'Show all')
+                : t('Βρες Nakamas', 'Find Nakamas')
+          }
           onAction={() => {
-            if (filter === 'mine') {
+            if (filter === 'mine' || filter === 'all') {
               composerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
               composerRef.current?.querySelector('textarea')?.focus();
+            } else if (filter === 'connections' && byFilter.all.length > 0) {
+              setFilter('all');
             } else navigate('/buddy-seek');
           }}
-          secondaryLabel={filter === 'mine' ? undefined : t('Οι Nakamas μου', 'My Nakamas')}
-          onSecondary={filter === 'mine' ? undefined : () => navigate('/connections')}
+          secondaryLabel={
+            filter === 'mine'
+              ? undefined
+              : filter === 'all'
+                ? t('Βρες Nakamas', 'Find Nakamas')
+                : filter === 'connections' && byFilter.all.length > 0
+                  ? t('Βρες Nakamas', 'Find Nakamas')
+                  : t('Οι Nakamas μου', 'My Nakamas')
+          }
+          onSecondary={
+            filter === 'mine'
+              ? undefined
+              : filter === 'all' || (filter === 'connections' && byFilter.all.length > 0)
+                ? () => navigate('/buddy-seek')
+                : () => navigate('/connections')
+          }
         />
       ) : (
         <WallPostList key={filter} posts={list} />

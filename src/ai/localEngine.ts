@@ -37,7 +37,8 @@ export interface LocalEngineContext {
 export const UNDO_CALL = '__undo';
 
 const NAV_VERBS = ['πηγαινε', 'παμε', 'ανοιξε', 'δειξε μου', 'δειξε', 'μεταβαση', 'μετεφερε', 'go to', 'open', 'show me', 'show', 'take me', 'navigate'];
-const SEARCH_VERBS = ['βρεσ', 'ψαξε', 'ψαχνω', 'αναζητ', 'θελω', 'υπαρχει', 'υπαρχουν', 'εχει κατι', 'find', 'search', 'look for', 'looking for', 'any ', 'is there', 'are there'];
+// Note: bare «θέλω» is too greedy (joins / prefs / mark-all). Prefer intent phrases.
+const SEARCH_VERBS = ['βρεσ', 'ψαξε', 'ψαχνω', 'αναζητ', 'θελω να βρω', 'θελω εκδηλωσ', 'υπαρχει', 'υπαρχουν', 'εχει κατι', 'find', 'search', 'look for', 'looking for', 'any ', 'is there', 'are there'];
 const FILLER = new Set([
   'το', 'τη', 'την', 'τον', 'τα', 'τισ', 'του', 'τησ', 'στο', 'στη', 'στην', 'στα', 'μου', 'σου', 'για', 'και', 'να', 'με', 'σε', 'απο', 'μια', 'ενα', 'αυτο', 'αυτη', 'εκδηλωση', 'εκδηλωσεισ', 'παρακαλω',
   'τι', 'κανω', 'κανουμε', 'παω', 'παμε', 'βγω', 'βγουμε', 'θα', 'μπορω', 'ηθελα', 'κατι', 'ωραιο', 'καλο',
@@ -100,10 +101,10 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
     return reply('Με χαρά! Ό,τι άλλο χρειαστείς, εδώ είμαι.', "You're welcome! I'm here if you need anything else.");
   }
 
-  /* 1b ─ catch me up («τι νέο;», «τι έχασα;») */
+  /* 1b ─ catch me up («τι νέο;», «τι έχασα;») — wall / notifications have their own paths */
   if (
     hasAny(p, ['τι νεο', 'τι νεα', 'τι εχασα', 'ενημερωσε με', 'ενημερωση για μενα', 'whats new', 'what s new', 'what is new', 'what did i miss', 'catch me up', 'any news']) &&
-    !hasAny(p, ['ειδοποιησ', 'notification'])
+    !hasAny(p, ['ειδοποιησ', 'notification', 'τοιχο', ' wall'])
   ) {
     return { calls: [call('whats_new')] };
   }
@@ -373,8 +374,8 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
   }
 
   /* 12 ─ join a group */
-  if (hasAny(p, [' μπεσ ', ' μπω ', 'ενταξ', 'συμμετεχ', 'γραψε με', 'κλεισε θεση', ' join', ' book ', 'θελω να παω'])) {
-    const ref = eventRef(n, ['μπεσ', 'μπω', 'ενταξη', 'ενταξου', 'συμμετεχω', 'συμμετοχη', 'γραψε με', 'κλεισε θεση', 'join', 'book', 'θελω να παω', 'σε', 'ομαδα', 'group']);
+  if (hasAny(p, [' μπεσ ', ' μπω ', 'ενταξ', 'συμμετεχ', 'γραψε με', 'κλεισε θεση', ' join', ' book ', 'θελω να παω', 'θελω να μπω'])) {
+    const ref = eventRef(n, ['μπεσ', 'μπω', 'ενταξη', 'ενταξου', 'συμμετεχω', 'συμμετοχη', 'γραψε με', 'κλεισε θεση', 'join', 'book', 'θελω να παω', 'θελω να μπω', 'θελω', 'σε', 'ομαδα', 'group', 'για', 'αυτη', 'αυτο']);
     if (ref !== null) return { calls: [call('start_join_flow', { event: refArg(ref) })] };
   }
 
@@ -413,6 +414,14 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
     else if (hasAny(p, ['ομαδ', 'group'])) privacy.messagePermission = 'groups';
   }
   if (Object.keys(privacy).length > 0) return { calls: [call('update_privacy', privacy)] };
+
+  /* 16a ─ mark all notifications read (chip may omit the word «ειδοποιήσεις») */
+  if (
+    hasAny(p, ['σημειωσε ολεσ', 'ολεσ ωσ αναγνωσμεν', 'mark all as read', 'mark all read', 'mark notifications read']) ||
+    (hasAny(p, ['αναγνωσμεν', 'διαβασμεν']) && hasAny(p, ['ολεσ', 'οεσ', 'all ']))
+  ) {
+    return { calls: [call('mark_notifications_read')] };
+  }
 
   /* 16 ─ notification preferences */
   if (hasAny(p, ['ειδοποιησ', 'notification', 'προωθητ', 'promo', 'υπενθυμ', 'reminder'])) {

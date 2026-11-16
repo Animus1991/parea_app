@@ -65,7 +65,12 @@ export function MiniOutingsSection() {
       toast.success(t('Μπήκες! Το σημείο φαίνεται στη «Βραδιά μας».', 'You are in! The spot is on «Our night».'));
       navigate(`/night/${groupId}`);
     } else if (gate.reason === 'full' && joinGroupWaitlist(groupId)) {
-      toast.success(t('Είσαι στη λίστα αναμονής.', 'You are on the waitlist.'));
+      toast.success(t('Είσαι στη λίστα αναμονής.', 'You are on the waitlist.'), {
+        action: {
+          label: t('Η βραδιά μας', 'Our night'),
+          onClick: () => navigate(`/night/${groupId}`),
+        },
+      });
     } else {
       toast.error(t(gate.el, gate.en));
     }
@@ -88,7 +93,14 @@ export function MiniOutingsSection() {
       </div>
 
       {list.length === 0 ? (
-        <p className="text-xs font-medium text-ink-muted">{t('Καμία μικρή έξοδος ακόμη — ξεκίνα εσύ την πρώτη.', 'No small outings yet — start the first one.')}</p>
+        <div className="rounded-xl border border-dashed border-border px-3 py-4 text-center">
+          <p className="text-xs font-medium text-ink-muted">
+            {t('Καμία μικρή έξοδος ακόμη — ξεκίνα εσύ την πρώτη.', 'No small outings yet — start the first one.')}
+          </p>
+          <Button size="sm" className="mt-3" onClick={() => setComposerOpen(true)}>
+            <Plus className="mr-1.5 h-4 w-4" aria-hidden /> {t('Νέα μικρή έξοδος', 'New small outing')}
+          </Button>
+        </div>
       ) : (
         <ul className="grid gap-2 sm:grid-cols-2">
           {list.map(({ event, group }) => {
@@ -124,7 +136,29 @@ export function MiniOutingsSection() {
                   ) : waiting ? (
                     <span className="text-xs font-bold text-ink">{t('Στη λίστα αναμονής', 'On the waitlist')}</span>
                   ) : (
-                    <Button size="sm" variant={full ? 'outline' : 'primary'} disabled={genderBlocked} onClick={() => join(group.id, event.id)}>
+                    <Button
+                      size="sm"
+                      variant={full ? 'outline' : 'primary'}
+                      disabled={genderBlocked}
+                      onClick={() => {
+                        if (genderBlocked) {
+                          toast.message(
+                            t(
+                              'Αυτή η έξοδος είναι μόνο για γυναίκες και μη δυαδικά άτομα. Μπορείς να ενημερώσεις το προφίλ σου αν θες.',
+                              'This outing is for women and non-binary people only. You can update your profile if you want.',
+                            ),
+                            {
+                              action: {
+                                label: t('Προφίλ', 'Profile'),
+                                onClick: () => navigate('/profile'),
+                              },
+                            },
+                          );
+                          return;
+                        }
+                        join(group.id, event.id);
+                      }}
+                    >
                       {genderBlocked ? t('Μόνο γυναίκες & μη δυαδικά', 'Women & non-binary only') : full ? t('Λίστα αναμονής', 'Join waitlist') : t('Μπες', 'Join')}
                     </Button>
                   )}

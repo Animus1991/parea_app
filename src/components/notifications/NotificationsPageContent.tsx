@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Bell, Calendar, MessageCircle, Users, CheckCircle2, ArrowRight, Trash2, BellOff } from 'lucide-react';
+import { Bell, Calendar, MessageCircle, Users, CheckCircle2, ArrowRight, Trash2, BellOff, PartyPopper, Shield, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store';
 import type { AppNotification } from '../../data/mockNotifications';
@@ -15,6 +15,8 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { WallActivityPanel } from '../wall/WallActivityPanel';
+import { useWallStore } from '../../store/wallStore';
+import { notificationsForUser } from '../../lib/notificationsUtil';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
 
@@ -25,6 +27,9 @@ const iconMap: Record<string, React.ElementType> = {
   system: CheckCircle2,
   achievement: CheckCircle2,
   buddy_seek: Users,
+  group: PartyPopper,
+  safety: Shield,
+  feedback: Star,
 };
 
 function notifMessage(notif: AppNotification, t: (el: string, en: string) => string) {
@@ -40,12 +45,18 @@ export default function NotificationsPageContent() {
   const navigate = useNavigate();
   const a = usePageContrast();
 
-  const { notifications, isLoading, isError, refetch } = useNotificationsResource();
+  const { notifications: rawNotifications, isLoading, isError, refetch } = useNotificationsResource();
+  const currentUserId = useStore((s) => s.currentUser?.id ?? null);
+  const notifications = useMemo(
+    () => notificationsForUser(rawNotifications, currentUserId),
+    [rawNotifications, currentUserId],
+  );
   const markNotificationRead = useStore((s) => s.markNotificationRead);
   const socialOn = useStore((s) => s.userSettings.notificationPrefs.social !== false);
   const markAllNotificationsRead = useStore((s) => s.markAllNotificationsRead);
   const dismissNotification = useStore((s) => s.dismissNotification);
   const addNotification = useStore((s) => s.addNotification);
+  const markWallActivityRead = useWallStore((s) => s.markActivityRead);
 
   const [activeTab, setActiveTab] = useState<TabFilter>('all');
 
@@ -62,11 +73,16 @@ export default function NotificationsPageContent() {
     if (activeTab === 'unread') filtered = filtered.filter((n) => !n.read);
     else if (activeTab === 'matches')
       filtered = filtered.filter(
-        (n) => n.type === 'match' || n.type === 'achievement' || n.type === 'buddy_seek',
+        (n) =>
+          n.type === 'match' ||
+          n.type === 'achievement' ||
+          n.type === 'buddy_seek' ||
+          n.type === 'group' ||
+          n.type === 'feedback',
       );
     else if (activeTab === 'messages') filtered = filtered.filter((n) => n.type === 'message');
     else if (activeTab === 'system')
-      filtered = filtered.filter((n) => n.type === 'system' || n.type === 'reminder');
+      filtered = filtered.filter((n) => n.type === 'system' || n.type === 'reminder' || n.type === 'safety');
     return filtered;
   }, [notifications, activeTab]);
 
@@ -76,6 +92,7 @@ export default function NotificationsPageContent() {
 
   const handleMarkAllRead = () => {
     markAllNotificationsRead();
+    markWallActivityRead();
     toast.success(t('Όλες οι ειδοποιήσεις σημάνθηκαν ως αναγνωσμένες', 'All notifications marked as read'));
   };
 
@@ -99,6 +116,9 @@ export default function NotificationsPageContent() {
     else if (notif.type === 'achievement') navigate('/achievements');
     else if (notif.type === 'reminder') navigate('/plans');
     else if (notif.type === 'buddy_seek') navigate('/buddy-seek');
+    else if (notif.type === 'group') navigate(notif.groupId ? `/night/${notif.groupId}` : '/plans');
+    else if (notif.type === 'safety') navigate('/trust');
+    else if (notif.type === 'feedback') navigate('/history');
     else if (notif.type === 'system') navigate('/trust');
   };
 
@@ -116,6 +136,12 @@ export default function NotificationsPageContent() {
       case 'achievement':
         return 'bg-purple-100 text-purple-600';
       case 'reminder':
+        return a.isDark ? 'bg-amber-900/30 text-amber-400' : 'bg-amber-100 text-amber-600';
+      case 'group':
+        return a.isDark ? 'bg-cyan-900/30 text-cyan-400' : 'bg-cyan-100 text-cyan-700';
+      case 'safety':
+        return a.isDark ? 'bg-rose-900/30 text-rose-400' : 'bg-rose-100 text-rose-600';
+      case 'feedback':
         return a.isDark ? 'bg-amber-900/30 text-amber-400' : 'bg-amber-100 text-amber-600';
       default:
         return a.isDark ? 'bg-gray-700/30 text-gray-400' : 'bg-gray-100 text-gray-600';

@@ -26,6 +26,33 @@ describe('buildReturnSummary', () => {
     expect(returnPartPath(parts[0])).toBe('/events/e1');
   });
 
+  it('deep-links next plan to Our night when a groupId is known', () => {
+    const parts = buildReturnSummary({
+      now,
+      previousVisitAt: null,
+      nextEvent: { id: 'e1', title: 'Summer Cinema', start: new Date(2026, 10, 15, 20, 30), groupId: 'g9' },
+      newPlans: 0,
+      unreadChats: 0,
+      unreadNotifications: 0,
+    });
+    expect(returnPartPath(parts[0])).toBe('/night/g9');
+  });
+
+  it('surfaces a ready group on return and links to Our night', () => {
+    const parts = buildReturnSummary({
+      now,
+      previousVisitAt: now.getTime() - 2 * RETURN_GAP_MS,
+      nextEvent: null,
+      newPlans: 0,
+      unreadChats: 0,
+      unreadNotifications: 0,
+      readyGroup: { groupId: 'g2', title: 'Jazz Night' },
+    });
+    expect(parts[0]).toEqual({ kind: 'ready', groupId: 'g2', title: 'Jazz Night' });
+    expect(describeReturnPart(parts[0], el)).toBe('Η παρέα σου είναι έτοιμη · Jazz Night');
+    expect(returnPartPath(parts[0])).toBe('/night/g2');
+  });
+
   it('ignores plans further than two days away or already past', () => {
     const far = { id: 'e2', title: 'Later', start: new Date(2026, 10, 18, 20, 0) };
     const past = { id: 'e3', title: 'Past', start: new Date(2026, 10, 14, 10, 0) };

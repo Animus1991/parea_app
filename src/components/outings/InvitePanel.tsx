@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Copy, Link2, Share2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { coverById, coversFor } from '../../lib/planCovers';
@@ -31,14 +32,33 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
   const host = users.find((u) => u.id === (invite?.hostId ?? me?.id));
 
   const pick = (id: string) => (invite ? setPlanInviteCover(invite.id, id) : setPendingCover(id));
-  const copy = async () => {
+  const copy = async (url = link) => {
     try {
-      await navigator.clipboard.writeText(link);
+      await navigator.clipboard.writeText(url);
       setCopied(true);
+      toast.success(t('Ο σύνδεσμος αντιγράφηκε', 'Link copied'));
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
+      toast.error(t('Δεν έγινε αντιγραφή — δοκίμασε ξανά', 'Copy failed — try again'));
     }
+  };
+
+  const createInvite = () => {
+    const id = createPlanInvite(group.id, pendingCover);
+    if (!id) {
+      toast.error(t('Δεν έγινε ο σύνδεσμος', 'Could not create the link'));
+      return;
+    }
+    const url = `${window.location.origin}/i/${id}`;
+    toast.success(t('Έτοιμος ο σύνδεσμος πρόσκλησης', 'Invite link ready'), {
+      action: {
+        label: t('Αντιγραφή', 'Copy'),
+        onClick: () => {
+          void copy(url);
+        },
+      },
+    });
   };
   const share = async () => {
     const nav = navigator as Navigator & { share?: (d: ShareData) => Promise<void> };
@@ -87,7 +107,7 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
       <div className="mt-3 flex flex-wrap gap-2">
         {invite ? (
           <>
-            <Button size="sm" onClick={copy}>
+            <Button size="sm" onClick={() => void copy()}>
               {copied ? <Check className="mr-1.5 h-4 w-4" aria-hidden /> : <Copy className="mr-1.5 h-4 w-4" aria-hidden />}
               {copied ? t('Αντιγράφηκε', 'Copied') : t('Αντιγραφή συνδέσμου', 'Copy link')}
             </Button>
@@ -99,7 +119,7 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
             </Link>
           </>
         ) : (
-          <Button size="sm" onClick={() => createPlanInvite(group.id, pendingCover)} disabled={seatsLeft === 0}>
+          <Button size="sm" onClick={createInvite} disabled={seatsLeft === 0}>
             <Link2 className="mr-1.5 h-4 w-4" aria-hidden /> {t('Φτιάξε σύνδεσμο πρόσκλησης', 'Create invite link')}
           </Button>
         )}
@@ -122,7 +142,12 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
               ))}
             </ul>
           ) : (
-            <p className="mt-1 text-xs font-medium text-ink-muted">{t('Δεν έχει απαντήσει κανείς ακόμη.', 'Nobody has answered yet.')}</p>
+            <div className="mt-1 space-y-2">
+              <p className="text-xs font-medium text-ink-muted">{t('Δεν έχει απαντήσει κανείς ακόμη.', 'Nobody has answered yet.')}</p>
+              <Button size="sm" variant="ghost" onClick={() => void share()}>
+                <Share2 className="mr-1.5 h-4 w-4" aria-hidden /> {t('Στείλε ξανά τον σύνδεσμο', 'Share the link again')}
+              </Button>
+            </div>
           )}
           <p className="mt-2 text-2xs font-medium text-ink-muted">{t('Τα ονόματα τα βλέπεις μόνο εσύ. Η σελίδα δείχνει μόνο πόσοι πάνε.', 'Only you see the names. The page only shows how many are going.')}</p>
         </div>

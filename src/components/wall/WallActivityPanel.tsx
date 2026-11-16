@@ -81,7 +81,10 @@ export function WallActivityPanel({ limit = 5, title }: { limit?: number; title?
         {unread > 0 && (
           <button
             type="button"
-            onClick={() => markActivityRead()}
+            onClick={() => {
+              markActivityRead();
+              toast.success(t('Όλη η δραστηριότητα αναγνωσμένη', 'All activity marked read'));
+            }}
             className="inline-flex min-h-8 items-center gap-1 rounded-full px-2 text-xs font-bold text-ink-muted hover:text-ink"
           >
             <CheckCheck className="h-3.5 w-3.5" aria-hidden /> {t('Όλα αναγνωσμένα', 'Mark all read')}

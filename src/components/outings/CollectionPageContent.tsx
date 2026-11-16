@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Library, Sparkles } from 'lucide-react';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
@@ -17,6 +17,7 @@ import { OrganizerCalendarCard } from './OrganizerCalendarCard';
 /** «/collections» lists all collections; «/collections/:id» opens one. */
 export default function CollectionPageContent() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { t } = useLanguage();
   const events = useStore((s) => s.events);
   const groups = useStore((s) => s.groups);
@@ -57,7 +58,12 @@ export default function CollectionPageContent() {
   if (!collection) {
     return (
       <div className="mx-auto max-w-2xl py-6">
-        <EmptyState title={t('Η συλλογή δεν βρέθηκε', 'Collection not found')} />
+        <EmptyState
+          title={t('Η συλλογή δεν βρέθηκε', 'Collection not found')}
+          description={t('Ίσως μετακινήθηκε — δες όλες τις συλλογές.', 'It may have moved — see all collections.')}
+          actionLabel={t('Όλες οι συλλογές', 'All collections')}
+          onAction={() => navigate('/collections')}
+        />
       </div>
     );
   }
@@ -94,11 +100,17 @@ export default function CollectionPageContent() {
         <EmptyState
           title={t('Τίποτα εδώ αυτή τη στιγμή', 'Nothing here right now')}
           description={t('Δοκίμασε χωρίς φίλτρα ή δες άλλη συλλογή.', 'Try without filters or see another collection.')}
-          actionLabel={formingOnly || !showPast ? t('Δείξε όλες', 'Show all') : undefined}
+          actionLabel={formingOnly || !showPast ? t('Δείξε όλες', 'Show all') : t('Άλλη συλλογή', 'Another collection')}
           onAction={() => {
-            setFormingOnly(false);
-            setShowPast(true);
+            if (formingOnly || !showPast) {
+              setFormingOnly(false);
+              setShowPast(true);
+            } else {
+              navigate('/collections');
+            }
           }}
+          secondaryLabel={formingOnly || !showPast ? t('Άλλη συλλογή', 'Another collection') : undefined}
+          onSecondary={formingOnly || !showPast ? () => navigate('/collections') : undefined}
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

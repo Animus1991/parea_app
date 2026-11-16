@@ -164,8 +164,17 @@ const MINI_DEFAULTS: Record<MiniOutingKind, { category: string; el: string; dura
 };
 
 export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
-  const notifyMe = (type: string, el: string, en: string) =>
-    get().addNotification({ type, messageGr: el, messageEn: en, timeGr: 'μόλις τώρα', timeEn: 'just now', read: false });
+  const notifyMe = (type: string, el: string, en: string, extra: { groupId?: string; eventId?: string } = {}) =>
+    get().addNotification({
+      type,
+      messageGr: el,
+      messageEn: en,
+      timeGr: 'μόλις τώρα',
+      timeEn: 'just now',
+      read: false,
+      groupId: extra.groupId,
+      eventId: extra.eventId,
+    });
 
   return {
     ...outingsSeedData(),
@@ -192,6 +201,7 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         'group',
         'Μπήκες στη λίστα αναμονής. Αν κάποιος αποχωρήσει, η θέση περνά σε σένα στην ίδια τιμή.',
         'You joined the waitlist. If someone leaves, their seat passes to you at the same price.',
+        { groupId, eventId: group.eventId },
       );
       return true;
     },
@@ -324,12 +334,18 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         groups: st.groups.map((g) => (g.id === groupId ? { ...g, checkInClosedAt: at } : g)),
       }));
       if (newStrikes.some((x) => x.userId === me.id)) {
-        notifyMe('safety', 'Καταγράφηκε απουσία σου. Δες τι σημαίνει και πώς κάνεις ένσταση στο Κέντρο Εμπιστοσύνης.', 'An absence was recorded for you. See what it means and how to appeal in the Trust Center.');
+        notifyMe(
+          'safety',
+          'Καταγράφηκε απουσία σου. Δες τι σημαίνει και πώς κάνεις ένσταση στο Κέντρο Εμπιστοσύνης.',
+          'An absence was recorded for you. See what it means and how to appeal in the Trust Center.',
+          { groupId, eventId: group.eventId },
+        );
       }
       notifyMe(
         'feedback',
         'Η έξοδος ολοκληρώθηκε. Πες μας πώς πήγε — βοηθά την επόμενη παρέα.',
         'The outing is done. Tell us how it went — it helps the next group.',
+        { groupId, eventId: group.eventId },
       );
       return counts
         ? {
@@ -484,7 +500,12 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       const unitPrice = Math.round(event.price * (1 - pct / 100) * 100) / 100;
       const tickets = activeTicketPartner().reserve({ groupId, eventId: event.id, memberIds: group.members, unitPrice });
       set((st) => ({ groups: st.groups.map((g) => (g.id === groupId ? { ...g, tickets } : g)) }));
-      notifyMe('group', 'Κρατήθηκαν θέσεις για όλη την ομάδα. Ο καθένας πληρώνει το δικό του μερίδιο.', 'Seats are held for the whole group. Everyone pays their own share.');
+      notifyMe(
+        'group',
+        'Κρατήθηκαν θέσεις για όλη την ομάδα. Ο καθένας πληρώνει το δικό του μερίδιο.',
+        'Seats are held for the whole group. Everyone pays their own share.',
+        { groupId, eventId: group.eventId },
+      );
       return true;
     },
 

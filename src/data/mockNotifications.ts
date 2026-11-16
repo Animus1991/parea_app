@@ -13,6 +13,11 @@ export interface AppNotification {
    *  derive their icon from `type` in the UI instead. */
   icon?: LucideIcon;
   color?: string;
+  /** Φ27 — deep-link to «Our night» / event when present. */
+  groupId?: string;
+  eventId?: string;
+  /** When set, only this user should see the row (multi-user inbox on a shared store). */
+  forUserId?: string;
 }
 
 export const mockNotifications: AppNotification[] = [

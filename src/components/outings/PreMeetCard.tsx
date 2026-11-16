@@ -1,4 +1,5 @@
 import { Coffee, Lock, MapPin } from 'lucide-react';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { nearestPartnerVenues, timeMinus, venueById } from '../../lib/outings';
@@ -69,7 +70,15 @@ export function PreMeetCard({ group, event, isHost, revealed }: { group: Group; 
                 key={v.id}
                 type="button"
                 aria-pressed={venue?.id === v.id}
-                onClick={() => setPreMeet(group.id, venue?.id === v.id ? null : v.id, group.preMeet?.minutesBefore ?? 30)}
+                onClick={() => {
+                  const clear = venue?.id === v.id;
+                  setPreMeet(group.id, clear ? null : v.id, group.preMeet?.minutesBefore ?? 30);
+                  toast.success(
+                    clear
+                      ? t('Η συνάντηση πριν καθαρίστηκε.', 'Pre-meet cleared.')
+                      : t('Συνάντηση πριν ορισμένη.', 'Pre-meet set.'),
+                  );
+                }}
                 className={cn(
                   'inline-flex min-h-9 items-center rounded-full border px-3 text-xs font-bold text-ink',
                   venue?.id === v.id ? 'border-ink' : 'border-border hover:border-border-strong',

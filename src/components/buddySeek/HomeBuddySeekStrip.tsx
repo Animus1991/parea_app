@@ -69,13 +69,22 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
               'No plans visible yet? Save events or declare that you are looking for Nakamas.',
             )}
           </p>
-          <button
-            type="button"
-            onClick={() => navigate('/')}
-            className="mt-2 text-xs font-bold text-accent"
-          >
-            {t('Εξερεύνηση εκδηλώσεων', 'Explore events')} →
-          </button>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="text-xs font-bold text-accent"
+            >
+              {t('Εξερεύνηση εκδηλώσεων', 'Explore events')} →
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/buddy-seek')}
+              className="text-xs font-bold text-ink underline underline-offset-2"
+            >
+              {t('Ή ξεκίνα μια μικρή έξοδο', 'Or start a small outing')}
+            </button>
+          </div>
         </div>
       ) : (
         <HorizontalScrollArrows

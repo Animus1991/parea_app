@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -12,10 +12,12 @@ import {
   MessageCircle,
   PartyPopper,
   Repeat2,
+  Share2,
   Star,
   Tag,
   Users,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
@@ -35,6 +37,8 @@ import { InvitePanel } from './InvitePanel';
 import { GroupTicketsPanel } from './GroupTicketsPanel';
 import { PreMeetCard } from './PreMeetCard';
 import type { User } from '../../types';
+
+const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
 const TIER = {
   '3_high_trust': { el: 'Υψηλή εμπιστοσύνη', en: 'High trust' },
@@ -63,8 +67,10 @@ export default function OurNightPageContent() {
   const invites = useStore((s) => s.planInvites);
   const leaveGroup = useStore((s) => s.leaveGroup);
   const leaveGroupWaitlist = useStore((s) => s.leaveGroupWaitlist);
+  const joinGroupWaitlist = useStore((s) => s.joinGroupWaitlist);
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
   const [confirmLeave, setConfirmLeave] = useState(false);
+  const [shareWallOpen, setShareWallOpen] = useState(false);
 
   const group = groups.find((g) => g.id === groupId);
   const event = group ? events.find((e) => e.id === group.eventId) : undefined;
@@ -108,7 +114,14 @@ export default function OurNightPageContent() {
   if (!group || !event) {
     return (
       <div className="mx-auto max-w-2xl py-6">
-        <EmptyState title={t('Η ομάδα δεν βρέθηκε', 'Group not found')} description={t('Ίσως διαγράφηκε ή ο σύνδεσμος είναι λάθος.', 'It may have been removed, or the link is wrong.')} />
+        <EmptyState
+          title={t('Η ομάδα δεν βρέθηκε', 'Group not found')}
+          description={t('Ίσως διαγράφηκε ή ο σύνδεσμος είναι λάθος.', 'It may have been removed, or the link is wrong.')}
+          actionLabel={t('Τα σχέδιά μου', 'My plans')}
+          onAction={() => navigate('/plans')}
+          secondaryLabel={t('Εξερεύνηση', 'Explore')}
+          onSecondary={() => navigate('/')}
+        />
       </div>
     );
   }
@@ -133,8 +146,26 @@ export default function OurNightPageContent() {
             <Button size="sm" onClick={() => navigate(`/events/${event.id}`)}>
               {t('Δες την εκδήλωση', 'See the event')}
             </Button>
+            <Button size="sm" variant="outline" onClick={() => navigate('/buddy-seek')}>
+              {t('Βρες Nakamas', 'Find Nakamas')}
+            </Button>
             {onWaitlist && (
-              <Button size="sm" variant="ghost" onClick={() => leaveGroupWaitlist(group.id)}>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  const gid = group.id;
+                  leaveGroupWaitlist(gid);
+                  toast.message(t('Αποχώρησες από τη λίστα αναμονής.', 'You left the waitlist.'), {
+                    action: {
+                      label: t('Αναίρεση', 'Undo'),
+                      onClick: () => {
+                        joinGroupWaitlist(gid);
+                      },
+                    },
+                  });
+                }}
+              >
                 {t('Αποχώρηση από τη λίστα', 'Leave the waitlist')}
               </Button>
             )}
@@ -328,6 +359,11 @@ export default function OurNightPageContent() {
           <Button size="sm" variant="outline" onClick={() => navigate('/trust')}>
             {t('Κέντρο Εμπιστοσύνης', 'Trust Center')}
           </Button>
+          {revealed && (
+            <Button size="sm" variant="outline" onClick={() => setShareWallOpen(true)}>
+              <Share2 className="mr-1.5 h-4 w-4" aria-hidden /> {t('Μοιράσου στον τοίχο', 'Share to wall')}
+            </Button>
+          )}
           <Button size="sm" variant="outline" onClick={() => navigate('/report')}>
             {t('Αναφορά', 'Report')}
           </Button>
@@ -355,7 +391,13 @@ export default function OurNightPageContent() {
                 size="sm"
                 variant="danger"
                 onClick={() => {
+                  const willHandOver = handsOver;
                   leaveGroup(group.id);
+                  toast.info(
+                    willHandOver
+                      ? t('Αποχώρησες — η θέση πέρασε στη λίστα αναμονής.', 'You left — your seat passed to the waitlist.')
+                      : t('Αποχώρησες από την ομάδα.', 'You have left the group.'),
+                  );
                   navigate('/plans');
                 }}
               >
@@ -371,6 +413,17 @@ export default function OurNightPageContent() {
             </Button>
           )}
         </section>
+      )}
+
+      {shareWallOpen && (
+        <Suspense fallback={null}>
+          <ShareToWallModal
+            eventId={event.id}
+            eventTitle={event.title}
+            open={shareWallOpen}
+            onClose={() => setShareWallOpen(false)}
+          />
+        </Suspense>
       )}
     </div>
   );

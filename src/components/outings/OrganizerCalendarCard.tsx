@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CalendarPlus, Check, Code2, Copy, Download, Star } from 'lucide-react';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { buildOrganizerIcs, organizerCalendarUrl } from '../../lib/organizerCalendar';
@@ -42,7 +43,15 @@ export function OrganizerCalendarCard({ organizerId, organizerName, className }:
         {t('Οι νέες εκδηλώσεις μπαίνουν μόνες τους στο ημερολόγιό σου, με το πόσες παρέες σχηματίζονται.', 'New events land in your calendar by themselves, with how many groups are forming.')}
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button size="sm" variant={followed ? 'outline' : 'primary'} onClick={() => toggleFollow(organizerId)} aria-pressed={followed}>
+        <Button
+          size="sm"
+          variant={followed ? 'outline' : 'primary'}
+          onClick={() => {
+            toggleFollow(organizerId);
+            toast.success(followed ? t('Έπαψες να ακολουθείς', 'Unfollowed') : t('Ακολουθείς τον διοργανωτή', 'Following the organizer'));
+          }}
+          aria-pressed={followed}
+        >
           <Star className="mr-1.5 h-4 w-4" aria-hidden /> {followed ? t('Ακολουθείς', 'Following') : t('Ακολούθησε', 'Follow')}
         </Button>
         <a href={feed.webcal} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-ink hover:border-border-strong">
@@ -55,7 +64,10 @@ export function OrganizerCalendarCard({ organizerId, organizerName, className }:
         <Button
           size="sm"
           variant="ghost"
-          onClick={() => downloadIcsBlob(buildOrganizerIcs({ id: organizerId, name: organizerName }, events, groups, origin), `nakamas-${organizerId}.ics`)}
+          onClick={() => {
+            downloadIcsBlob(buildOrganizerIcs({ id: organizerId, name: organizerName }, events, groups, origin), `nakamas-${organizerId}.ics`);
+            toast.success(t('Το ημερολόγιο εξήχθη', 'Calendar exported'));
+          }}
         >
           <Download className="mr-1.5 h-4 w-4" aria-hidden /> {t('Λήψη', 'Download')}
         </Button>

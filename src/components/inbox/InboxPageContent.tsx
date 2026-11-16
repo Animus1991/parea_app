@@ -38,7 +38,8 @@ export default function InboxPageContent() {
   const groups = useStore((s) => s.groups);
   const events = useStore((s) => s.events);
   const currentUser = useStore((s) => s.currentUser);
-  const notifications = useStore((s) => s.notifications);
+  const rawNotifications = useStore((s) => s.notifications);
+  const notifications = rawNotifications.filter((n) => !n.forUserId || n.forUserId === currentUser?.id);
   const conversations = useChatStore((s) => s.conversations);
   const openConversation = useChatStore((s) => s.openConversation);
   const setInboxOpen = useChatStore((s) => s.setInboxOpen);

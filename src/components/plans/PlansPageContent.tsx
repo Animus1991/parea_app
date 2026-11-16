@@ -149,7 +149,14 @@ export default function PlansPageContent() {
 
       {/* Next-event highlight */}
       {nextEvent && nextEventDays !== null && nextEventDays <= 7 && (
-        <Card className={cn('!rounded-2xl p-4 flex items-center gap-3', p.highlightRow)}>
+        <button
+          type="button"
+          onClick={() => {
+            const g = getUserGroupForEvent(nextEvent.id, groups, currentUser?.id);
+            navigate(g ? `/night/${g.id}` : `/events/${nextEvent.id}`);
+          }}
+          className={cn('!rounded-2xl p-4 flex items-center gap-3 w-full text-left transition-shadow hover:shadow-soft', p.highlightRow)}
+        >
           <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0', p.statBg)}>
             <CalendarClock className={cn('w-5 h-5', p.statVal)} />
           </div>
@@ -160,7 +167,7 @@ export default function PlansPageContent() {
           <span className={cn('shrink-0 text-xs font-bold px-2.5 py-1 rounded-full', p.statBg, p.statVal)}>
             {nextEventDays <= 0 ? t('Σήμερα', 'Today') : `${t('σε', 'in')} ${nextEventDays}${t('μ', 'd')}`}
           </span>
-        </Card>
+        </button>
       )}
 
       {/* Action required prompt — only when ID is not yet verified */}
@@ -347,7 +354,14 @@ export default function PlansPageContent() {
       {activeTab === 'pending' && (
       <div className="space-y-4">
         {pendingEvents.map(event => {
-          const group = getPendingGroupForEvent(event.id, groups);
+          const group =
+            getPendingGroupForEvent(event.id, groups) ??
+            groups.find(
+              (g) =>
+                g.eventId === event.id &&
+                Boolean(currentUser) &&
+                (g.waitlist?.includes(currentUser!.id) || g.pendingMembers?.includes(currentUser!.id)),
+            );
           const needed = group ? Math.max(0, group.targetSize - group.members.length) : 0;
 
           return (
@@ -380,6 +394,15 @@ export default function PlansPageContent() {
               </p>
 
               <div className={cn('mt-auto pt-4 border-t flex gap-2', p.borderT)}>
+                {group && (
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/night/${group.id}`)}
+                    className={cn(secondaryBtn, 'flex items-center justify-center gap-1.5')}
+                  >
+                    <PartyPopper className="h-4 w-4" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
+                  </button>
+                )}
                 <button onClick={() => navigate(`/events/${event.id}`)} className={secondaryBtn}>
                   {t(`Κατάσταση`, `View Status`)}
                 </button>

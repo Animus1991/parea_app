@@ -655,7 +655,7 @@ export default function ProfilePageContent() {
               <div className={`p-2 rounded-lg shrink-0 ${a.isDark ? "bg-gray-700/30" : "bg-gray-100"}`}><MapPin className={`w-4 h-4 ${sub}`} /></div>
               <div className="flex-1">
                 <span className={`text-sm font-bold block ${heading}`}>{t("Κοινοποίηση Τοποθεσίας", "Share Location")}</span>
-                <span className={`text-xs font-medium leading-relaxed block mt-0.5 ${sub}`}>{t("Για καλύτερες προτάσεις εκδηλώσεων και ζωντανή παρακολούθηση.", "For better event recommendations and live tracking.")}</span>
+                <span className={`text-xs font-medium leading-relaxed block mt-0.5 ${sub}`}>{t("Για καλύτερες προτάσεις εκδηλώσεων κοντά σου.", "For better nearby event suggestions.")}</span>
               </div>
               <input
                 type="checkbox"

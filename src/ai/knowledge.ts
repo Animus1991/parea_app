@@ -52,7 +52,7 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
   },
   {
     id: 'groups',
-    stems: ['πωσ λειτουργ', 'ομαδ', 'group', 'how does it work', 'how it works', 'σημειο συναντησ', 'meeting point'],
+    stems: ['πωσ λειτουργουν οι ομαδ', 'ομαδεσ', 'ομαδα ', ' groups', ' group ', 'how groups work', 'σημειο συναντησ', 'meeting point'],
     titleEl: 'Πώς λειτουργούν οι ομάδες',
     titleEn: 'How groups work',
     path: '/help',

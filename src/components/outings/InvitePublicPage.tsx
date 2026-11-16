@@ -59,6 +59,19 @@ export default function InvitePublicPage() {
         <p className="mt-1 text-sm font-medium text-ink-muted">
           {t('Ίσως έληξε ή ο σύνδεσμος είναι λάθος. Ζήτα από τον φίλο σου να τον ξαναστείλει.', 'It may have expired, or the link is wrong. Ask your friend to send it again.')}
         </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link
+            to={signedIn ? '/plans' : '/'}
+            className="inline-flex min-h-10 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
+          >
+            {signedIn ? t('Τα σχέδιά μου', 'My plans') : t('Άνοιγμα Nakamas', 'Open Nakamas')}
+          </Link>
+          {!signedIn && (
+            <Link to="/login" className="inline-flex min-h-10 items-center rounded-full border border-border px-4 text-xs font-bold text-ink">
+              {t('Σύνδεση', 'Sign in')}
+            </Link>
+          )}
+        </div>
       </div>,
     );
   }

@@ -16,7 +16,8 @@ export function HomeNextBestAction() {
   const a = usePageContrast();
   const user = useStore((s) => s.currentUser);
   const onboardingCompleted = useStore((s) => s.onboardingCompleted);
-  const notifications = useStore((s) => s.notifications);
+  const rawNotifications = useStore((s) => s.notifications);
+  const notifications = rawNotifications.filter((n) => !n.forUserId || n.forUserId === user?.id);
   const savedEvents = useStore((s) => s.savedEvents);
   const lastResumePath = useStore((s) => s.lastResumePath);
   const conversations = useChatStore((s) => s.conversations);

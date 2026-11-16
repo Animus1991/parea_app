@@ -634,6 +634,8 @@ export const useStore = create<AppState>()(
             timeGr: 'μόλις τώρα',
             timeEn: 'just now',
             read: false,
+            groupId,
+            eventId: target.eventId,
           }),
           ...state.notifications,
         ],
@@ -692,9 +694,24 @@ export const useStore = create<AppState>()(
       let strikes = state.strikes;
       let people = { users: state.users, currentUser: state.currentUser };
       const notifications = [...state.notifications];
-      const note = (messageGr: string, messageEn: string, type = 'group') =>
+      const note = (
+        messageGr: string,
+        messageEn: string,
+        type = 'group',
+        extra: { groupId?: string; eventId?: string; forUserId?: string } = {},
+      ) =>
         notifications.unshift(
-          normalizeAppNotification({ type, messageGr, messageEn, timeGr: 'μόλις τώρα', timeEn: 'just now', read: false }),
+          normalizeAppNotification({
+            type,
+            messageGr,
+            messageEn,
+            timeGr: 'μόλις τώρα',
+            timeEn: 'just now',
+            read: false,
+            groupId: extra.groupId ?? groupId,
+            eventId: extra.eventId ?? group?.eventId,
+            forUserId: extra.forUserId,
+          }),
         );
       if (late && group) {
         const delta = STRIKE_RELIABILITY.late_cancel;
@@ -719,6 +736,15 @@ export const useStore = create<AppState>()(
         note(
           'Η θέση σου πέρασε στο πρώτο άτομο της λίστας αναμονής, στην ίδια τιμή. Η ομάδα κρατά την έκπτωση.',
           'Your seat passed to the first person on the waitlist, at the same price. The group keeps its discount.',
+          'group',
+          { forUserId: uid },
+        );
+        // Loyalty: the waitlist winner must learn the seat is theirs (not only the leaver).
+        note(
+          'Άνοιξε θέση για σένα — πέρασες από τη λίστα αναμονής στην ομάδα, στην ίδια τιμή. Άνοιξε «Η βραδιά μας».',
+          'A seat opened for you — you moved from the waitlist into the group at the same price. Open «Our night».',
+          'group',
+          { groupId, eventId: group?.eventId, forUserId: toUserId },
         );
       }
       // Release the commitment hold for an event the member is no longer going to.

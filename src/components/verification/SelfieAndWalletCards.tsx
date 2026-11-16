@@ -157,7 +157,21 @@ export function GovWalletCard() {
         <li>{t('Θα κρατάμε μόνο: αποτέλεσμα (ναι/όχι), μέθοδο, ημερομηνία.', 'We would keep only: result (yes/no), method, date.')}</li>
         <li>{t('Ποτέ αριθμό ταυτότητας, ΑΦΜ, διεύθυνση ή φωτογραφία εγγράφου.', 'Never an ID number, tax number, address or document photo.')}</li>
       </ul>
-      <Button size="sm" variant={interested ? 'outline' : 'primary'} className="mt-3" aria-pressed={interested} onClick={() => setInterest(!interested)}>
+      <Button
+        size="sm"
+        variant={interested ? 'outline' : 'primary'}
+        className="mt-3"
+        aria-pressed={interested}
+        onClick={() => {
+          const next = !interested;
+          setInterest(next);
+          toast.message(
+            next
+              ? t('Θα σε ενημερώσουμε όταν είναι έτοιμο.', 'We will let you know when it is ready.')
+              : t('Αφαιρέθηκε το ενδιαφέρον.', 'Interest removed.'),
+          );
+        }}
+      >
         {interested ? t('Θα σε ενημερώσουμε ✓', 'We will let you know ✓') : t('Ενημέρωσέ με', 'Let me know')}
       </Button>
     </section>

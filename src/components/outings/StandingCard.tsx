@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Gavel, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { activeStrikes, standingFor, strikeLabel, STRIKE_WINDOW_DAYS } from '../../lib/consequences';
@@ -77,6 +78,7 @@ export function StandingCard({ className }: { className?: string }) {
                         setSent(s.id);
                         setAppealFor(null);
                         setText('');
+                        toast.success(t('Η ένστασή σου στάλθηκε.', 'Your appeal was sent.'));
                       }
                     }}
                   >
