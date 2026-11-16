@@ -19,7 +19,9 @@ test.describe('Group outings', () => {
     await door.getByRole('button', { name: /Κλείσιμο check-in|Close check-in/ }).click();
     await door.getByRole('alertdialog').getByRole('button', { name: /Κλείσιμο check-in|Close check-in/ }).click();
     await expect(page.getByRole('status').filter({ hasText: /Ήρθαν 3|3 arrived/ })).toBeVisible();
-    await expect(page.getByRole('button', { name: /^Αξιολόγηση$|^Feedback$/ })).toBeVisible();
+    // Primary Feedback is the Our Night region CTA (toast action is «Ιστορικό» / History).
+    const feedback = page.getByRole('region', { name: /Πώς πήγε η βραδιά;|How was the night?/ });
+    await expect(feedback.getByRole('button', { name: /^Αξιολόγηση$|^Feedback$/ })).toBeVisible();
   });
 
   test('a member sees a rotating 6-digit door code', async ({ page }) => {

@@ -195,7 +195,8 @@ export function CheckInPanel({ group, members }: { group: Group; members: User[]
                     setScanning(false);
                     toast.success(t(result.el, result.en), {
                       action: {
-                        label: t('Αξιολόγηση', 'Feedback'),
+                        // Distinct from the page's primary «Αξιολόγηση» CTA (one clear Feedback control).
+                        label: t('Ιστορικό', 'History'),
                         onClick: () => navigate('/history'),
                       },
                     });

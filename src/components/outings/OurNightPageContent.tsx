@@ -247,8 +247,12 @@ export default function OurNightPageContent() {
       </header>
 
       {canGiveFeedback && (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border bg-surface-raised p-4">
-          <p className="flex items-center gap-2 text-sm font-bold text-ink">
+        <div
+          role="region"
+          aria-labelledby="night-feedback-title"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border bg-surface-raised p-4"
+        >
+          <p id="night-feedback-title" className="flex items-center gap-2 text-sm font-bold text-ink">
             <Star className="h-4 w-4" aria-hidden /> {t('Πώς πήγε η βραδιά;', 'How was the night?')}
           </p>
           <Button size="sm" onClick={() => navigate(`/history/feedback/${event.id}`)}>
