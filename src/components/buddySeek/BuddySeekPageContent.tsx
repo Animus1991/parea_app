@@ -181,6 +181,25 @@ export default function BuddySeekPageContent() {
         </div>
       </header>
 
+      {/* Soft one-line vibe nudge — matching uses «Το στυλ παρέας μου»; never blocks browsing. */}
+      {currentUser && !currentUser.vibe && (
+        <button
+          type="button"
+          onClick={() => navigate('/profile')}
+          className={cn(
+            'w-full rounded-xl border border-dashed px-3 py-2 text-left text-xs font-bold transition-colors',
+            a.borderB,
+            a.head,
+            'hover:border-border-strong',
+          )}
+        >
+          {t(
+            'Ολοκλήρωσε το στυλ παρέας (5 ερωτήσεις) →',
+            'Complete your group style (5 questions) →',
+          )}
+        </button>
+      )}
+
       {/* Φ27 — small outings without an event (coffee / walk / run) */}
       <MiniOutingsSection />
 

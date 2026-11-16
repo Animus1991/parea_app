@@ -141,12 +141,13 @@ export function MiniOutingsSection() {
                       {t('Η βραδιά μας', 'Our night')}
                     </Button>
                   ) : waiting ? (
-                    <span className="text-xs font-bold text-ink">{t('Στη λίστα αναμονής', 'On the waitlist')}</span>
+                    <Button size="sm" variant="outline" onClick={() => navigate(`/night/${group.id}`)}>
+                      {t('Στη λίστα αναμονής · βραδιά', 'On waitlist · our night')}
+                    </Button>
                   ) : (
                     <Button
                       size="sm"
-                      variant={full ? 'outline' : 'primary'}
-                      disabled={genderBlocked}
+                      variant={genderBlocked || full ? 'outline' : 'primary'}
                       onClick={() => {
                         if (genderBlocked) {
                           toast.message(
@@ -212,7 +213,12 @@ function MiniOutingComposer({ onClose }: { onClose: () => void }) {
       setError(t('Δεν μπορείς να ξεκινήσεις έξοδο όσο ισχύει παύση.', 'You cannot start an outing while a pause applies.'));
       return;
     }
-    toast.success(t('Η έξοδος δημοσιεύτηκε!', 'Outing published!'));
+    toast.success(t('Η έξοδος δημοσιεύτηκε!', 'Outing published!'), {
+      action: {
+        label: t('Μοιράσου στον τοίχο', 'Share to wall'),
+        onClick: () => navigate('/wall'),
+      },
+    });
     onClose();
     navigate(`/night/${groupId}`);
   };

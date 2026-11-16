@@ -80,6 +80,16 @@ const BY_ROUTE: Record<string, CopilotSuggestion[]> = {
     S('Πώς λειτουργεί το Βρες Nakamas;', 'How does Find Nakamas work?'),
     S('Αποδέξου το αίτημα παρέας', 'Accept the company join request'),
   ],
+  'our-night': [
+    S('Πού είναι το σημείο συνάντησης;', 'Where is the meeting point?'),
+    S('Πώς λειτουργεί η ασφάλεια;', 'How does safety work?'),
+    S('Κάλεσε φίλους στην ομάδα', 'Invite friends to the group'),
+  ],
+  wall: [
+    S('Τι κάνουν οι φίλοι μου;', 'What are my friends up to?'),
+    S('Δημοσίευσε στον τοίχο', 'Post to the wall'),
+    S('Περιόρισε τις παλιές δημοσιεύσεις', 'Limit past posts'),
+  ],
   connections: [S('Αποδέξου το αίτημα σύνδεσης', 'Accept the connection request'), S('Τι νέο υπάρχει;', "What's new?")],
   manage: [
     S('Φτιάξε εκδήλωση για επιτραπέζια την Πέμπτη στις 20:00', 'Create a board games night on Thursday at 20:00'),

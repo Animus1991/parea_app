@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -20,9 +21,17 @@ export function HomeContinueStrip() {
   const a = usePageContrast();
   const path = useStore((s) => s.lastResumePath);
   const clear = useStore((s) => s.clearLastResumePath);
+  const groups = useStore((s) => s.groups);
   const returnParts = useReturnSummary();
 
-  if (!path || path === '/') return null;
+  // Stale «Our night» resume → not-found: clear quietly instead of a dead strip.
+  const nightMatch = path?.match(/^\/night\/([^/?#]+)/);
+  const nightMissing = Boolean(nightMatch && !groups.some((g) => g.id === nightMatch![1]));
+  useEffect(() => {
+    if (nightMissing) clear();
+  }, [nightMissing, clear]);
+
+  if (!path || path === '/' || nightMissing) return null;
 
   // Welcome-back line already covers this destination — keep one clear CTA in the hero.
   if (returnParts.some((part) => returnPartPath(part) === path)) return null;

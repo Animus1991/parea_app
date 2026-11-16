@@ -28,6 +28,7 @@ import { eventStartMs, isDoorPerson, LATE_CANCEL_MS } from '../../store/outingsS
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { Button } from '../common/Button';
 import { EmptyState } from '../common/EmptyState';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { PersonAvatar } from '../wall/PersonAvatar';
 import { CheckInTicket } from './CheckInTicket';
 import { CheckInPanel } from './CheckInPanel';
@@ -380,6 +381,8 @@ export default function OurNightPageContent() {
           {t('Συναντιέστε πρώτα σε δημόσιο χώρο. Ενημέρωσε κάποιον δικό σου πού θα είσαι.', 'Meet in a public place first. Tell someone you trust where you will be.')}
         </p>
       </section>
+
+      <CopilotInlinePrompt maxChips={2} title={{ el: 'Βοήθεια για τη βραδιά', en: 'Help for tonight' }} />
 
       {!closed && (
         <section className="rounded-2xl border border-border p-4" aria-labelledby="leave-title">

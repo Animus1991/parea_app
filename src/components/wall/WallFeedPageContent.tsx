@@ -10,6 +10,7 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 import { Chip } from '../common/Chip';
 import { EmptyState } from '../common/EmptyState';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { PostComposer } from './PostComposer';
 import { WallPostList } from './WallPostList';
@@ -98,6 +99,7 @@ export default function WallFeedPageContent() {
           {t('Τι σχεδιάζουν οι Nakamas σου — κι εσύ ορίζεις ποιος βλέπει κάθε δημοσίευσή σου.', 'What your Nakamas are planning — and you choose who sees each of your posts.')}
         </p>
       </div>
+      <CopilotInlinePrompt maxChips={2} title={{ el: 'Βοήθεια για τον τοίχο', en: 'Help for the wall' }} />
 
       {focusId && (
         <div className="space-y-2">
@@ -155,7 +157,10 @@ export default function WallFeedPageContent() {
         <span className="min-w-0 flex-1">
           <span className="block text-sm font-bold text-ink">{t('Εσύ ελέγχεις το κοινό σου', 'You control your audience')}</span>
           <span className="block text-xs font-medium text-ink-muted">
-            {t('Ανά δημοσίευση και ανά ενότητα προφίλ.', 'Per post and per profile section.')}
+            {t(
+              'Ανά δημοσίευση · ενότητες μόνο αν το προφίλ είναι ορατό σε εκείνους.',
+              'Per post · sections only if the profile is visible to them.',
+            )}
           </span>
         </span>
         <span className="shrink-0 text-xs font-bold text-ink underline">{t('Ρυθμίσεις', 'Settings')}</span>
