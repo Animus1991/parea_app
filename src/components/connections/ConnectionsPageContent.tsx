@@ -15,6 +15,9 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
 import { stopBubbling, pressable } from '../../lib/a11y';
 import { sameInterest } from '../../lib/interests';
+import { connectionOutcomeText } from '../../lib/connectionFeedback';
+import { profilePathFor } from '../../lib/profileLinks';
+import { PersonAvatar } from '../wall/PersonAvatar';
 
 // ─── More dropdown ──────────────────────────────────────────────
 function MoreMenu({
@@ -101,6 +104,7 @@ export default function ConnectionsPageContent() {
   const acceptConnectionRequest = useStore((s) => s.acceptConnectionRequest);
   const declineConnectionRequest = useStore((s) => s.declineConnectionRequest);
   const removeConnection = useStore((s) => s.removeConnection);
+  const restoreConnection = useStore((s) => s.restoreConnection);
   const sendConnectionRequest = useStore((s) => s.sendConnectionRequest);
   const blockUser = useStore((s) => s.blockUser);
   const blockedUserIds = useStore((s) => s.blockedUserIds);
@@ -159,11 +163,12 @@ export default function ConnectionsPageContent() {
   }, [connections, search, roleFilter, sortBy]);
 
   const pendingRequests = useMemo(() => {
+    const blocked = new Set(blockedUserIds);
     return connectionRequests
-      .filter((r) => r.toUserId === currentUser?.id && r.status === 'pending')
+      .filter((r) => r.toUserId === currentUser?.id && r.status === 'pending' && !blocked.has(r.fromUserId))
       .map((r) => ({ ...r, user: users.find((u) => u.id === r.fromUserId)! }))
       .filter((r) => r.user);
-  }, [connectionRequests, currentUser, users]);
+  }, [connectionRequests, currentUser, users, blockedUserIds]);
 
   const suggested = useMemo(() => {
     const connIds = new Set(myConnectionIds);
@@ -235,14 +240,22 @@ export default function ConnectionsPageContent() {
     setInviteForUserId(null);
   };
   const handleViewProfile = (user: { id: string; isOrganizer?: boolean }) => {
-    // Organizer page loads any user id from the store — use it for everyone so
-    // “View Profile” never dumps into the viewer’s own /profile.
-    navigate(`/organizer/${user.id}`);
+    // Organizers open their venue page; everyone else their personal profile & wall.
+    navigate(profilePathFor(user));
   };
   const handleRemove = (userId: string, name: string) => {
     removeConnection(userId);
     addNotification({ message: t(`Αφαιρέθηκε η σύνδεση με ${name}`, `Removed connection with ${name}`), type: 'system', time: 'now' });
-    toast.success(t(`Αφαιρέθηκε η σύνδεση με ${name}`, `Removed connection with ${name}`));
+    // Removing a person is easy to do by mistake from a menu: one tap brings them back.
+    toast.success(t(`Αφαιρέθηκε η σύνδεση με ${name}`, `Removed connection with ${name}`), {
+      action: {
+        label: t('Αναίρεση', 'Undo'),
+        onClick: () => {
+          restoreConnection(userId);
+          toast.success(t(`Η σύνδεση με ${name} επανήλθε`, `Connection with ${name} restored`));
+        },
+      },
+    });
   };
   const handleAccept = (requestId: string, name: string) => {
     acceptConnectionRequest(requestId);
@@ -258,9 +271,12 @@ export default function ConnectionsPageContent() {
     );
   };
   const handleConnect = (userId: string, name: string) => {
-    sendConnectionRequest(userId);
-    addNotification({ message: t(`Στάλθηκε αίτημα σύνδεσης στο ${name}`, `Connection request sent to ${name}`), type: 'system', time: 'now' });
-    toast.success(t(`Στάλθηκε αίτημα σύνδεσης στο ${name}`, `Connection request sent to ${name}`));
+    const outcome = sendConnectionRequest(userId);
+    const feedback = connectionOutcomeText(outcome, name, t);
+    if (outcome === 'sent' || outcome === 'accepted') {
+      addNotification({ message: feedback.text, type: 'system', time: 'now' });
+    }
+    toast[feedback.tone](feedback.text);
   };
 
   // ─── Render ──────────────────────────────────────────────
@@ -377,7 +393,7 @@ export default function ConnectionsPageContent() {
             <Card key={conn.id} className={`p-4 flex items-center justify-between ${a.cardHover} transition-colors cursor-pointer group`} onClick={() => handleViewProfile(conn)} containsControls>
               <div className="flex items-center gap-3 min-w-0">
                 <div className="relative shrink-0">
-                  <img referrerPolicy="no-referrer" src={conn.photoUrl || `https://i.pravatar.cc/150?u=${conn.id}`} alt={conn.name} className={`w-12 h-12 rounded-full object-cover ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
+                  <PersonAvatar user={conn} className="h-12 w-12 text-xs" />
                   <TrustBadge tier={conn.trustTier} isDark={a.isDark} />
                 </div>
                 <div className="min-w-0">
@@ -485,7 +501,7 @@ export default function ConnectionsPageContent() {
             <Card key={req.id} className="p-4">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0 cursor-pointer rounded-lg" {...pressable<HTMLDivElement>(() => handleViewProfile(req.user))}>
-                  <img referrerPolicy="no-referrer" src={req.user.photoUrl || `https://i.pravatar.cc/150?u=${req.user.id}`} alt={req.user.name} className={`w-12 h-12 rounded-full object-cover shrink-0 ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
+                  <PersonAvatar user={req.user} className="h-12 w-12 text-xs" />
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className={`font-bold text-sm ${a.head}`}>{req.user.name}</h3>
@@ -539,7 +555,7 @@ export default function ConnectionsPageContent() {
               <Card key={user.id} className={`p-4 ${a.cardHover} transition-colors cursor-pointer group`} onClick={() => handleViewProfile(user)} containsControls>
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <img referrerPolicy="no-referrer" src={user.photoUrl || `https://i.pravatar.cc/150?u=${user.id}`} alt={user.name} className={`w-12 h-12 rounded-full object-cover shrink-0 ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
+                    <PersonAvatar user={user} className="h-12 w-12 text-xs" />
                     <div className="min-w-0">
                       <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>
                         <button type="button" className="max-w-full truncate text-left rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current" onClick={(e) => { e.stopPropagation(); handleViewProfile(user); }}>

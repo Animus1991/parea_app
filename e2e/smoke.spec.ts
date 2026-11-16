@@ -79,6 +79,6 @@ test.describe('welcome back', () => {
     const line = page.locator('#main-content p').filter({ hasText: /Από την τελευταία σου επίσκεψη|Since your last visit/ });
     await expect(line).toBeVisible();
     await line.getByRole('button').first().click();
-    await expect(page).toHaveURL(/\/(chats|notifications|buddy-seek|events\/)/);
+    await expect(page).toHaveURL(/\/(chats|notifications|buddy-seek|wall|events\/)/);
   });
 });

@@ -13,6 +13,7 @@ import { EventCardSkeleton } from '../common/Skeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';
 import { useEventsResource } from '../../hooks/useEventsQuery';
 import { cn } from '../../lib/utils';
+import { PersonAvatar } from '../wall/PersonAvatar';
 import { PLANS_TYPO } from '../../lib/typographyTokens';
 import type { Group } from '../../types';
 import { dateFnsLocale, shortDayMonthPattern } from '../../lib/dateLocale';
@@ -261,12 +262,7 @@ export default function PlansPageContent() {
                 <div className="flex items-center gap-2 mb-3">
                   <div className="flex -space-x-2">
                     {memberUsers.map((user) => (
-                      <img
-                        key={user!.id}
-                        src={user!.photoUrl ?? `https://i.pravatar.cc/24?u=${user!.id}`}
-                        alt={user!.name}
-                        className="w-6 h-6 rounded-full border-2 border-white object-cover"
-                      />
+                      <PersonAvatar key={user!.id} user={user!} size="sm" className="h-6 w-6 border-2 border-white" />
                     ))}
                   </div>
                   <span className={cn('text-xs font-medium flex items-center gap-0.5', p.muted)}>

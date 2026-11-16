@@ -1,3 +1,5 @@
+import type { Audience } from './wall';
+
 export type TrustTier = '1_explorer' | '2_confirmed' | '3_high_trust';
 export type SafetyLevel = 'low' | 'medium' | 'high_trust';
 
@@ -29,6 +31,11 @@ export interface User {
     revealPhoto: boolean;
     allowMutualPing: boolean;
     allowOrganizerMsg: boolean;
+    /**
+     * Φ26 — fine-grained "who can see my profile" (specific people, lists,
+     * "…except"). `profileVisibility` stays the coarse, always-present value.
+     */
+    profileAudience?: Audience;
   };
   /** Users this account has blocked (denormalized for peer ACL checks). */
   blockedUserIds?: string[];

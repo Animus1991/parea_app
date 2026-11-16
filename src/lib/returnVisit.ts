@@ -13,11 +13,14 @@ export interface ReturnVisitInput {
   newPlans: number;
   unreadChats: number;
   unreadNotifications: number;
+  /** Φ26 — wall posts by others, visible to the user, since the previous visit. */
+  newPosts?: number;
 }
 
 export type ReturnVisitPart =
   | { kind: 'next'; eventId: string; title: string; day: 'today' | 'tomorrow' | 'dayAfter'; time: string }
   | { kind: 'plans'; count: number }
+  | { kind: 'posts'; count: number }
   | { kind: 'chats'; count: number }
   | { kind: 'notifications'; count: number };
 
@@ -42,6 +45,7 @@ export function buildReturnSummary(input: ReturnVisitInput): ReturnVisitPart[] {
   const returning = input.previousVisitAt !== null && now.getTime() - input.previousVisitAt >= RETURN_GAP_MS;
   if (returning) {
     if (input.newPlans > 0) parts.push({ kind: 'plans', count: input.newPlans });
+    if ((input.newPosts ?? 0) > 0) parts.push({ kind: 'posts', count: input.newPosts ?? 0 });
     if (input.unreadChats > 0) parts.push({ kind: 'chats', count: input.unreadChats });
     if (input.unreadNotifications > 0) parts.push({ kind: 'notifications', count: input.unreadNotifications });
   }
@@ -60,6 +64,10 @@ export function describeReturnPart(part: ReturnVisitPart, t: T): string {
     }
     case 'plans':
       return part.count === 1 ? t('1 νέο σχέδιο για σένα', '1 new plan for you') : t(`${part.count} νέα σχέδια για σένα`, `${part.count} new plans for you`);
+    case 'posts':
+      return part.count === 1
+        ? t('1 νέα δημοσίευση από Nakamas', '1 new post from your Nakamas')
+        : t(`${part.count} νέες δημοσιεύσεις στον τοίχο`, `${part.count} new wall posts`);
     case 'chats':
       return part.count === 1 ? t('1 νέο μήνυμα', '1 new message') : t(`${part.count} νέα μηνύματα`, `${part.count} new messages`);
     case 'notifications':
@@ -73,6 +81,8 @@ export function returnPartPath(part: ReturnVisitPart): string {
       return `/events/${part.eventId}`;
     case 'plans':
       return '/buddy-seek';
+    case 'posts':
+      return '/wall';
     case 'chats':
       return '/chats';
     case 'notifications':

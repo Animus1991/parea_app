@@ -49,6 +49,8 @@ const Leaderboard = lazy(routeLoaders.leaderboard);
 const Challenges = lazy(routeLoaders.challenges);
 const Onboarding = lazy(routeLoaders.onboarding);
 const BuddySeek = lazy(routeLoaders.buddySeek);
+const Wall = lazy(routeLoaders.wall);
+const PersonProfile = lazy(routeLoaders.personProfile);
 
 export default function App() {
   const location = useLocation();
@@ -64,7 +66,7 @@ export default function App() {
   useEffect(() => {
     if (onLogin) return prefetchWhenIdle(["/"]);
     if (!signedIn) return;
-    return prefetchWhenIdle(["/", "/events/_", "/categories", "/plans", "/buddy-seek", "/saved", "/chats", "/profile", "/notifications"]);
+    return prefetchWhenIdle(["/", "/events/_", "/categories", "/plans", "/buddy-seek", "/saved", "/chats", "/profile", "/notifications", "/wall"]);
   }, [onLogin, signedIn]);
 
   useEffect(() => {
@@ -149,6 +151,8 @@ export default function App() {
 
             <Route path="/profile" element={<ErrorBoundary><Profile /></ErrorBoundary>} />
             <Route path="/organizer/:id" element={<ErrorBoundary><OrganizerProfile /></ErrorBoundary>} />
+            <Route path="/u/:id" element={<ErrorBoundary><PersonProfile /></ErrorBoundary>} />
+            <Route path="/wall" element={<ErrorBoundary><Wall /></ErrorBoundary>} />
 
             <Route path="/notifications" element={<ErrorBoundary><Notifications /></ErrorBoundary>} />
             <Route path="/settings" element={<ErrorBoundary><SettingsAndPrivacy /></ErrorBoundary>} />

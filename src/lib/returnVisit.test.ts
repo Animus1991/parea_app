@@ -54,6 +54,13 @@ describe('buildReturnSummary', () => {
     expect(parts.map((p) => p.kind)).toEqual(['next', 'plans', 'chats']);
     expect(describeReturnPart(parts[0], el)).toBe('Επόμενο: σήμερα 21:00, X');
   });
+
+  it('mentions new wall posts and links to the wall', () => {
+    const parts = buildReturnSummary({ now, previousVisitAt: 0, nextEvent: null, newPlans: 0, unreadChats: 0, unreadNotifications: 0, newPosts: 3 });
+    expect(parts).toEqual([{ kind: 'posts', count: 3 }]);
+    expect(describeReturnPart(parts[0], el)).toBe('3 νέες δημοσιεύσεις στον τοίχο');
+    expect(returnPartPath(parts[0])).toBe('/wall');
+  });
 });
 
 describe('previousVisitAt', () => {

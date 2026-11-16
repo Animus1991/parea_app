@@ -25,6 +25,7 @@ export const APP_ROUTES: AppRoute[] = [
   { id: 'saved', path: '/saved', labelEl: 'Αποθηκευμένες', labelEn: 'Saved', stems: ['αποθηκευμεν', 'saved', 'bookmarks'] },
   { id: 'history', path: '/history', labelEl: 'Ιστορικό', labelEn: 'History', stems: ['ιστορικ', 'history', 'past events'] },
   { id: 'connections', path: '/connections', labelEl: 'Οι Nakamas μου', labelEn: 'My Nakamas', stems: ['nakamas μου', 'φιλοι', 'φιλουσ', 'συνδεσεισ', 'connections', 'friends', 'my nakamas'] },
+  { id: 'wall', path: '/wall', labelEl: 'Τοίχος Nakamas', labelEn: 'Nakamas Wall', stems: ['τοιχο', 'τοιχοσ', 'δημοσιευσ', 'ροη nakamas', 'wall', 'news feed', 'posts', 'timeline'] },
   { id: 'chats', path: '/chats', labelEl: 'Συνομιλίες', labelEn: 'Chats', stems: ['συνομιλι', 'μηνυματα', 'inbox', 'chats', 'messages'] },
   { id: 'manage', path: '/manage', labelEl: 'Πίνακας Διοργανωτή', labelEn: 'Organizer Dashboard', stems: ['διοργανωτ', 'organizer', 'dashboard', 'manage'] },
   { id: 'create', path: '/create', labelEl: 'Δημιουργία Εκδήλωσης', labelEn: 'Create Event', stems: ['δημιουργια εκδηλωσ', 'create event', 'new event'] },
@@ -66,6 +67,7 @@ export function routeIdForPath(pathname: string): string {
   if (pathname.startsWith('/events/')) return pathname.endsWith('/join') ? 'join' : 'event';
   if (pathname.startsWith('/chat/')) return 'chat';
   if (pathname.startsWith('/organizer/')) return 'organizer-profile';
+  if (pathname.startsWith('/u/')) return 'person-profile';
   if (pathname.startsWith('/history/feedback')) return 'feedback';
   const exact = APP_ROUTES.find((r) => r.path === pathname);
   if (exact) return exact.id;

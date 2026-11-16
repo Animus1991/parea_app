@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { useStore } from '../../store';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
@@ -17,6 +17,11 @@ import {
   canViewerContactOrganizer,
   projectProfileForViewer,
 } from '../../lib/profilePrivacy';
+import { useWallAccess, useWallStore } from '../../store/wallStore';
+import { canPostOnWall, visiblePosts } from '../../lib/audience';
+import { PostComposer } from '../wall/PostComposer';
+import { WallPostList } from '../wall/WallPostList';
+import { profilePathFor } from '../../lib/profileLinks';
 
 export default function OrganizerProfilePageContent() {
   const { id } = useParams();
@@ -33,9 +38,19 @@ export default function OrganizerProfilePageContent() {
   const feedbackSubmitted = useStore((state) => state.feedbackSubmitted);
   const organizer = users.find((u) => u.id === id);
 
+  const lists = useWallStore((state) => state.lists);
+  const wallPostsAll = useWallStore((state) => state.posts);
+  const wallAccess = useWallAccess();
   const privacyCtx = useMemo(
-    () => ({ blockedUserIds, groups }),
-    [blockedUserIds, groups],
+    () => ({ blockedUserIds, groups, users, lists }),
+    [blockedUserIds, groups, users, lists],
+  );
+  const wallPosts = useMemo(
+    () =>
+      organizer
+        ? visiblePosts(currentUser?.id ?? null, wallPostsAll, wallAccess, { wallOwnerId: organizer.id, pinnedFirst: true })
+        : [],
+    [organizer, currentUser?.id, wallPostsAll, wallAccess],
   );
 
   const projected = useMemo(
@@ -60,6 +75,9 @@ export default function OrganizerProfilePageContent() {
       </div>
     );
   }
+
+  // Members who are not organizers have a personal profile with a wall.
+  if (!organizer.isOrganizer) return <Navigate to={profilePathFor(organizer)} replace />;
 
   if (!projected.access.allowed || projected.access.level === 'hidden') {
     return (
@@ -277,6 +295,24 @@ export default function OrganizerProfilePageContent() {
           </div>
         )}
       </div>
+
+      {!limited && (
+        <section className="space-y-3" aria-labelledby="organizer-wall-title">
+          <h2 id="organizer-wall-title" className={cn('text-sm md:text-base font-bold', p.head)}>
+            {t('Ανακοινώσεις & Τοίχος', 'Announcements & Wall')}
+          </h2>
+          {currentUser && canPostOnWall(currentUser.id, organizer.id, wallAccess).allowed && (
+            <PostComposer key={organizer.id} wallOwnerId={organizer.id} />
+          )}
+          {wallPosts.length === 0 ? (
+            <p className={cn('rounded-2xl border border-dashed px-4 py-4 text-center text-sm font-medium', p.borderB, p.muted)}>
+              {t('Δεν υπάρχουν ανακοινώσεις ακόμα.', 'No announcements yet.')}
+            </p>
+          ) : (
+            <WallPostList posts={wallPosts} />
+          )}
+        </section>
+      )}
 
       <Modal
         open={showContactModal}

@@ -7,6 +7,7 @@ import { TabBar } from '../common/TabBar';
 import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
+import { PersonAvatar } from '../wall/PersonAvatar';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useStore } from '../../store';
 import { computeUserXp } from '../../lib/gamification';
@@ -62,7 +63,8 @@ export default function AchievementsPageContent() {
         return {
           id: u.id,
           name: isMe ? t('Εσύ', 'You') : u.name,
-          avatar: u.photoUrl || `https://i.pravatar.cc/64?u=${u.id}`,
+          avatar: u.photoUrl,
+          realName: u.name,
           xp: isMe ? d.xp : computeUserXp(u, false, Math.floor((u.reliabilityScore ?? 50) / 10)),
           isMe,
         };
@@ -237,7 +239,7 @@ export default function AchievementsPageContent() {
                   >
                     {entry.rank}
                   </span>
-                  <img src={entry.avatar} alt="" referrerPolicy="no-referrer" className={cn('w-7 h-7 rounded-full border', a.isDark ? 'border-gray-700' : 'border-gray-200')} />
+                  <PersonAvatar user={{ id: entry.id, name: entry.realName, photoUrl: entry.avatar }} className={cn('w-7 h-7 text-2xs', a.isDark ? 'border-gray-700' : 'border-gray-200')} />
                   <span className={cn('flex-1 card-copy font-medium', entry.isMe ? cn('font-bold', a.highlightText) : a.head)}>{entry.name}</span>
                   <span className={cn('text-xs font-bold tabular-nums', a.sub)}>{entry.xp} XP</span>
                 </li>

@@ -108,6 +108,28 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
     return { calls: [call('whats_new')] };
   }
 
+  /* 1b1 ─ wall: post («δημοσίευσε στον τοίχο μου μόνο για φίλους «…»») / limit past posts */
+  if (hasAny(p, ['περιορισε τισ παλιεσ', 'περιορισε τισ παλαιοτερεσ', 'περιορισμοσ παλαιοτερ', 'limit past posts', 'limit old posts', 'limit my old posts'])) {
+    return { calls: [call('limit_past_posts')] };
+  }
+  const wallWords = hasAny(p, ['τοιχο', ' wall', 'ποσταρε', ' post this', ' post that']);
+  // «δημοσίευσε εκδήλωση …» stays with event creation (rule 6).
+  const eventish = hasAny(p, ['εκδηλωσ', 'event', 'meetup', 'συναντησ']);
+  if (wallWords || (hasAny(p, ['δημοσιευσε']) && !eventish)) {
+    const text = extractQuotedOrTail(raw);
+    const audience = hasAny(p, ['μονο εγω', 'μονο για μενα', 'only me', 'just me'])
+      ? 'only_me'
+      : hasAny(p, ['nakamas των nakamas', 'φιλων φιλ', 'friends of friends'])
+        ? 'friends_of_friends'
+        : hasAny(p, ['δημοσια', 'δημοσιο ', 'ολο το δικτυο', 'σε ολουσ', 'publicly', ' public', 'everyone'])
+          ? 'public'
+          : hasAny(p, ['φιλουσ', 'φιλοι', 'nakamas μου', 'συνδεσεισ', 'friends', 'connections', 'my nakamas'])
+            ? 'connections'
+            : undefined;
+    if (text) return { calls: [call('post_to_wall', { text, ...(audience ? { audience } : {}) })] };
+    return { calls: [call('navigate', { page: 'wall' })] };
+  }
+
   /* 1b2 ─ where do I …? */
   if (isWhereIsQuestion(n)) {
     return { calls: [call('where_is', { query: raw.slice(0, 120) })] };

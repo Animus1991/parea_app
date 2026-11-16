@@ -31,6 +31,8 @@ See `docs/MERGE_INTEGRATION.md` for ZIP merge phase log.
 
 **Nakamas AI copilot (Φ23–Φ24):** `src/ai/` holds a single action registry (`actions.ts`, risk tiers `safe` / `confirm` / `destructive`, undo) that maps natural-language requests onto existing store actions and routes. Two engines produce the same tool calls: Gemini function calling through `server.ts` (`/api/ai/status`, `/api/ai/copilot`, key server-side only) and a deterministic Greek/English on-device engine (`localEngine.ts`) used whenever no key or network is available. UI: `components/copilot/*` (docked panel ≥1024px, full-screen dialog on phones, `Ctrl/⌘ J`, palette bridge, inline prompts). Language now lives in a persisted `languageStore` so the AI (and refreshes) can change it. See `docs/AI_FIRST_AUDIT_AND_PLAN.md`.
 
+**Wall & audiences (Φ26):** `types/wall.ts` + `lib/audience.ts` hold one `Audience` model (public / connections / friends of friends / specific / list / only me, plus «εκτός από…») and the pure ACL used for posts, comments, profile sections and who may write on a wall. `store/wallStore.ts` (own persist key, lazy chunk) re-checks every write. UI in `components/wall/*` (`/wall` feed, composer, post card, audience picker, lists, privacy panel) and `components/people/PersonProfilePageContent.tsx` (`/u/:id`, «Δες ως…»). Organizers keep `/organizer/:id`. Firestore rules mirror the ACL. See `docs/WALL_AND_AUDIENCE_2026-11-16.md`.
+
 Dev-only scripts live in `scripts/`; legacy AI Studio repair tools in `app/applet/` are not part of the build. 
 
 ## Mermaid System Architecture Diagram

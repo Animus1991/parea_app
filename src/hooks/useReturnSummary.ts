@@ -5,6 +5,8 @@ import { usePlannedEvents } from './usePlannedEvents';
 import { usePlansFormingFeed } from './usePlansFormingFeed';
 import { buildReturnSummary, type ReturnVisitPart } from '../lib/returnVisit';
 import { previousVisitAt, touchVisit } from '../lib/visitClock';
+import { useWallAccess, useWallStore } from '../store/wallStore';
+import { visiblePosts } from '../lib/audience';
 
 const TOUCH_EVERY_MS = 5 * 60 * 1000;
 
@@ -15,6 +17,8 @@ export function useReturnSummary(): ReturnVisitPart[] {
   const conversations = useChatStore((s) => s.conversations);
   const { plannedEvents } = usePlannedEvents();
   const feed = usePlansFormingFeed(30);
+  const posts = useWallStore((s) => s.posts);
+  const wallAccess = useWallAccess();
   const [previous] = useState(() => (userId ? previousVisitAt(userId) : null));
 
   useEffect(() => {
@@ -43,6 +47,10 @@ export function useReturnSummary(): ReturnVisitPart[] {
       newPlans,
       unreadChats: conversations.reduce((n, c) => n + (c.status === 'archived' ? 0 : c.unreadCount), 0),
       unreadNotifications: notifications.filter((n) => !n.read).length,
+      newPosts:
+        previous === null
+          ? 0
+          : visiblePosts(userId, posts, wallAccess).filter((p) => p.authorId !== userId && Date.parse(p.createdAt) > previous).length,
     });
-  }, [userId, previous, plannedEvents, feed.items, conversations, notifications]);
+  }, [userId, previous, plannedEvents, feed.items, conversations, notifications, posts, wallAccess]);
 }

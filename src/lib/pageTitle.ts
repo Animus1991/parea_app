@@ -13,6 +13,7 @@ export function pageTitleForPath(pathname: string): { el: string; en: string } {
   if (pathname.startsWith('/events/')) return { el: 'Εκδήλωση', en: 'Event' };
   if (pathname.startsWith('/chat/')) return { el: 'Συνομιλία ομάδας', en: 'Group chat' };
   if (pathname.startsWith('/organizer/')) return { el: 'Διοργανωτής', en: 'Organizer' };
+  if (pathname.startsWith('/u/')) return { el: 'Προφίλ μέλους', en: 'Member profile' };
   if (pathname.startsWith('/history/feedback')) return { el: 'Αξιολόγηση', en: 'Feedback' };
   if (pathname === '/calendar') return { el: 'Ημερολόγιο', en: 'Calendar' };
   if (pathname === '/login') return { el: 'Σύνδεση', en: 'Sign in' };

@@ -1,0 +1,64 @@
+import { test, expect } from '@playwright/test';
+import { enterDemoGuest } from './a11y-helpers';
+
+/**
+ * Φ26 — Wall & audiences: what people see is what the audience allows,
+ * and every choice is visible before it is made.
+ */
+test.describe('Nakamas wall', () => {
+  test.beforeEach(async ({ page }) => {
+    await enterDemoGuest(page);
+  });
+
+  test('posts with a chosen audience, shows it, and keeps it after reload', async ({ page }) => {
+    await page.goto('/wall');
+    const composer = page.getByTestId('wall-composer');
+    await composer.getByRole('textbox').fill('Ποιος έρχεται για καφέ μετά το σινεμά;');
+    await composer.getByRole('button', { name: /Κοινό:|Audience:/ }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByText(/^Μόνο εγώ$|^Only me$/).click();
+    await expect(dialog.getByRole('status')).toContainText(/Μόνο εσύ|Only you/);
+    await dialog.getByRole('button', { name: /^Τέλος$|^Done$/ }).click();
+    await composer.getByRole('button', { name: /^Δημοσίευση$|^Post$/ }).click();
+    const post = page.getByTestId('wall-post').filter({ hasText: 'Ποιος έρχεται για καφέ' });
+    await expect(post).toBeVisible();
+    await expect(post.getByRole('button', { name: /Κοινό: Μόνο εγώ|Audience: Only me/ })).toBeVisible();
+    await page.reload();
+    await expect(page.getByTestId('wall-post').filter({ hasText: 'Ποιος έρχεται για καφέ' })).toBeVisible();
+  });
+
+  test('a connections-only post appears only after accepting the request', async ({ page }) => {
+    await page.goto('/u/u4');
+    await expect(page.getByText('φωτογραφικό περίπατο')).toHaveCount(0);
+    await page.getByRole('button', { name: /Αποδοχή αιτήματος|Accept request/ }).click();
+    await expect(page.getByText(/φωτογραφικό περίπατο/)).toBeVisible();
+  });
+
+  test('never shows posts meant for other people', async ({ page }) => {
+    await page.goto('/wall');
+    await expect(page.getByTestId('wall-post').first()).toBeVisible();
+    await expect(page.getByText(/κράτα μου θέση για το board games/)).toHaveCount(0);
+    await expect(page.getByText(/έκπληξη γενεθλίων/)).toHaveCount(0);
+  });
+
+  test('«Δες ως» previews the profile as a non-connection', async ({ page }) => {
+    await page.goto('/u/u1?viewAs=public');
+    await expect(page.getByRole('status').filter({ hasText: /όπως το βλέπει|viewing your profile as/ })).toBeVisible();
+    // Alex's own posts are for Nakamas only: a stranger sees none of them.
+    await expect(page.getByTestId('wall-post')).toHaveCount(0);
+    await page.getByRole('button', { name: /Έξοδος προεπισκόπησης|Exit preview/ }).click();
+    await expect(page.getByTestId('wall-post').first()).toBeVisible();
+  });
+
+  test('reacts and comments on a friend’s post', async ({ page }) => {
+    await page.goto('/wall');
+    const post = page.locator('[data-post-id="wp1"]');
+    const like = post.getByRole('button', { name: /^Μου αρέσει$|^Like$/ });
+    await expect(like).toHaveAttribute('aria-pressed', 'false');
+    await like.click();
+    await expect(like).toHaveAttribute('aria-pressed', 'true');
+    await post.getByRole('textbox').fill('Τέλειο, έρχομαι!');
+    await post.getByRole('button', { name: /Αποστολή σχολίου|Send comment/ }).click();
+    await expect(post.getByText('Τέλειο, έρχομαι!')).toBeVisible();
+  });
+});

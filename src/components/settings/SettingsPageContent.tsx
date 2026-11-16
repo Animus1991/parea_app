@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Ban } from 'lucide-react';
+import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Ban, Newspaper } from 'lucide-react';
 import { HomeHeroModeSetting } from './HomeHeroModeSetting';
 import { BuddySeekPrivacySettings } from '../buddySeek/BuddySeekPrivacySettings';
 import { ChatPrivacySettingsPanel } from '../chat/ChatPrivacySettingsPanel';
@@ -19,6 +19,10 @@ import { Modal } from '../common/Modal';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
+import { resolveProfileAudience } from '../../lib/profilePrivacy';
+import { audienceLabel } from '../wall/wallText';
+import { useWallStore } from '../../store/wallStore';
+import { wallPrivacyOf } from '../../lib/audience';
 
 const CATEGORY_KEYS = ['liveMusic', 'theater', 'hiking', 'cinema', 'boardGames', 'wellness', 'festivals', 'workshops'] as const;
 
@@ -44,6 +48,9 @@ export default function SettingsPageContent() {
   const currentUser = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
   const blockedUserIds = useStore((s) => s.blockedUserIds);
+  const currentUserId = useStore((s) => s.currentUser?.id);
+  const audienceLists = useWallStore((s) => s.lists);
+  const wallPrivacyByUser = useWallStore((s) => s.privacyByUser);
   const unblockUser = useStore((s) => s.unblockUser);
 
   const [show2FASetup, setShow2FASetup] = useState(false);
@@ -173,12 +180,15 @@ export default function SettingsPageContent() {
     });
   };
 
-  const visibilityLabel =
-    userSettings.privacy.profileVisibility === 'public'
+  const fineProfileAudience = resolveProfileAudience(userSettings.privacy);
+  const visibilityLabel = fineProfileAudience
+    ? audienceLabel(fineProfileAudience, t, audienceLists)
+    : userSettings.privacy.profileVisibility === 'public'
       ? t('Δημόσιο', 'Public')
       : userSettings.privacy.profileVisibility === 'connections'
         ? t('Συνδέσεις', 'Connections only')
         : t('Ιδιωτικό', 'Private');
+  const myWallPrivacy = wallPrivacyOf(wallPrivacyByUser, currentUserId ?? '');
 
   const sections = [
     {
@@ -213,7 +223,13 @@ export default function SettingsPageContent() {
     {
       title: t('Απόρρητο & Ασφάλεια', 'Privacy & Security'),
       items: [
-        { icon: Eye, label: t('Ορατότητα Προφίλ', 'Profile Visibility'), value: visibilityLabel, onClick: () => navigate('/profile') },
+        { icon: Eye, label: t('Ορατότητα Προφίλ', 'Profile Visibility'), value: visibilityLabel, onClick: () => navigate('/profile?tab=privacy') },
+        {
+          icon: Newspaper,
+          label: t('Τοίχος & κοινό δημοσιεύσεων', 'Wall & post audience'),
+          value: audienceLabel(myWallPrivacy.defaultAudience, t, audienceLists),
+          onClick: () => navigate('/profile?tab=privacy#wall-privacy'),
+        },
         {
           icon: Ban,
           label: t('Μπλοκαρισμένοι', 'Blocked Users'),

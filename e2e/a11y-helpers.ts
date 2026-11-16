@@ -18,6 +18,9 @@ export const A11Y_ROUTES = [
   { path: '/agenda', needsAuth: true, name: 'agenda' },
   { path: '/create', needsAuth: true, name: 'create' },
   { path: '/admin', needsAuth: true, name: 'admin', asAdmin: true },
+  // Φ26: the wall feed and a member profile with its wall.
+  { path: '/wall', needsAuth: true, name: 'wall' },
+  { path: '/u/u2', needsAuth: true, name: 'person-profile' },
 ] as const;
 
 /**

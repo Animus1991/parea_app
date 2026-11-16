@@ -32,6 +32,7 @@ import {
   User as UserIcon,
   CreditCard as CreditCardIcon,
   Bot,
+  Newspaper,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -43,6 +44,17 @@ import { canonicalInterest, interestLabel, sameInterest } from "../../lib/intere
 import { useProfileContrast } from "../../hooks/usePageContrast";
 import { ProfileCompletionMeter } from "./ProfileCompletionMeter";
 import { useFormDraft, type FormDraftFields } from "../../lib/formDraft";
+import { fileToResizedDataUrl, imageErrorText } from "../../lib/imageResize";
+import { profilePathFor } from "../../lib/profileLinks";
+import { useWallAccess, useWallStore } from "../../store/wallStore";
+import { visiblePosts, profileVisibilityToAudience } from "../../lib/audience";
+import { resolveProfileAudience } from "../../lib/profilePrivacy";
+import { AudienceChip } from "../wall/AudienceChip";
+import { AudiencePickerModal } from "../wall/AudiencePickerModal";
+import { PostComposer } from "../wall/PostComposer";
+import { WallPostList } from "../wall/WallPostList";
+import { WallPrivacyPanel } from "../wall/WallPrivacyPanel";
+import { PersonAvatar } from "../wall/PersonAvatar";
 
 // ─── Main component ──────────────────────────────────────────
 export default function ProfilePageContent() {
@@ -69,10 +81,17 @@ export default function ProfilePageContent() {
   const [newInterest, setNewInterest] = useState("");
 
   // Φ25 (port from nakamas): progressive disclosure — one purpose per tab, deep-linkable via ?tab=.
-  type ProfileTab = "overview" | "trust" | "privacy";
+  type ProfileTab = "overview" | "wall" | "trust" | "privacy";
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
-  const activeTab: ProfileTab = tabParam === "trust" || tabParam === "privacy" ? tabParam : "overview";
+  const activeTab: ProfileTab = tabParam === "trust" || tabParam === "privacy" || tabParam === "wall" ? tabParam : "overview";
+  const [profileAudienceOpen, setProfileAudienceOpen] = useState(false);
+  const wallPostsAll = useWallStore((state) => state.posts);
+  const wallAccess = useWallAccess();
+  const myWallPosts = React.useMemo(
+    () => (currentUser ? visiblePosts(currentUser.id, wallPostsAll, wallAccess, { wallOwnerId: currentUser.id, pinnedFirst: true }) : []),
+    [currentUser, wallPostsAll, wallAccess],
+  );
   const setActiveTab = (id: string) => {
     const next = new URLSearchParams(searchParams);
     if (id === "overview") next.delete("tab");
@@ -123,14 +142,28 @@ export default function ProfilePageContent() {
     if (!currentUser) { navigate("/login"); return; }
   }, [currentUser, navigate]);
 
+  // Deep link from Settings › «Τοίχος & κοινό»: open the wall/audience block directly.
+  useEffect(() => {
+    if (activeTab !== "privacy" || window.location.hash !== "#wall-privacy") return;
+    const id = window.setTimeout(() => document.getElementById("wall-privacy")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+    return () => window.clearTimeout(id);
+  }, [activeTab]);
+
   if (!currentUser) return null;
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const newUrl = URL.createObjectURL(e.target.files[0]);
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    // Allow picking the same file again later.
+    e.target.value = "";
+    if (!file) return;
+    try {
+      // A downscaled data URL survives reloads (blob: links died on refresh).
+      const newUrl = await fileToResizedDataUrl(file, { maxSize: 320, quality: 0.85 });
       setPhotoUrl(newUrl);
       updateUser(currentUser.id, { photoUrl: newUrl });
       toast.success(t('Η φωτογραφία ενημερώθηκε', 'Photo updated'));
+    } catch (err) {
+      toast.error(imageErrorText(err, t));
     }
   };
 
@@ -338,12 +371,13 @@ export default function ProfilePageContent() {
         onChange={setActiveTab}
         tabs={[
           { id: "overview", label: t("Ενδιαφέροντα & Δίκτυο", "Interests & Network"), icon: UserIcon },
+          { id: "wall", label: t("Ο Τοίχος μου", "My Wall"), icon: Newspaper, count: myWallPosts.length },
           { id: "trust", label: t("Επίπεδα & Ομάδες", "Tiers & Group Prefs"), icon: ShieldCheck },
           { id: "privacy", label: t("Ορατότητα & Απόρρητο", "Visibility & Privacy"), icon: Lock },
         ]}
       />
 
-      <Card className="p-4" role="tabpanel" id={`profile-panel-${activeTab}`} aria-labelledby={`profile-tab-${activeTab}`}>
+      <Card className={activeTab === "wall" ? "p-0 border-0 shadow-none bg-transparent" : "p-4"} role="tabpanel" id={`profile-panel-${activeTab}`} aria-labelledby={`profile-tab-${activeTab}`}>
         {activeTab === "overview" && (
           <div className="space-y-5 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
         {/* ─── Interests ─── */}
@@ -426,15 +460,39 @@ export default function ProfilePageContent() {
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
               {connectedUsers.slice(0, 8).map((u) => (
-                <div key={u.id} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group" {...pressable<HTMLDivElement>(() => (u.isOrganizer ? navigate(`/organizer/${u.id}`) : navigate("/connections")))}>
-                  <img referrerPolicy="no-referrer" src={u.photoUrl || `https://i.pravatar.cc/80?u=${u.id}`} alt={u.name}
-                    className={`w-11 h-11 rounded-xl object-cover border-2 transition-all ${a.isDark ? "border-gray-700/50 group-hover:border-gray-500" : "border-gray-200 group-hover:border-gray-300"} group-hover:scale-105`} />
+                <div key={u.id} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group" {...pressable<HTMLDivElement>(() => navigate(profilePathFor(u)))}>
+                  <PersonAvatar user={u} className={`w-11 h-11 rounded-xl border-2 transition-all ${a.isDark ? "border-gray-700/50 group-hover:border-gray-500" : "border-gray-200 group-hover:border-gray-300"} group-hover:scale-105`} />
                   <span className={`text-2xs font-bold truncate max-w-[64px] ${a.isDark ? "text-gray-300" : "text-gray-700"}`}>{u.name}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
+          </div>
+        )}
+        {activeTab === "wall" && (
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border bg-surface-raised px-4 py-3">
+              <p className="text-xs font-medium text-ink-muted">
+                {t("Κάθε δημοσίευση έχει το δικό της κοινό. Δες πώς φαίνεται ο τοίχος σου στους άλλους.", "Every post has its own audience. See how your wall looks to others.")}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant="outline" onClick={() => navigate(`/u/${currentUser.id}?viewAs=public`)} className="gap-1.5">
+                  <Eye className="w-3.5 h-3.5" aria-hidden /> {t("Δες ως…", "View as…")}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => navigate("/wall")} className="gap-1.5">
+                  <Newspaper className="w-3.5 h-3.5" aria-hidden /> {t("Ροή Nakamas", "Nakamas feed")}
+                </Button>
+              </div>
+            </div>
+            <PostComposer />
+            {myWallPosts.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-border px-4 py-6 text-center text-sm font-medium text-ink-muted">
+                {t("Ο τοίχος σου είναι άδειος — γράψε τι σχεδιάζεις.", "Your wall is empty — share what you are planning.")}
+              </p>
+            ) : (
+              <WallPostList posts={myWallPosts} />
+            )}
           </div>
         )}
         {activeTab === "trust" && (
@@ -528,23 +586,23 @@ export default function ProfilePageContent() {
                 <div className={`p-2 rounded-lg shrink-0 ${a.isDark ? "bg-gray-700/30" : "bg-gray-100"}`}><Eye className={`w-4 h-4 ${sub}`} /></div>
                 <div>
                   <p className={`text-sm font-bold ${heading}`}>{t("Ορατότητα Προφίλ", "Profile Visibility")}</p>
-                  <p className={`text-xs mt-0.5 ${sub}`}>{t("Ποιοι βλέπουν το πλήρες προφίλ σας.", "Who can see your full profile.")}</p>
+                  <p className={`text-xs mt-0.5 ${sub}`}>{t("Δημόσιο, Nakamas, συγκεκριμένα άτομα, λίστα ή «εκτός από…».", "Public, Nakamas, specific people, a list or “except…”.")}</p>
                 </div>
               </div>
-              <select aria-label={t("Ορατότητα προφίλ", "Profile visibility")}
-                value={userSettings.privacy.profileVisibility}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  if (v === 'public' || v === 'connections' || v === 'private') {
-                    patchPrivacy({ profileVisibility: v });
-                  }
-                }}
-                className={`filter-select outline-none border ${a.selectBg} ${a.selectRing}`}
-              >
-                <option value="public">{t("Δημόσιο", "Public")}</option>
-                <option value="connections">{t("Μόνο συνδέσεις Nakamas", "Connections only")}</option>
-                <option value="private">{t("Ιδιωτικό", "Private")}</option>
-              </select>
+              <AudienceChip
+                audience={resolveProfileAudience(userSettings.privacy) ?? profileVisibilityToAudience(userSettings.privacy.profileVisibility)}
+                onClick={() => setProfileAudienceOpen(true)}
+                className="self-start"
+              />
+              <AudiencePickerModal
+                open={profileAudienceOpen}
+                onClose={() => setProfileAudienceOpen(false)}
+                value={resolveProfileAudience(userSettings.privacy) ?? profileVisibilityToAudience(userSettings.privacy.profileVisibility)}
+                context="profile"
+                title={t("Ποιος βλέπει το προφίλ μου;", "Who can see my profile?")}
+                description={t("Όσοι δεν είναι στο κοινό βλέπουν μόνο ότι το προφίλ είναι ιδιωτικό.", "People outside the audience only see that the profile is private.")}
+                onSave={(a) => patchPrivacy({ profileAudience: a })}
+              />
             </div>
 
             {/* Message Permission */}
@@ -613,6 +671,11 @@ export default function ProfilePageContent() {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* ─── Wall, sections & audience lists (Φ26) ─── */}
+        <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
+          <WallPrivacyPanel showProfileRow={false} />
         </div>
 
           </div>

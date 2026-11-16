@@ -33,6 +33,7 @@ import { legacyVisibilityToMode } from "../types/buddySeek";
 import type { AppNotification } from "../data/mockNotifications";
 import { normalizeAppNotification } from "../lib/notificationsUtil";
 import { createEventOnApi, updateEventOnApi } from "../services/eventsApi";
+import { audienceToProfileVisibility } from "../lib/audience";
 
 export interface FeedbackData {
   eventId: string;
@@ -52,6 +53,33 @@ export interface CommitmentHold {
 }
 
 export type HomeHeroMode = 'light' | 'balanced' | 'rich';
+
+export type ConnectionRequestOutcome = 'sent' | 'accepted' | 'exists' | 'connected' | 'blocked' | 'invalid';
+
+/** Adds `id` once (connection lists are sets). */
+function addUnique(list: string[] | undefined, id: string): string[] {
+  const base = list ?? [];
+  return base.includes(id) ? base : [...base, id];
+}
+
+/**
+ * Nakamas connections are mutual. Drops half-edges (A lists B, B does not
+ * list A) that an older removeConnection bug left behind in saved state, so
+ * privacy checks never treat a removed or blocked person as a connection.
+ * Ids of people not in the list are kept: they cannot be verified here.
+ */
+export function symmetrizeConnections<T extends { id: string; connections?: string[] }>(users: T[]): T[] {
+  const byId = new Map(users.map((u) => [u.id, u]));
+  return users.map((u) => {
+    const conns = u.connections ?? [];
+    const kept = [...new Set(conns)].filter((otherId) => {
+      if (otherId === u.id) return false;
+      const other = byId.get(otherId);
+      return !other || (other.connections ?? []).includes(u.id);
+    });
+    return kept.length === conns.length && kept.every((id, i) => id === conns[i]) ? u : { ...u, connections: kept };
+  });
+}
 
 /** Φ16.8 — persisted user-submitted issue reports (Report Issue page + Admin). */
 export interface IssueReport {
@@ -240,10 +268,18 @@ interface AppState {
   setPlansFormingSheetOpen: (open: boolean) => void;
   setPlansFormingSidebarOpen: (open: boolean) => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
-  sendConnectionRequest: (toUserId: string, message?: string) => void;
+  /**
+   * Sends a Nakamas request. Returns what happened so the UI can say it plainly:
+   * `accepted` when the other person had already asked (their request is accepted).
+   */
+  sendConnectionRequest: (toUserId: string, message?: string) => ConnectionRequestOutcome;
+  /** Withdraws the viewer's own pending request to `toUserId`. */
+  cancelConnectionRequest: (toUserId: string) => void;
   acceptConnectionRequest: (requestId: string) => void;
   declineConnectionRequest: (requestId: string) => void;
   removeConnection: (userId: string) => void;
+  /** Restores a connection removed moments ago (Undo on the toast). */
+  restoreConnection: (userId: string) => void;
 
   publishCompanyRequest: (request: Omit<CompanyRequest, 'id' | 'createdAt' | 'updatedAt'>) => string;
   saveCompanyRequestDraft: (request: Omit<CompanyRequest, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => string;
@@ -771,7 +807,11 @@ export const useStore = create<AppState>()(
 
   updatePrivacySettings: (patch) =>
     set((state) => {
-      const privacy = { ...state.userSettings.privacy, ...patch };
+      const privacy: AccountPrivacy = { ...state.userSettings.privacy, ...patch };
+      // A coarse visibility change without a fine audience (AI, legacy select)
+      // replaces any earlier fine-grained choice instead of leaving it to revive later.
+      if (patch.profileVisibility && !('profileAudience' in patch)) delete privacy.profileAudience;
+      if (privacy.profileAudience) privacy.profileVisibility = audienceToProfileVisibility(privacy.profileAudience);
       const uid = state.currentUser?.id;
       return {
         userSettings: {
@@ -809,10 +849,8 @@ export const useStore = create<AppState>()(
         ),
       };
     });
-    // Soft-remove Nakamas edge if present.
-    if ((get().currentUser?.connections ?? []).includes(userId)) {
-      get().removeConnection(userId);
-    }
+    // Drop the Nakamas edge on both sides (idempotent — also clears half-edges).
+    get().removeConnection(userId);
   },
   unblockUser: (userId) => {
     const myId = get().currentUser?.id;
@@ -976,40 +1014,78 @@ export const useStore = create<AppState>()(
   connectionRequests: [
     { id: 'cr1', fromUserId: 'org2', toUserId: 'u1', message: 'We noticed you attended our events. Let\'s connect!', createdAt: '2024-01-15', status: 'pending' as const },
     { id: 'cr2', fromUserId: 'org4', toUserId: 'u1', createdAt: '2024-01-14', status: 'pending' as const },
+    { id: 'cr3', fromUserId: 'u4', toUserId: 'u1', message: 'We were in the same cinema group — shall we connect?', createdAt: '2024-01-16', status: 'pending' as const },
   ],
 
-  sendConnectionRequest: (toUserId, message) =>
+  sendConnectionRequest: (toUserId, message) => {
+    const state = get();
+    const me = state.currentUser;
+    if (!me || !toUserId || toUserId === me.id) return 'invalid';
+    const peer = state.users.find((u) => u.id === toUserId);
+    if (!peer) return 'invalid';
+    if (state.blockedUserIds.includes(toUserId) || (peer.blockedUserIds ?? []).includes(me.id)) return 'blocked';
+    if ((me.connections ?? []).includes(toUserId)) return 'connected';
+    // They already asked: saying yes is what the person means.
+    const reverse = state.connectionRequests.find(
+      (r) => r.fromUserId === toUserId && r.toUserId === me.id && r.status === 'pending',
+    );
+    if (reverse) {
+      get().acceptConnectionRequest(reverse.id);
+      return 'accepted';
+    }
+    const exists = state.connectionRequests.some(
+      (r) => r.fromUserId === me.id && r.toUserId === toUserId && r.status === 'pending',
+    );
+    if (exists) return 'exists';
+    set((s) => ({
+      connectionRequests: [
+        ...s.connectionRequests,
+        {
+          id: `cr${Date.now()}`,
+          fromUserId: me.id,
+          toUserId,
+          message: message?.trim() ? message.trim().slice(0, 300) : undefined,
+          createdAt: new Date().toISOString().split('T')[0],
+          status: 'pending' as const,
+        },
+      ],
+    }));
+    return 'sent';
+  },
+
+  cancelConnectionRequest: (toUserId) =>
     set((state) => {
-      if (!state.currentUser) return state;
-      const exists = state.connectionRequests.some(
-        (r) => r.fromUserId === state.currentUser!.id && r.toUserId === toUserId && r.status === 'pending'
-      );
-      if (exists) return state;
+      const myId = state.currentUser?.id;
+      if (!myId) return state;
       return {
-        connectionRequests: [
-          ...state.connectionRequests,
-          { id: `cr${Date.now()}`, fromUserId: state.currentUser.id, toUserId, message, createdAt: new Date().toISOString().split('T')[0], status: 'pending' as const },
-        ],
+        connectionRequests: state.connectionRequests.filter(
+          (r) => !(r.fromUserId === myId && r.toUserId === toUserId && r.status === 'pending'),
+        ),
       };
     }),
 
   acceptConnectionRequest: (requestId) =>
     set((state) => {
       const req = state.connectionRequests.find((r) => r.id === requestId);
-      if (!req || !state.currentUser) return state;
+      if (!req || !state.currentUser || req.status !== 'pending') return state;
+      const myId = state.currentUser.id;
+      // Only the person who received the request can accept it.
+      if (req.toUserId !== myId) return state;
+      const link = <U extends { id: string; connections?: string[] }>(u: U): U => {
+        if (u.id === req.fromUserId) return { ...u, connections: addUnique(u.connections, req.toUserId) };
+        if (u.id === req.toUserId) return { ...u, connections: addUnique(u.connections, req.fromUserId) };
+        return u;
+      };
       return {
         connectionRequests: state.connectionRequests.map((r) =>
-          r.id === requestId ? { ...r, status: 'accepted' as const } : r
+          r.id === requestId ||
+          // A crossing request in the other direction is settled by the same yes.
+          (r.status === 'pending' && r.fromUserId === req.toUserId && r.toUserId === req.fromUserId)
+            ? { ...r, status: 'accepted' as const }
+            : r,
         ),
-        users: state.users.map((u) => {
-          if (u.id === req.fromUserId) return { ...u, connections: [...(u.connections || []), req.toUserId] };
-          if (u.id === req.toUserId) return { ...u, connections: [...(u.connections || []), req.fromUserId] };
-          return u;
-        }),
-        currentUser:
-          state.currentUser.id === req.toUserId
-            ? { ...state.currentUser, connections: [...(state.currentUser.connections || []), req.fromUserId] }
-            : state.currentUser,
+        users: state.users.map(link),
+        currentUser: link(state.currentUser),
       };
     }),
 
@@ -1027,10 +1103,27 @@ export const useStore = create<AppState>()(
       return {
         users: state.users.map((u) => {
           if (u.id === myId) return { ...u, connections: (u.connections || []).filter((id) => id !== userId) };
-          if (u.id === userId) return { ...u, connections: (u.connections || []).filter((id) => id !== userId) };
+          // Mutual edge: the other person must stop listing me too (privacy ACL reads both sides).
+          if (u.id === userId) return { ...u, connections: (u.connections || []).filter((id) => id !== myId) };
           return u;
         }),
         currentUser: { ...state.currentUser, connections: (state.currentUser.connections || []).filter((id) => id !== userId) },
+      };
+    }),
+
+  restoreConnection: (userId) =>
+    set((state) => {
+      if (!state.currentUser || userId === state.currentUser.id) return state;
+      const myId = state.currentUser.id;
+      if (state.blockedUserIds.includes(userId)) return state;
+      if (!state.users.some((u) => u.id === userId)) return state;
+      return {
+        users: state.users.map((u) => {
+          if (u.id === myId) return { ...u, connections: addUnique(u.connections, userId) };
+          if (u.id === userId) return { ...u, connections: addUnique(u.connections, myId) };
+          return u;
+        }),
+        currentUser: { ...state.currentUser, connections: addUnique(state.currentUser.connections, userId) },
       };
     }),
 
@@ -1652,7 +1745,15 @@ export const useStore = create<AppState>()(
         // isAdmin comes only from the trusted seeds, never from persisted
         // (user-editable) localStorage state.
         const seedAdmin = new Map(current.users.map((u) => [u.id, Boolean(u.isAdmin)]));
-        const users = mergeById(current.users, p.users).map((u) => ({ ...u, isAdmin: seedAdmin.get(u.id) ?? false }));
+        // blob: photo links saved by older builds die on reload — fall back to the seed photo.
+        const seedPhoto = new Map(current.users.map((u) => [u.id, u.photoUrl]));
+        const users = symmetrizeConnections(
+          mergeById(current.users, p.users).map((u) => ({
+            ...u,
+            isAdmin: seedAdmin.get(u.id) ?? false,
+            photoUrl: u.photoUrl?.startsWith('blob:') ? seedPhoto.get(u.id) : u.photoUrl,
+          })),
+        );
         const notifications = Array.isArray(p.notifications)
           ? (p.notifications as typeof current.notifications)
           : current.notifications;

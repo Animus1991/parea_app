@@ -101,7 +101,8 @@ function mapToUser(uid: string, data: NakamasFirestoreProfile): User {
     trustTier: data.trustTier || '1_explorer',
     reliabilityScore: 70,
     badges: ['Firebase member'],
-    photoUrl: data.photoUrl || `https://i.pravatar.cc/200?u=${uid}`,
+    // No stock faces: without a real photo the UI shows initials.
+    photoUrl: data.photoUrl || undefined,
     emailVerified: Boolean(data.email),
     phoneVerified: false,
     paymentVerified: false,

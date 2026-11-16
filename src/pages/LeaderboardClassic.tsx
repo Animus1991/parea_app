@@ -7,6 +7,7 @@ import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
 import { usePageContrast } from '../hooks/usePageContrast';
 import { cn } from '../lib/utils';
+import { PersonAvatar } from '../components/wall/PersonAvatar';
 import { motion } from 'motion/react';
 
 type Period = 'week' | 'month' | 'alltime';
@@ -46,7 +47,7 @@ export default function LeaderboardClassic() {
       return {
         id: u.id,
         name: u.name,
-        avatar: u.photoUrl || `https://i.pravatar.cc/150?u=${u.id}`,
+        avatar: u.photoUrl,
         xp: Math.round(xpForUser(u, isMe) * multiplier),
         streak: Math.min((isMe ? feedbackCount : (u.connections?.length ?? 0)) * 2, 14),
         eventsCount: isMe ? feedbackCount : Math.floor((u.reliabilityScore ?? 50) / 10),
@@ -59,7 +60,7 @@ export default function LeaderboardClassic() {
       list.push({
         id: currentUser.id,
         name: currentUser.name,
-        avatar: currentUser.photoUrl || `https://i.pravatar.cc/150?u=${currentUser.id}`,
+        avatar: currentUser.photoUrl,
         xp: Math.round(xpForUser(currentUser, true) * multiplier),
         streak: Math.min(feedbackCount * 2, 14),
         eventsCount: feedbackCount,
@@ -125,11 +126,9 @@ export default function LeaderboardClassic() {
           <Card className={cn('p-4', p.highlightRow)}>
             <div className="flex items-center gap-4">
               <div className="relative shrink-0">
-                <img
-                  referrerPolicy="no-referrer"
-                  src={myEntry.avatar}
-                  alt={myEntry.name}
-                  className={cn('w-11 h-11 rounded-full object-cover ring-2', p.isDark ? 'ring-white/20' : 'ring-accent/40')}
+                <PersonAvatar
+                  user={{ id: myEntry.id, name: myEntry.name, photoUrl: myEntry.avatar }}
+                  className={cn('w-11 h-11 ring-2', p.isDark ? 'ring-white/20' : 'ring-accent/40')}
                 />
                 <div className="absolute -bottom-1 -right-1 bg-ink text-white text-xs font-black px-1.5 py-0.5 rounded-full border-2 border-white">
                   #{myRank}
@@ -209,11 +208,9 @@ export default function LeaderboardClassic() {
                   <div className="w-8 flex items-center justify-center shrink-0">
                     <RankIcon rank={rank} mutedClass={p.muted} />
                   </div>
-                  <img
-                    referrerPolicy="no-referrer"
-                    src={entry.avatar}
-                    alt={entry.name}
-                    className={cn('w-10 h-10 rounded-full object-cover shrink-0 ring-1', p.isDark ? 'ring-white/10' : 'ring-gray-100')}
+                  <PersonAvatar
+                    user={{ id: entry.id, name: entry.name, photoUrl: entry.avatar }}
+                    className={cn('w-10 h-10 ring-1', p.isDark ? 'ring-white/10' : 'ring-gray-100')}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">

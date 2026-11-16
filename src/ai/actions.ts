@@ -30,6 +30,11 @@ import { isPlatformAdmin } from '../lib/roles';
 import { buildReturnSummary, describeReturnPart, returnPartPath } from '../lib/returnVisit';
 import { previousVisitAt } from '../lib/visitClock';
 import { interestLabel } from '../lib/interests';
+import { visiblePosts, wallPrivacyOf } from '../lib/audience';
+import type { Audience } from '../types/wall';
+
+/** The wall store loads on demand so the first page (login) never ships wall code. */
+const loadWallStore = () => import('../store/wallStore').then((m) => m.useWallStore);
 
 /* ───────────────────────── helpers ───────────────────────── */
 
@@ -1025,6 +1030,95 @@ const privacyAction: CopilotAction = {
   },
 };
 
+/* ───────────────────────── wall (Φ26) ───────────────────────── */
+
+const WALL_AUDIENCES = ['public', 'connections', 'friends_of_friends', 'only_me'] as const;
+const WALL_AUDIENCE_LABEL: Record<string, [string, string]> = {
+  public: ['Δημόσιο — όλο το δίκτυο Nakamas', 'Public — the whole Nakamas network'],
+  connections: ['Nakamas μου', 'My Nakamas'],
+  friends_of_friends: ['Nakamas των Nakamas', 'Friends of friends'],
+  only_me: ['Μόνο εγώ', 'Only me'],
+  specific: ['Συγκεκριμένα άτομα', 'Specific people'],
+  list: ['Λίστα', 'List'],
+};
+
+function wallAudienceArg(args: ActionArgs, byUser: Parameters<typeof wallPrivacyOf>[0]): Audience {
+  const a = str(args.audience);
+  if (a && (WALL_AUDIENCES as readonly string[]).includes(a)) return { base: a as Audience['base'] };
+  const me = state().currentUser?.id ?? '';
+  return wallPrivacyOf(byUser, me).defaultAudience;
+}
+
+const postToWallAction: CopilotAction = {
+  name: 'post_to_wall',
+  description:
+    "Publish a post on the user's own wall (Nakamas Wall). Audience: public (whole network), connections, friends_of_friends or only_me; omitted = the user's default. Optionally attach an event.",
+  risk: 'confirm',
+  parameters: OBJ(
+    {
+      text: S('Post text, max 2000 characters, in the language the user wrote.'),
+      audience: S('Who can see it', { enum: [...WALL_AUDIENCES] }),
+      event: EVENT_REF,
+    },
+    ['text'],
+  ),
+  preview: (args, rt) => {
+    const chosen = str(args.audience);
+    const label = chosen && WALL_AUDIENCE_LABEL[chosen] ? WALL_AUDIENCE_LABEL[chosen] : ['η προεπιλογή σου', 'your default'];
+    const ev = args.event !== undefined ? resolveEvent(args.event, rt) : null;
+    const text = (str(args.text) ?? '').slice(0, 140);
+    return {
+      el: `Δημοσίευση στον τοίχο σου · Κοινό: ${label[0]}${ev ? ` · Εκδήλωση: ${ev.title}` : ''}\n«${text}»`,
+      en: `Post on your wall · Audience: ${label[1]}${ev ? ` · Event: ${ev.title}` : ''}\n"${text}"`,
+    };
+  },
+  run: async (args, rt) => {
+    const text = (str(args.text) ?? '').slice(0, 2000);
+    if (!text) return fail('Τι να γράψω; Πες μου το κείμενο σε «εισαγωγικά».', 'What should I post? Give me the text in "quotes".');
+    const ev = args.event !== undefined ? resolveEvent(args.event, rt) : null;
+    const useWallStore = await loadWallStore();
+    const audience = wallAudienceArg(args, useWallStore.getState().privacyByUser);
+    const res = useWallStore.getState().createPost({ text, audience, eventId: ev?.id });
+    if (!res.ok || !res.id) return fail(res.reasonEl ?? 'Δεν δημοσιεύτηκε.', res.reasonEn ?? 'Not posted.');
+    const id = res.id;
+    const [el, en] = WALL_AUDIENCE_LABEL[audience.base] ?? WALL_AUDIENCE_LABEL.connections;
+    return {
+      ok: true,
+      el: `Δημοσιεύτηκε στον τοίχο σου (κοινό: ${el}).`,
+      en: `Posted on your wall (audience: ${en}).`,
+      undo: () => {
+        useWallStore.getState().deletePost(id);
+      },
+      link: { path: '/wall', el: 'Τοίχος', en: 'Wall' },
+      data: { postId: id, audience: audience.base },
+    };
+  },
+};
+
+const limitPastPostsAction: CopilotAction = {
+  name: 'limit_past_posts',
+  description: "Make all of the user's past public / friends-of-friends wall posts visible to their Nakamas (connections) only.",
+  risk: 'confirm',
+  parameters: OBJ({}),
+  preview: () => ({
+    el: 'Οι δημόσιες δημοσιεύσεις σου (και όσες βλέπουν οι Nakamas των Nakamas) θα γίνουν ορατές μόνο στους Nakamas σου.',
+    en: 'Your public (and friends-of-friends) posts will become visible to your Nakamas only.',
+  }),
+  run: async () => {
+    const useWallStore = await loadWallStore();
+    const previous = useWallStore.getState().limitPastPosts();
+    const n = Object.keys(previous).length;
+    if (n === 0) return { ok: true, el: 'Όλες οι δημοσιεύσεις σου είναι ήδη μόνο για Nakamas (ή στενότερο κοινό).', en: 'All your posts are already Nakamas-only (or narrower).' };
+    return {
+      ok: true,
+      el: `Περιόρισα ${n} δημοσιεύσεις στους Nakamas σου.`,
+      en: `Limited ${n} posts to your Nakamas.`,
+      undo: () => useWallStore.getState().restoreAudiences(previous),
+      link: { path: '/profile?tab=privacy', el: 'Απόρρητο', en: 'Privacy' },
+    };
+  },
+};
+
 const notifPrefsAction: CopilotAction = {
   name: 'update_notification_prefs',
   description: 'Turn notification categories on or off.',
@@ -1128,7 +1222,7 @@ const whatsNewAction: CopilotAction = {
     "Catch the user up: next plan, new plans, unread messages/notifications, pending feedback, verify gaps, incoming company joins.",
   risk: 'safe',
   parameters: OBJ({}),
-  run: () => {
+  run: async () => {
     const s = state();
     const user = s.currentUser;
     if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
@@ -1146,6 +1240,12 @@ const whatsNewAction: CopilotAction = {
     ).length;
     const unreadChats = useChatStore.getState().conversations.reduce((n, c) => n + (c.status === 'archived' ? 0 : c.unreadCount), 0);
     // Asked directly, so news counts even within the same session.
+    const w = (await loadWallStore()).getState();
+    const wallCtx = {
+      graph: { users: s.users, lists: w.lists, viewerBlockedIds: s.blockedUserIds, suspendedUserIds: s.suspendedUserIds },
+      privacyByUser: w.privacyByUser,
+    };
+    const newPosts = visiblePosts(user.id, w.posts, wallCtx).filter((p) => p.authorId !== user.id && Date.parse(p.createdAt) > since).length;
     const parts = buildReturnSummary({
       now,
       previousVisitAt: 0,
@@ -1153,6 +1253,7 @@ const whatsNewAction: CopilotAction = {
       newPlans,
       unreadChats,
       unreadNotifications: s.notifications.filter((n) => !n.read).length,
+      newPosts,
     });
     const extras: { el: string; en: string; path: string }[] = [];
     const pendingFeedback = s.getPendingFeedbackEventId();
@@ -1628,9 +1729,9 @@ const capabilitiesAction: CopilotAction = {
   run: () => ({
     ok: true,
     el:
-      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα, τις ειδοποιήσεις, το πορτοφόλι και την αξιοπιστία σου\n• Να εξάγω όλο το ημερολόγιο σε .ics και να ανοίξω εκκρεμή αξιολόγηση\n• Να ξεκινήσω επαλήθευση και να σου πω τι νέο υπάρχει (και κενά εμπιστοσύνης)\n• Να δείξω σχέδια που σχηματίζονται και να απαντήσω σε αιτήματα παρέας\n• Να απαντήσω «πού …;» με where_is και να προτείνω πρόχειρα φόρμας (εκδήλωση/προφίλ)\n• Να μπω σε προκλήσεις, να στείλω μήνυμα ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\nΌ,τι κάνω αναιρείται με ένα κλικ.',
+      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα, τις ειδοποιήσεις, το πορτοφόλι και την αξιοπιστία σου\n• Να εξάγω όλο το ημερολόγιο σε .ics και να ανοίξω εκκρεμή αξιολόγηση\n• Να ξεκινήσω επαλήθευση και να σου πω τι νέο υπάρχει (και κενά εμπιστοσύνης)\n• Να δείξω σχέδια που σχηματίζονται και να απαντήσω σε αιτήματα παρέας\n• Να απαντήσω «πού …;» με where_is και να προτείνω πρόχειρα φόρμας (εκδήλωση/προφίλ)\n• Να μπω σε προκλήσεις, να στείλω μήνυμα ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να δημοσιεύσω στον τοίχο σου με το κοινό που επιλέγεις ή να περιορίσω παλαιότερες δημοσιεύσεις\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\nΌ,τι κάνω αναιρείται με ένα κλικ.',
     en:
-      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule, notifications, wallet and trust\n• Export the whole calendar as .ics and open a pending review\n• Start verification and catch you up on what’s new (including trust gaps)\n• List plans forming and respond to company join requests\n• Answer “where do I …?” and propose form drafts (event/profile)\n• Join challenges, message your group or create an event (with confirmation)\n• Change theme, language, privacy, notifications, interests\nEverything I do can be undone in one click.',
+      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule, notifications, wallet and trust\n• Export the whole calendar as .ics and open a pending review\n• Start verification and catch you up on what’s new (including trust gaps)\n• List plans forming and respond to company join requests\n• Answer “where do I …?” and propose form drafts (event/profile)\n• Join challenges, message your group or create an event (with confirmation)\n• Post on your wall with the audience you choose, or limit past posts\n• Change theme, language, privacy, notifications, interests\nEverything I do can be undone in one click.',
   }),
 };
 
@@ -1697,6 +1798,8 @@ export const COPILOT_ACTIONS: CopilotAction[] = [
   interestAction(true),
   interestAction(false),
   privacyAction,
+  postToWallAction,
+  limitPastPostsAction,
   notifPrefsAction,
   sidebarAction,
   markReadAction,
