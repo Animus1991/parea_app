@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { HeartHandshake, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { VIBE_QUESTIONS } from '../../lib/vibe';
@@ -55,7 +56,14 @@ export function VibeProfileCard({ className }: { className?: string }) {
           {vibe ? t('Αλλαγή απαντήσεων', 'Change answers') : t('Κάνε το κουίζ (1′)', 'Take the quiz (1 min)')}
         </Button>
         {vibe && (
-          <Button size="sm" variant="ghost" onClick={() => setVibe(null)}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              setVibe(null);
+              toast.message(t('Το στυλ παρέας διαγράφηκε', 'Group style cleared'));
+            }}
+          >
             {t('Διαγραφή', 'Clear')}
           </Button>
         )}
@@ -68,7 +76,15 @@ export function VibeProfileCard({ className }: { className?: string }) {
         <select
           id="gender-identity"
           value={me.gender && me.gender !== 'undisclosed' ? me.gender : ''}
-          onChange={(e) => setGender((e.target.value || undefined) as GenderIdentity | undefined)}
+          onChange={(e) => {
+            const next = (e.target.value || undefined) as GenderIdentity | undefined;
+            setGender(next);
+            toast.message(
+              next
+                ? t('Η ταυτότητα φύλου ενημερώθηκε (μόνο για ομάδες).', 'Gender identity updated (groups only).')
+                : t('Η ταυτότητα φύλου αφαιρέθηκε.', 'Gender identity removed.'),
+            );
+          }}
           className="mt-1.5 min-h-10 w-full rounded-xl border border-border bg-surface px-3 text-sm font-medium text-ink"
           aria-describedby="gender-identity-help"
         >

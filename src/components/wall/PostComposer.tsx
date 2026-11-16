@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CalendarDays, ImagePlus, Lock, UserPlus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card } from '../common/Card';
@@ -65,6 +66,7 @@ export function PostComposer({
   focusOnOpen?: boolean;
 }) {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const me = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
   const events = useStore((s) => s.events);
@@ -176,6 +178,14 @@ export function PostComposer({
       isOwnWall
         ? t('Δημοσιεύτηκε στον τοίχο σου', 'Posted to your wall')
         : t(`Δημοσιεύτηκε στον τοίχο του/της ${owner?.name ?? ''}`, `Posted on ${owner?.name ?? ''}'s wall`),
+      res.id
+        ? {
+            action: {
+              label: t('Δες τη', 'View'),
+              onClick: () => navigate(isOwnWall ? `/wall?post=${res.id}` : `/u/${ownerId}`),
+            },
+          }
+        : undefined,
     );
     if (res.id) onPosted?.(res.id);
   };

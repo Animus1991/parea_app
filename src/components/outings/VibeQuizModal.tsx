@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { VIBE_QUESTIONS, isCompleteVibe } from '../../lib/vibe';
@@ -14,6 +16,7 @@ import type { VibeProfile } from '../../types/outings';
  */
 export function VibeQuizModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const me = useStore((s) => s.currentUser);
   const setVibe = useStore((s) => s.setVibe);
   const [answers, setAnswers] = useState<Partial<VibeProfile>>(() => ({ ...(me?.vibe ?? {}) }));
@@ -26,6 +29,12 @@ export function VibeQuizModal({ open, onClose }: { open: boolean; onClose: () =>
     const full = { ...answers, answeredAt: new Date().toISOString() };
     if (isCompleteVibe(full)) {
       setVibe(full);
+      toast.success(t('Το στυλ παρέας αποθηκεύτηκε', 'Group style saved'), {
+        action: {
+          label: t('Βρες Nakamas', 'Find Nakamas'),
+          onClick: () => navigate('/buddy-seek'),
+        },
+      });
       onClose();
     }
   };
