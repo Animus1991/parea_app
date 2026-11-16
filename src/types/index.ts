@@ -21,6 +21,17 @@ export interface User {
   /** Platform moderator. Only trusted seed data sets this (see lib/roles.ts). */
   isAdmin?: boolean;
   connections?: string[];
+  /** Account privacy projection — denormalized so peers can enforce ACL in-app. */
+  privacy?: {
+    profileVisibility: 'public' | 'connections' | 'private';
+    messagePermission: 'everyone' | 'connections' | 'groups';
+    shareLocation: boolean;
+    revealPhoto: boolean;
+    allowMutualPing: boolean;
+    allowOrganizerMsg: boolean;
+  };
+  /** Users this account has blocked (denormalized for peer ACL checks). */
+  blockedUserIds?: string[];
   /** Saved from OnboardingClassic (group size, schedule, location, activity). */
   discoveryPrefs?: {
     groupSize?: string;

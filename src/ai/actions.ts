@@ -968,11 +968,26 @@ function privacyPatch(args: ActionArgs): Partial<UserSettings['privacy']> {
   return patch;
 }
 
+const PRIVACY_VALUE_LABELS: Record<string, [string, string]> = {
+  public: ['δημόσιο', 'public'],
+  connections: ['μόνο συνδέσεις Nakamas', 'connections only'],
+  private: ['ιδιωτικό', 'private'],
+  everyone: ['όλοι', 'everyone'],
+  groups: ['ομάδες ίδιας εκδήλωσης', 'same event groups'],
+};
+
 function describePatch(patch: Record<string, unknown>, lang: 'el' | 'en'): string {
   return Object.entries(patch)
     .map(([k, v]) => {
       const label = PRIVACY_LABELS[k]?.[lang === 'el' ? 0 : 1] ?? k;
-      const val = typeof v === 'boolean' ? (v ? (lang === 'el' ? 'ναι' : 'on') : lang === 'el' ? 'όχι' : 'off') : String(v);
+      let val: string;
+      if (typeof v === 'boolean') {
+        val = v ? (lang === 'el' ? 'ναι' : 'on') : lang === 'el' ? 'όχι' : 'off';
+      } else if (typeof v === 'string' && PRIVACY_VALUE_LABELS[v]) {
+        val = PRIVACY_VALUE_LABELS[v][lang === 'el' ? 0 : 1];
+      } else {
+        val = String(v);
+      }
       return `${label}: ${val}`;
     })
     .join(' · ');

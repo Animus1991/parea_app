@@ -11,12 +11,24 @@ service cloud.firestore {
       return ['isOrganizer', 'trustTier', 'linkedUserId', 'isAdmin', 'reliabilityScore', 'badges', 'idVerified'];
     }
 
+    function validPrivacy(p) {
+      return p is map
+        && (!('profileVisibility' in p) || p.profileVisibility in ['public', 'connections', 'private'])
+        && (!('messagePermission' in p) || p.messagePermission in ['everyone', 'connections', 'groups'])
+        && (!('shareLocation' in p) || p.shareLocation is bool)
+        && (!('revealPhoto' in p) || p.revealPhoto is bool)
+        && (!('allowMutualPing' in p) || p.allowMutualPing is bool)
+        && (!('allowOrganizerMsg' in p) || p.allowOrganizerMsg is bool);
+    }
+
     function validProfile(data) {
       return data.uid == request.auth.uid
         && data.name is string && data.name.size() > 0 && data.name.size() <= 60
         && (!('bio' in data) || (data.bio is string && data.bio.size() <= 500))
         && (!('city' in data) || (data.city is string && data.city.size() <= 80))
-        && (!('interests' in data) || (data.interests is list && data.interests.size() <= 30));
+        && (!('interests' in data) || (data.interests is list && data.interests.size() <= 30))
+        && (!('privacy' in data) || validPrivacy(data.privacy))
+        && (!('blockedUserIds' in data) || (data.blockedUserIds is list && data.blockedUserIds.size() <= 500));
     }
 
     // Profiles: only the owner reads or writes their own document, and can

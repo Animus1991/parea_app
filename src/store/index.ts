@@ -15,6 +15,11 @@ import { computeReliabilityDelta } from "../lib/trust";
 import { mockCompanyRequests } from "../data/mockCompanyRequests";
 import { useChatStore } from "./chatStore";
 import { normalizeCompanyRequest, rateLimitOk } from "../lib/companyRequestUtils";
+import {
+  DEFAULT_ACCOUNT_PRIVACY,
+  canViewerContactOrganizer,
+  type AccountPrivacy,
+} from "../lib/profilePrivacy";
 import type {
   CompanyJoinRequest,
   CompanyRequest,
@@ -103,14 +108,7 @@ export interface UserSettings {
     promos: boolean;
   };
   categoryPrefs: string[];
-  privacy: {
-    profileVisibility: 'public' | 'connections' | 'private';
-    messagePermission: 'everyone' | 'connections' | 'groups';
-    shareLocation: boolean;
-    revealPhoto: boolean;
-    allowMutualPing: boolean;
-    allowOrganizerMsg: boolean;
-  };
+  privacy: AccountPrivacy;
   availability: string[];
 }
 
@@ -118,14 +116,7 @@ export const DEFAULT_USER_SETTINGS: UserSettings = {
   twoFactorEnabled: false,
   notificationPrefs: { matches: true, messages: true, reminders: true, promos: false },
   categoryPrefs: [],
-  privacy: {
-    profileVisibility: 'public',
-    messagePermission: 'everyone',
-    shareLocation: true,
-    revealPhoto: true,
-    allowMutualPing: true,
-    allowOrganizerMsg: true,
-  },
+  privacy: { ...DEFAULT_ACCOUNT_PRIVACY },
   availability: ['weekends', 'weekday_evenings'],
 };
 
@@ -188,11 +179,19 @@ interface AppState {
   adminActions: AdminAction[];
   logAdminAction: (action: string, targetId?: string, note?: string) => void;
   organizerMessages: OrganizerMessage[];
-  sendOrganizerMessage: (organizerId: string, message: string) => void;
+  sendOrganizerMessage: (
+    organizerId: string,
+    message: string,
+  ) => { ok: boolean; reasonEl?: string; reasonEn?: string };
 
   userSettings: UserSettings;
   updateUserSettings: (patch: Partial<UserSettings>) => void;
   updatePrivacySettings: (patch: Partial<UserSettings['privacy']>) => void;
+
+  /** Lean privacy — users the signed-in account has blocked. */
+  blockedUserIds: string[];
+  blockUser: (userId: string) => void;
+  unblockUser: (userId: string) => void;
 
   bonusXp: number;
   awardXp: (amount: number, reasonEl: string, reasonEn: string) => void;
@@ -410,19 +409,34 @@ export const useStore = create<AppState>()(
     set((state) => {
       const user = state.users.find((u) => u.id === userId);
       if (!user) return state;
-      return { currentUser: user, isAuthenticated: true, demoMode: false };
+      const privacy = { ...state.userSettings.privacy, ...(user.privacy ?? {}) };
+      const blockedUserIds = user.blockedUserIds ?? state.blockedUserIds;
+      const hydrated = { ...user, privacy, blockedUserIds };
+      return {
+        currentUser: hydrated,
+        isAuthenticated: true,
+        demoMode: false,
+        userSettings: { ...state.userSettings, privacy },
+        blockedUserIds,
+        users: state.users.map((u) => (u.id === userId ? hydrated : u)),
+      };
     }),
 
   loginWithUser: (user) =>
     set((state) => {
+      const privacy = { ...state.userSettings.privacy, ...(user.privacy ?? {}) };
+      const blockedUserIds = user.blockedUserIds ?? state.blockedUserIds;
+      const hydrated = { ...user, privacy, blockedUserIds };
       const exists = state.users.some((u) => u.id === user.id);
       return {
-        currentUser: user,
+        currentUser: hydrated,
         isAuthenticated: true,
         demoMode: false,
+        userSettings: { ...state.userSettings, privacy },
+        blockedUserIds,
         users: exists
-          ? state.users.map((u) => (u.id === user.id ? { ...u, ...user } : u))
-          : [...state.users, user],
+          ? state.users.map((u) => (u.id === user.id ? { ...u, ...hydrated } : u))
+          : [...state.users, hydrated],
       };
     }),
 
@@ -706,38 +720,114 @@ export const useStore = create<AppState>()(
     })),
 
   organizerMessages: [],
-  sendOrganizerMessage: (organizerId, message) =>
-    set((state) => ({
+  sendOrganizerMessage: (organizerId, message) => {
+    const state = get();
+    const subject = state.users.find((u) => u.id === organizerId);
+    const gate = canViewerContactOrganizer(state.currentUser, subject, {
+      blockedUserIds: state.blockedUserIds,
+      groups: state.groups,
+    });
+    if (!gate.allowed) {
+      return { ok: false, reasonEl: gate.reasonEl, reasonEn: gate.reasonEn };
+    }
+    set((s) => ({
       organizerMessages: [
         {
           id: `om_${Date.now()}`,
           organizerId,
-          fromUserId: state.currentUser?.id,
+          fromUserId: s.currentUser?.id,
           message,
           createdAt: new Date().toISOString(),
         },
-        ...state.organizerMessages,
+        ...s.organizerMessages,
       ],
-    })),
+    }));
+    return { ok: true };
+  },
 
   userSettings: { ...DEFAULT_USER_SETTINGS },
   updateUserSettings: (patch) =>
-    set((state) => ({
-      userSettings: {
+    set((state) => {
+      const privacy = { ...state.userSettings.privacy, ...(patch.privacy ?? {}) };
+      const nextSettings = {
         ...state.userSettings,
         ...patch,
         notificationPrefs: { ...state.userSettings.notificationPrefs, ...(patch.notificationPrefs ?? {}) },
-        privacy: { ...state.userSettings.privacy, ...(patch.privacy ?? {}) },
-      },
-    })),
+        privacy,
+      };
+      const uid = state.currentUser?.id;
+      return {
+        userSettings: nextSettings,
+        ...(patch.privacy && uid
+          ? {
+              currentUser: state.currentUser
+                ? { ...state.currentUser, privacy }
+                : null,
+              users: state.users.map((u) => (u.id === uid ? { ...u, privacy } : u)),
+            }
+          : {}),
+      };
+    }),
 
   updatePrivacySettings: (patch) =>
-    set((state) => ({
-      userSettings: {
-        ...state.userSettings,
-        privacy: { ...state.userSettings.privacy, ...patch },
-      },
-    })),
+    set((state) => {
+      const privacy = { ...state.userSettings.privacy, ...patch };
+      const uid = state.currentUser?.id;
+      return {
+        userSettings: {
+          ...state.userSettings,
+          privacy,
+        },
+        currentUser: state.currentUser ? { ...state.currentUser, privacy } : null,
+        users: uid
+          ? state.users.map((u) => (u.id === uid ? { ...u, privacy } : u))
+          : state.users,
+      };
+    }),
+
+  blockedUserIds: [],
+  blockUser: (userId) => {
+    const myId = get().currentUser?.id;
+    if (!myId || !userId || userId === myId) return;
+    set((state) => {
+      const blockedUserIds = state.blockedUserIds.includes(userId)
+        ? state.blockedUserIds
+        : [...state.blockedUserIds, userId];
+      const syncBlocked = (u: User): User =>
+        u.id === myId ? { ...u, blockedUserIds } : u;
+      return {
+        blockedUserIds,
+        currentUser: state.currentUser ? syncBlocked(state.currentUser) : null,
+        users: state.users.map(syncBlocked),
+        // Drop connection both ways when blocking.
+        connectionRequests: state.connectionRequests.filter(
+          (r) =>
+            !(
+              (r.fromUserId === myId && r.toUserId === userId) ||
+              (r.fromUserId === userId && r.toUserId === myId)
+            ),
+        ),
+      };
+    });
+    // Soft-remove Nakamas edge if present.
+    if ((get().currentUser?.connections ?? []).includes(userId)) {
+      get().removeConnection(userId);
+    }
+  },
+  unblockUser: (userId) => {
+    const myId = get().currentUser?.id;
+    if (!myId || !userId) return;
+    set((state) => {
+      const blockedUserIds = state.blockedUserIds.filter((id) => id !== userId);
+      const syncBlocked = (u: User): User =>
+        u.id === myId ? { ...u, blockedUserIds } : u;
+      return {
+        blockedUserIds,
+        currentUser: state.currentUser ? syncBlocked(state.currentUser) : null,
+        users: state.users.map(syncBlocked),
+      };
+    });
+  },
 
   bonusXp: 0,
   awardXp: (amount, reasonEl, reasonEn) =>
@@ -1525,6 +1615,7 @@ export const useStore = create<AppState>()(
         challengesJoined: state.challengesJoined,
         dailyChallengeClaimedOn: state.dailyChallengeClaimedOn,
         suspendedUserIds: state.suspendedUserIds,
+        blockedUserIds: state.blockedUserIds,
         adminSafeguards: state.adminSafeguards,
         demoMode: state.demoMode,
       }),
@@ -1606,6 +1697,7 @@ export const useStore = create<AppState>()(
           userSettings,
           adminSafeguards: { ...DEFAULT_ADMIN_SAFEGUARDS, ...(p.adminSafeguards as object) },
           suspendedUserIds: Array.isArray(p.suspendedUserIds) ? (p.suspendedUserIds as string[]) : [],
+          blockedUserIds: Array.isArray(p.blockedUserIds) ? (p.blockedUserIds as string[]) : [],
         };
       },
     },

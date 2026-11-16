@@ -114,12 +114,6 @@ export default function ProfilePageContent() {
     }
   };
 
-  const profileVisibilityUi =
-    userSettings.privacy.profileVisibility === 'connections' ? 'verified' : userSettings.privacy.profileVisibility;
-  const messagePermissionUi =
-    userSettings.privacy.messagePermission === 'everyone' ? 'anyone'
-      : userSettings.privacy.messagePermission === 'groups' ? 'friends' : 'verified';
-
   const patchPrivacy = (patch: Partial<typeof userSettings.privacy>) => {
     updatePrivacySettings(patch);
     toast.success(t('Οι ρυθμίσεις απορρήτου αποθηκεύτηκαν', 'Privacy settings saved'));
@@ -538,17 +532,17 @@ export default function ProfilePageContent() {
                 </div>
               </div>
               <select aria-label={t("Ορατότητα προφίλ", "Profile visibility")}
-                value={profileVisibilityUi}
+                value={userSettings.privacy.profileVisibility}
                 onChange={(e) => {
                   const v = e.target.value;
-                  patchPrivacy({
-                    profileVisibility: v === 'verified' ? 'connections' : (v as 'public' | 'private'),
-                  });
+                  if (v === 'public' || v === 'connections' || v === 'private') {
+                    patchPrivacy({ profileVisibility: v });
+                  }
                 }}
                 className={`filter-select outline-none border ${a.selectBg} ${a.selectRing}`}
               >
-                <option value="public">{t("Όλοι", "Everyone")}</option>
-                <option value="verified">{t("Μόνο επαληθευμένοι", "Verified Only")}</option>
+                <option value="public">{t("Δημόσιο", "Public")}</option>
+                <option value="connections">{t("Μόνο συνδέσεις Nakamas", "Connections only")}</option>
                 <option value="private">{t("Ιδιωτικό", "Private")}</option>
               </select>
             </div>
@@ -563,18 +557,18 @@ export default function ProfilePageContent() {
                 </div>
               </div>
               <select aria-label={t("Ποιος μπορεί να σας στείλει μήνυμα", "Who can message you")}
-                value={messagePermissionUi}
+                value={userSettings.privacy.messagePermission}
                 onChange={(e) => {
                   const v = e.target.value;
-                  patchPrivacy({
-                    messagePermission: v === 'anyone' ? 'everyone' : v === 'friends' ? 'groups' : 'connections',
-                  });
+                  if (v === 'everyone' || v === 'connections' || v === 'groups') {
+                    patchPrivacy({ messagePermission: v });
+                  }
                 }}
                 className={`filter-select outline-none border ${a.selectBg} ${a.selectRing}`}
               >
-                <option value="anyone">{t("Όλοι", "Everyone")}</option>
-                <option value="verified">{t("Μόνο επαληθευμένοι", "Verified Only")}</option>
-                <option value="friends">{t("Μόνο Nakamas", "Nakamas Only")}</option>
+                <option value="everyone">{t("Όλοι", "Everyone")}</option>
+                <option value="connections">{t("Μόνο συνδέσεις Nakamas", "Connections only")}</option>
+                <option value="groups">{t("Ομάδες ίδιας εκδήλωσης", "Same event groups")}</option>
               </select>
             </div>
 
@@ -600,7 +594,7 @@ export default function ProfilePageContent() {
                 <span className={`text-sm font-bold ${heading}`}>{t("Ρυθμίσεις Απορρήτου", "Privacy Controls")}</span>
               </div>
               {[
-                { key: "revealPhoto", icon: Camera, label: t("Αποκάλυψη φωτογραφίας 2ω πριν την εκδήλωση", "Reveal photo 2h before event") },
+                { key: "revealPhoto", icon: Camera, label: t("Εμφάνιση φωτογραφίας σε μη-συνδέσεις", "Show photo to non-connections") },
                 { key: "allowMutualPing", icon: Users, label: t("Αμοιβαία αιτήματα μετά εκδήλωση", 'Allow "Keep in touch" post-event') },
                 { key: "allowOrganizerMsg", icon: MessageSquare, label: t("Μηνύματα διοργανωτών μετά εκδήλωση", "Organizer messages after event") },
               ].map((opt) => (

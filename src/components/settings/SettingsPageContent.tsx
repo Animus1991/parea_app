@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bell, Lock, Eye, Globe, Shield, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid } from 'lucide-react';
+import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Ban } from 'lucide-react';
 import { HomeHeroModeSetting } from './HomeHeroModeSetting';
 import { BuddySeekPrivacySettings } from '../buddySeek/BuddySeekPrivacySettings';
 import { ChatPrivacySettingsPanel } from '../chat/ChatPrivacySettingsPanel';
@@ -42,12 +42,16 @@ export default function SettingsPageContent() {
   const userSettings = useStore((s) => s.userSettings);
   const updateUserSettings = useStore((s) => s.updateUserSettings);
   const currentUser = useStore((s) => s.currentUser);
+  const users = useStore((s) => s.users);
+  const blockedUserIds = useStore((s) => s.blockedUserIds);
+  const unblockUser = useStore((s) => s.unblockUser);
 
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showThemePicker, setShowThemePicker] = useState(false);
   const [showHomeLayout, setShowHomeLayout] = useState(false);
   const [showAvailability, setShowAvailability] = useState(false);
+  const [showBlockedUsers, setShowBlockedUsers] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const homeHeroMode = useStore((s) => s.homeHeroMode);
   const themePanelRef = useRef<HTMLDivElement>(null);
@@ -211,16 +215,13 @@ export default function SettingsPageContent() {
       items: [
         { icon: Eye, label: t('Ορατότητα Προφίλ', 'Profile Visibility'), value: visibilityLabel, onClick: () => navigate('/profile') },
         {
-          icon: Shield,
+          icon: Ban,
           label: t('Μπλοκαρισμένοι', 'Blocked Users'),
-          value: t('Σύντομα', 'Soon'),
-          onClick: () =>
-            handleComingSoon(t('Μπλοκαρισμένοι', 'Blocked Users'), {
-              path: '/trust',
-              actionLabel: t('Κέντρο εμπιστοσύνης', 'Trust Center'),
-              hintEl: 'Για ασφάλεια τώρα, άνοιξε το Κέντρο εμπιστοσύνης ή κάνε αναφορά.',
-              hintEn: 'For safety now, open the Trust Center or file a report.',
-            }),
+          value:
+            blockedUserIds.length === 0
+              ? t('Κανένας', 'None')
+              : String(blockedUserIds.length),
+          onClick: () => setShowBlockedUsers(true),
         },
         { icon: Lock, label: t('2FA', '2FA'), value: twoFactorEnabled ? t('Ενεργό', 'Active') : t('Ανενεργό', 'Inactive'), onClick: () => setShow2FASetup(!show2FASetup) },
       ],
@@ -307,6 +308,62 @@ export default function SettingsPageContent() {
       <div ref={chatPrivacySectionRef}>
         <ChatPrivacySettingsPanel />
       </div>
+
+      <Modal
+        open={showBlockedUsers}
+        onClose={() => setShowBlockedUsers(false)}
+        title={t('Μπλοκαρισμένοι χρήστες', 'Blocked users')}
+        size="md"
+      >
+        {blockedUserIds.length === 0 ? (
+          <p className={cn('card-copy', a.sub)}>
+            {t(
+              'Δεν έχετε αποκλείσει κάποιον. Από τις συνδέσεις μπορείτε να αποκλείσετε χρήστες.',
+              'You have not blocked anyone. You can block users from Connections.',
+            )}
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {blockedUserIds.map((id) => {
+              const u = users.find((x) => x.id === id);
+              return (
+                <li
+                  key={id}
+                  className={cn(
+                    'flex items-center justify-between gap-3 rounded-xl border px-3 py-2',
+                    a.divider,
+                  )}
+                >
+                  <div className="min-w-0">
+                    <p className={cn('text-sm font-bold truncate', a.head)}>{u?.name ?? id}</p>
+                    {u?.city && <p className={cn('text-xs', a.sub)}>{u.city}</p>}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      unblockUser(id);
+                      toast.success(
+                        t(
+                          `Ξεκλείδωσε ο/η ${u?.name ?? id}`,
+                          `Unblocked ${u?.name ?? id}`,
+                        ),
+                      );
+                    }}
+                  >
+                    {t('Ξεκλείδωμα', 'Unblock')}
+                  </Button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        <div className="mt-4 flex justify-end">
+          <Button variant="ghost" size="sm" onClick={() => setShowBlockedUsers(false)}>
+            {t('Κλείσιμο', 'Close')}
+          </Button>
+        </div>
+      </Modal>
 
       {/* 2FA Setup / Disable */}
       {show2FASetup && (

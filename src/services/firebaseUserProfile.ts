@@ -5,6 +5,7 @@ import { mockUsers } from '../data/mockUsers';
 import { resolveMockUserIdByEmail } from '../data/mockUserEmails';
 import type { TrustTier, User } from '../types';
 import { createLogger } from '../lib/logger';
+import { DEFAULT_ACCOUNT_PRIVACY, type AccountPrivacy } from '../lib/profilePrivacy';
 
 const log = createLogger('firebaseUserProfile');
 
@@ -24,7 +25,27 @@ export function ownerWritableProfile(p: Partial<NakamasFirestoreProfile>): Parti
   if (p.city !== undefined) out.city = p.city;
   if (p.bio !== undefined) out.bio = p.bio;
   if (p.interests !== undefined) out.interests = p.interests;
+  if (p.privacy !== undefined) out.privacy = sanitizePrivacy(p.privacy);
+  if (p.blockedUserIds !== undefined) {
+    out.blockedUserIds = Array.isArray(p.blockedUserIds)
+      ? p.blockedUserIds.filter((id): id is string => typeof id === 'string').slice(0, 500)
+      : [];
+  }
   return out;
+}
+
+function sanitizePrivacy(raw: Partial<AccountPrivacy> | undefined): AccountPrivacy {
+  const base = { ...DEFAULT_ACCOUNT_PRIVACY, ...(raw ?? {}) };
+  const vis = base.profileVisibility;
+  const msg = base.messagePermission;
+  return {
+    profileVisibility: vis === 'public' || vis === 'connections' || vis === 'private' ? vis : 'public',
+    messagePermission: msg === 'everyone' || msg === 'connections' || msg === 'groups' ? msg : 'everyone',
+    shareLocation: Boolean(base.shareLocation),
+    revealPhoto: Boolean(base.revealPhoto),
+    allowMutualPing: Boolean(base.allowMutualPing),
+    allowOrganizerMsg: Boolean(base.allowOrganizerMsg),
+  };
 }
 
 export interface NakamasFirestoreProfile {
@@ -35,6 +56,9 @@ export interface NakamasFirestoreProfile {
   city?: string;
   bio?: string;
   interests?: string[];
+  /** Owner-synced lean privacy (peer ACL still needs a readable projection later). */
+  privacy?: AccountPrivacy;
+  blockedUserIds?: string[];
   trustTier?: TrustTier;
   isOrganizer?: boolean;
   /** Set only by a trusted backend; see firestore.rules. */
@@ -51,6 +75,9 @@ function mapToUser(uid: string, data: NakamasFirestoreProfile): User {
     ? mockUsers.find((u) => u.id === data.linkedUserId)
     : undefined;
 
+  const privacy = data.privacy ? sanitizePrivacy(data.privacy) : undefined;
+  const blockedUserIds = Array.isArray(data.blockedUserIds) ? data.blockedUserIds : undefined;
+
   if (mockSeed) {
     return {
       ...mockSeed,
@@ -59,6 +86,8 @@ function mapToUser(uid: string, data: NakamasFirestoreProfile): User {
       photoUrl: data.photoUrl || mockSeed.photoUrl,
       bio: data.bio || mockSeed.bio,
       emailVerified: Boolean(data.email ?? mockSeed.emailVerified),
+      ...(privacy ? { privacy } : {}),
+      ...(blockedUserIds ? { blockedUserIds } : {}),
     };
   }
 
@@ -80,6 +109,8 @@ function mapToUser(uid: string, data: NakamasFirestoreProfile): User {
     isOrganizer: Boolean(data.isOrganizer),
     isAdmin: Boolean(data.isAdmin),
     connections: [],
+    ...(privacy ? { privacy } : {}),
+    ...(blockedUserIds ? { blockedUserIds } : {}),
   };
 }
 

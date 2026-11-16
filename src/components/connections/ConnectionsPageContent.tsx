@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MessageCircle, MoreVertical, MapPin, Filter, UserPlus, UserMinus, Flag, Eye, CalendarPlus, Check, X, ChevronDown, Users, ShieldCheck } from 'lucide-react';
+import { Search, MessageCircle, MoreVertical, MapPin, Filter, UserPlus, UserMinus, Flag, Eye, CalendarPlus, Check, X, ChevronDown, Users, ShieldCheck, Ban } from 'lucide-react';
+import { canViewerMessageUser } from '../../lib/profilePrivacy';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { CardInterestLine } from '../common/CardInterestLine';
@@ -16,7 +17,21 @@ import { stopBubbling, pressable } from '../../lib/a11y';
 import { sameInterest } from '../../lib/interests';
 
 // ─── More dropdown ──────────────────────────────────────────────
-function MoreMenu({ connId: _connId, onViewProfile, onRemove, onReport, onInvite }: { connId: string; onViewProfile: () => void; onRemove: () => void; onReport: () => void; onInvite: () => void }) {
+function MoreMenu({
+  connId: _connId,
+  onViewProfile,
+  onRemove,
+  onReport,
+  onBlock,
+  onInvite,
+}: {
+  connId: string;
+  onViewProfile: () => void;
+  onRemove: () => void;
+  onReport: () => void;
+  onBlock: () => void;
+  onInvite: () => void;
+}) {
   const { t } = useLanguage();
   const a = usePageContrast();
   const [open, setOpen] = useState(false);
@@ -55,6 +70,9 @@ function MoreMenu({ connId: _connId, onViewProfile, onRemove, onReport, onInvite
           <button type="button" role="menuitem" onClick={() => { onReport(); setOpen(false); }} className="w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
             <Flag className="w-4 h-4" aria-hidden /> {t('Αναφορά', 'Report')}
           </button>
+          <button type="button" role="menuitem" onClick={() => { onBlock(); setOpen(false); }} className="w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
+            <Ban className="w-4 h-4" aria-hidden /> {t('Αποκλεισμός', 'Block')}
+          </button>
         </div>
       )}
     </div>
@@ -84,6 +102,8 @@ export default function ConnectionsPageContent() {
   const declineConnectionRequest = useStore((s) => s.declineConnectionRequest);
   const removeConnection = useStore((s) => s.removeConnection);
   const sendConnectionRequest = useStore((s) => s.sendConnectionRequest);
+  const blockUser = useStore((s) => s.blockUser);
+  const blockedUserIds = useStore((s) => s.blockedUserIds);
   const addNotification = useStore((s) => s.addNotification);
   const ensureDirectConversation = useChatStore((s) => s.ensureDirectConversation);
   const setInboxOpen = useChatStore((s) => s.setInboxOpen);
@@ -112,8 +132,9 @@ export default function ConnectionsPageContent() {
   const myConnectionIds = useMemo(() => currentUser?.connections ?? [], [currentUser?.connections]);
 
   const connections = useMemo(() => {
+    const blocked = new Set(blockedUserIds);
     return users
-      .filter((u) => myConnectionIds.includes(u.id) && u.id !== currentUser?.id)
+      .filter((u) => myConnectionIds.includes(u.id) && u.id !== currentUser?.id && !blocked.has(u.id))
       .map((u) => {
         const myConns = currentUser?.connections || [];
         const theirConns = u.connections || [];
@@ -121,7 +142,7 @@ export default function ConnectionsPageContent() {
         const sharedInterests = (currentUser?.interests || []).filter((i) => (u.interests || []).some((x) => sameInterest(x, i)));
         return { ...u, mutual, sharedInterests, role: u.isOrganizer ? t('Διοργανωτής', 'Organizer') : (u.reliabilityScore > 80 ? t('Εξερευνητής', 'Explorer') : t('Αρχάριος', 'Newbie')) };
       });
-  }, [users, myConnectionIds, currentUser, t]);
+  }, [users, myConnectionIds, currentUser, blockedUserIds, t]);
 
   const filteredConnections = useMemo(() => {
     let list = connections;
@@ -147,15 +168,16 @@ export default function ConnectionsPageContent() {
   const suggested = useMemo(() => {
     const connIds = new Set(myConnectionIds);
     const pendingIds = new Set(connectionRequests.filter((r) => r.status === 'pending').map((r) => r.fromUserId === currentUser?.id ? r.toUserId : r.fromUserId));
+    const blocked = new Set(blockedUserIds);
     return users
-      .filter((u) => u.id !== currentUser?.id && !connIds.has(u.id) && !pendingIds.has(u.id))
+      .filter((u) => u.id !== currentUser?.id && !connIds.has(u.id) && !pendingIds.has(u.id) && !blocked.has(u.id))
       .map((u) => {
         const sharedInterests = (currentUser?.interests || []).filter((i) => (u.interests || []).some((x) => sameInterest(x, i)));
         return { ...u, sharedInterests };
       })
       .filter((u) => u.sharedInterests.length > 0)
       .sort((a, b) => b.sharedInterests.length - a.sharedInterests.length);
-  }, [users, myConnectionIds, connectionRequests, currentUser]);
+  }, [users, myConnectionIds, connectionRequests, currentUser, blockedUserIds]);
 
   // ─── Handlers ────────────────────────────────────────────
   const handleMessage = (userId: string) => {
@@ -164,6 +186,14 @@ export default function ConnectionsPageContent() {
       return;
     }
     const peer = users.find((u) => u.id === userId);
+    const gate = canViewerMessageUser(currentUser, peer, { blockedUserIds, groups });
+    if (!gate.allowed) {
+      toast.message(
+        t('Δεν μπορείτε να στείλετε μήνυμα', 'Cannot send message'),
+        { description: t(gate.reasonEl, gate.reasonEn) },
+      );
+      return;
+    }
     const convId = ensureDirectConversation({
       selfUserId: currentUser.id,
       peerUserId: userId,
@@ -187,6 +217,11 @@ export default function ConnectionsPageContent() {
     toast.success(
       t(`Συνομιλία με ${peer?.name ?? ''}`, `Chat with ${peer?.name ?? ''}`),
     );
+  };
+
+  const handleBlock = (userId: string, name: string) => {
+    blockUser(userId);
+    toast.success(t(`Αποκλείστηκε ο/η ${name}`, `Blocked ${name}`));
   };
   const handleInviteToEvent = (eventId: string) => {
     const ev = events.find((e) => e.id === eventId);
@@ -382,6 +417,7 @@ export default function ConnectionsPageContent() {
                   onViewProfile={() => handleViewProfile(conn)}
                   onRemove={() => handleRemove(conn.id, conn.name)}
                   onReport={() => navigate('/report')}
+                  onBlock={() => handleBlock(conn.id, conn.name)}
                   onInvite={() => setInviteForUserId(conn.id)}
                 />
               </div>
