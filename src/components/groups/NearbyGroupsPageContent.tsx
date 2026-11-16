@@ -211,7 +211,8 @@ function MapController({ center, panelRef }: { center: { lat: number; lng: numbe
 
 const GroupImage = ({ src, alt, className }: { src: string; alt: string; className?: string }) => {
   const [error, setError] = useState(false);
-  return error ? (
+  // An empty src would make the browser re-request the page itself.
+  return error || !src.trim() ? (
     <div className={cn("flex items-center justify-center bg-cyan-900/10 text-cyan-500", className)}>
       <MapIcon className="w-8 h-8 opacity-50" />
     </div>

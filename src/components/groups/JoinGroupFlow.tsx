@@ -284,7 +284,7 @@ export default function JoinGroupFlow() {
                   ))}
                 </div>
                 {!canWomenNb && (
-                  <p className="mt-1 text-2xs font-medium text-ink-muted">
+                  <p className="mt-1 text-2xs font-medium text-ink-muted dark:text-gray-300">
                     {t('Η επιλογή «Γυναίκες & μη δυαδικά» ανοίγει αν το δηλώσεις στο προφίλ σου (δεν εμφανίζεται δημόσια).', 'The “Women & non-binary” option opens if you set it in your profile (never shown publicly).')}
                   </p>
                 )}
