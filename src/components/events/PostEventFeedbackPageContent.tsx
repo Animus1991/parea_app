@@ -190,7 +190,7 @@ export default function PostEventFeedbackPageContent() {
           )}
         >
           <div>
-            <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-4', p.head)}>
+            <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-4', p.head)}>
               {tu('Πώς νιώσατε;', 'How did you feel?')}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -229,7 +229,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-2', p.head)}>
+              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-2', p.head)}>
                 {tu('Γενική Εντύπωση', 'Overall Experience')}
               </h3>
               <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
@@ -260,7 +260,7 @@ export default function PostEventFeedbackPageContent() {
             </div>
 
             <div>
-              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-2', p.head)}>
+              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-2', p.head)}>
                 {tu('Ατμόσφαιρα', 'Vibe')}
               </h3>
               <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
@@ -295,7 +295,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div className="space-y-4">
             <div>
-              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
+              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-3', p.head)}>
                 {tu('Παρουσία', 'Attendance')}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -367,7 +367,7 @@ export default function PostEventFeedbackPageContent() {
             </div>
 
             <div>
-              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
+              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-3', p.head)}>
                 {tu('Αίσθημα Ασφάλειας', 'Safety Comfort')}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -453,7 +453,7 @@ export default function PostEventFeedbackPageContent() {
           <hr className={cn('border-t', p.borderB)} />
 
           <div>
-            <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
+            <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-3', p.head)}>
               {tu('Σχόλιο (Προαιρετικό)', 'Comment (Optional)')}
             </h3>
             <textarea
@@ -482,7 +482,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div className="pt-2">
             <Button
-              className="w-full h-11 text-base font-bold rounded-2xl shadow-soft"
+              className="w-full h-11 text-xs font-bold rounded-2xl shadow-soft"
               variant={p.isAB ? 'primary' : 'gradient'}
               onClick={handleSubmit}
               disabled={overallRating === 0}

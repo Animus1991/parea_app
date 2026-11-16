@@ -64,7 +64,7 @@ export function HomeVerifyBanner() {
           <ShieldCheck className="w-4 h-4" aria-hidden />
         </div>
         <div>
-          <h3 className={`text-base font-bold ${h.feedbackTitle}`}>{title}</h3>
+          <h3 className={`text-sm font-bold ${h.feedbackTitle}`}>{title}</h3>
           <p className={`text-xs font-medium mt-0.5 leading-relaxed ${h.feedbackBody}`}>{body}</p>
         </div>
       </div>

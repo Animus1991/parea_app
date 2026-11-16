@@ -245,7 +245,7 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
             <span className={tok.wordmarkClass}>NAKAMAS</span>
           </div>
           <h1 className={cn('text-sm md:text-base font-bold', tok.stripDark ? 'text-white' : 'text-ink')}>{t('Καλώς ήρθατε', 'Welcome back')}</h1>
-          <p className={cn('text-xs font-medium', tok.mutedText)}>
+          <p className={cn('text-sm font-medium', tok.mutedText)}>
             {t('Συνδεθείτε για να ανακαλύψετε αξιόπιστες ομάδες και εμπειρίες.', 'Log in to discover trusted groups and experiences.')}
           </p>
         </div>

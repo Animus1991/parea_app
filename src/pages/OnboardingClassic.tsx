@@ -243,7 +243,7 @@ export default function OnboardingClassic() {
                     }`}
                   >
                     <span className="text-lg leading-none">{gs.emoji}</span>
-                    <span className="font-semibold text-base">{t(gs.gr, gs.en)}</span>
+                    <span className="font-bold text-sm">{t(gs.gr, gs.en)}</span>
                     {selectedGroupSize === gs.id && (
                       <CheckCircle2 className="w-4 h-4 ml-auto text-accent" />
                     )}
@@ -267,7 +267,7 @@ export default function OnboardingClassic() {
                   >
                     <span className="text-lg leading-none mt-0.5">{al.emoji}</span>
                     <div className="text-left">
-                      <p className="font-bold text-base">{t(al.gr, al.en)}</p>
+                      <p className="font-bold text-sm">{t(al.gr, al.en)}</p>
                       <p
                         className={`text-sm font-medium mt-0.5 ${
                           selectedActivity === al.id ? 'text-gray-300' : 'text-gray-400'
@@ -323,7 +323,7 @@ export default function OnboardingClassic() {
                     }`}
                   >
                     <span className="text-lg leading-none">{lp.emoji}</span>
-                    <span className="font-semibold text-base">{t(lp.gr, lp.en)}</span>
+                    <span className="font-bold text-sm">{t(lp.gr, lp.en)}</span>
                     {selectedLocation === lp.id && (
                       <CheckCircle2 className="w-4 h-4 ml-auto text-accent" />
                     )}

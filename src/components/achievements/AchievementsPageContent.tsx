@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { Card } from '../common/Card';
 import { TabBar } from '../common/TabBar';
 import { useLanguage } from '../../lib/i18n';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useStore } from '../../store';
@@ -177,7 +178,7 @@ export default function AchievementsPageContent() {
               <div className="flex items-center gap-3 mb-4">
                 <Flame className="w-5 h-5 text-orange-500" aria-hidden />
                 <div>
-                  <p className={cn('text-lg font-bold tabular-nums', a.head)}>
+                  <p className={cn(APP_TYPO.statValue, a.head)}>
                     {d.weekly.streak} {d.weekly.streak === 1 ? t('ημέρα σερί', 'day streak') : t('ημέρες σερί', 'day streak')}
                   </p>
                   <p className={cn('text-xs font-medium', a.sub)}>
@@ -214,7 +215,7 @@ export default function AchievementsPageContent() {
                   { val: String(Object.keys(feedbackSubmitted).length), label: t('Αξιολογήσεις', 'Reviews'), icon: Star },
                 ].map((stat) => (
                   <div key={stat.label} className="flex flex-col-reverse items-center text-center">
-                    <dt className={cn('text-2xs font-medium', a.sub)}>{stat.label}</dt>
+                    <dt className={cn(APP_TYPO.sectionLabel, a.sub)}>{stat.label}</dt>
                     <dd className={cn('text-sm md:text-base font-black tabular-nums', a.head)}>{stat.val}</dd>
                   </div>
                 ))}

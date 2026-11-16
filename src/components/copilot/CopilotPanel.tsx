@@ -101,7 +101,7 @@ function CopilotConversation({ onClose, onNavigate, headingId }: { onClose: () =
           <Bot className="h-4 w-4" />
         </span>
         <div className="min-w-0 flex-1">
-          <h2 id={headingId} className="text-sm font-bold leading-tight text-ink">
+          <h2 id={headingId} className="text-sm md:text-base font-bold leading-tight text-ink">
             Nakamas AI
           </h2>
           <EngineBadge />

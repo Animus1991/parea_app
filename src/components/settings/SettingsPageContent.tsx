@@ -16,6 +16,7 @@ import { THEME_IDS, THEME_LABELS, type ThemeId } from '../../lib/themes';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
 import { Modal } from '../common/Modal';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 const CATEGORY_KEYS = ['liveMusic', 'theater', 'hiking', 'cinema', 'boardGames', 'wellness', 'festivals', 'workshops'] as const;
 
@@ -233,8 +234,8 @@ export default function SettingsPageContent() {
   return (
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="mb-2">
-        <h1 className={cn("text-sm md:text-base font-bold", a.head)}>{t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')}</h1>
-        <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Διαχειριστείτε τον λογαριασμό σας', 'Manage your account')}</p>
+        <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')}</h1>
+        <p className={cn(APP_TYPO.pageSub, "mt-1", a.sub)}>{t('Διαχειριστείτε τον λογαριασμό σας', 'Manage your account')}</p>
       </div>
 
       {sections.map((section, idx) => (

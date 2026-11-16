@@ -49,7 +49,7 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
           />
           <h2
             className={cn(
-              'text-base font-bold leading-tight',
+              'text-sm md:text-base font-bold tracking-tight leading-tight',
               useClassicTokens ? h.heading : p.head,
             )}
           >
@@ -60,7 +60,7 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
           type="button"
           onClick={() => navigate('/connections')}
           className={cn(
-            'text-sm font-bold flex items-center gap-1 transition-colors shrink-0',
+            'text-xs font-bold flex items-center gap-1 transition-colors shrink-0',
             useClassicTokens ? tok.accentText : p.iconAccent,
             !useClassicTokens && p.hoverText,
           )}

@@ -169,7 +169,7 @@ export function CreateCompanyRequestModal({
         className={cn('relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl border shadow-soft-lg max-h-[92vh] flex flex-col outline-none', shell)}
       >
         <div className="p-4 border-b border-inherit shrink-0">
-          <h2 className="text-base font-bold">
+          <h2 className="text-sm md:text-base font-bold">
             {isEdit
               ? t('Επεξεργασία αιτήματος', 'Edit request')
               : t('Ψάχνετε Nakamas;', 'Looking for Nakamas?')}

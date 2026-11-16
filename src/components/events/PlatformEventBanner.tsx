@@ -54,7 +54,7 @@ export function PlatformEventBanner() {
         </div>
         <div>
           <h3
-            className={`text-base font-bold ${
+            className={`text-sm font-bold ${
               tok.isDark ? "text-amber-100" : "text-amber-900"
             }`}
           >

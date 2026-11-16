@@ -20,7 +20,7 @@ export default function NotFoundBento() {
         <span className="absolute inset-0 rounded-full bg-indigo-200 animate-ping opacity-20"></span>
         <Compass className="w-10 h-10 text-indigo-600 animate-spin" style={{ animationDuration: '8s' }} />
       </div>
-      <h1 className="text-sm font-bold text-ink mb-2">
+      <h1 className="text-sm md:text-base font-bold tracking-tight leading-tight text-ink mb-2">
         {t(`Η σελίδα δεν βρέθηκε`, `Page Not Found`)}
       </h1>
       <p className="text-sm text-black font-medium mb-4 max-w-xs">
