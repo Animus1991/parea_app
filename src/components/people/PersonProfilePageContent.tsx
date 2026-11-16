@@ -371,6 +371,12 @@ export default function PersonProfilePageContent() {
                 <span className="inline-flex items-center gap-1">
                   <ShieldCheck className="h-3 w-3" aria-hidden /> {tierText}
                 </span>
+                {/* Φ27 — selfie check badge (result only; no image is ever kept). */}
+                {subject.selfieVerified && (
+                  <span className="inline-flex items-center gap-1 font-bold text-ink" title={t('Επαληθευμένο με selfie', 'Verified with a selfie')}>
+                    <ShieldCheck className="h-3 w-3" aria-hidden /> Selfie ✓
+                  </span>
+                )}
               </div>
               {!isSelf && (mutualIds.length > 0 || sharedInterests.length > 0) && (
                 <p className="mt-1 text-xs font-bold text-ink">

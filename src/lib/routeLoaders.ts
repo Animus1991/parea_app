@@ -37,6 +37,11 @@ export const routeLoaders = {
   buddySeek: () => import('../pages/BuddySeek'),
   wall: () => import('../pages/Wall'),
   personProfile: () => import('../pages/PersonProfile'),
+  // Φ27 — outings
+  ourNight: () => import('../pages/OurNight'),
+  collections: () => import('../pages/Collections'),
+  invitePublic: () => import('../pages/InvitePublic'),
+  organizerEmbed: () => import('../pages/OrganizerEmbed'),
 } as const;
 
 export type RouteKey = keyof typeof routeLoaders;
@@ -73,6 +78,10 @@ const PATH_KEYS: Array<[RegExp, RouteKey]> = [
   [/^\/organizer\//, 'organizerProfile'],
   [/^\/wall$/, 'wall'],
   [/^\/u\//, 'personProfile'],
+  [/^\/night\//, 'ourNight'],
+  [/^\/collections(\/|$)/, 'collections'],
+  [/^\/i\//, 'invitePublic'],
+  [/^\/embed\/organizer\//, 'organizerEmbed'],
   [/^\/admin$/, 'adminDashboard'],
   [/^\/onboarding$/, 'onboarding'],
   [/^\/login$/, 'login'],

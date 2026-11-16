@@ -22,6 +22,7 @@ import { canPostOnWall, profileWallPosts } from '../../lib/audience';
 import { PostComposer } from '../wall/PostComposer';
 import { WallPostList } from '../wall/WallPostList';
 import { profilePathFor } from '../../lib/profileLinks';
+import { OrganizerCalendarCard } from '../outings/OrganizerCalendarCard';
 
 export default function OrganizerProfilePageContent() {
   const { id } = useParams();
@@ -252,6 +253,9 @@ export default function OrganizerProfilePageContent() {
           </div>
         </div>
       </div>
+
+      {/* Φ27 — follow + live .ics + embeddable widget (Luma, adapted) */}
+      <OrganizerCalendarCard organizerId={organizer.id} organizerName={projected.name} />
 
       <div className="space-y-4">
         <h2 className={cn('text-sm md:text-base font-bold', p.head)}>

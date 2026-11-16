@@ -105,3 +105,28 @@ describe('AI proxy and chat', () => {
     expect(checkChatSend({ conversationId: 'conv_1', senderId: 'u1', body: 'x'.repeat(2001) }, 'u1', rooms).reason).toBe('body');
   });
 });
+
+describe('embeds & calendar feeds (Φ27)', () => {
+  it('lets only the organizer widget be framed, without device access', async () => {
+    const { headersForPath, cspForPath, isEmbeddablePath, SECURITY_HEADERS } = await import('./security');
+    expect(isEmbeddablePath('/embed/organizer/org1')).toBe(true);
+    expect(isEmbeddablePath('/embed/organizer/org1/x')).toBe(false);
+    expect(isEmbeddablePath('/events/e1')).toBe(false);
+    expect(headersForPath('/events/e1')['X-Frame-Options']).toBe('DENY');
+    expect(SECURITY_HEADERS['Permissions-Policy']).toContain('camera=(self)');
+    const embed = headersForPath('/embed/organizer/org1');
+    expect(embed['X-Frame-Options']).toBeUndefined();
+    expect(embed['Permissions-Policy']).toBe('camera=(), microphone=(), geolocation=()');
+    expect(cspForPath("default-src 'self'; frame-ancestors 'none'", '/embed/organizer/org1')).toContain('frame-ancestors *');
+    expect(cspForPath("default-src 'self'; frame-ancestors 'none'", '/plans')).toContain("frame-ancestors 'none'");
+  });
+
+  it('accepts only simple ids for .ics feeds', async () => {
+    const { parseCalendarFeedId } = await import('./security');
+    expect(parseCalendarFeedId('org1.ics')).toBe('org1');
+    expect(parseCalendarFeedId('platform.ics')).toBe('platform');
+    expect(parseCalendarFeedId('../etc.ics')).toBeNull();
+    expect(parseCalendarFeedId('org1')).toBeNull();
+    expect(parseCalendarFeedId('a'.repeat(65) + '.ics')).toBeNull();
+  });
+});

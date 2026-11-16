@@ -34,6 +34,20 @@ import type { AppNotification } from "../data/mockNotifications";
 import { normalizeAppNotification } from "../lib/notificationsUtil";
 import { createEventOnApi, updateEventOnApi } from "../services/eventsApi";
 import { audienceToProfileVisibility } from "../lib/audience";
+import { mockOutingEvents, mockOutingGroups, withOutingPatches, withOutingPeople } from "../data/mockOutings";
+import {
+  createOutingsSlice,
+  eventStartMs,
+  handOverSeat,
+  LATE_CANCEL_MS,
+  outingsSeedData,
+  patchPerson,
+  withGroupCode,
+  type OutingsSlice,
+} from "./outingsSlice";
+import { canJoinGroup as gateJoinGroup, fitsGenderMode } from "../lib/outings";
+import { STRIKE_RELIABILITY } from "../lib/consequences";
+import type { GroupGenderMode, Strike } from "../types/outings";
 
 export interface FeedbackData {
   eventId: string;
@@ -155,7 +169,7 @@ export const DEFAULT_USER_SETTINGS: UserSettings = {
   availability: ['weekends', 'weekday_evenings'],
 };
 
-interface AppState {
+interface AppState extends OutingsSlice {
   theme: string;
   setTheme: (theme: string) => void;
   homeHeroMode: HomeHeroMode;
@@ -195,7 +209,8 @@ interface AppState {
   joinGroup: (groupId: string) => void;
   leaveGroup: (groupId: string) => void;
   addMemberToGroup: (groupId: string, userId: string) => void;
-  createGroup: (eventId: string, targetSize: number) => void;
+  /** Φ27 — `genderMode: 'women_nb'` makes a women & non-binary group (creator must fit). */
+  createGroup: (eventId: string, targetSize: number, options?: { genderMode?: GroupGenderMode }) => void;
   becomeEventHost: (eventId: string) => void;
   createEvent: (event: Partial<Event> & { title: string }) => void;
   updateEvent: (eventId: string, patch: Partial<Event>) => void;
@@ -333,6 +348,17 @@ const SEED_CONNECTION_REQUESTS: AppState['connectionRequests'] = [
 /** Fired when demo data is reset, so the chat and wall stores reset too. */
 export const DEMO_RESET_EVENT = 'nakamas:demo-reset';
 
+/** Φ27 — mock events + Nakamas Nights / small outings, and their groups and people. */
+function seedEvents(): Event[] {
+  return [...mockEvents, ...mockCalendarPlanEvents, ...mockOutingEvents];
+}
+function seedGroups(): typeof mockGroups {
+  return withOutingPatches([...mockGroups, ...mockCalendarPlanGroups, ...mockOutingGroups]);
+}
+function seedUsers(): typeof mockUsers {
+  return withOutingPeople(mockUsers);
+}
+
 /**
  * The demo's data in its original state. Exiting demo mode puts these back,
  * as the demo banner promises («τα demo δεδομένα χάνονται με την Έξοδο»);
@@ -340,9 +366,10 @@ export const DEMO_RESET_EVENT = 'nakamas:demo-reset';
  */
 function demoSeedData() {
   return {
-    events: [...mockEvents, ...mockCalendarPlanEvents],
-    groups: [...mockGroups, ...mockCalendarPlanGroups],
-    users: mockUsers,
+    events: seedEvents(),
+    groups: seedGroups(),
+    users: seedUsers(),
+    ...outingsSeedData(),
     notifications: mockNotifications,
     savedEvents: ['e4', 'e3'],
     waitlistedEvents: [] as string[],
@@ -381,25 +408,28 @@ function applyGroupDiscount(
     if (g.id !== groupId) return g;
     const event = events.find((e) => e.id === g.eventId);
     if (!event || !shouldUnlockGroupDiscount(g, event)) return g;
-    return { ...g, discountUnlocked: true, status: g.members.length >= g.targetSize ? 'confirmed' as const : g.status };
+    // Φ27 — the unlocked discount comes with a code the whole group sees.
+    return withGroupCode({ ...g, discountUnlocked: true, status: g.members.length >= g.targetSize ? 'confirmed' as const : g.status });
   });
 }
 
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
+  // Φ27 — outings: check-in, consequences, waitlists, invites, tickets…
+  ...createOutingsSlice(set as never, get as never),
   theme: 'classic',
   setTheme: (theme) => set({ theme }),
   homeHeroMode: 'balanced',
   setHomeHeroMode: (homeHeroMode) => set({ homeHeroMode }),
-  events: [...mockEvents, ...mockCalendarPlanEvents],
+  events: seedEvents(),
   eventsLoading: false,
   eventsSource: 'mock',
   hydrateEventsFromApi: (events) =>
     set({ events, eventsSource: 'api', eventsLoading: false }),
   setEventsLoading: (eventsLoading) => set({ eventsLoading }),
-  groups: [...mockGroups, ...mockCalendarPlanGroups],
-  users: mockUsers,
+  groups: seedGroups(),
+  users: seedUsers(),
   // Prototype: mock user until backend auth (see src/lib/runtimeMode.ts, docs/ARCHITECTURE.md).
   currentUser: currentUser,
   isAuthenticated: Boolean(currentUser),
@@ -445,9 +475,16 @@ export const useStore = create<AppState>()(
     const userGroupEventIds = state.groups
       .filter((g) => g.members.includes(state.currentUser!.id))
       .map((g) => g.eventId);
+    // Φ27 — a closed door check-in where I was confirmed opens feedback right away.
+    const checkedInEventIds = new Set(
+      state.groups
+        .filter((g) => g.checkInClosedAt && g.checkIns?.[state.currentUser!.id])
+        .map((g) => g.eventId),
+    );
     const pending = state.events.find((e) => {
       if (!userGroupEventIds.includes(e.id)) return false;
       if (state.feedbackSubmitted[e.id]) return false;
+      if (checkedInEventIds.has(e.id)) return true;
       try {
         return new Date(`${e.date}T${e.time || '20:00'}`) < new Date();
       } catch {
@@ -568,13 +605,39 @@ export const useStore = create<AppState>()(
     set((state) => {
       if (!state.currentUser) return state;
       const userId = state.currentUser.id;
+      const target = state.groups.find((g) => g.id === groupId);
+      if (!target) return state;
+      // Φ27 — one gate for every way in: capacity (→ waitlist), women & non-binary
+      // groups, blocks, and a paused standing for groups of strangers.
+      const gate = gateJoinGroup(state.currentUser, target, {
+        users: state.users,
+        strikes: state.strikes,
+        blockedUserIds: state.blockedUserIds,
+      });
+      if (!gate.ok) return state;
       let groups = state.groups.map((g) =>
         g.id === groupId && !g.members.includes(userId)
-          ? { ...g, members: [...g.members, userId] }
+          ? { ...g, members: [...g.members, userId], waitlist: (g.waitlist ?? []).filter((id) => id !== userId) }
           : g,
       );
       groups = applyGroupDiscount(groups, state.events, groupId);
-      return { groups };
+      // Φ27 — «Η παρέα σου είναι έτοιμη»: the moment the group is complete.
+      const ready = target.status !== 'confirmed' && groups.find((g) => g.id === groupId)?.status === 'confirmed';
+      if (!ready) return { groups };
+      return {
+        groups,
+        notifications: [
+          normalizeAppNotification({
+            type: 'group',
+            messageGr: 'Η παρέα σου είναι έτοιμη! Σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας στη «Βραδιά μας».',
+            messageEn: 'Your group is ready! Meeting point, group code and door ticket are on «Our night».',
+            timeGr: 'μόλις τώρα',
+            timeEn: 'just now',
+            read: false,
+          }),
+          ...state.notifications,
+        ],
+      };
     }),
 
   leaveGroup: (groupId) =>
@@ -602,17 +665,80 @@ export const useStore = create<AppState>()(
             ? { ...r, status: 'active' as const, matchedGroupId: undefined, updatedAt: new Date().toISOString() }
             : r,
       );
+      // Φ27 — seat hand-over: the first person on the waitlist takes the seat at
+      // face value; leaving late counts only if the seat stays empty.
+      const group = state.groups.find((g) => g.id === groupId);
+      const event = group ? state.events.find((e) => e.id === group.eventId) : undefined;
+      let nextGroup = group ? { ...group, members: group.members.filter((mId) => mId !== uid) } : undefined;
+      let toUserId: string | null = null;
+      if (group && group.members.includes(uid)) {
+        const handed = handOverSeat(group, uid, {
+          users: state.users,
+          strikes: state.strikes,
+          blockedUserIds: state.blockedUserIds,
+          price: event?.isPaid ? event.price : 0,
+        });
+        nextGroup = handed.group;
+        toUserId = handed.toUserId;
+      }
+      const start = eventStartMs(event);
+      const late =
+        Boolean(group?.members.includes(uid)) &&
+        group?.status === 'confirmed' &&
+        !toUserId &&
+        start !== null &&
+        start > Date.now() &&
+        start - Date.now() < LATE_CANCEL_MS;
+      let strikes = state.strikes;
+      let people = { users: state.users, currentUser: state.currentUser };
+      const notifications = [...state.notifications];
+      const note = (messageGr: string, messageEn: string, type = 'group') =>
+        notifications.unshift(
+          normalizeAppNotification({ type, messageGr, messageEn, timeGr: 'μόλις τώρα', timeEn: 'just now', read: false }),
+        );
+      if (late && group) {
+        const delta = STRIKE_RELIABILITY.late_cancel;
+        const strike: Strike = {
+          id: `st_${Date.now().toString(36)}`,
+          userId: uid,
+          kind: 'late_cancel',
+          at: new Date().toISOString(),
+          groupId,
+          eventId: group.eventId,
+          reliabilityDelta: delta,
+        };
+        strikes = [...strikes, strike];
+        people = patchPerson(people, uid, (u) => ({ reliabilityScore: Math.min(100, Math.max(0, u.reliabilityScore + delta)) }));
+        note(
+          'Αποχώρησες λιγότερο από 24 ώρες πριν και η θέση έμεινε κενή — καταγράφηκε αργή ακύρωση. Αν υπήρχε σοβαρός λόγος, κάνε ένσταση στο Κέντρο Εμπιστοσύνης.',
+          'You left less than 24 hours before and the seat stayed empty — a late cancel was recorded. If there was a serious reason, appeal in the Trust Center.',
+          'safety',
+        );
+      }
+      if (toUserId) {
+        note(
+          'Η θέση σου πέρασε στο πρώτο άτομο της λίστας αναμονής, στην ίδια τιμή. Η ομάδα κρατά την έκπτωση.',
+          'Your seat passed to the first person on the waitlist, at the same price. The group keeps its discount.',
+        );
+      }
+      // Release the commitment hold for an event the member is no longer going to.
+      let commitmentHolds = state.commitmentHolds;
+      if (group && commitmentHolds[group.eventId]) {
+        const stillGoing = state.groups.some((g) => g.id !== groupId && g.eventId === group.eventId && g.members.includes(uid));
+        if (!stillGoing) {
+          const { [group.eventId]: _released, ...rest } = commitmentHolds;
+          commitmentHolds = rest;
+        }
+      }
       return {
-        groups: state.groups.map((g) =>
-          g.id === groupId
-            ? {
-                ...g,
-                members: g.members.filter((mId) => mId !== uid),
-              }
-            : g,
-        ),
+        groups: state.groups.map((g) => (g.id === groupId && nextGroup ? nextGroup : g)),
         companyJoinRequests,
         companyRequests,
+        strikes,
+        users: people.users,
+        currentUser: people.currentUser,
+        notifications,
+        commitmentHolds,
       };
     }),
 
@@ -627,10 +753,13 @@ export const useStore = create<AppState>()(
       return { groups };
     }),
 
-  createGroup: (eventId, targetSize) =>
+  createGroup: (eventId, targetSize, options) =>
     set((state) => {
       if (!state.currentUser) return state;
+      const genderMode: GroupGenderMode =
+        options?.genderMode === 'women_nb' && fitsGenderMode(state.currentUser, 'women_nb') ? 'women_nb' : 'mixed';
       const newGroup = {
+        genderMode,
         id: `g${Date.now()}`,
         eventId,
         hostId: state.currentUser.id,
@@ -1779,6 +1908,11 @@ export const useStore = create<AppState>()(
         blockedUserIds: state.blockedUserIds,
         adminSafeguards: state.adminSafeguards,
         demoMode: state.demoMode,
+        // Φ27 — outings
+        strikes: state.strikes,
+        planInvites: state.planInvites,
+        followedOrganizerIds: state.followedOrganizerIds,
+        govWalletInterest: state.govWalletInterest,
       }),
       merge: (persisted, current) => {
         const p = persisted as Record<string, unknown> | undefined;
@@ -1816,7 +1950,7 @@ export const useStore = create<AppState>()(
         // blob: photo links saved by older builds die on reload — fall back to the seed photo.
         const seedPhoto = new Map(current.users.map((u) => [u.id, u.photoUrl]));
         const users = symmetrizeConnections(
-          mergeById(current.users, p.users).map((u) => ({
+          withOutingPeople(mergeById(current.users, p.users)).map((u) => ({
             ...u,
             isAdmin: seedAdmin.get(u.id) ?? false,
             photoUrl: u.photoUrl?.startsWith('blob:') ? seedPhoto.get(u.id) : u.photoUrl,
@@ -1867,6 +2001,10 @@ export const useStore = create<AppState>()(
           adminSafeguards: { ...DEFAULT_ADMIN_SAFEGUARDS, ...(p.adminSafeguards as object) },
           suspendedUserIds: Array.isArray(p.suspendedUserIds) ? (p.suspendedUserIds as string[]) : [],
           blockedUserIds: Array.isArray(p.blockedUserIds) ? (p.blockedUserIds as string[]) : [],
+          strikes: Array.isArray(p.strikes) ? (p.strikes as typeof current.strikes) : current.strikes,
+          planInvites: mergeById(current.planInvites, p.planInvites),
+          followedOrganizerIds: Array.isArray(p.followedOrganizerIds) ? (p.followedOrganizerIds as string[]) : [],
+          govWalletInterest: Boolean(p.govWalletInterest),
         };
       },
     },

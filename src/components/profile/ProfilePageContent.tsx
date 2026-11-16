@@ -55,6 +55,7 @@ import { PostComposer } from "../wall/PostComposer";
 import { WallPostList } from "../wall/WallPostList";
 import { WallPrivacyPanel } from "../wall/WallPrivacyPanel";
 import { PersonAvatar } from "../wall/PersonAvatar";
+import { VibeProfileCard } from '../outings/VibeProfileCard';
 
 // ─── Main component ──────────────────────────────────────────
 export default function ProfilePageContent() {
@@ -472,6 +473,8 @@ export default function ProfilePageContent() {
             </div>
           </div>
         )}
+            {/* Φ27 — «Το στυλ παρέας μου» + optional gender identity (private). */}
+            <VibeProfileCard className="mt-4" />
           </div>
         )}
         {activeTab === "wall" && (

@@ -24,6 +24,8 @@ import { EventDetailQrModal } from './EventDetailQrModal';
 import EventDetailPageContent from './EventDetailPageContent';
 import { LookingForCompanyPanel } from '../buddySeek/LookingForCompanyPanel';
 import { computeMatchScore } from '../../lib/matching';
+import { NakamasGoing } from '../outings/NakamasGoing';
+import { HikeRouteCard } from '../outings/HikeRouteCard';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
@@ -191,12 +193,25 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
              <EventDetailSafetySection event={event} accent={accent} darkSurface={darkSurface} />
              <EventDetailAdventureSection event={event} accent={accent} darkSurface={darkSurface} />
           </section>
+          {/* Φ27 — hiking route: numbers for everyone, start point for confirmed members. */}
+          {event.route && (
+            <HikeRouteCard
+              route={event.route}
+              revealStart={Boolean(
+                currentUser &&
+                  groups.some(
+                    (g) => g.eventId === event.id && g.members.includes(currentUser.id) && (g.status === 'confirmed' || g.status === 'completed'),
+                  ),
+              )}
+            />
+          )}
           <EventDetailReliabilityNote event={event} accent={accent} darkSurface={darkSurface} />
         </div>
 
         {/* Right Column: Groups & Actions */}
         <div className="space-y-4 md:col-span-2 lg:col-span-1">
           <div className="rounded-2xl border border-border bg-surface-raised p-4 shadow-soft sticky top-24">
+            <NakamasGoing eventId={event.id} className="mb-4" />
             <LookingForCompanyPanel event={event} accent={accent} darkSurface={darkSurface} />
 
             <h3 className="text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>

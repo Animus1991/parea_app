@@ -221,7 +221,16 @@ export const mockEvents: Event[] = [
     minTrustTierAccess: '2_confirmed',
     maxParticipants: 8,
     tags: ['hiking', 'nature', 'outdoor'],
-    imageUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&h=600&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&h=600&fit=crop',
+    route: {
+      distanceKm: 11.5,
+      elevationGainM: 520,
+      durationH: 4.5,
+      difficulty: 'moderate',
+      startArea: 'Thrakomakedones, Parnitha',
+      startPoint: 'Thrakomakedones Entrance, Mount Parnitha (parking by the chapel)',
+      profileM: [420, 520, 640, 780, 860, 910, 880, 760, 610, 480, 420],
+    },
   },
   {
     id: 'e11',
@@ -631,7 +640,16 @@ export const mockEvents: Event[] = [
     minTrustTierAccess: '1_explorer',
     maxParticipants: 12,
     tags: ['hiking', 'nature', 'community'],
-    imageUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&h=600&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&h=600&fit=crop',
+    route: {
+      distanceKm: 6.8,
+      elevationGainM: 310,
+      durationH: 2.5,
+      difficulty: 'easy',
+      startArea: 'Kaisariani, Hymettus',
+      startPoint: 'Kaisariani Monastery entrance, by the Kalopoula spring',
+      profileM: [330, 380, 450, 520, 590, 640, 600, 520, 430, 360],
+    },
   },
   {
     id: 'e30',

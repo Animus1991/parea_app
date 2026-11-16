@@ -8,6 +8,7 @@ import { shouldRevealMemberPhoto, getPhotoPlaceholder } from '../../lib/photoRev
 import { cn } from '../../lib/utils';
 import { redundantClick } from '../../lib/a11y';
 import type { Event, Group } from '../../types';
+import { GroupInsights } from '../outings/GroupInsights';
 
 export type EventDetailGroupAccent = 'classic' | 'vibrant' | 'neon' | 'bento';
 
@@ -147,7 +148,12 @@ export function EventDetailGroupCard({
 }: EventDetailGroupCardProps) {
   const { t } = useLanguage();
   const users = useStore((s) => s.users);
+  const meId = useStore((s) => s.currentUser?.id);
   const tok = (darkSurface ? DARK : LIGHT)[accent];
+  // Φ27 — members go straight to «Η βραδιά μας»; everyone else to the join flow.
+  const isMember = Boolean(meId && group.members.includes(meId));
+  const onWaitlist = Boolean(meId && group.waitlist?.includes(meId));
+  const openTarget = isMember ? `/night/${group.id}` : `/events/${event.id}/join?groupId=${group.id}`;
 
   const spotsLeft = group.targetSize - group.members.length;
   const isDiscountEligible =
@@ -168,7 +174,7 @@ export function EventDetailGroupCard({
         tok.card,
         tok.hoverBorder,
       )}
-      {...redundantClick<HTMLDivElement>(() => navigate(`/events/${event.id}/join?groupId=${group.id}`))}
+      {...redundantClick<HTMLDivElement>(() => navigate(openTarget))}
     >
       <div
         className={cn(
@@ -272,6 +278,8 @@ export function EventDetailGroupCard({
         </div>
       </div>
 
+      <GroupInsights group={group} className="mb-3" textClass={tok.meta} strongClass={tok.title} compact />
+
       {isDiscountEligible && !discountUnlockedTemp && (
         <div className="bg-amber-50/80 border border-amber-200/50 p-2.5 rounded-lg mb-4">
           <div className="flex justify-between items-center mb-1.5">
@@ -311,10 +319,16 @@ export function EventDetailGroupCard({
         className={cn('w-full font-semibold transition-all duration-200', tok.cta)}
         onClick={(e) => {
           e.stopPropagation();
-          navigate(`/events/${event.id}/join?groupId=${group.id}`);
+          navigate(openTarget);
         }}
       >
-        {t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
+        {isMember
+          ? t('Η βραδιά μας', 'Our night')
+          : onWaitlist
+            ? t('Στη λίστα αναμονής · Προβολή', 'On the waitlist · View')
+            : spotsLeft <= 0
+              ? t('Πλήρης · Λίστα αναμονής', 'Full · Waitlist')
+              : t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
       </Button>
     </div>
   );

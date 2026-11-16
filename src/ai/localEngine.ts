@@ -197,6 +197,65 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
     return { calls: [call('respond_company_join', { accept })] };
   }
 
+  /* 1d ─ outings (Φ27): our night, small outings, collections, standing, invites */
+  if (
+    hasAny(p, ['βραδια μασ', 'our night', 'my night', 'κωδικοσ ομαδασ', 'group code', 'εισιτηριο πορτασ', 'door ticket', ' check-in', ' check in ', 'τσεκ ιν']) &&
+    !hasAny(p, [' φτιαξε', ' δημιουργησ', ' δημοσιευσ', ' create', ' publish', 'καλεσε', 'invite'])
+  ) {
+    const ref = eventRef(n, ['δειξε', 'ανοιξε', 'η', 'βραδια', 'μασ', 'our', 'night', 'my', 'κωδικοσ', 'ομαδασ', 'group', 'code', 'εισιτηριο', 'πορτασ', 'door', 'ticket', 'check-in', 'check', 'in', 'τσεκ', 'ιν', 'για']);
+    return { calls: [call('show_my_night', typeof ref === 'string' && ref !== THIS_EVENT ? { event: ref } : {})] };
+  }
+  const miniKind = hasAny(p, ['καφε', 'coffee']) ? 'coffee'
+    : hasAny(p, ['τρεξιμο', 'τρεξουμε', ' run ', 'jog']) ? 'run'
+    : hasAny(p, ['βολτα', 'περπατημα', ' walk']) ? 'walk'
+    : hasAny(p, ['ενα ποτο', 'για ποτο', 'a drink', 'drinks']) ? 'drink'
+    : null;
+  if (
+    miniKind &&
+    hasAny(p, [' φτιαξε', ' οργανωσ', ' στησε', ' κανονισε', ' ξεκινα', ' create', ' organi', ' set up', ' start', ' host ', 'μικρη εξοδο', 'small outing']) &&
+    !hasAny(p, ['εκδηλωσ', ' event'])
+  ) {
+    const range = extractDateRange(n, ctx.now);
+    const time = extractTime(n);
+    const area = extractArea(n, ctx.areas);
+    const size = n.match(/(\d)\s*(?:ατομα|ατομων|people|persons)/);
+    const args: Record<string, unknown> = { kind: miniKind };
+    if (range) args.date = range.from.slice(0, 10);
+    if (time) args.time = time;
+    if (area) args.area = area;
+    if (size) args.size = Number(size[1]);
+    if (hasAny(p, ['γυναικ', 'μη δυαδικ', 'women', 'non-binary', 'non binary'])) args.womenNb = true;
+    const missing = !args.date || !args.time || !args.area;
+    if (missing) {
+      return reply(
+        'Πες μου πότε, τι ώρα και σε ποια περιοχή — π.χ. «φτιάξε καφέ αύριο 11:00 στο Κουκάκι για 3 άτομα».',
+        'Tell me when, what time and which area — e.g. "set up a coffee tomorrow 11:00 in Koukaki for 3 people".',
+      );
+    }
+    return { calls: [call('create_mini_outing', args)] };
+  }
+  if (hasAny(p, ['μικρεσ εξοδουσ', 'μικρη εξοδο', 'small outings', 'small outing'])) {
+    return { calls: [call('navigate', { page: 'buddy-seek' })] };
+  }
+  const collection = hasAny(p, ['nakamas nights']) ? 'nakamas-nights'
+    : hasAny(p, ['πρωτη φορα μονοσ', 'πρωτη φορα μονη', 'first time solo']) ? 'first-time-solo'
+    : hasAny(p, ['ησυχεσ βραδιεσ', 'quiet nights']) ? 'quiet-nights'
+    : hasAny(p, ['εξω στη φυση']) ? 'outdoors'
+    : null;
+  if (collection || hasAny(p, ['συλλογ', 'collections'])) {
+    return { calls: [call('open_collection', collection ? { collection } : {})] };
+  }
+  if (
+    hasAny(p, ['ενσταση', 'ενστασ', 'appeal', 'παυση', 'απουσιεσ μου', 'απουσια μου', 'my strikes', 'my standing', 'καταγραφηκε απουσια']) &&
+    !hasAny(p, ['ειδοποιησ', 'notification'])
+  ) {
+    return { calls: [call('summarize_standing')] };
+  }
+  if (hasAny(p, ['καλεσε φιλουσ', 'καλεσω φιλουσ', 'προσκληση για φιλ', 'link προσκλησ', 'συνδεσμο προσκλησ', 'invite friends', 'invite link', 'invite my friends'])) {
+    const ref = eventRef(n, ['καλεσε', 'καλεσω', 'φιλουσ', 'προσκληση', 'για', 'link', 'συνδεσμο', 'invite', 'friends', 'my', 'στο', 'στη', 'στην']);
+    return { calls: [call('invite_friends', typeof ref === 'string' && ref !== THIS_EVENT ? { event: ref } : {})] };
+  }
+
   /* 2 ─ undo */
   if (/^(αναιρεσ\S*|undo|ακυρωσε (το )?τελευταιο|revert)/.test(n)) return { calls: [call(UNDO_CALL)] };
 

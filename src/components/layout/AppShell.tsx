@@ -4,7 +4,7 @@ import { useUIStore } from '../../store/uiStore';
 import { Toaster } from 'sonner';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
-  Grid, TrendingUp, Bookmark, History, Flag,
+  Grid, TrendingUp, Bookmark, History, Flag, Library,
   Users, UserPlus, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, MessageSquare, Newspaper,
   Trophy, Zap, ChevronsLeft, ChevronsRight, ChevronDown, BookOpen
 } from 'lucide-react';
@@ -212,13 +212,14 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
 
   return (
     <>
-      <NavSection id="explore" paths={['/', '/categories', '/nearby']} title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
+      <NavSection id="explore" paths={['/', '/categories', '/collections', '/nearby']} title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
         <NavItem to="/" icon={Compass} label={t('Ανακάλυψη Εκδηλώσεων', 'Discover Events')} compact={compact} rail={rail} />
         <NavItem to="/categories" icon={Grid} label={t('Κατηγορίες', 'Categories')} compact={compact} rail={rail} />
+        <NavItem to="/collections" icon={Library} label={t('Συλλογές', 'Collections')} compact={compact} rail={rail} />
         <NavItem to="/nearby" icon={MapPin} label={t('Τοπικές Ομάδες', 'Local Groups')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection id="experience" paths={['/agenda', '/plans', '/buddy-seek', '/saved', '/history']} title={t('Η Εμπειρία μου', 'My Experience')} compact={compact} rail={rail}>
+      <NavSection id="experience" paths={['/agenda', '/plans', '/night', '/buddy-seek', '/saved', '/history']} title={t('Η Εμπειρία μου', 'My Experience')} compact={compact} rail={rail}>
         <NavItem to="/agenda" icon={Calendar} label={t('Το Ημερολόγιό μου', 'My Calendar')} compact={compact} rail={rail} />
         <NavItem to="/plans" icon={CalendarCheck} label={t('Τα Σχέδιά μου', 'My Plans')} compact={compact} rail={rail} />
         <NavItem to="/buddy-seek" icon={UserPlus} label={t('Βρες Nakamas', 'Find Nakamas')} compact={compact} rail={rail} />

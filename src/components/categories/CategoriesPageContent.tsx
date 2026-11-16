@@ -27,6 +27,7 @@ import {
   getCategoryGroupTabLabel,
   type CategoryGroupTab,
 } from '../../lib/categoriesCatalog';
+import { CollectionsRail } from '../outings/CollectionsRail';
 
 type PriceFilter = 'All' | 'Free' | 'Paid' | 'Group Discount';
 type DateFilter = 'Any' | 'Today' | 'This Week' | 'This Month' | 'Weekend';
@@ -182,6 +183,9 @@ export default function CategoriesPageContent() {
         </div>
         <div className="absolute right-0 top-0 w-64 h-64 bg-hero-fg/15 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       </div>
+
+      {/* Φ27 — themed collections */}
+      <CollectionsRail />
 
       {!searchQuery && !activeCategory && (
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">

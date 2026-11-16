@@ -21,6 +21,13 @@ export const A11Y_ROUTES = [
   // Φ26: the wall feed and a member profile with its wall.
   { path: '/wall', needsAuth: true, name: 'wall' },
   { path: '/u/u2', needsAuth: true, name: 'person-profile' },
+  // Φ27: group outings.
+  { path: '/night/g-nn1', needsAuth: true, name: 'our-night' },
+  { path: '/collections/nakamas-nights', needsAuth: true, name: 'collection' },
+  { path: '/trust', needsAuth: true, name: 'trust' },
+  { path: '/verification', needsAuth: true, name: 'verification' },
+  { path: '/i/inv-nn1', needsAuth: false, name: 'invite' },
+  { path: '/embed/organizer/platform', needsAuth: false, name: 'organizer-embed' },
 ] as const;
 
 /**

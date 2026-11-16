@@ -32,6 +32,9 @@ import { previousVisitAt } from '../lib/visitClock';
 import { interestLabel } from '../lib/interests';
 import { visiblePosts, wallPrivacyOf } from '../lib/audience';
 import type { Audience } from '../types/wall';
+import { COLLECTIONS, collectionById, collectionEvents, formingGroups, venueById, timeMinus } from '../lib/outings';
+import { standingFor, strikeLabel } from '../lib/consequences';
+import { eventStartMs } from '../store/outingsSlice';
 
 /** The wall store loads on demand so the first page (login) never ships wall code. */
 const loadWallStore = () => import('../store/wallStore').then((m) => m.useWallStore);
@@ -460,12 +463,20 @@ const leaveGroupAction: CopilotAction = {
     if (!e) return notFoundEvent();
     const g = userGroupForEvent(e.id);
     if (!g) return fail(`Δεν είσαι σε ομάδα για «${e.title}».`, `You're not in a group for "${e.title}".`);
+    const uid = state().currentUser?.id;
     state().leaveGroup(g.id);
+    // Φ27 — a seat handed to the waitlist belongs to someone else now: no undo.
+    const after = state().groups.find((x) => x.id === g.id);
+    const handedOver = Boolean(uid && after?.lastTransfer?.fromUserId === uid && Date.now() - Date.parse(after.lastTransfer.at) < 60_000);
     return {
       ok: true,
-      el: `Αποχώρησες από την ομάδα για «${e.title}».`,
-      en: `You left the group for "${e.title}".`,
-      undo: () => state().joinGroup(g.id),
+      el: handedOver
+        ? `Αποχώρησες από την ομάδα για «${e.title}». Η θέση σου πέρασε στο πρώτο άτομο της λίστας αναμονής.`
+        : `Αποχώρησες από την ομάδα για «${e.title}».`,
+      en: handedOver
+        ? `You left the group for "${e.title}". Your seat passed to the first person on the waitlist.`
+        : `You left the group for "${e.title}".`,
+      ...(handedOver ? {} : { undo: () => state().joinGroup(g.id) }),
     };
   },
 };
@@ -1812,6 +1823,217 @@ const resolveReportAction: CopilotAction = {
   },
 };
 
+/* ───────────────────────── Φ27 — outings ───────────────────────── */
+
+/** The user's next group outing (or the one for a given event). */
+function nextMyGroup(eventId?: string): { group: Group; event: Event } | null {
+  const s = state();
+  const uid = s.currentUser?.id;
+  if (!uid) return null;
+  const now = Date.now();
+  const mine = s.groups
+    .filter((g) => g.members.includes(uid) && g.status !== 'cancelled' && (!eventId || g.eventId === eventId))
+    .map((g) => ({ group: g, event: s.events.find((e) => e.id === g.eventId) }))
+    .filter((x): x is { group: Group; event: Event } => Boolean(x.event));
+  if (eventId) return mine[0] ?? null;
+  const upcoming = mine
+    .map((x) => ({ ...x, start: eventStartMs(x.event) ?? 0 }))
+    .filter((x) => x.start >= now - 6 * 3_600_000)
+    .sort((a, b) => a.start - b.start);
+  return upcoming[0] ?? null;
+}
+
+const showMyNightAction: CopilotAction = {
+  name: 'show_my_night',
+  description:
+    'Open «Η βραδιά μας» (Our night) for the user’s next group outing, or for a given event: door ticket/check-in, meeting point, pre-meet place, group code, who is coming.',
+  risk: 'safe',
+  parameters: OBJ({ event: EVENT_REF }),
+  run: (args, rt) => {
+    const e = args.event !== undefined && args.event !== null && str(String(args.event)) ? resolveEvent(args.event, rt) : null;
+    const found = nextMyGroup(e?.id);
+    if (!found) {
+      return fail(
+        e ? `Δεν είσαι σε ομάδα για «${e.title}».` : 'Δεν έχεις κάποια προσεχή έξοδο με ομάδα. Θες να βρούμε μία;',
+        e ? `You're not in a group for "${e.title}".` : "You don't have an upcoming group outing. Want to find one?",
+      );
+    }
+    const { group: g, event: ev } = found;
+    const revealed = g.status === 'confirmed' || g.status === 'completed';
+    const venue = venueById(g.preMeet?.venueId);
+    const path = `/night/${g.id}`;
+    rt.navigate(path);
+    const parts = (lang: 'el' | 'en') =>
+      [
+        formatEventLine(ev, lang),
+        lang === 'el' ? `${g.members.length}/${g.targetSize} μέλη` : `${g.members.length}/${g.targetSize} members`,
+        revealed && g.meetingPoint ? (lang === 'el' ? `Σημείο: ${g.meetingPoint}` : `Meeting point: ${g.meetingPoint}`) : null,
+        revealed && venue && g.preMeet
+          ? lang === 'el'
+            ? `Συνάντηση πριν: ${venue.name} στις ${timeMinus(ev.time, g.preMeet.minutesBefore)}`
+            : `Meet before: ${venue.name} at ${timeMinus(ev.time, g.preMeet.minutesBefore)}`
+          : null,
+        g.discountUnlocked && g.code ? (lang === 'el' ? `Κωδικός ομάδας: ${g.code}` : `Group code: ${g.code}`) : null,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    return {
+      ok: true,
+      el: `Άνοιξα «Η βραδιά μας».\n${parts('el')}`,
+      en: `Opened «Our night».\n${parts('en')}`,
+      link: { path, el: 'Η βραδιά μας', en: 'Our night' },
+      data: { groupId: g.id, eventId: ev.id },
+    };
+  },
+};
+
+const MINI_KINDS = ['coffee', 'walk', 'run', 'drink'] as const;
+const MINI_LABEL: Record<(typeof MINI_KINDS)[number], [string, string]> = {
+  coffee: ['Καφές', 'Coffee'],
+  walk: ['Βόλτα', 'Walk'],
+  run: ['Τρέξιμο', 'Run'],
+  drink: ['Ένα ποτό', 'A drink'],
+};
+
+const createMiniOutingAction: CopilotAction = {
+  name: 'create_mini_outing',
+  description:
+    'Create a small outing without an event (coffee, walk, run or a drink) for 2–6 people in «Βρες Nakamas». Same trust rules as events; the exact spot is shown to members only.',
+  risk: 'confirm',
+  parameters: OBJ(
+    {
+      kind: S('Kind of outing.', { enum: [...MINI_KINDS] }),
+      date: S('Date as YYYY-MM-DD (today or later).'),
+      time: S('Start time HH:MM (24h).'),
+      area: S('Neighbourhood shown to everyone, e.g. "Koukaki".'),
+      spot: S('Exact spot, shown to members only (optional).'),
+      size: N('Group size including the user (2-6, default 3).'),
+      womenNb: B('Women & non-binary only (requires the user to have set it in their profile).'),
+    },
+    ['kind', 'date', 'time', 'area'],
+  ),
+  preview: (args) => {
+    const k = (MINI_KINDS as readonly string[]).includes(String(args.kind)) ? (args.kind as (typeof MINI_KINDS)[number]) : 'coffee';
+    return {
+      el: `Νέα μικρή έξοδος: ${MINI_LABEL[k][0]} · ${str(args.area) ?? ''} · ${str(args.date) ?? ''} ${str(args.time) ?? ''}`,
+      en: `New small outing: ${MINI_LABEL[k][1]} · ${str(args.area) ?? ''} · ${str(args.date) ?? ''} ${str(args.time) ?? ''}`,
+    };
+  },
+  run: (args, rt) => {
+    const s = state();
+    if (!s.currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const kind = (MINI_KINDS as readonly string[]).includes(String(args.kind)) ? (args.kind as (typeof MINI_KINDS)[number]) : 'coffee';
+    const date = str(args.date);
+    const time = str(args.time);
+    const area = str(args.area);
+    const today = new Date().toISOString().slice(0, 10);
+    if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date) || date < today) return fail('Χρειάζομαι σημερινή ή μελλοντική ημερομηνία (ΕΕΕΕ-ΜΜ-ΗΗ).', 'I need today or a future date (YYYY-MM-DD).');
+    if (!time || !/^\d{1,2}:\d{2}$/.test(time)) return fail('Χρειάζομαι ώρα (π.χ. 11:00).', 'I need a time (e.g. 11:00).');
+    if (!area) return fail('Σε ποια περιοχή;', 'Which area?');
+    const size = Math.min(6, Math.max(2, Math.floor(num(args.size) ?? 3)));
+    const groupId = s.createMiniOuting({
+      kind,
+      date,
+      time,
+      area: area.includes(',') ? area : `${area}, Athens`,
+      exactLocation: str(args.spot),
+      size,
+      genderMode: bool(args.womenNb) ? 'women_nb' : 'mixed',
+    });
+    if (!groupId) return fail('Δεν μπορείς να ξεκινήσεις έξοδο όσο ισχύει παύση.', 'You cannot start an outing while a pause applies.');
+    const g = state().groups.find((x) => x.id === groupId);
+    const path = `/night/${groupId}`;
+    rt.navigate(path);
+    return {
+      ok: true,
+      el: `Δημοσιεύτηκε: ${MINI_LABEL[kind][0]} · ${area} · ${date} ${time} για ${size} άτομα${g?.genderMode === 'women_nb' ? ' (γυναίκες & μη δυαδικά)' : ''}.`,
+      en: `Published: ${MINI_LABEL[kind][1]} · ${area} · ${date} ${time} for ${size} people${g?.genderMode === 'women_nb' ? ' (women & non-binary)' : ''}.`,
+      link: { path, el: 'Η βραδιά μας', en: 'Our night' },
+      undo: () => {
+        if (g) state().cancelEvent(g.eventId);
+      },
+    };
+  },
+};
+
+const openCollectionAction: CopilotAction = {
+  name: 'open_collection',
+  description:
+    'Open a themed collection of events (free, weekend, first time solo, quiet nights, outdoors, Nakamas Nights) with how many groups are forming.',
+  risk: 'safe',
+  parameters: OBJ({ collection: S('Collection id.', { enum: COLLECTIONS.map((c) => c.id) }) }),
+  run: (args, rt) => {
+    const c = collectionById(str(args.collection));
+    if (!c) {
+      rt.navigate('/collections');
+      return { ok: true, el: 'Άνοιξα τις Συλλογές.', en: 'Opened Collections.', link: { path: '/collections', el: 'Συλλογές', en: 'Collections' } };
+    }
+    const s = state();
+    const today = new Date().toISOString().slice(0, 10);
+    const list = collectionEvents(c, s.events, s.groups).filter((e) => e.date >= today);
+    const forming = list.reduce((n, e) => n + formingGroups(e, s.groups).length, 0);
+    const path = `/collections/${c.id}`;
+    rt.navigate(path);
+    return {
+      ok: true,
+      el: `«${c.el}»: ${list.length} προσεχείς εκδηλώσεις, ${forming} παρέες σχηματίζονται.${list[0] ? `\nΠρώτη: ${formatEventLine(list[0], 'el')}` : ''}`,
+      en: `"${c.en}": ${list.length} upcoming events, ${forming} groups forming.${list[0] ? `\nFirst: ${formatEventLine(list[0], 'en')}` : ''}`,
+      link: { path, el: c.el, en: c.en },
+      eventIds: list.slice(0, 8).map((e) => e.id),
+    };
+  },
+};
+
+const summarizeStandingAction: CopilotAction = {
+  name: 'summarize_standing',
+  description:
+    'Explain the user’s standing (warning / 7-day pause / review) from absences and late cancels in the last 90 days, and how to appeal.',
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: (_args, rt) => {
+    const s = state();
+    const me = s.currentUser;
+    if (!me) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const st = standingFor(s.strikes, me.id);
+    const mine = s.strikes.filter((x) => x.userId === me.id);
+    const pending = mine.filter((x) => x.appeal?.status === 'pending').length;
+    const last = mine.sort((a, b) => b.at.localeCompare(a.at))[0];
+    rt.navigate('/trust');
+    const tEl = (el: string) => el;
+    return {
+      ok: true,
+      el: `${st.titleEl}. ${st.explainEl}${last ? `\nΤελευταίο: ${strikeLabel(last.kind, tEl)}.` : ''}${pending ? `\nΕνστάσεις σε εξέταση: ${pending}.` : ''}${last && !last.appeal ? '\nΜπορείς να κάνεις ένσταση στο Κέντρο Εμπιστοσύνης.' : ''}`,
+      en: `${st.titleEn}. ${st.explainEn}${last ? `\nLatest: ${strikeLabel(last.kind, (_e, en) => en)}.` : ''}${pending ? `\nAppeals under review: ${pending}.` : ''}${last && !last.appeal ? '\nYou can appeal in the Trust Center.' : ''}`,
+      link: { path: '/trust', el: 'Κέντρο Εμπιστοσύνης', en: 'Trust Center' },
+      data: { level: st.level, active: st.active },
+    };
+  },
+};
+
+const inviteFriendsAction: CopilotAction = {
+  name: 'invite_friends',
+  description:
+    'Create (or reuse) an invite link for the user’s group outing that friends can answer without an account.',
+  risk: 'safe',
+  parameters: OBJ({ event: EVENT_REF }),
+  run: (args, rt) => {
+    const e = args.event !== undefined && args.event !== null && str(String(args.event)) ? resolveEvent(args.event, rt) : null;
+    const found = nextMyGroup(e?.id);
+    if (!found) return fail('Δεν βρήκα ομάδα σου για πρόσκληση.', "I couldn't find a group of yours to invite to.");
+    if (found.group.members.length >= found.group.targetSize) return fail('Η ομάδα είναι πλήρης.', 'The group is full.');
+    const id = state().createPlanInvite(found.group.id);
+    if (!id) return fail('Δεν μπόρεσα να φτιάξω πρόσκληση.', 'I could not create an invite.');
+    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/i/${id}`;
+    return {
+      ok: true,
+      el: `Ο σύνδεσμος πρόσκλησης για «${found.event.title}»: ${url}\nΟι φίλοι σου απαντούν χωρίς λογαριασμό· τα ονόματα τα βλέπεις μόνο εσύ.`,
+      en: `Invite link for "${found.event.title}": ${url}\nFriends answer without an account; only you see the names.`,
+      link: { path: `/night/${found.group.id}`, el: 'Η βραδιά μας', en: 'Our night' },
+      data: { inviteId: id, url },
+    };
+  },
+};
+
 export const COPILOT_ACTIONS: CopilotAction[] = [
   navigateAction,
   searchAction,
@@ -1860,6 +2082,11 @@ export const COPILOT_ACTIONS: CopilotAction[] = [
   explainAction,
   capabilitiesAction,
   resolveReportAction,
+  showMyNightAction,
+  createMiniOutingAction,
+  openCollectionAction,
+  summarizeStandingAction,
+  inviteFriendsAction,
 ];
 
 export function getAction(name: string): CopilotAction | undefined {

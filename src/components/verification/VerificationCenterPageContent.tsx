@@ -9,6 +9,7 @@ import { useStore } from '../../store';
 import { toast } from 'sonner';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { verifyDemo } from '../../lib/verifyDemo';
+import { GovWalletCard, SelfieCheckCard } from './SelfieAndWalletCards';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function VerificationCenterPageContent() {
@@ -188,6 +189,10 @@ export default function VerificationCenterPageContent() {
             )}
           </div>
         </Card>
+
+        {/* Φ27 — selfie check (Bumble BFF) and Gov.gr Wallet (under study) */}
+        <SelfieCheckCard />
+        <GovWalletCard />
       </div>
 
       <Card className="p-5">

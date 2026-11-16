@@ -27,6 +27,7 @@ import type { CompanyJoinRequestStatus, CompanyRequest } from '../../types/compa
 import { readStorage, writeStorage } from '../../lib/safeUrl';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
+import { MiniOutingsSection } from '../outings/MiniOutingsSection';
 
 type FilterKey = 'all' | 'open_spots' | 'verified' | 'small_groups' | 'flexible' | 'saved_events' | 'high_match';
 
@@ -179,6 +180,9 @@ export default function BuddySeekPageContent() {
           </button>
         </div>
       </header>
+
+      {/* Φ27 — small outings without an event (coffee / walk / run) */}
+      <MiniOutingsSection />
 
       {showExplainer && (
         <div className={cn('rounded-2xl border p-4 flex gap-3', a.cardSurface, 'border-cyan-200 bg-cyan-50/60 dark:bg-cyan-950/20 dark:border-cyan-800')}>

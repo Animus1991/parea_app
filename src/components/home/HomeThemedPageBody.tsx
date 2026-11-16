@@ -19,6 +19,7 @@ import { useHomePageController } from '../../hooks/useHomePageController';
 import { HOME_TYPO } from '../../lib/typographyTokens';
 import { HOME_THEMED_TOKENS, type HomeThemedVariant } from '../../lib/homeThemedTokens';
 import { cn } from '../../lib/utils';
+import { CollectionsRail } from '../outings/CollectionsRail';
 
 /**
  * Canonical themed Home — ONE implementation for vibrant/neon/bento × light/dark.
@@ -115,6 +116,9 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
       />
 
       <HomeContinueStrip />
+
+      {/* Φ27 — themed collections with how many groups are forming */}
+      <CollectionsRail />
 
       <EventStories events={storyEvents} />
 

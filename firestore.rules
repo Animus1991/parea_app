@@ -313,6 +313,102 @@ service cloud.firestore {
       }
     }
 
+    // ───────────────────────── Group outings (Φ27) ─────────────────────────
+    // Mirrors src/store/outingsSlice.ts. Groups (members, host, waitlist,
+    // seat hand-overs) are written by a trusted backend; clients read the
+    // groups they are in. Strikes are written by the backend; the person
+    // concerned may add one appeal; moderators decide it.
+    function groupPath(groupId) {
+      return /databases/$(database)/documents/groups/$(groupId);
+    }
+
+    function isHostOf(groupId) {
+      return signedIn() && get(groupPath(groupId)).data.hostId == request.auth.uid;
+    }
+
+    function inGroup(groupId) {
+      return signedIn() && request.auth.uid in get(groupPath(groupId)).data.memberIds;
+    }
+
+    match /groups/{groupId} {
+      allow read: if signedIn() && request.auth.uid in resource.data.memberIds;
+      allow write: if false;
+
+      // Door check-in: only the host writes, only for members, only while
+      // check-in is open; the record names who confirmed it. Codes (rotating,
+      // HMAC-signed) are verified by a Cloud Function that writes the same doc.
+      match /checkIns/{uid} {
+        allow read: if inGroup(groupId);
+        allow create: if isHostOf(groupId)
+          && uid in get(groupPath(groupId)).data.memberIds
+          && !('checkInClosedAt' in get(groupPath(groupId)).data)
+          && request.resource.data.keys().hasOnly(['at', 'by', 'method'])
+          && request.resource.data.by == request.auth.uid
+          && request.resource.data.method in ['qr', 'code', 'manual'];
+        // Undo, while still open.
+        allow delete: if isHostOf(groupId) && !('checkInClosedAt' in get(groupPath(groupId)).data);
+        allow update: if false;
+      }
+    }
+
+    // Friend invitations: anyone with the link reads the invite card (no
+    // names in it); answers are write-only for guests and readable only by
+    // the person who sent the invite.
+    function invitePath(inviteId) {
+      return /databases/$(database)/documents/planInvites/$(inviteId);
+    }
+
+    match /planInvites/{inviteId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.hostId == request.auth.uid
+        && inGroup(request.resource.data.groupId)
+        && request.resource.data.keys().hasOnly(['groupId', 'eventId', 'hostId', 'coverId', 'createdAt'])
+        && request.resource.data.coverId is string && request.resource.data.coverId.size() <= 40;
+      allow update: if signedIn() && resource.data.hostId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['coverId'])
+        && request.resource.data.coverId is string && request.resource.data.coverId.size() <= 40;
+      allow delete: if signedIn() && resource.data.hostId == request.auth.uid;
+
+      match /responses/{responseId} {
+        allow read: if signedIn() && get(invitePath(inviteId)).data.hostId == request.auth.uid;
+        allow create: if exists(invitePath(inviteId))
+          && request.resource.data.keys().hasOnly(['name', 'status', 'at'])
+          && request.resource.data.name is string
+          && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 40
+          && request.resource.data.status in ['going', 'maybe', 'no'];
+        allow update, delete: if false;
+      }
+    }
+
+    match /strikes/{strikeId} {
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || isModerator());
+      allow create, delete: if false;
+      // One appeal, by the person concerned, while none exists.
+      allow update: if signedIn()
+        && (
+          (
+            resource.data.userId == request.auth.uid
+            && !('appeal' in resource.data)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['appeal'])
+            && request.resource.data.appeal.keys().hasOnly(['text', 'at', 'status'])
+            && request.resource.data.appeal.status == 'pending'
+            && request.resource.data.appeal.text is string
+            && request.resource.data.appeal.text.size() >= 10
+            && request.resource.data.appeal.text.size() <= 600
+          )
+          || (
+            isModerator()
+            && 'appeal' in resource.data
+            && resource.data.appeal.status == 'pending'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['appeal'])
+            && request.resource.data.appeal.status in ['accepted', 'rejected']
+            && request.resource.data.appeal.text == resource.data.appeal.text
+            && request.resource.data.appeal.decidedBy == request.auth.uid
+          )
+        );
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

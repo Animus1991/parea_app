@@ -51,6 +51,15 @@ const Onboarding = lazy(routeLoaders.onboarding);
 const BuddySeek = lazy(routeLoaders.buddySeek);
 const Wall = lazy(routeLoaders.wall);
 const PersonProfile = lazy(routeLoaders.personProfile);
+const OurNight = lazy(routeLoaders.ourNight);
+const Collections = lazy(routeLoaders.collections);
+const InvitePublic = lazy(routeLoaders.invitePublic);
+const OrganizerEmbed = lazy(routeLoaders.organizerEmbed);
+
+/** Pages anyone with the link may open, without an account (Φ27). */
+function isPublicPath(pathname: string): boolean {
+  return /^\/i\/[^/]+$/.test(pathname) || /^\/embed\/organizer\/[^/]+$/.test(pathname);
+}
 
 export default function App() {
   const location = useLocation();
@@ -69,23 +78,40 @@ export default function App() {
     return prefetchWhenIdle(["/", "/events/_", "/categories", "/plans", "/buddy-seek", "/saved", "/chats", "/profile", "/notifications", "/wall"]);
   }, [onLogin, signedIn]);
 
+  const publicPage = isPublicPath(location.pathname);
   useEffect(() => {
-    if (!currentUser && location.pathname !== "/login") {
+    if (!currentUser && location.pathname !== "/login" && !publicPage) {
       navigate("/login");
     }
-  }, [currentUser, location.pathname, navigate]);
+  }, [currentUser, location.pathname, navigate, publicPage]);
 
   useEffect(() => {
     if (
       currentUser &&
       !demoMode &&
       !onboardingCompleted &&
+      !publicPage &&
       location.pathname !== "/onboarding" &&
       location.pathname !== "/login"
     ) {
       navigate("/onboarding");
     }
-  }, [currentUser, onboardingCompleted, demoMode, location.pathname, navigate]);
+  }, [currentUser, onboardingCompleted, demoMode, location.pathname, navigate, publicPage]);
+
+  // Invite pages and the organizer widget render on their own, signed in or not.
+  if (publicPage) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <RouteLifecycle />
+        <Suspense fallback={<PageLoading />}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/i/:inviteId" element={<ErrorBoundary><InvitePublic /></ErrorBoundary>} />
+            <Route path="/embed/organizer/:id" element={<ErrorBoundary><OrganizerEmbed /></ErrorBoundary>} />
+          </Routes>
+        </Suspense>
+      </QueryClientProvider>
+    );
+  }
 
   if (!currentUser && location.pathname !== "/login") {
     return null; // wait for redirect
@@ -153,6 +179,9 @@ export default function App() {
             <Route path="/organizer/:id" element={<ErrorBoundary><OrganizerProfile /></ErrorBoundary>} />
             <Route path="/u/:id" element={<ErrorBoundary><PersonProfile /></ErrorBoundary>} />
             <Route path="/wall" element={<ErrorBoundary><Wall /></ErrorBoundary>} />
+            <Route path="/night/:groupId" element={<ErrorBoundary><OurNight /></ErrorBoundary>} />
+            <Route path="/collections" element={<ErrorBoundary><Collections /></ErrorBoundary>} />
+            <Route path="/collections/:id" element={<ErrorBoundary><Collections /></ErrorBoundary>} />
 
             <Route path="/notifications" element={<ErrorBoundary><Notifications /></ErrorBoundary>} />
             <Route path="/settings" element={<ErrorBoundary><SettingsAndPrivacy /></ErrorBoundary>} />

@@ -278,6 +278,76 @@ describe.skipIf(!emulator)('firestore.rules', () => {
     });
   });
 
+  describe('group outings (Φ27)', () => {
+    beforeEach(async () => {
+      await env.withSecurityRulesDisabled(async (ctx) => {
+        const db = ctx.firestore();
+        await setDoc(doc(db, 'groups/g1'), { hostId: 'alice', memberIds: ['alice', 'bob', 'carol'] });
+        await setDoc(doc(db, 'groups/closed'), { hostId: 'alice', memberIds: ['alice', 'bob'], checkInClosedAt: 1 });
+        await setDoc(doc(db, 'planInvites/inv1'), { groupId: 'g1', eventId: 'e1', hostId: 'alice', coverId: 'soc-teal', createdAt: 1 });
+        await setDoc(doc(db, 'strikes/s1'), { userId: 'bob', kind: 'no_show', at: 1, reliabilityDelta: -15 });
+      });
+    });
+    const as = (uid: string, claims?: Record<string, unknown>) => env.authenticatedContext(uid, claims).firestore();
+    const rec = (by: string, method = 'qr') => ({ at: 1, by, method });
+
+    it('lets members read their group and never write it', async () => {
+      await assertSucceeds(getDoc(doc(as('bob'), 'groups/g1')));
+      await assertFails(getDoc(doc(as('eve'), 'groups/g1')));
+      await assertFails(updateDoc(doc(as('alice'), 'groups/g1'), { memberIds: ['alice', 'eve'] }));
+    });
+
+    it('lets only the host check members in, while open, as themselves', async () => {
+      await assertSucceeds(setDoc(doc(as('alice'), 'groups/g1/checkIns/bob'), rec('alice')));
+      await assertFails(setDoc(doc(as('bob'), 'groups/g1/checkIns/carol'), rec('bob')));
+      await assertFails(setDoc(doc(as('alice'), 'groups/g1/checkIns/eve'), rec('alice')));
+      await assertFails(setDoc(doc(as('alice'), 'groups/g1/checkIns/carol'), rec('bob')));
+      await assertFails(setDoc(doc(as('alice'), 'groups/g1/checkIns/carol'), { ...rec('alice'), method: 'telepathy' }));
+      await assertFails(setDoc(doc(as('alice'), 'groups/closed/checkIns/bob'), rec('alice')));
+      await assertSucceeds(getDoc(doc(as('carol'), 'groups/g1/checkIns/bob')));
+      await assertFails(getDoc(doc(as('eve'), 'groups/g1/checkIns/bob')));
+      await assertSucceeds(deleteDoc(doc(as('alice'), 'groups/g1/checkIns/bob')));
+    });
+
+    it('lets guests answer an invite without an account, and only the host read the names', async () => {
+      const guest = env.unauthenticatedContext().firestore();
+      await assertSucceeds(getDoc(doc(guest, 'planInvites/inv1')));
+      await assertSucceeds(addDoc(collection(guest, 'planInvites/inv1/responses'), { name: 'Σοφία', status: 'going', at: 1 }));
+      await assertFails(addDoc(collection(guest, 'planInvites/inv1/responses'), { name: 'S', status: 'going', at: 1 }));
+      await assertFails(addDoc(collection(guest, 'planInvites/inv1/responses'), { name: 'Σοφία', status: 'going', at: 1, email: 'x' }));
+      await assertFails(addDoc(collection(guest, 'planInvites/nope/responses'), { name: 'Σοφία', status: 'going', at: 1 }));
+      await env.withSecurityRulesDisabled(async (ctx) => {
+        await setDoc(doc(ctx.firestore(), 'planInvites/inv1/responses/r1'), { name: 'Γιάννης', status: 'maybe', at: 1 });
+      });
+      await assertSucceeds(getDoc(doc(as('alice'), 'planInvites/inv1/responses/r1')));
+      await assertFails(getDoc(doc(as('bob'), 'planInvites/inv1/responses/r1')));
+      await assertFails(getDoc(doc(guest, 'planInvites/inv1/responses/r1')));
+    });
+
+    it('lets members create invites for their own group only', async () => {
+      await assertSucceeds(setDoc(doc(as('bob'), 'planInvites/inv2'), { groupId: 'g1', eventId: 'e1', hostId: 'bob', coverId: 'soc-sand', createdAt: 1 }));
+      await assertFails(setDoc(doc(as('eve'), 'planInvites/inv3'), { groupId: 'g1', eventId: 'e1', hostId: 'eve', coverId: 'soc-sand', createdAt: 1 }));
+      await assertFails(setDoc(doc(as('bob'), 'planInvites/inv4'), { groupId: 'g1', eventId: 'e1', hostId: 'alice', coverId: 'soc-sand', createdAt: 1 }));
+      await assertFails(updateDoc(doc(as('bob'), 'planInvites/inv1'), { coverId: 'x' }));
+      await assertSucceeds(updateDoc(doc(as('alice'), 'planInvites/inv1'), { coverId: 'soc-plum' }));
+    });
+
+    it('allows one appeal by the person concerned and decisions by moderators only', async () => {
+      const appeal = { text: 'Είχα πυρετό εκείνο το βράδυ.', at: 2, status: 'pending' };
+      await assertFails(getDoc(doc(as('eve'), 'strikes/s1')));
+      await assertSucceeds(getDoc(doc(as('bob'), 'strikes/s1')));
+      await assertFails(updateDoc(doc(as('eve'), 'strikes/s1'), { appeal }));
+      await assertFails(updateDoc(doc(as('bob'), 'strikes/s1'), { appeal: { ...appeal, text: 'short' } }));
+      await assertFails(updateDoc(doc(as('bob'), 'strikes/s1'), { appeal, reliabilityDelta: 0 }));
+      await assertSucceeds(updateDoc(doc(as('bob'), 'strikes/s1'), { appeal }));
+      await assertFails(updateDoc(doc(as('bob'), 'strikes/s1'), { appeal: { ...appeal, text: 'Δεύτερη ένσταση εδώ' } }));
+      await assertFails(updateDoc(doc(as('bob'), 'strikes/s1'), { appeal: { ...appeal, status: 'accepted', decidedBy: 'bob' } }));
+      const mod = as('mia', { role: 'moderator' });
+      await assertSucceeds(updateDoc(doc(mod, 'strikes/s1'), { appeal: { ...appeal, status: 'accepted', decidedBy: 'mia', decidedAt: 3 } }));
+      await assertFails(deleteDoc(doc(mod, 'strikes/s1')));
+    });
+  });
+
   it('denies every other path', async () => {
     const alice = env.authenticatedContext('alice').firestore();
     await assertFails(getDoc(doc(alice, 'events/e1')));

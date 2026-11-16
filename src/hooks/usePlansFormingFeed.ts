@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useStore } from '../store';
+import { fitsGenderMode } from '../lib/outings';
 import { useBuddySeekDiscovery, type BuddySeekDiscoveryItem } from './useBuddySeekDiscovery';
 import {
   enrichPlanItem,
@@ -53,7 +54,9 @@ export function usePlansFormingFeed(limit = 12) {
         (g) =>
           (g.isRecruiting || g.members.length < g.targetSize) &&
           g.status !== 'cancelled' &&
-          !g.members.includes(currentUser.id),
+          !g.members.includes(currentUser.id) &&
+          // Φ27 — women & non-binary groups are offered only to people who may join them.
+          fitsGenderMode(currentUser, g.genderMode),
       )
       .map((g) => {
         const event = events.find((e) => e.id === g.eventId);
@@ -144,8 +147,8 @@ export function usePlansFormingFeed(limit = 12) {
   ]);
 
   const scarcityPromos = useMemo(
-    () => buildScarcityPromos(groups, events, currentUser?.id),
-    [groups, events, currentUser?.id],
+    () => buildScarcityPromos(groups.filter((g) => fitsGenderMode(currentUser, g.genderMode)), events, currentUser?.id),
+    [groups, events, currentUser],
   );
 
   const hasContent =

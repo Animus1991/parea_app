@@ -27,6 +27,9 @@ import {
   allowedModels,
   bearerMatches,
   checkChatSend,
+  cspForPath,
+  headersForPath,
+  parseCalendarFeedId,
   eventsWriteMode,
   isOriginAllowed,
   isValidToolDeclaration,
@@ -76,9 +79,10 @@ async function startServer() {
   // CSP only for the production bundle: the Vite dev server injects inline scripts for HMR.
   const CSP_HEADER = IS_PRODUCTION ? cspHeaderName(cspMode(process.env)) : null;
   const CSP_VALUE = buildCsp(process.env, { reportUri: '/api/csp-report' });
-  app.use((_req, res, next) => {
-    for (const [k, v] of Object.entries(SECURITY_HEADERS)) res.setHeader(k, v);
-    if (CSP_HEADER) res.setHeader(CSP_HEADER, CSP_VALUE);
+  app.use((req, res, next) => {
+    // Φ27 — only the read-only organizer widget may be framed by other sites.
+    for (const [k, v] of Object.entries(headersForPath(req.path, SECURITY_HEADERS))) res.setHeader(k, v);
+    if (CSP_HEADER) res.setHeader(CSP_HEADER, cspForPath(CSP_VALUE, req.path));
     next();
   });
 
@@ -192,6 +196,34 @@ async function startServer() {
   // The verified identity as the server sees it (role from signed custom claims).
   app.get('/api/auth/me', (_req, res) => {
     res.json({ mode: AUTH.mode, user: currentUser(res) });
+  });
+
+  // Φ27 — live organizer calendar (Luma, adapted): calendar apps poll this
+  // feed; each event says whether a group is forming. Public data only.
+  const icsLimiter = new RateLimiter(60, 60_000);
+  app.get('/api/calendar/organizer/:file', async (req, res) => {
+    const organizerId = parseCalendarFeedId(String(req.params.file));
+    if (!organizerId) return res.status(404).json({ error: 'Not found' });
+    if (icsLimiter.hit(ipKey(req)) !== null) return res.status(429).json({ error: 'Rate limit exceeded' });
+    try {
+      const [{ buildOrganizerIcs }, { mockUsers }, { mockGroups }, { mockOutingGroups }] = await Promise.all([
+        import('./src/lib/organizerCalendar.ts'),
+        import('./src/data/mockUsers.ts'),
+        import('./src/data/mockGroups.ts'),
+        import('./src/data/mockOutings.ts'),
+      ]);
+      const organizer = mockUsers.find((u) => u.id === organizerId);
+      const name = organizerId === 'platform' ? 'Nakamas' : organizer?.name ?? organizerId;
+      const origin = `${req.protocol}://${req.get('host')}`;
+      const ics = buildOrganizerIcs({ id: organizerId, name }, await listEvents(), [...mockGroups, ...mockOutingGroups], origin);
+      res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+      res.setHeader('Content-Disposition', `inline; filename="nakamas-${organizerId}.ics"`);
+      res.setHeader('Cache-Control', 'public, max-age=900');
+      res.send(ics);
+    } catch (err) {
+      console.error('organizer calendar', err);
+      res.status(500).json({ error: 'Calendar unavailable' });
+    }
   });
 
   app.get('/api/events', async (_req, res) => {

@@ -23,6 +23,7 @@ import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
 import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
+import { CollectionsRail } from "../components/outings/CollectionsRail";
 
 export default function HomeClassic() {
   const h = useHomeTheme();
@@ -109,6 +110,9 @@ export default function HomeClassic() {
       />
 
       <HomeContinueStrip />
+
+      {/* Φ27 — themed collections with how many groups are forming */}
+      <CollectionsRail />
 
       <EventStories events={storyEvents} />
 

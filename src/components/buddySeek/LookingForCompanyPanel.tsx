@@ -17,6 +17,7 @@ import type { Group } from '../../types';
 import type { Event } from '../../types';
 import type { EventDetailGroupAccent } from '../events/EventDetailGroupCard';
 import { askCopilot } from '../../lib/askCopilot';
+import { fitsGenderMode } from '../../lib/outings';
 
 type Tab = 'requests' | 'groups';
 
@@ -373,10 +374,11 @@ export function LookingForCompanyPanel({
                         </p>
                         <p className={cn('text-xs', tok.muted)}>
                           {g.members.length}/{g.targetSize} · {spots} {t('θέσεις', 'spots')}
+                          {g.genderMode === 'women_nb' ? ` · ${t('Γυναίκες & μη δυαδικά', 'Women & non-binary')}` : ''}
                         </p>
                       </div>
                       <div className="flex flex-col items-end gap-1">
-                        {!g.members.includes(currentUser.id) && spots > 0 && (
+                        {!g.members.includes(currentUser.id) && spots > 0 && fitsGenderMode(currentUser, g.genderMode) && (
                           <button
                             type="button"
                             onClick={() => navigate(`/events/${event.id}/join?group=${g.id}`)}

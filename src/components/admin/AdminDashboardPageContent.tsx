@@ -5,6 +5,8 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'rec
 import { format, parseISO, startOfWeek } from 'date-fns';
 import { TabBar } from '../common/TabBar';
 import { AdminWallModeration } from './AdminWallModeration';
+import { AdminOutingsPanel } from './AdminOutingsPanel';
+import { outingMetrics } from '../../lib/outings';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import type { AdminSafeguards } from '../../store';
 import { Button } from '../common/Button';
@@ -44,6 +46,8 @@ export default function AdminDashboardPageContent() {
   const setAdminSafeguard = useStore((s) => s.setAdminSafeguard);
   const [userQuery, setUserQuery] = useState('');
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
+  const strikes = useStore((s) => s.strikes);
+  const verifiedActive = useMemo(() => outingMetrics(groups, users, strikes).verifiedActive, [groups, users, strikes]);
   /** Φ25 — no-show rate from attendance answers in reviews (was a fixed 4.2%). */
   const noShowPct = useMemo(() => {
     const answers = Object.values(feedbackSubmitted).filter((f) => f.attendance);
@@ -201,11 +205,12 @@ export default function AdminDashboardPageContent() {
       <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className={cn('p-4 border-t-4 border-t-blue-500', a.cardSurface)}>
-          <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Ενεργοί', 'Active')}</h3>
-          <p className={cn('text-sm md:text-base font-black mt-1', a.head)}>{users.length}</p>
+          {/* Φ27 — «active» counts verified people in a live group, not accounts. */}
+          <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Ενεργοί (επαληθευμένοι)', 'Active (verified)')}</h3>
+          <p className={cn('text-sm md:text-base font-black mt-1', a.head)}>{verifiedActive}</p>
           <p className="text-xs text-green-700 dark:text-green-400 font-bold flex items-center gap-0.5">
             <TrendingUp className="w-2.5 h-2.5" />
-            {t('χρήστες', 'users')}
+            {t(`από ${users.length} λογαριασμούς`, `of ${users.length} accounts`)}
           </p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-cyan-500', a.cardSurface)}>
@@ -224,6 +229,8 @@ export default function AdminDashboardPageContent() {
           <p className={cn('text-xs font-medium', a.muted)}>{t('στη βάση', 'in catalog')}</p>
         </Card>
       </div>
+
+      <AdminOutingsPanel section="metrics" />
 
       <Card className={cn('p-4', a.cardSurface)}>
         <h3 className={cn('text-xs font-bold tracking-widest mb-3', a.head)}>{t('Υγεία Πλατφόρμας', 'Platform Health')}</h3>
@@ -448,6 +455,7 @@ export default function AdminDashboardPageContent() {
 
       {adminTab === 'moderation' && (
       <>
+      <AdminOutingsPanel section="appeals" />
       <AdminWallModeration />
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
         <div className="md:col-span-7 space-y-4">

@@ -317,7 +317,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           </h3>
           {currentUser && matchScore != null && (
             <div className="flex flex-col items-end shrink-0 pt-0.5" title={t("Ταίριασμα", "Match")}>
-              <span className={cn(EVENT_CARD_TYPO.matchScore, "font-bold opacity-80", accent === 'fuchsia' ? headColor : accentText)}>
+              <span className={cn(EVENT_CARD_TYPO.matchScore, "font-bold", accent === 'fuchsia' ? headColor : accentText)}>
                 {matchScore}%
               </span>
               <span className={cn(EVENT_CARD_TYPO.matchLabel, mutedColor, "opacity-80")}>

@@ -13,6 +13,7 @@ import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import type { TrustTier } from '../../types';
+import { StandingCard } from '../outings/StandingCard';
 
 export default function TrustCenterPageContent() {
   const { t, language } = useLanguage();
@@ -203,6 +204,9 @@ export default function TrustCenterPageContent() {
           </Card>
         </div>
       </div>
+
+      {/* Φ27 — graduated consequences, explained, with appeals. */}
+      <StandingCard />
 
       <CopilotInlinePrompt
         title={{ el: 'Ρώτα το AI για την εμπιστοσύνη σου', en: 'Ask the AI about your trust' }}

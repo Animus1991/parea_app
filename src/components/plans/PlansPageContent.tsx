@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card } from '../common/Card';
-import { MessageCircle, MapPin, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass } from 'lucide-react';
+import { MessageCircle, MapPin, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass, PartyPopper } from 'lucide-react';
 import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO, differenceInDays, differenceInHours, isBefore } from 'date-fns';
@@ -19,6 +19,7 @@ import type { Group } from '../../types';
 import { dateFnsLocale, shortDayMonthPattern } from '../../lib/dateLocale';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
+import { eventStartMs, LATE_CANCEL_MS } from '../../store/outingsSlice';
 
 function getUserGroupForEvent(eventId: string, groups: Group[], userId: string | undefined) {
   if (!userId) return undefined;
@@ -70,6 +71,28 @@ export default function PlansPageContent() {
   const nextEvent = upcomingEvents[0];
   const nextEventDays = nextEvent ? differenceInDays(parseISO(nextEvent.date), now) : null;
   const showVerifyBanner = currentUser ? !currentUser.idVerified : false;
+
+  // Φ27 — say what leaving means before it happens (seat hand-over / late cancel).
+  const leaveNote = (() => {
+    if (!showLeaveConfirm) return null;
+    const g = getUserGroupForEvent(showLeaveConfirm, groups, currentUser?.id);
+    const ev = events.find((e) => e.id === showLeaveConfirm);
+    if (!g || !ev) return null;
+    if (g.members.length >= g.targetSize && g.waitlist?.length) {
+      return {
+        el: 'Η θέση σου θα περάσει στο πρώτο άτομο της λίστας αναμονής, χωρίς επίπτωση για σένα.',
+        en: 'Your seat will pass to the first person on the waitlist, with no consequence for you.',
+      };
+    }
+    const start = eventStartMs(ev);
+    if (g.status === 'confirmed' && start !== null && start > Date.now() && start - Date.now() < LATE_CANCEL_MS) {
+      return {
+        el: 'Λιγότερο από 24 ώρες πριν: καταγράφεται αργή ακύρωση (−8 αξιοπιστία), με δυνατότητα ένστασης.',
+        en: 'Less than 24 hours before: a late cancel is recorded (−8 reliability), and you can appeal.',
+      };
+    }
+    return null;
+  })();
 
   usePublishPageSnapshot({
     titleEl: 'Τα Σχέδιά μου',
@@ -271,6 +294,17 @@ export default function PlansPageContent() {
                 </div>
               )}
 
+              {group && (
+                <button
+                  type="button"
+                  onClick={() => navigate(`/night/${group.id}`)}
+                  className={cn(secondaryBtn, 'mb-1 w-full flex items-center justify-center gap-1.5')}
+                >
+                  <PartyPopper className="h-4 w-4" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
+                  {group.status === 'confirmed' ? t(' · έτοιμη', ' · ready') : ''}
+                </button>
+              )}
+
               <div className={cn('mt-auto pt-4 border-t flex gap-2', p.borderT)}>
                 <button
                   onClick={() => group && navigate(`/chat/${group.id}`)}
@@ -286,7 +320,7 @@ export default function PlansPageContent() {
                   onClick={() => setShowLeaveConfirm(event.id)}
                   className={cn(
                     'px-3 py-2 rounded-2xl text-xs font-bold transition-all duration-200 flex items-center gap-1 border-2',
-                    p.isDark ? 'border-red-500/30 hover:bg-red-500/10 text-red-400' : 'border-red-100 hover:bg-red-50 text-red-500',
+                    p.isDark ? 'border-red-500/30 hover:bg-red-500/10 text-red-400' : 'border-red-100 hover:bg-red-50 text-red-700',
                   )}
                 >
                   <XCircle className="h-3.5 w-3.5" /> {t('Αποχώρηση', 'Leave')}
@@ -421,15 +455,17 @@ export default function PlansPageContent() {
         title={t('Αποχώρηση από ομάδα', 'Leave Group')}
         size="sm"
       >
-        <p className="text-xs font-medium mb-4 text-ink-muted">
+        <p className="text-xs font-medium mb-2 text-ink-muted">
           {t('Είστε σίγουροι ότι θέλετε να αποχωρήσετε; Μπορεί να μην μπορέσετε να ξαναμπείτε.', 'Are you sure you want to leave? You might not be able to rejoin.')}
         </p>
+        {leaveNote && <p className="text-xs font-bold mb-4 text-ink">{t(leaveNote.el, leaveNote.en)}</p>}
         <div className="flex flex-col gap-2.5">
           <button
             type="button"
             data-autofocus
             onClick={() => {
-              const group = groups.find(g => g.eventId === showLeaveConfirm);
+              // The group *I* am in for this event (not just the first group of the event).
+              const group = getUserGroupForEvent(showLeaveConfirm ?? '', groups, currentUser?.id);
               if (group) leaveGroup(group.id);
               toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'));
               setShowLeaveConfirm(null);
