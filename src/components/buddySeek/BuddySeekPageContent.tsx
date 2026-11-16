@@ -152,7 +152,10 @@ export default function BuddySeekPageContent() {
         <h1 className={cn('text-sm md:text-base font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
         <CopilotInlinePrompt />
         <PlansFormingValueHero insights={feed.insights} />
-        <PlansFormingStatsBar plain insights={feed.insights} />
+        {/* StatsBar omitted when ValueHero already states compatible count — less chrome. */}
+        {feed.insights.compatiblePlans === 0 && (
+          <PlansFormingStatsBar plain insights={feed.insights} />
+        )}
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
@@ -177,6 +180,17 @@ export default function BuddySeekPageContent() {
           >
             <Plus className="w-3.5 h-3.5" />
             {t('Νέο αίτημα από εκδήλωση', 'New request from event')}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/plans')}
+            className={cn(
+              'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
+              a.borderB,
+              a.sub,
+            )}
+          >
+            {t('Τα σχέδιά μου', 'My plans')}
           </button>
         </div>
       </header>
@@ -459,8 +473,13 @@ export default function BuddySeekPageContent() {
             if (!previewJoinId) return;
             const groupId = acceptJoin(previewJoinId);
             if (groupId) {
-              toast.success(t('Αποδεχτήκατε — άνοιγμα chat', 'Accepted — opening chat'));
-              navigate(`/chat/${groupId}`);
+              toast.success(t('Αποδεχτήκατε — άνοιγμα της βραδιάς', 'Accepted — opening Our night'), {
+                action: {
+                  label: t('Chat', 'Chat'),
+                  onClick: () => navigate(`/chat/${groupId}`),
+                },
+              });
+              navigate(`/night/${groupId}`);
             }
           }}
           onDecline={() => {

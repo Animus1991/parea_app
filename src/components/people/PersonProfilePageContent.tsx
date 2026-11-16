@@ -427,6 +427,18 @@ export default function PersonProfilePageContent() {
                     ? t('Γράψε τι σχεδιάζεις — εσύ επιλέγεις ποιος το βλέπει.', 'Share what you are planning — you choose who sees it.')
                     : t(`Βλέπεις μόνο ό,τι μοιράζεται ο/η ${subject.name} μαζί σου.`, `You only see what ${subject.name} shares with you.`)
                 }
+                actionLabel={
+                  isSelf && !previewing
+                    ? t('Γράψε δημοσίευση', 'Write a post')
+                    : t('Βρες Nakamas', 'Find Nakamas')
+                }
+                onAction={() => {
+                  if (isSelf && !previewing) {
+                    document.querySelector<HTMLTextAreaElement>('[data-testid="wall-composer"] textarea')?.focus();
+                  } else {
+                    navigate('/buddy-seek');
+                  }
+                }}
               />
             ) : (
               <WallPostList key={`${subject.id}-${viewerId}`} posts={wallPosts} viewerOverride={previewing ? viewer : undefined} />

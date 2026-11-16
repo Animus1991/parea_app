@@ -195,9 +195,9 @@ export function CheckInPanel({ group, members }: { group: Group; members: User[]
                     setScanning(false);
                     toast.success(t(result.el, result.en), {
                       action: {
-                        // Distinct from the page's primary «Αξιολόγηση» CTA (one clear Feedback control).
-                        label: t('Ιστορικό', 'History'),
-                        onClick: () => navigate('/history'),
+                        // Host often has no OurNight feedback banner — land on the form.
+                        label: t('Αξιολόγηση', 'Feedback'),
+                        onClick: () => navigate(`/history/feedback/${group.eventId}`),
                       },
                     });
                   }}

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Bell, Calendar, MessageCircle, Users, CheckCircle2, ArrowRight, Trash2, BellOff, PartyPopper, Shield, Star } from 'lucide-react';
+import { Bell, Calendar, MessageCircle, Users, CheckCircle2, Trash2, BellOff, PartyPopper, Shield, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store';
 import type { AppNotification } from '../../data/mockNotifications';
@@ -14,7 +14,6 @@ import { toast } from 'sonner';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
-import { WallActivityPanel } from '../wall/WallActivityPanel';
 import { useWallStore } from '../../store/wallStore';
 import { notificationsForUser } from '../../lib/notificationsUtil';
 
@@ -109,17 +108,20 @@ export default function NotificationsPageContent() {
     });
   };
 
+  const pathForNotif = (notif: AppNotification) => {
+    if (notif.type === 'match' || notif.type === 'reminder') return '/plans';
+    if (notif.type === 'message') return '/chats';
+    if (notif.type === 'achievement') return '/achievements';
+    if (notif.type === 'buddy_seek') return '/buddy-seek';
+    if (notif.type === 'group') return notif.groupId ? `/night/${notif.groupId}` : '/plans';
+    if (notif.type === 'safety' || notif.type === 'system') return '/trust';
+    if (notif.type === 'feedback') return notif.eventId ? `/history/feedback/${notif.eventId}` : '/history';
+    return '/notifications';
+  };
+
   const handleNotifClick = (notif: AppNotification) => {
     if (!notif.read) markNotificationRead(notif.id);
-    if (notif.type === 'match') navigate('/plans');
-    else if (notif.type === 'message') navigate('/chats');
-    else if (notif.type === 'achievement') navigate('/achievements');
-    else if (notif.type === 'reminder') navigate('/plans');
-    else if (notif.type === 'buddy_seek') navigate('/buddy-seek');
-    else if (notif.type === 'group') navigate(notif.groupId ? `/night/${notif.groupId}` : '/plans');
-    else if (notif.type === 'safety') navigate('/trust');
-    else if (notif.type === 'feedback') navigate('/history');
-    else if (notif.type === 'system') navigate('/trust');
+    navigate(pathForNotif(notif));
   };
 
   const getIconColor = (type: string, read: boolean, color?: string) => {
@@ -190,66 +192,7 @@ export default function NotificationsPageContent() {
         </button>
         <div className="flex items-center gap-1.5 shrink-0 self-start">
           {isUnread && <span className={cn('w-2 h-2 rounded-full', a.dot)} aria-hidden />}
-          {notif.type === 'match' && (
-            <button
-              type="button"
-              onClick={() => navigate('/plans')}
-              className={cn(
-                'text-2xs font-semibold min-h-6 px-2 inline-flex items-center gap-1 rounded-lg transition-colors',
-                a.link,
-              )}
-            >
-              {t('Δείτε ομάδα', 'View group')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
-            </button>
-          )}
-          {notif.type === 'group' && (
-            <button
-              type="button"
-              onClick={() => navigate(notif.groupId ? `/night/${notif.groupId}` : '/plans')}
-              className={cn(
-                'text-2xs font-semibold min-h-6 px-2 inline-flex items-center gap-1 rounded-lg transition-colors',
-                a.link,
-              )}
-            >
-              {t('Η βραδιά μας', 'Our night')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
-            </button>
-          )}
-          {notif.type === 'safety' && (
-            <button
-              type="button"
-              onClick={() => navigate('/trust')}
-              className={cn(
-                'text-2xs font-semibold min-h-6 px-2 inline-flex items-center gap-1 rounded-lg transition-colors',
-                a.link,
-              )}
-            >
-              {t('Εμπιστοσύνη', 'Trust')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
-            </button>
-          )}
-          {notif.type === 'feedback' && (
-            <button
-              type="button"
-              onClick={() => navigate('/history')}
-              className={cn(
-                'text-2xs font-semibold min-h-6 px-2 inline-flex items-center gap-1 rounded-lg transition-colors',
-                a.link,
-              )}
-            >
-              {t('Αξιολόγηση', 'Feedback')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
-            </button>
-          )}
-          {notif.type === 'message' && (
-            <button
-              type="button"
-              onClick={() => navigate('/chats')}
-              className={cn(
-                'text-2xs font-semibold min-h-6 px-2 inline-flex items-center gap-1 rounded-lg transition-colors',
-                a.link,
-              )}
-            >
-              {t('Απάντηση', 'Reply')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
-            </button>
-          )}
+          {/* Row itself navigates — skip duplicate destination chips (noise). */}
           <button
             type="button"
             onClick={() => handleDismiss(notif.id)}
@@ -302,7 +245,19 @@ export default function NotificationsPageContent() {
 
       <CopilotInlinePrompt />
 
-      {socialOn && <WallActivityPanel title={t('Δραστηριότητα στον τοίχο', 'Wall activity')} limit={4} />}
+      {/* Wall activity lives on /wall — one-line bridge here avoids dual chrome. */}
+      {socialOn && (
+        <button
+          type="button"
+          onClick={() => navigate('/wall')}
+          className={cn(
+            'w-full rounded-xl border border-border px-3 py-2 text-left text-xs font-bold transition-colors hover:border-border-strong',
+            a.head,
+          )}
+        >
+          {t('Δραστηριότητα στον τοίχο →', 'Wall activity →')}
+        </button>
+      )}
 
       <div
         className="flex gap-1.5 overflow-x-auto pb-1 noscrollbar"

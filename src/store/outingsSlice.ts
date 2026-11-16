@@ -164,7 +164,12 @@ const MINI_DEFAULTS: Record<MiniOutingKind, { category: string; el: string; dura
 };
 
 export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
-  const notifyMe = (type: string, el: string, en: string, extra: { groupId?: string; eventId?: string } = {}) =>
+  const notifyMe = (
+    type: string,
+    el: string,
+    en: string,
+    extra: { groupId?: string; eventId?: string; forUserId?: string } = {},
+  ) =>
     get().addNotification({
       type,
       messageGr: el,
@@ -174,6 +179,7 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       read: false,
       groupId: extra.groupId,
       eventId: extra.eventId,
+      forUserId: extra.forUserId,
     });
 
   return {
@@ -341,12 +347,16 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
           { groupId, eventId: group.eventId },
         );
       }
-      notifyMe(
-        'feedback',
-        'Η έξοδος ολοκληρώθηκε. Πες μας πώς πήγε — βοηθά την επόμενη παρέα.',
-        'The outing is done. Tell us how it went — it helps the next group.',
-        { groupId, eventId: group.eventId },
-      );
+      // Fan-out so every arrived member (not only the host) gets the feedback loop.
+      const feedbackTargets = Array.from(new Set([me.id, ...arrivedIds]));
+      for (const uid of feedbackTargets) {
+        notifyMe(
+          'feedback',
+          'Η έξοδος ολοκληρώθηκε. Πες μας πώς πήγε — βοηθά την επόμενη παρέα.',
+          'The outing is done. Tell us how it went — it helps the next group.',
+          { groupId, eventId: group.eventId, forUserId: uid },
+        );
+      }
       return counts
         ? {
             ok: true,
@@ -475,6 +485,19 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
             : i,
         ),
       }));
+      const statusEl = status === 'going' ? 'έρχεται' : status === 'maybe' ? 'ίσως' : 'όχι';
+      const statusEn = status === 'going' ? 'is going' : status === 'maybe' ? 'maybe' : 'can’t make it';
+      get().addNotification({
+        type: 'group',
+        messageGr: `Ο/Η ${clean} απάντησε στην πρόσκληση (${statusEl}).`,
+        messageEn: `${clean} answered your invite (${statusEn}).`,
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        groupId: invite.groupId,
+        eventId: invite.eventId,
+        forUserId: invite.hostId,
+      });
       return response;
     },
 

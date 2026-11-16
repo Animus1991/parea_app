@@ -810,7 +810,7 @@ export default function GroupChatPageContent() {
                             ? t("Η Τοποθεσία Κοινοποιείται", "Location Shared")
                             : t(
                                 "Κοινοποίηση τοποθεσίας",
-                                "Share live location",
+                                "Share location",
                               )}
                         </p>
                         <p
@@ -932,7 +932,7 @@ export default function GroupChatPageContent() {
           <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
               "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ασφάλεια εκτός Nakamas. Θα βλέπουν την τοποθεσία σας μέχρι το τέλος. Ανακαλέστε τον όποτε θέλετε.",
-              "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They will be able to see your live location until the event ends. You can revoke it anytime.",
+              "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They see your location until the event ends. You can revoke it anytime.",
             )}
           </p>
           <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-4">

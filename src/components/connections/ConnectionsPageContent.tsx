@@ -293,7 +293,7 @@ export default function ConnectionsPageContent() {
           <h1 className={`text-sm md:text-base font-bold ${a.head}`}>{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
           <p className={`font-medium text-sm mt-1 ${subColor}`}>{t('Άτομα με τα οποία συνδεθήκατε μέσα από εκδηλώσεις.', 'People you\'ve connected with through events.')}</p>
         </div>
-        <Button variant="primary" size="sm" className="flex items-center gap-2" onClick={() => navigate('/nearby')}>
+        <Button variant="primary" size="sm" className="flex items-center gap-2" onClick={() => navigate('/buddy-seek')}>
           <Users className="w-4 h-4" /> {t('Βρες Nakamas', 'Find Nakamas')}
         </Button>
       </div>

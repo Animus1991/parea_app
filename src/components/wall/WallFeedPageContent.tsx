@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Eye, Newspaper, ShieldCheck, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { useWallAccess, useWallStore } from '../../store/wallStore';
@@ -257,7 +258,10 @@ export default function WallFeedPageContent() {
               <div key={p.id} className="space-y-1">
                 <button
                   type="button"
-                  onClick={() => useWallStore.getState().unhidePost(p.id)}
+                  onClick={() => {
+                    useWallStore.getState().unhidePost(p.id);
+                    toast.success(t('Επανήλθε στη ροή σου', 'Back in your feed'));
+                  }}
                   className="text-xs font-bold text-ink underline"
                 >
                   {t('Επαναφορά στη ροή', 'Show in feed again')}

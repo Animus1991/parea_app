@@ -109,14 +109,14 @@ export function EventDetailSafetySection({
           </h3>
           <p className={cn('card-copy mt-1 mb-3 text-balance leading-relaxed', tok.muted)}>
             {t(
-              'Κοινοποιήστε τη ζωντανή τοποθεσία σας στα μέλη της ομάδας σας (μετά την ένταξη σε ομάδα).',
-              'Share your live location with group members (after joining a group).',
+              'Προαιρετική, προσωρινή κοινοποίηση στα μέλη της ομάδας (μετά την ένταξη).',
+              'Optional, temporary sharing with group members (after joining).',
             )}
           </p>
           <button type="button" onClick={handleToggleLocation} className={isSharingLocation ? tok.primaryBtnStop : tok.primaryBtn}>
             {isSharingLocation
               ? t('Διακοπή Κοινοποίησης', 'Stop Sharing')
-              : t('Κοινοποίηση Τοποθεσίας', 'Share Live Location')}
+              : t('Κοινοποίηση Τοποθεσίας', 'Share Location')}
           </button>
         </div>
       </div>

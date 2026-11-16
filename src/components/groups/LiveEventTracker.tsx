@@ -13,6 +13,7 @@ import {
   WifiOff,
   AlertTriangle,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "../common/Button";
 
 delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
@@ -172,7 +173,15 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
           <Button
             size="sm"
             variant={isTrackingActive ? "outline" : "primary"}
-            onClick={() => toggleLiveTracking(groupId, !isTrackingActive)}
+            onClick={() => {
+              const next = !isTrackingActive;
+              toggleLiveTracking(groupId, next);
+              toast.success(
+                next
+                  ? t("Η ασπίδα ασφαλείας ενεργοποιήθηκε.", "Safety shield is on.")
+                  : t("Η ασπίδα ασφαλείας απενεργοποιήθηκε.", "Safety shield is off."),
+              );
+            }}
             className={
               isTrackingActive
                 ? "text-red-600 border-red-200 hover:bg-red-50"

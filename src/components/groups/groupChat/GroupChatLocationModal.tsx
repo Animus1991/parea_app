@@ -73,7 +73,7 @@ export function GroupChatLocationModal({
     <Modal
       open={open}
       onClose={onClose}
-      title={t('Live Τοποθεσία', 'Live Location Sharing')}
+      title={t('Κοινοποίηση τοποθεσίας', 'Share location')}
       size="md"
     >
       <p className="text-xs font-medium text-ink-muted -mt-1 mb-4 flex items-center gap-2">
@@ -127,7 +127,7 @@ export function GroupChatLocationModal({
                 <span className="text-xs text-ink-muted mt-1 leading-relaxed">
                   {precision === 'approximate'
                     ? t('Μόνο απόσταση & ETA, όχι live τοποθεσία', 'Distance & ETA only, no map pin')
-                    : t('Ακριβές GPS live tracking', 'Precise GPS live tracking')}
+                    : t('Ακριβής θέση στον χάρτη (προσωρινά)', 'Exact map pin (temporary)')}
                 </span>
               </button>
             ))}

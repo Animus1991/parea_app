@@ -57,7 +57,7 @@ export function GroupMergeModal({
     const groupId = respondMerge(pending.id, true);
     toast.success(t('Έγινε αποδεκτή η πρόταση', 'Suggestion accepted'));
     onClose();
-    if (groupId) navigate(`/chat/${groupId}`);
+    if (groupId) navigate(`/night/${groupId}`);
   };
 
   return createPortal(

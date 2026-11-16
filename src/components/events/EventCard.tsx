@@ -427,7 +427,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 setShowSafetyPanel(true);
               }}
               aria-haspopup="dialog"
-              aria-label={arrivalStatus ?? (isSharingLocation ? t("Ζωντανό GPS", "Live GPS") : t("Χάρτης & Ασφάλεια", "Map & Safety"))}
+              aria-label={arrivalStatus ?? (isSharingLocation ? t("Κοινοποίηση τοποθεσίας", "Location sharing") : t("Χάρτης & Ασφάλεια", "Map & Safety"))}
               title={t("Χάρτης & Ασφάλεια", "Map & Safety")}
               className={cn(
                 "inline-flex min-w-0 shrink items-center gap-1.5 px-3 min-h-10 rounded-full text-xs font-semibold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
@@ -439,7 +439,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               <ShieldCheck className={cn("w-3.5 h-3.5 shrink-0 opacity-80", accentText)} aria-hidden />
               {/* With the chat button present the card is tight: icon only (name stays in aria-label). */}
               <span className={cn("truncate max-w-[110px]", userGroup && "sr-only")}>
-                {arrivalStatus ?? (isSharingLocation ? t("Ζωντανό GPS", "Live GPS") : t("Ασφάλεια", "Safety"))}
+                {arrivalStatus ?? (isSharingLocation ? t("Τοποθεσία", "Sharing") : t("Ασφάλεια", "Safety"))}
               </span>
             </button>
             <div className="flex shrink-0 items-center gap-2">
@@ -604,8 +604,8 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                       {isSharingLocation
                         ? t("Η τοποθεσία κοινοποιείται", "Location Shared")
                         : t(
-                            "Κοινοποίηση Ζωντανής Τοποθεσίας",
-                            "Share Live Location",
+                            "Κοινοποίηση Τοποθεσίας",
+                            "Share Location",
                           )}
                     </p>
                     <p
@@ -665,8 +665,8 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   <div>
                     <h3 className="card-heading-lg font-bold text-ink">
                       {t(
-                        "Κοινοποίηση Ζωντανής Τοποθεσίας",
-                        "Live Location Sharing",
+                        "Κοινοποίηση Τοποθεσίας",
+                        "Share Location",
                       )}
                     </h3>
                     <p className={cn(EVENT_CARD_TYPO.hint, "font-medium text-gray-500")}>
@@ -749,8 +749,8 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                       </span>
                       <span className={cn(EVENT_CARD_TYPO.locationHint, "text-gray-500 mt-1")}>
                         {t(
-                          "Ακριβής παρακολούθηση GPS",
-                          "Precise GPS live tracking",
+                          "Ακριβής θέση στον χάρτη (προσωρινά)",
+                          "Exact map pin (temporary)",
                         )}
                       </span>
                     </button>
@@ -858,6 +858,9 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   onClick={() => {
                     setIsSharingLocation(true);
                     setShowLocationConfigModal(false);
+                    toast.success(
+                      t("Η τοποθεσία κοινοποιείται προσωρινά στην ομάδα.", "Location is shared temporarily with the group."),
+                    );
                   }}
                   className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
                 >
@@ -917,7 +920,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               onClick={() => {
                 if (navigator.share) {
                   navigator.share({
-                    title: t("Σύνδεσμος Παρακολούθησης", "Tracking Link"),
+                    title: t("Σύνδεσμος ασφαλείας", "Safety link"),
                     url: "https://nakamas.app/safe/r9x2p",
                   });
                 } else {

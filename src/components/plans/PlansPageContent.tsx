@@ -103,12 +103,6 @@ export default function PlansPageContent() {
     visibleIds: upcomingEvents.slice(0, 8).map((e) => e.id),
   });
 
-  const stats: { id: 'upcoming' | 'pending' | 'past'; label: string; count: number; icon: typeof Calendar }[] = [
-    { id: 'upcoming', label: t('Επερχόμενα', 'Upcoming'), count: upcomingEvents.length, icon: CalendarClock },
-    { id: 'pending', label: t('Εκκρεμή', 'Pending'), count: pendingEvents.length, icon: Clock },
-    { id: 'past', label: t('Ολοκληρωμένα', 'Completed'), count: pastEvents.length, icon: CalendarCheck },
-  ];
-
   const secondaryBtn = cn(
     'px-4 py-2 rounded-2xl transition-all duration-200 border-2 text-xs font-bold',
     p.isDark
@@ -124,28 +118,6 @@ export default function PlansPageContent() {
       </div>
 
       <CopilotInlinePrompt />
-
-      {/* Summary stats — also act as quick tab switches */}
-      <div className="grid grid-cols-3 gap-3">
-        {stats.map((s) => (
-          <button
-            key={s.id}
-            onClick={() => setActiveTab(s.id)}
-            className={cn(
-              'rounded-2xl p-3 sm:p-4 text-left border transition-all duration-200',
-              p.cardSurface,
-              activeTab === s.id ? `${p.statBg} ring-1 ring-inset ${p.ring.replace('focus:', '')}` : p.borderB,
-              p.cardHover,
-            )}
-          >
-            <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center mb-2', p.statBg)}>
-              <s.icon className={cn('w-5 h-5', p.statVal)} />
-            </div>
-            <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.head)}>{s.count}</p>
-            <p className={cn('text-2xs font-semibold mt-1', p.muted)}>{s.label}</p>
-          </button>
-        ))}
-      </div>
 
       {/* Next-event highlight */}
       {nextEvent && nextEventDays !== null && nextEventDays <= 7 && (
@@ -305,23 +277,20 @@ export default function PlansPageContent() {
                 <button
                   type="button"
                   onClick={() => navigate(`/night/${group.id}`)}
-                  className={cn(secondaryBtn, 'mb-1 w-full flex items-center justify-center gap-1.5')}
+                  className="mb-1 w-full btn-gradient !py-2 flex items-center justify-center gap-1.5"
                 >
                   <PartyPopper className="h-4 w-4" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
                   {group.status === 'confirmed' ? t(' · έτοιμη', ' · ready') : ''}
                 </button>
               )}
 
-              <div className={cn('mt-auto pt-4 border-t flex gap-2', p.borderT)}>
+              <div className={cn('mt-auto pt-4 border-t flex flex-wrap items-center gap-2', p.borderT)}>
                 <button
                   onClick={() => group && navigate(`/chat/${group.id}`)}
                   disabled={!group}
-                  className="flex-1 btn-gradient !py-2 flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={cn(secondaryBtn, 'flex-1 flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed')}
                 >
-                  <MessageCircle className="h-4 w-4" /> {t('Ομαδική Συνομιλία', 'Group Chat')}
-                </button>
-                <button onClick={() => navigate(`/events/${event.id}`)} className={secondaryBtn}>
-                  {t('Λεπτομέρειες', 'Details')}
+                  <MessageCircle className="h-4 w-4" /> {t('Chat', 'Chat')}
                 </button>
                 <button
                   onClick={() => setShowLeaveConfirm(event.id)}
@@ -331,6 +300,13 @@ export default function PlansPageContent() {
                   )}
                 >
                   <XCircle className="h-3.5 w-3.5" /> {t('Αποχώρηση', 'Leave')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/events/${event.id}`)}
+                  className={cn('text-xs font-bold underline underline-offset-2', p.muted)}
+                >
+                  {t('Λεπτομέρειες', 'Details')}
                 </button>
               </div>
             </div>
@@ -345,6 +321,8 @@ export default function PlansPageContent() {
             hint={t('Εξερευνήστε εκδηλώσεις και μπείτε σε μια ομάδα για να ξεκινήσετε.', 'Explore experiences and join a group to get started.')}
             ctaLabel={t(`Εξερεύνηση`, `Explore Experiences`)}
             onCta={() => navigate('/')}
+            secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+            onSecondary={() => navigate('/buddy-seek')}
             p={p}
           />
         )}
@@ -419,6 +397,8 @@ export default function PlansPageContent() {
             hint={t('Όταν εκδηλώσετε ενδιαφέρον για μια εκδήλωση, θα εμφανιστεί εδώ μέχρι να επιβεβαιωθεί η ομάδα.', 'When you express interest in an event, it appears here until the group is confirmed.')}
             ctaLabel={t('Ανακάλυψη', 'Discover')}
             onCta={() => navigate('/')}
+            secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+            onSecondary={() => navigate('/buddy-seek')}
             p={p}
           />
         )}
@@ -516,6 +496,8 @@ function EmptyTab({
   hint,
   ctaLabel,
   onCta,
+  secondaryLabel,
+  onSecondary,
   p,
 }: {
   icon: typeof Calendar;
@@ -523,6 +505,8 @@ function EmptyTab({
   hint: string;
   ctaLabel?: string;
   onCta?: () => void;
+  secondaryLabel?: string;
+  onSecondary?: () => void;
   p: ReturnType<typeof usePageContrast>;
 }) {
   return (
@@ -532,9 +516,20 @@ function EmptyTab({
       </div>
       <p className={cn(PLANS_TYPO.cardTitle, p.head)}>{title}</p>
       <p className={cn(PLANS_TYPO.bannerBody, 'mt-1 max-w-sm mx-auto', p.muted)}>{hint}</p>
-      {ctaLabel && onCta && (
-        <button className={cn('btn-gradient mt-4', PLANS_TYPO.bannerCta)} onClick={onCta}>{ctaLabel}</button>
-      )}
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+        {ctaLabel && onCta && (
+          <button className={cn('btn-gradient', PLANS_TYPO.bannerCta)} onClick={onCta}>{ctaLabel}</button>
+        )}
+        {secondaryLabel && onSecondary && (
+          <button
+            type="button"
+            className={cn('text-xs font-bold underline underline-offset-2', p.muted)}
+            onClick={onSecondary}
+          >
+            {secondaryLabel}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

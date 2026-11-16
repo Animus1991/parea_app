@@ -448,8 +448,13 @@ export function LookingForCompanyPanel({
             if (!preview.joinId) return;
             const groupId = acceptJoin(preview.joinId);
             if (groupId) {
-              toast.success(t('Αποδεχτήκατε — άνοιγμα συνομιλίας', 'Accepted — opening chat'));
-              navigate(`/chat/${groupId}`);
+              toast.success(t('Αποδεχτήκατε — άνοιγμα της βραδιάς', 'Accepted — opening Our night'), {
+                action: {
+                  label: t('Chat', 'Chat'),
+                  onClick: () => navigate(`/chat/${groupId}`),
+                },
+              });
+              navigate(`/night/${groupId}`);
             } else {
               toast.success(t('Αποδεχτήκατε', 'Accepted'));
             }
