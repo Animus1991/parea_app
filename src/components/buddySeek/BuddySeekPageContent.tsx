@@ -182,21 +182,7 @@ export default function BuddySeekPageContent() {
       </header>
 
       {/* Φ27 — small outings without an event (coffee / walk / run) */}
-      <div className="space-y-2">
-        <div className="flex flex-wrap items-center justify-between gap-2 px-0.5">
-          <p className={cn('text-xs font-medium', a.muted)}>
-            {t('Χωρίς επίσημη εκδήλωση — ίδια εμπιστοσύνη.', 'No formal event — same trust.')}
-          </p>
-          <button
-            type="button"
-            onClick={() => navigate('/collections')}
-            className={cn('text-xs font-bold underline underline-offset-2', a.head)}
-          >
-            {t('Συλλογές', 'Collections')}
-          </button>
-        </div>
-        <MiniOutingsSection />
-      </div>
+      <MiniOutingsSection />
 
       {showExplainer && (
         <div className={cn('rounded-2xl border p-4 flex gap-3', a.cardSurface, 'border-cyan-200 bg-cyan-50/60 dark:bg-cyan-950/20 dark:border-cyan-800')}>

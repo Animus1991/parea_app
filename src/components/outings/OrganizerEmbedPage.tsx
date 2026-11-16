@@ -44,7 +44,17 @@ export default function OrganizerEmbedPage() {
           </a>
         </div>
         {list.length === 0 ? (
-          <p className="mt-3 text-xs font-medium text-ink-muted">{t('Δεν υπάρχουν προσεχείς εκδηλώσεις.', 'No upcoming events.')}</p>
+          <div className="mt-3 space-y-2 rounded-2xl border border-dashed border-border px-3 py-4">
+            <p className="text-xs font-medium text-ink-muted">{t('Δεν υπάρχουν προσεχείς εκδηλώσεις.', 'No upcoming events.')}</p>
+            <a
+              href={id === 'platform' ? origin : `${origin}/organizer/${encodeURIComponent(id)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-9 items-center text-xs font-bold text-ink underline underline-offset-2"
+            >
+              {t('Δες στο Nakamas', 'See on Nakamas')}
+            </a>
+          </div>
         ) : (
           <ul className="mt-3 divide-y divide-border rounded-2xl border border-border bg-surface-raised">
             {list.map((e) => {

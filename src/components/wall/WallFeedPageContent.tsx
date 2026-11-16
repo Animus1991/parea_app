@@ -155,10 +155,7 @@ export default function WallFeedPageContent() {
         <span className="min-w-0 flex-1">
           <span className="block text-sm font-bold text-ink">{t('Εσύ ελέγχεις το κοινό σου', 'You control your audience')}</span>
           <span className="block text-xs font-medium text-ink-muted">
-            {t(
-              'Δημόσιο, Nakamas, συγκεκριμένα άτομα, λίστες ή «εκτός από…» — ανά δημοσίευση και ανά ενότητα προφίλ.',
-              'Public, Nakamas, specific people, lists or “except…” — per post and per profile section.',
-            )}
+            {t('Ανά δημοσίευση και ανά ενότητα προφίλ.', 'Per post and per profile section.')}
           </span>
         </span>
         <span className="shrink-0 text-xs font-bold text-ink underline">{t('Ρυθμίσεις', 'Settings')}</span>

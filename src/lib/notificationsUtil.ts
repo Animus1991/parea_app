@@ -9,6 +9,31 @@ export function notificationsForUser(
   return notifications.filter((n) => !n.forUserId || n.forUserId === userId);
 }
 
+/**
+ * Unify React Query API seed with Zustand live rows (Φ27 ready / waitlist /
+ * hand-over). Store wins on the same id (read state, deep-link fields).
+ */
+export function mergeNotificationLists(
+  api: AppNotification[],
+  store: AppNotification[],
+): AppNotification[] {
+  const storeIds = new Set(store.map((n) => n.id));
+  const byId = new Map<string, AppNotification>();
+  for (const n of api) byId.set(n.id, n);
+  for (const n of store) byId.set(n.id, n);
+  const out: AppNotification[] = [];
+  for (const n of store) {
+    const row = byId.get(n.id);
+    if (row) out.push(row);
+  }
+  for (const n of api) {
+    if (storeIds.has(n.id)) continue;
+    const row = byId.get(n.id);
+    if (row) out.push(row);
+  }
+  return out;
+}
+
 /** Normalize legacy or partial notification payloads to AppNotification (Φ16.2). */
 export function normalizeAppNotification(input: Record<string, unknown>): AppNotification {
   const n = { ...input };

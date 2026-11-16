@@ -746,6 +746,14 @@ export const useStore = create<AppState>()(
           'group',
           { groupId, eventId: group?.eventId, forUserId: toUserId },
         );
+      } else if (!late && group?.members.includes(uid)) {
+        // Quiet leave (no late strike, no hand-over) still leaves a trail back to plans.
+        note(
+          'Αποχώρησες από την ομάδα. Μπορείς να βρεις άλλη παρέα στα σχέδιά σου ή στο «Βρες Nakamas».',
+          'You left the group. You can find another company in My plans or Find Nakamas.',
+          'group',
+          { forUserId: uid },
+        );
       }
       // Release the commitment hold for an event the member is no longer going to.
       let commitmentHolds = state.commitmentHolds;

@@ -164,8 +164,11 @@ export function WallPrivacyPanel({ showProfileRow = true }: { showProfileRow?: b
         />
       )}
 
-      <p className="pt-1 text-xs font-bold text-ink-muted">
-        {t('Ενότητες προφίλ — ισχύουν μαζί με την ορατότητα του προφίλ', 'Profile sections — apply together with your profile visibility')}
+      <p className="pt-1 text-xs font-medium text-ink-muted leading-relaxed">
+        {t(
+          'Οι ενότητες ισχύουν μόνο αν το προφίλ είναι ορατό σε εκείνα τα άτομα — δεν ανοίγουν το προφίλ από μόνες τους.',
+          'Sections only apply if the profile is visible to those people — they do not open the profile on their own.',
+        )}
       </p>
       {PROFILE_SECTION_KEYS.map((key) => (
         <Row

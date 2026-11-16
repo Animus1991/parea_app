@@ -53,6 +53,21 @@ describe('buildReturnSummary', () => {
     expect(returnPartPath(parts[0])).toBe('/night/g2');
   });
 
+  it('surfaces waitlist seat-open when ready is absent', () => {
+    const parts = buildReturnSummary({
+      now,
+      previousVisitAt: now.getTime() - 2 * RETURN_GAP_MS,
+      nextEvent: null,
+      newPlans: 0,
+      unreadChats: 0,
+      unreadNotifications: 0,
+      waitlistOpen: { groupId: 'g3', title: 'Hike' },
+    });
+    expect(parts[0]).toEqual({ kind: 'waitlist', groupId: 'g3', title: 'Hike' });
+    expect(describeReturnPart(parts[0], el)).toBe('Η θέση σου άνοιξε · Hike');
+    expect(returnPartPath(parts[0])).toBe('/night/g3');
+  });
+
   it('ignores plans further than two days away or already past', () => {
     const far = { id: 'e2', title: 'Later', start: new Date(2026, 10, 18, 20, 0) };
     const past = { id: 'e3', title: 'Past', start: new Date(2026, 10, 14, 10, 0) };

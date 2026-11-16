@@ -51,12 +51,18 @@ export function NakamasGoing({ eventId, className }: { eventId: string; classNam
             </Link>
           ))}
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h2 id="nakamas-going-title" className="flex items-center gap-1.5 text-xs font-bold text-ink-muted">
             <HeartHandshake className="h-3.5 w-3.5" aria-hidden /> {t('Ποιοι Nakamas σου πάνε', 'Your Nakamas going')}
           </h2>
           <p className="text-sm font-bold text-ink">{text}</p>
         </div>
+        <Link
+          to={`/events/${eventId}#groups`}
+          className="shrink-0 text-xs font-bold text-ink underline underline-offset-2"
+        >
+          {t('Δες ομάδες', 'See groups')}
+        </Link>
       </div>
     </section>
   );

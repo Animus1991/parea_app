@@ -695,6 +695,12 @@ export default function ProfilePageContent() {
 
         {/* ─── Wall, sections & audience lists (Φ26) ─── */}
         <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
+          <p className={`mb-3 text-xs font-medium leading-relaxed ${sub}`}>
+            {t(
+              'Παρακάτω ρυθμίζεις ενότητες και τοίχο — ισχύουν μόνο για όσους ήδη βλέπουν το προφίλ σου.',
+              'Below you set sections and wall — they only apply to people who can already see your profile.',
+            )}
+          </p>
           <WallPrivacyPanel showProfileRow={false} />
         </div>
 

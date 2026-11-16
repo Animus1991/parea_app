@@ -202,6 +202,42 @@ export default function NotificationsPageContent() {
               {t('Δείτε ομάδα', 'View group')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
             </button>
           )}
+          {notif.type === 'group' && (
+            <button
+              type="button"
+              onClick={() => navigate(notif.groupId ? `/night/${notif.groupId}` : '/plans')}
+              className={cn(
+                'text-2xs font-semibold min-h-6 px-2 inline-flex items-center gap-1 rounded-lg transition-colors',
+                a.link,
+              )}
+            >
+              {t('Η βραδιά μας', 'Our night')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
+            </button>
+          )}
+          {notif.type === 'safety' && (
+            <button
+              type="button"
+              onClick={() => navigate('/trust')}
+              className={cn(
+                'text-2xs font-semibold min-h-6 px-2 inline-flex items-center gap-1 rounded-lg transition-colors',
+                a.link,
+              )}
+            >
+              {t('Εμπιστοσύνη', 'Trust')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
+            </button>
+          )}
+          {notif.type === 'feedback' && (
+            <button
+              type="button"
+              onClick={() => navigate('/history')}
+              className={cn(
+                'text-2xs font-semibold min-h-6 px-2 inline-flex items-center gap-1 rounded-lg transition-colors',
+                a.link,
+              )}
+            >
+              {t('Αξιολόγηση', 'Feedback')} <ArrowRight className="w-2.5 h-2.5" aria-hidden />
+            </button>
+          )}
           {notif.type === 'message' && (
             <button
               type="button"

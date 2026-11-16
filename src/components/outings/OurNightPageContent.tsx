@@ -235,6 +235,15 @@ export default function OurNightPageContent() {
             {t('Όλα είναι έτοιμα: σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας είναι παρακάτω.', 'All set: the meeting point, group code and door ticket are below.')}
           </p>
         )}
+        {revealed && (
+          <button
+            type="button"
+            onClick={() => setShareWallOpen(true)}
+            className="mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-full border border-current/30 bg-white/15 px-3 text-xs font-bold backdrop-blur-sm"
+          >
+            <Share2 className="h-3.5 w-3.5" aria-hidden /> {t('Μοιράσου στον τοίχο', 'Share to wall')}
+          </button>
+        )}
       </header>
 
       {canGiveFeedback && (
@@ -359,11 +368,6 @@ export default function OurNightPageContent() {
           <Button size="sm" variant="outline" onClick={() => navigate('/trust')}>
             {t('Κέντρο Εμπιστοσύνης', 'Trust Center')}
           </Button>
-          {revealed && (
-            <Button size="sm" variant="outline" onClick={() => setShareWallOpen(true)}>
-              <Share2 className="mr-1.5 h-4 w-4" aria-hidden /> {t('Μοιράσου στον τοίχο', 'Share to wall')}
-            </Button>
-          )}
           <Button size="sm" variant="outline" onClick={() => navigate('/report')}>
             {t('Αναφορά', 'Report')}
           </Button>

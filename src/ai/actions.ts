@@ -35,6 +35,7 @@ import type { Audience } from '../types/wall';
 import { COLLECTIONS, collectionById, collectionEvents, formingGroups, venueById, timeMinus } from '../lib/outings';
 import { standingFor, strikeLabel } from '../lib/consequences';
 import { eventStartMs } from '../store/outingsSlice';
+import { notificationsForUser } from '../lib/notificationsUtil';
 
 /** The wall store loads on demand so the first page (login) never ships wall code. */
 const loadWallStore = () => import('../store/wallStore').then((m) => m.useWallStore);
@@ -1244,7 +1245,8 @@ const markReadAction: CopilotAction = {
   parameters: OBJ({}),
   run: () => {
     const prev = state().notifications;
-    const unread = prev.filter((n) => !n.read).length;
+    const uid = state().currentUser?.id;
+    const unread = notificationsForUser(prev, uid).filter((n) => !n.read).length;
     if (unread === 0) return { ok: true, el: 'Δεν έχεις αδιάβαστες ειδοποιήσεις.', en: 'You have no unread notifications.' };
     state().markAllNotificationsRead();
     return {
@@ -1262,7 +1264,8 @@ const notifSummaryAction: CopilotAction = {
   risk: 'safe',
   parameters: OBJ({}),
   run: () => {
-    const unread = state().notifications.filter((n) => !n.read);
+    const uid = state().currentUser?.id;
+    const unread = notificationsForUser(state().notifications, uid).filter((n) => !n.read);
     if (unread.length === 0) return { ok: true, el: 'Είσαι ενημερωμένος — καμία νέα ειδοποίηση.', en: "You're all caught up — no new notifications." };
     const top = unread.slice(0, 4);
     return {
@@ -1312,7 +1315,7 @@ const whatsNewAction: CopilotAction = {
       nextEvent: next,
       newPlans,
       unreadChats,
-      unreadNotifications: s.notifications.filter((n) => !n.read).length,
+      unreadNotifications: notificationsForUser(s.notifications, user.id).filter((n) => !n.read).length,
       newPosts,
     });
     const extras: { el: string; en: string; path: string }[] = [];

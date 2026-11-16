@@ -8,6 +8,7 @@ import { useStore } from '../store';
 import { useLanguageStore } from '../store/languageStore';
 import { readPageSnapshot } from '../lib/pageSnapshot';
 import { WALLET_DEMO } from '../lib/walletDemo';
+import { notificationsForUser } from '../lib/notificationsUtil';
 import { routeIdForPath } from './routes';
 
 export interface ContextInput {
@@ -74,7 +75,7 @@ export function buildContextSnapshot({ pathname, lastEventIds, now = new Date() 
       const e = s.events.find((x) => x.id === g.eventId);
       return { groupId: g.id, eventId: g.eventId, title: e?.title, date: e?.date, size: `${g.members.length}/${g.targetSize}` };
     }),
-    unreadNotifications: s.notifications.filter((n) => !n.read).length,
+    unreadNotifications: notificationsForUser(s.notifications, uid).filter((n) => !n.read).length,
     pendingConnectionRequests: uid ? s.connectionRequests.filter((r) => r.toUserId === uid && r.status === 'pending').length : 0,
     lastResults: lastEventIds.slice(0, 8).map((id, i) => ({ n: i + 1, id, title: titleOf(id) })),
     catalogue: s.events

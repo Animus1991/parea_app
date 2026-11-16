@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Camera, CameraOff, CheckCircle2, Circle, DoorClosed, KeyRound, Undo2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { Button } from '../common/Button';
@@ -22,6 +24,7 @@ function barcodeDetector(): Detector | null {
  */
 export function CheckInPanel({ group, members }: { group: Group; members: User[] }) {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const checkInMember = useStore((s) => s.checkInMember);
   const undoCheckIn = useStore((s) => s.undoCheckIn);
   const closeCheckIn = useStore((s) => s.closeCheckIn);
@@ -186,9 +189,16 @@ export function CheckInPanel({ group, members }: { group: Group; members: User[]
                 <Button
                   size="sm"
                   onClick={() => {
-                    say(closeCheckIn(group.id));
+                    const result = closeCheckIn(group.id);
+                    say(result);
                     setConfirmClose(false);
                     setScanning(false);
+                    toast.success(t(result.el, result.en), {
+                      action: {
+                        label: t('Αξιολόγηση', 'Feedback'),
+                        onClick: () => navigate('/history'),
+                      },
+                    });
                   }}
                 >
                   {t('Κλείσιμο check-in', 'Close check-in')}

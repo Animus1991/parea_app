@@ -44,6 +44,11 @@ export function useReturnSummary(): ReturnVisitPart[] {
     const next = plannedEvents[0];
     const newPlans =
       previous === null ? 0 : feed.items.filter((item) => Date.parse(item.intent.createdAt) > previous).length;
+    const titleForGroup = (groupId: string) => {
+      const g = groups.find((group) => group.id === groupId);
+      const ev = g ? events.find((e) => e.id === g.eventId) : undefined;
+      return ev?.title ?? groupId;
+    };
     const readyGroup =
       previous === null
         ? null
@@ -56,9 +61,22 @@ export function useReturnSummary(): ReturnVisitPart[] {
                 (/έτοιμη|ready/i.test(n.messageGr) || /έτοιμη|ready/i.test(n.messageEn)),
             );
             if (!readyNotif?.groupId) return null;
-            const g = groups.find((group) => group.id === readyNotif.groupId);
-            const ev = g ? events.find((e) => e.id === g.eventId) : undefined;
-            return { groupId: readyNotif.groupId, title: ev?.title ?? readyNotif.groupId };
+            return { groupId: readyNotif.groupId, title: titleForGroup(readyNotif.groupId) };
+          })();
+    const waitlistOpen =
+      previous === null || readyGroup
+        ? null
+        : (() => {
+            const seatNotif = mine.find(
+              (n) =>
+                !n.read &&
+                n.type === 'group' &&
+                Boolean(n.groupId) &&
+                (/θέση|seat|waitlist|λίστα αναμονής|άνοιξε θέση/i.test(n.messageGr) ||
+                  /seat|waitlist|opened for you/i.test(n.messageEn)),
+            );
+            if (!seatNotif?.groupId) return null;
+            return { groupId: seatNotif.groupId, title: titleForGroup(seatNotif.groupId) };
           })();
     return buildReturnSummary({
       now: new Date(),
@@ -74,6 +92,7 @@ export function useReturnSummary(): ReturnVisitPart[] {
           ? 0
           : visiblePosts(userId, posts, wallAccess).filter((p) => p.authorId !== userId && Date.parse(p.createdAt) > previous).length,
       readyGroup,
+      waitlistOpen,
     });
   }, [userId, previous, plannedEvents, feed.items, conversations, notifications, posts, wallAccess, groups, events]);
 }
