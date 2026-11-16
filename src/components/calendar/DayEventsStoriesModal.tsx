@@ -16,6 +16,7 @@ import {
   Navigation,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import type { TrustTier } from '../../types';
@@ -320,7 +321,10 @@ export function DayEventsStoriesModal({
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  onClick={() => openGoogleCalendar(ev.event, { meetingPoint: ev.meetingPoint })}
+                  onClick={() => {
+                    openGoogleCalendar(ev.event, { meetingPoint: ev.meetingPoint });
+                    toast.info(t('Άνοιγμα Google Calendar', 'Opening Google Calendar'));
+                  }}
                   className={cn(outlineBtn, 'w-full text-xs')}
                 >
                   <Calendar className="w-4 h-4 shrink-0" />
@@ -328,7 +332,10 @@ export function DayEventsStoriesModal({
                 </button>
                 <button
                   type="button"
-                  onClick={() => downloadICS(ev.event, { meetingPoint: ev.meetingPoint })}
+                  onClick={() => {
+                    downloadICS(ev.event, { meetingPoint: ev.meetingPoint });
+                    toast.success(t('Το ημερολόγιο εξήχθη', 'Calendar exported'));
+                  }}
                   className={cn(outlineBtn, 'w-full text-xs')}
                 >
                   <Download className="w-4 h-4 shrink-0" />

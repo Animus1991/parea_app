@@ -5,6 +5,7 @@ import type { GroupChatMessage } from '../hooks/useGroupChatMessages';
 export function toGroupChatMessage(
   msg: ChatMessage,
   resolveName: (senderId: string) => string,
+  systemLabel = 'System',
 ): GroupChatMessage {
   const type: GroupChatMessage['type'] =
     msg.type === 'system' || msg.type === 'arrival_status'
@@ -16,7 +17,7 @@ export function toGroupChatMessage(
   return {
     id: msg.id,
     senderId: msg.senderId,
-    senderName: msg.senderType === 'system' ? 'System' : resolveName(msg.senderId),
+    senderName: msg.senderType === 'system' ? systemLabel : resolveName(msg.senderId),
     text: msg.body,
     timestamp: msg.createdAt,
     type,

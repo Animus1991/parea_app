@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { MapPin, Navigation } from 'lucide-react';
+import { toast } from 'sonner';
 import { useLanguage } from '../../../lib/i18n';
 import { cn } from '../../../lib/utils';
 import { Modal } from '../../common/Modal';
@@ -58,12 +59,13 @@ export function GroupChatLocationModal({
       {
         id: Date.now().toString(),
         senderId: 'system',
-        senderName: 'System',
+        senderName: t("Σύστημα", "System"),
         text: `${currentUserName} ${msg}.`,
         timestamp: new Date().toISOString(),
         type: 'location',
       },
     ]);
+    toast.success(t('Η κοινοποίηση τοποθεσίας ενεργοποιήθηκε', 'Location sharing enabled'));
     onStartSharing();
   };
 

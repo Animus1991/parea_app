@@ -23,7 +23,7 @@ export function CopilotInlinePrompt({ className, title, suggestions, maxChips = 
   const chips = (suggestions ?? suggestionsForPath(pathname)).slice(0, maxChips);
   return (
     <section
-      aria-label="Nakamas AI"
+      aria-label={t('Nakamas AI', 'Nakamas AI')}
       className={cn('@container rounded-2xl border border-border bg-surface-raised p-3 shadow-soft', className)}
     >
       <div className="flex flex-col gap-3 @4xl:flex-row @4xl:items-center">

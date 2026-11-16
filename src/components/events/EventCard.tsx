@@ -296,7 +296,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             {event.isPaid ? `€${event.price}` : t("event_card.free", "Free")}
             {event.isPaid && event.groupDiscount && (
               <span className={cn(EVENT_CARD_TYPO.dateSub, "text-brand block mt-0.5")}>
-                -{event.groupDiscount.percentage}% GRP
+                -{event.groupDiscount.percentage}% {t('ομαδική έκπτωση', 'group discount')}
               </span>
             )}
           </div>

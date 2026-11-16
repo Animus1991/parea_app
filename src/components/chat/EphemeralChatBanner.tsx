@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Info, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
 import { KeepChatRequestModal } from './KeepChatRequestModal';
@@ -9,6 +10,7 @@ export function EphemeralChatBanner({ conversationId }: { conversationId: string
   const dismissedIds = useChatStore((s) => s.dismissedEphemeralBanners);
   const dismissed = dismissedIds.includes(conversationId);
   const dismiss = useChatStore((s) => s.dismissEphemeralBanner);
+  const undismiss = useChatStore((s) => s.undismissEphemeralBanner);
   const [keepOpen, setKeepOpen] = useState(false);
   if (dismissed) return null;
 
@@ -29,7 +31,19 @@ export function EphemeralChatBanner({ conversationId }: { conversationId: string
         >
           {t('Διατήρηση', 'Keep')}
         </button>
-        <button type="button" onClick={() => dismiss(conversationId)} aria-label={t('Απόκρυψη', 'Dismiss')}>
+        <button
+          type="button"
+          onClick={() => {
+            dismiss(conversationId);
+            toast.info(t('Η ειδοποίηση αποκρύφθηκε', 'Banner dismissed'), {
+              action: {
+                label: t('Αναίρεση', 'Undo'),
+                onClick: () => undismiss(conversationId),
+              },
+            });
+          }}
+          aria-label={t('Απόκρυψη', 'Dismiss')}
+        >
           <X className="w-3.5 h-3.5 text-ink-muted" />
         </button>
       </div>

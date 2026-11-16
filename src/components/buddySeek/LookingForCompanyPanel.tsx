@@ -245,7 +245,16 @@ export function LookingForCompanyPanel({
                       onAskToJoin={() =>
                         setPreview({ seekerId: seeker.id, requestId: intent.id, mode: 'send' })
                       }
-                      onHide={() => setHiddenIds((ids) => [...ids, intent.id])}
+                      onHide={() => {
+                        setHiddenIds((ids) => [...ids, intent.id]);
+                        toast.message(t('Αποκρύφθηκε', 'Hidden'), {
+                          action: {
+                            label: t('Αναίρεση', 'Undo'),
+                            onClick: () =>
+                              setHiddenIds((ids) => ids.filter((x) => x !== intent.id)),
+                          },
+                        });
+                      }}
                       onReport={() => {
                         reportRequest(intent.id, 'other');
                         toast.message(t('Αναφέρθηκε', 'Reported'));

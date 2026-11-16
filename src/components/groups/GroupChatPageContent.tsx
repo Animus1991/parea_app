@@ -86,7 +86,7 @@ export default function GroupChatPageContent() {
       {
         id: "system1",
         senderId: "system",
-        senderName: "System",
+        senderName: t("Σύστημα", "System"),
         text: t(
           "Η ομάδα επιβεβαιώθηκε! Πείτε γεια στα νέα σας Nakamas. Οι λεπτομέρειες συνάντησης είναι διαθέσιμες στο πάνελ πληροφοριών.",
           "Group confirmed! Say hi to your new Nakamas. Meeting details are available in the info panel.",
@@ -903,7 +903,7 @@ export default function GroupChatPageContent() {
               {
                 id: Date.now().toString(),
                 senderId: 'system',
-                senderName: 'System',
+                senderName: t("Σύστημα", "System"),
                 text: t(
                   `${currentUser?.name} σταμάτησε την κοινοποίηση τοποθεσίας.`,
                   `${currentUser?.name} stopped sharing their location.`,
@@ -912,6 +912,7 @@ export default function GroupChatPageContent() {
                 type: 'location',
               },
             ]);
+            toast.message(t('Η κοινοποίηση τοποθεσίας σταμάτησε', 'Location sharing stopped'));
           }}
           setLocationConfig={setLocationConfig}
           setMessages={setMessages}
@@ -996,7 +997,7 @@ export default function GroupChatPageContent() {
                   {
                     id: Date.now().toString(),
                     senderId: "system",
-                    senderName: "System",
+                    senderName: t("Σύστημα", "System"),
                     text: `${currentUser.name} ${t("πρότεινε να απενεργοποιηθεί η Εφήμερη Λειτουργία. Η ψηφοφορία θα ξεκινήσει σύντομα.", "proposed to disable Ephemeral Mode. Voting will begin shortly.")}`,
                     timestamp: new Date().toISOString(),
                   },
@@ -1004,6 +1005,7 @@ export default function GroupChatPageContent() {
                 setIsEphemeral(false);
                 setShowDisableEphemeralModal(false);
                 setShowInfo(false);
+                toast.success(t('Η πρόταση στάλθηκε', 'Proposal sent'));
               }}
               className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
             >
@@ -1049,12 +1051,13 @@ export default function GroupChatPageContent() {
                     {
                       id: Date.now().toString(),
                       senderId: "system",
-                      senderName: "System",
+                      senderName: t("Σύστημα", "System"),
                       text: `${currentUser.name} ${t("ενημέρωσε την κατάστασή του", "updated their ETA")}: ETA ${eta} ${t("λεπτά", "mins")}`,
                       timestamp: new Date().toISOString(),
                     },
                   ]);
                   setShowStatusModal(false);
+                  toast.success(t('Η κατάσταση κοινοποιήθηκε', 'Status shared'));
                 }
               }}
               className="flex gap-2 mb-2"
@@ -1102,12 +1105,13 @@ export default function GroupChatPageContent() {
                     {
                       id: Date.now().toString(),
                       senderId: "system",
-                      senderName: "System",
+                      senderName: t("Σύστημα", "System"),
                       text: `${currentUser.name} ${t("ενημέρωσε την κατάστασή του", "updated their status")}: "${status.text}"`,
                       timestamp: new Date().toISOString(),
                     },
                   ]);
                   setShowStatusModal(false);
+                  toast.success(t('Η κατάσταση κοινοποιήθηκε', 'Status shared'));
                 }}
                 className={`w-full px-4 py-3 text-xs font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
               >
@@ -1268,7 +1272,7 @@ export default function GroupChatPageContent() {
                 {
                   id: Date.now().toString(),
                   senderId: "system",
-                  senderName: "System",
+                  senderName: t("Σύστημα", "System"),
                   text: !isSos
                     ? `${currentUser.name} ${t("ενεργοποίησε το SOS Flare! Βρίσκεται σε ανάγκη.", "triggered the SOS flare! They need help.")}`
                     : `${currentUser.name} ${t("απενεργοποίησε το SOS.", "deactivated the SOS.")}`,
