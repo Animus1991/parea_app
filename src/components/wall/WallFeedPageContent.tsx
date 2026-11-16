@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Eye, Newspaper, ShieldCheck, Sparkles } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowLeft, Eye, Newspaper, ShieldCheck, Sparkles } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { useWallAccess, useWallStore } from '../../store/wallStore';
-import { graphConnected, visiblePosts } from '../../lib/audience';
+import { canViewPost, graphConnected, tagShownOnProfile, visiblePosts } from '../../lib/audience';
+import { WallActivityPanel } from './WallActivityPanel';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 import { Chip } from '../common/Chip';
@@ -34,6 +35,12 @@ export default function WallFeedPageContent() {
   const [showHidden, setShowHidden] = useState(false);
   const composerRef = useRef<HTMLDivElement>(null);
   const myId = me?.id ?? null;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const focusId = searchParams.get('post');
+  const focusPost = useMemo(() => {
+    const p = focusId ? posts.find((x) => x.id === focusId) : undefined;
+    return p && myId && canViewPost(myId, p, access) ? p : null;
+  }, [focusId, posts, myId, access]);
 
   // «Νέα από την τελευταία φορά»: frozen at first render, then the visit is recorded.
   const [seenBefore] = useState(() => (myId ? feedSeenAt[myId] ?? null : null));
@@ -55,9 +62,9 @@ export default function WallFeedPageContent() {
       all,
       connections: all.filter((p) => p.authorId !== myId && isConn(p.authorId)),
       network: all.filter((p) => p.authorId !== myId && !isConn(p.authorId)),
-      mine: all.filter((p) => p.authorId === myId || p.wallOwnerId === myId),
+      mine: all.filter((p) => p.authorId === myId || p.wallOwnerId === myId || tagShownOnProfile(p, myId, access.privacyByUser)),
     };
-  }, [all, myId, access.graph]);
+  }, [all, myId, access.graph, access.privacyByUser]);
 
   const newCount = useMemo(
     () => (seenBefore ? all.filter((p) => p.authorId !== myId && p.createdAt > seenBefore).length : 0),
@@ -91,6 +98,31 @@ export default function WallFeedPageContent() {
           {t('Τι σχεδιάζουν οι Nakamas σου — κι εσύ ορίζεις ποιος βλέπει κάθε δημοσίευσή σου.', 'What your Nakamas are planning — and you choose who sees each of your posts.')}
         </p>
       </div>
+
+      {focusId && (
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={() => {
+              const next = new URLSearchParams(searchParams);
+              next.delete('post');
+              setSearchParams(next, { replace: true });
+            }}
+            className="inline-flex min-h-9 items-center gap-1.5 text-xs font-bold text-ink-muted hover:text-ink"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t('Όλη η ροή', 'Whole feed')}
+          </button>
+          {focusPost ? (
+            <PostCard post={focusPost} highlighted />
+          ) : (
+            <p role="status" className="rounded-2xl border border-dashed border-border px-4 py-4 text-sm font-medium text-ink-muted">
+              {t('Αυτή η δημοσίευση δεν είναι πια διαθέσιμη για σένα.', 'This post is no longer available to you.')}
+            </p>
+          )}
+        </div>
+      )}
+
+      <WallActivityPanel />
 
       <button
         type="button"

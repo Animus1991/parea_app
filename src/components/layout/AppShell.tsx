@@ -30,10 +30,13 @@ import { CopilotPanel } from '../copilot/CopilotPanel';
 import { useCopilotStore } from '../../store/copilotStore';
 import { isPlatformAdmin } from '../../lib/roles';
 import { DESKTOP_DOCK_QUERY, useMediaQuery } from '../../hooks/useMediaQuery';
+import { useWallUnreadCount } from '../../hooks/useWallUnreadCount';
 
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
-  return notifications.filter(n => !n.read).length;
+  const wallUnread = useWallUnreadCount();
+  // The bell covers wall activity too (comments, reactions, tags) — one place to look.
+  return notifications.filter(n => !n.read).length + wallUnread;
 }
 import { useLanguage } from '../../lib/i18n';
 
@@ -92,9 +95,11 @@ interface NavItemProps {
   compact?: boolean;
   /** Icon-only rail σε όλα τα widths (collapsed sidebar). */
   rail?: boolean;
+  /** Unread count shown next to the label (or as a dot on the icon rail). */
+  badge?: number;
 }
 
-function NavItem({ to, icon: Icon, label, compact = false, rail = false }: NavItemProps) {
+function NavItem({ to, icon: Icon, label, compact = false, rail = false, badge = 0 }: NavItemProps) {
   const tok = useThemeStyles();
   const containerClass = rail
     ? 'justify-center px-0 py-3'
@@ -111,7 +116,8 @@ function NavItem({ to, icon: Icon, label, compact = false, rail = false }: NavIt
   return (
     <NavLink
       to={to}
-      title={label}
+      title={badge > 0 ? `${label} (${badge})` : label}
+      aria-label={badge > 0 ? `${label} (${badge})` : undefined}
       // Start loading the page while the pointer or focus is on its link.
       onMouseEnter={() => prefetchPath(to)}
       onFocus={() => prefetchPath(to)}
@@ -123,8 +129,18 @@ function NavItem({ to, icon: Icon, label, compact = false, rail = false }: NavIt
         )
       }
     >
-      <Icon className={iconClass} />
+      <span className="relative inline-flex">
+        <Icon className={iconClass} />
+        {badge > 0 && (rail || compact) && (
+          <span className={cn('absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-[var(--color-surface-raised)] bg-accent', !rail && 'lg:hidden')} aria-hidden />
+        )}
+      </span>
       <span className={textClass}>{label}</span>
+      {badge > 0 && !rail && (
+        <span className={cn('ml-auto rounded-full bg-accent px-1.5 py-0.5 text-2xs font-bold leading-none text-accent-fg tabular-nums', compact && 'hidden lg:inline')} aria-hidden>
+          {badge > 99 ? '99+' : badge}
+        </span>
+      )}
     </NavLink>
   );
 }
@@ -192,6 +208,7 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
   const currentUser = useStore((s) => s.currentUser);
   // Same predicate as CommandPalette and the copilot (lib/roles.ts).
   const isAdmin = isPlatformAdmin(currentUser);
+  const wallUnread = useWallUnreadCount();
 
   return (
     <>
@@ -210,7 +227,7 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
       </NavSection>
 
       <NavSection id="community" paths={['/wall', '/connections', '/chats', '/chat', '/leaderboard', '/challenges', '/achievements', '/u']} title={t('Κοινότητα', 'Community')} compact={compact} rail={rail}>
-        <NavItem to="/wall" icon={Newspaper} label={t('Τοίχος Nakamas', 'Nakamas Wall')} compact={compact} rail={rail} />
+        <NavItem to="/wall" icon={Newspaper} label={t('Τοίχος Nakamas', 'Nakamas Wall')} compact={compact} rail={rail} badge={wallUnread} />
         <NavItem to="/connections" icon={Users} label={t('Οι Nakamas μου', 'My Nakamas')} compact={compact} rail={rail} />
         <NavItem to="/chats" icon={MessageSquare} label={t('Ομαδικές Συνομιλίες', 'Group Chats')} compact={compact} rail={rail} />
         <NavItem to="/leaderboard" icon={Trophy} label={t('Κατάταξη', 'Leaderboard')} compact={compact} rail={rail} />

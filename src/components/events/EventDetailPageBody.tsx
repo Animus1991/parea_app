@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useStore } from '../../store';
@@ -25,6 +25,8 @@ import EventDetailPageContent from './EventDetailPageContent';
 import { LookingForCompanyPanel } from '../buddySeek/LookingForCompanyPanel';
 import { computeMatchScore } from '../../lib/matching';
 
+const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
+
 interface EventDetailPageBodyProps {
   accent: EventDetailMapAccent;
   darkSurface?: boolean;
@@ -42,6 +44,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
   const { t } = useLanguage();
   const [groupSizeFilter, setGroupSizeFilter] = useState<'All' | '3' | '4' | '5' | '6+'>('All');
   const [discountFilter, setDiscountFilter] = useState(false);
+  const [shareWallOpen, setShareWallOpen] = useState(false);
 
   const events = useStore((state) => state.events);
   const groups = useStore((state) => state.groups);
@@ -131,6 +134,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             onSave={handleSave}
             onQr={() => setShowQRCode(true)}
             onShare={handleShare}
+            onShareToWall={() => setShareWallOpen(true)}
             isCopied={isCopied}
             onAddToGoogleCalendar={handleAddToGoogleCalendar}
             onDownloadIcs={handleDownloadIcs}
@@ -291,6 +295,11 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
       </div>
 
       <EventDetailQrModal open={showQRCode} onClose={() => setShowQRCode(false)} />
+      {shareWallOpen && (
+        <Suspense fallback={null}>
+          <ShareToWallModal eventId={event.id} eventTitle={event.title} open={shareWallOpen} onClose={() => setShareWallOpen(false)} />
+        </Suspense>
+      )}
     </motion.div>
   );
 }

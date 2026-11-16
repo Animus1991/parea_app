@@ -46,13 +46,12 @@ export function AudienceListsManager({ open, onClose }: { open: boolean; onClose
         {t('Μοιράσου με ομάδες ανθρώπων με ένα κλικ. Μόνο εσύ βλέπεις τις λίστες σου.', 'Share with groups of people in one tap. Only you see your lists.')}
       </p>
 
-      <div className="flex flex-wrap gap-2" role="tablist" aria-label={t('Λίστες', 'Lists')}>
+      <div className="flex flex-wrap gap-2" role="group" aria-label={t('Λίστες', 'Lists')}>
         {lists.map((l) => (
           <button
             key={l.id}
             type="button"
-            role="tab"
-            aria-selected={selected?.id === l.id}
+            aria-pressed={selected?.id === l.id}
             onClick={() => {
               setSelectedId(l.id);
               setConfirmDelete(false);

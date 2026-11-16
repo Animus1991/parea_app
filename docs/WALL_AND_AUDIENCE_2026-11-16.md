@@ -119,14 +119,15 @@ Saved wall state lives under its own key (`nakamas-wall-v1`) with a storage-full
 | Playwright | full suite incl. `e2e/wall.spec.ts` and `/wall`, `/u/u2` in the axe × 5-theme matrix and the type-hierarchy guard |
 | Bundle | main 538.7 kB (+14.8 kB raw / +4.5 kB gzip); wall store 14 kB lazy |
 
-## 5. Recommended next steps
+## 5. Recommended next steps (status after round 2, §7)
 
-1. Backend: maintain `socialGraph` from accepted requests/blocks and fan posts out to
-   `feeds/{uid}/items` so listing respects the same rules.
-2. Store post photos in Firebase Storage (URLs, not data URLs) with size/type rules.
-3. Notifications for comments, reactions and posts on your wall (respecting notification prefs).
-4. Tagging people in posts with tag review («έλεγχος ετικετών»).
-5. Moderation view for reported wall posts in Admin (reports already land in the issue queue).
+1. ✅ Backend contract: `functions/src/socialGraph.ts` maintains `socialGraph` and computes
+   feed fan-out with the app's own ACL (unit-tested); deploying it needs a Firebase project.
+2. ⏳ Post photos in Firebase Storage — waits for posts to sync to Firestore (they are
+   device-local in the demo); data URLs stay meanwhile.
+3. ✅ Notifications for comments, reactions, posts on your wall and tags (with a preference).
+4. ✅ Tagging people with tag review.
+5. ✅ Moderation view for reported wall posts in Admin.
 
 ## 6. Cloudflare preview
 
@@ -134,3 +135,50 @@ The workflow `.github/workflows/cloudflare-pages.yml` deploys every push to `mai
 `cursor/**` and comments the `https://<branch>.nakamas.pages.dev` link — once the repository has
 the secrets `CLOUDFLARE_API_TOKEN` (Pages:Edit) and `CLOUDFLARE_ACCOUNT_ID` under
 *Settings → Secrets and variables → Actions*.
+
+## 7. Round 2 — re-audit and the next steps, built
+
+The newest branch was `ccr-92dfba55-iwthnx` itself (it contains every other branch); `git pull`
+was already up to date.
+
+### Findings (all fixed)
+
+| ID | Sev | Finding | Fix |
+|---|---|---|---|
+| R2-1 | M | The demo banner promised «τα demo δεδομένα χάνονται με την Έξοδο», but `exitDemoMode` only signed out — every change stayed saved. | Exit now restores the demo data in the main, chat and wall stores (theme, language, layout kept). Signed-in accounts are untouched. `demoReset.test.ts` |
+| R2-2 | M | Contrast: secondary text on the highlighted (accent-soft) background was 3.96:1 in *activebuddies-dark* (found by the axe matrix on /notifications). | Full-contrast text on highlighted rows (activity, audience picker, pending tags). |
+| R2-3 | L | «⋯» menu: no arrow-key navigation, focus did not return to the button. | WAI-ARIA menu button: ↑/↓/Home/End, Escape/Tab close, focus returns. |
+| R2-4 | L | Audience lists used `tab` roles without tab panels; the «→» between author and wall owner had an icon label that screen readers skip. | `aria-pressed` buttons; visually hidden «στον τοίχο του/της». |
+| R2-5 | L | The composer kept an old default audience after it changed in Settings or via the AI. | Follows the default until the person picks one for that post. |
+
+### Built
+
+- **Tags «με…»** (connections only, max 20): tagged people always see the post, can remove
+  their tag, and — with **Έλεγχος ετικετών** (on by default) — approve it before it shows on
+  their profile. Profiles show approved tags; your own profile lists tags awaiting approval.
+- **Activity**: comments, reactions (one per person, withdrawn with the reaction), posts on
+  your wall, tags and moderation notices; panel on the Wall and Notifications, badge on «Τοίχος
+  Nakamas» and the bell, «Όλα αναγνωσμένα», one tap opens the post (`/wall?post=…`).
+  Preference «Δραστηριότητα τοίχου» in Settings and via the AI.
+- **Reports & moderation**: report with a reason → Admin › Μετριασμός › «Δημοσιεύσεις τοίχου»
+  (grouped by post, remove / dismiss / view, restore removed). Removed posts stay visible
+  only to the author (with the reason) and moderators; actions are in the admin log.
+- **Sharing & joining**: «Στον τοίχο μου» on every event page (composer opens with the event
+  attached); «Μπες στην παρέα με …» on friends' event posts opens the join flow.
+- **Composer**: quick starts (Ψάχνω παρέα για / Πάω σε αυτό / Σας προτείνω / Στιγμές από),
+  «Με ποιους;», safe clickable links (http/https only, `nofollow ugc`).
+- **AI**: `summarize_wall` («τι κάνουν οι φίλοι μου;» — only posts you may see) and the wall
+  notification preference.
+- **Server**: rules for tags (only your connections; tagged people manage only their own tag)
+  and moderation (custom-claim moderators only); `functions/src/socialGraph.ts` (graph sync,
+  fan-out, friends-of-friends snapshot).
+
+### Verification (round 2)
+
+| Check | Result |
+|---|---|
+| tsc / eslint / contrast | 0 / 0 / 90 of 90 AA |
+| Vitest (incl. `functions/`) | 215 passed, 21 skipped without the emulator |
+| Firestore rules (emulator) | 21/21 |
+| Playwright | 108/108 (8 wall flows, axe ×5 themes incl. /wall, /u/u2, /notifications) |
+| Bundle | main 544.5 kB (+1.9 kB gzip this round); wall store 19.5 kB lazy |

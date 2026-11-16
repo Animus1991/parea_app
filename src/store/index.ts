@@ -91,6 +91,11 @@ export interface IssueReport {
   evidenceNames: string[];
   createdAt: string;
   status: 'open' | 'reviewing' | 'resolved' | 'dismissed';
+  /** Φ26 — what was reported, when it is a specific item (e.g. a wall post). */
+  targetType?: 'wall_post' | 'user';
+  targetId?: string;
+  /** Author of the reported item. */
+  targetUserId?: string;
 }
 
 /** Φ20 — persisted log of admin moderation actions. */
@@ -134,6 +139,8 @@ export interface UserSettings {
     messages: boolean;
     reminders: boolean;
     promos: boolean;
+    /** Φ26 — comments, reactions, posts on my wall and tags. */
+    social: boolean;
   };
   categoryPrefs: string[];
   privacy: AccountPrivacy;
@@ -142,7 +149,7 @@ export interface UserSettings {
 
 export const DEFAULT_USER_SETTINGS: UserSettings = {
   twoFactorEnabled: false,
-  notificationPrefs: { matches: true, messages: true, reminders: true, promos: false },
+  notificationPrefs: { matches: true, messages: true, reminders: true, promos: false, social: true },
   categoryPrefs: [],
   privacy: { ...DEFAULT_ACCOUNT_PRIVACY },
   availability: ['weekends', 'weekday_evenings'],
@@ -315,6 +322,54 @@ interface AppState {
   setCompanyRequestPreferences: (prefs: Partial<CompanyRequestPreferences>) => void;
   setGroupRecruiting: (groupId: string, recruiting: boolean, note?: string) => void;
   connectWithBuddySeeker: (intentId: string) => void;
+}
+
+const SEED_CONNECTION_REQUESTS: AppState['connectionRequests'] = [
+  { id: 'cr1', fromUserId: 'org2', toUserId: 'u1', message: 'We noticed you attended our events. Let\'s connect!', createdAt: '2024-01-15', status: 'pending' as const },
+  { id: 'cr2', fromUserId: 'org4', toUserId: 'u1', createdAt: '2024-01-14', status: 'pending' as const },
+  { id: 'cr3', fromUserId: 'u4', toUserId: 'u1', message: 'We were in the same cinema group — shall we connect?', createdAt: '2024-01-16', status: 'pending' as const },
+];
+
+/** Fired when demo data is reset, so the chat and wall stores reset too. */
+export const DEMO_RESET_EVENT = 'nakamas:demo-reset';
+
+/**
+ * The demo's data in its original state. Exiting demo mode puts these back,
+ * as the demo banner promises («τα demo δεδομένα χάνονται με την Έξοδο»);
+ * preferences (theme, home layout, sidebar, language) are kept.
+ */
+function demoSeedData() {
+  return {
+    events: [...mockEvents, ...mockCalendarPlanEvents],
+    groups: [...mockGroups, ...mockCalendarPlanGroups],
+    users: mockUsers,
+    notifications: mockNotifications,
+    savedEvents: ['e4', 'e3'],
+    waitlistedEvents: [] as string[],
+    feedbackSubmitted: {} as Record<string, FeedbackData>,
+    recentSearches: [] as string[],
+    lastResumePath: null as string | null,
+    commitmentHolds: {} as Record<string, CommitmentHold>,
+    companyRequests: [...mockCompanyRequests],
+    companyJoinRequests: [] as CompanyJoinRequest[],
+    groupMergeSuggestions: [] as GroupMergeSuggestion[],
+    companyRequestReports: [] as CompanyRequestReport[],
+    companyRequestPreferences: { ...DEFAULT_COMPANY_REQUEST_PREFS },
+    joinRequestRateLog: [] as { userId: string; at: string }[],
+    savedCompanyRequestIds: [] as string[],
+    dismissedCompanyRequestIds: [] as string[],
+    connectionRequests: SEED_CONNECTION_REQUESTS.map((r) => ({ ...r })),
+    issueReports: [] as IssueReport[],
+    adminActions: [] as AdminAction[],
+    organizerMessages: [] as OrganizerMessage[],
+    userSettings: { ...DEFAULT_USER_SETTINGS, privacy: { ...DEFAULT_USER_SETTINGS.privacy } },
+    bonusXp: 0,
+    challengesJoined: ['c1', 'c2'],
+    dailyChallengeClaimedOn: null as string | null,
+    suspendedUserIds: [] as string[],
+    blockedUserIds: [] as string[],
+    adminSafeguards: { ...DEFAULT_ADMIN_SAFEGUARDS },
+  };
 }
 
 function applyGroupDiscount(
@@ -490,7 +545,24 @@ export const useStore = create<AppState>()(
       };
     }),
 
-  exitDemoMode: () => set({ demoMode: false, currentUser: null, isAuthenticated: false }),
+  exitDemoMode: () => {
+    const wasDemo = get().demoMode;
+    set({
+      ...(wasDemo ? demoSeedData() : {}),
+      demoMode: false,
+      currentUser: null,
+      isAuthenticated: false,
+    });
+    if (wasDemo && typeof window !== 'undefined') {
+      // Loaded stores reset themselves; stores never opened this session lose their saved copy.
+      window.dispatchEvent(new CustomEvent(DEMO_RESET_EVENT));
+      try {
+        localStorage.removeItem('nakamas-wall-v1');
+      } catch {
+        /* storage unavailable — nothing saved to clear */
+      }
+    }
+  },
 
   joinGroup: (groupId) =>
     set((state) => {
@@ -1011,11 +1083,7 @@ export const useStore = create<AppState>()(
       };
     }),
 
-  connectionRequests: [
-    { id: 'cr1', fromUserId: 'org2', toUserId: 'u1', message: 'We noticed you attended our events. Let\'s connect!', createdAt: '2024-01-15', status: 'pending' as const },
-    { id: 'cr2', fromUserId: 'org4', toUserId: 'u1', createdAt: '2024-01-14', status: 'pending' as const },
-    { id: 'cr3', fromUserId: 'u4', toUserId: 'u1', message: 'We were in the same cinema group — shall we connect?', createdAt: '2024-01-16', status: 'pending' as const },
-  ],
+  connectionRequests: SEED_CONNECTION_REQUESTS.map((r) => ({ ...r })),
 
   sendConnectionRequest: (toUserId, message) => {
     const state = get();

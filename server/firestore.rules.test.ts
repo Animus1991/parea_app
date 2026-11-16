@@ -230,6 +230,43 @@ describe.skipIf(!emulator)('firestore.rules', () => {
       await assertFails(getDoc(doc(as('eve'), 'socialGraph/alice')));
     });
 
+    it('lets tagged people see the post and manage only their own tag', async () => {
+      await env.withSecurityRulesDisabled(async (ctx) => {
+        await setDoc(doc(ctx.firestore(), 'wallPosts/tagged'), {
+          authorId: 'alice', wallOwnerId: 'alice', text: 'with bob', audience: { base: 'only_me' }, createdAt: 1, taggedIds: ['bob', 'dave'],
+        });
+      });
+      await assertSucceeds(read('bob', 'tagged'));
+      await assertFails(read('carol', 'tagged'));
+      // bob approves his own tag, cannot approve dave's, then removes his own tag.
+      await assertSucceeds(updateDoc(doc(as('bob'), 'wallPosts/tagged'), { tagApprovedIds: ['bob'] }));
+      await assertFails(updateDoc(doc(as('bob'), 'wallPosts/tagged'), { tagApprovedIds: ['bob', 'dave'] }));
+      await assertFails(updateDoc(doc(as('bob'), 'wallPosts/tagged'), { taggedIds: ['bob'] }));
+      await assertSucceeds(updateDoc(doc(as('bob'), 'wallPosts/tagged'), { taggedIds: ['dave'], tagApprovedIds: [] }));
+      await assertFails(read('bob', 'tagged'));
+    });
+
+    it('only lets authors tag their own connections', async () => {
+      const base = { authorId: 'alice', wallOwnerId: 'alice', text: 'hey', audience: { base: 'connections' }, createdAt: serverTimestamp() };
+      await assertSucceeds(addDoc(collection(as('alice'), 'wallPosts'), { ...base, taggedIds: ['bob', 'dave'] }));
+      await assertFails(addDoc(collection(as('alice'), 'wallPosts'), { ...base, taggedIds: ['eve'] }));
+      await assertFails(addDoc(collection(as('alice'), 'wallPosts'), { ...base, tagApprovedIds: [] }));
+    });
+
+    it('keeps moderation to moderators and hides removed posts from everyone but the author', async () => {
+      const mod = env.authenticatedContext('mia', { role: 'moderator' }).firestore();
+      const removal = { status: 'removed', at: 1, reasonEl: 'κανόνες', reasonEn: 'rules' };
+      await assertFails(updateDoc(doc(as('bob'), 'wallPosts/pub'), { moderation: removal }));
+      await assertFails(updateDoc(doc(as('alice'), 'wallPosts/pub'), { moderation: removal }));
+      await assertSucceeds(updateDoc(doc(mod, 'wallPosts/pub'), { moderation: removal }));
+      await assertFails(read('eve', 'pub'));
+      await assertSucceeds(read('alice', 'pub'));
+      await assertSucceeds(getDoc(doc(mod, 'wallPosts/pub')));
+      await assertFails(addDoc(collection(as('alice'), 'wallPosts'), {
+        authorId: 'alice', wallOwnerId: 'alice', text: 'x', audience: { base: 'public' }, createdAt: serverTimestamp(), moderation: removal,
+      }));
+    });
+
     it('accepts a fine-grained profile audience and rejects malformed ones', async () => {
       const alice = as('alice');
       await assertSucceeds(setDoc(doc(alice, 'profiles/alice'), profile('alice', {

@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
+import { WallActivityPanel } from '../wall/WallActivityPanel';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
 
@@ -41,6 +42,7 @@ export default function NotificationsPageContent() {
 
   const { notifications, isLoading, isError, refetch } = useNotificationsResource();
   const markNotificationRead = useStore((s) => s.markNotificationRead);
+  const socialOn = useStore((s) => s.userSettings.notificationPrefs.social !== false);
   const markAllNotificationsRead = useStore((s) => s.markAllNotificationsRead);
   const dismissNotification = useStore((s) => s.dismissNotification);
   const addNotification = useStore((s) => s.addNotification);
@@ -237,6 +239,8 @@ export default function NotificationsPageContent() {
       </div>
 
       <CopilotInlinePrompt />
+
+      {socialOn && <WallActivityPanel title={t('Δραστηριότητα στον τοίχο', 'Wall activity')} limit={4} />}
 
       <div
         className="flex gap-1.5 overflow-x-auto pb-1 noscrollbar"

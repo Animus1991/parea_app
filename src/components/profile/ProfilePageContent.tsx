@@ -47,7 +47,7 @@ import { useFormDraft, type FormDraftFields } from "../../lib/formDraft";
 import { fileToResizedDataUrl, imageErrorText } from "../../lib/imageResize";
 import { profilePathFor } from "../../lib/profileLinks";
 import { useWallAccess, useWallStore } from "../../store/wallStore";
-import { visiblePosts, profileVisibilityToAudience } from "../../lib/audience";
+import { pendingTagReviews, profileWallPosts, profileVisibilityToAudience } from "../../lib/audience";
 import { resolveProfileAudience } from "../../lib/profilePrivacy";
 import { AudienceChip } from "../wall/AudienceChip";
 import { AudiencePickerModal } from "../wall/AudiencePickerModal";
@@ -89,7 +89,11 @@ export default function ProfilePageContent() {
   const wallPostsAll = useWallStore((state) => state.posts);
   const wallAccess = useWallAccess();
   const myWallPosts = React.useMemo(
-    () => (currentUser ? visiblePosts(currentUser.id, wallPostsAll, wallAccess, { wallOwnerId: currentUser.id, pinnedFirst: true }) : []),
+    () => (currentUser ? profileWallPosts(currentUser.id, currentUser.id, wallPostsAll, wallAccess) : []),
+    [currentUser, wallPostsAll, wallAccess],
+  );
+  const myPendingTags = React.useMemo(
+    () => (currentUser ? pendingTagReviews(currentUser.id, wallPostsAll, wallAccess) : []),
     [currentUser, wallPostsAll, wallAccess],
   );
   const setActiveTab = (id: string) => {
@@ -485,6 +489,19 @@ export default function ProfilePageContent() {
                 </Button>
               </div>
             </div>
+            {myPendingTags.length > 0 && (
+              <section aria-labelledby="pending-tags-title" className="space-y-2 rounded-2xl border border-accent bg-accent-soft p-3">
+                <h3 id="pending-tags-title" className="text-sm font-bold text-ink">
+                  {myPendingTags.length === 1
+                    ? t("1 ετικέτα περιμένει την έγκρισή σου", "1 tag is waiting for your approval")
+                    : t(`${myPendingTags.length} ετικέτες περιμένουν την έγκρισή σου`, `${myPendingTags.length} tags are waiting for your approval`)}
+                </h3>
+                <p className="text-xs font-medium text-ink">
+                  {t("Εμφανίζονται στο προφίλ σου μόνο αφού τις εγκρίνεις (Έλεγχος ετικετών).", "They show on your profile only after you approve them (Tag review).")}
+                </p>
+                <WallPostList posts={myPendingTags} />
+              </section>
+            )}
             <PostComposer />
             {myWallPosts.length === 0 ? (
               <p className="rounded-2xl border border-dashed border-border px-4 py-6 text-center text-sm font-medium text-ink-muted">

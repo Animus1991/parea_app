@@ -4,6 +4,7 @@ import { AlertCircle, ShieldAlert, Flag, Search, TrendingUp, Activity, Users as 
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { format, parseISO, startOfWeek } from 'date-fns';
 import { TabBar } from '../common/TabBar';
+import { AdminWallModeration } from './AdminWallModeration';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import type { AdminSafeguards } from '../../store';
 import { Button } from '../common/Button';
@@ -447,6 +448,7 @@ export default function AdminDashboardPageContent() {
 
       {adminTab === 'moderation' && (
       <>
+      <AdminWallModeration />
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
         <div className="md:col-span-7 space-y-4">
           <h2 className={cn('card-heading-lg font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>

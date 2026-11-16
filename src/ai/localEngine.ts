@@ -109,13 +109,20 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
   }
 
   /* 1b1 ─ wall: post («δημοσίευσε στον τοίχο μου μόνο για φίλους «…»») / limit past posts */
+  if (
+    hasAny(p, ['τι κανουν οι φιλοι', 'τι κανουν οι nakamas', 'τι νεα στον τοιχο', 'τι γραφουν οι', 'what are my friends', 'what are my nakamas', 'whats on the wall', 'what s on the wall', 'summarize the wall', 'συνοψη τοιχου'])
+  ) {
+    return { calls: [call('summarize_wall')] };
+  }
   if (hasAny(p, ['περιορισε τισ παλιεσ', 'περιορισε τισ παλαιοτερεσ', 'περιορισμοσ παλαιοτερ', 'limit past posts', 'limit old posts', 'limit my old posts'])) {
     return { calls: [call('limit_past_posts')] };
   }
   const wallWords = hasAny(p, ['τοιχο', ' wall', 'ποσταρε', ' post this', ' post that']);
   // «δημοσίευσε εκδήλωση …» stays with event creation (rule 6).
   const eventish = hasAny(p, ['εκδηλωσ', 'event', 'meetup', 'συναντησ']);
-  if (wallWords || (hasAny(p, ['δημοσιευσε']) && !eventish)) {
+  // «κλείσε τις ειδοποιήσεις τοίχου» belongs to notification preferences (rule 16).
+  const aboutNotifications = hasAny(p, ['ειδοποιησ', 'notification']);
+  if (!aboutNotifications && (wallWords || (hasAny(p, ['δημοσιευσε']) && !eventish))) {
     const text = extractQuotedOrTail(raw);
     const audience = hasAny(p, ['μονο εγω', 'μονο για μενα', 'only me', 'just me'])
       ? 'only_me'
@@ -359,6 +366,7 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
       if (hasAny(p, ['υπενθυμ', 'reminder'])) prefs.reminders = v;
       if (hasAny(p, ['ταιριασ', 'match'])) prefs.matches = v;
       if (hasAny(p, ['μηνυματ', 'message', 'chat'])) prefs.messages = v;
+      if (hasAny(p, ['τοιχο', 'wall', 'σχολι', 'comment', 'ετικετ', 'tag', 'αντιδρασ', 'reaction'])) prefs.social = v;
       if (Object.keys(prefs).length > 0) return { calls: [call('update_notification_prefs', prefs)] };
     }
     if (hasAny(p, ['αναγνωσμεν', 'διαβασμεν', 'διαβασα', ' read', 'καθαρισ', 'clear'])) return { calls: [call('mark_notifications_read')] };

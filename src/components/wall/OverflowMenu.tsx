@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { MoreHorizontal, type LucideIcon } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -10,31 +10,65 @@ export interface OverflowMenuItem {
   danger?: boolean;
 }
 
-/** Accessible «⋯» menu (Escape / outside click close it). Shared by posts and profiles. */
+/**
+ * Accessible «⋯» menu (WAI-ARIA menu button): focus moves into the menu,
+ * ↑/↓/Home/End move between items, Escape or Tab closes it and focus
+ * returns to the button. Shared by posts and profiles.
+ */
 export function OverflowMenu({ items, label }: { items: OverflowMenuItem[]; label: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
   useEffect(() => {
     if (!open) return;
+    itemRefs.current[0]?.focus();
     const onDown = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
     document.addEventListener('mousedown', onDown);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onDown);
-      document.removeEventListener('keydown', onKey);
-    };
+    return () => document.removeEventListener('mousedown', onDown);
   }, [open]);
+
   if (items.length === 0) return null;
+  itemRefs.current.length = items.length;
+
+  const close = (refocus = true) => {
+    setOpen(false);
+    if (refocus) triggerRef.current?.focus();
+  };
+
+  const onMenuKey = (e: KeyboardEvent<HTMLDivElement>) => {
+    const list = itemRefs.current.filter(Boolean) as HTMLButtonElement[];
+    const i = list.indexOf(document.activeElement as HTMLButtonElement);
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      close();
+    } else if (e.key === 'Tab') {
+      close(false);
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const next = e.key === 'ArrowDown' ? (i + 1) % list.length : (i - 1 + list.length) % list.length;
+      list[next]?.focus();
+    } else if (e.key === 'Home' || e.key === 'End') {
+      e.preventDefault();
+      list[e.key === 'Home' ? 0 : list.length - 1]?.focus();
+    }
+  };
+
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowDown' && !open) {
+            e.preventDefault();
+            setOpen(true);
+          }
+        }}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={label}
@@ -43,18 +77,28 @@ export function OverflowMenu({ items, label }: { items: OverflowMenuItem[]; labe
         <MoreHorizontal className="h-5 w-5" aria-hidden />
       </button>
       {open && (
-        <div role="menu" className="absolute right-0 top-full z-fab mt-1 w-60 rounded-xl border border-border bg-surface-raised py-1 shadow-soft-lg">
-          {items.map((it) => (
+        <div
+          role="menu"
+          aria-label={label}
+          tabIndex={-1}
+          onKeyDown={onMenuKey}
+          className="absolute right-0 top-full z-fab mt-1 w-60 rounded-xl border border-border bg-surface-raised py-1 shadow-soft-lg"
+        >
+          {items.map((it, idx) => (
             <button
               key={it.key}
+              ref={(el) => {
+                itemRefs.current[idx] = el;
+              }}
               type="button"
               role="menuitem"
+              tabIndex={-1}
               onClick={() => {
-                setOpen(false);
+                close();
                 it.onSelect();
               }}
               className={cn(
-                'flex min-h-10 w-full items-center gap-2 px-3 text-left text-sm font-medium hover:bg-surface',
+                'flex min-h-10 w-full items-center gap-2 px-3 text-left text-sm font-medium hover:bg-surface focus-visible:bg-surface focus-visible:outline-none',
                 it.danger ? 'text-red-600 dark:text-red-400' : 'text-ink',
               )}
             >

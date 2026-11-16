@@ -1119,6 +1119,53 @@ const limitPastPostsAction: CopilotAction = {
   },
 };
 
+const summarizeWallAction: CopilotAction = {
+  name: 'summarize_wall',
+  description: "Summarise what the user's Nakamas are posting (latest posts visible to the user) and their unread wall activity.",
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: async () => {
+    const s = state();
+    const me = s.currentUser;
+    if (!me) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const w = (await loadWallStore()).getState();
+    const ctx = {
+      graph: { users: s.users, lists: w.lists, viewerBlockedIds: s.blockedUserIds, suspendedUserIds: s.suspendedUserIds },
+      privacyByUser: w.privacyByUser,
+    };
+    const hidden = w.hiddenPostIds[me.id] ?? [];
+    const latest = visiblePosts(me.id, w.posts, ctx, { hiddenIds: hidden }).filter((p) => p.authorId !== me.id).slice(0, 4);
+    const unread = w.activity.filter((a) => a.recipientId === me.id && !a.read && !s.blockedUserIds.includes(a.actorId)).length;
+    if (latest.length === 0 && unread === 0) {
+      return {
+        ok: true,
+        el: 'Ησυχία στον τοίχο — κανένα νέο από τους Nakamas σου. Θες να γράψεις τι σχεδιάζεις;',
+        en: 'Quiet on the wall — nothing new from your Nakamas. Want to share what you are planning?',
+        link: { path: '/wall', el: 'Τοίχος', en: 'Wall' },
+      };
+    }
+    const nameOf = (id: string) => s.users.find((u) => u.id === id)?.name ?? id;
+    const line = (p: (typeof latest)[number], lang: 'el' | 'en') => {
+      const ev = p.eventId ? s.events.find((e) => e.id === p.eventId) : undefined;
+      const text = p.text.length > 90 ? `${p.text.slice(0, 90)}…` : p.text;
+      return `• ${nameOf(p.authorId)}: ${text}${ev ? (lang === 'el' ? ` (εκδήλωση: ${ev.title})` : ` (event: ${ev.title})`) : ''}`;
+    };
+    const head = (lang: 'el' | 'en') =>
+      unread > 0
+        ? lang === 'el'
+          ? `Έχεις ${unread} νέα στη δραστηριότητα του τοίχου.`
+          : `You have ${unread} new in your wall activity.`
+        : '';
+    return {
+      ok: true,
+      el: [head('el'), latest.length ? `Τελευταία από τους Nakamas σου:\n${latest.map((p) => line(p, 'el')).join('\n')}` : ''].filter(Boolean).join('\n'),
+      en: [head('en'), latest.length ? `Latest from your Nakamas:\n${latest.map((p) => line(p, 'en')).join('\n')}` : ''].filter(Boolean).join('\n'),
+      link: { path: '/wall', el: 'Τοίχος', en: 'Wall' },
+      data: { posts: latest.map((p) => ({ id: p.id, author: nameOf(p.authorId), text: p.text.slice(0, 140), eventId: p.eventId })), unread },
+    };
+  },
+};
+
 const notifPrefsAction: CopilotAction = {
   name: 'update_notification_prefs',
   description: 'Turn notification categories on or off.',
@@ -1128,19 +1175,21 @@ const notifPrefsAction: CopilotAction = {
     messages: B('Chat messages.'),
     reminders: B('Event reminders.'),
     promos: B('Promotions & news.'),
+    social: B('Wall activity: comments, reactions, posts on my wall, tags.'),
   }),
   run: (args) => {
     const s = state();
-    const prev = { ...(s.userSettings?.notificationPrefs ?? DEFAULT_USER_SETTINGS.notificationPrefs) };
+    const prev = { ...DEFAULT_USER_SETTINGS.notificationPrefs, ...(s.userSettings?.notificationPrefs ?? {}) };
     const next = { ...prev };
     const labels: Record<string, [string, string]> = {
       matches: ['ταιριάσματα', 'matches'],
       messages: ['μηνύματα', 'messages'],
       reminders: ['υπενθυμίσεις', 'reminders'],
       promos: ['προωθητικά', 'promotions'],
+      social: ['δραστηριότητα τοίχου', 'wall activity'],
     };
     const changed: string[] = [];
-    for (const k of ['matches', 'messages', 'reminders', 'promos'] as const) {
+    for (const k of ['matches', 'messages', 'reminders', 'promos', 'social'] as const) {
       const v = bool(args[k]);
       if (v !== undefined && v !== next[k]) {
         next[k] = v;
@@ -1729,9 +1778,9 @@ const capabilitiesAction: CopilotAction = {
   run: () => ({
     ok: true,
     el:
-      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα, τις ειδοποιήσεις, το πορτοφόλι και την αξιοπιστία σου\n• Να εξάγω όλο το ημερολόγιο σε .ics και να ανοίξω εκκρεμή αξιολόγηση\n• Να ξεκινήσω επαλήθευση και να σου πω τι νέο υπάρχει (και κενά εμπιστοσύνης)\n• Να δείξω σχέδια που σχηματίζονται και να απαντήσω σε αιτήματα παρέας\n• Να απαντήσω «πού …;» με where_is και να προτείνω πρόχειρα φόρμας (εκδήλωση/προφίλ)\n• Να μπω σε προκλήσεις, να στείλω μήνυμα ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να δημοσιεύσω στον τοίχο σου με το κοινό που επιλέγεις ή να περιορίσω παλαιότερες δημοσιεύσεις\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\nΌ,τι κάνω αναιρείται με ένα κλικ.',
+      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα, τις ειδοποιήσεις, το πορτοφόλι και την αξιοπιστία σου\n• Να εξάγω όλο το ημερολόγιο σε .ics και να ανοίξω εκκρεμή αξιολόγηση\n• Να ξεκινήσω επαλήθευση και να σου πω τι νέο υπάρχει (και κενά εμπιστοσύνης)\n• Να δείξω σχέδια που σχηματίζονται και να απαντήσω σε αιτήματα παρέας\n• Να απαντήσω «πού …;» με where_is και να προτείνω πρόχειρα φόρμας (εκδήλωση/προφίλ)\n• Να μπω σε προκλήσεις, να στείλω μήνυμα ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να δημοσιεύσω στον τοίχο σου με το κοινό που επιλέγεις, να σου πω τι γράφουν οι Nakamas σου ή να περιορίσω παλαιότερες δημοσιεύσεις\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\nΌ,τι κάνω αναιρείται με ένα κλικ.',
     en:
-      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule, notifications, wallet and trust\n• Export the whole calendar as .ics and open a pending review\n• Start verification and catch you up on what’s new (including trust gaps)\n• List plans forming and respond to company join requests\n• Answer “where do I …?” and propose form drafts (event/profile)\n• Join challenges, message your group or create an event (with confirmation)\n• Post on your wall with the audience you choose, or limit past posts\n• Change theme, language, privacy, notifications, interests\nEverything I do can be undone in one click.',
+      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule, notifications, wallet and trust\n• Export the whole calendar as .ics and open a pending review\n• Start verification and catch you up on what’s new (including trust gaps)\n• List plans forming and respond to company join requests\n• Answer “where do I …?” and propose form drafts (event/profile)\n• Join challenges, message your group or create an event (with confirmation)\n• Post on your wall with the audience you choose, catch you up on your Nakamas’ posts, or limit past posts\n• Change theme, language, privacy, notifications, interests\nEverything I do can be undone in one click.',
   }),
 };
 
@@ -1800,6 +1849,7 @@ export const COPILOT_ACTIONS: CopilotAction[] = [
   privacyAction,
   postToWallAction,
   limitPastPostsAction,
+  summarizeWallAction,
   notifPrefsAction,
   sidebarAction,
   markReadAction,

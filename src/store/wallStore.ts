@@ -14,12 +14,15 @@ import type {
   Audience,
   AudienceList,
   ReactionKind,
+  WallActivity,
+  WallActivityKind,
   WallComment,
   WallPost,
   WallPrivacySettings,
 } from '../types/wall';
-import { AUDIENCE_BASES_FOR, DEFAULT_WALL_PRIVACY, REACTION_KINDS } from '../types/wall';
-import { mockAudienceLists, mockWallPosts, mockWallPrivacy } from '../data/mockWall';
+import { AUDIENCE_BASES_FOR, DEFAULT_WALL_PRIVACY, MAX_TAGS, REACTION_KINDS } from '../types/wall';
+import { mockAudienceLists, mockWallActivity, mockWallPosts, mockWallPrivacy } from '../data/mockWall';
+import { isPlatformAdmin } from '../lib/roles';
 import {
   AUDIENCE_RANK,
   canCommentOnPost,
@@ -51,6 +54,8 @@ interface WallState {
   hiddenPostIds: Record<string, string[]>;
   /** viewerId → ISO time the feed was last opened (for «νέες δημοσιεύσεις»). */
   feedSeenAt: Record<string, string>;
+  /** Everyone's wall activity (each entry has a recipient); newest first, capped. */
+  activity: WallActivity[];
 
   createPost: (input: {
     wallOwnerId?: string;
@@ -58,8 +63,21 @@ interface WallState {
     imageUrl?: string;
     eventId?: string;
     audience?: Audience;
+    taggedIds?: string[];
   }) => WallResult;
-  updatePost: (postId: string, patch: { text?: string; audience?: Audience; commentsDisabled?: boolean }) => WallResult;
+  updatePost: (
+    postId: string,
+    patch: { text?: string; audience?: Audience; commentsDisabled?: boolean; taggedIds?: string[] },
+  ) => WallResult;
+  /** The viewer removes their own tag from a post. */
+  removeMyTag: (postId: string) => WallResult;
+  /** The viewer lets a post they are tagged in appear on their profile. */
+  approveTag: (postId: string) => WallResult;
+  markActivityRead: (ids?: string[]) => void;
+  /** Report a post to the safety team (also hides it for the reporter). */
+  reportPost: (postId: string, reason: string) => WallResult;
+  /** Admins only: remove a post (author keeps seeing it with a notice) or restore it. */
+  moderatePost: (postId: string, action: 'remove' | 'restore', reasonEl?: string, reasonEn?: string) => WallResult;
   deletePost: (postId: string) => WallPost | null;
   restorePost: (post: WallPost) => void;
   togglePin: (postId: string) => WallResult;
@@ -133,6 +151,42 @@ function cleanMembers(ownerId: string, ids: string[], g: SocialGraph): string[] 
   return [...new Set(ids)].filter((id) => id !== ownerId && conns.has(id));
 }
 
+/** Tags are a de-duplicated subset of the author's connections. */
+function cleanTags(authorId: string, ids: string[] | undefined, g: SocialGraph): string[] {
+  return cleanMembers(authorId, ids ?? [], g).slice(0, MAX_TAGS);
+}
+
+const ACTIVITY_CAP = 300;
+
+function makeActivity(
+  kind: WallActivityKind,
+  recipientId: string,
+  actorId: string,
+  postId: string,
+  extra: Partial<Pick<WallActivity, 'reaction' | 'excerpt'>> = {},
+): WallActivity {
+  return {
+    id: newId('wa'),
+    recipientId,
+    actorId,
+    kind,
+    postId,
+    createdAt: new Date().toISOString(),
+    read: false,
+    ...extra,
+  };
+}
+
+/** New activity first; one reaction entry per (actor, post); capped. */
+function pushActivity(list: WallActivity[], items: WallActivity[]): WallActivity[] {
+  if (items.length === 0) return list;
+  const replacedReactions = new Set(items.filter((a) => a.kind === 'reaction').map((a) => `${a.actorId}|${a.postId}|${a.recipientId}`));
+  const rest = list.filter((a) => !(a.kind === 'reaction' && replacedReactions.has(`${a.actorId}|${a.postId}|${a.recipientId}`)));
+  return [...items, ...rest].slice(0, ACTIVITY_CAP);
+}
+
+const excerptOf = (text: string) => (text.length > 80 ? `${text.slice(0, 80).trimEnd()}…` : text);
+
 /** Specific / list audiences must point at things the owner actually has. */
 function sanitizeAudience(ownerId: string, a: Audience | undefined, lists: AudienceList[], allowed = AUDIENCE_BASES_FOR.post): Audience {
   const norm = normalizeAudience(a, allowed);
@@ -184,6 +238,7 @@ export const useWallStore = create<WallState>()(
       privacyByUser: mockWallPrivacy,
       hiddenPostIds: {},
       feedSeenAt: {},
+      activity: mockWallActivity,
 
       createPost: (input) => {
         const me = viewerId();
@@ -217,6 +272,7 @@ export const useWallStore = create<WallState>()(
             ? sanitizeAudience(me, input.audience ?? wallPrivacyOf(get().privacyByUser, me).defaultAudience, get().lists)
             : // Others' posts follow the wall owner's setting; store a display snapshot.
               wallPrivacyOf(get().privacyByUser, ownerId).othersPostsAudience;
+        const taggedIds = cleanTags(me, input.taggedIds, ctx.graph);
         const post: WallPost = {
           id: newId('wp'),
           authorId: me,
@@ -224,12 +280,17 @@ export const useWallStore = create<WallState>()(
           text,
           ...(input.imageUrl ? { imageUrl: input.imageUrl } : {}),
           ...(input.eventId ? { eventId: input.eventId } : {}),
+          ...(taggedIds.length ? { taggedIds } : {}),
           audience,
           createdAt: new Date(now).toISOString(),
           reactions: {},
           comments: [],
         };
-        set((s) => ({ posts: [post, ...s.posts] }));
+        const notes = [
+          ...(ownerId !== me ? [makeActivity('wall_post', ownerId, me, post.id, { excerpt: excerptOf(text) })] : []),
+          ...taggedIds.filter((id) => id !== ownerId).map((id) => makeActivity('tag', id, me, post.id, { excerpt: excerptOf(text) })),
+        ];
+        set((s) => ({ posts: [post, ...s.posts], activity: pushActivity(s.activity, notes) }));
         return { ok: true, id: post.id };
       },
 
@@ -262,7 +323,16 @@ export const useWallStore = create<WallState>()(
           next.audience = sanitizeAudience(me, patch.audience, get().lists);
         }
         if (patch.commentsDisabled !== undefined) next.commentsDisabled = patch.commentsDisabled;
-        set((s) => ({ posts: s.posts.map((p) => (p.id === postId ? next : p)) }));
+        let notes: WallActivity[] = [];
+        if (patch.taggedIds !== undefined) {
+          if (!isAuthor) return fail('Μόνο ο συντάκτης αλλάζει τις ετικέτες.', 'Only the author changes tags.');
+          const tags = cleanTags(me, patch.taggedIds, buildSocialGraph());
+          const before = new Set(post.taggedIds ?? []);
+          next.taggedIds = tags;
+          next.tagApprovedIds = (post.tagApprovedIds ?? []).filter((id) => tags.includes(id));
+          notes = tags.filter((id) => !before.has(id)).map((id) => makeActivity('tag', id, me, postId, { excerpt: excerptOf(next.text) }));
+        }
+        set((s) => ({ posts: s.posts.map((p) => (p.id === postId ? next : p)), activity: pushActivity(s.activity, notes) }));
         return { ok: true, id: postId };
       },
 
@@ -299,6 +369,7 @@ export const useWallStore = create<WallState>()(
         if (!me || !post) return fail('Η δημοσίευση δεν βρέθηκε.', 'Post not found.');
         if (!canViewPost(me, post, wallAccessContext())) return fail('Δεν είναι διαθέσιμο.', 'Not available.');
         if (kind !== null && !REACTION_KINDS.includes(kind)) return fail('Άγνωστη αντίδραση.', 'Unknown reaction.');
+        const adding = kind !== null && post.reactions[me] !== kind;
         set((s) => ({
           posts: s.posts.map((p) => {
             if (p.id !== postId) return p;
@@ -307,6 +378,11 @@ export const useWallStore = create<WallState>()(
             else reactions[me] = kind;
             return { ...p, reactions };
           }),
+          activity:
+            adding && post.authorId !== me
+              ? pushActivity(s.activity, [makeActivity('reaction', post.authorId, me, postId, { reaction: kind })])
+              : // Taking a reaction back also takes back its notification.
+                s.activity.filter((a) => !(a.kind === 'reaction' && a.actorId === me && a.postId === postId)),
         }));
         return { ok: true, id: postId };
       },
@@ -321,8 +397,13 @@ export const useWallStore = create<WallState>()(
         const gate = canCommentOnPost(me, post, wallAccessContext());
         if (!gate.allowed) return fail(gate.reasonEl, gate.reasonEn);
         const comment: WallComment = { id: newId('wc'), authorId: me, text, createdAt: new Date().toISOString() };
+        const recipients = [...new Set([post.authorId, post.wallOwnerId])].filter((id) => id !== me);
         set((s) => ({
           posts: s.posts.map((p) => (p.id === postId ? { ...p, comments: [...p.comments, comment] } : p)),
+          activity: pushActivity(
+            s.activity,
+            recipients.map((r) => makeActivity('comment', r, me, postId, { excerpt: excerptOf(text) })),
+          ),
         }));
         return { ok: true, id: comment.id };
       },
@@ -347,6 +428,90 @@ export const useWallStore = create<WallState>()(
               : p,
           ),
         })),
+
+      removeMyTag: (postId) => {
+        const me = viewerId();
+        const post = get().posts.find((p) => p.id === postId);
+        if (!me || !post || !(post.taggedIds ?? []).includes(me)) return fail('Δεν υπάρχει ετικέτα σου εδώ.', 'You are not tagged here.');
+        set((s) => ({
+          posts: s.posts.map((p) =>
+            p.id === postId
+              ? { ...p, taggedIds: (p.taggedIds ?? []).filter((id) => id !== me), tagApprovedIds: (p.tagApprovedIds ?? []).filter((id) => id !== me) }
+              : p,
+          ),
+          activity: s.activity.filter((a) => !(a.kind === 'tag' && a.recipientId === me && a.postId === postId)),
+        }));
+        return { ok: true, id: postId };
+      },
+
+      approveTag: (postId) => {
+        const me = viewerId();
+        const post = get().posts.find((p) => p.id === postId);
+        if (!me || !post || !(post.taggedIds ?? []).includes(me)) return fail('Δεν υπάρχει ετικέτα σου εδώ.', 'You are not tagged here.');
+        set((s) => ({
+          posts: s.posts.map((p) =>
+            p.id === postId && !(p.tagApprovedIds ?? []).includes(me) ? { ...p, tagApprovedIds: [...(p.tagApprovedIds ?? []), me] } : p,
+          ),
+          activity: s.activity.map((a) => (a.kind === 'tag' && a.recipientId === me && a.postId === postId ? { ...a, read: true } : a)),
+        }));
+        return { ok: true, id: postId };
+      },
+
+      markActivityRead: (ids) => {
+        const me = viewerId();
+        if (!me) return;
+        const only = ids ? new Set(ids) : null;
+        set((s) => ({
+          activity: s.activity.map((a) => (a.recipientId === me && !a.read && (!only || only.has(a.id)) ? { ...a, read: true } : a)),
+        }));
+      },
+
+      reportPost: (postId, reason) => {
+        const me = viewerId();
+        const post = get().posts.find((p) => p.id === postId);
+        if (!me || !post) return fail('Η δημοσίευση δεν βρέθηκε.', 'Post not found.');
+        if (post.authorId === me) return fail('Δεν αναφέρεις δική σου δημοσίευση.', 'You cannot report your own post.');
+        const reportId = useStore.getState().submitIssueReport({
+          category: 'user_behavior',
+          severity: 'medium',
+          description: `${reason.trim().slice(0, 200) || 'Wall post'} — «${post.text.slice(0, 200)}»`,
+          evidenceNames: [],
+          targetType: 'wall_post',
+          targetId: post.id,
+          targetUserId: post.authorId,
+        });
+        get().hidePost(postId);
+        return { ok: true, id: reportId };
+      },
+
+      moderatePost: (postId, action, reasonEl, reasonEn) => {
+        const main = useStore.getState();
+        const me = main.currentUser;
+        const post = get().posts.find((p) => p.id === postId);
+        if (!me || !post) return fail('Η δημοσίευση δεν βρέθηκε.', 'Post not found.');
+        if (!isPlatformAdmin(me)) return fail('Μόνο για τη συντονιστική ομάδα.', 'Moderators only.');
+        if (action === 'remove') {
+          const moderation = {
+            status: 'removed' as const,
+            at: new Date().toISOString(),
+            reasonEl: reasonEl?.trim() || 'Παραβιάζει τους κανόνες κοινότητας',
+            reasonEn: reasonEn?.trim() || 'Breaks the community rules',
+          };
+          set((s) => ({
+            posts: s.posts.map((p) => (p.id === postId ? { ...p, moderation, pinned: false } : p)),
+            activity: pushActivity(s.activity, [makeActivity('moderation', post.authorId, me.id, postId, { excerpt: excerptOf(post.text) })]),
+          }));
+        } else {
+          set((s) => ({ posts: s.posts.map((p) => (p.id === postId ? { ...p, moderation: undefined } : p)) }));
+        }
+        main.logAdminAction(action === 'remove' ? 'wall_post_removed' : 'wall_post_restored', postId);
+        for (const r of main.issueReports) {
+          if (r.targetType === 'wall_post' && r.targetId === postId && (r.status === 'open' || r.status === 'reviewing')) {
+            main.resolveIssueReport(r.id, action === 'remove' ? 'resolved' : 'dismissed');
+          }
+        }
+        return { ok: true, id: postId };
+      },
 
       hidePost: (postId) => {
         const me = viewerId();
@@ -467,6 +632,7 @@ export const useWallStore = create<WallState>()(
               ? normalizeAudience(patch.whoCanComment, AUDIENCE_BASES_FOR.whoCanComment)
               : cur.whoCanComment,
             sections: { ...cur.sections },
+            reviewTags: typeof patch.reviewTags === 'boolean' ? patch.reviewTags : cur.reviewTags,
           };
           for (const [k, v] of Object.entries(patch.sections ?? {})) {
             if (v) next.sections[k as keyof WallPrivacySettings['sections']] = sanitizeAudience(me, v, lists);
@@ -490,6 +656,7 @@ export const useWallStore = create<WallState>()(
         privacyByUser: s.privacyByUser,
         hiddenPostIds: s.hiddenPostIds,
         feedSeenAt: s.feedSeenAt,
+        activity: s.activity,
       }),
       merge: (persisted, current) => {
         const p = persisted as Partial<WallState> | undefined;
@@ -508,6 +675,7 @@ export const useWallStore = create<WallState>()(
           privacyByUser,
           hiddenPostIds: (p.hiddenPostIds as Record<string, string[]>) ?? {},
           feedSeenAt: (p.feedSeenAt as Record<string, string>) ?? {},
+          activity: Array.isArray(p.activity) ? (p.activity as WallActivity[]) : current.activity,
         };
       },
     },
@@ -515,3 +683,20 @@ export const useWallStore = create<WallState>()(
 );
 
 export { DEFAULT_WALL_PRIVACY };
+
+/** Seed wall content, used on first load and when demo mode is exited. */
+export function wallSeedState() {
+  return {
+    posts: mockWallPosts.map((p) => ({ ...p, reactions: { ...p.reactions }, comments: [...p.comments] })),
+    lists: mockAudienceLists.map((l) => ({ ...l, memberIds: [...l.memberIds] })),
+    privacyByUser: { ...mockWallPrivacy },
+    hiddenPostIds: {} as Record<string, string[]>,
+    feedSeenAt: {} as Record<string, string>,
+    activity: mockWallActivity.map((a) => ({ ...a })),
+  };
+}
+
+/* Demo exit («Έξοδος»): the demo wall returns to its original state. */
+if (typeof window !== 'undefined') {
+  window.addEventListener('nakamas:demo-reset', () => useWallStore.setState(wallSeedState()));
+}

@@ -169,6 +169,7 @@ export function wallPrivacyOf(
     ...DEFAULT_WALL_PRIVACY,
     ...saved,
     sections: { ...DEFAULT_WALL_PRIVACY.sections, ...(saved.sections ?? {}) },
+    reviewTags: typeof saved.reviewTags === 'boolean' ? saved.reviewTags : DEFAULT_WALL_PRIVACY.reviewTags,
   };
 }
 
@@ -188,11 +189,13 @@ export function canViewPost(viewerId: string | null | undefined, post: WallPost,
   if (!viewerId) return false;
   const g = ctx.graph;
   if (viewerId === post.authorId) return true;
+  const viewerIsAdmin = Boolean(userById(g, viewerId)?.isAdmin);
+  // Removed by a moderator: only the author (above) and admins.
+  if (post.moderation?.status === 'removed') return viewerIsAdmin;
   if (graphBlocked(g, viewerId, post.authorId, viewerId)) return false;
-  if ((g.suspendedUserIds ?? []).includes(post.authorId)) {
-    const viewer = userById(g, viewerId);
-    if (!viewer?.isAdmin) return false;
-  }
+  if ((g.suspendedUserIds ?? []).includes(post.authorId) && !viewerIsAdmin) return false;
+  // Tagged people always see what they are tagged in (and can remove the tag).
+  if ((post.taggedIds ?? []).includes(viewerId)) return true;
   if (post.wallOwnerId !== post.authorId) {
     if (viewerId === post.wallOwnerId) return true;
     if (graphBlocked(g, viewerId, post.wallOwnerId, viewerId)) return false;
@@ -287,6 +290,39 @@ export function visiblePosts(
     if (opts.pinnedFirst && Boolean(a.pinned) !== Boolean(b.pinned)) return a.pinned ? -1 : 1;
     return b.createdAt.localeCompare(a.createdAt);
   });
+}
+
+/** Is `userId` tagged in the post, and has the tag cleared their review setting? */
+export function tagShownOnProfile(post: WallPost, userId: string, byUser: Record<string, WallPrivacySettings | undefined>): boolean {
+  if (!(post.taggedIds ?? []).includes(userId)) return false;
+  return !wallPrivacyOf(byUser, userId).reviewTags || (post.tagApprovedIds ?? []).includes(userId);
+}
+
+/**
+ * What a profile's «Τοίχος» shows to `viewerId`: posts on that wall plus posts
+ * the owner is tagged in (after their tag review), each still filtered by
+ * the post's own audience. Pinned first, newest first.
+ */
+export function profileWallPosts(viewerId: string | null | undefined, ownerId: string, posts: WallPost[], ctx: WallAccessContext): WallPost[] {
+  const mine = posts.filter((p) => p.wallOwnerId === ownerId || tagShownOnProfile(p, ownerId, ctx.privacyByUser));
+  return visiblePosts(viewerId, mine, ctx).sort((a, b) => {
+    const ap = a.pinned && a.wallOwnerId === ownerId;
+    const bp = b.pinned && b.wallOwnerId === ownerId;
+    if (ap !== bp) return ap ? -1 : 1;
+    return b.createdAt.localeCompare(a.createdAt);
+  });
+}
+
+/** Tags waiting for `userId`'s approval (only when they review tags). */
+export function pendingTagReviews(userId: string, posts: WallPost[], ctx: WallAccessContext): WallPost[] {
+  if (!wallPrivacyOf(ctx.privacyByUser, userId).reviewTags) return [];
+  return posts.filter(
+    (p) =>
+      (p.taggedIds ?? []).includes(userId) &&
+      !(p.tagApprovedIds ?? []).includes(userId) &&
+      p.wallOwnerId !== userId &&
+      canViewPost(userId, p, ctx),
+  );
 }
 
 /** Comments the viewer may see (blocked people's comments disappear both ways). */

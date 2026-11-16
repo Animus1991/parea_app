@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { enterDemoGuest } from './a11y-helpers';
+import { enterDemoAdmin, enterDemoGuest } from './a11y-helpers';
 
 /**
  * Φ26 — Wall & audiences: what people see is what the audience allows,
@@ -60,5 +60,43 @@ test.describe('Nakamas wall', () => {
     await post.getByRole('textbox').fill('Τέλειο, έρχομαι!');
     await post.getByRole('button', { name: /Αποστολή σχολίου|Send comment/ }).click();
     await expect(post.getByText('Τέλειο, έρχομαι!')).toBeVisible();
+  });
+});
+
+test.describe('Nakamas wall v2', () => {
+  test('a tag is approved from Activity and then shows on the profile', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/wall');
+    const activity = page.getByRole('region', { name: /Δραστηριότητα|Activity/ });
+    await activity.getByRole('button', { name: /Εμφάνιση στο προφίλ μου|Show on my profile/ }).click();
+    await page.goto('/u/u1?viewAs=u2');
+    await expect(page.locator('[data-post-id="wp10"]')).toBeVisible();
+  });
+
+  test('shares an event to the wall from the event page', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/events/e7');
+    await page.getByRole('button', { name: /Κοινοποίηση|Share Event/ }).first().click();
+    await page.getByRole('menuitem', { name: /Στον τοίχο μου|On my wall/ }).click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByRole('textbox')).toHaveValue(/Πάω σε αυτό|I am going/);
+    await dialog.getByRole('button', { name: /^Δημοσίευση$|^Post$/ }).click();
+    await page.goto('/wall');
+    const mine = page.getByTestId('wall-post').filter({ hasText: /Πάω σε αυτό|I am going/ }).first();
+    await expect(mine).toContainText('Stand-Up Comedy Night');
+  });
+
+  test('a reported post is removed by a moderator and hidden from others', async ({ page }) => {
+    await enterDemoAdmin(page);
+    await page.goto('/wall');
+    const post = page.locator('[data-post-id="wp2"]');
+    await post.getByRole('button', { name: /Ενέργειες δημοσίευσης|Post actions/ }).click();
+    await page.getByRole('menuitem', { name: /Αναφορά δημοσίευσης|Report post/ }).click();
+    await page.getByRole('dialog').getByRole('button', { name: /Αποστολή αναφοράς|Send report/ }).click();
+    await page.goto('/admin');
+    await page.getByRole('tab', { name: /Μετριασμός|Moderation/ }).click();
+    const section = page.getByRole('region', { name: /Δημοσιεύσεις τοίχου|Wall posts/ });
+    await section.getByRole('button', { name: /Αφαίρεση δημοσίευσης|Remove post/ }).click();
+    await expect(section.getByRole('button', { name: /Επαναφορά|Restore/ })).toBeVisible();
   });
 });

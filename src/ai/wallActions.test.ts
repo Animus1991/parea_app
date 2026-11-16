@@ -53,3 +53,31 @@ describe('wall in the copilot', () => {
     expect(useWallStore.getState().posts[0].audience.base).toBe('public');
   });
 });
+
+describe('wall v2 in the copilot', () => {
+  beforeEach(() => {
+    useStore.getState().login('u1');
+    useWallStore.setState({ posts: mockWallPosts.map((p) => ({ ...p })) });
+  });
+
+  it('routes «τι κάνουν οι φίλοι μου;» to the wall summary', () => {
+    expect(planLocal('Τι κάνουν οι φίλοι μου;', ctx).calls[0].name).toBe('summarize_wall');
+    expect(planLocal("what are my friends up to?", ctx).calls[0].name).toBe('summarize_wall');
+  });
+
+  it('keeps «κλείσε τις ειδοποιήσεις τοίχου» with notification preferences', () => {
+    expect(planLocal('κλείσε τις ειδοποιήσεις για τον τοίχο', ctx).calls[0]).toMatchObject({
+      name: 'update_notification_prefs',
+      args: { social: false },
+    });
+  });
+
+  it('summarises only posts the user may see', async () => {
+    const res = await getAction('summarize_wall')!.run({}, rt);
+    expect(res.ok).toBe(true);
+    const ids = (res.data?.posts as { id: string }[]).map((p) => p.id);
+    expect(ids).not.toContain('wp6');
+    expect(ids).not.toContain('wp7');
+    expect(ids.length).toBeGreaterThan(0);
+  });
+});

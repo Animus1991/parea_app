@@ -3,6 +3,12 @@ import { Link } from 'react-router-dom';
 import {
   Ban,
   CalendarDays,
+  Check,
+  ShieldAlert,
+  ShieldCheck,
+  Tag,
+  UserMinus,
+  UsersRound,
   ChevronRight,
   EyeOff,
   Flag,
@@ -24,7 +30,9 @@ import { Modal } from '../common/Modal';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { COMMENT_MAX_CHARS, POST_MAX_CHARS, useWallAccess, useWallStore } from '../../store/wallStore';
-import { canCommentOnPost, visibleComments } from '../../lib/audience';
+import { canCommentOnPost, tagShownOnProfile, visibleComments } from '../../lib/audience';
+import { isPlatformAdmin } from '../../lib/roles';
+import { RichText } from './RichText';
 import { profilePathFor } from '../../lib/profileLinks';
 import type { ReactionKind, WallPost } from '../../types/wall';
 import { REACTION_KINDS } from '../../types/wall';
@@ -42,16 +50,46 @@ const LONG_TEXT = 420;
  * One wall post: who wrote it, where, for whom, and everything people can do
  * with it. Every action re-checks permissions in the store.
  */
-export function PostCard({ post, viewerOverride }: { post: WallPost; viewerOverride?: User | null }) {
+const REPORT_REASONS: { id: string; el: string; en: string }[] = [
+  { id: 'spam', el: 'Spam ή διαφήμιση', en: 'Spam or advertising' },
+  { id: 'harassment', el: 'Παρενόχληση ή εκφοβισμός', en: 'Harassment or bullying' },
+  { id: 'inappropriate', el: 'Ακατάλληλο περιεχόμενο', en: 'Inappropriate content' },
+  { id: 'false', el: 'Ψευδείς πληροφορίες ή απάτη', en: 'False information or scam' },
+  { id: 'safety', el: 'Κίνδυνος για την ασφάλεια', en: 'Safety risk' },
+];
+
+export function PostCard({
+  post,
+  viewerOverride,
+  highlighted = false,
+}: {
+  post: WallPost;
+  viewerOverride?: User | null;
+  /** Opened from a notification or link: outline it once. */
+  highlighted?: boolean;
+}) {
   const { t, language } = useLanguage();
   const me = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
   const events = useStore((s) => s.events);
   const blockUser = useStore((s) => s.blockUser);
-  const submitIssueReport = useStore((s) => s.submitIssueReport);
   const access = useWallAccess();
-  const { react, addComment, deleteComment, restoreComment, deletePost, restorePost, updatePost, togglePin, hidePost, unhidePost } =
-    useWallStore.getState();
+  const {
+    react,
+    addComment,
+    deleteComment,
+    restoreComment,
+    deletePost,
+    restorePost,
+    updatePost,
+    togglePin,
+    hidePost,
+    unhidePost,
+    reportPost,
+    moderatePost,
+    approveTag,
+    removeMyTag,
+  } = useWallStore.getState();
 
   const viewer = viewerOverride === undefined ? me : viewerOverride;
   const readOnly = viewerOverride !== undefined; // «Δες ως…» preview
@@ -71,6 +109,8 @@ export function PostCard({ post, viewerOverride }: { post: WallPost; viewerOverr
   const [audienceOpen, setAudienceOpen] = useState(false);
   const [reactionsOpen, setReactionsOpen] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportReason, setReportReason] = useState(REPORT_REASONS[0].id);
   const [thumbFailed, setThumbFailed] = useState(false);
   const commentRef = useRef<HTMLInputElement>(null);
 
@@ -112,15 +152,20 @@ export function PostCard({ post, viewerOverride }: { post: WallPost; viewerOverr
   };
 
   const handleReport = () => {
-    submitIssueReport({
-      category: 'user_behavior',
-      severity: 'medium',
-      description: `Wall post ${post.id} by ${author.name} (${author.id}): "${post.text.slice(0, 280)}"`,
-      evidenceNames: [],
+    const reason = REPORT_REASONS.find((r) => r.id === reportReason) ?? REPORT_REASONS[0];
+    const res = reportPost(post.id, reason.en);
+    setReportOpen(false);
+    if (!run(res)) return;
+    toast.success(t('Ευχαριστούμε — η ομάδα ασφαλείας θα το εξετάσει. Η δημοσίευση κρύφτηκε για σένα.', 'Thanks — the safety team will review it. The post is hidden for you.'), {
+      action: { label: t('Εμφάνιση ξανά', 'Show again'), onClick: () => unhidePost(post.id) },
     });
-    hidePost(post.id);
-    toast.success(t('Ευχαριστούμε — η ομάδα ασφαλείας θα το εξετάσει. Η δημοσίευση κρύφτηκε για σένα.', 'Thanks — the safety team will review it. The post is hidden for you.'));
   };
+
+  const isAdmin = !readOnly && isPlatformAdmin(me);
+  const removed = post.moderation?.status === 'removed';
+  const iAmTagged = Boolean(!readOnly && me && (post.taggedIds ?? []).includes(me.id));
+  const myTagShown = iAmTagged && me ? tagShownOnProfile(post, me.id, access.privacyByUser) : false;
+  const tagged = (post.taggedIds ?? []).map((id) => users.find((u) => u.id === id)).filter((u): u is User => Boolean(u));
 
   const handleBlock = () => {
     blockUser(author.id);
@@ -159,8 +204,16 @@ export function PostCard({ post, viewerOverride }: { post: WallPost; viewerOverr
       });
     } else {
       menuItems.push({ key: 'hide', icon: EyeOff, label: t('Απόκρυψη από τη ροή μου', 'Hide from my feed'), onSelect: handleHide });
-      menuItems.push({ key: 'report', icon: Flag, label: t('Αναφορά δημοσίευσης', 'Report post'), onSelect: handleReport, danger: true });
+      if (iAmTagged) menuItems.push({ key: 'untag', icon: UserMinus, label: t('Αφαίρεση της ετικέτας μου', 'Remove my tag'), onSelect: () => run(removeMyTag(post.id)) && toast.success(t('Η ετικέτα σου αφαιρέθηκε', 'Your tag was removed')) });
+      menuItems.push({ key: 'report', icon: Flag, label: t('Αναφορά δημοσίευσης', 'Report post'), onSelect: () => setReportOpen(true), danger: true });
       menuItems.push({ key: 'block', icon: Ban, label: t(`Αποκλεισμός ${author.name}`, `Block ${author.name}`), onSelect: handleBlock, danger: true });
+    }
+    if (isAdmin && !isAuthor) {
+      menuItems.push(
+        removed
+          ? { key: 'mod-restore', icon: ShieldCheck, label: t('Επαναφορά (συντονισμός)', 'Restore (moderation)'), onSelect: () => run(moderatePost(post.id, 'restore')) && toast.success(t('Η δημοσίευση επανήλθε', 'Post restored')) }
+          : { key: 'mod-remove', icon: ShieldAlert, label: t('Αφαίρεση (συντονισμός)', 'Remove (moderation)'), onSelect: () => run(moderatePost(post.id, 'remove')) && toast.success(t('Η δημοσίευση αφαιρέθηκε για όλους εκτός του συντάκτη', 'Post removed for everyone but its author')), danger: true },
+      );
     }
   }
 
@@ -174,7 +227,12 @@ export function PostCard({ post, viewerOverride }: { post: WallPost; viewerOverr
   const shownText = long && !expanded ? `${text.slice(0, LONG_TEXT).trimEnd()}…` : text;
 
   return (
-    <Card className="p-0" data-testid="wall-post" data-post-id={post.id}>
+    <Card
+      className={cn('p-0 scroll-mt-24', highlighted && 'ring-2 ring-accent')}
+      data-testid="wall-post"
+      data-post-id={post.id}
+      id={`post-${post.id}`}
+    >
       <article aria-label={t(`Δημοσίευση από ${author.name}`, `Post by ${author.name}`)} className="p-4">
         <header className="flex items-start gap-3">
           <Link to={profilePathFor(author)} className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label={author.name}>
@@ -187,11 +245,27 @@ export function PostCard({ post, viewerOverride }: { post: WallPost; viewerOverr
               </Link>
               {onOtherWall && owner && (
                 <>
-                  <ChevronRight className="mx-0.5 inline h-3.5 w-3.5 text-ink-muted" aria-label={t('στον τοίχο του/της', 'on the wall of')} />
+                  <ChevronRight className="mx-0.5 inline h-3.5 w-3.5 text-ink-muted" aria-hidden />
+                  <span className="sr-only">{t(' στον τοίχο του/της ', ' on the wall of ')}</span>
                   <Link to={profilePathFor(owner)} className="hover:underline">
                     {owner.name}
                   </Link>
                 </>
+              )}
+              {tagged.length > 0 && (
+                <span className="font-medium text-ink-muted">
+                  {' '}
+                  {t('με', 'with')}{' '}
+                  {tagged.slice(0, 3).map((u, i) => (
+                    <span key={u.id}>
+                      {i > 0 && ', '}
+                      <Link to={profilePathFor(u)} className="font-bold text-ink hover:underline">
+                        {u.id === me?.id ? t('εσένα', 'you') : u.name}
+                      </Link>
+                    </span>
+                  ))}
+                  {tagged.length > 3 && t(` και ${tagged.length - 3} ακόμη`, ` and ${tagged.length - 3} more`)}
+                </span>
               )}
             </p>
             <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-ink-muted">
@@ -211,6 +285,45 @@ export function PostCard({ post, viewerOverride }: { post: WallPost; viewerOverr
           </div>
           <OverflowMenu items={menuItems} label={t('Ενέργειες δημοσίευσης', 'Post actions')} />
         </header>
+
+        {removed && (isAuthor || isAdmin) && (
+          <p role="status" className="mt-3 flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100">
+            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+            <span>
+              {isAuthor
+                ? t('Η συντονιστική ομάδα αφαίρεσε αυτή τη δημοσίευση — τη βλέπεις μόνο εσύ. Λόγος: ', 'The moderation team removed this post — only you can see it. Reason: ')
+                : t('Αφαιρεμένη από τη συντονιστική ομάδα. Λόγος: ', 'Removed by moderation. Reason: ')}
+              {t(post.moderation?.reasonEl ?? '', post.moderation?.reasonEn ?? '')}
+            </span>
+          </p>
+        )}
+
+        {iAmTagged && !isAuthor && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl bg-surface px-3 py-2 text-xs font-medium text-ink">
+            <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <span className="flex-1">
+              {myTagShown
+                ? t('Σε έχει επισημάνει — εμφανίζεται και στο προφίλ σου.', 'You are tagged — it also shows on your profile.')
+                : t('Σε έχει επισημάνει. Να εμφανίζεται και στο προφίλ σου;', 'You are tagged. Show it on your profile too?')}
+            </span>
+            {!myTagShown && (
+              <button
+                type="button"
+                onClick={() => run(approveTag(post.id)) && toast.success(t('Εμφανίζεται πλέον στο προφίλ σου', 'Now shown on your profile'))}
+                className="inline-flex min-h-8 items-center gap-1 rounded-full bg-accent px-3 font-bold text-accent-fg"
+              >
+                <Check className="h-3.5 w-3.5" aria-hidden /> {t('Εμφάνιση', 'Show')}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => run(removeMyTag(post.id)) && toast.success(t('Η ετικέτα σου αφαιρέθηκε', 'Your tag was removed'))}
+              className="inline-flex min-h-8 items-center gap-1 rounded-full border border-border px-3 font-bold text-ink"
+            >
+              <UserMinus className="h-3.5 w-3.5" aria-hidden /> {t('Αφαίρεση ετικέτας', 'Remove tag')}
+            </button>
+          </div>
+        )}
 
         {editing ? (
           <div className="mt-3 space-y-2">
@@ -243,7 +356,7 @@ export function PostCard({ post, viewerOverride }: { post: WallPost; viewerOverr
         ) : (
           text && (
             <p className="mt-3 whitespace-pre-wrap break-words text-sm font-medium leading-relaxed text-ink">
-              {shownText}
+              <RichText text={shownText} />
               {long && (
                 <button type="button" onClick={() => setExpanded((v) => !v)} className="ml-1 font-bold underline">
                   {expanded ? t('Λιγότερα', 'Less') : t('Περισσότερα', 'More')}
@@ -287,6 +400,14 @@ export function PostCard({ post, viewerOverride }: { post: WallPost; viewerOverr
               </span>
             </span>
             <ChevronRight className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />
+          </Link>
+        )}
+        {event && !readOnly && !isAuthor && event.status !== 'cancelled' && event.status !== 'archived' && (
+          <Link
+            to={`/events/${event.id}/join`}
+            className="mt-2 inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-ink hover:border-border-strong"
+          >
+            <UsersRound className="h-3.5 w-3.5" aria-hidden /> {t(`Μπες στην παρέα με ${author.name}`, `Join ${author.name}'s company`)}
           </Link>
         )}
 
@@ -390,7 +511,7 @@ export function PostCard({ post, viewerOverride }: { post: WallPost; viewerOverr
                       <Link to={profilePathFor(cu)} className="hover:underline">{cu.name}</Link>
                       <span className="ml-2 font-medium text-ink-muted">{relativeTime(c.createdAt, language)}</span>
                     </p>
-                    <p className="whitespace-pre-wrap break-words text-sm font-medium text-ink">{c.text}</p>
+                    <p className="whitespace-pre-wrap break-words text-sm font-medium text-ink"><RichText text={c.text} /></p>
                   </div>
                   {canDelete && (
                     <button
@@ -464,6 +585,24 @@ export function PostCard({ post, viewerOverride }: { post: WallPost; viewerOverr
           }}
         />
       )}
+
+      <Modal open={reportOpen} onClose={() => setReportOpen(false)} title={t('Αναφορά δημοσίευσης', 'Report post')} size="sm">
+        <fieldset className="space-y-2">
+          <legend className="mb-2 text-sm font-medium text-ink-muted">
+            {t('Τι συμβαίνει; Η αναφορά είναι ανώνυμη για τον συντάκτη.', "What's wrong? The author won't see who reported it.")}
+          </legend>
+          {REPORT_REASONS.map((r) => (
+            <label key={r.id} className={cn('flex min-h-10 cursor-pointer items-center gap-3 rounded-xl border px-3', reportReason === r.id ? 'border-accent bg-accent-soft' : 'border-border')}>
+              <input type="radio" name={`report-${post.id}`} checked={reportReason === r.id} onChange={() => setReportReason(r.id)} className="h-4 w-4 accent-[var(--color-accent)]" />
+              <span className="text-sm font-bold text-ink">{t(r.el, r.en)}</span>
+            </label>
+          ))}
+        </fieldset>
+        <div className="mt-4 flex justify-end gap-2">
+          <Button size="sm" variant="ghost" onClick={() => setReportOpen(false)}>{t('Ακύρωση', 'Cancel')}</Button>
+          <Button size="sm" variant="danger" onClick={handleReport}>{t('Αποστολή αναφοράς', 'Send report')}</Button>
+        </div>
+      </Modal>
 
       <Modal open={reactionsOpen} onClose={() => setReactionsOpen(false)} title={t('Αντιδράσεις', 'Reactions')} size="sm">
         <ul className="space-y-2">

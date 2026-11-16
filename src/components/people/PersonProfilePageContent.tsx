@@ -36,7 +36,7 @@ import {
   connectionIdsOf,
   graphConnected,
   mutualConnectionIds,
-  visiblePosts,
+  profileWallPosts,
   type WallAccessContext,
 } from '../../lib/audience';
 import { canViewerMessageUser, canViewerSeeProfile } from '../../lib/profilePrivacy';
@@ -160,7 +160,7 @@ export default function PersonProfilePageContent() {
   );
 
   const wallPosts = useMemo(
-    () => (subject ? visiblePosts(viewerId, posts, viewerAccess, { wallOwnerId: subject.id, pinnedFirst: true }) : []),
+    () => (subject ? profileWallPosts(viewerId, subject.id, posts, viewerAccess) : []),
     [subject, viewerId, posts, viewerAccess],
   );
 

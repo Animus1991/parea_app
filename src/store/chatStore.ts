@@ -423,3 +423,19 @@ export const useChatStore = create<ChatState>()(
     },
   ),
 );
+
+/* Demo exit («Έξοδος»): demo chats go back to their original state; chat privacy choices stay. */
+if (typeof window !== 'undefined') {
+  window.addEventListener('nakamas:demo-reset', () => {
+    useChatStore.setState({
+      conversations: mockConversations,
+      messages: mockChatMessages,
+      reports: [],
+      reportedConversationIds: [],
+      openConversationIds: [],
+      minimizedIds: [],
+      activeWindowIds: [],
+      inboxOpen: false,
+    });
+  });
+}

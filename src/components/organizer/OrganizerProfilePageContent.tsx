@@ -18,7 +18,7 @@ import {
   projectProfileForViewer,
 } from '../../lib/profilePrivacy';
 import { useWallAccess, useWallStore } from '../../store/wallStore';
-import { canPostOnWall, visiblePosts } from '../../lib/audience';
+import { canPostOnWall, profileWallPosts } from '../../lib/audience';
 import { PostComposer } from '../wall/PostComposer';
 import { WallPostList } from '../wall/WallPostList';
 import { profilePathFor } from '../../lib/profileLinks';
@@ -48,7 +48,7 @@ export default function OrganizerProfilePageContent() {
   const wallPosts = useMemo(
     () =>
       organizer
-        ? visiblePosts(currentUser?.id ?? null, wallPostsAll, wallAccess, { wallOwnerId: organizer.id, pinnedFirst: true })
+        ? profileWallPosts(currentUser?.id ?? null, organizer.id, wallPostsAll, wallAccess)
         : [],
     [organizer, currentUser?.id, wallPostsAll, wallAccess],
   );

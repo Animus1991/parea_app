@@ -71,6 +71,34 @@ export interface WallPost {
   /** userId → reaction. */
   reactions: Record<string, ReactionKind>;
   comments: WallComment[];
+  /**
+   * People tagged «με …» (always connections of the author). A tagged person
+   * always sees the post and can remove their tag.
+   */
+  taggedIds?: string[];
+  /** Tagged people who approved showing the post on their own profile (tag review). */
+  tagApprovedIds?: string[];
+  /** Set by a moderator: removed posts stay visible only to their author (with a notice) and admins. */
+  moderation?: { status: 'removed'; at: string; reasonEl: string; reasonEn: string };
+}
+
+/** Maximum people tagged in one post. */
+export const MAX_TAGS = 20;
+
+export type WallActivityKind = 'comment' | 'reaction' | 'wall_post' | 'tag' | 'moderation';
+
+/** One line in someone's wall activity («Η Μαρία σχολίασε τη δημοσίευσή σου»). */
+export interface WallActivity {
+  id: string;
+  recipientId: string;
+  actorId: string;
+  kind: WallActivityKind;
+  postId: string;
+  reaction?: ReactionKind;
+  /** Short quote of the comment or post. */
+  excerpt?: string;
+  createdAt: string;
+  read: boolean;
 }
 
 export interface AudienceList {
@@ -97,6 +125,8 @@ export interface WallPrivacySettings {
   whoCanComment: Audience;
   /** Per-section visibility on my profile. */
   sections: Record<ProfileSectionKey, Audience>;
+  /** Posts I am tagged in appear on my profile only after I approve them. */
+  reviewTags: boolean;
 }
 
 export const DEFAULT_WALL_PRIVACY: WallPrivacySettings = {
@@ -110,6 +140,7 @@ export const DEFAULT_WALL_PRIVACY: WallPrivacySettings = {
     connections: { base: 'connections' },
     events: { base: 'connections' },
   },
+  reviewTags: true,
 };
 
 /** Bases offered by each picker (a wall never accepts posts from "everyone"). */

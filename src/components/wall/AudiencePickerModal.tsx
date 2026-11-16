@@ -73,7 +73,7 @@ export function PeopleChecklist({
                 <input type="checkbox" checked={on} onChange={() => toggle(u.id)} className="h-4 w-4 accent-[var(--color-accent)]" />
                 <PersonAvatar user={u} size="sm" />
                 <span className="min-w-0 flex-1 truncate text-sm font-bold text-ink">{u.name}</span>
-                {u.city && <span className="text-xs font-medium text-ink-muted">{u.city}</span>}
+                {u.city && <span className={cn('text-xs font-medium', on ? 'text-ink' : 'text-ink-muted')}>{u.city}</span>}
               </label>
             </li>
           );
@@ -221,10 +221,10 @@ export function AudiencePickerModal({
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-sm font-bold text-ink">{audienceBaseLabel(base, t)}</span>
-                  <span className="block text-xs font-medium text-ink-muted">{audienceBaseHint(base, t)}</span>
+                  <span className={cn('block text-xs font-medium', on ? 'text-ink' : 'text-ink-muted')}>{audienceBaseHint(base, t)}</span>
                 </span>
                 {base !== 'only_me' && base !== 'specific' && base !== 'list' && (
-                  <span className="shrink-0 text-xs font-bold tabular-nums text-ink-muted">
+                  <span className={cn('shrink-0 text-xs font-bold tabular-nums', on ? 'text-ink' : 'text-ink-muted')}>
                     {count === 1 ? t('1 άτομο', '1 person') : t(`${count} άτομα`, `${count} people`)}
                   </span>
                 )}
@@ -255,7 +255,7 @@ export function AudiencePickerModal({
                         className="h-4 w-4 accent-[var(--color-accent)]"
                       />
                       <span className="flex-1 text-sm font-bold text-ink">{l.name}</span>
-                      <span className="text-xs font-medium text-ink-muted">
+                      <span className={cn('text-xs font-medium', on && draft.listId === l.id ? 'text-ink' : 'text-ink-muted')}>
                         {l.memberIds.length === 1 ? t('1 μέλος', '1 member') : t(`${l.memberIds.length} μέλη`, `${l.memberIds.length} members`)}
                       </span>
                     </label>

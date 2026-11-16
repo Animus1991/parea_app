@@ -1,4 +1,4 @@
-import type { AudienceList, WallPost, WallPrivacySettings } from '../types/wall';
+import type { AudienceList, WallActivity, WallPost, WallPrivacySettings } from '../types/wall';
 import { DEFAULT_WALL_PRIVACY } from '../types/wall';
 
 /**
@@ -115,6 +115,27 @@ export const mockWallPosts: WallPost[] = [
     reactions: { u1: 'love' },
     comments: [],
   },
+  {
+    // Maria tags Alex: it waits for Alex's tag review before it shows on his profile.
+    id: 'wp10',
+    authorId: 'u2',
+    wallOwnerId: 'u2',
+    text: 'Τέλεια βραδιά στο θερινό σινεμά Θησείου 🎬 Επόμενη στάση: Λίμνη των Κύκνων!',
+    eventId: 'e4',
+    audience: { base: 'connections' },
+    taggedIds: ['u1'],
+    createdAt: ago(70),
+    reactions: { u3: 'love' },
+    comments: [],
+  },
+];
+
+/** What the demo user (Alex) finds in their wall activity. */
+export const mockWallActivity: WallActivity[] = [
+  { id: 'wa1', recipientId: 'u1', actorId: 'u2', kind: 'tag', postId: 'wp10', excerpt: 'Τέλεια βραδιά στο θερινό σινεμά Θησείου 🎬', createdAt: ago(70), read: false },
+  { id: 'wa2', recipientId: 'u1', actorId: 'u2', kind: 'comment', postId: 'wp8', excerpt: 'Εγώ! Στείλε μου στο chat 🙌', createdAt: ago(60 * 19), read: false },
+  { id: 'wa3', recipientId: 'u1', actorId: 'u3', kind: 'wall_post', postId: 'wp9', excerpt: 'Χάρηκα πολύ στο θερινό σινεμά, Alex!', createdAt: ago(60 * 30), read: true },
+  { id: 'wa4', recipientId: 'u1', actorId: 'u3', kind: 'reaction', postId: 'wp8', reaction: 'haha', createdAt: ago(60 * 19 + 30), read: true },
 ];
 
 export const mockAudienceLists: AudienceList[] = [

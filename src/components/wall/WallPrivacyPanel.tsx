@@ -1,6 +1,6 @@
 import { useMemo, useState, type ElementType } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CalendarDays, Eye, Info, ListChecks, MessageCircle, Newspaper, PenLine, ShieldHalf, UserRound, Users } from 'lucide-react';
+import { CalendarDays, Eye, Info, ListChecks, MessageCircle, Newspaper, PenLine, ShieldHalf, Tag, UserRound, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '../common/Button';
 import { useLanguage } from '../../lib/i18n';
@@ -207,6 +207,31 @@ export function WallPrivacyPanel({ showProfileRow = true }: { showProfileRow?: b
         audience={wp.whoCanComment}
         onEdit={() => setEditing({ kind: 'whoCanComment' })}
       />
+
+      <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border p-3">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface">
+          <Tag className="h-4 w-4 text-ink-muted" aria-hidden />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-bold text-ink">{t('Έλεγχος ετικετών', 'Tag review')}</span>
+          <span className="block text-xs font-medium text-ink-muted">
+            {t(
+              'Δημοσιεύσεις όπου σε επισημαίνουν εμφανίζονται στο προφίλ σου μόνο αφού τις εγκρίνεις.',
+              'Posts you are tagged in show on your profile only after you approve them.',
+            )}
+          </span>
+        </span>
+        <input
+          type="checkbox"
+          role="switch"
+          checked={wp.reviewTags}
+          onChange={(e) => {
+            updateWallPrivacy({ reviewTags: e.target.checked });
+            toast.success(e.target.checked ? t('Ο έλεγχος ετικετών ενεργοποιήθηκε', 'Tag review on') : t('Ο έλεγχος ετικετών απενεργοποιήθηκε', 'Tag review off'));
+          }}
+          className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-accent)]"
+        />
+      </label>
 
       <div className="rounded-2xl border border-border p-3">
         <p className="text-sm font-bold text-ink">{t('Περιορισμός παλαιότερων δημοσιεύσεων', 'Limit past posts')}</p>

@@ -149,16 +149,26 @@ service cloud.firestore {
         : {'base': 'connections'};
     }
 
+    // Moderators come from signed custom claims (npm run set-role), never from profile data.
+    function isModerator() {
+      return signedIn() && request.auth.token.get('role', '') in ['moderator', 'admin'];
+    }
+
     function canReadPost(p) {
       let uid = request.auth.uid;
       return signedIn() && (
         uid == p.authorId
-        || (!blockedEither(uid, p.authorId) && (
-          p.wallOwnerId == p.authorId
+        || isModerator()
+        // Removed by moderation: only the author (above) and moderators.
+        || (!('moderation' in p) && !blockedEither(uid, p.authorId) && (
+          // Tagged people always see what they are tagged in.
+          uid in p.get('taggedIds', [])
+          ||
+          (p.wallOwnerId == p.authorId
             ? audienceAllows(p.authorId, p.audience, uid)
             : (uid == p.wallOwnerId
               || (!blockedEither(uid, p.wallOwnerId)
-                && audienceAllows(p.wallOwnerId, wallSetting(p.wallOwnerId, 'othersPostsAudience'), uid)))
+                && audienceAllows(p.wallOwnerId, wallSetting(p.wallOwnerId, 'othersPostsAudience'), uid))))
         ))
       );
     }
@@ -173,7 +183,10 @@ service cloud.firestore {
     }
 
     function validPostData(d) {
-      return d.keys().hasOnly(['authorId', 'wallOwnerId', 'text', 'imageUrl', 'eventId', 'audience', 'createdAt', 'editedAt', 'pinned', 'commentsDisabled'])
+      return d.keys().hasOnly(['authorId', 'wallOwnerId', 'text', 'imageUrl', 'eventId', 'audience', 'createdAt', 'editedAt', 'pinned', 'commentsDisabled', 'taggedIds', 'tagApprovedIds', 'moderation'])
+        && (!('taggedIds' in d) || (d.taggedIds is list && d.taggedIds.size() <= 20))
+        && (!('tagApprovedIds' in d) || (d.tagApprovedIds is list && d.get('taggedIds', []).hasAll(d.tagApprovedIds)))
+        && (!('moderation' in d) || (d.moderation is map && d.moderation.status == 'removed'))
         && d.authorId is string && d.wallOwnerId is string
         && d.text is string && d.text.size() <= 2000
         && validAudience(d.audience, allBases())
@@ -229,21 +242,39 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time
         && !('editedAt' in request.resource.data)
         && !('pinned' in request.resource.data)
+        && !('moderation' in request.resource.data)
+        && !('tagApprovedIds' in request.resource.data)
+        // Only your own connections can be tagged.
+        && connsOf(request.auth.uid).hasAll(request.resource.data.get('taggedIds', []))
         && (request.resource.data.wallOwnerId == request.auth.uid
           || wallAccepts(request.resource.data.wallOwnerId, request.auth.uid));
 
-      // Author: text / audience / comments switch. Wall owner: pin / comments switch.
+      // Author: text / audience / tags / comments switch. Wall owner: pin / comments switch.
+      // Tagged person: remove or approve their own tag. Moderator: remove / restore.
       allow update: if signedIn() && validPostData(request.resource.data)
         && request.resource.data.authorId == resource.data.authorId
         && request.resource.data.wallOwnerId == resource.data.wallOwnerId
         && request.resource.data.createdAt == resource.data.createdAt
         && (
           (request.auth.uid == resource.data.authorId
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'audience', 'editedAt', 'commentsDisabled', 'imageUrl', 'eventId'])
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'audience', 'editedAt', 'commentsDisabled', 'imageUrl', 'eventId', 'taggedIds', 'tagApprovedIds'])
+            && connsOf(request.auth.uid).hasAll(request.resource.data.get('taggedIds', []))
             // Posts on someone else's wall keep the owner's audience.
             && (resource.data.wallOwnerId == resource.data.authorId || !('audience' in request.resource.data.diff(resource.data).affectedKeys())))
           || (request.auth.uid == resource.data.wallOwnerId
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pinned', 'commentsDisabled']))
+          || (request.auth.uid in resource.data.get('taggedIds', [])
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['taggedIds', 'tagApprovedIds'])
+            && (
+              // remove my tag
+              (request.resource.data.get('taggedIds', []) == resource.data.get('taggedIds', []).removeAll([request.auth.uid])
+                && request.resource.data.get('tagApprovedIds', []) == resource.data.get('tagApprovedIds', []).removeAll([request.auth.uid]))
+              // approve my tag
+              || (request.resource.data.get('taggedIds', []) == resource.data.get('taggedIds', [])
+                && request.resource.data.get('tagApprovedIds', []).toSet() == resource.data.get('tagApprovedIds', []).toSet().union([request.auth.uid].toSet()))
+            ))
+          || (isModerator()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['moderation', 'pinned']))
         );
 
       allow delete: if signedIn()

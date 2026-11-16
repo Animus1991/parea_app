@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CalendarDays, ImagePlus, Lock, X } from 'lucide-react';
+import { CalendarDays, ImagePlus, Lock, UserPlus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { POST_MAX_CHARS, useWallAccess, useWallStore } from '../../store/wallStore';
-import { canPostOnWall, wallPrivacyOf } from '../../lib/audience';
+import { canPostOnWall, connectionIdsOf, wallPrivacyOf } from '../../lib/audience';
+import { Modal } from '../common/Modal';
+import { PeopleChecklist } from './AudiencePickerModal';
 import { fileToResizedDataUrl, imageErrorText } from '../../lib/imageResize';
 import type { Audience } from '../../types/wall';
 import { AudienceChip } from './AudienceChip';
@@ -39,7 +41,29 @@ function writeDraft(ownerId: string, text: string) {
  * else's. The audience is always visible before posting; unsent text is kept
  * for the session so a tab switch never loses it.
  */
-export function PostComposer({ wallOwnerId, onPosted }: { wallOwnerId?: string; onPosted?: (id: string) => void }) {
+/** One-tap starts that turn an empty box into a useful post. */
+const QUICK_STARTS: { emoji: string; el: string; en: string }[] = [
+  { emoji: '🙋', el: 'Ψάχνω παρέα για ', en: 'Looking for company for ' },
+  { emoji: '🎟️', el: 'Πάω σε αυτό — ποιος έρχεται; ', en: 'I am going to this — who is coming? ' },
+  { emoji: '⭐', el: 'Σας προτείνω ', en: 'I recommend ' },
+  { emoji: '📸', el: 'Στιγμές από ', en: 'Moments from ' },
+];
+
+export function PostComposer({
+  wallOwnerId,
+  onPosted,
+  initialEventId,
+  initialText,
+  focusOnOpen = false,
+}: {
+  wallOwnerId?: string;
+  onPosted?: (id: string) => void;
+  /** Pre-attached event (e.g. «Μοιράσου στον τοίχο» from an event page). */
+  initialEventId?: string;
+  initialText?: string;
+  /** Inside a dialog the person just opened: start typing right away. */
+  focusOnOpen?: boolean;
+}) {
   const { t } = useLanguage();
   const me = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
@@ -53,16 +77,38 @@ export function PostComposer({ wallOwnerId, onPosted }: { wallOwnerId?: string; 
   const isOwnWall = Boolean(me && ownerId === me.id);
   const owner = users.find((u) => u.id === ownerId);
 
-  const [text, setText] = useState(() => readDraft(ownerId));
+  const [text, setText] = useState(() => initialText ?? readDraft(ownerId));
   const [imageUrl, setImageUrl] = useState<string | undefined>();
-  const [eventId, setEventId] = useState<string | undefined>();
-  const [audience, setAudience] = useState<Audience>(() => (me ? wallPrivacyOf(access.privacyByUser, me.id).defaultAudience : { base: 'connections' }));
+  const [eventId, setEventId] = useState<string | undefined>(initialEventId);
+  const [taggedIds, setTaggedIds] = useState<string[]>([]);
+  const [tagsOpen, setTagsOpen] = useState(false);
+  const textRef = useRef<HTMLTextAreaElement>(null);
+  const defaultAudience = me ? wallPrivacyOf(access.privacyByUser, me.id).defaultAudience : null;
+  const [audience, setAudience] = useState<Audience>(() => defaultAudience ?? { base: 'connections' });
+  const [audienceTouched, setAudienceTouched] = useState(false);
+  // Follow a changed default (Settings, AI) until the person picks one for this post.
+  const defaultKey = JSON.stringify(defaultAudience);
+  useEffect(() => {
+    if (!audienceTouched && defaultAudience) setAudience(defaultAudience);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the serialized default
+  }, [defaultKey, audienceTouched]);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [eventPickerOpen, setEventPickerOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => writeDraft(ownerId, text), [ownerId, text]);
+  // Drafts are kept per wall, except for one-off shares (they start from a template).
+  useEffect(() => {
+    if (initialText === undefined) writeDraft(ownerId, text);
+  }, [ownerId, text, initialText]);
+
+  useEffect(() => {
+    if (!focusOnOpen) return;
+    const el = textRef.current;
+    el?.focus();
+    // Caret after the ready first line.
+    el?.setSelectionRange(el.value.length, el.value.length);
+  }, [focusOnOpen]);
 
   useEffect(() => {
     const onFull = () =>
@@ -80,6 +126,8 @@ export function PostComposer({ wallOwnerId, onPosted }: { wallOwnerId?: string; 
       .sort((a, b) => Number(mine.has(b.id)) - Number(mine.has(a.id)) || a.date.localeCompare(b.date))
       .slice(0, 30);
   }, [events, savedEvents, groups, me]);
+
+  const myConnections = me ? connectionIdsOf(access.graph, me.id) : [];
 
   if (!me) return null;
   const gate = canPostOnWall(me.id, ownerId, access);
@@ -112,7 +160,7 @@ export function PostComposer({ wallOwnerId, onPosted }: { wallOwnerId?: string; 
 
   const submit = () => {
     if (!canSubmit) return;
-    const res = createPost({ wallOwnerId: ownerId, text, imageUrl, eventId, audience: isOwnWall ? audience : undefined });
+    const res = createPost({ wallOwnerId: ownerId, text, imageUrl, eventId, audience: isOwnWall ? audience : undefined, taggedIds });
     if (!res.ok) {
       toast.error(t(res.reasonEl ?? '', res.reasonEn ?? ''));
       return;
@@ -120,6 +168,9 @@ export function PostComposer({ wallOwnerId, onPosted }: { wallOwnerId?: string; 
     setText('');
     setImageUrl(undefined);
     setEventId(undefined);
+    setTaggedIds([]);
+    setAudienceTouched(false);
+    if (defaultAudience) setAudience(defaultAudience);
     writeDraft(ownerId, '');
     toast.success(
       isOwnWall
@@ -142,6 +193,8 @@ export function PostComposer({ wallOwnerId, onPosted }: { wallOwnerId?: string; 
             {isOwnWall ? t('Νέα δημοσίευση', 'New post') : t('Δημοσίευση σε τοίχο', 'Post on wall')}
           </label>
           <textarea
+            ref={textRef}
+            data-autofocus={focusOnOpen || undefined}
             id={`composer-${ownerId}`}
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -156,6 +209,35 @@ export function PostComposer({ wallOwnerId, onPosted }: { wallOwnerId?: string; 
             placeholder={placeholder}
             className="w-full resize-none rounded-2xl border border-border bg-surface px-3 py-2.5 text-sm text-ink outline-none placeholder:text-ink-muted focus:ring-2 focus:ring-accent"
           />
+
+          {!text && !eventId && !imageUrl && (
+            <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('Γρήγορη αρχή', 'Quick start')}>
+              {QUICK_STARTS.map((q) => (
+                <button
+                  key={q.en}
+                  type="button"
+                  onClick={() => {
+                    setText(t(q.el, q.en));
+                    textRef.current?.focus();
+                  }}
+                  className="inline-flex min-h-8 items-center gap-1 rounded-full border border-border bg-surface-raised px-2.5 text-xs font-bold text-ink-muted hover:border-border-strong hover:text-ink"
+                >
+                  <span aria-hidden>{q.emoji}</span> {t(q.el, q.en).trim()}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {taggedIds.length > 0 && (
+            <p className="flex flex-wrap items-center gap-1 text-xs font-bold text-ink">
+              <UserPlus className="h-3.5 w-3.5" aria-hidden />
+              {t('με', 'with')}{' '}
+              {taggedIds.map((id) => users.find((u) => u.id === id)?.name).filter(Boolean).join(', ')}
+              <button type="button" onClick={() => setTagsOpen(true)} className="ml-1 font-bold underline">
+                {t('Αλλαγή', 'Change')}
+              </button>
+            </p>
+          )}
 
           {imageUrl && (
             <div className="relative overflow-hidden rounded-2xl border border-border">
@@ -242,6 +324,13 @@ export function PostComposer({ wallOwnerId, onPosted }: { wallOwnerId?: string; 
             >
               <CalendarDays className="h-4 w-4" aria-hidden /> {t('Εκδήλωση', 'Event')}
             </button>
+            <button
+              type="button"
+              onClick={() => setTagsOpen(true)}
+              className="inline-flex min-h-8 items-center gap-1 rounded-full px-2.5 text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink"
+            >
+              <UserPlus className="h-4 w-4" aria-hidden /> {t('Με ποιους;', 'With whom?')}
+            </button>
             <span className="ml-auto flex items-center gap-2">
               {remaining < 200 && (
                 <span className={remaining < 0 ? 'text-xs font-bold text-red-600' : 'text-xs font-medium text-ink-muted'} aria-live="polite">
@@ -261,6 +350,27 @@ export function PostComposer({ wallOwnerId, onPosted }: { wallOwnerId?: string; 
         </div>
       </div>
 
+      <Modal open={tagsOpen} onClose={() => setTagsOpen(false)} title={t('Με ποιους είσαι;', 'Who are you with?')} size="md">
+        <p className="-mt-2 mb-3 text-sm font-medium text-ink-muted">
+          {t(
+            'Όσοι επισημαίνεις βλέπουν τη δημοσίευση και μπορούν να αφαιρέσουν την ετικέτα τους.',
+            'People you tag see the post and can remove their tag.',
+          )}
+        </p>
+        <PeopleChecklist
+          candidateIds={myConnections}
+          selected={taggedIds}
+          onChange={(ids) => setTaggedIds(ids.slice(0, 20))}
+          label={t('Ετικέτες', 'Tags')}
+          emptyText={t('Επισημαίνεις μόνο Nakamas σου — σύνδεσου πρώτα.', 'You can tag only your Nakamas — connect first.')}
+        />
+        <div className="mt-4 flex justify-end">
+          <Button size="sm" onClick={() => setTagsOpen(false)}>
+            {t('Τέλος', 'Done')}
+          </Button>
+        </div>
+      </Modal>
+
       {isOwnWall && (
         <AudiencePickerModal
           open={pickerOpen}
@@ -270,6 +380,7 @@ export function PostComposer({ wallOwnerId, onPosted }: { wallOwnerId?: string; 
           showMakeDefault
           onSave={(a, { makeDefault }) => {
             setAudience(a);
+            setAudienceTouched(!makeDefault);
             if (makeDefault) {
               updateWallPrivacy({ defaultAudience: a });
               toast.success(t('Αποθηκεύτηκε ως προεπιλογή', 'Saved as your default'));

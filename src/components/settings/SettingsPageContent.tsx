@@ -33,6 +33,7 @@ const NOTIF_MAP: Record<string, keyof import('../../store').UserSettings['notifi
   pushNewEvents: 'matches',
   emailMarketing: 'promos',
   emailUpdates: 'reminders',
+  pushSocial: 'social',
 };
 
 export default function SettingsPageContent() {
@@ -117,6 +118,7 @@ export default function SettingsPageContent() {
     pushNewEvents: userSettings.notificationPrefs.matches,
     emailMarketing: userSettings.notificationPrefs.promos,
     emailUpdates: userSettings.notificationPrefs.reminders,
+    pushSocial: userSettings.notificationPrefs.social !== false,
   };
 
   const categoryPrefs = Object.fromEntries(
@@ -427,6 +429,7 @@ export default function SettingsPageContent() {
             <div className="space-y-3">
               {[
                 { key: 'pushMessages', label: t('Μηνύματα ομάδας', 'Group messages') },
+                { key: 'pushSocial', label: t('Δραστηριότητα τοίχου (σχόλια, αντιδράσεις, ετικέτες)', 'Wall activity (comments, reactions, tags)') },
                 { key: 'pushReminders', label: t('Υπενθυμίσεις', 'Event reminders') },
                 { key: 'pushGroupUpdates', label: t('Ενημερώσεις ομάδας', 'Group updates') },
                 { key: 'pushNewEvents', label: t('Νέες εκδηλώσεις', 'New events nearby') },
