@@ -62,14 +62,29 @@ function rememberVote(messageId: string, vote: CopilotVote | null) {
  * the same thumb takes it back; a 👎 offers a short optional reason. Votes are
  * remembered on this device and counted through analytics.
  */
-function CopilotFeedback({ messageId }: { messageId: string }) {
+function CopilotFeedback({ messageId, engine }: { messageId: string; engine?: 'local' | 'gemini' }) {
   const { t } = useLanguage();
   const [vote, setVote] = useState<CopilotVote | null>(() => readVotes()[messageId] ?? null);
+  const updateMessage = useCopilotStore((s) => s.update);
+  const recordAudit = useAiAuditStore((s) => s.record);
+  const currentUserId = useStore((s) => s.currentUser?.id ?? null);
 
   const save = (next: CopilotVote | null) => {
     setVote(next);
     rememberVote(messageId, next);
-    if (next) trackEvent({ name: 'copilot_feedback', messageId, helpful: next.helpful, reason: next.reason });
+    updateMessage(messageId, { feedback: next ? (next.helpful ? 'up' : 'down') : undefined });
+    if (next) {
+      trackEvent({ name: 'copilot_feedback', messageId, helpful: next.helpful, reason: next.reason });
+      recordAudit({
+        userId: currentUserId,
+        action: `answer_feedback_${next.helpful ? 'up' : 'down'}`,
+        risk: 'safe',
+        status: 'done',
+        engine: engine ?? 'local',
+        argKeys: ['messageId'],
+        messageId,
+      });
+    }
   };
 
   const thumb =
@@ -190,30 +205,8 @@ function EventResult({ eventId, index, onNavigate }: { eventId: string; index: n
 export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMessage; onNavigate: () => void }) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
-  const updateMessage = useCopilotStore((s) => s.update);
-  const recordAudit = useAiAuditStore((s) => s.record);
-  const currentUserId = useStore((s) => s.currentUser?.id ?? null);
   const lang = message.lang ?? language;
   const pick = (el?: string, en?: string) => (lang === 'en' ? en ?? el : el ?? en) ?? '';
-
-  const setFeedback = (value: 'up' | 'down') => {
-    if (message.feedback === value) return;
-    updateMessage(message.id, { feedback: value });
-    recordAudit({
-      userId: currentUserId,
-      action: `answer_feedback_${value}`,
-      risk: 'safe',
-      status: 'done',
-      engine: message.engine ?? 'local',
-      argKeys: ['messageId'],
-      messageId: message.id,
-    });
-    toast.success(
-      value === 'up'
-        ? t('Ευχαριστούμε για το feedback', 'Thanks for the feedback')
-        : t('Θα προσπαθήσουμε καλύτερα', "We'll try to do better"),
-    );
-  };
 
   if (message.role === 'user') {
     return (
@@ -316,7 +309,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
             ))}
           </ol>
         )}
-        {(message.link || undoable || message.undone || (!message.error && body)) && (
+        {(message.link || undoable || message.undone) && (
           <div className="flex flex-wrap items-center gap-2">
             {message.link && (
               <button
@@ -340,37 +333,9 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
               </button>
             )}
             {message.undone && <span className="text-xs font-medium text-ink-muted">{t('Αναιρέθηκε', 'Undone')}</span>}
-            {!message.error && body && (
-              <div className="ml-auto flex items-center gap-0.5" role="group" aria-label={t('Feedback απάντησης', 'Answer feedback')}>
-                <button
-                  type="button"
-                  onClick={() => setFeedback('up')}
-                  aria-pressed={message.feedback === 'up'}
-                  aria-label={t('Χρήσιμη απάντηση', 'Helpful answer')}
-                  className={cn(
-                    'inline-flex h-8 w-8 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
-                    message.feedback === 'up' && 'bg-accent-soft text-accent',
-                  )}
-                >
-                  <ThumbsUp className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFeedback('down')}
-                  aria-pressed={message.feedback === 'down'}
-                  aria-label={t('Μη χρήσιμη απάντηση', 'Unhelpful answer')}
-                  className={cn(
-                    'inline-flex h-8 w-8 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
-                    message.feedback === 'down' && 'bg-accent-soft text-accent',
-                  )}
-                >
-                  <ThumbsDown className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            )}
           </div>
         )}
-        {!message.error && <CopilotFeedback messageId={message.id} />}
+        {!message.error && <CopilotFeedback messageId={message.id} engine={message.engine} />}
       </div>
     </div>
   );
