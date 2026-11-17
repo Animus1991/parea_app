@@ -17,10 +17,10 @@ import {
   Compass,
   UserPlus,
   Check,
-  AlertTriangle,
   Phone,
   Video,
-  Sparkles,
+  Images,
+  Siren,
 } from "lucide-react";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { toast } from "sonner";
@@ -39,6 +39,7 @@ import { ChatCallModal } from "../chat/ChatCallModal";
 import { LiveEventTracker } from "./LiveEventTracker";
 import { ChatIcebreakers } from "./ChatIcebreakers";
 import { MeetingPointPanel } from "../chat/MeetingPointPanel";
+import { EphemeralChatBanner } from "../chat/EphemeralChatBanner";
 import { QuickReplies } from "../chat/QuickReplies";
 import { GroupChatThreadStarter } from "./GroupChatThreadStarter";
 import { localizeSystemBody } from "../../lib/chatSystemCopy";
@@ -127,7 +128,6 @@ export default function GroupChatPageContent() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showSearchMobile, setShowSearchMobile] = useState(false);
-  const [showEphemeralBanner, setShowEphemeralBanner] = useState(true);
   const [isEphemeral, setIsEphemeral] = useState(true);
   const [showDisableEphemeralModal, setShowDisableEphemeralModal] =
     useState(false);
@@ -488,7 +488,7 @@ export default function GroupChatPageContent() {
                       showStories ? 'bg-brand-soft text-brand' : 'text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10',
                     )}
                   >
-                    <Sparkles className="h-4 w-4" />
+                    <Images className="h-4 w-4" />
                   </button>
 
                   <button
@@ -528,35 +528,8 @@ export default function GroupChatPageContent() {
             </div>
           )}
 
-          {/* Ephemeral Notice */}
-          {isEphemeral && showEphemeralBanner && (
-            <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 dark:border-amber-800/40 dark:bg-amber-950/40 px-2 py-2 sm:px-3 text-center shadow-soft z-10 backdrop-blur-sm flex items-center justify-center relative">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-xs sm:text-xs font-bold tracking-wide text-[#7b3306] dark:text-amber-200 pr-6 w-full">
-                <span className="flex items-center justify-center gap-1.5 whitespace-nowrap">
-                  <ShieldCheck className="h-3.5 w-3.5 shrink-0" />{" "}
-                  {t("Εφήμερη Λειτουργία", "Ephemeral Mode")}
-                </span>
-                <span className="hidden sm:inline w-1 h-1 rounded-full bg-amber-300 opacity-60 shrink-0"></span>
-                <span className="font-medium text-[#973c00] dark:text-amber-300 flex items-center justify-center gap-1 leading-tight w-full max-w-full overflow-hidden">
-                  <Clock className="h-3 w-3 shrink-0" />{" "}
-                  <span className="truncate whitespace-normal sm:whitespace-nowrap">
-                    {t(
-                      "Η συνομιλία διαγράφεται 24 ώρες μετά την εκδήλωση",
-                      "Chat destructs 24h after event",
-                    )}
-                  </span>
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowEphemeralBanner(false)}
-                className="p-1.5 text-amber-600/80 hover:bg-amber-200 hover:text-amber-800 rounded-full transition-colors absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 shrink-0"
-                title={t("Κλείσιμο Ειδοποίησης", "Close Banner")}
-                aria-label={t("Κλείσιμο Ειδοποίησης", "Close Banner")}
-              >
-                <X className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden />
-              </button>
-            </div>
+          {isEphemeral && (
+            <EphemeralChatBanner conversationId={conversationId ?? `conv_${group.id}`} />
           )}
 
           <div className="max-w-xl">
@@ -636,7 +609,7 @@ export default function GroupChatPageContent() {
                 title={t("SOS / Βοήθεια", "SOS / Help")}
                 aria-label={t("SOS / Βοήθεια", "SOS / Help")}
               >
-                <AlertTriangle className="h-4 w-4" aria-hidden />
+                <Siren className="h-4 w-4" aria-hidden />
               </button>
               <span className="text-2xs text-ink-muted truncate">
                 {t('Εργαλεία ασφάλειας · Emojis · GIF · Φωνητικό · Δημοσκόπηση', 'Safety tools · Emojis · GIF · Voice · Poll')}
@@ -931,7 +904,7 @@ export default function GroupChatPageContent() {
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex-1">
                       <p className="text-sm font-bold text-ink">
-                        {t("Εφήμερη Λειτουργία", "Ephemeral Mode")}
+                        {t("Προσωρινό ιστορικό", "Temporary history")}
                       </p>
                       <p className="text-xs text-gray-500 mt-1 leading-relaxed">
                         {t(

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Library, Sparkles } from 'lucide-react';
+import { ChevronRight, Library } from 'lucide-react';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { COLLECTIONS, collectionEvents, formingGroups } from '../../lib/outings';
@@ -58,7 +58,7 @@ export function CollectionsRail({
         }
       >
         {stats.map(({ c, count, forming }) => {
-          const Icon = COLLECTION_ICONS[c.id as keyof typeof COLLECTION_ICONS] ?? Sparkles;
+          const Icon = COLLECTION_ICONS[c.id as keyof typeof COLLECTION_ICONS] ?? Library;
           return (
             <li key={c.id} className={fill ? 'min-w-0' : 'w-44 shrink-0'}>
               <Link

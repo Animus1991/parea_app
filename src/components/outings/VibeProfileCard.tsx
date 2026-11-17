@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HeartHandshake, Sparkles } from 'lucide-react';
+import { HeartHandshake } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
@@ -33,7 +33,7 @@ export function VibeProfileCard({ className }: { className?: string }) {
   return (
     <section className={cn('rounded-2xl border border-border bg-surface-raised p-4', className)} aria-labelledby="vibe-card-title">
       <h2 id="vibe-card-title" className="flex items-center gap-2 text-sm font-bold text-ink">
-        <Sparkles className="h-4 w-4" aria-hidden /> {t('Το στυλ παρέας μου', 'My group style')}
+        <HeartHandshake className="h-4 w-4" aria-hidden /> {t('Το στυλ παρέας μου', 'My group style')}
       </h2>
       {vibe ? (
         <ul className="mt-2 flex flex-wrap gap-1.5">

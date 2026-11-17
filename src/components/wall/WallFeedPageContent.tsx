@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Eye, Newspaper, ShieldCheck, Sparkles, X } from 'lucide-react';
+import { ArrowLeft, Eye, Newspaper, ShieldCheck, CircleDot, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
@@ -209,7 +209,7 @@ export default function WallFeedPageContent() {
         ))}
         {newCount > 0 && filter === 'all' && (
           <span className="inline-flex items-center gap-1 text-xs font-bold text-ink" role="status">
-            <Sparkles className="h-3.5 w-3.5" aria-hidden />
+            <CircleDot className="h-3.5 w-3.5" aria-hidden />
             {newCount === 1 ? t('1 νέα από την τελευταία σου επίσκεψη', '1 new since your last visit') : t(`${newCount} νέες από την τελευταία σου επίσκεψη`, `${newCount} new since your last visit`)}
           </span>
         )}

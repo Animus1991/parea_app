@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card } from '../common/Card';
-import { MessageCircle, MapPin, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass, PartyPopper } from 'lucide-react';
+import { MessageCircle, MapPin, Calendar, Clock, ShieldAlert, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass, PartyPopper } from 'lucide-react';
 import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO, differenceInDays, differenceInHours, isBefore } from 'date-fns';
@@ -151,7 +151,7 @@ export default function PlansPageContent() {
           p.isDark ? '!bg-amber-500/10 !border-amber-500/30' : '!bg-amber-50 !border-amber-200',
         )}>
           <div className="flex items-start gap-3">
-            <AlertTriangle className={cn('w-5 h-5 shrink-0 mt-0.5', p.isDark ? 'text-amber-400' : 'text-amber-600')} />
+            <ShieldAlert className={cn('w-5 h-5 shrink-0 mt-0.5', p.isDark ? 'text-amber-400' : 'text-amber-600')} />
             <div>
               <h3 className={cn(PLANS_TYPO.bannerTitle, 'mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
               <p className={cn(PLANS_TYPO.bannerBody, p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
@@ -419,7 +419,7 @@ export default function PlansPageContent() {
       <div className="space-y-4">
         {needsRating > 0 && (
           <div className={cn('text-xs font-semibold flex items-center gap-1.5', p.muted)}>
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+            <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
             {t(`${needsRating} εκδηλώσεις περιμένουν την αξιολόγησή σας`, `${needsRating} event(s) awaiting your feedback`)}
           </div>
         )}

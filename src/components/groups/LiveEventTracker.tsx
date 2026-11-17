@@ -11,7 +11,7 @@ import {
   Users,
   ShieldCheck,
   WifiOff,
-  AlertTriangle,
+  ShieldAlert,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../common/Button";
@@ -216,7 +216,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
       <div className="flex-1 relative bg-gray-100">
         {isHost && activeLocations.some((l) => l.isOutOfBounds) && (
           <div className="absolute top-4 left-4 right-4 z-[1000] bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl shadow-soft-lg flex items-start gap-3 pointer-events-auto">
-            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
+            <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
             <div>
               <p className="text-sm font-bold m-0">
                 {t("Ειδοποίηση Ασφαλείας", "Safety Alert")}
@@ -342,7 +342,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                   className={`border-red-200 transition-colors ${sosActive ? "bg-red-600 text-white hover:bg-red-700" : "bg-red-50 text-red-600 hover:bg-red-100"}`}
                   onClick={() => setSosActive(!sosActive)}
                 >
-                  <AlertTriangle className="w-4 h-4 mr-1" />
+                  <ShieldAlert className="w-4 h-4 mr-1" />
                   {sosActive
                     ? t("Λήξη SOS", "End SOS")
                     : t("SOS / Χάθηκα", "SOS / Lost")}

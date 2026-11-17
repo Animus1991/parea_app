@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Sparkles, Users, HeartHandshake, BadgeCheck } from 'lucide-react';
+import { Users, HeartHandshake, BadgeCheck, Blend } from 'lucide-react';
 import { useStore } from '../../store';
 import { useWallAccess } from '../../store/wallStore';
 import { useLanguage } from '../../lib/i18n';
@@ -74,7 +74,7 @@ export function GroupInsights({
   }
   if (fit) {
     const why = fit.reasons.length ? ` — ${fit.reasons.join(', ').toLowerCase()}` : '';
-    rows.push({ key: 'f', icon: Sparkles, text: `${vibeFitLabel(fit.score, t)}${why}` });
+    rows.push({ key: 'f', icon: Blend, text: `${vibeFitLabel(fit.score, t)}${why}` });
   }
   if (rows.length === 0) return null;
 

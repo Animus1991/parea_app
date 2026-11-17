@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { AlertTriangle, ShieldCheck, CheckCircle2, X, Upload, Clock } from 'lucide-react';
+import { ShieldAlert, ShieldCheck, CheckCircle2, X, Upload, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
@@ -89,7 +89,7 @@ export default function ReportIssuePageContent() {
                 p.isDark ? 'bg-red-900/40' : 'bg-red-100',
               )}
             >
-              <AlertTriangle className={cn('w-5 h-5', p.isDark ? 'text-red-300' : 'text-red-600')} />
+              <ShieldAlert className={cn('w-5 h-5', p.isDark ? 'text-red-300' : 'text-red-600')} />
             </div>
             <div>
               <h3 className={cn('font-bold text-sm md:text-base', p.head)}>

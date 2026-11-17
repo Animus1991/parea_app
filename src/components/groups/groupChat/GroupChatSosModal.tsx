@@ -1,4 +1,4 @@
-import { AlertTriangle } from 'lucide-react';
+import { Siren } from 'lucide-react';
 import { useLanguage } from '../../../lib/i18n';
 import { Modal } from '../../common/Modal';
 import type { Group } from '../../../types';
@@ -30,7 +30,7 @@ export function GroupChatSosModal({
     >
       <div className="text-center">
         <div className="w-10 h-10 bg-red-100 dark:bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-red-600">
-          <AlertTriangle className="w-5 h-5 animate-pulse motion-reduce:animate-none" />
+          <Siren className="w-5 h-5 animate-pulse motion-reduce:animate-none" />
         </div>
         <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
           {isSos

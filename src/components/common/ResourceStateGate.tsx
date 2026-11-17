@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { AlertTriangle, type LucideIcon } from 'lucide-react';
+import { ShieldAlert, type LucideIcon } from 'lucide-react';
 import { EmptyState } from './EmptyState';
 import { useLanguage } from '../../lib/i18n';
 
@@ -23,7 +23,7 @@ export function ResourceStateGate({
   onRetry,
   loading,
   children,
-  errorIcon = AlertTriangle,
+  errorIcon = ShieldAlert,
   errorTitle,
   errorDescription,
 }: ResourceStateGateProps) {

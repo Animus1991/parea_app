@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
-  AlertTriangle,
   Bookmark,
   BookmarkCheck,
   Check,
@@ -275,7 +274,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
   if (message.compact) {
     return (
       <p className={cn('flex items-start gap-1.5 text-xs font-medium', message.error ? 'text-red-600 dark:text-red-400' : 'text-ink-muted')}>
-        {message.error ? <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" /> : <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />}
+        {message.error ? <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" /> : <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />}
         <span className="flex-1">{body}</span>
         {undoable && (
           <button type="button" onClick={() => undoAction(message.id)} className="shrink-0 font-semibold text-accent underline-offset-2 hover:underline">

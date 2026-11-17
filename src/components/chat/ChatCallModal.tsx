@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Mic, MicOff, PhoneOff, Video, VideoOff, Link2, Sparkles } from 'lucide-react';
+import { Mic, MicOff, PhoneOff, Video, VideoOff, Link2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
@@ -130,8 +130,7 @@ export function ChatCallModal({
                   {p.name.slice(0, 1).toUpperCase()}
                 </span>
                 <span className="text-xs font-semibold truncate max-w-full">{p.name.split(' ')[0]}</span>
-                <span className="text-2xs text-white/50 flex items-center gap-1">
-                  <Sparkles className="w-2.5 h-2.5 text-emerald-400" aria-hidden />
+                <span className="text-2xs text-emerald-400/90">
                   {t('Συνδεδεμένος', 'Connected')}
                 </span>
               </div>

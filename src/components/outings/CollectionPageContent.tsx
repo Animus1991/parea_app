@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Library, Sparkles } from 'lucide-react';
+import { ArrowLeft, Library } from 'lucide-react';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
@@ -69,7 +69,7 @@ export default function CollectionPageContent() {
     );
   }
 
-  const Icon = COLLECTION_ICONS[collection.id as keyof typeof COLLECTION_ICONS] ?? Sparkles;
+  const Icon = COLLECTION_ICONS[collection.id as keyof typeof COLLECTION_ICONS] ?? Library;
   const totalForming = list.reduce((n, e) => n + formingGroups(e, groups).length, 0);
 
   return (

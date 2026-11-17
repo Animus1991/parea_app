@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { toast } from 'sonner';
-import { MapPin, Search, Navigation, Crosshair, Map as MapIcon, SlidersHorizontal, AlertTriangle, Maximize, Minimize, ChevronUp } from "lucide-react";
+import { MapPin, Search, Navigation, Crosshair, Map as MapIcon, SlidersHorizontal, ShieldAlert, Maximize, Minimize, ChevronUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { isToday, parseISO } from "date-fns";
 import { useStore } from "../../store";
@@ -400,7 +400,7 @@ export default function NearbyGroupsPageContent() {
           fallback={
             <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] dark:bg-gray-900 p-5 text-center">
               <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-soft max-w-sm border border-red-100 dark:border-red-900">
-                <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" />
+                <ShieldAlert className="w-10 h-10 text-red-500 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">{t('Σφάλμα χάρτη', 'Map Error')}</h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">
                   {t('Πρόβλημα κατά τη φόρτωση του χάρτη.', 'There was a problem loading the map.')}

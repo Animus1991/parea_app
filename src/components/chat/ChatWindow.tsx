@@ -8,7 +8,7 @@ import {
   Video,
   Search,
   Pin,
-  Sparkles,
+  Images,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
@@ -194,7 +194,7 @@ export function ChatWindow({
                 showStories ? 'bg-brand-soft text-brand' : 'text-ink-muted hover:bg-ink/10 hover:text-ink',
               )}
             >
-              <Sparkles className="w-4 h-4" />
+              <Images className="w-4 h-4" />
             </button>
             <button
               type="button"

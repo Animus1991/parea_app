@@ -1,4 +1,4 @@
-import { Calendar, MessageCircle, AlertTriangle } from 'lucide-react';
+import { Calendar, MessageCircle, Users, BadgeCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 export interface AppNotification {
@@ -29,7 +29,7 @@ export const mockNotifications: AppNotification[] = [
     timeEn: '10 mins ago',
     timeGr: 'πριν 10 λεπτά',
     read: false,
-    icon: AlertTriangle,
+    icon: Users,
     color: 'bg-emerald-100 text-emerald-600',
     groupId: 'g2',
     eventId: 'e4',
@@ -68,7 +68,7 @@ export const mockNotifications: AppNotification[] = [
     timeEn: '2 days ago',
     timeGr: 'πριν 2 μέρες',
     read: true,
-    icon: AlertTriangle,
+    icon: BadgeCheck,
     color: 'bg-gray-100 text-gray-600'
   }
 ];

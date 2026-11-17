@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useStore } from '../../store';
 import { Button } from '../common/Button';
-import { Users, CheckCircle, Split, ShieldCheck, Tag, HeartHandshake, ListOrdered, Sparkles } from 'lucide-react';
+import { Users, CheckCircle, Split, ShieldCheck, Tag, HeartHandshake, ListOrdered } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { PAGE_FILL } from '../layout/PageShell';
@@ -394,7 +394,7 @@ export default function JoinGroupFlow() {
               onClick={() => setQuizOpen(true)}
               className="flex w-full items-center gap-2 rounded-xl border border-border p-3 text-left text-xs font-bold text-ink"
             >
-              <Sparkles className="h-4 w-4 shrink-0" aria-hidden />
+              <HeartHandshake className="h-4 w-4 shrink-0" aria-hidden />
               {t('Κάνε το κουίζ «Το στυλ παρέας μου» (1′) για να βλέπεις γιατί ταιριάζετε.', 'Take the “My group style” quiz (1 min) to see why you match.')}
             </button>
           )}
