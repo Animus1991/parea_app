@@ -71,6 +71,35 @@ export const WALLET_TYPO = {
   btn: APP_TYPO.btn,
 } as const;
 
+/**
+ * Profile page density — Wallet-aligned scale, no extrabold, label < value.
+ * pageTitle 14/15 → identity 12/13 → KPI numerals 13/14 → section 10 → row 12 → meta 10 → micro 9.
+ */
+export const PROFILE_TYPO = {
+  pageTitle: APP_TYPO.pageTitle,
+  pageSub: APP_TYPO.pageSub,
+  identityName: APP_TYPO.panelTitle,
+  identityMeta: APP_TYPO.rowMeta,
+  identityBio: APP_TYPO.cardBody,
+  kpiLabel: APP_TYPO.sectionLabel,
+  kpiValue: APP_TYPO.statValue,
+  /** Completion percent — stays at 12px so it does not match the 14px page title. */
+  kpiValueSecondary: 'text-sm font-bold tabular-nums leading-none',
+  kpiHint: APP_TYPO.kpiHint,
+  sectionTitle: APP_TYPO.sectionLabel,
+  rowTitle: APP_TYPO.rowTitle,
+  rowMeta: APP_TYPO.rowMeta,
+  micro: 'text-2xs font-medium',
+  microBold: 'text-2xs font-bold',
+  bannerTitle: APP_TYPO.bannerTitle,
+  bannerBody: APP_TYPO.bannerBody,
+  fieldLabel: 'text-xs font-bold',
+  fieldControl: 'text-xs font-medium',
+  fieldHelp: 'text-2xs font-medium leading-relaxed',
+  nestedCardTitle: APP_TYPO.rowTitle,
+  statusNote: APP_TYPO.bodyMedium,
+} as const;
+
 /** Popup chat window density */
 export const CHAT_TYPO = {
   title: 'text-sm font-bold',
@@ -78,8 +107,11 @@ export const CHAT_TYPO = {
   badge: 'text-2xs text-brand font-bold',
   menu: 'text-2xs',
   lockNotice: 'text-2xs text-amber-700 dark:text-amber-200',
-  /** Inbox lock/status line — gold-orange on white, same weight as body. */
-  lockHint: 'text-[#c08010] dark:text-amber-300',
+  /**
+   * Inbox lock/status line — gold-orange mixed with black for contrast on white
+   * (~8:1 vs white), same weight/size as the preview body.
+   */
+  lockHint: 'text-[#7c4a0d] dark:text-amber-200',
   sender: 'text-2xs text-ink-muted mb-0.5',
   bubble: 'text-sm leading-relaxed break-words',
   systemBubble: 'text-2xs text-center',

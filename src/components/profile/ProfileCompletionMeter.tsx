@@ -5,6 +5,7 @@ import { computeProfileCompletion } from '../../lib/behavioralOptimizer';
 import { useStore } from '../../store';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { PROFILE_TYPO } from '../../lib/typographyTokens';
 
 export function ProfileCompletionMeter({ className }: { className?: string }) {
   const { t } = useLanguage();
@@ -19,10 +20,10 @@ export function ProfileCompletionMeter({ className }: { className?: string }) {
   return (
     <div className={cn('rounded-2xl border p-4', a.cardSurface, a.borderB, className)}>
       <div className="flex items-center justify-between gap-3 mb-2">
-        <p className={cn('text-sm font-bold', a.head)}>
+        <p className={cn(PROFILE_TYPO.kpiHint, a.head)}>
           {t('Πληρότητα προφίλ', 'Profile completion')}
         </p>
-        <span className={cn('text-sm font-bold tabular-nums', a.iconAccent)}>{percent}%</span>
+        <span className={cn(PROFILE_TYPO.kpiValueSecondary, a.iconAccent)}>{percent}%</span>
       </div>
       <div className="h-2 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden mb-3">
         <div
