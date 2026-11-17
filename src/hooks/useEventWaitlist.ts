@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
 
@@ -7,6 +8,7 @@ export function useEventWaitlist(eventId: string) {
   const waitlistedEvents = useStore((s) => s.waitlistedEvents);
   const addToWaitlist = useStore((s) => s.addToWaitlist);
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const isWaitlisted = waitlistedEvents.includes(eventId);
 
   const handleJoinWaitlist = () => {
@@ -14,9 +16,15 @@ export function useEventWaitlist(eventId: string) {
     addToWaitlist(eventId);
     toast.success(
       t(
-        'Μπήκατε στη λίστα αναμονής — θα ειδοποιηθείτε αν ανοίξει θέση.',
-        'You joined the waitlist — we will notify you if a spot opens.',
+        'Αποθηκεύτηκε στα σχέδιά σου — παρακολούθησε από εκεί αν ανοίξει θέση.',
+        'Saved on My plans — watch there if a seat opens.',
       ),
+      {
+        action: {
+          label: t('Τα σχέδιά μου', 'My plans'),
+          onClick: () => navigate('/plans'),
+        },
+      },
     );
   };
 
