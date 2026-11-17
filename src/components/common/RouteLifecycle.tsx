@@ -9,9 +9,21 @@ import { useStore } from '../../store';
 const APP_NAME = 'Nakamas';
 /**
  * How long a back/forward restore waits for lazy content to grow tall enough.
- * Generous for slow phones; the restore still stops the moment the user scrolls.
+ * Generous for slow phones; the restore still stops the moment the user
+ * scrolls, presses a key or leaves the page.
  */
 const MAX_RESTORE_MS = 4000;
+
+/**
+ * Positions are keyed by the history entry's index, not the router key.
+ * A page may rewrite its own URL (replaceState) while it loads; under load
+ * React can drop those pending renders, so the key this component saw is not
+ * the key Back returns to. The index of the entry never changes on replace.
+ */
+function entryId(fallbackKey: string): string {
+  const idx = (window.history.state as { idx?: unknown } | null)?.idx;
+  return typeof idx === 'number' ? `i${idx}` : `k${fallbackKey}`;
+}
 
 /**
  * Per-page housekeeping: document title, the screen-reader announcement and
@@ -43,13 +55,17 @@ export function RouteLifecycle() {
     }
   }, [pathname, language, setLastResumePath]);
 
-  // Remember the scroll position of every history entry.
+  // Remember the scroll position of every history entry. The listener sits on
+  // the document (capture phase): the #main-content node can be replaced after
+  // a lazy chunk resolves, and a listener bound to the old node would miss every
+  // later scroll, so Back would restore 0.
   useEffect(() => {
-    const main = document.getElementById('main-content');
-    if (!main) return;
-    const onScroll = () => positions.current.set(key, main.scrollTop);
-    main.addEventListener('scroll', onScroll, { passive: true });
-    return () => main.removeEventListener('scroll', onScroll);
+    const onScroll = (e: Event) => {
+      const el = e.target;
+      if (el instanceof HTMLElement && el.id === 'main-content') positions.current.set(entryId(key), el.scrollTop);
+    };
+    document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+    return () => document.removeEventListener('scroll', onScroll, { capture: true });
   }, [key]);
 
   // Where to put the page: top for a new page; the remembered spot after Back
@@ -57,16 +73,18 @@ export function RouteLifecycle() {
   const previous = useRef<{ pathname: string } | null>(null);
   const pendingRestore = useRef(0);
   useEffect(() => {
-    const main = document.getElementById('main-content');
+    const first = document.getElementById('main-content');
     const samePage = previous.current?.pathname === pathname;
     previous.current = { pathname };
-    if (!main) return;
+    if (!first) return;
+    let main: HTMLElement = first;
+    const id = entryId(key);
     let target: number;
-    if (navigationType === 'POP') target = positions.current.get(key) ?? 0;
+    if (navigationType === 'POP') target = positions.current.get(id) ?? 0;
     else if (navigationType === 'REPLACE' && samePage) target = pendingRestore.current || main.scrollTop;
     else target = 0;
     // The new history entry starts where the page is shown (a later Back needs it).
-    positions.current.set(key, target);
+    positions.current.set(id, target);
 
     if (target <= 0) {
       pendingRestore.current = 0;
@@ -90,7 +108,21 @@ export function RouteLifecycle() {
     };
     const attempt = () => {
       if (cancelled) return;
-      if (main.scrollHeight - main.clientHeight >= target - 2 || performance.now() - started > MAX_RESTORE_MS) {
+      const live = document.getElementById('main-content');
+      if (live && live !== main) {
+        // The node was swapped while loading: move the restore (and its listeners) to it.
+        main.removeEventListener('wheel', userTookOver);
+        main.removeEventListener('touchstart', userTookOver);
+        main = live;
+        main.addEventListener('wheel', userTookOver, { passive: true });
+        main.addEventListener('touchstart', userTookOver, { passive: true });
+      }
+      const tallEnough = main.scrollHeight - main.clientHeight >= target - 2;
+      // While the page grows, keep the reader as close to their spot as it allows.
+      if (!tallEnough && main.scrollTop < main.scrollHeight - main.clientHeight) {
+        main.scrollTop = target;
+      }
+      if (tallEnough || performance.now() - started > MAX_RESTORE_MS) {
         main.scrollTop = target;
         pendingRestore.current = 0;
         return;
