@@ -30,7 +30,7 @@ npx wrangler pages deploy dist --project-name=nakamas
 
 GitHub Actions: `.github/workflows/cloudflare-pages.yml` (needs repo secrets `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`). SPA fallback + security headers: `public/_redirects`, `public/_headers`.
 
-Latest audit: [`docs/WALL_AND_AUDIENCE_2026-11-16.md`](docs/WALL_AND_AUDIENCE_2026-11-16.md) (wall, audiences, social-graph fixes). Previous: [`docs/COMPREHENSIVE_AUDIT_2026-11-14.md`](docs/COMPREHENSIVE_AUDIT_2026-11-14.md).
+Latest audit: [`docs/COMPREHENSIVE_AUDIT_2026-11-17.md`](docs/COMPREHENSIVE_AUDIT_2026-11-17.md). Related: [`WALL_AND_AUDIENCE_2026-11-16.md`](docs/WALL_AND_AUDIENCE_2026-11-16.md), [`COMPREHENSIVE_AUDIT_2026-11-14.md`](docs/COMPREHENSIVE_AUDIT_2026-11-14.md).
 
 ## Nakamas AI (copilot)
 
