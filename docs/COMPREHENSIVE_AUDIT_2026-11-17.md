@@ -57,7 +57,7 @@ https://deliver-originally-generally-pay.trycloudflare.com
 | `eslint .` | ✅ 0 errors (exit 0) |
 | `audit:contrast` | ✅ **90/90** pairs · 9 themes · AA |
 | `vitest run` | ✅ **262 passed** · 26 skipped · 40 files (+1 skipped) |
-| `vite build` | ✅ · προειδοποίηση chunk `index` **~615 KB** (gzip ~181 KB) + firebase ~465 KB |
+| `vite build` | ✅ · κανένα chunk > 500 KB (`index` **448 KB** / gzip **125 KB** μετά το lazy-load του copilot) |
 | `npm audit` | ✅ **0 vulnerabilities** |
 | Cloudflare Tunnel smoke | ✅ HTTP 200 · Playwright: Demo Alex → Skip onboarding → `/wall` · **0 page/console errors** |
 | CI στο tip (PR #24) | ✅ Typecheck/Lint/Test/Build · E2E Playwright · Firestore rules emulator · CF Pages job (publish skipped) |
@@ -189,11 +189,13 @@ Empty CTAs + Ask AI, toast Undo, deep-links (feedback/night/Φ27), quieter notif
 5. Demo login off σε κάθε production build — ✅  
 6. Server-backed invites/groups/strikes — ⬜  
 7. `RequireOrganizer` στο `/manage` — ✅  
-8. Μείωση `index` + lazy-load Firebase — ⬜  
+8. Μείωση `index` + lazy-load AI/Firebase — ✅ `CopilotPanel` + `src/ai/*` lazy-loaded (`index` 615 KB → 448 KB, 0 Vite warnings)  
 9. Καθαρισμός `raw_greek_remaining.json` / ενοποίηση i18n — ⬜  
 10. Διαγραφή άχρηστων theme re-export forks — 🟡 EventDetail ενιαίο body· υπόλοιπα forks παραμένουν  
 11. Active Buddies dark event-detail contrast — ✅ `isDarkTheme` → `darkSurface`  
-12. `ARCHITECTURE.md` Mermaid ως «στόχος» — ✅
+12. `ARCHITECTURE.md` Mermaid ως «στόχος» — ✅  
+
+Επιπλέον βελτιώσεις loyalty / ergonomics: zero-CLS lazy init + Undo στα Home tips, Map icon σε όλα τα Home hero modes, `Ask AI` στο Wall `EmptyState`, Undo στην απόρριψη αιτήματος σύνδεσης (`restoreConnectionRequest`), `createEvent` → `isOrganizer: true` + gated `/manage` nav/palette, `replace: true` στα auth/onboarding redirects.
 
 ---
 

@@ -2,7 +2,7 @@ import { ArrowRight, Bot } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
-import { openCopilot } from '../../ai/copilot';
+import { openCopilot } from '../../ai/launcher';
 import { suggestionsForPath, type CopilotSuggestion } from '../../ai/suggestions';
 
 interface Props {

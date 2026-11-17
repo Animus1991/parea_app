@@ -82,7 +82,7 @@ export default function App() {
   const publicPage = isPublicPath(location.pathname);
   useEffect(() => {
     if (!currentUser && location.pathname !== "/login" && !publicPage) {
-      navigate("/login");
+      navigate("/login", { replace: true });
     }
   }, [currentUser, location.pathname, navigate, publicPage]);
 
@@ -95,7 +95,7 @@ export default function App() {
       location.pathname !== "/onboarding" &&
       location.pathname !== "/login"
     ) {
-      navigate("/onboarding");
+      navigate("/onboarding", { replace: true });
     }
   }, [currentUser, onboardingCompleted, demoMode, location.pathname, navigate, publicPage]);
 

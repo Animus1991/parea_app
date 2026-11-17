@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
-import { openCopilot } from '../../ai/copilot';
+import { openCopilot } from '../../ai/launcher';
 import { Bot } from 'lucide-react';
 import { Search, MessageCircle, ChevronRight, ChevronDown, Zap, Shield, CreditCard, Users } from 'lucide-react';
 import { Card } from '../common/Card';

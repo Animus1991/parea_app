@@ -299,6 +299,8 @@ interface AppState extends OutingsSlice {
   cancelConnectionRequest: (toUserId: string) => void;
   acceptConnectionRequest: (requestId: string) => void;
   declineConnectionRequest: (requestId: string) => void;
+  /** Re-opens a request declined moments ago (Undo on the toast). */
+  restoreConnectionRequest: (requestId: string) => void;
   removeConnection: (userId: string) => void;
   /** Restores a connection removed moments ago (Undo on the toast). */
   restoreConnection: (userId: string) => void;
@@ -971,14 +973,15 @@ export const useStore = create<AppState>()(
   createEvent: (event) => {
     const state = get();
     if (!state.currentUser) return;
+    const uid = state.currentUser.id;
     const newEvent = { ...event, id: event.id ?? `e${Date.now()}` } as Event;
     const newGroup = {
       id: `g${Date.now()}`,
       eventId: newEvent.id,
-      hostId: state.currentUser.id,
+      hostId: uid,
       targetSize: event.maxParticipants || 5,
       status: "pending" as const,
-      members: [state.currentUser.id],
+      members: [uid],
       pendingMembers: [],
       discountUnlocked: false,
       chatId: `chat_${Date.now()}`,
@@ -987,6 +990,8 @@ export const useStore = create<AppState>()(
       events: [...state.events, newEvent],
       groups: [...state.groups, newGroup],
       eventsSource: 'mixed',
+      currentUser: { ...state.currentUser, isOrganizer: true },
+      users: state.users.map((u) => (u.id === uid ? { ...u, isOrganizer: true } : u)),
     });
     void createEventOnApi(newEvent).catch(() => undefined);
   },
@@ -1570,6 +1575,19 @@ export const useStore = create<AppState>()(
           }),
           ...state.notifications,
         ],
+      };
+    }),
+
+  restoreConnectionRequest: (requestId) =>
+    set((state) => {
+      if (!state.currentUser) return state;
+      const req = state.connectionRequests.find((r) => r.id === requestId);
+      if (!req || req.status !== 'declined' || req.toUserId !== state.currentUser.id) return state;
+      if (state.blockedUserIds.includes(req.fromUserId)) return state;
+      return {
+        connectionRequests: state.connectionRequests.map((r) =>
+          r.id === requestId ? { ...r, status: 'pending' as const } : r,
+        ),
       };
     }),
 

@@ -8,6 +8,7 @@ export interface AppRoute {
   /** Normalized bilingual stems used by the local engine and by the palette bridge. */
   stems: string[];
   adminOnly?: boolean;
+  organizerOnly?: boolean;
 }
 
 /**
@@ -28,7 +29,7 @@ export const APP_ROUTES: AppRoute[] = [
   { id: 'connections', path: '/connections', labelEl: 'Οι Nakamas μου', labelEn: 'My Nakamas', stems: ['nakamas μου', 'φιλοι', 'φιλουσ', 'συνδεσεισ', 'connections', 'friends', 'my nakamas'] },
   { id: 'wall', path: '/wall', labelEl: 'Τοίχος Nakamas', labelEn: 'Nakamas Wall', stems: ['τοιχο', 'τοιχοσ', 'δημοσιευσ', 'ροη nakamas', 'wall', 'news feed', 'posts', 'timeline'] },
   { id: 'chats', path: '/chats', labelEl: 'Συνομιλίες', labelEn: 'Chats', stems: ['συνομιλι', 'μηνυματα', 'inbox', 'chats', 'messages'] },
-  { id: 'manage', path: '/manage', labelEl: 'Πίνακας Διοργανωτή', labelEn: 'Organizer Dashboard', stems: ['διοργανωτ', 'organizer', 'dashboard', 'manage'] },
+  { id: 'manage', path: '/manage', labelEl: 'Πίνακας Διοργανωτή', labelEn: 'Organizer Dashboard', stems: ['διοργανωτ', 'organizer', 'dashboard', 'manage'], organizerOnly: true },
   { id: 'create', path: '/create', labelEl: 'Δημιουργία Εκδήλωσης', labelEn: 'Create Event', stems: ['δημιουργια εκδηλωσ', 'create event', 'new event'] },
   { id: 'wallet', path: '/wallet', labelEl: 'Πορτοφόλι', labelEn: 'Wallet', stems: ['πορτοφολ', 'κερδη', 'πληρωμ', 'wallet', 'earnings', 'payout'] },
   { id: 'verification', path: '/verification', labelEl: 'Επαλήθευση Ταυτότητας', labelEn: 'Identity Verification', stems: ['επαληθευσ', 'ταυτοτητ', 'verification', 'verify'] },

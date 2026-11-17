@@ -2,6 +2,7 @@ import { Bot } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { useCopilotStore } from '../../store/copilotStore';
+import { preloadCopilot } from '../../ai/launcher';
 
 /** TopNav entry point for Nakamas AI (visible on every breakpoint). */
 export function CopilotLauncher({ className }: { className?: string }) {
@@ -12,6 +13,8 @@ export function CopilotLauncher({ className }: { className?: string }) {
     <button
       type="button"
       onClick={toggle}
+      onMouseEnter={preloadCopilot}
+      onFocus={preloadCopilot}
       aria-expanded={open}
       aria-keyshortcuts="Control+J Meta+J"
       aria-label={t('Nakamas AI — ο βοηθός σου', 'Nakamas AI — your assistant')}

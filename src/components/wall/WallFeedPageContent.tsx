@@ -264,6 +264,18 @@ export default function WallFeedPageContent() {
                 ? () => navigate('/buddy-seek')
                 : () => navigate('/connections')
           }
+          askAi
+          askPrompt={
+            filter === 'mine'
+              ? t(
+                  'Βοήθησέ με να γράψω μια ωραία πρόσκληση για τον τοίχο μου.',
+                  'Help me write a nice invite post for my wall.',
+                )
+              : t(
+                  'Δείξε μου τι κάνουν οι Nakamas μου ή βρες παρέα για έξοδο.',
+                  'Show me what my Nakamas are up to or find company for an outing.',
+                )
+          }
         />
       ) : (
         <WallPostList key={filter} posts={list} />

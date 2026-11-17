@@ -57,8 +57,20 @@ export function HomeLoggedInHeroContrast({
           className={cn(
             h.heroSearchInput,
             'search-control shadow-soft focus:outline-none backdrop-blur-sm w-full',
+            homeHeroMode !== 'light' && 'pr-10',
           )}
         />
+        {homeHeroMode !== 'light' && (
+          <button
+            type="button"
+            onClick={() => navigate('/nearby')}
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-opacity opacity-80 hover:opacity-100"
+            title={t('Εμφάνιση στον Χάρτη', 'View on Map')}
+            aria-label={t('Εμφάνιση στον Χάρτη', 'View on Map')}
+          >
+            <MapPin className="w-4 h-4" aria-hidden />
+          </button>
+        )}
         {showSearchSuggestions && !searchQuery && searchDropdown}
       </div>
       {homeHeroMode === 'light' ? (

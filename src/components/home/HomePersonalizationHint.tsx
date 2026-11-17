@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Heart, X } from 'lucide-react';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
@@ -21,15 +21,13 @@ export function HomePersonalizationHint({ useClassicTokens = false }: HomePerson
   const h = useHomeTheme();
   const p = usePageContrast();
   const tok = useThemeStyles();
-  const [dismissed, setDismissed] = useState(true);
-
-  useEffect(() => {
+  const [dismissed, setDismissed] = useState(() => {
     try {
-      setDismissed(sessionStorage.getItem(DISMISS_KEY) === '1');
+      return typeof window !== 'undefined' && sessionStorage.getItem(DISMISS_KEY) === '1';
     } catch {
-      setDismissed(false);
+      return false;
     }
-  }, []);
+  });
 
   const hasInterests = (currentUser?.interests?.length ?? 0) > 0;
   const hasPrefs = getDiscoveryPrefChips(currentUser, t).length > 0;

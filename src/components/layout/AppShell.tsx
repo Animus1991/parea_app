@@ -1,4 +1,4 @@
-﻿import React, { ReactNode, useEffect, useState } from 'react';
+﻿import React, { ReactNode, Suspense, lazy, useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useUIStore } from '../../store/uiStore';
 import { Toaster } from 'sonner';
@@ -26,9 +26,12 @@ import { DemoModeBanner } from '../common/DemoModeBanner';
 import { useRealtimeChat } from '../../hooks/useRealtimeChat';
 import { useFirebaseAuth } from '../../hooks/useFirebaseAuth';
 import { CopilotLauncher } from '../copilot/CopilotLauncher';
-import { CopilotPanel } from '../copilot/CopilotPanel';
 import { useCopilotStore } from '../../store/copilotStore';
-import { isPlatformAdmin } from '../../lib/roles';
+import { isOrganizerUser, isPlatformAdmin } from '../../lib/roles';
+
+const CopilotPanel = lazy(() =>
+  import('../copilot/CopilotPanel').then((m) => ({ default: m.CopilotPanel })),
+);
 import { DESKTOP_DOCK_QUERY, useMediaQuery } from '../../hooks/useMediaQuery';
 import { useWallUnreadCount } from '../../hooks/useWallUnreadCount';
 
@@ -209,6 +212,7 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
   const currentUser = useStore((s) => s.currentUser);
   // Same predicate as CommandPalette and the copilot (lib/roles.ts).
   const isAdmin = isPlatformAdmin(currentUser);
+  const isOrganizer = isOrganizerUser(currentUser);
   const wallUnread = useWallUnreadCount();
 
   return (
@@ -237,7 +241,9 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
       </NavSection>
 
       <NavSection id="host" paths={['/manage', '/create', '/wallet']} title={t('Διοργάνωση', 'Host')} compact={compact} rail={rail}>
-        <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας Διοργανωτή', 'Organizer Dashboard')} compact={compact} rail={rail} />
+        {isOrganizer && (
+          <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας Διοργανωτή', 'Organizer Dashboard')} compact={compact} rail={rail} />
+        )}
         <NavItem to="/create" icon={PlusSquare} label={t('Δημιουργία Εκδήλωσης', 'Create Event')} compact={compact} rail={rail} />
         <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & Κέρδη', 'Wallet & Earnings')} compact={compact} rail={rail} />
       </NavSection>
@@ -594,7 +600,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* The docked copilot replaces the plans-forming rail while open (both live on the right edge). */}
         {showPlansRail && <PlansFormingSidebar />}
         {showPlansRail && <PlansFormingSidebarReopenTab />}
-        <CopilotPanel />
+        {copilotOpen && (
+          <Suspense fallback={null}>
+            <CopilotPanel />
+          </Suspense>
+        )}
       </div>
       </div>
       <PlansFormingBottomSheet />

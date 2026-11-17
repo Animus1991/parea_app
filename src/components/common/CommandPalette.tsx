@@ -28,14 +28,14 @@ import {
   Shield,
   TrendingUp,
 } from 'lucide-react';
-import { openCopilot } from '../../ai/copilot';
+import { openCopilot } from '../../ai/launcher';
 import { APP_ROUTES } from '../../ai/routes';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { trackEvent } from '../../lib/analytics';
 import { useStore } from '../../store';
 import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
-import { isPlatformAdmin } from '../../lib/roles';
+import { isOrganizerUser, isPlatformAdmin } from '../../lib/roles';
 
 type PaletteMode = 'mixed' | 'pages' | 'actions';
 
@@ -78,11 +78,12 @@ export function CommandPalette() {
   useOverlayBehavior(open, closePalette, panelRef);
 
   const isAdmin = isPlatformAdmin(currentUser);
+  const isOrganizer = isOrganizerUser(currentUser);
   const { mode, q } = detectMode(query);
 
   const pageItems: CommandItem[] = useMemo(
     () =>
-      APP_ROUTES.filter((r) => !r.adminOnly || isAdmin).map((r) => {
+      APP_ROUTES.filter((r) => (!r.adminOnly || isAdmin) && (!r.organizerOnly || isOrganizer)).map((r) => {
         const iconMap: Record<string, React.ElementType> = {
           home: Home,
           categories: Grid,
@@ -122,7 +123,7 @@ export function CommandPalette() {
           kind: 'page' as const,
         };
       }),
-    [isAdmin],
+    [isAdmin, isOrganizer],
   );
 
   const actionItems: CommandItem[] = useMemo(

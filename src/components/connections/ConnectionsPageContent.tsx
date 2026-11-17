@@ -103,6 +103,7 @@ export default function ConnectionsPageContent() {
   const connectionRequests = useStore((s) => s.connectionRequests);
   const acceptConnectionRequest = useStore((s) => s.acceptConnectionRequest);
   const declineConnectionRequest = useStore((s) => s.declineConnectionRequest);
+  const restoreConnectionRequest = useStore((s) => s.restoreConnectionRequest);
   const removeConnection = useStore((s) => s.removeConnection);
   const restoreConnection = useStore((s) => s.restoreConnection);
   const sendConnectionRequest = useStore((s) => s.sendConnectionRequest);
@@ -296,6 +297,14 @@ export default function ConnectionsPageContent() {
       name
         ? t(`Απορρίφθηκε το αίτημα από ${name}`, `Declined request from ${name}`)
         : t('Το αίτημα απορρίφθηκε', 'Request declined'),
+      {
+        action: {
+          label: t('Αναίρεση', 'Undo'),
+          onClick: () => {
+            restoreConnectionRequest(requestId);
+          },
+        },
+      },
     );
   };
   const handleConnect = (userId: string, name: string) => {

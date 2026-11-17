@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Lightbulb, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
@@ -14,17 +15,24 @@ export function HomeDailyTip() {
   const tok = useThemeStyles();
   const tipIndex = Math.floor(Date.now() / 86400000) % DAILY_TIPS_GR.length;
   const dayKey = String(Math.floor(Date.now() / 86400000));
-  const [dismissed, setDismissed] = useState(true);
-
-  useEffect(() => {
+  const [dismissed, setDismissed] = useState(() => {
     try {
-      setDismissed(sessionStorage.getItem(DISMISS_KEY) === dayKey);
+      return typeof window !== 'undefined' && sessionStorage.getItem(DISMISS_KEY) === dayKey;
     } catch {
-      setDismissed(false);
+      return false;
     }
-  }, [dayKey]);
+  });
 
   if (dismissed) return null;
+
+  const restore = () => {
+    try {
+      sessionStorage.removeItem(DISMISS_KEY);
+    } catch {
+      /* ignore */
+    }
+    setDismissed(false);
+  };
 
   const dismiss = () => {
     try {
@@ -33,6 +41,12 @@ export function HomeDailyTip() {
       /* ignore */
     }
     setDismissed(true);
+    toast.message(t('Η συμβουλή ημέρας κρύφτηκε για σήμερα.', 'Tip of the day hidden for today.'), {
+      action: {
+        label: t('Αναίρεση', 'Undo'),
+        onClick: restore,
+      },
+    });
   };
 
   return (
