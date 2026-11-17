@@ -228,7 +228,7 @@ export function ChatComposerTools({
   };
 
   return (
-    <div className="border-t border-border bg-surface-raised shrink-0 relative pb-safe md:pb-0">
+    <div className="border-t border-border bg-surface-raised shrink-0 relative pb-[max(0.5rem,env(safe-area-inset-bottom))] md:pb-0">
       {/* Reply-to-Reply bar */}
       {replyTo && (
         <div className="flex items-center justify-between gap-2 px-3 py-1.5 bg-brand-soft/60 border-b border-border text-xs">
@@ -252,7 +252,7 @@ export function ChatComposerTools({
       {/* @mention autocomplete */}
       {mentionCandidates.length > 0 && (
         <div
-          className="absolute bottom-full left-3 right-3 mb-1 z-30 rounded-xl border border-border bg-surface-raised shadow-soft-lg p-1.5 flex flex-wrap gap-1"
+          className="absolute bottom-full left-3 right-3 mb-1 z-30 rounded-2xl border border-border bg-surface-raised shadow-soft-lg p-1.5 flex flex-wrap gap-1"
           role="listbox"
           aria-label={t('Αναφορά χρήστη', 'Mention user')}
         >
@@ -281,7 +281,7 @@ export function ChatComposerTools({
                   type="button"
                   onClick={() => setEmojiTab(cat.id)}
                   className={cn(
-                    'px-2 py-1 rounded-lg text-xs font-bold',
+                    'px-2.5 py-1 rounded-full text-xs font-bold',
                     emojiTab === cat.id ? 'bg-brand text-brand-fg' : 'text-ink-muted hover:bg-ink/5',
                   )}
                 >
@@ -322,7 +322,7 @@ export function ChatComposerTools({
               value={gifQuery}
               onChange={(e) => setGifQuery(e.target.value)}
               placeholder={t('Αναζήτηση GIF (π.χ. party, coffee)...', 'Search GIFs (party, coffee)...')}
-              className="flex-1 h-7 rounded-lg border border-border bg-surface-raised px-2.5 text-xs text-ink focus:outline-none"
+              className="flex-1 h-8 rounded-full border border-border bg-surface-raised px-3 text-xs text-ink focus:outline-none"
             />
             <button type="button" onClick={() => setPanel('none')} aria-label={t('Κλείσιμο', 'Close')} className="p-1 text-ink-muted">
               <X className="w-3.5 h-3.5" />
@@ -334,7 +334,7 @@ export function ChatComposerTools({
                 key={g.id}
                 type="button"
                 onClick={() => pickGif(g)}
-                className="relative rounded-xl overflow-hidden border border-border hover:border-brand aspect-[3/2] bg-ink/5 group"
+                className="relative rounded-2xl overflow-hidden border border-border hover:border-brand aspect-[3/2] bg-ink/5 group"
               >
                 <img
                   src={failedGifIds[g.id] ? g.fallbackSvgDataUrl : g.url}
@@ -364,7 +364,7 @@ export function ChatComposerTools({
             value={pollQ}
             onChange={(e) => setPollQ(e.target.value)}
             placeholder={t('Ερώτηση (π.χ. Τι ώρα βρισκόμαστε;)', 'Question (e.g. What time?)')}
-            className="w-full h-8 rounded-lg border border-border bg-surface-raised px-2.5 text-xs text-ink"
+            className="w-full h-8 rounded-2xl border border-border bg-surface-raised px-3 text-xs text-ink"
           />
           {pollOpts.map((opt, idx) => (
             <input
@@ -373,7 +373,7 @@ export function ChatComposerTools({
               value={opt}
               onChange={(e) => setPollOpts((prev) => prev.map((v, i) => (i === idx ? e.target.value : v)))}
               placeholder={`${t('Επιλογή', 'Option')} ${idx + 1}`}
-              className="w-full h-7 rounded-lg border border-border bg-surface-raised px-2.5 text-xs text-ink"
+              className="w-full h-8 rounded-2xl border border-border bg-surface-raised px-3 text-xs text-ink"
             />
           ))}
           <div className="flex items-center justify-between pt-1">
@@ -515,7 +515,7 @@ export function ChatComposerTools({
             aria-label="GIPHY GIF"
             title="GIPHY GIF"
             className={cn(
-              'px-1.5 py-0.5 rounded-md text-2xs font-extrabold border transition-colors shrink-0 disabled:opacity-40',
+              'px-2 py-0.5 rounded-full text-2xs font-extrabold border transition-colors shrink-0 disabled:opacity-40',
               panel === 'giphy'
                 ? 'bg-brand text-brand-fg border-brand'
                 : 'border-border text-ink-muted hover:border-brand hover:text-brand',

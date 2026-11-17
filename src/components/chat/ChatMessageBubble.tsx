@@ -343,7 +343,7 @@ export function ChatMessageBubble({
                       type="button"
                       onClick={() => onVotePoll?.(message.id, opt.id)}
                       className={cn(
-                        'w-full text-left rounded-lg px-2.5 py-1.5 text-2xs font-semibold relative overflow-hidden border transition-colors',
+                        'w-full text-left rounded-xl px-2.5 py-1.5 text-2xs font-semibold relative overflow-hidden border transition-colors',
                         mine
                           ? voted
                             ? 'border-brand-fg bg-brand-fg/20 text-brand-fg'
@@ -393,7 +393,7 @@ export function ChatMessageBubble({
                 type="text"
                 value={editText}
                 onChange={(e) => setEditText(e.target.value)}
-                className="flex-1 rounded-lg bg-white text-gray-900 px-2 py-1 text-xs focus:outline-none"
+                className="flex-1 rounded-full bg-white text-gray-900 px-3 py-1 text-xs focus:outline-none"
               />
               <button type="submit" aria-label={t('Αποθήκευση', 'Save')} className="p-1 rounded bg-emerald-600 text-white">
                 <Check className="w-3 h-3" />

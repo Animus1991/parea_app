@@ -79,7 +79,7 @@ export function TabBar({ tabs, activeTab, onChange, className, ariaLabel, idBase
       aria-label={ariaLabel}
       className={cn(
         segmented
-          ? 'inline-flex max-w-full gap-1 overflow-x-auto noscrollbar rounded-xl border border-border bg-surface-raised p-1'
+          ? 'inline-flex max-w-full gap-1 overflow-x-auto noscrollbar rounded-2xl border border-border bg-surface-raised p-1'
           : 'flex gap-1 overflow-x-auto noscrollbar',
         className,
       )}
@@ -105,7 +105,7 @@ export function TabBar({ tabs, activeTab, onChange, className, ariaLabel, idBase
               'whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1',
               segmented
                 ? cn(
-                    'inline-flex min-h-8 items-center gap-1 rounded-md px-2.5 text-2xs font-semibold transition-colors',
+                    'inline-flex min-h-8 items-center gap-1 rounded-xl px-3 text-2xs font-semibold transition-colors',
                     selected ? 'bg-accent text-accent-fg shadow-soft' : 'text-ink-muted hover:bg-surface hover:text-ink',
                   )
                 : cn('text-xs', selected ? getActiveClass() : getInactiveClass()),

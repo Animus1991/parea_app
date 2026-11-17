@@ -146,7 +146,7 @@ export function ChatWindow({
         className={cn(
           'fixed z-modal md:z-sheet flex flex-col overflow-hidden shadow-soft-lg copilot-shift',
           'bg-surface border-border text-ink',
-          'inset-0 md:inset-auto md:bottom-6 md:h-[500px] md:w-[360px] md:rounded-2xl md:border',
+          'inset-0 md:inset-auto md:bottom-6 md:h-[500px] md:w-[360px] md:rounded-3xl md:border',
           stackIndex === 0 && 'md:right-6',
           stackIndex === 1 && 'md:right-[24rem]',
         )}
@@ -168,7 +168,7 @@ export function ChatWindow({
                   onClick={() => setCallMode('audio')}
                   aria-label={t('Φωνητική κλήση', 'Voice call')}
                   title={t('Φωνητική κλήση', 'Voice call')}
-                  className="p-1.5 rounded-lg text-ink-muted hover:bg-ink/10 hover:text-brand"
+                  className="p-1.5 rounded-full text-ink-muted hover:bg-ink/10 hover:text-brand"
                 >
                   <Phone className="w-4 h-4" />
                 </button>
@@ -177,7 +177,7 @@ export function ChatWindow({
                   onClick={() => setCallMode('video')}
                   aria-label={t('Βιντεοκλήση', 'Video call')}
                   title={t('Βιντεοκλήση', 'Video call')}
-                  className="p-1.5 rounded-lg text-ink-muted hover:bg-ink/10 hover:text-brand"
+                  className="p-1.5 rounded-full text-ink-muted hover:bg-ink/10 hover:text-brand"
                 >
                   <Video className="w-4 h-4" />
                 </button>
@@ -190,7 +190,7 @@ export function ChatWindow({
               aria-label={t('Stories', 'Stories')}
               title={t('Stories Nakamas', 'Nakamas Stories')}
               className={cn(
-                'p-1.5 rounded-lg transition-colors',
+                'p-1.5 rounded-full transition-colors',
                 showStories ? 'bg-brand-soft text-brand' : 'text-ink-muted hover:bg-ink/10 hover:text-ink',
               )}
             >
@@ -202,7 +202,7 @@ export function ChatWindow({
               aria-label={t('Αναζήτηση μηνυμάτων', 'Search messages')}
               title={t('Αναζήτηση', 'Search')}
               className={cn(
-                'p-1.5 rounded-lg transition-colors',
+                'p-1.5 rounded-full transition-colors',
                 searchOpen ? 'bg-brand-soft text-brand' : 'text-ink-muted hover:bg-ink/10 hover:text-ink',
               )}
             >
@@ -211,7 +211,7 @@ export function ChatWindow({
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="p-1.5 rounded-lg text-ink-muted hover:bg-ink/10"
+              className="p-1.5 rounded-full text-ink-muted hover:bg-ink/10"
               aria-label={t('Ενέργειες', 'Actions')}
             >
               <MoreVertical className="w-4 h-4" />
@@ -219,7 +219,7 @@ export function ChatWindow({
             <button
               type="button"
               onClick={() => minimizeConversation(conversation.id)}
-              className="p-1.5 rounded-lg text-ink-muted hover:bg-ink/10 hidden md:block"
+              className="p-1.5 rounded-full text-ink-muted hover:bg-ink/10 hidden md:block"
               aria-label={t('Ελαχιστοποίηση', 'Minimize')}
             >
               <Minus className="w-4 h-4" />
@@ -227,7 +227,7 @@ export function ChatWindow({
             <button
               type="button"
               onClick={() => closeConversation(conversation.id)}
-              className="p-1.5 rounded-lg text-ink-muted hover:bg-ink/10"
+              className="p-1.5 rounded-full text-ink-muted hover:bg-ink/10"
               aria-label={t('Κλείσιμο', 'Close')}
             >
               <X className="w-4 h-4" />
@@ -235,7 +235,7 @@ export function ChatWindow({
           </header>
 
           {menuOpen && (
-            <div className={cn('absolute right-3 top-11 z-30 rounded-xl border border-border bg-surface-raised py-1 shadow-soft-lg min-w-[130px]', CHAT_TYPO.menu)}>
+            <div className={cn('absolute right-3 top-11 z-30 rounded-2xl border border-border bg-surface-raised py-1 shadow-soft-lg min-w-[130px]', CHAT_TYPO.menu)}>
               <button
                 type="button"
                 className="block w-full text-left px-3.5 py-2 hover:bg-ink/5"
@@ -276,7 +276,7 @@ export function ChatWindow({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('Αναζήτηση στη συνομιλία…', 'Search in chat…')}
-                  className="flex-1 h-7 rounded-lg border border-border bg-surface px-2.5 text-xs text-ink focus:outline-none"
+                  className="flex-1 h-7 rounded-full border border-border bg-surface px-3 text-xs text-ink focus:outline-none"
                 />
               )}
               {tagFilter && (
@@ -318,9 +318,10 @@ export function ChatWindow({
           )}
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-3 py-2.5 space-y-2.5 min-h-0">
+          <div className="flex-1 overflow-y-auto px-3 py-2.5 flex flex-col gap-2.5 min-h-0">
+            <div className="mt-auto" aria-hidden />
             {!perm.canRead && perm.reasonIfLocked && (
-              <div className={cn('rounded-xl border border-amber-500/30 bg-amber-500/15 p-3', CHAT_TYPO.lockNotice)}>
+              <div className={cn('rounded-2xl border border-amber-500/30 bg-amber-500/15 p-3', CHAT_TYPO.lockNotice)}>
                 {t(perm.reasonIfLocked.el, perm.reasonIfLocked.en)}
               </div>
             )}

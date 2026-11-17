@@ -42,14 +42,14 @@ export function KeepChatRequestModal({
             toast.success(t('Αίτημα διατήρησης εστάλη', 'Keep request sent'));
             onClose();
           }}
-          className={cn('flex-1 min-h-10 rounded-xl text-xs font-bold bg-brand hover:bg-brand-strong text-brand-fg')}
+          className={cn('flex-1 min-h-9 rounded-full text-xs font-bold bg-brand hover:bg-brand-strong text-brand-fg')}
         >
           {t('Αίτημα διατήρησης', 'Request to keep')}
         </button>
         <button
           type="button"
           onClick={onClose}
-          className="px-4 min-h-10 rounded-xl text-xs font-bold border border-border-strong"
+          className="px-4 min-h-9 rounded-full text-xs font-bold border border-border-strong"
         >
           {t('Άκυρο', 'Cancel')}
         </button>
