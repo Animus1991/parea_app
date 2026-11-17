@@ -79,7 +79,7 @@ export function PlansFormingCard({
       {item.isHighMatch && (
         <p
           className={cn(
-            'px-3.5 pt-3 -mb-1 flex items-center gap-1 text-xs font-semibold',
+            'px-4 pt-3.5 -mb-0.5 flex items-center gap-1 text-xs font-semibold',
             darkCard ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300',
           )}
         >
@@ -91,18 +91,18 @@ export function PlansFormingCard({
       )}
 
       {isSidebar && (
-        <div className="px-3.5 pt-3 flex items-start gap-1">
-          <div className="min-w-0 flex-1 space-y-0.5">
+        <div className="px-4 pt-3.5 flex items-start gap-1">
+          <div className="min-w-0 flex-1 space-y-1.5">
           <button
             type="button"
             onClick={() => navigate(`/events/${item.event.id}`)}
             className="text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-lg"
           >
-            <h3 className={cn('card-heading-lg font-bold leading-snug line-clamp-3', darkCard ? 'text-white' : 'text-gray-900')}>
+            <h3 className={cn('card-heading-lg font-bold leading-normal line-clamp-3', darkCard ? 'text-white' : 'text-gray-900')}>
               {item.event.title}
             </h3>
           </button>
-          <p className={cn('card-meta-sm font-semibold leading-snug', darkCard ? 'text-gray-200' : 'text-gray-700')}>
+          <p className={cn('card-meta-sm font-semibold leading-relaxed', darkCard ? 'text-gray-200' : 'text-gray-700')}>
             {t(item.scheduleFull.el, item.scheduleFull.en)}
           </p>
           </div>
@@ -125,7 +125,7 @@ export function PlansFormingCard({
         </div>
       )}
 
-      <div className="flex gap-3 px-3.5 pt-3.5 pb-2">
+      <div className="flex gap-3 px-4 pt-3.5 pb-3">
         <button
           type="button"
           onClick={() => navigate(`/events/${item.event.id}`)}
@@ -145,8 +145,8 @@ export function PlansFormingCard({
           )}
         </button>
 
-        <div className="min-w-0 flex-1 space-y-1">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+        <div className="min-w-0 flex-1 space-y-1.5">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className={cn('card-badge font-semibold uppercase tracking-wide', darkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400')}>
               {tu(item.intentLabel.el, item.intentLabel.en)}
             </span>
@@ -157,18 +157,18 @@ export function PlansFormingCard({
             )}
           </div>
           {!isSidebar && (
-            <p className="card-heading font-bold leading-snug line-clamp-2 text-gray-900 dark:text-white">
+            <p className="card-heading font-bold leading-normal line-clamp-2 text-gray-900 dark:text-white">
               {item.event.title}
             </p>
           )}
           {isSidebar ? (
-            <p className={cn('card-copy-sm', darkCard ? 'text-gray-300' : 'text-gray-600')}>
+            <p className={cn('card-copy-sm leading-relaxed', darkCard ? 'text-gray-300' : 'text-gray-600')}>
               <span className={cn('font-semibold', darkCard ? 'text-gray-100' : 'text-gray-900')}>{displayName}</span>
               <span className={darkCard ? 'text-gray-500' : 'text-gray-400'} aria-hidden> · </span>
               <span className={cn('card-role font-semibold', roleText)}>{t(item.roleLabel.el, item.roleLabel.en)}</span>
             </p>
           ) : (
-            <p className="card-copy text-gray-600 dark:text-gray-300">
+            <p className="card-copy leading-relaxed text-gray-600 dark:text-gray-300">
               <span className="font-semibold text-gray-800 dark:text-gray-100">{displayName}</span>
               <span className="text-gray-400 dark:text-gray-500" aria-hidden> · </span>
               <span className={cn('card-role font-medium', roleText)}>
@@ -176,7 +176,7 @@ export function PlansFormingCard({
               </span>
             </p>
           )}
-          <div className={cn('flex flex-wrap gap-x-2.5 gap-y-0.5 card-meta text-gray-500', !isSidebar && 'dark:text-gray-400')}>
+          <div className={cn('flex flex-wrap gap-x-2.5 gap-y-1 card-meta leading-relaxed text-gray-500', !isSidebar && 'dark:text-gray-400')}>
             {!isSidebar && (
               <span className="inline-flex items-center gap-1 font-medium text-gray-600 dark:text-gray-300">
                 <Clock className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
@@ -201,7 +201,7 @@ export function PlansFormingCard({
 
       <p
         className={cn(
-          'px-3.5 pb-2 card-meta flex flex-wrap items-center gap-x-2 gap-y-0.5',
+          'px-4 pb-3 card-meta flex flex-wrap items-center gap-x-2.5 gap-y-1.5 leading-relaxed',
           darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-300',
         )}
       >
@@ -242,7 +242,7 @@ export function PlansFormingCard({
       {item.intent.message && (
         <div
           className={cn(
-            'mx-3.5 mb-2 pl-2.5 pr-2 py-1.5 flex gap-2 border-l-2',
+            'mx-4 mb-3 pl-3 pr-2.5 py-2.5 flex gap-2 border-l-2',
             darkCard ? 'border-l-white/20 text-gray-300' : 'border-l-gray-200 dark:border-l-white/15',
           )}
         >
@@ -253,12 +253,12 @@ export function PlansFormingCard({
       )}
 
       {!isSidebar && (
-        <p className="px-3.5 pb-2 card-copy leading-snug text-gray-400 dark:text-gray-500">
+        <p className="px-4 pb-3 card-copy leading-relaxed text-gray-400 dark:text-gray-500">
           {t(item.matchReason.el, item.matchReason.en)}
         </p>
       )}
 
-      <div className="flex items-center gap-1.5 px-3.5 pb-3 pt-0.5">
+      <div className="flex items-center gap-1.5 px-4 pb-3.5 pt-1.5">
         <button
           type="button"
           onClick={() => setPreviewOpen(true)}
@@ -359,21 +359,21 @@ export function PlansFormingGroupCard({
             : 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800',
       )}
     >
-      <div className="flex gap-3 p-3">
+      <div className="flex gap-3.5 p-4">
         {event.imageUrl && (
           <img src={event.imageUrl} alt="" className="w-11 h-11 rounded-xl object-cover shrink-0" />
         )}
-        <div className="min-w-0 flex-1 space-y-1">
+        <div className="min-w-0 flex-1 space-y-1.5">
           <p className="card-badge font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
             {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
           </p>
-          <p className={cn('card-heading-lg font-bold leading-snug line-clamp-2', darkCard ? 'text-white' : 'text-gray-900 dark:text-white')}>
+          <p className={cn('card-heading-lg font-bold leading-normal line-clamp-2', darkCard ? 'text-white' : 'text-gray-900 dark:text-white')}>
             {event.title}
           </p>
-          <p className={cn('card-meta-sm font-semibold leading-snug', darkCard ? 'text-emerald-100/90' : 'text-gray-700 dark:text-gray-200')}>
+          <p className={cn('card-meta-sm font-semibold leading-relaxed', darkCard ? 'text-emerald-100/90' : 'text-gray-700 dark:text-gray-200')}>
             {t(meta.scheduleFull.el, meta.scheduleFull.en)}
           </p>
-          <p className={cn('card-copy', darkCard ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300')}>
+          <p className={cn('card-copy leading-relaxed', darkCard ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300')}>
             {meta.hostFirstName && (
               <>
                 <span className={cn('font-semibold', darkCard ? 'text-gray-100' : 'text-gray-900 dark:text-gray-100')}>{meta.hostFirstName}</span>
@@ -385,7 +385,7 @@ export function PlansFormingGroupCard({
             </span>
           </p>
           {meta.location && (
-            <p className={cn('card-copy flex items-center gap-1', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
+            <p className={cn('card-copy flex items-center gap-1 leading-relaxed', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
               <MapPin className="w-3 h-3 shrink-0" />
               {meta.location}
             </p>
@@ -393,8 +393,8 @@ export function PlansFormingGroupCard({
         </div>
       </div>
 
-      <div className="px-3 pb-2">
-        <div className="flex justify-between card-copy font-bold mb-1">
+      <div className="px-4 pb-3">
+        <div className="flex justify-between card-copy font-bold mb-1.5 leading-relaxed">
           <span className={darkCard ? 'text-emerald-400' : 'text-emerald-700 dark:text-emerald-300'}>
             {meta.filled}/{meta.target} {t('μέλη', 'members')}
           </span>
@@ -406,13 +406,13 @@ export function PlansFormingGroupCard({
           <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${meta.progress}%` }} />
         </div>
         {meta.note && (
-          <p className={cn('text-xs mt-2 line-clamp-2', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
+          <p className={cn('card-copy mt-2.5 line-clamp-2 leading-relaxed', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
             «{meta.note}»
           </p>
         )}
       </div>
 
-      <div className="flex gap-2 px-3 pb-3">
+      <div className="flex gap-2 px-4 pb-3.5 pt-0.5">
         <button
           type="button"
           onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}

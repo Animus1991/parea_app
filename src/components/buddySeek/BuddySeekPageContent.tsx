@@ -364,7 +364,7 @@ export default function BuddySeekPageContent() {
       ) : (
         <>
           {filtered.length > 0 && (
-            <section className="space-y-3">
+            <section className="space-y-4">
               <PlansFormingSectionTitle
                 title={t('Αιτήματα Nakamas', 'Nakama requests')}
                 subtitle={t(`${filtered.length} αποτελέσματα`, `${filtered.length} results`)}
@@ -386,7 +386,7 @@ export default function BuddySeekPageContent() {
           )}
 
           {feed.recruitingGroupItems.length > 0 && (
-            <section className="space-y-3">
+            <section className="space-y-4">
               <PlansFormingSectionTitle title={t('Ομάδες με ανοιχτές θέσεις', 'Groups with open spots')} />
               {feed.recruitingGroupItems.map((entry) => (
                 <PlansFormingGroupCard key={entry.group.id} entry={entry} variant="page" />

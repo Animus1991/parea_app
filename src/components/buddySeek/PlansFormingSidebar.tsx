@@ -159,7 +159,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
                   isDark={isDark}
                   title={t('Σχεδόν πλήρεις', 'Nearly full')}
                 />
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {feed.scarcityPromos.map((promo) => (
                     <PlansFormingScarcityPromoCard key={promo.id} promo={promo} isDark={isDark} />
                   ))}
@@ -170,7 +170,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
             {feed.items.length > 0 && (
               <section>
                 <PlansFormingSectionTitle isDark={isDark} title={t('Για εσάς', 'For you')} />
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {feed.items.map((item) => (
                     <PlansFormingCard
                       key={item.intent.id}
@@ -201,7 +201,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
                       : undefined
                   }
                 />
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {feed.recruitingGroupItems.slice(0, 3).map((entry) => (
                     <PlansFormingGroupCard
                       key={entry.group.id}
