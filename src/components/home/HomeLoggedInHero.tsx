@@ -15,6 +15,7 @@ import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useStore } from '../../store';
 import { cn } from '../../lib/utils';
 import { HomeReturnLine } from './HomeReturnLine';
+import { HomeWeatherBadge } from './HomeWeatherBadge';
 export interface HomeLoggedInHeroProps {
   greeting: string;
   motivation: string;
@@ -43,7 +44,6 @@ export function HomeLoggedInHero({
   const homeHeroMode = useStore((s) => s.homeHeroMode);
 
   const firstName = currentUser?.name?.split(' ')[0] || t('φίλε', 'there');
-  const score = Math.round(currentUser?.reliabilityScore ?? 0);
 
   const searchBlock = (
     <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
@@ -124,16 +124,7 @@ export function HomeLoggedInHero({
                 )}
               </p>
             </div>
-            {currentUser && (
-              <div
-                role="img"
-                aria-label={t(`Αξιοπιστία ${score}%`, `Reliability ${score}%`)}
-                title={t('Η βαθμολογία αξιοπιστίας σας', 'Your reliability score')}
-                className="w-12 h-12 rounded-full border-2 border-white bg-amber-400 text-amber-950 flex items-center justify-center font-black text-sm shadow-soft shrink-0"
-              >
-                {score}%
-              </div>
-            )}
+            <HomeWeatherBadge size="md" />
           </div>
           {searchBlock}
         </div>
@@ -143,26 +134,17 @@ export function HomeLoggedInHero({
         <div className="relative z-10 space-y-5">
           <div className="flex justify-between items-start gap-4">
             <div className="space-y-2 flex-1">
-              <p className={h.heroGreeting}>{greeting}</p>
+              <h1 className={h.heroGreeting}>{greeting}</h1>
               <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
-              <h1 className={cn(h.heroTitle, 'max-w-2xl')}>
+              <p className={cn(h.heroTitle, 'max-w-2xl')}>
                 {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>
                   {t('home.hero.title2', 'εμπειρίες')}
                 </span>{' '}
                 {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
-              </h1>
+              </p>
             </div>
-            {currentUser && (
-              <div
-                role="img"
-                aria-label={t(`Αξιοπιστία ${score}%`, `Reliability ${score}%`)}
-                title={t('Η βαθμολογία αξιοπιστίας σας', 'Your reliability score')}
-                className="w-11 h-11 rounded-full border-2 border-white/80 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-xs shadow-soft shrink-0"
-              >
-                {score}%
-              </div>
-            )}
+            <HomeWeatherBadge size="sm" />
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1">
             {[
@@ -186,15 +168,20 @@ export function HomeLoggedInHero({
       {homeHeroMode === 'rich' && (
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="flex-1">
-            <p className={cn(h.heroGreeting, 'mb-1')}>{greeting}</p>
-            <HomeReturnLine className={cn(h.heroMotivation, 'mb-4')} fallback={motivation} />
-            <h1 className={cn(h.heroTitle, 'max-w-2xl')}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <h1 className={cn(h.heroGreeting, 'mb-1')}>{greeting}</h1>
+                <HomeReturnLine className={cn(h.heroMotivation, 'mb-3')} fallback={motivation} />
+              </div>
+              <HomeWeatherBadge size="sm" className="md:hidden" />
+            </div>
+            <p className={cn(h.heroTitle, 'max-w-2xl')}>
               {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
               <span className={h.heroTitleAccent}>
                 {t('home.hero.title2', 'εμπειρίες')}
               </span>{' '}
               {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
-            </h1>
+            </p>
             <p className={cn(h.heroSubtitle, 'max-w-xl mb-4')}>
               {t(
                 'home.hero.subtitle',
@@ -221,17 +208,12 @@ export function HomeLoggedInHero({
             </div>
             {searchBlock}
           </div>
-          {currentUser && (
-            <div className="hidden md:flex flex-col items-center gap-2 shrink-0">
-              <div className="w-12 h-12 rounded-full border-4 border-white/30 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-sm md:text-base shadow-soft">
-                {score}
-              </div>
-              <span className="text-xs font-bold text-white/80 uppercase tracking-wider flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3" />
-                {t('Αξιοπιστία', 'Reliability')}
-              </span>
-            </div>
-          )}
+          <div className="hidden md:flex flex-col items-center gap-1.5 shrink-0">
+            <HomeWeatherBadge size="md" />
+            <span className="text-2xs font-bold text-white/75 tracking-wide">
+              {t('Αθήνα', 'Athens')}
+            </span>
+          </div>
         </div>
       )}
 

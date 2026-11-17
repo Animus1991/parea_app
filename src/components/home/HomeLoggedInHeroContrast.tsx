@@ -13,6 +13,7 @@ import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useStore } from '../../store';
 import { cn } from '../../lib/utils';
 import { HomeReturnLine } from './HomeReturnLine';
+import { HomeWeatherBadge } from './HomeWeatherBadge';
 export interface HomeLoggedInHeroContrastProps {
   greeting: string;
   motivation: string;
@@ -42,7 +43,6 @@ export function HomeLoggedInHeroContrast({
   const homeHeroMode = useStore((s) => s.homeHeroMode);
 
   const firstName = currentUser?.name?.split(' ')[0] || t('φίλε', 'there');
-  const score = Math.round(currentUser?.reliabilityScore ?? 0);
 
   const searchBlock = (
     <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
@@ -123,16 +123,7 @@ export function HomeLoggedInHeroContrast({
                 )}
               </p>
             </div>
-            {currentUser && (
-              <div
-                role="img"
-                aria-label={t(`Αξιοπιστία ${score}%`, `Reliability ${score}%`)}
-                title={t('Η βαθμολογία αξιοπιστίας σας', 'Your reliability score')}
-                className="w-12 h-12 rounded-full border-2 border-white bg-amber-400 text-amber-950 flex items-center justify-center font-black text-sm shadow-soft shrink-0"
-              >
-                {score}%
-              </div>
-            )}
+            <HomeWeatherBadge size="md" />
           </div>
           {searchBlock}
         </div>
@@ -142,24 +133,15 @@ export function HomeLoggedInHeroContrast({
         <div className="relative z-10 space-y-5">
           <div className="flex justify-between items-start gap-4">
             <div className="space-y-2 flex-1">
-              <p className={h.heroGreeting}>{greeting}</p>
+              <h1 className={h.heroGreeting}>{greeting}</h1>
               <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
-              <h1 className={cn(h.heroTitle, 'max-w-2xl')}>
+              <p className={cn(h.heroTitle, 'max-w-2xl')}>
                 {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>{t('home.hero.title2', 'εμπειρίες')}</span>{' '}
                 {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
-              </h1>
+              </p>
             </div>
-            {currentUser && (
-              <div
-                role="img"
-                aria-label={t(`Αξιοπιστία ${score}%`, `Reliability ${score}%`)}
-                title={t('Η βαθμολογία αξιοπιστίας σας', 'Your reliability score')}
-                className="w-11 h-11 rounded-full border-2 border-white/80 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-xs shadow-soft shrink-0"
-              >
-                {score}%
-              </div>
-            )}
+            <HomeWeatherBadge size="sm" />
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1">
             {[

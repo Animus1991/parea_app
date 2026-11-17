@@ -337,15 +337,15 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   font-weight: 500;
 }
 
-/* Greeting line above hero h1 — sits cleanly below pageTitle (14/15px) */
+/* Greeting titles e.g. «Καλό βράδυ, Alex» — primary hero anchor (14/15px) */
 .hero-greeting {
-  font-size: var(--text-sm); /* 12px */
-  line-height: var(--text-sm--line-height);
+  font-size: var(--text-lg); /* 14px */
+  line-height: var(--text-lg--line-height);
 }
 @media (min-width: 768px) {
   .hero-greeting {
-    font-size: var(--text-base); /* 13px */
-    line-height: var(--text-base--line-height);
+    font-size: var(--text-xl); /* 15px */
+    line-height: var(--text-xl--line-height);
   }
 }
 
