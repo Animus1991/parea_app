@@ -7,8 +7,11 @@ import { isResumeWorthyPath } from '../../lib/resumePath';
 import { useStore } from '../../store';
 
 const APP_NAME = 'Nakamas';
-/** How long a back/forward restore waits for lazy content to grow tall enough. */
-const MAX_RESTORE_MS = 1500;
+/**
+ * How long a back/forward restore waits for lazy content to grow tall enough.
+ * Generous for slow phones; the restore still stops the moment the user scrolls.
+ */
+const MAX_RESTORE_MS = 4000;
 
 /**
  * Per-page housekeeping: document title, the screen-reader announcement and

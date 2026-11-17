@@ -32,7 +32,8 @@ test.describe('Nakamas AI copilot', () => {
 
   test('answers can be rated, with a reason on a thumbs-down', async ({ page }) => {
     await enterDemoGuest(page);
-    await page.keyboard.press('Control+j');
+    // The launcher waits for the shell to be interactive; Ctrl+J has its own test above.
+    await page.getByRole('button', { name: /Nakamas AI/ }).first().click();
     const input = page.locator('#copilot-input');
     await input.fill('τι νέο υπάρχει;');
     await input.press('Enter');

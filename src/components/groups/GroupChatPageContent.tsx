@@ -610,7 +610,7 @@ export default function GroupChatPageContent() {
               >
                 <AlertTriangle className="h-4 w-4" aria-hidden />
               </button>
-              <span className="text-2xs text-ink-muted truncate">
+              <span className="text-2xs text-ink-muted dark:text-gray-300 truncate">
                 {t('Εργαλεία ασφάλειας · Emojis · GIF · Φωνητικό · Δημοσκόπηση', 'Safety tools · Emojis · GIF · Voice · Poll')}
               </span>
             </div>
