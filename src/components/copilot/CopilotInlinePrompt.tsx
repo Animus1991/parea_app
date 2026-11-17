@@ -30,17 +30,17 @@ export function CopilotInlinePrompt({ className, title, suggestions, maxChips = 
       <button
         type="button"
         onClick={() => openCopilot()}
-        className="flex min-h-11 min-w-0 items-center gap-3 rounded-xl px-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent @4xl:max-w-[42%] @4xl:shrink-0"
+        className="flex min-h-10 min-w-0 items-center gap-2.5 rounded-xl px-1 text-left text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent @4xl:max-w-[42%] @4xl:shrink-0"
       >
-        <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent text-accent-fg">
+        <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent text-accent-fg">
           <Bot className="h-4 w-4" />
         </span>
         <span className="min-w-0">
-          <span className="block text-sm font-bold text-ink">
+          <span className="block text-xs font-bold text-ink">
             {title ? t(title.el, title.en) : t('Πες στο Nakamas AI τι θέλεις', 'Tell Nakamas AI what you want')}
           </span>
-          <span className="block truncate text-xs text-ink-muted">
-            {t('Βρίσκει, αποθηκεύει, οργανώνει και ρυθμίζει για σένα', 'It finds, saves, organises and sets things up for you')}
+          <span className="block text-2xs leading-snug text-ink-muted">
+            {t('Βρίσκει, οργανώνει & ρυθμίζει για σένα', 'Finds, organises & sets up for you')}
           </span>
         </span>
         <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-ink-muted md:hidden" aria-hidden />
@@ -52,8 +52,8 @@ export function CopilotInlinePrompt({ className, title, suggestions, maxChips = 
             type="button"
             onClick={() => openCopilot(t(s.el, s.en))}
             className={cn(
-              'shrink-0 whitespace-nowrap rounded-full border border-border bg-surface px-3 py-2 text-xs font-semibold text-ink transition-colors hover:border-accent/50 hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
-              i > 0 && 'hidden @md:inline-flex',
+              'shrink-0 whitespace-nowrap rounded-full border border-border bg-surface px-3 py-1.5 min-h-8 text-xs font-semibold text-ink transition-colors hover:border-accent/50 hover:bg-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+              i > 0 && 'hidden @md:inline-flex items-center',
             )}
           >
             {t(s.el, s.en)}

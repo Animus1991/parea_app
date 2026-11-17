@@ -202,7 +202,7 @@ export default function CategoriesPageContent() {
                 type="button"
                 onClick={() => setActiveCategory(cat.name)}
                 className={cn(
-                  'p-4 rounded-2xl border flex items-center justify-between text-left group transition-all duration-300 shadow-soft',
+                  'p-3.5 rounded-2xl border flex items-center justify-between text-left text-xs group transition-all duration-300 shadow-soft',
                   p.cardSurface,
                   p.borderB,
                   p.cardHover,
@@ -281,7 +281,7 @@ export default function CategoriesPageContent() {
               setActiveCategory(activeCategory === cat.name ? null : cat.name)
             }
             className={cn(
-              'rounded-2xl p-4 sm:p-5 border shadow-soft hover:shadow-soft transition-all duration-300 group flex flex-col items-center text-center',
+              'rounded-2xl p-3.5 sm:p-4 border shadow-soft hover:shadow-soft transition-all duration-300 group flex flex-col items-center text-center text-xs',
               p.cardSurface,
               activeCategory === cat.name
                 ? cn(
@@ -459,7 +459,7 @@ export default function CategoriesPageContent() {
             'Create your own event and gather people with similar passions.',
           )}
         </p>
-        <Button onClick={() => navigate('/create')} size="lg" className="font-bold px-5">
+        <Button onClick={() => navigate('/create')} size="md">
           {t('Δημιουργία Νέας Εμπειρίας', 'Create New Experience')}
         </Button>
       </div>

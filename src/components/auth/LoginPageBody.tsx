@@ -304,7 +304,7 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
           <button
             type="button"
             onClick={() => void handleGoogleLogin()}
-            className={cn('w-full flex items-center justify-center gap-3 px-4 py-3 min-h-11 rounded-full border text-xs font-bold transition-colors shadow-soft', tok.googleBtnClass)}
+            className={cn('w-full flex items-center justify-center gap-2.5 px-4 py-2 min-h-10 rounded-full border text-xs font-bold transition-colors shadow-soft', tok.googleBtnClass)}
           >
             <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="" className="w-5 h-5" aria-hidden />
             {googleOAuthReady

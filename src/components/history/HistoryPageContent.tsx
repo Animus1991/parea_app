@@ -16,6 +16,32 @@ import { dateFnsLocale } from '../../lib/dateLocale';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 
+function HistoryThumb({ src, title, category, isDark }: { src?: string; title: string; category: string; isDark: boolean }) {
+  const [broken, setBroken] = useState(false);
+  if (!src || broken) {
+    return (
+      <div
+        className={cn(
+          'w-12 h-12 rounded-2xl shrink-0 shadow-soft flex items-center justify-center bg-accent-soft text-accent font-bold text-xs uppercase',
+          isDark && 'opacity-90',
+        )}
+        aria-hidden
+      >
+        {category.slice(0, 2)}
+      </div>
+    );
+  }
+  return (
+    <img
+      referrerPolicy="no-referrer"
+      src={src}
+      alt={title}
+      onError={() => setBroken(true)}
+      className={cn('w-12 h-12 rounded-2xl object-cover shrink-0 shadow-soft', isDark && 'opacity-90')}
+    />
+  );
+}
+
 export default function HistoryPageContent() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
@@ -180,12 +206,7 @@ export default function HistoryPageContent() {
               }
             >
               <div className="flex gap-4">
-                <img
-                  referrerPolicy="no-referrer"
-                  src={event.imageUrl}
-                  alt={event.title}
-                  className={cn("w-12 h-12 rounded-2xl object-cover shrink-0 shadow-soft", a.isDark && "opacity-90")}
-                />
+                <HistoryThumb src={event.imageUrl} title={event.title} category={event.category} isDark={a.isDark} />
                 <div className="flex-1 min-w-0">
                   <h3 className={cn(APP_TYPO.rowTitle, 'truncate', a.head)}>{event.title}</h3>
                   <p className={cn("card-meta mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5", a.sub)}>

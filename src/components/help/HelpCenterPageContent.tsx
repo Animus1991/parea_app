@@ -126,9 +126,9 @@ export default function HelpCenterPageContent() {
                 }
                 setTopicFilter(topicFilter === topic.label ? null : topic.label);
               }}
-              className={cn("flex items-center gap-2 p-3 rounded-xl border transition-all w-full", a.topicBg, topicFilter === topic.label && 'ring-2 ring-cyan-500/40')}
+              className={cn("flex items-center gap-2 p-2.5 rounded-xl border text-xs transition-all w-full", a.topicBg, topicFilter === topic.label && 'ring-2 ring-cyan-500/40')}
             >
-              <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", topic.color)}>
+              <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center shrink-0", topic.color)}>
                 <Icon className="w-4 h-4" />
               </div>
               <span className={cn("card-heading font-bold", a.topicLabel)}>{topic.label}</span>
@@ -145,7 +145,7 @@ export default function HelpCenterPageContent() {
             <Card key={faq.id} className="overflow-hidden">
               <button
                 onClick={() => setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)}
-                className="w-full p-4 flex items-center justify-between text-left"
+                className="w-full p-3.5 flex items-center justify-between text-left text-xs"
               >
                 <span className={cn("card-heading font-bold pr-4", a.head)}>{faq.q}</span>
                 <ChevronDown className={cn("w-4 h-4 shrink-0 transition-transform", a.chevron, expandedFAQ === faq.id && 'rotate-180')} />

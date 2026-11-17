@@ -82,21 +82,21 @@ export function GroupChatReportModal({ open, onClose, groupId }: GroupChatReport
           'Please describe the issue in detail...',
         )}
       />
-      <div className="flex justify-end gap-3">
+      <div className="flex justify-end gap-2">
         <button
           type="button"
           onClick={() => {
             setText('');
             onClose();
           }}
-          className="px-5 py-2.5 text-xs font-bold text-ink-muted bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border"
+          className="px-4 py-2 min-h-8 text-xs font-bold text-ink-muted bg-surface hover:bg-surface-raised rounded-full transition-all duration-200 border border-border"
         >
           {t('Ακύρωση', 'Cancel')}
         </button>
         <button
           type="button"
           onClick={submit}
-          className="px-5 py-2.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
+          className="px-4 py-2 min-h-8 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-full transition-all duration-200 shadow-soft"
         >
           {t('Υποβολή Αναφοράς', 'Submit Report')}
         </button>

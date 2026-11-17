@@ -991,7 +991,7 @@ export default function GroupChatPageContent() {
             type="button"
             data-autofocus
             onClick={() => setShowSafetyLinkModal(false)}
-            className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+            className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
           >
             {t("Τέλος", "Done")}
           </button>
@@ -1057,14 +1057,14 @@ export default function GroupChatPageContent() {
                 setShowInfo(false);
                 toast.success(t('Το ιστορικό κρατήθηκε σε αυτή τη συσκευή', 'History kept on this device'));
               }}
-              className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+              className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
             >
               {t("Κράτα ιστορικό εδώ", "Keep history here")}
             </button>
             <button
               type="button"
               onClick={() => setShowDisableEphemeralModal(false)}
-              className="w-full px-4 py-3 text-xs font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+              className="w-full px-4 py-2 min-h-9 text-xs font-bold text-ink bg-surface hover:bg-surface-raised rounded-full transition-all duration-200 border border-border active:scale-[0.98]"
             >
               {t("Ακύρωση", "Cancel")}
             </button>
@@ -1121,12 +1121,12 @@ export default function GroupChatPageContent() {
                 type="number"
                 data-autofocus
                 placeholder={t("ETA (λεπτά)", "ETA (mins)")}
-                className="flex-1 w-full bg-surface border border-border text-ink text-sm rounded-2xl px-4 py-3 focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none shadow-soft"
+                className="flex-1 w-full bg-surface border border-border text-ink text-sm rounded-full px-4 py-2 min-h-9 focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none shadow-soft"
                 min="1"
               />
               <button
                 type="submit"
-                className="px-4 py-3 text-xs font-bold text-white bg-brand hover:bg-brand-strong rounded-2xl shadow-soft transition-all duration-200 whitespace-nowrap"
+                className="px-4 py-2 min-h-9 text-xs font-bold text-white bg-brand hover:bg-brand-strong rounded-full shadow-soft transition-all duration-200 whitespace-nowrap"
               >
                 {t("Αποστολή", "Send")}
               </button>
@@ -1167,7 +1167,7 @@ export default function GroupChatPageContent() {
                   setShowStatusModal(false);
                   toast.success(t('Η κατάσταση κοινοποιήθηκε', 'Status shared'));
                 }}
-                className={`w-full px-4 py-3 text-xs font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
+                className={`w-full px-4 py-2 min-h-9 text-xs font-bold rounded-full transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
               >
                 {status.text}
               </button>
@@ -1176,7 +1176,7 @@ export default function GroupChatPageContent() {
             <button
               type="button"
               onClick={() => setShowStatusModal(false)}
-              className="w-full px-4 py-3 mt-2 text-xs font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+              className="w-full px-4 py-2 min-h-9 mt-2 text-xs font-bold text-ink bg-surface hover:bg-surface-raised rounded-full transition-all duration-200 border border-border active:scale-[0.98]"
             >
               {t("Ακύρωση", "Cancel")}
             </button>
@@ -1293,7 +1293,7 @@ export default function GroupChatPageContent() {
                 setShowAddMemberModal(false);
                 setMemberAddSearchQuery("");
               }}
-              className="px-5 py-2.5 text-xs font-bold text-ink bg-surface-raised hover:bg-surface rounded-2xl transition-all duration-200 border border-border shadow-soft active:scale-[0.98]"
+              className="px-4 py-1.5 min-h-8 text-xs font-bold text-ink bg-surface-raised hover:bg-surface rounded-full transition-all duration-200 border border-border shadow-soft active:scale-[0.98]"
             >
               {t("Τέλος", "Done")}
             </button>

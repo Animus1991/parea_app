@@ -218,26 +218,26 @@ export default function BuddySeekPageContent() {
       <MiniOutingsSection />
 
       {showExplainer && (
-        <div className={cn('rounded-2xl border p-4 flex gap-3', a.cardSurface, 'border-cyan-200 bg-cyan-50/60 dark:bg-cyan-950/20 dark:border-cyan-800')}>
-          <Info className="w-5 h-5 shrink-0 text-cyan-600 dark:text-cyan-400 mt-0.5" />
+        <div className="rounded-2xl border border-border bg-surface-raised px-3.5 py-2.5 flex items-center gap-3">
+          <Info className="w-4 h-4 shrink-0 text-accent" aria-hidden />
           <div className="flex-1 min-w-0">
-            <p className={cn('text-sm font-bold', a.head)}>
+            <p className="text-xs font-bold text-ink">
               {t('Τι είναι το Βρες Nakamas;', 'What is Find Nakamas?')}
             </p>
-            <p className={cn('text-sm font-medium mt-1 leading-relaxed', a.sub)}>
+            <p className="text-xs font-medium mt-0.5 leading-snug text-ink-muted">
               {t(
-                'Δηλώνετε ότι ψάχνετε Nakamas για μια εκδήλωση — με έλεγχο ορατότητας. Άλλοι χρήστες μπορούν να σας στείλουν αίτημα ή να ενωθούν σε ομάδα.',
-                'You signal you want Nakamas for an event — with privacy controls. Others can send join requests or form a group with you.',
+                'Δηλώνεις ότι ψάχνεις παρέα για μια εκδήλωση — με πλήρη έλεγχο ορατότητας.',
+                'Signal you want company for an event — with full privacy controls.',
               )}
             </p>
           </div>
           <button
             type="button"
             onClick={dismissExplainer}
-            className={cn('p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg shrink-0', a.muted, 'hover:bg-black/5 dark:hover:bg-white/10')}
+            className="p-1.5 min-h-8 min-w-8 flex items-center justify-center rounded-lg shrink-0 text-ink-muted hover:bg-surface hover:text-ink"
             aria-label={t('Κλείσιμο', 'Dismiss')}
           >
-            <X className="w-4 h-4" aria-hidden />
+            <X className="w-3.5 h-3.5" aria-hidden />
           </button>
         </div>
       )}

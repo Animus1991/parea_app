@@ -881,7 +881,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                       ),
                     );
                   }}
-                  className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+                  className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
                 >
                   {isSharingLocation
                     ? t("Ενημέρωση", "Update Configuration")
@@ -922,7 +922,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             type="button"
             data-autofocus
             onClick={() => setShowSafetyLinkModal(false)}
-            className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+            className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
           >
             {t("Τέλος", "Done")}
           </button>

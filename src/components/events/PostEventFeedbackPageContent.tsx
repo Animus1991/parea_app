@@ -205,7 +205,7 @@ export default function PostEventFeedbackPageContent() {
                   type="button"
                   onClick={() => setMood(m.emoji)}
                   className={cn(
-                    'flex flex-col items-center justify-center gap-2 py-4 rounded-2xl border transition-all duration-300',
+                    'flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl border text-xs transition-all duration-300',
                     mood === m.emoji
                       ? p.isDark
                         ? 'border-cyan-500 bg-cyan-900/20 shadow-soft scale-[1.02]'
@@ -308,7 +308,7 @@ export default function PostEventFeedbackPageContent() {
                   type="button"
                   onClick={() => setAttendance('all')}
                   className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center gap-3 transition-colors',
+                    'p-3 border rounded-xl text-left text-xs flex items-center gap-3 transition-colors',
                     attendance === 'all'
                       ? p.isDark
                         ? 'border-cyan-500 bg-cyan-900/20 shadow-soft'
@@ -326,7 +326,7 @@ export default function PostEventFeedbackPageContent() {
                   </div>
                   <span
                     className={cn(
-                      'text-sm font-bold',
+                      'text-xs font-bold',
                       attendance === 'all' ? p.iconAccent : p.head,
                     )}
                   >
@@ -337,7 +337,7 @@ export default function PostEventFeedbackPageContent() {
                   type="button"
                   onClick={() => setAttendance('no_show')}
                   className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center gap-3 transition-colors',
+                    'p-3 border rounded-xl text-left text-xs flex items-center gap-3 transition-colors',
                     attendance === 'no_show'
                       ? p.isDark
                         ? 'border-amber-500 bg-amber-900/20 shadow-soft'
@@ -357,7 +357,7 @@ export default function PostEventFeedbackPageContent() {
                   </div>
                   <span
                     className={cn(
-                      'text-sm font-bold',
+                      'text-xs font-bold',
                       attendance === 'no_show'
                         ? p.isDark
                           ? 'text-amber-400'
@@ -380,7 +380,7 @@ export default function PostEventFeedbackPageContent() {
                   type="button"
                   onClick={() => setComfort('safe')}
                   className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center gap-3 transition-colors',
+                    'p-3 border rounded-xl text-left text-xs flex items-center gap-3 transition-colors',
                     comfort === 'safe'
                       ? p.isDark
                         ? 'border-emerald-500 bg-emerald-900/20 shadow-soft'
@@ -400,7 +400,7 @@ export default function PostEventFeedbackPageContent() {
                   </div>
                   <span
                     className={cn(
-                      'text-sm font-bold',
+                      'text-xs font-bold',
                       comfort === 'safe'
                         ? p.isDark
                           ? 'text-emerald-400'
@@ -415,7 +415,7 @@ export default function PostEventFeedbackPageContent() {
                   type="button"
                   onClick={() => setComfort('unsafe')}
                   className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center justify-between gap-3 transition-colors',
+                    'p-3 border rounded-xl text-left text-xs flex items-center justify-between gap-3 transition-colors',
                     comfort === 'unsafe'
                       ? p.isDark
                         ? 'border-red-500 bg-red-900/20 shadow-soft'
@@ -436,7 +436,7 @@ export default function PostEventFeedbackPageContent() {
                     </div>
                     <span
                       className={cn(
-                        'text-sm font-bold',
+                        'text-xs font-bold',
                         comfort === 'unsafe'
                           ? p.isDark
                             ? 'text-red-400'
@@ -562,8 +562,8 @@ export default function PostEventFeedbackPageContent() {
           <Button
             onClick={() => navigate('/history')}
             variant={p.isAB ? 'primary' : 'outline'}
-            size="lg"
-            className="rounded-2xl px-5 font-bold text-xs"
+            size="md"
+            className="rounded-full"
           >
             {t('Επιστροφή στο Ιστορικό', 'Back to History')}
           </Button>

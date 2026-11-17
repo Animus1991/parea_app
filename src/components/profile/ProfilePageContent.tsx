@@ -238,7 +238,7 @@ export default function ProfilePageContent() {
             type="button"
             onClick={() => navigate(stat.to)}
             className={cn(
-              "rounded-2xl border p-4 text-left shadow-soft transition-all duration-200 hover:-translate-y-[0.5px] hover:shadow-soft-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+              "rounded-2xl border p-3.5 text-left text-xs shadow-soft transition-all duration-200 hover:-translate-y-[0.5px] hover:shadow-soft-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
               a.isDark ? "bg-gray-800/60 border-gray-700/50" : "bg-white border-gray-100",
             )}
           >

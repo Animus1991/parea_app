@@ -22,7 +22,7 @@ export const mockCalendarPlanEvents: Event[] = [
     minTrustTierAccess: '1_explorer',
     maxParticipants: 12,
     tags: ['running'],
-    imageUrl: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc1?w=400&h=300&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop',
   },
   {
     id: 'e-cal-2b',
@@ -63,7 +63,7 @@ export const mockCalendarPlanEvents: Event[] = [
     minTrustTierAccess: '1_explorer',
     maxParticipants: 10,
     tags: ['museum'],
-    imageUrl: 'https://images.unsplash.com/photo-1566127446839-99a1d96cad8f?w=400&h=300&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?w=400&h=300&fit=crop',
   },
   {
     id: 'e-cal-5a',
@@ -101,7 +101,7 @@ export const mockCalendarPlanEvents: Event[] = [
     safetyLevel: 'low',
     minTrustTierAccess: '1_explorer',
     maxParticipants: 10,
-    imageUrl: 'https://images.unsplash.com/photo-1528607929212-2639ec44253e?w=400&h=300&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop',
   },
   {
     id: 'e-cal-5c',

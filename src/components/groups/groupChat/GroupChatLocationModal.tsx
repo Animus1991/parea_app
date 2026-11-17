@@ -207,7 +207,7 @@ export function GroupChatLocationModal({
           type="button"
           data-autofocus
           onClick={handleConfirm}
-          className="w-full px-4 py-3 text-xs font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+          className="w-full px-4 py-2 min-h-9 text-xs font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
         >
           {isSharingLocation
             ? t('Ενημέρωση Ρυθμίσεων', 'Update Configuration')

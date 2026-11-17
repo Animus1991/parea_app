@@ -152,18 +152,18 @@ export default function JoinGroupFlow() {
             <button
               type="button"
               onClick={() => setGroupType('existing')}
-              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'existing' ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 dark:border-border'}`}
+              className={`p-3 rounded-xl border text-left text-xs min-h-[72px] ${groupType === 'existing' ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 dark:border-border'}`}
             >
-              <Users className={`h-5 w-5 mb-2 ${groupType === 'existing' ? 'text-cyan-600' : 'text-gray-400'}`} />
-              <p className="font-bold text-sm">{t('Υπάρχουσα ομάδα', 'Join Existing')}</p>
+              <Users className={`h-4 w-4 mb-1.5 ${groupType === 'existing' ? 'text-cyan-600' : 'text-gray-400'}`} />
+              <p className="font-bold text-xs">{t('Υπάρχουσα ομάδα', 'Join Existing')}</p>
             </button>
             <button
               type="button"
               onClick={() => setGroupType('new')}
-              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'new' ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 dark:border-border'}`}
+              className={`p-3 rounded-xl border text-left text-xs min-h-[72px] ${groupType === 'new' ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 dark:border-border'}`}
             >
-              <Split className={`h-5 w-5 mb-2 ${groupType === 'new' ? 'text-cyan-600' : 'text-gray-400'}`} />
-              <p className="font-bold text-sm">{t('Νέα ομάδα', 'Start New Group')}</p>
+              <Split className={`h-4 w-4 mb-1.5 ${groupType === 'new' ? 'text-cyan-600' : 'text-gray-400'}`} />
+              <p className="font-bold text-xs">{t('Νέα ομάδα', 'Start New Group')}</p>
             </button>
           </div>
 

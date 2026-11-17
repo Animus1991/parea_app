@@ -135,15 +135,15 @@ export default function ReportIssuePageContent() {
                   onClick={() => setSeverity('low')}
                   aria-pressed={severity === 'low'}
                   className={cn(
-                    'p-2.5 rounded-lg border text-center transition-all hover:ring-2 hover:ring-amber-300',
+                    'p-2 rounded-xl border text-center text-xs transition-all hover:ring-2 hover:ring-amber-300',
                     p.isDark ? 'border-amber-800/50 bg-amber-950/30' : 'border-amber-200 bg-amber-50',
                     severity === 'low' && 'ring-2 ring-amber-400',
                   )}
                 >
-                  <span className={cn('text-sm font-bold block', p.isDark ? 'text-amber-200' : 'text-amber-800')}>
+                  <span className={cn('text-xs font-bold block', p.isDark ? 'text-amber-200' : 'text-amber-800')}>
                     {t('Χαμηλή', 'Low')}
                   </span>
-                  <span className={cn('text-xs', p.isDark ? 'text-amber-300/80' : 'text-amber-600')}>
+                  <span className={cn('text-2xs', p.isDark ? 'text-amber-300/80' : 'text-amber-600')}>
                     {t('Ενόχληση', 'Annoyance')}
                   </span>
                 </button>
@@ -152,17 +152,17 @@ export default function ReportIssuePageContent() {
                   onClick={() => setSeverity('medium')}
                   aria-pressed={severity === 'medium'}
                   className={cn(
-                    'p-2.5 rounded-lg border text-center transition-all hover:ring-2 hover:ring-orange-300',
+                    'p-2 rounded-xl border text-center text-xs transition-all hover:ring-2 hover:ring-orange-300',
                     p.isDark ? 'border-orange-800/50 bg-orange-950/30' : 'border-orange-200 bg-orange-50',
                     severity === 'medium' && 'ring-2 ring-orange-400',
                   )}
                 >
                   <span
-                    className={cn('text-sm font-bold block', p.isDark ? 'text-orange-200' : 'text-orange-800')}
+                    className={cn('text-xs font-bold block', p.isDark ? 'text-orange-200' : 'text-orange-800')}
                   >
                     {t('Μέτρια', 'Medium')}
                   </span>
-                  <span className={cn('text-xs', p.isDark ? 'text-orange-300/80' : 'text-orange-600')}>
+                  <span className={cn('text-2xs', p.isDark ? 'text-orange-300/80' : 'text-orange-600')}>
                     {t('Ανησυχία', 'Concern')}
                   </span>
                 </button>
@@ -171,15 +171,15 @@ export default function ReportIssuePageContent() {
                   onClick={() => setSeverity('high')}
                   aria-pressed={severity === 'high'}
                   className={cn(
-                    'p-2.5 rounded-lg border text-center transition-all hover:ring-2 hover:ring-red-300',
+                    'p-2 rounded-xl border text-center text-xs transition-all hover:ring-2 hover:ring-red-300',
                     p.isDark ? 'border-red-800/50 bg-red-950/30' : 'border-red-200 bg-red-50',
                     severity === 'high' && 'ring-2 ring-red-400',
                   )}
                 >
-                  <span className={cn('text-sm font-bold block', p.isDark ? 'text-red-200' : 'text-red-800')}>
+                  <span className={cn('text-xs font-bold block', p.isDark ? 'text-red-200' : 'text-red-800')}>
                     {t('Υψηλή', 'High')}
                   </span>
-                  <span className={cn('text-xs', p.isDark ? 'text-red-300/80' : 'text-red-600')}>
+                  <span className={cn('text-2xs', p.isDark ? 'text-red-300/80' : 'text-red-600')}>
                     {t('Κίνδυνος', 'Danger')}
                   </span>
                 </button>
@@ -202,7 +202,7 @@ export default function ReportIssuePageContent() {
 
             {/* Evidence Upload */}
             <div>
-              <label className={cn('block text-sm font-bold tracking-wider mb-2', p.head)}>
+              <label className={cn('block text-xs font-bold tracking-wider mb-2', p.head)}>
                 {t('Αποδεικτικά (προαιρετικά)', 'Evidence (optional)')}
               </label>
               <input
@@ -282,7 +282,7 @@ export default function ReportIssuePageContent() {
               type="submit"
               disabled={!category || !severity || !description.trim()}
               className={cn(
-                'w-full py-2.5 rounded-full text-xs font-bold shadow-soft transition-all duration-200 tracking-wider disabled:opacity-50',
+                'w-full py-2 min-h-9 rounded-full text-xs font-bold shadow-soft transition-all duration-200 tracking-wider disabled:opacity-50',
                 p.chipActive,
                 p.isDark ? '' : 'hover:opacity-90',
               )}
@@ -310,7 +310,7 @@ export default function ReportIssuePageContent() {
           </p>
           <button
             onClick={() => navigate('/')}
-            className={cn('px-5 py-2.5 rounded-full text-xs font-bold transition-colors tracking-wider', p.chipInactive)}
+            className={cn('px-4 py-1.5 min-h-8 rounded-full text-xs font-bold transition-colors tracking-wider', p.chipInactive)}
           >
             {t('Επιστροφή', 'Go Back')}
           </button>
