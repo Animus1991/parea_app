@@ -27,7 +27,7 @@ export function PlansFormingMobileFab() {
             ? 'bg-cyan-600 border-cyan-500 text-white'
             : 'bg-cyan-600 border-cyan-700 text-white',
       )}
-      aria-label={t('Άνοιγμα σχεδίων που σχηματίζονται', 'Open plans forming')}
+      aria-label={t('Βρες Nakamas — σχέδια που σχηματίζονται', 'Find Nakamas — plans forming')}
     >
       {hasPending ? <Inbox className="w-4 h-4" aria-hidden /> : <Users className="w-4 h-4" aria-hidden />}
       <span>{label}</span>

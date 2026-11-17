@@ -39,7 +39,7 @@ export function PlansFormingSidebarReopenTab() {
     >
       <Users className="w-4 h-4 shrink-0" />
       <span className="text-xs font-bold [writing-mode:vertical-rl] rotate-180 tracking-wide">
-        {t('Σχέδια', 'Plans')}
+        {t('Βρες Nakamas', 'Find Nakamas')}
       </span>
     </button>
   );

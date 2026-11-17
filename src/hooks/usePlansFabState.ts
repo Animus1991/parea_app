@@ -16,7 +16,8 @@ export function usePlansFabState() {
       ? t('Το σχέδιό σας', 'Your plan')
       : showTeaser
         ? t('Ψάχνετε Nakamas;', 'Need Nakamas?')
-        : t('Σχέδια', 'Plans');
+        : // Named after the sheet it opens; «Σχέδια» alone collided with the /plans tab.
+          t('Βρες Nakamas', 'Find Nakamas');
 
   const badge = hasPending ? feed.insights.pendingJoinsToReview : total > 0 ? total : null;
 

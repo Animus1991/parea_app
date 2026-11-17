@@ -72,11 +72,11 @@ export function MobileDock() {
           <button
             type="button"
             onClick={() => setPlansOpen(true)}
-            aria-label={t('Άνοιγμα σχεδίων που σχηματίζονται', 'Open plans forming')}
+            aria-label={t('Βρες Nakamas — σχέδια που σχηματίζονται', 'Find Nakamas — plans forming')}
             className={cn(segment, 'pl-4 pr-3 active:bg-black/10')}
           >
             {plans.hasPending ? <Inbox className="w-4 h-4" aria-hidden /> : <Users className="w-4 h-4" aria-hidden />}
-            <span>{plans.label}</span>
+            <span className="whitespace-nowrap">{plans.label}</span>
             {plans.badge != null && (
               <span
                 className={cn(
