@@ -117,9 +117,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
 
       <HomeContinueStrip />
 
-      {/* Φ27 — themed collections with how many groups are forming */}
-      <CollectionsRail />
-
       <EventStories events={storyEvents} />
 
       <CopilotInlinePrompt />
@@ -153,6 +150,9 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         activeMood={activeMood}
         onSelectMood={handleSelectMood}
       />
+
+      {/* Φ27 collections — below filters so the first viewport stays one job */}
+      <CollectionsRail />
 
       <section>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">

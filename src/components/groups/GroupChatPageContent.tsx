@@ -51,6 +51,7 @@ export default function GroupChatPageContent() {
   const users = useStore((state) => state.users);
   const currentUser = useStore((state) => state.currentUser);
   const leaveGroup = useStore((state) => state.leaveGroup);
+  const joinGroup = useStore((state) => state.joinGroup);
   const ensureEventGroupConversation = useChatStore((s) => s.ensureEventGroupConversation);
   const gc = useGroupChatContrast();
 
@@ -1001,12 +1002,19 @@ export default function GroupChatPageContent() {
           eventTitle={event?.title}
           onClose={() => setShowLeaveModal(false)}
           onConfirm={() => {
-            leaveGroup(group.id);
+            const gid = group.id;
+            const willHandOver = Boolean(group.waitlist?.length);
+            leaveGroup(gid);
             toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'), {
-              action: {
-                label: t('Βρες Nakamas', 'Find Nakamas'),
-                onClick: () => navigate('/buddy-seek'),
-              },
+              action: willHandOver
+                ? {
+                    label: t('Βρες Nakamas', 'Find Nakamas'),
+                    onClick: () => navigate('/buddy-seek'),
+                  }
+                : {
+                    label: t('Αναίρεση', 'Undo'),
+                    onClick: () => joinGroup(gid),
+                  },
             });
             setShowLeaveModal(false);
             navigate('/plans');

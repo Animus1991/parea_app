@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   RateLimiter,
   bearerMatches,
+  checkChatJoin,
   checkChatSend,
   eventsWriteMode,
   isOriginAllowed,
@@ -103,6 +104,14 @@ describe('AI proxy and chat', () => {
     expect(checkChatSend({ conversationId: 'conv_1', senderId: 'u2', body: 'hi' }, 'u1', rooms).reason).toBe('sender');
     expect(checkChatSend({ conversationId: 'conv_2', senderId: 'u1', body: 'hi' }, 'u1', rooms).reason).toBe('room');
     expect(checkChatSend({ conversationId: 'conv_1', senderId: 'u1', body: 'x'.repeat(2001) }, 'u1', rooms).reason).toBe('body');
+  });
+  it('only lets a known identity join a room, and honours membership when given', () => {
+    const rooms = new Set<string>();
+    expect(checkChatJoin('conv_1', undefined, rooms).reason).toBe('identity');
+    expect(checkChatJoin('bad id!', 'u1', rooms).reason).toBe('conversation');
+    expect(checkChatJoin('conv_1', 'u1', rooms).ok).toBe(true);
+    expect(checkChatJoin('conv_2', 'u1', rooms, () => false).reason).toBe('membership');
+    expect(checkChatJoin('conv_2', 'u1', rooms, (id, uid) => id === 'conv_2' && uid === 'u1').ok).toBe(true);
   });
 });
 

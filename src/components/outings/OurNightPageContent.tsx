@@ -67,6 +67,7 @@ export default function OurNightPageContent() {
   const users = useStore((s) => s.users);
   const invites = useStore((s) => s.planInvites);
   const leaveGroup = useStore((s) => s.leaveGroup);
+  const joinGroup = useStore((s) => s.joinGroup);
   const leaveGroupWaitlist = useStore((s) => s.leaveGroupWaitlist);
   const joinGroupWaitlist = useStore((s) => s.joinGroupWaitlist);
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
@@ -143,13 +144,17 @@ export default function OurNightPageContent() {
               )}
             </p>
           )}
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
             <Button size="sm" onClick={() => navigate(`/events/${event.id}`)}>
               {t('Δες την εκδήλωση', 'See the event')}
             </Button>
-            <Button size="sm" variant="outline" onClick={() => navigate('/buddy-seek')}>
+            <button
+              type="button"
+              onClick={() => navigate('/buddy-seek')}
+              className="text-xs font-bold text-ink underline underline-offset-2"
+            >
               {t('Βρες Nakamas', 'Find Nakamas')}
-            </Button>
+            </button>
             {onWaitlist && (
               <Button
                 size="sm"
@@ -405,16 +410,22 @@ export default function OurNightPageContent() {
                 variant="danger"
                 onClick={() => {
                   const willHandOver = handsOver;
-                  leaveGroup(group.id);
+                  const gid = group.id;
+                  leaveGroup(gid);
                   toast.info(
                     willHandOver
                       ? t('Αποχώρησες — η θέση πέρασε στη λίστα αναμονής.', 'You left — your seat passed to the waitlist.')
                       : t('Αποχώρησες από την ομάδα.', 'You have left the group.'),
                     {
-                      action: {
-                        label: t('Βρες Nakamas', 'Find Nakamas'),
-                        onClick: () => navigate('/buddy-seek'),
-                      },
+                      action: willHandOver
+                        ? {
+                            label: t('Βρες Nakamas', 'Find Nakamas'),
+                            onClick: () => navigate('/buddy-seek'),
+                          }
+                        : {
+                            label: t('Αναίρεση', 'Undo'),
+                            onClick: () => joinGroup(gid),
+                          },
                     },
                   );
                   navigate('/plans');

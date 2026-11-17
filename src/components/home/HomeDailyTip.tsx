@@ -1,23 +1,46 @@
-import { useState } from 'react';
-import { Lightbulb } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Lightbulb, X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
+import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { DAILY_TIPS_GR, DAILY_TIPS_EN } from '../../lib/homeGreeting';
 
+const DISMISS_KEY = 'nakamas.homeDailyTip.dismissedDay';
+
+/** Tip of the Day — dismissible for the calendar day to keep Home quiet on return. */
 export function HomeDailyTip() {
   const { t } = useLanguage();
   const h = useHomeTheme();
-  const [tipIndex] = useState(() => {
-    // Deterministic per calendar day — stable across mounts, rotates at midnight
-    return Math.floor(Date.now() / 86400000) % DAILY_TIPS_GR.length;
-  });
+  const tok = useThemeStyles();
+  const tipIndex = Math.floor(Date.now() / 86400000) % DAILY_TIPS_GR.length;
+  const dayKey = String(Math.floor(Date.now() / 86400000));
+  const [dismissed, setDismissed] = useState(true);
+
+  useEffect(() => {
+    try {
+      setDismissed(sessionStorage.getItem(DISMISS_KEY) === dayKey);
+    } catch {
+      setDismissed(false);
+    }
+  }, [dayKey]);
+
+  if (dismissed) return null;
+
+  const dismiss = () => {
+    try {
+      sessionStorage.setItem(DISMISS_KEY, dayKey);
+    } catch {
+      /* ignore */
+    }
+    setDismissed(true);
+  };
 
   return (
-    <div className={`rounded-2xl px-4 py-3 flex items-start gap-3 ${h.tipBanner}`}>
+    <div className={`rounded-2xl px-4 py-3 flex items-start gap-3 relative ${h.tipBanner}`}>
       <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
-        <Lightbulb className="w-3.5 h-3.5 text-amber-700" />
+        <Lightbulb className="w-3.5 h-3.5 text-amber-700" aria-hidden />
       </div>
-      <div>
+      <div className="pr-8 min-w-0">
         <span className={`text-xs font-bold uppercase tracking-widest block mb-0.5 ${h.tipLabel}`}>
           {t('Συμβουλή Ημέρας', 'Tip of the Day')}
         </span>
@@ -25,6 +48,16 @@ export function HomeDailyTip() {
           {t(DAILY_TIPS_GR[tipIndex], DAILY_TIPS_EN[tipIndex])}
         </p>
       </div>
+      <button
+        type="button"
+        onClick={dismiss}
+        aria-label={t('Απόκρυψη', 'Dismiss')}
+        className={`absolute top-2 right-2 p-1.5 rounded-full shrink-0 ${
+          tok.isDark ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-500 hover:bg-white/80'
+        }`}
+      >
+        <X className="w-3.5 h-3.5" aria-hidden />
+      </button>
     </div>
   );
 }

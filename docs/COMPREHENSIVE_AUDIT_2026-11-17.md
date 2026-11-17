@@ -180,20 +180,20 @@ Empty CTAs + Ask AI, toast Undo, deep-links (feedback/night/Φ27), quieter notif
 
 ---
 
-## 8. Προτεραιότητες (Top 12)
+## 8. Προτεραιότητες (Top 12) — κατάσταση εφαρμογής
 
-1. Προσθήκη `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` για μόνιμα `*.pages.dev` previews  
-2. Merge tip → `main` (PR #24 lineage) ώστε το default branch να μην είναι 115 commits πίσω  
-3. Fail-closed AI/chat/event writes όταν auth off σε production  
-4. Socket.IO + Firestore chat membership (deploy Functions· remove `!exists` fallback)  
-5. Demo login off σε κάθε production build  
-6. Server-backed invites/groups/strikes για cross-device `/i/:id`  
-7. `RequireOrganizer` στο `/manage`  
-8. Μείωση `index` + lazy-load Firebase  
-9. Καθαρισμός `raw_greek_remaining.json` / ενοποίηση i18n  
-10. Διαγραφή άχρηστων theme re-export forks  
-11. Active Buddies dark mobile contrast στο event detail  
-12. Ενημέρωση `ARCHITECTURE.md` Mermaid ως ρητός «στόχος» (ή αφαίρεση)
+1. Προσθήκη `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` για μόνιμα `*.pages.dev` — ⬜ secrets  
+2. Merge tip → `main` — 🟡 ανοιχτό PR #25  
+3. Fail-closed AI/chat όταν auth off σε production — ✅ `authConfig` 17/11  
+4. Socket.IO membership — 🟡 `checkChatJoin` + identity· πλήρες membership με Functions ακόμα ανοιχτό  
+5. Demo login off σε κάθε production build — ✅  
+6. Server-backed invites/groups/strikes — ⬜  
+7. `RequireOrganizer` στο `/manage` — ✅  
+8. Μείωση `index` + lazy-load Firebase — ⬜  
+9. Καθαρισμός `raw_greek_remaining.json` / ενοποίηση i18n — ⬜  
+10. Διαγραφή άχρηστων theme re-export forks — 🟡 EventDetail ενιαίο body· υπόλοιπα forks παραμένουν  
+11. Active Buddies dark event-detail contrast — ✅ `isDarkTheme` → `darkSurface`  
+12. `ARCHITECTURE.md` Mermaid ως «στόχος» — ✅
 
 ---
 

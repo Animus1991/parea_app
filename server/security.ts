@@ -251,6 +251,27 @@ export interface ChatSendCheck {
 }
 
 /**
+ * Join a chat room only with a known identity, a valid id, and (when a
+ * membership lookup is provided) proven membership of that conversation.
+ */
+export function checkChatJoin(
+  conversationId: unknown,
+  socketUserId: string | undefined,
+  joinedRooms: Set<string>,
+  memberOf?: (conversationId: string, userId: string) => boolean,
+): ChatSendCheck {
+  if (typeof conversationId !== 'string' || !CHAT_ID_PATTERN.test(conversationId)) {
+    return { ok: false, reason: 'conversation' };
+  }
+  if (!socketUserId) return { ok: false, reason: 'identity' };
+  if (joinedRooms.size >= 200) return { ok: false, reason: 'limit' };
+  if (memberOf && !memberOf(conversationId, socketUserId)) {
+    return { ok: false, reason: 'membership' };
+  }
+  return { ok: true };
+}
+
+/**
  * A socket may only send as the identity it connected with, only into a room
  * it joined, and only reasonably sized text.
  */

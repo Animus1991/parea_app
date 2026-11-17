@@ -26,6 +26,7 @@ import { LookingForCompanyPanel } from '../buddySeek/LookingForCompanyPanel';
 import { computeMatchScore } from '../../lib/matching';
 import { NakamasGoing } from '../outings/NakamasGoing';
 import { HikeRouteCard } from '../outings/HikeRouteCard';
+import { isDarkTheme } from '../../lib/themes';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
@@ -44,6 +45,8 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
   const { eventId } = useParams();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const theme = useStore((s) => s.theme);
+  const panelDark = darkSurface || isDarkTheme(theme);
   const [groupSizeFilter, setGroupSizeFilter] = useState<'All' | '3' | '4' | '5' | '6+'>('All');
   const [discountFilter, setDiscountFilter] = useState(false);
   const [shareWallOpen, setShareWallOpen] = useState(false);
@@ -139,7 +142,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
           <EventDetailActionBar
             accent={accent}
-            darkSurface={darkSurface}
+            darkSurface={panelDark}
             isSaved={isSaved}
             onSave={handleSave}
             onQr={() => setShowQRCode(true)}
@@ -187,19 +190,19 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
           )}
         </div>
         <h1 className="text-sm md:text-base font-extrabold text-ink leading-tight mb-2 md:mb-0">{event.title}</h1>
-        <EventDetailPageContent event={event} accent={accent} darkSurface={darkSurface} className="mt-4" />
+        <EventDetailPageContent event={event} accent={accent} darkSurface={panelDark} className="mt-4" />
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:gap-5 md:grid-cols-5 lg:grid-cols-3">
         {/* Left Column: Details */}
         <div className="space-y-4 md:space-y-5 md:col-span-3 lg:col-span-2">
           <section className="nakamas-card space-y-4 text-ink leading-relaxed bg-surface-raised rounded-2xl border border-border p-5 md:p-4 shadow-soft">
-             <EventDetailMetaSection event={event} accent={accent} darkSurface={darkSurface} />
-             <EventMap event={event} accent={accent} darkSurface={darkSurface} />
-             <EventDetailAboutSection event={event} accent={accent} darkSurface={darkSurface} />
-             <EventDetailOrganizerSection organizer={organizer} accent={accent} darkSurface={darkSurface} />
-             <EventDetailSafetySection event={event} accent={accent} darkSurface={darkSurface} />
-             <EventDetailAdventureSection event={event} accent={accent} darkSurface={darkSurface} />
+             <EventDetailMetaSection event={event} accent={accent} darkSurface={panelDark} />
+             <EventMap event={event} accent={accent} darkSurface={panelDark} />
+             <EventDetailAboutSection event={event} accent={accent} darkSurface={panelDark} />
+             <EventDetailOrganizerSection organizer={organizer} accent={accent} darkSurface={panelDark} />
+             <EventDetailSafetySection event={event} accent={accent} darkSurface={panelDark} />
+             <EventDetailAdventureSection event={event} accent={accent} darkSurface={panelDark} />
           </section>
           {/* Φ27 — hiking route: numbers for everyone, start point for confirmed members. */}
           {event.route && (
@@ -213,14 +216,14 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               )}
             />
           )}
-          <EventDetailReliabilityNote event={event} accent={accent} darkSurface={darkSurface} />
+          <EventDetailReliabilityNote event={event} accent={accent} darkSurface={panelDark} />
         </div>
 
         {/* Right Column: Groups & Actions */}
         <div className="space-y-4 md:col-span-2 lg:col-span-1">
           <div className="rounded-2xl border border-border bg-surface-raised p-4 shadow-soft sticky top-24">
             <NakamasGoing eventId={event.id} className="mb-4" />
-            <LookingForCompanyPanel event={event} accent={accent} darkSurface={darkSurface} />
+            <LookingForCompanyPanel event={event} accent={accent} darkSurface={panelDark} />
 
             <h3 id="groups" className="scroll-mt-28 text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
             <p className="text-2xs text-ink-muted font-medium mb-3 -mt-2">
@@ -302,7 +305,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             ) : (
               <div className="space-y-4 mb-4">
                 {eventGroups.map(group => (
-                  <EventDetailGroupCard key={group.id} group={group} event={event} navigate={navigate} accent={accent} darkSurface={darkSurface} />
+                  <EventDetailGroupCard key={group.id} group={group} event={event} navigate={navigate} accent={accent} darkSurface={panelDark} />
                 ))}
               </div>
             )}

@@ -20,6 +20,7 @@ import { dateFnsLocale, shortDayMonthPattern } from '../../lib/dateLocale';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { eventStartMs, LATE_CANCEL_MS } from '../../store/outingsSlice';
+import { EmptyState } from '../common/EmptyState';
 
 function getUserGroupForEvent(eventId: string, groups: Group[], userId: string | undefined) {
   if (!userId) return undefined;
@@ -49,6 +50,7 @@ export default function PlansPageContent() {
   const waitlistedEvents = useStore((s) => s.waitlistedEvents);
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
   const leaveGroup = useStore((s) => s.leaveGroup);
+  const joinGroup = useStore((s) => s.joinGroup);
 
   const now = new Date();
   const userGroupEventIds = currentUser
@@ -315,15 +317,20 @@ export default function PlansPageContent() {
         })}
 
         {upcomingEvents.length === 0 && (
-          <EmptyTab
+          <EmptyState
             icon={Compass}
             title={t(`Δεν υπάρχουν επερχόμενα σχέδια.`, `No upcoming confirmed plans.`)}
-            hint={t('Εξερευνήστε εκδηλώσεις και μπείτε σε μια ομάδα για να ξεκινήσετε.', 'Explore experiences and join a group to get started.')}
-            ctaLabel={t(`Εξερεύνηση`, `Explore Experiences`)}
-            onCta={() => navigate('/')}
+            description={t('Εξερευνήστε εκδηλώσεις και μπείτε σε μια ομάδα για να ξεκινήσετε.', 'Explore experiences and join a group to get started.')}
+            actionLabel={t(`Εξερεύνηση`, `Explore Experiences`)}
+            onAction={() => navigate('/')}
             secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
             onSecondary={() => navigate('/buddy-seek')}
-            p={p}
+            askAi
+            askPrompt={t(
+              'Βρες μου κάτι για αυτό το Σαββατοκύριακο με ανοιχτές θέσεις.',
+              'Find me something this weekend with open spots.',
+            )}
+            className="py-8"
           />
         )}
       </div>
@@ -391,15 +398,18 @@ export default function PlansPageContent() {
         })}
 
         {pendingEvents.length === 0 && (
-          <EmptyTab
+          <EmptyState
             icon={Clock}
             title={t('Καμία εκκρεμής ομάδα.', 'No pending groups.')}
-            hint={t('Όταν εκδηλώσετε ενδιαφέρον για μια εκδήλωση, θα εμφανιστεί εδώ μέχρι να επιβεβαιωθεί η ομάδα.', 'When you express interest in an event, it appears here until the group is confirmed.')}
-            ctaLabel={t('Ανακάλυψη', 'Discover')}
-            onCta={() => navigate('/')}
-            secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
-            onSecondary={() => navigate('/buddy-seek')}
-            p={p}
+            description={t('Όταν εκδηλώσετε ενδιαφέρον για μια εκδήλωση, θα εμφανιστεί εδώ μέχρι να επιβεβαιωθεί η ομάδα.', 'When you express interest in an event, it appears here until the group is confirmed.')}
+            actionLabel={t('Ανακάλυψη', 'Discover')}
+            onAction={() => navigate('/')}
+            askAi
+            askPrompt={t(
+              'Δείξε μου ομάδες που σχηματίζονται κοντά μου.',
+              'Show me groups forming near me.',
+            )}
+            className="py-8"
           />
         )}
       </div>
@@ -439,15 +449,16 @@ export default function PlansPageContent() {
         ))}
 
         {pastEvents.length === 0 && (
-          <EmptyTab
+          <EmptyState
             icon={CalendarCheck}
             title={t('Κανένα ολοκληρωμένο σχέδιο ακόμα.', 'No completed plans yet.')}
-            hint={t('Οι εκδηλώσεις που παρακολουθήσατε θα εμφανίζονται εδώ για αξιολόγηση και ιστορικό.', 'Events you attend will appear here for ratings and history.')}
-            ctaLabel={t('Εξερεύνηση', 'Explore')}
-            onCta={() => navigate('/')}
+            description={t('Οι εκδηλώσεις που παρακολουθήσατε θα εμφανίζονται εδώ για αξιολόγηση και ιστορικό.', 'Events you attend will appear here for ratings and history.')}
+            actionLabel={t('Εξερεύνηση', 'Explore')}
+            onAction={() => navigate('/')}
             secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
             onSecondary={() => navigate('/buddy-seek')}
-            p={p}
+            askAi
+            className="py-8"
           />
         )}
       </div>
@@ -471,12 +482,21 @@ export default function PlansPageContent() {
             onClick={() => {
               // The group *I* am in for this event (not just the first group of the event).
               const group = getUserGroupForEvent(showLeaveConfirm ?? '', groups, currentUser?.id);
-              if (group) leaveGroup(group.id);
+              const gid = group?.id;
+              const handsOver = Boolean(group?.waitlist?.length);
+              if (gid) leaveGroup(gid);
               toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'), {
-                action: {
-                  label: t('Βρες Nakamas', 'Find Nakamas'),
-                  onClick: () => navigate('/buddy-seek'),
-                },
+                action: handsOver
+                  ? {
+                      label: t('Βρες Nakamas', 'Find Nakamas'),
+                      onClick: () => navigate('/buddy-seek'),
+                    }
+                  : {
+                      label: t('Αναίρεση', 'Undo'),
+                      onClick: () => {
+                        if (gid) joinGroup(gid);
+                      },
+                    },
               });
               setShowLeaveConfirm(null);
             }}
@@ -497,46 +517,3 @@ export default function PlansPageContent() {
   );
 }
 
-function EmptyTab({
-  icon: Icon,
-  title,
-  hint,
-  ctaLabel,
-  onCta,
-  secondaryLabel,
-  onSecondary,
-  p,
-}: {
-  icon: typeof Calendar;
-  title: string;
-  hint: string;
-  ctaLabel?: string;
-  onCta?: () => void;
-  secondaryLabel?: string;
-  onSecondary?: () => void;
-  p: ReturnType<typeof usePageContrast>;
-}) {
-  return (
-    <div className={cn('text-center py-4 px-4 rounded-2xl border border-dashed', p.cardSurface, p.borderB)}>
-      <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3', p.statBg)}>
-        <Icon className={cn('w-6 h-6', p.statVal)} />
-      </div>
-      <p className={cn(PLANS_TYPO.cardTitle, p.head)}>{title}</p>
-      <p className={cn(PLANS_TYPO.bannerBody, 'mt-1 max-w-sm mx-auto', p.muted)}>{hint}</p>
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-        {ctaLabel && onCta && (
-          <button className={cn('btn-gradient', PLANS_TYPO.bannerCta)} onClick={onCta}>{ctaLabel}</button>
-        )}
-        {secondaryLabel && onSecondary && (
-          <button
-            type="button"
-            className={cn('text-xs font-bold underline underline-offset-2', p.muted)}
-            onClick={onSecondary}
-          >
-            {secondaryLabel}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}

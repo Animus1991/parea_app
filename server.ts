@@ -26,6 +26,7 @@ import {
   SECURITY_HEADERS,
   allowedModels,
   bearerMatches,
+  checkChatJoin,
   checkChatSend,
   cspForPath,
   headersForPath,
@@ -413,10 +414,12 @@ async function startServer() {
     const joined = new Set<string>();
 
     socket.on('join_room', (conversationId: unknown) => {
-      if (typeof conversationId !== 'string' || !/^[A-Za-z0-9:_-]{1,128}$/.test(conversationId)) return;
-      if (joined.size >= 200) return;
-      joined.add(conversationId);
-      socket.join(conversationId);
+      // Require a known identity; optional membership lookup can be wired when
+      // Firestore memberIds writers ship (see docs/SECURITY_HARDENING.md).
+      const check = checkChatJoin(conversationId, userId, joined);
+      if (!check.ok) return;
+      joined.add(conversationId as string);
+      socket.join(conversationId as string);
     });
 
     socket.on('send_message', (data: unknown) => {

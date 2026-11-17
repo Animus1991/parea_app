@@ -111,9 +111,6 @@ export default function HomeClassic() {
 
       <HomeContinueStrip />
 
-      {/* Φ27 — themed collections with how many groups are forming */}
-      <CollectionsRail />
-
       <EventStories events={storyEvents} />
 
       <CopilotInlinePrompt />
@@ -151,6 +148,9 @@ export default function HomeClassic() {
         activeMood={activeMood}
         onSelectMood={handleSelectMood}
       />
+
+      {/* Φ27 collections — below filters so the first viewport stays one job */}
+      <CollectionsRail />
 
       {/* Events Grid */}
       <section>

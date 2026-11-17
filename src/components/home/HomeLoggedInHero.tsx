@@ -207,16 +207,6 @@ export function HomeLoggedInHero({
                 </span>
               ))}
             </div>
-            <div className="flex gap-3 mb-4">
-              <button
-                type="button"
-                onClick={() => navigate('/nearby')}
-                className="btn-gradient flex items-center gap-1.5 !rounded-2xl !text-xs !px-3 !py-1.5"
-              >
-                <MapIcon className="w-3.5 h-3.5" />
-                {t('Αναζήτηση στον Χάρτη', 'Search on Map')}
-              </button>
-            </div>
             {searchBlock}
           </div>
           {currentUser && (

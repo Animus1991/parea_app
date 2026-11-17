@@ -37,6 +37,11 @@ Dev-only scripts live in `scripts/`; legacy AI Studio repair tools in `app/apple
 
 ## Mermaid System Architecture Diagram
 
+> **Target architecture** (not the live deploy). The current repo is the mock-first
+> SPA + Express shell described under «Client prototype» above. Microservices /
+> Onfido / Stripe Connect in the diagram are roadmap, not shipped code.
+
+
 ```mermaid
 graph TD
     %% Client Layer

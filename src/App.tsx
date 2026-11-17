@@ -8,6 +8,7 @@ import { OfflineBanner } from "./components/common/OfflineBanner";
 import { CspViolationToast } from "./components/common/CspViolationToast";
 import { CommandPalette } from "./components/common/CommandPalette";
 import { RequireAdmin } from "./components/auth/RequireAdmin";
+import { RequireOrganizer } from "./components/auth/RequireOrganizer";
 import { CopilotBridge } from "./components/copilot/CopilotBridge";
 import { useStore } from "./store";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
@@ -114,7 +115,12 @@ export default function App() {
   }
 
   if (!currentUser && location.pathname !== "/login") {
-    return null; // wait for redirect
+    return (
+      <QueryClientProvider client={queryClient}>
+        <RouteLifecycle />
+        <PageLoading />
+      </QueryClientProvider>
+    );
   }
 
   if (location.pathname === "/login") {
@@ -167,7 +173,7 @@ export default function App() {
             <Route path="/chats" element={<ErrorBoundary><Inbox /></ErrorBoundary>} />
             <Route path="/chat/:groupId" element={<ErrorBoundary><GroupChat /></ErrorBoundary>} />
 
-            <Route path="/manage" element={<ErrorBoundary><OrganizerDashboard /></ErrorBoundary>} />
+            <Route path="/manage" element={<ErrorBoundary><RequireOrganizer><OrganizerDashboard /></RequireOrganizer></ErrorBoundary>} />
             <Route path="/create" element={<ErrorBoundary><CreateEventFlow /></ErrorBoundary>} />
             <Route path="/wallet" element={<ErrorBoundary><Wallet /></ErrorBoundary>} />
 
