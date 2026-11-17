@@ -36,10 +36,10 @@ export function CopilotInlinePrompt({ className, title, suggestions, maxChips = 
           <Bot className="h-4 w-4" />
         </span>
         <span className="min-w-0">
-          <span className="block text-xs font-bold text-ink">
+          <span className="block text-sm font-bold text-ink">
             {title ? t(title.el, title.en) : t('Πες στο Nakamas AI τι θέλεις', 'Tell Nakamas AI what you want')}
           </span>
-          <span className="block text-2xs leading-snug text-ink-muted">
+          <span className="block text-xs leading-snug text-ink-muted">
             {t('Βρίσκει, οργανώνει & ρυθμίζει για σένα', 'Finds, organises & sets up for you')}
           </span>
         </span>

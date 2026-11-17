@@ -96,15 +96,15 @@ export default function TrustCenterPageContent() {
         {/* Verification Status */}
         <Card className="p-5 space-y-4">
           <div>
-            <h2 className={cn("text-base font-bold tracking-tight mb-1 flex items-center gap-1.5", a.head)}>
+            <h2 className={cn("text-sm font-bold tracking-tight mb-1 flex items-center gap-1.5", a.head)}>
               <ShieldCheck className={cn("h-4 w-4", a.iconAccent)} />{t('Κατάσταση Επαλήθευσης', 'Verification Status')}
             </h2>
-            <p className={cn("text-xs font-bold uppercase tracking-wide", a.muted)}>{trustTierLabel}</p>
+            <p className={cn("card-prose font-semibold", a.muted)}>{trustTierLabel}</p>
           </div>
 
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
-              <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
+              <div className={cn("flex items-center gap-2 card-prose font-medium", a.sub)}>
                 <Mail className={cn("h-3.5 w-3.5", a.muted)} /> {t('Email', 'Email')}
               </div>
               {currentUser.emailVerified ? (
@@ -116,7 +116,7 @@ export default function TrustCenterPageContent() {
               )}
             </div>
             <div className="flex items-center justify-between">
-              <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
+              <div className={cn("flex items-center gap-2 card-prose font-medium", a.sub)}>
                 <Phone className={cn("h-3.5 w-3.5", a.muted)} />{t('Τηλέφωνο', 'Phone')}
               </div>
               {currentUser.phoneVerified ? (
@@ -128,7 +128,7 @@ export default function TrustCenterPageContent() {
               )}
             </div>
             <div className="flex items-center justify-between">
-              <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
+              <div className={cn("flex items-center gap-2 card-prose font-medium", a.sub)}>
                 <CreditCard className={cn("h-3.5 w-3.5", a.muted)} />{t('Πληρωμή', 'Payment')}
               </div>
               {currentUser.paymentVerified ? (
@@ -140,7 +140,7 @@ export default function TrustCenterPageContent() {
               )}
             </div>
             <div className="flex items-center justify-between">
-              <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
+              <div className={cn("flex items-center gap-2 card-prose font-medium", a.sub)}>
                 <UserCheck className={cn("h-3.5 w-3.5", a.muted)} />{t('Ταυτότητα', 'Government ID')}
               </div>
               {currentUser.idVerified ? (
@@ -155,12 +155,12 @@ export default function TrustCenterPageContent() {
 
           <div className={cn("pt-3.5 border-t", a.isDark ? "border-gray-700/40" : "border-gray-100")}>
             <div className="flex items-center justify-between">
-              <div className={cn("flex items-center gap-2 text-base font-bold", a.head)}>
+              <div className={cn("flex items-center gap-2 text-sm font-bold", a.head)}>
                 <Award className="h-4 w-4 text-amber-500" />{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}
               </div>
-              <span className="text-base font-black tabular-nums leading-none text-emerald-600">{reliabilityScore}%</span>
+              <span className="text-sm font-black tabular-nums leading-none text-emerald-600">{reliabilityScore}%</span>
             </div>
-            <p className={cn("text-sm mt-1.5 font-medium leading-relaxed", a.sub)}>
+            <p className={cn("card-prose mt-1.5 font-medium leading-relaxed", a.sub)}>
               {t('Βασίζεται στις παρουσίες, αξιολογήσεις και συμπεριφορά σας.', 'Based on your attendance, reviews, and behavior.')}
             </p>
           </div>
@@ -172,19 +172,19 @@ export default function TrustCenterPageContent() {
             <svg width="120" height="120" viewBox="0 0 120 120" className="mb-2">
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.isDark ? '#374151' : '#e5e7eb'} strokeWidth="8" />
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.scoreStroke} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${strokeDash} ${circumference}`} transform="rotate(-90 60 60)" />
-              <text x="60" y="56" textAnchor="middle" className={cn("text-sm md:text-base font-black", a.scoreFill)} fontSize="14">{reliabilityScore}</text>
+              <text x="60" y="56" textAnchor="middle" className={cn("font-black", a.scoreFill)} fontSize="15">{reliabilityScore}</text>
               <text x="60" y="74" textAnchor="middle" className="fill-gray-400" fontSize="10" fontWeight="600">%</text>
             </svg>
-            <p className={cn("text-base font-bold tracking-tight", a.head)}>{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}</p>
+            <p className={cn("text-sm font-bold tracking-tight", a.head)}>{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}</p>
           </Card>
 
           <Card className={a.infoBg}>
             <div className="p-4 md:p-5">
-              <h3 className={cn("text-base font-bold tracking-tight mb-1.5", a.head)}>{t('Πώς υπολογίζεται η αξιοπιστία', 'How reliability is calculated')}</h3>
-              <p className={cn("text-sm font-medium leading-relaxed", a.sub)}>
+              <h3 className={cn("text-sm font-bold tracking-tight mb-1.5", a.head)}>{t('Πώς υπολογίζεται η αξιοπιστία', 'How reliability is calculated')}</h3>
+              <p className={cn("card-prose font-medium leading-relaxed", a.sub)}>
                 {t('Κάθε επαλήθευση αυξάνει το επίπεδο εμπιστοσύνης σας, ξεκλειδώνοντας πρόσβαση σε εκδηλώσεις υψηλής ασφάλειας.', 'Each verification raises your trust tier, unlocking access to high-safety events.')}
               </p>
-              <ul className={cn("mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm font-medium tabular-nums", a.sub)}>
+              <ul className={cn("mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1.5 card-prose font-medium tabular-nums", a.sub)}>
                 <li><span className="font-bold text-emerald-600 dark:text-emerald-400">+3</span> {t('επιβεβαιωμένη παρουσία', 'confirmed attendance')}</li>
                 <li><span className="font-bold text-emerald-600 dark:text-emerald-400">+2</span> {t('καλή αξιολόγηση (4–5★)', 'good rating (4–5★)')}</li>
                 <li><span className="font-bold text-red-600 dark:text-red-400">−8</span> {t('ακύρωση τελευταίας στιγμής', 'last-minute cancel')}</li>
@@ -194,8 +194,8 @@ export default function TrustCenterPageContent() {
           </Card>
           <Card className={a.infoBg}>
             <div className="p-4 md:p-5">
-              <h3 className={cn("text-base font-bold tracking-tight mb-1.5", a.head)}>{t('Τα 3 επίπεδα εμπιστοσύνης', 'The 3 trust tiers')}</h3>
-              <ol className={cn("text-sm font-medium leading-relaxed space-y-1.5", a.sub)}>
+              <h3 className={cn("text-sm font-bold tracking-tight mb-1.5", a.head)}>{t('Τα 3 επίπεδα εμπιστοσύνης', 'The 3 trust tiers')}</h3>
+              <ol className={cn("card-prose font-medium leading-relaxed space-y-1.5", a.sub)}>
                 <li><strong className={a.head}>1 · {t(tierLabelEl('1_explorer'), tierLabelEn('1_explorer'))}:</strong> {t('δωρεάν δημόσιες εκδηλώσεις.', 'free public events.')}</li>
                 <li><strong className={a.head}>2 · {t(tierLabelEl('2_confirmed'), tierLabelEn('2_confirmed'))}:</strong> {t('μικρές ομάδες 3–5 & εκδηλώσεις με εισιτήριο.', 'small groups of 3–5 & ticketed events.')}</li>
                 <li><strong className={a.head}>3 · {t(tierLabelEl('3_high_trust'), tierLabelEn('3_high_trust'))}:</strong> {t('εκδρομές, ιδιωτικές συναντήσεις & διοργάνωση.', 'trips, private meetups & hosting.')}</li>
@@ -251,7 +251,7 @@ export default function TrustCenterPageContent() {
                   {i < history.length - 1 && <div className={cn("w-px flex-1", a.timelineLine)} />}
                 </div>
                 <div className="pb-4">
-                  <p className={cn("text-sm font-medium", a.head)}>{t(item.el, item.en)}</p>
+                  <p className={cn("card-prose font-medium", a.head)}>{t(item.el, item.en)}</p>
                   <time dateTime={item.at} className={cn("text-xs font-medium", a.muted)}>{item.date}</time>
                 </div>
               </li>
