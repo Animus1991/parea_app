@@ -78,6 +78,8 @@ export const CHAT_TYPO = {
   badge: 'text-2xs text-brand font-bold',
   menu: 'text-2xs',
   lockNotice: 'text-2xs text-amber-700 dark:text-amber-200',
+  /** Inbox lock/status line — slightly deeper gold than amber-400 so it holds on white. */
+  lockHint: 'text-[#d27c0a] dark:text-amber-300',
   sender: 'text-2xs text-ink-muted mb-0.5',
   bubble: 'text-sm leading-relaxed break-words',
   systemBubble: 'text-2xs text-center',

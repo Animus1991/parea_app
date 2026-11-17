@@ -9,6 +9,7 @@ import { useStore } from '../../store';
 import { canOpenConversation } from '../../lib/chatPermissions';
 import type { Conversation, ConversationType } from '../../types/chat';
 import { cn } from '../../lib/utils';
+import { CHAT_TYPO } from '../../lib/typographyTokens';
 
 const TYPE_ICON: Record<ConversationType, typeof Users> = {
   event_group: Users,
@@ -117,7 +118,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
                             {t(c.lastMessagePreview.el, c.lastMessagePreview.en)}
                           </p>
                           {!perm.canSend && perm.reasonIfLocked && (
-                            <p className="text-xs text-amber-400/90 mt-0.5">
+                            <p className={cn('text-xs mt-0.5', CHAT_TYPO.lockHint)}>
                               {t(perm.reasonIfLocked.el, perm.reasonIfLocked.en)}
                             </p>
                           )}
