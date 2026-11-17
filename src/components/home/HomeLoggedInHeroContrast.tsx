@@ -134,7 +134,7 @@ export function HomeLoggedInHeroContrast({
           <div className="flex justify-between items-start gap-4">
             <div className="space-y-2 flex-1">
               <h1 className={h.heroGreeting}>{greeting}</h1>
-              <HomeReturnLine className={cn(h.heroMotivation, 'hero-sublead')} fallback={motivation} />
+              <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
               <p className={cn(h.heroTitle, 'max-w-2xl')}>
                 {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>{t('home.hero.title2', 'εμπειρίες')}</span>{' '}

@@ -91,7 +91,7 @@ export function EventStories({ events }: EventStoriesProps) {
             >
               <div
                 className={cn(
-                  "p-[2.04px] rounded-2xl bg-gradient-to-tr transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-95",
+                  "p-[2.08px] rounded-2xl bg-gradient-to-tr transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-95",
                   seen ? "from-gray-300 to-gray-300" : activeRing,
                 )}
               >

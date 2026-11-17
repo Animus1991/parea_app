@@ -147,7 +147,7 @@ export function ChatStoriesStrip({
             >
               <span
                 className={cn(
-                  'p-[1.53px] rounded-full transition-transform group-hover:scale-105',
+                  'p-[1.56px] rounded-full transition-transform group-hover:scale-105',
                   seen
                     ? 'bg-border-strong'
                     : 'bg-gradient-to-tr from-cyan-500 via-teal-400 to-amber-400',
