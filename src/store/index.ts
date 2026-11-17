@@ -735,6 +735,8 @@ export const useStore = create<AppState>()(
           'Αποχώρησες λιγότερο από 24 ώρες πριν και η θέση έμεινε κενή — καταγράφηκε αργή ακύρωση. Αν υπήρχε σοβαρός λόγος, κάνε ένσταση στο Κέντρο Εμπιστοσύνης.',
           'You left less than 24 hours before and the seat stayed empty — a late cancel was recorded. If there was a serious reason, appeal in the Trust Center.',
           'safety',
+          // Scoped to the leaver; clear groupId so the row does not deep-link a locked night.
+          { forUserId: uid, groupId: null },
         );
       }
       if (toUserId) {
@@ -742,7 +744,7 @@ export const useStore = create<AppState>()(
           'Η θέση σου πέρασε στο πρώτο άτομο της λίστας αναμονής, στην ίδια τιμή. Η ομάδα κρατά την έκπτωση.',
           'Your seat passed to the first person on the waitlist, at the same price. The group keeps its discount.',
           'group',
-          { forUserId: uid },
+          { forUserId: uid, groupId: null },
         );
         // Loyalty: the waitlist winner must learn the seat is theirs (not only the leaver).
         note(
@@ -1163,6 +1165,7 @@ export const useStore = create<AppState>()(
           timeEn: 'Just now',
           timeGr: 'Μόλις τώρα',
           color: 'bg-amber-100 text-amber-700',
+          forUserId: state.currentUser?.id,
         }),
         ...state.notifications,
       ],

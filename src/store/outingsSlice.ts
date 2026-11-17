@@ -207,7 +207,7 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         'group',
         'Μπήκες στη λίστα αναμονής. Αν κάποιος αποχωρήσει, η θέση περνά σε σένα στην ίδια τιμή.',
         'You joined the waitlist. If someone leaves, their seat passes to you at the same price.',
-        { groupId, eventId: group.eventId },
+        { groupId, eventId: group.eventId, forUserId: me.id },
       );
       return true;
     },
@@ -396,7 +396,12 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       set((st) => ({
         strikes: st.strikes.map((x) => (x.id === strikeId ? { ...x, appeal: { text: clean, at: new Date().toISOString(), status: 'pending' } } : x)),
       }));
-      notifyMe('safety', 'Η ένστασή σου στάλθηκε. Θα απαντήσουμε μέσα σε 48 ώρες.', 'Your appeal was sent. We reply within 48 hours.');
+      notifyMe(
+        'safety',
+        'Η ένστασή σου στάλθηκε. Θα απαντήσουμε μέσα σε 48 ώρες.',
+        'Your appeal was sent. We reply within 48 hours.',
+        { forUserId: me.id },
+      );
       return true;
     },
 
