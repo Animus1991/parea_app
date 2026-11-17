@@ -180,6 +180,16 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                 next
                   ? t("Η ασπίδα ασφαλείας ενεργοποιήθηκε.", "Safety shield is on.")
                   : t("Η ασπίδα ασφαλείας απενεργοποιήθηκε.", "Safety shield is off."),
+                next
+                  ? {
+                      action: {
+                        label: t('Χάρτης ομάδας', 'Group map'),
+                        onClick: () => {
+                          /* already on the map surface */
+                        },
+                      },
+                    }
+                  : undefined,
               );
             }}
             className={
@@ -304,7 +314,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                           ? t("SOS / HELP", "SOS / HELP")
                           : loc.isOutOfBounds
                             ? t("ΕΚΤΟΣ ΟΡΙΩΝ", "OUT OF BOUNDS")
-                            : "Live"}
+                            : t('Κοινοποίηση', 'Sharing')}
                       </p>
                     </div>
                   </div>

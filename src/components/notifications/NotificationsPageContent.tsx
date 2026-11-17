@@ -111,14 +111,20 @@ export default function NotificationsPageContent() {
   const pathForNotif = (notif: AppNotification) => {
     // Match with a real group deep-links Our night; otherwise My plans.
     if (notif.type === 'match') return notif.groupId ? `/night/${notif.groupId}` : '/plans';
-    if (notif.type === 'reminder') return '/plans';
+    // Event invites (and similar reminders) prefer night → event → plans.
+    if (notif.type === 'reminder') {
+      if (notif.groupId) return `/night/${notif.groupId}`;
+      if (notif.eventId) return `/events/${notif.eventId}`;
+      return '/plans';
+    }
     // Group-scoped messages (announcements) belong on Our night, not the DMs inbox.
     if (notif.type === 'message') return notif.groupId ? `/night/${notif.groupId}` : '/chats';
     if (notif.type === 'achievement') return '/achievements';
     if (notif.type === 'buddy_seek') return notif.groupId ? `/night/${notif.groupId}` : '/buddy-seek';
     // Cancelled-event rows clear groupId so leavers land on plans, not a locked night.
     if (notif.type === 'group') return notif.groupId ? `/night/${notif.groupId}` : '/plans';
-    if (notif.type === 'safety') return '/trust';
+    // SOS / safety shield with a group → group chat map; else Trust Center.
+    if (notif.type === 'safety') return notif.groupId ? `/chat/${notif.groupId}` : '/trust';
     // Incoming connection *requests* → Connections; accept/wall loops → Wall; else trust.
     if (notif.type === 'system') {
       const requestish =

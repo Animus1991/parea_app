@@ -131,6 +131,10 @@ export default function InboxPageContent() {
   };
 
   const unreadNotifications = notifications.filter((n) => !n.read).length;
+  const unreadPreview = useMemo(
+    () => notifications.filter((n) => !n.read).slice(0, 5),
+    [notifications],
+  );
 
   return (
     <div className="w-full max-w-full min-w-0 flex flex-col relative animate-in fade-in duration-500">
@@ -338,26 +342,62 @@ export default function InboxPageContent() {
       )}
 
       {activeTab === 'notifications' && (
-        <div
-          className={cn(
-            'rounded-2xl border shadow-soft p-5 text-center flex flex-col items-center',
-            p.cardSurface,
-            p.borderB,
+        <div className={cn('rounded-2xl border shadow-soft overflow-hidden', p.cardSurface, p.borderB)}>
+          {unreadPreview.length === 0 ? (
+            <div className="p-5 text-center flex flex-col items-center">
+              <CircleDashed className={cn('w-10 h-10 mb-3 opacity-40', p.muted)} />
+              <h3 className={cn('font-bold text-sm mb-2', p.head)}>
+                {t('Είστε ενημερωμένοι', "You're all caught up")}
+              </h3>
+              <button
+                type="button"
+                onClick={() => navigate('/notifications')}
+                className={cn('mt-2 px-5 py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white shadow-soft', INBOX_TYPO.cta)}
+              >
+                {t('Όλες οι Ειδοποιήσεις', 'All Notifications')}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/buddy-seek')}
+                className={cn('mt-2 text-xs font-bold underline underline-offset-2', p.muted)}
+              >
+                {t('Βρες Nakamas', 'Find Nakamas')}
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className={cn('px-4 py-3 border-b flex items-center justify-between', p.borderB)}>
+                <h3 className={cn('font-bold text-sm', p.head)}>
+                  {t(`${unreadNotifications} νέες`, `${unreadNotifications} new`)}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => navigate('/notifications')}
+                  className={cn('text-xs font-bold underline underline-offset-2', p.muted)}
+                >
+                  {t('Όλες', 'All')}
+                </button>
+              </div>
+              <ul className={cn('divide-y', p.isDark ? 'divide-white/5' : 'divide-gray-100')}>
+                {unreadPreview.map((n) => (
+                  <li key={n.id}>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/notifications')}
+                      className="w-full text-left px-4 py-3 min-h-12 hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors"
+                    >
+                      <span className={cn('block text-sm font-bold line-clamp-2', p.head)}>
+                        {t(n.messageGr ?? '', n.messageEn ?? '')}
+                      </span>
+                      <span className={cn('block text-2xs font-medium mt-0.5', p.muted)}>
+                        {t(n.timeGr ?? '', n.timeEn ?? '')}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
-        >
-          <CircleDashed className={cn('w-10 h-10 mb-3 opacity-40', p.muted)} />
-          <h3 className={cn('font-bold text-sm mb-2', p.head)}>
-            {unreadNotifications > 0
-              ? t(`${unreadNotifications} νέες ειδοποιήσεις`, `${unreadNotifications} new notifications`)
-              : t('Είστε ενημερωμένοι', "You're all caught up")}
-          </h3>
-          <button
-            type="button"
-            onClick={() => navigate('/notifications')}
-            className={cn('mt-2 px-5 py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white shadow-soft', INBOX_TYPO.cta)}
-          >
-            {t('Όλες οι Ειδοποιήσεις', 'All Notifications')}
-          </button>
         </div>
       )}
     </div>

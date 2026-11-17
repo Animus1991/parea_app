@@ -1300,12 +1300,32 @@ export const useStore = create<AppState>()(
       };
     }),
 
-  toggleLiveTracking: (groupId, enabled) =>
+  toggleLiveTracking: (groupId, enabled) => {
+    const group = get().groups.find((g) => g.id === groupId);
     set((state) => ({
       groups: state.groups.map((g) =>
         g.id === groupId ? { ...g, isLiveTrackingActive: enabled } : g,
       ),
-    })),
+    }));
+    if (!group || !enabled) return;
+    const me = get().currentUser;
+    const stamp = Date.now();
+    const peers = group.members.filter((id) => id !== me?.id);
+    for (let i = 0; i < peers.length; i++) {
+      get().addNotification({
+        id: `n_shield_${stamp}_${i}`,
+        type: 'safety',
+        messageGr: 'Η ασπίδα ασφαλείας ενεργοποιήθηκε — άνοιξε το chat για τον χάρτη ομάδας.',
+        messageEn: 'Safety shield is on — open group chat for the group map.',
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        groupId,
+        eventId: group.eventId,
+        forUserId: peers[i],
+      });
+    }
+  },
 
   updateMemberLocation: (groupId, userId, location) =>
     set((state) => ({
@@ -1317,7 +1337,8 @@ export const useStore = create<AppState>()(
       }),
     })),
 
-  triggerSos: (groupId, userId, active) =>
+  triggerSos: (groupId, userId, active) => {
+    const group = get().groups.find((g) => g.id === groupId);
     set((state) => ({
       groups: state.groups.map((g) => {
         if (g.id !== groupId) return g;
@@ -1331,7 +1352,27 @@ export const useStore = create<AppState>()(
         }
         return { ...g, membersLocations };
       }),
-    })),
+    }));
+    if (!group || !active) return;
+    const actor = get().users.find((u) => u.id === userId);
+    const name = actor?.name.split(' ')[0] || 'Nakamas';
+    const stamp = Date.now();
+    const peers = group.members.filter((id) => id !== userId);
+    for (let i = 0; i < peers.length; i++) {
+      get().addNotification({
+        id: `n_sos_${stamp}_${i}`,
+        type: 'safety',
+        messageGr: `Ο/Η ${name} ενεργοποίησε SOS — άνοιξε το chat της ομάδας τώρα.`,
+        messageEn: `${name} triggered SOS — open the group chat now.`,
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        groupId,
+        eventId: group.eventId,
+        forUserId: peers[i],
+      });
+    }
+  },
 
   toggleSavedEvent: (eventId) =>
     set((state) => {

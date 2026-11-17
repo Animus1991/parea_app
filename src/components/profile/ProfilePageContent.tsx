@@ -514,9 +514,14 @@ export default function ProfilePageContent() {
                 <button
                   type="button"
                   className="text-xs font-bold text-ink underline underline-offset-2"
-                  onClick={() => navigate('/wall')}
+                  onClick={() => {
+                    document
+                      .querySelector<HTMLElement>('[data-testid="wall-composer"], textarea, [contenteditable="true"]')
+                      ?.focus();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                 >
-                  {t('Άνοιξε τον τοίχο', 'Open the wall')}
+                  {t('Γράψε μια δημοσίευση', 'Write a post')}
                 </button>
               </div>
             ) : (

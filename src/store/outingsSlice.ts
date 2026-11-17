@@ -581,6 +581,21 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
             { groupId, eventId: after.eventId, forUserId: uid },
           );
         }
+      } else if (
+        before?.tickets?.status === 'awaiting_payments' &&
+        after?.tickets?.status === 'awaiting_payments' &&
+        after.hostId &&
+        after.hostId !== me.id
+      ) {
+        const paid = Object.values(after.tickets.payments).filter((p) => p === 'paid').length;
+        const total = Object.keys(after.tickets.payments).length;
+        const payer = me.name.split(' ')[0] || 'Nakamas';
+        notifyMe(
+          'group',
+          `Ο/Η ${payer} πλήρωσε το μερίδιό του (${paid}/${total}) — δες τη «Βραδιά μας».`,
+          `${payer} paid their share (${paid}/${total}) — see «Our night».`,
+          { groupId, eventId: after.eventId, forUserId: after.hostId },
+        );
       }
     },
 

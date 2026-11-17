@@ -122,7 +122,10 @@ export default function WalletPageContent() {
                 secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
                 onSecondary={() => navigate('/buddy-seek')}
                 askAi
-                askPrompt={t('Σύνοψη πορτοφολιού', 'Summarise my wallet')}
+                askPrompt={t(
+                  'Σύνοψη πορτοφολιού — demo στοιχεία μόνο',
+                  'Summarise my wallet — demo figures only',
+                )}
               />
             </div>
           ) : (

@@ -34,7 +34,7 @@ export function PlansFormingSidebarReopenTab() {
         'transition-colors hover:bg-cyan-50',
         tok.isDark ? 'bg-[#0c1016]/95 border-white/10 text-cyan-300' : 'bg-white border-gray-200 text-cyan-700',
       )}
-      aria-label={t('Άνοιγμα sidebar σχεδίων', 'Open plans sidebar')}
+      aria-label={t('Βρες Nakamas — σχέδια που σχηματίζονται', 'Find Nakamas — plans forming')}
       title={t('Βρες Nakamas', 'Find Nakamas')}
     >
       <Users className="w-4 h-4 shrink-0" />

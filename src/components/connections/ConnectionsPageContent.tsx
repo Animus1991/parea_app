@@ -108,6 +108,7 @@ export default function ConnectionsPageContent() {
   const sendConnectionRequest = useStore((s) => s.sendConnectionRequest);
   const blockUser = useStore((s) => s.blockUser);
   const blockedUserIds = useStore((s) => s.blockedUserIds);
+  const addNotification = useStore((s) => s.addNotification);
   const ensureDirectConversation = useChatStore((s) => s.ensureDirectConversation);
   const setInboxOpen = useChatStore((s) => s.setInboxOpen);
 
@@ -218,9 +219,9 @@ export default function ConnectionsPageContent() {
       return;
     }
     setInboxOpen(false);
-    toast.success(
-      t(`Συνομιλία με ${peer?.name ?? ''}`, `Chat with ${peer?.name ?? ''}`),
-    );
+    toast.success(t(`Συνομιλία με ${peer?.name ?? ''}`, `Chat with ${peer?.name ?? ''}`), {
+      action: { label: t('Άνοιγμα', 'Open'), onClick: () => navigate('/chats') },
+    });
   };
 
   const handleBlock = (userId: string, name: string) => {
@@ -229,12 +230,36 @@ export default function ConnectionsPageContent() {
   };
   const handleInviteToEvent = (eventId: string) => {
     const ev = events.find((e) => e.id === eventId);
-    const invitee = users.find((u) => u.id === inviteForUserId);
+    const inviteeId = inviteForUserId;
+    const invitee = users.find((u) => u.id === inviteeId);
+    const myGroup = currentUser
+      ? groups.find((g) => g.eventId === eventId && g.members.includes(currentUser.id))
+      : undefined;
+    const fromName = currentUser?.name.split(' ')[0] || 'Nakamas';
+    if (inviteeId) {
+      addNotification({
+        type: 'reminder',
+        messageGr: `Ο/Η ${fromName} σε προσκάλεσε στην «${ev?.title ?? eventId}» — δες την εκδήλωση.`,
+        messageEn: `${fromName} invited you to “${ev?.title ?? eventId}” — open the event.`,
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        eventId,
+        groupId: myGroup?.id,
+        forUserId: inviteeId,
+      });
+    }
     toast.success(
       t(
         `Πρόσκληση για «${ev?.title ?? eventId}» στάλθηκε${invitee ? ` στον/στην ${invitee.name}` : ''}`,
         `Invite to “${ev?.title ?? eventId}” sent${invitee ? ` to ${invitee.name}` : ''}`,
       ),
+      {
+        action: {
+          label: myGroup ? t('Η βραδιά μας', 'Our night') : t('Εκδήλωση', 'Event'),
+          onClick: () => navigate(myGroup ? `/night/${myGroup.id}` : `/events/${eventId}`),
+        },
+      },
     );
     setInviteForUserId(null);
   };

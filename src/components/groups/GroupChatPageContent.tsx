@@ -30,6 +30,8 @@ import { useChatStore } from "../../store/chatStore";
 import { LiveEventTracker } from "./LiveEventTracker";
 import { ChatIcebreakers } from "./ChatIcebreakers";
 import { Modal } from "../common/Modal";
+import { Button } from "../common/Button";
+import { EmptyState } from "../common/EmptyState";
 import { GroupChatLeaveModal } from "./groupChat/GroupChatLeaveModal";
 import { GroupChatReportModal } from "./groupChat/GroupChatReportModal";
 import { GroupChatLocationModal } from "./groupChat/GroupChatLocationModal";
@@ -48,6 +50,7 @@ export default function GroupChatPageContent() {
   const groups = useStore((state) => state.groups);
   const users = useStore((state) => state.users);
   const currentUser = useStore((state) => state.currentUser);
+  const leaveGroup = useStore((state) => state.leaveGroup);
   const ensureEventGroupConversation = useChatStore((s) => s.ensureEventGroupConversation);
   const gc = useGroupChatContrast();
 
@@ -57,9 +60,11 @@ export default function GroupChatPageContent() {
     groups.find((g) => g.eventId === groupId); // Fallback if routing passes eventId
   const event = events.find((e) => e.id === group?.eventId);
   const resolvedGroupId = group?.id;
+  const isMember = Boolean(currentUser && group?.members.includes(currentUser.id));
+  const onWaitlist = Boolean(currentUser && group?.waitlist?.includes(currentUser.id));
 
   useEffect(() => {
-    if (!group || !event) return;
+    if (!group || !event || !isMember) return;
     ensureEventGroupConversation({
       groupId: group.id,
       eventId: event.id,
@@ -67,7 +72,7 @@ export default function GroupChatPageContent() {
       participantUserIds: group.members,
       meetingPoint: group.meetingPoint,
     });
-  }, [group?.id, event?.id, ensureEventGroupConversation]); // eslint-disable-line react-hooks/exhaustive-deps -- bridge once per group/event
+  }, [group?.id, event?.id, isMember, ensureEventGroupConversation]); // eslint-disable-line react-hooks/exhaustive-deps -- bridge once per group/event
 
   const buildSeedMessages = (): GroupChatMessage[] => {
     if (!currentUser) return [];
@@ -191,11 +196,49 @@ export default function GroupChatPageContent() {
 
   if (!group || !event) {
     return (
-      <div className="p-5 text-center text-gray-500">
-        {t(
-          "Το Chat δεν βρέθηκε ή η ομάδα δεν επιβεβαιώθηκε.",
-          "Chat not found or group not confirmed.",
-        )}
+      <div className="mx-auto max-w-2xl py-6">
+        <EmptyState
+          title={t('Το Chat δεν βρέθηκε', 'Chat not found')}
+          description={t(
+            'Ίσως διαγράφηκε η ομάδα ή ο σύνδεσμος είναι λάθος.',
+            'The group may have been removed, or the link is wrong.',
+          )}
+          actionLabel={t('Τα σχέδιά μου', 'My plans')}
+          onAction={() => navigate('/plans')}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
+        />
+      </div>
+    );
+  }
+
+  if (!isMember) {
+    return (
+      <div className="mx-auto max-w-2xl space-y-4 py-4">
+        <h1 className="text-sm font-bold text-ink md:text-base">{t('Chat ομάδας', 'Group chat')}</h1>
+        <div className="rounded-2xl border border-border bg-surface-raised p-4">
+          <p className="text-sm font-bold text-ink">
+            {t('Αυτό το chat είναι μόνο για τα μέλη της ομάδας.', 'This chat is only for group members.')}
+          </p>
+          {onWaitlist && (
+            <p className="mt-2 text-xs font-medium text-ink-muted">
+              {t('Είσαι στη λίστα αναμονής — όταν μπεις, ανοίγει και το chat.', 'You are on the waitlist — chat opens once you join.')}
+            </p>
+          )}
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button size="sm" onClick={() => navigate('/plans')}>
+              {t('Τα σχέδιά μου', 'My plans')}
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => navigate('/buddy-seek')}>
+              {t('Βρες Nakamas', 'Find Nakamas')}
+            </Button>
+            {event && (
+              <Button size="sm" variant="ghost" onClick={() => navigate(`/events/${event.id}`)}>
+                {t('Δες την εκδήλωση', 'See the event')}
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
@@ -965,9 +1008,15 @@ export default function GroupChatPageContent() {
           eventTitle={event?.title}
           onClose={() => setShowLeaveModal(false)}
           onConfirm={() => {
-            toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'));
+            leaveGroup(group.id);
+            toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'), {
+              action: {
+                label: t('Βρες Nakamas', 'Find Nakamas'),
+                onClick: () => navigate('/buddy-seek'),
+              },
+            });
             setShowLeaveModal(false);
-            navigate(-1);
+            navigate('/plans');
           }}
         />
 

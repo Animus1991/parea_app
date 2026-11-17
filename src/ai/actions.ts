@@ -1609,10 +1609,10 @@ const summarizeWalletAction: CopilotAction = {
     }
     return {
       ok: true,
-      el: `Διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)}, εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}. Θες διαχείριση πληρωμών;`,
-      en: `Available ${formatWalletEur(WALLET_DEMO.availableEur)}, pending ${formatWalletEur(WALLET_DEMO.pendingEur)}. Want payout management?`,
+      el: `Demo στοιχεία: διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)}, εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}. Θες διαχείριση πληρωμών;`,
+      en: `Demo figures: available ${formatWalletEur(WALLET_DEMO.availableEur)}, pending ${formatWalletEur(WALLET_DEMO.pendingEur)}. Want payout management?`,
       link: { path: '/wallet', el: 'Πορτοφόλι', en: 'Wallet' },
-      data: { available: WALLET_DEMO.availableEur, pending: WALLET_DEMO.pendingEur },
+      data: { available: WALLET_DEMO.availableEur, pending: WALLET_DEMO.pendingEur, demo: true },
     };
   },
 };
