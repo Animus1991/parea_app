@@ -135,7 +135,7 @@ export function HomeLoggedInHero({
           <div className="flex justify-between items-start gap-4">
             <div className="space-y-2 flex-1">
               <h1 className={h.heroGreeting}>{greeting}</h1>
-              <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
+              <HomeReturnLine className={cn(h.heroMotivation, 'hero-sublead')} fallback={motivation} />
               <p className={cn(h.heroTitle, 'max-w-2xl')}>
                 {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>
@@ -171,7 +171,7 @@ export function HomeLoggedInHero({
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <h1 className={cn(h.heroGreeting, 'mb-1')}>{greeting}</h1>
-                <HomeReturnLine className={cn(h.heroMotivation, 'mb-3')} fallback={motivation} />
+                <HomeReturnLine className={cn(h.heroMotivation, 'hero-sublead mb-3')} fallback={motivation} />
               </div>
               <HomeWeatherBadge size="sm" className="md:hidden" />
             </div>

@@ -349,6 +349,18 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   }
 }
 
+/* Supporting hero lines directly under greeting — 13px mobile / 14px desktop (< 14/15px greeting) */
+.hero-sublead {
+  font-size: var(--text-base); /* 13px */
+  line-height: var(--text-base--line-height);
+}
+@media (min-width: 768px) {
+  .hero-sublead {
+    font-size: var(--text-lg); /* 14px */
+    line-height: var(--text-lg--line-height);
+  }
+}
+
 /* Nakamas wordmark + straw hat — +20% (hat scales with em) */
 .nakamas-logo {
   font-size: calc(var(--text-base) * 1.2); /* ~15.6px */
