@@ -236,7 +236,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
 
   return (
     <Card
-      className={cn("flex h-full flex-col overflow-hidden cursor-pointer relative group border border-gray-100/80 hover:border-gray-200 hover:shadow-soft-md transition-all duration-300 rounded-2xl p-0", isDark ? "border-white/5 shadow-[0_2px_12px_-3px_rgba(0,0,0,0.25)] bg-gray-800/60 hover:border-white/10" : "shadow-soft bg-white")}
+      className={cn("flex h-full flex-col overflow-hidden cursor-pointer relative group border border-gray-100/80 hover:border-gray-200 transition-colors duration-200 rounded-2xl p-0", isDark ? "border-white/5 bg-gray-800/60 hover:border-white/10" : "bg-white")}
       onClick={() => navigate(`/events/${event.id}`)}
       containsControls
     >
@@ -251,7 +251,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               "https://picsum.photos/seed/eventdefault/800/600"
             }
             alt={event.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out"
             onError={() => setImgError(true)}
           />
         ) : (
@@ -263,14 +263,14 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         )}
 
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0" />
 
         {/* Date Badge — top left */}
         <div className="absolute top-3 left-3 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm rounded-xl w-11 h-[46px] shadow-soft z-10">
           <span className={cn(EVENT_CARD_TYPO.badge, "mb-0.5", accent === 'fuchsia' ? 'text-gray-500' : accent === 'indigo' ? 'text-indigo-600' : accent === 'emerald' ? 'text-emerald-600' : 'text-brand')}>
             {month}
           </span>
-          <span className="text-sm font-extrabold text-gray-900 leading-none">
+          <span className="text-sm font-bold text-gray-900 leading-none">
             {day}
           </span>
         </div>
@@ -490,7 +490,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   }
                   navigate(`/events/${event.id}/join`);
                 }}
-                className={cn("px-4 py-2 min-h-11 shrink-0 whitespace-nowrap text-white font-bold rounded-full shadow-soft", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
+                className={cn("px-4 py-2 min-h-11 shrink-0 whitespace-nowrap text-white font-semibold rounded-full", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
               >
                 {t("Βρες Nakamas", "Find Nakamas")}
               </button>

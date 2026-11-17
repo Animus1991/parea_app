@@ -92,7 +92,7 @@ export function HomeFiltersSection({
   return (
     <section id="home-filters" className="space-y-4 scroll-mt-24">
       <div className="flex items-center justify-between gap-2">
-        <h2 className={`text-xs font-bold tracking-wide ${h.sectionLabel}`}>
+        <h2 className={`text-xs font-semibold tracking-[0.12em] uppercase ${h.sectionLabel}`}>
           {t('home.explore_categories', 'Εξερευνηση κατηγοριων')}
         </h2>
         <button
@@ -128,7 +128,7 @@ export function HomeFiltersSection({
             onClick={() => setActiveCategory(cat)}
             className={cn(
               HOME_TYPO.filterChip,
-              'whitespace-nowrap px-4 rounded-full shadow-soft transition-all duration-200 tracking-wide',
+              'whitespace-nowrap px-4 rounded-full transition-colors duration-150 tracking-wide',
               activeCategory === cat ? h.chipActive : h.chipInactive,
             )}
           >
@@ -145,7 +145,7 @@ export function HomeFiltersSection({
             onClick={() => setTagFilter(tag)}
             className={cn(
               HOME_TYPO.filterChip,
-              'whitespace-nowrap px-3.5 rounded-full transition-all duration-200 border',
+              'whitespace-nowrap px-3.5 rounded-full transition-colors duration-150 border',
               tagFilter === tag ? h.tagActive : h.tagInactive,
             )}
           >

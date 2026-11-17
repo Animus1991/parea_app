@@ -9,7 +9,7 @@ export const APP_TYPO = {
   /** Micro labels, badges, caps */
   micro: 'text-2xs',
   /** Section headings, KPI labels — Wallet balance/pending labels */
-  sectionLabel: 'text-xs font-bold tracking-wide',
+  sectionLabel: 'text-xs font-semibold tracking-[0.12em]',
   /** Body, list rows, meta */
   body: 'text-sm',
   /** Body medium emphasis */
@@ -28,7 +28,7 @@ export const APP_TYPO = {
   pageSub: 'text-sm font-medium',
   heroSubtitle: 'text-sm font-medium leading-relaxed',
   /** KPI numerals — Wallet / Profile stats, capped at or under page title */
-  statValue: 'text-base md:text-lg font-black tabular-nums leading-none',
+  statValue: 'text-base md:text-lg font-bold tabular-nums leading-none',
   /** Secondary KPI (Wallet pending) */
   statValueSecondary: 'text-sm md:text-base font-bold tabular-nums leading-none',
   /** List / bank card row title — Wallet tx / bank account */
@@ -51,7 +51,7 @@ export const APP_TYPO = {
    * Canonical button / CTA label size — matches Wallet Button + Plans «Αξιολόγηση»
    * (.btn-gradient / Button md). Use for every action button across the app.
    */
-  btn: 'text-xs font-bold',
+  btn: 'text-xs font-semibold',
 } as const;
 
 /** Explicit Wallet page template — aliases of APP_TYPO for page authors. */
@@ -145,8 +145,8 @@ export const BUDDY_SEEK_TYPO = {
 export const SHELL_TYPO = {
   logo: 'nakamas-logo nakamas-logo--lg',
   logoMobile: 'nakamas-logo',
-  sectionLabel: 'text-xs font-bold tracking-wide',
-  dashboard: 'text-xs font-bold tracking-wide',
+  sectionLabel: 'text-xs font-semibold tracking-[0.12em]',
+  dashboard: 'text-xs font-semibold tracking-[0.12em]',
   search: 'text-xs',
   createBtn: 'text-xs font-bold',
   langBtn: 'text-2xs font-bold',
@@ -160,12 +160,12 @@ export const SHELL_TYPO = {
 
 /** Event card density (high-traffic feed) */
 export const EVENT_CARD_TYPO = {
-  badge: 'card-badge font-extrabold tracking-wide leading-none',
+  badge: 'card-badge font-bold tracking-wide leading-none',
   chip: 'card-badge font-semibold capitalize tracking-wide',
-  dateBadge: 'text-2xs sm:text-xs font-black tracking-tight',
+  dateBadge: 'text-2xs sm:text-xs font-bold tracking-tight',
   dateSub: 'text-2xs leading-none font-bold',
   title: 'card-heading font-bold leading-snug',
-  matchScore: 'text-xs font-black leading-none',
+  matchScore: 'text-xs font-bold leading-none',
   matchLabel: 'card-copy-micro font-semibold capitalize tracking-wide',
   meta: 'card-meta font-medium',
   hint: 'card-copy-micro font-semibold',
@@ -212,11 +212,11 @@ export const HOME_TYPO = {
   stepTitle: 'text-xs font-bold',
   stepBody: 'text-2xs leading-relaxed font-medium',
   feedTab: 'text-xs font-bold',
-  sectionLabel: 'text-xs font-bold tracking-wide uppercase',
+  sectionLabel: 'text-xs font-semibold tracking-[0.12em] uppercase',
   /** Category / tag / feed / filter chips — same type + height as «Όλα» */
-  filterChip: 'filter-chip text-xs font-bold',
+  filterChip: 'filter-chip text-xs font-semibold',
   /** Mood chips with icons («Χαλαρά»…) — same type, slightly taller */
-  filterChipMood: 'filter-chip filter-chip--mood text-xs font-bold',
+  filterChipMood: 'filter-chip filter-chip--mood text-xs font-semibold',
   /** Native filter / sort dropdowns — same height as «Όλα» */
   filterSelect: 'filter-select',
   /** Full-width cells in the home meta-filter 2-column grid */
@@ -234,7 +234,7 @@ export const HOME_TYPO = {
 export const REPORT_TYPO = {
   pageTitle: 'text-lg md:text-xl font-bold tracking-tight leading-tight',
   pageSub: 'text-sm font-medium',
-  sectionLabel: 'text-xs font-bold tracking-wide uppercase',
+  sectionLabel: 'text-xs font-semibold tracking-[0.12em] uppercase',
   fieldLabel: 'text-xs font-bold',
   fieldHint: 'text-2xs font-medium leading-relaxed',
   option: 'text-xs font-medium',

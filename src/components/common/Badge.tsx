@@ -17,7 +17,7 @@ export function Badge({ children, variant = 'default', className, icon, ...props
   const theme = useStore((state) => state.theme);
   const isDark = isDarkTheme(theme);
 
-  const baseClasses = "inline-flex items-center gap-1.5 rounded-full tracking-wide px-2.5 py-0.5 text-xs font-bold transition-colors";
+  const baseClasses = "inline-flex items-center gap-1.5 rounded-full tracking-[0.08em] px-2.5 py-0.5 text-xs font-semibold transition-colors";
 
   const lightVariants = {
     default: "bg-gray-100 text-ink",

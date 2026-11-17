@@ -18,7 +18,7 @@ interface SectionLabelProps {
 export function SectionLabel({ el, en, children, className, as: Tag = 'h2' }: SectionLabelProps) {
   const { tu } = useLanguage();
   return (
-    <Tag className={cn('text-xs font-bold uppercase tracking-wide text-ink-muted', className)}>
+    <Tag className={cn('text-xs font-semibold uppercase tracking-[0.12em] text-ink-muted', className)}>
       {el ? tu(el, en) : children}
     </Tag>
   );

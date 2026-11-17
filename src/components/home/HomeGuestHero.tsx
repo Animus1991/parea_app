@@ -20,10 +20,10 @@ export function HomeGuestHero() {
       <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-700 mb-2">
         <Compass className="w-6 h-6" />
       </div>
-      <p className="text-xs font-bold uppercase tracking-widest text-cyan-700">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-700">
         {t('Εξερεύνηση Δραστηριοτήτων', 'Explore Activities')}
       </p>
-      <h1 className={cn(APP_TYPO.pageTitle, 'font-black text-ink')}>
+      <h1 className={cn(APP_TYPO.pageTitle, 'text-ink')}>
         {t('Βρείτε την επόμενη εμπειρία σας', 'Find your next experience')}
       </h1>
       <p className="text-sm text-gray-600 font-medium leading-relaxed max-w-md mx-auto">

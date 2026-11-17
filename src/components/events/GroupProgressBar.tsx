@@ -33,7 +33,7 @@ export function GroupProgressBar({
       )}
       <div
         className={cn(
-          'w-full h-2 rounded-full overflow-hidden',
+          'w-full h-1.5 rounded-full overflow-hidden',
           tok.isDark ? 'bg-gray-700/50' : 'bg-gray-100',
         )}
         role="progressbar"

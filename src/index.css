@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Outfit:wght@700;800;900&family=Poppins:wght@600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -66,13 +66,13 @@
      remaps these via [data-theme] rules right after @theme,
      so utilities (text-ink, bg-surface, border-border, …)
      adapt at runtime with zero markup changes. */
-  --color-ink: #111827;
+  --color-ink: #171614;
   --color-ink-muted: rgb(71 80 94);
   --color-ink-faint: rgb(82 91 105);
-  --color-surface: #F3F4F6;
-  --color-surface-raised: #ffffff;
-  --color-border: #E5E7EB;
-  --color-border-strong: #D1D5DB;
+  --color-surface: #F7F6F3;
+  --color-surface-raised: #FFFEFC;
+  --color-border: #E7E5E0;
+  --color-border-strong: #D6D3CC;
   /* Brand teal darkened for WCAG AA on white text (≥4.5:1; legacy #0E8B8D was ~4.12) */
   --color-brand: #0b6d6f;
   --color-brand-strong: #0a6365;
@@ -266,10 +266,27 @@ body {
   font-family: var(--font-sans);
   font-size: var(--text-base);
   line-height: var(--text-base--line-height);
-  background-color: #fcfcfb;
-  color: #1a1a1a;
+  font-optical-sizing: auto;
+  font-feature-settings: "ss01" 1, "cv11" 1, "calt" 1;
+  letter-spacing: -0.011em;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-brand) 22%, transparent);
+  color: var(--color-ink);
+}
+
+/* Lucide icons: hairline stroke reads as chic without shrinking the hit target. */
+svg.lucide {
+  stroke-width: 1.65px;
+}
+svg.lucide.icon-emphasis {
+  stroke-width: 2px;
 }
 
 @layer base {
@@ -305,7 +322,7 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 .filter-select {
   font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);
-  font-weight: 700;
+  font-weight: 600;
   padding: 0 0.75rem;
   height: 1.75rem;
   min-height: 1.75rem;
@@ -463,45 +480,42 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Neutral CTA button — works across all themes */
 .btn-gradient {
-  background: #1f2937;
+  background: #171614;
   color: white;
-  font-weight: 700;
+  font-weight: 600;
   /* Canonical CTA type — source: Plans → Ιστορικό → «Αξιολόγηση» */
   font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);
   border-radius: 9999px;
   padding: 0.35rem 0.95rem;
-  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.18);
-  transition: all 0.2s ease;
+  box-shadow: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 .btn-gradient:hover {
-  background: #111827;
-  box-shadow: 0 4px 12px -3px rgba(0, 0, 0, 0.22);
-  transform: translateY(-0.5px);
+  background: #0f0e0c;
 }
 .btn-gradient:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.12);
+  background: #000000;
 }
 
 /* Neutral pill button — works across all themes */
 .btn-pill-active {
-  border: 1px solid #4b5563;
+  border: 1px solid #171614;
   border-radius: 9999px;
   padding: 0.25rem 0.7rem;
-  font-weight: 700;
-  color: #111827;
-  background: #f3f4f6;
-  transition: all 0.2s ease;
+  font-weight: 600;
+  color: #fffefc;
+  background: #171614;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 .btn-pill-inactive {
   border: 1px solid transparent;
   border-radius: 9999px;
   padding: 0.25rem 0.7rem;
-  font-weight: 600;
+  font-weight: 500;
   color: #4b5563;
   background: transparent;
-  transition: all 0.2s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 .btn-pill-inactive:hover {
   color: #374151;
@@ -511,9 +525,9 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 /* Theme-aware pill tabs (Inbox, Calendar, etc.) */
 [data-theme$="-dark"] .btn-pill-active,
 .theme-ab-dark .btn-pill-active {
-  color: #f9fafb;
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.35);
+  color: #171614;
+  background: #f4f4f2;
+  border-color: #f4f4f2;
 }
 [data-theme$="-dark"] .btn-pill-inactive,
 .theme-ab-dark .btn-pill-inactive {
@@ -526,9 +540,9 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 }
 [data-theme="activebuddies"] .btn-pill-active,
 .theme-ab .btn-pill-active {
-  color: hsl(220 14% 12%);
-  background: hsl(220 14% 96%);
-  border-color: hsl(220 13% 72%);
+  color: #fffefc;
+  background: hsl(220 14% 12%);
+  border-color: hsl(220 14% 12%);
 }
 [data-theme="activebuddies"] .btn-pill-inactive,
 .theme-ab .btn-pill-inactive {
@@ -542,16 +556,15 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Card row style (matching the notification rows in screenshot) */
 .card-row {
-  background: white;
-  border: 1px solid #f1f5f9;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
   border-radius: 1rem;
   padding: 1rem 1.25rem;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: none;
 }
 .card-row:hover {
-  border-color: #a5f3fc;
-  box-shadow: 0 4px 14px -3px rgba(14, 139, 141, 0.08);
+  border-color: var(--color-border-strong);
 }
 
 /* dark: follows the app's data-theme, not the OS/browser color-scheme */
@@ -559,11 +572,11 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Elevation scale — runtime vars so [data-theme] remaps apply (mono themes go neutral) */
 :root {
-  --shadow-soft: 0 2px 8px -2px rgba(14, 139, 141, 0.08), 0 1px 3px -1px rgba(0, 0, 0, 0.04);
-  --shadow-soft-md: 0 4px 14px -3px rgba(14, 139, 141, 0.12), 0 2px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-soft-lg: 0 8px 24px -4px rgba(14, 139, 141, 0.14), 0 4px 10px -3px rgba(0, 0, 0, 0.06);
-  --shadow-soft-up: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
-  --shadow-soft-up-lg: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-soft: 0 1px 2px rgba(23, 22, 20, 0.04), 0 1px 1px rgba(23, 22, 20, 0.03);
+  --shadow-soft-md: 0 2px 8px -2px rgba(23, 22, 20, 0.08), 0 1px 2px rgba(23, 22, 20, 0.04);
+  --shadow-soft-lg: 0 8px 24px -8px rgba(23, 22, 20, 0.12), 0 2px 6px rgba(23, 22, 20, 0.04);
+  --shadow-soft-up: 0 -1px 4px rgba(23, 22, 20, 0.04);
+  --shadow-soft-up-lg: 0 -4px 16px rgba(23, 22, 20, 0.06);
 }
 @utility shadow-soft { box-shadow: var(--shadow-soft); }
 @utility shadow-soft-md { box-shadow: var(--shadow-soft-md); }
@@ -590,14 +603,14 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Modal overlay */
 .modal-overlay {
-  background: rgba(15, 23, 42, 0.3);
-  backdrop-filter: blur(4px);
+  background: rgba(23, 22, 20, 0.32);
+  backdrop-filter: blur(8px);
 }
 .modal-panel {
-  background: white;
+  background: var(--color-surface-raised);
   border-radius: 1.5rem;
-  box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 8px 20px -8px rgba(14, 139, 141, 0.1);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 16px 40px -16px rgba(23, 22, 20, 0.28);
+  border: 1px solid var(--color-border);
 }
 
 .noscrollbar, .scrollbar-hide {

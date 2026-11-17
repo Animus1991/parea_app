@@ -106,7 +106,7 @@ export function TabBar({ tabs, activeTab, onChange, className, ariaLabel, idBase
               segmented
                 ? cn(
                     'inline-flex min-h-8 items-center gap-1 rounded-xl px-3 text-xs font-semibold transition-colors',
-                    selected ? 'bg-accent text-accent-fg shadow-soft' : 'text-ink-muted hover:bg-surface hover:text-ink',
+                    selected ? 'bg-ink text-surface-raised' : 'text-ink-muted hover:bg-surface hover:text-ink',
                   )
                 : cn('text-xs', selected ? getActiveClass() : getInactiveClass()),
             )}

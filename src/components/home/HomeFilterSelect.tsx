@@ -39,8 +39,8 @@ export function HomeFilterSelect<T extends string>({
         aria-label={ariaLabel}
         className={cn(
           HOME_TYPO.filterControlEqual,
-          'inline-flex h-[1.75rem] items-center justify-center gap-1.5 rounded-[0.625rem] border px-2 text-xs font-bold shadow-soft outline-none transition-all duration-200',
-          'focus-visible:ring-2 focus-visible:ring-accent/40',
+          'inline-flex h-[1.75rem] items-center justify-center gap-1.5 rounded-[0.625rem] border px-2 text-xs font-semibold outline-none transition-colors duration-150',
+          'focus-visible:ring-2 focus-visible:ring-ink/25',
           h.select,
           className,
         )}

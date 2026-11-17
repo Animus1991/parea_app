@@ -112,7 +112,7 @@ export function HomeLoggedInHeroContrast({
         <div className="relative z-10 space-y-5">
           <div className="flex justify-between items-start gap-4">
             <div>
-              <h1 className="text-white text-lg md:text-xl font-extrabold tracking-tight leading-tight mb-1">
+              <h1 className="text-white text-lg md:text-xl font-bold tracking-tight leading-tight mb-1">
                 {t('Γειά σου, ', 'Hello, ')}
                 {firstName}!
               </h1>

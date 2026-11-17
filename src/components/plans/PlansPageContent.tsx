@@ -109,7 +109,7 @@ export default function PlansPageContent() {
     'px-3.5 py-1.5 min-h-8 rounded-xl transition-all duration-200 border text-xs font-bold',
     p.isDark
       ? 'border-white/15 hover:border-white/30 text-gray-100 hover:bg-white/5'
-      : 'border-gray-200 hover:border-[#a5f3fc] hover:bg-gray-50 text-gray-700',
+      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700',
   );
 
   return (
@@ -279,7 +279,7 @@ export default function PlansPageContent() {
                 <button
                   type="button"
                   onClick={() => navigate(`/night/${group.id}`)}
-                  className="mb-1 w-full btn-gradient !py-1.5 min-h-8 flex items-center justify-center gap-1.5"
+                  className="mb-1 inline-flex btn-gradient !py-1.5 min-h-8 items-center justify-center gap-1.5 self-start"
                 >
                   <PartyPopper className="h-3.5 w-3.5" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
                   {group.status === 'confirmed' ? t(' · έτοιμη', ' · ready') : ''}

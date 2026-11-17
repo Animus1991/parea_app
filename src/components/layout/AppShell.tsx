@@ -369,7 +369,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
           title={t('Δημιουργία εκδήλωσης', 'Create event')}
           className={cn(
-            "hidden sm:inline-flex items-center gap-1.5 text-xs font-bold rounded-full transition-all duration-200 px-3 py-2 min-h-10 shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]",
+            "hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold rounded-full transition-colors duration-150 px-3 py-2 min-h-10",
             theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] text-white hover:bg-black'
               : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] hover:bg-white'
               : theme === 'vibrant' || theme === 'vibrant-dark' ? 'bg-fuchsia-600 text-white hover:bg-fuchsia-700'
@@ -378,7 +378,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
               : 'bg-brand text-white hover:bg-[#0b6d6f]',
           )}
         >
-          <Plus className="w-4 h-4" strokeWidth={2.6} />
+          <Plus className="w-4 h-4 icon-emphasis" />
           <span className="hidden lg:inline">{t('Δημιουργία', 'Create')}</span>
         </button>
 
@@ -456,7 +456,7 @@ export function BottomNav() {
               isActive ? tok.navActive : tok.navInactive)
           }
         >
-          <Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
+          <Icon className="h-[18px] w-[18px]" />
           <span className="text-xs font-medium leading-none">{t(labelGr, labelEn)}</span>
         </NavLink>
       ))}
@@ -464,9 +464,9 @@ export function BottomNav() {
         <NavLink
           to="/create"
           aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
-          className={cn("w-11 h-11 rounded-full flex items-center justify-center shadow-soft-lg transition-colors border-[3px] border-white", tok.fab)}
+          className={cn("w-11 h-11 rounded-full flex items-center justify-center transition-colors border-2 border-white", tok.fab)}
         >
-          <Plus className="h-[20px] w-[20px]" strokeWidth={2.5} aria-hidden />
+          <Plus className="h-[20px] w-[20px] icon-emphasis" aria-hidden />
         </NavLink>
         {/* Visible caption; the link itself carries the name for screen readers. */}
         <span aria-hidden className={cn("text-xs font-medium mt-1", tok.muted)}>{t('Δημιουργία', 'Create')}</span>
@@ -483,7 +483,7 @@ export function BottomNav() {
               isActive ? tok.navActive : tok.navInactive)
           }
         >
-          <Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
+          <Icon className="h-[18px] w-[18px]" />
           <span className="text-xs font-medium leading-none">{t(labelGr, labelEn)}</span>
         </NavLink>
       ))}

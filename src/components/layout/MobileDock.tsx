@@ -80,7 +80,7 @@ export function MobileDock() {
             {plans.badge != null && (
               <span
                 className={cn(
-                  'bg-white/25 text-white text-xs font-black px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center',
+                  'bg-white/25 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center',
                   plans.hasPending && 'animate-pulse motion-reduce:animate-none',
                 )}
               >
@@ -104,7 +104,7 @@ export function MobileDock() {
       >
         <MessageCircle className="w-4 h-4" aria-hidden />
         {unread > 0 && (
-          <span className="bg-white/25 text-white text-xs font-black px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
+          <span className="bg-white/25 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
             {unread > 9 ? '9+' : unread}
           </span>
         )}
