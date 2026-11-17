@@ -149,7 +149,7 @@ export default function BuddySeekPageContent() {
   return (
     <div className="w-full max-w-full min-w-0 space-y-4 pb-16 pt-4">
       <header className="space-y-3">
-        <h1 className={cn('text-sm md:text-base font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
+        <h1 className={cn('text-lg md:text-xl font-bold tracking-tight leading-tight', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
         <CopilotInlinePrompt />
         <PlansFormingValueHero insights={feed.insights} />
         {/* StatsBar omitted when ValueHero already states compatible count — less chrome. */}

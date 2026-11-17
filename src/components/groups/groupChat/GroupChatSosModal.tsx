@@ -29,8 +29,8 @@ export function GroupChatSosModal({
       size="sm"
     >
       <div className="text-center">
-        <div className="w-11 h-11 bg-red-100 dark:bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
-          <AlertTriangle className="w-7 h-7 animate-pulse motion-reduce:animate-none" />
+        <div className="w-10 h-10 bg-red-100 dark:bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-red-600">
+          <AlertTriangle className="w-5 h-5 animate-pulse motion-reduce:animate-none" />
         </div>
         <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
           {isSos

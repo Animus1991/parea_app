@@ -193,7 +193,7 @@ export default function ProfilePageContent() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
-          <h1 className={`text-sm md:text-base font-extrabold tracking-tight ${heading}`}>{t("Προφίλ", "Profile")}</h1>
+          <h1 className={cn(APP_TYPO.pageTitle, 'font-extrabold', heading)}>{t("Προφίλ", "Profile")}</h1>
           <p className={`mt-1 text-sm font-medium leading-relaxed ${sub}`}>
             {t("Διαχειριστείτε τις ρυθμίσεις εμπιστοσύνης, τις επαληθεύσεις και το ιστορικό σας.", "Manage your trust settings, verifications, and history.")}
           </p>

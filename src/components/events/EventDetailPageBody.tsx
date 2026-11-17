@@ -189,7 +189,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             </Badge>
           )}
         </div>
-        <h1 className="text-sm md:text-base font-extrabold text-ink leading-tight mb-2 md:mb-0">{event.title}</h1>
+        <h1 className="text-lg md:text-xl font-extrabold text-ink tracking-tight leading-tight mb-2 md:mb-0">{event.title}</h1>
         <EventDetailPageContent event={event} accent={accent} darkSurface={panelDark} className="mt-4" />
       </div>
 

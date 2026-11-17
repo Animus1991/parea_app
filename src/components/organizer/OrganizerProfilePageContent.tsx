@@ -86,7 +86,7 @@ export default function OrganizerProfilePageContent() {
         <div className={cn('mx-auto flex h-16 w-16 items-center justify-center rounded-full border', p.borderB, p.cardSurface)}>
           <Lock className={cn('h-7 w-7', p.muted)} aria-hidden />
         </div>
-        <h1 className={cn('text-sm md:text-base font-bold', p.head)}>
+        <h1 className={cn('text-lg md:text-xl font-bold tracking-tight leading-tight', p.head)}>
           {t('Ιδιωτικό προφίλ', 'Private profile')}
         </h1>
         <p className={cn('text-sm font-medium max-w-md mx-auto', p.sub)}>
@@ -189,7 +189,7 @@ export default function OrganizerProfilePageContent() {
                 </Badge>
               )}
             </div>
-            <h1 className={cn('text-sm md:text-base font-bold', p.head)}>{projected.name}</h1>
+            <h1 className={cn('text-lg md:text-xl font-bold tracking-tight leading-tight', p.head)}>{projected.name}</h1>
             {projected.city && (
               <p className={cn('text-sm font-medium mt-1', p.sub)}>
                 <MapPin className="h-3.5 w-3.5 inline mr-1" /> {projected.city}

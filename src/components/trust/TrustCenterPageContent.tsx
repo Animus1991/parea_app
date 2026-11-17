@@ -72,7 +72,7 @@ export default function TrustCenterPageContent() {
   return (
     <div className="mx-auto max-w-full space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn("text-sm md:text-base font-bold tracking-tight leading-tight", a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
+        <h1 className={cn("text-lg md:text-xl font-bold tracking-tight leading-tight", a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
         <p className={cn("mt-2 text-sm font-medium leading-relaxed max-w-xl", a.sub)}>
           {t('Η αξιοπιστία σας βασίζεται στις επαληθεύσεις και τις αξιολογήσεις σας.', 'Your trust score is based on your verifications and reviews.')}
         </p>

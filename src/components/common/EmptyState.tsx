@@ -54,13 +54,13 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-dashed border-border bg-surface-raised',
+        'flex flex-col items-center justify-center py-10 px-4 text-center rounded-2xl border border-dashed border-border bg-surface-raised',
         className,
       )}
     >
       {Icon && (
-        <div className="w-11 h-11 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mb-4">
-          <Icon className="w-7 h-7" aria-hidden />
+        <div className="w-10 h-10 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mb-3">
+          <Icon className="w-5 h-5" aria-hidden />
         </div>
       )}
       {/* Inside-card type ≤ page title (text-sm); subtitle < title */}

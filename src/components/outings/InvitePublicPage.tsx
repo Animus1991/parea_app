@@ -55,7 +55,7 @@ export default function InvitePublicPage() {
   if (!invite || !group || !event) {
     return shell(
       <div className="rounded-2xl border border-border bg-surface-raised p-5">
-        <h1 className="text-base font-bold text-ink">{t('Η πρόσκληση δεν βρέθηκε', 'Invitation not found')}</h1>
+        <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-ink">{t('Η πρόσκληση δεν βρέθηκε', 'Invitation not found')}</h1>
         <p className="mt-1 text-sm font-medium text-ink-muted">
           {t('Ίσως έληξε ή ο σύνδεσμος είναι λάθος. Ζήτα από τον φίλο σου να τον ξαναστείλει.', 'It may have expired, or the link is wrong. Ask your friend to send it again.')}
         </p>

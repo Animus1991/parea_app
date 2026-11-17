@@ -33,7 +33,7 @@ export default function NotFound() {
         <CardContent className="pt-4">
           <div className="flex mb-4 gap-2">
             <AlertCircle className="h-8 w-8 text-red-500" />
-            <h1 className="text-sm md:text-base font-bold text-gray-900">{t('Σφάλμα 404', '404 Page Not Found')}</h1>
+            <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-gray-900">{t('Σφάλμα 404', '404 Page Not Found')}</h1>
           </div>
 
           <p className="mt-4 text-sm text-gray-600">

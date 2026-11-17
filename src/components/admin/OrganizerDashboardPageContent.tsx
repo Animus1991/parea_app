@@ -212,10 +212,10 @@ export default function OrganizerDashboardPageContent() {
       >
         <div className="flex items-center gap-4 relative z-10">
           <div className="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/10 backdrop-blur-md shadow-soft border border-white/20">
-            <Activity className="w-7 h-7 text-white" />
+            <Activity className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.isDark ? p.head : 'text-white')}>
+            <h1 className={cn('text-lg md:text-xl font-extrabold tracking-tight leading-tight', p.isDark ? p.head : 'text-white')}>
               {t('Πίνακας Διοργανωτή', 'Organizer Workspace')}
             </h1>
             <p className={cn('text-sm font-medium mt-1', p.isDark ? p.sub : 'text-indigo-200')}>

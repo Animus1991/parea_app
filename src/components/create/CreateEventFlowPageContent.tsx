@@ -237,7 +237,7 @@ export default function CreateEventFlowPageContent() {
             )}
           </p>
         )}
-        <h1 className={cn("text-sm md:text-base font-bold", p.head)}>
+        <h1 className={cn("text-lg md:text-xl font-bold tracking-tight leading-tight", p.head)}>
           {editEvent ? t("Επεξεργασία Εμπειρίας", "Edit Experience") : t("Δημιουργία Εμπειρίας", "Create Experience")}
         </h1>
         <p className={cn("text-sm font-medium mt-1", p.muted)}>

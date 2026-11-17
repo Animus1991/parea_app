@@ -332,21 +332,21 @@ export default function MyCalendarPageContent() {
     <div className="w-full max-w-full min-w-0 space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 border-b border-white/5 pb-4 md:pb-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3.5">
           <div
             className={cn(
-              "w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-soft border",
+              "w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-soft border",
               p.isDark
                 ? "bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]"
                 : "bg-white border-gray-100",
             )}
           >
-            <CalendarCheck className={cn("w-7 h-7", p.iconAccent)} />
+            <CalendarCheck className={cn("w-5 h-5", p.iconAccent)} />
           </div>
           <div>
             <h1
               className={cn(
-                "text-sm md:text-base font-extrabold tracking-tight",
+                "text-lg md:text-xl font-extrabold tracking-tight leading-tight",
                 p.head,
               )}
             >

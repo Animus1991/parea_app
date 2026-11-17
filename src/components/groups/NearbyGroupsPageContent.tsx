@@ -392,7 +392,7 @@ export default function NearbyGroupsPageContent() {
       style={{ "--sidebar-width": isMapFullscreen ? "0px" : `${sidebarWidth}px` } as React.CSSProperties}
     >
       {/* Page title for screen readers (the visible title lives in the side panel as h2). */}
-      <h1 className="sr-only">{t("Τοπικές Ομάδες", "Local Groups")}</h1>
+      <h1 className="sr-only text-lg md:text-xl">{t("Τοπικές Ομάδες", "Local Groups")}</h1>
       {/* Map Area */}
       <div className="absolute inset-0 z-0 bg-[#e5e3df] dark:bg-gray-900 map-container" id="map-container" ref={mapContainerRef}>
         <ErrorBoundary

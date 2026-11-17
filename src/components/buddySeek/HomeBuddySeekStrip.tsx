@@ -62,7 +62,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
 
       {feed.items.length === 0 ? (
         <div className="rounded-xl border border-dashed border-accent/30 p-4 text-center">
-          <Users className="w-8 h-8 mx-auto text-accent/60 mb-2" />
+          <Users className="w-6 h-6 mx-auto text-accent/60 mb-2" />
           <p className="text-sm font-medium text-ink-muted leading-relaxed">
             {t(
               'Δεν βλέπετε σχέδια ακόμα; Αποθηκεύστε εκδηλώσεις ή δηλώστε ότι ψάχνετε Nakamas.',

@@ -83,15 +83,15 @@ export function Modal({
               <button
                 type="button"
                 onClick={onClose}
-                className="ml-auto rounded-full p-2 min-h-11 min-w-11 flex items-center justify-center shrink-0 text-ink-muted hover:bg-surface hover:text-ink transition-colors"
+                className="ml-auto rounded-full p-1.5 min-h-9 min-w-9 flex items-center justify-center shrink-0 text-ink-muted hover:bg-surface hover:text-ink transition-colors"
                 aria-label={t('Κλείσιμο', 'Close')}
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
             )}
           </div>
         )}
-        <div className="text-sm font-medium text-ink-muted">{children}</div>
+        <div className="text-xs leading-relaxed font-medium text-ink-muted">{children}</div>
       </div>
     </div>,
     document.body,

@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { Compass } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../../lib/i18n';
+import { APP_TYPO } from '../../lib/typographyTokens';
+import { cn } from '../../lib/utils';
 import { Button } from '../common/Button';
 
 /** Marketing hero for unauthenticated users (Login / landing). */
@@ -21,7 +23,7 @@ export function HomeGuestHero() {
       <p className="text-xs font-bold uppercase tracking-widest text-cyan-700">
         {t('Εξερεύνηση Δραστηριοτήτων', 'Explore Activities')}
       </p>
-      <h1 className="text-sm md:text-base font-black text-ink leading-tight">
+      <h1 className={cn(APP_TYPO.pageTitle, 'font-black text-ink')}>
         {t('Βρείτε την επόμενη εμπειρία σας', 'Find your next experience')}
       </h1>
       <p className="text-sm text-gray-600 font-medium leading-relaxed max-w-md mx-auto">

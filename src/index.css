@@ -272,6 +272,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+@layer base {
+  button {
+    font-size: var(--text-xs);
+  }
+}
+
 h1, h2 { letter-spacing: -0.02em; text-wrap: balance; }
 h3, h4 { letter-spacing: -0.01em; }
 p { text-wrap: pretty; }
@@ -331,15 +337,15 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   font-weight: 500;
 }
 
-/* Greeting titles e.g. «Καλό απόγευμα, Alex» — +10% vs base/lg */
+/* Greeting line above hero h1 — sits cleanly below pageTitle (14/15px) */
 .hero-greeting {
-  font-size: calc(var(--text-base) * 1.1); /* ~14.3px */
-  line-height: var(--text-base--line-height);
+  font-size: var(--text-sm); /* 12px */
+  line-height: var(--text-sm--line-height);
 }
 @media (min-width: 768px) {
   .hero-greeting {
-    font-size: calc(var(--text-lg) * 1.1); /* ~15.4px */
-    line-height: var(--text-lg--line-height);
+    font-size: var(--text-base); /* 13px */
+    line-height: var(--text-base--line-height);
   }
 }
 

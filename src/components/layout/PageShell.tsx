@@ -37,7 +37,7 @@ export function PageShell({
           <div className="flex items-start justify-between gap-4 mb-4">
             <div>
               {title && (
-                <h1 className="text-sm md:text-base font-bold tracking-tight text-gray-900 dark:text-gray-100">
+                <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-gray-900 dark:text-gray-100">
                   {title}
                 </h1>
               )}

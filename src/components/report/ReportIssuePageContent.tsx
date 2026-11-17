@@ -53,7 +53,7 @@ export default function ReportIssuePageContent() {
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h1 className={cn('text-sm md:text-base font-bold', p.head)}>
+          <h1 className={cn('text-lg md:text-xl font-bold tracking-tight leading-tight', p.head)}>
             {t('Αναφορά Προβλήματος', 'Report an Issue')}
           </h1>
           <p className={cn('font-medium text-sm mt-1', p.sub)}>
@@ -295,11 +295,11 @@ export default function ReportIssuePageContent() {
         <div className={cn('rounded-2xl shadow-soft border p-5 text-center', c.surfaceElevated, c.border)}>
           <div
             className={cn(
-              'w-12 h-[58px] rounded-full flex items-center justify-center mx-auto mb-4',
+              'w-11 h-11 rounded-full flex items-center justify-center mx-auto mb-3',
               p.isDark ? 'bg-emerald-900/40' : 'bg-emerald-100',
             )}
           >
-            <CheckCircle2 className={cn('w-8 h-8', p.isDark ? 'text-emerald-300' : 'text-emerald-600')} />
+            <CheckCircle2 className={cn('w-6 h-6', p.isDark ? 'text-emerald-300' : 'text-emerald-600')} />
           </div>
           <h2 className={cn('text-sm md:text-base font-bold mb-2', p.head)}>{t('Η αναφορά υποβλήθηκε', 'Report Submitted')}</h2>
           <p className={cn('text-sm font-medium max-w-md mx-auto mb-4', p.sub)}>

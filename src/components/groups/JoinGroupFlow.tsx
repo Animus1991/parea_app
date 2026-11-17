@@ -121,7 +121,7 @@ export default function JoinGroupFlow() {
 
   return (
     <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sm:p-5 mt-5 dark:bg-surface-raised dark:border-border">
-      <h1 className="sr-only">{t('Συμμετοχή σε ομάδα', 'Join a group')}: {event.title}</h1>
+      <h1 className="sr-only text-lg md:text-xl">{t('Συμμετοχή σε ομάδα', 'Join a group')}: {event.title}</h1>
       {!gate.allowed && (
         <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm font-medium flex gap-2">
           <ShieldCheck className="w-5 h-5 shrink-0" />

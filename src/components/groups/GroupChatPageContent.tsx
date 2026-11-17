@@ -216,7 +216,7 @@ export default function GroupChatPageContent() {
   if (!isMember) {
     return (
       <div className="mx-auto max-w-2xl space-y-4 py-4">
-        <h1 className="text-sm font-bold text-ink md:text-base">{t('Chat ομάδας', 'Group chat')}</h1>
+        <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-ink">{t('Chat ομάδας', 'Group chat')}</h1>
         <div className="rounded-2xl border border-border bg-surface-raised p-4">
           <p className="text-sm font-bold text-ink">
             {t('Αυτό το chat είναι μόνο για τα μέλη της ομάδας.', 'This chat is only for group members.')}
@@ -379,7 +379,7 @@ export default function GroupChatPageContent() {
                     <ArrowLeft className="h-5 w-5" />
                   </button>
                   <div className="min-w-0">
-                    <h1 className="text-sm md:text-base font-bold text-ink truncate">
+                    <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-ink truncate">
                       {event.title}
                     </h1>
                     <p className="text-xs md:text-xs text-gray-500 tracking-wide font-bold truncate flex items-center gap-1.5 mt-0.5">
