@@ -450,8 +450,8 @@ export function LookingForCompanyPanel({
             if (groupId) {
               toast.success(t('Αποδεχτήκατε — άνοιγμα της βραδιάς', 'Accepted — opening Our night'), {
                 action: {
-                  label: t('Chat', 'Chat'),
-                  onClick: () => navigate(`/chat/${groupId}`),
+                  label: t('Η βραδιά μας', 'Our night'),
+                  onClick: () => navigate(`/night/${groupId}`),
                 },
               });
               navigate(`/night/${groupId}`);

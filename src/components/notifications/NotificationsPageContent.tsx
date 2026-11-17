@@ -110,9 +110,11 @@ export default function NotificationsPageContent() {
 
   const pathForNotif = (notif: AppNotification) => {
     if (notif.type === 'match' || notif.type === 'reminder') return '/plans';
-    if (notif.type === 'message') return '/chats';
+    // Group-scoped messages (announcements) belong on Our night, not the DMs inbox.
+    if (notif.type === 'message') return notif.groupId ? `/night/${notif.groupId}` : '/chats';
     if (notif.type === 'achievement') return '/achievements';
     if (notif.type === 'buddy_seek') return notif.groupId ? `/night/${notif.groupId}` : '/buddy-seek';
+    // Cancelled-event rows clear groupId so leavers land on plans, not a locked night.
     if (notif.type === 'group') return notif.groupId ? `/night/${notif.groupId}` : '/plans';
     if (notif.type === 'safety') return '/trust';
     // Connection-accept and similar system rows → wall; other system → trust.

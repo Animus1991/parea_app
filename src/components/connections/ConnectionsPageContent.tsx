@@ -108,7 +108,6 @@ export default function ConnectionsPageContent() {
   const sendConnectionRequest = useStore((s) => s.sendConnectionRequest);
   const blockUser = useStore((s) => s.blockUser);
   const blockedUserIds = useStore((s) => s.blockedUserIds);
-  const addNotification = useStore((s) => s.addNotification);
   const ensureDirectConversation = useChatStore((s) => s.ensureDirectConversation);
   const setInboxOpen = useChatStore((s) => s.setInboxOpen);
 
@@ -245,8 +244,7 @@ export default function ConnectionsPageContent() {
   };
   const handleRemove = (userId: string, name: string) => {
     removeConnection(userId);
-    addNotification({ message: t(`Αφαιρέθηκε η σύνδεση με ${name}`, `Removed connection with ${name}`), type: 'system', time: 'now' });
-    // Removing a person is easy to do by mistake from a menu: one tap brings them back.
+    // Toast + Undo is the recovery path; skip a duplicate system inbox row.
     toast.success(t(`Αφαιρέθηκε η σύνδεση με ${name}`, `Removed connection with ${name}`), {
       action: {
         label: t('Αναίρεση', 'Undo'),
@@ -258,9 +256,14 @@ export default function ConnectionsPageContent() {
     });
   };
   const handleAccept = (requestId: string, name: string) => {
+    // Store already notifies the requester → Wall; toast is enough for the acceptor.
     acceptConnectionRequest(requestId);
-    addNotification({ message: t(`Αποδεχτήκατε τη σύνδεση με ${name}`, `Accepted connection with ${name}`), type: 'system', time: 'now' });
-    toast.success(t(`Αποδεχτήκατε τη σύνδεση με ${name}`, `Accepted connection with ${name}`));
+    toast.success(t(`Αποδεχτήκατε τη σύνδεση με ${name}`, `Accepted connection with ${name}`), {
+      action: {
+        label: t('Τοίχος', 'Wall'),
+        onClick: () => navigate('/wall'),
+      },
+    });
   };
   const handleDecline = (requestId: string, name?: string) => {
     declineConnectionRequest(requestId);
@@ -273,10 +276,14 @@ export default function ConnectionsPageContent() {
   const handleConnect = (userId: string, name: string) => {
     const outcome = sendConnectionRequest(userId);
     const feedback = connectionOutcomeText(outcome, name, t);
-    if (outcome === 'sent' || outcome === 'accepted') {
-      addNotification({ message: feedback.text, type: 'system', time: 'now' });
+    // Live toast confirms the action; inbox stays for cross-user loops only.
+    if (outcome === 'accepted') {
+      toast.success(feedback.text, {
+        action: { label: t('Τοίχος', 'Wall'), onClick: () => navigate('/wall') },
+      });
+    } else {
+      toast[feedback.tone](feedback.text);
     }
-    toast[feedback.tone](feedback.text);
   };
 
   // ─── Render ──────────────────────────────────────────────

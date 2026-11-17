@@ -230,8 +230,20 @@ export default function JoinGroupFlow() {
                             variant="outline"
                             disabled={waiting}
                             onClick={() => {
-                              if (joinGroupWaitlist(g.id)) toast.success(t('Είσαι στη λίστα αναμονής — η θέση περνά σε σένα στην ίδια τιμή.', 'You are on the waitlist — the seat passes to you at the same price.'));
-                              else {
+                              if (joinGroupWaitlist(g.id)) {
+                                toast.success(
+                                  t(
+                                    'Είσαι στη λίστα αναμονής — η θέση περνά σε σένα στην ίδια τιμή.',
+                                    'You are on the waitlist — the seat passes to you at the same price.',
+                                  ),
+                                  {
+                                    action: {
+                                      label: t('Η βραδιά μας', 'Our night'),
+                                      onClick: () => navigate(`/night/${g.id}`),
+                                    },
+                                  },
+                                );
+                              } else {
                                 const gg = canJoinGroup(g.id);
                                 toast.error(t(gg.el, gg.en));
                               }

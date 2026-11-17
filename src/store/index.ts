@@ -886,7 +886,14 @@ export const useStore = create<AppState>()(
     void updateEventOnApi(eventId, patch).catch(() => undefined);
   },
 
-  cancelEvent: (eventId) =>
+  cancelEvent: (eventId) => {
+    const memberIds = Array.from(
+      new Set(
+        get()
+          .groups.filter((g) => g.eventId === eventId)
+          .flatMap((g) => g.members),
+      ),
+    );
     set((state) => ({
       events: state.events.map((e) =>
         e.id === eventId ? { ...e, status: 'cancelled' as const } : e,
@@ -894,7 +901,22 @@ export const useStore = create<AppState>()(
       groups: state.groups.map((g) =>
         g.eventId === eventId ? { ...g, status: 'cancelled' as const } : g,
       ),
-    })),
+    }));
+    const stamp = Date.now();
+    for (let i = 0; i < memberIds.length; i++) {
+      get().addNotification({
+        id: `n_cancel_${stamp}_${i}`,
+        type: 'group',
+        messageGr: 'Η εκδήλωση ακυρώθηκε. Δες τα σχέδιά σου για εναλλακτικές.',
+        messageEn: 'The event was cancelled. Check My plans for alternatives.',
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        eventId,
+        forUserId: memberIds[i],
+      });
+    }
+  },
 
   archiveEvent: (eventId) =>
     set((state) => ({
@@ -903,37 +925,58 @@ export const useStore = create<AppState>()(
       ),
     })),
 
-  publishMeetingPoint: (groupId, meetingPoint) =>
+  publishMeetingPoint: (groupId, meetingPoint) => {
+    const group = get().groups.find((g) => g.id === groupId);
     set((state) => ({
       groups: state.groups.map((g) =>
         g.id === groupId ? { ...g, meetingPoint } : g,
       ),
-    })),
+    }));
+    if (!group) return;
+    const stamp = Date.now();
+    const targets = group.members.filter((id) => id !== get().currentUser?.id);
+    for (let i = 0; i < targets.length; i++) {
+      get().addNotification({
+        id: `n_meet_${stamp}_${i}`,
+        type: 'group',
+        messageGr: 'Δημοσιεύτηκε σημείο συνάντησης — άνοιξε «Η βραδιά μας».',
+        messageEn: 'A meeting point was published — open «Our night».',
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        groupId,
+        eventId: group.eventId,
+        forUserId: targets[i],
+      });
+    }
+  },
 
-  sendGroupAnnouncement: (groupId, textEl, textEn) =>
-    set((state) => {
-      const group = state.groups.find((g) => g.id === groupId);
-      if (!group) return state;
-      return {
-        groups: state.groups.map((g) =>
-          g.id === groupId
-            ? { ...g, lastAnnouncement: { textEl, textEn, at: new Date().toISOString() } }
-            : g,
-        ),
-        notifications: [
-          normalizeAppNotification({
-            id: `n_ann_${Date.now()}`,
-            type: 'message',
-            messageEn: `Organizer announcement: ${textEn}`,
-            messageGr: `Ανακοίνωση διοργανωτή: ${textEl}`,
-            timeEn: 'Just now',
-            timeGr: 'Μόλις τώρα',
-            color: 'bg-cyan-100 text-cyan-600',
-          }),
-          ...state.notifications,
-        ],
-      };
-    }),
+  sendGroupAnnouncement: (groupId, textEl, textEn) => {
+    const group = get().groups.find((g) => g.id === groupId);
+    if (!group) return;
+    set((state) => ({
+      groups: state.groups.map((g) =>
+        g.id === groupId
+          ? { ...g, lastAnnouncement: { textEl, textEn, at: new Date().toISOString() } }
+          : g,
+      ),
+    }));
+    const stamp = Date.now();
+    for (let i = 0; i < group.members.length; i++) {
+      get().addNotification({
+        id: `n_ann_${stamp}_${i}`,
+        type: 'group',
+        messageEn: `Organizer announcement: ${textEn}`,
+        messageGr: `Ανακοίνωση διοργανωτή: ${textEl}`,
+        timeEn: 'Just now',
+        timeGr: 'Μόλις τώρα',
+        color: 'bg-cyan-100 text-cyan-600',
+        groupId,
+        eventId: group.eventId,
+        forUserId: group.members[i],
+      });
+    }
+  },
 
   // Accepts both the bilingual shape ({messageEn, messageGr, timeEn, timeGr})
   // and the legacy shape ({message, time}); normalizes to bilingual so the

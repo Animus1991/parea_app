@@ -339,13 +339,16 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         strikes: [...st.strikes, ...newStrikes],
         groups: st.groups.map((g) => (g.id === groupId ? { ...g, checkInClosedAt: at } : g)),
       }));
-      if (newStrikes.some((x) => x.userId === me.id)) {
-        notifyMe(
-          'safety',
-          'Καταγράφηκε απουσία σου. Δες τι σημαίνει και πώς κάνεις ένσταση στο Κέντρο Εμπιστοσύνης.',
-          'An absence was recorded for you. See what it means and how to appeal in the Trust Center.',
-          { groupId, eventId: group.eventId },
-        );
+      // Each absent member needs their own Trust Center loop — not only the host.
+      if (counts) {
+        for (const uid of absentIds) {
+          notifyMe(
+            'safety',
+            'Καταγράφηκε απουσία σου. Δες τι σημαίνει και πώς κάνεις ένσταση στο Κέντρο Εμπιστοσύνης.',
+            'An absence was recorded for you. See what it means and how to appeal in the Trust Center.',
+            { groupId, eventId: group.eventId, forUserId: uid },
+          );
+        }
       }
       // Fan-out so every arrived member (not only the host) gets the feedback loop.
       const feedbackTargets = Array.from(new Set([me.id, ...arrivedIds]));
@@ -583,6 +586,14 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       set((st) => ({
         groups: st.groups.map((g) => (g.id === groupId && g.tickets ? { ...g, tickets: { ...g.tickets, status: 'cancelled' } } : g)),
       }));
+      for (const uid of group.members) {
+        notifyMe(
+          'group',
+          'Η κράτηση εισιτηρίων ακυρώθηκε — δες λεπτομέρειες στη «Βραδιά μας».',
+          'The ticket hold was cancelled — see details on «Our night».',
+          { groupId, eventId: group.eventId, forUserId: uid },
+        );
+      }
     },
 
     toggleFollowOrganizer: (organizerId) =>

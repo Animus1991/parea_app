@@ -207,6 +207,8 @@ export default function SavedEventsPageContent() {
           )}
           actionLabel={t('Ανακαλύψτε Εκδηλώσεις', 'Discover Events')}
           onAction={() => navigate('/')}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
         />
       )}
       </ResourceStateGate>

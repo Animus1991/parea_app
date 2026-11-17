@@ -262,7 +262,16 @@ export default function PersonProfilePageContent() {
         </span>
       ) : incoming ? (
         <>
-          <Button size="sm" onClick={() => { acceptConnectionRequest(incoming.id); toast.success(t(`Είστε πλέον Nakamas με ${subject.name}`, `You are now Nakamas with ${subject.name}`)); }} className="gap-1.5">
+          <Button
+            size="sm"
+            onClick={() => {
+              acceptConnectionRequest(incoming.id);
+              toast.success(t(`Είστε πλέον Nakamas με ${subject.name}`, `You are now Nakamas with ${subject.name}`), {
+                action: { label: t('Τοίχος', 'Wall'), onClick: () => navigate('/wall') },
+              });
+            }}
+            className="gap-1.5"
+          >
             <Check className="h-3.5 w-3.5" aria-hidden /> {t('Αποδοχή αιτήματος', 'Accept request')}
           </Button>
           <Button size="sm" variant="ghost" onClick={() => { declineConnectionRequest(incoming.id); toast.info(t('Το αίτημα απορρίφθηκε', 'Request declined')); }} className="gap-1.5">

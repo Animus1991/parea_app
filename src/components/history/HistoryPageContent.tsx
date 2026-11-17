@@ -264,7 +264,13 @@ export default function HistoryPageContent() {
                 ? () => setTab('all')
                 : () => navigate('/')
           }
-          askAi
+          secondaryLabel={
+            search || tab === 'pending' ? undefined : t('Βρες Nakamas', 'Find Nakamas')
+          }
+          onSecondary={
+            search || tab === 'pending' ? undefined : () => navigate('/buddy-seek')
+          }
+          askAi={Boolean(search || tab === 'pending')}
           askPrompt={t('Άνοιξε την εκκρεμή αξιολόγηση', 'Open my pending review')}
         />
       )}
