@@ -4,6 +4,14 @@ import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
 import { toChatMessage, toGroupChatMessage } from '../lib/chatMessageAdapters';
 
+import type {
+  ChatMediaAttachment,
+  ChatPoll,
+  ChatReplyRef,
+  ChatStoryRef,
+  MessageType,
+} from '../types/chat';
+
 export interface GroupChatMessage {
   id: string;
   senderId: string;
@@ -11,6 +19,17 @@ export interface GroupChatMessage {
   text: string;
   timestamp: string;
   type?: 'text' | 'system' | 'location';
+  richType?: MessageType;
+  replyTo?: ChatReplyRef;
+  reactions?: Record<string, string[]>;
+  mentions?: string[];
+  tags?: string[];
+  media?: ChatMediaAttachment;
+  poll?: ChatPoll;
+  storyRef?: ChatStoryRef;
+  editedAt?: string;
+  pinned?: boolean;
+  readBy?: string[];
 }
 
 const STORAGE_PREFIX = 'nakamas-group-chat-v1';

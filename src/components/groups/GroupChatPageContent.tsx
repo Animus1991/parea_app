@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useStore } from "../../store";
 import {
-  Send,
   Users,
   ArrowLeft,
   Info,
@@ -19,6 +18,9 @@ import {
   UserPlus,
   Check,
   AlertTriangle,
+  Phone,
+  Video,
+  Sparkles,
 } from "lucide-react";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { toast } from "sonner";
@@ -27,6 +29,12 @@ import { useGroupChatContrast } from "../../hooks/useGroupChatContrast";
 import { cn } from "../../lib/utils";
 import { useGroupChatMessages, type GroupChatMessage } from "../../hooks/useGroupChatMessages";
 import { useChatStore } from "../../store/chatStore";
+import { toChatMessage } from "../../lib/chatMessageAdapters";
+import type { ChatReplyRef } from "../../types/chat";
+import { ChatMessageBubble } from "../chat/ChatMessageBubble";
+import { ChatComposerTools } from "../chat/ChatComposerTools";
+import { ChatStoriesStrip } from "../chat/ChatStoriesStrip";
+import { ChatCallModal } from "../chat/ChatCallModal";
 import { LiveEventTracker } from "./LiveEventTracker";
 import { ChatIcebreakers } from "./ChatIcebreakers";
 import { Modal } from "../common/Modal";
@@ -113,11 +121,24 @@ export default function GroupChatPageContent() {
     return msgs;
   };
 
-  const { messages, setMessages } = useGroupChatMessages(
+  const { messages, setMessages, conversationId } = useGroupChatMessages(
     resolvedGroupId,
     buildSeedMessages,
   );
+  const sendRichMessage = useChatStore((s) => s.sendRichMessage);
+  const toggleReaction = useChatStore((s) => s.toggleReaction);
+  const editMessage = useChatStore((s) => s.editMessage);
+  const deleteStoreMessage = useChatStore((s) => s.deleteMessage);
+  const restoreStoreMessage = useChatStore((s) => s.restoreMessage);
+  const togglePinMessage = useChatStore((s) => s.togglePinMessage);
+  const votePoll = useChatStore((s) => s.votePoll);
+  const receiveMessage = useChatStore((s) => s.receiveMessage);
+
   const [newMessage, setNewMessage] = useState("");
+  const [replyTo, setReplyTo] = useState<ChatReplyRef | null>(null);
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [showStories, setShowStories] = useState(false);
+  const [callMode, setCallMode] = useState<'video' | 'audio' | null>(null);
   const [showInfo, setShowInfo] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
@@ -144,22 +165,7 @@ export default function GroupChatPageContent() {
   const [senderFilter, setSenderFilter] = useState<string>("all");
   const virtuosoRef = useRef<VirtuosoHandle>(null);
 
-  const handleSend = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !currentUser) return;
-
-    const msg: GroupChatMessage = {
-      id: Date.now().toString(),
-      senderId: currentUser.id,
-      senderName: currentUser.name,
-      text: newMessage,
-      timestamp: new Date().toISOString(),
-    };
-
-    setMessages([...messages, msg]);
-    setNewMessage("");
-
-    // Scroll to bottom after state update
+  const scrollToBottom = () => {
     setTimeout(() => {
       if (virtuosoRef.current) {
         virtuosoRef.current.scrollToIndex({
@@ -172,6 +178,18 @@ export default function GroupChatPageContent() {
   };
 
   const handleDeleteMessage = (id: string) => {
+    if (conversationId && currentUser) {
+      const snap = deleteStoreMessage(id, currentUser.id);
+      if (snap) {
+        toast.info(t("Το μήνυμα διαγράφηκε", "Message deleted"), {
+          action: {
+            label: t("Αναίρεση", "Undo"),
+            onClick: () => restoreStoreMessage(snap),
+          },
+        });
+      }
+      return;
+    }
     setMessages(messages.filter((m) => m.id !== id));
     toast.success(t("Το μήνυμα διαγράφηκε", "Message deleted"));
   };
@@ -179,8 +197,13 @@ export default function GroupChatPageContent() {
   const filteredMessages = useMemo(() => {
     return messages
       .filter((m) => senderFilter === "all" || m.senderId === senderFilter)
+      .filter((m) =>
+        !tagFilter ||
+        m.tags?.includes(tagFilter) ||
+        m.text.toLowerCase().includes(`#${tagFilter}`),
+      )
       .filter((m) => m.text.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [messages, senderFilter, searchQuery]);
+  }, [messages, senderFilter, tagFilter, searchQuery]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -289,42 +312,43 @@ export default function GroupChatPageContent() {
       );
     }
 
+    const activeConvId = conversationId ?? `conv_${group.id}`;
+    const chatMsg = toChatMessage(msg, activeConvId);
     return (
-      <div
-        key={msg.id}
-        className={`flex flex-col group py-2.5 w-full px-4 md:px-4 ${isMe ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
-      >
-        <span className="text-xs font-semibold tracking-tight capitalize text-[#4b5563] dark:text-ink-muted ml-1 mb-1">
-          {isMe ? t("Εσείς", "You") : msg.senderName}
-        </span>
-        <div className="flex items-center gap-2">
-          {isMe && (
-            <button
-              type="button"
-              onClick={() => handleDeleteMessage(msg.id)}
-              className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all rounded-full"
-              title={t("Διαγραφή μηνύματος", "Delete message")}
-              aria-label={t("Διαγραφή μηνύματος", "Delete message")}
-            >
-              <X className="h-3.5 w-3.5" aria-hidden />
-            </button>
-          )}
-          <div
-            className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-2.5 text-base leading-relaxed relative ${
-              isMe
-                ? "bg-ink text-white rounded-tr-sm shadow-soft"
-                : "bg-white dark:bg-surface-raised border border-gray-100 dark:border-border text-ink rounded-tl-sm shadow-soft"
-            }`}
-          >
-            {msg.text}
-          </div>
-        </div>
-        <span className="text-xs text-[#6b7280] dark:text-ink-muted mt-1 mr-1 font-medium tracking-wide">
-          {new Date(msg.timestamp).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </span>
+      <div key={msg.id} className="px-4 py-1.5">
+        <ChatMessageBubble
+          message={chatMsg}
+          senderName={isMe ? t("Εσείς", "You") : msg.senderName}
+          mine={isMe}
+          viewerId={currentUser?.id}
+          onReply={(target) =>
+            setReplyTo({
+              id: target.id,
+              senderId: target.senderId,
+              senderName: target.senderId === currentUser?.id ? t("Εσείς", "You") : msg.senderName,
+              body: target.body || (target.media ? `[${target.media.kind}]` : ""),
+              type: target.type,
+            })
+          }
+          onJumpTo={(targetId) => {
+            const idx = filteredMessages.findIndex((x) => x.id === targetId);
+            if (idx >= 0 && virtuosoRef.current) {
+              virtuosoRef.current.scrollToIndex({ index: idx, align: "center", behavior: "smooth" });
+            }
+          }}
+          onReact={(msgId, emoji) =>
+            currentUser && toggleReaction(msgId, emoji, currentUser.id)
+          }
+          onEdit={(msgId, body) =>
+            currentUser && editMessage(msgId, body, currentUser.id)
+          }
+          onDelete={(msgId) => handleDeleteMessage(msgId)}
+          onPin={(msgId) => togglePinMessage(activeConvId, msgId)}
+          onVotePoll={(msgId, optId) =>
+            currentUser && votePoll(msgId, optId, currentUser.id)
+          }
+          onTagClick={(tag) => setTagFilter((cur) => (cur === tag ? null : tag))}
+        />
       </div>
     );
   };
@@ -418,6 +442,38 @@ export default function GroupChatPageContent() {
                     </div>
                   </div>
 
+                  {/* Voice / Video / Stories */}
+                  <button
+                    type="button"
+                    onClick={() => setCallMode('audio')}
+                    aria-label={t('Φωνητική κλήση', 'Voice call')}
+                    title={t('Φωνητική κλήση', 'Voice call')}
+                    className="p-2 rounded-full text-gray-400 hover:text-brand hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+                  >
+                    <Phone className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCallMode('video')}
+                    aria-label={t('Βιντεοκλήση', 'Video call')}
+                    title={t('Βιντεοκλήση', 'Video call')}
+                    className="p-2 rounded-full text-gray-400 hover:text-brand hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+                  >
+                    <Video className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowStories((s) => !s)}
+                    aria-label={t('Stories', 'Stories')}
+                    title={t('Stories Nakamas', 'Nakamas Stories')}
+                    className={cn(
+                      'p-2 rounded-full transition-colors',
+                      showStories ? 'bg-brand-soft text-brand' : 'text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10',
+                    )}
+                  >
+                    <Sparkles className="h-4 w-4" />
+                  </button>
+
                   {/* Mobile Search Toggle */}
                   <button
                     onClick={() => setShowSearchMobile(true)}
@@ -447,6 +503,23 @@ export default function GroupChatPageContent() {
               </>
             )}
           </div>
+
+          {showStories && (
+            <ChatStoriesStrip conversationId={conversationId ?? `conv_${group.id}`} compact />
+          )}
+
+          {tagFilter && (
+            <div className="px-4 py-1.5 border-b border-border bg-surface flex items-center gap-2 text-xs shrink-0">
+              <span className="text-ink-muted">{t('Φίλτρο tag:', 'Tag filter:')}</span>
+              <button
+                type="button"
+                onClick={() => setTagFilter(null)}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-soft text-brand font-bold"
+              >
+                #{tagFilter} <X className="w-3 h-3" />
+              </button>
+            </div>
+          )}
 
           {/* Ephemeral Notice */}
           {isEphemeral && showEphemeralBanner && (
@@ -505,32 +578,29 @@ export default function GroupChatPageContent() {
             />
           </div>
 
-          {/* Input */}
-          <form
-            onSubmit={handleSend}
-            className="p-3 sm:p-4 border-t border-gray-200 dark:border-border bg-white dark:bg-surface-raised shrink-0 relative z-20"
-          >
-            <div className="flex items-center gap-2 md:gap-3 max-w-4xl mx-auto w-full relative">
+          {/* Safety bar + Rich SOTA Composer */}
+          <div className="border-t border-gray-200 dark:border-border bg-white dark:bg-surface-raised shrink-0 relative z-20">
+            <div className="flex items-center gap-2 px-3 pt-2">
               <button
                 type="button"
                 onClick={() => setShowLocationConfigModal(true)}
-                className={`p-2.5 rounded-full transition-all flex items-center justify-center shrink-0 border hidden sm:flex ${
+                className={`p-2 rounded-full transition-all flex items-center justify-center shrink-0 border ${
                   isSharingLocation
                     ? "bg-emerald-50 text-emerald-600 border-emerald-200 ring-2 ring-emerald-500/20"
-                    : "bg-gray-50 dark:bg-white/5 text-gray-400 border-gray-200 dark:border-border hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-600"
+                    : "bg-gray-50 dark:bg-white/5 text-gray-500 border-gray-200 dark:border-border hover:bg-gray-100 dark:hover:bg-white/10"
                 }`}
                 title={t("Τοποθεσία & Ασφάλεια", "Location & Safety")}
                 aria-label={t("Τοποθεσία & Ασφάλεια", "Location & Safety")}
               >
                 <Compass
-                  className={`h-5 w-5 ${isSharingLocation ? "animate-pulse" : ""}`}
+                  className={`h-4 w-4 ${isSharingLocation ? "animate-pulse" : ""}`}
                   aria-hidden
                 />
               </button>
               <button
                 type="button"
                 onClick={() => setShowSosConfirm(true)}
-                className={`p-2.5 rounded-full transition-all flex items-center justify-center shrink-0 border ${
+                className={`p-2 rounded-full transition-all flex items-center justify-center shrink-0 border ${
                   group.membersLocations?.[currentUser.id]?.sos
                     ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500 animate-pulse"
                     : "bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
@@ -538,30 +608,61 @@ export default function GroupChatPageContent() {
                 title={t("SOS / Βοήθεια", "SOS / Help")}
                 aria-label={t("SOS / Βοήθεια", "SOS / Help")}
               >
-                <AlertTriangle className="h-5 w-5" aria-hidden />
+                <AlertTriangle className="h-4 w-4" aria-hidden />
               </button>
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder={t(
-                    "Πληκτρολογήστε ένα μήνυμα...",
-                    "Type a message...",
-                  )}
-                  className="w-full bg-gray-100 dark:bg-white/10 border border-transparent rounded-full py-3 md:py-3.5 pl-5 pr-14 text-sm focus:bg-white dark:focus:bg-surface-raised focus:ring-2 focus:ring-ink focus:border-ink outline-none transition-all shadow-soft"
-                />
-                <button
-                  type="submit"
-                  disabled={!newMessage.trim()}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2 bg-ink text-white rounded-full hover:bg-gray-800 disabled:opacity-40 disabled:hover:bg-ink transition-all shadow-soft"
-                  aria-label={t('Αποστολή μηνύματος', 'Send message')}
-                >
-                  <Send className="h-4 w-4 md:h-4.5 md:w-4.5" />
-                </button>
-              </div>
+              <span className="text-2xs text-ink-muted truncate">
+                {t('Εργαλεία ασφάλειας · Emojis · GIF · Φωνητικό · Δημοσκόπηση', 'Safety tools · Emojis · GIF · Voice · Poll')}
+              </span>
             </div>
-          </form>
+            <ChatComposerTools
+              value={newMessage}
+              onChange={setNewMessage}
+              participants={groupMembersDetailed.filter((u) => u.id !== currentUser?.id).map((u) => ({ id: u.id, name: u.name }))}
+              replyTo={replyTo}
+              onClearReply={() => setReplyTo(null)}
+              onSendText={(body, meta) => {
+                if (!currentUser) return;
+                const convId = conversationId ?? `conv_${group.id}`;
+                sendRichMessage({
+                  conversationId: convId,
+                  senderId: currentUser.id,
+                  body,
+                  replyTo: replyTo ?? undefined,
+                  tags: meta.tags,
+                  mentions: meta.mentions,
+                });
+                setNewMessage("");
+                setReplyTo(null);
+                scrollToBottom();
+              }}
+              onSendMedia={(media, caption) => {
+                if (!currentUser) return;
+                const convId = conversationId ?? `conv_${group.id}`;
+                sendRichMessage({
+                  conversationId: convId,
+                  senderId: currentUser.id,
+                  body: caption ?? media.label ?? "",
+                  type: media.kind,
+                  media,
+                  replyTo: replyTo ?? undefined,
+                });
+                setReplyTo(null);
+                scrollToBottom();
+              }}
+              onSendPoll={(poll) => {
+                if (!currentUser) return;
+                const convId = conversationId ?? `conv_${group.id}`;
+                sendRichMessage({
+                  conversationId: convId,
+                  senderId: currentUser.id,
+                  body: poll.question,
+                  type: "poll",
+                  poll,
+                });
+                scrollToBottom();
+              }}
+            />
+          </div>
         </div>
 
         {showInfo && (
@@ -1342,6 +1443,24 @@ export default function GroupChatPageContent() {
             }}
           />
         )}
+
+        <ChatCallModal
+          open={callMode !== null}
+          mode={callMode ?? 'video'}
+          title={event.title}
+          participants={groupMembersDetailed
+            .filter((m) => m.id !== currentUser?.id)
+            .map((m) => ({ id: m.id, name: m.name }))}
+          onClose={() => setCallMode(null)}
+          onEnded={(durationSec, mode) => {
+            const convId = conversationId ?? `conv_${group.id}`;
+            const label =
+              mode === 'video'
+                ? t(`Βιντεοκλήση · ${durationSec}δ`, `Video call · ${durationSec}s`)
+                : t(`Φωνητική κλήση · ${durationSec}δ`, `Voice call · ${durationSec}s`);
+            receiveMessage(convId, label, 'system', 'system');
+          }}
+        />
       </div>
     </div>
   );

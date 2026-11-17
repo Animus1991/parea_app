@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { X, Users, User, Megaphone, LifeBuoy, GitMerge, Lock, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { EmptyState } from '../common/EmptyState';
+import { ChatStoriesStrip } from './ChatStoriesStrip';
 import { useChatStore } from '../../store/chatStore';
 import { useStore } from '../../store';
 import { canOpenConversation } from '../../lib/chatPermissions';
@@ -72,6 +73,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
           <X className="w-5 h-5" />
         </button>
       </header>
+      <ChatStoriesStrip compact />
       <div className="flex-1 overflow-y-auto p-2 space-y-4">
         {conversations.length === 0 && (
           <EmptyState
