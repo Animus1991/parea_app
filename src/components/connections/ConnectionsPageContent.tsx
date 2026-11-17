@@ -393,6 +393,8 @@ export default function ConnectionsPageContent() {
                 description={t('Βρείτε Nakamas στις εκδηλώσεις!', 'Find Nakamas at events!')}
                 actionLabel={search ? t('Καθαρισμός', 'Clear') : t('Εξερεύνηση', 'Explore')}
                 onAction={search ? () => setSearch('') : () => navigate('/')}
+                secondaryLabel={search ? undefined : t('Βρες Nakamas', 'Find Nakamas')}
+                onSecondary={search ? undefined : () => navigate('/buddy-seek')}
               />
             </div>
           )}
@@ -462,9 +464,20 @@ export default function ConnectionsPageContent() {
                 'No events available. Create one or join a group first.',
               )}
             </p>
-            <Button onClick={() => { setInviteForUserId(null); navigate('/create'); }}>
-              {t('Δημιουργία εκδήλωσης', 'Create event')}
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={() => { setInviteForUserId(null); navigate('/create'); }}>
+                {t('Δημιουργία εκδήλωσης', 'Create event')}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setInviteForUserId(null);
+                  navigate('/buddy-seek');
+                }}
+              >
+                {t('Βρες Nakamas', 'Find Nakamas')}
+              </Button>
+            </div>
           </div>
         ) : (
           <ul className="space-y-2 max-h-72 overflow-y-auto">
@@ -555,6 +568,8 @@ export default function ConnectionsPageContent() {
               description={t('Συμμετέχετε σε εκδηλώσεις για να βρείτε Nakamas!', 'Join events to find Nakamas!')}
               actionLabel={t('Εξερεύνηση', 'Explore')}
               onAction={() => navigate('/')}
+              secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+              onSecondary={() => navigate('/buddy-seek')}
             />
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

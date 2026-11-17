@@ -445,6 +445,8 @@ export default function PlansPageContent() {
             hint={t('Οι εκδηλώσεις που παρακολουθήσατε θα εμφανίζονται εδώ για αξιολόγηση και ιστορικό.', 'Events you attend will appear here for ratings and history.')}
             ctaLabel={t('Εξερεύνηση', 'Explore')}
             onCta={() => navigate('/')}
+            secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+            onSecondary={() => navigate('/buddy-seek')}
             p={p}
           />
         )}
@@ -470,7 +472,12 @@ export default function PlansPageContent() {
               // The group *I* am in for this event (not just the first group of the event).
               const group = getUserGroupForEvent(showLeaveConfirm ?? '', groups, currentUser?.id);
               if (group) leaveGroup(group.id);
-              toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'));
+              toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'), {
+                action: {
+                  label: t('Βρες Nakamas', 'Find Nakamas'),
+                  onClick: () => navigate('/buddy-seek'),
+                },
+              });
               setShowLeaveConfirm(null);
             }}
             className="w-full px-4 py-3 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"

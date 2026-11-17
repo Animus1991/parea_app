@@ -887,8 +887,8 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           </div>
           <p className="card-copy font-medium leading-relaxed text-ink-muted mb-4">
             {t(
-              "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ένα φίλο. Θα βλέπει την τοποθεσία σας μέχρι το τέλος της εκδήλωσης.",
-              "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They will see your live location until the event ends.",
+              "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ένα φίλο εκτός Nakamas. Βλέπει τη θέση που μοιράζεσαι όσο είναι ενεργή η έξοδος — μπορείς να τον ανακαλέσεις όποτε θέλεις.",
+              "This creates a temporary safety link. Share it with a trusted friend outside Nakamas. They see the pin you share while the outing is active — you can revoke it anytime.",
             )}
           </p>
           <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-4 text-left">

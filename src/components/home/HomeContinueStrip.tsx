@@ -22,16 +22,24 @@ export function HomeContinueStrip() {
   const path = useStore((s) => s.lastResumePath);
   const clear = useStore((s) => s.clearLastResumePath);
   const groups = useStore((s) => s.groups);
+  const meId = useStore((s) => s.currentUser?.id);
   const returnParts = useReturnSummary();
 
-  // Stale «Our night» resume → not-found: clear quietly instead of a dead strip.
+  // Stale «Our night» resume → missing or non-member lock: clear quietly.
   const nightMatch = path?.match(/^\/night\/([^/?#]+)/);
-  const nightMissing = Boolean(nightMatch && !groups.some((g) => g.id === nightMatch![1]));
+  const nightGroup = nightMatch ? groups.find((g) => g.id === nightMatch[1]) : undefined;
+  const nightStale = Boolean(
+    nightMatch &&
+      (!nightGroup ||
+        (meId &&
+          !nightGroup.members.includes(meId) &&
+          !(nightGroup.waitlist ?? []).includes(meId))),
+  );
   useEffect(() => {
-    if (nightMissing) clear();
-  }, [nightMissing, clear]);
+    if (nightStale) clear();
+  }, [nightStale, clear]);
 
-  if (!path || path === '/' || nightMissing) return null;
+  if (!path || path === '/' || nightStale) return null;
 
   // Welcome-back line already covers this destination — keep one clear CTA in the hero.
   if (returnParts.some((part) => returnPartPath(part) === path)) return null;

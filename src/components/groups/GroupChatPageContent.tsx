@@ -931,8 +931,8 @@ export default function GroupChatPageContent() {
           </div>
           <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
-              "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ασφάλεια εκτός Nakamas. Θα βλέπουν την τοποθεσία σας μέχρι το τέλος. Ανακαλέστε τον όποτε θέλετε.",
-              "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They see your location until the event ends. You can revoke it anytime.",
+              "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ασφάλεια εκτός Nakamas. Βλέπουν τη θέση που μοιράζεσαι όσο είναι ενεργή η έξοδος — ανάκληση όποτε θέλεις.",
+              "This creates a temporary safety link. Share it securely outside Nakamas. They see the pin you share while the outing is active — revoke anytime.",
             )}
           </p>
           <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-4">

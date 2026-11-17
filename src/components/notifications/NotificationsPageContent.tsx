@@ -109,7 +109,9 @@ export default function NotificationsPageContent() {
   };
 
   const pathForNotif = (notif: AppNotification) => {
-    if (notif.type === 'match' || notif.type === 'reminder') return '/plans';
+    // Match with a real group deep-links Our night; otherwise My plans.
+    if (notif.type === 'match') return notif.groupId ? `/night/${notif.groupId}` : '/plans';
+    if (notif.type === 'reminder') return '/plans';
     // Group-scoped messages (announcements) belong on Our night, not the DMs inbox.
     if (notif.type === 'message') return notif.groupId ? `/night/${notif.groupId}` : '/chats';
     if (notif.type === 'achievement') return '/achievements';
@@ -117,8 +119,12 @@ export default function NotificationsPageContent() {
     // Cancelled-event rows clear groupId so leavers land on plans, not a locked night.
     if (notif.type === 'group') return notif.groupId ? `/night/${notif.groupId}` : '/plans';
     if (notif.type === 'safety') return '/trust';
-    // Connection-accept and similar system rows → wall; other system → trust.
+    // Incoming connection *requests* → Connections; accept/wall loops → Wall; else trust.
     if (notif.type === 'system') {
+      const requestish =
+        /αίτημα σύνδεσης|connection request/i.test(notif.messageGr ?? '') ||
+        /connection request/i.test(notif.messageEn ?? '');
+      if (requestish) return '/connections';
       const wallish =
         /τοίχο|wall|σύνδεση|connection/i.test(notif.messageGr ?? '') ||
         /wall|connection/i.test(notif.messageEn ?? '');

@@ -624,7 +624,28 @@ export const useStore = create<AppState>()(
       // Φ27 — «Η παρέα σου είναι έτοιμη»: the moment the group is complete.
       const confirmed = groups.find((g) => g.id === groupId);
       const ready = target.status !== 'confirmed' && confirmed?.status === 'confirmed';
-      if (!ready || !confirmed) return { groups };
+      const joinerName = state.currentUser.name.split(' ')[0] || 'Nakamas';
+      const priorMembers = target.members.filter((id) => id !== userId);
+      // Mid-join: tell people already in the forming group (ready fan-out covers the complete case).
+      const joinRows =
+        !ready && priorMembers.length > 0
+          ? priorMembers.map((memberId) =>
+              normalizeAppNotification({
+                type: 'group',
+                messageGr: `Ο/Η ${joinerName} μπήκε στην παρέα — άνοιξε «Η βραδιά μας».`,
+                messageEn: `${joinerName} joined the group — open «Our night».`,
+                timeGr: 'μόλις τώρα',
+                timeEn: 'just now',
+                read: false,
+                groupId,
+                eventId: target.eventId,
+                forUserId: memberId,
+              }),
+            )
+          : [];
+      if (!ready || !confirmed) {
+        return joinRows.length ? { groups, notifications: [...joinRows, ...state.notifications] } : { groups };
+      }
       const readyRows = confirmed.members.map((memberId) =>
         normalizeAppNotification({
           type: 'group',
@@ -760,6 +781,18 @@ export const useStore = create<AppState>()(
           'You left the group. You can find another company in My plans or Find Nakamas.',
           'group',
           { forUserId: uid, groupId: null },
+        );
+      }
+      // Remaining members learn the roster changed without opening Our night by chance.
+      const remaining = (nextGroup?.members ?? group?.members.filter((id) => id !== uid) ?? []).filter(
+        (id) => id !== uid && id !== toUserId,
+      );
+      for (const memberId of remaining) {
+        note(
+          'Ένα μέλος αποχώρησε από την παρέα — δες την ενημερωμένη ομάδα στη «Βραδιά μας».',
+          'A member left the group — see the updated roster on «Our night».',
+          'group',
+          { forUserId: memberId, groupId },
         );
       }
       // Release the commitment hold for an event the member is no longer going to.
@@ -1319,6 +1352,7 @@ export const useStore = create<AppState>()(
       (r) => r.fromUserId === me.id && r.toUserId === toUserId && r.status === 'pending',
     );
     if (exists) return 'exists';
+    const fromName = me.name.split(' ')[0] || 'Nakamas';
     set((s) => ({
       connectionRequests: [
         ...s.connectionRequests,
@@ -1330,6 +1364,18 @@ export const useStore = create<AppState>()(
           createdAt: new Date().toISOString().split('T')[0],
           status: 'pending' as const,
         },
+      ],
+      notifications: [
+        normalizeAppNotification({
+          type: 'system',
+          messageGr: `Νέο αίτημα σύνδεσης από ${fromName} — άνοιξε «Οι Συνδέσεις μου».`,
+          messageEn: `New connection request from ${fromName} — open My Nakamas.`,
+          timeGr: 'μόλις τώρα',
+          timeEn: 'just now',
+          read: false,
+          forUserId: toUserId,
+        }),
+        ...s.notifications,
       ],
     }));
     return 'sent';
@@ -1746,6 +1792,7 @@ export const useStore = create<AppState>()(
     set((state) => {
       if (!state.currentUser) return state;
       const from = state.groups.find((g) => g.id === fromGroupId);
+      const to = state.groups.find((g) => g.id === toGroupId);
       if (!from) return state;
       const suggestion: GroupMergeSuggestion = {
         id: `gm_${Date.now()}`,
@@ -1758,15 +1805,38 @@ export const useStore = create<AppState>()(
         status: 'pending',
         createdAt: new Date().toISOString(),
       };
-      return { groupMergeSuggestions: [...state.groupMergeSuggestions, suggestion] };
+      const targetHost = to?.hostId;
+      const fromName = state.currentUser.name.split(' ')[0] || 'Nakamas';
+      const hostNotif =
+        targetHost && targetHost !== state.currentUser.id
+          ? [
+              normalizeAppNotification({
+                type: 'buddy_seek',
+                messageGr: `Ο/Η ${fromName} πρότεινε συγχώνευση ομάδων — δες το στο «Βρες Nakamas».`,
+                messageEn: `${fromName} suggested merging groups — review it in Find Nakamas.`,
+                timeGr: 'μόλις τώρα',
+                timeEn: 'just now',
+                read: false,
+                groupId: toGroupId,
+                eventId: from.eventId,
+                forUserId: targetHost,
+              }),
+            ]
+          : [];
+      return {
+        groupMergeSuggestions: [...state.groupMergeSuggestions, suggestion],
+        notifications: [...hostNotif, ...state.notifications],
+      };
     }),
 
   respondGroupMerge: (suggestionId, accept) => {
     let resultGroupId: string | null = null;
+    let declinedFor: string | null = null;
     set((state) => {
       const suggestion = state.groupMergeSuggestions.find((s) => s.id === suggestionId);
       if (!suggestion || !state.currentUser) return state;
       if (!accept) {
+        declinedFor = suggestion.fromUserId;
         return {
           groupMergeSuggestions: state.groupMergeSuggestions.map((s) =>
             s.id === suggestionId ? { ...s, status: 'declined' as const } : s,
@@ -1837,6 +1907,17 @@ export const useStore = create<AppState>()(
         ),
       };
     });
+    if (!accept && declinedFor) {
+      get().addNotification({
+        type: 'buddy_seek',
+        messageGr: 'Η πρόταση συγχώνευσης απορρίφθηκε.',
+        messageEn: 'The group-merge suggestion was declined.',
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        forUserId: declinedFor,
+      });
+    }
     if (resultGroupId) {
       const snap = get();
       const group = snap.groups.find((g) => g.id === resultGroupId);
@@ -1849,6 +1930,21 @@ export const useStore = create<AppState>()(
           participantUserIds: group.members,
           meetingPoint: event?.locationArea,
         });
+        const stamp = Date.now();
+        for (let i = 0; i < group.members.length; i++) {
+          get().addNotification({
+            id: `n_merge_${stamp}_${i}`,
+            type: 'group',
+            messageGr: 'Οι ομάδες ενώθηκαν — άνοιξε «Η βραδιά μας» για τη νέα παρέα.',
+            messageEn: 'Groups merged — open «Our night» for the new company.',
+            timeGr: 'μόλις τώρα',
+            timeEn: 'just now',
+            read: false,
+            groupId: group.id,
+            eventId: group.eventId,
+            forUserId: group.members[i],
+          });
+        }
       }
     }
     return resultGroupId;

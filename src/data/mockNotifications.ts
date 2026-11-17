@@ -30,7 +30,9 @@ export const mockNotifications: AppNotification[] = [
     timeGr: 'πριν 10 λεπτά',
     read: false,
     icon: AlertTriangle,
-    color: 'bg-emerald-100 text-emerald-600'
+    color: 'bg-emerald-100 text-emerald-600',
+    groupId: 'g2',
+    eventId: 'e4',
   },
   {
     id: 'n2',

@@ -254,7 +254,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                 variant="outline"
                 className="w-full text-xs"
               >
-                {t("Κοινοποίηση μέχρι το τέλος", "Share until event ends")}
+                {t("Κοινοποίηση όσο διαρκεί η έξοδος", "Share while the outing is active")}
               </Button>
             </div>
           </div>

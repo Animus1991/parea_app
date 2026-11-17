@@ -76,7 +76,12 @@ export default function PostEventFeedbackPageContent() {
     };
     submitFeedback(payload);
     awardXp(25, 'Υποβολή αξιολόγησης', 'Feedback submitted');
-    toast.success(t('Η αξιολόγηση υποβλήθηκε · +25 XP', 'Feedback submitted · +25 XP'));
+    toast.success(t('Η αξιολόγηση υποβλήθηκε · +25 XP', 'Feedback submitted · +25 XP'), {
+      action: {
+        label: t('Τοίχος', 'Wall'),
+        onClick: () => navigate('/wall'),
+      },
+    });
     setStep(2);
   };
 

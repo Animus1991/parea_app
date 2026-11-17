@@ -222,7 +222,9 @@ export default function PersonProfilePageContent() {
       });
       return;
     }
-    toast.success(t(`Συνομιλία με ${subject.name}`, `Chat with ${subject.name}`));
+    toast.success(t(`Συνομιλία με ${subject.name}`, `Chat with ${subject.name}`), {
+      action: { label: t('Άνοιγμα', 'Open'), onClick: () => navigate('/chats') },
+    });
   };
 
   const handleBlock = () => {
@@ -504,7 +506,14 @@ export default function PersonProfilePageContent() {
                 {t(`Nakamas (${theirConnections.length})`, `Nakamas (${theirConnections.length})`)}
               </h2>
               {theirConnections.length === 0 ? (
-                <p className="text-sm font-medium text-ink-muted">{t('Καμία σύνδεση ακόμα.', 'No connections yet.')}</p>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-ink-muted">{t('Καμία σύνδεση ακόμα.', 'No connections yet.')}</p>
+                  {isSelf && (
+                    <Button size="sm" variant="ghost" onClick={() => navigate('/buddy-seek')}>
+                      {t('Βρες Nakamas', 'Find Nakamas')}
+                    </Button>
+                  )}
+                </div>
               ) : (
                 <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {theirConnections.map((u) => (
@@ -530,7 +539,14 @@ export default function PersonProfilePageContent() {
             <Card className="p-4">
               <h2 className={cn(APP_TYPO.sectionLabel, 'mb-3 text-ink-muted')}>{t('Εκδηλώσεις', 'Events')}</h2>
               {theirEvents.length === 0 ? (
-                <p className="text-sm font-medium text-ink-muted">{t('Καμία εκδήλωση ακόμα.', 'No events yet.')}</p>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-ink-muted">{t('Καμία εκδήλωση ακόμα.', 'No events yet.')}</p>
+                  {isSelf && (
+                    <Button size="sm" variant="ghost" onClick={() => navigate('/')}>
+                      {t('Εξερεύνηση', 'Explore')}
+                    </Button>
+                  )}
+                </div>
               ) : (
                 <ul className="space-y-2">
                   {theirEvents.map((e) => (

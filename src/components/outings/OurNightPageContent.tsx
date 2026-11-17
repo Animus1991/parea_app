@@ -408,6 +408,12 @@ export default function OurNightPageContent() {
                     willHandOver
                       ? t('Αποχώρησες — η θέση πέρασε στη λίστα αναμονής.', 'You left — your seat passed to the waitlist.')
                       : t('Αποχώρησες από την ομάδα.', 'You have left the group.'),
+                    {
+                      action: {
+                        label: t('Βρες Nakamas', 'Find Nakamas'),
+                        onClick: () => navigate('/buddy-seek'),
+                      },
+                    },
                   );
                   navigate('/plans');
                 }}
