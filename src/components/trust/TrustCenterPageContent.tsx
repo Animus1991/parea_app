@@ -70,7 +70,7 @@ export default function TrustCenterPageContent() {
 
 
   return (
-    <div className="mx-auto max-w-full space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="mx-auto max-w-full space-y-4 md:space-y-5 pb-20 md:pb-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
         <h1 className={cn("text-lg md:text-xl font-bold tracking-tight leading-tight", a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
         <p className={cn("mt-2 text-sm font-medium leading-relaxed max-w-xl", a.sub)}>
@@ -94,21 +94,21 @@ export default function TrustCenterPageContent() {
       <div role="tabpanel" id="trust-panel-status" aria-labelledby="trust-tab-status" className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
         {/* Verification Status */}
-        <Card className="p-5 space-y-5">
+        <Card className="p-5 space-y-4">
           <div>
-            <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5", a.muted)}>
-              <ShieldCheck className={cn("h-3.5 w-3.5", a.iconAccent)} />{t('Κατάσταση Επαλήθευσης', 'Verification Status')}
+            <h2 className={cn("text-base font-bold tracking-tight mb-1 flex items-center gap-1.5", a.head)}>
+              <ShieldCheck className={cn("h-4 w-4", a.iconAccent)} />{t('Κατάσταση Επαλήθευσης', 'Verification Status')}
             </h2>
-            <p className={cn("card-heading-lg font-bold", a.head)}>{trustTierLabel}</p>
+            <p className={cn("text-xs font-bold uppercase tracking-wide", a.muted)}>{trustTierLabel}</p>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <div className={cn("flex items-center gap-2 text-sm font-medium", a.sub)}>
                 <Mail className={cn("h-3.5 w-3.5", a.muted)} /> {t('Email', 'Email')}
               </div>
               {currentUser.emailVerified ? (
-                <Badge variant="success" className="text-xs px-1.5 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
+                <Badge variant="success" className="text-xs px-2 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
               ) : (
                 <button type="button" onClick={() => navigate('/verification')} className={cn("text-xs font-bold cursor-pointer tracking-wide", a.link)}>
                   {t('Επαλήθευση', 'Verify')}
@@ -120,7 +120,7 @@ export default function TrustCenterPageContent() {
                 <Phone className={cn("h-3.5 w-3.5", a.muted)} />{t('Τηλέφωνο', 'Phone')}
               </div>
               {currentUser.phoneVerified ? (
-                <Badge variant="success" className="text-xs px-1.5 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
+                <Badge variant="success" className="text-xs px-2 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
               ) : (
                 <button type="button" onClick={() => navigate('/verification')} className={cn("text-xs font-bold cursor-pointer tracking-wide", a.link)}>
                   {t('Επαλήθευση', 'Verify')}
@@ -132,7 +132,7 @@ export default function TrustCenterPageContent() {
                 <CreditCard className={cn("h-3.5 w-3.5", a.muted)} />{t('Πληρωμή', 'Payment')}
               </div>
               {currentUser.paymentVerified ? (
-                <Badge variant="success" className="text-xs px-1.5 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
+                <Badge variant="success" className="text-xs px-2 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
               ) : (
                 <button type="button" onClick={() => navigate('/wallet')} className={cn("text-xs font-bold cursor-pointer tracking-wide", a.link)}>
                   {t('Άνοιγμα πορτοφολιού', 'Open wallet')}
@@ -144,7 +144,7 @@ export default function TrustCenterPageContent() {
                 <UserCheck className={cn("h-3.5 w-3.5", a.muted)} />{t('Ταυτότητα', 'Government ID')}
               </div>
               {currentUser.idVerified ? (
-                <Badge variant="success" className="text-xs px-1.5 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
+                <Badge variant="success" className="text-xs px-2 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
               ) : (
                 <button type="button" onClick={() => navigate('/verification')} className={cn("text-xs font-bold cursor-pointer tracking-wide", a.link)}>
                   {t('Επαλήθευση', 'Verify')}
@@ -153,12 +153,12 @@ export default function TrustCenterPageContent() {
             </div>
           </div>
 
-          <div className={cn("pt-4 border-t", a.isDark ? "border-gray-700/40" : "border-gray-100")}>
+          <div className={cn("pt-3.5 border-t", a.isDark ? "border-gray-700/40" : "border-gray-100")}>
             <div className="flex items-center justify-between">
-              <div className={cn("flex items-center gap-2 text-sm font-bold", a.head)}>
+              <div className={cn("flex items-center gap-2 text-base font-bold", a.head)}>
                 <Award className="h-4 w-4 text-amber-500" />{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}
               </div>
-              <span className="text-sm md:text-base font-black tabular-nums leading-none text-emerald-600">{reliabilityScore}%</span>
+              <span className="text-base font-black tabular-nums leading-none text-emerald-600">{reliabilityScore}%</span>
             </div>
             <p className={cn("text-sm mt-1.5 font-medium leading-relaxed", a.sub)}>
               {t('Βασίζεται στις παρουσίες, αξιολογήσεις και συμπεριφορά σας.', 'Based on your attendance, reviews, and behavior.')}
@@ -175,16 +175,16 @@ export default function TrustCenterPageContent() {
               <text x="60" y="56" textAnchor="middle" className={cn("text-sm md:text-base font-black", a.scoreFill)} fontSize="14">{reliabilityScore}</text>
               <text x="60" y="74" textAnchor="middle" className="fill-gray-400" fontSize="10" fontWeight="600">%</text>
             </svg>
-            <p className={cn("text-xs font-bold tracking-wide", a.muted)}>{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}</p>
+            <p className={cn("text-base font-bold tracking-tight", a.head)}>{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}</p>
           </Card>
 
           <Card className={a.infoBg}>
             <div className="p-4 md:p-5">
-              <h3 className={cn("text-xs font-bold tracking-wide mb-1.5", a.head)}>{t('Πώς υπολογίζεται η αξιοπιστία', 'How reliability is calculated')}</h3>
-              <p className={cn("card-copy leading-relaxed", a.sub)}>
+              <h3 className={cn("text-base font-bold tracking-tight mb-1.5", a.head)}>{t('Πώς υπολογίζεται η αξιοπιστία', 'How reliability is calculated')}</h3>
+              <p className={cn("text-sm font-medium leading-relaxed", a.sub)}>
                 {t('Κάθε επαλήθευση αυξάνει το επίπεδο εμπιστοσύνης σας, ξεκλειδώνοντας πρόσβαση σε εκδηλώσεις υψηλής ασφάλειας.', 'Each verification raises your trust tier, unlocking access to high-safety events.')}
               </p>
-              <ul className={cn("mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-medium tabular-nums", a.sub)}>
+              <ul className={cn("mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm font-medium tabular-nums", a.sub)}>
                 <li><span className="font-bold text-emerald-600 dark:text-emerald-400">+3</span> {t('επιβεβαιωμένη παρουσία', 'confirmed attendance')}</li>
                 <li><span className="font-bold text-emerald-600 dark:text-emerald-400">+2</span> {t('καλή αξιολόγηση (4–5★)', 'good rating (4–5★)')}</li>
                 <li><span className="font-bold text-red-600 dark:text-red-400">−8</span> {t('ακύρωση τελευταίας στιγμής', 'last-minute cancel')}</li>
@@ -194,8 +194,8 @@ export default function TrustCenterPageContent() {
           </Card>
           <Card className={a.infoBg}>
             <div className="p-4 md:p-5">
-              <h3 className={cn("text-xs font-bold tracking-wide mb-1.5", a.head)}>{t('Τα 3 επίπεδα εμπιστοσύνης', 'The 3 trust tiers')}</h3>
-              <ol className={cn("card-copy leading-relaxed space-y-1", a.sub)}>
+              <h3 className={cn("text-base font-bold tracking-tight mb-1.5", a.head)}>{t('Τα 3 επίπεδα εμπιστοσύνης', 'The 3 trust tiers')}</h3>
+              <ol className={cn("text-sm font-medium leading-relaxed space-y-1.5", a.sub)}>
                 <li><strong className={a.head}>1 · {t(tierLabelEl('1_explorer'), tierLabelEn('1_explorer'))}:</strong> {t('δωρεάν δημόσιες εκδηλώσεις.', 'free public events.')}</li>
                 <li><strong className={a.head}>2 · {t(tierLabelEl('2_confirmed'), tierLabelEn('2_confirmed'))}:</strong> {t('μικρές ομάδες 3–5 & εκδηλώσεις με εισιτήριο.', 'small groups of 3–5 & ticketed events.')}</li>
                 <li><strong className={a.head}>3 · {t(tierLabelEl('3_high_trust'), tierLabelEn('3_high_trust'))}:</strong> {t('εκδρομές, ιδιωτικές συναντήσεις & διοργάνωση.', 'trips, private meetups & hosting.')}</li>
@@ -217,8 +217,8 @@ export default function TrustCenterPageContent() {
 
       {tab === 'history' && (
       <Card className="p-5" role="tabpanel" id="trust-panel-history" aria-labelledby="trust-tab-history">
-        <h2 className={cn("text-xs font-bold tracking-wide mb-4 flex items-center gap-1.5", a.head)}>
-          <TrendingUp className={cn("w-3.5 h-3.5", a.iconAccent)} aria-hidden />{t('Ιστορικό Εμπιστοσύνης', 'Trust History')}
+        <h2 className={cn("text-sm font-bold tracking-tight mb-4 flex items-center gap-1.5", a.head)}>
+          <TrendingUp className={cn("w-4 h-4", a.iconAccent)} aria-hidden />{t('Ιστορικό Εμπιστοσύνης', 'Trust History')}
         </h2>
         {history.length === 0 ? (
           <div className="space-y-3">
