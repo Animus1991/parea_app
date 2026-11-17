@@ -52,7 +52,7 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
   },
   {
     id: 'groups',
-    stems: ['πωσ λειτουργουν οι ομαδ', 'ομαδεσ', 'ομαδα ', ' groups', ' group ', 'how groups work', 'σημειο συναντησ', 'meeting point'],
+    stems: ['πωσ λειτουργουν οι ομαδ', 'how groups work', 'σημειο συναντησ', 'meeting point', 'group chat unlock', 'ξεκλειδωνει το group'],
     titleEl: 'Πώς λειτουργούν οι ομάδες',
     titleEn: 'How groups work',
     path: '/help',
@@ -68,8 +68,8 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
     titleEn: 'Safety',
     path: '/trust',
     answer: () => ({
-      el: 'Εργαλεία ασφάλειας: προαιρετική, προσωρινή κοινοποίηση ζωντανής τοποθεσίας μόνο στην ομάδα, κουμπί SOS στο group chat, σύνδεσμος για επαφή εμπιστοσύνης, κατάσταση άφιξης/ETA, συναντήσεις σε δημόσιους χώρους και αναφορά χρήστη/συνομιλίας με ένα κλικ.',
-      en: 'Safety tools: optional, temporary live location shared only with your group, an SOS button in group chat, a trusted-contact link, arrival status/ETA, public meeting places and one-tap reporting of users or chats.',
+      el: 'Εργαλεία ασφάλειας: προαιρετική, προσωρινή κοινοποίηση τοποθεσίας μόνο στην ομάδα, κουμπί SOS στο group chat, σύνδεσμος για επαφή εμπιστοσύνης, κατάσταση άφιξης/ETA, συναντήσεις σε δημόσιους χώρους και αναφορά χρήστη/συνομιλίας με ένα κλικ.',
+      en: 'Safety tools: optional, temporary location sharing with your group only, an SOS button in group chat, a trusted-contact link, arrival status/ETA, public meeting places and one-tap reporting of users or chats.',
     }),
   },
   {
@@ -79,8 +79,8 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
     titleEn: 'Find Nakamas',
     path: '/buddy-seek',
     answer: () => ({
-      el: 'Το «Βρες Nakamas» σου επιτρέπει να δηλώσεις ότι ψάχνεις παρέα για μια εκδήλωση ή να στείλεις αίτημα σε ομάδα που σχηματίζεται. Ο διοργανωτής βλέπει μόνο ό,τι επιτρέπουν οι ρυθμίσεις απορρήτου σου και αποφασίζει· αν δεχτεί, ανοίγει αυτόματα συνομιλία.',
-      en: '"Find Nakamas" lets you say you are looking for company for an event, or request to join a group that is forming. The host only sees what your privacy settings allow; if they accept, a chat opens automatically.',
+      el: 'Το «Βρες Nakamas» σου επιτρέπει να δηλώσεις ότι ψάχνεις παρέα για μια εκδήλωση ή να στείλεις αίτημα σε ομάδα που σχηματίζεται. Ο διοργανωτής βλέπει μόνο ό,τι επιτρέπουν οι ρυθμίσεις απορρήτου σου και αποφασίζει· αν δεχτεί, ανοίγει «Η βραδιά μας» (το chat είναι εκεί μέσα).',
+      en: '"Find Nakamas" lets you say you are looking for company for an event, or request to join a group that is forming. The host only sees what your privacy settings allow; if they accept, «Our night» opens (group chat lives there).',
     }),
   },
   {
@@ -118,13 +118,13 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
   },
   {
     id: 'cancel',
-    stems: ['ακυρω', 'cancel', 'αποχωρ', 'leave'],
+    stems: ['ακυρω συμμετοχ', 'ακυρωση', 'cancel attendance', 'cancel my spot', 'how to cancel'],
     titleEl: 'Ακύρωση συμμετοχής',
     titleEn: 'Cancelling',
     path: '/plans',
     answer: () => ({
-      el: 'Μπορείς να αποχωρήσεις από ομάδα από «Τα Σχέδιά μου». Έως 24 ώρες πριν δεν υπάρχει επίπτωση· αργότερη ακύρωση μειώνει τον Βαθμό Αξιοπιστίας.',
-      en: 'You can leave a group from "My Plans". Up to 24h before there is no penalty; later cancellations lower your Reliability Score.',
+      el: 'Μπορείς να αποχωρήσεις από ομάδα από «Τα Σχέδιά μου» ή από «Η βραδιά μας». Έως 24 ώρες πριν δεν υπάρχει επίπτωση· αργότερη ακύρωση μειώνει τον Βαθμό Αξιοπιστίας.',
+      en: 'You can leave a group from "My Plans" or "Our night". Up to 24h before there is no penalty; later cancellations lower your Reliability Score.',
     }),
   },
 ];

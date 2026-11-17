@@ -87,7 +87,20 @@ export default function InvitePublicPage() {
       <InviteCover cover={cover} event={event} hostFirstName={host?.name.split(' ')[0]} goingCount={group.members.length + going} seatsLeft={seatsLeft} />
 
       {closed ? (
-        <p className="rounded-2xl border border-border bg-surface-raised p-4 text-sm font-bold text-ink">{t('Αυτή η έξοδος δεν δέχεται πια απαντήσεις.', 'This outing no longer takes answers.')}</p>
+        <div className="space-y-3 rounded-2xl border border-border bg-surface-raised p-4">
+          <p className="text-sm font-bold text-ink">{t('Αυτή η έξοδος δεν δέχεται πια απαντήσεις.', 'This outing no longer takes answers.')}</p>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              to={signedIn ? '/plans' : '/'}
+              className="inline-flex min-h-10 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
+            >
+              {signedIn ? t('Τα σχέδιά μου', 'My plans') : t('Άνοιγμα Nakamas', 'Open Nakamas')}
+            </Link>
+            <Link to="/buddy-seek" className="inline-flex min-h-10 items-center rounded-full border border-border px-4 text-xs font-bold text-ink">
+              {t('Βρες Nakamas', 'Find Nakamas')}
+            </Link>
+          </div>
+        </div>
       ) : done ? (
         <div className="rounded-2xl border border-border bg-surface-raised p-4" role="status">
           <p className="flex items-center gap-2 text-sm font-bold text-ink">

@@ -523,12 +523,15 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       const unitPrice = Math.round(event.price * (1 - pct / 100) * 100) / 100;
       const tickets = activeTicketPartner().reserve({ groupId, eventId: event.id, memberIds: group.members, unitPrice });
       set((st) => ({ groups: st.groups.map((g) => (g.id === groupId ? { ...g, tickets } : g)) }));
-      notifyMe(
-        'group',
-        'Κρατήθηκαν θέσεις για όλη την ομάδα. Ο καθένας πληρώνει το δικό του μερίδιο.',
-        'Seats are held for the whole group. Everyone pays their own share.',
-        { groupId, eventId: group.eventId },
-      );
+      // Fan-out so every member knows to pay their share — not only the host who reserved.
+      for (const uid of group.members) {
+        notifyMe(
+          'group',
+          'Κρατήθηκαν θέσεις για όλη την ομάδα. Πλήρωσε το μερίδιό σου στη «Βραδιά μας».',
+          'Seats are held for the whole group. Pay your share on «Our night».',
+          { groupId, eventId: group.eventId, forUserId: uid },
+        );
+      }
       return true;
     },
 

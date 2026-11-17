@@ -54,11 +54,9 @@ export function CollectionsRail({ className, title = true }: { className?: strin
                 <span className="mt-2 text-sm font-bold leading-tight text-ink">{t(c.el, c.en)}</span>
                 <span className="mt-1 text-xs font-medium text-ink-muted">
                   {t(`${count} εκδηλώσεις`, `${count} events`)}
-                </span>
-                <span className="mt-0.5 text-xs font-bold text-ink">
                   {forming > 0
-                    ? t(`${forming} ${forming === 1 ? 'παρέα σχηματίζεται' : 'παρέες σχηματίζονται'}`, `${forming} ${forming === 1 ? 'group' : 'groups'} forming`)
-                    : t('Ξεκίνα πρώτος/η μια παρέα', 'Be the first to start a group')}
+                    ? t(` · ${forming} ${forming === 1 ? 'παρέα' : 'παρέες'}`, ` · ${forming} ${forming === 1 ? 'group' : 'groups'}`)
+                    : ''}
                 </span>
               </Link>
             </li>

@@ -257,14 +257,20 @@ export default function InboxPageContent() {
                     ? t('Καθαρισμός αναζήτησης', 'Clear search')
                     : chatFilter === 'past'
                       ? t('Εμφάνιση ενεργών', 'Show active')
-                      : t('Αναζήτηση Εκδηλώσεων', 'Browse Events')
+                      : t('Βρες Nakamas', 'Find Nakamas')
                 }
                 onAction={
                   search
                     ? () => setSearch('')
                     : chatFilter === 'past'
                       ? () => setChatFilter('active')
-                      : () => navigate('/')
+                      : () => navigate('/buddy-seek')
+                }
+                secondaryLabel={
+                  !search && chatFilter !== 'past' ? t('Εξερεύνηση', 'Explore') : undefined
+                }
+                onSecondary={
+                  !search && chatFilter !== 'past' ? () => navigate('/') : undefined
                 }
               />
             ) : (

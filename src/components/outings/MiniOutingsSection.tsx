@@ -292,7 +292,17 @@ function MiniOutingComposer({ onClose }: { onClose: () => void }) {
       </div>
       {!canWomen && (
         <p className="mt-1 text-2xs font-medium text-ink-muted dark:text-gray-300">
-          {t('Η επιλογή «Γυναίκες & μη δυαδικά» ανοίγει αν το δηλώσεις στο προφίλ σου.', 'The “Women & non-binary” option opens if you set it in your profile.')}
+          {t('Η επιλογή «Γυναίκες & μη δυαδικά» ανοίγει αν το δηλώσεις στο προφίλ σου.', 'The “Women & non-binary” option opens if you set it in your profile.')}{' '}
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              navigate('/profile');
+            }}
+            className="font-bold text-ink underline underline-offset-2"
+          >
+            {t('Προφίλ', 'Profile')}
+          </button>
         </p>
       )}
       <label className="mt-3 block text-xs font-bold text-ink">
