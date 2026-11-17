@@ -104,7 +104,14 @@ export function DailyChallengeCard({ className }: { className?: string }) {
   const d = useGamificationData();
   const claim = useStore((s) => s.claimDailyChallenge);
   const onClaim = () => {
-    if (claim(DAILY_CHALLENGE_XP)) toast.success(t(`+${DAILY_CHALLENGE_XP} XP — ημερήσια πρόκληση`, `+${DAILY_CHALLENGE_XP} XP — daily challenge`));
+    if (claim(DAILY_CHALLENGE_XP)) {
+      toast.success(t(`+${DAILY_CHALLENGE_XP} XP — ημερήσια πρόκληση`, `+${DAILY_CHALLENGE_XP} XP — daily challenge`), {
+        action: {
+          label: t('Επιτεύγματα', 'Achievements'),
+          onClick: () => navigate('/achievements'),
+        },
+      });
+    }
   };
   return (
     <section

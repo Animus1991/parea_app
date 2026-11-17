@@ -225,13 +225,22 @@ export default function TrustCenterPageContent() {
             <p className={cn("card-copy", a.muted)}>
               {t('Δεν υπάρχει ακόμη ιστορικό. Οι συμμετοχές και οι αξιολογήσεις σου θα εμφανίζονται εδώ.', 'No history yet. Your attendance and reviews will appear here.')}
             </p>
-            <button
-              type="button"
-              onClick={() => navigate('/')}
-              className={cn("text-xs font-bold tracking-wide", a.link)}
-            >
-              {t('Εξερεύνηση εκδηλώσεων', 'Explore events')}
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className={cn("text-xs font-bold tracking-wide", a.link)}
+              >
+                {t('Εξερεύνηση εκδηλώσεων', 'Explore events')}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/buddy-seek')}
+                className={cn("text-xs font-bold tracking-wide underline underline-offset-2", a.muted)}
+              >
+                {t('Βρες Nakamas', 'Find Nakamas')}
+              </button>
+            </div>
           </div>
         ) : (
           <ol className="space-y-0">

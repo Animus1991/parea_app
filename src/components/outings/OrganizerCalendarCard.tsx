@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CalendarPlus, Check, Code2, Copy, Download, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
@@ -15,6 +16,7 @@ import { cn } from '../../lib/utils';
  */
 export function OrganizerCalendarCard({ organizerId, organizerName, className }: { organizerId: string; organizerName: string; className?: string }) {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const followed = useStore((s) => s.followedOrganizerIds.includes(organizerId));
   const toggleFollow = useStore((s) => s.toggleFollowOrganizer);
   const events = useStore((s) => s.events);
@@ -48,7 +50,17 @@ export function OrganizerCalendarCard({ organizerId, organizerName, className }:
           variant={followed ? 'outline' : 'primary'}
           onClick={() => {
             toggleFollow(organizerId);
-            toast.success(followed ? t('Έπαψες να ακολουθείς', 'Unfollowed') : t('Ακολουθείς τον διοργανωτή', 'Following the organizer'));
+            toast.success(
+              followed ? t('Έπαψες να ακολουθείς', 'Unfollowed') : t('Ακολουθείς τον διοργανωτή', 'Following the organizer'),
+              followed
+                ? undefined
+                : {
+                    action: {
+                      label: t('Ημερολόγιο', 'Calendar'),
+                      onClick: () => navigate('/agenda'),
+                    },
+                  },
+            );
           }}
           aria-pressed={followed}
         >

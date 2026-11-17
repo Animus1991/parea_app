@@ -66,8 +66,12 @@ describe('group confirmation', () => {
   it('never revives a cancelled group', () => {
     const { groupId, others } = seedGroup(false);
     useStore.setState({ groups: useStore.getState().groups.map((g) => (g.id === groupId ? { ...g, status: 'cancelled' as const } : g)) });
+    const before = useStore.getState().groups.find((g) => g.id === groupId)!.members.slice();
     useStore.getState().addMemberToGroup(groupId, others[1]);
     useStore.getState().addMemberToGroup(groupId, useStore.getState().currentUser!.id);
-    expect(useStore.getState().groups.find((g) => g.id === groupId)?.status).toBe('cancelled');
+    useStore.getState().joinGroup(groupId);
+    const after = useStore.getState().groups.find((g) => g.id === groupId)!;
+    expect(after.status).toBe('cancelled');
+    expect(after.members).toEqual(before);
   });
 });

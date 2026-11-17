@@ -399,6 +399,13 @@ export default function JoinGroupFlow() {
           <Button variant="outline" className="w-full min-h-11" onClick={() => navigate(`/events/${eventId}`)}>
             {t('Επιστροφή στην εκδήλωση', 'Back to event')}
           </Button>
+          <button
+            type="button"
+            onClick={() => navigate('/inbox')}
+            className="text-xs font-bold text-gray-500 underline underline-offset-2"
+          >
+            {t('Άνοιξε Inbox', 'Open Inbox')}
+          </button>
           {quizOpen && <VibeQuizModal open={quizOpen} onClose={() => setQuizOpen(false)} />}
         </div>
       )}

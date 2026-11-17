@@ -323,6 +323,8 @@ export default function CategoriesPageContent() {
           title={t('Δεν βρέθηκαν αποτελέσματα', 'No categories match your search')}
           actionLabel={t('Καθαρισμός', 'Clear search')}
           onAction={() => setSearchQuery('')}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
         />
       )}
 

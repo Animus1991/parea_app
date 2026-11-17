@@ -50,7 +50,12 @@ export function useEventDetailActions(eventId: string | undefined, event?: Event
         action: { label: t('Αποθηκευμένα', 'Saved'), onClick: () => navigate('/saved') },
       });
     } else {
-      toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'));
+      toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'), {
+        action: {
+          label: t('Αναίρεση', 'Undo'),
+          onClick: () => toggleSavedEvent(eventId),
+        },
+      });
     }
   }, [eventId, savedEvents, toggleSavedEvent, t, navigate]);
 

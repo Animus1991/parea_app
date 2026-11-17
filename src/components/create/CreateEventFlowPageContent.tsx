@@ -159,11 +159,18 @@ export default function CreateEventFlowPageContent() {
         minTrustTierAccess: visibility === "private" ? "2_confirmed" : editEvent.minTrustTierAccess,
         imageUrl: imagePreview || editEvent.imageUrl,
       });
-      toast.success(t("Η εκδήλωση ενημερώθηκε", "Event updated"));
+      toast.success(t("Η εκδήλωση ενημερώθηκε", "Event updated"), {
+        action: {
+          label: t("Προβολή", "View"),
+          onClick: () => navigate(`/events/${editEvent.id}`),
+        },
+      });
       navigate("/manage");
       return;
     }
+    const newEventId = `e${Date.now()}`;
     const newEvent = {
+      id: newEventId,
       title: title || "New Experience",
       category: category || "Social",
       description: description || "A new gathering created from the app.",
@@ -186,12 +193,19 @@ export default function CreateEventFlowPageContent() {
     };
 
     createEvent(newEvent);
+    const hosted = useStore.getState().groups.find(
+      (g) => g.eventId === newEventId && g.hostId === currentUser.id,
+    );
     toast.success(
       t("Η εμπειρία δημοσιεύτηκε!", "Experience published!"),
       {
         description: isPaid
           ? t(`Τιμή εισόδου €${newEvent.price}`, `Entry price €${newEvent.price}`)
           : t("Δωρεάν εκδήλωση", "Free event"),
+        action: {
+          label: hosted ? t("Η βραδιά μας", "Our night") : t("Προβολή", "View"),
+          onClick: () => navigate(hosted ? `/night/${hosted.id}` : `/events/${newEventId}`),
+        },
       },
     );
     navigate("/manage");

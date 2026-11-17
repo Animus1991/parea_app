@@ -47,7 +47,12 @@ export function GroupMergeModal({
 
   const send = () => {
     const id = suggestMerge(fromGroup.id, toGroup.id, mode, message || undefined);
-    toast.success(t('Πρόταση συγχώνευσης εστάλη', 'Merge suggestion sent'));
+    toast.success(t('Πρόταση συγχώνευσης εστάλη', 'Merge suggestion sent'), {
+      action: {
+        label: t('Inbox', 'Inbox'),
+        onClick: () => navigate('/inbox'),
+      },
+    });
     onClose();
     void id;
   };
@@ -55,7 +60,17 @@ export function GroupMergeModal({
   const acceptPending = () => {
     if (!pending) return;
     const groupId = respondMerge(pending.id, true);
-    toast.success(t('Έγινε αποδεκτή η πρόταση', 'Suggestion accepted'));
+    toast.success(t('Έγινε αποδεκτή η πρόταση', 'Suggestion accepted'), {
+      action: groupId
+        ? {
+            label: t('Η βραδιά μας', 'Our night'),
+            onClick: () => navigate(`/night/${groupId}`),
+          }
+        : {
+            label: t('Βρες Nakamas', 'Find Nakamas'),
+            onClick: () => navigate('/buddy-seek'),
+          },
+    });
     onClose();
     if (groupId) navigate(`/night/${groupId}`);
   };

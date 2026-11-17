@@ -628,7 +628,7 @@ export const useStore = create<AppState>()(
       if (!state.currentUser) return state;
       const userId = state.currentUser.id;
       const target = state.groups.find((g) => g.id === groupId);
-      if (!target) return state;
+      if (!target || target.status === 'cancelled') return state;
       // Φ27 — one gate for every way in: capacity (→ waitlist), women & non-binary
       // groups, blocks, and a paused standing for groups of strangers.
       const gate = gateJoinGroup(state.currentUser, target, {
@@ -840,7 +840,8 @@ export const useStore = create<AppState>()(
   addMemberToGroup: (groupId, userId) =>
     set((state) => {
       const target = state.groups.find((g) => g.id === groupId);
-      if (!target || target.members.includes(userId)) return state;
+      // Never grow a cancelled group (tip confirmation rule + roster integrity).
+      if (!target || target.status === 'cancelled' || target.members.includes(userId)) return state;
       let groups = state.groups.map((g) =>
         g.id === groupId ? { ...g, members: [...g.members, userId], waitlist: (g.waitlist ?? []).filter((id) => id !== userId) } : g,
       );

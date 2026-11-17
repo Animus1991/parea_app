@@ -467,7 +467,12 @@ export default function BuddySeekPageContent() {
           mode={previewJoinId ? 'owner_review' : 'send'}
           onSendRequest={() => {
             sendJoin(preview.intent.id);
-            toast.success(t('Αίτημα εστάλη', 'Request sent'));
+            toast.success(t('Αίτημα εστάλη', 'Request sent'), {
+              action: {
+                label: t('Inbox', 'Inbox'),
+                onClick: () => navigate('/inbox'),
+              },
+            });
           }}
           onAccept={() => {
             if (!previewJoinId) return;

@@ -159,7 +159,20 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
     e.stopPropagation();
     if (!currentUser) { navigate('/login'); return; }
     becomeEventHost(event.id);
-    toast.success(t('Έγινες ο διοργανωτής της ομάδας! 🎉', "You're now the group's organizer! 🎉"));
+    const hosted = useStore.getState().groups.find(
+      (g) => g.eventId === event.id && g.hostId === currentUser.id,
+    );
+    toast.success(t('Έγινες ο διοργανωτής της ομάδας!', "You're now the group's organizer!"), {
+      action: hosted
+        ? {
+            label: t('Η βραδιά μας', 'Our night'),
+            onClick: () => navigate(`/night/${hosted.id}`),
+          }
+        : {
+            label: t('Βρες Nakamas', 'Find Nakamas'),
+            onClick: () => navigate('/buddy-seek'),
+          },
+    });
   };
 
   const toggleSave = (e: React.MouseEvent) => {
@@ -171,7 +184,12 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         action: { label: t('Αποθηκευμένα', 'Saved'), onClick: () => navigate('/saved') },
       });
     } else {
-      toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'));
+      toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'), {
+        action: {
+          label: t('Αναίρεση', 'Undo'),
+          onClick: () => toggleSavedEvent(event.id),
+        },
+      });
     }
   };
 

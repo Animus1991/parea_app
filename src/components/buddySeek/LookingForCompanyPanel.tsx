@@ -441,8 +441,14 @@ export function LookingForCompanyPanel({
           mode={preview.mode}
           onSendRequest={() => {
             const id = sendJoin(preview.requestId);
-            if (id) toast.success(t('Αίτημα εστάλη', 'Request sent'));
-            else toast.error(t('Δεν ήταν δυνατή η αποστολή', 'Could not send'));
+            if (id) {
+              toast.success(t('Αίτημα εστάλη', 'Request sent'), {
+                action: {
+                  label: t('Inbox', 'Inbox'),
+                  onClick: () => navigate('/inbox'),
+                },
+              });
+            } else toast.error(t('Δεν ήταν δυνατή η αποστολή', 'Could not send'));
           }}
           onAccept={() => {
             if (!preview.joinId) return;

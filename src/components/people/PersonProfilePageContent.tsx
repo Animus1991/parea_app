@@ -542,9 +542,14 @@ export default function PersonProfilePageContent() {
                 <div className="space-y-2">
                   <p className="text-sm font-medium text-ink-muted">{t('Καμία εκδήλωση ακόμα.', 'No events yet.')}</p>
                   {isSelf && (
-                    <Button size="sm" variant="ghost" onClick={() => navigate('/')}>
-                      {t('Εξερεύνηση', 'Explore')}
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      <Button size="sm" variant="ghost" onClick={() => navigate('/')}>
+                        {t('Εξερεύνηση', 'Explore')}
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => navigate('/buddy-seek')}>
+                        {t('Βρες Nakamas', 'Find Nakamas')}
+                      </Button>
+                    </div>
                   )}
                 </div>
               ) : (
