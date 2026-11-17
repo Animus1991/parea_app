@@ -71,6 +71,14 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
   const totalMembers = eventGroups.reduce((acc, g) => acc + g.members.length, 0);
   const spotsLeftEvent = (event?.maxParticipants || 100) - totalMembers;
+  const myGroupForEvent =
+    currentUser &&
+    groups.find(
+      (g) =>
+        g.eventId === eventId &&
+        g.status !== 'cancelled' &&
+        (g.members.includes(currentUser.id) || g.waitlist?.includes(currentUser.id)),
+    );
 
   if (discountFilter) {
     eventGroups = eventGroups.filter(g => g.discountUnlocked);
@@ -214,7 +222,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             <NakamasGoing eventId={event.id} className="mb-4" />
             <LookingForCompanyPanel event={event} accent={accent} darkSurface={darkSurface} />
 
-            <h3 className="text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
+            <h3 id="groups" className="scroll-mt-28 text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
             <p className="text-2xs text-ink-muted font-medium mb-3 -mt-2">
               {t(
                 'Πολλές ομάδες μπορούν να υπάρχουν παράλληλα· μέγεθος από τον διοργανωτή.',
@@ -227,10 +235,30 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             </div>
 
             <div className="flex flex-col gap-3 mb-4">
-              <Button className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
-                <Users className="w-5 h-5" />
-                {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
-              </Button>
+              {myGroupForEvent ? (
+                <>
+                  <Button
+                    className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2"
+                    size="lg"
+                    onClick={() => navigate(`/night/${myGroupForEvent.id}`)}
+                  >
+                    <Users className="w-5 h-5" />
+                    {t('Η βραδιά μας', 'Our night')}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/events/${eventId}/join`)}
+                    className="text-xs font-bold text-ink underline underline-offset-2"
+                  >
+                    {t('Ή δημιούργησε άλλη ομάδα', 'Or create another group')}
+                  </button>
+                </>
+              ) : (
+                <Button className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
+                  <Users className="w-5 h-5" />
+                  {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
+                </Button>
+              )}
             </div>
 
             {(eventGroups.length > 0 || groupSizeFilter !== 'All' || discountFilter) && (

@@ -622,23 +622,25 @@ export const useStore = create<AppState>()(
       );
       groups = applyGroupDiscount(groups, state.events, groupId);
       // Φ27 — «Η παρέα σου είναι έτοιμη»: the moment the group is complete.
-      const ready = target.status !== 'confirmed' && groups.find((g) => g.id === groupId)?.status === 'confirmed';
-      if (!ready) return { groups };
+      const confirmed = groups.find((g) => g.id === groupId);
+      const ready = target.status !== 'confirmed' && confirmed?.status === 'confirmed';
+      if (!ready || !confirmed) return { groups };
+      const readyRows = confirmed.members.map((memberId) =>
+        normalizeAppNotification({
+          type: 'group',
+          messageGr: 'Η παρέα σου είναι έτοιμη! Σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας στη «Βραδιά μας».',
+          messageEn: 'Your group is ready! Meeting point, group code and door ticket are on «Our night».',
+          timeGr: 'μόλις τώρα',
+          timeEn: 'just now',
+          read: false,
+          groupId,
+          eventId: target.eventId,
+          forUserId: memberId,
+        }),
+      );
       return {
         groups,
-        notifications: [
-          normalizeAppNotification({
-            type: 'group',
-            messageGr: 'Η παρέα σου είναι έτοιμη! Σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας στη «Βραδιά μας».',
-            messageEn: 'Your group is ready! Meeting point, group code and door ticket are on «Our night».',
-            timeGr: 'μόλις τώρα',
-            timeEn: 'just now',
-            read: false,
-            groupId,
-            eventId: target.eventId,
-          }),
-          ...state.notifications,
-        ],
+        notifications: [...readyRows, ...state.notifications],
       };
     }),
 
@@ -698,7 +700,7 @@ export const useStore = create<AppState>()(
         messageGr: string,
         messageEn: string,
         type = 'group',
-        extra: { groupId?: string; eventId?: string; forUserId?: string } = {},
+        extra: { groupId?: string | null; eventId?: string; forUserId?: string } = {},
       ) =>
         notifications.unshift(
           normalizeAppNotification({
@@ -708,7 +710,10 @@ export const useStore = create<AppState>()(
             timeGr: 'μόλις τώρα',
             timeEn: 'just now',
             read: false,
-            groupId: extra.groupId ?? groupId,
+            // Explicit null clears the default so leave-trail does not deep-link a locked night.
+            groupId: Object.prototype.hasOwnProperty.call(extra, 'groupId')
+              ? (extra.groupId ?? undefined)
+              : groupId,
             eventId: extra.eventId ?? group?.eventId,
             forUserId: extra.forUserId,
           }),
@@ -747,12 +752,12 @@ export const useStore = create<AppState>()(
           { groupId, eventId: group?.eventId, forUserId: toUserId },
         );
       } else if (!late && group?.members.includes(uid)) {
-        // Quiet leave (no late strike, no hand-over) still leaves a trail back to plans.
+        // Quiet leave (no late strike, no hand-over) still leaves a trail back to plans — not /night.
         note(
           'Αποχώρησες από την ομάδα. Μπορείς να βρεις άλλη παρέα στα σχέδιά σου ή στο «Βρες Nakamas».',
           'You left the group. You can find another company in My plans or Find Nakamas.',
           'group',
-          { forUserId: uid },
+          { forUserId: uid, groupId: null },
         );
       }
       // Release the commitment hold for an event the member is no longer going to.
@@ -1302,6 +1307,7 @@ export const useStore = create<AppState>()(
       const myId = state.currentUser.id;
       // Only the person who received the request can accept it.
       if (req.toUserId !== myId) return state;
+      const acceptor = state.currentUser;
       const link = <U extends { id: string; connections?: string[] }>(u: U): U => {
         if (u.id === req.fromUserId) return { ...u, connections: addUnique(u.connections, req.toUserId) };
         if (u.id === req.toUserId) return { ...u, connections: addUnique(u.connections, req.fromUserId) };
@@ -1317,6 +1323,18 @@ export const useStore = create<AppState>()(
         ),
         users: state.users.map(link),
         currentUser: link(state.currentUser),
+        notifications: [
+          normalizeAppNotification({
+            type: 'system',
+            messageGr: `Ο/Η ${acceptor.name.split(' ')[0]} αποδέχτηκε τη σύνδεση — δες τον τοίχο των Nakamas σου.`,
+            messageEn: `${acceptor.name.split(' ')[0]} accepted your connection — see your Nakamas wall.`,
+            timeGr: 'μόλις τώρα',
+            timeEn: 'just now',
+            read: false,
+            forUserId: req.fromUserId,
+          }),
+          ...state.notifications,
+        ],
       };
     }),
 
@@ -1476,23 +1494,26 @@ export const useStore = create<AppState>()(
           ...state.joinRequestRateLog,
           { userId: state.currentUser.id, at: new Date().toISOString() },
         ],
-        notifications: [
-          normalizeAppNotification({
-            id: `n_cjr_${Date.now()}`,
-            type: 'buddy_seek',
-            messageEn: event
-              ? `Someone asked to join your plan for "${event.title}"`
-              : 'New join request on your company request',
-            messageGr: event
-              ? `Κάποιος ζήτησε να μπει στο σχέδιό σου για «${event.title}»`
-              : 'Νέο αίτημα σύνδεσης στο αίτημά σας',
-            timeEn: 'Just now',
-            timeGr: 'Μόλις τώρα',
-            icon: Users,
-            color: 'bg-cyan-100 text-cyan-700',
-          }),
-          ...state.notifications,
-        ],
+        notifications: join.targetUserId
+          ? [
+              normalizeAppNotification({
+                id: `n_cjr_${Date.now()}`,
+                type: 'buddy_seek',
+                messageEn: event
+                  ? `Someone asked to join your plan for "${event.title}"`
+                  : 'New join request on your company request',
+                messageGr: event
+                  ? `Κάποιος ζήτησε να μπει στο σχέδιό σου για «${event.title}»`
+                  : 'Νέο αίτημα σύνδεσης στο αίτημά σας',
+                timeEn: 'Just now',
+                timeGr: 'Μόλις τώρα',
+                icon: Users,
+                color: 'bg-cyan-100 text-cyan-700',
+                forUserId: join.targetUserId,
+              }),
+              ...state.notifications,
+            ]
+          : state.notifications,
       };
     });
     return joinId;
@@ -1506,7 +1527,6 @@ export const useStore = create<AppState>()(
       const companyRequest = state.companyRequests.find((r) => r.id === join.companyRequestId);
       if (!companyRequest) return state;
       const event = state.events.find((e) => e.id === companyRequest.eventId);
-      const requester = state.users.find((u) => u.id === join.fromUserId);
       const targetSize = companyRequest.preferredGroupMax ?? event?.groupDiscount?.minSize ?? 5;
       coordinationGroupId = `g_plan_${Date.now()}`;
       const memberIds = [...new Set([join.fromUserId, join.targetUserId!])];
@@ -1542,17 +1562,16 @@ export const useStore = create<AppState>()(
         notifications: [
           normalizeAppNotification({
             id: `n_cjr_ok_${Date.now()}`,
-            type: 'buddy_seek',
-            messageEn: requester
-              ? `Accepted — group chat ready with ${requester.name.split(' ')[0]}`
-              : 'Join request accepted — group chat ready',
-            messageGr: requester
-              ? `Αποδεχτήκατε — έτοιμο group chat με ${requester.name.split(' ')[0]}`
-              : 'Το αίτημα έγινε δεκτό — έτοιμο group chat',
+            type: 'group',
+            messageEn: 'You are in — open «Our night» for the meeting spot and chat.',
+            messageGr: 'Μπήκες — άνοιξε «Η βραδιά μας» για σημείο συνάντησης και chat.',
             timeEn: 'Just now',
             timeGr: 'Μόλις τώρα',
             icon: Users,
             color: 'bg-emerald-100 text-emerald-700',
+            groupId: coordinationGroupId!,
+            eventId: companyRequest.eventId,
+            forUserId: join.fromUserId,
           }),
           ...state.notifications,
         ],
@@ -1607,6 +1626,7 @@ export const useStore = create<AppState>()(
             timeGr: 'Μόλις τώρα',
             icon: Users,
             color: 'bg-rose-100 text-rose-700',
+            forUserId: join.fromUserId,
           }),
           ...state.notifications,
         ],
@@ -1648,6 +1668,7 @@ export const useStore = create<AppState>()(
                 timeGr: 'Μόλις τώρα',
                 icon: Users,
                 color: 'bg-amber-100 text-amber-700',
+                forUserId: targetId,
               }),
               ...state.notifications,
             ]

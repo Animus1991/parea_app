@@ -72,6 +72,7 @@ export function PostCard({
   const me = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
   const events = useStore((s) => s.events);
+  const groups = useStore((s) => s.groups);
   const blockUser = useStore((s) => s.blockUser);
   const access = useWallAccess();
   const {
@@ -97,6 +98,25 @@ export function PostCard({
   const author = users.find((u) => u.id === post.authorId);
   const owner = users.find((u) => u.id === post.wallOwnerId);
   const event = post.eventId ? events.find((e) => e.id === post.eventId) : undefined;
+  const myEventGroup =
+    me && event
+      ? groups.find(
+          (g) =>
+            g.eventId === event.id &&
+            g.status !== 'cancelled' &&
+            (g.members.includes(me.id) || g.waitlist?.includes(me.id)),
+        )
+      : undefined;
+  const authorRecruitingGroup =
+    event && !myEventGroup
+      ? groups.find(
+          (g) =>
+            g.eventId === event.id &&
+            g.status !== 'cancelled' &&
+            g.status !== 'completed' &&
+            (g.hostId === post.authorId || g.members.includes(post.authorId)),
+        )
+      : undefined;
   const isAuthor = !readOnly && me?.id === post.authorId;
   const isOwner = !readOnly && me?.id === post.wallOwnerId;
   const onOtherWall = post.authorId !== post.wallOwnerId;
@@ -402,13 +422,26 @@ export function PostCard({
             <ChevronRight className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />
           </Link>
         )}
-        {event && !readOnly && !isAuthor && event.status !== 'cancelled' && event.status !== 'archived' && (
-          <Link
-            to={`/events/${event.id}/join`}
-            className="mt-2 inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-ink hover:border-border-strong"
-          >
-            <UsersRound className="h-3.5 w-3.5" aria-hidden /> {t(`Μπες στην παρέα με ${author.name}`, `Join ${author.name}'s company`)}
-          </Link>
+        {event && !readOnly && event.status !== 'cancelled' && event.status !== 'archived' && (
+          myEventGroup ? (
+            <Link
+              to={`/night/${myEventGroup.id}`}
+              className="mt-2 inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-ink hover:border-border-strong"
+            >
+              <UsersRound className="h-3.5 w-3.5" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
+            </Link>
+          ) : !isAuthor ? (
+            <Link
+              to={
+                authorRecruitingGroup
+                  ? `/events/${event.id}/join?groupId=${authorRecruitingGroup.id}`
+                  : `/events/${event.id}/join`
+              }
+              className="mt-2 inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-ink hover:border-border-strong"
+            >
+              <UsersRound className="h-3.5 w-3.5" aria-hidden /> {t(`Μπες στην παρέα με ${author.name}`, `Join ${author.name}'s company`)}
+            </Link>
+          ) : null
         )}
 
         {(reactionEntries.length > 0 || comments.length > 0) && (

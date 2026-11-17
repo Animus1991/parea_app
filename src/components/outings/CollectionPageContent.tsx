@@ -109,8 +109,8 @@ export default function CollectionPageContent() {
               navigate('/collections');
             }
           }}
-          secondaryLabel={formingOnly || !showPast ? t('Άλλη συλλογή', 'Another collection') : undefined}
-          onSecondary={formingOnly || !showPast ? () => navigate('/collections') : undefined}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

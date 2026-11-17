@@ -411,9 +411,12 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         ...(accept ? patchPerson(st, strike.userId, (u) => ({ reliabilityScore: clampScore(u.reliabilityScore - strike.reliabilityDelta) })) : {}),
       }));
       get().logAdminAction(accept ? 'appeal_accepted' : 'appeal_rejected', strike.userId, strike.kind);
-      if (strike.userId === admin.id) {
-        notifyMe('safety', accept ? 'Η ένστασή σου έγινε δεκτή.' : 'Η ένστασή σου δεν έγινε δεκτή.', accept ? 'Your appeal was upheld.' : 'Your appeal was not upheld.');
-      }
+      notifyMe(
+        'safety',
+        accept ? 'Η ένστασή σου έγινε δεκτή.' : 'Η ένστασή σου δεν έγινε δεκτή.',
+        accept ? 'Your appeal was upheld.' : 'Your appeal was not upheld.',
+        { forUserId: strike.userId },
+      );
     },
 
     setVibe: (vibe) => {
@@ -503,13 +506,24 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
 
     setPreMeet: (groupId, venueId, minutesBefore = 30) => {
       const s = get();
+      const me = s.currentUser;
       const group = s.groups.find((g) => g.id === groupId);
-      if (!group || !isDoorPerson(group, s.currentUser?.id)) return;
+      if (!group || !isDoorPerson(group, me?.id)) return;
       set((st) => ({
         groups: st.groups.map((g) =>
           g.id === groupId ? { ...g, preMeet: venueId ? { venueId, minutesBefore: Math.min(90, Math.max(15, minutesBefore)) } : undefined } : g,
         ),
       }));
+      if (!venueId || !me) return;
+      for (const uid of group.members) {
+        if (uid === me.id) continue;
+        notifyMe(
+          'group',
+          'Ορίστηκε συνάντηση πριν την έξοδο — δες λεπτομέρειες στη «Βραδιά μας».',
+          'A pre-meet was set — see details on «Our night».',
+          { groupId, eventId: group.eventId, forUserId: uid },
+        );
+      }
     },
 
     reserveGroupTickets: (groupId) => {
@@ -538,12 +552,28 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
     payTicketShare: (groupId) => {
       const me = get().currentUser;
       if (!me) return;
+      const before = get().groups.find((g) => g.id === groupId);
       set((st) => ({
         groups: st.groups.map((g) => {
           if (g.id !== groupId || !g.tickets || g.tickets.status !== 'awaiting_payments' || !(me.id in g.tickets.payments)) return g;
           return { ...g, tickets: settleReservation({ ...g.tickets, payments: { ...g.tickets.payments, [me.id]: 'paid' } }) };
         }),
       }));
+      const after = get().groups.find((g) => g.id === groupId);
+      if (
+        before?.tickets?.status === 'awaiting_payments' &&
+        after?.tickets?.status === 'issued' &&
+        after.members.length
+      ) {
+        for (const uid of after.members) {
+          notifyMe(
+            'group',
+            'Τα εισιτήρια της ομάδας εκδόθηκαν — δες τα στη «Βραδιά μας».',
+            'Group tickets were issued — see them on «Our night».',
+            { groupId, eventId: after.eventId, forUserId: uid },
+          );
+        }
+      }
     },
 
     cancelGroupTickets: (groupId) => {

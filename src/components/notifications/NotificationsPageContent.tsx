@@ -112,9 +112,16 @@ export default function NotificationsPageContent() {
     if (notif.type === 'match' || notif.type === 'reminder') return '/plans';
     if (notif.type === 'message') return '/chats';
     if (notif.type === 'achievement') return '/achievements';
-    if (notif.type === 'buddy_seek') return '/buddy-seek';
+    if (notif.type === 'buddy_seek') return notif.groupId ? `/night/${notif.groupId}` : '/buddy-seek';
     if (notif.type === 'group') return notif.groupId ? `/night/${notif.groupId}` : '/plans';
-    if (notif.type === 'safety' || notif.type === 'system') return '/trust';
+    if (notif.type === 'safety') return '/trust';
+    // Connection-accept and similar system rows → wall; other system → trust.
+    if (notif.type === 'system') {
+      const wallish =
+        /τοίχο|wall|σύνδεση|connection/i.test(notif.messageGr ?? '') ||
+        /wall|connection/i.test(notif.messageEn ?? '');
+      return wallish ? '/wall' : '/trust';
+    }
     if (notif.type === 'feedback') return notif.eventId ? `/history/feedback/${notif.eventId}` : '/history';
     return '/notifications';
   };

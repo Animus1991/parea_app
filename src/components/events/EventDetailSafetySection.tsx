@@ -63,7 +63,7 @@ export function EventDetailSafetySection({
           lng: position.coords.longitude,
         });
         setIsSharingLocation(true);
-        toast.success(t('Η τοποθεσία κοινοποιείται', 'Location sharing enabled'));
+        toast.success(t('Καρφιτσώθηκε η τρέχουσα θέση σου στην ομάδα.', 'Your current pin was shared with the group.'));
       },
       () => {
         toast.error(t('Αδυναμία ανάγνωσης τοποθεσίας', 'Could not read location'));
@@ -109,14 +109,14 @@ export function EventDetailSafetySection({
           </h3>
           <p className={cn('card-copy mt-1 mb-3 text-balance leading-relaxed', tok.muted)}>
             {t(
-              'Προαιρετική, προσωρινή κοινοποίηση στα μέλη της ομάδας (μετά την ένταξη).',
-              'Optional, temporary sharing with group members (after joining).',
+              'Προαιρετικό: μοιράσου μία φορά την τρέχουσα θέση σου με τα μέλη της ομάδας.',
+              'Optional: share your current pin once with group members.',
             )}
           </p>
           <button type="button" onClick={handleToggleLocation} className={isSharingLocation ? tok.primaryBtnStop : tok.primaryBtn}>
             {isSharingLocation
-              ? t('Διακοπή Κοινοποίησης', 'Stop Sharing')
-              : t('Κοινοποίηση Τοποθεσίας', 'Share Location')}
+              ? t('Αφαίρεση καρφίτσας', 'Clear pin')
+              : t('Κοινοποίηση θέσης', 'Share pin')}
           </button>
         </div>
       </div>
