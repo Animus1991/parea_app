@@ -78,10 +78,10 @@ export function useGroupChatMessages(
 
   const resolveName = useCallback(
     (senderId: string) => {
-      if (senderId === 'system') return 'System';
+      if (senderId === 'system') return systemLabel;
       return users.find((u) => u.id === senderId)?.name ?? senderId;
     },
-    [users],
+    [users, systemLabel],
   );
 
   const [localMessages, setLocalMessages] = useState<GroupChatMessage[]>([]);

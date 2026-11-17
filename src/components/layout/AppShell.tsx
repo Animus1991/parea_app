@@ -442,6 +442,9 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
 export function BottomNav() {
   const tok = useThemeStyles();
   const { t } = useLanguage();
+  const { pathname } = useLocation();
+  // Group chat owns the bottom of the screen (composer). Tabs stay one tap back.
+  if (pathname.startsWith('/chat/')) return null;
   return (
     <div className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-soft-up-lg z-bottomnav", tok.bottomNav)}>
       {([
@@ -569,7 +572,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
           <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
           <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none">
-            <div className="mx-auto w-full max-w-full p-4 lg:px-5 lg:py-4 flex-1 pb-safe md:pb-4">
+            <div
+              className={cn(
+                'mx-auto w-full max-w-full flex-1',
+                pathname.startsWith('/chat/')
+                  ? 'p-0 md:p-4 min-h-0 flex flex-col'
+                  : 'p-4 lg:px-5 lg:py-4 pb-safe md:pb-4',
+              )}
+            >
               {maintenanceMode && (
                 <p role="status" className="mb-4 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
                   <Settings className="h-4 w-4 shrink-0" aria-hidden />

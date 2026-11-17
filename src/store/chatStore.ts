@@ -15,6 +15,7 @@ import { DEFAULT_CHAT_PRIVACY } from '../types/chat';
 import { mockConversations, mockChatMessages, mockChatStories } from '../data/mockChatData';
 import { emitChatMessage, joinChatRoom } from '../lib/realtime/socket';
 import { isFirebaseConfigured as isFirebaseChatEnabled } from '../lib/firebaseConfig';
+import { SYS_COORDINATION_UNLOCKED, SYS_DM_UNLOCKED } from '../lib/chatSystemCopy';
 
 export interface ChatReport {
   id: string;
@@ -484,6 +485,13 @@ export const useChatStore = create<ChatState>()(
       }) => {
         const existing = get().conversations.find((c) => c.groupId === groupId);
         if (existing) {
+          if (meetingPoint && existing.meetingPoint !== meetingPoint) {
+            set((s) => ({
+              conversations: s.conversations.map((c) =>
+                c.id === existing.id ? { ...c, meetingPoint } : c,
+              ),
+            }));
+          }
           if (openWindow) get().openConversation(existing.id);
           return existing.id;
         }
@@ -514,7 +522,7 @@ export const useChatStore = create<ChatState>()(
           senderId: 'system',
           senderType: 'system',
           type: 'system',
-          body: 'Coordination chat unlocked after mutual accept.',
+          body: SYS_COORDINATION_UNLOCKED,
           createdAt: now,
         };
 
@@ -572,7 +580,7 @@ export const useChatStore = create<ChatState>()(
           senderId: 'system',
           senderType: 'system',
           type: 'system',
-          body: 'Direct message unlocked between connections.',
+          body: SYS_DM_UNLOCKED,
           createdAt: now,
         };
 

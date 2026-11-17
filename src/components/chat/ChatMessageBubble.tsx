@@ -16,6 +16,7 @@ import type { ChatMessage } from '../../types/chat';
 import { QUICK_REACTIONS } from '../../lib/chatMediaCatalog';
 import { cn } from '../../lib/utils';
 import { CHAT_TYPO } from '../../lib/typographyTokens';
+import { localizeSystemBody } from '../../lib/chatSystemCopy';
 
 /** Render message text with highlighted @mentions and clickable #tags. */
 function RichBodyText({
@@ -223,7 +224,7 @@ export function ChatMessageBubble({
       <div className="flex justify-center my-1.5 px-2" data-message-id={message.id}>
         <div className={cn('bg-ink/5 text-ink-muted rounded-full px-3 py-1 text-center max-w-[90%]', CHAT_TYPO.systemBubble)}>
           {message.pinned && <Pin className="w-2.5 h-2.5 inline mr-1 opacity-70" aria-hidden />}
-          {message.body}
+          {localizeSystemBody(message.body, t)}
         </div>
       </div>
     );

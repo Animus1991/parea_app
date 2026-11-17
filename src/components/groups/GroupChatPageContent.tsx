@@ -38,6 +38,10 @@ import { ChatStoriesStrip } from "../chat/ChatStoriesStrip";
 import { ChatCallModal } from "../chat/ChatCallModal";
 import { LiveEventTracker } from "./LiveEventTracker";
 import { ChatIcebreakers } from "./ChatIcebreakers";
+import { MeetingPointPanel } from "../chat/MeetingPointPanel";
+import { QuickReplies } from "../chat/QuickReplies";
+import { GroupChatThreadStarter } from "./GroupChatThreadStarter";
+import { localizeSystemBody } from "../../lib/chatSystemCopy";
 import { Modal } from "../common/Modal";
 import { Button } from "../common/Button";
 import { EmptyState } from "../common/EmptyState";
@@ -49,7 +53,7 @@ import { canModerateGroup } from "../../lib/roles";
 import { intlLocale } from '../../lib/dateLocale';
 
 /** Room under the newest message so the floating chats button (desktop) never covers it. */
-const VIRTUOSO_COMPONENTS = { Footer: () => <div aria-hidden className="h-2 md:h-14" /> };
+const VIRTUOSO_SPACER = { Footer: () => <div aria-hidden className="h-2 md:h-14" /> };
 
 export default function GroupChatPageContent() {
   const { t, language } = useLanguage();
@@ -86,40 +90,19 @@ export default function GroupChatPageContent() {
 
   const buildSeedMessages = (): GroupChatMessage[] => {
     if (!currentUser) return [];
-    const msgs: GroupChatMessage[] = Array.from({ length: 50 }).map((_, i) => ({
-      id: `m${i}`,
-      senderId: i % 2 === 0 ? "u2" : i % 3 === 0 ? "u3" : currentUser.id,
-      senderName:
-        i % 2 === 0 ? "Maria" : i % 3 === 0 ? "Nikos" : currentUser.name,
-      text: t(
-        `Μήνυμα ${i} από προηγούμενες συνομιλίες. ${i % 5 === 0 ? "Ανυπομονώ!" : ""}`,
-        `Test message ${i} from previous conversations. ${i % 5 === 0 ? "Looking forward to it!" : ""}`,
-      ),
-      timestamp: new Date(Date.now() - (50 - i) * 60000).toISOString(),
-    }));
-    msgs.push(
+    return [
       {
         id: "system1",
         senderId: "system",
         senderName: t("Σύστημα", "System"),
         text: t(
-          "Η ομάδα επιβεβαιώθηκε! Πείτε γεια στα νέα σας Nakamas. Οι λεπτομέρειες συνάντησης είναι διαθέσιμες στο πάνελ πληροφοριών.",
-          "Group confirmed! Say hi to your new Nakamas. Meeting details are available in the info panel.",
+          "Η ομάδα επιβεβαιώθηκε. Πείτε γεια στα Nakamas σας και συμφωνήστε πού θα συναντηθείτε.",
+          "Your group is confirmed. Say hi to your Nakamas and agree where to meet.",
         ),
-        timestamp: new Date(Date.now() - 86400000).toISOString(),
+        timestamp: new Date().toISOString(),
+        type: "system",
       },
-      {
-        id: "msg-maria",
-        senderId: "u2",
-        senderName: "Maria",
-        text: t(
-          "Γεια σε όλους! Είμαι ενθουσιασμένη γι' αυτό!",
-          "Hey everyone! Excited for this.",
-        ),
-        timestamp: new Date(Date.now() - 3600000).toISOString(),
-      },
-    );
-    return msgs;
+    ];
   };
 
   const { messages, setMessages, conversationId } = useGroupChatMessages(
@@ -195,8 +178,22 @@ export default function GroupChatPageContent() {
     toast.success(t("Το μήνυμα διαγράφηκε", "Message deleted"));
   };
 
+  const displayMessages = useMemo(
+    () =>
+      messages.map((m) =>
+        m.senderId === "system" || m.type === "system"
+          ? {
+              ...m,
+              senderName: t("Σύστημα", "System"),
+              text: localizeSystemBody(m.text, t),
+            }
+          : m,
+      ),
+    [messages, t],
+  );
+
   const filteredMessages = useMemo(() => {
-    return messages
+    return displayMessages
       .filter((m) => senderFilter === "all" || m.senderId === senderFilter)
       .filter((m) =>
         !tagFilter ||
@@ -204,7 +201,9 @@ export default function GroupChatPageContent() {
         m.text.toLowerCase().includes(`#${tagFilter}`),
       )
       .filter((m) => m.text.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [messages, senderFilter, tagFilter, searchQuery]);
+  }, [displayMessages, senderFilter, tagFilter, searchQuery]);
+
+  const hasUserMessage = displayMessages.some((m) => m.senderId !== "system");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -290,7 +289,7 @@ export default function GroupChatPageContent() {
           key={msg.id}
           className="text-center my-6 flex justify-center w-full px-4"
         >
-          <span className="text-xs font-semibold tracking-tight capitalize text-ink bg-[#F3F4F6] dark:bg-white/10 px-4 py-2 rounded-full shadow-soft max-w-sm text-center leading-relaxed">
+          <span className="text-xs font-medium tracking-tight text-ink bg-[#F3F4F6] dark:bg-white/10 px-4 py-2 rounded-full shadow-soft max-w-sm text-center leading-relaxed">
             {msg.text}
           </span>
         </div>
@@ -355,15 +354,15 @@ export default function GroupChatPageContent() {
   };
 
   return (
-    <div className={cn(PAGE_FILL, "h-full px-[5px] md:px-0")}>
-      <div className="w-full h-full min-h-[420px] flex bg-white dark:bg-surface-raised border border-gray-100 dark:border-border rounded-2xl shadow-soft overflow-hidden relative">
+    <div className={cn(PAGE_FILL, "h-full flex-1 min-h-[calc(100dvh-var(--header-h))] md:min-h-[420px]")}>
+      <div className="w-full h-full min-h-0 md:min-h-[420px] flex bg-white dark:bg-surface-raised border-0 md:border border-gray-100 dark:border-border rounded-none md:rounded-2xl shadow-none md:shadow-soft overflow-hidden relative">
         <div
           className={`flex flex-col flex-1 h-full min-w-0 ${showInfo ? "hidden md:flex border-r border-gray-200 dark:border-border" : "flex"}`}
         >
-          {/* Header */}
-          <div className="flex items-center justify-between px-3 md:px-5 py-3 border-b border-gray-200 dark:border-border bg-white dark:bg-surface-raised shrink-0 relative z-20">
+          {/* Header: title row + tools row so the event name stays readable on a phone. */}
+          <div className="flex flex-col shrink-0 border-b border-gray-200 dark:border-border bg-white dark:bg-surface-raised relative z-20">
             {showSearchMobile ? (
-              <div className="flex items-center gap-2 w-full animate-in fade-in slide-in-from-right-4 duration-200">
+              <div className="flex items-center gap-2 w-full px-3 py-2.5 animate-in fade-in slide-in-from-right-4 duration-200">
                 <button
                   onClick={() => {
                     setShowSearchMobile(false);
@@ -395,7 +394,7 @@ export default function GroupChatPageContent() {
               </div>
             ) : (
               <>
-                <div className="flex items-center gap-3 overflow-hidden">
+                <div className="flex items-center gap-2 px-3 md:px-5 py-2.5">
                   <button
                     onClick={() => navigate(-1)}
                     className="text-gray-400 hover:text-ink transition-colors p-1 shrink-0"
@@ -403,20 +402,38 @@ export default function GroupChatPageContent() {
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </button>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-ink truncate">
                       {event.title}
                     </h1>
-                    <p className="text-xs md:text-xs text-gray-500 tracking-wide font-bold truncate flex items-center gap-1.5 mt-0.5">
-                      <Users className="h-3 w-3 shrink-0" />{" "}
-                      {group.members.length} {t("Μέλη", "Members")}
+                    <p className="text-xs text-gray-500 tracking-wide font-medium truncate flex items-center gap-1.5 mt-0.5">
+                      <Users className="h-3 w-3 shrink-0" aria-hidden />
+                      <span>
+                        {group.members.length} {t("μέλη", "members")}
+                      </span>
+                      <span aria-hidden>·</span>
+                      <Calendar className="h-3 w-3 shrink-0" aria-hidden />
+                      <span>
+                        {new Date(event.date).toLocaleDateString(intlLocale(language), {
+                          weekday: "short",
+                          day: "numeric",
+                          month: "short",
+                        })}{" "}
+                        {event.time}
+                      </span>
                     </p>
                   </div>
+                  <button
+                    onClick={() => setShowInfo(!showInfo)}
+                    className={cn("transition-colors p-2 rounded-full min-h-11 min-w-11 shrink-0", showInfo ? gc.infoActive : "text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10")}
+                    aria-label={showInfo ? t('Απόκρυψη πληροφοριών', 'Hide info panel') : t('Εμφάνιση πληροφοριών', 'Show info panel')}
+                  >
+                    <Info className="h-5 w-5" />
+                  </button>
                 </div>
 
-                <div className="flex items-center justify-end gap-1 sm:gap-2 shrink-0">
-                  {/* Desktop Search & Filter */}
-                  <div className="hidden md:flex items-center gap-3 mr-2">
+                <div className="flex items-center gap-0.5 px-2 pb-2 overflow-x-auto noscrollbar">
+                  <div className="hidden md:flex items-center gap-3 mr-2 shrink-0">
                     <select aria-label={t("Φίλτρο αποστολέα", "Sender filter")}
                       value={senderFilter}
                       onChange={(e) => setSenderFilter(e.target.value)}
@@ -443,13 +460,12 @@ export default function GroupChatPageContent() {
                     </div>
                   </div>
 
-                  {/* Voice / Video / Stories */}
                   <button
                     type="button"
                     onClick={() => setCallMode('audio')}
                     aria-label={t('Φωνητική κλήση', 'Voice call')}
                     title={t('Φωνητική κλήση', 'Voice call')}
-                    className="p-2 rounded-full text-gray-400 hover:text-brand hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+                    className="p-2 rounded-full text-gray-400 hover:text-brand hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shrink-0"
                   >
                     <Phone className="h-4 w-4" />
                   </button>
@@ -458,7 +474,7 @@ export default function GroupChatPageContent() {
                     onClick={() => setCallMode('video')}
                     aria-label={t('Βιντεοκλήση', 'Video call')}
                     title={t('Βιντεοκλήση', 'Video call')}
-                    className="p-2 rounded-full text-gray-400 hover:text-brand hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+                    className="p-2 rounded-full text-gray-400 hover:text-brand hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shrink-0"
                   >
                     <Video className="h-4 w-4" />
                   </button>
@@ -468,17 +484,16 @@ export default function GroupChatPageContent() {
                     aria-label={t('Stories', 'Stories')}
                     title={t('Stories Nakamas', 'Nakamas Stories')}
                     className={cn(
-                      'p-2 rounded-full transition-colors',
+                      'p-2 rounded-full transition-colors shrink-0',
                       showStories ? 'bg-brand-soft text-brand' : 'text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10',
                     )}
                   >
                     <Sparkles className="h-4 w-4" />
                   </button>
 
-                  {/* Mobile Search Toggle */}
                   <button
                     onClick={() => setShowSearchMobile(true)}
-                    className="text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors p-2 md:hidden"
+                    className="text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors p-2 md:hidden shrink-0"
                     aria-label={t('Αναζήτηση', 'Search')}
                   >
                     <Search className="h-5 w-5" />
@@ -491,15 +506,6 @@ export default function GroupChatPageContent() {
                       onSuggest={(text) => setNewMessage(text)}
                     />
                   )}
-
-                  {/* Info Toggle */}
-                  <button
-                    onClick={() => setShowInfo(!showInfo)}
-                    className={cn("transition-colors p-2 rounded-full min-h-11 min-w-11", showInfo ? gc.infoActive : "text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10")}
-                    aria-label={showInfo ? t('Απόκρυψη πληροφοριών', 'Hide info panel') : t('Εμφάνιση πληροφοριών', 'Show info panel')}
-                  >
-                    <Info className="h-5 w-5" />
-                  </button>
                 </div>
               </>
             )}
@@ -553,8 +559,17 @@ export default function GroupChatPageContent() {
             </div>
           )}
 
+          <div className="max-w-xl">
+            <MeetingPointPanel
+              conversationId={conversationId ?? `conv_${group.id}`}
+              venue={event.exactLocation || event.locationArea}
+              meetingPoint={group.meetingPoint}
+              locked={group.status !== "confirmed" && group.status !== "completed"}
+            />
+          </div>
+
           {/* Messages Virtualized */}
-          <div className="flex-1 min-h-0 bg-[#F9FAFB] dark:bg-surface relative shadow-inner">
+          <div className="flex-1 min-h-0 bg-[#F9FAFB] dark:bg-surface relative shadow-inner flex flex-col">
             {isSharingLocation && (
               <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
                 <button
@@ -573,14 +588,26 @@ export default function GroupChatPageContent() {
               ref={virtuosoRef}
               data={filteredMessages}
               itemContent={renderMessage}
-              className="h-full w-full custom-scrollbar"
+              className="h-full w-full min-h-0 custom-scrollbar flex-1"
               alignToBottom={true}
-              components={VIRTUOSO_COMPONENTS}
+              components={VIRTUOSO_SPACER}
             />
+            {!hasUserMessage && (
+              <GroupChatThreadStarter
+                eventTitle={event.title}
+                whenLabel={`${new Date(event.date).toLocaleDateString(intlLocale(language), {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                })} · ${event.time}`}
+                whereLabel={event.exactLocation || event.locationArea}
+                onPick={setNewMessage}
+              />
+            )}
           </div>
 
           {/* Safety bar + Rich SOTA Composer */}
-          <div className="border-t border-gray-200 dark:border-border bg-white dark:bg-surface-raised shrink-0 relative z-20">
+          <div className="border-t border-gray-200 dark:border-border bg-white dark:bg-surface-raised shrink-0 relative z-20 pb-[env(safe-area-inset-bottom,0px)]">
             <div className="flex items-center gap-2 px-3 pt-2">
               <button
                 type="button"
@@ -615,6 +642,20 @@ export default function GroupChatPageContent() {
                 {t('Εργαλεία ασφάλειας · Emojis · GIF · Φωνητικό · Δημοσκόπηση', 'Safety tools · Emojis · GIF · Voice · Poll')}
               </span>
             </div>
+            <QuickReplies
+              onSelect={(q) => {
+                if (!currentUser) return;
+                const convId = conversationId ?? `conv_${group.id}`;
+                sendRichMessage({
+                  conversationId: convId,
+                  senderId: currentUser.id,
+                  body: q,
+                  replyTo: replyTo ?? undefined,
+                });
+                setReplyTo(null);
+                scrollToBottom();
+              }}
+            />
             <ChatComposerTools
               value={newMessage}
               onChange={setNewMessage}
