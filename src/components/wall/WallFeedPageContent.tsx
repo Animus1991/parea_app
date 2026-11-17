@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Eye, Newspaper, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowLeft, Eye, Newspaper, ShieldCheck, Sparkles, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
@@ -38,6 +38,22 @@ export default function WallFeedPageContent() {
   const composerRef = useRef<HTMLDivElement>(null);
   const myId = me?.id ?? null;
   const [searchParams, setSearchParams] = useSearchParams();
+  // The audience explainer isone-time schooling: once understood, it leaves.
+  const [audienceHintDismissed, setAudienceHintDismissed] = useState(() => {
+    try {
+      return localStorage.getItem('nakamas.wallAudienceHintDismissed') === '1';
+    } catch {
+      return false;
+    }
+  });
+  const dismissAudienceHint = () => {
+    setAudienceHintDismissed(true);
+    try {
+      localStorage.setItem('nakamas.wallAudienceHintDismissed', '1');
+    } catch {
+      /* private mode: it returns next visit */
+    }
+  };
   const focusId = searchParams.get('post');
   const focusPost = useMemo(() => {
     const p = focusId ? posts.find((x) => x.id === focusId) : undefined;
@@ -147,29 +163,42 @@ export default function WallFeedPageContent() {
         </div>
       )}
 
-      <WallActivityPanel />
-
-      <button
-        type="button"
-        onClick={() => navigate('/profile?tab=privacy')}
-        className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface-raised px-4 py-3 text-left transition-colors hover:border-border-strong"
-      >
-        <ShieldCheck className="h-5 w-5 shrink-0 text-ink" aria-hidden />
-        <span className="min-w-0 flex-1">
-          <span className="block text-sm font-bold text-ink">{t('Εσύ ελέγχεις το κοινό σου', 'You control your audience')}</span>
-          <span className="block text-xs font-medium text-ink-muted">
-            {t(
-              'Ανά δημοσίευση · ενότητες μόνο αν το προφίλ είναι ορατό σε εκείνους.',
-              'Per post · sections only if the profile is visible to them.',
-            )}
-          </span>
-        </span>
-        <span className="shrink-0 text-xs font-bold text-ink underline">{t('Ρυθμίσεις', 'Settings')}</span>
-      </button>
-
       <div ref={composerRef}>
         <PostComposer />
       </div>
+
+      <WallActivityPanel />
+
+      {!audienceHintDismissed && (
+        <div className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface-raised px-4 py-3">
+          <ShieldCheck className="h-5 w-5 shrink-0 text-ink" aria-hidden />
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-bold text-ink">{t('Εσύ ελέγχεις το κοινό σου', 'You control your audience')}</span>
+            <span className="block text-xs font-medium text-ink-muted">
+              {t(
+                'Ανά δημοσίευση · ενότητες μόνο αν το προφίλ είναι ορατό σε εκείνους.',
+                'Per post · sections only if the profile is visible to them.',
+              )}
+            </span>
+          </span>
+          <button
+            type="button"
+            onClick={() => navigate('/profile?tab=privacy')}
+            className="shrink-0 text-xs font-bold text-ink underline underline-offset-2"
+          >
+            {t('Ρυθμίσεις', 'Settings')}
+          </button>
+          <button
+            type="button"
+            onClick={dismissAudienceHint}
+            aria-label={t('Το κατάλαβα, απόκρυψη', 'Got it, dismiss')}
+            title={t('Το κατάλαβα', 'Got it')}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface hover:text-ink"
+          >
+            <X className="h-3.5 w-3.5" aria-hidden />
+          </button>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('Φίλτρο ροής', 'Feed filter')}>
         {filters.map((f) => (
