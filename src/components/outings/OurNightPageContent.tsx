@@ -233,7 +233,9 @@ export default function OurNightPageContent() {
         </div>
         {firstReady && revealed && (
           <p className="mt-3 text-sm font-semibold">
-            {t('Όλα είναι έτοιμα: σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας είναι παρακάτω.', 'All set: the meeting point, group code and door ticket are below.')}
+            {group.discountUnlocked && group.code
+              ? t('Όλα είναι έτοιμα: σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας είναι παρακάτω.', 'All set: the meeting point, group code and door ticket are below.')
+              : t('Όλα είναι έτοιμα: σημείο συνάντησης και εισιτήριο πόρτας είναι παρακάτω.', 'All set: the meeting point and door ticket are below.')}
           </p>
         )}
         {revealed && (

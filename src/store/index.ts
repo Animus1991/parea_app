@@ -399,6 +399,12 @@ function demoSeedData() {
   };
 }
 
+/**
+ * After a member joins: a full group is confirmed, and an event with a group
+ * discount unlocks it (with its code) once enough people are in. The two are
+ * independent: most events have no discount, and their full groups must still
+ * become ready (Our night reveals the meeting point and door ticket then).
+ */
 function applyGroupDiscount(
   groups: typeof mockGroups,
   events: Event[],
@@ -407,10 +413,26 @@ function applyGroupDiscount(
   return groups.map((g) => {
     if (g.id !== groupId) return g;
     const event = events.find((e) => e.id === g.eventId);
-    if (!event || !shouldUnlockGroupDiscount(g, event)) return g;
+    const unlock = Boolean(event && shouldUnlockGroupDiscount(g, event));
+    const fill = g.status === 'pending' && g.members.length >= g.targetSize;
+    if (!unlock && !fill) return g;
+    const next = { ...g, ...(unlock ? { discountUnlocked: true } : {}), ...(fill ? { status: 'confirmed' as const } : {}) };
     // Φ27 — the unlocked discount comes with a code the whole group sees.
-    return withGroupCode({ ...g, discountUnlocked: true, status: g.members.length >= g.targetSize ? 'confirmed' as const : g.status });
+    return withGroupCode(next);
   });
+}
+
+/** «Your group is ready» copy: the group code is promised only when one exists. */
+function readyMessage(group: { discountUnlocked?: boolean } | undefined): { messageGr: string; messageEn: string } {
+  return group?.discountUnlocked
+    ? {
+        messageGr: 'Η παρέα σου είναι έτοιμη! Σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας στη «Βραδιά μας».',
+        messageEn: 'Your group is ready! Meeting point, group code and door ticket are on «Our night».',
+      }
+    : {
+        messageGr: 'Η παρέα σου είναι έτοιμη! Σημείο συνάντησης και εισιτήριο πόρτας στη «Βραδιά μας».',
+        messageEn: 'Your group is ready! Meeting point and door ticket are on «Our night».',
+      };
 }
 
 export const useStore = create<AppState>()(
@@ -649,8 +671,7 @@ export const useStore = create<AppState>()(
       const readyRows = confirmed.members.map((memberId) =>
         normalizeAppNotification({
           type: 'group',
-          messageGr: 'Η παρέα σου είναι έτοιμη! Σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας στη «Βραδιά μας».',
-          messageEn: 'Your group is ready! Meeting point, group code and door ticket are on «Our night».',
+          ...readyMessage(confirmed),
           timeGr: 'μόλις τώρα',
           timeEn: 'just now',
           read: false,
@@ -857,8 +878,7 @@ export const useStore = create<AppState>()(
           ? after.members.map((memberId) =>
               normalizeAppNotification({
                 type: 'group',
-                messageGr: 'Η παρέα σου είναι έτοιμη! Σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας στη «Βραδιά μας».',
-                messageEn: 'Your group is ready! Meeting point, group code and door ticket are on «Our night».',
+                ...readyMessage(after),
                 timeGr: 'μόλις τώρα',
                 timeEn: 'just now',
                 read: false,
