@@ -32,14 +32,14 @@ export function StandingCard({ className }: { className?: string }) {
       <h2 id="standing-title" className="flex items-center gap-2 text-sm font-bold text-ink">
         <Icon className="h-4 w-4" aria-hidden /> {t('Η κατάστασή σου', 'Your standing')}
       </h2>
-      <p className="mt-1 text-sm font-bold text-ink" data-testid="standing-level">
+      <p className="mt-1.5 card-prose font-bold text-ink" data-testid="standing-level">
         {t(standing.titleEl, standing.titleEn)}
       </p>
-      <p className="mt-0.5 text-xs font-medium text-ink-muted">{t(standing.explainEl, standing.explainEn)}</p>
+      <p className="mt-0.5 card-prose font-medium leading-relaxed text-ink-muted">{t(standing.explainEl, standing.explainEn)}</p>
 
-      <details className="mt-2 text-xs font-medium text-ink">
-        <summary className="min-h-9 cursor-pointer font-bold">{t('Πώς λειτουργεί', 'How it works')}</summary>
-        <ol className="mt-1 list-decimal space-y-1 pl-5 text-ink-muted">
+      <details className="mt-2 card-prose font-medium text-ink">
+        <summary className="min-h-8 cursor-pointer font-bold">{t('Πώς λειτουργεί', 'How it works')}</summary>
+        <ol className="mt-1 list-decimal space-y-1 pl-5 card-prose text-ink-muted leading-relaxed">
           <li>{t('1η απουσία ή αργή ακύρωση: προειδοποίηση.', '1st absence or late cancel: a warning.')}</li>
           <li>{t('2η: παύση 7 ημερών για ομάδες με αγνώστους (με φίλους μπορείς), μετά τελευταία προειδοποίηση.', '2nd: a 7-day pause for groups of strangers (with friends you still can), then a final warning.')}</li>
           <li>{t('3η: έλεγχος από την ομάδα ασφάλειας.', '3rd: a review by the safety team.')}</li>

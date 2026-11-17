@@ -417,6 +417,11 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   font-size: var(--text-xs); /* equals subtitle max; never above titles */
   line-height: var(--text-xs--line-height);
 }
+/* Readable card prose/lists under 12px card titles (11.04px, > 10px micro/buttons) */
+.card-prose {
+  font-size: calc(var(--text-sm) * 0.92); /* ~11px */
+  line-height: var(--text-sm--line-height);
+}
 .card-copy-micro {
   font-size: calc(var(--text-2xs) * 1.1); /* ~9.9px */
   line-height: var(--text-2xs--line-height);
