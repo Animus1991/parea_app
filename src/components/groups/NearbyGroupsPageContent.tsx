@@ -724,6 +724,8 @@ export default function NearbyGroupsPageContent() {
                     ? () => setRadius(25)
                     : () => navigate('/')
               }
+              secondaryLabel={radius >= 25 ? t('Βρες Nakamas', 'Find Nakamas') : undefined}
+              onSecondary={radius >= 25 ? () => navigate('/buddy-seek') : undefined}
             />
           ) : (
             filteredLocalGroups.map((group) => (

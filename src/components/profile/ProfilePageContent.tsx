@@ -507,9 +507,18 @@ export default function ProfilePageContent() {
             )}
             <PostComposer />
             {myWallPosts.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-border px-4 py-6 text-center text-sm font-medium text-ink-muted">
-                {t("Ο τοίχος σου είναι άδειος — γράψε τι σχεδιάζεις.", "Your wall is empty — share what you are planning.")}
-              </p>
+              <div className="rounded-2xl border border-dashed border-border px-4 py-6 text-center space-y-2">
+                <p className="text-sm font-medium text-ink-muted">
+                  {t("Ο τοίχος σου είναι άδειος — γράψε τι σχεδιάζεις.", "Your wall is empty — share what you are planning.")}
+                </p>
+                <button
+                  type="button"
+                  className="text-xs font-bold text-ink underline underline-offset-2"
+                  onClick={() => navigate('/wall')}
+                >
+                  {t('Άνοιξε τον τοίχο', 'Open the wall')}
+                </button>
+              </div>
             ) : (
               <WallPostList posts={myWallPosts} />
             )}

@@ -20,6 +20,7 @@ export function HomeNextBestAction() {
   const notifications = rawNotifications.filter((n) => !n.forUserId || n.forUserId === user?.id);
   const savedEvents = useStore((s) => s.savedEvents);
   const lastResumePath = useStore((s) => s.lastResumePath);
+  const groups = useStore((s) => s.groups);
   const conversations = useChatStore((s) => s.conversations);
   const { plannedEvents } = usePlannedEvents();
 
@@ -29,6 +30,21 @@ export function HomeNextBestAction() {
   );
 
   const action = useMemo(() => {
+    // Skip resume paths that would soft-lock a non-member «Our night».
+    const nightMatch = lastResumePath?.match(/^\/night\/([^/?#]+)/);
+    const nightGroup = nightMatch ? groups.find((g) => g.id === nightMatch[1]) : undefined;
+    const resumeOk =
+      lastResumePath &&
+      lastResumePath !== '/' &&
+      !(
+        nightMatch &&
+        (!nightGroup ||
+          (user?.id &&
+            !nightGroup.members.includes(user.id) &&
+            !(nightGroup.waitlist ?? []).includes(user.id)))
+      )
+        ? lastResumePath
+        : null;
     const list = getNextBestActions({
       user,
       onboardingCompleted,
@@ -38,11 +54,11 @@ export function HomeNextBestAction() {
       savedEventsCount: savedEvents.length,
       profileInterestsCount: user?.interests?.length ?? 0,
       hasBio: Boolean(user?.bio?.trim()),
-      lastResumePath,
+      lastResumePath: resumeOk,
     });
     // Prefer a concrete next step over resume when both exist (resume has its own strip).
     return list.find((a) => a.id !== 'resume-last') ?? list[0] ?? null;
-  }, [user, onboardingCompleted, notifications, unreadChats, plannedEvents.length, savedEvents.length, lastResumePath]);
+  }, [user, onboardingCompleted, notifications, unreadChats, plannedEvents.length, savedEvents.length, lastResumePath, groups]);
 
   if (!action || !user) return null;
 

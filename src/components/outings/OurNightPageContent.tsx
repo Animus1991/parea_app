@@ -120,8 +120,8 @@ export default function OurNightPageContent() {
           description={t('Ίσως διαγράφηκε ή ο σύνδεσμος είναι λάθος.', 'It may have been removed, or the link is wrong.')}
           actionLabel={t('Τα σχέδιά μου', 'My plans')}
           onAction={() => navigate('/plans')}
-          secondaryLabel={t('Εξερεύνηση', 'Explore')}
-          onSecondary={() => navigate('/')}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
         />
       </div>
     );

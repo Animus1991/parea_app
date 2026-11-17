@@ -341,6 +341,16 @@ export default function NotificationsPageContent() {
               ? () => setActiveTab('all')
               : () => navigate('/')
           }
+          secondaryLabel={
+            activeTab !== 'all' && notifications.length > 0
+              ? undefined
+              : t('Βρες Nakamas', 'Find Nakamas')
+          }
+          onSecondary={
+            activeTab !== 'all' && notifications.length > 0
+              ? undefined
+              : () => navigate('/buddy-seek')
+          }
           askAi
           askPrompt={t('Τι νέο υπάρχει στις ειδοποιήσεις;', 'Summarise my notifications')}
         />

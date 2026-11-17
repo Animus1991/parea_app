@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CreditCard, Euro, ArrowUpRight, ArrowDownRight, Clock, Building2, CheckCircle2 } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
@@ -16,6 +17,7 @@ import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 
 export default function WalletPageContent() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const a = usePageContrast();
   const [txFilter, setTxFilter] = useState<'all' | 'month' | 'last'>('all');
   const [showWithdraw, setShowWithdraw] = useState(false);
@@ -115,8 +117,10 @@ export default function WalletPageContent() {
                   'Δεν υπάρχουν συναλλαγές για αυτό το φίλτρο.',
                   'No transactions match this filter.',
                 )}
-                actionLabel={t('Όλες', 'All Time')}
-                onAction={() => setTxFilter('all')}
+                actionLabel={txFilter === 'all' ? t('Εξερεύνηση', 'Explore') : t('Όλες', 'All Time')}
+                onAction={txFilter === 'all' ? () => navigate('/') : () => setTxFilter('all')}
+                secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+                onSecondary={() => navigate('/buddy-seek')}
                 askAi
                 askPrompt={t('Σύνοψη πορτοφολιού', 'Summarise my wallet')}
               />

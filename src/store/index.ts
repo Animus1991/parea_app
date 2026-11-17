@@ -818,13 +818,60 @@ export const useStore = create<AppState>()(
 
   addMemberToGroup: (groupId, userId) =>
     set((state) => {
+      const target = state.groups.find((g) => g.id === groupId);
+      if (!target || target.members.includes(userId)) return state;
       let groups = state.groups.map((g) =>
-        g.id === groupId && !g.members.includes(userId)
-          ? { ...g, members: [...g.members, userId] }
-          : g,
+        g.id === groupId ? { ...g, members: [...g.members, userId], waitlist: (g.waitlist ?? []).filter((id) => id !== userId) } : g,
       );
       groups = applyGroupDiscount(groups, state.events, groupId);
-      return { groups };
+      const after = groups.find((g) => g.id === groupId);
+      const ready = target.status !== 'confirmed' && after?.status === 'confirmed';
+      const joiner = state.users.find((u) => u.id === userId);
+      const joinerName = joiner?.name.split(' ')[0] || 'Nakamas';
+      const peerRows = target.members.map((memberId) =>
+        normalizeAppNotification({
+          type: 'group',
+          messageGr: `Ο/Η ${joinerName} μπήκε στην παρέα — άνοιξε «Η βραδιά μας».`,
+          messageEn: `${joinerName} joined the group — open «Our night».`,
+          timeGr: 'μόλις τώρα',
+          timeEn: 'just now',
+          read: false,
+          groupId,
+          eventId: target.eventId,
+          forUserId: memberId,
+        }),
+      );
+      const selfRow = normalizeAppNotification({
+        type: 'group',
+        messageGr: 'Μπήκες στην παρέα — άνοιξε «Η βραδιά μας» για σημείο συνάντησης και chat.',
+        messageEn: 'You were added to the group — open «Our night» for meeting point and chat.',
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        groupId,
+        eventId: target.eventId,
+        forUserId: userId,
+      });
+      const readyRows =
+        ready && after
+          ? after.members.map((memberId) =>
+              normalizeAppNotification({
+                type: 'group',
+                messageGr: 'Η παρέα σου είναι έτοιμη! Σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας στη «Βραδιά μας».',
+                messageEn: 'Your group is ready! Meeting point, group code and door ticket are on «Our night».',
+                timeGr: 'μόλις τώρα',
+                timeEn: 'just now',
+                read: false,
+                groupId,
+                eventId: target.eventId,
+                forUserId: memberId,
+              }),
+            )
+          : [];
+      return {
+        groups,
+        notifications: [...(ready ? readyRows : [...peerRows, selfRow]), ...state.notifications],
+      };
     }),
 
   createGroup: (eventId, targetSize, options) =>
@@ -1431,11 +1478,28 @@ export const useStore = create<AppState>()(
     }),
 
   declineConnectionRequest: (requestId) =>
-    set((state) => ({
-      connectionRequests: state.connectionRequests.map((r) =>
-        r.id === requestId ? { ...r, status: 'declined' as const } : r
-      ),
-    })),
+    set((state) => {
+      const req = state.connectionRequests.find((r) => r.id === requestId);
+      if (!req || req.status !== 'pending') return state;
+      const declinerName = state.currentUser?.name.split(' ')[0] || 'Nakamas';
+      return {
+        connectionRequests: state.connectionRequests.map((r) =>
+          r.id === requestId ? { ...r, status: 'declined' as const } : r,
+        ),
+        notifications: [
+          normalizeAppNotification({
+            type: 'system',
+            messageGr: `Το αίτημα σύνδεσης προς ${declinerName} απορρίφθηκε.`,
+            messageEn: `Your connection request to ${declinerName} was declined.`,
+            timeGr: 'μόλις τώρα',
+            timeEn: 'just now',
+            read: false,
+            forUserId: req.fromUserId,
+          }),
+          ...state.notifications,
+        ],
+      };
+    }),
 
   removeConnection: (userId) =>
     set((state) => {

@@ -601,12 +601,27 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       }
     },
 
-    toggleFollowOrganizer: (organizerId) =>
+    toggleFollowOrganizer: (organizerId) => {
+      const wasFollowing = get().followedOrganizerIds.includes(organizerId);
       set((st) => ({
-        followedOrganizerIds: st.followedOrganizerIds.includes(organizerId)
+        followedOrganizerIds: wasFollowing
           ? st.followedOrganizerIds.filter((id) => id !== organizerId)
           : [...st.followedOrganizerIds, organizerId],
-      })),
+      }));
+      if (!wasFollowing) {
+        const me = get().currentUser;
+        if (!me) return;
+        get().addNotification({
+          type: 'system',
+          messageGr: 'Ακολουθείς πλέον αυτόν τον διοργανωτή — θα βλέπεις τις νέες του εκδηλώσεις στην εξερεύνηση.',
+          messageEn: 'You now follow this organizer — their new events show up as you explore.',
+          timeGr: 'μόλις τώρα',
+          timeEn: 'just now',
+          read: false,
+          forUserId: me.id,
+        });
+      }
+    },
 
     createMiniOuting: (input) => {
       const s = get();

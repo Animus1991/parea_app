@@ -439,6 +439,8 @@ export default function MyCalendarPageContent() {
           )}
           actionLabel={t("Εξερεύνησε εκδηλώσεις", "Explore experiences")}
           onAction={() => navigate("/")}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
           askAi
           askPrompt={t("Τι έχω αυτή την εβδομάδα; Πρότεινέ μου κάτι.", "What do I have this week? Suggest something.")}
         />
