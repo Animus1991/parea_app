@@ -106,7 +106,7 @@ export interface IssueReport {
   createdAt: string;
   status: 'open' | 'reviewing' | 'resolved' | 'dismissed';
   /** Φ26 — what was reported, when it is a specific item (e.g. a wall post). */
-  targetType?: 'wall_post' | 'user';
+  targetType?: 'wall_post' | 'user' | 'group';
   targetId?: string;
   /** Author of the reported item. */
   targetUserId?: string;
@@ -717,6 +717,7 @@ export const useStore = create<AppState>()(
       const event = group ? state.events.find((e) => e.id === group.eventId) : undefined;
       let nextGroup = group ? { ...group, members: group.members.filter((mId) => mId !== uid) } : undefined;
       let toUserId: string | null = null;
+      let newHostId: string | null = null;
       if (group && group.members.includes(uid)) {
         const handed = handOverSeat(group, uid, {
           users: state.users,
@@ -726,6 +727,7 @@ export const useStore = create<AppState>()(
         });
         nextGroup = handed.group;
         toUserId = handed.toUserId;
+        newHostId = handed.newHostId;
       }
       const start = eventStartMs(event);
       const late =
@@ -814,6 +816,14 @@ export const useStore = create<AppState>()(
           'A member left the group — see the updated roster on «Our night».',
           'group',
           { forUserId: memberId, groupId },
+        );
+      }
+      if (newHostId) {
+        note(
+          'Έγινες ο νέος οικοδεσπότης της παρέας — check-in και εισιτήρια περνούν σε σένα. Άνοιξε «Η βραδιά μας».',
+          'You are the new group host — check-in and tickets are yours now. Open «Our night».',
+          'group',
+          { forUserId: newHostId, groupId },
         );
       }
       // Release the commitment hold for an event the member is no longer going to.

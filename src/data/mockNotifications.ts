@@ -43,7 +43,10 @@ export const mockNotifications: AppNotification[] = [
     timeGr: 'πριν 1 ώρα',
     read: false,
     icon: MessageCircle,
-    color: 'bg-cyan-100 text-cyan-600'
+    color: 'bg-cyan-100 text-cyan-600',
+    // Seed hike outing — deep-link Our night (same surface as group announcements).
+    groupId: 'g2',
+    eventId: 'e4',
   },
   {
     id: 'n3',
@@ -54,7 +57,8 @@ export const mockNotifications: AppNotification[] = [
     timeGr: 'πριν 3 ώρες',
     read: true,
     icon: Calendar,
-    color: 'bg-gray-100 text-gray-600'
+    color: 'bg-gray-100 text-gray-600',
+    eventId: 'e7',
   },
   {
     id: 'n4',

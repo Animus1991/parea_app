@@ -58,6 +58,22 @@ describe('outings in the store (Φ27)', () => {
     expect(useStore.getState().strikes.some((x) => x.userId === 'u1')).toBe(false);
   });
 
+  it('reassigns hostId when the host leaves so door/check-in stay usable', () => {
+    const before = useStore.getState().groups.find((x) => x.id === 'g-nn1')!;
+    expect(before.hostId).toBe('u1');
+    useStore.getState().leaveGroup('g-nn1');
+    const after = useStore.getState().groups.find((x) => x.id === 'g-nn1')!;
+    expect(after.members).not.toContain('u1');
+    expect(after.hostId).toBeTruthy();
+    expect(after.hostId).not.toBe('u1');
+    expect(after.members).toContain(after.hostId!);
+    expect(
+      useStore.getState().notifications.some(
+        (n) => n.forUserId === after.hostId && /νέος οικοδεσπότης|new group host/i.test(`${n.messageGr} ${n.messageEn}`),
+      ),
+    ).toBe(true);
+  });
+
   it('blocks a women & non-binary group until the profile says so', () => {
     const s = useStore.getState();
     expect(s.canJoinGroup('g-nn2').reason).toBe('gender');

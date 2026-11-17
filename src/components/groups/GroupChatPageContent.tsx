@@ -974,24 +974,17 @@ export default function GroupChatPageContent() {
           </div>
           <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
-              "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ασφάλεια εκτός Nakamas. Βλέπουν τη θέση που μοιράζεσαι όσο είναι ενεργή η έξοδος — ανάκληση όποτε θέλεις.",
-              "This creates a temporary safety link. Share it securely outside Nakamas. They see the pin you share while the outing is active — revoke anytime.",
+              "Προεπισκόπηση demo — ο πραγματικός σύνδεσμος ασφαλείας θα εκδίδεται ανά έξοδο με ανάκληση. Μην τον μοιραστείς ως ενεργό.",
+              "Demo preview — a real safety link will be minted per outing with revoke. Do not share this as live.",
             )}
           </p>
-          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-4">
-            <span className="text-xs font-medium text-ink truncate mr-2">
-              https://nakamas.app/safe/r9x2p
+          <div className="bg-surface border border-border rounded-lg p-3 mb-4 text-left">
+            <p className="text-2xs font-bold uppercase tracking-wide text-ink-muted mb-1">
+              {t('Demo', 'Demo')}
+            </p>
+            <span className="text-xs font-medium text-ink-muted break-all">
+              https://nakamas.app/safe/demo-preview
             </span>
-            <button
-              type="button"
-              onClick={() => {
-                navigator.clipboard.writeText("https://nakamas.app/safe/r9x2p");
-                toast.success(t("Αντιγράφηκε στο πρόχειρο!", "Copied to clipboard!"));
-              }}
-              className={cn("text-xs font-bold", gc.accentText)}
-            >
-              {t("Αντιγραφή", "Copy")}
-            </button>
           </div>
           <button
             type="button"
@@ -1032,8 +1025,8 @@ export default function GroupChatPageContent() {
           </div>
           <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
-              "Προτείνετε να απενεργοποιηθεί η Εφήμερη Λειτουργία. Αν όλα τα μέλη συμφωνήσουν, η συνομιλία θα διατηρηθεί μόνιμα.",
-              "You are proposing to turn off Ephemeral Mode. If all group members agree, this chat will be kept permanently instead of being deleted automatically.",
+              "Κρατά το ιστορικό σε αυτή τη συσκευή. Δεν ξεκινά ψηφοφορία στην ομάδα ακόμα — η ομαδική συγκατάθεση θα έρθει σε επόμενη έκδοση.",
+              "Keeps history on this device. It does not start a group vote yet — unanimous consent will come in a later release.",
             )}
           </p>
           <div className="flex flex-col gap-2.5">
@@ -1047,18 +1040,18 @@ export default function GroupChatPageContent() {
                     id: Date.now().toString(),
                     senderId: "system",
                     senderName: t("Σύστημα", "System"),
-                    text: `${currentUser.name} ${t("πρότεινε να απενεργοποιηθεί η Εφήμερη Λειτουργία. Η ψηφοφορία θα ξεκινήσει σύντομα.", "proposed to disable Ephemeral Mode. Voting will begin shortly.")}`,
+                    text: `${currentUser.name} ${t("κράτησε το ιστορικό συνομιλίας σε αυτή τη συσκευή.", "kept chat history on this device.")}`,
                     timestamp: new Date().toISOString(),
                   },
                 ]);
                 setIsEphemeral(false);
                 setShowDisableEphemeralModal(false);
                 setShowInfo(false);
-                toast.success(t('Η πρόταση στάλθηκε', 'Proposal sent'));
+                toast.success(t('Το ιστορικό κρατήθηκε σε αυτή τη συσκευή', 'History kept on this device'));
               }}
               className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
             >
-              {t("Πρόταση στην Ομάδα", "Propose to Group")}
+              {t("Κράτα ιστορικό εδώ", "Keep history here")}
             </button>
             <button
               type="button"
@@ -1070,7 +1063,11 @@ export default function GroupChatPageContent() {
           </div>
         </Modal>
 
-        <GroupChatReportModal open={showReportModal} onClose={() => setShowReportModal(false)} />
+        <GroupChatReportModal
+          open={showReportModal}
+          onClose={() => setShowReportModal(false)}
+          groupId={group.id}
+        />
 
         <Modal
           open={showStatusModal}

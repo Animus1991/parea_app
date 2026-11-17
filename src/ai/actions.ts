@@ -395,8 +395,9 @@ const waitlistAction: CopilotAction = {
     state().addToWaitlist(e.id);
     return {
       ok: true,
-      el: `Σε έβαλα στη λίστα αναμονής για «${e.title}». Θα ειδοποιηθείς αν ανοίξει θέση.`,
-      en: `You're on the waitlist for "${e.title}". You'll be notified if a spot opens.`,
+      el: `Σε έβαλα στη λίστα αναμονής για «${e.title}». Αποθηκεύτηκε στα σχέδιά σου — παρακολούθησε από εκεί αν ανοίξει θέση.`,
+      en: `You're on the waitlist for "${e.title}". Saved on My plans — watch there if a seat opens.`,
+      link: { path: '/plans', el: 'Τα σχέδιά μου', en: 'My plans' },
       undo: () => state().removeFromWaitlist(e.id),
     };
   },

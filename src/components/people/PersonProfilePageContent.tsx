@@ -180,6 +180,8 @@ export default function PersonProfilePageContent() {
         description={t('Ίσως ο σύνδεσμος είναι παλιός ή ο λογαριασμός δεν υπάρχει πια.', 'The link may be old or the account no longer exists.')}
         actionLabel={t('Οι Nakamas μου', 'My Nakamas')}
         onAction={() => navigate('/connections')}
+        secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+        onSecondary={() => navigate('/buddy-seek')}
       />
     );
   }

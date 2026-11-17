@@ -51,8 +51,6 @@ export function GroupChatLocationModal({
     }
     if (locationConfig.shareWith === 'organizer') {
       msg += t(' (Μόνο στον Διοργανωτή)', ' (Organizer only)');
-    } else if (locationConfig.shareWith === 'selected') {
-      msg += t(' (με επιλεγμένα μέλη)', ' (with selected members)');
     }
     setMessages((prev) => [
       ...prev,
@@ -60,12 +58,14 @@ export function GroupChatLocationModal({
         id: Date.now().toString(),
         senderId: 'system',
         senderName: t("Σύστημα", "System"),
-        text: `${currentUserName} ${msg}.`,
+        text: `${currentUserName} ${msg}. ${t('Προεπισκόπηση — το pin δεν στάλθηκε ακόμη στην ομάδα.', 'Preview — the pin was not sent to the group yet.')}`,
         timestamp: new Date().toISOString(),
         type: 'location',
       },
     ]);
-    toast.success(t('Η κοινοποίηση τοποθεσίας ενεργοποιήθηκε', 'Location sharing enabled'));
+    toast.success(
+      t('Προεπισκόπηση κοινοποίησης — το pin δεν στάλθηκε ακόμη.', 'Sharing preview — the pin was not sent yet.'),
+    );
     onStartSharing();
   };
 
@@ -137,7 +137,7 @@ export function GroupChatLocationModal({
         <div className="space-y-3">
           <h4 className="text-xs font-bold tracking-wide text-ink-muted">2. {t('Ορατότητα', 'Share With')}</h4>
           <div className="flex flex-col gap-2">
-            {(['organizer', 'selected', 'all'] as const).map((option) => (
+            {(['organizer', 'all'] as const).map((option) => (
               <label
                 key={option}
                 className={cn(
@@ -167,7 +167,6 @@ export function GroupChatLocationModal({
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-ink">
                     {option === 'organizer' && t('Μόνο στον Διοργανωτή', 'Organizer Only')}
-                    {option === 'selected' && t('Επιλεγμένα Μέλη', 'Selected Members')}
                     {option === 'all' && t('Ολόκληρη η Ομάδα', 'Entire Confirmed Group')}
                   </span>
                   {option === 'organizer' && (

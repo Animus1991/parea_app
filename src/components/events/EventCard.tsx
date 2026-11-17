@@ -780,7 +780,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     {t("2. Κοινοποίηση Σε", "2. Share With")}
                   </h4>
                   <div className="flex flex-col gap-2">
-                    {["organizer", "selected", "all"].map((option) => (
+                    {["organizer", "all"].map((option) => (
                       <label
                         key={option}
                         className={`flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all duration-200 ${locationConfig.shareWith === option ? "border-accent bg-cyan-50/30 shadow-soft" : "border-gray-100 hover:bg-gray-50 hover:border-[#a5f3fc]"}`}
@@ -810,8 +810,6 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                           <span className="card-heading font-bold text-ink">
                             {option === "organizer" &&
                               t("Μόνο Διοργανωτής", "Organizer Only")}
-                            {option === "selected" &&
-                              t("Επιλεγμένα Μέλη", "Selected Members")}
                             {option === "all" &&
                               t(
                                 "Όλη η Επιβεβαιωμένη Ομάδα",
@@ -877,7 +875,10 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     setIsSharingLocation(true);
                     setShowLocationConfigModal(false);
                     toast.success(
-                      t("Η τοποθεσία κοινοποιείται προσωρινά στην ομάδα.", "Location is shared temporarily with the group."),
+                      t(
+                        "Προεπισκόπηση κοινοποίησης — το pin δεν στάλθηκε ακόμη στην ομάδα.",
+                        "Sharing preview — the pin was not sent to the group yet.",
+                      ),
                     );
                   }}
                   className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
@@ -905,53 +906,26 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           </div>
           <p className="card-copy font-medium leading-relaxed text-ink-muted mb-4">
             {t(
-              "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ένα φίλο εκτός Nakamas. Βλέπει τη θέση που μοιράζεσαι όσο είναι ενεργή η έξοδος — μπορείς να τον ανακαλέσεις όποτε θέλεις.",
-              "This creates a temporary safety link. Share it with a trusted friend outside Nakamas. They see the pin you share while the outing is active — you can revoke it anytime.",
+              "Προεπισκόπηση demo — ο πραγματικός σύνδεσμος ασφαλείας θα εκδίδεται ανά έξοδο με ανάκληση. Μην τον μοιραστείς ως ενεργό.",
+              "Demo preview — a real safety link will be minted per outing with revoke. Do not share this as live.",
             )}
           </p>
-          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-4 text-left">
-            <span className="card-copy font-medium text-ink truncate mr-2">
-              https://nakamas.app/safe/r9x2p
+          <div className="bg-surface border border-border rounded-lg p-3 mb-4 text-left">
+            <p className="text-2xs font-bold uppercase tracking-wide text-ink-muted mb-1">
+              {t('Demo', 'Demo')}
+            </p>
+            <span className="card-copy font-medium text-ink-muted break-all">
+              https://nakamas.app/safe/demo-preview
             </span>
-            <button
-              type="button"
-              onClick={() => {
-                navigator.clipboard.writeText("https://nakamas.app/safe/r9x2p");
-                toast.success(t("Ο σύνδεσμος αντιγράφηκε", "Copied to clipboard"));
-              }}
-              className={cn("text-brand font-bold hover:bg-accent-soft px-2 py-1 rounded-lg transition-colors", EVENT_CARD_TYPO.link)}
-            >
-              {t("Αντιγραφη", "Copy")}
-            </button>
           </div>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setShowSafetyLinkModal(false)}
-              className="flex-1 px-4 py-3 text-xs font-bold text-ink hover:bg-surface rounded-2xl transition-all duration-200 active:scale-[0.98]"
-            >
-              {t("Ακύρωση", "Cancel")}
-            </button>
-            <button
-              type="button"
-              data-autofocus
-              onClick={() => {
-                if (navigator.share) {
-                  navigator.share({
-                    title: t("Σύνδεσμος ασφαλείας", "Safety link"),
-                    url: "https://nakamas.app/safe/r9x2p",
-                  });
-                } else {
-                  navigator.clipboard.writeText("https://nakamas.app/safe/r9x2p");
-                  toast.success(t("Ο σύνδεσμος αντιγράφηκε", "Copied"));
-                }
-                setShowSafetyLinkModal(false);
-              }}
-              className="flex-1 px-4 py-3 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
-            >
-              {t("Κοινοποιηση", "Share")}
-            </button>
-          </div>
+          <button
+            type="button"
+            data-autofocus
+            onClick={() => setShowSafetyLinkModal(false)}
+            className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+          >
+            {t("Τέλος", "Done")}
+          </button>
         </div>
       </Modal>
     </Card>

@@ -711,11 +711,21 @@ export function handOverSeat(
   group: Group,
   leaverId: string,
   ctx: { users: User[]; strikes: Strike[]; blockedUserIds: string[]; price: number },
-): { group: Group; toUserId: string | null } {
+): { group: Group; toUserId: string | null; newHostId: string | null } {
   const wasFull = group.members.length >= group.targetSize;
   const members = group.members.filter((m) => m !== leaverId);
   const base: Group = { ...group, members, waitlist: (group.waitlist ?? []).filter((id) => id !== leaverId) };
-  if (!wasFull || !base.waitlist?.length) return { group: base, toUserId: null };
+  /** Keep door/check-in/tickets usable — never leave a zombie hostId after the host leaves. */
+  const withHost = (g: Group, prefer?: string | null): { group: Group; newHostId: string | null } => {
+    if (g.hostId !== leaverId) return { group: g, newHostId: null };
+    const next = (prefer && g.members.includes(prefer) ? prefer : undefined) ?? g.members[0];
+    if (!next) return { group: { ...g, hostId: undefined }, newHostId: null };
+    return { group: { ...g, hostId: next }, newHostId: next };
+  };
+  if (!wasFull || !base.waitlist?.length) {
+    const handed = withHost(base);
+    return { group: handed.group, toUserId: null, newHostId: handed.newHostId };
+  }
   for (const candidateId of base.waitlist) {
     const candidate = ctx.users.find((u) => u.id === candidateId);
     const gate = gateJoinGroup(candidate, base, { users: ctx.users, strikes: ctx.strikes, blockedUserIds: [] });
@@ -728,18 +738,18 @@ export function handOverSeat(
             payments: Object.fromEntries([...Object.entries(payments).filter(([id]) => id !== leaverId), [candidateId, 'pending' as const]]),
           }
         : base.tickets;
-    return {
-      group: {
-        ...base,
-        members: [...members, candidateId],
-        waitlist: base.waitlist.filter((id) => id !== candidateId),
-        lastTransfer: { fromUserId: leaverId, toUserId: candidateId, at: new Date().toISOString(), price: ctx.price },
-        tickets,
-      },
-      toUserId: candidateId,
+    const nextGroup: Group = {
+      ...base,
+      members: [...members, candidateId],
+      waitlist: base.waitlist.filter((id) => id !== candidateId),
+      lastTransfer: { fromUserId: leaverId, toUserId: candidateId, at: new Date().toISOString(), price: ctx.price },
+      tickets,
     };
+    const handed = withHost(nextGroup, candidateId);
+    return { group: handed.group, toUserId: candidateId, newHostId: handed.newHostId };
   }
-  return { group: base, toUserId: null };
+  const handed = withHost(base);
+  return { group: handed.group, toUserId: null, newHostId: handed.newHostId };
 }
 
 /** The group's code once its discount unlocks (Partiful / Luma, adapted). */
