@@ -135,7 +135,7 @@ export function PlansFormingYourPlanBanner({
           type="button"
           onClick={() => (onManage ? onManage() : navigate(`/events/${plan.event.id}`))}
           className={cn(
-            'flex-1 min-h-10 rounded-lg',
+            'flex-1 min-h-8 py-1.5 rounded-full',
             PLANS_FORMING_TYPO.statChip,
             isDark ? 'bg-cyan-600 text-white' : 'bg-cyan-600 text-white',
           )}
@@ -147,7 +147,7 @@ export function PlansFormingYourPlanBanner({
             type="button"
             onClick={onEdit}
             className={cn(
-              'px-3 min-h-10 rounded-lg border',
+              'px-3 min-h-8 py-1.5 rounded-full border',
               PLANS_FORMING_TYPO.statChip,
               isDark ? 'border-white/20 text-gray-200' : 'border-cyan-300 text-cyan-800',
             )}

@@ -106,10 +106,10 @@ export default function PlansPageContent() {
   });
 
   const secondaryBtn = cn(
-    'px-4 py-2 rounded-2xl transition-all duration-200 border-2 text-xs font-bold',
+    'px-3.5 py-1.5 min-h-8 rounded-xl transition-all duration-200 border text-xs font-bold',
     p.isDark
-      ? 'border-white/10 hover:border-white/25 text-gray-100 hover:bg-white/5'
-      : 'border-gray-100 hover:border-[#a5f3fc] hover:bg-gray-50 text-gray-700',
+      ? 'border-white/15 hover:border-white/30 text-gray-100 hover:bg-white/5'
+      : 'border-gray-200 hover:border-[#a5f3fc] hover:bg-gray-50 text-gray-700',
   );
 
   return (
@@ -157,7 +157,7 @@ export default function PlansPageContent() {
               <p className={cn(PLANS_TYPO.bannerBody, p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
             </div>
           </div>
-          <button type="button" onClick={() => navigate('/verification')} className={cn('bg-amber-600 text-white px-5 py-2.5 rounded-2xl shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0', PLANS_TYPO.bannerCta)}>
+          <button type="button" onClick={() => navigate('/verification')} className={cn('self-start sm:self-center w-auto bg-amber-600 text-white px-4 py-1.5 min-h-8 rounded-full shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0', PLANS_TYPO.bannerCta)}>
             {t(`Επαλήθευση`, `Verify Now`)}
           </button>
         </Card>
@@ -279,26 +279,26 @@ export default function PlansPageContent() {
                 <button
                   type="button"
                   onClick={() => navigate(`/night/${group.id}`)}
-                  className="mb-1 w-full btn-gradient !py-2 flex items-center justify-center gap-1.5"
+                  className="mb-1 w-full btn-gradient !py-1.5 min-h-8 flex items-center justify-center gap-1.5"
                 >
-                  <PartyPopper className="h-4 w-4" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
+                  <PartyPopper className="h-3.5 w-3.5" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
                   {group.status === 'confirmed' ? t(' · έτοιμη', ' · ready') : ''}
                 </button>
               )}
 
-              <div className={cn('mt-auto pt-4 border-t flex flex-wrap items-center gap-2', p.borderT)}>
+              <div className={cn('mt-auto pt-3.5 border-t flex flex-wrap items-center gap-2', p.borderT)}>
                 <button
                   onClick={() => group && navigate(`/chat/${group.id}`)}
                   disabled={!group}
                   className={cn(secondaryBtn, 'flex-1 flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed')}
                 >
-                  <MessageCircle className="h-4 w-4" /> {t('Chat', 'Chat')}
+                  <MessageCircle className="h-3.5 w-3.5" /> {t('Chat', 'Chat')}
                 </button>
                 <button
                   onClick={() => setShowLeaveConfirm(event.id)}
                   className={cn(
-                    'px-3 py-2 rounded-2xl text-xs font-bold transition-all duration-200 flex items-center gap-1 border-2',
-                    p.isDark ? 'border-red-500/30 hover:bg-red-500/10 text-red-400' : 'border-red-100 hover:bg-red-50 text-red-700',
+                    'px-3 py-1.5 min-h-8 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-1 border',
+                    p.isDark ? 'border-red-500/30 hover:bg-red-500/10 text-red-400' : 'border-red-200 hover:bg-red-50 text-red-700',
                   )}
                 >
                   <XCircle className="h-3.5 w-3.5" /> {t('Αποχώρηση', 'Leave')}

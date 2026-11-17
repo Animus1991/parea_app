@@ -150,7 +150,7 @@ export default function InboxPageContent() {
           role="tablist"
           aria-label={t('Μηνύματα και ειδοποιήσεις', 'Messages and notifications')}
           className={cn(
-            'mt-4 flex h-11 rounded-2xl border p-1 shadow-soft',
+            'mt-4 flex h-9 rounded-xl border p-0.5 shadow-soft',
             p.isDark ? 'bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]' : 'bg-gray-50 border-gray-100',
           )}
         >
@@ -160,7 +160,7 @@ export default function InboxPageContent() {
             aria-selected={activeTab === 'messages'}
             onClick={() => setActiveTab('messages')}
             className={cn(
-              'flex-1 rounded-xl transition-all flex items-center justify-center gap-2 min-h-10',
+              'flex-1 rounded-lg transition-all flex items-center justify-center gap-1.5 min-h-8',
               INBOX_TYPO.tab,
               activeTab === 'messages'
                 ? p.isDark
@@ -169,7 +169,7 @@ export default function InboxPageContent() {
                 : p.muted,
             )}
           >
-            <MessageSquare className="w-4 h-4" aria-hidden /> {t('Μηνύματα', 'Messages')}
+            <MessageSquare className="w-3.5 h-3.5" aria-hidden /> {t('Μηνύματα', 'Messages')}
           </button>
           <button
             type="button"
@@ -177,7 +177,7 @@ export default function InboxPageContent() {
             aria-selected={activeTab === 'notifications'}
             onClick={() => setActiveTab('notifications')}
             className={cn(
-              'flex-1 rounded-xl transition-all flex items-center justify-center gap-2 min-h-10',
+              'flex-1 rounded-lg transition-all flex items-center justify-center gap-1.5 min-h-8',
               INBOX_TYPO.tab,
               activeTab === 'notifications'
                 ? p.isDark
@@ -186,9 +186,9 @@ export default function InboxPageContent() {
                 : p.muted,
             )}
           >
-            <Bell className="w-4 h-4" aria-hidden /> {t('Ειδοποιήσεις', 'Notifications')}
+            <Bell className="w-3.5 h-3.5" aria-hidden /> {t('Ειδοποιήσεις', 'Notifications')}
             {unreadNotifications > 0 && (
-              <span className={cn('bg-cyan-600 text-white px-1.5 py-0.5 rounded-full min-w-[18px]', INBOX_TYPO.badge)}>
+              <span className={cn('bg-cyan-600 text-white px-1.5 py-0.5 rounded-full min-w-[16px]', INBOX_TYPO.badge)}>
                 {unreadNotifications}
               </span>
             )}
@@ -352,7 +352,7 @@ export default function InboxPageContent() {
               <button
                 type="button"
                 onClick={() => navigate('/notifications')}
-                className={cn('mt-2 px-5 py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white shadow-soft', INBOX_TYPO.cta)}
+                className={cn('mt-2 px-4 py-1.5 min-h-8 rounded-full bg-cyan-600 hover:bg-cyan-700 text-white shadow-soft', INBOX_TYPO.cta)}
               >
                 {t('Όλες οι Ειδοποιήσεις', 'All Notifications')}
               </button>

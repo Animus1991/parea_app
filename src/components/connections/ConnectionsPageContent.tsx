@@ -345,31 +345,31 @@ export default function ConnectionsPageContent() {
           type="button"
           role="tab"
           aria-selected={activeTab === 'all'}
-          className={cn('px-3.5 py-2 min-h-10 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5', activeTab === 'all' ? a.chipActive : a.chipInactive)}
+          className={cn('px-3 py-1.5 min-h-8 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5', activeTab === 'all' ? a.chipActive : a.chipInactive)}
           onClick={() => setActiveTab('all')}
         >
           {t('Συνδέσεις', 'Connections')}
-          <span className="font-semibold">({connections.length})</span>
+          <span className="font-semibold text-2xs">({connections.length})</span>
         </button>
         <button
           type="button"
           role="tab"
           aria-selected={activeTab === 'requests'}
-          className={cn('px-3.5 py-2 min-h-10 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5', activeTab === 'requests' ? a.chipActive : a.chipInactive)}
+          className={cn('px-3 py-1.5 min-h-8 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5', activeTab === 'requests' ? a.chipActive : a.chipInactive)}
           onClick={() => setActiveTab('requests')}
         >
           {t('Αιτήματα', 'Requests')}
-          {pendingRequests.length > 0 && <span className={`${a.requestBadge} text-white text-xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{pendingRequests.length}</span>}
+          {pendingRequests.length > 0 && <span className={`${a.requestBadge} text-white text-2xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{pendingRequests.length}</span>}
         </button>
         <button
           type="button"
           role="tab"
           aria-selected={activeTab === 'suggested'}
-          className={cn('px-3.5 py-2 min-h-10 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5', activeTab === 'suggested' ? a.chipActive : a.chipInactive)}
+          className={cn('px-3 py-1.5 min-h-8 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5', activeTab === 'suggested' ? a.chipActive : a.chipInactive)}
           onClick={() => setActiveTab('suggested')}
         >
           <UserPlus className="w-3.5 h-3.5" aria-hidden /> {t('Προτάσεις', 'Suggested')}
-          {suggested.length > 0 && <span className={`${a.isDark ? 'bg-gray-600' : 'bg-gray-400'} text-white text-xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{suggested.length}</span>}
+          {suggested.length > 0 && <span className={`${a.isDark ? 'bg-gray-600' : 'bg-gray-400'} text-white text-2xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{suggested.length}</span>}
         </button>
       </div>
 

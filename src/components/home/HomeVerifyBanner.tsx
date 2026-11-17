@@ -68,11 +68,11 @@ export function HomeVerifyBanner() {
           <p className={`text-xs font-medium mt-0.5 leading-relaxed ${h.feedbackBody}`}>{body}</p>
         </div>
       </div>
-      <div className="flex items-center gap-2 w-full sm:w-auto">
+      <div className="flex items-center gap-2 self-start sm:self-center">
         <button
           type="button"
           onClick={() => navigate('/verification')}
-          className={`text-xs tracking-wider font-bold px-4 py-2 rounded-full whitespace-nowrap flex-1 sm:flex-none shadow-soft transition-all duration-200 ${h.feedbackBtn}`}
+          className={`text-xs tracking-wide font-bold px-3.5 py-1.5 min-h-8 rounded-full whitespace-nowrap shadow-soft transition-all duration-200 ${h.feedbackBtn}`}
         >
           {t('Επαλήθευση', 'Verify')}
         </button>

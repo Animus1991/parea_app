@@ -74,7 +74,7 @@ export function PlansFormingBottomSheet() {
             <button
               type="button"
               className={cn(
-                'w-full flex items-center gap-2 rounded-xl border px-3 py-2.5 min-h-10 text-xs font-bold',
+                'w-full flex items-center gap-2 rounded-xl border px-3 py-1.5 min-h-8 text-xs font-bold',
                 tok.isDark
                   ? 'border-amber-700/60 bg-amber-950/40 text-amber-100'
                   : 'border-amber-200 bg-amber-50 text-amber-900',
@@ -148,7 +148,7 @@ export function PlansFormingBottomSheet() {
 
         <div
           className={cn(
-            'sticky bottom-0 left-0 right-0 p-4 border-t flex gap-2 shrink-0 backdrop-blur-md',
+            'sticky bottom-0 left-0 right-0 px-4 py-2.5 border-t flex gap-2 shrink-0 backdrop-blur-md',
             tok.isDark ? 'bg-gray-900/95 border-gray-800' : 'bg-white/95 border-gray-200',
           )}
         >
@@ -158,14 +158,14 @@ export function PlansFormingBottomSheet() {
               setOpen(false);
               navigate('/buddy-seek');
             }}
-            className={cn('flex-1 min-h-10 rounded-2xl text-xs font-bold text-white', tok.primaryBtn)}
+            className={cn('flex-1 min-h-9 rounded-full text-xs font-bold text-white', tok.primaryBtn)}
           >
             {t('Όλα τα σχέδια', 'All plans')}
           </button>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className={cn('min-h-10 px-5 rounded-2xl text-xs font-bold border', c.border, c.fgMuted)}
+            className={cn('min-h-9 px-4 rounded-full text-xs font-bold border', c.border, c.fgMuted)}
           >
             {t('Κλείσιμο', 'Close')}
           </button>

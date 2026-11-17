@@ -183,7 +183,7 @@ export default function InvitePublicPage() {
               {error}
             </p>
           )}
-          <button type="submit" className="min-h-11 w-full rounded-full bg-accent px-4 text-sm font-bold text-accent-fg">
+          <button type="submit" className="min-h-9 w-full rounded-full bg-accent px-4 text-xs font-bold text-accent-fg">
             {t('Στείλε απάντηση', 'Send answer')}
           </button>
         </form>

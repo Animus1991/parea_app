@@ -58,7 +58,7 @@ export function PlansFormingScarcityPromoCard({
           navigate(promo.groupId ? `/events/${promo.eventId}/join?group=${promo.groupId}` : `/events/${promo.eventId}`)
         }
         className={cn(
-          'w-full min-h-10 rounded-xl text-xs font-bold transition-colors',
+          'inline-flex items-center justify-center px-4 min-h-8 py-1.5 rounded-full text-xs font-bold transition-colors shadow-soft',
           isDark ? 'bg-amber-600/90 hover:bg-amber-500 text-white' : 'bg-amber-700 hover:bg-amber-800 text-white',
         )}
       >

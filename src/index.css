@@ -463,18 +463,18 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Neutral pill button — works across all themes */
 .btn-pill-active {
-  border: 2px solid #4b5563;
+  border: 1px solid #4b5563;
   border-radius: 9999px;
-  padding: 0.3rem 0.85rem;
+  padding: 0.25rem 0.7rem;
   font-weight: 700;
   color: #111827;
   background: #f3f4f6;
   transition: all 0.2s ease;
 }
 .btn-pill-inactive {
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   border-radius: 9999px;
-  padding: 0.3rem 0.85rem;
+  padding: 0.25rem 0.7rem;
   font-weight: 600;
   color: #4b5563;
   background: transparent;

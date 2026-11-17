@@ -258,13 +258,13 @@ export function PlansFormingCard({
         </p>
       )}
 
-      <div className="flex gap-2 px-3.5 pb-3.5 pt-0.5">
+      <div className="flex items-center gap-1.5 px-3.5 pb-3 pt-0.5">
         <button
           type="button"
           onClick={() => setPreviewOpen(true)}
           className={cn(
-            'flex-1 min-h-10 rounded-xl card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors',
-            variant === 'page' && 'sm:flex-none sm:px-6',
+            'px-3.5 min-h-8 py-1.5 rounded-full card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors',
+            isSidebar && 'flex-1',
           )}
         >
           {t('Αίτημα συμμετοχής', 'Ask to join')}
@@ -273,7 +273,7 @@ export function PlansFormingCard({
           type="button"
           onClick={() => navigate(`/events/${item.event.id}`)}
           className={cn(
-            'px-3 min-h-10 rounded-xl card-cta transition-colors',
+            'px-2.5 min-h-8 py-1.5 rounded-full card-cta transition-colors',
             darkCard ? 'text-gray-300 hover:bg-white/5' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/5',
           )}
         >
@@ -291,7 +291,7 @@ export function PlansFormingCard({
             );
           }}
           className={cn(
-            'min-h-10 min-w-10 rounded-xl flex items-center justify-center transition-colors',
+            'ml-auto min-h-8 min-w-8 rounded-full flex items-center justify-center transition-colors',
             darkCard ? 'text-gray-400 hover:bg-white/5' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5',
             isSaved && (darkCard ? 'text-cyan-400 bg-cyan-500/10' : 'text-cyan-700 bg-cyan-50 dark:text-cyan-300 dark:bg-cyan-500/10'),
           )}
@@ -307,7 +307,7 @@ export function PlansFormingCard({
             aria-label={t('Απόκρυψη σχεδίου', 'Hide plan')}
             title={t('Απόκρυψη', 'Hide')}
             className={cn(
-              'min-h-9 min-w-9 rounded-xl flex items-center justify-center transition-colors',
+              'min-h-8 min-w-8 rounded-full flex items-center justify-center transition-colors',
               darkCard ? 'text-gray-400 hover:bg-white/5' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5',
             )}
           >
@@ -416,7 +416,10 @@ export function PlansFormingGroupCard({
         <button
           type="button"
           onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
-          className="flex-1 min-h-9 rounded-xl card-cta bg-emerald-600 hover:bg-emerald-500 text-white"
+          className={cn(
+            'px-4 min-h-8 py-1.5 rounded-full card-cta bg-emerald-600 hover:bg-emerald-500 text-white transition-colors',
+            isSidebar && 'flex-1',
+          )}
         >
           {t('Αίτημα συμμετοχής', 'Ask to join')}
         </button>
@@ -425,7 +428,7 @@ export function PlansFormingGroupCard({
             type="button"
             onClick={onSuggestMerge}
             className={cn(
-              'px-3 min-h-9 rounded-xl card-cta border',
+              'px-3 min-h-8 py-1.5 rounded-full card-cta border',
               darkCard ? 'border-emerald-600/40 text-emerald-300' : 'border-emerald-300 text-emerald-800 dark:border-emerald-600/40 dark:text-emerald-300',
             )}
           >
