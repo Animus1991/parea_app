@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { useLanguage } from "../../lib/i18n";
 import { useGroupChatContrast } from "../../hooks/useGroupChatContrast";
 import { cn } from "../../lib/utils";
+import { PAGE_FILL } from "../layout/PageShell";
 import { useGroupChatMessages, type GroupChatMessage } from "../../hooks/useGroupChatMessages";
 import { useChatStore } from "../../store/chatStore";
 import { toChatMessage } from "../../lib/chatMessageAdapters";
@@ -220,7 +221,7 @@ export default function GroupChatPageContent() {
 
   if (!group || !event) {
     return (
-      <div className="mx-auto max-w-2xl py-6">
+      <div className={cn(PAGE_FILL, "py-6")}>
         <EmptyState
           title={t('Το Chat δεν βρέθηκε', 'Chat not found')}
           description={t(
@@ -238,7 +239,7 @@ export default function GroupChatPageContent() {
 
   if (!isMember) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4 py-4">
+      <div className={cn(PAGE_FILL, "space-y-4 py-4")}>
         <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-ink">{t('Chat ομάδας', 'Group chat')}</h1>
         <div className="rounded-2xl border border-border bg-surface-raised p-4">
           <p className="text-sm font-bold text-ink">
@@ -354,7 +355,7 @@ export default function GroupChatPageContent() {
   };
 
   return (
-    <div className="w-full h-full px-[5px] md:px-0 mx-auto max-w-[1200px]">
+    <div className={cn(PAGE_FILL, "h-full px-[5px] md:px-0")}>
       <div className="w-full h-full min-h-[420px] flex bg-white dark:bg-surface-raised border border-gray-100 dark:border-border rounded-2xl shadow-soft overflow-hidden relative">
         <div
           className={`flex flex-col flex-1 h-full min-w-0 ${showInfo ? "hidden md:flex border-r border-gray-200 dark:border-border" : "flex"}`}

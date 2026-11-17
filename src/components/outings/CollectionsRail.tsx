@@ -12,7 +12,16 @@ import { COLLECTION_ICONS } from './collectionIcons';
  * μόνος/η», «Ήσυχες βραδιές», «Έξω στη φύση», «Nakamas Nights» — each with how
  * many groups are forming right now, which is what makes Nakamas different.
  */
-export function CollectionsRail({ className, title = true }: { className?: string; title?: boolean }) {
+export function CollectionsRail({
+  className,
+  title = true,
+  fill = false,
+}: {
+  className?: string;
+  title?: boolean;
+  /** Stretch tiles across the main column (collections index) instead of a compact scroll strip. */
+  fill?: boolean;
+}) {
   const { t } = useLanguage();
   const events = useStore((s) => s.events);
   const groups = useStore((s) => s.groups);
@@ -41,11 +50,17 @@ export function CollectionsRail({ className, title = true }: { className?: strin
           </Link>
         </div>
       )}
-      <ul className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 noscrollbar">
+      <ul
+        className={
+          fill
+            ? 'grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'
+            : '-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 noscrollbar'
+        }
+      >
         {stats.map(({ c, count, forming }) => {
           const Icon = COLLECTION_ICONS[c.id as keyof typeof COLLECTION_ICONS] ?? Sparkles;
           return (
-            <li key={c.id} className="w-44 shrink-0">
+            <li key={c.id} className={fill ? 'min-w-0' : 'w-44 shrink-0'}>
               <Link
                 to={`/collections/${c.id}`}
                 className="flex h-full flex-col rounded-2xl border border-border bg-surface-raised p-3 transition-colors hover:border-border-strong"

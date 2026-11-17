@@ -45,6 +45,7 @@ import { connectionOutcomeText } from '../../lib/connectionFeedback';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { interestLabel, sameInterest } from '../../lib/interests';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
 import type { ProfileSectionKey } from '../../types/wall';
 import type { User } from '../../types';
@@ -339,7 +340,7 @@ export default function PersonProfilePageContent() {
   /* ───────────── hidden profile ───────────── */
   if (hidden) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4 pb-20 md:pb-6">
+      <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6')}>
         {viewAsBar}
         <Card className="p-6 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-border bg-surface">
@@ -364,7 +365,7 @@ export default function PersonProfilePageContent() {
   const aboutVisible = can('about');
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300">
+    <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300')}>
       {viewAsBar}
 
       <Card className="overflow-hidden p-0">

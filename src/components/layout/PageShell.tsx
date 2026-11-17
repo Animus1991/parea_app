@@ -1,6 +1,9 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
 
+/** Fill the AppShell main column (between left nav and optional right rail). */
+export const PAGE_FILL = 'w-full max-w-full min-w-0';
+
 interface PageShellProps {
   title?: string;
   description?: string;

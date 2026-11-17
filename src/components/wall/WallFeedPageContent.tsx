@@ -8,6 +8,7 @@ import { useWallAccess, useWallStore } from '../../store/wallStore';
 import { canViewPost, graphConnected, tagShownOnProfile, visiblePosts } from '../../lib/audience';
 import { WallActivityPanel } from './WallActivityPanel';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
 import { Chip } from '../common/Chip';
 import { EmptyState } from '../common/EmptyState';
@@ -107,7 +108,7 @@ export default function WallFeedPageContent() {
   ];
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300">
+    <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300')}>
       <div className="flex flex-col gap-1">
         <h1 className={cn(APP_TYPO.pageTitle, 'flex items-center gap-2 text-ink')}>
           <Newspaper className="h-5 w-5" aria-hidden /> {t('Τοίχος Nakamas', 'Nakamas Wall')}

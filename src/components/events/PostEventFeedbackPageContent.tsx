@@ -15,6 +15,7 @@ import {
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useContrastTheme } from '../../hooks/useContrastTheme';
+import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
@@ -87,7 +88,7 @@ export default function PostEventFeedbackPageContent() {
 
   if (!eventId || !event) {
     return (
-      <div className="max-w-2xl mx-auto py-4 text-center space-y-4">
+      <div className={cn(PAGE_FILL, 'py-4 text-center space-y-4')}>
         <p className={cn('text-sm font-medium', p.sub)}>
           {t('Η εκδήλωση δεν βρέθηκε.', 'Event not found.')}
         </p>
@@ -99,7 +100,7 @@ export default function PostEventFeedbackPageContent() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className={cn(PAGE_FILL, 'space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in')}>
       <div>
         <h1 className={cn('text-lg md:text-xl font-extrabold tracking-tight leading-tight', p.head)}>
           {t('Αξιολόγηση Εκδήλωσης', 'Post-Event Feedback')}

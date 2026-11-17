@@ -4,6 +4,8 @@ import { useStore } from '../../store';
 import { Button } from '../common/Button';
 import { Users, CheckCircle, Split, ShieldCheck, Tag, HeartHandshake, ListOrdered, Sparkles } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
+import { cn } from '../../lib/utils';
+import { PAGE_FILL } from '../layout/PageShell';
 import { canAccessEvent } from '../../lib/trust';
 import { computeDiscountedPrice } from '../../lib/groupUtils';
 import { toast } from 'sonner';
@@ -120,7 +122,7 @@ export default function JoinGroupFlow() {
   };
 
   return (
-    <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sm:p-5 mt-5 dark:bg-surface-raised dark:border-border">
+    <div className={cn(PAGE_FILL, 'rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sm:p-6 md:p-8 dark:bg-surface-raised dark:border-border')}>
       <h1 className="sr-only text-lg md:text-xl">{t('Συμμετοχή σε ομάδα', 'Join a group')}: {event.title}</h1>
       {!gate.allowed && (
         <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm font-medium flex gap-2">

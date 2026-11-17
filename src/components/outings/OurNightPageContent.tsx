@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
 import { formatOutingDate, groupStatusLabel } from '../../lib/outings';
 import { coverById, coversFor } from '../../lib/planCovers';
@@ -115,7 +116,7 @@ export default function OurNightPageContent() {
   if (!me) return null;
   if (!group || !event) {
     return (
-      <div className="mx-auto max-w-2xl py-6">
+      <div className={cn(PAGE_FILL, 'py-6')}>
         <EmptyState
           title={t('Η ομάδα δεν βρέθηκε', 'Group not found')}
           description={t('Ίσως διαγράφηκε ή ο σύνδεσμος είναι λάθος.', 'It may have been removed, or the link is wrong.')}
@@ -130,7 +131,7 @@ export default function OurNightPageContent() {
 
   if (!isMember) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4 py-4">
+      <div className={cn(PAGE_FILL, 'space-y-4 py-4')}>
         <h1 className={cn(APP_TYPO.pageTitle, 'text-ink')}>{t('Η βραδιά μας', 'Our night')}</h1>
         <div className="rounded-2xl border border-border bg-surface-raised p-4">
           <p className="flex items-center gap-2 text-sm font-bold text-ink">
@@ -194,7 +195,7 @@ export default function OurNightPageContent() {
   const spotsLeft = Math.max(0, group.targetSize - group.members.length);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300">
+    <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300')}>
       <button
         type="button"
         onClick={() => navigate('/plans')}

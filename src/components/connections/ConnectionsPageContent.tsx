@@ -418,7 +418,7 @@ export default function ConnectionsPageContent() {
 
       {/* ═══ CONNECTIONS TAB ═══ */}
       {activeTab === 'all' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredConnections.length === 0 && (
             <div className="col-span-full">
               <EmptyState
@@ -606,7 +606,7 @@ export default function ConnectionsPageContent() {
               onSecondary={() => navigate('/buddy-seek')}
             />
           )}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {suggested.map((user) => (
               <Card key={user.id} className={`p-4 ${a.cardHover} transition-colors cursor-pointer group`} onClick={() => handleViewProfile(user)} containsControls>
                 <div className="flex items-center justify-between gap-3">

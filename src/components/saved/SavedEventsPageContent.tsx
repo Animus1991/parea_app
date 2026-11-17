@@ -108,7 +108,7 @@ export default function SavedEventsPageContent() {
         isError={isError}
         onRetry={() => void refetch()}
         loading={
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 4 }).map((_, i) => (
               <EventCardSkeleton key={`saved-sk-${i}`} />
             ))}
@@ -117,7 +117,7 @@ export default function SavedEventsPageContent() {
         errorTitle={t('Αδυναμία φόρτωσης αποθηκευμένων', 'Could not load saved events')}
       >
       {savedEvents.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {savedEvents.map(event => (
             <Card
               key={event.id}

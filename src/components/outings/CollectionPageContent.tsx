@@ -13,6 +13,7 @@ import { Chip } from '../common/Chip';
 import { CollectionsRail } from './CollectionsRail';
 import { COLLECTION_ICONS } from './collectionIcons';
 import { OrganizerCalendarCard } from './OrganizerCalendarCard';
+import { PAGE_FILL } from '../layout/PageShell';
 
 /** «/collections» lists all collections; «/collections/:id» opens one. */
 export default function CollectionPageContent() {
@@ -43,21 +44,21 @@ export default function CollectionPageContent() {
 
   if (!id) {
     return (
-      <div className="mx-auto max-w-5xl space-y-4 pb-20 md:pb-6">
+      <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6')}>
         <h1 className={cn(APP_TYPO.pageTitle, 'flex items-center gap-2 text-ink')}>
           <Library className="h-5 w-5" aria-hidden /> {t('Συλλογές', 'Collections')}
         </h1>
         <p className={cn(APP_TYPO.pageSub, 'text-ink-muted')}>
           {t('Διαλεγμένες εκδηλώσεις ανά διάθεση — και πόσες παρέες σχηματίζονται σε καθεμία.', 'Events picked by mood — and how many groups are forming in each.')}
         </p>
-        <CollectionsRail title={false} />
+        <CollectionsRail title={false} fill />
       </div>
     );
   }
 
   if (!collection) {
     return (
-      <div className="mx-auto max-w-2xl py-6">
+      <div className={cn(PAGE_FILL, 'py-6')}>
         <EmptyState
           title={t('Η συλλογή δεν βρέθηκε', 'Collection not found')}
           description={t('Ίσως μετακινήθηκε — δες όλες τις συλλογές.', 'It may have moved — see all collections.')}
@@ -72,7 +73,7 @@ export default function CollectionPageContent() {
   const totalForming = list.reduce((n, e) => n + formingGroups(e, groups).length, 0);
 
   return (
-    <div className="mx-auto max-w-5xl space-y-4 pb-20 md:pb-6">
+    <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6')}>
       <Link to="/collections" className="inline-flex min-h-9 items-center gap-1.5 text-xs font-bold text-ink-muted hover:text-ink">
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t('Όλες οι συλλογές', 'All collections')}
       </Link>
@@ -113,7 +114,7 @@ export default function CollectionPageContent() {
           onSecondary={() => navigate('/buddy-seek')}
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {list.map((e) => (
             <EventCard key={e.id} event={e} />
           ))}
