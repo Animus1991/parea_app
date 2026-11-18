@@ -169,11 +169,19 @@ export function computeProfileCompletion(user: User | null, hasBio: boolean): {
   if (user.trustTier === '1_explorer') {
     return { percent, nextActionEl: 'Ολοκλήρωσε επαλήθευση (+15%)', nextActionEn: 'Complete verification (+15%)', nextPath: '/verification' };
   }
+  if (!user.idVerified) {
+    return {
+      percent,
+      nextActionEl: 'Επαλήθευση ταυτότητας (+10%)',
+      nextActionEn: 'Verify your ID (+10%)',
+      nextPath: '/verification',
+    };
+  }
 
   return {
     percent,
-    nextActionEl: 'Το προφίλ σου είναι σχεδόν πλήρες',
-    nextActionEn: 'Your profile is nearly complete',
-    nextPath: '/profile',
+    nextActionEl: 'Το προφίλ σου είναι πλήρες',
+    nextActionEn: 'Your profile is complete',
+    nextPath: '/trust',
   };
 }

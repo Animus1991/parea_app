@@ -54,7 +54,7 @@ export function VibeProfileCard({ className }: { className?: string }) {
       )}
       <div className="mt-3 flex flex-wrap gap-2">
         <Button size="sm" variant={vibe ? 'outline' : 'primary'} onClick={() => setOpen(true)}>
-          {vibe ? t('Αλλαγή απαντήσεων', 'Change answers') : t('Κάνε το κουίζ (1′)', 'Take the quiz (1 min)')}
+          {vibe ? t('Αλλαγή απαντήσεων', 'Change answers') : t('Κάνε το κουίζ · 1 λεπτό', 'Take the quiz · 1 min')}
         </Button>
         {vibe && (
           <Button

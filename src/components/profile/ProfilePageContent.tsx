@@ -29,7 +29,6 @@ import {
   Lock,
   ChevronRight,
   Share2,
-  User as UserIcon,
   CreditCard as CreditCardIcon,
   Bot,
   Newspaper,
@@ -189,20 +188,20 @@ export default function ProfilePageContent() {
   const subtleBg = a.isDark ? "bg-gray-800/30" : "bg-gray-50/50";
 
   return (
-    <div className="mx-auto max-w-full space-y-4 pb-20 md:pb-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="mx-auto max-w-full space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
           <h1 className={cn(PROFILE_TYPO.pageTitle, heading)}>{t("Προφίλ", "Profile")}</h1>
-          <p className={cn(PROFILE_TYPO.pageSub, 'mt-1 leading-relaxed', sub)}>
-            {t("Διαχειριστείτε τις ρυθμίσεις εμπιστοσύνης, τις επαληθεύσεις και το ιστορικό σας.", "Manage your trust settings, verifications, and history.")}
+          <p className={cn(PROFILE_TYPO.pageSub, 'mt-1 leading-snug', sub)}>
+            {t("Η εικόνα σου προς τους Nakamas — ενδιαφέροντα, τοίχος και προτιμήσεις.", "How you appear to Nakamas — interests, wall and preferences.")}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="flex items-center gap-1.5">
             <Settings className="w-3.5 h-3.5" /> {t("Ρυθμίσεις", "Settings")}
           </Button>
-          <Button variant="primary" size="sm" onClick={() => navigate("/trust")} className="flex items-center gap-1.5">
+          <Button variant="outline" size="sm" onClick={() => navigate("/trust")} className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5" /> {t("Κέντρο Εμπιστοσύνης", "Trust Center")}
           </Button>
         </div>
@@ -223,42 +222,12 @@ export default function ProfilePageContent() {
         </p>
       )}
 
-      <ProfileCompletionMeter />
-
-      {/* ═══ Quick Stats ═══ */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[
-          { icon: Users, label: t("Nakamas", "Nakamas"), value: connectionCount, to: "/connections", color: a.accent },
-          { icon: Calendar, label: t("Εκδηλώσεις", "Events"), value: attendedEventsCount, to: "/plans", color: a.accent },
-          { icon: TrendingUp, label: t("Αξιοπιστία", "Reliability"), value: `${currentUser.reliabilityScore}%`, to: "/trust", color: currentUser.reliabilityScore >= 80 ? (a.isDark ? "text-green-400" : "text-green-600") : a.accent },
-          { icon: Award, label: t("Επίπεδο", "Tier"), value: tierLabel, to: "/trust", color: a.accent },
-        ].map((stat) => (
-          <button
-            key={stat.label}
-            type="button"
-            onClick={() => navigate(stat.to)}
-            className={cn(
-              "rounded-2xl border p-3.5 text-left text-xs shadow-soft transition-all duration-200 hover:-translate-y-[0.5px] hover:shadow-soft-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-              a.isDark ? "bg-gray-800/60 border-gray-700/50" : "bg-white border-gray-100",
-            )}
-          >
-            <div className="flex items-center justify-between">
-              <span className={cn(PROFILE_TYPO.kpiLabel, sub)}>{stat.label}</span>
-              <stat.icon className={`w-4 h-4 ${stat.color}`} aria-hidden />
-            </div>
-            <p className={cn(PROFILE_TYPO.kpiValue, 'mt-2', heading)}>{stat.value}</p>
-          </button>
-        ))}
-      </div>
-
       {/* ═══ Profile Card ═══ */}
       <Card className="p-0 overflow-hidden">
-        {/* Profile header band */}
-        <div className={`px-4 pt-4 pb-5 ${subtleBg}`}>
-          <div className="flex flex-col sm:flex-row items-start gap-5">
-            {/* Avatar */}
-            <div className="relative group">
-              <div className={`h-20 w-20 rounded-2xl flex items-center justify-center shrink-0 border-2 overflow-hidden shadow-soft ${a.avatarBg}`}>
+        <div className={`px-4 pt-4 pb-4 ${subtleBg}`}>
+          <div className="flex items-start gap-3 sm:gap-4">
+            <div className="relative shrink-0">
+              <div className={`h-20 w-20 rounded-2xl flex items-center justify-center border-2 overflow-hidden shadow-soft ${a.avatarBg}`}>
                 {photoUrl ? (
                   <img referrerPolicy="no-referrer" src={photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
                 ) : (
@@ -268,16 +237,15 @@ export default function ProfilePageContent() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 transition-opacity rounded-2xl"
+                className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface-raised text-ink shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 title={t("Ανέβασμα φωτογραφίας", "Upload photo")}
                 aria-label={t("Ανέβασμα φωτογραφίας", "Upload photo")}
               >
-                <Camera className="h-5 w-5 text-white" aria-hidden />
+                <Camera className="h-3.5 w-3.5" aria-hidden />
               </button>
               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handlePhotoUpload} />
             </div>
 
-            {/* Name & Bio */}
             <div className="flex-1 space-y-1 min-w-0">
               <div className="flex items-center justify-between">
                 {isEditingName ? (
@@ -289,13 +257,13 @@ export default function ProfilePageContent() {
                     <Button size="sm" variant="ghost" aria-label={t('Ακύρωση', 'Cancel')} onClick={() => { setTempName(currentUser.name); setIsEditingName(false); }}><X className="w-4 h-4" aria-hidden /></Button>
                   </div>
                 ) : (
-                  <div className="group/name relative flex w-full items-center justify-between">
-                    <h2 className={cn(PROFILE_TYPO.identityName, 'pr-8', heading)}>{currentUser.name}</h2>
+                  <div className="flex w-full items-center justify-between gap-2">
+                    <h2 className={cn(PROFILE_TYPO.identityName, 'min-w-0 truncate', heading)}>{currentUser.name}</h2>
                     <button
                       type="button"
                       onClick={() => setIsEditingName(true)}
                       aria-label={t("Επεξεργασία ονόματος", "Edit name")}
-                      className={`p-1.5 min-h-9 min-w-9 flex items-center justify-center opacity-0 group-hover/name:opacity-100 group-focus-within/name:opacity-100 focus-visible:opacity-100 transition-opacity rounded-lg ${a.isDark ? "text-gray-400 hover:bg-gray-700/40" : "text-gray-400 hover:bg-white/80"} ${a.accent}`}
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${a.isDark ? "text-gray-400 hover:bg-gray-700/40" : "text-gray-400 hover:bg-white/80"} ${a.accent}`}
                     >
                       <Edit2 className="w-3.5 h-3.5" aria-hidden />
                     </button>
@@ -316,24 +284,11 @@ export default function ProfilePageContent() {
                     </div>
                   </div>
                 ) : (
-                  <div className="group/bio relative">
-                    <p className={cn(PROFILE_TYPO.identityBio, 'pr-8 leading-relaxed', bodyTextLight)}>{bio}</p>
-                    <button
-                      type="button"
-                      onClick={() => setIsEditingBio(true)}
-                      aria-label={t("Επεξεργασία bio", "Edit bio")}
-                      className={`absolute top-0 right-0 p-1.5 min-h-9 min-w-9 flex items-center justify-center opacity-0 group-hover/bio:opacity-100 group-focus-within/bio:opacity-100 focus-visible:opacity-100 transition-opacity rounded-lg ${a.isDark ? "text-gray-400 hover:bg-gray-700/40" : "text-gray-400 hover:bg-white/80"} ${a.accent}`}
-                    >
-                      <Edit2 className="w-3.5 h-3.5" aria-hidden />
-                    </button>
-                  </div>
+                  <p className={cn(PROFILE_TYPO.identityBio, 'leading-snug', bodyTextLight)}>{bio}</p>
                 )}
               </div>
 
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex flex-col gap-2 shrink-0">
+            <div className="mt-3 flex flex-wrap items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => setIsEditingBio(true)} className="flex items-center gap-1.5">
                 <Edit2 className="w-3 h-3" /> {t("Επεξεργασία", "Edit")}
               </Button>
@@ -362,23 +317,52 @@ export default function ProfilePageContent() {
                 </Button>
               )}
             </div>
+            </div>
           </div>
         </div>
-
       </Card>
+
+      <ProfileCompletionMeter />
+
+      {/* ═══ Quick Stats ═══ */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { icon: Users, label: t("Nakamas", "Nakamas"), value: connectionCount, to: "/connections", color: a.accent },
+          { icon: Calendar, label: t("Εκδηλώσεις", "Events"), value: attendedEventsCount, to: attendedEventsCount > 0 ? "/history" : "/", color: a.accent },
+          { icon: TrendingUp, label: t("Αξιοπιστία", "Reliability"), value: `${currentUser.reliabilityScore}%`, to: "/trust", color: currentUser.reliabilityScore >= 80 ? (a.isDark ? "text-green-400" : "text-green-600") : a.accent },
+          { icon: Award, label: t("Επίπεδο", "Tier"), value: tierLabel, to: "/trust", color: a.accent },
+        ].map((stat) => (
+          <button
+            key={stat.label}
+            type="button"
+            onClick={() => navigate(stat.to)}
+            className={cn(
+              "rounded-2xl border p-3.5 text-left text-xs shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+              a.isDark ? "bg-gray-800/60 border-gray-700/50" : "bg-white border-gray-100",
+            )}
+          >
+            <div className="flex items-center justify-between">
+              <span className={cn(PROFILE_TYPO.kpiLabel, sub)}>{stat.label}</span>
+              <stat.icon className={`w-4 h-4 ${stat.color}`} aria-hidden />
+            </div>
+            <p className={cn(PROFILE_TYPO.kpiValue, 'mt-2', heading)}>{stat.value}</p>
+          </button>
+        ))}
+      </div>
 
       {/* ═══ Progressive disclosure (Φ25, from nakamas) ═══ */}
       <TabBar
         variant="segmented"
+        className="w-full"
         idBase="profile"
         ariaLabel={t("Ενότητες προφίλ", "Profile sections")}
         activeTab={activeTab}
         onChange={setActiveTab}
         tabs={[
-          { id: "overview", label: t("Ενδιαφέροντα & Δίκτυο", "Interests & Network"), icon: UserIcon },
-          { id: "wall", label: t("Ο Τοίχος μου", "My Wall"), icon: Newspaper, count: myWallPosts.length },
-          { id: "trust", label: t("Επίπεδα & Ομάδες", "Tiers & Group Prefs"), icon: ShieldCheck },
-          { id: "privacy", label: t("Ορατότητα & Απόρρητο", "Visibility & Privacy"), icon: Lock },
+          { id: "overview", label: t("Ενδιαφέροντα", "Interests") },
+          { id: "wall", label: t("Τοίχος", "Wall"), count: myWallPosts.length },
+          { id: "trust", label: t("Επίπεδα", "Tiers") },
+          { id: "privacy", label: t("Απόρρητο", "Privacy") },
         ]}
       />
 
@@ -448,8 +432,8 @@ export default function ProfilePageContent() {
             <div className="flex items-center gap-3 min-w-0">
               <div className={`p-2.5 rounded-xl shrink-0 ${a.historyIcon}`}><History className="h-5 w-5" /></div>
               <div className="min-w-0">
-                <p className={cn(PROFILE_TYPO.rowTitle, heading)}>{t("Παρελθούσες Εκδηλώσεις & Ιδιωτική Αξιολόγηση", "Past Events & Private Feedback")}</p>
-                <p className={cn(PROFILE_TYPO.rowMeta, sub)}>{t("Αξιολογήστε τις εμπειρίες σας ιδιωτικά", "Review your experiences privately")}</p>
+                <p className={cn(PROFILE_TYPO.rowTitle, heading)}>{t("Παρελθούσες εκδηλώσεις", "Past events")}</p>
+                <p className={cn(PROFILE_TYPO.rowMeta, sub)}>{t("Αξιολόγησε ιδιωτικά τις εμπειρίες σου", "Review your experiences privately")}</p>
               </div>
             </div>
             <Button variant="outline" size="sm" onClick={() => navigate("/history")} className="shrink-0">{t("Αξιολόγηση", "Review")}</Button>
@@ -467,7 +451,7 @@ export default function ProfilePageContent() {
               {connectedUsers.slice(0, 8).map((u) => (
                 <div key={u.id} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group" {...pressable<HTMLDivElement>(() => navigate(profilePathFor(u)))}>
                   <PersonAvatar user={u} className={`w-11 h-11 rounded-xl border-2 transition-all ${a.isDark ? "border-gray-700/50 group-hover:border-gray-500" : "border-gray-200 group-hover:border-gray-300"} group-hover:scale-105`} />
-                  <span className={cn(PROFILE_TYPO.microBold, 'truncate max-w-[64px]', a.isDark ? "text-gray-300" : "text-gray-700")}>{u.name}</span>
+                  <span className={cn(PROFILE_TYPO.microBold, 'line-clamp-2 max-w-[4.5rem] text-center leading-tight', a.isDark ? "text-gray-300" : "text-gray-700")}>{u.name}</span>
                 </div>
               ))}
             </div>
@@ -723,7 +707,7 @@ export default function ProfilePageContent() {
       </Card>
 
       {activeTab === "overview" && (
-        <Card className="p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+        <Card className="p-4 flex flex-wrap items-center gap-3">
           <div className={`h-11 w-11 shrink-0 rounded-xl flex items-center justify-center ${a.isDark ? "bg-gray-700/40" : "bg-gray-100"}`}>
             <Share2 className={`h-5 w-5 ${a.accent}`} aria-hidden />
           </div>
@@ -731,7 +715,7 @@ export default function ProfilePageContent() {
             <p className={cn(PROFILE_TYPO.bannerTitle, heading)}>{t("Φέρε τους δικούς σου Nakamas", "Bring your own Nakamas")}</p>
             <p className={cn(PROFILE_TYPO.bannerBody, 'mt-0.5', sub)}>{t("Οι φίλοι που προσκαλείς μπαίνουν κατευθείαν στο δίκτυό σου — πιο εύκολα σχηματίζονται ομάδες.", "Friends you invite join your network directly — groups form faster.")}</p>
           </div>
-          <Button size="sm" onClick={() => void handleInvite()} className="flex items-center gap-1.5 shrink-0">
+          <Button size="sm" onClick={() => void handleInvite()} className="flex items-center gap-1.5 shrink-0 max-sm:w-full">
             <Share2 className="w-3.5 h-3.5" aria-hidden /> {t("Πρόσκληση φίλων", "Invite friends")}
           </Button>
         </Card>
@@ -750,7 +734,7 @@ export default function ProfilePageContent() {
             type="button"
             onClick={() => navigate(link.to)}
             className={cn(
-              "group rounded-2xl border p-4 text-left shadow-soft transition-all duration-200 hover:-translate-y-[0.5px] hover:shadow-soft-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+              "group rounded-2xl border p-4 text-left shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
               a.isDark ? "bg-gray-800/60 border-gray-700/50" : "bg-white border-gray-100",
             )}
           >
