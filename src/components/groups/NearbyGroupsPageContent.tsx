@@ -463,7 +463,7 @@ export default function NearbyGroupsPageContent() {
                     }}
                   >
                     <Popup className="custom-popup">
-                      <div className="font-bold text-2xs uppercase tracking-widest text-cyan-600 dark:text-cyan-400 mb-1">
+                      <div className="font-bold text-2xs tracking-widest text-cyan-600 dark:text-cyan-400 mb-1">
                         {group.category}
                       </div>
                       <div

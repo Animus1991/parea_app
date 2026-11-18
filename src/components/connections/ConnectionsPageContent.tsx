@@ -392,7 +392,7 @@ export default function ConnectionsPageContent() {
             {filterOpen && (
               <div className={`absolute right-0 top-full mt-1 w-56 rounded-lg border shadow-soft-lg z-fab p-3 space-y-3 ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
                 <div>
-                  <label className={`text-xs font-bold uppercase tracking-wider ${a.muted}`}>{tu('Ρόλος', 'Role')}</label>
+                  <label className={`text-xs font-bold tracking-wider ${a.muted}`}>{tu('Ρόλος', 'Role')}</label>
                   <div className="flex gap-1 mt-1">
                     {(['all', 'organizer', 'user'] as const).map((r) => (
                       <button key={r} onClick={() => setRoleFilter(r)} className={`px-2 py-1 rounded-lg text-xs font-bold transition-colors ${roleFilter === r ? a.acceptBtn : (a.isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}`}>
@@ -402,7 +402,7 @@ export default function ConnectionsPageContent() {
                   </div>
                 </div>
                 <div>
-                  <label className={`text-xs font-bold uppercase tracking-wider ${a.muted}`}>{tu('Ταξινόμηση', 'Sort')}</label>
+                  <label className={`text-xs font-bold tracking-wider ${a.muted}`}>{tu('Ταξινόμηση', 'Sort')}</label>
                   <div className="flex gap-1 mt-1">
                     {(['name', 'mutual', 'trust'] as const).map((s) => (
                       <button key={s} onClick={() => setSortBy(s)} className={`px-2 py-1 rounded-lg text-xs font-bold transition-colors ${sortBy === s ? a.acceptBtn : (a.isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}`}>

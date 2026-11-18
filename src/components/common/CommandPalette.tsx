@@ -380,7 +380,7 @@ export function CommandPalette() {
               ) : (
                 Array.from(sections.entries()).map(([section, items]) => (
                   <div key={section} className="mb-2">
-                    <p className="px-2 py-1.5 text-2xs font-bold uppercase tracking-wider text-gray-400">
+                    <p className="px-2 py-1.5 text-2xs font-bold tracking-wider text-gray-400">
                       {section}
                     </p>
                     {items.map((item) => {

@@ -100,7 +100,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
           if (!items.length) return null;
           return (
             <section key={sec.key}>
-              <p className="text-xs font-bold uppercase tracking-wider text-brand/80 px-2 mb-1.5">{sec.title}</p>
+              <p className="text-xs font-bold tracking-wider text-brand/80 px-2 mb-1.5">{sec.title}</p>
               <ul className="space-y-1">
                 {items.map((c) => {
                   const Icon = TYPE_ICON[c.type];

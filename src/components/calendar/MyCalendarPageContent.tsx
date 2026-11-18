@@ -534,7 +534,7 @@ export default function MyCalendarPageContent() {
                   <div key={i} className="text-center group cursor-default">
                     <div
                       className={cn(
-                        "text-xs md:text-xs font-bold uppercase tracking-widest mb-1 transition-colors",
+                        "text-xs md:text-xs font-bold tracking-widest mb-1 transition-colors",
                         isToday(days[i]) ? p.iconAccent : p.muted,
                       )}
                     >
@@ -573,7 +573,7 @@ export default function MyCalendarPageContent() {
                   <div
                     key={d}
                     className={cn(
-                      "text-center text-xs md:text-xs font-bold uppercase tracking-widest py-2 rounded-lg",
+                      "text-center text-xs md:text-xs font-bold tracking-widest py-2 rounded-lg",
                       p.isDark
                         ? "bg-white/5 text-gray-400"
                         : "bg-gray-50 text-gray-500",
@@ -606,7 +606,7 @@ export default function MyCalendarPageContent() {
                 <div className={cn("mt-5 border-t pt-4 space-y-3", p.borderB)}>
                   <h4
                     className={cn(
-                      "text-xs font-bold uppercase tracking-widest pl-1 mb-4",
+                      "text-xs font-bold tracking-widest pl-1 mb-4",
                       p.head,
                     )}
                   >
@@ -625,7 +625,7 @@ export default function MyCalendarPageContent() {
                     >
                       <div
                         className={cn(
-                          "text-xs font-bold w-11 shrink-0 uppercase tracking-widest text-center",
+                          "text-xs font-bold w-11 shrink-0 tracking-widest text-center",
                           p.muted,
                         )}
                       >
@@ -642,7 +642,7 @@ export default function MyCalendarPageContent() {
                       </div>
                       <span
                         className={cn(
-                          "text-xs uppercase tracking-widest font-bold px-2 py-1 flex items-center justify-center rounded-lg shrink-0",
+                          "text-xs tracking-widest font-bold px-2 py-1 flex items-center justify-center rounded-lg shrink-0",
                           p.isDark
                             ? "bg-emerald-900/30 text-emerald-400"
                             : "bg-emerald-50 text-emerald-600",

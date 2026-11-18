@@ -47,7 +47,7 @@ export function NakamasCast({ className, heading }: NakamasCastProps) {
       aria-label={heading ?? t('Πώς δουλεύει το Nakamas', 'How Nakamas works')}
     >
       {heading ? (
-        <h2 className="text-xs font-bold tracking-wider uppercase text-ink-muted">{heading}</h2>
+        <h2 className="text-xs font-bold tracking-wider text-ink-muted">{heading}</h2>
       ) : null}
       <ul className="grid grid-cols-2 sm:grid-cols-4 gap-x-2 gap-y-3">
         {CAST.map((item) => (

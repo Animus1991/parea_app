@@ -19,7 +19,7 @@ export function MoodSelector({ activeMood, onSelectMood, className = '' }: MoodS
   return (
     <div className={cn('space-y-3', className)}>
       <div className="flex items-center gap-2 mb-2">
-        <h3 className={cn('text-xs font-semibold tracking-[0.12em] uppercase', h.sectionLabel)}>
+        <h3 className={cn(HOME_TYPO.sectionLabel, h.sectionLabel)}>
           {t('Πώς νιώθεις σήμερα;', 'How are you feeling today?')}
         </h3>
       </div>

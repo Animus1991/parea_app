@@ -81,7 +81,7 @@ export function HomeNextBestAction() {
           <Compass className={cn('w-5 h-5', a.iconAccent)} aria-hidden />
         </div>
         <div className="flex-1 min-w-0">
-          <p className={cn('text-xs font-bold uppercase tracking-wider mb-0.5', a.muted)}>
+          <p className={cn('text-xs font-bold tracking-wider mb-0.5', a.muted)}>
             {tu('Επόμενη καλύτερη ενέργεια', 'Next best action')}
           </p>
           <p className={cn('text-sm font-bold', a.head)}>

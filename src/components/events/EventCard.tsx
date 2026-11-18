@@ -254,7 +254,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
   const dateLocale = language === 'en' ? enLocale : elLocale;
   const eventDate = parseISO(event.date);
   const day = format(eventDate, "d");
-  const month = format(eventDate, "MMM", { locale: dateLocale }).toUpperCase();
+  const month = format(eventDate, "MMM", { locale: dateLocale });
   const weekday = format(eventDate, "EEEE", { locale: dateLocale });
 
   return (
@@ -984,7 +984,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
             )}
           </p>
           <div className="bg-surface border border-border rounded-lg p-3 mb-4 text-left">
-            <p className="text-2xs font-bold uppercase tracking-wide text-ink-muted mb-1">
+            <p className="text-2xs font-bold tracking-wide text-ink-muted mb-1">
               {t('Demo', 'Demo')}
             </p>
             <span className="card-copy font-medium text-ink-muted break-all">

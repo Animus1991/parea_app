@@ -85,7 +85,7 @@ export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewPro
         <div className={cn('p-5 flex items-center justify-between border-b shrink-0', p.borderB)}>
           <div>
             <h3 className={cn('font-bold text-sm md:text-base', p.head)}>{format(day, 'd MMMM yyyy', { locale: language === 'el' ? elLocale : enUS })}</h3>
-            <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
+            <p className={cn('text-xs font-bold tracking-widest', p.muted)}>
               {tu('Ημερήσιο πρόγραμμα', 'Daily schedule')}
             </p>
           </div>

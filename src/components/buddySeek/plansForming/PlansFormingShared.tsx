@@ -122,7 +122,7 @@ export function PlansFormingYourPlanBanner({
         isDark ? 'bg-cyan-950/40 border-cyan-700/40' : 'bg-cyan-50 border-cyan-200',
       )}
     >
-      <p className={cn(PLANS_FORMING_TYPO.sectionLabel, 'uppercase', isDark ? 'text-cyan-300' : 'text-cyan-700')}>
+      <p className={cn(PLANS_FORMING_TYPO.sectionLabel, isDark ? 'text-cyan-300' : 'text-cyan-700')}>
         {tu('Το σχέδιό σας', 'Your plan')}
       </p>
       <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'truncate', isDark ? 'text-white' : 'text-gray-900')}>

@@ -255,7 +255,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
                   <div
                     key={label}
                     className={cn(
-                      'text-center text-xs md:text-xs font-bold uppercase tracking-widest py-1',
+                      'text-center text-xs md:text-xs font-bold tracking-widest py-1',
                       p.muted,
                     )}
                   >
@@ -280,7 +280,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
                   <div
                     key={label}
                     className={cn(
-                      'text-center text-xs font-bold uppercase tracking-widest py-1 rounded-lg',
+                      'text-center text-xs font-bold tracking-widest py-1 rounded-lg',
                       p.isDark ? 'bg-white/5 text-gray-400' : 'bg-gray-50 text-gray-500',
                     )}
                   >

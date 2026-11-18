@@ -24,7 +24,7 @@ export function PlansFormingScarcityPromoCard({
           : 'border-amber-200 bg-amber-50/90',
       )}
     >
-      <p className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-amber-400' : 'text-amber-800')}>
+      <p className={cn('text-xs font-bold tracking-wider', isDark ? 'text-amber-400' : 'text-amber-800')}>
         {t('Σχεδόν πλήρης ομάδα', 'Group nearly full')}
       </p>
       <h3 className={cn('text-sm font-bold leading-normal line-clamp-2', isDark ? 'text-white' : 'text-gray-900')}>

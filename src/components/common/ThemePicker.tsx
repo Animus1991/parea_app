@@ -97,7 +97,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
               >
                 <p
                   className={cn(
-                    'px-3 py-2 text-2xs font-bold uppercase tracking-wider',
+                    'px-3 py-2 text-2xs font-bold tracking-wider',
                     tok.muted,
                   )}
                 >

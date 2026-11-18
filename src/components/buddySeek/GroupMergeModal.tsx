@@ -98,14 +98,14 @@ export function GroupMergeModal({
         <div className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl border border-border p-3">
-              <p className="text-xs font-bold uppercase text-ink-muted">{tu('Η ομάδα σας', 'Your group')}</p>
+              <p className="text-xs font-bold text-ink-muted">{tu('Η ομάδα σας', 'Your group')}</p>
               <p className="text-sm md:text-base font-bold flex items-center gap-1 mt-1">
                 <Users className="w-4 h-4" />
                 {fromGroup.members.length}
               </p>
             </div>
             <div className="rounded-2xl border border-border p-3">
-              <p className="text-xs font-bold uppercase text-ink-muted">{tu('Άλλη ομάδα', 'Other group')}</p>
+              <p className="text-xs font-bold text-ink-muted">{tu('Άλλη ομάδα', 'Other group')}</p>
               <p className="text-sm md:text-base font-bold flex items-center gap-1 mt-1">
                 <Users className="w-4 h-4" />
                 {toGroup.members.length}

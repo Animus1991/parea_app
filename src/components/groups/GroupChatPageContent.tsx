@@ -1097,7 +1097,7 @@ export default function GroupChatPageContent() {
             )}
           </p>
           <div className="bg-surface border border-border rounded-lg p-3 mb-4 text-left">
-            <p className="text-2xs font-bold uppercase tracking-wide text-ink-muted mb-1">
+            <p className="text-2xs font-bold tracking-wide text-ink-muted mb-1">
               {t('Demo', 'Demo')}
             </p>
             <span className="text-xs font-medium text-ink-muted break-all">

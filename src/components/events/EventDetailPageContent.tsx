@@ -88,7 +88,7 @@ function EventDetailQuickInfoBlock({
 
   return (
     <div className={cn(shell, className)} role="region" aria-label={t('Γρήγορες πληροφορίες', 'Quick info')}>
-      <p className={cn('text-xs font-bold tracking-wide uppercase mb-3', content.metaLabel)}>
+      <p className={cn('text-xs font-bold tracking-wide mb-3', content.metaLabel)}>
         {t('Γρήγορες πληροφορίες', 'Quick info')}
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -189,7 +189,7 @@ function EventDetailHostOrganizationRating({
 
   return (
     <div className={cn(shell, className)}>
-      <p className={cn('text-xs font-bold tracking-wide uppercase mb-1', content.metaLabel)}>
+      <p className={cn('text-xs font-bold tracking-wide mb-1', content.metaLabel)}>
         {t('Αξιολογήστε την οργάνωση του διοργανωτή', "Rate the host's organization")}
       </p>
       <p className={cn('card-copy font-medium mb-4', content.metaValue)}>

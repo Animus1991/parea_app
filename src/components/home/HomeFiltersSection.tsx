@@ -126,7 +126,7 @@ export function HomeFiltersSection({
       </div>
 
       <div className="hidden md:block space-y-3">
-        <h2 className={`text-xs font-semibold tracking-[0.12em] uppercase ${h.sectionLabel}`}>
+        <h2 className={`${HOME_TYPO.sectionLabel} ${h.sectionLabel}`}>
           {t('home.explore_categories', 'Explore Categories')}
         </h2>
 

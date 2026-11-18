@@ -147,7 +147,7 @@ export function PlansFormingCard({
 
         <div className="min-w-0 flex-1 space-y-1.5">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className={cn('card-badge font-semibold uppercase tracking-wide', darkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400')}>
+            <span className={cn('card-badge font-semibold tracking-wide', darkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400')}>
               {tu(item.intentLabel.el, item.intentLabel.en)}
             </span>
             {item.isSavedEvent && (
@@ -364,7 +364,7 @@ export function PlansFormingGroupCard({
           <img src={event.imageUrl} alt="" className="w-11 h-11 rounded-xl object-cover shrink-0" />
         )}
         <div className="min-w-0 flex-1 space-y-1.5">
-          <p className="card-badge font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
+          <p className="card-badge font-bold tracking-wide text-emerald-700 dark:text-emerald-300">
             {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
           </p>
           <p className={cn('card-heading-lg font-bold leading-normal line-clamp-2', darkCard ? 'text-white' : 'text-gray-900 dark:text-white')}>

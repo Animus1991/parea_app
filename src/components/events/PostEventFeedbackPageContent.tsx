@@ -552,7 +552,7 @@ export default function PostEventFeedbackPageContent() {
               </p>
               <p
                 className={cn(
-                  'text-xs font-bold uppercase tracking-widest mt-0.5',
+                  'text-xs font-bold tracking-widest mt-0.5',
                   p.isDark ? 'text-amber-500/80' : 'text-amber-700',
                 )}
               >

@@ -66,7 +66,7 @@ export function SectionHeading({
 }) {
   return (
     <div className="flex items-center justify-between mb-3">
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400">{children}</h2>
+      <h2 className="text-xs font-semibold tracking-wider text-gray-400">{children}</h2>
       {action && <div>{action}</div>}
     </div>
   );

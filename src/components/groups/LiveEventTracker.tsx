@@ -313,7 +313,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                         {loc.sos
                           ? t("SOS / HELP", "SOS / HELP")
                           : loc.isOutOfBounds
-                            ? t("ΕΚΤΟΣ ΟΡΙΩΝ", "OUT OF BOUNDS")
+                            ? t("Εκτός Ορίων", "Out Of Bounds")
                             : t('Κοινοποίηση', 'Sharing')}
                       </p>
                     </div>

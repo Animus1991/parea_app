@@ -18,7 +18,7 @@ export function HomeGuestHero() {
       className="w-full max-w-lg mx-auto mb-5 text-center space-y-4"
     >
       <NakamasMini id="explorer" size={48} className="mx-auto" />
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-700">
+      <p className="text-xs font-semibold tracking-[0.14em] text-cyan-700">
         {t('Εξερεύνηση Δραστηριοτήτων', 'Explore Activities')}
       </p>
       <h1 className={cn(APP_TYPO.pageTitle, 'text-ink')}>

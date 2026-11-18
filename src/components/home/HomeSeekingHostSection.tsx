@@ -88,7 +88,7 @@ export function HomeSeekingHostSection({
               <Link to={`/events/${event.id}`} className="block relative h-28">
                 <img src={event.imageUrl} alt="" className="w-full h-full object-cover" />
                 <span className="absolute top-2 left-2 rounded-lg bg-white/90 px-1.5 py-0.5 text-center leading-tight">
-                  <span className="block text-2xs font-bold uppercase text-ink-muted">{month}</span>
+                  <span className="block text-2xs font-bold text-ink-muted">{month}</span>
                   <span className="block text-sm font-bold text-ink">{day}</span>
                 </span>
                 <span className="absolute bottom-2 right-2 rounded-lg bg-white/90 px-1.5 py-0.5 text-2xs font-bold text-ink">

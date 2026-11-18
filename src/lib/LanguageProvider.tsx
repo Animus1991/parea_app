@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
-import { toUpperNoAccents } from './greekText';
+import { toTitleCase } from './greekText';
 import { useLanguageStore } from '../store/languageStore';
 import { LanguageContext, type Language } from './i18n';
 
@@ -68,8 +68,8 @@ const translations: Record<string, Record<Language, string>> = {
   'home.feed.sort.group_progress': { el: 'Πρόοδος Ομάδας', en: 'Group Progress' },
 
   // EventCard
-  'event_card.organizer': { el: 'ΔΙΟΡΓΑΝΩΤΗΣ', en: 'ORGANIZER' },
-  'event_card.free': { el: 'ΔΩΡΕΑΝ', en: 'FREE' },
+  'event_card.organizer': { el: 'Διοργανωτής', en: 'Organizer' },
+  'event_card.free': { el: 'Δωρεάν', en: 'Free' },
   'event_card.forming': { el: 'Σε Σχηματισμό', en: 'Forming' },
   'event_card.join': { el: 'Συμμετοχή', en: 'Join' },
   'event_card.copied': { el: 'Ο σύνδεσμος αντιγράφηκε!', en: 'Link copied to clipboard!' },
@@ -99,8 +99,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const tu = (greekText: string, englishText?: string): string => {
-    const translated = t(greekText, englishText);
-    return language === 'el' ? toUpperNoAccents(translated) : translated.toUpperCase();
+    return toTitleCase(t(greekText, englishText));
   };
 
   return (

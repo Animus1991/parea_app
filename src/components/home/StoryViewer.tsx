@@ -97,7 +97,7 @@ export function StoryViewer({
   try {
     const d = parseISO(activeEvent.date);
     day = format(d, "d");
-    mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale }).toUpperCase();
+    mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale });
     weekday = format(d, "EEEE", { locale: language === 'en' ? enLocale : elLocale });
   } catch {
     /* keep empty on invalid date */

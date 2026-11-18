@@ -143,7 +143,7 @@ export default function HelpCenterPageContent() {
 
       {/* FAQ */}
       <div>
-        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Συχνές Ερωτήσεις', 'FAQ')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider mb-3", a.sectionHead)}>{tu('Συχνές Ερωτήσεις', 'FAQ')}</h2>
         <div className="space-y-2">
           {filteredFaqs.map(faq => (
             <Card key={faq.id} className="overflow-hidden">
@@ -166,7 +166,7 @@ export default function HelpCenterPageContent() {
 
       {/* Articles */}
       <div>
-        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Άρθρα Βοήθειας', 'Help Articles')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider mb-3", a.sectionHead)}>{tu('Άρθρα Βοήθειας', 'Help Articles')}</h2>
         <div className="space-y-3">
           {filtered.map(article => (
             <Card

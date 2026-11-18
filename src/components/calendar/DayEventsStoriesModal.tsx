@@ -145,7 +145,7 @@ export function DayEventsStoriesModal({
       <div className="relative w-full max-w-lg h-full md:h-auto md:max-h-[90vh] flex flex-col bg-[#0f1419] md:rounded-2xl overflow-hidden shadow-soft border border-white/10">
         <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#151b22] shrink-0">
           <div className="min-w-0 pr-2">
-            <p className="text-xs font-bold uppercase tracking-widest text-cyan-400 truncate">
+            <p className="text-xs font-bold tracking-widest text-cyan-400 truncate">
               {headerDayLabel}
             </p>
             <p className="text-sm text-gray-400 font-medium">
@@ -212,7 +212,7 @@ export function DayEventsStoriesModal({
           )}
 
           <div className="absolute bottom-0 inset-x-0 p-4 md:p-5 space-y-1.5 z-[1]">
-            <span className="inline-block text-xs font-bold uppercase tracking-widest text-cyan-200 bg-cyan-950/90 border border-cyan-800/50 px-2 py-0.5 rounded-lg">
+            <span className="inline-block text-xs font-bold tracking-widest text-cyan-200 bg-cyan-950/90 border border-cyan-800/50 px-2 py-0.5 rounded-lg">
               {ev.category}
             </span>
             <h2 id="day-stories-title" className="text-sm md:text-base font-bold text-white leading-tight">
@@ -231,19 +231,19 @@ export function DayEventsStoriesModal({
         <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#151b22]">
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
-              <p className="text-gray-500 font-bold uppercase tracking-wide mb-1 flex items-center gap-1">
+              <p className="text-gray-500 font-bold tracking-wide mb-1 flex items-center gap-1">
                 <ShieldCheck className="w-3 h-3 shrink-0" /> {tu('Εμπιστοσύνη', 'Trust')}
               </p>
               <p className="text-white font-bold text-sm">{tierLabel}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
-              <p className="text-gray-500 font-bold uppercase tracking-wide mb-1 flex items-center gap-1">
+              <p className="text-gray-500 font-bold tracking-wide mb-1 flex items-center gap-1">
                 <Users className="w-3 h-3 shrink-0" /> {tu('Ομάδα', 'Group')}
               </p>
               <p className="text-white font-bold text-sm">{groupLabel}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-3 col-span-2">
-              <p className="text-gray-500 font-bold uppercase tracking-wide mb-1 flex items-center gap-1">
+              <p className="text-gray-500 font-bold tracking-wide mb-1 flex items-center gap-1">
                 <Ticket className="w-3 h-3 shrink-0" /> {tu('Εισιτήριο', 'Ticket')}
               </p>
               <p className="text-white font-bold text-sm">{ticketLabel}</p>
@@ -252,7 +252,7 @@ export function DayEventsStoriesModal({
 
           {ev.meetingPoint && (
             <div className="rounded-2xl border border-cyan-800/40 bg-cyan-950/30 p-3">
-              <p className="text-cyan-400/90 font-bold text-xs uppercase tracking-wide mb-1">
+              <p className="text-cyan-400/90 font-bold text-xs tracking-wide mb-1">
                 {tu('Σημείο συνάντησης', 'Meeting point')}
               </p>
               <p className="text-white text-sm font-medium leading-snug">{ev.meetingPoint}</p>
@@ -265,7 +265,7 @@ export function DayEventsStoriesModal({
                 <MapPin className="w-5 h-5 text-cyan-400" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-0.5">
+                <p className="text-xs font-bold tracking-wide text-gray-500 mb-0.5">
                   {tu('Τοποθεσία', 'Location')}
                 </p>
                 <p className="text-sm text-white font-medium leading-snug">
@@ -315,7 +315,7 @@ export function DayEventsStoriesModal({
             )}
 
             <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-2 space-y-2">
-              <p className="text-xs font-bold uppercase tracking-widest text-gray-500 px-1">
+              <p className="text-xs font-bold tracking-widest text-gray-500 px-1">
                 {tu('Προσθήκη στο ημερολόγιο', 'Add to calendar')}
               </p>
               <div className="grid grid-cols-2 gap-2">

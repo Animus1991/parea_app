@@ -9,7 +9,7 @@ export const APP_TYPO = {
   /** Micro labels, badges, caps */
   micro: 'text-2xs',
   /** Section headings, KPI labels — Wallet balance/pending labels */
-  sectionLabel: 'text-xs font-semibold tracking-[0.12em]',
+  sectionLabel: 'text-xs font-semibold tracking-wide',
   /** Body, list rows, meta */
   body: 'text-sm',
   /** Body medium emphasis */
@@ -151,7 +151,7 @@ export const PLANS_TYPO = {
   pageTitle: 'text-lg md:text-xl font-bold tracking-tight leading-tight',
   pageSub: 'text-sm font-medium',
   statLabel: 'text-2xs font-semibold',
-  nextLabel: 'text-2xs font-bold uppercase tracking-wide',
+  nextLabel: 'text-2xs font-bold tracking-wide',
   nextTitle: 'text-sm font-bold truncate',
   nextBadge: 'text-xs font-bold',
   bannerTitle: 'text-sm font-bold',
@@ -180,8 +180,8 @@ export const BUDDY_SEEK_TYPO = {
 export const SHELL_TYPO = {
   logo: 'nakamas-logo nakamas-logo--lg',
   logoMobile: 'nakamas-logo',
-  sectionLabel: 'text-xs font-semibold tracking-[0.12em]',
-  dashboard: 'text-xs font-semibold tracking-[0.12em]',
+  sectionLabel: 'text-xs font-semibold tracking-wide',
+  dashboard: 'text-xs font-semibold tracking-wide',
   search: 'text-xs',
   createBtn: 'text-xs font-bold',
   langBtn: 'text-2xs font-bold',
@@ -247,7 +247,7 @@ export const HOME_TYPO = {
   stepTitle: 'text-xs font-bold',
   stepBody: 'text-2xs leading-relaxed font-medium',
   feedTab: 'text-xs font-bold',
-  sectionLabel: 'text-xs font-semibold tracking-[0.12em] uppercase',
+  sectionLabel: 'text-xs font-semibold tracking-wide',
   /** Category / tag / feed / filter chips — same type + height as «Όλα» */
   filterChip: 'filter-chip text-xs font-semibold',
   /** Mood chips with icons («Χαλαρά»…) — same type, slightly taller */
@@ -269,7 +269,7 @@ export const HOME_TYPO = {
 export const REPORT_TYPO = {
   pageTitle: 'text-lg md:text-xl font-bold tracking-tight leading-tight',
   pageSub: 'text-sm font-medium',
-  sectionLabel: 'text-xs font-semibold tracking-[0.12em] uppercase',
+  sectionLabel: 'text-xs font-semibold tracking-wide',
   fieldLabel: 'text-xs font-bold',
   fieldHint: 'text-2xs font-medium leading-relaxed',
   option: 'text-xs font-medium',
@@ -279,7 +279,7 @@ export const REPORT_TYPO = {
 
 /** Onboarding wizard density — same title scale as Home */
 export const ONBOARDING_TYPO = {
-  stepLabel: 'text-2xs font-bold tracking-wide uppercase',
+  stepLabel: 'text-2xs font-bold tracking-wide',
   title: 'text-lg md:text-xl font-bold leading-tight',
   subtitle: 'text-sm font-medium leading-relaxed',
   optionTitle: 'text-xs font-bold',

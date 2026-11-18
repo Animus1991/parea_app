@@ -41,7 +41,7 @@ export function HomeBelowFold({
 
   return (
     <div className="space-y-4 md:space-y-5 pt-4 border-t border-border">
-      <p className="text-xs font-bold uppercase tracking-wider text-ink-muted">
+      <p className="text-xs font-bold tracking-wider text-ink-muted">
         {t('Περισσότερα', 'More')}
       </p>
 

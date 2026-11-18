@@ -364,7 +364,7 @@ export default function NotificationsPageContent() {
         <div className="space-y-4">
           {todayNotifs.length > 0 && (
             <div className="space-y-2">
-              <h3 className={cn('text-xs font-bold tracking-wider uppercase', a.muted)}>
+              <h3 className={cn('text-xs font-bold tracking-wider ', a.muted)}>
                 {tu('Νέες', 'New')} ({todayNotifs.length})
               </h3>
               {todayNotifs.map((notif) => renderNotifRow(notif, true))}
@@ -372,7 +372,7 @@ export default function NotificationsPageContent() {
           )}
           {earlierNotifs.length > 0 && (
             <div className="space-y-2">
-              <h3 className={cn('text-xs font-bold tracking-wider uppercase', a.muted)}>
+              <h3 className={cn('text-xs font-bold tracking-wider ', a.muted)}>
                 {tu('Προηγούμενες', 'Earlier')}
               </h3>
               {earlierNotifs.map((notif) => renderNotifRow(notif, false))}

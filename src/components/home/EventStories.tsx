@@ -75,7 +75,7 @@ export function EventStories({ events }: EventStoriesProps) {
           try {
             const d = parseISO(e.date);
             day = format(d, "d");
-            mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale }).toUpperCase();
+            mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale });
           } catch {
             /* keep empty on invalid date */
           }
@@ -126,7 +126,7 @@ export function EventStories({ events }: EventStoriesProps) {
                   {/* Date and title share one text block at the bottom, no boxed chip on top. */}
                   <div className="absolute bottom-1.5 left-1.5 right-1.5 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                     {day ? (
-                      <span className="block text-2xs font-bold uppercase leading-tight text-white/85">
+                      <span className="block text-2xs font-bold leading-tight text-white/85">
                         {day} {mon}
                       </span>
                     ) : null}

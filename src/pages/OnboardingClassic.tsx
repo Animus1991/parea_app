@@ -130,7 +130,7 @@ export default function OnboardingClassic() {
         {/* Progress bar */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+            <span className="text-xs font-bold text-gray-400 tracking-widest">
               {tu('Βήμα', 'Step')} {step + 1} / {TOTAL_STEPS}
             </span>
             <span className="text-xs font-bold text-brand">{progressPct}%</span>
@@ -333,7 +333,7 @@ export default function OnboardingClassic() {
             {step === 6 && (
               <div className="space-y-4">
                 <div>
-                  <label className="text-2xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
+                  <label className="text-2xs font-bold text-gray-500 tracking-widest block mb-1.5">
                     {tu('Όνομα', 'Name')}
                   </label>
                   <input
@@ -345,7 +345,7 @@ export default function OnboardingClassic() {
                   />
                 </div>
                 <div>
-                  <label className="text-2xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5">
+                  <label className="text-2xs font-bold text-gray-500 tracking-widest block mb-1.5">
                     {tu('Σύντομο Bio', 'Short Bio')}
                   </label>
                   <textarea
@@ -364,7 +364,7 @@ export default function OnboardingClassic() {
                 </div>
                 {/* Summary */}
                 <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-3 space-y-1.5 border border-gray-100 dark:border-border">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                  <p className="text-xs font-bold text-gray-400 tracking-widest">
                     {tu('Σύνοψη επιλογών', 'Your selections')}
                   </p>
                   <p className="text-sm text-gray-600 font-medium">

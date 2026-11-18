@@ -33,7 +33,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
         <div className="min-w-0 flex-1 space-y-1.5">
           <h2
             id="home-plans-forming"
-            className="text-sm font-bold uppercase tracking-wide text-accent-strong flex items-center gap-1.5"
+            className="text-sm font-bold tracking-wide text-accent-strong flex items-center gap-1.5"
           >
             <Users className="w-4 h-4 opacity-80" aria-hidden />
             {tu('Βρες Nakamas', 'Find Nakamas')}

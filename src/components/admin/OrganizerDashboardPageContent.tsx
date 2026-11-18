@@ -264,7 +264,7 @@ export default function OrganizerDashboardPageContent() {
                 <span className={cn('w-8 h-8 rounded-lg flex items-center justify-center', stat.iconWrap)}>
                   <stat.icon className={cn('w-4 h-4', stat.iconColor)} />
                 </span>
-                <span className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
+                <span className={cn('text-xs font-bold tracking-widest', p.muted)}>
                   {tu(stat.labelEl, stat.labelEn)}
                 </span>
               </div>
@@ -409,7 +409,7 @@ export default function OrganizerDashboardPageContent() {
                       <p className={cn('text-sm md:text-base font-bold tabular-nums leading-none', p.head)}>
                         {memberCount}/{capacity || '—'}
                       </p>
-                      <p className={cn('text-xs font-bold uppercase tracking-widest', p.muted)}>
+                      <p className={cn('text-xs font-bold tracking-widest', p.muted)}>
                         {tu('Θέσεις', 'Spots')}
                       </p>
                     </div>
@@ -422,7 +422,7 @@ export default function OrganizerDashboardPageContent() {
 
                 <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="md:col-span-2 space-y-4">
-                    <h4 className={cn('text-xs font-bold uppercase tracking-widest flex items-center gap-2', p.muted)}>
+                    <h4 className={cn('text-xs font-bold tracking-widest flex items-center gap-2', p.muted)}>
                       <Users className="w-4 h-4" />
                       {t('Διαχείριση Ομάδων', 'Group Management')}
                     </h4>
@@ -490,7 +490,7 @@ export default function OrganizerDashboardPageContent() {
                   </div>
 
                   <div className="space-y-4">
-                    <h4 className={cn('text-xs font-bold uppercase tracking-widest flex items-center gap-2', p.muted)}>
+                    <h4 className={cn('text-xs font-bold tracking-widest flex items-center gap-2', p.muted)}>
                       {actionsMode === 'full' ? (
                         <>
                           <TrendingUp className="w-4 h-4" />
@@ -572,13 +572,13 @@ export default function OrganizerDashboardPageContent() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-indigo-500" />
-                <span className={cn('text-xs uppercase font-bold', p.muted)}>
+                <span className={cn('text-xs font-bold', p.muted)}>
                   {tu('Προβολές', 'Views')}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                <span className={cn('text-xs uppercase font-bold', p.muted)}>
+                <span className={cn('text-xs font-bold', p.muted)}>
                   {tu('Κλικ', 'Clicks')}
                 </span>
               </div>
@@ -659,7 +659,7 @@ export default function OrganizerDashboardPageContent() {
           </div>
 
           <div>
-            <h3 className={cn('text-sm font-bold uppercase tracking-wider mb-4', p.head)}>
+            <h3 className={cn('text-sm font-bold tracking-wider mb-4', p.head)}>
               {tu('Ικανοποίηση Κοινού', 'Audience Satisfaction')}
             </h3>
             <div className="grid grid-cols-3 gap-3">
@@ -674,7 +674,7 @@ export default function OrganizerDashboardPageContent() {
                 </p>
                 <p
                   className={cn(
-                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
+                    'text-xs sm:text-xs font-bold tracking-widest mt-1',
                     p.isDark ? 'text-emerald-500' : 'text-emerald-600',
                   )}
                 >
@@ -692,7 +692,7 @@ export default function OrganizerDashboardPageContent() {
                 </p>
                 <p
                   className={cn(
-                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
+                    'text-xs sm:text-xs font-bold tracking-widest mt-1',
                     p.isDark ? 'text-amber-500' : 'text-amber-600',
                   )}
                 >
@@ -710,7 +710,7 @@ export default function OrganizerDashboardPageContent() {
                 </p>
                 <p
                   className={cn(
-                    'text-xs sm:text-xs font-bold uppercase tracking-widest mt-1',
+                    'text-xs sm:text-xs font-bold tracking-widest mt-1',
                     p.isDark ? 'text-red-500' : 'text-red-600',
                   )}
                 >

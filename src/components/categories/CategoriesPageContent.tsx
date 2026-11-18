@@ -240,7 +240,7 @@ export default function CategoriesPageContent() {
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className={cn('w-4 h-4', p.iconAccent)} />
-            <span className={cn('text-xs font-bold uppercase tracking-wider', p.sub)}>
+            <span className={cn('text-xs font-bold tracking-wider', p.sub)}>
               {tu('Δημοφιλή Τώρα', 'Trending Now')}
             </span>
           </div>
@@ -403,7 +403,7 @@ export default function CategoriesPageContent() {
                     : CATEGORY_CATALOG.find((c) => c.name === activeCategory)?.labelEn
                   : t('Όλες οι Εκδηλώσεις', 'All Discoveries')}
               </h2>
-              <p className={cn('text-xs font-bold uppercase tracking-wider mt-0.5', p.muted)}>
+              <p className={cn('text-xs font-bold tracking-wider mt-0.5', p.muted)}>
                 {filteredEvents.length} {tu('αποτελέσματα', 'results found')}
               </p>
             </div>

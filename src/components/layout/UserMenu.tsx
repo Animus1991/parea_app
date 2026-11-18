@@ -98,7 +98,7 @@ export function UserMenu({ children, label, header, showAccountLinks = false }: 
     tok.isDark ? 'focus-visible:ring-white/40' : 'focus-visible:ring-accent/40',
   );
   const itemIdle = cn(tok.navInactive, tok.isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-50');
-  const sectionLabel = cn('px-3 pt-2 pb-1 text-2xs font-bold uppercase tracking-wider', tok.muted);
+  const sectionLabel = cn('px-3 pt-2 pb-1 text-2xs font-bold tracking-wider', tok.muted);
   const divider = cn('my-1.5 border-t', tok.isDark ? 'border-gray-700' : 'border-gray-100');
 
   const menu =
