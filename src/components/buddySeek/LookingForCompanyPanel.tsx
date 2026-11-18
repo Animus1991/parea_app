@@ -99,7 +99,7 @@ export function LookingForCompanyPanel({
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className={cn('p-2 min-h-10 min-w-10 flex items-center justify-center rounded-xl', darkSurface ? 'hover:bg-white/10' : 'hover:bg-gray-100')}
+          className={cn('p-2 min-h-8 min-w-8 flex items-center justify-center rounded-xl', darkSurface ? 'hover:bg-white/10' : 'hover:bg-gray-100')}
           aria-expanded={expanded}
           aria-label={expanded ? t('Σύμπτυξη', 'Collapse') : t('Επέκταση', 'Expand')}
         >
@@ -136,7 +136,7 @@ export function LookingForCompanyPanel({
             <button
               type="button"
               onClick={() => setCreateOpen(true)}
-              className="inline-flex items-center gap-1.5 min-h-10 px-4 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold"
+              className="inline-flex items-center gap-1.5 min-h-8 px-4 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold"
             >
               <Plus className="w-3.5 h-3.5" />
               {myRequest ? t('Επεξεργασία αιτήματος', 'Edit request') : t('Δημιουργία αιτήματος', 'Create request')}
@@ -145,7 +145,7 @@ export function LookingForCompanyPanel({
               type="button"
               onClick={() => navigate('/buddy-seek')}
               className={cn(
-                'min-h-10 px-3 rounded-2xl text-xs font-bold border',
+                'min-h-8 px-3 rounded-2xl text-xs font-bold border',
                 darkSurface ? 'border-gray-600 text-gray-300' : 'border-gray-200 text-gray-700',
               )}
             >

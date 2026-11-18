@@ -472,7 +472,7 @@ export function PostCard({
                 onClick={() => run(react(post.id, myReaction ? null : 'like'))}
                 aria-pressed={Boolean(myReaction)}
                 className={cn(
-                  'inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl text-xs font-bold transition-colors hover:bg-surface',
+                  'inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl text-xs font-bold transition-colors hover:bg-surface',
                   myReaction ? 'text-ink' : 'text-ink-muted',
                 )}
               >
@@ -494,7 +494,7 @@ export function PostCard({
                   setShowAllComments(true);
                   commentRef.current?.focus();
                 }}
-                className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink"
+                className="inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink"
               >
                 <MessageCircle className="h-4 w-4" aria-hidden /> {t('Σχόλιο', 'Comment')}
               </button>
@@ -625,7 +625,7 @@ export function PostCard({
             {t('Τι συμβαίνει; Η αναφορά είναι ανώνυμη για τον συντάκτη.', "What's wrong? The author won't see who reported it.")}
           </legend>
           {REPORT_REASONS.map((r) => (
-            <label key={r.id} className={cn('flex min-h-10 cursor-pointer items-center gap-3 rounded-xl border px-3', reportReason === r.id ? 'border-accent bg-accent-soft' : 'border-border')}>
+            <label key={r.id} className={cn('flex min-h-8 cursor-pointer items-center gap-3 rounded-xl border px-3', reportReason === r.id ? 'border-accent bg-accent-soft' : 'border-border')}>
               <input type="radio" name={`report-${post.id}`} checked={reportReason === r.id} onChange={() => setReportReason(r.id)} className="h-4 w-4 accent-[var(--color-accent)]" />
               <span className="text-sm font-bold text-ink">{t(r.el, r.en)}</span>
             </label>

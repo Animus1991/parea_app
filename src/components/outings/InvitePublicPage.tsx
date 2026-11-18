@@ -62,12 +62,12 @@ export default function InvitePublicPage() {
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
             to={signedIn ? '/plans' : '/'}
-            className="inline-flex min-h-10 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
+            className="inline-flex min-h-8 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
           >
             {signedIn ? t('Τα σχέδιά μου', 'My plans') : t('Άνοιγμα Nakamas', 'Open Nakamas')}
           </Link>
           {!signedIn && (
-            <Link to="/login" className="inline-flex min-h-10 items-center rounded-full border border-border px-4 text-xs font-bold text-ink">
+            <Link to="/login" className="inline-flex min-h-8 items-center rounded-full border border-border px-4 text-xs font-bold text-ink">
               {t('Σύνδεση', 'Sign in')}
             </Link>
           )}
@@ -92,11 +92,11 @@ export default function InvitePublicPage() {
           <div className="flex flex-wrap gap-2">
             <Link
               to={signedIn ? '/plans' : '/'}
-              className="inline-flex min-h-10 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
+              className="inline-flex min-h-8 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
             >
               {signedIn ? t('Τα σχέδιά μου', 'My plans') : t('Άνοιγμα Nakamas', 'Open Nakamas')}
             </Link>
-            <Link to="/buddy-seek" className="inline-flex min-h-10 items-center rounded-full border border-border px-4 text-xs font-bold text-ink">
+            <Link to="/buddy-seek" className="inline-flex min-h-8 items-center rounded-full border border-border px-4 text-xs font-bold text-ink">
               {t('Βρες Nakamas', 'Find Nakamas')}
             </Link>
           </div>
@@ -119,11 +119,11 @@ export default function InvitePublicPage() {
           <div className="mt-3 flex flex-wrap gap-2">
             <Link
               to={signedIn ? `/events/${event.id}/join?groupId=${group.id}` : '/login'}
-              className="inline-flex min-h-10 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
+              className="inline-flex min-h-8 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
             >
               {signedIn ? t('Μπες στην ομάδα', 'Join the group') : t('Δημιουργία λογαριασμού', 'Create an account')}
             </Link>
-            <button type="button" onClick={() => setDone(null)} className="min-h-10 rounded-full border border-border px-4 text-xs font-bold text-ink">
+            <button type="button" onClick={() => setDone(null)} className="min-h-8 rounded-full border border-border px-4 text-xs font-bold text-ink">
               {t('Αλλαγή απάντησης', 'Change answer')}
             </button>
           </div>
@@ -152,7 +152,7 @@ export default function InvitePublicPage() {
                   aria-pressed={choice === c.id}
                   onClick={() => setChoice(c.id)}
                   className={cn(
-                    'min-h-11 rounded-xl border px-2 text-xs font-bold',
+                    'min-h-8 rounded-xl border px-2 text-xs font-bold',
                     choice === c.id ? 'border-transparent bg-accent text-accent-fg' : 'border-border text-ink hover:border-border-strong',
                   )}
                 >
@@ -171,7 +171,7 @@ export default function InvitePublicPage() {
               maxLength={40}
               autoComplete="given-name"
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 min-h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm font-medium text-ink"
+              className="mt-1 min-h-8 w-full rounded-xl border border-border bg-surface px-3 text-sm font-medium text-ink"
               aria-describedby="invite-name-help"
             />
             <p id="invite-name-help" className="mt-1 text-2xs font-medium text-ink-muted">

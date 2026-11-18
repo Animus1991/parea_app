@@ -470,7 +470,7 @@ export default function OrganizerDashboardPageContent() {
                               <button
                                 type="button"
                                 className={cn(
-                                  'relative p-2 min-h-10 min-w-10 flex items-center justify-center rounded-full border shadow-soft transition-colors',
+                                  'relative p-2 min-h-8 min-w-8 flex items-center justify-center rounded-full border shadow-soft transition-colors',
                                   p.isDark
                                     ? 'bg-gray-800 border-gray-700 text-cyan-400 hover:bg-gray-700'
                                     : 'bg-white border-gray-200 text-cyan-600 hover:bg-cyan-50',

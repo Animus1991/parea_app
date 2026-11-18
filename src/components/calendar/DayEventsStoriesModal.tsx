@@ -118,7 +118,7 @@ export function DayEventsStoriesModal({
   };
 
   const actionBtn =
-    'flex items-center justify-center gap-2 rounded-2xl font-bold transition-colors min-h-11 text-xs';
+    'flex items-center justify-center gap-2 rounded-2xl font-bold transition-colors min-h-8 text-xs';
   const outlineBtn = cn(actionBtn, 'border border-white/15 bg-white/5 text-white hover:bg-white/10');
   const primaryBtn = cn(actionBtn, 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-soft');
 
@@ -155,7 +155,7 @@ export function DayEventsStoriesModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-2xl hover:bg-white/10 min-h-11 min-w-11 flex items-center justify-center shrink-0"
+            className="p-2 rounded-2xl hover:bg-white/10 min-h-8 min-w-8 flex items-center justify-center shrink-0"
             aria-label={t('Κλείσιμο', 'Close')}
           >
             <X className="w-5 h-5 text-white" />

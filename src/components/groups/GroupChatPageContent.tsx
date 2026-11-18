@@ -425,7 +425,7 @@ export default function GroupChatPageContent() {
                   </div>
                   <button
                     onClick={() => setShowInfo(!showInfo)}
-                    className={cn("transition-colors p-2 rounded-full min-h-11 min-w-11 shrink-0", showInfo ? gc.infoActive : "text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10")}
+                    className={cn("transition-colors p-2 rounded-full min-h-8 min-w-8 shrink-0", showInfo ? gc.infoActive : "text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10")}
                     aria-label={showInfo ? t('Απόκρυψη πληροφοριών', 'Hide info panel') : t('Εμφάνιση πληροφοριών', 'Show info panel')}
                   >
                     <Info className="h-5 w-5" />

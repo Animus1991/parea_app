@@ -20,7 +20,7 @@ export function CopilotLauncher({ className }: { className?: string }) {
       aria-label={t('Nakamas AI — ο βοηθός σου', 'Nakamas AI — your assistant')}
       title={t('Nakamas AI (Ctrl/⌘ J)', 'Nakamas AI (Ctrl/⌘ J)')}
       className={cn(
-        'inline-flex min-h-10 items-center gap-1.5 rounded-full border px-3 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
+        'inline-flex min-h-8 items-center gap-1.5 rounded-full border px-3 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
         open ? 'border-accent bg-accent text-accent-fg' : 'border-accent/30 bg-accent-soft text-ink hover:border-accent/60',
         className,
       )}

@@ -244,7 +244,7 @@ export function PlansFormingEmptyState({
         <button
           type="button"
           onClick={onBrowse ?? (() => navigate('/'))}
-          className={cn('w-full min-h-10 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center gap-1', PLANS_FORMING_TYPO.cta)}
+          className={cn('w-full min-h-8 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center gap-1', PLANS_FORMING_TYPO.cta)}
         >
           {t('Ανακάλυψη εκδηλώσεων', 'Discover events')}
           <ChevronRight className="w-3.5 h-3.5" />
@@ -253,7 +253,7 @@ export function PlansFormingEmptyState({
           type="button"
           onClick={onCreate ?? (() => navigate('/buddy-seek'))}
           className={cn(
-            'w-full min-h-10 rounded-xl border flex items-center justify-center gap-1',
+            'w-full min-h-8 rounded-xl border flex items-center justify-center gap-1',
             PLANS_FORMING_TYPO.cta,
             isDark ? 'border-white/15 text-gray-200' : 'border-gray-300 text-gray-800',
           )}

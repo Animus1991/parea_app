@@ -58,7 +58,7 @@ export function CompanyRequestModerationPanel() {
                 <button
                   type="button"
                   onClick={() => pauseRequest(r.id)}
-                  className="p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg border"
+                  className="p-2 min-h-8 min-w-8 flex items-center justify-center rounded-lg border"
                   title={t('Παύση', 'Pause')}
                   aria-label={t('Παύση αιτήματος', 'Pause request')}
                 >
@@ -67,7 +67,7 @@ export function CompanyRequestModerationPanel() {
                 <button
                   type="button"
                   onClick={() => deleteRequest(r.id)}
-                  className="p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg border text-red-600"
+                  className="p-2 min-h-8 min-w-8 flex items-center justify-center rounded-lg border text-red-600"
                   title={t('Αφαίρεση', 'Remove')}
                   aria-label={t('Αφαίρεση αιτήματος', 'Remove request')}
                 >

@@ -140,7 +140,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
             type="button"
             onClick={handleExport}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all border min-h-11',
+              'flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all border min-h-8',
               p.cardSurface,
               p.borderB,
               p.cardHover,
@@ -169,7 +169,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           <button
             type="button"
             className={cn(
-              'relative z-10 px-5 py-2 text-xs font-bold min-h-11',
+              'relative z-10 px-5 py-2 text-xs font-bold min-h-8',
               view === 'week' ? p.head : p.muted,
             )}
             onClick={() => setView('week')}
@@ -179,7 +179,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           <button
             type="button"
             className={cn(
-              'relative z-10 px-4 py-2 text-xs font-bold min-h-11',
+              'relative z-10 px-4 py-2 text-xs font-bold min-h-8',
               view === 'month' ? p.head : p.muted,
             )}
             onClick={() => setView('month')}
@@ -205,7 +205,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               onClick={() =>
                 setCurrentDate(view === 'week' ? subWeeks(currentDate, 1) : subMonths(currentDate, 1))
               }
-              className={cn('p-2 rounded-2xl min-h-11 min-w-11', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
+              className={cn('p-2 rounded-2xl min-h-8 min-w-8', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
               aria-label={t('Προηγούμενη', 'Previous')}
             >
               <ChevronLeft className={cn('w-5 h-5', p.head)} />
@@ -214,7 +214,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               type="button"
               onClick={() => setCurrentDate(new Date())}
               className={cn(
-                'px-3 py-2 text-xs font-bold rounded-2xl border min-h-11',
+                'px-3 py-2 text-xs font-bold rounded-2xl border min-h-8',
                 p.isDark ? 'border-white/10' : 'border-gray-200',
                 p.head,
               )}
@@ -226,7 +226,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               onClick={() =>
                 setCurrentDate(view === 'week' ? addWeeks(currentDate, 1) : addMonths(currentDate, 1))
               }
-              className={cn('p-2 rounded-2xl min-h-11 min-w-11', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
+              className={cn('p-2 rounded-2xl min-h-8 min-w-8', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
               aria-label={t('Επόμενη', 'Next')}
             >
               <ChevronRight className={cn('w-5 h-5', p.head)} />

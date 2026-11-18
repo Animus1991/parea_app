@@ -126,7 +126,7 @@ export function GroupMergeModal({
                 type="button"
                 data-autofocus
                 onClick={acceptPending}
-                className="mt-2 w-full min-h-10 rounded-xl bg-emerald-600 text-white text-xs font-bold"
+                className="mt-2 w-full min-h-8 rounded-xl bg-emerald-600 text-white text-xs font-bold"
               >
                 {t('Αποδοχή (οργανωτής)', 'Accept (organizer)')}
               </button>
@@ -171,7 +171,7 @@ export function GroupMergeModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 min-h-11 rounded-2xl border border-border text-xs font-bold text-ink"
+            className="flex-1 min-h-8 rounded-2xl border border-border text-xs font-bold text-ink"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
@@ -180,7 +180,7 @@ export function GroupMergeModal({
               type="button"
               data-autofocus
               onClick={send}
-              className="flex-[2] min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold"
+              className="flex-[2] min-h-8 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold"
             >
               {t('Αποστολή πρότασης', 'Send suggestion')}
             </button>

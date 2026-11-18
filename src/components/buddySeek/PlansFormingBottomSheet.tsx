@@ -63,7 +63,7 @@ export function PlansFormingBottomSheet() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className={cn('rounded-full p-2 min-h-11 min-w-11 flex items-center justify-center shrink-0', tok.chipButton)}
+              className={cn('rounded-full p-2 min-h-8 min-w-8 flex items-center justify-center shrink-0', tok.chipButton)}
               aria-label={t('Κλείσιμο', 'Close')}
             >
               <X className="h-5 w-5" />

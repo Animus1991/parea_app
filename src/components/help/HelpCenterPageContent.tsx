@@ -190,7 +190,7 @@ export default function HelpCenterPageContent() {
                   <button
                     type="button"
                     onClick={() => setTopicFilter(null)}
-                    className={cn('inline-flex min-h-10 items-center rounded-xl border px-4 text-xs font-semibold', a.borderB, a.sub)}
+                    className={cn('inline-flex min-h-8 items-center rounded-xl border px-4 text-xs font-semibold', a.borderB, a.sub)}
                   >
                     {t('Καθαρισμός φίλτρου', 'Clear filter')}
                   </button>
@@ -198,7 +198,7 @@ export default function HelpCenterPageContent() {
                 <button
                   type="button"
                   onClick={() => openCopilot(search || topicFilter || undefined)}
-                  className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-accent px-4 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                  className="inline-flex min-h-8 items-center gap-1.5 rounded-xl bg-accent px-4 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
                 >
                   <Bot className="h-4 w-4" aria-hidden />
                   {t('Ρώτα το Nakamas AI', 'Ask Nakamas AI')}
@@ -217,7 +217,7 @@ export default function HelpCenterPageContent() {
               <button
                 type="button"
                 onClick={() => setTopicFilter(null)}
-                className={cn('inline-flex min-h-10 items-center rounded-xl border px-4 text-xs font-semibold', a.borderB, a.sub)}
+                className={cn('inline-flex min-h-8 items-center rounded-xl border px-4 text-xs font-semibold', a.borderB, a.sub)}
               >
                 {t('Καθαρισμός φίλτρου', 'Clear filter')}
               </button>
@@ -225,7 +225,7 @@ export default function HelpCenterPageContent() {
             <button
               type="button"
               onClick={() => openCopilot(search || topicFilter || undefined)}
-              className="inline-flex min-h-10 items-center gap-1.5 rounded-xl bg-accent px-4 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              className="inline-flex min-h-8 items-center gap-1.5 rounded-xl bg-accent px-4 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
               <Bot className="h-4 w-4" aria-hidden />
               {t('Ρώτα το Nakamas AI', 'Ask Nakamas AI')}

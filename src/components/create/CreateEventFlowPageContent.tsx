@@ -597,7 +597,7 @@ export default function CreateEventFlowPageContent() {
                       type="button"
                       onClick={() => setIsPaid(false)}
                       className={cn(
-                        "min-h-10 px-4 rounded-2xl text-xs font-bold border transition-colors",
+                        "min-h-8 px-4 rounded-2xl text-xs font-bold border transition-colors",
                         !isPaid ? visSelected : visIdle,
                       )}
                     >
@@ -607,7 +607,7 @@ export default function CreateEventFlowPageContent() {
                       type="button"
                       onClick={() => setIsPaid(true)}
                       className={cn(
-                        "min-h-10 px-4 rounded-2xl text-xs font-bold border transition-colors",
+                        "min-h-8 px-4 rounded-2xl text-xs font-bold border transition-colors",
                         isPaid ? visSelected : visIdle,
                       )}
                     >

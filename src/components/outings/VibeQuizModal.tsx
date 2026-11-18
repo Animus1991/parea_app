@@ -58,7 +58,7 @@ export function VibeQuizModal({ open, onClose }: { open: boolean; onClose: () =>
               aria-pressed={chosen === o.value}
               onClick={() => setAnswers((a) => ({ ...a, [q.key]: o.value }))}
               className={cn(
-                'min-h-11 rounded-xl border px-3 text-left text-sm font-bold',
+                'min-h-8 rounded-xl border px-3 text-left text-sm font-bold',
                 chosen === o.value ? 'border-transparent bg-accent text-accent-fg' : 'border-border text-ink hover:border-border-strong',
               )}
             >

@@ -270,7 +270,7 @@ export default function JoinGroupFlow() {
                     key={size}
                     type="button"
                     onClick={() => setNewGroupSize(size)}
-                    className={`flex-1 py-2 min-h-11 rounded-xl font-bold text-xs ${newGroupSize === size ? 'bg-ink text-white' : 'bg-gray-100 text-gray-600'}`}
+                    className={`flex-1 py-2 min-h-8 rounded-xl font-bold text-xs ${newGroupSize === size ? 'bg-ink text-white' : 'bg-gray-100 text-gray-600'}`}
                   >
                     {size}
                   </button>
@@ -291,7 +291,7 @@ export default function JoinGroupFlow() {
                       aria-pressed={genderMode === o.id}
                       disabled={o.id === 'women_nb' && !canWomenNb}
                       onClick={() => setGenderMode(o.id)}
-                      className={`min-h-11 rounded-xl border px-2 text-xs font-bold disabled:opacity-50 ${genderMode === o.id ? 'border-accent bg-cyan-50 text-ink dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 text-ink dark:border-border'}`}
+                      className={`min-h-8 rounded-xl border px-2 text-xs font-bold disabled:opacity-50 ${genderMode === o.id ? 'border-accent bg-cyan-50 text-ink dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 text-ink dark:border-border'}`}
                     >
                       {t(o.el, o.en)}
                     </button>
@@ -316,7 +316,7 @@ export default function JoinGroupFlow() {
             </button>
           )}
 
-          <Button className="w-full min-h-11" onClick={() => setStep(2)} disabled={!canContinueStep1}>
+          <Button className="w-full min-h-8" onClick={() => setStep(2)} disabled={!canContinueStep1}>
             {t('Συνέχεια', 'Continue')}
           </Button>
         </div>
@@ -366,10 +366,10 @@ export default function JoinGroupFlow() {
           )}
 
           <div className="flex gap-3">
-            <Button variant="outline" className="flex-1 min-h-11" onClick={() => setStep(1)}>
+            <Button variant="outline" className="flex-1 min-h-8" onClick={() => setStep(1)}>
               {t('Πίσω', 'Back')}
             </Button>
-            <Button variant="primary" className="flex-[2] min-h-11" onClick={handleConfirm}>
+            <Button variant="primary" className="flex-[2] min-h-8" onClick={handleConfirm}>
               {t('Επιβεβαίωση συμμετοχής', 'Confirm join')}
             </Button>
           </div>
@@ -384,7 +384,7 @@ export default function JoinGroupFlow() {
             {t('Το group chat ξεκλειδώνει όταν η ομάδα επιβεβαιωθεί.', 'Group chat unlocks when the group is confirmed.')}
           </p>
           {joinedGroupId && (
-            <Button className="w-full min-h-11" onClick={() => navigate(`/night/${joinedGroupId}`)}>
+            <Button className="w-full min-h-8" onClick={() => navigate(`/night/${joinedGroupId}`)}>
               {t('Άνοιξε «Η βραδιά μας»', 'Open «Our night»')}
             </Button>
           )}
@@ -398,7 +398,7 @@ export default function JoinGroupFlow() {
               {t('Κάνε το κουίζ «Το στυλ παρέας μου» (1′) για να βλέπεις γιατί ταιριάζετε.', 'Take the “My group style” quiz (1 min) to see why you match.')}
             </button>
           )}
-          <Button variant="outline" className="w-full min-h-11" onClick={() => navigate(`/events/${eventId}`)}>
+          <Button variant="outline" className="w-full min-h-8" onClick={() => navigate(`/events/${eventId}`)}>
             {t('Επιστροφή στην εκδήλωση', 'Back to event')}
           </Button>
           <button

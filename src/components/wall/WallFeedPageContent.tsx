@@ -288,7 +288,7 @@ export default function WallFeedPageContent() {
             type="button"
             onClick={() => setShowHidden((v) => !v)}
             aria-expanded={showHidden}
-            className="inline-flex min-h-10 items-center gap-2 text-xs font-bold text-ink-muted hover:text-ink"
+            className="inline-flex min-h-8 items-center gap-2 text-xs font-bold text-ink-muted hover:text-ink"
           >
             <Eye className="h-4 w-4" aria-hidden />
             {showHidden

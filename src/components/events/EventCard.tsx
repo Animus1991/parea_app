@@ -448,7 +448,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               aria-label={arrivalStatus ?? (isSharingLocation ? t("Κοινοποίηση τοποθεσίας", "Location sharing") : t("Χάρτης & Ασφάλεια", "Map & Safety"))}
               title={t("Χάρτης & Ασφάλεια", "Map & Safety")}
               className={cn(
-                "inline-flex min-w-0 shrink items-center gap-1.5 px-3 min-h-10 rounded-full text-xs font-semibold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                "inline-flex min-w-0 shrink items-center gap-1.5 px-3 min-h-8 rounded-full text-xs font-semibold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                 arrivalStatus || isSharingLocation
                   ? isDark ? "bg-emerald-950/40 text-emerald-300" : "bg-emerald-50 text-emerald-700"
                   : isDark ? "text-gray-300 hover:bg-white/[0.06]" : "text-gray-600 hover:bg-gray-50",
@@ -470,7 +470,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   }}
                   aria-label={t('Μετάβαση στο Group Chat', 'View Group Chat')}
                   title={t('Ομαδική συνομιλία', 'Group chat')}
-                  className={cn("min-h-11 min-w-11 rounded-full flex items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent", accentBg, accentText, isDark ? "border-white/10" : "border-transparent")}
+                  className={cn("min-h-8 min-w-8 rounded-full flex items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent", accentBg, accentText, isDark ? "border-white/10" : "border-transparent")}
                 >
                   <MessageSquare className="w-4 h-4" aria-hidden />
                 </button>
@@ -490,7 +490,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   }
                   navigate(`/events/${event.id}/join`);
                 }}
-                className={cn("px-4 py-2 min-h-11 shrink-0 whitespace-nowrap text-white font-semibold rounded-full", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
+                className={cn("px-4 py-2 min-h-8 shrink-0 whitespace-nowrap text-white font-semibold rounded-full", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
               >
                 {t("Βρες Nakamas", "Find Nakamas")}
               </button>
@@ -530,7 +530,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               <button
                 type="button"
                 onClick={getCalendarUrl}
-                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-bold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-bold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 <CalendarPlus className="w-4 h-4" aria-hidden /> {t('Προσθήκη στο ημερολόγιο', 'Add to calendar')}
               </button>
@@ -540,7 +540,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   setShowSafetyPanel(false);
                   navigate(`/events/${event.id}`);
                 }}
-                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-bold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-bold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
                 {t('Πλήρης σελίδα', 'Full event page')}
               </button>

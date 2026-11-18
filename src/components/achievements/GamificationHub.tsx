@@ -144,7 +144,7 @@ export function DailyChallengeCard({ className }: { className?: string }) {
           <button
             type="button"
             onClick={() => navigate('/chats')}
-            className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:flex-initial"
+            className="inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:flex-initial"
           >
             <MessageSquare className="h-3.5 w-3.5" aria-hidden />
             {t('Στις συνομιλίες', 'Go to chats')}
@@ -154,7 +154,7 @@ export function DailyChallengeCard({ className }: { className?: string }) {
             onClick={onClaim}
             disabled={!d.dailyMet}
             aria-describedby="daily-challenge-hint"
-            className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 sm:flex-initial"
+            className="inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 sm:flex-initial"
           >
             <Flame className="h-3.5 w-3.5" aria-hidden />
             {t('Πάρε +30 XP', 'Claim +30 XP')}

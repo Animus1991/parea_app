@@ -223,7 +223,7 @@ export default function ChallengesClassic() {
             aria-selected={filterType === f}
             onClick={() => setFilterType(f)}
             className={cn(
-              'whitespace-nowrap px-4 py-2 min-h-10 rounded-full text-xs font-bold transition-all duration-200 border',
+              'whitespace-nowrap px-4 py-1.5 min-h-8 rounded-full text-xs font-bold transition-all duration-200 border',
               filterType === f ? p.chipActive : p.chipInactive,
             )}
           >

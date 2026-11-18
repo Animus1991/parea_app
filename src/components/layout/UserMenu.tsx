@@ -93,7 +93,7 @@ export function UserMenu({ children, label, header, showAccountLinks = false }: 
   };
 
   const itemBase = cn(
-    'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium min-h-11 transition-colors outline-none',
+    'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium min-h-8 transition-colors outline-none',
     'focus-visible:ring-2',
     tok.isDark ? 'focus-visible:ring-white/40' : 'focus-visible:ring-accent/40',
   );
@@ -200,7 +200,7 @@ export function UserMenu({ children, label, header, showAccountLinks = false }: 
         className={cn(
           'flex items-center space-x-2 relative group rounded-full outline-none focus-visible:ring-2',
           tok.isDark ? 'focus-visible:ring-white/40' : 'focus-visible:ring-accent/40',
-          !children && cn('justify-center px-2.5 py-2 rounded-lg min-h-10 min-w-10', tok.chipButton),
+          !children && cn('justify-center px-2.5 py-1.5 rounded-lg min-h-8 min-w-8', tok.chipButton),
         )}
       >
         {children ?? <SlidersHorizontal className="w-4 h-4" aria-hidden />}

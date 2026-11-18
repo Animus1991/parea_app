@@ -290,7 +290,7 @@ export function PostComposer({
                         setEventId(e.id);
                         setEventPickerOpen(false);
                       }}
-                      className="flex min-h-10 w-full items-center gap-2 rounded-xl px-2 text-left text-xs font-bold text-ink hover:bg-surface"
+                      className="flex min-h-8 w-full items-center gap-2 rounded-xl px-2 text-left text-xs font-bold text-ink hover:bg-surface"
                     >
                       <CalendarDays className="h-3.5 w-3.5 shrink-0" aria-hidden />
                       <span className="min-w-0 flex-1 truncate">{e.title}</span>

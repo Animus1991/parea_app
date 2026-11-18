@@ -197,7 +197,7 @@ export default function OnboardingClassic() {
                         type="button"
                         onClick={() => toggleInterest(item.id)}
                         aria-pressed={sel}
-                        className={`flex items-center gap-2 px-3 py-2.5 min-h-10 rounded-xl text-sm font-semibold border transition-all duration-200 text-left ${
+                        className={`flex items-center gap-2 px-3 py-1.5 min-h-8 rounded-xl text-sm font-semibold border transition-all duration-200 text-left ${
                           sel
                             ? 'bg-ink text-white border-ink'
                             : 'bg-white dark:bg-surface-raised border-gray-200 dark:border-border text-gray-600 hover:border-gray-300 dark:hover:border-border-strong hover:text-ink'
@@ -403,7 +403,7 @@ export default function OnboardingClassic() {
               type="button"
               onClick={goNext}
               disabled={step === 1 && selectedInterests.length < 3}
-              className="flex items-center gap-2 px-4 py-2.5 min-h-10 rounded-2xl bg-ink text-white text-xs font-bold hover:bg-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-1.5 min-h-8 rounded-2xl bg-ink text-white text-xs font-bold hover:bg-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('Επόμενο', 'Next')}
               <ChevronRight className="w-4 h-4" aria-hidden />

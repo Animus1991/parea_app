@@ -54,26 +54,26 @@ function MoreMenu({
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label={t('Περισσότερες ενέργειες', 'More actions')}
-        className={`p-2 min-h-10 min-w-10 flex items-center justify-center rounded-full transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}
+        className={`p-2 min-h-8 min-w-8 flex items-center justify-center rounded-full transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}
       >
         <MoreVertical className="w-5 h-5" aria-hidden />
       </button>
       {open && (
         <div role="menu" className={`absolute right-0 top-full mt-1 w-48 rounded-lg border shadow-soft-lg z-fab py-1 text-sm ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-          <button type="button" role="menuitem" onClick={() => { onViewProfile(); setOpen(false); }} className={`w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
+          <button type="button" role="menuitem" onClick={() => { onViewProfile(); setOpen(false); }} className={`w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
             <Eye className="w-4 h-4" aria-hidden /> {t('Προβολή Προφίλ', 'View Profile')}
           </button>
-          <button type="button" role="menuitem" onClick={() => { onInvite(); setOpen(false); }} className={`w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
+          <button type="button" role="menuitem" onClick={() => { onInvite(); setOpen(false); }} className={`w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
             <CalendarPlus className="w-4 h-4" aria-hidden /> {t('Πρόσκληση σε Εκδήλωση', 'Invite to Event')}
           </button>
           <div className={`my-1 h-px ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} role="separator" />
-          <button type="button" role="menuitem" onClick={() => { onRemove(); setOpen(false); }} className="w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
+          <button type="button" role="menuitem" onClick={() => { onRemove(); setOpen(false); }} className="w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
             <UserMinus className="w-4 h-4" aria-hidden /> {t('Αφαίρεση Σύνδεσης', 'Remove Connection')}
           </button>
-          <button type="button" role="menuitem" onClick={() => { onReport(); setOpen(false); }} className="w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
+          <button type="button" role="menuitem" onClick={() => { onReport(); setOpen(false); }} className="w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
             <Flag className="w-4 h-4" aria-hidden /> {t('Αναφορά', 'Report')}
           </button>
-          <button type="button" role="menuitem" onClick={() => { onBlock(); setOpen(false); }} className="w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
+          <button type="button" role="menuitem" onClick={() => { onBlock(); setOpen(false); }} className="w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
             <Ban className="w-4 h-4" aria-hidden /> {t('Αποκλεισμός', 'Block')}
           </button>
         </div>
@@ -465,7 +465,7 @@ export default function ConnectionsPageContent() {
                 <button
                   type="button"
                   onClick={() => handleMessage(conn.id)}
-                  className={`p-2 min-h-10 min-w-10 flex items-center justify-center rounded-full transition-colors ${a.msgIcon}`}
+                  className={`p-2 min-h-8 min-w-8 flex items-center justify-center rounded-full transition-colors ${a.msgIcon}`}
                   title={t('Ιδιωτικό μήνυμα', 'Direct message')}
                   aria-label={t('Ιδιωτικό μήνυμα', 'Direct message')}
                 >
@@ -521,7 +521,7 @@ export default function ConnectionsPageContent() {
                   type="button"
                   onClick={() => handleInviteToEvent(ev.id)}
                   className={cn(
-                    'w-full text-left px-3 py-2.5 min-h-10 rounded-xl border text-xs font-semibold transition-colors',
+                    'w-full text-left px-3 py-1.5 min-h-8 rounded-xl border text-xs font-semibold transition-colors',
                     a.isDark ? 'border-gray-700 hover:bg-gray-800 text-gray-100' : 'border-gray-200 hover:bg-gray-50 text-gray-900',
                   )}
                 >
@@ -573,7 +573,7 @@ export default function ConnectionsPageContent() {
                   <button
                     type="button"
                     onClick={() => handleAccept(req.id, req.user.name)}
-                    className={`flex items-center gap-1 px-3 py-2 min-h-10 rounded-lg text-xs font-bold transition-colors ${a.acceptBtn}`}
+                    className={`flex items-center gap-1 px-3 py-1.5 min-h-8 rounded-lg text-xs font-bold transition-colors ${a.acceptBtn}`}
                   >
                     <Check className="w-3.5 h-3.5" aria-hidden /> {t('Αποδοχή', 'Accept')}
                   </button>
@@ -581,7 +581,7 @@ export default function ConnectionsPageContent() {
                     type="button"
                     onClick={() => handleDecline(req.id, req.user.name)}
                     aria-label={t('Απόρριψη αιτήματος', 'Decline request')}
-                    className={`p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}
+                    className={`p-2 min-h-8 min-w-8 flex items-center justify-center rounded-lg transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}
                   >
                     <X className="w-4 h-4" aria-hidden />
                   </button>

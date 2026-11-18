@@ -92,7 +92,7 @@ export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewPro
           <button
             type="button"
             className={cn(
-              'p-2 rounded-2xl transition-colors min-h-11 min-w-11 flex items-center justify-center',
+              'p-2 rounded-2xl transition-colors min-h-8 min-w-8 flex items-center justify-center',
               p.isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-gray-100 hover:bg-gray-200',
             )}
             onClick={onClose}

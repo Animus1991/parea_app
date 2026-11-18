@@ -98,7 +98,7 @@ export function HomeFiltersSection({
         <button
           type="button"
           onClick={onOpenMobileFilters}
-          className={`md:hidden flex items-center gap-1.5 px-3 py-2 min-h-11 rounded-full text-xs font-bold shadow-soft ${h.filterBtn}`}
+          className={`md:hidden flex items-center gap-1.5 px-3 py-2 min-h-8 rounded-full text-xs font-bold shadow-soft ${h.filterBtn}`}
         >
           <SlidersHorizontal className="w-4 h-4" />
           {t('Φίλτρα', 'Filters')}

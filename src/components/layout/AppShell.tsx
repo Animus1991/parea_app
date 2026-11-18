@@ -295,7 +295,7 @@ export function SideNav() {
           aria-expanded={!collapsed}
           aria-label={collapsed ? t('Επέκταση πλοήγησης', 'Expand sidebar') : t('Σύμπτυξη πλοήγησης', 'Collapse sidebar')}
           title={collapsed ? t('Επέκταση πλοήγησης', 'Expand sidebar') : t('Σύμπτυξη πλοήγησης', 'Collapse sidebar')}
-          className={cn("p-2 rounded-lg transition-colors min-h-10 min-w-10 flex items-center justify-center", tok.chipButton)}
+          className={cn("p-2 rounded-lg transition-colors min-h-8 min-w-8 flex items-center justify-center", tok.chipButton)}
         >
           {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
         </button>
@@ -369,7 +369,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
           title={t('Δημιουργία εκδήλωσης', 'Create event')}
           className={cn(
-            "hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold rounded-full transition-colors duration-150 px-3 py-2 min-h-10",
+            "hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold rounded-full transition-colors duration-150 px-3 py-1.5 min-h-8",
             theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] text-white hover:bg-black'
               : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] hover:bg-white'
               : theme === 'vibrant' || theme === 'vibrant-dark' ? 'bg-fuchsia-600 text-white hover:bg-fuchsia-700'
@@ -542,7 +542,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     >
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-toast focus:px-4 focus:py-2.5 focus:min-h-10 focus:bg-brand focus:text-brand-fg focus:rounded-xl focus:text-xs focus:font-semibold focus:shadow-soft"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-toast focus:px-4 focus:py-1.5 focus:min-h-8 focus:bg-brand focus:text-brand-fg focus:rounded-xl focus:text-xs focus:font-semibold focus:shadow-soft"
       >
         {t('Μετάβαση στο περιεχόμενο', 'Skip to content')}
       </a>

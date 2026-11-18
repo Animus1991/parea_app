@@ -80,7 +80,7 @@ export function HomeContinueStrip() {
           clear();
         }}
         className={cn(
-          'shrink-0 p-2 rounded-lg min-h-10 min-w-10 flex items-center justify-center transition-colors',
+          'shrink-0 p-2 rounded-lg min-h-8 min-w-8 flex items-center justify-center transition-colors',
           a.muted,
           'hover:bg-black/5 dark:hover:bg-white/10',
         )}
