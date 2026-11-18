@@ -94,7 +94,7 @@ export default function ReportIssuePageContent() {
             </div>
             <div>
               <h3 className={cn('font-bold text-sm md:text-base', p.head)}>
-                {t('Αναφορά Ζητήματος Ασφαλείας', 'Report a Safety Concern')}
+                {t('Αναφορά προβλήματος', 'Report an issue')}
               </h3>
               <p className={cn('card-copy mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>
                 {t(

@@ -72,8 +72,6 @@ export default function PlansPageContent() {
   const needsRating = pastEvents.filter(e => !feedbackSubmitted[e.id]).length;
   const nextEvent = upcomingEvents[0];
   const nextEventDays = nextEvent ? differenceInDays(parseISO(nextEvent.date), now) : null;
-  const showVerifyBanner = currentUser ? !currentUser.idVerified : false;
-
   // Φ27 — say what leaving means before it happens (seat hand-over / late cancel).
   const leaveNote = (() => {
     if (!showLeaveConfirm) return null;
@@ -142,25 +140,6 @@ export default function PlansPageContent() {
             {nextEventDays <= 0 ? t('Σήμερα', 'Today') : `${t('σε', 'in')} ${nextEventDays}${t('μ', 'd')}`}
           </span>
         </button>
-      )}
-
-      {/* Action required prompt — only when ID is not yet verified */}
-      {showVerifyBanner && (
-        <Card className={cn(
-          '!rounded-2xl p-4 shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-4',
-          p.isDark ? '!bg-amber-500/10 !border-amber-500/30' : '!bg-amber-50 !border-amber-200',
-        )}>
-          <div className="flex items-start gap-3">
-            <ShieldAlert className={cn('w-5 h-5 shrink-0 mt-0.5', p.isDark ? 'text-amber-400' : 'text-amber-600')} />
-            <div>
-              <h3 className={cn(PLANS_TYPO.bannerTitle, 'mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
-              <p className={cn(PLANS_TYPO.bannerBody, p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
-            </div>
-          </div>
-          <button type="button" onClick={() => navigate('/verification')} className={cn('self-start sm:self-center w-auto bg-amber-600 text-white px-4 py-1.5 min-h-8 rounded-full shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0', PLANS_TYPO.bannerCta)}>
-            {t(`Επαλήθευση`, `Verify Now`)}
-          </button>
-        </Card>
       )}
 
       <TabBar

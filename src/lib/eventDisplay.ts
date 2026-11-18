@@ -74,6 +74,41 @@ export function isEventPast(
   return when.getTime() < now.getTime();
 }
 
+function localDateKey(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/**
+ * Night-of coordination window: same local calendar day, or within 24 hours
+ * of the start. Used so maps / arrival / SOS appear at the outing, not while browsing.
+ */
+export function isEventImminent(
+  event: { date: string; time?: string },
+  now: Date = new Date(),
+): boolean {
+  if (isEventPast(event, now)) return false;
+  const start = eventOccursAt(event);
+  if (Number.isNaN(start.getTime())) return false;
+  const sameDay = event.date === localDateKey(now);
+  const hoursUntil = (start.getTime() - now.getTime()) / 36e5;
+  return sameDay || hoursUntil <= 24;
+}
+
+/** Arrival, live map and SOS — only for confirmed members, and only that night. */
+export function showNightCoordinationTools(opts: {
+  inGroup: boolean;
+  event: { date: string; time?: string };
+  alreadyActive?: boolean;
+  now?: Date;
+}): boolean {
+  if (opts.alreadyActive) return true;
+  if (!opts.inGroup) return false;
+  return isEventImminent(opts.event, opts.now);
+}
+
 export function formatEventPrice(
   event: { isPaid: boolean; price: number },
   language: 'el' | 'en',

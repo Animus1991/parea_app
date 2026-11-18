@@ -202,7 +202,7 @@ export default function ProfilePageContent() {
             <Settings className="w-3.5 h-3.5" /> {t("Ρυθμίσεις", "Settings")}
           </Button>
           <Button variant="outline" size="sm" onClick={() => navigate("/trust")} className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5" /> {t("Κέντρο Εμπιστοσύνης", "Trust Center")}
+            <ShieldCheck className="w-3.5 h-3.5" /> {t("Αξιοπιστία", "Reliability")}
           </Button>
         </div>
       </div>

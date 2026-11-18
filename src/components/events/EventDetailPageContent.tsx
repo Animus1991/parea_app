@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   Tag,
-  ShieldCheck,
   Ticket,
   Users,
   MapPin,
@@ -63,19 +62,14 @@ function EventDetailQuickInfoBlock({
   const rows: { icon: typeof Tag; label: string; value: string }[] = [
     { icon: Tag, label: t('Κατηγορία', 'Category'), value: info.category },
     {
-      icon: ShieldCheck,
-      label: t('Επίπεδο εμπιστοσύνης', 'Trust level'),
+      icon: CheckCircle2,
+      label: t('Ποιοι μπαίνουν', 'Who can join'),
       value: t(info.trustLevelEl, info.trustLevelEn),
     },
     {
-      icon: ShieldCheck,
-      label: t('Επίπεδο άνεσης', 'Comfort level'),
+      icon: MapPin,
+      label: t('Χώρος', 'Venue'),
       value: t(info.comfortLevelEl, info.comfortLevelEn),
-    },
-    {
-      icon: ShieldCheck,
-      label: t('Επαλήθευση', 'Verification'),
-      value: t(info.verificationEl, info.verificationEn),
     },
     { icon: Ticket, label: t('Κόστος', 'Cost'), value: t(info.costEl, info.costEn) },
     {

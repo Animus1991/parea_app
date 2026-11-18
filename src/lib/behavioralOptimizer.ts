@@ -167,21 +167,13 @@ export function computeProfileCompletion(user: User | null, hasBio: boolean): {
     return { percent, nextActionEl: 'Πρόσθεσε 3 ενδιαφέροντα (+15%)', nextActionEn: 'Add 3 interests (+15%)', nextPath: '/profile' };
   }
   if (user.trustTier === '1_explorer') {
-    return { percent, nextActionEl: 'Ολοκλήρωσε επαλήθευση (+15%)', nextActionEn: 'Complete verification (+15%)', nextPath: '/verification' };
-  }
-  if (!user.idVerified) {
-    return {
-      percent,
-      nextActionEl: 'Επαλήθευση ταυτότητας (+10%)',
-      nextActionEn: 'Verify your ID (+10%)',
-      nextPath: '/verification',
-    };
+    return { percent, nextActionEl: 'Επιβεβαίωσε email και τηλέφωνο (+15%)', nextActionEn: 'Confirm email and phone (+15%)', nextPath: '/verification' };
   }
 
   return {
     percent,
     nextActionEl: 'Το προφίλ σου είναι πλήρες',
     nextActionEn: 'Your profile is complete',
-    nextPath: '/trust',
+    nextPath: '/profile',
   };
 }

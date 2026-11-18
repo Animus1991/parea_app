@@ -25,7 +25,7 @@ export function GroupChatSosModal({
     <Modal
       open={open}
       onClose={onClose}
-      title={isSos ? t('Απενεργοποίηση SOS', 'Deactivate SOS') : t('Ενεργοποίηση SOS Flare', 'Activate SOS Flare')}
+      title={isSos ? t('Είμαι εντάξει', "I'm okay") : t('Χρειάζομαι βοήθεια', 'I need help')}
       size="sm"
     >
       <div className="text-center">
@@ -49,7 +49,7 @@ export function GroupChatSosModal({
               isSos ? 'text-white bg-emerald-600 hover:bg-emerald-700' : 'text-white bg-red-600 hover:bg-red-700'
             }`}
           >
-            {isSos ? t('Απενεργοποίηση', 'Deactivate') : t('Ενεργοποίηση SOS', 'Activate SOS')}
+            {isSos ? t('Είμαι εντάξει', "I'm okay") : t('Ειδοποίηση ομάδας', 'Notify the group')}
           </button>
           <button
             type="button"

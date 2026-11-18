@@ -3,7 +3,9 @@ import {
   formatEventPrice,
   formatLocationArea,
   getEventJoinState,
+  isEventImminent,
   isEventPast,
+  showNightCoordinationTools,
   translateEventTag,
 } from './eventDisplay';
 import type { Event, Group, User } from '../types';
@@ -32,6 +34,24 @@ describe('eventDisplay', () => {
     const now = new Date('2026-11-18T14:00:00');
     expect(isEventPast(event(), now)).toBe(true);
     expect(isEventPast(event({ date: '2026-12-01' }), now)).toBe(false);
+  });
+
+  it('treats tonight and the next 24 hours as imminent, not a date two weeks out', () => {
+    const now = new Date('2026-11-18T14:00:00');
+    expect(isEventImminent(event({ date: '2026-11-18', time: '21:00' }), now)).toBe(true);
+    expect(isEventImminent(event({ date: '2026-11-19', time: '10:00' }), now)).toBe(true);
+    expect(isEventImminent(event({ date: '2026-12-01', time: '20:00' }), now)).toBe(false);
+    expect(isEventImminent(event({ date: '2026-11-17', time: '20:00' }), now)).toBe(false);
+  });
+
+  it('keeps night tools off browsing cards and on for members that night', () => {
+    const now = new Date('2026-11-18T14:00:00');
+    const tonight = event({ date: '2026-11-18', time: '21:00' });
+    const later = event({ date: '2026-12-01', time: '21:00' });
+    expect(showNightCoordinationTools({ inGroup: false, event: tonight, now })).toBe(false);
+    expect(showNightCoordinationTools({ inGroup: true, event: later, now })).toBe(false);
+    expect(showNightCoordinationTools({ inGroup: true, event: tonight, now })).toBe(true);
+    expect(showNightCoordinationTools({ inGroup: false, event: later, alreadyActive: true, now })).toBe(true);
   });
 
   it('formats Greek euro amounts with a decimal comma', () => {

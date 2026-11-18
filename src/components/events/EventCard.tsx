@@ -10,7 +10,6 @@ import {
   Users,
   MapPin,
   Clock,
-  ShieldCheck,
   Navigation,
   Link2,
   X,
@@ -35,6 +34,7 @@ import {
   formatEventPrice,
   formatLocationArea,
   getEventJoinState,
+  showNightCoordinationTools,
   translateEventTag,
 } from "../../lib/eventDisplay";
 import { isDarkTheme } from "../../lib/themes";
@@ -156,7 +156,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
 
   const userGroup = currentUser ? groups.find(g => g.eventId === event.id && g.members.includes(currentUser.id)) : null;
 
-  // Arrival & Safety State
+  // Arrival & map — shown on the card only the night of a confirmed outing.
   const [showSafetyPanel, setShowSafetyPanel] = useState(false);
   const [arrivalStatus, setArrivalStatus] = useState<string | null>(null);
   const [showEtaPrompt, setShowEtaPrompt] = useState(false);
@@ -169,6 +169,11 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
     duration: "event_end",
   });
   const [showSafetyLinkModal, setShowSafetyLinkModal] = useState(false);
+  const showNightTools = showNightCoordinationTools({
+    inGroup: Boolean(userGroup),
+    event,
+    alreadyActive: Boolean(arrivalStatus) || isSharingLocation,
+  });
   const locationPanelRef = useRef<HTMLDivElement>(null);
   useOverlayBehavior(showLocationConfigModal, () => setShowLocationConfigModal(false), locationPanelRef);
 
@@ -492,7 +497,8 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
               -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
             </p>
           )}
-          <div className="flex items-center justify-between gap-2">
+          <div className={cn("flex items-center gap-2", showNightTools ? "justify-between" : "justify-end")}>
+            {showNightTools && (
             <button
               type="button"
               onClick={(e) => {
@@ -500,8 +506,8 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
                 setShowSafetyPanel(true);
               }}
               aria-haspopup="dialog"
-              aria-label={arrivalStatus ?? (isSharingLocation ? t("Κοινοποίηση τοποθεσίας", "Location sharing") : t("Χάρτης & Ασφάλεια", "Map & Safety"))}
-              title={t("Χάρτης & Ασφάλεια", "Map & Safety")}
+              aria-label={arrivalStatus ?? (isSharingLocation ? t("Κοινοποίηση τοποθεσίας", "Location sharing") : t("Χάρτης ομάδας", "Group map"))}
+              title={t("Άφιξη & χάρτης", "Arrival & map")}
               className={cn(
                 "inline-flex min-w-0 shrink items-center gap-1.5 px-3 min-h-8 rounded-full text-xs font-semibold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                 arrivalStatus || isSharingLocation
@@ -509,12 +515,13 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
                   : isDark ? "text-gray-300 hover:bg-white/[0.06]" : "text-gray-600 hover:bg-gray-50",
               )}
             >
-              <ShieldCheck className={cn("w-3.5 h-3.5 shrink-0 opacity-80", accentText)} aria-hidden />
+              <MapPin className={cn("w-3.5 h-3.5 shrink-0 opacity-80", accentText)} aria-hidden />
               {/* With the chat button present the card is tight: icon only (name stays in aria-label). */}
               <span className={cn("truncate max-w-[110px]", userGroup && "sr-only")}>
-                {arrivalStatus ?? (isSharingLocation ? t("Τοποθεσία", "Sharing") : t("Ασφάλεια", "Safety"))}
+                {arrivalStatus ?? (isSharingLocation ? t("Τοποθεσία", "Sharing") : t("Χάρτης", "Map"))}
               </span>
             </button>
+            )}
             <div className="flex shrink-0 items-center gap-2">
               {userGroup && (
                 <button
@@ -572,7 +579,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
         </div>
       </div>
 
-      {/* «Map & Safety» sheet — wrapper stops React event bubbling from the portal to the card. */}
+      {/* Arrival & map sheet — wrapper stops React event bubbling from the portal to the card. */}
       <div {...stopBubbling} className="contents">
         <BottomSheet
           open={showSafetyPanel}
@@ -580,7 +587,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
             setShowSafetyPanel(false);
             setShowEtaPrompt(false);
           }}
-          title={t("Χάρτης & Ασφάλεια", "Map & Safety")}
+          title={t("Άφιξη & χάρτης", "Arrival & map")}
           className="sm:max-w-lg sm:mx-auto sm:mb-4 sm:rounded-2xl sm:border"
         >
           <div className="space-y-4">

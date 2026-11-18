@@ -124,25 +124,13 @@ export default function TrustCenterPageContent() {
       labelEl: 'Επαλήθευση τηλεφώνου',
       labelEn: 'Verify phone',
     },
-    !currentUser.paymentVerified && {
-      key: 'payment',
-      to: '/wallet',
-      labelEl: 'Άνοιγμα πορτοφολιού',
-      labelEn: 'Open wallet',
-    },
-    !currentUser.idVerified && {
-      key: 'id',
-      to: '/verification',
-      labelEl: 'Επαλήθευση ταυτότητας',
-      labelEn: 'Verify ID',
-    },
   ].filter(Boolean) as { key: string; to: string; labelEl: string; labelEn: string }[];
   const primaryGap = gaps[0];
   const checks = [
     { key: 'email', icon: Mail, labelEl: 'Email', labelEn: 'Email', ok: Boolean(currentUser.emailVerified), to: '/verification' },
     { key: 'phone', icon: Phone, labelEl: 'Τηλέφωνο', labelEn: 'Phone', ok: Boolean(currentUser.phoneVerified), to: '/verification' },
     { key: 'payment', icon: CreditCard, labelEl: 'Πληρωμή', labelEn: 'Payment', ok: Boolean(currentUser.paymentVerified), to: '/wallet' },
-    { key: 'id', icon: UserCheck, labelEl: 'Ταυτότητα', labelEn: 'Government ID', ok: Boolean(currentUser.idVerified), to: '/verification' },
+    { key: 'id', icon: UserCheck, labelEl: 'Διοργάνωση', labelEn: 'Hosting', ok: Boolean(currentUser.idVerified), to: '/verification' },
   ];
 
   const tierBenefits: Record<TrustTier, { el: string; en: string }> = {
@@ -154,21 +142,21 @@ export default function TrustCenterPageContent() {
   return (
     <div className="mx-auto max-w-full space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
+        <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Αξιοπιστία', 'Reliability')}</h1>
         <p className={cn(APP_TYPO.pageSub, 'mt-1 leading-snug', a.sub)}>
           {primaryGap
             ? t(
                 `${gaps.length === 1 ? '1 εκκρεμότητα' : `${gaps.length} εκκρεμότητες`} · ${primaryGap.labelEl}.`,
                 `${gaps.length === 1 ? '1 open item' : `${gaps.length} open items`} · ${primaryGap.labelEn}.`,
               )
-            : t('Επαληθεύσεις και παρουσίες — όλα εντάξει.', 'Verifications and attendance — all clear.')}
+            : t('Email, τηλέφωνο και παρουσίες — όλα εντάξει.', 'Email, phone and attendance — all clear.')}
         </p>
       </div>
 
       <TabBar
         variant="segmented"
         idBase="trust"
-        ariaLabel={t('Ενότητες εμπιστοσύνης', 'Trust sections')}
+        ariaLabel={t('Ενότητες αξιοπιστίας', 'Reliability sections')}
         activeTab={tab}
         onChange={(id) => setTab(id as 'status' | 'history')}
         tabs={[
@@ -246,7 +234,11 @@ export default function TrustCenterPageContent() {
                     <span className="min-w-0">
                       <span className={cn('block text-xs font-semibold', a.head)}>{t(row.labelEl, row.labelEn)}</span>
                       <span className={cn('block text-2xs font-medium', row.ok ? a.muted : a.link)}>
-                        {row.ok ? t('Επαληθευμένο', 'Verified') : t('Επαλήθευση', 'Verify')}
+                        {row.ok
+                          ? t('Επαληθευμένο', 'Verified')
+                          : row.key === 'id'
+                            ? t('Αν διοργανώνεις', 'If you host')
+                            : t('Επαλήθευση', 'Verify')}
                       </span>
                     </span>
                   </>
@@ -321,8 +313,8 @@ export default function TrustCenterPageContent() {
         <StandingCard />
 
         <CopilotInlinePrompt
-          title={{ el: 'Ρώτα το AI για την εμπιστοσύνη σου', en: 'Ask the AI about your trust' }}
-          subtitle={{ el: 'Εξηγεί τον βαθμό σου και τι λείπει', en: 'Explains your score and what’s missing' }}
+          title={{ el: 'Ρώτα για την αξιοπιστία σου', en: 'Ask about your reliability' }}
+          subtitle={{ el: 'Εξηγεί τον βαθμό σου και τις παρουσίες', en: 'Explains your score and attendance' }}
           maxChips={2}
         />
       </div>
@@ -332,7 +324,7 @@ export default function TrustCenterPageContent() {
       <Card className="p-4" role="tabpanel" id="trust-panel-history" aria-labelledby="trust-tab-history">
         <div className="mb-3 flex items-center gap-1.5">
           <TrendingUp className={cn('h-3.5 w-3.5', a.iconAccent)} aria-hidden />
-          <SectionLabel el="Ιστορικό εμπιστοσύνης" en="Trust history" />
+          <SectionLabel el="Ιστορικό παρουσιών" en="Attendance history" />
         </div>
         {history.length === 0 ? (
           <div className="space-y-3">

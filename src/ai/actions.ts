@@ -1340,7 +1340,6 @@ const whatsNewAction: CopilotAction = {
     const gaps: string[] = [];
     if (!user.emailVerified) gaps.push('email');
     if (!user.phoneVerified) gaps.push('phone');
-    if (!user.idVerified) gaps.push('id');
     if (gaps.length > 0) {
       extras.push({
         el: `Λείπει επαλήθευση: ${gaps.join(', ')}`,
@@ -1640,9 +1639,9 @@ const summarizeTrustAction: CopilotAction = {
       rt.navigate('/trust');
       return {
         ok: true,
-        el: `Αξιοπιστία ${stars}/5 (${score}/100). Όλα τα βασικά βήματα επαλήθευσης είναι ολοκληρωμένα — άνοιξα το Κέντρο Εμπιστοσύνης.`,
-        en: `Reliability ${stars}/5 (${score}/100). All core verification steps are done — opened Trust Center.`,
-        link: { path: '/trust', el: 'Εμπιστοσύνη', en: 'Trust' },
+        el: `Αξιοπιστία ${stars}/5 (${score}/100). Email και τηλέφωνο είναι εντάξει — άνοιξα τη σελίδα αξιοπιστίας.`,
+        en: `Reliability ${stars}/5 (${score}/100). Email and phone are in order — opened the reliability page.`,
+        link: { path: '/trust', el: 'Αξιοπιστία', en: 'Reliability' },
         data: { score, gap: null },
       };
     }
@@ -2006,9 +2005,9 @@ const summarizeStandingAction: CopilotAction = {
     const tEl = (el: string) => el;
     return {
       ok: true,
-      el: `${st.titleEl}. ${st.explainEl}${last ? `\nΤελευταίο: ${strikeLabel(last.kind, tEl)}.` : ''}${pending ? `\nΕνστάσεις σε εξέταση: ${pending}.` : ''}${last && !last.appeal ? '\nΜπορείς να κάνεις ένσταση στο Κέντρο Εμπιστοσύνης.' : ''}`,
-      en: `${st.titleEn}. ${st.explainEn}${last ? `\nLatest: ${strikeLabel(last.kind, (_e, en) => en)}.` : ''}${pending ? `\nAppeals under review: ${pending}.` : ''}${last && !last.appeal ? '\nYou can appeal in the Trust Center.' : ''}`,
-      link: { path: '/trust', el: 'Κέντρο Εμπιστοσύνης', en: 'Trust Center' },
+      el: `${st.titleEl}. ${st.explainEl}${last ? `\nΤελευταίο: ${strikeLabel(last.kind, tEl)}.` : ''}${pending ? `\nΕνστάσεις σε εξέταση: ${pending}.` : ''}${last && !last.appeal ? '\nΜπορείς να κάνεις ένσταση στη σελίδα αξιοπιστίας.' : ''}`,
+      en: `${st.titleEn}. ${st.explainEn}${last ? `\nLatest: ${strikeLabel(last.kind, (_e, en) => en)}.` : ''}${pending ? `\nAppeals under review: ${pending}.` : ''}${last && !last.appeal ? '\nYou can appeal on the reliability page.' : ''}`,
+      link: { path: '/trust', el: 'Αξιοπιστία', en: 'Reliability' },
       data: { level: st.level, active: st.active },
     };
   },

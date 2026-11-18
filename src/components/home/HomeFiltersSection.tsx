@@ -200,11 +200,11 @@ export function HomeFiltersSection({
           />
 
           <HomeFilterSelect
-            ariaLabel={t('Φίλτρο άνεσης & ασφάλειας', 'Comfort & safety filter')}
+            ariaLabel={t('Φίλτρο χώρου', 'Venue filter')}
             value={safetyFilter}
             onValueChange={setSafetyFilter}
             options={[
-              { value: 'All', label: t('home.filter.all_comfort', 'Όλα τα Επίπεδα') },
+              { value: 'All', label: t('home.filter.all_comfort', 'Όλοι οι χώροι') },
               { value: 'low', label: t('home.filter.public', 'Δημόσιοι Χώροι') },
               { value: 'medium', label: t('home.filter.organized', 'Οργανωμένοι Hosts') },
               { value: 'high_trust', label: t('home.filter.verified', 'Επαληθευμένες Ομάδες') },
