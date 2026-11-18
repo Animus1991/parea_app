@@ -524,6 +524,10 @@ export const useStore = create<AppState>()(
     if (!event || !state.currentUser) {
       return { ok: false, messageEl: 'Η εκδήλωση δεν βρέθηκε.', messageEn: 'Event not found.' };
     }
+    const when = new Date(`${event.date}T${event.time || '23:59'}`);
+    if (!Number.isNaN(when.getTime()) && when.getTime() < Date.now()) {
+      return { ok: false, messageEl: 'Η εκδήλωση έχει ολοκληρωθεί.', messageEn: 'This event has ended.' };
+    }
     const pendingId = get().getPendingFeedbackEventId();
     if (pendingId && pendingId !== eventId) {
       return {

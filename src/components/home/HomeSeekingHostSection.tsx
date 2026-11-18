@@ -1,9 +1,16 @@
 import { Crown } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { format, parseISO } from 'date-fns';
+import { el as elLocale, enUS as enLocale } from 'date-fns/locale';
+import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
+import { useStore } from '../../store';
 import { EventCard } from '../events/EventCard';
+import { formatEventPrice, formatLocationArea } from '../../lib/eventDisplay';
 import type { Event } from '../../types';
+import { cn } from '../../lib/utils';
 
 export interface HomeSeekingHostSectionProps {
   events: Event[];
@@ -16,11 +23,24 @@ export function HomeSeekingHostSection({
   seekingHostOnly,
   onToggleSeekingHostOnly,
 }: HomeSeekingHostSectionProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const h = useHomeTheme();
   const tok = useThemeStyles();
+  const navigate = useNavigate();
+  const currentUser = useStore((s) => s.currentUser);
+  const becomeEventHost = useStore((s) => s.becomeEventHost);
+  const dateLocale = language === 'el' ? elLocale : enLocale;
 
   if (events.length === 0) return null;
+
+  const takeHost = (eventId: string) => {
+    if (!currentUser) {
+      navigate('/login');
+      return;
+    }
+    becomeEventHost(eventId);
+    toast.success(t('Έγινες ο διοργανωτής της ομάδας!', "You're now the group's organizer!"));
+  };
 
   return (
     <section
@@ -53,10 +73,48 @@ export function HomeSeekingHostSection({
             : `${t('Δες όλες', 'See all')} (${events.length})`}
         </button>
       </div>
-      <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 noscrollbar">
+      <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 noscrollbar md:hidden">
+        {events.map((event) => {
+          const day = format(parseISO(event.date), 'd');
+          const month = format(parseISO(event.date), 'LLL', { locale: dateLocale });
+          return (
+            <article
+              key={event.id}
+              className={cn(
+                'w-[220px] shrink-0 rounded-2xl overflow-hidden border bg-surface-raised',
+                tok.isDark ? 'border-white/10' : 'border-gray-200',
+              )}
+            >
+              <Link to={`/events/${event.id}`} className="block relative h-28">
+                <img src={event.imageUrl} alt="" className="w-full h-full object-cover" />
+                <span className="absolute top-2 left-2 rounded-lg bg-white/90 px-1.5 py-0.5 text-center leading-tight">
+                  <span className="block text-2xs font-bold uppercase text-ink-muted">{month}</span>
+                  <span className="block text-sm font-bold text-ink">{day}</span>
+                </span>
+                <span className="absolute bottom-2 right-2 rounded-lg bg-white/90 px-1.5 py-0.5 text-2xs font-bold text-ink">
+                  {formatEventPrice(event, language, t('Δωρεάν', 'Free'), t('Δωρεάν', 'Free'))}
+                </span>
+              </Link>
+              <div className="p-2.5 space-y-1.5">
+                <h3 className="text-xs font-bold text-ink line-clamp-2">{event.title}</h3>
+                <p className="text-2xs text-ink-muted truncate">{formatLocationArea(event.locationArea, language)}</p>
+                <button
+                  type="button"
+                  onClick={() => takeHost(event.id)}
+                  className="w-full min-h-8 rounded-full bg-amber-600 text-white text-xs font-bold inline-flex items-center justify-center gap-1"
+                >
+                  <Crown className="w-3.5 h-3.5" aria-hidden />
+                  {t('Ανάλαβε τη διοργάνωση', 'Take on hosting')}
+                </button>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+      <div className="hidden md:flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 noscrollbar">
         {events.map((event) => (
           <div key={event.id} className="w-[290px] sm:w-[320px] shrink-0">
-            <EventCard event={event} />
+            <EventCard event={event} emphasis="host" />
           </div>
         ))}
       </div>

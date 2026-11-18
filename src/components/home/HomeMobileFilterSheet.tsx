@@ -2,6 +2,9 @@ import { Crown } from 'lucide-react';
 import { FilterBottomSheet } from '../common/FilterBottomSheet';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
+import { HOME_CATEGORIES, HOME_POPULAR_TAGS } from '../../lib/homeFeedConstants';
+import { getHomeCategoryTranslations, getHomeTagTranslations } from '../../lib/homeCategoryLabels';
+import { MoodSelector } from './MoodSelector';
 import { cn } from '../../lib/utils';
 import type {
   HomeDateFilter,
@@ -29,6 +32,12 @@ export interface HomeMobileFilterSheetProps {
   seekingHostOnly: boolean;
   onToggleSeekingHostOnly: () => void;
   showSeekingHostChip: boolean;
+  activeCategory: string;
+  setActiveCategory: (v: string) => void;
+  tagFilter: string;
+  setTagFilter: (v: string) => void;
+  activeMood: string | null;
+  onSelectMood: (moodId: string | null, categories: string[]) => void;
 }
 
 export function HomeMobileFilterSheet({
@@ -49,9 +58,17 @@ export function HomeMobileFilterSheet({
   seekingHostOnly,
   onToggleSeekingHostOnly,
   showSeekingHostChip,
+  activeCategory,
+  setActiveCategory,
+  tagFilter,
+  setTagFilter,
+  activeMood,
+  onSelectMood,
 }: HomeMobileFilterSheetProps) {
   const { t } = useLanguage();
   const h = useHomeTheme();
+  const categoryTranslations = getHomeCategoryTranslations(t);
+  const tagTranslations = getHomeTagTranslations(t);
   const chip = (on: boolean) =>
     cn('px-3 min-h-8 rounded-full text-xs font-bold', on ? h.chipActive : h.chipInactive);
 
@@ -63,6 +80,40 @@ export function HomeMobileFilterSheet({
       onClear={onClear}
     >
       <div className="space-y-4">
+        <MoodSelector activeMood={activeMood} onSelectMood={onSelectMood} />
+
+        <div>
+          <p className={`text-xs font-bold mb-2 ${h.labelMuted}`}>{t('Κατηγορία', 'Category')}</p>
+          <div className="flex flex-wrap gap-2">
+            {HOME_CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setActiveCategory(cat)}
+                className={chip(activeCategory === cat)}
+              >
+                {categoryTranslations[cat] ?? cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <p className={`text-xs font-bold mb-2 ${h.labelMuted}`}>{t('Ετικέτες', 'Tags')}</p>
+          <div className="flex flex-wrap gap-2">
+            {HOME_POPULAR_TAGS.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setTagFilter(tag)}
+                className={chip(tagFilter === tag)}
+              >
+                {tagTranslations[tag] ?? tag}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div>
           <p className={`text-xs font-bold mb-2 ${h.labelMuted}`}>{t('Τιμή', 'Price')}</p>
           <div className="flex flex-wrap gap-2">

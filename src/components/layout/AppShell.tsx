@@ -571,7 +571,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="flex flex-1 h-full overflow-hidden min-w-0">
         <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
           <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
-          <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none">
+          <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none [scroll-padding-bottom:calc(var(--safe-bottom)+env(safe-area-inset-bottom,0px))]">
             <div
               className={cn(
                 'mx-auto w-full max-w-full flex-1',

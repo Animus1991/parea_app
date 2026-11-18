@@ -1,0 +1,128 @@
+import type { Event, Group, User } from '../types';
+
+const LOCATION_EL: Record<string, string> = {
+  'Thisio, Athens': 'Θησείο, Αθήνα',
+  'Exarchia, Athens': 'Εξάρχεια, Αθήνα',
+  'Kaisariani, Athens': 'Καισαριανή, Αθήνα',
+  'Faliro, Athens': 'Φάληρο, Αθήνα',
+  'Gazi, Athens': 'Γκάζι, Αθήνα',
+  'Makrygianni, Athens': 'Μακρυγιάννη, Αθήνα',
+  'Tavros, Athens': 'Ταύρος, Αθήνα',
+  'Kallithea, Athens': 'Καλλιθέα, Αθήνα',
+  'Kerameikos, Athens': 'Κεραμεικός, Αθήνα',
+  'Alimos, Athens': 'Άλιμος, Αθήνα',
+  'Schinias, Marathon': 'Σχινιάς, Μαραθώνας',
+  'Monastiraki, Athens': 'Μοναστηράκι, Αθήνα',
+  'Pagrati, Athens': 'Παγκράτι, Αθήνα',
+  'Koukaki, Athens': 'Κουκάκι, Αθήνα',
+  'Psyrri, Athens': 'Ψυρρή, Αθήνα',
+  'Kolonaki, Athens': 'Κολωνάκι, Αθήνα',
+  'Petralona, Athens': 'Πετράλωνα, Αθήνα',
+  'Kypseli, Athens': 'Κυψέλη, Αθήνα',
+  'Neos Kosmos, Athens': 'Νέος Κόσμος, Αθήνα',
+  'Glyfada, Athens': 'Γλυφάδα, Αθήνα',
+  'Piraeus': 'Πειραιάς',
+  Athens: 'Αθήνα',
+};
+
+const TAG_EL: Record<string, string> = {
+  music: 'Μουσική',
+  culture: 'Πολιτισμός',
+  food: 'Φαγητό',
+  outdoor: 'Υπαίθρια',
+  social: 'Κοινωνικά',
+  nightlife: 'Νυχτερινή ζωή',
+  sports: 'Αθλητισμός',
+  workshop: 'Εργαστήριο',
+  free: 'Δωρεάν',
+  cinema: 'Σινεμά',
+  'open-air': 'Υπαίθριο',
+  retro: 'Ρετρό',
+  boardgames: 'Επιτραπέζια',
+  hiking: 'Πεζοπορία',
+  nature: 'Φύση',
+  community: 'Κοινότητα',
+  festival: 'Φεστιβάλ',
+  concert: 'Συναυλία',
+  electronic: 'Ηλεκτρονική',
+  techno: 'Techno',
+  yoga: 'Γιόγκα',
+  wellness: 'Ευεξία',
+  environment: 'Περιβάλλον',
+  streetfood: 'Street food',
+  dance: 'Χορός',
+  theater: 'Θέατρο',
+  sailing: 'Ιστιοπλοΐα',
+  sunset: 'Ηλιοβασίλεμα',
+};
+
+function padTime(time: string): string {
+  const [h = '00', m = '00', s = '00'] = time.split(':');
+  return `${h.padStart(2, '0')}:${m.padStart(2, '0')}:${s.padStart(2, '0')}`;
+}
+
+export function eventOccursAt(event: { date: string; time?: string }): Date {
+  return new Date(`${event.date}T${padTime(event.time || '23:59')}`);
+}
+
+export function isEventPast(
+  event: { date: string; time?: string },
+  now: Date = new Date(),
+): boolean {
+  const when = eventOccursAt(event);
+  if (Number.isNaN(when.getTime())) return false;
+  return when.getTime() < now.getTime();
+}
+
+export function formatEventPrice(
+  event: { isPaid: boolean; price: number },
+  language: 'el' | 'en',
+  freeEl = 'Δωρεάν',
+  freeEn = 'Free',
+): string {
+  if (!event.isPaid || event.price <= 0) return language === 'el' ? freeEl : freeEn;
+  if (language === 'el') {
+    return `${event.price.toLocaleString('el-GR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
+  }
+  return `€${event.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+export function formatLocationArea(area: string, language: 'el' | 'en'): string {
+  if (language !== 'el') return area;
+  return LOCATION_EL[area] ?? area.replace(/\bAthens\b/g, 'Αθήνα');
+}
+
+export function translateEventTag(
+  tag: string,
+  t: (el: string, en: string) => string,
+): string {
+  const el = TAG_EL[tag] ?? TAG_EL[tag.toLowerCase()];
+  if (el) return t(el, tag);
+  return tag;
+}
+
+export type EventJoinState = 'join' | 'rate' | 'view' | 'chat';
+
+export function getEventJoinState(
+  event: Event,
+  opts: {
+    currentUser: User | null;
+    groups: Group[];
+    pendingFeedbackId: string | null;
+    now?: Date;
+  },
+): EventJoinState {
+  const past = isEventPast(event, opts.now);
+  const userGroup = opts.currentUser
+    ? opts.groups.find(
+        (g) => g.eventId === event.id && g.members.includes(opts.currentUser!.id),
+      )
+    : undefined;
+
+  if (past) {
+    if (userGroup && opts.pendingFeedbackId === event.id) return 'rate';
+    return 'view';
+  }
+  if (userGroup) return 'chat';
+  return 'join';
+}

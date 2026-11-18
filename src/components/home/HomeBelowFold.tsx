@@ -70,7 +70,7 @@ export function HomeBelowFold({
           },
           {
             step: '2',
-            title: t('home.how.step2.title', 'Εντάξτε μια μικρή ομάδα'),
+            title: t('home.how.step2.title', 'Μπες σε μια μικρή παρέα'),
             body: t(
               'home.how.step2.body',
               'Συνδεθείτε με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.',

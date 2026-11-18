@@ -11,6 +11,7 @@ import {
 } from '../lib/plansFormingUtils';
 import type { CompanyRequest } from '../types/companyRequest';
 import type { Event, Group } from '../types';
+import { isEventPast } from '../lib/eventDisplay';
 
 export interface PlansFormingGroupItem {
   group: Group;
@@ -43,6 +44,7 @@ export function usePlansFormingFeed(limit = 12) {
     if (!currentUser) return [];
     const filtered = raw
       .filter((item) => !dismissed.includes(item.intent.id))
+      .filter((item) => !isEventPast(item.event))
       .slice(0, limit);
     return filtered.map((item) => enrichPlanItem(item, currentUser, savedEventIds));
   }, [raw, dismissed, limit, currentUser, savedEventIds]);
@@ -60,7 +62,7 @@ export function usePlansFormingFeed(limit = 12) {
       )
       .map((g) => {
         const event = events.find((e) => e.id === g.eventId);
-        if (!event) return null;
+        if (!event || isEventPast(event)) return null;
         const host = users.find((u) => u.id === (g.hostId ?? g.members[0]));
         return {
           group: g,

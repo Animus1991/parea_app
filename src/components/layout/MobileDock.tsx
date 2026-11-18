@@ -56,7 +56,7 @@ export function MobileDock() {
       className={cn(
         'transition-[opacity,transform] duration-200 motion-reduce:transition-none',
         waiting && 'opacity-0 translate-y-3 pointer-events-none',
-        'md:hidden fixed left-1/2 -translate-x-1/2 z-fab flex items-stretch rounded-full shadow-soft-lg border overflow-hidden text-white',
+        'mobile-dock md:hidden fixed left-1/2 -translate-x-1/2 z-fab flex items-stretch rounded-full shadow-soft-lg border overflow-hidden text-white',
         aboveEventBar
           ? 'bottom-[calc(var(--bottom-nav-total)+5.25rem+env(safe-area-inset-bottom,0px))]'
           : 'bottom-fab-zone',
@@ -72,7 +72,11 @@ export function MobileDock() {
           <button
             type="button"
             onClick={() => setPlansOpen(true)}
-            aria-label={t('Βρες Nakamas — σχέδια που σχηματίζονται', 'Find Nakamas — plans forming')}
+            aria-label={
+              plans.badge != null
+                ? t(`Βρες Nakamas — ${plans.badge} συμβατά σχέδια`, `Find Nakamas — ${plans.badge} matching plans`)
+                : t('Βρες Nakamas — σχέδια που σχηματίζονται', 'Find Nakamas — plans forming')
+            }
             className={cn(segment, 'pl-4 pr-3 active:bg-black/10')}
           >
             {plans.hasPending ? <Inbox className="w-4 h-4" aria-hidden /> : <Users className="w-4 h-4" aria-hidden />}
@@ -96,17 +100,23 @@ export function MobileDock() {
         onClick={toggleInbox}
         aria-label={
           unread > 0
-            ? t(`Συνομιλίες σχεδίων (${unread} μη αναγνωσμένα)`, `Plan chats (${unread} unread)`)
+            ? t(`${unread} αδιάβαστες συνομιλίες`, `${unread} unread chats`)
             : t('Συνομιλίες σχεδίων', 'Plan chats')
         }
-        title={t('Συνομιλίες', 'Chats')}
+        title={
+          unread > 0
+            ? t(`${unread} αδιάβαστες συνομιλίες`, `${unread} unread chats`)
+            : t('Συνομιλίες', 'Chats')
+        }
         className={cn(segment, plans.visible ? 'pl-3 pr-4' : 'px-4', 'active:bg-black/10')}
       >
         <MessageCircle className="w-4 h-4" aria-hidden />
-        {unread > 0 && (
-          <span className="bg-white/25 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
-            {unread > 9 ? '9+' : unread}
+        {unread > 0 ? (
+          <span className="whitespace-nowrap">
+            {unread > 9 ? '9+' : unread} {t('αδιάβαστα', 'unread')}
           </span>
+        ) : (
+          <span className="whitespace-nowrap">{t('Συνομιλίες', 'Chats')}</span>
         )}
       </button>
     </div>

@@ -40,9 +40,10 @@ export function useHomePageController() {
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setShowSearchSuggestions(false);
-      }
+      const node = e.target as Node | null;
+      if (searchRef.current?.contains(node)) return;
+      if (node instanceof Element && node.closest('[data-home-search-menu]')) return;
+      setShowSearchSuggestions(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);

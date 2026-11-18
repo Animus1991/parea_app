@@ -94,8 +94,10 @@
   --bottom-nav-h: 56px;
   /* Rendered height of <BottomNav> (padding + raised create button + label). */
   --bottom-nav-total: 75px;
-  /* Ζώνη πάνω από το BottomNav + προεξοχή του center FAB + gap */
-  --safe-bottom: calc(var(--bottom-nav-h) + 28px);
+  /* Reserved phone dock (Find Nakamas / Chats) sitting on top of the tab bar. */
+  --mobile-dock-h: 44px;
+  /* BottomNav + dock + gap — content padding must clear both. */
+  --safe-bottom: calc(var(--bottom-nav-total) + var(--mobile-dock-h) + 10px);
 }
 
 @utility h-header {
@@ -103,10 +105,7 @@
 }
 
 @utility pb-safe {
-  /* Dock clearance (--safe-bottom) plus the floating Find-Nakamas/Chat pill (~44px) + gap.
-     The pill uses bottom-fab-zone (same --safe-bottom), so extra padding is required
-     or the last CTAs sit underneath it. */
-  padding-bottom: calc(var(--safe-bottom) + 3.25rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(var(--safe-bottom) + env(safe-area-inset-bottom, 0px));
 }
 
 @utility bottom-nav-clear {
@@ -114,7 +113,25 @@
 }
 
 @utility bottom-fab-zone {
-  bottom: calc(var(--safe-bottom) + env(safe-area-inset-bottom, 0px));
+  bottom: calc(var(--bottom-nav-total) + 6px + env(safe-area-inset-bottom, 0px));
+}
+
+.hero-search-field {
+  background-color: #ffffff;
+  color: #171614;
+  border-color: rgba(255, 255, 255, 0.85);
+  caret-color: #171614;
+}
+.hero-search-field::placeholder {
+  color: #4b5563;
+  opacity: 1;
+}
+
+/* Search suggestions portal above the dock; hide the dock so the list is fully tappable. */
+body[data-search-open] .mobile-dock {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
 }
 
 /* ── Per-theme semantic token remapping ── */

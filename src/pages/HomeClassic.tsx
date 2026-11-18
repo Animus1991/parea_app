@@ -1,19 +1,16 @@
 import { useEffect } from "react";
-import { CopilotInlinePrompt } from '../components/copilot/CopilotInlinePrompt';
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { EventCard } from "../components/events/EventCard";
 import { EventCardSkeleton } from "../components/common/Skeleton";
-import { Map as MapIcon, CalendarX } from "lucide-react";
+import { CalendarX } from "lucide-react";
 import { EmptyState } from "../components/common/EmptyState";
 import { useHomeTheme } from "../hooks/useHomeTheme";
 import { useThemeStyles } from "../hooks/useThemeStyles";
-import { EventStories } from "../components/home/EventStories";
 import { HomeLoggedInHero } from "../components/home/HomeLoggedInHero";
 import { HomePendingFeedbackBanner } from "../components/home/HomePendingFeedbackBanner";
 import { HomeVerifyBanner } from "../components/home/HomeVerifyBanner";
 import { HomeBelowFold } from "../components/home/HomeBelowFold";
-import { HomeBuddySeekStrip } from "../components/buddySeek/HomeBuddySeekStrip";
 import { getTimeGreeting, getMotivation } from "../lib/homeGreeting";
 import { HomeSearchDropdown } from "../components/home/HomeSearchDropdown";
 import { useOnboardingWelcome } from "../hooks/useOnboardingWelcome";
@@ -21,9 +18,10 @@ import { HomeOnboardingWelcomeBanner } from "../components/home/HomeOnboardingWe
 import { HomeContinueStrip } from "../components/home/HomeContinueStrip";
 import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
 import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
+import { HomeFeedToolbar } from "../components/home/HomeFeedToolbar";
+import { HomeDiscoverEnrichment } from "../components/home/HomeDiscoverEnrichment";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
-import { CollectionsRail } from "../components/outings/CollectionsRail";
 
 export default function HomeClassic() {
   const h = useHomeTheme();
@@ -86,6 +84,8 @@ export default function HomeClassic() {
     if (showWelcome) setFeedType("Discover");
   }, [showWelcome, setFeedType]);
 
+  const enrichment = <HomeDiscoverEnrichment storyEvents={storyEvents} />;
+
   return (
     <div className="space-y-4 md:space-y-5 pb-5 md:pb-0">
       <HomeLoggedInHero
@@ -110,12 +110,6 @@ export default function HomeClassic() {
       />
 
       <HomeContinueStrip />
-
-      <EventStories events={storyEvents} />
-
-      <CopilotInlinePrompt />
-
-      <HomeBuddySeekStrip />
 
       {showWelcome && (
         <HomeOnboardingWelcomeBanner useClassicTokens onDismiss={dismissWelcome} />
@@ -149,46 +143,20 @@ export default function HomeClassic() {
         onSelectMood={handleSelectMood}
       />
 
-      {/* Φ27 collections — below filters so the first viewport stays one job */}
-      <CollectionsRail />
-
-      {/* Events Grid */}
       <section>
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setFeedType("For You")}
-                className={`filter-chip px-4 text-xs font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
-              >
-                {t("home.feed.for_you", "Για Σένα")}
-              </button>
-              <button
-                onClick={() => setFeedType("Discover")}
-                className={`filter-chip px-4 text-xs font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
-              >
-                {t("home.feed.discover", "Ανακάλυψε")}
-              </button>
-            </div>
-            {!isLoading && sortedEvents.length > 0 && (
-              <p className="text-xs font-semibold text-ink-muted">
-                {sortedEvents.length === 1
-                  ? t("1 αποτέλεσμα", "1 result")
-                  : t(`${sortedEvents.length} αποτελέσματα`, `${sortedEvents.length} results`)}
-              </p>
-            )}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => navigate("/nearby")}
-            className={cn('inline-flex min-h-8 min-w-8 shrink-0 items-center justify-center rounded-full border transition-colors', tok.isDark ? 'border-gray-600/50 text-gray-300' : 'border-gray-200 text-ink-muted')}
-            title={t("Άνοιγμα Χάρτη", "Open Map")}
-            aria-label={t("Άνοιγμα Χάρτη", "Open Map")}
-          >
-            <MapIcon className="w-4 h-4" />
-          </button>
-        </div>
+        <HomeFeedToolbar
+          feedType={feedType}
+          setFeedType={setFeedType}
+          resultCount={sortedEvents.length}
+          isLoading={isLoading}
+          tabClassName={(active) =>
+            cn(
+              'filter-chip px-4 text-xs font-bold transition-all duration-200 rounded-full',
+              active ? h.feedTabActive : h.feedTabInactive,
+            )
+          }
+          mapClassName={tok.isDark ? 'border-gray-600/50 text-gray-300' : 'border-gray-200 text-ink-muted'}
+        />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
@@ -206,7 +174,7 @@ export default function HomeClassic() {
               />
             </div>
           ) : sortedEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 space-y-4">
               <EmptyState
                 icon={CalendarX}
                 title={t("home.feed.no_events", "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.")}
@@ -235,20 +203,34 @@ export default function HomeClassic() {
                     : () => navigate('/categories')
                 }
               />
+              {enrichment}
             </div>
           ) : (
-            visibleEvents.map((event, index) => (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-              >
-                <EventCard event={event} />
-              </motion.div>
-            ))
+            visibleEvents.flatMap((event, index) => {
+              const card = (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <EventCard event={event} />
+                </motion.div>
+              );
+              if (index !== 2) return [card];
+              return [
+                <div key="discover-enrichment" className="col-span-1 sm:col-span-2 lg:col-span-3">
+                  {enrichment}
+                </div>,
+                card,
+              ];
+            })
           )}
         </div>
+
+        {!isLoading && visibleEvents.length > 0 && visibleEvents.length < 3 && (
+          <div className="mt-4">{enrichment}</div>
+        )}
 
         {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
@@ -290,6 +272,12 @@ export default function HomeClassic() {
         seekingHostOnly={seekingHostOnly}
         onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
         showSeekingHostChip={seekingHostEvents.length > 0}
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+        tagFilter={tagFilter}
+        setTagFilter={setTagFilter}
+        activeMood={activeMood}
+        onSelectMood={handleSelectMood}
       />
     </div>
   );

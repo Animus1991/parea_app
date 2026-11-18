@@ -15,6 +15,7 @@ import {
   Link2,
   X,
   Crown,
+  HelpCircle,
   UserPlus,
   CalendarPlus,
   MessageSquare,
@@ -29,6 +30,13 @@ import { cn } from "../../lib/utils";
 import { stopBubbling } from "../../lib/a11y";
 import { EVENT_CARD_TYPO } from "../../lib/typographyTokens";
 import { computeMatchScore, getMatchingPreview } from "../../lib/matching";
+import { explainEventMatch } from "../../lib/matchingExplain";
+import {
+  formatEventPrice,
+  formatLocationArea,
+  getEventJoinState,
+  translateEventTag,
+} from "../../lib/eventDisplay";
 import { isDarkTheme } from "../../lib/themes";
 import { MatchExplainChips } from "./MatchExplainChips";
 import { getEventGroupProgress } from "../../lib/groupUtils";
@@ -52,6 +60,8 @@ L.Icon.Default.mergeOptions({
 
 interface EventCardProps {
   event: Event;
+  /** Feed cards lead with Find Nakamas; the seeking-host rail leads with hosting. */
+  emphasis?: 'join' | 'host';
 }
 
 /** Mount Leaflet only when the mini-map enters the viewport (avoids N× Strict Mode races). */
@@ -106,7 +116,7 @@ function EventCardMiniMap({ lat, lng, isDark, className }: { lat: number; lng: n
   );
 }
 
-export const EventCard = memo(function EventCard({ event }: EventCardProps) {
+export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: EventCardProps) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const users = useStore((state) => state.users);
@@ -121,6 +131,19 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
   const matchScore = currentUser ? computeMatchScore(currentUser, event) : null;
   const matchingPreview = getMatchingPreview(event, groups, users, currentUser);
   const [imgError, setImgError] = useState(false);
+  const [showMatchWhy, setShowMatchWhy] = useState(false);
+  const pendingFeedbackId = useStore((s) => {
+    void s.feedbackSubmitted;
+    void s.groups;
+    void s.events;
+    return s.getPendingFeedbackEventId();
+  });
+  const joinState = getEventJoinState(event, {
+    currentUser,
+    groups,
+    pendingFeedbackId,
+  });
+  const matchExplanation = currentUser ? explainEventMatch(currentUser, event, language) : null;
 
   const isDark = isDarkTheme(theme);
   const accent = theme === 'vibrant' || theme === 'vibrant-dark' ? 'fuchsia' : theme === 'bento' || theme === 'bento-dark' ? 'indigo' : theme === 'neon' || theme === 'neon-dark' ? 'emerald' : 'cyan';
@@ -304,14 +327,14 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             {(event.tags ?? []).slice(0, 2).map((tag: string) => (
               <span
                 key={tag}
-                className="bg-black/35 backdrop-blur-sm text-white/95 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-medium capitalize tracking-wide whitespace-nowrap truncate max-w-[100px] text-xs"
+                className="bg-black/35 backdrop-blur-sm text-white/95 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-medium tracking-wide whitespace-nowrap truncate max-w-[100px] text-xs"
               >
-                {tag}
+                {translateEventTag(tag, t)}
               </span>
             ))}
           </div>
           <div className={cn("bg-white/90 backdrop-blur-sm px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-xl font-bold text-ink tracking-tight flex flex-col items-end shrink-0", EVENT_CARD_TYPO.dateBadge)}>
-            {event.isPaid ? `€${event.price}` : t("event_card.free", "Free")}
+            {formatEventPrice(event, language, t("Δωρεάν", "Free"), t("Δωρεάν", "Free"))}
             {event.isPaid && event.groupDiscount && (
               <span className={cn(EVENT_CARD_TYPO.dateSub, "text-brand block mt-0.5")}>
                 -{event.groupDiscount.percentage}% {t('ομαδική έκπτωση', 'group discount')}
@@ -334,14 +357,25 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             </Link>
           </h3>
           {currentUser && matchScore != null && (
-            <div className="flex flex-col items-end shrink-0 pt-0.5" title={t("Ταίριασμα", "Match")}>
-              <span className={cn(EVENT_CARD_TYPO.matchScore, "font-bold", accent === 'fuchsia' ? headColor : accentText)}>
+            <button
+              type="button"
+              className="flex flex-col items-end shrink-0 pt-0.5 rounded-lg px-1 -mr-1 min-h-8 justify-center"
+              title={t("Γιατί αυτό το ταίριασμα", "Why this match")}
+              aria-expanded={showMatchWhy}
+              aria-label={t(`${matchScore}% ταίριασμα — άνοιγμα εξήγησης`, `${matchScore}% match — open explanation`)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMatchWhy((v) => !v);
+              }}
+            >
+              <span className={cn(EVENT_CARD_TYPO.matchScore, "font-bold inline-flex items-center gap-0.5", accent === 'fuchsia' ? headColor : accentText)}>
                 {matchScore}%
+                <HelpCircle className="w-3 h-3 opacity-70" aria-hidden />
               </span>
               <span className={cn(EVENT_CARD_TYPO.matchLabel, mutedColor, "opacity-80")}>
                 {t("Ταίριασμα", "Match")}
               </span>
-            </div>
+            </button>
           )}
         </div>
 
@@ -353,7 +387,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           <span aria-hidden className={cn(mutedColor, "opacity-50")}>·</span>
           <span className="inline-flex items-center gap-1 min-w-0">
             <MapPin className={cn("w-3.5 h-3.5 shrink-0 opacity-70", mutedColor)} aria-hidden />
-            <span className="truncate max-w-[150px]">{event.locationArea}</span>
+            <span className="truncate max-w-[150px]">{formatLocationArea(event.locationArea, language)}</span>
           </span>
           <span aria-hidden className={cn(mutedColor, "opacity-50")}>·</span>
           <span className="inline-flex items-center gap-1 tabular-nums">
@@ -362,13 +396,19 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           </span>
         </p>
 
-        {/* One quiet reason line — matchingPreview wins; else MatchExplainChips reasons (no double chrome). */}
-        {matchingPreview ? (
+        {showMatchWhy && matchExplanation && (
+          <p className={cn(EVENT_CARD_TYPO.hint, "mt-2 font-medium", accentText)}>
+            {matchExplanation.sharedStrengths[0]
+              || matchExplanation.mismatchFlags[0]
+              || t('Βασίζεται σε κοινά ενδιαφέροντα, κατηγορία και επίπεδο εμπιστοσύνης.', 'Based on shared interests, category and trust level.')}
+          </p>
+        )}
+        {!showMatchWhy && matchingPreview ? (
           <p className={cn(EVENT_CARD_TYPO.hint, "mt-2 font-medium", accentText, "opacity-90")}>
             {t(matchingPreview.labelEl, matchingPreview.labelEn)}
           </p>
         ) : (
-          currentUser && (
+          !showMatchWhy && currentUser && (
             <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className="mt-2" />
           )
         )}
@@ -401,27 +441,42 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           </button>
         )}
 
-        {/* Platform event — seeks a group organizer */}
-        {seeksHost && (
-          <div className={cn("mt-3 rounded-2xl p-3 border", isDark ? "bg-amber-500/10 border-amber-500/25" : "bg-amber-50 border-amber-200")}>
+        {/* Platform event — seeks a group organizer. Hosting is primary only in the host rail. */}
+        {seeksHost && joinState === 'join' && (
+          <div className={cn(
+            "mt-3 rounded-2xl p-3 border",
+            emphasis === 'host'
+              ? isDark ? "bg-amber-500/10 border-amber-500/25" : "bg-amber-50 border-amber-200"
+              : isDark ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-200",
+          )}>
             <div className="flex items-center gap-2 mb-2">
-              <UserPlus className={cn("w-4 h-4 shrink-0", isDark ? "text-amber-400" : "text-amber-600")} />
+              <UserPlus className={cn("w-4 h-4 shrink-0", emphasis === 'host' ? (isDark ? "text-amber-400" : "text-amber-600") : mutedColor)} />
               <div className="flex flex-col">
-                <span className={cn(EVENT_CARD_TYPO.avatarLabel, "capitalize", isDark ? "text-amber-300/90" : "text-amber-700")}>
+                <span className={cn(EVENT_CARD_TYPO.avatarLabel, "capitalize", mutedColor)}>
                   {t('Προσφέρεται από Nakamas', 'Offered by Nakamas')}
                 </span>
-                <span className={cn("text-xs font-bold", isDark ? "text-amber-100" : "text-amber-900")}>
+                <span className={cn("text-xs font-bold", headColor)}>
                   {t('Αναζητείται διοργανωτής', 'Looking for an organizer')}
                 </span>
               </div>
             </div>
-            <button
-              onClick={handleBecomeHost}
-              className={cn("w-full min-h-8 rounded-full font-bold transition-colors flex items-center justify-center gap-1.5", EVENT_CARD_TYPO.cta, isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
-            >
-              <Crown className="w-3.5 h-3.5" />
-              {t('Γίνε Διοργανωτής Nakamas', 'Become Nakamas organizer')}
-            </button>
+            {emphasis === 'host' ? (
+              <button
+                onClick={handleBecomeHost}
+                className={cn("w-full min-h-8 rounded-full font-bold transition-colors flex items-center justify-center gap-1.5", EVENT_CARD_TYPO.cta, isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
+              >
+                <Crown className="w-3.5 h-3.5" />
+                {t('Ανάλαβε τη διοργάνωση', 'Take on hosting')}
+              </button>
+            ) : (
+              <button
+                onClick={handleBecomeHost}
+                className={cn("w-full min-h-8 rounded-full font-bold transition-colors flex items-center justify-center gap-1.5 border", EVENT_CARD_TYPO.cta, isDark ? "border-white/15 text-gray-200 hover:bg-white/5" : "border-gray-200 text-ink hover:bg-white")}
+              >
+                <Crown className="w-3.5 h-3.5" />
+                {t('Ανάλαβε τη διοργάνωση', 'Take on hosting')}
+              </button>
+            )}
           </div>
         )}
 
@@ -479,6 +534,18 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
+                  if (joinState === 'rate') {
+                    navigate(`/history/feedback/${event.id}`);
+                    return;
+                  }
+                  if (joinState === 'view' || (joinState === 'chat' && !userGroup)) {
+                    navigate(`/events/${event.id}`);
+                    return;
+                  }
+                  if (joinState === 'chat' && userGroup) {
+                    navigate(`/chat/${userGroup.id}`);
+                    return;
+                  }
                   const gate = canJoinEvent(event.id);
                   if (!gate.ok) {
                     toast.error(t(gate.messageEl, gate.messageEn));
@@ -492,7 +559,13 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 }}
                 className={cn("px-4 py-2 min-h-8 shrink-0 whitespace-nowrap text-white font-semibold rounded-full", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
               >
-                {t("Βρες Nakamas", "Find Nakamas")}
+                {joinState === 'rate'
+                  ? t('Αξιολόγηση', 'Rate')
+                  : joinState === 'view'
+                    ? t('Προβολή', 'View')
+                    : joinState === 'chat'
+                      ? t('Η βραδιά μας', 'Our night')
+                      : t('Βρες παρέα', 'Find company')}
               </button>
             </div>
           </div>

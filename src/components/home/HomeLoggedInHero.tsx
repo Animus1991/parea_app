@@ -47,8 +47,8 @@ export function HomeLoggedInHero({
 
   const searchBlock = (
     <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-      <div ref={searchRef} className="relative flex-1 max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 z-10 opacity-70" />
+      <div ref={searchRef} className="relative flex-1 max-w-md overflow-visible">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 z-10 text-gray-500" />
         <input
           type="search"
           value={searchQuery}
@@ -57,7 +57,7 @@ export function HomeLoggedInHero({
           placeholder={t('home.hero.search_placeholder', 'Αναζήτηση εμπειριών...')}
           className={cn(
             h.heroSearchInput,
-            'search-control shadow-soft focus:outline-none backdrop-blur-sm w-full',
+            'hero-search-field search-control shadow-soft focus:outline-none w-full',
             homeHeroMode !== 'light' && 'pr-10',
           )}
         />
@@ -65,7 +65,7 @@ export function HomeLoggedInHero({
           <button
             type="button"
             onClick={() => navigate('/nearby')}
-            className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-opacity opacity-80 hover:opacity-100"
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-gray-600 hover:text-gray-900"
             title={t('Εμφάνιση στον Χάρτη', 'View on Map')}
             aria-label={t('Εμφάνιση στον Χάρτη', 'View on Map')}
           >
@@ -110,71 +110,32 @@ export function HomeLoggedInHero({
       className={cn(h.hero, 'flex flex-col gap-4 relative')}
     >
       {homeHeroMode === 'light' && (
-        <div className="relative z-10 space-y-5">
-          <div className="flex justify-between items-start gap-4">
-            <div>
-              <h1 className="text-white text-lg md:text-xl font-bold tracking-tight leading-tight mb-1">
-                {t('Γειά σου, ', 'Hello, ')}
-                {firstName}!
-              </h1>
-              <p className={cn(h.heroSubtitle, 'text-sm font-medium max-w-md')}>
-                {t(
-                  'Ανακαλύψτε τις καλύτερες εκδηλώσεις γύρω σας.',
-                  'Discover the best events around you.',
-                )}
-              </p>
-            </div>
-            <HomeWeatherBadge size="md" />
+        <div className="relative z-10 space-y-3 md:space-y-5">
+          <div className="flex justify-between items-center gap-3">
+            <h1 className="text-white text-lg md:text-xl font-bold tracking-tight leading-tight truncate">
+              {t('Γειά σου, ', 'Hello, ')}
+              {firstName}!
+            </h1>
+            <HomeWeatherBadge size="sm" />
           </div>
+          <p className={cn(h.heroSubtitle, 'hidden md:block text-sm font-medium max-w-md')}>
+            {t(
+              'Ανακαλύψτε τις καλύτερες εκδηλώσεις γύρω σας.',
+              'Discover the best events around you.',
+            )}
+          </p>
           {searchBlock}
         </div>
       )}
 
       {homeHeroMode === 'balanced' && (
-        <div className="relative z-10 space-y-5">
-          <div className="flex justify-between items-start gap-4">
-            <div className="space-y-2 flex-1">
-              <h1 className={h.heroGreeting}>{greeting}</h1>
-              <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
-              <p className={cn(h.heroTitle, 'max-w-2xl')}>
-                {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
-                <span className={h.heroTitleAccent}>
-                  {t('home.hero.title2', 'εμπειρίες')}
-                </span>{' '}
-                {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
-              </p>
-            </div>
+        <div className="relative z-10 space-y-3 md:space-y-5">
+          <div className="flex justify-between items-center gap-3">
+            <h1 className={cn(h.heroGreeting, 'mb-0 truncate')}>{greeting}</h1>
             <HomeWeatherBadge size="sm" />
           </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1">
-            {[
-              { icon: Users, label: t('home.hero.stat1', 'Μικρές ομάδες') },
-              { icon: ShieldCheck, label: t('home.hero.stat2', 'Επαληθευμένη συμμετοχή') },
-              { icon: MapIcon, label: t('home.hero.stat3', 'Δημόσια σημεία') },
-            ].map(({ icon: Icon, label }) => (
-              <span
-                key={label}
-                className={cn('inline-flex items-center gap-1.5 text-sm font-semibold', h.heroStat)}
-              >
-                <Icon className={cn('w-3.5 h-3.5', h.heroStatIcon)} />
-                {label}
-              </span>
-            ))}
-          </div>
-          {searchBlock}
-        </div>
-      )}
-
-      {homeHeroMode === 'rich' && (
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div className="flex-1">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <h1 className={cn(h.heroGreeting, 'mb-1')}>{greeting}</h1>
-                <HomeReturnLine className={cn(h.heroMotivation, 'text-sm mb-3')} fallback={motivation} />
-              </div>
-              <HomeWeatherBadge size="sm" className="md:hidden" />
-            </div>
+          <div className="hidden md:block space-y-2">
+            <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
             <p className={cn(h.heroTitle, 'max-w-2xl')}>
               {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
               <span className={h.heroTitleAccent}>
@@ -182,21 +143,12 @@ export function HomeLoggedInHero({
               </span>{' '}
               {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
             </p>
-            <p className={cn(h.heroSubtitle, 'max-w-xl mb-4')}>
-              {t(
-                'home.hero.subtitle',
-                'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.',
-              )}
-            </p>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4">
-              {(
-                [
-                  { icon: Users, label: t('home.hero.stat1', 'Μικρές ομάδες') },
-                  { icon: ShieldCheck, label: t('home.hero.stat2', 'Επαληθευμένη συμμετοχή') },
-                  { icon: MapIcon, label: t('home.hero.stat3', 'Δημόσια σημεία') },
-                  { icon: CheckCircle2, label: t('Ιδιωτικές αναφορές', 'Private reports') },
-                ] as const
-              ).map(({ icon: Icon, label }) => (
+            <div className="flex flex-wrap gap-x-4 gap-y-1">
+              {[
+                { icon: Users, label: t('home.hero.stat1', 'Μικρές ομάδες') },
+                { icon: ShieldCheck, label: t('home.hero.stat2', 'Επαληθευμένη συμμετοχή') },
+                { icon: MapIcon, label: t('home.hero.stat3', 'Δημόσια σημεία') },
+              ].map(({ icon: Icon, label }) => (
                 <span
                   key={label}
                   className={cn('inline-flex items-center gap-1.5 text-sm font-semibold', h.heroStat)}
@@ -206,7 +158,53 @@ export function HomeLoggedInHero({
                 </span>
               ))}
             </div>
-            {searchBlock}
+          </div>
+          {searchBlock}
+        </div>
+      )}
+
+      {homeHeroMode === 'rich' && (
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
+          <div className="flex-1">
+            <div className="flex items-center justify-between gap-3">
+              <h1 className={cn(h.heroGreeting, 'mb-0 truncate')}>{greeting}</h1>
+              <HomeWeatherBadge size="sm" className="md:hidden" />
+            </div>
+            <div className="hidden md:block">
+              <HomeReturnLine className={cn(h.heroMotivation, 'text-sm mb-3 mt-2')} fallback={motivation} />
+              <p className={cn(h.heroTitle, 'max-w-2xl')}>
+                {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
+                <span className={h.heroTitleAccent}>
+                  {t('home.hero.title2', 'εμπειρίες')}
+                </span>{' '}
+                {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
+              </p>
+              <p className={cn(h.heroSubtitle, 'max-w-xl mb-4')}>
+                {t(
+                  'home.hero.subtitle',
+                  'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.',
+                )}
+              </p>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4">
+                {(
+                  [
+                    { icon: Users, label: t('home.hero.stat1', 'Μικρές ομάδες') },
+                    { icon: ShieldCheck, label: t('home.hero.stat2', 'Επαληθευμένη συμμετοχή') },
+                    { icon: MapIcon, label: t('home.hero.stat3', 'Δημόσια σημεία') },
+                    { icon: CheckCircle2, label: t('Ιδιωτικές αναφορές', 'Private reports') },
+                  ] as const
+                ).map(({ icon: Icon, label }) => (
+                  <span
+                    key={label}
+                    className={cn('inline-flex items-center gap-1.5 text-sm font-semibold', h.heroStat)}
+                  >
+                    <Icon className={cn('w-3.5 h-3.5', h.heroStatIcon)} />
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="mt-3 md:mt-0">{searchBlock}</div>
           </div>
           <div className="hidden md:flex flex-col items-center gap-1.5 shrink-0">
             <HomeWeatherBadge size="md" />

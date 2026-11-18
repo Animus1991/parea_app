@@ -1,12 +1,9 @@
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { EventCard } from '../events/EventCard';
 import { EventCardSkeleton } from '../common/Skeleton';
 import { EmptyState } from '../common/EmptyState';
-import { Map as MapIcon, CalendarX } from 'lucide-react';
-import { EventStories } from './EventStories';
-import { HomeBuddySeekStrip } from '../buddySeek/HomeBuddySeekStrip';
+import { CalendarX } from 'lucide-react';
 import { HomeThemedEnrichment } from './HomeThemedEnrichment';
 import { HomeBelowFold } from './HomeBelowFold';
 import { HomeContinueStrip } from './HomeContinueStrip';
@@ -14,12 +11,13 @@ import { HomeThemedHeroSwitch } from './HomeThemedHeroSwitch';
 import { HomeRichHero } from './HomeRichHero';
 import { HomeFiltersSection } from './HomeFiltersSection';
 import { HomeMobileFilterSheet } from './HomeMobileFilterSheet';
+import { HomeFeedToolbar } from './HomeFeedToolbar';
+import { HomeDiscoverEnrichment } from './HomeDiscoverEnrichment';
 import { getTimeGreeting, getMotivation } from '../../lib/homeGreeting';
 import { useHomePageController } from '../../hooks/useHomePageController';
 import { HOME_TYPO } from '../../lib/typographyTokens';
 import { HOME_THEMED_TOKENS, type HomeThemedVariant } from '../../lib/homeThemedTokens';
 import { cn } from '../../lib/utils';
-import { CollectionsRail } from '../outings/CollectionsRail';
 
 /**
  * Canonical themed Home — ONE implementation for vibrant/neon/bento × light/dark.
@@ -82,6 +80,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
   const firstName = currentUser?.name?.split(' ')[0] || t('φίλε', 'there');
   const greeting = getTimeGreeting(firstName, t);
   const motivation = getMotivation(t);
+  const enrichment = <HomeDiscoverEnrichment storyEvents={storyEvents} />;
 
   return (
     <div className="space-y-4 md:space-y-5 pb-5 md:pb-0">
@@ -117,12 +116,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
 
       <HomeContinueStrip />
 
-      <EventStories events={storyEvents} />
-
-      <CopilotInlinePrompt />
-
-      <HomeBuddySeekStrip />
-
       <HomeThemedEnrichment onPreferDiscoverFeed={() => setFeedType('Discover')} />
 
       <HomeFiltersSection
@@ -151,45 +144,23 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         onSelectMood={handleSelectMood}
       />
 
-      {/* Φ27 collections — below filters so the first viewport stays one job */}
-      <CollectionsRail />
-
       <section>
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5">
-            <div className={cn('flex p-1 rounded-lg w-fit', tok.feedTabWrap)}>
-              <button
-                onClick={() => setFeedType('For You')}
-                className={cn(HOME_TYPO.filterChip, 'px-4 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'For You' ? tok.feedTabActive : tok.feedTabInactive)}
-              >
-                {t('home.feed.for_you', 'Για Σένα')}
-              </button>
-              <button
-                onClick={() => setFeedType('Discover')}
-                className={cn(HOME_TYPO.filterChip, 'px-4 rounded-lg transition-all', HOME_TYPO.feedTab, feedType === 'Discover' ? tok.feedTabActive : tok.feedTabInactive)}
-              >
-                {t('home.feed.discover', 'Ανακάλυψε')}
-              </button>
-            </div>
-            {!isLoading && sortedEvents.length > 0 && (
-              <p className="text-xs font-semibold text-ink-muted">
-                {sortedEvents.length === 1
-                  ? t('1 αποτέλεσμα', '1 result')
-                  : t(`${sortedEvents.length} αποτελέσματα`, `${sortedEvents.length} results`)}
-              </p>
-            )}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => navigate('/nearby')}
-            className={cn('inline-flex min-h-8 min-w-8 shrink-0 items-center justify-center rounded-full transition-all', tok.mapBtn)}
-            title={t('Άνοιγμα Χάρτη', 'Open Map')}
-            aria-label={t('Άνοιγμα Χάρτη', 'Open Map')}
-          >
-            <MapIcon className="w-4 h-4" />
-          </button>
-        </div>
+        <HomeFeedToolbar
+          feedType={feedType}
+          setFeedType={setFeedType}
+          resultCount={sortedEvents.length}
+          isLoading={isLoading}
+          tabWrapClassName={cn('p-1 rounded-lg w-fit', tok.feedTabWrap)}
+          tabClassName={(active) =>
+            cn(
+              HOME_TYPO.filterChip,
+              'px-4 rounded-lg transition-all',
+              HOME_TYPO.feedTab,
+              active ? tok.feedTabActive : tok.feedTabInactive,
+            )
+          }
+          mapClassName={tok.mapBtn}
+        />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
@@ -207,7 +178,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
               />
             </div>
           ) : sortedEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 space-y-4">
               <EmptyState
                 icon={CalendarX}
                 title={t(
@@ -239,20 +210,34 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
                     : () => navigate('/categories')
                 }
               />
+              {enrichment}
             </div>
           ) : (
-            visibleEvents.map((event, index) => (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-              >
-                <EventCard event={event} />
-              </motion.div>
-            ))
+            visibleEvents.flatMap((event, index) => {
+              const card = (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <EventCard event={event} />
+                </motion.div>
+              );
+              if (index !== 2) return [card];
+              return [
+                <div key="discover-enrichment" className="col-span-1 sm:col-span-2 lg:col-span-3">
+                  {enrichment}
+                </div>,
+                card,
+              ];
+            })
           )}
         </div>
+
+        {!isLoading && visibleEvents.length > 0 && visibleEvents.length < 3 && (
+          <div className="mt-4">{enrichment}</div>
+        )}
 
         {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
@@ -293,6 +278,12 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         seekingHostOnly={seekingHostOnly}
         onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
         showSeekingHostChip={seekingHostEvents.length > 0}
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+        tagFilter={tagFilter}
+        setTagFilter={setTagFilter}
+        activeMood={activeMood}
+        onSelectMood={handleSelectMood}
       />
     </div>
   );

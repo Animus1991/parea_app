@@ -14,6 +14,7 @@ import {
   type HomeSafetyFilter,
   type HomeSortParam,
 } from './homeFeedConstants';
+import { isEventPast } from './eventDisplay';
 
 export interface HomeEventFilterInput {
   events: Event[];
@@ -30,6 +31,7 @@ export interface HomeEventFilterInput {
   seekingHostOnly: boolean;
   isSeekingHost: (event: Event) => boolean;
   getDistance: (eventId: string, lat?: number, lng?: number) => number | null;
+  now?: Date;
 }
 
 export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
@@ -48,9 +50,12 @@ export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
     seekingHostOnly,
     isSeekingHost,
     getDistance,
+    now,
   } = input;
 
   return events.filter((e) => {
+    if (isEventPast(e, now)) return false;
+
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       const inTitle = e.title.toLowerCase().includes(q);
