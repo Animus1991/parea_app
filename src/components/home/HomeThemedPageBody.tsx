@@ -39,6 +39,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     setSeekingHostOnly,
     visibleEvents,
     hasMoreEvents,
+    loadMoreEvents,
     searchRef,
     loadMoreRef,
     scrollToFilters,
@@ -241,7 +242,16 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
 
         {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
-            <div className={cn('w-6 h-6 border-2 border-t-transparent rounded-full animate-spin', tok.spinner)} />
+            <button
+              type="button"
+              onClick={loadMoreEvents}
+              className={cn(
+                'inline-flex min-h-8 items-center justify-center rounded-full border px-4 text-xs font-bold',
+                tok.mapBtn,
+              )}
+            >
+              {t('Φόρτωσε περισσότερα', 'Load more')}
+            </button>
           </div>
         )}
       </section>

@@ -2,7 +2,7 @@
  * Shared Home feed controller — one place for filters/search/feed state so
  * HomeClassic and HomeThemedPageBody cannot drift on loyalty wiring.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useHomeExternalEvents } from './useHomeExternalEvents';
 import { useHomeEventFeed } from './useHomeEventFeed';
 import { useHomeScrollToFilters } from './useHomeScrollToFilters';
@@ -10,13 +10,15 @@ import { useStoryEvents } from './useStoryEvents';
 import { getDefaultHomeSearchSuggestions } from '../lib/homeSearchSuggestions';
 import { useLanguage } from '../lib/i18n';
 
+const HOME_FEED_PAGE_SIZE = 6;
+
 export function useHomePageController() {
   const { t } = useLanguage();
   const [feedType, setFeedType] = useState<'For You' | 'Discover'>('For You');
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [seekingHostOnly, setSeekingHostOnly] = useState(false);
-  const [visibleEventsCount, setVisibleEventsCount] = useState(6);
+  const [visibleEventsCount, setVisibleEventsCount] = useState(HOME_FEED_PAGE_SIZE);
   const searchRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -50,19 +52,25 @@ export function useHomePageController() {
   }, []);
 
   const visibleEvents = sortedEvents.slice(0, visibleEventsCount);
+  const hasMoreEvents = visibleEventsCount < sortedEvents.length;
+
+  const loadMoreEvents = useCallback(() => {
+    setVisibleEventsCount((count) => Math.min(count + HOME_FEED_PAGE_SIZE, sortedEvents.length));
+  }, [sortedEvents.length]);
 
   useEffect(() => {
+    const node = loadMoreRef.current;
+    if (!node || isLoading || !hasMoreEvents) return;
+    const root = document.getElementById('main-content');
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !isLoading && visibleEventsCount < sortedEvents.length) {
-          setVisibleEventsCount((c) => Math.min(c + 6, sortedEvents.length));
-        }
+        if (entries[0]?.isIntersecting) loadMoreEvents();
       },
-      { threshold: 0.1 },
+      { root, rootMargin: '0px 0px 280px 0px', threshold: 0 },
     );
-    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
+    observer.observe(node);
     return () => observer.disconnect();
-  }, [isLoading, visibleEventsCount, sortedEvents.length]);
+  }, [isLoading, hasMoreEvents, loadMoreEvents, visibleEventsCount]);
 
   const searchSuggestions = getDefaultHomeSearchSuggestions(t);
 
@@ -82,7 +90,8 @@ export function useHomePageController() {
     seekingHostOnly,
     setSeekingHostOnly,
     visibleEvents,
-    hasMoreEvents: visibleEventsCount < sortedEvents.length,
+    hasMoreEvents,
+    loadMoreEvents,
     searchRef,
     loadMoreRef,
     scrollToFilters,

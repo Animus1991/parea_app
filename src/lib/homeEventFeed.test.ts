@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { filterHomeEvents } from './homeEventFeed';
+import { filterHomeEvents, sortHomeEvents } from './homeEventFeed';
 import type { Event } from '../types';
 
 const base = (over: Partial<Event> = {}): Event => ({
@@ -37,11 +37,20 @@ const filters = {
 };
 
 describe('filterHomeEvents', () => {
-  it('hides finished nights from the joinable Discover feed', () => {
+  it('keeps finished nights in Discover so the catalog still scrolls', () => {
     const past = base({ id: 'e4', date: '2026-05-14', time: '20:45' });
     const next = base({ id: 'e30', date: '2026-12-01' });
+    const result = filterHomeEvents({ events: [past, next], ...filters });
+    expect(result.map((e) => e.id).sort()).toEqual(['e30', 'e4']);
+  });
+});
+
+describe('sortHomeEvents', () => {
+  it('sorts upcoming nights before finished ones', () => {
+    const past = base({ id: 'e4', date: '2026-11-14', time: '20:45' });
+    const next = base({ id: 'e30', date: '2026-12-01', time: '21:00' });
     const now = new Date('2026-11-18T14:00:00');
-    const result = filterHomeEvents({ events: [past, next], ...filters, now });
-    expect(result.map((e) => e.id)).toEqual(['e30']);
+    const result = sortHomeEvents([past, next], 'Relevance', null, () => 1, now);
+    expect(result.map((e) => e.id)).toEqual(['e30', 'e4']);
   });
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyLiveCatalogDates, liveCatalogDate } from './demoCatalogDates';
+import { applyLiveCatalogDates, liveCatalogDate, withLiveSeedSchedule } from './demoCatalogDates';
 
 describe('demoCatalogDates', () => {
   const now = new Date('2026-11-18T12:00:00');
@@ -19,5 +19,23 @@ describe('demoCatalogDates', () => {
     );
     expect(cinema.date < hike.date).toBe(true);
     expect(hike.date > '2026-11-18').toBe(true);
+  });
+
+  it('overlays live seed dates onto persisted catalog events', () => {
+    const seeds = [
+      { id: 'e1', date: '2026-12-01', time: '20:00' },
+      { id: 'e4', date: '2026-11-14', time: '20:45' },
+    ];
+    const persisted = [
+      { id: 'e1', date: '2026-05-16', time: '20:00' },
+      { id: 'e4', date: '2026-05-14', time: '20:45' },
+      { id: 'user-1', date: '2026-05-20', time: '19:00' },
+    ];
+    const merged = withLiveSeedSchedule(seeds, persisted);
+    expect(merged).toEqual([
+      { id: 'e1', date: '2026-12-01', time: '20:00' },
+      { id: 'e4', date: '2026-11-14', time: '20:45' },
+      { id: 'user-1', date: '2026-05-20', time: '19:00' },
+    ]);
   });
 });

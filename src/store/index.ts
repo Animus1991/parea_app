@@ -6,6 +6,7 @@ import type { User } from "../types";
 import { mockEvents } from "../data/mockEvents";
 import { mockGroups } from "../data/mockGroups";
 import { mockCalendarPlanEvents, mockCalendarPlanGroups } from "../data/mockCalendarPlan";
+import { withLiveSeedSchedule } from "../lib/demoCatalogDates";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
 import { fetchTicketmasterEvents, isTicketmasterConfigured } from "../services/eventApi";
@@ -2297,7 +2298,10 @@ export const useStore = create<AppState>()(
           return [...fromSeeds, ...extras];
         };
 
-        const events = mergeById(current.events, p.events);
+        const events = withLiveSeedSchedule(
+          current.events,
+          mergeById(current.events, p.events),
+        );
         const groups = mergeById(current.groups, p.groups);
         // isAdmin comes only from the trusted seeds, never from persisted
         // (user-editable) localStorage state.

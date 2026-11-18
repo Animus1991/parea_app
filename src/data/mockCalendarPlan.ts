@@ -1,8 +1,9 @@
 import type { Event } from '../types';
 import type { Group } from '../types';
+import { applyLiveCatalogDates } from '../lib/demoCatalogDates';
 
 /** Extra demo events for calendar grid QA (June 2026). */
-export const mockCalendarPlanEvents: Event[] = [
+const authoredCalendarPlanEvents: Event[] = [
   {
     id: 'e-cal-2a',
     title: 'Morning Run: SNFCC',
@@ -161,6 +162,8 @@ export const mockCalendarPlanEvents: Event[] = [
     imageUrl: 'https://picsum.photos/seed/cinema/400/300',
   },
 ];
+
+export const mockCalendarPlanEvents: Event[] = applyLiveCatalogDates(authoredCalendarPlanEvents);
 
 export const mockCalendarPlanGroups: Group[] = [
   { id: 'g-cal-20', eventId: 'e20', hostId: 'u3', members: ['u1', 'u2'], pendingMembers: [], targetSize: 8, status: 'confirmed', discountUnlocked: false },

@@ -41,6 +41,7 @@ export default function HomeClassic() {
     setSeekingHostOnly,
     visibleEvents,
     hasMoreEvents,
+    loadMoreEvents,
     searchRef,
     loadMoreRef,
     scrollToFilters,
@@ -234,7 +235,16 @@ export default function HomeClassic() {
 
         {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
-            <div className={cn('w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin', tok.accentText)} />
+            <button
+              type="button"
+              onClick={loadMoreEvents}
+              className={cn(
+                'inline-flex min-h-8 items-center justify-center rounded-full border border-border bg-surface-raised px-4 text-xs font-bold',
+                tok.accentText,
+              )}
+            >
+              {t('Φόρτωσε περισσότερα', 'Load more')}
+            </button>
           </div>
         )}
       </section>

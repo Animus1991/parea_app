@@ -29,3 +29,21 @@ export function applyLiveCatalogDates<T extends { id: string; date: string }>(
     date: liveCatalogDate(event.date, event.id, now),
   }));
 }
+
+/**
+ * Persisted mock events keep their May–June authored dates and would all look
+ * finished. Overlay the live seed schedule onto catalog ids; user-created
+ * extras (unknown ids) keep whatever dates they were saved with.
+ */
+export function withLiveSeedSchedule<T extends { id: string; date: string; time?: string }>(
+  seedEvents: T[],
+  mergedEvents: T[],
+): T[] {
+  const seeds = new Map(seedEvents.map((event) => [event.id, event]));
+  return mergedEvents.map((event) => {
+    const seed = seeds.get(event.id);
+    if (!seed) return event;
+    if (event.date === seed.date && event.time === seed.time) return event;
+    return { ...event, date: seed.date, time: seed.time };
+  });
+}

@@ -31,7 +31,6 @@ export interface HomeEventFilterInput {
   seekingHostOnly: boolean;
   isSeekingHost: (event: Event) => boolean;
   getDistance: (eventId: string, lat?: number, lng?: number) => number | null;
-  now?: Date;
 }
 
 export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
@@ -50,12 +49,9 @@ export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
     seekingHostOnly,
     isSeekingHost,
     getDistance,
-    now,
   } = input;
 
   return events.filter((e) => {
-    if (isEventPast(e, now)) return false;
-
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       const inTitle = e.title.toLowerCase().includes(q);
@@ -114,8 +110,13 @@ export function sortHomeEvents(
   sortParam: HomeSortParam,
   currentUser: User | null,
   getDistance: (eventId: string, lat?: number, lng?: number) => number | null,
+  now: Date = new Date(),
 ): Event[] {
   return [...events].sort((a, b) => {
+    const pastA = isEventPast(a, now);
+    const pastB = isEventPast(b, now);
+    if (pastA !== pastB) return pastA ? 1 : -1;
+
     if (sortParam === 'Distance') {
       const distA = getDistance(a.id, a.lat, a.lng) ?? HOME_MOCK_DISTANCES[a.id] ?? 5;
       const distB = getDistance(b.id, b.lat, b.lng) ?? HOME_MOCK_DISTANCES[b.id] ?? 5;
