@@ -577,7 +577,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                 'mx-auto w-full max-w-full flex-1',
                 pathname.startsWith('/chat/')
                   ? 'p-0 md:p-4 min-h-0 flex flex-col'
-                  : 'p-4 lg:px-5 lg:py-4 pb-safe md:pb-4',
+                  /* Do not use `p-4` with `pb-safe`: same-specificity shorthand
+                     can wipe the dock clearance and bury the last card. */
+                  : 'px-4 pt-4 pb-safe md:px-5 md:py-4',
               )}
             >
               {maintenanceMode && (

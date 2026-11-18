@@ -94,10 +94,11 @@
   --bottom-nav-h: 56px;
   /* Rendered height of <BottomNav> (padding + raised create button + label). */
   --bottom-nav-total: 75px;
-  /* Reserved phone dock (Find Nakamas / Chats) sitting on top of the tab bar. */
-  --mobile-dock-h: 44px;
-  /* BottomNav + dock + gap — content padding must clear both. */
-  --safe-bottom: calc(var(--bottom-nav-total) + var(--mobile-dock-h) + 10px);
+  /* Reserved phone dock (Find Nakamas / Chats) sitting on top of the tab bar.
+     min-h-11 plus the pill border — keep in sync with MobileDock. */
+  --mobile-dock-h: 48px;
+  /* BottomNav + fab-zone gap + dock + air so the last card sits fully above the pill. */
+  --safe-bottom: calc(var(--bottom-nav-total) + 6px + var(--mobile-dock-h) + 16px);
 }
 
 @utility h-header {
