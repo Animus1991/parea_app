@@ -72,18 +72,19 @@ export const WALLET_TYPO = {
 } as const;
 
 /**
- * Profile page density — Wallet-aligned scale, no extrabold, label < value.
- * pageTitle 14/15 → identity 12/13 → KPI numerals 13/14 → section 10 → row 12 → meta 10 → micro 9.
+ * Profile page density — in-card type never exceeds type outside the cards.
+ * Outside: pageTitle 14/15 → pageSub 12.
+ * In cards: identity / KPI / rows ≤ 12px (pageSub); section 10; meta 10; micro 9.
  */
 export const PROFILE_TYPO = {
   pageTitle: APP_TYPO.pageTitle,
   pageSub: APP_TYPO.pageSub,
-  identityName: APP_TYPO.panelTitle,
+  identityName: 'text-sm font-bold',
   identityMeta: APP_TYPO.rowMeta,
   identityBio: APP_TYPO.cardBody,
   kpiLabel: APP_TYPO.sectionLabel,
-  kpiValue: APP_TYPO.statValue,
-  /** Completion percent — stays at 12px so it does not match the 14px page title. */
+  /** Stat numerals sit in cards — cap at pageSub (12px), never 13/14. */
+  kpiValue: 'text-sm font-bold tabular-nums leading-none',
   kpiValueSecondary: 'text-sm font-bold tabular-nums leading-none',
   kpiHint: APP_TYPO.kpiHint,
   sectionTitle: APP_TYPO.sectionLabel,
