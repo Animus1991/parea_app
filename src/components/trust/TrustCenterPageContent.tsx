@@ -3,10 +3,11 @@ import { format, parseISO } from 'date-fns';
 import { el as elLocale, enUS } from 'date-fns/locale';
 import { TabBar } from '../common/TabBar';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
-import { ShieldCheck, Phone, Mail, CreditCard, UserCheck, TrendingUp, History as HistoryIcon } from 'lucide-react';
+import { ShieldCheck, Phone, Mail, CreditCard, UserCheck, TrendingUp, History as HistoryIcon, Check } from 'lucide-react';
 import { Card } from '../common/Card';
-import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
+import { SectionLabel } from '../common/SectionLabel';
+import { TrustLadder } from './TrustLadder';
 import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../lib/i18n';
@@ -24,31 +25,38 @@ function ReliabilityRing({
   size,
   track,
   stroke,
+  valueClassName,
 }: {
   score: number;
   size: number;
   track: string;
   stroke: string;
+  valueClassName?: string;
 }) {
-  const sw = 6;
+  const sw = 5;
   const r = size / 2 - sw;
   const c = 2 * Math.PI * r;
   const dash = (Math.min(100, Math.max(0, score)) / 100) * c;
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden>
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={track} strokeWidth={sw} />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        fill="none"
-        stroke={stroke}
-        strokeWidth={sw}
-        strokeLinecap="round"
-        strokeDasharray={`${dash} ${c}`}
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
-      />
-    </svg>
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={track} strokeWidth={sw} />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke={stroke}
+          strokeWidth={sw}
+          strokeLinecap="round"
+          strokeDasharray={`${dash} ${c}`}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+      </svg>
+      <span aria-hidden className={cn('absolute inset-0 flex items-center justify-center text-sm font-bold tabular-nums leading-none', valueClassName)}>
+        {score}%
+      </span>
+    </div>
   );
 }
 
@@ -171,7 +179,7 @@ export default function TrustCenterPageContent() {
 
       {tab === 'status' && (
       <div role="tabpanel" id="trust-panel-status" aria-labelledby="trust-tab-status" className="space-y-4">
-        <Card className="p-3 sm:p-4">
+        <Card className="p-4">
           <div className="flex items-center gap-3">
             <div
               className="shrink-0"
@@ -179,6 +187,7 @@ export default function TrustCenterPageContent() {
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={reliabilityScore}
+              aria-valuetext={`${reliabilityScore}%`}
               aria-label={t('Βαθμός αξιοπιστίας', 'Reliability score')}
             >
               <ReliabilityRing
@@ -186,12 +195,14 @@ export default function TrustCenterPageContent() {
                 size={64}
                 track={a.isDark ? '#374151' : '#e5e7eb'}
                 stroke={a.scoreStroke}
+                valueClassName={a.head}
               />
             </div>
             <div className="min-w-0 flex-1">
-              <p className={cn(APP_TYPO.statValue, a.head)}>{reliabilityScore}%</p>
-              <p className={cn('text-xs font-bold leading-snug', a.head)}>{t(badge.el, badge.en)}</p>
-              <p className={cn('text-xs font-medium', a.muted)}>{trustTierLabel}</p>
+              <p className={cn('text-sm font-semibold leading-snug', a.head)}>{t(badge.el, badge.en)}</p>
+              <p className={cn('mt-1 inline-flex rounded-full border border-border px-2 py-0.5 text-xs font-medium', a.muted)}>
+                {trustTierLabel}
+              </p>
             </div>
             {primaryGap && (
               <Button
@@ -217,125 +228,94 @@ export default function TrustCenterPageContent() {
         </Card>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Card className="p-4 space-y-3">
-            <div>
-              <h2 className={cn('text-sm font-bold tracking-tight mb-0.5 flex items-center gap-1.5', a.head)}>
-                <ShieldCheck className={cn('h-4 w-4', a.iconAccent)} />{t('Κατάσταση Επαλήθευσης', 'Verification Status')}
-              </h2>
-              <p className={cn('card-prose font-semibold', a.muted)}>{trustTierLabel}</p>
+          <Card className="p-4">
+            <div className="mb-3 flex items-baseline justify-between gap-2">
+              <SectionLabel el="Επαληθεύσεις" en="Verifications" />
+              <span className={cn('text-2xs font-semibold tabular-nums', a.muted)}>
+                {checks.filter((c) => c.ok).length}/{checks.length}
+              </span>
             </div>
-
-            <div className="space-y-1">
+            <div className="grid grid-cols-2 gap-2">
               {checks.map((row) => {
                 const Icon = row.icon;
-                return (
-                  <div key={row.key} className="flex min-h-8 items-center justify-between gap-2">
-                    <div className={cn('flex items-center gap-2 card-prose font-medium', a.sub)}>
-                      <Icon className={cn('h-3.5 w-3.5', a.muted)} /> {t(row.labelEl, row.labelEn)}
-                    </div>
-                    {row.ok ? (
-                      <Badge variant="success" className="text-xs px-2 py-0.5">{t('Επαληθευμένο', 'Verified')}</Badge>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => navigate(row.to)}
-                        className={cn('inline-flex min-h-8 items-center text-xs font-bold tracking-wide', a.link)}
-                      >
-                        {t('Επαλήθευση', 'Verify')}
-                      </button>
-                    )}
+                const inner = (
+                  <>
+                    <span className={cn('flex h-7 w-7 items-center justify-center rounded-full', row.ok ? 'bg-surface' : 'bg-surface-raised border border-border')}>
+                      {row.ok ? <Check className={cn('h-3.5 w-3.5', a.iconAccent)} aria-hidden /> : <Icon className={cn('h-3.5 w-3.5', a.muted)} aria-hidden />}
+                    </span>
+                    <span className="min-w-0">
+                      <span className={cn('block text-xs font-semibold', a.head)}>{t(row.labelEl, row.labelEn)}</span>
+                      <span className={cn('block text-2xs font-medium', row.ok ? a.muted : a.link)}>
+                        {row.ok ? t('Επαληθευμένο', 'Verified') : t('Επαλήθευση', 'Verify')}
+                      </span>
+                    </span>
+                  </>
+                );
+                return row.ok ? (
+                  <div key={row.key} className="flex min-h-11 items-center gap-2 rounded-xl bg-surface px-2.5 py-2">
+                    {inner}
                   </div>
+                ) : (
+                  <button
+                    key={row.key}
+                    type="button"
+                    onClick={() => navigate(row.to)}
+                    className="flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface-raised px-2.5 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  >
+                    {inner}
+                  </button>
                 );
               })}
             </div>
           </Card>
 
-          <div className="space-y-3">
-            <Card className="p-4">
-              <h3 className={cn('text-sm font-bold tracking-tight', a.head)}>
-                {t('Πώς υπολογίζεται η αξιοπιστία', 'How reliability is calculated')}
-              </h3>
-              <p className={cn('mt-1 text-xs font-medium leading-snug', a.muted)}>
-                {t(
-                  'Ο βαθμός είναι 0–100. Παρουσίες και αξιολογήσεις τον κινούν· οι επαληθεύσεις αλλάζουν επίπεδο.',
-                  'The score is 0–100. Attendance and reviews move it; verifications change your tier.',
-                )}
-              </p>
-              <p className={cn('mt-3 text-xs font-bold', a.muted)}>
-                {t('Ανεβαίνει', 'Goes up')}
-              </p>
-              <ul>
+          <Card className="p-4">
+            <SectionLabel el="Πώς υπολογίζεται" en="How the score moves" />
+            <p className={cn('mt-1.5 text-xs font-medium leading-snug', a.muted)}>
+              {t(
+                'Ο βαθμός είναι 0–100. Παρουσίες και αξιολογήσεις τον κινούν· οι επαληθεύσεις αλλάζουν επίπεδο.',
+                'The score is 0–100. Attendance and reviews move it; verifications change your tier.',
+              )}
+            </p>
+            <div className="mt-3 space-y-3">
+              <ul aria-label={t('Ανεβαίνει', 'Goes up')} className="space-y-1.5">
                 {[
                   { delta: '+3', el: 'Επιβεβαιωμένη παρουσία', en: 'Confirmed attendance' },
                   { delta: '+2', el: 'Καλή αξιολόγηση (4–5★)', en: 'Good rating (4–5★)' },
                 ].map((row) => (
-                  <li key={row.delta} className={cn('flex min-h-8 items-center justify-between gap-3 border-t', a.isDark ? 'border-gray-700/40' : 'border-gray-100')}>
-                    <span className={cn('text-xs font-medium', a.head)}>{t(row.el, row.en)}</span>
-                    <span className="text-xs font-bold tabular-nums text-emerald-700 dark:text-emerald-400">{row.delta}</span>
+                  <li key={row.delta} className="flex items-baseline gap-3">
+                    <span className="w-7 shrink-0 text-xs font-semibold tabular-nums text-emerald-700 dark:text-emerald-400">{row.delta}</span>
+                    <span className={cn('text-xs font-medium leading-snug', a.head)}>{t(row.el, row.en)}</span>
                   </li>
                 ))}
               </ul>
-              <p className={cn('mt-2 text-xs font-bold', a.muted)}>
-                {t('Πέφτει', 'Goes down')}
-              </p>
-              <ul>
+              <ul aria-label={t('Πέφτει', 'Goes down')} className="space-y-1.5 border-t border-border pt-3">
                 {[
                   { delta: '−8', el: 'Ακύρωση τελευταίας στιγμής', en: 'Last-minute cancel' },
                   { delta: '−15', el: 'Απουσία (no-show)', en: 'No-show' },
                 ].map((row) => (
-                  <li key={row.delta} className={cn('flex min-h-8 items-center justify-between gap-3 border-t', a.isDark ? 'border-gray-700/40' : 'border-gray-100')}>
-                    <span className={cn('text-xs font-medium', a.head)}>{t(row.el, row.en)}</span>
-                    <span className="text-xs font-bold tabular-nums text-red-700 dark:text-red-400">{row.delta}</span>
+                  <li key={row.delta} className="flex items-baseline gap-3">
+                    <span className="w-7 shrink-0 text-xs font-semibold tabular-nums text-red-700 dark:text-red-400">{row.delta}</span>
+                    <span className={cn('text-xs font-medium leading-snug', a.head)}>{t(row.el, row.en)}</span>
                   </li>
                 ))}
               </ul>
-            </Card>
-            <Card className="p-4">
-              <h3 className={cn('text-sm font-bold tracking-tight', a.head)}>
-                {t('Τα 3 επίπεδα εμπιστοσύνης', 'The 3 trust tiers')}
-              </h3>
-              <ol className="mt-2">
-                {TRUST_TIERS.map((tier, index) => {
-                  const current = tier === trustTier;
-                  return (
-                    <li
-                      key={tier}
-                      className={cn(
-                        'flex gap-3 py-2',
-                        index > 0 && (a.isDark ? 'border-t border-gray-700/40' : 'border-t border-gray-100'),
-                        current && cn('rounded-xl px-2 -mx-2', a.highlightRow),
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold',
-                          current ? cn(a.head, 'bg-surface-raised border border-border') : cn(a.muted, 'bg-surface'),
-                        )}
-                        aria-hidden
-                      >
-                        {index + 1}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex min-h-6 flex-wrap items-center gap-1.5">
-                          <p className={cn('text-xs font-bold', a.head)}>
-                            {t(tierLabelEl(tier), tierLabelEn(tier))}
-                          </p>
-                          {current && (
-                            <span className={cn('rounded-full px-2 py-0.5 text-2xs font-bold', a.muted)}>
-                              {t('τώρα', 'now')}
-                            </span>
-                          )}
-                        </div>
-                        <p className={cn('text-xs font-medium leading-snug', a.muted)}>
-                          {t(tierBenefits[tier].el, tierBenefits[tier].en)}
-                        </p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
-            </Card>
-          </div>
+            </div>
+            <SectionLabel el="Τα 3 επίπεδα" en="The 3 tiers" className="mt-4" />
+            <TrustLadder
+              className="mt-2.5"
+              items={TRUST_TIERS.map((tier, index) => {
+                const currentRank = TRUST_TIERS.indexOf(trustTier);
+                const state = index < currentRank ? 'done' : index === currentRank ? 'current' : 'upcoming';
+                return {
+                  title: t(tierLabelEl(tier), tierLabelEn(tier)),
+                  body: t(tierBenefits[tier].el, tierBenefits[tier].en),
+                  state,
+                  badge: tier === trustTier ? t('τώρα', 'now') : undefined,
+                };
+              })}
+            />
+          </Card>
         </div>
 
         <StandingCard />
@@ -350,9 +330,10 @@ export default function TrustCenterPageContent() {
 
       {tab === 'history' && (
       <Card className="p-4" role="tabpanel" id="trust-panel-history" aria-labelledby="trust-tab-history">
-        <h2 className={cn('text-sm font-bold tracking-tight mb-3 flex items-center gap-1.5', a.head)}>
-          <TrendingUp className={cn('w-4 h-4', a.iconAccent)} aria-hidden />{t('Ιστορικό Εμπιστοσύνης', 'Trust History')}
-        </h2>
+        <div className="mb-3 flex items-center gap-1.5">
+          <TrendingUp className={cn('h-3.5 w-3.5', a.iconAccent)} aria-hidden />
+          <SectionLabel el="Ιστορικό εμπιστοσύνης" en="Trust history" />
+        </div>
         {history.length === 0 ? (
           <div className="space-y-3">
             <p className={cn('card-copy', a.muted)}>
