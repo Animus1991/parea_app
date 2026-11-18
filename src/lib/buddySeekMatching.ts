@@ -7,6 +7,26 @@ function requestUserId(r: CompanyRequest): string {
   return r.creatorUserId;
 }
 import type { Event, Group, User } from '../types';
+import { sameInterest } from './interests';
+import { groupVibeFit, vibeSimilarity } from './vibe';
+import { fitsGenderMode } from './outings';
+
+const plain = (el: string) => el;
+
+/** Φ27 — «Το στυλ παρέας μου» feeds matching: up to +12 for two people, +10 for a group. */
+export function vibeBonus(viewer: User, other: User): number {
+  const sim = vibeSimilarity(viewer.vibe, other.vibe, plain);
+  return sim ? Math.round(sim.score * 12) : 0;
+}
+
+function groupVibeBonus(viewer: User, group: Group, users: User[]): number {
+  const fit = groupVibeFit(
+    viewer.vibe,
+    group.members.map((id) => users.find((u) => u.id === id)?.vibe),
+    plain,
+  );
+  return fit ? Math.round(fit.score * 10) : 0;
+}
 
 export function getActiveBuddySeeksForEvent(
   intents: CompanyRequest[],
@@ -42,7 +62,7 @@ export function buildBuddySeekSuggestions(
     if (!canViewerSeeBuddySeek(viewer, seeker, intent, event, { viewerAlsoSeekingSameEvent: viewerAlsoSeeking }))
       continue;
 
-    const score = computeMatchScore(viewer, event) + sharedInterestBonus(viewer, seeker, event);
+    const score = computeMatchScore(viewer, event) + sharedInterestBonus(viewer, seeker, event) + vibeBonus(viewer, seeker);
     out.push({
       kind: 'person_person',
       score,
@@ -59,17 +79,18 @@ export function buildBuddySeekSuggestions(
       g.eventId === event.id &&
       g.status !== 'cancelled' &&
       g.members.length < g.targetSize &&
-      (g.isRecruiting || g.members.length > 0),
+      (g.isRecruiting || g.members.length > 0) &&
+      // Φ27 — women & non-binary groups are suggested only to people who may join.
+      fitsGenderMode(viewer, g.genderMode),
   );
 
   for (const g of openGroups) {
     if (g.members.includes(viewer.id)) continue;
     const hostId = g.hostId ?? g.members[0];
-    const host = users.find((u) => u.id === hostId);
     const spots = g.targetSize - g.members.length;
     out.push({
       kind: 'person_group',
-      score: 70 + spots * 3,
+      score: 70 + spots * 3 + groupVibeBonus(viewer, g, users),
       eventId: event.id,
       groupId: g.id,
       seekerUserId: hostId,
@@ -108,7 +129,7 @@ function sharedInterestBonus(viewer: User, seeker: User, event: Event): number {
   const tags = event.tags ?? [];
   const overlap = (seeker.interests ?? []).filter((i) =>
     (viewer.interests ?? []).some(
-      (vi) => vi.toLowerCase() === i.toLowerCase() || tags.some((t) => t.toLowerCase() === i.toLowerCase()),
+      (vi) => sameInterest(vi, i) || tags.some((t) => t.toLowerCase() === i.toLowerCase()),
     ),
   ).length;
   return overlap * 8;
@@ -118,8 +139,8 @@ export function discoveryScoreForSeeker(
   viewer: User | null,
   seeker: User,
   event: Event,
-  intent: CompanyRequest,
+  _intent: CompanyRequest,
 ): number {
   if (!viewer) return 0;
-  return computeMatchScore(viewer, event) + sharedInterestBonus(viewer, seeker, event);
+  return computeMatchScore(viewer, event) + sharedInterestBonus(viewer, seeker, event) + vibeBonus(viewer, seeker);
 }

@@ -1,4 +1,4 @@
-import { HOME_CATEGORIES, HOME_POPULAR_TAGS } from './homeFeedConstants';
+import { HOME_CATEGORIES } from './homeFeedConstants';
 
 export function getHomeCategoryTranslations(
   t: (gr: string, en: string) => string,
@@ -46,5 +46,12 @@ export function getHomeTagTranslations(
     sports: t('Αθλητισμός', 'Sports'),
     workshop: t('Εργαστήριο', 'Workshop'),
     free: t('Δωρεάν', 'Free'),
+    cinema: t('Σινεμά', 'Cinema'),
+    'open-air': t('Υπαίθριο', 'Open-air'),
+    boardgames: t('Επιτραπέζια', 'Board games'),
+    hiking: t('Πεζοπορία', 'Hiking'),
+    nature: t('Φύση', 'Nature'),
+    community: t('Κοινότητα', 'Community'),
+    retro: t('Ρετρό', 'Retro'),
   };
 }

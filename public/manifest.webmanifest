@@ -1,0 +1,26 @@
+{
+  "name": "Nakamas",
+  "short_name": "Nakamas",
+  "description": "Βρες παρέα για εκδηλώσεις σε μικρές, επαληθευμένες ομάδες.",
+  "lang": "el",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f1419",
+  "theme_color": "#0f1419",
+  "categories": ["social", "lifestyle", "entertainment"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "shortcuts": [
+    { "name": "Βρες Nakamas", "short_name": "Βρες παρέα", "url": "/buddy-seek", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Τα Σχέδιά μου", "short_name": "Σχέδια", "url": "/plans", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Δημιουργία εκδήλωσης", "short_name": "Δημιουργία", "url": "/create", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

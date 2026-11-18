@@ -21,7 +21,7 @@ export function MeetingPointPanel({
 
   if (locked) {
     return (
-      <div className="mx-3 mb-2 rounded-xl border border-border bg-ink/[0.03] px-3 py-2 text-xs text-ink-muted">
+      <div className="mx-3 mb-2 rounded-2xl border border-border bg-ink/[0.03] px-3 py-2 text-xs text-ink-muted">
         {t('Σημείο συνάντησης μετά την επιβεβαίωση', 'Meeting point available after confirmation')}
       </div>
     );
@@ -31,7 +31,7 @@ export function MeetingPointPanel({
   const mapQuery = encodeURIComponent(venue ?? meetingPoint ?? '');
 
   return (
-    <div className="mx-3 mb-2 rounded-xl border border-brand/20 bg-brand-soft px-3 py-2 space-y-2">
+    <div className="mx-3 mb-2 rounded-2xl border border-brand/20 bg-brand-soft px-3 py-2 space-y-2">
       <p className="text-xs font-bold text-brand flex items-center gap-1">
         <MapPin className="w-3.5 h-3.5" />
         {t('Σημείο συνάντησης', 'Meeting point')}
@@ -43,7 +43,7 @@ export function MeetingPointPanel({
       <div className="flex gap-2">
         <button
           type="button"
-          className="flex-1 min-h-10 rounded-lg text-xs font-bold bg-brand/80 text-brand-fg"
+          className="flex-1 min-h-9 rounded-full text-xs font-bold bg-brand/80 text-brand-fg"
           aria-label={t('Ανακοίνωση άφιξης', 'Announce arrival')}
           onClick={() => {
             if (!viewer) return;
@@ -55,7 +55,7 @@ export function MeetingPointPanel({
         </button>
         <button
           type="button"
-          className="px-3 min-h-10 rounded-lg text-xs font-bold border border-border-strong flex items-center gap-1"
+          className="px-3.5 min-h-9 rounded-full text-xs font-bold border border-border-strong flex items-center gap-1"
           aria-label={t('Άνοιγμα χάρτη', 'Open map')}
           onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${mapQuery}`, '_blank', 'noopener,noreferrer')}
         >

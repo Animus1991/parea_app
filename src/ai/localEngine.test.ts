@@ -91,6 +91,25 @@ describe('planLocal intents', () => {
     expect(first('go to my calendar')).toEqual({ name: 'navigate', args: { page: 'agenda' } });
     expect(first('ειδοποιήσεις')).toMatchObject({ name: 'summarize_notifications' });
   });
+  it('catches the user up on «τι νέο;» but keeps notification questions separate', () => {
+    expect(first('τι νέο υπάρχει;')).toMatchObject({ name: 'whats_new' });
+    expect(first('τι έχασα;')).toMatchObject({ name: 'whats_new' });
+    expect(first("what's new?")).toMatchObject({ name: 'whats_new' });
+    expect(first('τι νέα ειδοποιήσεις έχω;')).toMatchObject({ name: 'summarize_notifications' });
+  });
+  it('plans verification, wallet, export and forming-plan intents', () => {
+    expect(first('ξεκίνα επαλήθευση email')).toMatchObject({ name: 'start_verification', args: { method: 'email' } });
+    expect(first('σύνοψη πορτοφολιού')).toMatchObject({ name: 'summarize_wallet' });
+    expect(first('σύνοψη αξιοπιστίας και κενών')).toMatchObject({ name: 'summarize_trust' });
+    expect(first('εξήγαγε το ημερολόγιό μου')).toMatchObject({ name: 'export_agenda' });
+    expect(first('δείξε σχέδια που σχηματίζονται')).toMatchObject({ name: 'list_forming_plans' });
+    expect(first('μπες στην πρόκληση c2')).toMatchObject({ name: 'join_challenge', args: { challengeId: 'c2', leave: false } });
+  });
+  it('plans where_is and draft_profile', () => {
+    expect(first('πού εξάγω το ημερολόγιο;')).toMatchObject({ name: 'where_is' });
+    expect(first('where do I verify my email?')).toMatchObject({ name: 'where_is' });
+    expect(first('πρότεινε bio για το προφίλ μου: «Λατρεύω πεζοπορία»')).toMatchObject({ name: 'draft_profile' });
+  });
   it('hides admin routes from members', () => {
     expect(first('open admin')?.args?.page).not.toBe('admin');
   });

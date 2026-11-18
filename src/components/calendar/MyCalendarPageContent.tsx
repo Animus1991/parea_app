@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import {
-  Calendar as CalendarIcon,
-  ChevronLeft,
+  Calendar as ChevronLeft,
   ChevronRight,
-  MapPin,
-  CheckCircle,
   Download,
   CalendarCheck,
   CalendarClock,
   Compass,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   format,
   addDays,
@@ -27,6 +25,8 @@ import {
   subMonths,
   isSameMonth,
 } from "date-fns";
+import { el as elLocale, enUS } from "date-fns/locale";
+import { pressable } from "../../lib/a11y";
 import { motion, AnimatePresence } from "motion/react";
 import { useStore } from "../../store";
 import { useLanguage } from "../../lib/i18n";
@@ -37,16 +37,20 @@ import { EmptyState } from "../common/EmptyState";
 import { EventCardSkeleton } from "../common/Skeleton";
 import { ResourceStateGate } from "../common/ResourceStateGate";
 import { cn } from "../../lib/utils";
+import { CALENDAR_TYPO } from "../../lib/typographyTokens";
 import { useCalendarDayInteraction } from "../../hooks/useCalendarDayInteraction";
 import { sortEventsForStories } from "../../lib/storyEventOrdering";
 import { downloadCalendarIcs } from "../../lib/calendarIcs";
 import { StoryViewer } from "../home/StoryViewer";
 import { CalendarHourlySchedule } from "./CalendarHourlySchedule";
 import type { Event } from "../../types";
+import { CopilotInlinePrompt } from "../copilot/CopilotInlinePrompt";
+import { usePublishPageSnapshot } from "../../hooks/usePublishPageSnapshot";
 
 export default function MyCalendarPageContent() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const dateLocale = language === "el" ? elLocale : enUS;
   const p = usePageContrast();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<"week" | "month">("week");
@@ -88,6 +92,7 @@ export default function MyCalendarPageContent() {
       })),
       "parea-calendar.ics",
     );
+    toast.success(t("Το ημερολόγιο εξήχθη", "Calendar exported"));
   };
 
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
@@ -104,7 +109,8 @@ export default function MyCalendarPageContent() {
     return (
       <div
         key={day.toISOString()}
-        onClick={() => handleCellClick(day, dayEvents)}
+        {...(isCurrentPeriod ? pressable<HTMLDivElement>(() => handleCellClick(day, dayEvents)) : {})}
+        aria-label={`${format(day, "EEEE d MMMM", { locale: dateLocale })}${dayEvents.length ? ` · ${dayEvents.length} ${t("εκδηλώσεις", "events")}` : ""}`}
         className={cn(
           "relative min-h-[140px] md:min-h-0 md:aspect-[3/4] lg:aspect-square flex flex-col items-center justify-center rounded-xl md:rounded-2xl cursor-pointer transition-all border overflow-hidden",
           isToday(day)
@@ -296,7 +302,7 @@ export default function MyCalendarPageContent() {
 
         <span
           className={cn(
-            "relative z-10 text-sm md:text-lg font-black",
+            "relative z-10 text-sm md:text-base font-bold",
             isToday(day) || dayEvents.length > 0
               ? "text-white drop-shadow-soft-md"
               : p.head,
@@ -314,31 +320,40 @@ export default function MyCalendarPageContent() {
     );
   };
 
+  usePublishPageSnapshot({
+    titleEl: "Το Ημερολόγιό μου",
+    titleEn: "My Calendar",
+    state: view,
+    summaryEl: `${upcomingEvents.length} επερχόμενα`,
+    summaryEn: `${upcomingEvents.length} upcoming`,
+    visibleIds: upcomingEvents.slice(0, 8).map((e) => e.id),
+  });
+
   return (
     <div className="w-full max-w-full min-w-0 space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 border-b border-white/5 pb-4 md:pb-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3.5">
           <div
             className={cn(
-              "w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-soft border",
+              "w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-soft border",
               p.isDark
                 ? "bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]"
                 : "bg-white border-gray-100",
             )}
           >
-            <CalendarCheck className={cn("w-7 h-7", p.iconAccent)} />
+            <CalendarCheck className={cn("w-5 h-5", p.iconAccent)} />
           </div>
           <div>
             <h1
               className={cn(
-                "text-sm md:text-base font-extrabold tracking-tight",
+                CALENDAR_TYPO.pageTitle,
                 p.head,
               )}
             >
               {t("Το Ημερολόγιό μου", "My Calendar")}
             </h1>
-            <p className={cn("text-sm md:text-base font-medium mt-1", p.sub)}>
+            <p className={cn("text-sm font-medium mt-1", p.sub)}>
               {t("Διαχειριστείτε το πρόγραμμά σας", "Manage your schedule")}
             </p>
           </div>
@@ -400,6 +415,8 @@ export default function MyCalendarPageContent() {
         </div>
       </div>
 
+      <CopilotInlinePrompt />
+
       <ResourceStateGate
         isLoading={isLoading}
         isError={isError}
@@ -423,6 +440,10 @@ export default function MyCalendarPageContent() {
           )}
           actionLabel={t("Εξερεύνησε εκδηλώσεις", "Explore experiences")}
           onAction={() => navigate("/")}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
+          askAi
+          askPrompt={t("Τι έχω αυτή την εβδομάδα; Πρότεινέ μου κάτι.", "What do I have this week? Suggest something.")}
         />
       )}
       </ResourceStateGate>
@@ -436,17 +457,17 @@ export default function MyCalendarPageContent() {
       >
         <div
           className={cn(
-            "flex items-center justify-between px-4 py-5 md:px-5 border-b",
+            "flex items-center justify-between px-4 py-3 md:px-5 border-b",
             p.borderB,
           )}
         >
           <h2
             className={cn(
-              "font-extrabold text-sm md:text-base tracking-tight capitalize",
+              "font-bold text-sm md:text-base tracking-tight capitalize",
               p.head,
             )}
           >
-            {format(currentDate, "MMMM yyyy")}
+            {format(currentDate, "LLLL yyyy", { locale: dateLocale })}
           </h2>
           <div className="flex items-center gap-1.5 md:gap-3">
             <button
@@ -513,7 +534,7 @@ export default function MyCalendarPageContent() {
                   <div key={i} className="text-center group cursor-default">
                     <div
                       className={cn(
-                        "text-xs md:text-xs font-bold uppercase tracking-widest mb-1 transition-colors",
+                        "text-xs md:text-xs font-bold tracking-widest mb-1 transition-colors",
                         isToday(days[i]) ? p.iconAccent : p.muted,
                       )}
                     >
@@ -552,7 +573,7 @@ export default function MyCalendarPageContent() {
                   <div
                     key={d}
                     className={cn(
-                      "text-center text-xs md:text-xs font-bold uppercase tracking-widest py-2 rounded-lg",
+                      "text-center text-xs md:text-xs font-bold tracking-widest py-2 rounded-lg",
                       p.isDark
                         ? "bg-white/5 text-gray-400"
                         : "bg-gray-50 text-gray-500",
@@ -585,7 +606,7 @@ export default function MyCalendarPageContent() {
                 <div className={cn("mt-5 border-t pt-4 space-y-3", p.borderB)}>
                   <h4
                     className={cn(
-                      "text-xs font-bold uppercase tracking-widest pl-1 mb-4",
+                      "text-xs font-bold tracking-widest pl-1 mb-4",
                       p.head,
                     )}
                   >
@@ -594,21 +615,21 @@ export default function MyCalendarPageContent() {
                   {upcomingEvents.map((event, idx) => (
                     <div
                       key={idx}
+                      {...pressable<HTMLDivElement>(() => navigate(`/events/${event.id}`))}
                       className={cn(
                         "flex gap-4 items-center cursor-pointer p-4 rounded-xl transition-all border shadow-soft group",
                         p.isDark
                           ? "bg-[hsl(220_16%_14%)] border-white/5 hover:border-cyan-500/50"
                           : "bg-white border-gray-100 hover:border-cyan-300 hover:bg-cyan-50/50",
                       )}
-                      onClick={() => navigate(`/events/${event.id}`)}
                     >
                       <div
                         className={cn(
-                          "text-xs font-bold w-11 shrink-0 uppercase tracking-widest text-center",
+                          "text-xs font-bold w-11 shrink-0 tracking-widest text-center",
                           p.muted,
                         )}
                       >
-                        {format(event.parsedDate, "MMM d")}
+                        {format(event.parsedDate, "d MMM", { locale: dateLocale })}
                       </div>
                       <div className="w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)] shrink-0" />
                       <div
@@ -621,7 +642,7 @@ export default function MyCalendarPageContent() {
                       </div>
                       <span
                         className={cn(
-                          "text-xs uppercase tracking-widest font-black px-2 py-1 flex items-center justify-center rounded-lg shrink-0",
+                          "text-xs tracking-widest font-bold px-2 py-1 flex items-center justify-center rounded-lg shrink-0",
                           p.isDark
                             ? "bg-emerald-900/30 text-emerald-400"
                             : "bg-emerald-50 text-emerald-600",

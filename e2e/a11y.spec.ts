@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import {
   A11Y_ROUTES,
   A11Y_THEMES_CI,
+  enterDemoAdmin,
   enterDemoGuest,
   expectNoSeriousAxeViolations,
   seedTheme,
@@ -21,6 +22,16 @@ test.describe('a11y axe smoke', () => {
   test('home (demo guest) has no serious/critical structural axe violations', async ({ page }) => {
     await enterDemoGuest(page);
     await expectNoSeriousAxeViolations(page, { includeColorContrast: false });
+  });
+
+  test('/admin is closed to members and open to the demo moderator', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/admin');
+    await expect(page).toHaveURL('/');
+    await enterDemoAdmin(page);
+    await page.goto('/admin');
+    await expect(page).toHaveURL('/admin');
+    await expect(page.locator('#main-content h1').first()).toBeVisible();
   });
 });
 
@@ -44,11 +55,14 @@ test.describe('a11y page × theme matrix', () => {
             await page.goto('/login');
             await expect(page.getByText('NAKAMAS', { exact: true })).toBeVisible();
           } else {
-            await enterDemoGuest(page);
+            if ('asAdmin' in route && route.asAdmin) await enterDemoAdmin(page);
+            else await enterDemoGuest(page);
             if (route.path !== '/') {
               await page.goto(route.path);
             }
             await expect(page.locator('#main-content')).toBeVisible({ timeout: 15_000 });
+            // Lazy pages: wait for the page heading (sr-only on the map page) so axe scans real content.
+            await page.locator('#main-content h1').first().waitFor({ state: 'attached', timeout: 15_000 });
           }
           // Login shell has no data-theme; still run contrast on composed UI.
           await expectNoSeriousAxeViolations(page, { includeColorContrast: true });

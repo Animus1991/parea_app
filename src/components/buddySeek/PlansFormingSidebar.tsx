@@ -34,19 +34,19 @@ export function PlansFormingSidebarReopenTab() {
         'transition-colors hover:bg-cyan-50',
         tok.isDark ? 'bg-[#0c1016]/95 border-white/10 text-cyan-300' : 'bg-white border-gray-200 text-cyan-700',
       )}
-      aria-label={t('Άνοιγμα sidebar σχεδίων', 'Open plans sidebar')}
+      aria-label={t('Βρες Nakamas — σχέδια που σχηματίζονται', 'Find Nakamas — plans forming')}
       title={t('Βρες Nakamas', 'Find Nakamas')}
     >
       <Users className="w-4 h-4 shrink-0" />
       <span className="text-xs font-bold [writing-mode:vertical-rl] rotate-180 tracking-wide">
-        {t('Σχέδια', 'Plans')}
+        {t('Βρες Nakamas', 'Find Nakamas')}
       </span>
     </button>
   );
 }
 
 export function PlansFormingSidebar({ className }: { className?: string }) {
-  const { t, tu } = useLanguage();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const tok = useThemeStyles();
   const feed = usePlansFormingFeed(6);
@@ -71,22 +71,28 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
     >
       <header
         className={cn(
-          'p-4 border-b sticky top-0 z-10 backdrop-blur-md space-y-3',
+          'p-4 border-b sticky top-0 z-10 backdrop-blur-md space-y-2.5',
           isDark ? 'border-white/10 bg-[#0c1016]/95' : 'border-gray-200 bg-gray-50/95',
         )}
       >
-        <div className="flex items-start gap-2">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-600/30 to-indigo-600/20 flex items-center justify-center border border-cyan-500/20 shrink-0">
-            <Users className="w-4 h-4 text-cyan-500" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h2 className={cn('text-xs font-bold uppercase tracking-wide', isDark ? 'text-cyan-300' : 'text-cyan-800')}>
-              {tu('Βρες Nakamas', 'Find Nakamas')}
-            </h2>
-            <p className={cn('text-xs mt-0.5', isDark ? 'text-gray-400' : 'text-gray-600')}>
-              {t('Παρέα για εκδηλώσεις', 'Company for events')}
-            </p>
-          </div>
+        {/* One title row: name, «All» link and close — no competing filled button. */}
+        <div className="flex items-center gap-2">
+          <Users className={cn('w-4 h-4 shrink-0', isDark ? 'text-cyan-300' : 'text-cyan-700')} aria-hidden />
+          <h2 className={cn('min-w-0 flex-1 text-xs font-bold', isDark ? 'text-white' : 'text-gray-900')}>
+            {t('Βρες Nakamas', 'Find Nakamas')}
+          </h2>
+          <button
+            type="button"
+            onClick={() => navigate('/buddy-seek')}
+            aria-label={t('Όλα τα σχέδια', 'All plans')}
+            className={cn(
+              'shrink-0 inline-flex items-center gap-0.5 rounded-lg px-1.5 min-h-9 text-xs font-semibold',
+              isDark ? 'text-cyan-300 hover:bg-white/10' : 'text-cyan-700 hover:bg-gray-200/60',
+            )}
+          >
+            {t('Όλα', 'All')}
+            <ChevronRight className="w-3.5 h-3.5" aria-hidden />
+          </button>
           <button
             type="button"
             onClick={() => setSidebarOpen(false)}
@@ -102,7 +108,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
         </div>
 
         <PlansFormingValueHero isDark={isDark} insights={feed.insights} />
-        <PlansFormingStatsBar insights={feed.insights} compact isDark={isDark} />
+        <PlansFormingStatsBar insights={feed.insights} compact plain isDark={isDark} />
 
         {feed.insights.pendingJoinsToReview > 0 && (
           <button
@@ -124,17 +130,9 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
           </button>
         )}
 
-        <button
-          type="button"
-          onClick={() => navigate('/buddy-seek')}
-          className="w-full min-h-10 rounded-xl text-xs font-bold flex items-center justify-center gap-1 bg-cyan-600 hover:bg-cyan-500 text-white"
-        >
-          {t('Όλα τα σχέδια', 'All plans')}
-          <ChevronRight className="w-3.5 h-3.5" />
-        </button>
       </header>
 
-      <div className="p-3 space-y-5 flex-1">
+      <div className="p-3 space-y-4 flex-1">
         {feed.myActivePlan && (
           <PlansFormingYourPlanBanner
             plan={feed.myActivePlan}
@@ -161,7 +159,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
                   isDark={isDark}
                   title={t('Σχεδόν πλήρεις', 'Nearly full')}
                 />
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {feed.scarcityPromos.map((promo) => (
                     <PlansFormingScarcityPromoCard key={promo.id} promo={promo} isDark={isDark} />
                   ))}
@@ -172,7 +170,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
             {feed.items.length > 0 && (
               <section>
                 <PlansFormingSectionTitle isDark={isDark} title={t('Για εσάς', 'For you')} />
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {feed.items.map((item) => (
                     <PlansFormingCard
                       key={item.intent.id}
@@ -203,7 +201,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
                       : undefined
                   }
                 />
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {feed.recruitingGroupItems.slice(0, 3).map((entry) => (
                     <PlansFormingGroupCard
                       key={entry.group.id}

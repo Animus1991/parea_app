@@ -178,3 +178,27 @@ Commits πάνω από main: AI copilot, progressive disclosure από nakamas 
 ## 10. Συμπέρασμα
 
 Το project στο `ccr-4a44ddef-fgcwnr` είναι το πιο πλήρες και επικαιροποιημένο snapshot του Nakamas: AI-first, a11y-gated, mock-rich. Για public production απαιτείται hardening ασφαλείας και πραγματικό backend· για demo/preview η Cloudflare Tunnel διεύθυνση παραπάνω είναι επαρκής απόδειξη λειτουργίας.
+
+---
+
+## 11. Κατάσταση των προτεραιοτήτων (ενημέρωση 14/11/2026, απόγευμα)
+
+Λεπτομέρειες στο `docs/SECURITY_HARDENING.md`.
+
+| # | Προτεραιότητα | Κατάσταση |
+|---|---|---|
+| 1 | Authz σε `/api/events` + `/api/ai/*` | ✅ Μερικώς. Εγγραφές κλειστές σε production χωρίς token, έλεγχος πεδίων, κλειδωμένο μοντέλο AI, όρια ρυθμού. Χρειάζεται ακόμη πραγματική ταυτότητα χρηστών |
+| 2 | Ρόλοι στον server, φρουρός `/admin` | ✅ Μερικώς. Ξεχωριστό `isAdmin` μόνο από seed, `RequireAdmin`, το «Γίνε οικοδεσπότης» δεν δίνει πια δικαιώματα admin. Custom claims ανοιχτά |
+| 3 | Firestore rules | ✅ Προφίλ μόνο από τον κάτοχο, απαγόρευση προνομιακών πεδίων, chat με `memberIds` όταν υπάρχει έγγραφο δωματίου. Δεν δοκιμάστηκε σε emulator |
+| 4 | CORS / Socket.IO | ✅ Allowlist, σταθερή ταυτότητα ανά σύνδεση, όρια. Η ταυτότητα δηλώνεται ακόμη από τον client |
+| 5 | `GEMINI_API_KEY` στο applet | ✅ Από το προηγούμενο PR |
+| 6 | Demo login / GIS μόνο σε DEV | ⬜ Ανοιχτό. Η επίδειξη βασίζεται σε αυτό |
+| 7 | CI σε `ccr-*` + axe σε περισσότερες σελίδες | ✅ Axe σε `/events/e1`, `/agenda`, `/create`, `/admin` σε 5 θέματα. Βρέθηκαν και διορθώθηκαν 21 παραβάσεις |
+| 8 | Κύριο bundle 1,4 MB | ✅ 567 KB (163 KB gzip). Firebase φορτώνεται μόνο όταν είναι ρυθμισμένο |
+| 9 | `npm audit` | 🟡 41 → 21 (critical 3 → 2, high 21 → 4). Τα υπόλοιπα θέλουν αναβαθμίσεις που σπάνε συμβατότητα |
+| 10 | Modal, hooks, οργάνωση φακέλων | ⬜ Ανοιχτό |
+| 11 | `Dummy.tsx`, scripts | ✅ `Dummy.tsx` αφαιρέθηκε. Τα scripts παραμένουν |
+| 12 | Μόνιμο Cloudflare Pages | ⬜ Χρειάζεται secrets. Διορθώθηκε το `public/_headers` που δεν εφαρμοζόταν |
+| 13 | ARCHITECTURE.md | ⬜ Ανοιχτό |
+| 14 | Gemini με πραγματικό κλειδί | ⬜ Ανοιχτό |
+| 15 | Proactive AI μετά από audit log + authz | 🟡 Το ιστορικό ενεργειών AI υπάρχει πλέον (Διαχείριση → Σύστημα). Το proactive AI δεν ξεκίνησε |

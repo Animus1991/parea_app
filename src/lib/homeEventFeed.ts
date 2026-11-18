@@ -14,6 +14,7 @@ import {
   type HomeSafetyFilter,
   type HomeSortParam,
 } from './homeFeedConstants';
+import { isEventPast } from './eventDisplay';
 
 export interface HomeEventFilterInput {
   events: Event[];
@@ -109,8 +110,13 @@ export function sortHomeEvents(
   sortParam: HomeSortParam,
   currentUser: User | null,
   getDistance: (eventId: string, lat?: number, lng?: number) => number | null,
+  now: Date = new Date(),
 ): Event[] {
   return [...events].sort((a, b) => {
+    const pastA = isEventPast(a, now);
+    const pastB = isEventPast(b, now);
+    if (pastA !== pastB) return pastA ? 1 : -1;
+
     if (sortParam === 'Distance') {
       const distA = getDistance(a.id, a.lat, a.lng) ?? HOME_MOCK_DISTANCES[a.id] ?? 5;
       const distB = getDistance(b.id, b.lat, b.lng) ?? HOME_MOCK_DISTANCES[b.id] ?? 5;

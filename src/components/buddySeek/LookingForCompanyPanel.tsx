@@ -16,6 +16,8 @@ import { GroupMergeModal } from './GroupMergeModal';
 import type { Group } from '../../types';
 import type { Event } from '../../types';
 import type { EventDetailGroupAccent } from '../events/EventDetailGroupCard';
+import { askCopilot } from '../../lib/askCopilot';
+import { fitsGenderMode } from '../../lib/outings';
 
 type Tab = 'requests' | 'groups';
 
@@ -97,7 +99,7 @@ export function LookingForCompanyPanel({
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className={cn('p-2 min-h-10 min-w-10 flex items-center justify-center rounded-xl', darkSurface ? 'hover:bg-white/10' : 'hover:bg-gray-100')}
+          className={cn('p-2 min-h-8 min-w-8 flex items-center justify-center rounded-xl', darkSurface ? 'hover:bg-white/10' : 'hover:bg-gray-100')}
           aria-expanded={expanded}
           aria-label={expanded ? t('Σύμπτυξη', 'Collapse') : t('Επέκταση', 'Expand')}
         >
@@ -134,7 +136,7 @@ export function LookingForCompanyPanel({
             <button
               type="button"
               onClick={() => setCreateOpen(true)}
-              className="inline-flex items-center gap-1.5 min-h-10 px-4 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold"
+              className="inline-flex items-center gap-1.5 min-h-8 px-4 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold"
             >
               <Plus className="w-3.5 h-3.5" />
               {myRequest ? t('Επεξεργασία αιτήματος', 'Edit request') : t('Δημιουργία αιτήματος', 'Create request')}
@@ -143,7 +145,7 @@ export function LookingForCompanyPanel({
               type="button"
               onClick={() => navigate('/buddy-seek')}
               className={cn(
-                'min-h-10 px-3 rounded-2xl text-xs font-bold border',
+                'min-h-8 px-3 rounded-2xl text-xs font-bold border',
                 darkSurface ? 'border-gray-600 text-gray-300' : 'border-gray-200 text-gray-700',
               )}
             >
@@ -230,9 +232,45 @@ export function LookingForCompanyPanel({
               </div>
 
               {filteredRequests.length === 0 ? (
-                <p className={cn('text-sm', tok.muted)}>
-                  {t('Κανείς άλλος δεν εμφανίζεται με τις τρέχουσες ρυθμίσεις ορατότητας.', 'No one else visible with current visibility rules.')}
-                </p>
+                <div className={cn('rounded-xl border border-dashed p-4 space-y-3', darkSurface ? 'border-gray-700' : 'border-gray-200')}>
+                  <p className={cn('text-sm', tok.muted)}>
+                    {filterOpen
+                      ? t('Κανείς δεν ταιριάζει με αυτά τα φίλτρα.', 'No one matches these filters.')
+                      : t('Κανείς άλλος δεν εμφανίζεται με τις τρέχουσες ρυθμίσεις ορατότητας.', 'No one else visible with current visibility rules.')}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {filterOpen && (
+                      <button
+                        type="button"
+                        onClick={() => setFilterOpen(null)}
+                        className="text-xs font-bold px-3 min-h-8 rounded-xl bg-cyan-600 text-white"
+                      >
+                        {t('Καθαρισμός φίλτρων', 'Clear filters')}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => navigate('/buddy-seek')}
+                      className={cn('text-xs font-bold px-3 min-h-8 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                    >
+                      {t('Περιήγηση σχεδίων', 'Browse plans')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        askCopilot(
+                          t(
+                            'Δείξε σχέδια που σχηματίζονται και βοήθησέ με να βρω παρέα',
+                            'List plans that are forming and help me find company',
+                          ),
+                        )
+                      }
+                      className={cn('text-xs font-bold px-3 min-h-8 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                    >
+                      {t('Ρώτα το AI', 'Ask AI')}
+                    </button>
+                  </div>
+                </div>
               ) : (
                 <div className="space-y-3">
                   {filteredRequests.map(({ intent, seeker }) => (
@@ -245,7 +283,16 @@ export function LookingForCompanyPanel({
                       onAskToJoin={() =>
                         setPreview({ seekerId: seeker.id, requestId: intent.id, mode: 'send' })
                       }
-                      onHide={() => setHiddenIds((ids) => [...ids, intent.id])}
+                      onHide={() => {
+                        setHiddenIds((ids) => [...ids, intent.id]);
+                        toast.message(t('Αποκρύφθηκε', 'Hidden'), {
+                          action: {
+                            label: t('Αναίρεση', 'Undo'),
+                            onClick: () =>
+                              setHiddenIds((ids) => ids.filter((x) => x !== intent.id)),
+                          },
+                        });
+                      }}
                       onReport={() => {
                         reportRequest(intent.id, 'other');
                         toast.message(t('Αναφέρθηκε', 'Reported'));
@@ -287,7 +334,32 @@ export function LookingForCompanyPanel({
           {tab === 'groups' && (
             <div className="space-y-2">
               {eventGroups.length === 0 ? (
-                <p className={cn('text-sm', tok.muted)}>{t('Δεν υπάρχουν ομάδες ακόμα.', 'No groups yet.')}</p>
+                <div className={cn('rounded-xl border border-dashed p-4 space-y-3', darkSurface ? 'border-gray-700' : 'border-gray-200')}>
+                  <p className={cn('text-sm', tok.muted)}>{t('Δεν υπάρχουν ομάδες ακόμα.', 'No groups yet.')}</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/events/${event.id}/join`)}
+                      className="text-xs font-bold px-3 min-h-8 rounded-xl bg-cyan-600 text-white"
+                    >
+                      {t('Έναρξη ομάδας', 'Start a group')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        askCopilot(
+                          t(
+                            `Θέλω παρέα για «${event.title}» — τι προτείνεις;`,
+                            `I want company for "${event.title}" — what do you suggest?`,
+                          ),
+                        )
+                      }
+                      className={cn('text-xs font-bold px-3 min-h-8 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                    >
+                      {t('Ρώτα το AI', 'Ask AI')}
+                    </button>
+                  </div>
+                </div>
               ) : (
                 eventGroups.map((g) => {
                   const spots = g.targetSize - g.members.length;
@@ -302,10 +374,11 @@ export function LookingForCompanyPanel({
                         </p>
                         <p className={cn('text-xs', tok.muted)}>
                           {g.members.length}/{g.targetSize} · {spots} {t('θέσεις', 'spots')}
+                          {g.genderMode === 'women_nb' ? ` · ${t('Γυναίκες & μη δυαδικά', 'Women & non-binary')}` : ''}
                         </p>
                       </div>
                       <div className="flex flex-col items-end gap-1">
-                        {!g.members.includes(currentUser.id) && spots > 0 && (
+                        {!g.members.includes(currentUser.id) && spots > 0 && fitsGenderMode(currentUser, g.genderMode) && (
                           <button
                             type="button"
                             onClick={() => navigate(`/events/${event.id}/join?group=${g.id}`)}
@@ -368,18 +441,34 @@ export function LookingForCompanyPanel({
           mode={preview.mode}
           onSendRequest={() => {
             const id = sendJoin(preview.requestId);
-            if (id) toast.success(t('Αίτημα εστάλη', 'Request sent'));
-            else toast.error(t('Δεν ήταν δυνατή η αποστολή', 'Could not send'));
+            if (id) {
+              toast.success(t('Αίτημα εστάλη', 'Request sent'), {
+                action: {
+                  label: t('Inbox', 'Inbox'),
+                  onClick: () => navigate('/inbox'),
+                },
+              });
+            } else toast.error(t('Δεν ήταν δυνατή η αποστολή', 'Could not send'));
           }}
           onAccept={() => {
             if (!preview.joinId) return;
             const groupId = acceptJoin(preview.joinId);
             if (groupId) {
-              toast.success(t('Αποδεχτήκατε — άνοιγμα συνομιλίας', 'Accepted — opening chat'));
-              navigate(`/chat/${groupId}`);
+              toast.success(t('Αποδεχτήκατε — άνοιγμα της βραδιάς', 'Accepted — opening Our night'), {
+                action: {
+                  label: t('Η βραδιά μας', 'Our night'),
+                  onClick: () => navigate(`/night/${groupId}`),
+                },
+              });
+              navigate(`/night/${groupId}`);
             } else {
               toast.success(t('Αποδεχτήκατε', 'Accepted'));
             }
+          }}
+          onDecline={() => {
+            if (!preview.joinId) return;
+            declineJoin(preview.joinId);
+            toast.info(t('Το αίτημα απορρίφθηκε', 'Request declined'));
           }}
         />
       )}

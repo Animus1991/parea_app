@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useStore } from '../store';
 import { queryKeys } from '../lib/queryClient';
 import { api } from '../lib/apiClient';
+import { mergeNotificationLists } from '../lib/notificationsUtil';
 import type { Event } from '../types';
 import type { AppNotification } from '../data/mockNotifications';
 
@@ -85,7 +87,11 @@ export function useNotificationsQuery() {
 
 export function useNotificationsResource() {
   const query = useNotificationsQuery();
-  const notifications = query.data ?? [];
+  const storeNotifications = useStore((s) => s.notifications);
+  const notifications = useMemo(
+    () => mergeNotificationLists(query.data ?? [], storeNotifications),
+    [query.data, storeNotifications],
+  );
   return {
     notifications,
     isLoading: query.isPending && notifications.length === 0,

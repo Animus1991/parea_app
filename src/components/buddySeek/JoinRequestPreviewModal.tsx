@@ -19,6 +19,7 @@ export function JoinRequestPreviewModal({
   message,
   onSendRequest,
   onAccept,
+  onDecline,
   mode,
 }: {
   open: boolean;
@@ -28,6 +29,8 @@ export function JoinRequestPreviewModal({
   message?: string;
   onSendRequest: (note?: string) => void;
   onAccept?: () => void;
+  /** Declines the join request. Without it, the button only closes the preview. */
+  onDecline?: () => void;
   mode: 'send' | 'owner_review';
 }) {
   const { t } = useLanguage();
@@ -51,7 +54,7 @@ export function JoinRequestPreviewModal({
         <div className="p-5 border-b border-border">
           <div className="flex items-center gap-2 text-accent-strong">
             <MessageSquare className="w-4 h-4" />
-            <h2 className="text-sm font-bold">
+            <h2 className="text-sm md:text-base font-bold">
               {mode === 'send'
                 ? t('Προεπισκόπηση πριν τη σύνδεση', 'Preview before connecting')
                 : t('Αίτημα συμμετοχής', 'Join request')}
@@ -109,7 +112,7 @@ export function JoinRequestPreviewModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 min-h-11 rounded-2xl border border-border text-sm font-bold text-ink"
+            className="flex-1 min-h-8 rounded-2xl border border-border text-xs font-bold text-ink"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
@@ -121,7 +124,7 @@ export function JoinRequestPreviewModal({
                 onSendRequest(message);
                 onClose();
               }}
-              className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold"
+              className="flex-1 min-h-8 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold"
             >
               {t('Αποστολή αιτήματος', 'Send request')}
             </button>
@@ -134,14 +137,17 @@ export function JoinRequestPreviewModal({
                   onAccept?.();
                   onClose();
                 }}
-                className="flex-1 min-h-11 rounded-2xl bg-emerald-600 text-white text-sm font-bold flex items-center justify-center gap-1"
+                className="flex-1 min-h-8 rounded-2xl bg-emerald-600 text-white text-xs font-bold flex items-center justify-center gap-1"
               >
                 <Check className="w-4 h-4" /> {t('Αποδοχή', 'Accept')}
               </button>
               <button
                 type="button"
-                onClick={onClose}
-                className="min-h-11 px-4 rounded-2xl border border-border text-sm font-bold flex items-center gap-1"
+                onClick={() => {
+                  onDecline?.();
+                  onClose();
+                }}
+                className="min-h-8 px-4 rounded-2xl border border-border text-xs font-bold flex items-center gap-1"
               >
                 <X className="w-4 h-4" /> {t('Απόρριψη', 'Decline')}
               </button>

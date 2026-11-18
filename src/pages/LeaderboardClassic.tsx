@@ -7,6 +7,8 @@ import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
 import { usePageContrast } from '../hooks/usePageContrast';
 import { cn } from '../lib/utils';
+import { APP_TYPO } from '../lib/typographyTokens';
+import { PersonAvatar } from '../components/wall/PersonAvatar';
 import { motion } from 'motion/react';
 
 type Period = 'week' | 'month' | 'alltime';
@@ -17,7 +19,7 @@ function RankIcon({ rank, mutedClass }: { rank: number; mutedClass: string }) {
   if (rank === 1) return <span className="text-lg leading-none select-none">🥇</span>;
   if (rank === 2) return <span className="text-lg leading-none select-none">🥈</span>;
   if (rank === 3) return <span className="text-lg leading-none select-none">🥉</span>;
-  return <span className={cn('text-base font-black tabular-nums w-8 text-center', mutedClass)}>#{rank}</span>;
+  return <span className={cn('card-heading font-bold tabular-nums w-8 text-center', mutedClass)}>#{rank}</span>;
 }
 
 export default function LeaderboardClassic() {
@@ -46,7 +48,7 @@ export default function LeaderboardClassic() {
       return {
         id: u.id,
         name: u.name,
-        avatar: u.photoUrl || `https://i.pravatar.cc/150?u=${u.id}`,
+        avatar: u.photoUrl,
         xp: Math.round(xpForUser(u, isMe) * multiplier),
         streak: Math.min((isMe ? feedbackCount : (u.connections?.length ?? 0)) * 2, 14),
         eventsCount: isMe ? feedbackCount : Math.floor((u.reliabilityScore ?? 50) / 10),
@@ -59,7 +61,7 @@ export default function LeaderboardClassic() {
       list.push({
         id: currentUser.id,
         name: currentUser.name,
-        avatar: currentUser.photoUrl || `https://i.pravatar.cc/150?u=${currentUser.id}`,
+        avatar: currentUser.photoUrl,
         xp: Math.round(xpForUser(currentUser, true) * multiplier),
         streak: Math.min(feedbackCount * 2, 14),
         eventsCount: feedbackCount,
@@ -92,12 +94,12 @@ export default function LeaderboardClassic() {
   ];
 
   return (
-    <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <GamificationHubNav />
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn('text-sm md:text-base font-bold', p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>
-          <p className={cn('font-medium text-sm md:text-sm mt-1', p.sub)}>
+          <h1 className={cn(APP_TYPO.pageTitle, p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>
+          <p className={cn(APP_TYPO.pageSub, 'mt-1', p.sub)}>
             {t('Δες πού βρίσκεσαι μέσα στην κοινότητα', 'See where you stand in the community')}
           </p>
         </div>
@@ -107,7 +109,7 @@ export default function LeaderboardClassic() {
               key={per}
               onClick={() => setPeriod(per)}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-sm font-bold transition-all duration-200 whitespace-nowrap',
+                'px-3 py-1.5 min-h-8 rounded-lg text-xs font-bold transition-all duration-200 whitespace-nowrap',
                 period === per
                   ? cn(p.cardSurface, p.head, 'shadow-soft')
                   : cn(p.muted, p.hoverText),
@@ -125,13 +127,11 @@ export default function LeaderboardClassic() {
           <Card className={cn('p-4', p.highlightRow)}>
             <div className="flex items-center gap-4">
               <div className="relative shrink-0">
-                <img
-                  referrerPolicy="no-referrer"
-                  src={myEntry.avatar}
-                  alt={myEntry.name}
-                  className={cn('w-11 h-11 rounded-full object-cover ring-2', p.isDark ? 'ring-white/20' : 'ring-accent/40')}
+                <PersonAvatar
+                  user={{ id: myEntry.id, name: myEntry.name, photoUrl: myEntry.avatar }}
+                  className={cn('w-11 h-11 ring-2', p.isDark ? 'ring-white/20' : 'ring-accent/40')}
                 />
-                <div className="absolute -bottom-1 -right-1 bg-ink text-white text-xs font-black px-1.5 py-0.5 rounded-full border-2 border-white">
+                <div className="absolute -bottom-1 -right-1 bg-ink text-white text-xs font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
                   #{myRank}
                 </div>
               </div>
@@ -141,13 +141,13 @@ export default function LeaderboardClassic() {
                   <span className={p.statVal}>#{myRank}</span>
                 </p>
                 <div className="flex flex-wrap items-center gap-3 mt-1.5">
-                  <span className={cn('text-sm flex items-center gap-1 font-medium', p.muted)}>
+                  <span className={cn('card-copy flex items-center gap-1 font-medium', p.muted)}>
                     <Trophy className="w-3.5 h-3.5 text-amber-500" /> {myEntry.xp} XP
                   </span>
-                  <span className={cn('text-sm flex items-center gap-1 font-medium', p.muted)}>
+                  <span className={cn('card-copy flex items-center gap-1 font-medium', p.muted)}>
                     <Flame className="w-3.5 h-3.5 text-orange-500" /> {myEntry.streak} {t('εβδ. σερί', 'wk streak')}
                   </span>
-                  <span className={cn('text-sm flex items-center gap-1 font-medium', p.muted)}>
+                  <span className={cn('card-copy flex items-center gap-1 font-medium', p.muted)}>
                     <Calendar className="w-3.5 h-3.5 text-cyan-600" /> {myEntry.eventsCount}{' '}
                     {t('εκδηλώσεις', 'events')}
                   </span>
@@ -209,15 +209,13 @@ export default function LeaderboardClassic() {
                   <div className="w-8 flex items-center justify-center shrink-0">
                     <RankIcon rank={rank} mutedClass={p.muted} />
                   </div>
-                  <img
-                    referrerPolicy="no-referrer"
-                    src={entry.avatar}
-                    alt={entry.name}
-                    className={cn('w-10 h-10 rounded-full object-cover shrink-0 ring-1', p.isDark ? 'ring-white/10' : 'ring-gray-100')}
+                  <PersonAvatar
+                    user={{ id: entry.id, name: entry.name, photoUrl: entry.avatar }}
+                    className={cn('w-10 h-10 ring-1', p.isDark ? 'ring-white/10' : 'ring-gray-100')}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className={cn('font-bold text-sm truncate', entry.isMe ? p.statVal : p.head)}>
+                      <span className={cn('card-heading font-bold truncate', entry.isMe ? p.statVal : p.head)}>
                         {entry.name}
                       </span>
                       {entry.isMe && (
@@ -239,7 +237,7 @@ export default function LeaderboardClassic() {
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className={cn('font-black text-lg tabular-nums leading-none', p.head)}>
+                    <p className={cn('text-sm md:text-base font-bold tabular-nums leading-none', p.head)}>
                       {entry.xp}
                     </p>
                     <p className={cn('text-xs font-semibold mt-0.5', p.muted)}>XP</p>
@@ -250,7 +248,7 @@ export default function LeaderboardClassic() {
           })}
           {displayEntries.length === 0 && (
             <Card className="p-5 text-center">
-              <p className={cn('text-sm font-medium', p.muted)}>
+              <p className={cn('card-copy font-medium', p.muted)}>
                 {t('Δεν βρέθηκαν εγγραφές.', 'No entries found.')}
               </p>
             </Card>

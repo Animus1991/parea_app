@@ -6,8 +6,10 @@ import { useStore } from '../../store';
 import { HomeGuestHero } from '../home/HomeGuestHero';
 import { LoginGuestHeroStrip } from './LoginGuestHeroStrip';
 import { LoginExploreDemoButton } from './LoginExploreDemoButton';
+import { appEnv } from '../../lib/config/env';
 import { isProductionGoogleOAuthAvailable, tryGoogleSignIn } from '../../lib/loginHandlers';
 import { cn } from '../../lib/utils';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 export type LoginVariant =
   | 'classic'
@@ -205,6 +207,7 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
   };
 
   const googleOAuthReady = isProductionGoogleOAuthAvailable();
+  const demoLogin = appEnv.demoLogin;
 
   const handleGoogleLogin = async () => {
     const result = await tryGoogleSignIn();
@@ -214,6 +217,11 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
         navigate('/');
       }
       // Firebase path: useFirebaseAuth bridge updates the store.
+      return;
+    }
+    if (!demoLogin) {
+      // Real sign-in only: never fall back to a demo identity.
+      toast.error(t('Η σύνδεση με Google απέτυχε. Δοκιμάστε ξανά.', 'Google sign-in failed. Please try again.'));
       return;
     }
     toast.info(
@@ -234,23 +242,27 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
       )}
       <Card className={cn('w-full max-w-md p-5 space-y-4 animate-in fade-in slide-in-from-bottom-4 shadow-soft-lg', tok.cardClass)}>
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center text-lg font-black tracking-tight mb-4 font-['Outfit']">
+          <div className="flex items-center justify-center text-sm md:text-base font-black tracking-tight mb-4 font-['Outfit']">
             <span className={tok.wordmarkClass}>NAKAMAS</span>
           </div>
-          <h1 className={cn('text-lg font-bold', tok.stripDark ? 'text-white' : 'text-ink')}>{t('Καλώς ήρθατε', 'Welcome back')}</h1>
-          <p className={cn('text-xs font-medium', tok.mutedText)}>
+          <h1 className={cn(APP_TYPO.pageTitle, tok.stripDark ? 'text-white' : 'text-ink')}>{t('Καλώς ήρθατε', 'Welcome back')}</h1>
+          <p className={cn(APP_TYPO.pageSub, tok.mutedText)}>
             {t('Συνδεθείτε για να ανακαλύψετε αξιόπιστες ομάδες και εμπειρίες.', 'Log in to discover trusted groups and experiences.')}
           </p>
         </div>
 
         <div className="space-y-4 pt-4">
+          {demoLogin && (
+            <>
           <LoginExploreDemoButton />
 
           <div className={cn('text-center text-xs font-bold tracking-wide mb-4', tok.mutedText)}>
             {t('Επιλέξτε Λογαριασμό (Demo)', 'Select Account (Demo)')}
           </div>
           <div className="grid grid-cols-1 gap-3">
-            {users.slice(0, 3).map((user) => (
+            {/* Three member accounts plus one seeded moderator, so Admin stays demo-able
+                now that hosting no longer grants admin rights. */}
+            {[...users.slice(0, 3), ...users.filter((u) => u.isAdmin).slice(0, 1)].map((user) => (
               <button
                 key={user.id}
                 type="button"
@@ -269,13 +281,17 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
                 <div>
                   <div className={cn('text-sm font-bold', tok.stripDark ? 'text-white' : 'text-gray-900', tok.nameHoverClass)}>{user.name}</div>
                   <div className={cn('text-xs', tok.mutedText)}>
-                    {user.isOrganizer ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')} • {user.city}
+                    {user.isAdmin ? t('Συντονιστής', 'Moderator') : user.isOrganizer ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')} • {user.city}
                   </div>
                 </div>
               </button>
             ))}
           </div>
 
+            </>
+          )}
+
+          {demoLogin && (
           <div className="relative py-4">
             <div className="absolute inset-0 flex items-center">
               <div className={cn('w-full border-t', tok.dividerLine)} />
@@ -284,11 +300,12 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
               <span className={cn('px-2 text-xs tracking-wide', tok.dividerChip)}>{t('Ή συνεχίστε με', 'Or continue with')}</span>
             </div>
           </div>
+          )}
 
           <button
             type="button"
             onClick={() => void handleGoogleLogin()}
-            className={cn('w-full flex items-center justify-center gap-3 px-4 py-3 min-h-11 rounded-full border text-sm font-bold transition-colors shadow-soft', tok.googleBtnClass)}
+            className={cn('w-full flex items-center justify-center gap-2.5 px-4 py-1.5 min-h-8 rounded-full border text-xs font-bold transition-colors shadow-soft', tok.googleBtnClass)}
           >
             <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="" className="w-5 h-5" aria-hidden />
             {googleOAuthReady

@@ -1,7 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useChatStore } from '../store/chatStore';
 import { useStore } from '../store';
+import { useLanguage } from '../lib/i18n';
 import { toChatMessage, toGroupChatMessage } from '../lib/chatMessageAdapters';
+
+import type {
+  ChatMediaAttachment,
+  ChatPoll,
+  ChatReplyRef,
+  ChatStoryRef,
+  MessageType,
+} from '../types/chat';
 
 export interface GroupChatMessage {
   id: string;
@@ -10,6 +19,17 @@ export interface GroupChatMessage {
   text: string;
   timestamp: string;
   type?: 'text' | 'system' | 'location';
+  richType?: MessageType;
+  replyTo?: ChatReplyRef;
+  reactions?: Record<string, string[]>;
+  mentions?: string[];
+  tags?: string[];
+  media?: ChatMediaAttachment;
+  poll?: ChatPoll;
+  storyRef?: ChatStoryRef;
+  editedAt?: string;
+  pinned?: boolean;
+  readBy?: string[];
 }
 
 const STORAGE_PREFIX = 'nakamas-group-chat-v1';
@@ -46,6 +66,8 @@ export function useGroupChatMessages(
   groupId: string | undefined,
   seedFactory: () => GroupChatMessage[],
 ) {
+  const { t } = useLanguage();
+  const systemLabel = t('Σύστημα', 'System');
   const users = useStore((s) => s.users);
   const conversation = useChatStore((s) =>
     groupId ? s.conversations.find((c) => c.groupId === groupId) : undefined,
@@ -56,10 +78,10 @@ export function useGroupChatMessages(
 
   const resolveName = useCallback(
     (senderId: string) => {
-      if (senderId === 'system') return 'System';
+      if (senderId === 'system') return systemLabel;
       return users.find((u) => u.id === senderId)?.name ?? senderId;
     },
-    [users],
+    [users, systemLabel],
   );
 
   const [localMessages, setLocalMessages] = useState<GroupChatMessage[]>([]);
@@ -79,8 +101,8 @@ export function useGroupChatMessages(
     if (!conversation) return null;
     return storeMessages
       .filter((m) => m.conversationId === conversation.id)
-      .map((m) => toGroupChatMessage(m, resolveName));
-  }, [conversation, storeMessages, resolveName]);
+      .map((m) => toGroupChatMessage(m, resolveName, systemLabel));
+  }, [conversation, storeMessages, resolveName, systemLabel]);
 
   const messages = unifiedFromStore ?? localMessages;
 

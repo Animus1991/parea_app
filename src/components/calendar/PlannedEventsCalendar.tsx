@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   ChevronLeft,
   ChevronRight,
@@ -32,6 +33,7 @@ import { CalendarDayCell } from './CalendarDayCell';
 import { DayEventsStoriesModal } from './DayEventsStoriesModal';
 import { DailyScheduleView } from './DailyScheduleView';
 import type { PlannedEvent } from '../../types/plannedEvent';
+import { dateFnsLocale } from '../../lib/dateLocale';
 
 const WEEKDAY_LABELS = (t: (el: string, en: string) => string) => [
   t('Δευ', 'Mon'),
@@ -48,7 +50,7 @@ export interface PlannedEventsCalendarProps {
 }
 
 export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const p = usePageContrast();
   const navigate = useNavigate();
   const { plannedEvents } = usePlannedEvents();
@@ -90,6 +92,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
       })),
       'parea-planned-events.ics',
     );
+    toast.success(t('Το ημερολόγιο εξήχθη', 'Calendar exported'));
   };
 
   const renderCell = (day: Date, inPeriod: boolean) => {
@@ -116,7 +119,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           <div className={cn('w-11 h-11 rounded-2xl flex items-center justify-center mx-auto mb-4', p.statBg)}>
             <Compass className={cn('w-7 h-7', p.statVal)} />
           </div>
-          <p className={cn('font-bold text-lg', p.head)}>
+          <p className={cn('font-bold text-sm md:text-base', p.head)}>
             {t('Δεν έχετε προγραμματισμένες εκδηλώσεις', 'No planned events yet')}
           </p>
           <p className={cn('text-sm font-medium mt-2 max-w-sm mx-auto', p.muted)}>
@@ -137,7 +140,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
             type="button"
             onClick={handleExport}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all border min-h-11',
+              'flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all border min-h-8',
               p.cardSurface,
               p.borderB,
               p.cardHover,
@@ -166,7 +169,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           <button
             type="button"
             className={cn(
-              'relative z-10 px-5 py-2 text-xs font-bold min-h-11',
+              'relative z-10 px-5 py-2 text-xs font-bold min-h-8',
               view === 'week' ? p.head : p.muted,
             )}
             onClick={() => setView('week')}
@@ -176,7 +179,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           <button
             type="button"
             className={cn(
-              'relative z-10 px-4 py-2 text-xs font-bold min-h-11',
+              'relative z-10 px-4 py-2 text-xs font-bold min-h-8',
               view === 'month' ? p.head : p.muted,
             )}
             onClick={() => setView('month')}
@@ -193,8 +196,8 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
             p.borderB,
           )}
         >
-          <h2 className={cn('font-extrabold text-base md:text-lg capitalize', p.head)}>
-            {format(currentDate, 'MMMM yyyy')}
+          <h2 className={cn('font-bold text-sm md:text-base capitalize', p.head)}>
+            {format(currentDate, 'LLLL yyyy', { locale: dateFnsLocale(language) })}
           </h2>
           <div className="flex items-center gap-1">
             <button
@@ -202,7 +205,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               onClick={() =>
                 setCurrentDate(view === 'week' ? subWeeks(currentDate, 1) : subMonths(currentDate, 1))
               }
-              className={cn('p-2 rounded-2xl min-h-11 min-w-11', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
+              className={cn('p-2 rounded-2xl min-h-8 min-w-8', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
               aria-label={t('Προηγούμενη', 'Previous')}
             >
               <ChevronLeft className={cn('w-5 h-5', p.head)} />
@@ -211,7 +214,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               type="button"
               onClick={() => setCurrentDate(new Date())}
               className={cn(
-                'px-3 py-2 text-xs font-bold rounded-2xl border min-h-11',
+                'px-3 py-2 text-xs font-bold rounded-2xl border min-h-8',
                 p.isDark ? 'border-white/10' : 'border-gray-200',
                 p.head,
               )}
@@ -223,7 +226,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
               onClick={() =>
                 setCurrentDate(view === 'week' ? addWeeks(currentDate, 1) : addMonths(currentDate, 1))
               }
-              className={cn('p-2 rounded-2xl min-h-11 min-w-11', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
+              className={cn('p-2 rounded-2xl min-h-8 min-w-8', p.isDark ? 'hover:bg-white/10' : 'hover:bg-black/5')}
               aria-label={t('Επόμενη', 'Next')}
             >
               <ChevronRight className={cn('w-5 h-5', p.head)} />
@@ -252,7 +255,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
                   <div
                     key={label}
                     className={cn(
-                      'text-center text-xs md:text-xs font-bold uppercase tracking-widest py-1',
+                      'text-center text-xs md:text-xs font-bold tracking-widest py-1',
                       p.muted,
                     )}
                   >
@@ -277,7 +280,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
                   <div
                     key={label}
                     className={cn(
-                      'text-center text-xs font-bold uppercase tracking-widest py-1 rounded-lg',
+                      'text-center text-xs font-bold tracking-widest py-1 rounded-lg',
                       p.isDark ? 'bg-white/5 text-gray-400' : 'bg-gray-50 text-gray-500',
                     )}
                   >

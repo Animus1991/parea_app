@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ShieldCheck, UserCheck, Smartphone, Mail, FileText, CheckCircle2 } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
@@ -7,13 +7,33 @@ import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useStore } from '../../store';
 import { toast } from 'sonner';
+import { APP_TYPO } from '../../lib/typographyTokens';
+import { verifyDemo } from '../../lib/verifyDemo';
+import { GovWalletCard, SelfieCheckCard } from './SelfieAndWalletCards';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function VerificationCenterPageContent() {
   const { t } = useLanguage();
   const a = usePageContrast();
   const currentUser = useStore((s) => s.currentUser);
-  const updateUser = useStore((s) => s.updateUser);
   const fileRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const highlight = searchParams.get('method');
+
+  useEffect(() => {
+    if (!highlight) return;
+    const id =
+      highlight === 'email'
+        ? 'verify-email'
+        : highlight === 'phone'
+          ? 'verify-phone'
+          : highlight === 'id'
+            ? 'verify-id'
+            : null;
+    if (!id) return;
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [highlight]);
 
   if (!currentUser) return null;
 
@@ -26,8 +46,11 @@ export default function VerificationCenterPageContent() {
   const progressPct = Math.round((completedSteps / 3) * 100);
 
   const handleVerifyPhone = () => {
-    updateUser(currentUser.id, { phoneVerified: true });
-    toast.success(t('Το τηλέφωνο επαληθεύτηκε (demo)', 'Phone verified (demo)'));
+    if (verifyDemo('phone')) toast.success(t('Το τηλέφωνο επαληθεύτηκε (demo)', 'Phone verified (demo)'));
+  };
+
+  const handleVerifyEmail = () => {
+    if (verifyDemo('email')) toast.success(t('Το email επαληθεύτηκε (demo)', 'Email verified (demo)'));
   };
 
   const handleUploadId = () => {
@@ -36,21 +59,30 @@ export default function VerificationCenterPageContent() {
 
   const onIdSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) return;
-    updateUser(currentUser.id, { idVerified: true });
-    toast.success(t('Η ταυτότητα υποβλήθηκε και επαληθεύτηκε (demo)', 'ID uploaded and verified (demo)'));
+    if (verifyDemo('id')) {
+      toast.success(t('Η ταυτότητα υποβλήθηκε και επαληθεύτηκε (demo)', 'ID uploaded and verified (demo)'));
+    }
     e.target.value = '';
   };
 
+  const ringFor = (method: string) =>
+    highlight === method ? 'ring-2 ring-accent ring-offset-2 ring-offset-surface' : '';
+
   return (
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
-      <div>
-        <h1 className={cn('text-sm md:text-base font-bold', a.head)}>{t('Κέντρο Επαλήθευσης', 'Verification Center')}</h1>
-        <p className={cn('font-medium text-sm mt-1', a.sub)}>
-          {t(
-            'Επαληθεύστε την ταυτότητά σας για μεγαλύτερη ασφάλεια και υψηλότερο Βαθμό Αξιοπιστίας',
-            'Verify your identity for greater safety and a higher Reliability Score',
-          )}
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Κέντρο Επαλήθευσης', 'Verification Center')}</h1>
+          <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>
+            {t(
+              'Επαληθεύστε την ταυτότητά σας για μεγαλύτερη ασφάλεια και υψηλότερο Βαθμό Αξιοπιστίας',
+              'Verify your identity for greater safety and a higher Reliability Score',
+            )}
+          </p>
+        </div>
+        <Button variant="outline" size="sm" className="shrink-0" onClick={() => navigate('/trust')}>
+          {t('Κέντρο Εμπιστοσύνης', 'Trust Center')}
+        </Button>
       </div>
 
       <div className={cn('rounded-xl p-4 flex gap-4 border', a.progressBg)}>
@@ -72,7 +104,7 @@ export default function VerificationCenterPageContent() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="p-5">
+        <Card id="verify-email" className={cn('p-5', ringFor('email'))}>
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', a.completedIcon)}>
@@ -87,9 +119,19 @@ export default function VerificationCenterPageContent() {
             </div>
             {currentUser.emailVerified && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
           </div>
+          {!currentUser.emailVerified && (
+            <>
+              <p className={cn('card-copy mt-4 mb-3', a.sub)}>
+                {t('Θα σας στείλουμε σύνδεσμο επιβεβαίωσης στο email σας.', "We'll send a confirmation link to your email.")}
+              </p>
+              <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleVerifyEmail}>
+                {t('Επαλήθευση Τώρα', 'Verify Now')}
+              </Button>
+            </>
+          )}
         </Card>
 
-        <Card className="p-5">
+        <Card id="verify-phone" className={cn('p-5', ringFor('phone'))}>
           <div className={cn('flex items-start justify-between border-b pb-4 mb-4', a.borderB)}>
             <div className="flex items-center gap-3">
               <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center border', a.pendingIcon)}>
@@ -106,7 +148,7 @@ export default function VerificationCenterPageContent() {
           </div>
           {!currentUser.phoneVerified && (
             <>
-              <p className={cn('text-sm mb-3', a.sub)}>{t('Θα σας στείλουμε SMS με κωδικό.', "We'll send you an SMS code.")}</p>
+              <p className={cn('card-copy mb-3', a.sub)}>{t('Θα σας στείλουμε SMS με κωδικό.', "We'll send you an SMS code.")}</p>
               <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleVerifyPhone}>
                 {t('Επαλήθευση Τώρα', 'Verify Now')}
               </Button>
@@ -114,7 +156,7 @@ export default function VerificationCenterPageContent() {
           )}
         </Card>
 
-        <Card className="p-5 md:col-span-2">
+        <Card id="verify-id" className={cn('p-5 md:col-span-2', ringFor('id'))}>
           <div className={cn('flex items-start justify-between border-b pb-4 mb-4', a.borderB)}>
             <div className="flex items-center gap-3">
               <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center border', a.pendingIcon)}>
@@ -129,11 +171,11 @@ export default function VerificationCenterPageContent() {
             </div>
             <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full tracking-wide', a.advBadge)}>{t('Προχωρημένο', 'Advanced')}</span>
           </div>
-          <p className={cn('text-sm mb-4 max-w-xl', a.sub)}>
+          <p className={cn('card-copy mb-4 max-w-xl', a.sub)}>
             {t('Ανεβάστε φωτογραφία ταυτότητας για εκδηλώσεις υψηλής ασφάλειας.', 'Upload a photo of your ID to access high-safety events.')}
           </p>
           <div className={cn('p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-dashed', a.uploadArea)}>
-            <div className={cn('flex gap-3 text-sm font-medium', a.uploadText)}>
+            <div className={cn('flex gap-3 card-copy font-medium', a.uploadText)}>
               <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4" />{t('Ασφαλές', 'Secure')}</span>
               <span className="flex items-center gap-1"><UserCheck className="w-4 h-4" />{t('Ιδιωτικό', 'Private')}</span>
             </div>
@@ -147,13 +189,17 @@ export default function VerificationCenterPageContent() {
             )}
           </div>
         </Card>
+
+        {/* Φ27 — selfie check (Bumble BFF) and Gov.gr Wallet (under study) */}
+        <SelfieCheckCard />
+        <GovWalletCard />
       </div>
 
       <Card className="p-5">
         <h3 className={cn('text-xs font-bold tracking-wide mb-4', a.head)}>{t('Τι ξεκλειδώνετε', 'What you unlock')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
-            { icon: Mail, label: 'Email', done: currentUser.emailVerified, color: 'text-cyan-600', bg: a.tierEmail },
+            { icon: Mail, label: t('Email', 'Email'), done: currentUser.emailVerified, color: 'text-cyan-600', bg: a.tierEmail },
             { icon: Smartphone, label: t('Τηλέφωνο', 'Phone'), done: currentUser.phoneVerified, color: 'text-emerald-600', bg: a.tierPhone },
             { icon: FileText, label: t('Ταυτότητα', 'ID'), done: currentUser.idVerified, color: 'text-purple-600', bg: a.tierId },
           ].map((item) => {
@@ -162,7 +208,7 @@ export default function VerificationCenterPageContent() {
               <div key={item.label} className={cn('p-3 rounded-xl border flex items-center gap-3', item.bg)}>
                 <Icon className={cn('w-5 h-5', item.color)} />
                 <div>
-                  <p className={cn('text-sm font-bold', a.head)}>{item.label}</p>
+                  <p className={cn('card-heading font-bold', a.head)}>{item.label}</p>
                   <p className={cn('text-xs font-bold', item.done ? 'text-emerald-600' : a.muted)}>
                     {item.done ? t('Ξεκλείδωτο', 'Unlocked') : t('Κλειδωμένο', 'Locked')}
                   </p>

@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MessageCircle, MoreVertical, MapPin, Filter, UserPlus, UserMinus, Flag, Eye, CalendarPlus, Check, X, ChevronDown, Users, ShieldCheck } from 'lucide-react';
+import { Search, MessageCircle, MoreVertical, MapPin, Filter, UserPlus, UserMinus, Flag, Eye, CalendarPlus, Check, X, ChevronDown, Users, ShieldCheck, Ban } from 'lucide-react';
+import { canViewerMessageUser } from '../../lib/profilePrivacy';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
-import { Badge } from '../common/Badge';
+import { CardInterestLine } from '../common/CardInterestLine';
 import { toast } from 'sonner';
 import { EmptyState } from '../common/EmptyState';
 import { Modal } from '../common/Modal';
@@ -12,9 +13,29 @@ import { useChatStore } from '../../store/chatStore';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
+import { stopBubbling, pressable } from '../../lib/a11y';
+import { sameInterest } from '../../lib/interests';
+import { connectionOutcomeText } from '../../lib/connectionFeedback';
+import { profilePathFor } from '../../lib/profileLinks';
+import { PersonAvatar } from '../wall/PersonAvatar';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 // ─── More dropdown ──────────────────────────────────────────────
-function MoreMenu({ connId, onViewProfile, onRemove, onReport, onInvite }: { connId: string; onViewProfile: () => void; onRemove: () => void; onReport: () => void; onInvite: () => void }) {
+function MoreMenu({
+  connId: _connId,
+  onViewProfile,
+  onRemove,
+  onReport,
+  onBlock,
+  onInvite,
+}: {
+  connId: string;
+  onViewProfile: () => void;
+  onRemove: () => void;
+  onReport: () => void;
+  onBlock: () => void;
+  onInvite: () => void;
+}) {
   const { t } = useLanguage();
   const a = usePageContrast();
   const [open, setOpen] = useState(false);
@@ -34,24 +55,27 @@ function MoreMenu({ connId, onViewProfile, onRemove, onReport, onInvite }: { con
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label={t('Περισσότερες ενέργειες', 'More actions')}
-        className={`p-2 min-h-10 min-w-10 flex items-center justify-center rounded-full transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}
+        className={`p-2 min-h-8 min-w-8 flex items-center justify-center rounded-full transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}
       >
         <MoreVertical className="w-5 h-5" aria-hidden />
       </button>
       {open && (
         <div role="menu" className={`absolute right-0 top-full mt-1 w-48 rounded-lg border shadow-soft-lg z-fab py-1 text-sm ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-          <button type="button" role="menuitem" onClick={() => { onViewProfile(); setOpen(false); }} className={`w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
+          <button type="button" role="menuitem" onClick={() => { onViewProfile(); setOpen(false); }} className={`w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
             <Eye className="w-4 h-4" aria-hidden /> {t('Προβολή Προφίλ', 'View Profile')}
           </button>
-          <button type="button" role="menuitem" onClick={() => { onInvite(); setOpen(false); }} className={`w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
+          <button type="button" role="menuitem" onClick={() => { onInvite(); setOpen(false); }} className={`w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
             <CalendarPlus className="w-4 h-4" aria-hidden /> {t('Πρόσκληση σε Εκδήλωση', 'Invite to Event')}
           </button>
           <div className={`my-1 h-px ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} role="separator" />
-          <button type="button" role="menuitem" onClick={() => { onRemove(); setOpen(false); }} className="w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
+          <button type="button" role="menuitem" onClick={() => { onRemove(); setOpen(false); }} className="w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
             <UserMinus className="w-4 h-4" aria-hidden /> {t('Αφαίρεση Σύνδεσης', 'Remove Connection')}
           </button>
-          <button type="button" role="menuitem" onClick={() => { onReport(); setOpen(false); }} className="w-full px-3 py-2.5 min-h-10 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
+          <button type="button" role="menuitem" onClick={() => { onReport(); setOpen(false); }} className="w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
             <Flag className="w-4 h-4" aria-hidden /> {t('Αναφορά', 'Report')}
+          </button>
+          <button type="button" role="menuitem" onClick={() => { onBlock(); setOpen(false); }} className="w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
+            <Ban className="w-4 h-4" aria-hidden /> {t('Αποκλεισμός', 'Block')}
           </button>
         </div>
       )}
@@ -80,8 +104,12 @@ export default function ConnectionsPageContent() {
   const connectionRequests = useStore((s) => s.connectionRequests);
   const acceptConnectionRequest = useStore((s) => s.acceptConnectionRequest);
   const declineConnectionRequest = useStore((s) => s.declineConnectionRequest);
+  const restoreConnectionRequest = useStore((s) => s.restoreConnectionRequest);
   const removeConnection = useStore((s) => s.removeConnection);
+  const restoreConnection = useStore((s) => s.restoreConnection);
   const sendConnectionRequest = useStore((s) => s.sendConnectionRequest);
+  const blockUser = useStore((s) => s.blockUser);
+  const blockedUserIds = useStore((s) => s.blockedUserIds);
   const addNotification = useStore((s) => s.addNotification);
   const ensureDirectConversation = useChatStore((s) => s.ensureDirectConversation);
   const setInboxOpen = useChatStore((s) => s.setInboxOpen);
@@ -107,19 +135,20 @@ export default function ConnectionsPageContent() {
   }, [events, groups, currentUser]);
 
   // ─── Computed data ───────────────────────────────────────
-  const myConnectionIds = currentUser?.connections || [];
+  const myConnectionIds = useMemo(() => currentUser?.connections ?? [], [currentUser?.connections]);
 
   const connections = useMemo(() => {
+    const blocked = new Set(blockedUserIds);
     return users
-      .filter((u) => myConnectionIds.includes(u.id) && u.id !== currentUser?.id)
+      .filter((u) => myConnectionIds.includes(u.id) && u.id !== currentUser?.id && !blocked.has(u.id))
       .map((u) => {
         const myConns = currentUser?.connections || [];
         const theirConns = u.connections || [];
         const mutual = myConns.filter((id) => theirConns.includes(id) && id !== currentUser?.id && id !== u.id).length;
-        const sharedInterests = (currentUser?.interests || []).filter((i) => (u.interests || []).includes(i));
+        const sharedInterests = (currentUser?.interests || []).filter((i) => (u.interests || []).some((x) => sameInterest(x, i)));
         return { ...u, mutual, sharedInterests, role: u.isOrganizer ? t('Διοργανωτής', 'Organizer') : (u.reliabilityScore > 80 ? t('Εξερευνητής', 'Explorer') : t('Αρχάριος', 'Newbie')) };
       });
-  }, [users, myConnectionIds, currentUser, t]);
+  }, [users, myConnectionIds, currentUser, blockedUserIds, t]);
 
   const filteredConnections = useMemo(() => {
     let list = connections;
@@ -136,24 +165,26 @@ export default function ConnectionsPageContent() {
   }, [connections, search, roleFilter, sortBy]);
 
   const pendingRequests = useMemo(() => {
+    const blocked = new Set(blockedUserIds);
     return connectionRequests
-      .filter((r) => r.toUserId === currentUser?.id && r.status === 'pending')
+      .filter((r) => r.toUserId === currentUser?.id && r.status === 'pending' && !blocked.has(r.fromUserId))
       .map((r) => ({ ...r, user: users.find((u) => u.id === r.fromUserId)! }))
       .filter((r) => r.user);
-  }, [connectionRequests, currentUser, users]);
+  }, [connectionRequests, currentUser, users, blockedUserIds]);
 
   const suggested = useMemo(() => {
     const connIds = new Set(myConnectionIds);
     const pendingIds = new Set(connectionRequests.filter((r) => r.status === 'pending').map((r) => r.fromUserId === currentUser?.id ? r.toUserId : r.fromUserId));
+    const blocked = new Set(blockedUserIds);
     return users
-      .filter((u) => u.id !== currentUser?.id && !connIds.has(u.id) && !pendingIds.has(u.id))
+      .filter((u) => u.id !== currentUser?.id && !connIds.has(u.id) && !pendingIds.has(u.id) && !blocked.has(u.id))
       .map((u) => {
-        const sharedInterests = (currentUser?.interests || []).filter((i) => (u.interests || []).includes(i));
+        const sharedInterests = (currentUser?.interests || []).filter((i) => (u.interests || []).some((x) => sameInterest(x, i)));
         return { ...u, sharedInterests };
       })
       .filter((u) => u.sharedInterests.length > 0)
       .sort((a, b) => b.sharedInterests.length - a.sharedInterests.length);
-  }, [users, myConnectionIds, connectionRequests, currentUser]);
+  }, [users, myConnectionIds, connectionRequests, currentUser, blockedUserIds]);
 
   // ─── Handlers ────────────────────────────────────────────
   const handleMessage = (userId: string) => {
@@ -162,6 +193,14 @@ export default function ConnectionsPageContent() {
       return;
     }
     const peer = users.find((u) => u.id === userId);
+    const gate = canViewerMessageUser(currentUser, peer, { blockedUserIds, groups });
+    if (!gate.allowed) {
+      toast.message(
+        t('Δεν μπορείτε να στείλετε μήνυμα', 'Cannot send message'),
+        { description: t(gate.reasonEl, gate.reasonEn) },
+      );
+      return;
+    }
     const convId = ensureDirectConversation({
       selfUserId: currentUser.id,
       peerUserId: userId,
@@ -171,42 +210,115 @@ export default function ConnectionsPageContent() {
     if (!convId) {
       toast.message(
         t('Οι ιδιωτικές συνομιλίες είναι απενεργοποιημένες', 'Direct chats are disabled'),
-        { description: t('Ενεργοποιήστε τις στις ρυθμίσεις απορρήτου chat.', 'Enable them in chat privacy settings.') },
+        {
+          description: t('Ενεργοποιήστε τις στις ρυθμίσεις απορρήτου chat.', 'Enable them in chat privacy settings.'),
+          action: {
+            label: t('Ρυθμίσεις chat', 'Chat settings'),
+            onClick: () => navigate('/settings?section=chat'),
+          },
+        },
       );
       return;
     }
     setInboxOpen(false);
-    toast.success(
-      t(`Συνομιλία με ${peer?.name ?? ''}`, `Chat with ${peer?.name ?? ''}`),
-    );
+    toast.success(t(`Συνομιλία με ${peer?.name ?? ''}`, `Chat with ${peer?.name ?? ''}`), {
+      action: { label: t('Άνοιγμα', 'Open'), onClick: () => navigate('/chats') },
+    });
+  };
+
+  const handleBlock = (userId: string, name: string) => {
+    blockUser(userId);
+    toast.success(t(`Αποκλείστηκε ο/η ${name}`, `Blocked ${name}`));
   };
   const handleInviteToEvent = (eventId: string) => {
     const ev = events.find((e) => e.id === eventId);
-    const invitee = users.find((u) => u.id === inviteForUserId);
+    const inviteeId = inviteForUserId;
+    const invitee = users.find((u) => u.id === inviteeId);
+    const myGroup = currentUser
+      ? groups.find((g) => g.eventId === eventId && g.members.includes(currentUser.id))
+      : undefined;
+    const fromName = currentUser?.name.split(' ')[0] || 'Nakamas';
+    if (inviteeId) {
+      addNotification({
+        type: 'reminder',
+        messageGr: `Ο/Η ${fromName} σε προσκάλεσε στην «${ev?.title ?? eventId}» — δες την εκδήλωση.`,
+        messageEn: `${fromName} invited you to “${ev?.title ?? eventId}” — open the event.`,
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        eventId,
+        groupId: myGroup?.id,
+        forUserId: inviteeId,
+      });
+    }
     toast.success(
       t(
         `Πρόσκληση για «${ev?.title ?? eventId}» στάλθηκε${invitee ? ` στον/στην ${invitee.name}` : ''}`,
         `Invite to “${ev?.title ?? eventId}” sent${invitee ? ` to ${invitee.name}` : ''}`,
       ),
+      {
+        action: {
+          label: myGroup ? t('Η βραδιά μας', 'Our night') : t('Εκδήλωση', 'Event'),
+          onClick: () => navigate(myGroup ? `/night/${myGroup.id}` : `/events/${eventId}`),
+        },
+      },
     );
     setInviteForUserId(null);
   };
-  const handleViewProfile = (user: { id: string; isOrganizer: boolean }) => {
-    if (user.isOrganizer) navigate(`/organizer/${user.id}`);
-    else navigate('/profile');
+  const handleViewProfile = (user: { id: string; isOrganizer?: boolean }) => {
+    // Organizers open their venue page; everyone else their personal profile & wall.
+    navigate(profilePathFor(user));
   };
   const handleRemove = (userId: string, name: string) => {
     removeConnection(userId);
-    addNotification({ message: t(`Αφαιρέθηκε η σύνδεση με ${name}`, `Removed connection with ${name}`), type: 'system', time: 'now' });
+    // Toast + Undo is the recovery path; skip a duplicate system inbox row.
+    toast.success(t(`Αφαιρέθηκε η σύνδεση με ${name}`, `Removed connection with ${name}`), {
+      action: {
+        label: t('Αναίρεση', 'Undo'),
+        onClick: () => {
+          restoreConnection(userId);
+          toast.success(t(`Η σύνδεση με ${name} επανήλθε`, `Connection with ${name} restored`));
+        },
+      },
+    });
   };
   const handleAccept = (requestId: string, name: string) => {
+    // Store already notifies the requester → Wall; toast is enough for the acceptor.
     acceptConnectionRequest(requestId);
-    addNotification({ message: t(`Αποδεχτήκατε τη σύνδεση με ${name}`, `Accepted connection with ${name}`), type: 'system', time: 'now' });
+    toast.success(t(`Αποδεχτήκατε τη σύνδεση με ${name}`, `Accepted connection with ${name}`), {
+      action: {
+        label: t('Τοίχος', 'Wall'),
+        onClick: () => navigate('/wall'),
+      },
+    });
   };
-  const handleDecline = (requestId: string) => declineConnectionRequest(requestId);
+  const handleDecline = (requestId: string, name?: string) => {
+    declineConnectionRequest(requestId);
+    toast.info(
+      name
+        ? t(`Απορρίφθηκε το αίτημα από ${name}`, `Declined request from ${name}`)
+        : t('Το αίτημα απορρίφθηκε', 'Request declined'),
+      {
+        action: {
+          label: t('Αναίρεση', 'Undo'),
+          onClick: () => {
+            restoreConnectionRequest(requestId);
+          },
+        },
+      },
+    );
+  };
   const handleConnect = (userId: string, name: string) => {
-    sendConnectionRequest(userId);
-    addNotification({ message: t(`Στάλθηκε αίτημα σύνδεσης στο ${name}`, `Connection request sent to ${name}`), type: 'system', time: 'now' });
+    const outcome = sendConnectionRequest(userId);
+    const feedback = connectionOutcomeText(outcome, name, t);
+    // Live toast confirms the action; inbox stays for cross-user loops only.
+    if (outcome === 'accepted') {
+      toast.success(feedback.text, {
+        action: { label: t('Τοίχος', 'Wall'), onClick: () => navigate('/wall') },
+      });
+    } else {
+      toast[feedback.tone](feedback.text);
+    }
   };
 
   // ─── Render ──────────────────────────────────────────────
@@ -220,10 +332,10 @@ export default function ConnectionsPageContent() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={`text-sm md:text-base font-bold ${a.head}`}>{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
-          <p className={`font-medium text-xs md:text-sm mt-1 ${subColor}`}>{t('Άτομα με τα οποία συνδεθήκατε μέσα από εκδηλώσεις.', 'People you\'ve connected with through events.')}</p>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
+          <p className={cn(APP_TYPO.pageSub, 'mt-1', subColor)}>{t('Άτομα με τα οποία συνδεθήκατε μέσα από εκδηλώσεις.', 'People you\'ve connected with through events.')}</p>
         </div>
-        <Button variant="primary" size="sm" className="flex items-center gap-2" onClick={() => navigate('/nearby')}>
+        <Button variant="primary" size="sm" className="flex items-center gap-2" onClick={() => navigate('/buddy-seek')}>
           <Users className="w-4 h-4" /> {t('Βρες Nakamas', 'Find Nakamas')}
         </Button>
       </div>
@@ -234,31 +346,31 @@ export default function ConnectionsPageContent() {
           type="button"
           role="tab"
           aria-selected={activeTab === 'all'}
-          className={cn('px-3.5 py-2 min-h-10 rounded-full text-sm font-bold transition-colors flex items-center gap-1.5', activeTab === 'all' ? a.chipActive : a.chipInactive)}
+          className={cn('px-3 py-1.5 min-h-8 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5', activeTab === 'all' ? a.chipActive : a.chipInactive)}
           onClick={() => setActiveTab('all')}
         >
           {t('Συνδέσεις', 'Connections')}
-          <span className="font-semibold">({connections.length})</span>
+          <span className="font-semibold text-2xs">({connections.length})</span>
         </button>
         <button
           type="button"
           role="tab"
           aria-selected={activeTab === 'requests'}
-          className={cn('px-3.5 py-2 min-h-10 rounded-full text-sm font-bold transition-colors flex items-center gap-1.5', activeTab === 'requests' ? a.chipActive : a.chipInactive)}
+          className={cn('px-3 py-1.5 min-h-8 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5', activeTab === 'requests' ? a.chipActive : a.chipInactive)}
           onClick={() => setActiveTab('requests')}
         >
           {t('Αιτήματα', 'Requests')}
-          {pendingRequests.length > 0 && <span className={`${a.requestBadge} text-white text-xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{pendingRequests.length}</span>}
+          {pendingRequests.length > 0 && <span className={`${a.requestBadge} text-white text-2xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{pendingRequests.length}</span>}
         </button>
         <button
           type="button"
           role="tab"
           aria-selected={activeTab === 'suggested'}
-          className={cn('px-3.5 py-2 min-h-10 rounded-full text-sm font-bold transition-colors flex items-center gap-1.5', activeTab === 'suggested' ? a.chipActive : a.chipInactive)}
+          className={cn('px-3 py-1.5 min-h-8 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5', activeTab === 'suggested' ? a.chipActive : a.chipInactive)}
           onClick={() => setActiveTab('suggested')}
         >
           <UserPlus className="w-3.5 h-3.5" aria-hidden /> {t('Προτάσεις', 'Suggested')}
-          {suggested.length > 0 && <span className={`${a.isDark ? 'bg-gray-600' : 'bg-gray-400'} text-white text-xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{suggested.length}</span>}
+          {suggested.length > 0 && <span className={`${a.isDark ? 'bg-gray-600' : 'bg-gray-400'} text-white text-2xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{suggested.length}</span>}
         </button>
       </div>
 
@@ -270,7 +382,7 @@ export default function ConnectionsPageContent() {
             <input
               type="text" value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder={t('Αναζήτηση συνδέσεων...', 'Search connections...')}
-              className={`w-full pl-9 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 ${inputClasses}`}
+              className={`search-control w-full h-9 pl-9 pr-3 border rounded-xl focus:outline-none focus:ring-2 ${inputClasses}`}
             />
           </div>
           <div className="relative">
@@ -280,7 +392,7 @@ export default function ConnectionsPageContent() {
             {filterOpen && (
               <div className={`absolute right-0 top-full mt-1 w-56 rounded-lg border shadow-soft-lg z-fab p-3 space-y-3 ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
                 <div>
-                  <label className={`text-xs font-bold uppercase tracking-wider ${a.muted}`}>{tu('Ρόλος', 'Role')}</label>
+                  <label className={`text-xs font-bold tracking-wider ${a.muted}`}>{tu('Ρόλος', 'Role')}</label>
                   <div className="flex gap-1 mt-1">
                     {(['all', 'organizer', 'user'] as const).map((r) => (
                       <button key={r} onClick={() => setRoleFilter(r)} className={`px-2 py-1 rounded-lg text-xs font-bold transition-colors ${roleFilter === r ? a.acceptBtn : (a.isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}`}>
@@ -290,7 +402,7 @@ export default function ConnectionsPageContent() {
                   </div>
                 </div>
                 <div>
-                  <label className={`text-xs font-bold uppercase tracking-wider ${a.muted}`}>{tu('Ταξινόμηση', 'Sort')}</label>
+                  <label className={`text-xs font-bold tracking-wider ${a.muted}`}>{tu('Ταξινόμηση', 'Sort')}</label>
                   <div className="flex gap-1 mt-1">
                     {(['name', 'mutual', 'trust'] as const).map((s) => (
                       <button key={s} onClick={() => setSortBy(s)} className={`px-2 py-1 rounded-lg text-xs font-bold transition-colors ${sortBy === s ? a.acceptBtn : (a.isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}`}>
@@ -307,49 +419,55 @@ export default function ConnectionsPageContent() {
 
       {/* ═══ CONNECTIONS TAB ═══ */}
       {activeTab === 'all' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredConnections.length === 0 && (
             <div className="col-span-full">
               <EmptyState
                 icon={Users}
+                character={search ? undefined : 'crew'}
                 title={search ? t('Δεν βρέθηκαν αποτελέσματα', 'No results found') : t('Δεν έχετε συνδέσεις ακόμα', 'No connections yet')}
                 description={t('Βρείτε Nakamas στις εκδηλώσεις!', 'Find Nakamas at events!')}
                 actionLabel={search ? t('Καθαρισμός', 'Clear') : t('Εξερεύνηση', 'Explore')}
                 onAction={search ? () => setSearch('') : () => navigate('/')}
+                secondaryLabel={search ? undefined : t('Βρες Nakamas', 'Find Nakamas')}
+                onSecondary={search ? undefined : () => navigate('/buddy-seek')}
               />
             </div>
           )}
           {filteredConnections.map((conn) => (
-            <Card key={conn.id} className={`p-4 flex items-center justify-between ${a.cardHover} transition-colors cursor-pointer group`} onClick={() => handleViewProfile(conn)}>
+            <Card key={conn.id} className={`p-4 flex items-center justify-between ${a.cardHover} transition-colors cursor-pointer group`} onClick={() => handleViewProfile(conn)} containsControls>
               <div className="flex items-center gap-3 min-w-0">
                 <div className="relative shrink-0">
-                  <img referrerPolicy="no-referrer" src={conn.photoUrl || `https://i.pravatar.cc/150?u=${conn.id}`} alt={conn.name} className={`w-12 h-12 rounded-full object-cover ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
+                  <PersonAvatar user={conn} className="h-12 w-12 text-xs" />
                   <TrustBadge tier={conn.trustTier} isDark={a.isDark} />
                 </div>
                 <div className="min-w-0">
-                  <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>{conn.name}</h3>
-                  <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.muted}`}>
-                    <MapPin className="w-3 h-3 shrink-0" /> {conn.city}
+                  <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>
+                    <button type="button" className="max-w-full truncate text-left rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current" onClick={(e) => { e.stopPropagation(); handleViewProfile(conn); }}>
+                      {conn.name}
+                    </button>
+                  </h3>
+                  <p className={`card-meta flex items-center gap-1 mt-0.5 ${a.muted}`}>
+                    <MapPin className="w-3 h-3 shrink-0" aria-hidden /> {conn.city}
+                    <span aria-hidden className="opacity-40">·</span>
+                    <span className="capitalize">{conn.role}</span>
+                    <span aria-hidden className="opacity-40">·</span>
+                    <span>{conn.mutual} {t('Κοινοί', 'mutuals')}</span>
                   </p>
-                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    <Badge variant="neutral" className="text-xs px-1.5 py-0">{conn.role}</Badge>
-                    <span className={`text-xs font-medium ${a.muted}`}>{conn.mutual} {t('Κοινοί', 'mutuals')}</span>
-                  </div>
                   {conn.sharedInterests.length > 0 && (
-                    <div className="flex gap-1 mt-2 flex-wrap">
-                      {conn.sharedInterests.slice(0, 3).map((interest) => (
-                        <span key={interest} className={`text-xs px-1.5 py-0.5 rounded-full border font-medium ${a.tagBg}`}>{interest}</span>
-                      ))}
-                      {conn.sharedInterests.length > 3 && <span className={`text-xs font-medium ${a.muted}`}>+{conn.sharedInterests.length - 3}</span>}
-                    </div>
+                    <CardInterestLine
+                      items={conn.sharedInterests}
+                      max={3}
+                      className={`mt-1.5 ${a.muted}`}
+                    />
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-1 shrink-0" {...stopBubbling}>
                 <button
                   type="button"
                   onClick={() => handleMessage(conn.id)}
-                  className={`p-2 min-h-10 min-w-10 flex items-center justify-center rounded-full transition-colors ${a.msgIcon}`}
+                  className={`p-2 min-h-8 min-w-8 flex items-center justify-center rounded-full transition-colors ${a.msgIcon}`}
                   title={t('Ιδιωτικό μήνυμα', 'Direct message')}
                   aria-label={t('Ιδιωτικό μήνυμα', 'Direct message')}
                 >
@@ -360,6 +478,7 @@ export default function ConnectionsPageContent() {
                   onViewProfile={() => handleViewProfile(conn)}
                   onRemove={() => handleRemove(conn.id, conn.name)}
                   onReport={() => navigate('/report')}
+                  onBlock={() => handleBlock(conn.id, conn.name)}
                   onInvite={() => setInviteForUserId(conn.id)}
                 />
               </div>
@@ -375,15 +494,26 @@ export default function ConnectionsPageContent() {
       >
         {inviteableEvents.length === 0 ? (
           <div className="space-y-3">
-            <p className={`text-sm ${a.muted}`}>
+            <p className={`card-copy ${a.muted}`}>
               {t(
                 'Δεν έχετε διαθέσιμες εκδηλώσεις. Δημιουργήστε μία ή μπείτε σε ομάδα.',
                 'No events available. Create one or join a group first.',
               )}
             </p>
-            <Button onClick={() => { setInviteForUserId(null); navigate('/create'); }}>
-              {t('Δημιουργία εκδήλωσης', 'Create event')}
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={() => { setInviteForUserId(null); navigate('/create'); }}>
+                {t('Δημιουργία εκδήλωσης', 'Create event')}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setInviteForUserId(null);
+                  navigate('/buddy-seek');
+                }}
+              >
+                {t('Βρες Nakamas', 'Find Nakamas')}
+              </Button>
+            </div>
           </div>
         ) : (
           <ul className="space-y-2 max-h-72 overflow-y-auto">
@@ -393,7 +523,7 @@ export default function ConnectionsPageContent() {
                   type="button"
                   onClick={() => handleInviteToEvent(ev.id)}
                   className={cn(
-                    'w-full text-left px-3 py-2.5 min-h-10 rounded-xl border text-sm font-semibold transition-colors',
+                    'w-full text-left px-3 py-1.5 min-h-8 rounded-xl border text-xs font-semibold transition-colors',
                     a.isDark ? 'border-gray-700 hover:bg-gray-800 text-gray-100' : 'border-gray-200 hover:bg-gray-50 text-gray-900',
                   )}
                 >
@@ -419,20 +549,24 @@ export default function ConnectionsPageContent() {
                 'Θα ειδοποιηθείτε όταν κάποιος θέλει να συνδεθεί.',
                 "You'll be notified when someone wants to connect.",
               )}
+              actionLabel={t('Βρες Nakamas', 'Find Nakamas')}
+              onAction={() => navigate('/buddy-seek')}
             />
           )}
           {pendingRequests.map((req) => (
             <Card key={req.id} className="p-4">
               <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3 min-w-0 cursor-pointer" onClick={() => handleViewProfile(req.user)}>
-                  <img referrerPolicy="no-referrer" src={req.user.photoUrl || `https://i.pravatar.cc/150?u=${req.user.id}`} alt={req.user.name} className={`w-12 h-12 rounded-full object-cover shrink-0 ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
+                <div className="flex items-center gap-3 min-w-0 cursor-pointer rounded-lg" {...pressable<HTMLDivElement>(() => handleViewProfile(req.user))}>
+                  <PersonAvatar user={req.user} className="h-12 w-12 text-xs" />
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className={`font-bold text-sm ${a.head}`}>{req.user.name}</h3>
-                      {req.user.isOrganizer && <Badge variant="neutral" className="text-xs px-1.5 py-0">{t('Διοργανωτής', 'Organizer')}</Badge>}
+                      {req.user.isOrganizer && (
+                        <span className={`card-meta font-medium ${a.muted}`}>{t('Διοργανωτής', 'Organizer')}</span>
+                      )}
                     </div>
-                    <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.muted}`}>
-                      <MapPin className="w-3 h-3" /> {req.user.city}
+                    <p className={`card-meta flex items-center gap-1 mt-0.5 ${a.muted}`}>
+                      <MapPin className="w-3 h-3 shrink-0" aria-hidden /> {req.user.city}
                     </p>
                     {req.message && <p className={`text-xs mt-1.5 italic ${a.isDark ? 'text-gray-300' : 'text-gray-600'}`}>"{req.message}"</p>}
                   </div>
@@ -441,15 +575,15 @@ export default function ConnectionsPageContent() {
                   <button
                     type="button"
                     onClick={() => handleAccept(req.id, req.user.name)}
-                    className={`flex items-center gap-1 px-3 py-2 min-h-10 rounded-lg text-xs font-bold transition-colors ${a.acceptBtn}`}
+                    className={`flex items-center gap-1 px-3 py-1.5 min-h-8 rounded-lg text-xs font-bold transition-colors ${a.acceptBtn}`}
                   >
                     <Check className="w-3.5 h-3.5" aria-hidden /> {t('Αποδοχή', 'Accept')}
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleDecline(req.id)}
+                    onClick={() => handleDecline(req.id, req.user.name)}
                     aria-label={t('Απόρριψη αιτήματος', 'Decline request')}
-                    className={`p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}
+                    className={`p-2 min-h-8 min-w-8 flex items-center justify-center rounded-lg transition-colors ${a.isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-400 hover:bg-gray-100'}`}
                   >
                     <X className="w-4 h-4" aria-hidden />
                   </button>
@@ -470,25 +604,34 @@ export default function ConnectionsPageContent() {
               description={t('Συμμετέχετε σε εκδηλώσεις για να βρείτε Nakamas!', 'Join events to find Nakamas!')}
               actionLabel={t('Εξερεύνηση', 'Explore')}
               onAction={() => navigate('/')}
+              secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+              onSecondary={() => navigate('/buddy-seek')}
             />
           )}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {suggested.map((user) => (
-              <Card key={user.id} className={`p-4 ${a.cardHover} transition-colors cursor-pointer group`} onClick={() => handleViewProfile(user)}>
+              <Card key={user.id} className={`p-4 ${a.cardHover} transition-colors cursor-pointer group`} onClick={() => handleViewProfile(user)} containsControls>
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <img referrerPolicy="no-referrer" src={user.photoUrl || `https://i.pravatar.cc/150?u=${user.id}`} alt={user.name} className={`w-12 h-12 rounded-full object-cover shrink-0 ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} />
+                    <PersonAvatar user={user} className="h-12 w-12 text-xs" />
                     <div className="min-w-0">
-                      <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>{user.name}</h3>
-                      <p className={`text-xs flex items-center gap-1 mt-0.5 ${a.muted}`}>
-                        <MapPin className="w-3 h-3" /> {user.city}
-                        {user.isOrganizer && <> · <Badge variant="neutral" className="text-xs px-1.5 py-0">{t('Διοργανωτής', 'Organizer')}</Badge></>}
+                      <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>
+                        <button type="button" className="max-w-full truncate text-left rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current" onClick={(e) => { e.stopPropagation(); handleViewProfile(user); }}>
+                          {user.name}
+                        </button>
+                      </h3>
+                      <p className={`card-meta flex items-center gap-1 mt-0.5 ${a.muted}`}>
+                        <MapPin className="w-3 h-3 shrink-0" aria-hidden /> {user.city}
+                        {user.isOrganizer && (
+                          <>
+                            <span aria-hidden className="opacity-40">·</span>
+                            <span>{t('Διοργανωτής', 'Organizer')}</span>
+                          </>
+                        )}
                       </p>
-                      <div className="flex gap-1 mt-2 flex-wrap">
-                        {user.sharedInterests.slice(0, 3).map((interest) => (
-                          <span key={interest} className={`text-xs px-1.5 py-0.5 rounded-full border font-medium ${a.tagBg}`}>{interest}</span>
-                        ))}
-                      </div>
+                      {user.sharedInterests.length > 0 && (
+                        <CardInterestLine items={user.sharedInterests} max={3} className={`mt-1.5 ${a.muted}`} />
+                      )}
                     </div>
                   </div>
                   <button

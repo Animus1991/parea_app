@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { computeAchievements, dailyChallengeMet, weeklyActivity } from './achievements';
 import type { Event, Group, User } from '../types';
+import { ACHIEVEMENT_MINI, NAKAMAS_MINI_IDS } from '../components/illustrations/NakamasMini';
 
 const user = {
   id: 'u1', name: 'A', ageRange: '25-34', city: 'Athens', interests: [], trustTier: '2_confirmed', reliabilityScore: 96,
@@ -24,6 +25,9 @@ describe('live achievements', () => {
     expect(by.explorer.progress).toBe(2);
     expect(by.trailblazer.unlocked).toBe(true);
     expect(by.connector.progress).toBe(1);
+    for (const a of list) {
+      expect(NAKAMAS_MINI_IDS).toContain(ACHIEVEMENT_MINI[a.id]);
+    }
   });
 
   it('computes the current week and day streak', () => {

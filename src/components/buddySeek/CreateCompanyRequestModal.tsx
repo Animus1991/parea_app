@@ -169,7 +169,7 @@ export function CreateCompanyRequestModal({
         className={cn('relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl border shadow-soft-lg max-h-[92vh] flex flex-col outline-none', shell)}
       >
         <div className="p-4 border-b border-inherit shrink-0">
-          <h2 className="text-base font-bold">
+          <h2 className="text-sm md:text-base font-bold">
             {isEdit
               ? t('Επεξεργασία αιτήματος', 'Edit request')
               : t('Ψάχνετε Nakamas;', 'Looking for Nakamas?')}
@@ -274,7 +274,7 @@ export function CreateCompanyRequestModal({
                 <input type="checkbox" checked={flexibleDates} onChange={(e) => setFlexibleDates(e.target.checked)} />
                 {t('Ευέλικτες ημερομηνίες', 'Flexible dates')}
               </label>
-              <select
+              <select aria-label={t("Σημείο συνάντησης", "Meeting preference")}
                 value={meetingPreference}
                 onChange={(e) => setMeetingPreference(e.target.value as MeetingPreference)}
                 className="w-full rounded-xl border border-border px-3 py-2 text-sm bg-surface-raised"
@@ -325,7 +325,7 @@ export function CreateCompanyRequestModal({
             <button
               type="button"
               onClick={() => setStep((s) => s - 1)}
-              className="min-h-11 px-4 rounded-2xl border border-border text-sm font-bold flex items-center gap-1"
+              className="min-h-8 px-4 rounded-2xl border border-border text-xs font-bold flex items-center gap-1"
             >
               <ChevronLeft className="w-4 h-4" aria-hidden /> {t('Πίσω', 'Back')}
             </button>
@@ -335,20 +335,20 @@ export function CreateCompanyRequestModal({
               type="button"
               data-autofocus
               onClick={() => setStep((s) => s + 1)}
-              className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold flex items-center justify-center gap-1"
+              className="flex-1 min-h-8 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold flex items-center justify-center gap-1"
             >
               {t('Συνέχεια', 'Continue')} <ChevronRight className="w-4 h-4" aria-hidden />
             </button>
           ) : (
             <>
-              <button type="button" onClick={saveAsDraft} className="min-h-11 px-3 rounded-2xl border border-border text-xs font-bold">
+              <button type="button" onClick={saveAsDraft} className="min-h-8 px-3 rounded-2xl border border-border text-xs font-bold">
                 {t('Πρόχειρο', 'Draft')}
               </button>
               <button
                 type="button"
                 data-autofocus
                 onClick={publishNow}
-                className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-sm font-bold"
+                className="flex-1 min-h-8 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold"
               >
                 {isEdit
                   ? t('Αποθήκευση αλλαγών', 'Save changes')

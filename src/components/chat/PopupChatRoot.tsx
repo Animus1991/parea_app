@@ -1,10 +1,16 @@
-import { useEffect } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
 import { PopupChatLauncher } from './PopupChatLauncher';
-import { ChatInboxPanel } from './ChatInboxPanel';
-import { ChatWindow } from './ChatWindow';
+
+const ChatInboxPanel = lazy(() =>
+  import('./ChatInboxPanel').then((m) => ({ default: m.ChatInboxPanel })),
+);
+const ChatWindow = lazy(() =>
+  import('./ChatWindow').then((m) => ({ default: m.ChatWindow })),
+);
 
 export function PopupChatRoot() {
   const { t } = useLanguage();
@@ -15,6 +21,8 @@ export function PopupChatRoot() {
   const minimizedIds = useChatStore((s) => s.minimizedIds);
   const openConversation = useChatStore((s) => s.openConversation);
   const conversations = useChatStore((s) => s.conversations);
+  // On a group chat page the composer sits at the bottom: float above it.
+  const onChatPage = useLocation().pathname.startsWith('/chat/');
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -35,7 +43,7 @@ export function PopupChatRoot() {
   return (
     <>
       {minimized.length > 0 && (
-        <div className="fixed z-chat flex flex-col items-end gap-2 right-4 bottom-fab-zone md:right-6 md:bottom-20 copilot-shift">
+        <div className={`fixed z-chat flex flex-col items-end gap-2 right-4 bottom-[calc(var(--safe-bottom)+3.5rem+env(safe-area-inset-bottom,0px))] md:right-6 copilot-shift ${onChatPage ? 'md:bottom-44' : 'md:bottom-20'}`}>
           {minimized.map((c) => (
             <button
               key={c.id}
@@ -56,7 +64,8 @@ export function PopupChatRoot() {
           ))}
         </div>
       )}
-      <PopupChatLauncher onClick={toggleInbox} />
+      {/* Phones reach chats from the shared dock (layout/MobileDock). */}
+      <PopupChatLauncher onClick={toggleInbox} className={onChatPage ? 'hidden md:flex md:bottom-28' : 'hidden md:flex'} />
       {inboxOpen && (
         <>
           <button
@@ -65,12 +74,18 @@ export function PopupChatRoot() {
             aria-label={t('Κλείσιμο εισερχομένων', 'Close inbox overlay')}
             onClick={() => setInboxOpen(false)}
           />
-          <ChatInboxPanel onClose={() => setInboxOpen(false)} />
+          <Suspense fallback={null}>
+            <ChatInboxPanel onClose={() => setInboxOpen(false)} />
+          </Suspense>
         </>
       )}
-      {windows.map((c, i) => (
-        <ChatWindow key={c.id} conversation={c} stackIndex={i} />
-      ))}
+      {windows.length > 0 && (
+        <Suspense fallback={null}>
+          {windows.map((c, i) => (
+            <ChatWindow key={c.id} conversation={c} stackIndex={i} />
+          ))}
+        </Suspense>
+      )}
     </>
   );
 }

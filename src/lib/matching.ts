@@ -1,4 +1,5 @@
 import type { Event, Group, User } from '../types';
+import { sameInterest } from './interests';
 
 export function computeMatchScore(user: User, event: Event): number {
   const tags = event.tags ?? [];
@@ -6,11 +7,11 @@ export function computeMatchScore(user: User, event: Event): number {
   if (tags.length === 0) return 55;
 
   const overlap = tags.filter((t) =>
-    interests.some((i) => i.toLowerCase() === t.toLowerCase()),
+    interests.some((i) => sameInterest(i, t)),
   ).length;
   const tagScore = Math.round((overlap / tags.length) * 55);
-  const categoryBonus = interests.some((i) =>
-    event.category.toLowerCase().includes(i.toLowerCase()),
+  const categoryBonus = interests.some(
+    (i) => sameInterest(i, event.category) || event.category.toLowerCase().includes(i.toLowerCase()),
   )
     ? 15
     : 0;
@@ -45,7 +46,7 @@ export function getMatchingPreview(
     const u = users.find((x) => x.id === uid);
     if (!u) return false;
     return (u.interests ?? []).some((i) =>
-      (event.tags ?? []).some((t) => t.toLowerCase() === i.toLowerCase()),
+      (event.tags ?? []).some((t) => sameInterest(t, i)),
     );
   }).length;
 

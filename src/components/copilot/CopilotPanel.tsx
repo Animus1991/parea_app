@@ -101,7 +101,7 @@ function CopilotConversation({ onClose, onNavigate, headingId }: { onClose: () =
           <Bot className="h-4 w-4" />
         </span>
         <div className="min-w-0 flex-1">
-          <h2 id={headingId} className="text-sm font-bold leading-tight text-ink">
+          <h2 id={headingId} className="text-sm md:text-base font-bold leading-tight text-ink">
             Nakamas AI
           </h2>
           <EngineBadge />
@@ -133,7 +133,7 @@ function CopilotConversation({ onClose, onNavigate, headingId }: { onClose: () =
         {messages.length === 0 ? (
           <div className="space-y-4 pt-2">
             <div>
-              <p className="text-lg font-bold text-ink">
+              <p className="text-sm md:text-base font-bold text-ink">
                 {userName ? t(`Γεια σου, ${userName}!`, `Hi ${userName}!`) : t('Γεια σου!', 'Hi there!')}
               </p>
               <p className="mt-1 text-sm leading-relaxed text-ink-muted">
@@ -268,7 +268,6 @@ export function CopilotPanel() {
   const headingId = useId();
   const close = useCallback(() => setOpen(false), [setOpen]);
   const asideRef = useRef<HTMLElement>(null);
-  const demoMode = useStore((s) => s.demoMode);
 
   useEffect(() => {
     if (!open || !isDesktop) return;
@@ -304,7 +303,6 @@ export function CopilotPanel() {
       aria-labelledby={headingId}
       className={cn(
         'hidden lg:flex h-full w-[380px] xl:w-[400px] shrink-0 flex-col border-l border-border bg-surface-raised animate-in slide-in-from-right-4 fade-in duration-200 motion-reduce:animate-none',
-        demoMode && 'pt-5',
       )}
     >
       <CopilotConversation onClose={close} onNavigate={() => undefined} headingId={headingId} />

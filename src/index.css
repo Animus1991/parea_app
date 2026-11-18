@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Outfit:wght@700;800;900&family=Poppins:wght@600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -66,13 +66,13 @@
      remaps these via [data-theme] rules right after @theme,
      so utilities (text-ink, bg-surface, border-border, …)
      adapt at runtime with zero markup changes. */
-  --color-ink: #111827;
+  --color-ink: #171614;
   --color-ink-muted: rgb(71 80 94);
   --color-ink-faint: rgb(82 91 105);
-  --color-surface: #F3F4F6;
-  --color-surface-raised: #ffffff;
-  --color-border: #E5E7EB;
-  --color-border-strong: #D1D5DB;
+  --color-surface: #F7F6F3;
+  --color-surface-raised: #FFFEFC;
+  --color-border: #E7E5E0;
+  --color-border-strong: #D6D3CC;
   /* Brand teal darkened for WCAG AA on white text (≥4.5:1; legacy #0E8B8D was ~4.12) */
   --color-brand: #0b6d6f;
   --color-brand-strong: #0a6365;
@@ -92,8 +92,13 @@
   /* Layout chrome metrics — compact shell */
   --header-h: 52px;
   --bottom-nav-h: 56px;
-  /* Ζώνη πάνω από το BottomNav + προεξοχή του center FAB + gap */
-  --safe-bottom: calc(var(--bottom-nav-h) + 28px);
+  /* Rendered height of <BottomNav> (padding + raised create button + label). */
+  --bottom-nav-total: 75px;
+  /* Reserved phone dock (Find Nakamas / Chats) sitting on top of the tab bar.
+     min-h-11 plus the pill border — keep in sync with MobileDock. */
+  --mobile-dock-h: 48px;
+  /* BottomNav + fab-zone gap + dock + air so the last card sits fully above the pill. */
+  --safe-bottom: calc(var(--bottom-nav-total) + 6px + var(--mobile-dock-h) + 16px);
 }
 
 @utility h-header {
@@ -109,7 +114,25 @@
 }
 
 @utility bottom-fab-zone {
-  bottom: calc(var(--safe-bottom) + env(safe-area-inset-bottom, 0px));
+  bottom: calc(var(--bottom-nav-total) + 6px + env(safe-area-inset-bottom, 0px));
+}
+
+.hero-search-field {
+  background-color: #ffffff;
+  color: #171614;
+  border-color: rgba(255, 255, 255, 0.85);
+  caret-color: #171614;
+}
+.hero-search-field::placeholder {
+  color: #4b5563;
+  opacity: 1;
+}
+
+/* Search suggestions portal above the dock; hide the dock so the list is fully tappable. */
+body[data-search-open] .mobile-dock {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
 }
 
 /* ── Per-theme semantic token remapping ── */
@@ -264,10 +287,33 @@ body {
   font-family: var(--font-sans);
   font-size: var(--text-base);
   line-height: var(--text-base--line-height);
-  background-color: #fcfcfb;
-  color: #1a1a1a;
+  font-optical-sizing: auto;
+  font-feature-settings: "ss01" 1, "cv11" 1, "calt" 1;
+  letter-spacing: -0.011em;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-brand) 22%, transparent);
+  color: var(--color-ink);
+}
+
+/* Lucide icons: hairline stroke reads as chic without shrinking the hit target. */
+svg.lucide {
+  stroke-width: 1.65px;
+}
+svg.lucide.icon-emphasis {
+  stroke-width: 2px;
+}
+
+@layer base {
+  button {
+    font-size: var(--text-xs);
+  }
 }
 
 h1, h2 { letter-spacing: -0.02em; text-wrap: balance; }
@@ -279,14 +325,40 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 /* Density wins over the old iOS 16px zoom floor — inputs/search/textarea
    follow the compact type scale. Prefer .field-control / .search-control. */
 
-/* Filter / chip-style native selects — match mood chips («Χαλαρά» = text-xs) */
+/* Unified filter / chip height — match category «Όλα» (text-xs + py-1.5 ≈ 1.75rem) */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.75rem;
+  box-sizing: border-box;
+}
+
+/* Mood chips with icons («Χαλαρά», «Δράση»…) — slightly taller for comfort */
+.filter-chip--mood {
+  height: 2.25rem;
+}
+
+/* Filter / chip-style native selects — same height as «Όλα» */
 .filter-select {
   font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);
-  font-weight: 700;
-  padding: 0.25rem 0.625rem;
+  font-weight: 600;
+  padding: 0 0.75rem;
+  height: 1.75rem;
   min-height: 1.75rem;
-  border-radius: 0.625rem;
+  border-radius: 9999px;
+  box-sizing: border-box;
+}
+
+/* Equal-width home meta filters in a 2-column grid («Όλοι οι Τύποι» … «Συνάφεια») */
+.filter-control-equal {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
 }
 
 /* Compact text fields (onboarding, forms, settings) — +21% vs --text-xs (stacked +10%×2) */
@@ -303,14 +375,26 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   font-weight: 500;
 }
 
-/* Greeting titles e.g. «Καλό απόγευμα, Alex» — +10% vs base/lg */
+/* Greeting titles e.g. «Καλό βράδυ, Alex» — primary hero anchor (14/15px) */
 .hero-greeting {
-  font-size: calc(var(--text-base) * 1.1); /* ~14.3px */
-  line-height: var(--text-base--line-height);
+  font-size: var(--text-lg); /* 14px */
+  line-height: var(--text-lg--line-height);
 }
 @media (min-width: 768px) {
   .hero-greeting {
-    font-size: calc(var(--text-lg) * 1.1); /* ~15.4px */
+    font-size: var(--text-xl); /* 15px */
+    line-height: var(--text-xl--line-height);
+  }
+}
+
+/* Supporting hero lines directly under greeting — 13px mobile / 14px desktop (< 14/15px greeting) */
+.hero-sublead {
+  font-size: var(--text-base); /* 13px */
+  line-height: var(--text-base--line-height);
+}
+@media (min-width: 768px) {
+  .hero-sublead {
+    font-size: var(--text-lg); /* 14px */
     line-height: var(--text-lg--line-height);
   }
 }
@@ -326,44 +410,66 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   }
 }
 
-/* Card titles (e.g. «Summer Cinema…») — +5% −2% −1% */
+/*
+ * Card type hierarchy (inside every card / nakamas-card):
+ * 1) Never larger than page titles outside cards (text-sm / md:text-base).
+ * 2) Title ≥ subtitle inside the same card.
+ * 3) Central content (body / values / descriptions) ≤ title AND ≤ subtitle.
+ *
+ *   card-heading-lg  → title (max)
+ *   card-heading     → title
+ *   card-copy-sm     → subtitle
+ *   card-copy        → central content (≤ subtitle)
+ *   card-meta*       → schedule / muted meta
+ *   card-copy-micro  → micro hints
+ *
+ * Guarded by e2e/typography.spec.ts (docs/AUDIT_FIXES §9).
+ */
 .card-heading {
-  font-size: calc(var(--text-sm) * 1.05 * 0.98 * 0.99); /* ~12.22px */
+  font-size: calc(var(--text-sm) * 0.92); /* ~11px — under page title */
   line-height: var(--text-sm--line-height);
 }
 .card-heading-lg {
-  font-size: calc(var(--text-base) * 1.05 * 0.98 * 0.99); /* ~13.24px */
-  line-height: var(--text-base--line-height);
+  font-size: var(--text-sm); /* 12px — equals mobile page title, never above */
+  line-height: var(--text-sm--line-height);
 }
-/* Card status badges (e.g. «ΑΝΟΙΧΤΟ ΣΕ ΙΔΕΕΣ», «Αποθηκευμένη») — +5% −2% −1% */
+/* Card status badges (e.g. «ΑΝΟΙΧΤΟ ΣΕ ΙΔΕΕΣ», «Αποθηκευμένη») */
 .card-badge {
   font-size: calc(var(--text-xs) * 1.05 * 0.98 * 0.99); /* ~10.19px */
   line-height: var(--text-xs--line-height);
 }
 
-/* Role line only (e.g. «Ψάχνει Nakamas») — meta scale then −1% */
+/* Role line only (e.g. «Ψάχνει Nakamas») */
 .card-role {
   font-size: calc(var(--text-xs) * 1.1 * 0.98 * 1.01 * 0.99); /* ~10.78px */
   line-height: var(--text-xs--line-height);
 }
 
-/* Schedule / location (date, area) — +10% −2% +1% (unchanged this pass) */
+/* Schedule / location (date, area) */
 .card-meta {
-  font-size: calc(var(--text-xs) * 1.1 * 0.98 * 1.01); /* ~10.89px */
+  font-size: calc(var(--text-xs) * 1.05); /* ~10.5px — ≤ card-heading */
   line-height: var(--text-xs--line-height);
 }
 .card-meta-sm {
-  font-size: calc(var(--text-sm) * 1.1 * 0.98 * 1.01); /* ~13.07px */
-  line-height: var(--text-sm--line-height);
-}
-
-/* Card body name (e.g. «Nikos») and similar — +10% then +1% */
-.card-copy {
-  font-size: calc(var(--text-xs) * 1.1 * 1.01); /* ~11.11px */
+  font-size: calc(var(--text-xs) * 1.05); /* ~10.5px — ≤ card-heading */
   line-height: var(--text-xs--line-height);
 }
+
+/* Subtitle under card titles — ≤ card-heading, ≥ body */
 .card-copy-sm {
-  font-size: calc(var(--text-sm) * 1.1 * 1.01); /* ~13.33px */
+  font-size: var(--text-xs); /* 10px — ≤ card-heading (~11) */
+  line-height: var(--text-xs--line-height);
+}
+
+/* Central card content — ≤ subtitle / field labels (text-xs) */
+.card-copy,
+.card-body {
+  font-size: var(--text-xs); /* equals subtitle max; never above titles */
+  line-height: var(--text-xs--line-height);
+}
+/* Readable card prose/lists under 12px card titles (11.04px, > 10px micro/buttons) */
+.card-prose {
+  font-size: calc(var(--text-sm) * 0.92); /* ~11px */
   line-height: var(--text-sm--line-height);
 }
 .card-copy-micro {
@@ -371,9 +477,18 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   line-height: var(--text-2xs--line-height);
 }
 
-/* Card action buttons (e.g. «Αίτημα συμμετοχής», «Εκδήλωση») — +2% */
+/*
+ * Default inherit for Nakamas cards: undescribed text lands at content size.
+ * Explicit .card-heading* / utilities still win for titles.
+ */
+.nakamas-card {
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+
+/* Card action buttons — same type size as .btn-gradient / Αξιολόγηση */
 .card-cta {
-  font-size: calc(var(--text-xs) * 1.02); /* ~10.2px */
+  font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);
   font-weight: 700;
 }
@@ -386,43 +501,42 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Neutral CTA button — works across all themes */
 .btn-gradient {
-  background: #1f2937;
+  background: #171614;
   color: white;
-  font-weight: 700;
-  font-size: var(--text-sm);
-  border-radius: 0.625rem;
-  padding: 0.35rem 0.9rem;
-  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.18);
-  transition: all 0.2s ease;
+  font-weight: 600;
+  /* Canonical CTA type — source: Plans → Ιστορικό → «Αξιολόγηση» */
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  border-radius: 9999px;
+  padding: 0.35rem 0.95rem;
+  box-shadow: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 .btn-gradient:hover {
-  background: #111827;
-  box-shadow: 0 4px 12px -3px rgba(0, 0, 0, 0.22);
-  transform: translateY(-0.5px);
+  background: #0f0e0c;
 }
 .btn-gradient:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.12);
+  background: #000000;
 }
 
 /* Neutral pill button — works across all themes */
 .btn-pill-active {
-  border: 2px solid #4b5563;
+  border: 1px solid #171614;
   border-radius: 9999px;
-  padding: 0.3rem 0.85rem;
-  font-weight: 700;
-  color: #111827;
-  background: #f3f4f6;
-  transition: all 0.2s ease;
+  padding: 0.25rem 0.7rem;
+  font-weight: 600;
+  color: #fffefc;
+  background: #171614;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 .btn-pill-inactive {
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   border-radius: 9999px;
-  padding: 0.3rem 0.85rem;
-  font-weight: 600;
-  color: #6b7280;
+  padding: 0.25rem 0.7rem;
+  font-weight: 500;
+  color: #4b5563;
   background: transparent;
-  transition: all 0.2s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 .btn-pill-inactive:hover {
   color: #374151;
@@ -432,9 +546,9 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 /* Theme-aware pill tabs (Inbox, Calendar, etc.) */
 [data-theme$="-dark"] .btn-pill-active,
 .theme-ab-dark .btn-pill-active {
-  color: #f9fafb;
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.35);
+  color: #171614;
+  background: #f4f4f2;
+  border-color: #f4f4f2;
 }
 [data-theme$="-dark"] .btn-pill-inactive,
 .theme-ab-dark .btn-pill-inactive {
@@ -447,9 +561,9 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 }
 [data-theme="activebuddies"] .btn-pill-active,
 .theme-ab .btn-pill-active {
-  color: hsl(220 14% 12%);
-  background: hsl(220 14% 96%);
-  border-color: hsl(220 13% 72%);
+  color: #fffefc;
+  background: hsl(220 14% 12%);
+  border-color: hsl(220 14% 12%);
 }
 [data-theme="activebuddies"] .btn-pill-inactive,
 .theme-ab .btn-pill-inactive {
@@ -463,16 +577,15 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Card row style (matching the notification rows in screenshot) */
 .card-row {
-  background: white;
-  border: 1px solid #f1f5f9;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
   border-radius: 1rem;
   padding: 1rem 1.25rem;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: none;
 }
 .card-row:hover {
-  border-color: #a5f3fc;
-  box-shadow: 0 4px 14px -3px rgba(14, 139, 141, 0.08);
+  border-color: var(--color-border-strong);
 }
 
 /* dark: follows the app's data-theme, not the OS/browser color-scheme */
@@ -480,11 +593,11 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Elevation scale — runtime vars so [data-theme] remaps apply (mono themes go neutral) */
 :root {
-  --shadow-soft: 0 2px 8px -2px rgba(14, 139, 141, 0.08), 0 1px 3px -1px rgba(0, 0, 0, 0.04);
-  --shadow-soft-md: 0 4px 14px -3px rgba(14, 139, 141, 0.12), 0 2px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-soft-lg: 0 8px 24px -4px rgba(14, 139, 141, 0.14), 0 4px 10px -3px rgba(0, 0, 0, 0.06);
-  --shadow-soft-up: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
-  --shadow-soft-up-lg: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-soft: 0 1px 2px rgba(23, 22, 20, 0.04), 0 1px 1px rgba(23, 22, 20, 0.03);
+  --shadow-soft-md: 0 2px 8px -2px rgba(23, 22, 20, 0.08), 0 1px 2px rgba(23, 22, 20, 0.04);
+  --shadow-soft-lg: 0 8px 24px -8px rgba(23, 22, 20, 0.12), 0 2px 6px rgba(23, 22, 20, 0.04);
+  --shadow-soft-up: 0 -1px 4px rgba(23, 22, 20, 0.04);
+  --shadow-soft-up-lg: 0 -4px 16px rgba(23, 22, 20, 0.06);
 }
 @utility shadow-soft { box-shadow: var(--shadow-soft); }
 @utility shadow-soft-md { box-shadow: var(--shadow-soft-md); }
@@ -511,14 +624,14 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* Modal overlay */
 .modal-overlay {
-  background: rgba(15, 23, 42, 0.3);
-  backdrop-filter: blur(4px);
+  background: rgba(23, 22, 20, 0.32);
+  backdrop-filter: blur(8px);
 }
 .modal-panel {
-  background: white;
+  background: var(--color-surface-raised);
   border-radius: 1.5rem;
-  box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.15), 0 8px 20px -8px rgba(14, 139, 141, 0.1);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 16px 40px -16px rgba(23, 22, 20, 0.28);
+  border: 1px solid var(--color-border);
 }
 
 .noscrollbar, .scrollbar-hide {
@@ -953,4 +1066,115 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   html[data-copilot-docked] .copilot-shift {
     margin-right: var(--copilot-dock-w, 0px);
   }
+}
+
+
+/* ── Accent contrast remaps (full-app audit 14/11/2026) ──────────────────
+   axe found -600 accent text under 4.5:1 on tinted light surfaces, and the
+   same -600 classes too dark on dark surfaces. Colour only; no size change.
+   Elements that set their own dark: colour keep it. Text on a light chip
+   (bg-*-50/100) or on a white panel kept light in a dark theme gets the
+   darker AA tone, not the light one. */
+[data-theme]:not([data-theme$="-dark"]) .text-amber-600 { color: #bb4d00; }
+[data-theme]:not([data-theme$="-dark"]) .text-orange-600 { color: #ca3500; }
+[data-theme]:not([data-theme$="-dark"]) .text-emerald-600 { color: #007a55; }
+[data-theme]:not([data-theme$="-dark"]) .text-fuchsia-600 { color: #a800b7; }
+[data-theme]:not([data-theme$="-dark"]) .text-blue-600 { color: #1447e6; }
+[data-theme]:not([data-theme$="-dark"]) .text-red-600 { color: #c10007; }
+[data-theme]:not([data-theme$="-dark"]) .text-green-600 { color: #008236; }
+[data-theme] .bg-amber-600.text-white { background-color: #bb4d00; }
+
+[data-theme$="-dark"] .text-indigo-600:not([class*="dark:text-"]):not(.bg-indigo-50):not(.bg-indigo-100):not(.bg-white) { color: #a3b3ff; }
+[data-theme$="-dark"] .text-cyan-600:not([class*="dark:text-"]):not(.bg-cyan-50):not(.bg-cyan-100):not(.bg-white) { color: #53eafd; }
+[data-theme$="-dark"] .text-emerald-600:not([class*="dark:text-"]):not(.bg-emerald-50):not(.bg-emerald-100):not(.bg-white) { color: #5ee9b5; }
+[data-theme$="-dark"] .text-fuchsia-600:not([class*="dark:text-"]):not(.bg-fuchsia-50):not(.bg-fuchsia-100):not(.bg-white) { color: #f4a8ff; }
+[data-theme$="-dark"] .text-amber-600:not([class*="dark:text-"]):not(.bg-amber-50):not(.bg-amber-100):not(.bg-white) { color: #ffd230; }
+[data-theme$="-dark"] .text-orange-600:not([class*="dark:text-"]):not(.bg-orange-50):not(.bg-orange-100):not(.bg-white) { color: #ffb86a; }
+[data-theme$="-dark"] .text-red-600:not([class*="dark:text-"]):not(.bg-red-50):not(.bg-red-100):not(.bg-white) { color: #ffa2a2; }
+[data-theme$="-dark"] .text-blue-600:not([class*="dark:text-"]):not(.bg-blue-50):not(.bg-blue-100):not(.bg-white) { color: #8ec5ff; }
+[data-theme$="-dark"] .text-green-600:not([class*="dark:text-"]):not(.bg-green-50):not(.bg-green-100):not(.bg-white) { color: #7bf1a8; }
+[data-theme$="-dark"] .text-amber-700:not([class*="dark:text-"]):not(.bg-amber-100):not(.bg-white) { color: #ffd230; }
+
+[data-theme$="-dark"] .text-indigo-600.bg-indigo-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-indigo-600.bg-indigo-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-indigo-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-indigo-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-indigo-600:not([class*="dark:text-"]) { color: #4f39f6; }
+[data-theme$="-dark"] .text-cyan-600.bg-cyan-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-cyan-600.bg-cyan-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-cyan-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-cyan-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-cyan-600:not([class*="dark:text-"]) { color: #007595; }
+[data-theme$="-dark"] .text-emerald-600.bg-emerald-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-emerald-600.bg-emerald-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-emerald-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-emerald-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-emerald-600:not([class*="dark:text-"]) { color: #007a55; }
+[data-theme$="-dark"] .text-fuchsia-600.bg-fuchsia-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-fuchsia-600.bg-fuchsia-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-fuchsia-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-fuchsia-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-fuchsia-600:not([class*="dark:text-"]) { color: #a800b7; }
+[data-theme$="-dark"] .text-amber-600.bg-amber-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-amber-600.bg-amber-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-amber-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-amber-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-amber-600:not([class*="dark:text-"]) { color: #bb4d00; }
+[data-theme$="-dark"] .text-orange-600.bg-orange-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-orange-600.bg-orange-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-orange-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-orange-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-orange-600:not([class*="dark:text-"]) { color: #ca3500; }
+[data-theme$="-dark"] .text-red-600.bg-red-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-red-600.bg-red-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-red-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-red-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-red-600:not([class*="dark:text-"]) { color: #c10007; }
+[data-theme$="-dark"] .text-blue-600.bg-blue-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-blue-600.bg-blue-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-blue-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-blue-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-blue-600:not([class*="dark:text-"]) { color: #1447e6; }
+[data-theme$="-dark"] .text-green-600.bg-green-50:not([class*="dark:text-"]),
+[data-theme$="-dark"] .text-green-600.bg-green-100:not([class*="dark:text-"]),
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-green-600:not([class*="dark:text-"]),
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-green-600:not([class*="dark:text-"]),
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-green-600:not([class*="dark:text-"]) { color: #008236; }
+
+/* «Ink» flips to a light colour in dark themes: white text on it would vanish. */
+[data-theme$="-dark"] .bg-ink.text-white { color: var(--color-surface); }
+
+/* White panels kept light inside vibrant/bento/neon dark: theme ink and greys must stay dark there. */
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-ink,
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-ink,
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-ink {
+  color: rgb(17 24 39) !important;
+}
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-600,
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-600,
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-600,
+[data-theme="vibrant-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-700,
+[data-theme="bento-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-700,
+[data-theme="neon-dark"] .bg-white:not([class*="dark:bg-"]) .text-gray-700 {
+  color: rgb(55 65 81) !important;
+}
+
+
+/* Numbered map pin for groups that would overlap (NearbyGroupsPageContent). */
+.nakamas-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #0e7490;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+}
+.nakamas-cluster:focus-visible {
+  outline: 3px solid #0e7490;
+  outline-offset: 2px;
 }

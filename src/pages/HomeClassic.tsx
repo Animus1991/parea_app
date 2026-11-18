@@ -1,59 +1,60 @@
-import { useState, useEffect, useRef } from "react";
-import { CopilotInlinePrompt } from '../components/copilot/CopilotInlinePrompt';
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { EventCard } from "../components/events/EventCard";
 import { EventCardSkeleton } from "../components/common/Skeleton";
-import { Map as MapIcon, CalendarX } from "lucide-react";
-import { useLanguage } from "../lib/i18n";
+import { CalendarX } from "lucide-react";
 import { EmptyState } from "../components/common/EmptyState";
 import { useHomeTheme } from "../hooks/useHomeTheme";
 import { useThemeStyles } from "../hooks/useThemeStyles";
-import { EventStories } from "../components/home/EventStories";
 import { HomeLoggedInHero } from "../components/home/HomeLoggedInHero";
 import { HomePendingFeedbackBanner } from "../components/home/HomePendingFeedbackBanner";
+import { HomeVerifyBanner } from "../components/home/HomeVerifyBanner";
 import { HomeBelowFold } from "../components/home/HomeBelowFold";
-import { HomeBuddySeekStrip } from "../components/buddySeek/HomeBuddySeekStrip";
 import { getTimeGreeting, getMotivation } from "../lib/homeGreeting";
-import { getDefaultHomeSearchSuggestions } from "../lib/homeSearchSuggestions";
 import { HomeSearchDropdown } from "../components/home/HomeSearchDropdown";
-import { useStoryEvents } from "../hooks/useStoryEvents";
-import { useHomeExternalEvents } from "../hooks/useHomeExternalEvents";
-import { useHomeEventFeed } from "../hooks/useHomeEventFeed";
-import { useHomeScrollToFilters } from "../hooks/useHomeScrollToFilters";
 import { useOnboardingWelcome } from "../hooks/useOnboardingWelcome";
 import { HomeOnboardingWelcomeBanner } from "../components/home/HomeOnboardingWelcomeBanner";
+import { HomeContinueStrip } from "../components/home/HomeContinueStrip";
 import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
 import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
+import { HomeFeedToolbar } from "../components/home/HomeFeedToolbar";
+import { HomeDiscoverEnrichment } from "../components/home/HomeDiscoverEnrichment";
+import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
 
 export default function HomeClassic() {
-  const { t } = useLanguage();
   const h = useHomeTheme();
   const tok = useThemeStyles();
   const navigate = useNavigate();
-  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
-  const [feedType, setFeedType] = useState<"For You" | "Discover">("For You");
-  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
-  const [seekingHostOnly, setSeekingHostOnly] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-
-  useHomeExternalEvents();
-  const scrollToFilters = useHomeScrollToFilters();
   const { showWelcome, dismissWelcome } = useOnboardingWelcome();
-  const { storyEvents, seekingHostEvents, isSeekingHost } = useStoryEvents();
-
-  const feed = useHomeEventFeed({
-    feedType,
-    seekingHostOnly,
-    isSeekingHost,
-  });
-
+  const ctrl = useHomePageController();
   const {
+    t,
+    feedType,
+    setFeedType,
+    showSearchSuggestions,
+    setShowSearchSuggestions,
+    filterSheetOpen,
+    setFilterSheetOpen,
+    seekingHostOnly,
+    setSeekingHostOnly,
+    visibleEvents,
+    hasMoreEvents,
+    loadMoreEvents,
+    searchRef,
+    loadMoreRef,
+    scrollToFilters,
+    storyEvents,
+    seekingHostEvents,
+    feed,
+    searchSuggestions,
+    handleClearAll,
     searchQuery,
     handleSearchChange,
-    initialSearch,
+  } = ctrl;
+
+  const {
     activeCategory,
     setActiveCategory,
     tagFilter,
@@ -71,68 +72,20 @@ export default function HomeClassic() {
     sortedEvents,
     hasActiveFilters,
     activeFilterCount,
-    clearAllFilters,
     activeMood,
     handleSelectMood,
     isLoading,
     isError,
+    refetch,
   } = feed;
 
   const currentUser = feed.currentUser;
 
-  const handleClearAll = () => {
-    clearAllFilters();
-    setSeekingHostOnly(false);
-  };
-
-  const searchSuggestions = getDefaultHomeSearchSuggestions(t);
-
-  // Sync to 'Discover' feed when the page is loaded with a search query
-  useEffect(() => {
-    if (initialSearch && searchQuery === initialSearch) {
-      setFeedType("Discover");
-    }
-  }, [initialSearch, searchQuery]);
-
   useEffect(() => {
     if (showWelcome) setFeedType("Discover");
-  }, [showWelcome]);
+  }, [showWelcome, setFeedType]);
 
-  // Close suggestions on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setShowSearchSuggestions(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  const [visibleEventsCount, setVisibleEventsCount] = useState(6);
-
-  const visibleEvents = sortedEvents.slice(0, visibleEventsCount);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (
-          entries[0].isIntersecting &&
-          !isLoading &&
-          visibleEventsCount < sortedEvents.length
-        ) {
-          setVisibleEventsCount((c) => Math.min(c + 6, sortedEvents.length));
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [isLoading, visibleEventsCount, sortedEvents.length]);
+  const enrichment = <HomeDiscoverEnrichment storyEvents={storyEvents} />;
 
   return (
     <div className="space-y-4 md:space-y-5 pb-5 md:pb-0">
@@ -157,15 +110,12 @@ export default function HomeClassic() {
         }
       />
 
-      <EventStories events={storyEvents} />
-
-      <CopilotInlinePrompt />
-
-      <HomeBuddySeekStrip />
+      <HomeContinueStrip />
 
       {showWelcome && (
         <HomeOnboardingWelcomeBanner useClassicTokens onDismiss={dismissWelcome} />
       )}
+      <HomeVerifyBanner />
       <HomePendingFeedbackBanner />
 
       <HomeFiltersSection
@@ -194,44 +144,20 @@ export default function HomeClassic() {
         onSelectMood={handleSelectMood}
       />
 
-      {/* Events Grid */}
       <section>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
-          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setFeedType("For You")}
-                className={`px-4 py-1.5 text-xs font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
-              >
-                {t("home.feed.for_you", "Για Σένα")}
-              </button>
-              <button
-                onClick={() => setFeedType("Discover")}
-                className={`px-4 py-1.5 text-xs font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
-              >
-                {t("home.feed.discover", "Ανακάλυψε")}
-              </button>
-            </div>
-            {!isLoading && sortedEvents.length > 0 && (
-              <p className="text-xs font-semibold text-ink-muted">
-                {sortedEvents.length === 1
-                  ? t("1 αποτέλεσμα", "1 result")
-                  : t(`${sortedEvents.length} αποτελέσματα`, `${sortedEvents.length} results`)}
-              </p>
-            )}
-          </div>
-
-          <div className={cn('flex p-0.5 rounded-full w-fit border', tok.isDark ? 'bg-gray-800/50 border-gray-600/50' : 'bg-gray-50 border-gray-100')}>
-            <button
-              onClick={() => navigate("/nearby")}
-              className={cn('p-1.5 rounded-lg transition-colors', h.feedTabInactive)}
-              title={t("Άνοιγμα Χάρτη", "Open Map")}
-              aria-label={t("Άνοιγμα Χάρτη", "Open Map")}
-            >
-              <MapIcon className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        <HomeFeedToolbar
+          feedType={feedType}
+          setFeedType={setFeedType}
+          resultCount={sortedEvents.length}
+          isLoading={isLoading}
+          tabClassName={(active) =>
+            cn(
+              'filter-chip px-4 text-xs font-bold transition-all duration-200 rounded-full',
+              active ? h.feedTabActive : h.feedTabInactive,
+            )
+          }
+          mapClassName={tok.isDark ? 'border-gray-600/50 text-gray-300' : 'border-gray-200 text-ink-muted'}
+        />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
@@ -244,42 +170,81 @@ export default function HomeClassic() {
                 icon={CalendarX}
                 title={t("Αδυναμία φόρτωσης εκδηλώσεων", "Could not load events")}
                 description={t("Εμφανίζονται τα αποθηκευμένα δεδομένα όταν είναι διαθέσιμα.", "Cached data is shown when available.")}
+                actionLabel={t("Επανάληψη", "Retry")}
+                onAction={() => { void refetch(); }}
               />
             </div>
           ) : sortedEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 space-y-4">
               <EmptyState
                 icon={CalendarX}
                 title={t("home.feed.no_events", "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.")}
-                description={t('Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία.', 'Try changing filters or category.')}
+                description={t(
+                  'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
+                  'Try changing filters or category — or see what’s nearby.',
+                )}
                 actionLabel={
                   hasActiveFilters || seekingHostOnly
                     ? t('Εκκαθάριση φίλτρων', 'Clear filters')
-                    : undefined
+                    : t('Στον χάρτη', 'On the map')
                 }
                 onAction={
-                  hasActiveFilters || seekingHostOnly ? handleClearAll : undefined
+                  hasActiveFilters || seekingHostOnly
+                    ? handleClearAll
+                    : () => navigate('/nearby')
+                }
+                secondaryLabel={
+                  hasActiveFilters || seekingHostOnly
+                    ? t('Στον χάρτη', 'On the map')
+                    : t('Κατηγορίες', 'Categories')
+                }
+                onSecondary={
+                  hasActiveFilters || seekingHostOnly
+                    ? () => navigate('/nearby')
+                    : () => navigate('/categories')
                 }
               />
+              {enrichment}
             </div>
           ) : (
-            visibleEvents.map((event, index) => (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-              >
-                <EventCard event={event} />
-              </motion.div>
-            ))
+            visibleEvents.flatMap((event, index) => {
+              const card = (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <EventCard event={event} />
+                </motion.div>
+              );
+              if (index !== 2) return [card];
+              return [
+                <div key="discover-enrichment" className="col-span-1 sm:col-span-2 lg:col-span-3">
+                  {enrichment}
+                </div>,
+                card,
+              ];
+            })
           )}
         </div>
 
-        {/* Load More Trigger */}
-        {!isLoading && visibleEventsCount < sortedEvents.length && (
+        {!isLoading && visibleEvents.length > 0 && visibleEvents.length < 3 && (
+          <div className="mt-4">{enrichment}</div>
+        )}
+
+        {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
-            <div className={cn('w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin', tok.accentText)} />
+            <button
+              type="button"
+              onClick={loadMoreEvents}
+              className={cn(
+                'inline-flex min-h-8 items-center justify-center rounded-full border border-border bg-surface-raised px-4 text-xs font-bold',
+                tok.accentText,
+              )}
+            >
+              {t('Φόρτωσε περισσότερα', 'Load more')}
+            </button>
           </div>
         )}
       </section>
@@ -310,6 +275,19 @@ export default function HomeClassic() {
         setDateFilter={setDateFilter}
         radiusFilter={radiusFilter}
         setRadiusFilter={setRadiusFilter}
+        safetyFilter={safetyFilter}
+        setSafetyFilter={setSafetyFilter}
+        sortParam={sortParam}
+        setSortParam={setSortParam}
+        seekingHostOnly={seekingHostOnly}
+        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
+        showSeekingHostChip={seekingHostEvents.length > 0}
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+        tagFilter={tagFilter}
+        setTagFilter={setTagFilter}
+        activeMood={activeMood}
+        onSelectMood={handleSelectMood}
       />
     </div>
   );

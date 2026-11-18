@@ -7,6 +7,7 @@ import { useStore } from '../../store';
 import { projectRequestForViewer } from '../../lib/companyRequestUtils';
 import { getPhotoPlaceholder } from '../../lib/photoReveal';
 import { cn } from '../../lib/utils';
+import { CardInterestLine } from '../common/CardInterestLine';
 import type { CompanyRequest } from '../../types/companyRequest';
 import type { Event, User } from '../../types';
 
@@ -56,7 +57,7 @@ export function CompanyRequestCard({
     : 'border-gray-200 bg-white shadow-soft';
 
   return (
-    <article className={cn('rounded-2xl border p-3', shell, compact && 'p-2.5')}>
+    <article className={cn('nakamas-card rounded-2xl border p-3', shell, compact && 'p-2.5')}>
       <div className="flex gap-2.5">
         {projection.showPhoto && seeker.photoUrl ? (
           <img
@@ -76,7 +77,7 @@ export function CompanyRequestCard({
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <p className={cn('card-badge font-bold uppercase tracking-wide', darkSurface ? 'text-cyan-400' : 'text-cyan-700')}>
+          <p className={cn('card-badge font-bold tracking-wide', darkSurface ? 'text-cyan-400' : 'text-cyan-700')}>
             {tu('Βρες Nakamas', 'Find Nakamas')}
           </p>
           <p className={cn('card-heading font-bold truncate', darkSurface ? 'text-white' : 'text-gray-900')}>
@@ -88,19 +89,11 @@ export function CompanyRequestCard({
             </p>
           )}
           {projection.interests.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-1.5">
-              {projection.interests.slice(0, 3).map((tag) => (
-                <span
-                  key={tag}
-                  className={cn(
-                    'card-copy font-bold px-1.5 py-0.5 rounded-lg',
-                    darkSurface ? 'bg-white/10 text-gray-200' : 'bg-gray-100 text-gray-700',
-                  )}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            <CardInterestLine
+              items={projection.interests}
+              max={3}
+              className={cn('mt-1.5', darkSurface ? 'text-gray-400' : 'text-gray-500')}
+            />
           )}
           {(request.preferredGroupMin || request.preferredGroupMax) && (
             <p className={cn('card-meta mt-1', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
@@ -159,19 +152,19 @@ export function CompanyRequestCard({
         </button>
       </div>
 
-      <div className="flex items-center gap-3 mt-2">
-        <p className={cn('text-xs flex items-center gap-1', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
-          <Shield className="w-3 h-3" />
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
+        <p className={cn('card-meta flex items-center gap-1', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
+          <Shield className="w-3 h-3 shrink-0" aria-hidden />
           {t('Όχι διαφήμιση · privacy-first', 'Not an ad · privacy-first')}
         </p>
         {onHide && (
-          <button type="button" onClick={onHide} className="text-xs text-gray-500 flex items-center gap-0.5">
-            <EyeOff className="w-3 h-3" /> {t('Απόκρυψη', 'Hide')}
+          <button type="button" onClick={onHide} className={cn('card-meta flex items-center gap-0.5', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
+            <EyeOff className="w-3 h-3" aria-hidden /> {t('Απόκρυψη', 'Hide')}
           </button>
         )}
         {onReport && (
-          <button type="button" onClick={onReport} className="text-xs text-gray-500 flex items-center gap-0.5">
-            <Flag className="w-3 h-3" /> {t('Αναφορά', 'Report')}
+          <button type="button" onClick={onReport} className={cn('card-meta flex items-center gap-0.5', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
+            <Flag className="w-3 h-3" aria-hidden /> {t('Αναφορά', 'Report')}
           </button>
         )}
       </div>

@@ -1,4 +1,4 @@
-import type { Conversation, ChatMessage } from '../types/chat';
+import type { Conversation, ChatMessage, ChatStory } from '../types/chat';
 
 export const mockConversations: Conversation[] = [
   {
@@ -13,8 +13,8 @@ export const mockConversations: Conversation[] = [
     expiresAt: '2026-05-15T23:00:00.000Z',
     canPersist: true,
     unreadCount: 2,
-    lastMessageAt: '2026-05-30T16:00:00.000Z',
-    lastMessagePreview: { el: 'Συναντιόμαστε στην είσοδο;', en: 'Meet at the entrance?' },
+    lastMessageAt: '2026-05-30T16:02:00.000Z',
+    lastMessagePreview: { el: 'Ψηφοφορία: Τι ώρα να βρεθούμε;', en: 'Poll: What time should we meet?' },
     meetingPoint: 'Cine Thisio, Apostolou Pavlou 7',
   },
   {
@@ -108,8 +108,11 @@ export const mockChatMessages: ChatMessage[] = [
     senderId: 'u2',
     senderType: 'user',
     type: 'text',
-    body: 'Γεια! Συναντιόμαστε 20′ πριν στην είσοδο;',
+    body: 'Γεια @Alex! Συναντιόμαστε 20′ πριν στην είσοδο; #συνάντηση',
     createdAt: '2026-05-30T15:50:00.000Z',
+    mentions: ['u1'],
+    tags: ['συνάντηση'],
+    reactions: { '👍': ['u1', 'u3'], '🔥': ['u3'] },
   },
   {
     id: 'm2',
@@ -119,6 +122,7 @@ export const mockChatMessages: ChatMessage[] = [
     type: 'meeting_point',
     body: 'Meeting point: Cine Thisio, Apostolou Pavlou 7 · 20:30',
     createdAt: '2026-05-30T15:55:00.000Z',
+    pinned: true,
   },
   {
     id: 'm3',
@@ -126,8 +130,36 @@ export const mockChatMessages: ChatMessage[] = [
     senderId: 'u1',
     senderType: 'user',
     type: 'text',
-    body: 'Ναι, τέλεια!',
+    body: 'Ναι, τέλεια! Θα πάρω και καφέ πριν @Maria #καφές',
     createdAt: '2026-05-30T16:00:00.000Z',
+    replyTo: {
+      id: 'm1',
+      senderId: 'u2',
+      senderName: 'Maria',
+      body: 'Γεια @Alex! Συναντιόμαστε 20′ πριν στην είσοδο; #συνάντηση',
+      type: 'text',
+    },
+    mentions: ['u2'],
+    tags: ['καφές'],
+    reactions: { '❤️': ['u2'] },
+    readBy: ['u2', 'u3'],
+  },
+  {
+    id: 'm3b',
+    conversationId: 'conv_g2',
+    senderId: 'u3',
+    senderType: 'user',
+    type: 'poll',
+    body: 'Τι ώρα να βρεθούμε;',
+    createdAt: '2026-05-30T16:02:00.000Z',
+    poll: {
+      id: 'poll_cine',
+      question: 'Τι ώρα να βρεθούμε;',
+      options: [
+        { id: 'opt1', label: '20:00 στην πλατεία', voterIds: ['u2', 'u3'] },
+        { id: 'opt2', label: '20:15 στην είσοδο', voterIds: ['u1'] },
+      ],
+    },
   },
   {
     id: 'm4',
@@ -135,8 +167,10 @@ export const mockChatMessages: ChatMessage[] = [
     senderId: 'u2',
     senderType: 'user',
     type: 'text',
-    body: 'Χαίρομαι που δεχτήκαμε το αίτημα — τα λέμε στο venue.',
+    body: 'Χαίρομαι που δεχτήκαμε το αίτημα — τα λέμε στο venue. #συνάντηση',
     createdAt: '2026-05-29T18:00:00.000Z',
+    tags: ['συνάντηση'],
+    reactions: { '🙌': ['u1'] },
   },
   {
     id: 'm5',
@@ -153,8 +187,9 @@ export const mockChatMessages: ChatMessage[] = [
     senderId: 'org1',
     senderType: 'organizer',
     type: 'text',
-    body: 'Υπενθύμιση: η είσοδος ανοίγει 30 λεπτά πριν. Φέρτε εισιτήριο.',
+    body: 'Υπενθύμιση: η είσοδος ανοίγει 30 λεπτά πριν. Φέρτε εισιτήριο. #εισιτήρια',
     createdAt: '2026-05-30T08:00:00.000Z',
+    tags: ['εισιτήρια'],
   },
   {
     id: 'm7',
@@ -164,5 +199,46 @@ export const mockChatMessages: ChatMessage[] = [
     type: 'text',
     body: 'Γεια σας! Είμαστε εδώ για θέματα ασφάλειας ή τεχνικής βοήθειας.',
     createdAt: '2026-05-20T10:00:00.000Z',
+    reactions: { '❤️': ['u1'] },
+  },
+];
+
+const nowIso = new Date().toISOString();
+const plus24h = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
+
+export const mockChatStories: ChatStory[] = [
+  {
+    id: 'st_maria',
+    authorId: 'u2',
+    authorName: 'Maria',
+    caption: 'Έτοιμη για σινεμά στο Θησείο! Θέα Ακρόπολη απόψε 🎬✨',
+    imageUrl: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&h=900&fit=crop',
+    bgGradient: 'linear-gradient(135deg, #0b6d6f 0%, #0ea5e9 100%)',
+    createdAt: nowIso,
+    expiresAt: plus24h,
+    reactions: { '🔥': ['u3'] },
+    tag: 'σινεμά',
+  },
+  {
+    id: 'st_nikos',
+    authorId: 'u3',
+    authorName: 'Nikos',
+    caption: 'Ποιος ψήνεται για specialty καφέ στο Κουκάκι πριν το meetup; ☕',
+    bgGradient: 'linear-gradient(135deg, #ea580c 0%, #f59e0b 100%)',
+    createdAt: nowIso,
+    expiresAt: plus24h,
+    reactions: { '☕': ['u2'] },
+    tag: 'καφές',
+  },
+  {
+    id: 'st_bios',
+    authorId: 'org1',
+    authorName: 'Bios',
+    caption: 'Η ταράτσα άνοιξε νωρίς απόψε — +2 θέσεις για παρέες Nakamas 🎶',
+    bgGradient: 'linear-gradient(135deg, #7c3aed 0%, #ec4899 100%)',
+    createdAt: nowIso,
+    expiresAt: plus24h,
+    reactions: {},
+    tag: 'μουσική',
   },
 ];

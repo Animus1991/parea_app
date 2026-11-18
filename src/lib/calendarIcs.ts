@@ -1,4 +1,9 @@
+/**
+ * Bulk calendar export — builds multi-VEVENT ICS using the same escape /
+ * download helpers as single-event `eventCalendarExport` (Wave C merge).
+ */
 import { parseISO } from 'date-fns';
+import { downloadIcsBlob, escapeIcsText, formatGoogleCalendarDate } from './eventCalendarExport';
 
 export interface CalendarIcsEvent {
   title: string;
@@ -7,23 +12,26 @@ export interface CalendarIcsEvent {
   locationArea?: string;
 }
 
-/** Build a multi-event .ics string (UTC DTSTART, ZIP-compatible bulk export). */
+/** Build a multi-event .ics string (local floating DTSTART, optional LOCATION). */
 export function buildCalendarIcs(events: CalendarIcsEvent[]): string {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//Nakamas//Calendar//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
   ];
   for (const ev of events) {
     const dt = parseISO(`${ev.date}T${ev.time || '00:00'}`);
-    const dtStr = Number.isNaN(dt.getTime())
-      ? ''
-      : `${dt.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`;
-    if (!dtStr) continue;
+    if (Number.isNaN(dt.getTime())) continue;
+    const dtStr = formatGoogleCalendarDate(dt);
+    const uid = `bulk-${ev.date}-${ev.time || '00'}-${escapeIcsText(ev.title).slice(0, 40)}@parea.app`;
     lines.push('BEGIN:VEVENT');
+    lines.push(`UID:${uid}`);
+    lines.push(`DTSTAMP:${formatGoogleCalendarDate(new Date())}`);
     lines.push(`DTSTART:${dtStr}`);
-    lines.push(`SUMMARY:${ev.title}`);
-    if (ev.locationArea) lines.push(`LOCATION:${ev.locationArea}`);
+    lines.push(`SUMMARY:${escapeIcsText(ev.title)}`);
+    if (ev.locationArea) lines.push(`LOCATION:${escapeIcsText(ev.locationArea)}`);
     lines.push('END:VEVENT');
   }
   lines.push('END:VCALENDAR');
@@ -34,12 +42,5 @@ export function downloadCalendarIcs(
   events: CalendarIcsEvent[],
   filename = 'parea-calendar.ics',
 ): void {
-  const icsContent = buildCalendarIcs(events);
-  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
+  downloadIcsBlob(buildCalendarIcs(events), filename);
 }

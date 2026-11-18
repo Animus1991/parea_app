@@ -16,8 +16,11 @@ export function HomeNextBestAction() {
   const a = usePageContrast();
   const user = useStore((s) => s.currentUser);
   const onboardingCompleted = useStore((s) => s.onboardingCompleted);
-  const notifications = useStore((s) => s.notifications);
+  const rawNotifications = useStore((s) => s.notifications);
+  const notifications = rawNotifications.filter((n) => !n.forUserId || n.forUserId === user?.id);
   const savedEvents = useStore((s) => s.savedEvents);
+  const lastResumePath = useStore((s) => s.lastResumePath);
+  const groups = useStore((s) => s.groups);
   const conversations = useChatStore((s) => s.conversations);
   const { plannedEvents } = usePlannedEvents();
 
@@ -27,6 +30,21 @@ export function HomeNextBestAction() {
   );
 
   const action = useMemo(() => {
+    // Skip resume paths that would soft-lock a non-member «Our night».
+    const nightMatch = lastResumePath?.match(/^\/night\/([^/?#]+)/);
+    const nightGroup = nightMatch ? groups.find((g) => g.id === nightMatch[1]) : undefined;
+    const resumeOk =
+      lastResumePath &&
+      lastResumePath !== '/' &&
+      !(
+        nightMatch &&
+        (!nightGroup ||
+          (user?.id &&
+            !nightGroup.members.includes(user.id) &&
+            !(nightGroup.waitlist ?? []).includes(user.id)))
+      )
+        ? lastResumePath
+        : null;
     const list = getNextBestActions({
       user,
       onboardingCompleted,
@@ -36,9 +54,11 @@ export function HomeNextBestAction() {
       savedEventsCount: savedEvents.length,
       profileInterestsCount: user?.interests?.length ?? 0,
       hasBio: Boolean(user?.bio?.trim()),
+      lastResumePath: resumeOk,
     });
-    return list[0] ?? null;
-  }, [user, onboardingCompleted, notifications, unreadChats, plannedEvents.length, savedEvents.length]);
+    // Prefer a concrete next step over resume when both exist (resume has its own strip).
+    return list.find((a) => a.id !== 'resume-last') ?? list[0] ?? null;
+  }, [user, onboardingCompleted, notifications, unreadChats, plannedEvents.length, savedEvents.length, lastResumePath, groups]);
 
   if (!action || !user) return null;
 
@@ -61,7 +81,7 @@ export function HomeNextBestAction() {
           <Compass className={cn('w-5 h-5', a.iconAccent)} aria-hidden />
         </div>
         <div className="flex-1 min-w-0">
-          <p className={cn('text-xs font-bold uppercase tracking-wider mb-0.5', a.muted)}>
+          <p className={cn('text-xs font-bold tracking-wider mb-0.5', a.muted)}>
             {tu('Επόμενη καλύτερη ενέργεια', 'Next best action')}
           </p>
           <p className={cn('text-sm font-bold', a.head)}>

@@ -20,10 +20,15 @@ import { Modal } from '../common/Modal';
 import { useEventsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { toast } from 'sonner';
 import type { Event } from '../../types';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
 import type { CompanyJoinRequestStatus, CompanyRequest } from '../../types/companyRequest';
+import { readStorage, writeStorage } from '../../lib/safeUrl';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
+import { MiniOutingsSection } from '../outings/MiniOutingsSection';
 
 type FilterKey = 'all' | 'open_spots' | 'verified' | 'small_groups' | 'flexible' | 'saved_events' | 'high_match';
 
@@ -58,6 +63,7 @@ export default function BuddySeekPageContent() {
   const dismiss = useStore((s) => s.dismissCompanyRequest);
   const undismiss = useStore((s) => s.undismissCompanyRequest);
   const acceptJoin = useStore((s) => s.acceptCompanyJoinRequest);
+  const declineJoin = useStore((s) => s.declineCompanyJoinRequest);
   const companyJoinRequests = useStore((s) => s.companyJoinRequests);
   const companyRequests = useStore((s) => s.companyRequests);
   const { events, isLoading, isError, refetch } = useEventsResource();
@@ -70,7 +76,7 @@ export default function BuddySeekPageContent() {
   const [eventPickerOpen, setEventPickerOpen] = useState(false);
   const [wizard, setWizard] = useState<RequestWizard | null>(null);
   const [showExplainer, setShowExplainer] = useState(
-    () => typeof window !== 'undefined' && !localStorage.getItem(EXPLAINER_KEY),
+    () => !readStorage(EXPLAINER_KEY),
   );
 
   useEffect(() => {
@@ -85,7 +91,7 @@ export default function BuddySeekPageContent() {
   }, [searchParams, companyRequests, events, setSearchParams]);
 
   const dismissExplainer = () => {
-    localStorage.setItem(EXPLAINER_KEY, '1');
+    writeStorage(EXPLAINER_KEY, '1');
     setShowExplainer(false);
   };
 
@@ -132,18 +138,31 @@ export default function BuddySeekPageContent() {
     [feed.items],
   );
 
+  usePublishPageSnapshot({
+    titleEl: 'Βρες Nakamas',
+    titleEn: 'Find Nakamas',
+    state: filter,
+    summaryEl: `${filtered.length} σχέδια · ${pendingForMe.length} αιτήματα προς εσένα`,
+    summaryEn: `${filtered.length} plans · ${pendingForMe.length} requests for you`,
+    visibleIds: filtered.slice(0, 8).map((i) => i.intent.id),
+  });
+
   return (
     <div className="w-full max-w-full min-w-0 space-y-4 pb-16 pt-4">
       <header className="space-y-3">
-        <h1 className={cn('text-lg font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
+        <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
+        <CopilotInlinePrompt />
         <PlansFormingValueHero insights={feed.insights} />
-        <PlansFormingStatsBar insights={feed.insights} />
+        {/* StatsBar omitted when ValueHero already states compatible count — less chrome. */}
+        {feed.insights.compatiblePlans === 0 && (
+          <PlansFormingStatsBar plain insights={feed.insights} />
+        )}
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/settings?section=buddy-seek')}
             className={cn(
-              'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
+              'inline-flex items-center gap-1.5 text-xs font-bold px-3 min-h-8 rounded-xl border',
               a.borderB,
               a.sub,
             )}
@@ -155,7 +174,7 @@ export default function BuddySeekPageContent() {
             type="button"
             onClick={() => setEventPickerOpen(true)}
             className={cn(
-              'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
+              'inline-flex items-center gap-1.5 text-xs font-bold px-3 min-h-8 rounded-xl border',
               a.borderB,
               a.sub,
             )}
@@ -163,30 +182,63 @@ export default function BuddySeekPageContent() {
             <Plus className="w-3.5 h-3.5" />
             {t('Νέο αίτημα από εκδήλωση', 'New request from event')}
           </button>
+          <button
+            type="button"
+            onClick={() => navigate('/plans')}
+            className={cn(
+              'inline-flex items-center gap-1.5 text-xs font-bold px-3 min-h-8 rounded-xl border',
+              a.borderB,
+              a.sub,
+            )}
+          >
+            {t('Τα σχέδιά μου', 'My plans')}
+          </button>
         </div>
       </header>
 
+      {/* Soft one-line vibe nudge — matching uses «Το στυλ παρέας μου»; never blocks browsing. */}
+      {currentUser && !currentUser.vibe && (
+        <button
+          type="button"
+          onClick={() => navigate('/profile')}
+          className={cn(
+            'w-full rounded-xl border border-dashed px-3 py-2 text-left text-xs font-bold transition-colors',
+            a.borderB,
+            a.head,
+            'hover:border-border-strong',
+          )}
+        >
+          {t(
+            'Ολοκλήρωσε το στυλ παρέας (5 ερωτήσεις) →',
+            'Complete your group style (5 questions) →',
+          )}
+        </button>
+      )}
+
+      {/* Φ27 — small outings without an event (coffee / walk / run) */}
+      <MiniOutingsSection />
+
       {showExplainer && (
-        <div className={cn('rounded-2xl border p-4 flex gap-3', a.cardSurface, 'border-cyan-200 bg-cyan-50/60 dark:bg-cyan-950/20 dark:border-cyan-800')}>
-          <Info className="w-5 h-5 shrink-0 text-cyan-600 dark:text-cyan-400 mt-0.5" />
+        <div className="rounded-2xl border border-border bg-surface-raised px-3.5 py-2.5 flex items-center gap-3">
+          <Info className="w-4 h-4 shrink-0 text-accent" aria-hidden />
           <div className="flex-1 min-w-0">
-            <p className={cn('text-sm font-bold', a.head)}>
+            <p className="text-xs font-bold text-ink">
               {t('Τι είναι το Βρες Nakamas;', 'What is Find Nakamas?')}
             </p>
-            <p className={cn('text-sm font-medium mt-1 leading-relaxed', a.sub)}>
+            <p className="text-xs font-medium mt-0.5 leading-snug text-ink-muted">
               {t(
-                'Δηλώνετε ότι ψάχνετε Nakamas για μια εκδήλωση — με έλεγχο ορατότητας. Άλλοι χρήστες μπορούν να σας στείλουν αίτημα ή να ενωθούν σε ομάδα.',
-                'You signal you want Nakamas for an event — with privacy controls. Others can send join requests or form a group with you.',
+                'Δηλώνεις ότι ψάχνεις παρέα για μια εκδήλωση — με πλήρη έλεγχο ορατότητας.',
+                'Signal you want company for an event — with full privacy controls.',
               )}
             </p>
           </div>
           <button
             type="button"
             onClick={dismissExplainer}
-            className={cn('p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg shrink-0', a.muted, 'hover:bg-black/5 dark:hover:bg-white/10')}
+            className="p-1.5 min-h-8 min-w-8 flex items-center justify-center rounded-lg shrink-0 text-ink-muted hover:bg-surface hover:text-ink"
             aria-label={t('Κλείσιμο', 'Dismiss')}
           >
-            <X className="w-4 h-4" aria-hidden />
+            <X className="w-3.5 h-3.5" aria-hidden />
           </button>
         </div>
       )}
@@ -286,7 +338,7 @@ export default function BuddySeekPageContent() {
               type="button"
               onClick={() => setFilter(key)}
               className={cn(
-                'text-xs font-bold px-3 py-1.5 rounded-xl border transition-colors inline-flex items-center gap-1',
+                'filter-chip text-xs font-bold px-3 rounded-xl border transition-colors gap-1',
                 filter === key ? 'bg-cyan-600 text-white border-cyan-600' : a.borderB,
               )}
             >
@@ -313,7 +365,7 @@ export default function BuddySeekPageContent() {
       ) : (
         <>
           {filtered.length > 0 && (
-            <section className="space-y-3">
+            <section className="space-y-4">
               <PlansFormingSectionTitle
                 title={t('Αιτήματα Nakamas', 'Nakama requests')}
                 subtitle={t(`${filtered.length} αποτελέσματα`, `${filtered.length} results`)}
@@ -335,7 +387,7 @@ export default function BuddySeekPageContent() {
           )}
 
           {feed.recruitingGroupItems.length > 0 && (
-            <section className="space-y-3">
+            <section className="space-y-4">
               <PlansFormingSectionTitle title={t('Ομάδες με ανοιχτές θέσεις', 'Groups with open spots')} />
               {feed.recruitingGroupItems.map((entry) => (
                 <PlansFormingGroupCard key={entry.group.id} entry={entry} variant="page" />
@@ -389,7 +441,7 @@ export default function BuddySeekPageContent() {
         <button
           type="button"
           onClick={() => setEventPickerOpen(false)}
-          className={cn('w-full mt-3 py-2.5 rounded-xl text-sm font-bold border', a.borderB, a.sub)}
+          className={cn('w-full mt-3 py-2.5 rounded-xl text-xs font-bold border', a.borderB, a.sub)}
         >
           {t('Ακύρωση', 'Cancel')}
         </button>
@@ -416,15 +468,30 @@ export default function BuddySeekPageContent() {
           mode={previewJoinId ? 'owner_review' : 'send'}
           onSendRequest={() => {
             sendJoin(preview.intent.id);
-            toast.success(t('Αίτημα εστάλη', 'Request sent'));
+            toast.success(t('Αίτημα εστάλη', 'Request sent'), {
+              action: {
+                label: t('Inbox', 'Inbox'),
+                onClick: () => navigate('/inbox'),
+              },
+            });
           }}
           onAccept={() => {
             if (!previewJoinId) return;
             const groupId = acceptJoin(previewJoinId);
             if (groupId) {
-              toast.success(t('Αποδεχτήκατε — άνοιγμα chat', 'Accepted — opening chat'));
-              navigate(`/chat/${groupId}`);
+              toast.success(t('Αποδεχτήκατε — άνοιγμα της βραδιάς', 'Accepted — opening Our night'), {
+                action: {
+                  label: t('Η βραδιά μας', 'Our night'),
+                  onClick: () => navigate(`/night/${groupId}`),
+                },
+              });
+              navigate(`/night/${groupId}`);
             }
+          }}
+          onDecline={() => {
+            if (!previewJoinId) return;
+            declineJoin(previewJoinId);
+            toast.info(t('Το αίτημα απορρίφθηκε', 'Request declined'));
           }}
         />
       )}

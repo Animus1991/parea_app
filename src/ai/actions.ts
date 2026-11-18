@@ -14,13 +14,31 @@ import { THEME_IDS, THEME_LABELS, isDarkTheme, type ThemeId } from '../lib/theme
 import { computeUserXp, levelForXp } from '../lib/gamification';
 import { computeAchievements } from '../lib/achievements';
 import { downloadICS, openGoogleCalendar } from '../lib/eventCalendarExport';
+import { downloadCalendarIcs } from '../lib/calendarIcs';
+import { FORM_DRAFT_ROUTES, stashFormDraft } from '../lib/formDraft';
 import { homePathWithCategory, homePathWithSearch } from '../lib/homeDeepLinks';
+import { formatWalletEur, WALLET_DEMO } from '../lib/walletDemo';
+import { nextVerifyGap, verifyDemo, verifyDemoSnapshot, type VerifyDemoMethod } from '../lib/verifyDemo';
 import { APP_ROUTES, routeById } from './routes';
 import { KNOWLEDGE_TOPICS, findTopic } from './knowledge';
 import { extractDateRange, CATEGORY_SYNONYMS } from './entities';
 import { normalize } from './text';
 import { resolveEventRef, searchEvents } from './eventSearch';
+import { rankWhereIs } from './whereIs';
 import type { ActionArgs, ActionResult, ActionRuntime, CopilotAction, ParamSchema } from './types';
+import { isPlatformAdmin } from '../lib/roles';
+import { buildReturnSummary, describeReturnPart, returnPartPath } from '../lib/returnVisit';
+import { previousVisitAt } from '../lib/visitClock';
+import { interestLabel } from '../lib/interests';
+import { visiblePosts, wallPrivacyOf } from '../lib/audience';
+import type { Audience } from '../types/wall';
+import { COLLECTIONS, collectionById, collectionEvents, formingGroups, venueById, timeMinus } from '../lib/outings';
+import { standingFor, strikeLabel } from '../lib/consequences';
+import { eventStartMs } from '../store/outingsSlice';
+import { notificationsForUser } from '../lib/notificationsUtil';
+
+/** The wall store loads on demand so the first page (login) never ships wall code. */
+const loadWallStore = () => import('../store/wallStore').then((m) => m.useWallStore);
 
 /* ───────────────────────── helpers ───────────────────────── */
 
@@ -171,19 +189,30 @@ function themeTarget(raw: string, current: string): ThemeId | null {
 
 /* ───────────────────────── actions ───────────────────────── */
 
+const SETTINGS_SECTIONS = ['availability', 'chat', 'buddy-seek'] as const;
+
 const navigateAction: CopilotAction = {
   name: 'navigate',
-  description: 'Open a page of the app.',
+  description:
+    'Open a page of the app. For settings, optional section deep-links: availability, chat, buddy-seek.',
   risk: 'safe',
-  parameters: OBJ({ page: S('Destination page id', { enum: APP_ROUTES.map((r) => r.id) }) }, ['page']),
+  parameters: OBJ({
+    page: S('Destination page id', { enum: APP_ROUTES.map((r) => r.id) }),
+    section: S('Settings deep-link section', { enum: [...SETTINGS_SECTIONS] }),
+  }, ['page']),
   run: (args, rt) => {
     const route = routeById(String(args.page ?? ''));
     if (!route) return fail('Δεν βρήκα αυτή τη σελίδα.', "I couldn't find that page.");
-    if (route.adminOnly && !state().currentUser?.isOrganizer) {
+    if (route.adminOnly && !isPlatformAdmin(state().currentUser)) {
       return fail('Η σελίδα διαχείρισης είναι μόνο για διαχειριστές.', 'The admin page is for admins only.');
     }
-    rt.navigate(route.path);
-    return { ok: true, el: `Άνοιξα: ${route.labelEl}.`, en: `Opened ${route.labelEn}.`, data: { path: route.path } };
+    let path = route.path;
+    const section = str(args.section);
+    if (route.id === 'settings' && section && (SETTINGS_SECTIONS as readonly string[]).includes(section)) {
+      path = section === 'availability' ? '/settings?availability=1' : `/settings?section=${section}`;
+    }
+    rt.navigate(path);
+    return { ok: true, el: `Άνοιξα: ${route.labelEl}.`, en: `Opened ${route.labelEn}.`, data: { path } };
   },
 };
 
@@ -278,11 +307,13 @@ const recommendAction: CopilotAction = {
     const joined = new Set(myGroups().map((g) => g.eventId));
     const pool = s.events.filter((e) => !joined.has(e.id));
     const result = searchEvents(pool, s.currentUser, { limit: num(args.limit) ?? 4 });
-    const interests = (s.currentUser?.interests ?? []).slice(0, 3).join(', ');
+    const top = (s.currentUser?.interests ?? []).slice(0, 3);
+    const interestsEl = top.map((i) => interestLabel(i, 'el')).join(', ');
+    const interestsEn = top.map((i) => interestLabel(i, 'en')).join(', ');
     return {
       ok: true,
-      el: interests ? `Με βάση τα ενδιαφέροντά σου (${interests}), προτείνω:` : 'Αυτές ξεχωρίζουν αυτή τη στιγμή:',
-      en: interests ? `Based on your interests (${interests}), I suggest:` : 'These stand out right now:',
+      el: top.length ? `Με βάση τα ενδιαφέροντά σου (${interestsEl}), προτείνω:` : 'Αυτές ξεχωρίζουν αυτή τη στιγμή:',
+      en: top.length ? `Based on your interests (${interestsEn}), I suggest:` : 'These stand out right now:',
       eventIds: result.events.map((e) => e.id),
       data: { events: result.events.map(eventData) },
     };
@@ -364,8 +395,9 @@ const waitlistAction: CopilotAction = {
     state().addToWaitlist(e.id);
     return {
       ok: true,
-      el: `Σε έβαλα στη λίστα αναμονής για «${e.title}». Θα ειδοποιηθείς αν ανοίξει θέση.`,
-      en: `You're on the waitlist for "${e.title}". You'll be notified if a spot opens.`,
+      el: `Σε έβαλα στη λίστα αναμονής για «${e.title}». Αποθηκεύτηκε στα σχέδιά σου — παρακολούθησε από εκεί αν ανοίξει θέση.`,
+      en: `You're on the waitlist for "${e.title}". Saved on My plans — watch there if a seat opens.`,
+      link: { path: '/plans', el: 'Τα σχέδιά μου', en: 'My plans' },
       undo: () => state().removeFromWaitlist(e.id),
     };
   },
@@ -433,12 +465,20 @@ const leaveGroupAction: CopilotAction = {
     if (!e) return notFoundEvent();
     const g = userGroupForEvent(e.id);
     if (!g) return fail(`Δεν είσαι σε ομάδα για «${e.title}».`, `You're not in a group for "${e.title}".`);
+    const uid = state().currentUser?.id;
     state().leaveGroup(g.id);
+    // Φ27 — a seat handed to the waitlist belongs to someone else now: no undo.
+    const after = state().groups.find((x) => x.id === g.id);
+    const handedOver = Boolean(uid && after?.lastTransfer?.fromUserId === uid && Date.now() - Date.parse(after.lastTransfer.at) < 60_000);
     return {
       ok: true,
-      el: `Αποχώρησες από την ομάδα για «${e.title}».`,
-      en: `You left the group for "${e.title}".`,
-      undo: () => state().joinGroup(g.id),
+      el: handedOver
+        ? `Αποχώρησες από την ομάδα για «${e.title}». Η θέση σου πέρασε στο πρώτο άτομο της λίστας αναμονής.`
+        : `Αποχώρησες από την ομάδα για «${e.title}».`,
+      en: handedOver
+        ? `You left the group for "${e.title}". Your seat passed to the first person on the waitlist.`
+        : `You left the group for "${e.title}".`,
+      ...(handedOver ? {} : { undo: () => state().joinGroup(g.id) }),
     };
   },
 };
@@ -516,20 +556,122 @@ const draftEventAction: CopilotAction = {
   parameters: OBJ(EVENT_FIELDS),
   run: (args, rt) => {
     const d = eventFromArgs(args);
-    const q = new URLSearchParams({ ai: '1' });
-    if (d.title) q.set('title', d.title);
-    q.set('category', d.category);
-    if (d.date) q.set('date', d.date);
-    if (d.time) q.set('time', d.time);
-    if (d.area) q.set('location', d.area);
-    if (d.description) q.set('description', d.description);
-    q.set('max', String(d.maxParticipants));
-    if (d.price > 0) q.set('price', String(d.price));
-    rt.navigate(`/create?${q.toString()}`);
+    // Single prefill channel: form draft stash. `?ai=1` only flags the banner.
+    // Organizer deep-links keep using `?edit=` / `?template=` separately.
+    stashFormDraft(
+      'event',
+      {
+        title: d.title,
+        category: d.category,
+        date: d.date,
+        time: d.time,
+        location: d.area,
+        description: d.description,
+        max: d.maxParticipants,
+        price: d.price,
+      },
+      'AI draft',
+    );
+    rt.navigate(`${FORM_DRAFT_ROUTES.event}?ai=1`);
     return {
       ok: true,
       el: 'Άνοιξα τη φόρμα δημιουργίας με τα στοιχεία συμπληρωμένα. Έλεγξέ τα και πάτα «Δημοσίευση».',
       en: 'Opened the create form with the details filled in. Review them and press "Publish".',
+    };
+  },
+};
+
+const draftProfileAction: CopilotAction = {
+  name: 'draft_profile',
+  description: 'Open the profile with bio / name / interests proposed — nothing is saved until the user confirms.',
+  risk: 'safe',
+  parameters: OBJ({
+    bio: S('Proposed bio text.'),
+    name: S('Proposed display name.'),
+    interest: S('Interest to propose adding.'),
+  }),
+  run: (args, rt) => {
+    if (!state().currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const fields: Record<string, string> = {};
+    const bio = str(args.bio);
+    const name = str(args.name);
+    const interest = str(args.interest);
+    if (bio) fields.bio = bio;
+    if (name) fields.name = name;
+    if (interest) fields.interest = interest;
+    if (Object.keys(fields).length === 0) {
+      rt.navigate(FORM_DRAFT_ROUTES.profile);
+      return { ok: true, el: 'Άνοιξα το προφίλ σου.', en: 'Opened your profile.' };
+    }
+    stashFormDraft('profile', fields, 'AI draft');
+    rt.navigate(`${FORM_DRAFT_ROUTES.profile}?aiDraft=1`);
+    return {
+      ok: true,
+      el: 'Πρότεινα αλλαγές στο προφίλ — έλεγξέ τις και πάτα Αποθήκευση.',
+      en: 'Proposed profile changes — review them and press Save.',
+      link: { path: '/profile', el: 'Προφίλ', en: 'Profile' },
+    };
+  },
+};
+
+const whereIsAction: CopilotAction = {
+  name: 'where_is',
+  description: 'Answer "where do I …?" by ranking app pages (and Help) from the route registry.',
+  risk: 'safe',
+  parameters: OBJ({ query: S('The where/how-do-I question.') }, ['query']),
+  run: (args, rt) => {
+    const query = str(args.query) ?? '';
+    if (!query) return fail('Πες μου τι ψάχνεις — π.χ. «πού εξάγω το ημερολόγιο;».', 'Tell me what you are looking for — e.g. "where do I export the calendar?".');
+    const hits = rankWhereIs(query, isPlatformAdmin(state().currentUser), 3);
+    if (hits.length === 0) {
+      const nq = normalize(query);
+      // Bridge to Help deep-links (`?topic=`) or a concrete route when Help has no matching topic.
+      if (/xp|επιτευγμ|badge|επιπεδ/.test(nq)) {
+        rt.navigate('/achievements');
+        return {
+          ok: true,
+          el: 'Άνοιξα τα Επιτεύγματα — εκεί φαίνονται XP και badges.',
+          en: 'Opened Achievements — XP and badges live there.',
+          link: { path: '/achievements', el: 'Επιτεύγματα', en: 'Achievements' },
+        };
+      }
+      const topic = /ομαδ|group/.test(nq)
+        ? 'groups'
+        : /ασφαλει|safety/.test(nq)
+          ? 'safety'
+          : /πληρωμ|payment|wallet|πορτοφ/.test(nq)
+            ? 'payments'
+            : null;
+      const helpPath = topic ? `/help?topic=${topic}` : '/help';
+      rt.navigate(helpPath);
+      return {
+        ok: true,
+        el: 'Δεν βρήκα ακριβή σελίδα — άνοιξα το Κέντρο Βοήθειας. Μπορείς και να με ρωτήσεις διαφορετικά.',
+        en: "I couldn't pin a page — opened Help. You can also rephrase the question.",
+        link: { path: helpPath, el: 'Βοήθεια', en: 'Help' },
+      };
+    }
+    const top = hits[0];
+    const nq = normalize(query);
+    const path =
+      top.route.id === 'help'
+        ? /ομαδ|group/.test(nq)
+          ? '/help?topic=groups'
+          : /ασφαλει|safety/.test(nq)
+            ? '/help?topic=safety'
+            : /πληρωμ|payment|wallet|πορτοφ/.test(nq)
+              ? '/help?topic=payments'
+              : top.route.path
+        : top.route.path;
+    rt.navigate(path);
+    const linesEl = hits.map((h) => `• ${h.route.labelEl} — ${h.reasonEl}`).join('\n');
+    const linesEn = hits.map((h) => `• ${h.route.labelEn} — ${h.reasonEn}`).join('\n');
+    return {
+      ok: true,
+      el: `Το βρήκα εδώ:\n${linesEl}`,
+      en: `Here is where:\n${linesEn}`,
+      link: { path, el: top.route.labelEl, en: top.route.labelEn },
+      data: { paths: hits.map((h) => h.route.path) },
     };
   },
 };
@@ -844,11 +986,26 @@ function privacyPatch(args: ActionArgs): Partial<UserSettings['privacy']> {
   return patch;
 }
 
+const PRIVACY_VALUE_LABELS: Record<string, [string, string]> = {
+  public: ['δημόσιο', 'public'],
+  connections: ['μόνο συνδέσεις Nakamas', 'connections only'],
+  private: ['ιδιωτικό', 'private'],
+  everyone: ['όλοι', 'everyone'],
+  groups: ['ομάδες ίδιας εκδήλωσης', 'same event groups'],
+};
+
 function describePatch(patch: Record<string, unknown>, lang: 'el' | 'en'): string {
   return Object.entries(patch)
     .map(([k, v]) => {
       const label = PRIVACY_LABELS[k]?.[lang === 'el' ? 0 : 1] ?? k;
-      const val = typeof v === 'boolean' ? (v ? (lang === 'el' ? 'ναι' : 'on') : lang === 'el' ? 'όχι' : 'off') : String(v);
+      let val: string;
+      if (typeof v === 'boolean') {
+        val = v ? (lang === 'el' ? 'ναι' : 'on') : lang === 'el' ? 'όχι' : 'off';
+      } else if (typeof v === 'string' && PRIVACY_VALUE_LABELS[v]) {
+        val = PRIVACY_VALUE_LABELS[v][lang === 'el' ? 0 : 1];
+      } else {
+        val = String(v);
+      }
       return `${label}: ${val}`;
     })
     .join(' · ');
@@ -886,6 +1043,142 @@ const privacyAction: CopilotAction = {
   },
 };
 
+/* ───────────────────────── wall (Φ26) ───────────────────────── */
+
+const WALL_AUDIENCES = ['public', 'connections', 'friends_of_friends', 'only_me'] as const;
+const WALL_AUDIENCE_LABEL: Record<string, [string, string]> = {
+  public: ['Δημόσιο — όλο το δίκτυο Nakamas', 'Public — the whole Nakamas network'],
+  connections: ['Nakamas μου', 'My Nakamas'],
+  friends_of_friends: ['Nakamas των Nakamas', 'Friends of friends'],
+  only_me: ['Μόνο εγώ', 'Only me'],
+  specific: ['Συγκεκριμένα άτομα', 'Specific people'],
+  list: ['Λίστα', 'List'],
+};
+
+function wallAudienceArg(args: ActionArgs, byUser: Parameters<typeof wallPrivacyOf>[0]): Audience {
+  const a = str(args.audience);
+  if (a && (WALL_AUDIENCES as readonly string[]).includes(a)) return { base: a as Audience['base'] };
+  const me = state().currentUser?.id ?? '';
+  return wallPrivacyOf(byUser, me).defaultAudience;
+}
+
+const postToWallAction: CopilotAction = {
+  name: 'post_to_wall',
+  description:
+    "Publish a post on the user's own wall (Nakamas Wall). Audience: public (whole network), connections, friends_of_friends or only_me; omitted = the user's default. Optionally attach an event.",
+  risk: 'confirm',
+  parameters: OBJ(
+    {
+      text: S('Post text, max 2000 characters, in the language the user wrote.'),
+      audience: S('Who can see it', { enum: [...WALL_AUDIENCES] }),
+      event: EVENT_REF,
+    },
+    ['text'],
+  ),
+  preview: (args, rt) => {
+    const chosen = str(args.audience);
+    const label = chosen && WALL_AUDIENCE_LABEL[chosen] ? WALL_AUDIENCE_LABEL[chosen] : ['η προεπιλογή σου', 'your default'];
+    const ev = args.event !== undefined ? resolveEvent(args.event, rt) : null;
+    const text = (str(args.text) ?? '').slice(0, 140);
+    return {
+      el: `Δημοσίευση στον τοίχο σου · Κοινό: ${label[0]}${ev ? ` · Εκδήλωση: ${ev.title}` : ''}\n«${text}»`,
+      en: `Post on your wall · Audience: ${label[1]}${ev ? ` · Event: ${ev.title}` : ''}\n"${text}"`,
+    };
+  },
+  run: async (args, rt) => {
+    const text = (str(args.text) ?? '').slice(0, 2000);
+    if (!text) return fail('Τι να γράψω; Πες μου το κείμενο σε «εισαγωγικά».', 'What should I post? Give me the text in "quotes".');
+    const ev = args.event !== undefined ? resolveEvent(args.event, rt) : null;
+    const useWallStore = await loadWallStore();
+    const audience = wallAudienceArg(args, useWallStore.getState().privacyByUser);
+    const res = useWallStore.getState().createPost({ text, audience, eventId: ev?.id });
+    if (!res.ok || !res.id) return fail(res.reasonEl ?? 'Δεν δημοσιεύτηκε.', res.reasonEn ?? 'Not posted.');
+    const id = res.id;
+    const [el, en] = WALL_AUDIENCE_LABEL[audience.base] ?? WALL_AUDIENCE_LABEL.connections;
+    return {
+      ok: true,
+      el: `Δημοσιεύτηκε στον τοίχο σου (κοινό: ${el}).`,
+      en: `Posted on your wall (audience: ${en}).`,
+      undo: () => {
+        useWallStore.getState().deletePost(id);
+      },
+      link: { path: '/wall', el: 'Τοίχος', en: 'Wall' },
+      data: { postId: id, audience: audience.base },
+    };
+  },
+};
+
+const limitPastPostsAction: CopilotAction = {
+  name: 'limit_past_posts',
+  description: "Make all of the user's past public / friends-of-friends wall posts visible to their Nakamas (connections) only.",
+  risk: 'confirm',
+  parameters: OBJ({}),
+  preview: () => ({
+    el: 'Οι δημόσιες δημοσιεύσεις σου (και όσες βλέπουν οι Nakamas των Nakamas) θα γίνουν ορατές μόνο στους Nakamas σου.',
+    en: 'Your public (and friends-of-friends) posts will become visible to your Nakamas only.',
+  }),
+  run: async () => {
+    const useWallStore = await loadWallStore();
+    const previous = useWallStore.getState().limitPastPosts();
+    const n = Object.keys(previous).length;
+    if (n === 0) return { ok: true, el: 'Όλες οι δημοσιεύσεις σου είναι ήδη μόνο για Nakamas (ή στενότερο κοινό).', en: 'All your posts are already Nakamas-only (or narrower).' };
+    return {
+      ok: true,
+      el: `Περιόρισα ${n} δημοσιεύσεις στους Nakamas σου.`,
+      en: `Limited ${n} posts to your Nakamas.`,
+      undo: () => useWallStore.getState().restoreAudiences(previous),
+      link: { path: '/profile?tab=privacy', el: 'Απόρρητο', en: 'Privacy' },
+    };
+  },
+};
+
+const summarizeWallAction: CopilotAction = {
+  name: 'summarize_wall',
+  description: "Summarise what the user's Nakamas are posting (latest posts visible to the user) and their unread wall activity.",
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: async () => {
+    const s = state();
+    const me = s.currentUser;
+    if (!me) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const w = (await loadWallStore()).getState();
+    const ctx = {
+      graph: { users: s.users, lists: w.lists, viewerBlockedIds: s.blockedUserIds, suspendedUserIds: s.suspendedUserIds },
+      privacyByUser: w.privacyByUser,
+    };
+    const hidden = w.hiddenPostIds[me.id] ?? [];
+    const latest = visiblePosts(me.id, w.posts, ctx, { hiddenIds: hidden }).filter((p) => p.authorId !== me.id).slice(0, 4);
+    const unread = w.activity.filter((a) => a.recipientId === me.id && !a.read && !s.blockedUserIds.includes(a.actorId)).length;
+    if (latest.length === 0 && unread === 0) {
+      return {
+        ok: true,
+        el: 'Ησυχία στον τοίχο — κανένα νέο από τους Nakamas σου. Θες να γράψεις τι σχεδιάζεις;',
+        en: 'Quiet on the wall — nothing new from your Nakamas. Want to share what you are planning?',
+        link: { path: '/wall', el: 'Τοίχος', en: 'Wall' },
+      };
+    }
+    const nameOf = (id: string) => s.users.find((u) => u.id === id)?.name ?? id;
+    const line = (p: (typeof latest)[number], lang: 'el' | 'en') => {
+      const ev = p.eventId ? s.events.find((e) => e.id === p.eventId) : undefined;
+      const text = p.text.length > 90 ? `${p.text.slice(0, 90)}…` : p.text;
+      return `• ${nameOf(p.authorId)}: ${text}${ev ? (lang === 'el' ? ` (εκδήλωση: ${ev.title})` : ` (event: ${ev.title})`) : ''}`;
+    };
+    const head = (lang: 'el' | 'en') =>
+      unread > 0
+        ? lang === 'el'
+          ? `Έχεις ${unread} νέα στη δραστηριότητα του τοίχου.`
+          : `You have ${unread} new in your wall activity.`
+        : '';
+    return {
+      ok: true,
+      el: [head('el'), latest.length ? `Τελευταία από τους Nakamas σου:\n${latest.map((p) => line(p, 'el')).join('\n')}` : ''].filter(Boolean).join('\n'),
+      en: [head('en'), latest.length ? `Latest from your Nakamas:\n${latest.map((p) => line(p, 'en')).join('\n')}` : ''].filter(Boolean).join('\n'),
+      link: { path: '/wall', el: 'Τοίχος', en: 'Wall' },
+      data: { posts: latest.map((p) => ({ id: p.id, author: nameOf(p.authorId), text: p.text.slice(0, 140), eventId: p.eventId })), unread },
+    };
+  },
+};
+
 const notifPrefsAction: CopilotAction = {
   name: 'update_notification_prefs',
   description: 'Turn notification categories on or off.',
@@ -895,19 +1188,21 @@ const notifPrefsAction: CopilotAction = {
     messages: B('Chat messages.'),
     reminders: B('Event reminders.'),
     promos: B('Promotions & news.'),
+    social: B('Wall activity: comments, reactions, posts on my wall, tags.'),
   }),
   run: (args) => {
     const s = state();
-    const prev = { ...(s.userSettings?.notificationPrefs ?? DEFAULT_USER_SETTINGS.notificationPrefs) };
+    const prev = { ...DEFAULT_USER_SETTINGS.notificationPrefs, ...(s.userSettings?.notificationPrefs ?? {}) };
     const next = { ...prev };
     const labels: Record<string, [string, string]> = {
       matches: ['ταιριάσματα', 'matches'],
       messages: ['μηνύματα', 'messages'],
       reminders: ['υπενθυμίσεις', 'reminders'],
       promos: ['προωθητικά', 'promotions'],
+      social: ['δραστηριότητα τοίχου', 'wall activity'],
     };
     const changed: string[] = [];
-    for (const k of ['matches', 'messages', 'reminders', 'promos'] as const) {
+    for (const k of ['matches', 'messages', 'reminders', 'promos', 'social'] as const) {
       const v = bool(args[k]);
       if (v !== undefined && v !== next[k]) {
         next[k] = v;
@@ -951,7 +1246,8 @@ const markReadAction: CopilotAction = {
   parameters: OBJ({}),
   run: () => {
     const prev = state().notifications;
-    const unread = prev.filter((n) => !n.read).length;
+    const uid = state().currentUser?.id;
+    const unread = notificationsForUser(prev, uid).filter((n) => !n.read).length;
     if (unread === 0) return { ok: true, el: 'Δεν έχεις αδιάβαστες ειδοποιήσεις.', en: 'You have no unread notifications.' };
     state().markAllNotificationsRead();
     return {
@@ -969,7 +1265,8 @@ const notifSummaryAction: CopilotAction = {
   risk: 'safe',
   parameters: OBJ({}),
   run: () => {
-    const unread = state().notifications.filter((n) => !n.read);
+    const uid = state().currentUser?.id;
+    const unread = notificationsForUser(state().notifications, uid).filter((n) => !n.read);
     if (unread.length === 0) return { ok: true, el: 'Είσαι ενημερωμένος — καμία νέα ειδοποίηση.', en: "You're all caught up — no new notifications." };
     const top = unread.slice(0, 4);
     return {
@@ -978,6 +1275,107 @@ const notifSummaryAction: CopilotAction = {
       en: `You have ${unread.length} unread:\n${top.map((n) => `• ${n.messageEn || n.messageGr}`).join('\n')}`,
       link: { path: '/notifications', el: 'Ειδοποιήσεις', en: 'Notifications' },
       data: { unread: unread.length, items: top.map((n) => n.messageEn) },
+    };
+  },
+};
+
+/** Same source as the Home welcome-back line (lib/returnVisit), so both always agree. */
+const whatsNewAction: CopilotAction = {
+  name: 'whats_new',
+  description:
+    "Catch the user up: next plan, new plans, unread messages/notifications, pending feedback, verify gaps, incoming company joins.",
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: async () => {
+    const s = state();
+    const user = s.currentUser;
+    if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const now = new Date();
+    const previous = previousVisitAt(user.id);
+    const since = previous ?? now.getTime() - 7 * 24 * 3600 * 1000;
+    const mine = new Set(s.groups.filter((g) => g.members.includes(user.id) || g.pendingMembers?.includes(user.id)).map((g) => g.eventId));
+    const next = s.events
+      .filter((e) => mine.has(e.id))
+      .map((e) => ({ id: e.id, title: e.title, start: new Date(`${e.date}T${/^\d{2}:\d{2}$/.test(e.time ?? '') ? e.time : '12:00'}:00`) }))
+      .filter((e) => !Number.isNaN(e.start.getTime()) && e.start.getTime() >= now.getTime())
+      .sort((a, b) => a.start.getTime() - b.start.getTime())[0] ?? null;
+    const newPlans = s.companyRequests.filter(
+      (r) => r.status === 'active' && r.creatorUserId !== user.id && Date.parse(r.createdAt) > since,
+    ).length;
+    const unreadChats = useChatStore.getState().conversations.reduce((n, c) => n + (c.status === 'archived' ? 0 : c.unreadCount), 0);
+    // Asked directly, so news counts even within the same session.
+    const w = (await loadWallStore()).getState();
+    const wallCtx = {
+      graph: { users: s.users, lists: w.lists, viewerBlockedIds: s.blockedUserIds, suspendedUserIds: s.suspendedUserIds },
+      privacyByUser: w.privacyByUser,
+    };
+    const newPosts = visiblePosts(user.id, w.posts, wallCtx).filter((p) => p.authorId !== user.id && Date.parse(p.createdAt) > since).length;
+    const parts = buildReturnSummary({
+      now,
+      previousVisitAt: 0,
+      nextEvent: next,
+      newPlans,
+      unreadChats,
+      unreadNotifications: notificationsForUser(s.notifications, user.id).filter((n) => !n.read).length,
+      newPosts,
+    });
+    const extras: { el: string; en: string; path: string }[] = [];
+    const pendingFeedback = s.getPendingFeedbackEventId();
+    if (pendingFeedback) {
+      const title = s.events.find((e) => e.id === pendingFeedback)?.title ?? pendingFeedback;
+      extras.push({
+        el: `Εκκρεμεί αξιολόγηση για «${title}»`,
+        en: `Pending review for "${title}"`,
+        path: `/history/feedback/${pendingFeedback}`,
+      });
+    }
+    const incomingJoins = s.companyJoinRequests.filter((j) => j.targetUserId === user.id && j.status === 'pending').length;
+    if (incomingJoins > 0) {
+      extras.push({
+        el: incomingJoins === 1 ? '1 νέο αίτημα παρέας' : `${incomingJoins} νέα αιτήματα παρέας`,
+        en: incomingJoins === 1 ? '1 company join request' : `${incomingJoins} company join requests`,
+        path: '/buddy-seek',
+      });
+    }
+    const gaps: string[] = [];
+    if (!user.emailVerified) gaps.push('email');
+    if (!user.phoneVerified) gaps.push('phone');
+    if (!user.idVerified) gaps.push('id');
+    if (gaps.length > 0) {
+      extras.push({
+        el: `Λείπει επαλήθευση: ${gaps.join(', ')}`,
+        en: `Verification still needed: ${gaps.join(', ')}`,
+        path: '/verification',
+      });
+    }
+    if (parts.length === 0 && extras.length === 0) {
+      return { ok: true, el: 'Είσαι ενημερωμένος: τίποτα νέο αυτή τη στιγμή.', en: "You're all caught up: nothing new right now." };
+    }
+    const tEl = (g: string) => g;
+    const tEn = (_g: string, e: string) => e;
+    const firstPath = parts.length > 0 ? returnPartPath(parts[0]) : extras[0]?.path ?? '/';
+    const elLines = [
+      ...parts.map((p) => `• ${describeReturnPart(p, tEl)}`),
+      ...extras.map((e) => `• ${e.el}`),
+    ];
+    const enLines = [
+      ...parts.map((p) => `• ${describeReturnPart(p, tEn)}`),
+      ...extras.map((e) => `• ${e.en}`),
+    ];
+    return {
+      ok: true,
+      el: `Τι νέο υπάρχει:\n${elLines.join('\n')}`,
+      en: `What's new:\n${enLines.join('\n')}`,
+      link: { path: firstPath, el: 'Άνοιγμα', en: 'Open' },
+      data: {
+        parts: parts.map((p) => p.kind),
+        extras: extras.map((e) => e.path),
+        newPlans,
+        unreadChats,
+        pendingFeedback,
+        incomingJoins,
+        verifyGaps: gaps,
+      },
     };
   },
 };
@@ -1061,6 +1459,332 @@ const explainAction: CopilotAction = {
   },
 };
 
+const startVerificationAction: CopilotAction = {
+  name: 'start_verification',
+  description:
+    'Open Identity Verification and complete one demo email/phone/id step (same helper as the Verification Center buttons).',
+  risk: 'safe',
+  parameters: OBJ({
+    method: S('Verification method', { enum: ['email', 'phone', 'id', 'any'] }),
+  }),
+  run: (args, rt) => {
+    const user = state().currentUser;
+    if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const method = str(args.method) ?? 'any';
+    const pick: VerifyDemoMethod | null =
+      method === 'email' || method === 'phone' || method === 'id'
+        ? method
+        : nextVerifyGap(user);
+    if (!pick) {
+      rt.navigate('/verification');
+      return {
+        ok: true,
+        el: 'Είσαι ήδη επαληθευμένος σε email, τηλέφωνο και ταυτότητα.',
+        en: 'You are already verified for email, phone and ID.',
+        link: { path: '/verification', el: 'Επαλήθευση', en: 'Verification' },
+      };
+    }
+    const prev = verifyDemoSnapshot(user);
+    const changed = verifyDemo(pick);
+    const path = `/verification?method=${pick}`;
+    rt.navigate(path);
+    const labels = {
+      email: ['email', 'email'],
+      phone: ['τηλέφωνο', 'phone'],
+      id: ['ταυτότητα', 'ID'],
+    } as const;
+    if (!changed) {
+      return {
+        ok: true,
+        el: `Το ${labels[pick][0]} είναι ήδη επαληθευμένο — άνοιξα το Κέντρο Επαλήθευσης.`,
+        en: `${labels[pick][1]} is already verified — opened Verification.`,
+        link: { path, el: 'Επαλήθευση', en: 'Verification' },
+      };
+    }
+    return {
+      ok: true,
+      el: `Ολοκλήρωσα demo επαλήθευση ${labels[pick][0]} και άνοιξα το Κέντρο Επαλήθευσης.`,
+      en: `Completed demo ${labels[pick][1]} verification and opened Verification.`,
+      undo: () => state().updateUser(user.id, prev),
+      link: { path, el: 'Επαλήθευση', en: 'Verification' },
+    };
+  },
+};
+
+const openFeedbackAction: CopilotAction = {
+  name: 'open_feedback',
+  description: 'Open the pending post-event feedback form, or History if none is pending.',
+  risk: 'safe',
+  parameters: OBJ({ event: EVENT_REF }),
+  run: (args, rt) => {
+    const s = state();
+    if (!s.currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const explicit = str(args.event);
+    const id =
+      explicit && explicit !== 'this'
+        ? resolveEvent(args.event, rt)?.id
+        : s.getPendingFeedbackEventId() ?? resolveEvent(args.event, rt)?.id;
+    if (!id) {
+      rt.navigate('/history');
+      return {
+        ok: true,
+        el: 'Δεν έχεις εκκρεμή αξιολόγηση — άνοιξα το Ιστορικό.',
+        en: 'No pending review — opened History.',
+        link: { path: '/history', el: 'Ιστορικό', en: 'History' },
+      };
+    }
+    const path = `/history/feedback/${id}`;
+    rt.navigate(path);
+    const title = s.events.find((e) => e.id === id)?.title ?? id;
+    return {
+      ok: true,
+      el: `Άνοιξα την αξιολόγηση για «${title}».`,
+      en: `Opened the review for "${title}".`,
+      link: { path, el: 'Αξιολόγηση', en: 'Review' },
+    };
+  },
+};
+
+const exportAgendaAction: CopilotAction = {
+  name: 'export_agenda',
+  description: 'Download a bulk .ics of the user upcoming joined/saved plans (same as Calendar export).',
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: () => {
+    const s = state();
+    if (!s.currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const uid = s.currentUser.id;
+    const joined = new Set(s.groups.filter((g) => g.members.includes(uid)).map((g) => g.eventId));
+    const now = new Date().toISOString().slice(0, 10);
+    const events = s.events
+      .filter(
+        (e) =>
+          e.status !== 'cancelled' &&
+          e.date >= now &&
+          (joined.has(e.id) || s.savedEvents.includes(e.id) || s.waitlistedEvents.includes(e.id)),
+      )
+      .sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`));
+    if (events.length === 0) {
+      return {
+        ok: true,
+        el: 'Δεν υπάρχουν επερχόμενα σχέδια για εξαγωγή.',
+        en: 'There are no upcoming plans to export.',
+        link: { path: '/agenda', el: 'Ημερολόγιο', en: 'Calendar' },
+      };
+    }
+    downloadCalendarIcs(
+      events.map((e) => ({
+        title: e.title,
+        date: e.date,
+        time: e.time,
+        locationArea: e.locationArea,
+      })),
+      'parea-calendar.ics',
+    );
+    return {
+      ok: true,
+      el: `Εξήγαγα ${events.length} εκδηλώσεις σε .ics.`,
+      en: `Exported ${events.length} events to .ics.`,
+      link: { path: '/agenda', el: 'Ημερολόγιο', en: 'Calendar' },
+      data: { count: events.length },
+    };
+  },
+};
+
+const summarizeWalletAction: CopilotAction = {
+  name: 'summarize_wallet',
+  description: 'Summarise available and pending earnings and offer a bridge to payout management.',
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: (_args, rt) => {
+    const s = state();
+    if (!s.currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    if (!s.currentUser.isOrganizer) {
+      rt.navigate('/wallet');
+      return {
+        ok: true,
+        el: 'Το πορτοφόλι είναι για διοργανωτές — άνοιξα τη σελίδα για να δεις τη demo προβολή.',
+        en: 'Wallet is for organizers — opened the page so you can see the demo view.',
+        link: { path: '/wallet', el: 'Πορτοφόλι', en: 'Wallet' },
+      };
+    }
+    return {
+      ok: true,
+      el: `Demo στοιχεία: διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)}, εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}. Θες διαχείριση πληρωμών;`,
+      en: `Demo figures: available ${formatWalletEur(WALLET_DEMO.availableEur)}, pending ${formatWalletEur(WALLET_DEMO.pendingEur)}. Want payout management?`,
+      link: { path: '/wallet', el: 'Πορτοφόλι', en: 'Wallet' },
+      data: { available: WALLET_DEMO.availableEur, pending: WALLET_DEMO.pendingEur, demo: true },
+    };
+  },
+};
+
+/** Live trust/verify gaps — bridges to Trust or the next Verification method (no second verify mutate). */
+const summarizeTrustAction: CopilotAction = {
+  name: 'summarize_trust',
+  description:
+    'Summarise reliability score and open verification gaps, then bridge to Trust Center or Verification.',
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: (_args, rt) => {
+    const user = state().currentUser;
+    if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const score = user.reliabilityScore ?? 0;
+    const stars = (score / 20).toFixed(1);
+    const gap = nextVerifyGap(user);
+    const labels = {
+      email: ['email', 'email'],
+      phone: ['τηλέφωνο', 'phone'],
+      id: ['ταυτότητα', 'ID'],
+    } as const;
+    if (!gap) {
+      rt.navigate('/trust');
+      return {
+        ok: true,
+        el: `Αξιοπιστία ${stars}/5 (${score}/100). Όλα τα βασικά βήματα επαλήθευσης είναι ολοκληρωμένα — άνοιξα το Κέντρο Εμπιστοσύνης.`,
+        en: `Reliability ${stars}/5 (${score}/100). All core verification steps are done — opened Trust Center.`,
+        link: { path: '/trust', el: 'Εμπιστοσύνη', en: 'Trust' },
+        data: { score, gap: null },
+      };
+    }
+    const path = `/verification?method=${gap}`;
+    rt.navigate(path);
+    return {
+      ok: true,
+      el: `Αξιοπιστία ${stars}/5 (${score}/100). Επόμενο κενό: ${labels[gap][0]} — άνοιξα την επαλήθευση.`,
+      en: `Reliability ${stars}/5 (${score}/100). Next gap: ${labels[gap][1]} — opened Verification.`,
+      link: { path, el: 'Επαλήθευση', en: 'Verification' },
+      data: { score, gap },
+    };
+  },
+};
+
+const listFormingAction: CopilotAction = {
+  name: 'list_forming_plans',
+  description: 'List active Find-Nakamas company requests (plans forming) the user can join or review.',
+  risk: 'safe',
+  parameters: OBJ({ limit: N('Max items (1-8, default 5).') }),
+  run: (args, rt) => {
+    const s = state();
+    const user = s.currentUser;
+    if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const limit = Math.min(8, Math.max(1, Math.floor(num(args.limit) ?? 5)));
+    const active = s.companyRequests
+      .filter((r) => r.status === 'active')
+      .slice(0, limit);
+    if (active.length === 0) {
+      rt.navigate('/buddy-seek');
+      return {
+        ok: true,
+        el: 'Δεν υπάρχουν ανοιχτά σχέδια αυτή τη στιγμή — άνοιξα το Βρες Nakamas.',
+        en: 'No open plans right now — opened Find Nakamas.',
+        link: { path: '/buddy-seek', el: 'Βρες Nakamas', en: 'Find Nakamas' },
+      };
+    }
+    const lines = (lang: 'el' | 'en') =>
+      active
+        .map((r) => {
+          const e = s.events.find((x) => x.id === r.eventId);
+          const title = e?.title ?? r.eventId;
+          const mine = r.creatorUserId === user.id;
+          return `• ${title}${mine ? (lang === 'el' ? ' (δικό σου)' : ' (yours)') : ''}`;
+        })
+        .join('\n');
+    return {
+      ok: true,
+      el: `Ανοιχτά σχέδια (${active.length}):\n${lines('el')}`,
+      en: `Open plans (${active.length}):\n${lines('en')}`,
+      link: { path: '/buddy-seek', el: 'Βρες Nakamas', en: 'Find Nakamas' },
+      data: { ids: active.map((r) => r.id) },
+    };
+  },
+};
+
+const respondCompanyJoinAction: CopilotAction = {
+  name: 'respond_company_join',
+  description: 'Accept or decline a pending company join request on Find Nakamas (requires confirmation).',
+  risk: 'confirm',
+  parameters: OBJ(
+    {
+      accept: B('true = accept, false = decline'),
+      requestId: S('Join request id, or omit for the newest pending for you.'),
+    },
+    ['accept'],
+  ),
+  preview: (args) => {
+    const accept = bool(args.accept) !== false;
+    return {
+      el: accept ? 'Αποδοχή αιτήματος παρέας' : 'Απόρριψη αιτήματος παρέας',
+      en: accept ? 'Accept company join request' : 'Decline company join request',
+    };
+  },
+  run: (args, rt) => {
+    const s = state();
+    const user = s.currentUser;
+    if (!user) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const accept = bool(args.accept) !== false;
+    const id = str(args.requestId);
+    const pending = s.companyJoinRequests.filter((j) => j.targetUserId === user.id && j.status === 'pending');
+    const join = id
+      ? s.companyJoinRequests.find((j) => j.id === id || j.id.endsWith(id))
+      : pending[0];
+    if (!join || join.targetUserId !== user.id || join.status !== 'pending') {
+      return fail('Δεν βρήκα εκκρεμές αίτημα παρέας.', 'No pending company join request found.');
+    }
+    if (accept) {
+      const groupId = s.acceptCompanyJoinRequest(join.id);
+      if (!groupId) return fail('Αποτυχία αποδοχής αιτήματος.', 'Could not accept the request.');
+      rt.navigate(`/chat/${groupId}`);
+      return {
+        ok: true,
+        el: 'Αποδέχτηκα το αίτημα και άνοιξα το chat συντονισμού.',
+        en: 'Accepted the request and opened the coordination chat.',
+        link: { path: `/chat/${groupId}`, el: 'Chat', en: 'Chat' },
+      };
+    }
+    s.declineCompanyJoinRequest(join.id);
+    return {
+      ok: true,
+      el: 'Απέρριψα το αίτημα παρέας.',
+      en: 'Declined the company join request.',
+      link: { path: '/buddy-seek', el: 'Βρες Nakamas', en: 'Find Nakamas' },
+    };
+  },
+};
+
+const joinChallengeAction: CopilotAction = {
+  name: 'join_challenge',
+  description: 'Join or leave a gamification challenge by id (c1, c2, c3, …).',
+  risk: 'safe',
+  parameters: OBJ({ challengeId: S('Challenge id, e.g. c1.'), leave: B('true = leave instead of join') }, ['challengeId']),
+  run: (args) => {
+    const s = state();
+    if (!s.currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const id = str(args.challengeId);
+    if (!id) return fail('Πες μου ποια πρόκληση (π.χ. c1).', 'Tell me which challenge (e.g. c1).');
+    const leave = bool(args.leave) === true;
+    const joined = s.challengesJoined.includes(id);
+    if (leave && !joined) {
+      return { ok: true, el: 'Δεν είσαι σε αυτή την πρόκληση.', en: 'You are not in that challenge.' };
+    }
+    if (!leave && joined) {
+      return {
+        ok: true,
+        el: 'Είσαι ήδη σε αυτή την πρόκληση.',
+        en: 'You are already in that challenge.',
+        link: { path: '/challenges', el: 'Προκλήσεις', en: 'Challenges' },
+      };
+    }
+    s.toggleChallengeJoined(id);
+    return {
+      ok: true,
+      el: leave ? `Έφυγες από την πρόκληση ${id}.` : `Μπήκες στην πρόκληση ${id}.`,
+      en: leave ? `Left challenge ${id}.` : `Joined challenge ${id}.`,
+      undo: () => state().toggleChallengeJoined(id),
+      link: { path: '/challenges', el: 'Προκλήσεις', en: 'Challenges' },
+    };
+  },
+};
+
 const capabilitiesAction: CopilotAction = {
   name: 'capabilities',
   description: 'Explain what the assistant can do.',
@@ -1069,9 +1793,9 @@ const capabilitiesAction: CopilotAction = {
   run: () => ({
     ok: true,
     el:
-      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα και τις ειδοποιήσεις σου\n• Να στείλω μήνυμα στην ομάδα σου ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\n• Να εξηγήσω αξιοπιστία, βαθμίδες, ασφάλεια, XP\nΌ,τι κάνω αναιρείται με ένα κλικ.',
+      'Μπορώ να κάνω πράγματα για σένα σε όλη την εφαρμογή:\n• Να βρω και να προτείνω εκδηλώσεις (κατηγορία, ημέρα, τιμή, περιοχή)\n• Να αποθηκεύσω, να ανοίξω, να βάλω στο ημερολόγιο ή να ξεκινήσω ένταξη σε ομάδα\n• Να συνοψίσω το πρόγραμμα, τις ειδοποιήσεις, το πορτοφόλι και την αξιοπιστία σου\n• Να εξάγω όλο το ημερολόγιο σε .ics και να ανοίξω εκκρεμή αξιολόγηση\n• Να ξεκινήσω επαλήθευση και να σου πω τι νέο υπάρχει (και κενά εμπιστοσύνης)\n• Να δείξω σχέδια που σχηματίζονται και να απαντήσω σε αιτήματα παρέας\n• Να απαντήσω «πού …;» με where_is και να προτείνω πρόχειρα φόρμας (εκδήλωση/προφίλ)\n• Να μπω σε προκλήσεις, να στείλω μήνυμα ή να δημιουργήσω εκδήλωση (με επιβεβαίωση)\n• Να δημοσιεύσω στον τοίχο σου με το κοινό που επιλέγεις, να σου πω τι γράφουν οι Nakamas σου ή να περιορίσω παλαιότερες δημοσιεύσεις\n• Να αλλάξω θέμα, γλώσσα, απόρρητο, ειδοποιήσεις, ενδιαφέροντα\nΌ,τι κάνω αναιρείται με ένα κλικ.',
     en:
-      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule and notifications\n• Message your group or create an event (with confirmation)\n• Change theme, language, privacy, notifications, interests\n• Explain reliability, tiers, safety and XP\nEverything I do can be undone in one click.',
+      'I can act for you across the app:\n• Find and recommend events (category, day, price, area)\n• Save, open, add to calendar or start joining a group\n• Summarise your schedule, notifications, wallet and trust\n• Export the whole calendar as .ics and open a pending review\n• Start verification and catch you up on what’s new (including trust gaps)\n• List plans forming and respond to company join requests\n• Answer “where do I …?” and propose form drafts (event/profile)\n• Join challenges, message your group or create an event (with confirmation)\n• Post on your wall with the audience you choose, catch you up on your Nakamas’ posts, or limit past posts\n• Change theme, language, privacy, notifications, interests\nEverything I do can be undone in one click.',
   }),
 };
 
@@ -1103,6 +1827,217 @@ const resolveReportAction: CopilotAction = {
   },
 };
 
+/* ───────────────────────── Φ27 — outings ───────────────────────── */
+
+/** The user's next group outing (or the one for a given event). */
+function nextMyGroup(eventId?: string): { group: Group; event: Event } | null {
+  const s = state();
+  const uid = s.currentUser?.id;
+  if (!uid) return null;
+  const now = Date.now();
+  const mine = s.groups
+    .filter((g) => g.members.includes(uid) && g.status !== 'cancelled' && (!eventId || g.eventId === eventId))
+    .map((g) => ({ group: g, event: s.events.find((e) => e.id === g.eventId) }))
+    .filter((x): x is { group: Group; event: Event } => Boolean(x.event));
+  if (eventId) return mine[0] ?? null;
+  const upcoming = mine
+    .map((x) => ({ ...x, start: eventStartMs(x.event) ?? 0 }))
+    .filter((x) => x.start >= now - 6 * 3_600_000)
+    .sort((a, b) => a.start - b.start);
+  return upcoming[0] ?? null;
+}
+
+const showMyNightAction: CopilotAction = {
+  name: 'show_my_night',
+  description:
+    'Open «Η βραδιά μας» (Our night) for the user’s next group outing, or for a given event: door ticket/check-in, meeting point, pre-meet place, group code, who is coming.',
+  risk: 'safe',
+  parameters: OBJ({ event: EVENT_REF }),
+  run: (args, rt) => {
+    const e = args.event !== undefined && args.event !== null && str(String(args.event)) ? resolveEvent(args.event, rt) : null;
+    const found = nextMyGroup(e?.id);
+    if (!found) {
+      return fail(
+        e ? `Δεν είσαι σε ομάδα για «${e.title}».` : 'Δεν έχεις κάποια προσεχή έξοδο με ομάδα. Θες να βρούμε μία;',
+        e ? `You're not in a group for "${e.title}".` : "You don't have an upcoming group outing. Want to find one?",
+      );
+    }
+    const { group: g, event: ev } = found;
+    const revealed = g.status === 'confirmed' || g.status === 'completed';
+    const venue = venueById(g.preMeet?.venueId);
+    const path = `/night/${g.id}`;
+    rt.navigate(path);
+    const parts = (lang: 'el' | 'en') =>
+      [
+        formatEventLine(ev, lang),
+        lang === 'el' ? `${g.members.length}/${g.targetSize} μέλη` : `${g.members.length}/${g.targetSize} members`,
+        revealed && g.meetingPoint ? (lang === 'el' ? `Σημείο: ${g.meetingPoint}` : `Meeting point: ${g.meetingPoint}`) : null,
+        revealed && venue && g.preMeet
+          ? lang === 'el'
+            ? `Συνάντηση πριν: ${venue.name} στις ${timeMinus(ev.time, g.preMeet.minutesBefore)}`
+            : `Meet before: ${venue.name} at ${timeMinus(ev.time, g.preMeet.minutesBefore)}`
+          : null,
+        g.discountUnlocked && g.code ? (lang === 'el' ? `Κωδικός ομάδας: ${g.code}` : `Group code: ${g.code}`) : null,
+      ]
+        .filter(Boolean)
+        .join('\n');
+    return {
+      ok: true,
+      el: `Άνοιξα «Η βραδιά μας».\n${parts('el')}`,
+      en: `Opened «Our night».\n${parts('en')}`,
+      link: { path, el: 'Η βραδιά μας', en: 'Our night' },
+      data: { groupId: g.id, eventId: ev.id },
+    };
+  },
+};
+
+const MINI_KINDS = ['coffee', 'walk', 'run', 'drink'] as const;
+const MINI_LABEL: Record<(typeof MINI_KINDS)[number], [string, string]> = {
+  coffee: ['Καφές', 'Coffee'],
+  walk: ['Βόλτα', 'Walk'],
+  run: ['Τρέξιμο', 'Run'],
+  drink: ['Ένα ποτό', 'A drink'],
+};
+
+const createMiniOutingAction: CopilotAction = {
+  name: 'create_mini_outing',
+  description:
+    'Create a small outing without an event (coffee, walk, run or a drink) for 2–6 people in «Βρες Nakamas». Same trust rules as events; the exact spot is shown to members only.',
+  risk: 'confirm',
+  parameters: OBJ(
+    {
+      kind: S('Kind of outing.', { enum: [...MINI_KINDS] }),
+      date: S('Date as YYYY-MM-DD (today or later).'),
+      time: S('Start time HH:MM (24h).'),
+      area: S('Neighbourhood shown to everyone, e.g. "Koukaki".'),
+      spot: S('Exact spot, shown to members only (optional).'),
+      size: N('Group size including the user (2-6, default 3).'),
+      womenNb: B('Women & non-binary only (requires the user to have set it in their profile).'),
+    },
+    ['kind', 'date', 'time', 'area'],
+  ),
+  preview: (args) => {
+    const k = (MINI_KINDS as readonly string[]).includes(String(args.kind)) ? (args.kind as (typeof MINI_KINDS)[number]) : 'coffee';
+    return {
+      el: `Νέα μικρή έξοδος: ${MINI_LABEL[k][0]} · ${str(args.area) ?? ''} · ${str(args.date) ?? ''} ${str(args.time) ?? ''}`,
+      en: `New small outing: ${MINI_LABEL[k][1]} · ${str(args.area) ?? ''} · ${str(args.date) ?? ''} ${str(args.time) ?? ''}`,
+    };
+  },
+  run: (args, rt) => {
+    const s = state();
+    if (!s.currentUser) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const kind = (MINI_KINDS as readonly string[]).includes(String(args.kind)) ? (args.kind as (typeof MINI_KINDS)[number]) : 'coffee';
+    const date = str(args.date);
+    const time = str(args.time);
+    const area = str(args.area);
+    const today = new Date().toISOString().slice(0, 10);
+    if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date) || date < today) return fail('Χρειάζομαι σημερινή ή μελλοντική ημερομηνία (ΕΕΕΕ-ΜΜ-ΗΗ).', 'I need today or a future date (YYYY-MM-DD).');
+    if (!time || !/^\d{1,2}:\d{2}$/.test(time)) return fail('Χρειάζομαι ώρα (π.χ. 11:00).', 'I need a time (e.g. 11:00).');
+    if (!area) return fail('Σε ποια περιοχή;', 'Which area?');
+    const size = Math.min(6, Math.max(2, Math.floor(num(args.size) ?? 3)));
+    const groupId = s.createMiniOuting({
+      kind,
+      date,
+      time,
+      area: area.includes(',') ? area : `${area}, Athens`,
+      exactLocation: str(args.spot),
+      size,
+      genderMode: bool(args.womenNb) ? 'women_nb' : 'mixed',
+    });
+    if (!groupId) return fail('Δεν μπορείς να ξεκινήσεις έξοδο όσο ισχύει παύση.', 'You cannot start an outing while a pause applies.');
+    const g = state().groups.find((x) => x.id === groupId);
+    const path = `/night/${groupId}`;
+    rt.navigate(path);
+    return {
+      ok: true,
+      el: `Δημοσιεύτηκε: ${MINI_LABEL[kind][0]} · ${area} · ${date} ${time} για ${size} άτομα${g?.genderMode === 'women_nb' ? ' (γυναίκες & μη δυαδικά)' : ''}.`,
+      en: `Published: ${MINI_LABEL[kind][1]} · ${area} · ${date} ${time} for ${size} people${g?.genderMode === 'women_nb' ? ' (women & non-binary)' : ''}.`,
+      link: { path, el: 'Η βραδιά μας', en: 'Our night' },
+      undo: () => {
+        if (g) state().cancelEvent(g.eventId);
+      },
+    };
+  },
+};
+
+const openCollectionAction: CopilotAction = {
+  name: 'open_collection',
+  description:
+    'Open a themed collection of events (free, weekend, first time solo, quiet nights, outdoors, Nakamas Nights) with how many groups are forming.',
+  risk: 'safe',
+  parameters: OBJ({ collection: S('Collection id.', { enum: COLLECTIONS.map((c) => c.id) }) }),
+  run: (args, rt) => {
+    const c = collectionById(str(args.collection));
+    if (!c) {
+      rt.navigate('/collections');
+      return { ok: true, el: 'Άνοιξα τις Συλλογές.', en: 'Opened Collections.', link: { path: '/collections', el: 'Συλλογές', en: 'Collections' } };
+    }
+    const s = state();
+    const today = new Date().toISOString().slice(0, 10);
+    const list = collectionEvents(c, s.events, s.groups).filter((e) => e.date >= today);
+    const forming = list.reduce((n, e) => n + formingGroups(e, s.groups).length, 0);
+    const path = `/collections/${c.id}`;
+    rt.navigate(path);
+    return {
+      ok: true,
+      el: `«${c.el}»: ${list.length} προσεχείς εκδηλώσεις, ${forming} παρέες σχηματίζονται.${list[0] ? `\nΠρώτη: ${formatEventLine(list[0], 'el')}` : ''}`,
+      en: `"${c.en}": ${list.length} upcoming events, ${forming} groups forming.${list[0] ? `\nFirst: ${formatEventLine(list[0], 'en')}` : ''}`,
+      link: { path, el: c.el, en: c.en },
+      eventIds: list.slice(0, 8).map((e) => e.id),
+    };
+  },
+};
+
+const summarizeStandingAction: CopilotAction = {
+  name: 'summarize_standing',
+  description:
+    'Explain the user’s standing (warning / 7-day pause / review) from absences and late cancels in the last 90 days, and how to appeal.',
+  risk: 'safe',
+  parameters: OBJ({}),
+  run: (_args, rt) => {
+    const s = state();
+    const me = s.currentUser;
+    if (!me) return fail('Χρειάζεται σύνδεση.', 'You need to sign in.');
+    const st = standingFor(s.strikes, me.id);
+    const mine = s.strikes.filter((x) => x.userId === me.id);
+    const pending = mine.filter((x) => x.appeal?.status === 'pending').length;
+    const last = mine.sort((a, b) => b.at.localeCompare(a.at))[0];
+    rt.navigate('/trust');
+    const tEl = (el: string) => el;
+    return {
+      ok: true,
+      el: `${st.titleEl}. ${st.explainEl}${last ? `\nΤελευταίο: ${strikeLabel(last.kind, tEl)}.` : ''}${pending ? `\nΕνστάσεις σε εξέταση: ${pending}.` : ''}${last && !last.appeal ? '\nΜπορείς να κάνεις ένσταση στο Κέντρο Εμπιστοσύνης.' : ''}`,
+      en: `${st.titleEn}. ${st.explainEn}${last ? `\nLatest: ${strikeLabel(last.kind, (_e, en) => en)}.` : ''}${pending ? `\nAppeals under review: ${pending}.` : ''}${last && !last.appeal ? '\nYou can appeal in the Trust Center.' : ''}`,
+      link: { path: '/trust', el: 'Κέντρο Εμπιστοσύνης', en: 'Trust Center' },
+      data: { level: st.level, active: st.active },
+    };
+  },
+};
+
+const inviteFriendsAction: CopilotAction = {
+  name: 'invite_friends',
+  description:
+    'Create (or reuse) an invite link for the user’s group outing that friends can answer without an account.',
+  risk: 'safe',
+  parameters: OBJ({ event: EVENT_REF }),
+  run: (args, rt) => {
+    const e = args.event !== undefined && args.event !== null && str(String(args.event)) ? resolveEvent(args.event, rt) : null;
+    const found = nextMyGroup(e?.id);
+    if (!found) return fail('Δεν βρήκα ομάδα σου για πρόσκληση.', "I couldn't find a group of yours to invite to.");
+    if (found.group.members.length >= found.group.targetSize) return fail('Η ομάδα είναι πλήρης.', 'The group is full.');
+    const id = state().createPlanInvite(found.group.id);
+    if (!id) return fail('Δεν μπόρεσα να φτιάξω πρόσκληση.', 'I could not create an invite.');
+    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/i/${id}`;
+    return {
+      ok: true,
+      el: `Ο σύνδεσμος πρόσκλησης για «${found.event.title}»: ${url}\nΟι φίλοι σου απαντούν χωρίς λογαριασμό· τα ονόματα τα βλέπεις μόνο εσύ.`,
+      en: `Invite link for "${found.event.title}": ${url}\nFriends answer without an account; only you see the names.`,
+      link: { path: `/night/${found.group.id}`, el: 'Η βραδιά μας', en: 'Our night' },
+      data: { inviteId: id, url },
+    };
+  },
+};
+
 export const COPILOT_ACTIONS: CopilotAction[] = [
   navigateAction,
   searchAction,
@@ -1115,12 +2050,22 @@ export const COPILOT_ACTIONS: CopilotAction[] = [
   calendarAction,
   leaveGroupAction,
   agendaAction,
+  exportAgendaAction,
   draftEventAction,
+  draftProfileAction,
+  whereIsAction,
   createEventAction,
   messageAction,
   openChatAction,
   connectionAction,
   findCompanyAction,
+  listFormingAction,
+  respondCompanyJoinAction,
+  startVerificationAction,
+  openFeedbackAction,
+  summarizeWalletAction,
+  summarizeTrustAction,
+  joinChallengeAction,
   themeAction,
   languageAction,
   homeLayoutAction,
@@ -1128,15 +2073,24 @@ export const COPILOT_ACTIONS: CopilotAction[] = [
   interestAction(true),
   interestAction(false),
   privacyAction,
+  postToWallAction,
+  limitPastPostsAction,
+  summarizeWallAction,
   notifPrefsAction,
   sidebarAction,
   markReadAction,
   notifSummaryAction,
+  whatsNewAction,
   progressAction,
   reportAction,
   explainAction,
   capabilitiesAction,
   resolveReportAction,
+  showMyNightAction,
+  createMiniOutingAction,
+  openCollectionAction,
+  summarizeStandingAction,
+  inviteFriendsAction,
 ];
 
 export function getAction(name: string): CopilotAction | undefined {
@@ -1145,7 +2099,7 @@ export function getAction(name: string): CopilotAction | undefined {
 
 /** Actions visible to the current user (least privilege: admin tools hidden from members). */
 export function availableActions(): CopilotAction[] {
-  const isAdmin = Boolean(state().currentUser?.isOrganizer);
+  const isAdmin = isPlatformAdmin(state().currentUser);
   return COPILOT_ACTIONS.filter((a) => !a.adminOnly || isAdmin);
 }
 

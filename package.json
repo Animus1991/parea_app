@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "tsx server.ts",
     "dev:client": "vite --port=3000 --host=0.0.0.0",
@@ -17,7 +20,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "validate": "npm run typecheck && npm run lint:eslint && npm run audit:contrast && npm run test"
+    "validate": "npm run typecheck && npm run lint:eslint && npm run audit:contrast && npm run test",
+    "test:rules": "npx -y firebase-tools@14 emulators:exec --only firestore --project nakamas-rules-test \"vitest run server/firestore.rules.test.ts\"",
+    "set-role": "tsx scripts/set-role.ts"
   },
   "dependencies": {
     "@google/genai": "^1.52.0",
@@ -66,6 +71,7 @@
     "http-proxy-agent": "^9.0.0",
     "https-proxy-agent": "^9.0.0",
     "input-otp": "^1.4.2",
+    "jose": "^6.2.17",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.546.0",
     "motion": "^12.38.0",
@@ -91,6 +97,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
     "@eslint/js": "^9.17.0",
+    "@firebase/rules-unit-testing": "^4.0.1",
     "@playwright/test": "^1.60.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@types/express": "^4.17.21",
@@ -98,7 +105,7 @@
     "@types/node": "^22.14.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitest/coverage-v8": "^3.2.6",
+    "@vitest/coverage-v8": "^5.1.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.17.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -112,6 +119,19 @@
     "typescript": "~5.8.2",
     "typescript-eslint": "^8.18.0",
     "vite": "^6.2.3",
-    "vitest": "^3.2.6"
+    "vitest": "^5.1.0"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.7",
+    "qs": "^6.17.1",
+    "@ts-morph/common": {
+      "minimatch": "^11.0.8"
+    },
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.8"
+    },
+    "tsx": {
+      "esbuild": "^0.28.2"
+    }
   }
 }

@@ -1,12 +1,15 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, Users, User, Megaphone, LifeBuoy, GitMerge, Lock, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { EmptyState } from '../common/EmptyState';
+import { ChatStoriesStrip } from './ChatStoriesStrip';
 import { useChatStore } from '../../store/chatStore';
 import { useStore } from '../../store';
 import { canOpenConversation } from '../../lib/chatPermissions';
 import type { Conversation, ConversationType } from '../../types/chat';
 import { cn } from '../../lib/utils';
+import { CHAT_TYPO } from '../../lib/typographyTokens';
 
 const TYPE_ICON: Record<ConversationType, typeof Users> = {
   event_group: Users,
@@ -29,6 +32,7 @@ function sectionFor(c: Conversation): 'active' | 'pending' | 'groups' | 'connect
 
 export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const allConversations = useChatStore((s) => s.conversations);
   const conversations = useMemo(
     () => allConversations.filter((c) => c.status !== 'archived'),
@@ -53,30 +57,42 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
       className={cn(
         'fixed z-sheet flex flex-col border shadow-soft-lg overflow-hidden copilot-shift',
         'bg-surface border-border text-ink',
-        'inset-x-0 bottom-0 top-auto max-h-[85vh] rounded-t-2xl',
-        'md:inset-auto md:bottom-20 md:right-6 md:w-[360px] md:max-h-[min(520px,70vh)] md:rounded-2xl',
+        'inset-x-0 bottom-0 top-auto max-h-[85vh] rounded-t-3xl',
+        'md:inset-auto md:bottom-20 md:right-6 md:w-[360px] md:max-h-[min(520px,70vh)] md:rounded-3xl',
       )}
       role="dialog"
       aria-label={t('Nakamas Chat', 'Nakamas Chat')}
     >
       <header className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
         <div>
-          <h2 className="text-sm font-bold">{t('Nakamas Chat', 'Nakamas Chat')}</h2>
+          <h2 className="text-sm md:text-base font-bold">{t('Nakamas Chat', 'Nakamas Chat')}</h2>
           <p className="text-xs text-ink-muted">
             {t('Μόνο μετά από αποδοχή αιτήματος ή ομάδας', 'Only after request or group acceptance')}
           </p>
         </div>
-        <button type="button" onClick={onClose} className="p-2 rounded-lg hover:bg-ink/10" aria-label={t('Κλείσιμο', 'Close')}>
+        <button type="button" onClick={onClose} className="p-2 rounded-full hover:bg-ink/10" aria-label={t('Κλείσιμο', 'Close')}>
           <X className="w-5 h-5" />
         </button>
       </header>
+      <ChatStoriesStrip compact />
       <div className="flex-1 overflow-y-auto p-2 space-y-4">
         {conversations.length === 0 && (
           <EmptyState
             icon={MessageCircle}
+            character="crew"
             title={t('Καμία συνομιλία ακόμα', 'No conversations yet')}
             description={t('Οι συνομιλίες ξεκλειδώνουν μετά από αποδοχή αιτήματος ή ομάδας.', 'Conversations unlock after a request or group is accepted.')}
             className="m-2 border-0 bg-transparent"
+            actionLabel={t('Περιήγηση εκδηλώσεων', 'Browse Events')}
+            onAction={() => {
+              onClose();
+              navigate('/');
+            }}
+            secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+            onSecondary={() => {
+              onClose();
+              navigate('/buddy-seek');
+            }}
           />
         )}
         {sections.map((sec) => {
@@ -84,7 +100,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
           if (!items.length) return null;
           return (
             <section key={sec.key}>
-              <p className="text-xs font-bold uppercase tracking-wider text-brand/80 px-2 mb-1.5">{sec.title}</p>
+              <p className="text-xs font-bold tracking-wider text-brand/80 px-2 mb-1.5">{sec.title}</p>
               <ul className="space-y-1">
                 {items.map((c) => {
                   const Icon = TYPE_ICON[c.type];
@@ -94,7 +110,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
                       <button
                         type="button"
                         onClick={() => openConversation(c.id)}
-                        className="w-full text-left rounded-xl px-3 py-2.5 hover:bg-ink/5 flex gap-3 items-start"
+                        className="w-full text-left rounded-2xl px-3 py-2.5 hover:bg-ink/5 flex gap-3 items-start"
                       >
                         <Icon className="w-4 h-4 text-brand shrink-0 mt-0.5" />
                         <div className="min-w-0 flex-1">
@@ -103,7 +119,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
                             {t(c.lastMessagePreview.el, c.lastMessagePreview.en)}
                           </p>
                           {!perm.canSend && perm.reasonIfLocked && (
-                            <p className="text-xs text-amber-400/90 mt-0.5">
+                            <p className={cn('text-xs mt-0.5', CHAT_TYPO.lockHint)}>
                               {t(perm.reasonIfLocked.el, perm.reasonIfLocked.en)}
                             </p>
                           )}

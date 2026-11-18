@@ -25,6 +25,10 @@ export function EventDetailAdventureSection({
   if (!ADVENTURE_CATEGORIES.has(event.category)) return null;
 
   const isHiking = event.category === 'Hiking';
+  // Φ27 — a route, when there is one, says how hard it really is.
+  const routeDifficulty = event.route
+    ? { easy: t('Εύκολη', 'Easy'), moderate: t('Μέτρια', 'Moderate'), hard: t('Απαιτητική', 'Hard') }[event.route.difficulty]
+    : null;
 
   return (
     <div
@@ -37,36 +41,25 @@ export function EventDetailAdventureSection({
       <h3 className={cn(tok.sectionHeading, 'mb-3')}>
         {t('Λεπτομέρειες Περιπέτειας', 'Adventure Details')}
       </h3>
+      {/* Semantic tokens: readable in every theme, light or dark. */}
       <div className="grid grid-cols-2 gap-4">
-        <div
-          className={cn(
-            tok.innerCard,
-            darkSurface
-              ? 'bg-emerald-950/40 border-emerald-900'
-              : 'bg-emerald-50/50 border-emerald-100',
-          )}
-        >
-          <div className={cn(tok.labelMicro, 'text-emerald-700 mb-1', darkSurface && 'text-emerald-400')}>
+        <div className={cn(tok.innerCard, 'border-border bg-surface')}>
+          <div className={cn(tok.labelMicro, 'mb-1 text-ink-muted')}>
             {t('Δυσκολία', 'Difficulty')}
           </div>
-          <div className={cn('text-sm font-bold', darkSurface ? 'text-white' : 'text-gray-900')}>
-            {isHiking
-              ? t('Μέτρια / Έδαφος', 'Moderate / Terrain')
-              : t('Εύκολο / Αναψυχή', 'Easy / Leisure')}
+          <div className="card-heading font-bold text-ink">
+            {routeDifficulty
+              ? `${routeDifficulty} · ${event.route!.distanceKm.toLocaleString('el-GR')} km`
+              : isHiking
+                ? t('Μέτρια / Έδαφος', 'Moderate / Terrain')
+                : t('Εύκολο / Αναψυχή', 'Easy / Leisure')}
           </div>
         </div>
-        <div
-          className={cn(
-            tok.innerCard,
-            darkSurface
-              ? 'bg-amber-950/30 border-amber-900'
-              : 'bg-amber-50/50 border-amber-100',
-          )}
-        >
-          <div className={cn(tok.labelMicro, 'text-amber-700 mb-1', darkSurface && 'text-amber-400')}>
+        <div className={cn(tok.innerCard, 'border-border bg-surface')}>
+          <div className={cn(tok.labelMicro, 'mb-1 text-ink-muted')}>
             {t('Εξοπλισμός / Σημειώσεις', 'Equipment / Notes')}
           </div>
-          <div className={cn('text-sm font-bold', darkSurface ? 'text-white' : 'text-gray-900')}>
+          <div className="card-heading font-bold text-ink">
             {isHiking
               ? t(
                   'Απαιτούνται μποτάκια πεζοπορίας. Φέρτε νερό.',

@@ -64,13 +64,18 @@ export function EventStories({ events }: EventStoriesProps) {
         {events.map((e, idx) => {
           const seeksHost = isEventSeekingHost(e, groups);
           const seen = savedEvents.includes(e.id);
+          const badgeLabel = seeksHost
+            ? t('Ψάχνει διοργανωτή', 'Looking for a host')
+            : e.isTrending
+              ? t('Δημοφιλές', 'Trending')
+              : '';
 
           let day = "";
           let mon = "";
           try {
             const d = parseISO(e.date);
             day = format(d, "d");
-            mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale }).toUpperCase();
+            mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale });
           } catch {
             /* keep empty on invalid date */
           }
@@ -78,13 +83,15 @@ export function EventStories({ events }: EventStoriesProps) {
           return (
             <button
               key={e.id}
+              type="button"
               onClick={() => setViewerIndex(idx)}
-              className="shrink-0 w-[104px] text-left group focus:outline-none"
+              className="shrink-0 w-[104px] text-left group focus:outline-none focus-visible:[&>div]:ring-2 focus-visible:[&>div]:ring-brand"
               title={e.title}
+              aria-label={[e.title, day && `${day} ${mon}`, badgeLabel].filter(Boolean).join(', ')}
             >
               <div
                 className={cn(
-                  "p-[2.5px] rounded-2xl bg-gradient-to-tr transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-95",
+                  "p-[2.08px] rounded-2xl bg-gradient-to-tr transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-95",
                   seen ? "from-gray-300 to-gray-300" : activeRing,
                 )}
               >
@@ -92,7 +99,7 @@ export function EventStories({ events }: EventStoriesProps) {
                   {e.imageUrl ? (
                     <img
                       src={e.imageUrl}
-                      alt={e.title}
+                      alt=""
                       loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
@@ -101,30 +108,32 @@ export function EventStories({ events }: EventStoriesProps) {
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
-                  {/* date chip */}
-                  <div className="absolute top-1.5 left-1.5 flex flex-col items-center bg-white/95 rounded-lg px-1.5 py-0.5 leading-none shadow-soft">
-                    <span className="text-2xs font-extrabold uppercase text-brand leading-none">
-                      {mon}
-                    </span>
-                    <span className="text-sm font-black text-gray-900 leading-none">
-                      {day}
-                    </span>
-                  </div>
-
-                  {/* badges */}
-                  {seeksHost ? (
-                    <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center shadow-soft">
-                      <Crown className="w-3 h-3 text-amber-900" />
-                    </div>
-                  ) : e.isTrending ? (
-                    <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center shadow-soft">
-                      <Flame className="w-3 h-3 text-white" />
+                  {/* One quiet marker at most: seeking a host wins over trending. */}
+                  {badgeLabel ? (
+                    <div
+                      className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-black/45 flex items-center justify-center"
+                      title={badgeLabel}
+                      aria-hidden="true"
+                    >
+                      {seeksHost ? (
+                        <Crown className="w-3 h-3 text-amber-300" />
+                      ) : (
+                        <Flame className="w-3 h-3 text-rose-300" />
+                      )}
                     </div>
                   ) : null}
 
-                  <p className="absolute bottom-1.5 left-1.5 right-1.5 text-white text-2xs font-bold leading-tight line-clamp-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                    {e.title}
-                  </p>
+                  {/* Date and title share one text block at the bottom, no boxed chip on top. */}
+                  <div className="absolute bottom-1.5 left-1.5 right-1.5 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                    {day ? (
+                      <span className="block text-2xs font-bold leading-tight text-white/85">
+                        {day} {mon}
+                      </span>
+                    ) : null}
+                    <span className="block text-2xs font-bold leading-tight line-clamp-2">
+                      {e.title}
+                    </span>
+                  </div>
                 </div>
               </div>
             </button>

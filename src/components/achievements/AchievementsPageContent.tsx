@@ -1,27 +1,19 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Award, Calendar, ChevronRight, Flame, Share2, Shield, Star, Target, TrendingUp, Trophy, Users, UserPlus } from 'lucide-react';
+import { Award, ChevronRight, Flame, Share2, Star, TrendingUp, Trophy, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card } from '../common/Card';
 import { TabBar } from '../common/TabBar';
 import { useLanguage } from '../../lib/i18n';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
+import { PersonAvatar } from '../wall/PersonAvatar';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useStore } from '../../store';
 import { computeUserXp } from '../../lib/gamification';
-import type { AchievementId } from '../../lib/achievements';
-import { DailyChallengeCard, GamificationHubNav, GamificationSummary, useGamificationData } from './GamificationHub';
-
-const ICONS: Record<AchievementId, { icon: React.ElementType; color: string; darkColor: string }> = {
-  first_experience: { icon: Calendar, color: 'text-cyan-600 bg-cyan-100', darkColor: 'text-cyan-400 bg-cyan-900/30' },
-  social_butterfly: { icon: Users, color: 'text-purple-600 bg-purple-100', darkColor: 'text-purple-400 bg-purple-900/30' },
-  reliability_star: { icon: Star, color: 'text-amber-600 bg-amber-100', darkColor: 'text-amber-400 bg-amber-900/30' },
-  weekly_streak: { icon: Flame, color: 'text-orange-600 bg-orange-100', darkColor: 'text-orange-400 bg-orange-900/30' },
-  trusted_member: { icon: Shield, color: 'text-green-600 bg-green-100', darkColor: 'text-green-400 bg-green-900/30' },
-  explorer: { icon: Target, color: 'text-indigo-600 bg-indigo-100', darkColor: 'text-indigo-400 bg-indigo-900/30' },
-  trailblazer: { icon: Trophy, color: 'text-rose-600 bg-rose-100', darkColor: 'text-rose-400 bg-rose-900/30' },
-  connector: { icon: UserPlus, color: 'text-teal-600 bg-teal-100', darkColor: 'text-teal-400 bg-teal-900/30' },
-};
+import { DailyChallengeCard, GamificationHubNav, GamificationSummary } from './GamificationHub';
+import { useGamificationData } from '../../hooks/useGamificationData';
+import { ACHIEVEMENT_MINI, NakamasMini } from '../illustrations/NakamasMini';
 
 /**
  * Achievements (Φ25): nakamas hub layout (shared nav + ring summary + daily
@@ -60,7 +52,8 @@ export default function AchievementsPageContent() {
         return {
           id: u.id,
           name: isMe ? t('Εσύ', 'You') : u.name,
-          avatar: u.photoUrl || `https://i.pravatar.cc/64?u=${u.id}`,
+          avatar: u.photoUrl,
+          realName: u.name,
           xp: isMe ? d.xp : computeUserXp(u, false, Math.floor((u.reliabilityScore ?? 50) / 10)),
           isMe,
         };
@@ -81,7 +74,7 @@ export default function AchievementsPageContent() {
       <GamificationHubNav />
       <div>
         <div>
-          <h1 className={cn('text-sm md:text-base font-bold', a.head)}>{t('Επιτεύγματα', 'Achievements')}</h1>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Επιτεύγματα', 'Achievements')}</h1>
           <p className={cn('font-medium text-sm mt-1', a.sub)}>
             {t('Κάθε badge βασίζεται στη πραγματική σου δραστηριότητα — πάτα ένα για να δεις πώς το ξεκλειδώνεις.', 'Every badge is based on your real activity — tap one to see how to unlock it.')}
           </p>
@@ -108,15 +101,13 @@ export default function AchievementsPageContent() {
         {activeTab === 'badges' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {d.achievements.map((ach) => {
-              const meta = ICONS[ach.id];
-              const Icon = meta.icon;
               const pct = Math.min(100, (ach.progress / ach.goal) * 100);
               const title = t(ach.titleEl, ach.titleEn);
               return (
                 <Card key={ach.id} className="p-4">
                   <div className="flex items-start gap-3">
-                    <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0', a.isDark ? meta.darkColor : meta.color, !ach.unlocked && 'opacity-60')}>
-                      <Icon className="w-4 h-4" aria-hidden />
+                    <div className={cn('shrink-0', !ach.unlocked && 'opacity-55 grayscale')}>
+                      <NakamasMini id={ACHIEVEMENT_MINI[ach.id]} size={40} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -141,7 +132,7 @@ export default function AchievementsPageContent() {
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-1.5 shrink-0">
-                      <span className={cn('text-2xs font-bold px-1.5 py-0.5 rounded-lg', a.xpBadge)}>+{ach.xp} XP</span>
+                      <span className={cn('card-meta font-bold tabular-nums', a.isDark ? 'text-amber-300' : 'text-amber-700')}>+{ach.xp} XP</span>
                       {ach.unlocked ? (
                         <button
                           type="button"
@@ -176,7 +167,7 @@ export default function AchievementsPageContent() {
               <div className="flex items-center gap-3 mb-4">
                 <Flame className="w-5 h-5 text-orange-500" aria-hidden />
                 <div>
-                  <p className={cn('text-lg font-bold tabular-nums', a.head)}>
+                  <p className={cn(APP_TYPO.statValue, a.head)}>
                     {d.weekly.streak} {d.weekly.streak === 1 ? t('ημέρα σερί', 'day streak') : t('ημέρες σερί', 'day streak')}
                   </p>
                   <p className={cn('text-xs font-medium', a.sub)}>
@@ -213,8 +204,8 @@ export default function AchievementsPageContent() {
                   { val: String(Object.keys(feedbackSubmitted).length), label: t('Αξιολογήσεις', 'Reviews'), icon: Star },
                 ].map((stat) => (
                   <div key={stat.label} className="flex flex-col-reverse items-center text-center">
-                    <dt className={cn('text-2xs font-medium', a.sub)}>{stat.label}</dt>
-                    <dd className={cn('text-lg font-black tabular-nums', a.head)}>{stat.val}</dd>
+                    <dt className={cn(APP_TYPO.sectionLabel, a.sub)}>{stat.label}</dt>
+                    <dd className={cn('text-sm md:text-base font-bold tabular-nums', a.head)}>{stat.val}</dd>
                   </div>
                 ))}
               </dl>
@@ -229,14 +220,14 @@ export default function AchievementsPageContent() {
                 <li key={entry.id} className={cn('flex items-center gap-3 px-4 py-3 border-b last:border-0', a.lbBorder, entry.isMe && a.highlightRow)}>
                   <span
                     className={cn(
-                      'w-6 h-6 rounded-full flex items-center justify-center text-xs font-black tabular-nums',
+                      'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold tabular-nums',
                       entry.rank === 1 ? 'bg-amber-100 text-amber-700' : entry.rank === 2 ? (a.isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700') : entry.rank === 3 ? 'bg-orange-100 text-orange-700' : a.isDark ? 'bg-gray-700/30 text-gray-400' : 'bg-gray-100 text-gray-600',
                     )}
                   >
                     {entry.rank}
                   </span>
-                  <img src={entry.avatar} alt="" referrerPolicy="no-referrer" className={cn('w-7 h-7 rounded-full border', a.isDark ? 'border-gray-700' : 'border-gray-200')} />
-                  <span className={cn('flex-1 text-sm font-medium', entry.isMe ? cn('font-bold', a.highlightText) : a.head)}>{entry.name}</span>
+                  <PersonAvatar user={{ id: entry.id, name: entry.realName, photoUrl: entry.avatar }} className={cn('w-7 h-7 text-2xs', a.isDark ? 'border-gray-700' : 'border-gray-200')} />
+                  <span className={cn('flex-1 card-copy font-medium', entry.isMe ? cn('font-bold', a.highlightText) : a.head)}>{entry.name}</span>
                   <span className={cn('text-xs font-bold tabular-nums', a.sub)}>{entry.xp} XP</span>
                 </li>
               ))}
@@ -244,7 +235,7 @@ export default function AchievementsPageContent() {
             <button
               type="button"
               onClick={() => navigate('/leaderboard')}
-              className={cn('w-full flex items-center justify-center gap-1 py-3 text-xs font-bold border-t transition-colors', a.lbBorder, a.shareHover)}
+              className={cn('w-full flex items-center justify-center gap-1 min-h-8 py-1.5 text-xs font-bold border-t transition-colors', a.lbBorder, a.shareHover)}
             >
               {t('Πλήρης κατάταξη', 'Full leaderboard')} <ChevronRight className="w-3.5 h-3.5" aria-hidden />
             </button>

@@ -35,7 +35,7 @@ export const mockUsers: User[] = [
     paymentVerified: true,
     idVerified: false,
     isOrganizer: false,
-    connections: ['u1', 'u3']
+    connections: ['u1', 'u3', 'u4']
   },
   {
     id: 'u3',
@@ -71,7 +71,9 @@ export const mockUsers: User[] = [
     paymentVerified: false,
     idVerified: false,
     isOrganizer: false,
-    connections: ['u1'],
+    // Connections are mutual. Elena has asked Alex to connect (see the
+    // seeded request cr3) instead of a one-sided edge.
+    connections: ['u2'],
   },
   {
     id: 'org1',
@@ -89,6 +91,8 @@ export const mockUsers: User[] = [
     paymentVerified: true,
     idVerified: true,
     isOrganizer: true,
+    // Demo: seeded venue accounts double as platform moderators.
+    isAdmin: true,
     connections: ['u1', 'u3']
   },
   {
@@ -107,6 +111,8 @@ export const mockUsers: User[] = [
     paymentVerified: true,
     idVerified: true,
     isOrganizer: true,
+    // Demo: seeded venue accounts double as platform moderators.
+    isAdmin: true,
     connections: []
   },
   {
@@ -125,6 +131,8 @@ export const mockUsers: User[] = [
     paymentVerified: true,
     idVerified: true,
     isOrganizer: true,
+    // Demo: seeded venue accounts double as platform moderators.
+    isAdmin: true,
     connections: []
   },
   {
@@ -143,6 +151,8 @@ export const mockUsers: User[] = [
     paymentVerified: true,
     idVerified: true,
     isOrganizer: true,
+    // Demo: seeded venue accounts double as platform moderators.
+    isAdmin: true,
     connections: []
   },
   {

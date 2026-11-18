@@ -6,6 +6,7 @@ import type { User } from "../types";
 import { mockEvents } from "../data/mockEvents";
 import { mockGroups } from "../data/mockGroups";
 import { mockCalendarPlanEvents, mockCalendarPlanGroups } from "../data/mockCalendarPlan";
+import { withLiveSeedSchedule } from "../lib/demoCatalogDates";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
 import { fetchTicketmasterEvents, isTicketmasterConfigured } from "../services/eventApi";
@@ -15,6 +16,11 @@ import { computeReliabilityDelta } from "../lib/trust";
 import { mockCompanyRequests } from "../data/mockCompanyRequests";
 import { useChatStore } from "./chatStore";
 import { normalizeCompanyRequest, rateLimitOk } from "../lib/companyRequestUtils";
+import {
+  DEFAULT_ACCOUNT_PRIVACY,
+  canViewerContactOrganizer,
+  type AccountPrivacy,
+} from "../lib/profilePrivacy";
 import type {
   CompanyJoinRequest,
   CompanyRequest,
@@ -28,6 +34,21 @@ import { legacyVisibilityToMode } from "../types/buddySeek";
 import type { AppNotification } from "../data/mockNotifications";
 import { normalizeAppNotification } from "../lib/notificationsUtil";
 import { createEventOnApi, updateEventOnApi } from "../services/eventsApi";
+import { audienceToProfileVisibility } from "../lib/audience";
+import { mockOutingEvents, mockOutingGroups, withOutingPatches, withOutingPeople } from "../data/mockOutings";
+import {
+  createOutingsSlice,
+  eventStartMs,
+  handOverSeat,
+  LATE_CANCEL_MS,
+  outingsSeedData,
+  patchPerson,
+  withGroupCode,
+  type OutingsSlice,
+} from "./outingsSlice";
+import { canJoinGroup as gateJoinGroup, fitsGenderMode } from "../lib/outings";
+import { STRIKE_RELIABILITY } from "../lib/consequences";
+import type { GroupGenderMode, Strike } from "../types/outings";
 
 export interface FeedbackData {
   eventId: string;
@@ -48,6 +69,33 @@ export interface CommitmentHold {
 
 export type HomeHeroMode = 'light' | 'balanced' | 'rich';
 
+export type ConnectionRequestOutcome = 'sent' | 'accepted' | 'exists' | 'connected' | 'blocked' | 'invalid';
+
+/** Adds `id` once (connection lists are sets). */
+function addUnique(list: string[] | undefined, id: string): string[] {
+  const base = list ?? [];
+  return base.includes(id) ? base : [...base, id];
+}
+
+/**
+ * Nakamas connections are mutual. Drops half-edges (A lists B, B does not
+ * list A) that an older removeConnection bug left behind in saved state, so
+ * privacy checks never treat a removed or blocked person as a connection.
+ * Ids of people not in the list are kept: they cannot be verified here.
+ */
+export function symmetrizeConnections<T extends { id: string; connections?: string[] }>(users: T[]): T[] {
+  const byId = new Map(users.map((u) => [u.id, u]));
+  return users.map((u) => {
+    const conns = u.connections ?? [];
+    const kept = [...new Set(conns)].filter((otherId) => {
+      if (otherId === u.id) return false;
+      const other = byId.get(otherId);
+      return !other || (other.connections ?? []).includes(u.id);
+    });
+    return kept.length === conns.length && kept.every((id, i) => id === conns[i]) ? u : { ...u, connections: kept };
+  });
+}
+
 /** Φ16.8 — persisted user-submitted issue reports (Report Issue page + Admin). */
 export interface IssueReport {
   id: string;
@@ -58,6 +106,11 @@ export interface IssueReport {
   evidenceNames: string[];
   createdAt: string;
   status: 'open' | 'reviewing' | 'resolved' | 'dismissed';
+  /** Φ26 — what was reported, when it is a specific item (e.g. a wall post). */
+  targetType?: 'wall_post' | 'user' | 'group';
+  targetId?: string;
+  /** Author of the reported item. */
+  targetUserId?: string;
 }
 
 /** Φ20 — persisted log of admin moderation actions. */
@@ -101,35 +154,23 @@ export interface UserSettings {
     messages: boolean;
     reminders: boolean;
     promos: boolean;
+    /** Φ26 — comments, reactions, posts on my wall and tags. */
+    social: boolean;
   };
   categoryPrefs: string[];
-  privacy: {
-    profileVisibility: 'public' | 'connections' | 'private';
-    messagePermission: 'everyone' | 'connections' | 'groups';
-    shareLocation: boolean;
-    revealPhoto: boolean;
-    allowMutualPing: boolean;
-    allowOrganizerMsg: boolean;
-  };
+  privacy: AccountPrivacy;
   availability: string[];
 }
 
 export const DEFAULT_USER_SETTINGS: UserSettings = {
   twoFactorEnabled: false,
-  notificationPrefs: { matches: true, messages: true, reminders: true, promos: false },
+  notificationPrefs: { matches: true, messages: true, reminders: true, promos: false, social: true },
   categoryPrefs: [],
-  privacy: {
-    profileVisibility: 'public',
-    messagePermission: 'everyone',
-    shareLocation: true,
-    revealPhoto: true,
-    allowMutualPing: true,
-    allowOrganizerMsg: true,
-  },
+  privacy: { ...DEFAULT_ACCOUNT_PRIVACY },
   availability: ['weekends', 'weekday_evenings'],
 };
 
-interface AppState {
+interface AppState extends OutingsSlice {
   theme: string;
   setTheme: (theme: string) => void;
   homeHeroMode: HomeHeroMode;
@@ -150,6 +191,10 @@ interface AppState {
 
   onboardingCompleted: boolean;
   recentSearches: string[];
+  /** Last meaningful path for "continue where you left off" on Home. */
+  lastResumePath: string | null;
+  setLastResumePath: (path: string | null) => void;
+  clearLastResumePath: () => void;
   commitmentHolds: Record<string, CommitmentHold>;
 
   login: (userId: string) => void;
@@ -165,7 +210,8 @@ interface AppState {
   joinGroup: (groupId: string) => void;
   leaveGroup: (groupId: string) => void;
   addMemberToGroup: (groupId: string, userId: string) => void;
-  createGroup: (eventId: string, targetSize: number) => void;
+  /** Φ27 — `genderMode: 'women_nb'` makes a women & non-binary group (creator must fit). */
+  createGroup: (eventId: string, targetSize: number, options?: { genderMode?: GroupGenderMode }) => void;
   becomeEventHost: (eventId: string) => void;
   createEvent: (event: Partial<Event> & { title: string }) => void;
   updateEvent: (eventId: string, patch: Partial<Event>) => void;
@@ -173,7 +219,7 @@ interface AppState {
   archiveEvent: (eventId: string) => void;
   publishMeetingPoint: (groupId: string, meetingPoint: string) => void;
   sendGroupAnnouncement: (groupId: string, textEl: string, textEn: string) => void;
-  addNotification: (notification: any) => void;
+  addNotification: (notification: Partial<AppNotification> & Record<string, unknown>) => void;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
   dismissNotification: (id: string) => void;
@@ -184,11 +230,19 @@ interface AppState {
   adminActions: AdminAction[];
   logAdminAction: (action: string, targetId?: string, note?: string) => void;
   organizerMessages: OrganizerMessage[];
-  sendOrganizerMessage: (organizerId: string, message: string) => void;
+  sendOrganizerMessage: (
+    organizerId: string,
+    message: string,
+  ) => { ok: boolean; reasonEl?: string; reasonEn?: string };
 
   userSettings: UserSettings;
   updateUserSettings: (patch: Partial<UserSettings>) => void;
   updatePrivacySettings: (patch: Partial<UserSettings['privacy']>) => void;
+
+  /** Lean privacy — users the signed-in account has blocked. */
+  blockedUserIds: string[];
+  blockUser: (userId: string) => void;
+  unblockUser: (userId: string) => void;
 
   bonusXp: number;
   awardXp: (amount: number, reasonEl: string, reasonEn: string) => void;
@@ -237,10 +291,20 @@ interface AppState {
   setPlansFormingSheetOpen: (open: boolean) => void;
   setPlansFormingSidebarOpen: (open: boolean) => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
-  sendConnectionRequest: (toUserId: string, message?: string) => void;
+  /**
+   * Sends a Nakamas request. Returns what happened so the UI can say it plainly:
+   * `accepted` when the other person had already asked (their request is accepted).
+   */
+  sendConnectionRequest: (toUserId: string, message?: string) => ConnectionRequestOutcome;
+  /** Withdraws the viewer's own pending request to `toUserId`. */
+  cancelConnectionRequest: (toUserId: string) => void;
   acceptConnectionRequest: (requestId: string) => void;
   declineConnectionRequest: (requestId: string) => void;
+  /** Re-opens a request declined moments ago (Undo on the toast). */
+  restoreConnectionRequest: (requestId: string) => void;
   removeConnection: (userId: string) => void;
+  /** Restores a connection removed moments ago (Undo on the toast). */
+  restoreConnection: (userId: string) => void;
 
   publishCompanyRequest: (request: Omit<CompanyRequest, 'id' | 'createdAt' | 'updatedAt'>) => string;
   saveCompanyRequestDraft: (request: Omit<CompanyRequest, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => string;
@@ -278,6 +342,72 @@ interface AppState {
   connectWithBuddySeeker: (intentId: string) => void;
 }
 
+const SEED_CONNECTION_REQUESTS: AppState['connectionRequests'] = [
+  { id: 'cr1', fromUserId: 'org2', toUserId: 'u1', message: 'We noticed you attended our events. Let\'s connect!', createdAt: '2024-01-15', status: 'pending' as const },
+  { id: 'cr2', fromUserId: 'org4', toUserId: 'u1', createdAt: '2024-01-14', status: 'pending' as const },
+  { id: 'cr3', fromUserId: 'u4', toUserId: 'u1', message: 'We were in the same cinema group — shall we connect?', createdAt: '2024-01-16', status: 'pending' as const },
+];
+
+/** Fired when demo data is reset, so the chat and wall stores reset too. */
+export const DEMO_RESET_EVENT = 'nakamas:demo-reset';
+
+/** Φ27 — mock events + Nakamas Nights / small outings, and their groups and people. */
+function seedEvents(): Event[] {
+  return [...mockEvents, ...mockCalendarPlanEvents, ...mockOutingEvents];
+}
+function seedGroups(): typeof mockGroups {
+  return withOutingPatches([...mockGroups, ...mockCalendarPlanGroups, ...mockOutingGroups]);
+}
+function seedUsers(): typeof mockUsers {
+  return withOutingPeople(mockUsers);
+}
+
+/**
+ * The demo's data in its original state. Exiting demo mode puts these back,
+ * as the demo banner promises («τα demo δεδομένα χάνονται με την Έξοδο»);
+ * preferences (theme, home layout, sidebar, language) are kept.
+ */
+function demoSeedData() {
+  return {
+    events: seedEvents(),
+    groups: seedGroups(),
+    users: seedUsers(),
+    ...outingsSeedData(),
+    notifications: mockNotifications,
+    savedEvents: ['e4', 'e3'],
+    waitlistedEvents: [] as string[],
+    feedbackSubmitted: {} as Record<string, FeedbackData>,
+    recentSearches: [] as string[],
+    lastResumePath: null as string | null,
+    commitmentHolds: {} as Record<string, CommitmentHold>,
+    companyRequests: [...mockCompanyRequests],
+    companyJoinRequests: [] as CompanyJoinRequest[],
+    groupMergeSuggestions: [] as GroupMergeSuggestion[],
+    companyRequestReports: [] as CompanyRequestReport[],
+    companyRequestPreferences: { ...DEFAULT_COMPANY_REQUEST_PREFS },
+    joinRequestRateLog: [] as { userId: string; at: string }[],
+    savedCompanyRequestIds: [] as string[],
+    dismissedCompanyRequestIds: [] as string[],
+    connectionRequests: SEED_CONNECTION_REQUESTS.map((r) => ({ ...r })),
+    issueReports: [] as IssueReport[],
+    adminActions: [] as AdminAction[],
+    organizerMessages: [] as OrganizerMessage[],
+    userSettings: { ...DEFAULT_USER_SETTINGS, privacy: { ...DEFAULT_USER_SETTINGS.privacy } },
+    bonusXp: 0,
+    challengesJoined: ['c1', 'c2'],
+    dailyChallengeClaimedOn: null as string | null,
+    suspendedUserIds: [] as string[],
+    blockedUserIds: [] as string[],
+    adminSafeguards: { ...DEFAULT_ADMIN_SAFEGUARDS },
+  };
+}
+
+/**
+ * After a member joins: a full group is confirmed, and an event with a group
+ * discount unlocks it (with its code) once enough people are in. The two are
+ * independent: most events have no discount, and their full groups must still
+ * become ready (Our night reveals the meeting point and door ticket then).
+ */
 function applyGroupDiscount(
   groups: typeof mockGroups,
   events: Event[],
@@ -286,26 +416,45 @@ function applyGroupDiscount(
   return groups.map((g) => {
     if (g.id !== groupId) return g;
     const event = events.find((e) => e.id === g.eventId);
-    if (!event || !shouldUnlockGroupDiscount(g, event)) return g;
-    return { ...g, discountUnlocked: true, status: g.members.length >= g.targetSize ? 'confirmed' as const : g.status };
+    const unlock = Boolean(event && shouldUnlockGroupDiscount(g, event));
+    const fill = g.status === 'pending' && g.members.length >= g.targetSize;
+    if (!unlock && !fill) return g;
+    const next = { ...g, ...(unlock ? { discountUnlocked: true } : {}), ...(fill ? { status: 'confirmed' as const } : {}) };
+    // Φ27 — the unlocked discount comes with a code the whole group sees.
+    return withGroupCode(next);
   });
+}
+
+/** «Your group is ready» copy: the group code is promised only when one exists. */
+function readyMessage(group: { discountUnlocked?: boolean } | undefined): { messageGr: string; messageEn: string } {
+  return group?.discountUnlocked
+    ? {
+        messageGr: 'Η παρέα σου είναι έτοιμη! Σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας στη «Βραδιά μας».',
+        messageEn: 'Your group is ready! Meeting point, group code and door ticket are on «Our night».',
+      }
+    : {
+        messageGr: 'Η παρέα σου είναι έτοιμη! Σημείο συνάντησης και εισιτήριο πόρτας στη «Βραδιά μας».',
+        messageEn: 'Your group is ready! Meeting point and door ticket are on «Our night».',
+      };
 }
 
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
+  // Φ27 — outings: check-in, consequences, waitlists, invites, tickets…
+  ...createOutingsSlice(set as never, get as never),
   theme: 'classic',
   setTheme: (theme) => set({ theme }),
   homeHeroMode: 'balanced',
   setHomeHeroMode: (homeHeroMode) => set({ homeHeroMode }),
-  events: [...mockEvents, ...mockCalendarPlanEvents],
+  events: seedEvents(),
   eventsLoading: false,
   eventsSource: 'mock',
   hydrateEventsFromApi: (events) =>
     set({ events, eventsSource: 'api', eventsLoading: false }),
   setEventsLoading: (eventsLoading) => set({ eventsLoading }),
-  groups: [...mockGroups, ...mockCalendarPlanGroups],
-  users: mockUsers,
+  groups: seedGroups(),
+  users: seedUsers(),
   // Prototype: mock user until backend auth (see src/lib/runtimeMode.ts, docs/ARCHITECTURE.md).
   currentUser: currentUser,
   isAuthenticated: Boolean(currentUser),
@@ -316,6 +465,9 @@ export const useStore = create<AppState>()(
   feedbackSubmitted: {},
   onboardingCompleted: false,
   recentSearches: [],
+  lastResumePath: null,
+  setLastResumePath: (path) => set({ lastResumePath: path }),
+  clearLastResumePath: () => set({ lastResumePath: null }),
   commitmentHolds: {},
   companyRequests: [...mockCompanyRequests],
   companyJoinRequests: [],
@@ -348,9 +500,16 @@ export const useStore = create<AppState>()(
     const userGroupEventIds = state.groups
       .filter((g) => g.members.includes(state.currentUser!.id))
       .map((g) => g.eventId);
+    // Φ27 — a closed door check-in where I was confirmed opens feedback right away.
+    const checkedInEventIds = new Set(
+      state.groups
+        .filter((g) => g.checkInClosedAt && g.checkIns?.[state.currentUser!.id])
+        .map((g) => g.eventId),
+    );
     const pending = state.events.find((e) => {
       if (!userGroupEventIds.includes(e.id)) return false;
       if (state.feedbackSubmitted[e.id]) return false;
+      if (checkedInEventIds.has(e.id)) return true;
       try {
         return new Date(`${e.date}T${e.time || '20:00'}`) < new Date();
       } catch {
@@ -365,6 +524,10 @@ export const useStore = create<AppState>()(
     const event = state.events.find((e) => e.id === eventId);
     if (!event || !state.currentUser) {
       return { ok: false, messageEl: 'Η εκδήλωση δεν βρέθηκε.', messageEn: 'Event not found.' };
+    }
+    const when = new Date(`${event.date}T${event.time || '23:59'}`);
+    if (!Number.isNaN(when.getTime()) && when.getTime() < Date.now()) {
+      return { ok: false, messageEl: 'Η εκδήλωση έχει ολοκληρωθεί.', messageEn: 'This event has ended.' };
     }
     const pendingId = get().getPendingFeedbackEventId();
     if (pendingId && pendingId !== eventId) {
@@ -403,19 +566,34 @@ export const useStore = create<AppState>()(
     set((state) => {
       const user = state.users.find((u) => u.id === userId);
       if (!user) return state;
-      return { currentUser: user, isAuthenticated: true, demoMode: false };
+      const privacy = { ...state.userSettings.privacy, ...(user.privacy ?? {}) };
+      const blockedUserIds = user.blockedUserIds ?? state.blockedUserIds;
+      const hydrated = { ...user, privacy, blockedUserIds };
+      return {
+        currentUser: hydrated,
+        isAuthenticated: true,
+        demoMode: false,
+        userSettings: { ...state.userSettings, privacy },
+        blockedUserIds,
+        users: state.users.map((u) => (u.id === userId ? hydrated : u)),
+      };
     }),
 
   loginWithUser: (user) =>
     set((state) => {
+      const privacy = { ...state.userSettings.privacy, ...(user.privacy ?? {}) };
+      const blockedUserIds = user.blockedUserIds ?? state.blockedUserIds;
+      const hydrated = { ...user, privacy, blockedUserIds };
       const exists = state.users.some((u) => u.id === user.id);
       return {
-        currentUser: user,
+        currentUser: hydrated,
         isAuthenticated: true,
         demoMode: false,
+        userSettings: { ...state.userSettings, privacy },
+        blockedUserIds,
         users: exists
-          ? state.users.map((u) => (u.id === user.id ? { ...u, ...user } : u))
-          : [...state.users, user],
+          ? state.users.map((u) => (u.id === user.id ? { ...u, ...hydrated } : u))
+          : [...state.users, hydrated],
       };
     }),
 
@@ -433,53 +611,314 @@ export const useStore = create<AppState>()(
       };
     }),
 
-  exitDemoMode: () => set({ demoMode: false, currentUser: null, isAuthenticated: false }),
+  exitDemoMode: () => {
+    const wasDemo = get().demoMode;
+    set({
+      ...(wasDemo ? demoSeedData() : {}),
+      demoMode: false,
+      currentUser: null,
+      isAuthenticated: false,
+    });
+    if (wasDemo && typeof window !== 'undefined') {
+      // Loaded stores reset themselves; stores never opened this session lose their saved copy.
+      window.dispatchEvent(new CustomEvent(DEMO_RESET_EVENT));
+      try {
+        localStorage.removeItem('nakamas-wall-v1');
+      } catch {
+        /* storage unavailable — nothing saved to clear */
+      }
+    }
+  },
 
   joinGroup: (groupId) =>
     set((state) => {
       if (!state.currentUser) return state;
       const userId = state.currentUser.id;
+      const target = state.groups.find((g) => g.id === groupId);
+      if (!target || target.status === 'cancelled') return state;
+      // Φ27 — one gate for every way in: capacity (→ waitlist), women & non-binary
+      // groups, blocks, and a paused standing for groups of strangers.
+      const gate = gateJoinGroup(state.currentUser, target, {
+        users: state.users,
+        strikes: state.strikes,
+        blockedUserIds: state.blockedUserIds,
+      });
+      if (!gate.ok) return state;
       let groups = state.groups.map((g) =>
         g.id === groupId && !g.members.includes(userId)
-          ? { ...g, members: [...g.members, userId] }
+          ? { ...g, members: [...g.members, userId], waitlist: (g.waitlist ?? []).filter((id) => id !== userId) }
           : g,
       );
       groups = applyGroupDiscount(groups, state.events, groupId);
-      return { groups };
+      // Φ27 — «Η παρέα σου είναι έτοιμη»: the moment the group is complete.
+      const confirmed = groups.find((g) => g.id === groupId);
+      const ready = target.status !== 'confirmed' && confirmed?.status === 'confirmed';
+      const joinerName = state.currentUser.name.split(' ')[0] || 'Nakamas';
+      const priorMembers = target.members.filter((id) => id !== userId);
+      // Mid-join: tell people already in the forming group (ready fan-out covers the complete case).
+      const joinRows =
+        !ready && priorMembers.length > 0
+          ? priorMembers.map((memberId) =>
+              normalizeAppNotification({
+                type: 'group',
+                messageGr: `Ο/Η ${joinerName} μπήκε στην παρέα — άνοιξε «Η βραδιά μας».`,
+                messageEn: `${joinerName} joined the group — open «Our night».`,
+                timeGr: 'μόλις τώρα',
+                timeEn: 'just now',
+                read: false,
+                groupId,
+                eventId: target.eventId,
+                forUserId: memberId,
+              }),
+            )
+          : [];
+      if (!ready || !confirmed) {
+        return joinRows.length ? { groups, notifications: [...joinRows, ...state.notifications] } : { groups };
+      }
+      const readyRows = confirmed.members.map((memberId) =>
+        normalizeAppNotification({
+          type: 'group',
+          ...readyMessage(confirmed),
+          timeGr: 'μόλις τώρα',
+          timeEn: 'just now',
+          read: false,
+          groupId,
+          eventId: target.eventId,
+          forUserId: memberId,
+        }),
+      );
+      return {
+        groups,
+        notifications: [...readyRows, ...state.notifications],
+      };
     }),
 
   leaveGroup: (groupId) =>
     set((state) => {
       if (!state.currentUser) return state;
+      const uid = state.currentUser.id;
+      // Keep Plans / BuddySeek in sync: company joins coordinated via this
+      // group become withdrawn when the member leaves.
+      const reopenedRequestIds = new Set<string>();
+      const companyJoinRequests = state.companyJoinRequests.map((j) => {
+        const tied =
+          j.coordinationGroupId === groupId ||
+          j.fromGroupId === groupId ||
+          j.targetGroupId === groupId;
+        if (!tied) return j;
+        if (j.fromUserId !== uid && j.targetUserId !== uid) return j;
+        if (j.status !== 'pending' && j.status !== 'accepted') return j;
+        reopenedRequestIds.add(j.companyRequestId);
+        return { ...j, status: 'withdrawn' as const };
+      });
+      const companyRequests = state.companyRequests.map((r) =>
+        r.matchedGroupId === groupId && r.status === 'matched'
+          ? { ...r, status: 'active' as const, matchedGroupId: undefined, updatedAt: new Date().toISOString() }
+          : reopenedRequestIds.has(r.id) && r.status === 'matched'
+            ? { ...r, status: 'active' as const, matchedGroupId: undefined, updatedAt: new Date().toISOString() }
+            : r,
+      );
+      // Φ27 — seat hand-over: the first person on the waitlist takes the seat at
+      // face value; leaving late counts only if the seat stays empty.
+      const group = state.groups.find((g) => g.id === groupId);
+      const event = group ? state.events.find((e) => e.id === group.eventId) : undefined;
+      let nextGroup = group ? { ...group, members: group.members.filter((mId) => mId !== uid) } : undefined;
+      let toUserId: string | null = null;
+      let newHostId: string | null = null;
+      if (group && group.members.includes(uid)) {
+        const handed = handOverSeat(group, uid, {
+          users: state.users,
+          strikes: state.strikes,
+          blockedUserIds: state.blockedUserIds,
+          price: event?.isPaid ? event.price : 0,
+        });
+        nextGroup = handed.group;
+        toUserId = handed.toUserId;
+        newHostId = handed.newHostId;
+      }
+      const start = eventStartMs(event);
+      const late =
+        Boolean(group?.members.includes(uid)) &&
+        group?.status === 'confirmed' &&
+        !toUserId &&
+        start !== null &&
+        start > Date.now() &&
+        start - Date.now() < LATE_CANCEL_MS;
+      let strikes = state.strikes;
+      let people = { users: state.users, currentUser: state.currentUser };
+      const notifications = [...state.notifications];
+      const note = (
+        messageGr: string,
+        messageEn: string,
+        type = 'group',
+        extra: { groupId?: string | null; eventId?: string; forUserId?: string } = {},
+      ) =>
+        notifications.unshift(
+          normalizeAppNotification({
+            type,
+            messageGr,
+            messageEn,
+            timeGr: 'μόλις τώρα',
+            timeEn: 'just now',
+            read: false,
+            // Explicit null clears the default so leave-trail does not deep-link a locked night.
+            groupId: Object.prototype.hasOwnProperty.call(extra, 'groupId')
+              ? (extra.groupId ?? undefined)
+              : groupId,
+            eventId: extra.eventId ?? group?.eventId,
+            forUserId: extra.forUserId,
+          }),
+        );
+      if (late && group) {
+        const delta = STRIKE_RELIABILITY.late_cancel;
+        const strike: Strike = {
+          id: `st_${Date.now().toString(36)}`,
+          userId: uid,
+          kind: 'late_cancel',
+          at: new Date().toISOString(),
+          groupId,
+          eventId: group.eventId,
+          reliabilityDelta: delta,
+        };
+        strikes = [...strikes, strike];
+        people = patchPerson(people, uid, (u) => ({ reliabilityScore: Math.min(100, Math.max(0, u.reliabilityScore + delta)) }));
+        note(
+          'Αποχώρησες λιγότερο από 24 ώρες πριν και η θέση έμεινε κενή — καταγράφηκε αργή ακύρωση. Αν υπήρχε σοβαρός λόγος, κάνε ένσταση στο Κέντρο Εμπιστοσύνης.',
+          'You left less than 24 hours before and the seat stayed empty — a late cancel was recorded. If there was a serious reason, appeal in the Trust Center.',
+          'safety',
+          // Scoped to the leaver; clear groupId so the row does not deep-link a locked night.
+          { forUserId: uid, groupId: null },
+        );
+      }
+      if (toUserId) {
+        note(
+          'Η θέση σου πέρασε στο πρώτο άτομο της λίστας αναμονής, στην ίδια τιμή. Η ομάδα κρατά την έκπτωση.',
+          'Your seat passed to the first person on the waitlist, at the same price. The group keeps its discount.',
+          'group',
+          { forUserId: uid, groupId: null },
+        );
+        // Loyalty: the waitlist winner must learn the seat is theirs (not only the leaver).
+        note(
+          'Άνοιξε θέση για σένα — πέρασες από τη λίστα αναμονής στην ομάδα, στην ίδια τιμή. Άνοιξε «Η βραδιά μας».',
+          'A seat opened for you — you moved from the waitlist into the group at the same price. Open «Our night».',
+          'group',
+          { groupId, eventId: group?.eventId, forUserId: toUserId },
+        );
+      } else if (!late && group?.members.includes(uid)) {
+        // Quiet leave (no late strike, no hand-over) still leaves a trail back to plans — not /night.
+        note(
+          'Αποχώρησες από την ομάδα. Μπορείς να βρεις άλλη παρέα στα σχέδιά σου ή στο «Βρες Nakamas».',
+          'You left the group. You can find another company in My plans or Find Nakamas.',
+          'group',
+          { forUserId: uid, groupId: null },
+        );
+      }
+      // Remaining members learn the roster changed without opening Our night by chance.
+      const remaining = (nextGroup?.members ?? group?.members.filter((id) => id !== uid) ?? []).filter(
+        (id) => id !== uid && id !== toUserId,
+      );
+      for (const memberId of remaining) {
+        note(
+          'Ένα μέλος αποχώρησε από την παρέα — δες την ενημερωμένη ομάδα στη «Βραδιά μας».',
+          'A member left the group — see the updated roster on «Our night».',
+          'group',
+          { forUserId: memberId, groupId },
+        );
+      }
+      if (newHostId) {
+        note(
+          'Έγινες ο νέος οικοδεσπότης της παρέας — check-in και εισιτήρια περνούν σε σένα. Άνοιξε «Η βραδιά μας».',
+          'You are the new group host — check-in and tickets are yours now. Open «Our night».',
+          'group',
+          { forUserId: newHostId, groupId },
+        );
+      }
+      // Release the commitment hold for an event the member is no longer going to.
+      let commitmentHolds = state.commitmentHolds;
+      if (group && commitmentHolds[group.eventId]) {
+        const stillGoing = state.groups.some((g) => g.id !== groupId && g.eventId === group.eventId && g.members.includes(uid));
+        if (!stillGoing) {
+          const { [group.eventId]: _released, ...rest } = commitmentHolds;
+          commitmentHolds = rest;
+        }
+      }
       return {
-        groups: state.groups.map((g) =>
-          g.id === groupId
-            ? {
-                ...g,
-                members: g.members.filter(
-                  (mId) => state.currentUser && mId !== state.currentUser.id,
-                ),
-              }
-            : g,
-        ),
+        groups: state.groups.map((g) => (g.id === groupId && nextGroup ? nextGroup : g)),
+        companyJoinRequests,
+        companyRequests,
+        strikes,
+        users: people.users,
+        currentUser: people.currentUser,
+        notifications,
+        commitmentHolds,
       };
     }),
 
   addMemberToGroup: (groupId, userId) =>
     set((state) => {
+      const target = state.groups.find((g) => g.id === groupId);
+      // Never grow a cancelled group (tip confirmation rule + roster integrity).
+      if (!target || target.status === 'cancelled' || target.members.includes(userId)) return state;
       let groups = state.groups.map((g) =>
-        g.id === groupId && !g.members.includes(userId)
-          ? { ...g, members: [...g.members, userId] }
-          : g,
+        g.id === groupId ? { ...g, members: [...g.members, userId], waitlist: (g.waitlist ?? []).filter((id) => id !== userId) } : g,
       );
       groups = applyGroupDiscount(groups, state.events, groupId);
-      return { groups };
+      const after = groups.find((g) => g.id === groupId);
+      const ready = target.status !== 'confirmed' && after?.status === 'confirmed';
+      const joiner = state.users.find((u) => u.id === userId);
+      const joinerName = joiner?.name.split(' ')[0] || 'Nakamas';
+      const peerRows = target.members.map((memberId) =>
+        normalizeAppNotification({
+          type: 'group',
+          messageGr: `Ο/Η ${joinerName} μπήκε στην παρέα — άνοιξε «Η βραδιά μας».`,
+          messageEn: `${joinerName} joined the group — open «Our night».`,
+          timeGr: 'μόλις τώρα',
+          timeEn: 'just now',
+          read: false,
+          groupId,
+          eventId: target.eventId,
+          forUserId: memberId,
+        }),
+      );
+      const selfRow = normalizeAppNotification({
+        type: 'group',
+        messageGr: 'Μπήκες στην παρέα — άνοιξε «Η βραδιά μας» για σημείο συνάντησης και chat.',
+        messageEn: 'You were added to the group — open «Our night» for meeting point and chat.',
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        groupId,
+        eventId: target.eventId,
+        forUserId: userId,
+      });
+      const readyRows =
+        ready && after
+          ? after.members.map((memberId) =>
+              normalizeAppNotification({
+                type: 'group',
+                ...readyMessage(after),
+                timeGr: 'μόλις τώρα',
+                timeEn: 'just now',
+                read: false,
+                groupId,
+                eventId: target.eventId,
+                forUserId: memberId,
+              }),
+            )
+          : [];
+      return {
+        groups,
+        notifications: [...(ready ? readyRows : [...peerRows, selfRow]), ...state.notifications],
+      };
     }),
 
-  createGroup: (eventId, targetSize) =>
+  createGroup: (eventId, targetSize, options) =>
     set((state) => {
       if (!state.currentUser) return state;
+      const genderMode: GroupGenderMode =
+        options?.genderMode === 'women_nb' && fitsGenderMode(state.currentUser, 'women_nb') ? 'women_nb' : 'mixed';
       const newGroup = {
+        genderMode,
         id: `g${Date.now()}`,
         eventId,
         hostId: state.currentUser.id,
@@ -539,14 +978,15 @@ export const useStore = create<AppState>()(
   createEvent: (event) => {
     const state = get();
     if (!state.currentUser) return;
+    const uid = state.currentUser.id;
     const newEvent = { ...event, id: event.id ?? `e${Date.now()}` } as Event;
     const newGroup = {
       id: `g${Date.now()}`,
       eventId: newEvent.id,
-      hostId: state.currentUser.id,
+      hostId: uid,
       targetSize: event.maxParticipants || 5,
       status: "pending" as const,
-      members: [state.currentUser.id],
+      members: [uid],
       pendingMembers: [],
       discountUnlocked: false,
       chatId: `chat_${Date.now()}`,
@@ -555,6 +995,8 @@ export const useStore = create<AppState>()(
       events: [...state.events, newEvent],
       groups: [...state.groups, newGroup],
       eventsSource: 'mixed',
+      currentUser: { ...state.currentUser, isOrganizer: true },
+      users: state.users.map((u) => (u.id === uid ? { ...u, isOrganizer: true } : u)),
     });
     void createEventOnApi(newEvent).catch(() => undefined);
   },
@@ -567,7 +1009,14 @@ export const useStore = create<AppState>()(
     void updateEventOnApi(eventId, patch).catch(() => undefined);
   },
 
-  cancelEvent: (eventId) =>
+  cancelEvent: (eventId) => {
+    const memberIds = Array.from(
+      new Set(
+        get()
+          .groups.filter((g) => g.eventId === eventId)
+          .flatMap((g) => g.members),
+      ),
+    );
     set((state) => ({
       events: state.events.map((e) =>
         e.id === eventId ? { ...e, status: 'cancelled' as const } : e,
@@ -575,7 +1024,22 @@ export const useStore = create<AppState>()(
       groups: state.groups.map((g) =>
         g.eventId === eventId ? { ...g, status: 'cancelled' as const } : g,
       ),
-    })),
+    }));
+    const stamp = Date.now();
+    for (let i = 0; i < memberIds.length; i++) {
+      get().addNotification({
+        id: `n_cancel_${stamp}_${i}`,
+        type: 'group',
+        messageGr: 'Η εκδήλωση ακυρώθηκε. Δες τα σχέδιά σου για εναλλακτικές.',
+        messageEn: 'The event was cancelled. Check My plans for alternatives.',
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        eventId,
+        forUserId: memberIds[i],
+      });
+    }
+  },
 
   archiveEvent: (eventId) =>
     set((state) => ({
@@ -584,37 +1048,58 @@ export const useStore = create<AppState>()(
       ),
     })),
 
-  publishMeetingPoint: (groupId, meetingPoint) =>
+  publishMeetingPoint: (groupId, meetingPoint) => {
+    const group = get().groups.find((g) => g.id === groupId);
     set((state) => ({
       groups: state.groups.map((g) =>
         g.id === groupId ? { ...g, meetingPoint } : g,
       ),
-    })),
+    }));
+    if (!group) return;
+    const stamp = Date.now();
+    const targets = group.members.filter((id) => id !== get().currentUser?.id);
+    for (let i = 0; i < targets.length; i++) {
+      get().addNotification({
+        id: `n_meet_${stamp}_${i}`,
+        type: 'group',
+        messageGr: 'Δημοσιεύτηκε σημείο συνάντησης — άνοιξε «Η βραδιά μας».',
+        messageEn: 'A meeting point was published — open «Our night».',
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        groupId,
+        eventId: group.eventId,
+        forUserId: targets[i],
+      });
+    }
+  },
 
-  sendGroupAnnouncement: (groupId, textEl, textEn) =>
-    set((state) => {
-      const group = state.groups.find((g) => g.id === groupId);
-      if (!group) return state;
-      return {
-        groups: state.groups.map((g) =>
-          g.id === groupId
-            ? { ...g, lastAnnouncement: { textEl, textEn, at: new Date().toISOString() } }
-            : g,
-        ),
-        notifications: [
-          normalizeAppNotification({
-            id: `n_ann_${Date.now()}`,
-            type: 'message',
-            messageEn: `Organizer announcement: ${textEn}`,
-            messageGr: `Ανακοίνωση διοργανωτή: ${textEl}`,
-            timeEn: 'Just now',
-            timeGr: 'Μόλις τώρα',
-            color: 'bg-cyan-100 text-cyan-600',
-          }),
-          ...state.notifications,
-        ],
-      };
-    }),
+  sendGroupAnnouncement: (groupId, textEl, textEn) => {
+    const group = get().groups.find((g) => g.id === groupId);
+    if (!group) return;
+    set((state) => ({
+      groups: state.groups.map((g) =>
+        g.id === groupId
+          ? { ...g, lastAnnouncement: { textEl, textEn, at: new Date().toISOString() } }
+          : g,
+      ),
+    }));
+    const stamp = Date.now();
+    for (let i = 0; i < group.members.length; i++) {
+      get().addNotification({
+        id: `n_ann_${stamp}_${i}`,
+        type: 'group',
+        messageEn: `Organizer announcement: ${textEn}`,
+        messageGr: `Ανακοίνωση διοργανωτή: ${textEl}`,
+        timeEn: 'Just now',
+        timeGr: 'Μόλις τώρα',
+        color: 'bg-cyan-100 text-cyan-600',
+        groupId,
+        eventId: group.eventId,
+        forUserId: group.members[i],
+      });
+    }
+  },
 
   // Accepts both the bilingual shape ({messageEn, messageGr, timeEn, timeGr})
   // and the legacy shape ({message, time}); normalizes to bilingual so the
@@ -677,38 +1162,116 @@ export const useStore = create<AppState>()(
     })),
 
   organizerMessages: [],
-  sendOrganizerMessage: (organizerId, message) =>
-    set((state) => ({
+  sendOrganizerMessage: (organizerId, message) => {
+    const state = get();
+    const subject = state.users.find((u) => u.id === organizerId);
+    const gate = canViewerContactOrganizer(state.currentUser, subject, {
+      blockedUserIds: state.blockedUserIds,
+      groups: state.groups,
+    });
+    if (!gate.allowed) {
+      return { ok: false, reasonEl: gate.reasonEl, reasonEn: gate.reasonEn };
+    }
+    set((s) => ({
       organizerMessages: [
         {
           id: `om_${Date.now()}`,
           organizerId,
-          fromUserId: state.currentUser?.id,
+          fromUserId: s.currentUser?.id,
           message,
           createdAt: new Date().toISOString(),
         },
-        ...state.organizerMessages,
+        ...s.organizerMessages,
       ],
-    })),
+    }));
+    return { ok: true };
+  },
 
   userSettings: { ...DEFAULT_USER_SETTINGS },
   updateUserSettings: (patch) =>
-    set((state) => ({
-      userSettings: {
+    set((state) => {
+      const privacy = { ...state.userSettings.privacy, ...(patch.privacy ?? {}) };
+      const nextSettings = {
         ...state.userSettings,
         ...patch,
         notificationPrefs: { ...state.userSettings.notificationPrefs, ...(patch.notificationPrefs ?? {}) },
-        privacy: { ...state.userSettings.privacy, ...(patch.privacy ?? {}) },
-      },
-    })),
+        privacy,
+      };
+      const uid = state.currentUser?.id;
+      return {
+        userSettings: nextSettings,
+        ...(patch.privacy && uid
+          ? {
+              currentUser: state.currentUser
+                ? { ...state.currentUser, privacy }
+                : null,
+              users: state.users.map((u) => (u.id === uid ? { ...u, privacy } : u)),
+            }
+          : {}),
+      };
+    }),
 
   updatePrivacySettings: (patch) =>
-    set((state) => ({
-      userSettings: {
-        ...state.userSettings,
-        privacy: { ...state.userSettings.privacy, ...patch },
-      },
-    })),
+    set((state) => {
+      const privacy: AccountPrivacy = { ...state.userSettings.privacy, ...patch };
+      // A coarse visibility change without a fine audience (AI, legacy select)
+      // replaces any earlier fine-grained choice instead of leaving it to revive later.
+      if (patch.profileVisibility && !('profileAudience' in patch)) delete privacy.profileAudience;
+      if (privacy.profileAudience) privacy.profileVisibility = audienceToProfileVisibility(privacy.profileAudience);
+      const uid = state.currentUser?.id;
+      return {
+        userSettings: {
+          ...state.userSettings,
+          privacy,
+        },
+        currentUser: state.currentUser ? { ...state.currentUser, privacy } : null,
+        users: uid
+          ? state.users.map((u) => (u.id === uid ? { ...u, privacy } : u))
+          : state.users,
+      };
+    }),
+
+  blockedUserIds: [],
+  blockUser: (userId) => {
+    const myId = get().currentUser?.id;
+    if (!myId || !userId || userId === myId) return;
+    set((state) => {
+      const blockedUserIds = state.blockedUserIds.includes(userId)
+        ? state.blockedUserIds
+        : [...state.blockedUserIds, userId];
+      const syncBlocked = (u: User): User =>
+        u.id === myId ? { ...u, blockedUserIds } : u;
+      return {
+        blockedUserIds,
+        currentUser: state.currentUser ? syncBlocked(state.currentUser) : null,
+        users: state.users.map(syncBlocked),
+        // Drop connection both ways when blocking.
+        connectionRequests: state.connectionRequests.filter(
+          (r) =>
+            !(
+              (r.fromUserId === myId && r.toUserId === userId) ||
+              (r.fromUserId === userId && r.toUserId === myId)
+            ),
+        ),
+      };
+    });
+    // Drop the Nakamas edge on both sides (idempotent — also clears half-edges).
+    get().removeConnection(userId);
+  },
+  unblockUser: (userId) => {
+    const myId = get().currentUser?.id;
+    if (!myId || !userId) return;
+    set((state) => {
+      const blockedUserIds = state.blockedUserIds.filter((id) => id !== userId);
+      const syncBlocked = (u: User): User =>
+        u.id === myId ? { ...u, blockedUserIds } : u;
+      return {
+        blockedUserIds,
+        currentUser: state.currentUser ? syncBlocked(state.currentUser) : null,
+        users: state.users.map(syncBlocked),
+      };
+    });
+  },
 
   bonusXp: 0,
   awardXp: (amount, reasonEl, reasonEn) =>
@@ -723,6 +1286,7 @@ export const useStore = create<AppState>()(
           timeEn: 'Just now',
           timeGr: 'Μόλις τώρα',
           color: 'bg-amber-100 text-amber-700',
+          forUserId: state.currentUser?.id,
         }),
         ...state.notifications,
       ],
@@ -761,8 +1325,10 @@ export const useStore = create<AppState>()(
     get().logAdminAction(`safeguard_${key}_${value ? 'on' : 'off'}`);
   },
 
-  updateUser: (userId, data) =>
+  updateUser: (userId, rawData) =>
     set((state) => {
+      // The admin role is never changed from the client (see lib/roles.ts).
+      const { isAdmin: _ignoredAdmin, ...data } = (rawData ?? {}) as Partial<typeof currentUser> & { isAdmin?: boolean };
       const isCurrentUser = state.currentUser?.id === userId;
       return {
         users: state.users.map((u) =>
@@ -775,12 +1341,32 @@ export const useStore = create<AppState>()(
       };
     }),
 
-  toggleLiveTracking: (groupId, enabled) =>
+  toggleLiveTracking: (groupId, enabled) => {
+    const group = get().groups.find((g) => g.id === groupId);
     set((state) => ({
       groups: state.groups.map((g) =>
         g.id === groupId ? { ...g, isLiveTrackingActive: enabled } : g,
       ),
-    })),
+    }));
+    if (!group || !enabled) return;
+    const me = get().currentUser;
+    const stamp = Date.now();
+    const peers = group.members.filter((id) => id !== me?.id);
+    for (let i = 0; i < peers.length; i++) {
+      get().addNotification({
+        id: `n_shield_${stamp}_${i}`,
+        type: 'safety',
+        messageGr: 'Η ασπίδα ασφαλείας ενεργοποιήθηκε — άνοιξε το chat για τον χάρτη ομάδας.',
+        messageEn: 'Safety shield is on — open group chat for the group map.',
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        groupId,
+        eventId: group.eventId,
+        forUserId: peers[i],
+      });
+    }
+  },
 
   updateMemberLocation: (groupId, userId, location) =>
     set((state) => ({
@@ -792,7 +1378,8 @@ export const useStore = create<AppState>()(
       }),
     })),
 
-  triggerSos: (groupId, userId, active) =>
+  triggerSos: (groupId, userId, active) => {
+    const group = get().groups.find((g) => g.id === groupId);
     set((state) => ({
       groups: state.groups.map((g) => {
         if (g.id !== groupId) return g;
@@ -806,7 +1393,27 @@ export const useStore = create<AppState>()(
         }
         return { ...g, membersLocations };
       }),
-    })),
+    }));
+    if (!group || !active) return;
+    const actor = get().users.find((u) => u.id === userId);
+    const name = actor?.name.split(' ')[0] || 'Nakamas';
+    const stamp = Date.now();
+    const peers = group.members.filter((id) => id !== userId);
+    for (let i = 0; i < peers.length; i++) {
+      get().addNotification({
+        id: `n_sos_${stamp}_${i}`,
+        type: 'safety',
+        messageGr: `Ο/Η ${name} ενεργοποίησε SOS — άνοιξε το chat της ομάδας τώρα.`,
+        messageEn: `${name} triggered SOS — open the group chat now.`,
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        groupId,
+        eventId: group.eventId,
+        forUserId: peers[i],
+      });
+    }
+  },
 
   toggleSavedEvent: (eventId) =>
     set((state) => {
@@ -852,52 +1459,142 @@ export const useStore = create<AppState>()(
       };
     }),
 
-  connectionRequests: [
-    { id: 'cr1', fromUserId: 'org2', toUserId: 'u1', message: 'We noticed you attended our events. Let\'s connect!', createdAt: '2024-01-15', status: 'pending' as const },
-    { id: 'cr2', fromUserId: 'org4', toUserId: 'u1', createdAt: '2024-01-14', status: 'pending' as const },
-  ],
+  connectionRequests: SEED_CONNECTION_REQUESTS.map((r) => ({ ...r })),
 
-  sendConnectionRequest: (toUserId, message) =>
+  sendConnectionRequest: (toUserId, message) => {
+    const state = get();
+    const me = state.currentUser;
+    if (!me || !toUserId || toUserId === me.id) return 'invalid';
+    const peer = state.users.find((u) => u.id === toUserId);
+    if (!peer) return 'invalid';
+    if (state.blockedUserIds.includes(toUserId) || (peer.blockedUserIds ?? []).includes(me.id)) return 'blocked';
+    if ((me.connections ?? []).includes(toUserId)) return 'connected';
+    // They already asked: saying yes is what the person means.
+    const reverse = state.connectionRequests.find(
+      (r) => r.fromUserId === toUserId && r.toUserId === me.id && r.status === 'pending',
+    );
+    if (reverse) {
+      get().acceptConnectionRequest(reverse.id);
+      return 'accepted';
+    }
+    const exists = state.connectionRequests.some(
+      (r) => r.fromUserId === me.id && r.toUserId === toUserId && r.status === 'pending',
+    );
+    if (exists) return 'exists';
+    const fromName = me.name.split(' ')[0] || 'Nakamas';
+    set((s) => ({
+      connectionRequests: [
+        ...s.connectionRequests,
+        {
+          id: `cr${Date.now()}`,
+          fromUserId: me.id,
+          toUserId,
+          message: message?.trim() ? message.trim().slice(0, 300) : undefined,
+          createdAt: new Date().toISOString().split('T')[0],
+          status: 'pending' as const,
+        },
+      ],
+      notifications: [
+        normalizeAppNotification({
+          type: 'system',
+          messageGr: `Νέο αίτημα σύνδεσης από ${fromName} — άνοιξε «Οι Συνδέσεις μου».`,
+          messageEn: `New connection request from ${fromName} — open My Nakamas.`,
+          timeGr: 'μόλις τώρα',
+          timeEn: 'just now',
+          read: false,
+          forUserId: toUserId,
+        }),
+        ...s.notifications,
+      ],
+    }));
+    return 'sent';
+  },
+
+  cancelConnectionRequest: (toUserId) =>
     set((state) => {
-      if (!state.currentUser) return state;
-      const exists = state.connectionRequests.some(
-        (r) => r.fromUserId === state.currentUser!.id && r.toUserId === toUserId && r.status === 'pending'
-      );
-      if (exists) return state;
+      const myId = state.currentUser?.id;
+      if (!myId) return state;
       return {
-        connectionRequests: [
-          ...state.connectionRequests,
-          { id: `cr${Date.now()}`, fromUserId: state.currentUser.id, toUserId, message, createdAt: new Date().toISOString().split('T')[0], status: 'pending' as const },
-        ],
+        connectionRequests: state.connectionRequests.filter(
+          (r) => !(r.fromUserId === myId && r.toUserId === toUserId && r.status === 'pending'),
+        ),
       };
     }),
 
   acceptConnectionRequest: (requestId) =>
     set((state) => {
       const req = state.connectionRequests.find((r) => r.id === requestId);
-      if (!req || !state.currentUser) return state;
+      if (!req || !state.currentUser || req.status !== 'pending') return state;
+      const myId = state.currentUser.id;
+      // Only the person who received the request can accept it.
+      if (req.toUserId !== myId) return state;
+      const acceptor = state.currentUser;
+      const link = <U extends { id: string; connections?: string[] }>(u: U): U => {
+        if (u.id === req.fromUserId) return { ...u, connections: addUnique(u.connections, req.toUserId) };
+        if (u.id === req.toUserId) return { ...u, connections: addUnique(u.connections, req.fromUserId) };
+        return u;
+      };
       return {
         connectionRequests: state.connectionRequests.map((r) =>
-          r.id === requestId ? { ...r, status: 'accepted' as const } : r
+          r.id === requestId ||
+          // A crossing request in the other direction is settled by the same yes.
+          (r.status === 'pending' && r.fromUserId === req.toUserId && r.toUserId === req.fromUserId)
+            ? { ...r, status: 'accepted' as const }
+            : r,
         ),
-        users: state.users.map((u) => {
-          if (u.id === req.fromUserId) return { ...u, connections: [...(u.connections || []), req.toUserId] };
-          if (u.id === req.toUserId) return { ...u, connections: [...(u.connections || []), req.fromUserId] };
-          return u;
-        }),
-        currentUser:
-          state.currentUser.id === req.toUserId
-            ? { ...state.currentUser, connections: [...(state.currentUser.connections || []), req.fromUserId] }
-            : state.currentUser,
+        users: state.users.map(link),
+        currentUser: link(state.currentUser),
+        notifications: [
+          normalizeAppNotification({
+            type: 'system',
+            messageGr: `Ο/Η ${acceptor.name.split(' ')[0]} αποδέχτηκε τη σύνδεση — δες τον τοίχο των Nakamas σου.`,
+            messageEn: `${acceptor.name.split(' ')[0]} accepted your connection — see your Nakamas wall.`,
+            timeGr: 'μόλις τώρα',
+            timeEn: 'just now',
+            read: false,
+            forUserId: req.fromUserId,
+          }),
+          ...state.notifications,
+        ],
       };
     }),
 
   declineConnectionRequest: (requestId) =>
-    set((state) => ({
-      connectionRequests: state.connectionRequests.map((r) =>
-        r.id === requestId ? { ...r, status: 'declined' as const } : r
-      ),
-    })),
+    set((state) => {
+      const req = state.connectionRequests.find((r) => r.id === requestId);
+      if (!req || req.status !== 'pending') return state;
+      const declinerName = state.currentUser?.name.split(' ')[0] || 'Nakamas';
+      return {
+        connectionRequests: state.connectionRequests.map((r) =>
+          r.id === requestId ? { ...r, status: 'declined' as const } : r,
+        ),
+        notifications: [
+          normalizeAppNotification({
+            type: 'system',
+            messageGr: `Το αίτημα σύνδεσης προς ${declinerName} απορρίφθηκε.`,
+            messageEn: `Your connection request to ${declinerName} was declined.`,
+            timeGr: 'μόλις τώρα',
+            timeEn: 'just now',
+            read: false,
+            forUserId: req.fromUserId,
+          }),
+          ...state.notifications,
+        ],
+      };
+    }),
+
+  restoreConnectionRequest: (requestId) =>
+    set((state) => {
+      if (!state.currentUser) return state;
+      const req = state.connectionRequests.find((r) => r.id === requestId);
+      if (!req || req.status !== 'declined' || req.toUserId !== state.currentUser.id) return state;
+      if (state.blockedUserIds.includes(req.fromUserId)) return state;
+      return {
+        connectionRequests: state.connectionRequests.map((r) =>
+          r.id === requestId ? { ...r, status: 'pending' as const } : r,
+        ),
+      };
+    }),
 
   removeConnection: (userId) =>
     set((state) => {
@@ -906,10 +1603,27 @@ export const useStore = create<AppState>()(
       return {
         users: state.users.map((u) => {
           if (u.id === myId) return { ...u, connections: (u.connections || []).filter((id) => id !== userId) };
-          if (u.id === userId) return { ...u, connections: (u.connections || []).filter((id) => id !== userId) };
+          // Mutual edge: the other person must stop listing me too (privacy ACL reads both sides).
+          if (u.id === userId) return { ...u, connections: (u.connections || []).filter((id) => id !== myId) };
           return u;
         }),
         currentUser: { ...state.currentUser, connections: (state.currentUser.connections || []).filter((id) => id !== userId) },
+      };
+    }),
+
+  restoreConnection: (userId) =>
+    set((state) => {
+      if (!state.currentUser || userId === state.currentUser.id) return state;
+      const myId = state.currentUser.id;
+      if (state.blockedUserIds.includes(userId)) return state;
+      if (!state.users.some((u) => u.id === userId)) return state;
+      return {
+        users: state.users.map((u) => {
+          if (u.id === myId) return { ...u, connections: addUnique(u.connections, userId) };
+          if (u.id === userId) return { ...u, connections: addUnique(u.connections, myId) };
+          return u;
+        }),
+        currentUser: { ...state.currentUser, connections: addUnique(state.currentUser.connections, userId) },
       };
     }),
 
@@ -1031,23 +1745,26 @@ export const useStore = create<AppState>()(
           ...state.joinRequestRateLog,
           { userId: state.currentUser.id, at: new Date().toISOString() },
         ],
-        notifications: [
-          normalizeAppNotification({
-            id: `n_cjr_${Date.now()}`,
-            type: 'buddy_seek',
-            messageEn: event
-              ? `Someone asked to join your plan for "${event.title}"`
-              : 'New join request on your company request',
-            messageGr: event
-              ? `Κάποιος ζήτησε να μπει στο σχέδιό σου για «${event.title}»`
-              : 'Νέο αίτημα σύνδεσης στο αίτημά σας',
-            timeEn: 'Just now',
-            timeGr: 'Μόλις τώρα',
-            icon: Users,
-            color: 'bg-cyan-100 text-cyan-700',
-          }),
-          ...state.notifications,
-        ],
+        notifications: join.targetUserId
+          ? [
+              normalizeAppNotification({
+                id: `n_cjr_${Date.now()}`,
+                type: 'buddy_seek',
+                messageEn: event
+                  ? `Someone asked to join your plan for "${event.title}"`
+                  : 'New join request on your company request',
+                messageGr: event
+                  ? `Κάποιος ζήτησε να μπει στο σχέδιό σου για «${event.title}»`
+                  : 'Νέο αίτημα σύνδεσης στο αίτημά σας',
+                timeEn: 'Just now',
+                timeGr: 'Μόλις τώρα',
+                icon: Users,
+                color: 'bg-cyan-100 text-cyan-700',
+                forUserId: join.targetUserId,
+              }),
+              ...state.notifications,
+            ]
+          : state.notifications,
       };
     });
     return joinId;
@@ -1061,7 +1778,6 @@ export const useStore = create<AppState>()(
       const companyRequest = state.companyRequests.find((r) => r.id === join.companyRequestId);
       if (!companyRequest) return state;
       const event = state.events.find((e) => e.id === companyRequest.eventId);
-      const requester = state.users.find((u) => u.id === join.fromUserId);
       const targetSize = companyRequest.preferredGroupMax ?? event?.groupDiscount?.minSize ?? 5;
       coordinationGroupId = `g_plan_${Date.now()}`;
       const memberIds = [...new Set([join.fromUserId, join.targetUserId!])];
@@ -1097,17 +1813,16 @@ export const useStore = create<AppState>()(
         notifications: [
           normalizeAppNotification({
             id: `n_cjr_ok_${Date.now()}`,
-            type: 'buddy_seek',
-            messageEn: requester
-              ? `Accepted — group chat ready with ${requester.name.split(' ')[0]}`
-              : 'Join request accepted — group chat ready',
-            messageGr: requester
-              ? `Αποδεχτήκατε — έτοιμο group chat με ${requester.name.split(' ')[0]}`
-              : 'Το αίτημα έγινε δεκτό — έτοιμο group chat',
+            type: 'group',
+            messageEn: 'You are in — open «Our night» for the meeting spot and chat.',
+            messageGr: 'Μπήκες — άνοιξε «Η βραδιά μας» για σημείο συνάντησης και chat.',
             timeEn: 'Just now',
             timeGr: 'Μόλις τώρα',
             icon: Users,
             color: 'bg-emerald-100 text-emerald-700',
+            groupId: coordinationGroupId!,
+            eventId: companyRequest.eventId,
+            forUserId: join.fromUserId,
           }),
           ...state.notifications,
         ],
@@ -1131,18 +1846,86 @@ export const useStore = create<AppState>()(
   },
 
   declineCompanyJoinRequest: (joinRequestId) =>
-    set((state) => ({
-      companyJoinRequests: state.companyJoinRequests.map((j) =>
-        j.id === joinRequestId ? { ...j, status: 'declined' as const } : j,
-      ),
-    })),
+    set((state) => {
+      const join = state.companyJoinRequests.find((j) => j.id === joinRequestId);
+      if (!join || join.status !== 'pending') {
+        return {
+          companyJoinRequests: state.companyJoinRequests.map((j) =>
+            j.id === joinRequestId ? { ...j, status: 'declined' as const } : j,
+          ),
+        };
+      }
+      const companyRequest = state.companyRequests.find((r) => r.id === join.companyRequestId);
+      const event = companyRequest
+        ? state.events.find((e) => e.id === companyRequest.eventId)
+        : undefined;
+      return {
+        companyJoinRequests: state.companyJoinRequests.map((j) =>
+          j.id === joinRequestId ? { ...j, status: 'declined' as const } : j,
+        ),
+        notifications: [
+          normalizeAppNotification({
+            id: `n_cjr_dec_${Date.now()}`,
+            type: 'buddy_seek',
+            messageEn: event
+              ? `Your join request for "${event.title}" was declined`
+              : 'Your company join request was declined',
+            messageGr: event
+              ? `Το αίτημά σου για «${event.title}» απορρίφθηκε`
+              : 'Το αίτημα παρέας σου απορρίφθηκε',
+            timeEn: 'Just now',
+            timeGr: 'Μόλις τώρα',
+            icon: Users,
+            color: 'bg-rose-100 text-rose-700',
+            forUserId: join.fromUserId,
+          }),
+          ...state.notifications,
+        ],
+      };
+    }),
 
   withdrawCompanyJoinRequest: (joinRequestId) =>
-    set((state) => ({
-      companyJoinRequests: state.companyJoinRequests.map((j) =>
-        j.id === joinRequestId ? { ...j, status: 'withdrawn' as const } : j,
-      ),
-    })),
+    set((state) => {
+      const join = state.companyJoinRequests.find((j) => j.id === joinRequestId);
+      if (!join || join.status !== 'pending') {
+        return {
+          companyJoinRequests: state.companyJoinRequests.map((j) =>
+            j.id === joinRequestId ? { ...j, status: 'withdrawn' as const } : j,
+          ),
+        };
+      }
+      const companyRequest = state.companyRequests.find((r) => r.id === join.companyRequestId);
+      const event = companyRequest
+        ? state.events.find((e) => e.id === companyRequest.eventId)
+        : undefined;
+      const targetId = join.targetUserId;
+      return {
+        companyJoinRequests: state.companyJoinRequests.map((j) =>
+          j.id === joinRequestId ? { ...j, status: 'withdrawn' as const } : j,
+        ),
+        // Notify the plan owner that the requester withdrew (same inbox stream).
+        notifications: targetId
+          ? [
+              normalizeAppNotification({
+                id: `n_cjr_wd_${Date.now()}`,
+                type: 'buddy_seek',
+                messageEn: event
+                  ? `Someone withdrew their join request for "${event.title}"`
+                  : 'A company join request was withdrawn',
+                messageGr: event
+                  ? `Κάποιος ανακάλεσε το αίτημα για «${event.title}»`
+                  : 'Ανακλήθηκε αίτημα παρέας',
+                timeEn: 'Just now',
+                timeGr: 'Μόλις τώρα',
+                icon: Users,
+                color: 'bg-amber-100 text-amber-700',
+                forUserId: targetId,
+              }),
+              ...state.notifications,
+            ]
+          : state.notifications,
+      };
+    }),
 
   reportCompanyRequest: (requestId, reason) =>
     set((state) => {
@@ -1168,6 +1951,7 @@ export const useStore = create<AppState>()(
     set((state) => {
       if (!state.currentUser) return state;
       const from = state.groups.find((g) => g.id === fromGroupId);
+      const to = state.groups.find((g) => g.id === toGroupId);
       if (!from) return state;
       const suggestion: GroupMergeSuggestion = {
         id: `gm_${Date.now()}`,
@@ -1180,15 +1964,38 @@ export const useStore = create<AppState>()(
         status: 'pending',
         createdAt: new Date().toISOString(),
       };
-      return { groupMergeSuggestions: [...state.groupMergeSuggestions, suggestion] };
+      const targetHost = to?.hostId;
+      const fromName = state.currentUser.name.split(' ')[0] || 'Nakamas';
+      const hostNotif =
+        targetHost && targetHost !== state.currentUser.id
+          ? [
+              normalizeAppNotification({
+                type: 'buddy_seek',
+                messageGr: `Ο/Η ${fromName} πρότεινε συγχώνευση ομάδων — δες το στο «Βρες Nakamas».`,
+                messageEn: `${fromName} suggested merging groups — review it in Find Nakamas.`,
+                timeGr: 'μόλις τώρα',
+                timeEn: 'just now',
+                read: false,
+                groupId: toGroupId,
+                eventId: from.eventId,
+                forUserId: targetHost,
+              }),
+            ]
+          : [];
+      return {
+        groupMergeSuggestions: [...state.groupMergeSuggestions, suggestion],
+        notifications: [...hostNotif, ...state.notifications],
+      };
     }),
 
   respondGroupMerge: (suggestionId, accept) => {
     let resultGroupId: string | null = null;
+    let declinedFor: string | null = null;
     set((state) => {
       const suggestion = state.groupMergeSuggestions.find((s) => s.id === suggestionId);
       if (!suggestion || !state.currentUser) return state;
       if (!accept) {
+        declinedFor = suggestion.fromUserId;
         return {
           groupMergeSuggestions: state.groupMergeSuggestions.map((s) =>
             s.id === suggestionId ? { ...s, status: 'declined' as const } : s,
@@ -1259,6 +2066,17 @@ export const useStore = create<AppState>()(
         ),
       };
     });
+    if (!accept && declinedFor) {
+      get().addNotification({
+        type: 'buddy_seek',
+        messageGr: 'Η πρόταση συγχώνευσης απορρίφθηκε.',
+        messageEn: 'The group-merge suggestion was declined.',
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        forUserId: declinedFor,
+      });
+    }
     if (resultGroupId) {
       const snap = get();
       const group = snap.groups.find((g) => g.id === resultGroupId);
@@ -1271,6 +2089,21 @@ export const useStore = create<AppState>()(
           participantUserIds: group.members,
           meetingPoint: event?.locationArea,
         });
+        const stamp = Date.now();
+        for (let i = 0; i < group.members.length; i++) {
+          get().addNotification({
+            id: `n_merge_${stamp}_${i}`,
+            type: 'group',
+            messageGr: 'Οι ομάδες ενώθηκαν — άνοιξε «Η βραδιά μας» για τη νέα παρέα.',
+            messageEn: 'Groups merged — open «Our night» for the new company.',
+            timeGr: 'μόλις τώρα',
+            timeEn: 'just now',
+            read: false,
+            groupId: group.id,
+            eventId: group.eventId,
+            forUserId: group.members[i],
+          });
+        }
       }
     }
     return resultGroupId;
@@ -1400,6 +2233,7 @@ export const useStore = create<AppState>()(
         feedbackSubmitted: state.feedbackSubmitted,
         onboardingCompleted: state.onboardingCompleted,
         recentSearches: state.recentSearches,
+        lastResumePath: state.lastResumePath,
         commitmentHolds: state.commitmentHolds,
         companyRequests: state.companyRequests,
         companyRequestPreferences: state.companyRequestPreferences,
@@ -1427,8 +2261,14 @@ export const useStore = create<AppState>()(
         challengesJoined: state.challengesJoined,
         dailyChallengeClaimedOn: state.dailyChallengeClaimedOn,
         suspendedUserIds: state.suspendedUserIds,
+        blockedUserIds: state.blockedUserIds,
         adminSafeguards: state.adminSafeguards,
         demoMode: state.demoMode,
+        // Φ27 — outings
+        strikes: state.strikes,
+        planInvites: state.planInvites,
+        followedOrganizerIds: state.followedOrganizerIds,
+        govWalletInterest: state.govWalletInterest,
       }),
       merge: (persisted, current) => {
         const p = persisted as Record<string, unknown> | undefined;
@@ -1458,9 +2298,23 @@ export const useStore = create<AppState>()(
           return [...fromSeeds, ...extras];
         };
 
-        const events = mergeById(current.events, p.events);
+        const events = withLiveSeedSchedule(
+          current.events,
+          mergeById(current.events, p.events),
+        );
         const groups = mergeById(current.groups, p.groups);
-        const users = mergeById(current.users, p.users);
+        // isAdmin comes only from the trusted seeds, never from persisted
+        // (user-editable) localStorage state.
+        const seedAdmin = new Map(current.users.map((u) => [u.id, Boolean(u.isAdmin)]));
+        // blob: photo links saved by older builds die on reload — fall back to the seed photo.
+        const seedPhoto = new Map(current.users.map((u) => [u.id, u.photoUrl]));
+        const users = symmetrizeConnections(
+          withOutingPeople(mergeById(current.users, p.users)).map((u) => ({
+            ...u,
+            isAdmin: seedAdmin.get(u.id) ?? false,
+            photoUrl: u.photoUrl?.startsWith('blob:') ? seedPhoto.get(u.id) : u.photoUrl,
+          })),
+        );
         const notifications = Array.isArray(p.notifications)
           ? (p.notifications as typeof current.notifications)
           : current.notifications;
@@ -1505,6 +2359,11 @@ export const useStore = create<AppState>()(
           userSettings,
           adminSafeguards: { ...DEFAULT_ADMIN_SAFEGUARDS, ...(p.adminSafeguards as object) },
           suspendedUserIds: Array.isArray(p.suspendedUserIds) ? (p.suspendedUserIds as string[]) : [],
+          blockedUserIds: Array.isArray(p.blockedUserIds) ? (p.blockedUserIds as string[]) : [],
+          strikes: Array.isArray(p.strikes) ? (p.strikes as typeof current.strikes) : current.strikes,
+          planInvites: mergeById(current.planInvites, p.planInvites),
+          followedOrganizerIds: Array.isArray(p.followedOrganizerIds) ? (p.followedOrganizerIds as string[]) : [],
+          govWalletInterest: Boolean(p.govWalletInterest),
         };
       },
     },

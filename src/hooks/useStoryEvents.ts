@@ -2,6 +2,7 @@ import { useMemo, useCallback } from 'react';
 import { useStore } from '../store';
 import type { Event } from '../types';
 import { isEventSeekingHost, sortEventsForStories } from '../lib/storyEventOrdering';
+import { isEventPast } from '../lib/eventDisplay';
 
 /**
  * Shared story-rail data for all Home theme variants (Classic, Vibrant, Neon, Bento, …).
@@ -17,12 +18,12 @@ export function useStoryEvents() {
   );
 
   const seekingHostEvents = useMemo(
-    () => events.filter(isSeekingHost),
+    () => events.filter((e) => isSeekingHost(e) && !isEventPast(e)),
     [events, isSeekingHost],
   );
 
   const storyEvents = useMemo(
-    () => sortEventsForStories(events, groups),
+    () => sortEventsForStories(events.filter((e) => !isEventPast(e)), groups),
     [events, groups],
   );
 

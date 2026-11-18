@@ -1,33 +1,46 @@
-﻿import React, { ReactNode, useState } from 'react';
+﻿import React, { ReactNode, Suspense, lazy, useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useUIStore } from '../../store/uiStore';
 import { Toaster } from 'sonner';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
-  Grid, TrendingUp, Bookmark, History, Flag,
-  Users, UserPlus, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, Globe, MessageSquare,
+  Grid, TrendingUp, Bookmark, History, Flag, Library,
+  Users, UserPlus, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, MessageSquare, Newspaper,
   Trophy, Zap, ChevronsLeft, ChevronsRight, ChevronDown, BookOpen
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
-import { ThemePicker } from '../common/ThemePicker';
+import { UserMenu } from './UserMenu';
 import { PlansFormingSidebar } from '../buddySeek/PlansFormingSidebar';
 import { PlansFormingSidebarReopenTab } from '../buddySeek/PlansFormingSidebar';
+import { isPlansRailRoute } from '../../lib/plansFormingRail';
+import { pageTitleForPath } from '../../lib/pageTitle';
+import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { PlansFormingBottomSheet } from '../buddySeek/PlansFormingBottomSheet';
 import { PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
+import { MobileDock } from './MobileDock';
+import { prefetchPath } from '../../lib/routeLoaders';
 import { PopupChatRoot } from '../chat/PopupChatRoot';
 import { DemoModeBanner } from '../common/DemoModeBanner';
 import { useRealtimeChat } from '../../hooks/useRealtimeChat';
 import { useFirebaseAuth } from '../../hooks/useFirebaseAuth';
 import { CopilotLauncher } from '../copilot/CopilotLauncher';
-import { CopilotPanel } from '../copilot/CopilotPanel';
 import { useCopilotStore } from '../../store/copilotStore';
+import { isOrganizerUser, isPlatformAdmin } from '../../lib/roles';
+
+const CopilotPanel = lazy(() =>
+  import('../copilot/CopilotPanel').then((m) => ({ default: m.CopilotPanel })),
+);
 import { DESKTOP_DOCK_QUERY, useMediaQuery } from '../../hooks/useMediaQuery';
+import { useWallUnreadCount } from '../../hooks/useWallUnreadCount';
 
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
-  return notifications.filter(n => !n.read).length;
+  const userId = useStore(state => state.currentUser?.id ?? null);
+  const wallUnread = useWallUnreadCount();
+  // The bell covers wall activity too (comments, reactions, tags) — one place to look.
+  return notifications.filter(n => !n.read && (!n.forUserId || n.forUserId === userId)).length + wallUnread;
 }
 import { useLanguage } from '../../lib/i18n';
 
@@ -86,9 +99,11 @@ interface NavItemProps {
   compact?: boolean;
   /** Icon-only rail σε όλα τα widths (collapsed sidebar). */
   rail?: boolean;
+  /** Unread count shown next to the label (or as a dot on the icon rail). */
+  badge?: number;
 }
 
-function NavItem({ to, icon: Icon, label, compact = false, rail = false }: NavItemProps) {
+function NavItem({ to, icon: Icon, label, compact = false, rail = false, badge = 0 }: NavItemProps) {
   const tok = useThemeStyles();
   const containerClass = rail
     ? 'justify-center px-0 py-3'
@@ -105,7 +120,11 @@ function NavItem({ to, icon: Icon, label, compact = false, rail = false }: NavIt
   return (
     <NavLink
       to={to}
-      title={label}
+      title={badge > 0 ? `${label} (${badge})` : label}
+      aria-label={badge > 0 ? `${label} (${badge})` : undefined}
+      // Start loading the page while the pointer or focus is on its link.
+      onMouseEnter={() => prefetchPath(to)}
+      onFocus={() => prefetchPath(to)}
       className={({ isActive }) =>
         cn(
           'flex items-center gap-3 rounded-xl lg:rounded-lg text-sm font-medium transition-colors group min-h-11',
@@ -114,8 +133,18 @@ function NavItem({ to, icon: Icon, label, compact = false, rail = false }: NavIt
         )
       }
     >
-      <Icon className={iconClass} />
+      <span className="relative inline-flex">
+        <Icon className={iconClass} />
+        {badge > 0 && (rail || compact) && (
+          <span className={cn('absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-[var(--color-surface-raised)] bg-accent', !rail && 'lg:hidden')} aria-hidden />
+        )}
+      </span>
       <span className={textClass}>{label}</span>
+      {badge > 0 && !rail && (
+        <span className={cn('ml-auto rounded-full bg-accent px-1.5 py-0.5 text-2xs font-bold leading-none text-accent-fg tabular-nums', compact && 'hidden lg:inline')} aria-hidden>
+          {badge > 99 ? '99+' : badge}
+        </span>
+      )}
     </NavLink>
   );
 }
@@ -159,7 +188,7 @@ function NavSection({ id, title, paths, children, compact = false, rail = false 
           disabled={containsActive}
           title={containsActive ? undefined : collapsed ? title : undefined}
           className={cn(
-            'w-full flex items-center justify-between gap-2 px-3 py-1.5 min-h-9 rounded-lg text-sm font-bold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default',
+            'w-full flex items-center justify-between gap-2 px-3 py-1.5 min-h-9 rounded-lg text-xs font-bold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default',
             isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-white/5' : isAB ? 'text-[hsl(220_11%_34%)] hover:bg-gray-100/70' : 'text-[#6B7280] hover:text-gray-900 hover:bg-gray-50',
           )}
         >
@@ -181,18 +210,21 @@ function NavSection({ id, title, paths, children, compact = false, rail = false 
 function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?: boolean }) {
   const { t } = useLanguage();
   const currentUser = useStore((s) => s.currentUser);
-  /** Ίδιο predicate με CommandPalette — δεν υπάρχει ξεχωριστό isAdmin flag. */
-  const isAdmin = Boolean(currentUser?.isOrganizer);
+  // Same predicate as CommandPalette and the copilot (lib/roles.ts).
+  const isAdmin = isPlatformAdmin(currentUser);
+  const isOrganizer = isOrganizerUser(currentUser);
+  const wallUnread = useWallUnreadCount();
 
   return (
     <>
-      <NavSection id="explore" paths={['/', '/categories', '/nearby']} title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
+      <NavSection id="explore" paths={['/', '/categories', '/collections', '/nearby']} title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
         <NavItem to="/" icon={Compass} label={t('Ανακάλυψη Εκδηλώσεων', 'Discover Events')} compact={compact} rail={rail} />
         <NavItem to="/categories" icon={Grid} label={t('Κατηγορίες', 'Categories')} compact={compact} rail={rail} />
+        <NavItem to="/collections" icon={Library} label={t('Συλλογές', 'Collections')} compact={compact} rail={rail} />
         <NavItem to="/nearby" icon={MapPin} label={t('Τοπικές Ομάδες', 'Local Groups')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection id="experience" paths={['/agenda', '/plans', '/buddy-seek', '/saved', '/history']} title={t('Η Εμπειρία μου', 'My Experience')} compact={compact} rail={rail}>
+      <NavSection id="experience" paths={['/agenda', '/plans', '/night', '/buddy-seek', '/saved', '/history']} title={t('Η Εμπειρία μου', 'My Experience')} compact={compact} rail={rail}>
         <NavItem to="/agenda" icon={Calendar} label={t('Το Ημερολόγιό μου', 'My Calendar')} compact={compact} rail={rail} />
         <NavItem to="/plans" icon={CalendarCheck} label={t('Τα Σχέδιά μου', 'My Plans')} compact={compact} rail={rail} />
         <NavItem to="/buddy-seek" icon={UserPlus} label={t('Βρες Nakamas', 'Find Nakamas')} compact={compact} rail={rail} />
@@ -200,7 +232,8 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
         <NavItem to="/history" icon={History} label={t('Ιστορικό', 'History')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection id="community" paths={['/connections', '/chats', '/chat', '/leaderboard', '/challenges', '/achievements']} title={t('Κοινότητα', 'Community')} compact={compact} rail={rail}>
+      <NavSection id="community" paths={['/wall', '/connections', '/chats', '/chat', '/leaderboard', '/challenges', '/achievements', '/u']} title={t('Κοινότητα', 'Community')} compact={compact} rail={rail}>
+        <NavItem to="/wall" icon={Newspaper} label={t('Τοίχος Nakamas', 'Nakamas Wall')} compact={compact} rail={rail} badge={wallUnread} />
         <NavItem to="/connections" icon={Users} label={t('Οι Nakamas μου', 'My Nakamas')} compact={compact} rail={rail} />
         <NavItem to="/chats" icon={MessageSquare} label={t('Ομαδικές Συνομιλίες', 'Group Chats')} compact={compact} rail={rail} />
         <NavItem to="/leaderboard" icon={Trophy} label={t('Κατάταξη', 'Leaderboard')} compact={compact} rail={rail} />
@@ -208,7 +241,9 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
       </NavSection>
 
       <NavSection id="host" paths={['/manage', '/create', '/wallet']} title={t('Διοργάνωση', 'Host')} compact={compact} rail={rail}>
-        <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας Διοργανωτή', 'Organizer Dashboard')} compact={compact} rail={rail} />
+        {isOrganizer && (
+          <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας Διοργανωτή', 'Organizer Dashboard')} compact={compact} rail={rail} />
+        )}
         <NavItem to="/create" icon={PlusSquare} label={t('Δημιουργία Εκδήλωσης', 'Create Event')} compact={compact} rail={rail} />
         <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & Κέρδη', 'Wallet & Earnings')} compact={compact} rail={rail} />
       </NavSection>
@@ -260,7 +295,7 @@ export function SideNav() {
           aria-expanded={!collapsed}
           aria-label={collapsed ? t('Επέκταση πλοήγησης', 'Expand sidebar') : t('Σύμπτυξη πλοήγησης', 'Collapse sidebar')}
           title={collapsed ? t('Επέκταση πλοήγησης', 'Expand sidebar') : t('Σύμπτυξη πλοήγησης', 'Collapse sidebar')}
-          className={cn("p-2 rounded-lg transition-colors min-h-10 min-w-10 flex items-center justify-center", tok.chipButton)}
+          className={cn("p-2 rounded-lg transition-colors min-h-8 min-w-8 flex items-center justify-center", tok.chipButton)}
         >
           {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
         </button>
@@ -275,7 +310,9 @@ export function SideNav() {
 export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   const isDesktopDock = useMediaQuery(DESKTOP_DOCK_QUERY);
   const navigate = useNavigate();
-  const { language, setLanguage, t } = useLanguage();
+  const { pathname: currentPath } = useLocation();
+  const pageTitle = pageTitleForPath(currentPath);
+  const { t } = useLanguage();
   const currentUser = useStore((state) => state.currentUser);
   const theme = useStore((state) => state.theme);
   const tok = useThemeStyles();
@@ -297,7 +334,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           <NakamasLogo />
         </div>
         <div className={cn("hidden whitespace-nowrap", copilotDocked ? "2xl:block" : "md:block")}>
-          <span className={cn("text-sm font-bold tracking-wide", tok.isDark ? "text-white" : tok.isAB ? "text-[hsl(220_14%_12%)] tracking-tight" : "text-gray-400")}>{t('Πίνακας Ελέγχου', 'Dashboard')}</span>
+          <span className={cn("text-sm font-bold tracking-wide", tok.isDark ? "text-white" : tok.isAB ? "text-[hsl(220_14%_12%)] tracking-tight" : "text-gray-400")}>{t(pageTitle.el, pageTitle.en)}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3 relative z-raised overflow-visible">
@@ -332,7 +369,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
           title={t('Δημιουργία εκδήλωσης', 'Create event')}
           className={cn(
-            "hidden sm:inline-flex items-center gap-1.5 text-sm font-bold rounded-full transition-all duration-200 px-3 py-2 min-h-10 shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]",
+            "hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold rounded-full transition-colors duration-150 px-3 py-1.5 min-h-8",
             theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] text-white hover:bg-black'
               : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] hover:bg-white'
               : theme === 'vibrant' || theme === 'vibrant-dark' ? 'bg-fuchsia-600 text-white hover:bg-fuchsia-700'
@@ -341,20 +378,8 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
               : 'bg-brand text-white hover:bg-[#0b6d6f]',
           )}
         >
-          <Plus className="w-4 h-4" strokeWidth={2.6} />
+          <Plus className="w-4 h-4 icon-emphasis" />
           <span className="hidden lg:inline">{t('Δημιουργία', 'Create')}</span>
-        </button>
-
-        <ThemePicker variant="compact" />
-
-        {/* Language Toggle */}
-        <button
-          onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}
-          className={cn("flex items-center gap-1 text-xs font-bold transition-colors px-2.5 py-2 rounded-lg min-h-10 min-w-10", tok.chipButton)}
-          aria-label={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')} title={language === 'el' ? t('Αλλαγή σε Αγγλικά','Switch to English') : t('Αλλαγή σε Ελληνικά','Switch to Greek')}
-        >
-          <Globe className="w-3.5 h-3.5" />
-          {language === 'el' ? 'EN' : 'EL'}
         </button>
 
         <NavLink aria-label={unreadNotificationCount > 0 ? `${t('Ειδοποιήσεις','Notifications')} (${unreadNotificationCount})` : t('Ειδοποιήσεις','Notifications')} to="/notifications" className={cn("relative transition-colors", theme === "activebuddies-dark" ? "text-white hover:text-gray-300" : theme === "activebuddies" ? "text-[hsl(220_11%_34%)] hover:text-[hsl(220_14%_12%)]" : theme === "bento-dark" || theme === "neon-dark" ? "text-white hover:text-emerald-400" : theme === "vibrant-dark" ? "text-white hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-500 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-500 hover:text-indigo-600" : theme === "neon" ? "text-gray-500 hover:text-emerald-600" : "text-gray-500 hover:text-brand")}>
@@ -368,26 +393,38 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
 
         <div className="flex items-center space-x-2">
           {currentUser ? (
-            <NavLink to="/profile" className="flex items-center space-x-2 relative group">
+            <UserMenu
+              label={t(`Μενού λογαριασμού: ${currentUser.name}`, `Account menu: ${currentUser.name}`)}
+              showAccountLinks
+              header={
+                <>
+                  <p className={cn("text-sm font-bold truncate", tok.head)}>{currentUser.name}</p>
+                  <p className={cn("text-xs font-medium truncate", tok.muted)}>{t(tierLabelEl(currentUser.trustTier), tierLabelEn(currentUser.trustTier))}</p>
+                </>
+              }
+            >
               <div className={cn("hidden flex-col items-end", copilotDocked ? "2xl:flex" : "sm:flex")}>
-                <span className={cn("text-xs font-bold tracking-wide", theme === "activebuddies" ? "text-[hsl(220_11%_34%)]" : theme === "activebuddies-dark" ? "text-[hsl(220_13%_72%)]" : theme === "vibrant-dark" ? "text-gray-400" : theme === "vibrant" ? "text-gray-500" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-brand")}>{t('Αξιόπιστο Μέλος', 'Trusted Member')}</span>
+                <span className={cn("text-xs font-bold tracking-wide", theme === "activebuddies" ? "text-[hsl(220_11%_34%)]" : theme === "activebuddies-dark" ? "text-[hsl(220_13%_72%)]" : theme === "vibrant-dark" ? "text-gray-400" : theme === "vibrant" ? "text-gray-500" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-brand")}>{t(tierLabelEl(currentUser.trustTier), tierLabelEn(currentUser.trustTier))}</span>
                 <span className={cn("text-xs font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-ink")}>{currentUser.name}</span>
               </div>
               <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-xs overflow-hidden border", theme === "activebuddies-dark" ? "bg-gray-700/50 border-gray-600 text-gray-200" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] border-[hsl(220_13%_92%)] text-[hsl(220_14%_12%)]" : theme === "vibrant-dark" ? "bg-white/10 border-white/15 text-gray-300" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "vibrant" ? "bg-gray-100 border-gray-200 text-gray-600" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-brand")}>
                 {currentUser.photoUrl ? (
-                  <img src={currentUser.photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
+                  <img src={currentUser.photoUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
                   currentUser.name.substring(0, 2)
                 )}
               </div>
-            </NavLink>
+            </UserMenu>
           ) : (
+            <>
+            <UserMenu label={t('Γλώσσα και εμφάνιση', 'Language and appearance')} />
             <button
               onClick={() => navigate('/login')}
               className={cn("text-xs font-bold text-white px-3 py-1.5 rounded-full transition-colors", theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] hover:bg-black' : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] hover:bg-white' : 'bg-cyan-600 hover:bg-cyan-700')}
             >
               {t('Σύνδεση', 'Login')}
             </button>
+            </>
           )}
         </div>
 
@@ -405,6 +442,9 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
 export function BottomNav() {
   const tok = useThemeStyles();
   const { t } = useLanguage();
+  const { pathname } = useLocation();
+  // Group chat owns the bottom of the screen (composer). Tabs stay one tap back.
+  if (pathname.startsWith('/chat/')) return null;
   return (
     <div className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-soft-up-lg z-bottomnav", tok.bottomNav)}>
       {([
@@ -412,35 +452,41 @@ export function BottomNav() {
         { to: "/plans", icon: CalendarCheck, labelGr: 'Σχέδια', labelEn: 'Plans' },
       ] as const).map(({ to, icon: Icon, labelGr, labelEn }) => (
         <NavLink key={to} to={to}
+          onTouchStart={() => prefetchPath(to)}
+          onFocus={() => prefetchPath(to)}
           className={({ isActive }) =>
             cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px] min-h-11",
               isActive ? tok.navActive : tok.navInactive)
           }
         >
-          <Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
+          <Icon className="h-[18px] w-[18px]" />
           <span className="text-xs font-medium leading-none">{t(labelGr, labelEn)}</span>
         </NavLink>
       ))}
       <div className="flex flex-col items-center justify-center -mt-4">
         <NavLink
           to="/create"
-          className={cn("w-11 h-11 rounded-full flex items-center justify-center shadow-soft-lg transition-colors border-[3px] border-white", tok.fab)}
+          aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
+          className={cn("w-11 h-11 rounded-full flex items-center justify-center transition-colors border-2 border-white", tok.fab)}
         >
-          <Plus className="h-[20px] w-[20px]" strokeWidth={2.5} />
+          <Plus className="h-[20px] w-[20px] icon-emphasis" aria-hidden />
         </NavLink>
-        <span className={cn("text-xs font-medium mt-1", tok.muted)}>{t('Δημιουργία', 'Create')}</span>
+        {/* Visible caption; the link itself carries the name for screen readers. */}
+        <span aria-hidden className={cn("text-xs font-medium mt-1", tok.muted)}>{t('Δημιουργία', 'Create')}</span>
       </div>
       {([
         { to: "/trust", icon: ShieldCheck, labelGr: 'Εμπιστοσύνη', labelEn: 'Trust' },
         { to: "/profile", icon: User, labelGr: 'Προφίλ', labelEn: 'Profile' },
       ] as const).map(({ to, icon: Icon, labelGr, labelEn }) => (
         <NavLink key={to} to={to}
+          onTouchStart={() => prefetchPath(to)}
+          onFocus={() => prefetchPath(to)}
           className={({ isActive }) =>
             cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px] min-h-11",
               isActive ? tok.navActive : tok.navInactive)
           }
         >
-          <Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
+          <Icon className="h-[18px] w-[18px]" />
           <span className="text-xs font-medium leading-none">{t(labelGr, labelEn)}</span>
         </NavLink>
       ))}
@@ -455,31 +501,58 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
   const theme = useStore((s) => s.theme);
-  const demoMode = useStore((s) => s.demoMode);
   const currentUser = useStore((s) => s.currentUser);
   const tok = useThemeStyles();
   const copilotOpen = useCopilotStore((s) => s.open);
   const maintenanceMode = useStore((s) => s.adminSafeguards.maintenanceMode);
+  const { pathname } = useLocation();
+  // Escape closes the mobile menu (it had no keyboard way out).
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isMobileMenuOpen]);
+
+  // Browser chrome (mobile address bar) follows the app theme, not the OS setting.
+  const shellRef = React.useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // Keep CSS `[data-theme]` remaps available for portals (menus, sheets, toasts).
+    document.documentElement.dataset.theme = theme;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    const el = shellRef.current;
+    if (!meta || !el) return;
+    const bg = getComputedStyle(el).backgroundColor;
+    const usable = bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)';
+    meta.setAttribute('content', usable ? bg : theme.endsWith('-dark') ? '#0f1419' : '#ffffff');
+  }, [theme]);
+  // The plans rail is contextual to discovery screens (lib/plansFormingRail.ts).
+  const showPlansRail = !copilotOpen && isPlansRailRoute(pathname);
 
   useRealtimeChat(currentUser?.id);
   useFirebaseAuth();
 
   return (
     <div
+      ref={shellRef}
       data-theme={theme}
-      className={cn("flex h-screen w-full font-sans antialiased overflow-hidden", tok.shell)}
+      className={cn("flex flex-col h-screen w-full font-sans antialiased overflow-hidden", tok.shell)}
     >
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-toast focus:px-4 focus:py-2.5 focus:min-h-10 focus:bg-brand focus:text-brand-fg focus:rounded-xl focus:text-sm focus:font-semibold focus:shadow-soft"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-toast focus:px-4 focus:py-1.5 focus:min-h-8 focus:bg-brand focus:text-brand-fg focus:rounded-xl focus:text-xs focus:font-semibold focus:shadow-soft"
       >
         {t('Μετάβαση στο περιεχόμενο', 'Skip to content')}
       </a>
+      {/* In the layout flow (not fixed), so it never covers the logo, header or rails. */}
       <DemoModeBanner />
+      <div className="flex flex-1 min-h-0 w-full">
       <SideNav />
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-modal flex">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
+          <button type="button" tabIndex={-1} aria-hidden="true" className="fixed inset-0 bg-black/50 cursor-default" onClick={() => setIsMobileMenuOpen(false)} />
           <div className={cn("relative w-64 max-w-sm h-full shadow-soft-lg flex flex-col z-modal", tok.sideNav)}>
             <div className="h-header flex items-center justify-between px-4 border-b border-[#E5E7EB] shrink-0">
               <NakamasLogo />
@@ -487,17 +560,28 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <X className="h-6 w-6" />
               </button>
             </div>
+            {/* Delegation: a click (or Enter, which fires click) on any nav link closes the menu. */}
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
             <div className="flex-1 overflow-y-auto py-4 px-3" onClick={() => setIsMobileMenuOpen(false)}>
               <NavLinks />
             </div>
           </div>
         </div>
       )}
-      <div className="flex flex-1 h-screen overflow-hidden min-w-0">
-        <div className={cn("flex flex-col flex-1 min-w-0 h-screen overflow-hidden", demoMode && "pt-5")}>
+      <div className="flex flex-1 h-full overflow-hidden min-w-0">
+        <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
           <TopNav onMenuClick={() => setIsMobileMenuOpen(true)} />
-          <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none">
-            <div className="mx-auto w-full max-w-full p-4 lg:px-5 lg:py-4 flex-1 pb-safe md:pb-4">
+          <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto relative flex flex-col min-w-0 outline-none [scroll-padding-bottom:calc(var(--safe-bottom)+env(safe-area-inset-bottom,0px))]">
+            <div
+              className={cn(
+                'mx-auto w-full max-w-full flex-1',
+                pathname.startsWith('/chat/')
+                  ? 'p-0 md:p-4 min-h-0 flex flex-col'
+                  /* Do not use `p-4` with `pb-safe`: same-specificity shorthand
+                     can wipe the dock clearance and bury the last card. */
+                  : 'px-4 pt-4 pb-safe md:px-5 md:py-4',
+              )}
+            >
               {maintenanceMode && (
                 <p role="status" className="mb-4 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
                   <Settings className="h-4 w-4 shrink-0" aria-hidden />
@@ -507,7 +591,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {children}
             </div>
           </main>
-        <footer className="hidden md:flex h-8 px-4 bg-gray-900 text-xs text-gray-300 items-center justify-between shrink-0">
+        <footer className="hidden md:flex h-8 px-4 border-t border-border bg-surface text-xs text-ink-muted items-center justify-between shrink-0">
           <div className="flex space-x-4">
             <span>Nakamas v1.0.5-beta</span>
             <span className="flex items-center">
@@ -516,18 +600,24 @@ export function AppShell({ children }: { children: ReactNode }) {
             </span>
           </div>
           <div className="hidden sm:flex space-x-4">
-            <Link to="/settings" className="hover:text-white transition-colors">{t('Πολιτική Απορρήτου', 'Privacy Policy')}</Link>
-            <Link to="/report" className="hover:text-white transition-colors">{t('Αναφορά Προβλημάτων', 'Report Issues')}</Link>
-            <Link to="/trust" className="hover:text-white transition-colors">{t('Πώς λειτουργεί η αξιοπιστία', 'How trust works')}</Link>
+            <Link to="/settings" className="hover:text-ink transition-colors">{t('Πολιτική Απορρήτου', 'Privacy Policy')}</Link>
+            <Link to="/report" className="hover:text-ink transition-colors">{t('Αναφορά Προβλημάτων', 'Report Issues')}</Link>
+            <Link to="/trust" className="hover:text-ink transition-colors">{t('Πώς λειτουργεί η αξιοπιστία', 'How trust works')}</Link>
           </div>
         </footer>
           <BottomNav />
           <PlansFormingMobileFab />
+          <MobileDock />
         </div>
         {/* The docked copilot replaces the plans-forming rail while open (both live on the right edge). */}
-        {!copilotOpen && <PlansFormingSidebar />}
-        {!copilotOpen && <PlansFormingSidebarReopenTab />}
-        <CopilotPanel />
+        {showPlansRail && <PlansFormingSidebar />}
+        {showPlansRail && <PlansFormingSidebarReopenTab />}
+        {copilotOpen && (
+          <Suspense fallback={null}>
+            <CopilotPanel />
+          </Suspense>
+        )}
+      </div>
       </div>
       <PlansFormingBottomSheet />
       <PopupChatRoot />

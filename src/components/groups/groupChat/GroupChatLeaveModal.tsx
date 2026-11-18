@@ -31,19 +31,19 @@ export function GroupChatLeaveModal({
             'You might not be able to rejoin if the group is full.',
           )}
         </p>
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2">
           <button
             type="button"
             data-autofocus
             onClick={onConfirm}
-            className="w-full px-4 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+            className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
           >
             {t('Ναι, Αποχώρηση', 'Yes, Leave Group')}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="w-full px-4 py-3 text-sm font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+            className="w-full px-4 py-2 min-h-9 text-xs font-bold text-ink bg-surface hover:bg-surface-raised rounded-full transition-all duration-200 border border-border active:scale-[0.98]"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>

@@ -30,7 +30,7 @@ export function AdminSSOPanel() {
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
-          <span className={cn('text-xs font-bold uppercase tracking-wider', a.muted)}>Provider</span>
+          <span className={cn('text-xs font-bold tracking-wider', a.muted)}>Provider</span>
           <select
             value={provider}
             onChange={(e) => setProvider(e.target.value as typeof provider)}
@@ -42,7 +42,7 @@ export function AdminSSOPanel() {
           </select>
         </label>
         <label className="block">
-          <span className={cn('text-xs font-bold uppercase tracking-wider', a.muted)}>
+          <span className={cn('text-xs font-bold tracking-wider', a.muted)}>
             {t('Domain', 'Email domain')}
           </span>
           <input

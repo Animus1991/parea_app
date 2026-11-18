@@ -2,6 +2,7 @@ import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { HOME_MOODS } from '../../lib/homeMoodConstants';
+import { HOME_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 
 interface MoodSelectorProps {
@@ -18,7 +19,7 @@ export function MoodSelector({ activeMood, onSelectMood, className = '' }: MoodS
   return (
     <div className={cn('space-y-3', className)}>
       <div className="flex items-center gap-2 mb-2">
-        <h3 className={cn('text-xs font-bold tracking-wide', h.sectionLabel)}>
+        <h3 className={cn(HOME_TYPO.sectionLabel, h.sectionLabel)}>
           {t('Πώς νιώθεις σήμερα;', 'How are you feeling today?')}
         </h3>
       </div>
@@ -36,18 +37,19 @@ export function MoodSelector({ activeMood, onSelectMood, className = '' }: MoodS
                 onSelectMood(isActive ? null : mood.id, isActive ? [] : mood.categories)
               }
               className={cn(
-                'flex items-center gap-2 px-4 py-2.5 rounded-2xl border transition-all duration-300 shrink-0 shadow-soft',
+                HOME_TYPO.filterChipMood,
+                'gap-2 px-4 rounded-2xl border transition-colors duration-150 shrink-0 tracking-wide',
                 palette,
                 isActive
                   ? cn(
-                      'ring-2 ring-offset-2 scale-[1.02]',
+                      'ring-1 ring-offset-1',
                       tok.isDark ? 'ring-offset-gray-900 ring-white' : 'ring-ink ring-offset-white',
                     )
-                  : 'opacity-90 hover:opacity-100 hover:scale-[1.02]',
+                  : '',
               )}
             >
               <Icon className="w-4 h-4 shrink-0" />
-              <span className="text-xs font-bold tracking-wide">
+              <span>
                 {t(mood.labelGr, mood.labelEn)}
               </span>
             </button>

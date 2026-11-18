@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { MapPin, Navigation } from 'lucide-react';
+import { toast } from 'sonner';
 import { useLanguage } from '../../../lib/i18n';
 import { cn } from '../../../lib/utils';
 import { Modal } from '../../common/Modal';
@@ -50,20 +51,21 @@ export function GroupChatLocationModal({
     }
     if (locationConfig.shareWith === 'organizer') {
       msg += t(' (Μόνο στον Διοργανωτή)', ' (Organizer only)');
-    } else if (locationConfig.shareWith === 'selected') {
-      msg += t(' (με επιλεγμένα μέλη)', ' (with selected members)');
     }
     setMessages((prev) => [
       ...prev,
       {
         id: Date.now().toString(),
         senderId: 'system',
-        senderName: 'System',
-        text: `${currentUserName} ${msg}.`,
+        senderName: t("Σύστημα", "System"),
+        text: `${currentUserName} ${msg}. ${t('Προεπισκόπηση — το pin δεν στάλθηκε ακόμη στην ομάδα.', 'Preview — the pin was not sent to the group yet.')}`,
         timestamp: new Date().toISOString(),
         type: 'location',
       },
     ]);
+    toast.success(
+      t('Προεπισκόπηση κοινοποίησης — το pin δεν στάλθηκε ακόμη.', 'Sharing preview — the pin was not sent yet.'),
+    );
     onStartSharing();
   };
 
@@ -71,7 +73,7 @@ export function GroupChatLocationModal({
     <Modal
       open={open}
       onClose={onClose}
-      title={t('Live Τοποθεσία', 'Live Location Sharing')}
+      title={t('Κοινοποίηση τοποθεσίας', 'Share location')}
       size="md"
     >
       <p className="text-xs font-medium text-ink-muted -mt-1 mb-4 flex items-center gap-2">
@@ -125,7 +127,7 @@ export function GroupChatLocationModal({
                 <span className="text-xs text-ink-muted mt-1 leading-relaxed">
                   {precision === 'approximate'
                     ? t('Μόνο απόσταση & ETA, όχι live τοποθεσία', 'Distance & ETA only, no map pin')
-                    : t('Ακριβές GPS live tracking', 'Precise GPS live tracking')}
+                    : t('Ακριβής θέση στον χάρτη (προσωρινά)', 'Exact map pin (temporary)')}
                 </span>
               </button>
             ))}
@@ -135,7 +137,7 @@ export function GroupChatLocationModal({
         <div className="space-y-3">
           <h4 className="text-xs font-bold tracking-wide text-ink-muted">2. {t('Ορατότητα', 'Share With')}</h4>
           <div className="flex flex-col gap-2">
-            {(['organizer', 'selected', 'all'] as const).map((option) => (
+            {(['organizer', 'all'] as const).map((option) => (
               <label
                 key={option}
                 className={cn(
@@ -165,7 +167,6 @@ export function GroupChatLocationModal({
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-ink">
                     {option === 'organizer' && t('Μόνο στον Διοργανωτή', 'Organizer Only')}
-                    {option === 'selected' && t('Επιλεγμένα Μέλη', 'Selected Members')}
                     {option === 'all' && t('Ολόκληρη η Ομάδα', 'Entire Confirmed Group')}
                   </span>
                   {option === 'organizer' && (
@@ -186,7 +187,7 @@ export function GroupChatLocationModal({
 
         <div className="space-y-3">
           <h4 className="text-xs font-bold tracking-wide text-ink-muted">3. {t('Αυτόματη Λήξη', 'Auto-Expiry')}</h4>
-          <select
+          <select aria-label={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
             value={locationConfig.duration}
             onChange={(e) => setLocationConfig({ ...locationConfig, duration: e.target.value })}
             className="w-full border border-border rounded-2xl p-3 text-sm font-medium focus:ring-2 focus:ring-accent/40 bg-surface-raised outline-none shadow-soft"
@@ -206,7 +207,7 @@ export function GroupChatLocationModal({
           type="button"
           data-autofocus
           onClick={handleConfirm}
-          className="w-full px-4 py-3 text-sm font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+          className="w-full px-4 py-2 min-h-9 text-xs font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
         >
           {isSharingLocation
             ? t('Ενημέρωση Ρυθμίσεων', 'Update Configuration')

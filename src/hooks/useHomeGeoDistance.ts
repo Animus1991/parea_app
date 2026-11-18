@@ -4,12 +4,13 @@ import { HOME_MOCK_DISTANCES, type HomeRadiusFilter } from '../lib/homeFeedConst
 
 export function useHomeGeoDistance(radiusFilter: HomeRadiusFilter) {
   const geo = useGeolocation();
+  const requestGeo = geo.request;
 
   useEffect(() => {
     if (radiusFilter !== 'Any' && !geo.granted && !geo.loading) {
-      geo.request();
+      requestGeo();
     }
-  }, [radiusFilter, geo.granted, geo.loading, geo.request]);
+  }, [radiusFilter, geo.granted, geo.loading, requestGeo]);
 
   const getDistance = useCallback(
     (eventId: string, eventLat?: number, eventLng?: number): number | null => {

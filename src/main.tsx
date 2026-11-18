@@ -4,7 +4,8 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import './index.css';
 import { bootstrap } from './lib/bootstrap';
-import { LanguageProvider } from './lib/i18n';
+import { registerServiceWorker } from './lib/serviceWorker';
+import { LanguageProvider } from './lib/LanguageProvider';
 import { MotionConfig } from 'motion/react';
 
 bootstrap();
@@ -24,24 +25,24 @@ window.addEventListener('unhandledrejection', (e) => {
   }
 });
 
-(window as any).gm_authFailure = () => {
+(window as Window & { gm_authFailure?: () => void }).gm_authFailure = () => {
   console.warn('Google Maps Authentication Failed. API Key may be invalid or restricted.');
 };
 
-class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: any }> {
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: unknown }> {
   constructor(props: { children: React.ReactNode }) {
     super(props);
     this.state = { hasError: false, error: null };
   }
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError(error: unknown) {
     return { hasError: true, error };
   }
   render() {
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center min-h-screen p-5 text-center">
-          <h1 className="text-lg font-bold text-red-600 mb-2">Κάτι πήγε στραβά</h1>
-          <pre className="text-xs text-gray-500 max-w-lg overflow-auto">{this.state.error?.toString()}</pre>
+          <h1 className="text-sm md:text-base font-bold text-red-600 mb-2">Κάτι πήγε στραβά</h1>
+          <pre className="text-xs text-gray-500 max-w-lg overflow-auto">{String(this.state.error ?? '')}</pre>
         </div>
       );
     }
@@ -63,3 +64,5 @@ createRoot(document.getElementById('root')!).render(
     </ErrorBoundary>
   </StrictMode>,
 );
+
+registerServiceWorker();

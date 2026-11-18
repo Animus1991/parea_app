@@ -1,18 +1,7 @@
-import React, { createContext, useContext, useEffect, ReactNode } from 'react';
-import { toUpperNoAccents } from './greekText';
+import { useEffect, type ReactNode } from 'react';
+import { toTitleCase } from './greekText';
 import { useLanguageStore } from '../store/languageStore';
-
-type Language = 'el' | 'en';
-
-interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (greekText: string, englishText?: string) => string;
-  /** Like t(), but returns uppercase text with Greek tonos stripped — for labels styled all-caps. */
-  tu: (greekText: string, englishText?: string) => string;
-}
-
-export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+import { LanguageContext, type Language } from './i18n';
 
 const translations: Record<string, Record<Language, string>> = {
   // Navigation / AppShell
@@ -36,7 +25,7 @@ const translations: Record<string, Record<Language, string>> = {
   'home.hero.stat1': { el: 'Μικρές ομάδες', en: 'Small groups' },
   'home.hero.stat2': { el: 'Επαληθευμένη συμμετοχή', en: 'Verified attendance' },
   'home.hero.stat3': { el: 'Δημόσια σημεία', en: 'Public spots' },
-  'home.hero.search_placeholder': { el: 'Αναζήτηση εμπειριών...', en: 'Search experiences...' },
+  'home.hero.search_placeholder': { el: 'Αναζήτηση εκδήλωσης ή περιοχής', en: 'Search event or area' },
   'home.hero.how_groups': { el: 'Πώς λειτουργούν οι ομάδες', en: 'How groups work' },
   'home.pending_feedback.title': { el: 'Εκκρεμής Αξιολόγηση', en: 'Pending Feedback' },
   'home.pending_feedback.body': { el: 'Αξιολογήστε τα 3 μέλη από το "Comedy Night" για να ξεκλειδώσετε την επόμενη κράτησή σας.', en: 'Please rate the 3 members from "Comedy Night" to unlock your next booking.' },
@@ -45,7 +34,7 @@ const translations: Record<string, Record<Language, string>> = {
   // How it works
   'home.how.step1.title': { el: 'Διαλέξτε μια εμπειρία', en: 'Pick an experience' },
   'home.how.step1.body': { el: 'Επιλέξτε μια εκδήλωση, πεζοπορία ή δραστηριότητα που θέλετε να παρακολουθήσετε.', en: 'Choose an event, hike, or activity you want to attend.' },
-  'home.how.step2.title': { el: 'Εντάξτε μια μικρή ομάδα', en: 'Join a small group' },
+  'home.how.step2.title': { el: 'Μπες σε μια μικρή παρέα', en: 'Join a small group' },
   'home.how.step2.body': { el: 'Συνδεθείτε με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.', en: 'Connect with 3-6 others who share the same intent and schedule.' },
   'home.how.step3.title': { el: 'Επιβεβαιώστε & συναντηθείτε', en: 'Confirm & meet' },
   'home.how.step3.body': { el: 'Ξεκλειδώστε το group chat, ορίστε σημείο συνάντησης και απολαύστε την εμπειρία.', en: 'Unlock the group chat, set a meeting point, and enjoy the experience.' },
@@ -79,8 +68,8 @@ const translations: Record<string, Record<Language, string>> = {
   'home.feed.sort.group_progress': { el: 'Πρόοδος Ομάδας', en: 'Group Progress' },
 
   // EventCard
-  'event_card.organizer': { el: 'ΔΙΟΡΓΑΝΩΤΗΣ', en: 'ORGANIZER' },
-  'event_card.free': { el: 'ΔΩΡΕΑΝ', en: 'FREE' },
+  'event_card.organizer': { el: 'Διοργανωτής', en: 'Organizer' },
+  'event_card.free': { el: 'Δωρεάν', en: 'Free' },
   'event_card.forming': { el: 'Σε Σχηματισμό', en: 'Forming' },
   'event_card.join': { el: 'Συμμετοχή', en: 'Join' },
   'event_card.copied': { el: 'Ο σύνδεσμος αντιγράφηκε!', en: 'Link copied to clipboard!' },
@@ -110,8 +99,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const tu = (greekText: string, englishText?: string): string => {
-    const translated = t(greekText, englishText);
-    return language === 'el' ? toUpperNoAccents(translated) : translated.toUpperCase();
+    return toTitleCase(t(greekText, englishText));
   };
 
   return (
@@ -119,15 +107,4 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       {children}
     </LanguageContext.Provider>
   );
-}
-
-export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (context === undefined) {
-    // Safe fallback to avoid runtime crashes if a component renders before the provider (e.g., HMR edge cases)
-    const t = (greekText: string, englishText?: string) => (englishText ?? greekText);
-    const tu = (greekText: string, englishText?: string) => toUpperNoAccents(englishText ?? greekText);
-    return { language: 'el', setLanguage: () => {}, t, tu } as const;
-  }
-  return context;
 }

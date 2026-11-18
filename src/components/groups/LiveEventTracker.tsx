@@ -11,11 +11,12 @@ import {
   Users,
   ShieldCheck,
   WifiOff,
-  AlertTriangle,
+  ShieldAlert,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "../common/Button";
 
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
@@ -129,7 +130,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
 
   // Aggregate data for map
   const activeLocations = Object.entries(group.membersLocations || {} as Record<string, MemberLocation>)
-    .filter(([userId, loc]) => Date.now() - (loc as MemberLocation).timestamp < 60000)
+    .filter(([, loc]) => Date.now() - (loc as MemberLocation).timestamp < 60000)
     .map(([userId, loc]) => {
       const location = loc as MemberLocation;
       const user = users.find((u) => u.id === userId);
@@ -172,7 +173,25 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
           <Button
             size="sm"
             variant={isTrackingActive ? "outline" : "primary"}
-            onClick={() => toggleLiveTracking(groupId, !isTrackingActive)}
+            onClick={() => {
+              const next = !isTrackingActive;
+              toggleLiveTracking(groupId, next);
+              toast.success(
+                next
+                  ? t("Η ασπίδα ασφαλείας ενεργοποιήθηκε.", "Safety shield is on.")
+                  : t("Η ασπίδα ασφαλείας απενεργοποιήθηκε.", "Safety shield is off."),
+                next
+                  ? {
+                      action: {
+                        label: t('Χάρτης ομάδας', 'Group map'),
+                        onClick: () => {
+                          /* already on the map surface */
+                        },
+                      },
+                    }
+                  : undefined,
+              );
+            }}
             className={
               isTrackingActive
                 ? "text-red-600 border-red-200 hover:bg-red-50"
@@ -197,7 +216,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
       <div className="flex-1 relative bg-gray-100">
         {isHost && activeLocations.some((l) => l.isOutOfBounds) && (
           <div className="absolute top-4 left-4 right-4 z-[1000] bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl shadow-soft-lg flex items-start gap-3 pointer-events-auto">
-            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
+            <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
             <div>
               <p className="text-sm font-bold m-0">
                 {t("Ειδοποίηση Ασφαλείας", "Safety Alert")}
@@ -245,7 +264,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                 variant="outline"
                 className="w-full text-xs"
               >
-                {t("Κοινοποίηση μέχρι το τέλος", "Share until event ends")}
+                {t("Κοινοποίηση όσο διαρκεί η έξοδος", "Share while the outing is active")}
               </Button>
             </div>
           </div>
@@ -294,8 +313,8 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                         {loc.sos
                           ? t("SOS / HELP", "SOS / HELP")
                           : loc.isOutOfBounds
-                            ? t("ΕΚΤΟΣ ΟΡΙΩΝ", "OUT OF BOUNDS")
-                            : "Live"}
+                            ? t("Εκτός Ορίων", "Out Of Bounds")
+                            : t('Κοινοποίηση', 'Sharing')}
                       </p>
                     </div>
                   </div>
@@ -323,7 +342,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                   className={`border-red-200 transition-colors ${sosActive ? "bg-red-600 text-white hover:bg-red-700" : "bg-red-50 text-red-600 hover:bg-red-100"}`}
                   onClick={() => setSosActive(!sosActive)}
                 >
-                  <AlertTriangle className="w-4 h-4 mr-1" />
+                  <ShieldAlert className="w-4 h-4 mr-1" />
                   {sosActive
                     ? t("Λήξη SOS", "End SOS")
                     : t("SOS / Χάθηκα", "SOS / Lost")}

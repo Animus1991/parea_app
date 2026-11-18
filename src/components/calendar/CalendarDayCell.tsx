@@ -180,7 +180,7 @@ export function CalendarDayCell({
             onOpenSchedule();
           }}
           className={cn(
-            'absolute top-1 right-1 z-20 p-1 rounded-lg min-h-10 min-w-10 flex items-center justify-center',
+            'absolute top-1 right-1 z-20 p-1 rounded-lg min-h-8 min-w-8 flex items-center justify-center',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand',
             today || hasEvents
               ? 'bg-black/40 hover:bg-black/55 text-white'
@@ -211,7 +211,7 @@ export function CalendarDayCell({
 
       <span
         className={cn(
-          'relative z-10 text-sm md:text-lg font-black leading-none',
+          'relative z-10 text-sm md:text-base font-bold leading-none',
           (today || hasEvents) && 'text-white drop-shadow-soft-md',
           !today && !hasEvents && headClass,
         )}

@@ -27,9 +27,9 @@ function resolveConfig() {
   };
 }
 
-export function isFirebaseConfigured(): boolean {
-  return Boolean(appEnv.firebase.projectId && appEnv.firebase.apiKey);
-}
+// Re-exported so existing imports keep working; the check itself is SDK-free.
+export { isFirebaseConfigured } from './firebaseConfig';
+import { isFirebaseConfigured } from './firebaseConfig';
 
 export function getFirebaseAuth(): Auth | null {
   if (!isFirebaseConfigured()) return null;

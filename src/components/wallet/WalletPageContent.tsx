@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CreditCard, Euro, ArrowUpRight, ArrowDownRight, Clock, Building2, CheckCircle2 } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
@@ -9,44 +10,59 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
 import { Modal } from '../common/Modal';
 import { isStripeConfigured, openStripeCheckout } from '../../services/payments';
+import { WALLET_TYPO } from '../../lib/typographyTokens';
+import { formatWalletEur, WALLET_DEMO } from '../../lib/walletDemo';
+import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 
 export default function WalletPageContent() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const a = usePageContrast();
   const [txFilter, setTxFilter] = useState<'all' | 'month' | 'last'>('all');
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [showPayouts, setShowPayouts] = useState(false);
   const stripeReady = isStripeConfigured();
 
+  usePublishPageSnapshot({
+    titleEl: 'Πορτοφόλι & Έσοδα',
+    titleEn: 'Wallet & Earnings',
+    state: txFilter,
+    summaryEl: `Διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)} · εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}`,
+    summaryEn: `Available ${formatWalletEur(WALLET_DEMO.availableEur)} · pending ${formatWalletEur(WALLET_DEMO.pendingEur)}`,
+  });
+
   const transactions = [
-    { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: 'Oct 12, 2024', desc: t('Μεταφορά στην τράπεζα 4092', 'Transfer to Bank ****4092') },
-    { id: '2', type: 'Earnings', amount: 45.00, status: t('Διαθέσιμο', 'Available'), date: 'Oct 10, 2024', desc: t('Πωλήσεις: Yoga στο Πάρκο', 'Ticket sales: Yoga in the Park') },
-    { id: '3', type: 'Earnings', amount: 25.00, status: t('Σε Επεξεργασία', 'Processing'), date: 'Oct 14, 2024', desc: t('Πωλήσεις: Comedy Night', 'Ticket sales: Comedy Night') },
+    { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: t('12 Οκτ 2024', 'Oct 12, 2024'), monthKey: 'Oct', desc: t('Μεταφορά στην τράπεζα 4092 (demo)', 'Transfer to Bank ****4092 (demo)') },
+    { id: '2', type: 'Earnings', amount: 45.00, status: t('Διαθέσιμο', 'Available'), date: t('10 Οκτ 2024', 'Oct 10, 2024'), monthKey: 'Oct', desc: t('Πωλήσεις: Yoga στο Πάρκο', 'Ticket sales: Yoga in the Park') },
+    { id: '3', type: 'Earnings', amount: 25.00, status: t('Σε Επεξεργασία', 'Processing'), date: t('14 Οκτ 2024', 'Oct 14, 2024'), monthKey: 'Oct', desc: t('Πωλήσεις: Comedy Night', 'Ticket sales: Comedy Night') },
   ];
 
   const filteredTx = txFilter === 'all'
     ? transactions
-    : transactions.filter((tx) => txFilter === 'month' ? tx.date.includes('Oct') : tx.date.includes('Sep'));
+    : transactions.filter((tx) => txFilter === 'month' ? tx.monthKey === 'Oct' : tx.monthKey === 'Sep');
 
   return (
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn("text-sm md:text-base font-bold", a.head)}>{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
-        <p className={cn("font-medium text-sm mt-1", a.sub)}>{t('Διαχειριστείτε τα έσοδα και τις πληρωμές σας.', 'Manage your event revenue and payouts.')}</p>
-        <p className={cn('text-xs font-bold mt-2', a.muted)}>
+        <h1 className={cn(WALLET_TYPO.pageTitle, a.head)}>{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
+        <p className={cn(WALLET_TYPO.pageSub, 'mt-1', a.sub)}>{t('Διαχειριστείτε τα έσοδα και τις πληρωμές σας.', 'Manage your event revenue and payouts.')}</p>
+        <p className={cn(WALLET_TYPO.statusNote, 'mt-2', a.muted)}>
           {stripeReady
             ? t('Stripe ενεργό — οι αναλήψεις ανοίγουν Checkout.', 'Stripe enabled — withdrawals open Checkout.')
             : t('Λειτουργία demo — ορίστε VITE_STRIPE_* για πραγματικές πληρωμές.', 'Demo mode — set VITE_STRIPE_* for real payments.')}
         </p>
       </div>
 
+      <CopilotInlinePrompt />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className={cn("p-4 text-white shadow-soft-md", a.balanceBg)}>
           <div className={cn("flex items-center gap-2 mb-2", a.balanceLabel)}>
             <Euro className="w-4 h-4" />
-            <h3 className="text-xs font-bold tracking-wide">{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
+            <h3 className={WALLET_TYPO.kpiLabel}>{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
-          <p className="text-lg font-black mb-4">€345.50</p>
+          <p className={cn(WALLET_TYPO.kpiValue, 'mb-4')}>{formatWalletEur(WALLET_DEMO.availableEur)}</p>
           <Button className={cn("w-full", a.withdrawBtn)} onClick={() => setShowWithdraw(true)}>
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
@@ -55,10 +71,10 @@ export default function WalletPageContent() {
         <Card className="p-4">
           <div className={cn("flex items-center gap-2 mb-2", a.sub)}>
             <Clock className="w-4 h-4" />
-            <h3 className="text-xs font-bold tracking-wide">{t('Εκκρεμεί', 'Pending')}</h3>
+            <h3 className={WALLET_TYPO.kpiLabel}>{t('Εκκρεμεί', 'Pending')}</h3>
           </div>
-          <p className={cn("text-lg font-bold mb-2", a.head)}>€85.00</p>
-          <p className={cn("text-xs font-medium leading-tight", a.muted)}>
+          <p className={cn(WALLET_TYPO.kpiValueSecondary, 'mb-2', a.head)}>{formatWalletEur(WALLET_DEMO.pendingEur)}</p>
+          <p className={cn(WALLET_TYPO.kpiHint, a.muted)}>
             {t('Εξοφλούνται 3-5 ημέρες μετά.', 'Clears 3-5 days after event.')}
           </p>
         </Card>
@@ -69,8 +85,8 @@ export default function WalletPageContent() {
               <Building2 className="w-5 h-5" />
             </div>
             <div>
-              <h3 className={cn("font-bold text-sm", a.head)}>{t('Τραπεζικός λογαριασμός', 'Bank Account')}</h3>
-              <p className={cn("text-xs font-medium", a.sub)}>Chase ****4092</p>
+              <h3 className={cn(WALLET_TYPO.rowTitle, a.head)}>{t('Τραπεζικός λογαριασμός', 'Bank Account')}</h3>
+              <p className={cn(WALLET_TYPO.rowMeta, a.sub)}>{t(WALLET_DEMO.bankLabelEl, WALLET_DEMO.bankLabelEn)}</p>
             </div>
           </div>
           <Button variant="outline" size="sm" className="w-full text-xs" onClick={() => setShowPayouts(true)}>{t('Διαχείριση', 'Manage Payouts')}</Button>
@@ -79,7 +95,7 @@ export default function WalletPageContent() {
 
       <Card className="mt-2">
         <div className={cn("p-4 md:p-4 border-b flex items-center justify-between", a.borderB)}>
-          <h2 className={cn("text-base font-bold", a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
+          <h2 className={cn(WALLET_TYPO.sectionInCard, a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
           <select
             className={cn("filter-select border outline-none", a.selectBg)}
             value={txFilter}
@@ -101,8 +117,15 @@ export default function WalletPageContent() {
                   'Δεν υπάρχουν συναλλαγές για αυτό το φίλτρο.',
                   'No transactions match this filter.',
                 )}
-                actionLabel={t('Όλες', 'All Time')}
-                onAction={() => setTxFilter('all')}
+                actionLabel={txFilter === 'all' ? t('Εξερεύνηση', 'Explore') : t('Όλες', 'All Time')}
+                onAction={txFilter === 'all' ? () => navigate('/') : () => setTxFilter('all')}
+                secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+                onSecondary={() => navigate('/buddy-seek')}
+                askAi
+                askPrompt={t(
+                  'Σύνοψη πορτοφολιού — demo στοιχεία μόνο',
+                  'Summarise my wallet — demo figures only',
+                )}
               />
             </div>
           ) : (
@@ -118,11 +141,11 @@ export default function WalletPageContent() {
                     {tx.type === 'Payout' ? <ArrowUpRight className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
                   </div>
                   <div>
-                    <h4 className={cn("font-bold text-sm", a.head)}>{tx.desc}</h4>
+                    <h4 className={cn(WALLET_TYPO.rowTitle, a.head)}>{tx.desc}</h4>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className={cn("text-xs font-bold tracking-wide", a.muted)}>{tx.date}</span>
+                      <span className={cn(WALLET_TYPO.rowDate, a.muted)}>{tx.date}</span>
                       <span className={cn("text-xs", a.muted)}>•</span>
-                      <span className={cn("text-xs font-medium flex items-center gap-1", a.sub)}>
+                      <span className={cn(WALLET_TYPO.rowMeta, 'flex items-center gap-1', a.sub)}>
                         {tx.status === t('Ολοκληρώθηκε', 'Completed') || tx.status === t('Διαθέσιμο', 'Available')
                           ? <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                           : <Clock className="w-3 h-3 text-amber-500" />}
@@ -132,7 +155,7 @@ export default function WalletPageContent() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className={cn("font-bold", tx.type === 'Payout' ? a.head : a.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
+                  <p className={cn(WALLET_TYPO.rowTitle, tx.type === 'Payout' ? a.head : a.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
                     {tx.type === 'Payout' ? '-' : '+'}€{tx.amount.toFixed(2)}
                   </p>
                 </div>
@@ -149,7 +172,7 @@ export default function WalletPageContent() {
         title={t('Ανάληψη χρημάτων', 'Withdraw Funds')}
         size="md"
       >
-        <p className="text-sm mb-4 text-ink-muted">
+        <p className={cn(WALLET_TYPO.modalBody, 'mb-4 text-ink-muted')}>
           {stripeReady
             ? t('Θα ανοίξει Stripe Checkout για την ανάληψη.', 'Stripe Checkout will open for this withdrawal.')
             : t('Demo ροή — η ανάληψη καταγράφεται τοπικά.', 'Demo flow — withdrawal is logged locally only.')}
@@ -178,7 +201,7 @@ export default function WalletPageContent() {
         title={t('Διαχείριση πληρωμών', 'Manage Payouts')}
         size="md"
       >
-        <p className="text-sm mb-4 text-ink-muted">
+        <p className={cn(WALLET_TYPO.modalBody, 'mb-4 text-ink-muted')}>
           {stripeReady
             ? t('Άνοιγμα Stripe για ενημέρωση τρόπου πληρωμής.', 'Open Stripe to update payout method.')
             : t('Demo — ενημέρωση τραπεζικού λογαριασμού σύντομα.', 'Demo — bank account update coming soon.')}

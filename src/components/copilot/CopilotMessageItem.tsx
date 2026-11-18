@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
-  AlertTriangle,
   Bookmark,
   BookmarkCheck,
   Check,
@@ -8,14 +9,19 @@ import {
   RotateCcw,
   ShieldAlert,
   Bot,
+  ThumbsDown,
+  ThumbsUp,
   X,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
-import type { CopilotMessage } from '../../store/copilotStore';
+import { useCopilotStore, type CopilotMessage } from '../../store/copilotStore';
+import { useAiAuditStore } from '../../store/aiAuditStore';
 import { canUndo, cancelAction, confirmAction, undoAction } from '../../ai/copilot';
 import { formatEventLine } from '../../ai/actions';
+import { explainEventMatch } from '../../lib/matchingExplain';
+import { trackEvent } from '../../lib/analytics';
 
 /** Minimal, safe rendering of model text (no HTML): strips markdown emphasis, keeps bullets. */
 function cleanModelText(text: string): string {
@@ -27,13 +33,123 @@ function cleanModelText(text: string): string {
     .trim();
 }
 
+const VOTES_KEY = 'nakamas.copilotVotes';
+type CopilotVote = { helpful: boolean; reason?: 'wrong_result' | 'not_done' | 'unclear' };
+
+function readVotes(): Record<string, CopilotVote> {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(VOTES_KEY) ?? '{}') as unknown;
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, CopilotVote>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function rememberVote(messageId: string, vote: CopilotVote | null) {
+  try {
+    const next = { ...readVotes() };
+    delete next[messageId];
+    if (vote) next[messageId] = vote;
+    localStorage.setItem(VOTES_KEY, JSON.stringify(Object.fromEntries(Object.entries(next).slice(-100))));
+  } catch {
+    /* Private mode: the thumb forgets on reload; the analytics event was still sent. */
+  }
+}
+
+/**
+ * Quiet 👍 / 👎 under an assistant reply. The other thumb changes the verdict,
+ * the same thumb takes it back; a 👎 offers a short optional reason. Votes are
+ * remembered on this device and counted through analytics.
+ */
+function CopilotFeedback({ messageId, engine }: { messageId: string; engine?: 'local' | 'gemini' }) {
+  const { t } = useLanguage();
+  const [vote, setVote] = useState<CopilotVote | null>(() => readVotes()[messageId] ?? null);
+  const updateMessage = useCopilotStore((s) => s.update);
+  const recordAudit = useAiAuditStore((s) => s.record);
+  const currentUserId = useStore((s) => s.currentUser?.id ?? null);
+
+  const save = (next: CopilotVote | null) => {
+    setVote(next);
+    rememberVote(messageId, next);
+    updateMessage(messageId, { feedback: next ? (next.helpful ? 'up' : 'down') : undefined });
+    if (next) {
+      trackEvent({ name: 'copilot_feedback', messageId, helpful: next.helpful, reason: next.reason });
+      recordAudit({
+        userId: currentUserId,
+        action: `answer_feedback_${next.helpful ? 'up' : 'down'}`,
+        risk: 'safe',
+        status: 'done',
+        engine: engine ?? 'local',
+        argKeys: ['messageId'],
+        messageId,
+      });
+    }
+  };
+
+  const thumb =
+    'flex h-7 w-7 items-center justify-center rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent';
+  const reasons = [
+    { id: 'wrong_result', el: 'Λάθος αποτέλεσμα', en: 'Wrong result' },
+    { id: 'not_done', el: 'Δεν έγινε η ενέργεια', en: 'Action not done' },
+    { id: 'unclear', el: 'Ασαφής απάντηση', en: 'Unclear answer' },
+  ] as const;
+
+  return (
+    <div className="flex flex-wrap items-center gap-1 pl-1">
+      <button
+        type="button"
+        aria-pressed={vote?.helpful === true}
+        aria-label={t('Χρήσιμη απάντηση', 'Helpful answer')}
+        title={t('Χρήσιμη απάντηση', 'Helpful answer')}
+        onClick={() => save(vote?.helpful === true ? null : { helpful: true })}
+        className={cn(thumb, vote?.helpful === true ? 'bg-accent-soft text-accent' : 'text-ink-muted hover:bg-surface hover:text-ink')}
+      >
+        <ThumbsUp className="h-3.5 w-3.5" aria-hidden />
+      </button>
+      <button
+        type="button"
+        aria-pressed={vote?.helpful === false}
+        aria-label={t('Όχι χρήσιμη απάντηση', 'Not a helpful answer')}
+        title={t('Όχι χρήσιμη απάντηση', 'Not a helpful answer')}
+        onClick={() => save(vote?.helpful === false ? null : { helpful: false })}
+        className={cn(thumb, vote?.helpful === false ? 'bg-accent-soft text-accent' : 'text-ink-muted hover:bg-surface hover:text-ink')}
+      >
+        <ThumbsDown className="h-3.5 w-3.5" aria-hidden />
+      </button>
+      {vote?.helpful === false && (
+        <span role="group" aria-label={t('Τι δεν πήγε καλά;', 'What was wrong?')} className="flex flex-wrap items-center gap-1">
+          {reasons.map((r) => (
+            <button
+              key={r.id}
+              type="button"
+              aria-pressed={vote.reason === r.id}
+              onClick={() => save({ helpful: false, reason: vote.reason === r.id ? undefined : r.id })}
+              className={cn(
+                'rounded-full border px-2 py-0.5 text-2xs font-semibold transition-colors',
+                vote.reason === r.id ? 'border-accent bg-accent-soft text-accent' : 'border-border text-ink-muted hover:text-ink',
+              )}
+            >
+              {t(r.el, r.en)}
+            </button>
+          ))}
+        </span>
+      )}
+    </div>
+  );
+}
+
 function EventResult({ eventId, index, onNavigate }: { eventId: string; index: number; onNavigate: () => void }) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const event = useStore((s) => s.events.find((e) => e.id === eventId));
   const saved = useStore((s) => s.savedEvents.includes(eventId));
   const toggleSaved = useStore((s) => s.toggleSavedEvent);
+  const currentUser = useStore((s) => s.currentUser);
   if (!event) return null;
+  // One quiet line on why this fits the user, same source as the event page chips.
+  const matchReason = currentUser
+    ? explainEventMatch(currentUser, event, language === 'el' ? 'el' : 'en').sharedStrengths[0]
+    : undefined;
   const open = () => {
     navigate(`/events/${event.id}`);
     onNavigate();
@@ -55,11 +171,22 @@ function EventResult({ eventId, index, onNavigate }: { eventId: string; index: n
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-semibold text-ink">{event.title}</span>
           <span className="block truncate text-xs text-ink-muted">{formatEventLine(event, language).split(' · ').slice(1).join(' · ')}</span>
+          {matchReason && <span className="block truncate text-2xs font-medium text-accent">{matchReason}</span>}
         </span>
       </button>
       <button
         type="button"
-        onClick={() => toggleSaved(event.id)}
+        onClick={() => {
+          const nextSaved = !saved;
+          toggleSaved(event.id);
+          if (nextSaved) {
+            toast.success(t('Αποθηκεύτηκε', 'Saved'), {
+              action: { label: t('Αποθηκευμένα', 'Saved'), onClick: () => navigate('/saved') },
+            });
+          } else {
+            toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'));
+          }
+        }}
         aria-pressed={saved}
         aria-label={saved ? t('Αφαίρεση από αποθηκευμένες', 'Remove from saved') : t('Αποθήκευση', 'Save')}
         title={saved ? t('Αποθηκευμένη', 'Saved') : t('Αποθήκευση', 'Save')}
@@ -125,7 +252,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
               data-autofocus
               onClick={() => void confirmAction(message.id)}
               className={cn(
-                'inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+                'inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
                 destructive ? 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500' : 'bg-accent text-accent-fg hover:bg-accent-strong focus-visible:ring-accent',
               )}
             >
@@ -134,7 +261,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
             <button
               type="button"
               onClick={() => cancelAction(message.id)}
-              className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface-raised px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface-raised px-3 text-xs font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <X className="h-4 w-4" /> {t('Άκυρο', 'Cancel')}
             </button>
@@ -147,7 +274,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
   if (message.compact) {
     return (
       <p className={cn('flex items-start gap-1.5 text-xs font-medium', message.error ? 'text-red-600 dark:text-red-400' : 'text-ink-muted')}>
-        {message.error ? <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" /> : <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />}
+        {message.error ? <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" /> : <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />}
         <span className="flex-1">{body}</span>
         {undoable && (
           <button type="button" onClick={() => undoAction(message.id)} className="shrink-0 font-semibold text-accent underline-offset-2 hover:underline">
@@ -207,6 +334,7 @@ export function CopilotMessageItem({ message, onNavigate }: { message: CopilotMe
             {message.undone && <span className="text-xs font-medium text-ink-muted">{t('Αναιρέθηκε', 'Undone')}</span>}
           </div>
         )}
+        {!message.error && <CopilotFeedback messageId={message.id} engine={message.engine} />}
       </div>
     </div>
   );

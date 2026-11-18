@@ -18,19 +18,19 @@ export function PlansFormingScarcityPromoCard({
   return (
     <article
       className={cn(
-        'rounded-2xl border p-3 space-y-2.5',
+        'rounded-2xl border p-4 space-y-3',
         isDark
           ? 'border-amber-700/35 bg-gradient-to-br from-amber-950/50 to-orange-950/30'
           : 'border-amber-200 bg-amber-50/90',
       )}
     >
-      <p className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-amber-400' : 'text-amber-800')}>
+      <p className={cn('text-xs font-bold tracking-wider', isDark ? 'text-amber-400' : 'text-amber-800')}>
         {t('Σχεδόν πλήρης ομάδα', 'Group nearly full')}
       </p>
-      <h3 className={cn('text-base font-bold leading-snug line-clamp-2', isDark ? 'text-white' : 'text-gray-900')}>
+      <h3 className={cn('text-sm font-bold leading-normal line-clamp-2', isDark ? 'text-white' : 'text-gray-900')}>
         {promo.eventTitle}
       </h3>
-      <p className={cn('text-xs font-semibold leading-snug', isDark ? 'text-amber-100/90' : 'text-amber-950')}>
+      <p className={cn('text-xs font-semibold leading-relaxed', isDark ? 'text-amber-100/90' : 'text-amber-950')}>
         {t(promo.scheduleFull.el, promo.scheduleFull.en)}
       </p>
       <div className={cn('flex items-center gap-2 text-xs font-bold', isDark ? 'text-amber-200' : 'text-amber-900')}>
@@ -58,7 +58,7 @@ export function PlansFormingScarcityPromoCard({
           navigate(promo.groupId ? `/events/${promo.eventId}/join?group=${promo.groupId}` : `/events/${promo.eventId}`)
         }
         className={cn(
-          'w-full min-h-10 rounded-xl text-xs font-bold transition-colors',
+          'inline-flex items-center justify-center px-4 min-h-8 py-1.5 rounded-full text-xs font-bold transition-colors shadow-soft',
           isDark ? 'bg-amber-600/90 hover:bg-amber-500 text-white' : 'bg-amber-700 hover:bg-amber-800 text-white',
         )}
       >

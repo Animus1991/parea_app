@@ -5,6 +5,7 @@ import type {
   VisibilityMode,
 } from '../types/companyRequest';
 import type { Event, Group, User } from '../types';
+import { sameInterest } from './interests';
 
 /** Migrate legacy buddy-seek intents from store persist. */
 export function normalizeCompanyRequest(raw: Record<string, unknown>): CompanyRequest {
@@ -50,7 +51,7 @@ export function sharedInterestCount(a: User, b: User, event?: Event): number {
   return (b.interests ?? []).filter((i) =>
     pool.some(
       (p) =>
-        p.toLowerCase() === i.toLowerCase() ||
+        sameInterest(p, i) ||
         p.toLowerCase().includes(i.toLowerCase()) ||
         i.toLowerCase().includes(p.toLowerCase()),
     ),

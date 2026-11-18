@@ -52,11 +52,11 @@ export function ReportConversationModal({
           toast.success(t('Η αναφορά υποβλήθηκε', 'Report submitted'));
           onClose();
         }}
-        className={cn('w-full min-h-10 rounded-xl text-xs font-bold bg-red-600/90 hover:bg-red-600 text-white mb-1')}
+        className={cn('w-full min-h-9 rounded-full text-xs font-bold bg-red-600/90 hover:bg-red-600 text-white mb-1')}
       >
         {t('Υποβολή αναφοράς', 'Submit report')}
       </button>
-      <button type="button" onClick={onClose} className="w-full min-h-10 text-xs text-ink-muted">
+      <button type="button" onClick={onClose} className="w-full min-h-9 rounded-full text-xs text-ink-muted">
         {t('Άκυρο', 'Cancel')}
       </button>
     </Modal>

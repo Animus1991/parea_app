@@ -161,8 +161,8 @@ export function EventDetailOrganizerSection({
 
   const trustTierLabel =
     organizer.trustTier === '3_high_trust'
-      ? t('ΥΨΗΛΗ ΕΜΠΙΣΤΟΣΥΝΗ', 'HIGH TRUST')
-      : t(tierLabelEl(organizer.trustTier).toUpperCase(), tierLabelEn(organizer.trustTier).toUpperCase());
+      ? t('Υψηλή Εμπιστοσύνη', 'High Trust')
+      : t(tierLabelEl(organizer.trustTier), tierLabelEn(organizer.trustTier));
 
   return (
     <div className={cn('pt-5 border-t mt-5', tok.sectionBorder, className)}>
@@ -201,7 +201,7 @@ export function EventDetailOrganizerSection({
             <div className="flex items-center gap-1.5 flex-wrap">
               <Link
                 to={`/organizer/${organizer.id}`}
-                className={cn('text-base font-bold transition-colors', tok.name)}
+                className={cn('card-heading-lg font-bold transition-colors', tok.name)}
               >
                 {organizer.name}
               </Link>
@@ -222,7 +222,7 @@ export function EventDetailOrganizerSection({
                 variant="outline"
                 className={cn('text-2xs py-0 px-1.5 shadow-none', tok.reliabilityBadge)}
               >
-                {organizer.reliabilityScore}% {t('ΑΞΙΟΠΙΣΤΙΑ', 'RELIABILITY')}
+                {organizer.reliabilityScore}% {t('Αξιοπιστία', 'Reliability')}
               </Badge>
             </div>
             <p className={cn('text-xs mt-0.5 font-medium', tok.bio)}>

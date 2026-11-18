@@ -1,5 +1,6 @@
 import type { Event, User } from '../types';
 import { computeMatchScore } from './matching';
+import { interestLabel, sameInterest } from './interests';
 
 export interface MatchExplanation {
   score: number;
@@ -23,15 +24,13 @@ export function explainEventMatch(
 ): MatchExplanation {
   const tags = event.tags ?? [];
   const interests = user.interests ?? [];
-  const overlap = tags.filter((tag) =>
-    interests.some((i) => i.toLowerCase() === tag.toLowerCase()),
-  );
+  const overlap = tags.filter((tag) => interests.some((i) => sameInterest(i, tag)));
 
   const tagScore = tags.length
     ? Math.round((overlap.length / tags.length) * 55)
     : 0;
-  const categoryBonus = interests.some((i) =>
-    event.category.toLowerCase().includes(i.toLowerCase()),
+  const categoryBonus = interests.some(
+    (i) => sameInterest(i, event.category) || event.category.toLowerCase().includes(i.toLowerCase()),
   )
     ? 15
     : 0;
@@ -45,8 +44,8 @@ export function explainEventMatch(
   if (overlap.length > 0) {
     sharedStrengths.push(
       tPair(
-        `${overlap.length} κοινά ενδιαφέροντα (${overlap.slice(0, 2).join(', ')})`,
-        `${overlap.length} shared interests (${overlap.slice(0, 2).join(', ')})`,
+        `${overlap.length} κοινά ενδιαφέροντα (${overlap.slice(0, 2).map((x) => interestLabel(x, 'el')).join(', ')})`,
+        `${overlap.length} shared interests (${overlap.slice(0, 2).map((x) => interestLabel(x, 'en')).join(', ')})`,
         lang,
       ),
     );
@@ -80,7 +79,7 @@ export function explainEventMatch(
   };
 }
 
-export function formatExplainChips(explanation: MatchExplanation, lang: 'el' | 'en'): string[] {
+export function formatExplainChips(explanation: MatchExplanation, _lang: 'el' | 'en'): string[] {
   const chips: string[] = [`${explanation.score}%`];
   for (const s of explanation.sharedStrengths.slice(0, 2)) chips.push(s);
   for (const m of explanation.mismatchFlags.slice(0, 1)) chips.push(m);

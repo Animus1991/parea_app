@@ -109,8 +109,9 @@ export function useChatPermission(conversation: Conversation | null): ChatPermis
   const viewer = useStore((s) => s.currentUser);
   const groups = useStore((s) => s.groups);
   const companyJoinRequests = useStore((s) => s.companyJoinRequests);
+  const blockedUserIds = useStore((s) => s.blockedUserIds);
   if (!conversation) {
     return { canRead: false, canSend: false, canReport: false, canPersist: false };
   }
-  return canOpenConversation(viewer, conversation, { groups, companyJoinRequests });
+  return canOpenConversation(viewer, conversation, { groups, companyJoinRequests, blockedUserIds });
 }

@@ -26,12 +26,13 @@ function scrubLeafletContainer(root: HTMLElement | null) {
 }
 
 /**
- * MapContainer that survives React Strict Mode remounts.
+ * MapContainer that survives React Strict Mode remounts and client-side route changes.
  * Leaflet attaches `_leaflet_id` to the container DOM node; a second instance on
  * the same node throws "Map container is being reused by another instance".
  *
  * Strategy: keep a stable wrapper, only mount MapContainer after a macrotask,
- * tear down + scrub on cleanup, and always use a fresh React key.
+ * tear down MapContainer first, then scrub the DOM *after* Leaflet's own remove()
+ * has run (never scrub in the same synchronous cleanup as setHostKey(null)).
  */
 export function LeafletMapHost({
   placeholder,
@@ -45,6 +46,9 @@ export function LeafletMapHost({
 
   useEffect(() => {
     let cancelled = false;
+    // The wrapper div is rendered for the component's whole life (only its
+    // children change), so reading it here is the same node cleanup will scrub.
+    const node = wrapRef.current;
     // Macrotask: runs after React finishes Strict Mode cleanup + DOM commit.
     const timer = window.setTimeout(() => {
       if (cancelled) return;
@@ -56,7 +60,10 @@ export function LeafletMapHost({
       cancelled = true;
       clearTimeout(timer);
       setHostKey(null);
-      scrubLeafletContainer(wrapRef.current);
+      // Defer scrub until after MapContainer's effect cleanup calls map.remove().
+      // Synchronous scrub here races remove() and crashes the ErrorBoundary on
+      // every client navigation away from /nearby (and other map pages).
+      window.setTimeout(() => scrubLeafletContainer(node), 0);
     };
   }, []);
 

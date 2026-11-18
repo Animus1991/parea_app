@@ -10,3 +10,12 @@ coverage/
 test-results/
 data/runtime/events.json
 data/runtime/events.db
+
+# Firebase emulator logs
+firestore-debug.log
+firebase-debug.log
+ui-debug.log
+
+# Never commit Google service-account keys (used by npm run set-role)
+service-account*.json
+*-firebase-adminsdk-*.json

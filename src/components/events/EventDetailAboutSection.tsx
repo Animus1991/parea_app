@@ -5,6 +5,7 @@ import { useLanguage } from '../../lib/i18n';
 import { homePathWithSearch } from '../../lib/homeDeepLinks';
 import { getEventDetailContentTokens } from '../../lib/designTokens';
 import { cn } from '../../lib/utils';
+import { safeExternalUrl } from '../../lib/safeUrl';
 import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventDetailMapSection';
 
@@ -22,6 +23,7 @@ export function EventDetailAboutSection({
   className,
 }: EventDetailAboutSectionProps) {
   const { t } = useLanguage();
+  const externalHref = safeExternalUrl(event.externalLink);
   const navigate = useNavigate();
   const { surface, content } = getEventDetailContentTokens(accent, darkSurface);
 
@@ -30,14 +32,14 @@ export function EventDetailAboutSection({
       <h3 className={cn(surface.sectionHeading, 'mb-2')}>
         {t('Πληροφορίες για την εμπειρία', 'About the experience')}
       </h3>
-      <p className={cn('text-sm leading-relaxed font-medium', content.aboutBody)}>
+      <p className={cn('card-copy leading-relaxed font-medium', content.aboutBody)}>
         {event.description}
       </p>
 
-      {event.externalLink && (
+      {externalHref && (
         <div className="mt-4 pt-1">
           <a
-            href={event.externalLink}
+            href={externalHref}
             target="_blank"
             rel="noopener noreferrer"
             className={cn(

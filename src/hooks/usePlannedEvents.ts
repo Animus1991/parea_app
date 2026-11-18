@@ -9,11 +9,13 @@ const MAX_PLANNED = 60;
 /**
  * Confirmed / pending planned events for the logged-in user (group membership).
  */
+const NO_IDS: string[] = [];
+
 export function usePlannedEvents() {
   const events = useStore((s) => s.events);
   const groups = useStore((s) => s.groups);
   const currentUser = useStore((s) => s.currentUser);
-  const waitlistedEvents = useStore((s) => s.waitlistedEvents) ?? [];
+  const waitlistedEvents = useStore((s) => s.waitlistedEvents ?? NO_IDS);
 
   const now = startOfDay(new Date());
 

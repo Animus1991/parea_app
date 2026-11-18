@@ -15,7 +15,10 @@ import {
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useContrastTheme } from '../../hooks/useContrastTheme';
+import { PAGE_FILL } from '../layout/PageShell';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
+import { toast } from 'sonner';
 import { useStore } from '../../store';
 import type { FeedbackData } from '../../store';
 
@@ -75,12 +78,18 @@ export default function PostEventFeedbackPageContent() {
     };
     submitFeedback(payload);
     awardXp(25, 'Υποβολή αξιολόγησης', 'Feedback submitted');
+    toast.success(t('Η αξιολόγηση υποβλήθηκε · +25 XP', 'Feedback submitted · +25 XP'), {
+      action: {
+        label: t('Τοίχος', 'Wall'),
+        onClick: () => navigate('/wall'),
+      },
+    });
     setStep(2);
   };
 
   if (!eventId || !event) {
     return (
-      <div className="max-w-2xl mx-auto py-4 text-center space-y-4">
+      <div className={cn(PAGE_FILL, 'py-4 text-center space-y-4')}>
         <p className={cn('text-sm font-medium', p.sub)}>
           {t('Η εκδήλωση δεν βρέθηκε.', 'Event not found.')}
         </p>
@@ -92,12 +101,12 @@ export default function PostEventFeedbackPageContent() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className={cn(PAGE_FILL, 'space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in')}>
       <div>
-        <h1 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.head)}>
+        <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
           {t('Αξιολόγηση Εκδήλωσης', 'Post-Event Feedback')}
         </h1>
-        <p className={cn('text-sm md:text-base font-medium mt-1', p.sub)}>
+        <p className={cn('text-sm font-medium mt-1', p.sub)}>
           {t(
             'Πείτε μας πώς ήταν η εμπειρία σας στην πρόσφατη εκδήλωση.',
             'Tell us about your experience at the recent event.',
@@ -118,7 +127,7 @@ export default function PostEventFeedbackPageContent() {
           </div>
         )}
         <div className="min-w-0">
-          <h3 className={cn('text-lg font-bold truncate', p.head)}>{event.title}</h3>
+          <h3 className={cn('text-sm md:text-base font-bold truncate', p.head)}>{event.title}</h3>
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5">
             {eventDateLabel && (
               <span className={cn('text-xs font-bold flex items-center gap-1', p.muted)}>
@@ -158,7 +167,7 @@ export default function PostEventFeedbackPageContent() {
           <div className="flex-1">
             <p
               className={cn(
-                'text-sm font-extrabold flex items-center gap-1 justify-center sm:justify-start',
+                'text-sm font-bold flex items-center gap-1 justify-center sm:justify-start',
                 p.isDark ? 'text-amber-400' : 'text-amber-900',
               )}
             >
@@ -182,13 +191,13 @@ export default function PostEventFeedbackPageContent() {
       {step === 1 ? (
         <div
           className={cn(
-            'rounded-2xl p-4 md:p-5 shadow-soft border space-y-5',
+            'rounded-2xl p-4 md:p-5 shadow-soft border space-y-4',
             p.cardSurface,
             p.borderB,
           )}
         >
           <div>
-            <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-4', p.head)}>
+            <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-4', p.head)}>
               {tu('Πώς νιώσατε;', 'How did you feel?')}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -198,7 +207,7 @@ export default function PostEventFeedbackPageContent() {
                   type="button"
                   onClick={() => setMood(m.emoji)}
                   className={cn(
-                    'flex flex-col items-center justify-center gap-2 py-4 rounded-2xl border transition-all duration-300',
+                    'flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl border text-xs transition-all duration-300',
                     mood === m.emoji
                       ? p.isDark
                         ? 'border-cyan-500 bg-cyan-900/20 shadow-soft scale-[1.02]'
@@ -227,7 +236,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-2', p.head)}>
+              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-2', p.head)}>
                 {tu('Γενική Εντύπωση', 'Overall Experience')}
               </h3>
               <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
@@ -258,7 +267,7 @@ export default function PostEventFeedbackPageContent() {
             </div>
 
             <div>
-              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-2', p.head)}>
+              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-2', p.head)}>
                 {tu('Ατμόσφαιρα', 'Vibe')}
               </h3>
               <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
@@ -293,7 +302,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div className="space-y-4">
             <div>
-              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
+              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-3', p.head)}>
                 {tu('Παρουσία', 'Attendance')}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -301,7 +310,7 @@ export default function PostEventFeedbackPageContent() {
                   type="button"
                   onClick={() => setAttendance('all')}
                   className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center gap-3 transition-colors',
+                    'p-3 border rounded-xl text-left text-xs flex items-center gap-3 transition-colors',
                     attendance === 'all'
                       ? p.isDark
                         ? 'border-cyan-500 bg-cyan-900/20 shadow-soft'
@@ -319,7 +328,7 @@ export default function PostEventFeedbackPageContent() {
                   </div>
                   <span
                     className={cn(
-                      'text-sm font-bold',
+                      'text-xs font-bold',
                       attendance === 'all' ? p.iconAccent : p.head,
                     )}
                   >
@@ -330,7 +339,7 @@ export default function PostEventFeedbackPageContent() {
                   type="button"
                   onClick={() => setAttendance('no_show')}
                   className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center gap-3 transition-colors',
+                    'p-3 border rounded-xl text-left text-xs flex items-center gap-3 transition-colors',
                     attendance === 'no_show'
                       ? p.isDark
                         ? 'border-amber-500 bg-amber-900/20 shadow-soft'
@@ -350,7 +359,7 @@ export default function PostEventFeedbackPageContent() {
                   </div>
                   <span
                     className={cn(
-                      'text-sm font-bold',
+                      'text-xs font-bold',
                       attendance === 'no_show'
                         ? p.isDark
                           ? 'text-amber-400'
@@ -365,7 +374,7 @@ export default function PostEventFeedbackPageContent() {
             </div>
 
             <div>
-              <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
+              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-3', p.head)}>
                 {tu('Αίσθημα Ασφάλειας', 'Safety Comfort')}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -373,7 +382,7 @@ export default function PostEventFeedbackPageContent() {
                   type="button"
                   onClick={() => setComfort('safe')}
                   className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center gap-3 transition-colors',
+                    'p-3 border rounded-xl text-left text-xs flex items-center gap-3 transition-colors',
                     comfort === 'safe'
                       ? p.isDark
                         ? 'border-emerald-500 bg-emerald-900/20 shadow-soft'
@@ -393,7 +402,7 @@ export default function PostEventFeedbackPageContent() {
                   </div>
                   <span
                     className={cn(
-                      'text-sm font-bold',
+                      'text-xs font-bold',
                       comfort === 'safe'
                         ? p.isDark
                           ? 'text-emerald-400'
@@ -408,7 +417,7 @@ export default function PostEventFeedbackPageContent() {
                   type="button"
                   onClick={() => setComfort('unsafe')}
                   className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center justify-between gap-3 transition-colors',
+                    'p-3 border rounded-xl text-left text-xs flex items-center justify-between gap-3 transition-colors',
                     comfort === 'unsafe'
                       ? p.isDark
                         ? 'border-red-500 bg-red-900/20 shadow-soft'
@@ -429,7 +438,7 @@ export default function PostEventFeedbackPageContent() {
                     </div>
                     <span
                       className={cn(
-                        'text-sm font-bold',
+                        'text-xs font-bold',
                         comfort === 'unsafe'
                           ? p.isDark
                             ? 'text-red-400'
@@ -451,7 +460,7 @@ export default function PostEventFeedbackPageContent() {
           <hr className={cn('border-t', p.borderB)} />
 
           <div>
-            <h3 className={cn('text-sm font-bold uppercase tracking-widest pl-1 mb-3', p.head)}>
+            <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-3', p.head)}>
               {tu('Σχόλιο (Προαιρετικό)', 'Comment (Optional)')}
             </h3>
             <textarea
@@ -480,7 +489,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div className="pt-2">
             <Button
-              className="w-full h-11 text-base font-bold rounded-2xl shadow-soft"
+              className="w-full"
               variant={p.isAB ? 'primary' : 'gradient'}
               onClick={handleSubmit}
               disabled={overallRating === 0}
@@ -509,10 +518,10 @@ export default function PostEventFeedbackPageContent() {
             />
           </div>
 
-          <h2 className={cn('text-lg font-extrabold tracking-tight mb-3', p.head)}>
+          <h2 className={cn('text-sm md:text-base font-bold tracking-tight mb-3', p.head)}>
             {t('Ευχαριστούμε!', 'Thank You!')}
           </h2>
-          <p className={cn('text-base font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
+          <p className={cn('text-sm font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
             {t(
               'Η αξιολόγησή σας βοηθά σημαντικά στη βελτίωση της εμπειρίας για όλη την κοινότητα.',
               'Your feedback significantly helps improve the experience for the entire community.',
@@ -538,12 +547,12 @@ export default function PostEventFeedbackPageContent() {
               <Trophy className="w-6 h-6" />
             </div>
             <div>
-              <p className={cn('text-lg font-black', p.isDark ? 'text-amber-400' : 'text-amber-900')}>
+              <p className={cn('text-sm md:text-base font-bold', p.isDark ? 'text-amber-400' : 'text-amber-900')}>
                 +25 XP
               </p>
               <p
                 className={cn(
-                  'text-xs font-bold uppercase tracking-widest mt-0.5',
+                  'text-xs font-bold tracking-widest mt-0.5',
                   p.isDark ? 'text-amber-500/80' : 'text-amber-700',
                 )}
               >
@@ -555,8 +564,8 @@ export default function PostEventFeedbackPageContent() {
           <Button
             onClick={() => navigate('/history')}
             variant={p.isAB ? 'primary' : 'outline'}
-            size="lg"
-            className="rounded-2xl px-5 font-bold text-sm"
+            size="md"
+            className="rounded-full"
           >
             {t('Επιστροφή στο Ιστορικό', 'Back to History')}
           </Button>

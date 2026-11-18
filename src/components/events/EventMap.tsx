@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Maximize, Minimize, AlertTriangle, MapPin } from 'lucide-react';
+import { Maximize, Minimize, ShieldAlert, MapPin } from 'lucide-react';
 import {
   APIProvider,
   Map,
@@ -192,7 +192,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
           type="button"
           onClick={() => setIsMapFullscreen((v) => !v)}
           className={cn(
-            'absolute top-4 right-4 z-10 p-2 backdrop-blur rounded-2xl shadow-soft transition-colors min-h-11 min-w-11 flex items-center justify-center',
+            'absolute top-4 right-4 z-10 p-2 backdrop-blur rounded-2xl shadow-soft transition-colors min-h-8 min-w-8 flex items-center justify-center',
             tok.toggle,
             accentText,
             tok.toggleHover,
@@ -211,7 +211,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
             fallback={
               <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] p-4 text-center">
                 <div className="bg-white p-3 rounded-2xl shadow-soft border border-red-100">
-                  <AlertTriangle className="w-6 h-6 text-red-500 mx-auto mb-2" />
+                  <ShieldAlert className="w-6 h-6 text-red-500 mx-auto mb-2" />
                   <p className="text-xs text-gray-600">
                     {t(
                       'Ο χάρτης δεν είναι διαθέσιμος. Παρακαλώ ελέγξτε το API key.',
@@ -249,7 +249,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
               type="button"
               onClick={() => setMarkerFocused(true)}
               className={cn(
-                'flex flex-col items-center gap-2 rounded-2xl p-4 transition-all min-h-11',
+                'flex flex-col items-center gap-2 rounded-2xl p-4 transition-all min-h-8',
                 tok.pulse,
                 markerFocused && 'ring-4 ring-cyan-500/40 scale-105',
               )}

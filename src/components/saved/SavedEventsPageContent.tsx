@@ -1,10 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Bookmark, MapPin, Calendar, Users, ArrowRight, Search } from 'lucide-react';
+import { Bookmark, MapPin, Calendar, ArrowRight, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
-import { Badge } from '../common/Badge';
 import { Card } from '../common/Card';
 import { EmptyState } from '../common/EmptyState';
 import { EventCardSkeleton } from '../common/Skeleton';
@@ -13,14 +12,18 @@ import { useEventsResource } from '../../hooks/useEventsQuery';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { dateFnsLocale } from '../../lib/dateLocale';
+import { APP_TYPO } from '../../lib/typographyTokens';
+
+const NO_IDS: string[] = [];
 
 export default function SavedEventsPageContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const a = usePageContrast();
 
   const { events, isLoading, isError, refetch } = useEventsResource();
-  const savedEventIds = useStore((s) => s.savedEvents) || [];
+  const savedEventIds = useStore((s) => s.savedEvents ?? NO_IDS);
   const toggleSavedEvent = useStore((s) => s.toggleSavedEvent);
 
   const [search, setSearch] = useState('');
@@ -42,12 +45,12 @@ export default function SavedEventsPageContent() {
   }, [events, savedEventIds]);
 
   return (
-    <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn("text-sm md:text-base font-bold", a.head)}>{t('Αποθηκευμένα', 'Saved Events')}</h1>
-          <p className={cn("font-medium text-sm mt-1", a.sub)}>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Αποθηκευμένα', 'Saved Events')}</h1>
+          <p className={cn(APP_TYPO.pageSub, "mt-1", a.sub)}>
             {savedEventIds.length > 0
               ? t(`${savedEventIds.length} αποθηκευμένες εκδηλώσεις`, `${savedEventIds.length} saved events`)
               : t('Δεν υπάρχουν αποθηκευμένες εκδηλώσεις ακόμα.', 'No saved events yet.')}
@@ -69,7 +72,7 @@ export default function SavedEventsPageContent() {
                 className={cn("search-control w-full h-9 pl-9 pr-3 rounded-xl border outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
               />
             </div>
-            <select
+            <select aria-label={t("Ταξινόμηση", "Sort by")}
               value={sortBy}
               onChange={e => setSortBy(e.target.value as 'date' | 'name')}
               className={cn("filter-select border outline-none cursor-pointer", a.inputBg)}
@@ -105,7 +108,7 @@ export default function SavedEventsPageContent() {
         isError={isError}
         onRetry={() => void refetch()}
         loading={
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 4 }).map((_, i) => (
               <EventCardSkeleton key={`saved-sk-${i}`} />
             ))}
@@ -114,27 +117,17 @@ export default function SavedEventsPageContent() {
         errorTitle={t('Αδυναμία φόρτωσης αποθηκευμένων', 'Could not load saved events')}
       >
       {savedEvents.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {savedEvents.map(event => (
             <Card
               key={event.id}
-              className={cn("overflow-hidden flex flex-col group cursor-pointer transition-all focus-visible:ring-2 focus-visible:ring-cyan-500", a.cardHover)}
-              onClick={() => navigate(`/events/${event.id}`)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e: React.KeyboardEvent) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  navigate(`/events/${event.id}`);
-                }
-              }}
-              aria-label={t(`Άνοιγμα εκδήλωσης ${event.title}`, `Open event ${event.title}`)}
+              className={cn("relative overflow-hidden flex flex-col group cursor-pointer transition-all duration-200 hover:-translate-y-[0.5px] hover:shadow-soft-md focus-within:ring-2 focus-within:ring-cyan-500", a.cardHover)}
             >
               <div className={cn("h-32 relative overflow-hidden shrink-0", a.isDark ? "bg-gray-700/30" : "bg-gray-200")}>
                 <img
                   referrerPolicy="no-referrer"
                   src={event.imageUrl}
-                  alt={event.title}
+                  alt=""
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <button
@@ -156,38 +149,53 @@ export default function SavedEventsPageContent() {
                 </button>
               </div>
               <div className="p-4 flex flex-col flex-1">
-                <div className="mb-2">
-                  <Badge variant={event.safetyLevel === 'high_trust' ? 'warning' : 'outline'}>
-                    {event.safetyLevel === 'high_trust' ? t('Υψηλή Εμπιστοσύνη', 'High Trust') : event.safetyLevel === 'medium' ? t('Μεσαία', 'Medium Trust') : t('Δημόσια', 'Public')}
-                  </Badge>
-                </div>
-                <h3 className={cn("font-bold text-sm transition-colors line-clamp-2 mb-2", a.head, a.isDark ? 'group-hover:text-gray-300' : 'group-hover:text-gray-600')}>
-                  {event.title}
+                <h3 className={cn("font-bold text-sm transition-colors line-clamp-2", a.head, a.isDark ? 'group-hover:text-gray-300' : 'group-hover:text-gray-600')}>
+                  {/* Stretched link: the whole card opens the event, while the remove button stays a separate control. */}
+                  <Link
+                    to={`/events/${event.id}`}
+                    className="outline-none after:absolute after:inset-0 after:content-['']"
+                  >
+                    {event.title}
+                  </Link>
                 </h3>
-                <div className="mt-auto space-y-1.5">
-                  <div className={cn("flex items-center text-xs font-medium", a.sub)}>
-                    <Calendar className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-                    <span className="truncate">{format(parseISO(event.date), 'MMM d, yyyy')} • {event.time}</span>
-                  </div>
-                  <div className={cn("flex items-center text-xs font-medium", a.sub)}>
-                    <MapPin className="w-3.5 h-3.5 mr-1.5 shrink-0" />
+                <p className={cn('card-meta mt-1.5', a.muted)}>
+                  {event.safetyLevel === 'high_trust'
+                    ? t('Υψηλή Εμπιστοσύνη', 'High Trust')
+                    : event.safetyLevel === 'medium'
+                      ? t('Μεσαία', 'Medium Trust')
+                      : t('Δημόσια', 'Public')}
+                </p>
+                <p className={cn('card-meta mt-auto pt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5', a.sub)}>
+                  <span className="inline-flex items-center gap-1 min-w-0">
+                    <Calendar className="w-3.5 h-3.5 shrink-0 opacity-70" aria-hidden />
+                    <span className="truncate">{format(parseISO(event.date), 'PP', { locale: dateFnsLocale(language) })} · {event.time}</span>
+                  </span>
+                  <span aria-hidden className="opacity-40">·</span>
+                  <span className="inline-flex items-center gap-1 min-w-0">
+                    <MapPin className="w-3.5 h-3.5 shrink-0 opacity-70" aria-hidden />
                     <span className="truncate">{event.locationArea}</span>
-                  </div>
-                </div>
-                <div className={cn("mt-3 pt-3 border-t flex items-center gap-1.5 text-2xs font-bold tracking-wider", a.isDark ? "border-gray-700/40" : "border-gray-100", a.link)}>
-                  {t('Προβολή Λεπτομερειών', 'View Details')} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </p>
+                <div className={cn("mt-3 pt-3 border-t flex items-center gap-1.5 card-meta font-semibold", a.isDark ? "border-gray-700/40" : "border-gray-100", a.link)}>
+                  {t('Προβολή Λεπτομερειών', 'View Details')} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" aria-hidden />
                 </div>
               </div>
             </Card>
           ))}
         </div>
-      ) : savedEventIds.length > 0 && search ? (
+      ) : savedEventIds.length > 0 && (search || catFilter !== 'All') ? (
         <EmptyState
           icon={Search}
           title={t('Κανένα αποτέλεσμα', 'No results')}
-          description={t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search term.')}
-          actionLabel={t('Καθαρισμός', 'Clear')}
-          onAction={() => setSearch('')}
+          description={t(
+            'Δεν υπάρχουν αποθηκευμένες με αυτά τα φίλτρα.',
+            'No saved events match these filters.',
+          )}
+          actionLabel={t('Καθαρισμός φίλτρων', 'Clear filters')}
+          onAction={() => {
+            setSearch('');
+            setCatFilter('All');
+          }}
         />
       ) : (
         <EmptyState
@@ -199,6 +207,8 @@ export default function SavedEventsPageContent() {
           )}
           actionLabel={t('Ανακαλύψτε Εκδηλώσεις', 'Discover Events')}
           onAction={() => navigate('/')}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
         />
       )}
       </ResourceStateGate>

@@ -92,12 +92,26 @@ export function formatGoogleCalendarDate(date: Date): string {
   return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
 }
 
-function escapeIcsText(value: string): string {
+/** Escape text for ICS SUMMARY / DESCRIPTION / LOCATION fields. */
+export function escapeIcsText(value: string): string {
   return value
     .replace(/\\/g, '\\\\')
     .replace(/;/g, '\\;')
     .replace(/,/g, '\\,')
     .replace(/\n/g, '\\n');
+}
+
+/** Trigger a browser download for a calendar blob (shared by single + bulk export). */
+export function downloadIcsBlob(content: string, filename: string): void {
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 100);
 }
 
 function buildCalendarDescription(event: Event, eventUrl: string, hostName?: string): string {
@@ -193,15 +207,7 @@ export function downloadICS(
   if (!content) return false;
 
   const title = event.title || 'parea-event';
-  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ics`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  setTimeout(() => URL.revokeObjectURL(url), 100);
+  downloadIcsBlob(content, `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ics`);
   return true;
 }
 

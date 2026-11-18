@@ -33,8 +33,20 @@ export default tseslint.config(
       // Prototype rollout: keep a11y signal loud but non-blocking until debt clears.
       'jsx-a11y/click-events-have-key-events': 'warn',
       'jsx-a11y/no-static-element-interactions': 'warn',
-      'jsx-a11y/no-noninteractive-element-interactions': 'warn',
-      'jsx-a11y/label-has-associated-control': 'warn',
+      // Same exemptions as the plugin's recommended preset (img onError/onLoad, dialog keys).
+      'jsx-a11y/no-noninteractive-element-interactions': [
+        'warn',
+        {
+          handlers: ['onClick', 'onError', 'onLoad', 'onMouseDown', 'onMouseUp', 'onKeyPress', 'onKeyDown', 'onKeyUp'],
+          alert: ['onKeyUp', 'onKeyDown', 'onKeyPress'],
+          body: ['onError', 'onLoad'],
+          dialog: ['onKeyDown', 'onKeyUp', 'onKeyPress'],
+          iframe: ['onError', 'onLoad'],
+          img: ['onError', 'onLoad'],
+        },
+      ],
+      // Labels here wrap the control and put the text one or two wrappers deeper.
+      'jsx-a11y/label-has-associated-control': ['warn', { depth: 4 }],
       'jsx-a11y/anchor-is-valid': 'warn',
       'jsx-a11y/anchor-has-content': 'warn',
       'jsx-a11y/heading-has-content': 'warn',

@@ -41,7 +41,7 @@ export function HomeBelowFold({
 
   return (
     <div className="space-y-4 md:space-y-5 pt-4 border-t border-border">
-      <p className="text-xs font-bold uppercase tracking-wider text-ink-muted">
+      <p className="text-xs font-bold tracking-wider text-ink-muted">
         {t('Περισσότερα', 'More')}
       </p>
 
@@ -70,7 +70,7 @@ export function HomeBelowFold({
           },
           {
             step: '2',
-            title: t('home.how.step2.title', 'Εντάξτε μια μικρή ομάδα'),
+            title: t('home.how.step2.title', 'Μπες σε μια μικρή παρέα'),
             body: t(
               'home.how.step2.body',
               'Συνδεθείτε με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.',

@@ -22,20 +22,38 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
       - run: npm ci
       - run: npm run build
         env:
           VITE_GEMINI_API_KEY: ''
       - name: Publish to Cloudflare Pages
+        id: deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CF_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           if [ -z "${CLOUDFLARE_API_TOKEN}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID}" ]; then
-            echo "::notice::Cloudflare deploy skipped — add repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID for pages.dev previews."
+            echo "::notice::Cloudflare deploy skipped: add repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID for pages.dev previews."
+            {
+              echo "### Cloudflare Pages preview"
+              echo "Skipped: the repository secrets \`CLOUDFLARE_API_TOKEN\` and \`CLOUDFLARE_ACCOUNT_ID\` are not set."
+              echo "Add them under Settings → Secrets and variables → Actions, then push again."
+            } >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          npx --yes wrangler@4 pages deploy dist --project-name=nakamas --branch="${CF_BRANCH}"
+          # First deploy: create the project (no-op when it already exists).
+          npx --yes wrangler@4 pages project create nakamas --production-branch=main >/dev/null 2>&1 || true
+          npx --yes wrangler@4 pages deploy dist --project-name=nakamas --branch="${CF_BRANCH}" | tee deploy.log
+          # Actions runs bash with -e and pipefail: a grep without a match must not fail the step.
+          pick() { (grep -iE "$1" deploy.log || true) | (grep -oE 'https://[a-zA-Z0-9.-]+\.pages\.dev' || true) | tail -1; }
+          URL=$(pick 'take a peek|deployment complete')
+          ALIAS=$(pick 'alias')
+          echo "url=${URL}" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Cloudflare Pages preview"
+            echo "- This deploy: ${URL}"
+            if [ -n "${ALIAS}" ]; then echo "- Branch alias (always the latest of \`${CF_BRANCH}\`): ${ALIAS}"; fi
+          } >> "$GITHUB_STEP_SUMMARY"

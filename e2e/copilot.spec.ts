@@ -30,10 +30,44 @@ test.describe('Nakamas AI copilot', () => {
     await expect(page.getByText(/Αποθήκευσα|is already saved|είναι ήδη αποθηκευμένη|Saved/).first()).toBeVisible();
   });
 
-  test('asks for confirmation before changing privacy', async ({ page }) => {
+  test('answers can be rated, with a reason on a thumbs-down', async ({ page }) => {
     await enterDemoGuest(page);
     await page.keyboard.press('Control+j');
     const input = page.locator('#copilot-input');
+    await input.fill('τι νέο υπάρχει;');
+    await input.press('Enter');
+    await expect(page.getByText(/Τι νέο υπάρχει:|Είσαι ενημερωμένος/).first()).toBeVisible();
+
+    const down = page.getByRole('button', { name: /Όχι χρήσιμη απάντηση|Not a helpful answer/ }).last();
+    await down.click();
+    await expect(down).toHaveAttribute('aria-pressed', 'true');
+    const reason = page.getByRole('button', { name: /Ασαφής απάντηση|Unclear answer/ }).last();
+    await reason.click();
+    await expect(reason).toHaveAttribute('aria-pressed', 'true');
+
+    // The other thumb changes the verdict and hides the reasons.
+    const up = page.getByRole('button', { name: /Χρήσιμη απάντηση|Helpful answer/ }).last();
+    await up.click();
+    await expect(up).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByRole('button', { name: /Ασαφής απάντηση|Unclear answer/ })).toHaveCount(0);
+  });
+
+  test('catches the user up on «τι νέο;»', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.getByRole('button', { name: /Nakamas AI/ }).first().click();
+    const input = page.locator('#copilot-input');
+    await input.fill('τι νέο υπάρχει;');
+    await input.press('Enter');
+    await expect(page.getByText(/Τι νέο υπάρχει:|Είσαι ενημερωμένος/).first()).toBeVisible();
+  });
+
+  test('asks for confirmation before changing privacy', async ({ page }) => {
+    await enterDemoGuest(page);
+    // Open via the launcher: under parallel load an early Ctrl+J can land before
+    // the shortcut listener mounts (the shortcut itself is covered above).
+    await page.getByRole('button', { name: /Nakamas AI/ }).first().click();
+    const input = page.locator('#copilot-input');
+    await expect(input).toBeVisible();
     await input.fill('κάνε το προφίλ μου ιδιωτικό');
     await input.press('Enter');
     const confirm = page.getByRole('button', { name: /Επιβεβαίωση|Confirm/ }).last();
@@ -47,7 +81,9 @@ test.describe('Nakamas AI copilot', () => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await seedTheme(page, theme);
       await enterDemoGuest(page);
-      await page.keyboard.press('Control+j');
+      // Launcher, not Ctrl+J: under parallel load an early shortcut can land
+      // before the app is interactive (same as the privacy test above).
+      await page.getByRole('button', { name: /Nakamas AI/ }).first().click();
       const input = page.locator('#copilot-input');
       await expect(input).toBeVisible();
       await input.fill('βρες πεζοπορία');

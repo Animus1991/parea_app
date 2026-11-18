@@ -31,7 +31,7 @@ export function LoginGuestHeroStrip({
       </div>
       <p
         className={cn(
-          'text-2xs font-bold uppercase tracking-widest',
+          'text-2xs font-bold tracking-widest',
           variant === 'dark' ? 'text-cyan-300' : 'text-cyan-700',
         )}
       >
@@ -50,7 +50,7 @@ export function LoginGuestHeroStrip({
       </p>
       <button
         type="button"
-        onClick={() => navigate('/trust')}
+        onClick={() => navigate('/help')}
         className={cn(
           'text-xs font-bold underline-offset-2 hover:underline',
           variant === 'dark'

@@ -8,6 +8,7 @@ export interface AppRoute {
   /** Normalized bilingual stems used by the local engine and by the palette bridge. */
   stems: string[];
   adminOnly?: boolean;
+  organizerOnly?: boolean;
 }
 
 /**
@@ -22,11 +23,13 @@ export const APP_ROUTES: AppRoute[] = [
   { id: 'agenda', path: '/agenda', labelEl: 'Ημερολόγιο', labelEn: 'Calendar', stems: ['ημερολογ', 'ατζεντα', 'calendar', 'agenda', 'schedule'] },
   { id: 'plans', path: '/plans', labelEl: 'Τα Σχέδιά μου', labelEn: 'My Plans', stems: ['σχεδια μου', 'τα σχεδια', 'my plans', 'plans'] },
   { id: 'buddy-seek', path: '/buddy-seek', labelEl: 'Βρες Nakamas', labelEn: 'Find Nakamas', stems: ['βρεσ nakamas', 'βρεσ παρεα', 'buddy', 'find nakamas', 'find company', 'plans forming'] },
+  { id: 'collections', path: '/collections', labelEl: 'Συλλογές', labelEn: 'Collections', stems: ['συλλογ', 'nakamas nights', 'δωρεαν εκδηλωσ', 'collections', 'free events'] },
   { id: 'saved', path: '/saved', labelEl: 'Αποθηκευμένες', labelEn: 'Saved', stems: ['αποθηκευμεν', 'saved', 'bookmarks'] },
   { id: 'history', path: '/history', labelEl: 'Ιστορικό', labelEn: 'History', stems: ['ιστορικ', 'history', 'past events'] },
   { id: 'connections', path: '/connections', labelEl: 'Οι Nakamas μου', labelEn: 'My Nakamas', stems: ['nakamas μου', 'φιλοι', 'φιλουσ', 'συνδεσεισ', 'connections', 'friends', 'my nakamas'] },
+  { id: 'wall', path: '/wall', labelEl: 'Τοίχος Nakamas', labelEn: 'Nakamas Wall', stems: ['τοιχο', 'τοιχοσ', 'δημοσιευσ', 'ροη nakamas', 'wall', 'news feed', 'posts', 'timeline'] },
   { id: 'chats', path: '/chats', labelEl: 'Συνομιλίες', labelEn: 'Chats', stems: ['συνομιλι', 'μηνυματα', 'inbox', 'chats', 'messages'] },
-  { id: 'manage', path: '/manage', labelEl: 'Πίνακας Διοργανωτή', labelEn: 'Organizer Dashboard', stems: ['διοργανωτ', 'organizer', 'dashboard', 'manage'] },
+  { id: 'manage', path: '/manage', labelEl: 'Πίνακας Διοργανωτή', labelEn: 'Organizer Dashboard', stems: ['διοργανωτ', 'organizer', 'dashboard', 'manage'], organizerOnly: true },
   { id: 'create', path: '/create', labelEl: 'Δημιουργία Εκδήλωσης', labelEn: 'Create Event', stems: ['δημιουργια εκδηλωσ', 'create event', 'new event'] },
   { id: 'wallet', path: '/wallet', labelEl: 'Πορτοφόλι', labelEn: 'Wallet', stems: ['πορτοφολ', 'κερδη', 'πληρωμ', 'wallet', 'earnings', 'payout'] },
   { id: 'verification', path: '/verification', labelEl: 'Επαλήθευση Ταυτότητας', labelEn: 'Identity Verification', stems: ['επαληθευσ', 'ταυτοτητ', 'verification', 'verify'] },
@@ -66,7 +69,10 @@ export function routeIdForPath(pathname: string): string {
   if (pathname.startsWith('/events/')) return pathname.endsWith('/join') ? 'join' : 'event';
   if (pathname.startsWith('/chat/')) return 'chat';
   if (pathname.startsWith('/organizer/')) return 'organizer-profile';
+  if (pathname.startsWith('/u/')) return 'person-profile';
   if (pathname.startsWith('/history/feedback')) return 'feedback';
+  if (pathname.startsWith('/night/')) return 'our-night';
+  if (pathname.startsWith('/collections/')) return 'collection';
   const exact = APP_ROUTES.find((r) => r.path === pathname);
   if (exact) return exact.id;
   return hasAny(pathname, ['/calendar']) ? 'agenda' : 'other';

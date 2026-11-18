@@ -19,6 +19,8 @@ interface OptimizerInput {
   savedEventsCount: number;
   profileInterestsCount: number;
   hasBio: boolean;
+  /** Optional resume path from the last meaningful screen. */
+  lastResumePath?: string | null;
 }
 
 export function getNextBestActions(input: OptimizerInput): NextBestAction[] {
@@ -71,6 +73,18 @@ export function getNextBestActions(input: OptimizerInput): NextBestAction[] {
       descriptionEn: 'Your calendar is empty — browse categories.',
       path: '/categories',
       priority: 80,
+    });
+  }
+
+  if (input.lastResumePath && input.lastResumePath !== '/') {
+    actions.push({
+      id: 'resume-last',
+      titleEl: 'Συνέχισε από εκεί που σταμάτησες',
+      titleEn: 'Pick up where you left off',
+      descriptionEl: 'Γύρνα στη σελίδα που έβλεπες πριν.',
+      descriptionEn: 'Return to the screen you were on.',
+      path: input.lastResumePath,
+      priority: 78,
     });
   }
 
@@ -155,11 +169,19 @@ export function computeProfileCompletion(user: User | null, hasBio: boolean): {
   if (user.trustTier === '1_explorer') {
     return { percent, nextActionEl: 'Ολοκλήρωσε επαλήθευση (+15%)', nextActionEn: 'Complete verification (+15%)', nextPath: '/verification' };
   }
+  if (!user.idVerified) {
+    return {
+      percent,
+      nextActionEl: 'Επαλήθευση ταυτότητας (+10%)',
+      nextActionEn: 'Verify your ID (+10%)',
+      nextPath: '/verification',
+    };
+  }
 
   return {
     percent,
-    nextActionEl: 'Το προφίλ σου είναι σχεδόν πλήρες',
-    nextActionEn: 'Your profile is nearly complete',
-    nextPath: '/profile',
+    nextActionEl: 'Το προφίλ σου είναι πλήρες',
+    nextActionEn: 'Your profile is complete',
+    nextPath: '/trust',
   };
 }

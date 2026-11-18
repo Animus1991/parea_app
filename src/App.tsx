@@ -5,47 +5,62 @@ import { AnimatePresence } from "motion/react";
 import { AppShell } from "./components/layout/AppShell";
 import { RouteLifecycle } from "./components/common/RouteLifecycle";
 import { OfflineBanner } from "./components/common/OfflineBanner";
+import { CspViolationToast } from "./components/common/CspViolationToast";
 import { CommandPalette } from "./components/common/CommandPalette";
+import { RequireAdmin } from "./components/auth/RequireAdmin";
+import { RequireOrganizer } from "./components/auth/RequireOrganizer";
 import { CopilotBridge } from "./components/copilot/CopilotBridge";
 import { useStore } from "./store";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { PageLoading } from "./components/common/PageLoading";
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient';
+import { routeLoaders, prefetchWhenIdle } from './lib/routeLoaders';
 
 // Route-level code-splitting (lazy-loaded pages)
-const Home = lazy(() => import("./pages/Home"));
-const NotFound = lazy(() => import("./pages/not-found"));
-const EventDetail = lazy(() => import("./pages/EventDetail"));
-const Plans = lazy(() => import("./pages/Plans"));
-const TrustCenter = lazy(() => import("./pages/TrustCenter"));
-const Profile = lazy(() => import("./pages/Profile"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-const OrganizerDashboard = lazy(() => import("./pages/OrganizerDashboard"));
-const JoinGroupFlow = lazy(() => import("./components/groups/JoinGroupFlow"));
-const GroupChat = lazy(() => import("./pages/GroupChat"));
-const OrganizerProfile = lazy(() => import("./pages/OrganizerProfile"));
-const Notifications = lazy(() => import("./pages/Notifications"));
-const Categories = lazy(() => import("./pages/Categories"));
-const NearbyGroups = lazy(() => import("./pages/NearbyGroups"));
-const History = lazy(() => import("./pages/History"));
-const SavedEvents = lazy(() => import("./pages/SavedEvents"));
-const ReportIssue = lazy(() => import("./pages/ReportIssue"));
-const PostEventFeedback = lazy(() => import("./pages/PostEventFeedback"));
-const Login = lazy(() => import("./pages/Login"));
-const MyCalendar = lazy(() => import("./pages/MyCalendar"));
-const MyConnections = lazy(() => import("./pages/MyConnections"));
-const Inbox = lazy(() => import("./pages/Inbox"));
-const CreateEventFlow = lazy(() => import("./pages/CreateEventFlow"));
-const Wallet = lazy(() => import("./pages/Wallet"));
-const VerificationCenter = lazy(() => import("./pages/VerificationCenter"));
-const SettingsAndPrivacy = lazy(() => import("./pages/SettingsAndPrivacy"));
-const HelpCenter = lazy(() => import("./pages/HelpCenter"));
-const Achievements = lazy(() => import("./pages/Achievements"));
-const Leaderboard = lazy(() => import("./pages/Leaderboard"));
-const Challenges = lazy(() => import("./pages/Challenges"));
-const Onboarding = lazy(() => import("./pages/Onboarding"));
-const BuddySeek = lazy(() => import("./pages/BuddySeek"));
+const Home = lazy(routeLoaders.home);
+const NotFound = lazy(routeLoaders.notFound);
+const EventDetail = lazy(routeLoaders.eventDetail);
+const Plans = lazy(routeLoaders.plans);
+const TrustCenter = lazy(routeLoaders.trustCenter);
+const Profile = lazy(routeLoaders.profile);
+const AdminDashboard = lazy(routeLoaders.adminDashboard);
+const OrganizerDashboard = lazy(routeLoaders.organizerDashboard);
+const JoinGroupFlow = lazy(routeLoaders.joinGroupFlow);
+const GroupChat = lazy(routeLoaders.groupChat);
+const OrganizerProfile = lazy(routeLoaders.organizerProfile);
+const Notifications = lazy(routeLoaders.notifications);
+const Categories = lazy(routeLoaders.categories);
+const NearbyGroups = lazy(routeLoaders.nearbyGroups);
+const History = lazy(routeLoaders.history);
+const SavedEvents = lazy(routeLoaders.savedEvents);
+const ReportIssue = lazy(routeLoaders.reportIssue);
+const PostEventFeedback = lazy(routeLoaders.postEventFeedback);
+const Login = lazy(routeLoaders.login);
+const MyCalendar = lazy(routeLoaders.myCalendar);
+const MyConnections = lazy(routeLoaders.myConnections);
+const Inbox = lazy(routeLoaders.inbox);
+const CreateEventFlow = lazy(routeLoaders.createEventFlow);
+const Wallet = lazy(routeLoaders.wallet);
+const VerificationCenter = lazy(routeLoaders.verificationCenter);
+const SettingsAndPrivacy = lazy(routeLoaders.settingsAndPrivacy);
+const HelpCenter = lazy(routeLoaders.helpCenter);
+const Achievements = lazy(routeLoaders.achievements);
+const Leaderboard = lazy(routeLoaders.leaderboard);
+const Challenges = lazy(routeLoaders.challenges);
+const Onboarding = lazy(routeLoaders.onboarding);
+const BuddySeek = lazy(routeLoaders.buddySeek);
+const Wall = lazy(routeLoaders.wall);
+const PersonProfile = lazy(routeLoaders.personProfile);
+const OurNight = lazy(routeLoaders.ourNight);
+const Collections = lazy(routeLoaders.collections);
+const InvitePublic = lazy(routeLoaders.invitePublic);
+const OrganizerEmbed = lazy(routeLoaders.organizerEmbed);
+
+/** Pages anyone with the link may open, without an account (Φ27). */
+function isPublicPath(pathname: string): boolean {
+  return /^\/i\/[^/]+$/.test(pathname) || /^\/embed\/organizer\/[^/]+$/.test(pathname);
+}
 
 export default function App() {
   const location = useLocation();
@@ -54,26 +69,58 @@ export default function App() {
   const onboardingCompleted = useStore((state) => state.onboardingCompleted);
   const demoMode = useStore((state) => state.demoMode);
 
+  // Instant navigation: while the browser is idle, fetch the pages people open
+  // next (Home from the login page; the main destinations once signed in).
+  const onLogin = location.pathname === "/login";
+  const signedIn = Boolean(currentUser);
   useEffect(() => {
-    if (!currentUser && location.pathname !== "/login") {
-      navigate("/login");
+    if (onLogin) return prefetchWhenIdle(["/"]);
+    if (!signedIn) return;
+    return prefetchWhenIdle(["/", "/events/_", "/categories", "/plans", "/buddy-seek", "/saved", "/chats", "/profile", "/notifications", "/wall"]);
+  }, [onLogin, signedIn]);
+
+  const publicPage = isPublicPath(location.pathname);
+  useEffect(() => {
+    if (!currentUser && location.pathname !== "/login" && !publicPage) {
+      navigate("/login", { replace: true });
     }
-  }, [currentUser, location.pathname, navigate]);
+  }, [currentUser, location.pathname, navigate, publicPage]);
 
   useEffect(() => {
     if (
       currentUser &&
       !demoMode &&
       !onboardingCompleted &&
+      !publicPage &&
       location.pathname !== "/onboarding" &&
       location.pathname !== "/login"
     ) {
-      navigate("/onboarding");
+      navigate("/onboarding", { replace: true });
     }
-  }, [currentUser, onboardingCompleted, demoMode, location.pathname, navigate]);
+  }, [currentUser, onboardingCompleted, demoMode, location.pathname, navigate, publicPage]);
+
+  // Invite pages and the organizer widget render on their own, signed in or not.
+  if (publicPage) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <RouteLifecycle />
+        <Suspense fallback={<PageLoading />}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/i/:inviteId" element={<ErrorBoundary><InvitePublic /></ErrorBoundary>} />
+            <Route path="/embed/organizer/:id" element={<ErrorBoundary><OrganizerEmbed /></ErrorBoundary>} />
+          </Routes>
+        </Suspense>
+      </QueryClientProvider>
+    );
+  }
 
   if (!currentUser && location.pathname !== "/login") {
-    return null; // wait for redirect
+    return (
+      <QueryClientProvider client={queryClient}>
+        <RouteLifecycle />
+        <PageLoading />
+      </QueryClientProvider>
+    );
   }
 
   if (location.pathname === "/login") {
@@ -81,6 +128,7 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <RouteLifecycle />
         <OfflineBanner />
+        <CspViolationToast />
         <AnimatePresence mode="popLayout">
         <Suspense fallback={<PageLoading />}>
           <Routes location={location} key={location.pathname}>
@@ -96,6 +144,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <RouteLifecycle />
       <OfflineBanner />
+      <CspViolationToast />
       <CommandPalette />
       <CopilotBridge />
       <AppShell>
@@ -124,7 +173,7 @@ export default function App() {
             <Route path="/chats" element={<ErrorBoundary><Inbox /></ErrorBoundary>} />
             <Route path="/chat/:groupId" element={<ErrorBoundary><GroupChat /></ErrorBoundary>} />
 
-            <Route path="/manage" element={<ErrorBoundary><OrganizerDashboard /></ErrorBoundary>} />
+            <Route path="/manage" element={<ErrorBoundary><RequireOrganizer><OrganizerDashboard /></RequireOrganizer></ErrorBoundary>} />
             <Route path="/create" element={<ErrorBoundary><CreateEventFlow /></ErrorBoundary>} />
             <Route path="/wallet" element={<ErrorBoundary><Wallet /></ErrorBoundary>} />
 
@@ -134,12 +183,17 @@ export default function App() {
 
             <Route path="/profile" element={<ErrorBoundary><Profile /></ErrorBoundary>} />
             <Route path="/organizer/:id" element={<ErrorBoundary><OrganizerProfile /></ErrorBoundary>} />
+            <Route path="/u/:id" element={<ErrorBoundary><PersonProfile /></ErrorBoundary>} />
+            <Route path="/wall" element={<ErrorBoundary><Wall /></ErrorBoundary>} />
+            <Route path="/night/:groupId" element={<ErrorBoundary><OurNight /></ErrorBoundary>} />
+            <Route path="/collections" element={<ErrorBoundary><Collections /></ErrorBoundary>} />
+            <Route path="/collections/:id" element={<ErrorBoundary><Collections /></ErrorBoundary>} />
 
             <Route path="/notifications" element={<ErrorBoundary><Notifications /></ErrorBoundary>} />
             <Route path="/settings" element={<ErrorBoundary><SettingsAndPrivacy /></ErrorBoundary>} />
             <Route path="/help" element={<ErrorBoundary><HelpCenter /></ErrorBoundary>} />
 
-            <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+            <Route path="/admin" element={<ErrorBoundary><RequireAdmin><AdminDashboard /></RequireAdmin></ErrorBoundary>} />
             <Route path="/achievements" element={<ErrorBoundary><Achievements /></ErrorBoundary>} />
             <Route path="/leaderboard" element={<ErrorBoundary><Leaderboard /></ErrorBoundary>} />
             <Route path="/challenges" element={<ErrorBoundary><Challenges /></ErrorBoundary>} />

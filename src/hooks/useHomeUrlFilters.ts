@@ -148,6 +148,7 @@ export function useHomeUrlFilters() {
   const activeFilterCount = useMemo(
     () =>
       [
+        activeCategory !== 'All',
         priceFilter !== 'All',
         dateFilter !== 'Any',
         safetyFilter !== 'All',
@@ -155,7 +156,7 @@ export function useHomeUrlFilters() {
         tagFilter !== 'All',
         hasMoodFilter,
       ].filter(Boolean).length,
-    [priceFilter, dateFilter, safetyFilter, radiusFilter, tagFilter, hasMoodFilter],
+    [activeCategory, priceFilter, dateFilter, safetyFilter, radiusFilter, tagFilter, hasMoodFilter],
   );
 
   const clearUrlFilters = useCallback(() => {

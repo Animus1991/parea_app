@@ -35,9 +35,20 @@ export function PlatformEventBanner() {
       return;
     }
     becomeEventHost(event.id);
-    toast.success(
-      t("Έγινες ο διοργανωτής της ομάδας! 🎉", "You're now the group's organizer! 🎉"),
+    const hosted = useStore.getState().groups.find(
+      (g) => g.eventId === event.id && g.hostId === currentUser.id,
     );
+    toast.success(t("Έγινες ο διοργανωτής της ομάδας!", "You're now the group's organizer!"), {
+      action: hosted
+        ? {
+            label: t("Η βραδιά μας", "Our night"),
+            onClick: () => navigate(`/night/${hosted.id}`),
+          }
+        : {
+            label: t("Βρες Nakamas", "Find Nakamas"),
+            onClick: () => navigate("/buddy-seek"),
+          },
+    });
   };
 
   return (
@@ -54,7 +65,7 @@ export function PlatformEventBanner() {
         </div>
         <div>
           <h3
-            className={`text-base font-bold ${
+            className={`text-sm font-bold ${
               tok.isDark ? "text-amber-100" : "text-amber-900"
             }`}
           >
@@ -74,7 +85,7 @@ export function PlatformEventBanner() {
       </div>
       <button
         onClick={handleBecomeHost}
-        className="shrink-0 inline-flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold rounded-2xl px-4 py-2.5 text-sm transition-colors shadow-soft"
+        className="shrink-0 inline-flex min-h-8 items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold rounded-full px-4 text-xs transition-colors"
       >
         <Crown className="w-4 h-4" />
         {t("Γίνε Διοργανωτής Παρέας", "Become group organizer")}

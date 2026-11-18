@@ -6,6 +6,8 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { cn } from '../../lib/utils';
+import { PersonAvatar } from '../wall/PersonAvatar';
+import { profilePathFor } from '../../lib/profileLinks';
 
 interface ActiveBuddiesRailProps {
   /** Use home theme tokens (Classic) instead of page contrast */
@@ -49,7 +51,7 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
           />
           <h2
             className={cn(
-              'text-base font-bold leading-tight',
+              'text-sm md:text-base font-bold tracking-tight leading-tight',
               useClassicTokens ? h.heading : p.head,
             )}
           >
@@ -60,7 +62,7 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
           type="button"
           onClick={() => navigate('/connections')}
           className={cn(
-            'text-sm font-bold flex items-center gap-1 transition-colors shrink-0',
+            'text-xs font-bold flex items-center gap-1 transition-colors shrink-0',
             useClassicTokens ? tok.accentText : p.iconAccent,
             !useClassicTokens && p.hoverText,
           )}
@@ -73,15 +75,15 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
           <button
             key={user.id}
             type="button"
-            onClick={() => navigate('/connections')}
+            onClick={() => navigate(profilePathFor(user))}
+            aria-label={t(`Προφίλ: ${user.name}`, `Profile: ${user.name}`)}
             className="flex flex-col items-center gap-2 snap-start min-w-[70px] group focus:outline-none"
           >
             <div className="relative">
-              <img
-                src={user.photoUrl || `https://i.pravatar.cc/150?u=${user.id}`}
-                alt={user.name}
+              <PersonAvatar
+                user={user}
                 className={cn(
-                  'w-11 h-11 rounded-full object-cover border-2 transition-transform group-hover:scale-105 focus-visible:scale-105 shadow-soft',
+                  'w-11 h-11 border-2 transition-transform group-hover:scale-105 group-focus-visible:scale-105 shadow-soft',
                   useClassicTokens
                     ? 'border-cyan-100'
                     : p.isDark

@@ -63,7 +63,7 @@ export function EventDetailSafetySection({
           lng: position.coords.longitude,
         });
         setIsSharingLocation(true);
-        toast.success(t('Η τοποθεσία κοινοποιείται', 'Location sharing enabled'));
+        toast.success(t('Καρφιτσώθηκε η τρέχουσα θέση σου στην ομάδα.', 'Your current pin was shared with the group.'));
       },
       () => {
         toast.error(t('Αδυναμία ανάγνωσης τοποθεσίας', 'Could not read location'));
@@ -88,10 +88,10 @@ export function EventDetailSafetySection({
         >
           <ShieldCheck className={cn('w-8 h-8 shrink-0', tok.verifiedIcon)} />
           <div>
-            <h3 className={cn('font-bold text-sm', darkSurface ? 'text-white' : 'text-ink')}>
+            <h3 className={cn('card-heading font-bold', darkSurface ? 'text-white' : 'text-ink')}>
               {t('Επαληθευμένη Εκδήλωση', 'Verified Event')}
             </h3>
-            <p className={cn('mt-1 text-balance leading-relaxed', tok.muted)}>
+            <p className={cn('card-copy mt-1 text-balance leading-relaxed', tok.muted)}>
               {t(
                 'Αυτή η εκδήλωση πληροί τα πρότυπα ασφάλειας και αξιοπιστίας της κοινότητάς μας.',
                 'This event meets our community safety and reliability standards.',
@@ -103,20 +103,20 @@ export function EventDetailSafetySection({
         <div className="hidden md:block w-px bg-gray-200 dark:bg-gray-700 shrink-0" />
 
         <div className="flex-1 min-w-0">
-          <h3 className={cn('font-bold flex items-center gap-2 text-sm', darkSurface ? 'text-white' : 'text-ink')}>
+          <h3 className={cn('card-heading font-bold flex items-center gap-2', darkSurface ? 'text-white' : 'text-ink')}>
             <Navigation2 className="w-4 h-4 shrink-0" />
             {t('Ασφάλεια Τοποθεσίας', 'Location Safety')}
           </h3>
-          <p className={cn('mt-1 mb-3 text-balance leading-relaxed', tok.muted)}>
+          <p className={cn('card-copy mt-1 mb-3 text-balance leading-relaxed', tok.muted)}>
             {t(
-              'Κοινοποιήστε τη ζωντανή τοποθεσία σας στα μέλη της ομάδας σας (μετά την ένταξη σε ομάδα).',
-              'Share your live location with group members (after joining a group).',
+              'Προαιρετικό: μοιράσου μία φορά την τρέχουσα θέση σου με τα μέλη της ομάδας.',
+              'Optional: share your current pin once with group members.',
             )}
           </p>
           <button type="button" onClick={handleToggleLocation} className={isSharingLocation ? tok.primaryBtnStop : tok.primaryBtn}>
             {isSharingLocation
-              ? t('Διακοπή Κοινοποίησης', 'Stop Sharing')
-              : t('Κοινοποίηση Τοποθεσίας', 'Share Live Location')}
+              ? t('Αφαίρεση καρφίτσας', 'Clear pin')
+              : t('Κοινοποίηση θέσης', 'Share pin')}
           </button>
         </div>
       </div>

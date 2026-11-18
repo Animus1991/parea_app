@@ -1,4 +1,5 @@
-import { Calendar, Bookmark, QrCode, Share, Download } from 'lucide-react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { Calendar, Bookmark, QrCode, Share, Download, ChevronDown, Newspaper } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import type { EventCalendarAvailability } from '../../lib/eventCalendarExport';
@@ -61,6 +62,8 @@ export interface EventDetailActionBarProps {
   onSave: () => void;
   onQr: () => void;
   onShare: () => void;
+  /** «Στον τοίχο μου» — opens the wall composer with this event attached. */
+  onShareToWall?: () => void;
   isCopied: boolean;
   onAddToGoogleCalendar: () => void;
   onDownloadIcs: () => void;
@@ -74,6 +77,7 @@ export function EventDetailActionBar({
   onSave,
   onQr,
   onShare,
+  onShareToWall,
   isCopied,
   onAddToGoogleCalendar,
   onDownloadIcs,
@@ -86,7 +90,9 @@ export function EventDetailActionBar({
   const calendarOk = calendarAvailability?.ok !== false;
 
   const btn = 'flex items-center gap-2 text-2xs font-bold tracking-wider transition-colors px-3 py-1.5 rounded-full';
+  const item = 'w-full flex items-center gap-2 text-left text-2xs font-bold tracking-wider px-3 py-2 rounded-lg transition-colors hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed';
 
+  // Five equal buttons became three: save, share (link + QR), calendar (Google + .ics).
   return (
     <div className={cn('flex flex-col items-end gap-1', className)}>
     <div className="flex gap-2 flex-wrap justify-end">
@@ -94,38 +100,128 @@ export function EventDetailActionBar({
         <Bookmark className={cn('h-3.5 w-3.5', isSaved && 'fill-current')} />
         {isSaved ? t('Αποθηκεύτηκε', 'Saved') : t('Αποθήκευση Εκδήλωσης', 'Save Event')}
       </button>
-      <button type="button" onClick={onQr} className={cn(btn, a.action)}>
-        <QrCode className="h-3.5 w-3.5" />
-        {t('Κωδικός QR', 'QR Code')}
-      </button>
-      <button type="button" onClick={onShare} className={cn(btn, a.action)}>
-        <Share className="h-3.5 w-3.5" />
-        {isCopied ? t('Αντιγράφηκε!', 'Link Copied!') : t('Κοινοποίηση', 'Share Event')}
-      </button>
-      <button
-        type="button"
-        onClick={onAddToGoogleCalendar}
-        disabled={!calendarOk}
-        className={cn(btn, a.action, !calendarOk && 'opacity-50 cursor-not-allowed')}
+      <ActionMenu
+        triggerClassName={cn(btn, a.action)}
+        icon={<Share className="h-3.5 w-3.5" aria-hidden />}
+        label={isCopied ? t('Αντιγράφηκε!', 'Link Copied!') : t('Κοινοποίηση', 'Share Event')}
+        darkSurface={darkSurface}
       >
-        <Calendar className="h-3.5 w-3.5" />
-        {t('Google Calendar', 'Google Calendar')}
-      </button>
-      <button
-        type="button"
-        onClick={onDownloadIcs}
-        disabled={!calendarOk}
-        className={cn(btn, a.neutral, !calendarOk && 'opacity-50 cursor-not-allowed')}
+        {(close) => (
+          <>
+            <button type="button" role="menuitem" className={item} onClick={() => { close(); onShare(); }}>
+              <Share className="h-3.5 w-3.5" aria-hidden />
+              {t('Αντιγραφή συνδέσμου', 'Copy link')}
+            </button>
+            <button type="button" role="menuitem" className={item} onClick={() => { close(); onQr(); }}>
+              <QrCode className="h-3.5 w-3.5" aria-hidden />
+              {t('Κωδικός QR', 'QR Code')}
+            </button>
+            {onShareToWall && (
+              <button type="button" role="menuitem" className={item} onClick={() => { close(); onShareToWall(); }}>
+                <Newspaper className="h-3.5 w-3.5" aria-hidden />
+                {t('Στον τοίχο μου', 'On my wall')}
+              </button>
+            )}
+          </>
+        )}
+      </ActionMenu>
+      <ActionMenu
+        triggerClassName={cn(btn, a.action)}
+        icon={<Calendar className="h-3.5 w-3.5" aria-hidden />}
+        label={t('Ημερολόγιο', 'Calendar')}
+        darkSurface={darkSurface}
       >
-        <Download className="h-3.5 w-3.5" />
-        {t('Λήψη .ics', 'Download ICS')}
-      </button>
+        {(close) => (
+          <>
+            <button type="button" role="menuitem" disabled={!calendarOk} className={item} onClick={() => { close(); onAddToGoogleCalendar(); }}>
+              <Calendar className="h-3.5 w-3.5" aria-hidden />
+              {t('Google Calendar', 'Google Calendar')}
+            </button>
+            <button type="button" role="menuitem" disabled={!calendarOk} className={item} onClick={() => { close(); onDownloadIcs(); }}>
+              <Download className="h-3.5 w-3.5" aria-hidden />
+              {t('Λήψη .ics', 'Download ICS')}
+            </button>
+          </>
+        )}
+      </ActionMenu>
     </div>
     {!calendarOk && calendarAvailability && (
       <p className="text-2xs font-medium text-gray-500 text-right max-w-xs">
         {t(calendarAvailability.reasonEl, calendarAvailability.reasonEn)}
       </p>
     )}
+    </div>
+  );
+}
+
+/** Small disclosure menu (button + popover) used to group related secondary actions. */
+function ActionMenu({
+  triggerClassName,
+  icon,
+  label,
+  darkSurface,
+  children,
+}: {
+  triggerClassName: string;
+  icon: ReactNode;
+  label: string;
+  darkSurface?: boolean;
+  children: (close: () => void) => ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuId = useId();
+  const close = () => setOpen(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    // Move focus to the first item so keyboard users land in the menu.
+    rootRef.current?.querySelector<HTMLElement>('[role="menuitem"]:not([disabled])')?.focus();
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className="relative">
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-controls={open ? menuId : undefined}
+        onClick={() => setOpen((v) => !v)}
+        className={triggerClassName}
+      >
+        {icon}
+        {label}
+        <ChevronDown className={cn('h-3 w-3 transition-transform', open && 'rotate-180')} aria-hidden />
+      </button>
+      {open && (
+        <div
+          id={menuId}
+          role="menu"
+          className={cn(
+            'absolute right-0 top-full mt-1.5 z-sheet min-w-[11rem] rounded-xl border p-1 shadow-soft-md',
+            darkSurface ? 'bg-gray-900 border-white/10 text-gray-100' : 'bg-white border-gray-200 text-gray-800',
+          )}
+        >
+          {children(close)}
+        </div>
+      )}
     </div>
   );
 }

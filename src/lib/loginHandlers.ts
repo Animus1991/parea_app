@@ -1,4 +1,4 @@
-import { isFirebaseAuthAvailable, signInWithGoogle } from '../services/firebaseAuth';
+import { isFirebaseConfigured as isFirebaseAuthAvailable } from './firebaseConfig';
 import {
   isGoogleIdentityConfigured,
   signInWithGoogleIdentity,
@@ -34,7 +34,8 @@ function userFromGoogleProfile(profile: GoogleIdentityProfile): User {
     trustTier: '1_explorer',
     reliabilityScore: 70,
     badges: ['Google member'],
-    photoUrl: profile.picture || `https://i.pravatar.cc/200?u=${profile.sub}`,
+    // No stock faces: without a real photo the UI shows initials.
+    photoUrl: profile.picture || undefined,
     emailVerified: Boolean(profile.email_verified ?? profile.email),
     phoneVerified: false,
     paymentVerified: false,
@@ -58,6 +59,7 @@ export function isProductionGoogleOAuthAvailable(): boolean {
 export async function tryGoogleSignIn(): Promise<GoogleSignInResult> {
   if (isFirebaseAuthAvailable()) {
     try {
+      const { signInWithGoogle } = await import('../services/firebaseAuth');
       await signInWithGoogle();
       return { ok: true, via: 'firebase' };
     } catch {

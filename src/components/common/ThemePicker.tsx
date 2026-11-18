@@ -4,6 +4,7 @@ import { Palette, Check } from 'lucide-react';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { THEME_IDS, THEME_LABELS, THEME_SWATCH, type ThemeId } from '../../lib/themes';
+import { applyThemeSelection } from '../../lib/applyTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import { cn } from '../../lib/utils';
@@ -21,6 +22,10 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
   const setTheme = useStore((s) => s.setTheme);
   const tok = useThemeStyles();
   const [open, setOpen] = useState(false);
+
+  const applyTheme = (id: ThemeId) => {
+    applyThemeSelection(id, setTheme, language === 'el' ? 'el' : 'en', theme);
+  };
   const anchorRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const closeMenu = useCallback(() => setOpen(false), []);
@@ -92,7 +97,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
               >
                 <p
                   className={cn(
-                    'px-3 py-2 text-2xs font-bold uppercase tracking-wider',
+                    'px-3 py-2 text-2xs font-bold tracking-wider',
                     tok.muted,
                   )}
                 >
@@ -105,11 +110,11 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
                     role="option"
                     aria-selected={theme === id}
                     onClick={() => {
-                      setTheme(id);
+                      applyTheme(id);
                       setOpen(false);
                     }}
                     className={cn(
-                      'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium min-h-11 transition-colors',
+                      'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium min-h-8 transition-colors',
                       theme === id
                         ? tok.navActive
                         : cn(
@@ -142,7 +147,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
           type="button"
           onClick={() => setOpen((v) => !v)}
           className={cn(
-            'flex items-center gap-1.5 text-xs font-bold transition-colors px-2.5 py-2 rounded-lg min-h-11',
+            'flex items-center gap-1.5 text-xs font-bold transition-colors px-2.5 py-2 rounded-lg min-h-8',
             tok.chipButton,
             open && (tok.isDark ? 'ring-2 ring-white/30' : 'ring-2 ring-accent/40'),
           )}
@@ -152,7 +157,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
           aria-haspopup="listbox"
         >
           <Palette className="w-4 h-4 shrink-0" />
-          <span className="hidden sm:inline max-w-[88px] truncate">
+          <span className="hidden 2xl:inline max-w-[88px] truncate">
             {language === 'el'
               ? THEME_LABELS[theme as ThemeId]?.el ?? theme
               : THEME_LABELS[theme as ThemeId]?.en ?? theme}
@@ -169,11 +174,17 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
         <button
           key={id}
           type="button"
-          onClick={() => setTheme(id)}
+          onClick={() => applyTheme(id)}
+          aria-pressed={theme === id}
           className={cn(
-            'flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all min-h-10',
+            'flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all min-h-8',
             theme === id
-              ? 'border-accent ring-2 ring-accent/30 bg-cyan-50/50'
+              ? cn(
+                  'ring-2',
+                  tok.isDark
+                    ? 'border-cyan-400/60 ring-cyan-400/25 bg-white/5'
+                    : 'border-accent ring-accent/30 bg-cyan-50/50',
+                )
               : tok.isDark
                 ? 'border-gray-700 hover:border-gray-600'
                 : 'border-gray-100 hover:border-gray-200',

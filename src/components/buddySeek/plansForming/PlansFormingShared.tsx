@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Users,
   CalendarCheck,
-  Bookmark,
   Inbox,
   ChevronRight,
   Plus,
@@ -13,6 +12,7 @@ import {
 import { useLanguage } from '../../../lib/i18n';
 import { cn } from '../../../lib/utils';
 import { PLANS_FORMING_TYPO } from '../../../lib/typographyTokens';
+import { NakamasMini } from '../../illustrations/NakamasMini';
 import type { PlansFormingInsights } from '../../../hooks/usePlansFormingFeed';
 import type { PlansFormingEnrichedItem } from '../../../lib/plansFormingUtils';
 import type { Event } from '../../../types';
@@ -21,10 +21,13 @@ export function PlansFormingStatsBar({
   insights,
   compact,
   isDark,
+  plain,
 }: {
   insights: PlansFormingInsights;
   compact?: boolean;
   isDark?: boolean;
+  /** One quiet line of text («4 σχέδια · 1 ομάδα · 3 θέσεις») instead of chips. */
+  plain?: boolean;
 }) {
   const { t } = useLanguage();
   const chips = [
@@ -32,29 +35,48 @@ export function PlansFormingStatsBar({
       icon: Users,
       value: insights.compatiblePlans,
       label: t('Σχέδια', 'Plans'),
+      one: t('σχέδιο', 'plan'),
       show: true,
     },
     {
       icon: CalendarCheck,
       value: insights.recruitingGroups,
       label: t('Ομάδες', 'Groups'),
+      one: t('ομάδα', 'group'),
       show: insights.recruitingGroups > 0,
     },
     {
       icon: CircleDot,
       value: insights.openSpots,
       label: t('Θέσεις', 'Spots'),
+      one: t('θέση', 'spot'),
       show: insights.openSpots > 0,
     },
     {
       icon: Inbox,
       value: insights.pendingJoinsToReview,
       label: t('Αιτήματα', 'Requests'),
+      one: t('αίτημα', 'request'),
       show: insights.pendingJoinsToReview > 0,
     },
   ].filter((c) => c.show);
 
   if (chips.length === 0) return null;
+
+  if (plain) {
+    return (
+      <p className={cn(PLANS_FORMING_TYPO.statChip, 'flex flex-wrap items-center gap-x-1.5', isDark ? 'text-gray-400' : 'text-gray-500')}>
+        {chips.map(({ value, label, one }, i) => (
+          <span key={label} className="inline-flex items-center gap-1.5">
+            {i > 0 && <span aria-hidden>·</span>}
+            <span>
+              <span className={cn('font-semibold', isDark ? 'text-gray-200' : 'text-gray-800')}>{value}</span> {value === 1 ? one : label.toLocaleLowerCase()}
+            </span>
+          </span>
+        ))}
+      </p>
+    );
+  }
 
   return (
     <div className={cn('flex flex-wrap gap-2', compact && 'gap-1.5')}>
@@ -62,14 +84,14 @@ export function PlansFormingStatsBar({
         <div
           key={label}
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 border',
+            'inline-flex items-center gap-1.5 rounded-lg px-2 py-1',
             PLANS_FORMING_TYPO.statChip,
-            isDark ? 'bg-white/5 border-white/10 text-gray-200' : 'bg-white border-gray-200 text-gray-700',
-            compact && 'px-2 py-1',
+            isDark ? 'bg-white/5 text-gray-200' : 'bg-white/70 text-gray-700',
+            compact && 'px-1.5 py-0.5',
           )}
         >
-          <Icon className="w-3 h-3 text-cyan-500 shrink-0" aria-hidden />
-          <span className="text-cyan-600 dark:text-cyan-400">{value}</span>
+          <Icon className="w-3 h-3 text-cyan-600/70 dark:text-cyan-400/80 shrink-0" aria-hidden />
+          <span className="font-semibold text-cyan-700 dark:text-cyan-300">{value}</span>
           <span className={cn('font-medium', isDark ? 'text-gray-400' : 'text-gray-500')}>{label}</span>
         </div>
       ))}
@@ -100,7 +122,7 @@ export function PlansFormingYourPlanBanner({
         isDark ? 'bg-cyan-950/40 border-cyan-700/40' : 'bg-cyan-50 border-cyan-200',
       )}
     >
-      <p className={cn(PLANS_FORMING_TYPO.sectionLabel, 'uppercase', isDark ? 'text-cyan-300' : 'text-cyan-700')}>
+      <p className={cn(PLANS_FORMING_TYPO.sectionLabel, isDark ? 'text-cyan-300' : 'text-cyan-700')}>
         {tu('Το σχέδιό σας', 'Your plan')}
       </p>
       <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'truncate', isDark ? 'text-white' : 'text-gray-900')}>
@@ -114,7 +136,7 @@ export function PlansFormingYourPlanBanner({
           type="button"
           onClick={() => (onManage ? onManage() : navigate(`/events/${plan.event.id}`))}
           className={cn(
-            'flex-1 min-h-10 rounded-lg',
+            'flex-1 min-h-8 py-1.5 rounded-full',
             PLANS_FORMING_TYPO.statChip,
             isDark ? 'bg-cyan-600 text-white' : 'bg-cyan-600 text-white',
           )}
@@ -126,7 +148,7 @@ export function PlansFormingYourPlanBanner({
             type="button"
             onClick={onEdit}
             className={cn(
-              'px-3 min-h-10 rounded-lg border',
+              'px-3 min-h-8 py-1.5 rounded-full border',
               PLANS_FORMING_TYPO.statChip,
               isDark ? 'border-white/20 text-gray-200' : 'border-cyan-300 text-cyan-800',
             )}
@@ -181,14 +203,7 @@ export function PlansFormingEmptyState({
         isDark ? 'border-white/15 bg-white/[0.02]' : 'border-gray-300 bg-gray-50/50',
       )}
     >
-      <div
-        className={cn(
-          'w-12 h-12 mx-auto rounded-2xl flex items-center justify-center',
-          isDark ? 'bg-cyan-900/30' : 'bg-cyan-100',
-        )}
-      >
-        <Users className={cn('w-6 h-6', isDark ? 'text-cyan-400' : 'text-cyan-600')} />
-      </div>
+      <NakamasMini id="crew" size={48} className="mx-auto" />
       <div>
         <p className={cn(PLANS_FORMING_TYPO.cardTitle, isDark ? 'text-white' : 'text-gray-900')}>
           {t('Θέλετε να πάτε, αλλά όχι μόνοι/ες;', 'Want to go, but not alone?')}
@@ -223,7 +238,7 @@ export function PlansFormingEmptyState({
         <button
           type="button"
           onClick={onBrowse ?? (() => navigate('/'))}
-          className={cn('w-full min-h-10 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center gap-1', PLANS_FORMING_TYPO.cta)}
+          className={cn('w-full min-h-8 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center gap-1', PLANS_FORMING_TYPO.cta)}
         >
           {t('Ανακάλυψη εκδηλώσεων', 'Discover events')}
           <ChevronRight className="w-3.5 h-3.5" />
@@ -232,7 +247,7 @@ export function PlansFormingEmptyState({
           type="button"
           onClick={onCreate ?? (() => navigate('/buddy-seek'))}
           className={cn(
-            'w-full min-h-10 rounded-xl border flex items-center justify-center gap-1',
+            'w-full min-h-8 rounded-xl border flex items-center justify-center gap-1',
             PLANS_FORMING_TYPO.cta,
             isDark ? 'border-white/15 text-gray-200' : 'border-gray-300 text-gray-800',
           )}
@@ -260,7 +275,7 @@ export function PlansFormingValueHero({ isDark, insights }: { isDark?: boolean; 
       : t('Βρείτε Nakamas για εκδήλωση', 'Find Nakamas for events');
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'leading-snug', isDark ? 'text-white' : 'text-gray-900')}>{headline}</p>
       <p className={cn(PLANS_FORMING_TYPO.body, 'leading-relaxed', isDark ? 'text-gray-400' : 'text-gray-600')}>
         {t(

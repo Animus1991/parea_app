@@ -14,6 +14,7 @@ export function createLogger(scope: string) {
 
   function log(level: LogLevel, message: string, data?: unknown) {
     if (LEVEL_ORDER[level] < LEVEL_ORDER[minLevel]) return;
+    // eslint-disable-next-line no-console -- this module is the one place that writes info/debug logs
     const fn = level === 'error' ? console.error : level === 'warn' ? console.warn : console.log;
     if (data !== undefined) fn(prefix, message, data);
     else fn(prefix, message);

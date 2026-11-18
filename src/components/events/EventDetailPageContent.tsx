@@ -16,6 +16,7 @@ import { getEventDetailContentTokens } from '../../lib/designTokens';
 import { buildEventQuickInfo, inferLocationType } from '../../lib/eventQuickInfo';
 import { isEventCompleted, isUserEventParticipant } from '../../lib/eventParticipation';
 import { cn } from '../../lib/utils';
+import { isDarkTheme } from '../../lib/themes';
 import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventMap';
 import { Button } from '../common/Button';
@@ -87,7 +88,7 @@ function EventDetailQuickInfoBlock({
 
   return (
     <div className={cn(shell, className)} role="region" aria-label={t('Γρήγορες πληροφορίες', 'Quick info')}>
-      <p className={cn('text-xs font-bold tracking-wide uppercase mb-3', content.metaLabel)}>
+      <p className={cn('text-xs font-bold tracking-wide mb-3', content.metaLabel)}>
         {t('Γρήγορες πληροφορίες', 'Quick info')}
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -96,13 +97,13 @@ function EventDetailQuickInfoBlock({
             <Icon className={cn('w-4 h-4 shrink-0 mt-0.5', content.metaLabel)} />
             <div className="min-w-0">
               <p className={cn('text-xs font-bold tracking-wide', content.metaLabel)}>{label}</p>
-              <p className={cn('text-sm font-bold', content.metaValue)}>{value}</p>
+              <p className={cn('card-heading font-bold', content.metaValue)}>{value}</p>
             </div>
           </div>
         ))}
       </div>
       {isParticipant && meetingPoint && (
-        <p className={cn('text-sm font-medium mt-3 pt-3 border-t border-cyan-200/50', content.metaLabel)}>
+        <p className={cn('card-copy-sm font-medium mt-3 pt-3 border-t border-cyan-200/50', content.metaLabel)}>
           {t('Σημείο συνάντησης', 'Meeting point')}: {meetingPoint}
         </p>
       )}
@@ -173,7 +174,7 @@ function EventDetailHostOrganizationRating({
       <div className={cn(shell, className)}>
         <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
           <CheckCircle2 className="w-5 h-5 shrink-0" />
-          <p className={cn('text-sm font-bold', content.metaValue)}>
+          <p className={cn('card-heading font-bold', content.metaValue)}>
             {t('Η αξιολόγηση οργάνωσης καταχωρήθηκε', 'Organization feedback submitted')}
           </p>
         </div>
@@ -188,10 +189,10 @@ function EventDetailHostOrganizationRating({
 
   return (
     <div className={cn(shell, className)}>
-      <p className={cn('text-xs font-bold tracking-wide uppercase mb-1', content.metaLabel)}>
+      <p className={cn('text-xs font-bold tracking-wide mb-1', content.metaLabel)}>
         {t('Αξιολογήστε την οργάνωση του διοργανωτή', "Rate the host's organization")}
       </p>
-      <p className={cn('text-sm font-medium mb-4', content.metaValue)}>
+      <p className={cn('card-copy font-medium mb-4', content.metaValue)}>
         {t('Πόσο καλά συντονίστηκε αυτή η εκδήλωση;', 'How well was this event coordinated?')}
       </p>
       <div
@@ -204,7 +205,7 @@ function EventDetailHostOrganizationRating({
           <button
             key={n}
             type="button"
-            className="p-1 min-h-11 min-w-11 flex items-center justify-center rounded-2xl transition-transform hover:scale-110"
+            className="p-1 min-h-8 min-w-8 flex items-center justify-center rounded-2xl transition-transform hover:scale-110"
             onMouseEnter={() => setHover(n)}
             onClick={() => setRating(n)}
             aria-label={`${n}`}
@@ -220,7 +221,7 @@ function EventDetailHostOrganizationRating({
       </div>
       <Button
         type="button"
-        className="rounded-2xl shadow-soft min-h-11"
+        className="rounded-2xl shadow-soft min-h-8"
         onClick={handleSubmit}
         disabled={rating < 1}
       >
@@ -237,13 +238,18 @@ export default function EventDetailPageContent({
   darkSurface = false,
   className,
 }: EventDetailPageContentProps) {
+  // Themes without a dedicated event page (e.g. activebuddies-dark) render the
+  // classic variant; their global text remaps are light, so these info panels
+  // must use the dark surface too or the text becomes unreadable.
+  const theme = useStore((s) => s.theme);
+  const panelDark = darkSurface || isDarkTheme(theme);
   return (
     <div className={cn('space-y-4', className)}>
-      <EventDetailQuickInfoBlock event={event} accent={accent} darkSurface={darkSurface} />
+      <EventDetailQuickInfoBlock event={event} accent={accent} darkSurface={panelDark} />
       <EventDetailHostOrganizationRating
         event={event}
         accent={accent}
-        darkSurface={darkSurface}
+        darkSurface={panelDark}
       />
     </div>
   );

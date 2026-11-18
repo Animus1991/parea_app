@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Camera,
   MapPin,
@@ -19,11 +19,14 @@ import { Button } from "../common/Button";
 import { useLanguage } from "../../lib/i18n";
 import { MapPinPicker } from "../common/MapPinPicker";
 import { cn } from "../../lib/utils";
+import { pressable } from "../../lib/a11y";
 import { usePageContrast } from "../../hooks/usePageContrast";
 import { useProfileContrast } from "../../hooks/usePageContrast";
 import { getHomeCategoryTranslations } from "../../lib/homeCategoryLabels";
 import { generateEventBlurb } from "../../services/gemini";
 import { Bot } from "lucide-react";
+import { useFormDraft, type FormDraftFields } from "../../lib/formDraft";
+import { APP_TYPO } from "../../lib/typographyTokens";
 
 export default function CreateEventFlowPageContent() {
   const [step, setStep] = useState(1);
@@ -84,6 +87,32 @@ export default function CreateEventFlowPageContent() {
     return editEvent?.isPaid && editEvent.price > 0 ? editEvent.price : 10;
   });
 
+  const applyAiDraft = useCallback((fields: FormDraftFields) => {
+    if (typeof fields.title === "string") setTitle(fields.title);
+    if (typeof fields.category === "string") setCategory(fields.category);
+    if (typeof fields.description === "string") setDescription(fields.description);
+    if (typeof fields.date === "string") setDate(fields.date);
+    if (typeof fields.time === "string") setTime(fields.time);
+    if (typeof fields.location === "string") setLocation(fields.location);
+    if (typeof fields.max === "number" && fields.max >= 2 && fields.max <= 12) setMaxAttendees(fields.max);
+    if (typeof fields.max === "string") {
+      const n = Number(fields.max);
+      if (Number.isFinite(n) && n >= 2 && n <= 12) setMaxAttendees(n);
+    }
+    if (typeof fields.price === "number" && fields.price > 0) {
+      setIsPaid(true);
+      setPrice(fields.price);
+    }
+    if (typeof fields.price === "string") {
+      const n = Number(fields.price);
+      if (n > 0) {
+        setIsPaid(true);
+        setPrice(n);
+      }
+    }
+  }, []);
+  const aiDraft = useFormDraft("event", applyAiDraft, true);
+
   /** Φ24 — AI description: Gemini via the server proxy, deterministic bilingual template otherwise. */
   const writeDescriptionWithAi = async () => {
     if (!title.trim()) {
@@ -131,11 +160,18 @@ export default function CreateEventFlowPageContent() {
         minTrustTierAccess: visibility === "private" ? "2_confirmed" : editEvent.minTrustTierAccess,
         imageUrl: imagePreview || editEvent.imageUrl,
       });
-      toast.success(t("Η εκδήλωση ενημερώθηκε", "Event updated"));
+      toast.success(t("Η εκδήλωση ενημερώθηκε", "Event updated"), {
+        action: {
+          label: t("Προβολή", "View"),
+          onClick: () => navigate(`/events/${editEvent.id}`),
+        },
+      });
       navigate("/manage");
       return;
     }
+    const newEventId = `e${Date.now()}`;
     const newEvent = {
+      id: newEventId,
       title: title || "New Experience",
       category: category || "Social",
       description: description || "A new gathering created from the app.",
@@ -158,12 +194,19 @@ export default function CreateEventFlowPageContent() {
     };
 
     createEvent(newEvent);
+    const hosted = useStore.getState().groups.find(
+      (g) => g.eventId === newEventId && g.hostId === currentUser.id,
+    );
     toast.success(
       t("Η εμπειρία δημοσιεύτηκε!", "Experience published!"),
       {
         description: isPaid
           ? t(`Τιμή εισόδου €${newEvent.price}`, `Entry price €${newEvent.price}`)
           : t("Δωρεάν εκδήλωση", "Free event"),
+        action: {
+          label: hosted ? t("Η βραδιά μας", "Our night") : t("Προβολή", "View"),
+          onClick: () => navigate(hosted ? `/night/${hosted.id}` : `/events/${newEventId}`),
+        },
       },
     );
     navigate("/manage");
@@ -182,16 +225,23 @@ export default function CreateEventFlowPageContent() {
       className="max-w-full mx-auto pb-24 md:pb-5"
     >
       <div className="mb-5">
-        {prefilledByAi && (
+        {(prefilledByAi || aiDraft.filled.length > 0) && (
           <p role="status" className="mb-4 flex items-center gap-2 rounded-xl border border-accent/30 bg-accent-soft px-3 py-2 text-sm font-medium text-ink">
             <Bot className="h-4 w-4 shrink-0 text-accent" aria-hidden />
-            {t("Το Nakamas AI συμπλήρωσε τη φόρμα. Έλεγξε τα στοιχεία και συνέχισε.", "Nakamas AI pre-filled this form. Review the details and continue.")}
+            <span className="flex-1">
+              {t("Το Nakamas AI συμπλήρωσε τη φόρμα. Έλεγξε τα στοιχεία και συνέχισε.", "Nakamas AI pre-filled this form. Review the details and continue.")}
+            </span>
+            {aiDraft.filled.length > 0 && (
+              <button type="button" onClick={aiDraft.dismiss} className="text-xs font-bold underline shrink-0">
+                {t("Απόκρυψη", "Dismiss")}
+              </button>
+            )}
           </p>
         )}
-        <h1 className={cn("text-sm md:text-base font-bold", p.head)}>
+        <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
           {editEvent ? t("Επεξεργασία Εμπειρίας", "Edit Experience") : t("Δημιουργία Εμπειρίας", "Create Experience")}
         </h1>
-        <p className={cn("text-sm mt-1", p.muted)}>
+        <p className={cn(APP_TYPO.pageSub, "mt-1", p.muted)}>
           {t(
             "Σχεδιάστε την τέλεια συνάντησή σας.",
             "Design your perfect real-world gathering.",
@@ -220,7 +270,7 @@ export default function CreateEventFlowPageContent() {
               exit="exit"
               className="space-y-4"
             >
-              <h2 className={cn("text-lg font-bold", p.head)}>
+              <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
                 {t("Τα Βασικά", "The Basics")}
               </h2>
 
@@ -235,7 +285,8 @@ export default function CreateEventFlowPageContent() {
                       p.uploadArea,
                       p.cardHover,
                     )}
-                    onClick={() => fileInputRef.current?.click()}
+                    {...pressable<HTMLDivElement>(() => fileInputRef.current?.click())}
+                    aria-label={t("Ανέβασμα εικόνας εκδήλωσης", "Upload event image")}
                   >
                     {imagePreview ? (
                        <img src={imagePreview} className="absolute inset-0 w-full h-full object-cover" alt={t('Προεπισκόπηση εκδήλωσης', 'Event preview')} />
@@ -272,10 +323,11 @@ export default function CreateEventFlowPageContent() {
                 </div>
 
                 <div>
-                  <label className={labelClass}>
+                  <label htmlFor="create-category" className={labelClass}>
                     {t("Κατηγορία", "Category")}
                   </label>
                   <select
+                    id="create-category"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     className={cn(inputClass, "bg-transparent")}
@@ -343,7 +395,7 @@ export default function CreateEventFlowPageContent() {
               exit="exit"
               className="space-y-4"
             >
-              <h2 className={cn("text-lg font-bold", p.head)}>
+              <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
                 {t("Πότε & Πού", "When & Where")}
               </h2>
 
@@ -375,10 +427,11 @@ export default function CreateEventFlowPageContent() {
                 </div>
 
                 <div>
-                  <label className={cn(labelClass, "flex items-center gap-1.5")}>
+                  <label htmlFor="create-duration" className={cn(labelClass, "flex items-center gap-1.5")}>
                     <Clock className="w-3.5 h-3.5" /> {t("Διάρκεια", "Duration")}
                   </label>
                   <select
+                    id="create-duration"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
                     className={cn(inputClass, "bg-transparent")}
@@ -461,7 +514,7 @@ export default function CreateEventFlowPageContent() {
               exit="exit"
               className="space-y-4"
             >
-              <h2 className={cn("text-lg font-bold", p.head)}>
+              <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
                 {t("Δυναμική Ομάδας", "Group Dynamics")}
               </h2>
 
@@ -545,7 +598,7 @@ export default function CreateEventFlowPageContent() {
                       type="button"
                       onClick={() => setIsPaid(false)}
                       className={cn(
-                        "min-h-10 px-4 rounded-2xl text-sm font-bold border transition-colors",
+                        "min-h-8 px-4 rounded-2xl text-xs font-bold border transition-colors",
                         !isPaid ? visSelected : visIdle,
                       )}
                     >
@@ -555,7 +608,7 @@ export default function CreateEventFlowPageContent() {
                       type="button"
                       onClick={() => setIsPaid(true)}
                       className={cn(
-                        "min-h-10 px-4 rounded-2xl text-sm font-bold border transition-colors",
+                        "min-h-8 px-4 rounded-2xl text-xs font-bold border transition-colors",
                         isPaid ? visSelected : visIdle,
                       )}
                     >
@@ -611,10 +664,10 @@ export default function CreateEventFlowPageContent() {
                 <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3", pc.accentBg)}>
                   <CheckCircle className={cn("w-6 h-6", pc.accent)} />
                 </div>
-                <h2 className={cn("text-lg font-bold", p.head)}>
+                <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
                   {editEvent ? t("Έτοιμο για αποθήκευση!", "Ready to save!") : t("Έτοιμο για Δημοσίευση!", "Ready to Publish!")}
                 </h2>
-                <p className={cn("text-sm mt-1", p.muted)}>
+                <p className={cn("text-sm font-medium mt-1", p.muted)}>
                   {t(
                     "Αναθεωρήστε τις λεπτομέρειες πριν τη δημοσίευση.",
                     "Review your event details before sharing.",
@@ -622,7 +675,7 @@ export default function CreateEventFlowPageContent() {
                 </p>
               </div>
 
-              <div className={cn("rounded-2xl p-4 space-y-3 text-sm shadow-soft", p.infoBg)}>
+              <div className={cn("nakamas-card rounded-2xl p-4 space-y-3 shadow-soft", p.infoBg)}>
                 <div className={cn("flex justify-between pb-3 border-b", p.borderB)}>
                   <span className={cn("font-medium", p.muted)}>
                     {t("Τίτλος", "Title")}
@@ -669,7 +722,7 @@ export default function CreateEventFlowPageContent() {
                 </div>
               </div>
 
-              <div className={cn("rounded-2xl p-3 flex gap-3 text-sm shadow-soft border", p.isDark ? "bg-amber-950/30 border-amber-800/40 text-amber-200" : "bg-amber-50 border-amber-200 text-amber-800")}>
+              <div className={cn("nakamas-card rounded-2xl p-3 flex gap-3 shadow-soft border", p.isDark ? "bg-amber-950/30 border-amber-800/40 text-amber-200" : "bg-amber-50 border-amber-200 text-amber-800")}>
                 <Target className="w-5 h-5 shrink-0 mt-0.5" />
                 <p className="text-xs">
                   {t(

@@ -97,7 +97,7 @@ export function StoryViewer({
   try {
     const d = parseISO(activeEvent.date);
     day = format(d, "d");
-    mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale }).toUpperCase();
+    mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale });
     weekday = format(d, "EEEE", { locale: language === 'en' ? enLocale : elLocale });
   } catch {
     /* keep empty on invalid date */
@@ -115,11 +115,22 @@ export function StoryViewer({
       return;
     }
     becomeEventHost(activeEvent.id);
-    toast.success(
-      t("Έγινες ο διοργανωτής της ομάδας! 🎉", "You're now the group's organizer! 🎉"),
+    const hosted = useStore.getState().groups.find(
+      (g) => g.eventId === activeEvent.id && g.hostId === currentUser.id,
     );
+    toast.success(t("Έγινες ο διοργανωτής της ομάδας!", "You're now the group's organizer!"), {
+      action: hosted
+        ? {
+            label: t("Η βραδιά μας", "Our night"),
+            onClick: () => navigate(`/night/${hosted.id}`),
+          }
+        : {
+            label: t("Βρες Nakamas", "Find Nakamas"),
+            onClick: () => navigate("/buddy-seek"),
+          },
+    });
     onClose();
-    navigate(`/events/${activeEvent.id}`);
+    navigate(hosted ? `/night/${hosted.id}` : `/events/${activeEvent.id}`);
   };
 
   const hasMultiple = events.length > 1;
@@ -217,7 +228,7 @@ export function StoryViewer({
               {weekday} {day} {mon}
             </span>
           </div>
-          <h2 className="text-white text-lg font-extrabold leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+          <h2 className="text-white text-sm md:text-base font-bold leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
             {activeEvent.title}
           </h2>
           {activeEvent.locationArea && (
@@ -229,7 +240,7 @@ export function StoryViewer({
           <div className="flex gap-2 pt-1.5 flex-wrap">
             <button
               onClick={openEvent}
-              className="flex-1 min-w-[120px] bg-white text-gray-900 font-bold rounded-2xl py-2.5 text-sm flex items-center justify-center gap-1.5 hover:bg-gray-100 transition-colors"
+              className="flex-1 min-w-[120px] bg-white text-gray-900 font-bold rounded-2xl py-2.5 text-xs flex items-center justify-center gap-1.5 hover:bg-gray-100 transition-colors"
             >
               {t("Δες εκδήλωση", "View event")}
               <ChevronRight className="w-4 h-4" />
@@ -241,7 +252,7 @@ export function StoryViewer({
                   onClose();
                   onOpenDaySchedule();
                 }}
-                className="flex-1 min-w-[120px] bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-2xl py-2.5 text-sm transition-colors"
+                className="flex-1 min-w-[120px] bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-2xl py-2.5 text-xs transition-colors"
               >
                 {t("Πρόγραμμα Ημέρας", "Day Schedule")}
               </button>
@@ -249,7 +260,7 @@ export function StoryViewer({
             {seeksHost && (
               <button
                 onClick={handleBecomeHost}
-                className="flex-1 min-w-[120px] bg-amber-400 text-amber-950 font-bold rounded-2xl py-2.5 text-sm flex items-center justify-center gap-1.5 hover:bg-amber-300 transition-colors"
+                className="flex-1 min-w-[120px] bg-amber-400 text-amber-950 font-bold rounded-2xl py-2.5 text-xs flex items-center justify-center gap-1.5 hover:bg-amber-300 transition-colors"
               >
                 <Crown className="w-4 h-4" />
                 {t("Γίνε Διοργανωτής", "Organize")}

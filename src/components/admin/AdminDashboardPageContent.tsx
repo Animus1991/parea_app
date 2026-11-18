@@ -4,6 +4,9 @@ import { AlertCircle, ShieldAlert, Flag, Search, TrendingUp, Activity, Users as 
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { format, parseISO, startOfWeek } from 'date-fns';
 import { TabBar } from '../common/TabBar';
+import { AdminWallModeration } from './AdminWallModeration';
+import { AdminOutingsPanel } from './AdminOutingsPanel';
+import { outingMetrics } from '../../lib/outings';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import type { AdminSafeguards } from '../../store';
 import { Button } from '../common/Button';
@@ -17,11 +20,14 @@ import { AdminAutomationPanel } from './AdminAutomationPanel';
 import { AdminBrandingPanel } from './AdminBrandingPanel';
 import { AdminSSOPanel } from './AdminSSOPanel';
 import { toast } from 'sonner';
+import { useAiAuditStore, type AiAuditStatus } from '../../store/aiAuditStore';
+import { intlLocale } from '../../lib/dateLocale';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 type AdminTab = 'overview' | 'moderation' | 'users' | 'system' | 'automation' | 'branding' | 'sso';
 
 export default function AdminDashboardPageContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const a = usePageContrast();
   const users = useStore((s) => s.users);
   const currentUserId = useStore((s) => s.currentUser?.id);
@@ -33,12 +39,15 @@ export default function AdminDashboardPageContent() {
   const [adminTab, setAdminTab] = useState<AdminTab>('overview');
   const groups = useStore((s) => s.groups);
   const adminActions = useStore((s) => s.adminActions);
+  const aiAudit = useAiAuditStore((s) => s.entries);
   const suspendedUserIds = useStore((s) => s.suspendedUserIds);
   const toggleUserSuspended = useStore((s) => s.toggleUserSuspended);
   const safeguards = useStore((s) => s.adminSafeguards);
   const setAdminSafeguard = useStore((s) => s.setAdminSafeguard);
   const [userQuery, setUserQuery] = useState('');
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
+  const strikes = useStore((s) => s.strikes);
+  const verifiedActive = useMemo(() => outingMetrics(groups, users, strikes).verifiedActive, [groups, users, strikes]);
   /** Φ25 — no-show rate from attendance answers in reviews (was a fixed 4.2%). */
   const noShowPct = useMemo(() => {
     const answers = Object.values(feedbackSubmitted).filter((f) => f.attendance);
@@ -154,7 +163,7 @@ export default function AdminDashboardPageContent() {
             <ShieldAlert className={cn('w-6 h-6', a.isDark ? 'text-red-400' : 'text-red-600')} aria-hidden />
           </div>
           <div>
-            <h1 className={cn('text-sm md:text-base font-bold', a.isDark ? 'text-red-400' : 'text-red-700')}>
+            <h1 className={cn(APP_TYPO.pageTitle, a.isDark ? 'text-red-400' : 'text-red-700')}>
               {t('Πίνακας Διαχείρισης', 'Admin Dashboard')}
             </h1>
             <p className={cn('mt-0.5 text-sm font-medium', a.sub)}>
@@ -196,29 +205,32 @@ export default function AdminDashboardPageContent() {
       <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className={cn('p-4 border-t-4 border-t-blue-500', a.cardSurface)}>
-          <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Ενεργοί', 'Active')}</h3>
-          <p className={cn('text-lg font-black mt-1', a.head)}>{users.length}</p>
-          <p className="text-xs text-green-500 font-bold flex items-center gap-0.5">
+          {/* Φ27 — «active» counts verified people in a live group, not accounts. */}
+          <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Ενεργοί (επαληθευμένοι)', 'Active (verified)')}</h3>
+          <p className={cn('text-sm md:text-base font-bold mt-1', a.head)}>{verifiedActive}</p>
+          <p className="text-xs text-green-700 dark:text-green-400 font-bold flex items-center gap-0.5">
             <TrendingUp className="w-2.5 h-2.5" />
-            {t('χρήστες', 'users')}
+            {t(`από ${users.length} λογαριασμούς`, `of ${users.length} accounts`)}
           </p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-cyan-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Αναφορές', 'Reports')}</h3>
-          <p className={cn('text-lg font-black mt-1', a.head)}>{pendingReports.length}</p>
-          <p className="text-xs text-amber-500 font-bold">{t('εκκρεμείς', 'pending')}</p>
+          <p className={cn('text-sm md:text-base font-bold mt-1', a.head)}>{pendingReports.length}</p>
+          <p className="text-xs text-amber-700 dark:text-amber-400 font-bold">{t('εκκρεμείς', 'pending')}</p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-red-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Επιλύθηκαν', 'Resolved')}</h3>
-          <p className={cn('text-lg font-black mt-1', a.head)}>{resolvedCount}</p>
+          <p className={cn('text-sm md:text-base font-bold mt-1', a.head)}>{resolvedCount}</p>
           <p className={cn('text-xs font-medium', a.muted)}>{t('συνολικά', 'total')}</p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-emerald-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Εκδηλώσεις', 'Events')}</h3>
-          <p className={cn('text-lg font-black mt-1', a.head)}>{events.length}</p>
+          <p className={cn('text-sm md:text-base font-bold mt-1', a.head)}>{events.length}</p>
           <p className={cn('text-xs font-medium', a.muted)}>{t('στη βάση', 'in catalog')}</p>
         </Card>
       </div>
+
+      <AdminOutingsPanel section="metrics" />
 
       <Card className={cn('p-4', a.cardSurface)}>
         <h3 className={cn('text-xs font-bold tracking-widest mb-3', a.head)}>{t('Υγεία Πλατφόρμας', 'Platform Health')}</h3>
@@ -226,7 +238,7 @@ export default function AdminDashboardPageContent() {
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className={cn('text-xs font-medium', a.muted)}>{t('Μ.Ο. Αξιοπιστία', 'Avg Reliability')}</span>
-              <span className="text-sm font-bold text-emerald-600">{avgReliability}%</span>
+              <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">{avgReliability}%</span>
             </div>
             <div className={cn('w-full h-1.5 rounded-full', a.progressBg)}>
               <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${avgReliability}%` }} />
@@ -398,9 +410,43 @@ export default function AdminDashboardPageContent() {
             {adminActions.slice(0, 8).map((act) => (
               <li key={act.id} className={cn('flex items-center justify-between gap-3 text-xs', a.sub)}>
                 <span className="font-mono truncate">{act.action}{act.targetId ? ` → ${act.targetId}` : ''}</span>
-                <time dateTime={act.createdAt} className={cn('shrink-0 tabular-nums', a.muted)}>{new Date(act.createdAt).toLocaleString()}</time>
+                <time dateTime={act.createdAt} className={cn('shrink-0 tabular-nums', a.muted)}>{new Date(act.createdAt).toLocaleString(intlLocale(language))}</time>
               </li>
             ))}
+          </ol>
+        )}
+      </Card>
+      {/* Every action Nakamas AI executed, was refused or had cancelled (privacy-minimised). */}
+      <Card className={cn('p-5', a.cardSurface)}>
+        <h2 className={cn('text-sm font-bold mb-3', a.head)}>{t('Ιστορικό ενεργειών Nakamas AI', 'Nakamas AI action log')}</h2>
+        {aiAudit.length === 0 ? (
+          <p className={cn('text-sm', a.muted)}>{t('Το AI δεν έχει εκτελέσει ενέργειες ακόμη.', 'Nakamas AI has not performed any actions yet.')}</p>
+        ) : (
+          <ol className="space-y-2">
+            {aiAudit.slice(0, 10).map((e) => {
+              const who = users.find((u) => u.id === e.userId)?.name ?? e.userId ?? '—';
+              const statusLabel: Record<AiAuditStatus, [string, string]> = {
+                done: ['εκτελέστηκε', 'done'],
+                failed: ['απέτυχε', 'failed'],
+                cancelled: ['ακυρώθηκε', 'cancelled'],
+                undone: ['αναιρέθηκε', 'undone'],
+                denied: ['απορρίφθηκε', 'denied'],
+              };
+              const [el, en] = statusLabel[e.status];
+              return (
+                <li key={e.id} className={cn('flex items-center justify-between gap-3 text-xs', a.sub)}>
+                  <span className="min-w-0 truncate">
+                    <span className="font-mono">{e.action}</span>
+                    {' · '}
+                    <span className={e.status === 'denied' || e.status === 'failed' ? 'font-semibold text-red-700 dark:text-red-300' : undefined}>{t(el, en)}</span>
+                    {' · '}
+                    {who}
+                    {e.risk !== 'safe' && e.risk !== 'unknown' ? ` · ${e.risk}` : ''}
+                  </span>
+                  <time dateTime={e.at} className={cn('shrink-0 tabular-nums', a.muted)}>{new Date(e.at).toLocaleString(intlLocale(language))}</time>
+                </li>
+              );
+            })}
           </ol>
         )}
       </Card>
@@ -409,12 +455,14 @@ export default function AdminDashboardPageContent() {
 
       {adminTab === 'moderation' && (
       <>
+      <AdminOutingsPanel section="appeals" />
+      <AdminWallModeration />
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
         <div className="md:col-span-7 space-y-4">
-          <h2 className={cn('text-base font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>
+          <h2 className={cn('card-heading-lg font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>
           {displayReports.length === 0 ? (
             <Card className={cn('p-4 text-center', a.cardSurface)}>
-              <p className={cn('text-sm font-medium', a.muted)}>
+              <p className={cn('card-copy font-medium', a.muted)}>
                 {t('Δεν υπάρχουν αναφορές ακόμα. Οι αναφορές από /report εμφανίζονται εδώ.', 'No reports yet. Reports from /report appear here.')}
               </p>
             </Card>
@@ -428,11 +476,11 @@ export default function AdminDashboardPageContent() {
                     </div>
                     <div>
                       <p className={cn('font-bold text-sm', a.head)}>{report.category}</p>
-                      <p className={cn('text-sm mt-0.5 leading-relaxed', a.sub)}>
+                      <p className={cn('card-copy mt-0.5 leading-relaxed', a.sub)}>
                         {report.description || t('Χωρίς περιγραφή', 'No description')}
                       </p>
                       <p className={cn('text-xs mt-1', a.muted)}>
-                        {report.severity} • {new Date(report.createdAt).toLocaleDateString()}
+                        {report.severity} • {new Date(report.createdAt).toLocaleDateString(intlLocale(language))}
                       </p>
                     </div>
                   </div>
@@ -464,7 +512,7 @@ export default function AdminDashboardPageContent() {
                 <p className={cn('font-bold text-sm', a.head)}>
                   {t('Ύποπτος λογαριασμός — πολλαπλές no-shows', 'Suspicious account — multiple no-shows')}
                 </p>
-                <p className={cn('text-sm mt-0.5', a.sub)}>
+                <p className={cn('card-copy mt-0.5', a.sub)}>
                   {t('3 no-shows τον τελευταίο μήνα (demo)', '3 no-shows in the last month (demo)')}
                 </p>
               </div>
@@ -503,7 +551,7 @@ export default function AdminDashboardPageContent() {
                 </div>
                 <div>
                   <label className={cn('text-xs font-bold mb-1.5 block', a.head)}>{t('Ενέργεια', 'Action')}</label>
-                  <select
+                  <select aria-label={t("Ενέργεια διαχείρισης", "Moderation action")}
                     value={adminAction}
                     onChange={(e) => setAdminAction(e.target.value)}
                     className={cn('filter-select w-full border focus:ring-2 focus:ring-cyan-600 focus:outline-none', a.inputBg)}

@@ -6,7 +6,9 @@ import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { shouldRevealMemberPhoto, getPhotoPlaceholder } from '../../lib/photoReveal';
 import { cn } from '../../lib/utils';
+import { redundantClick } from '../../lib/a11y';
 import type { Event, Group } from '../../types';
+import { GroupInsights } from '../outings/GroupInsights';
 
 export type EventDetailGroupAccent = 'classic' | 'vibrant' | 'neon' | 'bento';
 
@@ -146,7 +148,12 @@ export function EventDetailGroupCard({
 }: EventDetailGroupCardProps) {
   const { t } = useLanguage();
   const users = useStore((s) => s.users);
+  const meId = useStore((s) => s.currentUser?.id);
   const tok = (darkSurface ? DARK : LIGHT)[accent];
+  // Φ27 — members go straight to «Η βραδιά μας»; everyone else to the join flow.
+  const isMember = Boolean(meId && group.members.includes(meId));
+  const onWaitlist = Boolean(meId && group.waitlist?.includes(meId));
+  const openTarget = isMember ? `/night/${group.id}` : `/events/${event.id}/join?groupId=${group.id}`;
 
   const spotsLeft = group.targetSize - group.members.length;
   const isDiscountEligible =
@@ -167,7 +174,7 @@ export function EventDetailGroupCard({
         tok.card,
         tok.hoverBorder,
       )}
-      onClick={() => navigate(`/events/${event.id}/join?groupId=${group.id}`)}
+      {...redundantClick<HTMLDivElement>(() => navigate(openTarget))}
     >
       <div
         className={cn(
@@ -176,45 +183,34 @@ export function EventDetailGroupCard({
         )}
       />
 
-      {group.isRecruiting && (
+      {(group.discountUnlocked || discountUnlockedTemp) && event.groupDiscount ? (
         <div
           className={cn(
-            'absolute top-2 right-2 bg-cyan-600 text-white text-xs font-bold px-2 py-0.5 rounded-lg z-10',
-          )}
-        >
-          {t('Δέχεται μέλη', 'Recruiting')}
-        </div>
-      )}
-
-      {(group.discountUnlocked || discountUnlockedTemp) && event.groupDiscount && (
-        <div
-          className={cn(
-            'absolute -top-1 -right-1 bg-emerald-500 text-white text-xs font-bold px-2 py-1 flex items-center gap-1 z-10 w-fit',
+            'absolute top-2 right-2 bg-emerald-500 text-white text-2xs font-bold px-2 py-0.5 flex items-center gap-1 z-10 w-fit',
             tok.discountCorner,
           )}
         >
-          <CheckCircle className="h-3 w-3" /> {event.groupDiscount.percentage}%{' '}
-          {t('ΕΚΠΤΩΣΗ ΕΝΕΡΓΟΠΟΙΗΘΗΚΕ', 'OFF ACTIVATED')}
+          <CheckCircle className="h-3 w-3" aria-hidden /> {event.groupDiscount.percentage}%{' '}
+          {t('έκπτωση', 'off')}
         </div>
-      )}
+      ) : group.isRecruiting ? (
+        <div className="absolute top-2 right-2 z-10">
+          <span className={cn('card-meta font-semibold', darkSurface ? 'text-cyan-300' : 'text-cyan-700')}>
+            {t('Δέχεται μέλη', 'Recruiting')}
+          </span>
+        </div>
+      ) : null}
 
       <div className="flex justify-between items-start mb-3 mt-1">
         <div>
-          <div className={cn('flex items-center gap-1.5 text-xs font-bold tracking-wide mb-1', tok.label)}>
-            <Users className="h-3.5 w-3.5" />
+          <div className={cn('flex items-center gap-1.5 card-meta font-semibold mb-1', tok.label)}>
+            <Users className="h-3.5 w-3.5" aria-hidden />
             {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
           </div>
-          <h4 className={cn('text-sm font-bold mb-0.5 line-clamp-1', tok.title)}>{event.title}</h4>
-          <span
-            className={cn(
-              'text-xs tracking-widest font-bold px-2 py-0.5 rounded-full mb-2 inline-block',
-              tok.category,
-            )}
-          >
-            {event.category}
-          </span>
+          <h4 className={cn('card-heading-lg font-bold mb-0.5 line-clamp-1', tok.title)}>{event.title}</h4>
+          <p className={cn('card-meta capitalize mb-1', tok.meta)}>{event.category}</p>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className={cn('text-lg font-bold', tok.title)}>{group.members.length}</span>
+            <span className={cn('card-heading font-bold', tok.title)}>{group.members.length}</span>
             <span className={cn('card-copy font-medium', tok.meta)}>
               / {group.targetSize} {t('μέλη', 'members')}
             </span>
@@ -282,6 +278,8 @@ export function EventDetailGroupCard({
         </div>
       </div>
 
+      <GroupInsights group={group} className="mb-3" textClass={tok.meta} strongClass={tok.title} compact />
+
       {isDiscountEligible && !discountUnlockedTemp && (
         <div className="bg-amber-50/80 border border-amber-200/50 p-2.5 rounded-lg mb-4">
           <div className="flex justify-between items-center mb-1.5">
@@ -321,10 +319,16 @@ export function EventDetailGroupCard({
         className={cn('w-full font-semibold transition-all duration-200', tok.cta)}
         onClick={(e) => {
           e.stopPropagation();
-          navigate(`/events/${event.id}/join?groupId=${group.id}`);
+          navigate(openTarget);
         }}
       >
-        {t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
+        {isMember
+          ? t('Η βραδιά μας', 'Our night')
+          : onWaitlist
+            ? t('Στη λίστα αναμονής · Προβολή', 'On the waitlist · View')
+            : spotsLeft <= 0
+              ? t('Πλήρης · Λίστα αναμονής', 'Full · Waitlist')
+              : t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
       </Button>
     </div>
   );
