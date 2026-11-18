@@ -106,7 +106,7 @@ export function StandingCard({ className }: { className?: string }) {
                   <button
                     type="button"
                     onClick={() => setAppealFor(s.id)}
-                    className="mt-1 inline-flex min-h-9 items-center gap-1 text-xs font-bold text-ink underline underline-offset-2"
+                    className="mt-1 inline-flex min-h-8 items-center gap-1 text-xs font-bold text-ink underline underline-offset-2"
                   >
                     <Gavel className="h-3.5 w-3.5" aria-hidden /> {t('Ένσταση', 'Appeal')}
                   </button>

@@ -8,6 +8,7 @@ import { suggestionsForPath, type CopilotSuggestion } from '../../ai/suggestions
 interface Props {
   className?: string;
   title?: { el: string; en: string };
+  subtitle?: { el: string; en: string };
   suggestions?: CopilotSuggestion[];
   /** Max chips shown (desktop shows all, phones show the first). */
   maxChips?: number;
@@ -17,7 +18,7 @@ interface Props {
  * Slim, page-level entry point to Nakamas AI (Φ24). One row: what the AI can
  * do + page-aware one-tap prompts. Token-only styling → correct in all themes.
  */
-export function CopilotInlinePrompt({ className, title, suggestions, maxChips = 3 }: Props) {
+export function CopilotInlinePrompt({ className, title, subtitle, suggestions, maxChips = 3 }: Props) {
   const { t } = useLanguage();
   const { pathname } = useLocation();
   const chips = (suggestions ?? suggestionsForPath(pathname)).slice(0, maxChips);
@@ -40,7 +41,9 @@ export function CopilotInlinePrompt({ className, title, suggestions, maxChips = 
             {title ? t(title.el, title.en) : t('Πες στο Nakamas AI τι θέλεις', 'Tell Nakamas AI what you want')}
           </span>
           <span className="block text-xs leading-snug text-ink-muted">
-            {t('Βρίσκει, οργανώνει & ρυθμίζει για σένα', 'Finds, organises & sets up for you')}
+            {subtitle
+              ? t(subtitle.el, subtitle.en)
+              : t('Βρίσκει, οργανώνει & ρυθμίζει για σένα', 'Finds, organises & sets up for you')}
           </span>
         </span>
         <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-ink-muted md:hidden" aria-hidden />
