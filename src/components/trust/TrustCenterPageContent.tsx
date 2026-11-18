@@ -14,6 +14,7 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import type { TrustTier } from '../../types';
 import { StandingCard } from '../outings/StandingCard';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 export default function TrustCenterPageContent() {
   const { t, language } = useLanguage();
@@ -72,8 +73,8 @@ export default function TrustCenterPageContent() {
   return (
     <div className="mx-auto max-w-full space-y-4 md:space-y-5 pb-20 md:pb-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn("text-lg md:text-xl font-bold tracking-tight leading-tight", a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
-        <p className={cn("mt-2 text-sm font-medium leading-relaxed max-w-xl", a.sub)}>
+        <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Κέντρο Εμπιστοσύνης', 'Trust Center')}</h1>
+        <p className={cn(APP_TYPO.pageSub, "mt-1 leading-relaxed max-w-xl", a.sub)}>
           {t('Η αξιοπιστία σας βασίζεται στις επαληθεύσεις και τις αξιολογήσεις σας.', 'Your trust score is based on your verifications and reviews.')}
         </p>
       </div>
@@ -158,7 +159,7 @@ export default function TrustCenterPageContent() {
               <div className={cn("flex items-center gap-2 text-sm font-bold", a.head)}>
                 <Award className="h-4 w-4 text-amber-500" />{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}
               </div>
-              <span className="text-sm font-black tabular-nums leading-none text-emerald-600">{reliabilityScore}%</span>
+              <span className="text-sm font-bold tabular-nums leading-none text-emerald-600">{reliabilityScore}%</span>
             </div>
             <p className={cn("card-prose mt-1.5 font-medium leading-relaxed", a.sub)}>
               {t('Βασίζεται στις παρουσίες, αξιολογήσεις και συμπεριφορά σας.', 'Based on your attendance, reviews, and behavior.')}
@@ -172,7 +173,7 @@ export default function TrustCenterPageContent() {
             <svg width="120" height="120" viewBox="0 0 120 120" className="mb-2">
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.isDark ? '#374151' : '#e5e7eb'} strokeWidth="8" />
               <circle cx="60" cy="60" r="52" fill="none" stroke={a.scoreStroke} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${strokeDash} ${circumference}`} transform="rotate(-90 60 60)" />
-              <text x="60" y="56" textAnchor="middle" className={cn("font-black", a.scoreFill)} fontSize="15">{reliabilityScore}</text>
+              <text x="60" y="56" textAnchor="middle" className={cn("font-bold", a.scoreFill)} fontSize="15">{reliabilityScore}</text>
               <text x="60" y="74" textAnchor="middle" className="fill-gray-400" fontSize="10" fontWeight="600">%</text>
             </svg>
             <p className={cn("text-sm font-bold tracking-tight", a.head)}>{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}</p>

@@ -7,6 +7,7 @@ import { useStore } from '../store';
 import { useLanguage } from '../lib/i18n';
 import { usePageContrast } from '../hooks/usePageContrast';
 import { cn } from '../lib/utils';
+import { APP_TYPO } from '../lib/typographyTokens';
 import { PersonAvatar } from '../components/wall/PersonAvatar';
 import { motion } from 'motion/react';
 
@@ -18,7 +19,7 @@ function RankIcon({ rank, mutedClass }: { rank: number; mutedClass: string }) {
   if (rank === 1) return <span className="text-lg leading-none select-none">🥇</span>;
   if (rank === 2) return <span className="text-lg leading-none select-none">🥈</span>;
   if (rank === 3) return <span className="text-lg leading-none select-none">🥉</span>;
-  return <span className={cn('card-heading font-black tabular-nums w-8 text-center', mutedClass)}>#{rank}</span>;
+  return <span className={cn('card-heading font-bold tabular-nums w-8 text-center', mutedClass)}>#{rank}</span>;
 }
 
 export default function LeaderboardClassic() {
@@ -93,12 +94,12 @@ export default function LeaderboardClassic() {
   ];
 
   return (
-    <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <GamificationHubNav />
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn('text-lg md:text-xl font-bold tracking-tight leading-tight', p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>
-          <p className={cn('font-medium text-sm mt-1', p.sub)}>
+          <h1 className={cn(APP_TYPO.pageTitle, p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>
+          <p className={cn(APP_TYPO.pageSub, 'mt-1', p.sub)}>
             {t('Δες πού βρίσκεσαι μέσα στην κοινότητα', 'See where you stand in the community')}
           </p>
         </div>
@@ -108,7 +109,7 @@ export default function LeaderboardClassic() {
               key={per}
               onClick={() => setPeriod(per)}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 whitespace-nowrap',
+                'px-3 py-1.5 min-h-8 rounded-lg text-xs font-bold transition-all duration-200 whitespace-nowrap',
                 period === per
                   ? cn(p.cardSurface, p.head, 'shadow-soft')
                   : cn(p.muted, p.hoverText),
@@ -130,7 +131,7 @@ export default function LeaderboardClassic() {
                   user={{ id: myEntry.id, name: myEntry.name, photoUrl: myEntry.avatar }}
                   className={cn('w-11 h-11 ring-2', p.isDark ? 'ring-white/20' : 'ring-accent/40')}
                 />
-                <div className="absolute -bottom-1 -right-1 bg-ink text-white text-xs font-black px-1.5 py-0.5 rounded-full border-2 border-white">
+                <div className="absolute -bottom-1 -right-1 bg-ink text-white text-xs font-bold px-1.5 py-0.5 rounded-full border-2 border-white">
                   #{myRank}
                 </div>
               </div>
@@ -236,7 +237,7 @@ export default function LeaderboardClassic() {
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.head)}>
+                    <p className={cn('text-sm md:text-base font-bold tabular-nums leading-none', p.head)}>
                       {entry.xp}
                     </p>
                     <p className={cn('text-xs font-semibold mt-0.5', p.muted)}>XP</p>

@@ -28,6 +28,7 @@ import {
   type CategoryGroupTab,
 } from '../../lib/categoriesCatalog';
 import { CollectionsRail } from '../outings/CollectionsRail';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 type PriceFilter = 'All' | 'Free' | 'Paid' | 'Group Discount';
 type DateFilter = 'Any' | 'Today' | 'This Week' | 'This Month' | 'Weekend';
@@ -155,7 +156,7 @@ export default function CategoriesPageContent() {
             <Compass className="w-3.5 h-3.5 mr-1" />{' '}
             {t('Εξερευνηση Δραστηριοτήτων', 'Activity Explorer')}
           </Badge>
-          <h1 className="text-lg md:text-xl font-extrabold tracking-tight mb-3 leading-tight">
+          <h1 className={cn(APP_TYPO.pageTitle, 'mb-3')}>
             {t('Βρείτε την επόμενη', 'Find your next')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-hero-accent-from to-hero-accent-to">
               {t('εμπειρία σας', 'experience')}
@@ -349,7 +350,7 @@ export default function CategoriesPageContent() {
               )}
             </div>
             <div>
-              <h2 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.head)}>
+              <h2 className={cn('text-sm md:text-base font-bold tracking-tight', p.head)}>
                 {activeCategory
                   ? language === 'el'
                     ? CATEGORY_CATALOG.find((c) => c.name === activeCategory)?.labelGr
@@ -450,7 +451,7 @@ export default function CategoriesPageContent() {
         >
           <Star className="w-3.5 h-3.5 mr-1" /> {t('Γίνε Οικοδεσπότης', 'Become a Host')}
         </Badge>
-        <h3 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.head)}>
+        <h3 className={cn('text-sm md:text-base font-bold tracking-tight', p.head)}>
           {t('Μην βρήκατε αυτό που ψάχνατε;', "Couldn't find what you wanted?")}
         </h3>
         <p className={cn('text-sm max-w-lg mx-auto font-medium leading-relaxed', p.sub)}>

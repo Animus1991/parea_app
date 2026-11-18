@@ -169,7 +169,7 @@ export default function ChallengesClassic() {
   };
 
   return (
-    <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <GamificationHubNav />
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -184,7 +184,7 @@ export default function ChallengesClassic() {
           <Trophy className="w-4 h-4 text-amber-500 shrink-0" />
           <div>
             <p className="text-xs text-amber-600 font-bold">{t('XP Ολοκληρωμένων', 'Completed XP')}</p>
-            <p className="card-heading-lg font-black text-amber-700 leading-none">{totalXP}</p>
+            <p className="card-heading-lg font-bold text-amber-700 leading-none">{totalXP}</p>
           </div>
         </div>
       </div>

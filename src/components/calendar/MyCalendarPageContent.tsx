@@ -37,6 +37,7 @@ import { EmptyState } from "../common/EmptyState";
 import { EventCardSkeleton } from "../common/Skeleton";
 import { ResourceStateGate } from "../common/ResourceStateGate";
 import { cn } from "../../lib/utils";
+import { CALENDAR_TYPO } from "../../lib/typographyTokens";
 import { useCalendarDayInteraction } from "../../hooks/useCalendarDayInteraction";
 import { sortEventsForStories } from "../../lib/storyEventOrdering";
 import { downloadCalendarIcs } from "../../lib/calendarIcs";
@@ -301,7 +302,7 @@ export default function MyCalendarPageContent() {
 
         <span
           className={cn(
-            "relative z-10 text-sm md:text-base font-black",
+            "relative z-10 text-sm md:text-base font-bold",
             isToday(day) || dayEvents.length > 0
               ? "text-white drop-shadow-soft-md"
               : p.head,
@@ -346,7 +347,7 @@ export default function MyCalendarPageContent() {
           <div>
             <h1
               className={cn(
-                "text-lg md:text-xl font-extrabold tracking-tight leading-tight",
+                CALENDAR_TYPO.pageTitle,
                 p.head,
               )}
             >
@@ -456,13 +457,13 @@ export default function MyCalendarPageContent() {
       >
         <div
           className={cn(
-            "flex items-center justify-between px-4 py-5 md:px-5 border-b",
+            "flex items-center justify-between px-4 py-3 md:px-5 border-b",
             p.borderB,
           )}
         >
           <h2
             className={cn(
-              "font-extrabold text-sm md:text-base tracking-tight capitalize",
+              "font-bold text-sm md:text-base tracking-tight capitalize",
               p.head,
             )}
           >
@@ -641,7 +642,7 @@ export default function MyCalendarPageContent() {
                       </div>
                       <span
                         className={cn(
-                          "text-xs uppercase tracking-widest font-black px-2 py-1 flex items-center justify-center rounded-lg shrink-0",
+                          "text-xs uppercase tracking-widest font-bold px-2 py-1 flex items-center justify-center rounded-lg shrink-0",
                           p.isDark
                             ? "bg-emerald-900/30 text-emerald-400"
                             : "bg-emerald-50 text-emerald-600",

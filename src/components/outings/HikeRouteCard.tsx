@@ -52,7 +52,7 @@ export function HikeRouteCard({ route, revealStart, className }: { route: HikeRo
             <dt className="flex items-center gap-1 text-2xs font-bold text-ink-muted">
               <Icon className="h-3 w-3" aria-hidden /> {label}
             </dt>
-            <dd className="text-sm font-black text-ink">{value}</dd>
+            <dd className="text-sm font-bold text-ink">{value}</dd>
           </div>
         ))}
       </dl>

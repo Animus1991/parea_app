@@ -32,7 +32,7 @@ export function PlansFormingMobileFab() {
       {hasPending ? <Inbox className="w-4 h-4" aria-hidden /> : <Users className="w-4 h-4" aria-hidden />}
       <span>{label}</span>
       {badge != null && (
-        <span className="bg-white/25 text-white text-xs font-black px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
+        <span className="bg-white/25 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
           {badge}
         </span>
       )}

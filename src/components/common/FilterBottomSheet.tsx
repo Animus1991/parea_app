@@ -49,7 +49,7 @@ export function FilterBottomSheet({
           {t('Κλείσιμο', 'Close')}
         </button>
       </div>
-      <div className="space-y-5 text-ink">{children}</div>
+      <div className="space-y-4 text-ink">{children}</div>
       <div className="mt-4 flex gap-3">
         <button
           type="button"

@@ -18,6 +18,7 @@ import {
   projectProfileForViewer,
 } from '../../lib/profilePrivacy';
 import { useWallAccess, useWallStore } from '../../store/wallStore';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { canPostOnWall, profileWallPosts } from '../../lib/audience';
 import { PostComposer } from '../wall/PostComposer';
 import { WallPostList } from '../wall/WallPostList';
@@ -86,10 +87,10 @@ export default function OrganizerProfilePageContent() {
         <div className={cn('mx-auto flex h-16 w-16 items-center justify-center rounded-full border', p.borderB, p.cardSurface)}>
           <Lock className={cn('h-7 w-7', p.muted)} aria-hidden />
         </div>
-        <h1 className={cn('text-lg md:text-xl font-bold tracking-tight leading-tight', p.head)}>
+        <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
           {t('Ιδιωτικό προφίλ', 'Private profile')}
         </h1>
-        <p className={cn('text-sm font-medium max-w-md mx-auto', p.sub)}>
+        <p className={cn(APP_TYPO.pageSub, 'max-w-md mx-auto', p.sub)}>
           {t(projected.access.reasonEl, projected.access.reasonEn)}
         </p>
         <Link to="/connections" className="text-sm font-bold text-cyan-600 hover:underline">
@@ -150,7 +151,7 @@ export default function OrganizerProfilePageContent() {
   };
 
   return (
-    <div className="mx-auto max-w-full space-y-5 relative">
+    <div className="mx-auto max-w-full space-y-4 relative">
       {limited && (
         <p
           role="status"
@@ -189,9 +190,9 @@ export default function OrganizerProfilePageContent() {
                 </Badge>
               )}
             </div>
-            <h1 className={cn('text-lg md:text-xl font-bold tracking-tight leading-tight', p.head)}>{projected.name}</h1>
+            <h1 className={cn(APP_TYPO.pageTitle, p.head)}>{projected.name}</h1>
             {projected.city && (
-              <p className={cn('text-sm font-medium mt-1', p.sub)}>
+              <p className={cn(APP_TYPO.pageSub, 'mt-1', p.sub)}>
                 <MapPin className="h-3.5 w-3.5 inline mr-1" /> {projected.city}
               </p>
             )}

@@ -205,7 +205,7 @@ export default function AchievementsPageContent() {
                 ].map((stat) => (
                   <div key={stat.label} className="flex flex-col-reverse items-center text-center">
                     <dt className={cn(APP_TYPO.sectionLabel, a.sub)}>{stat.label}</dt>
-                    <dd className={cn('text-sm md:text-base font-black tabular-nums', a.head)}>{stat.val}</dd>
+                    <dd className={cn('text-sm md:text-base font-bold tabular-nums', a.head)}>{stat.val}</dd>
                   </div>
                 ))}
               </dl>
@@ -220,7 +220,7 @@ export default function AchievementsPageContent() {
                 <li key={entry.id} className={cn('flex items-center gap-3 px-4 py-3 border-b last:border-0', a.lbBorder, entry.isMe && a.highlightRow)}>
                   <span
                     className={cn(
-                      'w-6 h-6 rounded-full flex items-center justify-center text-xs font-black tabular-nums',
+                      'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold tabular-nums',
                       entry.rank === 1 ? 'bg-amber-100 text-amber-700' : entry.rank === 2 ? (a.isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700') : entry.rank === 3 ? 'bg-orange-100 text-orange-700' : a.isDark ? 'bg-gray-700/30 text-gray-400' : 'bg-gray-100 text-gray-600',
                     )}
                   >
@@ -235,7 +235,7 @@ export default function AchievementsPageContent() {
             <button
               type="button"
               onClick={() => navigate('/leaderboard')}
-              className={cn('w-full flex items-center justify-center gap-1 py-3 text-xs font-bold border-t transition-colors', a.lbBorder, a.shareHover)}
+              className={cn('w-full flex items-center justify-center gap-1 min-h-8 py-1.5 text-xs font-bold border-t transition-colors', a.lbBorder, a.shareHover)}
             >
               {t('Πλήρης κατάταξη', 'Full leaderboard')} <ChevronRight className="w-3.5 h-3.5" aria-hidden />
             </button>

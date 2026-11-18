@@ -196,7 +196,7 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
             p.borderB,
           )}
         >
-          <h2 className={cn('font-extrabold text-sm md:text-base capitalize', p.head)}>
+          <h2 className={cn('font-bold text-sm md:text-base capitalize', p.head)}>
             {format(currentDate, 'LLLL yyyy', { locale: dateFnsLocale(language) })}
           </h2>
           <div className="flex items-center gap-1">

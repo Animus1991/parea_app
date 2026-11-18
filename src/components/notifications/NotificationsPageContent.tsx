@@ -241,7 +241,7 @@ export default function NotificationsPageContent() {
   });
 
   return (
-    <div className="mx-auto max-w-full space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="mx-auto max-w-full space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="flex justify-between items-end">
         <div>
           <h1 className={cn(APP_TYPO.pageTitle, a.head)}>
@@ -361,7 +361,7 @@ export default function NotificationsPageContent() {
           askPrompt={t('Τι νέο υπάρχει στις ειδοποιήσεις;', 'Summarise my notifications')}
         />
       ) : (
-        <div className="space-y-5">
+        <div className="space-y-4">
           {todayNotifs.length > 0 && (
             <div className="space-y-2">
               <h3 className={cn('text-xs font-bold tracking-wider uppercase', a.muted)}>

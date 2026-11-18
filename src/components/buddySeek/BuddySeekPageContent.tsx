@@ -20,6 +20,7 @@ import { Modal } from '../common/Modal';
 import { useEventsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { toast } from 'sonner';
 import type { Event } from '../../types';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
@@ -149,7 +150,7 @@ export default function BuddySeekPageContent() {
   return (
     <div className="w-full max-w-full min-w-0 space-y-4 pb-16 pt-4">
       <header className="space-y-3">
-        <h1 className={cn('text-lg md:text-xl font-bold tracking-tight leading-tight', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
+        <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
         <CopilotInlinePrompt />
         <PlansFormingValueHero insights={feed.insights} />
         {/* StatsBar omitted when ValueHero already states compatible count — less chrome. */}
@@ -161,7 +162,7 @@ export default function BuddySeekPageContent() {
             type="button"
             onClick={() => navigate('/settings?section=buddy-seek')}
             className={cn(
-              'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
+              'inline-flex items-center gap-1.5 text-xs font-bold px-3 min-h-8 rounded-xl border',
               a.borderB,
               a.sub,
             )}
@@ -173,7 +174,7 @@ export default function BuddySeekPageContent() {
             type="button"
             onClick={() => setEventPickerOpen(true)}
             className={cn(
-              'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
+              'inline-flex items-center gap-1.5 text-xs font-bold px-3 min-h-8 rounded-xl border',
               a.borderB,
               a.sub,
             )}
@@ -185,7 +186,7 @@ export default function BuddySeekPageContent() {
             type="button"
             onClick={() => navigate('/plans')}
             className={cn(
-              'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
+              'inline-flex items-center gap-1.5 text-xs font-bold px-3 min-h-8 rounded-xl border',
               a.borderB,
               a.sub,
             )}

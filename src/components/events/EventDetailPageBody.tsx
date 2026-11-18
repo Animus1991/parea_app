@@ -27,6 +27,8 @@ import { computeMatchScore } from '../../lib/matching';
 import { NakamasGoing } from '../outings/NakamasGoing';
 import { HikeRouteCard } from '../outings/HikeRouteCard';
 import { isDarkTheme } from '../../lib/themes';
+import { cn } from '../../lib/utils';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
@@ -128,7 +130,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="mx-auto max-w-full space-y-5 pb-24 md:pb-5"
+      className="mx-auto max-w-full space-y-4 pb-24 md:pb-5"
     >
       {/* Header */}
       <div className="space-y-4">
@@ -189,7 +191,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             </Badge>
           )}
         </div>
-        <h1 className="text-lg md:text-xl font-extrabold text-ink tracking-tight leading-tight mb-2 md:mb-0">{event.title}</h1>
+        <h1 className={cn(APP_TYPO.pageTitle, 'text-ink mb-2 md:mb-0')}>{event.title}</h1>
         <EventDetailPageContent event={event} accent={accent} darkSurface={panelDark} className="mt-4" />
       </div>
 

@@ -16,6 +16,7 @@ import { useEventsResource } from "../../hooks/useEventsQuery";
 import { useLanguage } from "../../lib/i18n";
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { pressable, redundantClick } from '../../lib/a11y';
 import { Button } from "../common/Button";
 import { haversineKm, ATHENS_CENTER } from "../../lib/haversine";
@@ -630,9 +631,9 @@ export default function NearbyGroupsPageContent() {
         </div>
 
         <div className={cn("p-5 md:p-5 border-b shrink-0", p.borderB)}>
-          <h2 className={cn("text-sm md:text-base font-extrabold tracking-tight", p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
-          <p className={cn("text-sm font-medium mt-1.5 flex items-center gap-1.5", p.muted)}>
-            <Navigation className="h-4 w-4" /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius}km</span>
+          <h2 className={cn(APP_TYPO.pageTitle, p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
+          <p className={cn(APP_TYPO.pageSub, "mt-1.5 flex items-center gap-1.5", p.muted)}>
+            <Navigation className="h-3.5 w-3.5" aria-hidden /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius}km</span>
           </p>
 
           <div className="mt-4 flex items-center gap-4">

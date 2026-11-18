@@ -11,6 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { isLiveSupportConfigured, openLiveSupport } from '../../services/support';
 import { NakamasCast } from '../illustrations/NakamasCast';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 export default function HelpCenterPageContent() {
   const { t, tu } = useLanguage();
@@ -97,8 +98,8 @@ export default function HelpCenterPageContent() {
       <div className={cn("text-white rounded-2xl p-5 text-center shadow-soft-md relative overflow-hidden", a.heroBg)}>
         <div className={cn("absolute top-0 right-0 -mr-8 -mt-5 w-32 h-32 rounded-full", a.heroCircle)}></div>
         <div className={cn("absolute bottom-0 left-0 -ml-8 -mb-5 w-24 h-24 rounded-full", a.heroCircle)}></div>
-        <h1 className="text-lg md:text-xl font-black tracking-tight leading-tight mb-2 relative z-10">{t('Κέντρο Βοήθειας', 'Help Center')}</h1>
-        <p className={cn("text-sm font-medium mb-4 relative z-10", a.heroSub)}>{t('Πώς μπορούμε να βοηθήσουμε;', 'How can we help you?')}</p>
+        <h1 className={cn(APP_TYPO.pageTitle, "mb-2 relative z-10")}>{t('Κέντρο Βοήθειας', 'Help Center')}</h1>
+        <p className={cn(APP_TYPO.pageSub, "mb-4 relative z-10", a.heroSub)}>{t('Πώς μπορούμε να βοηθήσουμε;', 'How can we help you?')}</p>
         <div className="relative max-w-md mx-auto z-10">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input

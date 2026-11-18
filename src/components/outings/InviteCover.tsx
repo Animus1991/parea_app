@@ -31,7 +31,7 @@ export function InviteCover({
       <p className="text-xs font-bold">
         {hostFirstName ? t(`Ο/Η ${hostFirstName} σε καλεί`, `${hostFirstName} invites you`) : t('Πρόσκληση', 'Invitation')}
       </p>
-      <h2 className="mt-1 text-lg font-black leading-tight">{event.title}</h2>
+      <h2 className="mt-1 text-lg font-bold leading-tight">{event.title}</h2>
       <ul className="mt-3 space-y-1 text-sm font-semibold">
         <li className="flex items-center gap-2">
           <CalendarDays className="h-4 w-4 shrink-0" aria-hidden />

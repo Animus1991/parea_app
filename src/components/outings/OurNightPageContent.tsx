@@ -213,7 +213,7 @@ export default function OurNightPageContent() {
           {revealed ? <PartyPopper className="h-4 w-4" aria-hidden /> : <Users className="h-4 w-4" aria-hidden />}
           {groupStatusLabel(group, t)}
         </p>
-        <h1 className={cn('mt-1', APP_TYPO.pageTitle, 'font-black')}>{t('Η βραδιά μας', 'Our night')}</h1>
+        <h1 className={cn('mt-1', APP_TYPO.pageTitle)}>{t('Η βραδιά μας', 'Our night')}</h1>
         <p className="mt-0.5 text-sm font-bold">{event.title}</p>
         <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
           <li className="flex items-center gap-1.5">

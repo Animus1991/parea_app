@@ -16,6 +16,7 @@ import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useContrastTheme } from '../../hooks/useContrastTheme';
 import { PAGE_FILL } from '../layout/PageShell';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
@@ -102,7 +103,7 @@ export default function PostEventFeedbackPageContent() {
   return (
     <div className={cn(PAGE_FILL, 'space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in')}>
       <div>
-        <h1 className={cn('text-lg md:text-xl font-extrabold tracking-tight leading-tight', p.head)}>
+        <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
           {t('Αξιολόγηση Εκδήλωσης', 'Post-Event Feedback')}
         </h1>
         <p className={cn('text-sm font-medium mt-1', p.sub)}>
@@ -166,7 +167,7 @@ export default function PostEventFeedbackPageContent() {
           <div className="flex-1">
             <p
               className={cn(
-                'text-sm font-extrabold flex items-center gap-1 justify-center sm:justify-start',
+                'text-sm font-bold flex items-center gap-1 justify-center sm:justify-start',
                 p.isDark ? 'text-amber-400' : 'text-amber-900',
               )}
             >
@@ -190,7 +191,7 @@ export default function PostEventFeedbackPageContent() {
       {step === 1 ? (
         <div
           className={cn(
-            'rounded-2xl p-4 md:p-5 shadow-soft border space-y-5',
+            'rounded-2xl p-4 md:p-5 shadow-soft border space-y-4',
             p.cardSurface,
             p.borderB,
           )}
@@ -488,7 +489,7 @@ export default function PostEventFeedbackPageContent() {
 
           <div className="pt-2">
             <Button
-              className="w-full h-11 text-xs font-bold rounded-2xl shadow-soft"
+              className="w-full"
               variant={p.isAB ? 'primary' : 'gradient'}
               onClick={handleSubmit}
               disabled={overallRating === 0}
@@ -517,7 +518,7 @@ export default function PostEventFeedbackPageContent() {
             />
           </div>
 
-          <h2 className={cn('text-sm md:text-base font-extrabold tracking-tight mb-3', p.head)}>
+          <h2 className={cn('text-sm md:text-base font-bold tracking-tight mb-3', p.head)}>
             {t('Ευχαριστούμε!', 'Thank You!')}
           </h2>
           <p className={cn('text-sm font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
@@ -546,7 +547,7 @@ export default function PostEventFeedbackPageContent() {
               <Trophy className="w-6 h-6" />
             </div>
             <div>
-              <p className={cn('text-sm md:text-base font-black', p.isDark ? 'text-amber-400' : 'text-amber-900')}>
+              <p className={cn('text-sm md:text-base font-bold', p.isDark ? 'text-amber-400' : 'text-amber-900')}>
                 +25 XP
               </p>
               <p

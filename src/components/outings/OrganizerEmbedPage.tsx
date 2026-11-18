@@ -38,8 +38,8 @@ export default function OrganizerEmbedPage() {
     <main id="main-content" className="min-h-screen bg-surface p-3 text-ink">
       <div className="mx-auto max-w-lg">
         <div className="flex items-center justify-between gap-2">
-          <h1 className="truncate text-sm font-black text-ink">{t(`Επόμενα · ${name}`, `Upcoming · ${name}`)}</h1>
-          <a href={feed.webcal} className="inline-flex min-h-9 shrink-0 items-center gap-1 rounded-full border border-border px-3 text-xs font-bold text-ink">
+          <h1 className="truncate text-sm font-bold text-ink">{t(`Επόμενα · ${name}`, `Upcoming · ${name}`)}</h1>
+          <a href={feed.webcal} className="inline-flex min-h-8 shrink-0 items-center gap-1 rounded-full border border-border px-3 text-xs font-bold text-ink">
             <CalendarPlus className="h-3.5 w-3.5" aria-hidden /> {t('Ακολούθησε', 'Subscribe')}
           </a>
         </div>

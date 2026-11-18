@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { useLanguage } from "../../lib/i18n";
 import { useGroupChatContrast } from "../../hooks/useGroupChatContrast";
 import { cn } from "../../lib/utils";
+import { APP_TYPO } from "../../lib/typographyTokens";
 import { PAGE_FILL } from "../layout/PageShell";
 import { useGroupChatMessages, type GroupChatMessage } from "../../hooks/useGroupChatMessages";
 import { useChatStore } from "../../store/chatStore";
@@ -239,7 +240,7 @@ export default function GroupChatPageContent() {
   if (!isMember) {
     return (
       <div className={cn(PAGE_FILL, "space-y-4 py-4")}>
-        <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-ink">{t('Chat ομάδας', 'Group chat')}</h1>
+        <h1 className={cn(APP_TYPO.pageTitle, "text-ink")}>{t('Chat ομάδας', 'Group chat')}</h1>
         <div className="rounded-2xl border border-border bg-surface-raised p-4">
           <p className="text-sm font-bold text-ink">
             {t('Αυτό το chat είναι μόνο για τα μέλη της ομάδας.', 'This chat is only for group members.')}
@@ -397,13 +398,13 @@ export default function GroupChatPageContent() {
                 <div className="flex items-center gap-2 px-3 md:px-5 py-2.5">
                   <button
                     onClick={() => navigate(-1)}
-                    className="text-gray-400 hover:text-ink transition-colors p-1 shrink-0"
+                    className="text-gray-400 hover:text-ink transition-colors p-1 min-h-8 min-w-8 flex items-center justify-center rounded-full shrink-0"
                     aria-label={t('Πίσω', 'Go back')}
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </button>
                   <div className="min-w-0 flex-1">
-                    <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-ink truncate">
+                    <h1 className={cn(APP_TYPO.pageTitle, "text-ink truncate")}>
                       {event.title}
                     </h1>
                     <p className="text-xs text-gray-500 tracking-wide font-medium truncate flex items-center gap-1.5 mt-0.5">
@@ -895,7 +896,7 @@ export default function GroupChatPageContent() {
               </div>
 
               {/* Chat Settings */}
-              <div className="bg-white dark:bg-surface-raised rounded-2xl shadow-soft border border-gray-100 dark:border-border p-4 space-y-5">
+              <div className="bg-white dark:bg-surface-raised rounded-2xl shadow-soft border border-gray-100 dark:border-border p-4 space-y-4">
                 <div>
                   <h4 className="font-bold text-sm capitalize tracking-tight text-ink mb-3 flex items-center gap-1.5">
                     <ShieldCheck className="h-3.5 w-3.5 text-gray-400" />{" "}

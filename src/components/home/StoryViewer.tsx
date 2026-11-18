@@ -228,7 +228,7 @@ export function StoryViewer({
               {weekday} {day} {mon}
             </span>
           </div>
-          <h2 className="text-white text-sm md:text-base font-extrabold leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+          <h2 className="text-white text-sm md:text-base font-bold leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
             {activeEvent.title}
           </h2>
           {activeEvent.locationArea && (

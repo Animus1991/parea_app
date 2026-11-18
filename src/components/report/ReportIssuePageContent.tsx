@@ -7,6 +7,7 @@ import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useContrastTheme } from '../../hooks/useContrastTheme';
 import { useStore } from '../../store';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 export default function ReportIssuePageContent() {
   const { t } = useLanguage();
@@ -53,17 +54,17 @@ export default function ReportIssuePageContent() {
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h1 className={cn('text-lg md:text-xl font-bold tracking-tight leading-tight', p.head)}>
+          <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
             {t('Αναφορά Προβλήματος', 'Report an Issue')}
           </h1>
-          <p className={cn('font-medium text-sm mt-1', p.sub)}>
+          <p className={cn(APP_TYPO.pageSub, 'mt-1', p.sub)}>
             {t('Βοηθήστε μας να κρατήσουμε την κοινότητα ασφαλή', 'Help us keep the community safe')}
           </p>
         </div>
         <button
           onClick={() => navigate(-1)}
           className={cn(
-            'transition-all duration-200 rounded-full p-2 border shadow-soft',
+            'transition-all duration-200 rounded-full p-2 min-h-8 min-w-8 flex items-center justify-center border shadow-soft',
             c.surfaceElevated,
             c.border,
             p.muted,
@@ -104,7 +105,7 @@ export default function ReportIssuePageContent() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-4 md:p-4 space-y-5">
+          <form onSubmit={handleSubmit} className="p-4 md:p-4 space-y-4">
             <div>
               <label className={cn('block text-xs font-bold tracking-wider mb-2', p.head)}>
                 {t('Κατηγορία', 'Category')}

@@ -76,7 +76,7 @@ export function BottomSheet({
               <button
                 type="button"
                 onClick={onClose}
-                className="ml-auto rounded-full p-1.5 min-h-9 min-w-9 flex items-center justify-center shrink-0 text-ink-muted hover:bg-surface hover:text-ink transition-colors"
+                className="ml-auto rounded-full p-1.5 min-h-8 min-w-8 flex items-center justify-center shrink-0 text-ink-muted hover:bg-surface hover:text-ink transition-colors"
                 aria-label={t('Κλείσιμο', 'Close')}
               >
                 <X className="h-4 w-4" />

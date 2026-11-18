@@ -323,7 +323,7 @@ export default function JoinGroupFlow() {
       )}
 
       {step === 2 && (
-        <div className="space-y-5">
+        <div className="space-y-4">
           <h3 className="font-bold text-sm md:text-base">{t('Επιβεβαίωση', 'Confirmation')}</h3>
 
           {event.isPaid ? (

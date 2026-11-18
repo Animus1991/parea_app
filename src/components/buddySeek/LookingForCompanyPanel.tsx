@@ -243,7 +243,7 @@ export function LookingForCompanyPanel({
                       <button
                         type="button"
                         onClick={() => setFilterOpen(null)}
-                        className="text-xs font-bold px-3 py-2 rounded-xl bg-cyan-600 text-white"
+                        className="text-xs font-bold px-3 min-h-8 rounded-xl bg-cyan-600 text-white"
                       >
                         {t('Καθαρισμός φίλτρων', 'Clear filters')}
                       </button>
@@ -251,7 +251,7 @@ export function LookingForCompanyPanel({
                     <button
                       type="button"
                       onClick={() => navigate('/buddy-seek')}
-                      className={cn('text-xs font-bold px-3 py-2 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                      className={cn('text-xs font-bold px-3 min-h-8 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
                     >
                       {t('Περιήγηση σχεδίων', 'Browse plans')}
                     </button>
@@ -265,7 +265,7 @@ export function LookingForCompanyPanel({
                           ),
                         )
                       }
-                      className={cn('text-xs font-bold px-3 py-2 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                      className={cn('text-xs font-bold px-3 min-h-8 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
                     >
                       {t('Ρώτα το AI', 'Ask AI')}
                     </button>
@@ -340,7 +340,7 @@ export function LookingForCompanyPanel({
                     <button
                       type="button"
                       onClick={() => navigate(`/events/${event.id}/join`)}
-                      className="text-xs font-bold px-3 py-2 rounded-xl bg-cyan-600 text-white"
+                      className="text-xs font-bold px-3 min-h-8 rounded-xl bg-cyan-600 text-white"
                     >
                       {t('Έναρξη ομάδας', 'Start a group')}
                     </button>
@@ -354,7 +354,7 @@ export function LookingForCompanyPanel({
                           ),
                         )
                       }
-                      className={cn('text-xs font-bold px-3 py-2 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                      className={cn('text-xs font-bold px-3 min-h-8 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
                     >
                       {t('Ρώτα το AI', 'Ask AI')}
                     </button>

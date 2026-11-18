@@ -26,6 +26,7 @@ import { getHomeCategoryTranslations } from "../../lib/homeCategoryLabels";
 import { generateEventBlurb } from "../../services/gemini";
 import { Bot } from "lucide-react";
 import { useFormDraft, type FormDraftFields } from "../../lib/formDraft";
+import { APP_TYPO } from "../../lib/typographyTokens";
 
 export default function CreateEventFlowPageContent() {
   const [step, setStep] = useState(1);
@@ -237,10 +238,10 @@ export default function CreateEventFlowPageContent() {
             )}
           </p>
         )}
-        <h1 className={cn("text-lg md:text-xl font-bold tracking-tight leading-tight", p.head)}>
+        <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
           {editEvent ? t("Επεξεργασία Εμπειρίας", "Edit Experience") : t("Δημιουργία Εμπειρίας", "Create Experience")}
         </h1>
-        <p className={cn("text-sm font-medium mt-1", p.muted)}>
+        <p className={cn(APP_TYPO.pageSub, "mt-1", p.muted)}>
           {t(
             "Σχεδιάστε την τέλεια συνάντησή σας.",
             "Design your perfect real-world gathering.",

@@ -58,15 +58,15 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center py-10 px-4 text-center rounded-2xl border border-dashed border-border bg-surface-raised',
+        'flex flex-col items-center justify-center py-7 px-4 text-center rounded-2xl border border-dashed border-border bg-surface-raised',
         className,
       )}
     >
       {character ? (
         <NakamasMini id={character} size={48} className="mb-2" />
       ) : Icon ? (
-        <div className="w-10 h-10 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mb-3">
-          <Icon className="w-5 h-5" aria-hidden />
+        <div className="w-8 h-8 rounded-xl bg-brand-soft text-brand flex items-center justify-center mb-2">
+          <Icon className="w-4 h-4" aria-hidden />
         </div>
       ) : null}
       {/* Inside-card type ≤ page title (text-sm); subtitle < title */}

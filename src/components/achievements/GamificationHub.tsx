@@ -18,15 +18,15 @@ export function GamificationHubNav({ className }: { className?: string }) {
     { to: '/leaderboard', icon: Trophy, label: t('Κατάταξη', 'Ranking') },
   ];
   return (
-    <nav aria-label={t('Πρόοδος & ανταμοιβές', 'Progress & rewards')} className={cn('inline-flex max-w-full gap-1 overflow-x-auto noscrollbar rounded-xl border border-border bg-surface-raised p-1', className)}>
+    <nav aria-label={t('Πρόοδος & ανταμοιβές', 'Progress & rewards')} className={cn('inline-flex max-w-full gap-1 overflow-x-auto noscrollbar rounded-2xl border border-border bg-surface-raised p-1', className)}>
       {items.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
           className={({ isActive }) =>
             cn(
-              'inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
-              isActive ? 'bg-accent text-accent-fg shadow-soft' : 'text-ink-muted hover:bg-surface hover:text-ink',
+              'inline-flex min-h-8 items-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+              isActive ? 'bg-ink text-surface-raised' : 'text-ink-muted hover:bg-surface hover:text-ink',
             )
           }
         >

@@ -132,7 +132,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
 
       </header>
 
-      <div className="p-3 space-y-5 flex-1">
+      <div className="p-3 space-y-4 flex-1">
         {feed.myActivePlan && (
           <PlansFormingYourPlanBanner
             plan={feed.myActivePlan}

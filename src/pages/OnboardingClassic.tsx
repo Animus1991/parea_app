@@ -10,6 +10,8 @@ import {
 import { INTERESTS } from '../lib/interests';
 import { motion, AnimatePresence } from 'motion/react';
 import { NakamasCast } from '../components/illustrations/NakamasCast';
+import { ONBOARDING_TYPO } from '../lib/typographyTokens';
+import { cn } from '../lib/utils';
 
 const GROUP_SIZES = [
   { id: 'tiny', gr: '2–3 άτομα', en: '2–3 people', emoji: '👥' },
@@ -122,7 +124,7 @@ export default function OnboardingClassic() {
   ];
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-5">
+    <div className="flex flex-col items-center px-4 py-5 pb-28 md:min-h-[80vh] md:justify-center md:pb-5">
       <h1 className="sr-only">{tu('Ρύθμιση προφίλ', 'Profile setup')}</h1>
       <div className="w-full max-w-lg">
         {/* Progress bar */}
@@ -160,13 +162,13 @@ export default function OnboardingClassic() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: dir * -40 }}
             transition={{ duration: 0.25 }}
-            className="bg-white dark:bg-surface-raised rounded-2xl p-4 shadow-soft border border-gray-100 dark:border-border space-y-5"
+            className="bg-white dark:bg-surface-raised rounded-2xl p-4 shadow-soft border border-gray-100 dark:border-border space-y-4"
           >
             <div>
-              <h2 className="text-sm md:text-base font-black text-ink leading-tight">
+              <h2 className={cn(ONBOARDING_TYPO.title, 'text-ink')}>
                 {t(stepTitles[step].gr, stepTitles[step].en)}
               </h2>
-              <p className="text-sm text-gray-500 font-medium mt-1">
+              <p className={cn(ONBOARDING_TYPO.subtitle, 'text-gray-500 mt-1')}>
                 {t(stepSubs[step].gr, stepSubs[step].en)}
               </p>
             </div>
@@ -186,14 +188,14 @@ export default function OnboardingClassic() {
                         type="button"
                         onClick={() => toggleInterest(item.id)}
                         aria-pressed={sel}
-                        className={`flex items-center gap-2 px-3 py-1.5 min-h-8 rounded-xl text-sm font-semibold border transition-all duration-200 text-left ${
+                        className={`flex items-center gap-2 px-3 py-1.5 min-h-8 rounded-xl text-xs font-semibold border transition-all duration-200 text-left ${
                           sel
                             ? 'bg-ink text-white border-ink'
                             : 'bg-white dark:bg-surface-raised border-gray-200 dark:border-border text-gray-600 hover:border-gray-300 dark:hover:border-border-strong hover:text-ink'
                         }`}
                       >
                         <span className="text-lg leading-none shrink-0" aria-hidden>{item.emoji}</span>
-                        <span className="truncate">{t(item.gr, item.en)}</span>
+                        <span className="leading-snug line-clamp-2">{t(item.gr, item.en)}</span>
                         {sel && <CheckCircle2 className="w-3.5 h-3.5 ml-auto shrink-0 text-accent" aria-hidden />}
                       </button>
                     );
@@ -224,17 +226,18 @@ export default function OnboardingClassic() {
                 {GROUP_SIZES.map((gs) => (
                   <button
                     key={gs.id}
+                    type="button"
                     onClick={() => setSelectedGroupSize(gs.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition-all duration-200 ${
+                    className={`w-full flex items-center gap-2.5 px-3 py-1.5 min-h-8 rounded-xl border transition-all duration-200 ${
                       selectedGroupSize === gs.id
                         ? 'bg-ink text-white border-ink'
                         : 'bg-white dark:bg-surface-raised border-gray-200 dark:border-border text-gray-600 hover:border-gray-300 dark:hover:border-border-strong hover:text-ink'
                     }`}
                   >
-                    <span className="text-lg leading-none">{gs.emoji}</span>
-                    <span className="font-bold text-sm">{t(gs.gr, gs.en)}</span>
+                    <span className="text-base leading-none" aria-hidden>{gs.emoji}</span>
+                    <span className={ONBOARDING_TYPO.optionTitle}>{t(gs.gr, gs.en)}</span>
                     {selectedGroupSize === gs.id && (
-                      <CheckCircle2 className="w-4 h-4 ml-auto text-accent" />
+                      <CheckCircle2 className="w-3.5 h-3.5 ml-auto text-accent" aria-hidden />
                     )}
                   </button>
                 ))}
@@ -245,28 +248,31 @@ export default function OnboardingClassic() {
             {step === 3 && (
               <div className="space-y-2">
                 {ACTIVITY_LEVELS.map((al) => (
-                  <button
+                    <button
                     key={al.id}
+                    type="button"
                     onClick={() => setSelectedActivity(al.id)}
-                    className={`w-full flex items-start gap-3 px-4 py-3.5 rounded-2xl border transition-all duration-200 ${
+                    className={`w-full flex items-start gap-2.5 px-3 py-2 min-h-8 rounded-xl border transition-all duration-200 ${
                       selectedActivity === al.id
                         ? 'bg-ink text-white border-ink'
                         : 'bg-white dark:bg-surface-raised border-gray-200 dark:border-border text-gray-600 hover:border-gray-300 dark:hover:border-border-strong hover:text-ink'
                     }`}
                   >
-                    <span className="text-lg leading-none mt-0.5">{al.emoji}</span>
+                    <span className="text-base leading-none mt-0.5" aria-hidden>{al.emoji}</span>
                     <div className="text-left">
-                      <p className="font-bold text-sm">{t(al.gr, al.en)}</p>
+                      <p className={ONBOARDING_TYPO.optionTitle}>{t(al.gr, al.en)}</p>
                       <p
-                        className={`text-sm font-medium mt-0.5 ${
-                          selectedActivity === al.id ? 'text-gray-300' : 'text-gray-400'
-                        }`}
+                        className={cn(
+                          ONBOARDING_TYPO.optionBody,
+                          'mt-0.5',
+                          selectedActivity === al.id ? 'text-gray-300' : 'text-gray-400',
+                        )}
                       >
                         {t(al.dgr, al.den)}
                       </p>
                     </div>
                     {selectedActivity === al.id && (
-                      <CheckCircle2 className="w-4 h-4 ml-auto text-accent shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 ml-auto text-accent shrink-0 mt-0.5" aria-hidden />
                     )}
                   </button>
                 ))}
@@ -281,15 +287,16 @@ export default function OnboardingClassic() {
                   return (
                     <button
                       key={sc.id}
+                      type="button"
                       onClick={() => toggleSchedule(sc.id)}
-                      className={`flex items-center gap-2 px-3 py-3 rounded-2xl border transition-all duration-200 ${
+                      className={`flex items-center gap-2 px-3 py-1.5 min-h-8 rounded-xl border transition-all duration-200 ${
                         sel
                           ? 'bg-ink text-white border-ink'
                           : 'bg-white dark:bg-surface-raised border-gray-200 dark:border-border text-gray-600 hover:border-gray-300 dark:hover:border-border-strong hover:text-ink'
                       }`}
                     >
-                      <span className="text-lg leading-none">{sc.emoji}</span>
-                      <span className="font-semibold text-sm text-left leading-snug">
+                      <span className="text-base leading-none" aria-hidden>{sc.emoji}</span>
+                      <span className={cn(ONBOARDING_TYPO.optionTitle, 'text-left leading-snug')}>
                         {t(sc.gr, sc.en)}
                       </span>
                     </button>
@@ -302,19 +309,20 @@ export default function OnboardingClassic() {
             {step === 5 && (
               <div className="space-y-2">
                 {LOCATION_PREFS.map((lp) => (
-                  <button
+                    <button
                     key={lp.id}
+                    type="button"
                     onClick={() => setSelectedLocation(lp.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition-all duration-200 ${
+                    className={`w-full flex items-center gap-2.5 px-3 py-1.5 min-h-8 rounded-xl border transition-all duration-200 ${
                       selectedLocation === lp.id
                         ? 'bg-ink text-white border-ink'
                         : 'bg-white dark:bg-surface-raised border-gray-200 dark:border-border text-gray-600 hover:border-gray-300 dark:hover:border-border-strong hover:text-ink'
                     }`}
                   >
-                    <span className="text-lg leading-none">{lp.emoji}</span>
-                    <span className="font-bold text-sm">{t(lp.gr, lp.en)}</span>
+                    <span className="text-base leading-none" aria-hidden>{lp.emoji}</span>
+                    <span className={ONBOARDING_TYPO.optionTitle}>{t(lp.gr, lp.en)}</span>
                     {selectedLocation === lp.id && (
-                      <CheckCircle2 className="w-4 h-4 ml-auto text-accent" />
+                      <CheckCircle2 className="w-3.5 h-3.5 ml-auto text-accent" aria-hidden />
                     )}
                   </button>
                 ))}
@@ -378,12 +386,13 @@ export default function OnboardingClassic() {
         </AnimatePresence>
 
         {/* Navigation buttons */}
-        <div className="flex items-center justify-between mt-5">
+        <div className="flex items-center justify-between mt-4">
           <button
+            type="button"
             onClick={step === 0 ? handleSkip : goPrev}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-gray-200 dark:border-border text-xs font-bold text-gray-500 hover:text-ink hover:border-gray-300 dark:hover:border-border-strong transition-all duration-200"
+            className="inline-flex items-center gap-1.5 px-3.5 min-h-8 rounded-full border border-gray-200 dark:border-border text-xs font-semibold text-gray-500 hover:text-ink hover:border-gray-300 dark:hover:border-border-strong transition-colors"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-3.5 h-3.5" aria-hidden />
             {step === 0 ? t('Παράλειψη', 'Skip') : t('Πίσω', 'Back')}
           </button>
 
@@ -392,17 +401,18 @@ export default function OnboardingClassic() {
               type="button"
               onClick={goNext}
               disabled={step === 1 && selectedInterests.length < 3}
-              className="flex items-center gap-2 px-4 py-1.5 min-h-8 rounded-2xl bg-ink text-white text-xs font-bold hover:bg-black transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-1.5 px-4 min-h-8 rounded-full bg-ink text-white text-xs font-semibold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('Επόμενο', 'Next')}
-              <ChevronRight className="w-4 h-4" aria-hidden />
+              <ChevronRight className="w-3.5 h-3.5" aria-hidden />
             </button>
           ) : (
             <button
+              type="button"
               onClick={handleComplete}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-accent to-cyan-400 text-white text-xs font-bold hover:opacity-90 transition-all duration-200"
+              className="inline-flex items-center gap-1.5 px-4 min-h-8 rounded-full bg-ink text-white text-xs font-semibold hover:bg-black transition-colors"
             >
-              <CheckCircle2 className="w-4 h-4" />
+              <CheckCircle2 className="w-3.5 h-3.5" aria-hidden />
               {t('Ολοκλήρωση!', 'Complete!')}
             </button>
           )}

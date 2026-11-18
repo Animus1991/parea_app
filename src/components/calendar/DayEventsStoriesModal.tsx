@@ -215,7 +215,7 @@ export function DayEventsStoriesModal({
             <span className="inline-block text-xs font-bold uppercase tracking-widest text-cyan-200 bg-cyan-950/90 border border-cyan-800/50 px-2 py-0.5 rounded-lg">
               {ev.category}
             </span>
-            <h2 id="day-stories-title" className="text-sm md:text-base font-extrabold text-white leading-tight">
+            <h2 id="day-stories-title" className="text-sm md:text-base font-bold text-white leading-tight">
               {ev.title}
             </h2>
             <p className="text-sm text-gray-200 flex items-center gap-1.5">

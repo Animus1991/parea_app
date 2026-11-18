@@ -18,6 +18,7 @@ import { sameInterest } from '../../lib/interests';
 import { connectionOutcomeText } from '../../lib/connectionFeedback';
 import { profilePathFor } from '../../lib/profileLinks';
 import { PersonAvatar } from '../wall/PersonAvatar';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 // ─── More dropdown ──────────────────────────────────────────────
 function MoreMenu({
@@ -331,8 +332,8 @@ export default function ConnectionsPageContent() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn('text-lg md:text-xl font-bold tracking-tight leading-tight', a.head)}>{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
-          <p className={`font-medium text-sm mt-1 ${subColor}`}>{t('Άτομα με τα οποία συνδεθήκατε μέσα από εκδηλώσεις.', 'People you\'ve connected with through events.')}</p>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
+          <p className={cn(APP_TYPO.pageSub, 'mt-1', subColor)}>{t('Άτομα με τα οποία συνδεθήκατε μέσα από εκδηλώσεις.', 'People you\'ve connected with through events.')}</p>
         </div>
         <Button variant="primary" size="sm" className="flex items-center gap-2" onClick={() => navigate('/buddy-seek')}>
           <Users className="w-4 h-4" /> {t('Βρες Nakamas', 'Find Nakamas')}
@@ -381,7 +382,7 @@ export default function ConnectionsPageContent() {
             <input
               type="text" value={search} onChange={(e) => setSearch(e.target.value)}
               placeholder={t('Αναζήτηση συνδέσεων...', 'Search connections...')}
-              className={`w-full pl-9 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 ${inputClasses}`}
+              className={`search-control w-full h-9 pl-9 pr-3 border rounded-xl focus:outline-none focus:ring-2 ${inputClasses}`}
             />
           </div>
           <div className="relative">
