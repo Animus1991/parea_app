@@ -138,9 +138,9 @@ export default function TrustCenterPageContent() {
   ];
 
   const tierBenefits: Record<TrustTier, { el: string; en: string }> = {
-    '1_explorer': { el: 'δωρεάν δημόσιες εκδηλώσεις.', en: 'free public events.' },
-    '2_confirmed': { el: 'μικρές ομάδες 3–5 & εκδηλώσεις με εισιτήριο.', en: 'small groups of 3–5 & ticketed events.' },
-    '3_high_trust': { el: 'εκδρομές, ιδιωτικές συναντήσεις & διοργάνωση.', en: 'trips, private meetups & hosting.' },
+    '1_explorer': { el: 'Δωρεάν δημόσιες εκδηλώσεις', en: 'Free public events' },
+    '2_confirmed': { el: 'Μικρές ομάδες 3–5 και εκδηλώσεις με εισιτήριο', en: 'Small groups of 3–5 and ticketed events' },
+    '3_high_trust': { el: 'Εκδρομές, ιδιωτικές συναντήσεις και διοργάνωση', en: 'Trips, private meetups and hosting' },
   };
 
   return (
@@ -251,45 +251,89 @@ export default function TrustCenterPageContent() {
           </Card>
 
           <div className="space-y-3">
-            <Card className={a.infoBg}>
-              <div className="p-4">
-                <h3 className={cn('text-sm font-bold tracking-tight mb-1.5', a.head)}>{t('Πώς υπολογίζεται η αξιοπιστία', 'How reliability is calculated')}</h3>
-                <p className={cn('card-prose font-medium leading-snug', a.sub)}>
-                  {t(
-                    'Ο βαθμός (0–100) κινείται με παρουσίες και αξιολογήσεις. Οι επαληθεύσεις ανεβάζουν το επίπεδο και ξεκλειδώνουν εκδηλώσεις.',
-                    'The score (0–100) moves with attendance and reviews. Verifications raise your tier and unlock events.',
-                  )}
-                </p>
-                <ul className={cn('mt-2.5 space-y-1 card-prose font-medium tabular-nums sm:grid sm:grid-cols-2 sm:gap-x-4 sm:space-y-0', a.sub)}>
-                  <li className="flex gap-2"><span className="w-7 shrink-0 font-bold text-emerald-600 dark:text-emerald-400">+3</span>{t('επιβεβαιωμένη παρουσία', 'confirmed attendance')}</li>
-                  <li className="flex gap-2"><span className="w-7 shrink-0 font-bold text-emerald-600 dark:text-emerald-400">+2</span>{t('καλή αξιολόγηση (4–5★)', 'good rating (4–5★)')}</li>
-                  <li className="flex gap-2"><span className="w-7 shrink-0 font-bold text-red-600 dark:text-red-400">−8</span>{t('ακύρωση τελευταίας στιγμής', 'last-minute cancel')}</li>
-                  <li className="flex gap-2"><span className="w-7 shrink-0 font-bold text-red-600 dark:text-red-400">−15</span>{t('απουσία (no-show)', 'no-show')}</li>
-                </ul>
-              </div>
+            <Card className="p-4">
+              <h3 className={cn('text-sm font-bold tracking-tight', a.head)}>
+                {t('Πώς υπολογίζεται η αξιοπιστία', 'How reliability is calculated')}
+              </h3>
+              <p className={cn('mt-1 text-xs font-medium leading-snug', a.muted)}>
+                {t(
+                  'Ο βαθμός είναι 0–100. Παρουσίες και αξιολογήσεις τον κινούν· οι επαληθεύσεις αλλάζουν επίπεδο.',
+                  'The score is 0–100. Attendance and reviews move it; verifications change your tier.',
+                )}
+              </p>
+              <p className={cn('mt-3 text-xs font-bold', a.muted)}>
+                {t('Ανεβαίνει', 'Goes up')}
+              </p>
+              <ul>
+                {[
+                  { delta: '+3', el: 'Επιβεβαιωμένη παρουσία', en: 'Confirmed attendance' },
+                  { delta: '+2', el: 'Καλή αξιολόγηση (4–5★)', en: 'Good rating (4–5★)' },
+                ].map((row) => (
+                  <li key={row.delta} className={cn('flex min-h-8 items-center justify-between gap-3 border-t', a.isDark ? 'border-gray-700/40' : 'border-gray-100')}>
+                    <span className={cn('text-xs font-medium', a.head)}>{t(row.el, row.en)}</span>
+                    <span className="text-xs font-bold tabular-nums text-emerald-700 dark:text-emerald-400">{row.delta}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className={cn('mt-2 text-xs font-bold', a.muted)}>
+                {t('Πέφτει', 'Goes down')}
+              </p>
+              <ul>
+                {[
+                  { delta: '−8', el: 'Ακύρωση τελευταίας στιγμής', en: 'Last-minute cancel' },
+                  { delta: '−15', el: 'Απουσία (no-show)', en: 'No-show' },
+                ].map((row) => (
+                  <li key={row.delta} className={cn('flex min-h-8 items-center justify-between gap-3 border-t', a.isDark ? 'border-gray-700/40' : 'border-gray-100')}>
+                    <span className={cn('text-xs font-medium', a.head)}>{t(row.el, row.en)}</span>
+                    <span className="text-xs font-bold tabular-nums text-red-700 dark:text-red-400">{row.delta}</span>
+                  </li>
+                ))}
+              </ul>
             </Card>
-            <Card className={a.infoBg}>
-              <div className="p-4">
-                <h3 className={cn('text-sm font-bold tracking-tight mb-1.5', a.head)}>{t('Τα 3 επίπεδα εμπιστοσύνης', 'The 3 trust tiers')}</h3>
-                <ol className={cn('card-prose font-medium leading-snug space-y-1.5', a.sub)}>
-                  {TRUST_TIERS.map((tier, index) => {
-                    const current = tier === trustTier;
-                    return (
-                      <li
-                        key={tier}
-                        className={cn(current && cn('rounded-xl px-2 py-1 -mx-2', a.highlightRow))}
+            <Card className="p-4">
+              <h3 className={cn('text-sm font-bold tracking-tight', a.head)}>
+                {t('Τα 3 επίπεδα εμπιστοσύνης', 'The 3 trust tiers')}
+              </h3>
+              <ol className="mt-2">
+                {TRUST_TIERS.map((tier, index) => {
+                  const current = tier === trustTier;
+                  return (
+                    <li
+                      key={tier}
+                      className={cn(
+                        'flex gap-3 py-2',
+                        index > 0 && (a.isDark ? 'border-t border-gray-700/40' : 'border-t border-gray-100'),
+                        current && cn('rounded-xl px-2 -mx-2', a.highlightRow),
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold',
+                          current ? cn(a.head, 'bg-surface-raised border border-border') : cn(a.muted, 'bg-surface'),
+                        )}
+                        aria-hidden
                       >
-                        <strong className={a.head}>
-                          {index + 1} · {t(tierLabelEl(tier), tierLabelEn(tier))}
-                          {current ? ` · ${t('τώρα', 'now')}` : ''}
-                        </strong>
-                        {' '}
-                        {t(tierBenefits[tier].el, tierBenefits[tier].en)}
-                      </li>
-                    );
-                  })}
-                </ol>
-              </div>
+                        {index + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex min-h-6 flex-wrap items-center gap-1.5">
+                          <p className={cn('text-xs font-bold', a.head)}>
+                            {t(tierLabelEl(tier), tierLabelEn(tier))}
+                          </p>
+                          {current && (
+                            <span className={cn('rounded-full px-2 py-0.5 text-2xs font-bold', a.muted)}>
+                              {t('τώρα', 'now')}
+                            </span>
+                          )}
+                        </div>
+                        <p className={cn('text-xs font-medium leading-snug', a.muted)}>
+                          {t(tierBenefits[tier].el, tierBenefits[tier].en)}
+                        </p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
             </Card>
           </div>
         </div>

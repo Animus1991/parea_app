@@ -27,25 +27,78 @@ export function StandingCard({ className }: { className?: string }) {
   const active = new Set(activeStrikes(strikes, me.id).map((s) => s.id));
   const Icon = standing.level === 'good' ? ShieldCheck : ShieldAlert;
 
+  const steps = [
+    {
+      n: '1',
+      titleEl: 'Προειδοποίηση',
+      titleEn: 'Warning',
+      bodyEl: '1η απουσία ή αργή ακύρωση.',
+      bodyEn: '1st absence or late cancel.',
+    },
+    {
+      n: '2',
+      titleEl: 'Παύση 7 ημερών',
+      titleEn: '7-day pause',
+      bodyEl: 'Ομάδες με αγνώστους κλείνουν· με φίλους μπορείς. Μετά, τελευταία προειδοποίηση.',
+      bodyEn: 'Groups of strangers close; friends can still invite you. Then a final warning.',
+    },
+    {
+      n: '3',
+      titleEl: 'Έλεγχος',
+      titleEn: 'Review',
+      bodyEl: 'Η ομάδα ασφάλειας εξετάζει τον λογαριασμό.',
+      bodyEn: 'The safety team reviews the account.',
+    },
+  ];
+
   return (
     <section className={cn('rounded-2xl border border-border bg-surface-raised p-4', className)} aria-labelledby="standing-title">
-      <h2 id="standing-title" className="flex items-center gap-2 text-sm font-bold text-ink">
-        <Icon className="h-4 w-4" aria-hidden /> {t('Η κατάστασή σου', 'Your standing')}
-      </h2>
-      <p className="mt-1.5 card-prose font-bold text-ink" data-testid="standing-level">
-        {t(standing.titleEl, standing.titleEn)}
-      </p>
-      <p className="mt-0.5 card-prose font-medium leading-relaxed text-ink-muted">{t(standing.explainEl, standing.explainEn)}</p>
+      <div className="flex items-center justify-between gap-2">
+        <h2 id="standing-title" className="flex min-w-0 items-center gap-2 text-sm font-bold text-ink">
+          <Icon className="h-4 w-4 shrink-0" aria-hidden /> {t('Η κατάστασή σου', 'Your standing')}
+        </h2>
+        <p
+          data-testid="standing-level"
+          className={cn(
+            'shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold',
+            standing.level === 'good'
+              ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+              : 'bg-amber-50 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200',
+          )}
+        >
+          {t(standing.titleEl, standing.titleEn)}
+        </p>
+      </div>
+      <p className="mt-1.5 text-xs font-medium leading-snug text-ink-muted">{t(standing.explainEl, standing.explainEn)}</p>
 
-      <details className="mt-2 card-prose font-medium text-ink">
-        <summary className="min-h-8 cursor-pointer font-bold">{t('Πώς λειτουργεί', 'How it works')}</summary>
-        <ol className="mt-1 list-decimal space-y-1 pl-5 card-prose text-ink-muted leading-relaxed">
-          <li>{t('1η απουσία ή αργή ακύρωση: προειδοποίηση.', '1st absence or late cancel: a warning.')}</li>
-          <li>{t('2η: παύση 7 ημερών για ομάδες με αγνώστους (με φίλους μπορείς), μετά τελευταία προειδοποίηση.', '2nd: a 7-day pause for groups of strangers (with friends you still can), then a final warning.')}</li>
-          <li>{t('3η: έλεγχος από την ομάδα ασφάλειας.', '3rd: a review by the safety team.')}</li>
-          <li>{t(`Μετράνε μόνο τα τελευταία ${STRIKE_WINDOW_DAYS} ημέρες. Αν η θέση σου περάσει σε λίστα αναμονής, δεν μετράει.`, `Only the last ${STRIKE_WINDOW_DAYS} days count. If your seat passes to the waitlist, it does not count.`)}</li>
-        </ol>
-      </details>
+      <h3 className="mt-3 text-xs font-bold text-ink-muted">
+        {t('Πώς λειτουργεί', 'How it works')}
+      </h3>
+      <ol className="mt-1">
+        {steps.map((step, i) => (
+          <li
+            key={step.n}
+            className={cn('flex gap-3 py-2', i > 0 && 'border-t border-border')}
+          >
+            <span
+              className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface text-xs font-bold text-ink-muted"
+              aria-hidden
+            >
+              {step.n}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-ink">{t(step.titleEl, step.titleEn)}</p>
+              <p className="text-xs font-medium leading-snug text-ink-muted">{t(step.bodyEl, step.bodyEn)}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-1 text-2xs font-medium leading-snug text-ink-muted">
+        {t(
+          `Μετράνε μόνο οι τελευταίες ${STRIKE_WINDOW_DAYS} ημέρες. Αν η θέση σου περάσει σε λίστα αναμονής, δεν μετράει.`,
+          `Only the last ${STRIKE_WINDOW_DAYS} days count. If your seat passes to the waitlist, it does not count.`,
+        )}
+      </p>
 
       {mine.length > 0 && (
         <ul className="mt-3 divide-y divide-border">
