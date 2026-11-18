@@ -29,10 +29,23 @@ import {
 } from '../../lib/categoriesCatalog';
 import { CollectionsRail } from '../outings/CollectionsRail';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { isEventPast } from '../../lib/eventDisplay';
 
 type PriceFilter = 'All' | 'Free' | 'Paid' | 'Group Discount';
 type DateFilter = 'Any' | 'Today' | 'This Week' | 'This Month' | 'Weekend';
 type SortBy = 'Relevance' | 'Trending' | 'Distance' | 'Group Progress';
+
+function scrollToEvents() {
+  const area = document.getElementById('events-area');
+  const scroller = document.getElementById('main-content');
+  if (!area || !scroller) return;
+  const nextTop =
+    area.getBoundingClientRect().top -
+    scroller.getBoundingClientRect().top +
+    scroller.scrollTop -
+    12;
+  scroller.scrollTo({ top: Math.max(0, nextTop), behavior: 'smooth' });
+}
 
 const SELECT_CLASS =
   "filter-select border shadow-soft focus:outline-none shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239ca3af%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.4rem_center] pr-6 transition-colors";
@@ -54,10 +67,12 @@ export default function CategoriesPageContent() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
+    const current = searchParams.get('c');
+    if ((current || null) === (activeCategory || null)) return;
     const next = new URLSearchParams(searchParams);
     if (activeCategory) next.set('c', activeCategory);
     else next.delete('c');
-    setSearchParams(next, { replace: true });
+    setSearchParams(next, { replace: true, preventScrollReset: true });
   }, [activeCategory, searchParams, setSearchParams]);
 
   const categoryCounts = useMemo(() => {
@@ -92,8 +107,15 @@ export default function CategoriesPageContent() {
   }, [categoryCounts, activeTab, searchQuery, language]);
 
   const trendingCategories = useMemo(
-    () => sortedCategories.slice(0, 3),
-    [sortedCategories],
+    () =>
+      CATEGORY_CATALOG.map((cat) => ({
+        ...cat,
+        count: categoryCounts[cat.name] || 0,
+        displayName: language === 'el' ? cat.labelGr : cat.labelEn,
+      }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 3),
+    [categoryCounts, language],
   );
 
   const filteredEvents = useMemo(() => {
@@ -110,6 +132,14 @@ export default function CategoriesPageContent() {
         if (priceFilter === 'Paid' && !e.isPaid) return false;
         if (priceFilter === 'Group Discount' && !e.groupDiscount) return false;
 
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase();
+          const inTitle = e.title.toLowerCase().includes(q);
+          const inDesc = e.description?.toLowerCase().includes(q) ?? false;
+          const inTags = (e.tags ?? []).some((tag) => tag.toLowerCase().includes(q));
+          const inCat = (e.category || '').toLowerCase().includes(q);
+          if (!inTitle && !inDesc && !inTags && !inCat) return false;
+        }
         if (dateFilter !== 'Any') {
           const eDate = parseISO(e.date);
           const day = eDate.getDay();
@@ -121,6 +151,9 @@ export default function CategoriesPageContent() {
         return true;
       })
       .sort((a, b) => {
+        const pastA = isEventPast(a) ? 1 : 0;
+        const pastB = isEventPast(b) ? 1 : 0;
+        if (pastA !== pastB) return pastA - pastB;
         if (sortBy === 'Trending') {
           return (b.currentParticipants || 0) - (a.currentParticipants || 0);
         }
@@ -134,11 +167,22 @@ export default function CategoriesPageContent() {
         }
         return 0;
       });
-  }, [events, activeCategory, priceFilter, dateFilter, sortBy]);
+  }, [events, activeCategory, priceFilter, dateFilter, sortBy, searchQuery]);
 
   const selectTone = p.isDark
     ? 'bg-gray-800/80 border-gray-700 text-gray-200'
     : 'bg-white border-gray-200 text-gray-800 cursor-pointer';
+
+  const chooseCategory = (name: string) => {
+    const next = activeCategory === name ? null : name;
+    setActiveCategory(next);
+  };
+
+  useEffect(() => {
+    if (!activeCategory) return;
+    const id = window.setTimeout(scrollToEvents, 80);
+    return () => window.clearTimeout(id);
+  }, [activeCategory]);
 
   return (
     <div className="max-w-full mx-auto space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
@@ -151,18 +195,18 @@ export default function CategoriesPageContent() {
         <div className="relative z-10 w-full md:max-w-2xl text-center md:text-left">
           <Badge
             variant="outline"
-            className="mb-4 border-hero-fg/20 bg-hero-fg/10 text-hero-fg backdrop-blur-md"
+            className="mb-2 border-hero-fg/20 bg-hero-fg/10 text-hero-fg backdrop-blur-md"
           >
             <Compass className="w-3.5 h-3.5 mr-1" />{' '}
-            {t('Εξερευνηση Δραστηριοτήτων', 'Activity Explorer')}
+            {t('Εξερεύνηση δραστηριοτήτων', 'Activity explorer')}
           </Badge>
-          <h1 className={cn(APP_TYPO.pageTitle, 'mb-3')}>
+          <h1 className={cn(APP_TYPO.pageTitle, 'mb-1.5')}>
             {t('Βρείτε την επόμενη', 'Find your next')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-hero-accent-from to-hero-accent-to">
               {t('εμπειρία σας', 'experience')}
             </span>
           </h1>
-          <p className="text-sm font-medium text-hero-fg/80 leading-relaxed mb-4">
+          <p className="text-sm font-medium text-hero-fg/80 leading-snug mb-3">
             {t(
               'Ανακαλύψτε επιλεγμένες εκδηλώσεις που ταιριάζουν στα ενδιαφέροντά σας.',
               'Discover handpicked events matching your interests.',
@@ -174,10 +218,14 @@ export default function CategoriesPageContent() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && searchQuery.trim()) scrollToEvents();
+              }}
               placeholder={t(
-                'Αναζήτηση κατηγοριών ή θεμάτων...',
-                'Search categories or topics...',
+                'Αναζήτηση κατηγορίας ή εκδήλωσης...',
+                'Search a category or event...',
               )}
+              aria-label={t('Αναζήτηση κατηγορίας ή εκδήλωσης', 'Search a category or event')}
               className="search-control w-full h-9 pl-9 pr-3 rounded-xl border-0 bg-hero-fg/10 text-hero-fg placeholder:text-hero-fg/60 focus:outline-none focus:ring-2 focus:ring-hero-fg/40 backdrop-blur-md transition-all"
             />
           </div>
@@ -186,7 +234,7 @@ export default function CategoriesPageContent() {
       </div>
 
       {/* Φ27 — themed collections */}
-      <CollectionsRail />
+      {!searchQuery.trim() && <CollectionsRail />}
 
       {!searchQuery && !activeCategory && (
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -196,55 +244,52 @@ export default function CategoriesPageContent() {
               {tu('Δημοφιλή Τώρα', 'Trending Now')}
             </span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 noscrollbar">
             {trendingCategories.map((cat) => (
               <button
                 key={cat.id}
                 type="button"
-                onClick={() => setActiveCategory(cat.name)}
+                onClick={() => chooseCategory(cat.name)}
                 className={cn(
-                  'p-3.5 rounded-2xl border flex items-center justify-between text-left text-xs group transition-all duration-300 shadow-soft',
+                  'flex min-w-[11.5rem] shrink-0 items-center gap-2.5 rounded-2xl border p-2.5 text-left text-xs shadow-soft',
                   p.cardSurface,
                   p.borderB,
-                  p.cardHover,
                 )}
               >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={cn(
-                      'w-10 h-10 rounded-2xl flex items-center justify-center transition-transform duration-300 shadow-soft border group-hover:scale-110',
-                      cat.bg,
-                      cat.border,
-                    )}
-                  >
-                    <cat.icon className={cn('w-5 h-5', cat.color)} />
-                  </div>
-                  <div>
-                    <h3 className={cn('font-bold text-sm', p.head)}>{cat.displayName}</h3>
-                    <p className={cn('text-xs font-semibold tracking-wide', p.muted)}>
-                      {cat.count} {t('ενεργές', 'active')}
-                    </p>
-                  </div>
-                </div>
-                <ArrowRight
+                <div
                   className={cn(
-                    'w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all',
-                    p.iconAccent,
+                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border',
+                    cat.bg,
+                    cat.border,
                   )}
-                />
+                >
+                  <cat.icon className={cn('h-4 w-4', cat.color)} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className={cn('truncate text-xs font-bold', p.head)}>{cat.displayName}</h3>
+                  <p className={cn('text-2xs font-medium', p.muted)}>
+                    {cat.count} {t('ενεργές', 'active')}
+                  </p>
+                </div>
+                <ArrowRight className={cn('h-3.5 w-3.5 shrink-0', p.iconAccent)} aria-hidden />
               </button>
             ))}
           </div>
         </div>
       )}
 
+      {!searchQuery.trim() && (
       <div
         className={cn(
-          'rounded-2xl border shadow-soft p-1 overflow-hidden',
+          'rounded-2xl border shadow-soft p-1',
           p.isDark ? 'bg-[hsl(220_16%_14%)] border-gray-700/50' : 'bg-white border-gray-100',
         )}
       >
-        <div role="tablist" aria-label={t('Ομάδες κατηγοριών', 'Category groups')} className="flex overflow-x-auto noscrollbar min-w-full">
+        <div
+          role="tablist"
+          aria-label={t('Ομάδες κατηγοριών', 'Category groups')}
+          className="flex overflow-x-auto noscrollbar"
+        >
           {CATEGORY_GROUP_TABS.map((tab) => (
             <button
               key={tab}
@@ -256,7 +301,7 @@ export default function CategoriesPageContent() {
                 setActiveCategory(null);
               }}
               className={cn(
-                'px-3.5 py-2 whitespace-nowrap text-xs font-bold rounded-xl transition-all flex-1 text-center min-w-fit',
+                'shrink-0 px-2 py-2 whitespace-nowrap text-xs font-bold rounded-xl transition-all text-center',
                 activeTab === tab
                   ? p.isDark
                     ? 'bg-[hsl(220_16%_18%)] text-white shadow-soft'
@@ -272,17 +317,17 @@ export default function CategoriesPageContent() {
           ))}
         </div>
       </div>
+      )}
 
+      {sortedCategories.length > 0 && (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {sortedCategories.map((cat) => (
           <button
             key={cat.id}
             type="button"
-            onClick={() =>
-              setActiveCategory(activeCategory === cat.name ? null : cat.name)
-            }
+            onClick={() => chooseCategory(cat.name)}
             className={cn(
-              'rounded-2xl p-3.5 sm:p-4 border shadow-soft hover:shadow-soft transition-all duration-300 group flex flex-col items-center text-center text-xs',
+              'rounded-2xl p-3 sm:p-4 border shadow-soft flex flex-col items-center text-center text-xs',
               p.cardSurface,
               activeCategory === cat.name
                 ? cn(
@@ -294,7 +339,7 @@ export default function CategoriesPageContent() {
           >
             <div
               className={cn(
-                'w-12 h-12 rounded-2xl border-2 flex items-center justify-center mb-3 group-hover:-translate-y-1 transition-transform duration-300 shadow-soft',
+                'w-11 h-11 rounded-2xl border-2 flex items-center justify-center mb-2.5 shadow-soft',
                 cat.bg,
                 cat.border,
               )}
@@ -317,8 +362,9 @@ export default function CategoriesPageContent() {
           </button>
         ))}
       </div>
+      )}
 
-      {sortedCategories.length === 0 && (
+      {sortedCategories.length === 0 && filteredEvents.length === 0 && (
         <EmptyState
           icon={Search}
           title={t('Δεν βρέθηκαν αποτελέσματα', 'No categories match your search')}
@@ -329,7 +375,7 @@ export default function CategoriesPageContent() {
         />
       )}
 
-      <div className={cn('mt-10 border-t pt-5 scroll-mt-24', p.borderT)} id="events-area">
+      <div className={cn('mt-6 border-t pt-5 scroll-mt-24', p.borderT)} id="events-area">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
           <div className="flex items-center gap-3">
             <div
@@ -363,7 +409,7 @@ export default function CategoriesPageContent() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 items-center">
+          <div className="flex gap-2 items-center overflow-x-auto noscrollbar pb-0.5">
             <select aria-label={t("Φίλτρο κόστους", "Cost filter")}
               className={cn(SELECT_CLASS, selectTone)}
               value={priceFilter}
@@ -371,6 +417,7 @@ export default function CategoriesPageContent() {
             >
               <option value="All">{t('Κόστος: Οποιοδήποτε', 'Cost: Any')}</option>
               <option value="Free">{t('Μόνο δωρεάν', 'Free only')}</option>
+              <option value="Paid">{t('Μόνο επί πληρωμή', 'Paid only')}</option>
               <option value="Group Discount">
                 {t('Με Ομαδική Έκπτωση', 'Has Group Discount')}
               </option>
@@ -384,6 +431,7 @@ export default function CategoriesPageContent() {
               <option value="Any">{t('Χρόνος: Οποτεδήποτε', 'Time: Anytime')}</option>
               <option value="Today">{t('Σήμερα', 'Today')}</option>
               <option value="This Week">{t('Αυτή την Εβδομάδα', 'This Week')}</option>
+              <option value="This Month">{t('Αυτόν τον μήνα', 'This Month')}</option>
               <option value="Weekend">{t('Το Σαββατοκύριακο', 'This Weekend')}</option>
             </select>
 
@@ -426,6 +474,7 @@ export default function CategoriesPageContent() {
                     setActiveCategory(null);
                     setPriceFilter('All');
                     setDateFilter('Any');
+                    setSearchQuery('');
                   }}
                 />
               </div>
