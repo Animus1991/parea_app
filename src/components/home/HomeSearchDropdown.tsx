@@ -111,6 +111,7 @@ export function HomeSearchDropdown({
               key={`recent-${s}`}
               type="button"
               role="option"
+              aria-selected={false}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => onPick(s)}
               className={cn(
@@ -135,6 +136,7 @@ export function HomeSearchDropdown({
           key={`popular-${s}`}
           type="button"
           role="option"
+          aria-selected={false}
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => onPick(s)}
           className={cn(
