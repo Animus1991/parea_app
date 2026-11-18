@@ -7,6 +7,7 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { useStore } from '../../store';
 import { DAILY_CHALLENGE_XP } from '../../lib/achievements';
 import { useGamificationData } from '../../hooks/useGamificationData';
+import { NakamasMini } from '../illustrations/NakamasMini';
 
 /** Segmented navigation shared by /achievements, /challenges and /leaderboard (port from nakamas hub). */
 export function GamificationHubNav({ className }: { className?: string }) {
@@ -119,9 +120,7 @@ export function DailyChallengeCard({ className }: { className?: string }) {
       className={cn('flex flex-col gap-4 rounded-2xl border border-border bg-surface-raised p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between', className)}
     >
       <div className="flex items-center gap-3.5">
-        <span aria-hidden className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
-          <Flame className="h-5 w-5" />
-        </span>
+        <NakamasMini id="spark" size={40} />
         <div>
           <p className="text-xs font-semibold text-accent">
             {t('Ημερήσια πρόκληση', 'Daily challenge')} <span className="text-ink-muted">· +{DAILY_CHALLENGE_XP} XP</span>

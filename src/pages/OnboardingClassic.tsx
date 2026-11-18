@@ -9,6 +9,7 @@ import {
 } from '../lib/onboardingHomeBridge';
 import { INTERESTS } from '../lib/interests';
 import { motion, AnimatePresence } from 'motion/react';
+import { NakamasCast } from '../components/illustrations/NakamasCast';
 
 const GROUP_SIZES = [
   { id: 'tiny', gr: '2–3 άτομα', en: '2–3 people', emoji: '👥' },
@@ -171,19 +172,7 @@ export default function OnboardingClassic() {
             </div>
 
             {/* Step 0 — Welcome */}
-            {step === 0 && (
-              <div className="space-y-4">
-                <div className="flex flex-col items-center py-4 gap-3">
-                  <span className="text-6xl">👋</span>
-                  <p className="text-base text-gray-600 font-medium text-center max-w-xs leading-relaxed">
-                    {t(
-                      'Το Nakamas συνδέει ανθρώπους για μικρές ομαδικές εμπειρίες βασισμένες σε κοινά ενδιαφέροντα.',
-                      'Nakamas connects people for small group experiences based on shared interests.',
-                    )}
-                  </p>
-                </div>
-              </div>
-            )}
+            {step === 0 && <NakamasCast />}
 
             {/* Step 1 — Interests (gate: ≥3, matches subtitle) */}
             {step === 1 && (

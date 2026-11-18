@@ -10,6 +10,7 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { isLiveSupportConfigured, openLiveSupport } from '../../services/support';
+import { NakamasCast } from '../illustrations/NakamasCast';
 
 export default function HelpCenterPageContent() {
   const { t, tu } = useLanguage();
@@ -109,6 +110,8 @@ export default function HelpCenterPageContent() {
           />
         </div>
       </div>
+
+      <NakamasCast heading={t('Πώς δουλεύει', 'How it works')} />
 
       {/* Popular Topics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

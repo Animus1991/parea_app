@@ -319,6 +319,7 @@ export default function PlansPageContent() {
         {upcomingEvents.length === 0 && (
           <EmptyState
             icon={Compass}
+            character="explorer"
             title={t(`Δεν υπάρχουν επερχόμενα σχέδια.`, `No upcoming confirmed plans.`)}
             description={t('Εξερευνήστε εκδηλώσεις και μπείτε σε μια ομάδα για να ξεκινήσετε.', 'Explore experiences and join a group to get started.')}
             actionLabel={t(`Εξερεύνηση`, `Explore Experiences`)}

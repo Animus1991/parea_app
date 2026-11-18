@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { Compass } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 import { Button } from '../common/Button';
+import { NakamasMini } from '../illustrations/NakamasMini';
 
 /** Marketing hero for unauthenticated users (Login / landing). */
 export function HomeGuestHero() {
@@ -17,9 +17,7 @@ export function HomeGuestHero() {
       animate={{ opacity: 1, y: 0 }}
       className="w-full max-w-lg mx-auto mb-5 text-center space-y-4"
     >
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-700 mb-2">
-        <Compass className="w-6 h-6" />
-      </div>
+      <NakamasMini id="explorer" size={48} className="mx-auto" />
       <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-700">
         {t('Εξερεύνηση Δραστηριοτήτων', 'Explore Activities')}
       </p>

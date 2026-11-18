@@ -423,6 +423,7 @@ export default function ConnectionsPageContent() {
             <div className="col-span-full">
               <EmptyState
                 icon={Users}
+                character={search ? undefined : 'crew'}
                 title={search ? t('Δεν βρέθηκαν αποτελέσματα', 'No results found') : t('Δεν έχετε συνδέσεις ακόμα', 'No connections yet')}
                 description={t('Βρείτε Nakamas στις εκδηλώσεις!', 'Find Nakamas at events!')}
                 actionLabel={search ? t('Καθαρισμός', 'Clear') : t('Εξερεύνηση', 'Explore')}

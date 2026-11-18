@@ -4,9 +4,12 @@ import { Button } from './Button';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { ASK_AI_EMPTY, askCopilot } from '../../lib/askCopilot';
+import { NakamasMini, type NakamasMiniId } from '../illustrations/NakamasMini';
 
 interface EmptyStateProps {
   icon?: LucideIcon;
+  /** Original Nakamas mini — used instead of the Lucide well when set. */
+  character?: NakamasMiniId;
   title: string;
   description?: string;
   actionLabel?: string;
@@ -27,6 +30,7 @@ interface EmptyStateProps {
 /** Token-driven empty state: soft brand icon well, title, optional description + CTA. */
 export function EmptyState({
   icon: Icon,
+  character,
   title,
   description,
   actionLabel,
@@ -58,11 +62,13 @@ export function EmptyState({
         className,
       )}
     >
-      {Icon && (
+      {character ? (
+        <NakamasMini id={character} size={48} className="mb-2" />
+      ) : Icon ? (
         <div className="w-10 h-10 rounded-2xl bg-brand-soft text-brand flex items-center justify-center mb-3">
           <Icon className="w-5 h-5" aria-hidden />
         </div>
-      )}
+      ) : null}
       {/* Inside-card type ≤ page title (text-sm); subtitle < title */}
       <h3 className="text-sm font-bold text-ink">{title}</h3>
       {description && (

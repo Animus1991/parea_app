@@ -79,6 +79,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
         {conversations.length === 0 && (
           <EmptyState
             icon={MessageCircle}
+            character="crew"
             title={t('Καμία συνομιλία ακόμα', 'No conversations yet')}
             description={t('Οι συνομιλίες ξεκλειδώνουν μετά από αποδοχή αιτήματος ή ομάδας.', 'Conversations unlock after a request or group is accepted.')}
             className="m-2 border-0 bg-transparent"

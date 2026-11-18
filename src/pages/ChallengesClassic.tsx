@@ -1,11 +1,6 @@
 import { useState, useMemo } from 'react';
 import { GamificationHubNav } from '../components/achievements/GamificationHub';
 import {
-  Target,
-  Flame,
-  Users,
-  Globe,
-  Zap,
   CheckCircle2,
   Trophy,
   Clock,
@@ -19,12 +14,11 @@ import { cn } from '../lib/utils';
 import { toast } from 'sonner';
 import { APP_TYPO } from '../lib/typographyTokens';
 import { CopilotInlinePrompt } from '../components/copilot/CopilotInlinePrompt';
+import { CHALLENGE_MINI, NakamasMini, type NakamasMiniId } from '../components/illustrations/NakamasMini';
 
 interface Challenge {
   id: string;
-  icon: React.ElementType;
-  color: string;
-  bg: string;
+  mini: NakamasMiniId;
   titleGr: string;
   titleEn: string;
   descGr: string;
@@ -66,9 +60,7 @@ export default function ChallengesClassic() {
     () => [
       {
         id: 'c1',
-        icon: Target,
-        color: 'text-cyan-600',
-        bg: 'bg-cyan-50',
+        mini: CHALLENGE_MINI.events,
         titleGr: '5 Εκδηλώσεις τον Μήνα',
         titleEn: '5 Events This Month',
         descGr: 'Παρακολούθησε 5 εκδηλώσεις κατά τη διάρκεια του τρέχοντος μήνα.',
@@ -82,9 +74,7 @@ export default function ChallengesClassic() {
       },
       {
         id: 'c2',
-        icon: Flame,
-        color: 'text-orange-500',
-        bg: 'bg-orange-50',
+        mini: CHALLENGE_MINI.streak,
         titleGr: 'Σερί 4 Εβδομάδων',
         titleEn: '4-Week Streak',
         descGr: 'Συμμετείχε σε τουλάχιστον μια εκδήλωση κάθε εβδομάδα για 4 συνεχόμενες εβδομάδες.',
@@ -98,9 +88,7 @@ export default function ChallengesClassic() {
       },
       {
         id: 'c3',
-        icon: Users,
-        color: 'text-purple-600',
-        bg: 'bg-purple-50',
+        mini: CHALLENGE_MINI.social,
         titleGr: 'Δικτύωσε 5 Nakamas',
         titleEn: 'Connect with 5 Nakamas',
         descGr: 'Δημιούργησε 5 νέες συνδέσεις με μέλη της κοινότητας.',
@@ -114,9 +102,7 @@ export default function ChallengesClassic() {
       },
       {
         id: 'c4',
-        icon: Globe,
-        color: 'text-indigo-600',
-        bg: 'bg-indigo-50',
+        mini: CHALLENGE_MINI.explorer,
         titleGr: 'Εξερεύνησε 4 Κατηγορίες',
         titleEn: 'Explore 4 Categories',
         descGr: 'Παρακολούθησε εκδηλώσεις από 4 διαφορετικές κατηγορίες.',
@@ -130,9 +116,7 @@ export default function ChallengesClassic() {
       },
       {
         id: 'c5',
-        icon: Zap,
-        color: 'text-amber-500',
-        bg: 'bg-amber-50',
+        mini: 'spark',
         titleGr: 'Γρήγορη Εγγραφή ×3',
         titleEn: 'Quick Join ×3',
         descGr: 'Εγγράψου σε εκδήλωση εντός 5 λεπτών από τη δημοσίευσή της, 3 φορές.',
@@ -146,9 +130,7 @@ export default function ChallengesClassic() {
       },
       {
         id: 'c6',
-        icon: Trophy,
-        color: 'text-rose-500',
-        bg: 'bg-rose-50',
+        mini: 'helper',
         titleGr: 'Κορυφαίος Αξιολογητής',
         titleEn: 'Top Reviewer',
         descGr: 'Αξιολόγησε 3 εκδηλώσεις με αναλυτικό σχόλιο.',
@@ -238,8 +220,6 @@ export default function ChallengesClassic() {
           const pct = Math.round((c.progress / c.goal) * 100);
           const done = c.progress >= c.goal;
           const joined = joinedIds.has(c.id);
-          const Icon = c.icon;
-
           return (
             <motion.div
               key={c.id}
@@ -250,9 +230,7 @@ export default function ChallengesClassic() {
               <Card className={`p-4 flex flex-col gap-3 h-full ${done ? 'border-green-200 bg-green-50/20' : ''}`}>
                 {/* Header */}
                 <div className="flex items-start gap-3">
-                  <div className={`w-9 h-9 rounded-xl ${c.bg} flex items-center justify-center shrink-0`}>
-                    <Icon className={`w-4.5 h-4.5 ${c.color}`} />
-                  </div>
+                  <NakamasMini id={c.mini} size={40} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className={cn('card-heading font-bold', p.head)}>

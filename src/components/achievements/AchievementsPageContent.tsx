@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Award, Calendar, ChevronRight, Flame, Share2, Shield, Star, Target, TrendingUp, Trophy, Users, UserPlus } from 'lucide-react';
+import { Award, ChevronRight, Flame, Share2, Star, TrendingUp, Trophy, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card } from '../common/Card';
 import { TabBar } from '../common/TabBar';
@@ -11,20 +11,9 @@ import { PersonAvatar } from '../wall/PersonAvatar';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useStore } from '../../store';
 import { computeUserXp } from '../../lib/gamification';
-import type { AchievementId } from '../../lib/achievements';
 import { DailyChallengeCard, GamificationHubNav, GamificationSummary } from './GamificationHub';
 import { useGamificationData } from '../../hooks/useGamificationData';
-
-const ICONS: Record<AchievementId, { icon: React.ElementType; color: string; darkColor: string }> = {
-  first_experience: { icon: Calendar, color: 'text-cyan-600 bg-cyan-100', darkColor: 'text-cyan-400 bg-cyan-900/30' },
-  social_butterfly: { icon: Users, color: 'text-purple-600 bg-purple-100', darkColor: 'text-purple-400 bg-purple-900/30' },
-  reliability_star: { icon: Star, color: 'text-amber-600 bg-amber-100', darkColor: 'text-amber-400 bg-amber-900/30' },
-  weekly_streak: { icon: Flame, color: 'text-orange-600 bg-orange-100', darkColor: 'text-orange-400 bg-orange-900/30' },
-  trusted_member: { icon: Shield, color: 'text-green-600 bg-green-100', darkColor: 'text-green-400 bg-green-900/30' },
-  explorer: { icon: Target, color: 'text-indigo-600 bg-indigo-100', darkColor: 'text-indigo-400 bg-indigo-900/30' },
-  trailblazer: { icon: Trophy, color: 'text-rose-600 bg-rose-100', darkColor: 'text-rose-400 bg-rose-900/30' },
-  connector: { icon: UserPlus, color: 'text-teal-600 bg-teal-100', darkColor: 'text-teal-400 bg-teal-900/30' },
-};
+import { ACHIEVEMENT_MINI, NakamasMini } from '../illustrations/NakamasMini';
 
 /**
  * Achievements (Φ25): nakamas hub layout (shared nav + ring summary + daily
@@ -112,15 +101,13 @@ export default function AchievementsPageContent() {
         {activeTab === 'badges' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {d.achievements.map((ach) => {
-              const meta = ICONS[ach.id];
-              const Icon = meta.icon;
               const pct = Math.min(100, (ach.progress / ach.goal) * 100);
               const title = t(ach.titleEl, ach.titleEn);
               return (
                 <Card key={ach.id} className="p-4">
                   <div className="flex items-start gap-3">
-                    <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0', a.isDark ? meta.darkColor : meta.color, !ach.unlocked && 'opacity-60')}>
-                      <Icon className="w-4 h-4" aria-hidden />
+                    <div className={cn('shrink-0', !ach.unlocked && 'opacity-55 grayscale')}>
+                      <NakamasMini id={ACHIEVEMENT_MINI[ach.id]} size={40} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">

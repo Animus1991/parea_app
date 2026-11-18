@@ -12,6 +12,7 @@ import {
 import { useLanguage } from '../../../lib/i18n';
 import { cn } from '../../../lib/utils';
 import { PLANS_FORMING_TYPO } from '../../../lib/typographyTokens';
+import { NakamasMini } from '../../illustrations/NakamasMini';
 import type { PlansFormingInsights } from '../../../hooks/usePlansFormingFeed';
 import type { PlansFormingEnrichedItem } from '../../../lib/plansFormingUtils';
 import type { Event } from '../../../types';
@@ -202,14 +203,7 @@ export function PlansFormingEmptyState({
         isDark ? 'border-white/15 bg-white/[0.02]' : 'border-gray-300 bg-gray-50/50',
       )}
     >
-      <div
-        className={cn(
-          'w-12 h-12 mx-auto rounded-2xl flex items-center justify-center',
-          isDark ? 'bg-cyan-900/30' : 'bg-cyan-100',
-        )}
-      >
-        <Users className={cn('w-6 h-6', isDark ? 'text-cyan-400' : 'text-cyan-600')} />
-      </div>
+      <NakamasMini id="crew" size={48} className="mx-auto" />
       <div>
         <p className={cn(PLANS_FORMING_TYPO.cardTitle, isDark ? 'text-white' : 'text-gray-900')}>
           {t('Θέλετε να πάτε, αλλά όχι μόνοι/ες;', 'Want to go, but not alone?')}
