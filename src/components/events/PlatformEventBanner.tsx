@@ -85,7 +85,7 @@ export function PlatformEventBanner() {
       </div>
       <button
         onClick={handleBecomeHost}
-        className="shrink-0 inline-flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold rounded-2xl px-4 py-2.5 text-xs transition-colors shadow-soft"
+        className="shrink-0 inline-flex min-h-8 items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold rounded-full px-4 text-xs transition-colors"
       >
         <Crown className="w-4 h-4" />
         {t("Γίνε Διοργανωτής Παρέας", "Become group organizer")}

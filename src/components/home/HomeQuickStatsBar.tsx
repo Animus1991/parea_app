@@ -48,7 +48,7 @@ export function HomeQuickStatsBar() {
             >
               <Icon className={`w-3.5 h-3.5 ${iconColor}`} />
             </div>
-            <span className={`text-xs font-bold uppercase tracking-wider truncate ${h.labelMuted}`}>
+            <span className={`text-2xs font-bold leading-snug line-clamp-2 ${h.labelMuted}`}>
               {label}
             </span>
           </div>

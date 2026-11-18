@@ -103,7 +103,10 @@
 }
 
 @utility pb-safe {
-  padding-bottom: calc(var(--safe-bottom) + env(safe-area-inset-bottom, 0px));
+  /* Dock clearance (--safe-bottom) plus the floating Find-Nakamas/Chat pill (~44px) + gap.
+     The pill uses bottom-fab-zone (same --safe-bottom), so extra padding is required
+     or the last CTAs sit underneath it. */
+  padding-bottom: calc(var(--safe-bottom) + 3.25rem + env(safe-area-inset-bottom, 0px));
 }
 
 @utility bottom-nav-clear {

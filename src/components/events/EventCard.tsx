@@ -417,7 +417,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             </div>
             <button
               onClick={handleBecomeHost}
-              className={cn("w-full py-2 rounded-2xl font-bold transition-colors flex items-center justify-center gap-1.5 shadow-soft", EVENT_CARD_TYPO.cta, isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
+              className={cn("w-full min-h-8 rounded-full font-bold transition-colors flex items-center justify-center gap-1.5", EVENT_CARD_TYPO.cta, isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
             >
               <Crown className="w-3.5 h-3.5" />
               {t('Γίνε Διοργανωτής Nakamas', 'Become Nakamas organizer')}

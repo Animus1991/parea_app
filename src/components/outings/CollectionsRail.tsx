@@ -42,10 +42,11 @@ export function CollectionsRail({
     <section className={cn('space-y-2', className)} aria-labelledby={title ? 'collections-rail-title' : undefined} aria-label={title ? undefined : t('Συλλογές', 'Collections')}>
       {title && (
         <div className="flex items-center justify-between gap-2">
-          <h2 id="collections-rail-title" className="flex items-center gap-2 text-sm font-bold text-ink md:text-base">
-            <Library className="h-4 w-4" aria-hidden /> {t('Συλλογές', 'Collections')}
+          <h2 id="collections-rail-title" className="flex min-w-0 items-center gap-2 text-sm font-bold text-ink">
+            <Library className="h-4 w-4 shrink-0" aria-hidden />
+            <span className="truncate">{t('Συλλογές', 'Collections')}</span>
           </h2>
-          <Link to="/collections" className="inline-flex min-h-9 items-center gap-0.5 text-xs font-bold text-ink hover:underline">
+          <Link to="/collections" className="inline-flex min-h-8 shrink-0 items-center gap-0.5 text-xs font-bold text-ink hover:underline">
             {t('Όλες', 'All')} <ChevronRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
         </div>

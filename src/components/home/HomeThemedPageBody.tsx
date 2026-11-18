@@ -155,8 +155,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
       <CollectionsRail />
 
       <section>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
-          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5">
             <div className={cn('flex p-1 rounded-lg w-fit', tok.feedTabWrap)}>
               <button
                 onClick={() => setFeedType('For You')}
@@ -180,16 +180,15 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
             )}
           </div>
 
-          <div className={cn('flex p-0.5 rounded-lg w-fit', tok.mapBtnWrap)}>
-            <button
-              onClick={() => navigate('/nearby')}
-              className={cn('p-1.5 rounded-lg transition-all', tok.mapBtn)}
-              title={t('Άνοιγμα Χάρτη', 'Open Map')}
-              aria-label={t('Άνοιγμα Χάρτη', 'Open Map')}
-            >
-              <MapIcon className="w-4 h-4" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => navigate('/nearby')}
+            className={cn('inline-flex min-h-8 min-w-8 shrink-0 items-center justify-center rounded-full transition-all', tok.mapBtn)}
+            title={t('Άνοιγμα Χάρτη', 'Open Map')}
+            aria-label={t('Άνοιγμα Χάρτη', 'Open Map')}
+          >
+            <MapIcon className="w-4 h-4" />
+          </button>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -287,6 +286,13 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         setDateFilter={setDateFilter}
         radiusFilter={radiusFilter}
         setRadiusFilter={setRadiusFilter}
+        safetyFilter={safetyFilter}
+        setSafetyFilter={setSafetyFilter}
+        sortParam={sortParam}
+        setSortParam={setSortParam}
+        seekingHostOnly={seekingHostOnly}
+        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
+        showSeekingHostChip={seekingHostEvents.length > 0}
       />
     </div>
   );

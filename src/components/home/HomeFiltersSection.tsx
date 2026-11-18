@@ -90,10 +90,10 @@ export function HomeFiltersSection({
   }, []);
 
   return (
-    <section id="home-filters" className="space-y-4 scroll-mt-24">
+    <section id="home-filters" className="space-y-3 scroll-mt-24">
       <div className="flex items-center justify-between gap-2">
         <h2 className={`text-xs font-semibold tracking-[0.12em] uppercase ${h.sectionLabel}`}>
-          {t('home.explore_categories', 'Εξερευνηση κατηγοριων')}
+          {t('home.explore_categories', 'Explore Categories')}
         </h2>
         <button
           type="button"
@@ -154,7 +154,7 @@ export function HomeFiltersSection({
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="hidden md:grid grid-cols-2 gap-2">
         <HomeFilterSelect
           ariaLabel={t('Φίλτρο τιμής', 'Price filter')}
           value={priceFilter}

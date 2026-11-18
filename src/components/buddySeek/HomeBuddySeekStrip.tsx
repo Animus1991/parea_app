@@ -53,7 +53,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
           <button
             type="button"
             onClick={() => setSheetOpen(true)}
-            className="xl:hidden text-xs font-bold px-2.5 py-1.5 rounded-lg bg-accent text-accent-fg"
+            className="xl:hidden inline-flex min-h-8 items-center text-xs font-bold px-3 rounded-full bg-accent text-accent-fg"
           >
             {t('Άνοιγμα', 'Open')}
           </button>
