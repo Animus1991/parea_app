@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDebounce } from './useDebounce';
 import { useStore } from '../store';
@@ -10,10 +10,21 @@ import type {
   HomeSafetyFilter,
   HomeSortParam,
 } from '../lib/homeFeedConstants';
+import {
+  emptyHomeSchedule,
+  isScheduleFilterActive,
+  parseHomeScheduleFromSearch,
+  readStoredHomeSchedule,
+  schedulesEqual,
+  serializeHomeSchedule,
+  writeStoredHomeSchedule,
+  type HomeScheduleFilter,
+} from '../lib/homeScheduleFilter';
 
 export function useHomeUrlFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
   const addRecentSearch = useStore((s) => s.addRecentSearch);
+  const userId = useStore((s) => s.currentUser?.id ?? null);
 
   const initialSearch = searchParams.get('search') || '';
 
@@ -37,6 +48,22 @@ export function useHomeUrlFilters() {
   const [activeMood, setActiveMood] = useState<string | null>(() =>
     parseHomeMoodParam(searchParams.get('mood')),
   );
+  const [schedule, setScheduleState] = useState<HomeScheduleFilter>(() => {
+    const fromUrl = parseHomeScheduleFromSearch(searchParams);
+    if (isScheduleFilterActive(fromUrl)) return fromUrl;
+    return readStoredHomeSchedule(userId) ?? emptyHomeSchedule();
+  });
+
+  const setSchedule = useCallback(
+    (next: HomeScheduleFilter) => {
+      setScheduleState(next);
+      writeStoredHomeSchedule(next, userId);
+    },
+    [userId],
+  );
+
+  const searchParamsRef = useRef(searchParams);
+  searchParamsRef.current = searchParams;
 
   const moodCategories = useMemo(() => getMoodCategories(activeMood), [activeMood]);
   const hasMoodFilter = activeMood !== null && moodCategories.length > 0;
@@ -75,6 +102,11 @@ export function useHomeUrlFilters() {
     if (dist !== radiusFilter) setRadiusFilter(dist);
     if (mood !== activeMood) setActiveMood(mood);
 
+    const fromUrl = parseHomeScheduleFromSearch(searchParams);
+    if (isScheduleFilterActive(fromUrl)) {
+      setScheduleState((prev) => (schedulesEqual(prev, fromUrl) ? prev : fromUrl));
+    }
+
     const urlSearch = searchParams.get('search') || '';
     if (urlSearch !== debouncedSearch && searchQuery === debouncedSearch) {
       setSearchQuery(urlSearch);
@@ -103,6 +135,12 @@ export function useHomeUrlFilters() {
     if (radiusFilter !== 'Any') params.set('dist', radiusFilter);
     if (sortParam !== 'Relevance') params.set('sort', sortParam);
     if (activeMood) params.set('mood', activeMood);
+    const scheduleParams = serializeHomeSchedule(schedule);
+    if (scheduleParams.on) params.set('on', scheduleParams.on);
+    if (scheduleParams.wd) params.set('wd', scheduleParams.wd);
+    if (scheduleParams.tw) params.set('tw', scheduleParams.tw);
+    if (scheduleParams.hrs) params.set('hrs', scheduleParams.hrs);
+    if (params.toString() === searchParamsRef.current.toString()) return;
     setSearchParams(params, { replace: true });
     if (debouncedSearch.trim()) addRecentSearch(debouncedSearch.trim());
   }, [
@@ -115,6 +153,7 @@ export function useHomeUrlFilters() {
     radiusFilter,
     sortParam,
     activeMood,
+    schedule,
     setSearchParams,
     addRecentSearch,
   ]);
@@ -132,6 +171,7 @@ export function useHomeUrlFilters() {
       safetyFilter !== 'All' ||
       radiusFilter !== 'Any' ||
       hasMoodFilter ||
+      isScheduleFilterActive(schedule) ||
       searchQuery.length > 0,
     [
       activeCategory,
@@ -141,6 +181,7 @@ export function useHomeUrlFilters() {
       safetyFilter,
       radiusFilter,
       hasMoodFilter,
+      schedule,
       searchQuery,
     ],
   );
@@ -155,8 +196,9 @@ export function useHomeUrlFilters() {
         radiusFilter !== 'Any',
         tagFilter !== 'All',
         hasMoodFilter,
+        isScheduleFilterActive(schedule),
       ].filter(Boolean).length,
-    [activeCategory, priceFilter, dateFilter, safetyFilter, radiusFilter, tagFilter, hasMoodFilter],
+    [activeCategory, priceFilter, dateFilter, safetyFilter, radiusFilter, tagFilter, hasMoodFilter, schedule],
   );
 
   const clearUrlFilters = useCallback(() => {
@@ -168,7 +210,8 @@ export function useHomeUrlFilters() {
     setRadiusFilter('Any');
     setSearchQuery('');
     setActiveMood(null);
-  }, []);
+    setSchedule(emptyHomeSchedule());
+  }, [setSchedule]);
 
   return {
     searchParams,
@@ -200,5 +243,7 @@ export function useHomeUrlFilters() {
     hasActiveFilters,
     activeFilterCount,
     clearUrlFilters,
+    schedule,
+    setSchedule,
   };
 }

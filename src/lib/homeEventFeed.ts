@@ -15,6 +15,10 @@ import {
   type HomeSortParam,
 } from './homeFeedConstants';
 import { isEventPast } from './eventDisplay';
+import {
+  eventMatchesSchedule,
+  type HomeScheduleFilter,
+} from './homeScheduleFilter';
 
 export interface HomeEventFilterInput {
   events: Event[];
@@ -31,6 +35,7 @@ export interface HomeEventFilterInput {
   seekingHostOnly: boolean;
   isSeekingHost: (event: Event) => boolean;
   getDistance: (eventId: string, lat?: number, lng?: number) => number | null;
+  schedule?: HomeScheduleFilter;
 }
 
 export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
@@ -49,6 +54,7 @@ export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
     seekingHostOnly,
     isSeekingHost,
     getDistance,
+    schedule,
   } = input;
 
   return events.filter((e) => {
@@ -100,6 +106,8 @@ export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
     }
 
     if (seekingHostOnly && !isSeekingHost(e)) return false;
+
+    if (schedule && !eventMatchesSchedule(e, schedule)) return false;
 
     return true;
   });

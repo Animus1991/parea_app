@@ -21,6 +21,7 @@ import { HomeFeedToolbar } from "../components/home/HomeFeedToolbar";
 import { HomeDiscoverEnrichment } from "../components/home/HomeDiscoverEnrichment";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
+import { emptyHomeSchedule, isScheduleFilterActive } from "../lib/homeScheduleFilter";
 
 export default function HomeClassic() {
   const h = useHomeTheme();
@@ -75,6 +76,8 @@ export default function HomeClassic() {
     activeFilterCount,
     activeMood,
     handleSelectMood,
+    schedule,
+    setSchedule,
     isLoading,
     isError,
     refetch,
@@ -159,6 +162,8 @@ export default function HomeClassic() {
           activeMood={activeMood}
           onSelectMood={handleSelectMood}
           expanded={filtersExpanded}
+          schedule={schedule}
+          setSchedule={setSchedule}
         />
 
 
@@ -182,29 +187,44 @@ export default function HomeClassic() {
               <EmptyState
                 icon={CalendarX}
                 title={t("home.feed.no_events", "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.")}
-                description={t(
-                  'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
-                  'Try changing filters or category — or see what’s nearby.',
-                )}
+                description={
+                  isScheduleFilterActive(schedule)
+                    ? t(
+                        'Καμία βραδιά δεν χωράει σε αυτές τις μέρες και ώρες. Διεύρυνε το πρόγραμμα — ο κατάλογος είναι ακόμα εκεί.',
+                        'No nights fit these days and hours. Widen the schedule — the catalog is still there.',
+                      )
+                    : t(
+                        'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
+                        'Try changing filters or category — or see what’s nearby.',
+                      )
+                }
                 actionLabel={
-                  hasActiveFilters || seekingHostOnly
-                    ? t('Εκκαθάριση φίλτρων', 'Clear filters')
-                    : t('Στον χάρτη', 'On the map')
+                  isScheduleFilterActive(schedule)
+                    ? t('Διεύρυνε τις ώρες', 'Widen hours')
+                    : hasActiveFilters || seekingHostOnly
+                      ? t('Εκκαθάριση φίλτρων', 'Clear filters')
+                      : t('Στον χάρτη', 'On the map')
                 }
                 onAction={
-                  hasActiveFilters || seekingHostOnly
-                    ? handleClearAll
-                    : () => navigate('/nearby')
+                  isScheduleFilterActive(schedule)
+                    ? () => setSchedule(emptyHomeSchedule())
+                    : hasActiveFilters || seekingHostOnly
+                      ? handleClearAll
+                      : () => navigate('/nearby')
                 }
                 secondaryLabel={
-                  hasActiveFilters || seekingHostOnly
-                    ? t('Στον χάρτη', 'On the map')
-                    : t('Κατηγορίες', 'Categories')
+                  isScheduleFilterActive(schedule)
+                    ? t('Εκκαθάριση φίλτρων', 'Clear filters')
+                    : hasActiveFilters || seekingHostOnly
+                      ? t('Στον χάρτη', 'On the map')
+                      : t('Κατηγορίες', 'Categories')
                 }
                 onSecondary={
-                  hasActiveFilters || seekingHostOnly
-                    ? () => navigate('/nearby')
-                    : () => navigate('/categories')
+                  isScheduleFilterActive(schedule)
+                    ? handleClearAll
+                    : hasActiveFilters || seekingHostOnly
+                      ? () => navigate('/nearby')
+                      : () => navigate('/categories')
                 }
               />
             </div>
@@ -265,6 +285,8 @@ export default function HomeClassic() {
         setTagFilter={setTagFilter}
         activeMood={activeMood}
         onSelectMood={handleSelectMood}
+        schedule={schedule}
+        setSchedule={setSchedule}
       />
     </div>
   );

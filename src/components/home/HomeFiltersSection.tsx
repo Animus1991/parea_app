@@ -9,6 +9,8 @@ import { HomeDiscoveryPrefsChips } from './HomeDiscoveryPrefsChips';
 import { HomeFilterSelect } from './HomeFilterSelect';
 import { MoodSelector } from './MoodSelector';
 import { HomeActiveFilterChips } from './HomeActiveFilterChips';
+import { HomeScheduleFilterPanel } from './HomeScheduleFilterPanel';
+import { emptyHomeSchedule, type HomeScheduleFilter } from '../../lib/homeScheduleFilter';
 import { HOME_TYPO } from '../../lib/typographyTokens';
 import type {
   HomeDateFilter,
@@ -43,6 +45,8 @@ export interface HomeFiltersSectionProps {
   onSelectMood?: (moodId: string | null, categories: string[]) => void;
   /** Desktop/web: inline panel is collapsed until the toolbar Φίλτρα button expands it. */
   expanded?: boolean;
+  schedule: HomeScheduleFilter;
+  setSchedule: (next: HomeScheduleFilter) => void;
 }
 
 export function HomeFiltersSection({
@@ -68,6 +72,8 @@ export function HomeFiltersSection({
   activeMood = null,
   onSelectMood,
   expanded = false,
+  schedule,
+  setSchedule,
 }: HomeFiltersSectionProps) {
   const { t } = useLanguage();
   const h = useHomeTheme();
@@ -109,9 +115,14 @@ export function HomeFiltersSection({
         activeMood={activeMood}
         onClearMood={() => onSelectMood?.(null, [])}
         onClearAll={onClearAll}
+        schedule={schedule}
+        onClearSchedule={() => setSchedule(emptyHomeSchedule())}
       />
 
-      <div className={cn('hidden space-y-3', expanded && 'lg:block')}>
+      {expanded && (
+      <div className="hidden space-y-3 lg:block">
+        <HomeScheduleFilterPanel schedule={schedule} onChange={setSchedule} />
+
         <h2 className={`${HOME_TYPO.sectionLabel} ${h.sectionLabel}`}>
           {t('home.explore_categories', 'Explore Categories')}
         </h2>
@@ -249,6 +260,7 @@ export function HomeFiltersSection({
           )}
         </div>
       </div>
+      )}
     </section>
   );
 }

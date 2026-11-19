@@ -17,6 +17,7 @@ import { useHomePageController } from '../../hooks/useHomePageController';
 import { HOME_TYPO } from '../../lib/typographyTokens';
 import { HOME_THEMED_TOKENS, type HomeThemedVariant } from '../../lib/homeThemedTokens';
 import { cn } from '../../lib/utils';
+import { emptyHomeSchedule, isScheduleFilterActive } from '../../lib/homeScheduleFilter';
 
 /**
  * Canonical themed Home — ONE implementation for vibrant/neon/bento × light/dark.
@@ -73,6 +74,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     activeFilterCount,
     activeMood,
     handleSelectMood,
+    schedule,
+    setSchedule,
     isLoading,
     isError,
     refetch,
@@ -163,6 +166,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           activeMood={activeMood}
           onSelectMood={handleSelectMood}
           expanded={filtersExpanded}
+          schedule={schedule}
+          setSchedule={setSchedule}
         />
 
 
@@ -189,29 +194,44 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
                   'home.feed.no_events',
                   'Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.',
                 )}
-                description={t(
-                  'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
-                  'Try changing filters or category — or see what’s nearby.',
-                )}
+                description={
+                  isScheduleFilterActive(schedule)
+                    ? t(
+                        'Καμία βραδιά δεν χωράει σε αυτές τις μέρες και ώρες. Διεύρυνε το πρόγραμμα — ο κατάλογος είναι ακόμα εκεί.',
+                        'No nights fit these days and hours. Widen the schedule — the catalog is still there.',
+                      )
+                    : t(
+                        'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
+                        'Try changing filters or category — or see what’s nearby.',
+                      )
+                }
                 actionLabel={
-                  hasActiveFilters || seekingHostOnly
-                    ? t('Εκκαθάριση φίλτρων', 'Clear filters')
-                    : t('Στον χάρτη', 'On the map')
+                  isScheduleFilterActive(schedule)
+                    ? t('Διεύρυνε τις ώρες', 'Widen hours')
+                    : hasActiveFilters || seekingHostOnly
+                      ? t('Εκκαθάριση φίλτρων', 'Clear filters')
+                      : t('Στον χάρτη', 'On the map')
                 }
                 onAction={
-                  hasActiveFilters || seekingHostOnly
-                    ? handleClearAll
-                    : () => navigate('/nearby')
+                  isScheduleFilterActive(schedule)
+                    ? () => setSchedule(emptyHomeSchedule())
+                    : hasActiveFilters || seekingHostOnly
+                      ? handleClearAll
+                      : () => navigate('/nearby')
                 }
                 secondaryLabel={
-                  hasActiveFilters || seekingHostOnly
-                    ? t('Στον χάρτη', 'On the map')
-                    : t('Κατηγορίες', 'Categories')
+                  isScheduleFilterActive(schedule)
+                    ? t('Εκκαθάριση φίλτρων', 'Clear filters')
+                    : hasActiveFilters || seekingHostOnly
+                      ? t('Στον χάρτη', 'On the map')
+                      : t('Κατηγορίες', 'Categories')
                 }
                 onSecondary={
-                  hasActiveFilters || seekingHostOnly
-                    ? () => navigate('/nearby')
-                    : () => navigate('/categories')
+                  isScheduleFilterActive(schedule)
+                    ? handleClearAll
+                    : hasActiveFilters || seekingHostOnly
+                      ? () => navigate('/nearby')
+                      : () => navigate('/categories')
                 }
               />
             </div>
@@ -272,6 +292,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         setTagFilter={setTagFilter}
         activeMood={activeMood}
         onSelectMood={handleSelectMood}
+        schedule={schedule}
+        setSchedule={setSchedule}
       />
     </div>
   );

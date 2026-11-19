@@ -40,6 +40,7 @@ export function useHomeEventFeed({
         seekingHostOnly,
         isSeekingHost,
         getDistance,
+        schedule: filters.schedule,
       }),
     [
       events,
@@ -56,6 +57,7 @@ export function useHomeEventFeed({
       seekingHostOnly,
       isSeekingHost,
       getDistance,
+      filters.schedule,
     ],
   );
 

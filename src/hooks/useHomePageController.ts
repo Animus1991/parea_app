@@ -2,7 +2,7 @@
  * Shared Home feed controller — one place for filters/search/feed state so
  * HomeClassic and HomeThemedPageBody cannot drift on loyalty wiring.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHomeExternalEvents } from './useHomeExternalEvents';
 import { useHomeEventFeed } from './useHomeEventFeed';
 import { useHomeScrollToFilters } from './useHomeScrollToFilters';
@@ -10,6 +10,7 @@ import { useStoryEvents } from './useStoryEvents';
 import { getDefaultHomeSearchSuggestions } from '../lib/homeSearchSuggestions';
 import { useLanguage } from '../lib/i18n';
 import { DESKTOP_DOCK_QUERY, useMediaQuery } from './useMediaQuery';
+import { eventMatchesSchedule, isScheduleFilterActive } from '../lib/homeScheduleFilter';
 
 const HOME_FEED_PAGE_SIZE = 6;
 
@@ -27,7 +28,7 @@ export function useHomePageController() {
 
   useHomeExternalEvents();
   const scrollToFilters = useHomeScrollToFilters();
-  const { storyEvents, seekingHostEvents, isSeekingHost } = useStoryEvents();
+  const { storyEvents: catalogStories, seekingHostEvents, isSeekingHost } = useStoryEvents();
 
   const feed = useHomeEventFeed({
     feedType,
@@ -35,7 +36,12 @@ export function useHomePageController() {
     isSeekingHost,
   });
 
-  const { searchQuery, handleSearchChange, initialSearch, sortedEvents, clearAllFilters, isLoading } = feed;
+  const { searchQuery, handleSearchChange, initialSearch, sortedEvents, clearAllFilters, isLoading, schedule } = feed;
+
+  const storyEvents = useMemo(() => {
+    if (!isScheduleFilterActive(schedule)) return catalogStories;
+    return catalogStories.filter((event) => eventMatchesSchedule(event, schedule));
+  }, [catalogStories, schedule]);
 
   useEffect(() => {
     if (initialSearch && searchQuery === initialSearch) {
