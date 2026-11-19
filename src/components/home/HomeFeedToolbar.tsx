@@ -4,7 +4,7 @@ import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 
 const TOOLBAR_CHIP =
-  'filter-chip text-xs font-bold leading-none px-3 gap-1.5 rounded-full border shrink-0';
+  'filter-chip text-xs font-bold leading-none px-3 gap-1.5 rounded-full border shrink-0 whitespace-nowrap';
 const TOOLBAR_ICON = 'size-3.5 shrink-0';
 
 export interface HomeFeedToolbarProps {
@@ -57,7 +57,7 @@ export function HomeFeedToolbar({
           </button>
         </div>
         {!isLoading && resultCount > 0 && (
-          <p className="inline-flex h-[1.75rem] items-center text-xs font-semibold leading-none text-ink-muted whitespace-nowrap">
+          <p className="hidden h-[1.75rem] items-center text-xs font-semibold leading-none text-ink-muted whitespace-nowrap sm:inline-flex">
             {resultCount === 1
               ? t('1 αποτέλεσμα', '1 result')
               : t(`${resultCount} αποτελέσματα`, `${resultCount} results`)}

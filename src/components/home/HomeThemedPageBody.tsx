@@ -132,7 +132,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           tabClassName={(active) =>
             cn(
               HOME_TYPO.filterChip,
-              'px-4 rounded-lg transition-all',
+              'px-4 rounded-lg whitespace-nowrap transition-all',
               HOME_TYPO.feedTab,
               active ? tok.feedTabActive : tok.feedTabInactive,
             )
