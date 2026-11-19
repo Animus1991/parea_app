@@ -5,6 +5,7 @@ import { audienceSummary, exposureSummary } from '../../lib/companyRequestUtils'
 import type { ProfileExposure, VisibilityMode, PhotoRevealPolicy, InterestVisibilityMode } from '../../types/companyRequest';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { AppSelect } from '../common/AppSelect';
 
 export function BuddySeekPrivacySettings() {
   const { t } = useLanguage();
@@ -40,74 +41,70 @@ export function BuddySeekPrivacySettings() {
         <label htmlFor="bs-visibility" className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Προεπιλεγμένη ορατότητα αιτήματος', 'Default request visibility')}
         </label>
-        <select
+        <AppSelect
           id="bs-visibility"
+          ariaLabel={t('Προεπιλεγμένη ορατότητα αιτήματος', 'Default request visibility')}
           value={prefs.defaultVisibility}
-          onChange={(e) => setPrefs({ defaultVisibility: e.target.value as VisibilityMode })}
+          onValueChange={(v) => setPrefs({ defaultVisibility: v as VisibilityMode })}
           className={inputClass}
-        >
-          {(
+          options={(
             ['private', 'similar_interests', 'same_event_viewers', 'verified_users', 'public_event_page'] as VisibilityMode[]
-          ).map((mode) => (
-            <option key={mode} value={mode}>
-              {audienceSummary(mode, t)}
-            </option>
-          ))}
-        </select>
+          ).map((mode) => ({ value: mode, label: audienceSummary(mode, t) }))}
+        />
       </div>
 
       <div>
         <label htmlFor="bs-exposure" className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Προεπιλεγμένη έκθεση προφίλ', 'Default profile exposure')}
         </label>
-        <select
+        <AppSelect
           id="bs-exposure"
+          ariaLabel={t('Προεπιλεγμένη έκθεση προφίλ', 'Default profile exposure')}
           value={prefs.defaultProfileExposure}
-          onChange={(e) => setPrefs({ defaultProfileExposure: e.target.value as ProfileExposure })}
+          onValueChange={(v) => setPrefs({ defaultProfileExposure: v as ProfileExposure })}
           className={inputClass}
-        >
-          {(
+          options={(
             ['anonymous', 'nickname', 'interests_only', 'trust_badges', 'optional_photo', 'mini_profile'] as ProfileExposure[]
-          ).map((ex) => (
-            <option key={ex} value={ex}>
-              {exposureSummary(ex, t)}
-            </option>
-          ))}
-        </select>
+          ).map((ex) => ({ value: ex, label: exposureSummary(ex, t) }))}
+        />
       </div>
 
       <div>
         <label htmlFor="bs-photo" className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Φωτογραφία', 'Photo')}
         </label>
-        <select
+        <AppSelect
           id="bs-photo"
+          ariaLabel={t('Φωτογραφία', 'Photo')}
           value={prefs.photoRevealPolicy}
-          onChange={(e) => setPrefs({ photoRevealPolicy: e.target.value as PhotoRevealPolicy })}
+          onValueChange={(v) => setPrefs({ photoRevealPolicy: v as PhotoRevealPolicy })}
           className={inputClass}
-        >
-          <option value="never">{t('Ποτέ σε κάρτες', 'Never in cards')}</option>
-          <option value="after_accept">{t('Μετά την αποδοχή', 'After accept')}</option>
-          <option value="confirmed_group_only">{t('Μόνο σε επιβεβαιωμένη ομάδα', 'Confirmed group only')}</option>
-          <option value="in_cards_opt_in">{t('Μόνο με ρητή επιλογή', 'Explicit opt-in only')}</option>
-        </select>
+          options={[
+            { value: 'never', label: t('Ποτέ σε κάρτες', 'Never in cards') },
+            { value: 'after_accept', label: t('Μετά την αποδοχή', 'After accept') },
+            { value: 'confirmed_group_only', label: t('Μόνο σε επιβεβαιωμένη ομάδα', 'Confirmed group only') },
+            { value: 'in_cards_opt_in', label: t('Μόνο με ρητή επιλογή', 'Explicit opt-in only') },
+          ]}
+        />
       </div>
 
       <div>
         <label htmlFor="bs-interests" className={cn('text-xs font-bold mb-1 block', a.head)}>
           {t('Ενδιαφέροντα', 'Interests')}
         </label>
-        <select
+        <AppSelect
           id="bs-interests"
+          ariaLabel={t('Ενδιαφέροντα', 'Interests')}
           value={prefs.interestVisibility}
-          onChange={(e) => setPrefs({ interestVisibility: e.target.value as InterestVisibilityMode })}
+          onValueChange={(v) => setPrefs({ interestVisibility: v as InterestVisibilityMode })}
           className={inputClass}
-        >
-          <option value="shared_only">{t('Μόνο κοινά', 'Shared only')}</option>
-          <option value="count_only">{t('Μόνο αριθμός', 'Count only')}</option>
-          <option value="all">{t('Όλα τα επιλεγμένα', 'All selected')}</option>
-          <option value="hidden">{t('Απόκρυψη', 'Hidden')}</option>
-        </select>
+          options={[
+            { value: 'shared_only', label: t('Μόνο κοινά', 'Shared only') },
+            { value: 'count_only', label: t('Μόνο αριθμός', 'Count only') },
+            { value: 'all', label: t('Όλα τα επιλεγμένα', 'All selected') },
+            { value: 'hidden', label: t('Απόκρυψη', 'Hidden') },
+          ]}
+        />
       </div>
 
       {(

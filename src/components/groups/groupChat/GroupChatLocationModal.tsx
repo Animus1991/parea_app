@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { useLanguage } from '../../../lib/i18n';
 import { cn } from '../../../lib/utils';
 import { Modal } from '../../common/Modal';
+import { AppSelect } from '../../common/AppSelect';
 import type { useGroupChatContrast } from '../../../hooks/useGroupChatContrast';
 import type { GroupChatMessage } from '../../../hooks/useGroupChatMessages';
 
@@ -187,18 +188,21 @@ export function GroupChatLocationModal({
 
         <div className="space-y-3">
           <h4 className="text-xs font-bold tracking-wide text-ink-muted">3. {t('Αυτόματη Λήξη', 'Auto-Expiry')}</h4>
-          <select aria-label={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
+          <AppSelect
+            ariaLabel={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
             value={locationConfig.duration}
-            onChange={(e) => setLocationConfig({ ...locationConfig, duration: e.target.value })}
-            className="w-full border border-border rounded-2xl p-3 text-sm font-medium focus:ring-2 focus:ring-accent/40 bg-surface-raised outline-none shadow-soft"
-          >
-            <option value="arrival">{t('Μέχρι να φτάσω στο σημείο', 'Until I arrive at meeting point')}</option>
-            <option value="event_start">{t('Μέχρι να ξεκινήσει η εκδήλωση', 'Until event starts')}</option>
-            <option value="event_end">
-              {t('Μέχρι το τέλος της εκδήλωσης', 'Until event ends (or organizer marks complete)')}
-            </option>
-            <option value="1hr">{t('Για 1 ώρα', 'For 1 hour')}</option>
-          </select>
+            onValueChange={(v) => setLocationConfig({ ...locationConfig, duration: v })}
+            className="w-full border border-border rounded-2xl p-3 text-sm font-medium bg-surface-raised shadow-soft"
+            options={[
+              { value: 'arrival', label: t('Μέχρι να φτάσω στο σημείο', 'Until I arrive at meeting point') },
+              { value: 'event_start', label: t('Μέχρι να ξεκινήσει η εκδήλωση', 'Until event starts') },
+              {
+                value: 'event_end',
+                label: t('Μέχρι το τέλος της εκδήλωσης', 'Until event ends (or organizer marks complete)'),
+              },
+              { value: '1hr', label: t('Για 1 ώρα', 'For 1 hour') },
+            ]}
+          />
         </div>
       </div>
 

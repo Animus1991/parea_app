@@ -28,6 +28,7 @@ import {
   type CategoryGroupTab,
 } from '../../lib/categoriesCatalog';
 import { CollectionsRail } from '../outings/CollectionsRail';
+import { AppSelect } from '../common/AppSelect';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { isEventPast } from '../../lib/eventDisplay';
 
@@ -48,7 +49,7 @@ function scrollToEvents() {
 }
 
 const SELECT_CLASS =
-  "filter-select border shadow-soft focus:outline-none shrink-0 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239ca3af%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.4rem_center] pr-6 transition-colors";
+  'filter-select border shadow-soft focus:outline-none shrink-0 pr-2 transition-colors';
 
 /** Unified categories (ZIP parity + Classic design tokens via usePageContrast). */
 export default function CategoriesPageContent() {
@@ -410,42 +411,44 @@ export default function CategoriesPageContent() {
           </div>
 
           <div className="flex gap-2 items-center overflow-x-auto noscrollbar pb-0.5">
-            <select aria-label={t("Φίλτρο κόστους", "Cost filter")}
+            <AppSelect
+              ariaLabel={t("Φίλτρο κόστους", "Cost filter")}
               className={cn(SELECT_CLASS, selectTone)}
               value={priceFilter}
-              onChange={(e) => setPriceFilter(e.target.value as PriceFilter)}
-            >
-              <option value="All">{t('Κόστος: Οποιοδήποτε', 'Cost: Any')}</option>
-              <option value="Free">{t('Μόνο δωρεάν', 'Free only')}</option>
-              <option value="Paid">{t('Μόνο επί πληρωμή', 'Paid only')}</option>
-              <option value="Group Discount">
-                {t('Με Ομαδική Έκπτωση', 'Has Group Discount')}
-              </option>
-            </select>
+              onValueChange={(v) => setPriceFilter(v as PriceFilter)}
+              options={[
+                { value: 'All', label: t('Κόστος: Οποιοδήποτε', 'Cost: Any') },
+                { value: 'Free', label: t('Μόνο δωρεάν', 'Free only') },
+                { value: 'Paid', label: t('Μόνο επί πληρωμή', 'Paid only') },
+                { value: 'Group Discount', label: t('Με Ομαδική Έκπτωση', 'Has Group Discount') },
+              ]}
+            />
 
-            <select aria-label={t("Φίλτρο χρόνου", "Time filter")}
+            <AppSelect
+              ariaLabel={t("Φίλτρο χρόνου", "Time filter")}
               className={cn(SELECT_CLASS, selectTone)}
               value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value as DateFilter)}
-            >
-              <option value="Any">{t('Χρόνος: Οποτεδήποτε', 'Time: Anytime')}</option>
-              <option value="Today">{t('Σήμερα', 'Today')}</option>
-              <option value="This Week">{t('Αυτή την Εβδομάδα', 'This Week')}</option>
-              <option value="This Month">{t('Αυτόν τον μήνα', 'This Month')}</option>
-              <option value="Weekend">{t('Το Σαββατοκύριακο', 'This Weekend')}</option>
-            </select>
+              onValueChange={(v) => setDateFilter(v as DateFilter)}
+              options={[
+                { value: 'Any', label: t('Χρόνος: Οποτεδήποτε', 'Time: Anytime') },
+                { value: 'Today', label: t('Σήμερα', 'Today') },
+                { value: 'This Week', label: t('Αυτή την Εβδομάδα', 'This Week') },
+                { value: 'This Month', label: t('Αυτόν τον μήνα', 'This Month') },
+                { value: 'Weekend', label: t('Το Σαββατοκύριακο', 'This Weekend') },
+              ]}
+            />
 
-            <select aria-label={t("Ταξινόμηση", "Sort by")}
+            <AppSelect
+              ariaLabel={t("Ταξινόμηση", "Sort by")}
               className={cn(SELECT_CLASS, selectTone)}
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortBy)}
-            >
-              <option value="Trending">{t('Ταξινόμηση: Κορυφαία', 'Sort: Trending')}</option>
-              <option value="Distance">{t('Ταξινόμηση: Πιο κοντά', 'Sort: Distance')}</option>
-              <option value="Group Progress">
-                {t('Ταξινόμηση: Πρόοδος', 'Sort: Fill rate')}
-              </option>
-            </select>
+              onValueChange={(v) => setSortBy(v as SortBy)}
+              options={[
+                { value: 'Trending', label: t('Ταξινόμηση: Κορυφαία', 'Sort: Trending') },
+                { value: 'Distance', label: t('Ταξινόμηση: Πιο κοντά', 'Sort: Distance') },
+                { value: 'Group Progress', label: t('Ταξινόμηση: Πρόοδος', 'Sort: Fill rate') },
+              ]}
+            />
           </div>
         </div>
 

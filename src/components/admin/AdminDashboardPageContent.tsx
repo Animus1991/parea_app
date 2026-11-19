@@ -23,6 +23,7 @@ import { toast } from 'sonner';
 import { useAiAuditStore, type AiAuditStatus } from '../../store/aiAuditStore';
 import { intlLocale } from '../../lib/dateLocale';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { AppSelect } from '../common/AppSelect';
 
 type AdminTab = 'overview' | 'moderation' | 'users' | 'system' | 'automation' | 'branding' | 'sso';
 
@@ -269,15 +270,17 @@ export default function AdminDashboardPageContent() {
         <div className="flex items-center justify-between gap-3 mb-4">
           <h2 className={cn('text-sm font-bold', a.head)}>{t('Εκδηλώσεις & συμμετοχές ανά εβδομάδα', 'Events & participants per week')}</h2>
           <label className="sr-only" htmlFor="admin-chart-range">{t('Εύρος', 'Range')}</label>
-          <select
+          <AppSelect
             id="admin-chart-range"
+            ariaLabel={t('Εύρος', 'Range')}
             value={chartRange}
-            onChange={(e) => setChartRange(e.target.value as '8w' | 'all')}
+            onValueChange={(v) => setChartRange(v as '8w' | 'all')}
             className={cn('filter-select border outline-none', a.inputBg)}
-          >
-            <option value="8w">{t('Τελευταίες 8 εβδομάδες', 'Last 8 weeks')}</option>
-            <option value="all">{t('Όλο το διάστημα', 'All time')}</option>
-          </select>
+            options={[
+              { value: '8w', label: t('Τελευταίες 8 εβδομάδες', 'Last 8 weeks') },
+              { value: 'all', label: t('Όλο το διάστημα', 'All time') },
+            ]}
+          />
         </div>
         <div className="h-56 w-full" role="img" aria-label={t(`Γράφημα δραστηριότητας: ${activity.reduce((n, b) => n + b.events, 0)} εκδηλώσεις`, `Activity chart: ${activity.reduce((n, b) => n + b.events, 0)} events`)}>
           <ResponsiveContainer width="100%" height="100%">
@@ -551,16 +554,18 @@ export default function AdminDashboardPageContent() {
                 </div>
                 <div>
                   <label className={cn('text-xs font-bold mb-1.5 block', a.head)}>{t('Ενέργεια', 'Action')}</label>
-                  <select aria-label={t("Ενέργεια διαχείρισης", "Moderation action")}
+                  <AppSelect
+                    ariaLabel={t("Ενέργεια διαχείρισης", "Moderation action")}
                     value={adminAction}
-                    onChange={(e) => setAdminAction(e.target.value)}
-                    className={cn('filter-select w-full border focus:ring-2 focus:ring-cyan-600 focus:outline-none', a.inputBg)}
-                  >
-                    <option value="warning">{t('Προειδοποίηση', 'Warning')}</option>
-                    <option value="suspend_7d">{t('Αναστολή 7 ημέρες', 'Suspend 7 days')}</option>
-                    <option value="ban">{t('Μόνιμος αποκλεισμός', 'Permanent ban')}</option>
-                    <option value="reset_reliability">{t('Επαναφορά αξιοπιστίας', 'Reset reliability')}</option>
-                  </select>
+                    onValueChange={setAdminAction}
+                    className={cn('filter-select w-full border', a.inputBg)}
+                    options={[
+                      { value: 'warning', label: t('Προειδοποίηση', 'Warning') },
+                      { value: 'suspend_7d', label: t('Αναστολή 7 ημέρες', 'Suspend 7 days') },
+                      { value: 'ban', label: t('Μόνιμος αποκλεισμός', 'Permanent ban') },
+                      { value: 'reset_reliability', label: t('Επαναφορά αξιοπιστίας', 'Reset reliability') },
+                    ]}
+                  />
                 </div>
                 <div>
                   <label className={cn('text-xs font-bold mb-1.5 block', a.head)}>{t('Σημείωση', 'Note')}</label>

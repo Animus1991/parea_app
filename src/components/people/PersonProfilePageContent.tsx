@@ -26,6 +26,7 @@ import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
 import { TabBar } from '../common/TabBar';
 import { EmptyState } from '../common/EmptyState';
+import { AppSelect } from '../common/AppSelect';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { useChatStore } from '../../store/chatStore';
@@ -316,19 +317,21 @@ export default function PersonProfilePageContent() {
       <label htmlFor="view-as" className="text-sm font-bold text-ink">
         {previewing ? t('Βλέπεις το προφίλ σου όπως το βλέπει:', 'You are viewing your profile as:') : t('Δες το προφίλ σου ως:', 'View your profile as:')}
       </label>
-      <select
+      <AppSelect
         id="view-as"
+        ariaLabel={previewing ? t('Βλέπεις το προφίλ σου όπως το βλέπει:', 'You are viewing your profile as:') : t('Δες το προφίλ σου ως:', 'View your profile as:')}
         value={viewAsParam ?? ''}
-        onChange={(e) => setViewAs(e.target.value || null)}
+        onValueChange={(v) => setViewAs(v || null)}
         className="filter-select min-h-9 rounded-full border border-border bg-surface px-3 text-xs font-bold text-ink"
-      >
-        <option value="">{t('Εσύ (πλήρες)', 'You (full)')}</option>
-        <option value="public">{t('Μέλος του δικτύου (όχι Nakamas)', 'Network member (not a Nakama)')}</option>
-        {myConnections.map((cid) => {
-          const u = users.find((x) => x.id === cid);
-          return u ? <option key={cid} value={cid}>{u.name}</option> : null;
-        })}
-      </select>
+        options={[
+          { value: '', label: t('Εσύ (πλήρες)', 'You (full)') },
+          { value: 'public', label: t('Μέλος του δικτύου (όχι Nakamas)', 'Network member (not a Nakama)') },
+          ...myConnections.flatMap((cid) => {
+            const u = users.find((x) => x.id === cid);
+            return u ? [{ value: cid, label: u.name }] : [];
+          }),
+        ]}
+      />
       {previewing && (
         <button type="button" onClick={() => setViewAs(null)} className="ml-auto min-h-9 text-xs font-bold text-ink underline">
           {t('Έξοδος προεπισκόπησης', 'Exit preview')}

@@ -16,6 +16,7 @@ import type {
   ProfileExposure,
   VisibilityMode,
 } from '../../types/companyRequest';
+import { AppSelect } from '../common/AppSelect';
 
 const STEPS = 5;
 
@@ -274,16 +275,18 @@ export function CreateCompanyRequestModal({
                 <input type="checkbox" checked={flexibleDates} onChange={(e) => setFlexibleDates(e.target.checked)} />
                 {t('Ευέλικτες ημερομηνίες', 'Flexible dates')}
               </label>
-              <select aria-label={t("Σημείο συνάντησης", "Meeting preference")}
+              <AppSelect
+                ariaLabel={t("Σημείο συνάντησης", "Meeting preference")}
                 value={meetingPreference}
-                onChange={(e) => setMeetingPreference(e.target.value as MeetingPreference)}
+                onValueChange={(v) => setMeetingPreference(v as MeetingPreference)}
                 className="w-full rounded-xl border border-border px-3 py-2 text-sm bg-surface-raised"
-              >
-                <option value="at_venue">{t('Στον χώρο', 'At venue')}</option>
-                <option value="coffee_before">{t('Καφές πριν', 'Coffee before')}</option>
-                <option value="walk_after">{t('Περπάτημα μετά', 'Walk after')}</option>
-                <option value="chat_first">{t('Chat πρώτα', 'Group chat first')}</option>
-              </select>
+                options={[
+                  { value: 'at_venue', label: t('Στον χώρο', 'At venue') },
+                  { value: 'coffee_before', label: t('Καφές πριν', 'Coffee before') },
+                  { value: 'walk_after', label: t('Περπάτημα μετά', 'Walk after') },
+                  { value: 'chat_first', label: t('Chat πρώτα', 'Group chat first') },
+                ]}
+              />
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}

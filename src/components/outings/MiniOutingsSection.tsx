@@ -11,6 +11,7 @@ import { Modal } from '../common/Modal';
 import { cn } from '../../lib/utils';
 import type { MiniOutingKind } from '../../store/outingsSlice';
 import type { GroupGenderMode } from '../../types/outings';
+import { AppSelect } from '../common/AppSelect';
 
 const KINDS: { id: MiniOutingKind; el: string; en: string; icon: typeof Coffee }[] = [
   { id: 'coffee', el: 'Καφές', en: 'Coffee', icon: Coffee },
@@ -272,22 +273,30 @@ function MiniOutingComposer({ onClose }: { onClose: () => void }) {
       <div className="mt-3 grid grid-cols-2 gap-2">
         <label className="text-xs font-bold text-ink">
           {t('Άτομα (μαζί σου)', 'People (with you)')}
-          <select value={size} onChange={(e) => setSize(Number(e.target.value))} className={field}>
-            {[2, 3, 4, 5, 6].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
+          <AppSelect
+            ariaLabel={t('Άτομα (μαζί σου)', 'People (with you)')}
+            value={String(size)}
+            onValueChange={(v) => setSize(Number(v))}
+            className={field}
+            options={[2, 3, 4, 5, 6].map((n) => ({ value: String(n), label: String(n) }))}
+          />
         </label>
         <label className="text-xs font-bold text-ink">
           {t('Ποιοι μπορούν να μπουν', 'Who can join')}
-          <select value={mode} onChange={(e) => setMode(e.target.value as GroupGenderMode)} className={field}>
-            <option value="mixed">{t('Όλοι', 'Everyone')}</option>
-            <option value="women_nb" disabled={!canWomen}>
-              {t('Γυναίκες & μη δυαδικά άτομα', 'Women & non-binary')}
-            </option>
-          </select>
+          <AppSelect
+            ariaLabel={t('Ποιοι μπορούν να μπουν', 'Who can join')}
+            value={mode}
+            onValueChange={(v) => setMode(v as GroupGenderMode)}
+            className={field}
+            options={[
+              { value: 'mixed', label: t('Όλοι', 'Everyone') },
+              {
+                value: 'women_nb',
+                label: t('Γυναίκες & μη δυαδικά άτομα', 'Women & non-binary'),
+                disabled: !canWomen,
+              },
+            ]}
+          />
         </label>
       </div>
       {!canWomen && (

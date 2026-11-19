@@ -8,6 +8,7 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { useContrastTheme } from '../../hooks/useContrastTheme';
 import { useStore } from '../../store';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { AppSelect } from '../common/AppSelect';
 
 export default function ReportIssuePageContent() {
   const { t } = useLanguage();
@@ -110,19 +111,22 @@ export default function ReportIssuePageContent() {
               <label className={cn('block text-xs font-bold tracking-wider mb-2', p.head)}>
                 {t('Κατηγορία', 'Category')}
               </label>
-              <select aria-label={t("Κατηγορία προβλήματος", "Problem category")}
-                className={cn(inputClass, 'h-11 px-3')}
+              <AppSelect
+                ariaLabel={t('Κατηγορία προβλήματος', 'Problem category')}
                 required
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <option value="">{t('Επιλέξτε κατηγορία...', 'Select a category...')}</option>
-                <option value="user_behavior">{t('Ανάρμοστη συμπεριφορά', 'Inappropriate behavior')}</option>
-                <option value="event_safety">{t('Ασφάλεια εκδήλωσης', 'Event safety')}</option>
-                <option value="fake_profile">{t('Ψεύτικο προφίλ', 'Fake profile')}</option>
-                <option value="no_show">{t('No-show', 'No-show')}</option>
-                <option value="other">{t('Άλλο', 'Other')}</option>
-              </select>
+                onValueChange={setCategory}
+                placeholder={t('Επιλέξτε κατηγορία...', 'Select a category...')}
+                className={cn(inputClass, 'h-11 px-3')}
+                options={[
+                  { value: '', label: t('Επιλέξτε κατηγορία...', 'Select a category...') },
+                  { value: 'user_behavior', label: t('Ανάρμοστη συμπεριφορά', 'Inappropriate behavior') },
+                  { value: 'event_safety', label: t('Ασφάλεια εκδήλωσης', 'Event safety') },
+                  { value: 'fake_profile', label: t('Ψεύτικο προφίλ', 'Fake profile') },
+                  { value: 'no_show', label: t('No-show', 'No-show') },
+                  { value: 'other', label: t('Άλλο', 'Other') },
+                ]}
+              />
             </div>
 
             {/* Severity Level */}

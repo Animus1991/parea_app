@@ -5,6 +5,7 @@ import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useStore } from '../../store';
 import { cn } from '../../lib/utils';
 import { HOME_TYPO } from '../../lib/typographyTokens';
+import { AppSelect } from '../common/AppSelect';
 import {
   HOME_TIME_WINDOWS,
   HOME_WEEKDAY_LABELS,
@@ -111,55 +112,47 @@ export function HomeScheduleFilterPanel({
           ))}
         </div>
         <div className="mt-2 flex items-center gap-2">
-          <label className="sr-only" htmlFor="schedule-hour-from">
-            {t('Από ώρα', 'From hour')}
-          </label>
-          <select
+          <AppSelect
             id="schedule-hour-from"
-            value={schedule.hourFrom ?? ''}
-            onChange={(e) =>
+            ariaLabel={t('Από ώρα', 'From hour')}
+            value={schedule.hourFrom == null ? '' : String(schedule.hourFrom)}
+            onValueChange={(next) =>
               onChange({
                 ...schedule,
-                hourFrom: e.target.value === '' ? null : Number(e.target.value),
+                hourFrom: next === '' ? null : Number(next),
               })
             }
+            placeholder={t('Από', 'From')}
+            options={[
+              { value: '', label: t('Από', 'From') },
+              ...HOURS.map((hour) => ({ value: String(hour), label: hourLabel(hour) })),
+            ]}
             className={cn(
-              'min-h-8 rounded-full border px-3 text-xs font-bold bg-surface-raised',
+              'h-[1.75rem] min-w-[6.5rem] rounded-full border px-3 text-xs font-bold bg-surface-raised',
               h.select,
             )}
-          >
-            <option value="">{t('Από', 'From')}</option>
-            {HOURS.map((hour) => (
-              <option key={hour} value={hour}>
-                {hourLabel(hour)}
-              </option>
-            ))}
-          </select>
+          />
           <span className="text-xs text-ink-muted">–</span>
-          <label className="sr-only" htmlFor="schedule-hour-to">
-            {t('Έως ώρα', 'Until hour')}
-          </label>
-          <select
+          <AppSelect
             id="schedule-hour-to"
-            value={schedule.hourTo ?? ''}
-            onChange={(e) =>
+            ariaLabel={t('Έως ώρα', 'Until hour')}
+            value={schedule.hourTo == null ? '' : String(schedule.hourTo)}
+            onValueChange={(next) =>
               onChange({
                 ...schedule,
-                hourTo: e.target.value === '' ? null : Number(e.target.value),
+                hourTo: next === '' ? null : Number(next),
               })
             }
+            placeholder={t('Έως', 'Until')}
+            options={[
+              { value: '', label: t('Έως', 'Until') },
+              ...HOURS.map((hour) => ({ value: String(hour), label: hourLabel(hour) })),
+            ]}
             className={cn(
-              'min-h-8 rounded-full border px-3 text-xs font-bold bg-surface-raised',
+              'h-[1.75rem] min-w-[6.5rem] rounded-full border px-3 text-xs font-bold bg-surface-raised',
               h.select,
             )}
-          >
-            <option value="">{t('Έως', 'Until')}</option>
-            {HOURS.map((hour) => (
-              <option key={hour} value={hour}>
-                {hourLabel(hour)}
-              </option>
-            ))}
-          </select>
+          />
         </div>
       </div>
 

@@ -45,6 +45,7 @@ import { toast } from "sonner";
 import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
 import { TileLayer, Marker } from "react-leaflet";
 import { LeafletMapHost, LeafletMapReady } from "../common/LeafletMapHost";
+import { AppSelect } from "../common/AppSelect";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -922,30 +923,35 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
                   <h4 className="text-xs font-bold capitalize text-gray-600 tracking-tight">
                     {t("3. Αυτόματη Λήξη", "3. Auto-Expiry")}
                   </h4>
-                  <select aria-label={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
+                  <AppSelect
+                    ariaLabel={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
                     value={locationConfig.duration}
-                    onChange={(e) =>
+                    onValueChange={(next) =>
                       setLocationConfig({
                         ...locationConfig,
-                        duration: e.target.value,
+                        duration: next,
                       })
                     }
-                    className="w-full border border-gray-100 rounded-2xl p-3 text-xs font-medium focus:ring-2 focus:ring-accent/40 bg-white outline-none shadow-soft"
-                  >
-                    <option value="arrival">
-                      {t(
-                        "Μέχρι να φτάσω στο σημείο",
-                        "Until I arrive at meeting point",
-                      )}
-                    </option>
-                    <option value="event_start">
-                      {t("Μέχρι να ξεκινήσει η εκδήλωση", "Until event starts")}
-                    </option>
-                    <option value="event_end">
-                      {t("Μέχρι το τέλος της εκδήλωσης", "Until event ends")}
-                    </option>
-                    <option value="1hr">{t("Για 1 ώρα", "For 1 hour")}</option>
-                  </select>
+                    className="w-full border border-gray-100 rounded-2xl p-3 text-xs font-medium bg-white shadow-soft"
+                    options={[
+                      {
+                        value: "arrival",
+                        label: t(
+                          "Μέχρι να φτάσω στο σημείο",
+                          "Until I arrive at meeting point",
+                        ),
+                      },
+                      {
+                        value: "event_start",
+                        label: t("Μέχρι να ξεκινήσει η εκδήλωση", "Until event starts"),
+                      },
+                      {
+                        value: "event_end",
+                        label: t("Μέχρι το τέλος της εκδήλωσης", "Until event ends"),
+                      },
+                      { value: "1hr", label: t("Για 1 ώρα", "For 1 hour") },
+                    ]}
+                  />
                 </div>
               </div>
 
