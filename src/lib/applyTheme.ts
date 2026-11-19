@@ -1,15 +1,12 @@
-import { toast } from 'sonner';
-import { THEME_LABELS, type ThemeId } from './themes';
+import type { ThemeId } from './themes';
 
 /**
- * One place for theme picks: store + html[data-theme] + short confirmation toast.
- * Callers that already know the theme has not changed can skip the toast by
- * passing `current` equal to `id`.
+ * One place for theme picks: store + html[data-theme].
+ * The screen itself is the confirmation — no toast overlay.
  */
 export function applyThemeSelection(
   id: ThemeId,
   setTheme: (theme: string) => void,
-  language: 'el' | 'en',
   current?: string,
 ): void {
   if (current === id) return;
@@ -17,9 +14,4 @@ export function applyThemeSelection(
   if (typeof document !== 'undefined') {
     document.documentElement.dataset.theme = id;
   }
-  toast.message(
-    language === 'el'
-      ? `Θέμα: ${THEME_LABELS[id].el}`
-      : `Theme: ${THEME_LABELS[id].en}`,
-  );
 }

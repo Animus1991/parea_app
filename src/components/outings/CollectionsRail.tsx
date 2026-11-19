@@ -16,27 +16,34 @@ export function CollectionsRail({
   className,
   title = true,
   fill = false,
+  excludeEventIds,
 }: {
   className?: string;
   title?: boolean;
   /** Stretch tiles across the main column (collections index) instead of a compact scroll strip. */
   fill?: boolean;
+  /** Hide nights (and empty collections) already shown above this rail. */
+  excludeEventIds?: Iterable<string>;
 }) {
   const { t } = useLanguage();
   const events = useStore((s) => s.events);
   const groups = useStore((s) => s.groups);
   const today = new Date().toISOString().slice(0, 10);
 
+  const hidden = useMemo(() => new Set(excludeEventIds ?? []), [excludeEventIds]);
+
   const stats = useMemo(
     () =>
       COLLECTIONS.map((c) => {
-        const list = collectionEvents(c, events, groups);
+        const list = collectionEvents(c, events, groups).filter((e) => !hidden.has(e.id));
         const upcoming = list.filter((e) => e.date >= today);
         const shown = upcoming.length ? upcoming : list;
         return { c, count: shown.length, forming: shown.reduce((n, e) => n + formingGroups(e, groups).length, 0) };
-      }),
-    [events, groups, today],
+      }).filter((row) => row.count > 0),
+    [events, groups, today, hidden],
   );
+
+  if (stats.length === 0) return null;
 
   return (
     <section className={cn('space-y-2', className)} aria-labelledby={title ? 'collections-rail-title' : undefined} aria-label={title ? undefined : t('Συλλογές', 'Collections')}>

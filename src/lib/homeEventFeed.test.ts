@@ -70,4 +70,28 @@ describe('sortHomeEvents', () => {
     const result = sortHomeEvents([past, next], 'Relevance', null, () => 1, now);
     expect(result.map((e) => e.id)).toEqual(['e30', 'e4']);
   });
+
+  it('keeps unmatched Ticketmaster nights in Για Σένα and boosts usual hours', () => {
+    const weekend = base({ id: 'tm_weekend', date: '2026-12-05', time: '21:00' });
+    const tuesdayMorning = base({ id: 'tm_tue', date: '2026-12-01', time: '10:00' });
+    const user = {
+      discoveryPrefs: { schedule: ['weekends'] },
+    } as import('../types').User;
+    const kept = filterHomeEvents({
+      events: [weekend, tuesdayMorning],
+      ...filters,
+      feedType: 'For You',
+      currentUser: user,
+    });
+    expect(kept.map((e) => e.id).sort()).toEqual(['tm_tue', 'tm_weekend']);
+    const ranked = sortHomeEvents(
+      kept,
+      'Distance',
+      user,
+      () => 1,
+      new Date('2026-11-18T14:00:00'),
+      'For You',
+    );
+    expect(ranked.map((e) => e.id)).toEqual(['tm_weekend', 'tm_tue']);
+  });
 });

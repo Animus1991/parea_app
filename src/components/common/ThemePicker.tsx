@@ -24,7 +24,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
   const [open, setOpen] = useState(false);
 
   const applyTheme = (id: ThemeId) => {
-    applyThemeSelection(id, setTheme, language === 'el' ? 'el' : 'en', theme);
+    applyThemeSelection(id, setTheme, theme);
   };
   const anchorRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);

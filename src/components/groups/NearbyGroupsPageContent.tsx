@@ -114,7 +114,13 @@ const clusterIconCache = new Map<number, L.DivIcon>();
 function clusterIcon(count: number): L.DivIcon {
   let icon = clusterIconCache.get(count);
   if (!icon) {
-    icon = L.divIcon({ className: 'nakamas-cluster', html: `<span>${count}</span>`, iconSize: [36, 36], iconAnchor: [18, 18] });
+    const size = count >= 10 ? 44 : 40;
+    icon = L.divIcon({
+      className: 'nakamas-cluster',
+      html: `<span class="nakamas-cluster-count">${count}</span>`,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
+    });
     clusterIconCache.set(count, icon);
   }
   return icon;
@@ -634,6 +640,9 @@ export default function NearbyGroupsPageContent() {
           <h2 className={cn(APP_TYPO.pageTitle, p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
           <p className={cn(APP_TYPO.pageSub, "mt-1.5 flex items-center gap-1.5", p.muted)}>
             <Navigation className="h-3.5 w-3.5" aria-hidden /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius}km</span>
+          </p>
+          <p className={cn("mt-1 text-xs font-medium leading-snug", p.muted)}>
+            {t('Οι κοντινές πινελιές μαζεύονται σε ομάδες — όχι σαράντα καρφίτσες.', 'Nearby pins cluster together — not forty separate markers.')}
           </p>
 
           <div className="mt-4 flex items-center gap-4">

@@ -208,8 +208,6 @@ export default function SettingsPageContent() {
           onClick: () => {
             const next = language === 'el' ? 'en' : 'el';
             setLanguage(next);
-            // Toast in the language the user just chose (setLanguage has not re-rendered yet).
-            toast.message(next === 'el' ? t('Γλώσσα: Ελληνικά', 'Language: Greek') : t('Γλώσσα: Αγγλικά', 'Language: English'));
           },
         },
         { icon: Palette, label: t('Εμφάνιση & Θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
@@ -456,6 +454,38 @@ export default function SettingsPageContent() {
                   </button>
                 </label>
               ))}
+            </div>
+            <div className="mt-4 border-t border-border pt-3">
+              <p className={cn('mb-2 text-xs font-bold', a.head)}>{t('Σύνοψη', 'Digest')}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {(
+                  [
+                    ['morning', 'Πρωί', 'Morning'],
+                    ['afternoon', 'Απόγευμα', 'Afternoon'],
+                    ['off', 'Όλες μία-μία', 'Every item'],
+                  ] as const
+                ).map(([key, el, en]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    aria-pressed={(userSettings.notificationPrefs.digest ?? 'morning') === key}
+                    onClick={() => {
+                      updateUserSettings({
+                        notificationPrefs: { ...userSettings.notificationPrefs, digest: key },
+                      });
+                      toast.success(t('Οι προτιμήσεις αποθηκεύτηκαν', 'Preferences saved'));
+                    }}
+                    className={cn(
+                      'filter-chip inline-flex h-[1.75rem] items-center rounded-full border px-3 text-xs font-bold leading-none',
+                      (userSettings.notificationPrefs.digest ?? 'morning') === key
+                        ? 'border-accent bg-accent text-accent-fg'
+                        : 'border-border bg-surface-raised text-ink',
+                    )}
+                  >
+                    {t(el, en)}
+                  </button>
+                ))}
+              </div>
             </div>
           </Card>
 

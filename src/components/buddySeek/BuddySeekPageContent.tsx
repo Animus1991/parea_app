@@ -29,6 +29,7 @@ import { readStorage, writeStorage } from '../../lib/safeUrl';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { MiniOutingsSection } from '../outings/MiniOutingsSection';
+import { hasUsualHours, matchesUsualHours } from '../../lib/quietCatalog';
 
 type FilterKey = 'all' | 'open_spots' | 'verified' | 'small_groups' | 'flexible' | 'saved_events' | 'high_match';
 
@@ -69,6 +70,8 @@ export default function BuddySeekPageContent() {
   const { events, isLoading, isError, refetch } = useEventsResource();
   const currentUser = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
+  const availability = useStore((s) => s.userSettings.availability);
+  const [showQueuedSeeks, setShowQueuedSeeks] = useState(false);
 
   const [filter, setFilter] = useState<FilterKey>('all');
   const [preview, setPreview] = useState<PlansFormingEnrichedItem | null>(null);
@@ -119,6 +122,23 @@ export default function BuddySeekPageContent() {
     });
   }, [feed.items, filter]);
 
+  const splitByHours = hasUsualHours(currentUser, availability);
+  const inHoursItems = useMemo(
+    () =>
+      splitByHours
+        ? filtered.filter((item) => matchesUsualHours(item.event, currentUser, availability))
+        : filtered,
+    [filtered, splitByHours, currentUser, availability],
+  );
+  const queuedItems = useMemo(
+    () =>
+      splitByHours
+        ? filtered.filter((item) => !matchesUsualHours(item.event, currentUser, availability))
+        : [],
+    [filtered, splitByHours, currentUser, availability],
+  );
+  const visibleSeeks = showQueuedSeeks ? [...inHoursItems, ...queuedItems] : inHoursItems;
+
   const pendingForMe = companyJoinRequests.filter(
     (j) => j.status === 'pending' && j.targetUserId === currentUser?.id,
   );
@@ -144,7 +164,7 @@ export default function BuddySeekPageContent() {
     state: filter,
     summaryEl: `${filtered.length} σχέδια · ${pendingForMe.length} αιτήματα προς εσένα`,
     summaryEn: `${filtered.length} plans · ${pendingForMe.length} requests for you`,
-    visibleIds: filtered.slice(0, 8).map((i) => i.intent.id),
+    visibleIds: visibleSeeks.slice(0, 8).map((i) => i.intent.id),
   });
 
   return (
@@ -360,17 +380,25 @@ export default function BuddySeekPageContent() {
         loading={<PlansFormingSkeleton count={3} variant="inline" />}
         errorTitle={t('Αδυναμία φόρτωσης αιτημάτων', 'Could not load requests')}
       >
-      {filtered.length === 0 && feed.recruitingGroupItems.length === 0 ? (
+      {visibleSeeks.length === 0 && queuedItems.length === 0 && feed.recruitingGroupItems.length === 0 ? (
         <PlansFormingEmptyState suggestedEvent={feed.suggestedEvent} />
       ) : (
         <>
-          {filtered.length > 0 && (
+          {visibleSeeks.length > 0 && (
             <section className="space-y-4">
               <PlansFormingSectionTitle
                 title={t('Αιτήματα Nakamas', 'Nakama requests')}
-                subtitle={t(`${filtered.length} αποτελέσματα`, `${filtered.length} results`)}
+                subtitle={t(`${visibleSeeks.length} αποτελέσματα`, `${visibleSeeks.length} results`)}
               />
-              {filtered.map((item) => (
+              {splitByHours && (
+                <p className="text-xs font-medium leading-snug text-ink-muted">
+                  {t(
+                    'Πρώτα όσα χωράνε στις συνήθεις ώρες σου.',
+                    'Usual hours first.',
+                  )}
+                </p>
+              )}
+              {visibleSeeks.map((item) => (
                 <PlansFormingCard
                   key={item.intent.id}
                   item={item}
@@ -384,6 +412,26 @@ export default function BuddySeekPageContent() {
                 />
               ))}
             </section>
+          )}
+          {queuedItems.length > 0 && (
+            <button
+              type="button"
+              aria-pressed={showQueuedSeeks}
+              onClick={() => setShowQueuedSeeks((v) => !v)}
+              className={cn(
+                'filter-chip inline-flex h-[1.75rem] items-center self-start rounded-full border px-3 text-xs font-bold leading-none',
+                showQueuedSeeks
+                  ? 'border-accent bg-accent text-accent-fg'
+                  : 'border-border bg-surface-raised text-ink',
+              )}
+            >
+              {showQueuedSeeks
+                ? t('Κρύψε εκτός ωρών', 'Hide outside hours')
+                : t(
+                    `Στην ουρά εκτός ωρών ${queuedItems.length}`,
+                    `Queued outside hours ${queuedItems.length}`,
+                  )}
+            </button>
           )}
 
           {feed.recruitingGroupItems.length > 0 && (

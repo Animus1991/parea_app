@@ -157,6 +157,8 @@ export interface UserSettings {
     promos: boolean;
     /** Φ26 — comments, reactions, posts on my wall and tags. */
     social: boolean;
+    /** Morning / afternoon digest still lists every item underneath. */
+    digest: 'off' | 'morning' | 'afternoon';
   };
   categoryPrefs: string[];
   privacy: AccountPrivacy;
@@ -165,7 +167,7 @@ export interface UserSettings {
 
 export const DEFAULT_USER_SETTINGS: UserSettings = {
   twoFactorEnabled: false,
-  notificationPrefs: { matches: true, messages: true, reminders: true, promos: false, social: true },
+  notificationPrefs: { matches: true, messages: true, reminders: true, promos: false, social: true, digest: 'morning' },
   categoryPrefs: [],
   privacy: { ...DEFAULT_ACCOUNT_PRIVACY },
   availability: ['weekends', 'weekday_evenings'],

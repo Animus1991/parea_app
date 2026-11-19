@@ -16,6 +16,10 @@ import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useWallStore } from '../../store/wallStore';
 import { notificationsForUser } from '../../lib/notificationsUtil';
+import {
+  digestItems,
+  type NotificationDigestWindow,
+} from '../../lib/notificationDigest';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
 
@@ -52,6 +56,8 @@ export default function NotificationsPageContent() {
   );
   const markNotificationRead = useStore((s) => s.markNotificationRead);
   const socialOn = useStore((s) => s.userSettings.notificationPrefs.social !== false);
+  const digest = useStore((s) => s.userSettings.notificationPrefs.digest ?? 'morning');
+  const updateUserSettings = useStore((s) => s.updateUserSettings);
   const markAllNotificationsRead = useStore((s) => s.markAllNotificationsRead);
   const dismissNotification = useStore((s) => s.dismissNotification);
   const addNotification = useStore((s) => s.addNotification);
@@ -88,6 +94,17 @@ export default function NotificationsPageContent() {
   const unreadCount = notifications.filter((n) => !n.read).length;
   const todayNotifs = visibleNotifs.filter((n) => !n.read);
   const earlierNotifs = visibleNotifs.filter((n) => n.read);
+  const morningDigest = digestItems(todayNotifs, 'morning');
+  const afternoonDigest = digestItems(todayNotifs, 'afternoon');
+
+  const setDigest = (next: NotificationDigestWindow) => {
+    updateUserSettings({
+      notificationPrefs: {
+        ...useStore.getState().userSettings.notificationPrefs,
+        digest: next,
+      },
+    });
+  };
 
   const handleMarkAllRead = () => {
     markAllNotificationsRead();
@@ -266,6 +283,29 @@ export default function NotificationsPageContent() {
 
       <CopilotInlinePrompt />
 
+      <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('Σύνοψη ειδοποιήσεων', 'Notification digest')}>
+        {(
+          [
+            ['morning', 'Πρωινή σύνοψη', 'Morning digest'],
+            ['afternoon', 'Απογευματινή σύνοψη', 'Afternoon digest'],
+            ['off', 'Όλες μία-μία', 'Every item'],
+          ] as const
+        ).map(([key, el, en]) => (
+          <button
+            key={key}
+            type="button"
+            aria-pressed={digest === key}
+            onClick={() => setDigest(key)}
+            className={cn(
+              'filter-chip inline-flex h-[1.75rem] items-center rounded-full border px-3 text-xs font-bold leading-none',
+              digest === key ? 'border-accent bg-accent text-accent-fg' : 'border-border bg-surface-raised text-ink',
+            )}
+          >
+            {t(el, en)}
+          </button>
+        ))}
+      </div>
+
       {/* Wall activity lives on /wall — one-line bridge here avoids dual chrome. */}
       {socialOn && (
         <button
@@ -362,6 +402,32 @@ export default function NotificationsPageContent() {
         />
       ) : (
         <div className="space-y-4">
+          {digest !== 'off' && (morningDigest.length > 0 || afternoonDigest.length > 0) && (
+            <div className="space-y-2">
+              {digest === 'morning' && morningDigest.length > 0 && (
+                <div className={cn('rounded-2xl border px-3 py-2.5', a.cardSurface, a.borderB)}>
+                  <p className={cn('text-xs font-bold', a.head)}>{t('Πρωινή σύνοψη', 'Morning digest')}</p>
+                  <p className={cn('mt-0.5 text-xs font-medium leading-snug', a.muted)}>
+                    {t(
+                      `${morningDigest.length} ειδοποιήσεις ταιριάσματος / υπενθύμισης — οι υπόλοιπες μένουν από κάτω.`,
+                      `${morningDigest.length} match / reminder items — the rest stay listed below.`,
+                    )}
+                  </p>
+                </div>
+              )}
+              {digest === 'afternoon' && afternoonDigest.length > 0 && (
+                <div className={cn('rounded-2xl border px-3 py-2.5', a.cardSurface, a.borderB)}>
+                  <p className={cn('text-xs font-bold', a.head)}>{t('Απογευματινή σύνοψη', 'Afternoon digest')}</p>
+                  <p className={cn('mt-0.5 text-xs font-medium leading-snug', a.muted)}>
+                    {t(
+                      `${afternoonDigest.length} μηνύματα και κοινωνικές ειδοποιήσεις — οι υπόλοιπες μένουν από κάτω.`,
+                      `${afternoonDigest.length} messages and social items — the rest stay listed below.`,
+                    )}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
           {todayNotifs.length > 0 && (
             <div className="space-y-2">
               <h3 className={cn('text-xs font-bold tracking-wider ', a.muted)}>

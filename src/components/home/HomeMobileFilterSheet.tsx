@@ -182,8 +182,8 @@ export function HomeMobileFilterSheet({
           <p className={`text-xs font-bold mb-2 ${h.labelMuted}`}>{t('Ταξινόμηση', 'Sort')}</p>
           <div className="flex flex-wrap gap-2">
             {([
-              { value: 'Relevance' as const, el: 'Συνάφεια', en: 'Relevance' },
               { value: 'Distance' as const, el: 'Απόσταση', en: 'Distance' },
+              { value: 'Relevance' as const, el: 'Συνάφεια', en: 'Relevance' },
               { value: 'Group Progress' as const, el: 'Πρόοδος ομάδας', en: 'Group progress' },
             ]).map((opt) => (
               <button key={opt.value} type="button" onClick={() => setSortParam(opt.value)} className={chip(sortParam === opt.value)}>
