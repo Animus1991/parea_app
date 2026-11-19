@@ -416,8 +416,8 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
 
       {/* Content — spaced blocks, aligned icon wells, no middot soup */}
       <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className={cn(EVENT_CARD_TYPO.title, "min-h-11 min-w-0 flex-1 pr-1 transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-brand'))}>
+        <div className="flex items-center justify-between gap-3">
+          <h3 className={cn(EVENT_CARD_TYPO.title, "min-w-0 flex-1 pr-1 transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-brand'))}>
             <Link
               to={`/events/${event.id}`}
               onClick={(e) => e.stopPropagation()}
@@ -430,7 +430,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
             <button
               type="button"
               className={cn(
-                "flex min-h-11 shrink-0 flex-col items-center justify-center rounded-xl border px-3 py-1",
+                "flex min-h-11 shrink-0 flex-col items-center justify-center self-center rounded-xl border px-3 py-1",
                 isDark ? "border-white/10 bg-white/[0.04]" : "border-gray-100 bg-gray-50",
               )}
               title={t("Γιατί αυτό το ταίριασμα", "Why this match")}
