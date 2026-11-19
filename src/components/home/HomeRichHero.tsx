@@ -51,13 +51,6 @@ export function HomeRichHero({
           </span>{' '}
           {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
         </h1>
-        <p className={cn(tok.heroSubtitle, 'hidden md:block max-w-xl mb-4', HOME_TYPO.heroSubtitle)}>
-          {t(
-            'home.hero.subtitle',
-            'Βρες μια βραδιά να μπεις. Τα Σχέδια είναι οι βραδιές που έχεις ήδη κλείσει.',
-          )}
-        </p>
-
         <div className={cn('hidden md:flex flex-wrap items-center gap-x-4 gap-y-3 mb-4', tok.heroStats, HOME_TYPO.heroStats)}>
           <span className="flex items-center gap-1.5">
             <Users className={cn('w-3.5 h-3.5', tok.heroStatIcon)} />{' '}

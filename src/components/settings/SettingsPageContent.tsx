@@ -12,7 +12,7 @@ import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { pressable } from '../../lib/a11y';
 import { ThemePicker } from '../common/ThemePicker';
-import { THEME_IDS, THEME_LABELS, type ThemeId } from '../../lib/themes';
+import { THEME_LABELS, type ThemeId } from '../../lib/themes';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
 import { Modal } from '../common/Modal';
@@ -294,12 +294,6 @@ export default function SettingsPageContent() {
             <div ref={themePanelRef} className="scroll-mt-24">
               <Card className="p-5">
                 <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
-                <p className={cn("text-xs font-medium mb-4", a.sub)}>
-                  {t(
-                    `${THEME_IDS.length} επαγγελματικά θέματα — επιλέξτε αυτό που σας ταιριάζει`,
-                    `${THEME_IDS.length} polished themes — pick what fits you best`,
-                  )}
-                </p>
                 <ThemePicker variant="grid" />
               </Card>
             </div>
@@ -307,13 +301,7 @@ export default function SettingsPageContent() {
           {idx === 0 && showHomeLayout && (
             <div ref={homeLayoutPanelRef} className="scroll-mt-24">
               <Card className="p-5">
-                <h3 className={cn("font-bold text-sm mb-1", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
-                <p className={cn("text-xs font-medium mb-4", a.sub)}>
-                  {t(
-                    'Επιλέξτε πόσο πλούσιο είναι το hero στην αρχική — ισχύει σε όλα τα θέματα.',
-                    'Choose how rich the home hero is — applies across all themes.',
-                  )}
-                </p>
+                <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
                 <HomeHeroModeSetting />
               </Card>
             </div>
@@ -547,12 +535,6 @@ export default function SettingsPageContent() {
                 </button>
               ))}
               <div className="basis-full pt-2 space-y-1.5">
-                <p className="text-xs text-ink-muted leading-relaxed">
-                  {t(
-                    'Οι χρονοθήκες μένουν εδώ. Πάτα παρακάτω μόνο αν θέλεις να κρύψεις στην Ανακάλυψη ό,τι δεν χωράει σε αυτές.',
-                    'These slots stay here. Use the button below only if you want Discover to hide nights that do not fit.',
-                  )}
-                </p>
                 <button
                   type="button"
                   disabled={userSettings.availability.length === 0}

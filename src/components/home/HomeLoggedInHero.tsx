@@ -118,12 +118,6 @@ export function HomeLoggedInHero({
             </h1>
             <HomeWeatherBadge size="sm" />
           </div>
-          <p className={cn(h.heroSubtitle, 'hidden md:block text-sm font-medium max-w-md')}>
-            {t(
-              'Βρες μια βραδιά να μπεις. Τα Σχέδια είναι όσα έχεις ήδη κλείσει.',
-              'Find a night to join. Plans are the ones you already booked.',
-            )}
-          </p>
           {searchBlock}
         </div>
       )}
@@ -178,12 +172,6 @@ export function HomeLoggedInHero({
                   {t('home.hero.title2', 'εμπειρίες')}
                 </span>{' '}
                 {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
-              </p>
-              <p className={cn(h.heroSubtitle, 'max-w-xl mb-4')}>
-                {t(
-                  'home.hero.subtitle',
-                  'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.',
-                )}
               </p>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4">
                 {(

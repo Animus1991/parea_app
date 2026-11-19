@@ -59,7 +59,6 @@ export default function HomeClassic() {
     pastCount,
     showPast,
     onTogglePast,
-    usualHoursHint,
     searchRef,
     loadMoreRef,
     storyEvents,
@@ -191,7 +190,6 @@ export default function HomeClassic() {
           pastCount={pastCount}
           showPast={showPast}
           onTogglePast={onTogglePast}
-          usualHoursHint={usualHoursHint}
         />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -217,12 +215,12 @@ export default function HomeClassic() {
                 description={
                   isScheduleFilterActive(schedule)
                     ? t(
-                        'Καμία βραδιά δεν χωράει σε αυτές τις μέρες και ώρες. Διεύρυνε το πρόγραμμα — ο κατάλογος είναι ακόμα εκεί.',
-                        'No nights fit these days and hours. Widen the schedule — the catalog is still there.',
+                        'Καμία βραδιά σε αυτές τις ώρες. Δοκίμασε περισσότερες μέρες ή ώρες.',
+                        'No nights in these hours. Try more days or times.',
                       )
                     : t(
-                        'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
-                        'Try changing filters or category — or see what’s nearby.',
+                        'Άλλαξε φίλτρα ή δες τον χάρτη.',
+                        'Change filters or open the map.',
                       )
                 }
                 actionLabel={

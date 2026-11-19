@@ -471,11 +471,9 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
           />
         </div>
 
-        {showMatchWhy && matchExplanation && (
+        {showMatchWhy && matchExplanation && (matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]) && (
           <p className={cn(EVENT_CARD_TYPO.hint, socialWell, "font-medium", accentText)}>
-            {matchExplanation.sharedStrengths[0]
-              || matchExplanation.mismatchFlags[0]
-              || t('Βασίζεται σε κοινά ενδιαφέροντα, κατηγορία και επίπεδο εμπιστοσύνης.', 'Based on shared interests, category and trust level.')}
+            {matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]}
           </p>
         )}
         {!showMatchWhy && matchingPreview ? (

@@ -1142,8 +1142,8 @@ export default function GroupChatPageContent() {
           </div>
           <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
-              "Κρατά το ιστορικό σε αυτή τη συσκευή. Δεν ξεκινά ψηφοφορία στην ομάδα ακόμα — η ομαδική συγκατάθεση θα έρθει σε επόμενη έκδοση.",
-              "Keeps history on this device. It does not start a group vote yet — unanimous consent will come in a later release.",
+              "Το ιστορικό μένει σε αυτή τη συσκευή.",
+              "History stays on this device.",
             )}
           </p>
           <div className="flex flex-col gap-2.5">
@@ -1196,12 +1196,6 @@ export default function GroupChatPageContent() {
           <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
             <Clock className="w-6 h-6" />
           </div>
-          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
-            {t(
-              "Ενημερώστε γρήγορα την ομάδα για την κατάστασή σας χωρίς να μοιραστείτε την ακριβή τοποθεσία σας.",
-              "Quickly update the group on your status without sharing your exact location.",
-            )}
-          </p>
           <div className="flex flex-col gap-2.5">
             <form
               onSubmit={(e) => {

@@ -149,7 +149,6 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
               </Button>
             </div>
           )}
-          <p className="mt-2 text-2xs font-medium text-ink-muted">{t('Τα ονόματα τα βλέπεις μόνο εσύ. Η σελίδα δείχνει μόνο πόσοι πάνε.', 'Only you see the names. The page only shows how many are going.')}</p>
         </div>
       )}
     </section>

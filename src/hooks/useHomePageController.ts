@@ -13,11 +13,7 @@ import { DESKTOP_DOCK_QUERY, useMediaQuery } from './useMediaQuery';
 import { eventMatchesSchedule, isScheduleFilterActive } from '../lib/homeScheduleFilter';
 import { isEventPast } from '../lib/eventDisplay';
 import { useStore } from '../store';
-import {
-  hasUsualHours,
-  partitionQuietCatalog,
-  storiesWithoutFeedDupes,
-} from '../lib/quietCatalog';
+import { partitionQuietCatalog, storiesWithoutFeedDupes } from '../lib/quietCatalog';
 
 const HOME_FEED_PAGE_SIZE = 6;
 
@@ -37,7 +33,6 @@ export function useHomePageController() {
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const groups = useStore((s) => s.groups);
   const catalogEvents = useStore((s) => s.events);
-  const availability = useStore((s) => s.userSettings.availability);
 
   useHomeExternalEvents();
   const scrollToFilters = useHomeScrollToFilters();
@@ -89,11 +84,6 @@ export function useHomePageController() {
       new Set(shownEvents.slice(0, visibleEventsCount).map((event) => event.id)),
     );
   }, [catalogStories, schedule, shownEvents, visibleEventsCount, searchQuery, hidePast]);
-
-  const usualHoursHint =
-    feedType === 'For You' &&
-    !isScheduleFilterActive(schedule) &&
-    hasUsualHours(feed.currentUser, availability);
 
   useEffect(() => {
     if (initialSearch && searchQuery === initialSearch) {
@@ -181,7 +171,6 @@ export function useHomePageController() {
     pastCount: buckets.past.length,
     showPast,
     onTogglePast: () => setShowPast((v) => !v),
-    usualHoursHint,
     seekingHostEvents,
     isSeekingHost,
     feed,

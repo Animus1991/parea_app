@@ -68,10 +68,6 @@ export function HomeVerifyBanner() {
     : needsEmail
       ? t('Επαληθεύστε το email σας', 'Verify your email')
       : t('Επαληθεύστε το τηλέφωνό σας', 'Verify your phone');
-  const body = t(
-    'Έτσι σε βρίσκει η ομάδα και ξεκλειδώνει το chat όταν γεμίσει.',
-    'So the group can reach you, and chat unlocks when it fills.',
-  );
 
   const dismiss = () => dismissHomeVerify();
 
@@ -87,7 +83,6 @@ export function HomeVerifyBanner() {
         </div>
         <div>
           <h3 className={`text-sm font-bold ${h.feedbackTitle}`}>{title}</h3>
-          <p className={`text-xs font-medium mt-0.5 leading-relaxed ${h.feedbackBody}`}>{body}</p>
         </div>
       </div>
       <div className="flex items-center gap-2 self-start sm:self-center">

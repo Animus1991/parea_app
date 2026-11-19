@@ -55,12 +55,6 @@ export function HomeSeekingHostSection({
             <h2 className={`text-sm md:text-base font-bold tracking-tight leading-tight ${h.heading}`}>
               {t('Αναζητούν διοργανωτή', 'Looking for an organizer')}
             </h2>
-            <p className={`text-sm font-medium mt-0.5 ${h.labelMuted}`}>
-              {t(
-                'Εκδηλώσεις από το Nakamas — γίνε εσύ ο διοργανωτής της παρέας.',
-                'Events by Nakamas — step up and organize the group.',
-              )}
-            </p>
           </div>
         </div>
         <button

@@ -250,11 +250,6 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
         )}
       </div>
 
-      <footer className={cn('p-3 border-t', isDark ? 'border-white/10' : 'border-gray-200')}>
-        <p className={cn('text-xs leading-relaxed text-center', isDark ? 'text-gray-500' : 'text-gray-500')}>
-          {t('Privacy-first · όχι διαφήμιση', 'Privacy-first · not an ad')}
-        </p>
-      </footer>
     </aside>
   );
 }

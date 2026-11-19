@@ -85,7 +85,7 @@ export function MiniOutingsSection() {
             {t('Μικρές έξοδοι', 'Small outings')}
           </h2>
           <p className="text-xs font-medium text-ink-muted">
-            {t('Καφές, βόλτα ή τρέξιμο με 2–6 άτομα, χωρίς εκδήλωση. Ίδιοι κανόνες εμπιστοσύνης.', 'Coffee, a walk or a run with 2–6 people, no event needed. Same trust rules.')}{' '}
+            {t('Καφές, βόλτα ή τρέξιμο με 2–6 άτομα.', 'Coffee, a walk or a run with 2–6 people.')}{' '}
             <button
               type="button"
               onClick={() => navigate('/collections')}

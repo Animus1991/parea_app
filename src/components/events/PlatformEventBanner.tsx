@@ -71,16 +71,6 @@ export function PlatformEventBanner() {
           >
             {t("Προτεινόμενη εκδήλωση από το Nakamas", "Curated by Nakamas")}
           </h3>
-          <p
-            className={`text-sm font-medium mt-0.5 leading-relaxed ${
-              tok.isDark ? "text-amber-200/80" : "text-amber-800"
-            }`}
-          >
-            {t(
-              "Αυτή η εκδήλωση δεν έχει ακόμη διοργανωτή. Γίνε εσύ ο διοργανωτής της παρέας και ξεκίνα να συγκεντρώνεις κόσμο!",
-              "This event has no organizer yet. Step up as the group organizer and start gathering people!",
-            )}
-          </p>
         </div>
       </div>
       <button

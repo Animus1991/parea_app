@@ -28,10 +28,7 @@ export function BuddySeekPrivacySettings() {
           {t('Αναζήτηση Nakamas — απόρρητο', 'Looking for Nakamas — privacy')}
         </h3>
         <p className={cn('text-sm mt-1 leading-relaxed', a.sub)}>
-          {t(
-            'Λεπτομερείς ρυθμίσεις κοινοποίησης · ορατότητα με σεβασμό στο απόρρητο. Δεν αποτελεί νομική συμβουλή.',
-            'Granular sharing settings · privacy-first visibility. Not legal advice.',
-          )}
+          {t('Ποιος βλέπει τα αιτήματά σου.', 'Who can see your requests.')}
         </p>
       </div>
 
@@ -124,12 +121,6 @@ export function BuddySeekPrivacySettings() {
         </label>
       ))}
 
-      <p className={cn('text-xs leading-relaxed', a.sub)}>
-        {t(
-          'Η φωτογραφία είναι προαιρετική και δεν εμφανίζεται από προεπιλογή. Μπορείτε να παύσετε ή να διαγράψετε αιτήματα ανά πάσα στιγμή.',
-          'Your photo is optional and never shown by default. You can pause or delete requests anytime.',
-        )}
-      </p>
     </div>
   );
 }

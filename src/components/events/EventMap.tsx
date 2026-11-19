@@ -213,10 +213,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
                 <div className="bg-white p-3 rounded-2xl shadow-soft border border-red-100">
                   <ShieldAlert className="w-6 h-6 text-red-500 mx-auto mb-2" />
                   <p className="text-xs text-gray-600">
-                    {t(
-                      'Ο χάρτης δεν είναι διαθέσιμος. Παρακαλώ ελέγξτε το API key.',
-                      'Map unavailable. Please check API key.',
-                    )}
+                    {t('Ο χάρτης δεν είναι διαθέσιμος.', 'Map unavailable.')}
                   </p>
                 </div>
               </div>
@@ -268,7 +265,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
               )}
             </button>
             <p className={cn('text-xs mt-3 font-medium', tok.badge)}>
-              {t('Προεπισκόπηση χάρτη (χωρίς API key)', 'Map preview (no API key)')}
+              {t('Προεπισκόπηση χάρτη', 'Map preview')}
             </p>
           </div>
         )}

@@ -66,7 +66,7 @@ export function PlansFormingScarcityPromoCard({
       </button>
       <p className={cn('text-xs flex items-center gap-1', isDark ? 'text-gray-500' : 'text-gray-500')}>
         <Calendar className="w-3 h-3" />
-        {t('Μικρή ομάδα · event-first', 'Small group · event-first')}
+        {t('Μικρή ομάδα', 'Small group')}
       </p>
     </article>
   );

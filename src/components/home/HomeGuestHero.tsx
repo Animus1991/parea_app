@@ -24,12 +24,6 @@ export function HomeGuestHero() {
       <h1 className={cn(APP_TYPO.pageTitle, 'text-ink')}>
         {t('Βρείτε την επόμενη εμπειρία σας', 'Find your next experience')}
       </h1>
-      <p className="text-sm text-gray-600 font-medium leading-relaxed max-w-md mx-auto">
-        {t(
-          'Ανακαλύψτε επιλεγμένες εκδηλώσεις που ταιριάζουν στα ενδιαφέροντά σας, συνδεθείτε με ομάδες που μοιράζονται τα ίδια πάθη και σχεδιάστε εκπληκτικές βόλτες.',
-          'Discover curated events that match your interests, connect with groups who share your passions, and plan amazing outings.',
-        )}
-      </p>
       <Button
         variant="primary"
         className="!rounded-full"

@@ -40,11 +40,11 @@ export function CopilotInlinePrompt({ className, title, subtitle, suggestions, m
           <span className="block text-sm font-bold text-ink">
             {title ? t(title.el, title.en) : t('Πες στο Nakamas AI τι θέλεις', 'Tell Nakamas AI what you want')}
           </span>
-          <span className="block text-xs leading-snug text-ink-muted">
-            {subtitle
-              ? t(subtitle.el, subtitle.en)
-              : t('Βρίσκει, οργανώνει & ρυθμίζει για σένα', 'Finds, organises & sets up for you')}
-          </span>
+          {subtitle && (
+            <span className="block text-xs leading-snug text-ink-muted">
+              {t(subtitle.el, subtitle.en)}
+            </span>
+          )}
         </span>
         <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-ink-muted md:hidden" aria-hidden />
       </button>

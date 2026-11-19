@@ -229,12 +229,6 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             <LookingForCompanyPanel event={event} accent={accent} darkSurface={panelDark} />
 
             <h3 id="groups" className="scroll-mt-28 text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
-            <p className="text-2xs text-ink-muted font-medium mb-3 -mt-2">
-              {t(
-                'Πολλές ομάδες μπορούν να υπάρχουν παράλληλα· μέγεθος από τον διοργανωτή.',
-                'Multiple groups can run in parallel; size is set by the organizer.',
-              )}
-            </p>
             <div className="mb-4 bg-accent-soft border border-accent/20 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-xs font-bold text-accent-strong">
               <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική Χωρητικότητα Εκδήλωσης', 'Overall Event Capacity')}</span>
               <span className="text-accent bg-surface-raised xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs border border-accent/20 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
@@ -298,10 +292,6 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               </div>
             )}
 
-            <p className="text-xs text-ink-muted font-medium mb-4 leading-relaxed">
-              {t('Συνιστούμε ανεπιφύλακτα να δημιουργήσετε ή να συμμετάσχετε σε ομάδες 3-5 ατόμων.', 'We highly recommend joining or creating groups of 3-5 users to reduce awkwardness and ensure the event happens safely.')}
-            </p>
-
             {eventGroups.length === 0 ? (
               <div className="text-xs text-ink-muted mb-4 bg-surface p-4 rounded-2xl text-center border border-dashed border-border font-medium">
                 {t('Δεν έχουν δημιουργηθεί ομάδες ακόμα. Γίνετε ο πρώτος που θα ξεκινήσει μία!', 'No groups forming yet. Be the first to start one!')}
@@ -323,7 +313,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               <div className="text-2xs text-ink-muted font-medium bg-surface rounded-lg text-center p-3 leading-relaxed tracking-wide">
                 {t('Δημιουργήστε νέα ομάδα 3-5 ατόμων. ', 'Create a new 3-5 person group. ')}
                 {event.isPaid ? (
-                  <span className="block mt-1 font-bold text-ink">{t('Η πληρωμή προεγκρίνεται. Χρεώνεται μόνο κατά την επιβεβαίωση.', 'Payment pre-authorized via official partner APIs. Discharges automatically on Group confirmation.')}</span>
+                  <span className="block mt-1 font-bold text-ink">{t('Η πληρωμή κρατιέται και χρεώνεται όταν επιβεβαιωθεί η ομάδα.', 'Payment is held and charged when the group is confirmed.')}</span>
                 ) : (
                   <span className="block mt-1 font-bold">{t('Δωρεάν δημιουργία.', 'Free to start.')}</span>
                 )}

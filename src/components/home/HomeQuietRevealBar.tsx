@@ -14,7 +14,6 @@ export function HomeQuietRevealBar({
   pastCount,
   showPast,
   onTogglePast,
-  usualHoursHint,
 }: {
   conflictCount: number;
   showConflicts: boolean;
@@ -25,80 +24,64 @@ export function HomeQuietRevealBar({
   pastCount: number;
   showPast: boolean;
   onTogglePast: () => void;
-  usualHoursHint?: boolean;
 }) {
   const { t } = useLanguage();
-  if (!usualHoursHint && conflictCount === 0 && fullJoinedCount === 0 && pastCount === 0) {
+  if (conflictCount === 0 && fullJoinedCount === 0 && pastCount === 0) {
     return null;
   }
 
   return (
-    <div className="mb-3 flex flex-col gap-2">
-      {usualHoursHint ? (
-        <p className="text-xs font-medium leading-snug text-ink-muted">
-          {t(
-            'Στις συνήθεις ώρες σου · χωρίς να κρύψουμε τις άλλες.',
-            'Usual hours first · the rest stay visible.',
+    <div className="mb-3 flex flex-wrap gap-1.5">
+      {conflictCount > 0 && (
+        <button
+          type="button"
+          aria-pressed={showConflicts}
+          onClick={onToggleConflicts}
+          className={cn(
+            CHIP,
+            showConflicts
+              ? 'border-accent bg-accent text-accent-fg'
+              : 'border-border bg-surface-raised text-ink',
           )}
-        </p>
-      ) : null}
-      {(conflictCount > 0 || fullJoinedCount > 0 || pastCount > 0) && (
-        <div className="flex flex-wrap gap-1.5">
-          {conflictCount > 0 && (
-            <button
-              type="button"
-              aria-pressed={showConflicts}
-              onClick={onToggleConflicts}
-              className={cn(
-                CHIP,
-                showConflicts
-                  ? 'border-accent bg-accent text-accent-fg'
-                  : 'border-border bg-surface-raised text-ink',
-              )}
-            >
-              {showConflicts
-                ? t('Κρύψε συγκρούσεις', 'Hide clashes')
-                : t(`Δείξε και όσες συγκρούονται ${conflictCount}`, `Show clashes too ${conflictCount}`)}
-            </button>
+        >
+          {showConflicts
+            ? t('Κρύψε συγκρούσεις', 'Hide conflicts')
+            : t(`Συγκρούσεις (${conflictCount})`, `Conflicts (${conflictCount})`)}
+        </button>
+      )}
+      {fullJoinedCount > 0 && (
+        <button
+          type="button"
+          aria-pressed={showFullJoined}
+          onClick={onToggleFullJoined}
+          className={cn(
+            CHIP,
+            showFullJoined
+              ? 'border-accent bg-accent text-accent-fg'
+              : 'border-border bg-surface-raised text-ink',
           )}
-          {fullJoinedCount > 0 && (
-            <button
-              type="button"
-              aria-pressed={showFullJoined}
-              onClick={onToggleFullJoined}
-              className={cn(
-                CHIP,
-                showFullJoined
-                  ? 'border-accent bg-accent text-accent-fg'
-                  : 'border-border bg-surface-raised text-ink',
-              )}
-            >
-              {showFullJoined
-                ? t('Κρύψε γεμάτα / εγγεγραμμένα', 'Hide full / joined')
-                : t(
-                    `Δείξε ήδη γεμάτα / ήδη εγγεγραμμένος ${fullJoinedCount}`,
-                    `Show full / already joined ${fullJoinedCount}`,
-                  )}
-            </button>
+        >
+          {showFullJoined
+            ? t('Κρύψε άλλες', 'Hide more')
+            : t(`Άλλες (${fullJoinedCount})`, `More (${fullJoinedCount})`)}
+        </button>
+      )}
+      {pastCount > 0 && (
+        <button
+          type="button"
+          aria-pressed={showPast}
+          onClick={onTogglePast}
+          className={cn(
+            CHIP,
+            showPast
+              ? 'border-accent bg-accent text-accent-fg'
+              : 'border-border bg-surface-raised text-ink',
           )}
-          {pastCount > 0 && (
-            <button
-              type="button"
-              aria-pressed={showPast}
-              onClick={onTogglePast}
-              className={cn(
-                CHIP,
-                showPast
-                  ? 'border-accent bg-accent text-accent-fg'
-                  : 'border-border bg-surface-raised text-ink',
-              )}
-            >
-              {showPast
-                ? t('Κρύψε παλιές', 'Hide past')
-                : t(`Δείξε παλιές ${pastCount}`, `Show past ${pastCount}`)}
-            </button>
-          )}
-        </div>
+        >
+          {showPast
+            ? t('Κρύψε παλιές', 'Hide past')
+            : t(`Παλιές (${pastCount})`, `Past (${pastCount})`)}
+        </button>
       )}
     </div>
   );

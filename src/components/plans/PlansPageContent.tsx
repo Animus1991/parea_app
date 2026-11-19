@@ -112,7 +112,7 @@ export default function PlansPageContent() {
     <div className="mx-auto max-w-full space-y-4 md:space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div>
         <h1 className={cn(PLANS_TYPO.pageTitle, p.head)}>{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
-        <p className={cn(PLANS_TYPO.pageSub, 'mt-1', p.sub)}>{t(`Οι βραδιές που έχεις ήδη κλείσει — chat, αλλαγές, αξιολογήσεις.`, `The nights you already booked — chat, changes, reviews.`)}</p>
+        <p className={cn(PLANS_TYPO.pageSub, 'mt-1', p.sub)}>{t(`Οι βραδιές που έχεις κλείσει.`, `Nights you've booked.`)}</p>
       </div>
 
       {/* Next-event highlight */}

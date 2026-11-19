@@ -641,10 +641,6 @@ export default function NearbyGroupsPageContent() {
           <p className={cn(APP_TYPO.pageSub, "mt-1.5 flex items-center gap-1.5", p.muted)}>
             <Navigation className="h-3.5 w-3.5" aria-hidden /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius}km</span>
           </p>
-          <p className={cn("mt-1 text-xs font-medium leading-snug", p.muted)}>
-            {t('Οι κοντινές πινελιές μαζεύονται σε ομάδες — όχι σαράντα καρφίτσες.', 'Nearby pins cluster together — not forty separate markers.')}
-          </p>
-
           <div className="mt-4 flex items-center gap-4">
             <input
               type="range"

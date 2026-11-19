@@ -262,12 +262,6 @@ export default function TrustCenterPageContent() {
 
           <Card className="p-4">
             <SectionLabel el="Πώς υπολογίζεται" en="How the score moves" />
-            <p className={cn('mt-1.5 text-xs font-medium leading-snug', a.muted)}>
-              {t(
-                'Ο βαθμός είναι 0–100. Παρουσίες και αξιολογήσεις τον κινούν· οι επαληθεύσεις αλλάζουν επίπεδο.',
-                'The score is 0–100. Attendance and reviews move it; verifications change your tier.',
-              )}
-            </p>
             <div className="mt-3 space-y-3">
               <ul aria-label={t('Ανεβαίνει', 'Goes up')} className="space-y-1.5">
                 {[

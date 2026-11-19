@@ -39,12 +39,6 @@ export function HomeOnboardingWelcomeBanner({
         <p className={cn('text-sm font-bold', useClassicTokens ? h.heading : p.head)}>
           {t('Το προφίλ σου είναι έτοιμο!', 'Your profile is ready!')}
         </p>
-        <p className={cn('text-xs font-medium mt-0.5', useClassicTokens ? h.labelMuted : p.sub)}>
-          {t(
-            'Φιλτράραμε την αρχική με βάση τα ενδιαφέροντά σου. Ρύθμισε περισσότερα από τα φίλτρα παρακάτω.',
-            'We tailored the home feed to your interests. Fine-tune more using the filters below.',
-          )}
-        </p>
       </div>
       <button
         type="button"
