@@ -147,10 +147,10 @@ export function HomeMobileFilterSheet({
           </div>
         </div>
         <div>
-          <p className={`text-xs font-bold mb-2 ${h.labelMuted}`}>{t('Άνεση & ασφάλεια', 'Comfort & safety')}</p>
+          <p className={`text-xs font-bold mb-2 ${h.labelMuted}`}>{t('Χώρος', 'Venue')}</p>
           <div className="flex flex-wrap gap-2">
             {([
-              { value: 'All' as const, el: 'Όλα τα επίπεδα', en: 'All levels' },
+              { value: 'All' as const, el: 'Όλοι οι χώροι', en: 'All venues' },
               { value: 'low' as const, el: 'Δημόσιοι χώροι', en: 'Public spots' },
               { value: 'medium' as const, el: 'Οργανωμένοι hosts', en: 'Organized hosts' },
               { value: 'high_trust' as const, el: 'Επαληθευμένες ομάδες', en: 'Verified groups' },

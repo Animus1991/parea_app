@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigation2, ShieldCheck } from 'lucide-react';
+import { MapPin, Navigation2 } from 'lucide-react';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { getEventDetailSurfaceTokens } from '../../lib/designTokens';
@@ -7,6 +7,7 @@ import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
 import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventDetailMapSection';
+import { showNightCoordinationTools } from '../../lib/eventDisplay';
 
 export interface EventDetailSafetySectionProps {
   event: Event;
@@ -32,6 +33,11 @@ export function EventDetailSafetySection({
   const myGroup = currentUser
     ? eventGroups.find((g) => g.members.includes(currentUser.id))
     : undefined;
+  const showPinShare = showNightCoordinationTools({
+    inGroup: Boolean(myGroup),
+    event,
+    alreadyActive: isSharingLocation,
+  });
 
   const handleToggleLocation = () => {
     if (!currentUser) {
@@ -86,31 +92,33 @@ export function EventDetailSafetySection({
             tok.verifiedBg,
           )}
         >
-          <ShieldCheck className={cn('w-8 h-8 shrink-0', tok.verifiedIcon)} />
+          <MapPin className={cn('w-8 h-8 shrink-0', tok.verifiedIcon)} />
           <div>
             <h3 className={cn('card-heading font-bold', darkSurface ? 'text-white' : 'text-ink')}>
-              {t('Επαληθευμένη Εκδήλωση', 'Verified Event')}
+              {t('Δημόσιο σημείο συνάντησης', 'Public meeting point')}
             </h3>
             <p className={cn('card-copy mt-1 text-balance leading-relaxed', tok.muted)}>
               {t(
-                'Αυτή η εκδήλωση πληροί τα πρότυπα ασφάλειας και αξιοπιστίας της κοινότητάς μας.',
-                'This event meets our community safety and reliability standards.',
+                'Συναντιέστε σε δημόσιο χώρο. Το ακριβές σημείο φαίνεται μόνο στα επιβεβαιωμένα μέλη της ομάδας.',
+                'You meet in a public place. The exact pin is visible only to confirmed group members.',
               )}
             </p>
           </div>
         </div>
 
+        {showPinShare && (
+          <>
         <div className="hidden md:block w-px bg-gray-200 dark:bg-gray-700 shrink-0" />
 
         <div className="flex-1 min-w-0">
           <h3 className={cn('card-heading font-bold flex items-center gap-2', darkSurface ? 'text-white' : 'text-ink')}>
             <Navigation2 className="w-4 h-4 shrink-0" />
-            {t('Ασφάλεια Τοποθεσίας', 'Location Safety')}
+            {t('Κοινοποίηση θέσης', 'Share pin')}
           </h3>
           <p className={cn('card-copy mt-1 mb-3 text-balance leading-relaxed', tok.muted)}>
             {t(
-              'Προαιρετικό: μοιράσου μία φορά την τρέχουσα θέση σου με τα μέλη της ομάδας.',
-              'Optional: share your current pin once with group members.',
+              'Προαιρετικό: μία καρφίτσα στην ομάδα, μόνο όσο διαρκεί η έξοδος.',
+              'Optional: one pin with the group, only while the outing lasts.',
             )}
           </p>
           <button type="button" onClick={handleToggleLocation} className={isSharingLocation ? tok.primaryBtnStop : tok.primaryBtn}>
@@ -119,6 +127,8 @@ export function EventDetailSafetySection({
               : t('Κοινοποίηση θέσης', 'Share pin')}
           </button>
         </div>
+          </>
+        )}
       </div>
     </div>
   );

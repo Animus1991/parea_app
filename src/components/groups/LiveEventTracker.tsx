@@ -158,13 +158,13 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
         <div>
           <h3 className="font-bold text-ink flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            {t("Nakama Safety Shield", "Nakama Safety Shield")}
+            {t("Χάρτης ομάδας", "Group map")}
           </h3>
           <p className="text-xs text-gray-500 mt-1 flex items-center gap-1.5">
             <Navigation className="w-3.5 h-3.5 text-emerald-600" />
             {t(
-              "Οπτική επαφή με την ομάδα για ασφάλεια.",
-              "Visual contact with the group for safety.",
+              "Δες πού είναι η παρέα για να συναντηθείτε εύκολα.",
+              "See where the group is so you can meet up easily.",
             )}
           </p>
         </div>
@@ -178,8 +178,8 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
               toggleLiveTracking(groupId, next);
               toast.success(
                 next
-                  ? t("Η ασπίδα ασφαλείας ενεργοποιήθηκε.", "Safety shield is on.")
-                  : t("Η ασπίδα ασφαλείας απενεργοποιήθηκε.", "Safety shield is off."),
+                  ? t("Ο χάρτης της ομάδας είναι ενεργός.", "The group map is on.")
+                  : t("Ο χάρτης της ομάδας έκλεισε.", "The group map is off."),
                 next
                   ? {
                       action: {
@@ -219,7 +219,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
             <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
             <div>
               <p className="text-sm font-bold m-0">
-                {t("Ειδοποίηση Ασφαλείας", "Safety Alert")}
+                {t("Κάποιος απομακρύνθηκε", "Someone is farther away")}
               </p>
               <p className="text-xs mt-1 text-amber-700 leading-relaxed">
                 {t(
@@ -311,7 +311,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                           className={`w-1.5 h-1.5 rounded-full ${loc.sos ? "bg-red-500" : loc.isOutOfBounds ? "bg-amber-500" : "bg-emerald-500"} animate-pulse`}
                         ></span>
                         {loc.sos
-                          ? t("SOS / HELP", "SOS / HELP")
+                          ? t("Χρειάζεται βοήθεια", "Needs help")
                           : loc.isOutOfBounds
                             ? t("Εκτός Ορίων", "Out Of Bounds")
                             : t('Κοινοποίηση', 'Sharing')}
@@ -344,8 +344,8 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                 >
                   <ShieldAlert className="w-4 h-4 mr-1" />
                   {sosActive
-                    ? t("Λήξη SOS", "End SOS")
-                    : t("SOS / Χάθηκα", "SOS / Lost")}
+                    ? t("Είμαι εντάξει", "I'm okay")
+                    : t("Χάθηκα", "I'm lost")}
                 </Button>
               )}
               {!isHost && isSharing && (
@@ -355,7 +355,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                   className="bg-white text-gray-600 hover:bg-gray-50 border-gray-200"
                   onClick={() => setIsSharing(false)}
                 >
-                  {t("Διακοπή Radar", "Stop Radar")}
+                  {t("Διακοπή κοινοποίησης", "Stop sharing")}
                 </Button>
               )}
               {isHost && !isSharing && (

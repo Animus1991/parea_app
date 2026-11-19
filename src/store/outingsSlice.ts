@@ -344,8 +344,8 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         for (const uid of absentIds) {
           notifyMe(
             'safety',
-            'Καταγράφηκε απουσία σου. Δες τι σημαίνει και πώς κάνεις ένσταση στο Κέντρο Εμπιστοσύνης.',
-            'An absence was recorded for you. See what it means and how to appeal in the Trust Center.',
+            'Καταγράφηκε απουσία σου. Δες τι σημαίνει και πώς κάνεις ένσταση στη σελίδα αξιοπιστίας.',
+            'An absence was recorded for you. See what it means and how to appeal on the reliability page.',
             { groupId, eventId: group.eventId, forUserId: uid },
           );
         }

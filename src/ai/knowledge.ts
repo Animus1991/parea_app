@@ -45,8 +45,8 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
       const tierEl = u ? ` Είσαι στη βαθμίδα «${tierLabelEl(u.trustTier)}».` : '';
       const tierEn = u ? ` You are currently "${tierLabelEn(u.trustTier)}".` : '';
       return {
-        el: `Υπάρχουν 3 βαθμίδες: 1) Εξερευνητής — δωρεάν δημόσιες εκδηλώσεις· 2) Επιβεβαιωμένος (email + τηλέφωνο) — μικρές ομάδες 3–5 ατόμων & εκδηλώσεις με εισιτήριο· 3) Υψηλής Εμπιστοσύνης (+ ταυτότητα) — εκδρομές, ιδιωτικές συναντήσεις και διοργάνωση.${tierEl}`,
-        en: `There are 3 tiers: 1) Explorer — free public events; 2) Confirmed (email + phone) — small groups of 3–5 and ticketed events; 3) High Trust (+ ID) — trips, private meetups and hosting.${tierEn}`,
+        el: `Υπάρχουν 3 βαθμίδες: 1) Εξερευνητής — δωρεάν δημόσιες εκδηλώσεις· 2) Επιβεβαιωμένος (email + τηλέφωνο) — μικρές ομάδες 3–5 ατόμων & εκδηλώσεις με εισιτήριο· 3) Υψηλής Εμπιστοσύνης — εκδρομές, ιδιωτικές συναντήσεις και διοργάνωση. Η ταυτότητα ζητείται μόνο σε αυτό το βήμα, κατά προτίμηση μέσω Gov.gr Wallet.${tierEl}`,
+        en: `There are 3 tiers: 1) Explorer — free public events; 2) Confirmed (email + phone) — small groups of 3–5 and ticketed events; 3) High Trust — trips, private meetups and hosting. ID is only asked at that step, preferably via Gov.gr Wallet.${tierEn}`,
       };
     },
   },
@@ -64,12 +64,12 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
   {
     id: 'safety',
     stems: ['ασφαλει', 'safety', 'sos', 'τοποθεσια', 'location', 'trusted contact', 'επαφη εμπιστοσυν'],
-    titleEl: 'Ασφάλεια',
-    titleEn: 'Safety',
+    titleEl: 'Πώς δουλεύει η έξοδος',
+    titleEn: 'How the outing works',
     path: '/trust',
     answer: () => ({
-      el: 'Εργαλεία ασφάλειας: προαιρετική, προσωρινή κοινοποίηση τοποθεσίας μόνο στην ομάδα, κουμπί SOS στο group chat, σύνδεσμος για επαφή εμπιστοσύνης, κατάσταση άφιξης/ETA, συναντήσεις σε δημόσιους χώρους και αναφορά χρήστη/συνομιλίας με ένα κλικ.',
-      en: 'Safety tools: optional, temporary location sharing with your group only, an SOS button in group chat, a trusted-contact link, arrival status/ETA, public meeting places and one-tap reporting of users or chats.',
+      el: 'Οι συναντήσεις είναι σε δημόσιο χώρο, σε μικρή ομάδα 3–5. Το ακριβές σημείο φαίνεται μόνο στα επιβεβαιωμένα μέλη. Τη νύχτα της εξόδου μπορείς να μοιραστείς θέση, να πεις «έφτασα» ή να ειδοποιήσεις την ομάδα αν χρειάζεσαι βοήθεια. Η αναφορά είναι πάντα στο μενού.',
+      en: 'Meetups are in a public place, in a small group of 3–5. The exact pin is visible only to confirmed members. On the night you can share a pin, say you arrived, or alert the group if you need help. Report is always in the menu.',
     }),
   },
   {

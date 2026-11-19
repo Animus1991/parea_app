@@ -248,14 +248,10 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
         <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & Κέρδη', 'Wallet & Earnings')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection id="trust" paths={['/verification', '/trust', '/report']} title={t('Εμπιστοσύνη & Ασφάλεια', 'Trust & Safety')} compact={compact} rail={rail}>
-        <NavItem to="/verification" icon={BadgeCheck} label={t('Επαλήθευση Ταυτότητας', 'Identity Verification')} compact={compact} rail={rail} />
-        <NavItem to="/trust" icon={ShieldCheck} label={t('Κέντρο Εμπιστοσύνης', 'Trust Center')} compact={compact} rail={rail} />
-        <NavItem to="/report" icon={Flag} label={t('Αναφορά Προβλήματος', 'Report Issue')} compact={compact} rail={rail} />
-      </NavSection>
-
-      <NavSection id="account" paths={['/profile', '/notifications', '/settings', '/admin']} title={t('Λογαριασμός & Ρυθμίσεις', 'Account & Settings')} compact={compact} rail={rail}>
+      <NavSection id="account" paths={['/profile', '/verification', '/trust', '/notifications', '/settings', '/admin']} title={t('Λογαριασμός', 'Account')} compact={compact} rail={rail}>
         <NavItem to="/profile" icon={User} label={t('Το Προφίλ μου', 'My Profile')} compact={compact} rail={rail} />
+        <NavItem to="/verification" icon={BadgeCheck} label={t('Επαλήθευση', 'Verification')} compact={compact} rail={rail} />
+        <NavItem to="/trust" icon={ShieldCheck} label={t('Αξιοπιστία', 'Reliability')} compact={compact} rail={rail} />
         <NavItem to="/notifications" icon={Bell} label={t('Ειδοποιήσεις', 'Notifications')} compact={compact} rail={rail} />
         <NavItem to="/settings" icon={Settings} label={t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')} compact={compact} rail={rail} />
         {isAdmin && (
@@ -263,8 +259,9 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
         )}
       </NavSection>
 
-      <NavSection id="support" paths={['/help', '/onboarding']} title={t('Υποστήριξη', 'Support')} compact={compact} rail={rail}>
+      <NavSection id="support" paths={['/help', '/report', '/onboarding']} title={t('Υποστήριξη', 'Support')} compact={compact} rail={rail}>
         <NavItem to="/help" icon={HelpCircle} label={t('Κέντρο Βοήθειας', 'Help Center')} compact={compact} rail={rail} />
+        <NavItem to="/report" icon={Flag} label={t('Αναφορά', 'Report')} compact={compact} rail={rail} />
         <NavItem to="/onboarding" icon={BookOpen} label={t('Οδηγός Εισαγωγής', 'Onboarding')} compact={compact} rail={rail} />
       </NavSection>
     </>
@@ -475,7 +472,7 @@ export function BottomNav() {
         <span aria-hidden className={cn("text-xs font-medium mt-1", tok.muted)}>{t('Δημιουργία', 'Create')}</span>
       </div>
       {([
-        { to: "/trust", icon: ShieldCheck, labelGr: 'Εμπιστοσύνη', labelEn: 'Trust' },
+        { to: "/connections", icon: Users, labelGr: 'Φίλοι', labelEn: 'Friends' },
         { to: "/profile", icon: User, labelGr: 'Προφίλ', labelEn: 'Profile' },
       ] as const).map(({ to, icon: Icon, labelGr, labelEn }) => (
         <NavLink key={to} to={to}

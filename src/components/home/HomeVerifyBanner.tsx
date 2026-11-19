@@ -40,8 +40,8 @@ export function HomeVerifyBanner() {
       ? t('Επαληθεύστε το email σας', 'Verify your email')
       : t('Επαληθεύστε το τηλέφωνό σας', 'Verify your phone');
   const body = t(
-    'Η επαλήθευση ανεβάζει το Trust Score και ξεκλειδώνει περισσότερες συνδέσεις.',
-    'Verification raises your Trust Score and unlocks more connections.',
+    'Έτσι σε βρίσκει η ομάδα και ξεκλειδώνει το chat όταν γεμίσει.',
+    'So the group can reach you, and chat unlocks when it fills.',
   );
 
   const dismiss = () => {

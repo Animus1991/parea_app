@@ -783,8 +783,8 @@ export const useStore = create<AppState>()(
         strikes = [...strikes, strike];
         people = patchPerson(people, uid, (u) => ({ reliabilityScore: Math.min(100, Math.max(0, u.reliabilityScore + delta)) }));
         note(
-          'Αποχώρησες λιγότερο από 24 ώρες πριν και η θέση έμεινε κενή — καταγράφηκε αργή ακύρωση. Αν υπήρχε σοβαρός λόγος, κάνε ένσταση στο Κέντρο Εμπιστοσύνης.',
-          'You left less than 24 hours before and the seat stayed empty — a late cancel was recorded. If there was a serious reason, appeal in the Trust Center.',
+          'Αποχώρησες λιγότερο από 24 ώρες πριν και η θέση έμεινε κενή — καταγράφηκε αργή ακύρωση. Αν υπήρχε σοβαρός λόγος, κάνε ένσταση στη σελίδα αξιοπιστίας.',
+          'You left less than 24 hours before and the seat stayed empty — a late cancel was recorded. If there was a serious reason, appeal on the reliability page.',
           'safety',
           // Scoped to the leaver; clear groupId so the row does not deep-link a locked night.
           { forUserId: uid, groupId: null },
@@ -1356,8 +1356,8 @@ export const useStore = create<AppState>()(
       get().addNotification({
         id: `n_shield_${stamp}_${i}`,
         type: 'safety',
-        messageGr: 'Η ασπίδα ασφαλείας ενεργοποιήθηκε — άνοιξε το chat για τον χάρτη ομάδας.',
-        messageEn: 'Safety shield is on — open group chat for the group map.',
+        messageGr: 'Ο χάρτης της ομάδας είναι ενεργός — άνοιξέ τον από το chat.',
+        messageEn: 'The group map is on — open it from chat.',
         timeGr: 'μόλις τώρα',
         timeEn: 'just now',
         read: false,

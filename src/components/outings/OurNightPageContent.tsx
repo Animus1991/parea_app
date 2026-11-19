@@ -372,14 +372,14 @@ export default function OurNightPageContent() {
 
       <section className="rounded-2xl border border-border bg-surface-raised p-4" aria-labelledby="safety-title">
         <h3 id="safety-title" className="flex items-center gap-2 text-sm font-bold text-ink">
-          <LifeBuoy className="h-4 w-4" aria-hidden /> {t('Ασφάλεια & επικοινωνία', 'Safety & contact')}
+          <LifeBuoy className="h-4 w-4" aria-hidden /> {t('Ομάδα & βοήθεια', 'Group & help')}
         </h3>
         <div className="mt-2 flex flex-wrap gap-2">
           <Button size="sm" variant="outline" onClick={() => navigate(`/chat/${group.id}`)}>
             <MessageCircle className="mr-1.5 h-4 w-4" aria-hidden /> {t('Chat ομάδας', 'Group chat')}
           </Button>
           <Button size="sm" variant="outline" onClick={() => navigate('/trust')}>
-            {t('Κέντρο Εμπιστοσύνης', 'Trust Center')}
+            {t('Αξιοπιστία', 'Reliability')}
           </Button>
           <Button size="sm" variant="outline" onClick={() => navigate('/report')}>
             {t('Αναφορά', 'Report')}

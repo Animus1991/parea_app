@@ -53,6 +53,7 @@ import { GroupChatLocationModal } from "./groupChat/GroupChatLocationModal";
 import { GroupChatSosModal } from "./groupChat/GroupChatSosModal";
 import { canModerateGroup } from "../../lib/roles";
 import { intlLocale } from '../../lib/dateLocale';
+import { showNightCoordinationTools } from '../../lib/eventDisplay';
 
 /** Room under the newest message so the floating chats button (desktop) never covers it. */
 const VIRTUOSO_SPACER = { Footer: () => <div aria-hidden className="h-2 md:h-14" /> };
@@ -133,6 +134,17 @@ export default function GroupChatPageContent() {
   const [showDisableEphemeralModal, setShowDisableEphemeralModal] =
     useState(false);
   const [isSharingLocation, setIsSharingLocation] = useState(false);
+  const sosActive = Boolean(currentUser && group?.membersLocations?.[currentUser.id]?.sos);
+  const showHelpAlert = Boolean(
+    currentUser &&
+      group &&
+      event &&
+      showNightCoordinationTools({
+        inGroup: isMember,
+        event,
+        alreadyActive: sosActive || isSharingLocation,
+      }),
+  );
   const [showLocationConfigModal, setShowLocationConfigModal] = useState(false);
   const [showLiveRadarModal, setShowLiveRadarModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
@@ -591,14 +603,15 @@ export default function GroupChatPageContent() {
                     ? "bg-emerald-50 text-emerald-600 border-emerald-200 ring-2 ring-emerald-500/20"
                     : "bg-gray-50 dark:bg-white/5 text-gray-500 border-gray-200 dark:border-border hover:bg-gray-100 dark:hover:bg-white/10"
                 }`}
-                title={t("Τοποθεσία & Ασφάλεια", "Location & Safety")}
-                aria-label={t("Τοποθεσία & Ασφάλεια", "Location & Safety")}
+                title={t("Χάρτης ομάδας", "Group map")}
+                aria-label={t("Χάρτης ομάδας", "Group map")}
               >
                 <Compass
                   className={`h-4 w-4 ${isSharingLocation ? "animate-pulse" : ""}`}
                   aria-hidden
                 />
               </button>
+              {showHelpAlert && (
               <button
                 type="button"
                 onClick={() => setShowSosConfirm(true)}
@@ -607,14 +620,12 @@ export default function GroupChatPageContent() {
                     ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500 animate-pulse"
                     : "bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
                 }`}
-                title={t("SOS / Βοήθεια", "SOS / Help")}
-                aria-label={t("SOS / Βοήθεια", "SOS / Help")}
+                title={t("Χρειάζομαι βοήθεια", "I need help")}
+                aria-label={t("Χρειάζομαι βοήθεια", "I need help")}
               >
                 <Siren className="h-4 w-4" aria-hidden />
               </button>
-              <span className="text-2xs text-ink-muted truncate">
-                {t('Εργαλεία ασφάλειας · Emojis · GIF · Φωνητικό · Δημοσκόπηση', 'Safety tools · Emojis · GIF · Voice · Poll')}
-              </span>
+              )}
             </div>
             <QuickReplies
               onSelect={(q) => {
@@ -938,7 +949,7 @@ export default function GroupChatPageContent() {
                 <div className="pt-4 border-t border-gray-100 dark:border-border">
                   <h4 className="font-bold text-sm capitalize tracking-tight text-ink mb-3 flex items-center gap-1.5">
                     <Navigation className="h-3.5 w-3.5 text-gray-400" />{" "}
-                    {t("Άφιξη & Ασφάλεια", "Arrival & Safety")}
+                    {t("Άφιξη & χάρτης", "Arrival & map")}
                   </h4>
                   <div className="space-y-2">
                     <button
@@ -996,12 +1007,12 @@ export default function GroupChatPageContent() {
                     >
                       <div>
                         <p className="text-sm font-bold text-ink">
-                          {t("Nakama Safety Shield", "Nakama Safety Shield")}
+                          {t("Χάρτης ομάδας", "Group map")}
                         </p>
                         <p className="text-xs text-gray-500 mt-0.5">
                           {t(
-                            "Χάρτης ασφαλείας & SOS Flare",
-                            "Safety map & SOS Flare",
+                            "Ζωντανή θέση και ειδοποίηση βοήθειας",
+                            "Live pin and a help alert",
                           )}
                         </p>
                       </div>
@@ -1037,7 +1048,7 @@ export default function GroupChatPageContent() {
                   onClick={() => setShowReportModal(true)}
                   className="w-full py-2.5 px-4 text-xs font-bold tracking-wide text-red-600 bg-red-50/50 hover:bg-red-50 border border-red-100 rounded-lg transition-colors flex justify-center items-center gap-2"
                 >
-                  {t("Αναφορά Προβλήματος", "Report Safety Issue")}
+                  {t("Αναφορά προβλήματος", "Report an issue")}
                 </button>
                 <button
                   onClick={() => setShowLeaveModal(true)}
@@ -1420,7 +1431,7 @@ export default function GroupChatPageContent() {
         <Modal
           open={showLiveRadarModal}
           onClose={() => setShowLiveRadarModal(false)}
-          title={t("Live Radar", "Live Radar")}
+          title={t("Χάρτης ομάδας", "Group map")}
           size="lg"
           className="max-w-4xl p-4"
         >
@@ -1445,16 +1456,16 @@ export default function GroupChatPageContent() {
                   senderId: "system",
                   senderName: t("Σύστημα", "System"),
                   text: !isSos
-                    ? `${currentUser.name} ${t("ενεργοποίησε το SOS Flare! Βρίσκεται σε ανάγκη.", "triggered the SOS flare! They need help.")}`
-                    : `${currentUser.name} ${t("απενεργοποίησε το SOS.", "deactivated the SOS.")}`,
+                    ? `${currentUser.name} ${t("ζήτησε βοήθεια από την ομάδα.", "asked the group for help.")}`
+                    : `${currentUser.name} ${t("είναι εντάξει.", "is okay.")}`,
                   timestamp: new Date().toISOString(),
                 },
               ]);
               setShowSosConfirm(false);
               if (!isSos) {
-                toast.error(t('SOS Flare ενεργοποιήθηκε!', 'SOS Flare activated!'));
+                toast.error(t('Η ομάδα ειδοποιήθηκε ότι χρειάζεσαι βοήθεια.', 'The group was told you need help.'));
               } else {
-                toast.info(t('SOS απενεργοποίηκε.', 'SOS deactivated.'));
+                toast.info(t('Ενημερώθηκε η ομάδα ότι είσαι εντάξει.', 'The group was told you are okay.'));
               }
             }}
           />

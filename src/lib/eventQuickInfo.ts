@@ -85,7 +85,7 @@ export function buildEventQuickInfo(
   const comfortLabels: Record<ComfortLevelLabel, [string, string]> = {
     public: ['Δημόσιος χώρος', 'Public'],
     organized: ['Οργανωμένη συνάντηση', 'Organized'],
-    high_trust: ['Υψηλής εμπιστοσύνης', 'High-trust'],
+    high_trust: ['Επιβεβαιωμένη ομάδα', 'Confirmed group'],
     basic: ['Βασικό', 'Basic'],
   };
 
@@ -127,9 +127,9 @@ export function buildEventQuickInfo(
     comfortLevelEl: comfortEl,
     comfortLevelEn: comfortEn,
     verificationEl: verificationRequired
-      ? t('Απαιτείται επαλήθευση', 'Verification required')
-      : t('Χωρίς επιπλέον επαλήθευση', 'No extra verification'),
-    verificationEn: verificationRequired ? 'Verification required' : 'No extra verification',
+      ? t('Email και τηλέφωνο', 'Email and phone')
+      : t('Ανοιχτό', 'Open'),
+    verificationEn: verificationRequired ? 'Email and phone' : 'Open',
     costEl: event.isPaid ? `€${event.price}` : t('Δωρεάν', 'Free'),
     costEn: event.isPaid ? `€${event.price}` : 'Free',
     groupStatusEl,

@@ -160,10 +160,10 @@ export default function SavedEventsPageContent() {
                 </h3>
                 <p className={cn('card-meta mt-1.5', a.muted)}>
                   {event.safetyLevel === 'high_trust'
-                    ? t('Υψηλή Εμπιστοσύνη', 'High Trust')
+                    ? t('Επιβεβαιωμένη ομάδα', 'Confirmed group')
                     : event.safetyLevel === 'medium'
-                      ? t('Μεσαία', 'Medium Trust')
-                      : t('Δημόσια', 'Public')}
+                      ? t('Οργανωμένος host', 'Organized host')
+                      : t('Δημόσιος χώρος', 'Public venue')}
                 </p>
                 <p className={cn('card-meta mt-auto pt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5', a.sub)}>
                   <span className="inline-flex items-center gap-1 min-w-0">
