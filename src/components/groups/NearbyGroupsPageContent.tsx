@@ -114,7 +114,13 @@ const clusterIconCache = new Map<number, L.DivIcon>();
 function clusterIcon(count: number): L.DivIcon {
   let icon = clusterIconCache.get(count);
   if (!icon) {
-    icon = L.divIcon({ className: 'nakamas-cluster', html: `<span>${count}</span>`, iconSize: [36, 36], iconAnchor: [18, 18] });
+    const size = count >= 10 ? 44 : 40;
+    icon = L.divIcon({
+      className: 'nakamas-cluster',
+      html: `<span class="nakamas-cluster-count">${count}</span>`,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
+    });
     clusterIconCache.set(count, icon);
   }
   return icon;
