@@ -12,7 +12,6 @@ import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
 import { Chip } from '../common/Chip';
 import { EmptyState } from '../common/EmptyState';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { PostComposer } from './PostComposer';
 import { WallPostList } from './WallPostList';
@@ -117,8 +116,6 @@ export default function WallFeedPageContent() {
           {t('Τι σχεδιάζουν οι Nakamas σου — κι εσύ ορίζεις ποιος βλέπει κάθε δημοσίευσή σου.', 'What your Nakamas are planning — and you choose who sees each of your posts.')}
         </p>
       </div>
-      <CopilotInlinePrompt maxChips={2} title={{ el: 'Βοήθεια για τον τοίχο', en: 'Help for the wall' }} />
-
       {focusId && (
         <div className="space-y-2">
           <button

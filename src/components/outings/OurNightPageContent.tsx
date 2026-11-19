@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   BadgeCheck,
   CalendarDays,
-  Clock,
   LifeBuoy,
   ListOrdered,
   Lock,
@@ -23,13 +22,13 @@ import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
-import { formatOutingDate, groupStatusLabel } from '../../lib/outings';
+import { groupStatusLabel } from '../../lib/outings';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { coverById, coversFor } from '../../lib/planCovers';
 import { eventStartMs, isDoorPerson, LATE_CANCEL_MS } from '../../store/outingsSlice';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { Button } from '../common/Button';
 import { EmptyState } from '../common/EmptyState';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { PersonAvatar } from '../wall/PersonAvatar';
 import { CheckInTicket } from './CheckInTicket';
 import { CheckInPanel } from './CheckInPanel';
@@ -217,10 +216,7 @@ export default function OurNightPageContent() {
         <p className="mt-0.5 text-sm font-bold">{event.title}</p>
         <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
           <li className="flex items-center gap-1.5">
-            <CalendarDays className="h-4 w-4" aria-hidden /> {formatOutingDate(event.date, language)}
-          </li>
-          <li className="flex items-center gap-1.5">
-            <Clock className="h-4 w-4" aria-hidden /> {event.time}
+            <CalendarDays className="h-4 w-4" aria-hidden /> {formatPlanWhen(event.date, event.time, language)}
           </li>
           <li className="flex items-center gap-1.5">
             <MapPin className="h-4 w-4" aria-hidden /> {event.locationArea}
@@ -389,8 +385,6 @@ export default function OurNightPageContent() {
           {t('Συναντιέστε πρώτα σε δημόσιο χώρο. Ενημέρωσε κάποιον δικό σου πού θα είσαι.', 'Meet in a public place first. Tell someone you trust where you will be.')}
         </p>
       </section>
-
-      <CopilotInlinePrompt maxChips={2} title={{ el: 'Βοήθεια για τη βραδιά', en: 'Help for tonight' }} />
 
       {!closed && (
         <section className="rounded-2xl border border-border p-4" aria-labelledby="leave-title">

@@ -226,9 +226,6 @@ export default function PersonProfilePageContent() {
       });
       return;
     }
-    toast.success(t(`Συνομιλία με ${subject.name}`, `Chat with ${subject.name}`), {
-      action: { label: t('Άνοιγμα', 'Open'), onClick: () => navigate('/chats') },
-    });
   };
 
   const handleBlock = () => {

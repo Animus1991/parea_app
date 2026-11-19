@@ -12,7 +12,6 @@ import { useNotificationsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
 import { APP_TYPO } from '../../lib/typographyTokens';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useWallStore } from '../../store/wallStore';
 import { notificationsForUser } from '../../lib/notificationsUtil';
@@ -109,7 +108,6 @@ export default function NotificationsPageContent() {
   const handleMarkAllRead = () => {
     markAllNotificationsRead();
     markWallActivityRead();
-    toast.success(t('Όλες οι ειδοποιήσεις σημάνθηκαν ως αναγνωσμένες', 'All notifications marked as read'));
   };
 
   const handleDismiss = (id: string) => {
@@ -281,8 +279,6 @@ export default function NotificationsPageContent() {
         )}
       </div>
 
-      <CopilotInlinePrompt />
-
       <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('Σύνοψη ειδοποιήσεων', 'Notification digest')}>
         {(
           [
@@ -373,29 +369,16 @@ export default function NotificationsPageContent() {
                     ? t('Καμία ειδοποίηση συστήματος', 'No system notifications')
                     : t('Καμία ειδοποίηση', 'No notifications')
           }
-          description={t(
-            'Θα σας ειδοποιήσουμε όταν υπάρξει κάτι νέο.',
-            "We'll notify you when something new happens.",
-          )}
+          description={t('Θα εμφανιστούν εδώ όταν υπάρξει κάτι νέο.', "They'll show up here when there's news.")}
           actionLabel={
             activeTab !== 'all' && notifications.length > 0
               ? t('Προβολή όλων', 'Show all')
-              : t('Εξερεύνηση', 'Explore')
+              : t('Ανακάλυψη', 'Discover')
           }
           onAction={
             activeTab !== 'all' && notifications.length > 0
               ? () => setActiveTab('all')
               : () => navigate('/')
-          }
-          secondaryLabel={
-            activeTab !== 'all' && notifications.length > 0
-              ? undefined
-              : t('Βρες Nakamas', 'Find Nakamas')
-          }
-          onSecondary={
-            activeTab !== 'all' && notifications.length > 0
-              ? undefined
-              : () => navigate('/buddy-seek')
           }
           askAi
           askPrompt={t('Τι νέο υπάρχει στις ειδοποιήσεις;', 'Summarise my notifications')}

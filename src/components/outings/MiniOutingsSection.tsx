@@ -4,7 +4,7 @@ import { Coffee, Footprints, HeartHandshake, MapPin, Plus, Wine, Zap } from 'luc
 import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
-import { formatOutingDate } from '../../lib/outings';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { fitsGenderMode } from '../../lib/outings';
 import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
@@ -122,7 +122,7 @@ export function MiniOutingsSection() {
             return (
               <li key={group.id} className="rounded-xl border border-border bg-surface p-3">
                 <p className="flex items-center gap-1.5 text-2xs font-bold text-ink-muted">
-                  <Icon className="h-3.5 w-3.5" aria-hidden /> {t(k.el, k.en)} · {formatOutingDate(event.date, language)} · {event.time}
+                  <Icon className="h-3.5 w-3.5" aria-hidden /> {t(k.el, k.en)} · {formatPlanWhen(event.date, event.time, language)}
                 </p>
                 <p className="mt-0.5 text-sm font-bold text-ink">{event.title}</p>
                 <p className="flex items-center gap-1 text-xs font-medium text-ink-muted">

@@ -13,7 +13,6 @@ import { usePageContrast } from '../hooks/usePageContrast';
 import { cn } from '../lib/utils';
 import { toast } from 'sonner';
 import { APP_TYPO } from '../lib/typographyTokens';
-import { CopilotInlinePrompt } from '../components/copilot/CopilotInlinePrompt';
 import { CHALLENGE_MINI, NakamasMini, type NakamasMiniId } from '../components/illustrations/NakamasMini';
 
 interface Challenge {
@@ -188,8 +187,6 @@ export default function ChallengesClassic() {
           </div>
         </div>
       </div>
-
-      <CopilotInlinePrompt />
 
       {/* Filter chips */}
       <div

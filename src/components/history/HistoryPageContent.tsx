@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { History as HistoryIcon, MapPin, Calendar, Star, CheckCircle2, Search, TrendingUp, Users, Award } from 'lucide-react';
 import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import { Card } from '../common/Card';
 import { EmptyState } from '../common/EmptyState';
 import { EventCardSkeleton } from '../common/Skeleton';
@@ -12,8 +12,7 @@ import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
-import { dateFnsLocale } from '../../lib/dateLocale';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 
 function HistoryThumb({ src, title, category, isDark }: { src?: string; title: string; category: string; isDark: boolean }) {
@@ -112,8 +111,6 @@ export default function HistoryPageContent() {
           <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>{t('Εκδηλώσεις που έχετε παρακολουθήσει', 'Events you\'ve attended')}</p>
         </div>
       </div>
-
-      <CopilotInlinePrompt />
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -214,7 +211,7 @@ export default function HistoryPageContent() {
                     <span aria-hidden className="opacity-40">·</span>
                     <span className="inline-flex items-center gap-1">
                       <Calendar className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
-                      {format(parseISO(event.date), 'dd MMM yyyy', { locale: dateFnsLocale(language) })}
+                      {formatPlanWhen(event.date, event.time, language)}
                     </span>
                     <span aria-hidden className="opacity-40">·</span>
                     <span className="inline-flex items-center gap-1 min-w-0">
@@ -264,10 +261,10 @@ export default function HistoryPageContent() {
             search
               ? t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search.')
               : tab === 'pending'
-                ? t('Όταν ολοκληρώσετε μια εκδήλωση, οι αξιολογήσεις θα εμφανίζονται εδώ.', 'When you finish an event, reviews waiting for you will show up here.')
+                ? t('Όταν τελειώσει μια βραδιά, η αξιολόγηση έρχεται εδώ.', 'When a night ends, the review lands here.')
                 : tab === 'reviewed'
-                  ? t('Οι αξιολογήσεις που υποβάλλετε θα εμφανίζονται σε αυτή την καρτέλα.', 'Reviews you submit will appear in this tab.')
-                  : t('Οι εκδηλώσεις που θα παρακολουθήσετε θα εμφανίζονται εδώ.', 'Events you attend will appear here.')
+                  ? t('Οι αξιολογήσεις σου μένουν εδώ.', 'Your reviews stay here.')
+                  : t('Όσα παρακολουθήσεις θα μείνουν εδώ.', 'Nights you attend will stay here.')
           }
           actionLabel={
             search
@@ -285,13 +282,7 @@ export default function HistoryPageContent() {
                 ? () => setTab('all')
                 : () => navigate('/')
           }
-          secondaryLabel={
-            search || tab === 'pending' ? undefined : t('Βρες Nakamas', 'Find Nakamas')
-          }
-          onSecondary={
-            search || tab === 'pending' ? undefined : () => navigate('/buddy-seek')
-          }
-          askAi={Boolean(search || tab === 'pending')}
+          askAi
           askPrompt={t('Άνοιξε την εκκρεμή αξιολόγηση', 'Open my pending review')}
         />
       )}

@@ -209,10 +209,7 @@ export function PlansFormingEmptyState({
           {t('Θέλετε να πάτε, αλλά όχι μόνοι/ες;', 'Want to go, but not alone?')}
         </p>
         <p className={cn(PLANS_FORMING_TYPO.body, 'mt-1.5 leading-relaxed max-w-[240px] mx-auto', isDark ? 'text-gray-400' : 'text-gray-500')}>
-          {t(
-            'Δηλώστε πρόθεση για εκδήλωση ή μπείτε σε σχέδιο που ήδη σχηματίζεται — χωρίς δημόσια έκθεση από προεπιλογή.',
-            'Declare intent for an event or join a forming plan — not public by default.',
-          )}
+          {t('Δήλωσε πρόθεση ή μπες σε σχέδιο που σχηματίζεται.', 'Declare intent or join a forming plan.')}
         </p>
       </div>
       {suggestedEvent && (

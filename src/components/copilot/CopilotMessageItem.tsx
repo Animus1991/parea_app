@@ -179,12 +179,13 @@ function EventResult({ eventId, index, onNavigate }: { eventId: string; index: n
         onClick={() => {
           const nextSaved = !saved;
           toggleSaved(event.id);
-          if (nextSaved) {
-            toast.success(t('Αποθηκεύτηκε', 'Saved'), {
-              action: { label: t('Αποθηκευμένα', 'Saved'), onClick: () => navigate('/saved') },
+          if (!nextSaved) {
+            toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'), {
+              action: {
+                label: t('Αναίρεση', 'Undo'),
+                onClick: () => toggleSaved(event.id),
+              },
             });
-          } else {
-            toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'));
           }
         }}
         aria-pressed={saved}

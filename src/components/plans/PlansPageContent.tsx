@@ -3,7 +3,7 @@ import { Card } from '../common/Card';
 import { MessageCircle, MapPin, Calendar, Clock, ShieldAlert, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass, PartyPopper } from 'lucide-react';
 import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
-import { format, parseISO, differenceInDays, differenceInHours, isBefore } from 'date-fns';
+import { parseISO, differenceInDays, isBefore } from 'date-fns';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -16,8 +16,7 @@ import { cn } from '../../lib/utils';
 import { PersonAvatar } from '../wall/PersonAvatar';
 import { PLANS_TYPO } from '../../lib/typographyTokens';
 import type { Group } from '../../types';
-import { dateFnsLocale, shortDayMonthPattern } from '../../lib/dateLocale';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { eventStartMs, LATE_CANCEL_MS } from '../../store/outingsSlice';
 import { EmptyState } from '../common/EmptyState';
@@ -37,7 +36,6 @@ function isPlansFormingGroupId(groupId: string) {
 
 export default function PlansPageContent() {
   const { t, tu, language } = useLanguage();
-  const dateLocale = dateFnsLocale(language);
   const p = usePageContrast();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'pending' | 'past'>('upcoming');
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<string | null>(null);
@@ -116,8 +114,6 @@ export default function PlansPageContent() {
         <h1 className={cn(PLANS_TYPO.pageTitle, p.head)}>{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
         <p className={cn(PLANS_TYPO.pageSub, 'mt-1', p.sub)}>{t(`Οι βραδιές που έχεις ήδη κλείσει — chat, αλλαγές, αξιολογήσεις.`, `The nights you already booked — chat, changes, reviews.`)}</p>
       </div>
-
-      <CopilotInlinePrompt />
 
       {/* Next-event highlight */}
       {nextEvent && nextEventDays !== null && nextEventDays <= 7 && (
@@ -202,27 +198,7 @@ export default function PlansPageContent() {
                   )}
                 </div>
                 <div className="text-right shrink-0">
-                  <div className={cn(PLANS_TYPO.cardDate, p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
-                  <div className={cn('card-meta', p.muted)}>{event.time}</div>
-                  {(() => {
-                    const days = differenceInDays(parseISO(event.date), new Date());
-                    const hours = differenceInHours(parseISO(event.date), new Date());
-                    if (days <= 0 && hours > 0) {
-                      return (
-                        <span className={cn('card-meta font-semibold mt-0.5 inline-block', p.isDark ? 'text-orange-300' : 'text-orange-700')}>
-                          {t('σε', 'in')} {hours}h
-                        </span>
-                      );
-                    }
-                    if (days > 0 && days <= 7) {
-                      return (
-                        <span className={cn('card-meta font-semibold mt-0.5 inline-block', p.statVal)}>
-                          {t('σε', 'in')} {days} {t('μέρες', 'days')}
-                        </span>
-                      );
-                    }
-                    return null;
-                  })()}
+                  <div className={cn(PLANS_TYPO.cardDate, p.head)}>{formatPlanWhen(event.date, event.time, language)}</div>
                 </div>
               </div>
 
@@ -299,12 +275,10 @@ export default function PlansPageContent() {
           <EmptyState
             icon={Compass}
             character="explorer"
-            title={t(`Δεν υπάρχουν επερχόμενα σχέδια.`, `No upcoming confirmed plans.`)}
-            description={t('Εξερευνήστε εκδηλώσεις και μπείτε σε μια ομάδα για να ξεκινήσετε.', 'Explore experiences and join a group to get started.')}
-            actionLabel={t(`Εξερεύνηση`, `Explore Experiences`)}
+            title={t(`Κανένα επερχόμενο σχέδιο`, `No upcoming plans`)}
+            description={t('Βρες μια βραδιά στο Discover.', 'Find a night on Discover.')}
+            actionLabel={t(`Ανακάλυψη`, `Discover`)}
             onAction={() => navigate('/')}
-            secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
-            onSecondary={() => navigate('/buddy-seek')}
             askAi
             askPrompt={t(
               'Βρες μου κάτι για αυτό το Σαββατοκύριακο με ανοιχτές θέσεις.',
@@ -342,7 +316,7 @@ export default function PlansPageContent() {
               <div className="flex justify-between items-start gap-2 mb-2">
                 <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
-                  <div className={cn(PLANS_TYPO.cardDate, p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
+                  <div className={cn(PLANS_TYPO.cardDate, p.head)}>{formatPlanWhen(event.date, event.time, language)}</div>
                 </div>
               </div>
 
@@ -380,8 +354,8 @@ export default function PlansPageContent() {
         {pendingEvents.length === 0 && (
           <EmptyState
             icon={Clock}
-            title={t('Καμία εκκρεμής ομάδα.', 'No pending groups.')}
-            description={t('Όταν εκδηλώσετε ενδιαφέρον για μια εκδήλωση, θα εμφανιστεί εδώ μέχρι να επιβεβαιωθεί η ομάδα.', 'When you express interest in an event, it appears here until the group is confirmed.')}
+            title={t('Καμία εκκρεμής ομάδα', 'No pending groups')}
+            description={t('Όταν δηλώσεις ενδιαφέρον, θα εμφανιστεί εδώ.', 'When you express interest, it shows up here.')}
             actionLabel={t('Ανακάλυψη', 'Discover')}
             onAction={() => navigate('/')}
             askAi
@@ -408,7 +382,7 @@ export default function PlansPageContent() {
             <div className="flex-1 flex flex-col">
               <div className={cn('flex items-center gap-2 mb-1.5 text-xs font-bold', p.muted)}>
                 <Calendar className="w-3.5 h-3.5" />
-                {format(parseISO(event.date), 'PPP', { locale: dateLocale })}
+                {formatPlanWhen(event.date, event.time, language)}
               </div>
               <h3 className={cn(PLANS_TYPO.cardTitle, 'mb-3', p.head)}>{event.title}</h3>
 
@@ -431,12 +405,10 @@ export default function PlansPageContent() {
         {pastEvents.length === 0 && (
           <EmptyState
             icon={CalendarCheck}
-            title={t('Κανένα ολοκληρωμένο σχέδιο ακόμα.', 'No completed plans yet.')}
-            description={t('Οι εκδηλώσεις που παρακολουθήσατε θα εμφανίζονται εδώ για αξιολόγηση και ιστορικό.', 'Events you attend will appear here for ratings and history.')}
-            actionLabel={t('Εξερεύνηση', 'Explore')}
+            title={t('Κανένα ολοκληρωμένο σχέδιο', 'No completed plans yet')}
+            description={t('Όσα παρακολουθήσεις θα μείνουν εδώ.', 'Nights you attend will stay here.')}
+            actionLabel={t('Ανακάλυψη', 'Discover')}
             onAction={() => navigate('/')}
-            secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
-            onSecondary={() => navigate('/buddy-seek')}
             askAi
             className="py-8"
           />

@@ -9,6 +9,7 @@ import { prefetchPath } from '../../lib/routeLoaders';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useReturnSummary } from '../../hooks/useReturnSummary';
+import { useHomeQuietContinue } from '../../hooks/useHomeHeroGate';
 import { returnPartPath } from '../../lib/returnVisit';
 
 /**
@@ -24,6 +25,7 @@ export function HomeContinueStrip() {
   const groups = useStore((s) => s.groups);
   const meId = useStore((s) => s.currentUser?.id);
   const returnParts = useReturnSummary();
+  const quietContinue = useHomeQuietContinue();
 
   // Stale «Our night» resume → missing or non-member lock: clear quietly.
   const nightMatch = path?.match(/^\/night\/([^/?#]+)/);
@@ -39,7 +41,7 @@ export function HomeContinueStrip() {
     if (nightStale) clear();
   }, [nightStale, clear]);
 
-  if (!path || path === '/' || nightStale) return null;
+  if (!path || path === '/' || nightStale || !quietContinue) return null;
 
   // Welcome-back line already covers this destination — keep one clear CTA in the hero.
   if (returnParts.some((part) => returnPartPath(part) === path)) return null;

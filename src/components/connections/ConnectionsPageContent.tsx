@@ -221,9 +221,6 @@ export default function ConnectionsPageContent() {
       return;
     }
     setInboxOpen(false);
-    toast.success(t(`Συνομιλία με ${peer?.name ?? ''}`, `Chat with ${peer?.name ?? ''}`), {
-      action: { label: t('Άνοιγμα', 'Open'), onClick: () => navigate('/chats') },
-    });
   };
 
   const handleBlock = (userId: string, name: string) => {

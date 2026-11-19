@@ -39,8 +39,7 @@ import { ChatStoriesStrip } from "../chat/ChatStoriesStrip";
 import { ChatCallModal } from "../chat/ChatCallModal";
 import { LiveEventTracker } from "./LiveEventTracker";
 import { ChatIcebreakers } from "./ChatIcebreakers";
-import { MeetingPointPanel } from "../chat/MeetingPointPanel";
-import { EphemeralChatBanner } from "../chat/EphemeralChatBanner";
+import { GroupChatStatusStrip } from "../chat/GroupChatStatusStrip";
 import { QuickReplies } from "../chat/QuickReplies";
 import { GroupChatThreadStarter } from "./GroupChatThreadStarter";
 import { localizeSystemBody } from "../../lib/chatSystemCopy";
@@ -53,7 +52,7 @@ import { GroupChatReportModal } from "./groupChat/GroupChatReportModal";
 import { GroupChatLocationModal } from "./groupChat/GroupChatLocationModal";
 import { GroupChatSosModal } from "./groupChat/GroupChatSosModal";
 import { canModerateGroup } from "../../lib/roles";
-import { intlLocale } from '../../lib/dateLocale';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { showNightCoordinationTools } from '../../lib/eventDisplay';
 
 /** Room under the newest message so the floating chats button (desktop) never covers it. */
@@ -428,12 +427,7 @@ export default function GroupChatPageContent() {
                       <span aria-hidden>·</span>
                       <Calendar className="h-3 w-3 shrink-0" aria-hidden />
                       <span>
-                        {new Date(event.date).toLocaleDateString(intlLocale(language), {
-                          weekday: "short",
-                          day: "numeric",
-                          month: "short",
-                        })}{" "}
-                        {event.time}
+                        {formatPlanWhen(event.date, event.time, language)}
                       </span>
                     </p>
                   </div>
@@ -538,18 +532,13 @@ export default function GroupChatPageContent() {
             </div>
           )}
 
-          {isEphemeral && (
-            <EphemeralChatBanner conversationId={conversationId ?? `conv_${group.id}`} />
-          )}
-
-          <div className="max-w-xl">
-            <MeetingPointPanel
-              conversationId={conversationId ?? `conv_${group.id}`}
-              venue={event.exactLocation || event.locationArea}
-              meetingPoint={group.meetingPoint}
-              locked={group.status !== "confirmed" && group.status !== "completed"}
-            />
-          </div>
+          <GroupChatStatusStrip
+            conversationId={conversationId ?? `conv_${group.id}`}
+            isEphemeral={isEphemeral}
+            venue={event.exactLocation || event.locationArea}
+            meetingPoint={group.meetingPoint}
+            locked={group.status !== "confirmed" && group.status !== "completed"}
+          />
 
           {/* Messages Virtualized */}
           <div className="flex-1 min-h-0 bg-[#F9FAFB] dark:bg-surface relative shadow-inner flex flex-col">
@@ -578,11 +567,7 @@ export default function GroupChatPageContent() {
             {!hasUserMessage && (
               <GroupChatThreadStarter
                 eventTitle={event.title}
-                whenLabel={`${new Date(event.date).toLocaleDateString(intlLocale(language), {
-                  weekday: "short",
-                  day: "numeric",
-                  month: "short",
-                })} · ${event.time}`}
+                whenLabel={formatPlanWhen(event.date, event.time, language)}
                 whereLabel={event.exactLocation || event.locationArea}
                 onPick={setNewMessage}
               />
@@ -743,8 +728,7 @@ export default function GroupChatPageContent() {
                         <Calendar className="h-3.5 w-3.5" />
                       </div>
                       <span className="pt-0.5">
-                        {new Date(event.date).toLocaleDateString(intlLocale(language))}{" "}
-                        {t("στις", "at")} {event.time}
+                        {formatPlanWhen(event.date, event.time, language)}
                       </span>
                     </div>
                     <div className="flex items-start gap-3">

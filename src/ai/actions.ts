@@ -5,7 +5,7 @@
  * persistence, same side effects). Declarations double as Gemini tools.
  */
 import { format, parseISO } from 'date-fns';
-import { el as elLocale, enUS } from 'date-fns/locale';
+import { formatPlanWhen } from '../lib/dateLocale';
 import { useStore, DEFAULT_USER_SETTINGS, type HomeHeroMode, type UserSettings } from '../store';
 import { useChatStore } from '../store/chatStore';
 import { useLanguageStore } from '../store/languageStore';
@@ -82,14 +82,9 @@ function fail(el: string, en: string): ActionResult {
 }
 
 export function formatEventLine(e: Event, lang: 'el' | 'en'): string {
-  let when = e.date;
-  try {
-    when = format(parseISO(e.date), 'EEE d/M', { locale: lang === 'el' ? elLocale : enUS });
-  } catch {
-    /* keep raw */
-  }
+  const when = formatPlanWhen(e.date, e.time, lang);
   const price = e.isPaid && e.price > 0 ? `€${e.price}` : lang === 'el' ? 'Δωρεάν' : 'Free';
-  return `${e.title} · ${when} ${e.time} · ${e.locationArea} · ${price}`;
+  return `${e.title} · ${when} · ${e.locationArea} · ${price}`;
 }
 
 function eventData(e: Event) {

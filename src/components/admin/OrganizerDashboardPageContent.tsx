@@ -26,7 +26,6 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { EmptyState } from '../common/EmptyState';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useStore } from '../../store';
 import { toast } from 'sonner';
@@ -245,13 +244,6 @@ export default function OrganizerDashboardPageContent() {
           </>
         )}
       </div>
-
-      <CopilotInlinePrompt
-        title={{
-          el: 'Ρώτα το AI για τις εκδηλώσεις και τα έσοδά σου',
-          en: 'Ask AI about your events and earnings',
-        }}
-      />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {statsCards.map((stat, i) => {
