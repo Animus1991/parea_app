@@ -127,6 +127,7 @@ function CardFact({
   wellClass,
   labelClass,
   detailClass,
+  align = 'start',
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
@@ -134,11 +135,17 @@ function CardFact({
   wellClass: string;
   labelClass: string;
   detailClass: string;
+  align?: 'start' | 'center' | 'end';
 }) {
   const spoken = detail ? `${label}, ${detail}` : label;
   return (
     <div
-      className="flex min-w-0 items-center gap-2.5 text-left @[20rem]:flex-col @[20rem]:items-center @[20rem]:gap-1.5 @[20rem]:text-center"
+      className={cn(
+        'flex min-w-0 max-w-[38%] flex-col gap-1',
+        align === 'start' && 'items-start text-left',
+        align === 'center' && 'items-center text-center',
+        align === 'end' && 'items-end text-right',
+      )}
       title={spoken}
     >
       <span className={wellClass} aria-hidden>
@@ -445,11 +452,12 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
           )}
         </div>
 
-        <div className="grid grid-cols-1 gap-2.5 @[20rem]:grid-cols-3 @[20rem]:gap-2">
+        <div className="flex w-full items-start justify-between gap-2">
           <CardFact
             icon={Clock}
             label={whenDay}
             detail={event.time}
+            align="start"
             wellClass={factWell}
             labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold capitalize", headColor)}
             detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
@@ -458,6 +466,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
             icon={MapPin}
             label={locationPrimary}
             detail={locationDetail}
+            align="center"
             wellClass={factWell}
             labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold", headColor)}
             detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
@@ -465,6 +474,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
           <CardFact
             icon={Users}
             label={`${groupProgress.spotsLeft} ${t("θέσεις", "spots")}`}
+            align="end"
             wellClass={factWell}
             labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold tabular-nums", headColor)}
             detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
