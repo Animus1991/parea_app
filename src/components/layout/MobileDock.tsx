@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { MessageCircle, Users } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
-import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { useStore } from '../../store';
 import { useChatStore } from '../../store/chatStore';
 import { usePlansFabState } from '../../hooks/usePlansFabState';
@@ -14,7 +13,6 @@ import { cn } from '../../lib/utils';
  */
 export function MobileDock() {
   const { t } = useLanguage();
-  const tok = useThemeStyles();
   const setPlansOpen = useStore((s) => s.setPlansFormingSheetOpen);
   const toggleInbox = useChatStore((s) => s.toggleInbox);
   const conversations = useChatStore((s) => s.conversations);
@@ -45,7 +43,7 @@ export function MobileDock() {
   if (pathname.startsWith('/chat/')) return null;
 
   const segment =
-    'flex items-center gap-2 min-h-11 font-bold text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/70 transition-colors';
+    'flex items-center gap-2 min-h-11 font-bold text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-fg/70 transition-colors';
 
   return (
     <div
@@ -56,11 +54,10 @@ export function MobileDock() {
       className={cn(
         'transition-[opacity,transform] duration-200 motion-reduce:transition-none',
         waiting && 'opacity-0 translate-y-3 pointer-events-none',
-        'mobile-dock md:hidden fixed left-1/2 -translate-x-1/2 z-fab flex items-stretch rounded-full shadow-soft-lg border overflow-hidden text-white',
+        'mobile-dock md:hidden fixed left-1/2 -translate-x-1/2 z-fab flex items-stretch rounded-full shadow-soft-lg border overflow-hidden bg-accent text-accent-fg border-accent-strong',
         aboveEventBar
           ? 'bottom-[calc(var(--bottom-nav-total)+5.25rem+env(safe-area-inset-bottom,0px))]'
           : 'bottom-fab-zone',
-        tok.isDark ? 'bg-cyan-600 border-cyan-500' : 'bg-cyan-600 border-cyan-700',
       )}
     >
       {plans.visible && (
@@ -74,7 +71,7 @@ export function MobileDock() {
             <Users className="w-4 h-4" aria-hidden />
             <span className="whitespace-nowrap">{plans.label}</span>
           </button>
-          <span aria-hidden className="w-px my-2.5 bg-white/30" />
+          <span aria-hidden className="w-px my-2.5 bg-accent-fg/30" />
         </>
       )}
       <button
