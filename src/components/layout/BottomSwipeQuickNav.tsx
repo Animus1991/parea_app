@@ -55,18 +55,20 @@ function bindCloseSwipe(onClose: () => void) {
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onCancel);
     };
-    const onCancel = (cancel: PointerEvent) => {
-      if (cancel.pointerId !== event.pointerId) return;
-      stop();
+    const maybeClose = (x: number, y: number) => {
+      if (!isDownwardCloseSwipe({ dx: x - startX, dy: y - startY })) return;
+      suppressClickOnce(event.currentTarget);
+      onClose();
     };
     const onUp = (up: PointerEvent) => {
       if (up.pointerId !== event.pointerId) return;
       stop();
-      const dx = up.clientX - startX;
-      const dy = up.clientY - startY;
-      if (!isDownwardCloseSwipe({ dx, dy })) return;
-      suppressClickOnce(event.currentTarget);
-      onClose();
+      maybeClose(up.clientX, up.clientY);
+    };
+    const onCancel = (cancel: PointerEvent) => {
+      if (cancel.pointerId !== event.pointerId) return;
+      stop();
+      maybeClose(cancel.clientX, cancel.clientY);
     };
     window.addEventListener('pointerup', onUp);
     window.addEventListener('pointercancel', onCancel);

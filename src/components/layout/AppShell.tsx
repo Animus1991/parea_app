@@ -450,7 +450,8 @@ export function BottomNav() {
     <>
     <div
       ref={swipe.navRef}
-      className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-soft-up-lg z-bottomnav select-none [&_a]:[user-drag:none]", tok.bottomNav)}
+      data-bottom-swipe-origin=""
+      className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-soft-up-lg z-bottomnav touch-none select-none [&_a]:[user-drag:none]", tok.bottomNav)}
     >
       {([
         { to: "/", icon: Compass, labelGr: 'Ανακάλυψη', labelEn: 'Discover' },

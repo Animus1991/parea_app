@@ -51,10 +51,11 @@ export function MobileDock() {
       aria-label={t('Γρήγορη πρόσβαση', 'Quick access')}
       aria-hidden={waiting || undefined}
       inert={waiting || undefined}
+      data-bottom-swipe-origin=""
       className={cn(
         'transition-[opacity,transform] duration-200 motion-reduce:transition-none',
         waiting && 'opacity-0 translate-y-3 pointer-events-none',
-        'mobile-dock md:hidden fixed left-1/2 -translate-x-1/2 z-fab flex items-stretch rounded-full shadow-soft-lg border overflow-hidden bg-accent text-accent-fg border-accent-strong',
+        'mobile-dock md:hidden fixed left-1/2 -translate-x-1/2 z-fab flex items-stretch rounded-full shadow-soft-lg border overflow-hidden bg-accent text-accent-fg border-accent-strong touch-none',
         aboveEventBar
           ? 'bottom-[calc(var(--bottom-nav-total)+5.25rem+env(safe-area-inset-bottom,0px))]'
           : 'bottom-fab-zone',

@@ -10,8 +10,15 @@
 
 export const BOTTOM_SWIPE_QUICK_NAV_ENABLED = true;
 
+/** Mark the existing bottom chrome as the swipe-up start zone (no extra UI). */
+export const BOTTOM_SWIPE_ORIGIN_SELECTOR = '[data-bottom-swipe-origin]';
+
+export function isBottomSwipeOrigin(target: EventTarget | null): boolean {
+  return target instanceof Element && Boolean(target.closest(BOTTOM_SWIPE_ORIGIN_SELECTOR));
+}
+
 /** Upward movement (px) required before a gesture opens the sheet. */
-export const SWIPE_OPEN_PX = 56;
+export const SWIPE_OPEN_PX = 36;
 
 /** Downward movement (px) required before a gesture closes the sheet. */
 export const SWIPE_CLOSE_PX = 48;

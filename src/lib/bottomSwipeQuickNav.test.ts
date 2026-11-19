@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   BOTTOM_TAB_PATHS,
   QUICK_NAV_TILES,
+  isBottomSwipeOrigin,
   isDownwardCloseSwipe,
   isUpwardOpenSwipe,
   quickNavDestinations,
@@ -10,12 +11,12 @@ import {
 describe('bottom swipe gesture', () => {
   it('opens on a clear upward swipe from the tabs', () => {
     expect(isUpwardOpenSwipe({ dx: 0, dy: -80 })).toBe(true);
-    expect(isUpwardOpenSwipe({ dx: 12, dy: -64 })).toBe(true);
+    expect(isUpwardOpenSwipe({ dx: 12, dy: -40 })).toBe(true);
   });
 
   it('ignores taps and shallow flicks', () => {
     expect(isUpwardOpenSwipe({ dx: 0, dy: -8 })).toBe(false);
-    expect(isUpwardOpenSwipe({ dx: 0, dy: -40 })).toBe(false);
+    expect(isUpwardOpenSwipe({ dx: 0, dy: -24 })).toBe(false);
   });
 
   it('ignores a mostly horizontal slide across tabs', () => {
@@ -58,5 +59,19 @@ describe('quickNavDestinations', () => {
   it('defines every tile with a unique path', () => {
     const paths = QUICK_NAV_TILES.map((t) => t.path);
     expect(new Set(paths).size).toBe(paths.length);
+  });
+});
+
+describe('isBottomSwipeOrigin', () => {
+  it('accepts the existing bottom chrome and ignores the rest of the page', () => {
+    const nav = document.createElement('div');
+    nav.setAttribute('data-bottom-swipe-origin', '');
+    const icon = document.createElement('svg');
+    nav.appendChild(icon);
+    const elsewhere = document.createElement('main');
+    expect(isBottomSwipeOrigin(icon)).toBe(true);
+    expect(isBottomSwipeOrigin(nav)).toBe(true);
+    expect(isBottomSwipeOrigin(elsewhere)).toBe(false);
+    expect(isBottomSwipeOrigin(null)).toBe(false);
   });
 });
