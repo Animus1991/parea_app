@@ -252,7 +252,7 @@ export function PlansFormingCard({
         </div>
       )}
 
-      {!isSidebar && (
+      {!isSidebar && item.matchReason && (
         <p className="px-4 pb-3 card-copy leading-relaxed text-gray-400 dark:text-gray-500">
           {t(item.matchReason.el, item.matchReason.en)}
         </p>

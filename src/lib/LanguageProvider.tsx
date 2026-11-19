@@ -22,7 +22,6 @@ const translations: Record<string, Record<Language, string>> = {
   'home.hero.title1': { el: 'Βρείτε Nakamas για τις', en: 'Find Nakamas for the' },
   'home.hero.title2': { el: 'εμπειρίες', en: 'experiences' },
   'home.hero.title3': { el: 'που ήδη θέλετε να ζήσετε.', en: 'you already want to live.' },
-  'home.hero.subtitle': { el: 'Βρες μια βραδιά να μπεις. Τα Σχέδια είναι οι βραδιές που έχεις ήδη κλείσει.', en: 'Find a night to join. Plans are the nights you already booked.' },
   'home.hero.stat1': { el: 'Μικρές ομάδες', en: 'Small groups' },
   'home.hero.stat2': { el: 'Επαληθευμένη συμμετοχή', en: 'Verified attendance' },
   'home.hero.stat3': { el: 'Δημόσια σημεία', en: 'Public spots' },

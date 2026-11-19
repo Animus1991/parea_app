@@ -66,9 +66,6 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
       <header className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
         <div>
           <h2 className="text-sm md:text-base font-bold">{t('Nakamas Chat', 'Nakamas Chat')}</h2>
-          <p className="text-xs text-ink-muted">
-            {t('Μόνο μετά από αποδοχή αιτήματος ή ομάδας', 'Only after request or group acceptance')}
-          </p>
         </div>
         <button type="button" onClick={onClose} className="p-2 rounded-full hover:bg-ink/10" aria-label={t('Κλείσιμο', 'Close')}>
           <X className="w-5 h-5" />
@@ -138,9 +135,6 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
           );
         })}
       </div>
-      <footer className="px-4 py-2 border-t border-border text-xs text-ink-muted text-center shrink-0">
-        {t('Προσωρινά event chats · σχεδιασμένα με privacy controls', 'Temporary event chats · designed with privacy controls')}
-      </footer>
     </div>
   );
 }

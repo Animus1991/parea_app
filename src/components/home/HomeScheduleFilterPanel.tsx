@@ -56,12 +56,6 @@ export function HomeScheduleFilterPanel({
         <p className={cn('text-xs font-bold', h.labelMuted)}>
           {t('Πότε μπορώ να βγω', 'When I can go out')}
         </p>
-        <p className="mt-0.5 text-xs leading-relaxed text-ink-muted">
-          {t(
-            'Μόνο βραδιές που χωράνε στο πρόγραμμά σου — οι υπόλοιπες μένουν θόρυβος.',
-            'Only nights that fit your schedule — the rest is noise.',
-          )}
-        </p>
       </div>
 
       {coarse.weekdays.length > 0 && (
@@ -70,7 +64,7 @@ export function HomeScheduleFilterPanel({
           onClick={() => onChange(coarse)}
           className="text-xs font-bold text-accent min-h-8"
         >
-          {t('Χρήση της συνήθους διαθεσιμότητας', 'Use my usual hours')}
+          {t('Οι ώρες μου', 'My usual hours')}
         </button>
       )}
 

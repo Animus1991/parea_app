@@ -117,12 +117,6 @@ export function HomeLoggedInHeroContrast({
             </h1>
             <HomeWeatherBadge size="sm" />
           </div>
-          <p className={cn(h.heroSubtitle, 'hidden md:block text-sm font-medium max-w-md')}>
-            {t(
-              'Βρες μια βραδιά να μπεις. Τα Σχέδια είναι όσα έχεις ήδη κλείσει.',
-              'Find a night to join. Plans are the ones you already booked.',
-            )}
-          </p>
           {searchBlock}
         </div>
       )}

@@ -15,10 +15,7 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useWallStore } from '../../store/wallStore';
 import { notificationsForUser } from '../../lib/notificationsUtil';
-import {
-  digestItems,
-  type NotificationDigestWindow,
-} from '../../lib/notificationDigest';
+import { type NotificationDigestWindow } from '../../lib/notificationDigest';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
 
@@ -93,8 +90,6 @@ export default function NotificationsPageContent() {
   const unreadCount = notifications.filter((n) => !n.read).length;
   const todayNotifs = visibleNotifs.filter((n) => !n.read);
   const earlierNotifs = visibleNotifs.filter((n) => n.read);
-  const morningDigest = digestItems(todayNotifs, 'morning');
-  const afternoonDigest = digestItems(todayNotifs, 'afternoon');
 
   const setDigest = (next: NotificationDigestWindow) => {
     updateUserSettings({
@@ -385,32 +380,6 @@ export default function NotificationsPageContent() {
         />
       ) : (
         <div className="space-y-4">
-          {digest !== 'off' && (morningDigest.length > 0 || afternoonDigest.length > 0) && (
-            <div className="space-y-2">
-              {digest === 'morning' && morningDigest.length > 0 && (
-                <div className={cn('rounded-2xl border px-3 py-2.5', a.cardSurface, a.borderB)}>
-                  <p className={cn('text-xs font-bold', a.head)}>{t('Πρωινή σύνοψη', 'Morning digest')}</p>
-                  <p className={cn('mt-0.5 text-xs font-medium leading-snug', a.muted)}>
-                    {t(
-                      `${morningDigest.length} ειδοποιήσεις ταιριάσματος / υπενθύμισης — οι υπόλοιπες μένουν από κάτω.`,
-                      `${morningDigest.length} match / reminder items — the rest stay listed below.`,
-                    )}
-                  </p>
-                </div>
-              )}
-              {digest === 'afternoon' && afternoonDigest.length > 0 && (
-                <div className={cn('rounded-2xl border px-3 py-2.5', a.cardSurface, a.borderB)}>
-                  <p className={cn('text-xs font-bold', a.head)}>{t('Απογευματινή σύνοψη', 'Afternoon digest')}</p>
-                  <p className={cn('mt-0.5 text-xs font-medium leading-snug', a.muted)}>
-                    {t(
-                      `${afternoonDigest.length} μηνύματα και κοινωνικές ειδοποιήσεις — οι υπόλοιπες μένουν από κάτω.`,
-                      `${afternoonDigest.length} messages and social items — the rest stay listed below.`,
-                    )}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
           {todayNotifs.length > 0 && (
             <div className="space-y-2">
               <h3 className={cn('text-xs font-bold tracking-wider ', a.muted)}>

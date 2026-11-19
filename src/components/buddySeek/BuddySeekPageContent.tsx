@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Filter, Shield, Settings, Plus, X, Info } from 'lucide-react';
+import { Filter, Settings, Plus } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { usePlansFormingFeed } from '../../hooks/usePlansFormingFeed';
@@ -25,14 +25,11 @@ import { toast } from 'sonner';
 import type { Event } from '../../types';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
 import type { CompanyJoinRequestStatus, CompanyRequest } from '../../types/companyRequest';
-import { readStorage, writeStorage } from '../../lib/safeUrl';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { MiniOutingsSection } from '../outings/MiniOutingsSection';
 import { hasUsualHours, matchesUsualHours } from '../../lib/quietCatalog';
 
 type FilterKey = 'all' | 'open_spots' | 'verified' | 'small_groups' | 'flexible' | 'saved_events' | 'high_match';
-
-const EXPLAINER_KEY = 'parea-buddy-seek-explainer-dismissed';
 
 function joinStatusLabel(status: CompanyJoinRequestStatus, t: (el: string, en: string) => string) {
   switch (status) {
@@ -77,10 +74,6 @@ export default function BuddySeekPageContent() {
   const [previewJoinId, setPreviewJoinId] = useState<string | null>(null);
   const [eventPickerOpen, setEventPickerOpen] = useState(false);
   const [wizard, setWizard] = useState<RequestWizard | null>(null);
-  const [showExplainer, setShowExplainer] = useState(
-    () => !readStorage(EXPLAINER_KEY),
-  );
-
   useEffect(() => {
     const editId = searchParams.get('editRequest');
     if (!editId) return;
@@ -91,11 +84,6 @@ export default function BuddySeekPageContent() {
     next.delete('editRequest');
     setSearchParams(next, { replace: true });
   }, [searchParams, companyRequests, events, setSearchParams]);
-
-  const dismissExplainer = () => {
-    writeStorage(EXPLAINER_KEY, '1');
-    setShowExplainer(false);
-  };
 
   const upcomingEvents = useMemo(
     () =>
@@ -236,31 +224,6 @@ export default function BuddySeekPageContent() {
       {/* Φ27 — small outings without an event (coffee / walk / run) */}
       <MiniOutingsSection />
 
-      {showExplainer && (
-        <div className="rounded-2xl border border-border bg-surface-raised px-3.5 py-2.5 flex items-center gap-3">
-          <Info className="w-4 h-4 shrink-0 text-accent" aria-hidden />
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-ink">
-              {t('Τι είναι το Βρες Nakamas;', 'What is Find Nakamas?')}
-            </p>
-            <p className="text-xs font-medium mt-0.5 leading-snug text-ink-muted">
-              {t(
-                'Δηλώνεις ότι ψάχνεις παρέα για μια εκδήλωση — με πλήρη έλεγχο ορατότητας.',
-                'Signal you want company for an event — with full privacy controls.',
-              )}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={dismissExplainer}
-            className="p-1.5 min-h-8 min-w-8 flex items-center justify-center rounded-lg shrink-0 text-ink-muted hover:bg-surface hover:text-ink"
-            aria-label={t('Κλείσιμο', 'Dismiss')}
-          >
-            <X className="w-3.5 h-3.5" aria-hidden />
-          </button>
-        </div>
-      )}
-
       {feed.myActivePlan && (
         <PlansFormingYourPlanBanner
           plan={feed.myActivePlan}
@@ -388,14 +351,6 @@ export default function BuddySeekPageContent() {
                 title={t('Αιτήματα Nakamas', 'Nakama requests')}
                 subtitle={t(`${visibleSeeks.length} αποτελέσματα`, `${visibleSeeks.length} results`)}
               />
-              {splitByHours && (
-                <p className="text-xs font-medium leading-snug text-ink-muted">
-                  {t(
-                    'Πρώτα όσα χωράνε στις συνήθεις ώρες σου.',
-                    'Usual hours first.',
-                  )}
-                </p>
-              )}
               {visibleSeeks.map((item) => (
                 <PlansFormingCard
                   key={item.intent.id}
@@ -424,11 +379,8 @@ export default function BuddySeekPageContent() {
               )}
             >
               {showQueuedSeeks
-                ? t('Κρύψε εκτός ωρών', 'Hide outside hours')
-                : t(
-                    `Στην ουρά εκτός ωρών ${queuedItems.length}`,
-                    `Queued outside hours ${queuedItems.length}`,
-                  )}
+                ? t('Κρύψε άλλες ώρες', 'Hide other times')
+                : t(`Άλλες ώρες (${queuedItems.length})`, `Other times (${queuedItems.length})`)}
             </button>
           )}
 
@@ -443,14 +395,6 @@ export default function BuddySeekPageContent() {
         </>
       )}
       </ResourceStateGate>
-
-      <p className={cn('text-xs flex items-start gap-2', a.sub)}>
-        <Shield className="w-4 h-4 shrink-0" />
-        {t(
-          'Λεπτομερής ορατότητα · σχεδιασμένο με έλεγχο απορρήτου. Τα ενδιαφέροντα χρησιμοποιούνται για σχετικότητα, όχι για δημόσια έκθεση.',
-          'Granular visibility · designed with privacy controls. Interests are used for relevance, not public exposure.',
-        )}
-      </p>
 
       <Modal
         open={eventPickerOpen}

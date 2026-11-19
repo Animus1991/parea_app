@@ -47,11 +47,11 @@ export default function WalletPageContent() {
       <div>
         <h1 className={cn(WALLET_TYPO.pageTitle, a.head)}>{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
         <p className={cn(WALLET_TYPO.pageSub, 'mt-1', a.sub)}>{t('Διαχειριστείτε τα έσοδα και τις πληρωμές σας.', 'Manage your event revenue and payouts.')}</p>
-        <p className={cn(WALLET_TYPO.statusNote, 'mt-2', a.muted)}>
-          {stripeReady
-            ? t('Stripe ενεργό — οι αναλήψεις ανοίγουν Checkout.', 'Stripe enabled — withdrawals open Checkout.')
-            : t('Λειτουργία demo — ορίστε VITE_STRIPE_* για πραγματικές πληρωμές.', 'Demo mode — set VITE_STRIPE_* for real payments.')}
-        </p>
+        {stripeReady && (
+          <p className={cn(WALLET_TYPO.statusNote, 'mt-2', a.muted)}>
+            {t('Οι αναλήψεις γίνονται μέσω Stripe.', 'Withdrawals go through Stripe.')}
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

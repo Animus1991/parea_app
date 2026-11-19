@@ -48,11 +48,7 @@ export function VibeProfileCard({ className }: { className?: string }) {
             ) : null;
           })}
         </ul>
-      ) : (
-        <p className={cn('mt-1 text-ink-muted', PROFILE_TYPO.rowMeta)}>
-          {t('5 γρήγορες ερωτήσεις για να βλέπεις «γιατί ταιριάζετε» σε κάθε ομάδα.', '5 quick questions so you see “why you match” on every group.')}
-        </p>
-      )}
+      ) : null}
       <div className="mt-3 flex flex-wrap gap-2">
         <Button size="sm" variant={vibe ? 'outline' : 'primary'} onClick={() => setOpen(true)}>
           {vibe ? t('Αλλαγή απαντήσεων', 'Change answers') : t('Κάνε το κουίζ · 1 λεπτό', 'Take the quiz · 1 min')}

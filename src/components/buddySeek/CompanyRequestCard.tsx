@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Users, Shield, Flag, EyeOff, Bookmark } from 'lucide-react';
+import { Users, Flag, EyeOff, Bookmark } from 'lucide-react';
 import { toast } from 'sonner';
 import { plansFormingMatchReason } from '../../lib/plansFormingUtils';
 import { useLanguage } from '../../lib/i18n';
@@ -153,10 +153,6 @@ export function CompanyRequestCard({
       </div>
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
-        <p className={cn('card-meta flex items-center gap-1', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
-          <Shield className="w-3 h-3 shrink-0" aria-hidden />
-          {t('Όχι διαφήμιση · privacy-first', 'Not an ad · privacy-first')}
-        </p>
         {onHide && (
           <button type="button" onClick={onHide} className={cn('card-meta flex items-center gap-0.5', darkSurface ? 'text-gray-500' : 'text-gray-400')}>
             <EyeOff className="w-3 h-3" aria-hidden /> {t('Απόκρυψη', 'Hide')}

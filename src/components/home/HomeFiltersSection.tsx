@@ -4,7 +4,6 @@ import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { HOME_CATEGORIES, HOME_POPULAR_TAGS } from '../../lib/homeFeedConstants';
 import { getHomeCategoryTranslations, getHomeTagTranslations } from '../../lib/homeCategoryLabels';
-import { HomePersonalizationHint } from './HomePersonalizationHint';
 import { HomeDiscoveryPrefsChips } from './HomeDiscoveryPrefsChips';
 import { HomeFilterSelect } from './HomeFilterSelect';
 import { MoodSelector } from './MoodSelector';
@@ -127,7 +126,6 @@ export function HomeFiltersSection({
           {t('home.explore_categories', 'Explore Categories')}
         </h2>
 
-        <HomePersonalizationHint useClassicTokens />
         <HomeDiscoveryPrefsChips useClassicTokens />
 
         {onSelectMood && (

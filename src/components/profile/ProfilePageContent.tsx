@@ -194,9 +194,6 @@ export default function ProfilePageContent() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
           <h1 className={cn(PROFILE_TYPO.pageTitle, heading)}>{t("Προφίλ", "Profile")}</h1>
-          <p className={cn(PROFILE_TYPO.pageSub, 'mt-1 leading-snug', sub)}>
-            {t("Η εικόνα σου προς τους Nakamas — ενδιαφέροντα, τοίχος και προτιμήσεις.", "How you appear to Nakamas — interests, wall and preferences.")}
-          </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="flex items-center gap-1.5">
@@ -464,10 +461,7 @@ export default function ProfilePageContent() {
         )}
         {activeTab === "wall" && (
           <div className="space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border bg-surface-raised px-4 py-3">
-              <p className={cn(PROFILE_TYPO.rowMeta, "text-ink-muted")}>
-                {t("Κάθε δημοσίευση έχει το δικό της κοινό. Δες πώς φαίνεται ο τοίχος σου στους άλλους.", "Every post has its own audience. See how your wall looks to others.")}
-              </p>
+            <div className="flex flex-wrap items-center justify-end gap-2 rounded-2xl border border-border bg-surface-raised px-4 py-3">
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="outline" onClick={() => navigate(`/u/${currentUser.id}?viewAs=public`)} className="gap-1.5">
                   <Eye className="w-3.5 h-3.5" aria-hidden /> {t("Δες ως…", "View as…")}
@@ -484,9 +478,6 @@ export default function ProfilePageContent() {
                     ? t("1 ετικέτα περιμένει την έγκρισή σου", "1 tag is waiting for your approval")
                     : t(`${myPendingTags.length} ετικέτες περιμένουν την έγκρισή σου`, `${myPendingTags.length} tags are waiting for your approval`)}
                 </h3>
-                <p className={cn(PROFILE_TYPO.rowMeta, "text-ink")}>
-                  {t("Εμφανίζονται στο προφίλ σου μόνο αφού τις εγκρίνεις (Έλεγχος ετικετών).", "They show on your profile only after you approve them (Tag review).")}
-                </p>
                 <WallPostList posts={myPendingTags} />
               </section>
             )}
@@ -575,7 +566,6 @@ export default function ProfilePageContent() {
               <input type="radio" name="groupsize" defaultChecked className={`mt-0.5 h-4 w-4 rounded-full ${a.checkbox}`} />
               <div>
                 <span className={cn(PROFILE_TYPO.rowTitle, 'block', a.radioText)}>{t("Προεπιλογή: Ομάδες (3-5 άτομα)", "Default: Groups (3-5 people)")}</span>
-                <span className={cn(PROFILE_TYPO.rowMeta, 'leading-relaxed block mt-1', a.radioSub)}>{t("Συνιστάται. Το Nakamas λειτουργεί καλύτερα σε μικρές ομάδες για ασφάλεια.", "Recommended. Nakamas works best in small groups for safety.")}</span>
               </div>
             </label>
             <label className={`flex items-start gap-3 p-4 border rounded-2xl cursor-pointer transition-colors opacity-60 ${a.isDark ? "border-gray-700/40" : "border-gray-200"}`}>
@@ -655,7 +645,6 @@ export default function ProfilePageContent() {
               <div className={`p-2 rounded-lg shrink-0 ${a.isDark ? "bg-gray-700/30" : "bg-gray-100"}`}><MapPin className={`w-4 h-4 ${sub}`} /></div>
               <div className="flex-1">
                 <span className={cn(PROFILE_TYPO.rowTitle, 'block', heading)}>{t("Κοινοποίηση Τοποθεσίας", "Share Location")}</span>
-                <span className={cn(PROFILE_TYPO.rowMeta, 'leading-relaxed block mt-0.5', sub)}>{t("Για καλύτερες προτάσεις εκδηλώσεων κοντά σου.", "For better nearby event suggestions.")}</span>
               </div>
               <input
                 type="checkbox"
@@ -695,12 +684,6 @@ export default function ProfilePageContent() {
 
         {/* ─── Wall, sections & audience lists (Φ26) ─── */}
         <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
-          <p className={cn(PROFILE_TYPO.rowMeta, 'mb-3 leading-relaxed', sub)}>
-            {t(
-              'Παρακάτω ρυθμίζεις ενότητες και τοίχο — ισχύουν μόνο για όσους ήδη βλέπουν το προφίλ σου.',
-              'Below you set sections and wall — they only apply to people who can already see your profile.',
-            )}
-          </p>
           <WallPrivacyPanel showProfileRow={false} />
         </div>
 
@@ -715,7 +698,6 @@ export default function ProfilePageContent() {
           </div>
           <div className="flex-1 min-w-0">
             <p className={cn(PROFILE_TYPO.bannerTitle, heading)}>{t("Φέρε τους δικούς σου Nakamas", "Bring your own Nakamas")}</p>
-            <p className={cn(PROFILE_TYPO.bannerBody, 'mt-0.5', sub)}>{t("Οι φίλοι που προσκαλείς μπαίνουν κατευθείαν στο δίκτυό σου — πιο εύκολα σχηματίζονται ομάδες.", "Friends you invite join your network directly — groups form faster.")}</p>
           </div>
           <Button size="sm" onClick={() => void handleInvite()} className="flex items-center gap-1.5 shrink-0 max-sm:w-full">
             <Share2 className="w-3.5 h-3.5" aria-hidden /> {t("Πρόσκληση φίλων", "Invite friends")}

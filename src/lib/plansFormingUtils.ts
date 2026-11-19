@@ -17,7 +17,7 @@ export interface PlansFormingEnrichedItem extends BuddySeekDiscoveryItem {
   location: string;
   groupSizeLabel: { el: string; en: string };
   meetingLabel: { el: string; en: string };
-  matchReason: { el: string; en: string };
+  matchReason: { el: string; en: string } | null;
   intentLabel: { el: string; en: string };
   roleLabel: { el: string; en: string; kind: PlanRoleKind };
   isSavedEvent: boolean;
@@ -52,9 +52,9 @@ export function plansFormingMatchReason(
   viewer: User,
   seeker: User,
   event: Event,
-  request: CompanyRequest,
+  _request: CompanyRequest,
   savedEventIds: string[],
-): { el: string; en: string } {
+): { el: string; en: string } | null {
   const shared = sharedInterestCount(viewer, seeker, event);
   if (savedEventIds.includes(event.id) && shared > 0) {
     return {
@@ -64,8 +64,8 @@ export function plansFormingMatchReason(
   }
   if (savedEventIds.includes(event.id)) {
     return {
-      el: 'Αποθηκευμένη εκδήλωση — ίδιο σχέδιο',
-      en: 'Saved event — same plan context',
+      el: 'Αποθηκευμένη εκδήλωση',
+      en: 'Saved event',
     };
   }
   if (shared > 0) {
@@ -74,19 +74,7 @@ export function plansFormingMatchReason(
       en: `${shared} shared interests · ${event.category}`,
     };
   }
-  if (request.visibilityMode === 'public_event_page') {
-    return { el: 'Δημόσιο στο πλαίσιο της εκδήλωσης', en: 'Public on event page' };
-  }
-  if (request.visibilityMode === 'same_event_viewers') {
-    return {
-      el: 'Βλέπετε την ίδια εκδήλωση',
-      en: 'You are viewing the same event',
-    };
-  }
-  return {
-    el: 'Συμβατό με τις ρυθμίσεις ορατότητάς σας',
-    en: 'Matches your visibility preferences',
-  };
+  return null;
 }
 
 export function lookingForTypeLabel(

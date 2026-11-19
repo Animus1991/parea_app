@@ -4,7 +4,6 @@ import { cn } from '../../lib/utils';
 import { HomeQuickActions } from './HomeQuickActions';
 import { ActiveBuddiesRail } from './ActiveBuddiesRail';
 import { HomeQuickStatsBar } from './HomeQuickStatsBar';
-import { HomeDailyTip } from './HomeDailyTip';
 import { HomeSeekingHostSection } from './HomeSeekingHostSection';
 import type { Event } from '../../types';
 
@@ -19,7 +18,6 @@ interface HomeBelowFoldProps {
   stepCardClass?: string;
   stepCircleClass?: string;
   stepTitleClass?: string;
-  stepBodyClass?: string;
 }
 
 /**
@@ -35,7 +33,6 @@ export function HomeBelowFold({
   stepCardClass,
   stepCircleClass,
   stepTitleClass,
-  stepBodyClass,
 }: HomeBelowFoldProps) {
   const { t } = useLanguage();
 
@@ -51,7 +48,6 @@ export function HomeBelowFold({
       />
       <ActiveBuddiesRail useClassicTokens={useClassicTokens} />
       <HomeQuickStatsBar />
-      <HomeDailyTip />
       <HomeSeekingHostSection
         events={seekingHostEvents}
         seekingHostOnly={seekingHostOnly}
@@ -63,28 +59,16 @@ export function HomeBelowFold({
           {
             step: '1',
             title: t('home.how.step1.title', 'Διαλέξτε μια εμπειρία'),
-            body: t(
-              'home.how.step1.body',
-              'Επιλέξτε μια εκδήλωση, πεζοπορία ή δραστηριότητα που θέλετε να παρακολουθήσετε.',
-            ),
           },
           {
             step: '2',
             title: t('home.how.step2.title', 'Μπες σε μια μικρή παρέα'),
-            body: t(
-              'home.how.step2.body',
-              'Συνδεθείτε με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.',
-            ),
           },
           {
             step: '3',
             title: t('home.how.step3.title', 'Επιβεβαιώστε & συναντηθείτε'),
-            body: t(
-              'home.how.step3.body',
-              'Ξεκλειδώστε το group chat, ορίστε σημείο συνάντησης και απολαύστε την εμπειρία.',
-            ),
           },
-        ].map(({ step, title, body }) => (
+        ].map(({ step, title }) => (
           <div
             key={step}
             className={cn(
@@ -100,8 +84,7 @@ export function HomeBelowFold({
             >
               {step}
             </div>
-            <h3 className={cn(HOME_TYPO.stepTitle, 'mb-1 text-ink', stepTitleClass)}>{title}</h3>
-            <p className={cn(HOME_TYPO.stepBody, 'text-ink-muted', stepBodyClass)}>{body}</p>
+            <h3 className={cn(HOME_TYPO.stepTitle, 'text-ink', stepTitleClass)}>{title}</h3>
           </div>
         ))}
       </section>

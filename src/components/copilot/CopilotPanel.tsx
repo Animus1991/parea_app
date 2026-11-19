@@ -28,15 +28,11 @@ function EngineBadge() {
     };
   }, [setEngine]);
   const cloud = engine === 'gemini';
-  const label = cloud ? t('Gemini · cloud', 'Gemini · cloud') : t('Τοπικός βοηθός', 'On-device');
-  const hint = cloud
-    ? t('Απαντά το Gemini μέσω ασφαλούς διακομιστή. Το κλειδί δεν εκτίθεται στον browser.', 'Answers come from Gemini via a secure server; the key never reaches the browser.')
-    : t('Λειτουργεί χωρίς σύνδεση και χωρίς κλειδί API. Καταλαβαίνει ελληνικά και αγγλικά.', 'Works offline without an API key. Understands Greek and English.');
+  const label = cloud ? t('Gemini', 'Gemini') : t('Τοπικός βοηθός', 'On-device');
   return (
-    <span title={hint} className="inline-flex items-center gap-1 rounded-full bg-surface px-2 py-0.5 text-2xs font-semibold text-ink-muted">
+    <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2 py-0.5 text-2xs font-semibold text-ink-muted">
       {cloud ? <Cloud className="h-3 w-3" aria-hidden /> : <Cpu className="h-3 w-3" aria-hidden />}
       {engine ? label : '…'}
-      <span className="sr-only">{hint}</span>
     </span>
   );
 }
@@ -136,12 +132,6 @@ function CopilotConversation({ onClose, onNavigate, headingId }: { onClose: () =
               <p className="text-sm md:text-base font-bold text-ink">
                 {userName ? t(`Γεια σου, ${userName}!`, `Hi ${userName}!`) : t('Γεια σου!', 'Hi there!')}
               </p>
-              <p className="mt-1 text-sm leading-relaxed text-ink-muted">
-                {t(
-                  'Πρώτα το κενό σου — μέρα ή ώρα. Μετά βρίσκω εκδηλώσεις, οργανώνω το πρόγραμμα και μιλάω στην ομάδα σου.',
-                  'Start with your gap — a day or hour. Then I find events, organise the schedule and message your group.',
-                )}
-              </p>
             </div>
             <ul className="grid gap-2" aria-label={t('Προτάσεις', 'Suggestions')}>
               {suggestions.map((s) => (
@@ -157,12 +147,6 @@ function CopilotConversation({ onClose, onNavigate, headingId }: { onClose: () =
                 </li>
               ))}
             </ul>
-            <p className="text-xs leading-relaxed text-ink-muted">
-              {t(
-                'Ενέργειες που στέλνουν, δημοσιεύουν ή αλλάζουν το απόρρητο ζητούν πάντα επιβεβαίωση. Κάθε αλλαγή αναιρείται με ένα κλικ.',
-                'Anything that sends, publishes or changes privacy always asks first. Every change can be undone in one click.',
-              )}
-            </p>
           </div>
         ) : (
           messages.map((m) => <CopilotMessageItem key={m.id} message={m} onNavigate={onNavigate} />)
@@ -234,9 +218,6 @@ function CopilotConversation({ onClose, onNavigate, headingId }: { onClose: () =
             <ArrowUp className="h-4 w-4" />
           </button>
         </form>
-        <p className="mt-1.5 hidden px-1 text-2xs text-ink-muted md:block">
-          {t('Enter για αποστολή · Shift+Enter για νέα γραμμή · Ctrl/⌘ J άνοιγμα/κλείσιμο', 'Enter to send · Shift+Enter for a new line · Ctrl/⌘ J to toggle')}
-        </p>
       </div>
     </div>
   );

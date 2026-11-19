@@ -242,12 +242,6 @@ export default function CreateEventFlowPageContent() {
         <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
           {editEvent ? t("Επεξεργασία Εμπειρίας", "Edit Experience") : t("Δημιουργία Εμπειρίας", "Create Experience")}
         </h1>
-        <p className={cn(APP_TYPO.pageSub, "mt-1", p.muted)}>
-          {t(
-            "Σχεδιάστε την τέλεια συνάντησή σας.",
-            "Design your perfect real-world gathering.",
-          )}
-        </p>
 
         <div className="flex items-center gap-2 mt-4">
           {Array.from({ length: totalSteps }).map((_, i) => (

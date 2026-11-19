@@ -6,7 +6,6 @@ import {
   ChevronRight,
   Plus,
   MapPin,
-  Shield,
   CircleDot,
 } from 'lucide-react';
 import { useLanguage } from '../../../lib/i18n';
@@ -253,10 +252,6 @@ export function PlansFormingEmptyState({
           {t('Δημιουργία αιτήματος', 'Create a request')}
         </button>
       </div>
-      <p className={cn(PLANS_FORMING_TYPO.statChip, 'flex items-center justify-center gap-1', isDark ? 'text-gray-600' : 'text-gray-400')}>
-        <Shield className="w-3 h-3" />
-        {t('Privacy-first · όχι dating feed', 'Privacy-first · not a dating feed')}
-      </p>
     </div>
   );
 }
@@ -266,20 +261,12 @@ export function PlansFormingValueHero({ isDark, insights }: { isDark?: boolean; 
   const headline =
     insights.compatiblePlans > 0
       ? t(
-          `${insights.compatiblePlans} συμβατά σχέδια τώρα`,
-          `${insights.compatiblePlans} compatible plans right now`,
+          `${insights.compatiblePlans} σχέδια τώρα`,
+          `${insights.compatiblePlans} plans right now`,
         )
-      : t('Βρείτε Nakamas για εκδήλωση', 'Find Nakamas for events');
+      : t('Βρες Nakamas για εκδήλωση', 'Find Nakamas for an event');
 
   return (
-    <div className="space-y-1">
-      <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'leading-snug', isDark ? 'text-white' : 'text-gray-900')}>{headline}</p>
-      <p className={cn(PLANS_FORMING_TYPO.body, 'leading-relaxed', isDark ? 'text-gray-400' : 'text-gray-600')}>
-        {t(
-          'Άτομα & ομάδες για την ίδια εκδήλωση.',
-          'People & groups for the same event.',
-        )}
-      </p>
-    </div>
+    <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'leading-snug', isDark ? 'text-white' : 'text-gray-900')}>{headline}</p>
   );
 }

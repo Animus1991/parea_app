@@ -319,7 +319,6 @@ export default function ConnectionsPageContent() {
   };
 
   // ─── Render ──────────────────────────────────────────────
-  const subColor = a.sub;
   const inputClasses = a.isDark
     ? `bg-gray-800 border-gray-700 text-white placeholder-gray-400 ${a.ring}`
     : `bg-white border-gray-200 text-gray-900 placeholder-gray-400 ${a.ring}`;
@@ -330,7 +329,6 @@ export default function ConnectionsPageContent() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
-          <p className={cn(APP_TYPO.pageSub, 'mt-1', subColor)}>{t('Άτομα με τα οποία συνδεθήκατε μέσα από εκδηλώσεις.', 'People you\'ve connected with through events.')}</p>
         </div>
         <Button variant="primary" size="sm" className="flex items-center gap-2" onClick={() => navigate('/buddy-seek')}>
           <Users className="w-4 h-4" /> {t('Βρες Nakamas', 'Find Nakamas')}
