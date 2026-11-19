@@ -448,7 +448,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
           )}
         </div>
 
-        <div className="flex w-full items-start justify-between gap-2">
+        <div className="flex w-full items-start justify-between gap-2 px-[2%]">
           <CardFact
             icon={Clock}
             label={whenDay}
