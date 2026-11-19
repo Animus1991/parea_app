@@ -41,7 +41,7 @@ export function HomeFeedToolbar({
             onClick={() => setFeedType('Discover')}
             className={tabClassName(feedType === 'Discover')}
           >
-            {t('home.feed.discover', 'Ανακάλυψε')}
+            {t('home.feed.discover', 'Όλες')}
           </button>
         </div>
         {!isLoading && resultCount > 0 && (

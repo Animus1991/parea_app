@@ -10,7 +10,6 @@ import { useThemeStyles } from "../hooks/useThemeStyles";
 import { HomeLoggedInHero } from "../components/home/HomeLoggedInHero";
 import { HomePendingFeedbackBanner } from "../components/home/HomePendingFeedbackBanner";
 import { HomeVerifyBanner } from "../components/home/HomeVerifyBanner";
-import { HomeBelowFold } from "../components/home/HomeBelowFold";
 import { getTimeGreeting, getMotivation } from "../lib/homeGreeting";
 import { HomeSearchDropdown } from "../components/home/HomeSearchDropdown";
 import { useOnboardingWelcome } from "../hooks/useOnboardingWelcome";
@@ -44,7 +43,6 @@ export default function HomeClassic() {
     loadMoreEvents,
     searchRef,
     loadMoreRef,
-    scrollToFilters,
     storyEvents,
     seekingHostEvents,
     feed,
@@ -85,8 +83,6 @@ export default function HomeClassic() {
     if (showWelcome) setFeedType("Discover");
   }, [showWelcome, setFeedType]);
 
-  const enrichment = <HomeDiscoverEnrichment storyEvents={storyEvents} />;
-
   return (
     <div className="space-y-4 md:space-y-5 pb-5 md:pb-0">
       <HomeLoggedInHero
@@ -117,6 +113,7 @@ export default function HomeClassic() {
       )}
       <HomeVerifyBanner />
       <HomePendingFeedbackBanner />
+      <HomeDiscoverEnrichment storyEvents={storyEvents} />
 
       <HomeFiltersSection
         activeCategory={activeCategory}
@@ -175,7 +172,7 @@ export default function HomeClassic() {
               />
             </div>
           ) : sortedEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 space-y-4">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3">
               <EmptyState
                 icon={CalendarX}
                 title={t("home.feed.no_events", "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.")}
@@ -204,34 +201,20 @@ export default function HomeClassic() {
                     : () => navigate('/categories')
                 }
               />
-              {enrichment}
             </div>
           ) : (
-            visibleEvents.flatMap((event, index) => {
-              const card = (
-                <motion.div
-                  key={event.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <EventCard event={event} />
-                </motion.div>
-              );
-              if (index !== 2) return [card];
-              return [
-                <div key="discover-enrichment" className="col-span-1 sm:col-span-2 lg:col-span-3">
-                  {enrichment}
-                </div>,
-                card,
-              ];
-            })
+            visibleEvents.map((event, index) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+              >
+                <EventCard event={event} />
+              </motion.div>
+            ))
           )}
         </div>
-
-        {!isLoading && visibleEvents.length > 0 && visibleEvents.length < 3 && (
-          <div className="mt-4">{enrichment}</div>
-        )}
 
         {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
@@ -248,18 +231,6 @@ export default function HomeClassic() {
           </div>
         )}
       </section>
-
-      <HomeBelowFold
-        useClassicTokens
-        onScrollToCategories={scrollToFilters}
-        seekingHostEvents={seekingHostEvents}
-        seekingHostOnly={seekingHostOnly}
-        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
-        stepCardClass={h.card}
-        stepCircleClass={h.stepBadge}
-        stepTitleClass={h.stepTitle}
-        stepBodyClass={h.stepBody}
-      />
 
       <HomeMobileFilterSheet
         open={filterSheetOpen}

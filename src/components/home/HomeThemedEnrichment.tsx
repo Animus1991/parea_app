@@ -10,8 +10,8 @@ export interface HomeThemedEnrichmentProps {
 }
 
 /**
- * Above-fold enrichment only (P4): welcome + verify nudge + pending feedback.
- * Stats / tip / seeking-host moved to HomeBelowFold.
+ * Above-fold gates only: welcome + verify nudge + pending feedback.
+ * Catalog stories live in HomeDiscoverEnrichment, under the hero.
  */
 export function HomeThemedEnrichment({ onPreferDiscoverFeed }: HomeThemedEnrichmentProps) {
   const { showWelcome, dismissWelcome } = useOnboardingWelcome();

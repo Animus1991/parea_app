@@ -5,7 +5,6 @@ import { EventCardSkeleton } from '../common/Skeleton';
 import { EmptyState } from '../common/EmptyState';
 import { CalendarX } from 'lucide-react';
 import { HomeThemedEnrichment } from './HomeThemedEnrichment';
-import { HomeBelowFold } from './HomeBelowFold';
 import { HomeContinueStrip } from './HomeContinueStrip';
 import { HomeThemedHeroSwitch } from './HomeThemedHeroSwitch';
 import { HomeRichHero } from './HomeRichHero';
@@ -42,7 +41,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     loadMoreEvents,
     searchRef,
     loadMoreRef,
-    scrollToFilters,
     storyEvents,
     seekingHostEvents,
     feed,
@@ -81,8 +79,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
   const firstName = currentUser?.name?.split(' ')[0] || t('φίλε', 'there');
   const greeting = getTimeGreeting(firstName, t);
   const motivation = getMotivation(t);
-  const enrichment = <HomeDiscoverEnrichment storyEvents={storyEvents} />;
-
   return (
     <div className="space-y-4 md:space-y-5 pb-5 md:pb-0">
       <HomeThemedHeroSwitch
@@ -118,6 +114,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
       <HomeContinueStrip />
 
       <HomeThemedEnrichment onPreferDiscoverFeed={() => setFeedType('Discover')} />
+      <HomeDiscoverEnrichment storyEvents={storyEvents} />
 
       <HomeFiltersSection
         activeCategory={activeCategory}
@@ -179,7 +176,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
               />
             </div>
           ) : sortedEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 space-y-4">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3">
               <EmptyState
                 icon={CalendarX}
                 title={t(
@@ -211,34 +208,20 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
                     : () => navigate('/categories')
                 }
               />
-              {enrichment}
             </div>
           ) : (
-            visibleEvents.flatMap((event, index) => {
-              const card = (
-                <motion.div
-                  key={event.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <EventCard event={event} />
-                </motion.div>
-              );
-              if (index !== 2) return [card];
-              return [
-                <div key="discover-enrichment" className="col-span-1 sm:col-span-2 lg:col-span-3">
-                  {enrichment}
-                </div>,
-                card,
-              ];
-            })
+            visibleEvents.map((event, index) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+              >
+                <EventCard event={event} />
+              </motion.div>
+            ))
           )}
         </div>
-
-        {!isLoading && visibleEvents.length > 0 && visibleEvents.length < 3 && (
-          <div className="mt-4">{enrichment}</div>
-        )}
 
         {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
@@ -255,17 +238,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           </div>
         )}
       </section>
-
-      <HomeBelowFold
-        onScrollToCategories={scrollToFilters}
-        seekingHostEvents={seekingHostEvents}
-        seekingHostOnly={seekingHostOnly}
-        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
-        stepCardClass={tok.stepCard}
-        stepCircleClass={tok.stepCircle}
-        stepTitleClass={tok.stepTitle}
-        stepBodyClass={tok.stepBody}
-      />
 
       <HomeMobileFilterSheet
         open={filterSheetOpen}

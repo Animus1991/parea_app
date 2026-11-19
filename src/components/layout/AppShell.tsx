@@ -34,6 +34,7 @@ const CopilotPanel = lazy(() =>
 );
 import { DESKTOP_DOCK_QUERY, useMediaQuery } from '../../hooks/useMediaQuery';
 import { useWallUnreadCount } from '../../hooks/useWallUnreadCount';
+import { useLiveCatalogDates } from '../../hooks/useLiveCatalogDates';
 
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
@@ -495,6 +496,7 @@ export function BottomNav() {
 // AppShell
 // ─────────────────────────────────────────────
 export function AppShell({ children }: { children: ReactNode }) {
+  useLiveCatalogDates();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
   const theme = useStore((s) => s.theme);

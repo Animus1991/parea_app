@@ -6,7 +6,8 @@ import type { User } from "../types";
 import { mockEvents } from "../data/mockEvents";
 import { mockGroups } from "../data/mockGroups";
 import { mockCalendarPlanEvents, mockCalendarPlanGroups } from "../data/mockCalendarPlan";
-import { withLiveSeedSchedule } from "../lib/demoCatalogDates";
+import { coerceAuthoredSeasonToLive } from "../lib/demoCatalogDates";
+import { withFreshCatalogDates } from "../lib/catalogAuthoredSchedule";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
 import { fetchTicketmasterEvents, isTicketmasterConfigured } from "../services/eventApi";
@@ -353,7 +354,9 @@ export const DEMO_RESET_EVENT = 'nakamas:demo-reset';
 
 /** Φ27 — mock events + Nakamas Nights / small outings, and their groups and people. */
 function seedEvents(): Event[] {
-  return [...mockEvents, ...mockCalendarPlanEvents, ...mockOutingEvents];
+  return coerceAuthoredSeasonToLive(
+    withFreshCatalogDates([...mockEvents, ...mockCalendarPlanEvents, ...mockOutingEvents]),
+  );
 }
 function seedGroups(): typeof mockGroups {
   return withOutingPatches([...mockGroups, ...mockCalendarPlanGroups, ...mockOutingGroups]);
@@ -2224,6 +2227,8 @@ export const useStore = create<AppState>()(
 }),
     {
       name: 'nakamas-store-v1',
+      version: 3,
+      migrate: (persisted) => persisted as never,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         savedEvents: state.savedEvents,
@@ -2298,9 +2303,8 @@ export const useStore = create<AppState>()(
           return [...fromSeeds, ...extras];
         };
 
-        const events = withLiveSeedSchedule(
-          current.events,
-          mergeById(current.events, p.events),
+        const events = coerceAuthoredSeasonToLive(
+          withFreshCatalogDates(mergeById(current.events, p.events)),
         );
         const groups = mergeById(current.groups, p.groups);
         // isAdmin comes only from the trusted seeds, never from persisted

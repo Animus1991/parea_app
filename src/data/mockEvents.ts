@@ -1,7 +1,7 @@
 import { Event } from '../types';
 import { applyLiveCatalogDates } from '../lib/demoCatalogDates';
 
-const authoredEvents: Event[] = [
+export const authoredEvents: Event[] = [
   {
     id: 'e1',
     title: 'Release Athens 2026: Massive Attack',

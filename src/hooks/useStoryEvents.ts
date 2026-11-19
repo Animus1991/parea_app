@@ -3,6 +3,7 @@ import { useStore } from '../store';
 import type { Event } from '../types';
 import { isEventSeekingHost, sortEventsForStories } from '../lib/storyEventOrdering';
 import { isEventPast } from '../lib/eventDisplay';
+import { coerceAuthoredSeasonToLive } from '../lib/demoCatalogDates';
 
 /**
  * Shared story-rail data for all Home theme variants (Classic, Vibrant, Neon, Bento, …).
@@ -17,14 +18,16 @@ export function useStoryEvents() {
     [groups],
   );
 
+  const liveEvents = useMemo(() => coerceAuthoredSeasonToLive(events), [events]);
+
   const seekingHostEvents = useMemo(
-    () => events.filter((e) => isSeekingHost(e) && !isEventPast(e)),
-    [events, isSeekingHost],
+    () => liveEvents.filter((e) => isSeekingHost(e) && !isEventPast(e)),
+    [liveEvents, isSeekingHost],
   );
 
   const storyEvents = useMemo(
-    () => sortEventsForStories(events.filter((e) => !isEventPast(e)), groups),
-    [events, groups],
+    () => sortEventsForStories(liveEvents.filter((e) => !isEventPast(e)), groups),
+    [liveEvents, groups],
   );
 
   return { storyEvents, seekingHostEvents, isSeekingHost };
