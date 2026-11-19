@@ -127,6 +127,7 @@ function CardFact({
   wellClass,
   labelClass,
   detailClass,
+  align = 'start',
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
@@ -134,11 +135,17 @@ function CardFact({
   wellClass: string;
   labelClass: string;
   detailClass: string;
+  align?: 'start' | 'center' | 'end';
 }) {
   const spoken = detail ? `${label}, ${detail}` : label;
   return (
     <div
-      className="flex min-w-0 items-center gap-2.5 text-left @[20rem]:flex-col @[20rem]:items-center @[20rem]:gap-1.5 @[20rem]:text-center"
+      className={cn(
+        'flex min-w-0 max-w-[38%] flex-col gap-1',
+        align === 'start' && 'items-start text-left',
+        align === 'center' && 'items-center text-center',
+        align === 'end' && 'items-end text-right',
+      )}
       title={spoken}
     >
       <span className={wellClass} aria-hidden>
@@ -307,10 +314,6 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
     "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
     isDark ? "bg-white/[0.06] text-gray-400" : "bg-gray-50 text-gray-500",
   );
-  const socialWell = cn(
-    "rounded-xl px-3 py-2.5",
-    isDark ? "bg-white/[0.04]" : "bg-gray-50/90",
-  );
 
   return (
     <Card
@@ -409,8 +412,8 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
 
       {/* Content — spaced blocks, aligned icon wells, no middot soup */}
       <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className={cn(EVENT_CARD_TYPO.title, "min-h-11 min-w-0 flex-1 pr-1 transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-brand'))}>
+        <div className="flex items-center justify-between gap-3">
+          <h3 className={cn(EVENT_CARD_TYPO.title, "min-w-0 flex-1 pr-1 transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-brand'))}>
             <Link
               to={`/events/${event.id}`}
               onClick={(e) => e.stopPropagation()}
@@ -423,7 +426,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
             <button
               type="button"
               className={cn(
-                "flex min-h-11 shrink-0 flex-col items-center justify-center rounded-xl border px-3 py-1",
+                "flex min-h-11 shrink-0 flex-col items-center justify-center self-center rounded-xl border px-3 py-1",
                 isDark ? "border-white/10 bg-white/[0.04]" : "border-gray-100 bg-gray-50",
               )}
               title={t("Γιατί αυτό το ταίριασμα", "Why this match")}
@@ -445,11 +448,12 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
           )}
         </div>
 
-        <div className="grid grid-cols-1 gap-2.5 @[20rem]:grid-cols-3 @[20rem]:gap-2">
+        <div className="flex w-full items-start justify-between gap-2 px-[1%]">
           <CardFact
             icon={Clock}
             label={whenDay}
             detail={event.time}
+            align="start"
             wellClass={factWell}
             labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold capitalize", headColor)}
             detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
@@ -458,6 +462,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
             icon={MapPin}
             label={locationPrimary}
             detail={locationDetail}
+            align="center"
             wellClass={factWell}
             labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold", headColor)}
             detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
@@ -465,6 +470,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
           <CardFact
             icon={Users}
             label={`${groupProgress.spotsLeft} ${t("θέσεις", "spots")}`}
+            align="end"
             wellClass={factWell}
             labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold tabular-nums", headColor)}
             detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
@@ -472,17 +478,17 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
         </div>
 
         {showMatchWhy && matchExplanation && (matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]) && (
-          <p className={cn(EVENT_CARD_TYPO.hint, socialWell, "font-medium", accentText)}>
+          <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium", accentText)}>
             {matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]}
           </p>
         )}
         {!showMatchWhy && matchingPreview ? (
-          <p className={cn(EVENT_CARD_TYPO.hint, socialWell, "font-medium", accentText, "opacity-90")}>
+          <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium", accentText, "opacity-90")}>
             {t(matchingPreview.labelEl, matchingPreview.labelEn)}
           </p>
         ) : (
           !showMatchWhy && currentUser && (
-            <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className={socialWell} />
+            <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className="text-left" />
           )
         )}
 
