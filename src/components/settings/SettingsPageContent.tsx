@@ -208,8 +208,6 @@ export default function SettingsPageContent() {
           onClick: () => {
             const next = language === 'el' ? 'en' : 'el';
             setLanguage(next);
-            // Toast in the language the user just chose (setLanguage has not re-rendered yet).
-            toast.message(next === 'el' ? t('Γλώσσα: Ελληνικά', 'Language: Greek') : t('Γλώσσα: Αγγλικά', 'Language: English'));
           },
         },
         { icon: Palette, label: t('Εμφάνιση & Θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },

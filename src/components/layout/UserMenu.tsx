@@ -2,7 +2,6 @@ import { useCallback, useLayoutEffect, useRef, useState, type KeyboardEvent, typ
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { Check, Settings2, SlidersHorizontal, UserRound } from 'lucide-react';
-import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { THEME_IDS, THEME_LABELS, THEME_SWATCH, type ThemeId } from '../../lib/themes';
@@ -85,11 +84,10 @@ export function UserMenu({ children, label, header, showAccountLinks = false }: 
   const pickLanguage = (id: 'el' | 'en') => {
     if (language === id) return;
     setLanguage(id);
-    toast.message(id === 'el' ? 'Γλώσσα: Ελληνικά' : 'Language: English');
   };
 
   const pickTheme = (id: ThemeId) => {
-    applyThemeSelection(id, setTheme, language === 'el' ? 'el' : 'en', theme);
+    applyThemeSelection(id, setTheme, theme);
   };
 
   const itemBase = cn(

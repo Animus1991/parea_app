@@ -62,7 +62,7 @@ export function AdminBrandingPanel() {
             <button
               key={id}
               type="button"
-              onClick={() => applyThemeSelection(id, setTheme, language === 'el' ? 'el' : 'en', theme)}
+              onClick={() => applyThemeSelection(id, setTheme, theme)}
               className={cn(
                 'px-3 py-1.5 rounded-full text-xs font-bold border transition-colors',
                 theme === id ? 'bg-cyan-600 text-white border-cyan-600' : cn(a.borderB, a.sub),
