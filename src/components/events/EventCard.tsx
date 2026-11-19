@@ -314,10 +314,6 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
     "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
     isDark ? "bg-white/[0.06] text-gray-400" : "bg-gray-50 text-gray-500",
   );
-  const socialWell = cn(
-    "rounded-xl px-3 py-2.5",
-    isDark ? "bg-white/[0.04]" : "bg-gray-50/90",
-  );
 
   return (
     <Card
@@ -482,17 +478,17 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
         </div>
 
         {showMatchWhy && matchExplanation && (matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]) && (
-          <p className={cn(EVENT_CARD_TYPO.hint, socialWell, "font-medium", accentText)}>
+          <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium", accentText)}>
             {matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]}
           </p>
         )}
         {!showMatchWhy && matchingPreview ? (
-          <p className={cn(EVENT_CARD_TYPO.hint, socialWell, "font-medium", accentText, "opacity-90")}>
+          <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium", accentText, "opacity-90")}>
             {t(matchingPreview.labelEl, matchingPreview.labelEn)}
           </p>
         ) : (
           !showMatchWhy && currentUser && (
-            <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className={socialWell} />
+            <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className="text-left" />
           )
         )}
 
