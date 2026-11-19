@@ -55,22 +55,44 @@ export function EventCardSkeleton({ variant = 'default' }: { variant?: 'default'
     );
   }
   return (
-    <Status label={t('Φόρτωση εκδήλωσης…', 'Loading event…')} className={cn(shell, 'p-4')}>
-      <div className="flex justify-between items-start mb-3">
-        <Skeleton className="h-6 w-24 rounded-full" />
-        <Skeleton className="h-4 w-12" />
-      </div>
-      <Skeleton className="h-5 w-3/4 mb-2" />
-      <Skeleton className="h-3 w-1/2 mb-4" />
-      <div className={cn('mt-auto pt-3 border-t space-y-2', isDark ? 'border-gray-700/40' : 'border-gray-50')}>
-        <div className="flex justify-between items-center mb-1">
-          <Skeleton className="h-3 w-20" />
-          <Skeleton className="h-3 w-12" />
+    <Status label={t('Φόρτωση εκδήλωσης…', 'Loading event…')} className={cn(shell, 'overflow-hidden')}>
+      <Skeleton className="h-48 w-full rounded-none" />
+      <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
+        <div className="flex items-start justify-between gap-3">
+          <Skeleton className="h-11 w-3/4" />
+          <Skeleton className="h-11 w-14 rounded-xl" />
         </div>
-        <Skeleton className="h-1.5 w-full rounded-full" />
-        <div className="flex justify-between items-center mt-3 pt-1">
-          <Skeleton className="h-5 w-12" />
-          <Skeleton className="h-8 w-12 rounded-full" />
+        <div className="space-y-2.5">
+          <div className="flex items-center gap-2.5">
+            <Skeleton className="h-8 w-8 rounded-xl" />
+            <Skeleton className="h-3 w-28" />
+          </div>
+          <div className="flex items-center gap-2.5">
+            <Skeleton className="h-8 w-8 rounded-xl" />
+            <Skeleton className="h-3 w-24" />
+          </div>
+          <div className="flex items-center gap-2.5">
+            <Skeleton className="h-8 w-8 rounded-xl" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        </div>
+        <Skeleton className="h-10 w-full rounded-xl" />
+        <div className="flex items-center gap-2.5">
+          <Skeleton className="h-8 w-8 rounded-full" />
+          <div className="space-y-1.5">
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-2.5 w-24" />
+          </div>
+        </div>
+        <div className={cn('mt-auto space-y-3 border-t pt-4', isDark ? 'border-gray-700/40' : 'border-gray-100')}>
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-3 w-14" />
+          </div>
+          <Skeleton className="h-2 w-full rounded-full" />
+          <div className="flex justify-end">
+            <Skeleton className="h-9 w-28 rounded-full" />
+          </div>
         </div>
       </div>
     </Status>
