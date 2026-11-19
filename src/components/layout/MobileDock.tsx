@@ -90,14 +90,18 @@ export function MobileDock() {
         }
         className={cn(segment, plans.visible ? 'pl-3 pr-4' : 'px-4', 'active:bg-black/10')}
       >
-        <MessageCircle className="w-4 h-4" aria-hidden />
-        {unread > 0 ? (
-          <span className="whitespace-nowrap">
-            {unread > 9 ? '9+' : unread} {t('αδιάβαστα', 'unread')}
-          </span>
-        ) : (
-          <span className="whitespace-nowrap">{t('Συνομιλίες', 'Chats')}</span>
-        )}
+        <span className="relative shrink-0">
+          <MessageCircle className="w-4 h-4" aria-hidden />
+          {unread > 0 && (
+            <span
+              aria-hidden
+              className="absolute -top-1.5 -right-2 min-w-[1.05rem] h-4 px-1 rounded-full bg-accent-fg text-accent text-2xs font-bold leading-4 text-center tabular-nums"
+            >
+              {unread > 9 ? '9+' : unread}
+            </span>
+          )}
+        </span>
+        <span className="whitespace-nowrap">{t('Συνομιλίες', 'Chats')}</span>
       </button>
     </div>
   );

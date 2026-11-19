@@ -17,7 +17,6 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
 import { Modal } from '../common/Modal';
 import { APP_TYPO } from '../../lib/typographyTokens';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { resolveProfileAudience } from '../../lib/profilePrivacy';
 import { audienceLabel } from '../wall/wallText';
@@ -269,8 +268,6 @@ export default function SettingsPageContent() {
         <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')}</h1>
         <p className={cn(APP_TYPO.pageSub, "mt-1", a.sub)}>{t('Διαχειριστείτε τον λογαριασμό σας', 'Manage your account')}</p>
       </div>
-
-      <CopilotInlinePrompt />
 
       {sections.map((section, idx) => (
         <div key={idx} className="space-y-3">

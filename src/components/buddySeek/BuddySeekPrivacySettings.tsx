@@ -1,4 +1,3 @@
-import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { audienceSummary, exposureSummary } from '../../lib/companyRequestUtils';
@@ -14,7 +13,6 @@ export function BuddySeekPrivacySettings() {
   const setPrefsStore = useStore((s) => s.setCompanyRequestPreferences);
   const setPrefs = (patch: Parameters<typeof setPrefsStore>[0]) => {
     setPrefsStore(patch);
-    toast.success(t('Οι ρυθμίσεις απορρήτου αποθηκεύτηκαν', 'Privacy settings saved'));
   };
 
   const inputClass = cn(

@@ -3,7 +3,8 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { CalendarPlus, Users } from 'lucide-react';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
-import { formatOutingDate, formingGroups } from '../../lib/outings';
+import { formingGroups } from '../../lib/outings';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { organizerCalendarUrl } from '../../lib/organizerCalendar';
 
 /**
@@ -63,7 +64,7 @@ export default function OrganizerEmbedPage() {
                 <li key={e.id}>
                   <a href={`${origin}/events/${e.id}`} target="_blank" rel="noopener noreferrer" className="block px-3 py-2.5 hover:bg-surface">
                     <span className="block text-2xs font-bold text-ink-muted">
-                      {formatOutingDate(e.date, language)} · {e.time} · {e.locationArea.split(',')[0]}
+                      {formatPlanWhen(e.date, e.time, language)} · {e.locationArea.split(',')[0]}
                     </span>
                     <span className="block text-sm font-bold text-ink">{e.title}</span>
                     {forming > 0 && (

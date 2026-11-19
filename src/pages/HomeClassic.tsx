@@ -13,6 +13,7 @@ import { HomeVerifyBanner } from "../components/home/HomeVerifyBanner";
 import { getTimeGreeting, getMotivation } from "../lib/homeGreeting";
 import { HomeSearchDropdown } from "../components/home/HomeSearchDropdown";
 import { useOnboardingWelcome } from "../hooks/useOnboardingWelcome";
+import { useHomeHeroGate } from "../hooks/useHomeHeroGate";
 import { HomeOnboardingWelcomeBanner } from "../components/home/HomeOnboardingWelcomeBanner";
 import { HomeContinueStrip } from "../components/home/HomeContinueStrip";
 import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
@@ -30,6 +31,7 @@ export default function HomeClassic() {
   const tok = useThemeStyles();
   const navigate = useNavigate();
   const { showWelcome, dismissWelcome } = useOnboardingWelcome();
+  const homeGate = useHomeHeroGate(showWelcome);
   const ctrl = useHomePageController();
   const {
     t,
@@ -127,11 +129,11 @@ export default function HomeClassic() {
 
       <HomeContinueStrip />
 
-      {showWelcome && (
+      {homeGate === 'feedback' && <HomePendingFeedbackBanner />}
+      {homeGate === 'verify' && <HomeVerifyBanner />}
+      {homeGate === 'welcome' && (
         <HomeOnboardingWelcomeBanner useClassicTokens onDismiss={dismissWelcome} />
       )}
-      <HomeVerifyBanner />
-      <HomePendingFeedbackBanner />
       <HomeDiscoverEnrichment storyEvents={storyEvents} />
 
       <section>

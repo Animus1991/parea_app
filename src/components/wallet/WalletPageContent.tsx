@@ -12,7 +12,6 @@ import { Modal } from '../common/Modal';
 import { isStripeConfigured, openStripeCheckout } from '../../services/payments';
 import { WALLET_TYPO } from '../../lib/typographyTokens';
 import { formatWalletEur, WALLET_DEMO } from '../../lib/walletDemo';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { AppSelect } from '../common/AppSelect';
 
@@ -54,8 +53,6 @@ export default function WalletPageContent() {
             : t('Λειτουργία demo — ορίστε VITE_STRIPE_* για πραγματικές πληρωμές.', 'Demo mode — set VITE_STRIPE_* for real payments.')}
         </p>
       </div>
-
-      <CopilotInlinePrompt />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className={cn("p-4 text-white shadow-soft-md", a.balanceBg)}>

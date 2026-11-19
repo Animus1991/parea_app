@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { el as elLocale, enUS as enLocale } from "date-fns/locale";
+import { formatPlanWhen, formatPlanWhenDay } from "../../lib/dateLocale";
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../../store";
 import type { Event } from "../../types";
@@ -245,11 +246,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
     e.stopPropagation();
     const nextSaved = !isSaved;
     toggleSavedEvent(event.id);
-    if (nextSaved) {
-      toast.success(t('Αποθηκεύτηκε', 'Saved'), {
-        action: { label: t('Αποθηκευμένα', 'Saved'), onClick: () => navigate('/saved') },
-      });
-    } else {
+    if (!nextSaved) {
       toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'), {
         action: {
           label: t('Αναίρεση', 'Undo'),
@@ -298,7 +295,8 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
   const eventDate = parseISO(event.date);
   const day = format(eventDate, "d");
   const month = format(eventDate, "MMM", { locale: dateLocale });
-  const weekday = format(eventDate, "EEEE", { locale: dateLocale }).replace(/^./, (c) => c.toUpperCase());
+  const whenDay = formatPlanWhenDay(event.date, language);
+  const whenLine = formatPlanWhen(event.date, event.time, language);
   const locationLine = formatLocationArea(event.locationArea, language);
   const locationComma = locationLine.indexOf(',');
   const locationPrimary = locationComma >= 0 ? locationLine.slice(0, locationComma).trim() : locationLine;
@@ -450,7 +448,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
         <div className="grid grid-cols-1 gap-2.5 @[20rem]:grid-cols-3 @[20rem]:gap-2">
           <CardFact
             icon={Clock}
-            label={weekday}
+            label={whenDay}
             detail={event.time}
             wellClass={factWell}
             labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold capitalize", headColor)}
@@ -727,7 +725,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
             <div>
               <p className="card-heading font-bold text-ink line-clamp-2">{event.title}</p>
               <p className="card-copy font-medium text-ink-muted capitalize">
-                {weekday}, {event.time} · {event.locationArea}
+                {whenLine} · {event.locationArea}
               </p>
             </div>
             {event.lat && event.lng ? (

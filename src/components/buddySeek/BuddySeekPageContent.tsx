@@ -26,7 +26,6 @@ import type { Event } from '../../types';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
 import type { CompanyJoinRequestStatus, CompanyRequest } from '../../types/companyRequest';
 import { readStorage, writeStorage } from '../../lib/safeUrl';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { MiniOutingsSection } from '../outings/MiniOutingsSection';
 import { hasUsualHours, matchesUsualHours } from '../../lib/quietCatalog';
@@ -171,7 +170,6 @@ export default function BuddySeekPageContent() {
     <div className="w-full max-w-full min-w-0 space-y-4 pb-16 pt-4">
       <header className="space-y-3">
         <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
-        <CopilotInlinePrompt />
         <PlansFormingValueHero insights={feed.insights} />
         {/* StatsBar omitted when ValueHero already states compatible count — less chrome. */}
         {feed.insights.compatiblePlans === 0 && (

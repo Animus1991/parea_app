@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { el as elLocale, enUS } from 'date-fns/locale';
 import { TabBar } from '../common/TabBar';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { ShieldCheck, Phone, Mail, CreditCard, UserCheck, TrendingUp, History as HistoryIcon, Check } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
@@ -311,12 +310,6 @@ export default function TrustCenterPageContent() {
         </div>
 
         <StandingCard />
-
-        <CopilotInlinePrompt
-          title={{ el: 'Ρώτα για την αξιοπιστία σου', en: 'Ask about your reliability' }}
-          subtitle={{ el: 'Εξηγεί τον βαθμό σου και τις παρουσίες', en: 'Explains your score and attendance' }}
-          maxChips={2}
-        />
       </div>
       )}
 

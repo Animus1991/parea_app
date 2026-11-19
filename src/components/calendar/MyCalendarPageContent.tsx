@@ -44,7 +44,6 @@ import { downloadCalendarIcs } from "../../lib/calendarIcs";
 import { StoryViewer } from "../home/StoryViewer";
 import { CalendarHourlySchedule } from "./CalendarHourlySchedule";
 import type { Event } from "../../types";
-import { CopilotInlinePrompt } from "../copilot/CopilotInlinePrompt";
 import { usePublishPageSnapshot } from "../../hooks/usePublishPageSnapshot";
 
 export default function MyCalendarPageContent() {
@@ -414,8 +413,6 @@ export default function MyCalendarPageContent() {
           </div>
         </div>
       </div>
-
-      <CopilotInlinePrompt />
 
       <ResourceStateGate
         isLoading={isLoading}

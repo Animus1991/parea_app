@@ -7,6 +7,45 @@ import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { useStore } from '../../store';
 
 const DISMISS_KEY = 'nakamas.homeVerifyBanner.dismissed';
+const DISMISS_EVENT = 'nakamas:home-verify-dismissed';
+
+export function homeVerifyIsNeeded(
+  user: { emailVerified?: boolean; phoneVerified?: boolean } | null | undefined,
+  dismissed: boolean,
+): boolean {
+  if (!user) return false;
+  if (user.emailVerified && user.phoneVerified) return false;
+  return !dismissed;
+}
+
+export function useHomeVerifyNeeded(): boolean {
+  const currentUser = useStore((s) => s.currentUser);
+  const [dismissed, setDismissed] = useState(true);
+
+  useEffect(() => {
+    const sync = () => {
+      try {
+        setDismissed(sessionStorage.getItem(DISMISS_KEY) === '1');
+      } catch {
+        setDismissed(false);
+      }
+    };
+    sync();
+    window.addEventListener(DISMISS_EVENT, sync);
+    return () => window.removeEventListener(DISMISS_EVENT, sync);
+  }, []);
+
+  return homeVerifyIsNeeded(currentUser, dismissed);
+}
+
+function dismissHomeVerify() {
+  try {
+    sessionStorage.setItem(DISMISS_KEY, '1');
+  } catch {
+    /* ignore */
+  }
+  window.dispatchEvent(new Event(DISMISS_EVENT));
+}
 
 /**
  * Soft home nudge when email or phone is unverified — does not block Explore.
@@ -18,19 +57,9 @@ export function HomeVerifyBanner() {
   const h = useHomeTheme();
   const tok = useThemeStyles();
   const currentUser = useStore((s) => s.currentUser);
-  const [dismissed, setDismissed] = useState(true);
+  const needed = useHomeVerifyNeeded();
 
-  useEffect(() => {
-    try {
-      setDismissed(sessionStorage.getItem(DISMISS_KEY) === '1');
-    } catch {
-      setDismissed(false);
-    }
-  }, []);
-
-  if (!currentUser) return null;
-  if (currentUser.emailVerified && currentUser.phoneVerified) return null;
-  if (dismissed) return null;
+  if (!needed || !currentUser) return null;
 
   const needsEmail = !currentUser.emailVerified;
   const needsPhone = !currentUser.phoneVerified;
@@ -44,14 +73,7 @@ export function HomeVerifyBanner() {
     'So the group can reach you, and chat unlocks when it fills.',
   );
 
-  const dismiss = () => {
-    try {
-      sessionStorage.setItem(DISMISS_KEY, '1');
-    } catch {
-      /* ignore */
-    }
-    setDismissed(true);
-  };
+  const dismiss = () => dismissHomeVerify();
 
   return (
     <section
