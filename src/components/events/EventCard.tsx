@@ -137,12 +137,11 @@ function CardFact({
     <div
       className="flex min-w-0 items-center gap-2.5 text-left @[20rem]:flex-col @[20rem]:items-center @[20rem]:gap-1.5 @[20rem]:text-center"
       title={spoken}
-      aria-label={spoken}
     >
       <span className={wellClass} aria-hidden>
         <Icon className="h-4 w-4" />
       </span>
-      <span className="min-w-0 w-full" aria-hidden>
+      <span className="min-w-0 w-full">
         <span className={cn('block truncate leading-snug', labelClass)}>{label}</span>
         {detail ? (
           <span className={cn('mt-0.5 block truncate leading-snug', detailClass)}>{detail}</span>
