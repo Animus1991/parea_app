@@ -128,7 +128,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           setFeedType={setFeedType}
           resultCount={sortedEvents.length}
           isLoading={isLoading}
-          tabWrapClassName={cn('p-1 rounded-lg w-fit', tok.feedTabWrap)}
+          tabWrapClassName={cn('flex items-center p-1 rounded-lg w-fit', tok.feedTabWrap)}
           tabClassName={(active) =>
             cn(
               HOME_TYPO.filterChip,
@@ -137,6 +137,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
               active ? tok.feedTabActive : tok.feedTabInactive,
             )
           }
+          actionsWrapClassName={cn('flex items-center p-1 rounded-lg w-fit', tok.mapBtnWrap)}
           mapClassName={tok.mapBtn}
           filtersOpen={filtersOpen}
           onToggleFilters={toggleFilters}

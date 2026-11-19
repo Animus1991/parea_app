@@ -129,7 +129,7 @@ export default function HomeClassic() {
           isLoading={isLoading}
           tabClassName={(active) =>
             cn(
-              'filter-chip px-4 text-xs font-bold transition-all duration-200 rounded-full',
+              'filter-chip px-4 text-xs font-bold leading-none transition-all duration-200 rounded-full',
               active ? h.feedTabActive : h.feedTabInactive,
             )
           }
