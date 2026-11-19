@@ -18,6 +18,7 @@ import {
   UserPlus,
   CalendarPlus,
   MessageSquare,
+  Shield,
 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { el as elLocale, enUS as enLocale } from "date-fns/locale";
@@ -40,6 +41,7 @@ import {
 import { isDarkTheme } from "../../lib/themes";
 import { MatchExplainChips } from "./MatchExplainChips";
 import { getEventGroupProgress } from "../../lib/groupUtils";
+import { reliabilityBadge, tierLabelEl, tierLabelEn } from "../../lib/trust";
 import { GroupProgressBar } from "./GroupProgressBar";
 import { toast } from "sonner";
 import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
@@ -193,6 +195,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
 
   // Arrival & map — shown on the card only the night of a confirmed outing.
   const [showSafetyPanel, setShowSafetyPanel] = useState(false);
+  const [showTrustSheet, setShowTrustSheet] = useState(false);
   const [arrivalStatus, setArrivalStatus] = useState<string | null>(null);
   const [showEtaPrompt, setShowEtaPrompt] = useState(false);
   const [etaValue, setEtaValue] = useState("15 mins");
@@ -488,32 +491,49 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
         )}
 
         {displayOrganizer && (
-          <button
-            type="button"
-            className="flex min-h-11 items-center gap-2.5 self-start rounded-xl pr-2 text-left group/org focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/organizer/${displayOrganizer.id}`);
-            }}
-          >
-            <span className="relative shrink-0">
-              <img
-                referrerPolicy="no-referrer"
-                src={displayOrganizer.photoUrl}
-                alt=""
-                className={cn("h-8 w-8 rounded-full object-cover", isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}
-              />
-              <span className={cn("absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 border", isDark ? "border-gray-800" : "border-white")} aria-hidden />
-            </span>
-            <span className="min-w-0">
-              <span className={cn("block truncate text-xs font-bold leading-tight group-hover/org:underline", headColor)}>
-                {displayOrganizer.name}
+          <div className="flex min-w-0 items-center gap-1.5 self-start">
+            <button
+              type="button"
+              className="flex min-h-11 min-w-0 items-center gap-2.5 rounded-xl pr-2 text-left group/org focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/organizer/${displayOrganizer.id}`);
+              }}
+            >
+              <span className="relative shrink-0">
+                <img
+                  referrerPolicy="no-referrer"
+                  src={displayOrganizer.photoUrl}
+                  alt=""
+                  className={cn("h-8 w-8 rounded-full object-cover", isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}
+                />
+                <span className={cn("absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 border", isDark ? "border-gray-800" : "border-white")} aria-hidden />
               </span>
-              <span className={cn("card-copy-micro mt-0.5 block font-semibold leading-tight", mutedColor)}>
-                {hostUser && !organizer ? t('Διοργανωτής ομάδας', 'Group host') : t('Διοργανωτής', 'Organizer')}
+              <span className="min-w-0">
+                <span className={cn("block truncate text-xs font-bold leading-tight group-hover/org:underline", headColor)}>
+                  {displayOrganizer.name}
+                </span>
+                <span className={cn("card-copy-micro mt-0.5 block font-semibold leading-tight", mutedColor)}>
+                  {hostUser && !organizer ? t('Διοργανωτής ομάδας', 'Group host') : t('Διοργανωτής', 'Organizer')}
+                </span>
               </span>
-            </span>
-          </button>
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowTrustSheet(true);
+              }}
+              aria-label={t('Εμπιστοσύνη διοργανωτή', 'Organizer trust')}
+              title={t('Εμπιστοσύνη', 'Trust')}
+              className={cn(
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                isDark ? "border-gray-700/60 text-gray-400" : "border-gray-200 text-ink-muted",
+              )}
+            >
+              <Shield className="h-3.5 w-3.5" aria-hidden />
+            </button>
+          </div>
         )}
 
         {/* Platform event — seeks a group organizer. Hosting is primary only in the host rail. */}
@@ -654,6 +674,42 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
             </div>
           </div>
         </div>
+      </div>
+
+      <div {...stopBubbling} className="contents">
+        <BottomSheet
+          open={showTrustSheet}
+          onClose={() => setShowTrustSheet(false)}
+          title={t('Εμπιστοσύνη', 'Trust')}
+          className="sm:max-w-lg sm:mx-auto sm:mb-4 sm:rounded-2xl sm:border"
+        >
+          {displayOrganizer && (
+            <div className="space-y-3">
+              <p className={cn(EVENT_CARD_TYPO.title, "font-bold text-ink")}>{displayOrganizer.name}</p>
+              <p className="text-xs font-medium leading-snug text-ink-muted">
+                {t(
+                  `Βαθμίδα ${tierLabelEl(displayOrganizer.trustTier)} · ${reliabilityBadge(displayOrganizer.reliabilityScore).el}`,
+                  `Tier ${tierLabelEn(displayOrganizer.trustTier)} · ${reliabilityBadge(displayOrganizer.reliabilityScore).en}`,
+                )}
+              </p>
+              <ul className="space-y-1.5 text-xs font-medium text-ink">
+                <li>{displayOrganizer.emailVerified ? t('Email επιβεβαιωμένο', 'Email confirmed') : t('Email σε εκκρεμότητα', 'Email pending')}</li>
+                <li>{displayOrganizer.phoneVerified ? t('Τηλέφωνο επιβεβαιωμένο', 'Phone confirmed') : t('Τηλέφωνο σε εκκρεμότητα', 'Phone pending')}</li>
+                <li>{displayOrganizer.idVerified ? t('Ταυτότητα επιβεβαιωμένη', 'ID confirmed') : t('Ταυτότητα όταν χρειάζεται', 'ID only when needed')}</li>
+              </ul>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowTrustSheet(false);
+                  navigate('/trust');
+                }}
+                className="inline-flex min-h-8 items-center justify-center rounded-full border border-border bg-surface-raised px-4 text-xs font-bold text-ink"
+              >
+                {t('Κέντρο εμπιστοσύνης', 'Trust center')}
+              </button>
+            </div>
+          )}
+        </BottomSheet>
       </div>
 
       {/* Arrival & map sheet — wrapper stops React event bubbling from the portal to the card. */}

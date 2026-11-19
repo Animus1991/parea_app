@@ -19,6 +19,8 @@ import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
 import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
 import { HomeFeedToolbar } from "../components/home/HomeFeedToolbar";
 import { HomeDiscoverEnrichment } from "../components/home/HomeDiscoverEnrichment";
+import { HomeQuietRevealBar } from "../components/home/HomeQuietRevealBar";
+import { CollectionsRail } from "../components/outings/CollectionsRail";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
 import { emptyHomeSchedule, isScheduleFilterActive } from "../lib/homeScheduleFilter";
@@ -43,8 +45,19 @@ export default function HomeClassic() {
     seekingHostOnly,
     setSeekingHostOnly,
     visibleEvents,
+    shownEvents,
     hasMoreEvents,
     loadMoreEvents,
+    conflictCount,
+    showConflicts,
+    onToggleConflicts,
+    fullJoinedCount,
+    showFullJoined,
+    onToggleFullJoined,
+    pastCount,
+    showPast,
+    onTogglePast,
+    usualHoursHint,
     searchRef,
     loadMoreRef,
     storyEvents,
@@ -125,7 +138,7 @@ export default function HomeClassic() {
         <HomeFeedToolbar
           feedType={feedType}
           setFeedType={setFeedType}
-          resultCount={sortedEvents.length}
+          resultCount={shownEvents.length}
           isLoading={isLoading}
           tabClassName={(active) =>
             cn(
@@ -166,6 +179,18 @@ export default function HomeClassic() {
           setSchedule={setSchedule}
         />
 
+        <HomeQuietRevealBar
+          conflictCount={conflictCount}
+          showConflicts={showConflicts}
+          onToggleConflicts={onToggleConflicts}
+          fullJoinedCount={fullJoinedCount}
+          showFullJoined={showFullJoined}
+          onToggleFullJoined={onToggleFullJoined}
+          pastCount={pastCount}
+          showPast={showPast}
+          onTogglePast={onTogglePast}
+          usualHoursHint={usualHoursHint}
+        />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
@@ -257,6 +282,12 @@ export default function HomeClassic() {
           </div>
         )}
       </section>
+
+      {!isLoading && shownEvents.length > 0 && (
+        <CollectionsRail
+          excludeEventIds={shownEvents.map((event) => event.id)}
+        />
+      )}
 
       <HomeMobileFilterSheet
         open={filterSheetOpen}

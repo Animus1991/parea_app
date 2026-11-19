@@ -69,7 +69,7 @@ export function useHomeUrlFilters() {
   const hasMoodFilter = activeMood !== null && moodCategories.length > 0;
 
   const debouncedSearch = useDebounce(searchQuery, 400);
-  const sortParam = (searchParams.get('sort') as HomeSortParam) || 'Relevance';
+  const sortParam = (searchParams.get('sort') as HomeSortParam) || 'Distance';
 
   const setSortParam = useCallback(
     (value: HomeSortParam) => {
@@ -133,7 +133,7 @@ export function useHomeUrlFilters() {
     if (dateFilter !== 'Any') params.set('date', dateFilter);
     if (safetyFilter !== 'All') params.set('safety', safetyFilter);
     if (radiusFilter !== 'Any') params.set('dist', radiusFilter);
-    if (sortParam !== 'Relevance') params.set('sort', sortParam);
+    if (sortParam !== 'Distance') params.set('sort', sortParam);
     if (activeMood) params.set('mood', activeMood);
     const scheduleParams = serializeHomeSchedule(schedule);
     if (scheduleParams.on) params.set('on', scheduleParams.on);

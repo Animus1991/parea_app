@@ -1,5 +1,6 @@
 import { EventStories } from './EventStories';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { GAP_FIRST_SUGGESTIONS } from '../../ai/suggestions';
 import { useLanguage } from '../../lib/i18n';
 import type { Event } from '../../types';
 
@@ -25,11 +26,12 @@ export function HomeDiscoverEnrichment({
       </p>
       <EventStories events={storyEvents} />
       <CopilotInlinePrompt
-        title={{ el: 'Πες τι βραδιά ψάχνεις', en: 'Tell us what kind of night you want' }}
+        title={{ el: 'Πότε έχεις κενό;', en: 'When are you free?' }}
         subtitle={{
-          el: 'Βρίσκει εκδηλώσεις να μπεις — όχι τα σχέδια που έχεις ήδη κλείσει.',
-          en: 'Finds nights you can join — not the ones you already booked.',
+          el: 'Πες μια μέρα ή ώρα — βρίσκω βραδιές που χωράνε, χωρίς οκτώ ενέργειες μαζί.',
+          en: 'Name a day or hour — I find nights that fit, without dumping eight actions.',
         }}
+        suggestions={GAP_FIRST_SUGGESTIONS}
       />
     </div>
   );

@@ -11,6 +11,13 @@ import { getDefaultHomeSearchSuggestions } from '../lib/homeSearchSuggestions';
 import { useLanguage } from '../lib/i18n';
 import { DESKTOP_DOCK_QUERY, useMediaQuery } from './useMediaQuery';
 import { eventMatchesSchedule, isScheduleFilterActive } from '../lib/homeScheduleFilter';
+import { isEventPast } from '../lib/eventDisplay';
+import { useStore } from '../store';
+import {
+  hasUsualHours,
+  partitionQuietCatalog,
+  storiesWithoutFeedDupes,
+} from '../lib/quietCatalog';
 
 const HOME_FEED_PAGE_SIZE = 6;
 
@@ -23,8 +30,14 @@ export function useHomePageController() {
   const isDesktopFilters = useMediaQuery(DESKTOP_DOCK_QUERY);
   const [seekingHostOnly, setSeekingHostOnly] = useState(false);
   const [visibleEventsCount, setVisibleEventsCount] = useState(HOME_FEED_PAGE_SIZE);
+  const [showConflicts, setShowConflicts] = useState(false);
+  const [showFullJoined, setShowFullJoined] = useState(false);
+  const [showPast, setShowPast] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const groups = useStore((s) => s.groups);
+  const catalogEvents = useStore((s) => s.events);
+  const availability = useStore((s) => s.userSettings.availability);
 
   useHomeExternalEvents();
   const scrollToFilters = useHomeScrollToFilters();
@@ -38,10 +51,49 @@ export function useHomePageController() {
 
   const { searchQuery, handleSearchChange, initialSearch, sortedEvents, clearAllFilters, isLoading, schedule } = feed;
 
+  const hidePast = Boolean(searchQuery.trim());
+  const buckets = useMemo(
+    () =>
+      partitionQuietCatalog(sortedEvents, {
+        userId: feed.currentUser?.id,
+        groups,
+        catalog: catalogEvents,
+        hidePast,
+      }),
+    [sortedEvents, feed.currentUser?.id, groups, catalogEvents, hidePast],
+  );
+
+  const shownEvents = useMemo(() => {
+    const list = [...buckets.primary];
+    if (showConflicts) list.push(...buckets.conflicts);
+    if (showFullJoined) list.push(...buckets.fullJoined);
+    if (showPast) list.push(...buckets.past);
+    return list;
+  }, [buckets, showConflicts, showFullJoined, showPast]);
+
   const storyEvents = useMemo(() => {
-    if (!isScheduleFilterActive(schedule)) return catalogStories;
-    return catalogStories.filter((event) => eventMatchesSchedule(event, schedule));
-  }, [catalogStories, schedule]);
+    const q = searchQuery.trim().toLowerCase();
+    let scheduled = isScheduleFilterActive(schedule)
+      ? catalogStories.filter((event) => eventMatchesSchedule(event, schedule))
+      : catalogStories;
+    if (q) {
+      scheduled = scheduled.filter((event) => {
+        const inTitle = event.title.toLowerCase().includes(q);
+        const inTags = (event.tags ?? []).some((tag) => tag.toLowerCase().includes(q));
+        return inTitle || inTags;
+      });
+    }
+    if (hidePast) scheduled = scheduled.filter((event) => !isEventPast(event));
+    return storiesWithoutFeedDupes(
+      scheduled,
+      new Set(shownEvents.slice(0, visibleEventsCount).map((event) => event.id)),
+    );
+  }, [catalogStories, schedule, shownEvents, visibleEventsCount, searchQuery, hidePast]);
+
+  const usualHoursHint =
+    feedType === 'For You' &&
+    !isScheduleFilterActive(schedule) &&
+    hasUsualHours(feed.currentUser, availability);
 
   useEffect(() => {
     if (initialSearch && searchQuery === initialSearch) {
@@ -60,12 +112,12 @@ export function useHomePageController() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const visibleEvents = sortedEvents.slice(0, visibleEventsCount);
-  const hasMoreEvents = visibleEventsCount < sortedEvents.length;
+  const visibleEvents = shownEvents.slice(0, visibleEventsCount);
+  const hasMoreEvents = visibleEventsCount < shownEvents.length;
 
   const loadMoreEvents = useCallback(() => {
-    setVisibleEventsCount((count) => Math.min(count + HOME_FEED_PAGE_SIZE, sortedEvents.length));
-  }, [sortedEvents.length]);
+    setVisibleEventsCount((count) => Math.min(count + HOME_FEED_PAGE_SIZE, shownEvents.length));
+  }, [shownEvents.length]);
 
   useEffect(() => {
     const node = loadMoreRef.current;
@@ -113,12 +165,23 @@ export function useHomePageController() {
     seekingHostOnly,
     setSeekingHostOnly,
     visibleEvents,
+    shownEvents,
     hasMoreEvents,
     loadMoreEvents,
     searchRef,
     loadMoreRef,
     scrollToFilters,
     storyEvents,
+    conflictCount: buckets.conflicts.length,
+    showConflicts,
+    onToggleConflicts: () => setShowConflicts((v) => !v),
+    fullJoinedCount: buckets.fullJoined.length,
+    showFullJoined,
+    onToggleFullJoined: () => setShowFullJoined((v) => !v),
+    pastCount: buckets.past.length,
+    showPast,
+    onTogglePast: () => setShowPast((v) => !v),
+    usualHoursHint,
     seekingHostEvents,
     isSeekingHost,
     feed,

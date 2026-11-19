@@ -138,8 +138,8 @@ function CopilotConversation({ onClose, onNavigate, headingId }: { onClose: () =
               </p>
               <p className="mt-1 text-sm leading-relaxed text-ink-muted">
                 {t(
-                  'Γράψε ή πες μου τι θέλεις — βρίσκω εκδηλώσεις, οργανώνω το πρόγραμμά σου, αλλάζω ρυθμίσεις και μιλάω στην ομάδα σου.',
-                  'Type or say what you need — I find events, organise your schedule, change settings and message your group.',
+                  'Πρώτα το κενό σου — μέρα ή ώρα. Μετά βρίσκω εκδηλώσεις, οργανώνω το πρόγραμμα και μιλάω στην ομάδα σου.',
+                  'Start with your gap — a day or hour. Then I find events, organise the schedule and message your group.',
                 )}
               </p>
             </div>

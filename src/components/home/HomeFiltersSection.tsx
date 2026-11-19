@@ -242,8 +242,8 @@ export function HomeFiltersSection({
             onValueChange={setSortParam}
             showLeadingChevron
             options={[
-              { value: 'Relevance', label: t('home.feed.sort.relevance', 'Συνάφεια') },
               { value: 'Distance', label: t('home.feed.sort.distance', 'Απόσταση') },
+              { value: 'Relevance', label: t('home.feed.sort.relevance', 'Συνάφεια') },
               { value: 'Group Progress', label: t('home.feed.sort.group_progress', 'Πρόοδος Ομάδας') },
             ]}
           />

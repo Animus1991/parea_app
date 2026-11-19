@@ -457,6 +457,38 @@ export default function SettingsPageContent() {
                 </label>
               ))}
             </div>
+            <div className="mt-4 border-t border-border pt-3">
+              <p className={cn('mb-2 text-xs font-bold', a.head)}>{t('Σύνοψη', 'Digest')}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {(
+                  [
+                    ['morning', 'Πρωί', 'Morning'],
+                    ['afternoon', 'Απόγευμα', 'Afternoon'],
+                    ['off', 'Όλες μία-μία', 'Every item'],
+                  ] as const
+                ).map(([key, el, en]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    aria-pressed={(userSettings.notificationPrefs.digest ?? 'morning') === key}
+                    onClick={() => {
+                      updateUserSettings({
+                        notificationPrefs: { ...userSettings.notificationPrefs, digest: key },
+                      });
+                      toast.success(t('Οι προτιμήσεις αποθηκεύτηκαν', 'Preferences saved'));
+                    }}
+                    className={cn(
+                      'filter-chip inline-flex h-[1.75rem] items-center rounded-full border px-3 text-xs font-bold leading-none',
+                      (userSettings.notificationPrefs.digest ?? 'morning') === key
+                        ? 'border-accent bg-accent text-accent-fg'
+                        : 'border-border bg-surface-raised text-ink',
+                    )}
+                  >
+                    {t(el, en)}
+                  </button>
+                ))}
+              </div>
+            </div>
           </Card>
 
           <Card className="p-5">

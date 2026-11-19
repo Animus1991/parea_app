@@ -20,6 +20,7 @@ export function useHomeEventFeed({
 }: UseHomeEventFeedOptions) {
   const { events, isLoading, isError, isRefreshing, refetch } = useEventsResource();
   const currentUser = useStore((s) => s.currentUser);
+  const availability = useStore((s) => s.userSettings.availability);
   const filters = useHomeUrlFilters();
   const { getDistance } = useHomeGeoDistance(filters.radiusFilter);
 
@@ -68,8 +69,11 @@ export function useHomeEventFeed({
         filters.sortParam,
         currentUser,
         getDistance,
+        new Date(),
+        feedType,
+        availability,
       ),
-    [filteredEvents, filters.sortParam, currentUser, getDistance],
+    [filteredEvents, filters.sortParam, currentUser, getDistance, feedType, availability],
   );
 
   const hasActiveFilters =

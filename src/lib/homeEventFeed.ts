@@ -1,11 +1,8 @@
 import { parseISO, isToday, isThisWeek, isThisMonth } from 'date-fns';
 import type { Event } from '../types';
 import type { User } from '../types';
-import { isExternalApiEvent } from './runtimeMode';
-import {
-  eventMatchesUserInterest,
-  getEventPersonalizationScore,
-} from './homePersonalization';
+import { getEventPersonalizationScore } from './homePersonalization';
+import { matchesUsualHours } from './quietCatalog';
 import {
   HOME_MOCK_DISTANCES,
   type HomeDateFilter,
@@ -41,8 +38,6 @@ export interface HomeEventFilterInput {
 export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
   const {
     events,
-    currentUser,
-    feedType,
     searchQuery,
     activeCategory,
     tagFilter,
@@ -66,21 +61,7 @@ export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
       if (!inTitle && !inDesc && !inTags) return false;
     }
 
-    if (feedType === 'For You') {
-      const personalized = eventMatchesUserInterest(e, currentUser);
-      const tagHits = currentUser
-        ? (e.tags ?? []).filter((tag) => (currentUser.interests || []).includes(tag)).length
-        : 0;
-      if (
-        !personalized &&
-        tagHits === 0 &&
-        !e.isTrending &&
-        !isSeekingHost(e) &&
-        isExternalApiEvent(e.id)
-      ) {
-        return false;
-      }
-    }
+    // Για Σένα is a boost in sortHomeEvents, not a wall that hides the rest.
 
     if (activeCategory !== 'All' && e.category !== activeCategory) return false;
     if (moodCategories.length > 0 && !moodCategories.includes(e.category)) return false;
@@ -119,11 +100,19 @@ export function sortHomeEvents(
   currentUser: User | null,
   getDistance: (eventId: string, lat?: number, lng?: number) => number | null,
   now: Date = new Date(),
+  feedType: 'For You' | 'Discover' = 'Discover',
+  coarseAvailability?: string[],
 ): Event[] {
   return [...events].sort((a, b) => {
     const pastA = isEventPast(a, now);
     const pastB = isEventPast(b, now);
     if (pastA !== pastB) return pastA ? 1 : -1;
+
+    if (feedType === 'For You') {
+      const usualA = matchesUsualHours(a, currentUser, coarseAvailability) ? 1 : 0;
+      const usualB = matchesUsualHours(b, currentUser, coarseAvailability) ? 1 : 0;
+      if (usualA !== usualB) return usualB - usualA;
+    }
 
     if (sortParam === 'Distance') {
       const distA = getDistance(a.id, a.lat, a.lng) ?? HOME_MOCK_DISTANCES[a.id] ?? 5;

@@ -12,6 +12,8 @@ import { HomeFiltersSection } from './HomeFiltersSection';
 import { HomeMobileFilterSheet } from './HomeMobileFilterSheet';
 import { HomeFeedToolbar } from './HomeFeedToolbar';
 import { HomeDiscoverEnrichment } from './HomeDiscoverEnrichment';
+import { HomeQuietRevealBar } from './HomeQuietRevealBar';
+import { CollectionsRail } from '../outings/CollectionsRail';
 import { getTimeGreeting, getMotivation } from '../../lib/homeGreeting';
 import { useHomePageController } from '../../hooks/useHomePageController';
 import { HOME_TYPO } from '../../lib/typographyTokens';
@@ -41,8 +43,19 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     seekingHostOnly,
     setSeekingHostOnly,
     visibleEvents,
+    shownEvents,
     hasMoreEvents,
     loadMoreEvents,
+    conflictCount,
+    showConflicts,
+    onToggleConflicts,
+    fullJoinedCount,
+    showFullJoined,
+    onToggleFullJoined,
+    pastCount,
+    showPast,
+    onTogglePast,
+    usualHoursHint,
     searchRef,
     loadMoreRef,
     storyEvents,
@@ -126,7 +139,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         <HomeFeedToolbar
           feedType={feedType}
           setFeedType={setFeedType}
-          resultCount={sortedEvents.length}
+          resultCount={shownEvents.length}
           isLoading={isLoading}
           tabWrapClassName={cn('flex items-center p-1 rounded-lg w-fit', tok.feedTabWrap)}
           tabClassName={(active) =>
@@ -171,6 +184,18 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           setSchedule={setSchedule}
         />
 
+        <HomeQuietRevealBar
+          conflictCount={conflictCount}
+          showConflicts={showConflicts}
+          onToggleConflicts={onToggleConflicts}
+          fullJoinedCount={fullJoinedCount}
+          showFullJoined={showFullJoined}
+          onToggleFullJoined={onToggleFullJoined}
+          pastCount={pastCount}
+          showPast={showPast}
+          onTogglePast={onTogglePast}
+          usualHoursHint={usualHoursHint}
+        />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
@@ -265,6 +290,12 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           </div>
         )}
       </section>
+
+      {!isLoading && shownEvents.length > 0 && (
+        <CollectionsRail
+          excludeEventIds={shownEvents.map((event) => event.id)}
+        />
+      )}
 
       <HomeMobileFilterSheet
         open={filterSheetOpen}
