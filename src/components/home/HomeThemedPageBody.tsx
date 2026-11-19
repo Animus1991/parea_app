@@ -34,6 +34,9 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     setShowSearchSuggestions,
     filterSheetOpen,
     setFilterSheetOpen,
+    filtersExpanded,
+    filtersOpen,
+    toggleFilters,
     seekingHostOnly,
     setSeekingHostOnly,
     visibleEvents,
@@ -116,32 +119,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
       <HomeThemedEnrichment onPreferDiscoverFeed={() => setFeedType('Discover')} />
       <HomeDiscoverEnrichment storyEvents={storyEvents} />
 
-      <HomeFiltersSection
-        activeCategory={activeCategory}
-        setActiveCategory={setActiveCategory}
-        tagFilter={tagFilter}
-        setTagFilter={setTagFilter}
-        priceFilter={priceFilter}
-        setPriceFilter={setPriceFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        safetyFilter={safetyFilter}
-        setSafetyFilter={setSafetyFilter}
-        radiusFilter={radiusFilter}
-        setRadiusFilter={setRadiusFilter}
-        sortParam={sortParam}
-        setSortParam={setSortParam}
-        seekingHostOnly={seekingHostOnly}
-        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
-        showSeekingHostChip={seekingHostEvents.length > 0}
-        hasActiveFilters={hasActiveFilters || seekingHostOnly}
-        onClearAll={handleClearAll}
-        onOpenMobileFilters={() => setFilterSheetOpen(true)}
-        activeFilterCount={activeFilterCount}
-        activeMood={activeMood}
-        onSelectMood={handleSelectMood}
-      />
-
       <section>
         <HomeFeedToolbar
           feedType={feedType}
@@ -158,7 +135,36 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
             )
           }
           mapClassName={tok.mapBtn}
+          filtersOpen={filtersOpen}
+          onToggleFilters={toggleFilters}
+          activeFilterCount={activeFilterCount + (seekingHostOnly ? 1 : 0)}
         />
+
+        <HomeFiltersSection
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+          tagFilter={tagFilter}
+          setTagFilter={setTagFilter}
+          priceFilter={priceFilter}
+          setPriceFilter={setPriceFilter}
+          dateFilter={dateFilter}
+          setDateFilter={setDateFilter}
+          safetyFilter={safetyFilter}
+          setSafetyFilter={setSafetyFilter}
+          radiusFilter={radiusFilter}
+          setRadiusFilter={setRadiusFilter}
+          sortParam={sortParam}
+          setSortParam={setSortParam}
+          seekingHostOnly={seekingHostOnly}
+          onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
+          showSeekingHostChip={seekingHostEvents.length > 0}
+          hasActiveFilters={hasActiveFilters || seekingHostOnly}
+          onClearAll={handleClearAll}
+          activeMood={activeMood}
+          onSelectMood={handleSelectMood}
+          expanded={filtersExpanded}
+        />
+
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (

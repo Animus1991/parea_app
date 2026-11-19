@@ -1,4 +1,4 @@
-import { Map as MapIcon } from 'lucide-react';
+import { Map as MapIcon, SlidersHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
@@ -11,6 +11,9 @@ export interface HomeFeedToolbarProps {
   tabWrapClassName?: string;
   tabClassName: (active: boolean) => string;
   mapClassName: string;
+  filtersOpen?: boolean;
+  onToggleFilters?: () => void;
+  activeFilterCount?: number;
 }
 
 export function HomeFeedToolbar({
@@ -21,6 +24,9 @@ export function HomeFeedToolbar({
   tabWrapClassName,
   tabClassName,
   mapClassName,
+  filtersOpen = false,
+  onToggleFilters,
+  activeFilterCount = 0,
 }: HomeFeedToolbarProps) {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -53,19 +59,50 @@ export function HomeFeedToolbar({
         )}
       </div>
 
-      <button
-        type="button"
-        onClick={() => navigate('/nearby')}
-        className={cn(
-          'inline-flex min-h-8 shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 transition-colors',
-          mapClassName,
+      <div className="flex shrink-0 items-center gap-2">
+        {onToggleFilters && (
+          <button
+            type="button"
+            onClick={onToggleFilters}
+            aria-expanded={filtersOpen}
+            aria-controls="home-filters"
+            className={cn(
+              'inline-flex min-h-8 items-center justify-center gap-1.5 rounded-full border px-3 transition-colors',
+              filtersOpen
+                ? 'border-accent bg-accent text-accent-fg'
+                : mapClassName,
+            )}
+            title={t('Φίλτρα αναζήτησης', 'Search filters')}
+            aria-label={t('Φίλτρα αναζήτησης', 'Search filters')}
+          >
+            <SlidersHorizontal className="w-4 h-4" aria-hidden />
+            <span className="text-xs font-bold">{t('Φίλτρα', 'Filters')}</span>
+            {activeFilterCount > 0 && (
+              <span
+                className={cn(
+                  'min-w-4 rounded-full px-1.5 text-2xs font-bold',
+                  filtersOpen ? 'bg-accent-fg/20 text-accent-fg' : 'bg-accent text-accent-fg',
+                )}
+              >
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
         )}
-        title={t('Άνοιγμα Χάρτη', 'Open Map')}
-        aria-label={t('Άνοιγμα Χάρτη', 'Open Map')}
-      >
-        <MapIcon className="w-4 h-4" aria-hidden />
-        <span className="text-xs font-bold">{t('Χάρτης', 'Map')}</span>
-      </button>
+        <button
+          type="button"
+          onClick={() => navigate('/nearby')}
+          className={cn(
+            'inline-flex min-h-8 shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 transition-colors',
+            mapClassName,
+          )}
+          title={t('Άνοιγμα Χάρτη', 'Open Map')}
+          aria-label={t('Άνοιγμα Χάρτη', 'Open Map')}
+        >
+          <MapIcon className="w-4 h-4" aria-hidden />
+          <span className="text-xs font-bold">{t('Χάρτης', 'Map')}</span>
+        </button>
+      </div>
     </div>
   );
 }

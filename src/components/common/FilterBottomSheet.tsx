@@ -25,7 +25,7 @@ export function FilterBottomSheet({
     <BottomSheet
       open={open}
       onClose={onClose}
-      rootClassName="md:hidden z-sheet"
+      rootClassName="lg:hidden z-sheet"
       title={undefined}
       showClose={false}
       className="pb-28"
