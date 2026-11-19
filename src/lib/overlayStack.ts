@@ -31,3 +31,8 @@ export function removeOverlay(id: symbol): void {
 export function isTopOverlay(id: symbol): boolean {
   return stack.length > 0 && stack[stack.length - 1] === id;
 }
+
+/** True while any modal/sheet is on the stack — used to avoid opening a second overlay. */
+export function hasOpenOverlay(): boolean {
+  return stack.length > 0;
+}

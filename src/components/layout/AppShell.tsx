@@ -20,6 +20,8 @@ import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { PlansFormingBottomSheet } from '../buddySeek/PlansFormingBottomSheet';
 import { PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
 import { MobileDock } from './MobileDock';
+import { BottomSwipeQuickNav } from './BottomSwipeQuickNav';
+import { useBottomSwipeQuickNav } from '../../hooks/useBottomSwipeQuickNav';
 import { prefetchPath } from '../../lib/routeLoaders';
 import { PopupChatRoot } from '../chat/PopupChatRoot';
 import { DemoModeBanner } from '../common/DemoModeBanner';
@@ -441,10 +443,16 @@ export function BottomNav() {
   const tok = useThemeStyles();
   const { t } = useLanguage();
   const { pathname } = useLocation();
+  const swipe = useBottomSwipeQuickNav();
   // Group chat owns the bottom of the screen (composer). Tabs stay one tap back.
   if (pathname.startsWith('/chat/')) return null;
   return (
-    <div className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-soft-up-lg z-bottomnav", tok.bottomNav)}>
+    <>
+    <div
+      ref={swipe.navRef}
+      data-bottom-swipe-origin=""
+      className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-soft-up-lg z-bottomnav touch-none select-none [&_a]:[user-drag:none]", tok.bottomNav)}
+    >
       {([
         { to: "/", icon: Compass, labelGr: 'Ανακάλυψη', labelEn: 'Discover' },
         { to: "/plans", icon: CalendarCheck, labelGr: 'Σχέδια', labelEn: 'Plans' },
@@ -489,6 +497,8 @@ export function BottomNav() {
         </NavLink>
       ))}
     </div>
+    {swipe.open && <BottomSwipeQuickNav onClose={swipe.close} />}
+    </>
   );
 }
 
