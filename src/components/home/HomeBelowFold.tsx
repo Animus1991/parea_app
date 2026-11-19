@@ -23,8 +23,8 @@ interface HomeBelowFoldProps {
 }
 
 /**
- * P4 — demoted Home sections (below the event grid).
- * Keeps discovery above-the-fold lean: hero + stories + one buddy entry + filters + grid.
+ * Optional extra blocks (quick actions, buddies, how-it-works).
+ * Not mounted on Discover — that page is catalog only (stories + filters + grid).
  */
 export function HomeBelowFold({
   useClassicTokens = false,

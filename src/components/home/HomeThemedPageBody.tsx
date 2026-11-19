@@ -5,7 +5,6 @@ import { EventCardSkeleton } from '../common/Skeleton';
 import { EmptyState } from '../common/EmptyState';
 import { CalendarX } from 'lucide-react';
 import { HomeThemedEnrichment } from './HomeThemedEnrichment';
-import { HomeBelowFold } from './HomeBelowFold';
 import { HomeContinueStrip } from './HomeContinueStrip';
 import { HomeThemedHeroSwitch } from './HomeThemedHeroSwitch';
 import { HomeRichHero } from './HomeRichHero';
@@ -18,6 +17,7 @@ import { useHomePageController } from '../../hooks/useHomePageController';
 import { HOME_TYPO } from '../../lib/typographyTokens';
 import { HOME_THEMED_TOKENS, type HomeThemedVariant } from '../../lib/homeThemedTokens';
 import { cn } from '../../lib/utils';
+import { emptyHomeSchedule, isScheduleFilterActive } from '../../lib/homeScheduleFilter';
 
 /**
  * Canonical themed Home — ONE implementation for vibrant/neon/bento × light/dark.
@@ -35,6 +35,9 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     setShowSearchSuggestions,
     filterSheetOpen,
     setFilterSheetOpen,
+    filtersExpanded,
+    filtersOpen,
+    toggleFilters,
     seekingHostOnly,
     setSeekingHostOnly,
     visibleEvents,
@@ -42,7 +45,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     loadMoreEvents,
     searchRef,
     loadMoreRef,
-    scrollToFilters,
     storyEvents,
     seekingHostEvents,
     feed,
@@ -72,6 +74,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     activeFilterCount,
     activeMood,
     handleSelectMood,
+    schedule,
+    setSchedule,
     isLoading,
     isError,
     refetch,
@@ -81,8 +85,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
   const firstName = currentUser?.name?.split(' ')[0] || t('φίλε', 'there');
   const greeting = getTimeGreeting(firstName, t);
   const motivation = getMotivation(t);
-  const enrichment = <HomeDiscoverEnrichment storyEvents={storyEvents} />;
-
   return (
     <div className="space-y-4 md:space-y-5 pb-5 md:pb-0">
       <HomeThemedHeroSwitch
@@ -118,32 +120,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
       <HomeContinueStrip />
 
       <HomeThemedEnrichment onPreferDiscoverFeed={() => setFeedType('Discover')} />
-
-      <HomeFiltersSection
-        activeCategory={activeCategory}
-        setActiveCategory={setActiveCategory}
-        tagFilter={tagFilter}
-        setTagFilter={setTagFilter}
-        priceFilter={priceFilter}
-        setPriceFilter={setPriceFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        safetyFilter={safetyFilter}
-        setSafetyFilter={setSafetyFilter}
-        radiusFilter={radiusFilter}
-        setRadiusFilter={setRadiusFilter}
-        sortParam={sortParam}
-        setSortParam={setSortParam}
-        seekingHostOnly={seekingHostOnly}
-        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
-        showSeekingHostChip={seekingHostEvents.length > 0}
-        hasActiveFilters={hasActiveFilters || seekingHostOnly}
-        onClearAll={handleClearAll}
-        onOpenMobileFilters={() => setFilterSheetOpen(true)}
-        activeFilterCount={activeFilterCount}
-        activeMood={activeMood}
-        onSelectMood={handleSelectMood}
-      />
+      <HomeDiscoverEnrichment storyEvents={storyEvents} />
 
       <section>
         <HomeFeedToolbar
@@ -151,17 +128,49 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           setFeedType={setFeedType}
           resultCount={sortedEvents.length}
           isLoading={isLoading}
-          tabWrapClassName={cn('p-1 rounded-lg w-fit', tok.feedTabWrap)}
+          tabWrapClassName={cn('flex items-center p-1 rounded-lg w-fit', tok.feedTabWrap)}
           tabClassName={(active) =>
             cn(
               HOME_TYPO.filterChip,
-              'px-4 rounded-lg transition-all',
+              'px-4 rounded-lg whitespace-nowrap transition-all',
               HOME_TYPO.feedTab,
               active ? tok.feedTabActive : tok.feedTabInactive,
             )
           }
+          actionsWrapClassName={cn('flex items-center p-1 rounded-lg w-fit', tok.mapBtnWrap)}
           mapClassName={tok.mapBtn}
+          filtersOpen={filtersOpen}
+          onToggleFilters={toggleFilters}
+          activeFilterCount={activeFilterCount + (seekingHostOnly ? 1 : 0)}
         />
+
+        <HomeFiltersSection
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+          tagFilter={tagFilter}
+          setTagFilter={setTagFilter}
+          priceFilter={priceFilter}
+          setPriceFilter={setPriceFilter}
+          dateFilter={dateFilter}
+          setDateFilter={setDateFilter}
+          safetyFilter={safetyFilter}
+          setSafetyFilter={setSafetyFilter}
+          radiusFilter={radiusFilter}
+          setRadiusFilter={setRadiusFilter}
+          sortParam={sortParam}
+          setSortParam={setSortParam}
+          seekingHostOnly={seekingHostOnly}
+          onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
+          showSeekingHostChip={seekingHostEvents.length > 0}
+          hasActiveFilters={hasActiveFilters || seekingHostOnly}
+          onClearAll={handleClearAll}
+          activeMood={activeMood}
+          onSelectMood={handleSelectMood}
+          expanded={filtersExpanded}
+          schedule={schedule}
+          setSchedule={setSchedule}
+        />
+
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
@@ -179,66 +188,67 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
               />
             </div>
           ) : sortedEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 space-y-4">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3">
               <EmptyState
                 icon={CalendarX}
                 title={t(
                   'home.feed.no_events',
                   'Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.',
                 )}
-                description={t(
-                  'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
-                  'Try changing filters or category — or see what’s nearby.',
-                )}
+                description={
+                  isScheduleFilterActive(schedule)
+                    ? t(
+                        'Καμία βραδιά δεν χωράει σε αυτές τις μέρες και ώρες. Διεύρυνε το πρόγραμμα — ο κατάλογος είναι ακόμα εκεί.',
+                        'No nights fit these days and hours. Widen the schedule — the catalog is still there.',
+                      )
+                    : t(
+                        'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
+                        'Try changing filters or category — or see what’s nearby.',
+                      )
+                }
                 actionLabel={
-                  hasActiveFilters || seekingHostOnly
-                    ? t('Εκκαθάριση φίλτρων', 'Clear filters')
-                    : t('Στον χάρτη', 'On the map')
+                  isScheduleFilterActive(schedule)
+                    ? t('Διεύρυνε τις ώρες', 'Widen hours')
+                    : hasActiveFilters || seekingHostOnly
+                      ? t('Εκκαθάριση φίλτρων', 'Clear filters')
+                      : t('Στον χάρτη', 'On the map')
                 }
                 onAction={
-                  hasActiveFilters || seekingHostOnly
-                    ? handleClearAll
-                    : () => navigate('/nearby')
+                  isScheduleFilterActive(schedule)
+                    ? () => setSchedule(emptyHomeSchedule())
+                    : hasActiveFilters || seekingHostOnly
+                      ? handleClearAll
+                      : () => navigate('/nearby')
                 }
                 secondaryLabel={
-                  hasActiveFilters || seekingHostOnly
-                    ? t('Στον χάρτη', 'On the map')
-                    : t('Κατηγορίες', 'Categories')
+                  isScheduleFilterActive(schedule)
+                    ? t('Εκκαθάριση φίλτρων', 'Clear filters')
+                    : hasActiveFilters || seekingHostOnly
+                      ? t('Στον χάρτη', 'On the map')
+                      : t('Κατηγορίες', 'Categories')
                 }
                 onSecondary={
-                  hasActiveFilters || seekingHostOnly
-                    ? () => navigate('/nearby')
-                    : () => navigate('/categories')
+                  isScheduleFilterActive(schedule)
+                    ? handleClearAll
+                    : hasActiveFilters || seekingHostOnly
+                      ? () => navigate('/nearby')
+                      : () => navigate('/categories')
                 }
               />
-              {enrichment}
             </div>
           ) : (
-            visibleEvents.flatMap((event, index) => {
-              const card = (
-                <motion.div
-                  key={event.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <EventCard event={event} />
-                </motion.div>
-              );
-              if (index !== 2) return [card];
-              return [
-                <div key="discover-enrichment" className="col-span-1 sm:col-span-2 lg:col-span-3">
-                  {enrichment}
-                </div>,
-                card,
-              ];
-            })
+            visibleEvents.map((event, index) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+              >
+                <EventCard event={event} />
+              </motion.div>
+            ))
           )}
         </div>
-
-        {!isLoading && visibleEvents.length > 0 && visibleEvents.length < 3 && (
-          <div className="mt-4">{enrichment}</div>
-        )}
 
         {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
@@ -255,17 +265,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           </div>
         )}
       </section>
-
-      <HomeBelowFold
-        onScrollToCategories={scrollToFilters}
-        seekingHostEvents={seekingHostEvents}
-        seekingHostOnly={seekingHostOnly}
-        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
-        stepCardClass={tok.stepCard}
-        stepCircleClass={tok.stepCircle}
-        stepTitleClass={tok.stepTitle}
-        stepBodyClass={tok.stepBody}
-      />
 
       <HomeMobileFilterSheet
         open={filterSheetOpen}
@@ -294,6 +293,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         setTagFilter={setTagFilter}
         activeMood={activeMood}
         onSelectMood={handleSelectMood}
+        schedule={schedule}
+        setSchedule={setSchedule}
       />
     </div>
   );

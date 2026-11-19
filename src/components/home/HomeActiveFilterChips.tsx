@@ -8,6 +8,11 @@ import type {
   HomeRadiusFilter,
   HomeSafetyFilter,
 } from '../../lib/homeFeedConstants';
+import {
+  isScheduleFilterActive,
+  summarizeHomeSchedule,
+  type HomeScheduleFilter,
+} from '../../lib/homeScheduleFilter';
 
 export interface HomeActiveFilterChipsProps {
   activeCategory: string;
@@ -27,6 +32,8 @@ export interface HomeActiveFilterChipsProps {
   activeMood: string | null;
   onClearMood: () => void;
   onClearAll: () => void;
+  schedule?: HomeScheduleFilter;
+  onClearSchedule?: () => void;
 }
 
 export function HomeActiveFilterChips({
@@ -47,6 +54,8 @@ export function HomeActiveFilterChips({
   activeMood,
   onClearMood,
   onClearAll,
+  schedule,
+  onClearSchedule,
 }: HomeActiveFilterChipsProps) {
   const { t } = useLanguage();
   const categoryTranslations = getHomeCategoryTranslations(t);
@@ -110,6 +119,14 @@ export function HomeActiveFilterChips({
       key: 'host',
       label: t('Χωρίς διοργανωτή', 'Seeking organizer'),
       onRemove: onToggleSeekingHostOnly,
+    });
+  }
+  if (schedule && onClearSchedule && isScheduleFilterActive(schedule)) {
+    const summary = summarizeHomeSchedule(schedule);
+    chips.push({
+      key: 'schedule',
+      label: t(summary.el, summary.en),
+      onRemove: onClearSchedule,
     });
   }
 

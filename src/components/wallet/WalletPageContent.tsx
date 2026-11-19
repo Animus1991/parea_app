@@ -14,6 +14,7 @@ import { WALLET_TYPO } from '../../lib/typographyTokens';
 import { formatWalletEur, WALLET_DEMO } from '../../lib/walletDemo';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
+import { AppSelect } from '../common/AppSelect';
 
 export default function WalletPageContent() {
   const { t } = useLanguage();
@@ -96,16 +97,17 @@ export default function WalletPageContent() {
       <Card className="mt-2">
         <div className={cn("p-4 md:p-4 border-b flex items-center justify-between", a.borderB)}>
           <h2 className={cn(WALLET_TYPO.sectionInCard, a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
-          <select
+          <AppSelect
             className={cn("filter-select border outline-none", a.selectBg)}
             value={txFilter}
-            onChange={(e) => setTxFilter(e.target.value as typeof txFilter)}
-            aria-label={t('Φίλτρο συναλλαγών', 'Transaction filter')}
-          >
-            <option value="all">{t('Όλες', 'All Time')}</option>
-            <option value="month">{t('Αυτόν τον Μήνα', 'This Month')}</option>
-            <option value="last">{t('Προηγούμενο', 'Last Month')}</option>
-          </select>
+            onValueChange={(v) => setTxFilter(v as typeof txFilter)}
+            ariaLabel={t('Φίλτρο συναλλαγών', 'Transaction filter')}
+            options={[
+              { value: 'all', label: t('Όλες', 'All Time') },
+              { value: 'month', label: t('Αυτόν τον Μήνα', 'This Month') },
+              { value: 'last', label: t('Προηγούμενο', 'Last Month') },
+            ]}
+          />
         </div>
         <div className={a.divider}>
           {filteredTx.length === 0 ? (

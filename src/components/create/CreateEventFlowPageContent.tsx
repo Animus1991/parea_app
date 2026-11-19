@@ -27,6 +27,7 @@ import { generateEventBlurb } from "../../services/gemini";
 import { Bot } from "lucide-react";
 import { useFormDraft, type FormDraftFields } from "../../lib/formDraft";
 import { APP_TYPO } from "../../lib/typographyTokens";
+import { AppSelect } from "../common/AppSelect";
 
 export default function CreateEventFlowPageContent() {
   const [step, setStep] = useState(1);
@@ -326,25 +327,23 @@ export default function CreateEventFlowPageContent() {
                   <label htmlFor="create-category" className={labelClass}>
                     {t("Κατηγορία", "Category")}
                   </label>
-                  <select
+                  <AppSelect
                     id="create-category"
+                    ariaLabel={t("Κατηγορία", "Category")}
                     value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    onValueChange={setCategory}
+                    placeholder={t("Επιλέξτε κατηγορία...", "Select a category...")}
                     className={cn(inputClass, "bg-transparent")}
-                  >
-                    <option value="">
-                      {t("Επιλέξτε κατηγορία...", "Select a category...")}
-                    </option>
-                    {/* Canonical feed categories → created events show up under the same Home / Categories filters. */}
-                    {Object.entries(categoryLabels)
-                      .filter(([key]) => key !== 'All')
-                      .map(([key, label]) => (
-                        <option key={key} value={key}>
-                          {label}
-                        </option>
-                      ))}
-                    {category && !(category in categoryLabels) && <option value={category}>{category}</option>}
-                  </select>
+                    options={[
+                      { value: "", label: t("Επιλέξτε κατηγορία...", "Select a category...") },
+                      ...Object.entries(categoryLabels)
+                        .filter(([key]) => key !== "All")
+                        .map(([key, label]) => ({ value: key, label })),
+                      ...(category && !(category in categoryLabels)
+                        ? [{ value: category, label: category }]
+                        : []),
+                    ]}
+                  />
                 </div>
 
                 <div>
@@ -430,18 +429,20 @@ export default function CreateEventFlowPageContent() {
                   <label htmlFor="create-duration" className={cn(labelClass, "flex items-center gap-1.5")}>
                     <Clock className="w-3.5 h-3.5" /> {t("Διάρκεια", "Duration")}
                   </label>
-                  <select
+                  <AppSelect
                     id="create-duration"
+                    ariaLabel={t("Διάρκεια", "Duration")}
                     value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
+                    onValueChange={setDuration}
                     className={cn(inputClass, "bg-transparent")}
-                  >
-                    <option value="1h">1 {t("ώρα", "hour")}</option>
-                    <option value="2h">2 {t("ώρες", "hours")}</option>
-                    <option value="3h">3 {t("ώρες", "hours")}</option>
-                    <option value="4+h">4+ {t("ώρες", "hours")}</option>
-                    <option value="custom">{t("Προσαρμοσμένη", "Custom")}</option>
-                  </select>
+                    options={[
+                      { value: "1h", label: `1 ${t("ώρα", "hour")}` },
+                      { value: "2h", label: `2 ${t("ώρες", "hours")}` },
+                      { value: "3h", label: `3 ${t("ώρες", "hours")}` },
+                      { value: "4+h", label: `4+ ${t("ώρες", "hours")}` },
+                      { value: "custom", label: t("Προσαρμοσμένη", "Custom") },
+                    ]}
+                  />
                   {duration === "custom" && (
                      <input 
                        type="text" 

@@ -23,6 +23,7 @@ import { EventDetailMetaSection } from './EventDetailMetaSection';
 import { EventDetailQrModal } from './EventDetailQrModal';
 import EventDetailPageContent from './EventDetailPageContent';
 import { LookingForCompanyPanel } from '../buddySeek/LookingForCompanyPanel';
+import { AppSelect } from '../common/AppSelect';
 import { computeMatchScore } from '../../lib/matching';
 import { NakamasGoing } from '../outings/NakamasGoing';
 import { HikeRouteCard } from '../outings/HikeRouteCard';
@@ -271,18 +272,19 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                 <div className="flex gap-2">
                   <span className="text-2xs font-bold text-ink-muted mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
                   <div className="flex flex-wrap gap-2 flex-1">
-                    <select
-                      aria-label={t('Μέγεθος ομάδας', 'Group size')}
+                    <AppSelect
+                      ariaLabel={t('Μέγεθος ομάδας', 'Group size')}
                       value={groupSizeFilter}
-                      onChange={(e) => setGroupSizeFilter(e.target.value as typeof groupSizeFilter)}
-                      className="filter-select bg-surface border border-border focus:outline-none focus:ring-1 focus:ring-accent/50"
-                    >
-                      <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>
-                      <option value="3">{t('3 Μέλη', '3 Members')}</option>
-                      <option value="4">{t('4 Μέλη', '4 Members')}</option>
-                      <option value="5">{t('5 Μέλη', '5 Members')}</option>
-                      <option value="6+">{t('6+ Μέλη', '6+ Members')}</option>
-                    </select>
+                      onValueChange={(v) => setGroupSizeFilter(v as typeof groupSizeFilter)}
+                      className="filter-select bg-surface border border-border"
+                      options={[
+                        { value: 'All', label: t('Όλα τα Μεγέθη', 'Any Size') },
+                        { value: '3', label: t('3 Μέλη', '3 Members') },
+                        { value: '4', label: t('4 Μέλη', '4 Members') },
+                        { value: '5', label: t('5 Μέλη', '5 Members') },
+                        { value: '6+', label: t('6+ Μέλη', '6+ Members') },
+                      ]}
+                    />
                     {event.isPaid && event.groupDiscount && (
                       <button
                         onClick={() => setDiscountFilter(!discountFilter)}

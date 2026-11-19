@@ -10,7 +10,6 @@ import { useThemeStyles } from "../hooks/useThemeStyles";
 import { HomeLoggedInHero } from "../components/home/HomeLoggedInHero";
 import { HomePendingFeedbackBanner } from "../components/home/HomePendingFeedbackBanner";
 import { HomeVerifyBanner } from "../components/home/HomeVerifyBanner";
-import { HomeBelowFold } from "../components/home/HomeBelowFold";
 import { getTimeGreeting, getMotivation } from "../lib/homeGreeting";
 import { HomeSearchDropdown } from "../components/home/HomeSearchDropdown";
 import { useOnboardingWelcome } from "../hooks/useOnboardingWelcome";
@@ -22,6 +21,7 @@ import { HomeFeedToolbar } from "../components/home/HomeFeedToolbar";
 import { HomeDiscoverEnrichment } from "../components/home/HomeDiscoverEnrichment";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
+import { emptyHomeSchedule, isScheduleFilterActive } from "../lib/homeScheduleFilter";
 
 export default function HomeClassic() {
   const h = useHomeTheme();
@@ -37,6 +37,9 @@ export default function HomeClassic() {
     setShowSearchSuggestions,
     filterSheetOpen,
     setFilterSheetOpen,
+    filtersExpanded,
+    filtersOpen,
+    toggleFilters,
     seekingHostOnly,
     setSeekingHostOnly,
     visibleEvents,
@@ -44,7 +47,6 @@ export default function HomeClassic() {
     loadMoreEvents,
     searchRef,
     loadMoreRef,
-    scrollToFilters,
     storyEvents,
     seekingHostEvents,
     feed,
@@ -74,6 +76,8 @@ export default function HomeClassic() {
     activeFilterCount,
     activeMood,
     handleSelectMood,
+    schedule,
+    setSchedule,
     isLoading,
     isError,
     refetch,
@@ -84,8 +88,6 @@ export default function HomeClassic() {
   useEffect(() => {
     if (showWelcome) setFeedType("Discover");
   }, [showWelcome, setFeedType]);
-
-  const enrichment = <HomeDiscoverEnrichment storyEvents={storyEvents} />;
 
   return (
     <div className="space-y-4 md:space-y-5 pb-5 md:pb-0">
@@ -117,32 +119,7 @@ export default function HomeClassic() {
       )}
       <HomeVerifyBanner />
       <HomePendingFeedbackBanner />
-
-      <HomeFiltersSection
-        activeCategory={activeCategory}
-        setActiveCategory={setActiveCategory}
-        tagFilter={tagFilter}
-        setTagFilter={setTagFilter}
-        priceFilter={priceFilter}
-        setPriceFilter={setPriceFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        safetyFilter={safetyFilter}
-        setSafetyFilter={setSafetyFilter}
-        radiusFilter={radiusFilter}
-        setRadiusFilter={setRadiusFilter}
-        sortParam={sortParam}
-        setSortParam={setSortParam}
-        seekingHostOnly={seekingHostOnly}
-        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
-        showSeekingHostChip={seekingHostEvents.length > 0}
-        hasActiveFilters={hasActiveFilters || seekingHostOnly}
-        onClearAll={handleClearAll}
-        onOpenMobileFilters={() => setFilterSheetOpen(true)}
-        activeFilterCount={activeFilterCount}
-        activeMood={activeMood}
-        onSelectMood={handleSelectMood}
-      />
+      <HomeDiscoverEnrichment storyEvents={storyEvents} />
 
       <section>
         <HomeFeedToolbar
@@ -152,12 +129,43 @@ export default function HomeClassic() {
           isLoading={isLoading}
           tabClassName={(active) =>
             cn(
-              'filter-chip px-4 text-xs font-bold transition-all duration-200 rounded-full',
+              'filter-chip px-4 text-xs font-bold leading-none whitespace-nowrap transition-all duration-200 rounded-full',
               active ? h.feedTabActive : h.feedTabInactive,
             )
           }
           mapClassName={tok.isDark ? 'border-gray-600/50 text-gray-300' : 'border-gray-200 text-ink-muted'}
+          filtersOpen={filtersOpen}
+          onToggleFilters={toggleFilters}
+          activeFilterCount={activeFilterCount + (seekingHostOnly ? 1 : 0)}
         />
+
+        <HomeFiltersSection
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+          tagFilter={tagFilter}
+          setTagFilter={setTagFilter}
+          priceFilter={priceFilter}
+          setPriceFilter={setPriceFilter}
+          dateFilter={dateFilter}
+          setDateFilter={setDateFilter}
+          safetyFilter={safetyFilter}
+          setSafetyFilter={setSafetyFilter}
+          radiusFilter={radiusFilter}
+          setRadiusFilter={setRadiusFilter}
+          sortParam={sortParam}
+          setSortParam={setSortParam}
+          seekingHostOnly={seekingHostOnly}
+          onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
+          showSeekingHostChip={seekingHostEvents.length > 0}
+          hasActiveFilters={hasActiveFilters || seekingHostOnly}
+          onClearAll={handleClearAll}
+          activeMood={activeMood}
+          onSelectMood={handleSelectMood}
+          expanded={filtersExpanded}
+          schedule={schedule}
+          setSchedule={setSchedule}
+        />
+
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
@@ -175,63 +183,64 @@ export default function HomeClassic() {
               />
             </div>
           ) : sortedEvents.length === 0 ? (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 space-y-4">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3">
               <EmptyState
                 icon={CalendarX}
                 title={t("home.feed.no_events", "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.")}
-                description={t(
-                  'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
-                  'Try changing filters or category — or see what’s nearby.',
-                )}
+                description={
+                  isScheduleFilterActive(schedule)
+                    ? t(
+                        'Καμία βραδιά δεν χωράει σε αυτές τις μέρες και ώρες. Διεύρυνε το πρόγραμμα — ο κατάλογος είναι ακόμα εκεί.',
+                        'No nights fit these days and hours. Widen the schedule — the catalog is still there.',
+                      )
+                    : t(
+                        'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
+                        'Try changing filters or category — or see what’s nearby.',
+                      )
+                }
                 actionLabel={
-                  hasActiveFilters || seekingHostOnly
-                    ? t('Εκκαθάριση φίλτρων', 'Clear filters')
-                    : t('Στον χάρτη', 'On the map')
+                  isScheduleFilterActive(schedule)
+                    ? t('Διεύρυνε τις ώρες', 'Widen hours')
+                    : hasActiveFilters || seekingHostOnly
+                      ? t('Εκκαθάριση φίλτρων', 'Clear filters')
+                      : t('Στον χάρτη', 'On the map')
                 }
                 onAction={
-                  hasActiveFilters || seekingHostOnly
-                    ? handleClearAll
-                    : () => navigate('/nearby')
+                  isScheduleFilterActive(schedule)
+                    ? () => setSchedule(emptyHomeSchedule())
+                    : hasActiveFilters || seekingHostOnly
+                      ? handleClearAll
+                      : () => navigate('/nearby')
                 }
                 secondaryLabel={
-                  hasActiveFilters || seekingHostOnly
-                    ? t('Στον χάρτη', 'On the map')
-                    : t('Κατηγορίες', 'Categories')
+                  isScheduleFilterActive(schedule)
+                    ? t('Εκκαθάριση φίλτρων', 'Clear filters')
+                    : hasActiveFilters || seekingHostOnly
+                      ? t('Στον χάρτη', 'On the map')
+                      : t('Κατηγορίες', 'Categories')
                 }
                 onSecondary={
-                  hasActiveFilters || seekingHostOnly
-                    ? () => navigate('/nearby')
-                    : () => navigate('/categories')
+                  isScheduleFilterActive(schedule)
+                    ? handleClearAll
+                    : hasActiveFilters || seekingHostOnly
+                      ? () => navigate('/nearby')
+                      : () => navigate('/categories')
                 }
               />
-              {enrichment}
             </div>
           ) : (
-            visibleEvents.flatMap((event, index) => {
-              const card = (
-                <motion.div
-                  key={event.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <EventCard event={event} />
-                </motion.div>
-              );
-              if (index !== 2) return [card];
-              return [
-                <div key="discover-enrichment" className="col-span-1 sm:col-span-2 lg:col-span-3">
-                  {enrichment}
-                </div>,
-                card,
-              ];
-            })
+            visibleEvents.map((event, index) => (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+              >
+                <EventCard event={event} />
+              </motion.div>
+            ))
           )}
         </div>
-
-        {!isLoading && visibleEvents.length > 0 && visibleEvents.length < 3 && (
-          <div className="mt-4">{enrichment}</div>
-        )}
 
         {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
@@ -248,18 +257,6 @@ export default function HomeClassic() {
           </div>
         )}
       </section>
-
-      <HomeBelowFold
-        useClassicTokens
-        onScrollToCategories={scrollToFilters}
-        seekingHostEvents={seekingHostEvents}
-        seekingHostOnly={seekingHostOnly}
-        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
-        stepCardClass={h.card}
-        stepCircleClass={h.stepBadge}
-        stepTitleClass={h.stepTitle}
-        stepBodyClass={h.stepBody}
-      />
 
       <HomeMobileFilterSheet
         open={filterSheetOpen}
@@ -288,6 +285,8 @@ export default function HomeClassic() {
         setTagFilter={setTagFilter}
         activeMood={activeMood}
         onSelectMood={handleSelectMood}
+        schedule={schedule}
+        setSchedule={setSchedule}
       />
     </div>
   );

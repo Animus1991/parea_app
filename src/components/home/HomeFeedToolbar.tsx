@@ -1,7 +1,11 @@
-import { Map as MapIcon } from 'lucide-react';
+import { Map as MapIcon, SlidersHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
+
+const TOOLBAR_CHIP =
+  'filter-chip text-xs font-bold leading-none px-3 gap-1.5 rounded-full border shrink-0 whitespace-nowrap';
+const TOOLBAR_ICON = 'size-3.5 shrink-0';
 
 export interface HomeFeedToolbarProps {
   feedType: 'For You' | 'Discover';
@@ -11,6 +15,10 @@ export interface HomeFeedToolbarProps {
   tabWrapClassName?: string;
   tabClassName: (active: boolean) => string;
   mapClassName: string;
+  actionsWrapClassName?: string;
+  filtersOpen?: boolean;
+  onToggleFilters?: () => void;
+  activeFilterCount?: number;
 }
 
 export function HomeFeedToolbar({
@@ -21,14 +29,18 @@ export function HomeFeedToolbar({
   tabWrapClassName,
   tabClassName,
   mapClassName,
+  actionsWrapClassName,
+  filtersOpen = false,
+  onToggleFilters,
+  activeFilterCount = 0,
 }: HomeFeedToolbarProps) {
   const { t } = useLanguage();
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-between gap-2 mb-3">
-      <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5">
-        <div className={cn('flex gap-2', tabWrapClassName)}>
+    <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="flex min-w-0 items-center gap-2">
+        <div className={cn('flex items-center gap-2', tabWrapClassName)}>
           <button
             type="button"
             onClick={() => setFeedType('For You')}
@@ -41,11 +53,11 @@ export function HomeFeedToolbar({
             onClick={() => setFeedType('Discover')}
             className={tabClassName(feedType === 'Discover')}
           >
-            {t('home.feed.discover', 'Ανακάλυψε')}
+            {t('home.feed.discover', 'Όλες')}
           </button>
         </div>
         {!isLoading && resultCount > 0 && (
-          <p className="text-xs font-semibold text-ink-muted">
+          <p className="hidden h-[1.75rem] items-center text-xs font-semibold leading-none text-ink-muted whitespace-nowrap sm:inline-flex">
             {resultCount === 1
               ? t('1 αποτέλεσμα', '1 result')
               : t(`${resultCount} αποτελέσματα`, `${resultCount} results`)}
@@ -53,19 +65,47 @@ export function HomeFeedToolbar({
         )}
       </div>
 
-      <button
-        type="button"
-        onClick={() => navigate('/nearby')}
-        className={cn(
-          'inline-flex min-h-8 shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 transition-colors',
-          mapClassName,
+      <div className={cn('flex shrink-0 items-center gap-2', actionsWrapClassName)}>
+        {onToggleFilters && (
+          <button
+            type="button"
+            onClick={onToggleFilters}
+            aria-expanded={filtersOpen}
+            aria-controls="home-filters"
+            className={cn(
+              TOOLBAR_CHIP,
+              filtersOpen
+                ? 'border-accent bg-accent text-accent-fg'
+                : mapClassName,
+            )}
+            title={t('Φίλτρα αναζήτησης', 'Search filters')}
+            aria-label={t('Φίλτρα αναζήτησης', 'Search filters')}
+          >
+            <SlidersHorizontal className={TOOLBAR_ICON} aria-hidden />
+            <span>{t('Φίλτρα', 'Filters')}</span>
+            {activeFilterCount > 0 && (
+              <span
+                className={cn(
+                  'inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-2xs font-bold leading-none',
+                  filtersOpen ? 'bg-accent-fg/20 text-accent-fg' : 'bg-accent text-accent-fg',
+                )}
+              >
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
         )}
-        title={t('Άνοιγμα Χάρτη', 'Open Map')}
-        aria-label={t('Άνοιγμα Χάρτη', 'Open Map')}
-      >
-        <MapIcon className="w-4 h-4" aria-hidden />
-        <span className="text-xs font-bold">{t('Χάρτης', 'Map')}</span>
-      </button>
+        <button
+          type="button"
+          onClick={() => navigate('/nearby')}
+          className={cn(TOOLBAR_CHIP, mapClassName)}
+          title={t('Άνοιγμα Χάρτη', 'Open Map')}
+          aria-label={t('Άνοιγμα Χάρτη', 'Open Map')}
+        >
+          <MapIcon className={TOOLBAR_ICON} aria-hidden />
+          <span>{t('Χάρτης', 'Map')}</span>
+        </button>
+      </div>
     </div>
   );
 }

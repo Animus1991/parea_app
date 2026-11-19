@@ -8,8 +8,9 @@ import { HomePersonalizationHint } from './HomePersonalizationHint';
 import { HomeDiscoveryPrefsChips } from './HomeDiscoveryPrefsChips';
 import { HomeFilterSelect } from './HomeFilterSelect';
 import { MoodSelector } from './MoodSelector';
-import { HomeQuickDecisionRow } from './HomeQuickDecisionRow';
 import { HomeActiveFilterChips } from './HomeActiveFilterChips';
+import { HomeScheduleFilterPanel } from './HomeScheduleFilterPanel';
+import { emptyHomeSchedule, type HomeScheduleFilter } from '../../lib/homeScheduleFilter';
 import { HOME_TYPO } from '../../lib/typographyTokens';
 import type {
   HomeDateFilter,
@@ -40,10 +41,12 @@ export interface HomeFiltersSectionProps {
   showSeekingHostChip: boolean;
   hasActiveFilters: boolean;
   onClearAll: () => void;
-  onOpenMobileFilters: () => void;
-  activeFilterCount: number;
   activeMood?: string | null;
   onSelectMood?: (moodId: string | null, categories: string[]) => void;
+  /** Desktop/web: inline panel is collapsed until the toolbar Φίλτρα button expands it. */
+  expanded?: boolean;
+  schedule: HomeScheduleFilter;
+  setSchedule: (next: HomeScheduleFilter) => void;
 }
 
 export function HomeFiltersSection({
@@ -66,10 +69,11 @@ export function HomeFiltersSection({
   showSeekingHostChip,
   hasActiveFilters,
   onClearAll,
-  onOpenMobileFilters,
-  activeFilterCount,
   activeMood = null,
   onSelectMood,
+  expanded = false,
+  schedule,
+  setSchedule,
 }: HomeFiltersSectionProps) {
   const { t } = useLanguage();
   const h = useHomeTheme();
@@ -93,39 +97,32 @@ export function HomeFiltersSection({
 
   return (
     <section id="home-filters" className="space-y-3 scroll-mt-24">
-      <div className="md:hidden space-y-2">
-        <HomeQuickDecisionRow
-          dateFilter={dateFilter}
-          setDateFilter={setDateFilter}
-          radiusFilter={radiusFilter}
-          setRadiusFilter={setRadiusFilter}
-          priceFilter={priceFilter}
-          setPriceFilter={setPriceFilter}
-          onOpenFilters={onOpenMobileFilters}
-          activeFilterCount={activeFilterCount}
-        />
-        <HomeActiveFilterChips
-          activeCategory={activeCategory}
-          setActiveCategory={setActiveCategory}
-          tagFilter={tagFilter}
-          setTagFilter={setTagFilter}
-          priceFilter={priceFilter}
-          setPriceFilter={setPriceFilter}
-          dateFilter={dateFilter}
-          setDateFilter={setDateFilter}
-          safetyFilter={safetyFilter}
-          setSafetyFilter={setSafetyFilter}
-          radiusFilter={radiusFilter}
-          setRadiusFilter={setRadiusFilter}
-          seekingHostOnly={seekingHostOnly}
-          onToggleSeekingHostOnly={onToggleSeekingHostOnly}
-          activeMood={activeMood}
-          onClearMood={() => onSelectMood?.(null, [])}
-          onClearAll={onClearAll}
-        />
-      </div>
+      <HomeActiveFilterChips
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+        tagFilter={tagFilter}
+        setTagFilter={setTagFilter}
+        priceFilter={priceFilter}
+        setPriceFilter={setPriceFilter}
+        dateFilter={dateFilter}
+        setDateFilter={setDateFilter}
+        safetyFilter={safetyFilter}
+        setSafetyFilter={setSafetyFilter}
+        radiusFilter={radiusFilter}
+        setRadiusFilter={setRadiusFilter}
+        seekingHostOnly={seekingHostOnly}
+        onToggleSeekingHostOnly={onToggleSeekingHostOnly}
+        activeMood={activeMood}
+        onClearMood={() => onSelectMood?.(null, [])}
+        onClearAll={onClearAll}
+        schedule={schedule}
+        onClearSchedule={() => setSchedule(emptyHomeSchedule())}
+      />
 
-      <div className="hidden md:block space-y-3">
+      {expanded && (
+      <div className="hidden space-y-3 lg:block">
+        <HomeScheduleFilterPanel schedule={schedule} onChange={setSchedule} />
+
         <h2 className={`${HOME_TYPO.sectionLabel} ${h.sectionLabel}`}>
           {t('home.explore_categories', 'Explore Categories')}
         </h2>
@@ -263,6 +260,7 @@ export function HomeFiltersSection({
           )}
         </div>
       </div>
+      )}
     </section>
   );
 }

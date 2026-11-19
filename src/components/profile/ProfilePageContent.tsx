@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Card } from "../common/Card";
 import { Badge } from "../common/Badge";
 import { Button } from "../common/Button";
+import { AppSelect } from "../common/AppSelect";
 import { useStore } from "../../store";
 import { tierLabelEl, tierLabelEn } from "../../lib/trust";
 import { pressable } from "../../lib/a11y";
@@ -632,20 +633,21 @@ export default function ProfilePageContent() {
                   <p className={cn(PROFILE_TYPO.rowMeta, 'mt-0.5', sub)}>{t("Ποιοι μπορούν να ξεκινήσουν συνομιλία.", "Who can start a chat with you.")}</p>
                 </div>
               </div>
-              <select aria-label={t("Ποιος μπορεί να σας στείλει μήνυμα", "Who can message you")}
+              <AppSelect
+                ariaLabel={t("Ποιος μπορεί να σας στείλει μήνυμα", "Who can message you")}
                 value={userSettings.privacy.messagePermission}
-                onChange={(e) => {
-                  const v = e.target.value;
+                onValueChange={(v) => {
                   if (v === 'everyone' || v === 'connections' || v === 'groups') {
                     patchPrivacy({ messagePermission: v });
                   }
                 }}
                 className={`filter-select outline-none border ${a.selectBg} ${a.selectRing}`}
-              >
-                <option value="everyone">{t("Όλοι", "Everyone")}</option>
-                <option value="connections">{t("Μόνο συνδέσεις Nakamas", "Connections only")}</option>
-                <option value="groups">{t("Ομάδες ίδιας εκδήλωσης", "Same event groups")}</option>
-              </select>
+                options={[
+                  { value: "everyone", label: t("Όλοι", "Everyone") },
+                  { value: "connections", label: t("Μόνο συνδέσεις Nakamas", "Connections only") },
+                  { value: "groups", label: t("Ομάδες ίδιας εκδήλωσης", "Same event groups") },
+                ]}
+              />
             </div>
 
             {/* Share Location */}

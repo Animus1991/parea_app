@@ -5,7 +5,9 @@ import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { HOME_CATEGORIES, HOME_POPULAR_TAGS } from '../../lib/homeFeedConstants';
 import { getHomeCategoryTranslations, getHomeTagTranslations } from '../../lib/homeCategoryLabels';
 import { MoodSelector } from './MoodSelector';
+import { HomeScheduleFilterPanel } from './HomeScheduleFilterPanel';
 import { cn } from '../../lib/utils';
+import type { HomeScheduleFilter } from '../../lib/homeScheduleFilter';
 import type {
   HomeDateFilter,
   HomePriceFilter,
@@ -38,6 +40,8 @@ export interface HomeMobileFilterSheetProps {
   setTagFilter: (v: string) => void;
   activeMood: string | null;
   onSelectMood: (moodId: string | null, categories: string[]) => void;
+  schedule: HomeScheduleFilter;
+  setSchedule: (next: HomeScheduleFilter) => void;
 }
 
 export function HomeMobileFilterSheet({
@@ -64,6 +68,8 @@ export function HomeMobileFilterSheet({
   setTagFilter,
   activeMood,
   onSelectMood,
+  schedule,
+  setSchedule,
 }: HomeMobileFilterSheetProps) {
   const { t } = useLanguage();
   const h = useHomeTheme();
@@ -80,6 +86,7 @@ export function HomeMobileFilterSheet({
       onClear={onClear}
     >
       <div className="space-y-4">
+        <HomeScheduleFilterPanel schedule={schedule} onChange={setSchedule} />
         <MoodSelector activeMood={activeMood} onSelectMood={onSelectMood} />
 
         <div>

@@ -43,6 +43,23 @@ describe('filterHomeEvents', () => {
     const result = filterHomeEvents({ events: [past, next], ...filters });
     expect(result.map((e) => e.id).sort()).toEqual(['e30', 'e4']);
   });
+
+  it('hides nights that cannot fit a Thursday evening window', () => {
+    const thursdayNight = base({ id: 'fit', date: '2026-11-19', time: '21:00' });
+    const fridayMorning = base({ id: 'noise', date: '2026-11-20', time: '10:00' });
+    const result = filterHomeEvents({
+      events: [thursdayNight, fridayMorning],
+      ...filters,
+      schedule: {
+        dates: [],
+        weekdays: [4],
+        windowIds: ['night'],
+        hourFrom: null,
+        hourTo: null,
+      },
+    });
+    expect(result.map((e) => e.id)).toEqual(['fit']);
+  });
 });
 
 describe('sortHomeEvents', () => {

@@ -45,6 +45,7 @@ import { toast } from "sonner";
 import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
 import { TileLayer, Marker } from "react-leaflet";
 import { LeafletMapHost, LeafletMapReady } from "../common/LeafletMapHost";
+import { AppSelect } from "../common/AppSelect";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -112,6 +113,40 @@ function EventCardMiniMap({ lat, lng, isDark, className }: { lat: number; lng: n
       ) : (
         <div className="h-full w-full bg-gray-100 dark:bg-gray-800" aria-hidden />
       )}
+    </div>
+  );
+}
+
+function CardFact({
+  icon: Icon,
+  label,
+  detail,
+  wellClass,
+  labelClass,
+  detailClass,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  detail?: string | null;
+  wellClass: string;
+  labelClass: string;
+  detailClass: string;
+}) {
+  const spoken = detail ? `${label}, ${detail}` : label;
+  return (
+    <div
+      className="flex min-w-0 items-center gap-2.5 text-left @[20rem]:flex-col @[20rem]:items-center @[20rem]:gap-1.5 @[20rem]:text-center"
+      title={spoken}
+    >
+      <span className={wellClass} aria-hidden>
+        <Icon className="h-4 w-4" />
+      </span>
+      <span className="min-w-0 w-full">
+        <span className={cn('block truncate leading-snug', labelClass)}>{label}</span>
+        {detail ? (
+          <span className={cn('mt-0.5 block truncate leading-snug', detailClass)}>{detail}</span>
+        ) : null}
+      </span>
     </div>
   );
 }
@@ -260,11 +295,25 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
   const eventDate = parseISO(event.date);
   const day = format(eventDate, "d");
   const month = format(eventDate, "MMM", { locale: dateLocale });
-  const weekday = format(eventDate, "EEEE", { locale: dateLocale });
+  const weekday = format(eventDate, "EEEE", { locale: dateLocale }).replace(/^./, (c) => c.toUpperCase());
+  const locationLine = formatLocationArea(event.locationArea, language);
+  const locationComma = locationLine.indexOf(',');
+  const locationPrimary = locationComma >= 0 ? locationLine.slice(0, locationComma).trim() : locationLine;
+  const locationDetail = locationComma >= 0 ? locationLine.slice(locationComma + 1).trim() : null;
+  const overlayCtl =
+    "flex h-9 w-9 @[20rem]:h-11 @[20rem]:w-11 items-center justify-center rounded-xl backdrop-blur-md focus:outline-none transition-colors";
+  const factWell = cn(
+    "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
+    isDark ? "bg-white/[0.06] text-gray-400" : "bg-gray-50 text-gray-500",
+  );
+  const socialWell = cn(
+    "rounded-xl px-3 py-2.5",
+    isDark ? "bg-white/[0.04]" : "bg-gray-50/90",
+  );
 
   return (
     <Card
-      className={cn("flex h-full flex-col overflow-hidden cursor-pointer relative group border border-gray-100/80 hover:border-gray-200 transition-colors duration-200 rounded-2xl p-0", isDark ? "border-white/5 bg-gray-800/60 hover:border-white/10" : "bg-white")}
+      className={cn("@container flex h-full flex-col overflow-hidden cursor-pointer relative group border border-gray-100/80 hover:border-gray-200 transition-colors duration-200 rounded-2xl p-0", isDark ? "border-white/5 bg-gray-800/60 hover:border-white/10" : "bg-white")}
       onClick={() => navigate(`/events/${event.id}`)}
       containsControls
     >
@@ -293,8 +342,8 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0" />
 
-        {/* Date Badge — top left */}
-        <div className="absolute top-3 left-3 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm rounded-xl w-11 h-[46px] shadow-soft z-10">
+        {/* Date Badge — same frame size as share/save */}
+        <div className="absolute top-3 left-3 flex h-9 w-9 @[20rem]:h-11 @[20rem]:w-11 flex-col items-center justify-center bg-white/90 backdrop-blur-md rounded-xl shadow-soft z-10">
           <span className={cn(EVENT_CARD_TYPO.badge, "mb-0.5", accent === 'fuchsia' ? 'text-gray-500' : accent === 'indigo' ? 'text-indigo-600' : accent === 'emerald' ? 'text-emerald-600' : 'text-brand')}>
             {month}
           </span>
@@ -303,10 +352,10 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
           </span>
         </div>
 
-        {/* Action buttons — top right */}
-        <div className="absolute top-3 right-3 z-10 flex gap-1.5">
+        {/* Action buttons — top right, same 44×44 frames */}
+        <div className="absolute top-3 right-3 z-10 flex gap-2">
           <button
-            className="p-2 rounded-full backdrop-blur-md focus:outline-none transition-colors bg-white/75 hover:bg-white text-gray-600 hover:text-gray-900"
+            className={cn(overlayCtl, "bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900")}
             onClick={handleShare}
             title={t("Κοινοποίηση", "Share")}
             aria-label={t("Κοινοποίηση", "Share")}
@@ -314,7 +363,12 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
             <Share2 className="h-4 w-4" />
           </button>
           <button
-            className={`p-2 rounded-full backdrop-blur-md focus:outline-none transition-colors ${isSaved ? (accent === 'fuchsia' ? 'bg-fuchsia-500/20 text-fuchsia-600' : accent === 'emerald' ? 'bg-emerald-500/20 text-emerald-600' : accent === 'indigo' ? 'bg-indigo-500/20 text-indigo-600' : 'bg-accent/20 text-brand') : "bg-white/75 hover:bg-white text-gray-600 hover:text-gray-900"}`}
+            className={cn(
+              overlayCtl,
+              isSaved
+                ? (accent === 'fuchsia' ? 'bg-fuchsia-500/20 text-fuchsia-600' : accent === 'emerald' ? 'bg-emerald-500/20 text-emerald-600' : accent === 'indigo' ? 'bg-indigo-500/20 text-indigo-600' : 'bg-accent/20 text-brand')
+                : "bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900",
+            )}
             onClick={toggleSave}
             title={t("Αποθήκευση", "Save")}
             aria-label={isSaved ? t("Αφαίρεση αποθήκευσης", "Remove from saved") : t("Αποθήκευση", "Save")}
@@ -326,19 +380,22 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
           </button>
         </div>
 
-        {/* Tags + Price — bottom of image */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between z-10 gap-2">
-          <div className="flex flex-nowrap overflow-hidden gap-1.5 flex-1 w-full max-w-[65%]">
-            {(event.tags ?? []).slice(0, 2).map((tag: string) => (
+        {/* Tags + Price — bottom of image, same chip height */}
+        <div className="absolute bottom-3 left-3 right-3 z-10 flex items-end justify-between gap-2">
+          <div className="flex min-w-0 max-w-[48%] flex-1 flex-nowrap gap-1.5 overflow-hidden">
+            {(event.tags ?? []).slice(0, 2).map((tag: string, i: number) => (
               <span
                 key={tag}
-                className="bg-black/35 backdrop-blur-sm text-white/95 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-medium tracking-wide whitespace-nowrap truncate max-w-[100px] text-xs"
+                className={cn(
+                  "inline-flex h-7 max-w-full items-center truncate rounded-full bg-black/40 px-2.5 text-xs font-medium tracking-wide text-white/95 backdrop-blur-sm whitespace-nowrap",
+                  i > 0 && "hidden @[20rem]:inline-flex",
+                )}
               >
                 {translateEventTag(tag, t)}
               </span>
             ))}
           </div>
-          <div className={cn("bg-white/90 backdrop-blur-sm px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-xl font-bold text-ink tracking-tight flex flex-col items-end shrink-0", EVENT_CARD_TYPO.dateBadge)}>
+          <div className={cn("z-10 bg-white/90 backdrop-blur-md min-h-7 max-w-[52%] px-2.5 py-1 rounded-xl font-bold text-ink tracking-tight flex flex-col items-end justify-center shrink-0 text-right", EVENT_CARD_TYPO.dateBadge)}>
             {formatEventPrice(event, language, t("Δωρεάν", "Free"), t("Δωρεάν", "Free"))}
             {event.isPaid && event.groupDiscount && (
               <span className={cn(EVENT_CARD_TYPO.dateSub, "text-brand block mt-0.5")}>
@@ -349,10 +406,10 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
         </div>
       </div>
 
-      {/* Content Section — quieter hierarchy; all info kept */}
-      <div className="p-4 flex flex-col flex-1 gap-0">
-        <div className="flex items-start justify-between gap-3 mb-1.5">
-          <h3 className={cn(EVENT_CARD_TYPO.title, "transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-brand'))}>
+      {/* Content — spaced blocks, aligned icon wells, no middot soup */}
+      <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className={cn(EVENT_CARD_TYPO.title, "min-h-11 min-w-0 flex-1 pr-1 transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-brand'))}>
             <Link
               to={`/events/${event.id}`}
               onClick={(e) => e.stopPropagation()}
@@ -364,7 +421,10 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
           {currentUser && matchScore != null && (
             <button
               type="button"
-              className="flex flex-col items-end shrink-0 pt-0.5 rounded-lg px-1 -mr-1 min-h-8 justify-center"
+              className={cn(
+                "flex min-h-11 shrink-0 flex-col items-center justify-center rounded-xl border px-3 py-1",
+                isDark ? "border-white/10 bg-white/[0.04]" : "border-gray-100 bg-gray-50",
+              )}
               title={t("Γιατί αυτό το ταίριασμα", "Why this match")}
               aria-expanded={showMatchWhy}
               aria-label={t(`${matchScore}% ταίριασμα — άνοιγμα εξήγησης`, `${matchScore}% match — open explanation`)}
@@ -373,56 +433,64 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
                 setShowMatchWhy((v) => !v);
               }}
             >
-              <span className={cn(EVENT_CARD_TYPO.matchScore, "font-bold inline-flex items-center gap-0.5", accent === 'fuchsia' ? headColor : accentText)}>
+              <span className={cn(EVENT_CARD_TYPO.matchScore, "inline-flex items-center gap-1 font-bold tabular-nums", accent === 'fuchsia' ? headColor : accentText)}>
                 {matchScore}%
-                <HelpCircle className="w-3 h-3 opacity-70" aria-hidden />
+                <HelpCircle className="h-3.5 w-3.5 opacity-70" aria-hidden />
               </span>
-              <span className={cn(EVENT_CARD_TYPO.matchLabel, mutedColor, "opacity-80")}>
+              <span className={cn(EVENT_CARD_TYPO.matchLabel, mutedColor, "mt-0.5 whitespace-nowrap opacity-80")}>
                 {t("Ταίριασμα", "Match")}
               </span>
             </button>
           )}
         </div>
 
-        <p className={cn("flex flex-wrap items-center gap-x-2 gap-y-1 font-medium leading-relaxed", EVENT_CARD_TYPO.meta, subColor)}>
-          <span className="inline-flex items-center gap-1 capitalize">
-            <Clock className={cn("w-3.5 h-3.5 shrink-0 opacity-70", mutedColor)} aria-hidden />
-            {weekday}, {event.time}
-          </span>
-          <span aria-hidden className={cn(mutedColor, "opacity-50")}>·</span>
-          <span className="inline-flex items-center gap-1 min-w-0">
-            <MapPin className={cn("w-3.5 h-3.5 shrink-0 opacity-70", mutedColor)} aria-hidden />
-            <span className="truncate max-w-[150px]">{formatLocationArea(event.locationArea, language)}</span>
-          </span>
-          <span aria-hidden className={cn(mutedColor, "opacity-50")}>·</span>
-          <span className="inline-flex items-center gap-1 tabular-nums">
-            <Users className={cn("w-3.5 h-3.5 shrink-0 opacity-70", mutedColor)} aria-hidden />
-            {groupProgress.spotsLeft} {t("θέσεις", "spots left")}
-          </span>
-        </p>
+        <div className="grid grid-cols-1 gap-2.5 @[20rem]:grid-cols-3 @[20rem]:gap-2">
+          <CardFact
+            icon={Clock}
+            label={weekday}
+            detail={event.time}
+            wellClass={factWell}
+            labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold capitalize", headColor)}
+            detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
+          />
+          <CardFact
+            icon={MapPin}
+            label={locationPrimary}
+            detail={locationDetail}
+            wellClass={factWell}
+            labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold", headColor)}
+            detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
+          />
+          <CardFact
+            icon={Users}
+            label={`${groupProgress.spotsLeft} ${t("θέσεις", "spots")}`}
+            wellClass={factWell}
+            labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold tabular-nums", headColor)}
+            detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
+          />
+        </div>
 
         {showMatchWhy && matchExplanation && (
-          <p className={cn(EVENT_CARD_TYPO.hint, "mt-2 font-medium", accentText)}>
+          <p className={cn(EVENT_CARD_TYPO.hint, socialWell, "font-medium", accentText)}>
             {matchExplanation.sharedStrengths[0]
               || matchExplanation.mismatchFlags[0]
               || t('Βασίζεται σε κοινά ενδιαφέροντα, κατηγορία και επίπεδο εμπιστοσύνης.', 'Based on shared interests, category and trust level.')}
           </p>
         )}
         {!showMatchWhy && matchingPreview ? (
-          <p className={cn(EVENT_CARD_TYPO.hint, "mt-2 font-medium", accentText, "opacity-90")}>
+          <p className={cn(EVENT_CARD_TYPO.hint, socialWell, "font-medium", accentText, "opacity-90")}>
             {t(matchingPreview.labelEl, matchingPreview.labelEn)}
           </p>
         ) : (
           !showMatchWhy && currentUser && (
-            <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className="mt-2" />
+            <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className={socialWell} />
           )
         )}
 
-        {/* Organizer — compact row */}
         {displayOrganizer && (
           <button
             type="button"
-            className="mt-2.5 flex items-center gap-2 text-left self-start min-h-9 group/org rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="flex min-h-11 items-center gap-2.5 self-start rounded-xl pr-2 text-left group/org focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/organizer/${displayOrganizer.id}`);
@@ -433,15 +501,17 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
                 referrerPolicy="no-referrer"
                 src={displayOrganizer.photoUrl}
                 alt=""
-                className={cn("w-6 h-6 rounded-full object-cover", isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}
+                className={cn("h-8 w-8 rounded-full object-cover", isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}
               />
-              <span className={cn("absolute -bottom-0.5 -right-0.5 bg-green-500 w-2 h-2 rounded-full border border-white", isDark ? "border-gray-800" : "border-white")} aria-hidden />
+              <span className={cn("absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 border", isDark ? "border-gray-800" : "border-white")} aria-hidden />
             </span>
-            <span className={cn("card-copy font-medium", mutedColor)}>
-              {hostUser && !organizer ? t('Διοργανωτής ομάδας', 'Group host') : t('Διοργανωτής', 'Organizer')}:
-            </span>
-            <span className={cn("card-copy font-semibold truncate max-w-[140px] group-hover/org:underline", headColor)}>
-              {displayOrganizer.name}
+            <span className="min-w-0">
+              <span className={cn("block truncate text-xs font-bold leading-tight group-hover/org:underline", headColor)}>
+                {displayOrganizer.name}
+              </span>
+              <span className={cn("card-copy-micro mt-0.5 block font-semibold leading-tight", mutedColor)}>
+                {hostUser && !organizer ? t('Διοργανωτής ομάδας', 'Group host') : t('Διοργανωτής', 'Organizer')}
+              </span>
             </span>
           </button>
         )}
@@ -449,36 +519,43 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
         {/* Platform event — seeks a group organizer. Hosting is primary only in the host rail. */}
         {seeksHost && joinState === 'join' && (
           <div className={cn(
-            "mt-3 rounded-2xl p-3 border",
+            "rounded-2xl p-3.5 border",
             emphasis === 'host'
               ? isDark ? "bg-amber-500/10 border-amber-500/25" : "bg-amber-50 border-amber-200"
               : isDark ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-200",
           )}>
-            <div className="flex items-center gap-2 mb-2">
-              <UserPlus className={cn("w-4 h-4 shrink-0", emphasis === 'host' ? (isDark ? "text-amber-400" : "text-amber-600") : mutedColor)} />
-              <div className="flex flex-col">
-                <span className={cn(EVENT_CARD_TYPO.avatarLabel, "capitalize", mutedColor)}>
-                  {t('Προσφέρεται από Nakamas', 'Offered by Nakamas')}
-                </span>
-                <span className={cn("text-xs font-bold", headColor)}>
+            <div className="mb-2.5 flex items-center gap-2.5">
+              <span className={cn(
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
+                emphasis === 'host'
+                  ? isDark ? "bg-amber-500/15 text-amber-400" : "bg-amber-100 text-amber-600"
+                  : factWell,
+              )}>
+                <UserPlus className="h-4 w-4" />
+              </span>
+              <div className="flex min-w-0 flex-col">
+                <span className={cn("text-xs font-bold leading-tight", headColor)}>
                   {t('Αναζητείται διοργανωτής', 'Looking for an organizer')}
+                </span>
+                <span className={cn(EVENT_CARD_TYPO.avatarLabel, "mt-0.5 capitalize leading-tight", mutedColor)}>
+                  {t('Προσφέρεται από Nakamas', 'Offered by Nakamas')}
                 </span>
               </div>
             </div>
             {emphasis === 'host' ? (
               <button
                 onClick={handleBecomeHost}
-                className={cn("w-full min-h-8 rounded-full font-bold transition-colors flex items-center justify-center gap-1.5", EVENT_CARD_TYPO.cta, isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
+                className={cn("flex min-h-9 w-full items-center justify-center gap-2 rounded-full font-bold transition-colors", EVENT_CARD_TYPO.cta, isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
               >
-                <Crown className="w-3.5 h-3.5" />
+                <Crown className="h-4 w-4" />
                 {t('Ανάλαβε τη διοργάνωση', 'Take on hosting')}
               </button>
             ) : (
               <button
                 onClick={handleBecomeHost}
-                className={cn("w-full min-h-8 rounded-full font-bold transition-colors flex items-center justify-center gap-1.5 border", EVENT_CARD_TYPO.cta, isDark ? "border-white/15 text-gray-200 hover:bg-white/5" : "border-gray-200 text-ink hover:bg-white")}
+                className={cn("flex min-h-9 w-full items-center justify-center gap-2 rounded-full border font-bold transition-colors", EVENT_CARD_TYPO.cta, isDark ? "border-white/15 text-gray-200 hover:bg-white/5" : "border-gray-200 text-ink hover:bg-white")}
               >
-                <Crown className="w-3.5 h-3.5" />
+                <Crown className="h-4 w-4" />
                 {t('Ανάλαβε τη διοργάνωση', 'Take on hosting')}
               </button>
             )}
@@ -486,14 +563,14 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
         )}
 
         {/* Group progress + actions */}
-        <div className={cn("mt-auto pt-3 border-t border-dashed", borderSub)}>
+        <div className={cn("mt-auto border-t pt-4", borderSub)}>
           <GroupProgressBar
             current={groupProgress.current}
             target={groupProgress.target}
-            className="mt-0.5 mb-2.5"
+            className="mb-3"
           />
           {groupProgress.discountUnlocked && event.groupDiscount && (
-            <p className={cn(EVENT_CARD_TYPO.safetyLabel, "mb-2", isDark ? "text-emerald-400" : "text-emerald-600")}>
+            <p className={cn(EVENT_CARD_TYPO.safetyLabel, "mb-2.5", isDark ? "text-emerald-400" : "text-emerald-600")}>
               -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
             </p>
           )}
@@ -509,13 +586,13 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
               aria-label={arrivalStatus ?? (isSharingLocation ? t("Κοινοποίηση τοποθεσίας", "Location sharing") : t("Χάρτης ομάδας", "Group map"))}
               title={t("Άφιξη & χάρτης", "Arrival & map")}
               className={cn(
-                "inline-flex min-w-0 shrink items-center gap-1.5 px-3 min-h-8 rounded-full text-xs font-semibold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                "inline-flex min-h-9 min-w-0 shrink items-center gap-2 rounded-full px-3.5 text-xs font-semibold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                 arrivalStatus || isSharingLocation
                   ? isDark ? "bg-emerald-950/40 text-emerald-300" : "bg-emerald-50 text-emerald-700"
                   : isDark ? "text-gray-300 hover:bg-white/[0.06]" : "text-gray-600 hover:bg-gray-50",
               )}
             >
-              <MapPin className={cn("w-3.5 h-3.5 shrink-0 opacity-80", accentText)} aria-hidden />
+              <MapPin className={cn("h-4 w-4 shrink-0 opacity-80", accentText)} aria-hidden />
               {/* With the chat button present the card is tight: icon only (name stays in aria-label). */}
               <span className={cn("truncate max-w-[110px]", userGroup && "sr-only")}>
                 {arrivalStatus ?? (isSharingLocation ? t("Τοποθεσία", "Sharing") : t("Χάρτης", "Map"))}
@@ -532,9 +609,9 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
                   }}
                   aria-label={t('Μετάβαση στο Group Chat', 'View Group Chat')}
                   title={t('Ομαδική συνομιλία', 'Group chat')}
-                  className={cn("min-h-8 min-w-8 rounded-full flex items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent", accentBg, accentText, isDark ? "border-white/10" : "border-transparent")}
+                  className={cn("flex h-9 w-9 items-center justify-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent", accentBg, accentText, isDark ? "border-white/10" : "border-transparent")}
                 >
-                  <MessageSquare className="w-4 h-4" aria-hidden />
+                  <MessageSquare className="h-4 w-4" aria-hidden />
                 </button>
               )}
               <button
@@ -564,7 +641,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
                   }
                   navigate(`/events/${event.id}/join`);
                 }}
-                className={cn("px-4 py-2 min-h-8 shrink-0 whitespace-nowrap text-white font-semibold rounded-full", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
+                className={cn("min-h-9 shrink-0 whitespace-nowrap rounded-full px-5 py-2 text-white font-semibold", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
               >
                 {joinState === 'rate'
                   ? t('Αξιολόγηση', 'Rate')
@@ -922,30 +999,35 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
                   <h4 className="text-xs font-bold capitalize text-gray-600 tracking-tight">
                     {t("3. Αυτόματη Λήξη", "3. Auto-Expiry")}
                   </h4>
-                  <select aria-label={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
+                  <AppSelect
+                    ariaLabel={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
                     value={locationConfig.duration}
-                    onChange={(e) =>
+                    onValueChange={(next) =>
                       setLocationConfig({
                         ...locationConfig,
-                        duration: e.target.value,
+                        duration: next,
                       })
                     }
-                    className="w-full border border-gray-100 rounded-2xl p-3 text-xs font-medium focus:ring-2 focus:ring-accent/40 bg-white outline-none shadow-soft"
-                  >
-                    <option value="arrival">
-                      {t(
-                        "Μέχρι να φτάσω στο σημείο",
-                        "Until I arrive at meeting point",
-                      )}
-                    </option>
-                    <option value="event_start">
-                      {t("Μέχρι να ξεκινήσει η εκδήλωση", "Until event starts")}
-                    </option>
-                    <option value="event_end">
-                      {t("Μέχρι το τέλος της εκδήλωσης", "Until event ends")}
-                    </option>
-                    <option value="1hr">{t("Για 1 ώρα", "For 1 hour")}</option>
-                  </select>
+                    className="w-full border border-gray-100 rounded-2xl p-3 text-xs font-medium bg-white shadow-soft"
+                    options={[
+                      {
+                        value: "arrival",
+                        label: t(
+                          "Μέχρι να φτάσω στο σημείο",
+                          "Until I arrive at meeting point",
+                        ),
+                      },
+                      {
+                        value: "event_start",
+                        label: t("Μέχρι να ξεκινήσει η εκδήλωση", "Until event starts"),
+                      },
+                      {
+                        value: "event_end",
+                        label: t("Μέχρι το τέλος της εκδήλωσης", "Until event ends"),
+                      },
+                      { value: "1hr", label: t("Για 1 ώρα", "For 1 hour") },
+                    ]}
+                  />
                 </div>
               </div>
 

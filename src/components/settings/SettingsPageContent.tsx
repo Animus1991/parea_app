@@ -23,6 +23,11 @@ import { resolveProfileAudience } from '../../lib/profilePrivacy';
 import { audienceLabel } from '../wall/wallText';
 import { useWallStore } from '../../store/wallStore';
 import { wallPrivacyOf } from '../../lib/audience';
+import {
+  scheduleFromCoarseAvailability,
+  serializeHomeSchedule,
+  writeStoredHomeSchedule,
+} from '../../lib/homeScheduleFilter';
 
 const CATEGORY_KEYS = ['liveMusic', 'theater', 'hiking', 'cinema', 'boardGames', 'wellness', 'festivals', 'workshops'] as const;
 
@@ -514,6 +519,35 @@ export default function SettingsPageContent() {
                   {slot.label}
                 </button>
               ))}
+              <div className="basis-full pt-2 space-y-1.5">
+                <p className="text-xs text-ink-muted leading-relaxed">
+                  {t(
+                    'Οι χρονοθήκες μένουν εδώ. Πάτα παρακάτω μόνο αν θέλεις να κρύψεις στην Ανακάλυψη ό,τι δεν χωράει σε αυτές.',
+                    'These slots stay here. Use the button below only if you want Discover to hide nights that do not fit.',
+                  )}
+                </p>
+                <button
+                  type="button"
+                  disabled={userSettings.availability.length === 0}
+                  onClick={() => {
+                    const next = scheduleFromCoarseAvailability(userSettings.availability);
+                    writeStoredHomeSchedule(next, currentUser?.id);
+                    const encoded = serializeHomeSchedule(next);
+                    const params = new URLSearchParams();
+                    if (encoded.wd) params.set('wd', encoded.wd);
+                    if (encoded.tw) params.set('tw', encoded.tw);
+                    if (encoded.hrs) params.set('hrs', encoded.hrs);
+                    if (encoded.on) params.set('on', encoded.on);
+                    navigate(params.toString() ? `/?${params.toString()}` : '/');
+                    toast.success(
+                      t('Εφαρμόστηκε στην Ανακάλυψη', 'Applied to Discover'),
+                    );
+                  }}
+                  className="text-xs font-bold text-accent min-h-8 disabled:opacity-40"
+                >
+                  {t('Εφαρμογή στην Ανακάλυψη', 'Apply to Discover')}
+                </button>
+              </div>
             </div>
           )}
         </Card>

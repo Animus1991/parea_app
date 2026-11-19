@@ -8,6 +8,7 @@ import { Button } from '../common/Button';
 import { VibeQuizModal } from './VibeQuizModal';
 import { cn } from '../../lib/utils';
 import { PROFILE_TYPO } from '../../lib/typographyTokens';
+import { AppSelect } from '../common/AppSelect';
 import type { GenderIdentity } from '../../types/outings';
 
 const GENDERS: { id: GenderIdentity | ''; el: string; en: string }[] = [
@@ -74,11 +75,12 @@ export function VibeProfileCard({ className }: { className?: string }) {
         <label htmlFor="gender-identity" className={cn('flex items-center gap-2 text-ink', PROFILE_TYPO.fieldLabel)}>
           <HeartHandshake className="h-4 w-4" aria-hidden /> {t('Ταυτότητα φύλου (προαιρετικό)', 'Gender identity (optional)')}
         </label>
-        <select
+        <AppSelect
           id="gender-identity"
+          ariaLabel={t('Ταυτότητα φύλου (προαιρετικό)', 'Gender identity (optional)')}
           value={me.gender && me.gender !== 'undisclosed' ? me.gender : ''}
-          onChange={(e) => {
-            const next = (e.target.value || undefined) as GenderIdentity | undefined;
+          onValueChange={(raw) => {
+            const next = (raw || undefined) as GenderIdentity | undefined;
             setGender(next);
             toast.message(
               next
@@ -87,14 +89,8 @@ export function VibeProfileCard({ className }: { className?: string }) {
             );
           }}
           className={cn('mt-1.5 min-h-10 w-full rounded-xl border border-border bg-surface px-3 text-ink', PROFILE_TYPO.fieldControl)}
-          aria-describedby="gender-identity-help"
-        >
-          {GENDERS.map((g) => (
-            <option key={g.id} value={g.id}>
-              {t(g.el, g.en)}
-            </option>
-          ))}
-        </select>
+          options={GENDERS.map((g) => ({ value: g.id, label: t(g.el, g.en) }))}
+        />
         <p id="gender-identity-help" className={cn('mt-1 text-ink-muted', PROFILE_TYPO.fieldHelp)}>
           {t(
             'Δεν εμφανίζεται πουθενά στο προφίλ σου. Χρησιμεύει μόνο για να μπαίνεις σε ομάδες «Γυναίκες & μη δυαδικά άτομα».',

@@ -119,8 +119,8 @@ export function HomeLoggedInHeroContrast({
           </div>
           <p className={cn(h.heroSubtitle, 'hidden md:block text-sm font-medium max-w-md')}>
             {t(
-              'Ανακαλύψτε τις καλύτερες εκδηλώσεις γύρω σας.',
-              'Discover the best events around you.',
+              'Βρες μια βραδιά να μπεις. Τα Σχέδια είναι όσα έχεις ήδη κλείσει.',
+              'Find a night to join. Plans are the ones you already booked.',
             )}
           </p>
           {searchBlock}

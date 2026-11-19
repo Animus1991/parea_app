@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyLiveCatalogDates, liveCatalogDate, withLiveSeedSchedule } from './demoCatalogDates';
+import { applyLiveCatalogDates, coerceAuthoredSeasonToLive, liveCatalogDate, refreshLiveCatalogDates, withLiveSeedSchedule } from './demoCatalogDates';
 
 describe('demoCatalogDates', () => {
   const now = new Date('2026-11-18T12:00:00');
@@ -37,5 +37,35 @@ describe('demoCatalogDates', () => {
       { id: 'e4', date: '2026-11-14', time: '20:45' },
       { id: 'user-1', date: '2026-05-20', time: '19:00' },
     ]);
+  });
+
+  it('recomputes from authored dates even when persist already holds a stale shift', () => {
+    const authored = new Map([
+      ['e1', { date: '2026-05-16', time: '20:00' }],
+      ['e4', { date: '2026-05-14', time: '20:45' }],
+    ]);
+    const persisted = [
+      { id: 'e1', date: '2026-05-16', time: '20:00' },
+      { id: 'e4', date: '2026-05-14', time: '20:45' },
+      { id: 'nn1', date: '2026-11-27', time: '20:30' },
+    ];
+    const refreshed = refreshLiveCatalogDates(persisted, authored, now);
+    expect(refreshed[0]?.date).toBe('2026-11-21');
+    expect(refreshed[1]?.date).toBe('2026-11-14');
+    expect(refreshed[2]?.date).toBe('2026-11-27');
+  });
+
+  it('shifts leftover May persist dates without double-shifting live nights', () => {
+    const coerced = coerceAuthoredSeasonToLive(
+      [
+        { id: 'e1', date: '2026-05-16' },
+        { id: 'nn1', date: '2026-11-27' },
+        { id: 'e4', date: '2026-05-14' },
+      ],
+      now,
+    );
+    expect(coerced[0]?.date).toBe('2026-11-21');
+    expect(coerced[1]?.date).toBe('2026-11-27');
+    expect(coerced[2]?.date).toBe('2026-11-14');
   });
 });

@@ -22,18 +22,18 @@ export function GroupProgressBar({
   return (
     <div className={className}>
       {showLabel && (
-        <div className="flex items-center justify-between mb-1.5">
+        <div className="mb-2 flex items-center justify-between gap-3">
           <span className={cn('text-xs font-bold tracking-tight', tok.muted)}>
             {t('Πρόοδος ομάδας', 'Group progress')}
           </span>
-          <span className={cn('text-xs font-bold', tok.accentText)}>
+          <span className={cn('text-xs font-bold tabular-nums', tok.accentText)}>
             {current}/{target} {t('μέλη', 'members')}
           </span>
         </div>
       )}
       <div
         className={cn(
-          'w-full h-1.5 rounded-full overflow-hidden',
+          'h-2 w-full overflow-hidden rounded-full',
           tok.isDark ? 'bg-gray-700/50' : 'bg-gray-100',
         )}
         role="progressbar"

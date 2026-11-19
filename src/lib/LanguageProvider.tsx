@@ -22,7 +22,7 @@ const translations: Record<string, Record<Language, string>> = {
   'home.hero.title1': { el: 'Βρείτε Nakamas για τις', en: 'Find Nakamas for the' },
   'home.hero.title2': { el: 'εμπειρίες', en: 'experiences' },
   'home.hero.title3': { el: 'που ήδη θέλετε να ζήσετε.', en: 'you already want to live.' },
-  'home.hero.subtitle': { el: 'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.', en: 'Join small groups for events, activities and nearby getaways — based on shared interests and availability.' },
+  'home.hero.subtitle': { el: 'Βρες μια βραδιά να μπεις. Τα Σχέδια είναι οι βραδιές που έχεις ήδη κλείσει.', en: 'Find a night to join. Plans are the nights you already booked.' },
   'home.hero.stat1': { el: 'Μικρές ομάδες', en: 'Small groups' },
   'home.hero.stat2': { el: 'Επαληθευμένη συμμετοχή', en: 'Verified attendance' },
   'home.hero.stat3': { el: 'Δημόσια σημεία', en: 'Public spots' },
@@ -61,7 +61,7 @@ const translations: Record<string, Record<Language, string>> = {
 
   // Feed
   'home.feed.for_you': { el: 'Για Σένα', en: 'For You' },
-  'home.feed.discover': { el: 'Ανακάλυψε', en: 'Discover' },
+  'home.feed.discover': { el: 'Όλες', en: 'All' },
   'home.feed.no_events': { el: 'Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.', en: 'No events found matching your criteria.' },
   'home.feed.load_more': { el: 'Φόρτωση Περισσότερων', en: 'Load More' },
   'home.feed.sort.relevance': { el: 'Συνάφεια', en: 'Relevance' },

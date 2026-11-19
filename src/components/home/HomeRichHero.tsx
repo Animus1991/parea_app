@@ -54,7 +54,7 @@ export function HomeRichHero({
         <p className={cn(tok.heroSubtitle, 'hidden md:block max-w-xl mb-4', HOME_TYPO.heroSubtitle)}>
           {t(
             'home.hero.subtitle',
-            'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.',
+            'Βρες μια βραδιά να μπεις. Τα Σχέδια είναι οι βραδιές που έχεις ήδη κλείσει.',
           )}
         </p>
 

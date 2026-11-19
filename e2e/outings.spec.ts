@@ -56,7 +56,9 @@ test.describe('Group outings', () => {
     await expect(page.getByText(/μόνο για γυναίκες και μη δυαδικά|women and non-binary people only/)).toBeVisible();
     await expect(page.getByRole('button', { name: /^Συνέχεια$|^Continue$/ })).toBeDisabled();
     await page.goto('/profile');
-    await page.getByLabel(/Ταυτότητα φύλου|Gender identity/).selectOption('non_binary');
+    const gender = page.getByLabel(/Ταυτότητα φύλου|Gender identity/);
+    await gender.click();
+    await page.getByRole('option', { name: /Μη δυαδικό άτομο|Non-binary/ }).click();
     await page.goto('/events/nn2/join?groupId=g-nn2');
     await expect(page.getByRole('button', { name: /^Συνέχεια$|^Continue$/ })).toBeEnabled();
   });

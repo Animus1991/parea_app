@@ -14,6 +14,7 @@ import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { dateFnsLocale } from '../../lib/dateLocale';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { AppSelect } from '../common/AppSelect';
 
 const NO_IDS: string[] = [];
 
@@ -72,14 +73,16 @@ export default function SavedEventsPageContent() {
                 className={cn("search-control w-full h-9 pl-9 pr-3 rounded-xl border outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
               />
             </div>
-            <select aria-label={t("Ταξινόμηση", "Sort by")}
+            <AppSelect
+              ariaLabel={t("Ταξινόμηση", "Sort by")}
               value={sortBy}
-              onChange={e => setSortBy(e.target.value as 'date' | 'name')}
+              onValueChange={(v) => setSortBy(v as 'date' | 'name')}
               className={cn("filter-select border outline-none cursor-pointer", a.inputBg)}
-            >
-              <option value="date">{t('Ημερομηνία', 'By Date')}</option>
-              <option value="name">{t('Όνομα', 'By Name')}</option>
-            </select>
+              options={[
+                { value: 'date', label: t('Ημερομηνία', 'By Date') },
+                { value: 'name', label: t('Όνομα', 'By Name') },
+              ]}
+            />
           </div>
 
           {/* Category tabs */}

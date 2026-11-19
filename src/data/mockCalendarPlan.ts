@@ -3,7 +3,7 @@ import type { Group } from '../types';
 import { applyLiveCatalogDates } from '../lib/demoCatalogDates';
 
 /** Extra demo events for calendar grid QA (June 2026). */
-const authoredCalendarPlanEvents: Event[] = [
+export const authoredCalendarPlanEvents: Event[] = [
   {
     id: 'e-cal-2a',
     title: 'Morning Run: SNFCC',

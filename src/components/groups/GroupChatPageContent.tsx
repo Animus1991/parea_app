@@ -47,6 +47,7 @@ import { localizeSystemBody } from "../../lib/chatSystemCopy";
 import { Modal } from "../common/Modal";
 import { Button } from "../common/Button";
 import { EmptyState } from "../common/EmptyState";
+import { AppSelect } from "../common/AppSelect";
 import { GroupChatLeaveModal } from "./groupChat/GroupChatLeaveModal";
 import { GroupChatReportModal } from "./groupChat/GroupChatReportModal";
 import { GroupChatLocationModal } from "./groupChat/GroupChatLocationModal";
@@ -447,20 +448,16 @@ export default function GroupChatPageContent() {
 
                 <div className="flex items-center gap-0.5 px-2 pb-2 overflow-x-auto noscrollbar">
                   <div className="hidden md:flex items-center gap-3 mr-2 shrink-0">
-                    <select aria-label={t("Φίλτρο αποστολέα", "Sender filter")}
+                    <AppSelect
+                      ariaLabel={t("Φίλτρο αποστολέα", "Sender filter")}
                       value={senderFilter}
-                      onChange={(e) => setSenderFilter(e.target.value)}
-                      className={cn("filter-select border border-gray-200 dark:border-border focus:outline-none focus:ring-1 bg-gray-50 dark:bg-white/5 text-gray-600 hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer transition-colors max-w-[120px] truncate", gc.focusRing)}
-                    >
-                      <option value="all">
-                        {t("Όλοι οι Αποστολείς", "All Senders")}
-                      </option>
-                      {groupMembersDetailed.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.name}
-                        </option>
-                      ))}
-                    </select>
+                      onValueChange={setSenderFilter}
+                      className={cn("filter-select border border-gray-200 dark:border-border bg-gray-50 dark:bg-white/5 text-gray-600 hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer transition-colors max-w-[120px]", gc.focusRing)}
+                      options={[
+                        { value: "all", label: t("Όλοι οι Αποστολείς", "All Senders") },
+                        ...groupMembersDetailed.map((m) => ({ value: m.id, label: m.name })),
+                      ]}
+                    />
                     <div className="relative group">
                       <Search className={cn("h-3.5 w-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2 transition-colors", gc.focusIcon)} />
                       <input
