@@ -51,14 +51,64 @@ test.describe('Event tags', () => {
     await expect(page.getByRole('heading', { level: 1, name: /Εργαστήριο|workshop/i })).toBeVisible();
   });
 
-  test('the tags index is one language, without duplicate chips or a letter keyboard', async ({ page }) => {
+  test('the tags index is one language, without duplicate chips', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await enterDemoGuest(page);
     await page.goto('/tags');
     await expect(page.getByRole('heading', { level: 1, name: /Ετικέτες|Tags/ })).toBeVisible();
-    await expect(page.getByRole('navigation', { name: /Ευρετήριο γραμμάτων|Letter index/ })).toHaveCount(0);
     await expect(page.getByRole('link', { name: /Επιτραπέζια|Board games/ })).toHaveCount(1);
     await expect(page.getByText(/^#art$/i)).toHaveCount(0);
+  });
+
+  test('detailed A–Z puts letters on the same row as their tags; compact hides the jump nav', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterDemoGuest(page);
+    await page.goto('/tags');
+    await expect(page.getByRole('navigation', { name: /Ευρετήριο γραμμάτων|Letter index/ })).toBeVisible();
+
+    const letterRow = page.locator('#tag-letter-Α, [id^="tag-letter-"]').first();
+    await expect(letterRow).toBeVisible();
+    const aligned = await letterRow.evaluate((el) => {
+      const heading = el.querySelector('h2');
+      const chip = el.querySelector('a');
+      if (!heading || !chip) return null;
+      const letterBox = heading.getBoundingClientRect();
+      const chipBox = chip.getBoundingClientRect();
+      return {
+        deltaTop: Math.abs(letterBox.top - chipBox.top),
+        letterLeft: letterBox.left,
+        chipLeft: chipBox.left,
+      };
+    });
+    expect(aligned).not.toBeNull();
+    expect(aligned!.chipLeft).toBeGreaterThan(aligned!.letterLeft);
+    expect(aligned!.deltaTop).toBeLessThan(8);
+
+    await page.getByRole('button', { name: /^Σύντομη$|^Compact$/ }).click();
+    await expect(page.getByRole('navigation', { name: /Ευρετήριο γραμμάτων|Letter index/ })).toHaveCount(0);
+    await expect(page.locator('[id^="tag-letter-"]').first()).toBeVisible();
+  });
+
+  test('selected tag shows its event cards above the index', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterDemoGuest(page);
+    await page.goto('/tags/nakamas-nights');
+    await expect(page.getByRole('heading', { level: 1, name: /Nakamas Nights/i })).toBeVisible();
+    const events = page.locator('#tag-events');
+    const directory = page.getByRole('region', { name: /Όλες οι ετικέτες|All tags/ });
+    await expect(events).toBeVisible();
+    await expect(directory).toBeVisible();
+    const order = await page.evaluate(() => {
+      const eventsEl = document.getElementById('tag-events');
+      const indexEl = document.querySelector('[aria-label="Όλες οι ετικέτες"], [aria-label="All tags"]');
+      if (!eventsEl || !indexEl) return null;
+      const pos = eventsEl.compareDocumentPosition(indexEl);
+      return (pos & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+    });
+    expect(order).toBe(true);
+    await expect(events.locator('.nakamas-card')).not.toHaveCount(0);
   });
 
   test('returning from Tags does not put a Continue strip on Discover', async ({ page }) => {

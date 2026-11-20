@@ -191,12 +191,17 @@ export function groupTagsByLetter(
     groups.set(letter, list);
   }
   return [...groups.entries()]
-    .sort(([a], [b]) => {
-      if (a === '#') return 1;
-      if (b === '#') return -1;
-      return a.localeCompare(b, locale);
-    })
+    .sort(([a], [b]) => letterSortKey(a).localeCompare(letterSortKey(b), locale))
     .map(([letter, items]) => ({ letter, tags: items }));
+}
+
+const GREEK_LETTERS = 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ';
+
+function letterSortKey(letter: string): string {
+  if (letter === '#') return '2#';
+  const greek = GREEK_LETTERS.indexOf(letter);
+  if (greek >= 0) return `0${String(greek).padStart(2, '0')}`;
+  return `1${letter}`;
 }
 
 export function findCataloguedTag(

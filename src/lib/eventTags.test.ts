@@ -69,6 +69,7 @@ describe('eventTags', () => {
     expect(byLetter.N).toEqual(['nakamas-nights']);
     expect(byLetter.W).toEqual(['wine']);
     expect(tagLetter('Εργαστήριο', 'el')).toBe('Ε');
+    expect(groups.map((group) => group.letter)).toEqual(['Ε', 'N', 'W']);
     expect(findCataloguedTag(
       [{ tag: 'nakamas nights', slug: 'nakamas-nights', count: 2 }],
       'Nakamas-Nights',
