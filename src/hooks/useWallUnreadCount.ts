@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useStore } from '../store';
 
 /**
- * Unread wall activity for the signed-in person (badges on «Τοίχος Nakamas»
- * and the bell). The wall store is loaded on demand, so the app shell does not
- * carry wall code in its first bundle. Respects the «Δραστηριότητα τοίχου»
- * notification preference and hides activity from blocked people.
+ * Unread wall activity for the signed-in person (folded into the bell).
+ * The wall store is loaded on demand, so the app shell does not carry wall
+ * code in its first bundle. Respects the «Δραστηριότητα τοίχου» preference
+ * and hides activity from blocked people.
  */
 export function useWallUnreadCount(): number {
   const userId = useStore((s) => s.currentUser?.id ?? null);

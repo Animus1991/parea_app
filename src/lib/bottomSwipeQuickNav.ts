@@ -56,7 +56,6 @@ export interface QuickNavTileDef {
   labelEn: string;
   organizerOnly?: boolean;
   adminOnly?: boolean;
-  badge?: 'wall';
 }
 
 /**
@@ -71,7 +70,7 @@ export const QUICK_NAV_TILES: QuickNavTileDef[] = [
   { id: 'buddy-seek', path: '/buddy-seek', labelEl: 'Βρες Nakamas', labelEn: 'Find Nakamas' },
   { id: 'saved', path: '/saved', labelEl: 'Αποθηκευμένες', labelEn: 'Saved' },
   { id: 'history', path: '/history', labelEl: 'Ιστορικό', labelEn: 'History' },
-  { id: 'wall', path: '/wall', labelEl: 'Τοίχος', labelEn: 'Wall', badge: 'wall' },
+  { id: 'wall', path: '/wall', labelEl: 'Τοίχος', labelEn: 'Wall' },
   { id: 'chats', path: '/chats', labelEl: 'Συνομιλίες', labelEn: 'Chats' },
   { id: 'leaderboard', path: '/leaderboard', labelEl: 'Κατάταξη', labelEn: 'Leaderboard' },
   { id: 'challenges', path: '/challenges', labelEl: 'Προκλήσεις', labelEn: 'Challenges' },

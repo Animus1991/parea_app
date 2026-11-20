@@ -217,7 +217,6 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
   // Same predicate as CommandPalette and the copilot (lib/roles.ts).
   const isAdmin = isPlatformAdmin(currentUser);
   const isOrganizer = isOrganizerUser(currentUser);
-  const wallUnread = useWallUnreadCount();
 
   return (
     <>
@@ -237,7 +236,7 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
       </NavSection>
 
       <NavSection id="community" paths={['/wall', '/connections', '/chats', '/chat', '/leaderboard', '/challenges', '/achievements', '/u']} title={t('Κοινότητα', 'Community')} compact={compact} rail={rail}>
-        <NavItem to="/wall" icon={Newspaper} label={t('Τοίχος Nakamas', 'Nakamas Wall')} compact={compact} rail={rail} badge={wallUnread} />
+        <NavItem to="/wall" icon={Newspaper} label={t('Τοίχος Nakamas', 'Nakamas Wall')} compact={compact} rail={rail} />
         <NavItem to="/connections" icon={Users} label={t('Οι Nakamas μου', 'My Nakamas')} compact={compact} rail={rail} />
         <NavItem to="/chats" icon={MessageSquare} label={t('Ομαδικές Συνομιλίες', 'Group Chats')} compact={compact} rail={rail} />
         <NavItem to="/leaderboard" icon={Trophy} label={t('Κατάταξη', 'Leaderboard')} compact={compact} rail={rail} />

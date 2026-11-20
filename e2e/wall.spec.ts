@@ -66,7 +66,7 @@ test.describe('Nakamas wall', () => {
 test.describe('Nakamas wall v2', () => {
   test('a tag is approved from Activity and then shows on the profile', async ({ page }) => {
     await enterDemoGuest(page);
-    await page.goto('/wall');
+    await page.goto('/notifications');
     const activity = page.getByRole('region', { name: /Δραστηριότητα|Activity/ });
     await activity.getByRole('button', { name: /Εμφάνιση στο προφίλ μου|Show on my profile/ }).click();
     await page.goto('/u/u1?viewAs=u2');
