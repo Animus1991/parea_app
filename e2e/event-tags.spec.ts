@@ -125,7 +125,9 @@ test.describe('Event tags', () => {
     await addFree.click();
     await expect(page).toHaveURL(/t=social.*t=free|t=free.*t=social/);
     await expect(page.locator('#tag-events .nakamas-card')).not.toHaveCount(0);
-    await page.getByRole('link', { name: /Αφαίρεση Κοινωνικά|Remove Social/ }).first().click();
+    const removeSocial = page.getByRole('link', { name: /Αφαίρεση Κοινωνικά|Remove Social/ }).first();
+    await expect(removeSocial).toHaveAttribute('href', /\/tags\/free$/);
+    await removeSocial.click();
     await expect(page).toHaveURL(/\/tags\/free$/);
   });
 
