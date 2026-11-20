@@ -2,7 +2,7 @@ name: Cloudflare Pages
 
 on:
   push:
-    branches: [main, master, 'ccr-*', 'cursor/**']
+    branches: [main, master, 'ccr-*', 'cursor/**', 'devin/**']
   pull_request:
 
 concurrency:
