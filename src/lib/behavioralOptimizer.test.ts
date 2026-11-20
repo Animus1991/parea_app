@@ -36,7 +36,7 @@ describe('behavioralOptimizer', () => {
     const host = { ...(member as object), isOrganizer: true } as never;
     const h = computeProfileCompletion(host, true);
     expect(h.percent).toBe(90);
-    expect(h.nextPath).toBe('/verification?method=id');
+    expect(h.nextPath).toBe('/trust?tab=verify&method=id');
     expect(computeProfileCompletion({ ...(host as object), idVerified: true } as never, true).percent).toBe(100);
   });
 });
