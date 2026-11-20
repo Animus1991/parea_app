@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
-import { resumeLabel } from '../../lib/resumePath';
+import { isResumeWorthyPath, resumeLabel } from '../../lib/resumePath';
 import { trackEvent } from '../../lib/analytics';
 import { prefetchPath } from '../../lib/routeLoaders';
 import { cn } from '../../lib/utils';
@@ -37,11 +37,12 @@ export function HomeContinueStrip() {
           !nightGroup.members.includes(meId) &&
           !(nightGroup.waitlist ?? []).includes(meId))),
   );
+  const browseResume = Boolean(path && !isResumeWorthyPath(path));
   useEffect(() => {
-    if (nightStale) clear();
-  }, [nightStale, clear]);
+    if (nightStale || browseResume) clear();
+  }, [nightStale, browseResume, clear]);
 
-  if (!path || path === '/' || nightStale || !quietContinue) return null;
+  if (!path || path === '/' || nightStale || browseResume || !quietContinue) return null;
 
   // Welcome-back line already covers this destination — keep one clear CTA in the hero.
   if (returnParts.some((part) => returnPartPath(part) === path)) return null;

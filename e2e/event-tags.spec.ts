@@ -50,4 +50,17 @@ test.describe('Event tags', () => {
     await expect(page).toHaveURL(/\/tags\/workshop$/);
     await expect(page.getByRole('heading', { level: 1, name: /Εργαστήριο|workshop/i })).toBeVisible();
   });
+
+  test('returning from Tags does not put a Continue strip on Discover', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterDemoGuest(page);
+    await page.goto('/tags');
+    await expect(page.getByRole('heading', { level: 1, name: /Ετικέτες|Tags/ })).toBeVisible();
+    await page.goto('/');
+    await expect(page.locator('#main-content .nakamas-card').first()).toBeVisible({ timeout: 15_000 });
+    await expect(
+      page.getByRole('region', { name: /Συνέχεια από εκεί που σταμάτησες|Continue where you left off/ }),
+    ).toHaveCount(0);
+  });
 });
+

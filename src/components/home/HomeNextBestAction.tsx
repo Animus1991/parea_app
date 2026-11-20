@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Compass, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { getNextBestActions } from '../../lib/behavioralOptimizer';
+import { isResumeWorthyPath } from '../../lib/resumePath';
 import { trackEvent } from '../../lib/analytics';
 import { useStore } from '../../store';
 import { useChatStore } from '../../store/chatStore';
@@ -35,7 +36,7 @@ export function HomeNextBestAction() {
     const nightGroup = nightMatch ? groups.find((g) => g.id === nightMatch[1]) : undefined;
     const resumeOk =
       lastResumePath &&
-      lastResumePath !== '/' &&
+      isResumeWorthyPath(lastResumePath) &&
       !(
         nightMatch &&
         (!nightGroup ||
