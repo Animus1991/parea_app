@@ -15,6 +15,7 @@ import {
   Star,
   Tag,
   Users,
+  WifiOff,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
@@ -74,6 +75,20 @@ export default function OurNightPageContent() {
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
   const [confirmLeave, setConfirmLeave] = useState(false);
   const [shareWallOpen, setShareWallOpen] = useState(false);
+  const [isOnline, setIsOnline] = useState(() => typeof navigator === 'undefined' || navigator.onLine);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const updateOnline = () => setIsOnline(navigator.onLine);
+    const timer = window.setInterval(() => setNow(Date.now()), 60_000);
+    window.addEventListener('online', updateOnline);
+    window.addEventListener('offline', updateOnline);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('online', updateOnline);
+      window.removeEventListener('offline', updateOnline);
+    };
+  }, []);
 
   const group = groups.find((g) => g.id === groupId);
   const event = group ? events.find((e) => e.id === group.eventId) : undefined;
@@ -185,7 +200,17 @@ export default function OurNightPageContent() {
   const myInvite = invites.find((i) => i.groupId === group.id);
   const cover = coverById(myInvite?.coverId, event.category) ?? coversFor(event.category)[0];
   const start = eventStartMs(event);
-  const now = Date.now();
+  const preMeetStart = start !== null && group.preMeet
+    ? start - group.preMeet.minutesBefore * 60_000
+    : null;
+  const checkInStart = start !== null ? start - 2 * 60 * 60_000 : null;
+  const activeStep = start === null
+    ? 2
+    : preMeetStart !== null && now < preMeetStart
+      ? 1
+      : checkInStart !== null && now >= checkInStart
+        ? 3
+        : 2;
   const lateIfLeaving =
     group.status === 'confirmed' && start !== null && start > now && start - now < LATE_CANCEL_MS && !(group.waitlist?.length && group.members.length >= group.targetSize);
   const handsOver = group.members.length >= group.targetSize && Boolean(group.waitlist?.length);
@@ -254,6 +279,13 @@ export default function OurNightPageContent() {
         )}
       </header>
 
+      {!isOnline && (
+        <p role="status" className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-raised px-3 py-1.5 text-xs font-medium text-ink-muted">
+          <WifiOff className="h-3.5 w-3.5" aria-hidden />
+          {t('Εκτός σύνδεσης — βλέπεις την αποθηκευμένη εκδοχή', 'Offline — you are viewing the saved version')}
+        </p>
+      )}
+
       {canGiveFeedback && (
         <div
           role="region"
@@ -269,25 +301,56 @@ export default function OurNightPageContent() {
         </div>
       )}
 
-      {/* The host is checked in with the first arrival; everyone else shows a ticket. */}
-      {!closed && !isHost && <CheckInTicket groupId={group.id} userId={me.id} record={myRecord} hostName={host?.name.split(' ')[0]} />}
-      {isHost && <CheckInPanel group={group} members={members} />}
-
-      <section className="rounded-2xl border border-border bg-surface-raised p-4" aria-labelledby="meet-title">
-        <h3 id="meet-title" className="flex items-center gap-2 text-sm font-bold text-ink">
-          <MapPin className="h-4 w-4" aria-hidden /> {t('Σημείο συνάντησης', 'Meeting point')}
-        </h3>
-        {revealed ? (
-          <p className="mt-1 text-sm font-medium text-ink">{group.meetingPoint || event.exactLocation || event.locationArea}</p>
-        ) : (
-          <p className="mt-1 flex items-start gap-1.5 text-xs font-medium text-ink-muted">
-            <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
-            {t('Το ακριβές σημείο φαίνεται όταν επιβεβαιωθεί η ομάδα.', 'The exact spot shows once the group is confirmed.')}
-          </p>
-        )}
-      </section>
-
-      <PreMeetCard group={group} event={event} isHost={isHost} revealed={revealed} />
+      <ol className="relative space-y-3 before:absolute before:bottom-8 before:left-[1.125rem] before:top-8 before:w-px before:bg-border" aria-label={t('Χρονοδιάγραμμα βραδιάς', 'Night timeline')}>
+        {([
+          {
+            step: 1,
+            title: t('Συνάντηση πριν', 'Meet before'),
+            content: <PreMeetCard group={group} event={event} isHost={isHost} revealed={revealed} />,
+          },
+          {
+            step: 2,
+            title: t('Σημείο συνάντησης', 'Meeting point'),
+            content: (
+              <section className="rounded-2xl border border-border bg-surface-raised p-4" aria-label={t('Σημείο συνάντησης', 'Meeting point')}>
+                <h3 className="flex items-center gap-2 text-sm font-bold text-ink">
+                  <MapPin className="h-4 w-4" aria-hidden /> {t('Σημείο συνάντησης', 'Meeting point')}
+                </h3>
+                {revealed ? (
+                  <p className="mt-1 text-sm font-medium text-ink">{group.meetingPoint || event.exactLocation || event.locationArea}</p>
+                ) : (
+                  <p className="mt-1 flex items-start gap-1.5 text-xs font-medium text-ink-muted">
+                    <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+                    {t('Το ακριβές σημείο φαίνεται όταν επιβεβαιωθεί η ομάδα.', 'The exact spot shows once the group is confirmed.')}
+                  </p>
+                )}
+              </section>
+            ),
+          },
+          {
+            step: 3,
+            title: t('Check-in στην πόρτα', 'Door check-in'),
+            content: (
+              <div className="space-y-3">
+                {!closed && !isHost && <CheckInTicket groupId={group.id} userId={me.id} record={myRecord} hostName={host?.name.split(' ')[0]} />}
+                {isHost && <CheckInPanel group={group} members={members} />}
+              </div>
+            ),
+          },
+        ]).map(({ step, title, content }) => (
+          <li key={step} className="relative pl-10">
+            <span aria-hidden className="absolute left-0 top-1 flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface-raised text-sm font-bold text-ink">
+              {step}
+            </span>
+            <details open={activeStep === step} className="group">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-xl border border-border bg-surface-raised px-3 text-sm font-bold text-ink [&::-webkit-details-marker]:hidden">
+                {title}
+              </summary>
+              <div className="pt-2">{content}</div>
+            </details>
+          </li>
+        ))}
+      </ol>
 
       {group.discountUnlocked && group.code && (
         <section className="rounded-2xl border border-border bg-surface-raised p-4" aria-labelledby="code-title">
