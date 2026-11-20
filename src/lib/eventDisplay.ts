@@ -16,6 +16,7 @@ const LOCATION_EL: Record<string, string> = {
   'Monastiraki, Athens': 'Μοναστηράκι, Αθήνα',
   'Pagrati, Athens': 'Παγκράτι, Αθήνα',
   'Koukaki, Athens': 'Κουκάκι, Αθήνα',
+  'Zappeio, Athens': 'Ζάππειο, Αθήνα',
   'Psyrri, Athens': 'Ψυρρή, Αθήνα',
   'Kolonaki, Athens': 'Κολωνάκι, Αθήνα',
   'Petralona, Athens': 'Πετράλωνα, Αθήνα',

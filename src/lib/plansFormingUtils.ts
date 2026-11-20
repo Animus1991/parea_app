@@ -1,6 +1,7 @@
 import { format, parseISO } from 'date-fns';
 import { el } from 'date-fns/locale';
 import { sharedInterestCount } from './companyRequestUtils';
+import { interestLabel } from './interests';
 import type { CompanyRequest, MeetingPreference } from '../types/companyRequest';
 import type { Event, Group, User } from '../types';
 import type { BuddySeekDiscoveryItem } from '../hooks/useBuddySeekDiscovery';
@@ -70,8 +71,8 @@ export function plansFormingMatchReason(
   }
   if (shared > 0) {
     return {
-      el: `${shared} κοινά ενδιαφέροντα · ${event.category}`,
-      en: `${shared} shared interests · ${event.category}`,
+      el: `${shared} κοινά ενδιαφέροντα · ${interestLabel(event.category, 'el')}`,
+      en: `${shared} shared interests · ${interestLabel(event.category, 'en')}`,
     };
   }
   return null;
@@ -95,7 +96,7 @@ export function meetingPreferenceLabel(pref: MeetingPreference): { el: string; e
     at_venue: { el: 'Στον χώρο', en: 'At venue' },
     coffee_before: { el: 'Καφές πριν', en: 'Coffee before' },
     walk_after: { el: 'Μετά την εκδήλωση', en: 'After the event' },
-    chat_first: { el: 'Chat πρώτα', en: 'Chat first' },
+    chat_first: { el: 'Συνομιλία πρώτα', en: 'Chat first' },
   };
   return map[pref];
 }
@@ -243,7 +244,7 @@ export function buildScarcityPromos(
     const ratio = filled / target;
     if (ratio < 0.45) continue;
     const event = events.find((e) => e.id === g.eventId);
-    if (!event) continue;
+    if (!event || event.kind === 'mini_outing') continue;
     promos.push({
       id: `scarcity_${g.id}`,
       eventId: event.id,

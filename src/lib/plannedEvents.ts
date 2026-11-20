@@ -2,6 +2,7 @@ import { parseISO, isSameDay } from 'date-fns';
 import type { Event, Group, User } from '../types';
 import type { PlannedEvent, PlannedGroupStatus, PlannedTicketStatus, PlannedUserStatus } from '../types/plannedEvent';
 import { inferEventEndDate, parseEventStart } from './eventCalendarExport';
+import { eventCoverUrl } from './eventCover';
 
 export function eventToPlannedEvent(
   event: Event,
@@ -27,9 +28,7 @@ export function eventToPlannedEvent(
     id: event.id,
     title: event.title,
     category: event.category,
-    imageUrl:
-      event.imageUrl ||
-      `https://picsum.photos/seed/${encodeURIComponent(event.id)}/800/600`,
+    imageUrl: eventCoverUrl(event),
     startDateTime: start,
     endDateTime: end,
     locationName: event.locationArea,

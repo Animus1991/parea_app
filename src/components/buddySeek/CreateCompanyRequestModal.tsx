@@ -284,7 +284,7 @@ export function CreateCompanyRequestModal({
                   { value: 'at_venue', label: t('Στον χώρο', 'At venue') },
                   { value: 'coffee_before', label: t('Καφές πριν', 'Coffee before') },
                   { value: 'walk_after', label: t('Περπάτημα μετά', 'Walk after') },
-                  { value: 'chat_first', label: t('Chat πρώτα', 'Group chat first') },
+                  { value: 'chat_first', label: t('Συνομιλία πρώτα', 'Chat first') },
                 ]}
               />
               <textarea

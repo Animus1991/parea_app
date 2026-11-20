@@ -142,4 +142,22 @@ test.describe('Group outings', () => {
     await card.getByRole('button', { name: /Ολοκλήρωση \(demo\)|Finish \(demo\)/ }).click();
     await expect(card.getByText(/Επαληθεύτηκε στις|Verified on/)).toBeVisible();
   });
+
+  test('My Plans shows a cover on mini outing cards', async ({ page }) => {
+    await page.goto('/login');
+    await page.evaluate((key) => {
+      const raw = localStorage.getItem(key);
+      const data = raw ? JSON.parse(raw) : { state: {}, version: 0 };
+      data.state = { ...(data.state ?? {}), onboardingCompleted: true };
+      localStorage.setItem(key, JSON.stringify(data));
+    }, 'nakamas-store-v1');
+    await page.reload();
+    await page.getByRole('button', { name: /Maria/ }).first().click();
+    await expect(page.locator('#main-content')).toBeVisible();
+    await page.goto('/plans');
+    const img = page.locator('img[alt="Καφές στο Κουκάκι"]');
+    await expect(img).toBeVisible();
+    await expect(img).toHaveAttribute('src', /\/covers\/coffee\.jpg/);
+    await expect(img).toHaveJSProperty('naturalWidth', 1200);
+  });
 });

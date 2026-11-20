@@ -20,6 +20,7 @@ import { formatPlanWhen } from '../../lib/dateLocale';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { eventStartMs, LATE_CANCEL_MS } from '../../store/outingsSlice';
 import { EmptyState } from '../common/EmptyState';
+import { EventCoverImg } from '../common/EventCoverImg';
 
 function getUserGroupForEvent(eventId: string, groups: Group[], userId: string | undefined) {
   if (!userId) return undefined;
@@ -175,7 +176,7 @@ export default function PlansPageContent() {
           return (
           <Card key={event.id} className="!rounded-2xl p-0 overflow-hidden flex h-full flex-col">
             <div className="relative h-48 w-full shrink-0 bg-gray-100 overflow-hidden">
-              <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+              <EventCoverImg event={event} alt={event.title} className="w-full h-full object-cover" />
               {isConfirmed ? (
                 <div className="absolute top-2 left-2 bg-brand/95 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
                   {t('Επιβεβαιωμένο', 'Confirmed')}
@@ -308,7 +309,7 @@ export default function PlansPageContent() {
           return (
           <Card key={event.id} className="!rounded-2xl p-0 overflow-hidden opacity-80 hover:opacity-100 transition-all duration-200 flex h-full flex-col">
             <div className="relative h-48 w-full shrink-0 bg-gray-100 overflow-hidden grayscale">
-              <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+              <EventCoverImg event={event} alt={event.title} className="w-full h-full object-cover" />
               <div className="absolute top-2 left-2 bg-gray-800/90 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
                 {t(`Εκκρεμής Ομάδα`, `Pending Group`)}
               </div>
@@ -384,7 +385,7 @@ export default function PlansPageContent() {
         {pastEvents.map((event) => (
           <Card key={event.id} className="!rounded-2xl p-0 overflow-hidden flex h-full flex-col">
             <div className="relative h-48 w-full shrink-0 bg-gray-100 overflow-hidden">
-              <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+              <EventCoverImg event={event} alt={event.title} className="w-full h-full object-cover" />
             </div>
             <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
               <div className={cn('flex items-center gap-2 text-xs font-bold', p.muted)}>

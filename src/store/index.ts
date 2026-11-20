@@ -8,6 +8,7 @@ import { mockGroups } from "../data/mockGroups";
 import { mockCalendarPlanEvents, mockCalendarPlanGroups } from "../data/mockCalendarPlan";
 import { coerceAuthoredSeasonToLive } from "../lib/demoCatalogDates";
 import { withFreshCatalogDates } from "../lib/catalogAuthoredSchedule";
+import { eventCoverUrl } from "../lib/eventCover";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
 import { fetchTicketmasterEvents, isTicketmasterConfigured } from "../services/eventApi";
@@ -2230,8 +2231,18 @@ export const useStore = create<AppState>()(
 }),
     {
       name: 'nakamas-store-v1',
-      version: 3,
-      migrate: (persisted) => persisted as never,
+      version: 4,
+      migrate: (persisted, version) => {
+        const p = persisted as Record<string, unknown> | undefined;
+        if (!p) return persisted as never;
+        if (version < 4 && Array.isArray(p.companyRequests)) {
+          const seedMsg = new Map(mockCompanyRequests.map((r) => [r.id, r.message]));
+          p.companyRequests = (p.companyRequests as { id: string }[]).map((r) =>
+            seedMsg.has(r.id) ? { ...r, message: seedMsg.get(r.id) } : r,
+          );
+        }
+        return p as never;
+      },
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         savedEvents: state.savedEvents,
@@ -2307,7 +2318,12 @@ export const useStore = create<AppState>()(
         };
 
         const events = coerceAuthoredSeasonToLive(
-          withFreshCatalogDates(mergeById(current.events, p.events)),
+          withFreshCatalogDates(
+            mergeById(current.events, p.events).map((e) => {
+              const cover = eventCoverUrl(e);
+              return e.imageUrl === cover ? e : { ...e, imageUrl: cover };
+            }),
+          ),
         );
         const groups = mergeById(current.groups, p.groups);
         // isAdmin comes only from the trusted seeds, never from persisted

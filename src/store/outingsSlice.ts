@@ -30,6 +30,7 @@ import { canJoinGroup as gateJoinGroup, fitsGenderMode, groupCodeFor, type JoinG
 import { getEventDateRange } from '../lib/eventCalendarExport';
 import { activeTicketPartner, settleReservation } from '../services/ticketPartner';
 import { coversFor } from '../lib/planCovers';
+import { MINI_OUTING_COVERS } from '../lib/eventCover';
 import { mockPlanInvites, mockStrikes } from '../data/mockOutings';
 
 /** Check-in opens 2 h before the start and closes 6 h after it (demo mode: always open). */
@@ -660,6 +661,7 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         minTrustTierAccess: '2_confirmed',
         maxParticipants: Math.min(6, Math.max(2, input.size)),
         tags: ['mini outing', input.kind],
+        imageUrl: MINI_OUTING_COVERS[input.kind],
       };
       const group: Group = {
         id: groupId,
