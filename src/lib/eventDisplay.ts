@@ -1,4 +1,5 @@
 import type { Event, Group, User } from '../types';
+import { eventTagLabels } from './eventTags';
 
 const LOCATION_EL: Record<string, string> = {
   'Thisio, Athens': 'Θησείο, Αθήνα',
@@ -23,44 +24,6 @@ const LOCATION_EL: Record<string, string> = {
   'Glyfada, Athens': 'Γλυφάδα, Αθήνα',
   'Piraeus': 'Πειραιάς',
   Athens: 'Αθήνα',
-};
-
-const TAG_EL: Record<string, string> = {
-  music: 'Μουσική',
-  culture: 'Πολιτισμός',
-  food: 'Φαγητό',
-  outdoor: 'Υπαίθρια',
-  social: 'Κοινωνικά',
-  nightlife: 'Νυχτερινή ζωή',
-  sports: 'Αθλητισμός',
-  workshop: 'Εργαστήριο',
-  free: 'Δωρεάν',
-  cinema: 'Σινεμά',
-  'open-air': 'Υπαίθριο',
-  retro: 'Ρετρό',
-  boardgames: 'Επιτραπέζια',
-  hiking: 'Πεζοπορία',
-  nature: 'Φύση',
-  community: 'Κοινότητα',
-  festival: 'Φεστιβάλ',
-  concert: 'Συναυλία',
-  electronic: 'Ηλεκτρονική',
-  techno: 'Techno',
-  yoga: 'Γιόγκα',
-  wellness: 'Ευεξία',
-  environment: 'Περιβάλλον',
-  streetfood: 'Street food',
-  dance: 'Χορός',
-  theater: 'Θέατρο',
-  sailing: 'Ιστιοπλοΐα',
-  sunset: 'Ηλιοβασίλεμα',
-  'nakamas nights': 'Nakamas Nights',
-  'small groups': 'Μικρές ομάδες',
-  'board games': 'Επιτραπέζια',
-  'mini outing': 'Μικρή έξοδος',
-  wine: 'Κρασί',
-  coffee: 'Καφές',
-  run: 'Τρέξιμο',
 };
 
 function padTime(time: string): string {
@@ -138,9 +101,8 @@ export function translateEventTag(
   tag: string,
   t: (el: string, en: string) => string,
 ): string {
-  const el = TAG_EL[tag] ?? TAG_EL[tag.toLowerCase()];
-  if (el) return t(el, tag);
-  return tag;
+  const labels = eventTagLabels(tag);
+  return t(labels.el, labels.en);
 }
 
 export type EventJoinState = 'join' | 'rate' | 'view' | 'chat';

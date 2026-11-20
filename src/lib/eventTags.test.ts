@@ -16,7 +16,9 @@ describe('eventTags', () => {
   it('slugs mixed case, spaces and punctuation into a stable path', () => {
     expect(eventTagSlug('Nakamas Nights')).toBe('nakamas-nights');
     expect(eventTagSlug('  board games ')).toBe('board-games');
-    expect(eventTagSlug('καφές')).toBe('καφές');
+    expect(eventTagSlug('καφές')).toBe('coffee');
+    expect(eventTagSlug('boardgames')).toBe('board-games');
+    expect(eventTagSlug('run')).toBe('running');
     expect(eventTagPath('Nakamas Nights')).toBe('/tags/nakamas-nights');
     expect(tagsMatch('nakamas nights', 'Nakamas-Nights')).toBe(true);
   });
@@ -34,6 +36,13 @@ describe('eventTags', () => {
     ]);
     expect(eventsForTag([{ tags: ['nakamas nights'] }, { tags: ['wine'] }], 'Nakamas-Nights')).toHaveLength(1);
     expect(eventHasTag({ tags: ['board games'] }, 'board-games')).toBe(true);
+    const merged = catalogEventTags([
+      { tags: ['boardgames'] },
+      { tags: ['board games'] },
+      { tags: ['boardgames', 'social'] },
+    ]);
+    expect(merged.find((item) => item.slug === 'board-games')?.count).toBe(3);
+    expect(merged.filter((item) => item.slug === 'board-games')).toHaveLength(1);
   });
 
   it('filters the directory by label, raw tag or slug', () => {
