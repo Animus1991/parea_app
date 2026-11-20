@@ -1,5 +1,27 @@
 import type { AppNotification } from '../data/mockNotifications';
 
+export function pendingFeedbackNotificationId(eventId: string): string {
+  return `feedback-pending-${eventId}`;
+}
+
+/** Live join-gate reminder. Honest copy: rating the last night unblocks the next join. */
+export function buildPendingFeedbackNotification(
+  userId: string,
+  event: { id: string; title: string },
+): AppNotification {
+  return {
+    id: pendingFeedbackNotificationId(event.id),
+    type: 'feedback',
+    messageGr: `Αξιολόγησε το «${event.title}». Μέχρι τότε δεν μπορείς να μπεις σε άλλη βραδιά.`,
+    messageEn: `Rate “${event.title}”. You can’t join another night until you do.`,
+    timeGr: 'Τώρα',
+    timeEn: 'Now',
+    read: false,
+    eventId: event.id,
+    forUserId: userId,
+  };
+}
+
 /** Rows without `forUserId` belong to the active inbox; targeted rows only to that user. */
 export function notificationsForUser(
   notifications: AppNotification[],

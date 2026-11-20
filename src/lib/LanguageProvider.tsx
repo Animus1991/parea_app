@@ -27,9 +27,6 @@ const translations: Record<string, Record<Language, string>> = {
   'home.hero.stat3': { el: 'Δημόσια σημεία', en: 'Public spots' },
   'home.hero.search_placeholder': { el: 'Αναζήτηση εκδήλωσης ή περιοχής', en: 'Search event or area' },
   'home.hero.how_groups': { el: 'Πώς λειτουργούν οι ομάδες', en: 'How groups work' },
-  'home.pending_feedback.title': { el: 'Εκκρεμής Αξιολόγηση', en: 'Pending Feedback' },
-  'home.pending_feedback.body': { el: 'Αξιολογήστε τα 3 μέλη από το "Comedy Night" για να ξεκλειδώσετε την επόμενη κράτησή σας.', en: 'Please rate the 3 members from "Comedy Night" to unlock your next booking.' },
-  'home.pending_feedback.cta': { el: 'Αξιολόγηση', en: 'Review Event' },
 
   // How it works
   'home.how.step1.title': { el: 'Διαλέξτε μια εμπειρία', en: 'Pick an experience' },

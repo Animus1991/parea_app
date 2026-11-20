@@ -8,7 +8,6 @@ import { EmptyState } from "../components/common/EmptyState";
 import { useHomeTheme } from "../hooks/useHomeTheme";
 import { useThemeStyles } from "../hooks/useThemeStyles";
 import { HomeLoggedInHero } from "../components/home/HomeLoggedInHero";
-import { HomePendingFeedbackBanner } from "../components/home/HomePendingFeedbackBanner";
 import { HomeVerifyBanner } from "../components/home/HomeVerifyBanner";
 import { getTimeGreeting, getMotivation } from "../lib/homeGreeting";
 import { HomeSearchDropdown } from "../components/home/HomeSearchDropdown";
@@ -128,7 +127,6 @@ export default function HomeClassic() {
 
       <HomeContinueStrip />
 
-      {homeGate === 'feedback' && <HomePendingFeedbackBanner />}
       {homeGate === 'verify' && <HomeVerifyBanner />}
       {homeGate === 'welcome' && (
         <HomeOnboardingWelcomeBanner useClassicTokens onDismiss={dismissWelcome} />

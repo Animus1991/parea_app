@@ -118,8 +118,10 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
     const gate = canJoinEvent(eventId);
     if (!gate.ok) {
       toast.error(t(gate.messageEl, gate.messageEn));
-      const pending = getPendingFeedbackEventId();
-      if (pending) navigate(`/history/feedback/${pending}`);
+      if (gate.reason === 'feedback') {
+        const pending = getPendingFeedbackEventId();
+        if (pending) navigate(`/history/feedback/${pending}`);
+      }
       return;
     }
     navigate(`/events/${eventId}/join`);

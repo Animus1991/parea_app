@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useOnboardingWelcome } from '../../hooks/useOnboardingWelcome';
 import { useHomeHeroGate } from '../../hooks/useHomeHeroGate';
 import { HomeOnboardingWelcomeBanner } from './HomeOnboardingWelcomeBanner';
-import { HomePendingFeedbackBanner } from './HomePendingFeedbackBanner';
 import { HomeVerifyBanner } from './HomeVerifyBanner';
 
 export interface HomeThemedEnrichmentProps {
@@ -11,8 +10,8 @@ export interface HomeThemedEnrichmentProps {
 }
 
 /**
- * One above-fold gate: pending feedback, then verify, then welcome.
- * Catalog stories live in HomeDiscoverEnrichment, under the hero.
+ * One above-fold gate: verify, then welcome.
+ * Rating lives in Notifications. Catalog stories live in HomeDiscoverEnrichment.
  */
 export function HomeThemedEnrichment({ onPreferDiscoverFeed }: HomeThemedEnrichmentProps) {
   const { showWelcome, dismissWelcome } = useOnboardingWelcome();
@@ -22,7 +21,6 @@ export function HomeThemedEnrichment({ onPreferDiscoverFeed }: HomeThemedEnrichm
     if (showWelcome) onPreferDiscoverFeed?.();
   }, [showWelcome, onPreferDiscoverFeed]);
 
-  if (gate === 'feedback') return <HomePendingFeedbackBanner />;
   if (gate === 'verify') return <HomeVerifyBanner />;
   if (gate === 'welcome') return <HomeOnboardingWelcomeBanner onDismiss={dismissWelcome} />;
   return null;
