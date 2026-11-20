@@ -55,12 +55,24 @@ const json = (body: unknown, extra: Record<string, string> = {}): RequestInit =>
   body: JSON.stringify(body),
 });
 
-/** A random key only the inviting device holds; the server stores its hash. */
-export function newHostKey(): string {
-  const bytes = new Uint8Array(24);
+function randomHex(byteCount: number): string {
+  const bytes = new Uint8Array(byteCount);
   if (typeof crypto !== 'undefined' && crypto.getRandomValues) crypto.getRandomValues(bytes);
   else for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** A random key only the inviting device holds; the server stores its hash. */
+export function newHostKey(): string {
+  return randomHex(24);
+}
+
+/**
+ * The invite link is all a guest needs to see the card, so its id is 96
+ * random bits: nobody can guess or pre-claim another host's link.
+ */
+export function newInviteId(): string {
+  return `inv_${randomHex(12)}`;
 }
 
 export async function publishInvite(id: string, card: InviteCardDto, hostKey: string): Promise<boolean> {
