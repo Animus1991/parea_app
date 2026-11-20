@@ -38,6 +38,7 @@ import { DESKTOP_DOCK_QUERY, useMediaQuery } from '../../hooks/useMediaQuery';
 import { useWallUnreadCount } from '../../hooks/useWallUnreadCount';
 import { useLiveCatalogDates } from '../../hooks/useLiveCatalogDates';
 import { useEnsurePendingFeedbackNotification } from '../../hooks/useEnsurePendingFeedbackNotification';
+import { useNotificationsToggle } from '../../hooks/useNotificationsToggle';
 
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
@@ -119,9 +120,18 @@ interface NavItemProps {
   rail?: boolean;
   /** Unread count shown next to the label (or as a dot on the icon rail). */
   badge?: number;
+  onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
-function NavItem({ to, icon: Icon, label, compact = false, rail = false, badge = 0 }: NavItemProps) {
+function NavItem({
+  to,
+  icon: Icon,
+  label,
+  compact = false,
+  rail = false,
+  badge = 0,
+  onClick,
+}: NavItemProps) {
   const tok = useThemeStyles();
   const containerClass = rail
     ? 'justify-center px-0 py-3'
@@ -141,6 +151,7 @@ function NavItem({ to, icon: Icon, label, compact = false, rail = false, badge =
       title={badge > 0 ? `${label} (${badge})` : label}
       aria-label={badge > 0 ? `${label} (${badge})` : undefined}
       // Start loading the page while the pointer or focus is on its link.
+      onClick={onClick}
       onMouseEnter={() => prefetchPath(to)}
       onFocus={() => prefetchPath(to)}
       className={({ isActive }) =>
@@ -227,6 +238,7 @@ function NavSection({ id, title, paths, children, compact = false, rail = false 
 // ─────────────────────────────────────────────
 function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?: boolean }) {
   const { t } = useLanguage();
+  const { toggle: toggleNotifications } = useNotificationsToggle();
   const currentUser = useStore((s) => s.currentUser);
   // Same predicate as CommandPalette and the copilot (lib/roles.ts).
   const isAdmin = isPlatformAdmin(currentUser);
@@ -269,7 +281,7 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
         <NavItem to="/profile" icon={User} label={t('Το Προφίλ μου', 'My Profile')} compact={compact} rail={rail} />
         <NavItem to="/verification" icon={BadgeCheck} label={t('Επαλήθευση', 'Verification')} compact={compact} rail={rail} />
         <NavItem to="/trust" icon={ShieldCheck} label={t('Αξιοπιστία', 'Reliability')} compact={compact} rail={rail} />
-        <NavItem to="/notifications" icon={Bell} label={t('Ειδοποιήσεις', 'Notifications')} compact={compact} rail={rail} />
+        <NavItem to="/notifications" icon={Bell} label={t('Ειδοποιήσεις', 'Notifications')} compact={compact} rail={rail} onClick={toggleNotifications} />
         <NavItem to="/settings" icon={Settings} label={t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')} compact={compact} rail={rail} />
         {isAdmin && (
           <NavItem to="/admin" icon={Terminal} label={t('Διαχείριση & Έλεγχος', 'Admin & Moderation')} compact={compact} rail={rail} />
@@ -331,6 +343,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
   const theme = useStore((state) => state.theme);
   const tok = useThemeStyles();
   const unreadNotificationCount = useUnreadCount();
+  const { isOpen: notificationsOpen, toggle: toggleNotifications } = useNotificationsToggle();
   const [searchValue, setSearchValue] = useState('');
   // While Nakamas AI is docked the main column is narrower: secondary chrome waits for 2xl.
   const copilotDocked = useCopilotStore((s) => s.open) && isDesktopDock;
@@ -396,14 +409,41 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           <span className="hidden lg:inline">{t('Δημιουργία', 'Create')}</span>
         </button>
 
-        <NavLink aria-label={unreadNotificationCount > 0 ? `${t('Ειδοποιήσεις','Notifications')} (${unreadNotificationCount})` : t('Ειδοποιήσεις','Notifications')} to="/notifications" className={cn("relative transition-colors", theme === "activebuddies-dark" ? "text-white hover:text-gray-300" : theme === "activebuddies" ? "text-[hsl(220_11%_34%)] hover:text-[hsl(220_14%_12%)]" : theme === "bento-dark" || theme === "neon-dark" ? "text-white hover:text-emerald-400" : theme === "vibrant-dark" ? "text-white hover:text-fuchsia-400" : theme === "vibrant" ? "text-gray-500 hover:text-fuchsia-600" : theme === "bento" ? "text-gray-500 hover:text-indigo-600" : theme === "neon" ? "text-gray-500 hover:text-emerald-600" : "text-gray-500 hover:text-brand")}>
+        <button
+          type="button"
+          aria-pressed={notificationsOpen}
+          aria-label={unreadNotificationCount > 0 ? `${t('Ειδοποιήσεις','Notifications')} (${unreadNotificationCount})` : t('Ειδοποιήσεις','Notifications')}
+          onMouseEnter={() => prefetchPath('/notifications')}
+          onFocus={() => prefetchPath('/notifications')}
+          onClick={() => toggleNotifications()}
+          className={cn(
+            'relative inline-flex min-h-9 min-w-9 items-center justify-center rounded-lg transition-colors',
+            notificationsOpen
+              ? tok.navActive
+              : theme === 'activebuddies-dark'
+                ? 'text-white hover:text-gray-300'
+                : theme === 'activebuddies'
+                  ? 'text-[hsl(220_11%_34%)] hover:text-[hsl(220_14%_12%)]'
+                  : theme === 'bento-dark' || theme === 'neon-dark'
+                    ? 'text-white hover:text-emerald-400'
+                    : theme === 'vibrant-dark'
+                      ? 'text-white hover:text-fuchsia-400'
+                      : theme === 'vibrant'
+                        ? 'text-gray-500 hover:text-fuchsia-600'
+                        : theme === 'bento'
+                          ? 'text-gray-500 hover:text-indigo-600'
+                          : theme === 'neon'
+                            ? 'text-gray-500 hover:text-emerald-600'
+                            : 'text-gray-500 hover:text-brand',
+          )}
+        >
           <Bell className="h-[18px] w-[18px]" />
           {unreadNotificationCount > 0 && (
             <span className={cn("absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-xs font-bold border", theme === 'activebuddies' ? 'bg-[hsl(220_14%_12%)] text-white border-white' : theme === 'activebuddies-dark' ? 'bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] border-[hsl(220_16%_8%)]' : 'bg-accent text-white border-white')}>
               {unreadNotificationCount}
             </span>
           )}
-        </NavLink>
+        </button>
 
         <div className="flex items-center space-x-2">
           {currentUser ? (
