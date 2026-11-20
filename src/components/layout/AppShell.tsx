@@ -20,8 +20,7 @@ import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { PlansFormingBottomSheet } from '../buddySeek/PlansFormingBottomSheet';
 import { PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
 import { MobileDock } from './MobileDock';
-import { BottomSwipeQuickNav } from './BottomSwipeQuickNav';
-import { useBottomSwipeQuickNav } from '../../hooks/useBottomSwipeQuickNav';
+import { BottomNav } from './BottomNav';
 import { prefetchPath } from '../../lib/routeLoaders';
 import { PopupChatRoot } from '../chat/PopupChatRoot';
 import { DemoModeBanner } from '../common/DemoModeBanner';
@@ -488,72 +487,6 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         </button>
       </div>
     </nav>
-  );
-}
-
-// ─────────────────────────────────────────────
-// BottomNav
-// ─────────────────────────────────────────────
-export function BottomNav() {
-  const tok = useThemeStyles();
-  const { t } = useLanguage();
-  const { pathname } = useLocation();
-  const swipe = useBottomSwipeQuickNav();
-  // Group chat owns the bottom of the screen (composer). Tabs stay one tap back.
-  if (pathname.startsWith('/chat/')) return null;
-  return (
-    <>
-    <div
-      ref={swipe.navRef}
-      data-bottom-swipe-origin=""
-      className={cn("md:hidden fixed bottom-0 left-0 w-full backdrop-blur-md border-t px-2 pb-4 pt-3 flex items-center justify-around shadow-soft-up-lg z-bottomnav touch-none select-none [&_a]:[user-drag:none]", tok.bottomNav)}
-    >
-      {([
-        { to: "/", icon: Compass, labelGr: 'Ανακάλυψη', labelEn: 'Discover' },
-        { to: "/plans", icon: CalendarCheck, labelGr: 'Σχέδια', labelEn: 'Plans' },
-      ] as const).map(({ to, icon: Icon, labelGr, labelEn }) => (
-        <NavLink key={to} to={to}
-          onTouchStart={() => prefetchPath(to)}
-          onFocus={() => prefetchPath(to)}
-          className={({ isActive }) =>
-            cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px] min-h-11",
-              isActive ? tok.navActive : tok.navInactive)
-          }
-        >
-          <Icon className="h-[18px] w-[18px]" />
-          <span className="text-xs font-medium leading-none">{t(labelGr, labelEn)}</span>
-        </NavLink>
-      ))}
-      <div className="flex flex-col items-center justify-center -mt-4">
-        <NavLink
-          to="/create"
-          aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
-          className={cn("w-11 h-11 rounded-full flex items-center justify-center transition-colors border-2 border-white", tok.fab)}
-        >
-          <Plus className="h-[20px] w-[20px] icon-emphasis" aria-hidden />
-        </NavLink>
-        {/* Visible caption; the link itself carries the name for screen readers. */}
-        <span aria-hidden className={cn("text-xs font-medium mt-1", tok.muted)}>{t('Δημιουργία', 'Create')}</span>
-      </div>
-      {([
-        { to: "/connections", icon: Users, labelGr: 'Φίλοι', labelEn: 'Friends' },
-        { to: "/profile", icon: User, labelGr: 'Προφίλ', labelEn: 'Profile' },
-      ] as const).map(({ to, icon: Icon, labelGr, labelEn }) => (
-        <NavLink key={to} to={to}
-          onTouchStart={() => prefetchPath(to)}
-          onFocus={() => prefetchPath(to)}
-          className={({ isActive }) =>
-            cn("flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px] min-h-11",
-              isActive ? tok.navActive : tok.navInactive)
-          }
-        >
-          <Icon className="h-[18px] w-[18px]" />
-          <span className="text-xs font-medium leading-none">{t(labelGr, labelEn)}</span>
-        </NavLink>
-      ))}
-    </div>
-    {swipe.open && <BottomSwipeQuickNav onClose={swipe.close} />}
-    </>
   );
 }
 

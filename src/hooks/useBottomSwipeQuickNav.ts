@@ -69,7 +69,7 @@ export function useBottomSwipeQuickNav(): {
       if (!isUpwardOpenSwipe(delta)) return false;
       if (hasOpenOverlay()) return false;
       acted = true;
-      suppressClickOnce(undefined, 400);
+      suppressClickOnce(navRef.current, 400);
       setOpen(true);
       return true;
     };

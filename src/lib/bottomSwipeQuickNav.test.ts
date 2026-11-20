@@ -34,7 +34,7 @@ describe('bottom swipe gesture', () => {
 });
 
 describe('quickNavDestinations', () => {
-  it('never repeats the five visible bottom tabs', () => {
+  it('never repeats the five default bottom tabs', () => {
     const paths = quickNavDestinations({ isAdmin: true, isOrganizer: true }).map((t) => t.path);
     for (const tab of BOTTOM_TAB_PATHS) {
       expect(paths).not.toContain(tab);

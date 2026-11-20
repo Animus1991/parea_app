@@ -30,4 +30,25 @@ test.describe('Bottom swipe quick nav', () => {
     await swipe(page, { x: sheetBox!.x + sheetBox!.width / 2, y: sheetBox!.y + 36 }, 80);
     await expect(sheet).toHaveCount(0);
   });
+
+  test('edit can pin a page onto the bar and add a hidden page to the swipe menu', async ({ page }) => {
+    await enterDemoGuest(page);
+    const tab = page.getByRole('link', { name: /^Ανακάλυψη$|^Discover$/ });
+    const tabBox = await tab.boundingBox();
+    await swipe(page, { x: tabBox!.x + tabBox!.width / 2, y: tabBox!.y + tabBox!.height / 2 }, -80);
+
+    const sheet = page.getByRole('dialog', { name: /Γρήγορη πρόσβαση|Quick access|Επεξεργασία συντομεύσεων|Edit shortcuts/ });
+    await expect(sheet).toBeVisible();
+    await sheet.getByRole('button', { name: /^Επεξεργασία$|^Edit$/ }).click();
+    await expect(sheet.getByRole('heading', { name: /Επεξεργασία συντομεύσεων|Edit shortcuts/ })).toBeVisible({ timeout: 8_000 });
+
+    await sheet.getByRole('button', { name: /Στην κάτω μπάρα|Pin to the bar/ }).first().click();
+    const report = sheet.locator('div.relative').filter({ hasText: /^Αναφορά$|^Report$/ });
+    await report.getByRole('button', { name: /Προσθήκη στο μενού|Add to the menu/ }).click();
+    await sheet.getByRole('button', { name: /^Έτοιμο$|^Done$/ }).click();
+
+    const bar = page.locator('[data-bottom-swipe-origin]');
+    await expect(bar.getByRole('link', { name: /^Κατηγορίες$|^Categories$/ })).toBeVisible();
+    await expect(sheet.getByRole('link', { name: /^Αναφορά$|^Report$/ })).toBeVisible();
+  });
 });
