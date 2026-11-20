@@ -110,7 +110,7 @@ export function EventStoriesSkeleton({ count = 6 }: { count?: number }) {
       </div>
       <div className="flex gap-3 overflow-hidden pb-2">
         {Array.from({ length: count }).map((_, i) => (
-          <Skeleton key={i} className="shrink-0 w-[108px] h-[156px] rounded-2xl" />
+          <Skeleton key={i} className="event-story-skeleton shrink-0 w-[108px] h-[156px] rounded-2xl" />
         ))}
       </div>
     </Status>
