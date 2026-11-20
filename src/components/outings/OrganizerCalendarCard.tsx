@@ -86,7 +86,7 @@ export function OrganizerCalendarCard({ organizerId, organizerName, className }:
       </div>
       <details className="mt-3">
         <summary className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 text-xs font-bold text-ink">
-          <Code2 className="h-4 w-4" aria-hidden /> {t('Widget για το site σου', 'Widget for your site')}
+          <Code2 className="h-4 w-4" aria-hidden /> {t('Widget για την ιστοσελίδα σου', 'Widget for your site')}
         </summary>
         <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-all rounded-xl border border-border bg-surface p-3 text-2xs text-ink">{embed}</pre>
         <Button size="sm" variant="outline" className="mt-2" onClick={() => copy('embed', embed)}>

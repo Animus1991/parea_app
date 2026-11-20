@@ -30,6 +30,7 @@ import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useStore } from '../../store';
 import { toast } from 'sonner';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { formatEur } from '../../lib/money';
 
 const QUICK_TEMPLATES = [
   { labelEl: 'Πεζοπορία', labelEn: 'Hiking', icon: '🥾' },
@@ -98,7 +99,7 @@ export default function OrganizerDashboardPageContent() {
     const dayNames =
       language === 'en'
         ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        : ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ'];
+        : ['Δευ', 'Τρί', 'Τετ', 'Πέμ', 'Παρ', 'Σάβ', 'Κυρ'];
     const baseViews = Math.max(12, liveStats.participants * 14 + liveStats.active * 48);
     const baseClicks = Math.max(4, Math.round(baseViews * 0.38));
     return dayNames.map((name, i) => {
@@ -149,7 +150,7 @@ export default function OrganizerDashboardPageContent() {
     {
       labelEl: 'Έσοδα',
       labelEn: 'Revenue',
-      val: `€${liveStats.revenue}`,
+      val: formatEur(liveStats.revenue, language),
       trendEl: t('Από επί πληρωμή', 'From paid events'),
       trendEn: t('Από επί πληρωμή', 'From paid events'),
       icon: DollarSign,
@@ -199,8 +200,8 @@ export default function OrganizerDashboardPageContent() {
     titleEl: 'Πίνακας Διοργανωτή',
     titleEn: 'Organizer Workspace',
     state: section,
-    summaryEl: `${liveStats.active} ενεργές · €${liveStats.revenue} έσοδα ομάδων`,
-    summaryEn: `${liveStats.active} active · €${liveStats.revenue} group revenue`,
+    summaryEl: `${liveStats.active} ενεργές · ${formatEur(liveStats.revenue, 'el')} έσοδα ομάδων`,
+    summaryEn: `${liveStats.active} active · ${formatEur(liveStats.revenue, 'en')} group revenue`,
     visibleIds: myEvents.slice(0, 8).map((e) => e.id),
   });
 

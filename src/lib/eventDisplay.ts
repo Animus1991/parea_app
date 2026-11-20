@@ -1,4 +1,5 @@
 import type { Event, Group, User } from '../types';
+import { formatEur } from './money';
 import { eventTagLabels } from './eventTags';
 
 const LOCATION_EL: Record<string, string> = {
@@ -87,10 +88,7 @@ export function formatEventPrice(
   freeEn = 'Free',
 ): string {
   if (!event.isPaid || event.price <= 0) return language === 'el' ? freeEl : freeEn;
-  if (language === 'el') {
-    return `${event.price.toLocaleString('el-GR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
-  }
-  return `€${event.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return formatEur(event.price, language);
 }
 
 export function formatLocationArea(area: string, language: 'el' | 'en'): string {

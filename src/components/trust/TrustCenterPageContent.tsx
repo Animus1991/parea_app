@@ -300,7 +300,7 @@ export default function TrustCenterPageContent() {
               <ul aria-label={t('Πέφτει', 'Goes down')} className="space-y-1.5 border-t border-border pt-3">
                 {[
                   { delta: '−8', el: 'Ακύρωση τελευταίας στιγμής', en: 'Last-minute cancel' },
-                  { delta: '−15', el: 'Απουσία (no-show)', en: 'No-show' },
+                  { delta: '−15', el: 'Μη εμφάνιση', en: 'No-show' },
                 ].map((row) => (
                   <li key={row.delta} className="flex items-baseline gap-3">
                     <span className="w-7 shrink-0 text-xs font-semibold tabular-nums text-red-700 dark:text-red-400">{row.delta}</span>

@@ -140,7 +140,7 @@ export default function InboxPageContent() {
     <div className="w-full max-w-full min-w-0 flex flex-col relative animate-in fade-in duration-500">
       <div className="shrink-0 mb-4">
         <h1 className={cn(INBOX_TYPO.pageTitle, p.head)}>
-          {t('Μηνύματα', 'Messages')}
+          {t('Συνομιλίες', 'Chats')}
         </h1>
         <p className={cn(INBOX_TYPO.pageSub, 'mt-1', p.sub)}>
           {t('Συνομιλίες ομάδων & ειδοποιήσεις', 'Group conversations & notifications')}
@@ -169,7 +169,7 @@ export default function InboxPageContent() {
                 : p.muted,
             )}
           >
-            <MessageSquare className="w-3.5 h-3.5" aria-hidden /> {t('Μηνύματα', 'Messages')}
+            <MessageSquare className="w-3.5 h-3.5" aria-hidden /> {t('Συνομιλίες', 'Chats')}
           </button>
           <button
             type="button"

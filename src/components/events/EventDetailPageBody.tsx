@@ -32,6 +32,7 @@ import { cn } from '../../lib/utils';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { EventCoverImg } from '../common/EventCoverImg';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { formatEur } from '../../lib/money';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
@@ -49,7 +50,7 @@ interface EventDetailPageBodyProps {
 export default function EventDetailPageBody({ accent, darkSurface = false }: EventDetailPageBodyProps) {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const categoryLabel = useCategoryLabel();
   const theme = useStore((s) => s.theme);
   const panelDark = darkSurface || isDarkTheme(theme);
@@ -174,7 +175,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         <div className="flex flex-wrap gap-2 mt-4">
           <Badge variant="neutral">{categoryLabel(event.category)}</Badge>
           {event.isPaid ? (
-            <Badge variant="outline" icon={<Ticket className="h-3 w-3" />}>€{event.price}</Badge>
+            <Badge variant="outline" icon={<Ticket className="h-3 w-3" />}>{formatEur(event.price, language)}</Badge>
           ) : (
             <Badge variant="outline">{t('Δωρεάν', 'Free')}</Badge>
           )}

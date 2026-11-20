@@ -40,6 +40,7 @@ import { InvitePanel } from './InvitePanel';
 import { GroupTicketsPanel } from './GroupTicketsPanel';
 import { PreMeetCard } from './PreMeetCard';
 import type { User } from '../../types';
+import { formatEur } from '../../lib/money';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
@@ -428,7 +429,7 @@ export default function OurNightPageContent() {
               <Repeat2 className="h-3.5 w-3.5" aria-hidden />
               {t('Τελευταία μεταβίβαση θέσης: ', 'Last seat hand-over: ')}
               {new Date(group.lastTransfer.at).toLocaleDateString(language === 'el' ? 'el-GR' : 'en-GB')}
-              {group.lastTransfer.price ? ` · ${group.lastTransfer.price.toFixed(2)} €` : ''}
+              {group.lastTransfer.price ? ` · ${formatEur(group.lastTransfer.price, language)}` : ''}
             </p>
           )}
         </section>

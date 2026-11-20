@@ -236,7 +236,7 @@ export default function ReportIssuePageContent() {
               >
                 <Upload className={cn('w-5 h-5 mx-auto mb-1', p.muted)} />
                 <p className={cn('card-copy font-medium', p.uploadText)}>
-                  {t('Ανέβασε screenshots ή φωτογραφίες', 'Upload screenshots or photos')}
+                  {t('Ανέβασε στιγμιότυπα οθόνης ή φωτογραφίες', 'Upload screenshots or photos')}
                 </p>
                 <p className={cn('text-xs mt-0.5', p.muted)}>
                   PNG, JPG {t('έως', 'up to')} 5MB

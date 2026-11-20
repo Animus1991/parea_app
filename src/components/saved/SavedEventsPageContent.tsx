@@ -53,7 +53,7 @@ export default function SavedEventsPageContent() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Αποθηκευμένα', 'Saved Events')}</h1>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Αποθηκευμένες', 'Saved Events')}</h1>
           <p className={cn(APP_TYPO.pageSub, "mt-1", a.sub)}>
             {savedEventIds.length > 0
               ? t(`${savedEventIds.length} αποθηκευμένες εκδηλώσεις`, `${savedEventIds.length} saved events`)

@@ -55,7 +55,7 @@ describe('eventDisplay', () => {
   });
 
   it('formats Greek euro amounts with a decimal comma', () => {
-    expect(formatEventPrice(event(), 'el')).toBe('8,50 €');
+    expect(formatEventPrice(event(), 'el')).toBe('8,50\u00a0€');
     expect(formatEventPrice(event(), 'en')).toBe('€8.50');
     expect(formatEventPrice(event({ isPaid: false, price: 0 }), 'el')).toBe('Δωρεάν');
   });

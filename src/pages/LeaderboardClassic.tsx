@@ -90,7 +90,7 @@ export default function LeaderboardClassic() {
   const tabs = [
     { id: 'global', label: t('Παγκόσμια', 'Global') },
     { id: 'friends', label: t('Φίλοι', 'Friends') },
-    { id: 'badges', label: t('Badges', 'Badges') },
+    { id: 'badges', label: t('Διακριτικά', 'Badges') },
   ];
 
   return (

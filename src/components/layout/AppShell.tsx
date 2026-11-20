@@ -265,7 +265,7 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
       <NavSection id="community" paths={['/wall', '/connections', '/chats', '/chat', '/leaderboard', '/challenges', '/achievements', '/u']} title={t('Κοινότητα', 'Community')} compact={compact} rail={rail}>
         <NavItem to="/wall" icon={Newspaper} label={t('Τοίχος Nakamas', 'Nakamas Wall')} compact={compact} rail={rail} />
         <NavItem to="/connections" icon={Users} label={t('Οι Nakamas μου', 'My Nakamas')} compact={compact} rail={rail} />
-        <NavItem to="/chats" icon={MessageSquare} label={t('Ομαδικές Συνομιλίες', 'Group Chats')} compact={compact} rail={rail} />
+        <NavItem to="/chats" icon={MessageSquare} label={t('Συνομιλίες', 'Chats')} compact={compact} rail={rail} />
         <NavItem to="/leaderboard" icon={Trophy} label={t('Κατάταξη', 'Leaderboard')} compact={compact} rail={rail} />
         <NavItem to="/challenges" icon={Zap} label={t('Προκλήσεις', 'Challenges')} compact={compact} rail={rail} />
       </NavSection>
@@ -275,7 +275,7 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
           <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας Διοργανωτή', 'Organizer Dashboard')} compact={compact} rail={rail} />
         )}
         <NavItem to="/create" icon={PlusSquare} label={t('Δημιουργία Εκδήλωσης', 'Create Event')} compact={compact} rail={rail} />
-        <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & Κέρδη', 'Wallet & Earnings')} compact={compact} rail={rail} />
+        <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')} compact={compact} rail={rail} />
       </NavSection>
 
       <NavSection id="account" paths={['/profile', '/verification', '/trust', '/notifications', '/settings', '/admin']} title={t('Λογαριασμός', 'Account')} compact={compact} rail={rail}>
@@ -606,12 +606,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span>Nakamas v1.0.5-beta</span>
             <span className="flex items-center">
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2" />
-              {t('Σύστημα Λειτουργικό', 'System Operational')}
+              {t('Το σύστημα λειτουργεί', 'All systems working')}
             </span>
           </div>
           <div className="hidden sm:flex space-x-4">
             <Link to="/settings" className="hover:text-ink transition-colors">{t('Πολιτική Απορρήτου', 'Privacy Policy')}</Link>
-            <Link to="/report" className="hover:text-ink transition-colors">{t('Αναφορά Προβλημάτων', 'Report Issues')}</Link>
+            <Link to="/report" className="hover:text-ink transition-colors">{t('Αναφορά Προβλήματος', 'Report an Issue')}</Link>
             <Link to="/trust" className="hover:text-ink transition-colors">{t('Πώς λειτουργεί η αξιοπιστία', 'How trust works')}</Link>
           </div>
         </footer>

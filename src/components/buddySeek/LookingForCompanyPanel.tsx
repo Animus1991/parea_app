@@ -411,7 +411,7 @@ export function LookingForCompanyPanel({
           <p className={cn('text-xs flex items-start gap-1.5', tok.muted)}>
             <Shield className="w-3.5 h-3.5 shrink-0 mt-0.5" />
             {t(
-              'Σχεδιασμένο με privacy controls. Μόνο τα πεδία που επιλέγεις εμφανίζονται. Δεν είναι διαφήμιση.',
+              'Εμφανίζονται μόνο τα πεδία που επιλέγεις. Δεν είναι διαφήμιση.',
               'Designed with privacy controls. Only selected fields show. Not advertising.',
             )}
           </p>

@@ -524,11 +524,11 @@ export default function MyCalendarPageContent() {
               <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2 md:mb-4">
                 {[
                   t("Δευ", "Mon"),
-                  t("Τρι", "Tue"),
+                  t("Τρί", "Tue"),
                   t("Τετ", "Wed"),
-                  t("Πεμ", "Thu"),
+                  t("Πέμ", "Thu"),
                   t("Παρ", "Fri"),
-                  t("Σαβ", "Sat"),
+                  t("Σάβ", "Sat"),
                   t("Κυρ", "Sun"),
                 ].map((d, i) => (
                   <div key={i} className="text-center group cursor-default">
@@ -563,11 +563,11 @@ export default function MyCalendarPageContent() {
               <div className="grid grid-cols-7 gap-1 md:gap-2 mb-2 md:mb-4">
                 {[
                   t("Δευ", "Mon"),
-                  t("Τρι", "Tue"),
+                  t("Τρί", "Tue"),
                   t("Τετ", "Wed"),
-                  t("Πεμ", "Thu"),
+                  t("Πέμ", "Thu"),
                   t("Παρ", "Fri"),
-                  t("Σαβ", "Sat"),
+                  t("Σάβ", "Sat"),
                   t("Κυρ", "Sun"),
                 ].map((d) => (
                   <div

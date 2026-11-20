@@ -36,6 +36,7 @@ import { COLLECTIONS, collectionById, collectionEvents, formingGroups, venueById
 import { standingFor, strikeLabel } from '../lib/consequences';
 import { eventStartMs } from '../store/outingsSlice';
 import { notificationsForUser } from '../lib/notificationsUtil';
+import { formatEur } from '../lib/money';
 
 /** The wall store loads on demand so the first page (login) never ships wall code. */
 const loadWallStore = () => import('../store/wallStore').then((m) => m.useWallStore);
@@ -83,7 +84,7 @@ function fail(el: string, en: string): ActionResult {
 
 export function formatEventLine(e: Event, lang: 'el' | 'en'): string {
   const when = formatPlanWhen(e.date, e.time, lang);
-  const price = e.isPaid && e.price > 0 ? `€${e.price}` : lang === 'el' ? 'Δωρεάν' : 'Free';
+  const price = e.isPaid && e.price > 0 ? formatEur(e.price, lang) : lang === 'el' ? 'Δωρεάν' : 'Free';
   return `${e.title} · ${when} · ${e.locationArea} · ${price}`;
 }
 
@@ -678,8 +679,8 @@ const createEventAction: CopilotAction = {
   parameters: OBJ(EVENT_FIELDS, ['title', 'date', 'time']),
   preview: (args) => {
     const d = eventFromArgs(args);
-    const priceEl = d.price > 0 ? `€${d.price}` : 'Δωρεάν';
-    const priceEn = d.price > 0 ? `€${d.price}` : 'Free';
+    const priceEl = d.price > 0 ? formatEur(d.price, 'el') : 'Δωρεάν';
+    const priceEn = d.price > 0 ? formatEur(d.price, 'en') : 'Free';
     return {
       el: `Δημοσίευση: «${d.title}» · ${d.date} ${d.time} · ${d.area || 'Αθήνα'} · ${d.maxParticipants} άτομα · ${priceEl}`,
       en: `Publish: "${d.title}" · ${d.date} ${d.time} · ${d.area || 'Athens'} · ${d.maxParticipants} people · ${priceEn}`,
@@ -1606,8 +1607,8 @@ const summarizeWalletAction: CopilotAction = {
     }
     return {
       ok: true,
-      el: `Demo στοιχεία: διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)}, εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}. Θες διαχείριση πληρωμών;`,
-      en: `Demo figures: available ${formatWalletEur(WALLET_DEMO.availableEur)}, pending ${formatWalletEur(WALLET_DEMO.pendingEur)}. Want payout management?`,
+      el: `Demo στοιχεία: διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur, 'el')}, εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur, 'el')}. Θες διαχείριση πληρωμών;`,
+      en: `Demo figures: available ${formatWalletEur(WALLET_DEMO.availableEur, 'en')}, pending ${formatWalletEur(WALLET_DEMO.pendingEur, 'en')}. Want payout management?`,
       link: { path: '/wallet', el: 'Πορτοφόλι', en: 'Wallet' },
       data: { available: WALLET_DEMO.availableEur, pending: WALLET_DEMO.pendingEur, demo: true },
     };

@@ -46,7 +46,7 @@ export function ChatPrivacySettingsPanel() {
         onChange={(v) => setPrivacy({ allowGroupChats: v })}
       />
       <Toggle
-        label={t('Chats από συγχώνευση ομάδων', 'Chats from group merges')}
+        label={t('Συνομιλίες από συγχώνευση ομάδων', 'Chats from group merges')}
         hint={t(
           'Επιτρέπει μηνύματα όταν δύο ομάδες συγχωνεύονται για μια εκδήλωση',
           'Allows messaging when two groups merge for an event',
@@ -75,7 +75,7 @@ export function ChatPrivacySettingsPanel() {
         onChange={(v) => setPrivacy({ showMessagePreviews: !v })}
       />
       <Toggle
-        label={t('Αυτόματη λήξη event chats', 'Auto-expire event chats')}
+        label={t('Αυτόματη λήξη συνομιλιών εκδηλώσεων', 'Auto-expire event chats')}
         checked={privacy.autoExpireEventChats}
         onChange={(v) => setPrivacy({ autoExpireEventChats: v })}
       />

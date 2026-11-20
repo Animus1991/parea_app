@@ -26,6 +26,7 @@ import { profilePathFor } from '../../lib/profileLinks';
 import { OrganizerCalendarCard } from '../outings/OrganizerCalendarCard';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { formatEur } from '../../lib/money';
 
 export default function OrganizerProfilePageContent() {
   const { id } = useParams();
@@ -287,7 +288,7 @@ export default function OrganizerProfilePageContent() {
                       <span aria-hidden className="opacity-40"> · </span>
                       {event.locationArea}
                       <span aria-hidden className="opacity-40"> · </span>
-                      {event.isPaid ? `€${event.price}` : t('Δωρεάν', 'Free')}
+                      {event.isPaid ? formatEur(event.price, language) : t('Δωρεάν', 'Free')}
                     </p>
                   </div>
                   <div className={cn('hidden sm:flex items-center card-meta font-semibold text-cyan-600 self-center')}>

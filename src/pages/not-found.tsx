@@ -9,8 +9,8 @@ import { cn } from "../lib/utils";
 const ROUTE_SUGGESTIONS: { prefix: string; path: string; labelEl: string; labelEn: string }[] = [
   { prefix: 'cal', path: '/agenda', labelEl: 'Ημερολόγιο', labelEn: 'Calendar' },
   { prefix: 'agenda', path: '/agenda', labelEl: 'Ημερολόγιο', labelEn: 'Calendar' },
-  { prefix: 'chat', path: '/chats', labelEl: 'Μηνύματα', labelEn: 'Messages' },
-  { prefix: 'msg', path: '/chats', labelEl: 'Μηνύματα', labelEn: 'Messages' },
+  { prefix: 'chat', path: '/chats', labelEl: 'Συνομιλίες', labelEn: 'Chats' },
+  { prefix: 'msg', path: '/chats', labelEl: 'Συνομιλίες', labelEn: 'Chats' },
   { prefix: 'buddy', path: '/buddy-seek', labelEl: 'Buddy Seek', labelEn: 'Buddy Seek' },
   { prefix: 'plan', path: '/plans', labelEl: 'Πλάνα', labelEn: 'Plans' },
   { prefix: 'near', path: '/nearby', labelEl: 'Κοντά μου', labelEn: 'Nearby' },

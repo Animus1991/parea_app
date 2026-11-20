@@ -37,11 +37,11 @@ import { dateFnsLocale } from '../../lib/dateLocale';
 
 const WEEKDAY_LABELS = (t: (el: string, en: string) => string) => [
   t('Δευ', 'Mon'),
-  t('Τρι', 'Tue'),
+  t('Τρί', 'Tue'),
   t('Τετ', 'Wed'),
-  t('Πεμ', 'Thu'),
+  t('Πέμ', 'Thu'),
   t('Παρ', 'Fri'),
-  t('Σαβ', 'Sat'),
+  t('Σάβ', 'Sat'),
   t('Κυρ', 'Sun'),
 ];
 

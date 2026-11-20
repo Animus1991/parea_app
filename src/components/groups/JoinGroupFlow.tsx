@@ -13,11 +13,12 @@ import { GroupInsights } from '../outings/GroupInsights';
 import { VibeQuizModal } from '../outings/VibeQuizModal';
 import { fitsGenderMode } from '../../lib/outings';
 import type { GroupGenderMode } from '../../types/outings';
+import { formatEur } from '../../lib/money';
 
 export default function JoinGroupFlow() {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [searchParams] = useSearchParams();
   const preSelectedGroupId = searchParams.get('group') ?? searchParams.get('groupId');
 
@@ -330,7 +331,7 @@ export default function JoinGroupFlow() {
             <div className="p-4 rounded-xl border border-gray-100 bg-gray-50 space-y-2">
               <div className="flex justify-between text-sm font-medium">
                 <span>{t('Τιμή', 'Price')}</span>
-                <span>€{event.price}</span>
+                <span>{formatEur(event.price, language)}</span>
               </div>
               {event.groupDiscount && (
                 <div className="flex justify-between text-sm font-bold text-emerald-700">
@@ -338,7 +339,7 @@ export default function JoinGroupFlow() {
                     <Tag className="w-4 h-4" />
                     {t('Με ομαδική έκπτωση', 'With group discount')}
                   </span>
-                  <span>€{discountedPrice}</span>
+                  <span>{formatEur(Number(discountedPrice), language)}</span>
                 </div>
               )}
               <p className="text-2xs text-gray-500">

@@ -2,9 +2,10 @@ import { CreditCard, Ticket, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
-import { activeTicketPartner, PLANNED_TICKET_PARTNERS } from '../../services/ticketPartner';
+import { activeTicketPartner } from '../../services/ticketPartner';
 import { Button } from '../common/Button';
 import type { Event, Group, User } from '../../types';
+import { formatEur } from '../../lib/money';
 
 /**
  * Group tickets through a ticketing partner (more.com-style, adapted): the
@@ -31,7 +32,7 @@ export function GroupTicketsPanel({ group, event, members, isHost }: { group: Gr
         <Ticket className="h-4 w-4" aria-hidden /> {t('Εισιτήρια ομάδας', 'Group tickets')}
       </h3>
       <p className="mt-1 text-xs font-medium text-ink-muted">
-        {t(`${unit.toFixed(2)} € το άτομο${pct ? ` (με −${pct}% ομαδική έκπτωση)` : ''}. Ο καθένας πληρώνει μόνο το δικό του.`, `€${unit.toFixed(2)} per person${pct ? ` (with −${pct}% group discount)` : ''}. Everyone pays only their own share.`)}
+        {t(`${formatEur(unit, 'el')} το άτομο${pct ? ` (με −${pct}% ομαδική έκπτωση)` : ''}. Ο καθένας πληρώνει μόνο το δικό του.`, `${formatEur(unit, 'en')} per person${pct ? ` (with −${pct}% group discount)` : ''}. Everyone pays only their own share.`)}
       </p>
 
       {r ? (
@@ -57,7 +58,7 @@ export function GroupTicketsPanel({ group, event, members, isHost }: { group: Gr
                   toast.success(t('Το μερίδιό σου πληρώθηκε.', 'Your share was paid.'));
                 }}
               >
-                <CreditCard className="mr-1.5 h-4 w-4" aria-hidden /> {t(`Πλήρωσε το μερίδιό σου (${unit.toFixed(2)} €)`, `Pay your share (€${unit.toFixed(2)})`)}
+                <CreditCard className="mr-1.5 h-4 w-4" aria-hidden /> {t(`Πλήρωσε το μερίδιό σου (${formatEur(unit, 'el')})`, `Pay your share (${formatEur(unit, 'en')})`)}
               </Button>
             )}
             {isHost && r.status === 'awaiting_payments' && (
@@ -97,10 +98,8 @@ export function GroupTicketsPanel({ group, event, members, isHost }: { group: Gr
         <p className="mt-3 text-xs font-medium text-ink-muted">{t('Ο/Η οικοδεσπότης μπορεί να κρατήσει θέσεις για όλους μαζί.', 'The host can hold seats for everyone together.')}</p>
       )}
 
-      <p className="mt-3 text-2xs font-medium text-ink-muted">
-        {t(partner.noteEl, partner.noteEn)}{' '}
-        {PLANNED_TICKET_PARTNERS.map((p) => `${p.name}: ${t(p.noteEl, p.noteEn).toLowerCase()}`).join(' · ')}.
-      </p>
+      {/* Partner negotiations are product notes, not something a guest needs to read. */}
+      <p className="mt-3 text-2xs font-medium text-ink-muted">{t(partner.noteEl, partner.noteEn)}</p>
     </section>
   );
 }

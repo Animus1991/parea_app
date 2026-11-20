@@ -66,7 +66,7 @@ export function GamificationSummary({ className }: { className?: string }) {
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className={cn(APP_TYPO.statValue, 'text-ink')}>{d.level.level}</span>
-            <span className="text-2xs font-semibold text-ink-muted">LVL</span>
+            <span className="text-2xs font-semibold text-ink-muted">{t('Επίπεδο', 'Level')}</span>
           </div>
         </div>
         <div>

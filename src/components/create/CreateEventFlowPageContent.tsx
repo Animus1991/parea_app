@@ -28,6 +28,7 @@ import { Bot } from "lucide-react";
 import { useFormDraft, type FormDraftFields } from "../../lib/formDraft";
 import { APP_TYPO } from "../../lib/typographyTokens";
 import { AppSelect } from "../common/AppSelect";
+import { formatEur } from '../../lib/money';
 
 export default function CreateEventFlowPageContent() {
   const [step, setStep] = useState(1);
@@ -202,7 +203,7 @@ export default function CreateEventFlowPageContent() {
       t("Η εμπειρία δημοσιεύτηκε!", "Experience published!"),
       {
         description: isPaid
-          ? t(`Τιμή εισόδου €${newEvent.price}`, `Entry price €${newEvent.price}`)
+          ? t(`Τιμή εισόδου ${formatEur(newEvent.price, 'el')}`, `Entry price ${formatEur(newEvent.price, 'en')}`)
           : t("Δωρεάν εκδήλωση", "Free event"),
         action: {
           label: hosted ? t("Η βραδιά μας", "Our night") : t("Προβολή", "View"),
@@ -240,7 +241,7 @@ export default function CreateEventFlowPageContent() {
           </p>
         )}
         <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
-          {editEvent ? t("Επεξεργασία Εμπειρίας", "Edit Experience") : t("Δημιουργία Εμπειρίας", "Create Experience")}
+          {editEvent ? t("Επεξεργασία Εκδήλωσης", "Edit Event") : t("Δημιουργία Εκδήλωσης", "Create Event")}
         </h1>
 
         <div className="flex items-center gap-2 mt-4">
@@ -711,7 +712,7 @@ export default function CreateEventFlowPageContent() {
                   </span>
                   <span className={cn("font-bold", p.head)}>
                     {isPaid
-                      ? `€${Math.max(0, Number(price) || 0)}`
+                      ? formatEur(Math.max(0, Number(price) || 0), language)
                       : t("Δωρεάν", "Free")}
                   </span>
                 </div>
@@ -739,7 +740,7 @@ export default function CreateEventFlowPageContent() {
                   onClick={handleSubmit}
                   className="flex-[2]"
                 >
-                  {editEvent ? t("Αποθήκευση αλλαγών", "Save changes") : t("Δημοσίευση Εμπειρίας", "Publish Experience")}
+                  {editEvent ? t("Αποθήκευση αλλαγών", "Save changes") : t("Δημοσίευση Εκδήλωσης", "Publish Event")}
                 </Button>
               </div>
             </motion.div>

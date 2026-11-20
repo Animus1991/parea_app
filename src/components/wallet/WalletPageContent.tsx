@@ -14,9 +14,10 @@ import { WALLET_TYPO } from '../../lib/typographyTokens';
 import { formatWalletEur, WALLET_DEMO } from '../../lib/walletDemo';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { AppSelect } from '../common/AppSelect';
+import { formatEur } from '../../lib/money';
 
 export default function WalletPageContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const a = usePageContrast();
   const [txFilter, setTxFilter] = useState<'all' | 'month' | 'last'>('all');
@@ -28,8 +29,8 @@ export default function WalletPageContent() {
     titleEl: 'Πορτοφόλι & Έσοδα',
     titleEn: 'Wallet & Earnings',
     state: txFilter,
-    summaryEl: `Διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)} · εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}`,
-    summaryEn: `Available ${formatWalletEur(WALLET_DEMO.availableEur)} · pending ${formatWalletEur(WALLET_DEMO.pendingEur)}`,
+    summaryEl: `Διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur, 'el')} · εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur, 'el')}`,
+    summaryEn: `Available ${formatWalletEur(WALLET_DEMO.availableEur, 'en')} · pending ${formatWalletEur(WALLET_DEMO.pendingEur, 'en')}`,
   });
 
   const transactions = [
@@ -60,7 +61,7 @@ export default function WalletPageContent() {
             <Euro className="w-4 h-4" />
             <h3 className={WALLET_TYPO.kpiLabel}>{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
           </div>
-          <p className={cn(WALLET_TYPO.kpiValue, 'mb-4')}>{formatWalletEur(WALLET_DEMO.availableEur)}</p>
+          <p className={cn(WALLET_TYPO.kpiValue, 'mb-4')}>{formatWalletEur(WALLET_DEMO.availableEur, language)}</p>
           <Button className={cn("w-full", a.withdrawBtn)} onClick={() => setShowWithdraw(true)}>
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
@@ -71,7 +72,7 @@ export default function WalletPageContent() {
             <Clock className="w-4 h-4" />
             <h3 className={WALLET_TYPO.kpiLabel}>{t('Εκκρεμεί', 'Pending')}</h3>
           </div>
-          <p className={cn(WALLET_TYPO.kpiValueSecondary, 'mb-2', a.head)}>{formatWalletEur(WALLET_DEMO.pendingEur)}</p>
+          <p className={cn(WALLET_TYPO.kpiValueSecondary, 'mb-2', a.head)}>{formatWalletEur(WALLET_DEMO.pendingEur, language)}</p>
           <p className={cn(WALLET_TYPO.kpiHint, a.muted)}>
             {t('Εξοφλούνται 3-5 ημέρες μετά.', 'Clears 3-5 days after event.')}
           </p>
@@ -155,7 +156,7 @@ export default function WalletPageContent() {
                 </div>
                 <div className="text-right">
                   <p className={cn(WALLET_TYPO.rowTitle, tx.type === 'Payout' ? a.head : a.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
-                    {tx.type === 'Payout' ? '-' : '+'}€{tx.amount.toFixed(2)}
+                    {tx.type === 'Payout' ? '−' : '+'}{formatEur(tx.amount, language, true)}
                   </p>
                 </div>
               </div>
