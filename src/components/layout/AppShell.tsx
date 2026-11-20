@@ -51,11 +51,25 @@ import { useLanguage } from '../../lib/i18n';
 // ─────────────────────────────────────────────
 // NakamasLogo — SVG ψάθινο καπέλο με αχυρωτό στέλεχος
 // ─────────────────────────────────────────────
-function NakamasLogo({ className, compact = false }: { className?: string; compact?: boolean }) {
+function NakamasLogo({
+  className,
+  compact = false,
+  onClick,
+}: {
+  className?: string;
+  compact?: boolean;
+  onClick?: () => void;
+}) {
+  const { t } = useLanguage();
   const theme = useStore((state) => state.theme);
   const logoTextColor = theme === 'activebuddies' ? 'text-[hsl(220_14%_12%)]' : theme === 'activebuddies-dark' ? 'text-[hsl(210_20%_92%)]' : theme === 'vibrant' ? 'text-fuchsia-700' : theme === 'vibrant-dark' ? 'text-fuchsia-500' : 'text-accent';
   return (
-    <div className={cn("nakamas-logo flex items-baseline font-extrabold tracking-tight font-['Poppins']", logoTextColor, className)}>
+    <Link
+      to="/"
+      onClick={onClick}
+      aria-label={t('Αρχική', 'Home')}
+      className={cn("nakamas-logo flex items-baseline font-extrabold tracking-tight font-['Poppins']", logoTextColor, className)}
+    >
       <div className="relative inline-block">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +103,7 @@ function NakamasLogo({ className, compact = false }: { className?: string; compa
         <span className="relative z-0 leading-none">N</span>
       </div>
       <span className={cn("leading-none", compact && "hidden")}>akamas</span>
-    </div>
+    </Link>
   );
 }
 
@@ -565,7 +579,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button type="button" tabIndex={-1} aria-hidden="true" className="fixed inset-0 bg-black/50 cursor-default" onClick={() => setIsMobileMenuOpen(false)} />
           <div className={cn("relative w-64 max-w-sm h-full shadow-soft-lg flex flex-col z-modal", tok.sideNav)}>
             <div className="h-header flex items-center justify-between px-4 border-b border-[#E5E7EB] shrink-0">
-              <NakamasLogo />
+              <NakamasLogo onClick={() => setIsMobileMenuOpen(false)} />
               <button onClick={() => setIsMobileMenuOpen(false)} aria-label={t('Κλείσιμο μενού', 'Close menu')} className={cn(tok.isDark ? "text-white hover:text-white" : "text-gray-500 hover:text-ink")}>
                 <X className="h-6 w-6" />
               </button>
