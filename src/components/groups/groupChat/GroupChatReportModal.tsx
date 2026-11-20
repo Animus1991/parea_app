@@ -1,21 +1,55 @@
+import { useState } from 'react';
 import { ShieldCheck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLanguage } from '../../../lib/i18n';
+import { useStore } from '../../../store';
 import { Modal } from '../../common/Modal';
 
 interface GroupChatReportModalProps {
   open: boolean;
   onClose: () => void;
+  groupId?: string;
 }
 
-export function GroupChatReportModal({ open, onClose }: GroupChatReportModalProps) {
+export function GroupChatReportModal({ open, onClose, groupId }: GroupChatReportModalProps) {
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const submitIssueReport = useStore((s) => s.submitIssueReport);
+  const [text, setText] = useState('');
+
+  const submit = () => {
+    const description = text.trim();
+    if (!description) {
+      toast.error(t('Γράψε τι συνέβη πριν την υποβολή.', 'Describe what happened before submitting.'));
+      return;
+    }
+    submitIssueReport({
+      category: 'safety',
+      severity: 'high',
+      description,
+      evidenceNames: [],
+      targetType: 'group',
+      targetId: groupId,
+    });
+    setText('');
+    toast.success(t('Η αναφορά σας υποβλήθηκε με ασφάλεια.', 'Your report has been submitted securely.'), {
+      action: {
+        label: t('Αξιοπιστία', 'Reliability'),
+        onClick: () => navigate('/trust'),
+      },
+    });
+    onClose();
+  };
 
   return (
     <Modal
       open={open}
-      onClose={onClose}
-      title={t('Ιδιωτική Αναφορά Ασφαλείας', 'Private Safety Report')}
+      onClose={() => {
+        setText('');
+        onClose();
+      }}
+      title={t('Ιδιωτική αναφορά', 'Private report')}
       size="md"
     >
       <p className="text-xs font-semibold text-ink-muted tracking-tight capitalize -mt-2 mb-3">
@@ -39,6 +73,8 @@ export function GroupChatReportModal({ open, onClose }: GroupChatReportModalProp
       </div>
       <textarea
         data-autofocus
+        value={text}
+        onChange={(e) => setText(e.target.value)}
         className="w-full border border-border rounded-2xl p-3 text-sm resize-none mb-5 focus:ring-2 focus:ring-accent/40 outline-none shadow-soft font-medium transition-all duration-200 bg-surface-raised text-ink"
         rows={4}
         placeholder={t(
@@ -46,23 +82,21 @@ export function GroupChatReportModal({ open, onClose }: GroupChatReportModalProp
           'Please describe the issue in detail...',
         )}
       />
-      <div className="flex justify-end gap-3">
+      <div className="flex justify-end gap-2">
         <button
           type="button"
-          onClick={onClose}
-          className="px-5 py-2.5 text-xs font-bold text-ink-muted bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border"
+          onClick={() => {
+            setText('');
+            onClose();
+          }}
+          className="px-4 py-2 min-h-8 text-xs font-bold text-ink-muted bg-surface hover:bg-surface-raised rounded-full transition-all duration-200 border border-border"
         >
           {t('Ακύρωση', 'Cancel')}
         </button>
         <button
           type="button"
-          onClick={() => {
-            toast.success(
-              t('Η αναφορά σας υποβλήθηκε με ασφάλεια.', 'Your report has been submitted securely.'),
-            );
-            onClose();
-          }}
-          className="px-5 py-2.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
+          onClick={submit}
+          className="px-4 py-2 min-h-8 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-full transition-all duration-200 shadow-soft"
         >
           {t('Υποβολή Αναφοράς', 'Submit Report')}
         </button>

@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
-import { Calendar, Bookmark, QrCode, Share, Download, ChevronDown } from 'lucide-react';
+import { Calendar, Bookmark, QrCode, Share, Download, ChevronDown, Newspaper } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import type { EventCalendarAvailability } from '../../lib/eventCalendarExport';
@@ -62,6 +62,8 @@ export interface EventDetailActionBarProps {
   onSave: () => void;
   onQr: () => void;
   onShare: () => void;
+  /** «Στον τοίχο μου» — opens the wall composer with this event attached. */
+  onShareToWall?: () => void;
   isCopied: boolean;
   onAddToGoogleCalendar: () => void;
   onDownloadIcs: () => void;
@@ -75,6 +77,7 @@ export function EventDetailActionBar({
   onSave,
   onQr,
   onShare,
+  onShareToWall,
   isCopied,
   onAddToGoogleCalendar,
   onDownloadIcs,
@@ -113,6 +116,12 @@ export function EventDetailActionBar({
               <QrCode className="h-3.5 w-3.5" aria-hidden />
               {t('Κωδικός QR', 'QR Code')}
             </button>
+            {onShareToWall && (
+              <button type="button" role="menuitem" className={item} onClick={() => { close(); onShareToWall(); }}>
+                <Newspaper className="h-3.5 w-3.5" aria-hidden />
+                {t('Στον τοίχο μου', 'On my wall')}
+              </button>
+            )}
           </>
         )}
       </ActionMenu>

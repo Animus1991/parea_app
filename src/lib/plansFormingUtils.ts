@@ -1,6 +1,7 @@
 import { format, parseISO } from 'date-fns';
 import { el } from 'date-fns/locale';
 import { sharedInterestCount } from './companyRequestUtils';
+import { interestLabel } from './interests';
 import type { CompanyRequest, MeetingPreference } from '../types/companyRequest';
 import type { Event, Group, User } from '../types';
 import type { BuddySeekDiscoveryItem } from '../hooks/useBuddySeekDiscovery';
@@ -17,7 +18,7 @@ export interface PlansFormingEnrichedItem extends BuddySeekDiscoveryItem {
   location: string;
   groupSizeLabel: { el: string; en: string };
   meetingLabel: { el: string; en: string };
-  matchReason: { el: string; en: string };
+  matchReason: { el: string; en: string } | null;
   intentLabel: { el: string; en: string };
   roleLabel: { el: string; en: string; kind: PlanRoleKind };
   isSavedEvent: boolean;
@@ -52,9 +53,9 @@ export function plansFormingMatchReason(
   viewer: User,
   seeker: User,
   event: Event,
-  request: CompanyRequest,
+  _request: CompanyRequest,
   savedEventIds: string[],
-): { el: string; en: string } {
+): { el: string; en: string } | null {
   const shared = sharedInterestCount(viewer, seeker, event);
   if (savedEventIds.includes(event.id) && shared > 0) {
     return {
@@ -64,29 +65,17 @@ export function plansFormingMatchReason(
   }
   if (savedEventIds.includes(event.id)) {
     return {
-      el: 'Αποθηκευμένη εκδήλωση — ίδιο σχέδιο',
-      en: 'Saved event — same plan context',
+      el: 'Αποθηκευμένη εκδήλωση',
+      en: 'Saved event',
     };
   }
   if (shared > 0) {
     return {
-      el: `${shared} κοινά ενδιαφέροντα · ${event.category}`,
-      en: `${shared} shared interests · ${event.category}`,
+      el: `${shared} κοινά ενδιαφέροντα · ${interestLabel(event.category, 'el')}`,
+      en: `${shared} shared interests · ${interestLabel(event.category, 'en')}`,
     };
   }
-  if (request.visibilityMode === 'public_event_page') {
-    return { el: 'Δημόσιο στο πλαίσιο της εκδήλωσης', en: 'Public on event page' };
-  }
-  if (request.visibilityMode === 'same_event_viewers') {
-    return {
-      el: 'Βλέπετε την ίδια εκδήλωση',
-      en: 'You are viewing the same event',
-    };
-  }
-  return {
-    el: 'Συμβατό με τις ρυθμίσεις ορατότητάς σας',
-    en: 'Matches your visibility preferences',
-  };
+  return null;
 }
 
 export function lookingForTypeLabel(
@@ -107,7 +96,7 @@ export function meetingPreferenceLabel(pref: MeetingPreference): { el: string; e
     at_venue: { el: 'Στον χώρο', en: 'At venue' },
     coffee_before: { el: 'Καφές πριν', en: 'Coffee before' },
     walk_after: { el: 'Μετά την εκδήλωση', en: 'After the event' },
-    chat_first: { el: 'Chat πρώτα', en: 'Chat first' },
+    chat_first: { el: 'Συνομιλία πρώτα', en: 'Chat first' },
   };
   return map[pref];
 }
@@ -255,7 +244,7 @@ export function buildScarcityPromos(
     const ratio = filled / target;
     if (ratio < 0.45) continue;
     const event = events.find((e) => e.id === g.eventId);
-    if (!event) continue;
+    if (!event || event.kind === 'mini_outing') continue;
     promos.push({
       id: `scarcity_${g.id}`,
       eventId: event.id,

@@ -9,6 +9,7 @@ import { LoginExploreDemoButton } from './LoginExploreDemoButton';
 import { appEnv } from '../../lib/config/env';
 import { isProductionGoogleOAuthAvailable, tryGoogleSignIn } from '../../lib/loginHandlers';
 import { cn } from '../../lib/utils';
+import { APP_TYPO } from '../../lib/typographyTokens';
 
 export type LoginVariant =
   | 'classic'
@@ -244,8 +245,8 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
           <div className="flex items-center justify-center text-sm md:text-base font-black tracking-tight mb-4 font-['Outfit']">
             <span className={tok.wordmarkClass}>NAKAMAS</span>
           </div>
-          <h1 className={cn('text-sm md:text-base font-bold', tok.stripDark ? 'text-white' : 'text-ink')}>{t('Καλώς ήρθατε', 'Welcome back')}</h1>
-          <p className={cn('text-sm font-medium', tok.mutedText)}>
+          <h1 className={cn(APP_TYPO.pageTitle, tok.stripDark ? 'text-white' : 'text-ink')}>{t('Καλώς ήρθατε', 'Welcome back')}</h1>
+          <p className={cn(APP_TYPO.pageSub, tok.mutedText)}>
             {t('Συνδεθείτε για να ανακαλύψετε αξιόπιστες ομάδες και εμπειρίες.', 'Log in to discover trusted groups and experiences.')}
           </p>
         </div>
@@ -304,7 +305,7 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
           <button
             type="button"
             onClick={() => void handleGoogleLogin()}
-            className={cn('w-full flex items-center justify-center gap-3 px-4 py-3 min-h-11 rounded-full border text-xs font-bold transition-colors shadow-soft', tok.googleBtnClass)}
+            className={cn('w-full flex items-center justify-center gap-2.5 px-4 py-1.5 min-h-8 rounded-full border text-xs font-bold transition-colors shadow-soft', tok.googleBtnClass)}
           >
             <img referrerPolicy="no-referrer" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="" className="w-5 h-5" aria-hidden />
             {googleOAuthReady

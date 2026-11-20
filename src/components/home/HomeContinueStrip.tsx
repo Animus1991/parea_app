@@ -1,13 +1,15 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
-import { resumeLabel } from '../../lib/resumePath';
+import { isResumeWorthyPath, resumeLabel } from '../../lib/resumePath';
 import { trackEvent } from '../../lib/analytics';
 import { prefetchPath } from '../../lib/routeLoaders';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useReturnSummary } from '../../hooks/useReturnSummary';
+import { useHomeQuietContinue } from '../../hooks/useHomeHeroGate';
 import { returnPartPath } from '../../lib/returnVisit';
 
 /**
@@ -20,9 +22,27 @@ export function HomeContinueStrip() {
   const a = usePageContrast();
   const path = useStore((s) => s.lastResumePath);
   const clear = useStore((s) => s.clearLastResumePath);
+  const groups = useStore((s) => s.groups);
+  const meId = useStore((s) => s.currentUser?.id);
   const returnParts = useReturnSummary();
+  const quietContinue = useHomeQuietContinue();
 
-  if (!path || path === '/') return null;
+  // Stale «Our night» resume → missing or non-member lock: clear quietly.
+  const nightMatch = path?.match(/^\/night\/([^/?#]+)/);
+  const nightGroup = nightMatch ? groups.find((g) => g.id === nightMatch[1]) : undefined;
+  const nightStale = Boolean(
+    nightMatch &&
+      (!nightGroup ||
+        (meId &&
+          !nightGroup.members.includes(meId) &&
+          !(nightGroup.waitlist ?? []).includes(meId))),
+  );
+  const browseResume = Boolean(path && !isResumeWorthyPath(path));
+  useEffect(() => {
+    if (nightStale || browseResume) clear();
+  }, [nightStale, browseResume, clear]);
+
+  if (!path || path === '/' || nightStale || browseResume || !quietContinue) return null;
 
   // Welcome-back line already covers this destination — keep one clear CTA in the hero.
   if (returnParts.some((part) => returnPartPath(part) === path)) return null;
@@ -63,7 +83,7 @@ export function HomeContinueStrip() {
           clear();
         }}
         className={cn(
-          'shrink-0 p-2 rounded-lg min-h-10 min-w-10 flex items-center justify-center transition-colors',
+          'shrink-0 p-2 rounded-lg min-h-8 min-w-8 flex items-center justify-center transition-colors',
           a.muted,
           'hover:bg-black/5 dark:hover:bg-white/10',
         )}

@@ -22,20 +22,21 @@ import {
   Command,
   ArrowRight,
   Bot,
-  Sparkles,
+  Compass,
+  Newspaper,
   Wallet,
   HelpCircle,
   Shield,
   TrendingUp,
 } from 'lucide-react';
-import { openCopilot } from '../../ai/copilot';
+import { openCopilot } from '../../ai/launcher';
 import { APP_ROUTES } from '../../ai/routes';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { trackEvent } from '../../lib/analytics';
 import { useStore } from '../../store';
 import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
-import { isPlatformAdmin } from '../../lib/roles';
+import { isOrganizerUser, isPlatformAdmin } from '../../lib/roles';
 
 type PaletteMode = 'mixed' | 'pages' | 'actions';
 
@@ -78,11 +79,12 @@ export function CommandPalette() {
   useOverlayBehavior(open, closePalette, panelRef);
 
   const isAdmin = isPlatformAdmin(currentUser);
+  const isOrganizer = isOrganizerUser(currentUser);
   const { mode, q } = detectMode(query);
 
   const pageItems: CommandItem[] = useMemo(
     () =>
-      APP_ROUTES.filter((r) => !r.adminOnly || isAdmin).map((r) => {
+      APP_ROUTES.filter((r) => (!r.adminOnly || isAdmin) && (!r.organizerOnly || isOrganizer)).map((r) => {
         const iconMap: Record<string, React.ElementType> = {
           home: Home,
           categories: Grid,
@@ -122,7 +124,7 @@ export function CommandPalette() {
           kind: 'page' as const,
         };
       }),
-    [isAdmin],
+    [isAdmin, isOrganizer],
   );
 
   const actionItems: CommandItem[] = useMemo(
@@ -131,7 +133,7 @@ export function CommandPalette() {
         id: 'act-whats-new',
         labelEl: 'Τι νέο υπάρχει;',
         labelEn: "What's new?",
-        icon: Sparkles,
+        icon: Newspaper,
         promptEl: 'Τι νέο υπάρχει;',
         promptEn: "What's new?",
         sectionEl: 'Ενέργειες AI',
@@ -143,7 +145,7 @@ export function CommandPalette() {
         id: 'act-recommend',
         labelEl: 'Πρότεινέ μου κάτι',
         labelEn: 'Recommend something',
-        icon: Sparkles,
+        icon: Compass,
         promptEl: 'Πρότεινέ μου κάτι για μένα',
         promptEn: 'Recommend something for me',
         sectionEl: 'Ενέργειες AI',
@@ -378,7 +380,7 @@ export function CommandPalette() {
               ) : (
                 Array.from(sections.entries()).map(([section, items]) => (
                   <div key={section} className="mb-2">
-                    <p className="px-2 py-1.5 text-2xs font-bold uppercase tracking-wider text-gray-400">
+                    <p className="px-2 py-1.5 text-2xs font-bold tracking-wider text-gray-400">
                       {section}
                     </p>
                     {items.map((item) => {

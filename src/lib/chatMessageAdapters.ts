@@ -1,7 +1,7 @@
 import type { ChatMessage, MessageType } from '../types/chat';
 import type { GroupChatMessage } from '../hooks/useGroupChatMessages';
 
-/** Map popup/chatStore messages → full-page GroupChat UI model. */
+/** Map popup/chatStore messages → full-page GroupChat UI model (preserving rich metadata). */
 export function toGroupChatMessage(
   msg: ChatMessage,
   resolveName: (senderId: string) => string,
@@ -21,6 +21,17 @@ export function toGroupChatMessage(
     text: msg.body,
     timestamp: msg.createdAt,
     type,
+    richType: msg.type,
+    replyTo: msg.replyTo,
+    reactions: msg.reactions,
+    mentions: msg.mentions,
+    tags: msg.tags,
+    media: msg.media,
+    poll: msg.poll,
+    storyRef: msg.storyRef,
+    editedAt: msg.editedAt,
+    pinned: msg.pinned,
+    readBy: msg.readBy,
   };
 }
 
@@ -30,7 +41,8 @@ export function toChatMessage(
   conversationId: string,
 ): ChatMessage {
   const type: MessageType =
-    msg.type === 'system' ? 'system' : msg.type === 'location' ? 'meeting_point' : 'text';
+    msg.richType ??
+    (msg.type === 'system' ? 'system' : msg.type === 'location' ? 'meeting_point' : 'text');
 
   return {
     id: msg.id,
@@ -40,6 +52,16 @@ export function toChatMessage(
     type,
     body: msg.text,
     createdAt: msg.timestamp,
+    ...(msg.replyTo ? { replyTo: msg.replyTo } : {}),
+    ...(msg.reactions ? { reactions: msg.reactions } : {}),
+    ...(msg.mentions ? { mentions: msg.mentions } : {}),
+    ...(msg.tags ? { tags: msg.tags } : {}),
+    ...(msg.media ? { media: msg.media } : {}),
+    ...(msg.poll ? { poll: msg.poll } : {}),
+    ...(msg.storyRef ? { storyRef: msg.storyRef } : {}),
+    ...(msg.editedAt ? { editedAt: msg.editedAt } : {}),
+    ...(msg.pinned ? { pinned: msg.pinned } : {}),
+    ...(msg.readBy ? { readBy: msg.readBy } : {}),
   };
 }
 

@@ -9,6 +9,7 @@ import { useStore } from '../../store';
 import { toast } from 'sonner';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { verifyDemo } from '../../lib/verifyDemo';
+import { GovWalletCard, SelfieCheckCard } from './SelfieAndWalletCards';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function VerificationCenterPageContent() {
@@ -39,10 +40,9 @@ export default function VerificationCenterPageContent() {
   const steps = [
     currentUser.emailVerified,
     currentUser.phoneVerified,
-    currentUser.idVerified,
   ];
   const completedSteps = steps.filter(Boolean).length;
-  const progressPct = Math.round((completedSteps / 3) * 100);
+  const progressPct = Math.round((completedSteps / 2) * 100);
 
   const handleVerifyPhone = () => {
     if (verifyDemo('phone')) toast.success(t('Το τηλέφωνο επαληθεύτηκε (demo)', 'Phone verified (demo)'));
@@ -71,16 +71,16 @@ export default function VerificationCenterPageContent() {
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Κέντρο Επαλήθευσης', 'Verification Center')}</h1>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Επαλήθευση', 'Verification')}</h1>
           <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>
             {t(
-              'Επαληθεύστε την ταυτότητά σας για μεγαλύτερη ασφάλεια και υψηλότερο Βαθμό Αξιοπιστίας',
-              'Verify your identity for greater safety and a higher Reliability Score',
+              'Email και τηλέφωνο αρκούν για τις περισσότερες εξόδους. Η ταυτότητα ζητείται μόνο για διοργάνωση και πληρωμές.',
+              'Email and phone are enough for most outings. ID is only asked for hosting and payments.',
             )}
           </p>
         </div>
         <Button variant="outline" size="sm" className="shrink-0" onClick={() => navigate('/trust')}>
-          {t('Κέντρο Εμπιστοσύνης', 'Trust Center')}
+          {t('Αξιοπιστία', 'Reliability')}
         </Button>
       </div>
 
@@ -91,7 +91,7 @@ export default function VerificationCenterPageContent() {
         <div className="flex-1">
           <h2 className={cn('font-bold text-sm', a.progressHead)}>{t('Πρόοδος Επαλήθευσης', 'Verification Progress')}</h2>
           <p className={cn('text-xs mt-1 mb-3', a.progressSub)}>
-            {t(`${completedSteps} από 3 βήματα`, `${completedSteps} of 3 steps completed`)}
+            {t(`${completedSteps} από 2 βασικά βήματα`, `${completedSteps} of 2 core steps completed`)}
           </p>
           <div className={cn('w-full rounded-full h-2', a.progressBar)}>
             <div className={cn('h-2 rounded-full transition-all', a.progressFill)} style={{ width: `${progressPct}%` }} />
@@ -155,6 +155,10 @@ export default function VerificationCenterPageContent() {
           )}
         </Card>
 
+        {/* Φ27 — selfie first, Gov.gr next, document photo last. */}
+        <SelfieCheckCard />
+        <GovWalletCard />
+
         <Card id="verify-id" className={cn('p-5 md:col-span-2', ringFor('id'))}>
           <div className={cn('flex items-start justify-between border-b pb-4 mb-4', a.borderB)}>
             <div className="flex items-center gap-3">
@@ -162,32 +166,36 @@ export default function VerificationCenterPageContent() {
                 <FileText className="w-5 h-5" />
               </div>
               <div>
-                <h3 className={cn('font-bold text-sm', a.head)}>{t('Ταυτότητα / Διαβατήριο', 'Government ID')}</h3>
+                <h3 className={cn('font-bold text-sm', a.head)}>{t('Ταυτότητα — μόνο για διοργάνωση', 'ID — hosting only')}</h3>
                 <p className={cn('text-xs font-bold tracking-wider mt-0.5', currentUser.idVerified ? (a.isDark ? 'text-emerald-400' : 'text-emerald-600') : a.pendingLabel)}>
                   {currentUser.idVerified ? t('Ολοκληρώθηκε', 'Completed') : t('Προαιρετικό', 'Optional')}
                 </p>
               </div>
             </div>
-            <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full tracking-wide', a.advBadge)}>{t('Προχωρημένο', 'Advanced')}</span>
+            <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full tracking-wide', a.advBadge)}>{t('Αν χρειαστεί', 'If needed')}</span>
           </div>
           <p className={cn('card-copy mb-4 max-w-xl', a.sub)}>
-            {t('Ανεβάστε φωτογραφία ταυτότητας για εκδηλώσεις υψηλής ασφάλειας.', 'Upload a photo of your ID to access high-safety events.')}
+            {t(
+              'Δεν τη ζητάμε για να φυλλομετρήσεις ή να μπεις στην πρώτη σου ομάδα. Προτιμάμε Gov.gr Wallet όταν είναι έτοιμο· στο demo μπορείς να ολοκληρώσεις χωρίς να κρατήσουμε φωτογραφία εγγράφου.',
+              'We do not ask for this to browse or join your first group. We prefer Gov.gr Wallet when it is ready; in the demo you can finish without us keeping a document photo.',
+            )}
           </p>
           <div className={cn('p-4 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-dashed', a.uploadArea)}>
             <div className={cn('flex gap-3 card-copy font-medium', a.uploadText)}>
-              <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4" />{t('Ασφαλές', 'Secure')}</span>
-              <span className="flex items-center gap-1"><UserCheck className="w-4 h-4" />{t('Ιδιωτικό', 'Private')}</span>
+              <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4" />{t('Χωρίς αποθήκευση εγγράφου', 'No document stored')}</span>
+              <span className="flex items-center gap-1"><UserCheck className="w-4 h-4" />{t('Μόνο αποτέλεσμα', 'Result only')}</span>
             </div>
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onIdSelected} />
             {!currentUser.idVerified ? (
               <Button size="sm" className="w-full sm:w-auto shrink-0 shadow-soft" onClick={handleUploadId}>
-                {t('Μεταφόρτωση', 'Upload')}
+                {t('Ολοκλήρωση (demo)', 'Finish (demo)')}
               </Button>
             ) : (
               <span className={cn('text-xs font-bold', a.isDark ? 'text-emerald-400' : 'text-emerald-600')}>{t('Επαληθευμένο ✓', 'Verified ✓')}</span>
             )}
           </div>
         </Card>
+
       </div>
 
       <Card className="p-5">
@@ -196,7 +204,7 @@ export default function VerificationCenterPageContent() {
           {[
             { icon: Mail, label: t('Email', 'Email'), done: currentUser.emailVerified, color: 'text-cyan-600', bg: a.tierEmail },
             { icon: Smartphone, label: t('Τηλέφωνο', 'Phone'), done: currentUser.phoneVerified, color: 'text-emerald-600', bg: a.tierPhone },
-            { icon: FileText, label: t('Ταυτότητα', 'ID'), done: currentUser.idVerified, color: 'text-purple-600', bg: a.tierId },
+            { icon: FileText, label: t('Διοργάνωση', 'Hosting'), done: currentUser.idVerified, color: 'text-purple-600', bg: a.tierId },
           ].map((item) => {
             const Icon = item.icon;
             return (

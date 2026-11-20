@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bookmark,
   EyeOff,
   MapPin,
   Clock,
-  Shield,
   Heart,
   Users,
 } from 'lucide-react';
@@ -14,6 +13,9 @@ import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { projectRequestForViewer } from '../../lib/companyRequestUtils';
 import { JoinRequestPreviewModal } from './JoinRequestPreviewModal';
+import { formatLocationArea } from '../../lib/eventDisplay';
+import { EventCoverImg } from '../common/EventCoverImg';
+import { interestLabel } from '../../lib/interests';
 import { cn } from '../../lib/utils';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
 import type { PlansFormingGroupItem } from '../../hooks/usePlansFormingFeed';
@@ -30,10 +32,44 @@ const URGENCY_TEXT_DARK = {
   flexible: '',
 };
 
+function FactSpread({
+  left,
+  right,
+  leftIcon,
+  rightIcon,
+  mutedClass = 'text-ink-muted',
+}: {
+  left?: string | null;
+  right?: string | null;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+  mutedClass?: string;
+}) {
+  if (!left && !right) return null;
+  return (
+    <div className="flex items-baseline justify-between gap-x-5 gap-y-1">
+      {left ? (
+        <p className={cn('min-w-0 card-meta font-medium leading-relaxed inline-flex items-center gap-1.5', mutedClass)}>
+          {leftIcon}
+          <span className="min-w-0">{left}</span>
+        </p>
+      ) : (
+        <span />
+      )}
+      {right ? (
+        <p className={cn('shrink-0 card-meta font-medium leading-relaxed inline-flex items-center gap-1.5', mutedClass)}>
+          {rightIcon}
+          <span>{right}</span>
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 export function PlansFormingCard({
   item,
   variant = 'sidebar',
-  isDarkSurface = true,
+  isDarkSurface = false,
   onDismiss,
 }: {
   item: PlansFormingEnrichedItem;
@@ -41,7 +77,7 @@ export function PlansFormingCard({
   isDarkSurface?: boolean;
   onDismiss?: () => void;
 }) {
-  const { t, tu } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const navigate = useNavigate();
   const currentUser = useStore((s) => s.currentUser);
   const prefs = useStore((s) => s.companyRequestPreferences);
@@ -63,6 +99,163 @@ export function PlansFormingCard({
   const darkCard = isSidebar && isDarkSurface;
   const urgencyText = darkCard ? URGENCY_TEXT_DARK : URGENCY_TEXT;
   const roleText = darkCard ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300';
+  const locationLine = item.location ? formatLocationArea(item.location, language) : '';
+  const showUrgency = item.urgency.tone !== 'normal';
+  const showMatchReason = variant === 'page' && item.matchReason && item.sharedInterestTags.length === 0;
+  const interestLine = item.sharedInterestTags.length
+    ? item.sharedInterestTags.slice(0, 2).map((tag) => interestLabel(tag, language)).join(' · ')
+    : item.sharedInterestCount > 0
+      ? t(`${item.sharedInterestCount} κοινά`, `${item.sharedInterestCount} shared`)
+      : '';
+  const iconBtn =
+    'min-h-9 min-w-9 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-black/[0.04] dark:hover:bg-white/5 transition-colors';
+  const quietLayout = variant === 'page' || variant === 'sidebar' || variant === 'sheet';
+  const compact = variant !== 'page';
+  const onDark = compact && isDarkSurface;
+  const ink = onDark ? 'text-white' : 'text-ink';
+  const muted = onDark ? 'text-gray-400' : 'text-ink-muted';
+  const role = onDark ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300';
+  const pageIcon = (Icon: typeof Clock) =>
+    variant === 'page' ? <Icon className="w-3 h-3 shrink-0 opacity-70" aria-hidden /> : null;
+
+  if (quietLayout) {
+    return (
+      <article
+        className={cn(
+          'nakamas-card overflow-hidden rounded-2xl shadow-soft',
+          onDark ? 'bg-white/[0.04]' : 'bg-white dark:bg-gray-900',
+        )}
+      >
+        <button
+          type="button"
+          onClick={() => navigate(`/events/${item.event.id}`)}
+          className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+          aria-label={t('Δες εκδήλωση', 'View event')}
+        >
+          <EventCoverImg
+            event={item.event}
+            className={cn(
+              'w-full bg-gray-100 object-cover',
+              variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24',
+            )}
+          />
+        </button>
+
+        <div className={cn(compact ? 'space-y-3.5 px-4 py-4' : 'space-y-4 px-5 py-5')}>
+          <div className="flex items-start justify-between gap-4">
+            <p className={cn('card-badge font-semibold tracking-wide pt-1', muted)}>
+              {tu(item.intentLabel.el, item.intentLabel.en)}
+              {item.isSavedEvent ? ` · ${t('Αποθηκευμένη', 'Saved')}` : ''}
+              {item.isHighMatch ? ` · ${t('Υψηλή συμβατότητα', 'High match')}` : ''}
+            </p>
+            <div className="flex shrink-0 -mr-1.5 -mt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  if (isSaved) unsaveRequest(item.intent.id);
+                  else saveRequest(item.intent.id);
+                  toast.message(
+                    isSaved
+                      ? t('Αφαιρέθηκε', 'Removed')
+                      : t('Αποθηκεύτηκε ιδιωτικά — δημοσιεύστε όποτε θέλετε', 'Saved privately — publish anytime'),
+                  );
+                }}
+                className={cn(iconBtn, onDark && 'text-gray-400 hover:text-white hover:bg-white/5', isSaved && 'text-cyan-700 dark:text-cyan-300')}
+                aria-label={t('Αποθήκευση σχεδίου', 'Save plan')}
+                title={t('Αποθήκευση σχεδίου', 'Save plan')}
+              >
+                <Bookmark className={cn('w-4 h-4', isSaved && 'fill-current')} />
+              </button>
+              {onDismiss && (
+                <button
+                  type="button"
+                  onClick={onDismiss}
+                  aria-label={t('Απόκρυψη σχεδίου', 'Hide plan')}
+                  title={t('Απόκρυψη', 'Hide')}
+                  className={cn(iconBtn, onDark && 'text-gray-400 hover:text-white hover:bg-white/5')}
+                >
+                  <EyeOff className="w-4 h-4" aria-hidden />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <h3 className={cn('card-heading-lg font-bold leading-snug', ink)}>{item.event.title}</h3>
+            <p className={cn('card-copy leading-relaxed', muted)}>
+              <span className={cn('font-semibold', ink)}>{displayName}</span>
+              <span className="opacity-50" aria-hidden>
+                {' · '}
+              </span>
+              <span className={cn('card-role font-medium', role)}>
+                {t(item.roleLabel.el, item.roleLabel.en)}
+              </span>
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <FactSpread
+              mutedClass={muted}
+              leftIcon={pageIcon(Clock)}
+              left={t(item.scheduleFull.el, item.scheduleFull.en)}
+            />
+            <FactSpread
+              mutedClass={muted}
+              leftIcon={pageIcon(MapPin)}
+              left={locationLine}
+              rightIcon={pageIcon(Users)}
+              right={t(item.groupSizeLabel.el, item.groupSizeLabel.en)}
+            />
+            <FactSpread
+              mutedClass={muted}
+              left={t(item.meetingLabel.el, item.meetingLabel.en)}
+              rightIcon={!interestLine && showUrgency ? pageIcon(Clock) : null}
+              right={interestLine || (showUrgency ? t(item.urgency.el, item.urgency.en) : null)}
+            />
+          </div>
+
+          {item.intent.message && (
+            <p className={cn('card-copy leading-relaxed', muted)}>«{item.intent.message}»</p>
+          )}
+
+          {showMatchReason && item.matchReason && (
+            <p className={cn('card-copy leading-relaxed', muted)}>
+              {t(item.matchReason.el, item.matchReason.en)}
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
+            <button
+              type="button"
+              onClick={() => setPreviewOpen(true)}
+              className="px-4 min-h-9 rounded-full card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors"
+            >
+              {t('Αίτημα συμμετοχής', 'Ask to join')}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(`/events/${item.event.id}`)}
+              className={cn('min-h-9 card-cta transition-colors', muted, onDark ? 'hover:text-white' : 'hover:text-ink')}
+            >
+              {t('Εκδήλωση', 'Event')}
+            </button>
+          </div>
+        </div>
+
+        <JoinRequestPreviewModal
+          open={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          seeker={item.seeker}
+          event={item.event}
+          mode="send"
+          onSendRequest={() => {
+            const id = sendJoin(item.intent.id);
+            if (id) toast.success(t('Αίτημα εστάλη — θα ειδοποιηθεί ο/η δημιουργός', 'Request sent — creator notified'));
+          }}
+        />
+      </article>
+    );
+  }
 
   return (
     <article
@@ -79,30 +272,28 @@ export function PlansFormingCard({
       {item.isHighMatch && (
         <p
           className={cn(
-            'px-3.5 pt-3 -mb-1 flex items-center gap-1 text-xs font-semibold',
+            'px-4 pt-3.5 -mb-0.5 flex items-center gap-1 text-xs font-semibold',
             darkCard ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300',
           )}
         >
           <Heart className="w-3 h-3" aria-hidden />
           {t('Υψηλή συμβατότητα', 'High match')}
-          <span aria-hidden>·</span>
-          <span className="tabular-nums">{item.matchPercent}%</span>
         </p>
       )}
 
       {isSidebar && (
-        <div className="px-3.5 pt-3 flex items-start gap-1">
-          <div className="min-w-0 flex-1 space-y-0.5">
+        <div className="px-4 pt-3.5 flex items-start gap-1">
+          <div className="min-w-0 flex-1 space-y-1.5">
           <button
             type="button"
             onClick={() => navigate(`/events/${item.event.id}`)}
             className="text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-lg"
           >
-            <h3 className={cn('card-heading-lg font-bold leading-snug line-clamp-3', darkCard ? 'text-white' : 'text-gray-900')}>
+            <h3 className={cn('card-heading-lg font-bold leading-normal line-clamp-3', darkCard ? 'text-white' : 'text-gray-900')}>
               {item.event.title}
             </h3>
           </button>
-          <p className={cn('card-meta-sm font-semibold leading-snug', darkCard ? 'text-gray-200' : 'text-gray-700')}>
+          <p className={cn('card-meta-sm font-semibold leading-relaxed', darkCard ? 'text-gray-200' : 'text-gray-700')}>
             {t(item.scheduleFull.el, item.scheduleFull.en)}
           </p>
           </div>
@@ -125,29 +316,22 @@ export function PlansFormingCard({
         </div>
       )}
 
-      <div className="flex gap-3 px-3.5 pt-3.5 pb-2">
+      <div className="flex gap-3 px-4 pt-3.5 pb-3">
         <button
           type="button"
           onClick={() => navigate(`/events/${item.event.id}`)}
           className="relative shrink-0 w-12 h-12 rounded-xl overflow-hidden bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 group"
           aria-label={t('Δες εκδήλωση', 'View event')}
         >
-          {item.event.imageUrl ? (
-            <img
-              src={item.event.imageUrl}
-              alt=""
-              className="w-full h-full object-cover transition-transform group-hover:scale-105"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-cyan-900/40 text-cyan-200 text-xs font-bold">
-              {item.event.category?.slice(0, 2) ?? 'EV'}
-            </div>
-          )}
+          <EventCoverImg
+            event={item.event}
+            className="w-full h-full object-cover transition-transform group-hover:scale-105"
+          />
         </button>
 
-        <div className="min-w-0 flex-1 space-y-1">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-            <span className={cn('card-badge font-semibold uppercase tracking-wide', darkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400')}>
+        <div className="min-w-0 flex-1 space-y-1.5">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className={cn('card-badge font-semibold tracking-wide', darkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400')}>
               {tu(item.intentLabel.el, item.intentLabel.en)}
             </span>
             {item.isSavedEvent && (
@@ -157,18 +341,18 @@ export function PlansFormingCard({
             )}
           </div>
           {!isSidebar && (
-            <p className="card-heading font-bold leading-snug line-clamp-2 text-gray-900 dark:text-white">
+            <p className="card-heading font-bold leading-normal line-clamp-2 text-gray-900 dark:text-white">
               {item.event.title}
             </p>
           )}
           {isSidebar ? (
-            <p className={cn('card-copy-sm', darkCard ? 'text-gray-300' : 'text-gray-600')}>
+            <p className={cn('card-copy-sm leading-relaxed', darkCard ? 'text-gray-300' : 'text-gray-600')}>
               <span className={cn('font-semibold', darkCard ? 'text-gray-100' : 'text-gray-900')}>{displayName}</span>
               <span className={darkCard ? 'text-gray-500' : 'text-gray-400'} aria-hidden> · </span>
               <span className={cn('card-role font-semibold', roleText)}>{t(item.roleLabel.el, item.roleLabel.en)}</span>
             </p>
           ) : (
-            <p className="card-copy text-gray-600 dark:text-gray-300">
+            <p className="card-copy leading-relaxed text-gray-600 dark:text-gray-300">
               <span className="font-semibold text-gray-800 dark:text-gray-100">{displayName}</span>
               <span className="text-gray-400 dark:text-gray-500" aria-hidden> · </span>
               <span className={cn('card-role font-medium', roleText)}>
@@ -176,23 +360,23 @@ export function PlansFormingCard({
               </span>
             </p>
           )}
-          <div className={cn('flex flex-wrap gap-x-2.5 gap-y-0.5 card-meta text-gray-500', !isSidebar && 'dark:text-gray-400')}>
+          <div className={cn('flex flex-wrap gap-x-2.5 gap-y-1 card-meta leading-relaxed text-gray-500', !isSidebar && 'dark:text-gray-400')}>
             {!isSidebar && (
               <span className="inline-flex items-center gap-1 font-medium text-gray-600 dark:text-gray-300">
                 <Clock className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
                 {t(item.scheduleFull.el, item.scheduleFull.en)}
               </span>
             )}
-            {isSidebar && item.location && (
+            {isSidebar && locationLine && (
               <span className={cn('inline-flex items-center gap-1', darkCard ? 'text-gray-400' : 'text-gray-600')}>
                 <MapPin className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
-                {item.location}
+                {locationLine}
               </span>
             )}
-            {!isSidebar && item.location && (
+            {!isSidebar && locationLine && (
               <span className="inline-flex items-center gap-1 truncate max-w-[160px] font-medium text-gray-600 dark:text-gray-300">
                 <MapPin className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
-                {item.location}
+                {locationLine}
               </span>
             )}
           </div>
@@ -201,25 +385,34 @@ export function PlansFormingCard({
 
       <p
         className={cn(
-          'px-3.5 pb-2 card-meta flex flex-wrap items-center gap-x-2 gap-y-0.5',
+          'px-4 pb-3 card-meta flex flex-wrap items-center gap-x-2.5 gap-y-1.5 leading-relaxed',
           darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-300',
         )}
       >
-        <span className={cn('inline-flex items-center gap-1 font-semibold', urgencyText[item.urgency.tone])}>
-          <Clock className="w-2.5 h-2.5 opacity-70" aria-hidden />
-          {t(item.urgency.el, item.urgency.en)}
-        </span>
-        <span aria-hidden className="opacity-40">·</span>
+        {showUrgency && (
+          <>
+            <span className={cn('inline-flex items-center gap-1 font-semibold', urgencyText[item.urgency.tone])}>
+              <Clock className="w-2.5 h-2.5 opacity-70" aria-hidden />
+              {t(item.urgency.el, item.urgency.en)}
+            </span>
+            <span aria-hidden className="opacity-40">·</span>
+          </>
+        )}
         <span className="inline-flex items-center gap-1">
           <Users className="w-2.5 h-2.5 opacity-70" aria-hidden />
           {t(item.groupSizeLabel.el, item.groupSizeLabel.en)}
         </span>
         <span aria-hidden className="opacity-40">·</span>
         <span>{t(item.meetingLabel.el, item.meetingLabel.en)}</span>
-        {item.sharedInterestTags.slice(0, 2).length > 0 && (
+        {item.sharedInterestTags.length > 0 && (
           <>
             <span aria-hidden className="opacity-40">·</span>
-            <span className="line-clamp-1">{item.sharedInterestTags.slice(0, 2).join(' · ')}</span>
+            <span className="line-clamp-1">
+              {item.sharedInterestTags
+                .slice(0, 2)
+                .map((tag) => interestLabel(tag, language))
+                .join(' · ')}
+            </span>
           </>
         )}
         {item.sharedInterestCount > 0 && item.sharedInterestTags.length === 0 && (
@@ -228,21 +421,12 @@ export function PlansFormingCard({
             <span>{t(`${item.sharedInterestCount} κοινά`, `${item.sharedInterestCount} shared`)}</span>
           </>
         )}
-        {onDismiss && (
-          <>
-            <span aria-hidden className="opacity-40">·</span>
-            <span className="inline-flex items-center gap-1">
-              <Shield className="w-2.5 h-2.5 opacity-70" aria-hidden />
-              {t('Κοινότητα', 'Community')}
-            </span>
-          </>
-        )}
       </p>
 
       {item.intent.message && (
         <div
           className={cn(
-            'mx-3.5 mb-2 pl-2.5 pr-2 py-1.5 flex gap-2 border-l-2',
+            'mx-4 mb-3 pl-3 pr-2.5 py-2.5 flex gap-2 border-l-2',
             darkCard ? 'border-l-white/20 text-gray-300' : 'border-l-gray-200 dark:border-l-white/15',
           )}
         >
@@ -252,19 +436,19 @@ export function PlansFormingCard({
         </div>
       )}
 
-      {!isSidebar && (
-        <p className="px-3.5 pb-2 card-copy leading-snug text-gray-400 dark:text-gray-500">
+      {showMatchReason && item.matchReason && (
+        <p className="px-4 pb-3 card-copy leading-relaxed text-gray-400 dark:text-gray-500">
           {t(item.matchReason.el, item.matchReason.en)}
         </p>
       )}
 
-      <div className="flex gap-2 px-3.5 pb-3.5 pt-0.5">
+      <div className="flex items-center gap-1.5 px-4 pb-3.5 pt-1.5">
         <button
           type="button"
           onClick={() => setPreviewOpen(true)}
           className={cn(
-            'flex-1 min-h-10 rounded-xl card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors',
-            variant === 'page' && 'sm:flex-none sm:px-6',
+            'px-3.5 min-h-8 py-1.5 rounded-full card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors',
+            isSidebar && 'flex-1',
           )}
         >
           {t('Αίτημα συμμετοχής', 'Ask to join')}
@@ -273,7 +457,7 @@ export function PlansFormingCard({
           type="button"
           onClick={() => navigate(`/events/${item.event.id}`)}
           className={cn(
-            'px-3 min-h-10 rounded-xl card-cta transition-colors',
+            'px-2.5 min-h-8 py-1.5 rounded-full card-cta transition-colors',
             darkCard ? 'text-gray-300 hover:bg-white/5' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/5',
           )}
         >
@@ -291,7 +475,7 @@ export function PlansFormingCard({
             );
           }}
           className={cn(
-            'min-h-10 min-w-10 rounded-xl flex items-center justify-center transition-colors',
+            'ml-auto min-h-8 min-w-8 rounded-full flex items-center justify-center transition-colors',
             darkCard ? 'text-gray-400 hover:bg-white/5' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5',
             isSaved && (darkCard ? 'text-cyan-400 bg-cyan-500/10' : 'text-cyan-700 bg-cyan-50 dark:text-cyan-300 dark:bg-cyan-500/10'),
           )}
@@ -307,7 +491,7 @@ export function PlansFormingCard({
             aria-label={t('Απόκρυψη σχεδίου', 'Hide plan')}
             title={t('Απόκρυψη', 'Hide')}
             className={cn(
-              'min-h-9 min-w-9 rounded-xl flex items-center justify-center transition-colors',
+              'min-h-8 min-w-8 rounded-full flex items-center justify-center transition-colors',
               darkCard ? 'text-gray-400 hover:bg-white/5' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/5',
             )}
           >
@@ -334,7 +518,7 @@ export function PlansFormingCard({
 export function PlansFormingGroupCard({
   entry,
   variant = 'sidebar',
-  isDarkSurface = true,
+  isDarkSurface = false,
   onSuggestMerge,
 }: {
   entry: PlansFormingGroupItem;
@@ -342,96 +526,91 @@ export function PlansFormingGroupCard({
   isDarkSurface?: boolean;
   onSuggestMerge?: () => void;
 }) {
-  const { t, tu } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const navigate = useNavigate();
-  const isSidebar = variant === 'sidebar';
-  const darkCard = isSidebar && isDarkSurface;
+  const compact = variant !== 'page';
+  const onDark = compact && isDarkSurface;
   const { group, event, meta } = entry;
+  const locationLine = meta.location ? formatLocationArea(meta.location, language) : '';
+  const ink = onDark ? 'text-white' : 'text-ink';
+  const muted = onDark ? 'text-gray-400' : 'text-ink-muted';
+  const role = onDark ? 'text-emerald-300' : 'text-emerald-700 dark:text-emerald-300';
 
   return (
     <article
       className={cn(
-        'rounded-2xl border overflow-hidden',
-        darkCard
-          ? 'bg-emerald-950/20 border-emerald-700/30'
-          : isSidebar
-            ? 'bg-white border-gray-200/80 shadow-soft'
-            : 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800',
+        'nakamas-card overflow-hidden rounded-2xl shadow-soft',
+        onDark ? 'bg-white/[0.04]' : 'bg-white dark:bg-gray-900',
       )}
     >
-      <div className="flex gap-3 p-3">
-        {event.imageUrl && (
-          <img src={event.imageUrl} alt="" className="w-11 h-11 rounded-xl object-cover shrink-0" />
-        )}
-        <div className="min-w-0 flex-1 space-y-1">
-          <p className="card-badge font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
-            {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
-          </p>
-          <p className={cn('card-heading-lg font-bold leading-snug line-clamp-2', darkCard ? 'text-white' : 'text-gray-900 dark:text-white')}>
-            {event.title}
-          </p>
-          <p className={cn('card-meta-sm font-semibold leading-snug', darkCard ? 'text-emerald-100/90' : 'text-gray-700 dark:text-gray-200')}>
-            {t(meta.scheduleFull.el, meta.scheduleFull.en)}
-          </p>
-          <p className={cn('card-copy', darkCard ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300')}>
+      <button
+        type="button"
+        onClick={() => navigate(`/events/${event.id}`)}
+        className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+        aria-label={t('Δες εκδήλωση', 'View event')}
+      >
+        <EventCoverImg
+          event={event}
+          className={cn(
+            'w-full bg-gray-100 object-cover',
+            variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24',
+          )}
+        />
+      </button>
+      <div className={cn(compact ? 'space-y-3.5 px-4 py-4' : 'space-y-4 px-5 py-5')}>
+        <p className={cn('card-badge font-semibold tracking-wide', role)}>
+          {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
+        </p>
+        <div className="space-y-1.5">
+          <h3 className={cn('card-heading-lg font-bold leading-snug', ink)}>{event.title}</h3>
+          <p className={cn('card-copy leading-relaxed', muted)}>
             {meta.hostFirstName && (
               <>
-                <span className={cn('font-semibold', darkCard ? 'text-gray-100' : 'text-gray-900 dark:text-gray-100')}>{meta.hostFirstName}</span>
-                <span className={darkCard ? 'text-gray-500' : 'text-gray-400'} aria-hidden> · </span>
+                <span className={cn('font-semibold', ink)}>{meta.hostFirstName}</span>
+                <span className="opacity-50" aria-hidden>
+                  {' · '}
+                </span>
               </>
             )}
-            <span className={cn('card-role font-semibold', darkCard ? 'text-emerald-300' : 'text-emerald-700 dark:text-emerald-300')}>
+            <span className={cn('card-role font-medium', role)}>
               {t('Οργανώνει ομάδα', 'Group host')}
             </span>
           </p>
-          {meta.location && (
-            <p className={cn('card-copy flex items-center gap-1', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
-              <MapPin className="w-3 h-3 shrink-0" />
-              {meta.location}
-            </p>
-          )}
         </div>
-      </div>
-
-      <div className="px-3 pb-2">
-        <div className="flex justify-between card-copy font-bold mb-1">
-          <span className={darkCard ? 'text-emerald-400' : 'text-emerald-700 dark:text-emerald-300'}>
-            {meta.filled}/{meta.target} {t('μέλη', 'members')}
-          </span>
-          <span className={darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'}>
-            {meta.spots} {t('ανοιχτές θέσεις', 'open spots')}
-          </span>
+        <div className="space-y-2">
+          <FactSpread mutedClass={muted} left={t(meta.scheduleFull.el, meta.scheduleFull.en)} />
+          <FactSpread
+            mutedClass={muted}
+            leftIcon={variant === 'page' ? <MapPin className="w-3 h-3 shrink-0 opacity-70" aria-hidden /> : null}
+            left={locationLine}
+            rightIcon={variant === 'page' ? <Users className="w-3 h-3 shrink-0 opacity-70" aria-hidden /> : null}
+            right={`${meta.filled}/${meta.target} ${t('μέλη', 'members')} · ${meta.spots} ${t('ανοιχτές θέσεις', 'open spots')}`}
+          />
         </div>
-        <div className={cn('h-1.5 rounded-full overflow-hidden', darkCard ? 'bg-white/10' : 'bg-gray-200 dark:bg-white/10')}>
-          <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${meta.progress}%` }} />
+        <div className={cn('h-1.5 overflow-hidden rounded-full', onDark ? 'bg-white/10' : 'bg-black/[0.06]')}>
+          <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${meta.progress}%` }} />
         </div>
         {meta.note && (
-          <p className={cn('text-xs mt-2 line-clamp-2', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
-            «{meta.note}»
-          </p>
+          <p className={cn('card-copy leading-relaxed', muted)}>«{meta.note}»</p>
         )}
-      </div>
-
-      <div className="flex gap-2 px-3 pb-3">
-        <button
-          type="button"
-          onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
-          className="flex-1 min-h-9 rounded-xl card-cta bg-emerald-600 hover:bg-emerald-500 text-white"
-        >
-          {t('Αίτημα συμμετοχής', 'Ask to join')}
-        </button>
-        {onSuggestMerge && (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
           <button
             type="button"
-            onClick={onSuggestMerge}
-            className={cn(
-              'px-3 min-h-9 rounded-xl card-cta border',
-              darkCard ? 'border-emerald-600/40 text-emerald-300' : 'border-emerald-300 text-emerald-800 dark:border-emerald-600/40 dark:text-emerald-300',
-            )}
+            onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
+            className="px-4 min-h-9 rounded-full card-cta bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
           >
-            {t('Συγχώνευση', 'Merge')}
+            {t('Αίτημα συμμετοχής', 'Ask to join')}
           </button>
-        )}
+          {onSuggestMerge && (
+            <button
+              type="button"
+              onClick={onSuggestMerge}
+              className={cn('min-h-9 card-cta transition-colors', muted, onDark ? 'hover:text-white' : 'hover:text-ink')}
+            >
+              {t('Συγχώνευση', 'Merge')}
+            </button>
+          )}
+        </div>
       </div>
     </article>
   );

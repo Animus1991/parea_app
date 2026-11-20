@@ -49,7 +49,7 @@ export function EventStories({ events }: EventStoriesProps) {
   const activeRing = ringMap[tok.accent] ?? ringMap.cyan;
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-3" data-event-stories="">
       <div className="flex items-center justify-between gap-2">
         <SectionLabel el="Εκδηλώσεις σε στιγμιότυπα" en="Events in stories" />
         <span className={`text-xs font-semibold ${h.labelMuted}`}>
@@ -75,7 +75,7 @@ export function EventStories({ events }: EventStoriesProps) {
           try {
             const d = parseISO(e.date);
             day = format(d, "d");
-            mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale }).toUpperCase();
+            mon = format(d, "MMM", { locale: language === 'en' ? enLocale : elLocale });
           } catch {
             /* keep empty on invalid date */
           }
@@ -85,17 +85,18 @@ export function EventStories({ events }: EventStoriesProps) {
               key={e.id}
               type="button"
               onClick={() => setViewerIndex(idx)}
-              className="shrink-0 w-[104px] text-left group focus:outline-none focus-visible:[&>div]:ring-2 focus-visible:[&>div]:ring-brand"
+              className="event-story-tile shrink-0 w-[104px] text-left group focus:outline-none focus-visible:[&>div]:ring-2 focus-visible:[&>div]:ring-brand"
+              data-event-story=""
               title={e.title}
               aria-label={[e.title, day && `${day} ${mon}`, badgeLabel].filter(Boolean).join(', ')}
             >
               <div
                 className={cn(
-                  "p-[2.5px] rounded-2xl bg-gradient-to-tr transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-95",
+                  "p-[2.08px] rounded-2xl bg-gradient-to-tr transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-95",
                   seen ? "from-gray-300 to-gray-300" : activeRing,
                 )}
               >
-                <div className="relative w-full h-[150px] rounded-2xl overflow-hidden bg-gray-200">
+                <div className="event-story-tile-frame relative w-full h-[150px] rounded-2xl overflow-hidden bg-gray-200">
                   {e.imageUrl ? (
                     <img
                       src={e.imageUrl}
@@ -106,7 +107,7 @@ export function EventStories({ events }: EventStoriesProps) {
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
                   {/* One quiet marker at most: seeking a host wins over trending. */}
                   {badgeLabel ? (
@@ -124,9 +125,12 @@ export function EventStories({ events }: EventStoriesProps) {
                   ) : null}
 
                   {/* Date and title share one text block at the bottom, no boxed chip on top. */}
-                  <div className="absolute bottom-1.5 left-1.5 right-1.5 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  <div
+                    data-event-story-caption=""
+                    className="absolute bottom-1.5 left-1.5 right-1.5 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+                  >
                     {day ? (
-                      <span className="block text-2xs font-bold uppercase leading-tight text-white/85">
+                      <span className="block text-2xs font-bold leading-tight text-white/85">
                         {day} {mon}
                       </span>
                     ) : null}

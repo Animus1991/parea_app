@@ -37,13 +37,13 @@ import { EmptyState } from "../common/EmptyState";
 import { EventCardSkeleton } from "../common/Skeleton";
 import { ResourceStateGate } from "../common/ResourceStateGate";
 import { cn } from "../../lib/utils";
+import { CALENDAR_TYPO } from "../../lib/typographyTokens";
 import { useCalendarDayInteraction } from "../../hooks/useCalendarDayInteraction";
 import { sortEventsForStories } from "../../lib/storyEventOrdering";
 import { downloadCalendarIcs } from "../../lib/calendarIcs";
 import { StoryViewer } from "../home/StoryViewer";
 import { CalendarHourlySchedule } from "./CalendarHourlySchedule";
 import type { Event } from "../../types";
-import { CopilotInlinePrompt } from "../copilot/CopilotInlinePrompt";
 import { usePublishPageSnapshot } from "../../hooks/usePublishPageSnapshot";
 
 export default function MyCalendarPageContent() {
@@ -301,7 +301,7 @@ export default function MyCalendarPageContent() {
 
         <span
           className={cn(
-            "relative z-10 text-sm md:text-base font-black",
+            "relative z-10 text-sm md:text-base font-bold",
             isToday(day) || dayEvents.length > 0
               ? "text-white drop-shadow-soft-md"
               : p.head,
@@ -332,21 +332,21 @@ export default function MyCalendarPageContent() {
     <div className="w-full max-w-full min-w-0 space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 border-b border-white/5 pb-4 md:pb-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3.5">
           <div
             className={cn(
-              "w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-soft border",
+              "w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-soft border",
               p.isDark
                 ? "bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]"
                 : "bg-white border-gray-100",
             )}
           >
-            <CalendarCheck className={cn("w-7 h-7", p.iconAccent)} />
+            <CalendarCheck className={cn("w-5 h-5", p.iconAccent)} />
           </div>
           <div>
             <h1
               className={cn(
-                "text-sm md:text-base font-extrabold tracking-tight",
+                CALENDAR_TYPO.pageTitle,
                 p.head,
               )}
             >
@@ -414,8 +414,6 @@ export default function MyCalendarPageContent() {
         </div>
       </div>
 
-      <CopilotInlinePrompt />
-
       <ResourceStateGate
         isLoading={isLoading}
         isError={isError}
@@ -439,6 +437,8 @@ export default function MyCalendarPageContent() {
           )}
           actionLabel={t("Εξερεύνησε εκδηλώσεις", "Explore experiences")}
           onAction={() => navigate("/")}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
           askAi
           askPrompt={t("Τι έχω αυτή την εβδομάδα; Πρότεινέ μου κάτι.", "What do I have this week? Suggest something.")}
         />
@@ -454,13 +454,13 @@ export default function MyCalendarPageContent() {
       >
         <div
           className={cn(
-            "flex items-center justify-between px-4 py-5 md:px-5 border-b",
+            "flex items-center justify-between px-4 py-3 md:px-5 border-b",
             p.borderB,
           )}
         >
           <h2
             className={cn(
-              "font-extrabold text-sm md:text-base tracking-tight capitalize",
+              "font-bold text-sm md:text-base tracking-tight capitalize",
               p.head,
             )}
           >
@@ -531,7 +531,7 @@ export default function MyCalendarPageContent() {
                   <div key={i} className="text-center group cursor-default">
                     <div
                       className={cn(
-                        "text-xs md:text-xs font-bold uppercase tracking-widest mb-1 transition-colors",
+                        "text-xs md:text-xs font-bold tracking-widest mb-1 transition-colors",
                         isToday(days[i]) ? p.iconAccent : p.muted,
                       )}
                     >
@@ -570,7 +570,7 @@ export default function MyCalendarPageContent() {
                   <div
                     key={d}
                     className={cn(
-                      "text-center text-xs md:text-xs font-bold uppercase tracking-widest py-2 rounded-lg",
+                      "text-center text-xs md:text-xs font-bold tracking-widest py-2 rounded-lg",
                       p.isDark
                         ? "bg-white/5 text-gray-400"
                         : "bg-gray-50 text-gray-500",
@@ -603,7 +603,7 @@ export default function MyCalendarPageContent() {
                 <div className={cn("mt-5 border-t pt-4 space-y-3", p.borderB)}>
                   <h4
                     className={cn(
-                      "text-xs font-bold uppercase tracking-widest pl-1 mb-4",
+                      "text-xs font-bold tracking-widest pl-1 mb-4",
                       p.head,
                     )}
                   >
@@ -622,7 +622,7 @@ export default function MyCalendarPageContent() {
                     >
                       <div
                         className={cn(
-                          "text-xs font-bold w-11 shrink-0 uppercase tracking-widest text-center",
+                          "text-xs font-bold w-11 shrink-0 tracking-widest text-center",
                           p.muted,
                         )}
                       >
@@ -639,7 +639,7 @@ export default function MyCalendarPageContent() {
                       </div>
                       <span
                         className={cn(
-                          "text-xs uppercase tracking-widest font-black px-2 py-1 flex items-center justify-center rounded-lg shrink-0",
+                          "text-xs tracking-widest font-bold px-2 py-1 flex items-center justify-center rounded-lg shrink-0",
                           p.isDark
                             ? "bg-emerald-900/30 text-emerald-400"
                             : "bg-emerald-50 text-emerald-600",

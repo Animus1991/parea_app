@@ -2,7 +2,7 @@
  * Thin bridge from empty states / CTAs into Nakamas AI (CFB-style Ask AI).
  * Keeps page context by opening the existing docked/mobile copilot with a prompt.
  */
-import { openCopilot } from '../ai/copilot';
+import { openCopilot } from '../ai/launcher';
 
 export function askCopilot(prompt?: string): void {
   openCopilot(prompt);

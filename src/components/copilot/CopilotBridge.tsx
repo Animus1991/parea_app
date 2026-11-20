@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { bindCopilotNavigation } from '../../ai/copilot';
+import { bindCopilotNavigation } from '../../ai/navigationRef';
 import { useCopilotStore } from '../../store/copilotStore';
 import { DESKTOP_DOCK_QUERY } from '../../hooks/useMediaQuery';
 

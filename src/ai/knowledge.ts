@@ -45,14 +45,14 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
       const tierEl = u ? ` Είσαι στη βαθμίδα «${tierLabelEl(u.trustTier)}».` : '';
       const tierEn = u ? ` You are currently "${tierLabelEn(u.trustTier)}".` : '';
       return {
-        el: `Υπάρχουν 3 βαθμίδες: 1) Εξερευνητής — δωρεάν δημόσιες εκδηλώσεις· 2) Επιβεβαιωμένος (email + τηλέφωνο) — μικρές ομάδες 3–5 ατόμων & εκδηλώσεις με εισιτήριο· 3) Υψηλής Εμπιστοσύνης (+ ταυτότητα) — εκδρομές, ιδιωτικές συναντήσεις και διοργάνωση.${tierEl}`,
-        en: `There are 3 tiers: 1) Explorer — free public events; 2) Confirmed (email + phone) — small groups of 3–5 and ticketed events; 3) High Trust (+ ID) — trips, private meetups and hosting.${tierEn}`,
+        el: `Υπάρχουν 3 βαθμίδες: 1) Εξερευνητής — δωρεάν δημόσιες εκδηλώσεις· 2) Επιβεβαιωμένος (email + τηλέφωνο) — μικρές ομάδες 3–5 ατόμων & εκδηλώσεις με εισιτήριο· 3) Υψηλής Εμπιστοσύνης — εκδρομές, ιδιωτικές συναντήσεις και διοργάνωση. Η ταυτότητα ζητείται μόνο σε αυτό το βήμα, κατά προτίμηση μέσω Gov.gr Wallet.${tierEl}`,
+        en: `There are 3 tiers: 1) Explorer — free public events; 2) Confirmed (email + phone) — small groups of 3–5 and ticketed events; 3) High Trust — trips, private meetups and hosting. ID is only asked at that step, preferably via Gov.gr Wallet.${tierEn}`,
       };
     },
   },
   {
     id: 'groups',
-    stems: ['πωσ λειτουργ', 'ομαδ', 'group', 'how does it work', 'how it works', 'σημειο συναντησ', 'meeting point'],
+    stems: ['πωσ λειτουργουν οι ομαδ', 'how groups work', 'σημειο συναντησ', 'meeting point', 'group chat unlock', 'ξεκλειδωνει το group'],
     titleEl: 'Πώς λειτουργούν οι ομάδες',
     titleEn: 'How groups work',
     path: '/help',
@@ -64,12 +64,12 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
   {
     id: 'safety',
     stems: ['ασφαλει', 'safety', 'sos', 'τοποθεσια', 'location', 'trusted contact', 'επαφη εμπιστοσυν'],
-    titleEl: 'Ασφάλεια',
-    titleEn: 'Safety',
+    titleEl: 'Πώς δουλεύει η έξοδος',
+    titleEn: 'How the outing works',
     path: '/trust',
     answer: () => ({
-      el: 'Εργαλεία ασφάλειας: προαιρετική, προσωρινή κοινοποίηση ζωντανής τοποθεσίας μόνο στην ομάδα, κουμπί SOS στο group chat, σύνδεσμος για επαφή εμπιστοσύνης, κατάσταση άφιξης/ETA, συναντήσεις σε δημόσιους χώρους και αναφορά χρήστη/συνομιλίας με ένα κλικ.',
-      en: 'Safety tools: optional, temporary live location shared only with your group, an SOS button in group chat, a trusted-contact link, arrival status/ETA, public meeting places and one-tap reporting of users or chats.',
+      el: 'Οι συναντήσεις είναι σε δημόσιο χώρο, σε μικρή ομάδα 3–5. Το ακριβές σημείο φαίνεται μόνο στα επιβεβαιωμένα μέλη. Τη νύχτα της εξόδου μπορείς να μοιραστείς θέση, να πεις «έφτασα» ή να ειδοποιήσεις την ομάδα αν χρειάζεσαι βοήθεια. Η αναφορά είναι πάντα στο μενού.',
+      en: 'Meetups are in a public place, in a small group of 3–5. The exact pin is visible only to confirmed members. On the night you can share a pin, say you arrived, or alert the group if you need help. Report is always in the menu.',
     }),
   },
   {
@@ -79,8 +79,8 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
     titleEn: 'Find Nakamas',
     path: '/buddy-seek',
     answer: () => ({
-      el: 'Το «Βρες Nakamas» σου επιτρέπει να δηλώσεις ότι ψάχνεις παρέα για μια εκδήλωση ή να στείλεις αίτημα σε ομάδα που σχηματίζεται. Ο διοργανωτής βλέπει μόνο ό,τι επιτρέπουν οι ρυθμίσεις απορρήτου σου και αποφασίζει· αν δεχτεί, ανοίγει αυτόματα συνομιλία.',
-      en: '"Find Nakamas" lets you say you are looking for company for an event, or request to join a group that is forming. The host only sees what your privacy settings allow; if they accept, a chat opens automatically.',
+      el: 'Το «Βρες Nakamas» σου επιτρέπει να δηλώσεις ότι ψάχνεις παρέα για μια εκδήλωση ή να στείλεις αίτημα σε ομάδα που σχηματίζεται. Ο διοργανωτής βλέπει μόνο ό,τι επιτρέπουν οι ρυθμίσεις απορρήτου σου και αποφασίζει· αν δεχτεί, ανοίγει «Η βραδιά μας» (το chat είναι εκεί μέσα).',
+      en: '"Find Nakamas" lets you say you are looking for company for an event, or request to join a group that is forming. The host only sees what your privacy settings allow; if they accept, «Our night» opens (group chat lives there).',
     }),
   },
   {
@@ -118,13 +118,13 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
   },
   {
     id: 'cancel',
-    stems: ['ακυρω', 'cancel', 'αποχωρ', 'leave'],
+    stems: ['ακυρω συμμετοχ', 'ακυρωση', 'cancel attendance', 'cancel my spot', 'how to cancel'],
     titleEl: 'Ακύρωση συμμετοχής',
     titleEn: 'Cancelling',
     path: '/plans',
     answer: () => ({
-      el: 'Μπορείς να αποχωρήσεις από ομάδα από «Τα Σχέδιά μου». Έως 24 ώρες πριν δεν υπάρχει επίπτωση· αργότερη ακύρωση μειώνει τον Βαθμό Αξιοπιστίας.',
-      en: 'You can leave a group from "My Plans". Up to 24h before there is no penalty; later cancellations lower your Reliability Score.',
+      el: 'Μπορείς να αποχωρήσεις από ομάδα από «Τα Σχέδιά μου» ή από «Η βραδιά μας». Έως 24 ώρες πριν δεν υπάρχει επίπτωση· αργότερη ακύρωση μειώνει τον Βαθμό Αξιοπιστίας.',
+      en: 'You can leave a group from "My Plans" or "Our night". Up to 24h before there is no penalty; later cancellations lower your Reliability Score.',
     }),
   },
 ];

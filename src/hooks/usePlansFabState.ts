@@ -10,15 +10,9 @@ export function usePlansFabState() {
   const showTeaser = !feed.hasContent && !feed.myActivePlan;
   const visible = Boolean(total || hasPending || showTeaser || feed.myActivePlan);
 
-  const label = hasPending
-    ? t('Αιτήματα', 'Requests')
-    : feed.myActivePlan
-      ? t('Το σχέδιό σας', 'Your plan')
-      : showTeaser
-        ? t('Ψάχνετε Nakamas;', 'Need Nakamas?')
-        : t('Σχέδια', 'Plans');
+  const label = feed.myActivePlan
+    ? t('Το σχέδιό σας', 'Your plan')
+    : t('Βρες Nakamas', 'Find Nakamas');
 
-  const badge = hasPending ? feed.insights.pendingJoinsToReview : total > 0 ? total : null;
-
-  return { visible, label, badge, hasPending };
+  return { visible, label, badge: null as number | null, hasPending: false };
 }

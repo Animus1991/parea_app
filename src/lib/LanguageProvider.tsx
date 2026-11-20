@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
-import { toUpperNoAccents } from './greekText';
+import { toTitleCase } from './greekText';
 import { useLanguageStore } from '../store/languageStore';
 import { LanguageContext, type Language } from './i18n';
 
@@ -8,7 +8,8 @@ const translations: Record<string, Record<Language, string>> = {
   'nav.discover': { el: 'Ανακάλυψη', en: 'Discover' },
   'nav.plans': { el: 'Σχέδια', en: 'Plans' },
   'nav.organize': { el: 'Διοργάνωση', en: 'Organize' },
-  'nav.trust': { el: 'Εμπιστοσύνη', en: 'Trust' },
+  'nav.trust': { el: 'Αξιοπιστία', en: 'Reliability' },
+  'nav.friends': { el: 'Φίλοι', en: 'Friends' },
   'nav.profile': { el: 'Προφίλ', en: 'Profile' },
   'nav.my_nakamas': { el: 'Οι Nakamas μου', en: 'My Nakamas' },
   'nav.messages': { el: 'Μηνύματα', en: 'Messages' },
@@ -21,20 +22,16 @@ const translations: Record<string, Record<Language, string>> = {
   'home.hero.title1': { el: 'Βρείτε Nakamas για τις', en: 'Find Nakamas for the' },
   'home.hero.title2': { el: 'εμπειρίες', en: 'experiences' },
   'home.hero.title3': { el: 'που ήδη θέλετε να ζήσετε.', en: 'you already want to live.' },
-  'home.hero.subtitle': { el: 'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.', en: 'Join small groups for events, activities and nearby getaways — based on shared interests and availability.' },
   'home.hero.stat1': { el: 'Μικρές ομάδες', en: 'Small groups' },
   'home.hero.stat2': { el: 'Επαληθευμένη συμμετοχή', en: 'Verified attendance' },
   'home.hero.stat3': { el: 'Δημόσια σημεία', en: 'Public spots' },
-  'home.hero.search_placeholder': { el: 'Αναζήτηση εμπειριών...', en: 'Search experiences...' },
+  'home.hero.search_placeholder': { el: 'Αναζήτηση εκδήλωσης ή περιοχής', en: 'Search event or area' },
   'home.hero.how_groups': { el: 'Πώς λειτουργούν οι ομάδες', en: 'How groups work' },
-  'home.pending_feedback.title': { el: 'Εκκρεμής Αξιολόγηση', en: 'Pending Feedback' },
-  'home.pending_feedback.body': { el: 'Αξιολογήστε τα 3 μέλη από το "Comedy Night" για να ξεκλειδώσετε την επόμενη κράτησή σας.', en: 'Please rate the 3 members from "Comedy Night" to unlock your next booking.' },
-  'home.pending_feedback.cta': { el: 'Αξιολόγηση', en: 'Review Event' },
 
   // How it works
   'home.how.step1.title': { el: 'Διαλέξτε μια εμπειρία', en: 'Pick an experience' },
   'home.how.step1.body': { el: 'Επιλέξτε μια εκδήλωση, πεζοπορία ή δραστηριότητα που θέλετε να παρακολουθήσετε.', en: 'Choose an event, hike, or activity you want to attend.' },
-  'home.how.step2.title': { el: 'Εντάξτε μια μικρή ομάδα', en: 'Join a small group' },
+  'home.how.step2.title': { el: 'Μπες σε μια μικρή παρέα', en: 'Join a small group' },
   'home.how.step2.body': { el: 'Συνδεθείτε με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.', en: 'Connect with 3-6 others who share the same intent and schedule.' },
   'home.how.step3.title': { el: 'Επιβεβαιώστε & συναντηθείτε', en: 'Confirm & meet' },
   'home.how.step3.body': { el: 'Ξεκλειδώστε το group chat, ορίστε σημείο συνάντησης και απολαύστε την εμπειρία.', en: 'Unlock the group chat, set a meeting point, and enjoy the experience.' },
@@ -49,7 +46,7 @@ const translations: Record<string, Record<Language, string>> = {
   'home.filter.today': { el: 'Σήμερα', en: 'Today' },
   'home.filter.this_week': { el: 'Αυτή την Εβδομάδα', en: 'This Week' },
   'home.filter.this_month': { el: 'Αυτόν τον Μήνα', en: 'This Month' },
-  'home.filter.all_comfort': { el: 'Όλα τα Επίπεδα', en: 'All Comfort Levels' },
+  'home.filter.all_comfort': { el: 'Όλοι οι χώροι', en: 'All venues' },
   'home.filter.public': { el: 'Δημόσιοι Χώροι', en: 'Public Spaces' },
   'home.filter.organized': { el: 'Οργανωμένοι Hosts', en: 'Organized Hosts' },
   'home.filter.verified': { el: 'Επαληθευμένες Ομάδες', en: 'Verified Groups' },
@@ -60,7 +57,7 @@ const translations: Record<string, Record<Language, string>> = {
 
   // Feed
   'home.feed.for_you': { el: 'Για Σένα', en: 'For You' },
-  'home.feed.discover': { el: 'Ανακάλυψε', en: 'Discover' },
+  'home.feed.discover': { el: 'Όλες', en: 'All' },
   'home.feed.no_events': { el: 'Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.', en: 'No events found matching your criteria.' },
   'home.feed.load_more': { el: 'Φόρτωση Περισσότερων', en: 'Load More' },
   'home.feed.sort.relevance': { el: 'Συνάφεια', en: 'Relevance' },
@@ -68,8 +65,8 @@ const translations: Record<string, Record<Language, string>> = {
   'home.feed.sort.group_progress': { el: 'Πρόοδος Ομάδας', en: 'Group Progress' },
 
   // EventCard
-  'event_card.organizer': { el: 'ΔΙΟΡΓΑΝΩΤΗΣ', en: 'ORGANIZER' },
-  'event_card.free': { el: 'ΔΩΡΕΑΝ', en: 'FREE' },
+  'event_card.organizer': { el: 'Διοργανωτής', en: 'Organizer' },
+  'event_card.free': { el: 'Δωρεάν', en: 'Free' },
   'event_card.forming': { el: 'Σε Σχηματισμό', en: 'Forming' },
   'event_card.join': { el: 'Συμμετοχή', en: 'Join' },
   'event_card.copied': { el: 'Ο σύνδεσμος αντιγράφηκε!', en: 'Link copied to clipboard!' },
@@ -99,8 +96,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const tu = (greekText: string, englishText?: string): string => {
-    const translated = t(greekText, englishText);
-    return language === 'el' ? toUpperNoAccents(translated) : translated.toUpperCase();
+    return toTitleCase(t(greekText, englishText));
   };
 
   return (

@@ -16,6 +16,7 @@ import type {
   ProfileExposure,
   VisibilityMode,
 } from '../../types/companyRequest';
+import { AppSelect } from '../common/AppSelect';
 
 const STEPS = 5;
 
@@ -274,16 +275,18 @@ export function CreateCompanyRequestModal({
                 <input type="checkbox" checked={flexibleDates} onChange={(e) => setFlexibleDates(e.target.checked)} />
                 {t('Ευέλικτες ημερομηνίες', 'Flexible dates')}
               </label>
-              <select aria-label={t("Σημείο συνάντησης", "Meeting preference")}
+              <AppSelect
+                ariaLabel={t("Σημείο συνάντησης", "Meeting preference")}
                 value={meetingPreference}
-                onChange={(e) => setMeetingPreference(e.target.value as MeetingPreference)}
+                onValueChange={(v) => setMeetingPreference(v as MeetingPreference)}
                 className="w-full rounded-xl border border-border px-3 py-2 text-sm bg-surface-raised"
-              >
-                <option value="at_venue">{t('Στον χώρο', 'At venue')}</option>
-                <option value="coffee_before">{t('Καφές πριν', 'Coffee before')}</option>
-                <option value="walk_after">{t('Περπάτημα μετά', 'Walk after')}</option>
-                <option value="chat_first">{t('Chat πρώτα', 'Group chat first')}</option>
-              </select>
+                options={[
+                  { value: 'at_venue', label: t('Στον χώρο', 'At venue') },
+                  { value: 'coffee_before', label: t('Καφές πριν', 'Coffee before') },
+                  { value: 'walk_after', label: t('Περπάτημα μετά', 'Walk after') },
+                  { value: 'chat_first', label: t('Συνομιλία πρώτα', 'Chat first') },
+                ]}
+              />
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
@@ -325,7 +328,7 @@ export function CreateCompanyRequestModal({
             <button
               type="button"
               onClick={() => setStep((s) => s - 1)}
-              className="min-h-11 px-4 rounded-2xl border border-border text-xs font-bold flex items-center gap-1"
+              className="min-h-8 px-4 rounded-2xl border border-border text-xs font-bold flex items-center gap-1"
             >
               <ChevronLeft className="w-4 h-4" aria-hidden /> {t('Πίσω', 'Back')}
             </button>
@@ -335,20 +338,20 @@ export function CreateCompanyRequestModal({
               type="button"
               data-autofocus
               onClick={() => setStep((s) => s + 1)}
-              className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold flex items-center justify-center gap-1"
+              className="flex-1 min-h-8 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold flex items-center justify-center gap-1"
             >
               {t('Συνέχεια', 'Continue')} <ChevronRight className="w-4 h-4" aria-hidden />
             </button>
           ) : (
             <>
-              <button type="button" onClick={saveAsDraft} className="min-h-11 px-3 rounded-2xl border border-border text-xs font-bold">
+              <button type="button" onClick={saveAsDraft} className="min-h-8 px-3 rounded-2xl border border-border text-xs font-bold">
                 {t('Πρόχειρο', 'Draft')}
               </button>
               <button
                 type="button"
                 data-autofocus
                 onClick={publishNow}
-                className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold"
+                className="flex-1 min-h-8 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold"
               >
                 {isEdit
                   ? t('Αποθήκευση αλλαγών', 'Save changes')

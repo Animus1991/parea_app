@@ -147,33 +147,40 @@ export function computeProfileCompletion(user: User | null, hasBio: boolean): {
     return { percent: 0, nextActionEl: 'Σύνδεση', nextActionEn: 'Sign in', nextPath: '/login' };
   }
 
+  // ID verification is asked of hosts only (Trust Center: «Αν διοργανώνεις»), so a
+  // member's profile is complete without it — and an organizer's is not.
+  const countsId = Boolean(user.isOrganizer);
   let score = 20;
   if (user.photoUrl) score += 15;
   if (hasBio && user.bio?.trim()) score += 15;
   if ((user.interests?.length ?? 0) >= 1) score += 10;
   if ((user.interests?.length ?? 0) >= 3) score += 15;
   if (user.trustTier !== '1_explorer') score += 15;
-  if (user.idVerified) score += 10;
+  if (countsId && user.idVerified) score += 10;
 
-  const percent = Math.min(100, score);
+  const max = countsId ? 100 : 90;
+  const percent = Math.min(100, Math.round((score / max) * 100));
 
   if (!user.photoUrl) {
-    return { percent, nextActionEl: 'Πρόσθεσε φωτογραφία (+15%)', nextActionEn: 'Add a photo (+15%)', nextPath: '/profile' };
+    return { percent, nextActionEl: 'Πρόσθεσε φωτογραφία', nextActionEn: 'Add a photo', nextPath: '/profile' };
   }
   if (!hasBio || !user.bio?.trim()) {
-    return { percent, nextActionEl: 'Γράψε bio (+15%)', nextActionEn: 'Write a bio (+15%)', nextPath: '/profile' };
+    return { percent, nextActionEl: 'Γράψε λίγα λόγια για σένα', nextActionEn: 'Write a short bio', nextPath: '/profile' };
   }
   if ((user.interests?.length ?? 0) < 3) {
-    return { percent, nextActionEl: 'Πρόσθεσε 3 ενδιαφέροντα (+15%)', nextActionEn: 'Add 3 interests (+15%)', nextPath: '/profile' };
+    return { percent, nextActionEl: 'Πρόσθεσε 3 ενδιαφέροντα', nextActionEn: 'Add 3 interests', nextPath: '/profile' };
   }
   if (user.trustTier === '1_explorer') {
-    return { percent, nextActionEl: 'Ολοκλήρωσε επαλήθευση (+15%)', nextActionEn: 'Complete verification (+15%)', nextPath: '/verification' };
+    return { percent, nextActionEl: 'Επιβεβαίωσε email και τηλέφωνο', nextActionEn: 'Confirm email and phone', nextPath: '/verification' };
+  }
+  if (countsId && !user.idVerified) {
+    return { percent, nextActionEl: 'Επαλήθευσε ταυτότητα (για διοργανωτές)', nextActionEn: 'Verify your ID (for hosts)', nextPath: '/verification?method=id' };
   }
 
   return {
     percent,
-    nextActionEl: 'Το προφίλ σου είναι σχεδόν πλήρες',
-    nextActionEn: 'Your profile is nearly complete',
+    nextActionEl: 'Το προφίλ σου είναι πλήρες',
+    nextActionEn: 'Your profile is complete',
     nextPath: '/profile',
   };
 }

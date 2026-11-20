@@ -2,11 +2,17 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useStore } from '../../store';
 import { Button } from '../common/Button';
-import { Users, CheckCircle, Split, ShieldCheck, Tag } from 'lucide-react';
+import { Users, CheckCircle, Split, ShieldCheck, Tag, HeartHandshake, ListOrdered } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
+import { cn } from '../../lib/utils';
+import { PAGE_FILL } from '../layout/PageShell';
 import { canAccessEvent } from '../../lib/trust';
 import { computeDiscountedPrice } from '../../lib/groupUtils';
 import { toast } from 'sonner';
+import { GroupInsights } from '../outings/GroupInsights';
+import { VibeQuizModal } from '../outings/VibeQuizModal';
+import { fitsGenderMode } from '../../lib/outings';
+import type { GroupGenderMode } from '../../types/outings';
 
 export default function JoinGroupFlow() {
   const { eventId } = useParams();
@@ -23,6 +29,12 @@ export default function JoinGroupFlow() {
   const placeCommitmentHold = useStore((state) => state.placeCommitmentHold);
   const hasCommitmentHold = useStore((state) => state.hasCommitmentHold);
   const canJoinEvent = useStore((state) => state.canJoinEvent);
+  // Φ27 — one gate per group (capacity → waitlist, women & non-binary, blocks, standing).
+  const canJoinGroup = useStore((state) => state.canJoinGroup);
+  const joinGroupWaitlist = useStore((state) => state.joinGroupWaitlist);
+  const [genderMode, setGenderMode] = useState<GroupGenderMode>('mixed');
+  const [joinedGroupId, setJoinedGroupId] = useState<string | null>(null);
+  const [quizOpen, setQuizOpen] = useState(false);
 
   const event = events.find((e) => e.id === eventId);
   const [step, setStep] = useState(1);
@@ -51,12 +63,18 @@ export default function JoinGroupFlow() {
   const needsCommitment = !event.isPaid && !hasCommitmentHold(eventId);
 
   const availableGroups = groups.filter(
-    (g) => g.eventId === eventId && g.members.length < g.targetSize,
+    (g) => g.eventId === eventId && g.members.length < g.targetSize && g.status !== 'cancelled',
   );
+  const fullGroups = groups.filter(
+    (g) => g.eventId === eventId && g.members.length >= g.targetSize && g.status !== 'cancelled' && !g.members.includes(currentUser?.id ?? ''),
+  );
+  const myGroup = groups.find((g) => g.eventId === eventId && currentUser && g.members.includes(currentUser.id));
+  const selectedGate = selectedGroupId ? canJoinGroup(selectedGroupId) : null;
+  const canWomenNb = fitsGenderMode(currentUser, 'women_nb');
 
   const canContinueStep1 =
     gate.allowed &&
-    (groupType === 'new' || (availableGroups.length > 0 && Boolean(selectedGroupId)));
+    (groupType === 'new' || (availableGroups.length > 0 && Boolean(selectedGroupId) && Boolean(selectedGate?.ok)));
 
   const discountedPrice =
     event.isPaid && event.groupDiscount
@@ -81,23 +99,31 @@ export default function JoinGroupFlow() {
       );
       return;
     }
-    if (needsCommitment) placeCommitmentHold(eventId);
-
     if (groupType === 'existing') {
-      if (selectedGroupId) joinGroup(selectedGroupId);
-      else {
-        const first = availableGroups[0];
-        if (first) joinGroup(first.id);
+      const target = selectedGroupId ?? availableGroups[0]?.id;
+      if (!target) return;
+      const g = canJoinGroup(target);
+      if (!g.ok) {
+        toast.error(t(g.el, g.en));
+        return;
       }
+      if (needsCommitment) placeCommitmentHold(eventId);
+      joinGroup(target);
+      setJoinedGroupId(target);
     } else {
-      createGroup(event.id, newGroupSize);
+      if (needsCommitment) placeCommitmentHold(eventId);
+      createGroup(event.id, newGroupSize, { genderMode });
+      const mine = useStore
+        .getState()
+        .groups.filter((g) => g.eventId === event.id && g.hostId === currentUser?.id);
+      setJoinedGroupId(mine[mine.length - 1]?.id ?? null);
     }
     setStep(3);
   };
 
   return (
-    <div className="mx-auto max-w-lg rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sm:p-5 mt-5 dark:bg-surface-raised dark:border-border">
-      <h1 className="sr-only">{t('Συμμετοχή σε ομάδα', 'Join a group')}: {event.title}</h1>
+    <div className={cn(PAGE_FILL, 'rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sm:p-6 md:p-8 dark:bg-surface-raised dark:border-border')}>
+      <h1 className="sr-only text-lg md:text-xl">{t('Συμμετοχή σε ομάδα', 'Join a group')}: {event.title}</h1>
       {!gate.allowed && (
         <div className="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm font-medium flex gap-2">
           <ShieldCheck className="w-5 h-5 shrink-0" />
@@ -128,18 +154,18 @@ export default function JoinGroupFlow() {
             <button
               type="button"
               onClick={() => setGroupType('existing')}
-              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'existing' ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 dark:border-border'}`}
+              className={`p-3 rounded-xl border text-left text-xs min-h-[72px] ${groupType === 'existing' ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 dark:border-border'}`}
             >
-              <Users className={`h-5 w-5 mb-2 ${groupType === 'existing' ? 'text-cyan-600' : 'text-gray-400'}`} />
-              <p className="font-bold text-sm">{t('Υπάρχουσα ομάδα', 'Join Existing')}</p>
+              <Users className={`h-4 w-4 mb-1.5 ${groupType === 'existing' ? 'text-cyan-600' : 'text-gray-400'}`} />
+              <p className="font-bold text-xs">{t('Υπάρχουσα ομάδα', 'Join Existing')}</p>
             </button>
             <button
               type="button"
               onClick={() => setGroupType('new')}
-              className={`p-4 rounded-2xl border text-left min-h-[88px] ${groupType === 'new' ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 dark:border-border'}`}
+              className={`p-3 rounded-xl border text-left text-xs min-h-[72px] ${groupType === 'new' ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 dark:border-border'}`}
             >
-              <Split className={`h-5 w-5 mb-2 ${groupType === 'new' ? 'text-cyan-600' : 'text-gray-400'}`} />
-              <p className="font-bold text-sm">{t('Νέα ομάδα', 'Start New Group')}</p>
+              <Split className={`h-4 w-4 mb-1.5 ${groupType === 'new' ? 'text-cyan-600' : 'text-gray-400'}`} />
+              <p className="font-bold text-xs">{t('Νέα ομάδα', 'Start New Group')}</p>
             </button>
           </div>
 
@@ -150,54 +176,154 @@ export default function JoinGroupFlow() {
                   {t('Δεν υπάρχουν διαθέσιμες ομάδες — δημιουργήστε νέα.', 'No available groups — start a new one.')}
                 </p>
               ) : (
-                availableGroups.map((g) => (
-                  <button
-                    key={g.id}
-                    type="button"
-                    onClick={() => setSelectedGroupId(g.id)}
-                    className={`w-full p-3 rounded-xl border text-left transition-colors ${
-                      selectedGroupId === g.id
-                        ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent'
-                        : 'border-gray-100 hover:border-gray-200'
-                    }`}
-                  >
-                    <p className="font-bold text-sm text-gray-900">
-                      {t('Ομάδα', 'Group')} · {g.members.length}/{g.targetSize} {t('μέλη', 'members')}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      {g.status === 'confirmed'
-                        ? t('Επιβεβαιωμένη', 'Confirmed')
-                        : t('Εκκρεμής', 'Pending')}
-                    </p>
-                  </button>
-                ))
+                availableGroups.map((g) => {
+                  const gGate = canJoinGroup(g.id);
+                  const isMine = gGate.reason === 'member';
+                  return (
+                    <div
+                      key={g.id}
+                      className={`w-full rounded-xl border transition-colors ${
+                        selectedGroupId === g.id
+                          ? 'border-accent bg-cyan-50 dark:bg-cyan-950/40 ring-1 ring-accent'
+                          : 'border-gray-100 hover:border-gray-200 dark:border-border'
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => (isMine ? navigate(`/night/${g.id}`) : setSelectedGroupId(g.id))}
+                        aria-pressed={selectedGroupId === g.id}
+                        className="w-full p-3 text-left"
+                      >
+                        <p className="font-bold text-sm text-ink">
+                          {t('Ομάδα', 'Group')} · {g.members.length}/{g.targetSize} {t('μέλη', 'members')}
+                        </p>
+                        <p className="text-xs text-ink-muted mt-0.5">
+                          {g.status === 'confirmed'
+                            ? t('Επιβεβαιωμένη', 'Confirmed')
+                            : t('Εκκρεμής', 'Pending')}
+                          {isMine ? t(' · είσαι μέλος — άνοιξε «Η βραδιά μας»', ' · you are in — open «Our night»') : ''}
+                        </p>
+                      </button>
+                      <div className="px-3 pb-3">
+                        <GroupInsights group={g} />
+                        {!gGate.ok && !isMine && (
+                          <p className="mt-1 text-xs font-bold text-amber-800 dark:text-amber-200">{t(gGate.el, gGate.en)}</p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+              {fullGroups.length > 0 && (
+                <div className="rounded-xl border border-dashed border-border p-3">
+                  <p className="flex items-center gap-1.5 text-xs font-bold text-ink">
+                    <ListOrdered className="h-4 w-4" aria-hidden /> {t('Πλήρεις ομάδες — λίστα αναμονής', 'Full groups — waitlist')}
+                  </p>
+                  <ul className="mt-2 space-y-2">
+                    {fullGroups.map((g) => {
+                      const waiting = Boolean(currentUser && g.waitlist?.includes(currentUser.id));
+                      return (
+                        <li key={g.id} className="flex items-center justify-between gap-2">
+                          <span className="text-xs font-medium text-ink">
+                            {g.members.length}/{g.targetSize} · {t(`${g.waitlist?.length ?? 0} σε αναμονή`, `${g.waitlist?.length ?? 0} waiting`)}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={waiting}
+                            onClick={() => {
+                              if (joinGroupWaitlist(g.id)) {
+                                toast.success(
+                                  t(
+                                    'Είσαι στη λίστα αναμονής — η θέση περνά σε σένα στην ίδια τιμή.',
+                                    'You are on the waitlist — the seat passes to you at the same price.',
+                                  ),
+                                  {
+                                    action: {
+                                      label: t('Η βραδιά μας', 'Our night'),
+                                      onClick: () => navigate(`/night/${g.id}`),
+                                    },
+                                  },
+                                );
+                              } else {
+                                const gg = canJoinGroup(g.id);
+                                toast.error(t(gg.el, gg.en));
+                              }
+                            }}
+                          >
+                            {waiting ? t('Σε αναμονή', 'Waiting') : t('Λίστα αναμονής', 'Join waitlist')}
+                          </Button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               )}
             </div>
           )}
 
           {groupType === 'new' && (
-            <div className="flex gap-2">
-              {[3, 4, 5, 6].map((size) => (
-                <button
-                  key={size}
-                  type="button"
-                  onClick={() => setNewGroupSize(size)}
-                  className={`flex-1 py-2 min-h-11 rounded-xl font-bold text-xs ${newGroupSize === size ? 'bg-ink text-white' : 'bg-gray-100 text-gray-600'}`}
-                >
-                  {size}
-                </button>
-              ))}
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                {[3, 4, 5, 6].map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => setNewGroupSize(size)}
+                    className={`flex-1 py-2 min-h-8 rounded-xl font-bold text-xs ${newGroupSize === size ? 'bg-ink text-white' : 'bg-gray-100 text-gray-600'}`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+              <fieldset>
+                <legend className="flex items-center gap-1.5 text-xs font-bold text-ink">
+                  <HeartHandshake className="h-4 w-4" aria-hidden /> {t('Ποιοι μπορούν να μπουν', 'Who can join')}
+                </legend>
+                <div className="mt-1.5 grid grid-cols-2 gap-2">
+                  {([
+                    { id: 'mixed', el: 'Όλοι', en: 'Everyone' },
+                    { id: 'women_nb', el: 'Γυναίκες & μη δυαδικά', en: 'Women & non-binary' },
+                  ] as const).map((o) => (
+                    <button
+                      key={o.id}
+                      type="button"
+                      aria-pressed={genderMode === o.id}
+                      disabled={o.id === 'women_nb' && !canWomenNb}
+                      onClick={() => setGenderMode(o.id)}
+                      className={`min-h-8 rounded-xl border px-2 text-xs font-bold disabled:opacity-50 ${genderMode === o.id ? 'border-accent bg-cyan-50 text-ink dark:bg-cyan-950/40 ring-1 ring-accent' : 'border-gray-100 text-ink dark:border-border'}`}
+                    >
+                      {t(o.el, o.en)}
+                    </button>
+                  ))}
+                </div>
+                {!canWomenNb && (
+                  <p className="mt-1 text-2xs font-medium text-ink-muted dark:text-gray-300">
+                    {t('Η επιλογή «Γυναίκες & μη δυαδικά» ανοίγει αν το δηλώσεις στο προφίλ σου (δεν εμφανίζεται δημόσια).', 'The “Women & non-binary” option opens if you set it in your profile (never shown publicly).')}
+                  </p>
+                )}
+              </fieldset>
             </div>
           )}
 
-          <Button className="w-full min-h-11" onClick={() => setStep(2)} disabled={!canContinueStep1}>
+          {myGroup && (
+            <button
+              type="button"
+              onClick={() => navigate(`/night/${myGroup.id}`)}
+              className="w-full rounded-xl border border-border p-3 text-left text-xs font-bold text-ink"
+            >
+              {t('Είσαι ήδη σε ομάδα για αυτή την εκδήλωση → «Η βραδιά μας»', 'You are already in a group for this event → «Our night»')}
+            </button>
+          )}
+
+          <Button className="w-full min-h-8" onClick={() => setStep(2)} disabled={!canContinueStep1}>
             {t('Συνέχεια', 'Continue')}
           </Button>
         </div>
       )}
 
       {step === 2 && (
-        <div className="space-y-5">
+        <div className="space-y-4">
           <h3 className="font-bold text-sm md:text-base">{t('Επιβεβαίωση', 'Confirmation')}</h3>
 
           {event.isPaid ? (
@@ -240,10 +366,10 @@ export default function JoinGroupFlow() {
           )}
 
           <div className="flex gap-3">
-            <Button variant="outline" className="flex-1 min-h-11" onClick={() => setStep(1)}>
+            <Button variant="outline" className="flex-1 min-h-8" onClick={() => setStep(1)}>
               {t('Πίσω', 'Back')}
             </Button>
-            <Button variant="primary" className="flex-[2] min-h-11" onClick={handleConfirm}>
+            <Button variant="primary" className="flex-[2] min-h-8" onClick={handleConfirm}>
               {t('Επιβεβαίωση συμμετοχής', 'Confirm join')}
             </Button>
           </div>
@@ -257,9 +383,32 @@ export default function JoinGroupFlow() {
           <p className="text-sm text-gray-500 font-medium">
             {t('Το group chat ξεκλειδώνει όταν η ομάδα επιβεβαιωθεί.', 'Group chat unlocks when the group is confirmed.')}
           </p>
-          <Button className="w-full min-h-11" onClick={() => navigate(`/events/${eventId}`)}>
+          {joinedGroupId && (
+            <Button className="w-full min-h-8" onClick={() => navigate(`/night/${joinedGroupId}`)}>
+              {t('Άνοιξε «Η βραδιά μας»', 'Open «Our night»')}
+            </Button>
+          )}
+          {!currentUser?.vibe && (
+            <button
+              type="button"
+              onClick={() => setQuizOpen(true)}
+              className="flex w-full items-center gap-2 rounded-xl border border-border p-3 text-left text-xs font-bold text-ink"
+            >
+              <HeartHandshake className="h-4 w-4 shrink-0" aria-hidden />
+              {t('Κάνε το κουίζ «Το στυλ παρέας μου» (1′) για να βλέπεις γιατί ταιριάζετε.', 'Take the “My group style” quiz (1 min) to see why you match.')}
+            </button>
+          )}
+          <Button variant="outline" className="w-full min-h-8" onClick={() => navigate(`/events/${eventId}`)}>
             {t('Επιστροφή στην εκδήλωση', 'Back to event')}
           </Button>
+          <button
+            type="button"
+            onClick={() => navigate('/inbox')}
+            className="text-xs font-bold text-gray-500 underline underline-offset-2"
+          >
+            {t('Άνοιξε Inbox', 'Open Inbox')}
+          </button>
+          {quizOpen && <VibeQuizModal open={quizOpen} onClose={() => setQuizOpen(false)} />}
         </div>
       )}
     </div>

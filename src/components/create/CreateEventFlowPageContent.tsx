@@ -26,6 +26,8 @@ import { getHomeCategoryTranslations } from "../../lib/homeCategoryLabels";
 import { generateEventBlurb } from "../../services/gemini";
 import { Bot } from "lucide-react";
 import { useFormDraft, type FormDraftFields } from "../../lib/formDraft";
+import { APP_TYPO } from "../../lib/typographyTokens";
+import { AppSelect } from "../common/AppSelect";
 
 export default function CreateEventFlowPageContent() {
   const [step, setStep] = useState(1);
@@ -159,11 +161,18 @@ export default function CreateEventFlowPageContent() {
         minTrustTierAccess: visibility === "private" ? "2_confirmed" : editEvent.minTrustTierAccess,
         imageUrl: imagePreview || editEvent.imageUrl,
       });
-      toast.success(t("Η εκδήλωση ενημερώθηκε", "Event updated"));
+      toast.success(t("Η εκδήλωση ενημερώθηκε", "Event updated"), {
+        action: {
+          label: t("Προβολή", "View"),
+          onClick: () => navigate(`/events/${editEvent.id}`),
+        },
+      });
       navigate("/manage");
       return;
     }
+    const newEventId = `e${Date.now()}`;
     const newEvent = {
+      id: newEventId,
       title: title || "New Experience",
       category: category || "Social",
       description: description || "A new gathering created from the app.",
@@ -186,12 +195,19 @@ export default function CreateEventFlowPageContent() {
     };
 
     createEvent(newEvent);
+    const hosted = useStore.getState().groups.find(
+      (g) => g.eventId === newEventId && g.hostId === currentUser.id,
+    );
     toast.success(
       t("Η εμπειρία δημοσιεύτηκε!", "Experience published!"),
       {
         description: isPaid
           ? t(`Τιμή εισόδου €${newEvent.price}`, `Entry price €${newEvent.price}`)
           : t("Δωρεάν εκδήλωση", "Free event"),
+        action: {
+          label: hosted ? t("Η βραδιά μας", "Our night") : t("Προβολή", "View"),
+          onClick: () => navigate(hosted ? `/night/${hosted.id}` : `/events/${newEventId}`),
+        },
       },
     );
     navigate("/manage");
@@ -223,15 +239,9 @@ export default function CreateEventFlowPageContent() {
             )}
           </p>
         )}
-        <h1 className={cn("text-sm md:text-base font-bold", p.head)}>
+        <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
           {editEvent ? t("Επεξεργασία Εμπειρίας", "Edit Experience") : t("Δημιουργία Εμπειρίας", "Create Experience")}
         </h1>
-        <p className={cn("text-sm font-medium mt-1", p.muted)}>
-          {t(
-            "Σχεδιάστε την τέλεια συνάντησή σας.",
-            "Design your perfect real-world gathering.",
-          )}
-        </p>
 
         <div className="flex items-center gap-2 mt-4">
           {Array.from({ length: totalSteps }).map((_, i) => (
@@ -311,25 +321,23 @@ export default function CreateEventFlowPageContent() {
                   <label htmlFor="create-category" className={labelClass}>
                     {t("Κατηγορία", "Category")}
                   </label>
-                  <select
+                  <AppSelect
                     id="create-category"
+                    ariaLabel={t("Κατηγορία", "Category")}
                     value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    onValueChange={setCategory}
+                    placeholder={t("Επιλέξτε κατηγορία...", "Select a category...")}
                     className={cn(inputClass, "bg-transparent")}
-                  >
-                    <option value="">
-                      {t("Επιλέξτε κατηγορία...", "Select a category...")}
-                    </option>
-                    {/* Canonical feed categories → created events show up under the same Home / Categories filters. */}
-                    {Object.entries(categoryLabels)
-                      .filter(([key]) => key !== 'All')
-                      .map(([key, label]) => (
-                        <option key={key} value={key}>
-                          {label}
-                        </option>
-                      ))}
-                    {category && !(category in categoryLabels) && <option value={category}>{category}</option>}
-                  </select>
+                    options={[
+                      { value: "", label: t("Επιλέξτε κατηγορία...", "Select a category...") },
+                      ...Object.entries(categoryLabels)
+                        .filter(([key]) => key !== "All")
+                        .map(([key, label]) => ({ value: key, label })),
+                      ...(category && !(category in categoryLabels)
+                        ? [{ value: category, label: category }]
+                        : []),
+                    ]}
+                  />
                 </div>
 
                 <div>
@@ -415,18 +423,20 @@ export default function CreateEventFlowPageContent() {
                   <label htmlFor="create-duration" className={cn(labelClass, "flex items-center gap-1.5")}>
                     <Clock className="w-3.5 h-3.5" /> {t("Διάρκεια", "Duration")}
                   </label>
-                  <select
+                  <AppSelect
                     id="create-duration"
+                    ariaLabel={t("Διάρκεια", "Duration")}
                     value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
+                    onValueChange={setDuration}
                     className={cn(inputClass, "bg-transparent")}
-                  >
-                    <option value="1h">1 {t("ώρα", "hour")}</option>
-                    <option value="2h">2 {t("ώρες", "hours")}</option>
-                    <option value="3h">3 {t("ώρες", "hours")}</option>
-                    <option value="4+h">4+ {t("ώρες", "hours")}</option>
-                    <option value="custom">{t("Προσαρμοσμένη", "Custom")}</option>
-                  </select>
+                    options={[
+                      { value: "1h", label: `1 ${t("ώρα", "hour")}` },
+                      { value: "2h", label: `2 ${t("ώρες", "hours")}` },
+                      { value: "3h", label: `3 ${t("ώρες", "hours")}` },
+                      { value: "4+h", label: `4+ ${t("ώρες", "hours")}` },
+                      { value: "custom", label: t("Προσαρμοσμένη", "Custom") },
+                    ]}
+                  />
                   {duration === "custom" && (
                      <input 
                        type="text" 
@@ -583,7 +593,7 @@ export default function CreateEventFlowPageContent() {
                       type="button"
                       onClick={() => setIsPaid(false)}
                       className={cn(
-                        "min-h-10 px-4 rounded-2xl text-xs font-bold border transition-colors",
+                        "min-h-8 px-4 rounded-2xl text-xs font-bold border transition-colors",
                         !isPaid ? visSelected : visIdle,
                       )}
                     >
@@ -593,7 +603,7 @@ export default function CreateEventFlowPageContent() {
                       type="button"
                       onClick={() => setIsPaid(true)}
                       className={cn(
-                        "min-h-10 px-4 rounded-2xl text-xs font-bold border transition-colors",
+                        "min-h-8 px-4 rounded-2xl text-xs font-bold border transition-colors",
                         isPaid ? visSelected : visIdle,
                       )}
                     >

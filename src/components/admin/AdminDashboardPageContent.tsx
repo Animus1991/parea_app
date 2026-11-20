@@ -4,6 +4,9 @@ import { AlertCircle, ShieldAlert, Flag, Search, TrendingUp, Activity, Users as 
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { format, parseISO, startOfWeek } from 'date-fns';
 import { TabBar } from '../common/TabBar';
+import { AdminWallModeration } from './AdminWallModeration';
+import { AdminOutingsPanel } from './AdminOutingsPanel';
+import { outingMetrics } from '../../lib/outings';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import type { AdminSafeguards } from '../../store';
 import { Button } from '../common/Button';
@@ -20,6 +23,7 @@ import { toast } from 'sonner';
 import { useAiAuditStore, type AiAuditStatus } from '../../store/aiAuditStore';
 import { intlLocale } from '../../lib/dateLocale';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { AppSelect } from '../common/AppSelect';
 
 type AdminTab = 'overview' | 'moderation' | 'users' | 'system' | 'automation' | 'branding' | 'sso';
 
@@ -43,6 +47,8 @@ export default function AdminDashboardPageContent() {
   const setAdminSafeguard = useStore((s) => s.setAdminSafeguard);
   const [userQuery, setUserQuery] = useState('');
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
+  const strikes = useStore((s) => s.strikes);
+  const verifiedActive = useMemo(() => outingMetrics(groups, users, strikes).verifiedActive, [groups, users, strikes]);
   /** Φ25 — no-show rate from attendance answers in reviews (was a fixed 4.2%). */
   const noShowPct = useMemo(() => {
     const answers = Object.values(feedbackSubmitted).filter((f) => f.attendance);
@@ -200,29 +206,32 @@ export default function AdminDashboardPageContent() {
       <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className={cn('p-4 border-t-4 border-t-blue-500', a.cardSurface)}>
-          <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Ενεργοί', 'Active')}</h3>
-          <p className={cn('text-sm md:text-base font-black mt-1', a.head)}>{users.length}</p>
+          {/* Φ27 — «active» counts verified people in a live group, not accounts. */}
+          <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Ενεργοί (επαληθευμένοι)', 'Active (verified)')}</h3>
+          <p className={cn('text-sm md:text-base font-bold mt-1', a.head)}>{verifiedActive}</p>
           <p className="text-xs text-green-700 dark:text-green-400 font-bold flex items-center gap-0.5">
             <TrendingUp className="w-2.5 h-2.5" />
-            {t('χρήστες', 'users')}
+            {t(`από ${users.length} λογαριασμούς`, `of ${users.length} accounts`)}
           </p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-cyan-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Αναφορές', 'Reports')}</h3>
-          <p className={cn('text-sm md:text-base font-black mt-1', a.head)}>{pendingReports.length}</p>
+          <p className={cn('text-sm md:text-base font-bold mt-1', a.head)}>{pendingReports.length}</p>
           <p className="text-xs text-amber-700 dark:text-amber-400 font-bold">{t('εκκρεμείς', 'pending')}</p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-red-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Επιλύθηκαν', 'Resolved')}</h3>
-          <p className={cn('text-sm md:text-base font-black mt-1', a.head)}>{resolvedCount}</p>
+          <p className={cn('text-sm md:text-base font-bold mt-1', a.head)}>{resolvedCount}</p>
           <p className={cn('text-xs font-medium', a.muted)}>{t('συνολικά', 'total')}</p>
         </Card>
         <Card className={cn('p-4 border-t-4 border-t-emerald-500', a.cardSurface)}>
           <h3 className={cn('text-xs font-bold tracking-wider', a.muted)}>{t('Εκδηλώσεις', 'Events')}</h3>
-          <p className={cn('text-sm md:text-base font-black mt-1', a.head)}>{events.length}</p>
+          <p className={cn('text-sm md:text-base font-bold mt-1', a.head)}>{events.length}</p>
           <p className={cn('text-xs font-medium', a.muted)}>{t('στη βάση', 'in catalog')}</p>
         </Card>
       </div>
+
+      <AdminOutingsPanel section="metrics" />
 
       <Card className={cn('p-4', a.cardSurface)}>
         <h3 className={cn('text-xs font-bold tracking-widest mb-3', a.head)}>{t('Υγεία Πλατφόρμας', 'Platform Health')}</h3>
@@ -261,15 +270,17 @@ export default function AdminDashboardPageContent() {
         <div className="flex items-center justify-between gap-3 mb-4">
           <h2 className={cn('text-sm font-bold', a.head)}>{t('Εκδηλώσεις & συμμετοχές ανά εβδομάδα', 'Events & participants per week')}</h2>
           <label className="sr-only" htmlFor="admin-chart-range">{t('Εύρος', 'Range')}</label>
-          <select
+          <AppSelect
             id="admin-chart-range"
+            ariaLabel={t('Εύρος', 'Range')}
             value={chartRange}
-            onChange={(e) => setChartRange(e.target.value as '8w' | 'all')}
+            onValueChange={(v) => setChartRange(v as '8w' | 'all')}
             className={cn('filter-select border outline-none', a.inputBg)}
-          >
-            <option value="8w">{t('Τελευταίες 8 εβδομάδες', 'Last 8 weeks')}</option>
-            <option value="all">{t('Όλο το διάστημα', 'All time')}</option>
-          </select>
+            options={[
+              { value: '8w', label: t('Τελευταίες 8 εβδομάδες', 'Last 8 weeks') },
+              { value: 'all', label: t('Όλο το διάστημα', 'All time') },
+            ]}
+          />
         </div>
         <div className="h-56 w-full" role="img" aria-label={t(`Γράφημα δραστηριότητας: ${activity.reduce((n, b) => n + b.events, 0)} εκδηλώσεις`, `Activity chart: ${activity.reduce((n, b) => n + b.events, 0)} events`)}>
           <ResponsiveContainer width="100%" height="100%">
@@ -447,6 +458,8 @@ export default function AdminDashboardPageContent() {
 
       {adminTab === 'moderation' && (
       <>
+      <AdminOutingsPanel section="appeals" />
+      <AdminWallModeration />
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
         <div className="md:col-span-7 space-y-4">
           <h2 className={cn('card-heading-lg font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>
@@ -541,16 +554,18 @@ export default function AdminDashboardPageContent() {
                 </div>
                 <div>
                   <label className={cn('text-xs font-bold mb-1.5 block', a.head)}>{t('Ενέργεια', 'Action')}</label>
-                  <select aria-label={t("Ενέργεια διαχείρισης", "Moderation action")}
+                  <AppSelect
+                    ariaLabel={t("Ενέργεια διαχείρισης", "Moderation action")}
                     value={adminAction}
-                    onChange={(e) => setAdminAction(e.target.value)}
-                    className={cn('filter-select w-full border focus:ring-2 focus:ring-cyan-600 focus:outline-none', a.inputBg)}
-                  >
-                    <option value="warning">{t('Προειδοποίηση', 'Warning')}</option>
-                    <option value="suspend_7d">{t('Αναστολή 7 ημέρες', 'Suspend 7 days')}</option>
-                    <option value="ban">{t('Μόνιμος αποκλεισμός', 'Permanent ban')}</option>
-                    <option value="reset_reliability">{t('Επαναφορά αξιοπιστίας', 'Reset reliability')}</option>
-                  </select>
+                    onValueChange={setAdminAction}
+                    className={cn('filter-select w-full border', a.inputBg)}
+                    options={[
+                      { value: 'warning', label: t('Προειδοποίηση', 'Warning') },
+                      { value: 'suspend_7d', label: t('Αναστολή 7 ημέρες', 'Suspend 7 days') },
+                      { value: 'ban', label: t('Μόνιμος αποκλεισμός', 'Permanent ban') },
+                      { value: 'reset_reliability', label: t('Επαναφορά αξιοπιστίας', 'Reset reliability') },
+                    ]}
+                  />
                 </div>
                 <div>
                   <label className={cn('text-xs font-bold mb-1.5 block', a.head)}>{t('Σημείωση', 'Note')}</label>

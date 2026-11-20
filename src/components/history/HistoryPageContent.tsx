@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { History as HistoryIcon, MapPin, Calendar, Star, CheckCircle2, Search, TrendingUp, Users, Award } from 'lucide-react';
 import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import { Card } from '../common/Card';
 import { EmptyState } from '../common/EmptyState';
 import { EventCardSkeleton } from '../common/Skeleton';
@@ -12,9 +12,34 @@ import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
-import { dateFnsLocale } from '../../lib/dateLocale';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
+
+function HistoryThumb({ src, title, category, isDark }: { src?: string; title: string; category: string; isDark: boolean }) {
+  const [broken, setBroken] = useState(false);
+  if (!src || broken) {
+    return (
+      <div
+        className={cn(
+          'w-12 h-12 rounded-2xl shrink-0 shadow-soft flex items-center justify-center bg-accent-soft text-accent font-bold text-xs uppercase',
+          isDark && 'opacity-90',
+        )}
+        aria-hidden
+      >
+        {category.slice(0, 2)}
+      </div>
+    );
+  }
+  return (
+    <img
+      referrerPolicy="no-referrer"
+      src={src}
+      alt={title}
+      onError={() => setBroken(true)}
+      className={cn('w-12 h-12 rounded-2xl object-cover shrink-0 shadow-soft', isDark && 'opacity-90')}
+    />
+  );
+}
 
 export default function HistoryPageContent() {
   const { t, language } = useLanguage();
@@ -78,7 +103,7 @@ export default function HistoryPageContent() {
   });
 
   return (
-    <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -86,8 +111,6 @@ export default function HistoryPageContent() {
           <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>{t('Εκδηλώσεις που έχετε παρακολουθήσει', 'Events you\'ve attended')}</p>
         </div>
       </div>
-
-      <CopilotInlinePrompt />
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -180,12 +203,7 @@ export default function HistoryPageContent() {
               }
             >
               <div className="flex gap-4">
-                <img
-                  referrerPolicy="no-referrer"
-                  src={event.imageUrl}
-                  alt={event.title}
-                  className={cn("w-12 h-12 rounded-2xl object-cover shrink-0 shadow-soft", a.isDark && "opacity-90")}
-                />
+                <HistoryThumb src={event.imageUrl} title={event.title} category={event.category} isDark={a.isDark} />
                 <div className="flex-1 min-w-0">
                   <h3 className={cn(APP_TYPO.rowTitle, 'truncate', a.head)}>{event.title}</h3>
                   <p className={cn("card-meta mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5", a.sub)}>
@@ -193,7 +211,7 @@ export default function HistoryPageContent() {
                     <span aria-hidden className="opacity-40">·</span>
                     <span className="inline-flex items-center gap-1">
                       <Calendar className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
-                      {format(parseISO(event.date), 'dd MMM yyyy', { locale: dateFnsLocale(language) })}
+                      {formatPlanWhen(event.date, event.time, language)}
                     </span>
                     <span aria-hidden className="opacity-40">·</span>
                     <span className="inline-flex items-center gap-1 min-w-0">
@@ -243,10 +261,10 @@ export default function HistoryPageContent() {
             search
               ? t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search.')
               : tab === 'pending'
-                ? t('Όταν ολοκληρώσετε μια εκδήλωση, οι αξιολογήσεις θα εμφανίζονται εδώ.', 'When you finish an event, reviews waiting for you will show up here.')
+                ? t('Όταν τελειώσει μια βραδιά, η αξιολόγηση έρχεται εδώ.', 'When a night ends, the review lands here.')
                 : tab === 'reviewed'
-                  ? t('Οι αξιολογήσεις που υποβάλλετε θα εμφανίζονται σε αυτή την καρτέλα.', 'Reviews you submit will appear in this tab.')
-                  : t('Οι εκδηλώσεις που θα παρακολουθήσετε θα εμφανίζονται εδώ.', 'Events you attend will appear here.')
+                  ? t('Οι αξιολογήσεις σου μένουν εδώ.', 'Your reviews stay here.')
+                  : t('Όσα παρακολουθήσεις θα μείνουν εδώ.', 'Nights you attend will stay here.')
           }
           actionLabel={
             search

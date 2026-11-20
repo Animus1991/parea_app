@@ -39,18 +39,12 @@ export function HomeOnboardingWelcomeBanner({
         <p className={cn('text-sm font-bold', useClassicTokens ? h.heading : p.head)}>
           {t('Το προφίλ σου είναι έτοιμο!', 'Your profile is ready!')}
         </p>
-        <p className={cn('text-xs font-medium mt-0.5', useClassicTokens ? h.labelMuted : p.sub)}>
-          {t(
-            'Φιλτράραμε την αρχική με βάση τα ενδιαφέροντά σου. Ρύθμισε περισσότερα από τα φίλτρα παρακάτω.',
-            'We tailored the home feed to your interests. Fine-tune more using the filters below.',
-          )}
-        </p>
       </div>
       <button
         type="button"
         onClick={onDismiss}
         className={cn(
-          'absolute top-3 right-3 p-2 rounded-full min-h-11 min-w-11 flex items-center justify-center transition-colors',
+          'absolute top-3 right-3 p-2 rounded-full min-h-8 min-w-8 flex items-center justify-center transition-colors',
           useClassicTokens ? 'hover:bg-cyan-100 text-gray-500' : cn(p.muted, 'hover:opacity-80'),
         )}
         aria-label={t('Κλείσιμο', 'Close')}

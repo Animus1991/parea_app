@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Maximize, Minimize, AlertTriangle, MapPin } from 'lucide-react';
+import { Maximize, Minimize, ShieldAlert, MapPin } from 'lucide-react';
 import {
   APIProvider,
   Map,
@@ -30,9 +30,12 @@ const TOKENS = {
     toggle: 'bg-white/90 text-gray-700',
     toggleHover: 'hover:text-current',
     pulse: 'bg-cyan-100',
-    badge: 'text-gray-500',
+    badge: 'text-gray-600',
     focusRing: 'ring-cyan-500/50',
     popup: 'bg-white text-gray-900',
+    /** Placeholder «paper» when there is no map key — follows the theme so its text stays readable. */
+    canvas: 'bg-[#e5e3df]',
+    meeting: 'text-cyan-800',
   },
   dark: {
     frame: 'border-gray-700',
@@ -42,6 +45,8 @@ const TOKENS = {
     badge: 'text-gray-300',
     focusRing: 'ring-cyan-400/40',
     popup: 'bg-gray-900 text-white',
+    canvas: 'bg-gray-800',
+    meeting: 'text-cyan-300',
   },
 };
 
@@ -192,7 +197,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
           type="button"
           onClick={() => setIsMapFullscreen((v) => !v)}
           className={cn(
-            'absolute top-4 right-4 z-10 p-2 backdrop-blur rounded-2xl shadow-soft transition-colors min-h-11 min-w-11 flex items-center justify-center',
+            'absolute top-4 right-4 z-10 p-2 backdrop-blur rounded-2xl shadow-soft transition-colors min-h-8 min-w-8 flex items-center justify-center',
             tok.toggle,
             accentText,
             tok.toggleHover,
@@ -211,12 +216,9 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
             fallback={
               <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] p-4 text-center">
                 <div className="bg-white p-3 rounded-2xl shadow-soft border border-red-100">
-                  <AlertTriangle className="w-6 h-6 text-red-500 mx-auto mb-2" />
+                  <ShieldAlert className="w-6 h-6 text-red-500 mx-auto mb-2" />
                   <p className="text-xs text-gray-600">
-                    {t(
-                      'Ο χάρτης δεν είναι διαθέσιμος. Παρακαλώ ελέγξτε το API key.',
-                      'Map unavailable. Please check API key.',
-                    )}
+                    {t('Ο χάρτης δεν είναι διαθέσιμος.', 'Map unavailable.')}
                   </p>
                 </div>
               </div>
@@ -244,12 +246,12 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
             </APIProvider>
           </ErrorBoundary>
         ) : (
-          <div className="w-full h-full bg-[#e5e3df] relative flex flex-col items-center justify-center overflow-hidden p-4">
+          <div className={cn('w-full h-full relative flex flex-col items-center justify-center overflow-hidden p-4', tok.canvas)}>
             <button
               type="button"
               onClick={() => setMarkerFocused(true)}
               className={cn(
-                'flex flex-col items-center gap-2 rounded-2xl p-4 transition-all min-h-11',
+                'flex flex-col items-center gap-2 rounded-2xl p-4 transition-all min-h-8',
                 tok.pulse,
                 markerFocused && 'ring-4 ring-cyan-500/40 scale-105',
               )}
@@ -262,13 +264,13 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
                 </p>
               )}
               {meetingPoint && (
-                <p className="text-xs font-bold text-cyan-800 text-center">
+                <p className={cn('text-xs font-bold text-center', tok.meeting)}>
                   {t('Σημείο συνάντησης', 'Meeting point')}: {meetingPoint}
                 </p>
               )}
             </button>
             <p className={cn('text-xs mt-3 font-medium', tok.badge)}>
-              {t('Προεπισκόπηση χάρτη (χωρίς API key)', 'Map preview (no API key)')}
+              {t('Προεπισκόπηση χάρτη', 'Map preview')}
             </p>
           </div>
         )}

@@ -17,8 +17,8 @@ export const HOME_HERO_MODES: {
     id: 'balanced',
     labelKey: ['Ισορροπημένο', 'Balanced'],
     descKey: [
-      'Αναζήτηση, στατιστικά και καθημερινή συμβουλή.',
-      'Search, stats, and daily tip.',
+      'Αναζήτηση και στατιστικά.',
+      'Search and stats.',
     ],
   },
   {

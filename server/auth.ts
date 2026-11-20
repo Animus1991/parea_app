@@ -38,13 +38,22 @@ export function authConfig(env: {
   FIREBASE_PROJECT_ID?: string;
   VITE_FIREBASE_PROJECT_ID?: string;
   AUTH_OPTIONAL?: string;
+  NODE_ENV?: string;
 }): AuthConfig {
   const projectId = (env.FIREBASE_PROJECT_ID || env.VITE_FIREBASE_PROJECT_ID || '').trim();
-  if (!projectId) return { mode: 'off', required: false };
+  const optional = env.AUTH_OPTIONAL === 'true';
+  if (!projectId) {
+    // Production without Firebase: keep mode off, but require identity so AI /
+    // chat stay closed unless AUTH_OPTIONAL=true (break-glass demo only).
+    if (env.NODE_ENV === 'production' && !optional) {
+      return { mode: 'off', required: true };
+    }
+    return { mode: 'off', required: false };
+  }
   if (!PROJECT_ID_PATTERN.test(projectId)) {
     throw new Error('FIREBASE_PROJECT_ID is not a valid Firebase project id');
   }
-  return { mode: 'firebase', projectId, required: env.AUTH_OPTIONAL !== 'true' };
+  return { mode: 'firebase', projectId, required: !optional };
 }
 
 export const GOOGLE_SECURETOKEN_JWKS =

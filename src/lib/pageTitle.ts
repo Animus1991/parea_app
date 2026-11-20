@@ -13,7 +13,13 @@ export function pageTitleForPath(pathname: string): { el: string; en: string } {
   if (pathname.startsWith('/events/')) return { el: 'Εκδήλωση', en: 'Event' };
   if (pathname.startsWith('/chat/')) return { el: 'Συνομιλία ομάδας', en: 'Group chat' };
   if (pathname.startsWith('/organizer/')) return { el: 'Διοργανωτής', en: 'Organizer' };
+  if (pathname.startsWith('/u/')) return { el: 'Προφίλ μέλους', en: 'Member profile' };
   if (pathname.startsWith('/history/feedback')) return { el: 'Αξιολόγηση', en: 'Feedback' };
+  if (pathname.startsWith('/night/')) return { el: 'Η βραδιά μας', en: 'Our night' };
+  if (pathname.startsWith('/collections/')) return { el: 'Συλλογή', en: 'Collection' };
+  if (pathname.startsWith('/tags/')) return { el: 'Ετικέτες', en: 'Tags' };
+  if (pathname.startsWith('/i/')) return { el: 'Πρόσκληση', en: 'Invitation' };
+  if (pathname.startsWith('/embed/')) return { el: 'Ημερολόγιο διοργανωτή', en: 'Organizer calendar' };
   if (pathname === '/calendar') return { el: 'Ημερολόγιο', en: 'Calendar' };
   if (pathname === '/login') return { el: 'Σύνδεση', en: 'Sign in' };
   return { el: 'Nakamas', en: 'Nakamas' };

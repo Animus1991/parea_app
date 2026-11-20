@@ -2,7 +2,6 @@ import { useCallback, useLayoutEffect, useRef, useState, type KeyboardEvent, typ
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { Check, Settings2, SlidersHorizontal, UserRound } from 'lucide-react';
-import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { THEME_IDS, THEME_LABELS, THEME_SWATCH, type ThemeId } from '../../lib/themes';
@@ -85,20 +84,19 @@ export function UserMenu({ children, label, header, showAccountLinks = false }: 
   const pickLanguage = (id: 'el' | 'en') => {
     if (language === id) return;
     setLanguage(id);
-    toast.message(id === 'el' ? 'Γλώσσα: Ελληνικά' : 'Language: English');
   };
 
   const pickTheme = (id: ThemeId) => {
-    applyThemeSelection(id, setTheme, language === 'el' ? 'el' : 'en', theme);
+    applyThemeSelection(id, setTheme, theme);
   };
 
   const itemBase = cn(
-    'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium min-h-11 transition-colors outline-none',
+    'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium min-h-8 transition-colors outline-none',
     'focus-visible:ring-2',
     tok.isDark ? 'focus-visible:ring-white/40' : 'focus-visible:ring-accent/40',
   );
   const itemIdle = cn(tok.navInactive, tok.isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-50');
-  const sectionLabel = cn('px-3 pt-2 pb-1 text-2xs font-bold uppercase tracking-wider', tok.muted);
+  const sectionLabel = cn('px-3 pt-2 pb-1 text-2xs font-bold tracking-wider', tok.muted);
   const divider = cn('my-1.5 border-t', tok.isDark ? 'border-gray-700' : 'border-gray-100');
 
   const menu =
@@ -200,7 +198,7 @@ export function UserMenu({ children, label, header, showAccountLinks = false }: 
         className={cn(
           'flex items-center space-x-2 relative group rounded-full outline-none focus-visible:ring-2',
           tok.isDark ? 'focus-visible:ring-white/40' : 'focus-visible:ring-accent/40',
-          !children && cn('justify-center px-2.5 py-2 rounded-lg min-h-10 min-w-10', tok.chipButton),
+          !children && cn('justify-center px-2.5 py-1.5 rounded-lg min-h-8 min-w-8', tok.chipButton),
         )}
       >
         {children ?? <SlidersHorizontal className="w-4 h-4" aria-hidden />}

@@ -27,11 +27,16 @@ export function canAccessEvent(user: User | null, event: Event): TrustGateResult
     };
   }
   if (tierRank(user.trustTier) < tierRank(event.minTrustTierAccess)) {
+    const needsId = event.minTrustTierAccess === '3_high_trust';
     return {
       allowed: false,
       reason: 'tier',
-      messageEl: `Απαιτείται επίπεδο εμπιστοσύνης ${tierLabelEl(event.minTrustTierAccess)}.`,
-      messageEn: `Requires ${tierLabelEn(event.minTrustTierAccess)} trust level.`,
+      messageEl: needsId
+        ? 'Αυτή η έξοδος είναι για διοργάνωση και επιβεβαιωμένα μέλη. Ολοκλήρωσε email και τηλέφωνο· η ταυτότητα ζητείται μόνο τότε.'
+        : 'Επιβεβαίωσε email και τηλέφωνο για να μπεις σε αυτή την ομάδα.',
+      messageEn: needsId
+        ? 'This outing is for hosting and confirmed members. Finish email and phone first; ID is only asked then.'
+        : 'Confirm email and phone to join this group.',
     };
   }
   return { allowed: true, messageEl: '', messageEn: '' };

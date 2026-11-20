@@ -6,10 +6,13 @@
  * their own task, and /buddy-seek already shows the same list full-width.
  * Everything in the rail stays reachable from «Βρες Nakamas» in the nav.
  */
-const EXACT = new Set(['/', '/categories', '/saved']);
+const EXACT = new Set(['/', '/categories', '/tags', '/saved', '/collections']);
 
 export function isPlansRailRoute(pathname: string): boolean {
   if (EXACT.has(pathname)) return true;
-  // Event detail (and its join flow): the rail suggests company for events.
-  return /^\/events\/[^/]+(\/join)?$/.test(pathname);
+  // Collections are discovery too.
+  if (/^\/collections\/[^/]+$/.test(pathname)) return true;
+  // The join flow keeps the rail. The event page itself does not: it has its own
+  // «Αναζήτηση Nakamas» panel, and the rail squeezed it to ~200px (declutter, Φ28).
+  return /^\/events\/[^/]+\/join$/.test(pathname);
 }

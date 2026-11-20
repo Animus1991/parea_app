@@ -251,6 +251,27 @@ export interface ChatSendCheck {
 }
 
 /**
+ * Join a chat room only with a known identity, a valid id, and (when a
+ * membership lookup is provided) proven membership of that conversation.
+ */
+export function checkChatJoin(
+  conversationId: unknown,
+  socketUserId: string | undefined,
+  joinedRooms: Set<string>,
+  memberOf?: (conversationId: string, userId: string) => boolean,
+): ChatSendCheck {
+  if (typeof conversationId !== 'string' || !CHAT_ID_PATTERN.test(conversationId)) {
+    return { ok: false, reason: 'conversation' };
+  }
+  if (!socketUserId) return { ok: false, reason: 'identity' };
+  if (joinedRooms.size >= 200) return { ok: false, reason: 'limit' };
+  if (memberOf && !memberOf(conversationId, socketUserId)) {
+    return { ok: false, reason: 'membership' };
+  }
+  return { ok: true };
+}
+
+/**
  * A socket may only send as the identity it connected with, only into a room
  * it joined, and only reasonably sized text.
  */
@@ -274,8 +295,37 @@ export const SECURITY_HEADERS: Record<string, string> = {
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'X-Frame-Options': 'DENY',
-  // Microphone is used by the copilot's voice input; geolocation by maps.
-  'Permissions-Policy': 'camera=(), microphone=(self), geolocation=(self)',
+  // Microphone is used by the copilot's voice input; geolocation by maps;
+  // the camera (own origin only) by the door check-in scanner and the selfie check.
+  'Permissions-Policy': 'camera=(self), microphone=(self), geolocation=(self)',
   // Google sign-in opens a popup, so popups keep their opener.
   'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
 };
+
+/* ───────────────────────── Φ27 — embeds & calendar feeds ───────────────────────── */
+
+/** Read-only pages an organizer may put on their own site (every link opens a new tab). */
+export function isEmbeddablePath(pathname: string): boolean {
+  return /^\/embed\/organizer\/[^/]+$/.test(pathname);
+}
+
+/**
+ * Headers for one response: embeddable pages may be framed by any site
+ * (frame-ancestors *, no X-Frame-Options); everything else keeps DENY/'none'.
+ * The camera is never offered inside a frame.
+ */
+export function headersForPath(pathname: string, base: Record<string, string> = SECURITY_HEADERS): Record<string, string> {
+  if (!isEmbeddablePath(pathname)) return base;
+  const { 'X-Frame-Options': _deny, ...rest } = base;
+  return { ...rest, 'Permissions-Policy': 'camera=(), microphone=(), geolocation=()' };
+}
+
+export function cspForPath(csp: string, pathname: string): string {
+  return isEmbeddablePath(pathname) ? csp.replace("frame-ancestors 'none'", 'frame-ancestors *') : csp;
+}
+
+/** `org1.ics` → `org1`; anything else → null. */
+export function parseCalendarFeedId(file: string): string | null {
+  const m = /^([A-Za-z0-9_-]{1,64})\.ics$/.exec(file);
+  return m ? m[1] : null;
+}

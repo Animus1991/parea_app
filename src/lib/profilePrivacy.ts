@@ -1,9 +1,12 @@
 /**
  * Lean account privacy ACL (profile + DM + photo) — mirrors BuddySeek’s
  * canViewerSeeRequest pattern but for the connection / same-event-group graph.
- * Not a social wall: gates existing profile & messaging surfaces only.
+ * Φ26: the profile gate also honours the fine-grained `profileAudience`
+ * (specific people, lists, "…except") shared with the wall (lib/audience.ts).
  */
 import type { Group, User } from '../types';
+import type { Audience, AudienceList } from '../types/wall';
+import { audienceToProfileVisibility, canViewAudience, normalizeAudience } from './audience';
 
 export type ProfileVisibility = 'public' | 'connections' | 'private';
 export type MessagePermission = 'everyone' | 'connections' | 'groups';
@@ -15,6 +18,28 @@ export interface AccountPrivacy {
   revealPhoto: boolean;
   allowMutualPing: boolean;
   allowOrganizerMsg: boolean;
+  /** Fine-grained profile audience (optional; see resolveProfileAudience). */
+  profileAudience?: Audience;
+}
+
+/** Context the ACL helpers accept. `users` + `lists` enable fine-grained audiences. */
+export interface PrivacyCtx {
+  blockedUserIds?: string[];
+  groups?: Pick<Group, 'members' | 'hostId' | 'status'>[];
+  users?: Pick<User, 'id' | 'connections' | 'blockedUserIds'>[];
+  lists?: AudienceList[];
+}
+
+/**
+ * The fine-grained audience applies only while it agrees with the coarse
+ * `profileVisibility` (any path that changes the coarse value — the AI,
+ * Firestore, an older client — therefore wins and nothing gets stuck).
+ */
+export function resolveProfileAudience(privacy: AccountPrivacy): Audience | null {
+  const a = privacy.profileAudience;
+  if (!a) return null;
+  const norm = normalizeAudience(a);
+  return audienceToProfileVisibility(norm) === privacy.profileVisibility ? norm : null;
 }
 
 export const DEFAULT_ACCOUNT_PRIVACY: AccountPrivacy = {
@@ -72,7 +97,7 @@ export function isBlockedBetween(
 export function canViewerSeeProfile(
   viewer: User | null | undefined,
   subject: User | null | undefined,
-  ctx?: { blockedUserIds?: string[]; groups?: Pick<Group, 'members' | 'hostId' | 'status'>[] },
+  ctx?: PrivacyCtx,
 ): { allowed: boolean; level: ProfileAccessLevel; reasonEl: string; reasonEn: string } {
   if (!subject) {
     return {
@@ -95,6 +120,32 @@ export function canViewerSeeProfile(
   }
 
   const privacy = resolveAccountPrivacy(subject);
+  const fine = resolveProfileAudience(privacy);
+  if (fine && ctx?.users && viewer?.id) {
+    const graph = {
+      users: ctx.users.some((u) => u.id === viewer.id) ? ctx.users : [...ctx.users, viewer],
+      lists: ctx.lists ?? [],
+      viewerBlockedIds: ctx.blockedUserIds,
+    };
+    if (canViewAudience(subject.id, viewer.id, fine, graph)) {
+      return { allowed: true, level: 'full', reasonEl: '', reasonEn: '' };
+    }
+    if (subject.isOrganizer) {
+      return {
+        allowed: true,
+        level: 'limited',
+        reasonEl: 'Το πλήρες προφίλ είναι ορατό μόνο σε επιλεγμένα άτομα',
+        reasonEn: 'Full profile is visible to selected people only',
+      };
+    }
+    return {
+      allowed: false,
+      level: 'hidden',
+      reasonEl:
+        fine.base === 'only_me' ? 'Αυτό το προφίλ είναι ιδιωτικό' : 'Το προφίλ είναι ορατό μόνο σε επιλεγμένα άτομα',
+      reasonEn: fine.base === 'only_me' ? 'This profile is private' : 'This profile is visible to selected people only',
+    };
+  }
   if (privacy.profileVisibility === 'public') {
     return { allowed: true, level: 'full', reasonEl: '', reasonEn: '' };
   }
@@ -139,7 +190,7 @@ export function canViewerSeeProfile(
 export function shouldShowProfilePhoto(
   viewer: User | null | undefined,
   subject: User | null | undefined,
-  ctx?: { blockedUserIds?: string[]; groups?: Pick<Group, 'members' | 'hostId' | 'status'>[] },
+  ctx?: PrivacyCtx,
 ): boolean {
   const access = canViewerSeeProfile(viewer, subject, ctx);
   if (!access.allowed || access.level === 'hidden') return false;
@@ -154,7 +205,7 @@ export function shouldShowProfilePhoto(
 export function canViewerMessageUser(
   viewer: User | null | undefined,
   subject: User | null | undefined,
-  ctx?: { blockedUserIds?: string[]; groups?: Pick<Group, 'members' | 'hostId' | 'status'>[] },
+  ctx?: PrivacyCtx,
 ): { allowed: boolean; reasonEl: string; reasonEn: string } {
   if (!viewer) {
     return { allowed: false, reasonEl: 'Σύνδεση απαιτείται', reasonEn: 'Sign in required' };
@@ -196,7 +247,7 @@ export function canViewerMessageUser(
 export function canViewerContactOrganizer(
   viewer: User | null | undefined,
   subject: User | null | undefined,
-  ctx?: { blockedUserIds?: string[]; groups?: Pick<Group, 'members' | 'hostId' | 'status'>[] },
+  ctx?: PrivacyCtx,
 ): { allowed: boolean; reasonEl: string; reasonEn: string } {
   if (!subject?.isOrganizer) {
     return { allowed: false, reasonEl: 'Δεν είναι διοργανωτής', reasonEn: 'Not an organizer' };
@@ -215,7 +266,7 @@ export function canViewerContactOrganizer(
 export function projectProfileForViewer(
   viewer: User | null | undefined,
   subject: User,
-  ctx?: { blockedUserIds?: string[]; groups?: Pick<Group, 'members' | 'hostId' | 'status'>[] },
+  ctx?: PrivacyCtx,
 ): {
   access: ReturnType<typeof canViewerSeeProfile>;
   name: string;

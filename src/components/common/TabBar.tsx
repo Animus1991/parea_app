@@ -38,13 +38,13 @@ export function TabBar({ tabs, activeTab, onChange, className, ariaLabel, idBase
 
   const getActiveClass = () =>
     isDark
-      ? 'border border-gray-400 text-gray-100 bg-gray-700/50 rounded-full px-3 py-1 font-bold transition-all duration-200'
-      : 'btn-pill-active';
+      ? 'border border-gray-400/70 text-gray-100 bg-gray-700/50 rounded-full px-3 py-1.5 min-h-8 font-bold transition-all duration-200 inline-flex items-center'
+      : 'btn-pill-active inline-flex items-center min-h-8';
 
   const getInactiveClass = () =>
     isDark
-      ? 'border border-transparent text-gray-400 hover:text-gray-200 hover:bg-white/5 rounded-full px-3 py-1 font-semibold transition-all duration-200'
-      : 'btn-pill-inactive';
+      ? 'border border-transparent text-gray-400 hover:text-gray-200 hover:bg-white/5 rounded-full px-3 py-1.5 min-h-8 font-semibold transition-all duration-200 inline-flex items-center'
+      : 'btn-pill-inactive inline-flex items-center min-h-8';
 
   const getActiveCountClass = () => (isDark ? 'bg-gray-500 text-white' : 'bg-gray-600 text-white');
   const getInactiveCountClass = () => (isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600');
@@ -79,7 +79,7 @@ export function TabBar({ tabs, activeTab, onChange, className, ariaLabel, idBase
       aria-label={ariaLabel}
       className={cn(
         segmented
-          ? 'inline-flex max-w-full gap-1 overflow-x-auto noscrollbar rounded-xl border border-border bg-surface-raised p-1'
+          ? 'inline-flex max-w-full gap-1 overflow-x-auto noscrollbar rounded-2xl border border-border bg-surface-raised p-1'
           : 'flex gap-1 overflow-x-auto noscrollbar',
         className,
       )}
@@ -105,10 +105,10 @@ export function TabBar({ tabs, activeTab, onChange, className, ariaLabel, idBase
               'whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1',
               segmented
                 ? cn(
-                    'inline-flex min-h-8 items-center gap-1 rounded-md px-2.5 text-2xs font-semibold transition-colors',
-                    selected ? 'bg-accent text-accent-fg shadow-soft' : 'text-ink-muted hover:bg-surface hover:text-ink',
+                    'inline-flex min-h-8 items-center gap-1 rounded-xl px-3 text-xs font-semibold transition-colors',
+                    selected ? 'bg-ink text-surface-raised' : 'text-ink-muted hover:bg-surface hover:text-ink',
                   )
-                : cn('text-base', selected ? getActiveClass() : getInactiveClass()),
+                : cn('text-xs', selected ? getActiveClass() : getInactiveClass()),
             )}
           >
             {Icon && <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden />}
@@ -116,7 +116,7 @@ export function TabBar({ tabs, activeTab, onChange, className, ariaLabel, idBase
             {tab.count != null && tab.count > 0 && (
               <span
                 className={cn(
-                  'ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-xs font-bold px-1 tabular-nums',
+                  'ml-1.5 inline-flex items-center justify-center min-w-[16px] h-[16px] rounded-full text-2xs font-bold px-1 tabular-nums',
                   segmented
                     ? selected
                       ? 'bg-white/25 text-current'

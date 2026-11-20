@@ -83,17 +83,17 @@ export function getCategoryGroupTabLabel(
     case 'All':
       return t('Όλα', 'All');
     case 'Arts & Entertainment':
-      return t('Τέχνες & Διασκέδαση', 'Arts & Entertainment');
+      return t('Τέχνες', 'Arts');
     case 'Culture & Education':
-      return t('Πολιτισμός', 'Culture & Education');
+      return t('Πολιτισμός', 'Culture');
     case 'Activities':
-      return t('Δραστηριότητες', 'Activities');
+      return t('Δράση', 'Active');
     case 'Lifestyle':
-      return t('Τρόπος Ζωής', 'Lifestyle');
+      return t('Ζωή', 'Lifestyle');
     case 'Hobbies':
       return t('Χόμπι', 'Hobbies');
     case 'Professional':
-      return t('Επαγγελματικά', 'Professional');
+      return t('Εργασία', 'Work');
     default:
       return tab;
   }

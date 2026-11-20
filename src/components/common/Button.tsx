@@ -17,7 +17,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const isABDark = theme === 'activebuddies-dark';
     const isABLight = isActiveBuddiesTheme(theme) && !isDark;
 
-    const baseClass = "inline-flex items-center justify-center font-bold transition-all duration-200 active:scale-[0.97] active:duration-75 disabled:pointer-events-none disabled:opacity-50 disabled:scale-100";
+    const baseClass = "inline-flex items-center justify-center font-semibold transition-colors duration-150 active:opacity-90 disabled:pointer-events-none disabled:opacity-50";
 
     const focusRing = isDark || isABDark
       ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
@@ -25,47 +25,47 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const getVariants = (): Record<string, string> => {
       if (isABDark) return {
-        primary: "bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] hover:bg-white rounded-full shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]",
-        secondary: "bg-[hsl(220_16%_16%)] text-[hsl(210_20%_92%)] hover:bg-[hsl(220_16%_20%)] rounded-xl shadow-soft",
-        outline: "border-2 border-[hsl(220_13%_18%)] text-[hsl(210_20%_92%)] bg-transparent hover:bg-[hsl(220_16%_14%)] rounded-full",
-        ghost: "bg-transparent text-[hsl(220_12%_55%)] hover:bg-[hsl(220_16%_14%)] rounded-xl",
-        danger: "bg-red-900/20 text-red-400 hover:bg-red-900/30 rounded-xl",
+        primary: "bg-[hsl(0_0%_95%)] text-[hsl(220_14%_12%)] hover:bg-white rounded-full",
+        secondary: "bg-[hsl(220_16%_16%)] text-[hsl(210_20%_92%)] hover:bg-[hsl(220_16%_20%)] rounded-full",
+        outline: "border border-[hsl(220_13%_24%)] text-[hsl(210_20%_92%)] bg-transparent hover:bg-[hsl(220_16%_14%)] rounded-full",
+        ghost: "bg-transparent text-[hsl(220_12%_55%)] hover:bg-[hsl(220_16%_14%)] rounded-full",
+        danger: "bg-red-900/20 text-red-400 hover:bg-red-900/30 rounded-full",
         gradient: "btn-gradient"
       };
       if (isABLight) return {
-        primary: "bg-[hsl(220_14%_12%)] text-white hover:bg-black rounded-full shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]",
-        secondary: "bg-[hsl(220_14%_96%)] text-[hsl(220_14%_12%)] hover:bg-[hsl(220_13%_92%)] rounded-xl shadow-soft",
-        outline: "border-2 border-[hsl(220_13%_92%)] text-[hsl(220_14%_12%)] bg-transparent hover:bg-[hsl(220_14%_96%)] rounded-full",
-        ghost: "bg-transparent text-[hsl(220_11%_34%)] hover:bg-[hsl(220_14%_96%)] rounded-xl",
-        danger: "bg-red-50 text-red-700 hover:bg-red-100 rounded-xl",
+        primary: "bg-[hsl(220_14%_12%)] text-white hover:bg-black rounded-full",
+        secondary: "bg-[hsl(220_14%_96%)] text-[hsl(220_14%_12%)] hover:bg-[hsl(220_13%_92%)] rounded-full",
+        outline: "border border-[hsl(220_13%_82%)] text-[hsl(220_14%_12%)] bg-transparent hover:bg-[hsl(220_14%_96%)] rounded-full",
+        ghost: "bg-transparent text-[hsl(220_11%_34%)] hover:bg-[hsl(220_14%_96%)] rounded-full",
+        danger: "bg-red-50 text-red-700 hover:bg-red-100 rounded-full",
         gradient: "btn-gradient"
       };
       if (isDark) {
         const accent = theme === 'vibrant-dark'
-          ? { primary: "bg-fuchsia-600 text-white hover:bg-fuchsia-700 shadow-soft", outline: "border-2 border-fuchsia-500/40 text-fuchsia-400 bg-transparent hover:bg-fuchsia-900/20 rounded-full" }
-          : { primary: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-soft", outline: "border-2 border-emerald-500/40 text-emerald-400 bg-transparent hover:bg-emerald-900/20 rounded-full" };
+          ? { primary: "bg-fuchsia-600 text-white hover:bg-fuchsia-700", outline: "border border-fuchsia-500/40 text-fuchsia-400 bg-transparent hover:bg-fuchsia-900/20 rounded-full" }
+          : { primary: "bg-emerald-600 text-white hover:bg-emerald-700", outline: "border border-emerald-500/40 text-emerald-400 bg-transparent hover:bg-emerald-900/20 rounded-full" };
         return {
-          primary: `${accent.primary} rounded-xl`,
-          secondary: "bg-gray-700/50 text-white hover:bg-gray-600/60 rounded-xl shadow-soft",
+          primary: `${accent.primary} rounded-full`,
+          secondary: "bg-gray-700/50 text-white hover:bg-gray-600/60 rounded-full",
           outline: accent.outline,
-          ghost: "bg-transparent text-gray-300 hover:bg-gray-700/40 rounded-xl",
-          danger: "bg-red-900/20 text-red-400 hover:bg-red-900/30 rounded-xl",
+          ghost: "bg-transparent text-gray-300 hover:bg-gray-700/40 rounded-full",
+          danger: "bg-red-900/20 text-red-400 hover:bg-red-900/30 rounded-full",
           gradient: "btn-gradient"
         };
       }
       const accent = theme === 'vibrant'
-        ? { primary: "bg-fuchsia-700 text-white hover:bg-fuchsia-800", outline: "border-2 border-fuchsia-700 text-fuchsia-700 bg-transparent hover:bg-fuchsia-50" }
+        ? { primary: "bg-fuchsia-700 text-white hover:bg-fuchsia-800", outline: "border border-fuchsia-700/60 text-fuchsia-700 bg-transparent hover:bg-fuchsia-50" }
         : theme === 'bento'
-        ? { primary: "bg-indigo-700 text-white hover:bg-indigo-800", outline: "border-2 border-indigo-700 text-indigo-700 bg-transparent hover:bg-indigo-50" }
+        ? { primary: "bg-indigo-700 text-white hover:bg-indigo-800", outline: "border border-indigo-700/60 text-indigo-700 bg-transparent hover:bg-indigo-50" }
         : theme === 'neon'
-        ? { primary: "bg-emerald-700 text-white hover:bg-emerald-800", outline: "border-2 border-emerald-700 text-emerald-700 bg-transparent hover:bg-emerald-50" }
-        : { primary: "bg-brand text-brand-fg hover:bg-brand-strong", outline: "border-2 border-accent text-brand bg-accent/[0.04] hover:bg-accent/10" };
+        ? { primary: "bg-emerald-700 text-white hover:bg-emerald-800", outline: "border border-emerald-700/60 text-emerald-700 bg-transparent hover:bg-emerald-50" }
+        : { primary: "bg-brand text-brand-fg hover:bg-brand-strong", outline: "border border-accent/60 text-brand bg-accent/[0.04] hover:bg-accent/10" };
       return {
-        primary: `${accent.primary} rounded-xl shadow-soft hover:shadow-soft-md hover:-translate-y-[0.5px]`,
-        secondary: "bg-ink text-white hover:bg-gray-900 rounded-xl shadow-soft",
+        primary: `${accent.primary} rounded-full`,
+        secondary: "bg-ink text-white hover:bg-gray-900 rounded-full",
         outline: `${accent.outline} rounded-full`,
-        ghost: "bg-transparent text-gray-700 hover:bg-gray-50 rounded-xl",
-        danger: "bg-red-50 text-red-700 hover:bg-red-100 rounded-xl",
+        ghost: "bg-transparent text-gray-700 hover:bg-gray-50 rounded-full",
+        danger: "bg-red-50 text-red-700 hover:bg-red-100 rounded-full",
         gradient: "btn-gradient"
       };
     };
@@ -73,11 +73,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const variants = getVariants();
 
     // Font size locked to Αξιολόγηση / .btn-gradient canonical (text-xs) across all sizes.
-    // Size variants only change height and padding.
+    // Height stays close to the 10px type (≈2.8–3.2×); lg is wider, not taller.
     const sizes = {
-      sm: "min-h-10 h-10 px-4 text-xs gap-1.5",
-      md: "min-h-10 h-10 px-5 text-xs gap-2",
-      lg: "min-h-11 h-11 px-4 text-xs gap-2"
+      sm: "min-h-7 h-7 px-3 text-xs gap-1.5",
+      md: "min-h-8 h-8 px-3.5 text-xs gap-1.5",
+      lg: "min-h-8 h-8 px-4 text-xs gap-2"
     };
 
     return (

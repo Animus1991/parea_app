@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ExternalLink, Hash } from 'lucide-react';
-import { Badge } from '../common/Badge';
 import { useLanguage } from '../../lib/i18n';
-import { homePathWithSearch } from '../../lib/homeDeepLinks';
+import { eventTagPath } from '../../lib/eventTags';
+import { translateEventTag } from '../../lib/eventDisplay';
 import { getEventDetailContentTokens } from '../../lib/designTokens';
 import { cn } from '../../lib/utils';
 import { safeExternalUrl } from '../../lib/safeUrl';
@@ -24,7 +24,6 @@ export function EventDetailAboutSection({
 }: EventDetailAboutSectionProps) {
   const { t } = useLanguage();
   const externalHref = safeExternalUrl(event.externalLink);
-  const navigate = useNavigate();
   const { surface, content } = getEventDetailContentTokens(accent, darkSurface);
 
   return (
@@ -55,20 +54,22 @@ export function EventDetailAboutSection({
 
       {event.tags && event.tags.length > 0 && (
         <div className={cn('flex flex-wrap gap-2 mt-4 pt-4 border-t', surface.sectionBorder)}>
-          {event.tags.map((tag) => (
-            <Badge
+          {event.tags.map((tag) => {
+            const label = translateEventTag(tag, t);
+            return (
+            <Link
               key={tag}
-              variant="neutral"
+              to={eventTagPath(tag)}
               className={cn(
-                'shadow-none px-3 py-1 text-xs cursor-pointer transition-colors',
+                'inline-flex w-max max-w-none shrink-0 items-center gap-0.5 whitespace-nowrap rounded-full border px-3 py-1 text-xs font-semibold transition-colors',
                 content.tagBadge,
               )}
-              onClick={() => navigate(homePathWithSearch(tag))}
             >
               <Hash className={cn('h-3.5 w-3.5 mr-0.5', content.tagIcon)} />
-              {tag}
-            </Badge>
-          ))}
+              {label}
+            </Link>
+            );
+          })}
         </div>
       )}
     </div>

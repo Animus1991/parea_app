@@ -7,6 +7,7 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
 import { toast } from 'sonner';
+import { AppSelect } from '../common/AppSelect';
 
 export function AdminSSOPanel() {
   const { t } = useLanguage();
@@ -30,19 +31,21 @@ export function AdminSSOPanel() {
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
-          <span className={cn('text-xs font-bold uppercase tracking-wider', a.muted)}>Provider</span>
-          <select
+          <span className={cn('text-xs font-bold tracking-wider', a.muted)}>Provider</span>
+          <AppSelect
+            ariaLabel="Provider"
             value={provider}
-            onChange={(e) => setProvider(e.target.value as typeof provider)}
+            onValueChange={(v) => setProvider(v as typeof provider)}
             className={cn('mt-1 w-full rounded-xl border px-3 py-2 text-sm', a.borderB, a.cardSurface)}
-          >
-            <option value="google">Google Workspace</option>
-            <option value="microsoft">Microsoft Entra</option>
-            <option value="okta">Okta</option>
-          </select>
+            options={[
+              { value: 'google', label: 'Google Workspace' },
+              { value: 'microsoft', label: 'Microsoft Entra' },
+              { value: 'okta', label: 'Okta' },
+            ]}
+          />
         </label>
         <label className="block">
-          <span className={cn('text-xs font-bold uppercase tracking-wider', a.muted)}>
+          <span className={cn('text-xs font-bold tracking-wider', a.muted)}>
             {t('Domain', 'Email domain')}
           </span>
           <input

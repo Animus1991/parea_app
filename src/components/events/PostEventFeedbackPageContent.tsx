@@ -3,24 +3,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { el, enUS } from 'date-fns/locale';
 import { Button } from '../common/Button';
-import {
-  Star,
-  ShieldAlert,
-  CheckCircle2,
-  Trophy,
-  Zap,
-  MapPin,
-  Calendar,
-} from 'lucide-react';
+import { CheckCircle2, MapPin, Calendar } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useContrastTheme } from '../../hooks/useContrastTheme';
+import { PAGE_FILL } from '../layout/PageShell';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
-import { toast } from 'sonner';
 import { useStore } from '../../store';
 import type { FeedbackData } from '../../store';
+import { FEEDBACK_MOODS, starsForMood } from '../../lib/feedbackDue';
+import { PersonAvatar } from '../wall/PersonAvatar';
 
-const COMMENT_MAX = 500;
+const COMMENT_MAX = 280;
 
 export default function PostEventFeedbackPageContent() {
   const { t, tu, language } = useLanguage();
@@ -30,7 +25,6 @@ export default function PostEventFeedbackPageContent() {
   const c = useContrastTheme();
   const events = useStore((s) => s.events);
   const submitFeedback = useStore((s) => s.submitFeedback);
-  const awardXp = useStore((s) => s.awardXp);
   const alreadySubmitted = useStore((s) =>
     eventId ? Boolean(s.feedbackSubmitted[eventId]) : false,
   );
@@ -40,20 +34,19 @@ export default function PostEventFeedbackPageContent() {
     [events, eventId],
   );
 
-  const [step, setStep] = useState(alreadySubmitted ? 2 : 1);
-  const [overallRating, setOverallRating] = useState(0);
-  const [vibeRating, setVibeRating] = useState(0);
+  const [done, setDone] = useState(alreadySubmitted);
   const [mood, setMood] = useState('');
-  const [attendance, setAttendance] = useState('');
-  const [comfort, setComfort] = useState('');
+  const [wouldGoAgain, setWouldGoAgain] = useState<boolean | undefined>(undefined);
   const [comment, setComment] = useState('');
-
-  const moods = [
-    { emoji: '🤩', label: t('Φανταστικά', 'Amazing') },
-    { emoji: '😊', label: t('Ωραία', 'Good') },
-    { emoji: '😐', label: t('Μέτρια', 'Okay') },
-    { emoji: '😕', label: t('Δεν μου άρεσε', 'Meh') },
-  ];
+  // «Ξανά μαζί»: private marks, revealed only when mutual.
+  const seeAgainCandidates = useStore((s) => s.seeAgainCandidates);
+  const mySeeAgainPicks = useStore((s) => s.mySeeAgainPicks);
+  const pickSeeAgain = useStore((s) => s.pickSeeAgain);
+  const users = useStore((s) => s.users);
+  const candidates = useMemo(() => (eventId ? seeAgainCandidates(eventId) : []), [eventId, seeAgainCandidates]);
+  const [seeAgain, setSeeAgain] = useState<string[]>(() => (eventId ? mySeeAgainPicks(eventId) : []));
+  const [matches, setMatches] = useState<{ mutual: string[]; connected: string[] }>({ mutual: [], connected: [] });
+  const toggleSeeAgain = (id: string) => setSeeAgain((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
 
   const dateLocale = language === 'el' ? el : enUS;
   const eventDateLabel = event?.date
@@ -61,28 +54,25 @@ export default function PostEventFeedbackPageContent() {
     : null;
 
   const handleSubmit = () => {
-    if (!eventId || !event) return;
-    const attendanceStore =
-      attendance === 'all' ? 'yes' : attendance === 'no_show' ? 'no_show' : undefined;
+    if (!eventId || !event || !mood) return;
+    const overallRating = starsForMood(mood);
     const payload: FeedbackData = {
       eventId,
       overallRating,
-      vibeRating,
+      vibeRating: overallRating,
       mood,
       comment: comment.slice(0, COMMENT_MAX),
       submittedAt: new Date().toISOString(),
-      attendance: attendanceStore,
-      safetyComfort: comfort || undefined,
+      wouldGoAgain,
     };
     submitFeedback(payload);
-    awardXp(25, 'Υποβολή αξιολόγησης', 'Feedback submitted');
-    toast.success(t('Η αξιολόγηση υποβλήθηκε · +25 XP', 'Feedback submitted · +25 XP'));
-    setStep(2);
+    if (candidates.length > 0) setMatches(pickSeeAgain(eventId, seeAgain));
+    setDone(true);
   };
 
   if (!eventId || !event) {
     return (
-      <div className="max-w-2xl mx-auto py-4 text-center space-y-4">
+      <div className={cn(PAGE_FILL, 'py-4 text-center space-y-4')}>
         <p className={cn('text-sm font-medium', p.sub)}>
           {t('Η εκδήλωση δεν βρέθηκε.', 'Event not found.')}
         </p>
@@ -94,16 +84,11 @@ export default function PostEventFeedbackPageContent() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className={cn(PAGE_FILL, 'space-y-4 md:space-y-5 pb-24 md:pb-6 animate-in slide-in-from-bottom-4 duration-500 fade-in')}>
       <div>
-        <h1 className={cn('text-sm md:text-base font-extrabold tracking-tight', p.head)}>
-          {t('Αξιολόγηση Εκδήλωσης', 'Post-Event Feedback')}
-        </h1>
+        <h1 className={cn(APP_TYPO.pageTitle, p.head)}>{t('Πώς πέρασες;', 'How was it?')}</h1>
         <p className={cn('text-sm font-medium mt-1', p.sub)}>
-          {t(
-            'Πείτε μας πώς ήταν η εμπειρία σας στην πρόσφατη εκδήλωση.',
-            'Tell us about your experience at the recent event.',
-          )}
+          {t('Μια μικρή νότα — αν θες, και αν θα ξαναπήγαινες.', 'One note — and, if you like, whether you’d go again.')}
         </p>
       </div>
 
@@ -138,50 +123,61 @@ export default function PostEventFeedbackPageContent() {
         </div>
       </div>
 
-      {step === 1 && (
+      {done ? (
         <div
           className={cn(
-            'flex flex-col sm:flex-row items-center sm:justify-center text-center sm:text-left gap-3 md:gap-4 rounded-2xl p-4 md:p-5 shadow-soft border',
-            p.isDark
-              ? 'bg-amber-900/10 border-amber-800/50'
-              : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200',
+            'rounded-2xl shadow-soft border p-5 md:p-4 text-center flex flex-col items-center justify-center',
+            p.cardSurface,
+            p.borderB,
           )}
         >
-          <div
-            className={cn(
-              'w-10 h-10 rounded-full flex items-center justify-center shrink-0',
-              p.isDark
-                ? 'bg-amber-900/30 text-amber-400'
-                : 'bg-white text-amber-600 border border-amber-100 shadow-soft',
-            )}
+          <CheckCircle2
+            className={cn('w-10 h-10 mb-3', p.isDark ? 'text-emerald-400' : 'text-emerald-600')}
+          />
+          <h2 className={cn('text-sm md:text-base font-bold tracking-tight mb-2', p.head)}>
+            {t('Ευχαριστούμε.', 'Thank you.')}
+          </h2>
+          {matches.mutual.length > 0 ? (
+            <div className="mb-5 w-full max-w-sm space-y-2" role="status">
+              {matches.mutual.map((id) => {
+                const u = users.find((x) => x.id === id);
+                if (!u) return null;
+                const first = u.name.split(' ')[0];
+                return (
+                  <div key={id} className={cn('flex items-center gap-3 rounded-2xl border p-3 text-left', p.borderB)}>
+                    <PersonAvatar user={u} size="sm" />
+                    <p className={cn('min-w-0 flex-1 text-sm font-semibold', p.head)}>
+                      {matches.connected.includes(id)
+                        ? t(`Και ο/η ${first} θέλει να ξαναβγείτε — είστε πλέον Nakamas.`, `${first} wants to meet again too — you are now Nakamas.`)
+                        : t(`Και ο/η ${first} θέλει να ξαναβγείτε.`, `${first} wants to meet again too.`)}
+                    </p>
+                    <Button size="sm" variant="outline" onClick={() => navigate(`/u/${id}`)}>
+                      {t('Προφίλ', 'Profile')}
+                    </Button>
+                  </div>
+                );
+              })}
+              <Button size="sm" className="w-full" onClick={() => navigate('/buddy-seek')}>
+                {t('Κανονίστε την επόμενη', 'Plan the next one')}
+              </Button>
+            </div>
+          ) : (
+            <p className={cn('text-sm font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
+              {seeAgain.length > 0
+                ? t('Αν το θέλουν κι εκείνοι, θα το μάθετε και οι δύο.', 'If they want it too, you will both know.')
+                : t('Αυτό ήταν όλο.', 'That’s all.')}
+            </p>
+          )}
+          <Button
+            onClick={() => navigate('/history')}
+            variant={p.isAB ? 'primary' : 'outline'}
+            size="md"
+            className="rounded-full"
           >
-            <Trophy className="w-5 h-5" />
-          </div>
-          <div className="flex-1">
-            <p
-              className={cn(
-                'text-sm font-extrabold flex items-center gap-1 justify-center sm:justify-start',
-                p.isDark ? 'text-amber-400' : 'text-amber-900',
-              )}
-            >
-              {t('Κερδίστε +25 XP', 'Earn +25 XP')} <Zap className="w-3.5 h-3.5" />
-            </p>
-            <p
-              className={cn(
-                'text-xs font-bold mt-0.5',
-                p.isDark ? 'text-amber-500/80' : 'text-amber-700',
-              )}
-            >
-              {t(
-                'Η αξιολόγηση ανεβάζει το level σας και βοηθά την κοινότητα',
-                'Rating boosts your level and helps the community',
-              )}
-            </p>
-          </div>
+            {t('Επιστροφή στο Ιστορικό', 'Back to History')}
+          </Button>
         </div>
-      )}
-
-      {step === 1 ? (
+      ) : (
         <div
           className={cn(
             'rounded-2xl p-4 md:p-5 shadow-soft border space-y-5',
@@ -191,17 +187,18 @@ export default function PostEventFeedbackPageContent() {
         >
           <div>
             <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-4', p.head)}>
-              {tu('Πώς νιώσατε;', 'How did you feel?')}
+              {tu('Πώς νιώθεις;', 'How did it feel?')}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {moods.map((m) => (
+              {FEEDBACK_MOODS.map((m) => (
                 <button
-                  key={m.emoji}
+                  key={m.id}
                   type="button"
-                  onClick={() => setMood(m.emoji)}
+                  onClick={() => setMood(m.id)}
+                  aria-pressed={mood === m.id}
                   className={cn(
-                    'flex flex-col items-center justify-center gap-2 py-4 rounded-2xl border transition-all duration-300',
-                    mood === m.emoji
+                    'flex flex-col items-center justify-center gap-1.5 py-3 rounded-xl border text-xs transition-all duration-300 min-h-16',
+                    mood === m.id
                       ? p.isDark
                         ? 'border-cyan-500 bg-cyan-900/20 shadow-soft scale-[1.02]'
                         : 'border-cyan-500 bg-cyan-50 shadow-soft scale-[1.02]'
@@ -215,254 +212,95 @@ export default function PostEventFeedbackPageContent() {
                   <span
                     className={cn(
                       'text-xs font-bold',
-                      mood === m.emoji ? (p.isDark ? 'text-cyan-400' : 'text-cyan-700') : p.muted,
+                      mood === m.id ? (p.isDark ? 'text-cyan-400' : 'text-cyan-700') : p.muted,
                     )}
                   >
-                    {m.label}
+                    {t(m.el, m.en)}
                   </span>
                 </button>
               ))}
             </div>
           </div>
 
-          <hr className={cn('border-t', p.borderB)} />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-2', p.head)}>
-                {tu('Γενική Εντύπωση', 'Overall Experience')}
-              </h3>
-              <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
-                {t('Πώς θα βαθμολογούσατε την εκδήλωση;', 'How would you rate the event?')}
-              </p>
-              <div className="flex gap-1.5 p-3 rounded-2xl bg-black/5 dark:bg-white/5 w-fit">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={`overall-${star}`}
-                    type="button"
-                    onClick={() => setOverallRating(star)}
-                    aria-label={t(`${star} αστέρια`, `${star} stars`)}
-                    aria-pressed={star === overallRating}
-                    className="p-1 min-h-10 min-w-10 flex items-center justify-center hover:scale-110 focus-visible:scale-110 transition-transform"
-                  >
-                    <Star
-                      className={cn(
-                        'w-8 h-8 transition-colors',
-                        star <= overallRating
-                          ? 'text-amber-400 fill-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
-                          : 'text-gray-300 dark:text-gray-700 hover:text-amber-300',
-                      )}
-                      aria-hidden
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-2', p.head)}>
-                {tu('Ατμόσφαιρα', 'Vibe')}
-              </h3>
-              <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
-                {t('Πώς ήταν η ατμόσφαιρα της ομάδας;', 'How was the group atmosphere?')}
-              </p>
-              <div className="flex gap-1.5 p-3 rounded-2xl bg-black/5 dark:bg-white/5 w-fit">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={`vibe-${star}`}
-                    type="button"
-                    onClick={() => setVibeRating(star)}
-                    aria-label={t(`${star} αστέρια ατμόσφαιρας`, `${star} vibe stars`)}
-                    aria-pressed={star === vibeRating}
-                    className="p-1 min-h-10 min-w-10 flex items-center justify-center hover:scale-110 focus-visible:scale-110 transition-transform"
-                  >
-                    <Star
-                      className={cn(
-                        'w-8 h-8 transition-colors',
-                        star <= vibeRating
-                          ? 'text-cyan-400 fill-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]'
-                          : 'text-gray-300 dark:text-gray-700 hover:text-cyan-300',
-                      )}
-                      aria-hidden
-                    />
-                  </button>
-                ))}
-              </div>
+          <div>
+            <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-3', p.head)}>
+              {tu('Θα ξαναπήγαινες;', 'Would you go again?')}
+            </h3>
+            <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
+              {t('Προαιρετικό.', 'Optional.')}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {(
+                [
+                  { value: true, el: 'Ναι', en: 'Yes' },
+                  { value: false, el: 'Μάλλον όχι', en: 'Probably not' },
+                ] as const
+              ).map((opt) => (
+                <button
+                  key={String(opt.value)}
+                  type="button"
+                  aria-pressed={wouldGoAgain === opt.value}
+                  onClick={() =>
+                    setWouldGoAgain((prev) => (prev === opt.value ? undefined : opt.value))
+                  }
+                  className={cn(
+                    'min-h-10 px-4 rounded-full border text-xs font-bold transition-colors',
+                    wouldGoAgain === opt.value
+                      ? p.isDark
+                        ? 'border-cyan-500 bg-cyan-900/20 text-cyan-300'
+                        : 'border-cyan-500 bg-cyan-50 text-cyan-800'
+                      : cn(p.borderB, p.head, p.cardSurface),
+                  )}
+                >
+                  {t(opt.el, opt.en)}
+                </button>
+              ))}
             </div>
           </div>
 
-          <hr className={cn('border-t', p.borderB)} />
-
-          <div className="space-y-4">
+          {candidates.length > 0 && (
             <div>
-              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-3', p.head)}>
-                {tu('Παρουσία', 'Attendance')}
+              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-1', p.head)}>
+                {tu('Ξανά μαζί;', 'Again together?')}
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setAttendance('all')}
-                  className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center gap-3 transition-colors',
-                    attendance === 'all'
-                      ? p.isDark
-                        ? 'border-cyan-500 bg-cyan-900/20 shadow-soft'
-                        : 'border-cyan-500 bg-cyan-50 shadow-soft'
-                      : p.cardSurface,
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0',
-                      attendance === 'all' ? 'border-cyan-500' : 'border-gray-300',
-                    )}
-                  >
-                    {attendance === 'all' && <div className="w-2 h-2 rounded-full bg-cyan-500" />}
-                  </div>
-                  <span
-                    className={cn(
-                      'text-sm font-bold',
-                      attendance === 'all' ? p.iconAccent : p.head,
-                    )}
-                  >
-                    {t('Ναι, ήρθαν όλοι', 'Yes, everyone showed up')}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAttendance('no_show')}
-                  className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center gap-3 transition-colors',
-                    attendance === 'no_show'
-                      ? p.isDark
-                        ? 'border-amber-500 bg-amber-900/20 shadow-soft'
-                        : 'border-amber-500 bg-amber-50 shadow-soft'
-                      : p.cardSurface,
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0',
-                      attendance === 'no_show' ? 'border-amber-500' : 'border-gray-300',
-                    )}
-                  >
-                    {attendance === 'no_show' && (
-                      <div className="w-2 h-2 rounded-full bg-amber-500" />
-                    )}
-                  </div>
-                  <span
-                    className={cn(
-                      'text-sm font-bold',
-                      attendance === 'no_show'
-                        ? p.isDark
-                          ? 'text-amber-400'
-                          : 'text-amber-700'
-                        : p.head,
-                    )}
-                  >
-                    {t('Όχι, κάποιοι δεν ήρθαν', "No, some didn't show up")}
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-3', p.head)}>
-                {tu('Αίσθημα Ασφάλειας', 'Safety Comfort')}
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setComfort('safe')}
-                  className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center gap-3 transition-colors',
-                    comfort === 'safe'
-                      ? p.isDark
-                        ? 'border-emerald-500 bg-emerald-900/20 shadow-soft'
-                        : 'border-emerald-500 bg-emerald-50 shadow-soft'
-                      : p.cardSurface,
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0',
-                      comfort === 'safe' ? 'border-emerald-500' : 'border-gray-300',
-                    )}
-                  >
-                    {comfort === 'safe' && (
-                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                    )}
-                  </div>
-                  <span
-                    className={cn(
-                      'text-sm font-bold',
-                      comfort === 'safe'
-                        ? p.isDark
-                          ? 'text-emerald-400'
-                          : 'text-emerald-700'
-                        : p.head,
-                    )}
-                  >
-                    {t('Ένιωσα πλήρως ασφαλής', 'Felt completely safe')}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setComfort('unsafe')}
-                  className={cn(
-                    'p-4 border rounded-2xl text-left flex items-center justify-between gap-3 transition-colors',
-                    comfort === 'unsafe'
-                      ? p.isDark
-                        ? 'border-red-500 bg-red-900/20 shadow-soft'
-                        : 'border-red-500 bg-red-50 shadow-soft'
-                      : p.cardSurface,
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
+              <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
+                {t('Ποιους θα ήθελες να ξαναδείς; Το μαθαίνουν μόνο αν το θέλουν κι εκείνοι.', 'Who would you see again? They only find out if they want it too.')}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {candidates.map((u) => {
+                  const on = seeAgain.includes(u.id);
+                  return (
+                    <button
+                      key={u.id}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() => toggleSeeAgain(u.id)}
                       className={cn(
-                        'w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0',
-                        comfort === 'unsafe' ? 'border-red-500' : 'border-gray-300',
-                      )}
-                    >
-                      {comfort === 'unsafe' && (
-                        <div className="w-2 h-2 rounded-full bg-red-500" />
-                      )}
-                    </div>
-                    <span
-                      className={cn(
-                        'text-sm font-bold',
-                        comfort === 'unsafe'
+                        'inline-flex min-h-10 items-center gap-2 rounded-full border py-1 pl-1 pr-3 text-xs font-bold transition-colors',
+                        on
                           ? p.isDark
-                            ? 'text-red-400'
-                            : 'text-red-700'
-                          : p.head,
+                            ? 'border-cyan-500 bg-cyan-900/20 text-cyan-300'
+                            : 'border-cyan-500 bg-cyan-50 text-cyan-800'
+                          : cn(p.borderB, p.head, p.cardSurface),
                       )}
                     >
-                      {t('Είχα κάποια ανησυχία', 'I had some concerns')}
-                    </span>
-                  </div>
-                  {comfort === 'unsafe' && (
-                    <ShieldAlert className="w-5 h-5 text-red-500 shrink-0" />
-                  )}
-                </button>
+                      <PersonAvatar user={u} size="sm" className="h-7 w-7" />
+                      {u.name.split(' ')[0]}
+                    </button>
+                  );
+                })}
               </div>
             </div>
-          </div>
-
-          <hr className={cn('border-t', p.borderB)} />
+          )}
 
           <div>
             <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-3', p.head)}>
-              {tu('Σχόλιο (Προαιρετικό)', 'Comment (Optional)')}
+              {tu('Κάτι ακόμα;', 'Anything else?')}
             </h3>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value.slice(0, COMMENT_MAX))}
-              placeholder={t(
-                'Μοιραστείτε περισσότερα για την εμπειρία σας...',
-                'Share more about your experience...',
-              )}
+              placeholder={t('Προαιρετικό σημείωμα', 'Optional note')}
               className={cn(
                 'w-full px-4 py-3 border rounded-2xl text-base focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all resize-none shadow-soft',
                 c.inputBg,
@@ -470,98 +308,26 @@ export default function PostEventFeedbackPageContent() {
                 c.placeholder,
                 p.borderB,
               )}
-              rows={4}
+              rows={3}
             />
             <p className={cn('text-xs font-medium mt-2 flex items-center justify-between', p.muted)}>
-              <span>{t('Ορατό στον διοργανωτή', 'Visible to organizer')}</span>
+              <span>{t('Μόνο για την ομάδα Nakamas — όχι δημόσιο.', 'Only for Nakamas — not public.')}</span>
               <span>
                 {comment.length}/{COMMENT_MAX}
               </span>
             </p>
           </div>
 
-          <div className="pt-2">
+          <div className="pt-1">
             <Button
-              className="w-full h-11 text-xs font-bold rounded-2xl shadow-soft"
+              className="w-full"
               variant={p.isAB ? 'primary' : 'gradient'}
               onClick={handleSubmit}
-              disabled={overallRating === 0}
+              disabled={!mood}
             >
-              {t('Υποβολή Αξιολόγησης', 'Submit Feedback')}
+              {t('Αποστολή', 'Send')}
             </Button>
           </div>
-        </div>
-      ) : (
-        <div
-          className={cn(
-            'rounded-2xl shadow-soft border p-5 md:p-4 text-center flex flex-col items-center justify-center',
-            p.cardSurface,
-            p.borderB,
-          )}
-        >
-          <div
-            className={cn(
-              'w-20 h-20 rounded-full flex items-center justify-center mb-4 border shadow-soft relative overflow-hidden',
-              p.isDark ? 'bg-emerald-900/20 border-emerald-800' : 'bg-emerald-50 border-emerald-100',
-            )}
-          >
-            <div className="absolute inset-0 bg-emerald-500/20 animate-ping" />
-            <CheckCircle2
-              className={cn('w-10 h-10 relative z-10', p.isDark ? 'text-emerald-400' : 'text-emerald-600')}
-            />
-          </div>
-
-          <h2 className={cn('text-sm md:text-base font-extrabold tracking-tight mb-3', p.head)}>
-            {t('Ευχαριστούμε!', 'Thank You!')}
-          </h2>
-          <p className={cn('text-sm font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
-            {t(
-              'Η αξιολόγησή σας βοηθά σημαντικά στη βελτίωση της εμπειρίας για όλη την κοινότητα.',
-              'Your feedback significantly helps improve the experience for the entire community.',
-            )}
-          </p>
-
-          <div
-            className={cn(
-              'flex items-center gap-3 md:gap-4 rounded-2xl p-4 md:p-5 shadow-soft border mb-5 text-left w-full max-w-sm',
-              p.isDark
-                ? 'bg-amber-900/10 border-amber-800/50'
-                : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200',
-            )}
-          >
-            <div
-              className={cn(
-                'w-12 h-12 rounded-full flex items-center justify-center shrink-0',
-                p.isDark
-                  ? 'bg-amber-900/30 text-amber-400'
-                  : 'bg-white text-amber-600 border border-amber-100 shadow-soft',
-              )}
-            >
-              <Trophy className="w-6 h-6" />
-            </div>
-            <div>
-              <p className={cn('text-sm md:text-base font-black', p.isDark ? 'text-amber-400' : 'text-amber-900')}>
-                +25 XP
-              </p>
-              <p
-                className={cn(
-                  'text-xs font-bold uppercase tracking-widest mt-0.5',
-                  p.isDark ? 'text-amber-500/80' : 'text-amber-700',
-                )}
-              >
-                {t('Προστέθηκαν στο προφίλ!', 'Added to profile!')}
-              </p>
-            </div>
-          </div>
-
-          <Button
-            onClick={() => navigate('/history')}
-            variant={p.isAB ? 'primary' : 'outline'}
-            size="lg"
-            className="rounded-2xl px-5 font-bold text-xs"
-          >
-            {t('Επιστροφή στο Ιστορικό', 'Back to History')}
-          </Button>
         </div>
       )}
     </div>

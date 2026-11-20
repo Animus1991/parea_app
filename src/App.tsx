@@ -8,6 +8,7 @@ import { OfflineBanner } from "./components/common/OfflineBanner";
 import { CspViolationToast } from "./components/common/CspViolationToast";
 import { CommandPalette } from "./components/common/CommandPalette";
 import { RequireAdmin } from "./components/auth/RequireAdmin";
+import { RequireOrganizer } from "./components/auth/RequireOrganizer";
 import { CopilotBridge } from "./components/copilot/CopilotBridge";
 import { useStore } from "./store";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
@@ -49,6 +50,18 @@ const Leaderboard = lazy(routeLoaders.leaderboard);
 const Challenges = lazy(routeLoaders.challenges);
 const Onboarding = lazy(routeLoaders.onboarding);
 const BuddySeek = lazy(routeLoaders.buddySeek);
+const Wall = lazy(routeLoaders.wall);
+const PersonProfile = lazy(routeLoaders.personProfile);
+const OurNight = lazy(routeLoaders.ourNight);
+const Collections = lazy(routeLoaders.collections);
+const Tags = lazy(routeLoaders.tags);
+const InvitePublic = lazy(routeLoaders.invitePublic);
+const OrganizerEmbed = lazy(routeLoaders.organizerEmbed);
+
+/** Pages anyone with the link may open, without an account (Φ27). */
+function isPublicPath(pathname: string): boolean {
+  return /^\/i\/[^/]+$/.test(pathname) || /^\/embed\/organizer\/[^/]+$/.test(pathname);
+}
 
 export default function App() {
   const location = useLocation();
@@ -64,29 +77,51 @@ export default function App() {
   useEffect(() => {
     if (onLogin) return prefetchWhenIdle(["/"]);
     if (!signedIn) return;
-    return prefetchWhenIdle(["/", "/events/_", "/categories", "/plans", "/buddy-seek", "/saved", "/chats", "/profile", "/notifications"]);
+    return prefetchWhenIdle(["/", "/events/_", "/categories", "/tags", "/plans", "/buddy-seek", "/saved", "/chats", "/profile", "/notifications", "/wall"]);
   }, [onLogin, signedIn]);
 
+  const publicPage = isPublicPath(location.pathname);
   useEffect(() => {
-    if (!currentUser && location.pathname !== "/login") {
-      navigate("/login");
+    if (!currentUser && location.pathname !== "/login" && !publicPage) {
+      navigate("/login", { replace: true });
     }
-  }, [currentUser, location.pathname, navigate]);
+  }, [currentUser, location.pathname, navigate, publicPage]);
 
   useEffect(() => {
     if (
       currentUser &&
       !demoMode &&
       !onboardingCompleted &&
+      !publicPage &&
       location.pathname !== "/onboarding" &&
       location.pathname !== "/login"
     ) {
-      navigate("/onboarding");
+      navigate("/onboarding", { replace: true });
     }
-  }, [currentUser, onboardingCompleted, demoMode, location.pathname, navigate]);
+  }, [currentUser, onboardingCompleted, demoMode, location.pathname, navigate, publicPage]);
+
+  // Invite pages and the organizer widget render on their own, signed in or not.
+  if (publicPage) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <RouteLifecycle />
+        <Suspense fallback={<PageLoading />}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/i/:inviteId" element={<ErrorBoundary><InvitePublic /></ErrorBoundary>} />
+            <Route path="/embed/organizer/:id" element={<ErrorBoundary><OrganizerEmbed /></ErrorBoundary>} />
+          </Routes>
+        </Suspense>
+      </QueryClientProvider>
+    );
+  }
 
   if (!currentUser && location.pathname !== "/login") {
-    return null; // wait for redirect
+    return (
+      <QueryClientProvider client={queryClient}>
+        <RouteLifecycle />
+        <PageLoading />
+      </QueryClientProvider>
+    );
   }
 
   if (location.pathname === "/login") {
@@ -119,6 +154,8 @@ export default function App() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<ErrorBoundary><Home /></ErrorBoundary>} />
             <Route path="/categories" element={<ErrorBoundary><Categories /></ErrorBoundary>} />
+            <Route path="/tags" element={<ErrorBoundary><Tags /></ErrorBoundary>} />
+            <Route path="/tags/:slug" element={<ErrorBoundary><Tags /></ErrorBoundary>} />
             <Route path="/nearby" element={<ErrorBoundary><NearbyGroups /></ErrorBoundary>} />
 
             <Route path="/events/:eventId" element={<ErrorBoundary><EventDetail /></ErrorBoundary>} />
@@ -139,7 +176,7 @@ export default function App() {
             <Route path="/chats" element={<ErrorBoundary><Inbox /></ErrorBoundary>} />
             <Route path="/chat/:groupId" element={<ErrorBoundary><GroupChat /></ErrorBoundary>} />
 
-            <Route path="/manage" element={<ErrorBoundary><OrganizerDashboard /></ErrorBoundary>} />
+            <Route path="/manage" element={<ErrorBoundary><RequireOrganizer><OrganizerDashboard /></RequireOrganizer></ErrorBoundary>} />
             <Route path="/create" element={<ErrorBoundary><CreateEventFlow /></ErrorBoundary>} />
             <Route path="/wallet" element={<ErrorBoundary><Wallet /></ErrorBoundary>} />
 
@@ -149,6 +186,11 @@ export default function App() {
 
             <Route path="/profile" element={<ErrorBoundary><Profile /></ErrorBoundary>} />
             <Route path="/organizer/:id" element={<ErrorBoundary><OrganizerProfile /></ErrorBoundary>} />
+            <Route path="/u/:id" element={<ErrorBoundary><PersonProfile /></ErrorBoundary>} />
+            <Route path="/wall" element={<ErrorBoundary><Wall /></ErrorBoundary>} />
+            <Route path="/night/:groupId" element={<ErrorBoundary><OurNight /></ErrorBoundary>} />
+            <Route path="/collections" element={<ErrorBoundary><Collections /></ErrorBoundary>} />
+            <Route path="/collections/:id" element={<ErrorBoundary><Collections /></ErrorBoundary>} />
 
             <Route path="/notifications" element={<ErrorBoundary><Notifications /></ErrorBoundary>} />
             <Route path="/settings" element={<ErrorBoundary><SettingsAndPrivacy /></ErrorBoundary>} />

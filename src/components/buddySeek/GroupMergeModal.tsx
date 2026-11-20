@@ -47,7 +47,12 @@ export function GroupMergeModal({
 
   const send = () => {
     const id = suggestMerge(fromGroup.id, toGroup.id, mode, message || undefined);
-    toast.success(t('Πρόταση συγχώνευσης εστάλη', 'Merge suggestion sent'));
+    toast.success(t('Πρόταση συγχώνευσης εστάλη', 'Merge suggestion sent'), {
+      action: {
+        label: t('Inbox', 'Inbox'),
+        onClick: () => navigate('/inbox'),
+      },
+    });
     onClose();
     void id;
   };
@@ -55,9 +60,19 @@ export function GroupMergeModal({
   const acceptPending = () => {
     if (!pending) return;
     const groupId = respondMerge(pending.id, true);
-    toast.success(t('Έγινε αποδεκτή η πρόταση', 'Suggestion accepted'));
+    toast.success(t('Έγινε αποδεκτή η πρόταση', 'Suggestion accepted'), {
+      action: groupId
+        ? {
+            label: t('Η βραδιά μας', 'Our night'),
+            onClick: () => navigate(`/night/${groupId}`),
+          }
+        : {
+            label: t('Βρες Nakamas', 'Find Nakamas'),
+            onClick: () => navigate('/buddy-seek'),
+          },
+    });
     onClose();
-    if (groupId) navigate(`/chat/${groupId}`);
+    if (groupId) navigate(`/night/${groupId}`);
   };
 
   return createPortal(
@@ -83,15 +98,15 @@ export function GroupMergeModal({
         <div className="p-5 space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl border border-border p-3">
-              <p className="text-xs font-bold uppercase text-ink-muted">{tu('Η ομάδα σας', 'Your group')}</p>
-              <p className="text-sm md:text-base font-black flex items-center gap-1 mt-1">
+              <p className="text-xs font-bold text-ink-muted">{tu('Η ομάδα σας', 'Your group')}</p>
+              <p className="text-sm md:text-base font-bold flex items-center gap-1 mt-1">
                 <Users className="w-4 h-4" />
                 {fromGroup.members.length}
               </p>
             </div>
             <div className="rounded-2xl border border-border p-3">
-              <p className="text-xs font-bold uppercase text-ink-muted">{tu('Άλλη ομάδα', 'Other group')}</p>
-              <p className="text-sm md:text-base font-black flex items-center gap-1 mt-1">
+              <p className="text-xs font-bold text-ink-muted">{tu('Άλλη ομάδα', 'Other group')}</p>
+              <p className="text-sm md:text-base font-bold flex items-center gap-1 mt-1">
                 <Users className="w-4 h-4" />
                 {toGroup.members.length}
               </p>
@@ -111,7 +126,7 @@ export function GroupMergeModal({
                 type="button"
                 data-autofocus
                 onClick={acceptPending}
-                className="mt-2 w-full min-h-10 rounded-xl bg-emerald-600 text-white text-xs font-bold"
+                className="mt-2 w-full min-h-8 rounded-xl bg-emerald-600 text-white text-xs font-bold"
               >
                 {t('Αποδοχή (οργανωτής)', 'Accept (organizer)')}
               </button>
@@ -156,7 +171,7 @@ export function GroupMergeModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 min-h-11 rounded-2xl border border-border text-xs font-bold text-ink"
+            className="flex-1 min-h-8 rounded-2xl border border-border text-xs font-bold text-ink"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
@@ -165,7 +180,7 @@ export function GroupMergeModal({
               type="button"
               data-autofocus
               onClick={send}
-              className="flex-[2] min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold"
+              className="flex-[2] min-h-8 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold"
             >
               {t('Αποστολή πρότασης', 'Send suggestion')}
             </button>

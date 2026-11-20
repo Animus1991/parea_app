@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bot, Loader2 } from 'lucide-react';
+import { Lightbulb, Loader2 } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { generateGroupIcebreakers, isGeminiConfigured } from '../../services/gemini';
 import { toast } from 'sonner';
@@ -50,14 +50,14 @@ export function ChatIcebreakers({ eventTitle, interests, onSuggest }: ChatIcebre
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className="text-gray-400 hover:text-brand hover:bg-cyan-50 rounded-full transition-colors p-2 min-h-11 min-w-11 flex items-center justify-center disabled:opacity-50"
+      className="text-gray-400 hover:text-brand hover:bg-cyan-50 rounded-full transition-colors p-2 min-h-8 min-w-8 flex items-center justify-center disabled:opacity-50"
       title={t('Πρόταση icebreaker (AI)', 'AI icebreaker suggestion')}
       aria-label={t('Πρόταση icebreaker', 'Icebreaker suggestion')}
     >
       {loading ? (
         <Loader2 className="h-5 w-5 animate-spin" />
       ) : (
-        <Bot className="h-5 w-5" />
+        <Lightbulb className="h-5 w-5" />
       )}
     </button>
   );

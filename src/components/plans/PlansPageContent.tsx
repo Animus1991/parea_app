@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Card } from '../common/Card';
-import { MessageCircle, MapPin, Calendar, Clock, AlertTriangle, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass } from 'lucide-react';
+import { MessageCircle, MapPin, Calendar, Clock, ShieldAlert, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass, PartyPopper } from 'lucide-react';
 import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
-import { format, parseISO, differenceInDays, differenceInHours, isBefore } from 'date-fns';
+import { parseISO, differenceInDays, isBefore } from 'date-fns';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -13,11 +13,14 @@ import { EventCardSkeleton } from '../common/Skeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';
 import { useEventsResource } from '../../hooks/useEventsQuery';
 import { cn } from '../../lib/utils';
+import { PersonAvatar } from '../wall/PersonAvatar';
 import { PLANS_TYPO } from '../../lib/typographyTokens';
 import type { Group } from '../../types';
-import { dateFnsLocale, shortDayMonthPattern } from '../../lib/dateLocale';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
+import { eventStartMs, LATE_CANCEL_MS } from '../../store/outingsSlice';
+import { EmptyState } from '../common/EmptyState';
+import { EventCoverImg } from '../common/EventCoverImg';
 
 function getUserGroupForEvent(eventId: string, groups: Group[], userId: string | undefined) {
   if (!userId) return undefined;
@@ -34,7 +37,6 @@ function isPlansFormingGroupId(groupId: string) {
 
 export default function PlansPageContent() {
   const { t, tu, language } = useLanguage();
-  const dateLocale = dateFnsLocale(language);
   const p = usePageContrast();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'pending' | 'past'>('upcoming');
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<string | null>(null);
@@ -47,6 +49,7 @@ export default function PlansPageContent() {
   const waitlistedEvents = useStore((s) => s.waitlistedEvents);
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
   const leaveGroup = useStore((s) => s.leaveGroup);
+  const joinGroup = useStore((s) => s.joinGroup);
 
   const now = new Date();
   const userGroupEventIds = currentUser
@@ -68,7 +71,27 @@ export default function PlansPageContent() {
   const needsRating = pastEvents.filter(e => !feedbackSubmitted[e.id]).length;
   const nextEvent = upcomingEvents[0];
   const nextEventDays = nextEvent ? differenceInDays(parseISO(nextEvent.date), now) : null;
-  const showVerifyBanner = currentUser ? !currentUser.idVerified : false;
+  // Φ27 — say what leaving means before it happens (seat hand-over / late cancel).
+  const leaveNote = (() => {
+    if (!showLeaveConfirm) return null;
+    const g = getUserGroupForEvent(showLeaveConfirm, groups, currentUser?.id);
+    const ev = events.find((e) => e.id === showLeaveConfirm);
+    if (!g || !ev) return null;
+    if (g.members.length >= g.targetSize && g.waitlist?.length) {
+      return {
+        el: 'Η θέση σου θα περάσει στο πρώτο άτομο της λίστας αναμονής, χωρίς επίπτωση για σένα.',
+        en: 'Your seat will pass to the first person on the waitlist, with no consequence for you.',
+      };
+    }
+    const start = eventStartMs(ev);
+    if (g.status === 'confirmed' && start !== null && start > Date.now() && start - Date.now() < LATE_CANCEL_MS) {
+      return {
+        el: 'Λιγότερο από 24 ώρες πριν: καταγράφεται αργή ακύρωση (−8 αξιοπιστία), με δυνατότητα ένστασης.',
+        en: 'Less than 24 hours before: a late cancel is recorded (−8 reliability), and you can appeal.',
+      };
+    }
+    return null;
+  })();
 
   usePublishPageSnapshot({
     titleEl: 'Τα Σχέδιά μου',
@@ -79,83 +102,45 @@ export default function PlansPageContent() {
     visibleIds: upcomingEvents.slice(0, 8).map((e) => e.id),
   });
 
-  const stats: { id: 'upcoming' | 'pending' | 'past'; label: string; count: number; icon: typeof Calendar }[] = [
-    { id: 'upcoming', label: t('Επερχόμενα', 'Upcoming'), count: upcomingEvents.length, icon: CalendarClock },
-    { id: 'pending', label: t('Εκκρεμή', 'Pending'), count: pendingEvents.length, icon: Clock },
-    { id: 'past', label: t('Ολοκληρωμένα', 'Completed'), count: pastEvents.length, icon: CalendarCheck },
-  ];
-
   const secondaryBtn = cn(
-    'px-4 py-2 rounded-2xl transition-all duration-200 border-2 text-xs font-bold',
+    'px-3.5 py-1.5 min-h-8 rounded-xl transition-all duration-200 border text-xs font-bold',
     p.isDark
-      ? 'border-white/10 hover:border-white/25 text-gray-100 hover:bg-white/5'
-      : 'border-gray-100 hover:border-[#a5f3fc] hover:bg-gray-50 text-gray-700',
+      ? 'border-white/15 hover:border-white/30 text-gray-100 hover:bg-white/5'
+      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700',
   );
 
   return (
     <div className="mx-auto max-w-full space-y-4 md:space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div>
         <h1 className={cn(PLANS_TYPO.pageTitle, p.head)}>{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
-        <p className={cn(PLANS_TYPO.pageSub, 'mt-1', p.sub)}>{t(`Διαχείριση επερχόμενων, εκκρεμών και παρελθόντων εκδηλώσεων.`, `Manage your upcoming experiences, pending groups, and past events.`)}</p>
-      </div>
-
-      <CopilotInlinePrompt />
-
-      {/* Summary stats — also act as quick tab switches */}
-      <div className="grid grid-cols-3 gap-3">
-        {stats.map((s) => (
-          <button
-            key={s.id}
-            onClick={() => setActiveTab(s.id)}
-            className={cn(
-              'rounded-2xl p-3 sm:p-4 text-left border transition-all duration-200',
-              p.cardSurface,
-              activeTab === s.id ? `${p.statBg} ring-1 ring-inset ${p.ring.replace('focus:', '')}` : p.borderB,
-              p.cardHover,
-            )}
-          >
-            <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center mb-2', p.statBg)}>
-              <s.icon className={cn('w-5 h-5', p.statVal)} />
-            </div>
-            <p className={cn('text-sm md:text-base font-black tabular-nums leading-none', p.head)}>{s.count}</p>
-            <p className={cn('text-2xs font-semibold mt-1', p.muted)}>{s.label}</p>
-          </button>
-        ))}
+        <p className={cn(PLANS_TYPO.pageSub, 'mt-1', p.sub)}>{t(`Οι βραδιές που έχεις κλείσει.`, `Nights you've booked.`)}</p>
       </div>
 
       {/* Next-event highlight */}
       {nextEvent && nextEventDays !== null && nextEventDays <= 7 && (
-        <Card className={cn('!rounded-2xl p-4 flex items-center gap-3', p.highlightRow)}>
+        <button
+          type="button"
+          onClick={() => {
+            const g = getUserGroupForEvent(nextEvent.id, groups, currentUser?.id);
+            navigate(g ? `/night/${g.id}` : `/events/${nextEvent.id}`);
+          }}
+          className={cn('!rounded-2xl p-4 flex items-center gap-3 w-full text-left transition-shadow hover:shadow-soft', p.highlightRow)}
+        >
           <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0', p.statBg)}>
             <CalendarClock className={cn('w-5 h-5', p.statVal)} />
           </div>
           <div className="min-w-0 flex-1">
-            <p className={cn('text-xs font-bold uppercase tracking-wide', p.muted)}>{tu('Επόμενη εκδήλωση', 'Next up')}</p>
+            <p className={cn('text-xs font-bold tracking-wide', p.muted)}>{tu('Επόμενη εκδήλωση', 'Next up')}</p>
             <p className={cn(PLANS_TYPO.nextTitle, p.head)}>{nextEvent.title}</p>
           </div>
           <span className={cn('shrink-0 text-xs font-bold px-2.5 py-1 rounded-full', p.statBg, p.statVal)}>
-            {nextEventDays <= 0 ? t('Σήμερα', 'Today') : `${t('σε', 'in')} ${nextEventDays}${t('μ', 'd')}`}
+            {nextEventDays <= 0
+              ? t('Σήμερα', 'Today')
+              : nextEventDays === 1
+                ? t('Αύριο', 'Tomorrow')
+                : t(`σε ${nextEventDays} μέρες`, `in ${nextEventDays} days`)}
           </span>
-        </Card>
-      )}
-
-      {/* Action required prompt — only when ID is not yet verified */}
-      {showVerifyBanner && (
-        <Card className={cn(
-          '!rounded-2xl p-4 shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-4',
-          p.isDark ? '!bg-amber-500/10 !border-amber-500/30' : '!bg-amber-50 !border-amber-200',
-        )}>
-          <div className="flex items-start gap-3">
-            <AlertTriangle className={cn('w-5 h-5 shrink-0 mt-0.5', p.isDark ? 'text-amber-400' : 'text-amber-600')} />
-            <div>
-              <h3 className={cn(PLANS_TYPO.bannerTitle, 'mb-1', p.isDark ? 'text-amber-200' : 'text-amber-900')}>{t(`Επαληθεύστε την ταυτότητά σας`, `Verify your identity`)}</h3>
-              <p className={cn(PLANS_TYPO.bannerBody, p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
-            </div>
-          </div>
-          <button type="button" onClick={() => navigate('/verification')} className={cn('bg-amber-600 text-white px-5 py-2.5 rounded-2xl shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0', PLANS_TYPO.bannerCta)}>
-            {t(`Επαλήθευση`, `Verify Now`)}
-          </button>
-        </Card>
+        </button>
       )}
 
       <TabBar
@@ -173,8 +158,8 @@ export default function PlansPageContent() {
         isError={isError}
         onRetry={() => void refetch()}
         loading={
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
               <EventCardSkeleton key={`plans-sk-${i}`} />
             ))}
           </div>
@@ -182,7 +167,7 @@ export default function PlansPageContent() {
         errorTitle={t('Αδυναμία φόρτωσης σχεδίων', 'Could not load plans')}
       >
       {activeTab === 'upcoming' && (
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {upcomingEvents.map(event => {
           const group = getUserGroupForEvent(event.id, groups, currentUser?.id);
           const memberUsers = (group?.members ?? [])
@@ -193,9 +178,9 @@ export default function PlansPageContent() {
           const hasMeetingPoint = Boolean(group?.meetingPoint);
 
           return (
-          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
-              <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+          <Card key={event.id} className="!rounded-2xl p-0 overflow-hidden flex h-full flex-col">
+            <div className="relative h-48 w-full shrink-0 bg-gray-100 overflow-hidden">
+              <EventCoverImg event={event} alt={event.title} className="w-full h-full object-cover" />
               {isConfirmed ? (
                 <div className="absolute top-2 left-2 bg-brand/95 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
                   {t('Επιβεβαιωμένο', 'Confirmed')}
@@ -207,8 +192,8 @@ export default function PlansPageContent() {
               )}
             </div>
 
-            <div className="flex-1 flex flex-col">
-              <div className="flex justify-between items-start gap-2 mb-2">
+            <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
+              <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0">
                   <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>{event.title}</h3>
                   {group && isPlansFormingGroupId(group.id) && (
@@ -218,31 +203,11 @@ export default function PlansPageContent() {
                   )}
                 </div>
                 <div className="text-right shrink-0">
-                  <div className={cn(PLANS_TYPO.cardDate, p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
-                  <div className={cn('card-meta', p.muted)}>{event.time}</div>
-                  {(() => {
-                    const days = differenceInDays(parseISO(event.date), new Date());
-                    const hours = differenceInHours(parseISO(event.date), new Date());
-                    if (days <= 0 && hours > 0) {
-                      return (
-                        <span className={cn('card-meta font-semibold mt-0.5 inline-block', p.isDark ? 'text-orange-300' : 'text-orange-700')}>
-                          {t('σε', 'in')} {hours}h
-                        </span>
-                      );
-                    }
-                    if (days > 0 && days <= 7) {
-                      return (
-                        <span className={cn('card-meta font-semibold mt-0.5 inline-block', p.statVal)}>
-                          {t('σε', 'in')} {days} {t('μέρες', 'days')}
-                        </span>
-                      );
-                    }
-                    return null;
-                  })()}
+                  <div className={cn(PLANS_TYPO.cardDate, p.head)}>{formatPlanWhen(event.date, event.time, language)}</div>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-x-4 gap-y-2 mb-4">
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
                 <div className={cn(
                   'flex items-center text-xs font-medium',
                   hasMeetingPoint ? p.body : p.muted,
@@ -258,15 +223,10 @@ export default function PlansPageContent() {
               </div>
 
               {group && (
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2">
                   <div className="flex -space-x-2">
                     {memberUsers.map((user) => (
-                      <img
-                        key={user!.id}
-                        src={user!.photoUrl ?? `https://i.pravatar.cc/24?u=${user!.id}`}
-                        alt={user!.name}
-                        className="w-6 h-6 rounded-full border-2 border-white object-cover"
-                      />
+                      <PersonAvatar key={user!.id} user={user!} size="sm" className="h-6 w-6 border-2 border-white" />
                     ))}
                   </div>
                   <span className={cn('text-xs font-medium flex items-center gap-0.5', p.muted)}>
@@ -275,25 +235,40 @@ export default function PlansPageContent() {
                 </div>
               )}
 
-              <div className={cn('mt-auto pt-4 border-t flex gap-2', p.borderT)}>
+              {group && (
+                <button
+                  type="button"
+                  onClick={() => navigate(`/night/${group.id}`)}
+                  className="inline-flex btn-gradient !py-1.5 min-h-8 items-center justify-center gap-1.5 self-start"
+                >
+                  {/* «Επιβεβαιωμένο» is already on the photo — the button just says where it goes. */}
+                  <PartyPopper className="h-3.5 w-3.5" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
+                </button>
+              )}
+
+              <div className={cn('mt-auto pt-3.5 border-t flex flex-wrap items-center gap-2', p.borderT)}>
                 <button
                   onClick={() => group && navigate(`/chat/${group.id}`)}
                   disabled={!group}
-                  className="flex-1 btn-gradient !py-2 flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={cn(secondaryBtn, 'flex-1 flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed')}
                 >
-                  <MessageCircle className="h-4 w-4" /> {t('Ομαδική Συνομιλία', 'Group Chat')}
-                </button>
-                <button onClick={() => navigate(`/events/${event.id}`)} className={secondaryBtn}>
-                  {t('Λεπτομέρειες', 'Details')}
+                  <MessageCircle className="h-3.5 w-3.5" /> {t('Chat', 'Chat')}
                 </button>
                 <button
                   onClick={() => setShowLeaveConfirm(event.id)}
                   className={cn(
-                    'px-3 py-2 rounded-2xl text-xs font-bold transition-all duration-200 flex items-center gap-1 border-2',
-                    p.isDark ? 'border-red-500/30 hover:bg-red-500/10 text-red-400' : 'border-red-100 hover:bg-red-50 text-red-500',
+                    'px-3 py-1.5 min-h-8 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-1 border',
+                    p.isDark ? 'border-red-500/30 hover:bg-red-500/10 text-red-400' : 'border-red-200 hover:bg-red-50 text-red-700',
                   )}
                 >
                   <XCircle className="h-3.5 w-3.5" /> {t('Αποχώρηση', 'Leave')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/events/${event.id}`)}
+                  className={cn('text-xs font-bold underline underline-offset-2', p.muted)}
+                >
+                  {t('Λεπτομέρειες', 'Details')}
                 </button>
               </div>
             </div>
@@ -302,42 +277,57 @@ export default function PlansPageContent() {
         })}
 
         {upcomingEvents.length === 0 && (
-          <EmptyTab
-            icon={Compass}
-            title={t(`Δεν υπάρχουν επερχόμενα σχέδια.`, `No upcoming confirmed plans.`)}
-            hint={t('Εξερευνήστε εκδηλώσεις και μπείτε σε μια ομάδα για να ξεκινήσετε.', 'Explore experiences and join a group to get started.')}
-            ctaLabel={t(`Εξερεύνηση`, `Explore Experiences`)}
-            onCta={() => navigate('/')}
-            p={p}
-          />
+          <div className="col-span-full">
+            <EmptyState
+              icon={Compass}
+              character="explorer"
+              title={t(`Κανένα επερχόμενο σχέδιο`, `No upcoming plans`)}
+              description={t('Βρες μια βραδιά στο Discover.', 'Find a night on Discover.')}
+              actionLabel={t(`Ανακάλυψη`, `Discover`)}
+              onAction={() => navigate('/')}
+              askAi
+              askPrompt={t(
+                'Βρες μου κάτι για αυτό το Σαββατοκύριακο με ανοιχτές θέσεις.',
+                'Find me something this weekend with open spots.',
+              )}
+              className="py-8"
+            />
+          </div>
         )}
       </div>
       )}
 
       {activeTab === 'pending' && (
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {pendingEvents.map(event => {
-          const group = getPendingGroupForEvent(event.id, groups);
+          const group =
+            getPendingGroupForEvent(event.id, groups) ??
+            groups.find(
+              (g) =>
+                g.eventId === event.id &&
+                Boolean(currentUser) &&
+                (g.waitlist?.includes(currentUser!.id) || g.pendingMembers?.includes(currentUser!.id)),
+            );
           const needed = group ? Math.max(0, group.targetSize - group.members.length) : 0;
 
           return (
-          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 opacity-80 hover:opacity-100 transition-all duration-200 flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative grayscale">
-              <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+          <Card key={event.id} className="!rounded-2xl p-0 overflow-hidden opacity-80 hover:opacity-100 transition-all duration-200 flex h-full flex-col">
+            <div className="relative h-48 w-full shrink-0 bg-gray-100 overflow-hidden grayscale">
+              <EventCoverImg event={event} alt={event.title} className="w-full h-full object-cover" />
               <div className="absolute top-2 left-2 bg-gray-800/90 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
                 {t(`Εκκρεμής Ομάδα`, `Pending Group`)}
               </div>
             </div>
 
-            <div className="flex-1 flex flex-col">
-              <div className="flex justify-between items-start gap-2 mb-2">
+            <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
+              <div className="flex justify-between items-start gap-2">
                 <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
-                  <div className={cn(PLANS_TYPO.cardDate, p.head)}>{format(parseISO(event.date), shortDayMonthPattern(language), { locale: dateLocale })}</div>
+                  <div className={cn(PLANS_TYPO.cardDate, p.head)}>{formatPlanWhen(event.date, event.time, language)}</div>
                 </div>
               </div>
 
-              <p className={cn('card-copy-sm font-medium mb-4', p.sub)}>
+              <p className={cn('card-copy-sm font-medium', p.sub)}>
                 {needed === 1
                   ? t(
                       'Εκδηλώσατε ενδιαφέρον. Αναμονή για 1 ακόμα άτομο για να επιβεβαιωθεί η ομάδα.',
@@ -350,6 +340,15 @@ export default function PlansPageContent() {
               </p>
 
               <div className={cn('mt-auto pt-4 border-t flex gap-2', p.borderT)}>
+                {group && (
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/night/${group.id}`)}
+                    className={cn(secondaryBtn, 'flex items-center justify-center gap-1.5')}
+                  >
+                    <PartyPopper className="h-4 w-4" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
+                  </button>
+                )}
                 <button onClick={() => navigate(`/events/${event.id}`)} className={secondaryBtn}>
                   {t(`Κατάσταση`, `View Status`)}
                 </button>
@@ -360,34 +359,44 @@ export default function PlansPageContent() {
         })}
 
         {pendingEvents.length === 0 && (
-          <EmptyTab
-            icon={Clock}
-            title={t('Καμία εκκρεμής ομάδα.', 'No pending groups.')}
-            hint={t('Όταν εκδηλώσετε ενδιαφέρον για μια εκδήλωση, θα εμφανιστεί εδώ μέχρι να επιβεβαιωθεί η ομάδα.', 'When you express interest in an event, it appears here until the group is confirmed.')}
-            ctaLabel={t('Ανακάλυψη', 'Discover')}
-            onCta={() => navigate('/')}
-            p={p}
-          />
+          <div className="col-span-full">
+            <EmptyState
+              icon={Clock}
+              title={t('Καμία εκκρεμής ομάδα', 'No pending groups')}
+              description={t('Όταν δηλώσεις ενδιαφέρον, θα εμφανιστεί εδώ.', 'When you express interest, it shows up here.')}
+              actionLabel={t('Ανακάλυψη', 'Discover')}
+              onAction={() => navigate('/')}
+              askAi
+              askPrompt={t(
+                'Δείξε μου ομάδες που σχηματίζονται κοντά μου.',
+                'Show me groups forming near me.',
+              )}
+              className="py-8"
+            />
+          </div>
         )}
       </div>
       )}
 
       {activeTab === 'past' && (
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {needsRating > 0 && (
-          <div className={cn('text-xs font-semibold flex items-center gap-1.5', p.muted)}>
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+          <div className={cn('col-span-full text-xs font-semibold flex items-center gap-1.5', p.muted)}>
+            <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
             {t(`${needsRating} εκδηλώσεις περιμένουν την αξιολόγησή σας`, `${needsRating} event(s) awaiting your feedback`)}
           </div>
         )}
         {pastEvents.map((event) => (
-          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 flex flex-col">
-              <div className={cn('flex items-center gap-2 mb-1.5 text-xs font-bold', p.muted)}>
+          <Card key={event.id} className="!rounded-2xl p-0 overflow-hidden flex h-full flex-col">
+            <div className="relative h-48 w-full shrink-0 bg-gray-100 overflow-hidden">
+              <EventCoverImg event={event} alt={event.title} className="w-full h-full object-cover" />
+            </div>
+            <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
+              <div className={cn('flex items-center gap-2 text-xs font-bold', p.muted)}>
                 <Calendar className="w-3.5 h-3.5" />
-                {format(parseISO(event.date), 'PPP', { locale: dateLocale })}
+                {formatPlanWhen(event.date, event.time, language)}
               </div>
-              <h3 className={cn(PLANS_TYPO.cardTitle, 'mb-3', p.head)}>{event.title}</h3>
+              <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>{event.title}</h3>
 
               {!feedbackSubmitted[event.id] ? (
                 <div className={cn('p-3 rounded-2xl flex items-center justify-between mt-auto border', p.statBg)}>
@@ -406,14 +415,17 @@ export default function PlansPageContent() {
         ))}
 
         {pastEvents.length === 0 && (
-          <EmptyTab
-            icon={CalendarCheck}
-            title={t('Κανένα ολοκληρωμένο σχέδιο ακόμα.', 'No completed plans yet.')}
-            hint={t('Οι εκδηλώσεις που παρακολουθήσατε θα εμφανίζονται εδώ για αξιολόγηση και ιστορικό.', 'Events you attend will appear here for ratings and history.')}
-            ctaLabel={t('Εξερεύνηση', 'Explore')}
-            onCta={() => navigate('/')}
-            p={p}
-          />
+          <div className="col-span-full">
+            <EmptyState
+              icon={CalendarCheck}
+              title={t('Κανένα ολοκληρωμένο σχέδιο', 'No completed plans yet')}
+              description={t('Όσα παρακολουθήσεις θα μείνουν εδώ.', 'Nights you attend will stay here.')}
+              actionLabel={t('Ανακάλυψη', 'Discover')}
+              onAction={() => navigate('/')}
+              askAi
+              className="py-8"
+            />
+          </div>
         )}
       </div>
       )}
@@ -425,27 +437,43 @@ export default function PlansPageContent() {
         title={t('Αποχώρηση από ομάδα', 'Leave Group')}
         size="sm"
       >
-        <p className="text-xs font-medium mb-4 text-ink-muted">
+        <p className="text-xs font-medium mb-2 text-ink-muted">
           {t('Είστε σίγουροι ότι θέλετε να αποχωρήσετε; Μπορεί να μην μπορέσετε να ξαναμπείτε.', 'Are you sure you want to leave? You might not be able to rejoin.')}
         </p>
+        {leaveNote && <p className="text-xs font-bold mb-4 text-ink">{t(leaveNote.el, leaveNote.en)}</p>}
         <div className="flex flex-col gap-2.5">
           <button
             type="button"
             data-autofocus
             onClick={() => {
-              const group = groups.find(g => g.eventId === showLeaveConfirm);
-              if (group) leaveGroup(group.id);
-              toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'));
+              // The group *I* am in for this event (not just the first group of the event).
+              const group = getUserGroupForEvent(showLeaveConfirm ?? '', groups, currentUser?.id);
+              const gid = group?.id;
+              const handsOver = Boolean(group?.waitlist?.length);
+              if (gid) leaveGroup(gid);
+              toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'), {
+                action: handsOver
+                  ? {
+                      label: t('Βρες Nakamas', 'Find Nakamas'),
+                      onClick: () => navigate('/buddy-seek'),
+                    }
+                  : {
+                      label: t('Αναίρεση', 'Undo'),
+                      onClick: () => {
+                        if (gid) joinGroup(gid);
+                      },
+                    },
+              });
               setShowLeaveConfirm(null);
             }}
-            className="w-full px-4 py-3 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-2xl transition-all duration-200 shadow-soft"
+            className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-full transition-all duration-200 shadow-soft"
           >
             {t('Ναι, Αποχώρηση', 'Yes, Leave')}
           </button>
           <button
             type="button"
             onClick={() => setShowLeaveConfirm(null)}
-            className={cn('w-full px-4 py-3 text-xs font-bold rounded-2xl transition-all duration-200 border', secondaryBtn)}
+            className={cn('w-full px-4 py-2 min-h-9 text-xs font-bold rounded-full transition-all duration-200 border', secondaryBtn)}
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
@@ -455,31 +483,3 @@ export default function PlansPageContent() {
   );
 }
 
-function EmptyTab({
-  icon: Icon,
-  title,
-  hint,
-  ctaLabel,
-  onCta,
-  p,
-}: {
-  icon: typeof Calendar;
-  title: string;
-  hint: string;
-  ctaLabel?: string;
-  onCta?: () => void;
-  p: ReturnType<typeof usePageContrast>;
-}) {
-  return (
-    <div className={cn('text-center py-4 px-4 rounded-2xl border border-dashed', p.cardSurface, p.borderB)}>
-      <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3', p.statBg)}>
-        <Icon className={cn('w-6 h-6', p.statVal)} />
-      </div>
-      <p className={cn(PLANS_TYPO.cardTitle, p.head)}>{title}</p>
-      <p className={cn(PLANS_TYPO.bannerBody, 'mt-1 max-w-sm mx-auto', p.muted)}>{hint}</p>
-      {ctaLabel && onCta && (
-        <button className={cn('btn-gradient mt-4', PLANS_TYPO.bannerCta)} onClick={onCta}>{ctaLabel}</button>
-      )}
-    </div>
-  );
-}

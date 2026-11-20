@@ -35,6 +35,14 @@ export const routeLoaders = {
   challenges: () => import('../pages/Challenges'),
   onboarding: () => import('../pages/Onboarding'),
   buddySeek: () => import('../pages/BuddySeek'),
+  wall: () => import('../pages/Wall'),
+  personProfile: () => import('../pages/PersonProfile'),
+  // Φ27 — outings
+  ourNight: () => import('../pages/OurNight'),
+  collections: () => import('../pages/Collections'),
+  tags: () => import('../pages/Tags'),
+  invitePublic: () => import('../pages/InvitePublic'),
+  organizerEmbed: () => import('../pages/OrganizerEmbed'),
 } as const;
 
 export type RouteKey = keyof typeof routeLoaders;
@@ -69,6 +77,13 @@ const PATH_KEYS: Array<[RegExp, RouteKey]> = [
   [/^\/settings$/, 'settingsAndPrivacy'],
   [/^\/help$/, 'helpCenter'],
   [/^\/organizer\//, 'organizerProfile'],
+  [/^\/wall$/, 'wall'],
+  [/^\/u\//, 'personProfile'],
+  [/^\/night\//, 'ourNight'],
+  [/^\/collections(\/|$)/, 'collections'],
+  [/^\/tags(\/|$)/, 'tags'],
+  [/^\/i\//, 'invitePublic'],
+  [/^\/embed\/organizer\//, 'organizerEmbed'],
   [/^\/admin$/, 'adminDashboard'],
   [/^\/onboarding$/, 'onboarding'],
   [/^\/login$/, 'login'],

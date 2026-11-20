@@ -24,7 +24,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
   const [open, setOpen] = useState(false);
 
   const applyTheme = (id: ThemeId) => {
-    applyThemeSelection(id, setTheme, language === 'el' ? 'el' : 'en', theme);
+    applyThemeSelection(id, setTheme, theme);
   };
   const anchorRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -97,7 +97,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
               >
                 <p
                   className={cn(
-                    'px-3 py-2 text-2xs font-bold uppercase tracking-wider',
+                    'px-3 py-2 text-2xs font-bold tracking-wider',
                     tok.muted,
                   )}
                 >
@@ -114,7 +114,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
                       setOpen(false);
                     }}
                     className={cn(
-                      'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium min-h-11 transition-colors',
+                      'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left text-sm font-medium min-h-8 transition-colors',
                       theme === id
                         ? tok.navActive
                         : cn(
@@ -147,7 +147,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
           type="button"
           onClick={() => setOpen((v) => !v)}
           className={cn(
-            'flex items-center gap-1.5 text-xs font-bold transition-colors px-2.5 py-2 rounded-lg min-h-11',
+            'flex items-center gap-1.5 text-xs font-bold transition-colors px-2.5 py-2 rounded-lg min-h-8',
             tok.chipButton,
             open && (tok.isDark ? 'ring-2 ring-white/30' : 'ring-2 ring-accent/40'),
           )}
@@ -177,7 +177,7 @@ export function ThemePicker({ variant = 'grid' }: ThemePickerProps) {
           onClick={() => applyTheme(id)}
           aria-pressed={theme === id}
           className={cn(
-            'flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all min-h-10',
+            'flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all min-h-8',
             theme === id
               ? cn(
                   'ring-2',

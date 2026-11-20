@@ -76,6 +76,7 @@ export function buildCsp(env: CspEnv, opts: { reportUri?: string } = {}): string
       'https://*.firebaseapp.com',
       'https://accounts.google.com',
       'https://app.ticketmaster.com',
+      'https://api.open-meteo.com',
       ...extraConnect,
     ],
     'frame-src': ['https://accounts.google.com', 'https://*.firebaseapp.com', ...(authOrigin ? [authOrigin] : [])],

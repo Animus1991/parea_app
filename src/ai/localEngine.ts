@@ -37,7 +37,8 @@ export interface LocalEngineContext {
 export const UNDO_CALL = '__undo';
 
 const NAV_VERBS = ['πηγαινε', 'παμε', 'ανοιξε', 'δειξε μου', 'δειξε', 'μεταβαση', 'μετεφερε', 'go to', 'open', 'show me', 'show', 'take me', 'navigate'];
-const SEARCH_VERBS = ['βρεσ', 'ψαξε', 'ψαχνω', 'αναζητ', 'θελω', 'υπαρχει', 'υπαρχουν', 'εχει κατι', 'find', 'search', 'look for', 'looking for', 'any ', 'is there', 'are there'];
+// Note: bare «θέλω» is too greedy (joins / prefs / mark-all). Prefer intent phrases.
+const SEARCH_VERBS = ['βρεσ', 'ψαξε', 'ψαχνω', 'αναζητ', 'θελω να βρω', 'θελω εκδηλωσ', 'υπαρχει', 'υπαρχουν', 'εχει κατι', 'find', 'search', 'look for', 'looking for', 'any ', 'is there', 'are there'];
 const FILLER = new Set([
   'το', 'τη', 'την', 'τον', 'τα', 'τισ', 'του', 'τησ', 'στο', 'στη', 'στην', 'στα', 'μου', 'σου', 'για', 'και', 'να', 'με', 'σε', 'απο', 'μια', 'ενα', 'αυτο', 'αυτη', 'εκδηλωση', 'εκδηλωσεισ', 'παρακαλω',
   'τι', 'κανω', 'κανουμε', 'παω', 'παμε', 'βγω', 'βγουμε', 'θα', 'μπορω', 'ηθελα', 'κατι', 'ωραιο', 'καλο',
@@ -100,12 +101,41 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
     return reply('Με χαρά! Ό,τι άλλο χρειαστείς, εδώ είμαι.', "You're welcome! I'm here if you need anything else.");
   }
 
-  /* 1b ─ catch me up («τι νέο;», «τι έχασα;») */
+  /* 1b ─ catch me up («τι νέο;», «τι έχασα;») — wall / notifications have their own paths */
   if (
     hasAny(p, ['τι νεο', 'τι νεα', 'τι εχασα', 'ενημερωσε με', 'ενημερωση για μενα', 'whats new', 'what s new', 'what is new', 'what did i miss', 'catch me up', 'any news']) &&
-    !hasAny(p, ['ειδοποιησ', 'notification'])
+    !hasAny(p, ['ειδοποιησ', 'notification', 'τοιχο', ' wall'])
   ) {
     return { calls: [call('whats_new')] };
+  }
+
+  /* 1b1 ─ wall: post («δημοσίευσε στον τοίχο μου μόνο για φίλους «…»») / limit past posts */
+  if (
+    hasAny(p, ['τι κανουν οι φιλοι', 'τι κανουν οι nakamas', 'τι νεα στον τοιχο', 'τι γραφουν οι', 'what are my friends', 'what are my nakamas', 'whats on the wall', 'what s on the wall', 'summarize the wall', 'συνοψη τοιχου'])
+  ) {
+    return { calls: [call('summarize_wall')] };
+  }
+  if (hasAny(p, ['περιορισε τισ παλιεσ', 'περιορισε τισ παλαιοτερεσ', 'περιορισμοσ παλαιοτερ', 'limit past posts', 'limit old posts', 'limit my old posts'])) {
+    return { calls: [call('limit_past_posts')] };
+  }
+  const wallWords = hasAny(p, ['τοιχο', ' wall', 'ποσταρε', ' post this', ' post that']);
+  // «δημοσίευσε εκδήλωση …» stays with event creation (rule 6).
+  const eventish = hasAny(p, ['εκδηλωσ', 'event', 'meetup', 'συναντησ']);
+  // «κλείσε τις ειδοποιήσεις τοίχου» belongs to notification preferences (rule 16).
+  const aboutNotifications = hasAny(p, ['ειδοποιησ', 'notification']);
+  if (!aboutNotifications && (wallWords || (hasAny(p, ['δημοσιευσε']) && !eventish))) {
+    const text = extractQuotedOrTail(raw);
+    const audience = hasAny(p, ['μονο εγω', 'μονο για μενα', 'only me', 'just me'])
+      ? 'only_me'
+      : hasAny(p, ['nakamas των nakamas', 'φιλων φιλ', 'friends of friends'])
+        ? 'friends_of_friends'
+        : hasAny(p, ['δημοσια', 'δημοσιο ', 'ολο το δικτυο', 'σε ολουσ', 'publicly', ' public', 'everyone'])
+          ? 'public'
+          : hasAny(p, ['φιλουσ', 'φιλοι', 'nakamas μου', 'συνδεσεισ', 'friends', 'connections', 'my nakamas'])
+            ? 'connections'
+            : undefined;
+    if (text) return { calls: [call('post_to_wall', { text, ...(audience ? { audience } : {}) })] };
+    return { calls: [call('navigate', { page: 'wall' })] };
   }
 
   /* 1b2 ─ where do I …? */
@@ -166,6 +196,65 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
   if (hasAny(p, ['αιτημα παρεασ', 'company join', 'join request']) && hasAny(p, ['αποδεξ', 'δεξου', 'accept', 'απορριψ', 'decline', 'reject'])) {
     const accept = !hasAny(p, ['απορριψ', 'decline', 'reject']);
     return { calls: [call('respond_company_join', { accept })] };
+  }
+
+  /* 1d ─ outings (Φ27): our night, small outings, collections, standing, invites */
+  if (
+    hasAny(p, ['βραδια μασ', 'our night', 'my night', 'κωδικοσ ομαδασ', 'group code', 'εισιτηριο πορτασ', 'door ticket', ' check-in', ' check in ', 'τσεκ ιν']) &&
+    !hasAny(p, [' φτιαξε', ' δημιουργησ', ' δημοσιευσ', ' create', ' publish', 'καλεσε', 'invite'])
+  ) {
+    const ref = eventRef(n, ['δειξε', 'ανοιξε', 'η', 'βραδια', 'μασ', 'our', 'night', 'my', 'κωδικοσ', 'ομαδασ', 'group', 'code', 'εισιτηριο', 'πορτασ', 'door', 'ticket', 'check-in', 'check', 'in', 'τσεκ', 'ιν', 'για']);
+    return { calls: [call('show_my_night', typeof ref === 'string' && ref !== THIS_EVENT ? { event: ref } : {})] };
+  }
+  const miniKind = hasAny(p, ['καφε', 'coffee']) ? 'coffee'
+    : hasAny(p, ['τρεξιμο', 'τρεξουμε', ' run ', 'jog']) ? 'run'
+    : hasAny(p, ['βολτα', 'περπατημα', ' walk']) ? 'walk'
+    : hasAny(p, ['ενα ποτο', 'για ποτο', 'a drink', 'drinks']) ? 'drink'
+    : null;
+  if (
+    miniKind &&
+    hasAny(p, [' φτιαξε', ' οργανωσ', ' στησε', ' κανονισε', ' ξεκινα', ' create', ' organi', ' set up', ' start', ' host ', 'μικρη εξοδο', 'small outing']) &&
+    !hasAny(p, ['εκδηλωσ', ' event'])
+  ) {
+    const range = extractDateRange(n, ctx.now);
+    const time = extractTime(n);
+    const area = extractArea(n, ctx.areas);
+    const size = n.match(/(\d)\s*(?:ατομα|ατομων|people|persons)/);
+    const args: Record<string, unknown> = { kind: miniKind };
+    if (range) args.date = range.from.slice(0, 10);
+    if (time) args.time = time;
+    if (area) args.area = area;
+    if (size) args.size = Number(size[1]);
+    if (hasAny(p, ['γυναικ', 'μη δυαδικ', 'women', 'non-binary', 'non binary'])) args.womenNb = true;
+    const missing = !args.date || !args.time || !args.area;
+    if (missing) {
+      return reply(
+        'Πες μου πότε, τι ώρα και σε ποια περιοχή — π.χ. «φτιάξε καφέ αύριο 11:00 στο Κουκάκι για 3 άτομα».',
+        'Tell me when, what time and which area — e.g. "set up a coffee tomorrow 11:00 in Koukaki for 3 people".',
+      );
+    }
+    return { calls: [call('create_mini_outing', args)] };
+  }
+  if (hasAny(p, ['μικρεσ εξοδουσ', 'μικρη εξοδο', 'small outings', 'small outing'])) {
+    return { calls: [call('navigate', { page: 'buddy-seek' })] };
+  }
+  const collection = hasAny(p, ['nakamas nights']) ? 'nakamas-nights'
+    : hasAny(p, ['πρωτη φορα μονοσ', 'πρωτη φορα μονη', 'first time solo']) ? 'first-time-solo'
+    : hasAny(p, ['ησυχεσ βραδιεσ', 'quiet nights']) ? 'quiet-nights'
+    : hasAny(p, ['εξω στη φυση']) ? 'outdoors'
+    : null;
+  if (collection || hasAny(p, ['συλλογ', 'collections'])) {
+    return { calls: [call('open_collection', collection ? { collection } : {})] };
+  }
+  if (
+    hasAny(p, ['ενσταση', 'ενστασ', 'appeal', 'παυση', 'απουσιεσ μου', 'απουσια μου', 'my strikes', 'my standing', 'καταγραφηκε απουσια']) &&
+    !hasAny(p, ['ειδοποιησ', 'notification'])
+  ) {
+    return { calls: [call('summarize_standing')] };
+  }
+  if (hasAny(p, ['καλεσε φιλουσ', 'καλεσω φιλουσ', 'προσκληση για φιλ', 'link προσκλησ', 'συνδεσμο προσκλησ', 'invite friends', 'invite link', 'invite my friends'])) {
+    const ref = eventRef(n, ['καλεσε', 'καλεσω', 'φιλουσ', 'προσκληση', 'για', 'link', 'συνδεσμο', 'invite', 'friends', 'my', 'στο', 'στη', 'στην']);
+    return { calls: [call('invite_friends', typeof ref === 'string' && ref !== THIS_EVENT ? { event: ref } : {})] };
   }
 
   /* 2 ─ undo */
@@ -285,8 +374,8 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
   }
 
   /* 12 ─ join a group */
-  if (hasAny(p, [' μπεσ ', ' μπω ', 'ενταξ', 'συμμετεχ', 'γραψε με', 'κλεισε θεση', ' join', ' book ', 'θελω να παω'])) {
-    const ref = eventRef(n, ['μπεσ', 'μπω', 'ενταξη', 'ενταξου', 'συμμετεχω', 'συμμετοχη', 'γραψε με', 'κλεισε θεση', 'join', 'book', 'θελω να παω', 'σε', 'ομαδα', 'group']);
+  if (hasAny(p, [' μπεσ ', ' μπω ', 'ενταξ', 'συμμετεχ', 'γραψε με', 'κλεισε θεση', ' join', ' book ', 'θελω να παω', 'θελω να μπω'])) {
+    const ref = eventRef(n, ['μπεσ', 'μπω', 'ενταξη', 'ενταξου', 'συμμετεχω', 'συμμετοχη', 'γραψε με', 'κλεισε θεση', 'join', 'book', 'θελω να παω', 'θελω να μπω', 'θελω', 'σε', 'ομαδα', 'group', 'για', 'αυτη', 'αυτο']);
     if (ref !== null) return { calls: [call('start_join_flow', { event: refArg(ref) })] };
   }
 
@@ -326,10 +415,20 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
   }
   if (Object.keys(privacy).length > 0) return { calls: [call('update_privacy', privacy)] };
 
+  /* 16a ─ mark all notifications read — require notif/inbox stem or an exact idiom */
+  if (
+    hasAny(p, ['σημειωσε ολεσ', 'ολεσ ωσ αναγνωσμεν', 'mark all as read', 'mark all read', 'mark notifications read']) ||
+    (hasAny(p, ['αναγνωσμεν', 'διαβασμεν']) &&
+      hasAny(p, ['ολεσ', 'οεσ', 'all ']) &&
+      hasAny(p, ['ειδοποιησ', 'notification', 'inbox', 'καμπαν', 'bell']))
+  ) {
+    return { calls: [call('mark_notifications_read')] };
+  }
+
   /* 16 ─ notification preferences */
   if (hasAny(p, ['ειδοποιησ', 'notification', 'προωθητ', 'promo', 'υπενθυμ', 'reminder'])) {
     const off = hasAny(p, ['σταματ', 'κλεισ', 'απενεργ', 'turn off', 'disable', 'no more', 'mute', 'δεν θελω']);
-    const on = hasAny(p, ['ενεργοπ', 'ανοιξ', 'turn on', 'enable', 'θελω']);
+    const on = hasAny(p, ['ενεργοπ', 'ανοιξ', 'turn on', 'enable', 'θελω να', 'θελω ']);
     if (off || on) {
       const v = !off;
       const prefs: Record<string, boolean> = {};
@@ -337,6 +436,7 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
       if (hasAny(p, ['υπενθυμ', 'reminder'])) prefs.reminders = v;
       if (hasAny(p, ['ταιριασ', 'match'])) prefs.matches = v;
       if (hasAny(p, ['μηνυματ', 'message', 'chat'])) prefs.messages = v;
+      if (hasAny(p, ['τοιχο', 'wall', 'σχολι', 'comment', 'ετικετ', 'tag', 'αντιδρασ', 'reaction'])) prefs.social = v;
       if (Object.keys(prefs).length > 0) return { calls: [call('update_notification_prefs', prefs)] };
     }
     if (hasAny(p, ['αναγνωσμεν', 'διαβασμεν', 'διαβασα', ' read', 'καθαρισ', 'clear'])) return { calls: [call('mark_notifications_read')] };

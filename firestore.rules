@@ -18,7 +18,8 @@ service cloud.firestore {
         && (!('shareLocation' in p) || p.shareLocation is bool)
         && (!('revealPhoto' in p) || p.revealPhoto is bool)
         && (!('allowMutualPing' in p) || p.allowMutualPing is bool)
-        && (!('allowOrganizerMsg' in p) || p.allowOrganizerMsg is bool);
+        && (!('allowOrganizerMsg' in p) || p.allowOrganizerMsg is bool)
+        && (!('profileAudience' in p) || validAudience(p.profileAudience, allBases()));
     }
 
     function validProfile(data) {
@@ -73,6 +74,339 @@ service cloud.firestore {
     match /chatRooms/{roomId} {
       allow read: if signedIn() && exists(roomPath(roomId)) && request.auth.uid in resource.data.memberIds;
       allow write: if false;
+    }
+
+    // ───────────────────────── Wall & audiences (Φ26) ─────────────────────────
+    // Mirrors src/lib/audience.ts. The social graph is written only by a trusted
+    // backend (mutual connections + block lists), so a client can never make
+    // itself someone's connection to read their posts. Feed listing is served
+    // by a backend fan-out; these rules guard every single-document read/write.
+
+    function graphPath(uid) {
+      return /databases/$(database)/documents/socialGraph/$(uid);
+    }
+
+    function connsOf(uid) {
+      return exists(graphPath(uid)) ? get(graphPath(uid)).data.get('connections', []) : [];
+    }
+
+    function blocksOf(uid) {
+      return exists(graphPath(uid)) ? get(graphPath(uid)).data.get('blocked', []) : [];
+    }
+
+    function isConnected(a, b) {
+      return a != b && b in connsOf(a);
+    }
+
+    function blockedEither(a, b) {
+      return b in blocksOf(a) || a in blocksOf(b);
+    }
+
+    function listAllows(ownerId, listId, uid) {
+      let path = /databases/$(database)/documents/audienceLists/$(listId);
+      return listId != '' && exists(path)
+        && get(path).data.ownerId == ownerId
+        && uid in get(path).data.memberIds
+        && isConnected(ownerId, uid);
+    }
+
+    // `reachIds` is the author's own snapshot of friends-of-friends at write time
+    // (rules cannot walk the graph); the author may share their post with anyone.
+    function audienceAllows(ownerId, a, uid) {
+      return uid == ownerId || (
+        (a.base == 'specific' || !(uid in a.get('excludeIds', [])))
+        && (
+          a.base == 'public'
+          || (a.base == 'connections' && isConnected(ownerId, uid))
+          || (a.base == 'friends_of_friends' && (isConnected(ownerId, uid) || uid in a.get('reachIds', [])))
+          || (a.base == 'specific' && uid in a.get('includeIds', []) && isConnected(ownerId, uid))
+          || (a.base == 'list' && listAllows(ownerId, a.get('listId', ''), uid))
+        )
+      );
+    }
+
+    function validAudience(a, bases) {
+      return a is map
+        && a.keys().hasOnly(['base', 'includeIds', 'excludeIds', 'listId', 'reachIds'])
+        && a.base in bases
+        && (!('includeIds' in a) || (a.includeIds is list && a.includeIds.size() <= 500))
+        && (!('excludeIds' in a) || (a.excludeIds is list && a.excludeIds.size() <= 500))
+        && (!('reachIds' in a) || (a.reachIds is list && a.reachIds.size() <= 2000))
+        && (!('listId' in a) || (a.listId is string && a.listId.size() <= 128));
+    }
+
+    function allBases() {
+      return ['public', 'connections', 'friends_of_friends', 'specific', 'list', 'only_me'];
+    }
+
+    function settingsPath(uid) {
+      return /databases/$(database)/documents/wallSettings/$(uid);
+    }
+
+    function wallSetting(uid, key) {
+      return exists(settingsPath(uid))
+        ? get(settingsPath(uid)).data.get(key, {'base': 'connections'})
+        : {'base': 'connections'};
+    }
+
+    // Moderators come from signed custom claims (npm run set-role), never from profile data.
+    function isModerator() {
+      return signedIn() && request.auth.token.get('role', '') in ['moderator', 'admin'];
+    }
+
+    function canReadPost(p) {
+      let uid = request.auth.uid;
+      return signedIn() && (
+        uid == p.authorId
+        || isModerator()
+        // Removed by moderation: only the author (above) and moderators.
+        || (!('moderation' in p) && !blockedEither(uid, p.authorId) && (
+          // Tagged people always see what they are tagged in.
+          uid in p.get('taggedIds', [])
+          ||
+          (p.wallOwnerId == p.authorId
+            ? audienceAllows(p.authorId, p.audience, uid)
+            : (uid == p.wallOwnerId
+              || (!blockedEither(uid, p.wallOwnerId)
+                && audienceAllows(p.wallOwnerId, wallSetting(p.wallOwnerId, 'othersPostsAudience'), uid))))
+        ))
+      );
+    }
+
+    function wallAccepts(ownerId, uid) {
+      let a = wallSetting(ownerId, 'whoCanPost');
+      return uid == ownerId || (
+        a.base != 'only_me' && a.base != 'public'
+        && !blockedEither(uid, ownerId)
+        && audienceAllows(ownerId, a, uid)
+      );
+    }
+
+    function validPostData(d) {
+      return d.keys().hasOnly(['authorId', 'wallOwnerId', 'text', 'imageUrl', 'eventId', 'audience', 'createdAt', 'editedAt', 'pinned', 'commentsDisabled', 'taggedIds', 'tagApprovedIds', 'moderation'])
+        && (!('taggedIds' in d) || (d.taggedIds is list && d.taggedIds.size() <= 20))
+        && (!('tagApprovedIds' in d) || (d.tagApprovedIds is list && d.get('taggedIds', []).hasAll(d.tagApprovedIds)))
+        && (!('moderation' in d) || (d.moderation is map && d.moderation.status == 'removed'))
+        && d.authorId is string && d.wallOwnerId is string
+        && d.text is string && d.text.size() <= 2000
+        && validAudience(d.audience, allBases())
+        && (!('imageUrl' in d) || (d.imageUrl is string && d.imageUrl.size() <= 2048 && d.imageUrl.matches('https://.*')))
+        && (!('eventId' in d) || (d.eventId is string && d.eventId.size() <= 128))
+        && (!('pinned' in d) || d.pinned is bool)
+        && (!('commentsDisabled' in d) || d.commentsDisabled is bool);
+    }
+
+    function postPath(postId) {
+      return /databases/$(database)/documents/wallPosts/$(postId);
+    }
+
+    // Only the backend-maintained graph decides connections & blocks.
+    match /socialGraph/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Wall settings stay private to their owner (they can name people); rules read them via get().
+    match /wallSettings/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['defaultAudience', 'whoCanPost', 'othersPostsAudience', 'whoCanComment', 'sections'])
+        && (!('defaultAudience' in request.resource.data) || validAudience(request.resource.data.defaultAudience, allBases()))
+        && (!('whoCanPost' in request.resource.data) || validAudience(request.resource.data.whoCanPost, ['connections', 'specific', 'list', 'only_me']))
+        && (!('othersPostsAudience' in request.resource.data) || validAudience(request.resource.data.othersPostsAudience, allBases()))
+        && (!('whoCanComment' in request.resource.data) || validAudience(request.resource.data.whoCanComment, ['public', 'friends_of_friends', 'connections']))
+        && (!('sections' in request.resource.data) || request.resource.data.sections is map);
+      allow delete: if signedIn() && request.auth.uid == uid;
+    }
+
+    // Custom audience lists («Κοντινοί φίλοι»): private to their owner.
+    match /audienceLists/{listId} {
+      allow read, delete: if signedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.keys().hasOnly(['ownerId', 'name', 'memberIds', 'createdAt'])
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 40
+        && request.resource.data.memberIds is list && request.resource.data.memberIds.size() <= 500;
+      allow update: if signedIn() && resource.data.ownerId == request.auth.uid
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.keys().hasOnly(['ownerId', 'name', 'memberIds', 'createdAt'])
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 40
+        && request.resource.data.memberIds is list && request.resource.data.memberIds.size() <= 500;
+    }
+
+    match /wallPosts/{postId} {
+      allow read: if canReadPost(resource.data);
+
+      allow create: if signedIn()
+        && request.resource.data.authorId == request.auth.uid
+        && validPostData(request.resource.data)
+        && request.resource.data.createdAt == request.time
+        && !('editedAt' in request.resource.data)
+        && !('pinned' in request.resource.data)
+        && !('moderation' in request.resource.data)
+        && !('tagApprovedIds' in request.resource.data)
+        // Only your own connections can be tagged.
+        && connsOf(request.auth.uid).hasAll(request.resource.data.get('taggedIds', []))
+        && (request.resource.data.wallOwnerId == request.auth.uid
+          || wallAccepts(request.resource.data.wallOwnerId, request.auth.uid));
+
+      // Author: text / audience / tags / comments switch. Wall owner: pin / comments switch.
+      // Tagged person: remove or approve their own tag. Moderator: remove / restore.
+      allow update: if signedIn() && validPostData(request.resource.data)
+        && request.resource.data.authorId == resource.data.authorId
+        && request.resource.data.wallOwnerId == resource.data.wallOwnerId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (
+          (request.auth.uid == resource.data.authorId
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'audience', 'editedAt', 'commentsDisabled', 'imageUrl', 'eventId', 'taggedIds', 'tagApprovedIds'])
+            && connsOf(request.auth.uid).hasAll(request.resource.data.get('taggedIds', []))
+            // Posts on someone else's wall keep the owner's audience.
+            && (resource.data.wallOwnerId == resource.data.authorId || !('audience' in request.resource.data.diff(resource.data).affectedKeys())))
+          || (request.auth.uid == resource.data.wallOwnerId
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pinned', 'commentsDisabled']))
+          || (request.auth.uid in resource.data.get('taggedIds', [])
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['taggedIds', 'tagApprovedIds'])
+            && (
+              // remove my tag
+              (request.resource.data.get('taggedIds', []) == resource.data.get('taggedIds', []).removeAll([request.auth.uid])
+                && request.resource.data.get('tagApprovedIds', []) == resource.data.get('tagApprovedIds', []).removeAll([request.auth.uid]))
+              // approve my tag
+              || (request.resource.data.get('taggedIds', []) == resource.data.get('taggedIds', [])
+                && request.resource.data.get('tagApprovedIds', []).toSet() == resource.data.get('tagApprovedIds', []).toSet().union([request.auth.uid].toSet()))
+            ))
+          || (isModerator()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['moderation', 'pinned']))
+        );
+
+      allow delete: if signedIn()
+        && (request.auth.uid == resource.data.authorId || request.auth.uid == resource.data.wallOwnerId);
+
+      match /comments/{commentId} {
+        allow read: if canReadPost(get(postPath(postId)).data);
+        allow create: if signedIn()
+          && canReadPost(get(postPath(postId)).data)
+          && !get(postPath(postId)).data.get('commentsDisabled', false)
+          && request.resource.data.keys().hasOnly(['authorId', 'text', 'createdAt'])
+          && request.resource.data.authorId == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 1000
+          && request.resource.data.createdAt == request.time
+          && (request.auth.uid == get(postPath(postId)).data.authorId
+            || request.auth.uid == get(postPath(postId)).data.wallOwnerId
+            || audienceAllows(get(postPath(postId)).data.authorId,
+                 wallSetting(get(postPath(postId)).data.authorId, 'whoCanComment'), request.auth.uid));
+        allow update: if false;
+        allow delete: if signedIn() && (
+          request.auth.uid == resource.data.authorId
+          || request.auth.uid == get(postPath(postId)).data.authorId
+          || request.auth.uid == get(postPath(postId)).data.wallOwnerId
+        );
+      }
+
+      // One reaction per person: the document id is the reacting user's uid.
+      match /reactions/{uid} {
+        allow read: if canReadPost(get(postPath(postId)).data);
+        allow create, update: if signedIn() && request.auth.uid == uid
+          && canReadPost(get(postPath(postId)).data)
+          && request.resource.data.keys().hasOnly(['kind'])
+          && request.resource.data.kind in ['like', 'love', 'haha', 'wow', 'cheers'];
+        allow delete: if signedIn() && request.auth.uid == uid;
+      }
+    }
+
+    // ───────────────────────── Group outings (Φ27) ─────────────────────────
+    // Mirrors src/store/outingsSlice.ts. Groups (members, host, waitlist,
+    // seat hand-overs) are written by a trusted backend; clients read the
+    // groups they are in. Strikes are written by the backend; the person
+    // concerned may add one appeal; moderators decide it.
+    function groupPath(groupId) {
+      return /databases/$(database)/documents/groups/$(groupId);
+    }
+
+    function isHostOf(groupId) {
+      return signedIn() && get(groupPath(groupId)).data.hostId == request.auth.uid;
+    }
+
+    function inGroup(groupId) {
+      return signedIn() && request.auth.uid in get(groupPath(groupId)).data.memberIds;
+    }
+
+    match /groups/{groupId} {
+      allow read: if signedIn() && request.auth.uid in resource.data.memberIds;
+      allow write: if false;
+
+      // Door check-in: only the host writes, only for members, only while
+      // check-in is open; the record names who confirmed it. Codes (rotating,
+      // HMAC-signed) are verified by a Cloud Function that writes the same doc.
+      match /checkIns/{uid} {
+        allow read: if inGroup(groupId);
+        allow create: if isHostOf(groupId)
+          && uid in get(groupPath(groupId)).data.memberIds
+          && !('checkInClosedAt' in get(groupPath(groupId)).data)
+          && request.resource.data.keys().hasOnly(['at', 'by', 'method'])
+          && request.resource.data.by == request.auth.uid
+          && request.resource.data.method in ['qr', 'code', 'manual'];
+        // Undo, while still open.
+        allow delete: if isHostOf(groupId) && !('checkInClosedAt' in get(groupPath(groupId)).data);
+        allow update: if false;
+      }
+    }
+
+    // Friend invitations: anyone with the link reads the invite card (no
+    // names in it); answers are write-only for guests and readable only by
+    // the person who sent the invite.
+    function invitePath(inviteId) {
+      return /databases/$(database)/documents/planInvites/$(inviteId);
+    }
+
+    match /planInvites/{inviteId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.hostId == request.auth.uid
+        && inGroup(request.resource.data.groupId)
+        && request.resource.data.keys().hasOnly(['groupId', 'eventId', 'hostId', 'coverId', 'createdAt'])
+        && request.resource.data.coverId is string && request.resource.data.coverId.size() <= 40;
+      allow update: if signedIn() && resource.data.hostId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['coverId'])
+        && request.resource.data.coverId is string && request.resource.data.coverId.size() <= 40;
+      allow delete: if signedIn() && resource.data.hostId == request.auth.uid;
+
+      match /responses/{responseId} {
+        allow read: if signedIn() && get(invitePath(inviteId)).data.hostId == request.auth.uid;
+        allow create: if exists(invitePath(inviteId))
+          && request.resource.data.keys().hasOnly(['name', 'status', 'at'])
+          && request.resource.data.name is string
+          && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 40
+          && request.resource.data.status in ['going', 'maybe', 'no'];
+        allow update, delete: if false;
+      }
+    }
+
+    match /strikes/{strikeId} {
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || isModerator());
+      allow create, delete: if false;
+      // One appeal, by the person concerned, while none exists.
+      allow update: if signedIn()
+        && (
+          (
+            resource.data.userId == request.auth.uid
+            && !('appeal' in resource.data)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['appeal'])
+            && request.resource.data.appeal.keys().hasOnly(['text', 'at', 'status'])
+            && request.resource.data.appeal.status == 'pending'
+            && request.resource.data.appeal.text is string
+            && request.resource.data.appeal.text.size() >= 10
+            && request.resource.data.appeal.text.size() <= 600
+          )
+          || (
+            isModerator()
+            && 'appeal' in resource.data
+            && resource.data.appeal.status == 'pending'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['appeal'])
+            && request.resource.data.appeal.status in ['accepted', 'rejected']
+            && request.resource.data.appeal.text == resource.data.appeal.text
+            && request.resource.data.appeal.decidedBy == request.auth.uid
+          )
+        );
     }
 
     match /{document=**} {

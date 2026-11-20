@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useStore } from '../../store';
@@ -23,7 +23,16 @@ import { EventDetailMetaSection } from './EventDetailMetaSection';
 import { EventDetailQrModal } from './EventDetailQrModal';
 import EventDetailPageContent from './EventDetailPageContent';
 import { LookingForCompanyPanel } from '../buddySeek/LookingForCompanyPanel';
+import { AppSelect } from '../common/AppSelect';
 import { computeMatchScore } from '../../lib/matching';
+import { NakamasGoing } from '../outings/NakamasGoing';
+import { HikeRouteCard } from '../outings/HikeRouteCard';
+import { isDarkTheme } from '../../lib/themes';
+import { cn } from '../../lib/utils';
+import { APP_TYPO } from '../../lib/typographyTokens';
+import { EventCoverImg } from '../common/EventCoverImg';
+
+const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
 interface EventDetailPageBodyProps {
   accent: EventDetailMapAccent;
@@ -40,8 +49,11 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
   const { eventId } = useParams();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const theme = useStore((s) => s.theme);
+  const panelDark = darkSurface || isDarkTheme(theme);
   const [groupSizeFilter, setGroupSizeFilter] = useState<'All' | '3' | '4' | '5' | '6+'>('All');
   const [discountFilter, setDiscountFilter] = useState(false);
+  const [shareWallOpen, setShareWallOpen] = useState(false);
 
   const events = useStore((state) => state.events);
   const groups = useStore((state) => state.groups);
@@ -66,6 +78,14 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
   const totalMembers = eventGroups.reduce((acc, g) => acc + g.members.length, 0);
   const spotsLeftEvent = (event?.maxParticipants || 100) - totalMembers;
+  const myGroupForEvent =
+    currentUser &&
+    groups.find(
+      (g) =>
+        g.eventId === eventId &&
+        g.status !== 'cancelled' &&
+        (g.members.includes(currentUser.id) || g.waitlist?.includes(currentUser.id)),
+    );
 
   if (discountFilter) {
     eventGroups = eventGroups.filter(g => g.discountUnlocked);
@@ -99,8 +119,10 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
     const gate = canJoinEvent(eventId);
     if (!gate.ok) {
       toast.error(t(gate.messageEl, gate.messageEn));
-      const pending = getPendingFeedbackEventId();
-      if (pending) navigate(`/history/feedback/${pending}`);
+      if (gate.reason === 'feedback') {
+        const pending = getPendingFeedbackEventId();
+        if (pending) navigate(`/history/feedback/${pending}`);
+      }
       return;
     }
     navigate(`/events/${eventId}/join`);
@@ -112,7 +134,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="mx-auto max-w-full space-y-5 pb-24 md:pb-5"
+      className="mx-auto max-w-full space-y-4 pb-24 md:pb-5"
     >
       {/* Header */}
       <div className="space-y-4">
@@ -126,11 +148,12 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
           <EventDetailActionBar
             accent={accent}
-            darkSurface={darkSurface}
+            darkSurface={panelDark}
             isSaved={isSaved}
             onSave={handleSave}
             onQr={() => setShowQRCode(true)}
             onShare={handleShare}
+            onShareToWall={() => setShareWallOpen(true)}
             isCopied={isCopied}
             onAddToGoogleCalendar={handleAddToGoogleCalendar}
             onDownloadIcs={handleDownloadIcs}
@@ -139,13 +162,9 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         </div>
 
         <div className="relative w-full h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden shadow-soft-md">
-          <motion.img
-            layoutId={`event-image-${event.id}`}
-            referrerPolicy="no-referrer"
-            src={event.imageUrl || 'https://picsum.photos/seed/eventdefault/800/600'}
-            alt=""
-            className="w-full h-full object-cover"
-          />
+          <motion.div layoutId={`event-image-${event.id}`} className="h-full w-full">
+            <EventCoverImg event={event} className="w-full h-full object-cover" />
+          </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         </div>
 
@@ -172,46 +191,73 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             </Badge>
           )}
         </div>
-        <h1 className="text-sm md:text-base font-extrabold text-ink leading-tight mb-2 md:mb-0">{event.title}</h1>
-        <EventDetailPageContent event={event} accent={accent} darkSurface={darkSurface} className="mt-4" />
+        <h1 className={cn(APP_TYPO.pageTitle, 'text-ink mb-2 md:mb-0')}>{event.title}</h1>
+        <EventDetailPageContent event={event} accent={accent} darkSurface={panelDark} className="mt-4" />
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:gap-5 md:grid-cols-5 lg:grid-cols-3">
         {/* Left Column: Details */}
         <div className="space-y-4 md:space-y-5 md:col-span-3 lg:col-span-2">
           <section className="nakamas-card space-y-4 text-ink leading-relaxed bg-surface-raised rounded-2xl border border-border p-5 md:p-4 shadow-soft">
-             <EventDetailMetaSection event={event} accent={accent} darkSurface={darkSurface} />
-             <EventMap event={event} accent={accent} darkSurface={darkSurface} />
-             <EventDetailAboutSection event={event} accent={accent} darkSurface={darkSurface} />
-             <EventDetailOrganizerSection organizer={organizer} accent={accent} darkSurface={darkSurface} />
-             <EventDetailSafetySection event={event} accent={accent} darkSurface={darkSurface} />
-             <EventDetailAdventureSection event={event} accent={accent} darkSurface={darkSurface} />
+             <EventDetailMetaSection event={event} accent={accent} darkSurface={panelDark} />
+             <EventMap event={event} accent={accent} darkSurface={panelDark} />
+             <EventDetailAboutSection event={event} accent={accent} darkSurface={panelDark} />
+             <EventDetailOrganizerSection organizer={organizer} accent={accent} darkSurface={panelDark} />
+             <EventDetailSafetySection event={event} accent={accent} darkSurface={panelDark} />
+             <EventDetailAdventureSection event={event} accent={accent} darkSurface={panelDark} />
           </section>
-          <EventDetailReliabilityNote event={event} accent={accent} darkSurface={darkSurface} />
+          {/* Φ27 — hiking route: numbers for everyone, start point for confirmed members. */}
+          {event.route && (
+            <HikeRouteCard
+              route={event.route}
+              revealStart={Boolean(
+                currentUser &&
+                  groups.some(
+                    (g) => g.eventId === event.id && g.members.includes(currentUser.id) && (g.status === 'confirmed' || g.status === 'completed'),
+                  ),
+              )}
+            />
+          )}
+          <EventDetailReliabilityNote event={event} accent={accent} darkSurface={panelDark} />
         </div>
 
         {/* Right Column: Groups & Actions */}
         <div className="space-y-4 md:col-span-2 lg:col-span-1">
           <div className="rounded-2xl border border-border bg-surface-raised p-4 shadow-soft sticky top-24">
-            <LookingForCompanyPanel event={event} accent={accent} darkSurface={darkSurface} />
+            <NakamasGoing eventId={event.id} className="mb-4" />
+            <LookingForCompanyPanel event={event} accent={accent} darkSurface={panelDark} />
 
-            <h3 className="text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
-            <p className="text-2xs text-ink-muted font-medium mb-3 -mt-2">
-              {t(
-                'Πολλές ομάδες μπορούν να υπάρχουν παράλληλα· μέγεθος από τον διοργανωτή.',
-                'Multiple groups can run in parallel; size is set by the organizer.',
-              )}
-            </p>
+            <h3 id="groups" className="scroll-mt-28 text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
             <div className="mb-4 bg-accent-soft border border-accent/20 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-xs font-bold text-accent-strong">
               <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική Χωρητικότητα Εκδήλωσης', 'Overall Event Capacity')}</span>
               <span className="text-accent bg-surface-raised xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs border border-accent/20 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
             </div>
 
             <div className="flex flex-col gap-3 mb-4">
-              <Button className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
-                <Users className="w-5 h-5" />
-                {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
-              </Button>
+              {myGroupForEvent ? (
+                <>
+                  <Button
+                    className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2"
+                    size="lg"
+                    onClick={() => navigate(`/night/${myGroupForEvent.id}`)}
+                  >
+                    <Users className="w-5 h-5" />
+                    {t('Η βραδιά μας', 'Our night')}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/events/${eventId}/join`)}
+                    className="text-xs font-bold text-ink underline underline-offset-2"
+                  >
+                    {t('Ή δημιούργησε άλλη ομάδα', 'Or create another group')}
+                  </button>
+                </>
+              ) : (
+                <Button className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
+                  <Users className="w-5 h-5" />
+                  {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
+                </Button>
+              )}
             </div>
 
             {(eventGroups.length > 0 || groupSizeFilter !== 'All' || discountFilter) && (
@@ -219,18 +265,19 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                 <div className="flex gap-2">
                   <span className="text-2xs font-bold text-ink-muted mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
                   <div className="flex flex-wrap gap-2 flex-1">
-                    <select
-                      aria-label={t('Μέγεθος ομάδας', 'Group size')}
+                    <AppSelect
+                      ariaLabel={t('Μέγεθος ομάδας', 'Group size')}
                       value={groupSizeFilter}
-                      onChange={(e) => setGroupSizeFilter(e.target.value as typeof groupSizeFilter)}
-                      className="filter-select bg-surface border border-border focus:outline-none focus:ring-1 focus:ring-accent/50"
-                    >
-                      <option value="All">{t('Όλα τα Μεγέθη', 'Any Size')}</option>
-                      <option value="3">{t('3 Μέλη', '3 Members')}</option>
-                      <option value="4">{t('4 Μέλη', '4 Members')}</option>
-                      <option value="5">{t('5 Μέλη', '5 Members')}</option>
-                      <option value="6+">{t('6+ Μέλη', '6+ Members')}</option>
-                    </select>
+                      onValueChange={(v) => setGroupSizeFilter(v as typeof groupSizeFilter)}
+                      className="filter-select bg-surface border border-border"
+                      options={[
+                        { value: 'All', label: t('Όλα τα Μεγέθη', 'Any Size') },
+                        { value: '3', label: t('3 Μέλη', '3 Members') },
+                        { value: '4', label: t('4 Μέλη', '4 Members') },
+                        { value: '5', label: t('5 Μέλη', '5 Members') },
+                        { value: '6+', label: t('6+ Μέλη', '6+ Members') },
+                      ]}
+                    />
                     {event.isPaid && event.groupDiscount && (
                       <button
                         onClick={() => setDiscountFilter(!discountFilter)}
@@ -244,10 +291,6 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               </div>
             )}
 
-            <p className="text-xs text-ink-muted font-medium mb-4 leading-relaxed">
-              {t('Συνιστούμε ανεπιφύλακτα να δημιουργήσετε ή να συμμετάσχετε σε ομάδες 3-5 ατόμων.', 'We highly recommend joining or creating groups of 3-5 users to reduce awkwardness and ensure the event happens safely.')}
-            </p>
-
             {eventGroups.length === 0 ? (
               <div className="text-xs text-ink-muted mb-4 bg-surface p-4 rounded-2xl text-center border border-dashed border-border font-medium">
                 {t('Δεν έχουν δημιουργηθεί ομάδες ακόμα. Γίνετε ο πρώτος που θα ξεκινήσει μία!', 'No groups forming yet. Be the first to start one!')}
@@ -255,7 +298,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             ) : (
               <div className="space-y-4 mb-4">
                 {eventGroups.map(group => (
-                  <EventDetailGroupCard key={group.id} group={group} event={event} navigate={navigate} accent={accent} darkSurface={darkSurface} />
+                  <EventDetailGroupCard key={group.id} group={group} event={event} navigate={navigate} accent={accent} darkSurface={panelDark} />
                 ))}
               </div>
             )}
@@ -269,7 +312,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               <div className="text-2xs text-ink-muted font-medium bg-surface rounded-lg text-center p-3 leading-relaxed tracking-wide">
                 {t('Δημιουργήστε νέα ομάδα 3-5 ατόμων. ', 'Create a new 3-5 person group. ')}
                 {event.isPaid ? (
-                  <span className="block mt-1 font-bold text-ink">{t('Η πληρωμή προεγκρίνεται. Χρεώνεται μόνο κατά την επιβεβαίωση.', 'Payment pre-authorized via official partner APIs. Discharges automatically on Group confirmation.')}</span>
+                  <span className="block mt-1 font-bold text-ink">{t('Η πληρωμή κρατιέται και χρεώνεται όταν επιβεβαιωθεί η ομάδα.', 'Payment is held and charged when the group is confirmed.')}</span>
                 ) : (
                   <span className="block mt-1 font-bold">{t('Δωρεάν δημιουργία.', 'Free to start.')}</span>
                 )}
@@ -282,15 +325,20 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
       {/* Mobile Sticky CTA — primary: Find Nakamas (gated). It sits on top of the
           bottom navigation (it used to cover it, so the nav could not be tapped). */}
       <div className="fixed left-0 right-0 bottom-[calc(var(--bottom-nav-total)+env(safe-area-inset-bottom,0px))] bg-surface-raised/95 backdrop-blur-md border-t border-border p-4 shadow-soft-up md:hidden z-fab flex gap-3">
-        <Button variant="outline" className="flex-1 min-h-11 border-border text-ink" onClick={handleSave}>
+        <Button variant="outline" className="flex-1 min-h-8 border-border text-ink" onClick={handleSave}>
           {isSaved ? t('Αποθηκευμένο', 'Saved') : t('Αποθήκευση', 'Save')}
         </Button>
-        <Button className="flex-[2] min-h-11 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
+        <Button className="flex-[2] min-h-8 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
           {t('Βρες Nakamas', 'Find Nakamas')}
         </Button>
       </div>
 
       <EventDetailQrModal open={showQRCode} onClose={() => setShowQRCode(false)} />
+      {shareWallOpen && (
+        <Suspense fallback={null}>
+          <ShareToWallModal eventId={event.id} eventTitle={event.title} open={shareWallOpen} onClose={() => setShareWallOpen(false)} />
+        </Suspense>
+      )}
     </motion.div>
   );
 }

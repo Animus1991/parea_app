@@ -12,7 +12,9 @@ let catalogLoaded = false;
 async function seedFromMocks(): Promise<Event[]> {
   const { mockEvents } = await import('../src/data/mockEvents.ts');
   const { mockCalendarPlanEvents } = await import('../src/data/mockCalendarPlan.ts');
-  return [...mockEvents, ...mockCalendarPlanEvents];
+  // Φ27 — our own «Nakamas Nights» series is part of the public catalog.
+  const { mockOutingEvents } = await import('../src/data/mockOutings.ts');
+  return [...mockEvents, ...mockCalendarPlanEvents, ...mockOutingEvents.filter((e) => e.series === 'nakamas_nights')];
 }
 
 async function ensureCatalog(): Promise<void> {
@@ -22,6 +24,13 @@ async function ensureCatalog(): Promise<void> {
   if (existing.length === 0) {
     const seeded = await seedFromMocks();
     seedEventsDb(seeded);
+  } else {
+    // Φ27 — catalogs created before «Nakamas Nights» get the series once.
+    const have = new Set(existing.map((e) => e.id));
+    const { mockOutingEvents } = await import('../src/data/mockOutings.ts');
+    for (const e of mockOutingEvents) {
+      if (e.series === 'nakamas_nights' && !have.has(e.id)) insertEventDb(e);
+    }
   }
   catalogLoaded = true;
 }

@@ -16,6 +16,13 @@ export function isPlatformAdmin(user: Pick<User, 'isAdmin'> | null | undefined):
   return Boolean(user?.isAdmin);
 }
 
+/** Organizer dashboard (/manage) — hosts their own events, or a platform admin. */
+export function isOrganizerUser(
+  user: Pick<User, 'isOrganizer' | 'isAdmin'> | null | undefined,
+): boolean {
+  return Boolean(user?.isOrganizer) || isPlatformAdmin(user);
+}
+
 /** Host of the group, organizer of its event, or a platform admin. */
 export function canModerateGroup(
   user: Pick<User, 'id' | 'isAdmin'> | null | undefined,

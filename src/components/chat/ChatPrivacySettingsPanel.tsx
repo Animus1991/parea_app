@@ -39,13 +39,7 @@ export function ChatPrivacySettingsPanel() {
 
   return (
     <section className={cn('rounded-2xl border p-4 mt-4', a.cardSurface, a.borderB)}>
-      <h2 className={cn('text-sm md:text-base font-bold mb-1', a.head)}>{t('Nakamas Chat — ρυθμίσεις', 'Nakamas Chat — settings')}</h2>
-      <p className={cn('text-xs mb-3', a.sub)}>
-        {t(
-          'Μηνύματα βάσει σχέσης · προσωρινά event chats από προεπιλογή',
-          'Relationship-based messaging · temporary event chats by default',
-        )}
-      </p>
+      <h2 className={cn('text-sm font-bold mb-3', a.head)}>{t('Nakamas Chat — ρυθμίσεις', 'Nakamas Chat — settings')}</h2>
       <Toggle
         label={t('Μηνύματα από αποδεκτές ομάδες', 'Messages from accepted groups')}
         checked={privacy.allowGroupChats}

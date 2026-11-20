@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CreditCard, Euro, ArrowUpRight, ArrowDownRight, Clock, Building2, CheckCircle2 } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
@@ -11,11 +12,12 @@ import { Modal } from '../common/Modal';
 import { isStripeConfigured, openStripeCheckout } from '../../services/payments';
 import { WALLET_TYPO } from '../../lib/typographyTokens';
 import { formatWalletEur, WALLET_DEMO } from '../../lib/walletDemo';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
+import { AppSelect } from '../common/AppSelect';
 
 export default function WalletPageContent() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const a = usePageContrast();
   const [txFilter, setTxFilter] = useState<'all' | 'month' | 'last'>('all');
   const [showWithdraw, setShowWithdraw] = useState(false);
@@ -45,14 +47,12 @@ export default function WalletPageContent() {
       <div>
         <h1 className={cn(WALLET_TYPO.pageTitle, a.head)}>{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
         <p className={cn(WALLET_TYPO.pageSub, 'mt-1', a.sub)}>{t('Διαχειριστείτε τα έσοδα και τις πληρωμές σας.', 'Manage your event revenue and payouts.')}</p>
-        <p className={cn(WALLET_TYPO.statusNote, 'mt-2', a.muted)}>
-          {stripeReady
-            ? t('Stripe ενεργό — οι αναλήψεις ανοίγουν Checkout.', 'Stripe enabled — withdrawals open Checkout.')
-            : t('Λειτουργία demo — ορίστε VITE_STRIPE_* για πραγματικές πληρωμές.', 'Demo mode — set VITE_STRIPE_* for real payments.')}
-        </p>
+        {stripeReady && (
+          <p className={cn(WALLET_TYPO.statusNote, 'mt-2', a.muted)}>
+            {t('Οι αναλήψεις γίνονται μέσω Stripe.', 'Withdrawals go through Stripe.')}
+          </p>
+        )}
       </div>
-
-      <CopilotInlinePrompt />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className={cn("p-4 text-white shadow-soft-md", a.balanceBg)}>
@@ -94,16 +94,17 @@ export default function WalletPageContent() {
       <Card className="mt-2">
         <div className={cn("p-4 md:p-4 border-b flex items-center justify-between", a.borderB)}>
           <h2 className={cn(WALLET_TYPO.sectionInCard, a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
-          <select
+          <AppSelect
             className={cn("filter-select border outline-none", a.selectBg)}
             value={txFilter}
-            onChange={(e) => setTxFilter(e.target.value as typeof txFilter)}
-            aria-label={t('Φίλτρο συναλλαγών', 'Transaction filter')}
-          >
-            <option value="all">{t('Όλες', 'All Time')}</option>
-            <option value="month">{t('Αυτόν τον Μήνα', 'This Month')}</option>
-            <option value="last">{t('Προηγούμενο', 'Last Month')}</option>
-          </select>
+            onValueChange={(v) => setTxFilter(v as typeof txFilter)}
+            ariaLabel={t('Φίλτρο συναλλαγών', 'Transaction filter')}
+            options={[
+              { value: 'all', label: t('Όλες', 'All Time') },
+              { value: 'month', label: t('Αυτόν τον Μήνα', 'This Month') },
+              { value: 'last', label: t('Προηγούμενο', 'Last Month') },
+            ]}
+          />
         </div>
         <div className={a.divider}>
           {filteredTx.length === 0 ? (
@@ -115,10 +116,15 @@ export default function WalletPageContent() {
                   'Δεν υπάρχουν συναλλαγές για αυτό το φίλτρο.',
                   'No transactions match this filter.',
                 )}
-                actionLabel={t('Όλες', 'All Time')}
-                onAction={() => setTxFilter('all')}
+                actionLabel={txFilter === 'all' ? t('Εξερεύνηση', 'Explore') : t('Όλες', 'All Time')}
+                onAction={txFilter === 'all' ? () => navigate('/') : () => setTxFilter('all')}
+                secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+                onSecondary={() => navigate('/buddy-seek')}
                 askAi
-                askPrompt={t('Σύνοψη πορτοφολιού', 'Summarise my wallet')}
+                askPrompt={t(
+                  'Σύνοψη πορτοφολιού — demo στοιχεία μόνο',
+                  'Summarise my wallet — demo figures only',
+                )}
               />
             </div>
           ) : (

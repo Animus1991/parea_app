@@ -43,6 +43,13 @@ describe('authConfig', () => {
   it('is off without a project id', () => {
     expect(authConfig({})).toEqual({ mode: 'off', required: false });
   });
+  it('fail-closes personal endpoints in production without Firebase', () => {
+    expect(authConfig({ NODE_ENV: 'production' })).toEqual({ mode: 'off', required: true });
+    expect(authConfig({ NODE_ENV: 'production', AUTH_OPTIONAL: 'true' })).toEqual({
+      mode: 'off',
+      required: false,
+    });
+  });
   it('uses the server or the Vite project id', () => {
     expect(authConfig({ FIREBASE_PROJECT_ID: PROJECT })).toMatchObject({ mode: 'firebase', projectId: PROJECT, required: true });
     expect(authConfig({ VITE_FIREBASE_PROJECT_ID: PROJECT, AUTH_OPTIONAL: 'true' })).toMatchObject({ required: false });

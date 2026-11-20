@@ -10,6 +10,7 @@ coverage/
 test-results/
 data/runtime/events.json
 data/runtime/events.db
+data/runtime/invites.db
 
 # Firebase emulator logs
 firestore-debug.log

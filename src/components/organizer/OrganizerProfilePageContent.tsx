@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { useStore } from '../../store';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
@@ -17,6 +17,13 @@ import {
   canViewerContactOrganizer,
   projectProfileForViewer,
 } from '../../lib/profilePrivacy';
+import { useWallAccess, useWallStore } from '../../store/wallStore';
+import { APP_TYPO } from '../../lib/typographyTokens';
+import { canPostOnWall, profileWallPosts } from '../../lib/audience';
+import { PostComposer } from '../wall/PostComposer';
+import { WallPostList } from '../wall/WallPostList';
+import { profilePathFor } from '../../lib/profileLinks';
+import { OrganizerCalendarCard } from '../outings/OrganizerCalendarCard';
 
 export default function OrganizerProfilePageContent() {
   const { id } = useParams();
@@ -33,9 +40,19 @@ export default function OrganizerProfilePageContent() {
   const feedbackSubmitted = useStore((state) => state.feedbackSubmitted);
   const organizer = users.find((u) => u.id === id);
 
+  const lists = useWallStore((state) => state.lists);
+  const wallPostsAll = useWallStore((state) => state.posts);
+  const wallAccess = useWallAccess();
   const privacyCtx = useMemo(
-    () => ({ blockedUserIds, groups }),
-    [blockedUserIds, groups],
+    () => ({ blockedUserIds, groups, users, lists }),
+    [blockedUserIds, groups, users, lists],
+  );
+  const wallPosts = useMemo(
+    () =>
+      organizer
+        ? profileWallPosts(currentUser?.id ?? null, organizer.id, wallPostsAll, wallAccess)
+        : [],
+    [organizer, currentUser?.id, wallPostsAll, wallAccess],
   );
 
   const projected = useMemo(
@@ -61,16 +78,19 @@ export default function OrganizerProfilePageContent() {
     );
   }
 
+  // Members who are not organizers have a personal profile with a wall.
+  if (!organizer.isOrganizer) return <Navigate to={profilePathFor(organizer)} replace />;
+
   if (!projected.access.allowed || projected.access.level === 'hidden') {
     return (
       <div className="mx-auto max-w-full space-y-4 py-10 text-center">
         <div className={cn('mx-auto flex h-16 w-16 items-center justify-center rounded-full border', p.borderB, p.cardSurface)}>
           <Lock className={cn('h-7 w-7', p.muted)} aria-hidden />
         </div>
-        <h1 className={cn('text-sm md:text-base font-bold', p.head)}>
+        <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
           {t('Ιδιωτικό προφίλ', 'Private profile')}
         </h1>
-        <p className={cn('text-sm font-medium max-w-md mx-auto', p.sub)}>
+        <p className={cn(APP_TYPO.pageSub, 'max-w-md mx-auto', p.sub)}>
           {t(projected.access.reasonEl, projected.access.reasonEn)}
         </p>
         <Link to="/connections" className="text-sm font-bold text-cyan-600 hover:underline">
@@ -131,7 +151,7 @@ export default function OrganizerProfilePageContent() {
   };
 
   return (
-    <div className="mx-auto max-w-full space-y-5 relative">
+    <div className="mx-auto max-w-full space-y-4 relative">
       {limited && (
         <p
           role="status"
@@ -170,9 +190,9 @@ export default function OrganizerProfilePageContent() {
                 </Badge>
               )}
             </div>
-            <h1 className={cn('text-sm md:text-base font-bold', p.head)}>{projected.name}</h1>
+            <h1 className={cn(APP_TYPO.pageTitle, p.head)}>{projected.name}</h1>
             {projected.city && (
-              <p className={cn('text-sm font-medium mt-1', p.sub)}>
+              <p className={cn(APP_TYPO.pageSub, 'mt-1', p.sub)}>
                 <MapPin className="h-3.5 w-3.5 inline mr-1" /> {projected.city}
               </p>
             )}
@@ -235,6 +255,9 @@ export default function OrganizerProfilePageContent() {
         </div>
       </div>
 
+      {/* Φ27 — follow + live .ics + embeddable widget (Luma, adapted) */}
+      <OrganizerCalendarCard organizerId={organizer.id} organizerName={projected.name} />
+
       <div className="space-y-4">
         <h2 className={cn('text-sm md:text-base font-bold', p.head)}>
           {t('Επερχόμενες Εκδηλώσεις από', 'Upcoming Events by')} {projected.name}
@@ -277,6 +300,24 @@ export default function OrganizerProfilePageContent() {
           </div>
         )}
       </div>
+
+      {!limited && (
+        <section className="space-y-3" aria-labelledby="organizer-wall-title">
+          <h2 id="organizer-wall-title" className={cn('text-sm md:text-base font-bold', p.head)}>
+            {t('Ανακοινώσεις & Τοίχος', 'Announcements & Wall')}
+          </h2>
+          {currentUser && canPostOnWall(currentUser.id, organizer.id, wallAccess).allowed && (
+            <PostComposer key={organizer.id} wallOwnerId={organizer.id} />
+          )}
+          {wallPosts.length === 0 ? (
+            <p className={cn('rounded-2xl border border-dashed px-4 py-4 text-center text-sm font-medium', p.borderB, p.muted)}>
+              {t('Δεν υπάρχουν ανακοινώσεις ακόμα.', 'No announcements yet.')}
+            </p>
+          ) : (
+            <WallPostList posts={wallPosts} />
+          )}
+        </section>
+      )}
 
       <Modal
         open={showContactModal}

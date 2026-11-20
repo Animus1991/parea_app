@@ -7,17 +7,24 @@ export interface CopilotSuggestion {
 
 const S = (el: string, en: string): CopilotSuggestion => ({ el, en });
 
+export const GAP_FIRST_SUGGESTIONS: CopilotSuggestion[] = [
+  S('Πέμπτη μετά τις 8;', 'Thursday after 8?'),
+  S('Παρασκευή βράδυ;', 'Friday evening?'),
+  S('Σαββατοκύριακο;', 'This weekend?'),
+  S('Όποτε — δες τι ταιριάζει', 'Whenever — show what fits'),
+];
+
 const BY_ROUTE: Record<string, CopilotSuggestion[]> = {
-  home: [
-    S('Τι να κάνω αυτό το Σαββατοκύριακο;', 'What should I do this weekend?'),
-    S('Βρες δωρεάν εκδηλώσεις', 'Find free events'),
-    S('Πρότεινέ μου κάτι για μένα', 'Recommend something for me'),
-    S('Κάνε την αρχική πιο απλή', 'Make the home page simpler'),
-  ],
+  home: GAP_FIRST_SUGGESTIONS,
   categories: [
     S('Βρες πεζοπορία', 'Find hiking'),
     S('Συναυλίες κάτω από 20€', 'Concerts under €20'),
     S('Πρόσθεσε σινεμά στα ενδιαφέροντα', 'Add cinema to my interests'),
+  ],
+  tags: [
+    S('Δείξε τις Nakamas Nights', 'Show Nakamas Nights'),
+    S('Ποιες ετικέτες είναι δημοφιλείς;', 'Which tags are popular?'),
+    S('Βρες εκδηλώσεις με εργαστήριο', 'Find workshop events'),
   ],
   nearby: [S('Τι γίνεται στο Γκάζι;', "What's on in Gazi?"), S('Βρες εκδηλώσεις στο Κουκάκι', 'Find events in Koukaki')],
   event: [
@@ -79,6 +86,16 @@ const BY_ROUTE: Record<string, CopilotSuggestion[]> = {
     S('Δείξε σχέδια που σχηματίζονται', 'List plans that are forming'),
     S('Πώς λειτουργεί το Βρες Nakamas;', 'How does Find Nakamas work?'),
     S('Αποδέξου το αίτημα παρέας', 'Accept the company join request'),
+  ],
+  'our-night': [
+    S('Πού είναι το σημείο συνάντησης;', 'Where is the meeting point?'),
+    S('Πώς λειτουργεί η ασφάλεια;', 'How does safety work?'),
+    S('Κάλεσε φίλους στην ομάδα', 'Invite friends to the group'),
+  ],
+  wall: [
+    S('Τι κάνουν οι φίλοι μου;', 'What are my friends up to?'),
+    S('Δημοσίευσε στον τοίχο', 'Post to the wall'),
+    S('Περιόρισε τις παλιές δημοσιεύσεις', 'Limit past posts'),
   ],
   connections: [S('Αποδέξου το αίτημα σύνδεσης', 'Accept the connection request'), S('Τι νέο υπάρχει;', "What's new?")],
   manage: [

@@ -3,7 +3,7 @@
  * so this module exports no components (keeps React Fast Refresh working).
  */
 import { createContext, useContext } from 'react';
-import { toUpperNoAccents } from './greekText';
+import { toTitleCase } from './greekText';
 
 export type Language = 'el' | 'en';
 
@@ -11,7 +11,7 @@ export interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (greekText: string, englishText?: string) => string;
-  /** Like t(), but returns uppercase text with Greek tonos stripped — for labels styled all-caps. */
+  /** Like t(), but title-cases each word (first letter capital, rest small). */
   tu: (greekText: string, englishText?: string) => string;
 }
 
@@ -22,7 +22,7 @@ export function useLanguage() {
   if (context === undefined) {
     // Safe fallback to avoid runtime crashes if a component renders before the provider (e.g., HMR edge cases)
     const t = (greekText: string, englishText?: string) => (englishText ?? greekText);
-    const tu = (greekText: string, englishText?: string) => toUpperNoAccents(englishText ?? greekText);
+    const tu = (greekText: string, englishText?: string) => toTitleCase(englishText ?? greekText);
     return { language: 'el', setLanguage: () => {}, t, tu } as const;
   }
   return context;

@@ -38,7 +38,8 @@ export default function InboxPageContent() {
   const groups = useStore((s) => s.groups);
   const events = useStore((s) => s.events);
   const currentUser = useStore((s) => s.currentUser);
-  const notifications = useStore((s) => s.notifications);
+  const rawNotifications = useStore((s) => s.notifications);
+  const notifications = rawNotifications.filter((n) => !n.forUserId || n.forUserId === currentUser?.id);
   const conversations = useChatStore((s) => s.conversations);
   const openConversation = useChatStore((s) => s.openConversation);
   const setInboxOpen = useChatStore((s) => s.setInboxOpen);
@@ -130,6 +131,10 @@ export default function InboxPageContent() {
   };
 
   const unreadNotifications = notifications.filter((n) => !n.read).length;
+  const unreadPreview = useMemo(
+    () => notifications.filter((n) => !n.read).slice(0, 5),
+    [notifications],
+  );
 
   return (
     <div className="w-full max-w-full min-w-0 flex flex-col relative animate-in fade-in duration-500">
@@ -145,7 +150,7 @@ export default function InboxPageContent() {
           role="tablist"
           aria-label={t('Μηνύματα και ειδοποιήσεις', 'Messages and notifications')}
           className={cn(
-            'mt-4 flex h-11 rounded-2xl border p-1 shadow-soft',
+            'mt-4 flex h-9 rounded-xl border p-0.5 shadow-soft',
             p.isDark ? 'bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]' : 'bg-gray-50 border-gray-100',
           )}
         >
@@ -155,7 +160,7 @@ export default function InboxPageContent() {
             aria-selected={activeTab === 'messages'}
             onClick={() => setActiveTab('messages')}
             className={cn(
-              'flex-1 rounded-xl transition-all flex items-center justify-center gap-2 min-h-10',
+              'flex-1 rounded-lg transition-all flex items-center justify-center gap-1.5 min-h-8',
               INBOX_TYPO.tab,
               activeTab === 'messages'
                 ? p.isDark
@@ -164,7 +169,7 @@ export default function InboxPageContent() {
                 : p.muted,
             )}
           >
-            <MessageSquare className="w-4 h-4" aria-hidden /> {t('Μηνύματα', 'Messages')}
+            <MessageSquare className="w-3.5 h-3.5" aria-hidden /> {t('Μηνύματα', 'Messages')}
           </button>
           <button
             type="button"
@@ -172,7 +177,7 @@ export default function InboxPageContent() {
             aria-selected={activeTab === 'notifications'}
             onClick={() => setActiveTab('notifications')}
             className={cn(
-              'flex-1 rounded-xl transition-all flex items-center justify-center gap-2 min-h-10',
+              'flex-1 rounded-lg transition-all flex items-center justify-center gap-1.5 min-h-8',
               INBOX_TYPO.tab,
               activeTab === 'notifications'
                 ? p.isDark
@@ -181,9 +186,9 @@ export default function InboxPageContent() {
                 : p.muted,
             )}
           >
-            <Bell className="w-4 h-4" aria-hidden /> {t('Ειδοποιήσεις', 'Notifications')}
+            <Bell className="w-3.5 h-3.5" aria-hidden /> {t('Ειδοποιήσεις', 'Notifications')}
             {unreadNotifications > 0 && (
-              <span className={cn('bg-cyan-600 text-white px-1.5 py-0.5 rounded-full min-w-[18px]', INBOX_TYPO.badge)}>
+              <span className={cn('bg-cyan-600 text-white px-1.5 py-0.5 rounded-full min-w-[16px]', INBOX_TYPO.badge)}>
                 {unreadNotifications}
               </span>
             )}
@@ -256,14 +261,20 @@ export default function InboxPageContent() {
                     ? t('Καθαρισμός αναζήτησης', 'Clear search')
                     : chatFilter === 'past'
                       ? t('Εμφάνιση ενεργών', 'Show active')
-                      : t('Αναζήτηση Εκδηλώσεων', 'Browse Events')
+                      : t('Βρες Nakamas', 'Find Nakamas')
                 }
                 onAction={
                   search
                     ? () => setSearch('')
                     : chatFilter === 'past'
                       ? () => setChatFilter('active')
-                      : () => navigate('/')
+                      : () => navigate('/buddy-seek')
+                }
+                secondaryLabel={
+                  !search && chatFilter !== 'past' ? t('Εξερεύνηση', 'Explore') : undefined
+                }
+                onSecondary={
+                  !search && chatFilter !== 'past' ? () => navigate('/') : undefined
                 }
               />
             ) : (
@@ -331,26 +342,62 @@ export default function InboxPageContent() {
       )}
 
       {activeTab === 'notifications' && (
-        <div
-          className={cn(
-            'rounded-2xl border shadow-soft p-5 text-center flex flex-col items-center',
-            p.cardSurface,
-            p.borderB,
+        <div className={cn('rounded-2xl border shadow-soft overflow-hidden', p.cardSurface, p.borderB)}>
+          {unreadPreview.length === 0 ? (
+            <div className="p-5 text-center flex flex-col items-center">
+              <CircleDashed className={cn('w-10 h-10 mb-3 opacity-40', p.muted)} />
+              <h3 className={cn('font-bold text-sm mb-2', p.head)}>
+                {t('Είστε ενημερωμένοι', "You're all caught up")}
+              </h3>
+              <button
+                type="button"
+                onClick={() => navigate('/notifications')}
+                className={cn('mt-2 px-4 py-1.5 min-h-8 rounded-full bg-cyan-600 hover:bg-cyan-700 text-white shadow-soft', INBOX_TYPO.cta)}
+              >
+                {t('Όλες οι Ειδοποιήσεις', 'All Notifications')}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/buddy-seek')}
+                className={cn('mt-2 text-xs font-bold underline underline-offset-2', p.muted)}
+              >
+                {t('Βρες Nakamas', 'Find Nakamas')}
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className={cn('px-4 py-3 border-b flex items-center justify-between', p.borderB)}>
+                <h3 className={cn('font-bold text-sm', p.head)}>
+                  {t(`${unreadNotifications} νέες`, `${unreadNotifications} new`)}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => navigate('/notifications')}
+                  className={cn('text-xs font-bold underline underline-offset-2', p.muted)}
+                >
+                  {t('Όλες', 'All')}
+                </button>
+              </div>
+              <ul className={cn('divide-y', p.isDark ? 'divide-white/5' : 'divide-gray-100')}>
+                {unreadPreview.map((n) => (
+                  <li key={n.id}>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/notifications')}
+                      className="w-full text-left px-4 py-3 min-h-12 hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors"
+                    >
+                      <span className={cn('block text-sm font-bold line-clamp-2', p.head)}>
+                        {t(n.messageGr ?? '', n.messageEn ?? '')}
+                      </span>
+                      <span className={cn('block text-2xs font-medium mt-0.5', p.muted)}>
+                        {t(n.timeGr ?? '', n.timeEn ?? '')}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
-        >
-          <CircleDashed className={cn('w-10 h-10 mb-3 opacity-40', p.muted)} />
-          <h3 className={cn('font-bold text-sm mb-2', p.head)}>
-            {unreadNotifications > 0
-              ? t(`${unreadNotifications} νέες ειδοποιήσεις`, `${unreadNotifications} new notifications`)
-              : t('Είστε ενημερωμένοι', "You're all caught up")}
-          </h3>
-          <button
-            type="button"
-            onClick={() => navigate('/notifications')}
-            className={cn('mt-2 px-5 py-2.5 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white shadow-soft', INBOX_TYPO.cta)}
-          >
-            {t('Όλες οι Ειδοποιήσεις', 'All Notifications')}
-          </button>
         </div>
       )}
     </div>

@@ -34,17 +34,13 @@ export const appEnv = {
   supportUrl: (import.meta.env.VITE_SUPPORT_URL as string | undefined) ?? '',
   supportEmail: (import.meta.env.VITE_SUPPORT_EMAIL as string | undefined) ?? '',
   /**
-   * Demo accounts and "Explore as guest" on the login page. Default: on, except in a
-   * production build with Firebase configured (real sign-in only). VITE_DEMO_LOGIN overrides.
+   * Demo accounts and "Explore as guest" on the login page.
+   * Default: on in development; off in every production build (real sign-in only).
+   * VITE_DEMO_LOGIN=true|false overrides.
    */
   demoLogin:
     import.meta.env.VITE_DEMO_LOGIN === 'true' ||
-    (import.meta.env.VITE_DEMO_LOGIN !== 'false' &&
-      !(
-        import.meta.env.MODE === 'production' &&
-        Boolean(import.meta.env.VITE_FIREBASE_PROJECT_ID) &&
-        Boolean(import.meta.env.VITE_FIREBASE_API_KEY)
-      )),
+    (import.meta.env.VITE_DEMO_LOGIN !== 'false' && import.meta.env.MODE !== 'production'),
 } as const;
 
 export function validateEnv(): string[] {

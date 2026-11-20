@@ -7,6 +7,7 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { useStore } from '../../store';
 import { DAILY_CHALLENGE_XP } from '../../lib/achievements';
 import { useGamificationData } from '../../hooks/useGamificationData';
+import { NakamasMini } from '../illustrations/NakamasMini';
 
 /** Segmented navigation shared by /achievements, /challenges and /leaderboard (port from nakamas hub). */
 export function GamificationHubNav({ className }: { className?: string }) {
@@ -17,15 +18,15 @@ export function GamificationHubNav({ className }: { className?: string }) {
     { to: '/leaderboard', icon: Trophy, label: t('Κατάταξη', 'Ranking') },
   ];
   return (
-    <nav aria-label={t('Πρόοδος & ανταμοιβές', 'Progress & rewards')} className={cn('inline-flex max-w-full gap-1 overflow-x-auto noscrollbar rounded-xl border border-border bg-surface-raised p-1', className)}>
+    <nav aria-label={t('Πρόοδος & ανταμοιβές', 'Progress & rewards')} className={cn('inline-flex max-w-full gap-1 overflow-x-auto noscrollbar rounded-2xl border border-border bg-surface-raised p-1', className)}>
       {items.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
           className={({ isActive }) =>
             cn(
-              'inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
-              isActive ? 'bg-accent text-accent-fg shadow-soft' : 'text-ink-muted hover:bg-surface hover:text-ink',
+              'inline-flex min-h-8 items-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+              isActive ? 'bg-ink text-surface-raised' : 'text-ink-muted hover:bg-surface hover:text-ink',
             )
           }
         >
@@ -104,7 +105,14 @@ export function DailyChallengeCard({ className }: { className?: string }) {
   const d = useGamificationData();
   const claim = useStore((s) => s.claimDailyChallenge);
   const onClaim = () => {
-    if (claim(DAILY_CHALLENGE_XP)) toast.success(t(`+${DAILY_CHALLENGE_XP} XP — ημερήσια πρόκληση`, `+${DAILY_CHALLENGE_XP} XP — daily challenge`));
+    if (claim(DAILY_CHALLENGE_XP)) {
+      toast.success(t(`+${DAILY_CHALLENGE_XP} XP — ημερήσια πρόκληση`, `+${DAILY_CHALLENGE_XP} XP — daily challenge`), {
+        action: {
+          label: t('Επιτεύγματα', 'Achievements'),
+          onClick: () => navigate('/achievements'),
+        },
+      });
+    }
   };
   return (
     <section
@@ -112,9 +120,7 @@ export function DailyChallengeCard({ className }: { className?: string }) {
       className={cn('flex flex-col gap-4 rounded-2xl border border-border bg-surface-raised p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between', className)}
     >
       <div className="flex items-center gap-3.5">
-        <span aria-hidden className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent">
-          <Flame className="h-5 w-5" />
-        </span>
+        <NakamasMini id="spark" size={40} />
         <div>
           <p className="text-xs font-semibold text-accent">
             {t('Ημερήσια πρόκληση', 'Daily challenge')} <span className="text-ink-muted">· +{DAILY_CHALLENGE_XP} XP</span>
@@ -137,7 +143,7 @@ export function DailyChallengeCard({ className }: { className?: string }) {
           <button
             type="button"
             onClick={() => navigate('/chats')}
-            className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:flex-initial"
+            className="inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-semibold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:flex-initial"
           >
             <MessageSquare className="h-3.5 w-3.5" aria-hidden />
             {t('Στις συνομιλίες', 'Go to chats')}
@@ -147,7 +153,7 @@ export function DailyChallengeCard({ className }: { className?: string }) {
             onClick={onClaim}
             disabled={!d.dailyMet}
             aria-describedby="daily-challenge-hint"
-            className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 sm:flex-initial"
+            className="inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 sm:flex-initial"
           >
             <Flame className="h-3.5 w-3.5" aria-hidden />
             {t('Πάρε +30 XP', 'Claim +30 XP')}

@@ -34,7 +34,8 @@ function userFromGoogleProfile(profile: GoogleIdentityProfile): User {
     trustTier: '1_explorer',
     reliabilityScore: 70,
     badges: ['Google member'],
-    photoUrl: profile.picture || `https://i.pravatar.cc/200?u=${profile.sub}`,
+    // No stock faces: without a real photo the UI shows initials.
+    photoUrl: profile.picture || undefined,
     emailVerified: Boolean(profile.email_verified ?? profile.email),
     phoneVerified: false,
     paymentVerified: false,

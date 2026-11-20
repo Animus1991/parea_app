@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Ban } from 'lucide-react';
+import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Ban, Newspaper, Bot } from 'lucide-react';
+import { useUIStore } from '../../store/uiStore';
 import { HomeHeroModeSetting } from './HomeHeroModeSetting';
 import { BuddySeekPrivacySettings } from '../buddySeek/BuddySeekPrivacySettings';
 import { ChatPrivacySettingsPanel } from '../chat/ChatPrivacySettingsPanel';
@@ -12,13 +13,21 @@ import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { pressable } from '../../lib/a11y';
 import { ThemePicker } from '../common/ThemePicker';
-import { THEME_IDS, THEME_LABELS, type ThemeId } from '../../lib/themes';
+import { THEME_LABELS, type ThemeId } from '../../lib/themes';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
 import { Modal } from '../common/Modal';
 import { APP_TYPO } from '../../lib/typographyTokens';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
+import { resolveProfileAudience } from '../../lib/profilePrivacy';
+import { audienceLabel } from '../wall/wallText';
+import { useWallStore } from '../../store/wallStore';
+import { wallPrivacyOf } from '../../lib/audience';
+import {
+  scheduleFromCoarseAvailability,
+  serializeHomeSchedule,
+  writeStoredHomeSchedule,
+} from '../../lib/homeScheduleFilter';
 
 const CATEGORY_KEYS = ['liveMusic', 'theater', 'hiking', 'cinema', 'boardGames', 'wellness', 'festivals', 'workshops'] as const;
 
@@ -29,6 +38,7 @@ const NOTIF_MAP: Record<string, keyof import('../../store').UserSettings['notifi
   pushNewEvents: 'matches',
   emailMarketing: 'promos',
   emailUpdates: 'reminders',
+  pushSocial: 'social',
 };
 
 export default function SettingsPageContent() {
@@ -44,6 +54,9 @@ export default function SettingsPageContent() {
   const currentUser = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
   const blockedUserIds = useStore((s) => s.blockedUserIds);
+  const currentUserId = useStore((s) => s.currentUser?.id);
+  const audienceLists = useWallStore((s) => s.lists);
+  const wallPrivacyByUser = useWallStore((s) => s.privacyByUser);
   const unblockUser = useStore((s) => s.unblockUser);
 
   const [show2FASetup, setShow2FASetup] = useState(false);
@@ -54,6 +67,8 @@ export default function SettingsPageContent() {
   const [showBlockedUsers, setShowBlockedUsers] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const homeHeroMode = useStore((s) => s.homeHeroMode);
+  const aiHintsHidden = useUIStore((s) => s.aiHintsHidden);
+  const setAiHintsHidden = useUIStore((s) => s.setAiHintsHidden);
   const themePanelRef = useRef<HTMLDivElement>(null);
   const homeLayoutPanelRef = useRef<HTMLDivElement>(null);
   const availabilityPanelRef = useRef<HTMLDivElement>(null);
@@ -110,6 +125,7 @@ export default function SettingsPageContent() {
     pushNewEvents: userSettings.notificationPrefs.matches,
     emailMarketing: userSettings.notificationPrefs.promos,
     emailUpdates: userSettings.notificationPrefs.reminders,
+    pushSocial: userSettings.notificationPrefs.social !== false,
   };
 
   const categoryPrefs = Object.fromEntries(
@@ -173,12 +189,15 @@ export default function SettingsPageContent() {
     });
   };
 
-  const visibilityLabel =
-    userSettings.privacy.profileVisibility === 'public'
+  const fineProfileAudience = resolveProfileAudience(userSettings.privacy);
+  const visibilityLabel = fineProfileAudience
+    ? audienceLabel(fineProfileAudience, t, audienceLists)
+    : userSettings.privacy.profileVisibility === 'public'
       ? t('Δημόσιο', 'Public')
       : userSettings.privacy.profileVisibility === 'connections'
         ? t('Συνδέσεις', 'Connections only')
         : t('Ιδιωτικό', 'Private');
+  const myWallPrivacy = wallPrivacyOf(wallPrivacyByUser, currentUserId ?? '');
 
   const sections = [
     {
@@ -191,11 +210,19 @@ export default function SettingsPageContent() {
           onClick: () => {
             const next = language === 'el' ? 'en' : 'el';
             setLanguage(next);
-            toast.message(next === 'el' ? 'Γλώσσα: Ελληνικά' : 'Language: English');
           },
         },
         { icon: Palette, label: t('Εμφάνιση & Θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
         { icon: LayoutGrid, label: t('Προβολή αρχικής', 'Home layout'), value: homeHeroMode === 'light' ? t('Σύντομο', 'Compact') : homeHeroMode === 'rich' ? t('Πλήρες', 'Full') : t('Ισορροπημένο', 'Balanced'), onClick: () => setShowHomeLayout(!showHomeLayout) },
+        {
+          icon: Bot,
+          label: t('Προτάσεις Nakamas AI στις σελίδες', 'Nakamas AI suggestions on pages'),
+          value: aiHintsHidden ? t('Κρυμμένες', 'Hidden') : t('Ορατές', 'Shown'),
+          onClick: () => {
+            setAiHintsHidden(!aiHintsHidden);
+            toast.message(aiHintsHidden ? t('Οι προτάσεις AI εμφανίζονται ξανά', 'AI suggestions are shown again') : t('Οι προτάσεις AI κρύφτηκαν', 'AI suggestions hidden'));
+          },
+        },
         {
           icon: CreditCard,
           label: t('Μέθοδοι Πληρωμής', 'Payment Methods'),
@@ -213,7 +240,13 @@ export default function SettingsPageContent() {
     {
       title: t('Απόρρητο & Ασφάλεια', 'Privacy & Security'),
       items: [
-        { icon: Eye, label: t('Ορατότητα Προφίλ', 'Profile Visibility'), value: visibilityLabel, onClick: () => navigate('/profile') },
+        { icon: Eye, label: t('Ορατότητα Προφίλ', 'Profile Visibility'), value: visibilityLabel, onClick: () => navigate('/profile?tab=privacy') },
+        {
+          icon: Newspaper,
+          label: t('Τοίχος & κοινό δημοσιεύσεων', 'Wall & post audience'),
+          value: audienceLabel(myWallPrivacy.defaultAudience, t, audienceLists),
+          onClick: () => navigate('/profile?tab=privacy#wall-privacy'),
+        },
         {
           icon: Ban,
           label: t('Μπλοκαρισμένοι', 'Blocked Users'),
@@ -248,11 +281,9 @@ export default function SettingsPageContent() {
         <p className={cn(APP_TYPO.pageSub, "mt-1", a.sub)}>{t('Διαχειριστείτε τον λογαριασμό σας', 'Manage your account')}</p>
       </div>
 
-      <CopilotInlinePrompt />
-
       {sections.map((section, idx) => (
         <div key={idx} className="space-y-3">
-          <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{section.title}</h2>
+          <h2 className={cn("text-xs font-bold tracking-wider mb-3", a.sectionHead)}>{section.title}</h2>
           <Card className={a.divider}>
             <div className={cn("divide-y", a.divider)}>
               {section.items.map((item, i) => {
@@ -275,12 +306,6 @@ export default function SettingsPageContent() {
             <div ref={themePanelRef} className="scroll-mt-24">
               <Card className="p-5">
                 <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
-                <p className={cn("text-xs font-medium mb-4", a.sub)}>
-                  {t(
-                    `${THEME_IDS.length} επαγγελματικά θέματα — επιλέξτε αυτό που σας ταιριάζει`,
-                    `${THEME_IDS.length} polished themes — pick what fits you best`,
-                  )}
-                </p>
                 <ThemePicker variant="grid" />
               </Card>
             </div>
@@ -288,13 +313,7 @@ export default function SettingsPageContent() {
           {idx === 0 && showHomeLayout && (
             <div ref={homeLayoutPanelRef} className="scroll-mt-24">
               <Card className="p-5">
-                <h3 className={cn("font-bold text-sm mb-1", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
-                <p className={cn("text-xs font-medium mb-4", a.sub)}>
-                  {t(
-                    'Επιλέξτε πόσο πλούσιο είναι το hero στην αρχική — ισχύει σε όλα τα θέματα.',
-                    'Choose how rich the home hero is — applies across all themes.',
-                  )}
-                </p>
+                <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
                 <HomeHeroModeSetting />
               </Card>
             </div>
@@ -411,6 +430,7 @@ export default function SettingsPageContent() {
             <div className="space-y-3">
               {[
                 { key: 'pushMessages', label: t('Μηνύματα ομάδας', 'Group messages') },
+                { key: 'pushSocial', label: t('Δραστηριότητα τοίχου (σχόλια, αντιδράσεις, ετικέτες)', 'Wall activity (comments, reactions, tags)') },
                 { key: 'pushReminders', label: t('Υπενθυμίσεις', 'Event reminders') },
                 { key: 'pushGroupUpdates', label: t('Ενημερώσεις ομάδας', 'Group updates') },
                 { key: 'pushNewEvents', label: t('Νέες εκδηλώσεις', 'New events nearby') },
@@ -431,6 +451,38 @@ export default function SettingsPageContent() {
                   </button>
                 </label>
               ))}
+            </div>
+            <div className="mt-4 border-t border-border pt-3">
+              <p className={cn('mb-2 text-xs font-bold', a.head)}>{t('Σύνοψη', 'Digest')}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {(
+                  [
+                    ['morning', 'Πρωί', 'Morning'],
+                    ['afternoon', 'Απόγευμα', 'Afternoon'],
+                    ['off', 'Όλες μία-μία', 'Every item'],
+                  ] as const
+                ).map(([key, el, en]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    aria-pressed={(userSettings.notificationPrefs.digest ?? 'morning') === key}
+                    onClick={() => {
+                      updateUserSettings({
+                        notificationPrefs: { ...userSettings.notificationPrefs, digest: key },
+                      });
+                      toast.success(t('Οι προτιμήσεις αποθηκεύτηκαν', 'Preferences saved'));
+                    }}
+                    className={cn(
+                      'filter-chip inline-flex h-[1.75rem] items-center rounded-full border px-3 text-xs font-bold leading-none',
+                      (userSettings.notificationPrefs.digest ?? 'morning') === key
+                        ? 'border-accent bg-accent text-accent-fg'
+                        : 'border-border bg-surface-raised text-ink',
+                    )}
+                  >
+                    {t(el, en)}
+                  </button>
+                ))}
+              </div>
             </div>
           </Card>
 
@@ -465,7 +517,7 @@ export default function SettingsPageContent() {
       )}
 
       <div ref={availabilityPanelRef}>
-        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Διαθεσιμότητα', 'Availability')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider mb-3", a.sectionHead)}>{tu('Διαθεσιμότητα', 'Availability')}</h2>
         <Card className={a.divider}>
           <div
             className={cn("flex items-center justify-between p-4 cursor-pointer transition-colors", a.itemHover)}
@@ -494,6 +546,29 @@ export default function SettingsPageContent() {
                   {slot.label}
                 </button>
               ))}
+              <div className="basis-full pt-2 space-y-1.5">
+                <button
+                  type="button"
+                  disabled={userSettings.availability.length === 0}
+                  onClick={() => {
+                    const next = scheduleFromCoarseAvailability(userSettings.availability);
+                    writeStoredHomeSchedule(next, currentUser?.id);
+                    const encoded = serializeHomeSchedule(next);
+                    const params = new URLSearchParams();
+                    if (encoded.wd) params.set('wd', encoded.wd);
+                    if (encoded.tw) params.set('tw', encoded.tw);
+                    if (encoded.hrs) params.set('hrs', encoded.hrs);
+                    if (encoded.on) params.set('on', encoded.on);
+                    navigate(params.toString() ? `/?${params.toString()}` : '/');
+                    toast.success(
+                      t('Εφαρμόστηκε στην Ανακάλυψη', 'Applied to Discover'),
+                    );
+                  }}
+                  className="text-xs font-bold text-accent min-h-8 disabled:opacity-40"
+                >
+                  {t('Εφαρμογή στην Ανακάλυψη', 'Apply to Discover')}
+                </button>
+              </div>
             </div>
           )}
         </Card>
@@ -501,7 +576,7 @@ export default function SettingsPageContent() {
 
       {/* Active Sessions */}
       <div>
-        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Ενεργές Συνεδρίες', 'Active Sessions')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider mb-3", a.sectionHead)}>{tu('Ενεργές Συνεδρίες', 'Active Sessions')}</h2>
         <Card>
           <div className={cn("divide-y", a.divider)}>
             <div className="flex items-center justify-between p-4">
@@ -536,7 +611,7 @@ export default function SettingsPageContent() {
 
       {/* Data Export */}
       <div>
-        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Δεδομένα', 'Data')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider mb-3", a.sectionHead)}>{tu('Δεδομένα', 'Data')}</h2>
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

@@ -8,16 +8,25 @@ export interface ReturnVisitInput {
   now: Date;
   /** Previous visit (ms since epoch), or null on a first visit. */
   previousVisitAt: number | null;
-  nextEvent: { id: string; title: string; start: Date } | null;
+  nextEvent: { id: string; title: string; start: Date; groupId?: string } | null;
   /** Plans for you created after the previous visit. */
   newPlans: number;
   unreadChats: number;
   unreadNotifications: number;
+  /** Φ26 — wall posts by others, visible to the user, since the previous visit. */
+  newPosts?: number;
+  /** Φ27 — confirmed group ready since last visit (or unread ready moment). */
+  readyGroup?: { groupId: string; title: string } | null;
+  /** Φ27 — waitlist promotion unread since last visit. */
+  waitlistOpen?: { groupId: string; title: string } | null;
 }
 
 export type ReturnVisitPart =
-  | { kind: 'next'; eventId: string; title: string; day: 'today' | 'tomorrow' | 'dayAfter'; time: string }
+  | { kind: 'next'; eventId: string; title: string; day: 'today' | 'tomorrow' | 'dayAfter'; time: string; groupId?: string }
+  | { kind: 'ready'; groupId: string; title: string }
+  | { kind: 'waitlist'; groupId: string; title: string }
   | { kind: 'plans'; count: number }
+  | { kind: 'posts'; count: number }
   | { kind: 'chats'; count: number }
   | { kind: 'notifications'; count: number };
 
@@ -36,12 +45,20 @@ export function buildReturnSummary(input: ReturnVisitInput): ReturnVisitPart[] {
         title: nextEvent.title,
         day: days === 0 ? 'today' : days === 1 ? 'tomorrow' : 'dayAfter',
         time: format(nextEvent.start, 'HH:mm'),
+        groupId: nextEvent.groupId,
       });
     }
   }
   const returning = input.previousVisitAt !== null && now.getTime() - input.previousVisitAt >= RETURN_GAP_MS;
   if (returning) {
+    // Prefer the Φ27 ready / waitlist moments over generic plan/noise when present.
+    if (input.readyGroup) {
+      parts.push({ kind: 'ready', groupId: input.readyGroup.groupId, title: input.readyGroup.title });
+    } else if (input.waitlistOpen) {
+      parts.push({ kind: 'waitlist', groupId: input.waitlistOpen.groupId, title: input.waitlistOpen.title });
+    }
     if (input.newPlans > 0) parts.push({ kind: 'plans', count: input.newPlans });
+    if ((input.newPosts ?? 0) > 0) parts.push({ kind: 'posts', count: input.newPosts ?? 0 });
     if (input.unreadChats > 0) parts.push({ kind: 'chats', count: input.unreadChats });
     if (input.unreadNotifications > 0) parts.push({ kind: 'notifications', count: input.unreadNotifications });
   }
@@ -58,8 +75,16 @@ export function describeReturnPart(part: ReturnVisitPart, t: T): string {
         part.day === 'today' ? t('σήμερα', 'today') : part.day === 'tomorrow' ? t('αύριο', 'tomorrow') : t('μεθαύριο', 'in two days');
       return t(`Επόμενο: ${day} ${part.time}, ${part.title}`, `Next: ${day} ${part.time}, ${part.title}`);
     }
+    case 'ready':
+      return t(`Η παρέα σου είναι έτοιμη · ${part.title}`, `Your group is ready · ${part.title}`);
+    case 'waitlist':
+      return t(`Η θέση σου άνοιξε · ${part.title}`, `Your seat opened · ${part.title}`);
     case 'plans':
       return part.count === 1 ? t('1 νέο σχέδιο για σένα', '1 new plan for you') : t(`${part.count} νέα σχέδια για σένα`, `${part.count} new plans for you`);
+    case 'posts':
+      return part.count === 1
+        ? t('1 νέα δημοσίευση από Nakamas', '1 new post from your Nakamas')
+        : t(`${part.count} νέες δημοσιεύσεις στον τοίχο`, `${part.count} new wall posts`);
     case 'chats':
       return part.count === 1 ? t('1 νέο μήνυμα', '1 new message') : t(`${part.count} νέα μηνύματα`, `${part.count} new messages`);
     case 'notifications':
@@ -70,9 +95,14 @@ export function describeReturnPart(part: ReturnVisitPart, t: T): string {
 export function returnPartPath(part: ReturnVisitPart): string {
   switch (part.kind) {
     case 'next':
-      return `/events/${part.eventId}`;
+      return part.groupId ? `/night/${part.groupId}` : `/events/${part.eventId}`;
+    case 'ready':
+    case 'waitlist':
+      return `/night/${part.groupId}`;
     case 'plans':
       return '/buddy-seek';
+    case 'posts':
+      return '/wall';
     case 'chats':
       return '/chats';
     case 'notifications':

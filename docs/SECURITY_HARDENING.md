@@ -1,7 +1,13 @@
-# Θωράκιση ασφαλείας (14/11/2026)
+# Θωράκιση ασφαλείας (14/11/2026 · ενημέρωση 17/11/2026)
 
 Το έγγραφο καλύπτει τα ευρήματα Critical και High του `COMPREHENSIVE_AUDIT_2026-11-14.md` §4 που λύνονται χωρίς πραγματικό backend χρηστών.
 Λέει επίσης ρητά τι μένει ανοιχτό.
+
+### Ενημέρωση 17/11 (loyalty / exhaustive pass)
+- Production χωρίς Firebase: `authConfig` βάζει `required: true` (AI/chat κλειστά) εκτός `AUTH_OPTIONAL=true`.
+- Demo login off σε κάθε production build (`VITE_DEMO_LOGIN` override).
+- `/manage` με `RequireOrganizer` (UX guard)· Stripe/support URLs μέσω `safeExternalUrl`.
+- Socket `join_room` μέσω `checkChatJoin` (απαιτεί identity· προαιρετικό membership callback όταν έρθουν Functions).
 
 ## 1. Τι άλλαξε
 
