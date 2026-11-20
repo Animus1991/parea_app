@@ -14,6 +14,8 @@ import { isToday, isThisWeek, isThisMonth, parseISO } from 'date-fns';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { EventCard } from '../events/EventCard';
+import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
+import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
 import { EmptyState } from '../common/EmptyState';
 import { EventCardSkeleton } from '../common/Skeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';
@@ -53,6 +55,7 @@ const SELECT_CLASS =
 
 /** Unified categories (ZIP parity + Classic design tokens via usePageContrast). */
 export default function CategoriesPageContent() {
+  const cardImage = useDiscoverCardImageDepth();
   const navigate = useNavigate();
   const { t, tu, language } = useLanguage();
   const p = usePageContrast();
@@ -452,6 +455,8 @@ export default function CategoriesPageContent() {
           </div>
         </div>
 
+        <DiscoverCardImagePicker depth={cardImage.depth} options={cardImage.options} onChange={cardImage.setDepth} />
+
         <ResourceStateGate
           isLoading={isLoading}
           isError={isError}
@@ -482,7 +487,7 @@ export default function CategoriesPageContent() {
                 />
               </div>
             ) : (
-              filteredEvents.map((event) => <EventCard key={event.id} event={event} />)
+              filteredEvents.map((event) => <EventCard key={event.id} event={event} imageDepth={cardImage.depth} />)
             )}
           </div>
         </ResourceStateGate>

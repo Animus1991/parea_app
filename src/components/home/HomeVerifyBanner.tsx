@@ -42,11 +42,11 @@ export function HomeVerifyBanner() {
 
   return (
     <section
-      className={`rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-soft relative ${h.feedbackBanner}`}
+      className={`rounded-2xl px-3.5 py-2.5 flex flex-row items-center justify-between gap-3 border relative ${tok.isDark ? 'border-white/10' : 'border-gray-200 bg-white/60'}`}
     >
-      <div className="flex gap-3 items-center pr-8 sm:pr-0">
+      <div className="flex gap-2.5 items-center min-w-0">
         <div
-          className={`p-2 text-cyan-600 rounded-full shadow-soft shrink-0 ${tok.isDark ? 'bg-gray-800' : 'bg-white'}`}
+          className="text-cyan-600 shrink-0"
         >
           <ShieldCheck className="w-4 h-4" aria-hidden />
         </div>
@@ -54,7 +54,7 @@ export function HomeVerifyBanner() {
           <h3 className={`text-sm font-bold ${h.feedbackTitle}`}>{title}</h3>
         </div>
       </div>
-      <div className="flex items-center gap-2 self-start sm:self-center">
+      <div className="flex items-center gap-1 shrink-0">
         <button
           type="button"
           onClick={() => navigate('/verification')}

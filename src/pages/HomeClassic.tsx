@@ -1,3 +1,4 @@
+import { DiscoverCardImagePicker } from "../components/home/DiscoverCardImagePicker";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
@@ -15,6 +16,8 @@ import { useOnboardingWelcome } from "../hooks/useOnboardingWelcome";
 import { useHomeHeroGate } from "../hooks/useHomeHeroGate";
 import { HomeOnboardingWelcomeBanner } from "../components/home/HomeOnboardingWelcomeBanner";
 import { HomeContinueStrip } from "../components/home/HomeContinueStrip";
+import { HomeNextNightCard } from "../components/home/HomeNextNightCard";
+import { HomeWeekCard } from "../components/home/HomeWeekCard";
 import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
 import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
 import { HomeFeedToolbar } from "../components/home/HomeFeedToolbar";
@@ -24,7 +27,6 @@ import { CollectionsRail } from "../components/outings/CollectionsRail";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
 import { emptyHomeSchedule, isScheduleFilterActive } from "../lib/homeScheduleFilter";
-import { DiscoverCardImagePicker } from "../components/home/DiscoverCardImagePicker";
 import { useDiscoverCardImageDepth } from "../hooks/useDiscoverCardImageDepth";
 
 export default function HomeClassic() {
@@ -129,6 +131,8 @@ export default function HomeClassic() {
         }
       />
 
+      <HomeNextNightCard />
+      <HomeWeekCard />
       <HomeContinueStrip />
 
       {homeGate === 'verify' && <HomeVerifyBanner />}

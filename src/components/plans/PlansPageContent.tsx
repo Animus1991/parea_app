@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card } from '../common/Card';
 import { MessageCircle, MapPin, Calendar, Clock, ShieldAlert, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass, PartyPopper } from 'lucide-react';
 import { useStore } from '../../store';
@@ -21,6 +21,7 @@ import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { eventStartMs, LATE_CANCEL_MS } from '../../store/outingsSlice';
 import { EmptyState } from '../common/EmptyState';
 import { EventCoverImg } from '../common/EventCoverImg';
+import { formatCountdown } from '../../lib/countdown';
 
 function getUserGroupForEvent(eventId: string, groups: Group[], userId: string | undefined) {
   if (!userId) return undefined;
@@ -40,6 +41,11 @@ export default function PlansPageContent() {
   const p = usePageContrast();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'pending' | 'past'>('upcoming');
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<string | null>(null);
+  const [nowMs, setNowMs] = useState(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNowMs(Date.now()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
   const navigate = useNavigate();
 
   const { events, isLoading, isError, refetch } = useEventsResource();
@@ -51,7 +57,7 @@ export default function PlansPageContent() {
   const leaveGroup = useStore((s) => s.leaveGroup);
   const joinGroup = useStore((s) => s.joinGroup);
 
-  const now = new Date();
+  const now = new Date(nowMs);
   const userGroupEventIds = currentUser
     ? groups.filter(g => g.members.includes(currentUser.id)).map(g => g.eventId)
     : [];
@@ -134,11 +140,9 @@ export default function PlansPageContent() {
             <p className={cn(PLANS_TYPO.nextTitle, p.head)}>{nextEvent.title}</p>
           </div>
           <span className={cn('shrink-0 text-xs font-bold px-2.5 py-1 rounded-full', p.statBg, p.statVal)}>
-            {nextEventDays <= 0
-              ? t('Σήμερα', 'Today')
-              : nextEventDays === 1
-                ? t('Αύριο', 'Tomorrow')
-                : t(`σε ${nextEventDays} μέρες`, `in ${nextEventDays} days`)}
+            {eventStartMs(nextEvent) === null
+              ? t('Σύντομα', 'Soon')
+              : formatCountdown(eventStartMs(nextEvent)!, nowMs, language)}
           </span>
         </button>
       )}
@@ -255,20 +259,22 @@ export default function PlansPageContent() {
                   <MessageCircle className="h-3.5 w-3.5" /> {t('Chat', 'Chat')}
                 </button>
                 <button
-                  onClick={() => setShowLeaveConfirm(event.id)}
-                  className={cn(
-                    'px-3 py-1.5 min-h-8 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-1 border',
-                    p.isDark ? 'border-red-500/30 hover:bg-red-500/10 text-red-400' : 'border-red-200 hover:bg-red-50 text-red-700',
-                  )}
-                >
-                  <XCircle className="h-3.5 w-3.5" /> {t('Αποχώρηση', 'Leave')}
-                </button>
-                <button
                   type="button"
                   onClick={() => navigate(`/events/${event.id}`)}
-                  className={cn('text-xs font-bold underline underline-offset-2', p.muted)}
+                  className={cn('min-h-8 px-2 text-xs font-bold', p.muted)}
                 >
                   {t('Λεπτομέρειες', 'Details')}
+                </button>
+                {/* Leaving stays one tap away, but quiet: it is confirmed in a dialog. */}
+                <button
+                  type="button"
+                  onClick={() => setShowLeaveConfirm(event.id)}
+                  className={cn(
+                    'min-h-8 px-2 text-xs font-semibold flex items-center gap-1 transition-colors',
+                    p.isDark ? 'text-gray-400 hover:text-red-400' : 'text-gray-500 hover:text-red-700',
+                  )}
+                >
+                  <XCircle className="h-3.5 w-3.5" aria-hidden /> {t('Αποχώρηση', 'Leave')}
                 </button>
               </div>
             </div>
@@ -482,4 +488,3 @@ export default function PlansPageContent() {
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Bell, Calendar, MessageCircle, Users, CheckCircle2, Trash2, BellOff, PartyPopper, Shield, Star } from 'lucide-react';
+import { Bell, Calendar, MessageCircle, Users, CheckCircle2, Trash2, BellOff, PartyPopper, Shield, Star, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store';
 import type { AppNotification } from '../../data/mockNotifications';
@@ -295,7 +295,13 @@ export default function NotificationsPageContent() {
         )}
       </div>
 
-      <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('Σύνοψη ειδοποιήσεων', 'Notification digest')}>
+      <details className="group">
+        <summary className={cn('inline-flex cursor-pointer list-none items-center gap-1 min-h-8 text-xs font-semibold', a.sub)}>
+          {t('Συχνότητα', 'Frequency')}:{' '}
+          {digest === 'morning' ? t('Πρωινή σύνοψη', 'Morning digest') : digest === 'afternoon' ? t('Απογευματινή σύνοψη', 'Afternoon digest') : t('Όλες μία-μία', 'Every item')}
+          <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" aria-hidden />
+        </summary>
+        <div className="mt-2 flex flex-wrap gap-1.5" role="group" aria-label={t('Σύνοψη ειδοποιήσεων', 'Notification digest')}>
         {(
           [
             ['morning', 'Πρωινή σύνοψη', 'Morning digest'],
@@ -317,6 +323,7 @@ export default function NotificationsPageContent() {
           </button>
         ))}
       </div>
+      </details>
 
       {socialOn && <WallActivityPanel title={t('Δραστηριότητα τοίχου', 'Wall activity')} />}
 
@@ -362,6 +369,7 @@ export default function NotificationsPageContent() {
       {visibleNotifs.length === 0 ? (
         <EmptyState
           icon={BellOff}
+          character="spark"
           title={
             activeTab === 'unread'
               ? t('Καμία μη αναγνωσμένη ειδοποίηση', 'No unread notifications')
@@ -373,19 +381,9 @@ export default function NotificationsPageContent() {
                     ? t('Καμία ειδοποίηση συστήματος', 'No system notifications')
                     : t('Καμία ειδοποίηση', 'No notifications')
           }
-          description={t('Θα εμφανιστούν εδώ όταν υπάρξει κάτι νέο.', "They'll show up here when there's news.")}
-          actionLabel={
-            activeTab !== 'all' && notifications.length > 0
-              ? t('Προβολή όλων', 'Show all')
-              : t('Ανακάλυψη', 'Discover')
-          }
-          onAction={
-            activeTab !== 'all' && notifications.length > 0
-              ? () => setActiveTab('all')
-              : () => navigate('/')
-          }
-          askAi
-          askPrompt={t('Τι νέο υπάρχει στις ειδοποιήσεις;', 'Summarise my notifications')}
+          description={t('Οι νέες ειδοποιήσεις θα εμφανιστούν εδώ.', 'New notifications will appear here.')}
+          actionLabel={t('Ανακάλυψη', 'Discover')}
+          onAction={() => navigate('/')}
         />
       ) : (
         <div className="space-y-4">

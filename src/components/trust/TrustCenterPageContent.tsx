@@ -1,14 +1,14 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { el as elLocale, enUS } from 'date-fns/locale';
 import { TabBar } from '../common/TabBar';
-import { ShieldCheck, Phone, Mail, CreditCard, UserCheck, TrendingUp, History as HistoryIcon, Check } from 'lucide-react';
+import { ShieldCheck, Phone, Mail, CreditCard, UserCheck, TrendingUp, History as HistoryIcon, Check, ChevronDown, BadgeCheck } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { SectionLabel } from '../common/SectionLabel';
 import { TrustLadder } from './TrustLadder';
 import { useStore } from '../../store';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -16,6 +16,7 @@ import { reliabilityBadge, tierLabelEl, tierLabelEn } from '../../lib/trust';
 import type { TrustTier } from '../../types';
 import { StandingCard } from '../outings/StandingCard';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import VerificationCenterPageContent from '../verification/VerificationCenterPageContent';
 
 const TRUST_TIERS: TrustTier[] = ['1_explorer', '2_confirmed', '3_high_trust'];
 
@@ -67,7 +68,14 @@ export default function TrustCenterPageContent() {
   const events = useStore((s) => s.events);
   const groups = useStore((s) => s.groups);
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
-  const [tab, setTab] = useState<'status' | 'history'>('status');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [tab, setTab] = useState<'status' | 'history' | 'verify'>(() => {
+    return searchParams.get('tab') === 'verify' ? 'verify' : searchParams.get('tab') === 'history' ? 'history' : 'status';
+  });
+  useEffect(() => {
+    const nextTab = searchParams.get('tab');
+    setTab(nextTab === 'verify' ? 'verify' : nextTab === 'history' ? 'history' : 'status');
+  }, [searchParams]);
 
   /** Φ25 — live trust history (replaces the hardcoded timeline). */
   const history = useMemo(() => {
@@ -157,12 +165,23 @@ export default function TrustCenterPageContent() {
         idBase="trust"
         ariaLabel={t('Ενότητες αξιοπιστίας', 'Reliability sections')}
         activeTab={tab}
-        onChange={(id) => setTab(id as 'status' | 'history')}
+        onChange={(id) => {
+          const nextTab = id as 'status' | 'history' | 'verify';
+          setTab(nextTab);
+          setSearchParams(nextTab === 'status' ? {} : { tab: nextTab }, { replace: true });
+        }}
         tabs={[
           { id: 'status', label: t('Κατάσταση', 'Status'), icon: ShieldCheck },
           { id: 'history', label: t('Ιστορικό', 'History'), icon: HistoryIcon, count: history.length },
+          { id: 'verify', label: t('Επαληθεύσεις', 'Verifications'), icon: BadgeCheck },
         ]}
       />
+
+      {tab === 'verify' && (
+        <div role="tabpanel" id="trust-panel-verify" aria-labelledby="trust-tab-verify">
+          <VerificationCenterPageContent />
+        </div>
+      )}
 
       {tab === 'status' && (
       <div role="tabpanel" id="trust-panel-status" aria-labelledby="trust-tab-status" className="space-y-4">
@@ -261,7 +280,11 @@ export default function TrustCenterPageContent() {
           </Card>
 
           <Card className="p-4">
-            <SectionLabel el="Πώς υπολογίζεται" en="How the score moves" />
+            <details className="group">
+            <summary className="flex cursor-pointer list-none items-center justify-between min-h-8">
+              <SectionLabel el="Πώς υπολογίζεται" en="How the score moves" />
+              <ChevronDown className={cn('h-4 w-4 transition-transform group-open:rotate-180', a.muted)} aria-hidden />
+            </summary>
             <div className="mt-3 space-y-3">
               <ul aria-label={t('Ανεβαίνει', 'Goes up')} className="space-y-1.5">
                 {[
@@ -300,6 +323,7 @@ export default function TrustCenterPageContent() {
                 };
               })}
             />
+            </details>
           </Card>
         </div>
 

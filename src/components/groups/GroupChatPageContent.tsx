@@ -21,6 +21,7 @@ import {
   Video,
   Images,
   Siren,
+  MoreHorizontal,
 } from "lucide-react";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { toast } from "sonner";
@@ -131,6 +132,7 @@ export default function GroupChatPageContent() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showSearchMobile, setShowSearchMobile] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const [isEphemeral, setIsEphemeral] = useState(true);
   const [showDisableEphemeralModal, setShowDisableEphemeralModal] =
     useState(false);
@@ -159,6 +161,15 @@ export default function GroupChatPageContent() {
   const [memberSearchQuery, setMemberSearchQuery] = useState("");
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [memberAddSearchQuery, setMemberAddSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (!toolsOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setToolsOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [toolsOpen]);
   const [showSosConfirm, setShowSosConfirm] = useState(false);
   const [senderFilter, setSenderFilter] = useState<string>("all");
   const virtuosoRef = useRef<VirtuosoHandle>(null);
@@ -466,51 +477,47 @@ export default function GroupChatPageContent() {
                   </div>
 
                   <button
-                    type="button"
-                    onClick={() => setCallMode('audio')}
-                    aria-label={t('Φωνητική κλήση', 'Voice call')}
-                    title={t('Φωνητική κλήση', 'Voice call')}
-                    className="p-2 rounded-full text-gray-400 hover:text-brand hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shrink-0"
-                  >
-                    <Phone className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCallMode('video')}
-                    aria-label={t('Βιντεοκλήση', 'Video call')}
-                    title={t('Βιντεοκλήση', 'Video call')}
-                    className="p-2 rounded-full text-gray-400 hover:text-brand hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shrink-0"
-                  >
-                    <Video className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowStories((s) => !s)}
-                    aria-label={t('Stories', 'Stories')}
-                    title={t('Stories Nakamas', 'Nakamas Stories')}
-                    className={cn(
-                      'p-2 rounded-full transition-colors shrink-0',
-                      showStories ? 'bg-brand-soft text-brand' : 'text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10',
-                    )}
-                  >
-                    <Images className="h-4 w-4" />
-                  </button>
-
-                  <button
                     onClick={() => setShowSearchMobile(true)}
-                    className="text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors p-2 md:hidden shrink-0"
+                    className="text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors p-2 shrink-0"
                     aria-label={t('Αναζήτηση', 'Search')}
                   >
                     <Search className="h-5 w-5" />
                   </button>
-
-                  {event && (
-                    <ChatIcebreakers
-                      eventTitle={event.title}
-                      interests={currentUser?.interests ?? []}
-                      onSuggest={(text) => setNewMessage(text)}
-                    />
-                  )}
+                  <div className="relative shrink-0">
+                    <button
+                      type="button"
+                      aria-haspopup="menu"
+                      aria-expanded={toolsOpen}
+                      aria-label={t('Περισσότερες επιλογές', 'More options')}
+                      onClick={() => setToolsOpen((open) => !open)}
+                      className="p-2 rounded-full text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10"
+                    >
+                      <MoreHorizontal className="h-5 w-5" aria-hidden />
+                    </button>
+                    {toolsOpen && (
+                      <div role="menu" className="absolute right-0 top-full z-30 mt-1 min-w-48 rounded-xl border border-border bg-surface-raised p-1 shadow-soft-lg">
+                        <button role="menuitem" type="button" onClick={() => { setCallMode('audio'); setToolsOpen(false); }} className="flex min-h-9 w-full items-center gap-2 rounded-lg px-3 text-left text-xs font-medium text-ink hover:bg-surface">
+                          <Phone className="h-4 w-4" aria-hidden /> {t('Φωνητική κλήση', 'Voice call')}
+                        </button>
+                        <button role="menuitem" type="button" onClick={() => { setCallMode('video'); setToolsOpen(false); }} className="flex min-h-9 w-full items-center gap-2 rounded-lg px-3 text-left text-xs font-medium text-ink hover:bg-surface">
+                          <Video className="h-4 w-4" aria-hidden /> {t('Βιντεοκλήση', 'Video call')}
+                        </button>
+                        <button role="menuitem" type="button" onClick={() => { setShowStories((s) => !s); setToolsOpen(false); }} className="flex min-h-9 w-full items-center gap-2 rounded-lg px-3 text-left text-xs font-medium text-ink hover:bg-surface">
+                          <Images className="h-4 w-4" aria-hidden /> {t('Πολυμέσα και stories', 'Media and stories')}
+                        </button>
+                        {event && (
+                          <div role="none" className="px-2 py-1">
+                            <ChatIcebreakers
+                              eventTitle={event.title}
+                              interests={currentUser?.interests ?? []}
+                              menuItem
+                              onSuggest={(text) => { setNewMessage(text); setToolsOpen(false); }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </>
             )}

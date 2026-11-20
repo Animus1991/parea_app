@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Ban, Newspaper, Bot } from 'lucide-react';
+import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Image as ImageIcon, Ban, Newspaper, Bot } from 'lucide-react';
 import { useUIStore } from '../../store/uiStore';
 import { HomeHeroModeSetting } from './HomeHeroModeSetting';
+import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
+import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
+import { CARD_IMAGE_DEPTH_LABELS } from '../../lib/discoverCardImagePreview';
 import { BuddySeekPrivacySettings } from '../buddySeek/BuddySeekPrivacySettings';
 import { ChatPrivacySettingsPanel } from '../chat/ChatPrivacySettingsPanel';
 import { Card } from '../common/Card';
@@ -63,6 +66,8 @@ export default function SettingsPageContent() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showThemePicker, setShowThemePicker] = useState(false);
   const [showHomeLayout, setShowHomeLayout] = useState(false);
+  const [showCardImage, setShowCardImage] = useState(false);
+  const cardImage = useDiscoverCardImageDepth();
   const [showAvailability, setShowAvailability] = useState(false);
   const [showBlockedUsers, setShowBlockedUsers] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -214,6 +219,7 @@ export default function SettingsPageContent() {
         },
         { icon: Palette, label: t('Εμφάνιση & Θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
         { icon: LayoutGrid, label: t('Προβολή αρχικής', 'Home layout'), value: homeHeroMode === 'light' ? t('Σύντομο', 'Compact') : homeHeroMode === 'rich' ? t('Πλήρες', 'Full') : t('Ισορροπημένο', 'Balanced'), onClick: () => setShowHomeLayout(!showHomeLayout) },
+        { icon: ImageIcon, label: t('Εικόνα κάρτας εκδήλωσης', 'Event card photo'), value: t(...CARD_IMAGE_DEPTH_LABELS[cardImage.depth]), onClick: () => setShowCardImage(!showCardImage) },
         {
           icon: Bot,
           label: t('Προτάσεις Nakamas AI στις σελίδες', 'Nakamas AI suggestions on pages'),
@@ -315,6 +321,14 @@ export default function SettingsPageContent() {
               <Card className="p-5">
                 <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
                 <HomeHeroModeSetting />
+              </Card>
+            </div>
+          )}
+          {idx === 0 && showCardImage && (
+            <div className="scroll-mt-24">
+              <Card className="p-5">
+                <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Εικόνα κάρτας εκδήλωσης', 'Event card photo')}</h3>
+                <DiscoverCardImagePicker depth={cardImage.depth} options={cardImage.options} onChange={cardImage.setDepth} />
               </Card>
             </div>
           )}

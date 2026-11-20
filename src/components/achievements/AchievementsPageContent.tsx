@@ -1,16 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Award, ChevronRight, Flame, Share2, Star, TrendingUp, Trophy, Users } from 'lucide-react';
+import { Award, ChevronRight, Flame, Share2, Star, TrendingUp, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card } from '../common/Card';
 import { TabBar } from '../common/TabBar';
 import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
-import { PersonAvatar } from '../wall/PersonAvatar';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useStore } from '../../store';
-import { computeUserXp } from '../../lib/gamification';
 import { DailyChallengeCard, GamificationHubNav, GamificationSummary } from './GamificationHub';
 import { useGamificationData } from '../../hooks/useGamificationData';
 import { NakamasMini } from '../illustrations/NakamasMini';
@@ -25,9 +23,8 @@ export default function AchievementsPageContent() {
   const { t } = useLanguage();
   const a = usePageContrast();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'badges' | 'streaks' | 'leaderboard'>('badges');
+  const [activeTab, setActiveTab] = useState<'badges' | 'streaks'>('badges');
   const currentUser = useStore((s) => s.currentUser);
-  const users = useStore((s) => s.users);
   const groups = useStore((s) => s.groups);
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
   const d = useGamificationData();
@@ -45,26 +42,6 @@ export default function AchievementsPageContent() {
       toast.info(t('Η κοινοποίηση ακυρώθηκε', 'Share cancelled'));
     }
   };
-
-  const leaderboard = useMemo(() => {
-    return users
-      .map((u) => {
-        const isMe = u.id === currentUser?.id;
-        return {
-          id: u.id,
-          name: isMe ? t('Εσύ', 'You') : u.name,
-          avatar: u.photoUrl,
-          realName: u.name,
-          xp: isMe ? d.xp : computeUserXp(u, false, Math.floor((u.reliabilityScore ?? 50) / 10)),
-          isMe,
-        };
-      })
-      .sort((x, y) => y.xp - x.xp)
-      .map((e, i) => ({ ...e, rank: i + 1 }));
-  }, [users, currentUser, d.xp, t]);
-  const top = leaderboard.slice(0, 5);
-  const me = leaderboard.find((e) => e.isMe);
-  const rows = me && !top.some((e) => e.isMe) ? [...top, me] : top;
 
   const groupsJoined = currentUser ? groups.filter((g) => g.members.includes(currentUser.id)).length : 0;
   const dayLabels = [t('Δε', 'Mo'), t('Τρ', 'Tu'), t('Τε', 'We'), t('Πε', 'Th'), t('Πα', 'Fr'), t('Σα', 'Sa'), t('Κυ', 'Su')];
@@ -94,9 +71,15 @@ export default function AchievementsPageContent() {
         tabs={[
           { id: 'badges', label: t('Διακριτικά', 'Badges'), icon: Award, count: d.unlocked },
           { id: 'streaks', label: t('Σερί', 'Streaks'), icon: Flame },
-          { id: 'leaderboard', label: t('Κατάταξη', 'Leaderboard'), icon: Trophy },
         ]}
       />
+      <button
+        type="button"
+        onClick={() => navigate('/leaderboard')}
+        className={cn('inline-flex min-h-9 items-center gap-1 text-xs font-semibold', a.link)}
+      >
+        {t('Δες την κατάταξη →', 'See the leaderboard →')}
+      </button>
 
       <div role="tabpanel" id={`achievements-panel-${activeTab}`} aria-labelledby={`achievements-tab-${activeTab}`}>
         {activeTab === 'badges' && (
@@ -214,34 +197,6 @@ export default function AchievementsPageContent() {
           </div>
         )}
 
-        {activeTab === 'leaderboard' && (
-          <Card className="p-0 overflow-hidden">
-            <ol>
-              {rows.map((entry) => (
-                <li key={entry.id} className={cn('flex items-center gap-3 px-4 py-3 border-b last:border-0', a.lbBorder, entry.isMe && a.highlightRow)}>
-                  <span
-                    className={cn(
-                      'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold tabular-nums',
-                      entry.rank === 1 ? 'bg-amber-100 text-amber-700' : entry.rank === 2 ? (a.isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700') : entry.rank === 3 ? 'bg-orange-100 text-orange-700' : a.isDark ? 'bg-gray-700/30 text-gray-400' : 'bg-gray-100 text-gray-600',
-                    )}
-                  >
-                    {entry.rank}
-                  </span>
-                  <PersonAvatar user={{ id: entry.id, name: entry.realName, photoUrl: entry.avatar }} className={cn('w-7 h-7 text-2xs', a.isDark ? 'border-gray-700' : 'border-gray-200')} />
-                  <span className={cn('flex-1 card-copy font-medium', entry.isMe ? cn('font-bold', a.highlightText) : a.head)}>{entry.name}</span>
-                  <span className={cn('text-xs font-bold tabular-nums', a.sub)}>{entry.xp} XP</span>
-                </li>
-              ))}
-            </ol>
-            <button
-              type="button"
-              onClick={() => navigate('/leaderboard')}
-              className={cn('w-full flex items-center justify-center gap-1 min-h-8 py-1.5 text-xs font-bold border-t transition-colors', a.lbBorder, a.shareHover)}
-            >
-              {t('Πλήρης κατάταξη', 'Full leaderboard')} <ChevronRight className="w-3.5 h-3.5" aria-hidden />
-            </button>
-          </Card>
-        )}
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ export function usePlansFabState() {
 
   const label = feed.myActivePlan
     ? t('Το σχέδιό σας', 'Your plan')
-    : t('Βρες Nakamas', 'Find Nakamas');
+    : t('Παρέες', 'Groups');
 
   return { visible, label, badge: null as number | null, hasPending: false };
 }

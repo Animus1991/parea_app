@@ -148,7 +148,7 @@ describe('copilot action registry', () => {
     const res = await run('start_verification', { method: 'email' });
     expect(res.ok).toBe(true);
     expect(useStore.getState().currentUser?.emailVerified).toBe(true);
-    expect(navigated.at(-1)).toBe('/verification?method=email');
+    expect(navigated.at(-1)).toBe('/trust?tab=verify&method=email');
     res.undo?.();
     expect(useStore.getState().currentUser?.emailVerified).toBe(false);
   });
@@ -174,8 +174,8 @@ describe('copilot action registry', () => {
     } as never);
     const res = await run('summarize_trust', {});
     expect(res.ok).toBe(true);
-    expect(navigated.at(-1)).toBe('/verification?method=email');
-    expect(res.link?.path).toBe('/verification?method=email');
+    expect(navigated.at(-1)).toBe('/trust?tab=verify&method=email');
+    expect(res.link?.path).toBe('/trust?tab=verify&method=email');
   });
 
   it('joins a challenge with undo', async () => {

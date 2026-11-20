@@ -12,6 +12,7 @@ test.describe('Group outings', () => {
     await page.goto('/night/g-nn1');
     await expect(page.getByRole('heading', { name: /^Η βραδιά μας$|^Our night$/ })).toBeVisible();
     await expect(page.getByTestId('group-code')).toHaveText(/^PAREA-[A-Z2-9]{4}$/);
+    await page.getByRole('list', { name: /Χρονοδιάγραμμα βραδιάς|Night timeline/ }).locator('summary').filter({ hasText: /Check-in στην πόρτα|Door check-in/ }).click();
     const door = page.getByRole('region', { name: /Check-in στην πόρτα|Door check-in/ });
     await door.getByRole('button', { name: /Check-in για Maria|Check in Maria/ }).click();
     await door.getByRole('button', { name: /Check-in για Nikos|Check in Nikos/ }).click();
@@ -26,6 +27,7 @@ test.describe('Group outings', () => {
   test('a member sees a rotating 6-digit door code', async ({ page }) => {
     await enterDemoGuest(page);
     await page.goto('/night/g-nn3');
+    await page.getByRole('list', { name: /Χρονοδιάγραμμα βραδιάς|Night timeline/ }).locator('summary').filter({ hasText: /Check-in στην πόρτα|Door check-in/ }).click();
     await expect(page.getByTestId('checkin-code')).toHaveText(/\d{3} \d{3}/);
     await expect(page.getByRole('img', { name: /QR εισόδου|Entry QR/ })).toBeVisible();
   });

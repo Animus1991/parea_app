@@ -11,6 +11,8 @@ import { cn } from '../../lib/utils';
  * Phones only: one floating pill for "Plans forming" and "Chats",
  * instead of two separate floating buttons. Both actions stay one tap away.
  */
+const DOCK_HIDDEN = ['/chat', '/create', '/manage', '/report', '/settings', '/verification', '/onboarding', '/night', '/i', '/login', '/embed'];
+
 export function MobileDock() {
   const { t } = useLanguage();
   const setPlansOpen = useStore((s) => s.setPlansFormingSheetOpen);
@@ -39,8 +41,26 @@ export function MobileDock() {
   }, [aboveEventBar, pathname]);
   const waiting = aboveEventBar && !pastHeader;
 
-  // A group chat owns the bottom of the screen (composer); chats are one tap back.
-  if (pathname.startsWith('/chat/')) return null;
+  // Scrolling down shrinks the pill to its icons; scrolling up brings the labels back.
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    setCompact(false);
+    const main = document.getElementById('main-content');
+    if (!main) return;
+    let last = main.scrollTop;
+    const onScroll = () => {
+      const y = main.scrollTop;
+      if (Math.abs(y - last) < 8) return;
+      setCompact(y > last && y > 120);
+      last = y;
+    };
+    main.addEventListener('scroll', onScroll, { passive: true });
+    return () => main.removeEventListener('scroll', onScroll);
+  }, [pathname]);
+
+  // Screens that own the bottom edge (composer, forms, primary actions) keep it clear.
+  if (DOCK_HIDDEN.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return null;
+  if (matchPath('/events/:eventId/join', pathname) || matchPath('/history/feedback/:eventId', pathname)) return null;
   // On Find Nakamas itself the plans shortcut would open what is already on screen.
   const showPlans = plans.visible && !pathname.startsWith('/buddy-seek');
 
@@ -72,7 +92,7 @@ export function MobileDock() {
             className={cn(segment, 'pl-4 pr-3 active:bg-black/10')}
           >
             <Users className="w-4 h-4" aria-hidden />
-            <span className="whitespace-nowrap">{plans.label}</span>
+            {!compact && <span className="whitespace-nowrap">{plans.label}</span>}
           </button>
           <span aria-hidden className="w-px my-2.5 bg-accent-fg/30" />
         </>
@@ -103,7 +123,7 @@ export function MobileDock() {
             </span>
           )}
         </span>
-        <span className="whitespace-nowrap">{t('Συνομιλίες', 'Chats')}</span>
+        {!compact && <span className="whitespace-nowrap">{t('Συνομιλίες', 'Chats')}</span>}
       </button>
     </div>
   );

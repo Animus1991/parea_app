@@ -52,6 +52,7 @@ export default function MyCalendarPageContent() {
   const dateLocale = language === "el" ? elLocale : enUS;
   const p = usePageContrast();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState(new Date());
   const [view, setView] = useState<"week" | "month">("week");
   const [dayStoryEvents, setDayStoryEvents] = useState<Event[] | null>(null);
   const [dayStoryDay, setDayStoryDay] = useState<Date | null>(null);
@@ -63,6 +64,7 @@ export default function MyCalendarPageContent() {
 
   const { handleCellClick } = useCalendarDayInteraction(
     (day, dayEvents) => {
+      setSelectedDay(day);
       const list = dayEvents as typeof upcomingEvents;
       if (list.length > 0) {
         setDayStoryDay(day);
@@ -501,13 +503,14 @@ export default function MyCalendarPageContent() {
           </div>
         </div>
 
-        <p className={cn("text-xs font-medium px-4 md:px-5 py-2 border-b", p.borderB, p.muted)}>
+        <p className={cn("text-xs font-medium px-4 md:px-5 py-2 border-b lg:col-span-2", p.borderB, p.muted)}>
           {t(
             "Πάτημα: προεπισκόπηση · Διπλό πάτημα: ωριαίο πρόγραμμα",
             "Tap: preview · Double-tap: hourly schedule",
           )}
         </p>
 
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_20rem]">
         <AnimatePresence mode="wait">
           {view === "week" && (
             <motion.div
@@ -654,6 +657,33 @@ export default function MyCalendarPageContent() {
             </motion.div>
           )}
         </AnimatePresence>
+        <aside className={cn("border-t p-4 lg:border-l lg:border-t-0 lg:p-5", p.borderB)} aria-labelledby="selected-day-events">
+          <h3 id="selected-day-events" className={cn("text-sm font-bold", p.head)}>
+            {format(selectedDay, "EEEE d MMMM", { locale: dateLocale })}
+          </h3>
+          {upcomingEvents.filter((event) => isSameDay(event.parsedDate, selectedDay)).length > 0 ? (
+            <ul className="mt-3 space-y-2">
+              {upcomingEvents.filter((event) => isSameDay(event.parsedDate, selectedDay)).map((event) => (
+                <li key={event.id}>
+                  <button type="button" onClick={() => navigate(`/events/${event.id}`)} className={cn("flex min-h-14 w-full items-center gap-3 rounded-xl border p-2 text-left", p.borderB, p.cardHover)}>
+                    <img src={event.imageUrl} alt="" className="h-10 w-12 shrink-0 rounded-lg object-cover" />
+                    <span className="min-w-0">
+                      <span className={cn("block truncate text-xs font-bold", p.head)}>{event.title}</span>
+                      <span className={cn("block text-2xs font-medium", p.muted)}>{event.time} · {event.locationArea}</span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <EmptyState
+              icon={CalendarClock}
+              title={t('Δεν υπάρχουν εκδηλώσεις για αυτή την ημέρα.', 'No events on this day.')}
+              className="mt-3"
+            />
+          )}
+        </aside>
+        </div>
       </div>
 
       {dayStoryEvents && (

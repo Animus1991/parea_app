@@ -112,29 +112,35 @@ export default function HistoryPageContent() {
         </div>
       </div>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className={cn("p-3.5 text-center border", a.statBg)}>
-          <TrendingUp className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn(APP_TYPO.statValue, a.head)}>{totalAttended}</p>
-          <p className={cn(APP_TYPO.sectionLabel, a.muted)}>{t('Εκδηλώσεις', 'Events')}</p>
+      {/* Summary: one quiet line; zeros become an invitation instead of empty tiles */}
+      {totalAttended === 0 ? (
+        <p className={cn('text-sm font-medium', a.sub)}>
+          {t('Η πρώτη σου βραδιά θα εμφανιστεί εδώ.', 'Your first night will show up here.')}
+        </p>
+      ) : (
+        <Card className={cn('px-4 py-3 border flex flex-wrap items-center gap-x-5 gap-y-2 text-sm', a.statBg)}>
+          <span className={cn('inline-flex items-center gap-1.5 font-semibold', a.head)}>
+            <TrendingUp className={cn('w-4 h-4', a.statVal)} aria-hidden />
+            {totalAttended} {t(totalAttended === 1 ? 'εκδήλωση' : 'εκδηλώσεις', totalAttended === 1 ? 'event' : 'events')}
+          </span>
+          {peopleMet > 0 && (
+            <span className={cn('inline-flex items-center gap-1.5 font-semibold', a.head)}>
+              <Users className={cn('w-4 h-4', a.statVal)} aria-hidden />
+              {peopleMet} {t('άτομα', 'people')}
+            </span>
+          )}
+          {avgRating > 0 && (
+            <span className={cn('inline-flex items-center gap-1.5 font-semibold', a.head)}>
+              <Star className={cn('w-4 h-4', a.statVal)} aria-hidden />
+              {avgRating.toFixed(1)}
+            </span>
+          )}
+          <span className={cn('inline-flex items-center gap-1.5 font-semibold', a.head)}>
+            <Award className={cn('w-4 h-4', a.statVal)} aria-hidden />
+            {reviewedCount}/{totalAttended} {t('αξιολογήσεις', 'reviews')}
+          </span>
         </Card>
-        <Card className={cn("p-3.5 text-center border", a.statBg)}>
-          <Star className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn(APP_TYPO.statValue, a.head)}>{avgRating.toFixed(1)}</p>
-          <p className={cn(APP_TYPO.sectionLabel, a.muted)}>{t('Μ.Ο. Βαθμολογία', 'Avg Rating')}</p>
-        </Card>
-        <Card className={cn("p-3.5 text-center border", a.statBg)}>
-          <Users className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn(APP_TYPO.statValue, a.head)}>{peopleMet}</p>
-          <p className={cn(APP_TYPO.sectionLabel, a.muted)}>{t('Άτομα', 'People Met')}</p>
-        </Card>
-        <Card className={cn("p-3.5 text-center border", a.statBg)}>
-          <Award className={cn("w-4 h-4 mx-auto mb-1", a.statVal)} />
-          <p className={cn(APP_TYPO.statValue, a.head)}>{reviewedCount}/{totalAttended}</p>
-          <p className={cn(APP_TYPO.sectionLabel, a.muted)}>{t('Αξιολογήσεις', 'Reviews')}</p>
-        </Card>
-      </div>
+      )}
 
       {/* Search + Tabs */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -248,6 +254,7 @@ export default function HistoryPageContent() {
       ) : (
         <EmptyState
           icon={HistoryIcon}
+          character="explorer"
           title={
             search
               ? t('Κανένα αποτέλεσμα', 'No results')
@@ -259,31 +266,23 @@ export default function HistoryPageContent() {
           }
           description={
             search
-              ? t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search.')
+              ? t('Δεν βρέθηκαν αποτελέσματα για αυτή την αναζήτηση.', 'No results match this search.')
               : tab === 'pending'
-                ? t('Όταν τελειώσει μια βραδιά, η αξιολόγηση έρχεται εδώ.', 'When a night ends, the review lands here.')
+                ? t('Οι εκκρεμείς αξιολογήσεις θα εμφανιστούν εδώ.', 'Pending reviews will appear here.')
                 : tab === 'reviewed'
-                  ? t('Οι αξιολογήσεις σου μένουν εδώ.', 'Your reviews stay here.')
-                  : t('Όσα παρακολουθήσεις θα μείνουν εδώ.', 'Nights you attend will stay here.')
+                  ? t('Οι αξιολογήσεις σου θα εμφανιστούν εδώ.', 'Your reviews will appear here.')
+                  : t('Οι βραδιές που θα ζήσεις θα εμφανιστούν εδώ.', 'Nights you attend will appear here.')
           }
           actionLabel={
             search
               ? t('Καθαρισμός', 'Clear')
-              : tab === 'pending'
-                ? t('Προβολή όλων', 'View all')
-                : tab === 'reviewed'
-                  ? t('Εξερεύνηση', 'Explore')
-                  : t('Εξερεύνηση', 'Explore')
+              : t('Ανακάλυψη', 'Discover')
           }
           onAction={
             search
               ? () => setSearch('')
-              : tab === 'pending'
-                ? () => setTab('all')
-                : () => navigate('/')
+              : () => navigate('/')
           }
-          askAi
-          askPrompt={t('Άνοιξε την εκκρεμή αξιολόγηση', 'Open my pending review')}
         />
       )}
       </ResourceStateGate>

@@ -34,7 +34,7 @@ export const useUIStore = create<UIState>()(
       setCommandPaletteOpen: (commandPaletteOpen) => set({ commandPaletteOpen }),
       toggleCommandPalette: () => set((s) => ({ commandPaletteOpen: !s.commandPaletteOpen })),
       // Less frequent destinations start collapsed; the active section always opens.
-      navCollapsed: ['host', 'trust', 'support'],
+      navCollapsed: ['community', 'host', 'account', 'trust', 'support'],
       toggleNavSection: (id) =>
         set((s) => ({
           navCollapsed: s.navCollapsed.includes(id) ? s.navCollapsed.filter((x) => x !== id) : [...s.navCollapsed, id],

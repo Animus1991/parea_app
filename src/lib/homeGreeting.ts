@@ -3,9 +3,9 @@ export function getTimeGreeting(
   t: (gr: string, en: string) => string,
 ): string {
   const h = new Date().getHours();
-  if (h < 12) return t(`Καλημέρα, ${name} ☀️`, `Good morning, ${name} ☀️`);
-  if (h < 17) return t(`Καλό απόγευμα, ${name} 🌤️`, `Good afternoon, ${name} 🌤️`);
-  return t(`Καλό βράδυ, ${name} 🌙`, `Good evening, ${name} 🌙`);
+  if (h < 12) return t(`Καλημέρα, ${name}`, `Good morning, ${name}`);
+  if (h < 17) return t(`Καλό απόγευμα, ${name}`, `Good afternoon, ${name}`);
+  return t(`Καλό βράδυ, ${name}`, `Good evening, ${name}`);
 }
 
 export function getMotivation(t: (gr: string, en: string) => string): string {

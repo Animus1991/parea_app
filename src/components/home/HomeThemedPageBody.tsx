@@ -1,3 +1,4 @@
+import { DiscoverCardImagePicker } from './DiscoverCardImagePicker';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { EventCard } from '../events/EventCard';
@@ -6,6 +7,8 @@ import { EmptyState } from '../common/EmptyState';
 import { CalendarX } from 'lucide-react';
 import { HomeThemedEnrichment } from './HomeThemedEnrichment';
 import { HomeContinueStrip } from './HomeContinueStrip';
+import { HomeNextNightCard } from './HomeNextNightCard';
+import { HomeWeekCard } from './HomeWeekCard';
 import { HomeThemedHeroSwitch } from './HomeThemedHeroSwitch';
 import { HomeRichHero } from './HomeRichHero';
 import { HomeFiltersSection } from './HomeFiltersSection';
@@ -20,7 +23,6 @@ import { HOME_TYPO } from '../../lib/typographyTokens';
 import { HOME_THEMED_TOKENS, type HomeThemedVariant } from '../../lib/homeThemedTokens';
 import { cn } from '../../lib/utils';
 import { emptyHomeSchedule, isScheduleFilterActive } from '../../lib/homeScheduleFilter';
-import { DiscoverCardImagePicker } from './DiscoverCardImagePicker';
 import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
 
 /**
@@ -133,6 +135,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         }
       />
 
+      <HomeNextNightCard />
+      <HomeWeekCard />
       <HomeContinueStrip />
 
       <HomeThemedEnrichment onPreferDiscoverFeed={() => setFeedType('Discover')} />

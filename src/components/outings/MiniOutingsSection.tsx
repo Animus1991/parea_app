@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Coffee, Footprints, MapPin, Wine, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
@@ -41,6 +41,18 @@ export function MiniOutingsSection({
 }) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [composerInitialNote, setComposerInitialNote] = useState('');
+  const reconnectNames = searchParams.get('reconnect');
+  useEffect(() => {
+    if (!reconnectNames) return;
+    setComposerInitialNote(t(`Ξανά μαζί με ${reconnectNames}`, `Going out again with ${reconnectNames}`));
+    setComposerOpen(true);
+    const next = new URLSearchParams(searchParams);
+    next.delete('reconnect');
+    setSearchParams(next, { replace: true });
+  }, [reconnectNames, searchParams, setSearchParams, t]);
   const go = (path: string) => {
     onLeave?.();
     navigate(path);
@@ -53,7 +65,6 @@ export function MiniOutingsSection({
   const canJoinGroup = useStore((s) => s.canJoinGroup);
   const joinGroup = useStore((s) => s.joinGroup);
   const joinGroupWaitlist = useStore((s) => s.joinGroupWaitlist);
-  const [composerOpen, setComposerOpen] = useState(false);
   const today = new Date().toISOString().slice(0, 10);
 
   const list = useMemo(
@@ -221,12 +232,21 @@ export function MiniOutingsSection({
           })}
         </ul>
       )}
-      {composerOpen && <MiniOutingComposer onClose={() => setComposerOpen(false)} onLeave={onLeave} />}
+      {composerOpen && (
+        <MiniOutingComposer
+          initialNote={composerInitialNote}
+          onClose={() => {
+            setComposerOpen(false);
+            setComposerInitialNote('');
+          }}
+          onLeave={onLeave}
+        />
+      )}
     </section>
   );
 }
 
-function MiniOutingComposer({ onClose, onLeave }: { onClose: () => void; onLeave?: () => void }) {
+function MiniOutingComposer({ onClose, onLeave, initialNote }: { onClose: () => void; onLeave?: () => void; initialNote?: string }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const go = (path: string) => {
@@ -243,7 +263,7 @@ function MiniOutingComposer({ onClose, onLeave }: { onClose: () => void; onLeave
   const [spot, setSpot] = useState('');
   const [size, setSize] = useState(3);
   const [mode, setMode] = useState<GroupGenderMode>('mixed');
-  const [note, setNote] = useState('');
+  const [note, setNote] = useState(initialNote ?? '');
   const [error, setError] = useState('');
   const canWomen = fitsGenderMode(me, 'women_nb');
   const tierOk = me?.trustTier !== '1_explorer';

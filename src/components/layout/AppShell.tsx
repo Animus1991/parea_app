@@ -392,6 +392,21 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         {/* Nakamas AI — the copilot that can act anywhere in the app (Φ24) */}
         <CopilotLauncher />
 
+        {/* Settings — one tap from every screen */}
+        <button
+          type="button"
+          onClick={() => navigate('/settings')}
+          aria-label={t('Ρυθμίσεις', 'Settings')}
+          title={t('Ρυθμίσεις', 'Settings')}
+          className={cn(
+            'relative flex h-9 w-9 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+            currentPath === '/settings' ? 'text-accent' : tok.muted,
+            'hover:bg-black/5 dark:hover:bg-white/10',
+          )}
+        >
+          <Settings className="h-[18px] w-[18px]" aria-hidden />
+        </button>
+
         {/* Quick action — create an event */}
         <button
           onClick={() => navigate('/create')}
@@ -459,8 +474,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
                 </>
               }
             >
-              <div className={cn("hidden flex-col items-end", copilotDocked ? "2xl:flex" : "sm:flex")}>
-                <span className={cn("text-xs font-bold tracking-wide", theme === "activebuddies" ? "text-[hsl(220_11%_34%)]" : theme === "activebuddies-dark" ? "text-[hsl(220_13%_72%)]" : theme === "vibrant-dark" ? "text-gray-400" : theme === "vibrant" ? "text-gray-500" : theme === "bento-dark" || theme === "neon-dark" ? "text-emerald-400" : "text-brand")}>{t(tierLabelEl(currentUser.trustTier), tierLabelEn(currentUser.trustTier))}</span>
+              <div className={cn("hidden flex-col items-end", copilotDocked ? "2xl:flex" : "lg:flex")}>
                 <span className={cn("text-xs font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-ink")}>{currentUser.name}</span>
               </div>
               <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-xs overflow-hidden border", theme === "activebuddies-dark" ? "bg-gray-700/50 border-gray-600 text-gray-200" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] border-[hsl(220_13%_92%)] text-[hsl(220_14%_12%)]" : theme === "vibrant-dark" ? "bg-white/10 border-white/15 text-gray-300" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "vibrant" ? "bg-gray-100 border-gray-200 text-gray-600" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-brand")}>

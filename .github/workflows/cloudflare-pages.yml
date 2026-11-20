@@ -28,6 +28,7 @@ jobs:
       - run: npm run build
         env:
           VITE_GEMINI_API_KEY: ''
+          VITE_WS_URL: 'off'
       - name: Publish to Cloudflare Pages
         id: deploy
         env:
