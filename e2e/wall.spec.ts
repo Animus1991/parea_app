@@ -57,6 +57,7 @@ test.describe('Nakamas wall', () => {
     await expect(like).toHaveAttribute('aria-pressed', 'false');
     await like.click();
     await expect(like).toHaveAttribute('aria-pressed', 'true');
+    await post.getByRole('button', { name: /^Σχόλιο$|^Comment$/ }).click();
     await post.getByRole('textbox').fill('Τέλειο, έρχομαι!');
     await post.getByRole('button', { name: /Αποστολή σχολίου|Send comment/ }).click();
     await expect(post.getByText('Τέλειο, έρχομαι!')).toBeVisible();

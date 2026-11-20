@@ -41,6 +41,7 @@ import { cn } from '../../lib/utils';
 import { AudienceChip } from './AudienceChip';
 import { AudiencePickerModal } from './AudiencePickerModal';
 import { PersonAvatar } from './PersonAvatar';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { REACTION_EMOJI, reactionLabel, relativeTime } from './wallText';
 import { OverflowMenu, type OverflowMenuItem } from './OverflowMenu';
 
@@ -124,6 +125,7 @@ export function PostCard({
   const [expanded, setExpanded] = useState(false);
   const [showAllComments, setShowAllComments] = useState(false);
   const [comment, setComment] = useState('');
+  const [commenting, setCommenting] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(post.text);
   const [audienceOpen, setAudienceOpen] = useState(false);
@@ -318,29 +320,25 @@ export function PostCard({
           </p>
         )}
 
-        {iAmTagged && !isAuthor && (
-          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl bg-surface px-3 py-2 text-xs font-medium text-ink">
+        {iAmTagged && !isAuthor && !myTagShown && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-medium text-ink-muted">
             <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span className="flex-1">
-              {myTagShown
-                ? t('Σε έχει επισημάνει — εμφανίζεται και στο προφίλ σου.', 'You are tagged — it also shows on your profile.')
-                : t('Σε έχει επισημάνει. Να εμφανίζεται και στο προφίλ σου;', 'You are tagged. Show it on your profile too?')}
+            <span className="flex-1 text-ink">
+              {t('Να φαίνεται και στο προφίλ σου;', 'Show this on your profile too?')}
             </span>
-            {!myTagShown && (
-              <button
-                type="button"
-                onClick={() => run(approveTag(post.id)) && toast.success(t('Εμφανίζεται πλέον στο προφίλ σου', 'Now shown on your profile'))}
-                className="inline-flex min-h-8 items-center gap-1 rounded-full bg-accent px-3 font-bold text-accent-fg"
-              >
-                <Check className="h-3.5 w-3.5" aria-hidden /> {t('Εμφάνιση', 'Show')}
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => run(approveTag(post.id)) && toast.success(t('Εμφανίζεται πλέον στο προφίλ σου', 'Now shown on your profile'))}
+              className="inline-flex min-h-8 items-center gap-1 rounded-full bg-accent px-3 font-bold text-accent-fg"
+            >
+              <Check className="h-3.5 w-3.5" aria-hidden /> {t('Ναι', 'Yes')}
+            </button>
             <button
               type="button"
               onClick={() => run(removeMyTag(post.id)) && toast.success(t('Η ετικέτα σου αφαιρέθηκε', 'Your tag was removed'))}
-              className="inline-flex min-h-8 items-center gap-1 rounded-full border border-border px-3 font-bold text-ink"
+              className="inline-flex min-h-8 items-center rounded-full px-2 font-bold text-ink-muted hover:text-ink"
             >
-              <UserMinus className="h-3.5 w-3.5" aria-hidden /> {t('Αφαίρεση ετικέτας', 'Remove tag')}
+              {t('Αφαίρεση', 'Remove')}
             </button>
           </div>
         )}
@@ -416,7 +414,7 @@ export function PostCard({
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-bold text-ink">{event.title}</span>
               <span className="block truncate text-xs font-medium text-ink-muted">
-                {event.date} · {event.time} · {event.locationArea}
+                {formatPlanWhen(event.date, event.time, language)} · {event.locationArea}
               </span>
             </span>
             <ChevronRight className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />
@@ -488,16 +486,19 @@ export function PostCard({
               >
                 <SmilePlus className="h-4 w-4" aria-hidden />
               </button>
+              {commentGate?.allowed !== false && (
               <button
                 type="button"
                 onClick={() => {
                   setShowAllComments(true);
-                  commentRef.current?.focus();
+                  setCommenting(true);
+                  requestAnimationFrame(() => commentRef.current?.focus());
                 }}
                 className="inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink"
               >
                 <MessageCircle className="h-4 w-4" aria-hidden /> {t('Σχόλιο', 'Comment')}
               </button>
+              )}
             </div>
             {pickerOpen && (
               <div role="group" aria-label={t('Διάλεξε αντίδραση', 'Choose a reaction')} className="mt-1 flex flex-wrap gap-1">
@@ -558,7 +559,7 @@ export function PostCard({
                         }
                       }}
                       aria-label={t(`Διαγραφή σχολίου του/της ${cu.name}`, `Delete ${cu.name}'s comment`)}
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted hover:bg-surface hover:text-ink"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted/70 hover:bg-surface hover:text-ink"
                     >
                       <Trash2 className="h-3.5 w-3.5" aria-hidden />
                     </button>
@@ -569,8 +570,7 @@ export function PostCard({
           </ul>
         )}
 
-        {!readOnly && viewerId && commentGate && (
-          commentGate.allowed ? (
+        {!readOnly && viewerId && commentGate && commenting && commentGate.allowed && (
             <form
               className="mt-3 flex items-center gap-2"
               onSubmit={(e) => {
@@ -598,11 +598,11 @@ export function PostCard({
                 <Send className="h-4 w-4" aria-hidden />
               </button>
             </form>
-          ) : (
+        )}
+        {!readOnly && viewerId && commentGate && !commentGate.allowed && (
             <p className="mt-3 flex items-center gap-2 text-xs font-medium text-ink-muted">
               <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden /> {t(commentGate.reasonEl, commentGate.reasonEn)}
             </p>
-          )
         )}
       </article>
 

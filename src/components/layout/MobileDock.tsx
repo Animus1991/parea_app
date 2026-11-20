@@ -11,7 +11,7 @@ import { cn } from '../../lib/utils';
  * Phones only: one floating pill for "Plans forming" and "Chats",
  * instead of two separate floating buttons. Both actions stay one tap away.
  */
-const DOCK_HIDDEN = ['/chat', '/create', '/manage', '/report', '/settings', '/verification', '/onboarding', '/night', '/i', '/login', '/embed'];
+const DOCK_HIDDEN = ['/chat', '/create', '/manage', '/report', '/settings', '/verification', '/onboarding', '/night', '/i', '/login', '/embed', '/wall'];
 
 export function MobileDock() {
   const { t } = useLanguage();

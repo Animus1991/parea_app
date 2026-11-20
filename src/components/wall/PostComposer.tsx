@@ -90,8 +90,10 @@ export function PostComposer({
   const owner = users.find((u) => u.id === ownerId);
 
   const [text, setText] = useState(() => initialText ?? readDraft(ownerId));
-  // Quick starts appear once the person starts writing, not before.
-  const [engaged, setEngaged] = useState(false);
+  // Tools stay tucked away until someone starts writing, so the feed is the first thing they see.
+  const [engaged, setEngaged] = useState(() =>
+    Boolean(focusOnOpen || initialEventId || (initialText ?? readDraft(ownerId)).trim()),
+  );
   const [imageUrl, setImageUrl] = useState<string | undefined>();
   const [eventId, setEventId] = useState<string | undefined>(initialEventId);
   const [taggedIds, setTaggedIds] = useState<string[]>([]);
@@ -183,6 +185,7 @@ export function PostComposer({
     setImageUrl(undefined);
     setEventId(undefined);
     setTaggedIds([]);
+    setEngaged(false);
     setAudienceTouched(false);
     if (defaultAudience) setAudience(defaultAudience);
     writeDraft(ownerId, '');
@@ -203,11 +206,12 @@ export function PostComposer({
   };
 
   const placeholder = isOwnWall
-    ? t(`Τι σκέφτεσαι, ${me.name}; Ψάχνεις παρέα για κάτι;`, `What's on your mind, ${me.name}? Looking for company?`)
+    ? t(`Τι σκέφτεσαι, ${me.name};`, `What's on your mind, ${me.name}?`)
     : t(`Γράψε κάτι στον τοίχο του/της ${owner?.name ?? ''}…`, `Write something on ${owner?.name ?? ''}'s wall…`);
+  const toolsOpen = engaged || Boolean(text.trim() || imageUrl || eventId || taggedIds.length);
 
   return (
-    <Card className="p-4" data-testid="wall-composer">
+    <Card className={cn('p-3 sm:p-4', !toolsOpen && 'py-3')} data-testid="wall-composer">
       <div className="flex items-start gap-3">
         <PersonAvatar user={me} />
         <div className="min-w-0 flex-1 space-y-3">
@@ -227,7 +231,7 @@ export function PostComposer({
                 submit();
               }
             }}
-            rows={text.length > 120 ? 4 : 2}
+            rows={toolsOpen ? (text.length > 120 ? 4 : 2) : 1}
             maxLength={POST_MAX_CHARS + 50}
             placeholder={placeholder}
             className="w-full resize-none rounded-2xl border border-border bg-surface px-3 py-2.5 text-sm text-ink outline-none placeholder:text-ink-muted focus:ring-2 focus:ring-accent"
@@ -300,6 +304,7 @@ export function PostComposer({
         </div>
       </div>
 
+      {toolsOpen && (
       <div className="mt-3 space-y-2">
         {engaged && !text && !eventId && !imageUrl && (
           <div className={COMPOSER_ROW} role="group" aria-label={t('Γρήγορη αρχή', 'Quick start')}>
@@ -392,6 +397,7 @@ export function PostComposer({
           </p>
         )}
       </div>
+      )}
 
       <Modal open={tagsOpen} onClose={() => setTagsOpen(false)} title={t('Με ποιους είσαι;', 'Who are you with?')} size="md">
         <p className="-mt-2 mb-3 text-sm font-medium text-ink-muted">
