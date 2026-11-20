@@ -1,4 +1,4 @@
-import { useRef, type ComponentType, type PointerEvent as ReactPointerEvent } from 'react';
+import { useRef, type ComponentType } from 'react';
 import { createPortal } from 'react-dom';
 import { NavLink } from 'react-router-dom';
 import {
@@ -15,9 +15,7 @@ import { isOrganizerUser, isPlatformAdmin } from '../../lib/roles';
 import { prefetchPath } from '../../lib/routeLoaders';
 import {
   BOTTOM_SWIPE_QUICK_NAV_ENABLED,
-  isDownwardCloseSwipe,
   quickNavDestinations,
-  suppressClickOnce,
   type QuickNavTileDef,
 } from '../../lib/bottomSwipeQuickNav';
 
@@ -42,37 +40,6 @@ const ICONS: Record<string, ComponentType<{ className?: string }>> = {
   help: HelpCircle,
   admin: Terminal,
 };
-
-function bindCloseSwipe(onClose: () => void) {
-  return (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!event.isPrimary) return;
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
-    const startX = event.clientX;
-    const startY = event.clientY;
-
-    const stop = () => {
-      window.removeEventListener('pointerup', onUp);
-      window.removeEventListener('pointercancel', onCancel);
-    };
-    const maybeClose = (x: number, y: number) => {
-      if (!isDownwardCloseSwipe({ dx: x - startX, dy: y - startY })) return;
-      suppressClickOnce(event.currentTarget);
-      onClose();
-    };
-    const onUp = (up: PointerEvent) => {
-      if (up.pointerId !== event.pointerId) return;
-      stop();
-      maybeClose(up.clientX, up.clientY);
-    };
-    const onCancel = (cancel: PointerEvent) => {
-      if (cancel.pointerId !== event.pointerId) return;
-      stop();
-      maybeClose(cancel.clientX, cancel.clientY);
-    };
-    window.addEventListener('pointerup', onUp);
-    window.addEventListener('pointercancel', onCancel);
-  };
-}
 
 function Tile({
   tile,
@@ -157,9 +124,9 @@ export function BottomSwipeQuickNav({
       <div
         ref={panelRef}
         tabIndex={-1}
-        onPointerDown={bindCloseSwipe(onClose)}
+        data-bottom-swipe-sheet=""
         className={cn(
-          'absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-y-auto overscroll-contain rounded-t-2xl border-t border-x border-border bg-surface-raised text-ink shadow-soft-lg px-3 pt-2 pb-3 outline-none',
+          'absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-y-auto overscroll-contain rounded-t-2xl border-t border-x border-border bg-surface-raised text-ink shadow-soft-lg px-3 pt-2 pb-3 outline-none touch-none select-none',
           'animate-in slide-in-from-bottom duration-300 motion-reduce:animate-none',
           tok.isDark ? 'border-gray-700' : 'border-gray-200',
         )}
