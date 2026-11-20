@@ -171,44 +171,13 @@ export default function WallFeedPageContent() {
                   ? t('Καμία δημοσίευση από τους Nakamas σου ακόμα', 'No posts from your Nakamas yet')
                   : t('Ήσυχα εδώ προς το παρόν', 'Quiet here for now')
           }
-          description={
-            filter === 'mine'
-              ? t('Γράψε τι σχεδιάζεις — οι Nakamas σου μπορούν να έρθουν μαζί.', 'Share what you are planning — your Nakamas can join you.')
-              : filter === 'connections' && byFilter.all.length > 0
-                ? t('Δείξε όλη τη ροή ή γράψε κάτι δικό σου.', 'Show the whole feed or write something of your own.')
-                : t('Σύνδεσου με άτομα από τις εκδηλώσεις σου για να βλέπεις τα σχέδιά τους.', 'Connect with people from your events to see their plans.')
-          }
-          actionLabel={
-            filter === 'mine' || filter === 'all'
-              ? t('Γράψε δημοσίευση', 'Write a post')
-              : filter === 'connections' && byFilter.all.length > 0
-                ? t('Δείξε όλα', 'Show all')
-                : t('Βρες Nakamas', 'Find Nakamas')
-          }
+          character="crew"
+          description={t('Γράψε τι σχεδιάζεις για να το δουν οι Nakamas σου.', 'Share what you are planning so your Nakamas can see it.')}
+          actionLabel={t('Γράψε δημοσίευση', 'Write a post')}
           onAction={() => {
-            if (filter === 'mine' || filter === 'all') {
-              composerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              composerRef.current?.querySelector('textarea')?.focus();
-            } else if (filter === 'connections' && byFilter.all.length > 0) {
-              setFilter('all');
-            } else navigate('/buddy-seek');
+            composerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            composerRef.current?.querySelector('textarea')?.focus();
           }}
-          secondaryLabel={
-            filter === 'mine'
-              ? undefined
-              : filter === 'all'
-                ? t('Βρες Nakamas', 'Find Nakamas')
-                : filter === 'connections' && byFilter.all.length > 0
-                  ? t('Βρες Nakamas', 'Find Nakamas')
-                  : t('Οι Nakamas μου', 'My Nakamas')
-          }
-          onSecondary={
-            filter === 'mine'
-              ? undefined
-              : filter === 'all' || (filter === 'connections' && byFilter.all.length > 0)
-                ? () => navigate('/buddy-seek')
-                : () => navigate('/connections')
-          }
           askAi
           askPrompt={
             filter === 'mine'

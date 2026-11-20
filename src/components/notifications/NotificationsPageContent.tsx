@@ -369,6 +369,7 @@ export default function NotificationsPageContent() {
       {visibleNotifs.length === 0 ? (
         <EmptyState
           icon={BellOff}
+          character="spark"
           title={
             activeTab === 'unread'
               ? t('Καμία μη αναγνωσμένη ειδοποίηση', 'No unread notifications')
@@ -380,19 +381,9 @@ export default function NotificationsPageContent() {
                     ? t('Καμία ειδοποίηση συστήματος', 'No system notifications')
                     : t('Καμία ειδοποίηση', 'No notifications')
           }
-          description={t('Θα εμφανιστούν εδώ όταν υπάρξει κάτι νέο.', "They'll show up here when there's news.")}
-          actionLabel={
-            activeTab !== 'all' && notifications.length > 0
-              ? t('Προβολή όλων', 'Show all')
-              : t('Ανακάλυψη', 'Discover')
-          }
-          onAction={
-            activeTab !== 'all' && notifications.length > 0
-              ? () => setActiveTab('all')
-              : () => navigate('/')
-          }
-          askAi
-          askPrompt={t('Τι νέο υπάρχει στις ειδοποιήσεις;', 'Summarise my notifications')}
+          description={t('Οι νέες ειδοποιήσεις θα εμφανιστούν εδώ.', 'New notifications will appear here.')}
+          actionLabel={t('Ανακάλυψη', 'Discover')}
+          onAction={() => navigate('/')}
         />
       ) : (
         <div className="space-y-4">

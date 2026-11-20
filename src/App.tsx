@@ -42,7 +42,6 @@ const MyConnections = lazy(routeLoaders.myConnections);
 const Inbox = lazy(routeLoaders.inbox);
 const CreateEventFlow = lazy(routeLoaders.createEventFlow);
 const Wallet = lazy(routeLoaders.wallet);
-const VerificationCenter = lazy(routeLoaders.verificationCenter);
 const SettingsAndPrivacy = lazy(routeLoaders.settingsAndPrivacy);
 const HelpCenter = lazy(routeLoaders.helpCenter);
 const Achievements = lazy(routeLoaders.achievements);
@@ -180,7 +179,7 @@ export default function App() {
             <Route path="/create" element={<ErrorBoundary><CreateEventFlow /></ErrorBoundary>} />
             <Route path="/wallet" element={<ErrorBoundary><Wallet /></ErrorBoundary>} />
 
-            <Route path="/verification" element={<ErrorBoundary><VerificationCenter /></ErrorBoundary>} />
+            <Route path="/verification" element={<Navigate to="/trust?tab=verify" replace />} />
             <Route path="/trust" element={<ErrorBoundary><TrustCenter /></ErrorBoundary>} />
             <Route path="/report" element={<ErrorBoundary><ReportIssue /></ErrorBoundary>} />
 

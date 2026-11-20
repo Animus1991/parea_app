@@ -203,15 +203,11 @@ export default function SavedEventsPageContent() {
       ) : (
         <EmptyState
           icon={Bookmark}
+          character="explorer"
           title={t('Δεν υπάρχουν αποθηκευμένες', 'No saved events yet')}
-          description={t(
-            'Προσθέστε εκδηλώσεις στους σελιδοδείκτες σας για εύκολη πρόσβαση.',
-            'Bookmark events to find them easily later.',
-          )}
-          actionLabel={t('Ανακαλύψτε Εκδηλώσεις', 'Discover Events')}
+          description={t('Αποθήκευσε μια εκδήλωση για να τη βρεις εδώ.', 'Save an event to find it here.')}
+          actionLabel={t('Ανακάλυψη', 'Discover')}
           onAction={() => navigate('/')}
-          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
-          onSecondary={() => navigate('/buddy-seek')}
         />
       )}
       </ResourceStateGate>

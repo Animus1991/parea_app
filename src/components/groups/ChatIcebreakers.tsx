@@ -8,9 +8,10 @@ interface ChatIcebreakersProps {
   eventTitle: string;
   interests: string[];
   onSuggest: (text: string) => void;
+  menuItem?: boolean;
 }
 
-export function ChatIcebreakers({ eventTitle, interests, onSuggest }: ChatIcebreakersProps) {
+export function ChatIcebreakers({ eventTitle, interests, onSuggest, menuItem = false }: ChatIcebreakersProps) {
   const { t, language } = useLanguage();
   const [loading, setLoading] = useState(false);
 
@@ -48,6 +49,7 @@ export function ChatIcebreakers({ eventTitle, interests, onSuggest }: ChatIcebre
   return (
     <button
       type="button"
+      role={menuItem ? 'menuitem' : undefined}
       onClick={handleClick}
       disabled={loading}
       className="text-gray-400 hover:text-brand hover:bg-cyan-50 rounded-full transition-colors p-2 min-h-8 min-w-8 flex items-center justify-center disabled:opacity-50"

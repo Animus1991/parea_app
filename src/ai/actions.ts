@@ -1482,7 +1482,7 @@ const startVerificationAction: CopilotAction = {
     }
     const prev = verifyDemoSnapshot(user);
     const changed = verifyDemo(pick);
-    const path = `/verification?method=${pick}`;
+    const path = `/trust?tab=verify&method=${pick}`;
     rt.navigate(path);
     const labels = {
       email: ['email', 'email'],
@@ -1642,7 +1642,7 @@ const summarizeTrustAction: CopilotAction = {
         data: { score, gap: null },
       };
     }
-    const path = `/verification?method=${gap}`;
+    const path = `/trust?tab=verify&method=${gap}`;
     rt.navigate(path);
     return {
       ok: true,

@@ -252,7 +252,7 @@ export default function ProfilePageContent() {
                     {/* eslint-disable-next-line jsx-a11y/no-autofocus -- focus moves only after the user opened this field */}
                     <input autoFocus value={tempName} onChange={(e) => setTempName(e.target.value)}
                       className={cn("flex-1 rounded-2xl px-3 py-1.5 focus:ring-2 outline-none", PROFILE_TYPO.identityName, inputBg, a.ring)} />
-                    <Button size="sm" onClick={() => { if (tempName.trim()) { updateUser(currentUser.id, { name: tempName }); setIsEditingName(false); toast.success(t('Το όνομα αποθηκεύτηκε', 'Name saved')); } }}>{t("Αποθήκευση", "Save")}</Button>
+                    <Button size="sm" variant="outline" onClick={() => { if (tempName.trim()) { updateUser(currentUser.id, { name: tempName }); setIsEditingName(false); toast.success(t('Το όνομα αποθηκεύτηκε', 'Name saved')); } }}>{t("Αποθήκευση", "Save")}</Button>
                     <Button size="sm" variant="ghost" aria-label={t('Ακύρωση', 'Cancel')} onClick={() => { setTempName(currentUser.name); setIsEditingName(false); }}><X className="w-4 h-4" aria-hidden /></Button>
                   </div>
                 ) : (
@@ -278,7 +278,7 @@ export default function ProfilePageContent() {
                   <div className="space-y-2">
                     <textarea value={tempBio} onChange={(e) => setTempBio(e.target.value)} className={cn("w-full rounded-2xl p-3 focus:ring-2 outline-none resize-none", PROFILE_TYPO.identityBio, inputBg, a.ring)} rows={3} />
                     <div className="flex gap-2">
-                      <Button size="sm" onClick={() => { setBio(tempBio); setIsEditingBio(false); updateUser(currentUser.id, { bio: tempBio }); toast.success(t('Το bio αποθηκεύτηκε', 'Bio saved')); }}>{t("Αποθήκευση", "Save")}</Button>
+                      <Button size="sm" variant="outline" onClick={() => { setBio(tempBio); setIsEditingBio(false); updateUser(currentUser.id, { bio: tempBio }); toast.success(t('Το bio αποθηκεύτηκε', 'Bio saved')); }}>{t("Αποθήκευση", "Save")}</Button>
                       <Button size="sm" variant="outline" onClick={() => { setTempBio(bio); setIsEditingBio(false); }}>{t("Ακύρωση", "Cancel")}</Button>
                     </div>
                   </div>
@@ -293,7 +293,7 @@ export default function ProfilePageContent() {
               </Button>
               {currentUser.isOrganizer ? (
                 <>
-                  <Button size="sm" onClick={() => navigate(`/organizer/${currentUser.id}`)}>
+                  <Button size="sm" variant="outline" onClick={() => navigate(`/organizer/${currentUser.id}`)}>
                     {t('Προφίλ Διοργανωτή', 'Organizer Profile')}
                   </Button>
                   <Button
@@ -700,7 +700,7 @@ export default function ProfilePageContent() {
           <div className="flex-1 min-w-0">
             <p className={cn(PROFILE_TYPO.bannerTitle, heading)}>{t("Φέρε τους δικούς σου Nakamas", "Bring your own Nakamas")}</p>
           </div>
-          <Button size="sm" onClick={() => void handleInvite()} className="flex items-center gap-1.5 shrink-0 max-sm:w-full">
+          <Button size="sm" variant="primary" onClick={() => void handleInvite()} className="flex items-center gap-1.5 shrink-0 max-sm:w-full">
             <Share2 className="w-3.5 h-3.5" aria-hidden /> {t("Πρόσκληση φίλων", "Invite friends")}
           </Button>
         </Card>

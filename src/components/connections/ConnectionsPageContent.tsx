@@ -421,11 +421,9 @@ export default function ConnectionsPageContent() {
                 icon={Users}
                 character={search ? undefined : 'crew'}
                 title={search ? t('Δεν βρέθηκαν αποτελέσματα', 'No results found') : t('Δεν έχετε συνδέσεις ακόμα', 'No connections yet')}
-                description={t('Βρείτε Nakamas στις εκδηλώσεις!', 'Find Nakamas at events!')}
-                actionLabel={search ? t('Καθαρισμός', 'Clear') : t('Εξερεύνηση', 'Explore')}
-                onAction={search ? () => setSearch('') : () => navigate('/')}
-                secondaryLabel={search ? undefined : t('Βρες Nakamas', 'Find Nakamas')}
-                onSecondary={search ? undefined : () => navigate('/buddy-seek')}
+                description={t('Βρες παρέα για την επόμενη έξοδο.', 'Find company for your next outing.')}
+                actionLabel={search ? t('Καθαρισμός', 'Clear') : t('Βρες Nakamas', 'Find Nakamas')}
+                onAction={search ? () => setSearch('') : () => navigate('/buddy-seek')}
               />
             </div>
           )}
@@ -539,6 +537,7 @@ export default function ConnectionsPageContent() {
           {pendingRequests.length === 0 && (
             <EmptyState
               icon={UserPlus}
+              character="crew"
               title={t('Δεν υπάρχουν αιτήματα', 'No pending requests')}
               description={t(
                 'Θα ειδοποιηθείτε όταν κάποιος θέλει να συνδεθεί.',
@@ -570,7 +569,7 @@ export default function ConnectionsPageContent() {
                   <button
                     type="button"
                     onClick={() => handleAccept(req.id, req.user.name)}
-                    className={`flex items-center gap-1 px-3 py-1.5 min-h-8 rounded-lg text-xs font-bold transition-colors ${a.acceptBtn}`}
+                    className={`flex items-center gap-1 px-3 py-1.5 min-h-8 rounded-lg border border-border bg-transparent text-xs font-bold transition-colors ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}
                   >
                     <Check className="w-3.5 h-3.5" aria-hidden /> {t('Αποδοχή', 'Accept')}
                   </button>
@@ -595,12 +594,11 @@ export default function ConnectionsPageContent() {
           {suggested.length === 0 && (
             <EmptyState
               icon={Users}
+              character="crew"
               title={t('Δεν υπάρχουν προτάσεις', 'No suggestions yet')}
-              description={t('Συμμετέχετε σε εκδηλώσεις για να βρείτε Nakamas!', 'Join events to find Nakamas!')}
-              actionLabel={t('Εξερεύνηση', 'Explore')}
-              onAction={() => navigate('/')}
-              secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
-              onSecondary={() => navigate('/buddy-seek')}
+              description={t('Βρες παρέα για την επόμενη έξοδο.', 'Find company for your next outing.')}
+              actionLabel={t('Βρες Nakamas', 'Find Nakamas')}
+              onAction={() => navigate('/buddy-seek')}
             />
           )}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -631,7 +629,7 @@ export default function ConnectionsPageContent() {
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); handleConnect(user.id, user.name); }}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shrink-0 ${a.acceptBtn}`}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border bg-transparent text-xs font-bold transition-colors shrink-0 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}
                   >
                     <UserPlus className="w-3.5 h-3.5" /> {t('Σύνδεση', 'Connect')}
                   </button>

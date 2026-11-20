@@ -254,6 +254,7 @@ export default function HistoryPageContent() {
       ) : (
         <EmptyState
           icon={HistoryIcon}
+          character="explorer"
           title={
             search
               ? t('Κανένα αποτέλεσμα', 'No results')
@@ -265,31 +266,23 @@ export default function HistoryPageContent() {
           }
           description={
             search
-              ? t('Δοκιμάστε διαφορετική αναζήτηση.', 'Try a different search.')
+              ? t('Δεν βρέθηκαν αποτελέσματα για αυτή την αναζήτηση.', 'No results match this search.')
               : tab === 'pending'
-                ? t('Όταν τελειώσει μια βραδιά, η αξιολόγηση έρχεται εδώ.', 'When a night ends, the review lands here.')
+                ? t('Οι εκκρεμείς αξιολογήσεις θα εμφανιστούν εδώ.', 'Pending reviews will appear here.')
                 : tab === 'reviewed'
-                  ? t('Οι αξιολογήσεις σου μένουν εδώ.', 'Your reviews stay here.')
-                  : t('Όσα παρακολουθήσεις θα μείνουν εδώ.', 'Nights you attend will stay here.')
+                  ? t('Οι αξιολογήσεις σου θα εμφανιστούν εδώ.', 'Your reviews will appear here.')
+                  : t('Οι βραδιές που θα ζήσεις θα εμφανιστούν εδώ.', 'Nights you attend will appear here.')
           }
           actionLabel={
             search
               ? t('Καθαρισμός', 'Clear')
-              : tab === 'pending'
-                ? t('Προβολή όλων', 'View all')
-                : tab === 'reviewed'
-                  ? t('Εξερεύνηση', 'Explore')
-                  : t('Εξερεύνηση', 'Explore')
+              : t('Ανακάλυψη', 'Discover')
           }
           onAction={
             search
               ? () => setSearch('')
-              : tab === 'pending'
-                ? () => setTab('all')
-                : () => navigate('/')
+              : () => navigate('/')
           }
-          askAi
-          askPrompt={t('Άνοιξε την εκκρεμή αξιολόγηση', 'Open my pending review')}
         />
       )}
       </ResourceStateGate>
