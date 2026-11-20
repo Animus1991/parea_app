@@ -515,10 +515,22 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
     --text-3xl: calc(1.125rem * var(--web-card-boost));
     --text-4xl: calc(1.25rem * var(--web-card-boost));
   }
-  /* Story tiles are not cards — extra +10% on their type only. */
-  .event-story-tile {
-    --text-2xs: calc(0.5625rem * 1.1);
-    --text-xs: calc(0.625rem * 1.1);
+  /*
+   * Story tiles are not cards. Grow the tile 10% so the extra type
+   * (+10% then +5%) sits on the caption, not over the photo.
+   */
+  button.event-story-tile {
+    --web-story-type: 1.155;
+    --text-2xs: calc(0.5625rem * var(--web-story-type));
+    --text-xs: calc(0.625rem * var(--web-story-type));
+    width: calc(104px * 1.1);
+  }
+  .event-story-tile .event-story-tile-frame {
+    height: calc(150px * 1.1);
+  }
+  .event-story-skeleton {
+    width: calc(108px * 1.1);
+    height: calc(156px * 1.1);
   }
 }
 

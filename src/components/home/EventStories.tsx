@@ -96,7 +96,7 @@ export function EventStories({ events }: EventStoriesProps) {
                   seen ? "from-gray-300 to-gray-300" : activeRing,
                 )}
               >
-                <div className="relative w-full h-[150px] rounded-2xl overflow-hidden bg-gray-200">
+                <div className="event-story-tile-frame relative w-full h-[150px] rounded-2xl overflow-hidden bg-gray-200">
                   {e.imageUrl ? (
                     <img
                       src={e.imageUrl}
@@ -107,7 +107,7 @@ export function EventStories({ events }: EventStoriesProps) {
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
                   {/* One quiet marker at most: seeking a host wins over trending. */}
                   {badgeLabel ? (
@@ -125,7 +125,10 @@ export function EventStories({ events }: EventStoriesProps) {
                   ) : null}
 
                   {/* Date and title share one text block at the bottom, no boxed chip on top. */}
-                  <div className="absolute bottom-1.5 left-1.5 right-1.5 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  <div
+                    data-event-story-caption=""
+                    className="absolute bottom-1.5 left-1.5 right-1.5 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
+                  >
                     {day ? (
                       <span className="block text-2xs font-bold leading-tight text-white/85">
                         {day} {mon}

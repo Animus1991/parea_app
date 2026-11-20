@@ -16,13 +16,20 @@ test.describe('Desktop web type scale', () => {
       page.evaluate(() => {
         const html = parseFloat(getComputedStyle(document.documentElement).fontSize);
         const card = document.querySelector('#main-content .nakamas-card h3');
-        const storyType = document.querySelector('[data-event-story] .text-2xs');
+        const tile = document.querySelector('[data-event-story]');
+        const storyType = tile?.querySelector('.text-2xs');
+        const caption = tile?.querySelector('[data-event-story-caption]');
         const section = document.querySelector('[data-event-stories] h2');
+        const tileBox = tile?.getBoundingClientRect();
+        const captionBox = caption?.getBoundingClientRect();
         return {
           html,
           card: card ? parseFloat(getComputedStyle(card).fontSize) : 0,
           story: storyType ? parseFloat(getComputedStyle(storyType).fontSize) : 0,
           section: section ? parseFloat(getComputedStyle(section).fontSize) : 0,
+          tileW: tileBox?.width ?? 0,
+          tileH: tileBox?.height ?? 0,
+          captionShare: tileBox && captionBox && tileBox.height ? captionBox.height / tileBox.height : 0,
         };
       });
 
@@ -32,6 +39,8 @@ test.describe('Desktop web type scale', () => {
     expect(phone.card).toBeLessThan(12.2);
     expect(phone.story).toBeGreaterThan(8.5);
     expect(phone.story).toBeLessThan(9.6);
+    expect(phone.tileW).toBeGreaterThan(100);
+    expect(phone.tileW).toBeLessThan(112);
 
     await page.setViewportSize({ width: 1280, height: 800 });
     await expect(title).toBeVisible();
@@ -42,10 +51,13 @@ test.describe('Desktop web type scale', () => {
     expect(desktop.card / phone.card).toBeLessThan(1.32);
     expect(desktop.html / phone.html).toBeGreaterThan(1.08);
     expect(desktop.html / phone.html).toBeLessThan(1.13);
-    // Stories: html +10% and an extra +10% on the tile — not the card +25%.
-    expect(desktop.story / phone.story).toBeGreaterThan(1.18);
-    expect(desktop.story / phone.story).toBeLessThan(1.25);
+    // Stories: html +10%, tile type +10% then +5% extra, tile size +10%.
+    expect(desktop.story / phone.story).toBeGreaterThan(1.22);
+    expect(desktop.story / phone.story).toBeLessThan(1.32);
     expect(desktop.story / desktop.card).toBeLessThan(0.9);
+    expect(desktop.tileW / phone.tileW).toBeGreaterThan(1.08);
+    expect(desktop.tileW / phone.tileW).toBeLessThan(1.13);
+    expect(desktop.captionShare).toBeLessThan(0.42);
     // Section label next to the rail stays on the chrome scale, not the tile boost.
     expect(desktop.section / phone.section).toBeGreaterThan(1.08);
     expect(desktop.section / phone.section).toBeLessThan(1.13);
