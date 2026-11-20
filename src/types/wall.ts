@@ -36,9 +36,47 @@ export interface Audience {
 
 export const AUDIENCE_BASES: AudienceBase[] = ['public', 'connections', 'friends_of_friends', 'specific', 'list', 'only_me'];
 
-export type ReactionKind = 'like' | 'love' | 'haha' | 'wow' | 'cheers';
+export type ReactionKind =
+  | 'like'
+  | 'love'
+  | 'haha'
+  | 'wow'
+  | 'sad'
+  | 'fire'
+  | 'clap'
+  | 'going'
+  | 'cheers'
+  | 'party'
+  | 'eyes'
+  | 'hug'
+  | 'think'
+  | 'thanks'
+  | 'toast'
+  | 'star'
+  | 'ticket'
+  | 'music';
 
-export const REACTION_KINDS: ReactionKind[] = ['like', 'love', 'haha', 'wow', 'cheers'];
+/** Keep in sync with firestore.rules `reactions.kind` and wallText REACTION_EMOJI. */
+export const REACTION_KINDS: ReactionKind[] = [
+  'like',
+  'love',
+  'haha',
+  'wow',
+  'sad',
+  'fire',
+  'clap',
+  'going',
+  'cheers',
+  'party',
+  'eyes',
+  'hug',
+  'think',
+  'thanks',
+  'toast',
+  'star',
+  'ticket',
+  'music',
+];
 
 export interface WallComment {
   id: string;

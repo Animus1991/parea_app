@@ -71,6 +71,14 @@ describe('activity', () => {
     expect(kinds).toEqual(expect.arrayContaining(['comment', 'reaction', 'wall_post']));
   });
 
+  it('accepts the wider emoji set and rejects unknown kinds', () => {
+    expect(useWallStore.getState().react('wp1', 'going').ok).toBe(true);
+    expect(post('wp1').reactions.u1).toBe('going');
+    expect(useWallStore.getState().react('wp1', 'fire').ok).toBe(true);
+    expect(post('wp1').reactions.u1).toBe('fire');
+    expect(useWallStore.getState().react('wp1', 'angry' as 'like').ok).toBe(false);
+  });
+
   it('changing a reaction keeps one notification; taking it back removes it', () => {
     useWallStore.getState().react('wp1', 'like');
     useWallStore.getState().react('wp1', 'love');

@@ -19,7 +19,6 @@ import {
   Pin,
   PinOff,
   Send,
-  SmilePlus,
   Trash2,
   Users2,
 } from 'lucide-react';
@@ -130,7 +129,6 @@ export function PostCard({
   const [editText, setEditText] = useState(post.text);
   const [audienceOpen, setAudienceOpen] = useState(false);
   const [reactionsOpen, setReactionsOpen] = useState(false);
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [reportReason, setReportReason] = useState(REPORT_REASONS[0].id);
   const [thumbFailed, setThumbFailed] = useState(false);
@@ -147,7 +145,7 @@ export function PostCard({
   const topReactions = useMemo(() => {
     const counts = new Map<ReactionKind, number>();
     for (const [, k] of reactionEntries) counts.set(k, (counts.get(k) ?? 0) + 1);
-    return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([k]) => k).slice(0, 3);
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([k]) => k);
   }, [reactionEntries]);
   const myReaction = viewerId ? post.reactions[viewerId] : undefined;
 
@@ -470,63 +468,41 @@ export function PostCard({
         )}
 
         {!readOnly && viewerId && (
-          <div className="mt-2 border-t border-border pt-2">
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => run(react(post.id, myReaction ? null : 'like'))}
-                aria-pressed={Boolean(myReaction)}
-                className={cn(
-                  'inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl text-xs font-bold transition-colors hover:bg-surface',
-                  myReaction ? 'text-ink' : 'text-ink-muted',
-                )}
-              >
-                <span aria-hidden className="text-base leading-none">{myReaction ? REACTION_EMOJI[myReaction] : '👍'}</span>
-                {myReaction ? reactionLabel(myReaction, t) : t('Μου αρέσει', 'Like')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setPickerOpen((v) => !v)}
-                aria-expanded={pickerOpen}
-                aria-label={t('Περισσότερες αντιδράσεις', 'More reactions')}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-ink-muted hover:bg-surface hover:text-ink"
-              >
-                <SmilePlus className="h-4 w-4" aria-hidden />
-              </button>
-              {commentGate?.allowed !== false && (
-              <button
-                type="button"
-                onClick={() => {
-                  setShowAllComments(true);
-                  setCommenting(true);
-                  requestAnimationFrame(() => commentRef.current?.focus());
-                }}
-                className="inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink"
-              >
-                <MessageCircle className="h-4 w-4" aria-hidden /> {t('Σχόλιο', 'Comment')}
-              </button>
-              )}
+          <div className="mt-2 space-y-1 border-t border-border pt-2">
+            <div
+              role="group"
+              aria-label={t('Αντίδραση', 'React')}
+              className="grid grid-cols-9"
+            >
+              {REACTION_KINDS.map((k) => (
+                <button
+                  key={k}
+                  type="button"
+                  aria-pressed={myReaction === k}
+                  aria-label={reactionLabel(k, t)}
+                  title={reactionLabel(k, t)}
+                  onClick={() => run(react(post.id, k))}
+                  className={cn(
+                    'flex h-9 w-full items-center justify-center rounded-full text-base leading-none transition-colors',
+                    myReaction === k ? 'bg-accent-soft' : 'hover:bg-surface',
+                  )}
+                >
+                  <span aria-hidden>{REACTION_EMOJI[k]}</span>
+                </button>
+              ))}
             </div>
-            {pickerOpen && (
-              <div role="group" aria-label={t('Διάλεξε αντίδραση', 'Choose a reaction')} className="mt-1 flex flex-wrap gap-1">
-                {REACTION_KINDS.map((k) => (
-                  <button
-                    key={k}
-                    type="button"
-                    aria-pressed={myReaction === k}
-                    onClick={() => {
-                      run(react(post.id, k));
-                      setPickerOpen(false);
-                    }}
-                    className={cn(
-                      'inline-flex min-h-9 items-center gap-1 rounded-full border px-3 text-xs font-bold',
-                      myReaction === k ? 'border-accent bg-accent-soft text-ink' : 'border-border text-ink-muted hover:text-ink',
-                    )}
-                  >
-                    <span aria-hidden className="text-base leading-none">{REACTION_EMOJI[k]}</span> {reactionLabel(k, t)}
-                  </button>
-                ))}
-              </div>
+            {commentGate?.allowed !== false && (
+            <button
+              type="button"
+              onClick={() => {
+                setShowAllComments(true);
+                setCommenting(true);
+                requestAnimationFrame(() => commentRef.current?.focus());
+              }}
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-xl px-1 text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink"
+            >
+              <MessageCircle className="h-4 w-4" aria-hidden /> {t('Σχόλιο', 'Comment')}
+            </button>
             )}
           </div>
         )}

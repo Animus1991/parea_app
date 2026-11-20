@@ -308,7 +308,7 @@ service cloud.firestore {
         allow create, update: if signedIn() && request.auth.uid == uid
           && canReadPost(get(postPath(postId)).data)
           && request.resource.data.keys().hasOnly(['kind'])
-          && request.resource.data.kind in ['like', 'love', 'haha', 'wow', 'cheers'];
+          && request.resource.data.kind in ['like', 'love', 'haha', 'wow', 'sad', 'fire', 'clap', 'going', 'cheers', 'party', 'eyes', 'hug', 'think', 'thanks', 'toast', 'star', 'ticket', 'music'];
         allow delete: if signedIn() && request.auth.uid == uid;
       }
     }
