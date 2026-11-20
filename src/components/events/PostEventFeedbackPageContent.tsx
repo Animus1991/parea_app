@@ -13,6 +13,7 @@ import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
 import type { FeedbackData } from '../../store';
 import { FEEDBACK_MOODS, starsForMood } from '../../lib/feedbackDue';
+import { PersonAvatar } from '../wall/PersonAvatar';
 
 const COMMENT_MAX = 280;
 
@@ -37,6 +38,15 @@ export default function PostEventFeedbackPageContent() {
   const [mood, setMood] = useState('');
   const [wouldGoAgain, setWouldGoAgain] = useState<boolean | undefined>(undefined);
   const [comment, setComment] = useState('');
+  // «Ξανά μαζί»: private marks, revealed only when mutual.
+  const seeAgainCandidates = useStore((s) => s.seeAgainCandidates);
+  const mySeeAgainPicks = useStore((s) => s.mySeeAgainPicks);
+  const pickSeeAgain = useStore((s) => s.pickSeeAgain);
+  const users = useStore((s) => s.users);
+  const candidates = useMemo(() => (eventId ? seeAgainCandidates(eventId) : []), [eventId, seeAgainCandidates]);
+  const [seeAgain, setSeeAgain] = useState<string[]>(() => (eventId ? mySeeAgainPicks(eventId) : []));
+  const [matches, setMatches] = useState<{ mutual: string[]; connected: string[] }>({ mutual: [], connected: [] });
+  const toggleSeeAgain = (id: string) => setSeeAgain((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
 
   const dateLocale = language === 'el' ? el : enUS;
   const eventDateLabel = event?.date
@@ -56,6 +66,7 @@ export default function PostEventFeedbackPageContent() {
       wouldGoAgain,
     };
     submitFeedback(payload);
+    if (candidates.length > 0) setMatches(pickSeeAgain(eventId, seeAgain));
     setDone(true);
   };
 
@@ -126,9 +137,37 @@ export default function PostEventFeedbackPageContent() {
           <h2 className={cn('text-sm md:text-base font-bold tracking-tight mb-2', p.head)}>
             {t('Ευχαριστούμε.', 'Thank you.')}
           </h2>
-          <p className={cn('text-sm font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
-            {t('Αυτό ήταν όλο.', 'That’s all.')}
-          </p>
+          {matches.mutual.length > 0 ? (
+            <div className="mb-5 w-full max-w-sm space-y-2" role="status">
+              {matches.mutual.map((id) => {
+                const u = users.find((x) => x.id === id);
+                if (!u) return null;
+                const first = u.name.split(' ')[0];
+                return (
+                  <div key={id} className={cn('flex items-center gap-3 rounded-2xl border p-3 text-left', p.borderB)}>
+                    <PersonAvatar user={u} size="sm" />
+                    <p className={cn('min-w-0 flex-1 text-sm font-semibold', p.head)}>
+                      {matches.connected.includes(id)
+                        ? t(`Και ο/η ${first} θέλει να ξαναβγείτε — είστε πλέον Nakamas.`, `${first} wants to meet again too — you are now Nakamas.`)
+                        : t(`Και ο/η ${first} θέλει να ξαναβγείτε.`, `${first} wants to meet again too.`)}
+                    </p>
+                    <Button size="sm" variant="outline" onClick={() => navigate(`/u/${id}`)}>
+                      {t('Προφίλ', 'Profile')}
+                    </Button>
+                  </div>
+                );
+              })}
+              <Button size="sm" className="w-full" onClick={() => navigate('/buddy-seek')}>
+                {t('Κανονίστε την επόμενη', 'Plan the next one')}
+              </Button>
+            </div>
+          ) : (
+            <p className={cn('text-sm font-medium max-w-sm mx-auto mb-5 leading-relaxed', p.sub)}>
+              {seeAgain.length > 0
+                ? t('Αν το θέλουν κι εκείνοι, θα το μάθετε και οι δύο.', 'If they want it too, you will both know.')
+                : t('Αυτό ήταν όλο.', 'That’s all.')}
+            </p>
+          )}
           <Button
             onClick={() => navigate('/history')}
             variant={p.isAB ? 'primary' : 'outline'}
@@ -218,6 +257,41 @@ export default function PostEventFeedbackPageContent() {
               ))}
             </div>
           </div>
+
+          {candidates.length > 0 && (
+            <div>
+              <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-1', p.head)}>
+                {tu('Ξανά μαζί;', 'Again together?')}
+              </h3>
+              <p className={cn('text-xs font-medium pl-1 mb-3', p.sub)}>
+                {t('Ποιους θα ήθελες να ξαναδείς; Το μαθαίνουν μόνο αν το θέλουν κι εκείνοι.', 'Who would you see again? They only find out if they want it too.')}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {candidates.map((u) => {
+                  const on = seeAgain.includes(u.id);
+                  return (
+                    <button
+                      key={u.id}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() => toggleSeeAgain(u.id)}
+                      className={cn(
+                        'inline-flex min-h-10 items-center gap-2 rounded-full border py-1 pl-1 pr-3 text-xs font-bold transition-colors',
+                        on
+                          ? p.isDark
+                            ? 'border-cyan-500 bg-cyan-900/20 text-cyan-300'
+                            : 'border-cyan-500 bg-cyan-50 text-cyan-800'
+                          : cn(p.borderB, p.head, p.cardSurface),
+                      )}
+                    >
+                      <PersonAvatar user={u} size="sm" className="h-7 w-7" />
+                      {u.name.split(' ')[0]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div>
             <h3 className={cn('text-xs font-bold tracking-wide pl-1 mb-3', p.head)}>

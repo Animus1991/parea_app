@@ -4,7 +4,7 @@
  * pending appeal (so the admin queue is not empty) and one plan invite.
  */
 import type { Event, Group, User } from '../types';
-import type { PlanInvite, Strike, VibeProfile } from '../types/outings';
+import type { PlanInvite, SeeAgainPick, Strike, VibeProfile } from '../types/outings';
 import { groupCodeFor } from '../lib/outings';
 import { MINI_OUTING_COVERS } from '../lib/eventCover';
 
@@ -240,6 +240,12 @@ export const mockStrikes: Strike[] = [
       status: 'pending',
     },
   },
+];
+
+/** Others' private «Ξανά μαζί» marks (the demo's other devices). Elena would see Alex again after the cinema. */
+export const mockSeeAgainPicks: SeeAgainPick[] = [
+  { fromUserId: 'u4', toUserId: 'u1', eventId: 'e4', at: '2026-06-01T09:00:00.000Z' },
+  { fromUserId: 'u2', toUserId: 'u1', eventId: 'e5', at: '2026-06-06T10:00:00.000Z' },
 ];
 
 export const mockPlanInvites: PlanInvite[] = [

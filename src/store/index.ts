@@ -2288,6 +2288,7 @@ export const useStore = create<AppState>()(
         planInvites: state.planInvites,
         followedOrganizerIds: state.followedOrganizerIds,
         govWalletInterest: state.govWalletInterest,
+        seeAgainPicks: state.seeAgainPicks,
       }),
       merge: (persisted, current) => {
         const p = persisted as Record<string, unknown> | undefined;
@@ -2387,6 +2388,7 @@ export const useStore = create<AppState>()(
           planInvites: mergeById(current.planInvites, p.planInvites),
           followedOrganizerIds: Array.isArray(p.followedOrganizerIds) ? (p.followedOrganizerIds as string[]) : [],
           govWalletInterest: Boolean(p.govWalletInterest),
+          seeAgainPicks: Array.isArray(p.seeAgainPicks) ? (p.seeAgainPicks as typeof current.seeAgainPicks) : current.seeAgainPicks,
         };
       },
     },

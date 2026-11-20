@@ -34,6 +34,18 @@ export interface CheckInRecord {
 export type StrikeKind = 'no_show' | 'late_cancel' | 'report_upheld';
 
 /** Graduated consequences (Timeleft moderation, adapted to reliability). */
+/**
+ * «Ξανά μαζί» (Timeleft's mutual «I'd see them again», adapted): after an
+ * outing each person privately marks who they'd like to see again. Nothing is
+ * shown to anyone unless both marked each other for the same outing.
+ */
+export interface SeeAgainPick {
+  fromUserId: string;
+  toUserId: string;
+  eventId: string;
+  at: string;
+}
+
 export interface Strike {
   id: string;
   userId: string;

@@ -20,6 +20,7 @@ import type {
   GroupGenderMode,
   InviteResponse,
   PlanInvite,
+  SeeAgainPick,
   Strike,
   StrikeKind,
   VibeProfile,
@@ -31,7 +32,7 @@ import { getEventDateRange } from '../lib/eventCalendarExport';
 import { activeTicketPartner, settleReservation } from '../services/ticketPartner';
 import { coversFor } from '../lib/planCovers';
 import { MINI_OUTING_COVERS } from '../lib/eventCover';
-import { mockPlanInvites, mockStrikes } from '../data/mockOutings';
+import { mockPlanInvites, mockSeeAgainPicks, mockStrikes } from '../data/mockOutings';
 import { fetchInviteResponses, newHostKey, publishInvite } from '../services/invitesApi';
 
 /** Check-in opens 2 h before the start and closes 6 h after it (demo mode: always open). */
@@ -79,6 +80,8 @@ export interface OutingsSlice {
   followedOrganizerIds: string[];
   /** «Ενημέρωσέ με» for Gov.gr Wallet — interest only, nothing else is stored. */
   govWalletInterest: boolean;
+  /** «Ξανά μαζί» marks: mine plus (in the demo) other devices' — never shown unless mutual. */
+  seeAgainPicks: SeeAgainPick[];
 
   canJoinGroup: (groupId: string) => JoinGate;
   joinGroupWaitlist: (groupId: string) => boolean;
@@ -108,6 +111,15 @@ export interface OutingsSlice {
   createMiniOuting: (input: MiniOutingInput) => string | null;
   completeSelfieCheck: () => void;
   setGovWalletInterest: (on: boolean) => void;
+  /** People from this outing I could mark «Ξανά μαζί» (shared group, not me, not blocked). */
+  seeAgainCandidates: (eventId: string) => User[];
+  /** My marks for this outing (private). */
+  mySeeAgainPicks: (eventId: string) => string[];
+  /**
+   * Save my private «Ξανά μαζί» marks for an outing. Returns the people who
+   * also marked me (mutual); strangers who match become Nakamas — both chose it.
+   */
+  pickSeeAgain: (eventId: string, userIds: string[]) => { mutual: string[]; connected: string[] };
 }
 
 /** The parts of the main store this slice reads and writes. */
@@ -119,6 +131,7 @@ interface Host extends OutingsSlice {
   demoMode: boolean;
   blockedUserIds: string[];
   commitmentHolds: Record<string, { eventId: string; heldAt: string; amount: number }>;
+  connectionRequests: { id: string; fromUserId: string; toUserId: string; message?: string; createdAt: string; status: 'pending' | 'accepted' | 'declined' }[];
   addNotification: (n: Record<string, unknown>) => void;
   logAdminAction: (action: string, targetId?: string, note?: string) => void;
 }
@@ -132,6 +145,7 @@ export function outingsSeedData() {
     planInvites: mockPlanInvites.map((i) => ({ ...i, responses: i.responses.map((r) => ({ ...r })) })),
     followedOrganizerIds: [] as string[],
     govWalletInterest: false,
+    seeAgainPicks: mockSeeAgainPicks.map((p) => ({ ...p })),
   };
 }
 
@@ -774,6 +788,85 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
     },
 
     setGovWalletInterest: (on) => set({ govWalletInterest: on }),
+
+    seeAgainCandidates: (eventId) => {
+      const s = get();
+      const me = s.currentUser;
+      if (!me) return [];
+      const ids = new Set<string>();
+      for (const g of s.groups) {
+        if (g.eventId !== eventId || g.status === 'cancelled' || !g.members.includes(me.id)) continue;
+        // After a door check-in, only people who were actually there.
+        const present = g.checkInClosedAt && g.checkIns?.[me.id] ? g.members.filter((m) => g.checkIns?.[m]) : g.members;
+        present.forEach((m) => ids.add(m));
+      }
+      ids.delete(me.id);
+      return [...ids]
+        .map((id) => s.users.find((u) => u.id === id))
+        .filter((u): u is User => Boolean(u))
+        .filter((u) => !s.blockedUserIds.includes(u.id) && !(u.blockedUserIds ?? []).includes(me.id));
+    },
+
+    mySeeAgainPicks: (eventId) => {
+      const me = get().currentUser;
+      return me ? get().seeAgainPicks.filter((p) => p.fromUserId === me.id && p.eventId === eventId).map((p) => p.toUserId) : [];
+    },
+
+    pickSeeAgain: (eventId, userIds) => {
+      const s = get();
+      const me = s.currentUser;
+      if (!me) return { mutual: [], connected: [] };
+      const allowed = new Set(get().seeAgainCandidates(eventId).map((u) => u.id));
+      const chosen = [...new Set(userIds)].filter((id) => allowed.has(id));
+      const at = new Date().toISOString();
+      const mine = chosen.map((toUserId) => ({ fromUserId: me.id, toUserId, eventId, at }));
+      const mutual = chosen.filter((id) => s.seeAgainPicks.some((p) => p.fromUserId === id && p.toUserId === me.id && p.eventId === eventId));
+      const isConnected = (a: User | undefined, b: string) => Boolean(a?.connections?.includes(b));
+      const connected = mutual.filter((id) => !isConnected(s.users.find((u) => u.id === me.id) ?? me, id));
+      const alreadyMatched = new Set(
+        s.seeAgainPicks.filter((p) => p.fromUserId === me.id && p.eventId === eventId).map((p) => p.toUserId),
+      );
+
+      set((st) => {
+        let people = { users: st.users, currentUser: st.currentUser };
+        for (const id of connected) {
+          // Both chose it: they become Nakamas, the same as an accepted request.
+          people = patchPerson(people, me.id, (u) => ({ connections: [...new Set([...(u.connections ?? []), id])] }));
+          people = patchPerson(people, id, (u) => ({ connections: [...new Set([...(u.connections ?? []), me.id])] }));
+        }
+        return {
+          ...people,
+          seeAgainPicks: [...st.seeAgainPicks.filter((p) => !(p.fromUserId === me.id && p.eventId === eventId)), ...mine],
+          connectionRequests: st.connectionRequests.map((r) =>
+            r.status === 'pending' && connected.some((id) => (r.fromUserId === id && r.toUserId === me.id) || (r.fromUserId === me.id && r.toUserId === id))
+              ? { ...r, status: 'accepted' as const }
+              : r,
+          ),
+        };
+      });
+
+      const event = s.events.find((e) => e.id === eventId);
+      for (const id of mutual) {
+        if (alreadyMatched.has(id)) continue; // a match is announced once
+        const name = (s.users.find((u) => u.id === id)?.name ?? '').split(' ')[0];
+        const isNew = connected.includes(id);
+        get().addNotification({
+          type: 'connection',
+          messageGr: isNew
+            ? `Ξανά μαζί: εσύ και ο/η ${name} θέλετε να ξαναβγείτε — είστε πλέον Nakamas.`
+            : `Ξανά μαζί: και ο/η ${name} θέλει να ξαναβγείτε μετά το «${event?.title ?? ''}».`,
+          messageEn: isNew
+            ? `Again together: you and ${name} both want to meet again — you are now Nakamas.`
+            : `Again together: ${name} would like to meet again too, after «${event?.title ?? ''}».`,
+          timeGr: 'μόλις τώρα',
+          timeEn: 'just now',
+          read: false,
+          eventId,
+          forUserId: me.id,
+        });
+      }
+      return { mutual, connected };
+    },
   };
 }
 

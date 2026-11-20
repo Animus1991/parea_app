@@ -148,3 +148,37 @@ describe('outings in the store (Φ27)', () => {
     expect(after.users.find((u) => u.id === 'u1')!.selfieVerified).toBeFalsy();
   });
 });
+
+describe('«Ξανά μαζί» — mutual only (Φ28)', () => {
+  beforeEach(reset);
+
+  it('offers the people of the outing, never me or someone I blocked', () => {
+    const ids = useStore.getState().seeAgainCandidates('e4').map((u) => u.id).sort();
+    expect(ids).toEqual(['u2', 'u3', 'u4']);
+    useStore.getState().blockUser('u3');
+    expect(useStore.getState().seeAgainCandidates('e4').map((u) => u.id)).not.toContain('u3');
+  });
+
+  it('reveals only mutual marks; a mutual stranger becomes a Nakama and the pending request settles', () => {
+    const before = useStore.getState().notifications.length;
+    const res = useStore.getState().pickSeeAgain('e4', ['u4', 'u3', 'not-there']);
+    // Elena marked Alex too (seed); Nikos did not — and is never told.
+    expect(res).toEqual({ mutual: ['u4'], connected: ['u4'] });
+    const st = useStore.getState();
+    expect(st.users.find((u) => u.id === 'u1')!.connections).toContain('u4');
+    expect(st.users.find((u) => u.id === 'u4')!.connections).toContain('u1');
+    expect(st.currentUser!.connections).toContain('u4');
+    expect(st.connectionRequests.find((r) => r.id === 'cr3')!.status).toBe('accepted');
+    expect(st.mySeeAgainPicks('e4').sort()).toEqual(['u3', 'u4']);
+    expect(st.notifications.length).toBe(before + 1);
+    // Saving again does not announce the same match twice.
+    useStore.getState().pickSeeAgain('e4', ['u4']);
+    expect(useStore.getState().notifications.length).toBe(before + 1);
+    expect(useStore.getState().mySeeAgainPicks('e4')).toEqual(['u4']);
+  });
+
+  it('a mutual mark between people already connected is a nudge, not a new connection', () => {
+    const res = useStore.getState().pickSeeAgain('e5', ['u2']);
+    expect(res).toEqual({ mutual: ['u2'], connected: [] });
+  });
+});
