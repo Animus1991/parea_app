@@ -44,6 +44,7 @@ import { MatchExplainChips } from "./MatchExplainChips";
 import { getEventGroupProgress } from "../../lib/groupUtils";
 import { reliabilityBadge, tierLabelEl, tierLabelEn } from "../../lib/trust";
 import { GroupProgressBar } from "./GroupProgressBar";
+import type { EventCardImageDepth } from "../../lib/discoverCardImagePreview";
 import { toast } from "sonner";
 import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
 import { TileLayer, Marker } from "react-leaflet";
@@ -66,6 +67,11 @@ interface EventCardProps {
   event: Event;
   /** Feed cards lead with Find Nakamas; the seeking-host rail leads with hosting. */
   emphasis?: 'join' | 'host';
+  /**
+   * How far the photo reaches. Default `photo` is the current card.
+   * `title` / `facts` / `organizer` overlay those rows on the image.
+   */
+  imageDepth?: EventCardImageDepth;
 }
 
 /** Mount Leaflet only when the mini-map enters the viewport (avoids N× Strict Mode races). */
@@ -161,7 +167,7 @@ function CardFact({
   );
 }
 
-export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: EventCardProps) {
+export const EventCard = memo(function EventCard({ event, emphasis = 'join', imageDepth = 'photo' }: EventCardProps) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const users = useStore((state) => state.users);
@@ -314,6 +320,197 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
     "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
     isDark ? "bg-white/[0.06] text-gray-400" : "bg-gray-50 text-gray-500",
   );
+  const coverTitle = imageDepth !== 'photo';
+  const coverFacts =
+    imageDepth === 'facts' ||
+    imageDepth === 'organizer' ||
+    imageDepth === 'divider' ||
+    imageDepth === 'full';
+  const coverOrganizer =
+    imageDepth === 'organizer' || imageDepth === 'divider' || imageDepth === 'full';
+  const coverAboveProgress = imageDepth === 'divider' || imageDepth === 'full';
+  const coverFull = imageDepth === 'full';
+  const photoWell = "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white";
+
+  const titleRow = (onPhoto: boolean) => (
+    <div className="flex items-center justify-between gap-3">
+      <h3
+        className={cn(
+          EVENT_CARD_TYPO.title,
+          "min-w-0 flex-1 pr-1 transition-colors line-clamp-2",
+          onPhoto
+            ? "text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]"
+            : cn(
+                headColor,
+                isDark
+                  ? accent === 'fuchsia'
+                    ? ''
+                    : accent === 'indigo'
+                      ? 'group-hover:text-indigo-400'
+                      : accent === 'emerald'
+                        ? 'group-hover:text-emerald-400'
+                        : 'group-hover:text-cyan-400'
+                  : accent === 'fuchsia'
+                    ? ''
+                    : accent === 'indigo'
+                      ? 'group-hover:text-indigo-600'
+                      : accent === 'emerald'
+                        ? 'group-hover:text-emerald-600'
+                        : 'group-hover:text-brand',
+              ),
+        )}
+      >
+        <Link
+          to={`/events/${event.id}`}
+          onClick={(e) => e.stopPropagation()}
+          className="rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+        >
+          {event.title}
+        </Link>
+      </h3>
+      {currentUser && matchScore != null && (
+        <button
+          type="button"
+          className={cn(
+            "flex min-h-11 shrink-0 flex-col items-center justify-center self-center rounded-xl border px-3 py-1",
+            onPhoto
+              ? "border-white/25 bg-white/15 text-white backdrop-blur-md"
+              : isDark
+                ? "border-white/10 bg-white/[0.04]"
+                : "border-gray-100 bg-gray-50",
+          )}
+          title={t("Γιατί αυτό το ταίριασμα", "Why this match")}
+          aria-expanded={showMatchWhy}
+          aria-label={t(`${matchScore}% ταίριασμα — άνοιγμα εξήγησης`, `${matchScore}% match — open explanation`)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowMatchWhy((v) => !v);
+          }}
+        >
+          <span
+            className={cn(
+              EVENT_CARD_TYPO.matchScore,
+              "inline-flex items-center gap-1 font-bold tabular-nums",
+              onPhoto ? "text-white" : accent === 'fuchsia' ? headColor : accentText,
+            )}
+          >
+            {matchScore}%
+            <HelpCircle className="h-3.5 w-3.5 opacity-70" aria-hidden />
+          </span>
+          <span
+            className={cn(
+              EVENT_CARD_TYPO.matchLabel,
+              "mt-0.5 whitespace-nowrap opacity-80",
+              onPhoto ? "text-white" : mutedColor,
+            )}
+          >
+            {t("Ταίριασμα", "Match")}
+          </span>
+        </button>
+      )}
+    </div>
+  );
+
+  const factsRow = (onPhoto: boolean) => (
+    <div className="flex w-full items-start justify-between gap-2 px-[1%]">
+      <CardFact
+        icon={Clock}
+        label={whenDay}
+        detail={event.time}
+        align="start"
+        wellClass={onPhoto ? photoWell : factWell}
+        labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold capitalize", onPhoto ? "text-white" : headColor)}
+        detailClass={cn(EVENT_CARD_TYPO.progressSub, onPhoto ? "text-white/80" : mutedColor)}
+      />
+      <CardFact
+        icon={MapPin}
+        label={locationPrimary}
+        detail={locationDetail}
+        align="center"
+        wellClass={onPhoto ? photoWell : factWell}
+        labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold", onPhoto ? "text-white" : headColor)}
+        detailClass={cn(EVENT_CARD_TYPO.progressSub, onPhoto ? "text-white/80" : mutedColor)}
+      />
+      <CardFact
+        icon={Users}
+        label={`${groupProgress.spotsLeft} ${t("θέσεις", "spots")}`}
+        align="end"
+        wellClass={onPhoto ? photoWell : factWell}
+        labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold tabular-nums", onPhoto ? "text-white" : headColor)}
+        detailClass={cn(EVENT_CARD_TYPO.progressSub, onPhoto ? "text-white/80" : mutedColor)}
+      />
+    </div>
+  );
+
+  const hintRow = (onPhoto: boolean) => (
+    <>
+      {showMatchWhy && matchExplanation && (matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]) && (
+        <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium", onPhoto ? "text-white/90" : accentText)}>
+          {matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]}
+        </p>
+      )}
+      {!showMatchWhy && matchingPreview ? (
+        <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium opacity-90", onPhoto ? "text-white/90" : accentText)}>
+          {t(matchingPreview.labelEl, matchingPreview.labelEn)}
+        </p>
+      ) : (
+        !showMatchWhy && currentUser && (
+          <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className="text-left" />
+        )
+      )}
+    </>
+  );
+
+  const organizerRow = (onPhoto: boolean) =>
+    displayOrganizer ? (
+      <div className="flex min-w-0 items-center gap-1.5 self-start">
+        <button
+          type="button"
+          className="flex min-h-11 min-w-0 items-center gap-2.5 rounded-xl pr-2 text-left group/org focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/organizer/${displayOrganizer.id}`);
+          }}
+        >
+          <span className="relative shrink-0">
+            <img
+              referrerPolicy="no-referrer"
+              src={displayOrganizer.photoUrl}
+              alt=""
+              className={cn("h-8 w-8 rounded-full object-cover", onPhoto ? "ring-1 ring-white/40" : isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}
+            />
+            <span className={cn("absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 border", onPhoto || !isDark ? "border-white" : "border-gray-800")} aria-hidden />
+          </span>
+          <span className="min-w-0">
+            <span className={cn("block truncate text-xs font-bold leading-tight group-hover/org:underline", onPhoto ? "text-white" : headColor)}>
+              {displayOrganizer.name}
+            </span>
+            <span className={cn("card-copy-micro mt-0.5 block font-semibold leading-tight", onPhoto ? "text-white/80" : mutedColor)}>
+              {hostUser && !organizer ? t('Διοργανωτής ομάδας', 'Group host') : t('Διοργανωτής', 'Organizer')}
+            </span>
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowTrustSheet(true);
+          }}
+          aria-label={t('Εμπιστοσύνη διοργανωτή', 'Organizer trust')}
+          title={t('Εμπιστοσύνη', 'Trust')}
+          className={cn(
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+            onPhoto
+              ? "border-white/30 text-white"
+              : isDark
+                ? "border-gray-700/60 text-gray-400"
+                : "border-gray-200 text-ink-muted",
+          )}
+        >
+          <Shield className="h-3.5 w-3.5" aria-hidden />
+        </button>
+      </div>
+    ) : null;
 
   return (
     <Card
@@ -322,7 +519,14 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
       containsControls
     >
       {/* Image Section */}
-      <div className="relative h-48 w-full overflow-hidden bg-gray-100 shrink-0">
+      <div
+        className={cn(
+          "relative w-full overflow-hidden bg-gray-100 shrink-0",
+          !coverTitle && "h-48",
+          coverFull && "flex flex-col",
+        )}
+        data-image-depth={imageDepth}
+      >
         {!imgError ? (
           <motion.img
             layoutId={`event-image-${event.id}`}
@@ -332,11 +536,14 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
               "https://picsum.photos/seed/eventdefault/800/600"
             }
             alt={event.title}
-            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out"
+            className={cn(
+              "object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out",
+              coverTitle ? "absolute inset-0 h-full w-full" : "h-full w-full",
+            )}
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-cyan-100 to-purple-50 flex items-center justify-center p-4 text-center">
+          <div className={cn("bg-gradient-to-br from-cyan-100 to-purple-50 flex items-center justify-center p-4 text-center", coverTitle ? "absolute inset-0" : "w-full h-full")}>
             <span className="text-cyan-600 font-bold card-heading capitalize tracking-tight">
               {event.category}
             </span>
@@ -344,8 +551,18 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
         )}
 
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0" />
+        <div
+          className={cn(
+            "absolute inset-0",
+            coverFull
+              ? "bg-gradient-to-t from-black/80 via-black/40 to-black/10"
+              : coverTitle
+                ? "bg-gradient-to-t from-black/75 via-black/30 to-transparent"
+                : "bg-gradient-to-t from-black/50 via-black/0",
+          )}
+        />
 
+        <div className={cn(coverTitle ? "relative z-10 h-48" : "contents")}>
         {/* Date Badge — same frame size as share/save */}
         <div className="absolute top-3 left-3 flex h-9 w-9 @[20rem]:h-11 @[20rem]:w-11 flex-col items-center justify-center bg-white/90 backdrop-blur-md rounded-xl shadow-soft z-10">
           <span className={cn(EVENT_CARD_TYPO.badge, "mb-0.5", accent === 'fuchsia' ? 'text-gray-500' : accent === 'indigo' ? 'text-indigo-600' : accent === 'emerald' ? 'text-emerald-600' : 'text-brand')}>
@@ -408,138 +625,87 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
             )}
           </div>
         </div>
+        </div>
+
+        {coverTitle && (
+          <div
+            className={cn(
+              "relative z-10 flex flex-col gap-3.5 px-4 pt-1",
+              coverFull ? "flex-1 pb-4" : coverAboveProgress ? "pb-3" : "pb-4",
+            )}
+          >
+            {titleRow(true)}
+            {coverFacts && factsRow(true)}
+            {coverOrganizer && hintRow(true)}
+            {coverOrganizer && organizerRow(true)}
+            {coverFull && (
+              <div className="mt-auto border-t border-white/25 pt-4">
+                <GroupProgressBar
+                  current={groupProgress.current}
+                  target={groupProgress.target}
+                  className="mb-3"
+                  onPhoto
+                />
+                {groupProgress.discountUnlocked && event.groupDiscount && (
+                  <p className={cn(EVENT_CARD_TYPO.safetyLabel, "mb-2.5 text-emerald-200")}>
+                    -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
+                  </p>
+                )}
+                <div className={cn("flex items-center gap-2", showNightTools ? "justify-between" : "justify-end")}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (joinState === 'rate') {
+                        navigate(`/history/feedback/${event.id}`);
+                        return;
+                      }
+                      if (joinState === 'view' || (joinState === 'chat' && !userGroup)) {
+                        navigate(`/events/${event.id}`);
+                        return;
+                      }
+                      if (joinState === 'chat' && userGroup) {
+                        navigate(`/chat/${userGroup.id}`);
+                        return;
+                      }
+                      const gate = canJoinEvent(event.id);
+                      if (!gate.ok) {
+                        toast.error(t(gate.messageEl, gate.messageEn));
+                        if (gate.reason === 'feedback') {
+                          const pending = useStore.getState().getPendingFeedbackEventId();
+                          if (pending) navigate(`/history/feedback/${pending}`);
+                        }
+                        return;
+                      }
+                      navigate(`/events/${event.id}/join`);
+                    }}
+                    className={cn("min-h-9 shrink-0 whitespace-nowrap rounded-full px-5 py-2 text-white font-semibold", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
+                  >
+                    {joinState === 'rate'
+                      ? t('Αξιολόγηση', 'Rate')
+                      : joinState === 'view'
+                        ? t('Προβολή', 'View')
+                        : joinState === 'chat'
+                          ? t('Η βραδιά μας', 'Our night')
+                          : t('Βρες παρέα', 'Find company')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Content — spaced blocks, aligned icon wells, no middot soup */}
-      <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
-        <div className="flex items-center justify-between gap-3">
-          <h3 className={cn(EVENT_CARD_TYPO.title, "min-w-0 flex-1 pr-1 transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-brand'))}>
-            <Link
-              to={`/events/${event.id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
-            >
-              {event.title}
-            </Link>
-          </h3>
-          {currentUser && matchScore != null && (
-            <button
-              type="button"
-              className={cn(
-                "flex min-h-11 shrink-0 flex-col items-center justify-center self-center rounded-xl border px-3 py-1",
-                isDark ? "border-white/10 bg-white/[0.04]" : "border-gray-100 bg-gray-50",
-              )}
-              title={t("Γιατί αυτό το ταίριασμα", "Why this match")}
-              aria-expanded={showMatchWhy}
-              aria-label={t(`${matchScore}% ταίριασμα — άνοιγμα εξήγησης`, `${matchScore}% match — open explanation`)}
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowMatchWhy((v) => !v);
-              }}
-            >
-              <span className={cn(EVENT_CARD_TYPO.matchScore, "inline-flex items-center gap-1 font-bold tabular-nums", accent === 'fuchsia' ? headColor : accentText)}>
-                {matchScore}%
-                <HelpCircle className="h-3.5 w-3.5 opacity-70" aria-hidden />
-              </span>
-              <span className={cn(EVENT_CARD_TYPO.matchLabel, mutedColor, "mt-0.5 whitespace-nowrap opacity-80")}>
-                {t("Ταίριασμα", "Match")}
-              </span>
-            </button>
-          )}
-        </div>
-
-        <div className="flex w-full items-start justify-between gap-2 px-[1%]">
-          <CardFact
-            icon={Clock}
-            label={whenDay}
-            detail={event.time}
-            align="start"
-            wellClass={factWell}
-            labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold capitalize", headColor)}
-            detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
-          />
-          <CardFact
-            icon={MapPin}
-            label={locationPrimary}
-            detail={locationDetail}
-            align="center"
-            wellClass={factWell}
-            labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold", headColor)}
-            detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
-          />
-          <CardFact
-            icon={Users}
-            label={`${groupProgress.spotsLeft} ${t("θέσεις", "spots")}`}
-            align="end"
-            wellClass={factWell}
-            labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold tabular-nums", headColor)}
-            detailClass={cn(EVENT_CARD_TYPO.progressSub, mutedColor)}
-          />
-        </div>
-
-        {showMatchWhy && matchExplanation && (matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]) && (
-          <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium", accentText)}>
-            {matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]}
-          </p>
-        )}
-        {!showMatchWhy && matchingPreview ? (
-          <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium", accentText, "opacity-90")}>
-            {t(matchingPreview.labelEl, matchingPreview.labelEn)}
-          </p>
-        ) : (
-          !showMatchWhy && currentUser && (
-            <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className="text-left" />
-          )
-        )}
-
-        {displayOrganizer && (
-          <div className="flex min-w-0 items-center gap-1.5 self-start">
-            <button
-              type="button"
-              className="flex min-h-11 min-w-0 items-center gap-2.5 rounded-xl pr-2 text-left group/org focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/organizer/${displayOrganizer.id}`);
-              }}
-            >
-              <span className="relative shrink-0">
-                <img
-                  referrerPolicy="no-referrer"
-                  src={displayOrganizer.photoUrl}
-                  alt=""
-                  className={cn("h-8 w-8 rounded-full object-cover", isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}
-                />
-                <span className={cn("absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 border", isDark ? "border-gray-800" : "border-white")} aria-hidden />
-              </span>
-              <span className="min-w-0">
-                <span className={cn("block truncate text-xs font-bold leading-tight group-hover/org:underline", headColor)}>
-                  {displayOrganizer.name}
-                </span>
-                <span className={cn("card-copy-micro mt-0.5 block font-semibold leading-tight", mutedColor)}>
-                  {hostUser && !organizer ? t('Διοργανωτής ομάδας', 'Group host') : t('Διοργανωτής', 'Organizer')}
-                </span>
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowTrustSheet(true);
-              }}
-              aria-label={t('Εμπιστοσύνη διοργανωτή', 'Organizer trust')}
-              title={t('Εμπιστοσύνη', 'Trust')}
-              className={cn(
-                "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                isDark ? "border-gray-700/60 text-gray-400" : "border-gray-200 text-ink-muted",
-              )}
-            >
-              <Shield className="h-3.5 w-3.5" aria-hidden />
-            </button>
-          </div>
-        )}
+      {!coverFull && (
+      <div className={cn("flex flex-1 flex-col gap-3.5 px-4 pb-4", coverAboveProgress ? "pt-0" : "pt-4")}>
+        {!coverTitle && titleRow(false)}
+        {!coverFacts && factsRow(false)}
+        {!coverOrganizer && hintRow(false)}
+        {!coverOrganizer && organizerRow(false)}
 
         {/* Platform event — seeks a group organizer. Hosting is primary only in the host rail. */}
-        {seeksHost && joinState === 'join' && (
+        {!coverAboveProgress && seeksHost && joinState === 'join' && (
           <div className={cn(
             "rounded-2xl p-3.5 border",
             emphasis === 'host'
@@ -585,7 +751,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
         )}
 
         {/* Group progress + actions */}
-        <div className={cn("mt-auto border-t pt-4", borderSub)}>
+        <div className={cn("mt-auto border-t pt-4", coverAboveProgress ? "border-gray-100" : borderSub)}>
           <GroupProgressBar
             current={groupProgress.current}
             target={groupProgress.target}
@@ -677,6 +843,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
           </div>
         </div>
       </div>
+      )}
 
       <div {...stopBubbling} className="contents">
         <BottomSheet

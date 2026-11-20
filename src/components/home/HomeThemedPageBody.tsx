@@ -20,6 +20,7 @@ import { HOME_TYPO } from '../../lib/typographyTokens';
 import { HOME_THEMED_TOKENS, type HomeThemedVariant } from '../../lib/homeThemedTokens';
 import { cn } from '../../lib/utils';
 import { emptyHomeSchedule, isScheduleFilterActive } from '../../lib/homeScheduleFilter';
+import { discoverFeedImageDepth } from '../../lib/discoverCardImagePreview';
 
 /**
  * Canonical themed Home — ONE implementation for vibrant/neon/bento × light/dark.
@@ -267,7 +268,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <EventCard event={event} />
+                <EventCard event={event} imageDepth={discoverFeedImageDepth(index)} />
               </motion.div>
             ))
           )}
