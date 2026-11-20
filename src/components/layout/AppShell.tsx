@@ -37,6 +37,7 @@ const CopilotPanel = lazy(() =>
 import { DESKTOP_DOCK_QUERY, useMediaQuery } from '../../hooks/useMediaQuery';
 import { useWallUnreadCount } from '../../hooks/useWallUnreadCount';
 import { useLiveCatalogDates } from '../../hooks/useLiveCatalogDates';
+import { useEnsurePendingFeedbackNotification } from '../../hooks/useEnsurePendingFeedbackNotification';
 
 function useUnreadCount() {
   const notifications = useStore(state => state.notifications);
@@ -507,6 +508,7 @@ export function BottomNav() {
 // ─────────────────────────────────────────────
 export function AppShell({ children }: { children: ReactNode }) {
   useLiveCatalogDates();
+  useEnsurePendingFeedbackNotification();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
   const theme = useStore((s) => s.theme);

@@ -206,7 +206,12 @@ interface AppState extends OutingsSlice {
   completeOnboarding: () => void;
   addRecentSearch: (query: string) => void;
   getPendingFeedbackEventId: () => string | null;
-  canJoinEvent: (eventId: string) => { ok: boolean; messageEl: string; messageEn: string };
+  canJoinEvent: (eventId: string) => {
+    ok: boolean;
+    messageEl: string;
+    messageEn: string;
+    reason?: 'feedback';
+  };
   placeCommitmentHold: (eventId: string) => void;
   hasCommitmentHold: (eventId: string) => boolean;
 
@@ -538,8 +543,9 @@ export const useStore = create<AppState>()(
     if (pendingId && pendingId !== eventId) {
       return {
         ok: false,
-        messageEl: 'Ολοκληρώστε πρώτα την αξιολόγηση της προηγούμενης εκδήλωσης.',
-        messageEn: 'Please complete feedback for your previous event first.',
+        reason: 'feedback',
+        messageEl: 'Αξιολόγησε πρώτα το προηγούμενο βράδυ.',
+        messageEn: 'Rate your last night first.',
       };
     }
     const tier = canAccessEvent(state.currentUser, event);
@@ -1459,6 +1465,9 @@ export const useStore = create<AppState>()(
           ...state.feedbackSubmitted,
           [data.eventId]: data,
         },
+        notifications: state.notifications.filter(
+          (n) => !(n.type === 'feedback' && n.eventId === data.eventId),
+        ),
         users,
         currentUser,
       };

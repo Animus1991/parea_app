@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useStore } from '../store';
 import type { Event } from '../types';
 
+/** Same pending night that `canJoinEvent` uses to block the next join. */
 export function useHomePendingFeedback(): Event | undefined {
   const events = useStore((s) => s.events);
   const groups = useStore((s) => s.groups);
@@ -9,18 +10,8 @@ export function useHomePendingFeedback(): Event | undefined {
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
 
   return useMemo(() => {
-    if (!currentUser) return undefined;
-    const userGroupEventIds = groups
-      .filter((g) => g.members.includes(currentUser.id))
-      .map((g) => g.eventId);
-    return events.find((e) => {
-      if (!userGroupEventIds.includes(e.id)) return false;
-      if (feedbackSubmitted[e.id]) return false;
-      try {
-        return new Date(`${e.date}T${e.time || '20:00'}`) < new Date();
-      } catch {
-        return new Date(e.date) < new Date();
-      }
-    });
+    const id = useStore.getState().getPendingFeedbackEventId();
+    if (!id) return undefined;
+    return events.find((e) => e.id === id);
   }, [events, groups, currentUser, feedbackSubmitted]);
 }

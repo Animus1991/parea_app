@@ -655,7 +655,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
                   const gate = canJoinEvent(event.id);
                   if (!gate.ok) {
                     toast.error(t(gate.messageEl, gate.messageEn));
-                    if (gate.messageEn.includes("feedback")) {
+                    if (gate.reason === 'feedback') {
                       const pending = useStore.getState().getPendingFeedbackEventId();
                       if (pending) navigate(`/history/feedback/${pending}`);
                     }

@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { mergeNotificationLists, notificationsForUser } from './notificationsUtil';
+import {
+  buildPendingFeedbackNotification,
+  mergeNotificationLists,
+  notificationsForUser,
+  pendingFeedbackNotificationId,
+} from './notificationsUtil';
 import type { AppNotification } from '../data/mockNotifications';
 
 const base = (partial: Partial<AppNotification> & Pick<AppNotification, 'id'>): AppNotification => ({
@@ -35,5 +40,19 @@ describe('notificationsForUser', () => {
       base({ id: '3', forUserId: 'u1' }),
     ];
     expect(notificationsForUser(list, 'u1').map((n) => n.id)).toEqual(['1', '3']);
+  });
+});
+
+describe('buildPendingFeedbackNotification', () => {
+  it('names the night and says join is blocked until it is rated', () => {
+    const row = buildPendingFeedbackNotification('u1', { id: 'e9', title: 'Summer Cinema: Cine Thisio' });
+    expect(row.id).toBe(pendingFeedbackNotificationId('e9'));
+    expect(row.type).toBe('feedback');
+    expect(row.eventId).toBe('e9');
+    expect(row.forUserId).toBe('u1');
+    expect(row.read).toBe(false);
+    expect(row.messageGr).toContain('Summer Cinema: Cine Thisio');
+    expect(row.messageGr).toContain('άλλη βραδιά');
+    expect(row.messageEn).toContain('join another night');
   });
 });
