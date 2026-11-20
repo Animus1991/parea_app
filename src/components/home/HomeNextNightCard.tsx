@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, CalendarClock } from 'lucide-react';
 import { useNextNight } from '../../hooks/useNextNight';
@@ -5,15 +6,22 @@ import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { formatPlanWhen } from '../../lib/dateLocale';
 import { EventCoverImg } from '../common/EventCoverImg';
+import { eventStartMs } from '../../store/outingsSlice';
+import { formatCountdown } from '../../lib/countdown';
 
 export function HomeNextNightCard() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const night = useNextNight();
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
   if (!night) return null;
-  const { event, days, path } = night;
-  const when =
-    days <= 0 ? t('Απόψε', 'Tonight') : days === 1 ? t('Αύριο', 'Tomorrow') : t(`σε ${days} μέρες`, `in ${days} days`);
+  const { event, path } = night;
+  const start = eventStartMs(event);
+  const when = start === null ? t('Σύντομα', 'Soon') : formatCountdown(start, now, language);
 
   return (
     <button

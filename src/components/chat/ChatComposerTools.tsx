@@ -23,6 +23,9 @@ import {
 } from '../../lib/chatMediaCatalog';
 import { fileToResizedDataUrl, imageErrorText } from '../../lib/imageResize';
 import { cn } from '../../lib/utils';
+import { useStore } from '../../store';
+import { computeMatchScore } from '../../lib/matching';
+import { eventStartMs } from '../../store/outingsSlice';
 
 export function ChatComposerTools({
   value,
@@ -54,6 +57,23 @@ export function ChatComposerTools({
   const [failedGifIds, setFailedGifIds] = useState<Record<string, boolean>>({});
   const [pollQ, setPollQ] = useState('');
   const [pollOpts, setPollOpts] = useState(['', '']);
+  const events = useStore((s) => s.events);
+  const currentUser = useStore((s) => s.currentUser);
+
+  const setSaturdayPollPreset = () => {
+    const saturdayEvents = currentUser
+      ? events
+          .filter((event) => {
+            const start = eventStartMs(event);
+            return start !== null && start > Date.now() && new Date(start).getDay() === 6;
+          })
+          .sort((a, b) => computeMatchScore(currentUser, b) - computeMatchScore(currentUser, a))
+          .slice(0, 3)
+          .map((event) => event.title)
+      : [];
+    setPollQ(t('Τι λέμε για Σάββατο;', 'What are we doing Saturday?'));
+    setPollOpts(saturdayEvents.length === 3 ? saturdayEvents : [t('Σινεμά', 'Cinema'), t('Ποτό', 'Drinks'), t('Βόλτα', 'Walk')]);
+  };
 
   // Voice recording state
   const [recording, setRecording] = useState(false);
@@ -359,6 +379,9 @@ export function ChatComposerTools({
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
+          <button type="button" onClick={setSaturdayPollPreset} className="min-h-8 text-left text-xs font-semibold text-brand underline underline-offset-2">
+            {t('Τι λέμε για Σάββατο;', 'What are we doing Saturday?')}
+          </button>
           <input
             type="text"
             value={pollQ}

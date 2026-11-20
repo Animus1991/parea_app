@@ -17,6 +17,7 @@ import { useHomeHeroGate } from "../hooks/useHomeHeroGate";
 import { HomeOnboardingWelcomeBanner } from "../components/home/HomeOnboardingWelcomeBanner";
 import { HomeContinueStrip } from "../components/home/HomeContinueStrip";
 import { HomeNextNightCard } from "../components/home/HomeNextNightCard";
+import { HomeWeekCard } from "../components/home/HomeWeekCard";
 import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
 import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
 import { HomeFeedToolbar } from "../components/home/HomeFeedToolbar";
@@ -131,6 +132,7 @@ export default function HomeClassic() {
       />
 
       <HomeNextNightCard />
+      <HomeWeekCard />
       <HomeContinueStrip />
 
       {homeGate === 'verify' && <HomeVerifyBanner />}

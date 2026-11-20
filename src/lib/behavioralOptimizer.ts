@@ -174,7 +174,7 @@ export function computeProfileCompletion(user: User | null, hasBio: boolean): {
     return { percent, nextActionEl: 'Επιβεβαίωσε email και τηλέφωνο', nextActionEn: 'Confirm email and phone', nextPath: '/verification' };
   }
   if (countsId && !user.idVerified) {
-    return { percent, nextActionEl: 'Επαλήθευσε ταυτότητα (για διοργανωτές)', nextActionEn: 'Verify your ID (for hosts)', nextPath: '/verification?method=id' };
+    return { percent, nextActionEl: 'Επαλήθευσε ταυτότητα (για διοργανωτές)', nextActionEn: 'Verify your ID (for hosts)', nextPath: '/trust?tab=verify&method=id' };
   }
 
   return {

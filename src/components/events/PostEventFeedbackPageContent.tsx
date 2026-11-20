@@ -46,6 +46,10 @@ export default function PostEventFeedbackPageContent() {
   const candidates = useMemo(() => (eventId ? seeAgainCandidates(eventId) : []), [eventId, seeAgainCandidates]);
   const [seeAgain, setSeeAgain] = useState<string[]>(() => (eventId ? mySeeAgainPicks(eventId) : []));
   const [matches, setMatches] = useState<{ mutual: string[]; connected: string[] }>({ mutual: [], connected: [] });
+  const mutualNames = matches.mutual
+    .map((id) => users.find((user) => user.id === id)?.name.split(' ')[0])
+    .filter(Boolean)
+    .join(', ');
   const toggleSeeAgain = (id: string) => setSeeAgain((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
 
   const dateLocale = language === 'el' ? el : enUS;
@@ -157,8 +161,14 @@ export default function PostEventFeedbackPageContent() {
                   </div>
                 );
               })}
-              <Button size="sm" className="w-full" onClick={() => navigate('/buddy-seek')}>
-                {t('Κανονίστε την επόμενη', 'Plan the next one')}
+              <Button
+                size="sm"
+                className="w-full"
+                onClick={() => {
+                  navigate(`/buddy-seek?reconnect=${encodeURIComponent(mutualNames)}`);
+                }}
+              >
+                {t(`Ξανά μαζί με ${mutualNames} — πάμε άλλη βραδιά;`, `Go out again with ${mutualNames} — plan another night?`)}
               </Button>
             </div>
           ) : (
@@ -170,7 +180,7 @@ export default function PostEventFeedbackPageContent() {
           )}
           <Button
             onClick={() => navigate('/history')}
-            variant={p.isAB ? 'primary' : 'outline'}
+            variant="outline"
             size="md"
             className="rounded-full"
           >

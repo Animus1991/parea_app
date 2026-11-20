@@ -8,6 +8,7 @@ import { CalendarX } from 'lucide-react';
 import { HomeThemedEnrichment } from './HomeThemedEnrichment';
 import { HomeContinueStrip } from './HomeContinueStrip';
 import { HomeNextNightCard } from './HomeNextNightCard';
+import { HomeWeekCard } from './HomeWeekCard';
 import { HomeThemedHeroSwitch } from './HomeThemedHeroSwitch';
 import { HomeRichHero } from './HomeRichHero';
 import { HomeFiltersSection } from './HomeFiltersSection';
@@ -135,6 +136,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
       />
 
       <HomeNextNightCard />
+      <HomeWeekCard />
       <HomeContinueStrip />
 
       <HomeThemedEnrichment onPreferDiscoverFeed={() => setFeedType('Discover')} />
