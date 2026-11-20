@@ -493,6 +493,30 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   font-weight: 700;
 }
 
+/*
+ * Desktop web type (md+): the compact mobile scale is too small on a monitor.
+ * Page chrome +10%; cards +25% vs the authored sizes (extra 1.25/1.10 on the
+ * card so Tailwind rem utilities and .card-* tokens both pick it up).
+ * Phone layout (bottom tabs) is unchanged.
+ */
+@media (min-width: 768px) {
+  html {
+    font-size: 110%;
+  }
+  .nakamas-card {
+    --web-card-boost: 1.1363636364;
+    --text-2xs: calc(0.5625rem * var(--web-card-boost));
+    --text-xs: calc(0.625rem * var(--web-card-boost));
+    --text-sm: calc(0.75rem * var(--web-card-boost));
+    --text-base: calc(0.8125rem * var(--web-card-boost));
+    --text-lg: calc(0.875rem * var(--web-card-boost));
+    --text-xl: calc(0.9375rem * var(--web-card-boost));
+    --text-2xl: calc(1rem * var(--web-card-boost));
+    --text-3xl: calc(1.125rem * var(--web-card-boost));
+    --text-4xl: calc(1.25rem * var(--web-card-boost));
+  }
+}
+
 [data-sticky-nav-offset] {
   scroll-margin-top: 4.5rem;
 }
