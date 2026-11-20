@@ -153,8 +153,8 @@ export default function PlansPageContent() {
         isError={isError}
         onRetry={() => void refetch()}
         loading={
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
               <EventCardSkeleton key={`plans-sk-${i}`} />
             ))}
           </div>
@@ -162,7 +162,7 @@ export default function PlansPageContent() {
         errorTitle={t('Αδυναμία φόρτωσης σχεδίων', 'Could not load plans')}
       >
       {activeTab === 'upcoming' && (
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {upcomingEvents.map(event => {
           const group = getUserGroupForEvent(event.id, groups, currentUser?.id);
           const memberUsers = (group?.members ?? [])
@@ -173,8 +173,8 @@ export default function PlansPageContent() {
           const hasMeetingPoint = Boolean(group?.meetingPoint);
 
           return (
-          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative">
+          <Card key={event.id} className="!rounded-2xl p-0 overflow-hidden flex h-full flex-col">
+            <div className="relative h-48 w-full shrink-0 bg-gray-100 overflow-hidden">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
               {isConfirmed ? (
                 <div className="absolute top-2 left-2 bg-brand/95 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
@@ -187,8 +187,8 @@ export default function PlansPageContent() {
               )}
             </div>
 
-            <div className="flex-1 flex flex-col">
-              <div className="flex justify-between items-start gap-2 mb-2">
+            <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
+              <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0">
                   <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>{event.title}</h3>
                   {group && isPlansFormingGroupId(group.id) && (
@@ -202,7 +202,7 @@ export default function PlansPageContent() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-x-4 gap-y-2 mb-4">
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
                 <div className={cn(
                   'flex items-center text-xs font-medium',
                   hasMeetingPoint ? p.body : p.muted,
@@ -218,7 +218,7 @@ export default function PlansPageContent() {
               </div>
 
               {group && (
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2">
                   <div className="flex -space-x-2">
                     {memberUsers.map((user) => (
                       <PersonAvatar key={user!.id} user={user!} size="sm" className="h-6 w-6 border-2 border-white" />
@@ -234,7 +234,7 @@ export default function PlansPageContent() {
                 <button
                   type="button"
                   onClick={() => navigate(`/night/${group.id}`)}
-                  className="mb-1 inline-flex btn-gradient !py-1.5 min-h-8 items-center justify-center gap-1.5 self-start"
+                  className="inline-flex btn-gradient !py-1.5 min-h-8 items-center justify-center gap-1.5 self-start"
                 >
                   <PartyPopper className="h-3.5 w-3.5" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
                   {group.status === 'confirmed' ? t(' · έτοιμη', ' · ready') : ''}
@@ -272,26 +272,28 @@ export default function PlansPageContent() {
         })}
 
         {upcomingEvents.length === 0 && (
-          <EmptyState
-            icon={Compass}
-            character="explorer"
-            title={t(`Κανένα επερχόμενο σχέδιο`, `No upcoming plans`)}
-            description={t('Βρες μια βραδιά στο Discover.', 'Find a night on Discover.')}
-            actionLabel={t(`Ανακάλυψη`, `Discover`)}
-            onAction={() => navigate('/')}
-            askAi
-            askPrompt={t(
-              'Βρες μου κάτι για αυτό το Σαββατοκύριακο με ανοιχτές θέσεις.',
-              'Find me something this weekend with open spots.',
-            )}
-            className="py-8"
-          />
+          <div className="col-span-full">
+            <EmptyState
+              icon={Compass}
+              character="explorer"
+              title={t(`Κανένα επερχόμενο σχέδιο`, `No upcoming plans`)}
+              description={t('Βρες μια βραδιά στο Discover.', 'Find a night on Discover.')}
+              actionLabel={t(`Ανακάλυψη`, `Discover`)}
+              onAction={() => navigate('/')}
+              askAi
+              askPrompt={t(
+                'Βρες μου κάτι για αυτό το Σαββατοκύριακο με ανοιχτές θέσεις.',
+                'Find me something this weekend with open spots.',
+              )}
+              className="py-8"
+            />
+          </div>
         )}
       </div>
       )}
 
       {activeTab === 'pending' && (
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {pendingEvents.map(event => {
           const group =
             getPendingGroupForEvent(event.id, groups) ??
@@ -304,23 +306,23 @@ export default function PlansPageContent() {
           const needed = group ? Math.max(0, group.targetSize - group.members.length) : 0;
 
           return (
-          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 opacity-80 hover:opacity-100 transition-all duration-200 flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-32 h-32 sm:h-auto shrink-0 bg-gray-100 rounded-lg overflow-hidden relative grayscale">
+          <Card key={event.id} className="!rounded-2xl p-0 overflow-hidden opacity-80 hover:opacity-100 transition-all duration-200 flex h-full flex-col">
+            <div className="relative h-48 w-full shrink-0 bg-gray-100 overflow-hidden grayscale">
               <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
               <div className="absolute top-2 left-2 bg-gray-800/90 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
                 {t(`Εκκρεμής Ομάδα`, `Pending Group`)}
               </div>
             </div>
 
-            <div className="flex-1 flex flex-col">
-              <div className="flex justify-between items-start gap-2 mb-2">
+            <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
+              <div className="flex justify-between items-start gap-2">
                 <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>{event.title}</h3>
                 <div className="text-right shrink-0">
                   <div className={cn(PLANS_TYPO.cardDate, p.head)}>{formatPlanWhen(event.date, event.time, language)}</div>
                 </div>
               </div>
 
-              <p className={cn('card-copy-sm font-medium mb-4', p.sub)}>
+              <p className={cn('card-copy-sm font-medium', p.sub)}>
                 {needed === 1
                   ? t(
                       'Εκδηλώσατε ενδιαφέρον. Αναμονή για 1 ακόμα άτομο για να επιβεβαιωθεί η ομάδα.',
@@ -352,39 +354,44 @@ export default function PlansPageContent() {
         })}
 
         {pendingEvents.length === 0 && (
-          <EmptyState
-            icon={Clock}
-            title={t('Καμία εκκρεμής ομάδα', 'No pending groups')}
-            description={t('Όταν δηλώσεις ενδιαφέρον, θα εμφανιστεί εδώ.', 'When you express interest, it shows up here.')}
-            actionLabel={t('Ανακάλυψη', 'Discover')}
-            onAction={() => navigate('/')}
-            askAi
-            askPrompt={t(
-              'Δείξε μου ομάδες που σχηματίζονται κοντά μου.',
-              'Show me groups forming near me.',
-            )}
-            className="py-8"
-          />
+          <div className="col-span-full">
+            <EmptyState
+              icon={Clock}
+              title={t('Καμία εκκρεμής ομάδα', 'No pending groups')}
+              description={t('Όταν δηλώσεις ενδιαφέρον, θα εμφανιστεί εδώ.', 'When you express interest, it shows up here.')}
+              actionLabel={t('Ανακάλυψη', 'Discover')}
+              onAction={() => navigate('/')}
+              askAi
+              askPrompt={t(
+                'Δείξε μου ομάδες που σχηματίζονται κοντά μου.',
+                'Show me groups forming near me.',
+              )}
+              className="py-8"
+            />
+          </div>
         )}
       </div>
       )}
 
       {activeTab === 'past' && (
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {needsRating > 0 && (
-          <div className={cn('text-xs font-semibold flex items-center gap-1.5', p.muted)}>
+          <div className={cn('col-span-full text-xs font-semibold flex items-center gap-1.5', p.muted)}>
             <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
             {t(`${needsRating} εκδηλώσεις περιμένουν την αξιολόγησή σας`, `${needsRating} event(s) awaiting your feedback`)}
           </div>
         )}
         {pastEvents.map((event) => (
-          <Card key={event.id} className="!rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 flex flex-col">
-              <div className={cn('flex items-center gap-2 mb-1.5 text-xs font-bold', p.muted)}>
+          <Card key={event.id} className="!rounded-2xl p-0 overflow-hidden flex h-full flex-col">
+            <div className="relative h-48 w-full shrink-0 bg-gray-100 overflow-hidden">
+              <img referrerPolicy="no-referrer" src={event.imageUrl} alt={event.title} className="w-full h-full object-cover" />
+            </div>
+            <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
+              <div className={cn('flex items-center gap-2 text-xs font-bold', p.muted)}>
                 <Calendar className="w-3.5 h-3.5" />
                 {formatPlanWhen(event.date, event.time, language)}
               </div>
-              <h3 className={cn(PLANS_TYPO.cardTitle, 'mb-3', p.head)}>{event.title}</h3>
+              <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>{event.title}</h3>
 
               {!feedbackSubmitted[event.id] ? (
                 <div className={cn('p-3 rounded-2xl flex items-center justify-between mt-auto border', p.statBg)}>
@@ -403,15 +410,17 @@ export default function PlansPageContent() {
         ))}
 
         {pastEvents.length === 0 && (
-          <EmptyState
-            icon={CalendarCheck}
-            title={t('Κανένα ολοκληρωμένο σχέδιο', 'No completed plans yet')}
-            description={t('Όσα παρακολουθήσεις θα μείνουν εδώ.', 'Nights you attend will stay here.')}
-            actionLabel={t('Ανακάλυψη', 'Discover')}
-            onAction={() => navigate('/')}
-            askAi
-            className="py-8"
-          />
+          <div className="col-span-full">
+            <EmptyState
+              icon={CalendarCheck}
+              title={t('Κανένα ολοκληρωμένο σχέδιο', 'No completed plans yet')}
+              description={t('Όσα παρακολουθήσεις θα μείνουν εδώ.', 'Nights you attend will stay here.')}
+              actionLabel={t('Ανακάλυψη', 'Discover')}
+              onAction={() => navigate('/')}
+              askAi
+              className="py-8"
+            />
+          </div>
         )}
       </div>
       )}
