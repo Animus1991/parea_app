@@ -30,7 +30,7 @@ import { HikeRouteCard } from '../outings/HikeRouteCard';
 import { isDarkTheme } from '../../lib/themes';
 import { cn } from '../../lib/utils';
 import { APP_TYPO } from '../../lib/typographyTokens';
-import { eventCoverUrl } from '../../lib/eventCover';
+import { EventCoverImg } from '../common/EventCoverImg';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
@@ -162,13 +162,9 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         </div>
 
         <div className="relative w-full h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden shadow-soft-md">
-          <motion.img
-            layoutId={`event-image-${event.id}`}
-            referrerPolicy="no-referrer"
-            src={eventCoverUrl(event)}
-            alt=""
-            className="w-full h-full object-cover"
-          />
+          <motion.div layoutId={`event-image-${event.id}`} className="h-full w-full">
+            <EventCoverImg event={event} className="w-full h-full object-cover" />
+          </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         </div>
 

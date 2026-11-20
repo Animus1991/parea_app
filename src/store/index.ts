@@ -2319,9 +2319,10 @@ export const useStore = create<AppState>()(
 
         const events = coerceAuthoredSeasonToLive(
           withFreshCatalogDates(
-            mergeById(current.events, p.events).map((e) =>
-              e.imageUrl ? e : { ...e, imageUrl: eventCoverUrl(e) },
-            ),
+            mergeById(current.events, p.events).map((e) => {
+              const cover = eventCoverUrl(e);
+              return e.imageUrl === cover ? e : { ...e, imageUrl: cover };
+            }),
           ),
         );
         const groups = mergeById(current.groups, p.groups);

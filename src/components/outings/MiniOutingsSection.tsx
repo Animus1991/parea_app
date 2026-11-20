@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Coffee, Footprints, Wine, Zap } from 'lucide-react';
+import { Coffee, Footprints, MapPin, Wine, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
@@ -114,6 +114,7 @@ export function MiniOutingsSection() {
         <ul className="grid gap-4 sm:grid-cols-2">
           {list.map(({ event, group }) => {
             const k = kindOf(event.tags);
+            const KindIcon = k.icon;
             const host = users.find((u) => u.id === group.hostId);
             const mine = me ? group.members.includes(me.id) : false;
             const waiting = me ? group.waitlist?.includes(me.id) : false;
@@ -123,7 +124,8 @@ export function MiniOutingsSection() {
             return (
               <li key={group.id} className="space-y-3 rounded-2xl bg-surface-raised px-5 py-4 shadow-soft">
                 <div className="flex items-baseline justify-between gap-4">
-                  <p className="card-meta font-medium leading-relaxed text-ink-muted">
+                  <p className="card-meta font-medium leading-relaxed text-ink-muted inline-flex items-center gap-1.5 min-w-0">
+                    <KindIcon className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden />
                     {t(k.el, k.en)} · {formatPlanWhen(event.date, event.time, language)}
                   </p>
                   <p className="shrink-0 card-meta font-medium leading-relaxed text-ink-muted">
@@ -132,7 +134,8 @@ export function MiniOutingsSection() {
                 </div>
                 <p className="card-heading-lg font-bold leading-snug text-ink">{event.title}</p>
                 <div className="flex items-baseline justify-between gap-4">
-                  <p className="min-w-0 card-meta font-medium leading-relaxed text-ink-muted">
+                  <p className="min-w-0 card-meta font-medium leading-relaxed text-ink-muted inline-flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden />
                     {formatLocationArea(event.locationArea, language)}
                   </p>
                   <p className="shrink-0 card-meta font-medium leading-relaxed text-ink-muted">

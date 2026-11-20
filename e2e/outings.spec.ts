@@ -157,6 +157,7 @@ test.describe('Group outings', () => {
     await page.goto('/plans');
     const img = page.locator('img[alt="Καφές στο Κουκάκι"]');
     await expect(img).toBeVisible();
-    await expect(img).toHaveAttribute('src', /^https:\/\//);
+    await expect(img).toHaveAttribute('src', /\/covers\/coffee\.jpg/);
+    await expect(img).toHaveJSProperty('naturalWidth', 1200);
   });
 });

@@ -30,6 +30,9 @@ test.describe('Find Nakamas', () => {
 
     await expect(page.getByRole('button', { name: /Αίτημα συμμετοχής|Ask to join/ }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: /^Εκδήλωση$|^Event$/ }).first()).toBeVisible();
+    await expect(page.locator('article .lucide-clock').first()).toBeVisible();
+    await expect(page.locator('article .lucide-map-pin').first()).toBeVisible();
+    await expect(page.locator('article .lucide-users').first()).toBeVisible();
     await expect(page.getByRole('button', { name: /Αποθήκευση σχεδίου|Save plan/ }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: /Απόκρυψη σχεδίου|Hide plan/ }).first()).toBeVisible();
 

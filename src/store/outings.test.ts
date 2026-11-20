@@ -129,7 +129,7 @@ describe('outings in the store (Φ27)', () => {
     const g = st.groups.find((x) => x.id === gid)!;
     const e = st.events.find((x) => x.id === g.eventId)!;
     expect(e.kind).toBe('mini_outing');
-    expect(e.imageUrl).toMatch(/^https:\/\//);
+    expect(e.imageUrl).toMatch(/^\/covers\//);
     expect(e.minTrustTierAccess).toBe('2_confirmed');
     expect(g.hostId).toBe('u1');
     expect(g.targetSize).toBe(3);

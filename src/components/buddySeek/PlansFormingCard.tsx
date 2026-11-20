@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bookmark,
@@ -14,7 +14,7 @@ import { useStore } from '../../store';
 import { projectRequestForViewer } from '../../lib/companyRequestUtils';
 import { JoinRequestPreviewModal } from './JoinRequestPreviewModal';
 import { formatLocationArea } from '../../lib/eventDisplay';
-import { eventCoverUrl } from '../../lib/eventCover';
+import { EventCoverImg } from '../common/EventCoverImg';
 import { interestLabel } from '../../lib/interests';
 import { cn } from '../../lib/utils';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
@@ -35,22 +35,32 @@ const URGENCY_TEXT_DARK = {
 function FactSpread({
   left,
   right,
+  leftIcon,
+  rightIcon,
   mutedClass = 'text-ink-muted',
 }: {
   left?: string | null;
   right?: string | null;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
   mutedClass?: string;
 }) {
   if (!left && !right) return null;
   return (
     <div className="flex items-baseline justify-between gap-x-5 gap-y-1">
       {left ? (
-        <p className={cn('min-w-0 card-meta font-medium leading-relaxed', mutedClass)}>{left}</p>
+        <p className={cn('min-w-0 card-meta font-medium leading-relaxed inline-flex items-center gap-1.5', mutedClass)}>
+          {leftIcon}
+          <span className="min-w-0">{left}</span>
+        </p>
       ) : (
         <span />
       )}
       {right ? (
-        <p className={cn('shrink-0 card-meta font-medium leading-relaxed', mutedClass)}>{right}</p>
+        <p className={cn('shrink-0 card-meta font-medium leading-relaxed inline-flex items-center gap-1.5', mutedClass)}>
+          {rightIcon}
+          <span>{right}</span>
+        </p>
       ) : null}
     </div>
   );
@@ -105,6 +115,8 @@ export function PlansFormingCard({
   const ink = onDark ? 'text-white' : 'text-ink';
   const muted = onDark ? 'text-gray-400' : 'text-ink-muted';
   const role = onDark ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300';
+  const pageIcon = (Icon: typeof Clock) =>
+    variant === 'page' ? <Icon className="w-3 h-3 shrink-0 opacity-70" aria-hidden /> : null;
 
   if (quietLayout) {
     return (
@@ -120,7 +132,7 @@ export function PlansFormingCard({
           className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
           aria-label={t('Δες εκδήλωση', 'View event')}
         >
-          <img src={eventCoverUrl(item.event)} alt="" className={cn('w-full object-cover', compact ? 'h-24' : 'h-28')} />
+          <EventCoverImg event={item.event} className={cn('w-full object-cover', compact ? 'h-24' : 'h-28')} />
         </button>
 
         <div className={cn(compact ? 'space-y-3.5 px-4 py-4' : 'space-y-4 px-5 py-5')}>
@@ -176,11 +188,22 @@ export function PlansFormingCard({
           </div>
 
           <div className="space-y-2">
-            <FactSpread mutedClass={muted} left={t(item.scheduleFull.el, item.scheduleFull.en)} />
-            <FactSpread mutedClass={muted} left={locationLine} right={t(item.groupSizeLabel.el, item.groupSizeLabel.en)} />
+            <FactSpread
+              mutedClass={muted}
+              leftIcon={pageIcon(Clock)}
+              left={t(item.scheduleFull.el, item.scheduleFull.en)}
+            />
+            <FactSpread
+              mutedClass={muted}
+              leftIcon={pageIcon(MapPin)}
+              left={locationLine}
+              rightIcon={pageIcon(Users)}
+              right={t(item.groupSizeLabel.el, item.groupSizeLabel.en)}
+            />
             <FactSpread
               mutedClass={muted}
               left={t(item.meetingLabel.el, item.meetingLabel.en)}
+              rightIcon={!interestLine && showUrgency ? pageIcon(Clock) : null}
               right={interestLine || (showUrgency ? t(item.urgency.el, item.urgency.en) : null)}
             />
           </div>
@@ -294,9 +317,8 @@ export function PlansFormingCard({
           className="relative shrink-0 w-12 h-12 rounded-xl overflow-hidden bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 group"
           aria-label={t('Δες εκδήλωση', 'View event')}
         >
-          <img
-            src={eventCoverUrl(item.event)}
-            alt=""
+          <EventCoverImg
+            event={item.event}
             className="w-full h-full object-cover transition-transform group-hover:scale-105"
           />
         </button>
@@ -521,7 +543,7 @@ export function PlansFormingGroupCard({
         className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
         aria-label={t('Δες εκδήλωση', 'View event')}
       >
-        <img src={eventCoverUrl(event)} alt="" className={cn('w-full object-cover', compact ? 'h-24' : 'h-28')} />
+        <EventCoverImg event={event} className={cn('w-full object-cover', compact ? 'h-24' : 'h-28')} />
       </button>
       <div className={cn(compact ? 'space-y-3.5 px-4 py-4' : 'space-y-4 px-5 py-5')}>
         <p className={cn('card-badge font-semibold tracking-wide', role)}>
@@ -547,7 +569,9 @@ export function PlansFormingGroupCard({
           <FactSpread mutedClass={muted} left={t(meta.scheduleFull.el, meta.scheduleFull.en)} />
           <FactSpread
             mutedClass={muted}
+            leftIcon={variant === 'page' ? <MapPin className="w-3 h-3 shrink-0 opacity-70" aria-hidden /> : null}
             left={locationLine}
+            rightIcon={variant === 'page' ? <Users className="w-3 h-3 shrink-0 opacity-70" aria-hidden /> : null}
             right={`${meta.filled}/${meta.target} ${t('μέλη', 'members')} · ${meta.spots} ${t('ανοιχτές θέσεις', 'open spots')}`}
           />
         </div>
