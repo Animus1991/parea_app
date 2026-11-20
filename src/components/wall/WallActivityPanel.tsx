@@ -44,8 +44,9 @@ function describe(a: WallActivity, actor: string, onMyWall: boolean, t: T): stri
 }
 
 /**
- * «Δραστηριότητα» — what happened around your posts and wall, newest first.
- * Each line opens the post; tags can be approved or removed right here.
+ * «Δραστηριότητα τοίχου» — comments, tags, reactions. Lives on Notifications
+ * so the wall stays a feed. Each line still opens the post; tags can be
+ * approved or removed right here.
  */
 export function WallActivityPanel({ limit = 5, title }: { limit?: number; title?: string }) {
   const { t, language } = useLanguage();

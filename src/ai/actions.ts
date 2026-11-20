@@ -1168,7 +1168,9 @@ const summarizeWallAction: CopilotAction = {
       ok: true,
       el: [head('el'), latest.length ? `Τελευταία από τους Nakamas σου:\n${latest.map((p) => line(p, 'el')).join('\n')}` : ''].filter(Boolean).join('\n'),
       en: [head('en'), latest.length ? `Latest from your Nakamas:\n${latest.map((p) => line(p, 'en')).join('\n')}` : ''].filter(Boolean).join('\n'),
-      link: { path: '/wall', el: 'Τοίχος', en: 'Wall' },
+      link: unread > 0
+        ? { path: '/notifications', el: 'Ειδοποιήσεις', en: 'Notifications' }
+        : { path: '/wall', el: 'Τοίχος', en: 'Wall' },
       data: { posts: latest.map((p) => ({ id: p.id, author: nameOf(p.authorId), text: p.text.slice(0, 140), eventId: p.eventId })), unread },
     };
   },

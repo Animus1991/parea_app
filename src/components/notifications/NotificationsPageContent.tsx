@@ -17,6 +17,7 @@ import { useWallStore } from '../../store/wallStore';
 import { notificationsForUser } from '../../lib/notificationsUtil';
 import { type NotificationDigestWindow } from '../../lib/notificationDigest';
 import { useHomePendingFeedback } from '../../hooks/useHomePendingFeedback';
+import { WallActivityPanel } from '../wall/WallActivityPanel';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
 
@@ -336,19 +337,7 @@ export default function NotificationsPageContent() {
         ))}
       </div>
 
-      {/* Wall activity lives on /wall — one-line bridge here avoids dual chrome. */}
-      {socialOn && (
-        <button
-          type="button"
-          onClick={() => navigate('/wall')}
-          className={cn(
-            'w-full rounded-xl border border-border px-3 py-2 text-left text-xs font-bold transition-colors hover:border-border-strong',
-            a.head,
-          )}
-        >
-          {t('Δραστηριότητα στον τοίχο →', 'Wall activity →')}
-        </button>
-      )}
+      {socialOn && <WallActivityPanel title={t('Δραστηριότητα τοίχου', 'Wall activity')} />}
 
       <div
         className="flex gap-1.5 overflow-x-auto pb-1 noscrollbar"

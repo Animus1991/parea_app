@@ -6,7 +6,6 @@ import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { useWallAccess, useWallStore } from '../../store/wallStore';
 import { canViewPost, graphConnected, tagShownOnProfile, visiblePosts } from '../../lib/audience';
-import { WallActivityPanel } from './WallActivityPanel';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
@@ -145,8 +144,6 @@ export default function WallFeedPageContent() {
       <div ref={composerRef}>
         <PostComposer />
       </div>
-
-      <WallActivityPanel />
 
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('Φίλτρο ροής', 'Feed filter')}>
         {filters.map((f) => (

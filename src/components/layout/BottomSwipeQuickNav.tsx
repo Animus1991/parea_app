@@ -12,7 +12,6 @@ import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import { useStore } from '../../store';
 import { isOrganizerUser, isPlatformAdmin } from '../../lib/roles';
-import { useWallUnreadCount } from '../../hooks/useWallUnreadCount';
 import { prefetchPath } from '../../lib/routeLoaders';
 import {
   BOTTOM_SWIPE_QUICK_NAV_ENABLED,
@@ -129,7 +128,6 @@ export function BottomSwipeQuickNav({
   const { t } = useLanguage();
   const tok = useThemeStyles();
   const currentUser = useStore((s) => s.currentUser);
-  const wallUnread = useWallUnreadCount();
   const panelRef = useRef<HTMLDivElement>(null);
   useOverlayBehavior(true, onClose, panelRef);
 
@@ -175,7 +173,7 @@ export function BottomSwipeQuickNav({
             <Tile
               key={tile.id}
               tile={tile}
-              badge={tile.badge === 'wall' ? wallUnread : 0}
+              badge={0}
               onNavigate={onClose}
             />
           ))}
