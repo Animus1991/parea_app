@@ -531,7 +531,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
           !coverTitle && "h-48 shrink-0",
           photoFillsCard && "flex min-h-0 flex-1 flex-col",
           coverFull && "h-full",
-          !coverFull && "rounded-b-[0.4375rem]",
+          !coverFull && "rounded-b-[0.3125rem]",
         )}
         data-image-depth={imageDepth}
       >
