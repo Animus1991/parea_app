@@ -49,7 +49,7 @@ export function EventStories({ events }: EventStoriesProps) {
   const activeRing = ringMap[tok.accent] ?? ringMap.cyan;
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-3" data-event-stories="">
       <div className="flex items-center justify-between gap-2">
         <SectionLabel el="Εκδηλώσεις σε στιγμιότυπα" en="Events in stories" />
         <span className={`text-xs font-semibold ${h.labelMuted}`}>
@@ -85,7 +85,8 @@ export function EventStories({ events }: EventStoriesProps) {
               key={e.id}
               type="button"
               onClick={() => setViewerIndex(idx)}
-              className="shrink-0 w-[104px] text-left group focus:outline-none focus-visible:[&>div]:ring-2 focus-visible:[&>div]:ring-brand"
+              className="event-story-tile shrink-0 w-[104px] text-left group focus:outline-none focus-visible:[&>div]:ring-2 focus-visible:[&>div]:ring-brand"
+              data-event-story=""
               title={e.title}
               aria-label={[e.title, day && `${day} ${mon}`, badgeLabel].filter(Boolean).join(', ')}
             >
