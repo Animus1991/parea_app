@@ -109,7 +109,7 @@ export function ChatCallModal({
             type="button"
             onClick={() => {
               void navigator.clipboard?.writeText(window.location.href).catch(() => {});
-              toast.success(t('Ο σύνδεσμος κλήσης αντιγράφηκε', 'Call link copied'));
+              toast.success(t('Ο σύνδεσμος της συνομιλίας αντιγράφηκε', 'Conversation link copied'));
             }}
             className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-2xs font-bold flex items-center gap-1"
           >
@@ -130,8 +130,8 @@ export function ChatCallModal({
                   {p.name.slice(0, 1).toUpperCase()}
                 </span>
                 <span className="text-xs font-semibold truncate max-w-full">{p.name.split(' ')[0]}</span>
-                <span className="text-2xs text-emerald-400/90">
-                  {t('Συνδεδεμένος', 'Connected')}
+                <span className="text-2xs text-white/70">
+                  {t('Δεν έχει μπει ακόμα', 'Not joined yet')}
                 </span>
               </div>
             ))}
@@ -158,6 +158,13 @@ export function ChatCallModal({
             </div>
           </div>
         </div>
+
+        <p role="note" className="px-4 pt-2 text-center text-2xs font-medium text-white/60 bg-gray-950">
+          {t(
+            'Δοκιμαστική κλήση: ελέγχεις κάμερα και μικρόφωνο. Η ζωντανή σύνδεση με τους άλλους δεν είναι ακόμα διαθέσιμη.',
+            'Test call: check your camera and mic. Live connection with others is not available yet.',
+          )}
+        </p>
 
         {/* Controls */}
         <footer className="px-4 py-3.5 border-t border-white/10 flex items-center justify-center gap-3 bg-gray-900">

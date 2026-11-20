@@ -38,7 +38,7 @@ function RichBodyText({
               key={i}
               className={cn(
                 'font-bold px-1 py-0.5 rounded',
-                mine ? 'bg-white/20 text-white' : 'bg-brand-soft text-brand',
+                mine ? 'bg-brand-fg/10 text-brand-fg' : 'bg-brand-soft text-brand',
               )}
             >
               {part}
@@ -54,7 +54,7 @@ function RichBodyText({
               onClick={() => onTagClick?.(clean)}
               className={cn(
                 'inline font-bold underline underline-offset-2 hover:opacity-80',
-                mine ? 'text-white' : 'text-brand',
+                mine ? 'text-brand-fg' : 'text-brand',
               )}
             >
               {part}
@@ -148,7 +148,7 @@ function VoiceNotePlayer({
         aria-label={playing ? t('Παύση', 'Pause') : t('Αναπαραγωγή φωνητικού', 'Play voice note')}
         className={cn(
           'w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-transform active:scale-95',
-          mine ? 'bg-white/20 text-white hover:bg-white/30' : 'bg-brand text-brand-fg',
+          mine ? 'bg-brand-fg/15 text-brand-fg hover:bg-brand-fg/25' : 'bg-brand text-brand-fg',
         )}
       >
         {playing ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
@@ -174,7 +174,7 @@ function VoiceNotePlayer({
           );
         })}
       </div>
-      <span className={cn('text-2xs font-bold tabular-nums', mine ? 'text-white/85' : 'text-ink-muted')}>
+      <span className={cn('text-2xs font-bold tabular-nums', mine ? 'text-brand-fg' : 'text-ink-muted')}>
         {mins}:{secs}
       </span>
     </div>
@@ -264,7 +264,7 @@ export function ChatMessageBubble({
             <div
               className={cn(
                 'mb-1.5 rounded-xl px-2.5 py-1.5 text-2xs border-l-2',
-                mine ? 'bg-white/15 border-white text-white/95' : 'bg-surface border-brand text-ink-muted',
+                mine ? 'bg-brand-fg/10 border-brand-fg text-brand-fg' : 'bg-surface border-brand text-ink-muted',
               )}
             >
               <span className="font-bold block">
@@ -283,11 +283,11 @@ export function ChatMessageBubble({
               onClick={() => onJumpTo?.(message.replyTo!.id)}
               className={cn(
                 'mb-1.5 w-full text-left rounded-xl px-2.5 py-1 border-l-2 transition-opacity hover:opacity-90',
-                mine ? 'bg-white/15 border-white/80 text-white' : 'bg-surface border-brand text-ink',
+                mine ? 'bg-brand-fg/10 border-brand-fg/70 text-brand-fg' : 'bg-surface border-brand text-ink',
               )}
             >
-              <span className="block text-2xs font-bold opacity-90">{message.replyTo.senderName}</span>
-              <span className="block text-2xs opacity-80 truncate max-w-[200px]">
+              <span className="block text-2xs font-bold">{message.replyTo.senderName}</span>
+              <span className="block text-2xs truncate max-w-[200px]">
                 {message.replyTo.body}
               </span>
             </button>
@@ -347,8 +347,8 @@ export function ChatMessageBubble({
                         'w-full text-left rounded-xl px-2.5 py-1.5 text-2xs font-semibold relative overflow-hidden border transition-colors',
                         mine
                           ? voted
-                            ? 'border-white bg-white/25 text-white'
-                            : 'border-white/30 bg-white/10 text-white hover:bg-white/20'
+                            ? 'border-brand-fg bg-brand-fg/20 text-brand-fg'
+                            : 'border-brand-fg/30 bg-brand-fg/10 text-brand-fg hover:bg-brand-fg/20'
                           : voted
                             ? 'border-brand bg-brand-soft text-ink'
                             : 'border-border bg-surface text-ink hover:border-brand/40',
@@ -357,14 +357,14 @@ export function ChatMessageBubble({
                       <span
                         className={cn(
                           'absolute inset-y-0 left-0 transition-all',
-                          mine ? 'bg-white/20' : 'bg-brand/15',
+                          mine ? 'bg-brand-fg/15' : 'bg-brand/15',
                         )}
                         style={{ width: `${pct}%` }}
                         aria-hidden
                       />
                       <span className="relative z-10 flex items-center justify-between gap-2">
                         <span className="truncate">{opt.label}</span>
-                        <span className="tabular-nums opacity-85">
+                        <span className="tabular-nums">
                           {pct}% ({opt.voterIds.length})
                         </span>
                       </span>
@@ -415,8 +415,8 @@ export function ChatMessageBubble({
           {/* Meta row inside bubble footer */}
           <div
             className={cn(
-              'mt-0.5 flex items-center justify-end gap-1 text-2xs opacity-75',
-              mine ? 'text-white/80' : 'text-ink-muted',
+              'mt-0.5 flex items-center justify-end gap-1 text-2xs',
+              mine ? 'text-brand-fg' : 'text-ink-muted',
             )}
           >
             {message.pinned && <Pin className="w-2.5 h-2.5" aria-hidden />}
