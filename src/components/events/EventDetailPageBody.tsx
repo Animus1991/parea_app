@@ -30,6 +30,7 @@ import { HikeRouteCard } from '../outings/HikeRouteCard';
 import { isDarkTheme } from '../../lib/themes';
 import { cn } from '../../lib/utils';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { eventCoverUrl } from '../../lib/eventCover';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
@@ -164,7 +165,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
           <motion.img
             layoutId={`event-image-${event.id}`}
             referrerPolicy="no-referrer"
-            src={event.imageUrl || 'https://picsum.photos/seed/eventdefault/800/600'}
+            src={eventCoverUrl(event)}
             alt=""
             className="w-full h-full object-cover"
           />

@@ -14,6 +14,7 @@ import { useStore } from '../../store';
 import { projectRequestForViewer } from '../../lib/companyRequestUtils';
 import { JoinRequestPreviewModal } from './JoinRequestPreviewModal';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { eventCoverUrl } from '../../lib/eventCover';
 import { interestLabel } from '../../lib/interests';
 import { cn } from '../../lib/utils';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
@@ -34,20 +35,22 @@ const URGENCY_TEXT_DARK = {
 function FactSpread({
   left,
   right,
+  mutedClass = 'text-ink-muted',
 }: {
   left?: string | null;
   right?: string | null;
+  mutedClass?: string;
 }) {
   if (!left && !right) return null;
   return (
-    <div className="flex items-baseline justify-between gap-x-6 gap-y-1">
+    <div className="flex items-baseline justify-between gap-x-5 gap-y-1">
       {left ? (
-        <p className="min-w-0 card-meta font-medium leading-relaxed text-ink-muted">{left}</p>
+        <p className={cn('min-w-0 card-meta font-medium leading-relaxed', mutedClass)}>{left}</p>
       ) : (
         <span />
       )}
       {right ? (
-        <p className="shrink-0 card-meta font-medium leading-relaxed text-ink-muted">{right}</p>
+        <p className={cn('shrink-0 card-meta font-medium leading-relaxed', mutedClass)}>{right}</p>
       ) : null}
     </div>
   );
@@ -88,7 +91,7 @@ export function PlansFormingCard({
   const roleText = darkCard ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300';
   const locationLine = item.location ? formatLocationArea(item.location, language) : '';
   const showUrgency = item.urgency.tone !== 'normal';
-  const showMatchReason = !isSidebar && item.matchReason && item.sharedInterestTags.length === 0;
+  const showMatchReason = variant === 'page' && item.matchReason && item.sharedInterestTags.length === 0;
   const interestLine = item.sharedInterestTags.length
     ? item.sharedInterestTags.slice(0, 2).map((tag) => interestLabel(tag, language)).join(' · ')
     : item.sharedInterestCount > 0
@@ -96,24 +99,33 @@ export function PlansFormingCard({
       : '';
   const iconBtn =
     'min-h-9 min-w-9 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-black/[0.04] dark:hover:bg-white/5 transition-colors';
+  const quietLayout = variant === 'page' || variant === 'sidebar' || variant === 'sheet';
+  const compact = variant !== 'page';
+  const onDark = compact && isDarkSurface;
+  const ink = onDark ? 'text-white' : 'text-ink';
+  const muted = onDark ? 'text-gray-400' : 'text-ink-muted';
+  const role = onDark ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300';
 
-  if (variant === 'page') {
+  if (quietLayout) {
     return (
-      <article className="nakamas-card overflow-hidden rounded-2xl bg-white shadow-soft dark:bg-gray-900">
-        {item.event.imageUrl && (
-          <button
-            type="button"
-            onClick={() => navigate(`/events/${item.event.id}`)}
-            className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
-            aria-label={t('Δες εκδήλωση', 'View event')}
-          >
-            <img src={item.event.imageUrl} alt="" className="h-28 w-full object-cover" />
-          </button>
+      <article
+        className={cn(
+          'nakamas-card overflow-hidden rounded-2xl shadow-soft',
+          onDark ? 'bg-white/[0.04]' : 'bg-white dark:bg-gray-900',
         )}
+      >
+        <button
+          type="button"
+          onClick={() => navigate(`/events/${item.event.id}`)}
+          className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+          aria-label={t('Δες εκδήλωση', 'View event')}
+        >
+          <img src={eventCoverUrl(item.event)} alt="" className={cn('w-full object-cover', compact ? 'h-24' : 'h-28')} />
+        </button>
 
-        <div className="space-y-4 px-5 py-5">
+        <div className={cn(compact ? 'space-y-3.5 px-4 py-4' : 'space-y-4 px-5 py-5')}>
           <div className="flex items-start justify-between gap-4">
-            <p className="card-badge font-semibold tracking-wide text-ink-muted pt-1">
+            <p className={cn('card-badge font-semibold tracking-wide pt-1', muted)}>
               {tu(item.intentLabel.el, item.intentLabel.en)}
               {item.isSavedEvent ? ` · ${t('Αποθηκευμένη', 'Saved')}` : ''}
               {item.isHighMatch ? ` · ${t('Υψηλή συμβατότητα', 'High match')}` : ''}
@@ -130,7 +142,7 @@ export function PlansFormingCard({
                       : t('Αποθηκεύτηκε ιδιωτικά — δημοσιεύστε όποτε θέλετε', 'Saved privately — publish anytime'),
                   );
                 }}
-                className={cn(iconBtn, isSaved && 'text-cyan-700 dark:text-cyan-300')}
+                className={cn(iconBtn, onDark && 'text-gray-400 hover:text-white hover:bg-white/5', isSaved && 'text-cyan-700 dark:text-cyan-300')}
                 aria-label={t('Αποθήκευση σχεδίου', 'Save plan')}
                 title={t('Αποθήκευση σχεδίου', 'Save plan')}
               >
@@ -142,7 +154,7 @@ export function PlansFormingCard({
                   onClick={onDismiss}
                   aria-label={t('Απόκρυψη σχεδίου', 'Hide plan')}
                   title={t('Απόκρυψη', 'Hide')}
-                  className={iconBtn}
+                  className={cn(iconBtn, onDark && 'text-gray-400 hover:text-white hover:bg-white/5')}
                 >
                   <EyeOff className="w-4 h-4" aria-hidden />
                 </button>
@@ -151,33 +163,34 @@ export function PlansFormingCard({
           </div>
 
           <div className="space-y-1.5">
-            <h3 className="card-heading-lg font-bold leading-snug text-ink">{item.event.title}</h3>
-            <p className="card-copy leading-relaxed text-ink-muted">
-              <span className="font-semibold text-ink">{displayName}</span>
-              <span className="text-ink-muted/50" aria-hidden>
+            <h3 className={cn('card-heading-lg font-bold leading-snug', ink)}>{item.event.title}</h3>
+            <p className={cn('card-copy leading-relaxed', muted)}>
+              <span className={cn('font-semibold', ink)}>{displayName}</span>
+              <span className="opacity-50" aria-hidden>
                 {' · '}
               </span>
-              <span className="card-role font-medium text-cyan-700 dark:text-cyan-300">
+              <span className={cn('card-role font-medium', role)}>
                 {t(item.roleLabel.el, item.roleLabel.en)}
               </span>
             </p>
           </div>
 
           <div className="space-y-2">
-            <FactSpread left={t(item.scheduleFull.el, item.scheduleFull.en)} />
-            <FactSpread left={locationLine} right={t(item.groupSizeLabel.el, item.groupSizeLabel.en)} />
+            <FactSpread mutedClass={muted} left={t(item.scheduleFull.el, item.scheduleFull.en)} />
+            <FactSpread mutedClass={muted} left={locationLine} right={t(item.groupSizeLabel.el, item.groupSizeLabel.en)} />
             <FactSpread
+              mutedClass={muted}
               left={t(item.meetingLabel.el, item.meetingLabel.en)}
               right={interestLine || (showUrgency ? t(item.urgency.el, item.urgency.en) : null)}
             />
           </div>
 
           {item.intent.message && (
-            <p className="card-copy leading-relaxed text-ink-muted">«{item.intent.message}»</p>
+            <p className={cn('card-copy leading-relaxed', muted)}>«{item.intent.message}»</p>
           )}
 
           {showMatchReason && item.matchReason && (
-            <p className="card-copy leading-relaxed text-ink-muted/80">
+            <p className={cn('card-copy leading-relaxed', muted)}>
               {t(item.matchReason.el, item.matchReason.en)}
             </p>
           )}
@@ -193,7 +206,7 @@ export function PlansFormingCard({
             <button
               type="button"
               onClick={() => navigate(`/events/${item.event.id}`)}
-              className="min-h-9 card-cta text-ink-muted hover:text-ink transition-colors"
+              className={cn('min-h-9 card-cta transition-colors', muted, onDark ? 'hover:text-white' : 'hover:text-ink')}
             >
               {t('Εκδήλωση', 'Event')}
             </button>
@@ -281,17 +294,11 @@ export function PlansFormingCard({
           className="relative shrink-0 w-12 h-12 rounded-xl overflow-hidden bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 group"
           aria-label={t('Δες εκδήλωση', 'View event')}
         >
-          {item.event.imageUrl ? (
-            <img
-              src={item.event.imageUrl}
-              alt=""
-              className="w-full h-full object-cover transition-transform group-hover:scale-105"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-cyan-900/40 text-cyan-200 text-xs font-bold">
-              {item.event.category?.slice(0, 2) ?? 'EV'}
-            </div>
-          )}
+          <img
+            src={eventCoverUrl(item.event)}
+            alt=""
+            className="w-full h-full object-cover transition-transform group-hover:scale-105"
+          />
         </button>
 
         <div className="min-w-0 flex-1 space-y-1.5">
@@ -493,167 +500,81 @@ export function PlansFormingGroupCard({
 }) {
   const { t, tu, language } = useLanguage();
   const navigate = useNavigate();
-  const isSidebar = variant === 'sidebar';
-  const darkCard = isSidebar && isDarkSurface;
+  const compact = variant !== 'page';
+  const onDark = compact && isDarkSurface;
   const { group, event, meta } = entry;
   const locationLine = meta.location ? formatLocationArea(meta.location, language) : '';
-
-  if (variant === 'page') {
-    return (
-      <article className="nakamas-card overflow-hidden rounded-2xl bg-white shadow-soft dark:bg-gray-900">
-        {event.imageUrl && (
-          <button
-            type="button"
-            onClick={() => navigate(`/events/${event.id}`)}
-            className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
-            aria-label={t('Δες εκδήλωση', 'View event')}
-          >
-            <img src={event.imageUrl} alt="" className="h-28 w-full object-cover" />
-          </button>
-        )}
-        <div className="space-y-4 px-5 py-5">
-          <p className="card-badge font-semibold tracking-wide text-emerald-700 dark:text-emerald-300">
-            {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
-          </p>
-          <div className="space-y-1.5">
-            <h3 className="card-heading-lg font-bold leading-snug text-ink">{event.title}</h3>
-            <p className="card-copy leading-relaxed text-ink-muted">
-              {meta.hostFirstName && (
-                <>
-                  <span className="font-semibold text-ink">{meta.hostFirstName}</span>
-                  <span className="text-ink-muted/50" aria-hidden>
-                    {' · '}
-                  </span>
-                </>
-              )}
-              <span className="card-role font-medium text-emerald-700 dark:text-emerald-300">
-                {t('Οργανώνει ομάδα', 'Group host')}
-              </span>
-            </p>
-          </div>
-          <div className="space-y-2">
-            <FactSpread left={t(meta.scheduleFull.el, meta.scheduleFull.en)} />
-            <FactSpread
-              left={locationLine}
-              right={`${meta.filled}/${meta.target} ${t('μέλη', 'members')} · ${meta.spots} ${t('ανοιχτές θέσεις', 'open spots')}`}
-            />
-          </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-black/[0.06] dark:bg-white/10">
-            <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${meta.progress}%` }} />
-          </div>
-          {meta.note && (
-            <p className="card-copy leading-relaxed text-ink-muted">«{meta.note}»</p>
-          )}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
-            <button
-              type="button"
-              onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
-              className="px-4 min-h-9 rounded-full card-cta bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
-            >
-              {t('Αίτημα συμμετοχής', 'Ask to join')}
-            </button>
-            {onSuggestMerge && (
-              <button
-                type="button"
-                onClick={onSuggestMerge}
-                className="min-h-9 card-cta text-ink-muted hover:text-ink transition-colors"
-              >
-                {t('Συγχώνευση', 'Merge')}
-              </button>
-            )}
-          </div>
-        </div>
-      </article>
-    );
-  }
+  const ink = onDark ? 'text-white' : 'text-ink';
+  const muted = onDark ? 'text-gray-400' : 'text-ink-muted';
+  const role = onDark ? 'text-emerald-300' : 'text-emerald-700 dark:text-emerald-300';
 
   return (
     <article
       className={cn(
-        'rounded-2xl border overflow-hidden',
-        darkCard
-          ? 'bg-emerald-950/20 border-emerald-700/30'
-          : isSidebar
-            ? 'bg-white border-gray-200/80 shadow-soft'
-            : 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800',
+        'nakamas-card overflow-hidden rounded-2xl shadow-soft',
+        onDark ? 'bg-white/[0.04]' : 'bg-white dark:bg-gray-900',
       )}
     >
-      <div className="flex gap-3.5 p-4">
-        {event.imageUrl && (
-          <img src={event.imageUrl} alt="" className="w-11 h-11 rounded-xl object-cover shrink-0" />
-        )}
-        <div className="min-w-0 flex-1 space-y-1.5">
-          <p className="card-badge font-bold tracking-wide text-emerald-700 dark:text-emerald-300">
-            {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
-          </p>
-          <p className={cn('card-heading-lg font-bold leading-normal line-clamp-2', darkCard ? 'text-white' : 'text-gray-900 dark:text-white')}>
-            {event.title}
-          </p>
-          <p className={cn('card-meta-sm font-semibold leading-relaxed', darkCard ? 'text-emerald-100/90' : 'text-gray-700 dark:text-gray-200')}>
-            {t(meta.scheduleFull.el, meta.scheduleFull.en)}
-          </p>
-          <p className={cn('card-copy leading-relaxed', darkCard ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300')}>
+      <button
+        type="button"
+        onClick={() => navigate(`/events/${event.id}`)}
+        className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+        aria-label={t('Δες εκδήλωση', 'View event')}
+      >
+        <img src={eventCoverUrl(event)} alt="" className={cn('w-full object-cover', compact ? 'h-24' : 'h-28')} />
+      </button>
+      <div className={cn(compact ? 'space-y-3.5 px-4 py-4' : 'space-y-4 px-5 py-5')}>
+        <p className={cn('card-badge font-semibold tracking-wide', role)}>
+          {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
+        </p>
+        <div className="space-y-1.5">
+          <h3 className={cn('card-heading-lg font-bold leading-snug', ink)}>{event.title}</h3>
+          <p className={cn('card-copy leading-relaxed', muted)}>
             {meta.hostFirstName && (
               <>
-                <span className={cn('font-semibold', darkCard ? 'text-gray-100' : 'text-gray-900 dark:text-gray-100')}>{meta.hostFirstName}</span>
-                <span className={darkCard ? 'text-gray-500' : 'text-gray-400'} aria-hidden> · </span>
+                <span className={cn('font-semibold', ink)}>{meta.hostFirstName}</span>
+                <span className="opacity-50" aria-hidden>
+                  {' · '}
+                </span>
               </>
             )}
-            <span className={cn('card-role font-semibold', darkCard ? 'text-emerald-300' : 'text-emerald-700 dark:text-emerald-300')}>
+            <span className={cn('card-role font-medium', role)}>
               {t('Οργανώνει ομάδα', 'Group host')}
             </span>
           </p>
-          {locationLine && (
-            <p className={cn('card-copy flex items-center gap-1 leading-relaxed', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
-              <MapPin className="w-3 h-3 shrink-0" />
-              {locationLine}
-            </p>
-          )}
         </div>
-      </div>
-
-      <div className="px-4 pb-3">
-        <div className="flex justify-between card-copy font-bold mb-1.5 leading-relaxed">
-          <span className={darkCard ? 'text-emerald-400' : 'text-emerald-700 dark:text-emerald-300'}>
-            {meta.filled}/{meta.target} {t('μέλη', 'members')}
-          </span>
-          <span className={darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'}>
-            {meta.spots} {t('ανοιχτές θέσεις', 'open spots')}
-          </span>
+        <div className="space-y-2">
+          <FactSpread mutedClass={muted} left={t(meta.scheduleFull.el, meta.scheduleFull.en)} />
+          <FactSpread
+            mutedClass={muted}
+            left={locationLine}
+            right={`${meta.filled}/${meta.target} ${t('μέλη', 'members')} · ${meta.spots} ${t('ανοιχτές θέσεις', 'open spots')}`}
+          />
         </div>
-        <div className={cn('h-1.5 rounded-full overflow-hidden', darkCard ? 'bg-white/10' : 'bg-gray-200 dark:bg-white/10')}>
-          <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${meta.progress}%` }} />
+        <div className={cn('h-1.5 overflow-hidden rounded-full', onDark ? 'bg-white/10' : 'bg-black/[0.06]')}>
+          <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${meta.progress}%` }} />
         </div>
         {meta.note && (
-          <p className={cn('card-copy mt-2.5 line-clamp-2 leading-relaxed', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
-            «{meta.note}»
-          </p>
+          <p className={cn('card-copy leading-relaxed', muted)}>«{meta.note}»</p>
         )}
-      </div>
-
-      <div className="flex gap-2 px-4 pb-3.5 pt-0.5">
-        <button
-          type="button"
-          onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
-          className={cn(
-            'px-4 min-h-8 py-1.5 rounded-full card-cta bg-emerald-600 hover:bg-emerald-500 text-white transition-colors',
-            isSidebar && 'flex-1',
-          )}
-        >
-          {t('Αίτημα συμμετοχής', 'Ask to join')}
-        </button>
-        {onSuggestMerge && (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
           <button
             type="button"
-            onClick={onSuggestMerge}
-            className={cn(
-              'px-3 min-h-8 py-1.5 rounded-full card-cta border',
-              darkCard ? 'border-emerald-600/40 text-emerald-300' : 'border-emerald-300 text-emerald-800 dark:border-emerald-600/40 dark:text-emerald-300',
-            )}
+            onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
+            className="px-4 min-h-9 rounded-full card-cta bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
           >
-            {t('Συγχώνευση', 'Merge')}
+            {t('Αίτημα συμμετοχής', 'Ask to join')}
           </button>
-        )}
+          {onSuggestMerge && (
+            <button
+              type="button"
+              onClick={onSuggestMerge}
+              className={cn('min-h-9 card-cta transition-colors', muted, onDark ? 'hover:text-white' : 'hover:text-ink')}
+            >
+              {t('Συγχώνευση', 'Merge')}
+            </button>
+          )}
+        </div>
       </div>
     </article>
   );

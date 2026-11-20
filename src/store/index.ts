@@ -8,6 +8,7 @@ import { mockGroups } from "../data/mockGroups";
 import { mockCalendarPlanEvents, mockCalendarPlanGroups } from "../data/mockCalendarPlan";
 import { coerceAuthoredSeasonToLive } from "../lib/demoCatalogDates";
 import { withFreshCatalogDates } from "../lib/catalogAuthoredSchedule";
+import { eventCoverUrl } from "../lib/eventCover";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
 import { fetchTicketmasterEvents, isTicketmasterConfigured } from "../services/eventApi";
@@ -2317,7 +2318,11 @@ export const useStore = create<AppState>()(
         };
 
         const events = coerceAuthoredSeasonToLive(
-          withFreshCatalogDates(mergeById(current.events, p.events)),
+          withFreshCatalogDates(
+            mergeById(current.events, p.events).map((e) =>
+              e.imageUrl ? e : { ...e, imageUrl: eventCoverUrl(e) },
+            ),
+          ),
         );
         const groups = mergeById(current.groups, p.groups);
         // isAdmin comes only from the trusted seeds, never from persisted

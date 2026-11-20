@@ -244,7 +244,7 @@ export function buildScarcityPromos(
     const ratio = filled / target;
     if (ratio < 0.45) continue;
     const event = events.find((e) => e.id === g.eventId);
-    if (!event) continue;
+    if (!event || event.kind === 'mini_outing') continue;
     promos.push({
       id: `scarcity_${g.id}`,
       eventId: event.id,

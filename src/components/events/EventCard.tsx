@@ -37,6 +37,7 @@ import {
   showNightCoordinationTools,
   translateEventTag,
 } from "../../lib/eventDisplay";
+import { eventCoverUrl } from "../../lib/eventCover";
 import { eventTagPath, eventTagSlug } from "../../lib/eventTags";
 import { isDarkTheme } from "../../lib/themes";
 import { getEventGroupProgress } from "../../lib/groupUtils";
@@ -481,10 +482,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
           <motion.img
             layoutId={`event-image-${event.id}`}
             referrerPolicy="no-referrer"
-            src={
-              event.imageUrl ||
-              "https://picsum.photos/seed/eventdefault/800/600"
-            }
+            src={eventCoverUrl(event)}
             alt={event.title}
             className={cn(
               "object-cover object-center group-hover:scale-[1.02] transition-transform duration-700 ease-out",

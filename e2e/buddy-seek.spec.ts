@@ -43,4 +43,21 @@ test.describe('Find Nakamas', () => {
     await expect(page.getByRole('dialog')).toBeVisible();
     await page.getByRole('button', { name: /Ακύρωση|Cancel/ }).click();
   });
+
+  test('Discover rail matches the quiet Find Nakamas cards', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await enterDemoGuest(page);
+    const rail = page.getByRole('complementary', { name: /Βρες Nakamas|Find Nakamas/ });
+    await expect(rail).toBeVisible({ timeout: 15_000 });
+    await expect(rail.getByRole('heading', { name: /Βρες Nakamas|Find Nakamas/ })).toBeVisible();
+    await expect(rail.getByRole('button', { name: /Όλα τα σχέδια|All plans/ })).toBeVisible();
+    await expect(rail.getByRole('button', { name: /Κλείσιμο sidebar|Close sidebar/ })).toBeVisible();
+    await expect(rail.getByText('Koukaki, Athens')).toHaveCount(0);
+    await expect(rail.getByText('Καφές στο Κουκάκι')).toHaveCount(0);
+    await expect(rail.getByRole('button', { name: /Αίτημα συμμετοχής|Ask to join/ }).first()).toBeVisible();
+    await expect(rail.getByRole('button', { name: /^Εκδήλωση$|^Event$/ }).first()).toBeVisible();
+    await expect(rail.getByRole('button', { name: /Αποθήκευση σχεδίου|Save plan/ }).first()).toBeVisible();
+    await expect(rail.getByRole('button', { name: /Απόκρυψη σχεδίου|Hide plan/ }).first()).toBeVisible();
+    await expect(rail.getByText(/Φαγητό δρόμου με μικρή ομάδα|Street food with a small group/)).toBeVisible();
+  });
 });

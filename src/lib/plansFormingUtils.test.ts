@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildScarcityPromos,
   meetingPreferenceLabel,
   plansFormingMatchReason,
 } from './plansFormingUtils';
 import type { CompanyRequest } from '../types/companyRequest';
-import type { Event, User } from '../types';
+import type { Event, Group, User } from '../types';
 
 const user = (over: Partial<User> = {}): User => ({
   id: 'u1',
@@ -77,5 +78,41 @@ describe('plansFormingUtils copy', () => {
     expect(reason?.el).toContain('Γαστρονομία');
     expect(reason?.el).not.toContain('Food & Drink');
     expect(reason?.en).toContain('Food & Dining');
+  });
+
+  it('does not promote mini outings as nearly-full groups', () => {
+    const outing = event({
+      id: 'mo1',
+      title: 'Καφές στο Κουκάκι',
+      kind: 'mini_outing',
+      locationArea: 'Koukaki, Athens',
+    });
+    const festival = event({ id: 'e2' });
+    const groups: Group[] = [
+      {
+        id: 'g-mo1',
+        eventId: 'mo1',
+        hostId: 'u2',
+        members: ['u2', 'u3'],
+        pendingMembers: [],
+        targetSize: 4,
+        status: 'pending',
+        discountUnlocked: false,
+        isRecruiting: true,
+      },
+      {
+        id: 'g-e2',
+        eventId: 'e2',
+        hostId: 'u3',
+        members: ['u3', 'u4', 'u5'],
+        pendingMembers: [],
+        targetSize: 4,
+        status: 'pending',
+        discountUnlocked: false,
+        isRecruiting: true,
+      },
+    ];
+    const promos = buildScarcityPromos(groups, [outing, festival], 'u1');
+    expect(promos.map((p) => p.eventTitle)).toEqual(['Athens Street Food Festival 2026']);
   });
 });
