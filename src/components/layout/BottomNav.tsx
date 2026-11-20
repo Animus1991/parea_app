@@ -63,7 +63,7 @@ export function BottomNav() {
           <NavLink
             to="/create"
             aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
-            className={cn('w-11 h-11 rounded-full flex items-center justify-center transition-colors border-2 border-white', tok.fab)}
+            className={cn('w-11 h-11 rounded-full flex items-center justify-center transition-colors border-2 border-white shadow-round', tok.fab)}
           >
             <Plus className="h-[20px] w-[20px] icon-emphasis" aria-hidden />
           </NavLink>

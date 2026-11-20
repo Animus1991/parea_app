@@ -78,7 +78,7 @@ function BadgeButton({
     >
       <span
         className={cn(
-          'flex h-5 w-5 items-center justify-center rounded-full text-white shadow-soft',
+          'flex h-5 w-5 items-center justify-center rounded-full text-white shadow-round',
           kind === 'add' && 'bg-emerald-500',
           kind === 'remove' && 'bg-red-500',
           kind === 'pin' && 'bg-cyan-600',
@@ -149,7 +149,7 @@ function AvailableTile({ tile, onAdd }: { tile: QuickNavTileDef; onAdd: () => vo
       aria-label={t(`Προσθήκη: ${label}`, `Add ${label}`)}
       className="relative flex flex-col items-center justify-center gap-1 rounded-xl min-h-14 px-2 py-2 text-center"
     >
-      <span className="absolute -right-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-soft">
+      <span className="absolute -right-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-round">
         <Plus className="h-3 w-3" aria-hidden />
       </span>
       <span className={cn('flex h-10 w-10 items-center justify-center rounded-full', tok.isDark ? 'bg-white/10' : 'bg-black/[0.04]')}>
