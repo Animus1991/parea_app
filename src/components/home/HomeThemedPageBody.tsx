@@ -15,7 +15,6 @@ import { HomeFiltersSection } from './HomeFiltersSection';
 import { HomeMobileFilterSheet } from './HomeMobileFilterSheet';
 import { HomeFeedToolbar } from './HomeFeedToolbar';
 import { HomeDiscoverEnrichment } from './HomeDiscoverEnrichment';
-import { HomeQuietRevealBar } from './HomeQuietRevealBar';
 import { CollectionsRail } from '../outings/CollectionsRail';
 import { getTimeGreeting, getMotivation } from '../../lib/homeGreeting';
 import { useHomePageController } from '../../hooks/useHomePageController';
@@ -50,18 +49,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     shownEvents,
     hasMoreEvents,
     loadMoreEvents,
-    conflictCount,
-    showConflicts,
-    onToggleConflicts,
-    fullCount,
-    showFull,
-    onToggleFull,
-    joinedCount,
-    showJoined,
-    onToggleJoined,
-    pastCount,
-    showPast,
-    onTogglePast,
+    quietReveal,
+    quietRevealOnCount,
     searchRef,
     loadMoreRef,
     storyEvents,
@@ -164,7 +153,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           mapClassName={tok.mapBtn}
           filtersOpen={filtersOpen}
           onToggleFilters={toggleFilters}
-          activeFilterCount={activeFilterCount + (seekingHostOnly ? 1 : 0)}
+          activeFilterCount={activeFilterCount + (seekingHostOnly ? 1 : 0) + quietRevealOnCount}
         />
 
         <HomeFiltersSection
@@ -185,28 +174,14 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           seekingHostOnly={seekingHostOnly}
           onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
           showSeekingHostChip={seekingHostEvents.length > 0}
-          hasActiveFilters={hasActiveFilters || seekingHostOnly}
+          hasActiveFilters={hasActiveFilters || seekingHostOnly || quietRevealOnCount > 0}
           onClearAll={handleClearAll}
           activeMood={activeMood}
           onSelectMood={handleSelectMood}
           expanded={filtersExpanded}
           schedule={schedule}
           setSchedule={setSchedule}
-        />
-
-        <HomeQuietRevealBar
-          conflictCount={conflictCount}
-          showConflicts={showConflicts}
-          onToggleConflicts={onToggleConflicts}
-          fullCount={fullCount}
-          showFull={showFull}
-          onToggleFull={onToggleFull}
-          joinedCount={joinedCount}
-          showJoined={showJoined}
-          onToggleJoined={onToggleJoined}
-          pastCount={pastCount}
-          showPast={showPast}
-          onTogglePast={onTogglePast}
+          quietReveal={quietReveal}
         />
 
         <DiscoverCardImagePicker
@@ -252,28 +227,28 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
                 actionLabel={
                   isScheduleFilterActive(schedule)
                     ? t('Διεύρυνε τις ώρες', 'Widen hours')
-                    : hasActiveFilters || seekingHostOnly
+                    : hasActiveFilters || seekingHostOnly || quietRevealOnCount > 0
                       ? t('Εκκαθάριση φίλτρων', 'Clear filters')
                       : t('Στον χάρτη', 'On the map')
                 }
                 onAction={
                   isScheduleFilterActive(schedule)
                     ? () => setSchedule(emptyHomeSchedule())
-                    : hasActiveFilters || seekingHostOnly
+                    : hasActiveFilters || seekingHostOnly || quietRevealOnCount > 0
                       ? handleClearAll
                       : () => navigate('/nearby')
                 }
                 secondaryLabel={
                   isScheduleFilterActive(schedule)
                     ? t('Εκκαθάριση φίλτρων', 'Clear filters')
-                    : hasActiveFilters || seekingHostOnly
+                    : hasActiveFilters || seekingHostOnly || quietRevealOnCount > 0
                       ? t('Στον χάρτη', 'On the map')
                       : t('Κατηγορίες', 'Categories')
                 }
                 onSecondary={
                   isScheduleFilterActive(schedule)
                     ? handleClearAll
-                    : hasActiveFilters || seekingHostOnly
+                    : hasActiveFilters || seekingHostOnly || quietRevealOnCount > 0
                       ? () => navigate('/nearby')
                       : () => navigate('/categories')
                 }
@@ -318,7 +293,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
       <HomeMobileFilterSheet
         open={filterSheetOpen}
         onClose={() => setFilterSheetOpen(false)}
-        activeCount={activeFilterCount}
+        activeCount={activeFilterCount + (seekingHostOnly ? 1 : 0) + quietRevealOnCount}
         onClear={() => {
           handleClearAll();
           setFilterSheetOpen(false);
@@ -344,6 +319,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         onSelectMood={handleSelectMood}
         schedule={schedule}
         setSchedule={setSchedule}
+        quietReveal={quietReveal}
       />
     </div>
   );

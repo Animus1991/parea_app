@@ -2,7 +2,7 @@
 
 **Αντικείμενο:** πιο επικαιροποιημένο remote tip — **https://github.com/Animus1991/parea_app.git** `ccr-4a44ddef-fgcwnr` @ `d53da7e` (20/11 20:14 UTC), το οποίο ήδη περιλαμβάνει το `tasoasteritopeleven` `29169270` + audit PR + νεότερα UX.  
 **Source tip (αυτή η συνεδρία):** `animus/ccr-4a44ddef-fgcwnr` @ `d53da7ed46f54a580bbf882420b00008e872a024`  
-**Working branch:** `cursor/animus-tip-quiet-chips-2581` (fast-forward από το Animus tip + σαφέστερα quiet-reveal chips)  
+**Working branch:** `cursor/animus-tip-quiet-chips-2581` (Animus tip + quiet-reveal στα advanced Φίλτρα)  
 **Μέθοδος:** `git fetch --all --prune` · σύγκριση όλων των remote branches · στατική ανάλυση ασφάλειας / αρχιτεκτονικής / i18n / a11y · `typecheck` · `eslint` · `audit:contrast` · `vitest` · `vite build` · `npm audit` · χειροκίνητη ροή στο browser μέσω Cloudflare Quick Tunnel · επαλήθευση GitHub Actions στο `main`  
 **Ρήτρα:** αντικειμενικός, τεκμηριωμένος έλεγχος — όχι marketing. Το app είναι **mock-first prototype**. «Πράσινα tests» ≠ production-ready.
 

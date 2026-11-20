@@ -13,6 +13,13 @@ import {
   summarizeHomeSchedule,
   type HomeScheduleFilter,
 } from '../../lib/homeScheduleFilter';
+import {
+  conflictChipCopy,
+  fullChipCopy,
+  joinedChipCopy,
+  pastChipCopy,
+  type QuietRevealFilterState,
+} from '../../lib/quietRevealCopy';
 
 export interface HomeActiveFilterChipsProps {
   activeCategory: string;
@@ -34,6 +41,7 @@ export interface HomeActiveFilterChipsProps {
   onClearAll: () => void;
   schedule?: HomeScheduleFilter;
   onClearSchedule?: () => void;
+  quietReveal?: QuietRevealFilterState;
 }
 
 export function HomeActiveFilterChips({
@@ -56,6 +64,7 @@ export function HomeActiveFilterChips({
   onClearAll,
   schedule,
   onClearSchedule,
+  quietReveal,
 }: HomeActiveFilterChipsProps) {
   const { t } = useLanguage();
   const categoryTranslations = getHomeCategoryTranslations(t);
@@ -127,6 +136,34 @@ export function HomeActiveFilterChips({
       key: 'schedule',
       label: t(summary.el, summary.en),
       onRemove: onClearSchedule,
+    });
+  }
+  if (quietReveal?.showConflicts) {
+    chips.push({
+      key: 'quiet-day',
+      label: t(...conflictChipCopy()),
+      onRemove: quietReveal.onToggleConflicts,
+    });
+  }
+  if (quietReveal?.showJoined) {
+    chips.push({
+      key: 'quiet-joined',
+      label: t(...joinedChipCopy()),
+      onRemove: quietReveal.onToggleJoined,
+    });
+  }
+  if (quietReveal?.showFull) {
+    chips.push({
+      key: 'quiet-full',
+      label: t(...fullChipCopy()),
+      onRemove: quietReveal.onToggleFull,
+    });
+  }
+  if (quietReveal?.showPast) {
+    chips.push({
+      key: 'quiet-past',
+      label: t(...pastChipCopy()),
+      onRemove: quietReveal.onTogglePast,
     });
   }
 

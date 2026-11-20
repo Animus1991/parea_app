@@ -14,6 +14,10 @@ import { eventMatchesSchedule, isScheduleFilterActive } from '../lib/homeSchedul
 import { isEventPast } from '../lib/eventDisplay';
 import { useStore } from '../store';
 import { partitionQuietCatalog, storiesWithoutFeedDupes } from '../lib/quietCatalog';
+import {
+  quietRevealActiveCount,
+  type QuietRevealFilterState,
+} from '../lib/quietRevealCopy';
 
 const HOME_FEED_PAGE_SIZE = 6;
 
@@ -130,7 +134,27 @@ export function useHomePageController() {
   const handleClearAll = () => {
     clearAllFilters();
     setSeekingHostOnly(false);
+    setShowConflicts(false);
+    setShowFull(false);
+    setShowJoined(false);
+    setShowPast(false);
   };
+
+  const quietReveal: QuietRevealFilterState = {
+    conflictCount: buckets.conflicts.length,
+    showConflicts,
+    onToggleConflicts: () => setShowConflicts((v) => !v),
+    fullCount: buckets.full.length,
+    showFull,
+    onToggleFull: () => setShowFull((v) => !v),
+    joinedCount: buckets.joined.length,
+    showJoined,
+    onToggleJoined: () => setShowJoined((v) => !v),
+    pastCount: buckets.past.length,
+    showPast,
+    onTogglePast: () => setShowPast((v) => !v),
+  };
+  const quietRevealOnCount = quietRevealActiveCount(quietReveal);
 
   useEffect(() => {
     if (isDesktopFilters) setFilterSheetOpen(false);
@@ -164,18 +188,8 @@ export function useHomePageController() {
     loadMoreRef,
     scrollToFilters,
     storyEvents,
-    conflictCount: buckets.conflicts.length,
-    showConflicts,
-    onToggleConflicts: () => setShowConflicts((v) => !v),
-    fullCount: buckets.full.length,
-    showFull,
-    onToggleFull: () => setShowFull((v) => !v),
-    joinedCount: buckets.joined.length,
-    showJoined,
-    onToggleJoined: () => setShowJoined((v) => !v),
-    pastCount: buckets.past.length,
-    showPast,
-    onTogglePast: () => setShowPast((v) => !v),
+    quietReveal,
+    quietRevealOnCount,
     seekingHostEvents,
     isSeekingHost,
     feed,
