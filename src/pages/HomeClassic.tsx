@@ -24,7 +24,8 @@ import { CollectionsRail } from "../components/outings/CollectionsRail";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
 import { emptyHomeSchedule, isScheduleFilterActive } from "../lib/homeScheduleFilter";
-import { discoverFeedImageDepth } from "../lib/discoverCardImagePreview";
+import { DiscoverCardImagePicker } from "../components/home/DiscoverCardImagePicker";
+import { useDiscoverCardImageDepth } from "../hooks/useDiscoverCardImageDepth";
 
 export default function HomeClassic() {
   const h = useHomeTheme();
@@ -97,6 +98,8 @@ export default function HomeClassic() {
     refetch,
   } = feed;
 
+  const { depth: imageDepth, setDepth: setImageDepth, options: imageDepthOptions } =
+    useDiscoverCardImageDepth();
   const currentUser = feed.currentUser;
 
   useEffect(() => {
@@ -191,6 +194,12 @@ export default function HomeClassic() {
           onTogglePast={onTogglePast}
         />
 
+        <DiscoverCardImagePicker
+          depth={imageDepth}
+          options={imageDepthOptions}
+          onChange={setImageDepth}
+        />
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
             Array.from({ length: 6 }).map((_, i) => (
@@ -260,7 +269,7 @@ export default function HomeClassic() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <EventCard event={event} imageDepth={discoverFeedImageDepth(index)} />
+                <EventCard event={event} imageDepth={imageDepth} />
               </motion.div>
             ))
           )}

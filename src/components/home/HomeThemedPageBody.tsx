@@ -20,7 +20,8 @@ import { HOME_TYPO } from '../../lib/typographyTokens';
 import { HOME_THEMED_TOKENS, type HomeThemedVariant } from '../../lib/homeThemedTokens';
 import { cn } from '../../lib/utils';
 import { emptyHomeSchedule, isScheduleFilterActive } from '../../lib/homeScheduleFilter';
-import { discoverFeedImageDepth } from '../../lib/discoverCardImagePreview';
+import { DiscoverCardImagePicker } from './DiscoverCardImagePicker';
+import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
 
 /**
  * Canonical themed Home — ONE implementation for vibrant/neon/bento × light/dark.
@@ -94,6 +95,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     refetch,
   } = feed;
 
+  const { depth: imageDepth, setDepth: setImageDepth, options: imageDepthOptions } =
+    useDiscoverCardImageDepth();
   const currentUser = feed.currentUser;
   const firstName = currentUser?.name?.split(' ')[0] || t('φίλε', 'there');
   const greeting = getTimeGreeting(firstName, t);
@@ -196,6 +199,12 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           onTogglePast={onTogglePast}
         />
 
+        <DiscoverCardImagePicker
+          depth={imageDepth}
+          options={imageDepthOptions}
+          onChange={setImageDepth}
+        />
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
             Array.from({ length: 6 }).map((_, i) => (
@@ -268,7 +277,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <EventCard event={event} imageDepth={discoverFeedImageDepth(index)} />
+                <EventCard event={event} imageDepth={imageDepth} />
               </motion.div>
             ))
           )}

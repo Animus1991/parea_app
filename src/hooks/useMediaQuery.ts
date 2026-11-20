@@ -16,3 +16,5 @@ export function useMediaQuery(query: string): boolean {
 }
 
 export const DESKTOP_DOCK_QUERY = '(min-width: 1024px)';
+/** Tailwind `md` — desktop/web view vs phone. */
+export const WEB_VIEW_QUERY = '(min-width: 768px)';
