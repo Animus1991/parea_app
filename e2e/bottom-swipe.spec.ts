@@ -43,12 +43,32 @@ test.describe('Bottom swipe quick nav', () => {
     await expect(sheet.getByRole('heading', { name: /Επεξεργασία συντομεύσεων|Edit shortcuts/ })).toBeVisible({ timeout: 8_000 });
 
     await sheet.getByRole('button', { name: /Στην κάτω μπάρα|Pin to the bar/ }).first().click();
-    const report = sheet.locator('div.relative').filter({ hasText: /^Αναφορά$|^Report$/ });
-    await report.getByRole('button', { name: /Προσθήκη στο μενού|Add to the menu/ }).click();
+    await sheet.getByRole('button', { name: /Προσθήκη: Αναφορά|Add Report/ }).click();
     await sheet.getByRole('button', { name: /^Έτοιμο$|^Done$/ }).click();
 
     const bar = page.locator('[data-bottom-swipe-origin]');
     await expect(bar.getByRole('link', { name: /^Κατηγορίες$|^Categories$/ })).toBeVisible();
     await expect(sheet.getByRole('link', { name: /^Αναφορά$|^Report$/ })).toBeVisible();
+  });
+
+  test('browse Add opens edit, extra pages can join the menu, and extras can be removed', async ({ page }) => {
+    await enterDemoGuest(page);
+    const tab = page.getByRole('link', { name: /^Ανακάλυψη$|^Discover$/ });
+    const tabBox = await tab.boundingBox();
+    await swipe(page, { x: tabBox!.x + tabBox!.width / 2, y: tabBox!.y + tabBox!.height / 2 }, -80);
+
+    const sheet = page.getByRole('dialog', { name: /Γρήγορη πρόσβαση|Quick access|Επεξεργασία συντομεύσεων|Edit shortcuts/ });
+    await expect(sheet).toBeVisible();
+    await sheet.getByRole('button', { name: /^Προσθήκη$|^Add$/ }).click();
+    await expect(sheet.getByRole('heading', { name: /Κι άλλες λειτουργίες|More pages/ })).toBeVisible();
+
+    await sheet.getByRole('button', { name: /Προσθήκη: Επιτεύγματα|Add Achievements/ }).click();
+    await sheet.getByRole('button', { name: /^Έτοιμο$|^Done$/ }).click();
+    await expect(sheet.getByRole('link', { name: /^Επιτεύγματα$|^Achievements$/ })).toBeVisible();
+
+    await sheet.getByRole('button', { name: /^Επεξεργασία$|^Edit$/ }).click();
+    const before = await sheet.getByRole('button', { name: /^Αφαίρεση$|^Remove$/ }).count();
+    await sheet.getByRole('button', { name: /^Αφαίρεση$|^Remove$/ }).last().click();
+    await expect(sheet.getByRole('button', { name: /^Αφαίρεση$|^Remove$/ })).toHaveCount(before - 1);
   });
 });
