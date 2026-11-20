@@ -515,6 +515,11 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
     --text-3xl: calc(1.125rem * var(--web-card-boost));
     --text-4xl: calc(1.25rem * var(--web-card-boost));
   }
+  /* Story tiles are not cards — extra +10% on their type only. */
+  .event-story-tile {
+    --text-2xs: calc(0.5625rem * 1.1);
+    --text-xs: calc(0.625rem * 1.1);
+  }
 }
 
 [data-sticky-nav-offset] {
