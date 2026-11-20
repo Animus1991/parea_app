@@ -92,7 +92,7 @@ export function JoinRequestPreviewModal({
             ))}
             {message && (
               <p className="text-xs italic text-ink-muted border-t border-border pt-2">
-                {t('Το μήνυμά σας', 'Your note')}: {message}
+                {t('Το μήνυμά σου', 'Your note')}: {message}
               </p>
             )}
           </div>

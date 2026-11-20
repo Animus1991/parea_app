@@ -281,7 +281,7 @@ export default function NotificationsPageContent() {
           <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>
             {unreadCount > 0
               ? t(`${unreadCount} μη αναγνωσμένες`, `${unreadCount} unread`)
-              : t('Είστε ενημερωμένοι!', "You're all caught up!")}
+              : t('Τα είδες όλα!', "You're all caught up!")}
           </p>
         </div>
         {unreadCount > 0 && (

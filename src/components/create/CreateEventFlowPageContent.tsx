@@ -326,10 +326,10 @@ export default function CreateEventFlowPageContent() {
                     ariaLabel={t("Κατηγορία", "Category")}
                     value={category}
                     onValueChange={setCategory}
-                    placeholder={t("Επιλέξτε κατηγορία...", "Select a category...")}
+                    placeholder={t("Επίλεξε κατηγορία...", "Select a category...")}
                     className={cn(inputClass, "bg-transparent")}
                     options={[
-                      { value: "", label: t("Επιλέξτε κατηγορία...", "Select a category...") },
+                      { value: "", label: t("Επίλεξε κατηγορία...", "Select a category...") },
                       ...Object.entries(categoryLabels)
                         .filter(([key]) => key !== "All")
                         .map(([key, label]) => ({ value: key, label })),
@@ -468,7 +468,7 @@ export default function CreateEventFlowPageContent() {
                   <div className="w-full">
                     <p className={cn("text-2xs mb-2", p.muted)}>
                       {t(
-                        "Επιλέξτε το ακριβές σημείο στον χάρτη:",
+                        "Επίλεξε το ακριβές σημείο στον χάρτη:",
                         "Select exact location on map:",
                       )}
                     </p>
@@ -664,7 +664,7 @@ export default function CreateEventFlowPageContent() {
                 </h2>
                 <p className={cn("text-sm font-medium mt-1", p.muted)}>
                   {t(
-                    "Αναθεωρήστε τις λεπτομέρειες πριν τη δημοσίευση.",
+                    "Έλεγξε τις λεπτομέρειες πριν τη δημοσίευση.",
                     "Review your event details before sharing.",
                   )}
                 </p>
@@ -721,7 +721,7 @@ export default function CreateEventFlowPageContent() {
                 <Target className="w-5 h-5 shrink-0 mt-0.5" />
                 <p className="text-xs">
                   {t(
-                    "Μόλις δημοσιευθεί, οι συμμετέχοντες μπορούν να ζητήσουν συμμετοχή. Μπορείτε να εγκρίνετε τα αιτήματα χειροκίνητα ή αυτόματα.",
+                    "Μόλις δημοσιευθεί, οι συμμετέχοντες μπορούν να ζητήσουν συμμετοχή. Μπορείς να εγκρίνεις τα αιτήματα χειροκίνητα ή αυτόματα.",
                     "Once published, attendees can start joining. You can manually approve requests or set it to auto-approve.",
                   )}
                 </p>

@@ -228,9 +228,9 @@ export default function PlansPageContent() {
 
               {group && (
                 <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
+                  <div className="flex -space-x-1">
                     {memberUsers.map((user) => (
-                      <PersonAvatar key={user!.id} user={user!} size="sm" className="h-6 w-6 border-2 border-white" />
+                      <PersonAvatar key={user!.id} user={user!} size="sm" className="h-6 w-6" />
                     ))}
                   </div>
                   <span className={cn('text-xs font-medium flex items-center gap-0.5', p.muted)}>
@@ -336,11 +336,11 @@ export default function PlansPageContent() {
               <p className={cn('card-copy-sm font-medium', p.sub)}>
                 {needed === 1
                   ? t(
-                      'Εκδηλώσατε ενδιαφέρον. Αναμονή για 1 ακόμα άτομο για να επιβεβαιωθεί η ομάδα.',
+                      'Δήλωσες ενδιαφέρον. Αναμονή για 1 ακόμα άτομο για να επιβεβαιωθεί η ομάδα.',
                       'You expressed interest. Waiting for 1 more person to confirm the group and unlock the meeting point.',
                     )
                   : t(
-                      `Εκδηλώσατε ενδιαφέρον. Αναμονή για ${needed} ακόμα άτομα για να επιβεβαιωθεί η ομάδα.`,
+                      `Δήλωσες ενδιαφέρον. Αναμονή για ${needed} ακόμα άτομα για να επιβεβαιωθεί η ομάδα.`,
                       `You expressed interest. Waiting for ${needed} more people to confirm the group and unlock the meeting point.`,
                     )}
               </p>
@@ -389,7 +389,7 @@ export default function PlansPageContent() {
         {needsRating > 0 && (
           <div className={cn('col-span-full text-xs font-semibold flex items-center gap-1.5', p.muted)}>
             <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
-            {t(`${needsRating} εκδηλώσεις περιμένουν την αξιολόγησή σας`, `${needsRating} event(s) awaiting your feedback`)}
+            {t(`${needsRating} εκδηλώσεις περιμένουν την αξιολόγησή σου`, `${needsRating} event(s) awaiting your feedback`)}
           </div>
         )}
         {pastEvents.map((event) => (
@@ -444,7 +444,7 @@ export default function PlansPageContent() {
         size="sm"
       >
         <p className="text-xs font-medium mb-2 text-ink-muted">
-          {t('Είστε σίγουροι ότι θέλετε να αποχωρήσετε; Μπορεί να μην μπορέσετε να ξαναμπείτε.', 'Are you sure you want to leave? You might not be able to rejoin.')}
+          {t('Θέλεις σίγουρα να αποχωρήσεις; Μπορεί να μην μπορέσεις να ξαναμπείς.', 'Are you sure you want to leave? You might not be able to rejoin.')}
         </p>
         {leaveNote && <p className="text-xs font-bold mb-4 text-ink">{t(leaveNote.el, leaveNote.en)}</p>}
         <div className="flex flex-col gap-2.5">
@@ -457,7 +457,7 @@ export default function PlansPageContent() {
               const gid = group?.id;
               const handsOver = Boolean(group?.waitlist?.length);
               if (gid) leaveGroup(gid);
-              toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'), {
+              toast.info(t('Αποχώρησες από την ομάδα.', 'You have left the group.'), {
                 action: handsOver
                   ? {
                       label: t('Βρες Nakamas', 'Find Nakamas'),

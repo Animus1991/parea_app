@@ -41,7 +41,7 @@ export function EventDetailSafetySection({
 
   const handleToggleLocation = () => {
     if (!currentUser) {
-      toast.error(t('Πρέπει να συνδεθείτε', 'You must sign in'));
+      toast.error(t('Πρέπει να συνδεθείς', 'You must sign in'));
       return;
     }
     if (isSharingLocation) {
@@ -52,7 +52,7 @@ export function EventDetailSafetySection({
     if (!myGroup) {
       toast.error(
         t(
-          'Πρέπει να είστε μέλος ομάδας για να μοιραστείτε τοποθεσία.',
+          'Πρέπει να είσαι μέλος ομάδας για να μοιραστείς τοποθεσία.',
           'You must be in a group to share location.',
         ),
       );

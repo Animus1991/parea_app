@@ -42,7 +42,7 @@ export function ChatIcebreakers({ eventTitle, interests, onSuggest, menuItem = f
       onSuggest(ideas[0]);
       toast.success(t('Νέα πρόταση από AI', 'New AI suggestion'));
     } else {
-      toast.error(t('Δεν ήταν δυνατή η δημιουργία. Δοκιμάστε ξανά.', 'Could not generate. Try again.'));
+      toast.error(t('Δεν ήταν δυνατή η δημιουργία. Δοκίμασε ξανά.', 'Could not generate. Try again.'));
     }
   };
 

@@ -54,7 +54,7 @@ export function PlansFormingScarcityPromoCard({
             }
             className="px-4 min-h-9 rounded-full card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors"
           >
-            {t('Κλείστε τη θέση σας', 'Secure your spot')}
+            {t('Κλείσε τη θέση σου', 'Secure your spot')}
           </button>
         </div>
       </div>

@@ -50,17 +50,10 @@ import { TileLayer, Marker } from "react-leaflet";
 import { LeafletMapHost, LeafletMapReady } from "../common/LeafletMapHost";
 import { AppSelect } from "../common/AppSelect";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { applyBundledLeafletPins } from '../../lib/leafletDefaultIcon';
 
-delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
+applyBundledLeafletPins();
 
 interface EventCardProps {
   event: Event;
@@ -168,6 +161,7 @@ function CardFact({
 
 export const EventCard = memo(function EventCard({ event, emphasis = 'join', imageDepth = 'photo' }: EventCardProps) {
   const { t, language } = useLanguage();
+  const categoryLabel = useCategoryLabel();
   const navigate = useNavigate();
   const users = useStore((state) => state.users);
   const currentUser = useStore((state) => state.currentUser);
@@ -493,7 +487,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         ) : (
           <div className={cn("bg-gradient-to-br from-cyan-100 to-purple-50 flex items-center justify-center p-4 text-center", coverTitle ? "absolute inset-0" : "w-full h-full")}>
             <span className="text-cyan-600 font-bold card-heading capitalize tracking-tight">
-              {event.category}
+              {categoryLabel(event.category)}
             </span>
           </div>
         )}
@@ -976,7 +970,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                     >
                       {isSharingLocation
                         ? t(
-                            "Πατήστε για διαχείριση ή διακοπή",
+                            "Πάτα για διαχείριση ή διακοπή",
                             "Tap to manage or stop",
                           )
                         : t(
@@ -1053,7 +1047,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                       <Navigation className="w-4 h-4 animate-pulse" />
                       <span className="card-heading font-bold">
                         {t(
-                          "Αυτή τη στιγμή κοινοποιείτε την τοποθεσία σας",
+                          "Αυτή τη στιγμή κοινοποιείς την τοποθεσία σου",
                           "You are currently sharing location",
                         )}
                       </span>
@@ -1172,7 +1166,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                           {option === "all" && (
                             <span className={cn(EVENT_CARD_TYPO.locationHint, "text-amber-600")}>
                               {t(
-                                "Όλοι σε αυτό το chat βλέπουν την τοποθεσία σας",
+                                "Όλοι σε αυτό το chat βλέπουν την τοποθεσία σου",
                                 "Everyone in this chat will see your location",
                               )}
                             </span>

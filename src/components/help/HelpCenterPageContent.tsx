@@ -25,17 +25,17 @@ export default function HelpCenterPageContent() {
   const liveSupport = isLiveSupportConfigured();
 
   const articles = useMemo(() => [
-    { id: 1, title: t('Πώς να αναφέρετε μια μη εμφάνιση', 'How to report a no-show'), category: t('Αξιοπιστία', 'Reliability'), content: t('Ανοίξτε τη σελίδα της εκδήλωσης και πατήστε «Αναφορά». Καταγράψτε ποιος δεν εμφανίστηκε εντός 24 ωρών. Η ομάδα εξετάζει την αναφορά και ενημερώνει τον βαθμό αξιοπιστίας.', 'Open the event page and tap "Report". Record who didn\'t show up within 24 hours. The team reviews the report and updates the reliability score.') },
+    { id: 1, title: t('Πώς αναφέρεις μια μη εμφάνιση', 'How to report a no-show'), category: t('Αξιοπιστία', 'Reliability'), content: t('Άνοιξε τη σελίδα της εκδήλωσης και πάτα «Αναφορά». Κατάγραψε ποιος δεν εμφανίστηκε εντός 24 ωρών. Η ομάδα εξετάζει την αναφορά και ενημερώνει τον βαθμό αξιοπιστίας.', 'Open the event page and tap "Report". Record who didn\'t show up within 24 hours. The team reviews the report and updates the reliability score.') },
     { id: 2, title: t('Επιστροφή χρημάτων για ακυρωμένη εκδήλωση', 'Refund for canceled event'), category: t('Πληρωμές', 'Payments'), content: t('Αν ο διοργανωτής ακυρώσει την εκδήλωση, η προέγκριση πληρωμής ακυρώνεται αυτόματα εντός 3-5 εργάσιμων ημερών. Για χρεώσεις που έχουν ήδη ολοκληρωθεί, η επιστροφή γίνεται στο αρχικό μέσο πληρωμής.', 'If the organizer cancels, the payment pre-authorization is voided automatically within 3-5 business days. For completed charges, refunds go back to the original payment method.') },
-    { id: 3, title: t('Συμβουλές διοργάνωσης', 'Tips for hosting your first meetup'), category: t('Διοργανωτές', 'Organizers'), content: t('Ξεκινήστε με μικρή ομάδα 3-5 ατόμων, ορίστε ξεκάθαρο σημείο συνάντησης, στείλτε ανακοίνωση την προηγούμενη μέρα και επιβεβαιώστε τις παρουσίες μετά το event για να χτίσετε Trust Score.', 'Start with a small 3-5 person group, set a clear meeting point, send an announcement the day before, and confirm attendance after the event to build Trust Score.') },
-    { id: 4, title: t('Αλλαγή ειδοποιήσεων', 'Change notification preferences'), category: t('Λογαριασμός', 'Account'), content: t('Πηγαίνετε Ρυθμίσεις → Ειδοποιήσεις και επιλέξτε ποιες ενημερώσεις θέλετε (νέα μηνύματα, αλλαγές εκδηλώσεων, υπενθυμίσεις). Οι αλλαγές αποθηκεύονται αυτόματα.', 'Go to Settings → Notifications and choose which updates you want (new messages, event changes, reminders). Changes save automatically.') },
+    { id: 3, title: t('Συμβουλές διοργάνωσης', 'Tips for hosting your first meetup'), category: t('Διοργανωτές', 'Organizers'), content: t('Ξεκίνα με μικρή ομάδα 3-5 ατόμων, όρισε ξεκάθαρο σημείο συνάντησης, στείλε ανακοίνωση την προηγούμενη μέρα και επιβεβαίωσε τις παρουσίες μετά το event για να χτίσεις Trust Score.', 'Start with a small 3-5 person group, set a clear meeting point, send an announcement the day before, and confirm attendance after the event to build Trust Score.') },
+    { id: 4, title: t('Αλλαγή ειδοποιήσεων', 'Change notification preferences'), category: t('Λογαριασμός', 'Account'), content: t('Πήγαινε στις Ρυθμίσεις → Ειδοποιήσεις και διάλεξε ποιες ενημερώσεις θέλεις (νέα μηνύματα, αλλαγές εκδηλώσεων, υπενθυμίσεις). Οι αλλαγές αποθηκεύονται αυτόματα.', 'Go to Settings → Notifications and choose which updates you want (new messages, event changes, reminders). Changes save automatically.') },
   ], [t]);
 
   const faqs = useMemo(() => [
     { id: 1, q: t('Πώς λειτουργούν οι ομάδες;', 'How do groups work?'), a: t('Οι ομάδες σχηματίζονται αυτόματα όταν αρκετά άτομα εκδηλώσουν ενδιαφέρον. Μόλις γεμίσει η ομάδα, αποκαλύπτεται το σημείο συνάντησης.', 'Groups form automatically when enough people express interest. Once the group fills up, the meeting point is revealed.') },
     { id: 2, q: t('Τι γίνεται αν κάποιος δεν εμφανιστεί;', 'What if someone doesn\'t show up?'), a: t('Η αξιοπιστία του μειώνεται και μπορεί να λάβει προσωρινό αποκλεισμό.', 'Their reliability score decreases and they may receive a temporary ban.') },
     { id: 3, q: t('Πώς αυξάνω το Trust Score;', 'How to increase Trust Score?'), a: t('Επαλήθευσε email και τηλέφωνο. Πήγαινε στις εξόδους και άφηνε αξιολόγηση. Η ταυτότητα χρειάζεται μόνο αν διοργανώνεις ή πληρώνεις.', 'Verify email and phone. Show up and leave a review. ID is only needed if you host or take payments.') },
-    { id: 4, q: t('Μπορώ να ακυρώσω συμμετοχή;', 'Can I cancel?'), a: t('Ναι, μέχρι 24 ώρες πριν. Αργότερη ακύρωση επηρεάζει το score σας.', 'Yes, up to 24 hours before. Later cancellation affects your score.') },
+    { id: 4, q: t('Μπορώ να ακυρώσω συμμετοχή;', 'Can I cancel?'), a: t('Ναι, μέχρι 24 ώρες πριν. Αργότερη ακύρωση επηρεάζει το score σου.', 'Yes, up to 24 hours before. Later cancellation affects your score.') },
   ], [t]);
 
   const popularTopics = [
@@ -215,7 +215,7 @@ export default function HelpCenterPageContent() {
 
       {!hasResults && (search || topicFilter) && (
         <Card className="p-4 text-center">
-          <p className={cn('text-sm font-medium', a.muted)}>{t('Δεν βρέθηκαν αποτελέσματα. Δοκιμάστε άλλους όρους.', 'No results found. Try different terms.')}</p>
+          <p className={cn('text-sm font-medium', a.muted)}>{t('Δεν βρέθηκαν αποτελέσματα. Δοκίμασε άλλους όρους.', 'No results found. Try different terms.')}</p>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
             {topicFilter && (
               <button
@@ -243,8 +243,8 @@ export default function HelpCenterPageContent() {
       {/* Contact */}
       <Card className="p-4 text-center">
         <MessageCircle className={cn("w-8 h-8 mx-auto mb-3", a.contactIcon)} />
-        <h3 className={cn("font-bold mb-1", a.head)}>{t('Χρειάζεστε βοήθεια;', 'Need more help?')}</h3>
-        <p className={cn("card-copy mb-2", a.sub)}>{t('Επικοινωνήστε μαζί μας', 'Contact our support team')}</p>
+        <h3 className={cn("font-bold mb-1", a.head)}>{t('Χρειάζεσαι βοήθεια;', 'Need more help?')}</h3>
+        <p className={cn("card-copy mb-2", a.sub)}>{t('Επικοινώνησε μαζί μας', 'Contact our support team')}</p>
         <div className="flex items-center justify-center gap-1.5 mb-4">
           {liveSupport ? (
             <>

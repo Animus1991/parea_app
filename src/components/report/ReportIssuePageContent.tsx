@@ -59,7 +59,7 @@ export default function ReportIssuePageContent() {
             {t('Αναφορά Προβλήματος', 'Report an Issue')}
           </h1>
           <p className={cn(APP_TYPO.pageSub, 'mt-1', p.sub)}>
-            {t('Βοηθήστε μας να κρατήσουμε την κοινότητα ασφαλή', 'Help us keep the community safe')}
+            {t('Βοήθησέ μας να κρατήσουμε την κοινότητα ασφαλή', 'Help us keep the community safe')}
           </p>
         </div>
         <button
@@ -99,7 +99,7 @@ export default function ReportIssuePageContent() {
               </h3>
               <p className={cn('card-copy mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>
                 {t(
-                  'Η αναφορά σας θα εξεταστεί από την ομάδα μας εντός 24 ωρών.',
+                  'Η αναφορά σου θα εξεταστεί από την ομάδα μας εντός 24 ωρών.',
                   'Your report will be reviewed by our team within 24 hours.',
                 )}
               </p>
@@ -116,10 +116,10 @@ export default function ReportIssuePageContent() {
                 required
                 value={category}
                 onValueChange={setCategory}
-                placeholder={t('Επιλέξτε κατηγορία...', 'Select a category...')}
+                placeholder={t('Επίλεξε κατηγορία...', 'Select a category...')}
                 className={cn(inputClass, 'h-11 px-3')}
                 options={[
-                  { value: '', label: t('Επιλέξτε κατηγορία...', 'Select a category...') },
+                  { value: '', label: t('Επίλεξε κατηγορία...', 'Select a category...') },
                   { value: 'user_behavior', label: t('Ανάρμοστη συμπεριφορά', 'Inappropriate behavior') },
                   { value: 'event_safety', label: t('Ασφάλεια εκδήλωσης', 'Event safety') },
                   { value: 'fake_profile', label: t('Ψεύτικο προφίλ', 'Fake profile') },
@@ -236,7 +236,7 @@ export default function ReportIssuePageContent() {
               >
                 <Upload className={cn('w-5 h-5 mx-auto mb-1', p.muted)} />
                 <p className={cn('card-copy font-medium', p.uploadText)}>
-                  {t('Ανεβάστε screenshots ή φωτογραφίες', 'Upload screenshots or photos')}
+                  {t('Ανέβασε screenshots ή φωτογραφίες', 'Upload screenshots or photos')}
                 </p>
                 <p className={cn('text-xs mt-0.5', p.muted)}>
                   PNG, JPG {t('έως', 'up to')} 5MB
@@ -271,7 +271,7 @@ export default function ReportIssuePageContent() {
               <ShieldCheck className={cn('w-5 h-5 shrink-0 mt-0.5', p.iconAccent)} />
               <p className={cn('card-copy font-medium leading-relaxed', p.sub)}>
                 <span className={cn('font-bold', p.head)}>{t('Απόρρητο:', 'Privacy:')}</span>{' '}
-                {t('Η αναφορά σας είναι εμπιστευτική.', 'Your report is confidential.')}
+                {t('Η αναφορά σου είναι εμπιστευτική.', 'Your report is confidential.')}
               </p>
             </div>
 
@@ -309,7 +309,7 @@ export default function ReportIssuePageContent() {
           <h2 className={cn('text-sm md:text-base font-bold mb-2', p.head)}>{t('Η αναφορά υποβλήθηκε', 'Report Submitted')}</h2>
           <p className={cn('text-sm font-medium max-w-md mx-auto mb-4', p.sub)}>
             {t(
-              'Ευχαριστούμε. Θα εξετάσουμε την αναφορά σας και θα σας ενημερώσουμε.',
+              'Ευχαριστούμε. Θα εξετάσουμε την αναφορά σου και θα σε ενημερώσουμε.',
               "Thank you. We'll review your report and get back to you.",
             )}
           </p>

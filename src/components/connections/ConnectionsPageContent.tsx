@@ -196,7 +196,7 @@ export default function ConnectionsPageContent() {
     const gate = canViewerMessageUser(currentUser, peer, { blockedUserIds, groups });
     if (!gate.allowed) {
       toast.message(
-        t('Δεν μπορείτε να στείλετε μήνυμα', 'Cannot send message'),
+        t('Δεν μπορείς να στείλεις μήνυμα', 'Cannot send message'),
         { description: t(gate.reasonEl, gate.reasonEn) },
       );
       return;
@@ -211,7 +211,7 @@ export default function ConnectionsPageContent() {
       toast.message(
         t('Οι ιδιωτικές συνομιλίες είναι απενεργοποιημένες', 'Direct chats are disabled'),
         {
-          description: t('Ενεργοποιήστε τις στις ρυθμίσεις απορρήτου chat.', 'Enable them in chat privacy settings.'),
+          description: t('Ενεργοποίησέ τες στις ρυθμίσεις απορρήτου chat.', 'Enable them in chat privacy settings.'),
           action: {
             label: t('Ρυθμίσεις chat', 'Chat settings'),
             onClick: () => navigate('/settings?section=chat'),
@@ -282,7 +282,7 @@ export default function ConnectionsPageContent() {
   const handleAccept = (requestId: string, name: string) => {
     // Store already notifies the requester → Wall; toast is enough for the acceptor.
     acceptConnectionRequest(requestId);
-    toast.success(t(`Αποδεχτήκατε τη σύνδεση με ${name}`, `Accepted connection with ${name}`), {
+    toast.success(t(`Αποδέχτηκες τη σύνδεση με ${name}`, `Accepted connection with ${name}`), {
       action: {
         label: t('Τοίχος', 'Wall'),
         onClick: () => navigate('/wall'),
@@ -420,7 +420,7 @@ export default function ConnectionsPageContent() {
               <EmptyState
                 icon={Users}
                 character={search ? undefined : 'crew'}
-                title={search ? t('Δεν βρέθηκαν αποτελέσματα', 'No results found') : t('Δεν έχετε συνδέσεις ακόμα', 'No connections yet')}
+                title={search ? t('Δεν βρέθηκαν αποτελέσματα', 'No results found') : t('Δεν έχεις συνδέσεις ακόμα', 'No connections yet')}
                 description={t('Βρες παρέα για την επόμενη έξοδο.', 'Find company for your next outing.')}
                 actionLabel={search ? t('Καθαρισμός', 'Clear') : t('Βρες Nakamas', 'Find Nakamas')}
                 onAction={search ? () => setSearch('') : () => navigate('/buddy-seek')}
@@ -444,8 +444,16 @@ export default function ConnectionsPageContent() {
                     <MapPin className="w-3 h-3 shrink-0" aria-hidden /> {conn.city}
                     <span aria-hidden className="opacity-40">·</span>
                     <span className="capitalize">{conn.role}</span>
-                    <span aria-hidden className="opacity-40">·</span>
-                    <span>{conn.mutual} {t('Κοινοί', 'mutuals')}</span>
+                    {conn.mutual > 0 && (
+                      <>
+                        <span aria-hidden className="opacity-40">·</span>
+                        <span className="whitespace-nowrap">
+                          {conn.mutual === 1
+                            ? t('1 κοινός', '1 mutual')
+                            : t(`${conn.mutual} κοινοί`, `${conn.mutual} mutuals`)}
+                        </span>
+                      </>
+                    )}
                   </p>
                   {conn.sharedInterests.length > 0 && (
                     <CardInterestLine
@@ -489,7 +497,7 @@ export default function ConnectionsPageContent() {
           <div className="space-y-3">
             <p className={`card-copy ${a.muted}`}>
               {t(
-                'Δεν έχετε διαθέσιμες εκδηλώσεις. Δημιουργήστε μία ή μπείτε σε ομάδα.',
+                'Δεν έχεις διαθέσιμες εκδηλώσεις. Δημιούργησε μία ή μπες σε ομάδα.',
                 'No events available. Create one or join a group first.',
               )}
             </p>
@@ -540,7 +548,7 @@ export default function ConnectionsPageContent() {
               character="crew"
               title={t('Δεν υπάρχουν αιτήματα', 'No pending requests')}
               description={t(
-                'Θα ειδοποιηθείτε όταν κάποιος θέλει να συνδεθεί.',
+                'Θα ειδοποιηθείς όταν κάποιος θέλει να συνδεθεί.',
                 "You'll be notified when someone wants to connect.",
               )}
               actionLabel={t('Βρες Nakamas', 'Find Nakamas')}

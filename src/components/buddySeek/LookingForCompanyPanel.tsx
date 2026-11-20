@@ -150,7 +150,7 @@ export function LookingForCompanyPanel({
           {myRequest && (
             <div className={cn(tok.innerCard, darkSurface ? 'border-gray-600' : 'border-cyan-100')}>
               <p className={cn('text-sm font-bold', darkSurface ? 'text-white' : 'text-gray-900')}>
-                {t('Το αίτημά σας', 'Your request')} · {myRequest.status}
+                {t('Το αίτημά σου', 'Your request')} · {myRequest.status}
               </p>
               <p className={cn('text-xs mt-1', tok.muted)}>
                 {audienceSummary(myRequest.visibilityMode, t)}
@@ -411,7 +411,7 @@ export function LookingForCompanyPanel({
           <p className={cn('text-xs flex items-start gap-1.5', tok.muted)}>
             <Shield className="w-3.5 h-3.5 shrink-0 mt-0.5" />
             {t(
-              'Σχεδιασμένο με privacy controls. Μόνο τα πεδία που επιλέγετε εμφανίζονται. Δεν είναι διαφήμιση.',
+              'Σχεδιασμένο με privacy controls. Μόνο τα πεδία που επιλέγεις εμφανίζονται. Δεν είναι διαφήμιση.',
               'Designed with privacy controls. Only selected fields show. Not advertising.',
             )}
           </p>
@@ -448,7 +448,7 @@ export function LookingForCompanyPanel({
             if (!preview.joinId) return;
             const groupId = acceptJoin(preview.joinId);
             if (groupId) {
-              toast.success(t('Αποδεχτήκατε — άνοιγμα της βραδιάς', 'Accepted — opening Our night'), {
+              toast.success(t('Έγινε αποδοχή — άνοιγμα της βραδιάς', 'Accepted — opening Our night'), {
                 action: {
                   label: t('Η βραδιά μας', 'Our night'),
                   onClick: () => navigate(`/night/${groupId}`),
@@ -456,7 +456,7 @@ export function LookingForCompanyPanel({
               });
               navigate(`/night/${groupId}`);
             } else {
-              toast.success(t('Αποδεχτήκατε', 'Accepted'));
+              toast.success(t('Έγινε αποδοχή', 'Accepted'));
             }
           }}
           onDecline={() => {

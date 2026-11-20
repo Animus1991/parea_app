@@ -23,7 +23,7 @@ import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
-import { groupStatusLabel } from '../../lib/outings';
+import { groupStatusLabel, venueById } from '../../lib/outings';
 import { formatPlanWhen } from '../../lib/dateLocale';
 import { coverById, coversFor } from '../../lib/planCovers';
 import { eventStartMs, isDoorPerson, LATE_CANCEL_MS } from '../../store/outingsSlice';
@@ -204,6 +204,7 @@ export default function OurNightPageContent() {
     ? start - group.preMeet.minutesBefore * 60_000
     : null;
   const checkInStart = start !== null ? start - 2 * 60 * 60_000 : null;
+  const showPreMeet = isHost || Boolean(venueById(group.preMeet?.venueId));
   const activeStep = start === null
     ? 2
     : preMeetStart !== null && now < preMeetStart
@@ -251,7 +252,7 @@ export default function OurNightPageContent() {
           </li>
         </ul>
         <div className="mt-4 flex items-center gap-2">
-          <div className="flex -space-x-2">
+          <div className="flex -space-x-1.5">
             {members.slice(0, 6).map((m) => (
               <PersonAvatar key={m.id} user={m} size="sm" className="ring-2 ring-white" />
             ))}
@@ -306,20 +307,18 @@ export default function OurNightPageContent() {
           {
             step: 1,
             title: t('Συνάντηση πριν', 'Meet before'),
-            content: <PreMeetCard group={group} event={event} isHost={isHost} revealed={revealed} />,
+            content: <PreMeetCard group={group} event={event} isHost={isHost} revealed={revealed} showTitle={false} />,
           },
           {
             step: 2,
             title: t('Σημείο συνάντησης', 'Meeting point'),
             content: (
               <section className="rounded-2xl border border-border bg-surface-raised p-4" aria-label={t('Σημείο συνάντησης', 'Meeting point')}>
-                <h3 className="flex items-center gap-2 text-sm font-bold text-ink">
-                  <MapPin className="h-4 w-4" aria-hidden /> {t('Σημείο συνάντησης', 'Meeting point')}
-                </h3>
                 {revealed ? (
-                  <p className="mt-1 text-sm font-medium text-ink">{group.meetingPoint || event.exactLocation || event.locationArea}</p>
+                  <p className="flex items-start gap-1.5 text-sm font-medium text-ink">
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />{group.meetingPoint || event.exactLocation || event.locationArea}</p>
                 ) : (
-                  <p className="mt-1 flex items-start gap-1.5 text-xs font-medium text-ink-muted">
+                  <p className="flex items-start gap-1.5 text-xs font-medium text-ink-muted">
                     <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
                     {t('Το ακριβές σημείο φαίνεται όταν επιβεβαιωθεί η ομάδα.', 'The exact spot shows once the group is confirmed.')}
                   </p>
@@ -337,10 +336,13 @@ export default function OurNightPageContent() {
               </div>
             ),
           },
-        ]).map(({ step, title, content }) => (
+        ])
+          // A guest sees «Meet before» only once the host has picked a place: no empty step.
+          .filter(({ step }) => step !== 1 || showPreMeet)
+          .map(({ step, title, content }, index) => (
           <li key={step} className="relative pl-10">
             <span aria-hidden className="absolute left-0 top-1 flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface-raised text-sm font-bold text-ink">
-              {step}
+              {index + 1}
             </span>
             <details open={activeStep === step} className="group">
               <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-xl border border-border bg-surface-raised px-3 text-sm font-bold text-ink [&::-webkit-details-marker]:hidden">

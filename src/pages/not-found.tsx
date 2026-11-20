@@ -41,12 +41,12 @@ export default function NotFound() {
           </div>
 
           <p className={cn(APP_TYPO.pageSub, 'mt-3 text-gray-600')}>
-            {t('Η σελίδα δεν βρέθηκε. Ελέγξτε τη διεύθυνση URL ή επιστρέψτε στην αρχική σελίδα.', 'The page was not found. Please check the URL or return to the home page.')}
+            {t('Η σελίδα δεν βρέθηκε. Έλεγξε τη διεύθυνση ή γύρνα στην αρχική.', 'The page was not found. Please check the URL or return to the home page.')}
           </p>
 
           {suggestion && (
             <p className="mt-4 text-sm text-gray-700">
-              {t('Μήπως εννοούσατε', 'Did you mean')}{' '}
+              {t('Μήπως εννοούσες', 'Did you mean')}{' '}
               <Link to={suggestion.path} className="font-semibold text-cyan-700 hover:underline">
                 {t(suggestion.labelEl, suggestion.labelEn)}
               </Link>

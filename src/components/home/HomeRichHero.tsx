@@ -45,11 +45,11 @@ export function HomeRichHero({
           {t('home.hero.badge', 'Νεος τροπος εξοδου')}
         </div>
         <h1 className={cn(HOME_TYPO.heroTitle, 'mb-3 md:mb-4 max-w-2xl')}>
-          {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
+          {t('home.hero.title1', 'Βρες παρέα για τις')}{' '}
           <span className={cn('text-transparent bg-clip-text bg-gradient-to-r', tok.heroTitleAccent)}>
             {t('home.hero.title2', 'εμπειρίες')}
           </span>{' '}
-          {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
+          {t('home.hero.title3', 'που ήδη θέλεις να ζήσεις.')}
         </h1>
         <div className={cn('hidden md:flex flex-wrap items-center gap-x-4 gap-y-3 mb-4', tok.heroStats, HOME_TYPO.heroStats)}>
           <span className="flex items-center gap-1.5">

@@ -157,7 +157,7 @@ export function PlansFormingCard({
                   toast.message(
                     isSaved
                       ? t('Αφαιρέθηκε', 'Removed')
-                      : t('Αποθηκεύτηκε ιδιωτικά — δημοσιεύστε όποτε θέλετε', 'Saved privately — publish anytime'),
+                      : t('Αποθηκεύτηκε ιδιωτικά — δημοσίευσέ το όποτε θέλεις', 'Saved privately — publish anytime'),
                   );
                 }}
                 className={cn(iconBtn, onDark && 'text-gray-400 hover:text-white hover:bg-white/5', isSaved && 'text-cyan-700 dark:text-cyan-300')}
@@ -471,7 +471,7 @@ export function PlansFormingCard({
             toast.message(
               isSaved
                 ? t('Αφαιρέθηκε', 'Removed')
-                : t('Αποθηκεύτηκε ιδιωτικά — δημοσιεύστε όποτε θέλετε', 'Saved privately — publish anytime'),
+                : t('Αποθηκεύτηκε ιδιωτικά — δημοσίευσέ το όποτε θέλεις', 'Saved privately — publish anytime'),
             );
           }}
           className={cn(

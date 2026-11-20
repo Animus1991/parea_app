@@ -39,7 +39,7 @@ export function ResourceStateGate({
         description={
           errorDescription ??
           t(
-            'Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.',
+            'Έλεγξε τη σύνδεσή σου και δοκίμασε ξανά.',
             'Check your connection and try again.',
           )
         }

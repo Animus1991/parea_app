@@ -184,7 +184,8 @@ export function MiniOutingsSection({
                     {t(`με ${hostName}`, `with ${hostName}`)}
                   </p>
                 </div>
-                {group.genderMode === 'women_nb' && (
+                {/* When the button already says «women & non-binary only», the line would repeat it. */}
+                {group.genderMode === 'women_nb' && !genderBlocked && (
                   <p className="card-meta font-medium leading-relaxed text-ink">
                     {t('Γυναίκες & μη δυαδικά άτομα', 'Women & non-binary')}
                   </p>

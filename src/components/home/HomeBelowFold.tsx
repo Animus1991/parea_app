@@ -66,7 +66,7 @@ export function HomeBelowFold({
           },
           {
             step: '3',
-            title: t('home.how.step3.title', 'Επιβεβαιώστε & συναντηθείτε'),
+            title: t('home.how.step3.title', 'Επιβεβαίωσε & συναντηθείτε'),
           },
         ].map(({ step, title }) => (
           <div

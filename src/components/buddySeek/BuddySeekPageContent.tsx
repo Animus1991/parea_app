@@ -189,11 +189,11 @@ export default function BuddySeekPageContent() {
           onNewRequest={() => setEventPickerOpen(true)}
           onMyPlans={() => navigate('/plans')}
         />
+        {/* A small nudge belongs with the page links, not a section of its own. */}
+        {currentUser && !currentUser.vibe && (
+          <BuddySeekVibeNudge onClick={() => navigate('/profile')} />
+        )}
       </header>
-
-      {currentUser && !currentUser.vibe && (
-        <BuddySeekVibeNudge onClick={() => navigate('/profile')} />
-      )}
 
       {/* Φ27 — small outings without an event (coffee / walk / run) */}
       <MiniOutingsSection />
@@ -359,7 +359,7 @@ export default function BuddySeekPageContent() {
       <Modal
         open={eventPickerOpen}
         onClose={() => setEventPickerOpen(false)}
-        title={t('Επιλέξτε εκδήλωση', 'Choose an event')}
+        title={t('Επίλεξε εκδήλωση', 'Choose an event')}
         size="md"
         className="max-h-[70vh]"
       >
@@ -429,7 +429,7 @@ export default function BuddySeekPageContent() {
             if (!previewJoinId) return;
             const groupId = acceptJoin(previewJoinId);
             if (groupId) {
-              toast.success(t('Αποδεχτήκατε — άνοιγμα της βραδιάς', 'Accepted — opening Our night'), {
+              toast.success(t('Έγινε αποδοχή — άνοιγμα της βραδιάς', 'Accepted — opening Our night'), {
                 action: {
                   label: t('Η βραδιά μας', 'Our night'),
                   onClick: () => navigate(`/night/${groupId}`),

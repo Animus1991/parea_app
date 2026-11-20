@@ -11,7 +11,7 @@ export function usePlansFabState() {
   const visible = Boolean(total || hasPending || showTeaser || feed.myActivePlan);
 
   const label = feed.myActivePlan
-    ? t('Το σχέδιό σας', 'Your plan')
+    ? t('Το σχέδιό σου', 'Your plan')
     : t('Παρέες', 'Groups');
 
   return { visible, label, badge: null as number | null, hasPending: false };

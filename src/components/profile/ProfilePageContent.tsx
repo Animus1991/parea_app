@@ -288,7 +288,7 @@ export default function ProfilePageContent() {
 
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => setIsEditingBio(true)} className="flex items-center gap-1.5">
-                <Edit2 className="w-3 h-3" /> {t("Επεξεργασία", "Edit")}
+                <Edit2 className="w-3 h-3" aria-hidden /> {t("Επεξεργασία bio", "Edit bio")}
               </Button>
               {currentUser.isOrganizer ? (
                 <>
@@ -412,7 +412,7 @@ export default function ProfilePageContent() {
             {userSettings.availability.includes('weekday_evenings') && <Badge variant="neutral">{t("Βράδια Καθημερινών", "Weekday Evenings")}</Badge>}
             {userSettings.availability.includes('weekday_mornings') && <Badge variant="neutral">{t("Πρωινά καθημερινών", "Weekday mornings")}</Badge>}
             {userSettings.availability.length === 0 && (
-              <span className={cn(PROFILE_TYPO.rowMeta, sub)}>{t('Δεν έχετε ορίσει διαθεσιμότητα', 'No availability set yet')}</span>
+              <span className={cn(PROFILE_TYPO.rowMeta, sub)}>{t('Δεν έχεις ορίσει διαθεσιμότητα', 'No availability set yet')}</span>
             )}
             <Button variant="ghost" size="sm" className={`${a.isDark ? "bg-gray-800 border border-gray-700 text-gray-300" : "bg-gray-50 border border-gray-200"}`} onClick={() => navigate("/settings?availability=1")}>
               + {t("Επεξεργασία", "Edit")}
@@ -540,7 +540,7 @@ export default function ProfilePageContent() {
                 <p className={cn(PROFILE_TYPO.rowMeta, 'mt-0.5', currentUser.paymentVerified ? a.tierHighlightSub : sub)}>
                   {currentUser.paymentVerified
                     ? t("Προσθήκη Μεθόδου Πληρωμής. Συμμετοχή σε Πληρωμένες/Μικρές Ομάδες.", "Payment Method added. Can join Paid/Small Group Events.")
-                    : t("Προσθέστε μέθοδο πληρωμής για πληρωμένες/μικρές ομάδες.", "Add a payment method for paid/small group events.")}
+                    : t("Πρόσθεσε μέθοδο πληρωμής για πληρωμένες/μικρές ομάδες.", "Add a payment method for paid/small group events.")}
                 </p>
               </div>
               <ChevronRight className={`w-4 h-4 shrink-0 ${sub}`} aria-hidden />
@@ -624,7 +624,7 @@ export default function ProfilePageContent() {
                 </div>
               </div>
               <AppSelect
-                ariaLabel={t("Ποιος μπορεί να σας στείλει μήνυμα", "Who can message you")}
+                ariaLabel={t("Ποιος μπορεί να σου στείλει μήνυμα", "Who can message you")}
                 value={userSettings.privacy.messagePermission}
                 onValueChange={(v) => {
                   if (v === 'everyone' || v === 'connections' || v === 'groups') {

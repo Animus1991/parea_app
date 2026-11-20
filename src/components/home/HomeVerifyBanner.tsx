@@ -33,10 +33,10 @@ export function HomeVerifyBanner() {
   const needsEmail = !currentUser.emailVerified;
   const needsPhone = !currentUser.phoneVerified;
   const title = needsEmail && needsPhone
-    ? t('Επαληθεύστε email και τηλέφωνο', 'Verify email and phone')
+    ? t('Επαλήθευσε email και τηλέφωνο', 'Verify email and phone')
     : needsEmail
-      ? t('Επαληθεύστε το email σας', 'Verify your email')
-      : t('Επαληθεύστε το τηλέφωνό σας', 'Verify your phone');
+      ? t('Επαλήθευσε το email σου', 'Verify your email')
+      : t('Επαλήθευσε το τηλέφωνό σου', 'Verify your phone');
 
   const dismiss = () => dismissHomeVerify();
 

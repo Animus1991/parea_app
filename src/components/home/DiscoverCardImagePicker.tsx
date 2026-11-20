@@ -20,25 +20,30 @@ export function DiscoverCardImagePicker({
   depth,
   options,
   onChange,
+  expanded = false,
 }: {
   depth: EventCardImageDepth;
   options: readonly EventCardImageDepth[];
   onChange: (next: EventCardImageDepth) => void;
+  /** Settings already opened this on purpose: show the options without the toggle. */
+  expanded?: boolean;
 }) {
   const { t } = useLanguage();
-  const [open, setOpen] = useState(false);
+  const [toggled, setOpen] = useState(false);
+  const open = expanded || toggled;
   const [currentEl, currentEn] = CARD_IMAGE_DEPTH_LABELS[depth];
 
   return (
     <div className="mb-3" data-card-image-picker>
-      <button
-        type="button"
-        data-card-image-toggle
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-        className={cn(
-          HOME_TYPO.sectionLabel,
-          'inline-flex min-h-8 items-center gap-1.5 rounded-full text-ink-muted transition-colors hover:text-ink',
+      {!expanded && (
+        <button
+          type="button"
+          data-card-image-toggle
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+          className={cn(
+            HOME_TYPO.sectionLabel,
+            'inline-flex min-h-8 items-center gap-1.5 rounded-full text-ink-muted transition-colors hover:text-ink',
         )}
       >
         <Image className="size-3.5 shrink-0" aria-hidden />
@@ -47,11 +52,12 @@ export function DiscoverCardImagePicker({
         </span>
         <ChevronDown className={cn('size-3.5 shrink-0 transition-transform', open && 'rotate-180')} aria-hidden />
       </button>
+      )}
       {open && (
         <div
           role="radiogroup"
           aria-label={t('Εικόνα κάρτας', 'Card photo')}
-          className="mt-1.5 flex flex-wrap gap-1.5"
+          className={cn('flex flex-wrap gap-1.5', !expanded && 'mt-1.5')}
         >
           {options.map((option) => {
             const [el, en] = CARD_IMAGE_DEPTH_LABELS[option];

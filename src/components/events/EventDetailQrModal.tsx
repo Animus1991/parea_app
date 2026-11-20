@@ -24,7 +24,7 @@ export function EventDetailQrModal({ open, onClose, value }: EventDetailQrModalP
     >
       <p className="card-copy text-ink-muted mb-4">
         {t(
-          'Σαρώστε αυτό το QR για να δείτε την εκδήλωση',
+          'Σάρωσε αυτό το QR για να δεις την εκδήλωση',
           'Scan this QR code to view the event',
         )}
       </p>

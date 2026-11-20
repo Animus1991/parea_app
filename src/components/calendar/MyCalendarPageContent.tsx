@@ -355,7 +355,7 @@ export default function MyCalendarPageContent() {
               {t("Το Ημερολόγιό μου", "My Calendar")}
             </h1>
             <p className={cn("text-sm font-medium mt-1", p.sub)}>
-              {t("Διαχειριστείτε το πρόγραμμά σας", "Manage your schedule")}
+              {t("Οργάνωσε το πρόγραμμά σου", "Manage your schedule")}
             </p>
           </div>
         </div>
@@ -432,9 +432,9 @@ export default function MyCalendarPageContent() {
       {upcomingEvents.length === 0 && (
         <EmptyState
           icon={Compass}
-          title={t("Δεν έχετε προγραμματισμένες εκδηλώσεις", "No planned events yet")}
+          title={t("Δεν έχεις προγραμματισμένες εκδηλώσεις", "No planned events yet")}
           description={t(
-            "Εξερευνήστε εκδηλώσεις και μπείτε σε ομάδα — θα εμφανίζονται στο ημερολόγιο.",
+            "Εξερεύνησε εκδηλώσεις και μπες σε ομάδα — θα εμφανίζονται στο ημερολόγιο.",
             "Explore events and join a group — they will show on your calendar.",
           )}
           actionLabel={t("Εξερεύνησε εκδηλώσεις", "Explore experiences")}

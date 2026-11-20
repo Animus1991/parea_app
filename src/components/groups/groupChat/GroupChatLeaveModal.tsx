@@ -24,10 +24,10 @@ export function GroupChatLeaveModal({
           <ArrowLeft className="w-6 h-6" />
         </div>
         <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
-          {t('Είστε σίγουροι ότι θέλετε να αποχωρήσετε από', 'Are you sure you want to leave')}{' '}
+          {t('Θέλεις σίγουρα να αποχωρήσεις από', 'Are you sure you want to leave')}{' '}
           <span className="font-bold text-ink">{eventTitle}</span>?{' '}
           {t(
-            'Μπορεί να μην μπορέσετε να ξαναμπείτε εάν η ομάδα γεμίσει.',
+            'Μπορεί να μην μπορέσεις να ξαναμπείς αν η ομάδα γεμίσει.',
             'You might not be able to rejoin if the group is full.',
           )}
         </p>

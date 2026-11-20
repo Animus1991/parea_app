@@ -24,7 +24,7 @@ export default function NotFoundVibrant() {
         {t(`Η σελίδα δεν βρέθηκε`, `Page Not Found`)}
       </h1>
       <p className="text-sm text-black font-medium mb-4 max-w-xs">
-        {t(`Η σελίδα που αναζητάτε δεν υπάρχει ή έχει μετακινηθεί.`, `The page you're looking for doesn't exist or has been moved.`)}
+        {t(`Η σελίδα που ψάχνεις δεν υπάρχει ή έχει μετακινηθεί.`, `The page you're looking for doesn't exist or has been moved.`)}
       </p>
 
       <div className="grid grid-cols-2 gap-2 mb-4 w-full max-w-xs">

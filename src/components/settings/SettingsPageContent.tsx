@@ -284,7 +284,7 @@ export default function SettingsPageContent() {
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="mb-2">
         <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')}</h1>
-        <p className={cn(APP_TYPO.pageSub, "mt-1", a.sub)}>{t('Διαχειριστείτε τον λογαριασμό σας', 'Manage your account')}</p>
+        <p className={cn(APP_TYPO.pageSub, "mt-1", a.sub)}>{t('Ο λογαριασμός και το απόρρητό σου', 'Manage your account')}</p>
       </div>
 
       {sections.map((section, idx) => (
@@ -328,7 +328,7 @@ export default function SettingsPageContent() {
             <div className="scroll-mt-24">
               <Card className="p-5">
                 <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Εικόνα κάρτας εκδήλωσης', 'Event card photo')}</h3>
-                <DiscoverCardImagePicker depth={cardImage.depth} options={cardImage.options} onChange={cardImage.setDepth} />
+                <DiscoverCardImagePicker expanded depth={cardImage.depth} options={cardImage.options} onChange={cardImage.setDepth} />
               </Card>
             </div>
           )}
@@ -351,7 +351,7 @@ export default function SettingsPageContent() {
         {blockedUserIds.length === 0 ? (
           <p className={cn('card-copy', a.sub)}>
             {t(
-              'Δεν έχετε αποκλείσει κάποιον. Από τις συνδέσεις μπορείτε να αποκλείσετε χρήστες.',
+              'Δεν έχεις αποκλείσει κανέναν. Από τις συνδέσεις μπορείς να αποκλείσεις χρήστες.',
               'You have not blocked anyone. You can block users from Connections.',
             )}
           </p>
@@ -406,8 +406,8 @@ export default function SettingsPageContent() {
           </h3>
           <p className={cn("card-copy mb-4", a.sub)}>
             {twoFactorEnabled
-              ? t('Το 2FA είναι ενεργό. Μπορείτε να το απενεργοποιήσετε αν χρειαστεί.', '2FA is active. You can disable it if needed.')
-              : t('Προσθέστε ένα επιπλέον επίπεδο ασφάλειας', 'Add an extra layer of security')}
+              ? t('Το 2FA είναι ενεργό. Μπορείς να το απενεργοποιήσεις αν χρειαστεί.', '2FA is active. You can disable it if needed.')
+              : t('Πρόσθεσε ένα επιπλέον επίπεδο ασφάλειας', 'Add an extra layer of security')}
           </p>
           {twoFactorEnabled ? (
             <Button
@@ -538,7 +538,7 @@ export default function SettingsPageContent() {
             {...pressable<HTMLDivElement>(() => setShowAvailability(!showAvailability))}
             aria-expanded={showAvailability}
           >
-            <span className={cn("text-sm font-medium", a.head)}>{t('Πότε είστε διαθέσιμοι', 'When you are available')}</span>
+            <span className={cn("text-sm font-medium", a.head)}>{t('Η διαθεσιμότητά σου', 'When you are available')}</span>
             <Badge variant="neutral">{userSettings.availability.length} {t('χρονοθήκες', 'slots')}</Badge>
           </div>
           {showAvailability && (
@@ -632,7 +632,7 @@ export default function SettingsPageContent() {
               <Download className={cn("w-4 h-4", a.muted)} />
               <div>
                 <span className={cn("text-sm font-medium", a.head)}>{t('Εξαγωγή δεδομένων', 'Export your data')}</span>
-                <p className={cn("text-xs font-medium", a.muted)}>{t('Κατεβάστε αντίγραφο', 'Download a copy of your data')}</p>
+                <p className={cn("text-xs font-medium", a.muted)}>{t('Κατέβασε αντίγραφο', 'Download a copy of your data')}</p>
               </div>
             </div>
             <Button variant="outline" size="sm" className="text-xs" onClick={handleExportData}>{t('Λήψη', 'Download')}</Button>

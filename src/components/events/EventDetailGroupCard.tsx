@@ -9,6 +9,7 @@ import { cn } from '../../lib/utils';
 import { redundantClick } from '../../lib/a11y';
 import type { Event, Group } from '../../types';
 import { GroupInsights } from '../outings/GroupInsights';
+import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 
 export type EventDetailGroupAccent = 'classic' | 'vibrant' | 'neon' | 'bento';
 
@@ -147,6 +148,7 @@ export function EventDetailGroupCard({
   darkSurface = false,
 }: EventDetailGroupCardProps) {
   const { t } = useLanguage();
+  const categoryLabel = useCategoryLabel();
   const users = useStore((s) => s.users);
   const meId = useStore((s) => s.currentUser?.id);
   const tok = (darkSurface ? DARK : LIGHT)[accent];
@@ -208,7 +210,7 @@ export function EventDetailGroupCard({
             {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
           </div>
           <h4 className={cn('card-heading-lg font-bold mb-0.5 line-clamp-1', tok.title)}>{event.title}</h4>
-          <p className={cn('card-meta capitalize mb-1', tok.meta)}>{event.category}</p>
+          <p className={cn('card-meta capitalize mb-1', tok.meta)}>{categoryLabel(event.category)}</p>
           <div className="flex items-baseline gap-1 mt-1">
             <span className={cn('card-heading font-bold', tok.title)}>{group.members.length}</span>
             <span className={cn('card-copy font-medium', tok.meta)}>

@@ -26,7 +26,7 @@ export function MeetingPointActions({
       <button
         type="button"
         className={cn(
-          'rounded-full text-xs font-bold bg-brand/80 text-brand-fg',
+          'rounded-full text-xs font-bold bg-brand text-brand-fg',
           compact ? 'px-2.5 min-h-8' : 'flex-1 min-h-9',
         )}
         aria-label={t('Ανακοίνωση άφιξης', 'Announce arrival')}

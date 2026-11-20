@@ -15,16 +15,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../common/Button";
+import { applyBundledLeafletPins } from '../../lib/leafletDefaultIcon';
 
-delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
+applyBundledLeafletPins();
 
 // A custom map view controller to focus bounds
 function MapBoundsController({
@@ -244,11 +237,11 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 bg-white/80 backdrop-blur-sm z-10">
             <Users className="w-12 h-12 text-indigo-200 mb-4" />
             <h4 className="font-bold text-ink mb-2">
-              {t("Συνδεθείτε στον Χάρτη", "Join the Map")}
+              {t("Συνδέσου στον Χάρτη", "Join the Map")}
             </h4>
             <p className="text-xs text-gray-500 mb-4 max-w-[250px]">
               {t(
-                "Κοινοποιήστε την τοποθεσία σας προσωρινά σε αυτήν την ομάδα με δική σας επιλογή, για εύκολη συνάντηση.",
+                "Κοινοποίησε την τοποθεσία σου προσωρινά σε αυτήν την ομάδα, με δική σου επιλογή, για εύκολη συνάντηση.",
                 "Temporarily share your location with this group, at your choice, to easily meet up.",
               )}
             </p>

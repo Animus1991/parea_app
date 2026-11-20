@@ -33,7 +33,7 @@ export function GroupChatReportModal({ open, onClose, groupId }: GroupChatReport
       targetId: groupId,
     });
     setText('');
-    toast.success(t('Η αναφορά σας υποβλήθηκε με ασφάλεια.', 'Your report has been submitted securely.'), {
+    toast.success(t('Η αναφορά σου υποβλήθηκε με ασφάλεια.', 'Your report has been submitted securely.'), {
       action: {
         label: t('Αξιοπιστία', 'Reliability'),
         onClick: () => navigate('/trust'),
@@ -66,7 +66,7 @@ export function GroupChatReportModal({ open, onClose, groupId }: GroupChatReport
           )}
           <span className="font-bold text-ink">{t('Δεν', 'not')}</span>
           {t(
-            ' θα κοινοποιηθεί στα μέλη. Βοηθήστε μας να διατηρήσουμε την κοινότητα ασφαλή.',
+            ' θα κοινοποιηθεί στα μέλη. Βοήθησέ μας να διατηρήσουμε την κοινότητα ασφαλή.',
             ' be shared with the group members. Help us keep the community safe.',
           )}
         </p>

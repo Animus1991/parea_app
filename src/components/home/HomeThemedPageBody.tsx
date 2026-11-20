@@ -230,7 +230,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
                 icon={CalendarX}
                 title={t(
                   'home.feed.no_events',
-                  'Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.',
+                  'Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σου.',
                 )}
                 description={
                   isScheduleFilterActive(schedule)

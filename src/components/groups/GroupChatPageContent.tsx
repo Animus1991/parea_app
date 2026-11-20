@@ -1123,7 +1123,7 @@ export default function GroupChatPageContent() {
             const gid = group.id;
             const willHandOver = Boolean(group.waitlist?.length);
             leaveGroup(gid);
-            toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'), {
+            toast.info(t('Αποχώρησες από την ομάδα.', 'You have left the group.'), {
               action: willHandOver
                 ? {
                     label: t('Βρες Nakamas', 'Find Nakamas'),
@@ -1307,7 +1307,7 @@ export default function GroupChatPageContent() {
         >
           <p className="text-xs font-medium text-ink-muted -mt-2 mb-4">
             {t(
-              "Μπορείτε να προσθέσετε όσα άτομα θέλετε σε αυτή την ομάδα.",
+              "Μπορείς να προσθέσεις όσα άτομα θέλεις σε αυτή την ομάδα.",
               "You can add as many people as you wish to this group.",
             )}
           </p>

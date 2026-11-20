@@ -5,6 +5,7 @@ import { useStore } from '../../store';
 import { Link, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { Card } from '../common/Card';
+import { EventCoverImg } from '../common/EventCoverImg';
 import { EmptyState } from '../common/EmptyState';
 import { EventCardSkeleton } from '../common/Skeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';
@@ -15,11 +16,13 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { dateFnsLocale } from '../../lib/dateLocale';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { AppSelect } from '../common/AppSelect';
+import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 
 const NO_IDS: string[] = [];
 
 export default function SavedEventsPageContent() {
   const { t, language } = useLanguage();
+  const categoryLabel = useCategoryLabel();
   const navigate = useNavigate();
   const a = usePageContrast();
 
@@ -97,7 +100,7 @@ export default function SavedEventsPageContent() {
                     catFilter === cat ? a.tabActive : a.tabInactive
                   )}
                 >
-                  {cat === 'All' ? t('Όλα', 'All') : cat}
+                  {cat === 'All' ? t('Όλα', 'All') : categoryLabel(cat)}
                 </button>
               ))}
             </div>
@@ -127,10 +130,9 @@ export default function SavedEventsPageContent() {
               className={cn("relative overflow-hidden flex flex-col group cursor-pointer transition-all duration-200 hover:-translate-y-[0.5px] hover:shadow-soft-md focus-within:ring-2 focus-within:ring-cyan-500", a.cardHover)}
             >
               <div className={cn("h-32 relative overflow-hidden shrink-0", a.isDark ? "bg-gray-700/30" : "bg-gray-200")}>
-                <img
-                  referrerPolicy="no-referrer"
-                  src={event.imageUrl}
-                  alt=""
+                <EventCoverImg
+                  event={event}
+                  loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <button

@@ -14,7 +14,20 @@ const KIND = { cafe: { el: 'καφέ', en: 'café' }, bar: { el: 'μπαρ', en:
  * the event, with the group discount. The place shows once the group is
  * confirmed; the host picks it.
  */
-export function PreMeetCard({ group, event, isHost, revealed }: { group: Group; event: Event; isHost: boolean; revealed: boolean }) {
+export function PreMeetCard({
+  group,
+  event,
+  isHost,
+  revealed,
+  showTitle = true,
+}: {
+  group: Group;
+  event: Event;
+  isHost: boolean;
+  revealed: boolean;
+  /** The night timeline already names the step, so the card can skip its own title. */
+  showTitle?: boolean;
+}) {
   const { t } = useLanguage();
   const setPreMeet = useStore((s) => s.setPreMeet);
   const [pickOpen, setPickOpen] = useState(false);
@@ -22,14 +35,29 @@ export function PreMeetCard({ group, event, isHost, revealed }: { group: Group; 
   const options = nearestPartnerVenues(event);
   if (!venue && !isHost) return null;
 
+  const changePlace = (
+    <button
+      type="button"
+      onClick={() => setPickOpen(true)}
+      className="inline-flex min-h-9 items-center text-xs font-bold text-ink underline underline-offset-2"
+    >
+      {t('Αλλαγή μέρους', 'Change place')}
+    </button>
+  );
+
   return (
-    <section className="rounded-2xl border border-border bg-surface-raised p-4" aria-labelledby="premeet-title">
-      <h3 id="premeet-title" className="flex items-center gap-2 text-sm font-bold text-ink">
-        <Coffee className="h-4 w-4" aria-hidden /> {t('Συνάντηση πριν', 'Meet before')}
-      </h3>
+    <section
+      className="rounded-2xl border border-border bg-surface-raised p-4"
+      {...(showTitle ? { 'aria-labelledby': 'premeet-title' } : { 'aria-label': t('Συνάντηση πριν', 'Meet before') })}
+    >
+      {showTitle && (
+        <h3 id="premeet-title" className="mb-2 flex items-center gap-2 text-sm font-bold text-ink">
+          <Coffee className="h-4 w-4" aria-hidden /> {t('Συνάντηση πριν', 'Meet before')}
+        </h3>
+      )}
       {venue ? (
         revealed ? (
-          <div className="mt-2 text-sm text-ink">
+          <div className="text-sm text-ink">
             <p className="font-bold">
               {venue.name} · {timeMinus(event.time, group.preMeet!.minutesBefore)}
             </p>
@@ -40,17 +68,21 @@ export function PreMeetCard({ group, event, isHost, revealed }: { group: Group; 
               {t(`−${venue.discountPct}% με τον κωδικό της ομάδας`, `−${venue.discountPct}% with the group code`)}
               {group.code ? ` (${group.code})` : ''}
             </p>
-            <a
-              className="mt-2 inline-flex min-h-9 items-center text-xs font-bold text-ink underline underline-offset-2"
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.lat},${venue.lng}`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t('Άνοιγμα στον χάρτη', 'Open in maps')}
-            </a>
+            {/* Both quiet links on one line instead of two stacked 36 px rows. */}
+            <div className="mt-1 flex flex-wrap items-center gap-x-4">
+              <a
+                className="inline-flex min-h-9 items-center text-xs font-bold text-ink underline underline-offset-2"
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${venue.lat},${venue.lng}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('Άνοιγμα στον χάρτη', 'Open in maps')}
+              </a>
+              {isHost && !pickOpen && changePlace}
+            </div>
           </div>
         ) : (
-          <p className="mt-2 flex items-start gap-1.5 text-xs font-medium text-ink-muted">
+          <p className="flex items-start gap-1.5 text-xs font-medium text-ink-muted">
             <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
             {t(
               `Η ομάδα θα βρεθεί ${group.preMeet!.minutesBefore}′ νωρίτερα σε ${KIND[venue.kind].el} κοντά στο σημείο. Το μέρος φαίνεται με την επιβεβαίωση.`,
@@ -59,20 +91,12 @@ export function PreMeetCard({ group, event, isHost, revealed }: { group: Group; 
           </p>
         )
       ) : (
-        <p className="mt-1 text-xs font-medium text-ink-muted">
+        <p className="text-xs font-medium text-ink-muted">
           {t('Ένα ποτό ή καφές πριν σπάει τον πάγο. Διάλεξε ένα μέρος-συνεργάτη κοντά στην εκδήλωση.', 'A drink or coffee before breaks the ice. Pick a partner place near the event.')}
         </p>
       )}
       {/* With a place chosen, the list folds into «Αλλαγή μέρους» (declutter, Φ28). */}
-      {isHost && venue && !pickOpen && (
-        <button
-          type="button"
-          onClick={() => setPickOpen(true)}
-          className="mt-2 inline-flex min-h-9 items-center text-xs font-bold text-ink underline underline-offset-2"
-        >
-          {t('Αλλαγή μέρους', 'Change place')}
-        </button>
-      )}
+      {isHost && venue && !pickOpen && !revealed && <div className="mt-1">{changePlace}</div>}
       {isHost && (!venue || pickOpen) && (
         <div className="mt-3">
           <p className="text-xs font-bold text-ink">{t('Μέρη-συνεργάτες κοντά', 'Partner places nearby')}</p>

@@ -20,15 +20,11 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { pressable, redundantClick } from '../../lib/a11y';
 import { Button } from "../common/Button";
 import { haversineKm, ATHENS_CENTER } from "../../lib/haversine";
+import { applyBundledLeafletPins } from '../../lib/leafletDefaultIcon';
+import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { DEFAULT_EVENT_COVER } from '../../lib/eventCover';
 
-// Fix for default marker icons in leaflet with react
-delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
+applyBundledLeafletPins();
 
 /**
  * Markers whose point lies under the list panel are covered, yet stayed in the
@@ -217,20 +213,23 @@ function MapController({ center, panelRef }: { center: { lat: number; lng: numbe
 }
 
 const GroupImage = ({ src, alt, className }: { src: string; alt: string; className?: string }) => {
-  const [error, setError] = useState(false);
+  // Remote photo → the app's own cover → a map icon, so a row never shows a blank tile.
+  const [failed, setFailed] = useState<string[]>([]);
   // An empty src would make the browser re-request the page itself.
-  return error || !src.trim() ? (
+  const current = [src.trim(), DEFAULT_EVENT_COVER].find((u) => u && !failed.includes(u));
+  return !current ? (
     <div className={cn("flex items-center justify-center bg-cyan-900/10 text-cyan-500", className)}>
       <MapIcon className="w-8 h-8 opacity-50" />
     </div>
   ) : (
-    <img referrerPolicy="no-referrer" src={src} alt={alt} onError={() => setError(true)} className={className} />
+    <img referrerPolicy="no-referrer" src={current} alt={alt} onError={() => setFailed((f) => [...f, current])} className={className} />
   );
 };
 
 export default function NearbyGroupsPageContent() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const categoryLabel = useCategoryLabel();
   const p = usePageContrast();
   const { events, isLoading, isError, refetch } = useEventsResource();
   const savedEvents = useStore((state) => state.savedEvents);
@@ -315,7 +314,7 @@ export default function NearbyGroupsPageContent() {
           setUserLocation(loc);
         },
         () => {
-          toast.error(t("Δεν ήταν δυνατή η εύρεση της τοποθεσίας σας.", "Couldn't get your location."));
+          toast.error(t("Δεν ήταν δυνατή η εύρεση της τοποθεσίας σου.", "Couldn't get your location."));
         }
       );
     } else {
@@ -470,7 +469,7 @@ export default function NearbyGroupsPageContent() {
                   >
                     <Popup className="custom-popup">
                       <div className="font-bold text-2xs tracking-widest text-cyan-600 dark:text-cyan-400 mb-1">
-                        {group.category}
+                        {categoryLabel(group.category)}
                       </div>
                       <div
                         className="max-w-[200px] cursor-pointer group rounded-2xl"
@@ -507,7 +506,7 @@ export default function NearbyGroupsPageContent() {
 
                 {userLocation && (
                   <Marker position={[userLocation.lat, userLocation.lng]}>
-                    <Popup>{t("Η τοποθεσία σας", "Your Location")}</Popup>
+                    <Popup>{t("Η τοποθεσία σου", "Your Location")}</Popup>
                   </Marker>
                 )}
               </LeafletMapReady>
@@ -713,7 +712,7 @@ export default function NearbyGroupsPageContent() {
               icon={MapIcon}
               title={t("Καμία εκδήλωση στην ακτίνα", "No events in this radius")}
               description={t(
-                "Δοκιμάστε μεγαλύτερη ακτίνα ή διαφορετικά φίλτρα.",
+                "Δοκίμασε μεγαλύτερη ακτίνα ή διαφορετικά φίλτρα.",
                 "Try a larger radius or different filters.",
               )}
               actionLabel={
@@ -753,7 +752,7 @@ export default function NearbyGroupsPageContent() {
                 <div>
                   <h3 className={cn("card-heading font-bold leading-tight line-clamp-2 transition-colors", p.head, p.hoverText)}>{group.title}</h3>
                   <p className={cn("card-meta mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5", p.sub)}>
-                    <span className="capitalize">{group.category}</span>
+                    <span>{categoryLabel(group.category)}</span>
                     <span aria-hidden className="opacity-40">·</span>
                     <span className="truncate">{group.locationArea}</span>
                     <span aria-hidden className="opacity-40">·</span>
@@ -775,7 +774,7 @@ export default function NearbyGroupsPageContent() {
             </div>
             <h3 className={cn("text-sm md:text-base font-bold", p.head)}>{t("Επέκταση ακτίνας", "Expand your radius")}</h3>
             <p className={cn("text-sm font-medium mt-1.5 mb-4", p.sub)}>
-              {t("Δεν βρίσκετε αυτό που ψάχνετε; Αυξήστε την περιοχή αναζήτησης.", "Can't find what you're looking for? Increase your search area.")}
+              {t("Δεν βρίσκεις αυτό που ψάχνεις; Μεγάλωσε την περιοχή αναζήτησης.", "Can't find what you're looking for? Increase your search area.")}
             </p>
             <Button
               onClick={() => setRadius(radius < 15 ? 15 : 25)}

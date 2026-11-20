@@ -13,36 +13,13 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { formatPlanWhen } from '../../lib/dateLocale';
+import { EventCoverImg } from '../common/EventCoverImg';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
-
-function HistoryThumb({ src, title, category, isDark }: { src?: string; title: string; category: string; isDark: boolean }) {
-  const [broken, setBroken] = useState(false);
-  if (!src || broken) {
-    return (
-      <div
-        className={cn(
-          'w-12 h-12 rounded-2xl shrink-0 shadow-soft flex items-center justify-center bg-accent-soft text-accent font-bold text-xs uppercase',
-          isDark && 'opacity-90',
-        )}
-        aria-hidden
-      >
-        {category.slice(0, 2)}
-      </div>
-    );
-  }
-  return (
-    <img
-      referrerPolicy="no-referrer"
-      src={src}
-      alt={title}
-      onError={() => setBroken(true)}
-      className={cn('w-12 h-12 rounded-2xl object-cover shrink-0 shadow-soft', isDark && 'opacity-90')}
-    />
-  );
-}
+import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 
 export default function HistoryPageContent() {
   const { t, language } = useLanguage();
+  const categoryLabel = useCategoryLabel();
   const navigate = useNavigate();
   const a = usePageContrast();
 
@@ -108,7 +85,7 @@ export default function HistoryPageContent() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Ιστορικό', 'History')}</h1>
-          <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>{t('Εκδηλώσεις που έχετε παρακολουθήσει', 'Events you\'ve attended')}</p>
+          <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>{t('Εκδηλώσεις που έχεις παρακολουθήσει', 'Events you\'ve attended')}</p>
         </div>
       </div>
 
@@ -209,11 +186,11 @@ export default function HistoryPageContent() {
               }
             >
               <div className="flex gap-4">
-                <HistoryThumb src={event.imageUrl} title={event.title} category={event.category} isDark={a.isDark} />
+                <EventCoverImg event={event} loading="lazy" className={cn('w-12 h-12 rounded-2xl object-cover shrink-0 shadow-soft', a.isDark && 'opacity-90')} />
                 <div className="flex-1 min-w-0">
                   <h3 className={cn(APP_TYPO.rowTitle, 'truncate', a.head)}>{event.title}</h3>
                   <p className={cn("card-meta mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5", a.sub)}>
-                    <span className="capitalize">{event.category}</span>
+                    <span>{categoryLabel(event.category)}</span>
                     <span aria-hidden className="opacity-40">·</span>
                     <span className="inline-flex items-center gap-1">
                       <Calendar className="w-3 h-3 shrink-0 opacity-70" aria-hidden />

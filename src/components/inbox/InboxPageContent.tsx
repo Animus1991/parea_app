@@ -98,7 +98,7 @@ export default function InboxPageContent() {
           key: `group_${g.id}`,
           title: event?.title ?? t('Nakamas Εκδήλωσης', 'Event Nakamas'),
           imageUrl: event?.imageUrl,
-          previewEl: 'Πατήστε για συνομιλία',
+          previewEl: 'Πάτα για συνομιλία',
           previewEn: 'Tap to open chat',
           unread: 0,
           members: g.members.length,
@@ -248,7 +248,7 @@ export default function InboxPageContent() {
                 }
                 description={
                   search
-                    ? t('Δοκιμάστε άλλο όρο ή καθαρίστε την αναζήτηση.', 'Try another term or clear the search.')
+                    ? t('Δοκίμασε άλλον όρο ή καθάρισε την αναζήτηση.', 'Try another term or clear the search.')
                     : chatFilter === 'past'
                       ? t('Οι ολοκληρωμένες συνομιλίες εμφανίζονται εδώ.', 'Completed conversations appear here.')
                       : t(
@@ -347,7 +347,7 @@ export default function InboxPageContent() {
             <div className="p-5 text-center flex flex-col items-center">
               <CircleDashed className={cn('w-10 h-10 mb-3 opacity-40', p.muted)} />
               <h3 className={cn('font-bold text-sm mb-2', p.head)}>
-                {t('Είστε ενημερωμένοι', "You're all caught up")}
+                {t('Τα είδες όλα', "You're all caught up")}
               </h3>
               <button
                 type="button"

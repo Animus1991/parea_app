@@ -131,11 +131,11 @@ export function HomeLoggedInHero({
           <div className="hidden md:block space-y-2">
             <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
             <p className={cn(h.heroTitle, 'max-w-2xl')}>
-              {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
+              {t('home.hero.title1', 'Βρες παρέα για τις')}{' '}
               <span className={h.heroTitleAccent}>
                 {t('home.hero.title2', 'εμπειρίες')}
               </span>{' '}
-              {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
+              {t('home.hero.title3', 'που ήδη θέλεις να ζήσεις.')}
             </p>
             <div className="flex flex-wrap gap-x-4 gap-y-1">
               {[
@@ -167,11 +167,11 @@ export function HomeLoggedInHero({
             <div className="hidden md:block">
               <HomeReturnLine className={cn(h.heroMotivation, 'text-sm mb-3 mt-2')} fallback={motivation} />
               <p className={cn(h.heroTitle, 'max-w-2xl')}>
-                {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
+                {t('home.hero.title1', 'Βρες παρέα για τις')}{' '}
                 <span className={h.heroTitleAccent}>
                   {t('home.hero.title2', 'εμπειρίες')}
                 </span>{' '}
-                {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
+                {t('home.hero.title3', 'που ήδη θέλεις να ζήσεις.')}
               </p>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4">
                 {(

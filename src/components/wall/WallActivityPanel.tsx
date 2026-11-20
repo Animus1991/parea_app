@@ -69,9 +69,9 @@ export function WallActivityPanel({ limit = 5, title }: { limit?: number; title?
 
   return (
     <section aria-labelledby="wall-activity-title" className="rounded-2xl border border-border bg-surface-raised p-3">
-      <div className="mb-2 flex items-center justify-between gap-2 px-1">
-        <h2 id="wall-activity-title" className="flex items-center gap-2 text-sm font-bold text-ink">
-          <Bell className="h-4 w-4" aria-hidden />
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-x-2 px-1">
+        <h2 id="wall-activity-title" className="flex min-h-8 items-center gap-2 whitespace-nowrap text-sm font-bold text-ink">
+          <Bell className="h-4 w-4 shrink-0" aria-hidden />
           {title ?? t('Δραστηριότητα', 'Activity')}
           {unread > 0 && (
             <span className="rounded-full bg-accent px-2 py-0.5 text-2xs font-bold text-accent-fg">
@@ -86,7 +86,7 @@ export function WallActivityPanel({ limit = 5, title }: { limit?: number; title?
               markActivityRead();
               toast.success(t('Όλη η δραστηριότητα αναγνωσμένη', 'All activity marked read'));
             }}
-            className="inline-flex min-h-8 items-center gap-1 rounded-full px-2 text-xs font-bold text-ink-muted hover:text-ink"
+            className="-mx-2 inline-flex min-h-8 items-center gap-1 whitespace-nowrap rounded-full px-2 text-xs font-bold text-ink-muted hover:text-ink"
           >
             <CheckCheck className="h-3.5 w-3.5" aria-hidden /> {t('Όλα αναγνωσμένα', 'Mark all read')}
           </button>

@@ -19,9 +19,9 @@ const translations: Record<string, Record<Language, string>> = {
 
   // Home Page Hero
   'home.hero.badge': { el: 'Νέος Τρόπος Εξόδου', en: 'New Way to Go Out' },
-  'home.hero.title1': { el: 'Βρείτε Nakamas για τις', en: 'Find Nakamas for the' },
+  'home.hero.title1': { el: 'Βρες Nakamas για τις', en: 'Find Nakamas for the' },
   'home.hero.title2': { el: 'εμπειρίες', en: 'experiences' },
-  'home.hero.title3': { el: 'που ήδη θέλετε να ζήσετε.', en: 'you already want to live.' },
+  'home.hero.title3': { el: 'που ήδη θέλεις να ζήσεις.', en: 'you already want to live.' },
   'home.hero.stat1': { el: 'Μικρές ομάδες', en: 'Small groups' },
   'home.hero.stat2': { el: 'Επαληθευμένη συμμετοχή', en: 'Verified attendance' },
   'home.hero.stat3': { el: 'Δημόσια σημεία', en: 'Public spots' },
@@ -30,11 +30,11 @@ const translations: Record<string, Record<Language, string>> = {
 
   // How it works
   'home.how.step1.title': { el: 'Διαλέξτε μια εμπειρία', en: 'Pick an experience' },
-  'home.how.step1.body': { el: 'Επιλέξτε μια εκδήλωση, πεζοπορία ή δραστηριότητα που θέλετε να παρακολουθήσετε.', en: 'Choose an event, hike, or activity you want to attend.' },
+  'home.how.step1.body': { el: 'Επίλεξε μια εκδήλωση, πεζοπορία ή δραστηριότητα που θέλεις να παρακολουθήσεις.', en: 'Choose an event, hike, or activity you want to attend.' },
   'home.how.step2.title': { el: 'Μπες σε μια μικρή παρέα', en: 'Join a small group' },
-  'home.how.step2.body': { el: 'Συνδεθείτε με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.', en: 'Connect with 3-6 others who share the same intent and schedule.' },
-  'home.how.step3.title': { el: 'Επιβεβαιώστε & συναντηθείτε', en: 'Confirm & meet' },
-  'home.how.step3.body': { el: 'Ξεκλειδώστε το group chat, ορίστε σημείο συνάντησης και απολαύστε την εμπειρία.', en: 'Unlock the group chat, set a meeting point, and enjoy the experience.' },
+  'home.how.step2.body': { el: 'Συνδέσου με 3-6 άτομα που μοιράζονται την ίδια πρόθεση και πρόγραμμα.', en: 'Connect with 3-6 others who share the same intent and schedule.' },
+  'home.how.step3.title': { el: 'Επιβεβαίωσε & συναντηθείτε', en: 'Confirm & meet' },
+  'home.how.step3.body': { el: 'Ξεκλείδωσε το group chat, όρισε σημείο συνάντησης και απόλαυσε την εμπειρία.', en: 'Unlock the group chat, set a meeting point, and enjoy the experience.' },
 
   // Filters / categories
   'home.explore_categories': { el: 'Εξερεύνηση Κατηγοριών', en: 'Explore Categories' },
@@ -58,7 +58,7 @@ const translations: Record<string, Record<Language, string>> = {
   // Feed
   'home.feed.for_you': { el: 'Για Σένα', en: 'For You' },
   'home.feed.discover': { el: 'Όλες', en: 'All' },
-  'home.feed.no_events': { el: 'Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.', en: 'No events found matching your criteria.' },
+  'home.feed.no_events': { el: 'Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σου.', en: 'No events found matching your criteria.' },
   'home.feed.load_more': { el: 'Φόρτωση Περισσότερων', en: 'Load More' },
   'home.feed.sort.relevance': { el: 'Συνάφεια', en: 'Relevance' },
   'home.feed.sort.distance': { el: 'Απόσταση', en: 'Distance' },

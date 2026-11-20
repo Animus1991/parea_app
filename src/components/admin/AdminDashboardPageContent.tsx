@@ -145,7 +145,7 @@ export default function AdminDashboardPageContent() {
 
   const handleApplyQuickAction = () => {
     if (!searchUser.trim()) {
-      toast.error(t('Εισάγετε email ή ID χρήστη', 'Enter a user email or ID'));
+      toast.error(t('Γράψε email ή ID χρήστη', 'Enter a user email or ID'));
       return;
     }
     logAdminAction(adminAction, searchUser.trim(), adminNote.trim() || undefined);

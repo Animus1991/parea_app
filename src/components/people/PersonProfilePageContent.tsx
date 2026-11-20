@@ -215,13 +215,13 @@ export default function PersonProfilePageContent() {
   const handleMessage = () => {
     const gate = canViewerMessageUser(me, subject, { blockedUserIds, groups });
     if (!gate.allowed) {
-      toast.message(t('Δεν μπορείτε να στείλετε μήνυμα', 'Cannot send message'), { description: t(gate.reasonEl, gate.reasonEn) });
+      toast.message(t('Δεν μπορείς να στείλεις μήνυμα', 'Cannot send message'), { description: t(gate.reasonEl, gate.reasonEn) });
       return;
     }
     const conv = ensureDirectConversation({ selfUserId: me.id, peerUserId: subject.id, peerName: subject.name, openWindow: true });
     if (!conv) {
       toast.message(t('Οι ιδιωτικές συνομιλίες είναι απενεργοποιημένες', 'Direct chats are disabled'), {
-        description: t('Ενεργοποιήστε τις στις ρυθμίσεις απορρήτου chat.', 'Enable them in chat privacy settings.'),
+        description: t('Ενεργοποίησέ τες στις ρυθμίσεις απορρήτου chat.', 'Enable them in chat privacy settings.'),
         action: { label: t('Ρυθμίσεις chat', 'Chat settings'), onClick: () => navigate('/settings?section=chat') },
       });
       return;

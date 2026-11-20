@@ -31,6 +31,7 @@ import { isDarkTheme } from '../../lib/themes';
 import { cn } from '../../lib/utils';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { EventCoverImg } from '../common/EventCoverImg';
+import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
@@ -49,6 +50,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
   const { eventId } = useParams();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const categoryLabel = useCategoryLabel();
   const theme = useStore((s) => s.theme);
   const panelDark = darkSurface || isDarkTheme(theme);
   const [groupSizeFilter, setGroupSizeFilter] = useState<'All' | '3' | '4' | '5' | '6+'>('All');
@@ -170,7 +172,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         </div>
 
         <div className="flex flex-wrap gap-2 mt-4">
-          <Badge variant="neutral">{event.category}</Badge>
+          <Badge variant="neutral">{categoryLabel(event.category)}</Badge>
           {event.isPaid ? (
             <Badge variant="outline" icon={<Ticket className="h-3 w-3" />}>€{event.price}</Badge>
           ) : (
@@ -294,7 +296,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
             {eventGroups.length === 0 ? (
               <div className="text-xs text-ink-muted mb-4 bg-surface p-4 rounded-2xl text-center border border-dashed border-border font-medium">
-                {t('Δεν έχουν δημιουργηθεί ομάδες ακόμα. Γίνετε ο πρώτος που θα ξεκινήσει μία!', 'No groups forming yet. Be the first to start one!')}
+                {t('Δεν υπάρχουν ομάδες ακόμα. Ξεκίνα εσύ την πρώτη!', 'No groups forming yet. Be the first to start one!')}
               </div>
             ) : (
               <div className="space-y-4 mb-4">
@@ -311,7 +313,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                 </Button>
               </div>
               <div className="text-2xs text-ink-muted font-medium bg-surface rounded-lg text-center p-3 leading-relaxed tracking-wide">
-                {t('Δημιουργήστε νέα ομάδα 3-5 ατόμων. ', 'Create a new 3-5 person group. ')}
+                {t('Δημιούργησε νέα ομάδα 3-5 ατόμων. ', 'Create a new 3-5 person group. ')}
                 {event.isPaid ? (
                   <span className="block mt-1 font-bold text-ink">{t('Η πληρωμή κρατιέται και χρεώνεται όταν επιβεβαιωθεί η ομάδα.', 'Payment is held and charged when the group is confirmed.')}</span>
                 ) : (

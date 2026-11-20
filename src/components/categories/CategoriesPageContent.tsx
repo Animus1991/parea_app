@@ -205,14 +205,14 @@ export default function CategoriesPageContent() {
             {t('Εξερεύνηση δραστηριοτήτων', 'Activity explorer')}
           </Badge>
           <h1 className={cn(APP_TYPO.pageTitle, 'mb-1.5')}>
-            {t('Βρείτε την επόμενη', 'Find your next')}{' '}
+            {t('Βρες την επόμενη', 'Find your next')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-hero-accent-from to-hero-accent-to">
-              {t('εμπειρία σας', 'experience')}
+              {t('εμπειρία σου', 'experience')}
             </span>
           </h1>
           <p className="text-sm font-medium text-hero-fg/80 leading-snug mb-3">
             {t(
-              'Ανακαλύψτε επιλεγμένες εκδηλώσεις που ταιριάζουν στα ενδιαφέροντά σας.',
+              'Ανακάλυψε επιλεγμένες εκδηλώσεις που ταιριάζουν στα ενδιαφέροντά σου.',
               'Discover handpicked events matching your interests.',
             )}
           </p>
@@ -476,7 +476,7 @@ export default function CategoriesPageContent() {
                 <EmptyState
                   icon={Bookmark}
                   title={t('Δεν βρέθηκαν εκδηλώσεις', 'No events found')}
-                  description={t('Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία.', 'Try changing filters or category.')}
+                  description={t('Δοκίμασε άλλα φίλτρα ή κατηγορία.', 'Try changing filters or category.')}
                   actionLabel={t('Καθαρισμός Φίλτρων', 'Reset Filters')}
                   onAction={() => {
                     setActiveCategory(null);
@@ -509,11 +509,11 @@ export default function CategoriesPageContent() {
           <Star className="w-3.5 h-3.5 mr-1" /> {t('Γίνε Οικοδεσπότης', 'Become a Host')}
         </Badge>
         <h3 className={cn('text-sm md:text-base font-bold tracking-tight', p.head)}>
-          {t('Μην βρήκατε αυτό που ψάχνατε;', "Couldn't find what you wanted?")}
+          {t('Δεν βρήκες αυτό που έψαχνες;', "Couldn't find what you wanted?")}
         </h3>
         <p className={cn('text-sm max-w-lg mx-auto font-medium leading-relaxed', p.sub)}>
           {t(
-            'Δημιουργήστε τη δική σας εκδήλωση και συγκεντρώστε ανθρώπους με παρόμοια ενδιαφέροντα.',
+            'Δημιούργησε τη δική σου εκδήλωση και μάζεψε ανθρώπους με παρόμοια ενδιαφέροντα.',
             'Create your own event and gather people with similar passions.',
           )}
         </p>

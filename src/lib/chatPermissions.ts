@@ -52,7 +52,7 @@ export function canOpenConversation(
       canSend: false,
       canReport: false,
       canPersist: false,
-      reasonIfLocked: { el: 'Δεν έχετε πρόσβαση', en: 'You do not have access' },
+      reasonIfLocked: { el: 'Δεν έχεις πρόσβαση', en: 'You do not have access' },
     };
   }
 

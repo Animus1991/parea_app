@@ -22,7 +22,7 @@ export function canAccessEvent(user: User | null, event: Event): TrustGateResult
     return {
       allowed: false,
       reason: 'tier',
-      messageEl: 'Συνδεθείτε για να συμμετάσχετε.',
+      messageEl: 'Συνδέσου για να συμμετάσχεις.',
       messageEn: 'Sign in to join this experience.',
     };
   }

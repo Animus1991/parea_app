@@ -153,8 +153,8 @@ export default function ChallengesClassic() {
     toggleChallengeJoined(id);
     toast.success(
       wasJoined
-        ? t('Αποχωρήσατε από την πρόκληση', 'Left the challenge')
-        : t('Συμμετέχετε στην πρόκληση', 'Joined the challenge'),
+        ? t('Αποχώρησες από την πρόκληση', 'Left the challenge')
+        : t('Μπήκες στην πρόκληση', 'Joined the challenge'),
     );
   };
 

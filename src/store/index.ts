@@ -1762,7 +1762,7 @@ export const useStore = create<AppState>()(
                   : 'New join request on your company request',
                 messageGr: event
                   ? `Κάποιος ζήτησε να μπει στο σχέδιό σου για «${event.title}»`
-                  : 'Νέο αίτημα σύνδεσης στο αίτημά σας',
+                  : 'Νέο αίτημα σύνδεσης στο αίτημά σου',
                 timeEn: 'Just now',
                 timeGr: 'Μόλις τώρα',
                 icon: Users,

@@ -214,7 +214,7 @@ export function canViewerMessageUser(
     return { allowed: false, reasonEl: 'Ο χρήστης δεν βρέθηκε', reasonEn: 'User not found' };
   }
   if (viewer.id === subject.id) {
-    return { allowed: false, reasonEl: 'Δεν μπορείτε να στείλετε μήνυμα στον εαυτό σας', reasonEn: 'You cannot message yourself' };
+    return { allowed: false, reasonEl: 'Δεν μπορείς να στείλεις μήνυμα στον εαυτό σου', reasonEn: 'You cannot message yourself' };
   }
   if (isBlockedBetween(viewer, subject, ctx?.blockedUserIds)) {
     return { allowed: false, reasonEl: 'Αποκλεισμένη επαφή', reasonEn: 'Blocked contact' };

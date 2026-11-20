@@ -29,6 +29,7 @@ import { EmptyState } from '../common/EmptyState';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useStore } from '../../store';
 import { toast } from 'sonner';
+import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 
 const QUICK_TEMPLATES = [
   { labelEl: 'Πεζοπορία', labelEn: 'Hiking', icon: '🥾' },
@@ -39,6 +40,7 @@ const QUICK_TEMPLATES = [
 
 export default function OrganizerDashboardPageContent() {
   const { t, tu, language } = useLanguage();
+  const categoryLabel = useCategoryLabel();
   const p = usePageContrast();
   const navigate = useNavigate();
   const currentUser = useStore((s) => s.currentUser);
@@ -126,8 +128,8 @@ export default function OrganizerDashboardPageContent() {
       labelEl: 'Συμμετέχοντες',
       labelEn: 'Participants',
       val: String(liveStats.participants),
-      trendEl: t('Σε ομάδες σας', 'Across your groups'),
-      trendEn: t('Σε ομάδες σας', 'Across your groups'),
+      trendEl: t('Στις ομάδες σου', 'Across your groups'),
+      trendEn: t('Στις ομάδες σου', 'Across your groups'),
       icon: Users,
       iconWrap: 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800',
       iconColor: 'text-emerald-600 dark:text-emerald-400',
@@ -317,7 +319,7 @@ export default function OrganizerDashboardPageContent() {
           </h3>
           <p className={cn('text-sm font-medium mt-1', p.muted)}>
             {t(
-              'Χρησιμοποιήστε έτοιμα πρότυπα για τη νέα σας εκδήλωση.',
+              'Χρησιμοποίησε έτοιμα πρότυπα για τη νέα σου εκδήλωση.',
               'Use ready-made templates for your next event.',
             )}
           </p>
@@ -350,9 +352,9 @@ export default function OrganizerDashboardPageContent() {
         {myEvents.length === 0 ? (
           <EmptyState
             icon={Calendar}
-            title={t('Δεν έχετε ακόμα εκδηλώσεις', 'No events yet')}
+            title={t('Δεν έχεις ακόμα εκδηλώσεις', 'No events yet')}
             description={t(
-              'Δημιουργήστε την πρώτη σας εμπειρία για να εμφανιστεί εδώ.',
+              'Δημιούργησε την πρώτη σου εμπειρία για να εμφανιστεί εδώ.',
               'Create your first experience to see it here.',
             )}
             actionLabel={t('Νέα Εκδήλωση', 'New Event')}
@@ -387,7 +389,7 @@ export default function OrganizerDashboardPageContent() {
                             : 'bg-cyan-50 text-cyan-700 border-cyan-200',
                         )}
                       >
-                        {ev.category}
+                        {categoryLabel(ev.category)}
                       </Badge>
                       <span className={cn('text-xs font-bold flex items-center gap-1', p.muted)}>
                         <Clock className="w-3.5 h-3.5" aria-hidden /> {relativeWhen(ev.date)}
@@ -556,7 +558,7 @@ export default function OrganizerDashboardPageContent() {
               </h3>
               <p className={cn('text-xs font-medium mt-1', p.muted)}>
                 {t(
-                  'Εκτίμηση 7 ημερών από τις εκδηλώσεις/μέλη σας (demo analytics)',
+                  'Εκτίμηση 7 ημερών από τις εκδηλώσεις/μέλη σου (demo analytics)',
                   '7-day estimate from your events/members (demo analytics)',
                 )}
               </p>

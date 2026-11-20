@@ -19,7 +19,7 @@ export function HomeGuestHero() {
     >
       <NakamasMini id="explorer" size={48} className="mx-auto" />
       <h1 className={cn(APP_TYPO.pageTitle, 'text-ink')}>
-        {t('Βρείτε την επόμενη εμπειρία σας', 'Find your next experience')}
+        {t('Βρες την επόμενη εμπειρία σου', 'Find your next experience')}
       </h1>
       <Button
         variant="ghost"

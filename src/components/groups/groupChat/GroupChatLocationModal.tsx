@@ -90,7 +90,7 @@ export function GroupChatLocationModal({
             <div className={cn('flex items-center gap-2', gc.shareActiveText)}>
               <Navigation className="w-4 h-4 animate-pulse motion-reduce:animate-none" />
               <span className="text-sm font-bold">
-                {t('Η τοποθεσία σας κοινοποιείται', 'You are currently sharing location')}
+                {t('Η τοποθεσία σου κοινοποιείται', 'You are currently sharing location')}
               </span>
             </div>
             <button
@@ -177,7 +177,7 @@ export function GroupChatLocationModal({
                   )}
                   {option === 'all' && (
                     <span className="text-xs text-amber-600 leading-relaxed">
-                      {t('Όλοι θα βλέπουν την τοποθεσία σας', 'Everyone in this chat will see your location')}
+                      {t('Όλοι θα βλέπουν την τοποθεσία σου', 'Everyone in this chat will see your location')}
                     </span>
                   )}
                 </div>

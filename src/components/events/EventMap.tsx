@@ -181,7 +181,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
   return (
     <div className={cn('mt-4 space-y-2', className)}>
       <p className={cn('text-xs font-bold tracking-wide', tok.badge)}>
-        {t('Τοποθεσία', 'Location')} — {t('Πατήστε τον δείκτη για εστίαση', 'Tap marker to focus')}
+        {t('Τοποθεσία', 'Location')} — {t('Πάτα τον δείκτη για εστίαση', 'Tap marker to focus')}
       </p>
       <div
         className={cn(

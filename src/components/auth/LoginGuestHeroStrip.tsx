@@ -36,7 +36,7 @@ export function LoginGuestHeroStrip({
         )}
       >
         {t(
-          'Ανακαλύψτε εκδηλώσεις, συνδεθείτε με ομάδες και σχεδιάστε βόλτες — πριν συνδεθείτε.',
+          'Ανακάλυψε εκδηλώσεις, γνώρισε ομάδες και σχεδίασε βόλτες — πριν συνδεθείς.',
           'Discover events, join groups, and plan outings — before you sign in.',
         )}
       </p>

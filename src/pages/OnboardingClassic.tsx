@@ -192,7 +192,7 @@ export default function OnboardingClassic() {
                 >
                   {selectedInterests.length >= 3
                     ? t(
-                        `${selectedInterests.length} επιλεγμένα — μπορείτε να συνεχίσετε`,
+                        `${selectedInterests.length} επιλεγμένα — μπορείς να συνεχίσεις`,
                         `${selectedInterests.length} selected — you can continue`,
                       )
                     : t(

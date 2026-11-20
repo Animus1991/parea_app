@@ -26,6 +26,7 @@ import { EventCoverImage } from '../events/EventCoverImage';
 import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import { cn } from '../../lib/utils';
 import { SlideNavArrows } from '../ui/SlideNavArrows';
+import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 
 export interface DayEventsStoriesModalProps {
   day: Date;
@@ -46,6 +47,7 @@ export function DayEventsStoriesModal({
   const panelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { t, tu, language } = useLanguage();
+  const categoryLabel = useCategoryLabel();
   const locale = language === 'el' ? elLocale : enUS;
   const ev = events[index];
   useOverlayBehavior(Boolean(ev), onClose, panelRef);
@@ -213,7 +215,7 @@ export function DayEventsStoriesModal({
 
           <div className="absolute bottom-0 inset-x-0 p-4 md:p-5 space-y-1.5 z-[1]">
             <span className="inline-block text-xs font-bold tracking-widest text-cyan-200 bg-cyan-950/90 border border-cyan-800/50 px-2 py-0.5 rounded-lg">
-              {ev.category}
+              {categoryLabel(ev.category)}
             </span>
             <h2 id="day-stories-title" className="text-sm md:text-base font-bold text-white leading-tight">
               {ev.title}

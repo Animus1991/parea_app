@@ -223,7 +223,7 @@ export default function HomeClassic() {
             <div className="col-span-1 sm:col-span-2 lg:col-span-3">
               <EmptyState
                 icon={CalendarX}
-                title={t("home.feed.no_events", "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.")}
+                title={t("home.feed.no_events", "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σου.")}
                 description={
                   isScheduleFilterActive(schedule)
                     ? t(

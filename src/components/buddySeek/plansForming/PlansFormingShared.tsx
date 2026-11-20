@@ -122,7 +122,7 @@ export function PlansFormingYourPlanBanner({
       )}
     >
       <p className={cn(PLANS_FORMING_TYPO.sectionLabel, isDark ? 'text-cyan-300' : 'text-cyan-700')}>
-        {tu('Το σχέδιό σας', 'Your plan')}
+        {tu('Το σχέδιό σου', 'Your plan')}
       </p>
       <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'leading-snug', isDark ? 'text-white' : 'text-gray-900')}>
         {plan.event.title}
@@ -204,7 +204,7 @@ export function PlansFormingEmptyState({
       <NakamasMini id="crew" size={48} className="mx-auto" />
       <div>
         <p className={cn(PLANS_FORMING_TYPO.cardTitle, isDark ? 'text-white' : 'text-gray-900')}>
-          {t('Θέλετε να πάτε, αλλά όχι μόνοι/ες;', 'Want to go, but not alone?')}
+          {t('Θέλεις να πας, αλλά όχι μόνος/η;', 'Want to go, but not alone?')}
         </p>
         <p className={cn(PLANS_FORMING_TYPO.body, 'mt-1.5 leading-relaxed max-w-[240px] mx-auto', isDark ? 'text-gray-400' : 'text-gray-500')}>
           {t('Δήλωσε πρόθεση ή μπες σε σχέδιο που σχηματίζεται.', 'Declare intent or join a forming plan.')}

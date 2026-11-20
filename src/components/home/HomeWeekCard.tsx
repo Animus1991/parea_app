@@ -26,13 +26,17 @@ export function HomeWeekCard() {
   const currentUser = useStore((s) => s.currentUser);
   const groups = useStore((s) => s.groups);
   const { events } = useEventsResource();
-  const { items } = usePlansFormingFeed(1);
+  const { items } = usePlansFormingFeed(4);
   const now = new Date();
   const weekKey = isoWeekKey(now);
   const [dismissedKey, setDismissedKey] = useState(() => readStorage(DISMISSED_KEY));
   const dismissed = dismissedKey === weekKey;
   const picks = currentUser ? selectWeekPicks(events, currentUser, groups, now.getTime()) : [];
-  const plan = items[0];
+  const pickIds = new Set(picks.map((event) => event.id));
+  // One row per event: a forming plan for an event already listed marks that
+  // row instead of repeating the same title under it.
+  const plan = items.find((item) => !pickIds.has(item.event.id));
+  const formingIds = new Set(items.filter((item) => pickIds.has(item.event.id)).map((item) => item.event.id));
   if (dismissed || (picks.length === 0 && !plan)) return null;
 
   const dismiss = () => {
@@ -53,7 +57,10 @@ export function HomeWeekCard() {
               <EventCoverImg event={event} className="h-10 w-12 shrink-0 rounded-lg object-cover" />
               <span className="min-w-0">
                 <span className={cn('block truncate text-xs font-bold', p.head)}>{event.title}</span>
-                <span className={cn('block text-2xs font-medium', p.muted)}>{formatPlanWhen(event.date, event.time, language)}</span>
+                <span className={cn('block text-2xs font-medium', p.muted)}>
+                  {formatPlanWhen(event.date, event.time, language)}
+                  {formingIds.has(event.id) && ` · ${t('σχέδιο σχηματίζεται', 'plan forming')}`}
+                </span>
               </span>
             </button>
           </li>

@@ -161,7 +161,7 @@ export function CreateCompanyRequestModal({
       className="fixed inset-0 z-modal flex items-end sm:items-center justify-center sm:p-4"
       role="dialog"
       aria-modal="true"
-      aria-label={isEdit ? t('Επεξεργασία αιτήματος', 'Edit request') : t('Ψάχνετε Nakamas;', 'Looking for Nakamas?')}
+      aria-label={isEdit ? t('Επεξεργασία αιτήματος', 'Edit request') : t('Ψάχνεις Nakamas;', 'Looking for Nakamas?')}
     >
       <button type="button" tabIndex={-1} className="absolute inset-0 bg-black/50" onClick={onClose} aria-label={t('Κλείσιμο', 'Close')} />
       <div
@@ -173,7 +173,7 @@ export function CreateCompanyRequestModal({
           <h2 className="text-sm md:text-base font-bold">
             {isEdit
               ? t('Επεξεργασία αιτήματος', 'Edit request')
-              : t('Ψάχνετε Nakamas;', 'Looking for Nakamas?')}
+              : t('Ψάχνεις Nakamas;', 'Looking for Nakamas?')}
           </h2>
           <p className="text-xs opacity-70 mt-0.5">
             {t('Βήμα', 'Step')} {step + 1}/{STEPS} · {event.title}
@@ -188,7 +188,7 @@ export function CreateCompanyRequestModal({
         <div className="p-4 overflow-y-auto flex-1 space-y-4">
           {step === 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-bold">{t('Τι ψάχνετε;', 'What are you looking for?')}</p>
+              <p className="text-sm font-bold">{t('Τι ψάχνεις;', 'What are you looking for?')}</p>
               {(
                 [
                   ['join_group', 'Ένταξη σε υπάρχουσα ομάδα', 'Join an existing group'],
@@ -225,7 +225,7 @@ export function CreateCompanyRequestModal({
               ))}
               <p className="text-xs opacity-60 flex items-center gap-1">
                 <Shield className="w-3 h-3" aria-hidden />
-                {t('Το αίτημά σας δεν είναι δημόσιο από προεπιλογή.', 'Your request is not public by default.')}
+                {t('Το αίτημά σου δεν είναι δημόσιο από προεπιλογή.', 'Your request is not public by default.')}
               </p>
             </div>
           )}
@@ -310,7 +310,7 @@ export function CreateCompanyRequestModal({
                 <li>
                   {t('Εμφανίζονται', 'Shown')}: {exposureSummary(profileExposure, t)}
                 </li>
-                <li>{t('Μπορείτε να επεξεργαστείτε, να παύσετε ή να διαγράψετε ανά πάσα στιγμή.', 'You can edit, pause, or delete anytime.')}</li>
+                <li>{t('Μπορείς να το επεξεργαστείς, να το παύσεις ή να το διαγράψεις όποτε θέλεις.', 'You can edit, pause, or delete anytime.')}</li>
               </ul>
               <CompanyRequestCard
                 request={previewRequest}

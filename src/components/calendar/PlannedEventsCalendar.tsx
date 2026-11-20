@@ -120,11 +120,11 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
             <Compass className={cn('w-7 h-7', p.statVal)} />
           </div>
           <p className={cn('font-bold text-sm md:text-base', p.head)}>
-            {t('Δεν έχετε προγραμματισμένες εκδηλώσεις', 'No planned events yet')}
+            {t('Δεν έχεις προγραμματισμένες εκδηλώσεις', 'No planned events yet')}
           </p>
           <p className={cn('text-sm font-medium mt-2 max-w-sm mx-auto', p.muted)}>
             {t(
-              'Όταν μπείτε σε μια ομάδα, οι εκδηλώσεις σας θα εμφανίζονται εδώ.',
+              'Όταν μπεις σε μια ομάδα, οι εκδηλώσεις σου θα εμφανίζονται εδώ.',
               'When you join a group, your events will appear here.',
             )}
           </p>

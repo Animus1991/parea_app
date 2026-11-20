@@ -121,7 +121,7 @@ export default function VerificationCenterPageContent() {
           {!currentUser.emailVerified && (
             <>
               <p className={cn('card-copy mt-4 mb-3', a.sub)}>
-                {t('Θα σας στείλουμε σύνδεσμο επιβεβαίωσης στο email σας.', "We'll send a confirmation link to your email.")}
+                {t('Θα σου στείλουμε σύνδεσμο επιβεβαίωσης στο email σου.', "We'll send a confirmation link to your email.")}
               </p>
               <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleVerifyEmail}>
                 {t('Επαλήθευση Τώρα', 'Verify Now')}
@@ -147,7 +147,7 @@ export default function VerificationCenterPageContent() {
           </div>
           {!currentUser.phoneVerified && (
             <>
-              <p className={cn('card-copy mb-3', a.sub)}>{t('Θα σας στείλουμε SMS με κωδικό.', "We'll send you an SMS code.")}</p>
+              <p className={cn('card-copy mb-3', a.sub)}>{t('Θα σου στείλουμε SMS με κωδικό.', "We'll send you an SMS code.")}</p>
               <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleVerifyPhone}>
                 {t('Επαλήθευση Τώρα', 'Verify Now')}
               </Button>
@@ -199,7 +199,7 @@ export default function VerificationCenterPageContent() {
       </div>
 
       <Card className="p-5">
-        <h3 className={cn('text-xs font-bold tracking-wide mb-4', a.head)}>{t('Τι ξεκλειδώνετε', 'What you unlock')}</h3>
+        <h3 className={cn('text-xs font-bold tracking-wide mb-4', a.head)}>{t('Τι ξεκλειδώνεις', 'What you unlock')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
             { icon: Mail, label: t('Email', 'Email'), done: currentUser.emailVerified, color: 'text-cyan-600', bg: a.tierEmail },

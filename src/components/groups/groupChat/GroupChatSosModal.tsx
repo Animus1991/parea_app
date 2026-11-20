@@ -34,9 +34,9 @@ export function GroupChatSosModal({
         </div>
         <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
           {isSos
-            ? t('Αυτό θα ενημερώσει την ομάδα ότι είστε ασφαλείς.', 'This will notify the group that you are safe.')
+            ? t('Αυτό θα ενημερώσει την ομάδα ότι είσαι ασφαλής.', 'This will notify the group that you are safe.')
             : t(
-                'Αυτό θα ειδοποιήσει αμέσως όλα τα μέλη της ομάδας ότι χρειάζεστε βοήθεια.',
+                'Αυτό θα ειδοποιήσει αμέσως όλα τα μέλη της ομάδας ότι χρειάζεσαι βοήθεια.',
                 'This will immediately notify all group members that you need help.',
               )}
         </p>

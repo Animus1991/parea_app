@@ -93,7 +93,7 @@ export default function JoinGroupFlow() {
     if (needsCommitment && !commitmentAccepted) {
       toast.error(
         t(
-          'Αποδεχτείτε τη δέσμευση συμμετοχής για δωρεάν εκδηλώσεις.',
+          'Αποδέξου τη δέσμευση συμμετοχής για δωρεάν εκδηλώσεις.',
           'Accept the participation commitment for free events.',
         ),
       );
@@ -173,7 +173,7 @@ export default function JoinGroupFlow() {
             <div className="space-y-2">
               {availableGroups.length === 0 ? (
                 <p className="text-sm text-gray-500 font-medium p-3 bg-gray-50 rounded-xl border border-gray-100">
-                  {t('Δεν υπάρχουν διαθέσιμες ομάδες — δημιουργήστε νέα.', 'No available groups — start a new one.')}
+                  {t('Δεν υπάρχουν διαθέσιμες ομάδες — δημιούργησε νέα.', 'No available groups — start a new one.')}
                 </p>
               ) : (
                 availableGroups.map((g) => {
@@ -379,7 +379,7 @@ export default function JoinGroupFlow() {
       {step === 3 && (
         <div className="text-center space-y-4 py-4">
           <CheckCircle className="w-11 h-11 text-emerald-500 mx-auto" />
-          <h3 className="text-sm md:text-base font-bold">{t('Είστε μέσα!', "You're in!")}</h3>
+          <h3 className="text-sm md:text-base font-bold">{t('Μπήκες!', "You're in!")}</h3>
           <p className="text-sm text-gray-500 font-medium">
             {t('Το group chat ξεκλειδώνει όταν η ομάδα επιβεβαιωθεί.', 'Group chat unlocks when the group is confirmed.')}
           </p>

@@ -433,7 +433,7 @@ export function ChatMessageBubble({
         </div>
 
         {/* Hover / focus action bar */}
-        <div className="flex items-center gap-0.5 opacity-70 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition-opacity shrink-0">
+        <div className="flex items-center gap-1 opacity-70 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition-opacity shrink-0">
           <div className="relative">
             <button
               type="button"

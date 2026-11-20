@@ -25,10 +25,12 @@ import { WallPostList } from '../wall/WallPostList';
 import { profilePathFor } from '../../lib/profileLinks';
 import { OrganizerCalendarCard } from '../outings/OrganizerCalendarCard';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
+import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 
 export default function OrganizerProfilePageContent() {
   const { id } = useParams();
   const { t, language } = useLanguage();
+  const categoryLabel = useCategoryLabel();
   const p = usePageContrast();
   const [showContactModal, setShowContactModal] = useState(false);
   const [contactMessage, setContactMessage] = useState('');
@@ -124,7 +126,7 @@ export default function OrganizerProfilePageContent() {
   const handleOpenContact = () => {
     if (!contactGate?.allowed) {
       toast.message(
-        t('Δεν μπορείτε να επικοινωνήσετε', 'Cannot contact'),
+        t('Δεν μπορείς να επικοινωνήσεις', 'Cannot contact'),
         {
           description: t(
             contactGate?.reasonEl ?? 'Περιορισμένο από ρυθμίσεις απορρήτου',
@@ -139,7 +141,7 @@ export default function OrganizerProfilePageContent() {
 
   const handleSendMessage = () => {
     if (!contactMessage.trim()) {
-      toast.error(t('Γράψτε ένα μήνυμα πριν την αποστολή.', 'Write a message before sending.'));
+      toast.error(t('Γράψε ένα μήνυμα πριν την αποστολή.', 'Write a message before sending.'));
       return;
     }
     const res = sendOrganizerMessage(organizer.id, contactMessage.trim());
@@ -147,7 +149,7 @@ export default function OrganizerProfilePageContent() {
       toast.error(t(res.reasonEl ?? 'Απορρίφθηκε', res.reasonEn ?? 'Rejected'));
       return;
     }
-    toast.success(t('Το μήνυμά σας στάλθηκε στον διοργανωτή', 'Message sent to the organizer'));
+    toast.success(t('Το μήνυμά σου στάλθηκε στον διοργανωτή', 'Message sent to the organizer'));
     closeContactModal();
   };
 
@@ -279,7 +281,7 @@ export default function OrganizerProfilePageContent() {
                   <div className="flex-1">
                     <h3 className={cn('card-heading font-bold line-clamp-1 group-hover:text-cyan-600 transition-colors', p.head)}>{event.title}</h3>
                     <p className={cn('card-meta mt-1', p.muted)}>
-                      <span className="capitalize">{event.category}</span>
+                      <span>{categoryLabel(event.category)}</span>
                       <span aria-hidden className="opacity-40"> · </span>
                       {event.time}
                       <span aria-hidden className="opacity-40"> · </span>
@@ -324,7 +326,7 @@ export default function OrganizerProfilePageContent() {
       >
         <p className="card-copy mb-4 text-ink-muted">
           {t(
-            'Στείλτε ένα ασφαλές μήνυμα σε αυτόν τον διοργανωτή για τις εκδηλώσεις του, τα εισιτήρια ή γενικές ερωτήσεις.',
+            'Στείλε ένα ασφαλές μήνυμα σε αυτόν τον διοργανωτή για τις εκδηλώσεις του, τα εισιτήρια ή γενικές ερωτήσεις.',
             'Send a secure message to this organizer about their events, ticketing issues, or general inquiries.',
           )}
         </p>
@@ -334,7 +336,7 @@ export default function OrganizerProfilePageContent() {
           onChange={(e) => setContactMessage(e.target.value)}
           className="w-full border border-border rounded-lg p-3 text-sm resize-none mb-4 outline-none focus:ring-2 focus:ring-accent bg-surface-raised text-ink"
           rows={4}
-          placeholder={t('Το μήνυμά σας...', 'Your message...')}
+          placeholder={t('Το μήνυμά σου...', 'Your message...')}
         />
         <div className="flex justify-end gap-3">
           <button
