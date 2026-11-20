@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { homeVerifyIsNeeded } from '../components/home/HomeVerifyBanner';
+import { homeVerifyIsNeeded } from './useHomeVerifyNeeded';
 
 describe('homeVerifyIsNeeded', () => {
   it('hides when both email and phone are verified', () => {

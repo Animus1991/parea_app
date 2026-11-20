@@ -10,7 +10,7 @@ export type BuddySeekFilterKey =
   | 'saved_events'
   | 'high_match';
 
-export const BUDDY_SEEK_FILTERS: { key: BuddySeekFilterKey; el: string; en: string }[] = [
+const BUDDY_SEEK_FILTERS: { key: BuddySeekFilterKey; el: string; en: string }[] = [
   { key: 'all', el: 'Όλα', en: 'All' },
   { key: 'high_match', el: 'Υψηλή συμβατότητα', en: 'High match' },
   { key: 'saved_events', el: 'Αποθηκευμένες', en: 'Saved events' },

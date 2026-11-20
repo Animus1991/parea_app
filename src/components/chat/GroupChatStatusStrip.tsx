@@ -4,7 +4,8 @@ import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
 import { KeepChatRequestModal } from './KeepChatRequestModal';
-import { MeetingPointActions, MeetingPointPanel, meetingPointLabel } from './MeetingPointPanel';
+import { MeetingPointActions, MeetingPointPanel } from './MeetingPointPanel';
+import { meetingPointLabel } from '../../lib/meetingPoint';
 import { cn } from '../../lib/utils';
 
 /**

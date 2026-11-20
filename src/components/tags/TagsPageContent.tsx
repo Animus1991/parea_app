@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Hash, Search } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -29,13 +29,13 @@ export default function TagsPageContent() {
   const { events, isLoading, isError, refetch } = useEventsResource();
   const [query, setQuery] = useState('');
   const locale = language === 'el' ? 'el' : 'en';
-  const labelOf = (tag: string) => translateEventTag(tag, t);
+  const labelOf = useCallback((tag: string) => translateEventTag(tag, t), [t]);
 
   const catalog = useMemo(() => catalogEventTags(events), [events]);
   const selected = findCataloguedTag(catalog, slug);
   const visibleCatalog = useMemo(
     () => catalog.filter((item) => tagMatchesQuery(item, query, labelOf(item.tag))),
-    [catalog, query, language],
+    [catalog, query, labelOf],
   );
   const popular = useMemo(
     () => (!query.trim() && !slug ? catalog.slice(0, POPULAR_LIMIT) : []),
@@ -45,10 +45,10 @@ export default function TagsPageContent() {
     const popularSlugs = new Set(popular.map((item) => item.slug));
     const rest = visibleCatalog.filter((item) => !popularSlugs.has(item.slug));
     return [...rest].sort((a, b) => labelOf(a.tag).localeCompare(labelOf(b.tag), locale));
-  }, [visibleCatalog, popular, language]);
+  }, [visibleCatalog, popular, labelOf, locale]);
   const searchHits = useMemo(
     () => [...visibleCatalog].sort((a, b) => labelOf(a.tag).localeCompare(labelOf(b.tag), locale)),
-    [visibleCatalog, language],
+    [visibleCatalog, labelOf, locale],
   );
 
   const taggedEvents = useMemo(() => {

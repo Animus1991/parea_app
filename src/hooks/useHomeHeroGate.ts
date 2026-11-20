@@ -1,4 +1,4 @@
-import { useHomeVerifyNeeded } from '../components/home/HomeVerifyBanner';
+import { useHomeVerifyNeeded } from './useHomeVerifyNeeded';
 
 export type HomeHeroGate = 'verify' | 'welcome' | null;
 

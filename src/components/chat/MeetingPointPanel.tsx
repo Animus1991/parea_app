@@ -5,11 +5,6 @@ import { useChatStore } from '../../store/chatStore';
 import { useStore } from '../../store';
 import { cn } from '../../lib/utils';
 
-export function meetingPointLabel(venue?: string, meetingPoint?: string): string | undefined {
-  if (meetingPoint && meetingPoint !== venue) return meetingPoint;
-  return venue || meetingPoint;
-}
-
 export function MeetingPointActions({
   conversationId,
   venue,

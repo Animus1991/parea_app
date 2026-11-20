@@ -11,10 +11,12 @@ export function EventCoverImg({
   alt?: string;
   className?: string;
 }) {
-  const [src, setSrc] = useState(() => eventCoverUrl(event));
+  // The cover depends on id, image, kind and tags; reset when any of them changes.
+  const url = eventCoverUrl(event);
+  const [src, setSrc] = useState(url);
   useEffect(() => {
-    setSrc(eventCoverUrl(event));
-  }, [event.id, event.imageUrl, event.kind]);
+    setSrc(url);
+  }, [url]);
   return (
     <img
       src={src}

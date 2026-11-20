@@ -30,8 +30,8 @@ export function AdminSSOPanel() {
         )}
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
-        <label className="block">
-          <span className={cn('text-xs font-bold tracking-wider', a.muted)}>Provider</span>
+        <div className="block">
+          <span className={cn('text-xs font-bold tracking-wider', a.muted)} aria-hidden>Provider</span>
           <AppSelect
             ariaLabel="Provider"
             value={provider}
@@ -43,7 +43,7 @@ export function AdminSSOPanel() {
               { value: 'okta', label: 'Okta' },
             ]}
           />
-        </label>
+        </div>
         <label className="block">
           <span className={cn('text-xs font-bold tracking-wider', a.muted)}>
             {t('Domain', 'Email domain')}

@@ -13,7 +13,8 @@ import { usePageContrast } from '../hooks/usePageContrast';
 import { cn } from '../lib/utils';
 import { toast } from 'sonner';
 import { APP_TYPO } from '../lib/typographyTokens';
-import { CHALLENGE_MINI, NakamasMini, type NakamasMiniId } from '../components/illustrations/NakamasMini';
+import { NakamasMini, type NakamasMiniId } from '../components/illustrations/NakamasMini';
+import { CHALLENGE_MINI } from '../components/illustrations/miniMaps';
 
 interface Challenge {
   id: string;
