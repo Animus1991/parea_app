@@ -51,6 +51,16 @@ test.describe('Event tags', () => {
     await expect(page.getByRole('heading', { level: 1, name: /Εργαστήριο|workshop/i })).toBeVisible();
   });
 
+  test('the tags index is one language, without duplicate chips or a letter keyboard', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterDemoGuest(page);
+    await page.goto('/tags');
+    await expect(page.getByRole('heading', { level: 1, name: /Ετικέτες|Tags/ })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: /Ευρετήριο γραμμάτων|Letter index/ })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: /Επιτραπέζια|Board games/ })).toHaveCount(1);
+    await expect(page.getByText(/^#art$/i)).toHaveCount(0);
+  });
+
   test('returning from Tags does not put a Continue strip on Discover', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await enterDemoGuest(page);

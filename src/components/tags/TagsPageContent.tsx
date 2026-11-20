@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Hash, Search } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -17,18 +17,10 @@ import {
   eventTagPath,
   eventsForTag,
   findCataloguedTag,
-  groupTagsByLetter,
   tagMatchesQuery,
 } from '../../lib/eventTags';
 
 const POPULAR_LIMIT = 6;
-
-function scrollToLetter(letter: string) {
-  document.getElementById(`tag-letter-${letter}`)?.scrollIntoView({
-    block: 'start',
-    behavior: 'smooth',
-  });
-}
 
 export default function TagsPageContent() {
   const { slug } = useParams();
@@ -46,14 +38,18 @@ export default function TagsPageContent() {
     [catalog, query, language],
   );
   const popular = useMemo(
-    () => (query.trim() ? [] : catalog.slice(0, POPULAR_LIMIT)),
-    [catalog, query],
+    () => (!query.trim() && !slug ? catalog.slice(0, POPULAR_LIMIT) : []),
+    [catalog, query, slug],
   );
-  const letterGroups = useMemo(
-    () => groupTagsByLetter(visibleCatalog, labelOf, locale),
+  const directory = useMemo(() => {
+    const popularSlugs = new Set(popular.map((item) => item.slug));
+    const rest = visibleCatalog.filter((item) => !popularSlugs.has(item.slug));
+    return [...rest].sort((a, b) => labelOf(a.tag).localeCompare(labelOf(b.tag), locale));
+  }, [visibleCatalog, popular, language]);
+  const searchHits = useMemo(
+    () => [...visibleCatalog].sort((a, b) => labelOf(a.tag).localeCompare(labelOf(b.tag), locale)),
     [visibleCatalog, language],
   );
-  const showLetterJump = !query.trim() && letterGroups.length > 3;
 
   const taggedEvents = useMemo(() => {
     if (!slug) return [];
@@ -79,6 +75,14 @@ export default function TagsPageContent() {
     visibleIds: taggedEvents.map((event) => event.id),
   });
 
+  useEffect(() => {
+    if (!slug) return;
+    const id = window.setTimeout(() => {
+      document.getElementById('tag-events')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }, 80);
+    return () => window.clearTimeout(id);
+  }, [slug]);
+
   const chipClass = (active: boolean) =>
     cn(
       'filter-chip max-w-none shrink-0 whitespace-nowrap px-3 text-xs font-semibold border transition-colors rounded-full',
@@ -95,6 +99,7 @@ export default function TagsPageContent() {
         key={item.slug}
         to={active ? '/tags' : eventTagPath(item.tag)}
         aria-current={active ? 'page' : undefined}
+        aria-label={t(`${label}, ${item.count} εκδηλώσεις`, `${label}, ${item.count} events`)}
         title={`${label} · ${item.count}`}
         className={chipClass(active)}
       >
@@ -102,12 +107,17 @@ export default function TagsPageContent() {
           #
         </span>
         {label}
+        <span className={cn('ml-1 tabular-nums', active ? 'opacity-70' : 'text-ink-muted')}>
+          {item.count}
+        </span>
       </Link>
     );
   };
 
+  const searching = Boolean(query.trim());
+
   return (
-    <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6')}>
+    <div className={cn(PAGE_FILL, 'space-y-4 pb-32 md:pb-8')}>
       {slug ? (
         <Link
           to="/tags"
@@ -118,43 +128,24 @@ export default function TagsPageContent() {
         </Link>
       ) : null}
 
-      <header className="space-y-2">
+      <header className="space-y-1.5">
         <h1 className={cn(APP_TYPO.pageTitle, 'flex items-center gap-2 text-ink')}>
           <Hash className="h-5 w-5 shrink-0" aria-hidden />
-          {slug ? (
-            <>
-              <span aria-hidden className="text-ink-muted">
-                #
-              </span>
-              {selectedLabel || t('Ετικέτα', 'Tag')}
-            </>
-          ) : (
-            t('Ετικέτες', 'Tags')
-          )}
+          {slug ? selectedLabel || t('Ετικέτα', 'Tag') : t('Ετικέτες', 'Tags')}
         </h1>
         <p className={cn(APP_TYPO.pageSub, 'text-ink-muted')}>
           {slug
             ? t(
-                'Όλες οι εκδηλώσεις με αυτή την ετικέτα. Διάλεξε άλλη από το ευρετήριο από κάτω.',
-                'Every event with this tag. Pick another from the index below.',
+                `${taggedEvents.length} ${taggedEvents.length === 1 ? 'εκδήλωση' : 'εκδηλώσεις'}`,
+                `${taggedEvents.length} ${taggedEvents.length === 1 ? 'event' : 'events'}`,
               )
-            : t(
-                'Ευρετήριο των ετικετών που χρησιμοποιεί η πλατφόρμα. Πάτα μία για τις εκδηλώσεις της.',
-                'An index of tags used on the platform. Tap one to see its events.',
-              )}
+            : t('Πάτα μια ετικέτα για τις εκδηλώσεις της.', 'Tap a tag to see its events.')}
         </p>
-        {slug ? (
-          <p className="text-xs font-bold text-ink" aria-live="polite">
-            {t(
-              `${taggedEvents.length} ${taggedEvents.length === 1 ? 'εκδήλωση' : 'εκδηλώσεις'}`,
-              `${taggedEvents.length} ${taggedEvents.length === 1 ? 'event' : 'events'}`,
-            )}
-          </p>
-        ) : (
-          <p className="text-xs font-bold text-ink-muted">
+        {!slug ? (
+          <p className="text-xs font-medium text-ink-muted">
             {t(`${catalog.length} ετικέτες`, `${catalog.length} tags`)}
           </p>
-        )}
+        ) : null}
       </header>
 
       <div className="relative">
@@ -178,51 +169,28 @@ export default function TagsPageContent() {
         </section>
       )}
 
-      {showLetterJump && (
-        <nav
-          aria-label={t('Ευρετήριο γραμμάτων', 'Letter index')}
-          className="flex flex-wrap gap-1"
-        >
-          {letterGroups.map((group) => (
-            <button
-              key={group.letter}
-              type="button"
-              onClick={() => scrollToLetter(group.letter)}
-              className="inline-flex h-8 min-w-8 items-center justify-center rounded-lg px-1.5 text-xs font-bold text-ink-muted hover:bg-surface-raised hover:text-ink"
-            >
-              {group.letter}
-            </button>
-          ))}
-        </nav>
-      )}
-
-      {visibleCatalog.length === 0 ? (
-        <EmptyState
-          icon={Search}
-          title={t('Καμία ετικέτα δεν ταιριάζει', 'No tags match')}
-          description={t('Δοκίμασε άλλη λέξη ή καθάρισε την αναζήτηση.', 'Try another word or clear the search.')}
-          actionLabel={t('Καθαρισμός', 'Clear search')}
-          onAction={() => setQuery('')}
-        />
-      ) : query.trim() ? (
-        <section aria-label={t('Αποτελέσματα ετικετών', 'Tag results')}>
-          <div className="flex flex-wrap gap-1.5">{visibleCatalog.map(renderChip)}</div>
-        </section>
-      ) : (
-        <div className="space-y-4">
-          {letterGroups.map((group) => (
-            <section
-              key={group.letter}
-              id={`tag-letter-${group.letter}`}
-              className="scroll-mt-20"
-              aria-label={group.letter}
-            >
-              <h2 className={cn(APP_TYPO.sectionLabel, 'mb-2 text-ink-muted')}>{group.letter}</h2>
-              <div className="flex flex-wrap gap-1.5">{group.tags.map(renderChip)}</div>
-            </section>
-          ))}
-        </div>
-      )}
+      {!slug || searching ? (
+        visibleCatalog.length === 0 ? (
+          <EmptyState
+            icon={Search}
+            title={t('Καμία ετικέτα δεν ταιριάζει', 'No tags match')}
+            description={t('Δοκίμασε άλλη λέξη ή καθάρισε την αναζήτηση.', 'Try another word or clear the search.')}
+            actionLabel={t('Καθαρισμός', 'Clear search')}
+            onAction={() => setQuery('')}
+          />
+        ) : (
+          <section aria-label={t('Όλες οι ετικέτες', 'All tags')}>
+            {!searching ? (
+              <h2 className={cn(APP_TYPO.sectionLabel, 'mb-2 text-ink-muted')}>
+                {t('Όλες', 'All')}
+              </h2>
+            ) : null}
+            <div className="flex flex-wrap gap-1.5">
+              {(searching ? searchHits : directory).map(renderChip)}
+            </div>
+          </section>
+        )
+      ) : null}
 
       {slug ? (
         <div id="tag-events" className="scroll-mt-24 space-y-3 border-t border-border pt-4">
@@ -244,8 +212,8 @@ export default function TagsPageContent() {
                 icon={Hash}
                 title={t('Δεν υπάρχουν εκδηλώσεις με αυτή την ετικέτα', 'No events with this tag')}
                 description={t(
-                  'Διάλεξε άλλη ετικέτα από το ευρετήριο.',
-                  'Pick another tag from the index.',
+                  'Διάλεξε άλλη ετικέτα από την αναζήτηση ή γύρνα στο ευρετήριο.',
+                  'Pick another tag from search or go back to the index.',
                 )}
                 actionLabel={t('Όλες οι ετικέτες', 'All tags')}
                 onAction={() => navigate('/tags')}
@@ -259,11 +227,7 @@ export default function TagsPageContent() {
             )}
           </ResourceStateGate>
         </div>
-      ) : (
-        <p className={cn(APP_TYPO.body, 'text-ink-muted')}>
-          {t('Διάλεξε μια ετικέτα για να δεις τις εκδηλώσεις της.', 'Pick a tag to see its events.')}
-        </p>
-      )}
+      ) : null}
     </div>
   );
 }
