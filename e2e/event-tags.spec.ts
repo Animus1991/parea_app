@@ -46,7 +46,9 @@ test.describe('Event tags', () => {
     await expect(page.locator('#tag-events .nakamas-card')).not.toHaveCount(0);
 
     await page.getByRole('searchbox', { name: /Αναζήτηση ετικέτας|Search a tag/ }).fill('workshop');
-    await page.getByRole('link', { name: /Εργαστήριο|Workshop/ }).first().click();
+    const addWorkshop = page.getByRole('link', { name: /Προσθήκη Εργαστήριο|Add Workshop/ });
+    await expect(addWorkshop).toHaveAttribute('href', /t=nakamas-nights.*t=workshop|t=workshop.*t=nakamas-nights/);
+    await addWorkshop.click();
     await expect(page).toHaveURL(/t=nakamas-nights.*t=workshop|t=workshop.*t=nakamas-nights/);
     await expect(page.getByRole('heading', { level: 1, name: /Nakamas Nights/i })).toBeVisible();
     await expect(page.getByRole('heading', { level: 1, name: /Εργαστήριο|workshop/i })).toBeVisible();
@@ -118,7 +120,9 @@ test.describe('Event tags', () => {
     await page.goto('/tags');
     await page.getByRole('link', { name: /Κοινωνικά|Social/ }).first().click();
     await expect(page).toHaveURL(/\/tags\/social$/);
-    await page.getByRole('link', { name: /Δωρεάν|Free/ }).first().click();
+    const addFree = page.getByRole('link', { name: /Προσθήκη Δωρεάν|Add Free/ });
+    await expect(addFree).toHaveAttribute('href', /t=social.*t=free|t=free.*t=social/);
+    await addFree.click();
     await expect(page).toHaveURL(/t=social.*t=free|t=free.*t=social/);
     await expect(page.locator('#tag-events .nakamas-card')).not.toHaveCount(0);
     await page.getByRole('link', { name: /Αφαίρεση Κοινωνικά|Remove Social/ }).first().click();
