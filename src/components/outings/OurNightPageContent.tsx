@@ -26,6 +26,7 @@ import { groupStatusLabel } from '../../lib/outings';
 import { formatPlanWhen } from '../../lib/dateLocale';
 import { coverById, coversFor } from '../../lib/planCovers';
 import { eventStartMs, isDoorPerson, LATE_CANCEL_MS } from '../../store/outingsSlice';
+import { isFeedbackDue } from '../../lib/feedbackDue';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { Button } from '../common/Button';
 import { EmptyState } from '../common/EmptyState';
@@ -190,7 +191,9 @@ export default function OurNightPageContent() {
   const handsOver = group.members.length >= group.targetSize && Boolean(group.waitlist?.length);
   const closed = Boolean(group.checkInClosedAt);
   const myRecord = group.checkIns?.[me.id];
-  const canGiveFeedback = closed && myRecord && !feedbackSubmitted[event.id];
+  const skippedDoor = Boolean(closed && !myRecord);
+  const canGiveFeedback =
+    Boolean(me) && !skippedDoor && !feedbackSubmitted[event.id] && isFeedbackDue(event);
   const spotsLeft = Math.max(0, group.targetSize - group.members.length);
 
   return (
@@ -258,7 +261,7 @@ export default function OurNightPageContent() {
           className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border bg-surface-raised p-4"
         >
           <p id="night-feedback-title" className="flex items-center gap-2 text-sm font-bold text-ink">
-            <Star className="h-4 w-4" aria-hidden /> {t('Πώς πήγε η βραδιά;', 'How was the night?')}
+            <Star className="h-4 w-4" aria-hidden /> {t('Πώς πέρασες;', 'How was it?')}
           </p>
           <Button size="sm" onClick={() => navigate(`/history/feedback/${event.id}`)}>
             {t('Αξιολόγηση', 'Feedback')}

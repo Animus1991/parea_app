@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canAccessEvent } from './trust';
+import { canAccessEvent, computeReliabilityDelta } from './trust';
 import type { Event, User } from '../types';
 
 const event = (tier: Event['minTrustTierAccess']): Event =>
@@ -48,5 +48,12 @@ describe('canAccessEvent', () => {
     expect(gate.allowed).toBe(false);
     expect(gate.messageEn).toMatch(/hosting/i);
     expect(gate.messageEl).toMatch(/διοργάνωση/i);
+  });
+});
+
+describe('computeReliabilityDelta', () => {
+  it('does not punish the rater for a no-show flag on the mood form', () => {
+    expect(computeReliabilityDelta({ overallRating: 5 })).toBe(2);
+    expect(computeReliabilityDelta({ overallRating: 3 })).toBe(0);
   });
 });

@@ -350,16 +350,6 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
           );
         }
       }
-      // Fan-out so every arrived member (not only the host) gets the feedback loop.
-      const feedbackTargets = Array.from(new Set([me.id, ...arrivedIds]));
-      for (const uid of feedbackTargets) {
-        notifyMe(
-          'feedback',
-          'Η έξοδος ολοκληρώθηκε. Πες μας πώς πήγε — βοηθά την επόμενη παρέα.',
-          'The outing is done. Tell us how it went — it helps the next group.',
-          { groupId, eventId: group.eventId, forUserId: uid },
-        );
-      }
       return counts
         ? {
             ok: true,

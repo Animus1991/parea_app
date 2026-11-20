@@ -177,16 +177,16 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join' }: E
   const matchingPreview = getMatchingPreview(event, groups, users, currentUser);
   const [imgError, setImgError] = useState(false);
   const [showMatchWhy, setShowMatchWhy] = useState(false);
-  const pendingFeedbackId = useStore((s) => {
+  const thisEventPending = useStore((s) => {
     void s.feedbackSubmitted;
     void s.groups;
     void s.events;
-    return s.getPendingFeedbackEventId();
+    return s.getPendingFeedbackEventIds().includes(event.id);
   });
   const joinState = getEventJoinState(event, {
     currentUser,
     groups,
-    pendingFeedbackId,
+    pendingFeedbackId: thisEventPending ? event.id : null,
   });
   const matchExplanation = currentUser ? explainEventMatch(currentUser, event, language) : null;
 

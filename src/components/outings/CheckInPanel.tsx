@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Camera, CameraOff, CheckCircle2, Circle, DoorClosed, KeyRound, Undo2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
@@ -20,11 +19,10 @@ function barcodeDetector(): Detector | null {
  * Host's door list (DICE / Luma / Meetup, adapted): scan a ticket QR (where
  * the browser can), type the 6-digit code, or tick someone by hand. Closing
  * check-in rewards arrivals and records absences — only if 2+ people were
- * confirmed — and opens feedback.
+ * confirmed. Night feedback waits until ~45 minutes after the outing ends.
  */
 export function CheckInPanel({ group, members }: { group: Group; members: User[] }) {
   const { t } = useLanguage();
-  const navigate = useNavigate();
   const checkInMember = useStore((s) => s.checkInMember);
   const undoCheckIn = useStore((s) => s.undoCheckIn);
   const closeCheckIn = useStore((s) => s.closeCheckIn);
@@ -193,13 +191,7 @@ export function CheckInPanel({ group, members }: { group: Group; members: User[]
                     say(result);
                     setConfirmClose(false);
                     setScanning(false);
-                    toast.success(t(result.el, result.en), {
-                      action: {
-                        // Host often has no OurNight feedback banner — land on the form.
-                        label: t('Αξιολόγηση', 'Feedback'),
-                        onClick: () => navigate(`/history/feedback/${group.eventId}`),
-                      },
-                    });
+                    toast.success(t(result.el, result.en));
                   }}
                 >
                   {t('Κλείσιμο check-in', 'Close check-in')}
