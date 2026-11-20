@@ -44,9 +44,10 @@ export function HomeQuietRevealBar({
               : 'border-border bg-surface-raised text-ink',
           )}
         >
+          {/* Self-explanatory labels: what is hidden and why, in the chip itself. */}
           {showConflicts
-            ? t('Κρύψε συγκρούσεις', 'Hide conflicts')
-            : t(`Συγκρούσεις (${conflictCount})`, `Conflicts (${conflictCount})`)}
+            ? t('Κρύψε όσες πέφτουν πάνω σε σχέδιά σου', 'Hide clashes with your plans')
+            : t(`Ίδια ώρα με σχέδιά σου (${conflictCount})`, `Same time as your plans (${conflictCount})`)}
         </button>
       )}
       {fullJoinedCount > 0 && (
@@ -62,8 +63,8 @@ export function HomeQuietRevealBar({
           )}
         >
           {showFullJoined
-            ? t('Κρύψε άλλες', 'Hide more')
-            : t(`Άλλες (${fullJoinedCount})`, `More (${fullJoinedCount})`)}
+            ? t('Κρύψε πλήρεις & δικές σου', 'Hide full & yours')
+            : t(`Πλήρεις ή ήδη μέσα (${fullJoinedCount})`, `Full or already in (${fullJoinedCount})`)}
         </button>
       )}
       {pastCount > 0 && (

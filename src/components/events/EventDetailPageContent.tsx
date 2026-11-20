@@ -31,10 +31,7 @@ function EventDetailQuickInfoBlock({
 }) {
   const { t } = useLanguage();
   const groups = useStore((s) => s.groups);
-  const currentUser = useStore((s) => s.currentUser);
   const { content } = getEventDetailContentTokens(accent, darkSurface);
-  const isParticipant = isUserEventParticipant(event.id, currentUser, groups);
-  const meetingPoint = groups.find((g) => g.eventId === event.id && g.meetingPoint)?.meetingPoint;
   const info = buildEventQuickInfo(event, groups, t);
   const shell = darkSurface
     ? 'rounded-2xl border border-cyan-800/40 bg-cyan-950/30 shadow-soft p-4 md:p-5'
@@ -76,11 +73,6 @@ function EventDetailQuickInfoBlock({
           </div>
         ))}
       </div>
-      {isParticipant && meetingPoint && (
-        <p className={cn('card-copy-sm font-medium mt-3 pt-3 border-t border-cyan-200/50', content.metaLabel)}>
-          {t('Σημείο συνάντησης', 'Meeting point')}: {meetingPoint}
-        </p>
-      )}
     </div>
   );
 }

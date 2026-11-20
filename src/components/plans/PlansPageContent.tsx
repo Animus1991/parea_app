@@ -134,7 +134,11 @@ export default function PlansPageContent() {
             <p className={cn(PLANS_TYPO.nextTitle, p.head)}>{nextEvent.title}</p>
           </div>
           <span className={cn('shrink-0 text-xs font-bold px-2.5 py-1 rounded-full', p.statBg, p.statVal)}>
-            {nextEventDays <= 0 ? t('Σήμερα', 'Today') : `${t('σε', 'in')} ${nextEventDays}${t('μ', 'd')}`}
+            {nextEventDays <= 0
+              ? t('Σήμερα', 'Today')
+              : nextEventDays === 1
+                ? t('Αύριο', 'Tomorrow')
+                : t(`σε ${nextEventDays} μέρες`, `in ${nextEventDays} days`)}
           </span>
         </button>
       )}
@@ -237,8 +241,8 @@ export default function PlansPageContent() {
                   onClick={() => navigate(`/night/${group.id}`)}
                   className="inline-flex btn-gradient !py-1.5 min-h-8 items-center justify-center gap-1.5 self-start"
                 >
+                  {/* «Επιβεβαιωμένο» is already on the photo — the button just says where it goes. */}
                   <PartyPopper className="h-3.5 w-3.5" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
-                  {group.status === 'confirmed' ? t(' · έτοιμη', ' · ready') : ''}
                 </button>
               )}
 
