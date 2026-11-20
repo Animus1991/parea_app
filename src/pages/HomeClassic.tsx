@@ -24,6 +24,7 @@ import { CollectionsRail } from "../components/outings/CollectionsRail";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
 import { emptyHomeSchedule, isScheduleFilterActive } from "../lib/homeScheduleFilter";
+import { discoverFeedImageDepth } from "../lib/discoverCardImagePreview";
 
 export default function HomeClassic() {
   const h = useHomeTheme();
@@ -259,7 +260,7 @@ export default function HomeClassic() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <EventCard event={event} />
+                <EventCard event={event} imageDepth={discoverFeedImageDepth(index)} />
               </motion.div>
             ))
           )}
