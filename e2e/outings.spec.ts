@@ -160,4 +160,17 @@ test.describe('Group outings', () => {
     await expect(img).toHaveAttribute('src', /\/covers\/coffee\.jpg/);
     await expect(img).toHaveJSProperty('naturalWidth', 1200);
   });
+
+  test('«Ξανά μαζί»: a mutual mark is revealed and the stranger becomes a Nakama', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/history/feedback/e4');
+    await page.getByRole('button', { name: /Ωραία|Good/ }).first().click();
+    const again = page.getByRole('button', { name: /^EL Elena$|Elena/ }).filter({ hasText: 'Elena' }).first();
+    await again.click();
+    await expect(again).toHaveAttribute('aria-pressed', 'true');
+    await page.getByRole('button', { name: /^Αποστολή$|^Send$/ }).click();
+    await expect(page.getByRole('status').filter({ hasText: /Elena/ })).toContainText(/είστε πλέον Nakamas|you are now Nakamas/);
+    await page.goto('/connections');
+    await expect(page.getByText('Elena').first()).toBeVisible();
+  });
 });
