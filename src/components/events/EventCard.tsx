@@ -14,7 +14,6 @@ import {
   Link2,
   X,
   Crown,
-  HelpCircle,
   UserPlus,
   CalendarPlus,
   MessageSquare,
@@ -30,8 +29,7 @@ import { useLanguage } from "../../lib/i18n";
 import { cn } from "../../lib/utils";
 import { stopBubbling } from "../../lib/a11y";
 import { EVENT_CARD_TYPO } from "../../lib/typographyTokens";
-import { computeMatchScore, getMatchingPreview } from "../../lib/matching";
-import { explainEventMatch } from "../../lib/matchingExplain";
+import { getMatchingPreview } from "../../lib/matching";
 import {
   formatEventPrice,
   formatLocationArea,
@@ -40,7 +38,6 @@ import {
   translateEventTag,
 } from "../../lib/eventDisplay";
 import { isDarkTheme } from "../../lib/themes";
-import { MatchExplainChips } from "./MatchExplainChips";
 import { getEventGroupProgress } from "../../lib/groupUtils";
 import { reliabilityBadge, tierLabelEl, tierLabelEn } from "../../lib/trust";
 import { GroupProgressBar } from "./GroupProgressBar";
@@ -179,10 +176,8 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
   const canJoinEvent = useStore((state) => state.canJoinEvent);
   const isSaved = savedEvents.includes(event.id);
   const groupProgress = getEventGroupProgress(event, groups);
-  const matchScore = currentUser ? computeMatchScore(currentUser, event) : null;
   const matchingPreview = getMatchingPreview(event, groups, users, currentUser);
   const [imgError, setImgError] = useState(false);
-  const [showMatchWhy, setShowMatchWhy] = useState(false);
   const thisEventPending = useStore((s) => {
     void s.feedbackSubmitted;
     void s.groups;
@@ -194,8 +189,6 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
     groups,
     pendingFeedbackId: thisEventPending ? event.id : null,
   });
-  const matchExplanation = currentUser ? explainEventMatch(currentUser, event, language) : null;
-
   const isDark = isDarkTheme(theme);
   const accent = theme === 'vibrant' || theme === 'vibrant-dark' ? 'fuchsia' : theme === 'bento' || theme === 'bento-dark' ? 'indigo' : theme === 'neon' || theme === 'neon-dark' ? 'emerald' : 'cyan';
   const accentText = isDark ? (accent === 'fuchsia' ? 'text-fuchsia-400' : accent === 'indigo' ? 'text-indigo-400' : accent === 'emerald' ? 'text-emerald-400' : 'text-cyan-400') : (accent === 'fuchsia' ? 'text-fuchsia-600' : accent === 'indigo' ? 'text-indigo-600' : accent === 'emerald' ? 'text-emerald-600' : 'text-brand');
@@ -339,11 +332,11 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
   const photoWell = "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white";
 
   const titleRow = (onPhoto: boolean) => (
-    <div className="flex items-center justify-between gap-3">
+    <div className="flex items-center gap-3">
       <h3
         className={cn(
           EVENT_CARD_TYPO.title,
-          "min-w-0 flex-1 pr-1 transition-colors line-clamp-2",
+          "min-w-0 flex-1 transition-colors line-clamp-2",
           onPhoto
             ? "text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]"
             : cn(
@@ -374,46 +367,6 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
           {event.title}
         </Link>
       </h3>
-      {currentUser && matchScore != null && (
-        <button
-          type="button"
-          className={cn(
-            "flex min-h-11 shrink-0 flex-col items-center justify-center self-center rounded-xl border px-3 py-1",
-            onPhoto
-              ? "border-white/25 bg-white/15 text-white backdrop-blur-md"
-              : isDark
-                ? "border-white/10 bg-white/[0.04]"
-                : "border-gray-100 bg-gray-50",
-          )}
-          title={t("Γιατί αυτό το ταίριασμα", "Why this match")}
-          aria-expanded={showMatchWhy}
-          aria-label={t(`${matchScore}% ταίριασμα — άνοιγμα εξήγησης`, `${matchScore}% match — open explanation`)}
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowMatchWhy((v) => !v);
-          }}
-        >
-          <span
-            className={cn(
-              EVENT_CARD_TYPO.matchScore,
-              "inline-flex items-center gap-1 font-bold tabular-nums",
-              onPhoto ? "text-white" : accent === 'fuchsia' ? headColor : accentText,
-            )}
-          >
-            {matchScore}%
-            <HelpCircle className="h-3.5 w-3.5 opacity-70" aria-hidden />
-          </span>
-          <span
-            className={cn(
-              EVENT_CARD_TYPO.matchLabel,
-              "mt-0.5 whitespace-nowrap opacity-80",
-              onPhoto ? "text-white" : mutedColor,
-            )}
-          >
-            {t("Ταίριασμα", "Match")}
-          </span>
-        </button>
-      )}
     </div>
   );
 
@@ -448,24 +401,12 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
     </div>
   );
 
-  const hintRow = (onPhoto: boolean) => (
-    <>
-      {showMatchWhy && matchExplanation && (matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]) && (
-        <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium", onPhoto ? "text-white/90" : accentText)}>
-          {matchExplanation.sharedStrengths[0] || matchExplanation.mismatchFlags[0]}
-        </p>
-      )}
-      {!showMatchWhy && matchingPreview ? (
-        <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium opacity-90", onPhoto ? "text-white/90" : accentText)}>
-          {t(matchingPreview.labelEl, matchingPreview.labelEn)}
-        </p>
-      ) : (
-        !showMatchWhy && currentUser && (
-          <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className="text-left" />
-        )
-      )}
-    </>
-  );
+  const hintRow = (onPhoto: boolean) =>
+    matchingPreview ? (
+      <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium opacity-90", onPhoto ? "text-white/90" : accentText)}>
+        {t(matchingPreview.labelEl, matchingPreview.labelEn)}
+      </p>
+    ) : null;
 
   const organizerRow = (onPhoto: boolean) =>
     displayOrganizer ? (
