@@ -69,7 +69,7 @@ interface EventCardProps {
   emphasis?: 'join' | 'host';
   /**
    * How far the photo reaches. Default `photo` is the current card.
-   * `title` / `facts` / `organizer` overlay those rows on the image.
+   * `title` / `facts` / `organizer` / `roomy` overlay those rows on the image.
    */
   imageDepth?: EventCardImageDepth;
 }
@@ -324,12 +324,18 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
   const coverFacts =
     imageDepth === 'facts' ||
     imageDepth === 'organizer' ||
+    imageDepth === 'roomy' ||
     imageDepth === 'divider' ||
     imageDepth === 'full';
   const coverOrganizer =
-    imageDepth === 'organizer' || imageDepth === 'divider' || imageDepth === 'full';
+    imageDepth === 'organizer' ||
+    imageDepth === 'roomy' ||
+    imageDepth === 'divider' ||
+    imageDepth === 'full';
+  const coverRoomy = imageDepth === 'roomy';
   const coverProgress = imageDepth === 'divider' || imageDepth === 'full';
   const coverFull = imageDepth === 'full';
+  const photoFillsCard = coverProgress || coverRoomy;
   const photoWell = "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white";
 
   const titleRow = (onPhoto: boolean) => (
@@ -523,8 +529,9 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         className={cn(
           "relative w-full overflow-hidden bg-gray-100",
           !coverTitle && "h-48 shrink-0",
-          coverProgress && "flex min-h-0 flex-1 flex-col",
+          photoFillsCard && "flex min-h-0 flex-1 flex-col",
           coverFull && "h-full",
+          !coverFull && "rounded-b-2xl",
         )}
         data-image-depth={imageDepth}
       >
@@ -632,13 +639,14 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
           <div
             className={cn(
               "relative z-10 flex flex-col gap-3.5 px-4 pt-1 pb-4",
-              coverProgress && "flex-1",
+              photoFillsCard && "flex-1",
             )}
           >
             {titleRow(true)}
             {coverFacts && factsRow(true)}
             {coverOrganizer && hintRow(true)}
             {coverOrganizer && organizerRow(true)}
+            {coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
             {coverProgress && (
               <div className="mt-auto border-t border-white/25 pt-4">
                 <GroupProgressBar
@@ -701,7 +709,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
 
       {/* Content — spaced blocks, aligned icon wells, no middot soup */}
       {!coverFull && (
-      <div className={cn("flex flex-col gap-3.5 px-4 pb-4", coverProgress ? "shrink-0 pt-3" : "flex-1 pt-4")}>
+      <div className={cn("flex flex-col gap-3.5 px-4 pb-4", photoFillsCard ? "shrink-0 pt-3" : "flex-1 pt-4")}>
         {!coverTitle && titleRow(false)}
         {!coverFacts && factsRow(false)}
         {!coverOrganizer && hintRow(false)}

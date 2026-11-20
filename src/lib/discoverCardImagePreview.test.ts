@@ -17,8 +17,16 @@ describe('parseCardImageDepth', () => {
 });
 
 describe('CARD_IMAGE_DEPTHS', () => {
-  it('offers all six depths for phone and web preview', () => {
-    expect(CARD_IMAGE_DEPTHS).toEqual(['photo', 'title', 'facts', 'organizer', 'divider', 'full']);
+  it('offers all preview depths for phone and web', () => {
+    expect(CARD_IMAGE_DEPTHS).toEqual([
+      'photo',
+      'title',
+      'facts',
+      'organizer',
+      'roomy',
+      'divider',
+      'full',
+    ]);
   });
 });
 

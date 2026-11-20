@@ -2,7 +2,7 @@ import { readStorage, writeStorage } from './safeUrl';
 
 /**
  * Temporary Discover preview: a feed picker applies one photo depth to every
- * card. Phone and web both offer all 6 depths while we compare. Remove this
+ * card. Phone and web both offer every depth while we compare. Remove this
  * file and the `imageDepth` wiring to revert.
  */
 export type EventCardImageDepth =
@@ -10,6 +10,7 @@ export type EventCardImageDepth =
   | 'title'
   | 'facts'
   | 'organizer'
+  | 'roomy'
   | 'divider'
   | 'full';
 
@@ -20,6 +21,7 @@ export const CARD_IMAGE_DEPTHS = [
   'title',
   'facts',
   'organizer',
+  'roomy',
   'divider',
   'full',
 ] as const satisfies readonly EventCardImageDepth[];
@@ -29,6 +31,7 @@ export const CARD_IMAGE_DEPTH_LABELS: Record<EventCardImageDepth, [string, strin
   title: ['Τίτλος', 'Title'],
   facts: ['Στοιχεία', 'Facts'],
   organizer: ['Διοργανωτής', 'Organizer'],
+  roomy: ['Άνετη', 'Roomy'],
   divider: ['Πρόοδος', 'Progress'],
   full: ['Πλήρης', 'Full'],
 };

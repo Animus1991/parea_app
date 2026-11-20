@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
 import { enterDemoGuest } from './a11y-helpers';
 
-const ALL_DEPTHS = ['photo', 'title', 'facts', 'organizer', 'divider', 'full'] as const;
+const ALL_DEPTHS = ['photo', 'title', 'facts', 'organizer', 'roomy', 'divider', 'full'] as const;
 
 test.describe('Discover card image picker', () => {
-  test('phone and web both offer six depths and apply the choice to every card', async ({ page }) => {
+  test('phone and web both offer every depth and apply the choice to every card', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await enterDemoGuest(page);
     await expect(page.getByRole('button', { name: /Μενού λογαριασμού|Account menu/ })).toBeVisible();
 
     const picker = page.locator('[data-card-image-picker]');
     await expect(picker).toBeVisible({ timeout: 15_000 });
-    await expect(picker.getByRole('radio')).toHaveCount(6);
+    await expect(picker.getByRole('radio')).toHaveCount(ALL_DEPTHS.length);
     for (const option of ALL_DEPTHS) {
       await expect(picker.locator(`[data-card-image-option="${option}"]`)).toBeVisible();
     }
@@ -28,11 +28,16 @@ test.describe('Discover card image picker', () => {
     await expect(depths.first().getByRole('progressbar')).toBeVisible();
 
     await page.setViewportSize({ width: 1280, height: 800 });
-    await expect(picker.getByRole('radio')).toHaveCount(6);
+    await expect(picker.getByRole('radio')).toHaveCount(ALL_DEPTHS.length);
     await picker.locator('[data-card-image-option="organizer"]').click();
     for (let i = 0; i < (await depths.count()); i++) {
       await expect(depths.nth(i)).toHaveAttribute('data-image-depth', 'organizer');
     }
+    const organizerH = await depths.first().evaluate((el) => el.getBoundingClientRect().height);
+    await picker.locator('[data-card-image-option="roomy"]').click();
+    await expect(depths.first()).toHaveAttribute('data-image-depth', 'roomy');
+    const roomyH = await depths.first().evaluate((el) => el.getBoundingClientRect().height);
+    expect(roomyH).toBeGreaterThan(organizerH + 24);
   });
 
   test('full photo fills the card; progress photo stops before the CTA', async ({ page }) => {
