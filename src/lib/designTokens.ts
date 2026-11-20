@@ -301,7 +301,7 @@ const INDIGO_DARK: AccentTone = {
   profileSelectBg: 'bg-gray-800 border-gray-700',
   settingCard: 'bg-gray-800/50 border-gray-700/50',
   avatarBg: 'bg-indigo-900/30 border-indigo-700',
-  avatarText: 'text-indigo-400',
+  avatarText: 'text-indigo-300',
 };
 
 const EMERALD_LIGHT: AccentTone = {

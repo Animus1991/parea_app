@@ -151,7 +151,8 @@ const TOKENS: Record<LoginVariant, LoginVariantTokens> = {
     wordmarkClass: 'text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400',
     userBtnClass: cn(DARK_USER_BTN, 'hover:bg-indigo-900/30 hover:border-indigo-800'),
     avatarBg: 'bg-indigo-900/50',
-    avatarText: 'text-indigo-400',
+    // Initials show when a photo does not load; indigo-300 keeps them readable (AA).
+    avatarText: 'text-indigo-300',
     nameHoverClass: 'group-hover:text-indigo-400',
     mutedText: 'text-gray-300',
     dividerLine: 'border-gray-700',
