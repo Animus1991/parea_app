@@ -320,9 +320,16 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
     "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
     isDark ? "bg-white/[0.06] text-gray-400" : "bg-gray-50 text-gray-500",
   );
-  const coverTitle = imageDepth === 'title' || imageDepth === 'facts' || imageDepth === 'organizer';
-  const coverFacts = imageDepth === 'facts' || imageDepth === 'organizer';
-  const coverOrganizer = imageDepth === 'organizer';
+  const coverTitle = imageDepth !== 'photo';
+  const coverFacts =
+    imageDepth === 'facts' ||
+    imageDepth === 'organizer' ||
+    imageDepth === 'divider' ||
+    imageDepth === 'full';
+  const coverOrganizer =
+    imageDepth === 'organizer' || imageDepth === 'divider' || imageDepth === 'full';
+  const coverAboveProgress = imageDepth === 'divider' || imageDepth === 'full';
+  const coverFull = imageDepth === 'full';
   const photoWell = "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white";
 
   const titleRow = (onPhoto: boolean) => (
@@ -516,6 +523,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         className={cn(
           "relative w-full overflow-hidden bg-gray-100 shrink-0",
           !coverTitle && "h-48",
+          coverFull && "flex flex-col",
         )}
         data-image-depth={imageDepth}
       >
@@ -546,9 +554,11 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         <div
           className={cn(
             "absolute inset-0",
-            coverTitle
-              ? "bg-gradient-to-t from-black/75 via-black/30 to-transparent"
-              : "bg-gradient-to-t from-black/50 via-black/0",
+            coverFull
+              ? "bg-gradient-to-t from-black/80 via-black/40 to-black/10"
+              : coverTitle
+                ? "bg-gradient-to-t from-black/75 via-black/30 to-transparent"
+                : "bg-gradient-to-t from-black/50 via-black/0",
           )}
         />
 
@@ -618,24 +628,84 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         </div>
 
         {coverTitle && (
-          <div className="relative z-10 flex flex-col gap-3.5 px-4 pb-4 pt-1">
+          <div
+            className={cn(
+              "relative z-10 flex flex-col gap-3.5 px-4 pt-1",
+              coverFull ? "flex-1 pb-4" : coverAboveProgress ? "pb-3" : "pb-4",
+            )}
+          >
             {titleRow(true)}
             {coverFacts && factsRow(true)}
             {coverOrganizer && hintRow(true)}
             {coverOrganizer && organizerRow(true)}
+            {coverFull && (
+              <div className="mt-auto border-t border-white/25 pt-4">
+                <GroupProgressBar
+                  current={groupProgress.current}
+                  target={groupProgress.target}
+                  className="mb-3"
+                  onPhoto
+                />
+                {groupProgress.discountUnlocked && event.groupDiscount && (
+                  <p className={cn(EVENT_CARD_TYPO.safetyLabel, "mb-2.5 text-emerald-200")}>
+                    -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
+                  </p>
+                )}
+                <div className={cn("flex items-center gap-2", showNightTools ? "justify-between" : "justify-end")}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (joinState === 'rate') {
+                        navigate(`/history/feedback/${event.id}`);
+                        return;
+                      }
+                      if (joinState === 'view' || (joinState === 'chat' && !userGroup)) {
+                        navigate(`/events/${event.id}`);
+                        return;
+                      }
+                      if (joinState === 'chat' && userGroup) {
+                        navigate(`/chat/${userGroup.id}`);
+                        return;
+                      }
+                      const gate = canJoinEvent(event.id);
+                      if (!gate.ok) {
+                        toast.error(t(gate.messageEl, gate.messageEn));
+                        if (gate.reason === 'feedback') {
+                          const pending = useStore.getState().getPendingFeedbackEventId();
+                          if (pending) navigate(`/history/feedback/${pending}`);
+                        }
+                        return;
+                      }
+                      navigate(`/events/${event.id}/join`);
+                    }}
+                    className={cn("min-h-9 shrink-0 whitespace-nowrap rounded-full px-5 py-2 text-white font-semibold", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
+                  >
+                    {joinState === 'rate'
+                      ? t('Αξιολόγηση', 'Rate')
+                      : joinState === 'view'
+                        ? t('Προβολή', 'View')
+                        : joinState === 'chat'
+                          ? t('Η βραδιά μας', 'Our night')
+                          : t('Βρες παρέα', 'Find company')}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
 
       {/* Content — spaced blocks, aligned icon wells, no middot soup */}
-      <div className="flex flex-1 flex-col gap-3.5 px-4 py-4">
+      {!coverFull && (
+      <div className={cn("flex flex-1 flex-col gap-3.5 px-4 pb-4", coverAboveProgress ? "pt-0" : "pt-4")}>
         {!coverTitle && titleRow(false)}
         {!coverFacts && factsRow(false)}
         {!coverOrganizer && hintRow(false)}
         {!coverOrganizer && organizerRow(false)}
 
         {/* Platform event — seeks a group organizer. Hosting is primary only in the host rail. */}
-        {seeksHost && joinState === 'join' && (
+        {!coverAboveProgress && seeksHost && joinState === 'join' && (
           <div className={cn(
             "rounded-2xl p-3.5 border",
             emphasis === 'host'
@@ -681,7 +751,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         )}
 
         {/* Group progress + actions */}
-        <div className={cn("mt-auto border-t pt-4", borderSub)}>
+        <div className={cn("mt-auto border-t pt-4", coverAboveProgress ? "border-gray-100" : borderSub)}>
           <GroupProgressBar
             current={groupProgress.current}
             target={groupProgress.target}
@@ -773,6 +843,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
           </div>
         </div>
       </div>
+      )}
 
       <div {...stopBubbling} className="contents">
         <BottomSheet

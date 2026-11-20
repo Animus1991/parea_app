@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { enterDemoGuest } from './a11y-helpers';
 
 test.describe('Discover card image preview', () => {
-  test('first three feed cards try title, facts, organizer; the rest stay photo', async ({ page }) => {
+  test('first five feed cards try each photo depth; later cards stay photo', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await enterDemoGuest(page);
     await expect(page.getByRole('button', { name: /Μενού λογαριασμού|Account menu/ })).toBeVisible();
@@ -11,6 +11,10 @@ test.describe('Discover card image preview', () => {
     await expect(depths.nth(0)).toHaveAttribute('data-image-depth', 'title');
     await expect(depths.nth(1)).toHaveAttribute('data-image-depth', 'facts');
     await expect(depths.nth(2)).toHaveAttribute('data-image-depth', 'organizer');
-    await expect(depths.nth(3)).toHaveAttribute('data-image-depth', 'photo');
+    await expect(depths.nth(3)).toHaveAttribute('data-image-depth', 'divider');
+    await expect(depths.nth(4)).toHaveAttribute('data-image-depth', 'full');
+    if ((await depths.count()) > 5) {
+      await expect(depths.nth(5)).toHaveAttribute('data-image-depth', 'photo');
+    }
   });
 });
