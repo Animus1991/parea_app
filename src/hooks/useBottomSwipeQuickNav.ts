@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
 import { useLocation } from 'react-router-dom';
 import {
   BOTTOM_SWIPE_QUICK_NAV_ENABLED,
-  isBottomSwipeOrigin,
+  isBottomSwipeGestureStart,
+  isDownwardCloseSwipe,
   isUpwardOpenSwipe,
   suppressClickOnce,
 } from '../lib/bottomSwipeQuickNav';
@@ -15,9 +16,10 @@ type Point = { x: number; y: number };
 
 /**
  * Swipe-up from the existing bottom chrome (tabs + dock) opens the page grid.
+ * Swipe-down on the expanded sheet (not the dimmed page) closes it.
  *
  * Phones use Touch Events: iOS cancels Pointer Events when the system home
- * gesture steals the finger, which previously aborted the open. We open as
+ * gesture steals the finger, which previously aborted the open. We act as
  * soon as the swipe crosses the threshold — including on touchcancel /
  * pointercancel — so the OS can take the rest of the gesture.
  */
@@ -49,38 +51,35 @@ export function useBottomSwipeQuickNav(): {
     if (!BOTTOM_SWIPE_QUICK_NAV_ENABLED) return;
 
     let start: Point | null = null;
-    let opened = false;
+    let acted = false;
     let owner: 'touch' | 'mouse' | null = null;
     let last: Point | null = null;
 
-    const tryOpen = (point: Point) => {
-      if (!start || opened || openRef.current) return false;
+    const tryAct = (point: Point) => {
+      if (!start || acted) return false;
       if (desktopRef.current) return false;
-      if (!isUpwardOpenSwipe({ dx: point.x - start.x, dy: point.y - start.y })) return false;
+      const delta = { dx: point.x - start.x, dy: point.y - start.y };
+      if (openRef.current) {
+        if (!isDownwardCloseSwipe(delta)) return false;
+        acted = true;
+        suppressClickOnce(undefined, 400);
+        setOpen(false);
+        return true;
+      }
+      if (!isUpwardOpenSwipe(delta)) return false;
       if (hasOpenOverlay()) return false;
-      opened = true;
-      // Swallow the click that follows the finger-up — it may land on a tile
-      // that just appeared under the thumb, or on the tab the swipe started on.
+      acted = true;
       suppressClickOnce(undefined, 400);
       setOpen(true);
       return true;
     };
 
-    const tryCloseFromTap = (point: Point) => {
-      if (!openRef.current || !start) return;
-      if (isUpwardOpenSwipe({ dx: point.x - start.x, dy: point.y - start.y })) return;
-      setOpen(false);
-    };
-
     const finish = (point: Point | null) => {
       const at = point ?? last;
-      if (at) {
-        if (openRef.current) tryCloseFromTap(at);
-        else tryOpen(at);
-      }
+      if (at) tryAct(at);
       start = null;
       last = null;
-      opened = false;
+      acted = false;
       owner = null;
       window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchend', onTouchEnd);
@@ -96,7 +95,7 @@ export function useBottomSwipeQuickNav(): {
       if (!t) return;
       last = { x: t.clientX, y: t.clientY };
       if (event.cancelable) event.preventDefault();
-      tryOpen(last);
+      tryAct(last);
     };
 
     const onTouchEnd = (event: TouchEvent) => {
@@ -108,7 +107,7 @@ export function useBottomSwipeQuickNav(): {
     const onMouseMove = (event: PointerEvent) => {
       if (owner !== 'mouse' || event.pointerType !== 'mouse') return;
       last = { x: event.clientX, y: event.clientY };
-      tryOpen(last);
+      tryAct(last);
     };
 
     const onMouseUp = (event: PointerEvent) => {
@@ -119,10 +118,10 @@ export function useBottomSwipeQuickNav(): {
     const onTouchStart = (event: TouchEvent) => {
       if (desktopRef.current || owner) return;
       if (event.touches.length !== 1) return;
-      if (!isBottomSwipeOrigin(event.target)) return;
+      if (!isBottomSwipeGestureStart(event.target, openRef.current)) return;
       const t = event.touches[0];
       start = last = { x: t.clientX, y: t.clientY };
-      opened = false;
+      acted = false;
       owner = 'touch';
       window.addEventListener('touchmove', onTouchMove, { passive: false });
       window.addEventListener('touchend', onTouchEnd);
@@ -132,9 +131,9 @@ export function useBottomSwipeQuickNav(): {
     const onPointerDown = (event: PointerEvent) => {
       if (desktopRef.current || owner) return;
       if (event.pointerType !== 'mouse' || !event.isPrimary || event.button !== 0) return;
-      if (!isBottomSwipeOrigin(event.target)) return;
+      if (!isBottomSwipeGestureStart(event.target, openRef.current)) return;
       start = last = { x: event.clientX, y: event.clientY };
-      opened = false;
+      acted = false;
       owner = 'mouse';
       window.addEventListener('pointermove', onMouseMove);
       window.addEventListener('pointerup', onMouseUp);

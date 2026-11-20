@@ -13,8 +13,20 @@ export const BOTTOM_SWIPE_QUICK_NAV_ENABLED = true;
 /** Mark the existing bottom chrome as the swipe-up start zone (no extra UI). */
 export const BOTTOM_SWIPE_ORIGIN_SELECTOR = '[data-bottom-swipe-origin]';
 
+/** The expanded sheet only — swipe-down close does not use the dimmed page. */
+export const BOTTOM_SWIPE_SHEET_SELECTOR = '[data-bottom-swipe-sheet]';
+
 export function isBottomSwipeOrigin(target: EventTarget | null): boolean {
   return target instanceof Element && Boolean(target.closest(BOTTOM_SWIPE_ORIGIN_SELECTOR));
+}
+
+export function isBottomSwipeSheet(target: EventTarget | null): boolean {
+  return target instanceof Element && Boolean(target.closest(BOTTOM_SWIPE_SHEET_SELECTOR));
+}
+
+/** Closed: swipe up from the tabs. Open: swipe down only on the sheet itself. */
+export function isBottomSwipeGestureStart(target: EventTarget | null, sheetOpen: boolean): boolean {
+  return sheetOpen ? isBottomSwipeSheet(target) : isBottomSwipeOrigin(target);
 }
 
 /** Upward movement (px) required before a gesture opens the sheet. */

@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   BOTTOM_TAB_PATHS,
   QUICK_NAV_TILES,
+  isBottomSwipeGestureStart,
   isBottomSwipeOrigin,
+  isBottomSwipeSheet,
   isDownwardCloseSwipe,
   isUpwardOpenSwipe,
   quickNavDestinations,
@@ -73,5 +75,25 @@ describe('isBottomSwipeOrigin', () => {
     expect(isBottomSwipeOrigin(nav)).toBe(true);
     expect(isBottomSwipeOrigin(elsewhere)).toBe(false);
     expect(isBottomSwipeOrigin(null)).toBe(false);
+  });
+});
+
+describe('isBottomSwipeSheet / gesture start', () => {
+  it('closes only from the expanded sheet, not the dimmed page or the tabs', () => {
+    const sheet = document.createElement('div');
+    sheet.setAttribute('data-bottom-swipe-sheet', '');
+    const tile = document.createElement('a');
+    sheet.appendChild(tile);
+    const nav = document.createElement('div');
+    nav.setAttribute('data-bottom-swipe-origin', '');
+    const dimmed = document.createElement('button');
+    expect(isBottomSwipeSheet(tile)).toBe(true);
+    expect(isBottomSwipeSheet(nav)).toBe(false);
+    expect(isBottomSwipeSheet(dimmed)).toBe(false);
+    expect(isBottomSwipeGestureStart(nav, false)).toBe(true);
+    expect(isBottomSwipeGestureStart(tile, false)).toBe(false);
+    expect(isBottomSwipeGestureStart(tile, true)).toBe(true);
+    expect(isBottomSwipeGestureStart(nav, true)).toBe(false);
+    expect(isBottomSwipeGestureStart(dimmed, true)).toBe(false);
   });
 });
