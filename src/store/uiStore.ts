@@ -1,5 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import {
+  DEFAULT_QUICK_NAV_LAYOUT,
+  type QuickNavLayout,
+} from '../lib/quickNavLayout';
 
 interface UIState {
   sideNavCollapsed: boolean;
@@ -11,6 +15,10 @@ interface UIState {
   /** Φ25 (port from nakamas): ids of side-nav sections the user collapsed. */
   navCollapsed: string[];
   toggleNavSection: (id: string) => void;
+  /** Mobile bottom bar + swipe-up shortcuts the user arranged. */
+  quickNavLayout: QuickNavLayout;
+  setQuickNavLayout: (layout: QuickNavLayout) => void;
+  resetQuickNavLayout: () => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -28,10 +36,17 @@ export const useUIStore = create<UIState>()(
         set((s) => ({
           navCollapsed: s.navCollapsed.includes(id) ? s.navCollapsed.filter((x) => x !== id) : [...s.navCollapsed, id],
         })),
+      quickNavLayout: DEFAULT_QUICK_NAV_LAYOUT,
+      setQuickNavLayout: (quickNavLayout) => set({ quickNavLayout }),
+      resetQuickNavLayout: () => set({ quickNavLayout: DEFAULT_QUICK_NAV_LAYOUT }),
     }),
     {
       name: 'nakamas-ui',
-      partialize: (s) => ({ sideNavCollapsed: s.sideNavCollapsed, navCollapsed: s.navCollapsed }),
+      partialize: (s) => ({
+        sideNavCollapsed: s.sideNavCollapsed,
+        navCollapsed: s.navCollapsed,
+        quickNavLayout: s.quickNavLayout,
+      }),
     },
   ),
 );

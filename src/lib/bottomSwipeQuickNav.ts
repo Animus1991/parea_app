@@ -8,6 +8,14 @@
  * previous UI with no leftover chrome. The BottomNav markup stays unchanged.
  */
 
+import {
+  DEFAULT_QUICK_NAV_LAYOUT,
+  QUICK_NAV_CATALOG,
+  splitQuickNav,
+  type QuickNavLayout,
+  type QuickNavRole,
+} from './quickNavLayout';
+
 export const BOTTOM_SWIPE_QUICK_NAV_ENABLED = true;
 
 /** Mark the existing bottom chrome as the swipe-up start zone (no extra UI). */
@@ -53,57 +61,17 @@ export function isDownwardCloseSwipe({ dx, dy }: SwipeDelta): boolean {
   return Math.abs(dy) >= Math.abs(dx) * SWIPE_AXIS_RATIO;
 }
 
-/** The five destinations already on the mobile bottom tabs — not repeated here. */
+/** Default five destinations on the mobile bottom tabs (Create stays pinned). */
 export const BOTTOM_TAB_PATHS = ['/', '/plans', '/create', '/connections', '/profile'] as const;
 
-export type QuickNavRole = {
-  isAdmin?: boolean;
-  isOrganizer?: boolean;
-};
+export type { QuickNavLayout, QuickNavRole, QuickNavTileDef } from './quickNavLayout';
+export { QUICK_NAV_CATALOG as QUICK_NAV_TILES };
 
-export interface QuickNavTileDef {
-  id: string;
-  path: string;
-  labelEl: string;
-  labelEn: string;
-  organizerOnly?: boolean;
-  adminOnly?: boolean;
-}
-
-/**
- * Burger destinations that are worth one-thumb reach and are not already a
- * bottom tab. Onboarding / report stay in the burger only.
- */
-export const QUICK_NAV_TILES: QuickNavTileDef[] = [
-  { id: 'categories', path: '/categories', labelEl: 'Κατηγορίες', labelEn: 'Categories' },
-  { id: 'tags', path: '/tags', labelEl: 'Ετικέτες', labelEn: 'Tags' },
-  { id: 'collections', path: '/collections', labelEl: 'Συλλογές', labelEn: 'Collections' },
-  { id: 'nearby', path: '/nearby', labelEl: 'Τοπικές Ομάδες', labelEn: 'Local Groups' },
-  { id: 'agenda', path: '/agenda', labelEl: 'Ημερολόγιο', labelEn: 'Calendar' },
-  { id: 'buddy-seek', path: '/buddy-seek', labelEl: 'Βρες Nakamas', labelEn: 'Find Nakamas' },
-  { id: 'saved', path: '/saved', labelEl: 'Αποθηκευμένες', labelEn: 'Saved' },
-  { id: 'history', path: '/history', labelEl: 'Ιστορικό', labelEn: 'History' },
-  { id: 'wall', path: '/wall', labelEl: 'Τοίχος', labelEn: 'Wall' },
-  { id: 'chats', path: '/chats', labelEl: 'Συνομιλίες', labelEn: 'Chats' },
-  { id: 'leaderboard', path: '/leaderboard', labelEl: 'Κατάταξη', labelEn: 'Leaderboard' },
-  { id: 'challenges', path: '/challenges', labelEl: 'Προκλήσεις', labelEn: 'Challenges' },
-  { id: 'manage', path: '/manage', labelEl: 'Διοργάνωση', labelEn: 'Host', organizerOnly: true },
-  { id: 'wallet', path: '/wallet', labelEl: 'Πορτοφόλι', labelEn: 'Wallet' },
-  { id: 'notifications', path: '/notifications', labelEl: 'Ειδοποιήσεις', labelEn: 'Notifications' },
-  { id: 'settings', path: '/settings', labelEl: 'Ρυθμίσεις', labelEn: 'Settings' },
-  { id: 'verification', path: '/verification', labelEl: 'Επαλήθευση', labelEn: 'Verification' },
-  { id: 'trust', path: '/trust', labelEl: 'Αξιοπιστία', labelEn: 'Reliability' },
-  { id: 'help', path: '/help', labelEl: 'Βοήθεια', labelEn: 'Help' },
-  { id: 'admin', path: '/admin', labelEl: 'Διαχείριση', labelEn: 'Admin', adminOnly: true },
-];
-
-export function quickNavDestinations(role: QuickNavRole = {}): QuickNavTileDef[] {
-  return QUICK_NAV_TILES.filter((tile) => {
-    if ((BOTTOM_TAB_PATHS as readonly string[]).includes(tile.path)) return false;
-    if (tile.adminOnly && !role.isAdmin) return false;
-    if (tile.organizerOnly && !role.isOrganizer) return false;
-    return true;
-  });
+export function quickNavDestinations(
+  role: QuickNavRole = {},
+  layout: QuickNavLayout = DEFAULT_QUICK_NAV_LAYOUT,
+) {
+  return splitQuickNav(layout, role).sheet;
 }
 
 /** Swallow the click that would follow a swipe, but only inside `within` (the tab bar). */
