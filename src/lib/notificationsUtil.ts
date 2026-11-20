@@ -4,7 +4,7 @@ export function pendingFeedbackNotificationId(eventId: string): string {
   return `feedback-pending-${eventId}`;
 }
 
-/** Live join-gate reminder. Honest copy: rating the last night unblocks the next join. */
+/** Quiet reminder after the night — join stays open until several are skipped. */
 export function buildPendingFeedbackNotification(
   userId: string,
   event: { id: string; title: string },
@@ -12,8 +12,8 @@ export function buildPendingFeedbackNotification(
   return {
     id: pendingFeedbackNotificationId(event.id),
     type: 'feedback',
-    messageGr: `Αξιολόγησε το «${event.title}». Μέχρι τότε δεν μπορείς να μπεις σε άλλη βραδιά.`,
-    messageEn: `Rate “${event.title}”. You can’t join another night until you do.`,
+    messageGr: `Πώς πέρασες στο «${event.title}»;`,
+    messageEn: `How was “${event.title}”?`,
     timeGr: 'Τώρα',
     timeEn: 'Now',
     read: false,

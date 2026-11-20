@@ -50,6 +50,7 @@ import {
 import { canJoinGroup as gateJoinGroup, fitsGenderMode } from "../lib/outings";
 import { STRIKE_RELIABILITY } from "../lib/consequences";
 import type { GroupGenderMode, Strike } from "../types/outings";
+import { pendingFeedbackEvents, shouldBlockJoinForFeedback } from "../lib/feedbackDue";
 
 export interface FeedbackData {
   eventId: string;
@@ -60,6 +61,7 @@ export interface FeedbackData {
   submittedAt: string;
   attendance?: string;
   safetyComfort?: string;
+  wouldGoAgain?: boolean;
 }
 
 export interface CommitmentHold {
@@ -206,6 +208,7 @@ interface AppState extends OutingsSlice {
   completeOnboarding: () => void;
   addRecentSearch: (query: string) => void;
   getPendingFeedbackEventId: () => string | null;
+  getPendingFeedbackEventIds: () => string[];
   canJoinEvent: (eventId: string) => {
     ok: boolean;
     messageEl: string;
@@ -504,29 +507,17 @@ export const useStore = create<AppState>()(
       return { recentSearches: next };
     }),
 
-  getPendingFeedbackEventId: () => {
+  getPendingFeedbackEventId: () => get().getPendingFeedbackEventIds()[0] ?? null,
+
+  getPendingFeedbackEventIds: () => {
     const state = get();
-    if (!state.currentUser) return null;
-    const userGroupEventIds = state.groups
-      .filter((g) => g.members.includes(state.currentUser!.id))
-      .map((g) => g.eventId);
-    // Φ27 — a closed door check-in where I was confirmed opens feedback right away.
-    const checkedInEventIds = new Set(
-      state.groups
-        .filter((g) => g.checkInClosedAt && g.checkIns?.[state.currentUser!.id])
-        .map((g) => g.eventId),
-    );
-    const pending = state.events.find((e) => {
-      if (!userGroupEventIds.includes(e.id)) return false;
-      if (state.feedbackSubmitted[e.id]) return false;
-      if (checkedInEventIds.has(e.id)) return true;
-      try {
-        return new Date(`${e.date}T${e.time || '20:00'}`) < new Date();
-      } catch {
-        return false;
-      }
-    });
-    return pending?.id ?? null;
+    if (!state.currentUser) return [];
+    return pendingFeedbackEvents({
+      events: state.events,
+      groups: state.groups,
+      userId: state.currentUser.id,
+      feedbackSubmitted: state.feedbackSubmitted,
+    }).map((e) => e.id);
   },
 
   canJoinEvent: (eventId) => {
@@ -539,13 +530,13 @@ export const useStore = create<AppState>()(
     if (!Number.isNaN(when.getTime()) && when.getTime() < Date.now()) {
       return { ok: false, messageEl: 'Η εκδήλωση έχει ολοκληρωθεί.', messageEn: 'This event has ended.' };
     }
-    const pendingId = get().getPendingFeedbackEventId();
-    if (pendingId && pendingId !== eventId) {
+    const pendingIds = get().getPendingFeedbackEventIds();
+    if (shouldBlockJoinForFeedback(pendingIds.length) && !pendingIds.includes(eventId)) {
       return {
         ok: false,
         reason: 'feedback',
-        messageEl: 'Αξιολόγησε πρώτα το προηγούμενο βράδυ.',
-        messageEn: 'Rate your last night first.',
+        messageEl: 'Αξιολόγησε ένα προηγούμενο βράδυ για να συνεχίσεις.',
+        messageEn: 'Rate a previous night first.',
       };
     }
     const tier = canAccessEvent(state.currentUser, event);
@@ -1449,7 +1440,8 @@ export const useStore = create<AppState>()(
 
   submitFeedback: (data) =>
     set((state) => {
-      const delta = computeReliabilityDelta(data);
+      // Mood form never records absences — door check-in owns that.
+      const delta = computeReliabilityDelta({ overallRating: data.overallRating });
       const userId = state.currentUser?.id;
       let users = state.users;
       let currentUser = state.currentUser;

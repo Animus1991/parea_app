@@ -16,7 +16,7 @@ import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useWallStore } from '../../store/wallStore';
 import { notificationsForUser } from '../../lib/notificationsUtil';
 import { type NotificationDigestWindow } from '../../lib/notificationDigest';
-import { useHomePendingFeedback } from '../../hooks/useHomePendingFeedback';
+import { usePendingFeedbackEvents } from '../../hooks/useHomePendingFeedback';
 import { WallActivityPanel } from '../wall/WallActivityPanel';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
@@ -47,7 +47,11 @@ export default function NotificationsPageContent() {
   const a = usePageContrast();
 
   const { notifications: rawNotifications, isLoading, isError, refetch } = useNotificationsResource();
-  const pendingFeedbackEvent = useHomePendingFeedback();
+  const pendingFeedbackEvents = usePendingFeedbackEvents();
+  const pendingFeedbackIds = useMemo(
+    () => new Set(pendingFeedbackEvents.map((e) => e.id)),
+    [pendingFeedbackEvents],
+  );
   const currentUserId = useStore((s) => s.currentUser?.id ?? null);
   const notifications = useMemo(
     () => notificationsForUser(rawNotifications, currentUserId),
@@ -87,14 +91,13 @@ export default function NotificationsPageContent() {
     else if (activeTab === 'messages') filtered = filtered.filter((n) => n.type === 'message');
     else if (activeTab === 'system')
       filtered = filtered.filter((n) => n.type === 'system' || n.type === 'reminder' || n.type === 'safety');
-    const pendingId = pendingFeedbackEvent?.id;
-    if (!pendingId) return filtered;
+    if (pendingFeedbackIds.size === 0) return filtered;
     return filtered.slice().sort((a, b) => {
-      const ap = a.type === 'feedback' && a.eventId === pendingId ? 0 : 1;
-      const bp = b.type === 'feedback' && b.eventId === pendingId ? 0 : 1;
+      const ap = a.type === 'feedback' && a.eventId && pendingFeedbackIds.has(a.eventId) ? 0 : 1;
+      const bp = b.type === 'feedback' && b.eventId && pendingFeedbackIds.has(b.eventId) ? 0 : 1;
       return ap - bp;
     });
-  }, [notifications, activeTab, pendingFeedbackEvent?.id]);
+  }, [notifications, activeTab, pendingFeedbackIds]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
   const todayNotifs = visibleNotifs.filter((n) => !n.read);
@@ -193,7 +196,7 @@ export default function NotificationsPageContent() {
   const renderNotifRow = (notif: AppNotification, isUnread: boolean) => {
     const Icon = iconMap[notif.type] || Bell;
     const isPendingFeedback =
-      notif.type === 'feedback' && Boolean(pendingFeedbackEvent) && notif.eventId === pendingFeedbackEvent?.id;
+      notif.type === 'feedback' && Boolean(notif.eventId) && pendingFeedbackIds.has(notif.eventId);
     const iconColor = notif.color && isUnread ? notif.color : getIconColor(notif.type, !isUnread, notif.color);
 
     return (
@@ -203,9 +206,7 @@ export default function NotificationsPageContent() {
           'flex gap-3.5 p-3.5 rounded-xl border transition-all group',
           isUnread ? a.unreadBg : a.readBg,
           isPendingFeedback &&
-            (a.isDark
-              ? 'border-amber-400/80 bg-amber-950/45 ring-1 ring-amber-400/30'
-              : 'border-amber-400 bg-amber-50 ring-1 ring-amber-300/70'),
+            (a.isDark ? 'border-amber-500/40 bg-amber-950/25' : 'border-amber-200 bg-amber-50/70'),
           'hover:shadow-soft',
         )}
       >
@@ -227,16 +228,6 @@ export default function NotificationsPageContent() {
             <Icon className="w-4 h-4" aria-hidden />
           </div>
           <div className="flex-1 min-w-0">
-            {isPendingFeedback && (
-              <span
-                className={cn(
-                  'text-2xs font-bold tracking-wide mb-1 block',
-                  a.isDark ? 'text-amber-300' : 'text-amber-800',
-                )}
-              >
-                {t('Εκκρεμής αξιολόγηση', 'Pending review')}
-              </span>
-            )}
             <p
               className={cn(
                 'text-sm leading-relaxed',
@@ -248,16 +239,6 @@ export default function NotificationsPageContent() {
             <span className={cn('text-2xs font-bold tracking-wide mt-1 block', a.muted)}>
               {notifTime(notif, t)}
             </span>
-            {isPendingFeedback && (
-              <span
-                className={cn(
-                  'mt-2 inline-flex items-center rounded-full px-3 min-h-8 text-xs font-bold',
-                  a.isDark ? 'bg-amber-300 text-amber-950' : 'bg-amber-800 text-white',
-                )}
-              >
-                {t('Αξιολόγηση', 'Rate')}
-              </span>
-            )}
           </div>
         </button>
         <div className="flex items-center gap-1.5 shrink-0 self-start">

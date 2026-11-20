@@ -29,7 +29,7 @@ describe('outings in the store (Φ27)', () => {
     expect(useStore.getState().checkInMember('g-nn3', { userId: 'u2' }).reason).toBe('not_door');
   });
 
-  it('closing check-in rewards arrivals, records absences and opens feedback', () => {
+  it('closing check-in rewards arrivals and records absences without opening feedback', () => {
     const s = useStore.getState();
     s.checkInMember('g-nn1', { userId: 'u2' });
     s.checkInMember('g-nn1', { userId: 'u3' });
@@ -39,7 +39,8 @@ describe('outings in the store (Φ27)', () => {
     const after = useStore.getState();
     expect(after.strikes.some((x) => x.userId === 'u4' && x.kind === 'no_show' && x.groupId === 'g-nn1')).toBe(true);
     expect(after.users.find((u) => u.id === 'u4')!.reliabilityScore).toBe(beforeU4 - 15);
-    expect(after.getPendingFeedbackEventId()).toBeTruthy();
+    expect(after.getPendingFeedbackEventIds()).not.toContain('nn1');
+    expect(after.notifications.filter((n) => n.type === 'feedback' && n.eventId === 'nn1')).toHaveLength(0);
     expect(after.checkInMember('g-nn1', { userId: 'u4' }).ok).toBe(false);
   });
 

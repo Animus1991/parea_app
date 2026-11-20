@@ -44,7 +44,7 @@ describe('notificationsForUser', () => {
 });
 
 describe('buildPendingFeedbackNotification', () => {
-  it('names the night and says join is blocked until it is rated', () => {
+  it('names the night without locking the next join', () => {
     const row = buildPendingFeedbackNotification('u1', { id: 'e9', title: 'Summer Cinema: Cine Thisio' });
     expect(row.id).toBe(pendingFeedbackNotificationId('e9'));
     expect(row.type).toBe('feedback');
@@ -52,7 +52,8 @@ describe('buildPendingFeedbackNotification', () => {
     expect(row.forUserId).toBe('u1');
     expect(row.read).toBe(false);
     expect(row.messageGr).toContain('Summer Cinema: Cine Thisio');
-    expect(row.messageGr).toContain('άλλη βραδιά');
-    expect(row.messageEn).toContain('join another night');
+    expect(row.messageGr).toMatch(/Πώς πέρασες/);
+    expect(row.messageEn).toMatch(/How was/);
+    expect(`${row.messageGr} ${row.messageEn}`).not.toMatch(/join another|άλλη βραδιά/i);
   });
 });
