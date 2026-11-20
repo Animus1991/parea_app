@@ -165,7 +165,9 @@ export function tagsIndexPath(slugs: string[]): string {
 export function eventTagMatchCount(event: { tags?: string[] }, slugs: string[]): number {
   const set = new Set(parseTagSlugs(slugs));
   if (set.size === 0) return 0;
-  return (event.tags ?? []).filter((tag) => set.has(eventTagSlug(tag))).length;
+  return [...new Set((event.tags ?? []).map(eventTagSlug).filter(Boolean))].filter((slug) =>
+    set.has(slug),
+  ).length;
 }
 
 /** Unique tags currently used on events, popular first. Aliases share one row. */

@@ -98,5 +98,14 @@ describe('eventTags', () => {
     expect(eventsForTags([yoga, both, hike, wine], ['yoga', 'hiking'])).toEqual([yoga, both, hike]);
     expect(eventTagMatchCount(both, ['yoga', 'hiking'])).toBe(2);
     expect(eventTagMatchCount(wine, ['yoga', 'hiking'])).toBe(0);
+    expect(
+      eventTagMatchCount(
+        { tags: ['boardgames', 'board games', 'boardgames'] },
+        ['board-games', 'social'],
+      ),
+    ).toBe(1);
+    expect(
+      eventTagMatchCount({ tags: ['board games', 'social'] }, ['board-games', 'social']),
+    ).toBe(2);
   });
 });
