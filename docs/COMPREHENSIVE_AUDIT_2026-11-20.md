@@ -212,8 +212,8 @@ https://hat-nuke-emails-apart.trycloudflare.com
 7. GIS verify ή αφαίρεση του unverified path σε prod — ⬜
 8. FoF `reachIds` server-side — ⬜
 9. Μείωση `index` 497 kB — ⬜
-10. Αφαίρεση προσωρινού card-image picker όταν κλειδώσει default — ⬜
-11. Dedup weekly picks όταν η ίδια εκδήλωση είναι και forming plan — ⬜
+10. Αφαίρεση προσωρινού card-image picker όταν κλειδώσει default — 🟡 στο `ccr-4a44ddef-fgcwnr` έγινε ένα ήσυχο chip που ανοίγει τις επιλογές· η αφαίρεση περιμένει την τελική επιλογή
+11. Dedup weekly picks όταν η ίδια εκδήλωση είναι και forming plan — ✅ στο `ccr-4a44ddef-fgcwnr` (`HomeWeekCard`: μία γραμμή ανά εκδήλωση)
 12. `ARCHITECTURE.md` Mermaid ως «στόχος» — ✅ ήδη σημειωμένο
 
 ---
