@@ -69,7 +69,7 @@ function FactSpread({
 export function PlansFormingCard({
   item,
   variant = 'sidebar',
-  isDarkSurface = true,
+  isDarkSurface = false,
   onDismiss,
 }: {
   item: PlansFormingEnrichedItem;
@@ -132,7 +132,13 @@ export function PlansFormingCard({
           className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
           aria-label={t('Δες εκδήλωση', 'View event')}
         >
-          <EventCoverImg event={item.event} className={cn('w-full object-cover', compact ? 'h-24' : 'h-28')} />
+          <EventCoverImg
+            event={item.event}
+            className={cn(
+              'w-full bg-gray-100 object-cover',
+              variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24',
+            )}
+          />
         </button>
 
         <div className={cn(compact ? 'space-y-3.5 px-4 py-4' : 'space-y-4 px-5 py-5')}>
@@ -512,7 +518,7 @@ export function PlansFormingCard({
 export function PlansFormingGroupCard({
   entry,
   variant = 'sidebar',
-  isDarkSurface = true,
+  isDarkSurface = false,
   onSuggestMerge,
 }: {
   entry: PlansFormingGroupItem;
@@ -543,7 +549,13 @@ export function PlansFormingGroupCard({
         className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
         aria-label={t('Δες εκδήλωση', 'View event')}
       >
-        <EventCoverImg event={event} className={cn('w-full object-cover', compact ? 'h-24' : 'h-28')} />
+        <EventCoverImg
+          event={event}
+          className={cn(
+            'w-full bg-gray-100 object-cover',
+            variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24',
+          )}
+        />
       </button>
       <div className={cn(compact ? 'space-y-3.5 px-4 py-4' : 'space-y-4 px-5 py-5')}>
         <p className={cn('card-badge font-semibold tracking-wide', role)}>

@@ -30,6 +30,12 @@ test.describe('Find Nakamas', () => {
 
     await expect(page.getByRole('button', { name: /Αίτημα συμμετοχής|Ask to join/ }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: /^Εκδήλωση$|^Event$/ }).first()).toBeVisible();
+    const pagePhoto = page.locator('#main-content article img').first();
+    await expect(pagePhoto).toBeVisible();
+    await expect.poll(async () => pagePhoto.evaluate((el) => el.clientHeight)).toBeGreaterThan(170);
+    await expect.poll(async () =>
+      pagePhoto.evaluate((el) => (el as HTMLImageElement).naturalHeight),
+    ).toBeGreaterThan(80);
     await expect(page.locator('article .lucide-clock').first()).toBeVisible();
     await expect(page.locator('article .lucide-map-pin').first()).toBeVisible();
     await expect(page.locator('article .lucide-users').first()).toBeVisible();
@@ -62,5 +68,35 @@ test.describe('Find Nakamas', () => {
     await expect(rail.getByRole('button', { name: /Αποθήκευση σχεδίου|Save plan/ }).first()).toBeVisible();
     await expect(rail.getByRole('button', { name: /Απόκρυψη σχεδίου|Hide plan/ }).first()).toBeVisible();
     await expect(rail.getByText(/Φαγητό δρόμου με μικρή ομάδα|Street food with a small group/)).toBeVisible();
+  });
+
+  test('desktop page cards show a tall photo', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await enterDemoGuest(page);
+    await page.goto('/buddy-seek');
+    const photo = page.locator('#main-content article img').first();
+    await expect(photo).toBeVisible();
+    await expect.poll(async () => photo.evaluate((el) => el.clientHeight)).toBeGreaterThan(280);
+    await expect.poll(async () =>
+      photo.evaluate((el) => (el as HTMLImageElement).naturalHeight),
+    ).toBeGreaterThan(80);
+  });
+
+  test('mobile sheet scrolls and keeps titles and photos visible', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterDemoGuest(page);
+    await page.getByRole('button', { name: /Βρες Nakamas — σχέδια που σχηματίζονται|Find Nakamas — plans forming/ }).click();
+    const sheet = page.getByRole('dialog', { name: /Βρες Nakamas|Find Nakamas/ });
+    await expect(sheet).toBeVisible();
+    await expect(sheet.getByText('Athens Street Food Festival 2026')).toBeVisible();
+    const scroller = sheet.locator('[data-plans-sheet-scroll]');
+    await expect(scroller).toBeVisible();
+    await scroller.evaluate((el) => {
+      el.scrollTop = el.scrollHeight;
+    });
+    await expect(sheet.getByText('ADD Festival 2026')).toBeVisible();
+    const photo = sheet.locator('img').first();
+    await expect(photo).toBeVisible();
+    await expect.poll(async () => photo.evaluate((el) => (el as HTMLImageElement).naturalHeight)).toBeGreaterThan(80);
   });
 });

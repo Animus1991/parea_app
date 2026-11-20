@@ -46,7 +46,7 @@ export function PlansFormingBottomSheet() {
         ref={panelRef}
         tabIndex={-1}
         className={cn(
-          'absolute bottom-0 left-0 right-0 max-h-[92vh] flex flex-col rounded-t-3xl border-t shadow-soft-lg animate-in slide-in-from-bottom duration-300 motion-reduce:animate-none outline-none',
+          'absolute bottom-0 left-0 right-0 max-h-[92vh] flex flex-col overflow-hidden rounded-t-3xl border-t shadow-soft-lg animate-in slide-in-from-bottom duration-300 motion-reduce:animate-none outline-none',
           c.modalPanel,
         )}
       >
@@ -93,7 +93,10 @@ export function PlansFormingBottomSheet() {
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 pb-32">
+        <div
+          data-plans-sheet-scroll=""
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain touch-pan-y px-4 py-3 space-y-4 pb-32"
+        >
           {feed.myActivePlan && (
             <PlansFormingYourPlanBanner
               plan={feed.myActivePlan}
@@ -125,6 +128,7 @@ export function PlansFormingBottomSheet() {
                   key={item.intent.id}
                   item={item}
                   variant="sheet"
+                  isDarkSurface={tok.isDark}
                   onDismiss={() => {
                     const id = item.intent.id;
                     dismiss(id);
@@ -138,7 +142,12 @@ export function PlansFormingBottomSheet() {
                 <section>
                   <PlansFormingSectionTitle title={t('Ομάδες με θέσεις', 'Groups with spots')} />
                   {feed.recruitingGroupItems.map((entry) => (
-                    <PlansFormingGroupCard key={entry.group.id} entry={entry} variant="sheet" />
+                    <PlansFormingGroupCard
+                      key={entry.group.id}
+                      entry={entry}
+                      variant="sheet"
+                      isDarkSurface={tok.isDark}
+                    />
                   ))}
                 </section>
               )}

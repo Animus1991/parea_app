@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DEFAULT_EVENT_COVER, eventCoverUrl } from '../../lib/eventCover';
 import type { Event } from '../../types';
 
@@ -12,6 +12,9 @@ export function EventCoverImg({
   className?: string;
 }) {
   const [src, setSrc] = useState(() => eventCoverUrl(event));
+  useEffect(() => {
+    setSrc(eventCoverUrl(event));
+  }, [event.id, event.imageUrl, event.kind]);
   return (
     <img
       src={src}
