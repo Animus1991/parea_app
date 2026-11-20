@@ -33,6 +33,7 @@ import {
   CreditCard as CreditCardIcon,
   Bot,
   Newspaper,
+  CalendarCheck,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -726,7 +727,8 @@ export default function ProfilePageContent() {
       {/* ═══ Quick Links ═══ */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { icon: Settings, label: t("Ρυθμίσεις", "Settings"), desc: t("Γλώσσα, θέμα & λοιπά", "Language, theme & more"), to: "/settings" },
+          // «Ρυθμίσεις» is already the first button at the top of this page (declutter, Φ28).
+          { icon: CalendarCheck, label: t("Τα Σχέδιά μου", "My Plans"), desc: t("Οι επόμενες έξοδοί σου", "Your next outings"), to: "/plans" },
           { icon: ShieldCheck, label: t("Επαλήθευση", "Verification"), desc: t("Αύξηση εμπιστοσύνης", "Increase your trust"), to: "/verification" },
           { icon: Bookmark, label: t("Αποθηκευμένα", "Saved"), desc: t("Αγαπημένες εκδηλώσεις", "Favorite events"), to: "/saved" },
           { icon: MessageSquare, label: t("Συνομιλίες", "Chats"), desc: t("Ομαδικά μηνύματα", "Group messages"), to: "/chats" },

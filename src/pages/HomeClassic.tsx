@@ -20,7 +20,6 @@ import { useOnboardingWelcome } from "../hooks/useOnboardingWelcome";
 import { HomeOnboardingWelcomeBanner } from "../components/home/HomeOnboardingWelcomeBanner";
 import { HomeContinueStrip } from "../components/home/HomeContinueStrip";
 import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
-import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
 import { CollectionsRail } from "../components/outings/CollectionsRail";
@@ -37,8 +36,6 @@ export default function HomeClassic() {
     setFeedType,
     showSearchSuggestions,
     setShowSearchSuggestions,
-    filterSheetOpen,
-    setFilterSheetOpen,
     seekingHostOnly,
     setSeekingHostOnly,
     visibleEvents,
@@ -146,7 +143,6 @@ export default function HomeClassic() {
         showSeekingHostChip={seekingHostEvents.length > 0}
         hasActiveFilters={hasActiveFilters || seekingHostOnly}
         onClearAll={handleClearAll}
-        onOpenMobileFilters={() => setFilterSheetOpen(true)}
         activeFilterCount={activeFilterCount}
         activeMood={activeMood}
         onSelectMood={handleSelectMood}
@@ -268,22 +264,6 @@ export default function HomeClassic() {
         stepCircleClass={h.stepBadge}
         stepTitleClass={h.stepTitle}
         stepBodyClass={h.stepBody}
-      />
-
-      <HomeMobileFilterSheet
-        open={filterSheetOpen}
-        onClose={() => setFilterSheetOpen(false)}
-        activeCount={activeFilterCount}
-        onClear={() => {
-          handleClearAll();
-          setFilterSheetOpen(false);
-        }}
-        priceFilter={priceFilter}
-        setPriceFilter={setPriceFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        radiusFilter={radiusFilter}
-        setRadiusFilter={setRadiusFilter}
       />
     </div>
   );

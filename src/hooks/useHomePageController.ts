@@ -14,7 +14,6 @@ export function useHomePageController() {
   const { t } = useLanguage();
   const [feedType, setFeedType] = useState<'For You' | 'Discover'>('For You');
   const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
-  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [seekingHostOnly, setSeekingHostOnly] = useState(false);
   const [visibleEventsCount, setVisibleEventsCount] = useState(6);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -76,8 +75,6 @@ export function useHomePageController() {
     setFeedType,
     showSearchSuggestions,
     setShowSearchSuggestions,
-    filterSheetOpen,
-    setFilterSheetOpen,
     seekingHostOnly,
     setSeekingHostOnly,
     visibleEvents,

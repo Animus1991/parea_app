@@ -20,6 +20,9 @@ import { dateFnsLocale, shortDayMonthPattern } from '../../lib/dateLocale';
 import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { eventStartMs, LATE_CANCEL_MS } from '../../store/outingsSlice';
+import { isSnoozed, snooze } from '../../lib/snooze';
+
+const VERIFY_SNOOZE_KEY = 'nakamas-snooze:plans-verify';
 
 function getUserGroupForEvent(eventId: string, groups: Group[], userId: string | undefined) {
   if (!userId) return undefined;
@@ -71,6 +74,12 @@ export default function PlansPageContent() {
   const nextEvent = upcomingEvents[0];
   const nextEventDays = nextEvent ? differenceInDays(parseISO(nextEvent.date), now) : null;
   const showVerifyBanner = currentUser ? !currentUser.idVerified : false;
+  // «Αργότερα» snoozes the reminder for 14 days (per device); verification stays in the Trust Center.
+  const [verifyBannerHidden, setVerifyBannerHidden] = useState(() => isSnoozed(VERIFY_SNOOZE_KEY));
+  const hideVerifyBanner = () => {
+    snooze(VERIFY_SNOOZE_KEY, 14);
+    setVerifyBannerHidden(true);
+  };
 
   // Φ27 — say what leaving means before it happens (seat hand-over / late cancel).
   const leaveNote = (() => {
@@ -143,7 +152,7 @@ export default function PlansPageContent() {
       )}
 
       {/* Action required prompt — only when ID is not yet verified */}
-      {showVerifyBanner && (
+      {showVerifyBanner && !verifyBannerHidden && (
         <Card className={cn(
           '!rounded-2xl p-4 shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-4',
           p.isDark ? '!bg-amber-500/10 !border-amber-500/30' : '!bg-amber-50 !border-amber-200',
@@ -155,9 +164,18 @@ export default function PlansPageContent() {
               <p className={cn(PLANS_TYPO.bannerBody, p.isDark ? 'text-amber-200/80' : 'text-amber-800')}>{t(`Ολοκληρώστε την επαλήθευση ταυτότητας για να ξεκλειδώσετε όλες τις εκδηλώσεις και τα σημεία συνάντησης.`, `Complete ID verification to unlock all events and meeting points.`)}</p>
             </div>
           </div>
-          <button type="button" onClick={() => navigate('/verification')} className={cn('bg-amber-600 text-white px-5 py-2.5 rounded-2xl shadow-soft hover:bg-amber-700 transition-all duration-200 whitespace-nowrap shrink-0', PLANS_TYPO.bannerCta)}>
-            {t(`Επαλήθευση`, `Verify Now`)}
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button type="button" onClick={() => navigate('/verification')} className={cn('bg-amber-700 text-white px-5 py-2.5 rounded-2xl shadow-soft hover:bg-amber-800 transition-all duration-200 whitespace-nowrap', PLANS_TYPO.bannerCta)}>
+              {t(`Επαλήθευση`, `Verify Now`)}
+            </button>
+            <button
+              type="button"
+              onClick={hideVerifyBanner}
+              className={cn('px-3 py-2.5 rounded-2xl whitespace-nowrap', PLANS_TYPO.bannerCta, p.isDark ? 'text-amber-200 hover:bg-amber-500/10' : 'text-amber-900 hover:bg-amber-100')}
+            >
+              {t('Αργότερα', 'Later')}
+            </button>
+          </div>
         </Card>
       )}
 

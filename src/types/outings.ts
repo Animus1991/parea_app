@@ -61,6 +61,10 @@ export interface PlanInvite {
   coverId: string;
   createdAt: string;
   responses: InviteResponse[];
+  /** Φ28 — held by the inviting device only; proves it may read the names on the server. */
+  hostKey?: string;
+  /** Φ28 — last time the invite card reached the server (absent = this device only). */
+  remoteSyncedAt?: string;
 }
 
 export interface InviteResponse {

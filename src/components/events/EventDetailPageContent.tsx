@@ -2,9 +2,7 @@ import { useState } from 'react';
 import {
   Tag,
   ShieldCheck,
-  Ticket,
   Users,
-  MapPin,
   Star,
   CheckCircle2,
 } from 'lucide-react';
@@ -13,7 +11,7 @@ import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import type { FeedbackData } from '../../store';
 import { getEventDetailContentTokens } from '../../lib/designTokens';
-import { buildEventQuickInfo, inferLocationType } from '../../lib/eventQuickInfo';
+import { buildEventQuickInfo } from '../../lib/eventQuickInfo';
 import { isEventCompleted, isUserEventParticipant } from '../../lib/eventParticipation';
 import { cn } from '../../lib/utils';
 import { isDarkTheme } from '../../lib/themes';
@@ -46,22 +44,13 @@ function EventDetailQuickInfoBlock({
   const isParticipant = isUserEventParticipant(event.id, currentUser, groups);
   const meetingPoint = groups.find((g) => g.eventId === event.id && g.meetingPoint)?.meetingPoint;
   const info = buildEventQuickInfo(event, groups, t);
-  const locationType = inferLocationType(event, isParticipant, meetingPoint);
-  const locationLabel =
-    locationType === 'public_venue'
-      ? t(info.locationTypeEl, info.locationTypeEn)
-      : locationType === 'online'
-        ? t('Διαδικτυακά', 'Online')
-        : locationType === 'private_semi'
-          ? t('Ιδιωτικός / ημι-ιδιωτικός χώρος', 'Private / semi-private')
-          : t('Αποκαλύπτεται μετά την επιβεβαίωση', 'Revealed after confirmation');
-
   const shell = darkSurface
     ? 'rounded-2xl border border-cyan-800/40 bg-cyan-950/30 shadow-soft p-4 md:p-5'
     : 'rounded-2xl border border-cyan-100 bg-cyan-50/80 shadow-soft p-4 md:p-5';
 
+  // Declutter: category and price are the chips right above; the place is the
+  // «Τοποθεσία» section below. Quick info keeps only what is said nowhere else.
   const rows: { icon: typeof Tag; label: string; value: string }[] = [
-    { icon: Tag, label: t('Κατηγορία', 'Category'), value: info.category },
     {
       icon: ShieldCheck,
       label: t('Επίπεδο εμπιστοσύνης', 'Trust level'),
@@ -77,13 +66,11 @@ function EventDetailQuickInfoBlock({
       label: t('Επαλήθευση', 'Verification'),
       value: t(info.verificationEl, info.verificationEn),
     },
-    { icon: Ticket, label: t('Κόστος', 'Cost'), value: t(info.costEl, info.costEn) },
     {
       icon: Users,
       label: t('Ομάδες', 'Groups'),
       value: t(info.groupStatusEl, info.groupStatusEn),
     },
-    { icon: MapPin, label: t('Τύπος τοποθεσίας', 'Location type'), value: locationLabel },
   ];
 
   return (

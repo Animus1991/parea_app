@@ -13,7 +13,6 @@ import { HomeContinueStrip } from './HomeContinueStrip';
 import { HomeThemedHeroSwitch } from './HomeThemedHeroSwitch';
 import { HomeRichHero } from './HomeRichHero';
 import { HomeFiltersSection } from './HomeFiltersSection';
-import { HomeMobileFilterSheet } from './HomeMobileFilterSheet';
 import { getTimeGreeting, getMotivation } from '../../lib/homeGreeting';
 import { useHomePageController } from '../../hooks/useHomePageController';
 import { HOME_TYPO } from '../../lib/typographyTokens';
@@ -35,8 +34,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     setFeedType,
     showSearchSuggestions,
     setShowSearchSuggestions,
-    filterSheetOpen,
-    setFilterSheetOpen,
     seekingHostOnly,
     setSeekingHostOnly,
     visibleEvents,
@@ -148,7 +145,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         showSeekingHostChip={seekingHostEvents.length > 0}
         hasActiveFilters={hasActiveFilters || seekingHostOnly}
         onClearAll={handleClearAll}
-        onOpenMobileFilters={() => setFilterSheetOpen(true)}
         activeFilterCount={activeFilterCount}
         activeMood={activeMood}
         onSelectMood={handleSelectMood}
@@ -271,22 +267,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         stepCircleClass={tok.stepCircle}
         stepTitleClass={tok.stepTitle}
         stepBodyClass={tok.stepBody}
-      />
-
-      <HomeMobileFilterSheet
-        open={filterSheetOpen}
-        onClose={() => setFilterSheetOpen(false)}
-        activeCount={activeFilterCount}
-        onClear={() => {
-          handleClearAll();
-          setFilterSheetOpen(false);
-        }}
-        priceFilter={priceFilter}
-        setPriceFilter={setPriceFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        radiusFilter={radiusFilter}
-        setRadiusFilter={setRadiusFilter}
       />
     </div>
   );

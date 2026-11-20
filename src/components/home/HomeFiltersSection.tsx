@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { Crown, SlidersHorizontal, X } from 'lucide-react';
+import { useEffect, useId, useRef, useState } from 'react';
+import { ChevronDown, Crown, SlidersHorizontal, X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { HOME_CATEGORIES, HOME_POPULAR_TAGS } from '../../lib/homeFeedConstants';
@@ -38,7 +38,6 @@ export interface HomeFiltersSectionProps {
   showSeekingHostChip: boolean;
   hasActiveFilters: boolean;
   onClearAll: () => void;
-  onOpenMobileFilters: () => void;
   activeFilterCount: number;
   activeMood?: string | null;
   onSelectMood?: (moodId: string | null, categories: string[]) => void;
@@ -64,7 +63,6 @@ export function HomeFiltersSection({
   showSeekingHostChip,
   hasActiveFilters,
   onClearAll,
-  onOpenMobileFilters,
   activeFilterCount,
   activeMood = null,
   onSelectMood,
@@ -89,6 +87,14 @@ export function HomeFiltersSection({
     return () => el.removeEventListener('wheel', handleWheel);
   }, []);
 
+  // Declutter (Φ28): one «Φίλτρα» control on every screen size. Categories and
+  // mood stay in view; tags, price, date, comfort, distance, sort and «Χωρίς
+  // διοργανωτή» open on demand — and stay open while any of them is in use.
+  const secondaryActive = activeFilterCount > 0 || seekingHostOnly || sortParam !== 'Relevance';
+  const [moreOpen, setMoreOpen] = useState(secondaryActive);
+  const showMore = moreOpen || secondaryActive;
+  const moreId = useId();
+
   return (
     <section id="home-filters" className="space-y-4 scroll-mt-24">
       <div className="flex items-center justify-between gap-2">
@@ -97,16 +103,19 @@ export function HomeFiltersSection({
         </h2>
         <button
           type="button"
-          onClick={onOpenMobileFilters}
-          className={`md:hidden flex items-center gap-1.5 px-3 py-2 min-h-11 rounded-full text-xs font-bold shadow-soft ${h.filterBtn}`}
+          onClick={() => setMoreOpen((v) => !v)}
+          aria-expanded={showMore}
+          aria-controls={moreId}
+          className={`flex items-center gap-1.5 px-3 py-2 min-h-11 rounded-full text-xs font-bold shadow-soft ${h.filterBtn}`}
         >
-          <SlidersHorizontal className="w-4 h-4" />
+          <SlidersHorizontal className="w-4 h-4" aria-hidden />
           {t('Φίλτρα', 'Filters')}
           {activeFilterCount > 0 && (
             <span className={`text-xs px-1.5 rounded-full ${h.filterBadge}`}>
               {activeFilterCount}
             </span>
           )}
+          <ChevronDown className={cn('w-3.5 h-3.5 transition-transform', showMore && 'rotate-180')} aria-hidden />
         </button>
       </div>
 
@@ -137,6 +146,8 @@ export function HomeFiltersSection({
         ))}
       </div>
 
+      {showMore && (
+      <div id={moreId} className="space-y-4">
       <div className="flex gap-2 overflow-x-auto pb-1 noscrollbar">
         {HOME_POPULAR_TAGS.map((tag) => (
           <button
@@ -242,6 +253,8 @@ export function HomeFiltersSection({
           </button>
         )}
       </div>
+      </div>
+      )}
     </section>
   );
 }

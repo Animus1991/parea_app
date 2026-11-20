@@ -1,5 +1,7 @@
-import { ArrowRight, Bot } from 'lucide-react';
+import { ArrowRight, Bot, X } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
+import { useUIStore } from '../../store/uiStore';
 import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { openCopilot } from '../../ai/copilot';
@@ -20,12 +22,31 @@ interface Props {
 export function CopilotInlinePrompt({ className, title, suggestions, maxChips = 3 }: Props) {
   const { t } = useLanguage();
   const { pathname } = useLocation();
+  const hidden = useUIStore((s) => s.aiHintsHidden);
+  const setHidden = useUIStore((s) => s.setAiHintsHidden);
   const chips = (suggestions ?? suggestionsForPath(pathname)).slice(0, maxChips);
+  if (hidden) return null;
+  const hide = () => {
+    setHidden(true);
+    toast.message(t('Οι προτάσεις AI κρύφτηκαν', 'AI suggestions hidden'), {
+      description: t('Το κουμπί «AI» μένει πάνω δεξιά. Επαναφορά από Ρυθμίσεις.', 'The «AI» button stays at the top. Bring them back in Settings.'),
+      action: { label: t('Αναίρεση', 'Undo'), onClick: () => setHidden(false) },
+    });
+  };
   return (
     <section
       aria-label={t('Nakamas AI', 'Nakamas AI')}
-      className={cn('@container rounded-2xl border border-border bg-surface-raised p-3 shadow-soft', className)}
+      className={cn('@container relative rounded-2xl border border-border bg-surface-raised p-3 pr-10 shadow-soft', className)}
     >
+      <button
+        type="button"
+        onClick={hide}
+        aria-label={t('Απόκρυψη προτάσεων AI', 'Hide AI suggestions')}
+        title={t('Απόκρυψη προτάσεων AI', 'Hide AI suggestions')}
+        className="absolute right-1.5 top-1.5 inline-flex h-8 w-8 items-center justify-center rounded-full text-ink-muted hover:bg-accent-soft hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        <X className="h-4 w-4" aria-hidden />
+      </button>
       <div className="flex flex-col gap-3 @4xl:flex-row @4xl:items-center">
       <button
         type="button"

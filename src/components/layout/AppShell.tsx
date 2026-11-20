@@ -332,7 +332,8 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         </div>
       </div>
       <div className="flex items-center space-x-3 relative z-raised overflow-visible">
-        <div className={cn("relative hidden", copilotDocked ? "2xl:block" : "lg:block")}>
+        {/* Home has its own, richer search in the hero — one search box per screen (declutter, Φ28). */}
+        <div className={cn("relative hidden", currentPath === '/' ? '' : copilotDocked ? "2xl:block" : "lg:block")}>
           <input
             type="text"
             value={searchValue}

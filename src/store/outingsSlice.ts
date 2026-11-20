@@ -31,6 +31,7 @@ import { getEventDateRange } from '../lib/eventCalendarExport';
 import { activeTicketPartner, settleReservation } from '../services/ticketPartner';
 import { coversFor } from '../lib/planCovers';
 import { mockPlanInvites, mockStrikes } from '../data/mockOutings';
+import { fetchInviteResponses, newHostKey, publishInvite } from '../services/invitesApi';
 
 /** Check-in opens 2 h before the start and closes 6 h after it (demo mode: always open). */
 export const CHECKIN_OPENS_BEFORE_MS = 2 * 3_600_000;
@@ -94,6 +95,10 @@ export interface OutingsSlice {
   createPlanInvite: (groupId: string, coverId?: string) => string | null;
   setPlanInviteCover: (inviteId: string, coverId: string) => void;
   respondToPlanInvite: (inviteId: string, name: string, status: InviteResponse['status']) => InviteResponse | null;
+  /** Φ28 — publish the invite card to the server so the link opens on other devices. */
+  syncPlanInvite: (inviteId: string) => Promise<boolean>;
+  /** Φ28 — fetch answers given on other devices (host only). Returns how many were new or changed. */
+  pullInviteResponses: (inviteId: string) => Promise<number>;
   setPreMeet: (groupId: string, venueId: string | null, minutesBefore?: number) => void;
   reserveGroupTickets: (groupId: string) => boolean;
   payTicketShare: (groupId: string) => void;
@@ -459,6 +464,7 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         coverId: coverId ?? coversFor(event?.category)[0].id,
         createdAt: new Date().toISOString(),
         responses: [],
+        hostKey: newHostKey(),
       };
       set((st) => ({ planInvites: [...st.planInvites, invite] }));
       return invite.id;
@@ -499,6 +505,83 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         forUserId: invite.hostId,
       });
       return response;
+    },
+
+    syncPlanInvite: async (inviteId) => {
+      const s = get();
+      const me = s.currentUser;
+      let invite = s.planInvites.find((i) => i.id === inviteId);
+      if (!me || !invite || invite.hostId !== me.id) return false;
+      const group = s.groups.find((g) => g.id === invite!.groupId);
+      const event = s.events.find((e) => e.id === invite!.eventId);
+      if (!group || !event) return false;
+      if (!invite.hostKey) {
+        // Invites made before Φ28 (and the demo seed) get their key on first sync.
+        const hostKey = newHostKey();
+        set((st) => ({ planInvites: st.planInvites.map((i) => (i.id === inviteId ? { ...i, hostKey } : i)) }));
+        invite = { ...invite, hostKey };
+      }
+      const ok = await publishInvite(
+        invite.id,
+        {
+          eventId: event.id,
+          eventTitle: event.title,
+          date: event.date,
+          time: event.time,
+          // The area only — never the exact spot or the meeting point.
+          area: event.locationArea,
+          category: event.category,
+          coverId: invite.coverId,
+          hostFirstName: me.name.split(' ')[0],
+          members: group.members.length,
+          targetSize: group.targetSize,
+          closed: group.status === 'cancelled' || group.status === 'completed' || event.status === 'cancelled' || Boolean(group.checkInClosedAt),
+        },
+        invite.hostKey!,
+      );
+      // A failed attempt changes nothing: an invite published earlier is still on the server.
+      if (ok) {
+        const remoteSyncedAt = new Date().toISOString();
+        set((st) => ({ planInvites: st.planInvites.map((i) => (i.id === inviteId ? { ...i, remoteSyncedAt } : i)) }));
+      }
+      return ok;
+    },
+
+    pullInviteResponses: async (inviteId) => {
+      const s = get();
+      const invite = s.planInvites.find((i) => i.id === inviteId);
+      if (!s.currentUser || !invite?.hostKey || invite.hostId !== s.currentUser.id) return 0;
+      const remote = await fetchInviteResponses(inviteId, invite.hostKey);
+      if (!remote) return 0;
+      const key = (n: string) => n.toLocaleLowerCase('el');
+      // Re-read: the store may have changed while the request was in flight.
+      const current = get().planInvites.find((i) => i.id === inviteId);
+      if (!current) return 0;
+      const changed = remote.filter((r) => {
+        const mine = current.responses.find((x) => key(x.name) === key(r.name));
+        return !mine || (mine.status !== r.status && mine.at < r.at);
+      });
+      if (changed.length === 0) return 0;
+      set((st) => ({
+        planInvites: st.planInvites.map((i) => {
+          if (i.id !== inviteId) return i;
+          const kept = i.responses.filter((x) => !changed.some((r) => key(r.name) === key(x.name)));
+          return { ...i, responses: [...kept, ...changed].sort((a, b) => a.at.localeCompare(b.at)).slice(-50) };
+        }),
+      }));
+      const names = changed.map((r) => r.name).join(', ');
+      get().addNotification({
+        type: 'group',
+        messageGr: changed.length === 1 ? `Ο/Η ${names} απάντησε στην πρόσκλησή σου.` : `${changed.length} νέες απαντήσεις στην πρόσκλησή σου: ${names}.`,
+        messageEn: changed.length === 1 ? `${names} answered your invite.` : `${changed.length} new answers to your invite: ${names}.`,
+        timeGr: 'μόλις τώρα',
+        timeEn: 'just now',
+        read: false,
+        groupId: invite.groupId,
+        eventId: invite.eventId,
+        forUserId: invite.hostId,
+      });
+      return changed.length;
     },
 
     setPreMeet: (groupId, venueId, minutesBefore = 30) => {

@@ -11,6 +11,9 @@ interface UIState {
   /** Φ25 (port from nakamas): ids of side-nav sections the user collapsed. */
   navCollapsed: string[];
   toggleNavSection: (id: string) => void;
+  /** Declutter: hide the page-level «Πες στο Nakamas AI» cards (the AI button stays in the header). */
+  aiHintsHidden: boolean;
+  setAiHintsHidden: (v: boolean) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -28,10 +31,12 @@ export const useUIStore = create<UIState>()(
         set((s) => ({
           navCollapsed: s.navCollapsed.includes(id) ? s.navCollapsed.filter((x) => x !== id) : [...s.navCollapsed, id],
         })),
+      aiHintsHidden: false,
+      setAiHintsHidden: (aiHintsHidden) => set({ aiHintsHidden }),
     }),
     {
       name: 'nakamas-ui',
-      partialize: (s) => ({ sideNavCollapsed: s.sideNavCollapsed, navCollapsed: s.navCollapsed }),
+      partialize: (s) => ({ sideNavCollapsed: s.sideNavCollapsed, navCollapsed: s.navCollapsed, aiHintsHidden: s.aiHintsHidden }),
     },
   ),
 );

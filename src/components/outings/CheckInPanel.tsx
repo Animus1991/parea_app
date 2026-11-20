@@ -8,13 +8,10 @@ import { Button } from '../common/Button';
 import { PersonAvatar } from '../wall/PersonAvatar';
 import { cn } from '../../lib/utils';
 import type { Group, User } from '../../types';
+import { cameraScanSupported, createQrFrameReader } from '../../lib/qrScan';
 
-type Detector = { detect: (src: CanvasImageSource) => Promise<{ rawValue: string }[]> };
-
-function barcodeDetector(): Detector | null {
-  const Ctor = (window as unknown as { BarcodeDetector?: new (o: { formats: string[] }) => Detector }).BarcodeDetector;
-  return Ctor ? new Ctor({ formats: ['qr_code'] }) : null;
-}
+/** The same ticket stays in front of the camera for a moment: answer it once, not twice a second. */
+const SAME_TICKET_QUIET_MS = 4000;
 
 /**
  * Host's door list (DICE / Luma / Meetup, adapted): scan a ticket QR (where
@@ -34,7 +31,7 @@ export function CheckInPanel({ group, members }: { group: Group; members: User[]
   const [scanning, setScanning] = useState(false);
   const [confirmClose, setConfirmClose] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const canScan = typeof window !== 'undefined' && 'BarcodeDetector' in window && Boolean(navigator.mediaDevices?.getUserMedia);
+  const canScan = cameraScanSupported();
 
   const open = isCheckInOpen(group.id);
   const closed = Boolean(group.checkInClosedAt);
@@ -42,27 +39,44 @@ export function CheckInPanel({ group, members }: { group: Group; members: User[]
 
   const say = (r: { ok: boolean; el: string; en: string }) => setMessage({ ok: r.ok, text: t(r.el, r.en) });
 
-  // Camera scanning, only where BarcodeDetector exists; stops on unmount.
+  // Camera scanning: native detector where the browser has one, jsQR elsewhere
+  // (Safari, Firefox). The camera is released on stop, on unmount, and also if
+  // permission arrives after the host has already stopped.
   useEffect(() => {
     if (!scanning) return;
-    const detector = barcodeDetector();
     let stream: MediaStream | null = null;
     let timer = 0;
     let stopped = false;
+    let busy = false;
+    let last = { payload: '', at: 0 };
+    const release = () => stream?.getTracks().forEach((tr) => tr.stop());
     void (async () => {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        if (stopped || !videoRef.current || !detector) return;
-        videoRef.current.srcObject = stream;
+        const [read, media] = await Promise.all([
+          createQrFrameReader(),
+          navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }),
+        ]);
+        stream = media;
+        if (stopped || !videoRef.current) {
+          release();
+          return;
+        }
+        videoRef.current.srcObject = media;
         await videoRef.current.play();
         timer = window.setInterval(async () => {
-          if (!videoRef.current) return;
-          const found = await detector.detect(videoRef.current).catch(() => []);
-          if (found[0]?.rawValue) {
-            say(checkInMember(group.id, { payload: found[0].rawValue }));
-          }
-        }, 500);
+          if (busy || !videoRef.current) return;
+          busy = true;
+          const payload = await read(videoRef.current).catch(() => null);
+          busy = false;
+          if (stopped || !payload) return;
+          const nowMs = Date.now();
+          if (payload === last.payload && nowMs - last.at < SAME_TICKET_QUIET_MS) return;
+          last = { payload, at: nowMs };
+          say(checkInMember(group.id, { payload }));
+        }, 400);
       } catch {
+        release();
+        if (stopped) return;
         setMessage({ ok: false, text: t('Δεν δόθηκε πρόσβαση στην κάμερα. Πληκτρολόγησε τον κωδικό.', 'No camera access. Type the code instead.') });
         setScanning(false);
       }
@@ -70,7 +84,7 @@ export function CheckInPanel({ group, members }: { group: Group; members: User[]
     return () => {
       stopped = true;
       window.clearInterval(timer);
-      stream?.getTracks().forEach((tr) => tr.stop());
+      release();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- restart only when scanning toggles or the group changes
   }, [scanning, group.id]);
@@ -132,6 +146,8 @@ export function CheckInPanel({ group, members }: { group: Group; members: User[]
         </p>
       )}
 
+      {/* Before check-in opens the list says nothing new («Ποιοι έρχονται» is below) — show it only when it is useful. */}
+      {(open.open || closed) && (
       <ul className="mt-3 divide-y divide-border">
         {members.map((m) => {
           const rec = group.checkIns?.[m.id];
@@ -172,6 +188,7 @@ export function CheckInPanel({ group, members }: { group: Group; members: User[]
           );
         })}
       </ul>
+      )}
 
       {!closed && open.open && (
         <div className="mt-3 border-t border-border pt-3">

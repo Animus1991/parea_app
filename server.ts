@@ -21,6 +21,17 @@ import {
 } from './server/auth.ts';
 import { buildCsp, cspHeaderName, cspMode } from './server/csp.ts';
 import {
+  INVITE_ID_PATTERN,
+  addResponse,
+  getPublicInvite,
+  listResponses,
+  openInvitesDb,
+  sanitizeCard,
+  sanitizeResponse,
+  upsertInvite,
+  validHostKey,
+} from './server/invitesStore.ts';
+import {
   EVENT_ID_PATTERN,
   RateLimiter,
   SECURITY_HEADERS,
@@ -119,7 +130,7 @@ async function startServer() {
       res.setHeader('Access-Control-Allow-Origin', origin);
       res.setHeader('Vary', 'Origin');
       res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Invite-Key');
     }
     if (req.method === 'OPTIONS') return res.sendStatus(204);
     next();
@@ -196,6 +207,65 @@ async function startServer() {
   // The verified identity as the server sees it (role from signed custom claims).
   app.get('/api/auth/me', (_req, res) => {
     res.json({ mode: AUTH.mode, user: currentUser(res) });
+  });
+
+  // Φ28 — friend invitations that open on any device. The card is public
+  // (event, area, host first name, counts); guests' names need the host key.
+  const invitesDb = openInvitesDb();
+  const inviteReadLimiter = new RateLimiter(120, 60_000);
+  const inviteWriteLimiter = new RateLimiter(20, 60_000);
+  const limited = (limiter: RateLimiter, req: express.Request, res: express.Response) => {
+    if (limiter.hit(ipKey(req)) === null) return false;
+    res.status(429).json({ error: 'Rate limit exceeded' });
+    return true;
+  };
+
+  app.put('/api/invites/:id', (req, res) => {
+    const id = String(req.params.id);
+    if (!INVITE_ID_PATTERN.test(id)) return res.status(400).json({ error: 'Invalid invite id' });
+    if (limited(inviteWriteLimiter, req, res)) return;
+    const card = sanitizeCard((req.body as { card?: unknown } | undefined)?.card);
+    const hostKey = (req.body as { hostKey?: unknown } | undefined)?.hostKey;
+    if (!card || !validHostKey(hostKey)) return res.status(400).json({ error: 'Invalid invite' });
+    const result = upsertInvite(invitesDb, id, card, hostKey);
+    if (result === 'forbidden') return res.status(403).json({ error: 'Not your invite' });
+    res.status(result === 'created' ? 201 : 200).json({ ok: true });
+  });
+
+  app.get('/api/invites/:id', (req, res) => {
+    const id = String(req.params.id);
+    if (!INVITE_ID_PATTERN.test(id)) return res.status(404).json({ error: 'Not found' });
+    if (limited(inviteReadLimiter, req, res)) return;
+    const invite = getPublicInvite(invitesDb, id);
+    if (!invite) return res.status(404).json({ error: 'Not found' });
+    res.setHeader('Cache-Control', 'no-store');
+    res.json(invite);
+  });
+
+  app.post('/api/invites/:id/responses', (req, res) => {
+    const id = String(req.params.id);
+    if (!INVITE_ID_PATTERN.test(id)) return res.status(404).json({ error: 'Not found' });
+    if (limited(inviteWriteLimiter, req, res)) return;
+    const input = sanitizeResponse(req.body);
+    if (!input) return res.status(400).json({ error: 'Invalid answer' });
+    const result = addResponse(invitesDb, id, input);
+    if (result === 'not_found') return res.status(404).json({ error: 'Not found' });
+    if (result === 'closed') return res.status(409).json({ error: 'This outing no longer takes answers' });
+    if (result === 'full') return res.status(429).json({ error: 'Too many answers' });
+    // The guest gets back their own answer only — never the list.
+    res.status(201).json({ response: { name: result.name, status: result.status, at: result.at } });
+  });
+
+  app.get('/api/invites/:id/responses', (req, res) => {
+    const id = String(req.params.id);
+    const hostKey = req.get('X-Invite-Key');
+    if (!INVITE_ID_PATTERN.test(id) || !validHostKey(hostKey)) return res.status(403).json({ error: 'Host key required' });
+    if (limited(inviteReadLimiter, req, res)) return;
+    const result = listResponses(invitesDb, id, hostKey);
+    if (result === 'not_found') return res.status(404).json({ error: 'Not found' });
+    if (result === 'forbidden') return res.status(403).json({ error: 'Not your invite' });
+    res.setHeader('Cache-Control', 'no-store');
+    res.json({ responses: result });
   });
 
   // Φ27 — live organizer calendar (Luma, adapted): calendar apps poll this

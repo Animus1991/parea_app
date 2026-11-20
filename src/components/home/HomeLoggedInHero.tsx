@@ -113,14 +113,16 @@ export function HomeLoggedInHero({
               </p>
             </div>
             {currentUser && (
-              <div
-                role="img"
-                aria-label={t(`Αξιοπιστία ${score}%`, `Reliability ${score}%`)}
+              <button
+                type="button"
+                onClick={() => navigate('/trust')}
+                aria-label={t(`Αξιοπιστία ${score}% — άνοιγμα Κέντρου Εμπιστοσύνης`, `Reliability ${score}% — open Trust Center`)}
                 title={t('Η βαθμολογία αξιοπιστίας σας', 'Your reliability score')}
-                className="w-12 h-12 rounded-full border-2 border-white bg-amber-400 text-amber-950 flex items-center justify-center font-black text-sm shadow-soft shrink-0"
+                className="flex shrink-0 flex-col items-center gap-1 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                {score}%
-              </div>
+                <span className="w-12 h-12 rounded-full border-2 border-white bg-amber-400 text-amber-950 flex items-center justify-center font-black text-sm shadow-soft">{score}%</span>
+                <span className={cn(h.heroMotivation, 'text-2xs font-bold')}>{t('αξιοπιστία', 'reliability')}</span>
+              </button>
             )}
           </div>
           {searchBlock}
@@ -142,14 +144,16 @@ export function HomeLoggedInHero({
               </h1>
             </div>
             {currentUser && (
-              <div
-                role="img"
-                aria-label={t(`Αξιοπιστία ${score}%`, `Reliability ${score}%`)}
+              <button
+                type="button"
+                onClick={() => navigate('/trust')}
+                aria-label={t(`Αξιοπιστία ${score}% — άνοιγμα Κέντρου Εμπιστοσύνης`, `Reliability ${score}% — open Trust Center`)}
                 title={t('Η βαθμολογία αξιοπιστίας σας', 'Your reliability score')}
-                className="w-11 h-11 rounded-full border-2 border-white/80 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-xs shadow-soft shrink-0"
+                className="flex shrink-0 flex-col items-center gap-1 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                {score}%
-              </div>
+                <span className="w-11 h-11 rounded-full border-2 border-white/80 bg-amber-400 text-amber-950 flex items-center justify-center font-black text-xs shadow-soft">{score}%</span>
+                <span className={cn(h.heroMotivation, 'text-2xs font-bold')}>{t('αξιοπιστία', 'reliability')}</span>
+              </button>
             )}
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1">

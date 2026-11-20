@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Copy, Link2, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -22,10 +22,13 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
   const invites = useStore((s) => s.planInvites);
   const createPlanInvite = useStore((s) => s.createPlanInvite);
   const setPlanInviteCover = useStore((s) => s.setPlanInviteCover);
+  const syncPlanInvite = useStore((s) => s.syncPlanInvite);
+  const pullInviteResponses = useStore((s) => s.pullInviteResponses);
   const [copied, setCopied] = useState(false);
   const invite = invites.find((i) => i.groupId === group.id && i.hostId === me?.id);
   const covers = coversFor(event.category);
   const [pendingCover, setPendingCover] = useState(covers[0].id);
+  const [coverOpen, setCoverOpen] = useState(false);
   const cover = coverById(invite?.coverId ?? pendingCover, event.category);
   const link = invite ? `${window.location.origin}/i/${invite.id}` : '';
   const seatsLeft = Math.max(0, group.targetSize - group.members.length);
@@ -66,6 +69,28 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
     else void copy();
   };
 
+  // Φ28 — keep the server's copy of the card current (cover, seats) and bring in
+  // answers given on other devices while this screen is open.
+  const inviteId = invite?.id;
+  const cardKey = `${invite?.coverId}|${group.members.length}|${group.targetSize}|${group.status}`;
+  useEffect(() => {
+    if (!inviteId) return;
+    let alive = true;
+    const pull = () => {
+      if (alive && document.visibilityState === 'visible') void pullInviteResponses(inviteId);
+    };
+    void syncPlanInvite(inviteId).then((ok) => {
+      if (ok) pull();
+    });
+    const timer = window.setInterval(pull, 20_000);
+    document.addEventListener('visibilitychange', pull);
+    return () => {
+      alive = false;
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', pull);
+    };
+  }, [inviteId, cardKey, syncPlanInvite, pullInviteResponses]);
+
   const responses = invite?.responses ?? [];
   const going = responses.filter((r) => r.status === 'going');
   const maybe = responses.filter((r) => r.status === 'maybe');
@@ -83,6 +108,16 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
         <InviteCover cover={cover} event={event} hostFirstName={host?.name.split(' ')[0]} goingCount={group.members.length + going.length} seatsLeft={seatsLeft} />
       </div>
 
+      {/* Once the link exists, the cover picker folds away (declutter, Φ28). */}
+      {invite && !coverOpen ? (
+        <button
+          type="button"
+          onClick={() => setCoverOpen(true)}
+          className="mt-2 inline-flex min-h-9 items-center text-xs font-bold text-ink underline underline-offset-2"
+        >
+          {t(`Αλλαγή εξωφύλλου (${t(cover.el, cover.en)})`, `Change cover (${t(cover.el, cover.en)})`)}
+        </button>
+      ) : (
       <fieldset className="mt-3">
         <legend className="text-xs font-bold text-ink">{t('Εξώφυλλο', 'Cover')}</legend>
         <div className="mt-1.5 flex flex-wrap gap-2">
@@ -103,6 +138,7 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
           ))}
         </div>
       </fieldset>
+      )}
 
       <div className="mt-3 flex flex-wrap gap-2">
         {invite ? (
@@ -149,7 +185,12 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
               </Button>
             </div>
           )}
-          <p className="mt-2 text-2xs font-medium text-ink-muted">{t('Τα ονόματα τα βλέπεις μόνο εσύ. Η σελίδα δείχνει μόνο πόσοι πάνε.', 'Only you see the names. The page only shows how many are going.')}</p>
+          <p className="mt-2 text-2xs font-medium text-ink-muted">
+            {t('Τα ονόματα τα βλέπεις μόνο εσύ. Η σελίδα δείχνει μόνο πόσοι πάνε.', 'Only you see the names. The page only shows how many are going.')}{' '}
+            {invite.remoteSyncedAt
+              ? t('Ο σύνδεσμος ανοίγει σε κάθε συσκευή.', 'The link opens on any device.')
+              : t('Χωρίς σύνδεση με τον server, ο σύνδεσμος ανοίγει μόνο σε αυτή τη συσκευή.', 'With no server connection, the link opens on this device only.')}
+          </p>
         </div>
       )}
     </section>

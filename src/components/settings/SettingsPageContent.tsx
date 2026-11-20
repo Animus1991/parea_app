@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Ban, Newspaper } from 'lucide-react';
+import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Ban, Newspaper, Bot } from 'lucide-react';
+import { useUIStore } from '../../store/uiStore';
 import { HomeHeroModeSetting } from './HomeHeroModeSetting';
 import { BuddySeekPrivacySettings } from '../buddySeek/BuddySeekPrivacySettings';
 import { ChatPrivacySettingsPanel } from '../chat/ChatPrivacySettingsPanel';
@@ -62,6 +63,8 @@ export default function SettingsPageContent() {
   const [showBlockedUsers, setShowBlockedUsers] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const homeHeroMode = useStore((s) => s.homeHeroMode);
+  const aiHintsHidden = useUIStore((s) => s.aiHintsHidden);
+  const setAiHintsHidden = useUIStore((s) => s.setAiHintsHidden);
   const themePanelRef = useRef<HTMLDivElement>(null);
   const homeLayoutPanelRef = useRef<HTMLDivElement>(null);
   const availabilityPanelRef = useRef<HTMLDivElement>(null);
@@ -209,6 +212,15 @@ export default function SettingsPageContent() {
         },
         { icon: Palette, label: t('Εμφάνιση & Θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
         { icon: LayoutGrid, label: t('Προβολή αρχικής', 'Home layout'), value: homeHeroMode === 'light' ? t('Σύντομο', 'Compact') : homeHeroMode === 'rich' ? t('Πλήρες', 'Full') : t('Ισορροπημένο', 'Balanced'), onClick: () => setShowHomeLayout(!showHomeLayout) },
+        {
+          icon: Bot,
+          label: t('Προτάσεις Nakamas AI στις σελίδες', 'Nakamas AI suggestions on pages'),
+          value: aiHintsHidden ? t('Κρυμμένες', 'Hidden') : t('Ορατές', 'Shown'),
+          onClick: () => {
+            setAiHintsHidden(!aiHintsHidden);
+            toast.message(aiHintsHidden ? t('Οι προτάσεις AI εμφανίζονται ξανά', 'AI suggestions are shown again') : t('Οι προτάσεις AI κρύφτηκαν', 'AI suggestions hidden'));
+          },
+        },
         {
           icon: CreditCard,
           label: t('Μέθοδοι Πληρωμής', 'Payment Methods'),

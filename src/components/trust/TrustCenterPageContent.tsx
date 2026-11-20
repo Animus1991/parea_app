@@ -65,8 +65,6 @@ export default function TrustCenterPageContent() {
     ? t(tierLabelEl(currentUser.trustTier as TrustTier), tierLabelEn(currentUser.trustTier as TrustTier))
     : t('Νέος', 'Newcomer');
   const reliabilityScore = currentUser.reliabilityScore ?? 85;
-  const circumference = 2 * Math.PI * 52;
-  const strokeDash = (reliabilityScore / 100) * circumference;
 
 
   return (
@@ -158,7 +156,10 @@ export default function TrustCenterPageContent() {
               <div className={cn("flex items-center gap-2 text-sm font-bold", a.head)}>
                 <Award className="h-4 w-4 text-amber-500" />{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}
               </div>
-              <span className="text-sm md:text-base font-black tabular-nums leading-none text-emerald-600">{reliabilityScore}%</span>
+              <span className="text-sm md:text-base font-black tabular-nums leading-none text-emerald-700 dark:text-emerald-400">{reliabilityScore}%</span>
+            </div>
+            <div className={cn("mt-2 h-1.5 w-full overflow-hidden rounded-full", a.isDark ? "bg-gray-700" : "bg-gray-100")} aria-hidden>
+              <div className="h-full rounded-full bg-emerald-500" style={{ width: `${Math.min(100, Math.max(0, reliabilityScore))}%` }} />
             </div>
             <p className={cn("text-sm mt-1.5 font-medium leading-relaxed", a.sub)}>
               {t('Βασίζεται στις παρουσίες, αξιολογήσεις και συμπεριφορά σας.', 'Based on your attendance, reviews, and behavior.')}
@@ -166,17 +167,10 @@ export default function TrustCenterPageContent() {
           </div>
         </Card>
 
-        {/* Radial Score + Info */}
+        {/* Info (the score ring repeated the «Βαθμός Αξιοπιστίας» row on the left — declutter, Φ28) */}
         <div className="space-y-3">
-          <Card className="p-5 flex flex-col items-center">
-            <svg width="120" height="120" viewBox="0 0 120 120" className="mb-2">
-              <circle cx="60" cy="60" r="52" fill="none" stroke={a.isDark ? '#374151' : '#e5e7eb'} strokeWidth="8" />
-              <circle cx="60" cy="60" r="52" fill="none" stroke={a.scoreStroke} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${strokeDash} ${circumference}`} transform="rotate(-90 60 60)" />
-              <text x="60" y="56" textAnchor="middle" className={cn("text-sm md:text-base font-black", a.scoreFill)} fontSize="14">{reliabilityScore}</text>
-              <text x="60" y="74" textAnchor="middle" className="fill-gray-400" fontSize="10" fontWeight="600">%</text>
-            </svg>
-            <p className={cn("text-xs font-bold tracking-wide", a.muted)}>{t('Βαθμός Αξιοπιστίας', 'Reliability Score')}</p>
-          </Card>
+          {/* Φ27 — graduated consequences, explained, with appeals: next to what it affects. */}
+          <StandingCard />
 
           <Card className={a.infoBg}>
             <div className="p-4 md:p-5">
@@ -204,9 +198,6 @@ export default function TrustCenterPageContent() {
           </Card>
         </div>
       </div>
-
-      {/* Φ27 — graduated consequences, explained, with appeals. */}
-      <StandingCard />
 
       <CopilotInlinePrompt
         title={{ el: 'Ρώτα το AI για την εμπιστοσύνη σου', en: 'Ask the AI about your trust' }}

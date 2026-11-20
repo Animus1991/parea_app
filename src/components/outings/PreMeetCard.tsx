@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Coffee, Lock, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
@@ -16,6 +17,7 @@ const KIND = { cafe: { el: 'καφέ', en: 'café' }, bar: { el: 'μπαρ', en:
 export function PreMeetCard({ group, event, isHost, revealed }: { group: Group; event: Event; isHost: boolean; revealed: boolean }) {
   const { t } = useLanguage();
   const setPreMeet = useStore((s) => s.setPreMeet);
+  const [pickOpen, setPickOpen] = useState(false);
   const venue = venueById(group.preMeet?.venueId);
   const options = nearestPartnerVenues(event);
   if (!venue && !isHost) return null;
@@ -61,7 +63,17 @@ export function PreMeetCard({ group, event, isHost, revealed }: { group: Group; 
           {t('Ένα ποτό ή καφές πριν σπάει τον πάγο. Διάλεξε ένα μέρος-συνεργάτη κοντά στην εκδήλωση.', 'A drink or coffee before breaks the ice. Pick a partner place near the event.')}
         </p>
       )}
-      {isHost && (
+      {/* With a place chosen, the list folds into «Αλλαγή μέρους» (declutter, Φ28). */}
+      {isHost && venue && !pickOpen && (
+        <button
+          type="button"
+          onClick={() => setPickOpen(true)}
+          className="mt-2 inline-flex min-h-9 items-center text-xs font-bold text-ink underline underline-offset-2"
+        >
+          {t('Αλλαγή μέρους', 'Change place')}
+        </button>
+      )}
+      {isHost && (!venue || pickOpen) && (
         <div className="mt-3">
           <p className="text-xs font-bold text-ink">{t('Μέρη-συνεργάτες κοντά', 'Partner places nearby')}</p>
           <div className="mt-1.5 flex flex-wrap gap-2">
@@ -73,6 +85,7 @@ export function PreMeetCard({ group, event, isHost, revealed }: { group: Group; 
                 onClick={() => {
                   const clear = venue?.id === v.id;
                   setPreMeet(group.id, clear ? null : v.id, group.preMeet?.minutesBefore ?? 30);
+                  setPickOpen(false);
                   toast.success(
                     clear
                       ? t('Η συνάντηση πριν καθαρίστηκε.', 'Pre-meet cleared.')
