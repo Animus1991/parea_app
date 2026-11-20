@@ -4,7 +4,7 @@ import { useUIStore } from '../../store/uiStore';
 import { Toaster } from 'sonner';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
-  Grid, TrendingUp, Bookmark, History, Flag, Library,
+  Grid, Hash, TrendingUp, Bookmark, History, Flag, Library,
   Users, UserPlus, Settings, HelpCircle, Plus, User, X, MapPin, Calendar, PlusSquare, CreditCard, BadgeCheck, Terminal, Search, MessageSquare, Newspaper,
   Trophy, Zap, ChevronsLeft, ChevronsRight, ChevronDown, BookOpen
 } from 'lucide-react';
@@ -246,9 +246,10 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
 
   return (
     <>
-      <NavSection id="explore" paths={['/', '/categories', '/collections', '/nearby']} title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
+      <NavSection id="explore" paths={['/', '/categories', '/tags', '/collections', '/nearby']} title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
         <NavItem to="/" icon={Compass} label={t('Ανακάλυψη Εκδηλώσεων', 'Discover Events')} compact={compact} rail={rail} />
         <NavItem to="/categories" icon={Grid} label={t('Κατηγορίες', 'Categories')} compact={compact} rail={rail} />
+        <NavItem to="/tags" icon={Hash} label={t('Ετικέτες', 'Tags')} compact={compact} rail={rail} />
         <NavItem to="/collections" icon={Library} label={t('Συλλογές', 'Collections')} compact={compact} rail={rail} />
         <NavItem to="/nearby" icon={MapPin} label={t('Τοπικές Ομάδες', 'Local Groups')} compact={compact} rail={rail} />
       </NavSection>

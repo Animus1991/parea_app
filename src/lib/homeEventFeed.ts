@@ -12,6 +12,7 @@ import {
   type HomeSortParam,
 } from './homeFeedConstants';
 import { isEventPast } from './eventDisplay';
+import { eventHasTag } from './eventTags';
 import {
   eventMatchesSchedule,
   type HomeScheduleFilter,
@@ -65,7 +66,7 @@ export function filterHomeEvents(input: HomeEventFilterInput): Event[] {
 
     if (activeCategory !== 'All' && e.category !== activeCategory) return false;
     if (moodCategories.length > 0 && !moodCategories.includes(e.category)) return false;
-    if (tagFilter !== 'All' && !(e.tags ?? []).includes(tagFilter)) return false;
+    if (tagFilter !== 'All' && !eventHasTag(e, tagFilter)) return false;
     if (priceFilter === 'Free' && e.isPaid) return false;
     if (priceFilter === 'Paid' && !e.isPaid) return false;
     if (priceFilter === 'Group Discount' && !e.groupDiscount) return false;

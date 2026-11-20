@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useStore } from "../../store";
 import {
   Users,
@@ -52,8 +52,9 @@ import { GroupChatReportModal } from "./groupChat/GroupChatReportModal";
 import { GroupChatLocationModal } from "./groupChat/GroupChatLocationModal";
 import { GroupChatSosModal } from "./groupChat/GroupChatSosModal";
 import { canModerateGroup } from "../../lib/roles";
+import { eventTagPath } from "../../lib/eventTags";
 import { formatPlanWhen } from '../../lib/dateLocale';
-import { showNightCoordinationTools } from '../../lib/eventDisplay';
+import { showNightCoordinationTools, translateEventTag } from '../../lib/eventDisplay';
 
 /** Room under the newest message so the floating chats button (desktop) never covers it. */
 const VIRTUOSO_SPACER = { Footer: () => <div aria-hidden className="h-2 md:h-14" /> };
@@ -712,12 +713,13 @@ export default function GroupChatPageContent() {
                   {event.tags && event.tags.length > 0 && (
                     <div className="flex gap-1.5 flex-wrap">
                       {event.tags.map((tag: string) => (
-                        <span
+                        <Link
                           key={tag}
-                          className={cn("px-2.5 py-1 rounded-lg text-xs font-bold tracking-wide border", gc.tagBadge)}
+                          to={eventTagPath(tag)}
+                          className={cn("inline-flex w-max max-w-none shrink-0 whitespace-nowrap px-2.5 py-1 rounded-lg text-xs font-bold tracking-wide border", gc.tagBadge)}
                         >
-                          {tag}
-                        </span>
+                          {translateEventTag(tag, t)}
+                        </Link>
                       ))}
                     </div>
                   )}

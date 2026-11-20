@@ -64,6 +64,7 @@ describe('eventDisplay', () => {
     expect(formatLocationArea('Thisio, Athens', 'el')).toBe('Θησείο, Αθήνα');
     expect(formatLocationArea('Thisio, Athens', 'en')).toBe('Thisio, Athens');
     expect(translateEventTag('boardgames', (el) => el)).toBe('Επιτραπέζια');
+    expect(translateEventTag('nakamas nights', (el) => el)).toBe('Nakamas Nights');
   });
 
   it('ties the card action to date and membership, not the title', () => {
