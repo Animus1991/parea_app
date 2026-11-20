@@ -23,7 +23,7 @@ export const mockGroups: Group[] = [
     status: 'confirmed',
     discountUnlocked: false,
     isRecruiting: true,
-    recruitingNote: 'Cine Thisio open-air — ήσυχη μικρή παρέα, 3 θέσεις ακόμη',
+    recruitingNote: 'Θερινό σινεμά στο Θησείο — ήσυχη μικρή παρέα, 3 θέσεις ακόμη',
     meetingPoint: 'Cine Thisio, Apostolou Pavlou 7',
   },
 ];

@@ -14,6 +14,7 @@ import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { dateFnsLocale } from '../../lib/dateLocale';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { AppSelect } from '../common/AppSelect';
 
 const NO_IDS: string[] = [];
 
@@ -45,7 +46,7 @@ export default function SavedEventsPageContent() {
   }, [events, savedEventIds]);
 
   return (
-    <div className="max-w-full mx-auto space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -72,14 +73,16 @@ export default function SavedEventsPageContent() {
                 className={cn("search-control w-full h-9 pl-9 pr-3 rounded-xl border outline-none focus:ring-1 focus:ring-gray-300", a.inputBg)}
               />
             </div>
-            <select aria-label={t("Ταξινόμηση", "Sort by")}
+            <AppSelect
+              ariaLabel={t("Ταξινόμηση", "Sort by")}
               value={sortBy}
-              onChange={e => setSortBy(e.target.value as 'date' | 'name')}
+              onValueChange={(v) => setSortBy(v as 'date' | 'name')}
               className={cn("filter-select border outline-none cursor-pointer", a.inputBg)}
-            >
-              <option value="date">{t('Ημερομηνία', 'By Date')}</option>
-              <option value="name">{t('Όνομα', 'By Name')}</option>
-            </select>
+              options={[
+                { value: 'date', label: t('Ημερομηνία', 'By Date') },
+                { value: 'name', label: t('Όνομα', 'By Name') },
+              ]}
+            />
           </div>
 
           {/* Category tabs */}
@@ -108,7 +111,7 @@ export default function SavedEventsPageContent() {
         isError={isError}
         onRetry={() => void refetch()}
         loading={
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 4 }).map((_, i) => (
               <EventCardSkeleton key={`saved-sk-${i}`} />
             ))}
@@ -117,7 +120,7 @@ export default function SavedEventsPageContent() {
         errorTitle={t('Αδυναμία φόρτωσης αποθηκευμένων', 'Could not load saved events')}
       >
       {savedEvents.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {savedEvents.map(event => (
             <Card
               key={event.id}
@@ -160,10 +163,10 @@ export default function SavedEventsPageContent() {
                 </h3>
                 <p className={cn('card-meta mt-1.5', a.muted)}>
                   {event.safetyLevel === 'high_trust'
-                    ? t('Υψηλή Εμπιστοσύνη', 'High Trust')
+                    ? t('Επιβεβαιωμένη ομάδα', 'Confirmed group')
                     : event.safetyLevel === 'medium'
-                      ? t('Μεσαία', 'Medium Trust')
-                      : t('Δημόσια', 'Public')}
+                      ? t('Οργανωμένος host', 'Organized host')
+                      : t('Δημόσιος χώρος', 'Public venue')}
                 </p>
                 <p className={cn('card-meta mt-auto pt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5', a.sub)}>
                   <span className="inline-flex items-center gap-1 min-w-0">
@@ -207,6 +210,8 @@ export default function SavedEventsPageContent() {
           )}
           actionLabel={t('Ανακαλύψτε Εκδηλώσεις', 'Discover Events')}
           onAction={() => navigate('/')}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
         />
       )}
       </ResourceStateGate>

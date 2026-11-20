@@ -29,7 +29,7 @@ describe('outings in the store (Φ27)', () => {
     expect(useStore.getState().checkInMember('g-nn3', { userId: 'u2' }).reason).toBe('not_door');
   });
 
-  it('closing check-in rewards arrivals, records absences and opens feedback', () => {
+  it('closing check-in rewards arrivals and records absences without opening feedback', () => {
     const s = useStore.getState();
     s.checkInMember('g-nn1', { userId: 'u2' });
     s.checkInMember('g-nn1', { userId: 'u3' });
@@ -39,7 +39,8 @@ describe('outings in the store (Φ27)', () => {
     const after = useStore.getState();
     expect(after.strikes.some((x) => x.userId === 'u4' && x.kind === 'no_show' && x.groupId === 'g-nn1')).toBe(true);
     expect(after.users.find((u) => u.id === 'u4')!.reliabilityScore).toBe(beforeU4 - 15);
-    expect(after.getPendingFeedbackEventId()).toBeTruthy();
+    expect(after.getPendingFeedbackEventIds()).not.toContain('nn1');
+    expect(after.notifications.filter((n) => n.type === 'feedback' && n.eventId === 'nn1')).toHaveLength(0);
     expect(after.checkInMember('g-nn1', { userId: 'u4' }).ok).toBe(false);
   });
 
@@ -56,6 +57,22 @@ describe('outings in the store (Φ27)', () => {
     expect(g.members).not.toContain('u1');
     expect(g.lastTransfer?.toUserId).toBe('u3');
     expect(useStore.getState().strikes.some((x) => x.userId === 'u1')).toBe(false);
+  });
+
+  it('reassigns hostId when the host leaves so door/check-in stay usable', () => {
+    const before = useStore.getState().groups.find((x) => x.id === 'g-nn1')!;
+    expect(before.hostId).toBe('u1');
+    useStore.getState().leaveGroup('g-nn1');
+    const after = useStore.getState().groups.find((x) => x.id === 'g-nn1')!;
+    expect(after.members).not.toContain('u1');
+    expect(after.hostId).toBeTruthy();
+    expect(after.hostId).not.toBe('u1');
+    expect(after.members).toContain(after.hostId!);
+    expect(
+      useStore.getState().notifications.some(
+        (n) => n.forUserId === after.hostId && /νέος οικοδεσπότης|new group host/i.test(`${n.messageGr} ${n.messageEn}`),
+      ),
+    ).toBe(true);
   });
 
   it('blocks a women & non-binary group until the profile says so', () => {
@@ -112,6 +129,7 @@ describe('outings in the store (Φ27)', () => {
     const g = st.groups.find((x) => x.id === gid)!;
     const e = st.events.find((x) => x.id === g.eventId)!;
     expect(e.kind).toBe('mini_outing');
+    expect(e.imageUrl).toMatch(/^\/covers\//);
     expect(e.minTrustTierAccess).toBe('2_confirmed');
     expect(g.hostId).toBe('u1');
     expect(g.targetSize).toBe(3);

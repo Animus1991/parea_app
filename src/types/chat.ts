@@ -26,7 +26,12 @@ export type MessageType =
   | 'event_card'
   | 'meeting_point'
   | 'quick_reply'
-  | 'arrival_status';
+  | 'arrival_status'
+  | 'gif'
+  | 'voice'
+  | 'image'
+  | 'poll'
+  | 'story_reply';
 
 export interface ChatPermissions {
   canRead: boolean;
@@ -34,6 +39,57 @@ export interface ChatPermissions {
   canReport: boolean;
   canPersist: boolean;
   reasonIfLocked?: { el: string; en: string };
+}
+
+export interface ChatReplyRef {
+  id: string;
+  senderId: string;
+  senderName: string;
+  body: string;
+  type?: MessageType;
+}
+
+export interface ChatMediaAttachment {
+  kind: 'gif' | 'image' | 'voice';
+  url: string;
+  fallbackUrl?: string;
+  label?: string;
+  durationSec?: number;
+  waveform?: number[];
+}
+
+export interface ChatPollOption {
+  id: string;
+  label: string;
+  voterIds: string[];
+}
+
+export interface ChatPoll {
+  id: string;
+  question: string;
+  options: ChatPollOption[];
+}
+
+export interface ChatStoryRef {
+  storyId: string;
+  authorId: string;
+  authorName: string;
+  caption?: string;
+  bg?: string;
+}
+
+export interface ChatStory {
+  id: string;
+  authorId: string;
+  authorName: string;
+  authorAvatar?: string;
+  caption: string;
+  imageUrl?: string;
+  bgGradient: string;
+  createdAt: string;
+  expiresAt: string;
+  reactions: Record<string, string[]>;
+  tag?: string;
 }
 
 export interface Conversation {
@@ -68,6 +124,20 @@ export interface ChatMessage {
   type: MessageType;
   body: string;
   createdAt: string;
+  /** Threaded reply / reply-to-reply quote. */
+  replyTo?: ChatReplyRef;
+  /** Emoji -> list of userIds who reacted. */
+  reactions?: Record<string, string[]>;
+  /** Mentioned userIds (or 'all'). */
+  mentions?: string[];
+  /** Extracted #tags without leading '#'. */
+  tags?: string[];
+  media?: ChatMediaAttachment;
+  poll?: ChatPoll;
+  storyRef?: ChatStoryRef;
+  editedAt?: string;
+  pinned?: boolean;
+  readBy?: string[];
 }
 
 export interface ChatPrivacySettings {

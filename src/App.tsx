@@ -8,6 +8,7 @@ import { OfflineBanner } from "./components/common/OfflineBanner";
 import { CspViolationToast } from "./components/common/CspViolationToast";
 import { CommandPalette } from "./components/common/CommandPalette";
 import { RequireAdmin } from "./components/auth/RequireAdmin";
+import { RequireOrganizer } from "./components/auth/RequireOrganizer";
 import { CopilotBridge } from "./components/copilot/CopilotBridge";
 import { useStore } from "./store";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
@@ -53,6 +54,7 @@ const Wall = lazy(routeLoaders.wall);
 const PersonProfile = lazy(routeLoaders.personProfile);
 const OurNight = lazy(routeLoaders.ourNight);
 const Collections = lazy(routeLoaders.collections);
+const Tags = lazy(routeLoaders.tags);
 const InvitePublic = lazy(routeLoaders.invitePublic);
 const OrganizerEmbed = lazy(routeLoaders.organizerEmbed);
 
@@ -75,13 +77,13 @@ export default function App() {
   useEffect(() => {
     if (onLogin) return prefetchWhenIdle(["/"]);
     if (!signedIn) return;
-    return prefetchWhenIdle(["/", "/events/_", "/categories", "/plans", "/buddy-seek", "/saved", "/chats", "/profile", "/notifications", "/wall"]);
+    return prefetchWhenIdle(["/", "/events/_", "/categories", "/tags", "/plans", "/buddy-seek", "/saved", "/chats", "/profile", "/notifications", "/wall"]);
   }, [onLogin, signedIn]);
 
   const publicPage = isPublicPath(location.pathname);
   useEffect(() => {
     if (!currentUser && location.pathname !== "/login" && !publicPage) {
-      navigate("/login");
+      navigate("/login", { replace: true });
     }
   }, [currentUser, location.pathname, navigate, publicPage]);
 
@@ -94,7 +96,7 @@ export default function App() {
       location.pathname !== "/onboarding" &&
       location.pathname !== "/login"
     ) {
-      navigate("/onboarding");
+      navigate("/onboarding", { replace: true });
     }
   }, [currentUser, onboardingCompleted, demoMode, location.pathname, navigate, publicPage]);
 
@@ -114,7 +116,12 @@ export default function App() {
   }
 
   if (!currentUser && location.pathname !== "/login") {
-    return null; // wait for redirect
+    return (
+      <QueryClientProvider client={queryClient}>
+        <RouteLifecycle />
+        <PageLoading />
+      </QueryClientProvider>
+    );
   }
 
   if (location.pathname === "/login") {
@@ -147,6 +154,8 @@ export default function App() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<ErrorBoundary><Home /></ErrorBoundary>} />
             <Route path="/categories" element={<ErrorBoundary><Categories /></ErrorBoundary>} />
+            <Route path="/tags" element={<ErrorBoundary><Tags /></ErrorBoundary>} />
+            <Route path="/tags/:slug" element={<ErrorBoundary><Tags /></ErrorBoundary>} />
             <Route path="/nearby" element={<ErrorBoundary><NearbyGroups /></ErrorBoundary>} />
 
             <Route path="/events/:eventId" element={<ErrorBoundary><EventDetail /></ErrorBoundary>} />
@@ -167,7 +176,7 @@ export default function App() {
             <Route path="/chats" element={<ErrorBoundary><Inbox /></ErrorBoundary>} />
             <Route path="/chat/:groupId" element={<ErrorBoundary><GroupChat /></ErrorBoundary>} />
 
-            <Route path="/manage" element={<ErrorBoundary><OrganizerDashboard /></ErrorBoundary>} />
+            <Route path="/manage" element={<ErrorBoundary><RequireOrganizer><OrganizerDashboard /></RequireOrganizer></ErrorBoundary>} />
             <Route path="/create" element={<ErrorBoundary><CreateEventFlow /></ErrorBoundary>} />
             <Route path="/wallet" element={<ErrorBoundary><Wallet /></ErrorBoundary>} />
 

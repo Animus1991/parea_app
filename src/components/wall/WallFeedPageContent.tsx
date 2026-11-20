@@ -1,17 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Eye, Newspaper, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowLeft, Eye, Newspaper, CircleDot } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { useWallAccess, useWallStore } from '../../store/wallStore';
 import { canViewPost, graphConnected, tagShownOnProfile, visiblePosts } from '../../lib/audience';
-import { WallActivityPanel } from './WallActivityPanel';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
 import { Chip } from '../common/Chip';
 import { EmptyState } from '../common/EmptyState';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { PostComposer } from './PostComposer';
 import { WallPostList } from './WallPostList';
@@ -91,17 +90,12 @@ export default function WallFeedPageContent() {
   ];
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300">
+    <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300')}>
       <div className="flex flex-col gap-1">
         <h1 className={cn(APP_TYPO.pageTitle, 'flex items-center gap-2 text-ink')}>
           <Newspaper className="h-5 w-5" aria-hidden /> {t('Τοίχος Nakamas', 'Nakamas Wall')}
         </h1>
-        <p className={cn(APP_TYPO.pageSub, 'text-ink-muted')}>
-          {t('Τι σχεδιάζουν οι Nakamas σου — κι εσύ ορίζεις ποιος βλέπει κάθε δημοσίευσή σου.', 'What your Nakamas are planning — and you choose who sees each of your posts.')}
-        </p>
       </div>
-      <CopilotInlinePrompt maxChips={2} title={{ el: 'Βοήθεια για τον τοίχο', en: 'Help for the wall' }} />
-
       {focusId && (
         <div className="space-y-2">
           <button
@@ -147,26 +141,6 @@ export default function WallFeedPageContent() {
         </div>
       )}
 
-      <WallActivityPanel />
-
-      <button
-        type="button"
-        onClick={() => navigate('/profile?tab=privacy')}
-        className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface-raised px-4 py-3 text-left transition-colors hover:border-border-strong"
-      >
-        <ShieldCheck className="h-5 w-5 shrink-0 text-ink" aria-hidden />
-        <span className="min-w-0 flex-1">
-          <span className="block text-sm font-bold text-ink">{t('Εσύ ελέγχεις το κοινό σου', 'You control your audience')}</span>
-          <span className="block text-xs font-medium text-ink-muted">
-            {t(
-              'Ανά δημοσίευση · ενότητες μόνο αν το προφίλ είναι ορατό σε εκείνους.',
-              'Per post · sections only if the profile is visible to them.',
-            )}
-          </span>
-        </span>
-        <span className="shrink-0 text-xs font-bold text-ink underline">{t('Ρυθμίσεις', 'Settings')}</span>
-      </button>
-
       <div ref={composerRef}>
         <PostComposer />
       </div>
@@ -179,7 +153,7 @@ export default function WallFeedPageContent() {
         ))}
         {newCount > 0 && filter === 'all' && (
           <span className="inline-flex items-center gap-1 text-xs font-bold text-ink" role="status">
-            <Sparkles className="h-3.5 w-3.5" aria-hidden />
+            <CircleDot className="h-3.5 w-3.5" aria-hidden />
             {newCount === 1 ? t('1 νέα από την τελευταία σου επίσκεψη', '1 new since your last visit') : t(`${newCount} νέες από την τελευταία σου επίσκεψη`, `${newCount} new since your last visit`)}
           </span>
         )}
@@ -235,6 +209,18 @@ export default function WallFeedPageContent() {
                 ? () => navigate('/buddy-seek')
                 : () => navigate('/connections')
           }
+          askAi
+          askPrompt={
+            filter === 'mine'
+              ? t(
+                  'Βοήθησέ με να γράψω μια ωραία πρόσκληση για τον τοίχο μου.',
+                  'Help me write a nice invite post for my wall.',
+                )
+              : t(
+                  'Δείξε μου τι κάνουν οι Nakamas μου ή βρες παρέα για έξοδο.',
+                  'Show me what my Nakamas are up to or find company for an outing.',
+                )
+          }
         />
       ) : (
         <WallPostList key={filter} posts={list} />
@@ -246,7 +232,7 @@ export default function WallFeedPageContent() {
             type="button"
             onClick={() => setShowHidden((v) => !v)}
             aria-expanded={showHidden}
-            className="inline-flex min-h-10 items-center gap-2 text-xs font-bold text-ink-muted hover:text-ink"
+            className="inline-flex min-h-8 items-center gap-2 text-xs font-bold text-ink-muted hover:text-ink"
           >
             <Eye className="h-4 w-4" aria-hidden />
             {showHidden

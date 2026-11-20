@@ -161,8 +161,8 @@ export function EventDetailOrganizerSection({
 
   const trustTierLabel =
     organizer.trustTier === '3_high_trust'
-      ? t('ΥΨΗΛΗ ΕΜΠΙΣΤΟΣΥΝΗ', 'HIGH TRUST')
-      : t(tierLabelEl(organizer.trustTier).toUpperCase(), tierLabelEn(organizer.trustTier).toUpperCase());
+      ? t('Υψηλή Εμπιστοσύνη', 'High Trust')
+      : t(tierLabelEl(organizer.trustTier), tierLabelEn(organizer.trustTier));
 
   return (
     <div className={cn('pt-5 border-t mt-5', tok.sectionBorder, className)}>
@@ -222,7 +222,7 @@ export function EventDetailOrganizerSection({
                 variant="outline"
                 className={cn('text-2xs py-0 px-1.5 shadow-none', tok.reliabilityBadge)}
               >
-                {organizer.reliabilityScore}% {t('ΑΞΙΟΠΙΣΤΙΑ', 'RELIABILITY')}
+                {organizer.reliabilityScore}% {t('Αξιοπιστία', 'Reliability')}
               </Badge>
             </div>
             <p className={cn('text-xs mt-0.5 font-medium', tok.bio)}>

@@ -15,6 +15,16 @@ import type { Audience } from '../../types/wall';
 import { AudienceChip } from './AudienceChip';
 import { AudiencePickerModal } from './AudiencePickerModal';
 import { PersonAvatar } from './PersonAvatar';
+import { cn } from '../../lib/utils';
+
+const COMPOSER_ROW =
+  'flex w-full flex-wrap items-stretch justify-between gap-x-2 gap-y-1.5';
+/** Two-up on phones; equal share of the full card row from `sm` up. */
+const COMPOSER_FILL =
+  'min-h-8 min-w-0 flex-1 basis-[calc(50%-0.25rem)] sm:basis-0';
+/** Two-up on phones; natural pill width, spread with space-between from `sm` up. */
+const COMPOSER_PILL =
+  'min-h-8 min-w-0 flex-1 basis-[calc(50%-0.25rem)] sm:flex-none sm:basis-auto';
 
 function draftKey(ownerId: string) {
   return `nakamas-wall-draft:${ownerId}`;
@@ -220,24 +230,6 @@ export function PostComposer({
             className="w-full resize-none rounded-2xl border border-border bg-surface px-3 py-2.5 text-sm text-ink outline-none placeholder:text-ink-muted focus:ring-2 focus:ring-accent"
           />
 
-          {!text && !eventId && !imageUrl && (
-            <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('Γρήγορη αρχή', 'Quick start')}>
-              {QUICK_STARTS.map((q) => (
-                <button
-                  key={q.en}
-                  type="button"
-                  onClick={() => {
-                    setText(t(q.el, q.en));
-                    textRef.current?.focus();
-                  }}
-                  className="inline-flex min-h-8 items-center gap-1 rounded-full border border-border bg-surface-raised px-2.5 text-xs font-bold text-ink-muted hover:border-border-strong hover:text-ink"
-                >
-                  <span aria-hidden>{q.emoji}</span> {t(q.el, q.en).trim()}
-                </button>
-              ))}
-            </div>
-          )}
-
           {taggedIds.length > 0 && (
             <p className="flex flex-wrap items-center gap-1 text-xs font-bold text-ink">
               <UserPlus className="h-3.5 w-3.5" aria-hidden />
@@ -290,7 +282,7 @@ export function PostComposer({
                         setEventId(e.id);
                         setEventPickerOpen(false);
                       }}
-                      className="flex min-h-10 w-full items-center gap-2 rounded-xl px-2 text-left text-xs font-bold text-ink hover:bg-surface"
+                      className="flex min-h-8 w-full items-center gap-2 rounded-xl px-2 text-left text-xs font-bold text-ink hover:bg-surface"
                     >
                       <CalendarDays className="h-3.5 w-3.5 shrink-0" aria-hidden />
                       <span className="min-w-0 flex-1 truncate">{e.title}</span>
@@ -302,62 +294,100 @@ export function PostComposer({
             </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-2">
-            {isOwnWall ? (
-              <AudienceChip audience={audience} onClick={() => setPickerOpen(true)} />
-            ) : (
-              <AudienceChip audience={ownerAudience} />
-            )}
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className="inline-flex min-h-8 items-center gap-1 rounded-full px-2.5 text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink"
-            >
-              <ImagePlus className="h-4 w-4" aria-hidden /> {t('Φωτογραφία', 'Photo')}
-            </button>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                e.target.value = '';
-                void pickImage(f);
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => setEventPickerOpen((v) => !v)}
-              aria-expanded={eventPickerOpen}
-              className="inline-flex min-h-8 items-center gap-1 rounded-full px-2.5 text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink"
-            >
-              <CalendarDays className="h-4 w-4" aria-hidden /> {t('Εκδήλωση', 'Event')}
-            </button>
-            <button
-              type="button"
-              onClick={() => setTagsOpen(true)}
-              className="inline-flex min-h-8 items-center gap-1 rounded-full px-2.5 text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink"
-            >
-              <UserPlus className="h-4 w-4" aria-hidden /> {t('Με ποιους;', 'With whom?')}
-            </button>
-            <span className="ml-auto flex items-center gap-2">
-              {remaining < 200 && (
-                <span className={remaining < 0 ? 'text-xs font-bold text-red-600' : 'text-xs font-medium text-ink-muted'} aria-live="polite">
-                  {remaining}
-                </span>
-              )}
-              <Button size="sm" onClick={submit} disabled={!canSubmit} loading={busy}>
-                {t('Δημοσίευση', 'Post')}
-              </Button>
-            </span>
-          </div>
-          {!isOwnWall && (
-            <p className="text-xs font-medium text-ink-muted">
-              {t(`Το ποιος το βλέπει το ορίζει ο/η ${owner?.name ?? ''}.`, `${owner?.name ?? ''} decides who sees posts on their wall.`)}
-            </p>
-          )}
         </div>
+      </div>
+
+      <div className="mt-3 space-y-2">
+        {!text && !eventId && !imageUrl && (
+          <div className={COMPOSER_ROW} role="group" aria-label={t('Γρήγορη αρχή', 'Quick start')}>
+            {QUICK_STARTS.map((q) => (
+              <button
+                key={q.en}
+                type="button"
+                onClick={() => {
+                  setText(t(q.el, q.en));
+                  textRef.current?.focus();
+                }}
+                className={cn(
+                  COMPOSER_FILL,
+                  'inline-flex items-center justify-center gap-1 rounded-full border border-border bg-surface-raised px-2.5 py-1 text-center text-xs font-bold leading-tight text-ink-muted hover:border-border-strong hover:text-ink',
+                )}
+              >
+                <span aria-hidden>{q.emoji}</span>
+                <span className="min-w-0">{t(q.el, q.en).trim()}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className={COMPOSER_ROW}>
+          {isOwnWall ? (
+            <AudienceChip
+              audience={audience}
+              onClick={() => setPickerOpen(true)}
+              className={cn(COMPOSER_PILL, 'justify-center')}
+            />
+          ) : (
+            <AudienceChip audience={ownerAudience} className={cn(COMPOSER_PILL, 'justify-center')} />
+          )}
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className={cn(
+              COMPOSER_PILL,
+              'inline-flex items-center justify-center gap-1 rounded-full px-2.5 text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink',
+            )}
+          >
+            <ImagePlus className="h-4 w-4 shrink-0" aria-hidden /> {t('Φωτογραφία', 'Photo')}
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              e.target.value = '';
+              void pickImage(f);
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => setEventPickerOpen((v) => !v)}
+            aria-expanded={eventPickerOpen}
+            className={cn(
+              COMPOSER_PILL,
+              'inline-flex items-center justify-center gap-1 rounded-full px-2.5 text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink',
+            )}
+          >
+            <CalendarDays className="h-4 w-4 shrink-0" aria-hidden /> {t('Εκδήλωση', 'Event')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setTagsOpen(true)}
+            className={cn(
+              COMPOSER_PILL,
+              'inline-flex items-center justify-center gap-1 rounded-full px-2.5 text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink',
+            )}
+          >
+            <UserPlus className="h-4 w-4 shrink-0" aria-hidden /> {t('Με ποιους;', 'With whom?')}
+          </button>
+          <span className="ml-auto flex min-h-8 basis-full items-center justify-end gap-2 sm:ml-0 sm:basis-auto sm:flex-none">
+            {remaining < 200 && (
+              <span className={remaining < 0 ? 'text-xs font-bold text-red-600' : 'text-xs font-medium text-ink-muted'} aria-live="polite">
+                {remaining}
+              </span>
+            )}
+            <Button size="sm" onClick={submit} disabled={!canSubmit} loading={busy}>
+              {t('Δημοσίευση', 'Post')}
+            </Button>
+          </span>
+        </div>
+        {!isOwnWall && (
+          <p className="text-xs font-medium text-ink-muted">
+            {t(`Το ποιος το βλέπει το ορίζει ο/η ${owner?.name ?? ''}.`, `${owner?.name ?? ''} decides who sees posts on their wall.`)}
+          </p>
+        )}
       </div>
 
       <Modal open={tagsOpen} onClose={() => setTagsOpen(false)} title={t('Με ποιους είσαι;', 'Who are you with?')} size="md">

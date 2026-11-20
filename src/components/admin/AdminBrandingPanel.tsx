@@ -29,7 +29,7 @@ export function AdminBrandingPanel() {
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
-          <span className={cn('text-xs font-bold uppercase tracking-wider', a.muted)}>
+          <span className={cn('text-xs font-bold tracking-wider', a.muted)}>
             {t('Όνομα οργανισμού', 'Organization name')}
           </span>
           <input
@@ -39,7 +39,7 @@ export function AdminBrandingPanel() {
           />
         </label>
         <label className="block">
-          <span className={cn('text-xs font-bold uppercase tracking-wider', a.muted)}>
+          <span className={cn('text-xs font-bold tracking-wider', a.muted)}>
             {t('Κύριο χρώμα', 'Primary color')}
           </span>
           <div className="mt-1 flex items-center gap-2">
@@ -54,7 +54,7 @@ export function AdminBrandingPanel() {
         </label>
       </div>
       <div>
-        <p className={cn('text-xs font-bold uppercase tracking-wider mb-2', a.muted)}>
+        <p className={cn('text-xs font-bold tracking-wider mb-2', a.muted)}>
           {t('Προεπιλεγμένο θέμα πλατφόρμας', 'Default platform theme')}
         </p>
         <div className="flex flex-wrap gap-2">
@@ -62,7 +62,7 @@ export function AdminBrandingPanel() {
             <button
               key={id}
               type="button"
-              onClick={() => applyThemeSelection(id, setTheme, language === 'el' ? 'el' : 'en', theme)}
+              onClick={() => applyThemeSelection(id, setTheme, theme)}
               className={cn(
                 'px-3 py-1.5 rounded-full text-xs font-bold border transition-colors',
                 theme === id ? 'bg-cyan-600 text-white border-cyan-600' : cn(a.borderB, a.sub),

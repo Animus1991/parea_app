@@ -112,7 +112,7 @@ export function JoinRequestPreviewModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 min-h-11 rounded-2xl border border-border text-xs font-bold text-ink"
+            className="flex-1 min-h-8 rounded-2xl border border-border text-xs font-bold text-ink"
           >
             {t('Ακύρωση', 'Cancel')}
           </button>
@@ -124,7 +124,7 @@ export function JoinRequestPreviewModal({
                 onSendRequest(message);
                 onClose();
               }}
-              className="flex-1 min-h-11 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold"
+              className="flex-1 min-h-8 rounded-2xl bg-accent hover:bg-accent-strong text-accent-fg text-xs font-bold"
             >
               {t('Αποστολή αιτήματος', 'Send request')}
             </button>
@@ -137,7 +137,7 @@ export function JoinRequestPreviewModal({
                   onAccept?.();
                   onClose();
                 }}
-                className="flex-1 min-h-11 rounded-2xl bg-emerald-600 text-white text-xs font-bold flex items-center justify-center gap-1"
+                className="flex-1 min-h-8 rounded-2xl bg-emerald-600 text-white text-xs font-bold flex items-center justify-center gap-1"
               >
                 <Check className="w-4 h-4" /> {t('Αποδοχή', 'Accept')}
               </button>
@@ -147,7 +147,7 @@ export function JoinRequestPreviewModal({
                   onDecline?.();
                   onClose();
                 }}
-                className="min-h-11 px-4 rounded-2xl border border-border text-xs font-bold flex items-center gap-1"
+                className="min-h-8 px-4 rounded-2xl border border-border text-xs font-bold flex items-center gap-1"
               >
                 <X className="w-4 h-4" /> {t('Απόρριψη', 'Decline')}
               </button>

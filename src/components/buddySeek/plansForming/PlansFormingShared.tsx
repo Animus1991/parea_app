@@ -6,12 +6,12 @@ import {
   ChevronRight,
   Plus,
   MapPin,
-  Shield,
   CircleDot,
 } from 'lucide-react';
 import { useLanguage } from '../../../lib/i18n';
 import { cn } from '../../../lib/utils';
 import { PLANS_FORMING_TYPO } from '../../../lib/typographyTokens';
+import { NakamasMini } from '../../illustrations/NakamasMini';
 import type { PlansFormingInsights } from '../../../hooks/usePlansFormingFeed';
 import type { PlansFormingEnrichedItem } from '../../../lib/plansFormingUtils';
 import type { Event } from '../../../types';
@@ -117,27 +117,26 @@ export function PlansFormingYourPlanBanner({
   return (
     <div
       className={cn(
-        'rounded-2xl border p-3 space-y-2',
-        isDark ? 'bg-cyan-950/40 border-cyan-700/40' : 'bg-cyan-50 border-cyan-200',
+        'rounded-2xl shadow-soft px-4 py-4 space-y-3',
+        isDark ? 'bg-white/[0.04]' : 'bg-white',
       )}
     >
-      <p className={cn(PLANS_FORMING_TYPO.sectionLabel, 'uppercase', isDark ? 'text-cyan-300' : 'text-cyan-700')}>
+      <p className={cn(PLANS_FORMING_TYPO.sectionLabel, isDark ? 'text-cyan-300' : 'text-cyan-700')}>
         {tu('Το σχέδιό σας', 'Your plan')}
       </p>
-      <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'truncate', isDark ? 'text-white' : 'text-gray-900')}>
+      <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'leading-snug', isDark ? 'text-white' : 'text-gray-900')}>
         {plan.event.title}
       </p>
-      <p className={cn(PLANS_FORMING_TYPO.cardMeta, isDark ? 'text-gray-400' : 'text-gray-600')}>
+      <p className={cn(PLANS_FORMING_TYPO.cardMeta, 'leading-relaxed', isDark ? 'text-gray-400' : 'text-gray-600')}>
         {t(plan.intentLabel.el, plan.intentLabel.en)} · {t(plan.schedule.el, plan.schedule.en)}
       </p>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
         <button
           type="button"
           onClick={() => (onManage ? onManage() : navigate(`/events/${plan.event.id}`))}
           className={cn(
-            'flex-1 min-h-10 rounded-lg',
-            PLANS_FORMING_TYPO.statChip,
-            isDark ? 'bg-cyan-600 text-white' : 'bg-cyan-600 text-white',
+            'px-4 min-h-9 rounded-full bg-cyan-600 text-white',
+            PLANS_FORMING_TYPO.cta,
           )}
         >
           {t('Διαχείριση', 'Manage')}
@@ -147,9 +146,9 @@ export function PlansFormingYourPlanBanner({
             type="button"
             onClick={onEdit}
             className={cn(
-              'px-3 min-h-10 rounded-lg border',
-              PLANS_FORMING_TYPO.statChip,
-              isDark ? 'border-white/20 text-gray-200' : 'border-cyan-300 text-cyan-800',
+              'min-h-9',
+              PLANS_FORMING_TYPO.cta,
+              isDark ? 'text-gray-400 hover:text-white' : 'text-ink-muted hover:text-ink',
             )}
           >
             {t('Επεξεργασία', 'Edit')}
@@ -170,12 +169,12 @@ export function PlansFormingSectionTitle({
   isDark?: boolean;
 }) {
   return (
-    <div className="mb-2">
-      <h3 className={cn('text-xs font-semibold', isDark ? 'text-gray-200' : 'text-gray-800')}>
+    <div className="space-y-1">
+      <h3 className={cn('text-xs font-semibold tracking-wide', isDark ? 'text-gray-200' : 'text-gray-800')}>
         {title}
       </h3>
       {subtitle && (
-        <p className={cn(PLANS_FORMING_TYPO.statChip, 'mt-0.5', isDark ? 'text-gray-500' : 'text-gray-500')}>{subtitle}</p>
+        <p className={cn(PLANS_FORMING_TYPO.statChip, isDark ? 'text-gray-500' : 'text-gray-500')}>{subtitle}</p>
       )}
     </div>
   );
@@ -202,23 +201,13 @@ export function PlansFormingEmptyState({
         isDark ? 'border-white/15 bg-white/[0.02]' : 'border-gray-300 bg-gray-50/50',
       )}
     >
-      <div
-        className={cn(
-          'w-12 h-12 mx-auto rounded-2xl flex items-center justify-center',
-          isDark ? 'bg-cyan-900/30' : 'bg-cyan-100',
-        )}
-      >
-        <Users className={cn('w-6 h-6', isDark ? 'text-cyan-400' : 'text-cyan-600')} />
-      </div>
+      <NakamasMini id="crew" size={48} className="mx-auto" />
       <div>
         <p className={cn(PLANS_FORMING_TYPO.cardTitle, isDark ? 'text-white' : 'text-gray-900')}>
           {t('Θέλετε να πάτε, αλλά όχι μόνοι/ες;', 'Want to go, but not alone?')}
         </p>
         <p className={cn(PLANS_FORMING_TYPO.body, 'mt-1.5 leading-relaxed max-w-[240px] mx-auto', isDark ? 'text-gray-400' : 'text-gray-500')}>
-          {t(
-            'Δηλώστε πρόθεση για εκδήλωση ή μπείτε σε σχέδιο που ήδη σχηματίζεται — χωρίς δημόσια έκθεση από προεπιλογή.',
-            'Declare intent for an event or join a forming plan — not public by default.',
-          )}
+          {t('Δήλωσε πρόθεση ή μπες σε σχέδιο που σχηματίζεται.', 'Declare intent or join a forming plan.')}
         </p>
       </div>
       {suggestedEvent && (
@@ -244,7 +233,7 @@ export function PlansFormingEmptyState({
         <button
           type="button"
           onClick={onBrowse ?? (() => navigate('/'))}
-          className={cn('w-full min-h-10 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center gap-1', PLANS_FORMING_TYPO.cta)}
+          className={cn('w-full min-h-8 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center gap-1', PLANS_FORMING_TYPO.cta)}
         >
           {t('Ανακάλυψη εκδηλώσεων', 'Discover events')}
           <ChevronRight className="w-3.5 h-3.5" />
@@ -253,7 +242,7 @@ export function PlansFormingEmptyState({
           type="button"
           onClick={onCreate ?? (() => navigate('/buddy-seek'))}
           className={cn(
-            'w-full min-h-10 rounded-xl border flex items-center justify-center gap-1',
+            'w-full min-h-8 rounded-xl border flex items-center justify-center gap-1',
             PLANS_FORMING_TYPO.cta,
             isDark ? 'border-white/15 text-gray-200' : 'border-gray-300 text-gray-800',
           )}
@@ -262,33 +251,43 @@ export function PlansFormingEmptyState({
           {t('Δημιουργία αιτήματος', 'Create a request')}
         </button>
       </div>
-      <p className={cn(PLANS_FORMING_TYPO.statChip, 'flex items-center justify-center gap-1', isDark ? 'text-gray-600' : 'text-gray-400')}>
-        <Shield className="w-3 h-3" />
-        {t('Privacy-first · όχι dating feed', 'Privacy-first · not a dating feed')}
-      </p>
     </div>
   );
 }
 
-export function PlansFormingValueHero({ isDark, insights }: { isDark?: boolean; insights: PlansFormingInsights }) {
+export function PlansFormingValueHero({
+  isDark,
+  insights,
+  compact,
+}: {
+  isDark?: boolean;
+  insights: PlansFormingInsights;
+  /** Rail / sheet: sit under the title as a quieter count, not a second headline. */
+  compact?: boolean;
+}) {
   const { t } = useLanguage();
   const headline =
     insights.compatiblePlans > 0
       ? t(
-          `${insights.compatiblePlans} συμβατά σχέδια τώρα`,
-          `${insights.compatiblePlans} compatible plans right now`,
+          `${insights.compatiblePlans} σχέδια τώρα`,
+          `${insights.compatiblePlans} plans right now`,
         )
-      : t('Βρείτε Nakamas για εκδήλωση', 'Find Nakamas for events');
+      : t('Βρες Nakamas για εκδήλωση', 'Find Nakamas for an event');
 
   return (
-    <div className="space-y-1">
-      <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'leading-snug', isDark ? 'text-white' : 'text-gray-900')}>{headline}</p>
-      <p className={cn(PLANS_FORMING_TYPO.body, 'leading-relaxed', isDark ? 'text-gray-400' : 'text-gray-600')}>
-        {t(
-          'Άτομα & ομάδες για την ίδια εκδήλωση.',
-          'People & groups for the same event.',
-        )}
-      </p>
-    </div>
+    <p
+      className={cn(
+        compact ? 'text-xs font-medium leading-relaxed' : cn(PLANS_FORMING_TYPO.cardTitle, 'leading-snug'),
+        compact
+          ? isDark
+            ? 'text-gray-400'
+            : 'text-ink-muted'
+          : isDark
+            ? 'text-white'
+            : 'text-gray-900',
+      )}
+    >
+      {headline}
+    </p>
   );
 }

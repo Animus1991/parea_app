@@ -1,6 +1,9 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
 
+/** Fill the AppShell main column (between left nav and optional right rail). */
+export const PAGE_FILL = 'w-full max-w-full min-w-0';
+
 interface PageShellProps {
   title?: string;
   description?: string;
@@ -37,7 +40,7 @@ export function PageShell({
           <div className="flex items-start justify-between gap-4 mb-4">
             <div>
               {title && (
-                <h1 className="text-sm md:text-base font-bold tracking-tight text-gray-900 dark:text-gray-100">
+                <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-gray-900 dark:text-gray-100">
                   {title}
                 </h1>
               )}
@@ -63,7 +66,7 @@ export function SectionHeading({
 }) {
   return (
     <div className="flex items-center justify-between mb-3">
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400">{children}</h2>
+      <h2 className="text-xs font-semibold tracking-wider text-gray-400">{children}</h2>
       {action && <div>{action}</div>}
     </div>
   );
@@ -78,12 +81,12 @@ interface StatCardProps {
 
 export function StatCard({ label, value, sub, icon: Icon }: StatCardProps) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 shadow-soft">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
       <div className="flex items-start justify-between">
         <p className="text-xs font-bold tracking-wide text-gray-400">{label}</p>
         {Icon && <Icon className="w-4 h-4 text-gray-300" aria-hidden />}
       </div>
-      <p className="text-sm md:text-base font-black text-gray-900 dark:text-gray-100 mt-2 tabular-nums leading-none">{value}</p>
+      <p className="text-sm md:text-base font-bold text-gray-900 dark:text-gray-100 mt-2 tabular-nums leading-none">{value}</p>
       {sub && <p className="text-xs font-medium leading-tight text-gray-400 mt-1">{sub}</p>}
     </div>
   );

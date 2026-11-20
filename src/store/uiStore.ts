@@ -1,5 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import {
+  DEFAULT_QUICK_NAV_LAYOUT,
+  type QuickNavLayout,
+} from '../lib/quickNavLayout';
 
 interface UIState {
   sideNavCollapsed: boolean;
@@ -14,6 +18,10 @@ interface UIState {
   /** Declutter: hide the page-level «Πες στο Nakamas AI» cards (the AI button stays in the header). */
   aiHintsHidden: boolean;
   setAiHintsHidden: (v: boolean) => void;
+  /** Mobile bottom bar + swipe-up shortcuts the user arranged. */
+  quickNavLayout: QuickNavLayout;
+  setQuickNavLayout: (layout: QuickNavLayout) => void;
+  resetQuickNavLayout: () => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -33,10 +41,18 @@ export const useUIStore = create<UIState>()(
         })),
       aiHintsHidden: false,
       setAiHintsHidden: (aiHintsHidden) => set({ aiHintsHidden }),
+      quickNavLayout: DEFAULT_QUICK_NAV_LAYOUT,
+      setQuickNavLayout: (quickNavLayout) => set({ quickNavLayout }),
+      resetQuickNavLayout: () => set({ quickNavLayout: DEFAULT_QUICK_NAV_LAYOUT }),
     }),
     {
       name: 'nakamas-ui',
-      partialize: (s) => ({ sideNavCollapsed: s.sideNavCollapsed, navCollapsed: s.navCollapsed, aiHintsHidden: s.aiHintsHidden }),
+      partialize: (s) => ({
+        sideNavCollapsed: s.sideNavCollapsed,
+        navCollapsed: s.navCollapsed,
+        quickNavLayout: s.quickNavLayout,
+        aiHintsHidden: s.aiHintsHidden,
+      }),
     },
   ),
 );

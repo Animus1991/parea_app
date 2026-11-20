@@ -7,17 +7,24 @@ export interface CopilotSuggestion {
 
 const S = (el: string, en: string): CopilotSuggestion => ({ el, en });
 
+export const GAP_FIRST_SUGGESTIONS: CopilotSuggestion[] = [
+  S('Πέμπτη μετά τις 8;', 'Thursday after 8?'),
+  S('Παρασκευή βράδυ;', 'Friday evening?'),
+  S('Σαββατοκύριακο;', 'This weekend?'),
+  S('Όποτε — δες τι ταιριάζει', 'Whenever — show what fits'),
+];
+
 const BY_ROUTE: Record<string, CopilotSuggestion[]> = {
-  home: [
-    S('Τι να κάνω αυτό το Σαββατοκύριακο;', 'What should I do this weekend?'),
-    S('Βρες δωρεάν εκδηλώσεις', 'Find free events'),
-    S('Πρότεινέ μου κάτι για μένα', 'Recommend something for me'),
-    S('Κάνε την αρχική πιο απλή', 'Make the home page simpler'),
-  ],
+  home: GAP_FIRST_SUGGESTIONS,
   categories: [
     S('Βρες πεζοπορία', 'Find hiking'),
     S('Συναυλίες κάτω από 20€', 'Concerts under €20'),
     S('Πρόσθεσε σινεμά στα ενδιαφέροντα', 'Add cinema to my interests'),
+  ],
+  tags: [
+    S('Δείξε τις Nakamas Nights', 'Show Nakamas Nights'),
+    S('Ποιες ετικέτες είναι δημοφιλείς;', 'Which tags are popular?'),
+    S('Βρες εκδηλώσεις με εργαστήριο', 'Find workshop events'),
   ],
   nearby: [S('Τι γίνεται στο Γκάζι;', "What's on in Gazi?"), S('Βρες εκδηλώσεις στο Κουκάκι', 'Find events in Koukaki')],
   event: [

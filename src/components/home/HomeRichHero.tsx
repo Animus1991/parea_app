@@ -41,24 +41,17 @@ export function HomeRichHero({
       className={cn(tok.heroRoot, 'p-4 md:p-5 rounded-2xl relative overflow-hidden flex flex-col gap-4')}
     >
       <div className="relative z-10 flex-1 w-full">
-        <div className={cn(tok.heroBadge, 'mb-4', HOME_TYPO.heroBadge)}>
+        <div className={cn(tok.heroBadge, 'hidden md:inline-flex mb-4', HOME_TYPO.heroBadge)}>
           {t('home.hero.badge', 'Νεος τροπος εξοδου')}
         </div>
-        <h1 className={cn(HOME_TYPO.heroTitle, 'mb-4 max-w-2xl')}>
+        <h1 className={cn(HOME_TYPO.heroTitle, 'mb-3 md:mb-4 max-w-2xl')}>
           {t('home.hero.title1', 'Βρείτε παρέα για τις')}{' '}
           <span className={cn('text-transparent bg-clip-text bg-gradient-to-r', tok.heroTitleAccent)}>
             {t('home.hero.title2', 'εμπειρίες')}
           </span>{' '}
           {t('home.hero.title3', 'που ήδη θέλετε να ζήσετε.')}
         </h1>
-        <p className={cn(tok.heroSubtitle, 'max-w-xl mb-4', HOME_TYPO.heroSubtitle)}>
-          {t(
-            'home.hero.subtitle',
-            'Προσχωρήστε σε μικρές ομάδες για εκδηλώσεις, δραστηριότητες και κοντινές αποδράσεις — βασισμένες σε κοινά ενδιαφέροντα και διαθεσιμότητα.',
-          )}
-        </p>
-
-        <div className={cn('flex flex-wrap items-center gap-x-4 gap-y-3 mb-4', tok.heroStats, HOME_TYPO.heroStats)}>
+        <div className={cn('hidden md:flex flex-wrap items-center gap-x-4 gap-y-3 mb-4', tok.heroStats, HOME_TYPO.heroStats)}>
           <span className="flex items-center gap-1.5">
             <Users className={cn('w-3.5 h-3.5', tok.heroStatIcon)} />{' '}
             {t('home.hero.stat1', 'Μικρες ομαδες')}
@@ -80,29 +73,27 @@ export function HomeRichHero({
           </span>
         </div>
 
-        <div className="flex gap-3 mb-4">
-          <button
-            onClick={() => navigate('/nearby')}
-            className={cn('flex items-center gap-2 px-5 py-2.5 rounded-xl transition-colors', tok.heroMapBtn, HOME_TYPO.heroMapBtn)}
-            title={t('Εμφάνιση στον Χάρτη', 'View on Map')}
-          >
-            <MapIcon className="w-4 h-4" />
-            {t('Αναζήτηση στον Χάρτη', 'Search on Map')}
-          </button>
-        </div>
-
-        {/* Search with suggestions */}
-        <div className="flex gap-3 items-center">
-          <div ref={searchRef} className="relative flex-1 max-w-md">
-            <Search className={cn('absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 z-10', tok.heroSearchIcon)} />
+        {/* Search-primary: map as an icon affordance, help as a quiet text link */}
+        <div className="flex gap-3 items-center flex-wrap">
+          <div ref={searchRef} className="relative flex-1 min-w-[12rem] max-w-md overflow-visible">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 z-10 text-gray-500" />
             <input
-              type="text"
+              type="search"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               onFocus={onSearchFocus}
-              placeholder={t('home.hero.search_placeholder', 'Αναζήτηση εμπειριών...')}
-              className={cn('search-control w-full h-9 pl-9 pr-3 rounded-full shadow-soft focus:outline-none focus:ring-2', tok.heroSearchInput)}
+              placeholder={t('home.hero.search_placeholder', 'Αναζήτηση εκδήλωσης ή περιοχής')}
+              className={cn('hero-search-field search-control w-full h-9 pl-9 pr-11 rounded-full shadow-soft focus:outline-none focus:ring-2', tok.heroSearchInput)}
             />
+            <button
+              type="button"
+              onClick={() => navigate('/nearby')}
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-gray-600 hover:bg-gray-100"
+              title={t('Εμφάνιση στον Χάρτη', 'View on Map')}
+              aria-label={t('Εμφάνιση στον Χάρτη', 'View on Map')}
+            >
+              <MapIcon className="w-4 h-4" aria-hidden />
+            </button>
             <HomeSearchDropdown
               popularSuggestions={searchSuggestions}
               onPick={onPickSuggestion}
@@ -113,7 +104,10 @@ export function HomeRichHero({
           <button
             type="button"
             onClick={() => navigate('/help?topic=groups')}
-            className={cn('hidden sm:flex items-center justify-center px-5 h-11 rounded-full text-xs font-bold transition-colors whitespace-nowrap', tok.heroTrustBtn)}
+            className={cn(
+              'text-xs font-semibold underline underline-offset-2 whitespace-nowrap',
+              tok.heroSubtitle,
+            )}
           >
             {t('home.hero.how_groups', 'Πώς λειτουργούν οι ομάδες')}
           </button>

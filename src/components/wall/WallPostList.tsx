@@ -21,7 +21,7 @@ export function WallPostList({ posts, viewerOverride }: { posts: WallPost[]; vie
           <button
             type="button"
             onClick={() => setLimit((n) => n + PAGE)}
-            className="min-h-10 rounded-full border border-border bg-surface-raised px-4 text-xs font-bold text-ink hover:border-border-strong"
+            className="min-h-8 rounded-full border border-border bg-surface-raised px-4 text-xs font-bold text-ink hover:border-border-strong"
           >
             {t(`Περισσότερες δημοσιεύσεις (${posts.length - limit})`, `More posts (${posts.length - limit})`)}
           </button>

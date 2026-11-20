@@ -41,8 +41,7 @@ export function Card({
         p.isDark && p.body,
         onClick &&
           cn(
-            'cursor-pointer transition-all duration-200 hover:-translate-y-[0.5px]',
-            p.isAB || p.isDark ? 'hover:shadow-soft-md' : 'hover:shadow-soft-md',
+            'cursor-pointer transition-colors duration-150',
             hoverAccent,
           ),
         className,

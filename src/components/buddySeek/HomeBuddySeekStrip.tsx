@@ -33,7 +33,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
         <div className="min-w-0 flex-1 space-y-1.5">
           <h2
             id="home-plans-forming"
-            className="text-sm font-bold uppercase tracking-wide text-accent-strong flex items-center gap-1.5"
+            className="text-sm font-bold tracking-wide text-accent-strong flex items-center gap-1.5"
           >
             <Users className="w-4 h-4 opacity-80" aria-hidden />
             {tu('Βρες Nakamas', 'Find Nakamas')}
@@ -53,7 +53,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
           <button
             type="button"
             onClick={() => setSheetOpen(true)}
-            className="xl:hidden text-xs font-bold px-2.5 py-1.5 rounded-lg bg-accent text-accent-fg"
+            className="xl:hidden inline-flex min-h-8 items-center text-xs font-bold px-3 rounded-full bg-accent text-accent-fg"
           >
             {t('Άνοιγμα', 'Open')}
           </button>
@@ -62,7 +62,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
 
       {feed.items.length === 0 ? (
         <div className="rounded-xl border border-dashed border-accent/30 p-4 text-center">
-          <Users className="w-8 h-8 mx-auto text-accent/60 mb-2" />
+          <Users className="w-6 h-6 mx-auto text-accent/60 mb-2" />
           <p className="text-sm font-medium text-ink-muted leading-relaxed">
             {t(
               'Δεν βλέπετε σχέδια ακόμα; Αποθηκεύστε εκδηλώσεις ή δηλώστε ότι ψάχνετε Nakamas.',

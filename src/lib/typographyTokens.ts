@@ -9,7 +9,7 @@ export const APP_TYPO = {
   /** Micro labels, badges, caps */
   micro: 'text-2xs',
   /** Section headings, KPI labels — Wallet balance/pending labels */
-  sectionLabel: 'text-xs font-bold tracking-wide',
+  sectionLabel: 'text-xs font-semibold tracking-wide',
   /** Body, list rows, meta */
   body: 'text-sm',
   /** Body medium emphasis */
@@ -20,15 +20,15 @@ export const APP_TYPO = {
   cardSub: 'card-copy-sm font-medium',
   /** Central card content / values / descriptions — always ≤ cardSub */
   cardBody: 'card-copy font-medium',
-  /** Modal / panel titles — same as page title scale */
+  /** Modal / panel titles — under page title scale */
   panelTitle: 'text-sm md:text-base font-bold',
-  /** Page / hero titles — Wallet / Home standard */
-  pageTitle: 'text-sm md:text-base font-bold tracking-tight leading-tight',
-  /** Page subtitle under the title — Wallet pageSub */
+  /** Page / hero titles — strictly above subtitle, h2, cardTitle & buttons on every viewport */
+  pageTitle: 'text-lg md:text-xl font-bold tracking-tight leading-tight',
+  /** Page subtitle under the title — cleanly subordinate on mobile (12px < 14px) & desktop (12px < 15px) */
   pageSub: 'text-sm font-medium',
   heroSubtitle: 'text-sm font-medium leading-relaxed',
-  /** KPI numerals — capped at page-title scale (Wallet balance) */
-  statValue: 'text-sm md:text-base font-black tabular-nums leading-none',
+  /** KPI numerals — Wallet / Profile stats, capped at or under page title */
+  statValue: 'text-base md:text-lg font-bold tabular-nums leading-none',
   /** Secondary KPI (Wallet pending) */
   statValueSecondary: 'text-sm md:text-base font-bold tabular-nums leading-none',
   /** List / bank card row title — Wallet tx / bank account */
@@ -51,7 +51,7 @@ export const APP_TYPO = {
    * Canonical button / CTA label size — matches Wallet Button + Plans «Αξιολόγηση»
    * (.btn-gradient / Button md). Use for every action button across the app.
    */
-  btn: 'text-xs font-bold',
+  btn: 'text-xs font-semibold',
 } as const;
 
 /** Explicit Wallet page template — aliases of APP_TYPO for page authors. */
@@ -71,6 +71,36 @@ export const WALLET_TYPO = {
   btn: APP_TYPO.btn,
 } as const;
 
+/**
+ * Profile page density — in-card type never exceeds type outside the cards.
+ * Outside: pageTitle 14/15 → pageSub 12.
+ * In cards: identity / KPI / rows ≤ 12px (pageSub); section 10; meta 10; micro 9.
+ */
+export const PROFILE_TYPO = {
+  pageTitle: APP_TYPO.pageTitle,
+  pageSub: APP_TYPO.pageSub,
+  identityName: 'text-sm font-bold',
+  identityMeta: APP_TYPO.rowMeta,
+  identityBio: APP_TYPO.cardBody,
+  kpiLabel: APP_TYPO.sectionLabel,
+  /** Stat numerals sit in cards — cap at pageSub (12px), never 13/14. */
+  kpiValue: 'text-sm font-bold tabular-nums leading-none',
+  kpiValueSecondary: 'text-sm font-bold tabular-nums leading-none',
+  kpiHint: APP_TYPO.kpiHint,
+  sectionTitle: APP_TYPO.sectionLabel,
+  rowTitle: APP_TYPO.rowTitle,
+  rowMeta: APP_TYPO.rowMeta,
+  micro: 'text-2xs font-medium',
+  microBold: 'text-2xs font-bold',
+  bannerTitle: APP_TYPO.bannerTitle,
+  bannerBody: APP_TYPO.bannerBody,
+  fieldLabel: 'text-xs font-bold',
+  fieldControl: 'text-xs font-medium',
+  fieldHelp: 'text-2xs font-medium leading-relaxed',
+  nestedCardTitle: APP_TYPO.rowTitle,
+  statusNote: APP_TYPO.bodyMedium,
+} as const;
+
 /** Popup chat window density */
 export const CHAT_TYPO = {
   title: 'text-sm font-bold',
@@ -78,6 +108,11 @@ export const CHAT_TYPO = {
   badge: 'text-2xs text-brand font-bold',
   menu: 'text-2xs',
   lockNotice: 'text-2xs text-amber-700 dark:text-amber-200',
+  /**
+   * Inbox lock/status line — gold-orange mixed with black for contrast on white
+   * (~8:1 vs white), same weight/size as the preview body.
+   */
+  lockHint: 'text-[#7c4a0d] dark:text-amber-200',
   sender: 'text-2xs text-ink-muted mb-0.5',
   bubble: 'text-sm leading-relaxed break-words',
   systemBubble: 'text-2xs text-center',
@@ -98,7 +133,7 @@ export const PLANS_FORMING_TYPO = {
 
 /** Inbox list density */
 export const INBOX_TYPO = {
-  pageTitle: 'text-sm md:text-base font-bold tracking-tight',
+  pageTitle: 'text-lg md:text-xl font-bold tracking-tight leading-tight',
   pageSub: 'text-sm font-medium',
   tab: 'text-xs font-bold',
   badge: 'text-2xs font-bold',
@@ -113,10 +148,10 @@ export const INBOX_TYPO = {
 
 /** Plans page density */
 export const PLANS_TYPO = {
-  pageTitle: 'text-sm md:text-base font-bold',
+  pageTitle: 'text-lg md:text-xl font-bold tracking-tight leading-tight',
   pageSub: 'text-sm font-medium',
   statLabel: 'text-2xs font-semibold',
-  nextLabel: 'text-2xs font-bold uppercase tracking-wide',
+  nextLabel: 'text-2xs font-bold tracking-wide',
   nextTitle: 'text-sm font-bold truncate',
   nextBadge: 'text-xs font-bold',
   bannerTitle: 'text-sm font-bold',
@@ -145,8 +180,8 @@ export const BUDDY_SEEK_TYPO = {
 export const SHELL_TYPO = {
   logo: 'nakamas-logo nakamas-logo--lg',
   logoMobile: 'nakamas-logo',
-  sectionLabel: 'text-xs font-bold tracking-wide',
-  dashboard: 'text-xs font-bold tracking-wide',
+  sectionLabel: 'text-xs font-semibold tracking-wide',
+  dashboard: 'text-xs font-semibold tracking-wide',
   search: 'text-xs',
   createBtn: 'text-xs font-bold',
   langBtn: 'text-2xs font-bold',
@@ -160,12 +195,12 @@ export const SHELL_TYPO = {
 
 /** Event card density (high-traffic feed) */
 export const EVENT_CARD_TYPO = {
-  badge: 'card-badge font-extrabold tracking-wide leading-none',
+  badge: 'card-badge font-bold tracking-wide leading-none',
   chip: 'card-badge font-semibold capitalize tracking-wide',
-  dateBadge: 'text-2xs sm:text-xs font-black tracking-tight',
+  dateBadge: 'text-2xs sm:text-xs font-bold tracking-tight',
   dateSub: 'text-2xs leading-none font-bold',
   title: 'card-heading font-bold leading-snug',
-  matchScore: 'text-xs font-black leading-none',
+  matchScore: 'text-xs font-bold leading-none',
   matchLabel: 'card-copy-micro font-semibold capitalize tracking-wide',
   meta: 'card-meta font-medium',
   hint: 'card-copy-micro font-semibold',
@@ -188,7 +223,7 @@ export const EVENT_CARD_TYPO = {
 
 /** Calendar / agenda density */
 export const CALENDAR_TYPO = {
-  pageTitle: 'text-sm md:text-base font-bold tracking-tight',
+  pageTitle: 'text-lg md:text-xl font-bold tracking-tight leading-tight',
   pageSub: 'text-sm font-medium',
   dayLabel: 'text-2xs font-bold',
   dayNumber: 'text-xs font-bold',
@@ -204,7 +239,7 @@ export const CALENDAR_TYPO = {
 /** Home feed density — canonical scale for every other page */
 export const HOME_TYPO = {
   heroBadge: 'text-xs font-bold tracking-wide',
-  heroTitle: 'text-sm md:text-base font-bold tracking-tight leading-tight',
+  heroTitle: 'text-lg md:text-xl font-bold tracking-tight leading-tight',
   heroSub: 'text-sm font-medium',
   heroSubtitle: 'text-sm font-medium leading-relaxed',
   heroStats: 'text-2xs font-bold tracking-wide',
@@ -212,11 +247,11 @@ export const HOME_TYPO = {
   stepTitle: 'text-xs font-bold',
   stepBody: 'text-2xs leading-relaxed font-medium',
   feedTab: 'text-xs font-bold',
-  sectionLabel: 'text-xs font-bold tracking-wide uppercase',
+  sectionLabel: 'text-xs font-semibold tracking-wide',
   /** Category / tag / feed / filter chips — same type + height as «Όλα» */
-  filterChip: 'filter-chip text-xs font-bold',
+  filterChip: 'filter-chip text-xs font-semibold',
   /** Mood chips with icons («Χαλαρά»…) — same type, slightly taller */
-  filterChipMood: 'filter-chip filter-chip--mood text-xs font-bold',
+  filterChipMood: 'filter-chip filter-chip--mood text-xs font-semibold',
   /** Native filter / sort dropdowns — same height as «Όλα» */
   filterSelect: 'filter-select',
   /** Full-width cells in the home meta-filter 2-column grid */
@@ -232,9 +267,9 @@ export const HOME_TYPO = {
 
 /** Report / trust issue flow */
 export const REPORT_TYPO = {
-  pageTitle: 'text-sm md:text-base font-bold',
+  pageTitle: 'text-lg md:text-xl font-bold tracking-tight leading-tight',
   pageSub: 'text-sm font-medium',
-  sectionLabel: 'text-xs font-bold tracking-wide uppercase',
+  sectionLabel: 'text-xs font-semibold tracking-wide',
   fieldLabel: 'text-xs font-bold',
   fieldHint: 'text-2xs font-medium leading-relaxed',
   option: 'text-xs font-medium',
@@ -244,8 +279,8 @@ export const REPORT_TYPO = {
 
 /** Onboarding wizard density — same title scale as Home */
 export const ONBOARDING_TYPO = {
-  stepLabel: 'text-2xs font-bold tracking-wide uppercase',
-  title: 'text-sm md:text-base font-bold leading-tight',
+  stepLabel: 'text-2xs font-bold tracking-wide',
+  title: 'text-lg md:text-xl font-bold leading-tight',
   subtitle: 'text-sm font-medium leading-relaxed',
   optionTitle: 'text-xs font-bold',
   optionBody: 'text-2xs font-medium leading-relaxed',

@@ -13,17 +13,21 @@ import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { pressable } from '../../lib/a11y';
 import { ThemePicker } from '../common/ThemePicker';
-import { THEME_IDS, THEME_LABELS, type ThemeId } from '../../lib/themes';
+import { THEME_LABELS, type ThemeId } from '../../lib/themes';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
 import { Modal } from '../common/Modal';
 import { APP_TYPO } from '../../lib/typographyTokens';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { resolveProfileAudience } from '../../lib/profilePrivacy';
 import { audienceLabel } from '../wall/wallText';
 import { useWallStore } from '../../store/wallStore';
 import { wallPrivacyOf } from '../../lib/audience';
+import {
+  scheduleFromCoarseAvailability,
+  serializeHomeSchedule,
+  writeStoredHomeSchedule,
+} from '../../lib/homeScheduleFilter';
 
 const CATEGORY_KEYS = ['liveMusic', 'theater', 'hiking', 'cinema', 'boardGames', 'wellness', 'festivals', 'workshops'] as const;
 
@@ -206,8 +210,6 @@ export default function SettingsPageContent() {
           onClick: () => {
             const next = language === 'el' ? 'en' : 'el';
             setLanguage(next);
-            // Toast in the language the user just chose (setLanguage has not re-rendered yet).
-            toast.message(next === 'el' ? t('Γλώσσα: Ελληνικά', 'Language: Greek') : t('Γλώσσα: Αγγλικά', 'Language: English'));
           },
         },
         { icon: Palette, label: t('Εμφάνιση & Θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
@@ -279,11 +281,9 @@ export default function SettingsPageContent() {
         <p className={cn(APP_TYPO.pageSub, "mt-1", a.sub)}>{t('Διαχειριστείτε τον λογαριασμό σας', 'Manage your account')}</p>
       </div>
 
-      <CopilotInlinePrompt />
-
       {sections.map((section, idx) => (
         <div key={idx} className="space-y-3">
-          <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{section.title}</h2>
+          <h2 className={cn("text-xs font-bold tracking-wider mb-3", a.sectionHead)}>{section.title}</h2>
           <Card className={a.divider}>
             <div className={cn("divide-y", a.divider)}>
               {section.items.map((item, i) => {
@@ -306,12 +306,6 @@ export default function SettingsPageContent() {
             <div ref={themePanelRef} className="scroll-mt-24">
               <Card className="p-5">
                 <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
-                <p className={cn("text-xs font-medium mb-4", a.sub)}>
-                  {t(
-                    `${THEME_IDS.length} επαγγελματικά θέματα — επιλέξτε αυτό που σας ταιριάζει`,
-                    `${THEME_IDS.length} polished themes — pick what fits you best`,
-                  )}
-                </p>
                 <ThemePicker variant="grid" />
               </Card>
             </div>
@@ -319,13 +313,7 @@ export default function SettingsPageContent() {
           {idx === 0 && showHomeLayout && (
             <div ref={homeLayoutPanelRef} className="scroll-mt-24">
               <Card className="p-5">
-                <h3 className={cn("font-bold text-sm mb-1", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
-                <p className={cn("text-xs font-medium mb-4", a.sub)}>
-                  {t(
-                    'Επιλέξτε πόσο πλούσιο είναι το hero στην αρχική — ισχύει σε όλα τα θέματα.',
-                    'Choose how rich the home hero is — applies across all themes.',
-                  )}
-                </p>
+                <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Προβολή αρχικής', 'Home layout')}</h3>
                 <HomeHeroModeSetting />
               </Card>
             </div>
@@ -464,6 +452,38 @@ export default function SettingsPageContent() {
                 </label>
               ))}
             </div>
+            <div className="mt-4 border-t border-border pt-3">
+              <p className={cn('mb-2 text-xs font-bold', a.head)}>{t('Σύνοψη', 'Digest')}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {(
+                  [
+                    ['morning', 'Πρωί', 'Morning'],
+                    ['afternoon', 'Απόγευμα', 'Afternoon'],
+                    ['off', 'Όλες μία-μία', 'Every item'],
+                  ] as const
+                ).map(([key, el, en]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    aria-pressed={(userSettings.notificationPrefs.digest ?? 'morning') === key}
+                    onClick={() => {
+                      updateUserSettings({
+                        notificationPrefs: { ...userSettings.notificationPrefs, digest: key },
+                      });
+                      toast.success(t('Οι προτιμήσεις αποθηκεύτηκαν', 'Preferences saved'));
+                    }}
+                    className={cn(
+                      'filter-chip inline-flex h-[1.75rem] items-center rounded-full border px-3 text-xs font-bold leading-none',
+                      (userSettings.notificationPrefs.digest ?? 'morning') === key
+                        ? 'border-accent bg-accent text-accent-fg'
+                        : 'border-border bg-surface-raised text-ink',
+                    )}
+                  >
+                    {t(el, en)}
+                  </button>
+                ))}
+              </div>
+            </div>
           </Card>
 
           <Card className="p-5">
@@ -497,7 +517,7 @@ export default function SettingsPageContent() {
       )}
 
       <div ref={availabilityPanelRef}>
-        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Διαθεσιμότητα', 'Availability')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider mb-3", a.sectionHead)}>{tu('Διαθεσιμότητα', 'Availability')}</h2>
         <Card className={a.divider}>
           <div
             className={cn("flex items-center justify-between p-4 cursor-pointer transition-colors", a.itemHover)}
@@ -526,6 +546,29 @@ export default function SettingsPageContent() {
                   {slot.label}
                 </button>
               ))}
+              <div className="basis-full pt-2 space-y-1.5">
+                <button
+                  type="button"
+                  disabled={userSettings.availability.length === 0}
+                  onClick={() => {
+                    const next = scheduleFromCoarseAvailability(userSettings.availability);
+                    writeStoredHomeSchedule(next, currentUser?.id);
+                    const encoded = serializeHomeSchedule(next);
+                    const params = new URLSearchParams();
+                    if (encoded.wd) params.set('wd', encoded.wd);
+                    if (encoded.tw) params.set('tw', encoded.tw);
+                    if (encoded.hrs) params.set('hrs', encoded.hrs);
+                    if (encoded.on) params.set('on', encoded.on);
+                    navigate(params.toString() ? `/?${params.toString()}` : '/');
+                    toast.success(
+                      t('Εφαρμόστηκε στην Ανακάλυψη', 'Applied to Discover'),
+                    );
+                  }}
+                  className="text-xs font-bold text-accent min-h-8 disabled:opacity-40"
+                >
+                  {t('Εφαρμογή στην Ανακάλυψη', 'Apply to Discover')}
+                </button>
+              </div>
             </div>
           )}
         </Card>
@@ -533,7 +576,7 @@ export default function SettingsPageContent() {
 
       {/* Active Sessions */}
       <div>
-        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Ενεργές Συνεδρίες', 'Active Sessions')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider mb-3", a.sectionHead)}>{tu('Ενεργές Συνεδρίες', 'Active Sessions')}</h2>
         <Card>
           <div className={cn("divide-y", a.divider)}>
             <div className="flex items-center justify-between p-4">
@@ -568,7 +611,7 @@ export default function SettingsPageContent() {
 
       {/* Data Export */}
       <div>
-        <h2 className={cn("text-xs font-bold tracking-wider uppercase mb-3", a.sectionHead)}>{tu('Δεδομένα', 'Data')}</h2>
+        <h2 className={cn("text-xs font-bold tracking-wider mb-3", a.sectionHead)}>{tu('Δεδομένα', 'Data')}</h2>
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

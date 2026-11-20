@@ -10,7 +10,6 @@ import {
   Users,
   MapPin,
   Clock,
-  ShieldCheck,
   Navigation,
   Link2,
   X,
@@ -18,9 +17,11 @@ import {
   UserPlus,
   CalendarPlus,
   MessageSquare,
+  Shield,
 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { el as elLocale, enUS as enLocale } from "date-fns/locale";
+import { formatPlanWhen, formatPlanWhenDay } from "../../lib/dateLocale";
 import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../../store";
 import type { Event } from "../../types";
@@ -28,15 +29,26 @@ import { useLanguage } from "../../lib/i18n";
 import { cn } from "../../lib/utils";
 import { stopBubbling } from "../../lib/a11y";
 import { EVENT_CARD_TYPO } from "../../lib/typographyTokens";
-import { computeMatchScore, getMatchingPreview } from "../../lib/matching";
+import { getMatchingPreview } from "../../lib/matching";
+import {
+  formatEventPrice,
+  formatLocationArea,
+  getEventJoinState,
+  showNightCoordinationTools,
+  translateEventTag,
+} from "../../lib/eventDisplay";
+import { eventCoverUrl } from "../../lib/eventCover";
+import { eventTagPath, eventTagSlug } from "../../lib/eventTags";
 import { isDarkTheme } from "../../lib/themes";
-import { MatchExplainChips } from "./MatchExplainChips";
 import { getEventGroupProgress } from "../../lib/groupUtils";
+import { reliabilityBadge, tierLabelEl, tierLabelEn } from "../../lib/trust";
 import { GroupProgressBar } from "./GroupProgressBar";
+import type { EventCardImageDepth } from "../../lib/discoverCardImagePreview";
 import { toast } from "sonner";
 import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
 import { TileLayer, Marker } from "react-leaflet";
 import { LeafletMapHost, LeafletMapReady } from "../common/LeafletMapHost";
+import { AppSelect } from "../common/AppSelect";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -52,6 +64,13 @@ L.Icon.Default.mergeOptions({
 
 interface EventCardProps {
   event: Event;
+  /** Feed cards lead with Find Nakamas; the seeking-host rail leads with hosting. */
+  emphasis?: 'join' | 'host';
+  /**
+   * How far the photo reaches. Default `photo` is the current card.
+   * `title` / `facts` / `organizer` / `roomy` overlay those rows on the image.
+   */
+  imageDepth?: EventCardImageDepth;
 }
 
 /** Mount Leaflet only when the mini-map enters the viewport (avoids N× Strict Mode races). */
@@ -106,7 +125,48 @@ function EventCardMiniMap({ lat, lng, isDark, className }: { lat: number; lng: n
   );
 }
 
-export const EventCard = memo(function EventCard({ event }: EventCardProps) {
+function CardFact({
+  icon: Icon,
+  label,
+  detail,
+  wellClass,
+  labelClass,
+  detailClass,
+  align = 'start',
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  detail?: string | null;
+  wellClass: string;
+  labelClass: string;
+  detailClass: string;
+  align?: 'start' | 'center' | 'end';
+}) {
+  const spoken = detail ? `${label}, ${detail}` : label;
+  return (
+    <div
+      className={cn(
+        'flex min-w-0 max-w-[38%] flex-col gap-1',
+        align === 'start' && 'items-start text-left',
+        align === 'center' && 'items-center text-center',
+        align === 'end' && 'items-end text-right',
+      )}
+      title={spoken}
+    >
+      <span className={wellClass} aria-hidden>
+        <Icon className="h-4 w-4" />
+      </span>
+      <span className="min-w-0 w-full">
+        <span className={cn('block truncate leading-snug', labelClass)}>{label}</span>
+        {detail ? (
+          <span className={cn('mt-0.5 block truncate leading-snug', detailClass)}>{detail}</span>
+        ) : null}
+      </span>
+    </div>
+  );
+}
+
+export const EventCard = memo(function EventCard({ event, emphasis = 'join', imageDepth = 'photo' }: EventCardProps) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const users = useStore((state) => state.users);
@@ -118,10 +178,19 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
   const canJoinEvent = useStore((state) => state.canJoinEvent);
   const isSaved = savedEvents.includes(event.id);
   const groupProgress = getEventGroupProgress(event, groups);
-  const matchScore = currentUser ? computeMatchScore(currentUser, event) : null;
   const matchingPreview = getMatchingPreview(event, groups, users, currentUser);
   const [imgError, setImgError] = useState(false);
-
+  const thisEventPending = useStore((s) => {
+    void s.feedbackSubmitted;
+    void s.groups;
+    void s.events;
+    return s.getPendingFeedbackEventIds().includes(event.id);
+  });
+  const joinState = getEventJoinState(event, {
+    currentUser,
+    groups,
+    pendingFeedbackId: thisEventPending ? event.id : null,
+  });
   const isDark = isDarkTheme(theme);
   const accent = theme === 'vibrant' || theme === 'vibrant-dark' ? 'fuchsia' : theme === 'bento' || theme === 'bento-dark' ? 'indigo' : theme === 'neon' || theme === 'neon-dark' ? 'emerald' : 'cyan';
   const accentText = isDark ? (accent === 'fuchsia' ? 'text-fuchsia-400' : accent === 'indigo' ? 'text-indigo-400' : accent === 'emerald' ? 'text-emerald-400' : 'text-cyan-400') : (accent === 'fuchsia' ? 'text-fuchsia-600' : accent === 'indigo' ? 'text-indigo-600' : accent === 'emerald' ? 'text-emerald-600' : 'text-brand');
@@ -133,8 +202,9 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
 
   const userGroup = currentUser ? groups.find(g => g.eventId === event.id && g.members.includes(currentUser.id)) : null;
 
-  // Arrival & Safety State
+  // Arrival & map — shown on the card only the night of a confirmed outing.
   const [showSafetyPanel, setShowSafetyPanel] = useState(false);
+  const [showTrustSheet, setShowTrustSheet] = useState(false);
   const [arrivalStatus, setArrivalStatus] = useState<string | null>(null);
   const [showEtaPrompt, setShowEtaPrompt] = useState(false);
   const [etaValue, setEtaValue] = useState("15 mins");
@@ -146,6 +216,11 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
     duration: "event_end",
   });
   const [showSafetyLinkModal, setShowSafetyLinkModal] = useState(false);
+  const showNightTools = showNightCoordinationTools({
+    inGroup: Boolean(userGroup),
+    event,
+    alreadyActive: Boolean(arrivalStatus) || isSharingLocation,
+  });
   const locationPanelRef = useRef<HTMLDivElement>(null);
   useOverlayBehavior(showLocationConfigModal, () => setShowLocationConfigModal(false), locationPanelRef);
 
@@ -159,19 +234,33 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
     e.stopPropagation();
     if (!currentUser) { navigate('/login'); return; }
     becomeEventHost(event.id);
-    toast.success(t('Έγινες ο διοργανωτής της ομάδας! 🎉', "You're now the group's organizer! 🎉"));
+    const hosted = useStore.getState().groups.find(
+      (g) => g.eventId === event.id && g.hostId === currentUser.id,
+    );
+    toast.success(t('Έγινες ο διοργανωτής της ομάδας!', "You're now the group's organizer!"), {
+      action: hosted
+        ? {
+            label: t('Η βραδιά μας', 'Our night'),
+            onClick: () => navigate(`/night/${hosted.id}`),
+          }
+        : {
+            label: t('Βρες Nakamas', 'Find Nakamas'),
+            onClick: () => navigate('/buddy-seek'),
+          },
+    });
   };
 
   const toggleSave = (e: React.MouseEvent) => {
     e.stopPropagation();
     const nextSaved = !isSaved;
     toggleSavedEvent(event.id);
-    if (nextSaved) {
-      toast.success(t('Αποθηκεύτηκε', 'Saved'), {
-        action: { label: t('Αποθηκευμένα', 'Saved'), onClick: () => navigate('/saved') },
+    if (!nextSaved) {
+      toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'), {
+        action: {
+          label: t('Αναίρεση', 'Undo'),
+          onClick: () => toggleSavedEvent(event.id),
+        },
       });
-    } else {
-      toast.success(t('Αφαιρέθηκε από τα αποθηκευμένα', 'Removed from saved'));
     }
   };
 
@@ -213,31 +302,196 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
   const dateLocale = language === 'en' ? enLocale : elLocale;
   const eventDate = parseISO(event.date);
   const day = format(eventDate, "d");
-  const month = format(eventDate, "MMM", { locale: dateLocale }).toUpperCase();
-  const weekday = format(eventDate, "EEEE", { locale: dateLocale });
+  const month = format(eventDate, "MMM", { locale: dateLocale });
+  const whenDay = formatPlanWhenDay(event.date, language);
+  const whenLine = formatPlanWhen(event.date, event.time, language);
+  const locationLine = formatLocationArea(event.locationArea, language);
+  const locationComma = locationLine.indexOf(',');
+  const locationPrimary = locationComma >= 0 ? locationLine.slice(0, locationComma).trim() : locationLine;
+  const locationDetail = locationComma >= 0 ? locationLine.slice(locationComma + 1).trim() : null;
+  const overlayCtl =
+    "flex h-9 w-9 @[20rem]:h-11 @[20rem]:w-11 items-center justify-center rounded-xl backdrop-blur-md focus:outline-none transition-colors";
+  const factWell = cn(
+    "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
+    isDark ? "bg-white/[0.06] text-gray-400" : "bg-gray-50 text-gray-500",
+  );
+  const coverTitle = imageDepth !== 'photo';
+  const coverFacts =
+    imageDepth === 'facts' ||
+    imageDepth === 'organizer' ||
+    imageDepth === 'roomy' ||
+    imageDepth === 'divider' ||
+    imageDepth === 'full';
+  const coverOrganizer =
+    imageDepth === 'organizer' ||
+    imageDepth === 'roomy' ||
+    imageDepth === 'divider' ||
+    imageDepth === 'full';
+  const coverRoomy = imageDepth === 'roomy';
+  const coverProgress = imageDepth === 'divider' || imageDepth === 'full';
+  const coverFull = imageDepth === 'full';
+  const photoFillsCard = coverProgress || coverRoomy;
+  const photoWell = "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white";
+
+  const titleRow = (onPhoto: boolean) => (
+    <div className="flex items-center gap-3">
+      <h3
+        className={cn(
+          EVENT_CARD_TYPO.title,
+          "min-w-0 flex-1 transition-colors line-clamp-2",
+          onPhoto
+            ? "text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]"
+            : cn(
+                headColor,
+                isDark
+                  ? accent === 'fuchsia'
+                    ? ''
+                    : accent === 'indigo'
+                      ? 'group-hover:text-indigo-400'
+                      : accent === 'emerald'
+                        ? 'group-hover:text-emerald-400'
+                        : 'group-hover:text-cyan-400'
+                  : accent === 'fuchsia'
+                    ? ''
+                    : accent === 'indigo'
+                      ? 'group-hover:text-indigo-600'
+                      : accent === 'emerald'
+                        ? 'group-hover:text-emerald-600'
+                        : 'group-hover:text-brand',
+              ),
+        )}
+      >
+        <Link
+          to={`/events/${event.id}`}
+          onClick={(e) => e.stopPropagation()}
+          className="rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+        >
+          {event.title}
+        </Link>
+      </h3>
+    </div>
+  );
+
+  const factsRow = (onPhoto: boolean) => (
+    <div className="flex w-full items-start justify-between gap-2 px-[1%]">
+      <CardFact
+        icon={Clock}
+        label={whenDay}
+        detail={event.time}
+        align="start"
+        wellClass={onPhoto ? photoWell : factWell}
+        labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold capitalize", onPhoto ? "text-white" : headColor)}
+        detailClass={cn(EVENT_CARD_TYPO.progressSub, onPhoto ? "text-white/80" : mutedColor)}
+      />
+      <CardFact
+        icon={MapPin}
+        label={locationPrimary}
+        detail={locationDetail}
+        align="center"
+        wellClass={onPhoto ? photoWell : factWell}
+        labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold", onPhoto ? "text-white" : headColor)}
+        detailClass={cn(EVENT_CARD_TYPO.progressSub, onPhoto ? "text-white/80" : mutedColor)}
+      />
+      <CardFact
+        icon={Users}
+        label={`${groupProgress.spotsLeft} ${t("θέσεις", "spots")}`}
+        align="end"
+        wellClass={onPhoto ? photoWell : factWell}
+        labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold tabular-nums", onPhoto ? "text-white" : headColor)}
+        detailClass={cn(EVENT_CARD_TYPO.progressSub, onPhoto ? "text-white/80" : mutedColor)}
+      />
+    </div>
+  );
+
+  const hintRow = (onPhoto: boolean) =>
+    matchingPreview ? (
+      <p className={cn(EVENT_CARD_TYPO.hint, "text-left font-medium opacity-90", onPhoto ? "text-white/90" : accentText)}>
+        {t(matchingPreview.labelEl, matchingPreview.labelEn)}
+      </p>
+    ) : null;
+
+  const organizerRow = (onPhoto: boolean) =>
+    displayOrganizer ? (
+      <div className="flex min-w-0 items-center gap-1.5 self-start">
+        <button
+          type="button"
+          className="flex min-h-11 min-w-0 items-center gap-2.5 rounded-xl pr-2 text-left group/org focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/organizer/${displayOrganizer.id}`);
+          }}
+        >
+          <span className="relative shrink-0">
+            <img
+              referrerPolicy="no-referrer"
+              src={displayOrganizer.photoUrl}
+              alt=""
+              className={cn("h-8 w-8 rounded-full object-cover", onPhoto ? "ring-1 ring-white/40" : isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}
+            />
+            <span className={cn("absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 border", onPhoto || !isDark ? "border-white" : "border-gray-800")} aria-hidden />
+          </span>
+          <span className="min-w-0">
+            <span className={cn("block truncate text-xs font-bold leading-tight group-hover/org:underline", onPhoto ? "text-white" : headColor)}>
+              {displayOrganizer.name}
+            </span>
+            <span className={cn("card-copy-micro mt-0.5 block font-semibold leading-tight", onPhoto ? "text-white/80" : mutedColor)}>
+              {hostUser && !organizer ? t('Διοργανωτής ομάδας', 'Group host') : t('Διοργανωτής', 'Organizer')}
+            </span>
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowTrustSheet(true);
+          }}
+          aria-label={t('Εμπιστοσύνη διοργανωτή', 'Organizer trust')}
+          title={t('Εμπιστοσύνη', 'Trust')}
+          className={cn(
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+            onPhoto
+              ? "border-white/30 text-white"
+              : isDark
+                ? "border-gray-700/60 text-gray-400"
+                : "border-gray-200 text-ink-muted",
+          )}
+        >
+          <Shield className="h-3.5 w-3.5" aria-hidden />
+        </button>
+      </div>
+    ) : null;
 
   return (
     <Card
-      className={cn("flex h-full flex-col overflow-hidden cursor-pointer relative group border border-gray-100/80 hover:border-gray-200 hover:shadow-soft-md transition-all duration-300 rounded-2xl p-0", isDark ? "border-white/5 shadow-[0_2px_12px_-3px_rgba(0,0,0,0.25)] bg-gray-800/60 hover:border-white/10" : "shadow-soft bg-white")}
+      className={cn("@container flex h-full flex-col overflow-hidden cursor-pointer relative group border border-gray-100/80 hover:border-gray-200 transition-colors duration-200 rounded-2xl p-0", isDark ? "border-white/5 bg-gray-800/60 hover:border-white/10" : "bg-white")}
       onClick={() => navigate(`/events/${event.id}`)}
       containsControls
     >
       {/* Image Section */}
-      <div className="relative h-48 w-full overflow-hidden bg-gray-100 shrink-0">
+      <div
+        className={cn(
+          "relative w-full overflow-hidden bg-gray-100",
+          !coverTitle && "h-48 shrink-0",
+          photoFillsCard && "flex min-h-0 flex-1 flex-col",
+          coverFull && "h-full",
+          !coverFull && "rounded-b-[7.2px] md:rounded-b-[6.4px]",
+        )}
+        data-image-depth={imageDepth}
+      >
         {!imgError ? (
           <motion.img
             layoutId={`event-image-${event.id}`}
             referrerPolicy="no-referrer"
-            src={
-              event.imageUrl ||
-              "https://picsum.photos/seed/eventdefault/800/600"
-            }
+            src={eventCoverUrl(event)}
             alt={event.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            className={cn(
+              "object-cover object-center group-hover:scale-[1.02] transition-transform duration-700 ease-out",
+              coverTitle ? "absolute inset-0 h-full w-full" : "h-full w-full",
+            )}
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-cyan-100 to-purple-50 flex items-center justify-center p-4 text-center">
+          <div className={cn("bg-gradient-to-br from-cyan-100 to-purple-50 flex items-center justify-center p-4 text-center", coverTitle ? "absolute inset-0" : "w-full h-full")}>
             <span className="text-cyan-600 font-bold card-heading capitalize tracking-tight">
               {event.category}
             </span>
@@ -245,22 +499,32 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
         )}
 
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0" />
+        <div
+          className={cn(
+            "absolute inset-0",
+            coverFull
+              ? "bg-gradient-to-t from-black/80 via-black/40 to-black/10"
+              : coverTitle
+                ? "bg-gradient-to-t from-black/75 via-black/30 to-transparent"
+                : "bg-gradient-to-t from-black/50 via-black/0",
+          )}
+        />
 
-        {/* Date Badge — top left */}
-        <div className="absolute top-3 left-3 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm rounded-xl w-11 h-[46px] shadow-soft z-10">
+        <div className={cn(coverTitle ? "relative z-10 h-48" : "contents")}>
+        {/* Date Badge — same frame size as share/save */}
+        <div className="absolute top-3 left-3 flex h-9 w-9 @[20rem]:h-11 @[20rem]:w-11 flex-col items-center justify-center bg-white/90 backdrop-blur-md rounded-xl shadow-soft z-10">
           <span className={cn(EVENT_CARD_TYPO.badge, "mb-0.5", accent === 'fuchsia' ? 'text-gray-500' : accent === 'indigo' ? 'text-indigo-600' : accent === 'emerald' ? 'text-emerald-600' : 'text-brand')}>
             {month}
           </span>
-          <span className="text-sm font-extrabold text-gray-900 leading-none">
+          <span className="text-sm font-bold text-gray-900 leading-none">
             {day}
           </span>
         </div>
 
-        {/* Action buttons — top right */}
-        <div className="absolute top-3 right-3 z-10 flex gap-1.5">
+        {/* Action buttons — top right, same 44×44 frames */}
+        <div className="absolute top-3 right-3 z-10 flex gap-2">
           <button
-            className="p-2 rounded-full backdrop-blur-md focus:outline-none transition-colors bg-white/75 hover:bg-white text-gray-600 hover:text-gray-900"
+            className={cn(overlayCtl, "bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900")}
             onClick={handleShare}
             title={t("Κοινοποίηση", "Share")}
             aria-label={t("Κοινοποίηση", "Share")}
@@ -268,7 +532,12 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             <Share2 className="h-4 w-4" />
           </button>
           <button
-            className={`p-2 rounded-full backdrop-blur-md focus:outline-none transition-colors ${isSaved ? (accent === 'fuchsia' ? 'bg-fuchsia-500/20 text-fuchsia-600' : accent === 'emerald' ? 'bg-emerald-500/20 text-emerald-600' : accent === 'indigo' ? 'bg-indigo-500/20 text-indigo-600' : 'bg-accent/20 text-brand') : "bg-white/75 hover:bg-white text-gray-600 hover:text-gray-900"}`}
+            className={cn(
+              overlayCtl,
+              isSaved
+                ? (accent === 'fuchsia' ? 'bg-fuchsia-500/20 text-fuchsia-600' : accent === 'emerald' ? 'bg-emerald-500/20 text-emerald-600' : accent === 'indigo' ? 'bg-indigo-500/20 text-indigo-600' : 'bg-accent/20 text-brand')
+                : "bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900",
+            )}
             onClick={toggleSave}
             title={t("Αποθήκευση", "Save")}
             aria-label={isSaved ? t("Αφαίρεση αποθήκευσης", "Remove from saved") : t("Αποθήκευση", "Save")}
@@ -280,20 +549,31 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           </button>
         </div>
 
-        {/* Tags + Price — bottom of image */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between z-10 gap-2">
-          <div className="flex flex-nowrap overflow-hidden gap-1.5 flex-1 w-full max-w-[65%]">
-            {(event.tags ?? []).slice(0, 2).map((tag: string) => (
-              <span
+        {/* Tags + Price — chips size to their label; the row may scroll, the pill never clips. */}
+        <div className="absolute bottom-3 left-3 right-3 z-10 flex items-end justify-between gap-2">
+          <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto noscrollbar">
+            {(event.tags ?? []).slice(0, 2).map((tag: string, i: number) => {
+              const label = translateEventTag(tag, t);
+              return (
+              <Link
                 key={tag}
-                className="bg-black/35 backdrop-blur-sm text-white/95 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-medium capitalize tracking-wide whitespace-nowrap truncate max-w-[100px] text-xs"
+                to={eventTagPath(tag)}
+                data-event-tag={eventTagSlug(tag)}
+                title={label}
+                aria-label={t(`Ετικέτα ${label}`, `Tag ${label}`)}
+                onClick={(e) => e.stopPropagation()}
+                className={cn(
+                  "inline-flex h-7 w-max shrink-0 items-center overflow-visible rounded-full bg-black/40 px-2.5 text-xs font-medium tracking-wide text-white/95 backdrop-blur-sm whitespace-nowrap",
+                  i > 0 && "hidden @[20rem]:inline-flex",
+                )}
               >
-                {tag}
-              </span>
-            ))}
+                {label}
+              </Link>
+              );
+            })}
           </div>
-          <div className={cn("bg-white/90 backdrop-blur-sm px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-xl font-bold text-ink tracking-tight flex flex-col items-end shrink-0", EVENT_CARD_TYPO.dateBadge)}>
-            {event.isPaid ? `€${event.price}` : t("event_card.free", "Free")}
+          <div className={cn("z-10 bg-white/90 backdrop-blur-md min-h-7 px-2.5 py-1 rounded-xl font-bold text-ink tracking-tight flex flex-col items-end justify-center shrink-0 text-right", EVENT_CARD_TYPO.dateBadge)}>
+            {formatEventPrice(event, language, t("Δωρεάν", "Free"), t("Δωρεάν", "Free"))}
             {event.isPaid && event.groupDiscount && (
               <span className={cn(EVENT_CARD_TYPO.dateSub, "text-brand block mt-0.5")}>
                 -{event.groupDiscount.percentage}% {t('ομαδική έκπτωση', 'group discount')}
@@ -301,125 +581,152 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             )}
           </div>
         </div>
-      </div>
-
-      {/* Content Section — quieter hierarchy; all info kept */}
-      <div className="p-4 flex flex-col flex-1 gap-0">
-        <div className="flex items-start justify-between gap-3 mb-1.5">
-          <h3 className={cn(EVENT_CARD_TYPO.title, "transition-colors line-clamp-2", headColor, isDark ? (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-400' : accent === 'emerald' ? 'group-hover:text-emerald-400' : 'group-hover:text-cyan-400') : (accent === 'fuchsia' ? '' : accent === 'indigo' ? 'group-hover:text-indigo-600' : accent === 'emerald' ? 'group-hover:text-emerald-600' : 'group-hover:text-brand'))}>
-            <Link
-              to={`/events/${event.id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
-            >
-              {event.title}
-            </Link>
-          </h3>
-          {currentUser && matchScore != null && (
-            <div className="flex flex-col items-end shrink-0 pt-0.5" title={t("Ταίριασμα", "Match")}>
-              <span className={cn(EVENT_CARD_TYPO.matchScore, "font-bold", accent === 'fuchsia' ? headColor : accentText)}>
-                {matchScore}%
-              </span>
-              <span className={cn(EVENT_CARD_TYPO.matchLabel, mutedColor, "opacity-80")}>
-                {t("Ταίριασμα", "Match")}
-              </span>
-            </div>
-          )}
         </div>
 
-        <p className={cn("flex flex-wrap items-center gap-x-2 gap-y-1 font-medium leading-relaxed", EVENT_CARD_TYPO.meta, subColor)}>
-          <span className="inline-flex items-center gap-1 capitalize">
-            <Clock className={cn("w-3.5 h-3.5 shrink-0 opacity-70", mutedColor)} aria-hidden />
-            {weekday}, {event.time}
-          </span>
-          <span aria-hidden className={cn(mutedColor, "opacity-50")}>·</span>
-          <span className="inline-flex items-center gap-1 min-w-0">
-            <MapPin className={cn("w-3.5 h-3.5 shrink-0 opacity-70", mutedColor)} aria-hidden />
-            <span className="truncate max-w-[150px]">{event.locationArea}</span>
-          </span>
-          <span aria-hidden className={cn(mutedColor, "opacity-50")}>·</span>
-          <span className="inline-flex items-center gap-1 tabular-nums">
-            <Users className={cn("w-3.5 h-3.5 shrink-0 opacity-70", mutedColor)} aria-hidden />
-            {groupProgress.spotsLeft} {t("θέσεις", "spots left")}
-          </span>
-        </p>
-
-        {/* One quiet reason line — matchingPreview wins; else MatchExplainChips reasons (no double chrome). */}
-        {matchingPreview ? (
-          <p className={cn(EVENT_CARD_TYPO.hint, "mt-2 font-medium", accentText, "opacity-90")}>
-            {t(matchingPreview.labelEl, matchingPreview.labelEn)}
-          </p>
-        ) : (
-          currentUser && (
-            <MatchExplainChips user={currentUser} event={event} showScore={matchScore == null} className="mt-2" />
-          )
-        )}
-
-        {/* Organizer — compact row */}
-        {displayOrganizer && (
-          <button
-            type="button"
-            className="mt-2.5 flex items-center gap-2 text-left self-start min-h-9 group/org rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/organizer/${displayOrganizer.id}`);
-            }}
+        {coverTitle && (
+          <div
+            className={cn(
+              "relative z-10 flex flex-col gap-3.5 px-4 pt-1 pb-4",
+              photoFillsCard && "flex-1",
+            )}
           >
-            <span className="relative shrink-0">
-              <img
-                referrerPolicy="no-referrer"
-                src={displayOrganizer.photoUrl}
-                alt=""
-                className={cn("w-6 h-6 rounded-full object-cover", isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}
-              />
-              <span className={cn("absolute -bottom-0.5 -right-0.5 bg-green-500 w-2 h-2 rounded-full border border-white", isDark ? "border-gray-800" : "border-white")} aria-hidden />
-            </span>
-            <span className={cn("card-copy font-medium", mutedColor)}>
-              {hostUser && !organizer ? t('Διοργανωτής ομάδας', 'Group host') : t('Διοργανωτής', 'Organizer')}:
-            </span>
-            <span className={cn("card-copy font-semibold truncate max-w-[140px] group-hover/org:underline", headColor)}>
-              {displayOrganizer.name}
-            </span>
-          </button>
+            {titleRow(true)}
+            {coverFacts && factsRow(true)}
+            {coverOrganizer && hintRow(true)}
+            {coverOrganizer && organizerRow(true)}
+            {coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
+            {coverProgress && (
+              <div className="mt-auto border-t border-white/25 pt-4">
+                <GroupProgressBar
+                  current={groupProgress.current}
+                  target={groupProgress.target}
+                  className={coverFull ? "mb-3" : undefined}
+                  onPhoto
+                />
+                {groupProgress.discountUnlocked && event.groupDiscount && (
+                  <p className={cn(EVENT_CARD_TYPO.safetyLabel, coverFull && "mb-2.5", "text-emerald-200")}>
+                    -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
+                  </p>
+                )}
+                {coverFull && (
+                <div className={cn("flex items-center gap-2", showNightTools ? "justify-between" : "justify-end")}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (joinState === 'rate') {
+                        navigate(`/history/feedback/${event.id}`);
+                        return;
+                      }
+                      if (joinState === 'view' || (joinState === 'chat' && !userGroup)) {
+                        navigate(`/events/${event.id}`);
+                        return;
+                      }
+                      if (joinState === 'chat' && userGroup) {
+                        navigate(`/chat/${userGroup.id}`);
+                        return;
+                      }
+                      const gate = canJoinEvent(event.id);
+                      if (!gate.ok) {
+                        toast.error(t(gate.messageEl, gate.messageEn));
+                        if (gate.reason === 'feedback') {
+                          const pending = useStore.getState().getPendingFeedbackEventId();
+                          if (pending) navigate(`/history/feedback/${pending}`);
+                        }
+                        return;
+                      }
+                      navigate(`/events/${event.id}/join`);
+                    }}
+                    className={cn("min-h-9 shrink-0 whitespace-nowrap rounded-full px-5 py-2 text-white font-semibold", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
+                  >
+                    {joinState === 'rate'
+                      ? t('Αξιολόγηση', 'Rate')
+                      : joinState === 'view'
+                        ? t('Προβολή', 'View')
+                        : joinState === 'chat'
+                          ? t('Η βραδιά μας', 'Our night')
+                          : t('Βρες παρέα', 'Find company')}
+                  </button>
+                </div>
+                )}
+              </div>
+            )}
+          </div>
         )}
+      </div>
 
-        {/* Platform event — seeks a group organizer */}
-        {seeksHost && (
-          <div className={cn("mt-3 rounded-2xl p-3 border", isDark ? "bg-amber-500/10 border-amber-500/25" : "bg-amber-50 border-amber-200")}>
-            <div className="flex items-center gap-2 mb-2">
-              <UserPlus className={cn("w-4 h-4 shrink-0", isDark ? "text-amber-400" : "text-amber-600")} />
-              <div className="flex flex-col">
-                <span className={cn(EVENT_CARD_TYPO.avatarLabel, "capitalize", isDark ? "text-amber-300/90" : "text-amber-700")}>
-                  {t('Προσφέρεται από Nakamas', 'Offered by Nakamas')}
-                </span>
-                <span className={cn("text-xs font-bold", isDark ? "text-amber-100" : "text-amber-900")}>
+      {/* Content — spaced blocks, aligned icon wells, no middot soup */}
+      {!coverFull && (
+      <div className={cn("flex flex-col gap-3.5 px-4 pb-4", photoFillsCard ? "shrink-0 pt-3" : "flex-1 pt-4")}>
+        {!coverTitle && titleRow(false)}
+        {!coverFacts && factsRow(false)}
+        {!coverOrganizer && hintRow(false)}
+        {!coverOrganizer && organizerRow(false)}
+
+        {/* Platform event — seeks a group organizer. Hosting is primary only in the host rail. */}
+        {!coverProgress && seeksHost && joinState === 'join' && (
+          <div className={cn(
+            "rounded-2xl p-3.5 border",
+            emphasis === 'host'
+              ? isDark ? "bg-amber-500/10 border-amber-500/25" : "bg-amber-50 border-amber-200"
+              : isDark ? "bg-white/5 border-white/10" : "bg-gray-50 border-gray-200",
+          )}>
+            <div className="mb-2.5 flex items-center gap-2.5">
+              <span className={cn(
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
+                emphasis === 'host'
+                  ? isDark ? "bg-amber-500/15 text-amber-400" : "bg-amber-100 text-amber-600"
+                  : factWell,
+              )}>
+                <UserPlus className="h-4 w-4" />
+              </span>
+              <div className="flex min-w-0 flex-col">
+                <span className={cn("text-xs font-bold leading-tight", headColor)}>
                   {t('Αναζητείται διοργανωτής', 'Looking for an organizer')}
+                </span>
+                <span className={cn(EVENT_CARD_TYPO.avatarLabel, "mt-0.5 capitalize leading-tight", mutedColor)}>
+                  {t('Προσφέρεται από Nakamas', 'Offered by Nakamas')}
                 </span>
               </div>
             </div>
-            <button
-              onClick={handleBecomeHost}
-              className={cn("w-full py-2 rounded-2xl font-bold transition-colors flex items-center justify-center gap-1.5 shadow-soft", EVENT_CARD_TYPO.cta, isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
-            >
-              <Crown className="w-3.5 h-3.5" />
-              {t('Γίνε Διοργανωτής Nakamas', 'Become Nakamas organizer')}
-            </button>
+            {emphasis === 'host' ? (
+              <button
+                onClick={handleBecomeHost}
+                className={cn("flex min-h-9 w-full items-center justify-center gap-2 rounded-full font-bold transition-colors", EVENT_CARD_TYPO.cta, isDark ? "bg-amber-500 text-gray-900 hover:bg-amber-400" : "bg-amber-600 text-white hover:bg-amber-700")}
+              >
+                <Crown className="h-4 w-4" />
+                {t('Ανάλαβε τη διοργάνωση', 'Take on hosting')}
+              </button>
+            ) : (
+              <button
+                onClick={handleBecomeHost}
+                className={cn("flex min-h-9 w-full items-center justify-center gap-2 rounded-full border font-bold transition-colors", EVENT_CARD_TYPO.cta, isDark ? "border-white/15 text-gray-200 hover:bg-white/5" : "border-gray-200 text-ink hover:bg-white")}
+              >
+                <Crown className="h-4 w-4" />
+                {t('Ανάλαβε τη διοργάνωση', 'Take on hosting')}
+              </button>
+            )}
           </div>
         )}
 
-        {/* Group progress + actions */}
-        <div className={cn("mt-auto pt-3 border-t border-dashed", borderSub)}>
-          <GroupProgressBar
-            current={groupProgress.current}
-            target={groupProgress.target}
-            className="mt-0.5 mb-2.5"
-          />
-          {groupProgress.discountUnlocked && event.groupDiscount && (
-            <p className={cn(EVENT_CARD_TYPO.safetyLabel, "mb-2", isDark ? "text-emerald-400" : "text-emerald-600")}>
-              -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
-            </p>
+        {/* Group progress + actions. Progress sits on the photo for «Πρόοδος». */}
+        <div className={cn(coverProgress ? "pt-0" : cn("mt-auto border-t pt-4", borderSub))}>
+          {!coverProgress && (
+            <>
+              <GroupProgressBar
+                current={groupProgress.current}
+                target={groupProgress.target}
+                className="mb-3"
+              />
+              {groupProgress.discountUnlocked && event.groupDiscount && (
+                <p className={cn(EVENT_CARD_TYPO.safetyLabel, "mb-2.5", isDark ? "text-emerald-400" : "text-emerald-600")}>
+                  -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
+                </p>
+              )}
+            </>
           )}
-          <div className="flex items-center justify-between gap-2">
+          <div className={cn("flex items-center gap-2", showNightTools ? "justify-between" : "justify-end")}>
+            {showNightTools && (
             <button
               type="button"
               onClick={(e) => {
@@ -427,21 +734,22 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                 setShowSafetyPanel(true);
               }}
               aria-haspopup="dialog"
-              aria-label={arrivalStatus ?? (isSharingLocation ? t("Κοινοποίηση τοποθεσίας", "Location sharing") : t("Χάρτης & Ασφάλεια", "Map & Safety"))}
-              title={t("Χάρτης & Ασφάλεια", "Map & Safety")}
+              aria-label={arrivalStatus ?? (isSharingLocation ? t("Κοινοποίηση τοποθεσίας", "Location sharing") : t("Χάρτης ομάδας", "Group map"))}
+              title={t("Άφιξη & χάρτης", "Arrival & map")}
               className={cn(
-                "inline-flex min-w-0 shrink items-center gap-1.5 px-3 min-h-10 rounded-full text-xs font-semibold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                "inline-flex min-h-9 min-w-0 shrink items-center gap-2 rounded-full px-3.5 text-xs font-semibold transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
                 arrivalStatus || isSharingLocation
                   ? isDark ? "bg-emerald-950/40 text-emerald-300" : "bg-emerald-50 text-emerald-700"
                   : isDark ? "text-gray-300 hover:bg-white/[0.06]" : "text-gray-600 hover:bg-gray-50",
               )}
             >
-              <ShieldCheck className={cn("w-3.5 h-3.5 shrink-0 opacity-80", accentText)} aria-hidden />
+              <MapPin className={cn("h-4 w-4 shrink-0 opacity-80", accentText)} aria-hidden />
               {/* With the chat button present the card is tight: icon only (name stays in aria-label). */}
               <span className={cn("truncate max-w-[110px]", userGroup && "sr-only")}>
-                {arrivalStatus ?? (isSharingLocation ? t("Τοποθεσία", "Sharing") : t("Ασφάλεια", "Safety"))}
+                {arrivalStatus ?? (isSharingLocation ? t("Τοποθεσία", "Sharing") : t("Χάρτης", "Map"))}
               </span>
             </button>
+            )}
             <div className="flex shrink-0 items-center gap-2">
               {userGroup && (
                 <button
@@ -452,19 +760,31 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   }}
                   aria-label={t('Μετάβαση στο Group Chat', 'View Group Chat')}
                   title={t('Ομαδική συνομιλία', 'Group chat')}
-                  className={cn("min-h-11 min-w-11 rounded-full flex items-center justify-center border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent", accentBg, accentText, isDark ? "border-white/10" : "border-transparent")}
+                  className={cn("flex h-9 w-9 items-center justify-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent", accentBg, accentText, isDark ? "border-white/10" : "border-transparent")}
                 >
-                  <MessageSquare className="w-4 h-4" aria-hidden />
+                  <MessageSquare className="h-4 w-4" aria-hidden />
                 </button>
               )}
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
+                  if (joinState === 'rate') {
+                    navigate(`/history/feedback/${event.id}`);
+                    return;
+                  }
+                  if (joinState === 'view' || (joinState === 'chat' && !userGroup)) {
+                    navigate(`/events/${event.id}`);
+                    return;
+                  }
+                  if (joinState === 'chat' && userGroup) {
+                    navigate(`/chat/${userGroup.id}`);
+                    return;
+                  }
                   const gate = canJoinEvent(event.id);
                   if (!gate.ok) {
                     toast.error(t(gate.messageEl, gate.messageEn));
-                    if (gate.messageEn.includes("feedback")) {
+                    if (gate.reason === 'feedback') {
                       const pending = useStore.getState().getPendingFeedbackEventId();
                       if (pending) navigate(`/history/feedback/${pending}`);
                     }
@@ -472,16 +792,59 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   }
                   navigate(`/events/${event.id}/join`);
                 }}
-                className={cn("px-4 py-2 min-h-11 shrink-0 whitespace-nowrap text-white font-bold rounded-full shadow-soft", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
+                className={cn("min-h-9 shrink-0 whitespace-nowrap rounded-full px-5 py-2 text-white font-semibold", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
               >
-                {t("Βρες Nakamas", "Find Nakamas")}
+                {joinState === 'rate'
+                  ? t('Αξιολόγηση', 'Rate')
+                  : joinState === 'view'
+                    ? t('Προβολή', 'View')
+                    : joinState === 'chat'
+                      ? t('Η βραδιά μας', 'Our night')
+                      : t('Βρες παρέα', 'Find company')}
               </button>
             </div>
           </div>
         </div>
       </div>
+      )}
 
-      {/* «Map & Safety» sheet — wrapper stops React event bubbling from the portal to the card. */}
+      <div {...stopBubbling} className="contents">
+        <BottomSheet
+          open={showTrustSheet}
+          onClose={() => setShowTrustSheet(false)}
+          title={t('Εμπιστοσύνη', 'Trust')}
+          className="sm:max-w-lg sm:mx-auto sm:mb-4 sm:rounded-2xl sm:border"
+        >
+          {displayOrganizer && (
+            <div className="space-y-3">
+              <p className={cn(EVENT_CARD_TYPO.title, "font-bold text-ink")}>{displayOrganizer.name}</p>
+              <p className="text-xs font-medium leading-snug text-ink-muted">
+                {t(
+                  `Βαθμίδα ${tierLabelEl(displayOrganizer.trustTier)} · ${reliabilityBadge(displayOrganizer.reliabilityScore).el}`,
+                  `Tier ${tierLabelEn(displayOrganizer.trustTier)} · ${reliabilityBadge(displayOrganizer.reliabilityScore).en}`,
+                )}
+              </p>
+              <ul className="space-y-1.5 text-xs font-medium text-ink">
+                <li>{displayOrganizer.emailVerified ? t('Email επιβεβαιωμένο', 'Email confirmed') : t('Email σε εκκρεμότητα', 'Email pending')}</li>
+                <li>{displayOrganizer.phoneVerified ? t('Τηλέφωνο επιβεβαιωμένο', 'Phone confirmed') : t('Τηλέφωνο σε εκκρεμότητα', 'Phone pending')}</li>
+                <li>{displayOrganizer.idVerified ? t('Ταυτότητα επιβεβαιωμένη', 'ID confirmed') : t('Ταυτότητα όταν χρειάζεται', 'ID only when needed')}</li>
+              </ul>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowTrustSheet(false);
+                  navigate('/trust');
+                }}
+                className="inline-flex min-h-8 items-center justify-center rounded-full border border-border bg-surface-raised px-4 text-xs font-bold text-ink"
+              >
+                {t('Κέντρο εμπιστοσύνης', 'Trust center')}
+              </button>
+            </div>
+          )}
+        </BottomSheet>
+      </div>
+
+      {/* Arrival & map sheet — wrapper stops React event bubbling from the portal to the card. */}
       <div {...stopBubbling} className="contents">
         <BottomSheet
           open={showSafetyPanel}
@@ -489,14 +852,14 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
             setShowSafetyPanel(false);
             setShowEtaPrompt(false);
           }}
-          title={t("Χάρτης & Ασφάλεια", "Map & Safety")}
+          title={t("Άφιξη & χάρτης", "Arrival & map")}
           className="sm:max-w-lg sm:mx-auto sm:mb-4 sm:rounded-2xl sm:border"
         >
           <div className="space-y-4">
             <div>
               <p className="card-heading font-bold text-ink line-clamp-2">{event.title}</p>
               <p className="card-copy font-medium text-ink-muted capitalize">
-                {weekday}, {event.time} · {event.locationArea}
+                {whenLine} · {event.locationArea}
               </p>
             </div>
             {event.lat && event.lng ? (
@@ -512,7 +875,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
               <button
                 type="button"
                 onClick={getCalendarUrl}
-                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-bold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-xl border border-border px-3 text-xs font-bold text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 <CalendarPlus className="w-4 h-4" aria-hidden /> {t('Προσθήκη στο ημερολόγιο', 'Add to calendar')}
               </button>
@@ -522,7 +885,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   setShowSafetyPanel(false);
                   navigate(`/events/${event.id}`);
                 }}
-                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-bold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-bold text-accent-fg transition-colors hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
                 {t('Πλήρης σελίδα', 'Full event page')}
               </button>
@@ -762,7 +1125,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     {t("2. Κοινοποίηση Σε", "2. Share With")}
                   </h4>
                   <div className="flex flex-col gap-2">
-                    {["organizer", "selected", "all"].map((option) => (
+                    {["organizer", "all"].map((option) => (
                       <label
                         key={option}
                         className={`flex items-center gap-3 p-3 rounded-2xl border cursor-pointer transition-all duration-200 ${locationConfig.shareWith === option ? "border-accent bg-cyan-50/30 shadow-soft" : "border-gray-100 hover:bg-gray-50 hover:border-[#a5f3fc]"}`}
@@ -792,8 +1155,6 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                           <span className="card-heading font-bold text-ink">
                             {option === "organizer" &&
                               t("Μόνο Διοργανωτής", "Organizer Only")}
-                            {option === "selected" &&
-                              t("Επιλεγμένα Μέλη", "Selected Members")}
                             {option === "all" &&
                               t(
                                 "Όλη η Επιβεβαιωμένη Ομάδα",
@@ -826,30 +1187,35 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                   <h4 className="text-xs font-bold capitalize text-gray-600 tracking-tight">
                     {t("3. Αυτόματη Λήξη", "3. Auto-Expiry")}
                   </h4>
-                  <select aria-label={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
+                  <AppSelect
+                    ariaLabel={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
                     value={locationConfig.duration}
-                    onChange={(e) =>
+                    onValueChange={(next) =>
                       setLocationConfig({
                         ...locationConfig,
-                        duration: e.target.value,
+                        duration: next,
                       })
                     }
-                    className="w-full border border-gray-100 rounded-2xl p-3 text-xs font-medium focus:ring-2 focus:ring-accent/40 bg-white outline-none shadow-soft"
-                  >
-                    <option value="arrival">
-                      {t(
-                        "Μέχρι να φτάσω στο σημείο",
-                        "Until I arrive at meeting point",
-                      )}
-                    </option>
-                    <option value="event_start">
-                      {t("Μέχρι να ξεκινήσει η εκδήλωση", "Until event starts")}
-                    </option>
-                    <option value="event_end">
-                      {t("Μέχρι το τέλος της εκδήλωσης", "Until event ends")}
-                    </option>
-                    <option value="1hr">{t("Για 1 ώρα", "For 1 hour")}</option>
-                  </select>
+                    className="w-full border border-gray-100 rounded-2xl p-3 text-xs font-medium bg-white shadow-soft"
+                    options={[
+                      {
+                        value: "arrival",
+                        label: t(
+                          "Μέχρι να φτάσω στο σημείο",
+                          "Until I arrive at meeting point",
+                        ),
+                      },
+                      {
+                        value: "event_start",
+                        label: t("Μέχρι να ξεκινήσει η εκδήλωση", "Until event starts"),
+                      },
+                      {
+                        value: "event_end",
+                        label: t("Μέχρι το τέλος της εκδήλωσης", "Until event ends"),
+                      },
+                      { value: "1hr", label: t("Για 1 ώρα", "For 1 hour") },
+                    ]}
+                  />
                 </div>
               </div>
 
@@ -859,10 +1225,13 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
                     setIsSharingLocation(true);
                     setShowLocationConfigModal(false);
                     toast.success(
-                      t("Η τοποθεσία κοινοποιείται προσωρινά στην ομάδα.", "Location is shared temporarily with the group."),
+                      t(
+                        "Προεπισκόπηση κοινοποίησης — το pin δεν στάλθηκε ακόμη στην ομάδα.",
+                        "Sharing preview — the pin was not sent to the group yet.",
+                      ),
                     );
                   }}
-                  className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+                  className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
                 >
                   {isSharingLocation
                     ? t("Ενημέρωση", "Update Configuration")
@@ -887,53 +1256,26 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
           </div>
           <p className="card-copy font-medium leading-relaxed text-ink-muted mb-4">
             {t(
-              "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ένα φίλο. Θα βλέπει την τοποθεσία σας μέχρι το τέλος της εκδήλωσης.",
-              "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They will see your live location until the event ends.",
+              "Προεπισκόπηση demo — ο πραγματικός σύνδεσμος ασφαλείας θα εκδίδεται ανά έξοδο με ανάκληση. Μην τον μοιραστείς ως ενεργό.",
+              "Demo preview — a real safety link will be minted per outing with revoke. Do not share this as live.",
             )}
           </p>
-          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-4 text-left">
-            <span className="card-copy font-medium text-ink truncate mr-2">
-              https://nakamas.app/safe/r9x2p
+          <div className="bg-surface border border-border rounded-lg p-3 mb-4 text-left">
+            <p className="text-2xs font-bold tracking-wide text-ink-muted mb-1">
+              {t('Demo', 'Demo')}
+            </p>
+            <span className="card-copy font-medium text-ink-muted break-all">
+              https://nakamas.app/safe/demo-preview
             </span>
-            <button
-              type="button"
-              onClick={() => {
-                navigator.clipboard.writeText("https://nakamas.app/safe/r9x2p");
-                toast.success(t("Ο σύνδεσμος αντιγράφηκε", "Copied to clipboard"));
-              }}
-              className={cn("text-brand font-bold hover:bg-accent-soft px-2 py-1 rounded-lg transition-colors", EVENT_CARD_TYPO.link)}
-            >
-              {t("Αντιγραφη", "Copy")}
-            </button>
           </div>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setShowSafetyLinkModal(false)}
-              className="flex-1 px-4 py-3 text-xs font-bold text-ink hover:bg-surface rounded-2xl transition-all duration-200 active:scale-[0.98]"
-            >
-              {t("Ακύρωση", "Cancel")}
-            </button>
-            <button
-              type="button"
-              data-autofocus
-              onClick={() => {
-                if (navigator.share) {
-                  navigator.share({
-                    title: t("Σύνδεσμος ασφαλείας", "Safety link"),
-                    url: "https://nakamas.app/safe/r9x2p",
-                  });
-                } else {
-                  navigator.clipboard.writeText("https://nakamas.app/safe/r9x2p");
-                  toast.success(t("Ο σύνδεσμος αντιγράφηκε", "Copied"));
-                }
-                setShowSafetyLinkModal(false);
-              }}
-              className="flex-1 px-4 py-3 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
-            >
-              {t("Κοινοποιηση", "Share")}
-            </button>
-          </div>
+          <button
+            type="button"
+            data-autofocus
+            onClick={() => setShowSafetyLinkModal(false)}
+            className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
+          >
+            {t("Τέλος", "Done")}
+          </button>
         </div>
       </Modal>
     </Card>

@@ -61,3 +61,51 @@ describe('ensureDirectConversation', () => {
     expect(id).toBeNull();
   });
 });
+
+describe('ensureEventGroupConversation', () => {
+  beforeEach(() => {
+    useChatStore.setState({
+      conversations: [],
+      messages: [],
+      openConversationIds: [],
+    });
+  });
+
+  it('creates an event-group thread with a translatable welcome and meeting point', () => {
+    const id = useChatStore.getState().ensureEventGroupConversation({
+      groupId: 'g-nn1',
+      eventId: 'nn1',
+      title: 'Nakamas Nights: Ιστορίες στο τραπέζι',
+      participantUserIds: ['u1', 'u2', 'u3', 'u4'],
+      meetingPoint: 'Μπαρ Ψυρρή, Aisopou 8',
+    });
+    expect(id).toBe('conv_g-nn1');
+    const conv = useChatStore.getState().conversations.find((c) => c.id === id);
+    expect(conv?.type).toBe('event_group');
+    expect(conv?.meetingPoint).toBe('Μπαρ Ψυρρή, Aisopou 8');
+    expect(conv?.lastMessagePreview.el).toMatch(/συντονισμού/);
+    const bodies = useChatStore.getState().messages
+      .filter((m) => m.conversationId === id)
+      .map((m) => m.body);
+    expect(bodies).toEqual(['sys.coordination_unlocked']);
+  });
+
+  it('returns the existing conversation and does not duplicate the welcome', () => {
+    const a = useChatStore.getState().ensureEventGroupConversation({
+      groupId: 'g-x',
+      eventId: 'e-x',
+      title: 'Test',
+      participantUserIds: ['u1'],
+    });
+    const b = useChatStore.getState().ensureEventGroupConversation({
+      groupId: 'g-x',
+      eventId: 'e-x',
+      title: 'Test',
+      participantUserIds: ['u1'],
+    });
+    expect(a).toBe(b);
+    expect(
+      useChatStore.getState().messages.filter((m) => m.conversationId === a && m.type === 'system'),
+    ).toHaveLength(1);
+  });
+});

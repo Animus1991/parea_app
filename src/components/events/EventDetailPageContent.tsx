@@ -1,23 +1,15 @@
-import { useState } from 'react';
-import {
-  Tag,
-  ShieldCheck,
-  Users,
-  Star,
-  CheckCircle2,
-} from 'lucide-react';
-import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
+import { Users, MapPin, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
-import type { FeedbackData } from '../../store';
 import { getEventDetailContentTokens } from '../../lib/designTokens';
 import { buildEventQuickInfo } from '../../lib/eventQuickInfo';
-import { isEventCompleted, isUserEventParticipant } from '../../lib/eventParticipation';
+import { isUserEventParticipant } from '../../lib/eventParticipation';
+import { isFeedbackDue } from '../../lib/feedbackDue';
 import { cn } from '../../lib/utils';
 import { isDarkTheme } from '../../lib/themes';
 import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventMap';
-import { Button } from '../common/Button';
 
 export interface EventDetailPageContentProps {
   event: Event;
@@ -48,23 +40,18 @@ function EventDetailQuickInfoBlock({
     ? 'rounded-2xl border border-cyan-800/40 bg-cyan-950/30 shadow-soft p-4 md:p-5'
     : 'rounded-2xl border border-cyan-100 bg-cyan-50/80 shadow-soft p-4 md:p-5';
 
-  // Declutter: category and price are the chips right above; the place is the
-  // «Τοποθεσία» section below. Quick info keeps only what is said nowhere else.
-  const rows: { icon: typeof Tag; label: string; value: string }[] = [
+  // Declutter: category and price are the chips right above the title; the place
+  // type is in «Τοποθεσία» below. Quick info keeps what is said nowhere else.
+  const rows: { icon: typeof Users; label: string; value: string }[] = [
     {
-      icon: ShieldCheck,
-      label: t('Επίπεδο εμπιστοσύνης', 'Trust level'),
+      icon: CheckCircle2,
+      label: t('Ποιοι μπαίνουν', 'Who can join'),
       value: t(info.trustLevelEl, info.trustLevelEn),
     },
     {
-      icon: ShieldCheck,
-      label: t('Επίπεδο άνεσης', 'Comfort level'),
+      icon: MapPin,
+      label: t('Χώρος', 'Venue'),
       value: t(info.comfortLevelEl, info.comfortLevelEn),
-    },
-    {
-      icon: ShieldCheck,
-      label: t('Επαλήθευση', 'Verification'),
-      value: t(info.verificationEl, info.verificationEn),
     },
     {
       icon: Users,
@@ -75,7 +62,7 @@ function EventDetailQuickInfoBlock({
 
   return (
     <div className={cn(shell, className)} role="region" aria-label={t('Γρήγορες πληροφορίες', 'Quick info')}>
-      <p className={cn('text-xs font-bold tracking-wide uppercase mb-3', content.metaLabel)}>
+      <p className={cn('text-xs font-bold tracking-wide mb-3', content.metaLabel)}>
         {t('Γρήγορες πληροφορίες', 'Quick info')}
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -98,7 +85,7 @@ function EventDetailQuickInfoBlock({
   );
 }
 
-function EventDetailHostOrganizationRating({
+function EventDetailNightFeedbackLink({
   event,
   accent,
   darkSurface,
@@ -113,107 +100,19 @@ function EventDetailHostOrganizationRating({
   const { content } = getEventDetailContentTokens(accent, darkSurface);
   const groups = useStore((s) => s.groups);
   const currentUser = useStore((s) => s.currentUser);
-  const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
-  const submitFeedback = useStore((s) => s.submitFeedback);
-
-  const [hover, setHover] = useState(0);
-  const [rating, setRating] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
-
-  const existing = feedbackSubmitted[event.id];
-  const completed = isEventCompleted(event);
+  const existing = useStore((s) => s.feedbackSubmitted[event.id]);
   const isParticipant = isUserEventParticipant(event.id, currentUser, groups);
 
-  // Attendance: group membership = attended (mock store). TODO: wire ticket.used when backend exists.
-  const canRate = completed && isParticipant;
-
-  if (!canRate) return null;
-
-  const shell = darkSurface
-    ? 'rounded-2xl border border-amber-900/40 bg-amber-950/20 shadow-soft p-4 md:p-5'
-    : 'rounded-2xl border border-amber-100 bg-amber-50/90 shadow-soft p-4 md:p-5';
-
-  const handleSubmit = () => {
-    if (rating < 1) {
-      toast.error(t('Επιλέξτε αστέρια πριν την υποβολή', 'Select stars before submitting'));
-      return;
-    }
-    const payload: FeedbackData = {
-      eventId: event.id,
-      overallRating: rating,
-      vibeRating: rating,
-      mood: 'good',
-      comment: t(
-        'Αξιολόγηση οργάνωσης διοργανωτή (σελίδα εκδήλωσης)',
-        'Host organization feedback (event page)',
-      ),
-      submittedAt: new Date().toISOString(),
-      attendance: 'yes',
-    };
-    submitFeedback(payload);
-    setSubmitted(true);
-    toast.success(t('Ευχαριστούμε — η αξιολόγησή σας καταχωρήθηκε.', 'Thanks — your feedback was saved.'));
-  };
-
-  if (existing || submitted) {
-    const stars = existing?.overallRating ?? rating;
-    return (
-      <div className={cn(shell, className)}>
-        <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
-          <CheckCircle2 className="w-5 h-5 shrink-0" />
-          <p className={cn('card-heading font-bold', content.metaValue)}>
-            {t('Η αξιολόγηση οργάνωσης καταχωρήθηκε', 'Organization feedback submitted')}
-          </p>
-        </div>
-        <div className="flex items-center gap-1 mt-2" aria-label={t('Βαθμολογία', 'Rating')}>
-          {Array.from({ length: stars }).map((_, i) => (
-            <Star key={i} className="w-4 h-4 text-amber-500 fill-amber-500" />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  if (existing || !isParticipant || !isFeedbackDue(event)) return null;
 
   return (
-    <div className={cn(shell, className)}>
-      <p className={cn('text-xs font-bold tracking-wide uppercase mb-1', content.metaLabel)}>
-        {t('Αξιολογήστε την οργάνωση του διοργανωτή', "Rate the host's organization")}
-      </p>
-      <p className={cn('card-copy font-medium mb-4', content.metaValue)}>
-        {t('Πόσο καλά συντονίστηκε αυτή η εκδήλωση;', 'How well was this event coordinated?')}
-      </p>
-      <div
-        className="flex items-center gap-1 mb-4"
-        onMouseLeave={() => setHover(0)}
-        role="group"
-        aria-label={t('Βαθμολογία 1–5', 'Rating 1–5')}
+    <div className={cn('pt-1', className)}>
+      <Link
+        to={`/history/feedback/${event.id}`}
+        className={cn('text-sm font-semibold underline-offset-4 hover:underline', content.metaValue)}
       >
-        {[1, 2, 3, 4, 5].map((n) => (
-          <button
-            key={n}
-            type="button"
-            className="p-1 min-h-11 min-w-11 flex items-center justify-center rounded-2xl transition-transform hover:scale-110"
-            onMouseEnter={() => setHover(n)}
-            onClick={() => setRating(n)}
-            aria-label={`${n}`}
-          >
-            <Star
-              className={cn(
-                'w-7 h-7 transition-colors',
-                (hover || rating) >= n ? 'text-amber-500 fill-amber-500' : 'text-gray-300',
-              )}
-            />
-          </button>
-        ))}
-      </div>
-      <Button
-        type="button"
-        className="rounded-2xl shadow-soft min-h-11"
-        onClick={handleSubmit}
-        disabled={rating < 1}
-      >
-        {t('Υποβολή αξιολόγησης', 'Submit feedback')}
-      </Button>
+        {t('Πώς πέρασες;', 'How was it?')}
+      </Link>
     </div>
   );
 }
@@ -232,12 +131,8 @@ export default function EventDetailPageContent({
   const panelDark = darkSurface || isDarkTheme(theme);
   return (
     <div className={cn('space-y-4', className)}>
+      <EventDetailNightFeedbackLink event={event} accent={accent} darkSurface={panelDark} />
       <EventDetailQuickInfoBlock event={event} accent={accent} darkSurface={panelDark} />
-      <EventDetailHostOrganizationRating
-        event={event}
-        accent={accent}
-        darkSurface={panelDark}
-      />
     </div>
   );
 }

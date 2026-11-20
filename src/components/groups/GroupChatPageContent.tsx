@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useStore } from "../../store";
 import {
-  Send,
   Users,
   ArrowLeft,
   Info,
@@ -18,27 +17,47 @@ import {
   Compass,
   UserPlus,
   Check,
-  AlertTriangle,
+  Phone,
+  Video,
+  Images,
+  Siren,
 } from "lucide-react";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { toast } from "sonner";
 import { useLanguage } from "../../lib/i18n";
 import { useGroupChatContrast } from "../../hooks/useGroupChatContrast";
 import { cn } from "../../lib/utils";
+import { APP_TYPO } from "../../lib/typographyTokens";
+import { PAGE_FILL } from "../layout/PageShell";
 import { useGroupChatMessages, type GroupChatMessage } from "../../hooks/useGroupChatMessages";
 import { useChatStore } from "../../store/chatStore";
+import { toChatMessage } from "../../lib/chatMessageAdapters";
+import type { ChatReplyRef } from "../../types/chat";
+import { ChatMessageBubble } from "../chat/ChatMessageBubble";
+import { ChatComposerTools } from "../chat/ChatComposerTools";
+import { ChatStoriesStrip } from "../chat/ChatStoriesStrip";
+import { ChatCallModal } from "../chat/ChatCallModal";
 import { LiveEventTracker } from "./LiveEventTracker";
 import { ChatIcebreakers } from "./ChatIcebreakers";
+import { GroupChatStatusStrip } from "../chat/GroupChatStatusStrip";
+import { QuickReplies } from "../chat/QuickReplies";
+import { GroupChatThreadStarter } from "./GroupChatThreadStarter";
+import { localizeSystemBody } from "../../lib/chatSystemCopy";
 import { Modal } from "../common/Modal";
+import { Button } from "../common/Button";
+import { EmptyState } from "../common/EmptyState";
+import { AppSelect } from "../common/AppSelect";
 import { GroupChatLeaveModal } from "./groupChat/GroupChatLeaveModal";
 import { GroupChatReportModal } from "./groupChat/GroupChatReportModal";
 import { GroupChatLocationModal } from "./groupChat/GroupChatLocationModal";
 import { GroupChatSosModal } from "./groupChat/GroupChatSosModal";
 import { canModerateGroup } from "../../lib/roles";
-import { intlLocale } from '../../lib/dateLocale';
+import { eventTagPath } from "../../lib/eventTags";
+import { formatPlanWhen } from '../../lib/dateLocale';
+import { showNightCoordinationTools, translateEventTag } from '../../lib/eventDisplay';
 
 /** Room under the newest message so the floating chats button (desktop) never covers it. */
-const VIRTUOSO_COMPONENTS = { Footer: () => <div aria-hidden className="h-2 md:h-14" /> };
+const VIRTUOSO_SPACER = { Footer: () => <div aria-hidden className="h-2 md:h-14" /> };
 
 export default function GroupChatPageContent() {
   const { t, language } = useLanguage();
@@ -48,6 +67,8 @@ export default function GroupChatPageContent() {
   const groups = useStore((state) => state.groups);
   const users = useStore((state) => state.users);
   const currentUser = useStore((state) => state.currentUser);
+  const leaveGroup = useStore((state) => state.leaveGroup);
+  const joinGroup = useStore((state) => state.joinGroup);
   const ensureEventGroupConversation = useChatStore((s) => s.ensureEventGroupConversation);
   const gc = useGroupChatContrast();
 
@@ -57,9 +78,11 @@ export default function GroupChatPageContent() {
     groups.find((g) => g.eventId === groupId); // Fallback if routing passes eventId
   const event = events.find((e) => e.id === group?.eventId);
   const resolvedGroupId = group?.id;
+  const isMember = Boolean(currentUser && group?.members.includes(currentUser.id));
+  const onWaitlist = Boolean(currentUser && group?.waitlist?.includes(currentUser.id));
 
   useEffect(() => {
-    if (!group || !event) return;
+    if (!group || !event || !isMember) return;
     ensureEventGroupConversation({
       groupId: group.id,
       eventId: event.id,
@@ -67,60 +90,62 @@ export default function GroupChatPageContent() {
       participantUserIds: group.members,
       meetingPoint: group.meetingPoint,
     });
-  }, [group?.id, event?.id, ensureEventGroupConversation]); // eslint-disable-line react-hooks/exhaustive-deps -- bridge once per group/event
+  }, [group?.id, event?.id, isMember, ensureEventGroupConversation]); // eslint-disable-line react-hooks/exhaustive-deps -- bridge once per group/event
 
   const buildSeedMessages = (): GroupChatMessage[] => {
     if (!currentUser) return [];
-    const msgs: GroupChatMessage[] = Array.from({ length: 50 }).map((_, i) => ({
-      id: `m${i}`,
-      senderId: i % 2 === 0 ? "u2" : i % 3 === 0 ? "u3" : currentUser.id,
-      senderName:
-        i % 2 === 0 ? "Maria" : i % 3 === 0 ? "Nikos" : currentUser.name,
-      text: t(
-        `Μήνυμα ${i} από προηγούμενες συνομιλίες. ${i % 5 === 0 ? "Ανυπομονώ!" : ""}`,
-        `Test message ${i} from previous conversations. ${i % 5 === 0 ? "Looking forward to it!" : ""}`,
-      ),
-      timestamp: new Date(Date.now() - (50 - i) * 60000).toISOString(),
-    }));
-    msgs.push(
+    return [
       {
         id: "system1",
         senderId: "system",
         senderName: t("Σύστημα", "System"),
         text: t(
-          "Η ομάδα επιβεβαιώθηκε! Πείτε γεια στα νέα σας Nakamas. Οι λεπτομέρειες συνάντησης είναι διαθέσιμες στο πάνελ πληροφοριών.",
-          "Group confirmed! Say hi to your new Nakamas. Meeting details are available in the info panel.",
+          "Η ομάδα επιβεβαιώθηκε. Πείτε γεια στα Nakamas σας και συμφωνήστε πού θα συναντηθείτε.",
+          "Your group is confirmed. Say hi to your Nakamas and agree where to meet.",
         ),
-        timestamp: new Date(Date.now() - 86400000).toISOString(),
+        timestamp: new Date().toISOString(),
+        type: "system",
       },
-      {
-        id: "msg-maria",
-        senderId: "u2",
-        senderName: "Maria",
-        text: t(
-          "Γεια σε όλους! Είμαι ενθουσιασμένη γι' αυτό!",
-          "Hey everyone! Excited for this.",
-        ),
-        timestamp: new Date(Date.now() - 3600000).toISOString(),
-      },
-    );
-    return msgs;
+    ];
   };
 
-  const { messages, setMessages } = useGroupChatMessages(
+  const { messages, setMessages, conversationId } = useGroupChatMessages(
     resolvedGroupId,
     buildSeedMessages,
   );
+  const sendRichMessage = useChatStore((s) => s.sendRichMessage);
+  const toggleReaction = useChatStore((s) => s.toggleReaction);
+  const editMessage = useChatStore((s) => s.editMessage);
+  const deleteStoreMessage = useChatStore((s) => s.deleteMessage);
+  const restoreStoreMessage = useChatStore((s) => s.restoreMessage);
+  const togglePinMessage = useChatStore((s) => s.togglePinMessage);
+  const votePoll = useChatStore((s) => s.votePoll);
+  const receiveMessage = useChatStore((s) => s.receiveMessage);
+
   const [newMessage, setNewMessage] = useState("");
+  const [replyTo, setReplyTo] = useState<ChatReplyRef | null>(null);
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [showStories, setShowStories] = useState(false);
+  const [callMode, setCallMode] = useState<'video' | 'audio' | null>(null);
   const [showInfo, setShowInfo] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showSearchMobile, setShowSearchMobile] = useState(false);
-  const [showEphemeralBanner, setShowEphemeralBanner] = useState(true);
   const [isEphemeral, setIsEphemeral] = useState(true);
   const [showDisableEphemeralModal, setShowDisableEphemeralModal] =
     useState(false);
   const [isSharingLocation, setIsSharingLocation] = useState(false);
+  const sosActive = Boolean(currentUser && group?.membersLocations?.[currentUser.id]?.sos);
+  const showHelpAlert = Boolean(
+    currentUser &&
+      group &&
+      event &&
+      showNightCoordinationTools({
+        inGroup: isMember,
+        event,
+        alreadyActive: sosActive || isSharingLocation,
+      }),
+  );
   const [showLocationConfigModal, setShowLocationConfigModal] = useState(false);
   const [showLiveRadarModal, setShowLiveRadarModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
@@ -138,22 +163,7 @@ export default function GroupChatPageContent() {
   const [senderFilter, setSenderFilter] = useState<string>("all");
   const virtuosoRef = useRef<VirtuosoHandle>(null);
 
-  const handleSend = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !currentUser) return;
-
-    const msg: GroupChatMessage = {
-      id: Date.now().toString(),
-      senderId: currentUser.id,
-      senderName: currentUser.name,
-      text: newMessage,
-      timestamp: new Date().toISOString(),
-    };
-
-    setMessages([...messages, msg]);
-    setNewMessage("");
-
-    // Scroll to bottom after state update
+  const scrollToBottom = () => {
     setTimeout(() => {
       if (virtuosoRef.current) {
         virtuosoRef.current.scrollToIndex({
@@ -166,15 +176,48 @@ export default function GroupChatPageContent() {
   };
 
   const handleDeleteMessage = (id: string) => {
+    if (conversationId && currentUser) {
+      const snap = deleteStoreMessage(id, currentUser.id);
+      if (snap) {
+        toast.info(t("Το μήνυμα διαγράφηκε", "Message deleted"), {
+          action: {
+            label: t("Αναίρεση", "Undo"),
+            onClick: () => restoreStoreMessage(snap),
+          },
+        });
+      }
+      return;
+    }
     setMessages(messages.filter((m) => m.id !== id));
     toast.success(t("Το μήνυμα διαγράφηκε", "Message deleted"));
   };
 
+  const displayMessages = useMemo(
+    () =>
+      messages.map((m) =>
+        m.senderId === "system" || m.type === "system"
+          ? {
+              ...m,
+              senderName: t("Σύστημα", "System"),
+              text: localizeSystemBody(m.text, t),
+            }
+          : m,
+      ),
+    [messages, t],
+  );
+
   const filteredMessages = useMemo(() => {
-    return messages
+    return displayMessages
       .filter((m) => senderFilter === "all" || m.senderId === senderFilter)
+      .filter((m) =>
+        !tagFilter ||
+        m.tags?.includes(tagFilter) ||
+        m.text.toLowerCase().includes(`#${tagFilter}`),
+      )
       .filter((m) => m.text.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [messages, senderFilter, searchQuery]);
+  }, [displayMessages, senderFilter, tagFilter, searchQuery]);
+
+  const hasUserMessage = displayMessages.some((m) => m.senderId !== "system");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -191,11 +234,49 @@ export default function GroupChatPageContent() {
 
   if (!group || !event) {
     return (
-      <div className="p-5 text-center text-gray-500">
-        {t(
-          "Το Chat δεν βρέθηκε ή η ομάδα δεν επιβεβαιώθηκε.",
-          "Chat not found or group not confirmed.",
-        )}
+      <div className={cn(PAGE_FILL, "py-6")}>
+        <EmptyState
+          title={t('Το Chat δεν βρέθηκε', 'Chat not found')}
+          description={t(
+            'Ίσως διαγράφηκε η ομάδα ή ο σύνδεσμος είναι λάθος.',
+            'The group may have been removed, or the link is wrong.',
+          )}
+          actionLabel={t('Τα σχέδιά μου', 'My plans')}
+          onAction={() => navigate('/plans')}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
+        />
+      </div>
+    );
+  }
+
+  if (!isMember) {
+    return (
+      <div className={cn(PAGE_FILL, "space-y-4 py-4")}>
+        <h1 className={cn(APP_TYPO.pageTitle, "text-ink")}>{t('Chat ομάδας', 'Group chat')}</h1>
+        <div className="rounded-2xl border border-border bg-surface-raised p-4">
+          <p className="text-sm font-bold text-ink">
+            {t('Αυτό το chat είναι μόνο για τα μέλη της ομάδας.', 'This chat is only for group members.')}
+          </p>
+          {onWaitlist && (
+            <p className="mt-2 text-xs font-medium text-ink-muted">
+              {t('Είσαι στη λίστα αναμονής — όταν μπεις, ανοίγει και το chat.', 'You are on the waitlist — chat opens once you join.')}
+            </p>
+          )}
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button size="sm" onClick={() => navigate('/plans')}>
+              {t('Τα σχέδιά μου', 'My plans')}
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => navigate('/buddy-seek')}>
+              {t('Βρες Nakamas', 'Find Nakamas')}
+            </Button>
+            {event && (
+              <Button size="sm" variant="ghost" onClick={() => navigate(`/events/${event.id}`)}>
+                {t('Δες την εκδήλωση', 'See the event')}
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
@@ -222,7 +303,7 @@ export default function GroupChatPageContent() {
           key={msg.id}
           className="text-center my-6 flex justify-center w-full px-4"
         >
-          <span className="text-xs font-semibold tracking-tight capitalize text-ink bg-[#F3F4F6] dark:bg-white/10 px-4 py-2 rounded-full shadow-soft max-w-sm text-center leading-relaxed">
+          <span className="text-xs font-medium tracking-tight text-ink bg-[#F3F4F6] dark:bg-white/10 px-4 py-2 rounded-full shadow-soft max-w-sm text-center leading-relaxed">
             {msg.text}
           </span>
         </div>
@@ -245,56 +326,57 @@ export default function GroupChatPageContent() {
       );
     }
 
+    const activeConvId = conversationId ?? `conv_${group.id}`;
+    const chatMsg = toChatMessage(msg, activeConvId);
     return (
-      <div
-        key={msg.id}
-        className={`flex flex-col group py-2.5 w-full px-4 md:px-4 ${isMe ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
-      >
-        <span className="text-xs font-semibold tracking-tight capitalize text-[#4b5563] dark:text-ink-muted ml-1 mb-1">
-          {isMe ? t("Εσείς", "You") : msg.senderName}
-        </span>
-        <div className="flex items-center gap-2">
-          {isMe && (
-            <button
-              type="button"
-              onClick={() => handleDeleteMessage(msg.id)}
-              className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all rounded-full"
-              title={t("Διαγραφή μηνύματος", "Delete message")}
-              aria-label={t("Διαγραφή μηνύματος", "Delete message")}
-            >
-              <X className="h-3.5 w-3.5" aria-hidden />
-            </button>
-          )}
-          <div
-            className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-2.5 text-base leading-relaxed relative ${
-              isMe
-                ? "bg-ink text-white rounded-tr-sm shadow-soft"
-                : "bg-white dark:bg-surface-raised border border-gray-100 dark:border-border text-ink rounded-tl-sm shadow-soft"
-            }`}
-          >
-            {msg.text}
-          </div>
-        </div>
-        <span className="text-xs text-[#6b7280] dark:text-ink-muted mt-1 mr-1 font-medium tracking-wide">
-          {new Date(msg.timestamp).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </span>
+      <div key={msg.id} className="px-4 py-1.5">
+        <ChatMessageBubble
+          message={chatMsg}
+          senderName={isMe ? t("Εσείς", "You") : msg.senderName}
+          mine={isMe}
+          viewerId={currentUser?.id}
+          onReply={(target) =>
+            setReplyTo({
+              id: target.id,
+              senderId: target.senderId,
+              senderName: target.senderId === currentUser?.id ? t("Εσείς", "You") : msg.senderName,
+              body: target.body || (target.media ? `[${target.media.kind}]` : ""),
+              type: target.type,
+            })
+          }
+          onJumpTo={(targetId) => {
+            const idx = filteredMessages.findIndex((x) => x.id === targetId);
+            if (idx >= 0 && virtuosoRef.current) {
+              virtuosoRef.current.scrollToIndex({ index: idx, align: "center", behavior: "smooth" });
+            }
+          }}
+          onReact={(msgId, emoji) =>
+            currentUser && toggleReaction(msgId, emoji, currentUser.id)
+          }
+          onEdit={(msgId, body) =>
+            currentUser && editMessage(msgId, body, currentUser.id)
+          }
+          onDelete={(msgId) => handleDeleteMessage(msgId)}
+          onPin={(msgId) => togglePinMessage(activeConvId, msgId)}
+          onVotePoll={(msgId, optId) =>
+            currentUser && votePoll(msgId, optId, currentUser.id)
+          }
+          onTagClick={(tag) => setTagFilter((cur) => (cur === tag ? null : tag))}
+        />
       </div>
     );
   };
 
   return (
-    <div className="w-full h-full px-[5px] md:px-0 mx-auto max-w-[1200px]">
-      <div className="w-full h-full min-h-[420px] flex bg-white dark:bg-surface-raised border border-gray-100 dark:border-border rounded-2xl shadow-soft overflow-hidden relative">
+    <div className={cn(PAGE_FILL, "h-full flex-1 min-h-[calc(100dvh-var(--header-h))] md:min-h-[420px]")}>
+      <div className="w-full h-full min-h-0 md:min-h-[420px] flex bg-white dark:bg-surface-raised border-0 md:border border-gray-100 dark:border-border rounded-none md:rounded-2xl shadow-none md:shadow-soft overflow-hidden relative">
         <div
           className={`flex flex-col flex-1 h-full min-w-0 ${showInfo ? "hidden md:flex border-r border-gray-200 dark:border-border" : "flex"}`}
         >
-          {/* Header */}
-          <div className="flex items-center justify-between px-3 md:px-5 py-3 border-b border-gray-200 dark:border-border bg-white dark:bg-surface-raised shrink-0 relative z-20">
+          {/* Header: title row + tools row so the event name stays readable on a phone. */}
+          <div className="flex flex-col shrink-0 border-b border-gray-200 dark:border-border bg-white dark:bg-surface-raised relative z-20">
             {showSearchMobile ? (
-              <div className="flex items-center gap-2 w-full animate-in fade-in slide-in-from-right-4 duration-200">
+              <div className="flex items-center gap-2 w-full px-3 py-2.5 animate-in fade-in slide-in-from-right-4 duration-200">
                 <button
                   onClick={() => {
                     setShowSearchMobile(false);
@@ -326,42 +408,51 @@ export default function GroupChatPageContent() {
               </div>
             ) : (
               <>
-                <div className="flex items-center gap-3 overflow-hidden">
+                <div className="flex items-center gap-2 px-3 md:px-5 py-2.5">
                   <button
                     onClick={() => navigate(-1)}
-                    className="text-gray-400 hover:text-ink transition-colors p-1 shrink-0"
+                    className="text-gray-400 hover:text-ink transition-colors p-1 min-h-8 min-w-8 flex items-center justify-center rounded-full shrink-0"
                     aria-label={t('Πίσω', 'Go back')}
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </button>
-                  <div className="min-w-0">
-                    <h1 className="text-sm md:text-base font-bold text-ink truncate">
+                  <div className="min-w-0 flex-1">
+                    <h1 className={cn(APP_TYPO.pageTitle, "text-ink truncate")}>
                       {event.title}
                     </h1>
-                    <p className="text-xs md:text-xs text-gray-500 tracking-wide font-bold truncate flex items-center gap-1.5 mt-0.5">
-                      <Users className="h-3 w-3 shrink-0" />{" "}
-                      {group.members.length} {t("Μέλη", "Members")}
+                    <p className="text-xs text-gray-500 tracking-wide font-medium truncate flex items-center gap-1.5 mt-0.5">
+                      <Users className="h-3 w-3 shrink-0" aria-hidden />
+                      <span>
+                        {group.members.length} {t("μέλη", "members")}
+                      </span>
+                      <span aria-hidden>·</span>
+                      <Calendar className="h-3 w-3 shrink-0" aria-hidden />
+                      <span>
+                        {formatPlanWhen(event.date, event.time, language)}
+                      </span>
                     </p>
                   </div>
+                  <button
+                    onClick={() => setShowInfo(!showInfo)}
+                    className={cn("transition-colors p-2 rounded-full min-h-8 min-w-8 shrink-0", showInfo ? gc.infoActive : "text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10")}
+                    aria-label={showInfo ? t('Απόκρυψη πληροφοριών', 'Hide info panel') : t('Εμφάνιση πληροφοριών', 'Show info panel')}
+                  >
+                    <Info className="h-5 w-5" />
+                  </button>
                 </div>
 
-                <div className="flex items-center justify-end gap-1 sm:gap-2 shrink-0">
-                  {/* Desktop Search & Filter */}
-                  <div className="hidden md:flex items-center gap-3 mr-2">
-                    <select aria-label={t("Φίλτρο αποστολέα", "Sender filter")}
+                <div className="flex items-center gap-0.5 px-2 pb-2 overflow-x-auto noscrollbar">
+                  <div className="hidden md:flex items-center gap-3 mr-2 shrink-0">
+                    <AppSelect
+                      ariaLabel={t("Φίλτρο αποστολέα", "Sender filter")}
                       value={senderFilter}
-                      onChange={(e) => setSenderFilter(e.target.value)}
-                      className={cn("filter-select border border-gray-200 dark:border-border focus:outline-none focus:ring-1 bg-gray-50 dark:bg-white/5 text-gray-600 hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer transition-colors max-w-[120px] truncate", gc.focusRing)}
-                    >
-                      <option value="all">
-                        {t("Όλοι οι Αποστολείς", "All Senders")}
-                      </option>
-                      {groupMembersDetailed.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {m.name}
-                        </option>
-                      ))}
-                    </select>
+                      onValueChange={setSenderFilter}
+                      className={cn("filter-select border border-gray-200 dark:border-border bg-gray-50 dark:bg-white/5 text-gray-600 hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer transition-colors max-w-[120px]", gc.focusRing)}
+                      options={[
+                        { value: "all", label: t("Όλοι οι Αποστολείς", "All Senders") },
+                        ...groupMembersDetailed.map((m) => ({ value: m.id, label: m.name })),
+                      ]}
+                    />
                     <div className="relative group">
                       <Search className={cn("h-3.5 w-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2 transition-colors", gc.focusIcon)} />
                       <input
@@ -374,10 +465,40 @@ export default function GroupChatPageContent() {
                     </div>
                   </div>
 
-                  {/* Mobile Search Toggle */}
+                  <button
+                    type="button"
+                    onClick={() => setCallMode('audio')}
+                    aria-label={t('Φωνητική κλήση', 'Voice call')}
+                    title={t('Φωνητική κλήση', 'Voice call')}
+                    className="p-2 rounded-full text-gray-400 hover:text-brand hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shrink-0"
+                  >
+                    <Phone className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCallMode('video')}
+                    aria-label={t('Βιντεοκλήση', 'Video call')}
+                    title={t('Βιντεοκλήση', 'Video call')}
+                    className="p-2 rounded-full text-gray-400 hover:text-brand hover:bg-gray-100 dark:hover:bg-white/10 transition-colors shrink-0"
+                  >
+                    <Video className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowStories((s) => !s)}
+                    aria-label={t('Stories', 'Stories')}
+                    title={t('Stories Nakamas', 'Nakamas Stories')}
+                    className={cn(
+                      'p-2 rounded-full transition-colors shrink-0',
+                      showStories ? 'bg-brand-soft text-brand' : 'text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10',
+                    )}
+                  >
+                    <Images className="h-4 w-4" />
+                  </button>
+
                   <button
                     onClick={() => setShowSearchMobile(true)}
-                    className="text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors p-2 md:hidden"
+                    className="text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors p-2 md:hidden shrink-0"
                     aria-label={t('Αναζήτηση', 'Search')}
                   >
                     <Search className="h-5 w-5" />
@@ -390,53 +511,38 @@ export default function GroupChatPageContent() {
                       onSuggest={(text) => setNewMessage(text)}
                     />
                   )}
-
-                  {/* Info Toggle */}
-                  <button
-                    onClick={() => setShowInfo(!showInfo)}
-                    className={cn("transition-colors p-2 rounded-full min-h-11 min-w-11", showInfo ? gc.infoActive : "text-gray-400 hover:text-ink hover:bg-gray-100 dark:hover:bg-white/10")}
-                    aria-label={showInfo ? t('Απόκρυψη πληροφοριών', 'Hide info panel') : t('Εμφάνιση πληροφοριών', 'Show info panel')}
-                  >
-                    <Info className="h-5 w-5" />
-                  </button>
                 </div>
               </>
             )}
           </div>
 
-          {/* Ephemeral Notice */}
-          {isEphemeral && showEphemeralBanner && (
-            <div className="w-full shrink-0 border-b border-amber-200/60 bg-amber-50/80 dark:border-amber-800/40 dark:bg-amber-950/40 px-2 py-2 sm:px-3 text-center shadow-soft z-10 backdrop-blur-sm flex items-center justify-center relative">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-xs sm:text-xs font-bold tracking-wide text-[#7b3306] dark:text-amber-200 pr-6 w-full">
-                <span className="flex items-center justify-center gap-1.5 whitespace-nowrap">
-                  <ShieldCheck className="h-3.5 w-3.5 shrink-0" />{" "}
-                  {t("Εφήμερη Λειτουργία", "Ephemeral Mode")}
-                </span>
-                <span className="hidden sm:inline w-1 h-1 rounded-full bg-amber-300 opacity-60 shrink-0"></span>
-                <span className="font-medium text-[#973c00] dark:text-amber-300 flex items-center justify-center gap-1 leading-tight w-full max-w-full overflow-hidden">
-                  <Clock className="h-3 w-3 shrink-0" />{" "}
-                  <span className="truncate whitespace-normal sm:whitespace-nowrap">
-                    {t(
-                      "Η συνομιλία διαγράφεται 24 ώρες μετά την εκδήλωση",
-                      "Chat destructs 24h after event",
-                    )}
-                  </span>
-                </span>
-              </div>
+          {showStories && (
+            <ChatStoriesStrip conversationId={conversationId ?? `conv_${group.id}`} compact />
+          )}
+
+          {tagFilter && (
+            <div className="px-4 py-1.5 border-b border-border bg-surface flex items-center gap-2 text-xs shrink-0">
+              <span className="text-ink-muted">{t('Φίλτρο tag:', 'Tag filter:')}</span>
               <button
                 type="button"
-                onClick={() => setShowEphemeralBanner(false)}
-                className="p-1.5 text-amber-600/80 hover:bg-amber-200 hover:text-amber-800 rounded-full transition-colors absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 shrink-0"
-                title={t("Κλείσιμο Ειδοποίησης", "Close Banner")}
-                aria-label={t("Κλείσιμο Ειδοποίησης", "Close Banner")}
+                onClick={() => setTagFilter(null)}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-soft text-brand font-bold"
               >
-                <X className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden />
+                #{tagFilter} <X className="w-3 h-3" />
               </button>
             </div>
           )}
 
+          <GroupChatStatusStrip
+            conversationId={conversationId ?? `conv_${group.id}`}
+            isEphemeral={isEphemeral}
+            venue={event.exactLocation || event.locationArea}
+            meetingPoint={group.meetingPoint}
+            locked={group.status !== "confirmed" && group.status !== "completed"}
+          />
+
           {/* Messages Virtualized */}
-          <div className="flex-1 min-h-0 bg-[#F9FAFB] dark:bg-surface relative shadow-inner">
+          <div className="flex-1 min-h-0 bg-[#F9FAFB] dark:bg-surface relative shadow-inner flex flex-col">
             {isSharingLocation && (
               <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
                 <button
@@ -455,69 +561,118 @@ export default function GroupChatPageContent() {
               ref={virtuosoRef}
               data={filteredMessages}
               itemContent={renderMessage}
-              className="h-full w-full custom-scrollbar"
+              className="h-full w-full min-h-0 custom-scrollbar flex-1"
               alignToBottom={true}
-              components={VIRTUOSO_COMPONENTS}
+              components={VIRTUOSO_SPACER}
             />
+            {!hasUserMessage && (
+              <GroupChatThreadStarter
+                eventTitle={event.title}
+                whenLabel={formatPlanWhen(event.date, event.time, language)}
+                whereLabel={event.exactLocation || event.locationArea}
+                onPick={setNewMessage}
+              />
+            )}
           </div>
 
-          {/* Input */}
-          <form
-            onSubmit={handleSend}
-            className="p-3 sm:p-4 border-t border-gray-200 dark:border-border bg-white dark:bg-surface-raised shrink-0 relative z-20"
-          >
-            <div className="flex items-center gap-2 md:gap-3 max-w-4xl mx-auto w-full relative">
+          {/* Safety bar + Rich SOTA Composer */}
+          <div className="border-t border-gray-200 dark:border-border bg-white dark:bg-surface-raised shrink-0 relative z-20 pb-[env(safe-area-inset-bottom,0px)]">
+            <div className="flex items-center gap-2 px-3 pt-2">
               <button
                 type="button"
                 onClick={() => setShowLocationConfigModal(true)}
-                className={`p-2.5 rounded-full transition-all flex items-center justify-center shrink-0 border hidden sm:flex ${
+                className={`p-2 rounded-full transition-all flex items-center justify-center shrink-0 border ${
                   isSharingLocation
                     ? "bg-emerald-50 text-emerald-600 border-emerald-200 ring-2 ring-emerald-500/20"
-                    : "bg-gray-50 dark:bg-white/5 text-gray-400 border-gray-200 dark:border-border hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-600"
+                    : "bg-gray-50 dark:bg-white/5 text-gray-500 border-gray-200 dark:border-border hover:bg-gray-100 dark:hover:bg-white/10"
                 }`}
-                title={t("Τοποθεσία & Ασφάλεια", "Location & Safety")}
-                aria-label={t("Τοποθεσία & Ασφάλεια", "Location & Safety")}
+                title={t("Χάρτης ομάδας", "Group map")}
+                aria-label={t("Χάρτης ομάδας", "Group map")}
               >
                 <Compass
-                  className={`h-5 w-5 ${isSharingLocation ? "animate-pulse" : ""}`}
+                  className={`h-4 w-4 ${isSharingLocation ? "animate-pulse" : ""}`}
                   aria-hidden
                 />
               </button>
+              {showHelpAlert && (
               <button
                 type="button"
                 onClick={() => setShowSosConfirm(true)}
-                className={`p-2.5 rounded-full transition-all flex items-center justify-center shrink-0 border ${
+                className={`p-2 rounded-full transition-all flex items-center justify-center shrink-0 border ${
                   group.membersLocations?.[currentUser.id]?.sos
                     ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500 animate-pulse"
                     : "bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
                 }`}
-                title={t("SOS / Βοήθεια", "SOS / Help")}
-                aria-label={t("SOS / Βοήθεια", "SOS / Help")}
+                title={t("Χρειάζομαι βοήθεια", "I need help")}
+                aria-label={t("Χρειάζομαι βοήθεια", "I need help")}
               >
-                <AlertTriangle className="h-5 w-5" aria-hidden />
+                <Siren className="h-4 w-4" aria-hidden />
               </button>
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder={t(
-                    "Πληκτρολογήστε ένα μήνυμα...",
-                    "Type a message...",
-                  )}
-                  className="w-full bg-gray-100 dark:bg-white/10 border border-transparent rounded-full py-3 md:py-3.5 pl-5 pr-14 text-sm focus:bg-white dark:focus:bg-surface-raised focus:ring-2 focus:ring-ink focus:border-ink outline-none transition-all shadow-soft"
-                />
-                <button
-                  type="submit"
-                  disabled={!newMessage.trim()}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2 bg-ink text-white rounded-full hover:bg-gray-800 disabled:opacity-40 disabled:hover:bg-ink transition-all shadow-soft"
-                  aria-label={t('Αποστολή μηνύματος', 'Send message')}
-                >
-                  <Send className="h-4 w-4 md:h-4.5 md:w-4.5" />
-                </button>
-              </div>
+              )}
             </div>
-          </form>
+            <QuickReplies
+              onSelect={(q) => {
+                if (!currentUser) return;
+                const convId = conversationId ?? `conv_${group.id}`;
+                sendRichMessage({
+                  conversationId: convId,
+                  senderId: currentUser.id,
+                  body: q,
+                  replyTo: replyTo ?? undefined,
+                });
+                setReplyTo(null);
+                scrollToBottom();
+              }}
+            />
+            <ChatComposerTools
+              value={newMessage}
+              onChange={setNewMessage}
+              participants={groupMembersDetailed.filter((u) => u.id !== currentUser?.id).map((u) => ({ id: u.id, name: u.name }))}
+              replyTo={replyTo}
+              onClearReply={() => setReplyTo(null)}
+              onSendText={(body, meta) => {
+                if (!currentUser) return;
+                const convId = conversationId ?? `conv_${group.id}`;
+                sendRichMessage({
+                  conversationId: convId,
+                  senderId: currentUser.id,
+                  body,
+                  replyTo: replyTo ?? undefined,
+                  tags: meta.tags,
+                  mentions: meta.mentions,
+                });
+                setNewMessage("");
+                setReplyTo(null);
+                scrollToBottom();
+              }}
+              onSendMedia={(media, caption) => {
+                if (!currentUser) return;
+                const convId = conversationId ?? `conv_${group.id}`;
+                sendRichMessage({
+                  conversationId: convId,
+                  senderId: currentUser.id,
+                  body: caption ?? media.label ?? "",
+                  type: media.kind,
+                  media,
+                  replyTo: replyTo ?? undefined,
+                });
+                setReplyTo(null);
+                scrollToBottom();
+              }}
+              onSendPoll={(poll) => {
+                if (!currentUser) return;
+                const convId = conversationId ?? `conv_${group.id}`;
+                sendRichMessage({
+                  conversationId: convId,
+                  senderId: currentUser.id,
+                  body: poll.question,
+                  type: "poll",
+                  poll,
+                });
+                scrollToBottom();
+              }}
+            />
+          </div>
         </div>
 
         {showInfo && (
@@ -558,12 +713,13 @@ export default function GroupChatPageContent() {
                   {event.tags && event.tags.length > 0 && (
                     <div className="flex gap-1.5 flex-wrap">
                       {event.tags.map((tag: string) => (
-                        <span
+                        <Link
                           key={tag}
-                          className={cn("px-2.5 py-1 rounded-lg text-xs font-bold tracking-wide border", gc.tagBadge)}
+                          to={eventTagPath(tag)}
+                          className={cn("inline-flex w-max max-w-none shrink-0 whitespace-nowrap px-2.5 py-1 rounded-lg text-xs font-bold tracking-wide border", gc.tagBadge)}
                         >
-                          {tag}
-                        </span>
+                          {translateEventTag(tag, t)}
+                        </Link>
                       ))}
                     </div>
                   )}
@@ -574,8 +730,7 @@ export default function GroupChatPageContent() {
                         <Calendar className="h-3.5 w-3.5" />
                       </div>
                       <span className="pt-0.5">
-                        {new Date(event.date).toLocaleDateString(intlLocale(language))}{" "}
-                        {t("στις", "at")} {event.time}
+                        {formatPlanWhen(event.date, event.time, language)}
                       </span>
                     </div>
                     <div className="flex items-start gap-3">
@@ -735,7 +890,7 @@ export default function GroupChatPageContent() {
               </div>
 
               {/* Chat Settings */}
-              <div className="bg-white dark:bg-surface-raised rounded-2xl shadow-soft border border-gray-100 dark:border-border p-4 space-y-5">
+              <div className="bg-white dark:bg-surface-raised rounded-2xl shadow-soft border border-gray-100 dark:border-border p-4 space-y-4">
                 <div>
                   <h4 className="font-bold text-sm capitalize tracking-tight text-ink mb-3 flex items-center gap-1.5">
                     <ShieldCheck className="h-3.5 w-3.5 text-gray-400" />{" "}
@@ -744,7 +899,7 @@ export default function GroupChatPageContent() {
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex-1">
                       <p className="text-sm font-bold text-ink">
-                        {t("Εφήμερη Λειτουργία", "Ephemeral Mode")}
+                        {t("Προσωρινό ιστορικό", "Temporary history")}
                       </p>
                       <p className="text-xs text-gray-500 mt-1 leading-relaxed">
                         {t(
@@ -777,7 +932,7 @@ export default function GroupChatPageContent() {
                 <div className="pt-4 border-t border-gray-100 dark:border-border">
                   <h4 className="font-bold text-sm capitalize tracking-tight text-ink mb-3 flex items-center gap-1.5">
                     <Navigation className="h-3.5 w-3.5 text-gray-400" />{" "}
-                    {t("Άφιξη & Ασφάλεια", "Arrival & Safety")}
+                    {t("Άφιξη & χάρτης", "Arrival & map")}
                   </h4>
                   <div className="space-y-2">
                     <button
@@ -835,12 +990,12 @@ export default function GroupChatPageContent() {
                     >
                       <div>
                         <p className="text-sm font-bold text-ink">
-                          {t("Nakama Safety Shield", "Nakama Safety Shield")}
+                          {t("Χάρτης ομάδας", "Group map")}
                         </p>
                         <p className="text-xs text-gray-500 mt-0.5">
                           {t(
-                            "Χάρτης ασφαλείας & SOS Flare",
-                            "Safety map & SOS Flare",
+                            "Ζωντανή θέση και ειδοποίηση βοήθειας",
+                            "Live pin and a help alert",
                           )}
                         </p>
                       </div>
@@ -876,7 +1031,7 @@ export default function GroupChatPageContent() {
                   onClick={() => setShowReportModal(true)}
                   className="w-full py-2.5 px-4 text-xs font-bold tracking-wide text-red-600 bg-red-50/50 hover:bg-red-50 border border-red-100 rounded-lg transition-colors flex justify-center items-center gap-2"
                 >
-                  {t("Αναφορά Προβλήματος", "Report Safety Issue")}
+                  {t("Αναφορά προβλήματος", "Report an issue")}
                 </button>
                 <button
                   onClick={() => setShowLeaveModal(true)}
@@ -931,30 +1086,23 @@ export default function GroupChatPageContent() {
           </div>
           <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
-              "Αυτό δημιουργεί έναν προσωρινό σύνδεσμο ασφαλείας. Μοιραστείτε τον με ασφάλεια εκτός Nakamas. Θα βλέπουν την τοποθεσία σας μέχρι το τέλος. Ανακαλέστε τον όποτε θέλετε.",
-              "This creates a temporary safety link. Share this securely with a trusted friend or family member outside of Nakamas. They see your location until the event ends. You can revoke it anytime.",
+              "Προεπισκόπηση demo — ο πραγματικός σύνδεσμος ασφαλείας θα εκδίδεται ανά έξοδο με ανάκληση. Μην τον μοιραστείς ως ενεργό.",
+              "Demo preview — a real safety link will be minted per outing with revoke. Do not share this as live.",
             )}
           </p>
-          <div className="bg-surface border border-border rounded-lg p-3 flex items-center justify-between mb-4">
-            <span className="text-xs font-medium text-ink truncate mr-2">
-              https://nakamas.app/safe/r9x2p
+          <div className="bg-surface border border-border rounded-lg p-3 mb-4 text-left">
+            <p className="text-2xs font-bold tracking-wide text-ink-muted mb-1">
+              {t('Demo', 'Demo')}
+            </p>
+            <span className="text-xs font-medium text-ink-muted break-all">
+              https://nakamas.app/safe/demo-preview
             </span>
-            <button
-              type="button"
-              onClick={() => {
-                navigator.clipboard.writeText("https://nakamas.app/safe/r9x2p");
-                toast.success(t("Αντιγράφηκε στο πρόχειρο!", "Copied to clipboard!"));
-              }}
-              className={cn("text-xs font-bold", gc.accentText)}
-            >
-              {t("Αντιγραφή", "Copy")}
-            </button>
           </div>
           <button
             type="button"
             data-autofocus
             onClick={() => setShowSafetyLinkModal(false)}
-            className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+            className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
           >
             {t("Τέλος", "Done")}
           </button>
@@ -965,9 +1113,22 @@ export default function GroupChatPageContent() {
           eventTitle={event?.title}
           onClose={() => setShowLeaveModal(false)}
           onConfirm={() => {
-            toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'));
+            const gid = group.id;
+            const willHandOver = Boolean(group.waitlist?.length);
+            leaveGroup(gid);
+            toast.info(t('Αποχωρήσατε από την ομάδα.', 'You have left the group.'), {
+              action: willHandOver
+                ? {
+                    label: t('Βρες Nakamas', 'Find Nakamas'),
+                    onClick: () => navigate('/buddy-seek'),
+                  }
+                : {
+                    label: t('Αναίρεση', 'Undo'),
+                    onClick: () => joinGroup(gid),
+                  },
+            });
             setShowLeaveModal(false);
-            navigate(-1);
+            navigate('/plans');
           }}
         />
 
@@ -983,8 +1144,8 @@ export default function GroupChatPageContent() {
           </div>
           <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
             {t(
-              "Προτείνετε να απενεργοποιηθεί η Εφήμερη Λειτουργία. Αν όλα τα μέλη συμφωνήσουν, η συνομιλία θα διατηρηθεί μόνιμα.",
-              "You are proposing to turn off Ephemeral Mode. If all group members agree, this chat will be kept permanently instead of being deleted automatically.",
+              "Το ιστορικό μένει σε αυτή τη συσκευή.",
+              "History stays on this device.",
             )}
           </p>
           <div className="flex flex-col gap-2.5">
@@ -998,30 +1159,34 @@ export default function GroupChatPageContent() {
                     id: Date.now().toString(),
                     senderId: "system",
                     senderName: t("Σύστημα", "System"),
-                    text: `${currentUser.name} ${t("πρότεινε να απενεργοποιηθεί η Εφήμερη Λειτουργία. Η ψηφοφορία θα ξεκινήσει σύντομα.", "proposed to disable Ephemeral Mode. Voting will begin shortly.")}`,
+                    text: `${currentUser.name} ${t("κράτησε το ιστορικό συνομιλίας σε αυτή τη συσκευή.", "kept chat history on this device.")}`,
                     timestamp: new Date().toISOString(),
                   },
                 ]);
                 setIsEphemeral(false);
                 setShowDisableEphemeralModal(false);
                 setShowInfo(false);
-                toast.success(t('Η πρόταση στάλθηκε', 'Proposal sent'));
+                toast.success(t('Το ιστορικό κρατήθηκε σε αυτή τη συσκευή', 'History kept on this device'));
               }}
-              className="w-full px-4 py-3 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+              className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-ink hover:bg-gray-900 rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
             >
-              {t("Πρόταση στην Ομάδα", "Propose to Group")}
+              {t("Κράτα ιστορικό εδώ", "Keep history here")}
             </button>
             <button
               type="button"
               onClick={() => setShowDisableEphemeralModal(false)}
-              className="w-full px-4 py-3 text-xs font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+              className="w-full px-4 py-2 min-h-9 text-xs font-bold text-ink bg-surface hover:bg-surface-raised rounded-full transition-all duration-200 border border-border active:scale-[0.98]"
             >
               {t("Ακύρωση", "Cancel")}
             </button>
           </div>
         </Modal>
 
-        <GroupChatReportModal open={showReportModal} onClose={() => setShowReportModal(false)} />
+        <GroupChatReportModal
+          open={showReportModal}
+          onClose={() => setShowReportModal(false)}
+          groupId={group.id}
+        />
 
         <Modal
           open={showStatusModal}
@@ -1033,12 +1198,6 @@ export default function GroupChatPageContent() {
           <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
             <Clock className="w-6 h-6" />
           </div>
-          <p className="text-xs font-medium leading-relaxed text-ink-muted mb-4">
-            {t(
-              "Ενημερώστε γρήγορα την ομάδα για την κατάστασή σας χωρίς να μοιραστείτε την ακριβή τοποθεσία σας.",
-              "Quickly update the group on your status without sharing your exact location.",
-            )}
-          </p>
           <div className="flex flex-col gap-2.5">
             <form
               onSubmit={(e) => {
@@ -1067,12 +1226,12 @@ export default function GroupChatPageContent() {
                 type="number"
                 data-autofocus
                 placeholder={t("ETA (λεπτά)", "ETA (mins)")}
-                className="flex-1 w-full bg-surface border border-border text-ink text-sm rounded-2xl px-4 py-3 focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none shadow-soft"
+                className="flex-1 w-full bg-surface border border-border text-ink text-sm rounded-full px-4 py-2 min-h-9 focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none shadow-soft"
                 min="1"
               />
               <button
                 type="submit"
-                className="px-4 py-3 text-xs font-bold text-white bg-brand hover:bg-brand-strong rounded-2xl shadow-soft transition-all duration-200 whitespace-nowrap"
+                className="px-4 py-2 min-h-9 text-xs font-bold text-white bg-brand hover:bg-brand-strong rounded-full shadow-soft transition-all duration-200 whitespace-nowrap"
               >
                 {t("Αποστολή", "Send")}
               </button>
@@ -1113,7 +1272,7 @@ export default function GroupChatPageContent() {
                   setShowStatusModal(false);
                   toast.success(t('Η κατάσταση κοινοποιήθηκε', 'Status shared'));
                 }}
-                className={`w-full px-4 py-3 text-xs font-bold rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
+                className={`w-full px-4 py-2 min-h-9 text-xs font-bold rounded-full transition-all duration-200 shadow-soft active:scale-[0.98] ${status.color}`}
               >
                 {status.text}
               </button>
@@ -1122,7 +1281,7 @@ export default function GroupChatPageContent() {
             <button
               type="button"
               onClick={() => setShowStatusModal(false)}
-              className="w-full px-4 py-3 mt-2 text-xs font-bold text-ink bg-surface hover:bg-surface-raised rounded-2xl transition-all duration-200 border border-border active:scale-[0.98]"
+              className="w-full px-4 py-2 min-h-9 mt-2 text-xs font-bold text-ink bg-surface hover:bg-surface-raised rounded-full transition-all duration-200 border border-border active:scale-[0.98]"
             >
               {t("Ακύρωση", "Cancel")}
             </button>
@@ -1239,7 +1398,7 @@ export default function GroupChatPageContent() {
                 setShowAddMemberModal(false);
                 setMemberAddSearchQuery("");
               }}
-              className="px-5 py-2.5 text-xs font-bold text-ink bg-surface-raised hover:bg-surface rounded-2xl transition-all duration-200 border border-border shadow-soft active:scale-[0.98]"
+              className="px-4 py-1.5 min-h-8 text-xs font-bold text-ink bg-surface-raised hover:bg-surface rounded-full transition-all duration-200 border border-border shadow-soft active:scale-[0.98]"
             >
               {t("Τέλος", "Done")}
             </button>
@@ -1249,7 +1408,7 @@ export default function GroupChatPageContent() {
         <Modal
           open={showLiveRadarModal}
           onClose={() => setShowLiveRadarModal(false)}
-          title={t("Live Radar", "Live Radar")}
+          title={t("Χάρτης ομάδας", "Group map")}
           size="lg"
           className="max-w-4xl p-4"
         >
@@ -1274,20 +1433,38 @@ export default function GroupChatPageContent() {
                   senderId: "system",
                   senderName: t("Σύστημα", "System"),
                   text: !isSos
-                    ? `${currentUser.name} ${t("ενεργοποίησε το SOS Flare! Βρίσκεται σε ανάγκη.", "triggered the SOS flare! They need help.")}`
-                    : `${currentUser.name} ${t("απενεργοποίησε το SOS.", "deactivated the SOS.")}`,
+                    ? `${currentUser.name} ${t("ζήτησε βοήθεια από την ομάδα.", "asked the group for help.")}`
+                    : `${currentUser.name} ${t("είναι εντάξει.", "is okay.")}`,
                   timestamp: new Date().toISOString(),
                 },
               ]);
               setShowSosConfirm(false);
               if (!isSos) {
-                toast.error(t('SOS Flare ενεργοποιήθηκε!', 'SOS Flare activated!'));
+                toast.error(t('Η ομάδα ειδοποιήθηκε ότι χρειάζεσαι βοήθεια.', 'The group was told you need help.'));
               } else {
-                toast.info(t('SOS απενεργοποίηκε.', 'SOS deactivated.'));
+                toast.info(t('Ενημερώθηκε η ομάδα ότι είσαι εντάξει.', 'The group was told you are okay.'));
               }
             }}
           />
         )}
+
+        <ChatCallModal
+          open={callMode !== null}
+          mode={callMode ?? 'video'}
+          title={event.title}
+          participants={groupMembersDetailed
+            .filter((m) => m.id !== currentUser?.id)
+            .map((m) => ({ id: m.id, name: m.name }))}
+          onClose={() => setCallMode(null)}
+          onEnded={(durationSec, mode) => {
+            const convId = conversationId ?? `conv_${group.id}`;
+            const label =
+              mode === 'video'
+                ? t(`Βιντεοκλήση · ${durationSec}δ`, `Video call · ${durationSec}s`)
+                : t(`Φωνητική κλήση · ${durationSec}δ`, `Voice call · ${durationSec}s`);
+            receiveMessage(convId, label, 'system', 'system');
+          }}
+        />
       </div>
     </div>
   );

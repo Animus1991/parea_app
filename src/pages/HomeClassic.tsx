@@ -1,34 +1,38 @@
 import { useEffect } from "react";
-import { CopilotInlinePrompt } from '../components/copilot/CopilotInlinePrompt';
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { EventCard } from "../components/events/EventCard";
 import { EventCardSkeleton } from "../components/common/Skeleton";
-import { Map as MapIcon, CalendarX } from "lucide-react";
+import { CalendarX } from "lucide-react";
 import { EmptyState } from "../components/common/EmptyState";
 import { useHomeTheme } from "../hooks/useHomeTheme";
 import { useThemeStyles } from "../hooks/useThemeStyles";
-import { EventStories } from "../components/home/EventStories";
 import { HomeLoggedInHero } from "../components/home/HomeLoggedInHero";
-import { HomePendingFeedbackBanner } from "../components/home/HomePendingFeedbackBanner";
 import { HomeVerifyBanner } from "../components/home/HomeVerifyBanner";
-import { HomeBelowFold } from "../components/home/HomeBelowFold";
-import { HomeBuddySeekStrip } from "../components/buddySeek/HomeBuddySeekStrip";
 import { getTimeGreeting, getMotivation } from "../lib/homeGreeting";
 import { HomeSearchDropdown } from "../components/home/HomeSearchDropdown";
 import { useOnboardingWelcome } from "../hooks/useOnboardingWelcome";
+import { useHomeHeroGate } from "../hooks/useHomeHeroGate";
 import { HomeOnboardingWelcomeBanner } from "../components/home/HomeOnboardingWelcomeBanner";
 import { HomeContinueStrip } from "../components/home/HomeContinueStrip";
 import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
+import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
+import { HomeFeedToolbar } from "../components/home/HomeFeedToolbar";
+import { HomeDiscoverEnrichment } from "../components/home/HomeDiscoverEnrichment";
+import { HomeQuietRevealBar } from "../components/home/HomeQuietRevealBar";
+import { CollectionsRail } from "../components/outings/CollectionsRail";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
-import { CollectionsRail } from "../components/outings/CollectionsRail";
+import { emptyHomeSchedule, isScheduleFilterActive } from "../lib/homeScheduleFilter";
+import { DiscoverCardImagePicker } from "../components/home/DiscoverCardImagePicker";
+import { useDiscoverCardImageDepth } from "../hooks/useDiscoverCardImageDepth";
 
 export default function HomeClassic() {
   const h = useHomeTheme();
   const tok = useThemeStyles();
   const navigate = useNavigate();
   const { showWelcome, dismissWelcome } = useOnboardingWelcome();
+  const homeGate = useHomeHeroGate(showWelcome);
   const ctrl = useHomePageController();
   const {
     t,
@@ -36,13 +40,28 @@ export default function HomeClassic() {
     setFeedType,
     showSearchSuggestions,
     setShowSearchSuggestions,
+    filterSheetOpen,
+    setFilterSheetOpen,
+    filtersExpanded,
+    filtersOpen,
+    toggleFilters,
     seekingHostOnly,
     setSeekingHostOnly,
     visibleEvents,
+    shownEvents,
     hasMoreEvents,
+    loadMoreEvents,
+    conflictCount,
+    showConflicts,
+    onToggleConflicts,
+    fullJoinedCount,
+    showFullJoined,
+    onToggleFullJoined,
+    pastCount,
+    showPast,
+    onTogglePast,
     searchRef,
     loadMoreRef,
-    scrollToFilters,
     storyEvents,
     seekingHostEvents,
     feed,
@@ -72,11 +91,15 @@ export default function HomeClassic() {
     activeFilterCount,
     activeMood,
     handleSelectMood,
+    schedule,
+    setSchedule,
     isLoading,
     isError,
     refetch,
   } = feed;
 
+  const { depth: imageDepth, setDepth: setImageDepth, options: imageDepthOptions } =
+    useDiscoverCardImageDepth();
   const currentUser = feed.currentUser;
 
   useEffect(() => {
@@ -108,84 +131,74 @@ export default function HomeClassic() {
 
       <HomeContinueStrip />
 
-      {/* Φ27 — themed collections with how many groups are forming */}
-      <CollectionsRail />
-
-      <EventStories events={storyEvents} />
-
-      <CopilotInlinePrompt />
-
-      <HomeBuddySeekStrip />
-
-      {showWelcome && (
+      {homeGate === 'verify' && <HomeVerifyBanner />}
+      {homeGate === 'welcome' && (
         <HomeOnboardingWelcomeBanner useClassicTokens onDismiss={dismissWelcome} />
       )}
-      <HomeVerifyBanner />
-      <HomePendingFeedbackBanner />
+      <HomeDiscoverEnrichment storyEvents={storyEvents} />
 
-      <HomeFiltersSection
-        activeCategory={activeCategory}
-        setActiveCategory={setActiveCategory}
-        tagFilter={tagFilter}
-        setTagFilter={setTagFilter}
-        priceFilter={priceFilter}
-        setPriceFilter={setPriceFilter}
-        dateFilter={dateFilter}
-        setDateFilter={setDateFilter}
-        safetyFilter={safetyFilter}
-        setSafetyFilter={setSafetyFilter}
-        radiusFilter={radiusFilter}
-        setRadiusFilter={setRadiusFilter}
-        sortParam={sortParam}
-        setSortParam={setSortParam}
-        seekingHostOnly={seekingHostOnly}
-        onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
-        showSeekingHostChip={seekingHostEvents.length > 0}
-        hasActiveFilters={hasActiveFilters || seekingHostOnly}
-        onClearAll={handleClearAll}
-        activeFilterCount={activeFilterCount}
-        activeMood={activeMood}
-        onSelectMood={handleSelectMood}
-      />
-
-      {/* Events Grid */}
       <section>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
-          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setFeedType("For You")}
-                className={`filter-chip px-4 text-xs font-bold transition-all duration-200 rounded-full ${feedType === "For You" ? h.feedTabActive : h.feedTabInactive}`}
-              >
-                {t("home.feed.for_you", "Για Σένα")}
-              </button>
-              <button
-                onClick={() => setFeedType("Discover")}
-                className={`filter-chip px-4 text-xs font-bold transition-all duration-200 rounded-full ${feedType === "Discover" ? h.feedTabActive : h.feedTabInactive}`}
-              >
-                {t("home.feed.discover", "Ανακάλυψε")}
-              </button>
-            </div>
-            {!isLoading && sortedEvents.length > 0 && (
-              <p className="text-xs font-semibold text-ink-muted">
-                {sortedEvents.length === 1
-                  ? t("1 αποτέλεσμα", "1 result")
-                  : t(`${sortedEvents.length} αποτελέσματα`, `${sortedEvents.length} results`)}
-              </p>
-            )}
-          </div>
+        <HomeFeedToolbar
+          feedType={feedType}
+          setFeedType={setFeedType}
+          resultCount={shownEvents.length}
+          isLoading={isLoading}
+          tabClassName={(active) =>
+            cn(
+              'filter-chip px-4 text-xs font-bold leading-none whitespace-nowrap transition-all duration-200 rounded-full',
+              active ? h.feedTabActive : h.feedTabInactive,
+            )
+          }
+          mapClassName={tok.isDark ? 'border-gray-600/50 text-gray-300' : 'border-gray-200 text-ink-muted'}
+          filtersOpen={filtersOpen}
+          onToggleFilters={toggleFilters}
+          activeFilterCount={activeFilterCount + (seekingHostOnly ? 1 : 0)}
+        />
 
-          <div className={cn('flex p-0.5 rounded-full w-fit border', tok.isDark ? 'bg-gray-800/50 border-gray-600/50' : 'bg-gray-50 border-gray-100')}>
-            <button
-              onClick={() => navigate("/nearby")}
-              className={cn('p-1.5 rounded-lg transition-colors', h.feedTabInactive)}
-              title={t("Άνοιγμα Χάρτη", "Open Map")}
-              aria-label={t("Άνοιγμα Χάρτη", "Open Map")}
-            >
-              <MapIcon className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        <HomeFiltersSection
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+          tagFilter={tagFilter}
+          setTagFilter={setTagFilter}
+          priceFilter={priceFilter}
+          setPriceFilter={setPriceFilter}
+          dateFilter={dateFilter}
+          setDateFilter={setDateFilter}
+          safetyFilter={safetyFilter}
+          setSafetyFilter={setSafetyFilter}
+          radiusFilter={radiusFilter}
+          setRadiusFilter={setRadiusFilter}
+          sortParam={sortParam}
+          setSortParam={setSortParam}
+          seekingHostOnly={seekingHostOnly}
+          onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
+          showSeekingHostChip={seekingHostEvents.length > 0}
+          hasActiveFilters={hasActiveFilters || seekingHostOnly}
+          onClearAll={handleClearAll}
+          activeMood={activeMood}
+          onSelectMood={handleSelectMood}
+          expanded={filtersExpanded}
+          schedule={schedule}
+          setSchedule={setSchedule}
+        />
+
+        <HomeQuietRevealBar
+          conflictCount={conflictCount}
+          showConflicts={showConflicts}
+          onToggleConflicts={onToggleConflicts}
+          fullJoinedCount={fullJoinedCount}
+          showFullJoined={showFullJoined}
+          onToggleFullJoined={onToggleFullJoined}
+          pastCount={pastCount}
+          showPast={showPast}
+          onTogglePast={onTogglePast}
+        />
+
+        <DiscoverCardImagePicker
+          depth={imageDepth}
+          options={imageDepthOptions}
+          onChange={setImageDepth}
+        />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
@@ -207,29 +220,44 @@ export default function HomeClassic() {
               <EmptyState
                 icon={CalendarX}
                 title={t("home.feed.no_events", "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σας.")}
-                description={t(
-                  'Δοκιμάστε να αλλάξετε φίλτρα ή κατηγορία — ή δες τι γίνεται κοντά σου.',
-                  'Try changing filters or category — or see what’s nearby.',
-                )}
+                description={
+                  isScheduleFilterActive(schedule)
+                    ? t(
+                        'Καμία βραδιά σε αυτές τις ώρες. Δοκίμασε περισσότερες μέρες ή ώρες.',
+                        'No nights in these hours. Try more days or times.',
+                      )
+                    : t(
+                        'Άλλαξε φίλτρα ή δες τον χάρτη.',
+                        'Change filters or open the map.',
+                      )
+                }
                 actionLabel={
-                  hasActiveFilters || seekingHostOnly
-                    ? t('Εκκαθάριση φίλτρων', 'Clear filters')
-                    : t('Στον χάρτη', 'On the map')
+                  isScheduleFilterActive(schedule)
+                    ? t('Διεύρυνε τις ώρες', 'Widen hours')
+                    : hasActiveFilters || seekingHostOnly
+                      ? t('Εκκαθάριση φίλτρων', 'Clear filters')
+                      : t('Στον χάρτη', 'On the map')
                 }
                 onAction={
-                  hasActiveFilters || seekingHostOnly
-                    ? handleClearAll
-                    : () => navigate('/nearby')
+                  isScheduleFilterActive(schedule)
+                    ? () => setSchedule(emptyHomeSchedule())
+                    : hasActiveFilters || seekingHostOnly
+                      ? handleClearAll
+                      : () => navigate('/nearby')
                 }
                 secondaryLabel={
-                  hasActiveFilters || seekingHostOnly
-                    ? t('Στον χάρτη', 'On the map')
-                    : t('Κατηγορίες', 'Categories')
+                  isScheduleFilterActive(schedule)
+                    ? t('Εκκαθάριση φίλτρων', 'Clear filters')
+                    : hasActiveFilters || seekingHostOnly
+                      ? t('Στον χάρτη', 'On the map')
+                      : t('Κατηγορίες', 'Categories')
                 }
                 onSecondary={
-                  hasActiveFilters || seekingHostOnly
-                    ? () => navigate('/nearby')
-                    : () => navigate('/categories')
+                  isScheduleFilterActive(schedule)
+                    ? handleClearAll
+                    : hasActiveFilters || seekingHostOnly
+                      ? () => navigate('/nearby')
+                      : () => navigate('/categories')
                 }
               />
             </div>
@@ -241,7 +269,7 @@ export default function HomeClassic() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <EventCard event={event} />
+                <EventCard event={event} imageDepth={imageDepth} />
               </motion.div>
             ))
           )}
@@ -249,21 +277,55 @@ export default function HomeClassic() {
 
         {!isLoading && hasMoreEvents && (
           <div ref={loadMoreRef} className="flex justify-center mt-4 py-4">
-            <div className={cn('w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin', tok.accentText)} />
+            <button
+              type="button"
+              onClick={loadMoreEvents}
+              className={cn(
+                'inline-flex min-h-8 items-center justify-center rounded-full border border-border bg-surface-raised px-4 text-xs font-bold',
+                tok.accentText,
+              )}
+            >
+              {t('Φόρτωσε περισσότερα', 'Load more')}
+            </button>
           </div>
         )}
       </section>
 
-      <HomeBelowFold
-        useClassicTokens
-        onScrollToCategories={scrollToFilters}
-        seekingHostEvents={seekingHostEvents}
+      {!isLoading && shownEvents.length > 0 && (
+        <CollectionsRail
+          excludeEventIds={shownEvents.map((event) => event.id)}
+        />
+      )}
+
+      <HomeMobileFilterSheet
+        open={filterSheetOpen}
+        onClose={() => setFilterSheetOpen(false)}
+        activeCount={activeFilterCount}
+        onClear={() => {
+          handleClearAll();
+          setFilterSheetOpen(false);
+        }}
+        priceFilter={priceFilter}
+        setPriceFilter={setPriceFilter}
+        dateFilter={dateFilter}
+        setDateFilter={setDateFilter}
+        radiusFilter={radiusFilter}
+        setRadiusFilter={setRadiusFilter}
+        safetyFilter={safetyFilter}
+        setSafetyFilter={setSafetyFilter}
+        sortParam={sortParam}
+        setSortParam={setSortParam}
         seekingHostOnly={seekingHostOnly}
         onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
-        stepCardClass={h.card}
-        stepCircleClass={h.stepBadge}
-        stepTitleClass={h.stepTitle}
-        stepBodyClass={h.stepBody}
+        showSeekingHostChip={seekingHostEvents.length > 0}
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+        tagFilter={tagFilter}
+        setTagFilter={setTagFilter}
+        activeMood={activeMood}
+        onSelectMood={handleSelectMood}
+        schedule={schedule}
+        setSchedule={setSchedule}
       />
     </div>
   );

@@ -88,7 +88,7 @@ export function HorizontalScrollArrows({
           aria-label={t('Προηγούμενες', 'Scroll previous')}
           className={cn(
             'hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20',
-            'min-h-10 min-w-10 items-center justify-center rounded-full',
+            'min-h-8 min-w-8 items-center justify-center rounded-full',
             'bg-white/95 dark:bg-gray-900/95 border border-gray-200 dark:border-white/15',
             'shadow-soft-md text-gray-800 dark:text-white hover:scale-105 active:scale-95 transition-transform',
           )}
@@ -103,7 +103,7 @@ export function HorizontalScrollArrows({
           aria-label={t('Επόμενες', 'Scroll next')}
           className={cn(
             'hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20',
-            'min-h-10 min-w-10 items-center justify-center rounded-full',
+            'min-h-8 min-w-8 items-center justify-center rounded-full',
             'bg-white/95 dark:bg-gray-900/95 border border-gray-200 dark:border-white/15',
             'shadow-soft-md text-gray-800 dark:text-white hover:scale-105 active:scale-95 transition-transform',
           )}

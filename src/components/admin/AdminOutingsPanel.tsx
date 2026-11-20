@@ -41,7 +41,7 @@ export function AdminOutingsPanel({ section }: { section: 'metrics' | 'appeals' 
               <p className="flex items-center gap-1.5 text-xs font-bold text-ink-muted">
                 <Icon className="h-3.5 w-3.5" aria-hidden /> {label}
               </p>
-              <p className="mt-1 text-sm font-black text-ink md:text-base">{value}</p>
+              <p className="mt-1 text-sm font-bold text-ink md:text-base">{value}</p>
               <p className="text-2xs font-medium text-ink-muted">{hint}</p>
             </div>
           ))}

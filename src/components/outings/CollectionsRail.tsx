@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Library, Sparkles } from 'lucide-react';
+import { ChevronRight, Library } from 'lucide-react';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { COLLECTIONS, collectionEvents, formingGroups } from '../../lib/outings';
@@ -12,40 +12,63 @@ import { COLLECTION_ICONS } from './collectionIcons';
  * μόνος/η», «Ήσυχες βραδιές», «Έξω στη φύση», «Nakamas Nights» — each with how
  * many groups are forming right now, which is what makes Nakamas different.
  */
-export function CollectionsRail({ className, title = true }: { className?: string; title?: boolean }) {
+export function CollectionsRail({
+  className,
+  title = true,
+  fill = false,
+  excludeEventIds,
+}: {
+  className?: string;
+  title?: boolean;
+  /** Stretch tiles across the main column (collections index) instead of a compact scroll strip. */
+  fill?: boolean;
+  /** Hide nights (and empty collections) already shown above this rail. */
+  excludeEventIds?: Iterable<string>;
+}) {
   const { t } = useLanguage();
   const events = useStore((s) => s.events);
   const groups = useStore((s) => s.groups);
   const today = new Date().toISOString().slice(0, 10);
 
+  const hidden = useMemo(() => new Set(excludeEventIds ?? []), [excludeEventIds]);
+
   const stats = useMemo(
     () =>
       COLLECTIONS.map((c) => {
-        const list = collectionEvents(c, events, groups);
+        const list = collectionEvents(c, events, groups).filter((e) => !hidden.has(e.id));
         const upcoming = list.filter((e) => e.date >= today);
         const shown = upcoming.length ? upcoming : list;
         return { c, count: shown.length, forming: shown.reduce((n, e) => n + formingGroups(e, groups).length, 0) };
-      }),
-    [events, groups, today],
+      }).filter((row) => row.count > 0),
+    [events, groups, today, hidden],
   );
+
+  if (stats.length === 0) return null;
 
   return (
     <section className={cn('space-y-2', className)} aria-labelledby={title ? 'collections-rail-title' : undefined} aria-label={title ? undefined : t('Συλλογές', 'Collections')}>
       {title && (
         <div className="flex items-center justify-between gap-2">
-          <h2 id="collections-rail-title" className="flex items-center gap-2 text-sm font-bold text-ink md:text-base">
-            <Library className="h-4 w-4" aria-hidden /> {t('Συλλογές', 'Collections')}
+          <h2 id="collections-rail-title" className="flex min-w-0 items-center gap-2 text-sm font-bold text-ink">
+            <Library className="h-4 w-4 shrink-0" aria-hidden />
+            <span className="truncate">{t('Συλλογές', 'Collections')}</span>
           </h2>
-          <Link to="/collections" className="inline-flex min-h-9 items-center gap-0.5 text-xs font-bold text-ink hover:underline">
+          <Link to="/collections" className="inline-flex min-h-8 shrink-0 items-center gap-0.5 text-xs font-bold text-ink hover:underline">
             {t('Όλες', 'All')} <ChevronRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
         </div>
       )}
-      <ul className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 noscrollbar">
+      <ul
+        className={
+          fill
+            ? 'grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'
+            : '-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 noscrollbar'
+        }
+      >
         {stats.map(({ c, count, forming }) => {
-          const Icon = COLLECTION_ICONS[c.id as keyof typeof COLLECTION_ICONS] ?? Sparkles;
+          const Icon = COLLECTION_ICONS[c.id as keyof typeof COLLECTION_ICONS] ?? Library;
           return (
-            <li key={c.id} className="w-44 shrink-0">
+            <li key={c.id} className={fill ? 'min-w-0' : 'w-44 shrink-0'}>
               <Link
                 to={`/collections/${c.id}`}
                 className="flex h-full flex-col rounded-2xl border border-border bg-surface-raised p-3 transition-colors hover:border-border-strong"
@@ -54,11 +77,9 @@ export function CollectionsRail({ className, title = true }: { className?: strin
                 <span className="mt-2 text-sm font-bold leading-tight text-ink">{t(c.el, c.en)}</span>
                 <span className="mt-1 text-xs font-medium text-ink-muted">
                   {t(`${count} εκδηλώσεις`, `${count} events`)}
-                </span>
-                <span className="mt-0.5 text-xs font-bold text-ink">
                   {forming > 0
-                    ? t(`${forming} ${forming === 1 ? 'παρέα σχηματίζεται' : 'παρέες σχηματίζονται'}`, `${forming} ${forming === 1 ? 'group' : 'groups'} forming`)
-                    : t('Ξεκίνα πρώτος/η μια παρέα', 'Be the first to start a group')}
+                    ? t(` · ${forming} ${forming === 1 ? 'παρέα' : 'παρέες'}`, ` · ${forming} ${forming === 1 ? 'group' : 'groups'}`)
+                    : ''}
                 </span>
               </Link>
             </li>

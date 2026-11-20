@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HeartHandshake, Sparkles } from 'lucide-react';
+import { HeartHandshake } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
@@ -7,6 +7,8 @@ import { VIBE_QUESTIONS } from '../../lib/vibe';
 import { Button } from '../common/Button';
 import { VibeQuizModal } from './VibeQuizModal';
 import { cn } from '../../lib/utils';
+import { PROFILE_TYPO } from '../../lib/typographyTokens';
+import { AppSelect } from '../common/AppSelect';
 import type { GenderIdentity } from '../../types/outings';
 
 const GENDERS: { id: GenderIdentity | ''; el: string; en: string }[] = [
@@ -32,8 +34,8 @@ export function VibeProfileCard({ className }: { className?: string }) {
 
   return (
     <section className={cn('rounded-2xl border border-border bg-surface-raised p-4', className)} aria-labelledby="vibe-card-title">
-      <h2 id="vibe-card-title" className="flex items-center gap-2 text-sm font-bold text-ink">
-        <Sparkles className="h-4 w-4" aria-hidden /> {t('Το στυλ παρέας μου', 'My group style')}
+      <h2 id="vibe-card-title" className={cn('flex items-center gap-2 text-ink', PROFILE_TYPO.nestedCardTitle)}>
+        <HeartHandshake className="h-4 w-4" aria-hidden /> {t('Το στυλ παρέας μου', 'My group style')}
       </h2>
       {vibe ? (
         <ul className="mt-2 flex flex-wrap gap-1.5">
@@ -46,14 +48,10 @@ export function VibeProfileCard({ className }: { className?: string }) {
             ) : null;
           })}
         </ul>
-      ) : (
-        <p className="mt-1 text-xs font-medium text-ink-muted">
-          {t('5 γρήγορες ερωτήσεις για να βλέπεις «γιατί ταιριάζετε» σε κάθε ομάδα.', '5 quick questions so you see “why you match” on every group.')}
-        </p>
-      )}
+      ) : null}
       <div className="mt-3 flex flex-wrap gap-2">
         <Button size="sm" variant={vibe ? 'outline' : 'primary'} onClick={() => setOpen(true)}>
-          {vibe ? t('Αλλαγή απαντήσεων', 'Change answers') : t('Κάνε το κουίζ (1′)', 'Take the quiz (1 min)')}
+          {vibe ? t('Αλλαγή απαντήσεων', 'Change answers') : t('Κάνε το κουίζ · 1 λεπτό', 'Take the quiz · 1 min')}
         </Button>
         {vibe && (
           <Button
@@ -70,14 +68,15 @@ export function VibeProfileCard({ className }: { className?: string }) {
       </div>
 
       <div className="mt-4 border-t border-border pt-3">
-        <label htmlFor="gender-identity" className="flex items-center gap-2 text-xs font-bold text-ink">
+        <label htmlFor="gender-identity" className={cn('flex items-center gap-2 text-ink', PROFILE_TYPO.fieldLabel)}>
           <HeartHandshake className="h-4 w-4" aria-hidden /> {t('Ταυτότητα φύλου (προαιρετικό)', 'Gender identity (optional)')}
         </label>
-        <select
+        <AppSelect
           id="gender-identity"
+          ariaLabel={t('Ταυτότητα φύλου (προαιρετικό)', 'Gender identity (optional)')}
           value={me.gender && me.gender !== 'undisclosed' ? me.gender : ''}
-          onChange={(e) => {
-            const next = (e.target.value || undefined) as GenderIdentity | undefined;
+          onValueChange={(raw) => {
+            const next = (raw || undefined) as GenderIdentity | undefined;
             setGender(next);
             toast.message(
               next
@@ -85,16 +84,10 @@ export function VibeProfileCard({ className }: { className?: string }) {
                 : t('Η ταυτότητα φύλου αφαιρέθηκε.', 'Gender identity removed.'),
             );
           }}
-          className="mt-1.5 min-h-10 w-full rounded-xl border border-border bg-surface px-3 text-sm font-medium text-ink"
-          aria-describedby="gender-identity-help"
-        >
-          {GENDERS.map((g) => (
-            <option key={g.id} value={g.id}>
-              {t(g.el, g.en)}
-            </option>
-          ))}
-        </select>
-        <p id="gender-identity-help" className="mt-1 text-2xs font-medium text-ink-muted">
+          className={cn('mt-1.5 min-h-10 w-full rounded-xl border border-border bg-surface px-3 text-ink', PROFILE_TYPO.fieldControl)}
+          options={GENDERS.map((g) => ({ value: g.id, label: t(g.el, g.en) }))}
+        />
+        <p id="gender-identity-help" className={cn('mt-1 text-ink-muted', PROFILE_TYPO.fieldHelp)}>
           {t(
             'Δεν εμφανίζεται πουθενά στο προφίλ σου. Χρησιμεύει μόνο για να μπαίνεις σε ομάδες «Γυναίκες & μη δυαδικά άτομα».',
             'It is never shown on your profile. It is only used to let you into “Women & non-binary” groups.',

@@ -655,17 +655,17 @@ export function getThemeTokens(theme: string): ThemeTokens {
   };
 
   const navActiveMap: Record<ThemeTokens['accent'], string> = {
-    cyan: isDark ? 'bg-gray-700/40 text-cyan-400 font-bold' : 'bg-cyan-50 text-brand font-bold',
-    fuchsia: isDark ? 'bg-fuchsia-500/15 text-fuchsia-300 font-bold' : 'bg-fuchsia-50 text-fuchsia-700 font-bold',
-    indigo: isDark ? 'bg-gray-700/40 text-indigo-400 font-bold' : 'bg-indigo-50 text-indigo-700 font-bold',
-    emerald: isDark ? 'bg-gray-700/40 text-emerald-400 font-bold' : 'bg-emerald-50 text-emerald-700 font-bold',
+    cyan: isDark ? 'bg-white/[0.08] text-white font-semibold' : 'bg-ink/[0.05] text-ink font-semibold',
+    fuchsia: isDark ? 'bg-white/[0.08] text-white font-semibold' : 'bg-ink/[0.05] text-ink font-semibold',
+    indigo: isDark ? 'bg-white/[0.08] text-white font-semibold' : 'bg-ink/[0.05] text-ink font-semibold',
+    emerald: isDark ? 'bg-white/[0.08] text-white font-semibold' : 'bg-ink/[0.05] text-ink font-semibold',
     ab: isDark
-      ? 'bg-gray-700/40 text-white font-bold'
-      : 'bg-[hsl(220_14%_96%)] text-[hsl(220_14%_12%)] font-bold',
+      ? 'bg-white/[0.08] text-white font-semibold'
+      : 'bg-[hsl(220_14%_12%)]/[0.05] text-[hsl(220_14%_12%)] font-semibold',
   };
 
   const shellMap: Partial<Record<ThemeId, string>> = {
-    classic: 'bg-[#F3F4F6] text-ink',
+    classic: 'bg-surface text-ink',
     vibrant: 'bg-surface text-ink',
     bento: 'bg-[#F5F3FF] text-ink',
     neon: 'bg-[#ECFDF5] text-ink',
@@ -1186,7 +1186,7 @@ const lightBase = {
   body: 'text-gray-700',
   bodyMuted: 'text-gray-600',
   labelMuted: 'text-gray-600',
-  chipInactive: 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 hover:text-gray-900',
+  chipInactive: 'bg-transparent border border-gray-200 text-gray-600 hover:border-gray-400 hover:text-gray-900',
   select:
     'filter-select text-gray-800 border border-gray-200 shadow-soft bg-white hover:bg-gray-50',
   filterBtn: 'bg-white border border-gray-200 text-gray-800 shadow-soft',
@@ -1223,10 +1223,10 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
   classic: {
     ...lightBase,
     hero: 'bg-gray-900 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden',
-    heroGreeting: 'text-cyan-400 hero-greeting font-extrabold tracking-tight mb-1.5',
+    heroGreeting: 'text-cyan-400 hero-greeting font-bold tracking-tight mb-1.5',
     heroMotivation: 'text-gray-300 text-xs md:text-sm font-medium mb-3',
-    heroTitle: 'text-white text-sm md:text-base font-bold tracking-tight mb-2 leading-snug',
-    heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-300',
+    heroTitle: 'text-white hero-sublead font-bold tracking-tight mb-2 leading-snug',
+    heroTitleAccent: 'text-cyan-300',
     heroSubtitle: 'text-gray-300 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-cyan-400',
@@ -1259,10 +1259,10 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
   vibrant: {
     ...lightBase,
     hero: 'bg-gradient-to-br from-fuchsia-900 via-fuchsia-800 to-orange-900 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden',
-    heroGreeting: 'text-fuchsia-200 hero-greeting font-extrabold tracking-tight mb-1.5',
+    heroGreeting: 'text-fuchsia-200 hero-greeting font-bold tracking-tight mb-1.5',
     heroMotivation: 'text-fuchsia-100/90 text-xs md:text-sm font-medium mb-3',
-    heroTitle: 'text-white text-sm md:text-base font-bold tracking-tight mb-2 leading-snug',
-    heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-200 to-orange-200',
+    heroTitle: 'text-white hero-sublead font-bold tracking-tight mb-2 leading-snug',
+    heroTitleAccent: 'text-fuchsia-200',
     heroSubtitle: 'text-fuchsia-100 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-fuchsia-100',
     heroStatIcon: 'text-fuchsia-200',
@@ -1294,10 +1294,10 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
   bento: {
     ...lightBase,
     hero: 'bg-gradient-to-br from-indigo-900 to-violet-900 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden',
-    heroGreeting: 'text-indigo-200 hero-greeting font-extrabold tracking-tight mb-1.5',
+    heroGreeting: 'text-indigo-200 hero-greeting font-bold tracking-tight mb-1.5',
     heroMotivation: 'text-indigo-100/90 text-xs md:text-sm font-medium mb-3',
-    heroTitle: 'text-white text-sm md:text-base font-bold tracking-tight mb-2 leading-snug',
-    heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-violet-200',
+    heroTitle: 'text-white hero-sublead font-bold tracking-tight mb-2 leading-snug',
+    heroTitleAccent: 'text-indigo-200',
     heroSubtitle: 'text-indigo-100 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-indigo-100',
     heroStatIcon: 'text-indigo-200',
@@ -1329,10 +1329,10 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
   neon: {
     ...lightBase,
     hero: 'bg-gradient-to-br from-emerald-900 to-teal-900 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden',
-    heroGreeting: 'text-emerald-200 hero-greeting font-extrabold tracking-tight mb-1.5',
+    heroGreeting: 'text-emerald-200 hero-greeting font-bold tracking-tight mb-1.5',
     heroMotivation: 'text-emerald-100/90 text-xs md:text-sm font-medium mb-3',
-    heroTitle: 'text-white text-sm md:text-base font-bold tracking-tight mb-2 leading-snug',
-    heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 to-teal-200',
+    heroTitle: 'text-white hero-sublead font-bold tracking-tight mb-2 leading-snug',
+    heroTitleAccent: 'text-emerald-200',
     heroSubtitle: 'text-emerald-100 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-emerald-100',
     heroStatIcon: 'text-emerald-200',
@@ -1364,10 +1364,10 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
   'vibrant-dark': {
     ...darkBase,
     hero: 'bg-gradient-to-br from-[#1C141B] to-fuchsia-950 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden border border-fuchsia-800/40',
-    heroGreeting: 'text-fuchsia-300 hero-greeting font-extrabold tracking-tight mb-1.5',
+    heroGreeting: 'text-fuchsia-300 hero-greeting font-bold tracking-tight mb-1.5',
     heroMotivation: 'text-gray-300 text-xs md:text-sm font-medium mb-3',
-    heroTitle: 'text-white text-sm md:text-base font-bold tracking-tight mb-2 leading-snug',
-    heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 to-orange-300',
+    heroTitle: 'text-white hero-sublead font-bold tracking-tight mb-2 leading-snug',
+    heroTitleAccent: 'text-fuchsia-300',
     heroSubtitle: 'text-gray-300 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-fuchsia-400',
@@ -1399,10 +1399,10 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
   'bento-dark': {
     ...darkBase,
     hero: 'bg-gradient-to-br from-[#131318] to-indigo-950 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden border border-indigo-800/40',
-    heroGreeting: 'text-indigo-300 hero-greeting font-extrabold tracking-tight mb-1.5',
+    heroGreeting: 'text-indigo-300 hero-greeting font-bold tracking-tight mb-1.5',
     heroMotivation: 'text-gray-300 text-xs md:text-sm font-medium mb-3',
-    heroTitle: 'text-white text-sm md:text-base font-bold tracking-tight mb-2 leading-snug',
-    heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-violet-300',
+    heroTitle: 'text-white hero-sublead font-bold tracking-tight mb-2 leading-snug',
+    heroTitleAccent: 'text-indigo-300',
     heroSubtitle: 'text-gray-300 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-indigo-400',
@@ -1434,10 +1434,10 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
   'neon-dark': {
     ...darkBase,
     hero: 'bg-gradient-to-br from-[#101e17] to-emerald-950 text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden border border-emerald-800/40',
-    heroGreeting: 'text-emerald-300 hero-greeting font-extrabold tracking-tight mb-1.5',
+    heroGreeting: 'text-emerald-300 hero-greeting font-bold tracking-tight mb-1.5',
     heroMotivation: 'text-gray-300 text-xs md:text-sm font-medium mb-3',
-    heroTitle: 'text-white text-sm md:text-base font-bold tracking-tight mb-2 leading-snug',
-    heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-300',
+    heroTitle: 'text-white hero-sublead font-bold tracking-tight mb-2 leading-snug',
+    heroTitleAccent: 'text-emerald-300',
     heroSubtitle: 'text-gray-300 font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-gray-200',
     heroStatIcon: 'text-emerald-400',
@@ -1469,10 +1469,10 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
   activebuddies: {
     ...lightBase,
     hero: 'bg-[hsl(220_14%_12%)] text-white p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden border border-[hsl(220_13%_18%)]',
-    heroGreeting: 'text-[hsl(0_0%_88%)] hero-greeting font-extrabold tracking-tight mb-1.5',
+    heroGreeting: 'text-[hsl(0_0%_88%)] hero-greeting font-bold tracking-tight mb-1.5',
     heroMotivation: 'text-[hsl(220_10%_75%)] text-xs md:text-sm font-medium mb-3',
-    heroTitle: 'text-white text-sm md:text-base font-bold tracking-tight mb-2 leading-snug',
-    heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-white to-[hsl(220_10%_75%)]',
+    heroTitle: 'text-white hero-sublead font-bold tracking-tight mb-2 leading-snug',
+    heroTitleAccent: 'text-white',
     heroSubtitle:
       'text-[hsl(220_10%_80%)] font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-[hsl(220_10%_78%)]',
@@ -1507,10 +1507,10 @@ const HOME_THEMES: Record<ThemeId, HomeContrastTheme> = {
   'activebuddies-dark': {
     ...darkBase,
     hero: 'bg-[hsl(220_16%_11%)] text-[hsl(210_20%_92%)] p-4 md:p-5 rounded-2xl shadow-soft-lg relative overflow-hidden border border-[hsl(220_13%_22%)]',
-    heroGreeting: 'text-[hsl(0_0%_90%)] hero-greeting font-extrabold tracking-tight mb-1.5',
+    heroGreeting: 'text-[hsl(0_0%_90%)] hero-greeting font-bold tracking-tight mb-1.5',
     heroMotivation: 'text-[hsl(220_12%_70%)] text-xs md:text-sm font-medium mb-3',
-    heroTitle: 'text-white text-sm md:text-base font-bold tracking-tight mb-2 leading-snug',
-    heroTitleAccent: 'text-transparent bg-clip-text bg-gradient-to-r from-white to-[hsl(220_12%_75%)]',
+    heroTitle: 'text-white hero-sublead font-bold tracking-tight mb-2 leading-snug',
+    heroTitleAccent: 'text-white',
     heroSubtitle:
       'text-[hsl(220_12%_78%)] font-medium text-xs md:text-sm leading-relaxed max-w-xl mb-4',
     heroStat: 'text-[hsl(220_12%_80%)]',

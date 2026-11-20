@@ -415,10 +415,12 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
   }
   if (Object.keys(privacy).length > 0) return { calls: [call('update_privacy', privacy)] };
 
-  /* 16a ─ mark all notifications read (chip may omit the word «ειδοποιήσεις») */
+  /* 16a ─ mark all notifications read — require notif/inbox stem or an exact idiom */
   if (
     hasAny(p, ['σημειωσε ολεσ', 'ολεσ ωσ αναγνωσμεν', 'mark all as read', 'mark all read', 'mark notifications read']) ||
-    (hasAny(p, ['αναγνωσμεν', 'διαβασμεν']) && hasAny(p, ['ολεσ', 'οεσ', 'all ']))
+    (hasAny(p, ['αναγνωσμεν', 'διαβασμεν']) &&
+      hasAny(p, ['ολεσ', 'οεσ', 'all ']) &&
+      hasAny(p, ['ειδοποιησ', 'notification', 'inbox', 'καμπαν', 'bell']))
   ) {
     return { calls: [call('mark_notifications_read')] };
   }
@@ -426,7 +428,7 @@ export function planLocal(input: string, ctx: LocalEngineContext): EnginePlan {
   /* 16 ─ notification preferences */
   if (hasAny(p, ['ειδοποιησ', 'notification', 'προωθητ', 'promo', 'υπενθυμ', 'reminder'])) {
     const off = hasAny(p, ['σταματ', 'κλεισ', 'απενεργ', 'turn off', 'disable', 'no more', 'mute', 'δεν θελω']);
-    const on = hasAny(p, ['ενεργοπ', 'ανοιξ', 'turn on', 'enable', 'θελω']);
+    const on = hasAny(p, ['ενεργοπ', 'ανοιξ', 'turn on', 'enable', 'θελω να', 'θελω ']);
     if (off || on) {
       const v = !off;
       const prefs: Record<string, boolean> = {};

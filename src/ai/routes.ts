@@ -8,6 +8,7 @@ export interface AppRoute {
   /** Normalized bilingual stems used by the local engine and by the palette bridge. */
   stems: string[];
   adminOnly?: boolean;
+  organizerOnly?: boolean;
 }
 
 /**
@@ -23,16 +24,17 @@ export const APP_ROUTES: AppRoute[] = [
   { id: 'plans', path: '/plans', labelEl: 'Τα Σχέδιά μου', labelEn: 'My Plans', stems: ['σχεδια μου', 'τα σχεδια', 'my plans', 'plans'] },
   { id: 'buddy-seek', path: '/buddy-seek', labelEl: 'Βρες Nakamas', labelEn: 'Find Nakamas', stems: ['βρεσ nakamas', 'βρεσ παρεα', 'buddy', 'find nakamas', 'find company', 'plans forming'] },
   { id: 'collections', path: '/collections', labelEl: 'Συλλογές', labelEn: 'Collections', stems: ['συλλογ', 'nakamas nights', 'δωρεαν εκδηλωσ', 'collections', 'free events'] },
+  { id: 'tags', path: '/tags', labelEl: 'Ετικέτες', labelEn: 'Tags', stems: ['ετικετ', 'hashtag', 'tags'] },
   { id: 'saved', path: '/saved', labelEl: 'Αποθηκευμένες', labelEn: 'Saved', stems: ['αποθηκευμεν', 'saved', 'bookmarks'] },
   { id: 'history', path: '/history', labelEl: 'Ιστορικό', labelEn: 'History', stems: ['ιστορικ', 'history', 'past events'] },
   { id: 'connections', path: '/connections', labelEl: 'Οι Nakamas μου', labelEn: 'My Nakamas', stems: ['nakamas μου', 'φιλοι', 'φιλουσ', 'συνδεσεισ', 'connections', 'friends', 'my nakamas'] },
   { id: 'wall', path: '/wall', labelEl: 'Τοίχος Nakamas', labelEn: 'Nakamas Wall', stems: ['τοιχο', 'τοιχοσ', 'δημοσιευσ', 'ροη nakamas', 'wall', 'news feed', 'posts', 'timeline'] },
   { id: 'chats', path: '/chats', labelEl: 'Συνομιλίες', labelEn: 'Chats', stems: ['συνομιλι', 'μηνυματα', 'inbox', 'chats', 'messages'] },
-  { id: 'manage', path: '/manage', labelEl: 'Πίνακας Διοργανωτή', labelEn: 'Organizer Dashboard', stems: ['διοργανωτ', 'organizer', 'dashboard', 'manage'] },
+  { id: 'manage', path: '/manage', labelEl: 'Πίνακας Διοργανωτή', labelEn: 'Organizer Dashboard', stems: ['διοργανωτ', 'organizer', 'dashboard', 'manage'], organizerOnly: true },
   { id: 'create', path: '/create', labelEl: 'Δημιουργία Εκδήλωσης', labelEn: 'Create Event', stems: ['δημιουργια εκδηλωσ', 'create event', 'new event'] },
   { id: 'wallet', path: '/wallet', labelEl: 'Πορτοφόλι', labelEn: 'Wallet', stems: ['πορτοφολ', 'κερδη', 'πληρωμ', 'wallet', 'earnings', 'payout'] },
-  { id: 'verification', path: '/verification', labelEl: 'Επαλήθευση Ταυτότητας', labelEn: 'Identity Verification', stems: ['επαληθευσ', 'ταυτοτητ', 'verification', 'verify'] },
-  { id: 'trust', path: '/trust', labelEl: 'Κέντρο Εμπιστοσύνης', labelEn: 'Trust Center', stems: ['εμπιστοσυν', 'trust center', 'trust'] },
+  { id: 'verification', path: '/verification', labelEl: 'Επαλήθευση', labelEn: 'Verification', stems: ['επαληθευσ', 'ταυτοτητ', 'verification', 'verify'] },
+  { id: 'trust', path: '/trust', labelEl: 'Αξιοπιστία', labelEn: 'Reliability', stems: ['εμπιστοσυν', 'trust center', 'trust', 'αξιοπιστ'] },
   { id: 'report', path: '/report', labelEl: 'Αναφορά Προβλήματος', labelEn: 'Report Issue', stems: ['αναφορα προβλ', 'report issue', 'report a problem'] },
   { id: 'profile', path: '/profile', labelEl: 'Το Προφίλ μου', labelEn: 'My Profile', stems: ['προφιλ', 'profile'] },
   { id: 'notifications', path: '/notifications', labelEl: 'Ειδοποιήσεις', labelEn: 'Notifications', stems: ['ειδοποιησ', 'notification', 'alerts'] },
@@ -72,6 +74,7 @@ export function routeIdForPath(pathname: string): string {
   if (pathname.startsWith('/history/feedback')) return 'feedback';
   if (pathname.startsWith('/night/')) return 'our-night';
   if (pathname.startsWith('/collections/')) return 'collection';
+  if (pathname.startsWith('/tags/')) return 'tags';
   const exact = APP_ROUTES.find((r) => r.path === pathname);
   if (exact) return exact.id;
   return hasAny(pathname, ['/calendar']) ? 'agenda' : 'other';

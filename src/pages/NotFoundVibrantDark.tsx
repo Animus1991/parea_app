@@ -20,7 +20,7 @@ export default function NotFoundVibrantDark() {
         <span className="absolute inset-0 rounded-full bg-fuchsia-500/20 animate-ping opacity-20"></span>
         <Compass className="w-10 h-10 text-fuchsia-400 animate-spin" style={{ animationDuration: '8s' }} />
       </div>
-      <h1 className="text-sm md:text-base font-bold tracking-tight leading-tight text-white mb-2">
+      <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-white mb-2">
         {t(`Η σελίδα δεν βρέθηκε`, `Page Not Found`)}
       </h1>
       <p className="text-sm text-white font-medium mb-4 max-w-xs">

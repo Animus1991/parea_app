@@ -89,17 +89,11 @@ export function LookingForCompanyPanel({
             <Users className="w-4 h-4 inline mr-1.5 opacity-80" />
             {t('Αναζήτηση Nakamas', 'Looking for Nakamas')}
           </h2>
-          <p className={cn(tok.muted, 'text-xs mt-1 leading-relaxed')}>
-            {t(
-              'Εκδήλωση πρώτα · πρόθεση δεύτερη · ελέγχετε την ορατότητα.',
-              'Event first · intention second · you control visibility.',
-            )}
-          </p>
         </div>
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className={cn('p-2 min-h-10 min-w-10 flex items-center justify-center rounded-xl', darkSurface ? 'hover:bg-white/10' : 'hover:bg-gray-100')}
+          className={cn('p-2 min-h-8 min-w-8 flex items-center justify-center rounded-xl', darkSurface ? 'hover:bg-white/10' : 'hover:bg-gray-100')}
           aria-expanded={expanded}
           aria-label={expanded ? t('Σύμπτυξη', 'Collapse') : t('Επέκταση', 'Expand')}
         >
@@ -136,7 +130,7 @@ export function LookingForCompanyPanel({
             <button
               type="button"
               onClick={() => setCreateOpen(true)}
-              className="inline-flex items-center gap-1.5 min-h-10 px-4 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold"
+              className="inline-flex items-center gap-1.5 min-h-8 px-4 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold"
             >
               <Plus className="w-3.5 h-3.5" />
               {myRequest ? t('Επεξεργασία αιτήματος', 'Edit request') : t('Δημιουργία αιτήματος', 'Create request')}
@@ -145,7 +139,7 @@ export function LookingForCompanyPanel({
               type="button"
               onClick={() => navigate('/buddy-seek')}
               className={cn(
-                'min-h-10 px-3 rounded-2xl text-xs font-bold border',
+                'min-h-8 px-3 rounded-2xl text-xs font-bold border',
                 darkSurface ? 'border-gray-600 text-gray-300' : 'border-gray-200 text-gray-700',
               )}
             >
@@ -243,7 +237,7 @@ export function LookingForCompanyPanel({
                       <button
                         type="button"
                         onClick={() => setFilterOpen(null)}
-                        className="text-xs font-bold px-3 py-2 rounded-xl bg-cyan-600 text-white"
+                        className="text-xs font-bold px-3 min-h-8 rounded-xl bg-cyan-600 text-white"
                       >
                         {t('Καθαρισμός φίλτρων', 'Clear filters')}
                       </button>
@@ -251,7 +245,7 @@ export function LookingForCompanyPanel({
                     <button
                       type="button"
                       onClick={() => navigate('/buddy-seek')}
-                      className={cn('text-xs font-bold px-3 py-2 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                      className={cn('text-xs font-bold px-3 min-h-8 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
                     >
                       {t('Περιήγηση σχεδίων', 'Browse plans')}
                     </button>
@@ -265,7 +259,7 @@ export function LookingForCompanyPanel({
                           ),
                         )
                       }
-                      className={cn('text-xs font-bold px-3 py-2 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                      className={cn('text-xs font-bold px-3 min-h-8 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
                     >
                       {t('Ρώτα το AI', 'Ask AI')}
                     </button>
@@ -340,7 +334,7 @@ export function LookingForCompanyPanel({
                     <button
                       type="button"
                       onClick={() => navigate(`/events/${event.id}/join`)}
-                      className="text-xs font-bold px-3 py-2 rounded-xl bg-cyan-600 text-white"
+                      className="text-xs font-bold px-3 min-h-8 rounded-xl bg-cyan-600 text-white"
                     >
                       {t('Έναρξη ομάδας', 'Start a group')}
                     </button>
@@ -354,7 +348,7 @@ export function LookingForCompanyPanel({
                           ),
                         )
                       }
-                      className={cn('text-xs font-bold px-3 py-2 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
+                      className={cn('text-xs font-bold px-3 min-h-8 rounded-xl border', darkSurface ? 'border-gray-600' : 'border-gray-200')}
                     >
                       {t('Ρώτα το AI', 'Ask AI')}
                     </button>
@@ -441,8 +435,14 @@ export function LookingForCompanyPanel({
           mode={preview.mode}
           onSendRequest={() => {
             const id = sendJoin(preview.requestId);
-            if (id) toast.success(t('Αίτημα εστάλη', 'Request sent'));
-            else toast.error(t('Δεν ήταν δυνατή η αποστολή', 'Could not send'));
+            if (id) {
+              toast.success(t('Αίτημα εστάλη', 'Request sent'), {
+                action: {
+                  label: t('Inbox', 'Inbox'),
+                  onClick: () => navigate('/inbox'),
+                },
+              });
+            } else toast.error(t('Δεν ήταν δυνατή η αποστολή', 'Could not send'));
           }}
           onAccept={() => {
             if (!preview.joinId) return;
@@ -450,8 +450,8 @@ export function LookingForCompanyPanel({
             if (groupId) {
               toast.success(t('Αποδεχτήκατε — άνοιγμα της βραδιάς', 'Accepted — opening Our night'), {
                 action: {
-                  label: t('Chat', 'Chat'),
-                  onClick: () => navigate(`/chat/${groupId}`),
+                  label: t('Η βραδιά μας', 'Our night'),
+                  onClick: () => navigate(`/night/${groupId}`),
                 },
               });
               navigate(`/night/${groupId}`);

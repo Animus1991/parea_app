@@ -9,6 +9,7 @@ import type { PartnerVenue, Strike } from '../types/outings';
 import { partnerVenues } from '../data/partnerVenues';
 import { fnv1a } from './checkIn';
 import { standingBlocksJoining, standingFor } from './consequences';
+import { formatPlanWhenDay } from './dateLocale';
 import { interestLabel, sameInterest } from './interests';
 
 type T = (el: string, en: string) => string;
@@ -266,7 +267,5 @@ export function groupStatusLabel(group: Group, t: T): string {
 
 /** «Παρ 27 Νοε» — short, local, for cards and invites. */
 export function formatOutingDate(date: string, language: string): string {
-  const d = new Date(`${date}T12:00:00`);
-  if (Number.isNaN(d.getTime())) return date;
-  return d.toLocaleDateString(language === 'el' ? 'el-GR' : 'en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  return formatPlanWhenDay(date, language);
 }

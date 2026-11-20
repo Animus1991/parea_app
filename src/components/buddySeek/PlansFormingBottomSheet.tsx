@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Inbox } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -16,6 +16,13 @@ import {
   PlansFormingValueHero,
   PlansFormingYourPlanBanner,
 } from './plansForming/PlansFormingShared';
+import {
+  BuddySeekFilterBar,
+  BuddySeekPageActions,
+  BuddySeekVibeNudge,
+  type BuddySeekFilterKey,
+} from './BuddySeekChrome';
+import { MiniOutingsSection } from '../outings/MiniOutingsSection';
 import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
 
@@ -29,8 +36,46 @@ export function PlansFormingBottomSheet() {
   const feed = usePlansFormingFeed(10);
   const dismiss = useStore((s) => s.dismissCompanyRequest);
   const undismiss = useStore((s) => s.undismissCompanyRequest);
+  const currentUser = useStore((s) => s.currentUser);
   const panelRef = useRef<HTMLDivElement>(null);
+  const [filter, setFilter] = useState<BuddySeekFilterKey>('all');
+  const [filtersOpen, setFiltersOpen] = useState(false);
   useOverlayBehavior(open, () => setOpen(false), panelRef);
+
+  const leave = (path: string) => {
+    setOpen(false);
+    navigate(path);
+  };
+
+  const filteredItems = useMemo(() => {
+    return feed.items.filter((item) => {
+      if (filter === 'open_spots') return item.intent.openToJoinGroup !== false;
+      if (filter === 'verified') return item.intent.requiredTrustTier !== 'none';
+      if (filter === 'small_groups') return (item.intent.preferredGroupMax ?? 6) <= 4;
+      if (filter === 'flexible') return item.intent.flexibleDates;
+      if (filter === 'saved_events') return item.isSavedEvent;
+      if (filter === 'high_match') return item.isHighMatch;
+      return true;
+    });
+  }, [feed.items, filter]);
+
+  const recruitingGroups = useMemo(
+    () => feed.recruitingGroupItems.filter((entry) => entry.event.kind !== 'mini_outing'),
+    [feed.recruitingGroupItems],
+  );
+
+  const filterCounts = useMemo(
+    () => ({
+      all: feed.items.length,
+      high_match: feed.items.filter((i) => i.isHighMatch).length,
+      saved_events: feed.items.filter((i) => i.isSavedEvent).length,
+      flexible: feed.items.filter((i) => i.intent.flexibleDates).length,
+      open_spots: feed.items.filter((i) => i.intent.openToJoinGroup !== false).length,
+      small_groups: feed.items.filter((i) => (i.intent.preferredGroupMax ?? 6) <= 4).length,
+      verified: feed.items.filter((i) => i.intent.requiredTrustTier !== 'none').length,
+    }),
+    [feed.items],
+  );
 
   if (!open) return null;
 
@@ -46,7 +91,7 @@ export function PlansFormingBottomSheet() {
         ref={panelRef}
         tabIndex={-1}
         className={cn(
-          'absolute bottom-0 left-0 right-0 max-h-[92vh] flex flex-col rounded-t-3xl border-t shadow-soft-lg animate-in slide-in-from-bottom duration-300 motion-reduce:animate-none outline-none',
+          'absolute bottom-0 left-0 right-0 max-h-[92vh] flex flex-col overflow-hidden rounded-t-3xl border-t shadow-soft-lg animate-in slide-in-from-bottom duration-300 motion-reduce:animate-none outline-none',
           c.modalPanel,
         )}
       >
@@ -63,7 +108,7 @@ export function PlansFormingBottomSheet() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className={cn('rounded-full p-2 min-h-11 min-w-11 flex items-center justify-center shrink-0', tok.chipButton)}
+              className={cn('rounded-full p-2 min-h-8 min-w-8 flex items-center justify-center shrink-0', tok.chipButton)}
               aria-label={t('Κλείσιμο', 'Close')}
             >
               <X className="h-5 w-5" />
@@ -74,7 +119,7 @@ export function PlansFormingBottomSheet() {
             <button
               type="button"
               className={cn(
-                'w-full flex items-center gap-2 rounded-xl border px-3 py-2.5 min-h-10 text-xs font-bold',
+                'w-full flex items-center gap-2 rounded-xl border px-3 py-1.5 min-h-8 text-xs font-bold',
                 tok.isDark
                   ? 'border-amber-700/60 bg-amber-950/40 text-amber-100'
                   : 'border-amber-200 bg-amber-50 text-amber-900',
@@ -93,23 +138,38 @@ export function PlansFormingBottomSheet() {
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 pb-32">
+        <div
+          data-plans-sheet-scroll=""
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain touch-pan-y px-4 py-3 space-y-4 pb-32"
+        >
+          <BuddySeekPageActions
+            onPrivacy={() => leave('/settings?section=buddy-seek')}
+            onNewRequest={() => leave('/buddy-seek?newRequest=1')}
+            onMyPlans={() => leave('/plans')}
+          />
+          {currentUser && !currentUser.vibe && (
+            <BuddySeekVibeNudge onClick={() => leave('/profile')} />
+          )}
+          <MiniOutingsSection variant="sheet" onLeave={() => setOpen(false)} />
+          <BuddySeekFilterBar
+            filter={filter}
+            filterCounts={filterCounts}
+            filtersOpen={filtersOpen}
+            onToggleOpen={() => setFiltersOpen((open) => !open)}
+            onChange={setFilter}
+            filtersId="buddy-seek-sheet-filters"
+          />
+
           {feed.myActivePlan && (
             <PlansFormingYourPlanBanner
               plan={feed.myActivePlan}
-              onManage={() => {
-                setOpen(false);
-                navigate(`/events/${feed.myActivePlan!.event.id}`);
-              }}
-              onEdit={() => {
-                setOpen(false);
-                navigate(`/buddy-seek?editRequest=${feed.myActivePlan!.intent.id}`);
-              }}
+              onManage={() => leave(`/events/${feed.myActivePlan!.event.id}`)}
+              onEdit={() => leave(`/buddy-seek?editRequest=${feed.myActivePlan!.intent.id}`)}
             />
           )}
 
           {!feed.hasContent && !feed.myActivePlan ? (
-            <PlansFormingEmptyState suggestedEvent={feed.suggestedEvent} onBrowse={() => { setOpen(false); navigate('/'); }} />
+            <PlansFormingEmptyState suggestedEvent={feed.suggestedEvent} onBrowse={() => leave('/')} />
           ) : (
             <>
               {feed.scarcityPromos.length > 0 && (
@@ -120,11 +180,12 @@ export function PlansFormingBottomSheet() {
                   ))}
                 </section>
               )}
-              {feed.items.map((item) => (
+              {filteredItems.map((item) => (
                 <PlansFormingCard
                   key={item.intent.id}
                   item={item}
                   variant="sheet"
+                  isDarkSurface={tok.isDark}
                   onDismiss={() => {
                     const id = item.intent.id;
                     dismiss(id);
@@ -134,11 +195,16 @@ export function PlansFormingBottomSheet() {
                   }}
                 />
               ))}
-              {feed.recruitingGroupItems.length > 0 && (
+              {recruitingGroups.length > 0 && (
                 <section>
                   <PlansFormingSectionTitle title={t('Ομάδες με θέσεις', 'Groups with spots')} />
-                  {feed.recruitingGroupItems.map((entry) => (
-                    <PlansFormingGroupCard key={entry.group.id} entry={entry} variant="sheet" />
+                  {recruitingGroups.map((entry) => (
+                    <PlansFormingGroupCard
+                      key={entry.group.id}
+                      entry={entry}
+                      variant="sheet"
+                      isDarkSurface={tok.isDark}
+                    />
                   ))}
                 </section>
               )}
@@ -148,24 +214,21 @@ export function PlansFormingBottomSheet() {
 
         <div
           className={cn(
-            'sticky bottom-0 left-0 right-0 p-4 border-t flex gap-2 shrink-0 backdrop-blur-md',
+            'sticky bottom-0 left-0 right-0 px-4 py-2.5 border-t flex gap-2 shrink-0 backdrop-blur-md',
             tok.isDark ? 'bg-gray-900/95 border-gray-800' : 'bg-white/95 border-gray-200',
           )}
         >
           <button
             type="button"
-            onClick={() => {
-              setOpen(false);
-              navigate('/buddy-seek');
-            }}
-            className={cn('flex-1 min-h-10 rounded-2xl text-xs font-bold text-white', tok.primaryBtn)}
+            onClick={() => leave('/buddy-seek')}
+            className={cn('flex-1 min-h-9 rounded-full text-xs font-bold text-white', tok.primaryBtn)}
           >
             {t('Όλα τα σχέδια', 'All plans')}
           </button>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className={cn('min-h-10 px-5 rounded-2xl text-xs font-bold border', c.border, c.fgMuted)}
+            className={cn('min-h-9 px-4 rounded-full text-xs font-bold border', c.border, c.fgMuted)}
           >
             {t('Κλείσιμο', 'Close')}
           </button>

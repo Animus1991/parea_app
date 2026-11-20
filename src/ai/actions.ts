@@ -5,7 +5,7 @@
  * persistence, same side effects). Declarations double as Gemini tools.
  */
 import { format, parseISO } from 'date-fns';
-import { el as elLocale, enUS } from 'date-fns/locale';
+import { formatPlanWhen } from '../lib/dateLocale';
 import { useStore, DEFAULT_USER_SETTINGS, type HomeHeroMode, type UserSettings } from '../store';
 import { useChatStore } from '../store/chatStore';
 import { useLanguageStore } from '../store/languageStore';
@@ -82,14 +82,9 @@ function fail(el: string, en: string): ActionResult {
 }
 
 export function formatEventLine(e: Event, lang: 'el' | 'en'): string {
-  let when = e.date;
-  try {
-    when = format(parseISO(e.date), 'EEE d/M', { locale: lang === 'el' ? elLocale : enUS });
-  } catch {
-    /* keep raw */
-  }
+  const when = formatPlanWhen(e.date, e.time, lang);
   const price = e.isPaid && e.price > 0 ? `€${e.price}` : lang === 'el' ? 'Δωρεάν' : 'Free';
-  return `${e.title} · ${when} ${e.time} · ${e.locationArea} · ${price}`;
+  return `${e.title} · ${when} · ${e.locationArea} · ${price}`;
 }
 
 function eventData(e: Event) {
@@ -395,8 +390,9 @@ const waitlistAction: CopilotAction = {
     state().addToWaitlist(e.id);
     return {
       ok: true,
-      el: `Σε έβαλα στη λίστα αναμονής για «${e.title}». Θα ειδοποιηθείς αν ανοίξει θέση.`,
-      en: `You're on the waitlist for "${e.title}". You'll be notified if a spot opens.`,
+      el: `Σε έβαλα στη λίστα αναμονής για «${e.title}». Αποθηκεύτηκε στα σχέδιά σου — παρακολούθησε από εκεί αν ανοίξει θέση.`,
+      en: `You're on the waitlist for "${e.title}". Saved on My plans — watch there if a seat opens.`,
+      link: { path: '/plans', el: 'Τα σχέδιά μου', en: 'My plans' },
       undo: () => state().removeFromWaitlist(e.id),
     };
   },
@@ -1172,7 +1168,9 @@ const summarizeWallAction: CopilotAction = {
       ok: true,
       el: [head('el'), latest.length ? `Τελευταία από τους Nakamas σου:\n${latest.map((p) => line(p, 'el')).join('\n')}` : ''].filter(Boolean).join('\n'),
       en: [head('en'), latest.length ? `Latest from your Nakamas:\n${latest.map((p) => line(p, 'en')).join('\n')}` : ''].filter(Boolean).join('\n'),
-      link: { path: '/wall', el: 'Τοίχος', en: 'Wall' },
+      link: unread > 0
+        ? { path: '/notifications', el: 'Ειδοποιήσεις', en: 'Notifications' }
+        : { path: '/wall', el: 'Τοίχος', en: 'Wall' },
       data: { posts: latest.map((p) => ({ id: p.id, author: nameOf(p.authorId), text: p.text.slice(0, 140), eventId: p.eventId })), unread },
     };
   },
@@ -1339,7 +1337,6 @@ const whatsNewAction: CopilotAction = {
     const gaps: string[] = [];
     if (!user.emailVerified) gaps.push('email');
     if (!user.phoneVerified) gaps.push('phone');
-    if (!user.idVerified) gaps.push('id');
     if (gaps.length > 0) {
       extras.push({
         el: `Λείπει επαλήθευση: ${gaps.join(', ')}`,
@@ -1609,10 +1606,10 @@ const summarizeWalletAction: CopilotAction = {
     }
     return {
       ok: true,
-      el: `Διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)}, εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}. Θες διαχείριση πληρωμών;`,
-      en: `Available ${formatWalletEur(WALLET_DEMO.availableEur)}, pending ${formatWalletEur(WALLET_DEMO.pendingEur)}. Want payout management?`,
+      el: `Demo στοιχεία: διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)}, εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}. Θες διαχείριση πληρωμών;`,
+      en: `Demo figures: available ${formatWalletEur(WALLET_DEMO.availableEur)}, pending ${formatWalletEur(WALLET_DEMO.pendingEur)}. Want payout management?`,
       link: { path: '/wallet', el: 'Πορτοφόλι', en: 'Wallet' },
-      data: { available: WALLET_DEMO.availableEur, pending: WALLET_DEMO.pendingEur },
+      data: { available: WALLET_DEMO.availableEur, pending: WALLET_DEMO.pendingEur, demo: true },
     };
   },
 };
@@ -1639,9 +1636,9 @@ const summarizeTrustAction: CopilotAction = {
       rt.navigate('/trust');
       return {
         ok: true,
-        el: `Αξιοπιστία ${stars}/5 (${score}/100). Όλα τα βασικά βήματα επαλήθευσης είναι ολοκληρωμένα — άνοιξα το Κέντρο Εμπιστοσύνης.`,
-        en: `Reliability ${stars}/5 (${score}/100). All core verification steps are done — opened Trust Center.`,
-        link: { path: '/trust', el: 'Εμπιστοσύνη', en: 'Trust' },
+        el: `Αξιοπιστία ${stars}/5 (${score}/100). Email και τηλέφωνο είναι εντάξει — άνοιξα τη σελίδα αξιοπιστίας.`,
+        en: `Reliability ${stars}/5 (${score}/100). Email and phone are in order — opened the reliability page.`,
+        link: { path: '/trust', el: 'Αξιοπιστία', en: 'Reliability' },
         data: { score, gap: null },
       };
     }
@@ -2005,9 +2002,9 @@ const summarizeStandingAction: CopilotAction = {
     const tEl = (el: string) => el;
     return {
       ok: true,
-      el: `${st.titleEl}. ${st.explainEl}${last ? `\nΤελευταίο: ${strikeLabel(last.kind, tEl)}.` : ''}${pending ? `\nΕνστάσεις σε εξέταση: ${pending}.` : ''}${last && !last.appeal ? '\nΜπορείς να κάνεις ένσταση στο Κέντρο Εμπιστοσύνης.' : ''}`,
-      en: `${st.titleEn}. ${st.explainEn}${last ? `\nLatest: ${strikeLabel(last.kind, (_e, en) => en)}.` : ''}${pending ? `\nAppeals under review: ${pending}.` : ''}${last && !last.appeal ? '\nYou can appeal in the Trust Center.' : ''}`,
-      link: { path: '/trust', el: 'Κέντρο Εμπιστοσύνης', en: 'Trust Center' },
+      el: `${st.titleEl}. ${st.explainEl}${last ? `\nΤελευταίο: ${strikeLabel(last.kind, tEl)}.` : ''}${pending ? `\nΕνστάσεις σε εξέταση: ${pending}.` : ''}${last && !last.appeal ? '\nΜπορείς να κάνεις ένσταση στη σελίδα αξιοπιστίας.' : ''}`,
+      en: `${st.titleEn}. ${st.explainEn}${last ? `\nLatest: ${strikeLabel(last.kind, (_e, en) => en)}.` : ''}${pending ? `\nAppeals under review: ${pending}.` : ''}${last && !last.appeal ? '\nYou can appeal on the reliability page.' : ''}`,
+      link: { path: '/trust', el: 'Αξιοπιστία', en: 'Reliability' },
       data: { level: st.level, active: st.active },
     };
   },

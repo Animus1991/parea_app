@@ -6,7 +6,7 @@ import { test, expect, type Page } from '@playwright/test';
  * content are a deliberate pattern and are not titles, so they are not checked.
  */
 
-const ROUTES = ['/', '/categories', '/buddy-seek', '/nearby', '/plans', '/connections', '/challenges', '/leaderboard', '/help', '/report', '/events/e1', '/organizer/org1', '/wall', '/u/u2', '/does-not-exist'];
+const ROUTES = ['/', '/categories', '/buddy-seek', '/nearby', '/plans', '/connections', '/challenges', '/leaderboard', '/help', '/report', '/events/e1', '/organizer/org1', '/wall', '/u/u2', '/profile', '/does-not-exist'];
 
 async function titleOffenders(page: Page) {
   return page.evaluate(() => {

@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { Gavel, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { Gavel } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { activeStrikes, standingFor, strikeLabel, STRIKE_WINDOW_DAYS } from '../../lib/consequences';
 import { Button } from '../common/Button';
+import { Card } from '../common/Card';
+import { SectionLabel } from '../common/SectionLabel';
+import { TrustLadder } from '../trust/TrustLadder';
 import { cn } from '../../lib/utils';
 
 /**
@@ -25,30 +28,70 @@ export function StandingCard({ className }: { className?: string }) {
   const standing = standingFor(strikes, me.id);
   const mine = strikes.filter((s) => s.userId === me.id).sort((a, b) => b.at.localeCompare(a.at));
   const active = new Set(activeStrikes(strikes, me.id).map((s) => s.id));
-  const Icon = standing.level === 'good' ? ShieldCheck : ShieldAlert;
+  const currentIndex =
+    standing.level === 'warning' ? 0 : standing.level === 'paused' ? 1 : standing.level === 'review' ? 2 : -1;
+
+  const steps = [
+    {
+      titleEl: 'Προειδοποίηση',
+      titleEn: 'Warning',
+      bodyEl: '1η απουσία ή αργή ακύρωση.',
+      bodyEn: '1st absence or late cancel.',
+    },
+    {
+      titleEl: 'Παύση 7 ημερών',
+      titleEn: '7-day pause',
+      bodyEl: 'Ομάδες με αγνώστους κλείνουν· με φίλους μπορείς. Μετά, τελευταία προειδοποίηση.',
+      bodyEn: 'Groups of strangers close; friends can still invite you. Then a final warning.',
+    },
+    {
+      titleEl: 'Έλεγχος',
+      titleEn: 'Review',
+      bodyEl: 'Η ομάδα ασφάλειας εξετάζει τον λογαριασμό.',
+      bodyEn: 'The safety team reviews the account.',
+    },
+  ];
 
   return (
-    <section className={cn('rounded-2xl border border-border bg-surface-raised p-4', className)} aria-labelledby="standing-title">
-      <h2 id="standing-title" className="flex items-center gap-2 text-sm font-bold text-ink">
-        <Icon className="h-4 w-4" aria-hidden /> {t('Η κατάστασή σου', 'Your standing')}
-      </h2>
-      <p className="mt-1 text-sm font-bold text-ink" data-testid="standing-level">
-        {t(standing.titleEl, standing.titleEn)}
-      </p>
-      <p className="mt-0.5 text-xs font-medium text-ink-muted">{t(standing.explainEl, standing.explainEn)}</p>
+    <Card className={cn('p-4', className)} aria-label={t('Η κατάστασή σου', 'Your standing')}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <SectionLabel el="Η κατάστασή σου" en="Your standing" as="h2" />
+          <p className="mt-1.5 text-xs font-medium leading-snug text-ink-muted">
+            {t(standing.explainEl, standing.explainEn)}
+          </p>
+        </div>
+        <p
+          data-testid="standing-level"
+          className={cn(
+            'shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold',
+            standing.level === 'good'
+              ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
+              : 'bg-amber-50 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200',
+          )}
+        >
+          {t(standing.titleEl, standing.titleEn)}
+        </p>
+      </div>
 
-      <details className="mt-2 text-xs font-medium text-ink">
-        <summary className="min-h-9 cursor-pointer font-bold">{t('Πώς λειτουργεί', 'How it works')}</summary>
-        <ol className="mt-1 list-decimal space-y-1 pl-5 text-ink-muted">
-          <li>{t('1η απουσία ή αργή ακύρωση: προειδοποίηση.', '1st absence or late cancel: a warning.')}</li>
-          <li>{t('2η: παύση 7 ημερών για ομάδες με αγνώστους (με φίλους μπορείς), μετά τελευταία προειδοποίηση.', '2nd: a 7-day pause for groups of strangers (with friends you still can), then a final warning.')}</li>
-          <li>{t('3η: έλεγχος από την ομάδα ασφάλειας.', '3rd: a review by the safety team.')}</li>
-          <li>{t(`Μετράνε μόνο τα τελευταία ${STRIKE_WINDOW_DAYS} ημέρες. Αν η θέση σου περάσει σε λίστα αναμονής, δεν μετράει.`, `Only the last ${STRIKE_WINDOW_DAYS} days count. If your seat passes to the waitlist, it does not count.`)}</li>
-        </ol>
-      </details>
+      <TrustLadder
+        className="mt-3"
+        items={steps.map((step, i) => ({
+          title: t(step.titleEl, step.titleEn),
+          body: t(step.bodyEl, step.bodyEn),
+          state: currentIndex < 0 ? 'upcoming' : i < currentIndex ? 'done' : i === currentIndex ? 'current' : 'upcoming',
+          badge: i === currentIndex ? t('τώρα', 'now') : undefined,
+        }))}
+      />
+      <p className="mt-3 text-2xs font-medium leading-snug text-ink-muted">
+        {t(
+          `Μετράνε μόνο οι τελευταίες ${STRIKE_WINDOW_DAYS} ημέρες. Αν η θέση σου περάσει σε λίστα αναμονής, δεν μετράει.`,
+          `Only the last ${STRIKE_WINDOW_DAYS} days count. If your seat passes to the waitlist, it does not count.`,
+        )}
+      </p>
 
       {mine.length > 0 && (
-        <ul className="mt-3 divide-y divide-border">
+        <ul className="mt-3 divide-y divide-border border-t border-border">
           {mine.map((s) => {
             const event = events.find((e) => e.id === s.eventId);
             return (
@@ -106,7 +149,7 @@ export function StandingCard({ className }: { className?: string }) {
                   <button
                     type="button"
                     onClick={() => setAppealFor(s.id)}
-                    className="mt-1 inline-flex min-h-9 items-center gap-1 text-xs font-bold text-ink underline underline-offset-2"
+                    className="mt-1 inline-flex min-h-8 items-center gap-1 text-xs font-bold text-ink underline underline-offset-2"
                   >
                     <Gavel className="h-3.5 w-3.5" aria-hidden /> {t('Ένσταση', 'Appeal')}
                   </button>
@@ -121,6 +164,6 @@ export function StandingCard({ className }: { className?: string }) {
           })}
         </ul>
       )}
-    </section>
+    </Card>
   );
 }

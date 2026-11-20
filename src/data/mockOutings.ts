@@ -6,6 +6,7 @@
 import type { Event, Group, User } from '../types';
 import type { PlanInvite, Strike, VibeProfile } from '../types/outings';
 import { groupCodeFor } from '../lib/outings';
+import { MINI_OUTING_COVERS } from '../lib/eventCover';
 
 const NIGHT_IMG = 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&h=600&fit=crop';
 
@@ -104,6 +105,7 @@ export const mockOutingEvents: Event[] = [
     minTrustTierAccess: '2_confirmed',
     maxParticipants: 4,
     tags: ['coffee', 'mini outing'],
+    imageUrl: MINI_OUTING_COVERS.coffee,
   },
   {
     id: 'mo2',
@@ -125,6 +127,7 @@ export const mockOutingEvents: Event[] = [
     minTrustTierAccess: '2_confirmed',
     maxParticipants: 5,
     tags: ['run', 'mini outing'],
+    imageUrl: MINI_OUTING_COVERS.run,
   },
 ];
 

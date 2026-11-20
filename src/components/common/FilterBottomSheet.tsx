@@ -25,7 +25,7 @@ export function FilterBottomSheet({
     <BottomSheet
       open={open}
       onClose={onClose}
-      rootClassName="md:hidden z-sheet"
+      rootClassName="lg:hidden z-sheet"
       title={undefined}
       showClose={false}
       className="pb-28"
@@ -43,18 +43,18 @@ export function FilterBottomSheet({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full px-3 py-2 min-h-11 text-xs font-bold text-ink-muted hover:bg-surface"
+          className="rounded-full px-3 py-2 min-h-8 text-xs font-bold text-ink-muted hover:bg-surface"
           aria-label={t('Κλείσιμο', 'Close')}
         >
           {t('Κλείσιμο', 'Close')}
         </button>
       </div>
-      <div className="space-y-5 text-ink">{children}</div>
+      <div className="space-y-4 text-ink">{children}</div>
       <div className="mt-4 flex gap-3">
         <button
           type="button"
           onClick={onClear}
-          className="flex-1 min-h-11 rounded-2xl border border-border text-xs font-bold text-ink-muted"
+          className="flex-1 min-h-8 rounded-2xl border border-border text-xs font-bold text-ink-muted"
         >
           {t('Εκκαθάριση', 'Clear all')}
         </button>
@@ -62,7 +62,7 @@ export function FilterBottomSheet({
           type="button"
           data-autofocus
           onClick={onClose}
-          className={cn('flex-[2] min-h-11 rounded-2xl text-xs font-bold bg-accent text-accent-fg hover:bg-accent-strong')}
+          className={cn('flex-[2] min-h-8 rounded-2xl text-xs font-bold bg-accent text-accent-fg hover:bg-accent-strong')}
         >
           {t('Εφαρμογή', 'Apply')}
         </button>

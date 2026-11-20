@@ -78,19 +78,19 @@ export default function InvitePublicPage() {
   if (!hasLocal && !remote) {
     return shell(
       <div className="rounded-2xl border border-border bg-surface-raised p-5">
-        <h1 className="text-base font-bold text-ink">{t('Η πρόσκληση δεν βρέθηκε', 'Invitation not found')}</h1>
+        <h1 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-ink">{t('Η πρόσκληση δεν βρέθηκε', 'Invitation not found')}</h1>
         <p className="mt-1 text-sm font-medium text-ink-muted">
           {t('Ίσως έληξε ή ο σύνδεσμος είναι λάθος. Ζήτα από τον φίλο σου να τον ξαναστείλει.', 'It may have expired, or the link is wrong. Ask your friend to send it again.')}
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
             to={signedIn ? '/plans' : '/'}
-            className="inline-flex min-h-10 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
+            className="inline-flex min-h-8 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
           >
             {signedIn ? t('Τα σχέδιά μου', 'My plans') : t('Άνοιγμα Nakamas', 'Open Nakamas')}
           </Link>
           {!signedIn && (
-            <Link to="/login" className="inline-flex min-h-10 items-center rounded-full border border-border px-4 text-xs font-bold text-ink">
+            <Link to="/login" className="inline-flex min-h-8 items-center rounded-full border border-border px-4 text-xs font-bold text-ink">
               {t('Σύνδεση', 'Sign in')}
             </Link>
           )}
@@ -178,7 +178,20 @@ export default function InvitePublicPage() {
       <InviteCover cover={cover} event={coverEvent} hostFirstName={view.hostFirstName} goingCount={view.members + view.going} seatsLeft={seatsLeft} />
 
       {closed ? (
-        <p className="rounded-2xl border border-border bg-surface-raised p-4 text-sm font-bold text-ink">{t('Αυτή η έξοδος δεν δέχεται πια απαντήσεις.', 'This outing no longer takes answers.')}</p>
+        <div className="space-y-3 rounded-2xl border border-border bg-surface-raised p-4">
+          <p className="text-sm font-bold text-ink">{t('Αυτή η έξοδος δεν δέχεται πια απαντήσεις.', 'This outing no longer takes answers.')}</p>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              to={signedIn ? '/plans' : '/'}
+              className="inline-flex min-h-8 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
+            >
+              {signedIn ? t('Τα σχέδιά μου', 'My plans') : t('Άνοιγμα Nakamas', 'Open Nakamas')}
+            </Link>
+            <Link to="/buddy-seek" className="inline-flex min-h-8 items-center rounded-full border border-border px-4 text-xs font-bold text-ink">
+              {t('Βρες Nakamas', 'Find Nakamas')}
+            </Link>
+          </div>
+        </div>
       ) : done ? (
         <div className="rounded-2xl border border-border bg-surface-raised p-4" role="status">
           <p className="flex items-center gap-2 text-sm font-bold text-ink">
@@ -197,11 +210,11 @@ export default function InvitePublicPage() {
           <div className="mt-3 flex flex-wrap gap-2">
             <Link
               to={joinPath}
-              className="inline-flex min-h-10 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
+              className="inline-flex min-h-8 items-center rounded-full bg-accent px-4 text-xs font-bold text-accent-fg"
             >
               {signedIn ? t('Μπες στην ομάδα', 'Join the group') : t('Δημιουργία λογαριασμού', 'Create an account')}
             </Link>
-            <button type="button" onClick={() => setDone(null)} className="min-h-10 rounded-full border border-border px-4 text-xs font-bold text-ink">
+            <button type="button" onClick={() => setDone(null)} className="min-h-8 rounded-full border border-border px-4 text-xs font-bold text-ink">
               {t('Αλλαγή απάντησης', 'Change answer')}
             </button>
           </div>
@@ -224,7 +237,7 @@ export default function InvitePublicPage() {
                   aria-pressed={choice === c.id}
                   onClick={() => setChoice(c.id)}
                   className={cn(
-                    'min-h-11 rounded-xl border px-2 text-xs font-bold',
+                    'min-h-8 rounded-xl border px-2 text-xs font-bold',
                     choice === c.id ? 'border-transparent bg-accent text-accent-fg' : 'border-border text-ink hover:border-border-strong',
                   )}
                 >
@@ -243,7 +256,7 @@ export default function InvitePublicPage() {
               maxLength={40}
               autoComplete="given-name"
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 min-h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm font-medium text-ink"
+              className="mt-1 min-h-8 w-full rounded-xl border border-border bg-surface px-3 text-sm font-medium text-ink"
               aria-describedby="invite-name-help"
             />
             <p id="invite-name-help" className="mt-1 text-2xs font-medium text-ink-muted">
@@ -255,7 +268,7 @@ export default function InvitePublicPage() {
               {error}
             </p>
           )}
-          <button type="submit" disabled={sending} className="min-h-11 w-full rounded-full bg-accent px-4 text-sm font-bold text-accent-fg disabled:opacity-60">
+          <button type="submit" disabled={sending} className="min-h-9 w-full rounded-full bg-accent px-4 text-xs font-bold text-accent-fg disabled:opacity-60">
             {sending ? t('Στέλνεται…', 'Sending…') : t('Στείλε απάντηση', 'Send answer')}
           </button>
         </form>

@@ -185,12 +185,13 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
               </Button>
             </div>
           )}
-          <p className="mt-2 text-2xs font-medium text-ink-muted">
-            {t('Τα ονόματα τα βλέπεις μόνο εσύ. Η σελίδα δείχνει μόνο πόσοι πάνε.', 'Only you see the names. The page only shows how many are going.')}{' '}
-            {invite.remoteSyncedAt
-              ? t('Ο σύνδεσμος ανοίγει σε κάθε συσκευή.', 'The link opens on any device.')
-              : t('Χωρίς σύνδεση με τον server, ο σύνδεσμος ανοίγει μόνο σε αυτή τη συσκευή.', 'With no server connection, the link opens on this device only.')}
-          </p>
+          {/* Upstream removed the always-on aside; only the exception is said: the link
+              did not reach the server, so it opens on this device only. */}
+          {!invite.remoteSyncedAt && (
+            <p className="mt-2 text-2xs font-medium text-ink-muted">
+              {t('Ο σύνδεσμος ανοίγει προς το παρόν μόνο σε αυτή τη συσκευή.', 'For now the link opens on this device only.')}
+            </p>
+          )}
         </div>
       )}
     </section>

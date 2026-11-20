@@ -12,10 +12,12 @@ import { useNotificationsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { toast } from 'sonner';
 import { APP_TYPO } from '../../lib/typographyTokens';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useWallStore } from '../../store/wallStore';
 import { notificationsForUser } from '../../lib/notificationsUtil';
+import { type NotificationDigestWindow } from '../../lib/notificationDigest';
+import { usePendingFeedbackEvents } from '../../hooks/useHomePendingFeedback';
+import { WallActivityPanel } from '../wall/WallActivityPanel';
 
 type TabFilter = 'all' | 'unread' | 'matches' | 'messages' | 'system';
 
@@ -45,6 +47,11 @@ export default function NotificationsPageContent() {
   const a = usePageContrast();
 
   const { notifications: rawNotifications, isLoading, isError, refetch } = useNotificationsResource();
+  const pendingFeedbackEvents = usePendingFeedbackEvents();
+  const pendingFeedbackIds = useMemo(
+    () => new Set(pendingFeedbackEvents.map((e) => e.id)),
+    [pendingFeedbackEvents],
+  );
   const currentUserId = useStore((s) => s.currentUser?.id ?? null);
   const notifications = useMemo(
     () => notificationsForUser(rawNotifications, currentUserId),
@@ -52,6 +59,8 @@ export default function NotificationsPageContent() {
   );
   const markNotificationRead = useStore((s) => s.markNotificationRead);
   const socialOn = useStore((s) => s.userSettings.notificationPrefs.social !== false);
+  const digest = useStore((s) => s.userSettings.notificationPrefs.digest ?? 'morning');
+  const updateUserSettings = useStore((s) => s.updateUserSettings);
   const markAllNotificationsRead = useStore((s) => s.markAllNotificationsRead);
   const dismissNotification = useStore((s) => s.dismissNotification);
   const addNotification = useStore((s) => s.addNotification);
@@ -82,17 +91,30 @@ export default function NotificationsPageContent() {
     else if (activeTab === 'messages') filtered = filtered.filter((n) => n.type === 'message');
     else if (activeTab === 'system')
       filtered = filtered.filter((n) => n.type === 'system' || n.type === 'reminder' || n.type === 'safety');
-    return filtered;
-  }, [notifications, activeTab]);
+    if (pendingFeedbackIds.size === 0) return filtered;
+    return filtered.slice().sort((a, b) => {
+      const ap = a.type === 'feedback' && a.eventId && pendingFeedbackIds.has(a.eventId) ? 0 : 1;
+      const bp = b.type === 'feedback' && b.eventId && pendingFeedbackIds.has(b.eventId) ? 0 : 1;
+      return ap - bp;
+    });
+  }, [notifications, activeTab, pendingFeedbackIds]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
   const todayNotifs = visibleNotifs.filter((n) => !n.read);
   const earlierNotifs = visibleNotifs.filter((n) => n.read);
 
+  const setDigest = (next: NotificationDigestWindow) => {
+    updateUserSettings({
+      notificationPrefs: {
+        ...useStore.getState().userSettings.notificationPrefs,
+        digest: next,
+      },
+    });
+  };
+
   const handleMarkAllRead = () => {
     markAllNotificationsRead();
     markWallActivityRead();
-    toast.success(t('Όλες οι ειδοποιήσεις σημάνθηκαν ως αναγνωσμένες', 'All notifications marked as read'));
   };
 
   const handleDismiss = (id: string) => {
@@ -109,12 +131,33 @@ export default function NotificationsPageContent() {
   };
 
   const pathForNotif = (notif: AppNotification) => {
-    if (notif.type === 'match' || notif.type === 'reminder') return '/plans';
-    if (notif.type === 'message') return '/chats';
+    // Match with a real group deep-links Our night; otherwise My plans.
+    if (notif.type === 'match') return notif.groupId ? `/night/${notif.groupId}` : '/plans';
+    // Event invites (and similar reminders) prefer night → event → plans.
+    if (notif.type === 'reminder') {
+      if (notif.groupId) return `/night/${notif.groupId}`;
+      if (notif.eventId) return `/events/${notif.eventId}`;
+      return '/plans';
+    }
+    // Group-scoped messages (announcements) belong on Our night, not the DMs inbox.
+    if (notif.type === 'message') return notif.groupId ? `/night/${notif.groupId}` : '/chats';
     if (notif.type === 'achievement') return '/achievements';
-    if (notif.type === 'buddy_seek') return '/buddy-seek';
+    if (notif.type === 'buddy_seek') return notif.groupId ? `/night/${notif.groupId}` : '/buddy-seek';
+    // Cancelled-event rows clear groupId so leavers land on plans, not a locked night.
     if (notif.type === 'group') return notif.groupId ? `/night/${notif.groupId}` : '/plans';
-    if (notif.type === 'safety' || notif.type === 'system') return '/trust';
+    // SOS / safety shield with a group → group chat map; else Trust Center.
+    if (notif.type === 'safety') return notif.groupId ? `/chat/${notif.groupId}` : '/trust';
+    // Incoming connection *requests* → Connections; accept/wall loops → Wall; else trust.
+    if (notif.type === 'system') {
+      const requestish =
+        /αίτημα σύνδεσης|connection request/i.test(notif.messageGr ?? '') ||
+        /connection request/i.test(notif.messageEn ?? '');
+      if (requestish) return '/connections';
+      const wallish =
+        /τοίχο|wall|σύνδεση|connection/i.test(notif.messageGr ?? '') ||
+        /wall|connection/i.test(notif.messageEn ?? '');
+      return wallish ? '/wall' : '/trust';
+    }
     if (notif.type === 'feedback') return notif.eventId ? `/history/feedback/${notif.eventId}` : '/history';
     return '/notifications';
   };
@@ -152,6 +195,8 @@ export default function NotificationsPageContent() {
 
   const renderNotifRow = (notif: AppNotification, isUnread: boolean) => {
     const Icon = iconMap[notif.type] || Bell;
+    const isPendingFeedback =
+      notif.type === 'feedback' && Boolean(notif.eventId) && pendingFeedbackIds.has(notif.eventId);
     const iconColor = notif.color && isUnread ? notif.color : getIconColor(notif.type, !isUnread, notif.color);
 
     return (
@@ -160,6 +205,8 @@ export default function NotificationsPageContent() {
         className={cn(
           'flex gap-3.5 p-3.5 rounded-xl border transition-all group',
           isUnread ? a.unreadBg : a.readBg,
+          isPendingFeedback &&
+            (a.isDark ? 'border-amber-500/40 bg-amber-950/25' : 'border-amber-200 bg-amber-50/70'),
           'hover:shadow-soft',
         )}
       >
@@ -171,7 +218,11 @@ export default function NotificationsPageContent() {
           <div
             className={cn(
               'w-9 h-9 rounded-full flex items-center justify-center shrink-0',
-              iconColor,
+              isPendingFeedback
+                ? a.isDark
+                  ? 'bg-amber-900/50 text-amber-300'
+                  : 'bg-amber-200 text-amber-800'
+                : iconColor,
             )}
           >
             <Icon className="w-4 h-4" aria-hidden />
@@ -180,7 +231,7 @@ export default function NotificationsPageContent() {
             <p
               className={cn(
                 'text-sm leading-relaxed',
-                isUnread ? cn('font-medium', a.head) : a.sub,
+                isUnread || isPendingFeedback ? cn('font-medium', a.head) : a.sub,
               )}
             >
               {notifMessage(notif, t)}
@@ -192,19 +243,20 @@ export default function NotificationsPageContent() {
         </button>
         <div className="flex items-center gap-1.5 shrink-0 self-start">
           {isUnread && <span className={cn('w-2 h-2 rounded-full', a.dot)} aria-hidden />}
-          {/* Row itself navigates — skip duplicate destination chips (noise). */}
-          <button
-            type="button"
-            onClick={() => handleDismiss(notif.id)}
-            className={cn(
-              'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 p-1.5 min-h-9 min-w-9 flex items-center justify-center rounded-lg transition-all',
-              a.isDark ? 'hover:bg-gray-700/40 text-gray-500' : 'hover:bg-gray-100 text-gray-400',
-            )}
-            title={t('Απόρριψη', 'Dismiss')}
-            aria-label={t('Απόρριψη ειδοποίησης', 'Dismiss notification')}
-          >
-            <Trash2 className="w-3 h-3" aria-hidden />
-          </button>
+          {!isPendingFeedback && (
+            <button
+              type="button"
+              onClick={() => handleDismiss(notif.id)}
+              className={cn(
+                'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 p-1.5 min-h-9 min-w-9 flex items-center justify-center rounded-lg transition-all',
+                a.isDark ? 'hover:bg-gray-700/40 text-gray-500' : 'hover:bg-gray-100 text-gray-400',
+              )}
+              title={t('Απόρριψη', 'Dismiss')}
+              aria-label={t('Απόρριψη ειδοποίησης', 'Dismiss notification')}
+            >
+              <Trash2 className="w-3 h-3" aria-hidden />
+            </button>
+          )}
         </div>
       </article>
     );
@@ -220,7 +272,7 @@ export default function NotificationsPageContent() {
   });
 
   return (
-    <div className="mx-auto max-w-full space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
+    <div className="mx-auto max-w-full space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="flex justify-between items-end">
         <div>
           <h1 className={cn(APP_TYPO.pageTitle, a.head)}>
@@ -243,21 +295,30 @@ export default function NotificationsPageContent() {
         )}
       </div>
 
-      <CopilotInlinePrompt />
+      <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('Σύνοψη ειδοποιήσεων', 'Notification digest')}>
+        {(
+          [
+            ['morning', 'Πρωινή σύνοψη', 'Morning digest'],
+            ['afternoon', 'Απογευματινή σύνοψη', 'Afternoon digest'],
+            ['off', 'Όλες μία-μία', 'Every item'],
+          ] as const
+        ).map(([key, el, en]) => (
+          <button
+            key={key}
+            type="button"
+            aria-pressed={digest === key}
+            onClick={() => setDigest(key)}
+            className={cn(
+              'filter-chip inline-flex h-[1.75rem] items-center rounded-full border px-3 text-xs font-bold leading-none',
+              digest === key ? 'border-accent bg-accent text-accent-fg' : 'border-border bg-surface-raised text-ink',
+            )}
+          >
+            {t(el, en)}
+          </button>
+        ))}
+      </div>
 
-      {/* Wall activity lives on /wall — one-line bridge here avoids dual chrome. */}
-      {socialOn && (
-        <button
-          type="button"
-          onClick={() => navigate('/wall')}
-          className={cn(
-            'w-full rounded-xl border border-border px-3 py-2 text-left text-xs font-bold transition-colors hover:border-border-strong',
-            a.head,
-          )}
-        >
-          {t('Δραστηριότητα στον τοίχο →', 'Wall activity →')}
-        </button>
-      )}
+      {socialOn && <WallActivityPanel title={t('Δραστηριότητα τοίχου', 'Wall activity')} />}
 
       <div
         className="flex gap-1.5 overflow-x-auto pb-1 noscrollbar"
@@ -312,14 +373,11 @@ export default function NotificationsPageContent() {
                     ? t('Καμία ειδοποίηση συστήματος', 'No system notifications')
                     : t('Καμία ειδοποίηση', 'No notifications')
           }
-          description={t(
-            'Θα σας ειδοποιήσουμε όταν υπάρξει κάτι νέο.',
-            "We'll notify you when something new happens.",
-          )}
+          description={t('Θα εμφανιστούν εδώ όταν υπάρξει κάτι νέο.', "They'll show up here when there's news.")}
           actionLabel={
             activeTab !== 'all' && notifications.length > 0
               ? t('Προβολή όλων', 'Show all')
-              : t('Εξερεύνηση', 'Explore')
+              : t('Ανακάλυψη', 'Discover')
           }
           onAction={
             activeTab !== 'all' && notifications.length > 0
@@ -330,10 +388,10 @@ export default function NotificationsPageContent() {
           askPrompt={t('Τι νέο υπάρχει στις ειδοποιήσεις;', 'Summarise my notifications')}
         />
       ) : (
-        <div className="space-y-5">
+        <div className="space-y-4">
           {todayNotifs.length > 0 && (
             <div className="space-y-2">
-              <h3 className={cn('text-xs font-bold tracking-wider uppercase', a.muted)}>
+              <h3 className={cn('text-xs font-bold tracking-wider ', a.muted)}>
                 {tu('Νέες', 'New')} ({todayNotifs.length})
               </h3>
               {todayNotifs.map((notif) => renderNotifRow(notif, true))}
@@ -341,7 +399,7 @@ export default function NotificationsPageContent() {
           )}
           {earlierNotifs.length > 0 && (
             <div className="space-y-2">
-              <h3 className={cn('text-xs font-bold tracking-wider uppercase', a.muted)}>
+              <h3 className={cn('text-xs font-bold tracking-wider ', a.muted)}>
                 {tu('Προηγούμενες', 'Earlier')}
               </h3>
               {earlierNotifs.map((notif) => renderNotifRow(notif, false))}

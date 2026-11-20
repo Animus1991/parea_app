@@ -1,5 +1,6 @@
 import { ONBOARDING_INTEREST_TO_HOME_CATEGORY } from './onboardingHomeBridge';
 import type { Event, User } from '../types';
+import { parseEventHour } from './homeScheduleFilter';
 
 const HIGH_ACTIVITY_CATEGORIES = new Set(['Sports', 'Hiking', 'Nearby escapes']);
 const LOW_ACTIVITY_CATEGORIES = new Set([
@@ -52,6 +53,16 @@ export function getEventPersonalizationScore(event: Event, user: User | null): n
     const d = new Date(`${event.date}T12:00:00`);
     const day = d.getDay();
     if (day === 0 || day === 6) score += 6;
+  }
+  if (prefs?.schedule?.includes('weekday_eve') || prefs?.schedule?.includes('weekday_evenings')) {
+    const d = new Date(`${event.date}T12:00:00`);
+    const day = d.getDay();
+    const hour = parseEventHour(event.time);
+    if (day >= 1 && day <= 5 && hour != null && hour >= 17) score += 8;
+  }
+  if (prefs?.schedule?.includes('mornings') || prefs?.schedule?.includes('weekday_mornings')) {
+    const hour = parseEventHour(event.time);
+    if (hour != null && hour >= 6 && hour < 12) score += 6;
   }
 
   return score;

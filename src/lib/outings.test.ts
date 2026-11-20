@@ -124,19 +124,26 @@ describe('join gate', () => {
 
 describe('seat hand-over', () => {
   it('passes the seat to the first eligible person, at face value', () => {
-    const g = group({ members: ['u1', 'u2', 'u4'], targetSize: 3, waitlist: ['u3'], genderMode: 'mixed' });
+    const g = group({ members: ['u1', 'u2', 'u4'], targetSize: 3, waitlist: ['u3'], genderMode: 'mixed', hostId: 'u1' });
     const out = handOverSeat(g, 'u1', { users, strikes: [], blockedUserIds: [], price: 12 });
     expect(out.toUserId).toBe('u3');
     expect(out.group.members).toEqual(['u2', 'u4', 'u3']);
     expect(out.group.waitlist).toEqual([]);
     expect(out.group.lastTransfer).toMatchObject({ fromUserId: 'u1', toUserId: 'u3', price: 12 });
+    expect(out.group.hostId).toBe('u3');
+    expect(out.newHostId).toBe('u3');
   });
 
   it('skips people who may not join and does nothing for a group that was not full', () => {
-    const womenOnly = group({ members: ['u2', 'u4', 'u1'], targetSize: 3, waitlist: ['u3'], genderMode: 'women_nb' });
-    expect(handOverSeat(womenOnly, 'u1', { users, strikes: [], blockedUserIds: [], price: 0 }).toUserId).toBeNull();
-    const open = group({ members: ['u1', 'u2'], targetSize: 4, waitlist: ['u3'] });
-    expect(handOverSeat(open, 'u1', { users, strikes: [], blockedUserIds: [], price: 0 }).toUserId).toBeNull();
+    const womenOnly = group({ members: ['u2', 'u4', 'u1'], targetSize: 3, waitlist: ['u3'], genderMode: 'women_nb', hostId: 'u1' });
+    const skipped = handOverSeat(womenOnly, 'u1', { users, strikes: [], blockedUserIds: [], price: 0 });
+    expect(skipped.toUserId).toBeNull();
+    expect(skipped.group.hostId).toBe('u2');
+    expect(skipped.newHostId).toBe('u2');
+    const open = group({ members: ['u1', 'u2'], targetSize: 4, waitlist: ['u3'], hostId: 'u1' });
+    const openOut = handOverSeat(open, 'u1', { users, strikes: [], blockedUserIds: [], price: 0 });
+    expect(openOut.toUserId).toBeNull();
+    expect(openOut.group.hostId).toBe('u2');
   });
 
   it('moves a pending ticket share to the new member', () => {

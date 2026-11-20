@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { toast } from 'sonner';
-import { MapPin, Search, Navigation, Crosshair, Map as MapIcon, SlidersHorizontal, AlertTriangle, Maximize, Minimize, ChevronUp } from "lucide-react";
+import { MapPin, Search, Navigation, Crosshair, Map as MapIcon, SlidersHorizontal, ShieldAlert, Maximize, Minimize, ChevronUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { isToday, parseISO } from "date-fns";
 import { useStore } from "../../store";
@@ -16,6 +16,7 @@ import { useEventsResource } from "../../hooks/useEventsQuery";
 import { useLanguage } from "../../lib/i18n";
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { pressable, redundantClick } from '../../lib/a11y';
 import { Button } from "../common/Button";
 import { haversineKm, ATHENS_CENTER } from "../../lib/haversine";
@@ -113,7 +114,13 @@ const clusterIconCache = new Map<number, L.DivIcon>();
 function clusterIcon(count: number): L.DivIcon {
   let icon = clusterIconCache.get(count);
   if (!icon) {
-    icon = L.divIcon({ className: 'nakamas-cluster', html: `<span>${count}</span>`, iconSize: [36, 36], iconAnchor: [18, 18] });
+    const size = count >= 10 ? 44 : 40;
+    icon = L.divIcon({
+      className: 'nakamas-cluster',
+      html: `<span class="nakamas-cluster-count">${count}</span>`,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
+    });
     clusterIconCache.set(count, icon);
   }
   return icon;
@@ -392,7 +399,7 @@ export default function NearbyGroupsPageContent() {
       style={{ "--sidebar-width": isMapFullscreen ? "0px" : `${sidebarWidth}px` } as React.CSSProperties}
     >
       {/* Page title for screen readers (the visible title lives in the side panel as h2). */}
-      <h1 className="sr-only">{t("Τοπικές Ομάδες", "Local Groups")}</h1>
+      <h1 className="sr-only text-lg md:text-xl">{t("Τοπικές Ομάδες", "Local Groups")}</h1>
       {/* Map Area */}
       <div className="absolute inset-0 z-0 bg-[#e5e3df] dark:bg-gray-900 map-container" id="map-container" ref={mapContainerRef}>
         <ErrorBoundary
@@ -400,7 +407,7 @@ export default function NearbyGroupsPageContent() {
           fallback={
             <div className="w-full h-full flex items-center justify-center bg-[#e5e3df] dark:bg-gray-900 p-5 text-center">
               <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-soft max-w-sm border border-red-100 dark:border-red-900">
-                <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" />
+                <ShieldAlert className="w-10 h-10 text-red-500 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">{t('Σφάλμα χάρτη', 'Map Error')}</h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">
                   {t('Πρόβλημα κατά τη φόρτωση του χάρτη.', 'There was a problem loading the map.')}
@@ -462,7 +469,7 @@ export default function NearbyGroupsPageContent() {
                     }}
                   >
                     <Popup className="custom-popup">
-                      <div className="font-bold text-2xs uppercase tracking-widest text-cyan-600 dark:text-cyan-400 mb-1">
+                      <div className="font-bold text-2xs tracking-widest text-cyan-600 dark:text-cyan-400 mb-1">
                         {group.category}
                       </div>
                       <div
@@ -630,11 +637,10 @@ export default function NearbyGroupsPageContent() {
         </div>
 
         <div className={cn("p-5 md:p-5 border-b shrink-0", p.borderB)}>
-          <h2 className={cn("text-sm md:text-base font-extrabold tracking-tight", p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
-          <p className={cn("text-sm font-medium mt-1.5 flex items-center gap-1.5", p.muted)}>
-            <Navigation className="h-4 w-4" /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius}km</span>
+          <h2 className={cn(APP_TYPO.pageTitle, p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
+          <p className={cn(APP_TYPO.pageSub, "mt-1.5 flex items-center gap-1.5", p.muted)}>
+            <Navigation className="h-3.5 w-3.5" aria-hidden /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius}km</span>
           </p>
-
           <div className="mt-4 flex items-center gap-4">
             <input
               type="range"
@@ -724,6 +730,8 @@ export default function NearbyGroupsPageContent() {
                     ? () => setRadius(25)
                     : () => navigate('/')
               }
+              secondaryLabel={radius >= 25 ? t('Βρες Nakamas', 'Find Nakamas') : undefined}
+              onSecondary={radius >= 25 ? () => navigate('/buddy-seek') : undefined}
             />
           ) : (
             filteredLocalGroups.map((group) => (

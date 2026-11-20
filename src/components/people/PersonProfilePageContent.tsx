@@ -26,6 +26,7 @@ import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
 import { TabBar } from '../common/TabBar';
 import { EmptyState } from '../common/EmptyState';
+import { AppSelect } from '../common/AppSelect';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { useChatStore } from '../../store/chatStore';
@@ -45,6 +46,7 @@ import { connectionOutcomeText } from '../../lib/connectionFeedback';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { interestLabel, sameInterest } from '../../lib/interests';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
 import type { ProfileSectionKey } from '../../types/wall';
 import type { User } from '../../types';
@@ -180,6 +182,8 @@ export default function PersonProfilePageContent() {
         description={t('Ίσως ο σύνδεσμος είναι παλιός ή ο λογαριασμός δεν υπάρχει πια.', 'The link may be old or the account no longer exists.')}
         actionLabel={t('Οι Nakamas μου', 'My Nakamas')}
         onAction={() => navigate('/connections')}
+        secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+        onSecondary={() => navigate('/buddy-seek')}
       />
     );
   }
@@ -222,7 +226,6 @@ export default function PersonProfilePageContent() {
       });
       return;
     }
-    toast.success(t(`Συνομιλία με ${subject.name}`, `Chat with ${subject.name}`));
   };
 
   const handleBlock = () => {
@@ -262,7 +265,16 @@ export default function PersonProfilePageContent() {
         </span>
       ) : incoming ? (
         <>
-          <Button size="sm" onClick={() => { acceptConnectionRequest(incoming.id); toast.success(t(`Είστε πλέον Nakamas με ${subject.name}`, `You are now Nakamas with ${subject.name}`)); }} className="gap-1.5">
+          <Button
+            size="sm"
+            onClick={() => {
+              acceptConnectionRequest(incoming.id);
+              toast.success(t(`Είστε πλέον Nakamas με ${subject.name}`, `You are now Nakamas with ${subject.name}`), {
+                action: { label: t('Τοίχος', 'Wall'), onClick: () => navigate('/wall') },
+              });
+            }}
+            className="gap-1.5"
+          >
             <Check className="h-3.5 w-3.5" aria-hidden /> {t('Αποδοχή αιτήματος', 'Accept request')}
           </Button>
           <Button size="sm" variant="ghost" onClick={() => { declineConnectionRequest(incoming.id); toast.info(t('Το αίτημα απορρίφθηκε', 'Request declined')); }} className="gap-1.5">
@@ -302,19 +314,21 @@ export default function PersonProfilePageContent() {
       <label htmlFor="view-as" className="text-sm font-bold text-ink">
         {previewing ? t('Βλέπεις το προφίλ σου όπως το βλέπει:', 'You are viewing your profile as:') : t('Δες το προφίλ σου ως:', 'View your profile as:')}
       </label>
-      <select
+      <AppSelect
         id="view-as"
+        ariaLabel={previewing ? t('Βλέπεις το προφίλ σου όπως το βλέπει:', 'You are viewing your profile as:') : t('Δες το προφίλ σου ως:', 'View your profile as:')}
         value={viewAsParam ?? ''}
-        onChange={(e) => setViewAs(e.target.value || null)}
+        onValueChange={(v) => setViewAs(v || null)}
         className="filter-select min-h-9 rounded-full border border-border bg-surface px-3 text-xs font-bold text-ink"
-      >
-        <option value="">{t('Εσύ (πλήρες)', 'You (full)')}</option>
-        <option value="public">{t('Μέλος του δικτύου (όχι Nakamas)', 'Network member (not a Nakama)')}</option>
-        {myConnections.map((cid) => {
-          const u = users.find((x) => x.id === cid);
-          return u ? <option key={cid} value={cid}>{u.name}</option> : null;
-        })}
-      </select>
+        options={[
+          { value: '', label: t('Εσύ (πλήρες)', 'You (full)') },
+          { value: 'public', label: t('Μέλος του δικτύου (όχι Nakamas)', 'Network member (not a Nakama)') },
+          ...myConnections.flatMap((cid) => {
+            const u = users.find((x) => x.id === cid);
+            return u ? [{ value: cid, label: u.name }] : [];
+          }),
+        ]}
+      />
       {previewing && (
         <button type="button" onClick={() => setViewAs(null)} className="ml-auto min-h-9 text-xs font-bold text-ink underline">
           {t('Έξοδος προεπισκόπησης', 'Exit preview')}
@@ -326,7 +340,7 @@ export default function PersonProfilePageContent() {
   /* ───────────── hidden profile ───────────── */
   if (hidden) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4 pb-20 md:pb-6">
+      <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6')}>
         {viewAsBar}
         <Card className="p-6 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-border bg-surface">
@@ -351,7 +365,7 @@ export default function PersonProfilePageContent() {
   const aboutVisible = can('about');
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300">
+    <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300')}>
       {viewAsBar}
 
       <Card className="overflow-hidden p-0">
@@ -495,7 +509,14 @@ export default function PersonProfilePageContent() {
                 {t(`Nakamas (${theirConnections.length})`, `Nakamas (${theirConnections.length})`)}
               </h2>
               {theirConnections.length === 0 ? (
-                <p className="text-sm font-medium text-ink-muted">{t('Καμία σύνδεση ακόμα.', 'No connections yet.')}</p>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-ink-muted">{t('Καμία σύνδεση ακόμα.', 'No connections yet.')}</p>
+                  {isSelf && (
+                    <Button size="sm" variant="ghost" onClick={() => navigate('/buddy-seek')}>
+                      {t('Βρες Nakamas', 'Find Nakamas')}
+                    </Button>
+                  )}
+                </div>
               ) : (
                 <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {theirConnections.map((u) => (
@@ -521,7 +542,19 @@ export default function PersonProfilePageContent() {
             <Card className="p-4">
               <h2 className={cn(APP_TYPO.sectionLabel, 'mb-3 text-ink-muted')}>{t('Εκδηλώσεις', 'Events')}</h2>
               {theirEvents.length === 0 ? (
-                <p className="text-sm font-medium text-ink-muted">{t('Καμία εκδήλωση ακόμα.', 'No events yet.')}</p>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-ink-muted">{t('Καμία εκδήλωση ακόμα.', 'No events yet.')}</p>
+                  {isSelf && (
+                    <div className="flex flex-wrap gap-2">
+                      <Button size="sm" variant="ghost" onClick={() => navigate('/')}>
+                        {t('Εξερεύνηση', 'Explore')}
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => navigate('/buddy-seek')}>
+                        {t('Βρες Nakamas', 'Find Nakamas')}
+                      </Button>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <ul className="space-y-2">
                   {theirEvents.map((e) => (

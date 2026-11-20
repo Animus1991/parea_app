@@ -35,50 +35,33 @@ export function EventDetailReliabilityNote({
           <Users className={cn('w-4 h-4 shrink-0 mt-0.5', tok.iconMuted)} />
           <span className={tok.listText}>
             <strong className={tok.listStrong}>
-              {t('Περιορισμός μικρής ομάδας.', 'Small group constraint.')}
-            </strong>{' '}
-            {t('Περιορίζεται σε ', 'Kept to ')}
-            {event.maxParticipants || '3-6'}
-            {t(
-              ' άτομα για καλύτερο συντονισμό και άνεση.',
-              ' people for better coordination and comfort.',
-            )}
+              {t('Μικρή ομάδα', 'Small group')}
+            </strong>
+            {event.maxParticipants ? ` · ${event.maxParticipants}` : ''}
           </span>
         </li>
         <li className="flex items-start gap-2">
           <ShieldCheck className={cn('w-4 h-4 shrink-0 mt-0.5', tok.iconMuted)} />
           <span className={tok.listText}>
             <strong className={tok.listStrong}>
-              {t('Επιβεβαιωμένη συμμετοχή.', 'Confirmed participation.')}
-            </strong>{' '}
-            {t(
-              'Οι χρήστες πρέπει να δεσμευτούν για να συμμετάσχουν. Οι μη-εμφανίσεις παρακολουθούνται.',
-              'Users must commit to join. No-shows are tracked internally.',
-            )}
+              {t('Επιβεβαιωμένη συμμετοχή', 'Confirmed attendance')}
+            </strong>
           </span>
         </li>
         <li className="flex items-start gap-2">
           <MapPin className={cn('w-4 h-4 shrink-0 mt-0.5', tok.iconMuted)} />
           <span className={tok.listText}>
             <strong className={tok.listStrong}>
-              {t('Δημόσιο σημείο συνάντησης.', 'Public meeting point.')}
-            </strong>{' '}
-            {t(
-              'Η ακριβής τοποθεσία συνάντησης αποκαλύπτεται μόνο αφού επιβεβαιωθεί η ομάδα.',
-              'Exact meeting location is revealed only after the group is confirmed.',
-            )}
+              {t('Δημόσιο σημείο συνάντησης', 'Public meeting point')}
+            </strong>
           </span>
         </li>
         <li className="flex items-start gap-2">
           <CheckCircle className={cn('w-4 h-4 shrink-0 mt-0.5', tok.iconMuted)} />
           <span className={tok.listText}>
             <strong className={tok.listStrong}>
-              {t('Ιδιωτικές αναφορές.', 'Private reports.')}
-            </strong>{' '}
-            {t(
-              'Οποιαδήποτε ανάρμοστη συμπεριφορά μπορεί να αναφερθεί ιδιωτικά και επηρεάζει τις βαθμολογίες αξιοπιστίας.',
-              'Any inappropriate behavior can be reported privately and affects reliability scores.',
-            )}
+              {t('Ιδιωτικές αναφορές', 'Private reports')}
+            </strong>
           </span>
         </li>
       </ul>

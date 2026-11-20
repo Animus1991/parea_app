@@ -7,6 +7,8 @@ interface GroupProgressBarProps {
   target: number;
   showLabel?: boolean;
   className?: string;
+  /** Light type/track for a photo overlay. */
+  onPhoto?: boolean;
 }
 
 export function GroupProgressBar({
@@ -14,6 +16,7 @@ export function GroupProgressBar({
   target,
   showLabel = true,
   className,
+  onPhoto = false,
 }: GroupProgressBarProps) {
   const { t } = useLanguage();
   const tok = useThemeStyles();
@@ -22,19 +25,19 @@ export function GroupProgressBar({
   return (
     <div className={className}>
       {showLabel && (
-        <div className="flex items-center justify-between mb-1.5">
-          <span className={cn('text-xs font-bold tracking-tight', tok.muted)}>
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <span className={cn('text-xs font-bold tracking-tight', onPhoto ? 'text-white' : tok.muted)}>
             {t('Πρόοδος ομάδας', 'Group progress')}
           </span>
-          <span className={cn('text-xs font-bold', tok.accentText)}>
+          <span className={cn('text-xs font-bold tabular-nums', onPhoto ? 'text-white' : tok.accentText)}>
             {current}/{target} {t('μέλη', 'members')}
           </span>
         </div>
       )}
       <div
         className={cn(
-          'w-full h-2 rounded-full overflow-hidden',
-          tok.isDark ? 'bg-gray-700/50' : 'bg-gray-100',
+          'h-2 w-full overflow-hidden rounded-full',
+          onPhoto ? 'bg-white/25' : tok.isDark ? 'bg-gray-700/50' : 'bg-gray-100',
         )}
         role="progressbar"
         aria-label={t('Πρόοδος ομάδας', 'Group progress')}

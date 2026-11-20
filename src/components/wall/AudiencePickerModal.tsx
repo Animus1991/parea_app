@@ -66,7 +66,7 @@ export function PeopleChecklist({
             <li key={u.id}>
               <label
                 className={cn(
-                  'flex min-h-10 cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 transition-colors',
+                  'flex min-h-8 cursor-pointer items-center gap-3 rounded-xl border px-3 py-1.5 transition-colors',
                   on ? 'border-accent bg-accent-soft' : 'border-border hover:bg-surface',
                 )}
               >
@@ -246,7 +246,7 @@ export function AudiencePickerModal({
               {base === 'list' && (on || disabled) && (
                 <div className="mt-2 space-y-2 pl-2">
                   {myLists.map((l) => (
-                    <label key={l.id} className={cn('flex min-h-10 cursor-pointer items-center gap-3 rounded-xl border px-3 py-2', draft.listId === l.id && on ? 'border-accent bg-accent-soft' : 'border-border hover:bg-surface')}>
+                    <label key={l.id} className={cn('flex min-h-8 cursor-pointer items-center gap-3 rounded-xl border px-3 py-2', draft.listId === l.id && on ? 'border-accent bg-accent-soft' : 'border-border hover:bg-surface')}>
                       <input
                         type="radio"
                         name={`${groupName}-list`}
@@ -281,7 +281,7 @@ export function AudiencePickerModal({
                       </Button>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => setCreatingList(true)} className="flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-bold text-ink hover:bg-surface">
+                    <button type="button" onClick={() => setCreatingList(true)} className="flex min-h-8 items-center gap-2 rounded-xl px-3 text-xs font-bold text-ink hover:bg-surface">
                       <Plus className="h-3.5 w-3.5" aria-hidden /> {t('Νέα λίστα', 'New list')}
                     </button>
                   )}

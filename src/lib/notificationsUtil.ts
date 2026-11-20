@@ -1,5 +1,27 @@
 import type { AppNotification } from '../data/mockNotifications';
 
+export function pendingFeedbackNotificationId(eventId: string): string {
+  return `feedback-pending-${eventId}`;
+}
+
+/** Quiet reminder after the night — join stays open until several are skipped. */
+export function buildPendingFeedbackNotification(
+  userId: string,
+  event: { id: string; title: string },
+): AppNotification {
+  return {
+    id: pendingFeedbackNotificationId(event.id),
+    type: 'feedback',
+    messageGr: `Πώς πέρασες στο «${event.title}»;`,
+    messageEn: `How was “${event.title}”?`,
+    timeGr: 'Τώρα',
+    timeEn: 'Now',
+    read: false,
+    eventId: event.id,
+    forUserId: userId,
+  };
+}
+
 /** Rows without `forUserId` belong to the active inbox; targeted rows only to that user. */
 export function notificationsForUser(
   notifications: AppNotification[],

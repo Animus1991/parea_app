@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Filter, Shield, Settings, Plus, X, Info } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { usePlansFormingFeed } from '../../hooks/usePlansFormingFeed';
@@ -19,19 +18,22 @@ import { ResourceStateGate } from '../common/ResourceStateGate';
 import { Modal } from '../common/Modal';
 import { useEventsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
+import { APP_TYPO } from '../../lib/typographyTokens';
 import { toast } from 'sonner';
 import type { Event } from '../../types';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
 import type { CompanyJoinRequestStatus, CompanyRequest } from '../../types/companyRequest';
-import { readStorage, writeStorage } from '../../lib/safeUrl';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { MiniOutingsSection } from '../outings/MiniOutingsSection';
-
-type FilterKey = 'all' | 'open_spots' | 'verified' | 'small_groups' | 'flexible' | 'saved_events' | 'high_match';
-
-const EXPLAINER_KEY = 'parea-buddy-seek-explainer-dismissed';
+import { hasUsualHours, matchesUsualHours } from '../../lib/quietCatalog';
+import {
+  BuddySeekFilterBar,
+  BuddySeekPageActions,
+  BuddySeekVibeNudge,
+  type BuddySeekFilterKey,
+} from './BuddySeekChrome';
 
 function joinStatusLabel(status: CompanyJoinRequestStatus, t: (el: string, en: string) => string) {
   switch (status) {
@@ -68,31 +70,33 @@ export default function BuddySeekPageContent() {
   const { events, isLoading, isError, refetch } = useEventsResource();
   const currentUser = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
+  const availability = useStore((s) => s.userSettings.availability);
+  const [showQueuedSeeks, setShowQueuedSeeks] = useState(false);
 
-  const [filter, setFilter] = useState<FilterKey>('all');
+  const [filter, setFilter] = useState<BuddySeekFilterKey>('all');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filterBarRef = useRef<HTMLDivElement>(null);
   const [preview, setPreview] = useState<PlansFormingEnrichedItem | null>(null);
   const [previewJoinId, setPreviewJoinId] = useState<string | null>(null);
   const [eventPickerOpen, setEventPickerOpen] = useState(false);
   const [wizard, setWizard] = useState<RequestWizard | null>(null);
-  const [showExplainer, setShowExplainer] = useState(
-    () => !readStorage(EXPLAINER_KEY),
-  );
-
   useEffect(() => {
     const editId = searchParams.get('editRequest');
-    if (!editId) return;
-    const req = companyRequests.find((r) => r.id === editId);
-    const event = req ? events.find((e) => e.id === req.eventId) : undefined;
-    if (req && event) setWizard({ event, existing: req });
+    const openNew = searchParams.get('newRequest') === '1';
+    if (!editId && !openNew) return;
     const next = new URLSearchParams(searchParams);
-    next.delete('editRequest');
+    if (editId) {
+      const req = companyRequests.find((r) => r.id === editId);
+      const event = req ? events.find((e) => e.id === req.eventId) : undefined;
+      if (req && event) setWizard({ event, existing: req });
+      next.delete('editRequest');
+    }
+    if (openNew) {
+      setEventPickerOpen(true);
+      next.delete('newRequest');
+    }
     setSearchParams(next, { replace: true });
   }, [searchParams, companyRequests, events, setSearchParams]);
-
-  const dismissExplainer = () => {
-    writeStorage(EXPLAINER_KEY, '1');
-    setShowExplainer(false);
-  };
 
   const upcomingEvents = useMemo(
     () =>
@@ -117,6 +121,29 @@ export default function BuddySeekPageContent() {
       return true;
     });
   }, [feed.items, filter]);
+
+  const splitByHours = hasUsualHours(currentUser, availability);
+  const inHoursItems = useMemo(
+    () =>
+      splitByHours
+        ? filtered.filter((item) => matchesUsualHours(item.event, currentUser, availability))
+        : filtered,
+    [filtered, splitByHours, currentUser, availability],
+  );
+  const queuedItems = useMemo(
+    () =>
+      splitByHours
+        ? filtered.filter((item) => !matchesUsualHours(item.event, currentUser, availability))
+        : [],
+    [filtered, splitByHours, currentUser, availability],
+  );
+  const visibleSeeks = showQueuedSeeks ? [...inHoursItems, ...queuedItems] : inHoursItems;
+
+  // Mini outings already have their own section with Join — don't repeat them as recruiting groups.
+  const recruitingGroups = useMemo(
+    () => feed.recruitingGroupItems.filter((entry) => entry.event.kind !== 'mini_outing'),
+    [feed.recruitingGroupItems],
+  );
 
   const pendingForMe = companyJoinRequests.filter(
     (j) => j.status === 'pending' && j.targetUserId === currentUser?.id,
@@ -143,104 +170,33 @@ export default function BuddySeekPageContent() {
     state: filter,
     summaryEl: `${filtered.length} σχέδια · ${pendingForMe.length} αιτήματα προς εσένα`,
     summaryEn: `${filtered.length} plans · ${pendingForMe.length} requests for you`,
-    visibleIds: filtered.slice(0, 8).map((i) => i.intent.id),
+    visibleIds: visibleSeeks.slice(0, 8).map((i) => i.intent.id),
   });
 
   return (
-    <div className="w-full max-w-full min-w-0 space-y-4 pb-16 pt-4">
+    <div className={cn(PAGE_FILL, 'space-y-7 pb-32 pt-4 md:pb-8')}>
       <header className="space-y-3">
-        <h1 className={cn('text-sm md:text-base font-bold', a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
-        <CopilotInlinePrompt />
-        <PlansFormingValueHero insights={feed.insights} />
+        <div className="space-y-1.5">
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
+          <PlansFormingValueHero insights={feed.insights} />
+        </div>
         {/* StatsBar omitted when ValueHero already states compatible count — less chrome. */}
         {feed.insights.compatiblePlans === 0 && (
           <PlansFormingStatsBar plain insights={feed.insights} />
         )}
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => navigate('/settings?section=buddy-seek')}
-            className={cn(
-              'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
-              a.borderB,
-              a.sub,
-            )}
-          >
-            <Settings className="w-3.5 h-3.5" />
-            {t('Ρυθμίσεις απορρήτου', 'Privacy settings')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setEventPickerOpen(true)}
-            className={cn(
-              'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
-              a.borderB,
-              a.sub,
-            )}
-          >
-            <Plus className="w-3.5 h-3.5" />
-            {t('Νέο αίτημα από εκδήλωση', 'New request from event')}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/plans')}
-            className={cn(
-              'inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl border',
-              a.borderB,
-              a.sub,
-            )}
-          >
-            {t('Τα σχέδιά μου', 'My plans')}
-          </button>
-        </div>
+        <BuddySeekPageActions
+          onPrivacy={() => navigate('/settings?section=buddy-seek')}
+          onNewRequest={() => setEventPickerOpen(true)}
+          onMyPlans={() => navigate('/plans')}
+        />
       </header>
 
-      {/* Soft one-line vibe nudge — matching uses «Το στυλ παρέας μου»; never blocks browsing. */}
       {currentUser && !currentUser.vibe && (
-        <button
-          type="button"
-          onClick={() => navigate('/profile')}
-          className={cn(
-            'w-full rounded-xl border border-dashed px-3 py-2 text-left text-xs font-bold transition-colors',
-            a.borderB,
-            a.head,
-            'hover:border-border-strong',
-          )}
-        >
-          {t(
-            'Ολοκλήρωσε το στυλ παρέας (5 ερωτήσεις) →',
-            'Complete your group style (5 questions) →',
-          )}
-        </button>
+        <BuddySeekVibeNudge onClick={() => navigate('/profile')} />
       )}
 
       {/* Φ27 — small outings without an event (coffee / walk / run) */}
       <MiniOutingsSection />
-
-      {showExplainer && (
-        <div className={cn('rounded-2xl border p-4 flex gap-3', a.cardSurface, 'border-cyan-200 bg-cyan-50/60 dark:bg-cyan-950/20 dark:border-cyan-800')}>
-          <Info className="w-5 h-5 shrink-0 text-cyan-600 dark:text-cyan-400 mt-0.5" />
-          <div className="flex-1 min-w-0">
-            <p className={cn('text-sm font-bold', a.head)}>
-              {t('Τι είναι το Βρες Nakamas;', 'What is Find Nakamas?')}
-            </p>
-            <p className={cn('text-sm font-medium mt-1 leading-relaxed', a.sub)}>
-              {t(
-                'Δηλώνετε ότι ψάχνετε Nakamas για μια εκδήλωση — με έλεγχο ορατότητας. Άλλοι χρήστες μπορούν να σας στείλουν αίτημα ή να ενωθούν σε ομάδα.',
-                'You signal you want Nakamas for an event — with privacy controls. Others can send join requests or form a group with you.',
-              )}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={dismissExplainer}
-            className={cn('p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg shrink-0', a.muted, 'hover:bg-black/5 dark:hover:bg-white/10')}
-            aria-label={t('Κλείσιμο', 'Dismiss')}
-          >
-            <X className="w-4 h-4" aria-hidden />
-          </button>
-        </div>
-      )}
 
       {feed.myActivePlan && (
         <PlansFormingYourPlanBanner
@@ -315,41 +271,27 @@ export default function BuddySeekPageContent() {
         </section>
       )}
 
-      <div className={cn('rounded-2xl border p-3 space-y-3', a.cardSurface, a.borderB)}>
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 opacity-60" />
-          <span className={cn('text-sm font-bold', a.head)}>{t('Φίλτρα', 'Filters')}</span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {(
-            [
-              ['all', 'Όλα', 'All', filterCounts.all],
-              ['high_match', 'Υψηλή συμβατότητα', 'High match', filterCounts.high_match],
-              ['saved_events', 'Αποθηκευμένες', 'Saved events', filterCounts.saved_events],
-              ['flexible', 'Ευέλικτα', 'Flexible', filterCounts.flexible],
-              ['open_spots', 'Ανοιχτές θέσεις', 'Open spots', filterCounts.open_spots],
-              ['small_groups', 'Μικρές ομάδες', 'Small groups', filterCounts.small_groups],
-              ['verified', 'Επαληθευμένοι', 'Verified', filterCounts.verified],
-            ] as const
-          ).map(([key, el, en, count]) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setFilter(key)}
-              className={cn(
-                'filter-chip text-xs font-bold px-3 rounded-xl border transition-colors gap-1',
-                filter === key ? 'bg-cyan-600 text-white border-cyan-600' : a.borderB,
-              )}
-            >
-              {t(el, en)}
-              {count != null && count > 0 && (
-                <span className={cn('text-xs px-1 rounded-lg', filter === key ? 'bg-white/20' : 'bg-cyan-100 text-cyan-800')}>
-                  {count}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+      <div ref={filterBarRef} className="scroll-mt-4">
+        <BuddySeekFilterBar
+          filter={filter}
+          filterCounts={filterCounts}
+          filtersOpen={filtersOpen}
+          onToggleOpen={() => {
+            setFiltersOpen((open) => {
+              const next = !open;
+              if (next) {
+                requestAnimationFrame(() => {
+                  filterBarRef.current?.scrollIntoView({
+                    block: 'start',
+                    behavior: 'smooth',
+                  });
+                });
+              }
+              return next;
+            });
+          }}
+          onChange={setFilter}
+        />
       </div>
 
       <ResourceStateGate
@@ -359,17 +301,17 @@ export default function BuddySeekPageContent() {
         loading={<PlansFormingSkeleton count={3} variant="inline" />}
         errorTitle={t('Αδυναμία φόρτωσης αιτημάτων', 'Could not load requests')}
       >
-      {filtered.length === 0 && feed.recruitingGroupItems.length === 0 ? (
+      {visibleSeeks.length === 0 && queuedItems.length === 0 && recruitingGroups.length === 0 ? (
         <PlansFormingEmptyState suggestedEvent={feed.suggestedEvent} />
       ) : (
         <>
-          {filtered.length > 0 && (
-            <section className="space-y-3">
+          {visibleSeeks.length > 0 && (
+            <section className="space-y-5">
               <PlansFormingSectionTitle
                 title={t('Αιτήματα Nakamas', 'Nakama requests')}
-                subtitle={t(`${filtered.length} αποτελέσματα`, `${filtered.length} results`)}
+                subtitle={t(`${visibleSeeks.length} αποτελέσματα`, `${visibleSeeks.length} results`)}
               />
-              {filtered.map((item) => (
+              {visibleSeeks.map((item) => (
                 <PlansFormingCard
                   key={item.intent.id}
                   item={item}
@@ -384,11 +326,28 @@ export default function BuddySeekPageContent() {
               ))}
             </section>
           )}
+          {queuedItems.length > 0 && (
+            <button
+              type="button"
+              aria-pressed={showQueuedSeeks}
+              onClick={() => setShowQueuedSeeks((v) => !v)}
+              className={cn(
+                'filter-chip inline-flex h-[1.75rem] items-center self-start rounded-full border px-3 text-xs font-bold leading-none',
+                showQueuedSeeks
+                  ? 'border-accent bg-accent text-accent-fg'
+                  : 'border-border bg-surface-raised text-ink',
+              )}
+            >
+              {showQueuedSeeks
+                ? t('Κρύψε άλλες ώρες', 'Hide other times')
+                : t(`Άλλες ώρες (${queuedItems.length})`, `Other times (${queuedItems.length})`)}
+            </button>
+          )}
 
-          {feed.recruitingGroupItems.length > 0 && (
-            <section className="space-y-3">
+          {recruitingGroups.length > 0 && (
+            <section className="space-y-5">
               <PlansFormingSectionTitle title={t('Ομάδες με ανοιχτές θέσεις', 'Groups with open spots')} />
-              {feed.recruitingGroupItems.map((entry) => (
+              {recruitingGroups.map((entry) => (
                 <PlansFormingGroupCard key={entry.group.id} entry={entry} variant="page" />
               ))}
             </section>
@@ -396,14 +355,6 @@ export default function BuddySeekPageContent() {
         </>
       )}
       </ResourceStateGate>
-
-      <p className={cn('text-xs flex items-start gap-2', a.sub)}>
-        <Shield className="w-4 h-4 shrink-0" />
-        {t(
-          'Λεπτομερής ορατότητα · σχεδιασμένο με έλεγχο απορρήτου. Τα ενδιαφέροντα χρησιμοποιούνται για σχετικότητα, όχι για δημόσια έκθεση.',
-          'Granular visibility · designed with privacy controls. Interests are used for relevance, not public exposure.',
-        )}
-      </p>
 
       <Modal
         open={eventPickerOpen}
@@ -467,7 +418,12 @@ export default function BuddySeekPageContent() {
           mode={previewJoinId ? 'owner_review' : 'send'}
           onSendRequest={() => {
             sendJoin(preview.intent.id);
-            toast.success(t('Αίτημα εστάλη', 'Request sent'));
+            toast.success(t('Αίτημα εστάλη', 'Request sent'), {
+              action: {
+                label: t('Inbox', 'Inbox'),
+                onClick: () => navigate('/inbox'),
+              },
+            });
           }}
           onAccept={() => {
             if (!previewJoinId) return;
@@ -475,8 +431,8 @@ export default function BuddySeekPageContent() {
             if (groupId) {
               toast.success(t('Αποδεχτήκατε — άνοιγμα της βραδιάς', 'Accepted — opening Our night'), {
                 action: {
-                  label: t('Chat', 'Chat'),
-                  onClick: () => navigate(`/chat/${groupId}`),
+                  label: t('Η βραδιά μας', 'Our night'),
+                  onClick: () => navigate(`/night/${groupId}`),
                 },
               });
               navigate(`/night/${groupId}`);

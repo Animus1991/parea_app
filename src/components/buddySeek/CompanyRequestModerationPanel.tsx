@@ -29,19 +29,19 @@ export function CompanyRequestModerationPanel() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
         <div className={cn('rounded-xl border p-3', a.borderB)}>
-          <p className="text-sm md:text-base font-black">{active.length}</p>
+          <p className="text-sm md:text-base font-bold">{active.length}</p>
           <p className="text-xs font-bold tracking-wide opacity-60">{t('Ενεργά', 'Active')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
-          <p className="text-sm md:text-base font-black">{reported.length}</p>
+          <p className="text-sm md:text-base font-bold">{reported.length}</p>
           <p className="text-xs font-bold tracking-wide opacity-60">{t('Αναφερμένα', 'Reported')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
-          <p className="text-sm md:text-base font-black">{reports.length}</p>
+          <p className="text-sm md:text-base font-bold">{reports.length}</p>
           <p className="text-xs font-bold tracking-wide opacity-60">{t('Αναφορές', 'Reports')}</p>
         </div>
         <div className={cn('rounded-xl border p-3', a.borderB)}>
-          <p className="text-sm md:text-base font-black">{suspicious}</p>
+          <p className="text-sm md:text-base font-bold">{suspicious}</p>
           <p className="text-xs font-bold tracking-wide opacity-60">{t('Ύποπτα', 'Suspicious')}</p>
         </div>
       </div>
@@ -58,7 +58,7 @@ export function CompanyRequestModerationPanel() {
                 <button
                   type="button"
                   onClick={() => pauseRequest(r.id)}
-                  className="p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg border"
+                  className="p-2 min-h-8 min-w-8 flex items-center justify-center rounded-lg border"
                   title={t('Παύση', 'Pause')}
                   aria-label={t('Παύση αιτήματος', 'Pause request')}
                 >
@@ -67,7 +67,7 @@ export function CompanyRequestModerationPanel() {
                 <button
                   type="button"
                   onClick={() => deleteRequest(r.id)}
-                  className="p-2 min-h-10 min-w-10 flex items-center justify-center rounded-lg border text-red-600"
+                  className="p-2 min-h-8 min-w-8 flex items-center justify-center rounded-lg border text-red-600"
                   title={t('Αφαίρεση', 'Remove')}
                   aria-label={t('Αφαίρεση αιτήματος', 'Remove request')}
                 >

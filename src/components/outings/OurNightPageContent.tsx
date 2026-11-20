@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   BadgeCheck,
   CalendarDays,
-  Clock,
   LifeBuoy,
   ListOrdered,
   Lock,
@@ -21,14 +20,16 @@ import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
-import { formatOutingDate, groupStatusLabel } from '../../lib/outings';
+import { groupStatusLabel } from '../../lib/outings';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { coverById, coversFor } from '../../lib/planCovers';
 import { eventStartMs, isDoorPerson, LATE_CANCEL_MS } from '../../store/outingsSlice';
+import { isFeedbackDue } from '../../lib/feedbackDue';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { Button } from '../common/Button';
 import { EmptyState } from '../common/EmptyState';
-import { CopilotInlinePrompt } from '../copilot/CopilotInlinePrompt';
 import { PersonAvatar } from '../wall/PersonAvatar';
 import { CheckInTicket } from './CheckInTicket';
 import { CheckInPanel } from './CheckInPanel';
@@ -67,6 +68,7 @@ export default function OurNightPageContent() {
   const users = useStore((s) => s.users);
   const invites = useStore((s) => s.planInvites);
   const leaveGroup = useStore((s) => s.leaveGroup);
+  const joinGroup = useStore((s) => s.joinGroup);
   const leaveGroupWaitlist = useStore((s) => s.leaveGroupWaitlist);
   const joinGroupWaitlist = useStore((s) => s.joinGroupWaitlist);
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
@@ -114,14 +116,14 @@ export default function OurNightPageContent() {
   if (!me) return null;
   if (!group || !event) {
     return (
-      <div className="mx-auto max-w-2xl py-6">
+      <div className={cn(PAGE_FILL, 'py-6')}>
         <EmptyState
           title={t('Η ομάδα δεν βρέθηκε', 'Group not found')}
           description={t('Ίσως διαγράφηκε ή ο σύνδεσμος είναι λάθος.', 'It may have been removed, or the link is wrong.')}
           actionLabel={t('Τα σχέδιά μου', 'My plans')}
           onAction={() => navigate('/plans')}
-          secondaryLabel={t('Εξερεύνηση', 'Explore')}
-          onSecondary={() => navigate('/')}
+          secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
+          onSecondary={() => navigate('/buddy-seek')}
         />
       </div>
     );
@@ -129,7 +131,7 @@ export default function OurNightPageContent() {
 
   if (!isMember) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4 py-4">
+      <div className={cn(PAGE_FILL, 'space-y-4 py-4')}>
         <h1 className={cn(APP_TYPO.pageTitle, 'text-ink')}>{t('Η βραδιά μας', 'Our night')}</h1>
         <div className="rounded-2xl border border-border bg-surface-raised p-4">
           <p className="flex items-center gap-2 text-sm font-bold text-ink">
@@ -143,13 +145,17 @@ export default function OurNightPageContent() {
               )}
             </p>
           )}
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
             <Button size="sm" onClick={() => navigate(`/events/${event.id}`)}>
               {t('Δες την εκδήλωση', 'See the event')}
             </Button>
-            <Button size="sm" variant="outline" onClick={() => navigate('/buddy-seek')}>
+            <button
+              type="button"
+              onClick={() => navigate('/buddy-seek')}
+              className="text-xs font-bold text-ink underline underline-offset-2"
+            >
               {t('Βρες Nakamas', 'Find Nakamas')}
-            </Button>
+            </button>
             {onWaitlist && (
               <Button
                 size="sm"
@@ -185,11 +191,13 @@ export default function OurNightPageContent() {
   const handsOver = group.members.length >= group.targetSize && Boolean(group.waitlist?.length);
   const closed = Boolean(group.checkInClosedAt);
   const myRecord = group.checkIns?.[me.id];
-  const canGiveFeedback = closed && myRecord && !feedbackSubmitted[event.id];
+  const skippedDoor = Boolean(closed && !myRecord);
+  const canGiveFeedback =
+    Boolean(me) && !skippedDoor && !feedbackSubmitted[event.id] && isFeedbackDue(event);
   const spotsLeft = Math.max(0, group.targetSize - group.members.length);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300">
+    <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300')}>
       <button
         type="button"
         onClick={() => navigate('/plans')}
@@ -207,14 +215,11 @@ export default function OurNightPageContent() {
           {revealed ? <PartyPopper className="h-4 w-4" aria-hidden /> : <Users className="h-4 w-4" aria-hidden />}
           {groupStatusLabel(group, t)}
         </p>
-        <h1 className="mt-1 text-xl font-black leading-tight">{t('Η βραδιά μας', 'Our night')}</h1>
+        <h1 className={cn('mt-1', APP_TYPO.pageTitle)}>{t('Η βραδιά μας', 'Our night')}</h1>
         <p className="mt-0.5 text-sm font-bold">{event.title}</p>
         <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
           <li className="flex items-center gap-1.5">
-            <CalendarDays className="h-4 w-4" aria-hidden /> {formatOutingDate(event.date, language)}
-          </li>
-          <li className="flex items-center gap-1.5">
-            <Clock className="h-4 w-4" aria-hidden /> {event.time}
+            <CalendarDays className="h-4 w-4" aria-hidden /> {formatPlanWhen(event.date, event.time, language)}
           </li>
           <li className="flex items-center gap-1.5">
             <MapPin className="h-4 w-4" aria-hidden /> {event.locationArea}
@@ -233,7 +238,9 @@ export default function OurNightPageContent() {
         </div>
         {firstReady && revealed && (
           <p className="mt-3 text-sm font-semibold">
-            {t('Όλα είναι έτοιμα: σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας είναι παρακάτω.', 'All set: the meeting point, group code and door ticket are below.')}
+            {group.discountUnlocked && group.code
+              ? t('Όλα είναι έτοιμα: σημείο συνάντησης, κωδικός ομάδας και εισιτήριο πόρτας είναι παρακάτω.', 'All set: the meeting point, group code and door ticket are below.')
+              : t('Όλα είναι έτοιμα: σημείο συνάντησης και εισιτήριο πόρτας είναι παρακάτω.', 'All set: the meeting point and door ticket are below.')}
           </p>
         )}
         {revealed && (
@@ -254,7 +261,7 @@ export default function OurNightPageContent() {
           className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border bg-surface-raised p-4"
         >
           <p id="night-feedback-title" className="flex items-center gap-2 text-sm font-bold text-ink">
-            <Star className="h-4 w-4" aria-hidden /> {t('Πώς πήγε η βραδιά;', 'How was the night?')}
+            <Star className="h-4 w-4" aria-hidden /> {t('Πώς πέρασες;', 'How was it?')}
           </p>
           <Button size="sm" onClick={() => navigate(`/history/feedback/${event.id}`)}>
             {t('Αξιολόγηση', 'Feedback')}
@@ -287,7 +294,7 @@ export default function OurNightPageContent() {
           <h3 id="code-title" className="flex items-center gap-2 text-sm font-bold text-ink">
             <Tag className="h-4 w-4" aria-hidden /> {t('Κωδικός ομάδας', 'Group code')}
           </h3>
-          <p className="mt-2 font-mono text-lg font-black tracking-widest text-ink" data-testid="group-code">
+          <p className="mt-2 font-mono text-base font-black tracking-widest text-ink" data-testid="group-code">
             {group.code}
           </p>
           <p className="mt-1 text-xs font-medium text-ink-muted">
@@ -364,14 +371,14 @@ export default function OurNightPageContent() {
 
       <section className="rounded-2xl border border-border bg-surface-raised p-4" aria-labelledby="safety-title">
         <h3 id="safety-title" className="flex items-center gap-2 text-sm font-bold text-ink">
-          <LifeBuoy className="h-4 w-4" aria-hidden /> {t('Ασφάλεια & επικοινωνία', 'Safety & contact')}
+          <LifeBuoy className="h-4 w-4" aria-hidden /> {t('Ομάδα & βοήθεια', 'Group & help')}
         </h3>
         <div className="mt-2 flex flex-wrap gap-2">
           <Button size="sm" variant="outline" onClick={() => navigate(`/chat/${group.id}`)}>
             <MessageCircle className="mr-1.5 h-4 w-4" aria-hidden /> {t('Chat ομάδας', 'Group chat')}
           </Button>
           <Button size="sm" variant="outline" onClick={() => navigate('/trust')}>
-            {t('Κέντρο Εμπιστοσύνης', 'Trust Center')}
+            {t('Αξιοπιστία', 'Reliability')}
           </Button>
           <Button size="sm" variant="outline" onClick={() => navigate('/report')}>
             {t('Αναφορά', 'Report')}
@@ -381,8 +388,6 @@ export default function OurNightPageContent() {
           {t('Συναντιέστε πρώτα σε δημόσιο χώρο. Ενημέρωσε κάποιον δικό σου πού θα είσαι.', 'Meet in a public place first. Tell someone you trust where you will be.')}
         </p>
       </section>
-
-      <CopilotInlinePrompt maxChips={2} title={{ el: 'Βοήθεια για τη βραδιά', en: 'Help for tonight' }} />
 
       {!closed && (
         <section className="rounded-2xl border border-border p-4" aria-labelledby="leave-title">
@@ -403,11 +408,23 @@ export default function OurNightPageContent() {
                 variant="danger"
                 onClick={() => {
                   const willHandOver = handsOver;
-                  leaveGroup(group.id);
+                  const gid = group.id;
+                  leaveGroup(gid);
                   toast.info(
                     willHandOver
                       ? t('Αποχώρησες — η θέση πέρασε στη λίστα αναμονής.', 'You left — your seat passed to the waitlist.')
                       : t('Αποχώρησες από την ομάδα.', 'You have left the group.'),
+                    {
+                      action: willHandOver
+                        ? {
+                            label: t('Βρες Nakamas', 'Find Nakamas'),
+                            onClick: () => navigate('/buddy-seek'),
+                          }
+                        : {
+                            label: t('Αναίρεση', 'Undo'),
+                            onClick: () => joinGroup(gid),
+                          },
+                    },
                   );
                   navigate('/plans');
                 }}

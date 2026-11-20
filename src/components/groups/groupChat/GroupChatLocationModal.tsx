@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { useLanguage } from '../../../lib/i18n';
 import { cn } from '../../../lib/utils';
 import { Modal } from '../../common/Modal';
+import { AppSelect } from '../../common/AppSelect';
 import type { useGroupChatContrast } from '../../../hooks/useGroupChatContrast';
 import type { GroupChatMessage } from '../../../hooks/useGroupChatMessages';
 
@@ -51,8 +52,6 @@ export function GroupChatLocationModal({
     }
     if (locationConfig.shareWith === 'organizer') {
       msg += t(' (Μόνο στον Διοργανωτή)', ' (Organizer only)');
-    } else if (locationConfig.shareWith === 'selected') {
-      msg += t(' (με επιλεγμένα μέλη)', ' (with selected members)');
     }
     setMessages((prev) => [
       ...prev,
@@ -60,12 +59,14 @@ export function GroupChatLocationModal({
         id: Date.now().toString(),
         senderId: 'system',
         senderName: t("Σύστημα", "System"),
-        text: `${currentUserName} ${msg}.`,
+        text: `${currentUserName} ${msg}. ${t('Προεπισκόπηση — το pin δεν στάλθηκε ακόμη στην ομάδα.', 'Preview — the pin was not sent to the group yet.')}`,
         timestamp: new Date().toISOString(),
         type: 'location',
       },
     ]);
-    toast.success(t('Η κοινοποίηση τοποθεσίας ενεργοποιήθηκε', 'Location sharing enabled'));
+    toast.success(
+      t('Προεπισκόπηση κοινοποίησης — το pin δεν στάλθηκε ακόμη.', 'Sharing preview — the pin was not sent yet.'),
+    );
     onStartSharing();
   };
 
@@ -137,7 +138,7 @@ export function GroupChatLocationModal({
         <div className="space-y-3">
           <h4 className="text-xs font-bold tracking-wide text-ink-muted">2. {t('Ορατότητα', 'Share With')}</h4>
           <div className="flex flex-col gap-2">
-            {(['organizer', 'selected', 'all'] as const).map((option) => (
+            {(['organizer', 'all'] as const).map((option) => (
               <label
                 key={option}
                 className={cn(
@@ -167,7 +168,6 @@ export function GroupChatLocationModal({
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-ink">
                     {option === 'organizer' && t('Μόνο στον Διοργανωτή', 'Organizer Only')}
-                    {option === 'selected' && t('Επιλεγμένα Μέλη', 'Selected Members')}
                     {option === 'all' && t('Ολόκληρη η Ομάδα', 'Entire Confirmed Group')}
                   </span>
                   {option === 'organizer' && (
@@ -188,18 +188,21 @@ export function GroupChatLocationModal({
 
         <div className="space-y-3">
           <h4 className="text-xs font-bold tracking-wide text-ink-muted">3. {t('Αυτόματη Λήξη', 'Auto-Expiry')}</h4>
-          <select aria-label={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
+          <AppSelect
+            ariaLabel={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
             value={locationConfig.duration}
-            onChange={(e) => setLocationConfig({ ...locationConfig, duration: e.target.value })}
-            className="w-full border border-border rounded-2xl p-3 text-sm font-medium focus:ring-2 focus:ring-accent/40 bg-surface-raised outline-none shadow-soft"
-          >
-            <option value="arrival">{t('Μέχρι να φτάσω στο σημείο', 'Until I arrive at meeting point')}</option>
-            <option value="event_start">{t('Μέχρι να ξεκινήσει η εκδήλωση', 'Until event starts')}</option>
-            <option value="event_end">
-              {t('Μέχρι το τέλος της εκδήλωσης', 'Until event ends (or organizer marks complete)')}
-            </option>
-            <option value="1hr">{t('Για 1 ώρα', 'For 1 hour')}</option>
-          </select>
+            onValueChange={(v) => setLocationConfig({ ...locationConfig, duration: v })}
+            className="w-full border border-border rounded-2xl p-3 text-sm font-medium bg-surface-raised shadow-soft"
+            options={[
+              { value: 'arrival', label: t('Μέχρι να φτάσω στο σημείο', 'Until I arrive at meeting point') },
+              { value: 'event_start', label: t('Μέχρι να ξεκινήσει η εκδήλωση', 'Until event starts') },
+              {
+                value: 'event_end',
+                label: t('Μέχρι το τέλος της εκδήλωσης', 'Until event ends (or organizer marks complete)'),
+              },
+              { value: '1hr', label: t('Για 1 ώρα', 'For 1 hour') },
+            ]}
+          />
         </div>
       </div>
 
@@ -208,7 +211,7 @@ export function GroupChatLocationModal({
           type="button"
           data-autofocus
           onClick={handleConfirm}
-          className="w-full px-4 py-3 text-xs font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-2xl transition-all duration-200 shadow-soft active:scale-[0.98]"
+          className="w-full px-4 py-2 min-h-9 text-xs font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
         >
           {isSharingLocation
             ? t('Ενημέρωση Ρυθμίσεων', 'Update Configuration')

@@ -19,9 +19,8 @@ test.describe('Group outings', () => {
     await door.getByRole('button', { name: /Κλείσιμο check-in|Close check-in/ }).click();
     await door.getByRole('alertdialog').getByRole('button', { name: /Κλείσιμο check-in|Close check-in/ }).click();
     await expect(page.getByRole('status').filter({ hasText: /Ήρθαν 3|3 arrived/ })).toBeVisible();
-    // Primary Feedback is the Our Night region CTA (toast action is «Ιστορικό» / History).
-    const feedback = page.getByRole('region', { name: /Πώς πήγε η βραδιά;|How was the night?/ });
-    await expect(feedback.getByRole('button', { name: /^Αξιολόγηση$|^Feedback$/ })).toBeVisible();
+    // Feedback waits until ~45 minutes after the night ends — not at the door.
+    await expect(page.getByRole('region', { name: /Πώς πέρασες;|How was it\?/ })).toHaveCount(0);
   });
 
   test('a member sees a rotating 6-digit door code', async ({ page }) => {
@@ -56,7 +55,9 @@ test.describe('Group outings', () => {
     await expect(page.getByText(/μόνο για γυναίκες και μη δυαδικά|women and non-binary people only/)).toBeVisible();
     await expect(page.getByRole('button', { name: /^Συνέχεια$|^Continue$/ })).toBeDisabled();
     await page.goto('/profile');
-    await page.getByLabel(/Ταυτότητα φύλου|Gender identity/).selectOption('non_binary');
+    const gender = page.getByLabel(/Ταυτότητα φύλου|Gender identity/);
+    await gender.click();
+    await page.getByRole('option', { name: /Μη δυαδικό άτομο|Non-binary/ }).click();
     await page.goto('/events/nn2/join?groupId=g-nn2');
     await expect(page.getByRole('button', { name: /^Συνέχεια$|^Continue$/ })).toBeEnabled();
   });
@@ -140,5 +141,23 @@ test.describe('Group outings', () => {
     await card.getByRole('button', { name: /Ξεκίνα|Start/ }).click();
     await card.getByRole('button', { name: /Ολοκλήρωση \(demo\)|Finish \(demo\)/ }).click();
     await expect(card.getByText(/Επαληθεύτηκε στις|Verified on/)).toBeVisible();
+  });
+
+  test('My Plans shows a cover on mini outing cards', async ({ page }) => {
+    await page.goto('/login');
+    await page.evaluate((key) => {
+      const raw = localStorage.getItem(key);
+      const data = raw ? JSON.parse(raw) : { state: {}, version: 0 };
+      data.state = { ...(data.state ?? {}), onboardingCompleted: true };
+      localStorage.setItem(key, JSON.stringify(data));
+    }, 'nakamas-store-v1');
+    await page.reload();
+    await page.getByRole('button', { name: /Maria/ }).first().click();
+    await expect(page.locator('#main-content')).toBeVisible();
+    await page.goto('/plans');
+    const img = page.locator('img[alt="Καφές στο Κουκάκι"]');
+    await expect(img).toBeVisible();
+    await expect(img).toHaveAttribute('src', /\/covers\/coffee\.jpg/);
+    await expect(img).toHaveJSProperty('naturalWidth', 1200);
   });
 });

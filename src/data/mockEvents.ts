@@ -1,6 +1,7 @@
 import { Event } from '../types';
+import { applyLiveCatalogDates } from '../lib/demoCatalogDates';
 
-export const mockEvents: Event[] = [
+export const authoredEvents: Event[] = [
   {
     id: 'e1',
     title: 'Release Athens 2026: Massive Attack',
@@ -696,3 +697,5 @@ export const mockEvents: Event[] = [
     imageUrl: 'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=800&h=600&fit=crop'
   }
 ];
+
+export const mockEvents: Event[] = applyLiveCatalogDates(authoredEvents);

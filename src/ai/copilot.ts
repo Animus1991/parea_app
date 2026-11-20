@@ -14,18 +14,9 @@ import { detectLanguage } from './text';
 import type { ActionArgs, ActionResult, ActionRuntime, AiLang, PlannedCall } from './types';
 import { isPlatformAdmin } from '../lib/roles';
 import { useAiAuditStore, type AiAuditStatus } from '../store/aiAuditStore';
+import { bindCopilotNavigation, getCopilotNavigation } from './navigationRef';
 
-/* ───────────── navigation bridge (set by <CopilotBridge/> inside the router) ───────────── */
-
-let navigateImpl: (path: string) => void = (path) => {
-  if (typeof window !== 'undefined') window.location.assign(path);
-};
-let currentPath = '/';
-
-export function bindCopilotNavigation(navigate: (path: string) => void, pathname: string): void {
-  navigateImpl = navigate;
-  currentPath = pathname;
-}
+export { bindCopilotNavigation };
 
 /* ───────────── undo registry (in-memory; closures are not persisted) ───────────── */
 
@@ -52,12 +43,13 @@ function store() {
 }
 
 function runtime(lang: AiLang): ActionRuntime {
+  const nav = getCopilotNavigation();
   return {
-    navigate: (p) => navigateImpl(p),
-    pathname: currentPath,
+    navigate: (p) => nav.navigate(p),
+    pathname: nav.pathname,
     lang,
     lastEventIds: store().lastEventIds,
-    currentEventId: currentPath.match(/^\/events\/([^/]+)/)?.[1],
+    currentEventId: nav.pathname.match(/^\/events\/([^/]+)/)?.[1],
   };
 }
 
@@ -226,7 +218,9 @@ function historyContents(lang: AiLang): GeminiContent[] {
 }
 
 async function runGemini(text: string, lang: AiLang): Promise<void> {
-  const system = buildSystemInstruction(buildContextSnapshot({ pathname: currentPath, lastEventIds: store().lastEventIds }));
+  const system = buildSystemInstruction(
+    buildContextSnapshot({ pathname: getCopilotNavigation().pathname, lastEventIds: store().lastEventIds }),
+  );
   const tools = toFunctionDeclarations();
   const contents: GeminiContent[] = [...historyContents(lang), { role: 'user', parts: [{ text }] }];
   for (let round = 0; round < 4; round += 1) {

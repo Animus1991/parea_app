@@ -27,21 +27,3 @@ export function getMotivation(t: (gr: string, en: string) => string): string {
     'Evening plans? Legends go out after dark!',
   );
 }
-
-export const DAILY_TIPS_GR = [
-  'Η αξιολόγησή σου μετά από μια εκδήλωση βοηθά την κοινότητα να αναπτυχθεί.',
-  'Επιβεβαίωσε τη συμμετοχή σου 24 ώρες πριν για να διατηρήσεις την αξιοπιστία σου στο 100%.',
-  'Μικρές ομάδες = βαθύτερες γνωριμίες. Δοκίμασε μια εκδήλωση με λιγότερα από 6 άτομα.',
-  'Η επαλήθευση της ταυτότητάς σου ξεκλειδώνει προσβάσεις σε αποκλειστικές εμπειρίες.',
-  'Πρότεινε μια εκδήλωση στους φίλους σου και διπλασίασε τη διασκέδαση!',
-  'Συμμετοχή σε εκδηλώσεις διαφορετικών κατηγοριών αυξάνει τα XP σου ταχύτερα.',
-] as const;
-
-export const DAILY_TIPS_EN = [
-  'Rating your experience after an event helps the community grow.',
-  'Confirm attendance 24h before an event to keep your reliability at 100%.',
-  'Small groups = deeper connections. Try an event with fewer than 6 people.',
-  'Verifying your identity unlocks access to exclusive experiences.',
-  'Suggest an event to your Nakamas and double the fun!',
-  'Attending different event categories earns XP faster.',
-] as const;

@@ -14,8 +14,8 @@ export function Chip({ active = false, className, type = 'button', ...props }: C
       className={cn(
         'filter-chip px-3 rounded-full text-xs font-semibold border transition-colors',
         active
-          ? 'bg-brand text-brand-fg border-transparent'
-          : 'bg-surface-raised text-ink-muted border-border hover:border-border-strong hover:text-ink',
+          ? 'bg-ink text-surface-raised border-ink'
+          : 'bg-transparent text-ink-muted border-border hover:border-border-strong hover:text-ink',
         className,
       )}
       {...props}

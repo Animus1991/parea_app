@@ -55,19 +55,9 @@ export function explainEventMatch(
       tPair(`Ταιριάζει στην κατηγορία ${event.category}`, `Fits ${event.category} category`, lang),
     );
   }
-  if (tierBonus > 0) {
-    sharedStrengths.push(
-      tPair('Υψηλό επίπεδο εμπιστοσύνης', 'Strong trust tier', lang),
-    );
-  }
   if (overlap.length === 0 && tags.length > 0) {
     mismatchFlags.push(
-      tPair('Λίγα κοινά tags — δοκίμασε άλλες κατηγορίες', 'Few shared tags — try other categories', lang),
-    );
-  }
-  if (user.trustTier === '1_explorer') {
-    mismatchFlags.push(
-      tPair('Επίπεδο explorer — ορισμένες ομάδες απαιτούν επιβεβαίωση', 'Explorer tier — some groups need verification', lang),
+      tPair('Λίγα κοινά ενδιαφέροντα', 'Few shared interests', lang),
     );
   }
 

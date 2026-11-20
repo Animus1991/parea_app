@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { format } from 'date-fns';
-import { dateFnsLocale, intlLocale, shortDayMonthPattern } from './dateLocale';
+import { dateFnsLocale, formatPlanWhen, formatPlanWhenDay, intlLocale, shortDayMonthPattern } from './dateLocale';
 
 const d = new Date(2026, 4, 15);
 
@@ -18,5 +18,11 @@ describe('dateLocale', () => {
     expect(format(d, shortDayMonthPattern('el'), { locale: dateFnsLocale('el') })).toBe('15 Μαΐ');
     expect(format(d, shortDayMonthPattern('en'), { locale: dateFnsLocale('en') })).toBe('May 15');
     expect(intlLocale('el')).toBe('el-GR');
+  });
+
+  it('uses one compact when-line on plans, cards, and chat', () => {
+    expect(formatPlanWhenDay('2026-11-22', 'el')).toBe('Κυρ 22 Νοε');
+    expect(formatPlanWhen('2026-11-22', '19:30', 'el')).toBe('Κυρ 22 Νοε · 19:30');
+    expect(formatPlanWhen('2026-11-22', '19:30', 'en')).toBe('Sun 22 Nov · 19:30');
   });
 });

@@ -30,6 +30,7 @@ import { canJoinGroup as gateJoinGroup, fitsGenderMode, groupCodeFor, type JoinG
 import { getEventDateRange } from '../lib/eventCalendarExport';
 import { activeTicketPartner, settleReservation } from '../services/ticketPartner';
 import { coversFor } from '../lib/planCovers';
+import { MINI_OUTING_COVERS } from '../lib/eventCover';
 import { mockPlanInvites, mockStrikes } from '../data/mockOutings';
 import { fetchInviteResponses, newHostKey, publishInvite } from '../services/invitesApi';
 
@@ -212,7 +213,7 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         'group',
         'Μπήκες στη λίστα αναμονής. Αν κάποιος αποχωρήσει, η θέση περνά σε σένα στην ίδια τιμή.',
         'You joined the waitlist. If someone leaves, their seat passes to you at the same price.',
-        { groupId, eventId: group.eventId },
+        { groupId, eventId: group.eventId, forUserId: me.id },
       );
       return true;
     },
@@ -344,23 +345,16 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         strikes: [...st.strikes, ...newStrikes],
         groups: st.groups.map((g) => (g.id === groupId ? { ...g, checkInClosedAt: at } : g)),
       }));
-      if (newStrikes.some((x) => x.userId === me.id)) {
-        notifyMe(
-          'safety',
-          'Καταγράφηκε απουσία σου. Δες τι σημαίνει και πώς κάνεις ένσταση στο Κέντρο Εμπιστοσύνης.',
-          'An absence was recorded for you. See what it means and how to appeal in the Trust Center.',
-          { groupId, eventId: group.eventId },
-        );
-      }
-      // Fan-out so every arrived member (not only the host) gets the feedback loop.
-      const feedbackTargets = Array.from(new Set([me.id, ...arrivedIds]));
-      for (const uid of feedbackTargets) {
-        notifyMe(
-          'feedback',
-          'Η έξοδος ολοκληρώθηκε. Πες μας πώς πήγε — βοηθά την επόμενη παρέα.',
-          'The outing is done. Tell us how it went — it helps the next group.',
-          { groupId, eventId: group.eventId, forUserId: uid },
-        );
+      // Each absent member needs their own Trust Center loop — not only the host.
+      if (counts) {
+        for (const uid of absentIds) {
+          notifyMe(
+            'safety',
+            'Καταγράφηκε απουσία σου. Δες τι σημαίνει και πώς κάνεις ένσταση στη σελίδα αξιοπιστίας.',
+            'An absence was recorded for you. See what it means and how to appeal on the reliability page.',
+            { groupId, eventId: group.eventId, forUserId: uid },
+          );
+        }
       }
       return counts
         ? {
@@ -398,7 +392,12 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       set((st) => ({
         strikes: st.strikes.map((x) => (x.id === strikeId ? { ...x, appeal: { text: clean, at: new Date().toISOString(), status: 'pending' } } : x)),
       }));
-      notifyMe('safety', 'Η ένστασή σου στάλθηκε. Θα απαντήσουμε μέσα σε 48 ώρες.', 'Your appeal was sent. We reply within 48 hours.');
+      notifyMe(
+        'safety',
+        'Η ένστασή σου στάλθηκε. Θα απαντήσουμε μέσα σε 48 ώρες.',
+        'Your appeal was sent. We reply within 48 hours.',
+        { forUserId: me.id },
+      );
       return true;
     },
 
@@ -416,9 +415,12 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         ...(accept ? patchPerson(st, strike.userId, (u) => ({ reliabilityScore: clampScore(u.reliabilityScore - strike.reliabilityDelta) })) : {}),
       }));
       get().logAdminAction(accept ? 'appeal_accepted' : 'appeal_rejected', strike.userId, strike.kind);
-      if (strike.userId === admin.id) {
-        notifyMe('safety', accept ? 'Η ένστασή σου έγινε δεκτή.' : 'Η ένστασή σου δεν έγινε δεκτή.', accept ? 'Your appeal was upheld.' : 'Your appeal was not upheld.');
-      }
+      notifyMe(
+        'safety',
+        accept ? 'Η ένστασή σου έγινε δεκτή.' : 'Η ένστασή σου δεν έγινε δεκτή.',
+        accept ? 'Your appeal was upheld.' : 'Your appeal was not upheld.',
+        { forUserId: strike.userId },
+      );
     },
 
     setVibe: (vibe) => {
@@ -586,13 +588,24 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
 
     setPreMeet: (groupId, venueId, minutesBefore = 30) => {
       const s = get();
+      const me = s.currentUser;
       const group = s.groups.find((g) => g.id === groupId);
-      if (!group || !isDoorPerson(group, s.currentUser?.id)) return;
+      if (!group || !isDoorPerson(group, me?.id)) return;
       set((st) => ({
         groups: st.groups.map((g) =>
           g.id === groupId ? { ...g, preMeet: venueId ? { venueId, minutesBefore: Math.min(90, Math.max(15, minutesBefore)) } : undefined } : g,
         ),
       }));
+      if (!venueId || !me) return;
+      for (const uid of group.members) {
+        if (uid === me.id) continue;
+        notifyMe(
+          'group',
+          'Ορίστηκε συνάντηση πριν την έξοδο — δες λεπτομέρειες στη «Βραδιά μας».',
+          'A pre-meet was set — see details on «Our night».',
+          { groupId, eventId: group.eventId, forUserId: uid },
+        );
+      }
     },
 
     reserveGroupTickets: (groupId) => {
@@ -606,24 +619,58 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       const unitPrice = Math.round(event.price * (1 - pct / 100) * 100) / 100;
       const tickets = activeTicketPartner().reserve({ groupId, eventId: event.id, memberIds: group.members, unitPrice });
       set((st) => ({ groups: st.groups.map((g) => (g.id === groupId ? { ...g, tickets } : g)) }));
-      notifyMe(
-        'group',
-        'Κρατήθηκαν θέσεις για όλη την ομάδα. Ο καθένας πληρώνει το δικό του μερίδιο.',
-        'Seats are held for the whole group. Everyone pays their own share.',
-        { groupId, eventId: group.eventId },
-      );
+      // Fan-out so every member knows to pay their share — not only the host who reserved.
+      for (const uid of group.members) {
+        notifyMe(
+          'group',
+          'Κρατήθηκαν θέσεις για όλη την ομάδα. Πλήρωσε το μερίδιό σου στη «Βραδιά μας».',
+          'Seats are held for the whole group. Pay your share on «Our night».',
+          { groupId, eventId: group.eventId, forUserId: uid },
+        );
+      }
       return true;
     },
 
     payTicketShare: (groupId) => {
       const me = get().currentUser;
       if (!me) return;
+      const before = get().groups.find((g) => g.id === groupId);
       set((st) => ({
         groups: st.groups.map((g) => {
           if (g.id !== groupId || !g.tickets || g.tickets.status !== 'awaiting_payments' || !(me.id in g.tickets.payments)) return g;
           return { ...g, tickets: settleReservation({ ...g.tickets, payments: { ...g.tickets.payments, [me.id]: 'paid' } }) };
         }),
       }));
+      const after = get().groups.find((g) => g.id === groupId);
+      if (
+        before?.tickets?.status === 'awaiting_payments' &&
+        after?.tickets?.status === 'issued' &&
+        after.members.length
+      ) {
+        for (const uid of after.members) {
+          notifyMe(
+            'group',
+            'Τα εισιτήρια της ομάδας εκδόθηκαν — δες τα στη «Βραδιά μας».',
+            'Group tickets were issued — see them on «Our night».',
+            { groupId, eventId: after.eventId, forUserId: uid },
+          );
+        }
+      } else if (
+        before?.tickets?.status === 'awaiting_payments' &&
+        after?.tickets?.status === 'awaiting_payments' &&
+        after.hostId &&
+        after.hostId !== me.id
+      ) {
+        const paid = Object.values(after.tickets.payments).filter((p) => p === 'paid').length;
+        const total = Object.keys(after.tickets.payments).length;
+        const payer = me.name.split(' ')[0] || 'Nakamas';
+        notifyMe(
+          'group',
+          `Ο/Η ${payer} πλήρωσε το μερίδιό του (${paid}/${total}) — δες τη «Βραδιά μας».`,
+          `${payer} paid their share (${paid}/${total}) — see «Our night».`,
+          { groupId, eventId: after.eventId, forUserId: after.hostId },
+        );
+      }
     },
 
     cancelGroupTickets: (groupId) => {
@@ -633,14 +680,37 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       set((st) => ({
         groups: st.groups.map((g) => (g.id === groupId && g.tickets ? { ...g, tickets: { ...g.tickets, status: 'cancelled' } } : g)),
       }));
+      for (const uid of group.members) {
+        notifyMe(
+          'group',
+          'Η κράτηση εισιτηρίων ακυρώθηκε — δες λεπτομέρειες στη «Βραδιά μας».',
+          'The ticket hold was cancelled — see details on «Our night».',
+          { groupId, eventId: group.eventId, forUserId: uid },
+        );
+      }
     },
 
-    toggleFollowOrganizer: (organizerId) =>
+    toggleFollowOrganizer: (organizerId) => {
+      const wasFollowing = get().followedOrganizerIds.includes(organizerId);
       set((st) => ({
-        followedOrganizerIds: st.followedOrganizerIds.includes(organizerId)
+        followedOrganizerIds: wasFollowing
           ? st.followedOrganizerIds.filter((id) => id !== organizerId)
           : [...st.followedOrganizerIds, organizerId],
-      })),
+      }));
+      if (!wasFollowing) {
+        const me = get().currentUser;
+        if (!me) return;
+        get().addNotification({
+          type: 'system',
+          messageGr: 'Ακολουθείς πλέον αυτόν τον διοργανωτή — θα βλέπεις τις νέες του εκδηλώσεις στην εξερεύνηση.',
+          messageEn: 'You now follow this organizer — their new events show up as you explore.',
+          timeGr: 'μόλις τώρα',
+          timeEn: 'just now',
+          read: false,
+          forUserId: me.id,
+        });
+      }
+    },
 
     createMiniOuting: (input) => {
       const s = get();
@@ -674,6 +744,7 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         minTrustTierAccess: '2_confirmed',
         maxParticipants: Math.min(6, Math.max(2, input.size)),
         tags: ['mini outing', input.kind],
+        imageUrl: MINI_OUTING_COVERS[input.kind],
       };
       const group: Group = {
         id: groupId,
@@ -715,11 +786,21 @@ export function handOverSeat(
   group: Group,
   leaverId: string,
   ctx: { users: User[]; strikes: Strike[]; blockedUserIds: string[]; price: number },
-): { group: Group; toUserId: string | null } {
+): { group: Group; toUserId: string | null; newHostId: string | null } {
   const wasFull = group.members.length >= group.targetSize;
   const members = group.members.filter((m) => m !== leaverId);
   const base: Group = { ...group, members, waitlist: (group.waitlist ?? []).filter((id) => id !== leaverId) };
-  if (!wasFull || !base.waitlist?.length) return { group: base, toUserId: null };
+  /** Keep door/check-in/tickets usable — never leave a zombie hostId after the host leaves. */
+  const withHost = (g: Group, prefer?: string | null): { group: Group; newHostId: string | null } => {
+    if (g.hostId !== leaverId) return { group: g, newHostId: null };
+    const next = (prefer && g.members.includes(prefer) ? prefer : undefined) ?? g.members[0];
+    if (!next) return { group: { ...g, hostId: undefined }, newHostId: null };
+    return { group: { ...g, hostId: next }, newHostId: next };
+  };
+  if (!wasFull || !base.waitlist?.length) {
+    const handed = withHost(base);
+    return { group: handed.group, toUserId: null, newHostId: handed.newHostId };
+  }
   for (const candidateId of base.waitlist) {
     const candidate = ctx.users.find((u) => u.id === candidateId);
     const gate = gateJoinGroup(candidate, base, { users: ctx.users, strikes: ctx.strikes, blockedUserIds: [] });
@@ -732,18 +813,18 @@ export function handOverSeat(
             payments: Object.fromEntries([...Object.entries(payments).filter(([id]) => id !== leaverId), [candidateId, 'pending' as const]]),
           }
         : base.tickets;
-    return {
-      group: {
-        ...base,
-        members: [...members, candidateId],
-        waitlist: base.waitlist.filter((id) => id !== candidateId),
-        lastTransfer: { fromUserId: leaverId, toUserId: candidateId, at: new Date().toISOString(), price: ctx.price },
-        tickets,
-      },
-      toUserId: candidateId,
+    const nextGroup: Group = {
+      ...base,
+      members: [...members, candidateId],
+      waitlist: base.waitlist.filter((id) => id !== candidateId),
+      lastTransfer: { fromUserId: leaverId, toUserId: candidateId, at: new Date().toISOString(), price: ctx.price },
+      tickets,
     };
+    const handed = withHost(nextGroup, candidateId);
+    return { group: handed.group, toUserId: candidateId, newHostId: handed.newHostId };
   }
-  return { group: base, toUserId: null };
+  const handed = withHost(base);
+  return { group: handed.group, toUserId: null, newHostId: handed.newHostId };
 }
 
 /** The group's code once its discount unlocks (Partiful / Luma, adapted). */
