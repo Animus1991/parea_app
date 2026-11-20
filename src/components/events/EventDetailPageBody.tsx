@@ -140,10 +140,15 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <button
+            type="button"
             onClick={() => navigateBack(navigate)}
+            aria-label={t('Επιστροφή στην Ανακάλυψη', 'Back to Discover')}
             className="text-2xs font-bold tracking-wide text-ink-muted hover:text-ink"
           >
-            &larr; {t('Επιστροφή στην Ανακάλυψη', 'Back to Discover')}
+            &larr;{' '}
+            {/* Short on phones so the actions beside it stay on one line. */}
+            <span className="sm:hidden">{t('Ανακάλυψη', 'Discover')}</span>
+            <span className="hidden sm:inline">{t('Επιστροφή στην Ανακάλυψη', 'Back to Discover')}</span>
           </button>
 
           <EventDetailActionBar

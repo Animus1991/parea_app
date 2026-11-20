@@ -16,6 +16,8 @@ export function ProfileCompletionMeter({ className }: { className?: string }) {
   if (!user) return null;
 
   const { percent, nextActionEl, nextActionEn, nextPath } = computeProfileCompletion(user, Boolean(user.bio?.trim()));
+  // A full bar with nothing left to do is only noise; the card returns when something is missing.
+  if (percent >= 100) return null;
 
   return (
     <div className={cn('rounded-2xl border p-4', a.cardSurface, a.borderB, className)}>
@@ -31,19 +33,17 @@ export function ProfileCompletionMeter({ className }: { className?: string }) {
           style={{ width: `${percent}%` }}
         />
       </div>
-      {percent < 100 && (
-        <button
-          type="button"
-          onClick={() => navigate(nextPath)}
-          className={cn(
-            'flex items-center gap-2 text-xs font-semibold w-full text-left hover:opacity-80 transition-opacity',
-            a.iconAccent,
-          )}
-        >
-          {t(nextActionEl, nextActionEn)}
-          <ArrowRight className="w-3.5 h-3.5 shrink-0" aria-hidden />
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={() => navigate(nextPath)}
+        className={cn(
+          'flex items-center gap-2 text-xs font-semibold w-full text-left hover:opacity-80 transition-opacity',
+          a.iconAccent,
+        )}
+      >
+        {t(nextActionEl, nextActionEn)}
+        <ArrowRight className="w-3.5 h-3.5 shrink-0" aria-hidden />
+      </button>
     </div>
   );
 }

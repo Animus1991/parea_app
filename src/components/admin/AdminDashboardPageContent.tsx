@@ -24,6 +24,7 @@ import { useAiAuditStore, type AiAuditStatus } from '../../store/aiAuditStore';
 import { intlLocale } from '../../lib/dateLocale';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { AppSelect } from '../common/AppSelect';
+import { PhotoOrInitials } from '../common/PhotoOrInitials';
 
 type AdminTab = 'overview' | 'moderation' | 'users' | 'system' | 'automation' | 'branding' | 'sso';
 
@@ -335,7 +336,9 @@ export default function AdminDashboardPageContent() {
               return (
                 <li key={u.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <img src={u.photoUrl || `https://i.pravatar.cc/80?u=${u.id}`} alt="" referrerPolicy="no-referrer" className="w-10 h-10 rounded-full object-cover shrink-0" />
+                    <span className={cn('w-10 h-10 rounded-full overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold', a.isDark ? 'bg-gray-700 text-gray-200' : 'bg-gray-100 text-gray-700')}>
+                      <PhotoOrInitials src={u.photoUrl} name={u.name} />
+                    </span>
                     <div className="min-w-0">
                       <p className={cn('font-bold text-sm flex items-center gap-2 flex-wrap', a.head)}>
                         {u.name}

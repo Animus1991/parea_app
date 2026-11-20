@@ -57,6 +57,7 @@ import { WallPostList } from "../wall/WallPostList";
 import { WallPrivacyPanel } from "../wall/WallPrivacyPanel";
 import { PersonAvatar } from "../wall/PersonAvatar";
 import { VibeProfileCard } from '../outings/VibeProfileCard';
+import { PhotoOrInitials } from "../common/PhotoOrInitials";
 
 // ─── Main component ──────────────────────────────────────────
 export default function ProfilePageContent() {
@@ -227,11 +228,9 @@ export default function ProfilePageContent() {
           <div className="flex items-start gap-3 sm:gap-4">
             <div className="relative shrink-0">
               <div className={`h-20 w-20 rounded-2xl flex items-center justify-center border-2 overflow-hidden shadow-soft ${a.avatarBg}`}>
-                {photoUrl ? (
-                  <img referrerPolicy="no-referrer" src={photoUrl} alt={currentUser.name} className="w-full h-full object-cover" />
-                ) : (
-                  <span className={cn(PROFILE_TYPO.identityName, a.avatarText)}>{currentUser.name.substring(0, 2)}</span>
-                )}
+                <span className={cn(PROFILE_TYPO.identityName, a.avatarText, 'contents')}>
+                  <PhotoOrInitials src={photoUrl} name={currentUser.name} />
+                </span>
               </div>
               <button
                 type="button"

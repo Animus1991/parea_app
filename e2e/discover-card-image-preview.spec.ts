@@ -11,6 +11,9 @@ test.describe('Discover card image picker', () => {
 
     const picker = page.locator('[data-card-image-picker]');
     await expect(picker).toBeVisible({ timeout: 15_000 });
+    // Collapsed to one quiet chip until opened.
+    await expect(picker.getByRole('radio')).toHaveCount(0);
+    await picker.locator('[data-card-image-toggle]').click();
     await expect(picker.getByRole('radio')).toHaveCount(ALL_DEPTHS.length);
     for (const option of ALL_DEPTHS) {
       await expect(picker.locator(`[data-card-image-option="${option}"]`)).toBeVisible();
@@ -45,6 +48,7 @@ test.describe('Discover card image picker', () => {
     await enterDemoGuest(page);
     const picker = page.locator('[data-card-image-picker]');
     await expect(picker).toBeVisible({ timeout: 15_000 });
+    await picker.locator('[data-card-image-toggle]').click();
     const card = page.locator('#main-content .nakamas-card').first();
     await expect(card).toBeVisible({ timeout: 15_000 });
 

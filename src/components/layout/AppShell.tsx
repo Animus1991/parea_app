@@ -47,6 +47,7 @@ function useUnreadCount() {
   return notifications.filter(n => !n.read && (!n.forUserId || n.forUserId === userId)).length + wallUnread;
 }
 import { useLanguage } from '../../lib/i18n';
+import { PhotoOrInitials } from '../common/PhotoOrInitials';
 
 // ─────────────────────────────────────────────
 // NakamasLogo — SVG ψάθινο καπέλο με αχυρωτό στέλεχος
@@ -463,11 +464,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
                 <span className={cn("text-xs font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-ink")}>{currentUser.name}</span>
               </div>
               <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-xs overflow-hidden border", theme === "activebuddies-dark" ? "bg-gray-700/50 border-gray-600 text-gray-200" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] border-[hsl(220_13%_92%)] text-[hsl(220_14%_12%)]" : theme === "vibrant-dark" ? "bg-white/10 border-white/15 text-gray-300" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "vibrant" ? "bg-gray-100 border-gray-200 text-gray-600" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-brand")}>
-                {currentUser.photoUrl ? (
-                  <img src={currentUser.photoUrl} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  currentUser.name.substring(0, 2)
-                )}
+                <PhotoOrInitials src={currentUser.photoUrl} name={currentUser.name} />
               </div>
             </UserMenu>
           ) : (

@@ -10,6 +10,7 @@ import { useHomeTheme } from "../../hooks/useHomeTheme";
 import { cn } from "../../lib/utils";
 import { isEventSeekingHost } from "../../lib/storyEventOrdering";
 import { StoryViewer } from "./StoryViewer";
+import { EventCoverImg } from "../common/EventCoverImg";
 import { HorizontalScrollArrows } from "../ui/HorizontalScrollArrows";
 import { SectionLabel } from "../common/SectionLabel";
 
@@ -97,16 +98,12 @@ export function EventStories({ events }: EventStoriesProps) {
                 )}
               >
                 <div className="event-story-tile-frame relative w-full h-[150px] rounded-2xl overflow-hidden bg-gray-200">
-                  {e.imageUrl ? (
-                    <img
-                      src={e.imageUrl}
-                      alt=""
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400" />
-                  )}
+                  {/* Same cover logic as the event cards: falls back to the app's own cover offline. */}
+                  <EventCoverImg
+                    event={e}
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
                   {/* One quiet marker at most: seeking a host wins over trending. */}

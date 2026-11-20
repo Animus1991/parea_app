@@ -4,6 +4,7 @@ import { Card } from '../common/Card';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { HomeGuestHero } from '../home/HomeGuestHero';
+import { PhotoOrInitials } from '../common/PhotoOrInitials';
 import { LoginGuestHeroStrip } from './LoginGuestHeroStrip';
 import { LoginExploreDemoButton } from './LoginExploreDemoButton';
 import { appEnv } from '../../lib/config/env';
@@ -269,14 +270,8 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
                 onClick={() => handleLogin(user.id)}
                 className={tok.userBtnClass}
               >
-                <div className={cn('h-10 w-10 rounded-full overflow-hidden flex-shrink-0', tok.avatarBg)}>
-                  {user.photoUrl ? (
-                    <img referrerPolicy="no-referrer" src={user.photoUrl} alt={user.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className={cn('w-full h-full flex items-center justify-center font-bold', tok.avatarText)}>
-                      {user.name.substring(0, 2)}
-                    </div>
-                  )}
+                <div className={cn('h-10 w-10 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center font-bold', tok.avatarBg, tok.avatarText)}>
+                  <PhotoOrInitials src={user.photoUrl} name={user.name} />
                 </div>
                 <div>
                   <div className={cn('text-sm font-bold', tok.stripDark ? 'text-white' : 'text-gray-900', tok.nameHoverClass)}>{user.name}</div>

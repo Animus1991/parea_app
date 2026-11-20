@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import { Users } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { usePlansFabState } from '../../hooks/usePlansFabState';
@@ -9,8 +10,10 @@ export function PlansFormingMobileFab() {
   const { t } = useLanguage();
   const setOpen = useStore((s) => s.setPlansFormingSheetOpen);
   const { visible, label } = usePlansFabState();
+  const { pathname } = useLocation();
 
-  if (!visible) return null;
+  // Not on Find Nakamas itself: the page already shows these plans.
+  if (!visible || pathname.startsWith('/buddy-seek')) return null;
 
   return (
     <button

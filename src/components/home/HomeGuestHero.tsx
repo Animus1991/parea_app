@@ -3,7 +3,6 @@ import { motion } from 'motion/react';
 import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
-import { Button } from '../common/Button';
 import { NakamasMini } from '../illustrations/NakamasMini';
 
 /** Marketing hero for unauthenticated users (Login / landing). */
@@ -24,13 +23,14 @@ export function HomeGuestHero() {
       <h1 className={cn(APP_TYPO.pageTitle, 'text-ink')}>
         {t('Βρείτε την επόμενη εμπειρία σας', 'Find your next experience')}
       </h1>
-      <Button
-        variant="primary"
-        className="!rounded-full"
+      {/* A quiet link, as on the themed login strip: the sign-in choices below are the main action. */}
+      <button
+        type="button"
         onClick={() => navigate('/help')}
+        className="text-xs font-bold text-cyan-700 underline-offset-2 hover:text-cyan-800 hover:underline"
       >
         {t('Πώς λειτουργεί το Nakamas', 'How Nakamas works')}
-      </Button>
+      </button>
     </motion.section>
   );
 }

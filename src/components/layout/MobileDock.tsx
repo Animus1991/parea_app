@@ -41,6 +41,8 @@ export function MobileDock() {
 
   // A group chat owns the bottom of the screen (composer); chats are one tap back.
   if (pathname.startsWith('/chat/')) return null;
+  // On Find Nakamas itself the plans shortcut would open what is already on screen.
+  const showPlans = plans.visible && !pathname.startsWith('/buddy-seek');
 
   const segment =
     'flex items-center gap-2 min-h-11 font-bold text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-fg/70 transition-colors';
@@ -61,7 +63,7 @@ export function MobileDock() {
           : 'bottom-fab-zone',
       )}
     >
-      {plans.visible && (
+      {showPlans && (
         <>
           <button
             type="button"
@@ -88,7 +90,7 @@ export function MobileDock() {
             ? t(`${unread} αδιάβαστες συνομιλίες`, `${unread} unread chats`)
             : t('Συνομιλίες', 'Chats')
         }
-        className={cn(segment, plans.visible ? 'pl-3 pr-4' : 'px-4', 'active:bg-black/10')}
+        className={cn(segment, showPlans ? 'pl-3 pr-4' : 'px-4', 'active:bg-black/10')}
       >
         <span className="relative shrink-0">
           <MessageCircle className="w-4 h-4" aria-hidden />

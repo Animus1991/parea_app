@@ -24,6 +24,7 @@ import { PostComposer } from '../wall/PostComposer';
 import { WallPostList } from '../wall/WallPostList';
 import { profilePathFor } from '../../lib/profileLinks';
 import { OrganizerCalendarCard } from '../outings/OrganizerCalendarCard';
+import { PhotoOrInitials } from '../common/PhotoOrInitials';
 
 export default function OrganizerProfilePageContent() {
   const { id } = useParams();
@@ -167,13 +168,9 @@ export default function OrganizerProfilePageContent() {
 
       <div className={cn('rounded-2xl border p-5 shadow-soft text-center sm:text-left sm:flex sm:items-start gap-5', p.cardSurface, p.borderB)}>
         <div className={cn('w-32 h-32 rounded-full overflow-hidden mx-auto sm:mx-0 shrink-0 border-4 shadow-soft-md', p.isDark ? 'border-gray-700 bg-gray-800' : 'border-white bg-gray-100')}>
-          {projected.photoUrl ? (
-            <img referrerPolicy="no-referrer" src={projected.photoUrl} alt={projected.name} className="w-full h-full object-cover" />
-          ) : (
-            <div className={cn('w-full h-full flex items-center justify-center text-sm md:text-base font-bold', p.muted)}>
-              {projected.name.substring(0, 2).toUpperCase()}
-            </div>
-          )}
+          <div className={cn('w-full h-full flex items-center justify-center text-sm md:text-base font-bold uppercase', p.muted)}>
+            <PhotoOrInitials src={projected.photoUrl} name={projected.name} />
+          </div>
         </div>
 
         <div className="mt-4 sm:mt-0 flex-1 space-y-4">
