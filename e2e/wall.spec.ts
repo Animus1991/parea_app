@@ -87,6 +87,41 @@ test.describe('Nakamas wall v2', () => {
     await expect(mine).toContainText('Stand-Up Comedy Night');
   });
 
+  test('a tagged wall owner can still remove the tag after approving it', async ({ page }) => {
+    await page.goto('/login');
+    await page.evaluate((key) => {
+      const raw = localStorage.getItem(key);
+      const data = raw ? JSON.parse(raw) : { state: {}, version: 0 };
+      data.state = { ...(data.state ?? {}), onboardingCompleted: true };
+      localStorage.setItem(key, JSON.stringify(data));
+    }, 'nakamas-store-v1');
+    await page.reload();
+    await page.getByRole('button', { name: /Nikos/ }).first().click();
+    await expect(page.locator('#main-content')).toBeVisible();
+
+    await page.goto('/u/u1');
+    const composer = page.getByTestId('wall-composer');
+    await composer.getByRole('textbox').fill('Καλημέρα, σε έβαλα στην παρέα.');
+    await composer.getByRole('button', { name: /Με ποιους|With whom/ }).click();
+    const tagDialog = page.getByRole('dialog');
+    await tagDialog.locator('label').filter({ hasText: /^Alex/ }).click();
+    await tagDialog.getByRole('button', { name: /^Τέλος$|^Done$/ }).click();
+    await composer.getByRole('button', { name: /^Δημοσίευση$|^Post$/ }).click();
+    await expect(page.getByTestId('wall-post').filter({ hasText: 'Καλημέρα, σε έβαλα στην παρέα' })).toBeVisible();
+
+    await page.goto('/login');
+    await page.getByRole('button', { name: /^Alex\b/ }).first().click();
+    await expect(page.locator('#main-content')).toBeVisible();
+    await page.goto('/wall');
+    const post = page.getByTestId('wall-post').filter({ hasText: 'Καλημέρα, σε έβαλα στην παρέα' });
+    await expect(post.getByRole('button', { name: /^Ναι$|^Yes$/ })).toBeVisible();
+    await post.getByRole('button', { name: /^Ναι$|^Yes$/ }).click();
+    await expect(post.getByRole('button', { name: /^Ναι$|^Yes$/ })).toHaveCount(0);
+    await post.getByRole('button', { name: /Ενέργειες δημοσίευσης|Post actions/ }).click();
+    await page.getByRole('menuitem', { name: /Αφαίρεση της ετικέτας μου|Remove my tag/ }).click();
+    await expect(post.getByText(/με εσένα|with you/)).toHaveCount(0);
+  });
+
   test('a reported post is removed by a moderator and hidden from others', async ({ page }) => {
     await enterDemoAdmin(page);
     await page.goto('/wall');

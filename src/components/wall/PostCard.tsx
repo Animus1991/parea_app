@@ -208,6 +208,14 @@ export function PostCard({
         onSelect: () => run(togglePin(post.id)) && toast.success(post.pinned ? t('Ξεκαρφιτσώθηκε', 'Unpinned') : t('Καρφιτσώθηκε', 'Pinned')),
       });
     }
+    if (iAmTagged && !isAuthor) {
+      menuItems.push({
+        key: 'untag',
+        icon: UserMinus,
+        label: t('Αφαίρεση της ετικέτας μου', 'Remove my tag'),
+        onSelect: () => run(removeMyTag(post.id)) && toast.success(t('Η ετικέτα σου αφαιρέθηκε', 'Your tag was removed')),
+      });
+    }
     if (isAuthor || isOwner) {
       menuItems.push({
         key: 'comments',
@@ -226,7 +234,6 @@ export function PostCard({
       });
     } else {
       menuItems.push({ key: 'hide', icon: EyeOff, label: t('Απόκρυψη από τη ροή μου', 'Hide from my feed'), onSelect: handleHide });
-      if (iAmTagged) menuItems.push({ key: 'untag', icon: UserMinus, label: t('Αφαίρεση της ετικέτας μου', 'Remove my tag'), onSelect: () => run(removeMyTag(post.id)) && toast.success(t('Η ετικέτα σου αφαιρέθηκε', 'Your tag was removed')) });
       menuItems.push({ key: 'report', icon: Flag, label: t('Αναφορά δημοσίευσης', 'Report post'), onSelect: () => setReportOpen(true), danger: true });
       menuItems.push({ key: 'block', icon: Ban, label: t(`Αποκλεισμός ${author.name}`, `Block ${author.name}`), onSelect: handleBlock, danger: true });
     }
