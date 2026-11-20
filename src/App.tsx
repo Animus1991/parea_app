@@ -54,6 +54,7 @@ const Wall = lazy(routeLoaders.wall);
 const PersonProfile = lazy(routeLoaders.personProfile);
 const OurNight = lazy(routeLoaders.ourNight);
 const Collections = lazy(routeLoaders.collections);
+const Tags = lazy(routeLoaders.tags);
 const InvitePublic = lazy(routeLoaders.invitePublic);
 const OrganizerEmbed = lazy(routeLoaders.organizerEmbed);
 
@@ -76,7 +77,7 @@ export default function App() {
   useEffect(() => {
     if (onLogin) return prefetchWhenIdle(["/"]);
     if (!signedIn) return;
-    return prefetchWhenIdle(["/", "/events/_", "/categories", "/plans", "/buddy-seek", "/saved", "/chats", "/profile", "/notifications", "/wall"]);
+    return prefetchWhenIdle(["/", "/events/_", "/categories", "/tags", "/plans", "/buddy-seek", "/saved", "/chats", "/profile", "/notifications", "/wall"]);
   }, [onLogin, signedIn]);
 
   const publicPage = isPublicPath(location.pathname);
@@ -153,6 +154,8 @@ export default function App() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<ErrorBoundary><Home /></ErrorBoundary>} />
             <Route path="/categories" element={<ErrorBoundary><Categories /></ErrorBoundary>} />
+            <Route path="/tags" element={<ErrorBoundary><Tags /></ErrorBoundary>} />
+            <Route path="/tags/:slug" element={<ErrorBoundary><Tags /></ErrorBoundary>} />
             <Route path="/nearby" element={<ErrorBoundary><NearbyGroups /></ErrorBoundary>} />
 
             <Route path="/events/:eventId" element={<ErrorBoundary><EventDetail /></ErrorBoundary>} />

@@ -15,6 +15,7 @@ const ROUTE_SUGGESTIONS: { prefix: string; path: string; labelEl: string; labelE
   { prefix: 'plan', path: '/plans', labelEl: 'Πλάνα', labelEn: 'Plans' },
   { prefix: 'near', path: '/nearby', labelEl: 'Κοντά μου', labelEn: 'Nearby' },
   { prefix: 'categ', path: '/categories', labelEl: 'Κατηγορίες', labelEn: 'Categories' },
+  { prefix: 'tag', path: '/tags', labelEl: 'Ετικέτες', labelEn: 'Tags' },
   { prefix: 'set', path: '/settings', labelEl: 'Ρυθμίσεις', labelEn: 'Settings' },
 ];
 

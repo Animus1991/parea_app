@@ -40,6 +40,7 @@ export const routeLoaders = {
   // Φ27 — outings
   ourNight: () => import('../pages/OurNight'),
   collections: () => import('../pages/Collections'),
+  tags: () => import('../pages/Tags'),
   invitePublic: () => import('../pages/InvitePublic'),
   organizerEmbed: () => import('../pages/OrganizerEmbed'),
 } as const;
@@ -80,6 +81,7 @@ const PATH_KEYS: Array<[RegExp, RouteKey]> = [
   [/^\/u\//, 'personProfile'],
   [/^\/night\//, 'ourNight'],
   [/^\/collections(\/|$)/, 'collections'],
+  [/^\/tags(\/|$)/, 'tags'],
   [/^\/i\//, 'invitePublic'],
   [/^\/embed\/organizer\//, 'organizerEmbed'],
   [/^\/admin$/, 'adminDashboard'],

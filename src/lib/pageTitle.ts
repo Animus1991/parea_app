@@ -17,6 +17,7 @@ export function pageTitleForPath(pathname: string): { el: string; en: string } {
   if (pathname.startsWith('/history/feedback')) return { el: 'Αξιολόγηση', en: 'Feedback' };
   if (pathname.startsWith('/night/')) return { el: 'Η βραδιά μας', en: 'Our night' };
   if (pathname.startsWith('/collections/')) return { el: 'Συλλογή', en: 'Collection' };
+  if (pathname.startsWith('/tags/')) return { el: 'Ετικέτες', en: 'Tags' };
   if (pathname.startsWith('/i/')) return { el: 'Πρόσκληση', en: 'Invitation' };
   if (pathname.startsWith('/embed/')) return { el: 'Ημερολόγιο διοργανωτή', en: 'Organizer calendar' };
   if (pathname === '/calendar') return { el: 'Ημερολόγιο', en: 'Calendar' };

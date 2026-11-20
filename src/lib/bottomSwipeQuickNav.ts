@@ -76,6 +76,7 @@ export interface QuickNavTileDef {
  */
 export const QUICK_NAV_TILES: QuickNavTileDef[] = [
   { id: 'categories', path: '/categories', labelEl: 'Κατηγορίες', labelEn: 'Categories' },
+  { id: 'tags', path: '/tags', labelEl: 'Ετικέτες', labelEn: 'Tags' },
   { id: 'collections', path: '/collections', labelEl: 'Συλλογές', labelEn: 'Collections' },
   { id: 'nearby', path: '/nearby', labelEl: 'Τοπικές Ομάδες', labelEn: 'Local Groups' },
   { id: 'agenda', path: '/agenda', labelEl: 'Ημερολόγιο', labelEn: 'Calendar' },

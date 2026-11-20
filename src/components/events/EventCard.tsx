@@ -37,6 +37,7 @@ import {
   showNightCoordinationTools,
   translateEventTag,
 } from "../../lib/eventDisplay";
+import { eventTagPath, eventTagSlug } from "../../lib/eventTags";
 import { isDarkTheme } from "../../lib/themes";
 import { getEventGroupProgress } from "../../lib/groupUtils";
 import { reliabilityBadge, tierLabelEl, tierLabelEn } from "../../lib/trust";
@@ -550,22 +551,30 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
           </button>
         </div>
 
-        {/* Tags + Price — bottom of image, same chip height */}
+        {/* Tags + Price — chips size to their label; the row may scroll, the pill never clips. */}
         <div className="absolute bottom-3 left-3 right-3 z-10 flex items-end justify-between gap-2">
-          <div className="flex min-w-0 max-w-[48%] flex-1 flex-nowrap gap-1.5 overflow-hidden">
-            {(event.tags ?? []).slice(0, 2).map((tag: string, i: number) => (
-              <span
+          <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto noscrollbar">
+            {(event.tags ?? []).slice(0, 2).map((tag: string, i: number) => {
+              const label = translateEventTag(tag, t);
+              return (
+              <Link
                 key={tag}
+                to={eventTagPath(tag)}
+                data-event-tag={eventTagSlug(tag)}
+                title={label}
+                aria-label={t(`Ετικέτα ${label}`, `Tag ${label}`)}
+                onClick={(e) => e.stopPropagation()}
                 className={cn(
-                  "inline-flex h-7 max-w-full items-center truncate rounded-full bg-black/40 px-2.5 text-xs font-medium tracking-wide text-white/95 backdrop-blur-sm whitespace-nowrap",
+                  "inline-flex h-7 w-max shrink-0 items-center overflow-visible rounded-full bg-black/40 px-2.5 text-xs font-medium tracking-wide text-white/95 backdrop-blur-sm whitespace-nowrap",
                   i > 0 && "hidden @[20rem]:inline-flex",
                 )}
               >
-                {translateEventTag(tag, t)}
-              </span>
-            ))}
+                {label}
+              </Link>
+              );
+            })}
           </div>
-          <div className={cn("z-10 bg-white/90 backdrop-blur-md min-h-7 max-w-[52%] px-2.5 py-1 rounded-xl font-bold text-ink tracking-tight flex flex-col items-end justify-center shrink-0 text-right", EVENT_CARD_TYPO.dateBadge)}>
+          <div className={cn("z-10 bg-white/90 backdrop-blur-md min-h-7 px-2.5 py-1 rounded-xl font-bold text-ink tracking-tight flex flex-col items-end justify-center shrink-0 text-right", EVENT_CARD_TYPO.dateBadge)}>
             {formatEventPrice(event, language, t("Δωρεάν", "Free"), t("Δωρεάν", "Free"))}
             {event.isPaid && event.groupDiscount && (
               <span className={cn(EVENT_CARD_TYPO.dateSub, "text-brand block mt-0.5")}>

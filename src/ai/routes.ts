@@ -24,6 +24,7 @@ export const APP_ROUTES: AppRoute[] = [
   { id: 'plans', path: '/plans', labelEl: 'Τα Σχέδιά μου', labelEn: 'My Plans', stems: ['σχεδια μου', 'τα σχεδια', 'my plans', 'plans'] },
   { id: 'buddy-seek', path: '/buddy-seek', labelEl: 'Βρες Nakamas', labelEn: 'Find Nakamas', stems: ['βρεσ nakamas', 'βρεσ παρεα', 'buddy', 'find nakamas', 'find company', 'plans forming'] },
   { id: 'collections', path: '/collections', labelEl: 'Συλλογές', labelEn: 'Collections', stems: ['συλλογ', 'nakamas nights', 'δωρεαν εκδηλωσ', 'collections', 'free events'] },
+  { id: 'tags', path: '/tags', labelEl: 'Ετικέτες', labelEn: 'Tags', stems: ['ετικετ', 'hashtag', 'tags'] },
   { id: 'saved', path: '/saved', labelEl: 'Αποθηκευμένες', labelEn: 'Saved', stems: ['αποθηκευμεν', 'saved', 'bookmarks'] },
   { id: 'history', path: '/history', labelEl: 'Ιστορικό', labelEn: 'History', stems: ['ιστορικ', 'history', 'past events'] },
   { id: 'connections', path: '/connections', labelEl: 'Οι Nakamas μου', labelEn: 'My Nakamas', stems: ['nakamas μου', 'φιλοι', 'φιλουσ', 'συνδεσεισ', 'connections', 'friends', 'my nakamas'] },
@@ -73,6 +74,7 @@ export function routeIdForPath(pathname: string): string {
   if (pathname.startsWith('/history/feedback')) return 'feedback';
   if (pathname.startsWith('/night/')) return 'our-night';
   if (pathname.startsWith('/collections/')) return 'collection';
+  if (pathname.startsWith('/tags/')) return 'tags';
   const exact = APP_ROUTES.find((r) => r.path === pathname);
   if (exact) return exact.id;
   return hasAny(pathname, ['/calendar']) ? 'agenda' : 'other';

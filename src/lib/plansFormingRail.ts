@@ -6,7 +6,7 @@
  * their own task, and /buddy-seek already shows the same list full-width.
  * Everything in the rail stays reachable from «Βρες Nakamas» in the nav.
  */
-const EXACT = new Set(['/', '/categories', '/saved']);
+const EXACT = new Set(['/', '/categories', '/tags', '/saved']);
 
 export function isPlansRailRoute(pathname: string): boolean {
   if (EXACT.has(pathname)) return true;

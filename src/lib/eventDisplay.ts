@@ -54,6 +54,13 @@ const TAG_EL: Record<string, string> = {
   theater: 'Θέατρο',
   sailing: 'Ιστιοπλοΐα',
   sunset: 'Ηλιοβασίλεμα',
+  'nakamas nights': 'Nakamas Nights',
+  'small groups': 'Μικρές ομάδες',
+  'board games': 'Επιτραπέζια',
+  'mini outing': 'Μικρή έξοδος',
+  wine: 'Κρασί',
+  coffee: 'Καφές',
+  run: 'Τρέξιμο',
 };
 
 function padTime(time: string): string {
