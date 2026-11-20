@@ -28,18 +28,12 @@ import type { CompanyJoinRequestStatus, CompanyRequest } from '../../types/compa
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { MiniOutingsSection } from '../outings/MiniOutingsSection';
 import { hasUsualHours, matchesUsualHours } from '../../lib/quietCatalog';
-
-type FilterKey = 'all' | 'open_spots' | 'verified' | 'small_groups' | 'flexible' | 'saved_events' | 'high_match';
-
-const FILTER_DEFS: { key: FilterKey; el: string; en: string }[] = [
-  { key: 'all', el: 'Όλα', en: 'All' },
-  { key: 'high_match', el: 'Υψηλή συμβατότητα', en: 'High match' },
-  { key: 'saved_events', el: 'Αποθηκευμένες', en: 'Saved events' },
-  { key: 'flexible', el: 'Ευέλικτα', en: 'Flexible' },
-  { key: 'open_spots', el: 'Ανοιχτές θέσεις', en: 'Open spots' },
-  { key: 'small_groups', el: 'Μικρές ομάδες', en: 'Small groups' },
-  { key: 'verified', el: 'Επαληθευμένοι', en: 'Verified' },
-];
+import {
+  BuddySeekFilterBar,
+  BuddySeekPageActions,
+  BuddySeekVibeNudge,
+  type BuddySeekFilterKey,
+} from './BuddySeekChrome';
 
 function joinStatusLabel(status: CompanyJoinRequestStatus, t: (el: string, en: string) => string) {
   switch (status) {
@@ -79,7 +73,7 @@ export default function BuddySeekPageContent() {
   const availability = useStore((s) => s.userSettings.availability);
   const [showQueuedSeeks, setShowQueuedSeeks] = useState(false);
 
-  const [filter, setFilter] = useState<FilterKey>('all');
+  const [filter, setFilter] = useState<BuddySeekFilterKey>('all');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const filterBarRef = useRef<HTMLDivElement>(null);
   const [preview, setPreview] = useState<PlansFormingEnrichedItem | null>(null);
@@ -88,12 +82,19 @@ export default function BuddySeekPageContent() {
   const [wizard, setWizard] = useState<RequestWizard | null>(null);
   useEffect(() => {
     const editId = searchParams.get('editRequest');
-    if (!editId) return;
-    const req = companyRequests.find((r) => r.id === editId);
-    const event = req ? events.find((e) => e.id === req.eventId) : undefined;
-    if (req && event) setWizard({ event, existing: req });
+    const openNew = searchParams.get('newRequest') === '1';
+    if (!editId && !openNew) return;
     const next = new URLSearchParams(searchParams);
-    next.delete('editRequest');
+    if (editId) {
+      const req = companyRequests.find((r) => r.id === editId);
+      const event = req ? events.find((e) => e.id === req.eventId) : undefined;
+      if (req && event) setWizard({ event, existing: req });
+      next.delete('editRequest');
+    }
+    if (openNew) {
+      setEventPickerOpen(true);
+      next.delete('newRequest');
+    }
     setSearchParams(next, { replace: true });
   }, [searchParams, companyRequests, events, setSearchParams]);
 
@@ -172,11 +173,6 @@ export default function BuddySeekPageContent() {
     visibleIds: visibleSeeks.slice(0, 8).map((i) => i.intent.id),
   });
 
-  const headerLink =
-    'inline-flex items-center min-h-9 text-xs font-semibold text-ink-muted hover:text-ink transition-colors';
-  const quietChip =
-    'inline-flex items-center min-h-8 px-3 text-xs font-semibold rounded-full transition-colors';
-
   return (
     <div className={cn(PAGE_FILL, 'space-y-7 pb-32 pt-4 md:pb-8')}>
       <header className="space-y-3">
@@ -188,43 +184,15 @@ export default function BuddySeekPageContent() {
         {feed.insights.compatiblePlans === 0 && (
           <PlansFormingStatsBar plain insights={feed.insights} />
         )}
-        <nav aria-label={t('Ενέργειες σελίδας', 'Page actions')} className="flex flex-wrap gap-x-5 gap-y-2">
-          <button
-            type="button"
-            onClick={() => navigate('/settings?section=buddy-seek')}
-            className={headerLink}
-          >
-            {t('Ρυθμίσεις απορρήτου', 'Privacy settings')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setEventPickerOpen(true)}
-            className={headerLink}
-          >
-            {t('Νέο αίτημα από εκδήλωση', 'New request from event')}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/plans')}
-            className={headerLink}
-          >
-            {t('Τα σχέδιά μου', 'My plans')}
-          </button>
-        </nav>
+        <BuddySeekPageActions
+          onPrivacy={() => navigate('/settings?section=buddy-seek')}
+          onNewRequest={() => setEventPickerOpen(true)}
+          onMyPlans={() => navigate('/plans')}
+        />
       </header>
 
-      {/* Soft one-line vibe nudge — matching uses «Το στυλ παρέας μου»; never blocks browsing. */}
       {currentUser && !currentUser.vibe && (
-        <button
-          type="button"
-          onClick={() => navigate('/profile')}
-          className="text-left text-xs font-semibold text-ink-muted hover:text-ink"
-        >
-          {t(
-            'Ολοκλήρωσε το στυλ παρέας (5 ερωτήσεις) →',
-            'Complete your group style (5 questions) →',
-          )}
-        </button>
+        <BuddySeekVibeNudge onClick={() => navigate('/profile')} />
       )}
 
       {/* Φ27 — small outings without an event (coffee / walk / run) */}
@@ -303,72 +271,27 @@ export default function BuddySeekPageContent() {
         </section>
       )}
 
-      <div ref={filterBarRef} className="space-y-3 scroll-mt-4">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
-          <button
-            type="button"
-            aria-expanded={filtersOpen}
-            aria-controls="buddy-seek-filters"
-            onClick={() => {
-              setFiltersOpen((open) => {
-                const next = !open;
-                if (next) {
-                  requestAnimationFrame(() => {
-                    filterBarRef.current?.scrollIntoView({
-                      block: 'start',
-                      behavior: 'smooth',
-                    });
+      <div ref={filterBarRef} className="scroll-mt-4">
+        <BuddySeekFilterBar
+          filter={filter}
+          filterCounts={filterCounts}
+          filtersOpen={filtersOpen}
+          onToggleOpen={() => {
+            setFiltersOpen((open) => {
+              const next = !open;
+              if (next) {
+                requestAnimationFrame(() => {
+                  filterBarRef.current?.scrollIntoView({
+                    block: 'start',
+                    behavior: 'smooth',
                   });
-                }
-                return next;
-              });
-            }}
-            className={cn(
-              quietChip,
-              filtersOpen ? 'bg-cyan-600 text-white' : 'text-ink hover:text-ink-muted',
-            )}
-          >
-            {t('Φίλτρα', 'Filters')}
-            {filter !== 'all' && <span className="ml-1.5 tabular-nums opacity-80">1</span>}
-          </button>
-          {!filtersOpen && filter !== 'all' && (
-            <button
-              type="button"
-              onClick={() => setFilter('all')}
-              className={cn(quietChip, 'bg-cyan-600 text-white gap-1.5')}
-              aria-label={t('Καθαρισμός φίλτρου', 'Clear filter')}
-            >
-              {t(
-                FILTER_DEFS.find((item) => item.key === filter)?.el ?? 'Φίλτρο',
-                FILTER_DEFS.find((item) => item.key === filter)?.en ?? 'Filter',
-              )}
-              {filterCounts[filter] > 0 && <span className="tabular-nums opacity-80">{filterCounts[filter]}</span>}
-            </button>
-          )}
-        </div>
-        {filtersOpen && (
-          <div id="buddy-seek-filters" className="flex flex-wrap gap-x-1 gap-y-2">
-            {FILTER_DEFS.map(({ key, el, en }) => {
-              const count = filterCounts[key];
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  aria-pressed={filter === key}
-                  onClick={() => setFilter(key === filter && key !== 'all' ? 'all' : key)}
-                  className={cn(
-                    quietChip,
-                    'gap-1.5',
-                    filter === key ? 'bg-cyan-600 text-white' : 'text-ink-muted hover:text-ink',
-                  )}
-                >
-                  {t(el, en)}
-                  {count > 0 && <span className="tabular-nums opacity-80">{count}</span>}
-                </button>
-              );
-            })}
-          </div>
-        )}
+                });
+              }
+              return next;
+            });
+          }}
+          onChange={setFilter}
+        />
       </div>
 
       <ResourceStateGate

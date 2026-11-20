@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Inbox } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -16,6 +16,13 @@ import {
   PlansFormingValueHero,
   PlansFormingYourPlanBanner,
 } from './plansForming/PlansFormingShared';
+import {
+  BuddySeekFilterBar,
+  BuddySeekPageActions,
+  BuddySeekVibeNudge,
+  type BuddySeekFilterKey,
+} from './BuddySeekChrome';
+import { MiniOutingsSection } from '../outings/MiniOutingsSection';
 import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
 
@@ -29,8 +36,46 @@ export function PlansFormingBottomSheet() {
   const feed = usePlansFormingFeed(10);
   const dismiss = useStore((s) => s.dismissCompanyRequest);
   const undismiss = useStore((s) => s.undismissCompanyRequest);
+  const currentUser = useStore((s) => s.currentUser);
   const panelRef = useRef<HTMLDivElement>(null);
+  const [filter, setFilter] = useState<BuddySeekFilterKey>('all');
+  const [filtersOpen, setFiltersOpen] = useState(false);
   useOverlayBehavior(open, () => setOpen(false), panelRef);
+
+  const leave = (path: string) => {
+    setOpen(false);
+    navigate(path);
+  };
+
+  const filteredItems = useMemo(() => {
+    return feed.items.filter((item) => {
+      if (filter === 'open_spots') return item.intent.openToJoinGroup !== false;
+      if (filter === 'verified') return item.intent.requiredTrustTier !== 'none';
+      if (filter === 'small_groups') return (item.intent.preferredGroupMax ?? 6) <= 4;
+      if (filter === 'flexible') return item.intent.flexibleDates;
+      if (filter === 'saved_events') return item.isSavedEvent;
+      if (filter === 'high_match') return item.isHighMatch;
+      return true;
+    });
+  }, [feed.items, filter]);
+
+  const recruitingGroups = useMemo(
+    () => feed.recruitingGroupItems.filter((entry) => entry.event.kind !== 'mini_outing'),
+    [feed.recruitingGroupItems],
+  );
+
+  const filterCounts = useMemo(
+    () => ({
+      all: feed.items.length,
+      high_match: feed.items.filter((i) => i.isHighMatch).length,
+      saved_events: feed.items.filter((i) => i.isSavedEvent).length,
+      flexible: feed.items.filter((i) => i.intent.flexibleDates).length,
+      open_spots: feed.items.filter((i) => i.intent.openToJoinGroup !== false).length,
+      small_groups: feed.items.filter((i) => (i.intent.preferredGroupMax ?? 6) <= 4).length,
+      verified: feed.items.filter((i) => i.intent.requiredTrustTier !== 'none').length,
+    }),
+    [feed.items],
+  );
 
   if (!open) return null;
 
@@ -97,22 +142,34 @@ export function PlansFormingBottomSheet() {
           data-plans-sheet-scroll=""
           className="min-h-0 flex-1 overflow-y-auto overscroll-contain touch-pan-y px-4 py-3 space-y-4 pb-32"
         >
+          <BuddySeekPageActions
+            onPrivacy={() => leave('/settings?section=buddy-seek')}
+            onNewRequest={() => leave('/buddy-seek?newRequest=1')}
+            onMyPlans={() => leave('/plans')}
+          />
+          {currentUser && !currentUser.vibe && (
+            <BuddySeekVibeNudge onClick={() => leave('/profile')} />
+          )}
+          <MiniOutingsSection variant="sheet" onLeave={() => setOpen(false)} />
+          <BuddySeekFilterBar
+            filter={filter}
+            filterCounts={filterCounts}
+            filtersOpen={filtersOpen}
+            onToggleOpen={() => setFiltersOpen((open) => !open)}
+            onChange={setFilter}
+            filtersId="buddy-seek-sheet-filters"
+          />
+
           {feed.myActivePlan && (
             <PlansFormingYourPlanBanner
               plan={feed.myActivePlan}
-              onManage={() => {
-                setOpen(false);
-                navigate(`/events/${feed.myActivePlan!.event.id}`);
-              }}
-              onEdit={() => {
-                setOpen(false);
-                navigate(`/buddy-seek?editRequest=${feed.myActivePlan!.intent.id}`);
-              }}
+              onManage={() => leave(`/events/${feed.myActivePlan!.event.id}`)}
+              onEdit={() => leave(`/buddy-seek?editRequest=${feed.myActivePlan!.intent.id}`)}
             />
           )}
 
           {!feed.hasContent && !feed.myActivePlan ? (
-            <PlansFormingEmptyState suggestedEvent={feed.suggestedEvent} onBrowse={() => { setOpen(false); navigate('/'); }} />
+            <PlansFormingEmptyState suggestedEvent={feed.suggestedEvent} onBrowse={() => leave('/')} />
           ) : (
             <>
               {feed.scarcityPromos.length > 0 && (
@@ -123,7 +180,7 @@ export function PlansFormingBottomSheet() {
                   ))}
                 </section>
               )}
-              {feed.items.map((item) => (
+              {filteredItems.map((item) => (
                 <PlansFormingCard
                   key={item.intent.id}
                   item={item}
@@ -138,10 +195,10 @@ export function PlansFormingBottomSheet() {
                   }}
                 />
               ))}
-              {feed.recruitingGroupItems.length > 0 && (
+              {recruitingGroups.length > 0 && (
                 <section>
                   <PlansFormingSectionTitle title={t('Ομάδες με θέσεις', 'Groups with spots')} />
-                  {feed.recruitingGroupItems.map((entry) => (
+                  {recruitingGroups.map((entry) => (
                     <PlansFormingGroupCard
                       key={entry.group.id}
                       entry={entry}
@@ -163,10 +220,7 @@ export function PlansFormingBottomSheet() {
         >
           <button
             type="button"
-            onClick={() => {
-              setOpen(false);
-              navigate('/buddy-seek');
-            }}
+            onClick={() => leave('/buddy-seek')}
             className={cn('flex-1 min-h-9 rounded-full text-xs font-bold text-white', tok.primaryBtn)}
           >
             {t('Όλα τα σχέδια', 'All plans')}

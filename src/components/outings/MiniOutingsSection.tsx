@@ -9,6 +9,7 @@ import { formatLocationArea } from '../../lib/eventDisplay';
 import { fitsGenderMode } from '../../lib/outings';
 import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
+import { EventCoverImg } from '../common/EventCoverImg';
 import { cn } from '../../lib/utils';
 import type { MiniOutingKind } from '../../store/outingsSlice';
 import type { GroupGenderMode } from '../../types/outings';
@@ -31,9 +32,19 @@ function kindOf(tags: string[] | undefined): (typeof KINDS)[number] {
  * the exact spot shown only to members and an optional women & non-binary
  * mode.
  */
-export function MiniOutingsSection() {
+export function MiniOutingsSection({
+  variant = 'page',
+  onLeave,
+}: {
+  variant?: 'page' | 'sheet';
+  onLeave?: () => void;
+}) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const go = (path: string) => {
+    onLeave?.();
+    navigate(path);
+  };
   const me = useStore((s) => s.currentUser);
   const events = useStore((s) => s.events);
   const groups = useStore((s) => s.groups);
@@ -65,12 +76,12 @@ export function MiniOutingsSection() {
     if (gate.ok) {
       joinGroup(groupId);
       toast.success(t('Μπήκες! Το σημείο φαίνεται στη «Βραδιά μας».', 'You are in! The spot is on «Our night».'));
-      navigate(`/night/${groupId}`);
+      go(`/night/${groupId}`);
     } else if (gate.reason === 'full' && joinGroupWaitlist(groupId)) {
       toast.success(t('Είσαι στη λίστα αναμονής.', 'You are on the waitlist.'), {
         action: {
           label: t('Η βραδιά μας', 'Our night'),
-          onClick: () => navigate(`/night/${groupId}`),
+          onClick: () => go(`/night/${groupId}`),
         },
       });
     } else {
@@ -79,10 +90,10 @@ export function MiniOutingsSection() {
   };
 
   return (
-    <section className="space-y-4" aria-labelledby="mini-outings-title">
+    <section className="space-y-4" aria-labelledby={variant === 'sheet' ? 'mini-outings-sheet-title' : 'mini-outings-title'}>
       <div className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-          <h2 id="mini-outings-title" className="text-sm font-bold text-ink md:text-base">
+          <h2 id={variant === 'sheet' ? 'mini-outings-sheet-title' : 'mini-outings-title'} className="text-sm font-bold text-ink md:text-base">
             {t('Μικρές έξοδοι', 'Small outings')}
           </h2>
           <Button size="sm" onClick={() => setComposerOpen(true)}>
@@ -93,7 +104,7 @@ export function MiniOutingsSection() {
           {t('Καφές, βόλτα ή τρέξιμο με 2–6 άτομα.', 'Coffee, a walk or a run with 2–6 people.')}{' '}
           <button
             type="button"
-            onClick={() => navigate('/collections')}
+            onClick={() => go('/collections')}
             className="font-semibold text-ink-muted underline underline-offset-2 hover:text-ink"
           >
             {t('Συλλογές', 'Collections')}
@@ -111,7 +122,7 @@ export function MiniOutingsSection() {
           </Button>
         </div>
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul className={cn('grid gap-4', variant === 'sheet' ? 'grid-cols-1' : 'sm:grid-cols-2')}>
           {list.map(({ event, group }) => {
             const k = kindOf(event.tags);
             const KindIcon = k.icon;
@@ -122,7 +133,27 @@ export function MiniOutingsSection() {
             const genderBlocked = group.genderMode === 'women_nb' && !fitsGenderMode(me, 'women_nb');
             const hostName = host?.name.split(' ')[0] ?? '—';
             return (
-              <li key={group.id} className="space-y-3 rounded-2xl bg-surface-raised px-5 py-4 shadow-soft">
+              <li
+                key={group.id}
+                data-mini-outing-card=""
+                className="nakamas-card overflow-hidden rounded-2xl bg-surface-raised shadow-soft"
+              >
+                <button
+                  type="button"
+                  onClick={() => go(`/events/${event.id}`)}
+                  className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+                  aria-label={event.title}
+                >
+                  <EventCoverImg
+                    event={event}
+                    alt=""
+                    className={cn(
+                      'w-full bg-gray-100 object-cover',
+                      variant === 'sheet' ? 'h-36' : 'h-40 md:h-48',
+                    )}
+                  />
+                </button>
+                <div className="space-y-3 px-5 py-4">
                 <div className="flex items-baseline justify-between gap-4">
                   <p className="card-meta font-medium leading-relaxed text-ink-muted inline-flex items-center gap-1.5 min-w-0">
                     <KindIcon className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden />
@@ -149,11 +180,11 @@ export function MiniOutingsSection() {
                 )}
                 <div className="pt-1">
                   {mine ? (
-                    <Button size="sm" variant="ghost" onClick={() => navigate(`/night/${group.id}`)}>
+                    <Button size="sm" variant="ghost" onClick={() => go(`/night/${group.id}`)}>
                       {t('Η βραδιά μας', 'Our night')}
                     </Button>
                   ) : waiting ? (
-                    <Button size="sm" variant="ghost" onClick={() => navigate(`/night/${group.id}`)}>
+                    <Button size="sm" variant="ghost" onClick={() => go(`/night/${group.id}`)}>
                       {t('Στη λίστα αναμονής · βραδιά', 'On waitlist · our night')}
                     </Button>
                   ) : (
@@ -171,7 +202,7 @@ export function MiniOutingsSection() {
                             {
                               action: {
                                 label: t('Προφίλ', 'Profile'),
-                                onClick: () => navigate('/profile'),
+                                onClick: () => go('/profile'),
                               },
                             },
                           );
@@ -184,19 +215,24 @@ export function MiniOutingsSection() {
                     </Button>
                   )}
                 </div>
+                </div>
               </li>
             );
           })}
         </ul>
       )}
-      {composerOpen && <MiniOutingComposer onClose={() => setComposerOpen(false)} />}
+      {composerOpen && <MiniOutingComposer onClose={() => setComposerOpen(false)} onLeave={onLeave} />}
     </section>
   );
 }
 
-function MiniOutingComposer({ onClose }: { onClose: () => void }) {
+function MiniOutingComposer({ onClose, onLeave }: { onClose: () => void; onLeave?: () => void }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const go = (path: string) => {
+    onLeave?.();
+    navigate(path);
+  };
   const me = useStore((s) => s.currentUser);
   const create = useStore((s) => s.createMiniOuting);
   const tomorrow = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
@@ -229,11 +265,11 @@ function MiniOutingComposer({ onClose }: { onClose: () => void }) {
     toast.success(t('Η έξοδος δημοσιεύτηκε!', 'Outing published!'), {
       action: {
         label: t('Μοιράσου στον τοίχο', 'Share to wall'),
-        onClick: () => navigate('/wall'),
+        onClick: () => go('/wall'),
       },
     });
     onClose();
-    navigate(`/night/${groupId}`);
+    go(`/night/${groupId}`);
   };
 
   const field = 'mt-1 min-h-10 w-full rounded-xl border border-border bg-surface px-3 text-sm font-medium text-ink';
@@ -318,7 +354,7 @@ function MiniOutingComposer({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={() => {
               onClose();
-              navigate('/profile');
+              go('/profile');
             }}
             className="font-bold text-ink underline underline-offset-2"
           >

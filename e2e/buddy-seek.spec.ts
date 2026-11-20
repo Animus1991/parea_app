@@ -18,6 +18,9 @@ test.describe('Find Nakamas', () => {
 
     await expect(page.getByText('Κουκάκι, Αθήνα').or(page.getByText('Koukaki, Athens'))).toBeVisible();
     await expect(page.getByText('Καφές στο Κουκάκι')).toHaveCount(1);
+    const coffeeCover = page.locator('[data-mini-outing-card]').filter({ hasText: 'Καφές στο Κουκάκι' }).locator('img');
+    await expect(coffeeCover).toBeVisible();
+    await expect(coffeeCover).toHaveAttribute('src', /\/covers\/coffee\.jpg/);
 
     const filters = page.getByRole('button', { name: /^Φίλτρα$|^Filters$/ });
     await expect(filters).toBeVisible();
@@ -74,6 +77,12 @@ test.describe('Find Nakamas', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await enterDemoGuest(page);
     await page.goto('/buddy-seek');
+    const coffeeCover = page.locator('[data-mini-outing-card]').filter({ hasText: 'Καφές στο Κουκάκι' }).locator('img');
+    await expect(coffeeCover).toBeVisible();
+    await expect(coffeeCover).toHaveAttribute('src', /\/covers\/coffee\.jpg/);
+    await expect.poll(async () =>
+      coffeeCover.evaluate((el) => (el as HTMLImageElement).naturalHeight),
+    ).toBeGreaterThan(80);
     const photo = page.locator('#main-content article img').first();
     await expect(photo).toBeVisible();
     await expect.poll(async () => photo.evaluate((el) => el.clientHeight)).toBeGreaterThan(280);
@@ -82,21 +91,29 @@ test.describe('Find Nakamas', () => {
     ).toBeGreaterThan(80);
   });
 
-  test('mobile sheet scrolls and keeps titles and photos visible', async ({ page }) => {
+  test('mobile sheet shows the intro, outing photos, and scrolls', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await enterDemoGuest(page);
     await page.getByRole('button', { name: /Βρες Nakamas — σχέδια που σχηματίζονται|Find Nakamas — plans forming/ }).click();
     const sheet = page.getByRole('dialog', { name: /Βρες Nakamas|Find Nakamas/ });
     await expect(sheet).toBeVisible();
-    await expect(sheet.getByText('Athens Street Food Festival 2026')).toBeVisible();
+    await expect(sheet.getByRole('button', { name: /Ρυθμίσεις απορρήτου|Privacy settings/ })).toBeVisible();
+    await expect(sheet.getByRole('button', { name: /Νέο αίτημα από εκδήλωση|New request from event/ })).toBeVisible();
+    await expect(sheet.getByRole('button', { name: /Τα σχέδιά μου|My plans/ })).toBeVisible();
+    await expect(sheet.getByRole('heading', { name: /Μικρές έξοδοι|Small outings/ })).toBeVisible();
+    await expect(sheet.getByText('Καφές στο Κουκάκι')).toBeVisible();
+    const coffeeCover = sheet.locator('[data-mini-outing-card]').filter({ hasText: 'Καφές στο Κουκάκι' }).locator('img');
+    await expect(coffeeCover).toBeVisible();
+    await expect.poll(async () =>
+      coffeeCover.evaluate((el) => (el as HTMLImageElement).naturalHeight),
+    ).toBeGreaterThan(80);
+    await expect(sheet.getByRole('button', { name: /^Φίλτρα$|^Filters$/ })).toBeVisible();
     const scroller = sheet.locator('[data-plans-sheet-scroll]');
     await expect(scroller).toBeVisible();
     await scroller.evaluate((el) => {
       el.scrollTop = el.scrollHeight;
     });
+    await expect(sheet.getByText('Athens Street Food Festival 2026')).toBeVisible();
     await expect(sheet.getByText('ADD Festival 2026')).toBeVisible();
-    const photo = sheet.locator('img').first();
-    await expect(photo).toBeVisible();
-    await expect.poll(async () => photo.evaluate((el) => (el as HTMLImageElement).naturalHeight)).toBeGreaterThan(80);
   });
 });
