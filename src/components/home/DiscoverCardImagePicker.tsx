@@ -30,7 +30,7 @@ export function DiscoverCardImagePicker({
       <div
         role="radiogroup"
         aria-label={t('Εικόνα κάρτας', 'Card photo')}
-        className="flex gap-1.5 overflow-x-auto pb-1 noscrollbar"
+        className="flex flex-wrap gap-1.5"
       >
         {options.map((option) => {
           const [el, en] = CARD_IMAGE_DEPTH_LABELS[option];

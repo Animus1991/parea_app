@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   CARD_IMAGE_DEPTH_STORAGE_KEY,
-  cardImageDepthOptions,
-  clampCardImageDepth,
+  CARD_IMAGE_DEPTHS,
   parseCardImageDepth,
   readStoredCardImageDepth,
   writeStoredCardImageDepth,
@@ -17,27 +16,9 @@ describe('parseCardImageDepth', () => {
   });
 });
 
-describe('clampCardImageDepth', () => {
-  it('leaves every web depth unchanged', () => {
-    expect(clampCardImageDepth('title', true)).toBe('title');
-    expect(clampCardImageDepth('organizer', true)).toBe('organizer');
-    expect(clampCardImageDepth('divider', true)).toBe('divider');
-  });
-
-  it('maps web-only depths to the nearest phone option', () => {
-    expect(clampCardImageDepth('title', false)).toBe('photo');
-    expect(clampCardImageDepth('organizer', false)).toBe('facts');
-    expect(clampCardImageDepth('divider', false)).toBe('full');
-    expect(clampCardImageDepth('photo', false)).toBe('photo');
-    expect(clampCardImageDepth('facts', false)).toBe('facts');
-    expect(clampCardImageDepth('full', false)).toBe('full');
-  });
-});
-
-describe('cardImageDepthOptions', () => {
-  it('offers 3 on phone and 6 on web', () => {
-    expect(cardImageDepthOptions(false)).toEqual(['photo', 'facts', 'full']);
-    expect(cardImageDepthOptions(true)).toHaveLength(6);
+describe('CARD_IMAGE_DEPTHS', () => {
+  it('offers all six depths for phone and web preview', () => {
+    expect(CARD_IMAGE_DEPTHS).toEqual(['photo', 'title', 'facts', 'organizer', 'divider', 'full']);
   });
 });
 

@@ -328,7 +328,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
     imageDepth === 'full';
   const coverOrganizer =
     imageDepth === 'organizer' || imageDepth === 'divider' || imageDepth === 'full';
-  const coverAboveProgress = imageDepth === 'divider' || imageDepth === 'full';
+  const coverProgress = imageDepth === 'divider' || imageDepth === 'full';
   const coverFull = imageDepth === 'full';
   const photoWell = "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white";
 
@@ -521,9 +521,10 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
       {/* Image Section */}
       <div
         className={cn(
-          "relative w-full overflow-hidden bg-gray-100 shrink-0",
-          !coverTitle && "h-48",
-          coverFull && "flex flex-col",
+          "relative w-full overflow-hidden bg-gray-100",
+          !coverTitle && "h-48 shrink-0",
+          coverProgress && "flex min-h-0 flex-1 flex-col",
+          coverFull && "h-full",
         )}
         data-image-depth={imageDepth}
       >
@@ -537,7 +538,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
             }
             alt={event.title}
             className={cn(
-              "object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out",
+              "object-cover object-center group-hover:scale-[1.02] transition-transform duration-700 ease-out",
               coverTitle ? "absolute inset-0 h-full w-full" : "h-full w-full",
             )}
             onError={() => setImgError(true)}
@@ -630,27 +631,28 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         {coverTitle && (
           <div
             className={cn(
-              "relative z-10 flex flex-col gap-3.5 px-4 pt-1",
-              coverFull ? "flex-1 pb-4" : coverAboveProgress ? "pb-3" : "pb-4",
+              "relative z-10 flex flex-col gap-3.5 px-4 pt-1 pb-4",
+              coverProgress && "flex-1",
             )}
           >
             {titleRow(true)}
             {coverFacts && factsRow(true)}
             {coverOrganizer && hintRow(true)}
             {coverOrganizer && organizerRow(true)}
-            {coverFull && (
+            {coverProgress && (
               <div className="mt-auto border-t border-white/25 pt-4">
                 <GroupProgressBar
                   current={groupProgress.current}
                   target={groupProgress.target}
-                  className="mb-3"
+                  className={coverFull ? "mb-3" : undefined}
                   onPhoto
                 />
                 {groupProgress.discountUnlocked && event.groupDiscount && (
-                  <p className={cn(EVENT_CARD_TYPO.safetyLabel, "mb-2.5 text-emerald-200")}>
+                  <p className={cn(EVENT_CARD_TYPO.safetyLabel, coverFull && "mb-2.5", "text-emerald-200")}>
                     -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
                   </p>
                 )}
+                {coverFull && (
                 <div className={cn("flex items-center gap-2", showNightTools ? "justify-between" : "justify-end")}>
                   <button
                     type="button"
@@ -690,6 +692,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                           : t('Βρες παρέα', 'Find company')}
                   </button>
                 </div>
+                )}
               </div>
             )}
           </div>
@@ -698,14 +701,14 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
 
       {/* Content — spaced blocks, aligned icon wells, no middot soup */}
       {!coverFull && (
-      <div className={cn("flex flex-1 flex-col gap-3.5 px-4 pb-4", coverAboveProgress ? "pt-0" : "pt-4")}>
+      <div className={cn("flex flex-col gap-3.5 px-4 pb-4", coverProgress ? "shrink-0 pt-3" : "flex-1 pt-4")}>
         {!coverTitle && titleRow(false)}
         {!coverFacts && factsRow(false)}
         {!coverOrganizer && hintRow(false)}
         {!coverOrganizer && organizerRow(false)}
 
         {/* Platform event — seeks a group organizer. Hosting is primary only in the host rail. */}
-        {!coverAboveProgress && seeksHost && joinState === 'join' && (
+        {!coverProgress && seeksHost && joinState === 'join' && (
           <div className={cn(
             "rounded-2xl p-3.5 border",
             emphasis === 'host'
@@ -750,17 +753,21 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
           </div>
         )}
 
-        {/* Group progress + actions */}
-        <div className={cn("mt-auto border-t pt-4", coverAboveProgress ? "border-gray-100" : borderSub)}>
-          <GroupProgressBar
-            current={groupProgress.current}
-            target={groupProgress.target}
-            className="mb-3"
-          />
-          {groupProgress.discountUnlocked && event.groupDiscount && (
-            <p className={cn(EVENT_CARD_TYPO.safetyLabel, "mb-2.5", isDark ? "text-emerald-400" : "text-emerald-600")}>
-              -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
-            </p>
+        {/* Group progress + actions. Progress sits on the photo for «Πρόοδος». */}
+        <div className={cn(coverProgress ? "pt-0" : cn("mt-auto border-t pt-4", borderSub))}>
+          {!coverProgress && (
+            <>
+              <GroupProgressBar
+                current={groupProgress.current}
+                target={groupProgress.target}
+                className="mb-3"
+              />
+              {groupProgress.discountUnlocked && event.groupDiscount && (
+                <p className={cn(EVENT_CARD_TYPO.safetyLabel, "mb-2.5", isDark ? "text-emerald-400" : "text-emerald-600")}>
+                  -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
+                </p>
+              )}
+            </>
           )}
           <div className={cn("flex items-center gap-2", showNightTools ? "justify-between" : "justify-end")}>
             {showNightTools && (
