@@ -31,6 +31,28 @@ const URGENCY_TEXT_DARK = {
   flexible: '',
 };
 
+function FactSpread({
+  left,
+  right,
+}: {
+  left?: string | null;
+  right?: string | null;
+}) {
+  if (!left && !right) return null;
+  return (
+    <div className="flex items-baseline justify-between gap-x-6 gap-y-1">
+      {left ? (
+        <p className="min-w-0 card-meta font-medium leading-relaxed text-ink-muted">{left}</p>
+      ) : (
+        <span />
+      )}
+      {right ? (
+        <p className="shrink-0 card-meta font-medium leading-relaxed text-ink-muted">{right}</p>
+      ) : null}
+    </div>
+  );
+}
+
 export function PlansFormingCard({
   item,
   variant = 'sidebar',
@@ -67,6 +89,131 @@ export function PlansFormingCard({
   const locationLine = item.location ? formatLocationArea(item.location, language) : '';
   const showUrgency = item.urgency.tone !== 'normal';
   const showMatchReason = !isSidebar && item.matchReason && item.sharedInterestTags.length === 0;
+  const interestLine = item.sharedInterestTags.length
+    ? item.sharedInterestTags.slice(0, 2).map((tag) => interestLabel(tag, language)).join(' · ')
+    : item.sharedInterestCount > 0
+      ? t(`${item.sharedInterestCount} κοινά`, `${item.sharedInterestCount} shared`)
+      : '';
+  const iconBtn =
+    'min-h-9 min-w-9 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-black/[0.04] dark:hover:bg-white/5 transition-colors';
+
+  if (variant === 'page') {
+    return (
+      <article className="nakamas-card overflow-hidden rounded-2xl bg-white shadow-soft dark:bg-gray-900">
+        {item.event.imageUrl && (
+          <button
+            type="button"
+            onClick={() => navigate(`/events/${item.event.id}`)}
+            className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+            aria-label={t('Δες εκδήλωση', 'View event')}
+          >
+            <img src={item.event.imageUrl} alt="" className="h-28 w-full object-cover" />
+          </button>
+        )}
+
+        <div className="space-y-4 px-5 py-5">
+          <div className="flex items-start justify-between gap-4">
+            <p className="card-badge font-semibold tracking-wide text-ink-muted pt-1">
+              {tu(item.intentLabel.el, item.intentLabel.en)}
+              {item.isSavedEvent ? ` · ${t('Αποθηκευμένη', 'Saved')}` : ''}
+              {item.isHighMatch ? ` · ${t('Υψηλή συμβατότητα', 'High match')}` : ''}
+            </p>
+            <div className="flex shrink-0 -mr-1.5 -mt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  if (isSaved) unsaveRequest(item.intent.id);
+                  else saveRequest(item.intent.id);
+                  toast.message(
+                    isSaved
+                      ? t('Αφαιρέθηκε', 'Removed')
+                      : t('Αποθηκεύτηκε ιδιωτικά — δημοσιεύστε όποτε θέλετε', 'Saved privately — publish anytime'),
+                  );
+                }}
+                className={cn(iconBtn, isSaved && 'text-cyan-700 dark:text-cyan-300')}
+                aria-label={t('Αποθήκευση σχεδίου', 'Save plan')}
+                title={t('Αποθήκευση σχεδίου', 'Save plan')}
+              >
+                <Bookmark className={cn('w-4 h-4', isSaved && 'fill-current')} />
+              </button>
+              {onDismiss && (
+                <button
+                  type="button"
+                  onClick={onDismiss}
+                  aria-label={t('Απόκρυψη σχεδίου', 'Hide plan')}
+                  title={t('Απόκρυψη', 'Hide')}
+                  className={iconBtn}
+                >
+                  <EyeOff className="w-4 h-4" aria-hidden />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <h3 className="card-heading-lg font-bold leading-snug text-ink">{item.event.title}</h3>
+            <p className="card-copy leading-relaxed text-ink-muted">
+              <span className="font-semibold text-ink">{displayName}</span>
+              <span className="text-ink-muted/50" aria-hidden>
+                {' · '}
+              </span>
+              <span className="card-role font-medium text-cyan-700 dark:text-cyan-300">
+                {t(item.roleLabel.el, item.roleLabel.en)}
+              </span>
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <FactSpread left={t(item.scheduleFull.el, item.scheduleFull.en)} />
+            <FactSpread left={locationLine} right={t(item.groupSizeLabel.el, item.groupSizeLabel.en)} />
+            <FactSpread
+              left={t(item.meetingLabel.el, item.meetingLabel.en)}
+              right={interestLine || (showUrgency ? t(item.urgency.el, item.urgency.en) : null)}
+            />
+          </div>
+
+          {item.intent.message && (
+            <p className="card-copy leading-relaxed text-ink-muted">«{item.intent.message}»</p>
+          )}
+
+          {showMatchReason && item.matchReason && (
+            <p className="card-copy leading-relaxed text-ink-muted/80">
+              {t(item.matchReason.el, item.matchReason.en)}
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
+            <button
+              type="button"
+              onClick={() => setPreviewOpen(true)}
+              className="px-4 min-h-9 rounded-full card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors"
+            >
+              {t('Αίτημα συμμετοχής', 'Ask to join')}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(`/events/${item.event.id}`)}
+              className="min-h-9 card-cta text-ink-muted hover:text-ink transition-colors"
+            >
+              {t('Εκδήλωση', 'Event')}
+            </button>
+          </div>
+        </div>
+
+        <JoinRequestPreviewModal
+          open={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          seeker={item.seeker}
+          event={item.event}
+          mode="send"
+          onSendRequest={() => {
+            const id = sendJoin(item.intent.id);
+            if (id) toast.success(t('Αίτημα εστάλη — θα ειδοποιηθεί ο/η δημιουργός', 'Request sent — creator notified'));
+          }}
+        />
+      </article>
+    );
+  }
 
   return (
     <article
@@ -350,6 +497,75 @@ export function PlansFormingGroupCard({
   const darkCard = isSidebar && isDarkSurface;
   const { group, event, meta } = entry;
   const locationLine = meta.location ? formatLocationArea(meta.location, language) : '';
+
+  if (variant === 'page') {
+    return (
+      <article className="nakamas-card overflow-hidden rounded-2xl bg-white shadow-soft dark:bg-gray-900">
+        {event.imageUrl && (
+          <button
+            type="button"
+            onClick={() => navigate(`/events/${event.id}`)}
+            className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+            aria-label={t('Δες εκδήλωση', 'View event')}
+          >
+            <img src={event.imageUrl} alt="" className="h-28 w-full object-cover" />
+          </button>
+        )}
+        <div className="space-y-4 px-5 py-5">
+          <p className="card-badge font-semibold tracking-wide text-emerald-700 dark:text-emerald-300">
+            {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
+          </p>
+          <div className="space-y-1.5">
+            <h3 className="card-heading-lg font-bold leading-snug text-ink">{event.title}</h3>
+            <p className="card-copy leading-relaxed text-ink-muted">
+              {meta.hostFirstName && (
+                <>
+                  <span className="font-semibold text-ink">{meta.hostFirstName}</span>
+                  <span className="text-ink-muted/50" aria-hidden>
+                    {' · '}
+                  </span>
+                </>
+              )}
+              <span className="card-role font-medium text-emerald-700 dark:text-emerald-300">
+                {t('Οργανώνει ομάδα', 'Group host')}
+              </span>
+            </p>
+          </div>
+          <div className="space-y-2">
+            <FactSpread left={t(meta.scheduleFull.el, meta.scheduleFull.en)} />
+            <FactSpread
+              left={locationLine}
+              right={`${meta.filled}/${meta.target} ${t('μέλη', 'members')} · ${meta.spots} ${t('ανοιχτές θέσεις', 'open spots')}`}
+            />
+          </div>
+          <div className="h-1.5 overflow-hidden rounded-full bg-black/[0.06] dark:bg-white/10">
+            <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${meta.progress}%` }} />
+          </div>
+          {meta.note && (
+            <p className="card-copy leading-relaxed text-ink-muted">«{meta.note}»</p>
+          )}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
+            <button
+              type="button"
+              onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
+              className="px-4 min-h-9 rounded-full card-cta bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+            >
+              {t('Αίτημα συμμετοχής', 'Ask to join')}
+            </button>
+            {onSuggestMerge && (
+              <button
+                type="button"
+                onClick={onSuggestMerge}
+                className="min-h-9 card-cta text-ink-muted hover:text-ink transition-colors"
+              >
+                {t('Συγχώνευση', 'Merge')}
+              </button>
+            )}
+          </div>
+        </div>
+      </article>
+    );
+  }
 
   return (
     <article

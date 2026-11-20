@@ -37,6 +37,7 @@ test.describe('Find Nakamas', () => {
     await expect(page.getByText('Board game night')).toHaveCount(0);
     await expect(page.getByText('Chat πρώτα')).toHaveCount(0);
     await expect(page.getByText('Food & Drink')).toHaveCount(0);
+    await expect(page.getByText(/Φαγητό δρόμου με μικρή ομάδα|Street food with a small group/)).toBeVisible();
 
     await page.getByRole('button', { name: /Νέο αίτημα από εκδήλωση|New request from event/ }).click();
     await expect(page.getByRole('dialog')).toBeVisible();

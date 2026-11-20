@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Filter, Settings, Plus } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { usePlansFormingFeed } from '../../hooks/usePlansFormingFeed';
@@ -174,24 +173,27 @@ export default function BuddySeekPageContent() {
   });
 
   const headerLink =
-    'inline-flex items-center gap-1.5 min-h-8 text-xs font-semibold text-ink-muted hover:text-ink transition-colors';
+    'inline-flex items-center min-h-9 text-xs font-semibold text-ink-muted hover:text-ink transition-colors';
+  const quietChip =
+    'inline-flex items-center min-h-8 px-3 text-xs font-semibold rounded-full transition-colors';
 
   return (
-    <div className={cn(PAGE_FILL, 'space-y-4 pb-32 pt-4 md:pb-8')}>
-      <header className="space-y-2">
-        <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
-        <PlansFormingValueHero insights={feed.insights} />
+    <div className={cn(PAGE_FILL, 'space-y-7 pb-32 pt-4 md:pb-8')}>
+      <header className="space-y-3">
+        <div className="space-y-1.5">
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
+          <PlansFormingValueHero insights={feed.insights} />
+        </div>
         {/* StatsBar omitted when ValueHero already states compatible count — less chrome. */}
         {feed.insights.compatiblePlans === 0 && (
           <PlansFormingStatsBar plain insights={feed.insights} />
         )}
-        <nav aria-label={t('Ενέργειες σελίδας', 'Page actions')} className="flex flex-wrap gap-x-4 gap-y-0">
+        <nav aria-label={t('Ενέργειες σελίδας', 'Page actions')} className="flex flex-wrap gap-x-5 gap-y-2">
           <button
             type="button"
             onClick={() => navigate('/settings?section=buddy-seek')}
             className={headerLink}
           >
-            <Settings className="w-3.5 h-3.5" aria-hidden />
             {t('Ρυθμίσεις απορρήτου', 'Privacy settings')}
           </button>
           <button
@@ -199,7 +201,6 @@ export default function BuddySeekPageContent() {
             onClick={() => setEventPickerOpen(true)}
             className={headerLink}
           >
-            <Plus className="w-3.5 h-3.5" aria-hidden />
             {t('Νέο αίτημα από εκδήλωση', 'New request from event')}
           </button>
           <button
@@ -302,8 +303,8 @@ export default function BuddySeekPageContent() {
         </section>
       )}
 
-      <div ref={filterBarRef} className="space-y-2 scroll-mt-4">
-        <div className="flex flex-wrap items-center gap-2">
+      <div ref={filterBarRef} className="space-y-3 scroll-mt-4">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
           <button
             type="button"
             aria-expanded={filtersOpen}
@@ -323,37 +324,30 @@ export default function BuddySeekPageContent() {
               });
             }}
             className={cn(
-              'filter-chip text-xs font-bold px-3 rounded-xl border transition-colors gap-1.5',
-              filtersOpen ? 'bg-cyan-600 text-white border-cyan-600' : a.borderB,
+              quietChip,
+              filtersOpen ? 'bg-cyan-600 text-white' : 'text-ink hover:text-ink-muted',
             )}
           >
-            <Filter className="w-3.5 h-3.5" aria-hidden />
             {t('Φίλτρα', 'Filters')}
-            {filter !== 'all' && (
-              <span className={cn('text-xs px-1 rounded-lg', filtersOpen ? 'bg-white/20' : 'bg-cyan-100 text-cyan-800')}>
-                1
-              </span>
-            )}
+            {filter !== 'all' && <span className="ml-1.5 tabular-nums opacity-80">1</span>}
           </button>
           {!filtersOpen && filter !== 'all' && (
             <button
               type="button"
               onClick={() => setFilter('all')}
-              className="filter-chip text-xs font-bold px-3 rounded-xl border border-cyan-600 bg-cyan-600 text-white gap-1"
+              className={cn(quietChip, 'bg-cyan-600 text-white gap-1.5')}
               aria-label={t('Καθαρισμός φίλτρου', 'Clear filter')}
             >
               {t(
                 FILTER_DEFS.find((item) => item.key === filter)?.el ?? 'Φίλτρο',
                 FILTER_DEFS.find((item) => item.key === filter)?.en ?? 'Filter',
               )}
-              {filterCounts[filter] > 0 && (
-                <span className="text-xs px-1 rounded-lg bg-white/20">{filterCounts[filter]}</span>
-              )}
+              {filterCounts[filter] > 0 && <span className="tabular-nums opacity-80">{filterCounts[filter]}</span>}
             </button>
           )}
         </div>
         {filtersOpen && (
-          <div id="buddy-seek-filters" className="flex flex-wrap gap-2">
+          <div id="buddy-seek-filters" className="flex flex-wrap gap-x-1 gap-y-2">
             {FILTER_DEFS.map(({ key, el, en }) => {
               const count = filterCounts[key];
               return (
@@ -363,16 +357,13 @@ export default function BuddySeekPageContent() {
                   aria-pressed={filter === key}
                   onClick={() => setFilter(key === filter && key !== 'all' ? 'all' : key)}
                   className={cn(
-                    'filter-chip text-xs font-bold px-3 rounded-xl border transition-colors gap-1',
-                    filter === key ? 'bg-cyan-600 text-white border-cyan-600' : a.borderB,
+                    quietChip,
+                    'gap-1.5',
+                    filter === key ? 'bg-cyan-600 text-white' : 'text-ink-muted hover:text-ink',
                   )}
                 >
                   {t(el, en)}
-                  {count > 0 && (
-                    <span className={cn('text-xs px-1 rounded-lg', filter === key ? 'bg-white/20' : 'bg-cyan-100 text-cyan-800')}>
-                      {count}
-                    </span>
-                  )}
+                  {count > 0 && <span className="tabular-nums opacity-80">{count}</span>}
                 </button>
               );
             })}
@@ -392,7 +383,7 @@ export default function BuddySeekPageContent() {
       ) : (
         <>
           {visibleSeeks.length > 0 && (
-            <section className="space-y-4">
+            <section className="space-y-5">
               <PlansFormingSectionTitle
                 title={t('Αιτήματα Nakamas', 'Nakama requests')}
                 subtitle={t(`${visibleSeeks.length} αποτελέσματα`, `${visibleSeeks.length} results`)}
@@ -431,7 +422,7 @@ export default function BuddySeekPageContent() {
           )}
 
           {recruitingGroups.length > 0 && (
-            <section className="space-y-4">
+            <section className="space-y-5">
               <PlansFormingSectionTitle title={t('Ομάδες με ανοιχτές θέσεις', 'Groups with open spots')} />
               {recruitingGroups.map((entry) => (
                 <PlansFormingGroupCard key={entry.group.id} entry={entry} variant="page" />

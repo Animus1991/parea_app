@@ -170,12 +170,12 @@ export function PlansFormingSectionTitle({
   isDark?: boolean;
 }) {
   return (
-    <div className="mb-2">
-      <h3 className={cn('text-xs font-semibold', isDark ? 'text-gray-200' : 'text-gray-800')}>
+    <div className="space-y-1">
+      <h3 className={cn('text-xs font-semibold tracking-wide', isDark ? 'text-gray-200' : 'text-gray-800')}>
         {title}
       </h3>
       {subtitle && (
-        <p className={cn(PLANS_FORMING_TYPO.statChip, 'mt-0.5', isDark ? 'text-gray-500' : 'text-gray-500')}>{subtitle}</p>
+        <p className={cn(PLANS_FORMING_TYPO.statChip, isDark ? 'text-gray-500' : 'text-gray-500')}>{subtitle}</p>
       )}
     </div>
   );

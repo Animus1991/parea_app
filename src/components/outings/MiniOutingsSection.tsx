@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Coffee, Footprints, HeartHandshake, MapPin, Plus, Wine, Zap } from 'lucide-react';
+import { Coffee, Footprints, Wine, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
@@ -79,77 +79,85 @@ export function MiniOutingsSection() {
   };
 
   return (
-    <section className="space-y-3 rounded-2xl border border-border bg-surface-raised p-4" aria-labelledby="mini-outings-title">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="min-w-0">
+    <section className="space-y-4" aria-labelledby="mini-outings-title">
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <h2 id="mini-outings-title" className="text-sm font-bold text-ink md:text-base">
             {t('Μικρές έξοδοι', 'Small outings')}
           </h2>
-          <p className="text-xs font-medium text-ink-muted">
-            {t('Καφές, βόλτα ή τρέξιμο με 2–6 άτομα.', 'Coffee, a walk or a run with 2–6 people.')}{' '}
-            <button
-              type="button"
-              onClick={() => navigate('/collections')}
-              className="font-semibold text-ink-muted underline underline-offset-2 hover:text-ink"
-            >
-              {t('Συλλογές', 'Collections')}
-            </button>
-          </p>
+          <Button size="sm" onClick={() => setComposerOpen(true)}>
+            {t('Νέα μικρή έξοδος', 'New small outing')}
+          </Button>
         </div>
-        <Button size="sm" onClick={() => setComposerOpen(true)}>
-          <Plus className="mr-1.5 h-4 w-4" aria-hidden /> {t('Νέα μικρή έξοδος', 'New small outing')}
-        </Button>
+        <p className="text-xs font-medium leading-relaxed text-ink-muted">
+          {t('Καφές, βόλτα ή τρέξιμο με 2–6 άτομα.', 'Coffee, a walk or a run with 2–6 people.')}{' '}
+          <button
+            type="button"
+            onClick={() => navigate('/collections')}
+            className="font-semibold text-ink-muted underline underline-offset-2 hover:text-ink"
+          >
+            {t('Συλλογές', 'Collections')}
+          </button>
+        </p>
       </div>
 
       {list.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border px-3 py-4 text-center">
-          <p className="text-xs font-medium text-ink-muted">
+        <div className="rounded-2xl bg-surface-raised px-5 py-6 text-center shadow-soft">
+          <p className="text-xs font-medium leading-relaxed text-ink-muted">
             {t('Καμία μικρή έξοδος ακόμη — ξεκίνα εσύ την πρώτη.', 'No small outings yet — start the first one.')}
           </p>
-          <Button size="sm" className="mt-3" onClick={() => setComposerOpen(true)}>
-            <Plus className="mr-1.5 h-4 w-4" aria-hidden /> {t('Νέα μικρή έξοδος', 'New small outing')}
+          <Button size="sm" className="mt-4" onClick={() => setComposerOpen(true)}>
+            {t('Νέα μικρή έξοδος', 'New small outing')}
           </Button>
         </div>
       ) : (
-        <ul className="grid gap-2 sm:grid-cols-2">
+        <ul className="grid gap-4 sm:grid-cols-2">
           {list.map(({ event, group }) => {
             const k = kindOf(event.tags);
-            const Icon = k.icon;
             const host = users.find((u) => u.id === group.hostId);
             const mine = me ? group.members.includes(me.id) : false;
             const waiting = me ? group.waitlist?.includes(me.id) : false;
             const full = group.members.length >= group.targetSize;
             const genderBlocked = group.genderMode === 'women_nb' && !fitsGenderMode(me, 'women_nb');
+            const hostName = host?.name.split(' ')[0] ?? '—';
             return (
-              <li key={group.id} className="rounded-xl border border-border bg-surface p-3">
-                <p className="flex items-center gap-1.5 text-2xs font-bold text-ink-muted">
-                  <Icon className="h-3.5 w-3.5" aria-hidden /> {t(k.el, k.en)} · {formatPlanWhen(event.date, event.time, language)}
-                </p>
-                <p className="mt-0.5 text-sm font-bold text-ink">{event.title}</p>
-                <p className="flex items-center gap-1 text-xs font-medium text-ink-muted">
-                  <MapPin className="h-3.5 w-3.5" aria-hidden /> {formatLocationArea(event.locationArea, language)}
-                </p>
-                <p className="mt-1 text-xs font-medium text-ink">
-                  {t(`${group.members.length}/${group.targetSize} · με ${host?.name.split(' ')[0] ?? '—'}`, `${group.members.length}/${group.targetSize} · with ${host?.name.split(' ')[0] ?? '—'}`)}
-                </p>
+              <li key={group.id} className="space-y-3 rounded-2xl bg-surface-raised px-5 py-4 shadow-soft">
+                <div className="flex items-baseline justify-between gap-4">
+                  <p className="card-meta font-medium leading-relaxed text-ink-muted">
+                    {t(k.el, k.en)} · {formatPlanWhen(event.date, event.time, language)}
+                  </p>
+                  <p className="shrink-0 card-meta font-medium leading-relaxed text-ink-muted">
+                    {group.members.length}/{group.targetSize}
+                  </p>
+                </div>
+                <p className="card-heading-lg font-bold leading-snug text-ink">{event.title}</p>
+                <div className="flex items-baseline justify-between gap-4">
+                  <p className="min-w-0 card-meta font-medium leading-relaxed text-ink-muted">
+                    {formatLocationArea(event.locationArea, language)}
+                  </p>
+                  <p className="shrink-0 card-meta font-medium leading-relaxed text-ink-muted">
+                    {t(`με ${hostName}`, `with ${hostName}`)}
+                  </p>
+                </div>
                 {group.genderMode === 'women_nb' && (
-                  <p className="mt-0.5 flex items-center gap-1 text-2xs font-bold text-ink">
-                    <HeartHandshake className="h-3 w-3" aria-hidden /> {t('Γυναίκες & μη δυαδικά άτομα', 'Women & non-binary')}
+                  <p className="card-meta font-medium leading-relaxed text-ink">
+                    {t('Γυναίκες & μη δυαδικά άτομα', 'Women & non-binary')}
                   </p>
                 )}
-                <div className="mt-2">
+                <div className="pt-1">
                   {mine ? (
-                    <Button size="sm" variant="outline" onClick={() => navigate(`/night/${group.id}`)}>
+                    <Button size="sm" variant="ghost" onClick={() => navigate(`/night/${group.id}`)}>
                       {t('Η βραδιά μας', 'Our night')}
                     </Button>
                   ) : waiting ? (
-                    <Button size="sm" variant="outline" onClick={() => navigate(`/night/${group.id}`)}>
+                    <Button size="sm" variant="ghost" onClick={() => navigate(`/night/${group.id}`)}>
                       {t('Στη λίστα αναμονής · βραδιά', 'On waitlist · our night')}
                     </Button>
                   ) : (
                     <Button
                       size="sm"
-                      variant={genderBlocked || full ? 'outline' : 'primary'}
+                      variant={genderBlocked || full ? 'ghost' : 'primary'}
+                      className={genderBlocked || full ? 'text-ink' : undefined}
                       onClick={() => {
                         if (genderBlocked) {
                           toast.message(
