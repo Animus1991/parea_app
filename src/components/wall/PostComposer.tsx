@@ -90,6 +90,8 @@ export function PostComposer({
   const owner = users.find((u) => u.id === ownerId);
 
   const [text, setText] = useState(() => initialText ?? readDraft(ownerId));
+  // Quick starts appear once the person starts writing, not before.
+  const [engaged, setEngaged] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | undefined>();
   const [eventId, setEventId] = useState<string | undefined>(initialEventId);
   const [taggedIds, setTaggedIds] = useState<string[]>([]);
@@ -218,6 +220,7 @@ export function PostComposer({
             id={`composer-${ownerId}`}
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onFocus={() => setEngaged(true)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
                 e.preventDefault();
@@ -298,7 +301,7 @@ export function PostComposer({
       </div>
 
       <div className="mt-3 space-y-2">
-        {!text && !eventId && !imageUrl && (
+        {engaged && !text && !eventId && !imageUrl && (
           <div className={COMPOSER_ROW} role="group" aria-label={t('Γρήγορη αρχή', 'Quick start')}>
             {QUICK_STARTS.map((q) => (
               <button

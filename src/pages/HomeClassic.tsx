@@ -15,6 +15,7 @@ import { useOnboardingWelcome } from "../hooks/useOnboardingWelcome";
 import { useHomeHeroGate } from "../hooks/useHomeHeroGate";
 import { HomeOnboardingWelcomeBanner } from "../components/home/HomeOnboardingWelcomeBanner";
 import { HomeContinueStrip } from "../components/home/HomeContinueStrip";
+import { HomeNextNightCard } from "../components/home/HomeNextNightCard";
 import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
 import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
 import { HomeFeedToolbar } from "../components/home/HomeFeedToolbar";
@@ -24,7 +25,6 @@ import { CollectionsRail } from "../components/outings/CollectionsRail";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
 import { emptyHomeSchedule, isScheduleFilterActive } from "../lib/homeScheduleFilter";
-import { DiscoverCardImagePicker } from "../components/home/DiscoverCardImagePicker";
 import { useDiscoverCardImageDepth } from "../hooks/useDiscoverCardImageDepth";
 
 export default function HomeClassic() {
@@ -98,8 +98,7 @@ export default function HomeClassic() {
     refetch,
   } = feed;
 
-  const { depth: imageDepth, setDepth: setImageDepth, options: imageDepthOptions } =
-    useDiscoverCardImageDepth();
+  const { depth: imageDepth } = useDiscoverCardImageDepth();
   const currentUser = feed.currentUser;
 
   useEffect(() => {
@@ -129,6 +128,7 @@ export default function HomeClassic() {
         }
       />
 
+      <HomeNextNightCard />
       <HomeContinueStrip />
 
       {homeGate === 'verify' && <HomeVerifyBanner />}
@@ -192,12 +192,6 @@ export default function HomeClassic() {
           pastCount={pastCount}
           showPast={showPast}
           onTogglePast={onTogglePast}
-        />
-
-        <DiscoverCardImagePicker
-          depth={imageDepth}
-          options={imageDepthOptions}
-          onChange={setImageDepth}
         />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

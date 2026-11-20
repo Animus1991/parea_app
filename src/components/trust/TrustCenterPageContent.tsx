@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { el as elLocale, enUS } from 'date-fns/locale';
 import { TabBar } from '../common/TabBar';
-import { ShieldCheck, Phone, Mail, CreditCard, UserCheck, TrendingUp, History as HistoryIcon, Check } from 'lucide-react';
+import { ShieldCheck, Phone, Mail, CreditCard, UserCheck, TrendingUp, History as HistoryIcon, Check, ChevronDown } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { SectionLabel } from '../common/SectionLabel';
@@ -261,7 +261,11 @@ export default function TrustCenterPageContent() {
           </Card>
 
           <Card className="p-4">
-            <SectionLabel el="Πώς υπολογίζεται" en="How the score moves" />
+            <details className="group">
+            <summary className="flex cursor-pointer list-none items-center justify-between min-h-8">
+              <SectionLabel el="Πώς υπολογίζεται" en="How the score moves" />
+              <ChevronDown className={cn('h-4 w-4 transition-transform group-open:rotate-180', a.muted)} aria-hidden />
+            </summary>
             <div className="mt-3 space-y-3">
               <ul aria-label={t('Ανεβαίνει', 'Goes up')} className="space-y-1.5">
                 {[
@@ -300,6 +304,7 @@ export default function TrustCenterPageContent() {
                 };
               })}
             />
+            </details>
           </Card>
         </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Bell, Calendar, MessageCircle, Users, CheckCircle2, Trash2, BellOff, PartyPopper, Shield, Star } from 'lucide-react';
+import { Bell, Calendar, MessageCircle, Users, CheckCircle2, Trash2, BellOff, PartyPopper, Shield, Star, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store';
 import type { AppNotification } from '../../data/mockNotifications';
@@ -295,7 +295,13 @@ export default function NotificationsPageContent() {
         )}
       </div>
 
-      <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('Σύνοψη ειδοποιήσεων', 'Notification digest')}>
+      <details className="group">
+        <summary className={cn('inline-flex cursor-pointer list-none items-center gap-1 min-h-8 text-xs font-semibold', a.sub)}>
+          {t('Συχνότητα', 'Frequency')}:{' '}
+          {digest === 'morning' ? t('Πρωινή σύνοψη', 'Morning digest') : digest === 'afternoon' ? t('Απογευματινή σύνοψη', 'Afternoon digest') : t('Όλες μία-μία', 'Every item')}
+          <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" aria-hidden />
+        </summary>
+        <div className="mt-2 flex flex-wrap gap-1.5" role="group" aria-label={t('Σύνοψη ειδοποιήσεων', 'Notification digest')}>
         {(
           [
             ['morning', 'Πρωινή σύνοψη', 'Morning digest'],
@@ -317,6 +323,7 @@ export default function NotificationsPageContent() {
           </button>
         ))}
       </div>
+      </details>
 
       {socialOn && <WallActivityPanel title={t('Δραστηριότητα τοίχου', 'Wall activity')} />}
 

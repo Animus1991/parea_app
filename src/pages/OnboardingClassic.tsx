@@ -39,7 +39,7 @@ const LOCATION_PREFS = [
   { id: 'anywhere', gr: 'Οπουδήποτε', en: 'Anywhere', emoji: '🌍' },
 ];
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 3;
 
 export default function OnboardingClassic() {
   const { t, tu } = useLanguage();
@@ -102,50 +102,33 @@ export default function OnboardingClassic() {
     navigate('/');
   };
 
-  const progressPct = Math.round((step / (TOTAL_STEPS - 1)) * 100);
 
+  // Three short steps; group size and activity level stay one tap away as optional extras.
   const stepTitles = [
-    { gr: 'Καλώς ήρθες στο Nakamas!', en: 'Welcome to Nakamas!' },
-    { gr: 'Τι σε ενδιαφέρει;', en: 'What are you into?' },
-    { gr: 'Μέγεθος ομάδας', en: 'Group size preference' },
-    { gr: 'Επίπεδο δραστηριότητας', en: 'Activity level' },
-    { gr: 'Πρόγραμμα διαθεσιμότητας', en: 'Availability schedule' },
-    { gr: 'Τοποθεσία', en: 'Location preference' },
+    { gr: 'Καλώς ήρθες! Τι σε ενδιαφέρει;', en: 'Welcome! What are you into?' },
+    { gr: 'Πότε και πού;', en: 'When and where?' },
     { gr: 'Σχεδόν έτοιμος/η!', en: 'Almost done!' },
   ];
   const stepSubs = [
-    { gr: 'Ας στήσουμε το προφίλ σου γρήγορα για να βρεις τις ιδανικές παρέες.', en: "Let's set up your profile quickly to find your ideal group." },
-    { gr: 'Επίλεξε τουλάχιστον 3 κατηγορίες που σε εκφράζουν.', en: 'Pick at least 3 categories that represent you.' },
-    { gr: 'Με πόσα άτομα νιώθεις πιο άνετα;', en: 'How many people are you most comfortable with?' },
-    { gr: 'Πόσο δυναμικές εκδηλώσεις ψάχνεις;', en: 'How active do you want your events to be?' },
-    { gr: 'Πότε συνήθως είσαι διαθέσιμος/η;', en: 'When are you usually available?' },
-    { gr: 'Πόσο μακριά είσαι διατεθειμένος/η να πας;', en: 'How far are you willing to travel?' },
-    { gr: 'Πρόσθεσε ένα σύντομο bio και το όνομά σου.', en: 'Add a short bio and confirm your name.' },
+    { gr: 'Διάλεξε τουλάχιστον 3 — θα σου δείχνουμε βραδιές που σου ταιριάζουν.', en: "Pick at least 3 — we'll show you nights that fit." },
+    { gr: 'Πότε είσαι συνήθως διαθέσιμος/η και πόσο μακριά πας;', en: 'When are you usually free and how far will you go?' },
+    { gr: 'Το όνομά σου και, αν θέλεις, λίγα λόγια για σένα.', en: 'Your name and, if you like, a few words about you.' },
   ];
 
   return (
     <div className="flex flex-col items-center px-4 py-5 pb-28 md:min-h-[80vh] md:justify-center md:pb-5">
       <h1 className="sr-only">{tu('Ρύθμιση προφίλ', 'Profile setup')}</h1>
       <div className="w-full max-w-lg">
-        {/* Progress bar */}
+        {/* Progress: one label and one segmented bar */}
         <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-bold text-gray-400 tracking-widest">
-              {tu('Βήμα', 'Step')} {step + 1} / {TOTAL_STEPS}
-            </span>
-            <span className="text-xs font-bold text-brand">{progressPct}%</span>
-          </div>
-          <div className="w-full bg-gray-100 dark:bg-white/10 rounded-full h-2 overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-accent to-cyan-400 rounded-full transition-all duration-500"
-              style={{ width: `${progressPct}%` }}
-            />
-          </div>
-          <div className="flex gap-1 mt-2">
+          <span className="block mb-2 text-xs font-semibold text-ink-muted">
+            {t('Βήμα', 'Step')} {step + 1} {t('από', 'of')} {TOTAL_STEPS}
+          </span>
+          <div className="flex gap-1.5" aria-hidden>
             {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
               <div
                 key={i}
-                className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
                   i <= step ? 'bg-accent' : 'bg-gray-100 dark:bg-white/10'
                 }`}
               />
@@ -162,7 +145,7 @@ export default function OnboardingClassic() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: dir * -40 }}
             transition={{ duration: 0.25 }}
-            className="bg-white dark:bg-surface-raised rounded-2xl p-4 shadow-soft border border-gray-100 dark:border-border space-y-4"
+            className="bg-white dark:bg-surface-raised rounded-2xl p-4 shadow-soft border border-gray-100 dark:border-border flex flex-col gap-4"
           >
             <div>
               <h2 className={cn(ONBOARDING_TYPO.title, 'text-ink')}>
@@ -174,10 +157,10 @@ export default function OnboardingClassic() {
             </div>
 
             {/* Step 0 — Welcome */}
-            {step === 0 && <NakamasCast />}
+            {step === 0 && <NakamasCast className="hidden sm:block" />}
 
             {/* Step 1 — Interests (gate: ≥3, matches subtitle) */}
-            {step === 1 && (
+            {step === 0 && (
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-2">
                   {INTERESTS.map((item) => {
@@ -222,6 +205,12 @@ export default function OnboardingClassic() {
 
             {/* Step 2 — Group size */}
             {step === 2 && (
+              <details className="order-last group rounded-xl border border-gray-100 dark:border-border px-3 py-2">
+                <summary className="cursor-pointer list-none text-xs font-semibold text-ink-muted min-h-8 flex items-center justify-between">
+                  {t('Μέγεθος παρέας (προαιρετικό)', 'Group size (optional)')}
+                  <ChevronRight className="w-3.5 h-3.5 transition-transform group-open:rotate-90" aria-hidden />
+                </summary>
+                <div className="mt-2">
               <div className="space-y-2">
                 {GROUP_SIZES.map((gs) => (
                   <button
@@ -242,10 +231,18 @@ export default function OnboardingClassic() {
                   </button>
                 ))}
               </div>
+                </div>
+              </details>
             )}
 
             {/* Step 3 — Activity level */}
-            {step === 3 && (
+            {step === 2 && (
+              <details className="order-last group rounded-xl border border-gray-100 dark:border-border px-3 py-2">
+                <summary className="cursor-pointer list-none text-xs font-semibold text-ink-muted min-h-8 flex items-center justify-between">
+                  {t('Επίπεδο δραστηριότητας (προαιρετικό)', 'Activity level (optional)')}
+                  <ChevronRight className="w-3.5 h-3.5 transition-transform group-open:rotate-90" aria-hidden />
+                </summary>
+                <div className="mt-2">
               <div className="space-y-2">
                 {ACTIVITY_LEVELS.map((al) => (
                     <button
@@ -277,10 +274,12 @@ export default function OnboardingClassic() {
                   </button>
                 ))}
               </div>
+                </div>
+              </details>
             )}
 
             {/* Step 4 — Schedule */}
-            {step === 4 && (
+            {step === 1 && (
               <div className="grid grid-cols-2 gap-2">
                 {SCHEDULES.map((sc) => {
                   const sel = selectedSchedule.includes(sc.id);
@@ -306,7 +305,7 @@ export default function OnboardingClassic() {
             )}
 
             {/* Step 5 — Location */}
-            {step === 5 && (
+            {step === 1 && (
               <div className="space-y-2">
                 {LOCATION_PREFS.map((lp) => (
                     <button
@@ -330,7 +329,7 @@ export default function OnboardingClassic() {
             )}
 
             {/* Step 6 — Bio & name */}
-            {step === 6 && (
+            {step === 2 && (
               <div className="space-y-4">
                 <div>
                   <label className="text-2xs font-bold text-gray-500 tracking-widest block mb-1.5">
@@ -400,7 +399,7 @@ export default function OnboardingClassic() {
             <button
               type="button"
               onClick={goNext}
-              disabled={step === 1 && selectedInterests.length < 3}
+              disabled={step === 0 && selectedInterests.length < 3}
               className="inline-flex items-center gap-1.5 px-4 min-h-8 rounded-full bg-ink text-white text-xs font-semibold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('Επόμενο', 'Next')}

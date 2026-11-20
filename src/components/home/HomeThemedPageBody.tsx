@@ -6,6 +6,7 @@ import { EmptyState } from '../common/EmptyState';
 import { CalendarX } from 'lucide-react';
 import { HomeThemedEnrichment } from './HomeThemedEnrichment';
 import { HomeContinueStrip } from './HomeContinueStrip';
+import { HomeNextNightCard } from './HomeNextNightCard';
 import { HomeThemedHeroSwitch } from './HomeThemedHeroSwitch';
 import { HomeRichHero } from './HomeRichHero';
 import { HomeFiltersSection } from './HomeFiltersSection';
@@ -20,7 +21,6 @@ import { HOME_TYPO } from '../../lib/typographyTokens';
 import { HOME_THEMED_TOKENS, type HomeThemedVariant } from '../../lib/homeThemedTokens';
 import { cn } from '../../lib/utils';
 import { emptyHomeSchedule, isScheduleFilterActive } from '../../lib/homeScheduleFilter';
-import { DiscoverCardImagePicker } from './DiscoverCardImagePicker';
 import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
 
 /**
@@ -95,8 +95,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     refetch,
   } = feed;
 
-  const { depth: imageDepth, setDepth: setImageDepth, options: imageDepthOptions } =
-    useDiscoverCardImageDepth();
+  const { depth: imageDepth } = useDiscoverCardImageDepth();
   const currentUser = feed.currentUser;
   const firstName = currentUser?.name?.split(' ')[0] || t('φίλε', 'there');
   const greeting = getTimeGreeting(firstName, t);
@@ -133,6 +132,7 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
         }
       />
 
+      <HomeNextNightCard />
       <HomeContinueStrip />
 
       <HomeThemedEnrichment onPreferDiscoverFeed={() => setFeedType('Discover')} />
@@ -197,12 +197,6 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           pastCount={pastCount}
           showPast={showPast}
           onTogglePast={onTogglePast}
-        />
-
-        <DiscoverCardImagePicker
-          depth={imageDepth}
-          options={imageDepthOptions}
-          onChange={setImageDepth}
         />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

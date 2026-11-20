@@ -141,9 +141,10 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         <div className="flex justify-between items-center">
           <button
             onClick={() => navigateBack(navigate)}
-            className="text-2xs font-bold tracking-wide text-ink-muted hover:text-ink"
+            aria-label={t('Επιστροφή στην Ανακάλυψη', 'Back to Discover')}
+            className="inline-flex items-center gap-1 min-h-8 text-xs font-semibold text-ink-muted hover:text-ink"
           >
-            &larr; {t('Επιστροφή στην Ανακάλυψη', 'Back to Discover')}
+            <span aria-hidden>&larr;</span> {t('Πίσω', 'Back')}
           </button>
 
           <EventDetailActionBar
@@ -329,7 +330,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
           {isSaved ? t('Αποθηκευμένο', 'Saved') : t('Αποθήκευση', 'Save')}
         </Button>
         <Button className="flex-[2] min-h-8 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
-          {t('Βρες Nakamas', 'Find Nakamas')}
+          {t('Μπες σε παρέα', 'Join a group')}
         </Button>
       </div>
 

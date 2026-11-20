@@ -31,14 +31,6 @@ export function LoginGuestHeroStrip({
       </div>
       <p
         className={cn(
-          'text-2xs font-bold tracking-widest',
-          variant === 'dark' ? 'text-cyan-300' : 'text-cyan-700',
-        )}
-      >
-        {t('Εξερεύνηση Δραστηριοτήτων', 'Explore Activities')}
-      </p>
-      <p
-        className={cn(
           'text-sm font-medium leading-relaxed px-2',
           variant === 'dark' ? 'text-gray-300' : 'text-gray-600',
         )}

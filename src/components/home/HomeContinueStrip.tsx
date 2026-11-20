@@ -11,6 +11,7 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { useReturnSummary } from '../../hooks/useReturnSummary';
 import { useHomeQuietContinue } from '../../hooks/useHomeHeroGate';
 import { returnPartPath } from '../../lib/returnVisit';
+import { useNextNight } from '../../hooks/useNextNight';
 
 /**
  * One-job strip: bring the user back to where they left off.
@@ -26,6 +27,7 @@ export function HomeContinueStrip() {
   const meId = useStore((s) => s.currentUser?.id);
   const returnParts = useReturnSummary();
   const quietContinue = useHomeQuietContinue();
+  const nextNight = useNextNight();
 
   // Stale «Our night» resume → missing or non-member lock: clear quietly.
   const nightMatch = path?.match(/^\/night\/([^/?#]+)/);
@@ -43,6 +45,8 @@ export function HomeContinueStrip() {
   }, [nightStale, browseResume, clear]);
 
   if (!path || path === '/' || nightStale || browseResume || !quietContinue) return null;
+  // The next-night card above already leads there.
+  if (nextNight?.path === path) return null;
 
   // Welcome-back line already covers this destination — keep one clear CTA in the hero.
   if (returnParts.some((part) => returnPartPath(part) === path)) return null;

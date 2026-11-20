@@ -5,6 +5,8 @@ import { getAuthToken } from '../authToken';
 let socket: Socket | null = null;
 
 function resolveSocketUrl(): string {
+  // Static hosting (Cloudflare Pages) has no socket server: the build sets "off".
+  if (appEnv.wsUrl === 'off') return '';
   if (appEnv.wsUrl) return appEnv.wsUrl;
   if (typeof window !== 'undefined') return window.location.origin;
   return '';

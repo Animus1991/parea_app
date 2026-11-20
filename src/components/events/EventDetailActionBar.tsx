@@ -96,9 +96,10 @@ export function EventDetailActionBar({
   return (
     <div className={cn('flex flex-col items-end gap-1', className)}>
     <div className="flex gap-2 flex-wrap justify-end">
-      <button type="button" onClick={onSave} className={cn(btn, isSaved ? a.saved : a.neutral)}>
+      {/* Phones save from the sticky bar at the bottom; one Save per screen. */}
+      <button type="button" onClick={onSave} className={cn(btn, 'hidden md:flex', isSaved ? a.saved : a.neutral)}>
         <Bookmark className={cn('h-3.5 w-3.5', isSaved && 'fill-current')} />
-        {isSaved ? t('Αποθηκεύτηκε', 'Saved') : t('Αποθήκευση Εκδήλωσης', 'Save Event')}
+        {isSaved ? t('Αποθηκεύτηκε', 'Saved') : t('Αποθήκευση', 'Save')}
       </button>
       <ActionMenu
         triggerClassName={cn(btn, a.action)}
