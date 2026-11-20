@@ -155,6 +155,7 @@ export function useHomePageController() {
     onTogglePast: () => setShowPast((v) => !v),
   };
   const quietRevealOnCount = quietRevealActiveCount(quietReveal);
+  const filterBadgeCount = feed.activeFilterCount + quietRevealOnCount;
 
   useEffect(() => {
     if (isDesktopFilters) setFilterSheetOpen(false);
@@ -190,6 +191,7 @@ export function useHomePageController() {
     storyEvents,
     quietReveal,
     quietRevealOnCount,
+    filterBadgeCount,
     seekingHostEvents,
     isSeekingHost,
     feed,

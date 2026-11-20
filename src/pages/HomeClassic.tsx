@@ -54,6 +54,7 @@ export default function HomeClassic() {
     loadMoreEvents,
     quietReveal,
     quietRevealOnCount,
+    filterBadgeCount,
     searchRef,
     loadMoreRef,
     storyEvents,
@@ -82,7 +83,6 @@ export default function HomeClassic() {
     setSortParam,
     sortedEvents,
     hasActiveFilters,
-    activeFilterCount,
     activeMood,
     handleSelectMood,
     schedule,
@@ -148,7 +148,7 @@ export default function HomeClassic() {
           mapClassName={tok.isDark ? 'border-gray-600/50 text-gray-300' : 'border-gray-200 text-ink-muted'}
           filtersOpen={filtersOpen}
           onToggleFilters={toggleFilters}
-          activeFilterCount={activeFilterCount + (seekingHostOnly ? 1 : 0) + quietRevealOnCount}
+          activeFilterCount={filterBadgeCount}
         />
 
         <HomeFiltersSection
@@ -169,7 +169,7 @@ export default function HomeClassic() {
           seekingHostOnly={seekingHostOnly}
           onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
           showSeekingHostChip={seekingHostEvents.length > 0}
-          hasActiveFilters={hasActiveFilters || seekingHostOnly || quietRevealOnCount > 0}
+          hasActiveFilters={hasActiveFilters || quietRevealOnCount > 0}
           onClearAll={handleClearAll}
           activeMood={activeMood}
           onSelectMood={handleSelectMood}
@@ -219,28 +219,28 @@ export default function HomeClassic() {
                 actionLabel={
                   isScheduleFilterActive(schedule)
                     ? t('Διεύρυνε τις ώρες', 'Widen hours')
-                    : hasActiveFilters || seekingHostOnly || quietRevealOnCount > 0
+                    : hasActiveFilters || quietRevealOnCount > 0
                       ? t('Εκκαθάριση φίλτρων', 'Clear filters')
                       : t('Στον χάρτη', 'On the map')
                 }
                 onAction={
                   isScheduleFilterActive(schedule)
                     ? () => setSchedule(emptyHomeSchedule())
-                    : hasActiveFilters || seekingHostOnly || quietRevealOnCount > 0
+                    : hasActiveFilters || quietRevealOnCount > 0
                       ? handleClearAll
                       : () => navigate('/nearby')
                 }
                 secondaryLabel={
                   isScheduleFilterActive(schedule)
                     ? t('Εκκαθάριση φίλτρων', 'Clear filters')
-                    : hasActiveFilters || seekingHostOnly || quietRevealOnCount > 0
+                    : hasActiveFilters || quietRevealOnCount > 0
                       ? t('Στον χάρτη', 'On the map')
                       : t('Κατηγορίες', 'Categories')
                 }
                 onSecondary={
                   isScheduleFilterActive(schedule)
                     ? handleClearAll
-                    : hasActiveFilters || seekingHostOnly || quietRevealOnCount > 0
+                    : hasActiveFilters || quietRevealOnCount > 0
                       ? () => navigate('/nearby')
                       : () => navigate('/categories')
                 }
@@ -285,7 +285,7 @@ export default function HomeClassic() {
       <HomeMobileFilterSheet
         open={filterSheetOpen}
         onClose={() => setFilterSheetOpen(false)}
-        activeCount={activeFilterCount + (seekingHostOnly ? 1 : 0) + quietRevealOnCount}
+        activeCount={filterBadgeCount}
         onClear={() => {
           handleClearAll();
           setFilterSheetOpen(false);
