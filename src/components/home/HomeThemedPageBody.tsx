@@ -53,9 +53,12 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     conflictCount,
     showConflicts,
     onToggleConflicts,
-    fullJoinedCount,
-    showFullJoined,
-    onToggleFullJoined,
+    fullCount,
+    showFull,
+    onToggleFull,
+    joinedCount,
+    showJoined,
+    onToggleJoined,
     pastCount,
     showPast,
     onTogglePast,
@@ -195,9 +198,12 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           conflictCount={conflictCount}
           showConflicts={showConflicts}
           onToggleConflicts={onToggleConflicts}
-          fullJoinedCount={fullJoinedCount}
-          showFullJoined={showFullJoined}
-          onToggleFullJoined={onToggleFullJoined}
+          fullCount={fullCount}
+          showFull={showFull}
+          onToggleFull={onToggleFull}
+          joinedCount={joinedCount}
+          showJoined={showJoined}
+          onToggleJoined={onToggleJoined}
           pastCount={pastCount}
           showPast={showPast}
           onTogglePast={onTogglePast}

@@ -75,7 +75,10 @@ export function hasUsualHours(
 export interface QuietCatalogBuckets {
   primary: Event[];
   conflicts: Event[];
-  fullJoined: Event[];
+  /** Events the signed-in user already has a spot in. */
+  joined: Event[];
+  /** Events with no spots left that the user has not joined. */
+  full: Event[];
   past: Event[];
 }
 
@@ -92,7 +95,8 @@ export function partitionQuietCatalog(
   const buckets: QuietCatalogBuckets = {
     primary: [],
     conflicts: [],
-    fullJoined: [],
+    joined: [],
+    full: [],
     past: [],
   };
   const now = opts.now ?? new Date();
@@ -101,11 +105,12 @@ export function partitionQuietCatalog(
       buckets.past.push(event);
       continue;
     }
-    if (
-      userJoinedEvent(event, opts.userId, opts.groups) ||
-      eventIsFull(event, opts.groups)
-    ) {
-      buckets.fullJoined.push(event);
+    if (userJoinedEvent(event, opts.userId, opts.groups)) {
+      buckets.joined.push(event);
+      continue;
+    }
+    if (eventIsFull(event, opts.groups)) {
+      buckets.full.push(event);
       continue;
     }
     if (eventConflictsWithPlans(event, opts.userId, opts.groups, opts.catalog)) {

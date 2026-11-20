@@ -68,7 +68,8 @@ describe('quietCatalog', () => {
     });
     expect(buckets.primary.map((e) => e.id)).toEqual(['open']);
     expect(buckets.conflicts.map((e) => e.id)).toEqual(['clash']);
-    expect(buckets.fullJoined.map((e) => e.id).sort()).toEqual(['booked', 'full']);
+    expect(buckets.joined.map((e) => e.id)).toEqual(['booked']);
+    expect(buckets.full.map((e) => e.id)).toEqual(['full']);
     expect(buckets.past.map((e) => e.id)).toEqual(['past']);
   });
 

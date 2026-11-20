@@ -27,7 +27,8 @@ export function useHomePageController() {
   const [seekingHostOnly, setSeekingHostOnly] = useState(false);
   const [visibleEventsCount, setVisibleEventsCount] = useState(HOME_FEED_PAGE_SIZE);
   const [showConflicts, setShowConflicts] = useState(false);
-  const [showFullJoined, setShowFullJoined] = useState(false);
+  const [showFull, setShowFull] = useState(false);
+  const [showJoined, setShowJoined] = useState(false);
   const [showPast, setShowPast] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -61,10 +62,11 @@ export function useHomePageController() {
   const shownEvents = useMemo(() => {
     const list = [...buckets.primary];
     if (showConflicts) list.push(...buckets.conflicts);
-    if (showFullJoined) list.push(...buckets.fullJoined);
+    if (showFull) list.push(...buckets.full);
+    if (showJoined) list.push(...buckets.joined);
     if (showPast) list.push(...buckets.past);
     return list;
-  }, [buckets, showConflicts, showFullJoined, showPast]);
+  }, [buckets, showConflicts, showFull, showJoined, showPast]);
 
   const storyEvents = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -165,9 +167,12 @@ export function useHomePageController() {
     conflictCount: buckets.conflicts.length,
     showConflicts,
     onToggleConflicts: () => setShowConflicts((v) => !v),
-    fullJoinedCount: buckets.fullJoined.length,
-    showFullJoined,
-    onToggleFullJoined: () => setShowFullJoined((v) => !v),
+    fullCount: buckets.full.length,
+    showFull,
+    onToggleFull: () => setShowFull((v) => !v),
+    joinedCount: buckets.joined.length,
+    showJoined,
+    onToggleJoined: () => setShowJoined((v) => !v),
     pastCount: buckets.past.length,
     showPast,
     onTogglePast: () => setShowPast((v) => !v),
