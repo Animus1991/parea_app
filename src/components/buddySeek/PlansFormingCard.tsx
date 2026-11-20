@@ -5,7 +5,6 @@ import {
   EyeOff,
   MapPin,
   Clock,
-  Shield,
   Heart,
   Users,
 } from 'lucide-react';
@@ -14,6 +13,8 @@ import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { projectRequestForViewer } from '../../lib/companyRequestUtils';
 import { JoinRequestPreviewModal } from './JoinRequestPreviewModal';
+import { formatLocationArea } from '../../lib/eventDisplay';
+import { interestLabel } from '../../lib/interests';
 import { cn } from '../../lib/utils';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
 import type { PlansFormingGroupItem } from '../../hooks/usePlansFormingFeed';
@@ -41,7 +42,7 @@ export function PlansFormingCard({
   isDarkSurface?: boolean;
   onDismiss?: () => void;
 }) {
-  const { t, tu } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const navigate = useNavigate();
   const currentUser = useStore((s) => s.currentUser);
   const prefs = useStore((s) => s.companyRequestPreferences);
@@ -63,6 +64,9 @@ export function PlansFormingCard({
   const darkCard = isSidebar && isDarkSurface;
   const urgencyText = darkCard ? URGENCY_TEXT_DARK : URGENCY_TEXT;
   const roleText = darkCard ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300';
+  const locationLine = item.location ? formatLocationArea(item.location, language) : '';
+  const showUrgency = item.urgency.tone !== 'normal';
+  const showMatchReason = !isSidebar && item.matchReason && item.sharedInterestTags.length === 0;
 
   return (
     <article
@@ -85,8 +89,6 @@ export function PlansFormingCard({
         >
           <Heart className="w-3 h-3" aria-hidden />
           {t('Υψηλή συμβατότητα', 'High match')}
-          <span aria-hidden>·</span>
-          <span className="tabular-nums">{item.matchPercent}%</span>
         </p>
       )}
 
@@ -183,16 +185,16 @@ export function PlansFormingCard({
                 {t(item.scheduleFull.el, item.scheduleFull.en)}
               </span>
             )}
-            {isSidebar && item.location && (
+            {isSidebar && locationLine && (
               <span className={cn('inline-flex items-center gap-1', darkCard ? 'text-gray-400' : 'text-gray-600')}>
                 <MapPin className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
-                {item.location}
+                {locationLine}
               </span>
             )}
-            {!isSidebar && item.location && (
+            {!isSidebar && locationLine && (
               <span className="inline-flex items-center gap-1 truncate max-w-[160px] font-medium text-gray-600 dark:text-gray-300">
                 <MapPin className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
-                {item.location}
+                {locationLine}
               </span>
             )}
           </div>
@@ -205,36 +207,36 @@ export function PlansFormingCard({
           darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-300',
         )}
       >
-        <span className={cn('inline-flex items-center gap-1 font-semibold', urgencyText[item.urgency.tone])}>
-          <Clock className="w-2.5 h-2.5 opacity-70" aria-hidden />
-          {t(item.urgency.el, item.urgency.en)}
-        </span>
-        <span aria-hidden className="opacity-40">·</span>
+        {showUrgency && (
+          <>
+            <span className={cn('inline-flex items-center gap-1 font-semibold', urgencyText[item.urgency.tone])}>
+              <Clock className="w-2.5 h-2.5 opacity-70" aria-hidden />
+              {t(item.urgency.el, item.urgency.en)}
+            </span>
+            <span aria-hidden className="opacity-40">·</span>
+          </>
+        )}
         <span className="inline-flex items-center gap-1">
           <Users className="w-2.5 h-2.5 opacity-70" aria-hidden />
           {t(item.groupSizeLabel.el, item.groupSizeLabel.en)}
         </span>
         <span aria-hidden className="opacity-40">·</span>
         <span>{t(item.meetingLabel.el, item.meetingLabel.en)}</span>
-        {item.sharedInterestTags.slice(0, 2).length > 0 && (
+        {item.sharedInterestTags.length > 0 && (
           <>
             <span aria-hidden className="opacity-40">·</span>
-            <span className="line-clamp-1">{item.sharedInterestTags.slice(0, 2).join(' · ')}</span>
+            <span className="line-clamp-1">
+              {item.sharedInterestTags
+                .slice(0, 2)
+                .map((tag) => interestLabel(tag, language))
+                .join(' · ')}
+            </span>
           </>
         )}
         {item.sharedInterestCount > 0 && item.sharedInterestTags.length === 0 && (
           <>
             <span aria-hidden className="opacity-40">·</span>
             <span>{t(`${item.sharedInterestCount} κοινά`, `${item.sharedInterestCount} shared`)}</span>
-          </>
-        )}
-        {onDismiss && (
-          <>
-            <span aria-hidden className="opacity-40">·</span>
-            <span className="inline-flex items-center gap-1">
-              <Shield className="w-2.5 h-2.5 opacity-70" aria-hidden />
-              {t('Κοινότητα', 'Community')}
-            </span>
           </>
         )}
       </p>
@@ -252,7 +254,7 @@ export function PlansFormingCard({
         </div>
       )}
 
-      {!isSidebar && item.matchReason && (
+      {showMatchReason && item.matchReason && (
         <p className="px-4 pb-3 card-copy leading-relaxed text-gray-400 dark:text-gray-500">
           {t(item.matchReason.el, item.matchReason.en)}
         </p>
@@ -342,11 +344,12 @@ export function PlansFormingGroupCard({
   isDarkSurface?: boolean;
   onSuggestMerge?: () => void;
 }) {
-  const { t, tu } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const navigate = useNavigate();
   const isSidebar = variant === 'sidebar';
   const darkCard = isSidebar && isDarkSurface;
   const { group, event, meta } = entry;
+  const locationLine = meta.location ? formatLocationArea(meta.location, language) : '';
 
   return (
     <article
@@ -384,10 +387,10 @@ export function PlansFormingGroupCard({
               {t('Οργανώνει ομάδα', 'Group host')}
             </span>
           </p>
-          {meta.location && (
+          {locationLine && (
             <p className={cn('card-copy flex items-center gap-1 leading-relaxed', darkCard ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400')}>
               <MapPin className="w-3 h-3 shrink-0" />
-              {meta.location}
+              {locationLine}
             </p>
           )}
         </div>

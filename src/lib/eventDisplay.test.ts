@@ -63,6 +63,8 @@ describe('eventDisplay', () => {
   it('localizes Athens neighbourhoods and event tags', () => {
     expect(formatLocationArea('Thisio, Athens', 'el')).toBe('Θησείο, Αθήνα');
     expect(formatLocationArea('Thisio, Athens', 'en')).toBe('Thisio, Athens');
+    expect(formatLocationArea('Koukaki, Athens', 'el')).toBe('Κουκάκι, Αθήνα');
+    expect(formatLocationArea('Zappeio, Athens', 'el')).toBe('Ζάππειο, Αθήνα');
     expect(translateEventTag('boardgames', (el) => el)).toBe('Επιτραπέζια');
     expect(translateEventTag('board games', (_el, en) => en)).toBe('Board games');
     expect(translateEventTag('nakamas nights', (el) => el)).toBe('Nakamas Nights');

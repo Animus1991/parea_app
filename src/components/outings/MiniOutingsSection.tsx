@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { formatPlanWhen } from '../../lib/dateLocale';
+import { formatLocationArea } from '../../lib/eventDisplay';
 import { fitsGenderMode } from '../../lib/outings';
 import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
@@ -89,7 +90,7 @@ export function MiniOutingsSection() {
             <button
               type="button"
               onClick={() => navigate('/collections')}
-              className="font-bold text-ink underline underline-offset-2"
+              className="font-semibold text-ink-muted underline underline-offset-2 hover:text-ink"
             >
               {t('Συλλογές', 'Collections')}
             </button>
@@ -126,7 +127,7 @@ export function MiniOutingsSection() {
                 </p>
                 <p className="mt-0.5 text-sm font-bold text-ink">{event.title}</p>
                 <p className="flex items-center gap-1 text-xs font-medium text-ink-muted">
-                  <MapPin className="h-3.5 w-3.5" aria-hidden /> {event.locationArea}
+                  <MapPin className="h-3.5 w-3.5" aria-hidden /> {formatLocationArea(event.locationArea, language)}
                 </p>
                 <p className="mt-1 text-xs font-medium text-ink">
                   {t(`${group.members.length}/${group.targetSize} · με ${host?.name.split(' ')[0] ?? '—'}`, `${group.members.length}/${group.targetSize} · with ${host?.name.split(' ')[0] ?? '—'}`)}

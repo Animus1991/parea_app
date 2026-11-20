@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Filter, Settings, Plus } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -19,6 +19,7 @@ import { ResourceStateGate } from '../common/ResourceStateGate';
 import { Modal } from '../common/Modal';
 import { useEventsResource } from '../../hooks/useEventsQuery';
 import { usePageContrast } from '../../hooks/usePageContrast';
+import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { toast } from 'sonner';
@@ -30,6 +31,16 @@ import { MiniOutingsSection } from '../outings/MiniOutingsSection';
 import { hasUsualHours, matchesUsualHours } from '../../lib/quietCatalog';
 
 type FilterKey = 'all' | 'open_spots' | 'verified' | 'small_groups' | 'flexible' | 'saved_events' | 'high_match';
+
+const FILTER_DEFS: { key: FilterKey; el: string; en: string }[] = [
+  { key: 'all', el: 'Όλα', en: 'All' },
+  { key: 'high_match', el: 'Υψηλή συμβατότητα', en: 'High match' },
+  { key: 'saved_events', el: 'Αποθηκευμένες', en: 'Saved events' },
+  { key: 'flexible', el: 'Ευέλικτα', en: 'Flexible' },
+  { key: 'open_spots', el: 'Ανοιχτές θέσεις', en: 'Open spots' },
+  { key: 'small_groups', el: 'Μικρές ομάδες', en: 'Small groups' },
+  { key: 'verified', el: 'Επαληθευμένοι', en: 'Verified' },
+];
 
 function joinStatusLabel(status: CompanyJoinRequestStatus, t: (el: string, en: string) => string) {
   switch (status) {
@@ -70,6 +81,8 @@ export default function BuddySeekPageContent() {
   const [showQueuedSeeks, setShowQueuedSeeks] = useState(false);
 
   const [filter, setFilter] = useState<FilterKey>('all');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filterBarRef = useRef<HTMLDivElement>(null);
   const [preview, setPreview] = useState<PlansFormingEnrichedItem | null>(null);
   const [previewJoinId, setPreviewJoinId] = useState<string | null>(null);
   const [eventPickerOpen, setEventPickerOpen] = useState(false);
@@ -126,6 +139,12 @@ export default function BuddySeekPageContent() {
   );
   const visibleSeeks = showQueuedSeeks ? [...inHoursItems, ...queuedItems] : inHoursItems;
 
+  // Mini outings already have their own section with Join — don't repeat them as recruiting groups.
+  const recruitingGroups = useMemo(
+    () => feed.recruitingGroupItems.filter((entry) => entry.event.kind !== 'mini_outing'),
+    [feed.recruitingGroupItems],
+  );
+
   const pendingForMe = companyJoinRequests.filter(
     (j) => j.status === 'pending' && j.targetUserId === currentUser?.id,
   );
@@ -154,52 +173,43 @@ export default function BuddySeekPageContent() {
     visibleIds: visibleSeeks.slice(0, 8).map((i) => i.intent.id),
   });
 
+  const headerLink =
+    'inline-flex items-center gap-1.5 min-h-8 text-xs font-semibold text-ink-muted hover:text-ink transition-colors';
+
   return (
-    <div className="w-full max-w-full min-w-0 space-y-4 pb-16 pt-4">
-      <header className="space-y-3">
+    <div className={cn(PAGE_FILL, 'space-y-4 pb-32 pt-4 md:pb-8')}>
+      <header className="space-y-2">
         <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
         <PlansFormingValueHero insights={feed.insights} />
         {/* StatsBar omitted when ValueHero already states compatible count — less chrome. */}
         {feed.insights.compatiblePlans === 0 && (
           <PlansFormingStatsBar plain insights={feed.insights} />
         )}
-        <div className="flex flex-wrap gap-2">
+        <nav aria-label={t('Ενέργειες σελίδας', 'Page actions')} className="flex flex-wrap gap-x-4 gap-y-0">
           <button
             type="button"
             onClick={() => navigate('/settings?section=buddy-seek')}
-            className={cn(
-              'inline-flex items-center gap-1.5 text-xs font-bold px-3 min-h-8 rounded-xl border',
-              a.borderB,
-              a.sub,
-            )}
+            className={headerLink}
           >
-            <Settings className="w-3.5 h-3.5" />
+            <Settings className="w-3.5 h-3.5" aria-hidden />
             {t('Ρυθμίσεις απορρήτου', 'Privacy settings')}
           </button>
           <button
             type="button"
             onClick={() => setEventPickerOpen(true)}
-            className={cn(
-              'inline-flex items-center gap-1.5 text-xs font-bold px-3 min-h-8 rounded-xl border',
-              a.borderB,
-              a.sub,
-            )}
+            className={headerLink}
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3.5 h-3.5" aria-hidden />
             {t('Νέο αίτημα από εκδήλωση', 'New request from event')}
           </button>
           <button
             type="button"
             onClick={() => navigate('/plans')}
-            className={cn(
-              'inline-flex items-center gap-1.5 text-xs font-bold px-3 min-h-8 rounded-xl border',
-              a.borderB,
-              a.sub,
-            )}
+            className={headerLink}
           >
             {t('Τα σχέδιά μου', 'My plans')}
           </button>
-        </div>
+        </nav>
       </header>
 
       {/* Soft one-line vibe nudge — matching uses «Το στυλ παρέας μου»; never blocks browsing. */}
@@ -207,12 +217,7 @@ export default function BuddySeekPageContent() {
         <button
           type="button"
           onClick={() => navigate('/profile')}
-          className={cn(
-            'w-full rounded-xl border border-dashed px-3 py-2 text-left text-xs font-bold transition-colors',
-            a.borderB,
-            a.head,
-            'hover:border-border-strong',
-          )}
+          className="text-left text-xs font-semibold text-ink-muted hover:text-ink"
         >
           {t(
             'Ολοκλήρωσε το στυλ παρέας (5 ερωτήσεις) →',
@@ -297,41 +302,82 @@ export default function BuddySeekPageContent() {
         </section>
       )}
 
-      <div className={cn('rounded-2xl border p-3 space-y-3', a.cardSurface, a.borderB)}>
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 opacity-60" />
-          <span className={cn('text-sm font-bold', a.head)}>{t('Φίλτρα', 'Filters')}</span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {(
-            [
-              ['all', 'Όλα', 'All', filterCounts.all],
-              ['high_match', 'Υψηλή συμβατότητα', 'High match', filterCounts.high_match],
-              ['saved_events', 'Αποθηκευμένες', 'Saved events', filterCounts.saved_events],
-              ['flexible', 'Ευέλικτα', 'Flexible', filterCounts.flexible],
-              ['open_spots', 'Ανοιχτές θέσεις', 'Open spots', filterCounts.open_spots],
-              ['small_groups', 'Μικρές ομάδες', 'Small groups', filterCounts.small_groups],
-              ['verified', 'Επαληθευμένοι', 'Verified', filterCounts.verified],
-            ] as const
-          ).map(([key, el, en, count]) => (
+      <div ref={filterBarRef} className="space-y-2 scroll-mt-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            aria-expanded={filtersOpen}
+            aria-controls="buddy-seek-filters"
+            onClick={() => {
+              setFiltersOpen((open) => {
+                const next = !open;
+                if (next) {
+                  requestAnimationFrame(() => {
+                    filterBarRef.current?.scrollIntoView({
+                      block: 'start',
+                      behavior: 'smooth',
+                    });
+                  });
+                }
+                return next;
+              });
+            }}
+            className={cn(
+              'filter-chip text-xs font-bold px-3 rounded-xl border transition-colors gap-1.5',
+              filtersOpen ? 'bg-cyan-600 text-white border-cyan-600' : a.borderB,
+            )}
+          >
+            <Filter className="w-3.5 h-3.5" aria-hidden />
+            {t('Φίλτρα', 'Filters')}
+            {filter !== 'all' && (
+              <span className={cn('text-xs px-1 rounded-lg', filtersOpen ? 'bg-white/20' : 'bg-cyan-100 text-cyan-800')}>
+                1
+              </span>
+            )}
+          </button>
+          {!filtersOpen && filter !== 'all' && (
             <button
-              key={key}
               type="button"
-              onClick={() => setFilter(key)}
-              className={cn(
-                'filter-chip text-xs font-bold px-3 rounded-xl border transition-colors gap-1',
-                filter === key ? 'bg-cyan-600 text-white border-cyan-600' : a.borderB,
-              )}
+              onClick={() => setFilter('all')}
+              className="filter-chip text-xs font-bold px-3 rounded-xl border border-cyan-600 bg-cyan-600 text-white gap-1"
+              aria-label={t('Καθαρισμός φίλτρου', 'Clear filter')}
             >
-              {t(el, en)}
-              {count != null && count > 0 && (
-                <span className={cn('text-xs px-1 rounded-lg', filter === key ? 'bg-white/20' : 'bg-cyan-100 text-cyan-800')}>
-                  {count}
-                </span>
+              {t(
+                FILTER_DEFS.find((item) => item.key === filter)?.el ?? 'Φίλτρο',
+                FILTER_DEFS.find((item) => item.key === filter)?.en ?? 'Filter',
+              )}
+              {filterCounts[filter] > 0 && (
+                <span className="text-xs px-1 rounded-lg bg-white/20">{filterCounts[filter]}</span>
               )}
             </button>
-          ))}
+          )}
         </div>
+        {filtersOpen && (
+          <div id="buddy-seek-filters" className="flex flex-wrap gap-2">
+            {FILTER_DEFS.map(({ key, el, en }) => {
+              const count = filterCounts[key];
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  aria-pressed={filter === key}
+                  onClick={() => setFilter(key === filter && key !== 'all' ? 'all' : key)}
+                  className={cn(
+                    'filter-chip text-xs font-bold px-3 rounded-xl border transition-colors gap-1',
+                    filter === key ? 'bg-cyan-600 text-white border-cyan-600' : a.borderB,
+                  )}
+                >
+                  {t(el, en)}
+                  {count > 0 && (
+                    <span className={cn('text-xs px-1 rounded-lg', filter === key ? 'bg-white/20' : 'bg-cyan-100 text-cyan-800')}>
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <ResourceStateGate
@@ -341,7 +387,7 @@ export default function BuddySeekPageContent() {
         loading={<PlansFormingSkeleton count={3} variant="inline" />}
         errorTitle={t('Αδυναμία φόρτωσης αιτημάτων', 'Could not load requests')}
       >
-      {visibleSeeks.length === 0 && queuedItems.length === 0 && feed.recruitingGroupItems.length === 0 ? (
+      {visibleSeeks.length === 0 && queuedItems.length === 0 && recruitingGroups.length === 0 ? (
         <PlansFormingEmptyState suggestedEvent={feed.suggestedEvent} />
       ) : (
         <>
@@ -384,10 +430,10 @@ export default function BuddySeekPageContent() {
             </button>
           )}
 
-          {feed.recruitingGroupItems.length > 0 && (
+          {recruitingGroups.length > 0 && (
             <section className="space-y-4">
               <PlansFormingSectionTitle title={t('Ομάδες με ανοιχτές θέσεις', 'Groups with open spots')} />
-              {feed.recruitingGroupItems.map((entry) => (
+              {recruitingGroups.map((entry) => (
                 <PlansFormingGroupCard key={entry.group.id} entry={entry} variant="page" />
               ))}
             </section>
