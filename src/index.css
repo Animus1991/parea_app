@@ -263,7 +263,8 @@ body[data-search-open] .mobile-dock {
 }
 [data-theme="activebuddies-dark"] {
   --color-ink: hsl(210 20% 92%);
-  --color-ink-muted: hsl(220 12% 55%);
+  /* 60% (was 55%): ≥ 4.5:1 on every raised card shade, incl. accent-soft (4.70). */
+  --color-ink-muted: hsl(220 12% 60%);
   --color-ink-faint: hsl(220 10% 48%);
   --color-surface: hsl(220 16% 8%);
   --color-surface-raised: hsl(220 16% 11%);

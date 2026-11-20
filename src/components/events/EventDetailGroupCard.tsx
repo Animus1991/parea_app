@@ -281,7 +281,7 @@ export function EventDetailGroupCard({
       <GroupInsights group={group} className="mb-3" textClass={tok.meta} strongClass={tok.title} compact />
 
       {isDiscountEligible && !discountUnlockedTemp && (
-        <div className="bg-amber-50/80 border border-amber-200/50 p-2.5 rounded-lg mb-4">
+        <div className="bg-amber-50 border border-amber-200/50 p-2.5 rounded-lg mb-4">
           <div className="flex justify-between items-center mb-1.5">
             <p className="text-xs text-amber-800 font-bold tracking-wide">
               {t('Πρόοδος Έκπτωσης', 'Discount Progress')}

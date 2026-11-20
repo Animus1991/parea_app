@@ -30,9 +30,12 @@ const TOKENS = {
     toggle: 'bg-white/90 text-gray-700',
     toggleHover: 'hover:text-current',
     pulse: 'bg-cyan-100',
-    badge: 'text-gray-500',
+    badge: 'text-gray-600',
     focusRing: 'ring-cyan-500/50',
     popup: 'bg-white text-gray-900',
+    /** Placeholder «paper» when there is no map key — follows the theme so its text stays readable. */
+    canvas: 'bg-[#e5e3df]',
+    meeting: 'text-cyan-800',
   },
   dark: {
     frame: 'border-gray-700',
@@ -42,6 +45,8 @@ const TOKENS = {
     badge: 'text-gray-300',
     focusRing: 'ring-cyan-400/40',
     popup: 'bg-gray-900 text-white',
+    canvas: 'bg-gray-800',
+    meeting: 'text-cyan-300',
   },
 };
 
@@ -241,7 +246,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
             </APIProvider>
           </ErrorBoundary>
         ) : (
-          <div className="w-full h-full bg-[#e5e3df] relative flex flex-col items-center justify-center overflow-hidden p-4">
+          <div className={cn('w-full h-full relative flex flex-col items-center justify-center overflow-hidden p-4', tok.canvas)}>
             <button
               type="button"
               onClick={() => setMarkerFocused(true)}
@@ -259,7 +264,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
                 </p>
               )}
               {meetingPoint && (
-                <p className="text-xs font-bold text-cyan-800 text-center">
+                <p className={cn('text-xs font-bold text-center', tok.meeting)}>
                   {t('Σημείο συνάντησης', 'Meeting point')}: {meetingPoint}
                 </p>
               )}
