@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Hash, Search } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { APP_TYPO } from '../../lib/typographyTokens';
@@ -14,11 +14,14 @@ import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { isEventPast, translateEventTag } from '../../lib/eventDisplay';
 import {
   catalogEventTags,
-  eventTagPath,
-  eventsForTag,
-  findCataloguedTag,
+  eventTagMatchCount,
+  eventsForTags,
+  findCataloguedTags,
   groupTagsByLetter,
+  parseTagSlugs,
   tagMatchesQuery,
+  tagsIndexPath,
+  toggleTagSlug,
   type CataloguedTag,
 } from '../../lib/eventTags';
 
@@ -50,7 +53,8 @@ function scrollToLetter(letter: string) {
 }
 
 export default function TagsPageContent() {
-  const { slug } = useParams();
+  const { slug: pathSlug } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const { events, isLoading, isError, refetch } = useEventsResource();
@@ -60,7 +64,14 @@ export default function TagsPageContent() {
   const labelOf = useCallback((tag: string) => translateEventTag(tag, t), [t]);
 
   const catalog = useMemo(() => catalogEventTags(events), [events]);
-  const selected = findCataloguedTag(catalog, slug);
+  const selectedSlugs = useMemo(
+    () => parseTagSlugs([pathSlug, ...searchParams.getAll('t')]),
+    [pathSlug, searchParams],
+  );
+  const selectedItems = useMemo(
+    () => findCataloguedTags(catalog, selectedSlugs),
+    [catalog, selectedSlugs],
+  );
   const visibleCatalog = useMemo(
     () => catalog.filter((item) => tagMatchesQuery(item, query, labelOf(item.tag))),
     [catalog, query, labelOf],
@@ -81,26 +92,45 @@ export default function TagsPageContent() {
   const showLetterJump = view === 'detailed' && !searching && letterGroups.length > 3;
 
   const taggedEvents = useMemo(() => {
-    if (!slug) return [];
-    return [...eventsForTag(events, slug)].sort((a, b) => {
+    if (selectedSlugs.length === 0) return [];
+    return [...eventsForTags(events, selectedSlugs)].sort((a, b) => {
+      const matchDelta = eventTagMatchCount(b, selectedSlugs) - eventTagMatchCount(a, selectedSlugs);
+      if (matchDelta !== 0) return matchDelta;
       const pastA = isEventPast(a) ? 1 : 0;
       const pastB = isEventPast(b) ? 1 : 0;
       if (pastA !== pastB) return pastA - pastB;
       return a.date.localeCompare(b.date);
     });
-  }, [events, slug]);
+  }, [events, selectedSlugs]);
 
-  const selectedLabel = selected ? labelOf(selected.tag) : slug ? labelOf(slug) : '';
+  const selectedLabel =
+    selectedItems.length === 0
+      ? ''
+      : selectedItems.length === 1
+        ? labelOf(selectedItems[0].tag)
+        : selectedItems.length === 2
+          ? `${labelOf(selectedItems[0].tag)} και ${labelOf(selectedItems[1].tag)}`
+          : `${selectedItems.length} ετικέτες`;
+  const selectedLabelEn =
+    selectedItems.length === 0
+      ? ''
+      : selectedItems.length === 1
+        ? labelOf(selectedItems[0].tag)
+        : selectedItems.length === 2
+          ? `${labelOf(selectedItems[0].tag)} and ${labelOf(selectedItems[1].tag)}`
+          : `${selectedItems.length} tags`;
 
   usePublishPageSnapshot({
     titleEl: selectedLabel || 'Ετικέτες',
-    titleEn: selectedLabel || 'Tags',
-    summaryEl: slug
-      ? `${taggedEvents.length} εκδηλώσεις με αυτή την ετικέτα`
-      : `${catalog.length} ετικέτες στην πλατφόρμα`,
-    summaryEn: slug
-      ? `${taggedEvents.length} events with this tag`
-      : `${catalog.length} tags on the platform`,
+    titleEn: selectedLabelEn || 'Tags',
+    summaryEl:
+      selectedSlugs.length > 0
+        ? `${taggedEvents.length} εκδηλώσεις με αυτές τις ετικέτες`
+        : `${catalog.length} ετικέτες στην πλατφόρμα`,
+    summaryEn:
+      selectedSlugs.length > 0
+        ? `${taggedEvents.length} events with these tags`
+        : `${catalog.length} tags on the platform`,
     visibleIds: taggedEvents.map((event) => event.id),
   });
 
@@ -118,14 +148,18 @@ export default function TagsPageContent() {
     );
 
   const renderChip = (item: CataloguedTag) => {
-    const active = Boolean(selected && selected.slug === item.slug);
+    const active = selectedSlugs.includes(item.slug);
     const label = labelOf(item.tag);
     return (
       <Link
         key={item.slug}
-        to={active ? '/tags' : eventTagPath(item.tag)}
-        aria-current={active ? 'page' : undefined}
-        aria-label={t(`${label}, ${item.count} εκδηλώσεις`, `${label}, ${item.count} events`)}
+        to={tagsIndexPath(toggleTagSlug(selectedSlugs, item.slug))}
+        aria-pressed={active}
+        aria-label={
+          active
+            ? t(`Αφαίρεση ${label}`, `Remove ${label}`)
+            : t(`Προσθήκη ${label}, ${item.count} εκδηλώσεις`, `Add ${label}, ${item.count} events`)
+        }
         title={`${label} · ${item.count}`}
         className={chipClass(active)}
       >
@@ -164,7 +198,7 @@ export default function TagsPageContent() {
     </div>
   );
 
-  const eventsBlock = slug ? (
+  const eventsBlock = selectedSlugs.length > 0 ? (
     <div id="tag-events" className="scroll-mt-24 space-y-3">
       <h2 className={cn(APP_TYPO.sectionLabel, 'text-ink-muted')}>
         {t('Εκδηλώσεις', 'Events')}
@@ -185,10 +219,10 @@ export default function TagsPageContent() {
         {taggedEvents.length === 0 ? (
           <EmptyState
             icon={Hash}
-            title={t('Δεν υπάρχουν εκδηλώσεις με αυτή την ετικέτα', 'No events with this tag')}
+            title={t('Δεν υπάρχουν εκδηλώσεις με αυτές τις ετικέτες', 'No events with these tags')}
             description={t(
-              'Διάλεξε άλλη ετικέτα από το ευρετήριο από κάτω.',
-              'Pick another tag from the index below.',
+              'Βγάλε μία ετικέτα ή διάλεξε άλλες από το ευρετήριο από κάτω.',
+              'Remove a tag or pick others from the index below.',
             )}
             actionLabel={t('Όλες οι ετικέτες', 'All tags')}
             onAction={() => navigate('/tags')}
@@ -206,36 +240,40 @@ export default function TagsPageContent() {
 
   return (
     <div className={cn(PAGE_FILL, 'space-y-4 pb-32 md:pb-8')}>
-      {slug ? (
+      {selectedSlugs.length > 0 ? (
         <Link
           to="/tags"
           className="inline-flex min-h-9 items-center gap-1.5 text-xs font-bold text-ink-muted hover:text-ink"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
-          {t('Όλες οι ετικέτες', 'All tags')}
+          {t('Καθαρισμός ετικετών', 'Clear tags')}
         </Link>
       ) : null}
 
       <header className="space-y-1.5">
         <h1 className={cn(APP_TYPO.pageTitle, 'flex items-center gap-2 text-ink')}>
           <Hash className="h-5 w-5 shrink-0" aria-hidden />
-          {slug ? selectedLabel || t('Ετικέτα', 'Tag') : t('Ετικέτες', 'Tags')}
+          {selectedSlugs.length > 0
+            ? t(selectedLabel, selectedLabelEn)
+            : t('Ετικέτες', 'Tags')}
         </h1>
         <p className={cn(APP_TYPO.pageSub, 'text-ink-muted')}>
-          {slug
+          {selectedSlugs.length > 0
             ? t(
-                `${taggedEvents.length} ${taggedEvents.length === 1 ? 'εκδήλωση' : 'εκδηλώσεις'} με αυτή την ετικέτα.`,
-                `${taggedEvents.length} ${taggedEvents.length === 1 ? 'event' : 'events'} with this tag.`,
+                `${taggedEvents.length} ${taggedEvents.length === 1 ? 'εκδήλωση' : 'εκδηλώσεις'} με ${selectedItems.length === 1 ? 'αυτή την ετικέτα' : 'οποιαδήποτε από αυτές'}.`,
+                `${taggedEvents.length} ${taggedEvents.length === 1 ? 'event' : 'events'} with ${selectedItems.length === 1 ? 'this tag' : 'any of these tags'}.`,
               )
             : t(
-                'Ευρετήριο των ετικετών που χρησιμοποιεί η πλατφόρμα. Πάτα μία για τις εκδηλώσεις της.',
-                'An index of tags used on the platform. Tap one to see its events.',
+                'Πάτα όσες ετικέτες θες. Ξαναπάτα για να τις βγάλεις.',
+                'Tap as many tags as you want. Tap again to remove them.',
               )}
         </p>
-        {!slug ? (
+        {selectedSlugs.length === 0 ? (
           <p className="text-xs font-medium text-ink-muted">
             {t(`${catalog.length} ετικέτες`, `${catalog.length} tags`)}
           </p>
+        ) : selectedItems.length > 1 ? (
+          <div className="flex flex-wrap gap-1.5">{selectedItems.map(renderChip)}</div>
         ) : null}
       </header>
 

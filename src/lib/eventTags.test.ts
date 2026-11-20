@@ -2,14 +2,19 @@ import { describe, expect, it } from 'vitest';
 import {
   catalogEventTags,
   eventHasTag,
+  eventTagMatchCount,
   eventTagPath,
   eventTagSlug,
   eventsForTag,
+  eventsForTags,
   findCataloguedTag,
   groupTagsByLetter,
+  parseTagSlugs,
   tagLetter,
   tagMatchesQuery,
+  tagsIndexPath,
   tagsMatch,
+  toggleTagSlug,
 } from './eventTags';
 
 describe('eventTags', () => {
@@ -74,5 +79,24 @@ describe('eventTags', () => {
       [{ tag: 'nakamas nights', slug: 'nakamas-nights', count: 2 }],
       'Nakamas-Nights',
     )?.tag).toBe('nakamas nights');
+  });
+
+  it('toggles several slugs into a shareable tags-index path', () => {
+    expect(parseTagSlugs(['yoga', 'hiking,yoga'])).toEqual(['yoga', 'hiking']);
+    expect(toggleTagSlug(['yoga'], 'hiking')).toEqual(['yoga', 'hiking']);
+    expect(toggleTagSlug(['yoga', 'hiking'], 'yoga')).toEqual(['hiking']);
+    expect(tagsIndexPath(['yoga'])).toBe('/tags/yoga');
+    expect(tagsIndexPath(['yoga', 'hiking'])).toBe('/tags?t=yoga&t=hiking');
+    expect(tagsIndexPath([])).toBe('/tags');
+  });
+
+  it('unions events across selected tags and counts overlaps', () => {
+    const yoga = { tags: ['yoga'] };
+    const both = { tags: ['yoga', 'hiking'] };
+    const hike = { tags: ['hiking'] };
+    const wine = { tags: ['wine'] };
+    expect(eventsForTags([yoga, both, hike, wine], ['yoga', 'hiking'])).toEqual([yoga, both, hike]);
+    expect(eventTagMatchCount(both, ['yoga', 'hiking'])).toBe(2);
+    expect(eventTagMatchCount(wine, ['yoga', 'hiking'])).toBe(0);
   });
 });

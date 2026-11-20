@@ -47,7 +47,8 @@ test.describe('Event tags', () => {
 
     await page.getByRole('searchbox', { name: /Αναζήτηση ετικέτας|Search a tag/ }).fill('workshop');
     await page.getByRole('link', { name: /Εργαστήριο|Workshop/ }).first().click();
-    await expect(page).toHaveURL(/\/tags\/workshop$/);
+    await expect(page).toHaveURL(/t=nakamas-nights.*t=workshop|t=workshop.*t=nakamas-nights/);
+    await expect(page.getByRole('heading', { level: 1, name: /Nakamas Nights/i })).toBeVisible();
     await expect(page.getByRole('heading', { level: 1, name: /Εργαστήριο|workshop/i })).toBeVisible();
   });
 
@@ -109,6 +110,19 @@ test.describe('Event tags', () => {
     });
     expect(order).toBe(true);
     await expect(events.locator('.nakamas-card')).not.toHaveCount(0);
+  });
+
+  test('the index keeps several tags selected at once', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterDemoGuest(page);
+    await page.goto('/tags');
+    await page.getByRole('link', { name: /Κοινωνικά|Social/ }).first().click();
+    await expect(page).toHaveURL(/\/tags\/social$/);
+    await page.getByRole('link', { name: /Δωρεάν|Free/ }).first().click();
+    await expect(page).toHaveURL(/t=social.*t=free|t=free.*t=social/);
+    await expect(page.locator('#tag-events .nakamas-card')).not.toHaveCount(0);
+    await page.getByRole('link', { name: /Αφαίρεση Κοινωνικά|Remove Social/ }).first().click();
+    await expect(page).toHaveURL(/\/tags\/free$/);
   });
 
   test('returning from Tags does not put a Continue strip on Discover', async ({ page }) => {
