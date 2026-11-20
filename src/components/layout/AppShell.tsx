@@ -391,6 +391,21 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         {/* Nakamas AI — the copilot that can act anywhere in the app (Φ24) */}
         <CopilotLauncher />
 
+        {/* Settings — one tap from every screen */}
+        <button
+          type="button"
+          onClick={() => navigate('/settings')}
+          aria-label={t('Ρυθμίσεις', 'Settings')}
+          title={t('Ρυθμίσεις', 'Settings')}
+          className={cn(
+            'relative flex h-9 w-9 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+            currentPath === '/settings' ? 'text-accent' : tok.muted,
+            'hover:bg-black/5 dark:hover:bg-white/10',
+          )}
+        >
+          <Settings className="h-[18px] w-[18px]" aria-hidden />
+        </button>
+
         {/* Quick action — create an event */}
         <button
           onClick={() => navigate('/create')}

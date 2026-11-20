@@ -1,3 +1,4 @@
+import { DiscoverCardImagePicker } from "../components/home/DiscoverCardImagePicker";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
@@ -98,7 +99,8 @@ export default function HomeClassic() {
     refetch,
   } = feed;
 
-  const { depth: imageDepth } = useDiscoverCardImageDepth();
+  const { depth: imageDepth, setDepth: setImageDepth, options: imageDepthOptions } =
+    useDiscoverCardImageDepth();
   const currentUser = feed.currentUser;
 
   useEffect(() => {
@@ -192,6 +194,12 @@ export default function HomeClassic() {
           pastCount={pastCount}
           showPast={showPast}
           onTogglePast={onTogglePast}
+        />
+
+        <DiscoverCardImagePicker
+          depth={imageDepth}
+          options={imageDepthOptions}
+          onChange={setImageDepth}
         />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

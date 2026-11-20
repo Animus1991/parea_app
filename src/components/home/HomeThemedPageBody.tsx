@@ -1,3 +1,4 @@
+import { DiscoverCardImagePicker } from './DiscoverCardImagePicker';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { EventCard } from '../events/EventCard';
@@ -95,7 +96,8 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
     refetch,
   } = feed;
 
-  const { depth: imageDepth } = useDiscoverCardImageDepth();
+  const { depth: imageDepth, setDepth: setImageDepth, options: imageDepthOptions } =
+    useDiscoverCardImageDepth();
   const currentUser = feed.currentUser;
   const firstName = currentUser?.name?.split(' ')[0] || t('φίλε', 'there');
   const greeting = getTimeGreeting(firstName, t);
@@ -197,6 +199,12 @@ export default function HomeThemedPageBody({ variant }: { variant: HomeThemedVar
           pastCount={pastCount}
           showPast={showPast}
           onTogglePast={onTogglePast}
+        />
+
+        <DiscoverCardImagePicker
+          depth={imageDepth}
+          options={imageDepthOptions}
+          onChange={setImageDepth}
         />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
