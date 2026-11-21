@@ -464,8 +464,16 @@ export const useStore = create<AppState>()(
   events: seedEvents(),
   eventsLoading: false,
   eventsSource: 'mock',
-  hydrateEventsFromApi: (events) =>
-    set({ events, eventsSource: 'api', eventsLoading: false }),
+  hydrateEventsFromApi: (apiEvents) =>
+    set((state) => {
+      const apiIds = new Set(apiEvents.map((e) => e.id));
+      const extras = state.events.filter((e) => !apiIds.has(e.id));
+      return {
+        events: extras.length ? [...apiEvents, ...extras] : apiEvents,
+        eventsSource: extras.length ? 'mixed' : 'api',
+        eventsLoading: false,
+      };
+    }),
   setEventsLoading: (eventsLoading) => set({ eventsLoading }),
   groups: seedGroups(),
   users: seedUsers(),

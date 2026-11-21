@@ -33,8 +33,9 @@ export function useEventsQuery() {
       try {
         const res = await api.get<EventsApiResponse>('/api/events');
         if (res.events?.length) {
+          // Keep mini outings / user-created events the public catalog omits.
           hydrateEventsFromApi(res.events);
-          return res.events;
+          return useStore.getState().events;
         }
         return useStore.getState().events;
       } catch (err) {
