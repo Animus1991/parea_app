@@ -18,7 +18,7 @@ import { isPlansRailRoute } from '../../lib/plansFormingRail';
 import { pageTitleForPath } from '../../lib/pageTitle';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { PlansFormingBottomSheet } from '../buddySeek/PlansFormingBottomSheet';
-import { PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
+import { PlansFormingHeaderButton, PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
 import { MobileDock } from './MobileDock';
 import { BottomNav } from './BottomNav';
 import { prefetchPath } from '../../lib/routeLoaders';
@@ -343,6 +343,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
         </div>
       </div>
       <div className="flex items-center space-x-3 relative z-raised overflow-visible">
+        <PlansFormingHeaderButton />
         {/* Home has its own, richer search in the hero — one search box per screen (declutter, Φ28). */}
         <div className={cn("relative hidden", currentPath === '/' ? '' : copilotDocked ? "2xl:block" : "lg:block")}>
           <input

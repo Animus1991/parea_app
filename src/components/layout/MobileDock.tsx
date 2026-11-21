@@ -82,6 +82,7 @@ export function MobileDock() {
           type="button"
           onClick={() => setPlansOpen(true)}
           aria-label={t('Βρες παρέα τώρα — μικρές έξοδοι δίπλα σου', 'Find company now — small outings next to you')}
+          data-find-company-cta="float"
           className="flex items-center gap-2 min-h-11 pl-4 pr-4 font-bold text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-fg/70 transition-colors active:bg-black/10"
         >
           <Users className="w-4 h-4" aria-hidden />
