@@ -44,7 +44,7 @@ export function GroupChatStatusStrip({
   return (
     <>
       <div
-        className="px-3 py-2 border-b border-border/80 bg-surface-raised/50 space-y-2"
+        className="relative z-0 px-3 py-2 border-b border-border/80 bg-surface-raised/50 space-y-2"
         data-chat-status-strip=""
       >
         {hasMeeting &&

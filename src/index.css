@@ -147,6 +147,8 @@
 }
 @media (min-width: 768px) {
   .chat-popup-window {
+    top: auto;
+    left: auto;
     bottom: 1.5rem;
     height: min(500px, calc(100dvh - var(--header-h) - 4rem));
     max-height: calc(100dvh - var(--header-h) - 4rem);

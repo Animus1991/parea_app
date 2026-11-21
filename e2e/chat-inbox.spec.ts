@@ -23,6 +23,29 @@ async function openInbox(page: Page) {
   return sheet;
 }
 
+async function hitAtCenter(page: Page, item: ReturnType<Page['getByRole']>) {
+  await expect(item).toBeVisible();
+  const box = await item.boundingBox();
+  expect(box).toBeTruthy();
+  const viewport = page.viewportSize() ?? { width: 390, height: 844 };
+  const x = Math.max(1, Math.min(box!.x + Math.min(40, box!.width / 2), viewport.width - 1));
+  const y = Math.max(1, Math.min(box!.y + box!.height / 2, viewport.height - 1));
+  return page.evaluate(({ x, y }) => {
+    const el = document.elementFromPoint(x, y);
+    if (!el) return { kind: 'none', label: '' };
+    const menu = el.closest('[role="menuitem"]');
+    if (menu) return { kind: 'menuitem', label: menu.textContent?.trim() ?? '' };
+    if (el.closest('[data-chat-status-strip]')) return { kind: 'strip', label: '' };
+    const btn = el.closest('button');
+    return { kind: btn ? 'button' : 'other', label: btn?.getAttribute('aria-label') ?? '' };
+  }, { x, y });
+}
+
+async function expectMenuItemAboveStrip(page: Page, item: ReturnType<Page['getByRole']>) {
+  const hit = await hitAtCenter(page, item);
+  expect(hit.kind).toBe('menuitem');
+}
+
 test.describe('Nakamas Chat preview', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
@@ -147,6 +170,7 @@ test.describe('Nakamas Chat preview', () => {
     await win.getByRole('button', { name: /^Ενέργειες$|^Actions$/ }).click();
     await expect(win.getByRole('menuitem', { name: /Φωνητική κλήση|Voice call/ })).toBeVisible();
     await expect(win.getByRole('menuitem', { name: /Βιντεοκλήση|Video call/ })).toBeVisible();
+    await expectMenuItemAboveStrip(page, win.getByRole('menuitem', { name: /Φωνητική κλήση|Voice call/ }));
     await win.getByRole('button', { name: /^Κλείσιμο μενού$|^Close menu$/ }).click();
     await expect(win.getByRole('button', { name: /Αντίδραση|React/ }).first()).toBeHidden();
     await win.locator('[data-message-id="m3"]').click();
@@ -163,6 +187,20 @@ test.describe('Nakamas Chat preview', () => {
     const mapUrls = await page.evaluate(() => (window as Window & { __mapUrls?: string[] }).__mapUrls ?? []);
     expect(mapUrls.join(' ')).toMatch(/Cine(\+|%20| )Thisio/);
     expect(mapUrls.join(' ')).not.toMatch(/Thisio(%2C|,)%20Athens/);
+  });
+
+  test('full-page group chat more-options menu sits above the meeting strip', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/chat/g-cal-5c');
+    await expect(page.getByRole('heading', { name: /Workshop: UX Basics/ })).toBeVisible();
+    const strip = page.locator('[data-chat-status-strip]');
+    await expect(strip.getByText(/Σημείο συνάντησης|Meeting point/)).toBeVisible();
+    await page.getByRole('button', { name: /Περισσότερες επιλογές|More options/ }).click();
+    const voice = page.getByRole('menuitem', { name: /Φωνητική κλήση|Voice call/ });
+    await expect(voice).toBeVisible();
+    await expectMenuItemAboveStrip(page, voice);
+    await expect(page.getByRole('menuitem', { name: /Βιντεοκλήση|Video call/ })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: /Πολυμέσα και stories|Media and stories/ })).toBeVisible();
   });
 
   test('keyboard focus on a message reveals reply and react', async ({ page }) => {
@@ -235,6 +273,49 @@ test.describe('Nakamas Chat desktop hat', () => {
     await expect(page.locator('[data-chat-window]')).toBeVisible();
     await expect(chatsButton(page)).toHaveCount(0);
     await expect(inbox(page)).toHaveCount(0);
+  });
+});
+
+test.describe('Nakamas Chat web popups', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test('web popup Close and Minimize receive the click', async ({ page }) => {
+    await enterDemoGuest(page);
+    const sheet = await openInbox(page);
+    await sheet.getByRole('button', { name: /Nakamas Support/ }).click();
+    const win = page.locator('[data-chat-window]');
+    await expect(win).toBeVisible();
+
+    const close = win.getByRole('button', { name: /^Κλείσιμο$|^Close$/ });
+    const closeHit = await hitAtCenter(page, close);
+    expect(closeHit.kind).toBe('button');
+    expect(closeHit.label).toMatch(/Κλείσιμο|Close/);
+    await close.click();
+    await expect(win).toHaveCount(0);
+
+    const sheetAgain = await openInbox(page);
+    await sheetAgain.getByRole('button', { name: /Nakamas Support/ }).click();
+    await expect(win).toBeVisible();
+    const mini = win.getByRole('button', { name: /^Ελαχιστοποίηση$|^Minimize$/ });
+    const miniHit = await hitAtCenter(page, mini);
+    expect(miniHit.kind).toBe('button');
+    expect(miniHit.label).toMatch(/Ελαχιστοποίηση|Minimize/);
+    await mini.click();
+    await expect(win).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Επαναφορά συνομιλίας|Restore conversation/ })).toBeVisible();
+  });
+
+  test('two web popups from Chats can each be closed', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/chats');
+    await page.getByRole('button', { name: /Nakamas Support/ }).click();
+    await page.getByRole('button', { name: /Διοργανωτής · Ωδείο|Organizer/ }).click();
+    const windows = page.locator('[data-chat-window]');
+    await expect(windows).toHaveCount(2);
+    await windows.nth(0).getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).click();
+    await expect(windows).toHaveCount(1);
+    await windows.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).click();
+    await expect(windows).toHaveCount(0);
   });
 });
 

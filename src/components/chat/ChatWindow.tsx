@@ -171,9 +171,12 @@ export function ChatWindow({
       <div
         ref={panelRef}
         className={cn(
-          'fixed z-modal md:z-sheet flex flex-col overflow-hidden shadow-soft-lg copilot-shift',
+          'fixed z-modal pointer-events-auto flex flex-col overflow-hidden shadow-soft-lg copilot-shift',
           'bg-surface border-border text-ink',
-          'chat-popup-window inset-0 md:left-auto md:top-auto md:w-[360px] md:rounded-3xl md:border',
+          // inset-0 fills the phone; md:inset-auto clears all four edges so the
+          // window cannot sit under the web top nav (z-topnav 90 > old z-sheet 70),
+          // which swallowed clicks on Close and Minimize.
+          'chat-popup-window inset-0 md:inset-auto md:bottom-6 md:w-[360px] md:rounded-3xl md:border',
           stackIndex === 0 && 'md:right-6',
           stackIndex === 1 && 'md:right-[24rem]',
         )}
@@ -184,7 +187,7 @@ export function ChatWindow({
           <header
             ref={dismissRef}
             data-chat-window-dismiss=""
-            className="flex items-center gap-1.5 px-3 py-2 border-b border-border bg-surface-raised shrink-0 touch-none md:touch-auto"
+            className="relative z-30 flex items-center gap-1.5 px-3 py-2 border-b border-border bg-surface-raised shrink-0 touch-none md:touch-auto"
           >
             <div className="min-w-0 flex-1">
               <p className={cn(CHAT_TYPO.title, 'truncate')}>{conversation.title}</p>
@@ -196,11 +199,12 @@ export function ChatWindow({
 
             <button
               type="button"
+              onPointerDown={(event) => event.stopPropagation()}
               onClick={() => setSearchOpen((s) => !s)}
               aria-label={t('Αναζήτηση μηνυμάτων', 'Search messages')}
               title={t('Αναζήτηση', 'Search')}
               className={cn(
-                'p-1.5 rounded-full transition-colors',
+                'relative z-10 p-1.5 rounded-full transition-colors',
                 searchOpen ? 'bg-brand-soft text-brand' : 'text-ink-muted hover:bg-ink/10 hover:text-ink',
               )}
             >
@@ -208,8 +212,9 @@ export function ChatWindow({
             </button>
             <button
               type="button"
+              onPointerDown={(event) => event.stopPropagation()}
               onClick={() => setMenuOpen(!menuOpen)}
-              className="p-1.5 rounded-full text-ink-muted hover:bg-ink/10"
+              className="relative z-10 p-1.5 rounded-full text-ink-muted hover:bg-ink/10"
               aria-expanded={menuOpen}
               aria-haspopup="menu"
               aria-label={t('Ενέργειες', 'Actions')}
@@ -218,16 +223,18 @@ export function ChatWindow({
             </button>
             <button
               type="button"
+              onPointerDown={(event) => event.stopPropagation()}
               onClick={() => minimizeConversation(conversation.id)}
-              className="p-1.5 rounded-full text-ink-muted hover:bg-ink/10 hidden md:block"
+              className="relative z-10 p-1.5 rounded-full text-ink-muted hover:bg-ink/10 hidden md:block"
               aria-label={t('Ελαχιστοποίηση', 'Minimize')}
             >
               <Minus className="w-4 h-4" />
             </button>
             <button
               type="button"
+              onPointerDown={(event) => event.stopPropagation()}
               onClick={() => closeConversation(conversation.id)}
-              className="p-1.5 rounded-full text-ink-muted hover:bg-ink/10"
+              className="relative z-10 p-1.5 rounded-full text-ink-muted hover:bg-ink/10"
               aria-label={t('Κλείσιμο', 'Close')}
             >
               <X className="w-4 h-4" />
@@ -238,7 +245,7 @@ export function ChatWindow({
             <>
               <button
                 type="button"
-                className="absolute inset-0 z-20 cursor-default"
+                className="absolute inset-x-0 bottom-0 top-11 z-20 cursor-default"
                 aria-label={t('Κλείσιμο μενού', 'Close menu')}
                 onClick={() => setMenuOpen(false)}
               />
@@ -248,6 +255,7 @@ export function ChatWindow({
                   'absolute right-3 top-11 z-30 rounded-2xl border border-border bg-surface-raised py-1 shadow-soft-lg min-w-[180px]',
                   CHAT_TYPO.menu,
                 )}
+                data-chat-tools-menu=""
               >
                 {perm.canSend && (
                   <>
