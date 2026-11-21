@@ -90,7 +90,7 @@ export const mockOutingEvents: Event[] = [
     title: 'Καφές στο Κουκάκι',
     category: 'Social',
     description: 'Ένας χαλαρός καφές Σάββατο πρωί, μία ώρα, για όποιον θέλει να γνωρίσει νέο κόσμο στη γειτονιά.',
-    date: '2026-11-21',
+    date: '2026-11-28',
     time: '11:00',
     duration: '1h',
     locationArea: 'Koukaki, Athens',

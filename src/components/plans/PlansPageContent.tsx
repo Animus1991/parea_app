@@ -3,7 +3,7 @@ import { Card } from '../common/Card';
 import { MessageCircle, MapPin, Calendar, Clock, ShieldAlert, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass, PartyPopper } from 'lucide-react';
 import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
-import { parseISO, differenceInDays, isBefore } from 'date-fns';
+import { parseISO, differenceInDays } from 'date-fns';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -63,16 +63,16 @@ export default function PlansPageContent() {
     : [];
 
   const upcomingEvents = events.filter(e => {
-    const d = new Date(e.date);
-    return !isNaN(d.getTime()) && !isBefore(d, now) && userGroupEventIds.includes(e.id);
-  }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    const start = eventStartMs(e);
+    return start !== null && start >= nowMs && userGroupEventIds.includes(e.id);
+  }).sort((a, b) => (eventStartMs(a) ?? 0) - (eventStartMs(b) ?? 0));
 
   const pendingEvents = events.filter(e => waitlistedEvents.includes(e.id) && !userGroupEventIds.includes(e.id));
 
   const pastEvents = events.filter(e => {
-    const d = new Date(e.date);
-    return !isNaN(d.getTime()) && isBefore(d, now) && userGroupEventIds.includes(e.id);
-  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const start = eventStartMs(e);
+    return start !== null && start < nowMs && userGroupEventIds.includes(e.id);
+  }).sort((a, b) => (eventStartMs(b) ?? 0) - (eventStartMs(a) ?? 0));
 
   const needsRating = pastEvents.filter(e => !feedbackSubmitted[e.id]).length;
   const nextEvent = upcomingEvents[0];
