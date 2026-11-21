@@ -81,6 +81,41 @@ test.describe('Find Nakamas', () => {
     await expect(rail.getByRole('button', { name: /Αποθήκευση σχεδίου|Save plan/ }).first()).toBeVisible();
     await expect(rail.getByRole('button', { name: /Απόκρυψη σχεδίου|Hide plan/ }).first()).toBeVisible();
     await expect(rail.getByText(/Φαγητό δρόμου με μικρή ομάδα|Street food with a small group/)).toBeVisible();
+    await expect(
+      page.getByRole('button', {
+        name: /Βρες παρέα τώρα — μικρές έξοδοι δίπλα σου|Find company now — small outings next to you/,
+      }),
+    ).toContainText(/Βρες παρέα τώρα|Find company now/);
+    await expect(page.locator('[data-find-company-cta="header"]')).toBeVisible();
+    await expect(page.locator('[data-find-company-cta="float"]:visible')).toHaveCount(0);
+  });
+
+  test('web header sits the nearby shortcut left of search; phones keep it floated', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await enterDemoGuest(page);
+    await page.goto('/connections');
+    const headerCta = page.locator('[data-find-company-cta="header"]');
+    const search = page.getByPlaceholder(/Αναζήτηση εκδηλώσεων|Search events/);
+    await expect(headerCta).toBeVisible();
+    await expect(search).toBeVisible();
+    const ctaBox = await headerCta.boundingBox();
+    const searchBox = await search.boundingBox();
+    expect(ctaBox).toBeTruthy();
+    expect(searchBox).toBeTruthy();
+    expect(ctaBox!.y).toBeLessThan(80);
+    expect(ctaBox!.x + ctaBox!.width).toBeLessThanOrEqual(searchBox!.x + 4);
+    await headerCta.click();
+    await expect(page.getByRole('dialog', { name: /Βρες παρέα τώρα|Find company now/ })).toBeVisible();
+    await page.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).last().click();
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    await expect(page.locator('[data-find-company-cta="header"]')).toBeHidden();
+    const floatCta = page.locator('[data-find-company-cta="float"]:visible');
+    await expect(floatCta).toBeVisible();
+    const floatBox = await floatCta.boundingBox();
+    expect(floatBox).toBeTruthy();
+    expect(floatBox!.y).toBeGreaterThan(500);
   });
 
   test('desktop page cards show a tall photo', async ({ page }) => {

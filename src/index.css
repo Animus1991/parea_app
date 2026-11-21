@@ -34,6 +34,8 @@
   --z-fab: 50;
   --z-chat: 60;
   --z-chat-scrim: 65;
+  /* Above the inbox scrim, below sheets/windows so Send and Join stay tappable. */
+  --z-chat-toggle: 68;
   --z-sheet: 70;
   --z-banner: 80;
   --z-topnav: 90;
@@ -94,9 +96,14 @@
   --bottom-nav-h: 56px;
   /* Rendered height of <BottomNav> (padding + raised create button + label). */
   --bottom-nav-total: 75px;
-  /* Reserved phone dock (Find Nakamas / Chats) sitting on top of the tab bar.
+  /* Reserved phone dock (Find Nakamas) sitting on top of the tab bar.
      min-h-11 plus the pill border — keep in sync with MobileDock. */
   --mobile-dock-h: 48px;
+  /* Floated straw-hat chat control (w-24 / md:w-28). */
+  --chat-hat-fab: 6rem;
+  --chat-hat-bottom: calc(var(--bottom-nav-total) + 6px + env(safe-area-inset-bottom, 0px));
+  --chat-hat-bottom-event: calc(var(--bottom-nav-total) + 5.25rem + env(safe-area-inset-bottom, 0px));
+  --chat-hat-bottom-composer: 7rem;
   /* BottomNav + fab-zone gap + dock + air so the last card sits fully above the pill. */
   --safe-bottom: calc(var(--bottom-nav-total) + 6px + var(--mobile-dock-h) + 16px);
 }
@@ -115,6 +122,78 @@
 
 @utility bottom-fab-zone {
   bottom: calc(var(--bottom-nav-total) + 6px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Straw-hat FAB + the surfaces that must clear its full rectangle. */
+.chat-hat-fab {
+  bottom: var(--chat-hat-bottom);
+}
+.chat-hat-fab[data-placed] {
+  bottom: auto;
+  right: auto;
+}
+@media (max-width: 767px) {
+  html[data-chat-hat='event'] .chat-hat-fab {
+    bottom: var(--chat-hat-bottom-event);
+  }
+}
+.chat-above-hat {
+  bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.5rem);
+}
+.chat-inbox-phone {
+  top: calc(var(--header-h) + 2.5rem);
+  /* Phone sheet covers the tab bar; the hat unmounts while chat is open. */
+  bottom: 0;
+}
+@media (min-width: 768px) {
+  .chat-popup-window {
+    top: auto;
+    left: auto;
+    bottom: 1.5rem;
+    height: min(500px, calc(100dvh - var(--header-h) - 4rem));
+    max-height: calc(100dvh - var(--header-h) - 4rem);
+  }
+}
+@media (min-width: 768px) {
+  :root {
+    --chat-hat-fab: 7rem;
+    --chat-hat-bottom: 1.5rem;
+  }
+  .chat-hat-fab {
+    bottom: var(--chat-hat-bottom);
+  }
+  html[data-chat-hat='composer'] .chat-hat-fab {
+    bottom: var(--chat-hat-bottom-composer);
+  }
+  .chat-above-hat {
+    bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.5rem);
+  }
+  html[data-chat-hat='composer'] .chat-above-hat {
+    bottom: calc(var(--chat-hat-bottom-composer) + var(--chat-hat-fab) + 0.5rem);
+  }
+  .chat-inbox-phone,
+  html[data-chat-hat='composer'] .chat-inbox-phone {
+    top: auto;
+    bottom: 1.5rem;
+    max-height: min(520px, 70vh, calc(100dvh - var(--header-h) - 4.5rem));
+  }
+}
+@media (min-width: 768px) and (max-height: 640px) {
+  .chat-hat-fab,
+  html[data-chat-hat='composer'] .chat-hat-fab {
+    bottom: 1.5rem;
+  }
+  .chat-inbox-phone,
+  html[data-chat-hat='composer'] .chat-inbox-phone {
+    bottom: 1.5rem;
+    max-height: min(520px, calc(100dvh - var(--header-h) - 4.5rem));
+  }
+}
+.chat-hat-fab[data-placed],
+html[data-chat-hat='event'] .chat-hat-fab[data-placed],
+html[data-chat-hat='composer'] .chat-hat-fab[data-placed] {
+  bottom: auto;
+  right: auto;
 }
 
 .hero-search-field {
@@ -665,6 +744,7 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 @utility z-fab { z-index: var(--z-fab); }
 @utility z-chat { z-index: var(--z-chat); }
 @utility z-chat-scrim { z-index: var(--z-chat-scrim); }
+@utility z-chat-toggle { z-index: var(--z-chat-toggle); }
 @utility z-sheet { z-index: var(--z-sheet); }
 @utility z-banner { z-index: var(--z-banner); }
 @utility z-topnav { z-index: var(--z-topnav); }

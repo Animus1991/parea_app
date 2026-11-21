@@ -272,7 +272,7 @@ export function ChatComposerTools({
       {/* @mention autocomplete */}
       {mentionCandidates.length > 0 && (
         <div
-          className="absolute bottom-full left-3 right-3 mb-1 z-30 rounded-2xl border border-border bg-surface-raised shadow-soft-lg p-1.5 flex flex-wrap gap-1"
+          className="mx-3 mt-2 mb-1 z-30 rounded-2xl border border-border bg-surface-raised shadow-soft-lg p-1.5 flex flex-wrap gap-1"
           role="listbox"
           aria-label={t('Αναφορά χρήστη', 'Mention user')}
         >
@@ -372,7 +372,7 @@ export function ChatComposerTools({
       )}
 
       {panel === 'poll' && (
-        <form onSubmit={handleCreatePoll} className="p-3 border-b border-border bg-surface space-y-2">
+        <form onSubmit={handleCreatePoll} className="p-3 border-b border-border bg-surface space-y-2 overflow-y-auto max-h-52">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-ink">📊 {t('Νέα δημοσκόπηση', 'New poll')}</span>
             <button type="button" onClick={() => setPanel('none')} aria-label={t('Κλείσιμο', 'Close')} className="p-1 text-ink-muted">

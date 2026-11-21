@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
 import {
   Reply,
   Pin,
@@ -15,6 +15,7 @@ import { useLanguage } from '../../lib/i18n';
 import type { ChatMessage } from '../../types/chat';
 import { QUICK_REACTIONS } from '../../lib/chatMediaCatalog';
 import { cn } from '../../lib/utils';
+import { redundantClick } from '../../lib/a11y';
 import { CHAT_TYPO } from '../../lib/typographyTokens';
 import { localizeSystemBody } from '../../lib/chatSystemCopy';
 
@@ -195,6 +196,8 @@ export function ChatMessageBubble({
   onPin,
   onVotePoll,
   onTagClick,
+  selected = false,
+  onSelect,
 }: {
   message: ChatMessage;
   senderName: string;
@@ -209,8 +212,13 @@ export function ChatMessageBubble({
   onPin?: (messageId: string) => void;
   onVotePoll?: (messageId: string, optionId: string) => void;
   onTagClick?: (tag: string) => void;
+  selected?: boolean;
+  onSelect?: () => void;
 }) {
   const { t } = useLanguage();
+  const [localSelected, setLocalSelected] = useState(false);
+  const isSelected = onSelect ? selected : localSelected;
+  const toggleSelect = onSelect ?? (() => setLocalSelected((v) => !v));
   const [reactOpen, setReactOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(message.body);
@@ -236,16 +244,42 @@ export function ChatMessageBubble({
     ? message.poll.options.reduce((acc, o) => acc + o.voterIds.length, 0)
     : 0;
 
+  // Click and long-press/right-click select the message; keyboards use the message actions button.
+  const bubblePointer = {
+    ...redundantClick<HTMLDivElement>((event) => {
+      if ((event.target as HTMLElement).closest('button, a, input, textarea')) return;
+      toggleSelect();
+    }),
+    onContextMenu: (event: ReactMouseEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      toggleSelect();
+    },
+  };
+
   return (
     <div
       id={`msg-${message.id}`}
       data-message-id={message.id}
       className={cn(
-        'group flex flex-col transition-colors',
+        'group relative flex flex-col transition-colors rounded-2xl',
         compact ? 'max-w-[92%]' : 'max-w-[85%] sm:max-w-[75%]',
         mine ? 'ml-auto items-end' : 'items-start',
       )}
+      {...bubblePointer}
     >
+      <button
+        type="button"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:z-10 focus:inline-flex focus:items-center rounded-full border border-border bg-surface-raised px-2 py-1 text-2xs font-bold text-ink shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60"
+        aria-expanded={isSelected}
+        onClick={(event) => {
+          event.stopPropagation();
+          toggleSelect();
+        }}
+      >
+        {mine
+          ? t('Ενέργειες μηνύματος', 'Message actions')
+          : t(`Ενέργειες μηνύματος από ${senderName}`, `Message actions from ${senderName}`)}
+      </button>
       {!mine && <span className={CHAT_TYPO.sender}>{senderName}</span>}
 
       <div className={cn('flex items-end gap-1.5', mine && 'flex-row-reverse')}>
@@ -432,8 +466,15 @@ export function ChatMessageBubble({
           </div>
         </div>
 
-        {/* Hover / focus action bar */}
-        <div className="flex items-center gap-1 opacity-70 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition-opacity shrink-0">
+        {/* Actions stay tucked until hover (desktop) or a tap on the bubble (touch). */}
+        <div
+          className={cn(
+            'flex items-center gap-1 shrink-0 transition-opacity',
+            isSelected || reactOpen
+              ? 'visible opacity-100'
+              : 'invisible opacity-0 md:group-hover:visible md:group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100',
+          )}
+        >
           <div className="relative">
             <button
               type="button"

@@ -4,6 +4,8 @@ import {
   DEFAULT_QUICK_NAV_LAYOUT,
   type QuickNavLayout,
 } from '../lib/quickNavLayout';
+import { isChatHatAnchor, type ChatHatAnchor } from '../lib/chatHatPosition';
+import { CHAT_HAT_STYLES, DEFAULT_CHAT_HAT_STYLE } from '../lib/chatHatStyles';
 
 interface UIState {
   sideNavCollapsed: boolean;
@@ -22,6 +24,15 @@ interface UIState {
   quickNavLayout: QuickNavLayout;
   setQuickNavLayout: (layout: QuickNavLayout) => void;
   resetQuickNavLayout: () => void;
+  /** Which straw-hat photo/sketch is the chat FAB. */
+  chatHatStyle: string;
+  dismissedChatHats: string[];
+  setChatHatStyle: (id: string) => void;
+  dismissChatHat: (id: string) => void;
+  restoreChatHats: () => void;
+  /** Normalized chat-hat screen position. Null keeps the default corner. */
+  chatHatPos: ChatHatAnchor | null;
+  setChatHatPos: (pos: ChatHatAnchor | null) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -44,6 +55,29 @@ export const useUIStore = create<UIState>()(
       quickNavLayout: DEFAULT_QUICK_NAV_LAYOUT,
       setQuickNavLayout: (quickNavLayout) => set({ quickNavLayout }),
       resetQuickNavLayout: () => set({ quickNavLayout: DEFAULT_QUICK_NAV_LAYOUT }),
+      chatHatStyle: DEFAULT_CHAT_HAT_STYLE,
+      dismissedChatHats: [],
+      chatHatPos: null,
+      setChatHatPos: (chatHatPos) =>
+        set({ chatHatPos: chatHatPos && isChatHatAnchor(chatHatPos) ? chatHatPos : null }),
+      setChatHatStyle: (chatHatStyle) =>
+        set((s) => ({
+          chatHatStyle,
+          dismissedChatHats: s.dismissedChatHats.filter((id) => id !== chatHatStyle),
+        })),
+      restoreChatHats: () => set({ dismissedChatHats: [] }),
+      dismissChatHat: (id) =>
+        set((s) => {
+          const dismissed = s.dismissedChatHats.includes(id)
+            ? s.dismissedChatHats
+            : [...s.dismissedChatHats, id];
+          const remaining = CHAT_HAT_STYLES.filter((h) => !dismissed.includes(h.id));
+          const nextStyle =
+            s.chatHatStyle === id
+              ? (remaining[0]?.id ?? DEFAULT_CHAT_HAT_STYLE)
+              : s.chatHatStyle;
+          return { dismissedChatHats: dismissed, chatHatStyle: nextStyle };
+        }),
     }),
     {
       name: 'nakamas-ui',
@@ -52,6 +86,9 @@ export const useUIStore = create<UIState>()(
         navCollapsed: s.navCollapsed,
         quickNavLayout: s.quickNavLayout,
         aiHintsHidden: s.aiHintsHidden,
+        chatHatStyle: s.chatHatStyle,
+        dismissedChatHats: s.dismissedChatHats,
+        chatHatPos: s.chatHatPos,
       }),
     },
   ),

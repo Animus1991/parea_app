@@ -24,7 +24,7 @@ export function QuickReplies({ onSelect, disabled }: { onSelect: (text: string) 
           key={r.en}
           type="button"
           onClick={() => onSelect(t(r.el, r.en))}
-          className="shrink-0 text-xs font-bold px-2.5 py-1 min-h-8 rounded-full border border-border-strong bg-ink/5 hover:bg-brand/20 text-ink transition-colors"
+          className="shrink-0 text-xs font-medium px-2.5 py-1 min-h-8 rounded-full bg-ink/[0.05] hover:bg-brand/15 text-ink transition-colors"
         >
           {t(r.el, r.en)}
         </button>

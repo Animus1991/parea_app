@@ -86,7 +86,7 @@ interface ChatState {
   /** Φ17 — real keep-chat request: flags the conversation + system message. */
   requestKeepChat: (conversationId: string, userId: string) => void;
   /** Φ17 — "I arrived" at the meeting point: arrival system message. */
-  announceArrival: (conversationId: string, userId: string) => void;
+  announceArrival: (conversationId: string, userId: string) => boolean;
   ensureEventGroupConversation: (input: {
     groupId: string;
     eventId: string;
@@ -103,7 +103,8 @@ interface ChatState {
   }) => string | null;
 }
 
-const MAX_WINDOWS = 2;
+/** How many popup windows can sit on screen at once. Extra opens minimize the oldest. */
+export const MAX_POPUP_WINDOWS = 4;
 
 function previewForRich(input: SendRichMessageInput): { el: string; en: string } {
   if (input.media?.kind === 'gif') return { el: 'GIF · ' + (input.media.label || 'GIF'), en: 'GIF · ' + (input.media.label || 'GIF') };
@@ -138,16 +139,19 @@ export const useChatStore = create<ChatState>()(
       openConversation: (id) => {
         const { activeWindowIds, minimizedIds } = get();
         let next = activeWindowIds.filter((x) => x !== id);
+        let nextMinimized = minimizedIds.filter((x) => x !== id);
         if (!next.includes(id)) {
           next = [...next, id];
-          if (next.length > MAX_WINDOWS) {
-            next = next.slice(-MAX_WINDOWS);
+          if (next.length > MAX_POPUP_WINDOWS) {
+            const overflow = next.slice(0, next.length - MAX_POPUP_WINDOWS);
+            next = next.slice(-MAX_POPUP_WINDOWS);
+            nextMinimized = [...new Set([...nextMinimized, ...overflow])];
           }
         }
         set({
           inboxOpen: false,
           activeWindowIds: next,
-          minimizedIds: minimizedIds.filter((x) => x !== id),
+          minimizedIds: nextMinimized,
           openConversationIds: [...new Set([...get().openConversationIds, id])],
         });
         get().markRead(id);
@@ -448,6 +452,12 @@ export const useChatStore = create<ChatState>()(
       },
 
       announceArrival: (conversationId, userId) => {
+        const conv = get().conversations.find((c) => c.id === conversationId);
+        if (!conv) return false;
+        const isParty =
+          conv.participantUserIds.includes(userId) || conv.organizerUserId === userId;
+        if (!isParty) return false;
+        if (conv.status !== 'active' && conv.status !== 'persistent') return false;
         const sysMsg: ChatMessage = {
           id: `m_arr_${Date.now()}`,
           conversationId,
@@ -473,6 +483,7 @@ export const useChatStore = create<ChatState>()(
               : c,
           ),
         }));
+        return true;
       },
 
       ensureEventGroupConversation: ({
@@ -483,12 +494,28 @@ export const useChatStore = create<ChatState>()(
         meetingPoint,
         openWindow = false,
       }) => {
-        const existing = get().conversations.find((c) => c.groupId === groupId);
+        const existing = get().conversations.find(
+          (c) => c.groupId === groupId && c.type === 'event_group',
+        );
         if (existing) {
-          if (meetingPoint && existing.meetingPoint !== meetingPoint) {
+          const nextParticipants = [...new Set(participantUserIds)];
+          const participantsChanged =
+            nextParticipants.length > 0 &&
+            (nextParticipants.length !== existing.participantUserIds.length ||
+              nextParticipants.some((id) => !existing.participantUserIds.includes(id)));
+          const meetingChanged = Boolean(meetingPoint && existing.meetingPoint !== meetingPoint);
+          if (participantsChanged || meetingChanged) {
             set((s) => ({
               conversations: s.conversations.map((c) =>
-                c.id === existing.id ? { ...c, meetingPoint } : c,
+                c.id === existing.id
+                  ? {
+                      ...c,
+                      participantUserIds: participantsChanged
+                        ? nextParticipants
+                        : c.participantUserIds,
+                      meetingPoint: meetingChanged ? meetingPoint : c.meetingPoint,
+                    }
+                  : c,
               ),
             }));
           }

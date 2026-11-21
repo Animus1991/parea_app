@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { matchPath, useLocation } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
@@ -21,8 +21,18 @@ export function PopupChatRoot() {
   const minimizedIds = useChatStore((s) => s.minimizedIds);
   const openConversation = useChatStore((s) => s.openConversation);
   const conversations = useChatStore((s) => s.conversations);
+  const pathname = useLocation().pathname;
   // On a group chat page the composer sits at the bottom: float above it.
-  const onChatPage = useLocation().pathname.startsWith('/chat/');
+  const onChatPage = pathname.startsWith('/chat/');
+  const onEventDetail = Boolean(matchPath('/events/:eventId', pathname));
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.chatHat = onChatPage ? 'composer' : onEventDetail ? 'event' : 'default';
+    return () => {
+      delete root.dataset.chatHat;
+    };
+  }, [onChatPage, onEventDetail]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -43,7 +53,7 @@ export function PopupChatRoot() {
   return (
     <>
       {minimized.length > 0 && (
-        <div className={`fixed z-chat flex flex-col items-end gap-2 right-4 bottom-[calc(var(--safe-bottom)+3.5rem+env(safe-area-inset-bottom,0px))] md:right-6 copilot-shift ${onChatPage ? 'md:bottom-44' : 'md:bottom-20'}`}>
+        <div className="chat-above-hat fixed z-chat flex flex-col items-end gap-2 right-4 md:right-6 copilot-shift">
           {minimized.map((c) => (
             <button
               key={c.id}
@@ -64,8 +74,9 @@ export function PopupChatRoot() {
           ))}
         </div>
       )}
-      {/* Phones reach chats from the shared dock (layout/MobileDock). */}
-      <PopupChatLauncher onClick={toggleInbox} className={onChatPage ? 'hidden md:flex md:bottom-28' : 'hidden md:flex'} />
+      {!(onChatPage || inboxOpen || windows.length > 0) && (
+        <PopupChatLauncher onClick={toggleInbox} />
+      )}
       {inboxOpen && (
         <>
           <button
