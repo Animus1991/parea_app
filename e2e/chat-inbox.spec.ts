@@ -12,27 +12,40 @@ function chatsButton(page: Page) {
   return page.getByRole('button', { name: /Συνομιλίες σχεδίων|Plan chats|αδιάβαστες συνομιλίες|unread chats/ });
 }
 
+function inbox(page: Page) {
+  return page.getByRole('dialog', { name: /^Nakamas Chat$/ });
+}
+
+async function openInbox(page: Page) {
+  await chatsButton(page).click();
+  const sheet = inbox(page);
+  await expect(sheet).toBeVisible();
+  return sheet;
+}
+
 test.describe('Nakamas Chat preview', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test('the floated straw hat opens and closes plan chats', async ({ page }) => {
+  test('the floated straw hat opens plan chats', async ({ page }) => {
     await enterDemoGuest(page);
     const btn = chatsButton(page);
     await expect(btn.locator('svg[data-straw-hat="plan"]')).toBeVisible();
-    await expect(btn).toHaveAttribute('aria-expanded', 'false');
     await btn.click();
-    await expect(btn).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.getByRole('dialog', { name: /^Nakamas Chat$/ })).toBeVisible();
-    await btn.click();
-    await expect(page.getByRole('dialog', { name: /^Nakamas Chat$/ })).toHaveCount(0);
-    await expect(btn).toHaveAttribute('aria-expanded', 'false');
+    const sheet = inbox(page);
+    await expect(sheet).toBeVisible();
+    await expect(chatsButton(page)).toHaveCount(0);
+    const sheetBox = await sheet.boundingBox();
+    expect(sheetBox).toBeTruthy();
+    expect(sheetBox!.y + sheetBox!.height).toBeGreaterThan((page.viewportSize()?.height ?? 0) - 100);
+    await expect(sheet.getByRole('button', { name: /Summer Cinema/ })).toBeVisible();
+    await sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).click();
+    await expect(sheet).toHaveCount(0);
+    await expect(chatsButton(page)).toBeVisible();
   });
 
   test('swipe down on the sheet handle closes group chat preview', async ({ page }) => {
     await enterDemoGuest(page);
-    await chatsButton(page).click();
-    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
-    await expect(sheet).toBeVisible();
+    const sheet = await openInbox(page);
     await expect(sheet.getByText(/Ομάδες|Groups/)).toBeVisible();
 
     const handle = sheet.locator('[data-chat-inbox-dismiss]');
@@ -44,9 +57,7 @@ test.describe('Nakamas Chat preview', () => {
 
   test('the close button still hides the preview', async ({ page }) => {
     await enterDemoGuest(page);
-    await chatsButton(page).click();
-    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
-    await expect(sheet).toBeVisible();
+    const sheet = await openInbox(page);
     await sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).click();
     await expect(sheet).toHaveCount(0);
   });
@@ -55,37 +66,22 @@ test.describe('Nakamas Chat preview', () => {
 test.describe('Nakamas Chat desktop hat', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
-  test('floated straw hat opens and closes plan chats', async ({ page }) => {
+  test('floated straw hat opens plan chats', async ({ page }) => {
     await enterDemoGuest(page);
     const btn = chatsButton(page);
     await expect(btn.locator('svg[data-straw-hat="plan"]')).toBeVisible();
-    await btn.click();
-    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
-    await expect(sheet).toBeVisible();
-    await btn.click();
+    const sheet = await openInbox(page);
+    await sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).click();
     await expect(sheet).toHaveCount(0);
   });
 
-  test('the hat still toggles the inbox on a group-chat page', async ({ page }) => {
+  test('opening a popup conversation hides the hat', async ({ page }) => {
     await enterDemoGuest(page);
-    await page.goto('/chat/g-nn1');
-    const btn = chatsButton(page);
-    await expect(btn).toBeVisible();
-    await btn.click();
-    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
-    await expect(sheet).toBeVisible();
-    await btn.click();
-    await expect(sheet).toHaveCount(0);
-  });
-
-  test('opening a popup conversation hides the hat so Send stays tappable', async ({ page }) => {
-    await enterDemoGuest(page);
-    await chatsButton(page).click();
-    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
+    const sheet = await openInbox(page);
     await sheet.getByRole('button').filter({ hasText: /Διοργανωτής|Organizer|Ομάδ|Group|Nakamas/ }).first().click();
     await expect(page.locator('[data-chat-window]')).toBeVisible();
     await expect(chatsButton(page)).toHaveCount(0);
-    await expect(page.getByRole('dialog', { name: /^Nakamas Chat$/ })).toHaveCount(0);
+    await expect(inbox(page)).toHaveCount(0);
   });
 });
 
@@ -100,18 +96,14 @@ test.describe('Nakamas Chat event page', () => {
     const box = await join.boundingBox();
     expect(box).toBeTruthy();
     await page.mouse.click(box!.x + box!.width - 10, box!.y + box!.height / 2);
-    await expect(page.getByRole('dialog', { name: /^Nakamas Chat$/ })).toHaveCount(0);
+    await expect(inbox(page)).toHaveCount(0);
   });
 
-  test('the hat still toggles chat above the event action bar', async ({ page }) => {
+  test('the hat opens chat above the event action bar', async ({ page }) => {
     await enterDemoGuest(page);
     await page.goto('/events/e1');
-    const btn = chatsButton(page);
-    await expect(btn).toBeVisible();
-    await btn.click();
-    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
-    await expect(sheet).toBeVisible();
-    await btn.click();
+    const sheet = await openInbox(page);
+    await sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).click();
     await expect(sheet).toHaveCount(0);
   });
 });
@@ -121,22 +113,21 @@ test.describe('Nakamas Chat landscape', () => {
 
   test('a conversation row stays tappable', async ({ page }) => {
     await enterDemoGuest(page);
-    await chatsButton(page).click();
-    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
-    await expect(sheet).toBeVisible();
+    const sheet = await openInbox(page);
     const row = sheet.getByRole('button').filter({ hasText: /Διοργανωτής|Organizer|Ομάδ|Group|Nakamas/ }).first();
     await expect(row).toBeVisible();
     await row.click();
     await expect(page.locator('[data-chat-window]')).toBeVisible();
   });
 
-  test('close and the hat remain tappable', async ({ page }) => {
+  test('close stays tappable on an event page', async ({ page }) => {
     await enterDemoGuest(page);
-    await chatsButton(page).click();
-    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
-    await expect(sheet).toBeVisible();
+    await page.goto('/events/e1');
+    const sheet = await openInbox(page);
     await expect(sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ })).toBeVisible();
-    await chatsButton(page).click();
+    const row = sheet.getByRole('button').filter({ hasText: /Διοργανωτής|Organizer|Ομάδ|Group|Nakamas/ }).first();
+    await expect(row).toBeVisible();
+    await sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).click();
     await expect(sheet).toHaveCount(0);
   });
 });
@@ -144,28 +135,31 @@ test.describe('Nakamas Chat landscape', () => {
 test.describe('Nakamas Chat landscape desktop', () => {
   test.use({ viewport: { width: 844, height: 390 } });
 
-  test('group-chat inbox still shows a conversation row', async ({ page }) => {
+  test('popup close stays on screen and the hat returns', async ({ page }) => {
     await enterDemoGuest(page);
-    await page.goto('/chat/g-nn1');
-    await chatsButton(page).click();
-    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
-    await expect(sheet).toBeVisible();
+    const sheet = await openInbox(page);
     const row = sheet.getByRole('button').filter({ hasText: /Διοργανωτής|Organizer|Ομάδ|Group|Nakamas/ }).first();
     await expect(row).toBeVisible();
     await row.click();
-    await expect(page.locator('[data-chat-window]')).toBeVisible();
+    const win = page.locator('[data-chat-window]');
+    await expect(win).toBeVisible();
+    const close = win.getByRole('button', { name: /^Κλείσιμο$|^Close$/ });
+    await expect(close).toBeVisible();
+    const box = await close.boundingBox();
+    expect(box).toBeTruthy();
+    expect(box!.y).toBeGreaterThanOrEqual(0);
+    await close.click();
+    await expect(win).toHaveCount(0);
+    await expect(chatsButton(page)).toBeVisible();
   });
 });
 
 test.describe('Nakamas Chat short desktop', () => {
   test.use({ viewport: { width: 1024, height: 650 } });
 
-  test('group-chat inbox close stays on screen', async ({ page }) => {
+  test('inbox close stays on screen', async ({ page }) => {
     await enterDemoGuest(page);
-    await page.goto('/chat/g-nn1');
-    await chatsButton(page).click();
-    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
-    await expect(sheet).toBeVisible();
+    const sheet = await openInbox(page);
     const close = sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ });
     await expect(close).toBeVisible();
     const box = await close.boundingBox();

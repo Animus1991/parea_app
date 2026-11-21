@@ -27,7 +27,6 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
       onClick={onClick}
       aria-label={t('Συνομιλίες σχεδίων', 'Plan chats')}
       aria-expanded={inboxOpen}
-      title={t('Συνομιλίες', 'Chats')}
       className={cn(
         'chat-hat-fab fixed z-chat-toggle inline-flex items-center justify-center p-0 m-0',
         'bg-transparent border-0 shadow-none rounded-full overflow-visible',

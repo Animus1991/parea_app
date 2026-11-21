@@ -3,7 +3,6 @@ import { matchPath, useLocation } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
-import { cn } from '../../lib/utils';
 import { PopupChatLauncher } from './PopupChatLauncher';
 
 const ChatInboxPanel = lazy(() =>
@@ -75,10 +74,9 @@ export function PopupChatRoot() {
           ))}
         </div>
       )}
-      <PopupChatLauncher
-        onClick={toggleInbox}
-        className={cn(onChatPage && 'max-md:hidden', windows.length > 0 && 'hidden')}
-      />
+      {!(onChatPage || inboxOpen || windows.length > 0) && (
+        <PopupChatLauncher onClick={toggleInbox} />
+      )}
       {inboxOpen && (
         <>
           <button

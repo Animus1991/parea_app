@@ -151,7 +151,7 @@ export function ChatWindow({
         className={cn(
           'fixed z-modal md:z-sheet flex flex-col overflow-hidden shadow-soft-lg copilot-shift',
           'bg-surface border-border text-ink',
-          'inset-0 md:inset-auto md:bottom-6 md:h-[500px] md:w-[360px] md:rounded-3xl md:border',
+          'chat-popup-window inset-0 md:left-auto md:top-auto md:w-[360px] md:rounded-3xl md:border',
           stackIndex === 0 && 'md:right-6',
           stackIndex === 1 && 'md:right-[24rem]',
         )}
