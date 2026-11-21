@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useStore } from './index';
 import { currentCheckInCode, checkInPayload } from '../lib/checkIn';
+import { isLiveCatalogEvent } from '../lib/eventDisplay';
 
 function reset() {
   useStore.getState().enterDemoMode();
@@ -182,12 +183,15 @@ describe('«Ξανά μαζί» — mutual only (Φ28)', () => {
     expect(res).toEqual({ mutual: ['u2'], connected: [] });
   });
 
-  it('catalog hydrate keeps live mini outings and drops cancelled extras', () => {
+  it('catalog hydrate keeps mini outings, including cancelled ones', () => {
     useStore.getState().cancelEvent('mo1');
     const catalog = useStore.getState().events.filter((e) => e.id !== 'mo1' && e.id !== 'mo2');
     useStore.getState().hydrateEventsFromApi(catalog);
-    const ids = useStore.getState().events.map((e) => e.id);
-    expect(ids).toContain('mo2');
-    expect(ids).not.toContain('mo1');
+    const mo1 = useStore.getState().events.find((e) => e.id === 'mo1');
+    const mo2 = useStore.getState().events.find((e) => e.id === 'mo2');
+    expect(mo2).toBeTruthy();
+    expect(isLiveCatalogEvent(mo2!)).toBe(true);
+    expect(mo1?.status).toBe('cancelled');
+    expect(isLiveCatalogEvent(mo1!)).toBe(false);
   });
 });
