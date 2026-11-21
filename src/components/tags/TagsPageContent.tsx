@@ -6,6 +6,8 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { cn } from '../../lib/utils';
 import { PAGE_FILL } from '../layout/PageShell';
 import { EventCard } from '../events/EventCard';
+import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
+import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
 import { EmptyState } from '../common/EmptyState';
 import { EventCardSkeleton } from '../common/Skeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';
@@ -58,6 +60,7 @@ export default function TagsPageContent() {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const { events, isLoading, isError, refetch } = useEventsResource();
+  const cardImage = useDiscoverCardImageDepth();
   const [query, setQuery] = useState('');
   const [view, setView] = useState<TagsView>(readTagsView);
   const locale = language === 'el' ? 'el' : 'en';
@@ -228,11 +231,14 @@ export default function TagsPageContent() {
             onAction={() => navigate('/tags')}
           />
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            {taggedEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
+          <>
+            <DiscoverCardImagePicker depth={cardImage.depth} options={cardImage.options} onChange={cardImage.setDepth} />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+              {taggedEvents.map((event) => (
+                <EventCard key={event.id} event={event} imageDepth={cardImage.depth} />
+              ))}
+            </div>
+          </>
         )}
       </ResourceStateGate>
     </div>

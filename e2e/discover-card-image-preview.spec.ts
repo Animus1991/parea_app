@@ -11,6 +11,10 @@ test.describe('Discover card image picker', () => {
 
     const picker = page.locator('[data-card-image-picker]');
     await expect(picker).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#main-content .nakamas-card [data-image-depth]').first()).toHaveAttribute(
+      'data-image-depth',
+      'full',
+    );
     // Collapsed to one quiet chip until opened.
     await expect(picker.getByRole('radio')).toHaveCount(0);
     await picker.locator('[data-card-image-toggle]').click();
@@ -51,6 +55,7 @@ test.describe('Discover card image picker', () => {
     await picker.locator('[data-card-image-toggle]').click();
     const card = page.locator('#main-content .nakamas-card').first();
     await expect(card).toBeVisible({ timeout: 15_000 });
+    await expect(card.locator('[data-image-depth]')).toHaveAttribute('data-image-depth', 'full');
 
     await picker.locator('[data-card-image-option="full"]').click();
     const fullGap = await card.evaluate((el) => {
@@ -77,6 +82,10 @@ test.describe('Discover card image picker', () => {
     await page.goto('/plans');
     const plansPicker = page.locator('[data-card-image-picker]');
     await expect(plansPicker).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#main-content .nakamas-card [data-image-depth]').first()).toHaveAttribute(
+      'data-image-depth',
+      'full',
+    );
     await plansPicker.locator('[data-card-image-toggle]').click();
     await expect(plansPicker.getByRole('radio')).toHaveCount(ALL_DEPTHS.length);
     await plansPicker.locator('[data-card-image-option="title"]').click();

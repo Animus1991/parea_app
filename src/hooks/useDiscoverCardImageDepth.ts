@@ -1,13 +1,13 @@
 import { useCallback, useState } from 'react';
 import {
   CARD_IMAGE_DEPTHS,
-  readStoredCardImageDepth,
+  applyDefaultCardImageDepthIfUnset,
   writeStoredCardImageDepth,
   type EventCardImageDepth,
 } from '../lib/discoverCardImagePreview';
 
 export function useDiscoverCardImageDepth() {
-  const [stored, setStored] = useState<EventCardImageDepth>(readStoredCardImageDepth);
+  const [stored, setStored] = useState<EventCardImageDepth>(applyDefaultCardImageDepthIfUnset);
 
   const setDepth = useCallback((next: EventCardImageDepth) => {
     setStored(next);

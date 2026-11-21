@@ -37,7 +37,7 @@ function kindOf(tags: string[] | undefined): (typeof KINDS)[number] {
 export function MiniOutingsSection({
   variant = 'page',
   onLeave,
-  imageDepth = 'photo',
+  imageDepth = 'full',
 }: {
   variant?: 'page' | 'sheet';
   onLeave?: () => void;

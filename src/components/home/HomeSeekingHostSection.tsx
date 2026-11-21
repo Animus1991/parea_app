@@ -8,6 +8,7 @@ import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { useStore } from '../../store';
 import { EventCard } from '../events/EventCard';
+import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
 import { formatEventPrice, formatLocationArea } from '../../lib/eventDisplay';
 import type { Event } from '../../types';
 import { cn } from '../../lib/utils';
@@ -24,6 +25,7 @@ export function HomeSeekingHostSection({
   onToggleSeekingHostOnly,
 }: HomeSeekingHostSectionProps) {
   const { t, language } = useLanguage();
+  const cardImage = useDiscoverCardImageDepth();
   const h = useHomeTheme();
   const tok = useThemeStyles();
   const navigate = useNavigate();
@@ -108,7 +110,7 @@ export function HomeSeekingHostSection({
       <div className="hidden md:flex gap-4 overflow-x-auto pb-2 -mx-1 px-1 noscrollbar">
         {events.map((event) => (
           <div key={event.id} className="w-[290px] sm:w-[320px] shrink-0">
-            <EventCard event={event} emphasis="host" />
+            <EventCard event={event} emphasis="host" imageDepth={cardImage.depth} />
           </div>
         ))}
       </div>

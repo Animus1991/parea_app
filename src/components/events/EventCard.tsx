@@ -159,7 +159,7 @@ function CardFact({
   );
 }
 
-export const EventCard = memo(function EventCard({ event, emphasis = 'join', imageDepth = 'photo' }: EventCardProps) {
+export const EventCard = memo(function EventCard({ event, emphasis = 'join', imageDepth = 'full' }: EventCardProps) {
   const { t, language } = useLanguage();
   const categoryLabel = useCategoryLabel();
   const navigate = useNavigate();

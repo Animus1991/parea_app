@@ -10,6 +10,7 @@ import { coerceAuthoredSeasonToLive } from "../lib/demoCatalogDates";
 import { withFreshCatalogDates } from "../lib/catalogAuthoredSchedule";
 import { eventCoverUrl } from "../lib/eventCover";
 import { isLiveCatalogEvent } from "../lib/eventDisplay";
+import { applyDefaultCardImageDepthIfUnset } from "../lib/discoverCardImagePreview";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
 import { fetchTicketmasterEvents, isTicketmasterConfigured } from "../services/eventApi";
@@ -507,7 +508,10 @@ export const useStore = create<AppState>()(
   setPlansFormingSidebarOpen: (open) => set({ plansFormingSidebarOpen: open }),
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
 
-  completeOnboarding: () => set({ onboardingCompleted: true }),
+  completeOnboarding: () => {
+    applyDefaultCardImageDepthIfUnset();
+    set({ onboardingCompleted: true });
+  },
 
   addRecentSearch: (query) =>
     set((state) => {
@@ -581,7 +585,8 @@ export const useStore = create<AppState>()(
 
   hasCommitmentHold: (eventId) => Boolean(get().commitmentHolds[eventId]),
 
-  login: (userId) =>
+  login: (userId) => {
+    applyDefaultCardImageDepthIfUnset();
     set((state) => {
       const user = state.users.find((u) => u.id === userId);
       if (!user) return state;
@@ -596,9 +601,11 @@ export const useStore = create<AppState>()(
         blockedUserIds,
         users: state.users.map((u) => (u.id === userId ? hydrated : u)),
       };
-    }),
+    });
+  },
 
-  loginWithUser: (user) =>
+  loginWithUser: (user) => {
+    applyDefaultCardImageDepthIfUnset();
     set((state) => {
       const privacy = { ...state.userSettings.privacy, ...(user.privacy ?? {}) };
       const blockedUserIds = user.blockedUserIds ?? state.blockedUserIds;
@@ -614,11 +621,13 @@ export const useStore = create<AppState>()(
           ? state.users.map((u) => (u.id === user.id ? { ...u, ...hydrated } : u))
           : [...state.users, hydrated],
       };
-    }),
+    });
+  },
 
   logout: () => set({ currentUser: null, isAuthenticated: false, demoMode: false }),
 
-  enterDemoMode: () =>
+  enterDemoMode: () => {
+    applyDefaultCardImageDepthIfUnset();
     set((state) => {
       const user = state.users.find((u) => u.id === 'u1') ?? state.users[0];
       if (!user) return state;
@@ -628,7 +637,8 @@ export const useStore = create<AppState>()(
         isAuthenticated: true,
         onboardingCompleted: true,
       };
-    }),
+    });
+  },
 
   exitDemoMode: () => {
     const wasDemo = get().demoMode;

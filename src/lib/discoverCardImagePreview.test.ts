@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   CARD_IMAGE_DEPTH_STORAGE_KEY,
   CARD_IMAGE_DEPTHS,
+  DEFAULT_CARD_IMAGE_DEPTH,
+  applyDefaultCardImageDepthIfUnset,
   cardImageDepthFlags,
   parseCardImageDepth,
   readStoredCardImageDepth,
@@ -9,11 +11,12 @@ import {
 } from './discoverCardImagePreview';
 
 describe('parseCardImageDepth', () => {
-  it('keeps known depths and falls back to photo', () => {
+  it('keeps known depths and falls back to full', () => {
     expect(parseCardImageDepth('facts')).toBe('facts');
     expect(parseCardImageDepth('divider')).toBe('divider');
-    expect(parseCardImageDepth('nope')).toBe('photo');
-    expect(parseCardImageDepth(null)).toBe('photo');
+    expect(parseCardImageDepth('nope')).toBe('full');
+    expect(parseCardImageDepth(null)).toBe('full');
+    expect(DEFAULT_CARD_IMAGE_DEPTH).toBe('full');
   });
 });
 
@@ -56,8 +59,16 @@ describe('cardImageDepthFlags', () => {
 describe('card image depth storage', () => {
   it('round-trips a chosen depth', () => {
     localStorage.removeItem(CARD_IMAGE_DEPTH_STORAGE_KEY);
-    expect(readStoredCardImageDepth()).toBe('photo');
-    writeStoredCardImageDepth('full');
     expect(readStoredCardImageDepth()).toBe('full');
+    writeStoredCardImageDepth('photo');
+    expect(readStoredCardImageDepth()).toBe('photo');
+  });
+
+  it('writes Full for a new user and keeps a later choice', () => {
+    localStorage.removeItem(CARD_IMAGE_DEPTH_STORAGE_KEY);
+    expect(applyDefaultCardImageDepthIfUnset()).toBe('full');
+    expect(localStorage.getItem(CARD_IMAGE_DEPTH_STORAGE_KEY)).toBe('full');
+    writeStoredCardImageDepth('title');
+    expect(applyDefaultCardImageDepthIfUnset()).toBe('title');
   });
 });

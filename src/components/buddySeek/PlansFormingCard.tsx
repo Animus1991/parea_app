@@ -75,7 +75,7 @@ export function PlansFormingCard({
   isDarkSurface = false,
   onDismiss,
   onNavigate,
-  imageDepth = 'photo',
+  imageDepth = 'full',
 }: {
   item: PlansFormingEnrichedItem;
   variant?: 'sidebar' | 'sheet' | 'inline' | 'page';
@@ -625,7 +625,7 @@ export function PlansFormingGroupCard({
   isDarkSurface = false,
   onSuggestMerge,
   onNavigate,
-  imageDepth = 'photo',
+  imageDepth = 'full',
 }: {
   entry: PlansFormingGroupItem;
   variant?: 'sidebar' | 'sheet' | 'page';

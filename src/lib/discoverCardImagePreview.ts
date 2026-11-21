@@ -25,6 +25,9 @@ export const CARD_IMAGE_DEPTHS = [
   'full',
 ] as const satisfies readonly EventCardImageDepth[];
 
+/** First-time / newly registered users start with a full-bleed card photo. */
+export const DEFAULT_CARD_IMAGE_DEPTH: EventCardImageDepth = 'full';
+
 /** Which rows sit on the photo for a given depth. Shared by Discover, Plans and Find Nakamas. */
 export function cardImageDepthFlags(depth: EventCardImageDepth) {
   const coverTitle = depth !== 'photo';
@@ -64,7 +67,9 @@ export const CARD_IMAGE_DEPTH_LABELS: Record<EventCardImageDepth, [string, strin
 };
 
 export function parseCardImageDepth(raw: string | null | undefined): EventCardImageDepth {
-  return CARD_IMAGE_DEPTHS.includes(raw as EventCardImageDepth) ? (raw as EventCardImageDepth) : 'photo';
+  return CARD_IMAGE_DEPTHS.includes(raw as EventCardImageDepth)
+    ? (raw as EventCardImageDepth)
+    : DEFAULT_CARD_IMAGE_DEPTH;
 }
 
 export function readStoredCardImageDepth(): EventCardImageDepth {
@@ -73,4 +78,14 @@ export function readStoredCardImageDepth(): EventCardImageDepth {
 
 export function writeStoredCardImageDepth(depth: EventCardImageDepth): void {
   writeStorage(CARD_IMAGE_DEPTH_STORAGE_KEY, depth);
+}
+
+/** Persist Full for a new account unless the person already picked a depth. */
+export function applyDefaultCardImageDepthIfUnset(): EventCardImageDepth {
+  const raw = readStorage(CARD_IMAGE_DEPTH_STORAGE_KEY);
+  if (CARD_IMAGE_DEPTHS.includes(raw as EventCardImageDepth)) {
+    return raw as EventCardImageDepth;
+  }
+  writeStoredCardImageDepth(DEFAULT_CARD_IMAGE_DEPTH);
+  return DEFAULT_CARD_IMAGE_DEPTH;
 }
