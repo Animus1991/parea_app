@@ -1,5 +1,6 @@
 import type { Event, Group } from '../types';
 import { inferEventEndDate } from './eventCalendarExport';
+import { isLiveCatalogEvent } from './eventDisplay';
 
 /** Wait this long after the night ends before asking how it went. */
 export const FEEDBACK_AFTER_END_MS = 45 * 60 * 1000;
@@ -43,10 +44,13 @@ export function pendingFeedbackEvents(opts: {
 }): Event[] {
   const now = opts.now ?? new Date();
   const mine = new Set(
-    opts.groups.filter((g) => g.members.includes(opts.userId)).map((g) => g.eventId),
+    opts.groups
+      .filter((g) => g.status !== 'cancelled' && g.members.includes(opts.userId))
+      .map((g) => g.eventId),
   );
   return opts.events
     .filter((e) => {
+      if (!isLiveCatalogEvent(e)) return false;
       if (!mine.has(e.id)) return false;
       if (opts.feedbackSubmitted[e.id]) return false;
       if (memberWasAbsentAtDoor(opts.groups, e.id, opts.userId)) return false;
@@ -69,11 +73,13 @@ export function soonestUpcomingFeedbackDueAt(opts: {
 }): Date | null {
   const now = opts.now ?? new Date();
   const mine = new Set(
-    opts.groups.filter((g) => g.members.includes(opts.userId)).map((g) => g.eventId),
+    opts.groups
+      .filter((g) => g.status !== 'cancelled' && g.members.includes(opts.userId))
+      .map((g) => g.eventId),
   );
   let soonest: Date | null = null;
   for (const e of opts.events) {
-    if (!mine.has(e.id) || opts.feedbackSubmitted[e.id]) continue;
+    if (!isLiveCatalogEvent(e) || !mine.has(e.id) || opts.feedbackSubmitted[e.id]) continue;
     if (memberWasAbsentAtDoor(opts.groups, e.id, opts.userId)) continue;
     const at = feedbackDueAt(e);
     if (!at || at.getTime() <= now.getTime()) continue;

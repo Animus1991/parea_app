@@ -32,6 +32,7 @@ import { cn } from '../../lib/utils';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { EventCoverImg } from '../common/EventCoverImg';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { isLiveCatalogEvent } from '../../lib/eventDisplay';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
@@ -237,7 +238,11 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             </div>
 
             <div className="flex flex-col gap-3 mb-4">
-              {myGroupForEvent ? (
+              {!isLiveCatalogEvent(event) ? (
+                <p className="text-sm font-medium text-ink-muted">
+                  {t('Η εκδήλωση ακυρώθηκε.', 'This event was cancelled.')}
+                </p>
+              ) : myGroupForEvent ? (
                 <>
                   <Button
                     className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2"

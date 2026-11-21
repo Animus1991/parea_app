@@ -9,6 +9,7 @@ import { mockCalendarPlanEvents, mockCalendarPlanGroups } from "../data/mockCale
 import { coerceAuthoredSeasonToLive } from "../lib/demoCatalogDates";
 import { withFreshCatalogDates } from "../lib/catalogAuthoredSchedule";
 import { eventCoverUrl } from "../lib/eventCover";
+import { isLiveCatalogEvent } from "../lib/eventDisplay";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
 import { fetchTicketmasterEvents, isTicketmasterConfigured } from "../services/eventApi";
@@ -535,6 +536,13 @@ export const useStore = create<AppState>()(
     if (!event || !state.currentUser) {
       return { ok: false, messageEl: 'Η εκδήλωση δεν βρέθηκε.', messageEn: 'Event not found.' };
     }
+    if (!isLiveCatalogEvent(event)) {
+      return {
+        ok: false,
+        messageEl: 'Η εκδήλωση ακυρώθηκε.',
+        messageEn: 'This event was cancelled.',
+      };
+    }
     const when = new Date(`${event.date}T${event.time || '23:59'}`);
     if (!Number.isNaN(when.getTime()) && when.getTime() < Date.now()) {
       return { ok: false, messageEl: 'Η εκδήλωση έχει ολοκληρωθεί.', messageEn: 'This event has ended.' };
@@ -647,6 +655,8 @@ export const useStore = create<AppState>()(
       const userId = state.currentUser.id;
       const target = state.groups.find((g) => g.id === groupId);
       if (!target || target.status === 'cancelled') return state;
+      const outing = state.events.find((e) => e.id === target.eventId);
+      if (outing && !isLiveCatalogEvent(outing)) return state;
       // Φ27 — one gate for every way in: capacity (→ waitlist), women & non-binary
       // groups, blocks, and a paused standing for groups of strangers.
       const gate = gateJoinGroup(state.currentUser, target, {
@@ -926,6 +936,8 @@ export const useStore = create<AppState>()(
   createGroup: (eventId, targetSize, options) =>
     set((state) => {
       if (!state.currentUser) return state;
+      const outing = state.events.find((e) => e.id === eventId);
+      if (!outing || !isLiveCatalogEvent(outing)) return state;
       const genderMode: GroupGenderMode =
         options?.genderMode === 'women_nb' && fitsGenderMode(state.currentUser, 'women_nb') ? 'women_nb' : 'mixed';
       const newGroup = {
@@ -952,7 +964,8 @@ export const useStore = create<AppState>()(
       // If a hosted group already exists for this event, do nothing.
       if (state.groups.some((g) => g.eventId === eventId && g.hostId)) return state;
       const event = state.events.find((e) => e.id === eventId);
-      const targetSize = event?.groupDiscount?.minSize || 4;
+      if (!event || !isLiveCatalogEvent(event)) return state;
+      const targetSize = event.groupDiscount?.minSize || 4;
       // Claim an existing host-less (system-created) group, else create one.
       const hostless = state.groups.find((g) => g.eventId === eventId && !g.hostId);
       const groups = hostless

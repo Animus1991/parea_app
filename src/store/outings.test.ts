@@ -183,6 +183,17 @@ describe('«Ξανά μαζί» — mutual only (Φ28)', () => {
     expect(res).toEqual({ mutual: ['u2'], connected: [] });
   });
 
+  it('rejects new groups on a cancelled outing and keeps it off the join quota', () => {
+    useStore.getState().cancelEvent('mo1');
+    const gate = useStore.getState().canJoinEvent('mo1');
+    expect(gate.ok).toBe(false);
+    expect(gate.messageEn).toMatch(/cancelled/i);
+    const before = useStore.getState().groups.length;
+    useStore.getState().createGroup('mo1', 4);
+    expect(useStore.getState().groups.length).toBe(before);
+    expect(useStore.getState().getPendingFeedbackEventIds()).not.toContain('mo1');
+  });
+
   it('catalog hydrate keeps mini outings, including cancelled ones', () => {
     useStore.getState().cancelEvent('mo1');
     const catalog = useStore.getState().events.filter((e) => e.id !== 'mo1' && e.id !== 'mo2');

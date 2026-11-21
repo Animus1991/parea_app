@@ -13,6 +13,7 @@ import { GroupInsights } from '../outings/GroupInsights';
 import { VibeQuizModal } from '../outings/VibeQuizModal';
 import { fitsGenderMode } from '../../lib/outings';
 import type { GroupGenderMode } from '../../types/outings';
+import { isLiveCatalogEvent } from '../../lib/eventDisplay';
 
 export default function JoinGroupFlow() {
   const { eventId } = useParams();
@@ -57,6 +58,19 @@ export default function JoinGroupFlow() {
   }, [preSelectedGroupId, eventId, groups]);
 
   if (!event || !eventId) return null;
+  if (!isLiveCatalogEvent(event)) {
+    return (
+      <div className={cn(PAGE_FILL, 'rounded-2xl border border-gray-100 bg-white p-4 shadow-soft sm:p-6 md:p-8 dark:bg-surface-raised dark:border-border')}>
+        <h1 className="text-lg font-bold text-ink">{t('Η εκδήλωση ακυρώθηκε.', 'This event was cancelled.')}</h1>
+        <p className="mt-2 text-sm text-ink-muted">
+          {t('Δεν μπορείς να δημιουργήσεις νέα ομάδα εδώ.', 'You cannot create a new group here.')}
+        </p>
+        <Button className="mt-4" onClick={() => navigate('/plans')}>
+          {t('Τα σχέδιά μου', 'My plans')}
+        </Button>
+      </div>
+    );
+  }
 
   const gate = canAccessEvent(currentUser, event);
   const storeGate = canJoinEvent(eventId);

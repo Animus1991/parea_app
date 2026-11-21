@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { parseISO, startOfDay, isSameDay } from 'date-fns';
 import { useStore } from '../store';
+import { isLiveCatalogEvent } from '../lib/eventDisplay';
 import type { Event } from '../types';
 
 export type CalendarEventWithDate = Event & { parsedDate: Date };
@@ -24,8 +25,9 @@ export function useUserCalendarEvents() {
       groups
         .filter(
           (g) =>
-            g.members.includes(currentUser.id) ||
-            g.pendingMembers?.includes(currentUser.id),
+            g.status !== 'cancelled' &&
+            (g.members.includes(currentUser.id) ||
+              g.pendingMembers?.includes(currentUser.id)),
         )
         .map((g) => g.eventId),
     );
@@ -34,6 +36,7 @@ export function useUserCalendarEvents() {
   const upcomingEvents = useMemo(() => {
     return events
       .filter((e) => {
+        if (!isLiveCatalogEvent(e)) return false;
         const d = parseISO(e.date);
         if (Number.isNaN(d.getTime())) return false;
         if (d < now) return false;

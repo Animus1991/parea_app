@@ -2,7 +2,7 @@ import { useMemo, useCallback } from 'react';
 import { useStore } from '../store';
 import type { Event } from '../types';
 import { isEventSeekingHost, sortEventsForStories } from '../lib/storyEventOrdering';
-import { isEventPast } from '../lib/eventDisplay';
+import { isEventPast, isLiveCatalogEvent } from '../lib/eventDisplay';
 import { coerceAuthoredSeasonToLive } from '../lib/demoCatalogDates';
 
 /**
@@ -18,7 +18,10 @@ export function useStoryEvents() {
     [groups],
   );
 
-  const liveEvents = useMemo(() => coerceAuthoredSeasonToLive(events), [events]);
+  const liveEvents = useMemo(
+    () => coerceAuthoredSeasonToLive(events).filter(isLiveCatalogEvent),
+    [events],
+  );
 
   const seekingHostEvents = useMemo(
     () => liveEvents.filter((e) => isSeekingHost(e) && !isEventPast(e)),
