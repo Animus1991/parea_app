@@ -182,6 +182,21 @@ test.describe('Discover card image picker', () => {
     );
   });
 
+  test('rail photo chips stay clickable over a Full card', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await enterDemoGuest(page);
+    const rail = page.getByRole('complementary', { name: /^Βρες Nakamas$|^Find Nakamas$/ });
+    await expect(rail).toBeVisible({ timeout: 15_000 });
+    const picker = rail.locator('[data-card-image-picker]');
+    const toggle = picker.locator('[data-card-image-toggle]');
+    await expect(toggle).toBeVisible();
+    await rail.evaluate((el) => {
+      el.scrollTop = 240;
+    });
+    await toggle.click();
+    await expect(picker.getByRole('radio')).toHaveCount(ALL_DEPTHS.length);
+  });
+
   test('Full cards keep hosting and Find Nakamas notes', async ({ page }) => {
     await enterDemoGuest(page);
     const hostChip = page.getByRole('button', { name: /Χωρίς διοργανωτή|Seeking organizer/ });

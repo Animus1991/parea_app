@@ -136,7 +136,7 @@ export function PlansFormingCard({
     return (
       <article
         className={cn(
-          'nakamas-card overflow-hidden rounded-2xl shadow-soft flex flex-col',
+          'nakamas-card isolate overflow-hidden rounded-2xl shadow-soft flex flex-col',
           onDark ? 'bg-white/[0.04]' : 'bg-white dark:bg-gray-900',
         )}
       >
@@ -672,7 +672,7 @@ export function PlansFormingGroupCard({
   return (
     <article
       className={cn(
-        'nakamas-card overflow-hidden rounded-2xl shadow-soft flex flex-col',
+        'nakamas-card isolate overflow-hidden rounded-2xl shadow-soft flex flex-col',
         onDark ? 'bg-white/[0.04]' : 'bg-white dark:bg-gray-900',
       )}
     >
