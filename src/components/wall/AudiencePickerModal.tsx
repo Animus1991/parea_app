@@ -12,7 +12,7 @@ import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
 import { AUDIENCE_ICON, audienceBaseHint, audienceBaseLabel } from './wallText';
 import { PersonAvatar } from './PersonAvatar';
-import { formatLocationArea } from '../../lib/eventDisplay';
+import { formatLocationArea, locationMatchesQuery } from '../../lib/eventDisplay';
 
 const EXCLUDABLE: AudienceBase[] = ['public', 'connections', 'friends_of_friends', 'list'];
 
@@ -38,9 +38,9 @@ export function PeopleChecklist({
     return candidateIds
       .map((id) => users.find((u) => u.id === id))
       .filter((u): u is NonNullable<typeof u> => Boolean(u))
-      .filter((u) => !ql || u.name.toLowerCase().includes(ql) || (u.city ?? '').toLowerCase().includes(ql))
+      .filter((u) => !ql || u.name.toLowerCase().includes(ql) || locationMatchesQuery(u.city, ql, language))
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [candidateIds, users, q]);
+  }, [candidateIds, language, users, q]);
   const toggle = (id: string) => onChange(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
   if (candidateIds.length === 0) {
     return <p className="rounded-xl border border-dashed border-border px-3 py-3 text-xs font-medium text-ink-muted">{emptyText}</p>;

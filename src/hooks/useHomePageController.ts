@@ -14,6 +14,10 @@ import { eventMatchesSchedule, isScheduleFilterActive } from '../lib/homeSchedul
 import { isEventPast } from '../lib/eventDisplay';
 import { useStore } from '../store';
 import { partitionQuietCatalog, storiesWithoutFeedDupes } from '../lib/quietCatalog';
+import {
+  quietRevealActiveCount,
+  type QuietRevealFilterState,
+} from '../lib/quietRevealCopy';
 
 const HOME_FEED_PAGE_SIZE = 6;
 
@@ -27,7 +31,8 @@ export function useHomePageController() {
   const [seekingHostOnly, setSeekingHostOnly] = useState(false);
   const [visibleEventsCount, setVisibleEventsCount] = useState(HOME_FEED_PAGE_SIZE);
   const [showConflicts, setShowConflicts] = useState(false);
-  const [showFullJoined, setShowFullJoined] = useState(false);
+  const [showFull, setShowFull] = useState(false);
+  const [showJoined, setShowJoined] = useState(false);
   const [showPast, setShowPast] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -61,10 +66,11 @@ export function useHomePageController() {
   const shownEvents = useMemo(() => {
     const list = [...buckets.primary];
     if (showConflicts) list.push(...buckets.conflicts);
-    if (showFullJoined) list.push(...buckets.fullJoined);
+    if (showFull) list.push(...buckets.full);
+    if (showJoined) list.push(...buckets.joined);
     if (showPast) list.push(...buckets.past);
     return list;
-  }, [buckets, showConflicts, showFullJoined, showPast]);
+  }, [buckets, showConflicts, showFull, showJoined, showPast]);
 
   const storyEvents = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -128,7 +134,28 @@ export function useHomePageController() {
   const handleClearAll = () => {
     clearAllFilters();
     setSeekingHostOnly(false);
+    setShowConflicts(false);
+    setShowFull(false);
+    setShowJoined(false);
+    setShowPast(false);
   };
+
+  const quietReveal: QuietRevealFilterState = {
+    conflictCount: buckets.conflicts.length,
+    showConflicts,
+    onToggleConflicts: () => setShowConflicts((v) => !v),
+    fullCount: buckets.full.length,
+    showFull,
+    onToggleFull: () => setShowFull((v) => !v),
+    joinedCount: buckets.joined.length,
+    showJoined,
+    onToggleJoined: () => setShowJoined((v) => !v),
+    pastCount: buckets.past.length,
+    showPast,
+    onTogglePast: () => setShowPast((v) => !v),
+  };
+  const quietRevealOnCount = quietRevealActiveCount(quietReveal);
+  const filterBadgeCount = feed.activeFilterCount + quietRevealOnCount;
 
   useEffect(() => {
     if (isDesktopFilters) setFilterSheetOpen(false);
@@ -162,15 +189,9 @@ export function useHomePageController() {
     loadMoreRef,
     scrollToFilters,
     storyEvents,
-    conflictCount: buckets.conflicts.length,
-    showConflicts,
-    onToggleConflicts: () => setShowConflicts((v) => !v),
-    fullJoinedCount: buckets.fullJoined.length,
-    showFullJoined,
-    onToggleFullJoined: () => setShowFullJoined((v) => !v),
-    pastCount: buckets.past.length,
-    showPast,
-    onTogglePast: () => setShowPast((v) => !v),
+    quietReveal,
+    quietRevealOnCount,
+    filterBadgeCount,
     seekingHostEvents,
     isSeekingHost,
     feed,

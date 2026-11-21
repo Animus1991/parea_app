@@ -1,12 +1,27 @@
-import { Fragment } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { safeExternalUrl } from '../../lib/safeUrl';
 
 const URL_RE = /\b((?:https?:\/\/|www\.)[^\s<>"«»]+[^\s<>"«».,;:!?)\]])/gi;
+const MENTION_RE = /(@[\p{L}\p{N}_-]{1,40})/gu;
+
+function withMentions(text: string, keyPrefix: string): ReactNode[] {
+  const bits = text.split(MENTION_RE);
+  return bits.map((bit, i) =>
+    bit.startsWith('@') ? (
+      <span key={`${keyPrefix}-m-${i}`} className="font-bold text-accent">
+        {bit}
+      </span>
+    ) : (
+      <Fragment key={`${keyPrefix}-t-${i}`}>{bit}</Fragment>
+    ),
+  );
+}
 
 /**
  * Post/comment text with safe, clickable links: only http(s) URLs pass
  * `safeExternalUrl`, links open in a new tab and are marked as user content
- * (`nofollow ugc`). Everything else stays plain text (React escapes it).
+ * (`nofollow ugc`). @mentions are highlighted. Everything else stays plain
+ * text (React escapes it).
  */
 export function RichText({ text }: { text: string }) {
   const parts: Array<{ kind: 'text' | 'link'; value: string; href?: string }> = [];
@@ -27,7 +42,7 @@ export function RichText({ text }: { text: string }) {
             {p.value}
           </a>
         ) : (
-          <Fragment key={i}>{p.value}</Fragment>
+          <Fragment key={i}>{withMentions(p.value, String(i))}</Fragment>
         ),
       )}
     </>

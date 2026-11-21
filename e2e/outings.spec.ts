@@ -64,11 +64,12 @@ test.describe('Group outings', () => {
     await expect(page.getByRole('button', { name: /^Συνέχεια$|^Continue$/ })).toBeEnabled();
   });
 
-  test('creates a small outing from Find Nakamas', async ({ page }) => {
+  test('creates a small outing from the nearby overlay', async ({ page }) => {
     await enterDemoGuest(page);
-    await page.goto('/buddy-seek');
-    await page.getByRole('button', { name: /Νέα μικρή έξοδος|New small outing/ }).first().click();
-    const dialog = page.getByRole('dialog');
+    await page.getByRole('button', { name: /Βρες παρέα τώρα — μικρές έξοδοι δίπλα σου|Find company now — small outings next to you/ }).click();
+    const sheet = page.getByRole('dialog', { name: /Βρες παρέα τώρα|Find company now/ });
+    await sheet.getByRole('button', { name: /Νέα μικρή έξοδος|New small outing/ }).first().click();
+    const dialog = page.getByRole('dialog', { name: /Νέα μικρή έξοδος|New small outing/ });
     await dialog.getByRole('button', { name: /^Βόλτα$|^Walk$/ }).click();
     await dialog.getByLabel(/Περιοχή|Area/).fill('Παγκράτι');
     await dialog.getByRole('button', { name: /^Δημοσίευση$|^Publish$/ }).click();
@@ -163,6 +164,16 @@ test.describe('Group outings', () => {
     await expect(img).toBeVisible();
     await expect(img).toHaveAttribute('src', /\/covers\/coffee\.jpg/);
     await expect(img).toHaveJSProperty('naturalWidth', 1200);
+  });
+
+  test('members keep Our night and cannot fake a second group', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/events/nn1');
+    await expect(page.getByRole('button', { name: /Η βραδιά μας|Our night/ }).first()).toBeVisible();
+    await expect(page.getByText(/Ή δημιούργησε άλλη ομάδα|Or create another group/)).toHaveCount(0);
+    await page.goto('/events/nn1/join');
+    await expect(page.getByText(/Είσαι ήδη σε ομάδα|You are already in a group/)).toBeVisible();
+    await expect(page.getByRole('button', { name: /Νέα ομάδα|Start New Group/ })).toHaveCount(0);
   });
 
   test('«Ξανά μαζί»: a mutual mark is revealed and the stranger becomes a Nakama', async ({ page }) => {

@@ -73,22 +73,46 @@ export const REACTION_EMOJI: Record<ReactionKind, string> = {
   love: '❤️',
   haha: '😂',
   wow: '😮',
+  sad: '😢',
+  fire: '🔥',
+  clap: '👏',
+  going: '🙌',
   cheers: '🎉',
+  party: '🥳',
+  eyes: '👀',
+  hug: '🤗',
+  think: '🤔',
+  thanks: '🙏',
+  toast: '🍻',
+  star: '⭐',
+  ticket: '🎟️',
+  music: '🎵',
+};
+
+const REACTION_LABEL: Record<ReactionKind, [string, string]> = {
+  like: ['Μου αρέσει', 'Like'],
+  love: ['Τέλειο', 'Love'],
+  haha: ['Χαχα', 'Haha'],
+  wow: ['Ουάου', 'Wow'],
+  sad: ['Λυπάμαι', 'Sad'],
+  fire: ['Καίει', 'Fire'],
+  clap: ['Μπράβο', 'Bravo'],
+  going: ['Είμαι μέσα', "I'm in"],
+  cheers: ['Πάμε!', "Let's go!"],
+  party: ['Πάρτι', 'Party'],
+  eyes: ['Το κοιτάω', 'Watching'],
+  hug: ['Αγκαλιά', 'Hug'],
+  think: ['Σκέφτομαι', 'Thinking'],
+  thanks: ['Ευχαριστώ', 'Thanks'],
+  toast: ['Στην υγειά', 'Cheers'],
+  star: ['Αστέρι', 'Star'],
+  ticket: ['Εισιτήριο', 'Ticket'],
+  music: ['Μουσική', 'Music'],
 };
 
 export function reactionLabel(kind: ReactionKind, t: T): string {
-  switch (kind) {
-    case 'like':
-      return t('Μου αρέσει', 'Like');
-    case 'love':
-      return t('Τέλειο', 'Love');
-    case 'haha':
-      return t('Χαχα', 'Haha');
-    case 'wow':
-      return t('Ουάου', 'Wow');
-    case 'cheers':
-      return t('Πάμε!', "Let's go!");
-  }
+  const [el, en] = REACTION_LABEL[kind];
+  return t(el, en);
 }
 
 export function sectionLabel(key: ProfileSectionKey, t: T): string {

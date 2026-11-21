@@ -32,6 +32,7 @@ import { cn } from '../../lib/utils';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { EventCoverImg } from '../common/EventCoverImg';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { isLiveCatalogEvent, selectMyEventGroups } from '../../lib/eventDisplay';
 import { formatEur } from '../../lib/money';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
@@ -68,7 +69,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
   const event = events.find(e => e.id === eventId);
 
   let eventGroups = groups
-    .filter(g => g.eventId === eventId)
+    .filter(g => g.eventId === eventId && g.status !== 'cancelled')
     .sort((a, b) => {
       if (event?.isPaid && event?.groupDiscount) {
          if (a.discountUnlocked && !b.discountUnlocked) return -1;
@@ -81,14 +82,14 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
   const totalMembers = eventGroups.reduce((acc, g) => acc + g.members.length, 0);
   const spotsLeftEvent = (event?.maxParticipants || 100) - totalMembers;
-  const myGroupForEvent =
-    currentUser &&
-    groups.find(
-      (g) =>
-        g.eventId === eventId &&
-        g.status !== 'cancelled' &&
-        (g.members.includes(currentUser.id) || g.waitlist?.includes(currentUser.id)),
-    );
+  const { member: myMemberGroup, waitlisted: myWaitlistGroup } = selectMyEventGroups(
+    groups,
+    eventId,
+    currentUser?.id,
+  );
+  const myGroupForEvent = myMemberGroup ?? myWaitlistGroup;
+  const isMemberOfEvent = Boolean(myMemberGroup);
+  const isWaitlistedOnly = Boolean(myWaitlistGroup && !myMemberGroup);
 
   if (discountFilter) {
     eventGroups = eventGroups.filter(g => g.discountUnlocked);
@@ -119,6 +120,10 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
   const handlePrimaryJoin = () => {
     if (!eventId) return;
+    if (myMemberGroup) {
+      navigate(`/night/${myMemberGroup.id}`);
+      return;
+    }
     const gate = canJoinEvent(eventId);
     if (!gate.ok) {
       toast.error(t(gate.messageEl, gate.messageEn));
@@ -229,7 +234,9 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         <div className="space-y-4 md:col-span-2 lg:col-span-1">
           <div className="rounded-2xl border border-border bg-surface-raised p-4 shadow-soft sticky top-24">
             <NakamasGoing eventId={event.id} className="mb-4" />
-            <LookingForCompanyPanel event={event} accent={accent} darkSurface={panelDark} />
+            {isLiveCatalogEvent(event) && (
+              <LookingForCompanyPanel event={event} accent={accent} darkSurface={panelDark} />
+            )}
 
             <h3 id="groups" className="scroll-mt-28 text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
             <div className="mb-4 bg-accent-soft border border-accent/20 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-xs font-bold text-accent-strong">
@@ -238,7 +245,11 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             </div>
 
             <div className="flex flex-col gap-3 mb-4">
-              {myGroupForEvent ? (
+              {!isLiveCatalogEvent(event) ? (
+                <p className="text-sm font-medium text-ink-muted">
+                  {t('Η εκδήλωση ακυρώθηκε.', 'This event was cancelled.')}
+                </p>
+              ) : myGroupForEvent ? (
                 <>
                   <Button
                     className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2"
@@ -248,13 +259,15 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                     <Users className="w-5 h-5" />
                     {t('Η βραδιά μας', 'Our night')}
                   </Button>
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/events/${eventId}/join`)}
-                    className="text-xs font-bold text-ink underline underline-offset-2"
-                  >
-                    {t('Ή δημιούργησε άλλη ομάδα', 'Or create another group')}
-                  </button>
+                  {isWaitlistedOnly && (
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/events/${eventId}/join`)}
+                      className="text-xs font-bold text-ink underline underline-offset-2"
+                    >
+                      {t('Ή δημιούργησε άλλη ομάδα', 'Or create another group')}
+                    </button>
+                  )}
                 </>
               ) : (
                 <Button className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
@@ -264,7 +277,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               )}
             </div>
 
-            {(eventGroups.length > 0 || groupSizeFilter !== 'All' || discountFilter) && (
+            {isLiveCatalogEvent(event) && (eventGroups.length > 0 || groupSizeFilter !== 'All' || discountFilter) && (
               <div className="mb-4 space-y-2">
                 <div className="flex gap-2">
                   <span className="text-2xs font-bold text-ink-muted mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
@@ -295,7 +308,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               </div>
             )}
 
-            {eventGroups.length === 0 ? (
+            {isLiveCatalogEvent(event) && (eventGroups.length === 0 ? (
               <div className="text-xs text-ink-muted mb-4 bg-surface p-4 rounded-2xl text-center border border-dashed border-border font-medium">
                 {t('Δεν υπάρχουν ομάδες ακόμα. Ξεκίνα εσύ την πρώτη!', 'No groups forming yet. Be the first to start one!')}
               </div>
@@ -305,8 +318,9 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                   <EventDetailGroupCard key={group.id} group={group} event={event} navigate={navigate} accent={accent} darkSurface={panelDark} />
                 ))}
               </div>
-            )}
+            ))}
 
+            {isLiveCatalogEvent(event) && (
             <div className="space-y-4 pt-5 border-t border-border">
               <div className="grid grid-cols-1 gap-3">
                 <Button variant="outline" className="w-full border-border text-ink hover:bg-ink/5" size="lg" disabled={isWaitlisted} onClick={handleJoinWaitlist}>
@@ -322,6 +336,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                 )}
               </div>
             </div>
+            )}
           </div>
         </div>
       </div>
@@ -332,9 +347,17 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         <Button variant="outline" className="flex-1 min-h-8 border-border text-ink" onClick={handleSave}>
           {isSaved ? t('Αποθηκευμένο', 'Saved') : t('Αποθήκευση', 'Save')}
         </Button>
-        <Button className="flex-[2] min-h-8 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
-          {t('Μπες σε παρέα', 'Join a group')}
-        </Button>
+        {isLiveCatalogEvent(event) ? (
+          <Button className="flex-[2] min-h-8 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
+            {isMemberOfEvent
+              ? t('Η βραδιά μας', 'Our night')
+              : t('Μπες σε παρέα', 'Join a group')}
+          </Button>
+        ) : (
+          <p className="flex-[2] self-center text-center text-xs font-medium text-ink-muted">
+            {t('Η εκδήλωση ακυρώθηκε.', 'This event was cancelled.')}
+          </p>
+        )}
       </div>
 
       <EventDetailQrModal open={showQRCode} onClose={() => setShowQRCode(false)} />

@@ -12,10 +12,10 @@ import { useCopilotStore } from '../../store/copilotStore';
 export function HomeBuddySeekStrip({ className }: { className?: string }) {
   const { t, tu } = useLanguage();
   const navigate = useNavigate();
-  const setSheetOpen = useStore((s) => s.setPlansFormingSheetOpen);
   const feed = usePlansFormingFeed(6);
   // ≥1280px the «Βρες Nakamas» rail shows this same feed: don't repeat it on Home.
   const railOpen = useStore((s) => s.plansFormingSidebarOpen);
+  const setSheetOpen = useStore((s) => s.setPlansFormingSheetOpen);
   const copilotOpen = useCopilotStore((s) => s.open);
   const railVisible = railOpen && !copilotOpen;
 
@@ -52,10 +52,17 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
           </button>
           <button
             type="button"
-            onClick={() => setSheetOpen(true)}
+            onClick={() => navigate('/buddy-seek')}
             className="xl:hidden inline-flex min-h-8 items-center text-xs font-bold px-3 rounded-full bg-accent text-accent-fg"
           >
             {t('Άνοιγμα', 'Open')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setSheetOpen(true)}
+            className="text-xs font-semibold text-ink-muted hover:text-ink"
+          >
+            {t('Καφές δίπλα σου', 'Coffee nearby')}
           </button>
         </div>
       </div>
@@ -65,8 +72,8 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
           <Users className="w-6 h-6 mx-auto text-accent/60 mb-2" />
           <p className="text-sm font-medium text-ink-muted leading-relaxed">
             {t(
-              'Δεν βλέπεις σχέδια ακόμα; Αποθήκευσε εκδηλώσεις ή δήλωσε ότι ψάχνεις Nakamas.',
-              'No plans visible yet? Save events or declare that you are looking for Nakamas.',
+              'Δεν βλέπεις παρέες ακόμα; Αποθήκευσε εκδηλώσεις ή δήλωσε ότι ψάχνεις παρέα.',
+              'No company visible yet? Save events or say you are looking for company.',
             )}
           </p>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
@@ -79,7 +86,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
             </button>
             <button
               type="button"
-              onClick={() => navigate('/buddy-seek')}
+              onClick={() => setSheetOpen(true)}
               className="text-xs font-bold text-ink underline underline-offset-2"
             >
               {t('Ή ξεκίνα μια μικρή έξοδο', 'Or start a small outing')}

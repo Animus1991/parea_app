@@ -36,9 +36,64 @@ export interface Audience {
 
 export const AUDIENCE_BASES: AudienceBase[] = ['public', 'connections', 'friends_of_friends', 'specific', 'list', 'only_me'];
 
-export type ReactionKind = 'like' | 'love' | 'haha' | 'wow' | 'cheers';
+export type ReactionKind =
+  | 'like'
+  | 'love'
+  | 'haha'
+  | 'wow'
+  | 'sad'
+  | 'fire'
+  | 'clap'
+  | 'going'
+  | 'cheers'
+  | 'party'
+  | 'eyes'
+  | 'hug'
+  | 'think'
+  | 'thanks'
+  | 'toast'
+  | 'star'
+  | 'ticket'
+  | 'music';
 
-export const REACTION_KINDS: ReactionKind[] = ['like', 'love', 'haha', 'wow', 'cheers'];
+/** Keep in sync with firestore.rules `reactions.kind` and wallText REACTION_EMOJI. */
+export const REACTION_KINDS: ReactionKind[] = [
+  'like',
+  'love',
+  'haha',
+  'wow',
+  'sad',
+  'fire',
+  'clap',
+  'going',
+  'cheers',
+  'party',
+  'eyes',
+  'hug',
+  'think',
+  'thanks',
+  'toast',
+  'star',
+  'ticket',
+  'music',
+];
+
+/**
+ * Hover / long-press tray on a post — the five people expect from every
+ * social app. Everything else lives in the comment composer.
+ */
+export const QUICK_POST_REACTIONS: ReactionKind[] = ['like', 'love', 'haha', 'wow', 'cheers'];
+
+/** One-tap hearts on a comment (Instagram / Facebook style). */
+export const COMMENT_REACTION_EMOJIS = ['👍', '❤️', '😂', '😮', '🎉'] as const;
+
+export interface CommentDraft {
+  imageUrl?: string;
+  gifUrl?: string;
+  gifFallbackUrl?: string;
+  parentId?: string;
+  mentionIds?: string[];
+}
 
 export interface WallComment {
   id: string;
@@ -46,6 +101,14 @@ export interface WallComment {
   text: string;
   createdAt: string;
   editedAt?: string;
+  imageUrl?: string;
+  gifUrl?: string;
+  gifFallbackUrl?: string;
+  /** Reply to another comment on the same post. */
+  parentId?: string;
+  mentionIds?: string[];
+  /** userId → emoji. */
+  reactions?: Record<string, string>;
 }
 
 export interface WallPost {

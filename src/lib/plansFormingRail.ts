@@ -12,3 +12,11 @@ const EXACT = new Set(['/']);
 export function isPlansRailRoute(pathname: string): boolean {
   return EXACT.has(pathname);
 }
+
+/**
+ * Overlay = last-minute nearby outings. My Plans already lists booked nights,
+ * so do not stack a second copy there. Find Nakamas is event company only.
+ */
+export function hidesFindCompanyShortcut(pathname: string): boolean {
+  return pathname === '/plans' || pathname.startsWith('/plans/');
+}

@@ -53,13 +53,25 @@ test.describe('Nakamas wall', () => {
   test('reacts and comments on a friend’s post', async ({ page }) => {
     await page.goto('/wall');
     const post = page.locator('[data-post-id="wp1"]');
-    const like = post.getByRole('button', { name: /^Μου αρέσει$|^Like$/ });
+    const like = post.getByTestId('wall-post-like');
     await expect(like).toHaveAttribute('aria-pressed', 'false');
-    await like.click();
+    await expect(like).toHaveAccessibleName(/^Μου αρέσει$|^Like$/);
+    await like.focus();
+    await like.press('ArrowUp');
+    const tray = post.getByRole('group', { name: /Διάλεξε αντίδραση|Choose a reaction/ });
+    await expect(tray).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(tray).toHaveCount(0);
+    await page.mouse.move(0, 0);
+    await like.hover();
+    await expect(tray).toBeVisible();
+    await tray.getByRole('button', { name: /^Τέλειο$|^Love$/ }).click();
     await expect(like).toHaveAttribute('aria-pressed', 'true');
-    await post.getByRole('textbox').fill('Τέλειο, έρχομαι!');
+    await expect(like).toHaveAccessibleName(/^Τέλειο$|^Love$/);
+    await post.getByRole('button', { name: /^Σχόλιο$|^Comment$/ }).click();
+    await post.getByRole('textbox').fill('Τέλειο, έρχομαι! 🙌');
     await post.getByRole('button', { name: /Αποστολή σχολίου|Send comment/ }).click();
-    await expect(post.getByText('Τέλειο, έρχομαι!')).toBeVisible();
+    await expect(post.getByText('Τέλειο, έρχομαι! 🙌')).toBeVisible();
   });
 });
 
@@ -84,6 +96,41 @@ test.describe('Nakamas wall v2', () => {
     await page.goto('/wall');
     const mine = page.getByTestId('wall-post').filter({ hasText: /Πάω σε αυτό|I am going/ }).first();
     await expect(mine).toContainText('Stand-Up Comedy Night');
+  });
+
+  test('a tagged wall owner can still remove the tag after approving it', async ({ page }) => {
+    await page.goto('/login');
+    await page.evaluate((key) => {
+      const raw = localStorage.getItem(key);
+      const data = raw ? JSON.parse(raw) : { state: {}, version: 0 };
+      data.state = { ...(data.state ?? {}), onboardingCompleted: true };
+      localStorage.setItem(key, JSON.stringify(data));
+    }, 'nakamas-store-v1');
+    await page.reload();
+    await page.getByRole('button', { name: /Nikos/ }).first().click();
+    await expect(page.locator('#main-content')).toBeVisible();
+
+    await page.goto('/u/u1');
+    const composer = page.getByTestId('wall-composer');
+    await composer.getByRole('textbox').fill('Καλημέρα, σε έβαλα στην παρέα.');
+    await composer.getByRole('button', { name: /Με ποιους|With whom/ }).click();
+    const tagDialog = page.getByRole('dialog');
+    await tagDialog.locator('label').filter({ hasText: /^Alex/ }).click();
+    await tagDialog.getByRole('button', { name: /^Τέλος$|^Done$/ }).click();
+    await composer.getByRole('button', { name: /^Δημοσίευση$|^Post$/ }).click();
+    await expect(page.getByTestId('wall-post').filter({ hasText: 'Καλημέρα, σε έβαλα στην παρέα' })).toBeVisible();
+
+    await page.goto('/login');
+    await page.getByRole('button', { name: /^Alex\b/ }).first().click();
+    await expect(page.locator('#main-content')).toBeVisible();
+    await page.goto('/wall');
+    const post = page.getByTestId('wall-post').filter({ hasText: 'Καλημέρα, σε έβαλα στην παρέα' });
+    await expect(post.getByRole('button', { name: /^Ναι$|^Yes$/ })).toBeVisible();
+    await post.getByRole('button', { name: /^Ναι$|^Yes$/ }).click();
+    await expect(post.getByRole('button', { name: /^Ναι$|^Yes$/ })).toHaveCount(0);
+    await post.getByRole('button', { name: /Ενέργειες δημοσίευσης|Post actions/ }).click();
+    await page.getByRole('menuitem', { name: /Αφαίρεση της ετικέτας μου|Remove my tag/ }).click();
+    await expect(post.getByText(/με εσένα|with you/)).toHaveCount(0);
   });
 
   test('a reported post is removed by a moderator and hidden from others', async ({ page }) => {

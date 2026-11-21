@@ -8,8 +8,10 @@ import { HomeDiscoveryPrefsChips } from './HomeDiscoveryPrefsChips';
 import { HomeFilterSelect } from './HomeFilterSelect';
 import { MoodSelector } from './MoodSelector';
 import { HomeActiveFilterChips } from './HomeActiveFilterChips';
+import { HomeQuietRevealFilters } from './HomeQuietRevealFilters';
 import { HomeScheduleFilterPanel } from './HomeScheduleFilterPanel';
 import { emptyHomeSchedule, type HomeScheduleFilter } from '../../lib/homeScheduleFilter';
+import type { QuietRevealFilterState } from '../../lib/quietRevealCopy';
 import { HOME_TYPO } from '../../lib/typographyTokens';
 import type {
   HomeDateFilter,
@@ -46,6 +48,7 @@ export interface HomeFiltersSectionProps {
   expanded?: boolean;
   schedule: HomeScheduleFilter;
   setSchedule: (next: HomeScheduleFilter) => void;
+  quietReveal: QuietRevealFilterState;
 }
 
 export function HomeFiltersSection({
@@ -73,6 +76,7 @@ export function HomeFiltersSection({
   expanded = false,
   schedule,
   setSchedule,
+  quietReveal,
 }: HomeFiltersSectionProps) {
   const { t, tu } = useLanguage();
   const h = useHomeTheme();
@@ -116,6 +120,7 @@ export function HomeFiltersSection({
         onClearAll={onClearAll}
         schedule={schedule}
         onClearSchedule={() => setSchedule(emptyHomeSchedule())}
+        quietReveal={quietReveal}
       />
 
       {expanded && (
@@ -257,6 +262,8 @@ export function HomeFiltersSection({
             </button>
           )}
         </div>
+
+        <HomeQuietRevealFilters {...quietReveal} />
       </div>
       )}
     </section>

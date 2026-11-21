@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Ban,
@@ -13,13 +13,10 @@ import {
   EyeOff,
   Flag,
   Lock,
-  MessageCircle,
   MessageSquareOff,
   Pencil,
   Pin,
   PinOff,
-  Send,
-  SmilePlus,
   Trash2,
   Users2,
 } from 'lucide-react';
@@ -29,22 +26,24 @@ import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
-import { COMMENT_MAX_CHARS, POST_MAX_CHARS, useWallAccess, useWallStore } from '../../store/wallStore';
+import { POST_MAX_CHARS, useWallAccess, useWallStore } from '../../store/wallStore';
 import { canCommentOnPost, tagShownOnProfile, visibleComments } from '../../lib/audience';
 import { isPlatformAdmin } from '../../lib/roles';
 import { RichText } from './RichText';
 import { profilePathFor } from '../../lib/profileLinks';
-import type { ReactionKind, WallPost } from '../../types/wall';
-import { REACTION_KINDS } from '../../types/wall';
+import type { ReactionKind, WallComment, WallPost } from '../../types/wall';
 import type { User } from '../../types';
 import { cn } from '../../lib/utils';
 import { AudienceChip } from './AudienceChip';
 import { AudiencePickerModal } from './AudiencePickerModal';
 import { PersonAvatar } from './PersonAvatar';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { REACTION_EMOJI, reactionLabel, relativeTime } from './wallText';
 import { OverflowMenu, type OverflowMenuItem } from './OverflowMenu';
+import { PostReactionBar } from './PostReactionBar';
+import { CommentComposer } from './CommentComposer';
+import { CommentThread } from './CommentThread';
 import { formatLocationArea } from '../../lib/eventDisplay';
-import { formatPlanWhen } from '../../lib/dateLocale';
 
 const LONG_TEXT = 420;
 
@@ -79,9 +78,6 @@ export function PostCard({
   const access = useWallAccess();
   const {
     react,
-    addComment,
-    deleteComment,
-    restoreComment,
     deletePost,
     restorePost,
     updatePost,
@@ -125,20 +121,34 @@ export function PostCard({
 
   const [expanded, setExpanded] = useState(false);
   const [showAllComments, setShowAllComments] = useState(false);
-  const [comment, setComment] = useState('');
+  const [commenting, setCommenting] = useState(false);
+  const [replyTo, setReplyTo] = useState<WallComment | null>(null);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(post.text);
   const [audienceOpen, setAudienceOpen] = useState(false);
   const [reactionsOpen, setReactionsOpen] = useState(false);
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [reportReason, setReportReason] = useState(REPORT_REASONS[0].id);
   const [thumbFailed, setThumbFailed] = useState(false);
-  const commentRef = useRef<HTMLInputElement>(null);
 
   const comments = useMemo(() => visibleComments(viewerId, post, access.graph), [viewerId, post, access.graph]);
-  const shownComments = showAllComments ? comments : comments.slice(-2);
   const commentGate = viewerId ? canCommentOnPost(viewerId, post, access) : null;
+  const mentionPeople = useMemo(() => {
+    const ids = new Set<string>([
+      post.authorId,
+      post.wallOwnerId,
+      ...(post.taggedIds ?? []),
+      ...comments.map((c) => c.authorId),
+      ...(me?.connections ?? []),
+    ]);
+    if (me) ids.delete(me.id);
+    return users.filter((u) => ids.has(u.id)).map((u) => ({ id: u.id, name: u.name }));
+  }, [post.authorId, post.wallOwnerId, post.taggedIds, comments, me, users]);
+
+  const openComments = () => {
+    setShowAllComments(true);
+    setCommenting(true);
+  };
 
   const reactionEntries = useMemo(
     () => Object.entries(post.reactions).filter(([uid]) => !viewerId || uid === viewerId || !access.graph.viewerBlockedIds?.includes(uid)),
@@ -147,7 +157,7 @@ export function PostCard({
   const topReactions = useMemo(() => {
     const counts = new Map<ReactionKind, number>();
     for (const [, k] of reactionEntries) counts.set(k, (counts.get(k) ?? 0) + 1);
-    return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([k]) => k).slice(0, 3);
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([k]) => k);
   }, [reactionEntries]);
   const myReaction = viewerId ? post.reactions[viewerId] : undefined;
 
@@ -208,6 +218,14 @@ export function PostCard({
         onSelect: () => run(togglePin(post.id)) && toast.success(post.pinned ? t('Ξεκαρφιτσώθηκε', 'Unpinned') : t('Καρφιτσώθηκε', 'Pinned')),
       });
     }
+    if (iAmTagged && !isAuthor) {
+      menuItems.push({
+        key: 'untag',
+        icon: UserMinus,
+        label: t('Αφαίρεση της ετικέτας μου', 'Remove my tag'),
+        onSelect: () => run(removeMyTag(post.id)) && toast.success(t('Η ετικέτα σου αφαιρέθηκε', 'Your tag was removed')),
+      });
+    }
     if (isAuthor || isOwner) {
       menuItems.push({
         key: 'comments',
@@ -226,7 +244,6 @@ export function PostCard({
       });
     } else {
       menuItems.push({ key: 'hide', icon: EyeOff, label: t('Απόκρυψη από τη ροή μου', 'Hide from my feed'), onSelect: handleHide });
-      if (iAmTagged) menuItems.push({ key: 'untag', icon: UserMinus, label: t('Αφαίρεση της ετικέτας μου', 'Remove my tag'), onSelect: () => run(removeMyTag(post.id)) && toast.success(t('Η ετικέτα σου αφαιρέθηκε', 'Your tag was removed')) });
       menuItems.push({ key: 'report', icon: Flag, label: t('Αναφορά δημοσίευσης', 'Report post'), onSelect: () => setReportOpen(true), danger: true });
       menuItems.push({ key: 'block', icon: Ban, label: t(`Αποκλεισμός ${author.name}`, `Block ${author.name}`), onSelect: handleBlock, danger: true });
     }
@@ -238,11 +255,6 @@ export function PostCard({
       );
     }
   }
-
-  const sendComment = () => {
-    if (!comment.trim()) return;
-    if (run(addComment(post.id, comment))) setComment('');
-  };
 
   const text = post.text;
   const long = text.length > LONG_TEXT;
@@ -320,29 +332,25 @@ export function PostCard({
           </p>
         )}
 
-        {iAmTagged && !isAuthor && (
-          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl bg-surface px-3 py-2 text-xs font-medium text-ink">
+        {iAmTagged && !isAuthor && !myTagShown && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-medium text-ink-muted">
             <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span className="flex-1">
-              {myTagShown
-                ? t('Σε έχει επισημάνει — εμφανίζεται και στο προφίλ σου.', 'You are tagged — it also shows on your profile.')
-                : t('Σε έχει επισημάνει. Να εμφανίζεται και στο προφίλ σου;', 'You are tagged. Show it on your profile too?')}
+            <span className="flex-1 text-ink">
+              {t('Να φαίνεται και στο προφίλ σου;', 'Show this on your profile too?')}
             </span>
-            {!myTagShown && (
-              <button
-                type="button"
-                onClick={() => run(approveTag(post.id)) && toast.success(t('Εμφανίζεται πλέον στο προφίλ σου', 'Now shown on your profile'))}
-                className="inline-flex min-h-8 items-center gap-1 rounded-full bg-accent px-3 font-bold text-accent-fg"
-              >
-                <Check className="h-3.5 w-3.5" aria-hidden /> {t('Εμφάνιση', 'Show')}
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => run(approveTag(post.id)) && toast.success(t('Εμφανίζεται πλέον στο προφίλ σου', 'Now shown on your profile'))}
+              className="inline-flex min-h-8 items-center gap-1 rounded-full bg-accent px-3 font-bold text-accent-fg"
+            >
+              <Check className="h-3.5 w-3.5" aria-hidden /> {t('Ναι', 'Yes')}
+            </button>
             <button
               type="button"
               onClick={() => run(removeMyTag(post.id)) && toast.success(t('Η ετικέτα σου αφαιρέθηκε', 'Your tag was removed'))}
-              className="inline-flex min-h-8 items-center gap-1 rounded-full border border-border px-3 font-bold text-ink"
+              className="inline-flex min-h-8 items-center rounded-full px-2 font-bold text-ink-muted hover:text-ink"
             >
-              <UserMinus className="h-3.5 w-3.5" aria-hidden /> {t('Αφαίρεση ετικέτας', 'Remove tag')}
+              {t('Αφαίρεση', 'Remove')}
             </button>
           </div>
         )}
@@ -459,7 +467,7 @@ export function PostCard({
               <span />
             )}
             {comments.length > 0 && (
-              <button type="button" onClick={() => setShowAllComments((v) => !v)} className="min-h-8 hover:underline">
+              <button type="button" onClick={() => { setShowAllComments(true); setCommenting(true); }} className="min-h-8 hover:underline">
                 {comments.length === 1 ? t('1 σχόλιο', '1 comment') : t(`${comments.length} σχόλια`, `${comments.length} comments`)}
               </button>
             )}
@@ -467,144 +475,48 @@ export function PostCard({
         )}
 
         {!readOnly && viewerId && (
-          <div className="mt-2 border-t border-border pt-2">
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => run(react(post.id, myReaction ? null : 'like'))}
-                aria-pressed={Boolean(myReaction)}
-                className={cn(
-                  'inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl text-xs font-bold transition-colors hover:bg-surface',
-                  myReaction ? 'text-ink' : 'text-ink-muted',
-                )}
-              >
-                <span aria-hidden className="text-base leading-none">{myReaction ? REACTION_EMOJI[myReaction] : '👍'}</span>
-                {myReaction ? reactionLabel(myReaction, t) : t('Μου αρέσει', 'Like')}
-              </button>
-              <button
-                type="button"
-                onClick={() => setPickerOpen((v) => !v)}
-                aria-expanded={pickerOpen}
-                aria-label={t('Περισσότερες αντιδράσεις', 'More reactions')}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-ink-muted hover:bg-surface hover:text-ink"
-              >
-                <SmilePlus className="h-4 w-4" aria-hidden />
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowAllComments(true);
-                  commentRef.current?.focus();
-                }}
-                className="inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl text-xs font-bold text-ink-muted hover:bg-surface hover:text-ink"
-              >
-                <MessageCircle className="h-4 w-4" aria-hidden /> {t('Σχόλιο', 'Comment')}
-              </button>
-            </div>
-            {pickerOpen && (
-              <div role="group" aria-label={t('Διάλεξε αντίδραση', 'Choose a reaction')} className="mt-1 flex flex-wrap gap-1">
-                {REACTION_KINDS.map((k) => (
-                  <button
-                    key={k}
-                    type="button"
-                    aria-pressed={myReaction === k}
-                    onClick={() => {
-                      run(react(post.id, k));
-                      setPickerOpen(false);
-                    }}
-                    className={cn(
-                      'inline-flex min-h-9 items-center gap-1 rounded-full border px-3 text-xs font-bold',
-                      myReaction === k ? 'border-accent bg-accent-soft text-ink' : 'border-border text-ink-muted hover:text-ink',
-                    )}
-                  >
-                    <span aria-hidden className="text-base leading-none">{REACTION_EMOJI[k]}</span> {reactionLabel(k, t)}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <PostReactionBar
+            myReaction={myReaction}
+            onReact={(kind) => run(react(post.id, kind))}
+            onComment={openComments}
+            canComment={commentGate?.allowed !== false}
+          />
         )}
 
-        {shownComments.length > 0 && (
-          <ul className="mt-3 space-y-2">
-            {!showAllComments && comments.length > shownComments.length && (
-              <li>
-                <button type="button" onClick={() => setShowAllComments(true)} className="text-xs font-bold text-ink-muted hover:underline">
-                  {t(`Προβολή όλων των ${comments.length} σχολίων`, `View all ${comments.length} comments`)}
-                </button>
-              </li>
-            )}
-            {shownComments.map((c) => {
-              const cu = users.find((u) => u.id === c.authorId);
-              if (!cu) return null;
-              const canDelete = !readOnly && Boolean(me && (c.authorId === me.id || isAuthor || isOwner));
-              return (
-                <li key={c.id} className="flex items-start gap-2">
-                  <PersonAvatar user={cu} size="sm" viewer={viewer} />
-                  <div className="min-w-0 flex-1 rounded-2xl bg-surface px-3 py-2">
-                    <p className="text-xs font-bold text-ink">
-                      <Link to={profilePathFor(cu)} className="tap-area-y hover:underline">{cu.name}</Link>
-                      <span className="ml-2 font-medium text-ink-muted">{relativeTime(c.createdAt, language)}</span>
-                    </p>
-                    <p className="whitespace-pre-wrap break-words text-sm font-medium text-ink"><RichText text={c.text} /></p>
-                  </div>
-                  {canDelete && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const removed = deleteComment(post.id, c.id);
-                        if (removed) {
-                          toast.success(t('Το σχόλιο διαγράφηκε', 'Comment deleted'), {
-                            action: { label: t('Αναίρεση', 'Undo'), onClick: () => restoreComment(post.id, removed) },
-                          });
-                        }
-                      }}
-                      aria-label={t(`Διαγραφή σχολίου του/της ${cu.name}`, `Delete ${cu.name}'s comment`)}
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted hover:bg-surface hover:text-ink"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" aria-hidden />
-                    </button>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+        {comments.length > 0 && (
+          <CommentThread
+            postId={post.id}
+            comments={comments}
+            users={users}
+            viewer={viewer}
+            readOnly={readOnly}
+            canModerate={isAuthor || isOwner}
+            canReply={commentGate?.allowed === true}
+            showAll={showAllComments}
+            onShowAll={openComments}
+            onReply={(c) => {
+              setReplyTo(c);
+              setCommenting(true);
+              setShowAllComments(true);
+            }}
+          />
         )}
 
-        {!readOnly && viewerId && commentGate && (
-          commentGate.allowed ? (
-            <form
-              className="mt-3 flex items-center gap-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                sendComment();
-              }}
-            >
-              {me && <PersonAvatar user={me} size="sm" />}
-              <label className="sr-only" htmlFor={`comment-${post.id}`}>{t('Γράψε σχόλιο', 'Write a comment')}</label>
-              <input
-                ref={commentRef}
-                id={`comment-${post.id}`}
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                maxLength={COMMENT_MAX_CHARS}
-                placeholder={t('Γράψε ένα σχόλιο…', 'Write a comment…')}
-                className="min-h-10 min-w-0 flex-1 rounded-full border border-border bg-surface px-4 text-sm text-ink outline-none placeholder:text-ink-muted focus:ring-2 focus:ring-accent"
-              />
-              <button
-                type="submit"
-                disabled={!comment.trim()}
-                aria-label={t('Αποστολή σχολίου', 'Send comment')}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-fg disabled:opacity-40"
-              >
-                <Send className="h-4 w-4" aria-hidden />
-              </button>
-            </form>
-          ) : (
+        {!readOnly && viewerId && commentGate && commenting && commentGate.allowed && me && (
+          <CommentComposer
+            postId={post.id}
+            me={me}
+            mentionPeople={mentionPeople}
+            replyTo={replyTo}
+            onClearReply={() => setReplyTo(null)}
+            autoFocus
+            inputId={`comment-${post.id}`}
+          />
+        )}
+        {!readOnly && viewerId && commentGate && !commentGate.allowed && (
             <p className="mt-3 flex items-center gap-2 text-xs font-medium text-ink-muted">
               <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden /> {t(commentGate.reasonEl, commentGate.reasonEn)}
             </p>
-          )
         )}
       </article>
 

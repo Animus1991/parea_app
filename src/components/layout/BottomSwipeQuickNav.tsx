@@ -78,7 +78,7 @@ function BadgeButton({
     >
       <span
         className={cn(
-          'flex h-5 w-5 items-center justify-center rounded-full text-white shadow-soft',
+          'flex h-5 w-5 items-center justify-center rounded-full text-white shadow-round',
           kind === 'add' && 'bg-emerald-500',
           kind === 'remove' && 'bg-red-500',
           kind === 'pin' && 'bg-cyan-600',
@@ -143,13 +143,20 @@ function AvailableTile({ tile, onAdd }: { tile: QuickNavTileDef; onAdd: () => vo
   const Icon = quickNavIcon(tile.id);
   const label = t(tile.labelEl, tile.labelEn);
   return (
-    <div className="relative flex flex-col items-center justify-center gap-1 rounded-xl min-h-14 px-2 py-2 text-center">
-      <BadgeButton kind="add" label={t('Προσθήκη στο μενού', 'Add to the menu')} onClick={onAdd} />
+    <button
+      type="button"
+      onClick={onAdd}
+      aria-label={t(`Προσθήκη: ${label}`, `Add ${label}`)}
+      className="relative flex flex-col items-center justify-center gap-1 rounded-xl min-h-14 px-2 py-2 text-center"
+    >
+      <span className="absolute -right-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-round">
+        <Plus className="h-3 w-3" aria-hidden />
+      </span>
       <span className={cn('flex h-10 w-10 items-center justify-center rounded-full', tok.isDark ? 'bg-white/10' : 'bg-black/[0.04]')}>
         <Icon className="h-[18px] w-[18px]" aria-hidden />
       </span>
       <span className="text-xs font-medium leading-none line-clamp-2 text-ink">{label}</span>
-    </div>
+    </button>
   );
 }
 
@@ -244,8 +251,8 @@ export function BottomSwipeQuickNav({
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs font-medium leading-relaxed text-ink-muted">
                   {t(
-                    'Οι πρώτες συντομεύσεις κάθονται στην κάτω μπάρα. Πρόσθεσε όποια σελίδα σου είναι χρήσιμη.',
-                    'The first shortcuts sit on the bottom bar. Add any page you use.',
+                    'Πάτα + για να μπει στο μενού. Πάτα − για να φύγει. Όσες θες.',
+                    'Tap + to add it to the menu. Tap − to remove it. As many as you want.',
                   )}
                 </p>
                 <button
@@ -289,11 +296,43 @@ export function BottomSwipeQuickNav({
                 </div>
               </section>
 
+              <section id="quick-nav-available">
+                <h3 className="mb-1 text-xs font-bold text-ink">
+                  {t('Κι άλλες λειτουργίες', 'More pages')}
+                  {nav.available.length > 0
+                    ? ` · ${nav.available.length}`
+                    : ''}
+                </h3>
+                <p className="mb-2 text-xs font-medium text-ink-muted">
+                  {nav.available.length > 0
+                    ? t('Πρόσθεσε όσες θες — δεν υπάρχει όριο.', 'Add as many as you want — there is no cap.')
+                    : t('Τις έχεις όλες στο μενού. Αφαίρεσε κάποια για να ξαναφανεί εδώ.', 'They are all on the menu. Remove one to see it here again.')}
+                </p>
+                {nav.available.length > 0 ? (
+                  QUICK_NAV_GROUPS.map((group) => {
+                    const tiles = nav.available.filter((tile) => tile.group === group.id);
+                    if (tiles.length === 0) return null;
+                    return (
+                      <div key={group.id} className="mb-3">
+                        <p className="mb-1.5 text-2xs font-bold uppercase tracking-wide text-ink-muted">
+                          {t(group.el, group.en)}
+                        </p>
+                        <div className="grid grid-cols-4 gap-1">
+                          {tiles.map((tile) => (
+                            <AvailableTile key={tile.id} tile={tile} onAdd={() => nav.add(tile.id)} />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : null}
+              </section>
+
               <section>
-                <h3 className="mb-2 text-xs font-bold text-ink">{t('Μενού swipe', 'Swipe menu')}</h3>
+                <h3 className="mb-2 text-xs font-bold text-ink">{t('Στο μενού τώρα', 'On the menu now')}</h3>
                 {nav.sheet.length === 0 ? (
                   <p className="rounded-2xl bg-surface px-4 py-5 text-center text-xs font-medium text-ink-muted">
-                    {t('Πρόσθεσε σελίδες από τα διαθέσιμα παρακάτω.', 'Add pages from the available list below.')}
+                    {t('Το μενού είναι άδειο. Πρόσθεσε από πάνω.', 'The menu is empty. Add pages from above.')}
                   </p>
                 ) : (
                   <div className="grid grid-cols-4 gap-1">
@@ -310,27 +349,20 @@ export function BottomSwipeQuickNav({
                   </div>
                 )}
               </section>
-
-              {QUICK_NAV_GROUPS.map((group) => {
-                const tiles = nav.available.filter((tile) => tile.group === group.id);
-                if (tiles.length === 0) return null;
-                return (
-                  <section key={group.id}>
-                    <h3 className="mb-2 text-xs font-bold text-ink">{t(group.el, group.en)}</h3>
-                    <div className="grid grid-cols-4 gap-1">
-                      {tiles.map((tile) => (
-                        <AvailableTile key={tile.id} tile={tile} onAdd={() => nav.add(tile.id)} />
-                      ))}
-                    </div>
-                  </section>
-                );
-              })}
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-1">
               {nav.sheet.map((tile) => (
                 <TileLink key={tile.id} tile={tile} onNavigate={onClose} />
               ))}
+              <button
+                type="button"
+                onClick={() => setEditing(true)}
+                className="flex min-h-11 flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-border px-1 py-2 text-ink-muted hover:border-accent hover:text-ink"
+              >
+                <Plus className="h-[18px] w-[18px]" aria-hidden />
+                <span className="text-xs font-medium leading-none">{t('Προσθήκη', 'Add')}</span>
+              </button>
             </div>
           )}
         </div>

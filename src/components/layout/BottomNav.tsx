@@ -16,6 +16,7 @@ function BarLink({ tile }: { tile: QuickNavTileDef }) {
   const tok = useThemeStyles();
   const Icon = quickNavIcon(tile.id);
   const caption = barCaption(tile);
+  const label = t(caption.el, caption.en);
   return (
     <NavLink
       to={tile.path}
@@ -23,13 +24,26 @@ function BarLink({ tile }: { tile: QuickNavTileDef }) {
       onFocus={() => prefetchPath(tile.path)}
       className={({ isActive }) =>
         cn(
-          'flex flex-col items-center justify-center gap-1 transition-colors min-w-[60px] min-h-11',
-          isActive ? tok.navActive : tok.navInactive,
+          'flex flex-col items-center justify-center gap-1 min-w-[60px] min-h-11 px-1 rounded-2xl transition-colors',
+          isActive ? 'font-semibold' : tok.navInactive,
         )
       }
     >
-      <Icon className="h-[18px] w-[18px]" />
-      <span className="text-xs font-medium leading-none">{t(caption.el, caption.en)}</span>
+      {({ isActive }) => (
+        <>
+          <span
+            className={cn(
+              'flex h-9 w-9 items-center justify-center rounded-full transition-colors',
+              isActive && tok.navActive,
+            )}
+          >
+            <Icon className="h-[18px] w-[18px]" aria-hidden />
+          </span>
+          <span className={cn('text-xs font-medium leading-none', isActive && (tok.isDark ? 'text-white' : 'text-ink'))}>
+            {label}
+          </span>
+        </>
+      )}
     </NavLink>
   );
 }
@@ -63,7 +77,7 @@ export function BottomNav() {
           <NavLink
             to="/create"
             aria-label={t('Δημιουργία εκδήλωσης', 'Create event')}
-            className={cn('w-11 h-11 rounded-full flex items-center justify-center transition-colors border-2 border-white', tok.fab)}
+            className={cn('w-11 h-11 rounded-full flex items-center justify-center transition-colors border-2 border-white shadow-round', tok.fab)}
           >
             <Plus className="h-[20px] w-[20px] icon-emphasis" aria-hidden />
           </NavLink>

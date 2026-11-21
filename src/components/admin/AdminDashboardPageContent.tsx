@@ -25,7 +25,7 @@ import { intlLocale, formatPlanWhenDay } from '../../lib/dateLocale';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { AppSelect } from '../common/AppSelect';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
-import { formatLocationArea } from '../../lib/eventDisplay';
+import { formatLocationArea, locationMatchesQuery } from '../../lib/eventDisplay';
 
 type AdminTab = 'overview' | 'moderation' | 'users' | 'system' | 'automation' | 'branding' | 'sso';
 
@@ -84,8 +84,13 @@ export default function AdminDashboardPageContent() {
   const filteredUsers = useMemo(() => {
     const q = userQuery.trim().toLowerCase();
     if (!q) return users;
-    return users.filter((u) => u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q) || u.city?.toLowerCase().includes(q));
-  }, [users, userQuery]);
+    return users.filter(
+      (u) =>
+        u.name.toLowerCase().includes(q) ||
+        u.id.toLowerCase().includes(q) ||
+        locationMatchesQuery(u.city, q, language),
+    );
+  }, [language, users, userQuery]);
 
   const SAFEGUARDS: { key: keyof AdminSafeguards; title: string; desc: string }[] = [
     {

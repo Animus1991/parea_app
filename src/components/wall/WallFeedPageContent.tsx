@@ -82,19 +82,43 @@ export default function WallFeedPageContent() {
   if (!me) return null;
 
   const list = byFilter[filter];
-  const filters: { id: FeedFilter; el: string; en: string }[] = [
-    { id: 'all', el: 'Όλα', en: 'All' },
-    { id: 'connections', el: 'Nakamas μου', en: 'My Nakamas' },
-    { id: 'network', el: 'Δημόσια δικτύου', en: 'Network (public)' },
-    { id: 'mine', el: 'Ο τοίχος μου', en: 'My wall' },
+  const filters: { id: FeedFilter; el: string; en: string; hintEl: string; hintEn: string }[] = [
+    { id: 'all', el: 'Όλα', en: 'All', hintEl: 'Ό,τι μπορείς να δεις', hintEn: 'Everything you can see' },
+    {
+      id: 'connections',
+      el: 'Από Nakamas',
+      en: 'From Nakamas',
+      hintEl: 'Δημοσιεύσεις των συνδέσεών σου',
+      hintEn: 'Posts from people you are connected with',
+    },
+    {
+      id: 'network',
+      el: 'Δημόσιες',
+      en: 'Public',
+      hintEl: 'Ανοιχτές δημοσιεύσεις από ανθρώπους που δεν είναι ακόμα Nakamas σου',
+      hintEn: 'Open posts from people who are not your Nakamas yet',
+    },
+    {
+      id: 'mine',
+      el: 'Δικά μου',
+      en: 'Mine',
+      hintEl: 'Στον τοίχο σου, από σένα, ή με ετικέτα σου',
+      hintEn: 'On your wall, by you, or tagging you',
+    },
   ];
 
   return (
-    <div className={cn(PAGE_FILL, 'space-y-4 pb-20 md:pb-6 animate-in fade-in duration-300')}>
+    <div className={cn(PAGE_FILL, 'space-y-4 pb-8 md:pb-6 animate-in fade-in duration-300')}>
       <div className="flex flex-col gap-1">
         <h1 className={cn(APP_TYPO.pageTitle, 'flex items-center gap-2 text-ink')}>
           <Newspaper className="h-5 w-5" aria-hidden /> {t('Τοίχος Nakamas', 'Nakamas Wall')}
         </h1>
+        <p className="text-sm font-medium leading-snug text-ink-muted">
+          {t(
+            'Τα σχέδια των Nakamas σου — και όσα μοιράστηκαν ανοιχτά.',
+            'Your Nakamas’ plans — and what they shared openly.',
+          )}
+        </p>
       </div>
       {focusId && (
         <div className="space-y-2">
@@ -145,17 +169,33 @@ export default function WallFeedPageContent() {
         <PostComposer />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('Φίλτρο ροής', 'Feed filter')}>
-        {filters.map((f) => (
-          <Chip key={f.id} active={filter === f.id} onClick={() => setFilter(f.id)}>
-            {t(f.el, f.en)} <span className="ml-1 tabular-nums opacity-80">{byFilter[f.id].length}</span>
-          </Chip>
-        ))}
+      <div className="space-y-2">
+        <div
+          className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          role="group"
+          aria-label={t('Φίλτρο ροής', 'Feed filter')}
+        >
+          {filters.map((f) => (
+            <Chip
+              key={f.id}
+              active={filter === f.id}
+              onClick={() => setFilter(f.id)}
+              title={t(f.hintEl, f.hintEn)}
+              aria-label={`${t(f.el, f.en)}, ${byFilter[f.id].length}. ${t(f.hintEl, f.hintEn)}`}
+              className="shrink-0 whitespace-nowrap"
+            >
+              {t(f.el, f.en)}
+              <span className="ml-1 tabular-nums font-medium opacity-70">{byFilter[f.id].length}</span>
+            </Chip>
+          ))}
+        </div>
         {newCount > 0 && filter === 'all' && (
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-ink" role="status">
+          <p className="inline-flex items-center gap-1 text-xs font-medium text-ink-muted" role="status">
             <CircleDot className="h-3.5 w-3.5" aria-hidden />
-            {newCount === 1 ? t('1 νέα από την τελευταία σου επίσκεψη', '1 new since your last visit') : t(`${newCount} νέες από την τελευταία σου επίσκεψη`, `${newCount} new since your last visit`)}
-          </span>
+            {newCount === 1
+              ? t('1 νέα από την τελευταία σου επίσκεψη', '1 new since your last visit')
+              : t(`${newCount} νέες από την τελευταία σου επίσκεψη`, `${newCount} new since your last visit`)}
+          </p>
         )}
       </div>
 

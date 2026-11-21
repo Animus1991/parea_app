@@ -143,7 +143,7 @@ export function LookingForCompanyPanel({
                 darkSurface ? 'border-gray-600 text-gray-300' : 'border-gray-200 text-gray-700',
               )}
             >
-              {t('Όλα τα σχέδια', 'All plans')}
+              {t('Βρες παρέα', 'Find company')}
             </button>
           </div>
 

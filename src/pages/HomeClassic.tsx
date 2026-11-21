@@ -22,7 +22,6 @@ import { HomeFiltersSection } from "../components/home/HomeFiltersSection";
 import { HomeMobileFilterSheet } from "../components/home/HomeMobileFilterSheet";
 import { HomeFeedToolbar } from "../components/home/HomeFeedToolbar";
 import { HomeDiscoverEnrichment } from "../components/home/HomeDiscoverEnrichment";
-import { HomeQuietRevealBar } from "../components/home/HomeQuietRevealBar";
 import { CollectionsRail } from "../components/outings/CollectionsRail";
 import { useHomePageController } from "../hooks/useHomePageController";
 import { cn } from "../lib/utils";
@@ -53,15 +52,9 @@ export default function HomeClassic() {
     shownEvents,
     hasMoreEvents,
     loadMoreEvents,
-    conflictCount,
-    showConflicts,
-    onToggleConflicts,
-    fullJoinedCount,
-    showFullJoined,
-    onToggleFullJoined,
-    pastCount,
-    showPast,
-    onTogglePast,
+    quietReveal,
+    quietRevealOnCount,
+    filterBadgeCount,
     searchRef,
     loadMoreRef,
     storyEvents,
@@ -90,7 +83,6 @@ export default function HomeClassic() {
     setSortParam,
     sortedEvents,
     hasActiveFilters,
-    activeFilterCount,
     activeMood,
     handleSelectMood,
     schedule,
@@ -156,7 +148,7 @@ export default function HomeClassic() {
           mapClassName={tok.isDark ? 'border-gray-600/50 text-gray-300' : 'border-gray-200 text-ink-muted'}
           filtersOpen={filtersOpen}
           onToggleFilters={toggleFilters}
-          activeFilterCount={activeFilterCount + (seekingHostOnly ? 1 : 0)}
+          activeFilterCount={filterBadgeCount}
         />
 
         <HomeFiltersSection
@@ -177,25 +169,14 @@ export default function HomeClassic() {
           seekingHostOnly={seekingHostOnly}
           onToggleSeekingHostOnly={() => setSeekingHostOnly((v) => !v)}
           showSeekingHostChip={seekingHostEvents.length > 0}
-          hasActiveFilters={hasActiveFilters || seekingHostOnly}
+          hasActiveFilters={hasActiveFilters || quietRevealOnCount > 0}
           onClearAll={handleClearAll}
           activeMood={activeMood}
           onSelectMood={handleSelectMood}
           expanded={filtersExpanded}
           schedule={schedule}
           setSchedule={setSchedule}
-        />
-
-        <HomeQuietRevealBar
-          conflictCount={conflictCount}
-          showConflicts={showConflicts}
-          onToggleConflicts={onToggleConflicts}
-          fullJoinedCount={fullJoinedCount}
-          showFullJoined={showFullJoined}
-          onToggleFullJoined={onToggleFullJoined}
-          pastCount={pastCount}
-          showPast={showPast}
-          onTogglePast={onTogglePast}
+          quietReveal={quietReveal}
         />
 
         <DiscoverCardImagePicker
@@ -229,28 +210,28 @@ export default function HomeClassic() {
                 actionLabel={
                   isScheduleFilterActive(schedule)
                     ? t('Διεύρυνε τις ώρες', 'Widen hours')
-                    : hasActiveFilters || seekingHostOnly
+                    : hasActiveFilters || quietRevealOnCount > 0
                       ? t('Εκκαθάριση φίλτρων', 'Clear filters')
                       : t('Στον χάρτη', 'On the map')
                 }
                 onAction={
                   isScheduleFilterActive(schedule)
                     ? () => setSchedule(emptyHomeSchedule())
-                    : hasActiveFilters || seekingHostOnly
+                    : hasActiveFilters || quietRevealOnCount > 0
                       ? handleClearAll
                       : () => navigate('/nearby')
                 }
                 secondaryLabel={
                   isScheduleFilterActive(schedule)
                     ? t('Εκκαθάριση φίλτρων', 'Clear filters')
-                    : hasActiveFilters || seekingHostOnly
+                    : hasActiveFilters || quietRevealOnCount > 0
                       ? t('Στον χάρτη', 'On the map')
                       : t('Κατηγορίες', 'Categories')
                 }
                 onSecondary={
                   isScheduleFilterActive(schedule)
                     ? handleClearAll
-                    : hasActiveFilters || seekingHostOnly
+                    : hasActiveFilters || quietRevealOnCount > 0
                       ? () => navigate('/nearby')
                       : () => navigate('/categories')
                 }
@@ -295,7 +276,7 @@ export default function HomeClassic() {
       <HomeMobileFilterSheet
         open={filterSheetOpen}
         onClose={() => setFilterSheetOpen(false)}
-        activeCount={activeFilterCount}
+        activeCount={filterBadgeCount}
         onClear={() => {
           handleClearAll();
           setFilterSheetOpen(false);
@@ -321,6 +302,7 @@ export default function HomeClassic() {
         onSelectMood={handleSelectMood}
         schedule={schedule}
         setSchedule={setSchedule}
+        quietReveal={quietReveal}
       />
     </div>
   );

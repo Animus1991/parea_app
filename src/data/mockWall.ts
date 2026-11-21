@@ -19,9 +19,10 @@ export const mockWallPosts: WallPost[] = [
     eventId: 'e29',
     audience: { base: 'connections' },
     createdAt: ago(95),
-    reactions: { u3: 'like', u4: 'love' },
+    reactions: { u3: 'going', u4: 'love' },
     comments: [
-      { id: 'wc1', authorId: 'u3', text: 'Μέσα! Φέρνω και θερμός 😄', createdAt: ago(80) },
+      { id: 'wc1', authorId: 'u3', text: 'Μέσα! Φέρνω και θερμός 😄', createdAt: ago(80), reactions: { u2: '👍' } },
+      { id: 'wc1r', authorId: 'u2', text: 'Τέλεια, πάρε και εμένα 🙌', createdAt: ago(70), parentId: 'wc1' },
     ],
   },
   {
@@ -32,7 +33,7 @@ export const mockWallPosts: WallPost[] = [
     eventId: 'e1',
     audience: { base: 'public' },
     createdAt: ago(240),
-    reactions: { u2: 'wow' },
+    reactions: { u2: 'wow', u4: 'ticket', u1: 'fire' },
     comments: [],
   },
   {
@@ -44,7 +45,7 @@ export const mockWallPosts: WallPost[] = [
     audience: { base: 'public' },
     createdAt: ago(60 * 26),
     pinned: true,
-    reactions: { u1: 'cheers', u3: 'like' },
+    reactions: { u1: 'cheers', u3: 'music' },
     comments: [],
   },
   {
@@ -54,7 +55,7 @@ export const mockWallPosts: WallPost[] = [
     text: 'Η αγαπημένη μου ταράτσα για θερινό σινεμά αυτό το καλοκαίρι — καλύτερη θέα στην Ακρόπολη 🎬',
     audience: { base: 'public' },
     createdAt: ago(60 * 5),
-    reactions: {},
+    reactions: { u2: 'star', u3: 'eyes' },
     comments: [],
   },
   {
@@ -99,7 +100,7 @@ export const mockWallPosts: WallPost[] = [
     eventId: 'e7',
     audience: { base: 'connections' },
     createdAt: ago(60 * 20),
-    reactions: { u2: 'like', u3: 'haha' },
+    reactions: { u2: 'clap', u3: 'haha' },
     comments: [
       { id: 'wc2', authorId: 'u2', text: 'Εγώ! Στείλε μου στο chat 🙌', createdAt: ago(60 * 19) },
     ],
@@ -125,7 +126,7 @@ export const mockWallPosts: WallPost[] = [
     audience: { base: 'connections' },
     taggedIds: ['u1'],
     createdAt: ago(70),
-    reactions: { u3: 'love' },
+    reactions: { u3: 'party' },
     comments: [],
   },
 ];

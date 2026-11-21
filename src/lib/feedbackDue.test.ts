@@ -75,6 +75,19 @@ describe('pendingFeedbackEvents / join skip', () => {
     expect(shouldBlockJoinForFeedback(FEEDBACK_JOIN_SKIP_LIMIT)).toBe(true);
   });
 
+  it('does not count cancelled nights toward the join skip quota', () => {
+    const cancelled = event({ id: 'x', date: '2026-11-01', time: '20:00', status: 'cancelled' });
+    const list = pendingFeedbackEvents({
+      events: [nights[0], nights[1], cancelled],
+      groups: [groups[0], groups[1], { ...group('x'), status: 'cancelled' }],
+      userId: 'u1',
+      feedbackSubmitted: {},
+      now,
+    });
+    expect(list.map((e) => e.id)).toEqual(['a', 'b']);
+    expect(shouldBlockJoinForFeedback(list.length)).toBe(false);
+  });
+
   it('skips members marked absent at the door', () => {
     const e = event({ id: 'door', date: '2026-11-01', time: '20:00' });
     const g: Group = {

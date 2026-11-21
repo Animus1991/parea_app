@@ -116,6 +116,7 @@ function InteractiveEventMarker({
 export function EventMap({ event, accent, darkSurface = false, className }: EventMapProps) {
   const { t, language } = useLanguage();
   const groups = useStore((s) => s.groups);
+  const me = useStore((s) => s.currentUser);
   const [isMapFullscreen, setIsMapFullscreen] = useState(false);
   const [markerFocused, setMarkerFocused] = useState(false);
   const apiKey = getGoogleMapsApiKey();
@@ -139,9 +140,14 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
 
   const lat = hasCoords ? event.lat! : 37.9838;
   const lng = hasCoords ? event.lng! : 23.7275;
-  const meetingPoint = groups.find((g) => g.eventId === event.id && g.meetingPoint)?.meetingPoint;
-  const locationLine =
-    event.exactLocation || event.locationArea || meetingPoint || '';
+  const myGroup = groups.find((g) => g.eventId === event.id && me && (g.members.includes(me.id) || Boolean(g.waitlist?.includes(me.id))));
+  const showExactSpot = event.kind !== 'mini_outing' || Boolean(myGroup);
+  const meetingPoint = showExactSpot
+    ? groups.find((g) => g.eventId === event.id && g.meetingPoint)?.meetingPoint
+    : undefined;
+  const locationLine = showExactSpot
+    ? event.exactLocation || event.locationArea || meetingPoint || ''
+    : event.locationArea || '';
 
   useEffect(() => {
     if (!markerFocused) return;
@@ -164,7 +170,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
         >
           <MapPin className={cn('w-8 h-8 mx-auto mb-2 opacity-50', accentText)} />
           <p className={cn('text-sm font-bold', darkSurface ? 'text-white' : 'text-gray-800')}>
-            {event.exactLocation || event.locationArea
+            {(showExactSpot ? event.exactLocation : undefined) || event.locationArea
               ? t('Ο χάρτης δεν είναι διαθέσιμος για αυτή την εκδήλωση', 'Map unavailable for this event')
               : t(
                   'Η τοποθεσία θα είναι διαθέσιμη μετά την επιβεβαίωση',

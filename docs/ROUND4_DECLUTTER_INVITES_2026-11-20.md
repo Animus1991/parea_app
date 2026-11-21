@@ -26,8 +26,10 @@ Where upstream had already solved the same noise more completely, upstream won:
   Quick info, and sit next to «appears after confirmation». The «Βρες Nakamas»
   rail no longer squeezes the page to about 200 px, because the page has its own
   company panel.
-- **Discover.** The chips «Συγκρούσεις (n)» and «Άλλες (n)» now read «Ίδια ώρα με
-  σχέδιά σου (n)» and «Πλήρεις ή ήδη μέσα (n)».
+- **Discover.** Quiet-catalog nights no longer sit as chips on the feed (that
+  copy confused people). They live in advanced Φίλτρα as checkboxes in
+  «Κι άλλα που συνήθως κρύβουμε»: «Την ίδια μέρα που έχεις ήδη κάτι»,
+  «Αυτές που έχεις ήδη κλείσει», «Αυτές που γέμισαν», «Αυτές που έχουν περάσει».
 - **Plans.** «σε 6μ» now reads «σε 6 μέρες» or «Αύριο». «· έτοιμη» is gone from
   the button, because the photo already says «Επιβεβαιωμένο».
 - **Profile completeness.** ID verification is asked of hosts only (the Trust

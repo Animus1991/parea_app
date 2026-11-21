@@ -106,7 +106,7 @@ export function HomeWeatherBadge({
       aria-label={label}
       title={label}
       className={cn(
-        'rounded-full border border-white/25 bg-white/15 backdrop-blur-sm text-white flex flex-col items-center justify-center shadow-soft shrink-0 transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+        'rounded-full border border-white/25 bg-white/15 backdrop-blur-sm text-white flex flex-col items-center justify-center shadow-round shrink-0 transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
         size === 'sm' ? 'w-11 h-11' : 'w-12 h-12',
         className,
       )}

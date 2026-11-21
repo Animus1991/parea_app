@@ -9,6 +9,9 @@ import { mockCalendarPlanEvents, mockCalendarPlanGroups } from "../data/mockCale
 import { coerceAuthoredSeasonToLive } from "../lib/demoCatalogDates";
 import { withFreshCatalogDates } from "../lib/catalogAuthoredSchedule";
 import { eventCoverUrl } from "../lib/eventCover";
+import { isLiveCatalogEvent } from "../lib/eventDisplay";
+import { lockedMiniOutingFixtureIds, withFreshMiniOutingDates, type MapLocation } from "../lib/miniOutings";
+import { applyDefaultCardImageDepthIfUnset } from "../lib/discoverCardImagePreview";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
 import { fetchTicketmasterEvents, isTicketmasterConfigured } from "../services/eventApi";
@@ -166,6 +169,8 @@ export interface UserSettings {
   categoryPrefs: string[];
   privacy: AccountPrivacy;
   availability: string[];
+  /** Last place the member pinned for mini outings (GPS or map). */
+  mapLocation: MapLocation | null;
 }
 
 export const DEFAULT_USER_SETTINGS: UserSettings = {
@@ -174,6 +179,7 @@ export const DEFAULT_USER_SETTINGS: UserSettings = {
   categoryPrefs: [],
   privacy: { ...DEFAULT_ACCOUNT_PRIVACY },
   availability: ['weekends', 'weekday_evenings'],
+  mapLocation: null,
 };
 
 interface AppState extends OutingsSlice {
@@ -223,7 +229,7 @@ interface AppState extends OutingsSlice {
   leaveGroup: (groupId: string) => void;
   addMemberToGroup: (groupId: string, userId: string) => void;
   /** Φ27 — `genderMode: 'women_nb'` makes a women & non-binary group (creator must fit). */
-  createGroup: (eventId: string, targetSize: number, options?: { genderMode?: GroupGenderMode }) => void;
+  createGroup: (eventId: string, targetSize: number, options?: { genderMode?: GroupGenderMode }) => string | null;
   becomeEventHost: (eventId: string) => void;
   createEvent: (event: Partial<Event> & { title: string }) => void;
   updateEvent: (eventId: string, patch: Partial<Event>) => void;
@@ -365,8 +371,10 @@ export const DEMO_RESET_EVENT = 'nakamas:demo-reset';
 
 /** Φ27 — mock events + Nakamas Nights / small outings, and their groups and people. */
 function seedEvents(): Event[] {
-  return coerceAuthoredSeasonToLive(
-    withFreshCatalogDates([...mockEvents, ...mockCalendarPlanEvents, ...mockOutingEvents]),
+  return withFreshMiniOutingDates(
+    coerceAuthoredSeasonToLive(
+      withFreshCatalogDates([...mockEvents, ...mockCalendarPlanEvents, ...mockOutingEvents]),
+    ),
   );
 }
 function seedGroups(): typeof mockGroups {
@@ -464,8 +472,16 @@ export const useStore = create<AppState>()(
   events: seedEvents(),
   eventsLoading: false,
   eventsSource: 'mock',
-  hydrateEventsFromApi: (events) =>
-    set({ events, eventsSource: 'api', eventsLoading: false }),
+  hydrateEventsFromApi: (apiEvents) =>
+    set((state) => {
+      const apiIds = new Set(apiEvents.map((e) => e.id));
+      const extras = state.events.filter((e) => !apiIds.has(e.id));
+      return {
+        events: extras.length ? [...apiEvents, ...extras] : apiEvents,
+        eventsSource: extras.length ? 'mixed' : 'api',
+        eventsLoading: false,
+      };
+    }),
   setEventsLoading: (eventsLoading) => set({ eventsLoading }),
   groups: seedGroups(),
   users: seedUsers(),
@@ -498,7 +514,10 @@ export const useStore = create<AppState>()(
   setPlansFormingSidebarOpen: (open) => set({ plansFormingSidebarOpen: open }),
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
 
-  completeOnboarding: () => set({ onboardingCompleted: true }),
+  completeOnboarding: () => {
+    applyDefaultCardImageDepthIfUnset();
+    set({ onboardingCompleted: true });
+  },
 
   addRecentSearch: (query) =>
     set((state) => {
@@ -526,6 +545,13 @@ export const useStore = create<AppState>()(
     const event = state.events.find((e) => e.id === eventId);
     if (!event || !state.currentUser) {
       return { ok: false, messageEl: 'Η εκδήλωση δεν βρέθηκε.', messageEn: 'Event not found.' };
+    }
+    if (!isLiveCatalogEvent(event)) {
+      return {
+        ok: false,
+        messageEl: 'Η εκδήλωση ακυρώθηκε.',
+        messageEn: 'This event was cancelled.',
+      };
     }
     const when = new Date(`${event.date}T${event.time || '23:59'}`);
     if (!Number.isNaN(when.getTime()) && when.getTime() < Date.now()) {
@@ -565,54 +591,78 @@ export const useStore = create<AppState>()(
 
   hasCommitmentHold: (eventId) => Boolean(get().commitmentHolds[eventId]),
 
-  login: (userId) =>
+  login: (userId) => {
+    applyDefaultCardImageDepthIfUnset();
     set((state) => {
       const user = state.users.find((u) => u.id === userId);
       if (!user) return state;
       const privacy = { ...state.userSettings.privacy, ...(user.privacy ?? {}) };
       const blockedUserIds = user.blockedUserIds ?? state.blockedUserIds;
       const hydrated = { ...user, privacy, blockedUserIds };
+      const switched = state.currentUser?.id !== user.id;
       return {
         currentUser: hydrated,
         isAuthenticated: true,
         demoMode: false,
-        userSettings: { ...state.userSettings, privacy },
+        userSettings: {
+          ...state.userSettings,
+          privacy,
+          ...(switched ? { mapLocation: null } : {}),
+        },
         blockedUserIds,
         users: state.users.map((u) => (u.id === userId ? hydrated : u)),
       };
-    }),
+    });
+  },
 
-  loginWithUser: (user) =>
+  loginWithUser: (user) => {
+    applyDefaultCardImageDepthIfUnset();
     set((state) => {
       const privacy = { ...state.userSettings.privacy, ...(user.privacy ?? {}) };
       const blockedUserIds = user.blockedUserIds ?? state.blockedUserIds;
       const hydrated = { ...user, privacy, blockedUserIds };
       const exists = state.users.some((u) => u.id === user.id);
+      const switched = state.currentUser?.id !== user.id;
       return {
         currentUser: hydrated,
         isAuthenticated: true,
         demoMode: false,
-        userSettings: { ...state.userSettings, privacy },
+        userSettings: {
+          ...state.userSettings,
+          privacy,
+          ...(switched ? { mapLocation: null } : {}),
+        },
         blockedUserIds,
         users: exists
           ? state.users.map((u) => (u.id === user.id ? { ...u, ...hydrated } : u))
           : [...state.users, hydrated],
       };
-    }),
+    });
+  },
 
-  logout: () => set({ currentUser: null, isAuthenticated: false, demoMode: false }),
+  logout: () =>
+    set((state) => ({
+      currentUser: null,
+      isAuthenticated: false,
+      demoMode: false,
+      userSettings: { ...state.userSettings, mapLocation: null },
+    })),
 
-  enterDemoMode: () =>
+  enterDemoMode: () => {
+    applyDefaultCardImageDepthIfUnset();
     set((state) => {
       const user = state.users.find((u) => u.id === 'u1') ?? state.users[0];
       if (!user) return state;
+      const switched = state.currentUser?.id !== user.id;
       return {
         demoMode: true,
         currentUser: user,
         isAuthenticated: true,
         onboardingCompleted: true,
+        ...(switched ? { userSettings: { ...state.userSettings, mapLocation: null } } : {}),
       };
-    }),
+    });
+  },
 
   exitDemoMode: () => {
     const wasDemo = get().demoMode;
@@ -639,6 +689,8 @@ export const useStore = create<AppState>()(
       const userId = state.currentUser.id;
       const target = state.groups.find((g) => g.id === groupId);
       if (!target || target.status === 'cancelled') return state;
+      const outing = state.events.find((e) => e.id === target.eventId);
+      if (outing && !isLiveCatalogEvent(outing)) return state;
       // Φ27 — one gate for every way in: capacity (→ waitlist), women & non-binary
       // groups, blocks, and a paused standing for groups of strangers.
       const gate = gateJoinGroup(state.currentUser, target, {
@@ -915,9 +967,17 @@ export const useStore = create<AppState>()(
       };
     }),
 
-  createGroup: (eventId, targetSize, options) =>
+  createGroup: (eventId, targetSize, options) => {
+    let createdId: string | null = null;
     set((state) => {
       if (!state.currentUser) return state;
+      const outing = state.events.find((e) => e.id === eventId);
+      if (!outing || !isLiveCatalogEvent(outing)) return state;
+      if (!get().canJoinEvent(eventId).ok) return state;
+      const uid = state.currentUser.id;
+      if (state.groups.some((g) => g.eventId === eventId && g.status !== 'cancelled' && g.members.includes(uid))) {
+        return state;
+      }
       const genderMode: GroupGenderMode =
         options?.genderMode === 'women_nb' && fitsGenderMode(state.currentUser, 'women_nb') ? 'women_nb' : 'mixed';
       const newGroup = {
@@ -932,10 +992,13 @@ export const useStore = create<AppState>()(
         discountUnlocked: false,
         chatId: `chat_${Date.now()}`,
       };
+      createdId = newGroup.id;
       return {
         groups: [...state.groups, newGroup],
       };
-    }),
+    });
+    return createdId;
+  },
 
   becomeEventHost: (eventId) =>
     set((state) => {
@@ -944,7 +1007,8 @@ export const useStore = create<AppState>()(
       // If a hosted group already exists for this event, do nothing.
       if (state.groups.some((g) => g.eventId === eventId && g.hostId)) return state;
       const event = state.events.find((e) => e.id === eventId);
-      const targetSize = event?.groupDiscount?.minSize || 4;
+      if (!event || !isLiveCatalogEvent(event)) return state;
+      const targetSize = event.groupDiscount?.minSize || 4;
       // Claim an existing host-less (system-created) group, else create one.
       const hostless = state.groups.find((g) => g.eventId === eventId && !g.hostId);
       const groups = hostless
@@ -2318,15 +2382,19 @@ export const useStore = create<AppState>()(
           return [...fromSeeds, ...extras];
         };
 
-        const events = coerceAuthoredSeasonToLive(
-          withFreshCatalogDates(
-            mergeById(current.events, p.events).map((e) => {
-              const cover = eventCoverUrl(e);
-              return e.imageUrl === cover ? e : { ...e, imageUrl: cover };
-            }),
-          ),
-        );
         const groups = mergeById(current.groups, p.groups);
+        const events = withFreshMiniOutingDates(
+          coerceAuthoredSeasonToLive(
+            withFreshCatalogDates(
+              mergeById(current.events, p.events).map((e) => {
+                const cover = eventCoverUrl(e);
+                return e.imageUrl === cover ? e : { ...e, imageUrl: cover };
+              }),
+            ),
+          ),
+          new Date(),
+          lockedMiniOutingFixtureIds(groups, current.groups),
+        );
         // isAdmin comes only from the trusted seeds, never from persisted
         // (user-editable) localStorage state.
         const seedAdmin = new Map(current.users.map((u) => [u.id, Boolean(u.isAdmin)]));

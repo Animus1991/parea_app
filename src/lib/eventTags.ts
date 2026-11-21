@@ -127,6 +127,49 @@ export function eventTagPath(tag: string): string {
   return slug ? `/tags/${encodeURIComponent(slug)}` : '/tags';
 }
 
+/** Unique slugs from path/query values (`yoga`, `yoga,hiking`, aliases). */
+export function parseTagSlugs(raw: Array<string | null | undefined> | string | null | undefined): string[] {
+  const values = Array.isArray(raw) ? raw : [raw];
+  const slugs: string[] = [];
+  const seen = new Set<string>();
+  for (const value of values) {
+    if (!value) continue;
+    for (const part of value.split(/[,+]/)) {
+      const slug = eventTagSlug(part);
+      if (!slug || seen.has(slug)) continue;
+      seen.add(slug);
+      slugs.push(slug);
+    }
+  }
+  return slugs;
+}
+
+export function toggleTagSlug(selected: string[], tagOrSlug: string): string[] {
+  const needle = eventTagSlug(tagOrSlug);
+  if (!needle) return selected;
+  return selected.includes(needle)
+    ? selected.filter((slug) => slug !== needle)
+    : [...selected, needle];
+}
+
+/** One tag → `/tags/yoga`. Several → `/tags?t=yoga&t=hiking`. None → `/tags`. */
+export function tagsIndexPath(slugs: string[]): string {
+  const unique = parseTagSlugs(slugs);
+  if (unique.length === 0) return '/tags';
+  if (unique.length === 1) return `/tags/${encodeURIComponent(unique[0])}`;
+  const params = new URLSearchParams();
+  for (const slug of unique) params.append('t', slug);
+  return `/tags?${params.toString()}`;
+}
+
+export function eventTagMatchCount(event: { tags?: string[] }, slugs: string[]): number {
+  const set = new Set(parseTagSlugs(slugs));
+  if (set.size === 0) return 0;
+  return [...new Set((event.tags ?? []).map(eventTagSlug).filter(Boolean))].filter((slug) =>
+    set.has(slug),
+  ).length;
+}
+
 /** Unique tags currently used on events, popular first. Aliases share one row. */
 export function catalogEventTags(events: Array<{ tags?: string[] }>): CataloguedTag[] {
   const map = new Map<string, CataloguedTag>();
@@ -148,6 +191,14 @@ export function catalogEventTags(events: Array<{ tags?: string[] }>): Catalogued
 
 export function eventsForTag<T extends { tags?: string[] }>(events: T[], tagOrSlug: string): T[] {
   return events.filter((event) => eventHasTag(event, tagOrSlug));
+}
+
+/** Events that have at least one of the selected tags. */
+export function eventsForTags<T extends { tags?: string[] }>(events: T[], slugs: string[]): T[] {
+  const unique = parseTagSlugs(slugs);
+  if (unique.length === 0) return [];
+  if (unique.length === 1) return eventsForTag(events, unique[0]);
+  return events.filter((event) => eventTagMatchCount(event, unique) > 0);
 }
 
 export function tagMatchesQuery(
@@ -191,12 +242,17 @@ export function groupTagsByLetter(
     groups.set(letter, list);
   }
   return [...groups.entries()]
-    .sort(([a], [b]) => {
-      if (a === '#') return 1;
-      if (b === '#') return -1;
-      return a.localeCompare(b, locale);
-    })
+    .sort(([a], [b]) => letterSortKey(a).localeCompare(letterSortKey(b), locale))
     .map(([letter, items]) => ({ letter, tags: items }));
+}
+
+const GREEK_LETTERS = 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ';
+
+function letterSortKey(letter: string): string {
+  if (letter === '#') return '2#';
+  const greek = GREEK_LETTERS.indexOf(letter);
+  if (greek >= 0) return `0${String(greek).padStart(2, '0')}`;
+  return `1${letter}`;
 }
 
 export function findCataloguedTag(
@@ -206,4 +262,10 @@ export function findCataloguedTag(
   if (!slug) return undefined;
   const needle = eventTagSlug(slug);
   return catalog.find((item) => item.slug === needle);
+}
+
+export function findCataloguedTags(catalog: CataloguedTag[], slugs: string[]): CataloguedTag[] {
+  return parseTagSlugs(slugs)
+    .map((slug) => findCataloguedTag(catalog, slug) ?? { tag: slug, slug, count: 0 })
+    .filter((item) => item.slug);
 }

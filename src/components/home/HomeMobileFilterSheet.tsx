@@ -5,9 +5,11 @@ import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { HOME_CATEGORIES, HOME_POPULAR_TAGS } from '../../lib/homeFeedConstants';
 import { getHomeCategoryTranslations, getHomeTagTranslations } from '../../lib/homeCategoryLabels';
 import { MoodSelector } from './MoodSelector';
+import { HomeQuietRevealFilters } from './HomeQuietRevealFilters';
 import { HomeScheduleFilterPanel } from './HomeScheduleFilterPanel';
 import { cn } from '../../lib/utils';
 import type { HomeScheduleFilter } from '../../lib/homeScheduleFilter';
+import type { QuietRevealFilterState } from '../../lib/quietRevealCopy';
 import type {
   HomeDateFilter,
   HomePriceFilter,
@@ -42,6 +44,7 @@ export interface HomeMobileFilterSheetProps {
   onSelectMood: (moodId: string | null, categories: string[]) => void;
   schedule: HomeScheduleFilter;
   setSchedule: (next: HomeScheduleFilter) => void;
+  quietReveal: QuietRevealFilterState;
 }
 
 export function HomeMobileFilterSheet({
@@ -70,6 +73,7 @@ export function HomeMobileFilterSheet({
   onSelectMood,
   schedule,
   setSchedule,
+  quietReveal,
 }: HomeMobileFilterSheetProps) {
   const { t } = useLanguage();
   const h = useHomeTheme();
@@ -202,6 +206,7 @@ export function HomeMobileFilterSheet({
             {t('Χωρίς διοργανωτή', 'Seeking organizer')}
           </button>
         )}
+        <HomeQuietRevealFilters {...quietReveal} />
       </div>
     </FilterBottomSheet>
   );

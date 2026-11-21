@@ -12,9 +12,9 @@ const CHIP =
   'filter-chip inline-flex h-[1.75rem] items-center rounded-full border px-3 text-xs font-bold leading-none whitespace-nowrap';
 
 /**
- * Card-photo depth for the Discover feed. Collapsed by default to one quiet
- * chip that names the current choice; the options open in place, so layouts
- * can still be compared live on the feed without seven chips on first view.
+ * Card-photo depth for Discover, Plans and Find Nakamas. Collapsed by default
+ * to one quiet chip that names the current choice; the options open in place,
+ * so layouts can still be compared live without seven chips on first view.
  */
 export function DiscoverCardImagePicker({
   depth,

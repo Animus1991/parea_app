@@ -688,7 +688,7 @@ export default function SettingsPageContent() {
       <div className="text-center pt-2 pb-4">
         <div className={cn("flex items-center justify-center gap-1 text-xs font-medium", a.isDark ? "text-gray-600" : "text-gray-300")}>
           <Info className="w-3 h-3" aria-hidden />
-          <span>Nakamas v{APP_VERSION}</span>
+          <span>{t(`Nakamas έκδ. ${APP_VERSION}`, `Nakamas v${APP_VERSION}`)}</span>
         </div>
       </div>
     </div>

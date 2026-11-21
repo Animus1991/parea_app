@@ -604,7 +604,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </main>
         <footer className="hidden md:flex h-8 px-4 border-t border-border bg-surface text-xs text-ink-muted items-center justify-between shrink-0">
           <div className="flex space-x-4">
-            <span>Nakamas v{APP_VERSION}</span>
+            <span>{t(`Nakamas έκδ. ${APP_VERSION}`, `Nakamas v${APP_VERSION}`)}</span>
             <span className="flex items-center">
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2" />
               {t('Το σύστημα λειτουργεί', 'All systems working')}

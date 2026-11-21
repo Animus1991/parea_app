@@ -43,7 +43,7 @@ import { isDarkTheme } from "../../lib/themes";
 import { getEventGroupProgress } from "../../lib/groupUtils";
 import { reliabilityBadge, tierLabelEl, tierLabelEn } from "../../lib/trust";
 import { GroupProgressBar } from "./GroupProgressBar";
-import type { EventCardImageDepth } from "../../lib/discoverCardImagePreview";
+import { cardImageDepthFlags, type EventCardImageDepth } from "../../lib/discoverCardImagePreview";
 import { toast } from "sonner";
 import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
 import { TileLayer, Marker } from "react-leaflet";
@@ -61,7 +61,7 @@ interface EventCardProps {
   /** Feed cards lead with Find Nakamas; the seeking-host rail leads with hosting. */
   emphasis?: 'join' | 'host';
   /**
-   * How far the photo reaches. Default `photo` is the current card.
+   * How far the photo reaches. Default `full` is the first-time card.
    * `title` / `facts` / `organizer` / `roomy` overlay those rows on the image.
    */
   imageDepth?: EventCardImageDepth;
@@ -160,7 +160,7 @@ function CardFact({
   );
 }
 
-export const EventCard = memo(function EventCard({ event, emphasis = 'join', imageDepth = 'photo' }: EventCardProps) {
+export const EventCard = memo(function EventCard({ event, emphasis = 'join', imageDepth = 'full' }: EventCardProps) {
   const { t, language } = useLanguage();
   const categoryLabel = useCategoryLabel();
   const navigate = useNavigate();
@@ -310,22 +310,15 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
     "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
     isDark ? "bg-white/[0.06] text-gray-400" : "bg-gray-50 text-gray-500",
   );
-  const coverTitle = imageDepth !== 'photo';
-  const coverFacts =
-    imageDepth === 'facts' ||
-    imageDepth === 'organizer' ||
-    imageDepth === 'roomy' ||
-    imageDepth === 'divider' ||
-    imageDepth === 'full';
-  const coverOrganizer =
-    imageDepth === 'organizer' ||
-    imageDepth === 'roomy' ||
-    imageDepth === 'divider' ||
-    imageDepth === 'full';
-  const coverRoomy = imageDepth === 'roomy';
-  const coverProgress = imageDepth === 'divider' || imageDepth === 'full';
-  const coverFull = imageDepth === 'full';
-  const photoFillsCard = coverProgress || coverRoomy;
+  const {
+    coverTitle,
+    coverFacts,
+    coverOrganizer,
+    coverRoomy,
+    coverProgress,
+    coverFull,
+    photoFillsCard,
+  } = cardImageDepthFlags(imageDepth);
   const photoWell = "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white";
 
   const titleRow = (onPhoto: boolean) => (
@@ -604,44 +597,92 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                   </p>
                 )}
                 {coverFull && (
-                <div className={cn("flex items-center gap-2", showNightTools ? "justify-between" : "justify-end")}>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (joinState === 'rate') {
-                        navigate(`/history/feedback/${event.id}`);
-                        return;
-                      }
-                      if (joinState === 'view' || (joinState === 'chat' && !userGroup)) {
-                        navigate(`/events/${event.id}`);
-                        return;
-                      }
-                      if (joinState === 'chat' && userGroup) {
-                        navigate(`/chat/${userGroup.id}`);
-                        return;
-                      }
-                      const gate = canJoinEvent(event.id);
-                      if (!gate.ok) {
-                        toast.error(t(gate.messageEl, gate.messageEn));
-                        if (gate.reason === 'feedback') {
-                          const pending = useStore.getState().getPendingFeedbackEventId();
-                          if (pending) navigate(`/history/feedback/${pending}`);
+                <div className={cn("flex flex-wrap items-center gap-2", showNightTools ? "justify-between" : "justify-end")}>
+                  {showNightTools && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowSafetyPanel(true);
+                      }}
+                      aria-haspopup="dialog"
+                      aria-label={arrivalStatus ?? (isSharingLocation ? t("Κοινοποίηση τοποθεσίας", "Location sharing") : t("Χάρτης ομάδας", "Group map"))}
+                      title={t("Άφιξη & χάρτης", "Arrival & map")}
+                      className="inline-flex min-h-9 min-w-0 shrink items-center gap-2 rounded-full px-3.5 text-xs font-semibold text-white/90 transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                    >
+                      <MapPin className="h-4 w-4 shrink-0 opacity-80" aria-hidden />
+                      <span className={cn("truncate max-w-[110px]", userGroup && "sr-only")}>
+                        {arrivalStatus ?? (isSharingLocation ? t("Τοποθεσία", "Sharing") : t("Χάρτης", "Map"))}
+                      </span>
+                    </button>
+                  )}
+                  <div className="flex flex-wrap shrink-0 items-center gap-2">
+                    {userGroup && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/chat/${userGroup.id}`);
+                        }}
+                        aria-label={t('Μετάβαση στο Group Chat', 'View Group Chat')}
+                        title={t('Ομαδική συνομιλία', 'Group chat')}
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                      >
+                        <MessageSquare className="h-4 w-4" aria-hidden />
+                      </button>
+                    )}
+                    {seeksHost && joinState === 'join' && (
+                      <button
+                        type="button"
+                        onClick={handleBecomeHost}
+                        className={cn(
+                          "flex min-h-9 items-center justify-center gap-2 rounded-full px-4 font-bold text-white",
+                          EVENT_CARD_TYPO.cta,
+                          emphasis === 'host' ? "bg-amber-500 hover:bg-amber-400 text-gray-900" : "border border-white/30 hover:bg-white/10",
+                        )}
+                      >
+                        <Crown className="h-4 w-4" />
+                        {t('Ανάλαβε τη διοργάνωση', 'Take on hosting')}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (joinState === 'rate') {
+                          navigate(`/history/feedback/${event.id}`);
+                          return;
                         }
-                        return;
-                      }
-                      navigate(`/events/${event.id}/join`);
-                    }}
-                    className={cn("min-h-9 shrink-0 whitespace-nowrap rounded-full px-5 py-2 text-white font-semibold", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
-                  >
-                    {joinState === 'rate'
-                      ? t('Αξιολόγηση', 'Rate')
-                      : joinState === 'view'
-                        ? t('Προβολή', 'View')
-                        : joinState === 'chat'
-                          ? t('Η βραδιά μας', 'Our night')
-                          : t('Βρες παρέα', 'Find company')}
-                  </button>
+                        if (joinState === 'view' || (joinState === 'chat' && !userGroup)) {
+                          navigate(`/events/${event.id}`);
+                          return;
+                        }
+                        if (joinState === 'chat' && userGroup) {
+                          navigate(`/chat/${userGroup.id}`);
+                          return;
+                        }
+                        const gate = canJoinEvent(event.id);
+                        if (!gate.ok) {
+                          toast.error(t(gate.messageEl, gate.messageEn));
+                          if (gate.reason === 'feedback') {
+                            const pending = useStore.getState().getPendingFeedbackEventId();
+                            if (pending) navigate(`/history/feedback/${pending}`);
+                          }
+                          return;
+                        }
+                        navigate(`/events/${event.id}/join`);
+                      }}
+                      className={cn("min-h-9 shrink-0 whitespace-nowrap rounded-full px-5 py-2 text-white font-semibold", EVENT_CARD_TYPO.modalBtn, accent === 'fuchsia' ? 'bg-fuchsia-600 hover:bg-fuchsia-700' : accent === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : accent === 'indigo' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-accent hover:bg-accent-strong text-accent-fg')}
+                    >
+                      {joinState === 'rate'
+                        ? t('Αξιολόγηση', 'Rate')
+                        : joinState === 'view'
+                          ? t('Προβολή', 'View')
+                          : joinState === 'chat'
+                            ? t('Η βραδιά μας', 'Our night')
+                            : t('Βρες παρέα', 'Find company')}
+                    </button>
+                  </div>
                 </div>
                 )}
               </div>
@@ -659,7 +700,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         {!coverOrganizer && organizerRow(false)}
 
         {/* Platform event — seeks a group organizer. Hosting is primary only in the host rail. */}
-        {!coverProgress && seeksHost && joinState === 'join' && (
+        {!coverFull && seeksHost && joinState === 'join' && (
           <div className={cn(
             "rounded-2xl p-3.5 border",
             emphasis === 'host'

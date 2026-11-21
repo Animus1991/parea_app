@@ -13,6 +13,7 @@ import { useStore } from './index';
 import type {
   Audience,
   AudienceList,
+  CommentDraft,
   ReactionKind,
   WallActivity,
   WallActivityKind,
@@ -82,7 +83,9 @@ interface WallState {
   restorePost: (post: WallPost) => void;
   togglePin: (postId: string) => WallResult;
   react: (postId: string, kind: ReactionKind | null) => WallResult;
-  addComment: (postId: string, text: string) => WallResult;
+  addComment: (postId: string, text: string, extra?: CommentDraft) => WallResult;
+  updateComment: (postId: string, commentId: string, patch: { text: string }) => WallResult;
+  reactToComment: (postId: string, commentId: string, emoji: string | null) => WallResult;
   deleteComment: (postId: string, commentId: string) => WallComment | null;
   restoreComment: (postId: string, comment: WallComment) => void;
   hidePost: (postId: string) => void;
@@ -387,25 +390,91 @@ export const useWallStore = create<WallState>()(
         return { ok: true, id: postId };
       },
 
-      addComment: (postId, raw) => {
+      addComment: (postId, raw, extra) => {
         const me = viewerId();
         const post = get().posts.find((p) => p.id === postId);
         if (!me || !post) return fail('Η δημοσίευση δεν βρέθηκε.', 'Post not found.');
         const text = raw.trim();
-        if (!text) return fail('Γράψε ένα σχόλιο.', 'Write a comment.');
+        const hasMedia = Boolean(extra?.imageUrl || extra?.gifUrl);
+        if (!text && !hasMedia) return fail('Γράψε ένα σχόλιο.', 'Write a comment.');
         if (text.length > COMMENT_MAX_CHARS) return fail(`Έως ${COMMENT_MAX_CHARS} χαρακτήρες.`, `Up to ${COMMENT_MAX_CHARS} characters.`);
+        if (extra?.parentId && !post.comments.some((c) => c.id === extra.parentId)) {
+          return fail('Το σχόλιο δεν βρέθηκε.', 'Comment not found.');
+        }
         const gate = canCommentOnPost(me, post, wallAccessContext());
         if (!gate.allowed) return fail(gate.reasonEl, gate.reasonEn);
-        const comment: WallComment = { id: newId('wc'), authorId: me, text, createdAt: new Date().toISOString() };
-        const recipients = [...new Set([post.authorId, post.wallOwnerId])].filter((id) => id !== me);
+        const parentAuthor = extra?.parentId ? post.comments.find((c) => c.id === extra.parentId)?.authorId : undefined;
+        const comment: WallComment = {
+          id: newId('wc'),
+          authorId: me,
+          text,
+          createdAt: new Date().toISOString(),
+          ...(extra?.imageUrl ? { imageUrl: extra.imageUrl } : {}),
+          ...(extra?.gifUrl ? { gifUrl: extra.gifUrl, ...(extra.gifFallbackUrl ? { gifFallbackUrl: extra.gifFallbackUrl } : {}) } : {}),
+          ...(extra?.parentId ? { parentId: extra.parentId } : {}),
+          ...(extra?.mentionIds?.length ? { mentionIds: [...new Set(extra.mentionIds)] } : {}),
+        };
+        const recipients = [...new Set([post.authorId, post.wallOwnerId, parentAuthor])].filter(
+          (id): id is string => Boolean(id) && id !== me,
+        );
         set((s) => ({
           posts: s.posts.map((p) => (p.id === postId ? { ...p, comments: [...p.comments, comment] } : p)),
           activity: pushActivity(
             s.activity,
-            recipients.map((r) => makeActivity('comment', r, me, postId, { excerpt: excerptOf(text) })),
+            recipients.map((r) => makeActivity('comment', r, me, postId, { excerpt: excerptOf(text || '📎') })),
           ),
         }));
         return { ok: true, id: comment.id };
+      },
+
+      updateComment: (postId, commentId, patch) => {
+        const me = viewerId();
+        const post = get().posts.find((p) => p.id === postId);
+        const comment = post?.comments.find((c) => c.id === commentId);
+        if (!me || !post || !comment) return fail('Το σχόλιο δεν βρέθηκε.', 'Comment not found.');
+        if (comment.authorId !== me) return fail('Επεξεργάζεσαι μόνο τα δικά σου σχόλια.', 'You can only edit your own comments.');
+        if (!canViewPost(me, post, wallAccessContext())) return fail('Δεν είναι διαθέσιμο.', 'Not available.');
+        const text = patch.text.trim();
+        if (!text && !comment.imageUrl && !comment.gifUrl) return fail('Γράψε ένα σχόλιο.', 'Write a comment.');
+        if (text.length > COMMENT_MAX_CHARS) return fail(`Έως ${COMMENT_MAX_CHARS} χαρακτήρες.`, `Up to ${COMMENT_MAX_CHARS} characters.`);
+        set((s) => ({
+          posts: s.posts.map((p) =>
+            p.id === postId
+              ? {
+                  ...p,
+                  comments: p.comments.map((c) =>
+                    c.id === commentId ? { ...c, text, editedAt: new Date().toISOString() } : c,
+                  ),
+                }
+              : p,
+          ),
+        }));
+        return { ok: true, id: commentId };
+      },
+
+      reactToComment: (postId, commentId, emoji) => {
+        const me = viewerId();
+        const post = get().posts.find((p) => p.id === postId);
+        const comment = post?.comments.find((c) => c.id === commentId);
+        if (!me || !post || !comment) return fail('Το σχόλιο δεν βρέθηκε.', 'Comment not found.');
+        if (!canViewPost(me, post, wallAccessContext())) return fail('Δεν είναι διαθέσιμο.', 'Not available.');
+        if (emoji !== null && (emoji.length === 0 || emoji.length > 8)) return fail('Άγνωστη αντίδραση.', 'Unknown reaction.');
+        set((s) => ({
+          posts: s.posts.map((p) => {
+            if (p.id !== postId) return p;
+            return {
+              ...p,
+              comments: p.comments.map((c) => {
+                if (c.id !== commentId) return c;
+                const reactions = { ...(c.reactions ?? {}) };
+                if (emoji === null || reactions[me] === emoji) delete reactions[me];
+                else reactions[me] = emoji;
+                return { ...c, reactions };
+              }),
+            };
+          }),
+        }));
+        return { ok: true, id: commentId };
       },
 
       deleteComment: (postId, commentId) => {

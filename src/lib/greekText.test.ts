@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { toTitleCase } from './greekText';
+import { foldSearchText, toTitleCase } from './greekText';
+
+describe('foldSearchText', () => {
+  it('folds accented and uppercase Greek to the same key', () => {
+    expect(foldSearchText('ΑΘΗΝΑ')).toBe(foldSearchText('Αθήνα'));
+    expect(foldSearchText('ΘΗΣΕΙΟ')).toBe(foldSearchText('Θησείο'));
+    expect(foldSearchText('αθήνα')).toBe(foldSearchText('Αθήνα'));
+  });
+});
 
 describe('toTitleCase', () => {
   it('keeps only the first letter of each word capital', () => {

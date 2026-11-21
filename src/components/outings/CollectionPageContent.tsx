@@ -8,6 +8,8 @@ import { cn } from '../../lib/utils';
 import { collectionById, collectionEvents, formingGroups } from '../../lib/outings';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { EventCard } from '../events/EventCard';
+import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
+import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
 import { EmptyState } from '../common/EmptyState';
 import { Chip } from '../common/Chip';
 import { CollectionsRail } from './CollectionsRail';
@@ -24,6 +26,7 @@ export default function CollectionPageContent() {
   const groups = useStore((s) => s.groups);
   const [formingOnly, setFormingOnly] = useState(false);
   const [showPast, setShowPast] = useState(false);
+  const cardImage = useDiscoverCardImageDepth();
   const collection = collectionById(id);
   const today = new Date().toISOString().slice(0, 10);
 
@@ -112,11 +115,14 @@ export default function CollectionPageContent() {
           onSecondary={() => navigate('/buddy-seek')}
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-          {list.map((e) => (
-            <EventCard key={e.id} event={e} />
-          ))}
-        </div>
+        <>
+          <DiscoverCardImagePicker depth={cardImage.depth} options={cardImage.options} onChange={cardImage.setDepth} />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            {list.map((e) => (
+              <EventCard key={e.id} event={e} imageDepth={cardImage.depth} />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

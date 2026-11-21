@@ -2,14 +2,19 @@ import { describe, expect, it } from 'vitest';
 import {
   catalogEventTags,
   eventHasTag,
+  eventTagMatchCount,
   eventTagPath,
   eventTagSlug,
   eventsForTag,
+  eventsForTags,
   findCataloguedTag,
   groupTagsByLetter,
+  parseTagSlugs,
   tagLetter,
   tagMatchesQuery,
+  tagsIndexPath,
   tagsMatch,
+  toggleTagSlug,
 } from './eventTags';
 
 describe('eventTags', () => {
@@ -69,9 +74,38 @@ describe('eventTags', () => {
     expect(byLetter.N).toEqual(['nakamas-nights']);
     expect(byLetter.W).toEqual(['wine']);
     expect(tagLetter('Εργαστήριο', 'el')).toBe('Ε');
+    expect(groups.map((group) => group.letter)).toEqual(['Ε', 'N', 'W']);
     expect(findCataloguedTag(
       [{ tag: 'nakamas nights', slug: 'nakamas-nights', count: 2 }],
       'Nakamas-Nights',
     )?.tag).toBe('nakamas nights');
+  });
+
+  it('toggles several slugs into a shareable tags-index path', () => {
+    expect(parseTagSlugs(['yoga', 'hiking,yoga'])).toEqual(['yoga', 'hiking']);
+    expect(toggleTagSlug(['yoga'], 'hiking')).toEqual(['yoga', 'hiking']);
+    expect(toggleTagSlug(['yoga', 'hiking'], 'yoga')).toEqual(['hiking']);
+    expect(tagsIndexPath(['yoga'])).toBe('/tags/yoga');
+    expect(tagsIndexPath(['yoga', 'hiking'])).toBe('/tags?t=yoga&t=hiking');
+    expect(tagsIndexPath([])).toBe('/tags');
+  });
+
+  it('unions events across selected tags and counts overlaps', () => {
+    const yoga = { tags: ['yoga'] };
+    const both = { tags: ['yoga', 'hiking'] };
+    const hike = { tags: ['hiking'] };
+    const wine = { tags: ['wine'] };
+    expect(eventsForTags([yoga, both, hike, wine], ['yoga', 'hiking'])).toEqual([yoga, both, hike]);
+    expect(eventTagMatchCount(both, ['yoga', 'hiking'])).toBe(2);
+    expect(eventTagMatchCount(wine, ['yoga', 'hiking'])).toBe(0);
+    expect(
+      eventTagMatchCount(
+        { tags: ['boardgames', 'board games', 'boardgames'] },
+        ['board-games', 'social'],
+      ),
+    ).toBe(1);
+    expect(
+      eventTagMatchCount({ tags: ['board games', 'social'] }, ['board-games', 'social']),
+    ).toBe(2);
   });
 });
