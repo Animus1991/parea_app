@@ -267,7 +267,7 @@ export default function GroupChatPageContent() {
   if (!isMember) {
     return (
       <div className={cn(PAGE_FILL, "space-y-4 py-4")}>
-        <h1 className={cn(APP_TYPO.pageTitle, "text-ink")}>{t('Chat ομάδας', 'Group chat')}</h1>
+        <h1 className={cn(APP_TYPO.pageTitle, "text-ink")}>{t('Συνομιλία ομάδας', 'Group chat')}</h1>
         <div className="rounded-2xl border border-border bg-surface-raised p-4">
           <p className="text-sm font-bold text-ink">
             {t('Αυτό το chat είναι μόνο για τα μέλη της ομάδας.', 'This chat is only for group members.')}

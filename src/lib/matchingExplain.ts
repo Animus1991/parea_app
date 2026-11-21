@@ -1,6 +1,7 @@
 import type { Event, User } from '../types';
 import { computeMatchScore } from './matching';
 import { interestLabel, sameInterest } from './interests';
+import { countNoun } from './plural';
 
 export interface MatchExplanation {
   score: number;
@@ -44,8 +45,8 @@ export function explainEventMatch(
   if (overlap.length > 0) {
     sharedStrengths.push(
       tPair(
-        `${overlap.length} κοινά ενδιαφέροντα (${overlap.slice(0, 2).map((x) => interestLabel(x, 'el')).join(', ')})`,
-        `${overlap.length} shared interests (${overlap.slice(0, 2).map((x) => interestLabel(x, 'en')).join(', ')})`,
+        `${countNoun(overlap.length, 'κοινό ενδιαφέρον', 'κοινά ενδιαφέροντα')} (${overlap.slice(0, 2).map((x) => interestLabel(x, 'el')).join(', ')})`,
+        `${countNoun(overlap.length, 'shared interest', 'shared interests')} (${overlap.slice(0, 2).map((x) => interestLabel(x, 'en')).join(', ')})`,
         lang,
       ),
     );

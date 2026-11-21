@@ -17,6 +17,7 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { AppSelect } from '../common/AppSelect';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { countNoun } from '../../lib/plural';
 
 const NO_IDS: string[] = [];
 
@@ -56,7 +57,10 @@ export default function SavedEventsPageContent() {
           <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Αποθηκευμένες', 'Saved Events')}</h1>
           <p className={cn(APP_TYPO.pageSub, "mt-1", a.sub)}>
             {savedEventIds.length > 0
-              ? t(`${savedEventIds.length} αποθηκευμένες εκδηλώσεις`, `${savedEventIds.length} saved events`)
+              ? t(
+                  countNoun(savedEventIds.length, 'αποθηκευμένη εκδήλωση', 'αποθηκευμένες εκδηλώσεις'),
+                  countNoun(savedEventIds.length, 'saved event', 'saved events'),
+                )
               : t('Δεν υπάρχουν αποθηκευμένες εκδηλώσεις ακόμα.', 'No saved events yet.')}
           </p>
         </div>

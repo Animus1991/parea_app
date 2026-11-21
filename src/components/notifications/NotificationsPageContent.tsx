@@ -288,7 +288,7 @@ export default function NotificationsPageContent() {
           <button
             type="button"
             onClick={handleMarkAllRead}
-            className={cn('text-xs font-bold transition-colors', a.link)}
+            className={cn('tap-area-y text-xs font-bold transition-colors', a.link)}
           >
             {t('Σήμανση όλων', 'Mark all read')}
           </button>

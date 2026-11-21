@@ -27,7 +27,7 @@ export function CommentComposer({
   mentionPeople,
   replyTo,
   onClearReply,
-  autoFocus = false,
+  focusOnOpen = false,
   inputId,
 }: {
   postId: string;
@@ -35,7 +35,7 @@ export function CommentComposer({
   mentionPeople: { id: string; name: string }[];
   replyTo: WallComment | null;
   onClearReply: () => void;
-  autoFocus?: boolean;
+  focusOnOpen?: boolean;
   inputId: string;
 }) {
   const { t } = useLanguage();
@@ -51,8 +51,8 @@ export function CommentComposer({
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (autoFocus) inputRef.current?.focus();
-  }, [autoFocus, replyTo]);
+    if (focusOnOpen) inputRef.current?.focus();
+  }, [focusOnOpen, replyTo]);
 
   useEffect(() => {
     const el = inputRef.current;
@@ -300,7 +300,7 @@ export function CommentComposer({
             <button
               type="button"
               onClick={() => setPanel((p) => (p === 'emoji' ? 'none' : 'emoji'))}
-              aria-label={t('Emojis', 'Emojis')}
+              aria-label={t('Emoji', 'Emoji')}
               aria-pressed={panel === 'emoji'}
               className={cn('flex h-8 w-8 items-center justify-center rounded-full', panel === 'emoji' ? 'bg-accent text-accent-fg' : 'text-ink-muted hover:bg-surface-raised')}
             >

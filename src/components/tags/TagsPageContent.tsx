@@ -161,7 +161,9 @@ export default function TagsPageContent() {
         aria-label={
           active
             ? t(`Αφαίρεση ${label}`, `Remove ${label}`)
-            : t(`Προσθήκη ${label}, ${item.count} εκδηλώσεις`, `Add ${label}, ${item.count} events`)
+            : item.count === 1
+              ? t(`Προσθήκη ${label}, 1 εκδήλωση`, `Add ${label}, 1 event`)
+              : t(`Προσθήκη ${label}, ${item.count} εκδηλώσεις`, `Add ${label}, ${item.count} events`)
         }
         title={`${label} · ${item.count}`}
         className={chipClass(active)}

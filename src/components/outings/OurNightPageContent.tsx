@@ -42,6 +42,7 @@ import { PreMeetCard } from './PreMeetCard';
 import type { User } from '../../types';
 import { formatEur } from '../../lib/money';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { countNoun } from '../../lib/plural';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
@@ -262,7 +263,7 @@ export default function OurNightPageContent() {
           </div>
           <span className="text-xs font-bold">
             {t(`${members.length}/${group.targetSize} μέλη`, `${members.length}/${group.targetSize} members`)}
-            {spotsLeft > 0 ? t(` · ${spotsLeft} θέσεις ακόμη`, ` · ${spotsLeft} seats left`) : t(' · πλήρης', ' · full')}
+            {spotsLeft > 0 ? t(` · ${countNoun(spotsLeft, 'θέση', 'θέσεις')} ακόμη`, ` · ${countNoun(spotsLeft, 'seat', 'seats')} left`) : t(' · πλήρης', ' · full')}
           </span>
         </div>
         {firstReady && revealed && (
@@ -382,7 +383,7 @@ export default function OurNightPageContent() {
             <li key={m.id} className="flex items-center gap-3 py-2">
               <PersonAvatar user={m} size="sm" />
               <span className="min-w-0 flex-1">
-                <Link to={m.id === me.id ? '/profile' : `/u/${m.id}`} className="tap-area-y block truncate text-sm font-bold text-ink hover:underline">
+                <Link to={m.id === me.id ? '/profile' : `/u/${m.id}`} className="-my-1 block truncate py-1 text-sm font-bold text-ink hover:underline">
                   {m.name}
                   {m.id === me.id ? t(' (εσύ)', ' (you)') : ''}
                   {m.id === group.hostId ? t(' · οικοδεσπότης', ' · host') : ''}
@@ -443,7 +444,7 @@ export default function OurNightPageContent() {
         </h3>
         <div className="mt-2 flex flex-wrap gap-2">
           <Button size="sm" variant="outline" onClick={() => navigate(`/chat/${group.id}`)}>
-            <MessageCircle className="mr-1.5 h-4 w-4" aria-hidden /> {t('Chat ομάδας', 'Group chat')}
+            <MessageCircle className="mr-1.5 h-4 w-4" aria-hidden /> {t('Συνομιλία ομάδας', 'Group chat')}
           </Button>
           <Button size="sm" variant="outline" onClick={() => navigate('/trust')}>
             {t('Αξιοπιστία', 'Reliability')}

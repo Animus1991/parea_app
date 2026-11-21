@@ -47,7 +47,7 @@ function CommentReactionTray({
   if (!open) return null;
   return (
     <div
-      role="group"
+      role="toolbar"
       aria-label={t('Αντίδραση στο σχόλιο', 'React to comment')}
       onKeyDown={onKeyDown}
       className="absolute bottom-full left-0 z-20 mb-1 flex items-center gap-0.5 rounded-full border border-border bg-surface-raised px-1 py-0.5 shadow-soft-lg after:absolute after:left-0 after:right-0 after:top-full after:h-2 after:content-['']"
@@ -244,6 +244,7 @@ function CommentCard({
         {!readOnly && viewer && (
           <div className="mt-0.5 flex items-center gap-1 pl-1 text-xs font-bold text-ink-muted">
             <div
+              role="presentation"
               className="relative"
               onMouseEnter={() => setTray(true)}
               onMouseLeave={() => setTray(false)}

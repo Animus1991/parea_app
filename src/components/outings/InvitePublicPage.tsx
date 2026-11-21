@@ -52,7 +52,7 @@ export default function InvitePublicPage() {
     <main id="main-content" className="min-h-screen bg-surface px-4 py-6 text-ink">
       <div className="mx-auto max-w-md space-y-4">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-sm font-black text-ink">Nakamas</Link>
+          <Link to="/" className="tap-area-y text-sm font-black text-ink">Nakamas</Link>
           <button
             type="button"
             onClick={() => setLanguage(language === 'el' ? 'en' : 'el')}

@@ -71,10 +71,20 @@ describe('eventTags', () => {
       groups.map((group) => [group.letter, group.tags.map((item) => item.slug)]),
     );
     expect(byLetter['Ε']).toEqual(['workshop']);
-    expect(byLetter.N).toEqual(['nakamas-nights']);
-    expect(byLetter.W).toEqual(['wine']);
+    // Latin initials share one group in the Greek UI: no second «Ε» or «Ν».
+    expect(byLetter['A–Z']).toEqual(['nakamas-nights', 'wine']);
     expect(tagLetter('Εργαστήριο', 'el')).toBe('Ε');
-    expect(groups.map((group) => group.letter)).toEqual(['Ε', 'N', 'W']);
+    expect(groups.map((group) => group.letter)).toEqual(['Ε', 'A–Z']);
+    const english = groupTagsByLetter(
+      [
+        { tag: 'wine', slug: 'wine', count: 1 },
+        { tag: 'συνάντηση', slug: 'συνάντηση', count: 1 },
+        { tag: 'nakamas nights', slug: 'nakamas-nights', count: 2 },
+      ],
+      (tag) => tag,
+      'en',
+    );
+    expect(english.map((group) => group.letter)).toEqual(['N', 'W', 'Α–Ω']);
     expect(findCataloguedTag(
       [{ tag: 'nakamas nights', slug: 'nakamas-nights', count: 2 }],
       'Nakamas-Nights',

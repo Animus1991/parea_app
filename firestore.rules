@@ -294,8 +294,8 @@ service cloud.firestore {
           && (!('imageUrl' in request.resource.data) || (request.resource.data.imageUrl is string && request.resource.data.imageUrl.size() <= 2048 && request.resource.data.imageUrl.matches('https://.*')))
           && (!('gifUrl' in request.resource.data) || (request.resource.data.gifUrl is string && request.resource.data.gifUrl.size() <= 2048 && request.resource.data.gifUrl.matches('https://.*')))
           && (!('gifFallbackUrl' in request.resource.data) || (request.resource.data.gifFallbackUrl is string && request.resource.data.gifFallbackUrl.size() <= 2048 && request.resource.data.gifFallbackUrl.matches('https://.*')))
-          && (!('parentId' in request.resource.data) || request.resource.data.parentId is string)
-          && (!('mentionIds' in request.resource.data) || request.resource.data.mentionIds is list)
+          && (!('parentId' in request.resource.data) || (request.resource.data.parentId is string && request.resource.data.parentId.size() <= 128))
+          && (!('mentionIds' in request.resource.data) || (request.resource.data.mentionIds is list && request.resource.data.mentionIds.size() <= 20))
           && (request.auth.uid == get(postPath(postId)).data.authorId
             || request.auth.uid == get(postPath(postId)).data.wallOwnerId
             || audienceAllows(get(postPath(postId)).data.authorId,
@@ -305,7 +305,10 @@ service cloud.firestore {
           && canReadPost(get(postPath(postId)).data)
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'editedAt'])
           && request.resource.data.text is string
-          && request.resource.data.text.size() <= 1000;
+          && request.resource.data.text.size() <= 1000
+          // An edit cannot leave an empty comment unless it carries a picture or GIF.
+          && (request.resource.data.text.size() > 0 || resource.data.keys().hasAny(['imageUrl', 'gifUrl']))
+          && (!('editedAt' in request.resource.data) || request.resource.data.editedAt == request.time);
         allow delete: if signedIn() && (
           request.auth.uid == resource.data.authorId
           || request.auth.uid == get(postPath(postId)).data.authorId

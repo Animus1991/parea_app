@@ -4,6 +4,7 @@ import { formatPlanWhen } from '../../lib/dateLocale';
 import type { PlanCover } from '../../lib/planCovers';
 import type { Event } from '../../types';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { countNoun } from '../../lib/plural';
 
 /**
  * The invitation card (Partiful, kept gentle): a soft gradient with text in
@@ -44,7 +45,10 @@ export function InviteCover({
         </li>
         <li className="flex items-center gap-2">
           <Users className="h-4 w-4 shrink-0" aria-hidden />
-          {t(`${goingCount} πάνε · ${seatsLeft} θέσεις ακόμη`, `${goingCount} going · ${seatsLeft} seats left`)}
+          {t(
+            `${goingCount} ${goingCount === 1 ? 'πάει' : 'πάνε'} · ${countNoun(seatsLeft, 'θέση', 'θέσεις')} ακόμη`,
+            `${goingCount} going · ${countNoun(seatsLeft, 'seat', 'seats')} left`,
+          )}
         </li>
       </ul>
     </div>

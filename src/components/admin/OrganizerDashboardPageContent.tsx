@@ -31,6 +31,7 @@ import { useStore } from '../../store';
 import { toast } from 'sonner';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 import { formatEur } from '../../lib/money';
+import { countNoun } from '../../lib/plural';
 
 const QUICK_TEMPLATES = [
   { labelEl: 'Πεζοπορία', labelEn: 'Hiking', icon: '🥾' },
@@ -722,8 +723,8 @@ export default function OrganizerDashboardPageContent() {
                 {liveStats.quote
                   ? `«${liveStats.quote}»`
                   : t(
-                      `Δεν υπάρχουν ακόμη σχόλια (${liveStats.reviews} αξιολογήσεις). Τα σχόλια των συμμετεχόντων θα εμφανίζονται εδώ.`,
-                      `No comments yet (${liveStats.reviews} reviews). Participant comments will appear here.`,
+                      `Δεν υπάρχουν ακόμη σχόλια (${countNoun(liveStats.reviews, 'αξιολόγηση', 'αξιολογήσεις')}). Τα σχόλια των συμμετεχόντων θα εμφανίζονται εδώ.`,
+                      `No comments yet (${countNoun(liveStats.reviews, 'review', 'reviews')}). Participant comments will appear here.`,
                     )}
               </p>
             </div>

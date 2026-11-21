@@ -233,7 +233,7 @@ export default function OrganizerProfilePageContent() {
               onClick={handleOpenContact}
               disabled={!projected.showContact}
               className={cn(
-                'text-2xs font-bold tracking-wide transition-colors flex items-center gap-1',
+                'tap-area-y text-2xs font-bold tracking-wide transition-colors flex items-center gap-1',
                 projected.showContact ? cn(p.muted, p.hoverText) : 'opacity-40 cursor-not-allowed',
               )}
               aria-label={t('Επικοινωνία με διοργανωτή', 'Contact organizer')}
@@ -246,7 +246,7 @@ export default function OrganizerProfilePageContent() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleWebsiteClick}
-                className={cn('text-2xs font-bold tracking-wide transition-colors flex items-center gap-1', p.muted, p.hoverText)}
+                className={cn('tap-area-y text-2xs font-bold tracking-wide transition-colors flex items-center gap-1', p.muted, p.hoverText)}
                 aria-label={t('Ιστότοπος διοργανωτή', 'Organizer website')}
               >
                 <Globe className="h-4 w-4" /> {t('Ιστότοπος', 'Website')}

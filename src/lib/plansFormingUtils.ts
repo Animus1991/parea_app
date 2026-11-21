@@ -4,6 +4,7 @@ import type { CompanyRequest, MeetingPreference } from '../types/companyRequest'
 import type { Event, Group, User } from '../types';
 import type { BuddySeekDiscoveryItem } from '../hooks/useBuddySeekDiscovery';
 import { formatPlanWhen } from './dateLocale';
+import { countNoun } from './plural';
 
 export type PlanRoleKind = 'seeker' | 'group_builder' | 'coordinator';
 
@@ -58,8 +59,8 @@ export function plansFormingMatchReason(
   const shared = sharedInterestCount(viewer, seeker, event);
   if (savedEventIds.includes(event.id) && shared > 0) {
     return {
-      el: `Αποθηκευμένη εκδήλωση · ${shared} κοινά ενδιαφέροντα`,
-      en: `Saved event · ${shared} shared interests`,
+      el: `Αποθηκευμένη εκδήλωση · ${countNoun(shared, 'κοινό ενδιαφέρον', 'κοινά ενδιαφέροντα')}`,
+      en: `Saved event · ${countNoun(shared, 'shared interest', 'shared interests')}`,
     };
   }
   if (savedEventIds.includes(event.id)) {
@@ -70,8 +71,8 @@ export function plansFormingMatchReason(
   }
   if (shared > 0) {
     return {
-      el: `${shared} κοινά ενδιαφέροντα · ${interestLabel(event.category, 'el')}`,
-      en: `${shared} shared interests · ${interestLabel(event.category, 'en')}`,
+      el: `${countNoun(shared, 'κοινό ενδιαφέρον', 'κοινά ενδιαφέροντα')} · ${interestLabel(event.category, 'el')}`,
+      en: `${countNoun(shared, 'shared interest', 'shared interests')} · ${interestLabel(event.category, 'en')}`,
     };
   }
   return null;

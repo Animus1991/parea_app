@@ -102,4 +102,3 @@ export function CardImageDepthFrame({
   );
 }
 
-export { cardImageDepthFlags };

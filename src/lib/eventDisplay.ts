@@ -14,6 +14,7 @@ const LOCATION_EL: Record<string, string> = {
   'Syntagma, Athens': 'Σύνταγμα, Αθήνα',
   'Vouliagmeni, Athens': 'Βουλιαγμένη, Αθήνα',
   'Thisio, Athens': 'Θησείο, Αθήνα',
+  'Thissio, Athens': 'Θησείο, Αθήνα',
   'Exarchia, Athens': 'Εξάρχεια, Αθήνα',
   'Kaisariani, Athens': 'Καισαριανή, Αθήνα',
   'Faliro, Athens': 'Φάληρο, Αθήνα',

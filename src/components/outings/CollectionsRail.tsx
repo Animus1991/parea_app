@@ -6,6 +6,7 @@ import { useLanguage } from '../../lib/i18n';
 import { COLLECTIONS, collectionEvents, formingGroups } from '../../lib/outings';
 import { cn } from '../../lib/utils';
 import { COLLECTION_ICONS } from './collectionIcons';
+import { countNoun } from '../../lib/plural';
 
 /**
  * Themed collections (Fever, adapted): «Δωρεάν», «Σαββατοκύριακο», «Πρώτη φορά
@@ -76,7 +77,7 @@ export function CollectionsRail({
                 <Icon className="h-5 w-5 text-ink" aria-hidden />
                 <span className="mt-2 text-sm font-bold leading-tight text-ink">{t(c.el, c.en)}</span>
                 <span className="mt-1 text-xs font-medium text-ink-muted">
-                  {t(`${count} εκδηλώσεις`, `${count} events`)}
+                  {t(countNoun(count, 'εκδήλωση', 'εκδηλώσεις'), countNoun(count, 'event', 'events'))}
                   {forming > 0
                     ? t(` · ${forming} ${forming === 1 ? 'παρέα' : 'παρέες'}`, ` · ${forming} ${forming === 1 ? 'group' : 'groups'}`)
                     : ''}

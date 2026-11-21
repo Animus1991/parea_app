@@ -437,7 +437,7 @@ export default function ConnectionsPageContent() {
                 </div>
                 <div className="min-w-0">
                   <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>
-                    <button type="button" className="max-w-full truncate text-left rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current" onClick={(e) => { e.stopPropagation(); handleViewProfile(conn); }}>
+                    <button type="button" className="-my-1.5 max-w-full truncate py-1.5 text-left rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current" onClick={(e) => { e.stopPropagation(); handleViewProfile(conn); }}>
                       {conn.name}
                     </button>
                   </h3>
@@ -617,7 +617,7 @@ export default function ConnectionsPageContent() {
                     <PersonAvatar user={user} className="h-12 w-12 text-xs" />
                     <div className="min-w-0">
                       <h3 className={`font-bold text-sm truncate ${a.head} ${a.hoverText} transition-colors`}>
-                        <button type="button" className="max-w-full truncate text-left rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current" onClick={(e) => { e.stopPropagation(); handleViewProfile(user); }}>
+                        <button type="button" className="-my-1.5 max-w-full truncate py-1.5 text-left rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current" onClick={(e) => { e.stopPropagation(); handleViewProfile(user); }}>
                           {user.name}
                         </button>
                       </h3>

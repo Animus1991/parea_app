@@ -411,7 +411,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         >
           <span className="relative shrink-0">
             {/* Photo, or initials when it does not load: never a broken image. */}
-            <span className={cn("flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-accent-soft text-2xs font-bold text-ink", onPhoto ? "ring-1 ring-white/40" : isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}>
+            <span className={cn("flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-accent-soft text-xs font-bold text-ink", onPhoto ? "ring-1 ring-white/40" : isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}>
               <PhotoOrInitials src={displayOrganizer.photoUrl} name={displayOrganizer.name} />
             </span>
             <span className={cn("absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 border", onPhoto || !isDark ? "border-white" : "border-gray-800")} aria-hidden />

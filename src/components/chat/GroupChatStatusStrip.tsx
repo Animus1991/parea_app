@@ -57,7 +57,7 @@ export function GroupChatStatusStrip({
           <button
             type="button"
             onClick={() => setKeepOpen(true)}
-            className="shrink-0 font-medium text-ink hover:underline"
+            className="tap-area-y shrink-0 font-medium text-ink hover:underline"
           >
             {t('Διατήρηση', 'Keep')}
           </button>
@@ -83,7 +83,7 @@ export function GroupChatStatusStrip({
               });
             }}
             aria-label={t('Απόκρυψη', 'Dismiss')}
-            className="shrink-0 p-0.5 rounded-full hover:bg-ink/5"
+            className="tap-area shrink-0 p-0.5 rounded-full hover:bg-ink/5"
           >
             <X className="w-3 h-3 text-ink-muted" />
           </button>
@@ -98,7 +98,7 @@ export function GroupChatStatusStrip({
                 ? t('Απόκρυψη σημείου συνάντησης', 'Hide meeting point')
                 : t('Λεπτομέρειες σημείου συνάντησης', 'Meeting point details')
             }
-            className="shrink-0 p-1 rounded-full hover:bg-ink/5"
+            className="tap-area shrink-0 p-1 rounded-full hover:bg-ink/5"
           >
             <ChevronDown className={cn('w-3.5 h-3.5 transition-transform', open && 'rotate-180')} aria-hidden />
           </button>

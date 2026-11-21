@@ -8,6 +8,7 @@ import { cn } from '../../lib/utils';
 import type { User } from '../../types';
 import type { EventDetailMapAccent } from './EventDetailMapSection';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
+import { countNoun } from '../../lib/plural';
 
 interface OrganizerTokens {
   sectionBorder: string;
@@ -155,8 +156,8 @@ export function EventDetailOrganizerSection({
   const defaultBio =
     hostedCount > 0
       ? t(
-          `Επαληθευμένος Διοργανωτής • ${hostedCount} εκδηλώσεις`,
-          `Verified Organizer • ${hostedCount} events hosted`,
+          `Επαληθευμένος διοργανωτής • ${countNoun(hostedCount, 'εκδήλωση', 'εκδηλώσεις')}`,
+          `Verified Organizer • ${countNoun(hostedCount, 'event', 'events')} hosted`,
         )
       : t('Επαληθευμένος διοργανωτής', 'Verified Organizer');
 
@@ -199,7 +200,7 @@ export function EventDetailOrganizerSection({
             <div className="flex items-center gap-1.5 flex-wrap">
               <Link
                 to={`/organizer/${organizer.id}`}
-                className={cn('card-heading-lg font-bold transition-colors', tok.name)}
+                className={cn('tap-area-y card-heading-lg font-bold transition-colors', tok.name)}
               >
                 {organizer.name}
               </Link>

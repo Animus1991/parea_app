@@ -96,7 +96,8 @@ test.describe('Discover card image picker', () => {
     await expect(plansCard.getByText(/· \d{1,2}:\d{2}/).first()).toBeVisible();
     await plansPicker.locator('[data-card-image-option="full"]').click();
     await expect(plansPhoto).toHaveAttribute('data-image-depth', 'full');
-    await expect(plansCard.getByRole('button', { name: /Λεπτομέρειες|Details/ })).toBeVisible();
+    // The photo itself opens the event (no separate Details button).
+    await expect(plansPhoto.locator(':scope > button')).toHaveCount(1);
     await expect(plansCard.getByRole('button', { name: /Αποχώρηση|Leave/ })).toBeVisible();
     await plansPicker.locator('[data-card-image-option="title"]').click();
 

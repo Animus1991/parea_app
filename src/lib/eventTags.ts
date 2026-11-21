@@ -36,6 +36,7 @@ export const EVENT_TAG_LABELS: Record<string, EventTagLabels> = {
   creative: { el: 'Δημιουργικά', en: 'Creative' },
   culture: { el: 'Πολιτισμός', en: 'Culture' },
   dance: { el: 'Χορός', en: 'Dance' },
+  drink: { el: 'Ποτό', en: 'Drink' },
   daytrip: { el: 'Ημερήσια εκδρομή', en: 'Day trip' },
   electronic: { el: 'Ηλεκτρονική', en: 'Electronic' },
   environment: { el: 'Περιβάλλον', en: 'Environment' },
@@ -74,6 +75,7 @@ export const EVENT_TAG_LABELS: Record<string, EventTagLabels> = {
   tech: { el: 'Τεχνολογία', en: 'Tech' },
   techno: { el: 'Techno', en: 'Techno' },
   theater: { el: 'Θέατρο', en: 'Theater' },
+  walk: { el: 'Βόλτα', en: 'Walk' },
   walking: { el: 'Περπάτημα', en: 'Walking' },
   wellness: { el: 'Ευεξία', en: 'Wellness' },
   wine: { el: 'Κρασί', en: 'Wine' },
@@ -235,8 +237,14 @@ export function groupTagsByLetter(
   const sorted = [...tags].sort((a, b) =>
     labelOf(a.tag).localeCompare(labelOf(b.tag), locale),
   );
+  // Ε and E, Ν and N, Τ and T look the same: letters from the other alphabet
+  // share one group at the end instead of repeating a letter in the index.
+  const greekUi = locale.toLowerCase().startsWith('el');
   for (const item of sorted) {
-    const letter = tagLetter(labelOf(item.tag), locale);
+    const raw = tagLetter(labelOf(item.tag), locale);
+    const isGreek = GREEK_LETTERS.includes(raw) || /[\u0370-\u03FF]/.test(raw);
+    const letter =
+      raw === '#' ? raw : greekUi && !isGreek ? OTHER_LATIN : !greekUi && isGreek ? OTHER_GREEK : raw;
     const list = groups.get(letter) ?? [];
     list.push(item);
     groups.set(letter, list);
@@ -247,9 +255,12 @@ export function groupTagsByLetter(
 }
 
 const GREEK_LETTERS = 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ';
+const OTHER_LATIN = 'A–Z';
+const OTHER_GREEK = 'Α–Ω';
 
 function letterSortKey(letter: string): string {
-  if (letter === '#') return '2#';
+  if (letter === '#') return '3#';
+  if (letter === OTHER_LATIN || letter === OTHER_GREEK) return '2';
   const greek = GREEK_LETTERS.indexOf(letter);
   if (greek >= 0) return `0${String(greek).padStart(2, '0')}`;
   return `1${letter}`;

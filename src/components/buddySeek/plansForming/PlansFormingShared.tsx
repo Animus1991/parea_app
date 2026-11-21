@@ -16,6 +16,7 @@ import type { PlansFormingInsights } from '../../../hooks/usePlansFormingFeed';
 import type { PlansFormingEnrichedItem } from '../../../lib/plansFormingUtils';
 import type { Event } from '../../../types';
 import { formatLocationArea } from '../../../lib/eventDisplay';
+import { countNoun } from '../../../lib/plural';
 
 export function PlansFormingStatsBar({
   insights,
@@ -270,8 +271,8 @@ export function PlansFormingValueHero({
   const headline =
     insights.compatiblePlans > 0
       ? t(
-          `${insights.compatiblePlans} παρέες τώρα`,
-          `${insights.compatiblePlans} people looking now`,
+          `${countNoun(insights.compatiblePlans, 'παρέα', 'παρέες')} τώρα`,
+          `${countNoun(insights.compatiblePlans, 'group', 'groups')} now`,
         )
       : t('Βρες Nakamas για εκδήλωση', 'Find Nakamas for an event');
 

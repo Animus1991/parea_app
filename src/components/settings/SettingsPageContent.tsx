@@ -614,7 +614,7 @@ export default function SettingsPageContent() {
               </div>
               <button
                 type="button"
-                className="text-2xs font-bold text-red-500 hover:text-red-700"
+                className="tap-area-y text-2xs font-bold text-red-500 hover:text-red-700"
                 onClick={() => toast.success(t('Η συνεδρία τερματίστηκε (demo)', 'Session ended (demo)'))}
               >
                 {t('Αποσύνδεση', 'Log out')}

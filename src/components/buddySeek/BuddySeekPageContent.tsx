@@ -37,6 +37,7 @@ import { formatLocationArea } from '../../lib/eventDisplay';
 import { formatPlanWhen } from '../../lib/dateLocale';
 import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
 import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
+import { countNoun } from '../../lib/plural';
 
 function joinStatusLabel(status: CompanyJoinRequestStatus, t: (el: string, en: string) => string) {
   switch (status) {
@@ -174,7 +175,7 @@ export default function BuddySeekPageContent() {
     titleEl: 'Βρες Nakamas',
     titleEn: 'Find Nakamas',
     state: filter,
-    summaryEl: `${filtered.length} παρέες · ${pendingForMe.length} αιτήματα προς εσένα`,
+    summaryEl: `${countNoun(filtered.length, 'παρέα', 'παρέες')} · ${countNoun(pendingForMe.length, 'αίτημα', 'αιτήματα')} προς εσένα`,
     summaryEn: `${filtered.length} looking · ${pendingForMe.length} requests for you`,
     visibleIds: visibleSeeks.slice(0, 8).map((i) => i.intent.id),
   });
@@ -184,12 +185,6 @@ export default function BuddySeekPageContent() {
       <header className="space-y-3">
         <div className="space-y-1.5">
           <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
-          <p className={cn('text-xs font-medium leading-relaxed', a.muted)}>
-            {t(
-              'Άτομα που ψάχνουν παρέα για εκδήλωση. Τα βράδια που έκλεισες είναι στα Σχέδιά σου· καφές ή βόλτα δίπλα σου είναι στο «Βρες παρέα».',
-              'People looking for company at an event. Nights you booked live in My Plans; coffee or a walk next to you is in “Find company”.',
-            )}
-          </p>
           <PlansFormingValueHero insights={feed.insights} />
         </div>
         {/* StatsBar omitted when ValueHero already states compatible count — less chrome. */}
@@ -325,7 +320,7 @@ export default function BuddySeekPageContent() {
             <section className="space-y-5">
               <PlansFormingSectionTitle
                 title={t('Αιτήματα Nakamas', 'Nakama requests')}
-                subtitle={t(`${visibleSeeks.length} αποτελέσματα`, `${visibleSeeks.length} results`)}
+                subtitle={t(countNoun(visibleSeeks.length, 'αποτέλεσμα', 'αποτελέσματα'), countNoun(visibleSeeks.length, 'result', 'results'))}
               />
               {visibleSeeks.map((item) => (
                 <PlansFormingCard

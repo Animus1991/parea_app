@@ -279,7 +279,7 @@ export default function PlansPageContent() {
                                 onClick={() => navigate(`/chat/${group.id}`)}
                                 className="min-h-8 px-3 rounded-xl text-xs font-bold text-white/90 border border-white/30"
                               >
-                                {t('Chat', 'Chat')}
+                                {t('Συνομιλία', 'Chat')}
                               </button>
                             </>
                           )}
@@ -371,7 +371,7 @@ export default function PlansPageContent() {
                   disabled={!group}
                   className={cn(secondaryBtn, 'flex-1 flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed')}
                 >
-                  <MessageCircle className="h-3.5 w-3.5" /> {t('Chat', 'Chat')}
+                  <MessageCircle className="h-3.5 w-3.5" /> {t('Συνομιλία', 'Chat')}
                 </button>
                 {/* Leaving stays one tap away, but quiet: it is confirmed in a dialog. */}
                 <button
@@ -552,7 +552,9 @@ export default function PlansPageContent() {
         {needsRating > 0 && (
           <div className={cn('col-span-full text-xs font-semibold flex items-center gap-1.5', p.muted)}>
             <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
-            {t(`${needsRating} εκδηλώσεις περιμένουν την αξιολόγησή σου`, `${needsRating} event(s) awaiting your feedback`)}
+            {needsRating === 1
+              ? t('1 εκδήλωση περιμένει την αξιολόγησή σου', '1 event awaiting your feedback')
+              : t(`${needsRating} εκδηλώσεις περιμένουν την αξιολόγησή σου`, `${needsRating} events awaiting your feedback`)}
           </div>
         )}
         {pastEvents.map((event) => (

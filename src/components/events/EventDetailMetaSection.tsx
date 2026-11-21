@@ -104,7 +104,7 @@ export function EventDetailMetaSection({
           <p className={cn('card-copy font-medium capitalize', content.metaValue)}>{ruleText}</p>
           <Link
             to="/trust"
-            className={cn('text-xs font-bold underline', content.trustLink)}
+            className={cn('tap-area-y text-xs font-bold underline', content.trustLink)}
           >
             {t('Γιατί;', 'Why?')}
           </Link>

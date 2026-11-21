@@ -16,6 +16,7 @@ import { CollectionsRail } from './CollectionsRail';
 import { COLLECTION_ICONS } from './collectionIcons';
 import { OrganizerCalendarCard } from './OrganizerCalendarCard';
 import { PAGE_FILL } from '../layout/PageShell';
+import { countNoun } from '../../lib/plural';
 
 /** «/collections» lists all collections; «/collections/:id» opens one. */
 export default function CollectionPageContent() {
@@ -40,8 +41,8 @@ export default function CollectionPageContent() {
   usePublishPageSnapshot({
     titleEl: collection ? collection.el : 'Συλλογές',
     titleEn: collection ? collection.en : 'Collections',
-    summaryEl: collection ? `${list.length} εκδηλώσεις` : 'Θεματικές συλλογές εκδηλώσεων',
-    summaryEn: collection ? `${list.length} events` : 'Themed event collections',
+    summaryEl: collection ? countNoun(list.length, 'εκδήλωση', 'εκδηλώσεις') : 'Θεματικές συλλογές εκδηλώσεων',
+    summaryEn: collection ? countNoun(list.length, 'event', 'events') : 'Themed event collections',
     visibleIds: list.map((e) => e.id),
   });
 
@@ -84,7 +85,10 @@ export default function CollectionPageContent() {
         </h1>
         <p className={cn(APP_TYPO.pageSub, 'mt-1 text-ink-muted')}>{t(collection.descEl, collection.descEn)}</p>
         <p className="mt-1 text-xs font-bold text-ink" aria-live="polite">
-          {t(`${list.length} εκδηλώσεις · ${totalForming} παρέες σχηματίζονται`, `${list.length} events · ${totalForming} groups forming`)}
+          {t(
+            `${countNoun(list.length, 'εκδήλωση', 'εκδηλώσεις')} · ${countNoun(totalForming, 'παρέα σχηματίζεται', 'παρέες σχηματίζονται')}`,
+            `${countNoun(list.length, 'event', 'events')} · ${countNoun(totalForming, 'group', 'groups')} forming`,
+          )}
         </p>
       </header>
       {collection.id === 'nakamas-nights' && (

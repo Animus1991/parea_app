@@ -440,7 +440,7 @@ export function ChatMessageBubble({
               onClick={() => setReactOpen((v) => !v)}
               aria-label={t('Αντίδραση', 'React')}
               title={t('Αντίδραση', 'React')}
-              className="p-1 rounded-full text-ink-muted hover:bg-ink/10 hover:text-ink"
+              className="tap-area-y p-1 rounded-full text-ink-muted hover:bg-ink/10 hover:text-ink"
             >
               <SmilePlus className="w-3.5 h-3.5" />
             </button>
@@ -472,7 +472,7 @@ export function ChatMessageBubble({
             onClick={() => onReply(message)}
             aria-label={t('Απάντηση', 'Reply')}
             title={t('Απάντηση', 'Reply')}
-            className="p-1 rounded-full text-ink-muted hover:bg-ink/10 hover:text-ink"
+            className="tap-area-y p-1 rounded-full text-ink-muted hover:bg-ink/10 hover:text-ink"
           >
             <Reply className="w-3.5 h-3.5" />
           </button>
@@ -483,7 +483,7 @@ export function ChatMessageBubble({
               aria-label={t('Καρφίτσωμα', 'Pin')}
               title={t('Καρφίτσωμα', 'Pin')}
               className={cn(
-                'p-1 rounded-full hover:bg-ink/10',
+                'tap-area-y p-1 rounded-full hover:bg-ink/10',
                 message.pinned ? 'text-amber-500' : 'text-ink-muted hover:text-ink',
               )}
             >
@@ -499,7 +499,7 @@ export function ChatMessageBubble({
               }}
               aria-label={t('Επεξεργασία', 'Edit')}
               title={t('Επεξεργασία', 'Edit')}
-              className="p-1 rounded-full text-ink-muted hover:bg-ink/10 hover:text-ink"
+              className="tap-area-y p-1 rounded-full text-ink-muted hover:bg-ink/10 hover:text-ink"
             >
               <Pencil className="w-3 h-3" />
             </button>
@@ -510,7 +510,7 @@ export function ChatMessageBubble({
               onClick={() => onDelete(message.id)}
               aria-label={t('Διαγραφή', 'Delete')}
               title={t('Διαγραφή', 'Delete')}
-              className="p-1 rounded-full text-ink-muted hover:bg-red-50 hover:text-red-600"
+              className="tap-area-y p-1 rounded-full text-ink-muted hover:bg-red-50 hover:text-red-600"
             >
               <Trash2 className="w-3 h-3" />
             </button>

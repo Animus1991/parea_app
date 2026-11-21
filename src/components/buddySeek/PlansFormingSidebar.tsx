@@ -15,6 +15,7 @@ import {
 } from './plansForming/PlansFormingShared';
 import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
+import { countNoun } from '../../lib/plural';
 
 export function PlansFormingSidebarReopenTab() {
   const { t } = useLanguage();
@@ -121,8 +122,8 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
             )}
           >
             {t(
-              `${feed.insights.pendingJoinsToReview} αιτήματα προς έλεγχο →`,
-              `${feed.insights.pendingJoinsToReview} requests to review →`,
+              `${countNoun(feed.insights.pendingJoinsToReview, 'αίτημα', 'αιτήματα')} προς έλεγχο →`,
+              `${countNoun(feed.insights.pendingJoinsToReview, 'request', 'requests')} to review →`,
             )}
           </button>
         )}

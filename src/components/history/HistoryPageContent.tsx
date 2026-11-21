@@ -17,6 +17,7 @@ import { EventCoverImg } from '../common/EventCoverImg';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 import { formatLocationArea, locationMatchesQuery } from '../../lib/eventDisplay';
+import { countNoun } from '../../lib/plural';
 
 export default function HistoryPageContent() {
   const { t, language } = useLanguage();
@@ -75,8 +76,8 @@ export default function HistoryPageContent() {
     titleEl: 'Ιστορικό',
     titleEn: 'History',
     state: tab,
-    summaryEl: `${totalAttended} εκδηλώσεις · ${totalAttended - reviewedCount} χωρίς αξιολόγηση`,
-    summaryEn: `${totalAttended} events · ${totalAttended - reviewedCount} without review`,
+    summaryEl: `${countNoun(totalAttended, 'εκδήλωση', 'εκδηλώσεις')} · ${totalAttended - reviewedCount} χωρίς αξιολόγηση`,
+    summaryEn: `${countNoun(totalAttended, 'event', 'events')} · ${totalAttended - reviewedCount} without review`,
     visibleIds: pastEvents.slice(0, 8).map((e) => e.id),
   });
 

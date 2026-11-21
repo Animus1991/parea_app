@@ -66,9 +66,10 @@ export default function JoinGroupFlow() {
     }
   }, [preSelectedGroupId, eventId, groups]);
 
+  const myGroupId = myGroup?.id;
   useEffect(() => {
-    if (myGroup) setGroupType('existing');
-  }, [myGroup?.id]);
+    if (myGroupId) setGroupType('existing');
+  }, [myGroupId]);
 
   if (!event || !eventId) return null;
   if (!isLiveCatalogEvent(event)) {

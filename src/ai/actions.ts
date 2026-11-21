@@ -37,6 +37,7 @@ import { standingFor, strikeLabel } from '../lib/consequences';
 import { eventStartMs } from '../store/outingsSlice';
 import { notificationsForUser } from '../lib/notificationsUtil';
 import { formatEur } from '../lib/money';
+import { countNoun } from '../lib/plural';
 
 /** The wall store loads on demand so the first page (login) never ships wall code. */
 const loadWallStore = () => import('../store/wallStore').then((m) => m.useWallStore);
@@ -1120,8 +1121,8 @@ const limitPastPostsAction: CopilotAction = {
     if (n === 0) return { ok: true, el: 'Όλες οι δημοσιεύσεις σου είναι ήδη μόνο για Nakamas (ή στενότερο κοινό).', en: 'All your posts are already Nakamas-only (or narrower).' };
     return {
       ok: true,
-      el: `Περιόρισα ${n} δημοσιεύσεις στους Nakamas σου.`,
-      en: `Limited ${n} posts to your Nakamas.`,
+      el: `Περιόρισα ${countNoun(n, 'δημοσίευση', 'δημοσιεύσεις')} στους Nakamas σου.`,
+      en: `Limited ${countNoun(n, 'post', 'posts')} to your Nakamas.`,
       undo: () => useWallStore.getState().restoreAudiences(previous),
       link: { path: '/profile?tab=privacy', el: 'Απόρρητο', en: 'Privacy' },
     };
@@ -1250,8 +1251,8 @@ const markReadAction: CopilotAction = {
     state().markAllNotificationsRead();
     return {
       ok: true,
-      el: `Σημείωσα ${unread} ειδοποιήσεις ως αναγνωσμένες.`,
-      en: `Marked ${unread} notifications as read.`,
+      el: `Σημείωσα ${countNoun(unread, 'ειδοποίηση', 'ειδοποιήσεις')} ως ${unread === 1 ? 'αναγνωσμένη' : 'αναγνωσμένες'}.`,
+      en: `Marked ${countNoun(unread, 'notification', 'notifications')} as read.`,
       undo: () => useStore.setState({ notifications: prev }),
     };
   },
@@ -1580,8 +1581,8 @@ const exportAgendaAction: CopilotAction = {
     );
     return {
       ok: true,
-      el: `Εξήγαγα ${events.length} εκδηλώσεις σε .ics.`,
-      en: `Exported ${events.length} events to .ics.`,
+      el: `Εξήγαγα ${countNoun(events.length, 'εκδήλωση', 'εκδηλώσεις')} σε .ics.`,
+      en: `Exported ${countNoun(events.length, 'event', 'events')} to .ics.`,
       link: { path: '/agenda', el: 'Ημερολόγιο', en: 'Calendar' },
       data: { count: events.length },
     };
@@ -1733,9 +1734,9 @@ const respondCompanyJoinAction: CopilotAction = {
       rt.navigate(`/chat/${groupId}`);
       return {
         ok: true,
-        el: 'Αποδέχτηκα το αίτημα και άνοιξα το chat συντονισμού.',
+        el: 'Αποδέχτηκα το αίτημα και άνοιξα τη συνομιλία συντονισμού.',
         en: 'Accepted the request and opened the coordination chat.',
-        link: { path: `/chat/${groupId}`, el: 'Chat', en: 'Chat' },
+        link: { path: `/chat/${groupId}`, el: 'Συνομιλία', en: 'Chat' },
       };
     }
     s.declineCompanyJoinRequest(join.id);
@@ -1977,8 +1978,8 @@ const openCollectionAction: CopilotAction = {
     rt.navigate(path);
     return {
       ok: true,
-      el: `«${c.el}»: ${list.length} προσεχείς εκδηλώσεις, ${forming} παρέες σχηματίζονται.${list[0] ? `\nΠρώτη: ${formatEventLine(list[0], 'el')}` : ''}`,
-      en: `"${c.en}": ${list.length} upcoming events, ${forming} groups forming.${list[0] ? `\nFirst: ${formatEventLine(list[0], 'en')}` : ''}`,
+      el: `«${c.el}»: ${countNoun(list.length, 'προσεχής εκδήλωση', 'προσεχείς εκδηλώσεις')}, ${countNoun(forming, 'παρέα σχηματίζεται', 'παρέες σχηματίζονται')}.${list[0] ? `\nΠρώτη: ${formatEventLine(list[0], 'el')}` : ''}`,
+      en: `"${c.en}": ${countNoun(list.length, 'upcoming event', 'upcoming events')}, ${countNoun(forming, 'group', 'groups')} forming.${list[0] ? `\nFirst: ${formatEventLine(list[0], 'en')}` : ''}`,
       link: { path, el: c.el, en: c.en },
       eventIds: list.slice(0, 8).map((e) => e.id),
     };

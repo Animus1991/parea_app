@@ -10,6 +10,7 @@ import type { Event, Group, User } from '../types';
 import { sameInterest } from './interests';
 import { groupVibeFit, vibeSimilarity } from './vibe';
 import { fitsGenderMode } from './outings';
+import { countNoun } from './plural';
 
 const plain = (el: string) => el;
 
@@ -96,10 +97,10 @@ export function buildBuddySeekSuggestions(
       seekerUserId: hostId,
       labelEl: g.isRecruiting
         ? `Ομάδα ${spots} θέσεων — δέχεται νέα μέλη`
-        : `Ομάδα με ${spots} ελεύθερες θέσεις`,
+        : `Ομάδα με ${countNoun(spots, 'ελεύθερη θέση', 'ελεύθερες θέσεις')}`,
       labelEn: g.isRecruiting
         ? `Group with ${spots} spots — welcoming new members`
-        : `Group with ${spots} open spots`,
+        : `Group with ${countNoun(spots, 'open spot', 'open spots')}`,
     });
   }
 

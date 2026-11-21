@@ -219,6 +219,27 @@ describe.skipIf(!emulator)('firestore.rules', () => {
       await assertFails(setDoc(doc(as('bob'), 'wallPosts/conn/reactions/bob'), { kind: 'angry' }));
     });
 
+    it('lets only the author edit a comment, never to empty, with the server time', async () => {
+      const ref = await addDoc(collection(as('bob'), 'wallPosts/conn/comments'), {
+        authorId: 'bob',
+        text: 'nice',
+        createdAt: serverTimestamp(),
+      });
+      const mine = doc(as('bob'), `wallPosts/conn/comments/${ref.id}`);
+      await assertSucceeds(updateDoc(mine, { text: 'very nice', editedAt: serverTimestamp() }));
+      await assertFails(updateDoc(mine, { text: '' }));
+      await assertFails(updateDoc(mine, { text: 'x', editedAt: 1 }));
+      await assertFails(updateDoc(doc(as('alice'), `wallPosts/conn/comments/${ref.id}`), { text: 'not yours' }));
+      await assertFails(
+        addDoc(collection(as('bob'), 'wallPosts/conn/comments'), {
+          authorId: 'bob',
+          text: 'hi',
+          createdAt: serverTimestamp(),
+          mentionIds: Array.from({ length: 21 }, (_, i) => `u${i}`),
+        }),
+      );
+    });
+
     it('keeps lists, wall settings and the social graph private', async () => {
       await assertSucceeds(getDoc(doc(as('alice'), 'audienceLists/close')));
       await assertFails(getDoc(doc(as('bob'), 'audienceLists/close')));

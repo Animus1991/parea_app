@@ -236,8 +236,12 @@ export function WallPrivacyPanel({ showProfileRow = true }: { showProfileRow?: b
           {widePosts === 0
             ? t('Καμία δημοσίευσή σου δεν είναι ορατή πέρα από τους Nakamas σου.', 'None of your posts is visible beyond your Nakamas.')
             : t(
-                `${widePosts} δημοσιεύσεις σου είναι ορατές πέρα από τους Nakamas σου. Κάν' τες μόνο για Nakamas με ένα κλικ.`,
-                `${widePosts} of your posts are visible beyond your Nakamas. Make them Nakamas-only in one tap.`,
+                widePosts === 1
+                  ? "1 δημοσίευσή σου είναι ορατή πέρα από τους Nakamas σου. Κάν' την μόνο για Nakamas με ένα κλικ."
+                  : `${widePosts} δημοσιεύσεις σου είναι ορατές πέρα από τους Nakamas σου. Κάν' τες μόνο για Nakamas με ένα κλικ.`,
+                widePosts === 1
+                  ? '1 of your posts is visible beyond your Nakamas. Make it Nakamas-only in one tap.'
+                  : `${widePosts} of your posts are visible beyond your Nakamas. Make them Nakamas-only in one tap.`,
               )}
         </p>
         {widePosts > 0 &&

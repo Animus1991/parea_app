@@ -293,7 +293,7 @@ export function PostCard({
                   {tagged.slice(0, 3).map((u, i) => (
                     <span key={u.id}>
                       {i > 0 && ', '}
-                      <Link to={profilePathFor(u)} className="font-bold text-ink hover:underline">
+                      <Link to={profilePathFor(u)} className="tap-area-y font-bold text-ink hover:underline">
                         {u.id === me?.id ? t('εσένα', 'you') : u.name}
                       </Link>
                     </span>
@@ -509,7 +509,7 @@ export function PostCard({
             mentionPeople={mentionPeople}
             replyTo={replyTo}
             onClearReply={() => setReplyTo(null)}
-            autoFocus
+            focusOnOpen
             inputId={`comment-${post.id}`}
           />
         )}

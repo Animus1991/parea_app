@@ -522,8 +522,8 @@ export function ChatComposerTools({
             type="button"
             disabled={disabled}
             onClick={() => setPanel((p) => (p === 'emoji' ? 'none' : 'emoji'))}
-            aria-label={t('Emojis', 'Emojis')}
-            title={t('Emojis', 'Emojis')}
+            aria-label={t('Emoji', 'Emoji')}
+            title={t('Emoji', 'Emoji')}
             className={cn(
               'p-1.5 rounded-full transition-colors shrink-0 disabled:opacity-40',
               panel === 'emoji' ? 'bg-brand text-brand-fg' : 'text-ink-muted hover:bg-ink/10 hover:text-ink',
@@ -538,7 +538,7 @@ export function ChatComposerTools({
             aria-label="GIPHY GIF"
             title="GIPHY GIF"
             className={cn(
-              'px-2 py-0.5 rounded-full text-2xs font-extrabold border transition-colors shrink-0 disabled:opacity-40',
+              'tap-area-y px-2 py-0.5 rounded-full text-2xs font-extrabold border transition-colors shrink-0 disabled:opacity-40',
               panel === 'giphy'
                 ? 'bg-brand text-brand-fg border-brand'
                 : 'border-border text-ink-muted hover:border-brand hover:text-brand',

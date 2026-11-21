@@ -59,7 +59,7 @@ export function NakamasGoing({ eventId, className }: { eventId: string; classNam
         </div>
         <Link
           to={`/events/${eventId}#groups`}
-          className="shrink-0 text-xs font-bold text-ink underline underline-offset-2"
+          className="tap-area-y shrink-0 text-xs font-bold text-ink underline underline-offset-2"
         >
           {t('Δες ομάδες', 'See groups')}
         </Link>

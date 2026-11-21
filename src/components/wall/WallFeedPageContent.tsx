@@ -113,12 +113,6 @@ export default function WallFeedPageContent() {
         <h1 className={cn(APP_TYPO.pageTitle, 'flex items-center gap-2 text-ink')}>
           <Newspaper className="h-5 w-5" aria-hidden /> {t('Τοίχος Nakamas', 'Nakamas Wall')}
         </h1>
-        <p className="text-sm font-medium leading-snug text-ink-muted">
-          {t(
-            'Τα σχέδια των Nakamas σου — και όσα μοιράστηκαν ανοιχτά.',
-            'Your Nakamas’ plans — and what they shared openly.',
-          )}
-        </p>
       </div>
       {focusId && (
         <div className="space-y-2">

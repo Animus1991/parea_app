@@ -61,7 +61,7 @@ export function BuddySeekVibeNudge({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="text-left text-xs font-semibold text-ink-muted hover:text-ink"
+      className="tap-area-y text-left text-xs font-semibold text-ink-muted hover:text-ink"
     >
       {t(
         'Ολοκλήρωσε το στυλ παρέας (5 ερωτήσεις) →',

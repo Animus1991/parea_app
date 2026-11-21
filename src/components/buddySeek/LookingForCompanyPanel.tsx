@@ -312,7 +312,7 @@ export function LookingForCompanyPanel({
                           <button
                             type="button"
                             onClick={() => navigate(`/events/${event.id}/join?group=${s.groupId}`)}
-                            className="ml-2 text-cyan-600 font-bold"
+                            className="tap-area-y ml-2 text-cyan-600 font-bold"
                           >
                             {t('Συμμετοχή', 'Join')}
                           </button>
