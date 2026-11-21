@@ -299,13 +299,6 @@ export default function PlansPageContent() {
                           )}
                           <button
                             type="button"
-                            onClick={() => navigate(`/events/${event.id}`)}
-                            className="min-h-8 px-2 text-xs font-bold text-white/90"
-                          >
-                            {t('Λεπτομέρειες', 'Details')}
-                          </button>
-                          <button
-                            type="button"
                             onClick={() => setShowLeaveConfirm(event.id)}
                             className="min-h-8 px-2 text-xs font-semibold text-white/80 hover:text-red-200 flex items-center gap-1"
                           >

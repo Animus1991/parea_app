@@ -44,7 +44,6 @@ import { PostReactionBar } from './PostReactionBar';
 import { CommentComposer } from './CommentComposer';
 import { CommentThread } from './CommentThread';
 import { formatLocationArea } from '../../lib/eventDisplay';
-import { formatPlanWhen } from '../../lib/dateLocale';
 
 const LONG_TEXT = 420;
 

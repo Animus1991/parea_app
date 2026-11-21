@@ -143,7 +143,7 @@ export function PostReactionBar({
             role="group"
             aria-label={t('Διάλεξε αντίδραση', 'Choose a reaction')}
             onKeyDown={onTrayKeyDown}
-            className="absolute bottom-full left-1/2 z-[90] flex -translate-x-1/2 items-center gap-0.5 rounded-full border border-border bg-surface-raised px-1.5 py-1 mb-1 shadow-soft-lg after:absolute after:left-0 after:right-0 after:top-full after:h-2 after:content-['']"
+            className="absolute bottom-full left-1/2 z-20 flex -translate-x-1/2 items-center gap-0.5 rounded-full border border-border bg-surface-raised px-1.5 py-1 mb-1 shadow-soft-lg after:absolute after:left-0 after:right-0 after:top-full after:h-2 after:content-['']"
           >
             {QUICK_POST_REACTIONS.map((k, i) => (
               <button

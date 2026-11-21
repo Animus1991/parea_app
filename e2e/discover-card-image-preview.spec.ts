@@ -96,7 +96,7 @@ test.describe('Discover card image picker', () => {
     await expect(plansCard.getByText(/· \d{1,2}:\d{2}/).first()).toBeVisible();
     await plansPicker.locator('[data-card-image-option="full"]').click();
     await expect(plansPhoto).toHaveAttribute('data-image-depth', 'full');
-    await expect(plansCard.getByRole('button', { name: /Λεπτομέρειες|Details/ })).toBeVisible();
+    await expect(plansCard.locator('h3 a').first()).toBeVisible();
     await expect(plansCard.getByRole('button', { name: /Αποχώρηση|Leave/ })).toBeVisible();
     await plansPicker.locator('[data-card-image-option="title"]').click();
 
