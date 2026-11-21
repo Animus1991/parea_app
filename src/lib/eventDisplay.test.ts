@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   formatEventPrice,
   formatLocationArea,
+  locationMatchesQuery,
   getEventJoinState,
   isEventImminent,
   isEventPast,
@@ -74,6 +75,10 @@ describe('eventDisplay', () => {
     expect(formatLocationArea('Zappeio, Athens', 'el')).toBe('Ζάππειο, Αθήνα');
     expect(formatLocationArea('Plaka, Athens', 'el')).toBe('Πλάκα, Αθήνα');
     expect(formatLocationArea('Syntagma, Athens', 'el')).toBe('Σύνταγμα, Αθήνα');
+    expect(locationMatchesQuery('Thisio, Athens', 'θησείο', 'el')).toBe(true);
+    expect(locationMatchesQuery('Thisio, Athens', 'thisio', 'el')).toBe(true);
+    expect(locationMatchesQuery('Athens', 'αθήνα', 'el')).toBe(true);
+    expect(locationMatchesQuery('Thisio, Athens', 'κουκάκι', 'el')).toBe(false);
     expect(translateEventTag('boardgames', (el) => el)).toBe('Επιτραπέζια');
     expect(translateEventTag('board games', (_el, en) => en)).toBe('Board games');
     expect(translateEventTag('nakamas nights', (el) => el)).toBe('Nakamas Nights');

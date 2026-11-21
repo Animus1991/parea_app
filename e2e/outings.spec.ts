@@ -163,6 +163,16 @@ test.describe('Group outings', () => {
     await expect(img).toHaveJSProperty('naturalWidth', 1200);
   });
 
+  test('members keep Our night and cannot fake a second group', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/events/nn1');
+    await expect(page.getByRole('button', { name: /Η βραδιά μας|Our night/ }).first()).toBeVisible();
+    await expect(page.getByText(/Ή δημιούργησε άλλη ομάδα|Or create another group/)).toHaveCount(0);
+    await page.goto('/events/nn1/join');
+    await expect(page.getByText(/Είσαι ήδη σε ομάδα|You are already in a group/)).toBeVisible();
+    await expect(page.getByRole('button', { name: /Νέα ομάδα|Start New Group/ })).toHaveCount(0);
+  });
+
   test('«Ξανά μαζί»: a mutual mark is revealed and the stranger becomes a Nakama', async ({ page }) => {
     await enterDemoGuest(page);
     await page.goto('/history/feedback/e4');

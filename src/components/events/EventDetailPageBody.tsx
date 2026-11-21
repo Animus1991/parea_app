@@ -90,6 +90,13 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         g.status !== 'cancelled' &&
         (g.members.includes(currentUser.id) || g.waitlist?.includes(currentUser.id)),
     );
+  const isMemberOfEvent = Boolean(currentUser && myGroupForEvent?.members.includes(currentUser.id));
+  const isWaitlistedOnly = Boolean(
+    currentUser &&
+      myGroupForEvent &&
+      !myGroupForEvent.members.includes(currentUser.id) &&
+      myGroupForEvent.waitlist?.includes(currentUser.id),
+  );
 
   if (discountFilter) {
     eventGroups = eventGroups.filter(g => g.discountUnlocked);
@@ -120,6 +127,10 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
   const handlePrimaryJoin = () => {
     if (!eventId) return;
+    if (isMemberOfEvent && myGroupForEvent) {
+      navigate(`/night/${myGroupForEvent.id}`);
+      return;
+    }
     const gate = canJoinEvent(eventId);
     if (!gate.ok) {
       toast.error(t(gate.messageEl, gate.messageEn));
@@ -255,13 +266,15 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                     <Users className="w-5 h-5" />
                     {t('Η βραδιά μας', 'Our night')}
                   </Button>
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/events/${eventId}/join`)}
-                    className="text-xs font-bold text-ink underline underline-offset-2"
-                  >
-                    {t('Ή δημιούργησε άλλη ομάδα', 'Or create another group')}
-                  </button>
+                  {isWaitlistedOnly && (
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/events/${eventId}/join`)}
+                      className="text-xs font-bold text-ink underline underline-offset-2"
+                    >
+                      {t('Ή δημιούργησε άλλη ομάδα', 'Or create another group')}
+                    </button>
+                  )}
                 </>
               ) : (
                 <Button className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
@@ -343,7 +356,9 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         </Button>
         {isLiveCatalogEvent(event) ? (
           <Button className="flex-[2] min-h-8 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
-            {t('Μπες σε παρέα', 'Join a group')}
+            {isMemberOfEvent
+              ? t('Η βραδιά μας', 'Our night')
+              : t('Μπες σε παρέα', 'Join a group')}
           </Button>
         ) : (
           <p className="flex-[2] self-center text-center text-xs font-medium text-ink-muted">

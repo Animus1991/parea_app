@@ -13,6 +13,13 @@ test.describe('public auth surface', () => {
     await expect(page).toHaveURL('/');
     await expect(page.locator('#main-content')).toBeVisible();
   });
+
+  test('settings shows the Greek version label', async ({ page }) => {
+    await page.goto('/login');
+    await page.getByRole('button', { name: /Explore as guest|Εξερεύνηση ως επισκέπτης/i }).click();
+    await page.goto('/settings');
+    await expect(page.getByText(/Nakamas έκδ\./)).toBeVisible();
+  });
 });
 
 test.describe('404 handling', () => {

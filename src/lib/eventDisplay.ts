@@ -110,6 +110,19 @@ export function formatLocationArea(area: string, language: 'el' | 'en'): string 
   return LOCATION_EL[area] ?? area.replace(/\bAthens\b/g, 'Αθήνα');
 }
 
+/** Search both the stored English place name and the localized label. */
+export function locationMatchesQuery(
+  area: string | undefined | null,
+  query: string,
+  language: 'el' | 'en',
+): boolean {
+  if (!area) return false;
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  if (area.toLowerCase().includes(q)) return true;
+  return formatLocationArea(area, language).toLowerCase().includes(q);
+}
+
 export function translateEventTag(
   tag: string,
   t: (el: string, en: string) => string,

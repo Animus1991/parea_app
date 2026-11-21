@@ -224,7 +224,7 @@ interface AppState extends OutingsSlice {
   leaveGroup: (groupId: string) => void;
   addMemberToGroup: (groupId: string, userId: string) => void;
   /** Φ27 — `genderMode: 'women_nb'` makes a women & non-binary group (creator must fit). */
-  createGroup: (eventId: string, targetSize: number, options?: { genderMode?: GroupGenderMode }) => void;
+  createGroup: (eventId: string, targetSize: number, options?: { genderMode?: GroupGenderMode }) => string | null;
   becomeEventHost: (eventId: string) => void;
   createEvent: (event: Partial<Event> & { title: string }) => void;
   updateEvent: (eventId: string, patch: Partial<Event>) => void;
@@ -933,7 +933,8 @@ export const useStore = create<AppState>()(
       };
     }),
 
-  createGroup: (eventId, targetSize, options) =>
+  createGroup: (eventId, targetSize, options) => {
+    let createdId: string | null = null;
     set((state) => {
       if (!state.currentUser) return state;
       const outing = state.events.find((e) => e.id === eventId);
@@ -957,10 +958,13 @@ export const useStore = create<AppState>()(
         discountUnlocked: false,
         chatId: `chat_${Date.now()}`,
       };
+      createdId = newGroup.id;
       return {
         groups: [...state.groups, newGroup],
       };
-    }),
+    });
+    return createdId;
+  },
 
   becomeEventHost: (eventId) =>
     set((state) => {

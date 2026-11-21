@@ -189,9 +189,23 @@ describe('«Ξανά μαζί» — mutual only (Φ28)', () => {
     expect(gate.ok).toBe(false);
     expect(gate.messageEn).toMatch(/cancelled/i);
     const before = useStore.getState().groups.length;
-    useStore.getState().createGroup('mo1', 4);
+    expect(useStore.getState().createGroup('mo1', 4)).toBeNull();
     expect(useStore.getState().groups.length).toBe(before);
     expect(useStore.getState().getPendingFeedbackEventIds()).not.toContain('mo1');
+  });
+
+  it('returns a group id and refuses a second group for the same member', () => {
+    const st = useStore.getState();
+    const mine = new Set(
+      st.groups.filter((g) => g.status !== 'cancelled' && g.members.includes('u1')).map((g) => g.eventId),
+    );
+    const eventId = st.events.find((e) => isLiveCatalogEvent(e) && !mine.has(e.id))!.id;
+    const id = useStore.getState().createGroup(eventId, 4);
+    expect(id).toMatch(/^g/);
+    expect(useStore.getState().groups.some((g) => g.id === id && g.eventId === eventId)).toBe(true);
+    const before = useStore.getState().groups.length;
+    expect(useStore.getState().createGroup(eventId, 5)).toBeNull();
+    expect(useStore.getState().groups.length).toBe(before);
   });
 
   it('catalog hydrate keeps mini outings, including cancelled ones', () => {

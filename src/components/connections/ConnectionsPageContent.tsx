@@ -19,7 +19,7 @@ import { connectionOutcomeText } from '../../lib/connectionFeedback';
 import { profilePathFor } from '../../lib/profileLinks';
 import { PersonAvatar } from '../wall/PersonAvatar';
 import { APP_TYPO } from '../../lib/typographyTokens';
-import { formatLocationArea } from '../../lib/eventDisplay';
+import { formatLocationArea, locationMatchesQuery } from '../../lib/eventDisplay';
 
 // ─── More dropdown ──────────────────────────────────────────────
 function MoreMenu({
@@ -155,7 +155,7 @@ export default function ConnectionsPageContent() {
     let list = connections;
     if (search.trim()) {
       const q = search.toLowerCase();
-      list = list.filter((c) => c.name.toLowerCase().includes(q) || c.city.toLowerCase().includes(q));
+      list = list.filter((c) => c.name.toLowerCase().includes(q) || locationMatchesQuery(c.city, q, language));
     }
     if (roleFilter === 'organizer') list = list.filter((c) => c.isOrganizer);
     if (roleFilter === 'user') list = list.filter((c) => !c.isOrganizer);
@@ -163,7 +163,7 @@ export default function ConnectionsPageContent() {
     if (sortBy === 'mutual') list = [...list].sort((a, b) => b.mutual - a.mutual);
     if (sortBy === 'trust') list = [...list].sort((a, b) => b.reliabilityScore - a.reliabilityScore);
     return list;
-  }, [connections, search, roleFilter, sortBy]);
+  }, [connections, language, search, roleFilter, sortBy]);
 
   const pendingRequests = useMemo(() => {
     const blocked = new Set(blockedUserIds);
