@@ -15,6 +15,8 @@ import {
 } from './plansForming/PlansFormingShared';
 import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
+import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
+import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
 
 export function PlansFormingSidebarReopenTab() {
   const { t } = useLanguage();
@@ -54,6 +56,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
   const undismiss = useStore((s) => s.undismissCompanyRequest);
   const sidebarOpen = useStore((s) => s.plansFormingSidebarOpen);
   const setSidebarOpen = useStore((s) => s.setPlansFormingSidebarOpen);
+  const cardImage = useDiscoverCardImageDepth();
   const isDark = tok.isDark;
 
   if (!sidebarOpen) return null;
@@ -110,6 +113,12 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
         {feed.insights.compatiblePlans === 0 && (
           <PlansFormingStatsBar insights={feed.insights} compact plain isDark={isDark} />
         )}
+
+        <DiscoverCardImagePicker
+          depth={cardImage.depth}
+          options={cardImage.options}
+          onChange={cardImage.setDepth}
+        />
 
         {feed.insights.pendingJoinsToReview > 0 && (
           <button
@@ -172,6 +181,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
                       key={item.intent.id}
                       item={item}
                       variant="sidebar"
+                      imageDepth={cardImage.depth}
                       isDarkSurface={isDark}
                       onDismiss={() => {
                         const id = item.intent.id;
@@ -203,6 +213,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
                       key={entry.group.id}
                       entry={entry}
                       variant="sidebar"
+                      imageDepth={cardImage.depth}
                       isDarkSurface={isDark}
                       onSuggestMerge={() => navigate(`/events/${entry.event.id}`)}
                     />

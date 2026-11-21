@@ -128,8 +128,9 @@ export function PlansFormingCard({
   const role = onDark ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300';
   const pageIcon = (Icon: typeof Clock) =>
     variant === 'page' ? <Icon className="w-3 h-3 shrink-0 opacity-70" aria-hidden /> : null;
-  const depth = variant === 'page' || variant === 'sheet' ? imageDepth : 'photo';
+  const depth = imageDepth;
   const flags = cardImageDepthFlags(depth);
+  const showPhotoChrome = variant === 'page' || flags.coverTitle;
 
   if (quietLayout) {
     return (
@@ -142,11 +143,11 @@ export function PlansFormingCard({
         <CardImageDepthFrame
           event={item.event}
           depth={depth}
-          photoHeightClass={variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24'}
+          photoHeightClass={variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-48'}
           onPhotoClick={() => go(`/events/${item.event.id}`)}
           photoAriaLabel={t('Δες εκδήλωση', 'View event')}
           top={
-            variant === 'page' || (variant === 'sheet' && flags.coverFull) ? (
+            showPhotoChrome ? (
               <div className="absolute top-3 right-3 z-10 flex gap-1">
                 <button
                   type="button"
@@ -256,7 +257,7 @@ export function PlansFormingCard({
             </p>
             )}
             <div className={cn('flex shrink-0 -mr-1.5 -mt-1', flags.coverTitle && 'ml-auto')}>
-              {variant !== 'page' && (
+              {variant !== 'page' && !showPhotoChrome && (
               <button
                 type="button"
                 onClick={() => {
@@ -275,7 +276,7 @@ export function PlansFormingCard({
                 <Bookmark className={cn('w-4 h-4', isSaved && 'fill-current')} />
               </button>
               )}
-              {onDismiss && variant !== 'page' && (
+              {onDismiss && variant !== 'page' && !showPhotoChrome && (
                 <button
                   type="button"
                   onClick={onDismiss}
@@ -665,7 +666,7 @@ export function PlansFormingGroupCard({
   const ink = onDark ? 'text-white' : 'text-ink';
   const muted = onDark ? 'text-gray-400' : 'text-ink-muted';
   const role = onDark ? 'text-emerald-300' : 'text-emerald-700 dark:text-emerald-300';
-  const depth = variant === 'page' || variant === 'sheet' ? imageDepth : 'photo';
+  const depth = imageDepth;
   const flags = cardImageDepthFlags(depth);
 
   return (
@@ -678,7 +679,7 @@ export function PlansFormingGroupCard({
       <CardImageDepthFrame
         event={event}
         depth={depth}
-        photoHeightClass={variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24'}
+        photoHeightClass={variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-48'}
         onPhotoClick={() => go(`/events/${event.id}`)}
         photoAriaLabel={t('Δες εκδήλωση', 'View event')}
         overlay={
