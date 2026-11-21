@@ -54,6 +54,13 @@ test.describe('Find Nakamas', () => {
     await expect(page.getByText('Chat πρώτα')).toHaveCount(0);
     await expect(page.getByText('Food & Drink')).toHaveCount(0);
     await expect(page.getByText(/Φαγητό δρόμου με μικρή ομάδα|Street food with a small group/)).toBeVisible();
+    await expect(page.getByText(/Καφές πριν|Coffee before/)).toBeVisible();
+
+    const restrictedOuting = page.locator('[data-mini-outing-card]').filter({ hasText: 'Τρέξιμο στο Ζάππειο' });
+    await restrictedOuting.getByRole('button', { name: /Μόνο γυναίκες & μη δυαδικά|Women & non-binary only/ }).click();
+    await page.locator('[data-sonner-toast]').getByRole('button', { name: /Προφίλ|Profile/ }).click();
+    await expect(page).toHaveURL(/\/profile/);
+    await page.goto('/buddy-seek');
 
     await page.getByRole('button', { name: /Νέο αίτημα από εκδήλωση|New request from event/ }).click();
     await expect(page.getByRole('dialog')).toBeVisible();

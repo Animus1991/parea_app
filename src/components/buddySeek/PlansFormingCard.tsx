@@ -207,6 +207,14 @@ export function PlansFormingCard({
                   />
                 </div>
               )}
+              {flags.coverFull && (
+                <FactSpread
+                  mutedClass="text-white/85"
+                  left={t(item.meetingLabel.el, item.meetingLabel.en)}
+                  rightIcon={!interestLine && showUrgency ? pageIcon(Clock) : null}
+                  right={interestLine || (showUrgency ? t(item.urgency.el, item.urgency.en) : null)}
+                />
+              )}
               {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
               {flags.coverFull && item.intent.message && (
                 <p className="card-copy leading-relaxed text-white/85">«{item.intent.message}»</p>
@@ -315,12 +323,14 @@ export function PlansFormingCard({
               right={t(item.groupSizeLabel.el, item.groupSizeLabel.en)}
             />
             )}
+            {!flags.coverFull && (
             <FactSpread
               mutedClass={muted}
               left={t(item.meetingLabel.el, item.meetingLabel.en)}
               rightIcon={!interestLine && showUrgency ? pageIcon(Clock) : null}
               right={interestLine || (showUrgency ? t(item.urgency.el, item.urgency.en) : null)}
             />
+            )}
           </div>
 
           {item.intent.message && (

@@ -148,6 +148,24 @@ export function MiniOutingsSection({
             const full = group.members.length >= group.targetSize;
             const genderBlocked = group.genderMode === 'women_nb' && !fitsGenderMode(me, 'women_nb');
             const hostName = host?.name.split(' ')[0] ?? '—';
+            const refuseRestrictedOrJoin = () => {
+              if (genderBlocked) {
+                toast.message(
+                  t(
+                    'Αυτή η έξοδος είναι μόνο για γυναίκες και μη δυαδικά άτομα. Μπορείς να ενημερώσεις το προφίλ σου αν θες.',
+                    'This outing is for women and non-binary people only. You can update your profile if you want.',
+                  ),
+                  {
+                    action: {
+                      label: t('Προφίλ', 'Profile'),
+                      onClick: () => go('/profile'),
+                    },
+                  },
+                );
+                return;
+              }
+              join(group.id, event.id);
+            };
             return (
               <li
                 key={group.id}
@@ -200,18 +218,7 @@ export function MiniOutingsSection({
                                 size="sm"
                                 variant="ghost"
                                 className="text-white"
-                                onClick={() => {
-                                  if (genderBlocked) {
-                                    toast.message(
-                                      t(
-                                        'Αυτή η έξοδος είναι μόνο για γυναίκες και μη δυαδικά άτομα. Μπορείς να ενημερώσεις το προφίλ σου αν θες.',
-                                        'This outing is for women and non-binary people only. You can update your profile if you want.',
-                                      ),
-                                    );
-                                    return;
-                                  }
-                                  join(group.id, event.id);
-                                }}
+                                onClick={refuseRestrictedOrJoin}
                               >
                                 {genderBlocked ? t('Μόνο γυναίκες & μη δυαδικά', 'Women & non-binary only') : full ? t('Λίστα αναμονής', 'Join waitlist') : t('Μπες', 'Join')}
                               </Button>
@@ -277,24 +284,7 @@ export function MiniOutingsSection({
                       size="sm"
                       variant={genderBlocked || full ? 'ghost' : 'primary'}
                       className={genderBlocked || full ? 'text-ink' : undefined}
-                      onClick={() => {
-                        if (genderBlocked) {
-                          toast.message(
-                            t(
-                              'Αυτή η έξοδος είναι μόνο για γυναίκες και μη δυαδικά άτομα. Μπορείς να ενημερώσεις το προφίλ σου αν θες.',
-                              'This outing is for women and non-binary people only. You can update your profile if you want.',
-                            ),
-                            {
-                              action: {
-                                label: t('Προφίλ', 'Profile'),
-                                onClick: () => go('/profile'),
-                              },
-                            },
-                          );
-                          return;
-                        }
-                        join(group.id, event.id);
-                      }}
+                      onClick={refuseRestrictedOrJoin}
                     >
                       {genderBlocked ? t('Μόνο γυναίκες & μη δυαδικά', 'Women & non-binary only') : full ? t('Λίστα αναμονής', 'Join waitlist') : t('Μπες', 'Join')}
                     </Button>
