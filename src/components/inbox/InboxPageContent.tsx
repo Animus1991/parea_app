@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import {
   Search,
   MessageSquare,
@@ -43,6 +44,8 @@ export default function InboxPageContent() {
   const conversations = useChatStore((s) => s.conversations);
   const openConversation = useChatStore((s) => s.openConversation);
   const setInboxOpen = useChatStore((s) => s.setInboxOpen);
+  const ensureEventGroupConversation = useChatStore((s) => s.ensureEventGroupConversation);
+  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const [activeTab, setActiveTab] = useState<InboxTab>('messages');
   const [search, setSearch] = useState('');
@@ -120,10 +123,34 @@ export default function InboxPageContent() {
   }, [inboxRows, chatFilter, search]);
 
   const openRow = (row: InboxRow) => {
-    if (row.groupId) {
+    const conversation = conversations.find((c) => c.id === row.conversationId);
+    const isLegacyGroup = Boolean(row.groupId) && !conversation;
+    const isEventGroupThread = conversation?.type === 'event_group' || isLegacyGroup;
+
+    // Phone: the group workspace is the full /chat/:id page. Web: same popup
+    // as DMs/support — the hat inbox already opened every thread that way.
+    if (row.groupId && isEventGroupThread && !isDesktop) {
       navigate(`/chat/${row.groupId}`);
       return;
     }
+
+    if (isLegacyGroup) {
+      const group = groups.find((g) => g.id === row.groupId);
+      const event = events.find((e) => e.id === group?.eventId);
+      if (group && event) {
+        ensureEventGroupConversation({
+          groupId: group.id,
+          eventId: event.id,
+          title: event.title,
+          participantUserIds: group.members,
+          meetingPoint: group.meetingPoint,
+          openWindow: true,
+        });
+        setInboxOpen(false);
+        return;
+      }
+    }
+
     setInboxOpen(false);
     openConversation(row.conversationId);
   };

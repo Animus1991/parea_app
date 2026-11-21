@@ -103,7 +103,8 @@ interface ChatState {
   }) => string | null;
 }
 
-const MAX_WINDOWS = 2;
+/** How many popup windows can sit on screen at once. Extra opens minimize the oldest. */
+export const MAX_POPUP_WINDOWS = 4;
 
 function previewForRich(input: SendRichMessageInput): { el: string; en: string } {
   if (input.media?.kind === 'gif') return { el: 'GIF · ' + (input.media.label || 'GIF'), en: 'GIF · ' + (input.media.label || 'GIF') };
@@ -138,16 +139,19 @@ export const useChatStore = create<ChatState>()(
       openConversation: (id) => {
         const { activeWindowIds, minimizedIds } = get();
         let next = activeWindowIds.filter((x) => x !== id);
+        let nextMinimized = minimizedIds.filter((x) => x !== id);
         if (!next.includes(id)) {
           next = [...next, id];
-          if (next.length > MAX_WINDOWS) {
-            next = next.slice(-MAX_WINDOWS);
+          if (next.length > MAX_POPUP_WINDOWS) {
+            const overflow = next.slice(0, next.length - MAX_POPUP_WINDOWS);
+            next = next.slice(-MAX_POPUP_WINDOWS);
+            nextMinimized = [...new Set([...nextMinimized, ...overflow])];
           }
         }
         set({
           inboxOpen: false,
           activeWindowIds: next,
-          minimizedIds: minimizedIds.filter((x) => x !== id),
+          minimizedIds: nextMinimized,
           openConversationIds: [...new Set([...get().openConversationIds, id])],
         });
         get().markRead(id);

@@ -198,3 +198,21 @@ describe('announceArrival', () => {
     expect(useChatStore.getState().messages).toHaveLength(0);
   });
 });
+
+describe('popup windows', () => {
+  beforeEach(() => {
+    useChatStore.setState({
+      activeWindowIds: [],
+      minimizedIds: [],
+      inboxOpen: false,
+    });
+  });
+
+  it('keeps four popups and minimizes the oldest after that', () => {
+    const ids = ['conv_g2', 'conv_direct_maria', 'conv_org_e3', 'conv_support', 'conv_req_pending'];
+    for (const id of ids) useChatStore.getState().openConversation(id);
+    const { activeWindowIds, minimizedIds } = useChatStore.getState();
+    expect(activeWindowIds).toEqual(ids.slice(-4));
+    expect(minimizedIds).toEqual(['conv_g2']);
+  });
+});

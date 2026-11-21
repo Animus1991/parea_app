@@ -230,6 +230,16 @@ test.describe('Nakamas Chat preview', () => {
     await expect(win.getByText(/Καρφιτσωμένο:|Pinned:/)).toBeVisible();
   });
 
+  test('phone Chats opens a group thread on the full chat page', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/chats');
+    await page.getByPlaceholder(/Αναζήτηση συνομιλιών|Search conversations/).fill('Workshop');
+    await page.getByRole('button', { name: /Workshop: UX Basics/ }).click();
+    await expect(page).toHaveURL(/\/chat\/g-cal-5c/);
+    await expect(page.locator('[data-chat-window]')).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: /Workshop: UX Basics/ })).toBeVisible();
+  });
+
   test('the first mention chip stays tappable in a popup', async ({ page }) => {
     await enterDemoGuest(page);
     const sheet = await openInbox(page);
@@ -316,6 +326,22 @@ test.describe('Nakamas Chat web popups', () => {
     await expect(windows).toHaveCount(1);
     await windows.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).click();
     await expect(windows).toHaveCount(0);
+  });
+
+  test('web Chats opens a group thread as a popup, and more than two can sit together', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/chats');
+    const search = page.getByPlaceholder(/Αναζήτηση συνομιλιών|Search conversations/);
+    await search.fill('Workshop');
+    await page.getByRole('button', { name: /Workshop: UX Basics/ }).click();
+    await expect(page).toHaveURL(/\/chats/);
+    const windows = page.locator('[data-chat-window]');
+    await expect(windows).toHaveCount(1);
+    await expect(windows.getByText(/Workshop: UX Basics/)).toBeVisible();
+    await search.fill('');
+    await page.getByRole('button', { name: /Nakamas Support/ }).click();
+    await page.getByRole('button', { name: /Διοργανωτής · Ωδείο|Organizer/ }).click();
+    await expect(windows).toHaveCount(3);
   });
 });
 

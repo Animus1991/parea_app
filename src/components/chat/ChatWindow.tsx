@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, type CSSProperties } from 'react';
 import {
   Minus,
   X,
@@ -177,9 +177,9 @@ export function ChatWindow({
           // window cannot sit under the web top nav (z-topnav 90 > old z-sheet 70),
           // which swallowed clicks on Close and Minimize.
           'chat-popup-window inset-0 md:inset-auto md:bottom-6 md:w-[360px] md:rounded-3xl md:border',
-          stackIndex === 0 && 'md:right-6',
-          stackIndex === 1 && 'md:right-[24rem]',
+          'md:right-[calc(1.5rem+var(--chat-stack)*22.5rem)]',
         )}
+        style={{ '--chat-stack': String(stackIndex) } as CSSProperties}
         data-chat-window
       >
         <div className="relative flex flex-col h-full min-h-0">
