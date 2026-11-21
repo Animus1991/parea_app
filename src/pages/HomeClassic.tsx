@@ -212,9 +212,9 @@ export default function HomeClassic() {
           ) : isError && sortedEvents.length === 0 ? (
             <div className="col-span-1 sm:col-span-2 lg:col-span-3">
               <EmptyState
+                character="helper"
                 icon={CalendarX}
                 title={t("Αδυναμία φόρτωσης εκδηλώσεων", "Could not load events")}
-                description={t("Εμφανίζονται τα αποθηκευμένα δεδομένα όταν είναι διαθέσιμα.", "Cached data is shown when available.")}
                 actionLabel={t("Επανάληψη", "Retry")}
                 onAction={() => { void refetch(); }}
               />
@@ -222,19 +222,10 @@ export default function HomeClassic() {
           ) : sortedEvents.length === 0 ? (
             <div className="col-span-1 sm:col-span-2 lg:col-span-3">
               <EmptyState
+                character="explorer"
                 icon={CalendarX}
                 title={t("home.feed.no_events", "Δεν βρέθηκαν εκδηλώσεις για τα κριτήριά σου.")}
-                description={
-                  isScheduleFilterActive(schedule)
-                    ? t(
-                        'Καμία βραδιά σε αυτές τις ώρες. Δοκίμασε περισσότερες μέρες ή ώρες.',
-                        'No nights in these hours. Try more days or times.',
-                      )
-                    : t(
-                        'Άλλαξε φίλτρα ή δες τον χάρτη.',
-                        'Change filters or open the map.',
-                      )
-                }
+                description={isScheduleFilterActive(schedule) ? t('Καμία βραδιά σε αυτές τις ώρες.', 'No nights in these hours.') : undefined}
                 actionLabel={
                   isScheduleFilterActive(schedule)
                     ? t('Διεύρυνε τις ώρες', 'Widen hours')

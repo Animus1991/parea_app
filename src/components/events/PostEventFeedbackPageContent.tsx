@@ -1,7 +1,5 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { format, parseISO } from 'date-fns';
-import { el, enUS } from 'date-fns/locale';
 import { Button } from '../common/Button';
 import { CheckCircle2, MapPin, Calendar } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -15,6 +13,7 @@ import type { FeedbackData } from '../../store';
 import { FEEDBACK_MOODS, starsForMood } from '../../lib/feedbackDue';
 import { PersonAvatar } from '../wall/PersonAvatar';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { formatPlanWhen } from '../../lib/dateLocale';
 
 const COMMENT_MAX = 280;
 
@@ -53,10 +52,7 @@ export default function PostEventFeedbackPageContent() {
     .join(', ');
   const toggleSeeAgain = (id: string) => setSeeAgain((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
 
-  const dateLocale = language === 'el' ? el : enUS;
-  const eventDateLabel = event?.date
-    ? format(parseISO(event.date), 'PPP', { locale: dateLocale })
-    : null;
+  const eventDateLabel = event?.date ? formatPlanWhen(event.date, event.time, language) : null;
 
   const handleSubmit = () => {
     if (!eventId || !event || !mood) return;

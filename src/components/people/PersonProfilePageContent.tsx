@@ -56,6 +56,7 @@ import { PostComposer } from '../wall/PostComposer';
 import { WallPostList } from '../wall/WallPostList';
 import { OverflowMenu } from '../wall/OverflowMenu';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { formatPlanWhenDay } from '../../lib/dateLocale';
 
 type Tab = 'wall' | 'about' | 'nakamas' | 'events';
 const TABS: Tab[] = ['wall', 'about', 'nakamas', 'events'];
@@ -178,6 +179,7 @@ export default function PersonProfilePageContent() {
   if (!subject) {
     return (
       <EmptyState
+        character="helper"
         icon={Users}
         title={t('Το προφίλ δεν βρέθηκε', 'Profile not found')}
         description={t('Ίσως ο σύνδεσμος είναι παλιός ή ο λογαριασμός δεν υπάρχει πια.', 'The link may be old or the account no longer exists.')}
@@ -435,6 +437,7 @@ export default function PersonProfilePageContent() {
             )}
             {wallPosts.length === 0 ? (
               <EmptyState
+                character="crew"
                 icon={Newspaper}
                 title={isSelf && !previewing ? t('Ο τοίχος σου είναι άδειος', 'Your wall is empty') : t('Καμία δημοσίευση για εσένα ακόμα', 'Nothing shared with you yet')}
                 description={
@@ -564,7 +567,7 @@ export default function PersonProfilePageContent() {
                         <CalendarDays className="h-4 w-4 shrink-0 text-ink" aria-hidden />
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-sm font-bold text-ink">{e.title}</span>
-                          <span className="block truncate text-xs font-medium text-ink-muted">{e.date} · {formatLocationArea(e.locationArea, language)}</span>
+                          <span className="block truncate text-xs font-medium text-ink-muted">{formatPlanWhenDay(e.date, language)} · {formatLocationArea(e.locationArea, language)}</span>
                         </span>
                       </Link>
                     </li>

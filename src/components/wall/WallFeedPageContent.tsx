@@ -172,7 +172,6 @@ export default function WallFeedPageContent() {
                   : t('Ήσυχα εδώ προς το παρόν', 'Quiet here for now')
           }
           character="crew"
-          description={t('Γράψε τι σχεδιάζεις για να το δουν οι Nakamas σου.', 'Share what you are planning so your Nakamas can see it.')}
           actionLabel={t('Γράψε δημοσίευση', 'Write a post')}
           onAction={() => {
             composerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });

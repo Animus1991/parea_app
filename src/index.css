@@ -1253,3 +1253,24 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   position: absolute;
   inset: -6px;
 }
+
+/*
+ * Touch comfort, same look (round 21): small controls get a larger invisible
+ * hit area. Chips, tabs, small buttons and inline links grow up and down only,
+ * so neighbours in a row never overlap. In the components layer, so a control
+ * that is positioned on purpose (absolute, sticky…) keeps its own position.
+ */
+@layer components {
+  .filter-chip,
+  [role='tab'],
+  .tap-area-y {
+    position: relative;
+  }
+  .filter-chip::after,
+  [role='tab']::after,
+  .tap-area-y::after {
+    content: '';
+    position: absolute;
+    inset: -6px 0;
+  }
+}

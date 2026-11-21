@@ -15,6 +15,7 @@ import { formatWalletEur, WALLET_DEMO } from '../../lib/walletDemo';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { AppSelect } from '../common/AppSelect';
 import { formatEur } from '../../lib/money';
+import { formatPlanWhenDay } from '../../lib/dateLocale';
 
 export default function WalletPageContent() {
   const { t, language } = useLanguage();
@@ -34,9 +35,9 @@ export default function WalletPageContent() {
   });
 
   const transactions = [
-    { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: t('12 Οκτ 2024', 'Oct 12, 2024'), monthKey: 'Oct', desc: t('Μεταφορά στην τράπεζα 4092 (demo)', 'Transfer to Bank ****4092 (demo)') },
-    { id: '2', type: 'Earnings', amount: 45.00, status: t('Διαθέσιμο', 'Available'), date: t('10 Οκτ 2024', 'Oct 10, 2024'), monthKey: 'Oct', desc: t('Πωλήσεις: Yoga στο Πάρκο', 'Ticket sales: Yoga in the Park') },
-    { id: '3', type: 'Earnings', amount: 25.00, status: t('Σε Επεξεργασία', 'Processing'), date: t('14 Οκτ 2024', 'Oct 14, 2024'), monthKey: 'Oct', desc: t('Πωλήσεις: Comedy Night', 'Ticket sales: Comedy Night') },
+    { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: formatPlanWhenDay('2024-10-12', language), monthKey: 'Oct', desc: t('Μεταφορά στην τράπεζα 4092 (demo)', 'Transfer to Bank ****4092 (demo)') },
+    { id: '2', type: 'Earnings', amount: 45.00, status: t('Διαθέσιμο', 'Available'), date: formatPlanWhenDay('2024-10-10', language), monthKey: 'Oct', desc: t('Πωλήσεις: Yoga στο Πάρκο', 'Ticket sales: Yoga in the Park') },
+    { id: '3', type: 'Earnings', amount: 25.00, status: t('Σε Επεξεργασία', 'Processing'), date: formatPlanWhenDay('2024-10-14', language), monthKey: 'Oct', desc: t('Πωλήσεις: Comedy Night', 'Ticket sales: Comedy Night') },
   ];
 
   const filteredTx = txFilter === 'all'
@@ -110,12 +111,9 @@ export default function WalletPageContent() {
           {filteredTx.length === 0 ? (
             <div className="p-4">
               <EmptyState
+                character="host"
                 icon={CreditCard}
                 title={t('Καμία συναλλαγή', 'No transactions')}
-                description={t(
-                  'Δεν υπάρχουν συναλλαγές για αυτό το φίλτρο.',
-                  'No transactions match this filter.',
-                )}
                 actionLabel={txFilter === 'all' ? t('Εξερεύνηση', 'Explore') : t('Όλες', 'All Time')}
                 onAction={txFilter === 'all' ? () => navigate('/') : () => setTxFilter('all')}
                 secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}

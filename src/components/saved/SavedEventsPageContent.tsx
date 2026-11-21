@@ -3,7 +3,6 @@ import { Bookmark, MapPin, Calendar, ArrowRight, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { useStore } from '../../store';
 import { Link, useNavigate } from 'react-router-dom';
-import { format, parseISO } from 'date-fns';
 import { Card } from '../common/Card';
 import { EventCoverImg } from '../common/EventCoverImg';
 import { EmptyState } from '../common/EmptyState';
@@ -13,7 +12,7 @@ import { useEventsResource } from '../../hooks/useEventsQuery';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
-import { dateFnsLocale } from '../../lib/dateLocale';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { AppSelect } from '../common/AppSelect';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
@@ -174,7 +173,7 @@ export default function SavedEventsPageContent() {
                 <p className={cn('card-meta mt-auto pt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5', a.sub)}>
                   <span className="inline-flex items-center gap-1 min-w-0">
                     <Calendar className="w-3.5 h-3.5 shrink-0 opacity-70" aria-hidden />
-                    <span className="truncate">{format(parseISO(event.date), 'PP', { locale: dateFnsLocale(language) })} · {event.time}</span>
+                    <span className="truncate">{formatPlanWhen(event.date, event.time, language)}</span>
                   </span>
                   <span aria-hidden className="opacity-40">·</span>
                   <span className="inline-flex items-center gap-1 min-w-0">
@@ -191,12 +190,9 @@ export default function SavedEventsPageContent() {
         </div>
       ) : savedEventIds.length > 0 && (search || catFilter !== 'All') ? (
         <EmptyState
+          character="explorer"
           icon={Search}
           title={t('Κανένα αποτέλεσμα', 'No results')}
-          description={t(
-            'Δεν υπάρχουν αποθηκευμένες με αυτά τα φίλτρα.',
-            'No saved events match these filters.',
-          )}
           actionLabel={t('Καθαρισμός φίλτρων', 'Clear filters')}
           onAction={() => {
             setSearch('');
@@ -208,7 +204,6 @@ export default function SavedEventsPageContent() {
           icon={Bookmark}
           character="explorer"
           title={t('Δεν υπάρχουν αποθηκευμένες', 'No saved events yet')}
-          description={t('Αποθήκευσε μια εκδήλωση για να τη βρεις εδώ.', 'Save an event to find it here.')}
           actionLabel={t('Ανακάλυψη', 'Discover')}
           onAction={() => navigate('/')}
         />

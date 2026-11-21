@@ -44,6 +44,7 @@ import { PersonAvatar } from './PersonAvatar';
 import { REACTION_EMOJI, reactionLabel, relativeTime } from './wallText';
 import { OverflowMenu, type OverflowMenuItem } from './OverflowMenu';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { formatPlanWhen } from '../../lib/dateLocale';
 
 const LONG_TEXT = 420;
 
@@ -261,14 +262,14 @@ export function PostCard({
           </Link>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold leading-snug text-ink">
-              <Link to={profilePathFor(author)} className="hover:underline">
+              <Link to={profilePathFor(author)} className="tap-area-y hover:underline">
                 {author.name}
               </Link>
               {onOtherWall && owner && (
                 <>
                   <ChevronRight className="mx-0.5 inline h-3.5 w-3.5 text-ink-muted" aria-hidden />
                   <span className="sr-only">{t(' στον τοίχο του/της ', ' on the wall of ')}</span>
-                  <Link to={profilePathFor(owner)} className="hover:underline">
+                  <Link to={profilePathFor(owner)} className="tap-area-y hover:underline">
                     {owner.name}
                   </Link>
                 </>
@@ -417,7 +418,7 @@ export function PostCard({
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-bold text-ink">{event.title}</span>
               <span className="block truncate text-xs font-medium text-ink-muted">
-                {event.date} · {event.time} · {formatLocationArea(event.locationArea, language)}
+                {formatPlanWhen(event.date, event.time, language)} · {formatLocationArea(event.locationArea, language)}
               </span>
             </span>
             <ChevronRight className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />
@@ -542,7 +543,7 @@ export function PostCard({
                   <PersonAvatar user={cu} size="sm" viewer={viewer} />
                   <div className="min-w-0 flex-1 rounded-2xl bg-surface px-3 py-2">
                     <p className="text-xs font-bold text-ink">
-                      <Link to={profilePathFor(cu)} className="hover:underline">{cu.name}</Link>
+                      <Link to={profilePathFor(cu)} className="tap-area-y hover:underline">{cu.name}</Link>
                       <span className="ml-2 font-medium text-ink-muted">{relativeTime(c.createdAt, language)}</span>
                     </p>
                     <p className="whitespace-pre-wrap break-words text-sm font-medium text-ink"><RichText text={c.text} /></p>

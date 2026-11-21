@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { format, parseISO, isSameDay } from 'date-fns';
-import { el as elLocale, enUS } from 'date-fns/locale';
+import { isSameDay } from 'date-fns';
 import {
   X,
   MapPin,
@@ -27,6 +26,7 @@ import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import { cn } from '../../lib/utils';
 import { SlideNavArrows } from '../ui/SlideNavArrows';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { formatLongDay, formatPlanWhenDay, formatPlanWhen } from '../../lib/dateLocale';
 
 export interface DayEventsStoriesModalProps {
   day: Date;
@@ -48,7 +48,6 @@ export function DayEventsStoriesModal({
   const navigate = useNavigate();
   const { t, tu, language } = useLanguage();
   const categoryLabel = useCategoryLabel();
-  const locale = language === 'el' ? elLocale : enUS;
   const ev = events[index];
   useOverlayBehavior(Boolean(ev), onClose, panelRef);
 
@@ -77,8 +76,8 @@ export function DayEventsStoriesModal({
 
   const eventDay = ev.parsedDate;
   const headerDayLabel = isSameDay(eventDay, day)
-    ? format(day, 'EEEE d MMMM yyyy', { locale })
-    : `${format(day, 'EEEE d MMMM', { locale })} · ${format(eventDay, 'd MMMM yyyy', { locale })}`;
+    ? formatLongDay(day, language)
+    : `${formatLongDay(day, language)} · ${formatPlanWhenDay(eventDay, language)}`;
 
   const tierLabel = t(
     tierLabelEl(ev.trustTier as TrustTier),
@@ -225,7 +224,7 @@ export function DayEventsStoriesModal({
               <span className="truncate">{ev.locationName}</span>
             </p>
             <p className="text-sm text-gray-400 font-medium">
-              {format(parseISO(ev.event.date), 'PPP', { locale })} · {ev.time}
+              {formatPlanWhen(ev.event.date, ev.time, language)}
             </p>
           </div>
         </div>

@@ -24,7 +24,7 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { PAGE_FILL } from '../layout/PageShell';
 import { cn } from '../../lib/utils';
 import { groupStatusLabel, venueById } from '../../lib/outings';
-import { formatPlanWhen } from '../../lib/dateLocale';
+import { formatPlanWhen, formatPlanWhenDay } from '../../lib/dateLocale';
 import { coverById, coversFor } from '../../lib/planCovers';
 import { eventStartMs, isDoorPerson, LATE_CANCEL_MS } from '../../store/outingsSlice';
 import { isFeedbackDue } from '../../lib/feedbackDue';
@@ -135,6 +135,7 @@ export default function OurNightPageContent() {
     return (
       <div className={cn(PAGE_FILL, 'py-6')}>
         <EmptyState
+          character="helper"
           title={t('Η ομάδα δεν βρέθηκε', 'Group not found')}
           description={t('Ίσως διαγράφηκε ή ο σύνδεσμος είναι λάθος.', 'It may have been removed, or the link is wrong.')}
           actionLabel={t('Τα σχέδιά μου', 'My plans')}
@@ -381,7 +382,7 @@ export default function OurNightPageContent() {
             <li key={m.id} className="flex items-center gap-3 py-2">
               <PersonAvatar user={m} size="sm" />
               <span className="min-w-0 flex-1">
-                <Link to={m.id === me.id ? '/profile' : `/u/${m.id}`} className="block truncate text-sm font-bold text-ink hover:underline">
+                <Link to={m.id === me.id ? '/profile' : `/u/${m.id}`} className="tap-area-y block truncate text-sm font-bold text-ink hover:underline">
                   {m.name}
                   {m.id === me.id ? t(' (εσύ)', ' (you)') : ''}
                   {m.id === group.hostId ? t(' · οικοδεσπότης', ' · host') : ''}
@@ -429,7 +430,7 @@ export default function OurNightPageContent() {
             <p className="mt-1 flex items-center gap-1.5 text-xs font-medium text-ink-muted">
               <Repeat2 className="h-3.5 w-3.5" aria-hidden />
               {t('Τελευταία μεταβίβαση θέσης: ', 'Last seat hand-over: ')}
-              {new Date(group.lastTransfer.at).toLocaleDateString(language === 'el' ? 'el-GR' : 'en-GB')}
+              {formatPlanWhenDay(group.lastTransfer.at, language)}
               {group.lastTransfer.price ? ` · ${formatEur(group.lastTransfer.price, language)}` : ''}
             </p>
           )}

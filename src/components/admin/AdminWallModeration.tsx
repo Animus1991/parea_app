@@ -7,7 +7,7 @@ import { Button } from '../common/Button';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { useWallStore } from '../../store/wallStore';
-import { intlLocale } from '../../lib/dateLocale';
+import { formatPlanWhenDay } from '../../lib/dateLocale';
 import { AudienceChip } from '../wall/AudienceChip';
 
 /**
@@ -85,7 +85,7 @@ export function AdminWallModeration() {
                   {r.reportIds.length === 1 ? t('1 αναφορά', '1 report') : t(`${r.reportIds.length} αναφορές`, `${r.reportIds.length} reports`)}
                 </span>
                 <span>· {[...new Set(r.reasons)].join(', ')}</span>
-                <span>· {new Date(r.at).toLocaleDateString(intlLocale(language))}</span>
+                <span>· {formatPlanWhenDay(r.at, language)}</span>
               </div>
               {post ? (
                 <>

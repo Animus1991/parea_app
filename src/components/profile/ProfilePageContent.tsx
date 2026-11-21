@@ -384,7 +384,7 @@ export default function ProfilePageContent() {
                   type="button"
                   aria-label={t(`Αφαίρεση ενδιαφέροντος ${interestLabel(i, 'el')}`, `Remove interest ${interestLabel(i, 'en')}`)}
                   title={t('Αφαίρεση', 'Remove')}
-                  className={`ml-1.5 p-0.5 rounded-full transition-colors ${a.isDark ? "hover:bg-gray-600 text-gray-400 hover:text-gray-200" : "hover:bg-gray-200 text-gray-400 hover:text-gray-600"}`}>
+                  className={`tap-area ml-1.5 p-0.5 rounded-full transition-colors ${a.isDark ? "hover:bg-gray-600 text-gray-400 hover:text-gray-200" : "hover:bg-gray-200 text-gray-400 hover:text-gray-600"}`}>
                   <X className="w-3 h-3" aria-hidden="true" />
                 </button>
               </Badge>

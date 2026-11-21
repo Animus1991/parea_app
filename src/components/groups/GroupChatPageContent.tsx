@@ -57,6 +57,7 @@ import { eventTagPath } from "../../lib/eventTags";
 import { formatPlanWhen } from '../../lib/dateLocale';
 import { showNightCoordinationTools, translateEventTag } from '../../lib/eventDisplay';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { PhotoOrInitials } from '../common/PhotoOrInitials';
 
 /** Room under the newest message so the floating chats button (desktop) never covers it. */
 const VIRTUOSO_SPACER = { Footer: () => <div aria-hidden className="h-2 md:h-14" /> };
@@ -248,6 +249,7 @@ export default function GroupChatPageContent() {
     return (
       <div className={cn(PAGE_FILL, "py-6")}>
         <EmptyState
+          character="helper"
           title={t('Το Chat δεν βρέθηκε', 'Chat not found')}
           description={t(
             'Ίσως διαγράφηκε η ομάδα ή ο σύνδεσμος είναι λάθος.',
@@ -841,12 +843,9 @@ export default function GroupChatPageContent() {
                         >
                           <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/15 overflow-hidden shrink-0 relative group shadow-soft border border-gray-100 dark:border-border">
                             {member.photoUrl ? (
-                              <img
-                                referrerPolicy="no-referrer"
-                                src={member.photoUrl}
-                                alt={member.name}
-                                className={`w-full h-full object-cover transition-all ${!isCloseToEvent && member.id !== currentUser.id ? "blur-sm grayscale opacity-80" : ""}`}
-                              />
+                              <span className="flex h-full w-full items-center justify-center text-xs font-bold">
+                                <PhotoOrInitials src={member.photoUrl} name={member.name} imgClassName={`w-full h-full object-cover transition-all ${!isCloseToEvent && member.id !== currentUser.id ? "blur-sm grayscale opacity-80" : ""}`} />
+                              </span>
                             ) : (
                               <div className={cn("w-full h-full flex items-center justify-center font-bold text-xs", gc.avatarPlaceholder)}>
                                 {member.name.substring(0, 2)}
@@ -1337,11 +1336,9 @@ export default function GroupChatPageContent() {
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-10 h-10 rounded-full bg-surface overflow-hidden shrink-0 border border-border">
                         {member.photoUrl ? (
-                          <img
-                            src={member.photoUrl}
-                            alt={member.name}
-                            className="w-full h-full object-cover"
-                          />
+                          <span className="flex h-full w-full items-center justify-center text-xs font-bold">
+                            <PhotoOrInitials src={member.photoUrl} name={member.name} imgClassName="w-full h-full object-cover" />
+                          </span>
                         ) : (
                           <div className={cn("w-full h-full flex items-center justify-center font-bold text-xs", gc.avatarPlaceholder)}>
                             {member.name.substring(0, 2)}

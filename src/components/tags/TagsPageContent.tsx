@@ -172,9 +172,9 @@ export default function TagsPageContent() {
       {!slug || searching ? (
         visibleCatalog.length === 0 ? (
           <EmptyState
+            character="explorer"
             icon={Search}
             title={t('Καμία ετικέτα δεν ταιριάζει', 'No tags match')}
-            description={t('Δοκίμασε άλλη λέξη ή καθάρισε την αναζήτηση.', 'Try another word or clear the search.')}
             actionLabel={t('Καθαρισμός', 'Clear search')}
             onAction={() => setQuery('')}
           />
@@ -209,12 +209,9 @@ export default function TagsPageContent() {
           >
             {taggedEvents.length === 0 ? (
               <EmptyState
+                character="explorer"
                 icon={Hash}
                 title={t('Δεν υπάρχουν εκδηλώσεις με αυτή την ετικέτα', 'No events with this tag')}
-                description={t(
-                  'Διάλεξε άλλη ετικέτα από την αναζήτηση ή γύρνα στο ευρετήριο.',
-                  'Pick another tag from search or go back to the index.',
-                )}
                 actionLabel={t('Όλες οι ετικέτες', 'All tags')}
                 onAction={() => navigate('/tags')}
               />

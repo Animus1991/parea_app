@@ -242,15 +242,6 @@ export default function HistoryPageContent() {
                   ? t('Καμία αξιολογημένη εκδήλωση ακόμα', 'No reviewed events yet')
                   : t('Δεν υπάρχει ιστορικό ακόμα', 'No history yet')
           }
-          description={
-            search
-              ? t('Δεν βρέθηκαν αποτελέσματα για αυτή την αναζήτηση.', 'No results match this search.')
-              : tab === 'pending'
-                ? t('Οι εκκρεμείς αξιολογήσεις θα εμφανιστούν εδώ.', 'Pending reviews will appear here.')
-                : tab === 'reviewed'
-                  ? t('Οι αξιολογήσεις σου θα εμφανιστούν εδώ.', 'Your reviews will appear here.')
-                  : t('Οι βραδιές που θα ζήσεις θα εμφανιστούν εδώ.', 'Nights you attend will appear here.')
-          }
           actionLabel={
             search
               ? t('Καθαρισμός', 'Clear')

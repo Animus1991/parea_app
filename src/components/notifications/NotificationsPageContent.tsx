@@ -381,7 +381,6 @@ export default function NotificationsPageContent() {
                     ? t('Καμία ειδοποίηση συστήματος', 'No system notifications')
                     : t('Καμία ειδοποίηση', 'No notifications')
           }
-          description={t('Οι νέες ειδοποιήσεις θα εμφανιστούν εδώ.', 'New notifications will appear here.')}
           actionLabel={t('Ανακάλυψη', 'Discover')}
           onAction={() => navigate('/')}
         />

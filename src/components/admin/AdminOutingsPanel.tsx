@@ -5,7 +5,7 @@ import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { outingMetrics } from '../../lib/outings';
 import { standingFor, strikeLabel } from '../../lib/consequences';
-import { intlLocale } from '../../lib/dateLocale';
+import { formatPlanWhenDay } from '../../lib/dateLocale';
 import { Button } from '../common/Button';
 
 /**
@@ -52,7 +52,7 @@ export function AdminOutingsPanel({ section }: { section: 'metrics' | 'appeals' 
 
   const pending = strikes.filter((s) => s.appeal?.status === 'pending').sort((a, b) => (a.appeal!.at < b.appeal!.at ? -1 : 1));
   const underReview = users.filter((u) => standingFor(strikes, u.id).level === 'review');
-  const fmt = (iso: string) => new Date(iso).toLocaleDateString(intlLocale(language));
+  const fmt = (iso: string) => formatPlanWhenDay(iso, language);
 
   return (
     <section aria-labelledby="admin-appeals-title" className="space-y-3 rounded-2xl border border-border bg-surface-raised p-4">

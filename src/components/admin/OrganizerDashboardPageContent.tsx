@@ -352,12 +352,9 @@ export default function OrganizerDashboardPageContent() {
 
         {myEvents.length === 0 ? (
           <EmptyState
+            character="host"
             icon={Calendar}
             title={t('Δεν έχεις ακόμα εκδηλώσεις', 'No events yet')}
-            description={t(
-              'Δημιούργησε την πρώτη σου εμπειρία για να εμφανιστεί εδώ.',
-              'Create your first experience to see it here.',
-            )}
             actionLabel={t('Νέα εκδήλωση', 'New Event')}
             onAction={() => navigate('/create')}
           />
