@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Users, User, Megaphone, LifeBuoy, GitMerge, Lock, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -10,6 +10,7 @@ import { canOpenConversation } from '../../lib/chatPermissions';
 import type { Conversation, ConversationType } from '../../types/chat';
 import { cn } from '../../lib/utils';
 import { CHAT_TYPO } from '../../lib/typographyTokens';
+import { useSwipeDownDismiss } from '../../hooks/useSwipeDownDismiss';
 
 const TYPE_ICON: Record<ConversationType, typeof Users> = {
   event_group: Users,
@@ -33,6 +34,9 @@ function sectionFor(c: Conversation): 'active' | 'pending' | 'groups' | 'connect
 export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const dismissRef = useRef<HTMLDivElement>(null);
+  useSwipeDownDismiss(dismissRef, panelRef, onClose);
   const allConversations = useChatStore((s) => s.conversations);
   const conversations = useMemo(
     () => allConversations.filter((c) => c.status !== 'archived'),
@@ -54,6 +58,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
 
   return (
     <div
+      ref={panelRef}
       className={cn(
         'fixed z-sheet flex flex-col border shadow-soft-lg overflow-hidden copilot-shift',
         'bg-surface border-border text-ink',
@@ -63,14 +68,21 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
       role="dialog"
       aria-label={t('Nakamas Chat', 'Nakamas Chat')}
     >
-      <header className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
-        <div>
-          <h2 className="text-sm md:text-base font-bold">{t('Nakamas Chat', 'Nakamas Chat')}</h2>
-        </div>
-        <button type="button" onClick={onClose} className="p-2 rounded-full hover:bg-ink/10" aria-label={t('Κλείσιμο', 'Close')}>
-          <X className="w-5 h-5" />
-        </button>
-      </header>
+      <div ref={dismissRef} data-chat-inbox-dismiss="" className="shrink-0 touch-none">
+        <div
+          className="mx-auto mt-2 mb-1 h-1 w-10 rounded-full bg-border-strong"
+          aria-hidden
+        />
+        <header className="flex items-center justify-between px-4 pb-3 pt-1 border-b border-border">
+          <div>
+            <h2 className="text-sm md:text-base font-bold">{t('Nakamas Chat', 'Nakamas Chat')}</h2>
+            <p className="sr-only">{t('Σύρε κάτω για κλείσιμο', 'Swipe down to close')}</p>
+          </div>
+          <button type="button" onClick={onClose} className="p-2 rounded-full hover:bg-ink/10" aria-label={t('Κλείσιμο', 'Close')}>
+            <X className="w-5 h-5" />
+          </button>
+        </header>
+      </div>
       <ChatStoriesStrip compact />
       <div className="flex-1 overflow-y-auto p-2 space-y-4">
         {conversations.length === 0 && (

@@ -131,6 +131,40 @@ test.describe('Event tags', () => {
     await expect(page).toHaveURL(/\/tags\/free$/);
   });
 
+  test('compact wrapped chips keep their own bottom edge', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterDemoGuest(page);
+    await page.goto('/tags');
+    await page.getByRole('button', { name: /^Σύντομη$|^Compact$/ }).click();
+    const pair = await page.evaluate(() => {
+      const groups = [...document.querySelectorAll<HTMLElement>('[id^="tag-letter-"]')];
+      for (const group of groups) {
+        const chips = [...group.querySelectorAll('a')];
+        for (let i = 0; i < chips.length; i++) {
+          const upper = chips[i].getBoundingClientRect();
+          for (let j = i + 1; j < chips.length; j++) {
+            const lower = chips[j].getBoundingClientRect();
+            const overlapsX = Math.min(upper.right, lower.right) - Math.max(upper.left, lower.left) > 8;
+            if (overlapsX && lower.top > upper.bottom) {
+              return {
+                upperHref: chips[i].getAttribute('href') || '',
+                lowerHref: chips[j].getAttribute('href') || '',
+                x: (Math.max(upper.left, lower.left) + Math.min(upper.right, lower.right)) / 2,
+                y: upper.bottom - 1,
+              };
+            }
+          }
+        }
+      }
+      return null;
+    });
+    expect(pair, 'compact A–Z should wrap at least one letter group').not.toBeNull();
+    const escape = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    await page.mouse.click(pair!.x, pair!.y);
+    await expect(page).toHaveURL(new RegExp(`${escape(pair!.upperHref)}$`));
+    await expect(page).not.toHaveURL(new RegExp(`${escape(pair!.lowerHref)}$`));
+  });
+
   test('returning from Tags does not put a Continue strip on Discover', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await enterDemoGuest(page);

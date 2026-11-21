@@ -202,6 +202,7 @@ export default function PlansPageContent() {
               event={event}
               depth={cardImage.depth}
               onPhotoClick={() => navigate(`/events/${event.id}`)}
+              photoAriaLabel={event.title}
               top={
                 isConfirmed ? (
                   <div className="absolute top-2 left-2 z-10 bg-brand/95 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
@@ -216,7 +217,14 @@ export default function PlansPageContent() {
               overlay={
                 <>
                   <div>
-                    <h3 className={cn(PLANS_TYPO.cardTitle, 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]')}>{event.title}</h3>
+                    <h3 className={cn(PLANS_TYPO.cardTitle, 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]')}>
+                      <Link
+                        to={`/events/${event.id}`}
+                        className="tap-area-y rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+                      >
+                        {event.title}
+                      </Link>
+                    </h3>
                     {group && isPlansFormingGroupId(group.id) && (
                       <p className="card-meta mt-0.5 text-white/80">
                         {t('Από Βρες Nakamas', 'From Find Nakamas')}

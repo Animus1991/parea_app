@@ -26,6 +26,7 @@ import { ChatStoriesStrip } from './ChatStoriesStrip';
 import { ChatCallModal } from './ChatCallModal';
 import { cn } from '../../lib/utils';
 import { CHAT_TYPO } from '../../lib/typographyTokens';
+import { useSwipeDownDismiss } from '../../hooks/useSwipeDownDismiss';
 
 function typeBadge(c: Conversation, t: (el: string, en: string) => string) {
   if (c.type === 'organizer_announcement') return t('Ανάγνωση μόνο', 'Read only');
@@ -74,6 +75,9 @@ export function ChatWindow({
   const [reportOpen, setReportOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const dismissRef = useRef<HTMLElement>(null);
+  useSwipeDownDismiss(dismissRef, panelRef, () => closeConversation(conversation.id));
 
   const event = conversation.eventId ? events.find((e) => e.id === conversation.eventId) : undefined;
   const participants = useMemo(
@@ -143,6 +147,7 @@ export function ChatWindow({
   return (
     <>
       <div
+        ref={panelRef}
         className={cn(
           'fixed z-modal md:z-sheet flex flex-col overflow-hidden shadow-soft-lg copilot-shift',
           'bg-surface border-border text-ink',
@@ -153,8 +158,12 @@ export function ChatWindow({
         data-chat-window
       >
         <div className="relative flex flex-col h-full min-h-0">
-          {/* Header */}
-          <header className="flex items-center gap-1.5 px-3 py-2 border-b border-border bg-surface-raised shrink-0">
+          {/* Header — swipe down also closes the group chat preview */}
+          <header
+            ref={dismissRef}
+            data-chat-window-dismiss=""
+            className="flex items-center gap-1.5 px-3 py-2 border-b border-border bg-surface-raised shrink-0 touch-none md:touch-auto"
+          >
             <div className="min-w-0 flex-1">
               <p className={cn(CHAT_TYPO.title, 'truncate')}>{conversation.title}</p>
               {event?.title && <p className={cn(CHAT_TYPO.subtitle, 'truncate')}>{event.title}</p>}

@@ -10,7 +10,7 @@ test.describe('Discover card image picker', () => {
     await enterDemoGuest(page);
     await expect(page.getByRole('button', { name: /Μενού λογαριασμού|Account menu/ })).toBeVisible();
 
-    const picker = page.locator('[data-card-image-picker]');
+    const picker = page.locator('#main-content [data-card-image-picker]');
     await expect(picker).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('#main-content .nakamas-card [data-image-depth]').first()).toHaveAttribute(
       'data-image-depth',
@@ -51,7 +51,7 @@ test.describe('Discover card image picker', () => {
   test('full photo fills the card; progress photo stops before the CTA', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await enterDemoGuest(page);
-    const picker = page.locator('[data-card-image-picker]');
+    const picker = page.locator('#main-content [data-card-image-picker]');
     await expect(picker).toBeVisible({ timeout: 15_000 });
     await picker.locator('[data-card-image-toggle]').click();
     const card = page.locator('#main-content .nakamas-card').first();
@@ -98,6 +98,7 @@ test.describe('Discover card image picker', () => {
     await expect(plansPhoto).toHaveAttribute('data-image-depth', 'full');
     // The photo itself opens the event (no separate Details button).
     await expect(plansPhoto.locator(':scope > button')).toHaveCount(1);
+    await expect(plansCard.locator('h3 a').first()).toBeVisible();
     await expect(plansCard.getByRole('button', { name: /Αποχώρηση|Leave/ })).toBeVisible();
     await plansPicker.locator('[data-card-image-option="title"]').click();
 
@@ -149,6 +150,37 @@ test.describe('Discover card image picker', () => {
     await expect(page.locator('#main-content .nakamas-card [data-image-depth]').first()).toHaveAttribute(
       'data-image-depth',
       'photo',
+    );
+  });
+
+  test('web right rail cards follow the same seven photo depths', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await enterDemoGuest(page);
+    const rail = page.getByRole('complementary', { name: /^Βρες Nakamas$|^Find Nakamas$/ });
+    await expect(rail).toBeVisible({ timeout: 15_000 });
+    const railPicker = rail.locator('[data-card-image-picker]');
+    await expect(railPicker).toBeVisible();
+    const railPhoto = rail.locator('.nakamas-card [data-image-depth]').first();
+    await expect(railPhoto).toHaveAttribute('data-image-depth', 'full');
+
+    await railPicker.locator('[data-card-image-toggle]').click();
+    await expect(railPicker.getByRole('radio')).toHaveCount(ALL_DEPTHS.length);
+    for (const option of ALL_DEPTHS) {
+      await expect(railPicker.locator(`[data-card-image-option="${option}"]`)).toBeVisible();
+    }
+
+    await railPicker.locator('[data-card-image-option="photo"]').click();
+    await expect(railPhoto).toHaveAttribute('data-image-depth', 'photo');
+    await railPicker.locator('[data-card-image-option="full"]').click();
+    await expect(railPhoto).toHaveAttribute('data-image-depth', 'full');
+
+    const homePicker = page.locator('#main-content [data-card-image-picker]');
+    await homePicker.locator('[data-card-image-toggle]').click();
+    await homePicker.locator('[data-card-image-option="facts"]').click();
+    await expect(railPhoto).toHaveAttribute('data-image-depth', 'facts');
+    await expect(page.locator('#main-content .nakamas-card [data-image-depth]').first()).toHaveAttribute(
+      'data-image-depth',
+      'facts',
     );
   });
 

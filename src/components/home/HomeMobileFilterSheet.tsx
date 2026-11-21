@@ -100,7 +100,7 @@ export function HomeMobileFilterSheet({
               <button
                 key={cat}
                 type="button"
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => setActiveCategory(activeCategory === cat && cat !== 'All' ? 'All' : cat)}
                 className={chip(activeCategory === cat)}
               >
                 {categoryTranslations[cat] ?? cat}

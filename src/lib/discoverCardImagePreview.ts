@@ -2,7 +2,8 @@ import { readStorage, writeStorage } from './safeUrl';
 
 /**
  * Card-photo depth: a picker applies one overlay depth to every event card
- * (Discover, Plans, Find Nakamas). Phone and web both offer every depth.
+ * (Discover, Plans, Find Nakamas, and the web right rail). Phone and web
+ * both offer every depth.
  */
 export type EventCardImageDepth =
   | 'photo'
@@ -28,7 +29,7 @@ export const CARD_IMAGE_DEPTHS = [
 /** First-time / newly registered users start with a full-bleed card photo. */
 export const DEFAULT_CARD_IMAGE_DEPTH: EventCardImageDepth = 'full';
 
-/** Which rows sit on the photo for a given depth. Shared by Discover, Plans and Find Nakamas. */
+/** Which rows sit on the photo for a given depth. Shared by Discover, Plans, Find Nakamas, and the web rail. */
 export function cardImageDepthFlags(depth: EventCardImageDepth) {
   const coverTitle = depth !== 'photo';
   const coverFacts =
