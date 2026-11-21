@@ -145,7 +145,7 @@ export function HomeFiltersSection({
             <button
               key={cat}
               type="button"
-              onClick={() => setActiveCategory(cat)}
+              onClick={() => setActiveCategory(activeCategory === cat && cat !== 'All' ? 'All' : cat)}
               className={cn(
                 HOME_TYPO.filterChip,
                 'whitespace-nowrap px-4 rounded-full transition-colors duration-150 tracking-wide',

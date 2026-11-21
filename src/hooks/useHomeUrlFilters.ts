@@ -20,6 +20,7 @@ import {
   writeStoredHomeSchedule,
   type HomeScheduleFilter,
 } from '../lib/homeScheduleFilter';
+import { buildHomeFilterQuery, homeFilterQueryEquals, mergeHomeFilterQuery } from '../lib/homeUrlFilters';
 
 export function useHomeUrlFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -69,6 +70,10 @@ export function useHomeUrlFilters() {
   const hasMoodFilter = activeMood !== null && moodCategories.length > 0;
 
   const debouncedSearch = useDebounce(searchQuery, 400);
+  const searchQueryRef = useRef(searchQuery);
+  searchQueryRef.current = searchQuery;
+  const debouncedSearchRef = useRef(debouncedSearch);
+  debouncedSearchRef.current = debouncedSearch;
   const sortParam = (searchParams.get('sort') as HomeSortParam) || 'Distance';
 
   const setSortParam = useCallback(
@@ -84,7 +89,9 @@ export function useHomeUrlFilters() {
     setActiveMood(null);
   }, []);
 
-  // Keep filter state in sync when URL changes (browser back/forward, shared links).
+  // URL → state only when the address actually changes (back/forward, shared link).
+  // Do not depend on local filter state: that races the state → URL write and
+  // ping-pongs Theater & Dance with All after the user dismisses the chip.
   useEffect(() => {
     const cat = searchParams.get('cat') || 'All';
     const tag = searchParams.get('tag') || 'All';
@@ -94,13 +101,13 @@ export function useHomeUrlFilters() {
     const dist = (searchParams.get('dist') as HomeRadiusFilter) || 'Any';
     const mood = parseHomeMoodParam(searchParams.get('mood'));
 
-    if (cat !== activeCategory) setActiveCategory(cat);
-    if (tag !== tagFilter) setTagFilter(tag);
-    if (price !== priceFilter) setPriceFilter(price);
-    if (date !== dateFilter) setDateFilter(date);
-    if (safety !== safetyFilter) setSafetyFilter(safety);
-    if (dist !== radiusFilter) setRadiusFilter(dist);
-    if (mood !== activeMood) setActiveMood(mood);
+    setActiveCategory((prev) => (prev === cat ? prev : cat));
+    setTagFilter((prev) => (prev === tag ? prev : tag));
+    setPriceFilter((prev) => (prev === price ? prev : price));
+    setDateFilter((prev) => (prev === date ? prev : date));
+    setSafetyFilter((prev) => (prev === safety ? prev : safety));
+    setRadiusFilter((prev) => (prev === dist ? prev : dist));
+    setActiveMood((prev) => (prev === mood ? prev : mood));
 
     const fromUrl = parseHomeScheduleFromSearch(searchParams);
     if (isScheduleFilterActive(fromUrl)) {
@@ -108,40 +115,29 @@ export function useHomeUrlFilters() {
     }
 
     const urlSearch = searchParams.get('search') || '';
-    if (urlSearch !== debouncedSearch && searchQuery === debouncedSearch) {
+    if (
+      urlSearch !== debouncedSearchRef.current &&
+      searchQueryRef.current === debouncedSearchRef.current
+    ) {
       setSearchQuery(urlSearch);
     }
-  }, [
-    searchParams,
-    activeCategory,
-    tagFilter,
-    priceFilter,
-    dateFilter,
-    safetyFilter,
-    radiusFilter,
-    activeMood,
-    debouncedSearch,
-    searchQuery,
-  ]);
+  }, [searchParams]);
 
   useEffect(() => {
-    const params = new URLSearchParams();
-    if (debouncedSearch) params.set('search', debouncedSearch);
-    if (activeCategory !== 'All') params.set('cat', activeCategory);
-    if (tagFilter !== 'All') params.set('tag', tagFilter);
-    if (priceFilter !== 'All') params.set('price', priceFilter);
-    if (dateFilter !== 'Any') params.set('date', dateFilter);
-    if (safetyFilter !== 'All') params.set('safety', safetyFilter);
-    if (radiusFilter !== 'Any') params.set('dist', radiusFilter);
-    if (sortParam !== 'Distance') params.set('sort', sortParam);
-    if (activeMood) params.set('mood', activeMood);
-    const scheduleParams = serializeHomeSchedule(schedule);
-    if (scheduleParams.on) params.set('on', scheduleParams.on);
-    if (scheduleParams.wd) params.set('wd', scheduleParams.wd);
-    if (scheduleParams.tw) params.set('tw', scheduleParams.tw);
-    if (scheduleParams.hrs) params.set('hrs', scheduleParams.hrs);
-    if (params.toString() === searchParamsRef.current.toString()) return;
-    setSearchParams(params, { replace: true });
+    const filters = buildHomeFilterQuery({
+      search: debouncedSearch,
+      category: activeCategory,
+      tag: tagFilter,
+      price: priceFilter,
+      date: dateFilter,
+      safety: safetyFilter,
+      dist: radiusFilter,
+      sort: sortParam,
+      mood: activeMood,
+      schedule: serializeHomeSchedule(schedule),
+    });
+    if (homeFilterQueryEquals(filters, searchParamsRef.current)) return;
+    setSearchParams(mergeHomeFilterQuery(searchParamsRef.current, filters), { replace: true });
     if (debouncedSearch.trim()) addRecentSearch(debouncedSearch.trim());
   }, [
     debouncedSearch,

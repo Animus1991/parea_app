@@ -36,19 +36,16 @@ export interface PostOnboardingHomeParams {
   locationPref: string;
 }
 
-/** Build Home URL with filters + welcome flag (additive; does not replace Home routing). */
+/** Build Home URL with welcome flag (additive; does not replace Home routing). */
 export function buildPostOnboardingHomePath({
-  interests,
   locationPref,
 }: PostOnboardingHomeParams): string {
   const params = new URLSearchParams();
   params.set('welcome', '1');
 
-  const primary = interests
-    .map(mapOnboardingInterestToCategory)
-    .find((c): c is string => !!c);
-  if (primary) params.set('cat', primary);
-
+  // Do not pin `cat` to the first interest — that hid the rest of Discover
+  // (Theatre → Theater & Dance) and fought the chip dismiss. «Για Σένα» already
+  // boosts matching nights.
   const dist = mapOnboardingLocationToRadius(locationPref);
   if (dist !== 'Any') params.set('dist', dist);
 
