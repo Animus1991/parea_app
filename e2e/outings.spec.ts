@@ -160,7 +160,11 @@ test.describe('Group outings', () => {
     await page.getByRole('button', { name: /Maria/ }).first().click();
     await expect(page.locator('#main-content')).toBeVisible();
     await page.goto('/plans');
-    const img = page.locator('img[alt="Καφές στο Κουκάκι"]');
+    // The photo opens the event: its button carries the name, the image itself is decorative.
+    const photo = page
+      .locator('[data-image-depth]')
+      .filter({ has: page.getByRole('button', { name: 'Καφές στο Κουκάκι', exact: true }) });
+    const img = photo.locator('img').first();
     await expect(img).toBeVisible();
     await expect(img).toHaveAttribute('src', /\/covers\/coffee\.jpg/);
     await expect(img).toHaveJSProperty('naturalWidth', 1200);
