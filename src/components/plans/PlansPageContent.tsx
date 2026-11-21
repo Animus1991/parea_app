@@ -247,9 +247,12 @@ export default function PlansPageContent() {
                           <PersonAvatar key={user!.id} user={user!} size="sm" className="h-6 w-6 ring-1 ring-white/40" />
                         ))}
                       </div>
-                      <span className="text-xs font-medium flex items-center gap-0.5 text-white/85">
-                        <Users className="w-3 h-3" /> {group.members.length}/{group.targetSize} {t('μέλη', 'members')}
-                      </span>
+                      {/* With the progress bar on the photo, the count is said once, there. */}
+                      {!flags.coverProgress && (
+                        <span className="text-xs font-medium flex items-center gap-0.5 text-white/85">
+                          <Users className="w-3 h-3" /> {group.members.length}/{group.targetSize} {t('μέλη', 'members')}
+                        </span>
+                      )}
                     </div>
                   )}
                   {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
