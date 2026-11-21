@@ -10,7 +10,7 @@ import { coerceAuthoredSeasonToLive } from "../lib/demoCatalogDates";
 import { withFreshCatalogDates } from "../lib/catalogAuthoredSchedule";
 import { eventCoverUrl } from "../lib/eventCover";
 import { isLiveCatalogEvent } from "../lib/eventDisplay";
-import type { MapLocation } from "../lib/miniOutings";
+import { withFreshMiniOutingDates, type MapLocation } from "../lib/miniOutings";
 import { applyDefaultCardImageDepthIfUnset } from "../lib/discoverCardImagePreview";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
@@ -371,8 +371,10 @@ export const DEMO_RESET_EVENT = 'nakamas:demo-reset';
 
 /** Φ27 — mock events + Nakamas Nights / small outings, and their groups and people. */
 function seedEvents(): Event[] {
-  return coerceAuthoredSeasonToLive(
-    withFreshCatalogDates([...mockEvents, ...mockCalendarPlanEvents, ...mockOutingEvents]),
+  return withFreshMiniOutingDates(
+    coerceAuthoredSeasonToLive(
+      withFreshCatalogDates([...mockEvents, ...mockCalendarPlanEvents, ...mockOutingEvents]),
+    ),
   );
 }
 function seedGroups(): typeof mockGroups {
@@ -597,11 +599,16 @@ export const useStore = create<AppState>()(
       const privacy = { ...state.userSettings.privacy, ...(user.privacy ?? {}) };
       const blockedUserIds = user.blockedUserIds ?? state.blockedUserIds;
       const hydrated = { ...user, privacy, blockedUserIds };
+      const switched = state.currentUser?.id !== user.id;
       return {
         currentUser: hydrated,
         isAuthenticated: true,
         demoMode: false,
-        userSettings: { ...state.userSettings, privacy },
+        userSettings: {
+          ...state.userSettings,
+          privacy,
+          ...(switched ? { mapLocation: null } : {}),
+        },
         blockedUserIds,
         users: state.users.map((u) => (u.id === userId ? hydrated : u)),
       };
@@ -615,11 +622,16 @@ export const useStore = create<AppState>()(
       const blockedUserIds = user.blockedUserIds ?? state.blockedUserIds;
       const hydrated = { ...user, privacy, blockedUserIds };
       const exists = state.users.some((u) => u.id === user.id);
+      const switched = state.currentUser?.id !== user.id;
       return {
         currentUser: hydrated,
         isAuthenticated: true,
         demoMode: false,
-        userSettings: { ...state.userSettings, privacy },
+        userSettings: {
+          ...state.userSettings,
+          privacy,
+          ...(switched ? { mapLocation: null } : {}),
+        },
         blockedUserIds,
         users: exists
           ? state.users.map((u) => (u.id === user.id ? { ...u, ...hydrated } : u))
@@ -628,18 +640,26 @@ export const useStore = create<AppState>()(
     });
   },
 
-  logout: () => set({ currentUser: null, isAuthenticated: false, demoMode: false }),
+  logout: () =>
+    set((state) => ({
+      currentUser: null,
+      isAuthenticated: false,
+      demoMode: false,
+      userSettings: { ...state.userSettings, mapLocation: null },
+    })),
 
   enterDemoMode: () => {
     applyDefaultCardImageDepthIfUnset();
     set((state) => {
       const user = state.users.find((u) => u.id === 'u1') ?? state.users[0];
       if (!user) return state;
+      const switched = state.currentUser?.id !== user.id;
       return {
         demoMode: true,
         currentUser: user,
         isAuthenticated: true,
         onboardingCompleted: true,
+        ...(switched ? { userSettings: { ...state.userSettings, mapLocation: null } } : {}),
       };
     });
   },
@@ -2362,12 +2382,14 @@ export const useStore = create<AppState>()(
           return [...fromSeeds, ...extras];
         };
 
-        const events = coerceAuthoredSeasonToLive(
-          withFreshCatalogDates(
-            mergeById(current.events, p.events).map((e) => {
-              const cover = eventCoverUrl(e);
-              return e.imageUrl === cover ? e : { ...e, imageUrl: cover };
-            }),
+        const events = withFreshMiniOutingDates(
+          coerceAuthoredSeasonToLive(
+            withFreshCatalogDates(
+              mergeById(current.events, p.events).map((e) => {
+                const cover = eventCoverUrl(e);
+                return e.imageUrl === cover ? e : { ...e, imageUrl: cover };
+              }),
+            ),
           ),
         );
         const groups = mergeById(current.groups, p.groups);

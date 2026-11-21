@@ -138,6 +138,15 @@ describe('outings in the store (Φ27)', () => {
     expect(g.targetSize).toBe(3);
   });
 
+  it('forgets the map pin on logout so the next account does not inherit GPS', () => {
+    useStore.getState().updateUserSettings({
+      mapLocation: { lat: 37.9755, lng: 23.7348, label: 'Η θέση σου', source: 'gps' },
+    });
+    expect(useStore.getState().userSettings.mapLocation?.source).toBe('gps');
+    useStore.getState().logout();
+    expect(useStore.getState().userSettings.mapLocation).toBeNull();
+  });
+
   it('keeps only result, method and date for a selfie check; demo reset restores seeds', () => {
     useStore.getState().completeSelfieCheck();
     const me = useStore.getState().currentUser!;

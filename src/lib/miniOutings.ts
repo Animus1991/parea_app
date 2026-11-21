@@ -9,6 +9,14 @@ export const MINI_OUTING_DEFAULT_RADIUS_KM = 5;
 export const MINI_OUTING_CITY_RADIUS_KM = 50;
 const STARTED_GRACE_MS = 30 * 60_000;
 
+/** Seed mini outings stay on the real clock after a saved demo session reloads. */
+export const MINI_OUTING_FIXTURE_OFFSETS: Record<string, { days: number; time: string }> = {
+  mo1: { days: 6, time: '11:00' },
+  mo2: { days: 1, time: '09:00' },
+  mo3: { days: 0, time: '20:00' },
+  mo4: { days: 1, time: '17:00' },
+};
+
 export type MiniOutingWhen = 'soon' | 'today' | 'week';
 export type MiniOutingRadiusKm = 5 | 10 | 50;
 
@@ -28,7 +36,21 @@ export const MINI_OUTING_PLACES: { el: string; en: string; area: string; lat: nu
   { el: 'Γκάζι', en: 'Gazi', area: 'Gazi, Athens', lat: 37.9784, lng: 23.7142 },
   { el: 'Ψυρρή', en: 'Psyrri', area: 'Psyrri, Athens', lat: 37.9783, lng: 23.7239 },
   { el: 'Κολωνάκι', en: 'Kolonaki', area: 'Kolonaki, Athens', lat: 37.979, lng: 23.743 },
+  { el: 'Παγκράτι', en: 'Pangrati', area: 'Pangrati, Athens', lat: 37.9675, lng: 23.7503 },
+  { el: 'Πλάκα', en: 'Plaka', area: 'Plaka, Athens', lat: 37.9726, lng: 23.7303 },
+  { el: 'Μοναστηράκι', en: 'Monastiraki', area: 'Monastiraki, Athens', lat: 37.9737, lng: 23.7259 },
+  { el: 'Κυψέλη', en: 'Kypseli', area: 'Kypseli, Athens', lat: 37.993, lng: 23.737 },
+  { el: 'Πετράλωνα', en: 'Petralona', area: 'Petralona, Athens', lat: 37.9685, lng: 23.7095 },
+  { el: 'Νέος Κόσμος', en: 'Neos Kosmos', area: 'Neos Kosmos, Athens', lat: 37.9585, lng: 23.7285 },
+  { el: 'Μετς', en: 'Mets', area: 'Mets, Athens', lat: 37.9635, lng: 23.7375 },
+  { el: 'Ιλίσια', en: 'Ilisia', area: 'Ilisia, Athens', lat: 37.977, lng: 23.756 },
+  { el: 'Κεραμεικός', en: 'Kerameikos', area: 'Kerameikos, Athens', lat: 37.978, lng: 23.718 },
+  { el: 'Μακρυγιάννη', en: 'Makrygianni', area: 'Makrygianni, Athens', lat: 37.968, lng: 23.728 },
+  { el: 'Αθήνα', en: 'Athens', area: 'Athens', lat: 37.9838, lng: 23.7275 },
 ];
+
+const QUICK_PLACE_EN = new Set(['Syntagma', 'Koukaki', 'Zappeio', 'Thisio', 'Exarchia', 'Gazi', 'Psyrri', 'Kolonaki', 'Pangrati']);
+export const MINI_OUTING_QUICK_PLACES = MINI_OUTING_PLACES.filter((place) => QUICK_PLACE_EN.has(place.en));
 
 export function parseDurationHours(duration: string | undefined): number {
   if (!duration) return 1;
@@ -45,10 +67,46 @@ export function isShortMiniOuting(event: Pick<Event, 'kind' | 'duration'>): bool
 
 export function placeForArea(area: string | undefined): (typeof MINI_OUTING_PLACES)[number] | undefined {
   if (!area) return undefined;
-  const needle = area.toLowerCase();
-  return MINI_OUTING_PLACES.find(
-    (place) => needle.includes(place.en.toLowerCase()) || needle.includes(place.el.toLowerCase()) || needle.includes(place.area.toLowerCase()),
-  );
+  const needle = area.toLowerCase().trim();
+  const scored = MINI_OUTING_PLACES.map((place) => {
+    const names = [place.area, place.en, place.el].map((name) => name.toLowerCase());
+    if (names.some((name) => name === needle)) return { place, score: 3 };
+    const generic = place.en === 'Athens';
+    if (!generic && names.some((name) => needle.includes(name))) return { place, score: 2 };
+    if (generic && (needle === 'athens' || needle === 'αθήνα')) return { place, score: 1 };
+    return { place, score: 0 };
+  }).filter((row) => row.score > 0);
+  scored.sort((a, b) => b.score - a.score || b.place.en.length - a.place.en.length);
+  return scored[0]?.place;
+}
+
+export function dayFromNow(days: number, now: Date = new Date()): string {
+  const d = new Date(now);
+  d.setHours(12, 0, 0, 0);
+  d.setDate(d.getDate() + days);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+export function withFreshMiniOutingDates<T extends { id: string; date: string; time?: string }>(
+  events: T[],
+  now: Date = new Date(),
+): T[] {
+  return events.map((event) => {
+    const spec = MINI_OUTING_FIXTURE_OFFSETS[event.id];
+    if (!spec) return event;
+    const date = dayFromNow(spec.days, now);
+    if (event.date === date && event.time === spec.time) return event;
+    return { ...event, date, time: spec.time };
+  });
+}
+
+/** Join closes at the start; the 30′ grace only keeps a started outing visible. */
+export function outingHasStarted(event: Pick<Event, 'date' | 'time'>, now: Date = new Date()): boolean {
+  const start = eventOccursAt(event).getTime();
+  return !Number.isNaN(start) && start <= now.getTime();
 }
 
 export function outingCoords(event: Pick<Event, 'lat' | 'lng' | 'locationArea'>): { lat: number; lng: number } | null {
@@ -112,6 +170,7 @@ export function rankMiniOutings<T extends Pick<Event, 'id' | 'kind' | 'duration'
     }))
     .filter((row) => {
       if (!opts.origin) return false;
+      if (row.km == null) return opts.radiusKm >= MINI_OUTING_CITY_RADIUS_KM;
       return matchesNearby(row.event, opts.origin, opts.radiusKm);
     })
     .sort((a, b) => {

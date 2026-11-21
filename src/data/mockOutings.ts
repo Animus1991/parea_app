@@ -7,17 +7,7 @@ import type { Event, Group, User } from '../types';
 import type { PlanInvite, SeeAgainPick, Strike, VibeProfile } from '../types/outings';
 import { groupCodeFor } from '../lib/outings';
 import { MINI_OUTING_COVERS } from '../lib/eventCover';
-
-/** Keep last-minute demos on the real clock, not a frozen November week. */
-function dayFromNow(days: number): string {
-  const d = new Date();
-  d.setHours(12, 0, 0, 0);
-  d.setDate(d.getDate() + days);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
+import { MINI_OUTING_FIXTURE_OFFSETS, dayFromNow } from '../lib/miniOutings';
 
 const NIGHT_IMG = 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&h=600&fit=crop';
 
@@ -101,8 +91,8 @@ export const mockOutingEvents: Event[] = [
     title: 'Καφές στο Κουκάκι',
     category: 'Social',
     description: 'Ένας χαλαρός καφές Σάββατο πρωί, μία ώρα, για όποιον θέλει να γνωρίσει νέο κόσμο στη γειτονιά.',
-    date: dayFromNow(6),
-    time: '11:00',
+    date: dayFromNow(MINI_OUTING_FIXTURE_OFFSETS.mo1.days),
+    time: MINI_OUTING_FIXTURE_OFFSETS.mo1.time,
     duration: '1h',
     locationArea: 'Koukaki, Athens',
     exactLocation: 'Αυλή Κουκάκι, Drakou 6',
@@ -123,8 +113,8 @@ export const mockOutingEvents: Event[] = [
     title: 'Τρέξιμο στο Ζάππειο (5 χλμ.)',
     category: 'Sports',
     description: 'Ήπιος ρυθμός, κανείς δεν μένει πίσω. Μόνο για γυναίκες & μη δυαδικά άτομα.',
-    date: dayFromNow(1),
-    time: '09:00',
+    date: dayFromNow(MINI_OUTING_FIXTURE_OFFSETS.mo2.days),
+    time: MINI_OUTING_FIXTURE_OFFSETS.mo2.time,
     duration: '1h',
     locationArea: 'Zappeio, Athens',
     exactLocation: 'Είσοδος Ζαππείου από Βασ. Όλγας',
@@ -145,8 +135,8 @@ export const mockOutingEvents: Event[] = [
     title: 'Ποτό στη Θεσσαλονίκη',
     category: 'Food & Drink',
     description: 'Ένα ποτήρι μακριά από την Αθήνα — φαίνεται μόνο αν ανοίξεις την ακτίνα.',
-    date: dayFromNow(0),
-    time: '20:00',
+    date: dayFromNow(MINI_OUTING_FIXTURE_OFFSETS.mo3.days),
+    time: MINI_OUTING_FIXTURE_OFFSETS.mo3.time,
     duration: '1h 30m',
     locationArea: 'Thessaloniki',
     exactLocation: 'Ναυαρίνου 12',
@@ -167,8 +157,8 @@ export const mockOutingEvents: Event[] = [
     title: 'Βόλτα στο Θησείο',
     category: 'Walking tours',
     description: 'Μία ώρα περπάτημα όταν σου μείνει ένα κενό σήμερα.',
-    date: dayFromNow(1),
-    time: '17:00',
+    date: dayFromNow(MINI_OUTING_FIXTURE_OFFSETS.mo4.days),
+    time: MINI_OUTING_FIXTURE_OFFSETS.mo4.time,
     duration: '1h 30m',
     locationArea: 'Thisio, Athens',
     exactLocation: 'Σταθμός Θησείου, έξοδος πεζόδρομου',

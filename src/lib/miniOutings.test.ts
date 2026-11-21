@@ -1,12 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
+  MINI_OUTING_CITY_RADIUS_KM,
   MINI_OUTING_DEFAULT_RADIUS_KM,
+  dayFromNow,
   distanceKmToOuting,
   isShortMiniOuting,
   matchesNearby,
   matchesWhen,
+  outingHasStarted,
   parseDurationHours,
+  placeForArea,
   rankMiniOutings,
+  withFreshMiniOutingDates,
 } from './miniOutings';
 
 const origin = { lat: 37.9755, lng: 23.7348, label: 'Syntagma', source: 'gps' as const };
@@ -94,5 +99,34 @@ describe('mini outing last-minute filters', () => {
       now,
     });
     expect(week.map((row) => row.event.id)).toEqual(['mo2', 'mo1']);
+  });
+
+  it('resolves Pangrati without matching the whole city', () => {
+    expect(placeForArea('Pangrati, Athens')?.en).toBe('Pangrati');
+    expect(placeForArea('Παγκράτι')?.lat).toBeCloseTo(37.9675);
+    expect(placeForArea('Athens')?.en).toBe('Athens');
+  });
+
+  it('keeps pin-less outings only at the city radius', () => {
+    const lost = { ...coffee, id: 'mo-lost', lat: undefined, lng: undefined, locationArea: 'Unknown alley' };
+    expect(
+      rankMiniOutings([lost], { origin, when: 'week', radiusKm: 5, now }).map((row) => row.event.id),
+    ).toEqual([]);
+    expect(
+      rankMiniOutings([lost], { origin, when: 'week', radiusKm: MINI_OUTING_CITY_RADIUS_KM, now }).map((row) => row.event.id),
+    ).toEqual(['mo-lost']);
+  });
+
+  it('closes join at the start while the card can still be visible', () => {
+    expect(outingHasStarted(farDrink, now)).toBe(false);
+    expect(outingHasStarted(farDrink, new Date('2026-11-21T20:01:00'))).toBe(true);
+    expect(matchesWhen(farDrink, 'soon', new Date('2026-11-21T20:10:00'))).toBe(true);
+  });
+
+  it('rolls demo mini-outing dates forward on reload', () => {
+    const later = new Date('2026-12-10T12:00:00');
+    const refreshed = withFreshMiniOutingDates([{ id: 'mo1', date: '2026-11-28', time: '11:00' }], later);
+    expect(refreshed[0].date).toBe(dayFromNow(6, later));
+    expect(refreshed[0].time).toBe('11:00');
   });
 });

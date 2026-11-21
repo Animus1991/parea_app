@@ -14,7 +14,14 @@ import { CardImageDepthFrame } from '../events/CardImageDepthFrame';
 import { GroupProgressBar } from '../events/GroupProgressBar';
 import { MiniOutingNearbyControls } from './MiniOutingNearbyControls';
 import { cardImageDepthFlags, type EventCardImageDepth } from '../../lib/discoverCardImagePreview';
-import { rankMiniOutings, type MiniOutingRadiusKm, type MiniOutingWhen } from '../../lib/miniOutings';
+import {
+  MINI_OUTING_QUICK_PLACES,
+  outingHasStarted,
+  placeForArea,
+  rankMiniOutings,
+  type MiniOutingRadiusKm,
+  type MiniOutingWhen,
+} from '../../lib/miniOutings';
 import { formatCountdown } from '../../lib/countdown';
 import type { MiniOutingKind } from '../../store/outingsSlice';
 import type { GroupGenderMode } from '../../types/outings';
@@ -168,6 +175,7 @@ export function MiniOutingsSection({
             const waiting = me ? group.waitlist?.includes(me.id) : false;
             const full = group.members.length >= group.targetSize;
             const genderBlocked = group.genderMode === 'women_nb' && !fitsGenderMode(me, 'women_nb');
+            const started = outingHasStarted(event);
             const hostName = host?.name.split(' ')[0] ?? '—';
             const refuseRestrictedOrJoin = () => {
               if (genderBlocked) {
@@ -236,7 +244,7 @@ export function MiniOutingsSection({
                               <Button size="sm" variant="ghost" className="text-white" onClick={() => go(`/night/${group.id}`)}>
                                 {t('Στη λίστα αναμονής · βραδιά', 'On waitlist · our night')}
                               </Button>
-                            ) : (
+                            ) : started ? null : (
                               <Button
                                 size="sm"
                                 variant="ghost"
@@ -303,7 +311,7 @@ export function MiniOutingsSection({
                     <Button size="sm" variant="ghost" onClick={() => go(`/night/${group.id}`)}>
                       {t('Στη λίστα αναμονής · βραδιά', 'On waitlist · our night')}
                     </Button>
-                  ) : (
+                  ) : started ? null : (
                     <Button
                       size="sm"
                       variant={genderBlocked || full ? 'ghost' : 'primary'}
@@ -379,18 +387,30 @@ function MiniOutingComposer({ onClose, onLeave, initialNote }: { onClose: () => 
       return;
     }
     const areaLabel = area.includes(',') ? area : `${area.trim()}, Athens`;
+    const place = placeForArea(areaLabel) ?? placeForArea(area.trim());
     const pin = mapLocation && area.trim() === mapLocation.label ? mapLocation : null;
+    const lat = pin?.lat ?? place?.lat;
+    const lng = pin?.lng ?? place?.lng;
+    if (typeof lat !== 'number' || typeof lng !== 'number') {
+      setError(
+        t(
+          'Διάλεξε γειτονιά από τη λίστα, ώστε να σε βρίσκουν κοντά.',
+          'Pick a neighbourhood from the list so people nearby can find you.',
+        ),
+      );
+      return;
+    }
     const groupId = create({
       kind,
       date,
       time,
-      area: areaLabel,
+      area: place?.area ?? areaLabel,
       exactLocation: spot,
       size,
       genderMode: mode,
       note,
-      lat: pin?.lat,
-      lng: pin?.lng,
+      lat,
+      lng,
     });
     if (!groupId) {
       setError(t('Δεν μπορείς να ξεκινήσεις έξοδο όσο ισχύει παύση.', 'You cannot start an outing while a pause applies.'));
@@ -444,10 +464,34 @@ function MiniOutingComposer({ onClose, onLeave, initialNote }: { onClose: () => 
           <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={field} />
         </label>
       </div>
-      <label className="mt-3 block text-xs font-bold text-ink">
-        {t('Περιοχή (φαίνεται σε όλους)', 'Area (shown to everyone)')}
-        <input value={area} maxLength={60} onChange={(e) => setArea(e.target.value)} placeholder={t('π.χ. Κουκάκι', 'e.g. Koukaki')} className={field} />
-      </label>
+      <fieldset className="mt-3">
+        <legend className="text-xs font-bold text-ink">{t('Περιοχή (φαίνεται σε όλους)', 'Area (shown to everyone)')}</legend>
+        <div className="mt-1.5 flex flex-wrap gap-1.5">
+          {MINI_OUTING_QUICK_PLACES.map((place) => {
+            const selected = area === place.el || area === place.en || area === place.area;
+            return (
+              <button
+                key={place.area}
+                type="button"
+                onClick={() => setArea(t(place.el, place.en))}
+                className={cn(
+                  'inline-flex min-h-8 items-center rounded-full border px-3 text-xs font-bold',
+                  selected ? 'border-accent bg-accent text-accent-fg' : 'border-border bg-surface-raised text-ink',
+                )}
+              >
+                {t(place.el, place.en)}
+              </button>
+            );
+          })}
+        </div>
+        <input
+          value={area}
+          maxLength={60}
+          onChange={(e) => setArea(e.target.value)}
+          placeholder={t('ή γράψε π.χ. Παγκράτι', 'or type e.g. Pangrati')}
+          className={field}
+        />
+      </fieldset>
       <label className="mt-3 block text-xs font-bold text-ink">
         {t('Ακριβές σημείο (μόνο για μέλη)', 'Exact spot (members only)')}
         <input value={spot} maxLength={100} onChange={(e) => setSpot(e.target.value)} placeholder={t('π.χ. καφέ στη γωνία Δράκου', 'e.g. café on the corner of Drakou')} className={field} />
