@@ -570,7 +570,7 @@ export function ChatMessageBubble({
                 type="button"
                 onClick={() => onReact(message.id, em)}
                 className={cn(
-                  'tap-area-y inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-2xs font-bold border transition-colors',
+                  'tap-area-y inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-count font-bold border transition-colors',
                   reacted
                     ? 'border-brand bg-brand-soft text-brand'
                     : 'border-border bg-surface-raised text-ink-muted hover:border-border-strong',

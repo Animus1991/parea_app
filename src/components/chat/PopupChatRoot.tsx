@@ -66,7 +66,7 @@ export function PopupChatRoot() {
               <MessageCircle className="w-3.5 h-3.5 shrink-0 text-brand" />
               <span className="text-xs font-bold truncate">{c.title}</span>
               {c.unreadCount > 0 && (
-                <span className="shrink-0 min-w-[18px] h-[18px] rounded-full bg-brand text-brand-fg text-2xs font-bold flex items-center justify-center px-1">
+                <span className="shrink-0 min-w-[18px] h-[18px] rounded-full bg-brand text-brand-fg text-count font-bold flex items-center justify-center px-1">
                   {c.unreadCount > 9 ? '9+' : c.unreadCount}
                 </span>
               )}

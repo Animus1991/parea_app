@@ -232,7 +232,7 @@ function CommentCard({
                 disabled={readOnly}
                 onClick={() => run(reactToComment(postId, comment.id, em))}
                 className={cn(
-                  'inline-flex min-h-6 items-center gap-0.5 rounded-full border px-1.5 text-2xs font-bold',
+                  'inline-flex min-h-6 items-center gap-0.5 rounded-full border px-1.5 text-count font-bold',
                   myEmoji === em ? 'border-accent bg-accent-soft text-ink' : 'border-border text-ink-muted',
                 )}
               >

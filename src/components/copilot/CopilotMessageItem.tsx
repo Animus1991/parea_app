@@ -158,7 +158,7 @@ function EventResult({ eventId, index, onNavigate }: { eventId: string; index: n
     <li className="group relative flex items-center gap-3 rounded-xl border border-border bg-surface-raised p-2 pr-1.5 transition-colors hover:border-border-strong">
       <span
         aria-hidden
-        className="absolute -left-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1 text-2xs font-bold text-surface-raised tabular-nums"
+        className="absolute -left-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1 text-count font-bold text-surface-raised tabular-nums"
       >
         {index + 1}
       </span>

@@ -254,9 +254,6 @@ export function MiniOutingsSection({
                                 {genderBlocked ? t('Μόνο γυναίκες & μη δυαδικά', 'Women & non-binary only') : full ? t('Λίστα αναμονής', 'Join waitlist') : t('Μπες', 'Join')}
                               </Button>
                             )}
-                            <Button size="sm" variant="ghost" className="text-white" onClick={() => go(`/events/${event.id}`)}>
-                              {t('Λεπτομέρειες', 'Details')}
-                            </Button>
                             </div>
                           )}
                         </div>
@@ -321,9 +318,6 @@ export function MiniOutingsSection({
                       {genderBlocked ? t('Μόνο γυναίκες & μη δυαδικά', 'Women & non-binary only') : full ? t('Λίστα αναμονής', 'Join waitlist') : t('Μπες', 'Join')}
                     </Button>
                   )}
-                  <Button size="sm" variant="ghost" onClick={() => go(`/events/${event.id}`)}>
-                    {t('Λεπτομέρειες', 'Details')}
-                  </Button>
                 </div>
                 )}
                 </div>

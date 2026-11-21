@@ -547,6 +547,20 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   font-size: var(--text-xs); /* equals subtitle max; never above titles */
   line-height: var(--text-xs--line-height);
 }
+/*
+ * Phones: no word under 10px. text-2xs rises from 9px to 10px; numbers inside
+ * small bubbles (unread counts, reaction counts) keep 9px through text-count.
+ */
+@media (max-width: 767px) {
+  :root {
+    --text-2xs: 0.625rem;
+  }
+}
+@utility text-count {
+  font-size: 0.5625rem;
+  line-height: 1.4;
+}
+
 /* Readable card prose/lists under 12px card titles (11.04px, > 10px micro/buttons) */
 .card-prose {
   font-size: calc(var(--text-sm) * 0.92); /* ~11px */
@@ -554,7 +568,7 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 }
 .card-copy-micro {
   /* Readable card copy never drops under the 10px floor (phones). */
-  font-size: max(var(--text-xs), calc(var(--text-2xs) * 1.1));
+  font-size: max(var(--text-xs), calc(0.5625rem * 1.1));
   line-height: var(--text-2xs--line-height);
 }
 

@@ -357,7 +357,7 @@ export default function ConnectionsPageContent() {
           onClick={() => setActiveTab('requests')}
         >
           {t('Αιτήματα', 'Requests')}
-          {pendingRequests.length > 0 && <span className={`${a.requestBadge} text-white text-2xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{pendingRequests.length}</span>}
+          {pendingRequests.length > 0 && <span className={`${a.requestBadge} text-white text-count min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{pendingRequests.length}</span>}
         </button>
         <button
           type="button"
@@ -367,7 +367,7 @@ export default function ConnectionsPageContent() {
           onClick={() => setActiveTab('suggested')}
         >
           <UserPlus className="w-3.5 h-3.5" aria-hidden /> {t('Προτάσεις', 'Suggested')}
-          {suggested.length > 0 && <span className={`${a.isDark ? 'bg-gray-600' : 'bg-gray-400'} text-white text-2xs min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{suggested.length}</span>}
+          {suggested.length > 0 && <span className={`${a.isDark ? 'bg-gray-600' : 'bg-gray-400'} text-white text-count min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center`}>{suggested.length}</span>}
         </button>
       </div>
 

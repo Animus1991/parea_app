@@ -63,7 +63,7 @@ export function AdminWallModeration() {
       <h2 id="admin-wall-title" className="card-heading-lg flex items-center gap-2 font-bold tracking-wide text-ink">
         <Newspaper className="h-4 w-4" aria-hidden /> {t('Δημοσιεύσεις τοίχου', 'Wall posts')}
         {reported.length > 0 && (
-          <span className="rounded-full bg-red-600 px-2 py-0.5 text-2xs font-bold text-white">{reported.length}</span>
+          <span className="rounded-full bg-red-600 px-2 py-0.5 text-count font-bold text-white">{reported.length}</span>
         )}
       </h2>
 

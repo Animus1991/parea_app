@@ -118,7 +118,7 @@ export function HomeWeatherBadge({
         )}
         aria-hidden
       />
-      <span className="text-2xs font-extrabold tabular-nums leading-none mt-0.5">
+      <span className="text-count font-extrabold tabular-nums leading-none mt-0.5">
         {weather.tempC}°
       </span>
     </button>

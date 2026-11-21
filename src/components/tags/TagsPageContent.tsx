@@ -329,14 +329,14 @@ export default function TagsPageContent() {
       {showLetterJump ? (
         <nav
           aria-label={t('Ευρετήριο γραμμάτων', 'Letter index')}
-          className="flex flex-wrap gap-1"
+          className="-mx-4 flex gap-1 overflow-x-auto scrollbar-hide px-4 md:mx-0 md:flex-wrap md:px-0"
         >
           {letterGroups.map((group) => (
             <button
               key={group.letter}
               type="button"
               onClick={() => scrollToLetter(group.letter)}
-              className="inline-flex h-8 min-w-8 items-center justify-center rounded-lg px-1.5 text-xs font-bold text-ink-muted hover:bg-surface-raised hover:text-ink"
+              className="inline-flex h-8 min-w-8 shrink-0 items-center justify-center rounded-lg px-1.5 text-xs font-bold text-ink-muted hover:bg-surface-raised hover:text-ink"
             >
               {group.letter}
             </button>

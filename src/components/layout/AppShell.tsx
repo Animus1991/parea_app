@@ -147,7 +147,7 @@ function NavItem({
       </span>
       <span className={textClass}>{label}</span>
       {badge > 0 && !rail && (
-        <span className={cn('ml-auto rounded-full bg-accent px-1.5 py-0.5 text-2xs font-bold leading-none text-accent-fg tabular-nums', compact && 'hidden lg:inline')} aria-hidden>
+        <span className={cn('ml-auto rounded-full bg-accent px-1.5 py-0.5 text-count font-bold leading-none text-accent-fg tabular-nums', compact && 'hidden lg:inline')} aria-hidden>
           {badge > 99 ? '99+' : badge}
         </span>
       )}
@@ -200,7 +200,7 @@ function NavSection({ id, title, paths, children, compact = false, rail = false 
         >
           <span className="truncate text-left">{title}</span>
           <span className="flex items-center gap-1.5 shrink-0">
-            {collapsed && <span className="text-2xs font-semibold tabular-nums opacity-70">{count}</span>}
+            {collapsed && <span className="text-count font-semibold tabular-nums opacity-70">{count}</span>}
             <ChevronDown className={cn('w-3.5 h-3.5 transition-transform duration-200 motion-reduce:transition-none', collapsed ? '-rotate-90' : 'rotate-0', containsActive && 'opacity-40')} aria-hidden />
           </span>
         </button>

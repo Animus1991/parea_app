@@ -84,7 +84,7 @@ export function PlansFormingCard({
   onNavigate?: (path: string) => void;
   imageDepth?: EventCardImageDepth;
 }) {
-  const { t, tu, language } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const go = (path: string) => {
     if (onNavigate) onNavigate(path);
@@ -182,7 +182,7 @@ export function PlansFormingCard({
           overlay={
             <>
               <p className="card-badge font-semibold tracking-wide text-white/80">
-                {tu(item.intentLabel.el, item.intentLabel.en)}
+                {t(item.intentLabel.el, item.intentLabel.en)}
                 {item.isSavedEvent ? ` · ${t('Αποθηκευμένη', 'Saved')}` : ''}
                 {item.isHighMatch ? ` · ${t('Υψηλή συμβατότητα', 'High match')}` : ''}
               </p>
@@ -251,7 +251,7 @@ export function PlansFormingCard({
           <div className="flex items-start justify-between gap-4">
             {!flags.coverTitle && (
             <p className={cn('card-badge font-semibold tracking-wide pt-1', muted)}>
-              {tu(item.intentLabel.el, item.intentLabel.en)}
+              {t(item.intentLabel.el, item.intentLabel.en)}
               {item.isSavedEvent ? ` · ${t('Αποθηκευμένη', 'Saved')}` : ''}
               {item.isHighMatch ? ` · ${t('Υψηλή συμβατότητα', 'High match')}` : ''}
             </p>
@@ -455,7 +455,7 @@ export function PlansFormingCard({
         <div className="min-w-0 flex-1 space-y-1.5">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className={cn('card-badge font-semibold tracking-wide', darkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400')}>
-              {tu(item.intentLabel.el, item.intentLabel.en)}
+              {t(item.intentLabel.el, item.intentLabel.en)}
             </span>
             {item.isSavedEvent && (
               <span className={cn('card-badge font-medium', darkCard ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400')}>
@@ -653,7 +653,7 @@ export function PlansFormingGroupCard({
   onNavigate?: (path: string) => void;
   imageDepth?: EventCardImageDepth;
 }) {
-  const { t, tu, language } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const go = (path: string) => {
     if (onNavigate) onNavigate(path);
@@ -685,7 +685,7 @@ export function PlansFormingGroupCard({
         overlay={
           <>
             <p className="card-badge font-semibold tracking-wide text-emerald-200">
-              {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
+              {t('Ομάδα δέχεται μέλη', 'Group recruiting')}
             </p>
             <h3 className="card-heading-lg font-bold leading-snug text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]">{event.title}</h3>
             {flags.coverOrganizer && meta.hostFirstName && (
@@ -749,7 +749,7 @@ export function PlansFormingGroupCard({
       <div className={cn(compact ? 'space-y-3.5 px-4 py-4' : 'space-y-4 px-5 py-5')}>
         {!flags.coverTitle && (
         <p className={cn('card-badge font-semibold tracking-wide', role)}>
-          {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
+          {t('Ομάδα δέχεται μέλη', 'Group recruiting')}
         </p>
         )}
         <div className="space-y-1.5">

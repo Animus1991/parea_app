@@ -33,7 +33,7 @@ export function CompanyRequestCard({
   onReport?: () => void;
   onSave?: () => void;
 }) {
-  const { t, tu } = useLanguage();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const currentUser = useStore((s) => s.currentUser);
   const prefs = useStore((s) => s.companyRequestPreferences);
@@ -76,7 +76,7 @@ export function CompanyRequestCard({
         )}
         <div className="min-w-0 flex-1">
           <p className={cn('card-badge font-bold tracking-wide', darkSurface ? 'text-cyan-400' : 'text-cyan-700')}>
-            {tu('Βρες Nakamas', 'Find Nakamas')}
+            {t('Βρες Nakamas', 'Find Nakamas')}
           </p>
           <p className={cn('card-heading font-bold truncate', darkSurface ? 'text-white' : 'text-gray-900')}>
             {title}

@@ -116,7 +116,7 @@ export function TabBar({ tabs, activeTab, onChange, className, ariaLabel, idBase
             {tab.count != null && tab.count > 0 && (
               <span
                 className={cn(
-                  'ml-1.5 inline-flex items-center justify-center min-w-[16px] h-[16px] rounded-full text-2xs font-bold px-1 tabular-nums',
+                  'ml-1.5 inline-flex items-center justify-center min-w-[16px] h-[16px] rounded-full text-count font-bold px-1 tabular-nums',
                   segmented
                     ? selected
                       ? 'bg-white/25 text-current'

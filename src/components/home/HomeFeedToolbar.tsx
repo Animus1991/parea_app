@@ -86,7 +86,7 @@ export function HomeFeedToolbar({
             {activeFilterCount > 0 && (
               <span
                 className={cn(
-                  'inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-2xs font-bold leading-none',
+                  'inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-count font-bold leading-none',
                   filtersOpen ? 'bg-accent-fg/20 text-accent-fg' : 'bg-accent text-accent-fg',
                 )}
               >

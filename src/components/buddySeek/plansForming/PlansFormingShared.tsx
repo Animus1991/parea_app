@@ -113,7 +113,7 @@ export function PlansFormingYourPlanBanner({
   /** Opens the company-request edit wizard */
   onEdit?: () => void;
 }) {
-  const { t, tu } = useLanguage();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   return (
@@ -124,7 +124,7 @@ export function PlansFormingYourPlanBanner({
       )}
     >
       <p className={cn(PLANS_FORMING_TYPO.sectionLabel, isDark ? 'text-cyan-300' : 'text-cyan-700')}>
-        {tu('Το σχέδιό σου', 'Your plan')}
+        {t('Το σχέδιό σου', 'Your plan')}
       </p>
       <p className={cn(PLANS_FORMING_TYPO.cardTitle, 'leading-snug', isDark ? 'text-white' : 'text-gray-900')}>
         {plan.event.title}

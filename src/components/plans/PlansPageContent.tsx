@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card } from '../common/Card';
-import { MessageCircle, MapPin, Calendar, Clock, ShieldAlert, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass, PartyPopper } from 'lucide-react';
+import { MessageCircle, MapPin, Calendar, Clock, ShieldAlert, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass, PartyPopper, ChevronDown } from 'lucide-react';
 import { useStore } from '../../store';
 import { Link, useNavigate } from 'react-router-dom';
 import { parseISO, differenceInDays } from 'date-fns';
@@ -27,6 +27,8 @@ import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth
 import { CardImageDepthFrame } from '../events/CardImageDepthFrame';
 import { cardImageDepthFlags } from '../../lib/discoverCardImagePreview';
 import { GroupProgressBar } from '../events/GroupProgressBar';
+import { EventCoverImg } from '../common/EventCoverImg';
+import { useIsMobile } from '../../hooks/use-mobile';
 
 function getUserGroupForEvent(eventId: string, groups: Group[], userId: string | undefined) {
   if (!userId) return undefined;
@@ -36,6 +38,9 @@ function getUserGroupForEvent(eventId: string, groups: Group[], userId: string |
 function getPendingGroupForEvent(eventId: string, groups: Group[]) {
   return groups.find((g) => g.eventId === eventId && g.status === 'pending');
 }
+
+/** Phones show this many upcoming plans as cards; the rest wait in a short list. */
+const PLAN_CARDS_FIRST = 3;
 
 function isPlansFormingGroupId(groupId: string) {
   return groupId.startsWith('g_plan_') || groupId.startsWith('g_merged_') || groupId.startsWith('g_coord_');
@@ -48,6 +53,9 @@ export default function PlansPageContent() {
   const flags = cardImageDepthFlags(cardImage.depth);
   const [activeTab, setActiveTab] = useState<'upcoming' | 'pending' | 'past'>('upcoming');
   const [showLeaveConfirm, setShowLeaveConfirm] = useState<string | null>(null);
+  // Phones: after the next 3 plans, the rest wait in a short list and open into a card.
+  const isMobile = useIsMobile();
+  const [openedPlans, setOpenedPlans] = useState<Set<string>>(() => new Set());
   const [nowMs, setNowMs] = useState(() => Date.now());
   useEffect(() => {
     const id = window.setInterval(() => setNowMs(Date.now()), 60_000);
@@ -77,6 +85,10 @@ export default function PlansPageContent() {
     const start = eventStartMs(e);
     return isLiveCatalogEvent(e) && start !== null && start >= nowMs && userGroupEventIds.includes(e.id);
   }).sort((a, b) => (eventStartMs(a) ?? 0) - (eventStartMs(b) ?? 0));
+  const upcomingLater = isMobile
+    ? upcomingEvents.slice(PLAN_CARDS_FIRST).filter((e) => !openedPlans.has(e.id))
+    : [];
+  const upcomingCards = upcomingEvents.filter((e) => !upcomingLater.includes(e));
 
   const pendingEvents = events.filter(e => waitlistedEvents.includes(e.id) && !userGroupEventIds.includes(e.id));
 
@@ -187,7 +199,7 @@ export default function PlansPageContent() {
       >
       {activeTab === 'upcoming' && (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {upcomingEvents.map(event => {
+        {upcomingCards.map(event => {
           const group = getUserGroupForEvent(event.id, groups, currentUser?.id);
           const memberUsers = (group?.members ?? [])
             .slice(0, 3)
@@ -197,7 +209,7 @@ export default function PlansPageContent() {
           const hasMeetingPoint = Boolean(group?.meetingPoint);
 
           return (
-          <Card key={event.id} className="!rounded-2xl p-0 overflow-hidden flex h-full flex-col">
+          <Card key={event.id} id={`plan-${event.id}`} className="!rounded-2xl p-0 overflow-hidden flex h-full flex-col scroll-mt-20">
             <CardImageDepthFrame
               event={event}
               depth={cardImage.depth}
@@ -401,6 +413,45 @@ export default function PlansPageContent() {
           </Card>
           );
         })}
+
+        {upcomingLater.length > 0 && (
+          <section className="col-span-full" aria-labelledby="plans-later">
+            <h2 id="plans-later" className={cn('mb-2 text-xs font-semibold tracking-wide', p.muted)}>
+              {tu('Αργότερα', 'Later')}
+            </h2>
+            <ul className={cn('divide-y overflow-hidden rounded-2xl border', p.borderT, 'bg-surface-raised')}>
+              {upcomingLater.map((event) => {
+                const group = getUserGroupForEvent(event.id, groups, currentUser?.id);
+                const isConfirmed = group?.status === 'confirmed';
+                return (
+                  <li key={event.id}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpenedPlans((prev) => new Set(prev).add(event.id));
+                        requestAnimationFrame(() =>
+                          document.getElementById(`plan-${event.id}`)?.scrollIntoView({ block: 'start', behavior: 'smooth' }),
+                        );
+                      }}
+                      aria-expanded={false}
+                      className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-surface"
+                    >
+                      <EventCoverImg event={event} alt="" className="h-12 w-12 shrink-0 rounded-xl object-cover" />
+                      <span className="min-w-0 flex-1">
+                        <span className={cn('block truncate text-sm font-bold', p.head)}>{event.title}</span>
+                        <span className={cn('block text-xs font-medium', p.muted)}>
+                          {formatPlanWhen(event.date, event.time, language)} ·{' '}
+                          {isConfirmed ? t('Επιβεβαιωμένο', 'Confirmed') : t('Εκκρεμής', 'Pending')}
+                        </span>
+                      </span>
+                      <ChevronDown className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
 
         {upcomingEvents.length === 0 && (
           <div className="col-span-full">
