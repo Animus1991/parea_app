@@ -43,7 +43,7 @@ import { isDarkTheme } from "../../lib/themes";
 import { getEventGroupProgress } from "../../lib/groupUtils";
 import { reliabilityBadge, tierLabelEl, tierLabelEn } from "../../lib/trust";
 import { GroupProgressBar } from "./GroupProgressBar";
-import type { EventCardImageDepth } from "../../lib/discoverCardImagePreview";
+import { cardImageDepthFlags, type EventCardImageDepth } from "../../lib/discoverCardImagePreview";
 import { toast } from "sonner";
 import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
 import { TileLayer, Marker } from "react-leaflet";
@@ -309,22 +309,15 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
     "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
     isDark ? "bg-white/[0.06] text-gray-400" : "bg-gray-50 text-gray-500",
   );
-  const coverTitle = imageDepth !== 'photo';
-  const coverFacts =
-    imageDepth === 'facts' ||
-    imageDepth === 'organizer' ||
-    imageDepth === 'roomy' ||
-    imageDepth === 'divider' ||
-    imageDepth === 'full';
-  const coverOrganizer =
-    imageDepth === 'organizer' ||
-    imageDepth === 'roomy' ||
-    imageDepth === 'divider' ||
-    imageDepth === 'full';
-  const coverRoomy = imageDepth === 'roomy';
-  const coverProgress = imageDepth === 'divider' || imageDepth === 'full';
-  const coverFull = imageDepth === 'full';
-  const photoFillsCard = coverProgress || coverRoomy;
+  const {
+    coverTitle,
+    coverFacts,
+    coverOrganizer,
+    coverRoomy,
+    coverProgress,
+    coverFull,
+    photoFillsCard,
+  } = cardImageDepthFlags(imageDepth);
   const photoWell = "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white";
 
   const titleRow = (onPhoto: boolean) => (

@@ -1,9 +1,8 @@
 import { readStorage, writeStorage } from './safeUrl';
 
 /**
- * Temporary Discover preview: a feed picker applies one photo depth to every
- * card. Phone and web both offer every depth while we compare. Remove this
- * file and the `imageDepth` wiring to revert.
+ * Card-photo depth: a picker applies one overlay depth to every event card
+ * (Discover, Plans, Find Nakamas). Phone and web both offer every depth.
  */
 export type EventCardImageDepth =
   | 'photo'
@@ -25,6 +24,34 @@ export const CARD_IMAGE_DEPTHS = [
   'divider',
   'full',
 ] as const satisfies readonly EventCardImageDepth[];
+
+/** Which rows sit on the photo for a given depth. Shared by Discover, Plans and Find Nakamas. */
+export function cardImageDepthFlags(depth: EventCardImageDepth) {
+  const coverTitle = depth !== 'photo';
+  const coverFacts =
+    depth === 'facts' ||
+    depth === 'organizer' ||
+    depth === 'roomy' ||
+    depth === 'divider' ||
+    depth === 'full';
+  const coverOrganizer =
+    depth === 'organizer' ||
+    depth === 'roomy' ||
+    depth === 'divider' ||
+    depth === 'full';
+  const coverRoomy = depth === 'roomy';
+  const coverProgress = depth === 'divider' || depth === 'full';
+  const coverFull = depth === 'full';
+  return {
+    coverTitle,
+    coverFacts,
+    coverOrganizer,
+    coverRoomy,
+    coverProgress,
+    coverFull,
+    photoFillsCard: coverProgress || coverRoomy,
+  };
+}
 
 export const CARD_IMAGE_DEPTH_LABELS: Record<EventCardImageDepth, [string, string]> = {
   photo: ['Συμπαγής', 'Standard'],

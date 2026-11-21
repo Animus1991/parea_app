@@ -9,8 +9,10 @@ import { formatLocationArea } from '../../lib/eventDisplay';
 import { fitsGenderMode } from '../../lib/outings';
 import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
-import { EventCoverImg } from '../common/EventCoverImg';
 import { cn } from '../../lib/utils';
+import { CardImageDepthFrame } from '../events/CardImageDepthFrame';
+import { GroupProgressBar } from '../events/GroupProgressBar';
+import { cardImageDepthFlags, type EventCardImageDepth } from '../../lib/discoverCardImagePreview';
 import type { MiniOutingKind } from '../../store/outingsSlice';
 import type { GroupGenderMode } from '../../types/outings';
 import { AppSelect } from '../common/AppSelect';
@@ -35,11 +37,15 @@ function kindOf(tags: string[] | undefined): (typeof KINDS)[number] {
 export function MiniOutingsSection({
   variant = 'page',
   onLeave,
+  imageDepth = 'photo',
 }: {
   variant?: 'page' | 'sheet';
   onLeave?: () => void;
+  imageDepth?: EventCardImageDepth;
 }) {
   const { t, language } = useLanguage();
+  const depth = variant === 'page' ? imageDepth : 'photo';
+  const flags = cardImageDepthFlags(depth);
   const navigate = useNavigate();
   const [composerOpen, setComposerOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -146,24 +152,70 @@ export function MiniOutingsSection({
               <li
                 key={group.id}
                 data-mini-outing-card=""
-                className="nakamas-card overflow-hidden rounded-2xl bg-surface-raised shadow-soft"
+                className="nakamas-card overflow-hidden rounded-2xl bg-surface-raised shadow-soft flex flex-col"
               >
-                <button
-                  type="button"
-                  onClick={() => go(`/events/${event.id}`)}
-                  className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
-                  aria-label={event.title}
+                <CardImageDepthFrame
+                  event={event}
+                  depth={depth}
+                  photoHeightClass={variant === 'sheet' ? 'h-36' : 'h-40 md:h-48'}
+                  overlay={
+                    <>
+                      <p className="card-meta font-medium text-white/80 inline-flex items-center gap-1.5">
+                        <KindIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        {t(k.el, k.en)} · {formatPlanWhen(event.date, event.time, language)}
+                      </p>
+                      <p className="card-heading-lg font-bold leading-snug text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]">{event.title}</p>
+                      {flags.coverFacts && (
+                        <p className="card-meta font-medium text-white/85 inline-flex items-center gap-1.5">
+                          <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                          {formatLocationArea(event.locationArea, language)}
+                        </p>
+                      )}
+                      {flags.coverOrganizer && (
+                        <p className="card-meta font-medium text-white/85">{t(`με ${hostName}`, `with ${hostName}`)}</p>
+                      )}
+                      {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
+                      {flags.coverProgress && (
+                        <div className="mt-auto border-t border-white/25 pt-4">
+                          <GroupProgressBar current={group.members.length} target={group.targetSize} onPhoto className={flags.coverFull ? 'mb-3' : undefined} />
+                          {flags.coverFull && (
+                            mine ? (
+                              <Button size="sm" variant="ghost" className="text-white" onClick={() => go(`/night/${group.id}`)}>
+                                {t('Η βραδιά μας', 'Our night')}
+                              </Button>
+                            ) : waiting ? (
+                              <Button size="sm" variant="ghost" className="text-white" onClick={() => go(`/night/${group.id}`)}>
+                                {t('Στη λίστα αναμονής · βραδιά', 'On waitlist · our night')}
+                              </Button>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-white"
+                                onClick={() => {
+                                  if (genderBlocked) {
+                                    toast.message(
+                                      t(
+                                        'Αυτή η έξοδος είναι μόνο για γυναίκες και μη δυαδικά άτομα. Μπορείς να ενημερώσεις το προφίλ σου αν θες.',
+                                        'This outing is for women and non-binary people only. You can update your profile if you want.',
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  join(group.id, event.id);
+                                }}
+                              >
+                                {genderBlocked ? t('Μόνο γυναίκες & μη δυαδικά', 'Women & non-binary only') : full ? t('Λίστα αναμονής', 'Join waitlist') : t('Μπες', 'Join')}
+                              </Button>
+                            )
+                          )}
+                        </div>
+                      )}
+                    </>
+                  }
                 >
-                  <EventCoverImg
-                    event={event}
-                    alt=""
-                    className={cn(
-                      'w-full bg-gray-100 object-cover',
-                      variant === 'sheet' ? 'h-36' : 'h-40 md:h-48',
-                    )}
-                  />
-                </button>
                 <div className="space-y-3 px-5 py-4">
+                {!flags.coverTitle && (
                 <div className="flex items-baseline justify-between gap-4">
                   <p className="card-meta font-medium leading-relaxed text-ink-muted inline-flex items-center gap-1.5 min-w-0">
                     <KindIcon className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden />
@@ -173,22 +225,32 @@ export function MiniOutingsSection({
                     {group.members.length}/{group.targetSize}
                   </p>
                 </div>
+                )}
+                {!flags.coverTitle && (
                 <p className="card-heading-lg font-bold leading-snug text-ink">{event.title}</p>
+                )}
+                {(!flags.coverFacts || !flags.coverOrganizer) && (
                 <div className="flex items-baseline justify-between gap-4">
+                  {!flags.coverFacts && (
                   <p className="min-w-0 card-meta font-medium leading-relaxed text-ink-muted inline-flex items-center gap-1.5">
                     <MapPin className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden />
                     {formatLocationArea(event.locationArea, language)}
                   </p>
+                  )}
+                  {!flags.coverOrganizer && (
                   <p className="shrink-0 card-meta font-medium leading-relaxed text-ink-muted">
                     {t(`με ${hostName}`, `with ${hostName}`)}
                   </p>
+                  )}
                 </div>
+                )}
                 {/* When the button already says «women & non-binary only», the line would repeat it. */}
                 {group.genderMode === 'women_nb' && !genderBlocked && (
                   <p className="card-meta font-medium leading-relaxed text-ink">
                     {t('Γυναίκες & μη δυαδικά άτομα', 'Women & non-binary')}
                   </p>
                 )}
+                {!flags.coverFull && (
                 <div className="pt-1">
                   {mine ? (
                     <Button size="sm" variant="ghost" onClick={() => go(`/night/${group.id}`)}>
@@ -226,7 +288,9 @@ export function MiniOutingsSection({
                     </Button>
                   )}
                 </div>
+                )}
                 </div>
+                </CardImageDepthFrame>
               </li>
             );
           })}

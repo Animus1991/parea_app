@@ -35,6 +35,8 @@ import {
   type BuddySeekFilterKey,
 } from './BuddySeekChrome';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
+import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
 
 function joinStatusLabel(status: CompanyJoinRequestStatus, t: (el: string, en: string) => string) {
   switch (status) {
@@ -58,6 +60,7 @@ type RequestWizard = { event: Event; existing?: CompanyRequest };
 export default function BuddySeekPageContent() {
   const { t, language } = useLanguage();
   const a = usePageContrast();
+  const cardImage = useDiscoverCardImageDepth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const feed = usePlansFormingFeed(24);
@@ -196,8 +199,14 @@ export default function BuddySeekPageContent() {
         )}
       </header>
 
+      <DiscoverCardImagePicker
+        depth={cardImage.depth}
+        options={cardImage.options}
+        onChange={cardImage.setDepth}
+      />
+
       {/* Φ27 — small outings without an event (coffee / walk / run) */}
-      <MiniOutingsSection />
+      <MiniOutingsSection imageDepth={cardImage.depth} />
 
       {feed.myActivePlan && (
         <PlansFormingYourPlanBanner
@@ -317,6 +326,7 @@ export default function BuddySeekPageContent() {
                   key={item.intent.id}
                   item={item}
                   variant="page"
+                  imageDepth={cardImage.depth}
                   onDismiss={() => {
                     dismiss(item.intent.id);
                     toast(t('Απόκρυψη', 'Hidden'), {
@@ -349,7 +359,7 @@ export default function BuddySeekPageContent() {
             <section className="space-y-5">
               <PlansFormingSectionTitle title={t('Ομάδες με ανοιχτές θέσεις', 'Groups with open spots')} />
               {recruitingGroups.map((entry) => (
-                <PlansFormingGroupCard key={entry.group.id} entry={entry} variant="page" />
+                <PlansFormingGroupCard key={entry.group.id} entry={entry} variant="page" imageDepth={cardImage.depth} />
               ))}
             </section>
           )}

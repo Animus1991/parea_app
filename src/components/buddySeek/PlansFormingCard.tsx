@@ -19,6 +19,9 @@ import { interestLabel } from '../../lib/interests';
 import { cn } from '../../lib/utils';
 import type { PlansFormingEnrichedItem } from '../../lib/plansFormingUtils';
 import type { PlansFormingGroupItem } from '../../hooks/usePlansFormingFeed';
+import { CardImageDepthFrame } from '../events/CardImageDepthFrame';
+import { GroupProgressBar } from '../events/GroupProgressBar';
+import { cardImageDepthFlags, type EventCardImageDepth } from '../../lib/discoverCardImagePreview';
 
 /** Urgency is a quiet chip; only «soon» keeps a colour because it is time-sensitive. */
 const URGENCY_TEXT = {
@@ -71,11 +74,13 @@ export function PlansFormingCard({
   variant = 'sidebar',
   isDarkSurface = false,
   onDismiss,
+  imageDepth = 'photo',
 }: {
   item: PlansFormingEnrichedItem;
   variant?: 'sidebar' | 'sheet' | 'inline' | 'page';
   isDarkSurface?: boolean;
   onDismiss?: () => void;
+  imageDepth?: EventCardImageDepth;
 }) {
   const { t, tu, language } = useLanguage();
   const navigate = useNavigate();
@@ -117,38 +122,99 @@ export function PlansFormingCard({
   const role = onDark ? 'text-cyan-300' : 'text-cyan-700 dark:text-cyan-300';
   const pageIcon = (Icon: typeof Clock) =>
     variant === 'page' ? <Icon className="w-3 h-3 shrink-0 opacity-70" aria-hidden /> : null;
+  const depth = variant === 'page' ? imageDepth : 'photo';
+  const flags = cardImageDepthFlags(depth);
 
   if (quietLayout) {
     return (
       <article
         className={cn(
-          'nakamas-card overflow-hidden rounded-2xl shadow-soft',
+          'nakamas-card overflow-hidden rounded-2xl shadow-soft flex flex-col',
           onDark ? 'bg-white/[0.04]' : 'bg-white dark:bg-gray-900',
         )}
       >
-        <button
-          type="button"
-          onClick={() => navigate(`/events/${item.event.id}`)}
-          className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
-          aria-label={t('Δες εκδήλωση', 'View event')}
+        <CardImageDepthFrame
+          event={item.event}
+          depth={depth}
+          photoHeightClass={variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24'}
+          top={
+            variant === 'page' ? (
+              <div className="absolute top-3 right-3 z-10 flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isSaved) unsaveRequest(item.intent.id);
+                    else saveRequest(item.intent.id);
+                    toast.message(
+                      isSaved
+                        ? t('Αφαιρέθηκε', 'Removed')
+                        : t('Αποθηκεύτηκε ιδιωτικά — δημοσίευσέ το όποτε θέλεις', 'Saved privately — publish anytime'),
+                    );
+                  }}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/80 text-gray-700 backdrop-blur-md"
+                  aria-label={t('Αποθήκευση σχεδίου', 'Save plan')}
+                >
+                  <Bookmark className={cn('w-4 h-4', isSaved && 'fill-current text-cyan-700')} />
+                </button>
+              </div>
+            ) : undefined
+          }
+          overlay={
+            <>
+              <p className="card-badge font-semibold tracking-wide text-white/80">
+                {tu(item.intentLabel.el, item.intentLabel.en)}
+                {item.isSavedEvent ? ` · ${t('Αποθηκευμένη', 'Saved')}` : ''}
+                {item.isHighMatch ? ` · ${t('Υψηλή συμβατότητα', 'High match')}` : ''}
+              </p>
+              <div className="space-y-1.5">
+                <h3 className="card-heading-lg font-bold leading-snug text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]">{item.event.title}</h3>
+                {flags.coverOrganizer && (
+                  <p className="card-copy leading-relaxed text-white/85">
+                    <span className="font-semibold text-white">{displayName}</span>
+                    <span className="opacity-50" aria-hidden>{' · '}</span>
+                    <span className="card-role font-medium">{t(item.roleLabel.el, item.roleLabel.en)}</span>
+                  </p>
+                )}
+              </div>
+              {flags.coverFacts && (
+                <div className="space-y-2 text-white/85">
+                  <FactSpread mutedClass="text-white/85" leftIcon={pageIcon(Clock)} left={t(item.scheduleFull.el, item.scheduleFull.en)} />
+                  <FactSpread
+                    mutedClass="text-white/85"
+                    leftIcon={pageIcon(MapPin)}
+                    left={locationLine}
+                    rightIcon={pageIcon(Users)}
+                    right={t(item.groupSizeLabel.el, item.groupSizeLabel.en)}
+                  />
+                </div>
+              )}
+              {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
+              {flags.coverFull && (
+                <div className="mt-auto border-t border-white/25 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewOpen(true)}
+                    className="px-4 min-h-9 rounded-full card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors"
+                  >
+                    {t('Αίτημα συμμετοχής', 'Ask to join')}
+                  </button>
+                </div>
+              )}
+            </>
+          }
         >
-          <EventCoverImg
-            event={item.event}
-            className={cn(
-              'w-full bg-gray-100 object-cover',
-              variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24',
-            )}
-          />
-        </button>
 
         <div className={cn(compact ? 'space-y-3.5 px-4 py-4' : 'space-y-4 px-5 py-5')}>
           <div className="flex items-start justify-between gap-4">
+            {!flags.coverTitle && (
             <p className={cn('card-badge font-semibold tracking-wide pt-1', muted)}>
               {tu(item.intentLabel.el, item.intentLabel.en)}
               {item.isSavedEvent ? ` · ${t('Αποθηκευμένη', 'Saved')}` : ''}
               {item.isHighMatch ? ` · ${t('Υψηλή συμβατότητα', 'High match')}` : ''}
             </p>
-            <div className="flex shrink-0 -mr-1.5 -mt-1">
+            )}
+            <div className={cn('flex shrink-0 -mr-1.5 -mt-1', flags.coverTitle && 'ml-auto')}>
+              {variant !== 'page' && (
               <button
                 type="button"
                 onClick={() => {
@@ -166,6 +232,7 @@ export function PlansFormingCard({
               >
                 <Bookmark className={cn('w-4 h-4', isSaved && 'fill-current')} />
               </button>
+              )}
               {onDismiss && (
                 <button
                   type="button"
@@ -181,7 +248,10 @@ export function PlansFormingCard({
           </div>
 
           <div className="space-y-1.5">
-            <h3 className={cn('card-heading-lg font-bold leading-snug', ink)}>{item.event.title}</h3>
+            {!flags.coverTitle && (
+              <h3 className={cn('card-heading-lg font-bold leading-snug', ink)}>{item.event.title}</h3>
+            )}
+            {!flags.coverOrganizer && (
             <p className={cn('card-copy leading-relaxed', muted)}>
               <span className={cn('font-semibold', ink)}>{displayName}</span>
               <span className="opacity-50" aria-hidden>
@@ -191,14 +261,18 @@ export function PlansFormingCard({
                 {t(item.roleLabel.el, item.roleLabel.en)}
               </span>
             </p>
+            )}
           </div>
 
           <div className="space-y-2">
+            {!flags.coverFacts && (
             <FactSpread
               mutedClass={muted}
               leftIcon={pageIcon(Clock)}
               left={t(item.scheduleFull.el, item.scheduleFull.en)}
             />
+            )}
+            {!flags.coverFacts && (
             <FactSpread
               mutedClass={muted}
               leftIcon={pageIcon(MapPin)}
@@ -206,6 +280,7 @@ export function PlansFormingCard({
               rightIcon={pageIcon(Users)}
               right={t(item.groupSizeLabel.el, item.groupSizeLabel.en)}
             />
+            )}
             <FactSpread
               mutedClass={muted}
               left={t(item.meetingLabel.el, item.meetingLabel.en)}
@@ -224,6 +299,7 @@ export function PlansFormingCard({
             </p>
           )}
 
+          {!flags.coverFull && (
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
             <button
               type="button"
@@ -240,7 +316,9 @@ export function PlansFormingCard({
               {t('Εκδήλωση', 'Event')}
             </button>
           </div>
+          )}
         </div>
+        </CardImageDepthFrame>
 
         <JoinRequestPreviewModal
           open={previewOpen}
@@ -520,11 +598,13 @@ export function PlansFormingGroupCard({
   variant = 'sidebar',
   isDarkSurface = false,
   onSuggestMerge,
+  imageDepth = 'photo',
 }: {
   entry: PlansFormingGroupItem;
   variant?: 'sidebar' | 'sheet' | 'page';
   isDarkSurface?: boolean;
   onSuggestMerge?: () => void;
+  imageDepth?: EventCardImageDepth;
 }) {
   const { t, tu, language } = useLanguage();
   const navigate = useNavigate();
@@ -535,34 +615,69 @@ export function PlansFormingGroupCard({
   const ink = onDark ? 'text-white' : 'text-ink';
   const muted = onDark ? 'text-gray-400' : 'text-ink-muted';
   const role = onDark ? 'text-emerald-300' : 'text-emerald-700 dark:text-emerald-300';
+  const depth = variant === 'page' ? imageDepth : 'photo';
+  const flags = cardImageDepthFlags(depth);
 
   return (
     <article
       className={cn(
-        'nakamas-card overflow-hidden rounded-2xl shadow-soft',
+        'nakamas-card overflow-hidden rounded-2xl shadow-soft flex flex-col',
         onDark ? 'bg-white/[0.04]' : 'bg-white dark:bg-gray-900',
       )}
     >
-      <button
-        type="button"
-        onClick={() => navigate(`/events/${event.id}`)}
-        className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
-        aria-label={t('Δες εκδήλωση', 'View event')}
+      <CardImageDepthFrame
+        event={event}
+        depth={depth}
+        photoHeightClass={variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24'}
+        overlay={
+          <>
+            <p className="card-badge font-semibold tracking-wide text-emerald-200">
+              {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
+            </p>
+            <h3 className="card-heading-lg font-bold leading-snug text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]">{event.title}</h3>
+            {flags.coverOrganizer && meta.hostFirstName && (
+              <p className="card-copy leading-relaxed text-white/85">
+                <span className="font-semibold text-white">{meta.hostFirstName}</span>
+                <span className="opacity-50" aria-hidden>{' · '}</span>
+                <span className="card-role font-medium">{t('Οργανώνει ομάδα', 'Group host')}</span>
+              </p>
+            )}
+            {flags.coverFacts && (
+              <FactSpread
+                mutedClass="text-white/85"
+                left={t(meta.scheduleFull.el, meta.scheduleFull.en)}
+                right={`${meta.filled}/${meta.target} ${t('μέλη', 'members')}`}
+              />
+            )}
+            {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
+            {flags.coverProgress && (
+              <div className="mt-auto border-t border-white/25 pt-4">
+                <GroupProgressBar current={meta.filled} target={meta.target} onPhoto className={flags.coverFull ? 'mb-3' : undefined} />
+                {flags.coverFull && (
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
+                    className="px-4 min-h-9 rounded-full card-cta bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+                  >
+                    {t('Αίτημα συμμετοχής', 'Ask to join')}
+                  </button>
+                )}
+              </div>
+            )}
+          </>
+        }
       >
-        <EventCoverImg
-          event={event}
-          className={cn(
-            'w-full bg-gray-100 object-cover',
-            variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24',
-          )}
-        />
-      </button>
       <div className={cn(compact ? 'space-y-3.5 px-4 py-4' : 'space-y-4 px-5 py-5')}>
+        {!flags.coverTitle && (
         <p className={cn('card-badge font-semibold tracking-wide', role)}>
           {tu('Ομάδα δέχεται μέλη', 'Group recruiting')}
         </p>
+        )}
         <div className="space-y-1.5">
+          {!flags.coverTitle && (
           <h3 className={cn('card-heading-lg font-bold leading-snug', ink)}>{event.title}</h3>
+          )}
+          {!flags.coverOrganizer && (
           <p className={cn('card-copy leading-relaxed', muted)}>
             {meta.hostFirstName && (
               <>
@@ -576,7 +691,9 @@ export function PlansFormingGroupCard({
               {t('Οργανώνει ομάδα', 'Group host')}
             </span>
           </p>
+          )}
         </div>
+        {!flags.coverFacts && (
         <div className="space-y-2">
           <FactSpread mutedClass={muted} left={t(meta.scheduleFull.el, meta.scheduleFull.en)} />
           <FactSpread
@@ -587,12 +704,16 @@ export function PlansFormingGroupCard({
             right={`${meta.filled}/${meta.target} ${t('μέλη', 'members')} · ${meta.spots} ${t('ανοιχτές θέσεις', 'open spots')}`}
           />
         </div>
+        )}
+        {!flags.coverProgress && (
         <div className={cn('h-1.5 overflow-hidden rounded-full', onDark ? 'bg-white/10' : 'bg-black/[0.06]')}>
           <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${meta.progress}%` }} />
         </div>
+        )}
         {meta.note && (
           <p className={cn('card-copy leading-relaxed', muted)}>«{meta.note}»</p>
         )}
+        {!flags.coverFull && (
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
           <button
             type="button"
@@ -611,7 +732,9 @@ export function PlansFormingGroupCard({
             </button>
           )}
         </div>
+        )}
       </div>
+      </CardImageDepthFrame>
     </article>
   );
 }
