@@ -37,8 +37,9 @@ test.describe('Desktop web type scale', () => {
     expect(phone.html).toBeCloseTo(16, 0);
     expect(phone.card).toBeGreaterThan(10);
     expect(phone.card).toBeLessThan(12.2);
-    expect(phone.story).toBeGreaterThan(8.5);
-    expect(phone.story).toBeLessThan(9.6);
+    // Phones: no word under 10px (round 23 raised text-2xs from 9px).
+    expect(phone.story).toBeGreaterThanOrEqual(10);
+    expect(phone.story).toBeLessThan(10.6);
     expect(phone.tileW).toBeGreaterThan(100);
     expect(phone.tileW).toBeLessThan(112);
 
@@ -51,9 +52,10 @@ test.describe('Desktop web type scale', () => {
     expect(desktop.card / phone.card).toBeLessThan(1.32);
     expect(desktop.html / phone.html).toBeGreaterThan(1.08);
     expect(desktop.html / phone.html).toBeLessThan(1.13);
-    // Stories: html +10%, tile type +10% then +5% extra, tile size +10%.
-    expect(desktop.story / phone.story).toBeGreaterThan(1.22);
-    expect(desktop.story / phone.story).toBeLessThan(1.32);
+    // Stories: html +10% and tile type +15.5% on the old 9px token (~11.4px).
+    // Phone stories now sit on the 10px floor, so the desktop ratio is milder.
+    expect(desktop.story / phone.story).toBeGreaterThan(1.10);
+    expect(desktop.story / phone.story).toBeLessThan(1.20);
     expect(desktop.story / desktop.card).toBeLessThan(0.9);
     expect(desktop.tileW / phone.tileW).toBeGreaterThan(1.08);
     expect(desktop.tileW / phone.tileW).toBeLessThan(1.13);
