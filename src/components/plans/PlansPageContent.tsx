@@ -3,7 +3,7 @@ import { Card } from '../common/Card';
 import { MessageCircle, MapPin, Calendar, Clock, ShieldAlert, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass, PartyPopper } from 'lucide-react';
 import { useStore } from '../../store';
 import { useNavigate } from 'react-router-dom';
-import { parseISO, differenceInDays, isBefore } from 'date-fns';
+import { parseISO, differenceInDays } from 'date-fns';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
@@ -22,6 +22,7 @@ import { eventStartMs, LATE_CANCEL_MS } from '../../store/outingsSlice';
 import { EmptyState } from '../common/EmptyState';
 import { EventCoverImg } from '../common/EventCoverImg';
 import { formatCountdown } from '../../lib/countdown';
+import { eventOccursAt, isEventPast } from '../../lib/eventDisplay';
 
 function getUserGroupForEvent(eventId: string, groups: Group[], userId: string | undefined) {
   if (!userId) return undefined;
@@ -62,17 +63,18 @@ export default function PlansPageContent() {
     ? groups.filter(g => g.members.includes(currentUser.id)).map(g => g.eventId)
     : [];
 
+  // Date and time together: a plan later today is still upcoming, not history
+  // waiting for a rating (a date-only string parses as midnight UTC).
+  const startsAt = (e: { date: string; time?: string }) => eventOccursAt(e).getTime();
   const upcomingEvents = events.filter(e => {
-    const d = new Date(e.date);
-    return !isNaN(d.getTime()) && !isBefore(d, now) && userGroupEventIds.includes(e.id);
-  }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return !isNaN(startsAt(e)) && !isEventPast(e, now) && userGroupEventIds.includes(e.id);
+  }).sort((a, b) => startsAt(a) - startsAt(b));
 
   const pendingEvents = events.filter(e => waitlistedEvents.includes(e.id) && !userGroupEventIds.includes(e.id));
 
   const pastEvents = events.filter(e => {
-    const d = new Date(e.date);
-    return !isNaN(d.getTime()) && isBefore(d, now) && userGroupEventIds.includes(e.id);
-  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return !isNaN(startsAt(e)) && isEventPast(e, now) && userGroupEventIds.includes(e.id);
+  }).sort((a, b) => startsAt(b) - startsAt(a));
 
   const needsRating = pastEvents.filter(e => !feedbackSubmitted[e.id]).length;
   const nextEvent = upcomingEvents[0];

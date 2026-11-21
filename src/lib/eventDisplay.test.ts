@@ -1,13 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  formatEventPrice,
-  formatLocationArea,
-  getEventJoinState,
-  isEventImminent,
-  isEventPast,
-  showNightCoordinationTools,
-  translateEventTag,
-} from './eventDisplay';
+import { formatEventPrice, formatLocationArea, getEventJoinState, isEventImminent, isEventPast, showNightCoordinationTools, translateEventTag } from './eventDisplay';
 import type { Event, Group, User } from '../types';
 
 const event = (over: Partial<Event> = {}): Event => ({
@@ -102,5 +94,12 @@ describe('eventDisplay', () => {
         now,
       }),
     ).toBe('join');
+  });
+
+  it('keeps a plan later today upcoming (date and time, not date alone)', () => {
+    const morning = new Date(2026, 10, 21, 9, 6);
+    expect(isEventPast({ date: '2026-11-21', time: '11:00' }, morning)).toBe(false);
+    expect(isEventPast({ date: '2026-11-21', time: '08:00' }, morning)).toBe(true);
+    expect(isEventPast({ date: '2026-11-20', time: '23:30' }, morning)).toBe(true);
   });
 });
