@@ -4,10 +4,12 @@ import {
   CHAT_HAT_NUDGE_PX,
   CHAT_HAT_NUDGE_SHIFT_PX,
   chatHatAnchorFromPixels,
+  chatHatChromeInsets,
   chatHatPixelsFromAnchor,
   chatHatSizePx,
   clampChatHatPixels,
   type ChatHatAnchor,
+  type ChatHatChromeVariant,
 } from '../lib/chatHatPosition';
 
 type Pixels = { left: number; top: number };
@@ -26,6 +28,7 @@ function readViewport() {
 export function useDraggableChatHat(
   saved: ChatHatAnchor | null,
   setSaved: (pos: ChatHatAnchor | null) => void,
+  variant: ChatHatChromeVariant = 'default',
 ) {
   const [viewport, setViewport] = useState(readViewport);
   const [dragPixels, setDragPixels] = useState<Pixels | null>(null);
@@ -53,21 +56,23 @@ export function useDraggableChatHat(
   }, []);
 
   const size = chatHatSizePx(viewport.w);
+  const insets = chatHatChromeInsets(viewport.w, variant);
   const placed =
     dragPixels ??
-    (saved ? chatHatPixelsFromAnchor(saved, size, viewport.w, viewport.h) : null);
+    (saved ? chatHatPixelsFromAnchor(saved, size, viewport.w, viewport.h, insets) : null);
 
   const persistPixels = useCallback(
     (pixels: Pixels) => {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
       const nextSize = chatHatSizePx(vw);
-      const next = clampChatHatPixels(pixels.left, pixels.top, nextSize, vw, vh);
-      setSaved(chatHatAnchorFromPixels(next.left, next.top, nextSize, vw, vh));
+      const nextInsets = chatHatChromeInsets(vw, variant);
+      const next = clampChatHatPixels(pixels.left, pixels.top, nextSize, vw, vh, nextInsets);
+      setSaved(chatHatAnchorFromPixels(next.left, next.top, nextSize, vw, vh, nextInsets));
       setDragPixels(null);
       setViewport({ w: vw, h: vh });
     },
-    [setSaved],
+    [setSaved, variant],
   );
 
   const onPointerDown = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
@@ -106,11 +111,12 @@ export function useDraggableChatHat(
         chatHatSizePx(vw),
         vw,
         vh,
+        chatHatChromeInsets(vw, variant),
       );
       liveRef.current = next;
       setDragPixels(next);
     },
-    [],
+    [variant],
   );
 
   const endGesture = useCallback(
@@ -148,10 +154,11 @@ export function useDraggableChatHat(
           chatHatSizePx(vw),
           vw,
           vh,
+          chatHatChromeInsets(vw, variant),
         ),
       );
     },
-    [persistPixels],
+    [persistPixels, variant],
   );
 
   const shouldIgnoreClick = useCallback(() => suppressClickRef.current, []);

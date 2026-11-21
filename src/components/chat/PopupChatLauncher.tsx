@@ -15,13 +15,14 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
   const hatSrc = chatHatById(hatStyleId)?.src;
   const chatHatPos = useUIStore((s) => s.chatHatPos);
   const setChatHatPos = useUIStore((s) => s.setChatHatPos);
-  const drag = useDraggableChatHat(chatHatPos, setChatHatPos);
+  const { pathname } = useLocation();
+  const onEventDetail = Boolean(matchPath('/events/:eventId', pathname));
+  const drag = useDraggableChatHat(chatHatPos, setChatHatPos, onEventDetail ? 'event' : 'default');
   const conversations = useChatStore((s) => s.conversations);
   const unread = useMemo(
     () => conversations.reduce((n, c) => n + (c.status === 'archived' ? 0 : c.unreadCount), 0),
     [conversations],
   );
-  const { pathname } = useLocation();
   const hideOnPhones =
     Boolean(matchPath('/events/:eventId/join', pathname)) ||
     Boolean(matchPath('/history/feedback/:eventId', pathname));
@@ -30,7 +31,7 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
     <button
       type="button"
       onClick={(event) => {
-        if (drag.shouldIgnoreClick()) {
+        if (event.detail > 0 && drag.shouldIgnoreClick()) {
           event.preventDefault();
           event.stopPropagation();
           return;

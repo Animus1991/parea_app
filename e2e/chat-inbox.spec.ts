@@ -67,8 +67,31 @@ test.describe('Nakamas Chat preview', () => {
     });
     expect(stored?.state?.chatHatPos?.nx).toBeGreaterThanOrEqual(0);
     expect(stored?.state?.chatHatPos?.nx).toBeLessThan(1);
-    await btn.click();
+    await btn.focus();
+    await page.keyboard.press('Enter');
     await expect(inbox(page)).toBeVisible();
+  });
+
+  test('dragging the hat cannot cover Create event', async ({ page }) => {
+    await enterDemoGuest(page);
+    const btn = chatsButton(page);
+    const before = await btn.boundingBox();
+    expect(before).toBeTruthy();
+    const start = { x: before!.x + before!.width / 2, y: before!.y + before!.height / 2 };
+    const viewport = page.viewportSize() ?? { width: 390, height: 844 };
+    await page.mouse.move(start.x, start.y);
+    await page.mouse.down();
+    await page.mouse.move(viewport.width / 2, viewport.height - 20, { steps: 12 });
+    await page.mouse.up();
+    await expect(inbox(page)).toHaveCount(0);
+    const after = await btn.boundingBox();
+    expect(after).toBeTruthy();
+    expect(after!.y + after!.height).toBeLessThanOrEqual(viewport.height - 75);
+    const create = page.getByRole('link', { name: /Δημιουργία εκδήλωσης|Create event/ });
+    await expect(create).toBeVisible();
+    await create.click();
+    await expect(page).toHaveURL(/\/create/);
+    await expect(inbox(page)).toHaveCount(0);
   });
 
   test('the floated straw hat opens plan chats', async ({ page }) => {
@@ -200,6 +223,16 @@ test.describe('Nakamas Chat event page', () => {
   test('the event Join button stays tappable under the hat', async ({ page }) => {
     await enterDemoGuest(page);
     await page.goto('/events/e1');
+    const hat = chatsButton(page);
+    const hatBox = await hat.boundingBox();
+    if (hatBox) {
+      const start = { x: hatBox.x + hatBox.width / 2, y: hatBox.y + hatBox.height / 2 };
+      const viewport = page.viewportSize() ?? { width: 390, height: 844 };
+      await page.mouse.move(start.x, start.y);
+      await page.mouse.down();
+      await page.mouse.move(viewport.width / 2, viewport.height - 90, { steps: 10 });
+      await page.mouse.up();
+    }
     const join = page.getByRole('button', { name: /Μπες σε παρέα|Join a group|Η βραδιά μας|Our night/ });
     await expect(join).toBeVisible();
     const box = await join.boundingBox();

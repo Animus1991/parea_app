@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   chatHatAnchorFromPixels,
+  chatHatChromeInsets,
   chatHatPixelsFromAnchor,
   chatHatSizePx,
   clamp01,
@@ -57,5 +58,18 @@ describe('chat hat placement', () => {
     expect(isChatHatAnchor({ nx: 0.2, ny: 0.8 })).toBe(true);
     expect(isChatHatAnchor({ nx: 0.2 })).toBe(false);
     expect(isChatHatAnchor(null)).toBe(false);
+  });
+
+  it('keeps the hat above the phone tab bar and the event Join row', () => {
+    const size = 96;
+    const home = chatHatChromeInsets(390, 'default');
+    const event = chatHatChromeInsets(390, 'event');
+    const dropped = clampChatHatPixels(147, 820, size, 390, 844, home);
+    expect(dropped.top + size).toBeLessThanOrEqual(844 - home.bottom);
+    expect(dropped.top + size).toBeLessThanOrEqual(844 - 75);
+
+    const onEvent = clampChatHatPixels(dropped.left, dropped.top, size, 390, 844, event);
+    expect(onEvent.top + size).toBeLessThanOrEqual(844 - event.bottom);
+    expect(event.bottom).toBeGreaterThan(home.bottom);
   });
 });
