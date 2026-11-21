@@ -1,4 +1,5 @@
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, useState, type CSSProperties } from 'react';
+import { cn } from '../../lib/utils';
 import { matchPath, useLocation } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -50,11 +51,28 @@ export function PopupChatRoot() {
     .map((id) => conversations.find((c) => c.id === id))
     .filter((c): c is NonNullable<typeof c> => !!c);
 
+  // Web popups stand side by side from the right (360px, one 22.5rem step each).
+  // Show only as many as fit the screen; the rest wait as restore chips, like
+  // minimized ones, and one tap brings a chat to the front.
+  const fit = usePopupsThatFit(windows.length, minimized.length);
+  const shown = windows.slice(-fit);
+  const parked = windows.slice(0, windows.length - shown.length);
+  const chips = [...parked, ...minimized];
+
   return (
     <>
-      {minimized.length > 0 && (
-        <div className="chat-above-hat fixed z-chat flex flex-col items-end gap-2 right-4 md:right-6 copilot-shift">
-          {minimized.map((c) => (
+      {chips.length > 0 && (
+        <div
+          className={cn(
+            'fixed z-chat flex flex-col items-end gap-2 right-4 copilot-shift',
+            // Beside the open popups (never under them); above the hat when none is open.
+            shown.length > 0
+              ? 'chat-above-hat md:bottom-6 md:right-[calc(1.5rem+var(--chat-stack)*22.5rem)]'
+              : 'chat-above-hat md:right-6',
+          )}
+          style={{ '--chat-stack': String(shown.length) } as CSSProperties}
+        >
+          {chips.map((c) => (
             <button
               key={c.id}
               type="button"
@@ -92,11 +110,37 @@ export function PopupChatRoot() {
       )}
       {windows.length > 0 && (
         <Suspense fallback={null}>
-          {windows.map((c, i) => (
+          {shown.map((c, i) => (
             <ChatWindow key={c.id} conversation={c} stackIndex={i} />
           ))}
         </Suspense>
       )}
     </>
   );
+}
+
+const POPUP_WIDTH_PX = 360;
+const POPUP_STEP_REM = 22.5;
+const POPUP_EDGE_REM = 1.5;
+
+const CHIP_ROOM_PX = 208;
+
+/**
+ * How many side-by-side chat popups fit the window (phones stack them full
+ * screen). When some chats wait as restore chips, room is kept for them.
+ */
+function usePopupsThatFit(count: number, minimizedCount: number): number {
+  const [width, setWidth] = useState(() => (typeof window === 'undefined' ? 1280 : window.innerWidth));
+  useEffect(() => {
+    const onResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  if (width < 768) return count;
+  const rem = typeof document === 'undefined' ? 16 : parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  const fitIn = (room: number) => Math.max(1, Math.floor(room / (POPUP_STEP_REM * rem)) + 1);
+  const room = width - POPUP_EDGE_REM * rem - POPUP_WIDTH_PX;
+  const all = fitIn(room);
+  const chips = minimizedCount > 0 || count > all;
+  return chips ? fitIn(room - CHIP_ROOM_PX) : all;
 }

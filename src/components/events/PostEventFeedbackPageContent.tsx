@@ -14,6 +14,7 @@ import { FEEDBACK_MOODS, starsForMood } from '../../lib/feedbackDue';
 import { PersonAvatar } from '../wall/PersonAvatar';
 import { formatLocationArea } from '../../lib/eventDisplay';
 import { formatPlanWhen } from '../../lib/dateLocale';
+import { EventCoverImg } from '../common/EventCoverImg';
 
 const COMMENT_MAX = 280;
 
@@ -100,11 +101,9 @@ export default function PostEventFeedbackPageContent() {
           p.borderB,
         )}
       >
-        {event.imageUrl && (
-          <div className="w-12 h-12 rounded-2xl overflow-hidden shrink-0 border border-white/10 hidden sm:block">
-            <img src={event.imageUrl} alt="" className="w-full h-full object-cover" />
-          </div>
-        )}
+        <div className="w-12 h-12 rounded-2xl overflow-hidden shrink-0 border border-white/10 hidden sm:block">
+          <EventCoverImg event={event} alt="" className="w-full h-full object-cover" />
+        </div>
         <div className="min-w-0">
           <h3 className={cn('text-sm md:text-base font-bold truncate', p.head)}>{event.title}</h3>
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5">

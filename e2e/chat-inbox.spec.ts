@@ -373,6 +373,28 @@ test.describe('Nakamas Chat web popups', () => {
 test.describe('Nakamas Chat restore vs hat picker', () => {
   test.use({ viewport: { width: 1024, height: 768 } });
 
+  test('a narrow desktop shows only the popups that fit; the rest wait as restore chips', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/chats');
+    const search = page.getByPlaceholder(/Αναζήτηση συνομιλιών|Search conversations/);
+    await search.fill('Workshop');
+    await page.getByRole('button', { name: /Workshop: UX Basics/ }).click();
+    await search.fill('');
+    await page.getByRole('button', { name: /Nakamas Support/ }).click();
+    await page.getByRole('button', { name: /Διοργανωτής · Ωδείο|Organizer/ }).click();
+    const windows = page.locator('[data-chat-window]');
+    await expect(windows).toHaveCount(2);
+    for (let i = 0; i < 2; i++) {
+      const box = await windows.nth(i).boundingBox();
+      expect(box && box.x >= 0 && box.x + box.width <= 1024).toBe(true);
+    }
+    const restore = page.getByRole('button', { name: /Επαναφορά συνομιλίας: Workshop|Restore conversation: Workshop/ });
+    await expect(restore).toBeVisible();
+    await restore.click();
+    await expect(windows).toHaveCount(2);
+    await expect(windows.getByText(/Workshop: UX Basics/)).toBeVisible();
+  });
+
   test('minimizing the last popup keeps restore tappable', async ({ page }) => {
     await enterDemoGuest(page);
     const sheet = await openInbox(page);

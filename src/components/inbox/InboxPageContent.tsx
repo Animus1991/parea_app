@@ -16,6 +16,7 @@ import { cn } from '../../lib/utils';
 import { INBOX_TYPO } from '../../lib/typographyTokens';
 import type { Conversation } from '../../types/chat';
 import { isEventPast } from '../../lib/eventDisplay';
+import { PhotoOrInitials } from '../common/PhotoOrInitials';
 
 type InboxTab = 'messages' | 'notifications';
 
@@ -307,24 +308,18 @@ export default function InboxPageContent() {
                     )}
                   >
                     <div className="relative shrink-0">
-                      {chat.imageUrl ? (
-                        <img
-                          src={chat.imageUrl}
-                          alt=""
-                          className="w-12 h-12 rounded-full object-cover border-2 border-white/20"
-                        />
-                      ) : (
-                        <div
-                          className={cn(
-                            'w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg text-white',
-                            p.isDark
-                              ? 'bg-gradient-to-br from-cyan-600 to-blue-700'
-                              : 'bg-gradient-to-br from-cyan-400 to-blue-500',
-                          )}
-                        >
-                          {chat.title.charAt(0)}
-                        </div>
-                      )}
+                      {/* Photo, or the first letters when there is none or it fails to load. */}
+                      <div
+                        className={cn(
+                          'w-12 h-12 overflow-hidden rounded-full flex items-center justify-center font-bold text-base text-white',
+                          chat.imageUrl && 'border-2 border-white/20',
+                          p.isDark
+                            ? 'bg-gradient-to-br from-cyan-600 to-blue-700'
+                            : 'bg-gradient-to-br from-cyan-400 to-blue-500',
+                        )}
+                      >
+                        <PhotoOrInitials src={chat.imageUrl} name={chat.title} />
+                      </div>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">

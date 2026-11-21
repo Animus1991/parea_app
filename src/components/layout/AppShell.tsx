@@ -353,7 +353,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
             onChange={e => setSearchValue(e.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={t('Αναζήτηση εκδηλώσεων...', 'Search events...')}
-            className={cn("search-control w-64 h-9 py-1.5 pl-8 pr-7 border outline-none transition-colors", tok.searchInput)}
+            className={cn("search-control w-44 xl:w-64 h-9 py-1.5 pl-8 pr-7 border outline-none transition-colors", tok.searchInput)}
           />
           <Search className={cn("absolute w-3.5 h-3.5 left-2.5 top-1/2 -translate-y-1/2", tok.isDark ? "text-gray-400" : "text-gray-400")} />
           {searchValue && (
@@ -402,7 +402,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           )}
         >
           <Plus className="w-4 h-4 icon-emphasis" />
-          <span className="hidden lg:inline">{t('Δημιουργία', 'Create')}</span>
+          <span className="hidden xl:inline">{t('Δημιουργία', 'Create')}</span>
         </button>
 
         <button

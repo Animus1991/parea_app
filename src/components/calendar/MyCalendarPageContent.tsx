@@ -47,6 +47,7 @@ import type { Event } from "../../types";
 import { usePublishPageSnapshot } from "../../hooks/usePublishPageSnapshot";
 import { formatLocationArea } from '../../lib/eventDisplay';
 import { formatPlanWhenDay } from '../../lib/dateLocale';
+import { EventCoverImg } from '../common/EventCoverImg';
 
 export default function MyCalendarPageContent() {
   const navigate = useNavigate();
@@ -659,7 +660,7 @@ export default function MyCalendarPageContent() {
               {upcomingEvents.filter((event) => isSameDay(event.parsedDate, selectedDay)).map((event) => (
                 <li key={event.id}>
                   <button type="button" onClick={() => navigate(`/events/${event.id}`)} className={cn("flex min-h-14 w-full items-center gap-3 rounded-xl border p-2 text-left", p.borderB, p.cardHover)}>
-                    <img src={event.imageUrl} alt="" className="h-10 w-12 shrink-0 rounded-lg object-cover" />
+                    <EventCoverImg event={event} alt="" className="h-10 w-12 shrink-0 rounded-lg object-cover" />
                     <span className="min-w-0">
                       <span className={cn("block truncate text-xs font-bold", p.head)}>{event.title}</span>
                       <span className={cn("block text-2xs font-medium", p.muted)}>{event.time} · {formatLocationArea(event.locationArea, language)}</span>

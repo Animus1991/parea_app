@@ -22,6 +22,7 @@ import { canUndo, cancelAction, confirmAction, undoAction } from '../../ai/copil
 import { formatEventLine } from '../../ai/actions';
 import { explainEventMatch } from '../../lib/matchingExplain';
 import { trackEvent } from '../../lib/analytics';
+import { EventCoverImg } from '../common/EventCoverImg';
 
 /** Minimal, safe rendering of model text (no HTML): strips markdown emphasis, keeps bullets. */
 function cleanModelText(text: string): string {
@@ -163,11 +164,7 @@ function EventResult({ eventId, index, onNavigate }: { eventId: string; index: n
         {index + 1}
       </span>
       <button type="button" onClick={open} className="flex min-w-0 flex-1 items-center gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg">
-        {event.imageUrl ? (
-          <img src={event.imageUrl} alt="" referrerPolicy="no-referrer" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
-        ) : (
-          <span className="h-10 w-10 shrink-0 rounded-lg bg-accent-soft" />
-        )}
+        <EventCoverImg event={event} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-semibold text-ink">{event.title}</span>
           <span className="block truncate text-xs text-ink-muted">{formatEventLine(event, language).split(' · ').slice(1).join(' · ')}</span>

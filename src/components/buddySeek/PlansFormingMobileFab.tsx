@@ -34,11 +34,13 @@ export function PlansFormingHeaderButton() {
       type="button"
       onClick={open}
       data-find-company-cta="header"
-      className="hidden lg:inline-flex items-center gap-1.5 min-h-9 px-3 rounded-full border border-accent-strong bg-accent text-accent-fg font-bold text-xs whitespace-nowrap transition-transform active:scale-[0.98] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      className="hidden lg:inline-flex items-center justify-center gap-1.5 min-h-9 min-w-9 px-2.5 xl:px-3 rounded-full border border-accent-strong bg-accent text-accent-fg font-bold text-xs whitespace-nowrap transition-transform active:scale-[0.98] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       aria-label={ariaLabel}
+      title={ariaLabel}
     >
       <Users className="w-3.5 h-3.5" aria-hidden />
-      <span>{label}</span>
+      {/* Narrow desktops (lg) keep the icon so the bell and profile stay on screen. */}
+      <span className="hidden xl:inline">{label}</span>
     </button>
   );
 }

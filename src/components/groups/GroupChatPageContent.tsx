@@ -58,6 +58,7 @@ import { formatPlanWhen } from '../../lib/dateLocale';
 import { showNightCoordinationTools, translateEventTag } from '../../lib/eventDisplay';
 import { formatLocationArea } from '../../lib/eventDisplay';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
+import { EventCoverImg } from '../common/EventCoverImg';
 
 /** Room under the newest message so the floating chats button (desktop) never covers it. */
 const VIRTUOSO_SPACER = { Footer: () => <div aria-hidden className="h-2 md:h-14" /> };
@@ -717,10 +718,9 @@ export default function GroupChatPageContent() {
               {/* Event Summary */}
               <div className="bg-white dark:bg-surface-raised rounded-2xl shadow-soft border border-gray-100 dark:border-border overflow-hidden">
                 <div className="relative h-28 w-full group">
-                  <img
-                    referrerPolicy="no-referrer"
-                    src={event.imageUrl}
-                    alt={event.title}
+                  <EventCoverImg
+                    event={event}
+                    alt=""
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
