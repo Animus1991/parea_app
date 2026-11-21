@@ -22,6 +22,17 @@ export function toUpperNoAccents(text: string): string {
     .replace(/́/g, '');
 }
 
+/** Case- and accent-fold so «ΑΘΗΝΑ», «Αθήνα» and «αθηνα» match the same place. */
+export function foldSearchText(text: string): string {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLocaleLowerCase('el')
+    .replace(/ς/g, 'σ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 /**
  * Articles, prepositions, conjunctions and possessives stay small inside a
  * title, as in both Greek and English title case («Εκδηλώσεις σε στιγμιότυπα»

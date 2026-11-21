@@ -3,6 +3,7 @@ import {
   formatEventPrice,
   formatLocationArea,
   locationMatchesQuery,
+  selectMyEventGroups,
   getEventJoinState,
   isEventImminent,
   isEventPast,
@@ -78,10 +79,33 @@ describe('eventDisplay', () => {
     expect(locationMatchesQuery('Thisio, Athens', 'θησείο', 'el')).toBe(true);
     expect(locationMatchesQuery('Thisio, Athens', 'thisio', 'el')).toBe(true);
     expect(locationMatchesQuery('Athens', 'αθήνα', 'el')).toBe(true);
+    expect(locationMatchesQuery('Athens', 'ΑΘΗΝΑ', 'el')).toBe(true);
+    expect(locationMatchesQuery('Thisio, Athens', 'ΘΗΣΕΙΟ', 'el')).toBe(true);
     expect(locationMatchesQuery('Thisio, Athens', 'κουκάκι', 'el')).toBe(false);
     expect(translateEventTag('boardgames', (el) => el)).toBe('Επιτραπέζια');
     expect(translateEventTag('board games', (_el, en) => en)).toBe('Board games');
     expect(translateEventTag('nakamas nights', (el) => el)).toBe('Nakamas Nights');
+  });
+
+  it('prefers membership over an earlier waitlist row for the same event', () => {
+    const waitlisted = {
+      id: 'g-wait',
+      eventId: 'e1',
+      status: 'pending' as const,
+      members: ['u2'],
+      waitlist: ['u1'],
+    };
+    const member = {
+      id: 'g-mine',
+      eventId: 'e1',
+      status: 'pending' as const,
+      members: ['u1'],
+      waitlist: [],
+    };
+    const picked = selectMyEventGroups([waitlisted, member], 'e1', 'u1');
+    expect(picked.member?.id).toBe('g-mine');
+    expect(picked.waitlisted?.id).toBe('g-wait');
+    expect(picked.member ?? picked.waitlisted).toEqual(member);
   });
 
   it('ties the card action to date and membership, not the title', () => {

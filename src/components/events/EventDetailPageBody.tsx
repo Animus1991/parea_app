@@ -32,7 +32,7 @@ import { cn } from '../../lib/utils';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { EventCoverImg } from '../common/EventCoverImg';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
-import { isLiveCatalogEvent } from '../../lib/eventDisplay';
+import { isLiveCatalogEvent, selectMyEventGroups } from '../../lib/eventDisplay';
 import { formatEur } from '../../lib/money';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
@@ -82,21 +82,14 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
   const totalMembers = eventGroups.reduce((acc, g) => acc + g.members.length, 0);
   const spotsLeftEvent = (event?.maxParticipants || 100) - totalMembers;
-  const myGroupForEvent =
-    currentUser &&
-    groups.find(
-      (g) =>
-        g.eventId === eventId &&
-        g.status !== 'cancelled' &&
-        (g.members.includes(currentUser.id) || g.waitlist?.includes(currentUser.id)),
-    );
-  const isMemberOfEvent = Boolean(currentUser && myGroupForEvent?.members.includes(currentUser.id));
-  const isWaitlistedOnly = Boolean(
-    currentUser &&
-      myGroupForEvent &&
-      !myGroupForEvent.members.includes(currentUser.id) &&
-      myGroupForEvent.waitlist?.includes(currentUser.id),
+  const { member: myMemberGroup, waitlisted: myWaitlistGroup } = selectMyEventGroups(
+    groups,
+    eventId,
+    currentUser?.id,
   );
+  const myGroupForEvent = myMemberGroup ?? myWaitlistGroup;
+  const isMemberOfEvent = Boolean(myMemberGroup);
+  const isWaitlistedOnly = Boolean(myWaitlistGroup && !myMemberGroup);
 
   if (discountFilter) {
     eventGroups = eventGroups.filter(g => g.discountUnlocked);
@@ -127,8 +120,8 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
   const handlePrimaryJoin = () => {
     if (!eventId) return;
-    if (isMemberOfEvent && myGroupForEvent) {
-      navigate(`/night/${myGroupForEvent.id}`);
+    if (myMemberGroup) {
+      navigate(`/night/${myMemberGroup.id}`);
       return;
     }
     const gate = canJoinEvent(eventId);

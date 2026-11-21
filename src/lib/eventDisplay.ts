@@ -1,6 +1,7 @@
 import type { Event, Group, User } from '../types';
 import { formatEur } from './money';
 import { eventTagLabels } from './eventTags';
+import { foldSearchText } from './greekText';
 
 const LOCATION_EL: Record<string, string> = {
   'Ilisia, Athens': 'Ιλίσια, Αθήνα',
@@ -117,10 +118,29 @@ export function locationMatchesQuery(
   language: 'el' | 'en',
 ): boolean {
   if (!area) return false;
-  const q = query.trim().toLowerCase();
+  const q = foldSearchText(query);
   if (!q) return true;
-  if (area.toLowerCase().includes(q)) return true;
-  return formatLocationArea(area, language).toLowerCase().includes(q);
+  if (foldSearchText(area).includes(q)) return true;
+  return foldSearchText(formatLocationArea(area, language)).includes(q);
+}
+
+/** Membership wins over an earlier waitlist row for the same event. */
+export function selectMyEventGroups<T extends {
+  eventId: string;
+  status?: string;
+  members: string[];
+  waitlist?: string[];
+}>(
+  groups: T[],
+  eventId: string | undefined,
+  userId: string | undefined,
+): { member: T | undefined; waitlisted: T | undefined } {
+  if (!eventId || !userId) return { member: undefined, waitlisted: undefined };
+  const live = groups.filter((g) => g.eventId === eventId && g.status !== 'cancelled');
+  return {
+    member: live.find((g) => g.members.includes(userId)),
+    waitlisted: live.find((g) => g.waitlist?.includes(userId)),
+  };
 }
 
 export function translateEventTag(
