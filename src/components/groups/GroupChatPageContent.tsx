@@ -250,7 +250,7 @@ export default function GroupChatPageContent() {
       <div className={cn(PAGE_FILL, "py-6")}>
         <EmptyState
           character="helper"
-          title={t('Το Chat δεν βρέθηκε', 'Chat not found')}
+          title={t('Η συνομιλία δεν βρέθηκε', 'Chat not found')}
           description={t(
             'Ίσως διαγράφηκε η ομάδα ή ο σύνδεσμος είναι λάθος.',
             'The group may have been removed, or the link is wrong.',
@@ -270,11 +270,11 @@ export default function GroupChatPageContent() {
         <h1 className={cn(APP_TYPO.pageTitle, "text-ink")}>{t('Συνομιλία ομάδας', 'Group chat')}</h1>
         <div className="rounded-2xl border border-border bg-surface-raised p-4">
           <p className="text-sm font-bold text-ink">
-            {t('Αυτό το chat είναι μόνο για τα μέλη της ομάδας.', 'This chat is only for group members.')}
+            {t('Αυτή η συνομιλία είναι μόνο για τα μέλη της ομάδας.', 'This chat is only for group members.')}
           </p>
           {onWaitlist && (
             <p className="mt-2 text-xs font-medium text-ink-muted">
-              {t('Είσαι στη λίστα αναμονής — όταν μπεις, ανοίγει και το chat.', 'You are on the waitlist — chat opens once you join.')}
+              {t('Είσαι στη λίστα αναμονής. Όταν μπεις, ανοίγει και η συνομιλία.', 'You are on the waitlist — chat opens once you join.')}
             </p>
           )}
           <div className="mt-3 flex flex-wrap gap-2">

@@ -163,7 +163,7 @@ export default function PlansPageContent() {
             <CalendarClock className={cn('w-5 h-5', p.statVal)} />
           </div>
           <div className="min-w-0 flex-1">
-            <p className={cn('text-xs font-bold tracking-wide', p.muted)}>{tu('Επόμενη εκδήλωση', 'Next up')}</p>
+            <p className={cn('text-xs font-bold tracking-wide', p.muted)}>{t('Επόμενη εκδήλωση', 'Next up')}</p>
             <p className={cn(PLANS_TYPO.nextTitle, p.head)}>{nextEvent.title}</p>
           </div>
           <span className={cn('shrink-0 text-xs font-bold px-2.5 py-1 rounded-full', p.statBg, p.statVal)}>

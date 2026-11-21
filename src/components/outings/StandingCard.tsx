@@ -42,7 +42,7 @@ export function StandingCard({ className }: { className?: string }) {
     {
       titleEl: 'Παύση 7 ημερών',
       titleEn: '7-day pause',
-      bodyEl: 'Ομάδες με αγνώστους κλείνουν· με φίλους μπορείς. Μετά, τελευταία προειδοποίηση.',
+      bodyEl: 'Ομάδες με αγνώστους κλείνουν· με τους Nakamas σου μπορείς. Μετά, τελευταία προειδοποίηση.',
       bodyEn: 'Groups of strangers close; friends can still invite you. Then a final warning.',
     },
     {

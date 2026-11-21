@@ -37,7 +37,7 @@ export default function WalletPageContent() {
   const transactions = [
     { id: '1', type: 'Payout', amount: 120.00, status: t('Ολοκληρώθηκε', 'Completed'), date: formatPlanWhenDay('2024-10-12', language), monthKey: 'Oct', desc: t('Μεταφορά στην τράπεζα 4092 (demo)', 'Transfer to Bank ****4092 (demo)') },
     { id: '2', type: 'Earnings', amount: 45.00, status: t('Διαθέσιμο', 'Available'), date: formatPlanWhenDay('2024-10-10', language), monthKey: 'Oct', desc: t('Πωλήσεις: Yoga στο Πάρκο', 'Ticket sales: Yoga in the Park') },
-    { id: '3', type: 'Earnings', amount: 25.00, status: t('Σε Επεξεργασία', 'Processing'), date: formatPlanWhenDay('2024-10-14', language), monthKey: 'Oct', desc: t('Πωλήσεις: Comedy Night', 'Ticket sales: Comedy Night') },
+    { id: '3', type: 'Earnings', amount: 25.00, status: t('Σε επεξεργασία', 'Processing'), date: formatPlanWhenDay('2024-10-14', language), monthKey: 'Oct', desc: t('Πωλήσεις: Comedy Night', 'Ticket sales: Comedy Night') },
   ];
 
   const filteredTx = txFilter === 'all'

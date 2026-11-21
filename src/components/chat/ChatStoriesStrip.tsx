@@ -111,7 +111,7 @@ export function ChatStoriesStrip({
     }
     setReplyText('');
     setActiveIndex(null);
-    toast.success(t('Η απάντηση στάλθηκε στο chat', 'Reply sent to chat'));
+    toast.success(t('Η απάντηση στάλθηκε στη συνομιλία', 'Reply sent to chat'));
   };
 
   return (

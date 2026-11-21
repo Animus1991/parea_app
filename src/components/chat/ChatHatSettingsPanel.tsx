@@ -80,8 +80,8 @@ export function ChatHatSettingsPanel() {
       </p>
       <p className={cn('text-xs mt-1 mb-4 leading-relaxed', a.sub)}>
         {t(
-          'Διάλεξε, απόκρυψε ή ανέβασε το ψάθινο καπέλο του κουμπιού συνομιλιών. Η φωτογραφία κόβεται αυτόματα στο μέγεθος του bubble· απλό φόντο καθαρίζεται όταν γίνεται. Μόνο το ενεργό καπέλο εμφανίζεται στην εφαρμογή. Σύρε το οπουδήποτε στην οθόνη· ένα πάτημα ανοίγει τις συνομιλίες.',
-          'Choose, hide, or upload the straw hat for the chat button. Photos are cropped to the bubble size; a plain background is cleared when we can. Only the active hat appears in the app. Drag it anywhere; a tap opens chats.',
+          'Διάλεξε ή ανέβασε δική σου εικόνα. Σύρε το καπέλο όπου θες· ένα πάτημα ανοίγει τις συνομιλίες.',
+          'Choose or upload your own picture. Drag the hat anywhere; a tap opens chats.',
         )}
       </p>
       <div className="flex flex-col items-center gap-2 mb-4">

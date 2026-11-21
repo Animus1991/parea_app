@@ -65,7 +65,7 @@ export function ChatPrivacySettingsPanel() {
         onChange={(v) => setPrivacy({ allowOrganizerMessages: v })}
       />
       <Toggle
-        label={t('Απαιτείται έγκριση για 1:1 chat', 'Require approval before 1:1 chat')}
+        label={t('Απαιτείται έγκριση για συνομιλία 1:1', 'Require approval before 1:1 chat')}
         checked={privacy.requireApprovalForDirectChat}
         onChange={(v) => setPrivacy({ requireApprovalForDirectChat: v })}
       />

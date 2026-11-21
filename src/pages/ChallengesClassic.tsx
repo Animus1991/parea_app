@@ -77,7 +77,7 @@ export default function ChallengesClassic() {
         mini: CHALLENGE_MINI.streak,
         titleGr: 'Σερί 4 εβδομάδων',
         titleEn: '4-Week Streak',
-        descGr: 'Συμμετείχε σε τουλάχιστον μια εκδήλωση κάθε εβδομάδα για 4 συνεχόμενες εβδομάδες.',
+        descGr: 'Πήγαινε σε τουλάχιστον μία εκδήλωση κάθε εβδομάδα για 4 συνεχόμενες εβδομάδες.',
         descEn: 'Attend at least one event per week for 4 consecutive weeks.',
         progress: Math.min(feedbackCount, 4),
         goal: 4,

@@ -415,7 +415,7 @@ export default function JoinGroupFlow() {
           <CheckCircle className="w-11 h-11 text-emerald-500 mx-auto" />
           <h3 className="text-sm md:text-base font-bold">{t('Μπήκες!', "You're in!")}</h3>
           <p className="text-sm text-gray-500 font-medium">
-            {t('Το group chat ξεκλειδώνει όταν η ομάδα επιβεβαιωθεί.', 'Group chat unlocks when the group is confirmed.')}
+            {t('Η συνομιλία ομάδας ξεκλειδώνει όταν η ομάδα επιβεβαιωθεί.', 'Group chat unlocks when the group is confirmed.')}
           </p>
           {joinedGroupId && (
             <Button className="w-full min-h-8" onClick={() => navigate(`/night/${joinedGroupId}`)}>

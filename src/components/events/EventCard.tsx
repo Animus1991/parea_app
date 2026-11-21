@@ -624,7 +624,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                           e.stopPropagation();
                           navigate(`/chat/${userGroup.id}`);
                         }}
-                        aria-label={t('Μετάβαση στο Group Chat', 'View Group Chat')}
+                        aria-label={t('Μετάβαση στη συνομιλία ομάδας', 'View Group Chat')}
                         title={t('Ομαδική συνομιλία', 'Group chat')}
                         className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
                       >
@@ -794,7 +794,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                     e.stopPropagation();
                     navigate(`/chat/${userGroup.id}`);
                   }}
-                  aria-label={t('Μετάβαση στο Group Chat', 'View Group Chat')}
+                  aria-label={t('Μετάβαση στη συνομιλία ομάδας', 'View Group Chat')}
                   title={t('Ομαδική συνομιλία', 'Group chat')}
                   className={cn("flex h-9 w-9 items-center justify-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent", accentBg, accentText, isDark ? "border-white/10" : "border-transparent")}
                 >
@@ -1208,7 +1208,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                           {option === "all" && (
                             <span className={cn(EVENT_CARD_TYPO.locationHint, "text-amber-600")}>
                               {t(
-                                "Όλοι σε αυτό το chat βλέπουν την τοποθεσία σου",
+                                "Όλοι σε αυτή τη συνομιλία βλέπουν την τοποθεσία σου",
                                 "Everyone in this chat will see your location",
                               )}
                             </span>

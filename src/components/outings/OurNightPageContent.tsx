@@ -468,7 +468,7 @@ export default function OurNightPageContent() {
               ? t('Η θέση σου θα περάσει στο πρώτο άτομο της λίστας αναμονής — χωρίς καμία επίπτωση για σένα.', 'Your seat will pass to the first person on the waitlist — with no consequence for you.')
               : lateIfLeaving
                 ? t('Λιγότερο από 24 ώρες πριν: αν η θέση μείνει κενή, καταγράφεται αργή ακύρωση (−8 αξιοπιστία), με δυνατότητα ένστασης.', 'Less than 24 hours before: if the seat stays empty, a late cancel is recorded (−8 reliability), and you can appeal.')
-                : t('Πες το νωρίς στο chat.', 'Say it early in the chat.')}
+                : t('Πες το νωρίς στη συνομιλία.', 'Say it early in the chat.')}
           </p>
           {confirmLeave ? (
             <div className="mt-2 flex gap-2">

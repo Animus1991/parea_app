@@ -636,7 +636,7 @@ export default function SettingsPageContent() {
                 <Laptop className={cn("w-4 h-4", a.muted)} />
                 <div>
                   <span className={cn("text-sm font-medium", a.head)}>{t('Chrome • Windows (demo)', 'Chrome • Windows (demo)')}</span>
-                  <p className={cn("text-xs font-medium", a.muted)}>{t('Αθήνα, GR', 'Athens, GR')} • 2h {t('πριν', 'ago')}</p>
+                  <p className={cn("text-xs font-medium", a.muted)}>{t('Αθήνα · πριν από 2 ώρες', 'Athens, GR • 2h ago')}</p>
                 </div>
               </div>
               <button

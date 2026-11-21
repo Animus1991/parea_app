@@ -289,7 +289,7 @@ export default function ProfilePageContent() {
 
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => setIsEditingBio(true)} className="flex items-center gap-1.5">
-                <Edit2 className="w-3 h-3" aria-hidden /> {t("Επεξεργασία bio", "Edit bio")}
+                <Edit2 className="w-3 h-3" aria-hidden /> {t("Επεξεργασία περιγραφής", "Edit bio")}
               </Button>
               {currentUser.isOrganizer ? (
                 <>

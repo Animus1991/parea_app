@@ -328,7 +328,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                 </Button>
               </div>
               <div className="text-2xs text-ink-muted font-medium bg-surface rounded-lg text-center p-3 leading-relaxed tracking-wide">
-                {t('Δημιούργησε νέα ομάδα 3-5 ατόμων. ', 'Create a new 3-5 person group. ')}
+                {t('Δημιούργησε νέα ομάδα 3–5 ατόμων. ', 'Create a new 3–5 person group. ')}
                 {event.isPaid ? (
                   <span className="block mt-1 font-bold text-ink">{t('Η πληρωμή κρατιέται και χρεώνεται όταν επιβεβαιωθεί η ομάδα.', 'Payment is held and charged when the group is confirmed.')}</span>
                 ) : (

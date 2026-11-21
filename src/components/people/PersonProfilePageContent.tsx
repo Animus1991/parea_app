@@ -224,8 +224,8 @@ export default function PersonProfilePageContent() {
     const conv = ensureDirectConversation({ selfUserId: me.id, peerUserId: subject.id, peerName: subject.name, openWindow: true });
     if (!conv) {
       toast.message(t('Οι ιδιωτικές συνομιλίες είναι απενεργοποιημένες', 'Direct chats are disabled'), {
-        description: t('Ενεργοποίησέ τες στις ρυθμίσεις απορρήτου chat.', 'Enable them in chat privacy settings.'),
-        action: { label: t('Ρυθμίσεις chat', 'Chat settings'), onClick: () => navigate('/settings?section=chat') },
+        description: t('Ενεργοποίησέ τες στις ρυθμίσεις απορρήτου συνομιλιών.', 'Enable them in chat privacy settings.'),
+        action: { label: t('Ρυθμίσεις συνομιλιών', 'Chat settings'), onClick: () => navigate('/settings?section=chat') },
       });
       return;
     }

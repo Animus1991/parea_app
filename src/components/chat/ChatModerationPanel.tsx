@@ -21,7 +21,7 @@ export function ChatModerationPanel() {
       </p>
       <ul className="space-y-2 max-h-56 overflow-y-auto">
         {reports.length === 0 ? (
-          <li className={cn('text-sm', a.sub)}>{t('Καμία αναφορά chat ακόμα.', 'No chat reports yet.')}</li>
+          <li className={cn('text-sm', a.sub)}>{t('Καμία αναφορά συνομιλίας ακόμα.', 'No chat reports yet.')}</li>
         ) : (
           reports.map((r) => {
             const conv = conversations.find((c) => c.id === r.conversationId);

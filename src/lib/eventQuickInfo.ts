@@ -1,6 +1,7 @@
 import type { Event, Group, TrustTier } from '../types';
 import { tierLabelEl, tierLabelEn } from './trust';
 import { formatEur } from './money';
+import { countNoun } from './plural';
 
 export type ComfortLevelLabel = 'public' | 'organized' | 'high_trust' | 'basic';
 
@@ -113,10 +114,10 @@ export function buildEventQuickInfo(
     groupStatusEl = 'Δεν έχουν δημιουργηθεί ομάδες ακόμα';
     groupStatusEn = 'No groups formed yet';
   } else {
-    groupStatusEl = `${eventGroups.length} ${eventGroups.length === 1 ? 'ομάδα' : 'ομάδες'} · ${totalMembers} μέλη`;
-    groupStatusEn = `${eventGroups.length} group(s) · ${totalMembers} members`;
+    groupStatusEl = `${countNoun(eventGroups.length, 'ομάδα', 'ομάδες')} · ${countNoun(totalMembers, 'μέλος', 'μέλη')}`;
+    groupStatusEn = `${countNoun(eventGroups.length, 'group', 'groups')} · ${countNoun(totalMembers, 'member', 'members')}`;
     if (confirmed > 0 || pending > 0) {
-      groupStatusEl += ` · ${confirmed} επιβεβαιωμένες`;
+      groupStatusEl += ` · ${confirmed} ${confirmed === 1 ? 'επιβεβαιωμένη' : 'επιβεβαιωμένες'}`;
       groupStatusEn += ` · ${confirmed} confirmed`;
     }
   }
