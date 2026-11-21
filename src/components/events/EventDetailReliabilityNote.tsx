@@ -5,18 +5,15 @@ import {
   getEventDetailSurfaceTokens,
 } from '../../lib/designTokens';
 import { cn } from '../../lib/utils';
-import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventDetailMapSection';
 
 export interface EventDetailReliabilityNoteProps {
-  event: Event;
   accent: EventDetailMapAccent;
   darkSurface?: boolean;
   className?: string;
 }
 
 export function EventDetailReliabilityNote({
-  event,
   accent,
   darkSurface = false,
   className,
@@ -37,7 +34,6 @@ export function EventDetailReliabilityNote({
             <strong className={tok.listStrong}>
               {t('Μικρή ομάδα', 'Small group')}
             </strong>
-            {event.maxParticipants ? ` · ${event.maxParticipants}` : ''}
           </span>
         </li>
         <li className="flex items-start gap-2">

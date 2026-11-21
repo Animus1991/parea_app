@@ -61,7 +61,7 @@ export default function ChallengesClassic() {
       {
         id: 'c1',
         mini: CHALLENGE_MINI.events,
-        titleGr: '5 Εκδηλώσεις τον Μήνα',
+        titleGr: '5 εκδηλώσεις τον μήνα',
         titleEn: '5 Events This Month',
         descGr: 'Παρακολούθησε 5 εκδηλώσεις κατά τη διάρκεια του τρέχοντος μήνα.',
         descEn: 'Attend 5 events during the current month.',

@@ -227,7 +227,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               )}
             />
           )}
-          <EventDetailReliabilityNote event={event} accent={accent} darkSurface={panelDark} />
+          <EventDetailReliabilityNote accent={accent} darkSurface={panelDark} />
         </div>
 
         {/* Right Column: Groups & Actions */}
