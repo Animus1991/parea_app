@@ -11,23 +11,32 @@ export function ChatHatSettingsPanel() {
   const a = usePageContrast();
   const selected = useUIStore((s) => s.chatHatStyle);
   const setChatHatStyle = useUIStore((s) => s.setChatHatStyle);
-  const dismissed = useUIStore((s) => s.dismissedChatHats);
-  const restoreChatHats = useUIStore((s) => s.restoreChatHats);
   const current = chatHatById(selected) ?? CHAT_HAT_STYLES[0];
 
   return (
-    <div className={cn('mb-4 pb-4 border-b', a.borderB)}>
-      <p className={cn('text-sm font-medium', a.head)}>
+    <div
+      role="region"
+      aria-label={t('Επιλογή καπέλου συνομιλιών', 'Chat hat picker')}
+    >
+      <p className={cn('text-sm font-bold', a.head)}>
         {t('Εικονίδιο συνομιλιών', 'Chat icon')}
       </p>
-      <p className={cn('text-xs mt-0.5 mb-3', a.sub)}>
+      <p className={cn('text-xs mt-1 mb-4 leading-relaxed', a.sub)}>
         {t(
-          'Διάλεξε το ψάθινο καπέλο που φαίνεται στο κουμπί συνομιλιών.',
-          'Choose the straw hat that appears on the chat button.',
+          'Διάλεξε το ψάθινο καπέλο του κουμπιού συνομιλιών. Μόνο αυτό εμφανίζεται στην εφαρμογή — εδώ βλέπεις όλες τις επιλογές.',
+          'Choose the straw hat for the chat button. Only that hat appears in the app — every option lives here.',
         )}
       </p>
-      <div className="flex justify-center mb-3">
+      <div className="flex flex-col items-center gap-2 mb-4">
         <ChatHatThumb hat={current} />
+        <span
+          className={cn(
+            'text-xs font-bold tracking-wider px-2 py-1 rounded-full',
+            a.isDark ? 'bg-cyan-500/20 text-cyan-300' : 'bg-cyan-100 text-cyan-700',
+          )}
+        >
+          {t('Ενεργό', 'Active')}: {t(current.labelEl, current.labelEn)}
+        </span>
       </div>
       <div
         role="radiogroup"
@@ -50,7 +59,7 @@ export function ChatHatSettingsPanel() {
                 toast.success(t('Το καπέλο συνομιλιών αποθηκεύτηκε', 'Chat hat saved'));
               }}
               className={cn(
-                'relative flex flex-col items-center gap-1 rounded-2xl p-1.5 border bg-transparent',
+                'relative flex flex-col items-center gap-1 rounded-2xl p-2 border bg-transparent',
                 active ? 'ring-2 ring-brand border-brand' : a.borderB,
               )}
             >
@@ -62,15 +71,6 @@ export function ChatHatSettingsPanel() {
           );
         })}
       </div>
-      {dismissed.length > 0 && (
-        <button
-          type="button"
-          onClick={() => restoreChatHats()}
-          className={cn('mt-3 text-xs font-bold underline-offset-2 hover:underline', a.head)}
-        >
-          {t('Εμφάνισε ξανά όλα στην προεπισκόπηση', 'Show all again on the preview row')}
-        </button>
-      )}
     </div>
   );
 }

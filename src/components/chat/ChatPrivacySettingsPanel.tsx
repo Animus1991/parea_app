@@ -3,7 +3,6 @@ import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
 import { cn } from '../../lib/utils';
 import { usePageContrast } from '../../hooks/usePageContrast';
-import { ChatHatSettingsPanel } from './ChatHatSettingsPanel';
 
 function Toggle({
   label,
@@ -41,7 +40,6 @@ export function ChatPrivacySettingsPanel() {
   return (
     <section className={cn('rounded-2xl border p-4 mt-4', a.cardSurface, a.borderB)}>
       <h2 className={cn('text-sm font-bold mb-3', a.head)}>{t('Nakamas Chat — ρυθμίσεις', 'Nakamas Chat — settings')}</h2>
-      <ChatHatSettingsPanel />
       <Toggle
         label={t('Μηνύματα από αποδεκτές ομάδες', 'Messages from accepted groups')}
         checked={privacy.allowGroupChats}

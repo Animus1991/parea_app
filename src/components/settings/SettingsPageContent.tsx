@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Image as ImageIcon, Ban, Newspaper, Bot } from 'lucide-react';
+import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Image as ImageIcon, Ban, Newspaper, Bot, MessageCircle } from 'lucide-react';
 import { useUIStore } from '../../store/uiStore';
 import { HomeHeroModeSetting } from './HomeHeroModeSetting';
 import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
@@ -7,6 +7,8 @@ import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth
 import { CARD_IMAGE_DEPTH_LABELS } from '../../lib/discoverCardImagePreview';
 import { BuddySeekPrivacySettings } from '../buddySeek/BuddySeekPrivacySettings';
 import { ChatPrivacySettingsPanel } from '../chat/ChatPrivacySettingsPanel';
+import { ChatHatSettingsPanel } from '../chat/ChatHatSettingsPanel';
+import { chatHatById } from '../../lib/chatHatStyles';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
@@ -81,6 +83,9 @@ export default function SettingsPageContent() {
   const availabilityPanelRef = useRef<HTMLDivElement>(null);
   const buddySeekSectionRef = useRef<HTMLDivElement>(null);
   const chatPrivacySectionRef = useRef<HTMLDivElement>(null);
+  const chatHatSectionRef = useRef<HTMLDivElement>(null);
+  const chatHatStyle = useUIStore((s) => s.chatHatStyle);
+  const currentChatHat = chatHatById(chatHatStyle);
 
   // Keep the expandable panels next to the row that opened them (not below the fold).
   useEffect(() => {
@@ -92,13 +97,14 @@ export default function SettingsPageContent() {
     homeLayoutPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [showHomeLayout]);
 
-  // Deep-links: ?availability=1 / ?section=buddy-seek / ?section=chat
+  // Deep-links: ?availability=1 / ?section=buddy-seek / ?section=chat / ?section=chat-icon
   useEffect(() => {
     const openAvailability =
       searchParams.get('availability') === '1' || searchParams.get('section') === 'availability';
     const openBuddySeek = searchParams.get('section') === 'buddy-seek';
     const openChat = searchParams.get('section') === 'chat';
-    if (!openAvailability && !openBuddySeek && !openChat) return;
+    const openChatIcon = searchParams.get('section') === 'chat-icon';
+    if (!openAvailability && !openBuddySeek && !openChat && !openChatIcon) return;
 
     if (openAvailability) {
       setShowAvailability(true);
@@ -116,10 +122,15 @@ export default function SettingsPageContent() {
         chatPrivacySectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
+    if (openChatIcon) {
+      requestAnimationFrame(() => {
+        chatHatSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
 
     const next = new URLSearchParams(searchParams);
     next.delete('availability');
-    if (openBuddySeek || openAvailability || openChat) next.delete('section');
+    if (openBuddySeek || openAvailability || openChat || openChatIcon) next.delete('section');
     setSearchParams(next, { replace: true });
   }, [searchParams, setSearchParams]);
 
@@ -222,6 +233,14 @@ export default function SettingsPageContent() {
         { icon: Palette, label: t('Εμφάνιση & θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
         { icon: LayoutGrid, label: t('Προβολή αρχικής', 'Home layout'), value: homeHeroMode === 'light' ? t('Σύντομο', 'Compact') : homeHeroMode === 'rich' ? t('Πλήρες', 'Full') : t('Ισορροπημένο', 'Balanced'), onClick: () => setShowHomeLayout(!showHomeLayout) },
         { icon: ImageIcon, label: t('Εικόνα κάρτας εκδήλωσης', 'Event card photo'), value: t(...CARD_IMAGE_DEPTH_LABELS[cardImage.depth]), onClick: () => setShowCardImage(!showCardImage) },
+        {
+          icon: MessageCircle,
+          label: t('Εικονίδιο συνομιλιών', 'Chat icon'),
+          value: currentChatHat ? t(currentChatHat.labelEl, currentChatHat.labelEn) : t('Σκίτσο κάτοψη', 'Drawn plan view'),
+          onClick: () => {
+            chatHatSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          },
+        },
         {
           icon: Bot,
           label: t('Προτάσεις Nakamas AI στις σελίδες', 'Nakamas AI suggestions on pages'),
@@ -330,6 +349,13 @@ export default function SettingsPageContent() {
               <Card className="p-5">
                 <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Εικόνα κάρτας εκδήλωσης', 'Event card photo')}</h3>
                 <DiscoverCardImagePicker expanded depth={cardImage.depth} options={cardImage.options} onChange={cardImage.setDepth} />
+              </Card>
+            </div>
+          )}
+          {idx === 0 && (
+            <div ref={chatHatSectionRef} className="scroll-mt-24">
+              <Card className="p-5">
+                <ChatHatSettingsPanel />
               </Card>
             </div>
           )}

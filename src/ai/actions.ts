@@ -185,12 +185,12 @@ function themeTarget(raw: string, current: string): ThemeId | null {
 
 /* ───────────────────────── actions ───────────────────────── */
 
-const SETTINGS_SECTIONS = ['availability', 'chat', 'buddy-seek'] as const;
+const SETTINGS_SECTIONS = ['availability', 'chat', 'buddy-seek', 'chat-icon'] as const;
 
 const navigateAction: CopilotAction = {
   name: 'navigate',
   description:
-    'Open a page of the app. For settings, optional section deep-links: availability, chat, buddy-seek.',
+    'Open a page of the app. For settings, optional section deep-links: availability, chat, buddy-seek, chat-icon.',
   risk: 'safe',
   parameters: OBJ({
     page: S('Destination page id', { enum: APP_ROUTES.map((r) => r.id) }),

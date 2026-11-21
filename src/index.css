@@ -128,9 +128,6 @@
 .chat-hat-fab {
   bottom: var(--chat-hat-bottom);
 }
-.chat-hat-picker {
-  bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.6rem);
-}
 @media (max-width: 767px) {
   html[data-chat-hat='event'] .chat-hat-fab {
     bottom: var(--chat-hat-bottom-event);
