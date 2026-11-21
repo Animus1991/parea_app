@@ -58,7 +58,7 @@ test.describe('Nakamas wall', () => {
     await expect(like).toHaveAccessibleName(/^Μου αρέσει$|^Like$/);
     await like.focus();
     await like.press('ArrowUp');
-    const tray = post.getByRole('group', { name: /Διάλεξε αντίδραση|Choose a reaction/ });
+    const tray = post.getByRole('toolbar', { name: /Διάλεξε αντίδραση|Choose a reaction/ });
     await expect(tray).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(tray).toHaveCount(0);
