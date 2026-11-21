@@ -232,7 +232,7 @@ export default function PlansPageContent() {
                     <h3 className={cn(PLANS_TYPO.cardTitle, 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]')}>
                       <Link
                         to={`/events/${event.id}`}
-                        className="tap-area-y rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+                        className="-my-[5px] inline-block rounded-sm py-[5px] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
                       >
                         {event.title}
                       </Link>
@@ -327,7 +327,7 @@ export default function PlansPageContent() {
                   <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>
                     <Link
                       to={`/events/${event.id}`}
-                      className="tap-area-y rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      className="-my-[5px] inline-block rounded-sm py-[5px] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                     >
                       {event.title}
                     </Link>
@@ -429,11 +429,13 @@ export default function PlansPageContent() {
                       type="button"
                       onClick={() => {
                         setOpenedPlans((prev) => new Set(prev).add(event.id));
-                        requestAnimationFrame(() =>
-                          document.getElementById(`plan-${event.id}`)?.scrollIntoView({ block: 'start', behavior: 'smooth' }),
-                        );
+                        // The row leaves the list: bring the opened card into view and move focus to it.
+                        requestAnimationFrame(() => {
+                          const card = document.getElementById(`plan-${event.id}`);
+                          card?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+                          card?.querySelector<HTMLElement>('button, a[href]')?.focus({ preventScroll: true });
+                        });
                       }}
-                      aria-expanded={false}
                       className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-surface"
                     >
                       <EventCoverImg event={event} alt="" className="h-12 w-12 shrink-0 rounded-xl object-cover" />
