@@ -101,7 +101,7 @@ export function EventDetailMetaSection({
           {t('Κανόνες συμμετοχής', 'Participation Rules')}
         </div>
         <div className="flex items-center gap-2">
-          <p className={cn('card-copy font-medium capitalize', content.metaValue)}>{ruleText}</p>
+          <p className={cn('card-copy font-medium first-letter:uppercase', content.metaValue)}>{ruleText}</p>
           <Link
             to="/trust"
             className={cn('tap-area-y text-xs font-bold underline', content.trustLink)}
