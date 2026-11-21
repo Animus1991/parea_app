@@ -107,6 +107,20 @@ test.describe('Discover card image picker', () => {
     await seekPicker.locator('[data-card-image-toggle]').click();
     await seekPicker.locator('[data-card-image-option="facts"]').click();
     await expect(page.locator('#main-content [data-image-depth]').first()).toHaveAttribute('data-image-depth', 'facts');
+    await seekPicker.locator('[data-card-image-option="full"]').click();
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    await page.getByRole('button', { name: /Βρες Nakamas — σχέδια που σχηματίζονται|Find Nakamas — plans forming/ }).click();
+    const sheet = page.getByRole('dialog', { name: /Βρες Nakamas|Find Nakamas/ });
+    await expect(sheet).toBeVisible();
+    const sheetPicker = sheet.locator('[data-card-image-picker]');
+    await expect(sheetPicker).toBeVisible();
+    await expect(sheet.locator('[data-image-depth]').first()).toHaveAttribute('data-image-depth', 'full');
+    await sheetPicker.locator('[data-card-image-toggle]').click();
+    await expect(sheetPicker.getByRole('radio')).toHaveCount(ALL_DEPTHS.length);
+    await sheetPicker.locator('[data-card-image-option="photo"]').click();
+    await expect(sheet.locator('[data-image-depth]').first()).toHaveAttribute('data-image-depth', 'photo');
   });
 
   test('Full cards keep hosting and Find Nakamas notes', async ({ page }) => {

@@ -23,6 +23,8 @@ import {
   type BuddySeekFilterKey,
 } from './BuddySeekChrome';
 import { MiniOutingsSection } from '../outings/MiniOutingsSection';
+import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
+import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
 import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
 
@@ -34,6 +36,7 @@ export function PlansFormingBottomSheet() {
   const tok = useThemeStyles();
   const navigate = useNavigate();
   const feed = usePlansFormingFeed(10);
+  const cardImage = useDiscoverCardImageDepth();
   const dismiss = useStore((s) => s.dismissCompanyRequest);
   const undismiss = useStore((s) => s.undismissCompanyRequest);
   const currentUser = useStore((s) => s.currentUser);
@@ -150,7 +153,12 @@ export function PlansFormingBottomSheet() {
           {currentUser && !currentUser.vibe && (
             <BuddySeekVibeNudge onClick={() => leave('/profile')} />
           )}
-          <MiniOutingsSection variant="sheet" onLeave={() => setOpen(false)} />
+          <DiscoverCardImagePicker
+            depth={cardImage.depth}
+            options={cardImage.options}
+            onChange={cardImage.setDepth}
+          />
+          <MiniOutingsSection variant="sheet" onLeave={() => setOpen(false)} imageDepth={cardImage.depth} />
           <BuddySeekFilterBar
             filter={filter}
             filterCounts={filterCounts}
@@ -186,6 +194,7 @@ export function PlansFormingBottomSheet() {
                   item={item}
                   variant="sheet"
                   isDarkSurface={tok.isDark}
+                  imageDepth={cardImage.depth}
                   onNavigate={leave}
                   onDismiss={() => {
                     const id = item.intent.id;
@@ -205,6 +214,7 @@ export function PlansFormingBottomSheet() {
                       entry={entry}
                       variant="sheet"
                       isDarkSurface={tok.isDark}
+                      imageDepth={cardImage.depth}
                       onNavigate={leave}
                     />
                   ))}

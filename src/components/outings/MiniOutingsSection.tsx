@@ -44,7 +44,7 @@ export function MiniOutingsSection({
   imageDepth?: EventCardImageDepth;
 }) {
   const { t, language } = useLanguage();
-  const depth = variant === 'page' ? imageDepth : 'photo';
+  const depth = imageDepth;
   const flags = cardImageDepthFlags(depth);
   const navigate = useNavigate();
   const [composerOpen, setComposerOpen] = useState(false);
@@ -176,6 +176,11 @@ export function MiniOutingsSection({
                       {flags.coverOrganizer && (
                         <p className="card-meta font-medium text-white/85">{t(`με ${hostName}`, `with ${hostName}`)}</p>
                       )}
+                      {flags.coverFull && group.genderMode === 'women_nb' && !genderBlocked && (
+                        <p className="card-meta font-medium text-white/85">
+                          {t('Γυναίκες & μη δυαδικά άτομα', 'Women & non-binary')}
+                        </p>
+                      )}
                       {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
                       {flags.coverProgress && (
                         <div className="mt-auto border-t border-white/25 pt-4">
@@ -252,7 +257,7 @@ export function MiniOutingsSection({
                 </div>
                 )}
                 {/* When the button already says «women & non-binary only», the line would repeat it. */}
-                {group.genderMode === 'women_nb' && !genderBlocked && (
+                {group.genderMode === 'women_nb' && !genderBlocked && !flags.coverFull && (
                   <p className="card-meta font-medium leading-relaxed text-ink">
                     {t('Γυναίκες & μη δυαδικά άτομα', 'Women & non-binary')}
                   </p>

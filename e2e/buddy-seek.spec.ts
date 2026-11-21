@@ -108,6 +108,8 @@ test.describe('Find Nakamas', () => {
     await expect(sheet.getByRole('button', { name: /Νέο αίτημα από εκδήλωση|New request from event/ })).toBeVisible();
     await expect(sheet.getByRole('button', { name: /Τα σχέδιά μου|My plans/ })).toBeVisible();
     await expect(sheet.getByRole('heading', { name: /Μικρές έξοδοι|Small outings/ })).toBeVisible();
+    await expect(sheet.locator('[data-card-image-picker]')).toBeVisible();
+    await expect(sheet.locator('[data-image-depth]').first()).toHaveAttribute('data-image-depth', 'full');
     await expect(sheet.getByText('Καφές στο Κουκάκι')).toBeVisible();
     const coffeeCover = sheet.locator('[data-mini-outing-card]').filter({ hasText: 'Καφές στο Κουκάκι' }).locator('img');
     await expect(coffeeCover).toBeVisible();
