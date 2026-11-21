@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
@@ -23,19 +23,7 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
   const hideOnPhones =
     Boolean(matchPath('/events/:eventId/join', pathname)) ||
     Boolean(matchPath('/history/feedback/:eventId', pathname));
-
-  const [pastHeader, setPastHeader] = useState(false);
-  useEffect(() => {
-    setPastHeader(false);
-    if (!onEventDetail) return;
-    const main = document.getElementById('main-content');
-    if (!main) return;
-    const onScroll = () => setPastHeader(main.scrollTop > 280);
-    onScroll();
-    main.addEventListener('scroll', onScroll, { passive: true });
-    return () => main.removeEventListener('scroll', onScroll);
-  }, [onEventDetail, pathname]);
-  const waiting = isPhone && onEventDetail && !pastHeader;
+  const liftForEvent = isPhone && onEventDetail;
 
   return (
     <button
@@ -43,15 +31,12 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
       onClick={onClick}
       aria-label={t('Συνομιλίες σχεδίων', 'Plan chats')}
       aria-expanded={inboxOpen}
-      aria-hidden={waiting || undefined}
       title={t('Συνομιλίες', 'Chats')}
       className={cn(
         'chat-hat-fab fixed z-chat-toggle inline-flex items-center justify-center p-0 m-0',
         'bg-transparent border-0 shadow-none rounded-full overflow-visible',
         'right-3 md:right-6 copilot-shift',
-        'transition-[opacity,transform] duration-200 motion-reduce:transition-none',
-        waiting && 'opacity-0 translate-y-3 pointer-events-none',
-        onEventDetail && !waiting && 'chat-hat-fab-event',
+        liftForEvent && 'chat-hat-fab-event',
         hideOnPhones && 'max-md:hidden',
         className,
       )}

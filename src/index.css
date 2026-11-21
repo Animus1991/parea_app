@@ -34,8 +34,8 @@
   --z-fab: 50;
   --z-chat: 60;
   --z-chat-scrim: 65;
-  /* Hat FAB / phone dock stay tappable while the inbox scrim is up. */
-  --z-chat-toggle: 68;
+  /* Hat sits above the inbox so a second tap still closes it. */
+  --z-chat-toggle: 72;
   --z-sheet: 70;
   --z-banner: 80;
   --z-topnav: 90;
@@ -140,14 +140,9 @@
   bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.5rem);
 }
 .chat-inbox-phone {
+  /* Stay below demo banner + TopNav; the hat overlays the sheet (higher z). */
   top: calc(var(--header-h) + 2.5rem);
-  bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.5rem);
-}
-@media (max-height: 540px) {
-  .chat-inbox-phone {
-    top: 0.35rem;
-    bottom: 0;
-  }
+  bottom: var(--chat-hat-bottom);
 }
 @media (min-width: 768px) {
   :root {
@@ -169,9 +164,11 @@
   .chat-inbox-phone {
     top: auto;
     bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.75rem);
+    max-height: min(520px, 70vh, calc(100dvh - var(--chat-hat-bottom) - var(--chat-hat-fab) - 0.75rem - var(--header-h) - 3rem));
   }
   html[data-chat-hat='composer'] .chat-inbox-phone {
     bottom: calc(var(--chat-hat-bottom-composer) + var(--chat-hat-fab) + 0.75rem);
+    max-height: min(520px, 70vh, calc(100dvh - var(--chat-hat-bottom-composer) - var(--chat-hat-fab) - 0.75rem - var(--header-h) - 3rem));
   }
 }
 

@@ -92,6 +92,18 @@ test.describe('Nakamas Chat event page', () => {
     await page.mouse.click(box!.x + box!.width - 10, box!.y + box!.height / 2);
     await expect(page.getByRole('dialog', { name: /^Nakamas Chat$/ })).toHaveCount(0);
   });
+
+  test('the hat still toggles chat above the event action bar', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/events/e1');
+    const btn = chatsButton(page);
+    await expect(btn).toBeVisible();
+    await btn.click();
+    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
+    await expect(sheet).toBeVisible();
+    await btn.click();
+    await expect(sheet).toHaveCount(0);
+  });
 });
 
 test.describe('Nakamas Chat landscape', () => {
@@ -106,5 +118,34 @@ test.describe('Nakamas Chat landscape', () => {
     await expect(row).toBeVisible();
     await row.click();
     await expect(page.locator('[data-chat-window]')).toBeVisible();
+  });
+
+  test('close and the hat remain tappable', async ({ page }) => {
+    await enterDemoGuest(page);
+    await chatsButton(page).click();
+    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
+    await expect(sheet).toBeVisible();
+    await expect(sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ })).toBeVisible();
+    await chatsButton(page).click();
+    await expect(sheet).toHaveCount(0);
+  });
+});
+
+test.describe('Nakamas Chat short desktop', () => {
+  test.use({ viewport: { width: 1024, height: 650 } });
+
+  test('group-chat inbox close stays on screen', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/chat/g-nn1');
+    await chatsButton(page).click();
+    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
+    await expect(sheet).toBeVisible();
+    const close = sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ });
+    await expect(close).toBeVisible();
+    const box = await close.boundingBox();
+    expect(box).toBeTruthy();
+    expect(box!.y).toBeGreaterThanOrEqual(0);
+    await close.click();
+    await expect(sheet).toHaveCount(0);
   });
 });

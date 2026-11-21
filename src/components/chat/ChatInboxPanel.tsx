@@ -63,7 +63,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
         'chat-inbox-phone fixed z-sheet flex flex-col border shadow-soft-lg overflow-hidden copilot-shift',
         'bg-surface border-border text-ink',
         'inset-x-0 rounded-t-3xl',
-        'md:left-auto md:right-6 md:w-[360px] md:max-h-[min(520px,70vh)] md:rounded-3xl',
+        'md:left-auto md:right-6 md:w-[360px] md:rounded-3xl',
       )}
       role="dialog"
       aria-label={t('Nakamas Chat', 'Nakamas Chat')}
