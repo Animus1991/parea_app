@@ -61,6 +61,29 @@ test.describe('Nakamas Chat preview', () => {
     await sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).click();
     await expect(sheet).toHaveCount(0);
   });
+
+  test('the first mention chip stays tappable in a popup', async ({ page }) => {
+    await enterDemoGuest(page);
+    const sheet = await openInbox(page);
+    await sheet.getByRole('button', { name: /Summer Cinema/ }).click();
+    const win = page.locator('[data-chat-window]');
+    await expect(win).toBeVisible();
+    await win.getByRole('button', { name: /Περισσότερα|More tools/ }).click();
+    await win.getByRole('button', { name: /^Αναφορά$|^Mention$/ }).click();
+    const listbox = win.getByRole('listbox', { name: /Αναφορά χρήστη|Mention user/ });
+    await expect(listbox).toBeVisible();
+    const first = listbox.getByRole('button').first();
+    await first.scrollIntoViewIfNeeded();
+    await expect(first).toBeVisible();
+    const box = await first.boundingBox();
+    expect(box).toBeTruthy();
+    expect(box!.y).toBeGreaterThanOrEqual(0);
+    const label = ((await first.textContent()) ?? '').replace(/\s+/g, ' ').trim();
+    await first.click();
+    await expect(win.getByRole('textbox', { name: /Σύνθεση μηνύματος|Compose message/ })).toHaveValue(
+      new RegExp(`@${label.split(' ').pop()}`),
+    );
+  });
 });
 
 test.describe('Nakamas Chat desktop hat', () => {

@@ -272,7 +272,7 @@ export function ChatComposerTools({
       {/* @mention autocomplete */}
       {mentionCandidates.length > 0 && (
         <div
-          className="absolute bottom-full left-3 right-3 mb-1 z-30 rounded-2xl border border-border bg-surface-raised shadow-soft-lg p-1.5 flex flex-wrap gap-1"
+          className="mx-3 mt-2 mb-1 z-30 rounded-2xl border border-border bg-surface-raised shadow-soft-lg p-1.5 flex flex-wrap gap-1"
           role="listbox"
           aria-label={t('Αναφορά χρήστη', 'Mention user')}
         >
