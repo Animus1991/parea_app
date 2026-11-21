@@ -10,7 +10,9 @@ export function usePlansFabState() {
   const showTeaser = !feed.hasContent && !feed.myActivePlan;
   const visible = Boolean(total || hasPending || showTeaser || feed.myActivePlan);
 
-  const label = t('Βρες παρέα', 'Find company');
+  // Same breath as the overlay title — no comma. “τώρα” makes it a nearby-now
+  // action, not a vague appeal. Event-card “Βρες παρέα” stays generic on purpose.
+  const label = t('Βρες παρέα τώρα', 'Find company now');
 
   return { visible, label, badge: null as number | null, hasPending: false };
 }

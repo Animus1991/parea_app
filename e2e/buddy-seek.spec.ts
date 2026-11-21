@@ -81,6 +81,11 @@ test.describe('Find Nakamas', () => {
     await expect(rail.getByRole('button', { name: /Αποθήκευση σχεδίου|Save plan/ }).first()).toBeVisible();
     await expect(rail.getByRole('button', { name: /Απόκρυψη σχεδίου|Hide plan/ }).first()).toBeVisible();
     await expect(rail.getByText(/Φαγητό δρόμου με μικρή ομάδα|Street food with a small group/)).toBeVisible();
+    await expect(
+      page.getByRole('button', {
+        name: /Βρες παρέα τώρα — μικρές έξοδοι δίπλα σου|Find company now — small outings next to you/,
+      }),
+    ).toContainText(/Βρες παρέα τώρα|Find company now/);
   });
 
   test('desktop page cards show a tall photo', async ({ page }) => {
