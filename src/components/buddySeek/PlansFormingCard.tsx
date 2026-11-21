@@ -137,6 +137,8 @@ export function PlansFormingCard({
           event={item.event}
           depth={depth}
           photoHeightClass={variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24'}
+          onPhotoClick={() => navigate(`/events/${item.event.id}`)}
+          photoAriaLabel={t('Δες εκδήλωση', 'View event')}
           top={
             variant === 'page' ? (
               <div className="absolute top-3 right-3 z-10 flex gap-1">
@@ -156,6 +158,17 @@ export function PlansFormingCard({
                 >
                   <Bookmark className={cn('w-4 h-4', isSaved && 'fill-current text-cyan-700')} />
                 </button>
+                {onDismiss && (
+                  <button
+                    type="button"
+                    onClick={onDismiss}
+                    aria-label={t('Απόκρυψη σχεδίου', 'Hide plan')}
+                    title={t('Απόκρυψη', 'Hide')}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/80 text-gray-700 backdrop-blur-md"
+                  >
+                    <EyeOff className="w-4 h-4" aria-hidden />
+                  </button>
+                )}
               </div>
             ) : undefined
           }
@@ -190,13 +203,20 @@ export function PlansFormingCard({
               )}
               {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
               {flags.coverFull && (
-                <div className="mt-auto border-t border-white/25 pt-4">
+                <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-white/25 pt-4">
                   <button
                     type="button"
                     onClick={() => setPreviewOpen(true)}
                     className="px-4 min-h-9 rounded-full card-cta bg-cyan-600 hover:bg-cyan-500 text-white transition-colors"
                   >
                     {t('Αίτημα συμμετοχής', 'Ask to join')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/events/${item.event.id}`)}
+                    className="min-h-9 card-cta text-white/90 transition-colors hover:text-white"
+                  >
+                    {t('Εκδήλωση', 'Event')}
                   </button>
                 </div>
               )}
@@ -233,7 +253,7 @@ export function PlansFormingCard({
                 <Bookmark className={cn('w-4 h-4', isSaved && 'fill-current')} />
               </button>
               )}
-              {onDismiss && (
+              {onDismiss && variant !== 'page' && (
                 <button
                   type="button"
                   onClick={onDismiss}
@@ -629,6 +649,8 @@ export function PlansFormingGroupCard({
         event={event}
         depth={depth}
         photoHeightClass={variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24'}
+        onPhotoClick={() => navigate(`/events/${event.id}`)}
+        photoAriaLabel={t('Δες εκδήλωση', 'View event')}
         overlay={
           <>
             <p className="card-badge font-semibold tracking-wide text-emerald-200">
@@ -643,24 +665,38 @@ export function PlansFormingGroupCard({
               </p>
             )}
             {flags.coverFacts && (
-              <FactSpread
-                mutedClass="text-white/85"
-                left={t(meta.scheduleFull.el, meta.scheduleFull.en)}
-                right={`${meta.filled}/${meta.target} ${t('μέλη', 'members')}`}
-              />
+              <div className="space-y-2">
+                <FactSpread mutedClass="text-white/85" left={t(meta.scheduleFull.el, meta.scheduleFull.en)} />
+                <FactSpread
+                  mutedClass="text-white/85"
+                  leftIcon={variant === 'page' ? <MapPin className="w-3 h-3 shrink-0 opacity-70" aria-hidden /> : null}
+                  left={locationLine}
+                  rightIcon={variant === 'page' ? <Users className="w-3 h-3 shrink-0 opacity-70" aria-hidden /> : null}
+                  right={`${meta.filled}/${meta.target} ${t('μέλη', 'members')} · ${meta.spots} ${t('ανοιχτές θέσεις', 'open spots')}`}
+                />
+              </div>
             )}
             {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
             {flags.coverProgress && (
               <div className="mt-auto border-t border-white/25 pt-4">
                 <GroupProgressBar current={meta.filled} target={meta.target} onPhoto className={flags.coverFull ? 'mb-3' : undefined} />
                 {flags.coverFull && (
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
-                    className="px-4 min-h-9 rounded-full card-cta bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
-                  >
-                    {t('Αίτημα συμμετοχής', 'Ask to join')}
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
+                      className="px-4 min-h-9 rounded-full card-cta bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+                    >
+                      {t('Αίτημα συμμετοχής', 'Ask to join')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/events/${event.id}`)}
+                      className="min-h-9 card-cta text-white/90 transition-colors hover:text-white"
+                    >
+                      {t('Εκδήλωση', 'Event')}
+                    </button>
+                  </div>
                 )}
               </div>
             )}

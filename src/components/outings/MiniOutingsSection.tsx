@@ -158,6 +158,8 @@ export function MiniOutingsSection({
                   event={event}
                   depth={depth}
                   photoHeightClass={variant === 'sheet' ? 'h-36' : 'h-40 md:h-48'}
+                  onPhotoClick={() => go(`/events/${event.id}`)}
+                  photoAriaLabel={event.title}
                   overlay={
                     <>
                       <p className="card-meta font-medium text-white/80 inline-flex items-center gap-1.5">
@@ -179,7 +181,8 @@ export function MiniOutingsSection({
                         <div className="mt-auto border-t border-white/25 pt-4">
                           <GroupProgressBar current={group.members.length} target={group.targetSize} onPhoto className={flags.coverFull ? 'mb-3' : undefined} />
                           {flags.coverFull && (
-                            mine ? (
+                            <div className="flex flex-wrap items-center gap-2">
+                            {mine ? (
                               <Button size="sm" variant="ghost" className="text-white" onClick={() => go(`/night/${group.id}`)}>
                                 {t('Η βραδιά μας', 'Our night')}
                               </Button>
@@ -207,7 +210,11 @@ export function MiniOutingsSection({
                               >
                                 {genderBlocked ? t('Μόνο γυναίκες & μη δυαδικά', 'Women & non-binary only') : full ? t('Λίστα αναμονής', 'Join waitlist') : t('Μπες', 'Join')}
                               </Button>
-                            )
+                            )}
+                            <Button size="sm" variant="ghost" className="text-white" onClick={() => go(`/events/${event.id}`)}>
+                              {t('Λεπτομέρειες', 'Details')}
+                            </Button>
+                            </div>
                           )}
                         </div>
                       )}
@@ -251,7 +258,7 @@ export function MiniOutingsSection({
                   </p>
                 )}
                 {!flags.coverFull && (
-                <div className="pt-1">
+                <div className="pt-1 flex flex-wrap items-center gap-2">
                   {mine ? (
                     <Button size="sm" variant="ghost" onClick={() => go(`/night/${group.id}`)}>
                       {t('Η βραδιά μας', 'Our night')}
@@ -287,6 +294,9 @@ export function MiniOutingsSection({
                       {genderBlocked ? t('Μόνο γυναίκες & μη δυαδικά', 'Women & non-binary only') : full ? t('Λίστα αναμονής', 'Join waitlist') : t('Μπες', 'Join')}
                     </Button>
                   )}
+                  <Button size="sm" variant="ghost" onClick={() => go(`/events/${event.id}`)}>
+                    {t('Λεπτομέρειες', 'Details')}
+                  </Button>
                 </div>
                 )}
                 </div>

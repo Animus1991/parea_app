@@ -252,29 +252,49 @@ export default function PlansPageContent() {
                     </div>
                   )}
                   {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
-                  {flags.coverProgress && group && (
+                  {flags.coverProgress && (
                     <div className="mt-auto border-t border-white/25 pt-4">
-                      <GroupProgressBar
-                        current={group.members.length}
-                        target={group.targetSize}
-                        onPhoto
-                        className={flags.coverFull ? 'mb-3' : undefined}
-                      />
+                      {group && (
+                        <GroupProgressBar
+                          current={group.members.length}
+                          target={group.targetSize}
+                          onPhoto
+                          className={flags.coverFull ? 'mb-3' : undefined}
+                        />
+                      )}
                       {flags.coverFull && (
                         <div className="flex flex-wrap items-center gap-2">
+                          {group && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => navigate(`/night/${group.id}`)}
+                                className="inline-flex btn-gradient !py-1.5 min-h-8 items-center justify-center gap-1.5"
+                              >
+                                <PartyPopper className="h-3.5 w-3.5" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => navigate(`/chat/${group.id}`)}
+                                className="min-h-8 px-3 rounded-xl text-xs font-bold text-white/90 border border-white/30"
+                              >
+                                {t('Chat', 'Chat')}
+                              </button>
+                            </>
+                          )}
                           <button
                             type="button"
-                            onClick={() => navigate(`/night/${group.id}`)}
-                            className="inline-flex btn-gradient !py-1.5 min-h-8 items-center justify-center gap-1.5"
+                            onClick={() => navigate(`/events/${event.id}`)}
+                            className="min-h-8 px-2 text-xs font-bold text-white/90"
                           >
-                            <PartyPopper className="h-3.5 w-3.5" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
+                            {t('Λεπτομέρειες', 'Details')}
                           </button>
                           <button
                             type="button"
-                            onClick={() => navigate(`/chat/${group.id}`)}
-                            className="min-h-8 px-3 rounded-xl text-xs font-bold text-white/90 border border-white/30"
+                            onClick={() => setShowLeaveConfirm(event.id)}
+                            className="min-h-8 px-2 text-xs font-semibold text-white/80 hover:text-red-200 flex items-center gap-1"
                           >
-                            {t('Chat', 'Chat')}
+                            <XCircle className="h-3.5 w-3.5" aria-hidden /> {t('Αποχώρηση', 'Leave')}
                           </button>
                         </div>
                       )}
@@ -438,17 +458,30 @@ export default function PlansPageContent() {
                     </p>
                   )}
                   {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
-                  {flags.coverProgress && group && (
+                  {flags.coverProgress && (
                     <div className="mt-auto border-t border-white/25 pt-4">
-                      <GroupProgressBar current={group.members.length} target={group.targetSize} onPhoto className={flags.coverFull ? 'mb-3' : undefined} />
+                      {group && (
+                        <GroupProgressBar current={group.members.length} target={group.targetSize} onPhoto className={flags.coverFull ? 'mb-3' : undefined} />
+                      )}
                       {flags.coverFull && (
-                        <button
-                          type="button"
-                          onClick={() => navigate(`/night/${group.id}`)}
-                          className="inline-flex btn-gradient !py-1.5 min-h-8 items-center justify-center gap-1.5"
-                        >
-                          <PartyPopper className="h-4 w-4" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
-                        </button>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {group && (
+                            <button
+                              type="button"
+                              onClick={() => navigate(`/night/${group.id}`)}
+                              className="inline-flex btn-gradient !py-1.5 min-h-8 items-center justify-center gap-1.5"
+                            >
+                              <PartyPopper className="h-4 w-4" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => navigate(`/events/${event.id}`)}
+                            className="min-h-8 px-3 rounded-xl text-xs font-bold text-white/90 border border-white/30"
+                          >
+                            {t('Κατάσταση', 'View Status')}
+                          </button>
+                        </div>
                       )}
                     </div>
                   )}
@@ -463,6 +496,9 @@ export default function PlansPageContent() {
                   <div className={cn(PLANS_TYPO.cardDate, p.head)}>{formatPlanWhen(event.date, event.time, language)}</div>
                 </div>
               </div>
+              )}
+              {flags.coverTitle && !flags.coverFacts && (
+                <div className={cn(PLANS_TYPO.cardDate, p.head)}>{formatPlanWhen(event.date, event.time, language)}</div>
               )}
 
               <p className={cn('card-copy-sm font-medium', p.sub)}>

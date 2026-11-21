@@ -20,6 +20,8 @@ export function CardImageDepthFrame({
   photoHeightClass = 'h-48',
   top,
   overlay,
+  onPhotoClick,
+  photoAriaLabel,
   children,
 }: {
   event: Event;
@@ -29,6 +31,8 @@ export function CardImageDepthFrame({
   photoHeightClass?: string;
   top?: ReactNode;
   overlay?: ReactNode;
+  onPhotoClick?: () => void;
+  photoAriaLabel?: string;
   children?: ReactNode;
 }) {
   const flags = cardImageDepthFlags(depth);
@@ -47,12 +51,20 @@ export function CardImageDepthFrame({
       >
         <EventCoverImg
           event={event}
-          alt={alt ?? event.title}
+          alt={onPhotoClick ? '' : alt ?? event.title}
           className={cn(
             'object-cover object-center',
             flags.coverTitle ? 'absolute inset-0 h-full w-full' : 'h-full w-full',
           )}
         />
+        {onPhotoClick ? (
+          <button
+            type="button"
+            onClick={onPhotoClick}
+            aria-label={photoAriaLabel ?? alt ?? event.title}
+            className="absolute inset-0 z-[1]"
+          />
+        ) : null}
         <div
           className={cn(
             'pointer-events-none absolute inset-0',
@@ -64,12 +76,20 @@ export function CardImageDepthFrame({
           )}
         />
         {top ? (
-          <div className={cn(flags.coverTitle ? 'relative z-10 h-48' : 'contents')}>{top}</div>
+          <div
+            className={cn(
+              flags.coverTitle
+                ? 'relative z-10 h-48 pointer-events-none [&_button]:pointer-events-auto [&_a]:pointer-events-auto'
+                : 'contents',
+            )}
+          >
+            {top}
+          </div>
         ) : null}
         {flags.coverTitle && overlay ? (
           <div
             className={cn(
-              'relative z-10 flex flex-col gap-3.5 px-4 pt-1 pb-4',
+              'relative z-10 flex flex-col gap-3.5 px-4 pt-1 pb-4 pointer-events-none [&_button]:pointer-events-auto [&_a]:pointer-events-auto',
               flags.photoFillsCard && 'flex-1',
             )}
           >
