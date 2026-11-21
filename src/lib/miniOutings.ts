@@ -66,17 +66,24 @@ export function isShortMiniOuting(event: Pick<Event, 'kind' | 'duration'>): bool
   return parseDurationHours(event.duration) <= 2;
 }
 
+const ATHENS_LOCALITIES = new Set(['athens', 'αθηνα', 'attiki', 'attica', 'αττικη']);
+
 function localityOf(area: string): string {
   const comma = area.indexOf(',');
   return comma < 0 ? '' : foldSearchText(area.slice(comma + 1));
 }
 
+function isAthensLocality(locality: string): boolean {
+  return ATHENS_LOCALITIES.has(locality) || [...ATHENS_LOCALITIES].some((alias) => locality.includes(alias));
+}
+
 function localityMatches(inputLocality: string, place: (typeof MINI_OUTING_PLACES)[number]): boolean {
   if (!inputLocality) return true;
-  if (inputLocality === 'athens' || inputLocality === 'attiki' || inputLocality === 'attica') return true;
+  if (isAthensLocality(inputLocality)) return true;
   const placeLocality = localityOf(place.area) || foldSearchText('Athens');
   return (
     inputLocality === placeLocality ||
+    (isAthensLocality(placeLocality) && isAthensLocality(inputLocality)) ||
     placeLocality.includes(inputLocality) ||
     inputLocality.includes(placeLocality)
   );

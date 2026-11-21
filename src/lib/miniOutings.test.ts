@@ -112,6 +112,8 @@ describe('mini outing last-minute filters', () => {
   it('folds Greek case and accents, and does not pin a different island', () => {
     expect(placeForArea('ΚΥΨΕΛΗ')?.en).toBe('Kypseli');
     expect(placeForArea('κυψελη')?.en).toBe('Kypseli');
+    expect(placeForArea('Παγκράτι, Αθήνα')?.en).toBe('Pangrati');
+    expect(placeForArea('Πλάκα, Αττική')?.en).toBe('Plaka');
     expect(placeForArea('Plaka, Milos')).toBeUndefined();
     expect(placeForArea('Plaka, Athens')?.en).toBe('Plaka');
   });
@@ -120,6 +122,7 @@ describe('mini outing last-minute filters', () => {
     const gps = { lat: 37.99, lng: 23.71, label: 'Η θέση σου', source: 'gps' as const };
     expect(publicMiniOutingPin('Η θέση σου', gps)).toBeNull();
     expect(publicMiniOutingPin('Pangrati, Athens', gps)?.lat).toBeCloseTo(37.9675);
+    expect(publicMiniOutingPin('Παγκράτι, Αθήνα', gps)?.lat).toBeCloseTo(37.9675);
     expect(publicMiniOutingPin('Κουκάκι', origin)?.lat).toBeCloseTo(37.9655);
   });
 
