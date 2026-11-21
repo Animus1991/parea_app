@@ -208,7 +208,7 @@ export function EventDetailGroupCard({
         <div>
           <div className={cn('flex items-center gap-1.5 card-meta font-semibold mb-1', tok.label)}>
             <Users className="h-3.5 w-3.5" aria-hidden />
-            {t('Ομαδα', 'Group')} {group.id.replace('g', '#')}
+            {t('Ομάδα', 'Group')} {group.id.replace('g', '#')}
           </div>
           <h4 className={cn('card-heading-lg font-bold mb-0.5 line-clamp-1', tok.title)}>{event.title}</h4>
           <p className={cn('card-meta mb-1', tok.meta)}>{categoryLabel(event.category)}</p>
