@@ -40,7 +40,7 @@ export function audienceBaseHint(base: AudienceBase, t: T): string {
     case 'public':
       return t('Όλα τα μέλη του δικτύου Nakamas', 'Everyone on the Nakamas network');
     case 'connections':
-      return t('Μόνο οι συνδέσεις σου', 'Only people you are connected with');
+      return t('Μόνο οι Nakamas σου', 'Only your Nakamas');
     case 'friends_of_friends':
       return t('Οι Nakamas σου και οι δικοί τους Nakamas', 'Your Nakamas and their Nakamas');
     case 'specific':

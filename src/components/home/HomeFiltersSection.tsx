@@ -74,7 +74,7 @@ export function HomeFiltersSection({
   schedule,
   setSchedule,
 }: HomeFiltersSectionProps) {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const h = useHomeTheme();
   const categoryScrollRef = useRef<HTMLDivElement>(null);
 
@@ -123,7 +123,7 @@ export function HomeFiltersSection({
         <HomeScheduleFilterPanel schedule={schedule} onChange={setSchedule} />
 
         <h2 className={`${HOME_TYPO.sectionLabel} ${h.sectionLabel}`}>
-          {t('home.explore_categories', 'Explore Categories')}
+          {tu('home.explore_categories', 'Explore Categories')}
         </h2>
 
         <HomeDiscoveryPrefsChips useClassicTokens />

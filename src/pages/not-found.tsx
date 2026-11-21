@@ -55,7 +55,7 @@ export default function NotFound() {
           )}
 
           <Button type="button" className="mt-4 w-full" onClick={() => navigate('/')}>
-            {t('Πίσω στην Αρχική', 'Back to Home')}
+            {t('Πίσω στην αρχική', 'Back to Home')}
           </Button>
         </CardContent>
       </Card>

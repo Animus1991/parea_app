@@ -286,7 +286,7 @@ export function EventDetailGroupCard({
         <div className="bg-amber-50 border border-amber-200/50 p-2.5 rounded-lg mb-4">
           <div className="flex justify-between items-center mb-1.5">
             <p className="text-xs text-amber-800 font-bold tracking-wide">
-              {t('Πρόοδος Έκπτωσης', 'Discount Progress')}
+              {t('Πρόοδος έκπτωσης', 'Discount Progress')}
             </p>
             <span className="text-xs font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-lg">
               -{event.groupDiscount!.percentage}%
@@ -330,7 +330,7 @@ export function EventDetailGroupCard({
             ? t('Στη λίστα αναμονής · Προβολή', 'On the waitlist · View')
             : spotsLeft <= 0
               ? t('Πλήρης · Λίστα αναμονής', 'Full · Waitlist')
-              : t('Προβολή & Συμμετοχή στην Ομάδα', 'View & Join Group')}
+              : t('Προβολή & συμμετοχή στην ομάδα', 'View & Join Group')}
       </Button>
     </div>
   );

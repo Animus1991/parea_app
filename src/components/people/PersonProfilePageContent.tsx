@@ -55,6 +55,7 @@ import { PersonAvatar } from '../wall/PersonAvatar';
 import { PostComposer } from '../wall/PostComposer';
 import { WallPostList } from '../wall/WallPostList';
 import { OverflowMenu } from '../wall/OverflowMenu';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 type Tab = 'wall' | 'about' | 'nakamas' | 'events';
 const TABS: Tab[] = ['wall', 'about', 'nakamas', 'events'];
@@ -378,7 +379,7 @@ export default function PersonProfilePageContent() {
               <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-ink-muted">
                 {aboutVisible && subject.city && (
                   <span className="inline-flex items-center gap-1">
-                    <MapPin className="h-3 w-3" aria-hidden /> {subject.city}
+                    <MapPin className="h-3 w-3" aria-hidden /> {formatLocationArea(subject.city, language)}
                   </span>
                 )}
                 {aboutVisible && subject.ageRange && <span>{subject.ageRange}</span>}
@@ -467,7 +468,7 @@ export default function PersonProfilePageContent() {
                 <h2 className={cn(APP_TYPO.sectionLabel, 'text-ink-muted')}>{t('Σχετικά', 'About')}</h2>
                 <p className="whitespace-pre-wrap text-sm font-medium text-ink">{subject.bio || t('Δεν έχει γράψει bio ακόμα.', 'No bio yet.')}</p>
                 <div className="flex flex-wrap gap-2 text-xs font-bold text-ink">
-                  {subject.city && <span className="rounded-full border border-border px-2.5 py-1">{subject.city}</span>}
+                  {subject.city && <span className="rounded-full border border-border px-2.5 py-1">{formatLocationArea(subject.city, language)}</span>}
                   {subject.ageRange && <span className="rounded-full border border-border px-2.5 py-1">{subject.ageRange}</span>}
                   {subject.badges.map((b) => (
                     <span key={b} className="rounded-full border border-border px-2.5 py-1">{b}</span>
@@ -563,7 +564,7 @@ export default function PersonProfilePageContent() {
                         <CalendarDays className="h-4 w-4 shrink-0 text-ink" aria-hidden />
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-sm font-bold text-ink">{e.title}</span>
-                          <span className="block truncate text-xs font-medium text-ink-muted">{e.date} · {e.locationArea}</span>
+                          <span className="block truncate text-xs font-medium text-ink-muted">{e.date} · {formatLocationArea(e.locationArea, language)}</span>
                         </span>
                       </Link>
                     </li>

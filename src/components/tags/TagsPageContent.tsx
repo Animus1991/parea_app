@@ -133,14 +133,14 @@ export default function TagsPageContent() {
           <Hash className="h-5 w-5 shrink-0" aria-hidden />
           {slug ? selectedLabel || t('Ετικέτα', 'Tag') : t('Ετικέτες', 'Tags')}
         </h1>
-        <p className={cn(APP_TYPO.pageSub, 'text-ink-muted')}>
-          {slug
-            ? t(
-                `${taggedEvents.length} ${taggedEvents.length === 1 ? 'εκδήλωση' : 'εκδηλώσεις'}`,
-                `${taggedEvents.length} ${taggedEvents.length === 1 ? 'event' : 'events'}`,
-              )
-            : t('Πάτα μια ετικέτα για τις εκδηλώσεις της.', 'Tap a tag to see its events.')}
-        </p>
+        {slug && (
+          <p className={cn(APP_TYPO.pageSub, 'text-ink-muted')}>
+            {t(
+              `${taggedEvents.length} ${taggedEvents.length === 1 ? 'εκδήλωση' : 'εκδηλώσεις'}`,
+              `${taggedEvents.length} ${taggedEvents.length === 1 ? 'event' : 'events'}`,
+            )}
+          </p>
+        )}
         {!slug ? (
           <p className="text-xs font-medium text-ink-muted">
             {t(`${catalog.length} ετικέτες`, `${catalog.length} tags`)}

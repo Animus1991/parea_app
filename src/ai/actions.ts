@@ -722,7 +722,7 @@ const createEventAction: CopilotAction = {
       en: `"${d.title}" is published and your group was created.`,
       eventIds: [id],
       undo: () => state().cancelEvent(id),
-      link: { path: '/manage', el: 'Πίνακας Διοργανωτή', en: 'Organizer dashboard' },
+      link: { path: '/manage', el: 'Πίνακας διοργανωτή', en: 'Organizer dashboard' },
     };
   },
 };

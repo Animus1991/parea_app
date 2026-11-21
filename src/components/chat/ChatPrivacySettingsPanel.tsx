@@ -55,7 +55,7 @@ export function ChatPrivacySettingsPanel() {
         onChange={(v) => setPrivacy({ allowGroupMergeChats: v })}
       />
       <Toggle
-        label={t('Μηνύματα από αμοιβαίες συνδέσεις', 'Messages from mutual connections')}
+        label={t('Μηνύματα από κοινούς Nakamas', 'Messages from mutual Nakamas')}
         checked={privacy.allowMutualConnectionChats}
         onChange={(v) => setPrivacy({ allowMutualConnectionChats: v })}
       />

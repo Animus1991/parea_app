@@ -10,6 +10,7 @@ import type { Event } from "../../types";
 import { useLanguage } from "../../lib/i18n";
 import { useStore } from "../../store";
 import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 const STORY_DURATION_MS = 5000;
 const TICK_MS = 50;
@@ -234,7 +235,7 @@ export function StoryViewer({
           {activeEvent.locationArea && (
             <div className="flex items-center gap-1.5 text-white/85 text-sm font-medium">
               <MapPin className="w-3.5 h-3.5" />
-              {activeEvent.locationArea}
+              {formatLocationArea(activeEvent.locationArea, language)}
             </div>
           )}
           <div className="flex gap-2 pt-1.5 flex-wrap">
@@ -254,7 +255,7 @@ export function StoryViewer({
                 }}
                 className="flex-1 min-w-[120px] bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-2xl py-2.5 text-xs transition-colors"
               >
-                {t("Πρόγραμμα Ημέρας", "Day Schedule")}
+                {t("Πρόγραμμα ημέρας", "Day Schedule")}
               </button>
             )}
             {seeksHost && (
@@ -263,7 +264,7 @@ export function StoryViewer({
                 className="flex-1 min-w-[120px] bg-amber-400 text-amber-950 font-bold rounded-2xl py-2.5 text-xs flex items-center justify-center gap-1.5 hover:bg-amber-300 transition-colors"
               >
                 <Crown className="w-4 h-4" />
-                {t("Γίνε Διοργανωτής", "Organize")}
+                {t("Γίνε διοργανωτής", "Organize")}
               </button>
             )}
           </div>

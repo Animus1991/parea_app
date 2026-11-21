@@ -96,7 +96,7 @@ export const PROFILE_TYPO = {
   bannerBody: APP_TYPO.bannerBody,
   fieldLabel: 'text-xs font-bold',
   fieldControl: 'text-xs font-medium',
-  fieldHelp: 'text-2xs font-medium leading-relaxed',
+  fieldHelp: 'text-xs font-medium leading-relaxed',
   nestedCardTitle: APP_TYPO.rowTitle,
   statusNote: APP_TYPO.bodyMedium,
 } as const;
@@ -104,10 +104,10 @@ export const PROFILE_TYPO = {
 /** Popup chat window density */
 export const CHAT_TYPO = {
   title: 'text-sm font-bold',
-  subtitle: 'text-2xs text-ink-muted',
+  subtitle: 'text-xs text-ink-muted',
   badge: 'text-2xs text-brand font-bold',
   menu: 'text-2xs',
-  lockNotice: 'text-2xs text-amber-700 dark:text-amber-200',
+  lockNotice: 'text-xs text-amber-700 dark:text-amber-200',
   /**
    * Inbox lock/status line — gold-orange mixed with black for contrast on white
    * (~8:1 vs white), same weight/size as the preview body.
@@ -115,10 +115,10 @@ export const CHAT_TYPO = {
   lockHint: 'text-[#7c4a0d] dark:text-amber-200',
   sender: 'text-2xs text-ink-muted mb-0.5',
   bubble: 'text-sm leading-relaxed break-words',
-  systemBubble: 'text-2xs text-center',
+  systemBubble: 'text-xs text-center',
   input: 'text-xs',
   sendBtn: 'text-xs font-bold',
-  footer: 'text-2xs text-ink-muted',
+  footer: 'text-xs text-ink-muted',
 } as const;
 
 /** Plans forming / BuddySeek shared chips */
@@ -140,7 +140,7 @@ export const INBOX_TYPO = {
   search: 'text-xs font-medium',
   filter: 'text-2xs font-bold',
   rowTitle: 'text-sm truncate',
-  rowMeta: 'text-2xs font-medium',
+  rowMeta: 'text-xs font-medium',
   rowPreview: 'text-xs truncate',
   unread: 'text-2xs font-bold',
   cta: 'text-xs font-bold',
@@ -228,7 +228,7 @@ export const CALENDAR_TYPO = {
   dayLabel: 'text-2xs font-bold',
   dayNumber: 'text-xs font-bold',
   eventTitle: 'text-xs font-bold leading-snug',
-  eventMeta: 'text-2xs font-medium',
+  eventMeta: 'text-xs font-medium',
   hourLabel: 'text-2xs font-semibold',
   modalTitle: 'text-sm md:text-base font-bold',
   modalSub: 'text-sm font-medium',
@@ -245,7 +245,7 @@ export const HOME_TYPO = {
   heroStats: 'text-2xs font-bold tracking-wide',
   heroMapBtn: 'text-xs font-bold',
   stepTitle: 'text-xs font-bold',
-  stepBody: 'text-2xs leading-relaxed font-medium',
+  stepBody: 'text-xs leading-relaxed font-medium',
   feedTab: 'text-xs font-bold',
   sectionLabel: 'text-xs font-semibold tracking-wide',
   /** Category / tag / feed / filter chips — same type + height as «Όλα» */
@@ -271,7 +271,7 @@ export const REPORT_TYPO = {
   pageSub: 'text-sm font-medium',
   sectionLabel: 'text-xs font-semibold tracking-wide',
   fieldLabel: 'text-xs font-bold',
-  fieldHint: 'text-2xs font-medium leading-relaxed',
+  fieldHint: 'text-xs font-medium leading-relaxed',
   option: 'text-xs font-medium',
   chip: 'text-2xs font-bold',
   cta: 'text-xs font-bold',
@@ -283,7 +283,7 @@ export const ONBOARDING_TYPO = {
   title: 'text-lg md:text-xl font-bold leading-tight',
   subtitle: 'text-sm font-medium leading-relaxed',
   optionTitle: 'text-xs font-bold',
-  optionBody: 'text-2xs font-medium leading-relaxed',
+  optionBody: 'text-xs font-medium leading-relaxed',
   chip: 'text-2xs font-semibold',
   cta: 'text-xs font-bold',
   skip: 'text-2xs font-bold',

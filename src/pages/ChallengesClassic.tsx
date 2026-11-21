@@ -75,7 +75,7 @@ export default function ChallengesClassic() {
       {
         id: 'c2',
         mini: CHALLENGE_MINI.streak,
-        titleGr: 'Σερί 4 Εβδομάδων',
+        titleGr: 'Σερί 4 εβδομάδων',
         titleEn: '4-Week Streak',
         descGr: 'Συμμετείχε σε τουλάχιστον μια εκδήλωση κάθε εβδομάδα για 4 συνεχόμενες εβδομάδες.',
         descEn: 'Attend at least one event per week for 4 consecutive weeks.',
@@ -91,8 +91,8 @@ export default function ChallengesClassic() {
         mini: CHALLENGE_MINI.social,
         titleGr: 'Δικτύωσε 5 Nakamas',
         titleEn: 'Connect with 5 Nakamas',
-        descGr: 'Δημιούργησε 5 νέες συνδέσεις με μέλη της κοινότητας.',
-        descEn: 'Make 5 new connections with community members.',
+        descGr: 'Γνώρισε 5 νέους Nakamas.',
+        descEn: 'Meet 5 new Nakamas.',
         progress: Math.min(connectionsCount, 5),
         goal: 5,
         unit: t('συνδ.', 'connections'),
@@ -103,7 +103,7 @@ export default function ChallengesClassic() {
       {
         id: 'c4',
         mini: CHALLENGE_MINI.explorer,
-        titleGr: 'Εξερεύνησε 4 Κατηγορίες',
+        titleGr: 'Εξερεύνησε 4 κατηγορίες',
         titleEn: 'Explore 4 Categories',
         descGr: 'Παρακολούθησε εκδηλώσεις από 4 διαφορετικές κατηγορίες.',
         descEn: 'Attend events from 4 different categories.',
@@ -117,7 +117,7 @@ export default function ChallengesClassic() {
       {
         id: 'c5',
         mini: 'spark',
-        titleGr: 'Γρήγορη Εγγραφή ×3',
+        titleGr: 'Γρήγορη εγγραφή ×3',
         titleEn: 'Quick Join ×3',
         descGr: 'Εγγράψου σε εκδήλωση εντός 5 λεπτών από τη δημοσίευσή της, 3 φορές.',
         descEn: 'Join an event within 5 minutes of posting, 3 times.',
@@ -131,7 +131,7 @@ export default function ChallengesClassic() {
       {
         id: 'c6',
         mini: 'helper',
-        titleGr: 'Κορυφαίος Αξιολογητής',
+        titleGr: 'Κορυφαίος αξιολογητής',
         titleEn: 'Top Reviewer',
         descGr: 'Αξιολόγησε 3 εκδηλώσεις με αναλυτικό σχόλιο.',
         descEn: 'Rate 3 events with a detailed comment.',
@@ -176,9 +176,6 @@ export default function ChallengesClassic() {
           <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
             {t('Προκλήσεις', 'Challenges')}
           </h1>
-          <p className={cn(APP_TYPO.pageSub, 'mt-1', p.sub)}>
-            {t('Κέρδισε XP και ξεκλείδωσε badges', 'Earn XP and unlock badges')}
-          </p>
         </div>
         <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-2 self-start">
           <Trophy className="w-4 h-4 text-amber-500 shrink-0" />

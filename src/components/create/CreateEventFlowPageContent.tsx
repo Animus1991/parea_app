@@ -241,7 +241,7 @@ export default function CreateEventFlowPageContent() {
           </p>
         )}
         <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
-          {editEvent ? t("Επεξεργασία Εκδήλωσης", "Edit Event") : t("Δημιουργία Εκδήλωσης", "Create Event")}
+          {editEvent ? t("Επεξεργασία εκδήλωσης", "Edit Event") : t("Δημιουργία εκδήλωσης", "Create Event")}
         </h1>
 
         <div className="flex items-center gap-2 mt-4">
@@ -273,7 +273,7 @@ export default function CreateEventFlowPageContent() {
               <div className="space-y-4">
                 <div>
                   <label className={labelClass}>
-                    {t("Εικόνα Εκδήλωσης", "Event Image")}
+                    {t("Εικόνα εκδήλωσης", "Event Image")}
                   </label>
                   <div 
                     className={cn(
@@ -289,7 +289,7 @@ export default function CreateEventFlowPageContent() {
                     ) : (
                        <>
                          <Camera className={cn("w-8 h-8 mb-2", p.muted)} />
-                         <span className={cn("text-sm font-bold block", p.head)}>{t('Ανέβασμα Εικόνας', 'Upload Image')}</span>
+                         <span className={cn("text-sm font-bold block", p.head)}>{t('Ανέβασμα εικόνας', 'Upload Image')}</span>
                          <span className={cn("text-xs mt-1 capitalize tracking-tight", p.muted)}>{t('JPG, PNG έως 5MB', 'JPG, PNG up to 5MB')}</span>
                        </>
                     )}
@@ -297,14 +297,14 @@ export default function CreateEventFlowPageContent() {
                   <input type="file" ref={fileInputRef} className="hidden" accept="image/jpeg, image/png" onChange={handleImageUpload} />
                   {imagePreview && (
                      <button onClick={() => setImagePreview(null)} className="text-xs text-red-500 font-bold capitalize tracking-tight mt-2 hover:underline">
-                        {t('Αφαίρεση Εικόνας', 'Remove Image')}
+                        {t('Αφαίρεση εικόνας', 'Remove Image')}
                      </button>
                   )}
                 </div>
 
                 <div>
                   <label className={labelClass}>
-                    {t("Τίτλος Εκδήλωσης", "Event Title")}
+                    {t("Τίτλος εκδήλωσης", "Event Title")}
                   </label>
                   <input
                     type="text"
@@ -375,7 +375,7 @@ export default function CreateEventFlowPageContent() {
                 className="w-full"
                 disabled={!title || !category}
               >
-                {t("Επόμενο: Πότε & Πού", "Next: When & Where")}
+                {t("Επόμενο: Πότε & πού", "Next: When & Where")}
               </Button>
             </motion.div>
           )}
@@ -390,7 +390,7 @@ export default function CreateEventFlowPageContent() {
               className="space-y-4"
             >
               <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
-                {t("Πότε & Πού", "When & Where")}
+                {t("Πότε & πού", "When & Where")}
               </h2>
 
               <div className="space-y-4">
@@ -495,7 +495,7 @@ export default function CreateEventFlowPageContent() {
                   className="flex-[2]"
                   disabled={!date || !time || !location}
                 >
-                  {t("Επόμενο: Δυναμική Ομάδας", "Next: Group Dynamics")}
+                  {t("Επόμενο: Δυναμική ομάδας", "Next: Group Dynamics")}
                 </Button>
               </div>
             </motion.div>
@@ -511,7 +511,7 @@ export default function CreateEventFlowPageContent() {
               className="space-y-4"
             >
               <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
-                {t("Δυναμική Ομάδας", "Group Dynamics")}
+                {t("Δυναμική ομάδας", "Group Dynamics")}
               </h2>
 
               <div className="space-y-4">
@@ -661,7 +661,7 @@ export default function CreateEventFlowPageContent() {
                   <CheckCircle className={cn("w-6 h-6", pc.accent)} />
                 </div>
                 <h2 className={cn("text-sm md:text-base font-bold", p.head)}>
-                  {editEvent ? t("Έτοιμο για αποθήκευση!", "Ready to save!") : t("Έτοιμο για Δημοσίευση!", "Ready to Publish!")}
+                  {editEvent ? t("Έτοιμο για αποθήκευση!", "Ready to save!") : t("Έτοιμο για δημοσίευση!", "Ready to Publish!")}
                 </h2>
                 <p className={cn("text-sm font-medium mt-1", p.muted)}>
                   {t(
@@ -677,12 +677,12 @@ export default function CreateEventFlowPageContent() {
                     {t("Τίτλος", "Title")}
                   </span>
                   <span className={cn("font-bold truncate max-w-[200px] text-right", p.head)}>
-                    {title || t("Χωρίς Τίτλο", "Untitled")}
+                    {title || t("Χωρίς τίτλο", "Untitled")}
                   </span>
                 </div>
                 <div className={cn("flex justify-between pb-3 border-b", p.borderB)}>
                   <span className={cn("font-medium", p.muted)}>
-                    {t("Ημερομηνία & Ώρα", "Date & Time")}
+                    {t("Ημερομηνία & ώρα", "Date & Time")}
                   </span>
                   <span className={cn("font-bold", p.head)}>
                     {date} • {time}
@@ -740,7 +740,7 @@ export default function CreateEventFlowPageContent() {
                   onClick={handleSubmit}
                   className="flex-[2]"
                 >
-                  {editEvent ? t("Αποθήκευση αλλαγών", "Save changes") : t("Δημοσίευση Εκδήλωσης", "Publish Event")}
+                  {editEvent ? t("Αποθήκευση αλλαγών", "Save changes") : t("Δημοσίευση εκδήλωσης", "Publish Event")}
                 </Button>
               </div>
             </motion.div>

@@ -186,7 +186,7 @@ export const COLLECTIONS: Collection[] = [
     id: 'first-time-solo',
     el: 'Πρώτη φορά μόνος/η',
     en: 'First time solo',
-    descEl: 'Ομάδες που καλωσορίζουν νέα μέλη, με οικοδεσπότη υψηλής εμπιστοσύνης ή ανοιχτή πρόσκληση.',
+    descEl: 'Ομάδες που καλωσορίζουν νέα μέλη, με πλήρως επαληθευμένο οικοδεσπότη ή ανοιχτή πρόσκληση.',
     descEn: 'Groups that welcome newcomers, with a trusted host or an open invitation.',
     match: (e, groups) => formingGroups(e, groups).some((g) => g.isRecruiting || g.status === 'confirmed'),
   },

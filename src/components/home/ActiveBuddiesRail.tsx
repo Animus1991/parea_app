@@ -55,7 +55,7 @@ export function ActiveBuddiesRail({ useClassicTokens = false }: ActiveBuddiesRai
               useClassicTokens ? h.heading : p.head,
             )}
           >
-            {t('Ενεργοί Φίλοι', 'Active Buddies')}
+            {t('Ενεργοί Nakamas', 'Active Nakamas')}
           </h2>
         </div>
         <button

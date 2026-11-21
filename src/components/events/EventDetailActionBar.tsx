@@ -147,7 +147,7 @@ export function EventDetailActionBar({
       </ActionMenu>
     </div>
     {!calendarOk && calendarAvailability && (
-      <p className="text-2xs font-medium text-gray-500 text-right max-w-xs">
+      <p className="text-xs font-medium text-gray-500 text-right max-w-xs">
         {t(calendarAvailability.reasonEl, calendarAvailability.reasonEn)}
       </p>
     )}

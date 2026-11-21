@@ -234,12 +234,6 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           </div>
         </div>
 
-        <p className={cn('text-xs font-medium px-4 md:px-5 py-2 border-b', p.borderB, p.muted)}>
-          {t(
-            'Πάτημα: προεπισκόπηση · Διπλό πάτημα: ωριαίο πρόγραμμα',
-            'Tap: preview · Double-tap: hourly schedule',
-          )}
-        </p>
 
         <AnimatePresence mode="wait">
           {view === 'week' ? (

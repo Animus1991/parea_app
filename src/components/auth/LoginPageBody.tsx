@@ -11,6 +11,7 @@ import { appEnv } from '../../lib/config/env';
 import { isProductionGoogleOAuthAvailable, tryGoogleSignIn } from '../../lib/loginHandlers';
 import { cn } from '../../lib/utils';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 export type LoginVariant =
   | 'classic'
@@ -197,7 +198,7 @@ const TOKENS: Record<LoginVariant, LoginVariantTokens> = {
 
 export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const users = useStore((state) => state.users);
   const login = useStore((state) => state.login);
   const loginWithUser = useStore((state) => state.loginWithUser);
@@ -248,9 +249,6 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
             <span className={tok.wordmarkClass}>NAKAMAS</span>
           </div>
           <h1 className={cn(APP_TYPO.pageTitle, tok.stripDark ? 'text-white' : 'text-ink')}>{t('Καλώς ήρθες', 'Welcome back')}</h1>
-          <p className={cn(APP_TYPO.pageSub, tok.mutedText)}>
-            {t('Συνδέσου για να ανακαλύψεις αξιόπιστες ομάδες και εμπειρίες.', 'Log in to discover trusted groups and experiences.')}
-          </p>
         </div>
 
         <div className="space-y-4 pt-4">
@@ -277,7 +275,7 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
                 <div>
                   <div className={cn('text-sm font-bold', tok.stripDark ? 'text-white' : 'text-gray-900', tok.nameHoverClass)}>{user.name}</div>
                   <div className={cn('text-xs', tok.mutedText)}>
-                    {user.isAdmin ? t('Συντονιστής', 'Moderator') : user.isOrganizer ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')} • {user.city}
+                    {user.isAdmin ? t('Συντονιστής', 'Moderator') : user.isOrganizer ? t('Διοργανωτής', 'Organizer') : t('Χρήστης', 'User')} • {formatLocationArea(user.city, language)}
                   </div>
                 </div>
               </button>
@@ -314,15 +312,13 @@ export default function LoginPageBody({ variant }: { variant: LoginVariant }) {
           <p className={cn('text-xs font-medium leading-relaxed', tok.mutedText)}>
             {t('Συνεχίζοντας, συμφωνείς με τους', 'By continuing, you agree to Nakamas')}{' '}
             <Link to="/help" className="underline font-semibold hover:opacity-80">
-              {t('Όρους Χρήσης', 'Terms of Service')}
+              {t('Όρους χρήσης', 'Terms of Service')}
             </Link>
             {' '}{t('και την', 'and')}{' '}
             <Link to="/help" className="underline font-semibold hover:opacity-80">
-              {t('Πολιτική Απορρήτου', 'Privacy Policy')}
+              {t('Πολιτική απορρήτου', 'Privacy Policy')}
             </Link>
             .
-            <br />
-            {t('Ίσως απαιτείται επαλήθευση για ορισμένες εκδηλώσεις υψηλής εμπιστοσύνης.', 'Verification may be required for certain high-trust events.')}
           </p>
         </div>
       </Card>

@@ -62,7 +62,7 @@ export function HikeRouteCard({ route, revealStart, className }: { route: HikeRo
             points={route.profileM}
             label={t(`Υψομετρικό προφίλ, κορυφή ${peak} μ.`, `Elevation profile, highest point ${peak} m`)}
           />
-          <p className="text-2xs font-medium text-ink-muted">
+          <p className="text-xs font-medium text-ink-muted">
             {t(`Υψομετρικό · ψηλότερο σημείο ${peak} μ.`, `Elevation · highest point ${peak} m`)}
           </p>
         </div>
@@ -83,7 +83,7 @@ export function HikeRouteCard({ route, revealStart, className }: { route: HikeRo
           )}
         </span>
       </p>
-      <p className="mt-2 text-2xs font-medium text-ink-muted">
+      <p className="mt-2 text-xs font-medium text-ink-muted">
         {t('Πάρε νερό, καπέλο και κλειστά παπούτσια. Ο/η οικοδεσπότης κρατά τον ρυθμό του πιο αργού.', 'Bring water, a hat and closed shoes. The host keeps the pace of the slowest person.')}
       </p>
     </section>

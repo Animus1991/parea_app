@@ -51,7 +51,7 @@ export function GroupChatLocationModal({
       msg = t('κοινοποιεί το ETA/απόσταση', 'is sharing their ETA/distance');
     }
     if (locationConfig.shareWith === 'organizer') {
-      msg += t(' (Μόνο στον Διοργανωτή)', ' (Organizer only)');
+      msg += t(' (Μόνο στον διοργανωτή)', ' (Organizer only)');
     }
     setMessages((prev) => [
       ...prev,
@@ -102,7 +102,7 @@ export function GroupChatLocationModal({
               }}
               className="w-full bg-surface-raised text-red-600 border border-red-200 hover:bg-red-50 dark:hover:bg-red-950/30 py-2 rounded-lg text-xs font-bold tracking-wide"
             >
-              {t('Διακοπή Κοινοποίησης', 'Stop Sharing Now')}
+              {t('Διακοπή κοινοποίησης', 'Stop Sharing Now')}
             </button>
           </div>
         )}
@@ -167,8 +167,8 @@ export function GroupChatLocationModal({
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-ink">
-                    {option === 'organizer' && t('Μόνο στον Διοργανωτή', 'Organizer Only')}
-                    {option === 'all' && t('Ολόκληρη η Ομάδα', 'Entire Confirmed Group')}
+                    {option === 'organizer' && t('Μόνο στον διοργανωτή', 'Organizer Only')}
+                    {option === 'all' && t('Ολόκληρη η ομάδα', 'Entire Confirmed Group')}
                   </span>
                   {option === 'organizer' && (
                     <span className="text-xs text-ink-muted leading-relaxed">
@@ -187,7 +187,7 @@ export function GroupChatLocationModal({
         </div>
 
         <div className="space-y-3">
-          <h4 className="text-xs font-bold tracking-wide text-ink-muted">3. {t('Αυτόματη Λήξη', 'Auto-Expiry')}</h4>
+          <h4 className="text-xs font-bold tracking-wide text-ink-muted">3. {t('Αυτόματη λήξη', 'Auto-Expiry')}</h4>
           <AppSelect
             ariaLabel={t("Διάρκεια κοινοποίησης τοποθεσίας", "Location sharing duration")}
             value={locationConfig.duration}
@@ -214,8 +214,8 @@ export function GroupChatLocationModal({
           className="w-full px-4 py-2 min-h-9 text-xs font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
         >
           {isSharingLocation
-            ? t('Ενημέρωση Ρυθμίσεων', 'Update Configuration')
-            : t('Έναρξη Κοινοποίησης', 'Start Sharing')}
+            ? t('Ενημέρωση ρυθμίσεων', 'Update Configuration')
+            : t('Έναρξη κοινοποίησης', 'Start Sharing')}
         </button>
       </div>
     </Modal>

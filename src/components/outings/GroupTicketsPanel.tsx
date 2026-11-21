@@ -99,7 +99,7 @@ export function GroupTicketsPanel({ group, event, members, isHost }: { group: Gr
       )}
 
       {/* Partner negotiations are product notes, not something a guest needs to read. */}
-      <p className="mt-3 text-2xs font-medium text-ink-muted">{t(partner.noteEl, partner.noteEn)}</p>
+      <p className="mt-3 text-xs font-medium text-ink-muted">{t(partner.noteEl, partner.noteEn)}</p>
     </section>
   );
 }

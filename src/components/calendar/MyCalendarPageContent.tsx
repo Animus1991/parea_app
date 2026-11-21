@@ -45,6 +45,7 @@ import { StoryViewer } from "../home/StoryViewer";
 import { CalendarHourlySchedule } from "./CalendarHourlySchedule";
 import type { Event } from "../../types";
 import { usePublishPageSnapshot } from "../../hooks/usePublishPageSnapshot";
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 export default function MyCalendarPageContent() {
   const navigate = useNavigate();
@@ -503,12 +504,6 @@ export default function MyCalendarPageContent() {
           </div>
         </div>
 
-        <p className={cn("text-xs font-medium px-4 md:px-5 py-2 border-b lg:col-span-2", p.borderB, p.muted)}>
-          {t(
-            "Πάτημα: προεπισκόπηση · Διπλό πάτημα: ωριαίο πρόγραμμα",
-            "Tap: preview · Double-tap: hourly schedule",
-          )}
-        </p>
 
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_20rem]">
         <AnimatePresence mode="wait">
@@ -669,7 +664,7 @@ export default function MyCalendarPageContent() {
                     <img src={event.imageUrl} alt="" className="h-10 w-12 shrink-0 rounded-lg object-cover" />
                     <span className="min-w-0">
                       <span className={cn("block truncate text-xs font-bold", p.head)}>{event.title}</span>
-                      <span className={cn("block text-2xs font-medium", p.muted)}>{event.time} · {event.locationArea}</span>
+                      <span className={cn("block text-2xs font-medium", p.muted)}>{event.time} · {formatLocationArea(event.locationArea, language)}</span>
                     </span>
                   </button>
                 </li>

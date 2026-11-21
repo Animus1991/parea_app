@@ -39,7 +39,7 @@ export function EventDetailAdventureSection({
       )}
     >
       <h3 className={cn(tok.sectionHeading, 'mb-3')}>
-        {t('Λεπτομέρειες Περιπέτειας', 'Adventure Details')}
+        {t('Λεπτομέρειες περιπέτειας', 'Adventure Details')}
       </h3>
       {/* Semantic tokens: readable in every theme, light or dark. */}
       <div className="grid grid-cols-2 gap-4">
@@ -51,13 +51,13 @@ export function EventDetailAdventureSection({
             {routeDifficulty
               ? `${routeDifficulty} · ${event.route!.distanceKm.toLocaleString('el-GR')} km`
               : isHiking
-                ? t('Μέτρια / Έδαφος', 'Moderate / Terrain')
-                : t('Εύκολο / Αναψυχή', 'Easy / Leisure')}
+                ? t('Μέτρια / έδαφος', 'Moderate / Terrain')
+                : t('Εύκολο / αναψυχή', 'Easy / Leisure')}
           </div>
         </div>
         <div className={cn(tok.innerCard, 'border-border bg-surface')}>
           <div className={cn(tok.labelMicro, 'mb-1 text-ink-muted')}>
-            {t('Εξοπλισμός / Σημειώσεις', 'Equipment / Notes')}
+            {t('Εξοπλισμός / σημειώσεις', 'Equipment / Notes')}
           </div>
           <div className="card-heading font-bold text-ink">
             {isHiking

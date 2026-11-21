@@ -47,7 +47,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
     { key: 'active', title: t('Ενεργά σχέδια', 'Active plans') },
     { key: 'pending', title: t('Αιτήματα', 'Pending requests') },
     { key: 'groups', title: t('Ομάδες', 'Groups') },
-    { key: 'connections', title: t('Συνδέσεις', 'Connections') },
+    { key: 'connections', title: t('Nakamas', 'Nakamas') },
     { key: 'organizer', title: t('Διοργανωτής', 'Organizer') },
     { key: 'support', title: t('Υποστήριξη', 'Support') },
   ] as const;

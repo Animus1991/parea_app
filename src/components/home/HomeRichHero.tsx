@@ -89,8 +89,8 @@ export function HomeRichHero({
               type="button"
               onClick={() => navigate('/nearby')}
               className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-gray-600 hover:bg-gray-100"
-              title={t('Εμφάνιση στον Χάρτη', 'View on Map')}
-              aria-label={t('Εμφάνιση στον Χάρτη', 'View on Map')}
+              title={t('Εμφάνιση στον χάρτη', 'View on Map')}
+              aria-label={t('Εμφάνιση στον χάρτη', 'View on Map')}
             >
               <MapIcon className="w-4 h-4" aria-hidden />
             </button>

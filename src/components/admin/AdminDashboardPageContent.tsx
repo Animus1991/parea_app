@@ -25,6 +25,7 @@ import { intlLocale } from '../../lib/dateLocale';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { AppSelect } from '../common/AppSelect';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 type AdminTab = 'overview' | 'moderation' | 'users' | 'system' | 'automation' | 'branding' | 'sso';
 
@@ -166,7 +167,7 @@ export default function AdminDashboardPageContent() {
           </div>
           <div>
             <h1 className={cn(APP_TYPO.pageTitle, a.isDark ? 'text-red-400' : 'text-red-700')}>
-              {t('Πίνακας Διαχείρισης', 'Admin Dashboard')}
+              {t('Πίνακας διαχείρισης', 'Admin Dashboard')}
             </h1>
             <p className={cn('mt-0.5 text-sm font-medium', a.sub)}>
               {t('Εποπτεία πλατφόρμας & μετριασμός', 'Platform oversight & moderation')}
@@ -235,7 +236,7 @@ export default function AdminDashboardPageContent() {
       <AdminOutingsPanel section="metrics" />
 
       <Card className={cn('p-4', a.cardSurface)}>
-        <h3 className={cn('text-xs font-bold tracking-widest mb-3', a.head)}>{t('Υγεία Πλατφόρμας', 'Platform Health')}</h3>
+        <h3 className={cn('text-xs font-bold tracking-widest mb-3', a.head)}>{t('Υγεία πλατφόρμας', 'Platform Health')}</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <div className="flex items-center justify-between mb-1">
@@ -312,7 +313,7 @@ export default function AdminDashboardPageContent() {
         <div className={cn('p-5 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4', a.borderB)}>
           <div>
             <h2 className={cn('text-sm font-bold', a.head)}>{t('Λογαριασμοί χρηστών', 'User accounts')}</h2>
-            <p className={cn('text-xs mt-0.5', a.muted)}>{t('Βαθμίδα εμπιστοσύνης, αξιοπιστία και πρόσβαση', 'Trust tier, reliability and access')}</p>
+            <p className={cn('text-xs mt-0.5', a.muted)}>{t('Επίπεδο επαλήθευσης, αξιοπιστία και πρόσβαση', 'Trust tier, reliability and access')}</p>
           </div>
           <div className="relative w-full sm:w-64">
             <Search className={cn('absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4', a.muted)} aria-hidden />
@@ -348,7 +349,7 @@ export default function AdminDashboardPageContent() {
                         {u.idVerified && <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" aria-label={t('Επαληθευμένη ταυτότητα', 'ID verified')} />}
                       </p>
                       <p className={cn('text-xs mt-0.5', a.muted)}>
-                        {u.city} · {t(tierLabelEl(u.trustTier), tierLabelEn(u.trustTier))} · {t('Αξιοπιστία', 'Reliability')} {u.reliabilityScore}%
+                        {formatLocationArea(u.city, language)} · {t(tierLabelEl(u.trustTier), tierLabelEn(u.trustTier))} · {t('Αξιοπιστία', 'Reliability')} {u.reliabilityScore}%
                       </p>
                     </div>
                   </div>
@@ -465,7 +466,7 @@ export default function AdminDashboardPageContent() {
       <AdminWallModeration />
       <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
         <div className="md:col-span-7 space-y-4">
-          <h2 className={cn('card-heading-lg font-bold tracking-wide', a.head)}>{t('Πρόσφατες Αναφορές', 'Recent Reports')}</h2>
+          <h2 className={cn('card-heading-lg font-bold tracking-wide', a.head)}>{t('Πρόσφατες αναφορές', 'Recent Reports')}</h2>
           {displayReports.length === 0 ? (
             <Card className={cn('p-4 text-center', a.cardSurface)}>
               <p className={cn('card-copy font-medium', a.muted)}>
@@ -537,10 +538,10 @@ export default function AdminDashboardPageContent() {
           <div className="sticky top-24">
             <h2 className={cn('text-sm font-bold tracking-wide mb-4 flex items-center gap-2', a.head)}>
               <Flag className="h-4 w-4 text-gray-400" />
-              {t('Γρήγορη Ενέργεια', 'Quick Action')}
+              {t('Γρήγορη ενέργεια', 'Quick Action')}
             </h2>
             <Card className={cn('p-5', a.isDark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200')}>
-              <p className={cn('text-xs font-bold tracking-wide mb-4', a.muted)}>{t('Αναζήτηση Χρήστη', 'Search User')}</p>
+              <p className={cn('text-xs font-bold tracking-wide mb-4', a.muted)}>{t('Αναζήτηση χρήστη', 'Search User')}</p>
               <div className="space-y-4">
                 <div>
                   <label className={cn('text-xs font-bold mb-1.5 block', a.head)}>{t('Email ή ID', 'Email or ID')}</label>

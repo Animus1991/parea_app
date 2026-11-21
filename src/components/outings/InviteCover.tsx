@@ -3,6 +3,7 @@ import { useLanguage } from '../../lib/i18n';
 import { formatPlanWhen } from '../../lib/dateLocale';
 import type { PlanCover } from '../../lib/planCovers';
 import type { Event } from '../../types';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 /**
  * The invitation card (Partiful, kept gentle): a soft gradient with text in
@@ -39,7 +40,7 @@ export function InviteCover({
         </li>
         <li className="flex items-center gap-2">
           <MapPin className="h-4 w-4 shrink-0" aria-hidden />
-          {event.locationArea}
+          {formatLocationArea(event.locationArea, language)}
         </li>
         <li className="flex items-center gap-2">
           <Users className="h-4 w-4 shrink-0" aria-hidden />

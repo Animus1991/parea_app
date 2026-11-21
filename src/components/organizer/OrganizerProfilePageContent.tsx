@@ -27,6 +27,7 @@ import { OrganizerCalendarCard } from '../outings/OrganizerCalendarCard';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 import { formatEur } from '../../lib/money';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 export default function OrganizerProfilePageContent() {
   const { id } = useParams();
@@ -98,7 +99,7 @@ export default function OrganizerProfilePageContent() {
           {t(projected.access.reasonEl, projected.access.reasonEn)}
         </p>
         <Link to="/connections" className="text-sm font-bold text-cyan-600 hover:underline">
-          {t('Οι συνδέσεις μου', 'My connections')}
+          {t('Οι Nakamas μου', 'My Nakamas')}
         </Link>
       </div>
     );
@@ -181,19 +182,19 @@ export default function OrganizerProfilePageContent() {
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
               {!limited && isVerifiedOrganizer && (
                 <Badge variant="outline" icon={<ShieldCheck className="h-3 w-3 text-cyan-600" />}>
-                  {t('Επαληθευμένος Διοργανωτής', 'Verified Organizer')}
+                  {t('Επαληθευμένος διοργανωτής', 'Verified Organizer')}
                 </Badge>
               )}
               {!limited && (
                 <Badge variant="neutral">
-                  {t('Επίπεδο Εμπιστοσύνης', 'Trust Tier')}: {t(tierLabelEl(organizer.trustTier), tierLabelEn(organizer.trustTier))}
+                  {t('Επίπεδο επαλήθευσης', 'Trust Tier')}: {t(tierLabelEl(organizer.trustTier), tierLabelEn(organizer.trustTier))}
                 </Badge>
               )}
             </div>
             <h1 className={cn(APP_TYPO.pageTitle, p.head)}>{projected.name}</h1>
             {projected.city && (
               <p className={cn(APP_TYPO.pageSub, 'mt-1', p.sub)}>
-                <MapPin className="h-3.5 w-3.5 inline mr-1" /> {projected.city}
+                <MapPin className="h-3.5 w-3.5 inline mr-1" /> {formatLocationArea(projected.city, language)}
               </p>
             )}
           </div>
@@ -260,7 +261,7 @@ export default function OrganizerProfilePageContent() {
 
       <div className="space-y-4">
         <h2 className={cn('text-sm md:text-base font-bold', p.head)}>
-          {t('Επερχόμενες Εκδηλώσεις από', 'Upcoming Events by')} {projected.name}
+          {t('Επερχόμενες εκδηλώσεις από', 'Upcoming Events by')} {projected.name}
         </h2>
         {hostedEvents.length === 0 ? (
           <div className={cn('text-center py-4 rounded-2xl border border-dashed', p.isDark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200')}>
@@ -286,7 +287,7 @@ export default function OrganizerProfilePageContent() {
                       <span aria-hidden className="opacity-40"> · </span>
                       {event.time}
                       <span aria-hidden className="opacity-40"> · </span>
-                      {event.locationArea}
+                      {formatLocationArea(event.locationArea, language)}
                       <span aria-hidden className="opacity-40"> · </span>
                       {event.isPaid ? formatEur(event.price, language) : t('Δωρεάν', 'Free')}
                     </p>
@@ -304,7 +305,7 @@ export default function OrganizerProfilePageContent() {
       {!limited && (
         <section className="space-y-3" aria-labelledby="organizer-wall-title">
           <h2 id="organizer-wall-title" className={cn('text-sm md:text-base font-bold', p.head)}>
-            {t('Ανακοινώσεις & Τοίχος', 'Announcements & Wall')}
+            {t('Ανακοινώσεις & τοίχος', 'Announcements & Wall')}
           </h2>
           {currentUser && canPostOnWall(currentUser.id, organizer.id, wallAccess).allowed && (
             <PostComposer key={organizer.id} wallOwnerId={organizer.id} />
@@ -352,7 +353,7 @@ export default function OrganizerProfilePageContent() {
             onClick={handleSendMessage}
             className="px-4 py-2 text-xs font-bold text-accent-fg bg-accent hover:bg-accent-strong rounded-lg transition-colors"
           >
-            {t('Αποστολή Μηνύματος', 'Send Message')}
+            {t('Αποστολή μηνύματος', 'Send Message')}
           </button>
         </div>
       </Modal>

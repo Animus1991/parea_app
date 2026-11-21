@@ -569,7 +569,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
           <div className={cn("z-10 bg-white/90 backdrop-blur-md min-h-7 px-2.5 py-1 rounded-xl font-bold text-ink tracking-tight flex flex-col items-end justify-center shrink-0 text-right", EVENT_CARD_TYPO.dateBadge)}>
             {formatEventPrice(event, language, t("Δωρεάν", "Free"), t("Δωρεάν", "Free"))}
             {event.isPaid && event.groupDiscount && (
-              <span className={cn(EVENT_CARD_TYPO.dateSub, "text-brand block mt-0.5")}>
+              <span className="text-xs leading-none font-bold text-brand block mt-0.5">
                 -{event.groupDiscount.percentage}% {t('ομαδική έκπτωση', 'group discount')}
               </span>
             )}
@@ -598,7 +598,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                   onPhoto
                 />
                 {groupProgress.discountUnlocked && event.groupDiscount && (
-                  <p className={cn(EVENT_CARD_TYPO.safetyLabel, coverFull && "mb-2.5", "text-emerald-200")}>
+                  <p className={cn("text-xs font-bold", coverFull && "mb-2.5", "text-emerald-200")}>
                     -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
                   </p>
                 )}
@@ -713,7 +713,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                 className="mb-3"
               />
               {groupProgress.discountUnlocked && event.groupDiscount && (
-                <p className={cn(EVENT_CARD_TYPO.safetyLabel, "mb-2.5", isDark ? "text-emerald-400" : "text-emerald-600")}>
+                <p className={cn("text-xs font-bold", "mb-2.5", isDark ? "text-emerald-400" : "text-emerald-600")}>
                   -{event.groupDiscount.percentage}% {t("ομαδική έκπτωση", "group discount")}
                 </p>
               )}
@@ -814,8 +814,8 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
               <p className={cn(EVENT_CARD_TYPO.title, "font-bold text-ink")}>{displayOrganizer.name}</p>
               <p className="text-xs font-medium leading-snug text-ink-muted">
                 {t(
-                  `Βαθμίδα ${tierLabelEl(displayOrganizer.trustTier)} · ${reliabilityBadge(displayOrganizer.reliabilityScore).el}`,
-                  `Tier ${tierLabelEn(displayOrganizer.trustTier)} · ${reliabilityBadge(displayOrganizer.reliabilityScore).en}`,
+                  `Επίπεδο: ${tierLabelEl(displayOrganizer.trustTier)} · ${reliabilityBadge(displayOrganizer.reliabilityScore).el}`,
+                  `Level: ${tierLabelEn(displayOrganizer.trustTier)} · ${reliabilityBadge(displayOrganizer.reliabilityScore).en}`,
                 )}
               </p>
               <ul className="space-y-1.5 text-xs font-medium text-ink">
@@ -831,7 +831,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                 }}
                 className="inline-flex min-h-8 items-center justify-center rounded-full border border-border bg-surface-raised px-4 text-xs font-bold text-ink"
               >
-                {t('Κέντρο εμπιστοσύνης', 'Trust center')}
+                {t('Αξιοπιστία', 'Trust center')}
               </button>
             </div>
           )}
@@ -853,7 +853,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
             <div>
               <p className="card-heading font-bold text-ink line-clamp-2">{event.title}</p>
               <p className="card-copy font-medium text-ink-muted capitalize">
-                {whenLine} · {event.locationArea}
+                {whenLine} · {formatLocationArea(event.locationArea, language)}
               </p>
             </div>
             {event.lat && event.lng ? (
@@ -861,7 +861,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
             ) : (
               <div className={cn("h-24 w-full rounded-xl border flex items-center justify-center", isDark ? "border-gray-700/40 bg-gray-800/30" : "border-gray-200 bg-gray-50")}>
                 <span className={cn("text-xs font-bold flex items-center gap-1", mutedColor)}>
-                  <MapPin className="w-4 h-4" aria-hidden /> {event.locationArea}
+                  <MapPin className="w-4 h-4" aria-hidden /> {formatLocationArea(event.locationArea, language)}
                 </span>
               </div>
             )}
@@ -888,7 +888,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
               {/* 1. Arrival Status */}
               <div className="space-y-1.5">
                 <p className={cn(EVENT_CARD_TYPO.progressTitle, "tracking-tight capitalize", subColor)}>
-                  {t("Κατάσταση Άφιξης", "Arrival Status")}
+                  {t("Κατάσταση άφιξης", "Arrival Status")}
                 </p>
                 <div className="grid grid-cols-2 gap-1.5">
                   {[
@@ -923,7 +923,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                     className={cn("flex-1 py-1.5 px-2 rounded-2xl flex items-center justify-center gap-1 border shadow-soft", EVENT_CARD_TYPO.statusBtn, isDark ? "bg-emerald-900/20 text-emerald-400 border-emerald-800 hover:bg-emerald-900/30" : "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100")}
                   >
                     <Link2 className="w-3 h-3" />{" "}
-                    {t("Επαφή Εμπιστοσύνης", "Trusted Contact")}
+                    {t("Έμπιστη επαφή", "Trusted Contact")}
                   </button>
                 </div>
                 {showEtaPrompt && (
@@ -961,7 +961,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                       {isSharingLocation
                         ? t("Η τοποθεσία κοινοποιείται", "Location Shared")
                         : t(
-                            "Κοινοποίηση Τοποθεσίας",
+                            "Κοινοποίηση τοποθεσίας",
                             "Share Location",
                           )}
                     </p>
@@ -1022,12 +1022,12 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                   <div>
                     <h3 className="card-heading-lg font-bold text-ink">
                       {t(
-                        "Κοινοποίηση Τοποθεσίας",
+                        "Κοινοποίηση τοποθεσίας",
                         "Share Location",
                       )}
                     </h3>
                     <p className={cn(EVENT_CARD_TYPO.hint, "font-medium text-gray-500")}>
-                      {t("Προαιρετικό & Προσωρινό", "Optional & temporary")}
+                      {t("Προαιρετικό & προσωρινό", "Optional & temporary")}
                     </p>
                   </div>
                 </div>
@@ -1059,7 +1059,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                       }}
                       className={cn("w-full bg-white text-red-600 border border-red-200 hover:bg-red-50 py-2 rounded-2xl font-bold tracking-tight capitalize shadow-soft", EVENT_CARD_TYPO.link)}
                     >
-                      {t("Διακοπή Κοινοποίησης", "Stop Sharing Now")}
+                      {t("Διακοπή κοινοποίησης", "Stop Sharing Now")}
                     </button>
                   </div>
                 )}
@@ -1148,10 +1148,10 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                         <div className="flex flex-col">
                           <span className="card-heading font-bold text-ink">
                             {option === "organizer" &&
-                              t("Μόνο Διοργανωτής", "Organizer Only")}
+                              t("Μόνο διοργανωτής", "Organizer Only")}
                             {option === "all" &&
                               t(
-                                "Όλη η Επιβεβαιωμένη Ομάδα",
+                                "Όλη η επιβεβαιωμένη ομάδα",
                                 "Entire Confirmed Group",
                               )}
                           </span>
@@ -1241,7 +1241,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
       <Modal
         open={showSafetyLinkModal}
         onClose={() => setShowSafetyLinkModal(false)}
-        title={t("Σύνδεσμος Επαφής Εμπιστοσύνης", "Trusted Contact Link")}
+        title={t("Σύνδεσμος έμπιστης επαφής", "Trusted Contact Link")}
         size="sm"
       >
         <div className="text-center">

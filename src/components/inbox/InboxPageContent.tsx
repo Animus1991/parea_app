@@ -354,7 +354,7 @@ export default function InboxPageContent() {
                 onClick={() => navigate('/notifications')}
                 className={cn('mt-2 px-4 py-1.5 min-h-8 rounded-full bg-cyan-600 hover:bg-cyan-700 text-white shadow-soft', INBOX_TYPO.cta)}
               >
-                {t('Όλες οι Ειδοποιήσεις', 'All Notifications')}
+                {t('Όλες οι ειδοποιήσεις', 'All Notifications')}
               </button>
               <button
                 type="button"

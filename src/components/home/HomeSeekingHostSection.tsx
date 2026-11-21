@@ -91,7 +91,7 @@ export function HomeSeekingHostSection({
               </Link>
               <div className="p-2.5 space-y-1.5">
                 <h3 className="text-xs font-bold text-ink line-clamp-2">{event.title}</h3>
-                <p className="text-2xs text-ink-muted truncate">{formatLocationArea(event.locationArea, language)}</p>
+                <p className="text-xs text-ink-muted truncate">{formatLocationArea(event.locationArea, language)}</p>
                 <button
                   type="button"
                   onClick={() => takeHost(event.id)}

@@ -43,7 +43,7 @@ export default function HelpCenterPageContent() {
     { id: 'payments', label: t('Πληρωμές', 'Payments'), match: t('Πληρωμές', 'Payments'), icon: CreditCard, color: a.isDark ? 'text-emerald-400 bg-emerald-900/20' : 'text-emerald-600 bg-emerald-50' },
     // Maps to Organizers articles + group FAQs (no article category named "Groups").
     { id: 'groups', label: t('Ομάδες', 'Groups'), match: t('Διοργανωτές', 'Organizers'), icon: Users, color: a.isDark ? 'text-blue-400 bg-blue-900/20' : 'text-blue-600 bg-blue-50' },
-    { id: 'quick', label: t('Γρήγορη Βοήθεια', 'Quick Help'), match: null as string | null, icon: Zap, color: a.isDark ? 'text-amber-400 bg-amber-900/20' : 'text-amber-600 bg-amber-50' },
+    { id: 'quick', label: t('Γρήγορη βοήθεια', 'Quick Help'), match: null as string | null, icon: Zap, color: a.isDark ? 'text-amber-400 bg-amber-900/20' : 'text-amber-600 bg-amber-50' },
   ];
 
   // Deep-link: /help?topic=groups|safety|payments|quick
@@ -98,7 +98,7 @@ export default function HelpCenterPageContent() {
       <div className={cn("text-white rounded-2xl p-5 text-center shadow-soft-md relative overflow-hidden", a.heroBg)}>
         <div className={cn("absolute top-0 right-0 -mr-8 -mt-5 w-32 h-32 rounded-full", a.heroCircle)}></div>
         <div className={cn("absolute bottom-0 left-0 -ml-8 -mb-5 w-24 h-24 rounded-full", a.heroCircle)}></div>
-        <h1 className={cn(APP_TYPO.pageTitle, "mb-2 relative z-10")}>{t('Κέντρο Βοήθειας', 'Help Center')}</h1>
+        <h1 className={cn(APP_TYPO.pageTitle, "mb-2 relative z-10")}>{t('Κέντρο βοήθειας', 'Help Center')}</h1>
         <p className={cn(APP_TYPO.pageSub, "mb-4 relative z-10", a.heroSub)}>{t('Πώς μπορούμε να βοηθήσουμε;', 'How can we help you?')}</p>
         <div className="relative max-w-md mx-auto z-10">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

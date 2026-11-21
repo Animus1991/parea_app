@@ -34,6 +34,7 @@ import {
   BuddySeekVibeNudge,
   type BuddySeekFilterKey,
 } from './BuddySeekChrome';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 function joinStatusLabel(status: CompanyJoinRequestStatus, t: (el: string, en: string) => string) {
   switch (status) {
@@ -55,7 +56,7 @@ function joinStatusLabel(status: CompanyJoinRequestStatus, t: (el: string, en: s
 type RequestWizard = { event: Event; existing?: CompanyRequest };
 
 export default function BuddySeekPageContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const a = usePageContrast();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -379,7 +380,7 @@ export default function BuddySeekPageContent() {
               )}
             >
               <span className={cn('font-bold block', a.head)}>{event.title}</span>
-              <span className={cn('text-xs', a.muted)}>{event.date} · {event.locationArea}</span>
+              <span className={cn('text-xs', a.muted)}>{event.date} · {formatLocationArea(event.locationArea, language)}</span>
             </button>
           ))}
           {upcomingEvents.length === 0 && (

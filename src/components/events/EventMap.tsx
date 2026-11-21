@@ -14,6 +14,7 @@ import { getGoogleMapsApiKey, isGoogleMapsConfigured } from '../../lib/maps';
 import { cn } from '../../lib/utils';
 import type { Event } from '../../types';
 import { useStore } from '../../store';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 export type EventDetailMapAccent = 'classic' | 'vibrant' | 'neon' | 'bento';
 
@@ -113,7 +114,7 @@ function InteractiveEventMarker({
 }
 
 export function EventMap({ event, accent, darkSurface = false, className }: EventMapProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const groups = useStore((s) => s.groups);
   const [isMapFullscreen, setIsMapFullscreen] = useState(false);
   const [markerFocused, setMarkerFocused] = useState(false);
@@ -171,7 +172,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
                 )}
           </p>
           {event.locationArea && (
-            <p className={cn('text-sm font-medium mt-2', tok.badge)}>{event.locationArea}</p>
+            <p className={cn('text-sm font-medium mt-2', tok.badge)}>{formatLocationArea(event.locationArea, language)}</p>
           )}
         </div>
       </div>
@@ -181,7 +182,7 @@ export function EventMap({ event, accent, darkSurface = false, className }: Even
   return (
     <div className={cn('mt-4 space-y-2', className)}>
       <p className={cn('text-xs font-bold tracking-wide', tok.badge)}>
-        {t('Τοποθεσία', 'Location')} — {t('Πάτα τον δείκτη για εστίαση', 'Tap marker to focus')}
+        {t('Τοποθεσία', 'Location')}
       </p>
       <div
         className={cn(

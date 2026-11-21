@@ -3,6 +3,15 @@ import { formatEur } from './money';
 import { eventTagLabels } from './eventTags';
 
 const LOCATION_EL: Record<string, string> = {
+  'Ilisia, Athens': 'Ιλίσια, Αθήνα',
+  'Metaxourgeio, Athens': 'Μεταξουργείο, Αθήνα',
+  'Mets, Athens': 'Μετς, Αθήνα',
+  'Pangrati, Athens': 'Παγκράτι, Αθήνα',
+  'Parnitha, Attica': 'Πάρνηθα, Αττική',
+  'Piraeus → Aegina': 'Πειραιάς → Αίγινα',
+  'Plaka, Athens': 'Πλάκα, Αθήνα',
+  'Syntagma, Athens': 'Σύνταγμα, Αθήνα',
+  'Vouliagmeni, Athens': 'Βουλιαγμένη, Αθήνα',
   'Thisio, Athens': 'Θησείο, Αθήνα',
   'Exarchia, Athens': 'Εξάρχεια, Αθήνα',
   'Kaisariani, Athens': 'Καισαριανή, Αθήνα',

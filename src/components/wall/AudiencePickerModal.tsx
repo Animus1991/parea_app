@@ -12,6 +12,7 @@ import { cn } from '../../lib/utils';
 import { toast } from 'sonner';
 import { AUDIENCE_ICON, audienceBaseHint, audienceBaseLabel } from './wallText';
 import { PersonAvatar } from './PersonAvatar';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 const EXCLUDABLE: AudienceBase[] = ['public', 'connections', 'friends_of_friends', 'list'];
 
@@ -29,7 +30,7 @@ export function PeopleChecklist({
   label: string;
   emptyText: string;
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const users = useStore((s) => s.users);
   const [q, setQ] = useState('');
   const people = useMemo(() => {
@@ -73,7 +74,7 @@ export function PeopleChecklist({
                 <input type="checkbox" checked={on} onChange={() => toggle(u.id)} className="h-4 w-4 accent-[var(--color-accent)]" />
                 <PersonAvatar user={u} size="sm" />
                 <span className="min-w-0 flex-1 truncate text-sm font-bold text-ink">{u.name}</span>
-                {u.city && <span className={cn('text-xs font-medium', on ? 'text-ink' : 'text-ink-muted')}>{u.city}</span>}
+                {u.city && <span className={cn('text-xs font-medium', on ? 'text-ink' : 'text-ink-muted')}>{formatLocationArea(u.city, language)}</span>}
               </label>
             </li>
           );

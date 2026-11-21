@@ -33,7 +33,7 @@ test.describe('client-side navigation', () => {
     await page.goto('/login');
     await page.getByRole('button', { name: /Explore as guest|Εξερεύνηση ως επισκέπτης/i }).click();
     await expect(page.getByRole('button', { name: /Μενού λογαριασμού|Account menu/ })).toBeVisible();
-    for (const name of ['Τοπικές Ομάδες', 'Κατηγορίες', 'Τοπικές Ομάδες', 'Ανακάλυψη Εκδηλώσεων', 'Τοπικές Ομάδες', 'Ιστορικό']) {
+    for (const name of ['Τοπικές ομάδες', 'Κατηγορίες', 'Τοπικές ομάδες', 'Ανακάλυψη εκδηλώσεων', 'Τοπικές ομάδες', 'Ιστορικό']) {
       await page.getByRole('link', { name, exact: true }).first().click();
       await expect(page.locator('#main-content')).toBeVisible();
     }

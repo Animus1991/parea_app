@@ -18,6 +18,8 @@ export function OrganizerCalendarCard({ organizerId, organizerName, className }:
   const { t } = useLanguage();
   const navigate = useNavigate();
   const followed = useStore((s) => s.followedOrganizerIds.includes(organizerId));
+  // The embed code is for the organizer's own site; visitors don't need it.
+  const isOwner = useStore((s) => s.currentUser?.id === organizerId);
   const toggleFollow = useStore((s) => s.toggleFollowOrganizer);
   const events = useStore((s) => s.events);
   const groups = useStore((s) => s.groups);
@@ -41,9 +43,6 @@ export function OrganizerCalendarCard({ organizerId, organizerName, className }:
       <h2 id="org-cal-title" className="flex items-center gap-2 text-sm font-bold text-ink">
         <CalendarPlus className="h-4 w-4" aria-hidden /> {t('Ημερολόγιο διοργανωτή', 'Organizer calendar')}
       </h2>
-      <p className="mt-1 text-xs font-medium text-ink-muted">
-        {t('Οι νέες εκδηλώσεις μπαίνουν μόνες τους στο ημερολόγιό σου, με το πόσες παρέες σχηματίζονται.', 'New events land in your calendar by themselves, with how many groups are forming.')}
-      </p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Button
           size="sm"
@@ -84,6 +83,7 @@ export function OrganizerCalendarCard({ organizerId, organizerName, className }:
           <Download className="mr-1.5 h-4 w-4" aria-hidden /> {t('Λήψη', 'Download')}
         </Button>
       </div>
+      {isOwner && (
       <details className="mt-3">
         <summary className="inline-flex min-h-9 cursor-pointer items-center gap-1.5 text-xs font-bold text-ink">
           <Code2 className="h-4 w-4" aria-hidden /> {t('Widget για την ιστοσελίδα σου', 'Widget for your site')}
@@ -93,6 +93,7 @@ export function OrganizerCalendarCard({ organizerId, organizerName, className }:
           {copied === 'embed' ? t('Αντιγράφηκε', 'Copied') : t('Αντιγραφή κώδικα', 'Copy code')}
         </Button>
       </details>
+      )}
     </section>
   );
 }

@@ -126,7 +126,7 @@ export function DailyChallengeCard({ className }: { className?: string }) {
             {t('Ημερήσια πρόκληση', 'Daily challenge')} <span className="text-ink-muted">· +{DAILY_CHALLENGE_XP} XP</span>
           </p>
           <p className="mt-0.5 text-sm font-semibold text-ink">{t('Στείλε μήνυμα σε μια ομάδα σήμερα', 'Send a message in a group today')}</p>
-          {!d.dailyClaimed && (
+          {!d.dailyClaimed && d.dailyMet && (
             <p id="daily-challenge-hint" className="mt-0.5 text-xs text-ink-muted">
               {d.dailyMet ? t('Έτοιμο! Πάρε την ανταμοιβή σου.', 'Done! Claim your reward.') : t('Η ανταμοιβή ξεκλειδώνει μόλις στείλεις ένα μήνυμα.', 'The reward unlocks once you send a message.')}
             </p>
@@ -152,7 +152,7 @@ export function DailyChallengeCard({ className }: { className?: string }) {
             type="button"
             onClick={onClaim}
             disabled={!d.dailyMet}
-            aria-describedby="daily-challenge-hint"
+            aria-describedby={d.dailyMet && !d.dailyClaimed ? 'daily-challenge-hint' : undefined}
             className="inline-flex min-h-8 flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-3 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 sm:flex-initial"
           >
             <Flame className="h-3.5 w-3.5" aria-hidden />

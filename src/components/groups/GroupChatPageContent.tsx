@@ -56,6 +56,7 @@ import { canModerateGroup } from "../../lib/roles";
 import { eventTagPath } from "../../lib/eventTags";
 import { formatPlanWhen } from '../../lib/dateLocale';
 import { showNightCoordinationTools, translateEventTag } from '../../lib/eventDisplay';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 /** Room under the newest message so the floating chats button (desktop) never covers it. */
 const VIRTUOSO_SPACER = { Footer: () => <div aria-hidden className="h-2 md:h-14" /> };
@@ -460,7 +461,7 @@ export default function GroupChatPageContent() {
                       onValueChange={setSenderFilter}
                       className={cn("filter-select border border-gray-200 dark:border-border bg-gray-50 dark:bg-white/5 text-gray-600 hover:bg-gray-100 dark:hover:bg-white/10 cursor-pointer transition-colors max-w-[120px]", gc.focusRing)}
                       options={[
-                        { value: "all", label: t("Όλοι οι Αποστολείς", "All Senders") },
+                        { value: "all", label: t("Όλοι οι αποστολείς", "All Senders") },
                         ...groupMembersDetailed.map((m) => ({ value: m.id, label: m.name })),
                       ]}
                     />
@@ -560,7 +561,7 @@ export default function GroupChatPageContent() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
-                  {t("Κοινοποίηση Τοποθεσίας", "Sharing Location")}
+                  {t("Κοινοποίηση τοποθεσίας", "Sharing Location")}
                 </button>
               </div>
             )}
@@ -686,7 +687,7 @@ export default function GroupChatPageContent() {
           <div className="w-full md:w-[320px] lg:w-[380px] bg-white dark:bg-surface-raised shrink-0 flex flex-col absolute md:relative z-30 h-full border-l border-gray-200 dark:border-border animate-in slide-in-from-right-8 duration-200">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-border bg-white dark:bg-surface-raised sticky top-0 z-10 shadow-soft">
               <h3 className="font-bold text-ink text-sm tracking-wide">
-                {t("Λεπτομέρειες Ομάδας", "Group Details")}
+                {t("Λεπτομέρειες ομάδας", "Group Details")}
               </h3>
               <button
                 type="button"
@@ -775,7 +776,7 @@ export default function GroupChatPageContent() {
                     <span
                       className={`font-bold text-sm ${group.discountUnlocked ? "text-emerald-800" : "text-ink"}`}
                     >
-                      {t("Ομαδική Έκπτωση", "Group Discount")}
+                      {t("Ομαδική έκπτωση", "Group Discount")}
                     </span>
                   </div>
                   <p
@@ -797,7 +798,7 @@ export default function GroupChatPageContent() {
               <div className="bg-white dark:bg-surface-raised rounded-2xl shadow-soft border border-gray-100 dark:border-border p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="font-bold text-sm capitalize tracking-tight text-ink">
-                    {t("Μέλη Ομάδας", "Group Members")}
+                    {t("Μέλη ομάδας", "Group Members")}
                   </h4>
                   <div className="flex items-center gap-2">
                     {isGroupAdmin && (
@@ -806,7 +807,7 @@ export default function GroupChatPageContent() {
                         className={cn("flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg border transition-colors", gc.linkBtn)}
                       >
                         <UserPlus className="w-3 h-3" />{" "}
-                        {t("Προσθήκη Μελών", "Add Members")}
+                        {t("Προσθήκη μελών", "Add Members")}
                       </button>
                     )}
                     <span className="text-xs font-bold text-gray-500 bg-gray-100 dark:bg-white/10 px-2 py-0.5 rounded-full">
@@ -883,10 +884,10 @@ export default function GroupChatPageContent() {
                                 className={`text-xs font-bold tracking-wide truncate ${member.reliabilityScore >= 80 ? "text-emerald-600" : member.reliabilityScore >= 50 ? "text-blue-600" : "text-amber-600"}`}
                               >
                                 {member.reliabilityScore >= 80
-                                  ? t("Υψηλή Αξιοπιστία", "Highly Reliable")
+                                  ? t("Υψηλή αξιοπιστία", "Highly Reliable")
                                   : member.reliabilityScore >= 50
                                     ? t("Συχνός", "Frequent")
-                                    : t("Χρειάζεται Βελτίωση", "Needs Work")}
+                                    : t("Χρειάζεται βελτίωση", "Needs Work")}
                               </p>
                             </div>
                           </div>
@@ -901,7 +902,7 @@ export default function GroupChatPageContent() {
                 <div>
                   <h4 className="font-bold text-sm capitalize tracking-tight text-ink mb-3 flex items-center gap-1.5">
                     <ShieldCheck className="h-3.5 w-3.5 text-gray-400" />{" "}
-                    {t("Ιδιωτικότητα Συνομιλίας", "Chat Privacy")}
+                    {t("Ιδιωτικότητα συνομιλίας", "Chat Privacy")}
                   </h4>
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex-1">
@@ -948,7 +949,7 @@ export default function GroupChatPageContent() {
                     >
                       <div>
                         <p className="text-sm font-bold text-ink">
-                          {t("Κατάσταση Άφιξης", "Share Arrival Status")}
+                          {t("Κατάσταση άφιξης", "Share Arrival Status")}
                         </p>
                         <p className="text-xs text-gray-500 mt-0.5">
                           {t(
@@ -969,7 +970,7 @@ export default function GroupChatPageContent() {
                           className={cn("text-sm font-bold", isSharingLocation ? gc.shareActiveText : "text-ink")}
                         >
                           {isSharingLocation
-                            ? t("Η Τοποθεσία Κοινοποιείται", "Location Shared")
+                            ? t("Η τοποθεσία κοινοποιείται", "Location Shared")
                             : t(
                                 "Κοινοποίηση τοποθεσίας",
                                 "Share location",
@@ -979,7 +980,7 @@ export default function GroupChatPageContent() {
                           className={cn("text-xs mt-0.5", isSharingLocation ? gc.shareMutedText : "text-gray-500")}
                         >
                           {isSharingLocation
-                            ? t("Διαχείριση ή Διακοπή", "Tap to manage or stop")
+                            ? t("Διαχείριση ή διακοπή", "Tap to manage or stop")
                             : t(
                                 "Προσωρινή, προαιρετική κοινοποίηση",
                                 "Temporary, optional sharing",
@@ -1016,7 +1017,7 @@ export default function GroupChatPageContent() {
                       <div>
                         <p className="text-sm font-bold text-emerald-800">
                           {t(
-                            "Σύνδεσμος Έμπιστης Επαφής",
+                            "Σύνδεσμος έμπιστης επαφής",
                             "Trusted Contact Link",
                           )}
                         </p>
@@ -1084,7 +1085,7 @@ export default function GroupChatPageContent() {
         <Modal
           open={showSafetyLinkModal}
           onClose={() => setShowSafetyLinkModal(false)}
-          title={t("Σύνδεσμος Έμπιστης Επαφής", "Trusted Contact Link")}
+          title={t("Σύνδεσμος έμπιστης επαφής", "Trusted Contact Link")}
           size="sm"
           className="text-center"
         >
@@ -1142,7 +1143,7 @@ export default function GroupChatPageContent() {
         <Modal
           open={showDisableEphemeralModal}
           onClose={() => setShowDisableEphemeralModal(false)}
-          title={t("Διατήρηση Ιστορικού;", "Keep Chat History?")}
+          title={t("Διατήρηση ιστορικού;", "Keep Chat History?")}
           size="sm"
           className="text-center"
         >
@@ -1198,7 +1199,7 @@ export default function GroupChatPageContent() {
         <Modal
           open={showStatusModal}
           onClose={() => setShowStatusModal(false)}
-          title={t("Κατάσταση Άφιξης", "Share Arrival Status")}
+          title={t("Κατάσταση άφιξης", "Share Arrival Status")}
           size="sm"
           className="text-center"
         >
@@ -1301,7 +1302,7 @@ export default function GroupChatPageContent() {
             setShowAddMemberModal(false);
             setMemberAddSearchQuery("");
           }}
-          title={t("Προσθήκη Μελών", "Add Members")}
+          title={t("Προσθήκη μελών", "Add Members")}
           size="md"
           className="max-h-[85vh] flex flex-col"
         >
@@ -1350,7 +1351,7 @@ export default function GroupChatPageContent() {
                       <div className="flex flex-col min-w-0">
                         <span className="text-sm font-bold text-ink truncate">{member.name}</span>
                         <span className="text-xs text-ink-muted font-medium flex items-center gap-1">
-                          {member.city}{" "}
+                          {formatLocationArea(member.city, language)}{" "}
                           {member.badges.includes("Payment verified") && (
                             <ShieldCheck className="w-3 h-3 text-emerald-500" />
                           )}

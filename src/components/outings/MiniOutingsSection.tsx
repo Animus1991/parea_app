@@ -112,7 +112,6 @@ export function MiniOutingsSection({
           </Button>
         </div>
         <p className="text-xs font-medium leading-relaxed text-ink-muted">
-          {t('Καφές, βόλτα ή τρέξιμο με 2–6 άτομα.', 'Coffee, a walk or a run with 2–6 people.')}{' '}
           <button
             type="button"
             onClick={() => go('/collections')}
@@ -369,7 +368,7 @@ function MiniOutingComposer({ onClose, onLeave, initialNote }: { onClose: () => 
         </label>
       </div>
       {!canWomen && (
-        <p className="mt-1 text-2xs font-medium text-ink-muted dark:text-gray-300">
+        <p className="mt-1 text-xs font-medium text-ink-muted dark:text-gray-300">
           {t('Η επιλογή «Γυναίκες & μη δυαδικά» ανοίγει αν το δηλώσεις στο προφίλ σου.', 'The “Women & non-binary” option opens if you set it in your profile.')}{' '}
           <button
             type="button"

@@ -79,7 +79,7 @@ export default function OrganizerEmbedPage() {
             })}
           </ul>
         )}
-        <p className="mt-2 text-2xs font-medium text-ink-muted">
+        <p className="mt-2 text-xs font-medium text-ink-muted">
           <a href={origin} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
             Nakamas
           </a>{' '}

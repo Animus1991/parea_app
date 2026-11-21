@@ -210,12 +210,6 @@ export default function CategoriesPageContent() {
               {t('εμπειρία σου', 'experience')}
             </span>
           </h1>
-          <p className="text-sm font-medium text-hero-fg/80 leading-snug mb-3">
-            {t(
-              'Ανακάλυψε επιλεγμένες εκδηλώσεις που ταιριάζουν στα ενδιαφέροντά σου.',
-              'Discover handpicked events matching your interests.',
-            )}
-          </p>
           <div className="relative w-full max-w-md mx-auto md:mx-0">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-hero-fg/60" />
             <input
@@ -405,7 +399,7 @@ export default function CategoriesPageContent() {
                   ? language === 'el'
                     ? CATEGORY_CATALOG.find((c) => c.name === activeCategory)?.labelGr
                     : CATEGORY_CATALOG.find((c) => c.name === activeCategory)?.labelEn
-                  : t('Όλες οι Εκδηλώσεις', 'All Discoveries')}
+                  : t('Όλες οι εκδηλώσεις', 'All Discoveries')}
               </h2>
               <p className={cn('text-xs font-bold tracking-wider mt-0.5', p.muted)}>
                 {filteredEvents.length} {tu('αποτελέσματα', 'results found')}
@@ -423,7 +417,7 @@ export default function CategoriesPageContent() {
                 { value: 'All', label: t('Κόστος: Οποιοδήποτε', 'Cost: Any') },
                 { value: 'Free', label: t('Μόνο δωρεάν', 'Free only') },
                 { value: 'Paid', label: t('Μόνο επί πληρωμή', 'Paid only') },
-                { value: 'Group Discount', label: t('Με Ομαδική Έκπτωση', 'Has Group Discount') },
+                { value: 'Group Discount', label: t('Με ομαδική έκπτωση', 'Has Group Discount') },
               ]}
             />
 
@@ -477,7 +471,7 @@ export default function CategoriesPageContent() {
                   icon={Bookmark}
                   title={t('Δεν βρέθηκαν εκδηλώσεις', 'No events found')}
                   description={t('Δοκίμασε άλλα φίλτρα ή κατηγορία.', 'Try changing filters or category.')}
-                  actionLabel={t('Καθαρισμός Φίλτρων', 'Reset Filters')}
+                  actionLabel={t('Καθαρισμός φίλτρων', 'Reset Filters')}
                   onAction={() => {
                     setActiveCategory(null);
                     setPriceFilter('All');
@@ -506,19 +500,13 @@ export default function CategoriesPageContent() {
             p.isDark ? 'border-cyan-500/30 text-cyan-400 bg-cyan-900/10' : 'border-cyan-200 text-cyan-700 bg-white',
           )}
         >
-          <Star className="w-3.5 h-3.5 mr-1" /> {t('Γίνε Οικοδεσπότης', 'Become a Host')}
+          <Star className="w-3.5 h-3.5 mr-1" /> {t('Γίνε οικοδεσπότης', 'Become a Host')}
         </Badge>
         <h3 className={cn('text-sm md:text-base font-bold tracking-tight', p.head)}>
           {t('Δεν βρήκες αυτό που έψαχνες;', "Couldn't find what you wanted?")}
         </h3>
-        <p className={cn('text-sm max-w-lg mx-auto font-medium leading-relaxed', p.sub)}>
-          {t(
-            'Δημιούργησε τη δική σου εκδήλωση και μάζεψε ανθρώπους με παρόμοια ενδιαφέροντα.',
-            'Create your own event and gather people with similar passions.',
-          )}
-        </p>
         <Button onClick={() => navigate('/create')} size="md">
-          {t('Δημιουργία Νέας Εμπειρίας', 'Create New Experience')}
+          {t('Δημιουργία νέας εμπειρίας', 'Create New Experience')}
         </Button>
       </div>
     </div>

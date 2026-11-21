@@ -55,7 +55,7 @@ export function getMatchingPreview(
 
   return {
     count,
-    labelEl: `${count} ${count === 1 ? 'άτομο' : 'άτομα'} με κοινά ενδιαφέροντα ψάχνουν Nakamas`,
-    labelEn: `${count} ${count === 1 ? 'person' : 'people'} with shared interests looking for Nakamas`,
+    labelEl: `${count} ${count === 1 ? 'άτομο με κοινά ενδιαφέροντα ψάχνει' : 'άτομα με κοινά ενδιαφέροντα ψάχνουν'} Nakamas`,
+    labelEn: `${count} ${count === 1 ? 'person' : 'people'} with shared interests ${count === 1 ? 'is' : 'are'} looking for Nakamas`,
   };
 }

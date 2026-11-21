@@ -60,7 +60,7 @@ export function CheckInTicket({
       <div className="mx-auto mt-2 h-1 w-40 overflow-hidden rounded-full bg-border" aria-hidden>
         <div className="h-full bg-accent transition-[width] duration-1000 ease-linear" style={{ width: `${progress * 100}%` }} />
       </div>
-      <p className="mt-1 text-2xs font-medium text-ink-muted">
+      <p className="mt-1 text-xs font-medium text-ink-muted">
         {t(`Αλλάζει σε ${secondsLeft}″ · δείξ’ το ${hostName ? `στον/στην ${hostName}` : 'στον/στην οικοδεσπότη'}`, `Changes in ${secondsLeft}s · show it to ${hostName ?? 'the host'}`)}
       </p>
     </div>

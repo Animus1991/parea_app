@@ -7,6 +7,7 @@ import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
 import type { CalendarEventWithDate } from '../../hooks/useUserCalendarEvents';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 export interface CalendarHourlyScheduleProps {
   day: Date;
@@ -94,7 +95,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
                       <p className={cn('text-sm font-bold', p.head)}>{ev.title}</p>
                       <p className={cn('text-xs flex items-center gap-1 mt-1', p.muted)}>
                         <MapPin className="w-3 h-3" />
-                        {ev.locationArea}
+                        {formatLocationArea(ev.locationArea, language)}
                       </p>
                     </button>
                   ))}

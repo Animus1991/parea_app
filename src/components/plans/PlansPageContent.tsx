@@ -119,7 +119,6 @@ export default function PlansPageContent() {
     <div className="mx-auto max-w-full space-y-4 md:space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div>
         <h1 className={cn(PLANS_TYPO.pageTitle, p.head)}>{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
-        <p className={cn(PLANS_TYPO.pageSub, 'mt-1', p.sub)}>{t(`Οι βραδιές που έχεις κλείσει.`, `Nights you've booked.`)}</p>
       </div>
 
       {/* Next-event highlight */}
@@ -321,7 +320,7 @@ export default function PlansPageContent() {
             <div className="relative h-48 w-full shrink-0 bg-gray-100 overflow-hidden grayscale">
               <EventCoverImg event={event} alt={event.title} className="w-full h-full object-cover" />
               <div className="absolute top-2 left-2 bg-gray-800/90 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
-                {t(`Εκκρεμής Ομάδα`, `Pending Group`)}
+                {t(`Εκκρεμής ομάδα`, `Pending Group`)}
               </div>
             </div>
 
@@ -474,7 +473,7 @@ export default function PlansPageContent() {
             }}
             className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-full transition-all duration-200 shadow-soft"
           >
-            {t('Ναι, Αποχώρηση', 'Yes, Leave')}
+            {t('Ναι, αποχώρηση', 'Yes, Leave')}
           </button>
           <button
             type="button"

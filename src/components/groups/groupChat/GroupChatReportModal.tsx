@@ -53,7 +53,7 @@ export function GroupChatReportModal({ open, onClose, groupId }: GroupChatReport
       size="md"
     >
       <p className="text-xs font-semibold text-ink-muted tracking-tight capitalize -mt-2 mb-3">
-        {t('Απολύτως Εμπιστευτικό', 'Strictly Confidential')}
+        {t('Απολύτως εμπιστευτικό', 'Strictly Confidential')}
       </p>
       <div className="flex items-start gap-3 mb-4">
         <div className="w-10 h-10 bg-red-50 dark:bg-red-500/15 rounded-full flex items-center justify-center text-red-600 shrink-0">
@@ -98,7 +98,7 @@ export function GroupChatReportModal({ open, onClose, groupId }: GroupChatReport
           onClick={submit}
           className="px-4 py-2 min-h-8 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-full transition-all duration-200 shadow-soft"
         >
-          {t('Υποβολή Αναφοράς', 'Submit Report')}
+          {t('Υποβολή αναφοράς', 'Submit Report')}
         </button>
       </div>
     </Modal>

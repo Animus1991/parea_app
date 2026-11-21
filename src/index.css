@@ -474,7 +474,8 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   line-height: var(--text-sm--line-height);
 }
 .card-copy-micro {
-  font-size: calc(var(--text-2xs) * 1.1); /* ~9.9px */
+  /* Readable card copy never drops under the 10px floor (phones). */
+  font-size: max(var(--text-xs), calc(var(--text-2xs) * 1.1));
   line-height: var(--text-2xs--line-height);
 }
 

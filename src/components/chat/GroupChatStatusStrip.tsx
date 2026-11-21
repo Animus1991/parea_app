@@ -51,7 +51,7 @@ export function GroupChatStatusStrip({
 
   return (
     <>
-      <div className="flex items-center gap-1.5 px-3 py-1 border-b border-border/80 text-2xs text-ink-muted">
+      <div className="flex items-center gap-1.5 px-3 py-1 border-b border-border/80 text-xs text-ink-muted">
         <p className="min-w-0 flex-1 truncate leading-snug">{statusText}</p>
         {showEphemeral && (
           <button

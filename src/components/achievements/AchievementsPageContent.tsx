@@ -53,9 +53,6 @@ export default function AchievementsPageContent() {
       <div>
         <div>
           <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Επιτεύγματα', 'Achievements')}</h1>
-          <p className={cn('font-medium text-sm mt-1', a.sub)}>
-            {t('Κάθε badge βασίζεται στη πραγματική σου δραστηριότητα — πάτα ένα για να δεις πώς το ξεκλειδώνεις.', 'Every badge is based on your real activity — tap one to see how to unlock it.')}
-          </p>
         </div>
       </div>
 

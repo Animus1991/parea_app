@@ -31,6 +31,8 @@ import {
   serializeHomeSchedule,
   writeStoredHomeSchedule,
 } from '../../lib/homeScheduleFilter';
+import { APP_VERSION } from '../../lib/appVersion';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 const CATEGORY_KEYS = ['liveMusic', 'theater', 'hiking', 'cinema', 'boardGames', 'wellness', 'festivals', 'workshops'] as const;
 
@@ -200,13 +202,13 @@ export default function SettingsPageContent() {
     : userSettings.privacy.profileVisibility === 'public'
       ? t('Δημόσιο', 'Public')
       : userSettings.privacy.profileVisibility === 'connections'
-        ? t('Συνδέσεις', 'Connections only')
+        ? t('Nakamas μου', 'My Nakamas')
         : t('Ιδιωτικό', 'Private');
   const myWallPrivacy = wallPrivacyOf(wallPrivacyByUser, currentUserId ?? '');
 
   const sections = [
     {
-      title: t('Ρυθμίσεις Λογαριασμού', 'Account Settings'),
+      title: t('Ρυθμίσεις λογαριασμού', 'Account Settings'),
       items: [
         {
           icon: Globe,
@@ -217,7 +219,7 @@ export default function SettingsPageContent() {
             setLanguage(next);
           },
         },
-        { icon: Palette, label: t('Εμφάνιση & Θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
+        { icon: Palette, label: t('Εμφάνιση & θέμα', 'Appearance & Theme'), value: language === 'el' ? THEME_LABELS[theme as ThemeId]?.el : THEME_LABELS[theme as ThemeId]?.en, onClick: () => setShowThemePicker(!showThemePicker) },
         { icon: LayoutGrid, label: t('Προβολή αρχικής', 'Home layout'), value: homeHeroMode === 'light' ? t('Σύντομο', 'Compact') : homeHeroMode === 'rich' ? t('Πλήρες', 'Full') : t('Ισορροπημένο', 'Balanced'), onClick: () => setShowHomeLayout(!showHomeLayout) },
         { icon: ImageIcon, label: t('Εικόνα κάρτας εκδήλωσης', 'Event card photo'), value: t(...CARD_IMAGE_DEPTH_LABELS[cardImage.depth]), onClick: () => setShowCardImage(!showCardImage) },
         {
@@ -231,10 +233,10 @@ export default function SettingsPageContent() {
         },
         {
           icon: CreditCard,
-          label: t('Μέθοδοι Πληρωμής', 'Payment Methods'),
+          label: t('Μέθοδοι πληρωμής', 'Payment Methods'),
           value: t('Σύντομα', 'Soon'),
           onClick: () =>
-            handleComingSoon(t('Μέθοδοι Πληρωμής', 'Payment Methods'), {
+            handleComingSoon(t('Μέθοδοι πληρωμής', 'Payment Methods'), {
               path: '/wallet',
               actionLabel: t('Πορτοφόλι', 'Wallet'),
               hintEl: 'Εν τω μεταξύ δες το πορτοφόλι και τις κινήσεις σου.',
@@ -244,9 +246,9 @@ export default function SettingsPageContent() {
       ],
     },
     {
-      title: t('Απόρρητο & Ασφάλεια', 'Privacy & Security'),
+      title: t('Απόρρητο & ασφάλεια', 'Privacy & Security'),
       items: [
-        { icon: Eye, label: t('Ορατότητα Προφίλ', 'Profile Visibility'), value: visibilityLabel, onClick: () => navigate('/profile?tab=privacy') },
+        { icon: Eye, label: t('Ορατότητα προφίλ', 'Profile Visibility'), value: visibilityLabel, onClick: () => navigate('/profile?tab=privacy') },
         {
           icon: Newspaper,
           label: t('Τοίχος & κοινό δημοσιεύσεων', 'Wall & post audience'),
@@ -268,13 +270,13 @@ export default function SettingsPageContent() {
     {
       title: t('Ειδοποιήσεις', 'Notifications'),
       items: [
-        { icon: Bell, label: t('Προτιμήσεις Ειδοποιήσεων', 'Notification Preferences'), value: t('Προσαρμοσμένες', 'Custom'), onClick: () => setShowNotifications(!showNotifications) },
+        { icon: Bell, label: t('Προτιμήσεις ειδοποιήσεων', 'Notification Preferences'), value: t('Προσαρμοσμένες', 'Custom'), onClick: () => setShowNotifications(!showNotifications) },
       ],
     },
   ];
 
   usePublishPageSnapshot({
-    titleEl: 'Ρυθμίσεις & Απόρρητο',
+    titleEl: 'Ρυθμίσεις & απόρρητο',
     titleEn: 'Settings & Privacy',
     summaryEl: 'Θέμα, απόρρητο, ειδοποιήσεις, διαθεσιμότητα',
     summaryEn: 'Theme, privacy, notifications, availability',
@@ -283,8 +285,7 @@ export default function SettingsPageContent() {
   return (
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div className="mb-2">
-        <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')}</h1>
-        <p className={cn(APP_TYPO.pageSub, "mt-1", a.sub)}>{t('Ο λογαριασμός και το απόρρητό σου', 'Manage your account')}</p>
+        <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Ρυθμίσεις & απόρρητο', 'Settings & Privacy')}</h1>
       </div>
 
       {sections.map((section, idx) => (
@@ -311,7 +312,7 @@ export default function SettingsPageContent() {
           {idx === 0 && showThemePicker && (
             <div ref={themePanelRef} className="scroll-mt-24">
               <Card className="p-5">
-                <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Επιλογή Θέματος', 'Choose Theme')}</h3>
+                <h3 className={cn("font-bold text-sm mb-3", a.head)}>{t('Επιλογή θέματος', 'Choose Theme')}</h3>
                 <ThemePicker variant="grid" />
               </Card>
             </div>
@@ -369,7 +370,7 @@ export default function SettingsPageContent() {
                 >
                   <div className="min-w-0">
                     <p className={cn('text-sm font-bold truncate', a.head)}>{u?.name ?? id}</p>
-                    {u?.city && <p className={cn('text-xs', a.sub)}>{u.city}</p>}
+                    {u?.city && <p className={cn('text-xs', a.sub)}>{formatLocationArea(u.city, language)}</p>}
                   </div>
                   <Button
                     variant="outline"
@@ -440,7 +441,7 @@ export default function SettingsPageContent() {
       {showNotifications && (
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className={cn("font-bold text-sm mb-4", a.head)}>{t('Γενικές Ειδοποιήσεις', 'General Notifications')}</h3>
+            <h3 className={cn("font-bold text-sm mb-4", a.head)}>{t('Γενικές ειδοποιήσεις', 'General Notifications')}</h3>
             <div className="space-y-3">
               {[
                 { key: 'pushMessages', label: t('Μηνύματα ομάδας', 'Group messages') },
@@ -575,12 +576,12 @@ export default function SettingsPageContent() {
                     if (encoded.on) params.set('on', encoded.on);
                     navigate(params.toString() ? `/?${params.toString()}` : '/');
                     toast.success(
-                      t('Εφαρμόστηκε στην Ανακάλυψη', 'Applied to Discover'),
+                      t('Εφαρμόστηκε στην ανακάλυψη', 'Applied to Discover'),
                     );
                   }}
                   className="text-xs font-bold text-accent min-h-8 disabled:opacity-40"
                 >
-                  {t('Εφαρμογή στην Ανακάλυψη', 'Apply to Discover')}
+                  {t('Εφαρμογή στην ανακάλυψη', 'Apply to Discover')}
                 </button>
               </div>
             </div>
@@ -687,7 +688,7 @@ export default function SettingsPageContent() {
       <div className="text-center pt-2 pb-4">
         <div className={cn("flex items-center justify-center gap-1 text-xs font-medium", a.isDark ? "text-gray-600" : "text-gray-300")}>
           <Info className="w-3 h-3" aria-hidden />
-          <span>{t('Nakamas έκδ. 1.2.0 · Build 2026.07', 'Nakamas v1.2.0 · Build 2026.07')}</span>
+          <span>Nakamas v{APP_VERSION}</span>
         </div>
       </div>
     </div>

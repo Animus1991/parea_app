@@ -19,6 +19,7 @@ import { connectionOutcomeText } from '../../lib/connectionFeedback';
 import { profilePathFor } from '../../lib/profileLinks';
 import { PersonAvatar } from '../wall/PersonAvatar';
 import { APP_TYPO } from '../../lib/typographyTokens';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 // ─── More dropdown ──────────────────────────────────────────────
 function MoreMenu({
@@ -62,14 +63,14 @@ function MoreMenu({
       {open && (
         <div role="menu" className={`absolute right-0 top-full mt-1 w-48 rounded-lg border shadow-soft-lg z-fab py-1 text-sm ${a.isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
           <button type="button" role="menuitem" onClick={() => { onViewProfile(); setOpen(false); }} className={`w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
-            <Eye className="w-4 h-4" aria-hidden /> {t('Προβολή Προφίλ', 'View Profile')}
+            <Eye className="w-4 h-4" aria-hidden /> {t('Προβολή προφίλ', 'View Profile')}
           </button>
           <button type="button" role="menuitem" onClick={() => { onInvite(); setOpen(false); }} className={`w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 ${a.isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'}`}>
-            <CalendarPlus className="w-4 h-4" aria-hidden /> {t('Πρόσκληση σε Εκδήλωση', 'Invite to Event')}
+            <CalendarPlus className="w-4 h-4" aria-hidden /> {t('Πρόσκληση σε εκδήλωση', 'Invite to Event')}
           </button>
           <div className={`my-1 h-px ${a.isDark ? 'bg-gray-700' : 'bg-gray-100'}`} role="separator" />
           <button type="button" role="menuitem" onClick={() => { onRemove(); setOpen(false); }} className="w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
-            <UserMinus className="w-4 h-4" aria-hidden /> {t('Αφαίρεση Σύνδεσης', 'Remove Connection')}
+            <UserMinus className="w-4 h-4" aria-hidden /> {t('Αφαίρεση σύνδεσης', 'Remove Connection')}
           </button>
           <button type="button" role="menuitem" onClick={() => { onReport(); setOpen(false); }} className="w-full px-3 py-1.5 min-h-8 text-left flex items-center gap-2 text-red-500 hover:bg-red-50/10">
             <Flag className="w-4 h-4" aria-hidden /> {t('Αναφορά', 'Report')}
@@ -93,7 +94,7 @@ function TrustBadge({ tier, isDark }: { tier: string; isDark: boolean }) {
 
 // ─── Main component ──────────────────────────────────────────────
 export default function ConnectionsPageContent() {
-  const { t, tu } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const navigate = useNavigate();
   const a = usePageContrast();
 
@@ -328,7 +329,7 @@ export default function ConnectionsPageContent() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Οι Συνδέσεις μου', 'My Nakamas')}</h1>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Οι Nakamas μου', 'My Nakamas')}</h1>
         </div>
         <Button variant="primary" size="sm" className="flex items-center gap-2" onClick={() => navigate('/buddy-seek')}>
           <Users className="w-4 h-4" /> {t('Βρες Nakamas', 'Find Nakamas')}
@@ -344,7 +345,7 @@ export default function ConnectionsPageContent() {
           className={cn('px-3 py-1.5 min-h-8 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5', activeTab === 'all' ? a.chipActive : a.chipInactive)}
           onClick={() => setActiveTab('all')}
         >
-          {t('Συνδέσεις', 'Connections')}
+          {t('Nakamas', 'Nakamas')}
           <span className="font-semibold text-2xs">({connections.length})</span>
         </button>
         <button
@@ -376,7 +377,7 @@ export default function ConnectionsPageContent() {
             <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${a.muted}`} />
             <input
               type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-              placeholder={t('Αναζήτηση συνδέσεων...', 'Search connections...')}
+              placeholder={t('Αναζήτηση Nakamas...', 'Search Nakamas...')}
               className={`search-control w-full h-9 pl-9 pr-3 border rounded-xl focus:outline-none focus:ring-2 ${inputClasses}`}
             />
           </div>
@@ -420,7 +421,7 @@ export default function ConnectionsPageContent() {
               <EmptyState
                 icon={Users}
                 character={search ? undefined : 'crew'}
-                title={search ? t('Δεν βρέθηκαν αποτελέσματα', 'No results found') : t('Δεν έχεις συνδέσεις ακόμα', 'No connections yet')}
+                title={search ? t('Δεν βρέθηκαν αποτελέσματα', 'No results found') : t('Δεν έχεις Nakamas ακόμα', 'No Nakamas yet')}
                 description={t('Βρες παρέα για την επόμενη έξοδο.', 'Find company for your next outing.')}
                 actionLabel={search ? t('Καθαρισμός', 'Clear') : t('Βρες Nakamas', 'Find Nakamas')}
                 onAction={search ? () => setSearch('') : () => navigate('/buddy-seek')}
@@ -441,7 +442,7 @@ export default function ConnectionsPageContent() {
                     </button>
                   </h3>
                   <p className={`card-meta flex items-center gap-1 mt-0.5 ${a.muted}`}>
-                    <MapPin className="w-3 h-3 shrink-0" aria-hidden /> {conn.city}
+                    <MapPin className="w-3 h-3 shrink-0" aria-hidden /> {formatLocationArea(conn.city, language)}
                     <span aria-hidden className="opacity-40">·</span>
                     <span className="capitalize">{conn.role}</span>
                     {conn.mutual > 0 && (
@@ -530,7 +531,7 @@ export default function ConnectionsPageContent() {
                 >
                   {ev.title}
                   <span className={`block text-xs font-medium mt-0.5 ${a.muted}`}>
-                    {ev.date} · {ev.locationArea}
+                    {ev.date} · {formatLocationArea(ev.locationArea, language)}
                   </span>
                 </button>
               </li>
@@ -622,7 +623,7 @@ export default function ConnectionsPageContent() {
                         </button>
                       </h3>
                       <p className={`card-meta flex items-center gap-1 mt-0.5 ${a.muted}`}>
-                        <MapPin className="w-3 h-3 shrink-0" aria-hidden /> {user.city}
+                        <MapPin className="w-3 h-3 shrink-0" aria-hidden /> {formatLocationArea(user.city, language)}
                         {user.isOrganizer && (
                           <>
                             <span aria-hidden className="opacity-40">·</span>

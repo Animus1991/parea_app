@@ -259,7 +259,7 @@ export default function InvitePublicPage() {
               className="mt-1 min-h-8 w-full rounded-xl border border-border bg-surface px-3 text-sm font-medium text-ink"
               aria-describedby="invite-name-help"
             />
-            <p id="invite-name-help" className="mt-1 text-2xs font-medium text-ink-muted">
+            <p id="invite-name-help" className="mt-1 text-xs font-medium text-ink-muted">
               {t('Το βλέπει μόνο όποιος σε κάλεσε. Δεν χρειάζεται email ούτε κωδικός.', 'Only the person who invited you sees it. No email or password needed.')}
             </p>
           </div>
@@ -274,7 +274,7 @@ export default function InvitePublicPage() {
         </form>
       )}
 
-      <p className="flex items-start gap-1.5 text-2xs font-medium text-ink-muted">
+      <p className="flex items-start gap-1.5 text-xs font-medium text-ink-muted">
         <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
         {t(
           'Στο Nakamas οι ομάδες είναι μικρές, τα μέλη επιβεβαιώνουν τηλέφωνο και το ακριβές σημείο φαίνεται μόνο στα μέλη.',

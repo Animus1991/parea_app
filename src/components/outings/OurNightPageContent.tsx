@@ -41,13 +41,14 @@ import { GroupTicketsPanel } from './GroupTicketsPanel';
 import { PreMeetCard } from './PreMeetCard';
 import type { User } from '../../types';
 import { formatEur } from '../../lib/money';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
 const TIER = {
-  '3_high_trust': { el: 'Υψηλή εμπιστοσύνη', en: 'High trust' },
+  '3_high_trust': { el: 'Πλήρως επαληθευμένο', en: 'Fully verified' },
   '2_confirmed': { el: 'Επιβεβαιωμένο', en: 'Confirmed' },
-  '1_explorer': { el: 'Νέο μέλος', en: 'New member' },
+  '1_explorer': { el: 'Εξερευνητής', en: 'Explorer' },
 } as const;
 
 function seenKey(groupId: string) {
@@ -249,7 +250,7 @@ export default function OurNightPageContent() {
             <CalendarDays className="h-4 w-4" aria-hidden /> {formatPlanWhen(event.date, event.time, language)}
           </li>
           <li className="flex items-center gap-1.5">
-            <MapPin className="h-4 w-4" aria-hidden /> {event.locationArea}
+            <MapPin className="h-4 w-4" aria-hidden /> {formatLocationArea(event.locationArea, language)}
           </li>
         </ul>
         <div className="mt-4 flex items-center gap-2">
@@ -365,8 +366,8 @@ export default function OurNightPageContent() {
           </p>
           <p className="mt-1 text-xs font-medium text-ink-muted">
             {event.groupDiscount
-              ? t(`−${event.groupDiscount.percentage}% στο ταμείο και στο μέρος της «Συνάντησης πριν». Τον βλέπουν όλα τα μέλη.`, `−${event.groupDiscount.percentage}% at the door and at the «meet before» place. Every member sees it.`)
-              : t('Δείξ’ τον στο ταμείο. Τον βλέπουν όλα τα μέλη.', 'Show it at the door. Every member sees it.')}
+              ? t(`−${event.groupDiscount.percentage}% στο ταμείο και στη «Συνάντηση πριν».`, `−${event.groupDiscount.percentage}% at the door and at the «meet before».`)
+              : t('Δείξ’ τον στο ταμείο.', 'Show it at the door.')}
           </p>
         </section>
       )}
@@ -385,7 +386,7 @@ export default function OurNightPageContent() {
                   {m.id === me.id ? t(' (εσύ)', ' (you)') : ''}
                   {m.id === group.hostId ? t(' · οικοδεσπότης', ' · host') : ''}
                 </Link>
-                <span className="flex flex-wrap items-center gap-x-2 text-2xs font-medium text-ink-muted">
+                <span className="flex flex-wrap items-center gap-x-2 text-xs font-medium text-ink-muted">
                   <span>{t(TIER[m.trustTier].el, TIER[m.trustTier].en)}</span>
                   {m.selfieVerified && (
                     <span className="inline-flex items-center gap-0.5">
@@ -450,7 +451,7 @@ export default function OurNightPageContent() {
             {t('Αναφορά', 'Report')}
           </Button>
         </div>
-        <p className="mt-2 text-2xs font-medium text-ink-muted">
+        <p className="mt-2 text-xs font-medium text-ink-muted">
           {t('Συναντιέστε πρώτα σε δημόσιο χώρο. Ενημέρωσε κάποιον δικό σου πού θα είσαι.', 'Meet in a public place first. Tell someone you trust where you will be.')}
         </p>
       </section>
@@ -465,7 +466,7 @@ export default function OurNightPageContent() {
               ? t('Η θέση σου θα περάσει στο πρώτο άτομο της λίστας αναμονής — χωρίς καμία επίπτωση για σένα.', 'Your seat will pass to the first person on the waitlist — with no consequence for you.')
               : lateIfLeaving
                 ? t('Λιγότερο από 24 ώρες πριν: αν η θέση μείνει κενή, καταγράφεται αργή ακύρωση (−8 αξιοπιστία), με δυνατότητα ένστασης.', 'Less than 24 hours before: if the seat stays empty, a late cancel is recorded (−8 reliability), and you can appeal.')
-                : t('Πες το νωρίς στο chat — έτσι η ομάδα προλαβαίνει να βρει κάποιον άλλον.', 'Say it early in the chat — so the group has time to find someone else.')}
+                : t('Πες το νωρίς στο chat.', 'Say it early in the chat.')}
           </p>
           {confirmLeave ? (
             <div className="mt-2 flex gap-2">

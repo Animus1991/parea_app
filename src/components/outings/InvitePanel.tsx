@@ -101,7 +101,7 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
         <Link2 className="h-4 w-4" aria-hidden /> {t('Κάλεσε φίλους', 'Invite friends')}
       </h3>
       <p className="mt-1 text-xs font-medium text-ink-muted">
-        {t('Απαντούν με ένα πάτημα, χωρίς λογαριασμό. Για να κρατήσουν θέση φτιάχνουν λογαριασμό σε ένα λεπτό.', 'They answer in one tap, no account needed. To hold a seat they sign up in a minute.')}
+        {t('Απαντούν με ένα πάτημα, χωρίς λογαριασμό.', 'They answer in one tap, no account needed.')}
       </p>
 
       <div className="mt-3">
@@ -188,7 +188,7 @@ export function InvitePanel({ group, event }: { group: Group; event: Event }) {
           {/* Upstream removed the always-on aside; only the exception is said: the link
               did not reach the server, so it opens on this device only. */}
           {!invite.remoteSyncedAt && (
-            <p className="mt-2 text-2xs font-medium text-ink-muted">
+            <p className="mt-2 text-xs font-medium text-ink-muted">
               {t('Ο σύνδεσμος ανοίγει προς το παρόν μόνο σε αυτή τη συσκευή.', 'For now the link opens on this device only.')}
             </p>
           )}

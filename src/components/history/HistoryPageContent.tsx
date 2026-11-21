@@ -16,6 +16,7 @@ import { formatPlanWhen } from '../../lib/dateLocale';
 import { EventCoverImg } from '../common/EventCoverImg';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 export default function HistoryPageContent() {
   const { t, language } = useLanguage();
@@ -199,7 +200,7 @@ export default function HistoryPageContent() {
                     <span aria-hidden className="opacity-40">·</span>
                     <span className="inline-flex items-center gap-1 min-w-0">
                       <MapPin className="w-3 h-3 shrink-0 opacity-70" aria-hidden />
-                      <span className="truncate">{event.locationArea}</span>
+                      <span className="truncate">{formatLocationArea(event.locationArea, language)}</span>
                     </span>
                     {feedbackSubmitted[event.id] && (
                       <>

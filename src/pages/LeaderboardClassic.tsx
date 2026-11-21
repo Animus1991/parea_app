@@ -89,7 +89,7 @@ export default function LeaderboardClassic() {
 
   const tabs = [
     { id: 'global', label: t('Παγκόσμια', 'Global') },
-    { id: 'friends', label: t('Φίλοι', 'Friends') },
+    { id: 'friends', label: t('Nakamas', 'Nakamas') },
     { id: 'badges', label: t('Διακριτικά', 'Badges') },
   ];
 
@@ -99,9 +99,6 @@ export default function LeaderboardClassic() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className={cn(APP_TYPO.pageTitle, p.head)}>{t('Κατάταξη', 'Leaderboard')}</h1>
-          <p className={cn(APP_TYPO.pageSub, 'mt-1', p.sub)}>
-            {t('Δες πού βρίσκεσαι μέσα στην κοινότητα', 'See where you stand in the community')}
-          </p>
         </div>
         <div className={cn('flex gap-1 rounded-xl p-1 self-start', p.isDark ? 'bg-white/5' : 'bg-gray-100')}>
           {(['week', 'month', 'alltime'] as Period[]).map((per) => (

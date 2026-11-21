@@ -43,6 +43,7 @@ import { AudiencePickerModal } from './AudiencePickerModal';
 import { PersonAvatar } from './PersonAvatar';
 import { REACTION_EMOJI, reactionLabel, relativeTime } from './wallText';
 import { OverflowMenu, type OverflowMenuItem } from './OverflowMenu';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 const LONG_TEXT = 420;
 
@@ -416,7 +417,7 @@ export function PostCard({
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-bold text-ink">{event.title}</span>
               <span className="block truncate text-xs font-medium text-ink-muted">
-                {event.date} · {event.time} · {event.locationArea}
+                {event.date} · {event.time} · {formatLocationArea(event.locationArea, language)}
               </span>
             </span>
             <ChevronRight className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />

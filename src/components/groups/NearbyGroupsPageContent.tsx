@@ -23,6 +23,7 @@ import { haversineKm, ATHENS_CENTER } from "../../lib/haversine";
 import { applyBundledLeafletPins } from '../../lib/leafletDefaultIcon';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 import { DEFAULT_EVENT_COVER } from '../../lib/eventCover';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 applyBundledLeafletPins();
 
@@ -228,7 +229,7 @@ const GroupImage = ({ src, alt, className }: { src: string; alt: string; classNa
 
 export default function NearbyGroupsPageContent() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const categoryLabel = useCategoryLabel();
   const p = usePageContrast();
   const { events, isLoading, isError, refetch } = useEventsResource();
@@ -398,7 +399,7 @@ export default function NearbyGroupsPageContent() {
       style={{ "--sidebar-width": isMapFullscreen ? "0px" : `${sidebarWidth}px` } as React.CSSProperties}
     >
       {/* Page title for screen readers (the visible title lives in the side panel as h2). */}
-      <h1 className="sr-only text-lg md:text-xl">{t("Τοπικές Ομάδες", "Local Groups")}</h1>
+      <h1 className="sr-only text-lg md:text-xl">{t("Τοπικές ομάδες", "Local Groups")}</h1>
       {/* Map Area */}
       <div className="absolute inset-0 z-0 bg-[#e5e3df] dark:bg-gray-900 map-container" id="map-container" ref={mapContainerRef}>
         <ErrorBoundary
@@ -486,7 +487,7 @@ export default function NearbyGroupsPageContent() {
                           {group.title}
                         </h3>
                         <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-3 truncate flex items-center">
-                          <MapPin className="w-3 h-3 mr-1" /> {group.locationArea}
+                          <MapPin className="w-3 h-3 mr-1" /> {formatLocationArea(group.locationArea, language)}
                         </p>
                         <button
                           type="button"
@@ -496,7 +497,7 @@ export default function NearbyGroupsPageContent() {
                           }}
                           className="w-full bg-cyan-600 text-white text-xs font-bold py-2 rounded-2xl hover:bg-cyan-700 transition-colors shadow-soft"
                         >
-                          {t('Δες Εκδήλωση', 'View Event')}
+                          {t('Δες εκδήλωση', 'View Event')}
                         </button>
                       </div>
                     </Popup>
@@ -567,8 +568,8 @@ export default function NearbyGroupsPageContent() {
             type="button"
             onClick={() => setIsMapFullscreen(!isMapFullscreen)}
             className={cn("h-10 w-10 rounded-2xl shadow-soft-lg flex items-center justify-center transition-all duration-200 pointer-events-auto shrink-0", p.isDark ? "bg-gray-800/95 text-white hover:bg-gray-700" : "bg-gray-900 text-white hover:bg-black")}
-            title={isMapFullscreen ? t('Έξοδος', 'Exit') : t('Πλήρης Οθόνη', 'Fullscreen')}
-            aria-label={isMapFullscreen ? t('Έξοδος', 'Exit') : t('Πλήρης Οθόνη', 'Fullscreen')}
+            title={isMapFullscreen ? t('Έξοδος', 'Exit') : t('Πλήρης οθόνη', 'Fullscreen')}
+            aria-label={isMapFullscreen ? t('Έξοδος', 'Exit') : t('Πλήρης οθόνη', 'Fullscreen')}
           >
             {isMapFullscreen ? <Minimize className="h-5 w-5" aria-hidden /> : <Maximize className="h-5 w-5" aria-hidden />}
           </button>
@@ -636,7 +637,7 @@ export default function NearbyGroupsPageContent() {
         </div>
 
         <div className={cn("p-5 md:p-5 border-b shrink-0", p.borderB)}>
-          <h2 className={cn(APP_TYPO.pageTitle, p.head)}>{t("Τοπικές Ομάδες", "Local Groups")}</h2>
+          <h2 className={cn(APP_TYPO.pageTitle, p.head)}>{t("Τοπικές ομάδες", "Local Groups")}</h2>
           <p className={cn(APP_TYPO.pageSub, "mt-1.5 flex items-center gap-1.5", p.muted)}>
             <Navigation className="h-3.5 w-3.5" aria-hidden /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius}km</span>
           </p>
@@ -688,7 +689,7 @@ export default function NearbyGroupsPageContent() {
                   : p.isDark ? "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700" : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100",
               )}
             >
-              {t("Φίλοι", "Friends")}
+              {t("Nakamas", "Nakamas")}
             </button>
           </div>
         </div>
@@ -720,7 +721,7 @@ export default function NearbyGroupsPageContent() {
                   ? t("Ορισμός ακτίνας στα 15km", "Set radius to 15km")
                   : radius < 25
                     ? t("Ορισμός ακτίνας στα 25km", "Set radius to 25km")
-                    : t("Αναζήτηση Εκδηλώσεων", "Browse Events")
+                    : t("Αναζήτηση εκδηλώσεων", "Browse Events")
               }
               onAction={
                 radius < 15
@@ -754,7 +755,7 @@ export default function NearbyGroupsPageContent() {
                   <p className={cn("card-meta mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5", p.sub)}>
                     <span>{categoryLabel(group.category)}</span>
                     <span aria-hidden className="opacity-40">·</span>
-                    <span className="truncate">{group.locationArea}</span>
+                    <span className="truncate">{formatLocationArea(group.locationArea, language)}</span>
                     <span aria-hidden className="opacity-40">·</span>
                     <span className={cn("inline-flex items-center gap-1 font-semibold", p.isDark ? "text-cyan-400" : "text-cyan-700")}>
                       <MapPin className="h-3 w-3 shrink-0" aria-hidden />
@@ -773,9 +774,6 @@ export default function NearbyGroupsPageContent() {
               <MapIcon className="h-6 w-6" />
             </div>
             <h3 className={cn("text-sm md:text-base font-bold", p.head)}>{t("Επέκταση ακτίνας", "Expand your radius")}</h3>
-            <p className={cn("text-sm font-medium mt-1.5 mb-4", p.sub)}>
-              {t("Δεν βρίσκεις αυτό που ψάχνεις; Μεγάλωσε την περιοχή αναζήτησης.", "Can't find what you're looking for? Increase your search area.")}
-            </p>
             <Button
               onClick={() => setRadius(radius < 15 ? 15 : 25)}
               variant={p.isAB ? "primary" : "outline"}

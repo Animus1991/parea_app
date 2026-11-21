@@ -57,7 +57,7 @@ export function HomeWeekCard() {
               <EventCoverImg event={event} className="h-10 w-12 shrink-0 rounded-lg object-cover" />
               <span className="min-w-0">
                 <span className={cn('block truncate text-xs font-bold', p.head)}>{event.title}</span>
-                <span className={cn('block text-2xs font-medium', p.muted)}>
+                <span className={cn('block text-xs font-medium', p.muted)}>
                   {formatPlanWhen(event.date, event.time, language)}
                   {formingIds.has(event.id) && ` · ${t('σχέδιο σχηματίζεται', 'plan forming')}`}
                 </span>
@@ -71,7 +71,7 @@ export function HomeWeekCard() {
               <EventCoverImg event={plan.event} className="h-10 w-12 shrink-0 rounded-lg object-cover" />
               <span className="min-w-0">
                 <span className={cn('block truncate text-xs font-bold', p.head)}>{plan.event.title}</span>
-                <span className={cn('block text-2xs font-medium', p.muted)}>{t('Σχέδιο που σχηματίζεται · Βρες Nakamas', 'A forming plan · Find Nakamas')}</span>
+                <span className={cn('block text-xs font-medium', p.muted)}>{t('Σχέδιο που σχηματίζεται · Βρες Nakamas', 'A forming plan · Find Nakamas')}</span>
               </span>
             </button>
           </li>

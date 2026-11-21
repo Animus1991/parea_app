@@ -78,7 +78,7 @@ export function PlatformEventBanner() {
         className="shrink-0 inline-flex min-h-8 items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold rounded-full px-4 text-xs transition-colors"
       >
         <Crown className="w-4 h-4" />
-        {t("Γίνε Διοργανωτής Παρέας", "Become group organizer")}
+        {t("Γίνε διοργανωτής παρέας", "Become group organizer")}
       </button>
     </div>
   );
