@@ -372,7 +372,7 @@ export function ChatComposerTools({
       )}
 
       {panel === 'poll' && (
-        <form onSubmit={handleCreatePoll} className="p-3 border-b border-border bg-surface space-y-2">
+        <form onSubmit={handleCreatePoll} className="p-3 border-b border-border bg-surface space-y-2 overflow-y-auto max-h-52">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-ink">📊 {t('Νέα δημοσκόπηση', 'New poll')}</span>
             <button type="button" onClick={() => setPanel('none')} aria-label={t('Κλείσιμο', 'Close')} className="p-1 text-ink-muted">

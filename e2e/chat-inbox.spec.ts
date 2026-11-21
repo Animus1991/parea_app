@@ -152,6 +152,28 @@ test.describe('Nakamas Chat landscape desktop', () => {
     await expect(win).toHaveCount(0);
     await expect(chatsButton(page)).toBeVisible();
   });
+
+  test('a poll can be filled and sent in a short popup', async ({ page }) => {
+    await enterDemoGuest(page);
+    const sheet = await openInbox(page);
+    await sheet.getByRole('button', { name: /Maria/ }).filter({ hasText: /Τέλεια|Great, see you/ }).click();
+    const win = page.locator('[data-chat-window]');
+    await expect(win).toBeVisible();
+    await win.getByRole('button', { name: /Περισσότερα|More tools/ }).click();
+    await win.getByRole('button', { name: /^Δημοσκόπηση$|^Poll$/ }).click();
+    await win.getByPlaceholder(/Ερώτηση|Question/).fill('Coffee?');
+    await win.getByPlaceholder(/Επιλογή|Option/).nth(0).fill('Yes');
+    await win.getByPlaceholder(/Επιλογή|Option/).nth(1).fill('No');
+    const send = win.getByRole('button', { name: /Send poll|^Αποστολή$/ });
+    await send.scrollIntoViewIfNeeded();
+    await expect(send).toBeVisible();
+    const box = await send.boundingBox();
+    expect(box).toBeTruthy();
+    expect(box!.y).toBeGreaterThanOrEqual(0);
+    expect(box!.y + box!.height).toBeLessThanOrEqual((page.viewportSize()?.height ?? 0) + 1);
+    await send.click();
+    await expect(win.getByText('Coffee?')).toBeVisible();
+  });
 });
 
 test.describe('Nakamas Chat short desktop', () => {

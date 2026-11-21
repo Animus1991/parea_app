@@ -382,6 +382,7 @@ export function ChatWindow({
             <div ref={bottomRef} />
           </div>
 
+          <div className="shrink-0 min-h-0 max-h-[55%] overflow-y-auto">
           <QuickReplies
             onSelect={(q) => {
               if (!viewer || !perm.canSend) return;
@@ -448,6 +449,7 @@ export function ChatWindow({
                 : t('Η συνομιλία είναι κλειδωμένη', 'Conversation is locked')}
             </div>
           )}
+          </div>
         </div>
       </div>
 
