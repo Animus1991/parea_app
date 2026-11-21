@@ -490,7 +490,9 @@ export const useChatStore = create<ChatState>()(
         meetingPoint,
         openWindow = false,
       }) => {
-        const existing = get().conversations.find((c) => c.groupId === groupId);
+        const existing = get().conversations.find(
+          (c) => c.groupId === groupId && c.type === 'event_group',
+        );
         if (existing) {
           const nextParticipants = [...new Set(participantUserIds)];
           const participantsChanged =

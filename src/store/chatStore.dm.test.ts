@@ -109,6 +109,41 @@ describe('ensureEventGroupConversation', () => {
     ).toHaveLength(1);
   });
 
+  it('does not overwrite a person-to-group request that shares the group id', () => {
+    useChatStore.setState({
+      conversations: [
+        {
+          id: 'conv_req_pending',
+          type: 'person_to_group',
+          title: 'Αίτημα · Ομάδα έκθεσης',
+          eventId: 'e1',
+          groupId: 'g1',
+          participantUserIds: ['u1', 'u2'],
+          status: 'locked',
+          isEphemeral: true,
+          canPersist: false,
+          unreadCount: 1,
+          lastMessageAt: '2026-05-30T12:00:00.000Z',
+          lastMessagePreview: { el: 'Θα ήθελα να έρθω μαζί σας', en: 'I would like to join you' },
+        },
+      ],
+      messages: [],
+    });
+    const id = useChatStore.getState().ensureEventGroupConversation({
+      groupId: 'g1',
+      eventId: 'e1',
+      title: 'Exhibition',
+      participantUserIds: ['u2'],
+    });
+    expect(id).toBe('conv_g1');
+    const request = useChatStore.getState().conversations.find((c) => c.id === 'conv_req_pending');
+    expect(request?.type).toBe('person_to_group');
+    expect(request?.participantUserIds).toEqual(['u1', 'u2']);
+    const groupChat = useChatStore.getState().conversations.find((c) => c.id === id);
+    expect(groupChat?.type).toBe('event_group');
+    expect(groupChat?.participantUserIds).toEqual(['u2']);
+  });
+
   it('syncs new group members onto an existing thread so they can announce arrival', () => {
     const id = useChatStore.getState().ensureEventGroupConversation({
       groupId: 'g2',

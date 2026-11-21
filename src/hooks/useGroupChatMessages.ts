@@ -70,7 +70,9 @@ export function useGroupChatMessages(
   const systemLabel = t('Σύστημα', 'System');
   const users = useStore((s) => s.users);
   const conversation = useChatStore((s) =>
-    groupId ? s.conversations.find((c) => c.groupId === groupId) : undefined,
+    groupId
+      ? s.conversations.find((c) => c.groupId === groupId && c.type === 'event_group')
+      : undefined,
   );
   const storeMessages = useChatStore((s) => s.messages);
   const sendMessage = useChatStore((s) => s.sendMessage);
