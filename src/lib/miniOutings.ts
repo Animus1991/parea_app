@@ -109,6 +109,19 @@ export function outingHasStarted(event: Pick<Event, 'date' | 'time'>, now: Date 
   return !Number.isNaN(start) && start <= now.getTime();
 }
 
+/** Neighbourhood centroid for a published hang — never a GPS search fix. */
+export function publicMiniOutingPin(
+  area: string,
+  searchLocation?: MapLocation | null,
+): { area: string; lat: number; lng: number } | null {
+  const place = placeForArea(area);
+  if (place) return { area: place.area, lat: place.lat, lng: place.lng };
+  if (searchLocation && searchLocation.source !== 'gps' && searchLocation.label.trim() === area.trim()) {
+    return { area, lat: searchLocation.lat, lng: searchLocation.lng };
+  }
+  return null;
+}
+
 export function outingCoords(event: Pick<Event, 'lat' | 'lng' | 'locationArea'>): { lat: number; lng: number } | null {
   if (typeof event.lat === 'number' && typeof event.lng === 'number') return { lat: event.lat, lng: event.lng };
   const place = placeForArea(event.locationArea);

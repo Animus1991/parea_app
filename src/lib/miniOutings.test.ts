@@ -10,6 +10,7 @@ import {
   outingHasStarted,
   parseDurationHours,
   placeForArea,
+  publicMiniOutingPin,
   rankMiniOutings,
   withFreshMiniOutingDates,
 } from './miniOutings';
@@ -105,6 +106,13 @@ describe('mini outing last-minute filters', () => {
     expect(placeForArea('Pangrati, Athens')?.en).toBe('Pangrati');
     expect(placeForArea('Παγκράτι')?.lat).toBeCloseTo(37.9675);
     expect(placeForArea('Athens')?.en).toBe('Athens');
+  });
+
+  it('never publishes a GPS search fix as the outing pin', () => {
+    const gps = { lat: 37.99, lng: 23.71, label: 'Η θέση σου', source: 'gps' as const };
+    expect(publicMiniOutingPin('Η θέση σου', gps)).toBeNull();
+    expect(publicMiniOutingPin('Pangrati, Athens', gps)?.lat).toBeCloseTo(37.9675);
+    expect(publicMiniOutingPin('Κουκάκι', origin)?.lat).toBeCloseTo(37.9655);
   });
 
   it('keeps pin-less outings only at the city radius', () => {

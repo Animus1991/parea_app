@@ -88,7 +88,7 @@ export function MiniOutingNearbyControls({
           </span>
         )}
       </div>
-      <div className="flex flex-wrap gap-1.5" role="list" aria-label={t('Γειτονιά', 'Neighbourhood')}>
+      <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('Γειτονιά', 'Neighbourhood')}>
         {MINI_OUTING_QUICK_PLACES.map((place) => {
           const selected = location?.label === (language === 'el' ? place.el : place.en) || location?.label === place.el;
           return (

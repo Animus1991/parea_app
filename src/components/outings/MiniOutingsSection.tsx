@@ -17,7 +17,7 @@ import { cardImageDepthFlags, type EventCardImageDepth } from '../../lib/discove
 import {
   MINI_OUTING_QUICK_PLACES,
   outingHasStarted,
-  placeForArea,
+  publicMiniOutingPin,
   rankMiniOutings,
   type MiniOutingRadiusKm,
   type MiniOutingWhen,
@@ -368,7 +368,7 @@ function MiniOutingComposer({ onClose, onLeave, initialNote }: { onClose: () => 
   const [kind, setKind] = useState<MiniOutingKind>('coffee');
   const [date, setDate] = useState(soon.date);
   const [time, setTime] = useState(soon.time);
-  const [area, setArea] = useState(mapLocation?.label ?? '');
+  const [area, setArea] = useState(mapLocation && mapLocation.source !== 'gps' ? mapLocation.label : '');
   const [spot, setSpot] = useState('');
   const [size, setSize] = useState(3);
   const [mode, setMode] = useState<GroupGenderMode>('mixed');
@@ -387,11 +387,8 @@ function MiniOutingComposer({ onClose, onLeave, initialNote }: { onClose: () => 
       return;
     }
     const areaLabel = area.includes(',') ? area : `${area.trim()}, Athens`;
-    const place = placeForArea(areaLabel) ?? placeForArea(area.trim());
-    const pin = mapLocation && area.trim() === mapLocation.label ? mapLocation : null;
-    const lat = pin?.lat ?? place?.lat;
-    const lng = pin?.lng ?? place?.lng;
-    if (typeof lat !== 'number' || typeof lng !== 'number') {
+    const pin = publicMiniOutingPin(areaLabel, mapLocation) ?? publicMiniOutingPin(area.trim(), mapLocation);
+    if (!pin) {
       setError(
         t(
           'Διάλεξε γειτονιά από τη λίστα, ώστε να σε βρίσκουν κοντά.',
@@ -404,13 +401,13 @@ function MiniOutingComposer({ onClose, onLeave, initialNote }: { onClose: () => 
       kind,
       date,
       time,
-      area: place?.area ?? areaLabel,
+      area: pin.area,
       exactLocation: spot,
       size,
       genderMode: mode,
       note,
-      lat,
-      lng,
+      lat: pin.lat,
+      lng: pin.lng,
     });
     if (!groupId) {
       setError(t('Δεν μπορείς να ξεκινήσεις έξοδο όσο ισχύει παύση.', 'You cannot start an outing while a pause applies.'));
