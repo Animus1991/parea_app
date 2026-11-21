@@ -6,7 +6,7 @@ import { useStore } from '../../store';
 import { hidesFindCompanyShortcut } from '../../lib/plansFormingRail';
 import { cn } from '../../lib/utils';
 
-/** Nearby-now shortcut for tablets (md to xl). Phones use the combined dock in layout/MobileDock. */
+/** Nearby-now shortcut for tablets (md to xl). Phones use the dock in layout/MobileDock. */
 export function PlansFormingMobileFab() {
   const { t } = useLanguage();
   const setOpen = useStore((s) => s.setPlansFormingSheetOpen);

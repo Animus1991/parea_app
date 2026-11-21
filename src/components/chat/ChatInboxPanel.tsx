@@ -62,8 +62,10 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
       className={cn(
         'fixed z-sheet flex flex-col border shadow-soft-lg overflow-hidden copilot-shift',
         'bg-surface border-border text-ink',
-        'inset-x-0 bottom-0 top-auto max-h-[85vh] rounded-t-3xl',
-        'md:inset-auto md:bottom-20 md:right-6 md:w-[360px] md:max-h-[min(520px,70vh)] md:rounded-3xl',
+        'inset-x-0 rounded-t-3xl',
+        'top-[calc(var(--header-h)+2.5rem)]',
+        'bottom-[calc(var(--bottom-nav-total)+6px+var(--chat-hat-fab)+8px+env(safe-area-inset-bottom,0px))]',
+        'md:inset-auto md:top-auto md:bottom-[calc(1.5rem+var(--chat-hat-fab)+0.75rem)] md:right-6 md:w-[360px] md:max-h-[min(520px,70vh)] md:rounded-3xl',
       )}
       role="dialog"
       aria-label={t('Nakamas Chat', 'Nakamas Chat')}

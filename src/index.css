@@ -34,6 +34,8 @@
   --z-fab: 50;
   --z-chat: 60;
   --z-chat-scrim: 65;
+  /* Hat FAB / phone dock stay tappable while the inbox scrim is up. */
+  --z-chat-toggle: 68;
   --z-sheet: 70;
   --z-banner: 80;
   --z-topnav: 90;
@@ -94,9 +96,11 @@
   --bottom-nav-h: 56px;
   /* Rendered height of <BottomNav> (padding + raised create button + label). */
   --bottom-nav-total: 75px;
-  /* Reserved phone dock (Find Nakamas / Chats) sitting on top of the tab bar.
+  /* Reserved phone dock (Find Nakamas) sitting on top of the tab bar.
      min-h-11 plus the pill border — keep in sync with MobileDock. */
   --mobile-dock-h: 48px;
+  /* Floated straw-hat chat control (w-24 / md:w-28). */
+  --chat-hat-fab: 7rem;
   /* BottomNav + fab-zone gap + dock + air so the last card sits fully above the pill. */
   --safe-bottom: calc(var(--bottom-nav-total) + 6px + var(--mobile-dock-h) + 16px);
 }
@@ -665,6 +669,7 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
 @utility z-fab { z-index: var(--z-fab); }
 @utility z-chat { z-index: var(--z-chat); }
 @utility z-chat-scrim { z-index: var(--z-chat-scrim); }
+@utility z-chat-toggle { z-index: var(--z-chat-toggle); }
 @utility z-sheet { z-index: var(--z-sheet); }
 @utility z-banner { z-index: var(--z-banner); }
 @utility z-topnav { z-index: var(--z-topnav); }

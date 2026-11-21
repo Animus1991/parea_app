@@ -1,28 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
-import { MessageCircle, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
-import { useChatStore } from '../../store/chatStore';
 import { usePlansFabState } from '../../hooks/usePlansFabState';
 import { hidesFindCompanyShortcut } from '../../lib/plansFormingRail';
 import { cn } from '../../lib/utils';
 
 /**
- * Phones only: one floating pill for "Plans forming" and "Chats",
- * instead of two separate floating buttons. Both actions stay one tap away.
+ * Phones only: floating pill for nearby outings.
+ * Plan chats live on the straw-hat FAB (PopupChatLauncher).
  */
 const DOCK_HIDDEN = ['/chat', '/create', '/manage', '/report', '/settings', '/verification', '/onboarding', '/night', '/i', '/login', '/embed', '/wall'];
 
 export function MobileDock() {
   const { t } = useLanguage();
   const setPlansOpen = useStore((s) => s.setPlansFormingSheetOpen);
-  const toggleInbox = useChatStore((s) => s.toggleInbox);
-  const conversations = useChatStore((s) => s.conversations);
-  const unread = useMemo(
-    () => conversations.reduce((n, c) => n + (c.status === 'archived' ? 0 : c.unreadCount), 0),
-    [conversations],
-  );
   const plans = usePlansFabState();
   // The event page has its own sticky Save / Find Nakamas bar: sit just above it.
   const { pathname } = useLocation();
@@ -42,7 +35,7 @@ export function MobileDock() {
   }, [aboveEventBar, pathname]);
   const waiting = aboveEventBar && !pastHeader;
 
-  // Scrolling down shrinks the pill to its icons; scrolling up brings the labels back.
+  // Scrolling down shrinks the pill to its icon; scrolling up brings the label back.
   const [compact, setCompact] = useState(false);
   useEffect(() => {
     setCompact(false);
@@ -64,9 +57,7 @@ export function MobileDock() {
   if (matchPath('/events/:eventId/join', pathname) || matchPath('/history/feedback/:eventId', pathname)) return null;
   // Overlay is nearby-now outings. My Plans already lists booked nights.
   const showPlans = plans.visible && !hidesFindCompanyShortcut(pathname);
-
-  const segment =
-    'flex items-center gap-2 min-h-11 font-bold text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-fg/70 transition-colors';
+  if (!showPlans) return null;
 
   return (
     <div
@@ -87,47 +78,14 @@ export function MobileDock() {
         data-bottom-swipe-origin=""
         className="flex items-stretch overflow-hidden rounded-full border bg-accent text-accent-fg border-accent-strong touch-none"
       >
-        {showPlans && (
-          <>
-            <button
-              type="button"
-              onClick={() => setPlansOpen(true)}
-              aria-label={t('Βρες παρέα τώρα — μικρές έξοδοι δίπλα σου', 'Find company now — small outings next to you')}
-              className={cn(segment, 'pl-4 pr-3 active:bg-black/10')}
-            >
-              <Users className="w-4 h-4" aria-hidden />
-              {!compact && <span className="whitespace-nowrap">{plans.label}</span>}
-            </button>
-            <span aria-hidden className="w-px my-2.5 bg-accent-fg/30" />
-          </>
-        )}
         <button
           type="button"
-          onClick={toggleInbox}
-          aria-label={
-            unread > 0
-              ? t(`${unread} αδιάβαστες συνομιλίες`, `${unread} unread chats`)
-              : t('Συνομιλίες σχεδίων', 'Plan chats')
-          }
-          title={
-            unread > 0
-              ? t(`${unread} αδιάβαστες συνομιλίες`, `${unread} unread chats`)
-              : t('Συνομιλίες', 'Chats')
-          }
-          className={cn(segment, showPlans ? 'pl-3 pr-4' : 'px-4', 'active:bg-black/10')}
+          onClick={() => setPlansOpen(true)}
+          aria-label={t('Βρες παρέα τώρα — μικρές έξοδοι δίπλα σου', 'Find company now — small outings next to you')}
+          className="flex items-center gap-2 min-h-11 pl-4 pr-4 font-bold text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-fg/70 transition-colors active:bg-black/10"
         >
-          <span className="relative shrink-0">
-            <MessageCircle className="w-4 h-4" aria-hidden />
-            {unread > 0 && (
-              <span
-                aria-hidden
-                className="absolute -top-1.5 -right-2 min-w-[1.05rem] h-4 px-1 rounded-full bg-accent-fg text-accent text-2xs font-bold leading-4 text-center tabular-nums"
-              >
-                {unread > 9 ? '9+' : unread}
-              </span>
-            )}
-          </span>
-          {!compact && <span className="whitespace-nowrap">{t('Συνομιλίες', 'Chats')}</span>}
+          <Users className="w-4 h-4" aria-hidden />
+          {!compact && <span className="whitespace-nowrap">{plans.label}</span>}
         </button>
       </div>
     </div>

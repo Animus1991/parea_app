@@ -43,7 +43,7 @@ export function PopupChatRoot() {
   return (
     <>
       {minimized.length > 0 && (
-        <div className={`fixed z-chat flex flex-col items-end gap-2 right-4 bottom-[calc(var(--safe-bottom)+3.5rem+env(safe-area-inset-bottom,0px))] md:right-6 copilot-shift ${onChatPage ? 'md:bottom-44' : 'md:bottom-20'}`}>
+        <div className={`fixed z-chat flex flex-col items-end gap-2 right-4 bottom-[calc(var(--bottom-nav-total)+6px+var(--chat-hat-fab)+8px+env(safe-area-inset-bottom,0px))] md:right-6 copilot-shift ${onChatPage ? 'md:bottom-44' : 'md:bottom-[calc(1.5rem+var(--chat-hat-fab)+0.5rem)]'}`}>
           {minimized.map((c) => (
             <button
               key={c.id}
@@ -64,8 +64,7 @@ export function PopupChatRoot() {
           ))}
         </div>
       )}
-      {/* Phones reach chats from the shared dock (layout/MobileDock). */}
-      <PopupChatLauncher onClick={toggleInbox} className={onChatPage ? 'hidden md:flex md:bottom-28' : 'hidden md:flex'} />
+      <PopupChatLauncher onClick={toggleInbox} className={onChatPage ? 'max-md:hidden md:bottom-28' : undefined} />
       {inboxOpen && (
         <>
           <button

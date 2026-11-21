@@ -1,44 +1,46 @@
 import { useMemo } from 'react';
-import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
+import { StrawHatSpin } from '../illustrations/StrawHatMark';
 import { cn } from '../../lib/utils';
+
+/** 4× the old 24px glyph, a bit more on desktop so the hat reads as the FAB. */
+const HAT_FAB = 'w-24 h-24 md:w-28 md:h-28';
 
 export function PopupChatLauncher({ onClick, className }: { onClick: () => void; className?: string }) {
   const { t } = useLanguage();
+  const inboxOpen = useChatStore((s) => s.inboxOpen);
   const conversations = useChatStore((s) => s.conversations);
   const unread = useMemo(
     () => conversations.reduce((n, c) => n + (c.status === 'archived' ? 0 : c.unreadCount), 0),
     [conversations],
   );
-  const activeCount = useChatStore((s) => s.activeWindowIds.length);
 
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={t('Συνομιλίες σχεδίων', 'Plan chats')}
+      aria-expanded={inboxOpen}
+      title={t('Συνομιλίες', 'Chats')}
       className={cn(
-        'fixed z-chat flex items-center gap-2 rounded-full shadow-round-lg border min-h-8 px-4',
-        'bg-surface border-brand/40 text-ink hover:border-brand/60 transition-colors',
-        'bottom-nav-clear right-4 md:bottom-6 md:right-6 copilot-shift',
+        'fixed z-chat-toggle inline-flex items-center justify-center p-0 m-0',
+        'bg-transparent border-0 shadow-none rounded-full overflow-visible',
+        'bottom-fab-zone right-3 md:bottom-6 md:right-6 copilot-shift',
         className,
       )}
     >
-      <span className="relative">
-        <MessageCircle className="w-5 h-5 text-brand" />
+      <span className="relative inline-flex">
+        <StrawHatSpin
+          open={inboxOpen}
+          markClassName={cn(HAT_FAB, 'drop-shadow-[0_8px_14px_rgba(63,42,27,0.4)]')}
+        />
         {unread > 0 && (
-          <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-brand text-brand-fg text-xs font-bold flex items-center justify-center px-1">
+          <span className="absolute top-1 right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-brand text-brand-fg text-xs font-bold flex items-center justify-center">
             {unread > 9 ? '9+' : unread}
           </span>
         )}
       </span>
-      <span className="text-xs font-bold hidden sm:inline">{t('Συνομιλίες', 'Chats')}</span>
-      {activeCount > 0 && (
-        <span className="text-xs font-bold px-1.5 py-0.5 rounded-lg bg-ink/10 text-brand hidden sm:inline">
-          {activeCount} {t('ανοιχτές', 'open')}
-        </span>
-      )}
     </button>
   );
 }
