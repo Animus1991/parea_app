@@ -1,7 +1,8 @@
 ﻿import React, { ReactNode, Suspense, lazy, useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useUIStore } from '../../store/uiStore';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
+import { STORAGE_FULL_EVENT } from '../../lib/safeStorage';
 import {
   Compass, CalendarCheck, ShieldCheck, Menu, Bell,
   Grid, Hash, TrendingUp, Bookmark, History, Flag, Library,
@@ -494,6 +495,16 @@ export function AppShell({ children }: { children: ReactNode }) {
   const copilotOpen = useCopilotStore((s) => s.open);
   const maintenanceMode = useStore((s) => s.adminSafeguards.maintenanceMode);
   const { pathname } = useLocation();
+  // Any store that cannot save (device storage full) says so once, wherever you are.
+  useEffect(() => {
+    const onFull = () =>
+      toast.error(
+        t('Ο χώρος της συσκευής γέμισε. Η τελευταία αλλαγή δεν αποθηκεύτηκε.', 'Device storage is full. The last change was not saved.'),
+        { id: 'storage-full' },
+      );
+    window.addEventListener(STORAGE_FULL_EVENT, onFull);
+    return () => window.removeEventListener(STORAGE_FULL_EVENT, onFull);
+  }, [t]);
   // Escape closes the mobile menu (it had no keyboard way out).
   useEffect(() => {
     if (!isMobileMenuOpen) return;

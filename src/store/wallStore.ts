@@ -8,7 +8,8 @@
  */
 import { useMemo } from 'react';
 import { create } from 'zustand';
-import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { safeStorage } from '../lib/safeStorage';
 import { useStore } from './index';
 import type {
   Audience,
@@ -207,29 +208,6 @@ function sanitizeAudience(ownerId: string, a: Audience | undefined, lists: Audie
 /* ───────────────────────── storage ───────────────────────── */
 
 /** Never let a full device storage crash the app (photos are the big items). */
-const safeStorage: StateStorage = {
-  getItem: (name) => {
-    try {
-      return localStorage.getItem(name);
-    } catch {
-      return null;
-    }
-  },
-  setItem: (name, value) => {
-    try {
-      localStorage.setItem(name, value);
-    } catch {
-      if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('nakamas:storage-full'));
-    }
-  },
-  removeItem: (name) => {
-    try {
-      localStorage.removeItem(name);
-    } catch {
-      /* ignore */
-    }
-  },
-};
 
 /* ───────────────────────── store ───────────────────────── */
 

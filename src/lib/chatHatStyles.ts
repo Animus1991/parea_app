@@ -6,6 +6,7 @@ export type ChatHatStyle = {
   src?: string;
   labelEl: string;
   labelEn: string;
+  custom?: boolean;
 };
 
 /** Photo cutouts from the user's refs, plus the current drawn κάτοψη. */
@@ -30,6 +31,30 @@ export const CHAT_HAT_STYLES: ChatHatStyle[] = [
 
 export const DEFAULT_CHAT_HAT_STYLE = 'drawn';
 
-export function chatHatById(id: string): ChatHatStyle | undefined {
-  return CHAT_HAT_STYLES.find((h) => h.id === id);
+export function isCustomChatHat(value: unknown): value is ChatHatStyle {
+  if (!value || typeof value !== 'object') return false;
+  const hat = value as ChatHatStyle;
+  return (
+    typeof hat.id === 'string' &&
+    hat.id.startsWith('custom_') &&
+    typeof hat.src === 'string' &&
+    hat.src.startsWith('data:image/') &&
+    typeof hat.labelEl === 'string' &&
+    typeof hat.labelEn === 'string'
+  );
+}
+
+export function chatHatById(
+  id: string,
+  custom: readonly ChatHatStyle[] = [],
+): ChatHatStyle | undefined {
+  return custom.find((h) => h.id === id) ?? CHAT_HAT_STYLES.find((h) => h.id === id);
+}
+
+export function visibleChatHats(
+  custom: readonly ChatHatStyle[],
+  dismissed: readonly string[],
+): ChatHatStyle[] {
+  const builtIn = CHAT_HAT_STYLES.filter((h) => !dismissed.includes(h.id));
+  return [...custom.filter((h) => h.src).map((h) => ({ ...h, custom: true as const })), ...builtIn];
 }

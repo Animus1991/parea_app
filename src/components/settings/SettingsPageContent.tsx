@@ -85,7 +85,8 @@ export default function SettingsPageContent() {
   const chatPrivacySectionRef = useRef<HTMLDivElement>(null);
   const chatHatSectionRef = useRef<HTMLDivElement>(null);
   const chatHatStyle = useUIStore((s) => s.chatHatStyle);
-  const currentChatHat = chatHatById(chatHatStyle);
+  const customChatHats = useUIStore((s) => s.customChatHats);
+  const currentChatHat = chatHatById(chatHatStyle, customChatHats);
 
   // Keep the expandable panels next to the row that opened them (not below the fold).
   useEffect(() => {

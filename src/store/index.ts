@@ -1,5 +1,6 @@
 import { Users } from "lucide-react";
 import { create } from "zustand";
+import { safeStorage } from '../lib/safeStorage';
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Event } from "../types";
 import type { User } from "../types";
@@ -2307,7 +2308,7 @@ export const useStore = create<AppState>()(
         }
         return p as never;
       },
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => safeStorage),
       partialize: (state) => ({
         savedEvents: state.savedEvents,
         theme: state.theme,

@@ -127,13 +127,6 @@ export function PostComposer({
     el?.setSelectionRange(el.value.length, el.value.length);
   }, [focusOnOpen]);
 
-  useEffect(() => {
-    const onFull = () =>
-      toast.error(t('Ο χώρος της συσκευής γέμισε — η τελευταία αλλαγή δεν αποθηκεύτηκε.', 'Device storage is full — the last change was not saved.'));
-    window.addEventListener('nakamas:storage-full', onFull);
-    return () => window.removeEventListener('nakamas:storage-full', onFull);
-  }, [t]);
-
   // Events worth sharing first: the ones you joined or saved, then the rest by date.
   const shareableEvents = useMemo(() => {
     if (!me) return [];
