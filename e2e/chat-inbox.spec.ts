@@ -69,6 +69,31 @@ test.describe('Nakamas Chat preview', () => {
     await expect(chatsButton(page).locator('img[src="/chat-hats/12-chinstrap.png"]')).toBeVisible();
   });
 
+  test('settings can hide a built-in hat and restore it', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/settings?section=chat-icon');
+    const chooser = page.getByRole('region', { name: /Επιλογή καπέλου συνομιλιών|Chat hat picker/ });
+    const strap = chooser.getByRole('radio', { name: /Επιλογή: Με λουρί|Choose: Chin strap/ });
+    await expect(strap).toBeVisible();
+    await chooser.getByRole('button', { name: /Απόκρυψη: Με λουρί|Hide: Chin strap/ }).click();
+    await expect(strap).toHaveCount(0);
+    await chooser.getByRole('button', { name: /Εμφάνιση κρυμμένων καπέλων|Show hidden hats/ }).click();
+    await expect(strap).toBeVisible();
+  });
+
+  test('settings can upload a hat that becomes the chat button', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/settings?section=chat-icon');
+    const chooser = page.getByRole('region', { name: /Επιλογή καπέλου συνομιλιών|Chat hat picker/ });
+    const file = chooser.locator('input[type="file"]');
+    await file.setInputFiles('e2e/fixtures/chat-hat-upload.png');
+    await expect(chooser.getByRole('radio', { name: /Επιλογή: Δικό μου|Choose: My hat/ })).toBeVisible({
+      timeout: 15_000,
+    });
+    await page.goto('/');
+    await expect(chatsButton(page).locator('img[src^="data:image/"]')).toBeVisible();
+  });
+
   test('the chat hat can be dragged without opening, then tapped', async ({ page }) => {
     await enterDemoGuest(page);
     const btn = chatsButton(page);
