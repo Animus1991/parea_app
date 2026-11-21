@@ -77,7 +77,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
     >
       <header
         className={cn(
-          'px-4 pt-4 pb-3 sticky top-0 z-10 backdrop-blur-md space-y-3',
+          'px-4 pt-4 pb-3 sticky top-0 z-20 backdrop-blur-md space-y-3',
           isDark ? 'bg-[#0c1016]/95' : 'bg-gray-50/95',
         )}
       >
