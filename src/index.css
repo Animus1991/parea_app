@@ -100,7 +100,10 @@
      min-h-11 plus the pill border — keep in sync with MobileDock. */
   --mobile-dock-h: 48px;
   /* Floated straw-hat chat control (w-24 / md:w-28). */
-  --chat-hat-fab: 7rem;
+  --chat-hat-fab: 6rem;
+  --chat-hat-bottom: calc(var(--bottom-nav-total) + 6px + env(safe-area-inset-bottom, 0px));
+  --chat-hat-bottom-event: calc(var(--bottom-nav-total) + 5.25rem + env(safe-area-inset-bottom, 0px));
+  --chat-hat-bottom-composer: 7rem;
   /* BottomNav + fab-zone gap + dock + air so the last card sits fully above the pill. */
   --safe-bottom: calc(var(--bottom-nav-total) + 6px + var(--mobile-dock-h) + 16px);
 }
@@ -119,6 +122,57 @@
 
 @utility bottom-fab-zone {
   bottom: calc(var(--bottom-nav-total) + 6px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Straw-hat FAB + the surfaces that must clear its full rectangle. */
+.chat-hat-fab {
+  bottom: var(--chat-hat-bottom);
+}
+.chat-hat-fab-event {
+  bottom: var(--chat-hat-bottom-event);
+}
+@media (min-width: 768px) {
+  .chat-hat-fab-event {
+    bottom: var(--chat-hat-bottom);
+  }
+}
+.chat-above-hat {
+  bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.5rem);
+}
+.chat-inbox-phone {
+  top: calc(var(--header-h) + 2.5rem);
+  bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.5rem);
+}
+@media (max-height: 540px) {
+  .chat-inbox-phone {
+    top: 0.35rem;
+    bottom: 0;
+  }
+}
+@media (min-width: 768px) {
+  :root {
+    --chat-hat-fab: 7rem;
+    --chat-hat-bottom: 1.5rem;
+  }
+  .chat-hat-fab {
+    bottom: var(--chat-hat-bottom);
+  }
+  html[data-chat-hat='composer'] .chat-hat-fab {
+    bottom: var(--chat-hat-bottom-composer);
+  }
+  .chat-above-hat {
+    bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.5rem);
+  }
+  html[data-chat-hat='composer'] .chat-above-hat {
+    bottom: calc(var(--chat-hat-bottom-composer) + var(--chat-hat-fab) + 0.5rem);
+  }
+  .chat-inbox-phone {
+    top: auto;
+    bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.75rem);
+  }
+  html[data-chat-hat='composer'] .chat-inbox-phone {
+    bottom: calc(var(--chat-hat-bottom-composer) + var(--chat-hat-fab) + 0.75rem);
+  }
 }
 
 .hero-search-field {

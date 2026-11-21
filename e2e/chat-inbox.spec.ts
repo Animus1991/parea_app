@@ -65,4 +65,46 @@ test.describe('Nakamas Chat desktop hat', () => {
     await btn.click();
     await expect(sheet).toHaveCount(0);
   });
+
+  test('the hat still toggles the inbox on a group-chat page', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/chat/g-nn1');
+    const btn = chatsButton(page);
+    await expect(btn).toBeVisible();
+    await btn.click();
+    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
+    await expect(sheet).toBeVisible();
+    await btn.click();
+    await expect(sheet).toHaveCount(0);
+  });
+});
+
+test.describe('Nakamas Chat event page', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test('the event Join button stays tappable under the hat', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/events/e1');
+    const join = page.getByRole('button', { name: /Μπες σε παρέα|Join a group|Η βραδιά μας|Our night/ });
+    await expect(join).toBeVisible();
+    const box = await join.boundingBox();
+    expect(box).toBeTruthy();
+    await page.mouse.click(box!.x + box!.width - 10, box!.y + box!.height / 2);
+    await expect(page.getByRole('dialog', { name: /^Nakamas Chat$/ })).toHaveCount(0);
+  });
+});
+
+test.describe('Nakamas Chat landscape', () => {
+  test.use({ viewport: { width: 667, height: 375 } });
+
+  test('a conversation row stays tappable', async ({ page }) => {
+    await enterDemoGuest(page);
+    await chatsButton(page).click();
+    const sheet = page.getByRole('dialog', { name: /^Nakamas Chat$/ });
+    await expect(sheet).toBeVisible();
+    const row = sheet.getByRole('button').filter({ hasText: /Διοργανωτής|Organizer|Ομάδ|Group|Nakamas/ }).first();
+    await expect(row).toBeVisible();
+    await row.click();
+    await expect(page.locator('[data-chat-window]')).toBeVisible();
+  });
 });

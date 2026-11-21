@@ -60,12 +60,10 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
     <div
       ref={panelRef}
       className={cn(
-        'fixed z-sheet flex flex-col border shadow-soft-lg overflow-hidden copilot-shift',
+        'chat-inbox-phone fixed z-sheet flex flex-col border shadow-soft-lg overflow-hidden copilot-shift',
         'bg-surface border-border text-ink',
         'inset-x-0 rounded-t-3xl',
-        'top-[calc(var(--header-h)+2.5rem)]',
-        'bottom-[calc(var(--bottom-nav-total)+6px+var(--chat-hat-fab)+8px+env(safe-area-inset-bottom,0px))]',
-        'md:inset-auto md:top-auto md:bottom-[calc(1.5rem+var(--chat-hat-fab)+0.75rem)] md:right-6 md:w-[360px] md:max-h-[min(520px,70vh)] md:rounded-3xl',
+        'md:left-auto md:right-6 md:w-[360px] md:max-h-[min(520px,70vh)] md:rounded-3xl',
       )}
       role="dialog"
       aria-label={t('Nakamas Chat', 'Nakamas Chat')}
@@ -85,8 +83,9 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
           </button>
         </header>
       </div>
+      <div className="flex-1 min-h-0 overflow-y-auto">
       <ChatStoriesStrip compact />
-      <div className="flex-1 overflow-y-auto p-2 space-y-4">
+      <div className="p-2 space-y-4">
         {conversations.length === 0 && (
           <EmptyState
             icon={MessageCircle}
@@ -148,6 +147,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
             </section>
           );
         })}
+      </div>
       </div>
     </div>
   );

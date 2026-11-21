@@ -25,6 +25,14 @@ export function PopupChatRoot() {
   const onChatPage = useLocation().pathname.startsWith('/chat/');
 
   useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.chatHat = onChatPage ? 'composer' : 'default';
+    return () => {
+      delete root.dataset.chatHat;
+    };
+  }, [onChatPage]);
+
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setInboxOpen(false);
     };
@@ -43,7 +51,7 @@ export function PopupChatRoot() {
   return (
     <>
       {minimized.length > 0 && (
-        <div className={`fixed z-chat flex flex-col items-end gap-2 right-4 bottom-[calc(var(--bottom-nav-total)+6px+var(--chat-hat-fab)+8px+env(safe-area-inset-bottom,0px))] md:right-6 copilot-shift ${onChatPage ? 'md:bottom-44' : 'md:bottom-[calc(1.5rem+var(--chat-hat-fab)+0.5rem)]'}`}>
+        <div className="chat-above-hat fixed z-chat flex flex-col items-end gap-2 right-4 md:right-6 copilot-shift">
           {minimized.map((c) => (
             <button
               key={c.id}
@@ -64,7 +72,7 @@ export function PopupChatRoot() {
           ))}
         </div>
       )}
-      <PopupChatLauncher onClick={toggleInbox} className={onChatPage ? 'max-md:hidden md:bottom-28' : undefined} />
+      <PopupChatLauncher onClick={toggleInbox} className={onChatPage ? 'max-md:hidden' : undefined} />
       {inboxOpen && (
         <>
           <button
