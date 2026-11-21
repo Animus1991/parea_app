@@ -62,7 +62,7 @@ export function MobileDock() {
   // Screens that own the bottom edge (composer, forms, primary actions) keep it clear.
   if (DOCK_HIDDEN.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return null;
   if (matchPath('/events/:eventId/join', pathname) || matchPath('/history/feedback/:eventId', pathname)) return null;
-  // Overlay is nearby-now outings. My Plans and Find company already have their own lists.
+  // Overlay is nearby-now outings. My Plans already lists booked nights.
   const showPlans = plans.visible && !hidesFindCompanyShortcut(pathname);
 
   const segment =

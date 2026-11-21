@@ -15,6 +15,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
   const feed = usePlansFormingFeed(6);
   // ≥1280px the «Βρες Nakamas» rail shows this same feed: don't repeat it on Home.
   const railOpen = useStore((s) => s.plansFormingSidebarOpen);
+  const setSheetOpen = useStore((s) => s.setPlansFormingSheetOpen);
   const copilotOpen = useCopilotStore((s) => s.open);
   const railVisible = railOpen && !copilotOpen;
 
@@ -56,6 +57,13 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
           >
             {t('Άνοιγμα', 'Open')}
           </button>
+          <button
+            type="button"
+            onClick={() => setSheetOpen(true)}
+            className="text-xs font-semibold text-ink-muted hover:text-ink"
+          >
+            {t('Καφές δίπλα σου', 'Coffee nearby')}
+          </button>
         </div>
       </div>
 
@@ -78,7 +86,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
             </button>
             <button
               type="button"
-              onClick={() => navigate('/buddy-seek')}
+              onClick={() => setSheetOpen(true)}
               className="text-xs font-bold text-ink underline underline-offset-2"
             >
               {t('Ή ξεκίνα μια μικρή έξοδο', 'Or start a small outing')}

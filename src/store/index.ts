@@ -10,7 +10,7 @@ import { coerceAuthoredSeasonToLive } from "../lib/demoCatalogDates";
 import { withFreshCatalogDates } from "../lib/catalogAuthoredSchedule";
 import { eventCoverUrl } from "../lib/eventCover";
 import { isLiveCatalogEvent } from "../lib/eventDisplay";
-import { withFreshMiniOutingDates, type MapLocation } from "../lib/miniOutings";
+import { lockedMiniOutingFixtureIds, withFreshMiniOutingDates, type MapLocation } from "../lib/miniOutings";
 import { applyDefaultCardImageDepthIfUnset } from "../lib/discoverCardImagePreview";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
@@ -2382,6 +2382,7 @@ export const useStore = create<AppState>()(
           return [...fromSeeds, ...extras];
         };
 
+        const groups = mergeById(current.groups, p.groups);
         const events = withFreshMiniOutingDates(
           coerceAuthoredSeasonToLive(
             withFreshCatalogDates(
@@ -2391,8 +2392,9 @@ export const useStore = create<AppState>()(
               }),
             ),
           ),
+          new Date(),
+          lockedMiniOutingFixtureIds(groups, current.groups),
         );
-        const groups = mergeById(current.groups, p.groups);
         // isAdmin comes only from the trusted seeds, never from persisted
         // (user-editable) localStorage state.
         const seedAdmin = new Map(current.users.map((u) => [u.id, Boolean(u.isAdmin)]));

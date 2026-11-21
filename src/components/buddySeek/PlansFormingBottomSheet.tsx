@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useContrastTheme } from '../../hooks/useContrastTheme';
@@ -24,6 +24,7 @@ export function PlansFormingBottomSheet() {
   const tok = useThemeStyles();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
   const cardImage = useDiscoverCardImageDepth();
   const panelRef = useRef<HTMLDivElement>(null);
   useOverlayBehavior(open, () => setOpen(false), panelRef);
@@ -31,6 +32,10 @@ export function PlansFormingBottomSheet() {
   useEffect(() => {
     if (hidesFindCompanyShortcut(pathname)) setOpen(false);
   }, [pathname, setOpen]);
+
+  useEffect(() => {
+    if (searchParams.get('reconnect') && !hidesFindCompanyShortcut(pathname)) setOpen(true);
+  }, [searchParams, pathname, setOpen]);
 
   const leave = (path: string) => {
     setOpen(false);
@@ -40,7 +45,7 @@ export function PlansFormingBottomSheet() {
   if (!open || hidesFindCompanyShortcut(pathname)) return null;
 
   return (
-    <div className="fixed inset-0 z-sheet xl:hidden" role="dialog" aria-modal="true" aria-labelledby="plans-forming-sheet-title">
+    <div className="fixed inset-0 z-sheet" role="dialog" aria-modal="true" aria-labelledby="plans-forming-sheet-title">
       <button
         type="button"
         className={cn('absolute inset-0 backdrop-blur-sm', c.modalOverlay)}
@@ -52,6 +57,7 @@ export function PlansFormingBottomSheet() {
         tabIndex={-1}
         className={cn(
           'absolute bottom-0 left-0 right-0 max-h-[92vh] flex flex-col overflow-hidden rounded-t-3xl border-t shadow-soft-lg animate-in slide-in-from-bottom duration-300 motion-reduce:animate-none outline-none',
+          'md:left-1/2 md:right-auto md:w-[min(100%-2rem,36rem)] md:-translate-x-1/2 md:bottom-8 md:max-h-[min(92vh,40rem)] md:rounded-3xl md:border',
           c.modalPanel,
         )}
       >

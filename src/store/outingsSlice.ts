@@ -741,7 +741,7 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       const genderMode: GroupGenderMode = input.genderMode === 'women_nb' && fitsGenderMode(me, 'women_nb') ? 'women_nb' : 'mixed';
       const event: Event = {
         id: eventId,
-        title: (input.title?.trim() || `${d.el} · ${area.split(',')[0]}`).slice(0, 80),
+        title: (input.title?.trim() || `${d.el} · ${place?.el ?? area.split(',')[0]}`).slice(0, 80),
         category: d.category,
         description: (input.note?.trim() || 'Μικρή έξοδος χωρίς εκδήλωση, για να γνωριστούμε.').slice(0, 300),
         date: input.date,

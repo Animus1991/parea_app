@@ -29,10 +29,12 @@ export function BuddySeekPageActions({
   onPrivacy,
   onNewRequest,
   onMyPlans,
+  onNearbyNow,
 }: {
   onPrivacy: () => void;
   onNewRequest: () => void;
   onMyPlans: () => void;
+  onNearbyNow: () => void;
 }) {
   const { t } = useLanguage();
   return (
@@ -42,6 +44,9 @@ export function BuddySeekPageActions({
       </button>
       <button type="button" onClick={onNewRequest} className={headerLink}>
         {t('Νέο αίτημα από εκδήλωση', 'New request from event')}
+      </button>
+      <button type="button" onClick={onNearbyNow} className={headerLink}>
+        {t('Καφές ή βόλτα τώρα', 'Coffee or a walk now')}
       </button>
       <button type="button" onClick={onMyPlans} className={headerLink}>
         {t('Τα σχέδιά μου', 'My plans')}

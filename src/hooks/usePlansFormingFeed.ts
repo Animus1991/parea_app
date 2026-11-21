@@ -62,7 +62,7 @@ export function usePlansFormingFeed(limit = 12) {
       )
       .map((g) => {
         const event = events.find((e) => e.id === g.eventId);
-        if (!event || isEventPast(event)) return null;
+        if (!event || event.kind === 'mini_outing' || isEventPast(event)) return null;
         const host = users.find((u) => u.id === (g.hostId ?? g.members[0]));
         return {
           group: g,
@@ -112,6 +112,7 @@ export function usePlansFormingFeed(limit = 12) {
   const suggestedEvent = useMemo((): Event | null => {
     if (!currentUser || myActivePlan) return null;
     const upcoming = events
+      .filter((e) => e.kind !== 'mini_outing')
       .filter((e) => {
         try {
           return new Date(`${e.date}T${e.time || '20:00'}`) > new Date();

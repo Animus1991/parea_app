@@ -1,5 +1,6 @@
 import { haversineKm } from './haversine';
 import { eventOccursAt } from './eventDisplay';
+import { foldSearchText } from './greekText';
 import type { Event } from '../types';
 
 /** Last-minute window: tonight and tomorrow, not next month’s calendar. */
@@ -65,15 +66,34 @@ export function isShortMiniOuting(event: Pick<Event, 'kind' | 'duration'>): bool
   return parseDurationHours(event.duration) <= 2;
 }
 
+function localityOf(area: string): string {
+  const comma = area.indexOf(',');
+  return comma < 0 ? '' : foldSearchText(area.slice(comma + 1));
+}
+
+function localityMatches(inputLocality: string, place: (typeof MINI_OUTING_PLACES)[number]): boolean {
+  if (!inputLocality) return true;
+  if (inputLocality === 'athens' || inputLocality === 'attiki' || inputLocality === 'attica') return true;
+  const placeLocality = localityOf(place.area) || foldSearchText('Athens');
+  return (
+    inputLocality === placeLocality ||
+    placeLocality.includes(inputLocality) ||
+    inputLocality.includes(placeLocality)
+  );
+}
+
 export function placeForArea(area: string | undefined): (typeof MINI_OUTING_PLACES)[number] | undefined {
   if (!area) return undefined;
-  const needle = area.toLowerCase().trim();
+  const needle = foldSearchText(area);
+  const inputLocality = localityOf(area);
   const scored = MINI_OUTING_PLACES.map((place) => {
-    const names = [place.area, place.en, place.el].map((name) => name.toLowerCase());
-    if (names.some((name) => name === needle)) return { place, score: 3 };
+    const names = [place.area, place.en, place.el].map((name) => foldSearchText(name));
+    if (names.some((name) => name === needle) && localityMatches(inputLocality, place)) return { place, score: 3 };
     const generic = place.en === 'Athens';
-    if (!generic && names.some((name) => needle.includes(name))) return { place, score: 2 };
-    if (generic && (needle === 'athens' || needle === 'αθήνα')) return { place, score: 1 };
+    if (!generic && names.some((name) => needle.includes(name)) && localityMatches(inputLocality, place)) {
+      return { place, score: 2 };
+    }
+    if (generic && (needle === 'athens' || needle === foldSearchText('Αθήνα'))) return { place, score: 1 };
     return { place, score: 0 };
   }).filter((row) => row.score > 0);
   scored.sort((a, b) => b.score - a.score || b.place.en.length - a.place.en.length);
@@ -93,14 +113,36 @@ export function dayFromNow(days: number, now: Date = new Date()): string {
 export function withFreshMiniOutingDates<T extends { id: string; date: string; time?: string }>(
   events: T[],
   now: Date = new Date(),
+  lockedEventIds: ReadonlySet<string> = new Set(),
 ): T[] {
   return events.map((event) => {
+    if (lockedEventIds.has(event.id)) return event;
     const spec = MINI_OUTING_FIXTURE_OFFSETS[event.id];
     if (!spec) return event;
     const date = dayFromNow(spec.days, now);
     if (event.date === date && event.time === spec.time) return event;
     return { ...event, date, time: spec.time };
   });
+}
+
+/** Demo fixtures someone joined stay on the date they booked, not the rolling seed. */
+export function lockedMiniOutingFixtureIds<
+  T extends { id: string; eventId: string; members: string[]; waitlist?: string[]; pendingMembers?: string[] },
+>(groups: T[], seedGroups: T[]): Set<string> {
+  const seedById = new Map(seedGroups.map((group) => [group.id, group]));
+  const locked = new Set<string>();
+  for (const group of groups) {
+    if (!MINI_OUTING_FIXTURE_OFFSETS[group.eventId]) continue;
+    const seed = seedById.get(group.id);
+    const extraMember =
+      !seed ||
+      group.members.length !== seed.members.length ||
+      group.members.some((id) => !seed.members.includes(id));
+    const waitlisted = (group.waitlist?.length ?? 0) > (seed?.waitlist?.length ?? 0);
+    const pending = (group.pendingMembers?.length ?? 0) > (seed?.pendingMembers?.length ?? 0);
+    if (extraMember || waitlisted || pending) locked.add(group.eventId);
+  }
+  return locked;
 }
 
 /** Join closes at the start; the 30′ grace only keeps a started outing visible. */

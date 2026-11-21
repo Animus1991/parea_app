@@ -485,6 +485,7 @@ function MiniOutingComposer({ onClose, onLeave, initialNote }: { onClose: () => 
           value={area}
           maxLength={60}
           onChange={(e) => setArea(e.target.value)}
+          aria-label={t('Περιοχή', 'Area')}
           placeholder={t('ή γράψε π.χ. Παγκράτι', 'or type e.g. Pangrati')}
           className={field}
         />

@@ -9,6 +9,7 @@ import {
   matchesWhen,
   outingHasStarted,
   parseDurationHours,
+  lockedMiniOutingFixtureIds,
   placeForArea,
   publicMiniOutingPin,
   rankMiniOutings,
@@ -108,6 +109,13 @@ describe('mini outing last-minute filters', () => {
     expect(placeForArea('Athens')?.en).toBe('Athens');
   });
 
+  it('folds Greek case and accents, and does not pin a different island', () => {
+    expect(placeForArea('ΚΥΨΕΛΗ')?.en).toBe('Kypseli');
+    expect(placeForArea('κυψελη')?.en).toBe('Kypseli');
+    expect(placeForArea('Plaka, Milos')).toBeUndefined();
+    expect(placeForArea('Plaka, Athens')?.en).toBe('Plaka');
+  });
+
   it('never publishes a GPS search fix as the outing pin', () => {
     const gps = { lat: 37.99, lng: 23.71, label: 'Η θέση σου', source: 'gps' as const };
     expect(publicMiniOutingPin('Η θέση σου', gps)).toBeNull();
@@ -136,5 +144,21 @@ describe('mini outing last-minute filters', () => {
     const refreshed = withFreshMiniOutingDates([{ id: 'mo1', date: '2026-11-28', time: '11:00' }], later);
     expect(refreshed[0].date).toBe(dayFromNow(6, later));
     expect(refreshed[0].time).toBe('11:00');
+  });
+
+  it('keeps booked or waitlisted fixture dates instead of rolling them', () => {
+    const later = new Date('2026-12-10T12:00:00');
+    const locked = lockedMiniOutingFixtureIds(
+      [{ id: 'g-mo4', eventId: 'mo4', members: ['u2', 'u1'] }],
+      [{ id: 'g-mo4', eventId: 'mo4', members: ['u2'] }],
+    );
+    expect(locked.has('mo4')).toBe(true);
+    const booked = withFreshMiniOutingDates([{ id: 'mo4', date: '2026-11-22', time: '17:00' }], later, locked);
+    expect(booked[0].date).toBe('2026-11-22');
+    const waitlisted = lockedMiniOutingFixtureIds(
+      [{ id: 'g-mo1', eventId: 'mo1', members: ['u2', 'u3'], waitlist: ['u1'] }],
+      [{ id: 'g-mo1', eventId: 'mo1', members: ['u2', 'u3'] }],
+    );
+    expect(waitlisted.has('mo1')).toBe(true);
   });
 });

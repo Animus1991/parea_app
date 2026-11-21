@@ -64,11 +64,12 @@ test.describe('Group outings', () => {
     await expect(page.getByRole('button', { name: /^Συνέχεια$|^Continue$/ })).toBeEnabled();
   });
 
-  test('creates a small outing from Find Nakamas', async ({ page }) => {
+  test('creates a small outing from the nearby overlay', async ({ page }) => {
     await enterDemoGuest(page);
-    await page.goto('/buddy-seek');
-    await page.getByRole('button', { name: /Νέα μικρή έξοδος|New small outing/ }).first().click();
-    const dialog = page.getByRole('dialog');
+    await page.getByRole('button', { name: /Βρες παρέα τώρα — μικρές έξοδοι δίπλα σου|Find company now — small outings next to you/ }).click();
+    const sheet = page.getByRole('dialog', { name: /Βρες παρέα τώρα|Find company now/ });
+    await sheet.getByRole('button', { name: /Νέα μικρή έξοδος|New small outing/ }).first().click();
+    const dialog = page.getByRole('dialog', { name: /Νέα μικρή έξοδος|New small outing/ });
     await dialog.getByRole('button', { name: /^Βόλτα$|^Walk$/ }).click();
     await dialog.getByLabel(/Περιοχή|Area/).fill('Παγκράτι');
     await dialog.getByRole('button', { name: /^Δημοσίευση$|^Publish$/ }).click();

@@ -101,6 +101,7 @@ test.describe('Discover card image picker', () => {
     await plansPicker.locator('[data-card-image-option="title"]').click();
 
     await page.goto('/buddy-seek');
+    await expect(page.locator('#main-content').getByText('Καφές στο Κουκάκι')).toHaveCount(0);
     const seekPicker = page.locator('[data-card-image-picker]');
     await expect(seekPicker).toBeVisible({ timeout: 15_000 });
     const seekPhoto = page.locator('#main-content [data-image-depth]').first();

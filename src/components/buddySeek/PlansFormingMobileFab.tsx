@@ -20,7 +20,7 @@ export function PlansFormingMobileFab() {
       type="button"
       onClick={() => setOpen(true)}
       className={cn(
-        'hidden md:flex xl:hidden fixed left-1/2 -translate-x-1/2 z-fab items-center gap-2 min-h-8 pl-4 pr-3 rounded-full shadow-round-lg border border-accent-strong bg-accent text-accent-fg font-bold text-xs transition-transform active:scale-[0.98] motion-reduce:transition-none',
+        'hidden md:flex fixed left-1/2 -translate-x-1/2 z-fab items-center gap-2 min-h-8 pl-4 pr-3 rounded-full shadow-round-lg border border-accent-strong bg-accent text-accent-fg font-bold text-xs transition-transform active:scale-[0.98] motion-reduce:transition-none',
         'bottom-fab-zone',
       )}
       aria-label={t('Βρες παρέα τώρα — μικρές έξοδοι δίπλα σου', 'Find company now — small outings next to you')}

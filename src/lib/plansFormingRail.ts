@@ -14,9 +14,9 @@ export function isPlansRailRoute(pathname: string): boolean {
 }
 
 /**
- * Overlay = last-minute nearby outings. My Plans and Find company already
- * have their own jobs — do not stack a third copy on top of them.
+ * Overlay = last-minute nearby outings. My Plans already lists booked nights,
+ * so do not stack a second copy there. Find Nakamas is event company only.
  */
 export function hidesFindCompanyShortcut(pathname: string): boolean {
-  return pathname === '/plans' || pathname.startsWith('/plans/') || pathname.startsWith('/buddy-seek');
+  return pathname === '/plans' || pathname.startsWith('/plans/');
 }

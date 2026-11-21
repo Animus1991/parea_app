@@ -15,20 +15,10 @@ test.describe('Find Nakamas', () => {
     await expect(page.getByRole('button', { name: /Ρυθμίσεις απορρήτου|Privacy settings/ })).toBeVisible();
     await expect(page.getByRole('button', { name: /Νέο αίτημα από εκδήλωση|New request from event/ })).toBeVisible();
     await expect(page.getByRole('button', { name: /Τα σχέδιά μου|My plans/ })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Νέα μικρή έξοδος|New small outing/ }).first()).toBeVisible();
-    await expect(page.getByRole('button', { name: /Συλλογές|Collections/ })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Μικρές έξοδοι δίπλα σου|Small outings near you/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Καφές ή βόλτα τώρα|Coffee or a walk now/ })).toBeVisible();
+    await expect(page.locator('#main-content').getByRole('heading', { name: /Μικρές έξοδοι δίπλα σου|Small outings near you/ })).toHaveCount(0);
     await expect(page.locator('#main-content [data-mini-outing-card]')).toHaveCount(0);
-    await revealNearbyMiniOutings(page.locator('#main-content'));
-
-    await expect(page.getByText('Κουκάκι, Αθήνα').or(page.getByText('Koukaki, Athens'))).toBeVisible();
-    await expect(page.getByText('Καφές στο Κουκάκι')).toHaveCount(1);
-    const coffeeCard = page.locator('[data-mini-outing-card]').filter({ hasText: 'Καφές στο Κουκάκι' });
-    const coffeeCover = coffeeCard.locator('img');
-    await expect(coffeeCover).toBeVisible();
-    await expect(coffeeCover).toHaveAttribute('src', /\/covers\/coffee\.jpg/);
-    await expect(coffeeCard.getByRole('button', { name: 'Καφές στο Κουκάκι' })).toBeVisible();
-    await expect(coffeeCard.getByRole('button', { name: /Λεπτομέρειες|Details/ })).toBeVisible();
+    await expect(page.locator('#main-content').getByText('Καφές στο Κουκάκι')).toHaveCount(0);
 
     const filters = page.getByRole('button', { name: /^Φίλτρα$|^Filters$/ });
     await expect(filters).toBeVisible();
@@ -60,19 +50,20 @@ test.describe('Find Nakamas', () => {
     await expect(page.getByText(/Φαγητό δρόμου με μικρή ομάδα|Street food with a small group/)).toBeVisible();
     await expect(page.getByText(/Καφές πριν|Coffee before/)).toBeVisible();
 
-    const restrictedOuting = page.locator('[data-mini-outing-card]').filter({ hasText: 'Τρέξιμο στο Ζάππειο' });
+    await page.getByRole('button', { name: /Νέο αίτημα από εκδήλωση|New request from event/ }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await expect(page.getByRole('dialog').getByText('Καφές στο Κουκάκι')).toHaveCount(0);
+    await page.getByRole('button', { name: /Ακύρωση|Cancel/ }).click();
+
+    await page.getByRole('button', { name: /Καφές ή βόλτα τώρα|Coffee or a walk now/ }).click();
+    const sheet = page.getByRole('dialog', { name: /Βρες παρέα τώρα|Find company now/ });
+    await expect(sheet).toBeVisible();
+    await revealNearbyMiniOutings(sheet);
+    await expect(sheet.getByText('Καφές στο Κουκάκι')).toBeVisible();
+    const restrictedOuting = sheet.locator('[data-mini-outing-card]').filter({ hasText: 'Τρέξιμο στο Ζάππειο' });
     await restrictedOuting.getByRole('button', { name: /Μόνο γυναίκες & μη δυαδικά|Women & non-binary only/ }).click();
     await page.locator('[data-sonner-toast]').getByRole('button', { name: /Προφίλ|Profile/ }).click();
     await expect(page).toHaveURL(/\/profile/);
-    await page.goto('/buddy-seek');
-    await revealNearbyMiniOutings(page.locator('#main-content'));
-
-    await page.getByRole('button', { name: /Νέο αίτημα από εκδήλωση|New request from event/ }).click();
-    await expect(page.getByRole('dialog')).toBeVisible();
-    await page.getByRole('button', { name: /Ακύρωση|Cancel/ }).click();
-
-    await page.locator('[data-mini-outing-card]').filter({ hasText: 'Καφές στο Κουκάκι' }).getByRole('button', { name: 'Καφές στο Κουκάκι' }).click();
-    await expect(page).toHaveURL(/\/events\//);
   });
 
   test('Discover rail matches the quiet Find Nakamas cards', async ({ page }) => {
@@ -96,13 +87,7 @@ test.describe('Find Nakamas', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await enterDemoGuest(page);
     await page.goto('/buddy-seek');
-    await revealNearbyMiniOutings(page.locator('#main-content'));
-    const coffeeCover = page.locator('[data-mini-outing-card]').filter({ hasText: 'Καφές στο Κουκάκι' }).locator('img');
-    await expect(coffeeCover).toBeVisible();
-    await expect(coffeeCover).toHaveAttribute('src', /\/covers\/coffee\.jpg/);
-    await expect.poll(async () =>
-      coffeeCover.evaluate((el) => (el as HTMLImageElement).naturalHeight),
-    ).toBeGreaterThan(80);
+    await expect(page.locator('#main-content').getByText('Καφές στο Κουκάκι')).toHaveCount(0);
     const photo = page.locator('#main-content article img').first();
     await expect(photo).toBeVisible();
     await expect.poll(async () => photo.evaluate((el) => el.clientHeight)).toBeGreaterThan(280);
@@ -134,6 +119,8 @@ test.describe('Find Nakamas', () => {
     await sheet.getByRole('button', { name: /Βρες παρέα για εκδήλωση|Find company for an event/ }).click();
     await expect(page).toHaveURL(/\/buddy-seek/);
     await expect(page.getByRole('dialog', { name: /Βρες παρέα τώρα|Find company now/ })).toHaveCount(0);
+    await expect(page.locator('#main-content').getByText('Καφές στο Κουκάκι')).toHaveCount(0);
+    await expect(page.getByText(/Street food με μικρή ομάδα|Street food with a small group|Φαγητό δρόμου με μικρή ομάδα/)).toBeVisible();
   });
 
   test('My Plans does not open the nearby overlay', async ({ page }) => {
