@@ -1240,3 +1240,16 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   outline: 3px solid #0891b2;
   outline-offset: 2px;
 }
+
+/*
+ * Larger touch target, same look: the hit area grows by 6px on each side
+ * without moving or growing the visible control (header icons, small links).
+ */
+.tap-area {
+  position: relative;
+}
+.tap-area::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+}

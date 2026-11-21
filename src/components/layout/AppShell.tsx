@@ -70,7 +70,7 @@ function NakamasLogo({
       to="/"
       onClick={onClick}
       aria-label={t('Αρχική', 'Home')}
-      className={cn("nakamas-logo flex items-baseline font-extrabold tracking-tight font-['Poppins']", logoTextColor, className)}
+      className={cn("nakamas-logo tap-area flex items-baseline font-extrabold tracking-tight font-['Poppins']", logoTextColor, className)}
     >
       <div className="relative inline-block">
         <svg
@@ -495,7 +495,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           )}
         </div>
 
-        <button onClick={onMenuClick} aria-label={t('Άνοιγμα μενού','Open menu')} className={cn("md:hidden", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-gray-300 hover:text-white" : "text-gray-500 hover:text-ink")}>
+        <button onClick={onMenuClick} aria-label={t('Άνοιγμα μενού','Open menu')} className={cn("tap-area md:hidden", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-gray-300 hover:text-white" : "text-gray-500 hover:text-ink")}>
           <Menu className="h-[22px] w-[22px]" />
         </button>
       </div>

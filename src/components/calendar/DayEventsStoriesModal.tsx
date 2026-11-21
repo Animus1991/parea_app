@@ -234,7 +234,7 @@ export function DayEventsStoriesModal({
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
               <p className="text-gray-500 font-bold tracking-wide mb-1 flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 shrink-0" /> {tu('Εμπιστοσύνη', 'Trust')}
+                <ShieldCheck className="w-3 h-3 shrink-0" /> {tu('Επίπεδο', 'Level')}
               </p>
               <p className="text-white font-bold text-sm">{tierLabel}</p>
             </div>

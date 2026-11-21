@@ -20,7 +20,7 @@ export function DemoModeBanner() {
           'Demo mode — demo data clears on Exit; theme/language stay on this device',
         )}
       </span>
-      <button type="button" onClick={() => exitDemoMode()} className="underline hover:opacity-80">
+      <button type="button" onClick={() => exitDemoMode()} className="tap-area underline hover:opacity-80">
         {t('Έξοδος', 'Exit')}
       </button>
     </div>

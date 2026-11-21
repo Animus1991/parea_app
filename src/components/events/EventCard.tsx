@@ -439,8 +439,8 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
             e.stopPropagation();
             setShowTrustSheet(true);
           }}
-          aria-label={t('Εμπιστοσύνη διοργανωτή', 'Organizer trust')}
-          title={t('Εμπιστοσύνη', 'Trust')}
+          aria-label={t('Αξιοπιστία διοργανωτή', 'Organizer reliability')}
+          title={t('Αξιοπιστία', 'Reliability')}
           className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
             onPhoto
@@ -806,7 +806,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         <BottomSheet
           open={showTrustSheet}
           onClose={() => setShowTrustSheet(false)}
-          title={t('Εμπιστοσύνη', 'Trust')}
+          title={t('Αξιοπιστία', 'Reliability')}
           className="sm:max-w-lg sm:mx-auto sm:mb-4 sm:rounded-2xl sm:border"
         >
           {displayOrganizer && (
