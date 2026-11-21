@@ -492,10 +492,24 @@ export const useChatStore = create<ChatState>()(
       }) => {
         const existing = get().conversations.find((c) => c.groupId === groupId);
         if (existing) {
-          if (meetingPoint && existing.meetingPoint !== meetingPoint) {
+          const nextParticipants = [...new Set(participantUserIds)];
+          const participantsChanged =
+            nextParticipants.length > 0 &&
+            (nextParticipants.length !== existing.participantUserIds.length ||
+              nextParticipants.some((id) => !existing.participantUserIds.includes(id)));
+          const meetingChanged = Boolean(meetingPoint && existing.meetingPoint !== meetingPoint);
+          if (participantsChanged || meetingChanged) {
             set((s) => ({
               conversations: s.conversations.map((c) =>
-                c.id === existing.id ? { ...c, meetingPoint } : c,
+                c.id === existing.id
+                  ? {
+                      ...c,
+                      participantUserIds: participantsChanged
+                        ? nextParticipants
+                        : c.participantUserIds,
+                      meetingPoint: meetingChanged ? meetingPoint : c.meetingPoint,
+                    }
+                  : c,
               ),
             }));
           }

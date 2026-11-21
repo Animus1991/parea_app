@@ -108,6 +108,25 @@ describe('ensureEventGroupConversation', () => {
       useChatStore.getState().messages.filter((m) => m.conversationId === a && m.type === 'system'),
     ).toHaveLength(1);
   });
+
+  it('syncs new group members onto an existing thread so they can announce arrival', () => {
+    const id = useChatStore.getState().ensureEventGroupConversation({
+      groupId: 'g2',
+      eventId: 'e4',
+      title: 'Summer Cinema',
+      participantUserIds: ['u1', 'u2', 'u3'],
+    });
+    expect(useChatStore.getState().announceArrival(id, 'u9')).toBe(false);
+    useChatStore.getState().ensureEventGroupConversation({
+      groupId: 'g2',
+      eventId: 'e4',
+      title: 'Summer Cinema',
+      participantUserIds: ['u1', 'u2', 'u3', 'u9'],
+    });
+    const conv = useChatStore.getState().conversations.find((c) => c.id === id);
+    expect(conv?.participantUserIds).toEqual(['u1', 'u2', 'u3', 'u9']);
+    expect(useChatStore.getState().announceArrival(id, 'u9')).toBe(true);
+  });
 });
 
 describe('announceArrival', () => {

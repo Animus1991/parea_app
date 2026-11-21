@@ -93,7 +93,7 @@ export default function GroupChatPageContent() {
       participantUserIds: group.members,
       meetingPoint: group.meetingPoint,
     });
-  }, [group?.id, event?.id, isMember, ensureEventGroupConversation]); // eslint-disable-line react-hooks/exhaustive-deps -- bridge once per group/event
+  }, [group?.id, event?.id, isMember, group?.members, ensureEventGroupConversation]); // eslint-disable-line react-hooks/exhaustive-deps -- re-bridge when membership changes
 
   const buildSeedMessages = (): GroupChatMessage[] => {
     if (!currentUser) return [];
