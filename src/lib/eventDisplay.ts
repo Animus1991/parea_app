@@ -30,6 +30,7 @@ const LOCATION_EL: Record<string, string> = {
   'Zappeio, Athens': 'Ζάππειο, Αθήνα',
   'Psyrri, Athens': 'Ψυρρή, Αθήνα',
   'Kolonaki, Athens': 'Κολωνάκι, Αθήνα',
+  Thessaloniki: 'Θεσσαλονίκη',
   'Petralona, Athens': 'Πετράλωνα, Αθήνα',
   'Kypseli, Athens': 'Κυψέλη, Αθήνα',
   'Neos Kosmos, Athens': 'Νέος Κόσμος, Αθήνα',

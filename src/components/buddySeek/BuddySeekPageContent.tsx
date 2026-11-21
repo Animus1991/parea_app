@@ -172,8 +172,8 @@ export default function BuddySeekPageContent() {
     titleEl: 'Βρες Nakamas',
     titleEn: 'Find Nakamas',
     state: filter,
-    summaryEl: `${filtered.length} σχέδια · ${pendingForMe.length} αιτήματα προς εσένα`,
-    summaryEn: `${filtered.length} plans · ${pendingForMe.length} requests for you`,
+    summaryEl: `${filtered.length} παρέες · ${pendingForMe.length} αιτήματα προς εσένα`,
+    summaryEn: `${filtered.length} looking · ${pendingForMe.length} requests for you`,
     visibleIds: visibleSeeks.slice(0, 8).map((i) => i.intent.id),
   });
 
@@ -182,6 +182,12 @@ export default function BuddySeekPageContent() {
       <header className="space-y-3">
         <div className="space-y-1.5">
           <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Βρες Nakamas', 'Find Nakamas')}</h1>
+          <p className={cn('text-xs font-medium leading-relaxed', a.muted)}>
+            {t(
+              'Άτομα που ψάχνουν παρέα για εκδήλωση — όχι τα βράδια που έχεις ήδη κλείσει στα Σχέδιά σου.',
+              'People looking for company at an event — not the nights you already booked in My Plans.',
+            )}
+          </p>
           <PlansFormingValueHero insights={feed.insights} />
         </div>
         {/* StatsBar omitted when ValueHero already states compatible count — less chrome. */}

@@ -8,6 +8,17 @@ import type { PlanInvite, SeeAgainPick, Strike, VibeProfile } from '../types/out
 import { groupCodeFor } from '../lib/outings';
 import { MINI_OUTING_COVERS } from '../lib/eventCover';
 
+/** Keep last-minute demos on the real clock, not a frozen November week. */
+function dayFromNow(days: number): string {
+  const d = new Date();
+  d.setHours(12, 0, 0, 0);
+  d.setDate(d.getDate() + days);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 const NIGHT_IMG = 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&h=600&fit=crop';
 
 export const mockOutingEvents: Event[] = [
@@ -90,7 +101,7 @@ export const mockOutingEvents: Event[] = [
     title: 'Καφές στο Κουκάκι',
     category: 'Social',
     description: 'Ένας χαλαρός καφές Σάββατο πρωί, μία ώρα, για όποιον θέλει να γνωρίσει νέο κόσμο στη γειτονιά.',
-    date: '2026-11-28',
+    date: dayFromNow(6),
     time: '11:00',
     duration: '1h',
     locationArea: 'Koukaki, Athens',
@@ -112,7 +123,7 @@ export const mockOutingEvents: Event[] = [
     title: 'Τρέξιμο στο Ζάππειο (5 χλμ.)',
     category: 'Sports',
     description: 'Ήπιος ρυθμός, κανείς δεν μένει πίσω. Μόνο για γυναίκες & μη δυαδικά άτομα.',
-    date: '2026-11-22',
+    date: dayFromNow(1),
     time: '09:00',
     duration: '1h',
     locationArea: 'Zappeio, Athens',
@@ -128,6 +139,50 @@ export const mockOutingEvents: Event[] = [
     maxParticipants: 5,
     tags: ['run', 'mini outing'],
     imageUrl: MINI_OUTING_COVERS.run,
+  },
+  {
+    id: 'mo3',
+    title: 'Ποτό στη Θεσσαλονίκη',
+    category: 'Food & Drink',
+    description: 'Ένα ποτήρι μακριά από την Αθήνα — φαίνεται μόνο αν ανοίξεις την ακτίνα.',
+    date: dayFromNow(0),
+    time: '20:00',
+    duration: '1h 30m',
+    locationArea: 'Thessaloniki',
+    exactLocation: 'Ναυαρίνου 12',
+    lat: 40.6329,
+    lng: 22.9446,
+    isPaid: false,
+    price: 0,
+    organizerId: 'u3',
+    kind: 'mini_outing',
+    safetyLevel: 'low',
+    minTrustTierAccess: '2_confirmed',
+    maxParticipants: 4,
+    tags: ['drink', 'mini outing'],
+    imageUrl: MINI_OUTING_COVERS.drink,
+  },
+  {
+    id: 'mo4',
+    title: 'Βόλτα στο Θησείο',
+    category: 'Walking tours',
+    description: 'Μία ώρα περπάτημα όταν σου μείνει ένα κενό σήμερα.',
+    date: dayFromNow(1),
+    time: '17:00',
+    duration: '1h 30m',
+    locationArea: 'Thisio, Athens',
+    exactLocation: 'Σταθμός Θησείου, έξοδος πεζόδρομου',
+    lat: 37.9765,
+    lng: 23.7208,
+    isPaid: false,
+    price: 0,
+    organizerId: 'u2',
+    kind: 'mini_outing',
+    safetyLevel: 'low',
+    minTrustTierAccess: '2_confirmed',
+    maxParticipants: 4,
+    tags: ['walk', 'mini outing'],
+    imageUrl: MINI_OUTING_COVERS.walk,
   },
 ];
 
@@ -198,6 +253,30 @@ export const mockOutingGroups: Group[] = [
     discountUnlocked: false,
     isRecruiting: true,
     genderMode: 'women_nb',
+  },
+  {
+    id: 'g-mo3',
+    eventId: 'mo3',
+    hostId: 'u3',
+    members: ['u3'],
+    pendingMembers: [],
+    targetSize: 4,
+    status: 'pending',
+    discountUnlocked: false,
+    isRecruiting: true,
+    genderMode: 'mixed',
+  },
+  {
+    id: 'g-mo4',
+    eventId: 'mo4',
+    hostId: 'u2',
+    members: ['u2'],
+    pendingMembers: [],
+    targetSize: 4,
+    status: 'pending',
+    discountUnlocked: false,
+    isRecruiting: true,
+    genderMode: 'mixed',
   },
 ];
 

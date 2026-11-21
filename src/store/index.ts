@@ -10,6 +10,7 @@ import { coerceAuthoredSeasonToLive } from "../lib/demoCatalogDates";
 import { withFreshCatalogDates } from "../lib/catalogAuthoredSchedule";
 import { eventCoverUrl } from "../lib/eventCover";
 import { isLiveCatalogEvent } from "../lib/eventDisplay";
+import type { MapLocation } from "../lib/miniOutings";
 import { applyDefaultCardImageDepthIfUnset } from "../lib/discoverCardImagePreview";
 import { mockUsers, currentUser } from "../data/mockUsers";
 import { mockNotifications } from "../data/mockNotifications";
@@ -168,6 +169,8 @@ export interface UserSettings {
   categoryPrefs: string[];
   privacy: AccountPrivacy;
   availability: string[];
+  /** Last place the member pinned for mini outings (GPS or map). */
+  mapLocation: MapLocation | null;
 }
 
 export const DEFAULT_USER_SETTINGS: UserSettings = {
@@ -176,6 +179,7 @@ export const DEFAULT_USER_SETTINGS: UserSettings = {
   categoryPrefs: [],
   privacy: { ...DEFAULT_ACCOUNT_PRIVACY },
   availability: ['weekends', 'weekday_evenings'],
+  mapLocation: null,
 };
 
 interface AppState extends OutingsSlice {

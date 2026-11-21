@@ -12,7 +12,6 @@ import { useCopilotStore } from '../../store/copilotStore';
 export function HomeBuddySeekStrip({ className }: { className?: string }) {
   const { t, tu } = useLanguage();
   const navigate = useNavigate();
-  const setSheetOpen = useStore((s) => s.setPlansFormingSheetOpen);
   const feed = usePlansFormingFeed(6);
   // ≥1280px the «Βρες Nakamas» rail shows this same feed: don't repeat it on Home.
   const railOpen = useStore((s) => s.plansFormingSidebarOpen);
@@ -52,7 +51,7 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
           </button>
           <button
             type="button"
-            onClick={() => setSheetOpen(true)}
+            onClick={() => navigate('/buddy-seek')}
             className="xl:hidden inline-flex min-h-8 items-center text-xs font-bold px-3 rounded-full bg-accent text-accent-fg"
           >
             {t('Άνοιγμα', 'Open')}
@@ -65,8 +64,8 @@ export function HomeBuddySeekStrip({ className }: { className?: string }) {
           <Users className="w-6 h-6 mx-auto text-accent/60 mb-2" />
           <p className="text-sm font-medium text-ink-muted leading-relaxed">
             {t(
-              'Δεν βλέπεις σχέδια ακόμα; Αποθήκευσε εκδηλώσεις ή δήλωσε ότι ψάχνεις Nakamas.',
-              'No plans visible yet? Save events or declare that you are looking for Nakamas.',
+              'Δεν βλέπεις παρέες ακόμα; Αποθήκευσε εκδηλώσεις ή δήλωσε ότι ψάχνεις παρέα.',
+              'No company visible yet? Save events or say you are looking for company.',
             )}
           </p>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">

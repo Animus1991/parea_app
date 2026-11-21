@@ -130,6 +130,12 @@ export default function PlansPageContent() {
     <div className="mx-auto max-w-full space-y-4 md:space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div>
         <h1 className={cn(PLANS_TYPO.pageTitle, p.head)}>{t(`Τα Σχέδιά μου`, `My Plans`)}</h1>
+        <p className={cn('mt-1 text-xs font-medium leading-relaxed', p.muted)}>
+          {t(
+            'Τα βράδια που έχεις ήδη κλείσει. Για παρέα σε εκδήλωση πήγαινε στο Βρες Nakamas· για κάτι δίπλα σου τώρα, άνοιξε «Βρες παρέα».',
+            'Nights you already booked. For company at an event go to Find Nakamas; for something next to you now, open “Find company”.',
+          )}
+        </p>
       </div>
       <DiscoverCardImagePicker
         depth={cardImage.depth}

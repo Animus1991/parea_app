@@ -1,33 +1,21 @@
-import { useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { X, Inbox } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useContrastTheme } from '../../hooks/useContrastTheme';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
-import { usePlansFormingFeed } from '../../hooks/usePlansFormingFeed';
 import { useStore } from '../../store';
-import { PlansFormingCard, PlansFormingGroupCard } from './PlansFormingCard';
-import { PlansFormingScarcityPromoCard } from './PlansFormingScarcityPromo';
-import {
-  PlansFormingEmptyState,
-  PlansFormingSectionTitle,
-  PlansFormingStatsBar,
-  PlansFormingValueHero,
-  PlansFormingYourPlanBanner,
-} from './plansForming/PlansFormingShared';
-import {
-  BuddySeekFilterBar,
-  BuddySeekPageActions,
-  BuddySeekVibeNudge,
-  type BuddySeekFilterKey,
-} from './BuddySeekChrome';
 import { MiniOutingsSection } from '../outings/MiniOutingsSection';
 import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
 import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
+import { hidesFindCompanyShortcut } from '../../lib/plansFormingRail';
 import { cn } from '../../lib/utils';
-import { toast } from 'sonner';
 
+/**
+ * Last-minute nearby outings — not My Plans, not the event Find-company page.
+ * Those two pages already list different things; this sheet must not clone them.
+ */
 export function PlansFormingBottomSheet() {
   const open = useStore((s) => s.plansFormingSheetOpen);
   const setOpen = useStore((s) => s.setPlansFormingSheetOpen);
@@ -35,52 +23,21 @@ export function PlansFormingBottomSheet() {
   const c = useContrastTheme();
   const tok = useThemeStyles();
   const navigate = useNavigate();
-  const feed = usePlansFormingFeed(10);
+  const { pathname } = useLocation();
   const cardImage = useDiscoverCardImageDepth();
-  const dismiss = useStore((s) => s.dismissCompanyRequest);
-  const undismiss = useStore((s) => s.undismissCompanyRequest);
-  const currentUser = useStore((s) => s.currentUser);
   const panelRef = useRef<HTMLDivElement>(null);
-  const [filter, setFilter] = useState<BuddySeekFilterKey>('all');
-  const [filtersOpen, setFiltersOpen] = useState(false);
   useOverlayBehavior(open, () => setOpen(false), panelRef);
+
+  useEffect(() => {
+    if (hidesFindCompanyShortcut(pathname)) setOpen(false);
+  }, [pathname, setOpen]);
 
   const leave = (path: string) => {
     setOpen(false);
     navigate(path);
   };
 
-  const filteredItems = useMemo(() => {
-    return feed.items.filter((item) => {
-      if (filter === 'open_spots') return item.intent.openToJoinGroup !== false;
-      if (filter === 'verified') return item.intent.requiredTrustTier !== 'none';
-      if (filter === 'small_groups') return (item.intent.preferredGroupMax ?? 6) <= 4;
-      if (filter === 'flexible') return item.intent.flexibleDates;
-      if (filter === 'saved_events') return item.isSavedEvent;
-      if (filter === 'high_match') return item.isHighMatch;
-      return true;
-    });
-  }, [feed.items, filter]);
-
-  const recruitingGroups = useMemo(
-    () => feed.recruitingGroupItems.filter((entry) => entry.event.kind !== 'mini_outing'),
-    [feed.recruitingGroupItems],
-  );
-
-  const filterCounts = useMemo(
-    () => ({
-      all: feed.items.length,
-      high_match: feed.items.filter((i) => i.isHighMatch).length,
-      saved_events: feed.items.filter((i) => i.isSavedEvent).length,
-      flexible: feed.items.filter((i) => i.intent.flexibleDates).length,
-      open_spots: feed.items.filter((i) => i.intent.openToJoinGroup !== false).length,
-      small_groups: feed.items.filter((i) => (i.intent.preferredGroupMax ?? 6) <= 4).length,
-      verified: feed.items.filter((i) => i.intent.requiredTrustTier !== 'none').length,
-    }),
-    [feed.items],
-  );
-
-  if (!open) return null;
+  if (!open || hidesFindCompanyShortcut(pathname)) return null;
 
   return (
     <div className="fixed inset-0 z-sheet xl:hidden" role="dialog" aria-modal="true" aria-labelledby="plans-forming-sheet-title">
@@ -100,13 +57,18 @@ export function PlansFormingBottomSheet() {
       >
         <div className={cn('mx-auto mt-3 mb-1 h-1 w-10 rounded-full shrink-0', tok.isDark ? 'bg-gray-500' : 'bg-gray-300')} />
 
-        <div className="px-5 pt-2 pb-3 border-b border-inherit shrink-0 space-y-3">
+        <div className="px-5 pt-2 pb-3 border-b border-inherit shrink-0 space-y-2">
           <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
+            <div className="min-w-0 space-y-1">
               <h2 id="plans-forming-sheet-title" className={cn('text-sm md:text-base font-bold', tok.head)}>
-                {t('Βρες Nakamas', 'Find Nakamas')}
+                {t('Βρες παρέα τώρα', 'Find company now')}
               </h2>
-              <PlansFormingValueHero insights={feed.insights} />
+              <p className={cn('text-xs font-medium leading-relaxed', tok.isDark ? 'text-gray-400' : 'text-ink-muted')}>
+                {t(
+                  'Σύντομες έξοδοι δίπλα σου — καφές, βόλτα, τρέξιμο — χωρίς να κλείσεις εκδήλωση. Τα βράδια που έχεις ήδη κλείσει είναι στα Σχέδιά σου.',
+                  'Short outings next to you — coffee, a walk, a run — without booking an event. Nights you already booked live in My Plans.',
+                )}
+              </p>
             </div>
             <button
               type="button"
@@ -117,116 +79,23 @@ export function PlansFormingBottomSheet() {
               <X className="h-5 w-5" />
             </button>
           </div>
-          <PlansFormingStatsBar plain insights={feed.insights} />
-          {feed.insights.pendingJoinsToReview > 0 && (
-            <button
-              type="button"
-              className={cn(
-                'w-full flex items-center gap-2 rounded-xl border px-3 py-1.5 min-h-8 text-xs font-bold',
-                tok.isDark
-                  ? 'border-amber-700/60 bg-amber-950/40 text-amber-100'
-                  : 'border-amber-200 bg-amber-50 text-amber-900',
-              )}
-              onClick={() => {
-                setOpen(false);
-                navigate('/buddy-seek');
-              }}
-            >
-              <Inbox className="w-4 h-4" />
-              {t(
-                `${feed.insights.pendingJoinsToReview} αιτήματα προς έλεγχο`,
-                `${feed.insights.pendingJoinsToReview} requests to review`,
-              )}
-            </button>
-          )}
         </div>
 
         <div
           data-plans-sheet-scroll=""
           className="min-h-0 flex-1 overflow-y-auto overscroll-contain touch-pan-y px-4 py-3 space-y-4 pb-32"
         >
-          <BuddySeekPageActions
-            onPrivacy={() => leave('/settings?section=buddy-seek')}
-            onNewRequest={() => leave('/buddy-seek?newRequest=1')}
-            onMyPlans={() => leave('/plans')}
-          />
-          {currentUser && !currentUser.vibe && (
-            <BuddySeekVibeNudge onClick={() => leave('/profile')} />
-          )}
           <DiscoverCardImagePicker
             depth={cardImage.depth}
             options={cardImage.options}
             onChange={cardImage.setDepth}
           />
           <MiniOutingsSection variant="sheet" onLeave={() => setOpen(false)} imageDepth={cardImage.depth} />
-          <BuddySeekFilterBar
-            filter={filter}
-            filterCounts={filterCounts}
-            filtersOpen={filtersOpen}
-            onToggleOpen={() => setFiltersOpen((open) => !open)}
-            onChange={setFilter}
-            filtersId="buddy-seek-sheet-filters"
-          />
-
-          {feed.myActivePlan && (
-            <PlansFormingYourPlanBanner
-              plan={feed.myActivePlan}
-              onManage={() => leave(`/events/${feed.myActivePlan!.event.id}`)}
-              onEdit={() => leave(`/buddy-seek?editRequest=${feed.myActivePlan!.intent.id}`)}
-            />
-          )}
-
-          {!feed.hasContent && !feed.myActivePlan ? (
-            <PlansFormingEmptyState suggestedEvent={feed.suggestedEvent} onBrowse={() => leave('/')} />
-          ) : (
-            <>
-              {feed.scarcityPromos.length > 0 && (
-                <section className="space-y-3">
-                  <PlansFormingSectionTitle title={t('Σχεδόν πλήρεις ομάδες', 'Groups filling up')} />
-                  {feed.scarcityPromos.map((promo) => (
-                    <PlansFormingScarcityPromoCard key={promo.id} promo={promo} isDark={tok.isDark} />
-                  ))}
-                </section>
-              )}
-              {filteredItems.map((item) => (
-                <PlansFormingCard
-                  key={item.intent.id}
-                  item={item}
-                  variant="sheet"
-                  isDarkSurface={tok.isDark}
-                  imageDepth={cardImage.depth}
-                  onNavigate={leave}
-                  onDismiss={() => {
-                    const id = item.intent.id;
-                    dismiss(id);
-                    toast(t('Απόκρυψη', 'Hidden'), {
-                      action: { label: t('Αναίρεση', 'Undo'), onClick: () => undismiss(id) },
-                    });
-                  }}
-                />
-              ))}
-              {recruitingGroups.length > 0 && (
-                <section>
-                  <PlansFormingSectionTitle title={t('Ομάδες με θέσεις', 'Groups with spots')} />
-                  {recruitingGroups.map((entry) => (
-                    <PlansFormingGroupCard
-                      key={entry.group.id}
-                      entry={entry}
-                      variant="sheet"
-                      isDarkSurface={tok.isDark}
-                      imageDepth={cardImage.depth}
-                      onNavigate={leave}
-                    />
-                  ))}
-                </section>
-              )}
-            </>
-          )}
         </div>
 
         <div
           className={cn(
-            'sticky bottom-0 left-0 right-0 px-4 py-2.5 border-t flex gap-2 shrink-0 backdrop-blur-md',
+            'sticky bottom-0 left-0 right-0 px-4 py-2.5 border-t flex flex-wrap gap-2 shrink-0 backdrop-blur-md',
             tok.isDark ? 'bg-gray-900/95 border-gray-800' : 'bg-white/95 border-gray-200',
           )}
         >
@@ -235,14 +104,14 @@ export function PlansFormingBottomSheet() {
             onClick={() => leave('/buddy-seek')}
             className={cn('flex-1 min-h-9 rounded-full text-xs font-bold text-white', tok.primaryBtn)}
           >
-            {t('Όλα τα σχέδια', 'All plans')}
+            {t('Βρες παρέα για εκδήλωση', 'Find company for an event')}
           </button>
           <button
             type="button"
-            onClick={() => setOpen(false)}
+            onClick={() => leave('/plans')}
             className={cn('min-h-9 px-4 rounded-full text-xs font-bold border', c.border, c.fgMuted)}
           >
-            {t('Κλείσιμο', 'Close')}
+            {t('Τα σχέδιά μου', 'My plans')}
           </button>
         </div>
       </div>

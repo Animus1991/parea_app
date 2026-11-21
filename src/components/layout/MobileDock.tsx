@@ -5,6 +5,7 @@ import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
 import { useChatStore } from '../../store/chatStore';
 import { usePlansFabState } from '../../hooks/usePlansFabState';
+import { hidesFindCompanyShortcut } from '../../lib/plansFormingRail';
 import { cn } from '../../lib/utils';
 
 /**
@@ -61,8 +62,8 @@ export function MobileDock() {
   // Screens that own the bottom edge (composer, forms, primary actions) keep it clear.
   if (DOCK_HIDDEN.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return null;
   if (matchPath('/events/:eventId/join', pathname) || matchPath('/history/feedback/:eventId', pathname)) return null;
-  // On Find Nakamas itself the plans shortcut would open what is already on screen.
-  const showPlans = plans.visible && !pathname.startsWith('/buddy-seek');
+  // Overlay is nearby-now outings. My Plans and Find company already have their own lists.
+  const showPlans = plans.visible && !hidesFindCompanyShortcut(pathname);
 
   const segment =
     'flex items-center gap-2 min-h-11 font-bold text-xs outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-fg/70 transition-colors';
@@ -91,7 +92,7 @@ export function MobileDock() {
             <button
               type="button"
               onClick={() => setPlansOpen(true)}
-              aria-label={t('Βρες Nakamas — σχέδια που σχηματίζονται', 'Find Nakamas — plans forming')}
+              aria-label={t('Βρες παρέα τώρα — μικρές έξοδοι δίπλα σου', 'Find company now — small outings next to you')}
               className={cn(segment, 'pl-4 pr-3 active:bg-black/10')}
             >
               <Users className="w-4 h-4" aria-hidden />

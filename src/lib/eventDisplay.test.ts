@@ -76,6 +76,7 @@ describe('eventDisplay', () => {
     expect(formatLocationArea('Zappeio, Athens', 'el')).toBe('Ζάππειο, Αθήνα');
     expect(formatLocationArea('Plaka, Athens', 'el')).toBe('Πλάκα, Αθήνα');
     expect(formatLocationArea('Syntagma, Athens', 'el')).toBe('Σύνταγμα, Αθήνα');
+    expect(formatLocationArea('Thessaloniki', 'el')).toBe('Θεσσαλονίκη');
     expect(locationMatchesQuery('Thisio, Athens', 'θησείο', 'el')).toBe(true);
     expect(locationMatchesQuery('Thisio, Athens', 'thisio', 'el')).toBe(true);
     expect(locationMatchesQuery('Athens', 'αθήνα', 'el')).toBe(true);

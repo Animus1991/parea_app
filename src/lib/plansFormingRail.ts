@@ -12,3 +12,11 @@ const EXACT = new Set(['/']);
 export function isPlansRailRoute(pathname: string): boolean {
   return EXACT.has(pathname);
 }
+
+/**
+ * Overlay = last-minute nearby outings. My Plans and Find company already
+ * have their own jobs — do not stack a third copy on top of them.
+ */
+export function hidesFindCompanyShortcut(pathname: string): boolean {
+  return pathname === '/plans' || pathname.startsWith('/plans/') || pathname.startsWith('/buddy-seek');
+}

@@ -34,7 +34,7 @@ export function PlansFormingSidebarReopenTab() {
         'transition-colors hover:bg-cyan-50',
         tok.isDark ? 'bg-[#0c1016]/95 border-white/10 text-cyan-300' : 'bg-white border-gray-200 text-cyan-700',
       )}
-      aria-label={t('Βρες Nakamas — σχέδια που σχηματίζονται', 'Find Nakamas — plans forming')}
+      aria-label={t('Βρες Nakamas — παρέα για εκδήλωση', 'Find Nakamas — company for an event')}
       title={t('Βρες Nakamas', 'Find Nakamas')}
     >
       <Users className="w-4 h-4 shrink-0" />
@@ -84,7 +84,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
           <button
             type="button"
             onClick={() => navigate('/buddy-seek')}
-            aria-label={t('Όλα τα σχέδια', 'All plans')}
+            aria-label={t('Άνοιγμα Βρες Nakamas', 'Open Find Nakamas')}
             className={cn(
               'shrink-0 inline-flex items-center min-h-9 text-xs font-semibold',
               isDark ? 'text-cyan-300 hover:text-white' : 'text-cyan-700 hover:text-cyan-900',

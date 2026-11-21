@@ -34,8 +34,8 @@ export function PlansFormingStatsBar({
     {
       icon: Users,
       value: insights.compatiblePlans,
-      label: t('Σχέδια', 'Plans'),
-      one: t('σχέδιο', 'plan'),
+      label: t('Παρέες', 'Company'),
+      one: t('παρέα', 'looking'),
       show: true,
     },
     {
@@ -270,8 +270,8 @@ export function PlansFormingValueHero({
   const headline =
     insights.compatiblePlans > 0
       ? t(
-          `${insights.compatiblePlans} σχέδια τώρα`,
-          `${insights.compatiblePlans} plans right now`,
+          `${insights.compatiblePlans} παρέες τώρα`,
+          `${insights.compatiblePlans} people looking now`,
         )
       : t('Βρες Nakamas για εκδήλωση', 'Find Nakamas for an event');
 

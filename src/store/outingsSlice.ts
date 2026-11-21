@@ -32,6 +32,7 @@ import { getEventDateRange } from '../lib/eventCalendarExport';
 import { activeTicketPartner, settleReservation } from '../services/ticketPartner';
 import { coversFor } from '../lib/planCovers';
 import { MINI_OUTING_COVERS } from '../lib/eventCover';
+import { placeForArea } from '../lib/miniOutings';
 import { mockPlanInvites, mockSeeAgainPicks, mockStrikes } from '../data/mockOutings';
 import { fetchInviteResponses, newHostKey, newInviteId, publishInvite } from '../services/invitesApi';
 
@@ -734,6 +735,7 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       if (standing.level === 'paused' || standing.level === 'review') return null;
       const d = MINI_DEFAULTS[input.kind];
       const area = input.area.trim() || 'Athens';
+      const place = placeForArea(area);
       const eventId = `mo${Date.now()}`;
       const groupId = `g-${eventId}`;
       const genderMode: GroupGenderMode = input.genderMode === 'women_nb' && fitsGenderMode(me, 'women_nb') ? 'women_nb' : 'mixed';
@@ -747,8 +749,8 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
         duration: d.duration,
         locationArea: area,
         exactLocation: input.exactLocation?.trim() || undefined,
-        lat: input.lat,
-        lng: input.lng,
+        lat: input.lat ?? place?.lat,
+        lng: input.lng ?? place?.lng,
         isPaid: false,
         price: 0,
         organizerId: me.id,
