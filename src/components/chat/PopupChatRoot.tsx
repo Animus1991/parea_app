@@ -1,8 +1,9 @@
 import { Suspense, lazy, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { matchPath, useLocation } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
+import { cn } from '../../lib/utils';
 import { PopupChatLauncher } from './PopupChatLauncher';
 
 const ChatInboxPanel = lazy(() =>
@@ -21,16 +22,18 @@ export function PopupChatRoot() {
   const minimizedIds = useChatStore((s) => s.minimizedIds);
   const openConversation = useChatStore((s) => s.openConversation);
   const conversations = useChatStore((s) => s.conversations);
+  const pathname = useLocation().pathname;
   // On a group chat page the composer sits at the bottom: float above it.
-  const onChatPage = useLocation().pathname.startsWith('/chat/');
+  const onChatPage = pathname.startsWith('/chat/');
+  const onEventDetail = Boolean(matchPath('/events/:eventId', pathname));
 
   useEffect(() => {
     const root = document.documentElement;
-    root.dataset.chatHat = onChatPage ? 'composer' : 'default';
+    root.dataset.chatHat = onChatPage ? 'composer' : onEventDetail ? 'event' : 'default';
     return () => {
       delete root.dataset.chatHat;
     };
-  }, [onChatPage]);
+  }, [onChatPage, onEventDetail]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -72,7 +75,10 @@ export function PopupChatRoot() {
           ))}
         </div>
       )}
-      <PopupChatLauncher onClick={toggleInbox} className={onChatPage ? 'max-md:hidden' : undefined} />
+      <PopupChatLauncher
+        onClick={toggleInbox}
+        className={cn(onChatPage && 'max-md:hidden', windows.length > 0 && 'hidden')}
+      />
       {inboxOpen && (
         <>
           <button

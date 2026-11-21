@@ -34,8 +34,8 @@
   --z-fab: 50;
   --z-chat: 60;
   --z-chat-scrim: 65;
-  /* Hat sits above the inbox so a second tap still closes it. */
-  --z-chat-toggle: 72;
+  /* Above the inbox scrim, below sheets/windows so Send and Join stay tappable. */
+  --z-chat-toggle: 68;
   --z-sheet: 70;
   --z-banner: 80;
   --z-topnav: 90;
@@ -128,21 +128,21 @@
 .chat-hat-fab {
   bottom: var(--chat-hat-bottom);
 }
-.chat-hat-fab-event {
-  bottom: var(--chat-hat-bottom-event);
-}
-@media (min-width: 768px) {
-  .chat-hat-fab-event {
-    bottom: var(--chat-hat-bottom);
+@media (max-width: 767px) {
+  html[data-chat-hat='event'] .chat-hat-fab {
+    bottom: var(--chat-hat-bottom-event);
+  }
+  html[data-chat-hat='event'] .chat-inbox-phone,
+  html[data-chat-hat='event'] .chat-above-hat {
+    bottom: calc(var(--chat-hat-bottom-event) + var(--chat-hat-fab) + 0.5rem);
   }
 }
 .chat-above-hat {
   bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.5rem);
 }
 .chat-inbox-phone {
-  /* Stay below demo banner + TopNav; the hat overlays the sheet (higher z). */
   top: calc(var(--header-h) + 2.5rem);
-  bottom: var(--chat-hat-bottom);
+  bottom: calc(var(--chat-hat-bottom) + var(--chat-hat-fab) + 0.5rem);
 }
 @media (min-width: 768px) {
   :root {
@@ -169,6 +169,17 @@
   html[data-chat-hat='composer'] .chat-inbox-phone {
     bottom: calc(var(--chat-hat-bottom-composer) + var(--chat-hat-fab) + 0.75rem);
     max-height: min(520px, 70vh, calc(100dvh - var(--chat-hat-bottom-composer) - var(--chat-hat-fab) - 0.75rem - var(--header-h) - 3rem));
+  }
+}
+@media (min-width: 768px) and (max-height: 640px) {
+  .chat-hat-fab,
+  html[data-chat-hat='composer'] .chat-hat-fab {
+    bottom: 1.5rem;
+  }
+  .chat-inbox-phone,
+  html[data-chat-hat='composer'] .chat-inbox-phone {
+    bottom: 1.5rem;
+    max-height: min(520px, calc(100dvh - var(--header-h) - 4.5rem));
   }
 }
 

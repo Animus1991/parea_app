@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
-import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { StrawHatSpin } from '../illustrations/StrawHatMark';
 import { cn } from '../../lib/utils';
 
@@ -18,12 +17,9 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
     [conversations],
   );
   const { pathname } = useLocation();
-  const isPhone = useMediaQuery('(max-width: 767px)');
-  const onEventDetail = Boolean(matchPath('/events/:eventId', pathname));
   const hideOnPhones =
     Boolean(matchPath('/events/:eventId/join', pathname)) ||
     Boolean(matchPath('/history/feedback/:eventId', pathname));
-  const liftForEvent = isPhone && onEventDetail;
 
   return (
     <button
@@ -36,7 +32,6 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
         'chat-hat-fab fixed z-chat-toggle inline-flex items-center justify-center p-0 m-0',
         'bg-transparent border-0 shadow-none rounded-full overflow-visible',
         'right-3 md:right-6 copilot-shift',
-        liftForEvent && 'chat-hat-fab-event',
         hideOnPhones && 'max-md:hidden',
         className,
       )}
