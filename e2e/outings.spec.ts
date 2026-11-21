@@ -146,6 +146,8 @@ test.describe('Group outings', () => {
   });
 
   test('My Plans shows a cover on mini outing cards', async ({ page }) => {
+    // The demo coffee is on a fixed date; read the page the day before, not «now».
+    await page.clock.setFixedTime(new Date('2026-11-20T10:00:00+02:00'));
     await page.goto('/login');
     await page.evaluate((key) => {
       const raw = localStorage.getItem(key);
