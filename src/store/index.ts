@@ -938,6 +938,11 @@ export const useStore = create<AppState>()(
       if (!state.currentUser) return state;
       const outing = state.events.find((e) => e.id === eventId);
       if (!outing || !isLiveCatalogEvent(outing)) return state;
+      if (!get().canJoinEvent(eventId).ok) return state;
+      const uid = state.currentUser.id;
+      if (state.groups.some((g) => g.eventId === eventId && g.status !== 'cancelled' && g.members.includes(uid))) {
+        return state;
+      }
       const genderMode: GroupGenderMode =
         options?.genderMode === 'women_nb' && fitsGenderMode(state.currentUser, 'women_nb') ? 'women_nb' : 'mixed';
       const newGroup = {

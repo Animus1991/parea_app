@@ -69,7 +69,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
   const event = events.find(e => e.id === eventId);
 
   let eventGroups = groups
-    .filter(g => g.eventId === eventId)
+    .filter(g => g.eventId === eventId && g.status !== 'cancelled')
     .sort((a, b) => {
       if (event?.isPaid && event?.groupDiscount) {
          if (a.discountUnlocked && !b.discountUnlocked) return -1;
@@ -230,7 +230,9 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         <div className="space-y-4 md:col-span-2 lg:col-span-1">
           <div className="rounded-2xl border border-border bg-surface-raised p-4 shadow-soft sticky top-24">
             <NakamasGoing eventId={event.id} className="mb-4" />
-            <LookingForCompanyPanel event={event} accent={accent} darkSurface={panelDark} />
+            {isLiveCatalogEvent(event) && (
+              <LookingForCompanyPanel event={event} accent={accent} darkSurface={panelDark} />
+            )}
 
             <h3 id="groups" className="scroll-mt-28 text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
             <div className="mb-4 bg-accent-soft border border-accent/20 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-xs font-bold text-accent-strong">
@@ -269,7 +271,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               )}
             </div>
 
-            {(eventGroups.length > 0 || groupSizeFilter !== 'All' || discountFilter) && (
+            {isLiveCatalogEvent(event) && (eventGroups.length > 0 || groupSizeFilter !== 'All' || discountFilter) && (
               <div className="mb-4 space-y-2">
                 <div className="flex gap-2">
                   <span className="text-2xs font-bold text-ink-muted mt-1.5">{t('Φίλτρο:', 'Filter by:')}</span>
@@ -300,7 +302,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               </div>
             )}
 
-            {eventGroups.length === 0 ? (
+            {isLiveCatalogEvent(event) && (eventGroups.length === 0 ? (
               <div className="text-xs text-ink-muted mb-4 bg-surface p-4 rounded-2xl text-center border border-dashed border-border font-medium">
                 {t('Δεν υπάρχουν ομάδες ακόμα. Ξεκίνα εσύ την πρώτη!', 'No groups forming yet. Be the first to start one!')}
               </div>
@@ -310,8 +312,9 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                   <EventDetailGroupCard key={group.id} group={group} event={event} navigate={navigate} accent={accent} darkSurface={panelDark} />
                 ))}
               </div>
-            )}
+            ))}
 
+            {isLiveCatalogEvent(event) && (
             <div className="space-y-4 pt-5 border-t border-border">
               <div className="grid grid-cols-1 gap-3">
                 <Button variant="outline" className="w-full border-border text-ink hover:bg-ink/5" size="lg" disabled={isWaitlisted} onClick={handleJoinWaitlist}>
@@ -327,6 +330,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                 )}
               </div>
             </div>
+            )}
           </div>
         </div>
       </div>
@@ -337,9 +341,15 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         <Button variant="outline" className="flex-1 min-h-8 border-border text-ink" onClick={handleSave}>
           {isSaved ? t('Αποθηκευμένο', 'Saved') : t('Αποθήκευση', 'Save')}
         </Button>
-        <Button className="flex-[2] min-h-8 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
-          {t('Μπες σε παρέα', 'Join a group')}
-        </Button>
+        {isLiveCatalogEvent(event) ? (
+          <Button className="flex-[2] min-h-8 bg-accent text-accent-fg hover:bg-accent-strong shadow-soft" onClick={handlePrimaryJoin}>
+            {t('Μπες σε παρέα', 'Join a group')}
+          </Button>
+        ) : (
+          <p className="flex-[2] self-center text-center text-xs font-medium text-ink-muted">
+            {t('Η εκδήλωση ακυρώθηκε.', 'This event was cancelled.')}
+          </p>
+        )}
       </div>
 
       <EventDetailQrModal open={showQRCode} onClose={() => setShowQRCode(false)} />

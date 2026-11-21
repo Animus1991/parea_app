@@ -62,7 +62,9 @@ test.describe('Nakamas wall', () => {
     await expect(tray).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(tray).toHaveCount(0);
+    await page.mouse.move(0, 0);
     await like.hover();
+    await expect(tray).toBeVisible();
     await tray.getByRole('button', { name: /^Τέλειο$|^Love$/ }).click();
     await expect(like).toHaveAttribute('aria-pressed', 'true');
     await expect(like).toHaveAccessibleName(/^Τέλειο$|^Love$/);

@@ -19,6 +19,7 @@ import type { Group } from '../../types';
 import { formatPlanWhen } from '../../lib/dateLocale';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { eventStartMs, LATE_CANCEL_MS } from '../../store/outingsSlice';
+import { isLiveCatalogEvent } from '../../lib/eventDisplay';
 import { EmptyState } from '../common/EmptyState';
 import { EventCoverImg } from '../common/EventCoverImg';
 import { formatCountdown } from '../../lib/countdown';
@@ -59,21 +60,23 @@ export default function PlansPageContent() {
 
   const now = new Date(nowMs);
   const userGroupEventIds = currentUser
-    ? groups.filter(g => g.members.includes(currentUser.id)).map(g => g.eventId)
+    ? groups
+        .filter((g) => g.status !== 'cancelled' && g.members.includes(currentUser.id))
+        .map((g) => g.eventId)
     : [];
 
   // Date and time together: a plan later today is still upcoming, not history
   // waiting for a rating (a date-only string parses as midnight UTC).
   const upcomingEvents = events.filter(e => {
     const start = eventStartMs(e);
-    return start !== null && start >= nowMs && userGroupEventIds.includes(e.id);
+    return isLiveCatalogEvent(e) && start !== null && start >= nowMs && userGroupEventIds.includes(e.id);
   }).sort((a, b) => (eventStartMs(a) ?? 0) - (eventStartMs(b) ?? 0));
 
   const pendingEvents = events.filter(e => waitlistedEvents.includes(e.id) && !userGroupEventIds.includes(e.id));
 
   const pastEvents = events.filter(e => {
     const start = eventStartMs(e);
-    return start !== null && start < nowMs && userGroupEventIds.includes(e.id);
+    return isLiveCatalogEvent(e) && start !== null && start < nowMs && userGroupEventIds.includes(e.id);
   }).sort((a, b) => (eventStartMs(b) ?? 0) - (eventStartMs(a) ?? 0));
 
   const needsRating = pastEvents.filter(e => !feedbackSubmitted[e.id]).length;
@@ -289,7 +292,7 @@ export default function PlansPageContent() {
               icon={Compass}
               character="explorer"
               title={t(`Κανένα επερχόμενο σχέδιο`, `No upcoming plans`)}
-              description={t('Βρες μια βραδιά στο Discover.', 'Find a night on Discover.')}
+              description={t('Βρες μια βραδιά στην Ανακάλυψη.', 'Find a night on Discover.')}
               actionLabel={t(`Ανακάλυψη`, `Discover`)}
               onAction={() => navigate('/')}
               askAi
