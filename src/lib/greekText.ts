@@ -23,11 +23,29 @@ export function toUpperNoAccents(text: string): string {
 }
 
 /**
+ * Articles, prepositions, conjunctions and possessives stay small inside a
+ * title, as in both Greek and English title case («Εκδηλώσεις σε στιγμιότυπα»
+ * reads «Εκδηλώσεις σε Στιγμιότυπα», never «… Σε …»).
+ */
+const SMALL_WORDS = new Set([
+  'ο', 'η', 'το', 'οι', 'τα', 'του', 'της', 'των', 'τον', 'την', 'τους', 'τις',
+  'στο', 'στη', 'στην', 'στον', 'στα', 'στις', 'στους', 'σε', 'με', 'και', 'κι', 'ή',
+  'για', 'από', 'ως', 'προς', 'κατά', 'μετά', 'πριν', 'χωρίς', 'ανά', 'μου', 'σου', 'μας', 'σας',
+  'a', 'an', 'the', 'and', 'or', 'nor', 'but', 'of', 'in', 'on', 'at', 'to', 'for', 'by', 'with', 'from', 'as', 'vs', 'per', 'via',
+]);
+
+/**
  * First letter of each word capital, the rest small. Short all-caps tokens
- * (AI, FAQ, SOS, GIPHY) stay as acronyms.
+ * (AI, FAQ, SOS, GIPHY) stay as acronyms; small words stay small unless they
+ * open the title or follow a colon.
  */
 export function toTitleCase(text: string): string {
+  let index = 0;
+  let afterColon = false;
   return text.replace(/\S+/g, (word) => {
+    const first = index === 0 || afterColon;
+    index += 1;
+    afterColon = word.endsWith(':');
     const letters = [...word].filter((ch) => LETTER.test(ch)).join('');
     const latinOnly = /^[A-Z]+$/.test(letters);
     if (latinOnly && letters.length >= 2 && letters.length <= 5) {
@@ -36,7 +54,8 @@ export function toTitleCase(text: string): string {
     const chars = [...word];
     const firstLetterIdx = chars.findIndex((ch) => LETTER.test(ch));
     if (firstLetterIdx < 0) return word;
-    chars[firstLetterIdx] = chars[firstLetterIdx].toLocaleUpperCase();
+    const small = !first && SMALL_WORDS.has(letters.toLocaleLowerCase());
+    chars[firstLetterIdx] = small ? chars[firstLetterIdx].toLocaleLowerCase() : chars[firstLetterIdx].toLocaleUpperCase();
     for (let i = firstLetterIdx + 1; i < chars.length; i++) {
       if (LETTER.test(chars[i])) chars[i] = chars[i].toLocaleLowerCase();
     }

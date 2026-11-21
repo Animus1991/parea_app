@@ -47,7 +47,7 @@ export function EventDetailAboutSection({
             )}
           >
             <ExternalLink className="w-3.5 h-3.5" />
-            {t('Επίσημη Σελίδα Εκδήλωσης', 'Official Event Page')}
+            {t('Επίσημη σελίδα εκδήλωσης', 'Official Event Page')}
           </a>
         </div>
       )}

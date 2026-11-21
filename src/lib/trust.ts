@@ -45,18 +45,18 @@ export function canAccessEvent(user: User | null, event: Event): TrustGateResult
 export function tierLabelEl(tier: TrustTier): string {
   switch (tier) {
     case '3_high_trust':
-      return 'Υψηλής Εμπιστοσύνης';
+      return 'Πλήρως επαληθευμένο';
     case '2_confirmed':
       return 'Επιβεβαιωμένο';
     default:
-      return 'Εξερευνητή';
+      return 'Εξερευνητής';
   }
 }
 
 export function tierLabelEn(tier: TrustTier): string {
   switch (tier) {
     case '3_high_trust':
-      return 'High Trust';
+      return 'Fully verified';
     case '2_confirmed':
       return 'Confirmed';
     default:
@@ -65,10 +65,10 @@ export function tierLabelEn(tier: TrustTier): string {
 }
 
 export function reliabilityBadge(score: number): { el: string; en: string } {
-  if (score >= 95) return { el: 'Εξαιρετικά Αξιόπιστος', en: 'Highly Reliable' };
-  if (score >= 85) return { el: 'Συχνός Συμμετέχων', en: 'Frequent Participant' };
-  if (score >= 70) return { el: 'Ενεργό Μέλος', en: 'Active Member' };
-  return { el: 'Νέο Μέλος', en: 'New Member' };
+  if (score >= 95) return { el: 'Εξαιρετικά αξιόπιστος', en: 'Highly Reliable' };
+  if (score >= 85) return { el: 'Συχνός συμμετέχων', en: 'Frequent Participant' };
+  if (score >= 70) return { el: 'Ενεργό μέλος', en: 'Active Member' };
+  return { el: 'Νέο μέλος', en: 'New Member' };
 }
 
 export function computeReliabilityDelta(feedback: {

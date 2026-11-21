@@ -11,8 +11,20 @@ describe('toTitleCase', () => {
 
   it('keeps short acronyms and brand tokens', () => {
     expect(toTitleCase('FAQ')).toBe('FAQ');
-    expect(toTitleCase('Ρώτα το AI')).toBe('Ρώτα Το AI');
+    expect(toTitleCase('Ρώτα το AI')).toBe('Ρώτα το AI');
     expect(toTitleCase('GIPHY')).toBe('GIPHY');
     expect(toTitleCase('Find Nakamas')).toBe('Find Nakamas');
+  });
+
+  it('keeps articles, prepositions and possessives small inside a title', () => {
+    expect(toTitleCase('Εκδηλώσεις σε στιγμιότυπα')).toBe('Εκδηλώσεις σε Στιγμιότυπα');
+    expect(toTitleCase('Ανοιχτό σε ιδέες')).toBe('Ανοιχτό σε Ιδέες');
+    expect(toTitleCase('τα σχέδιά μου')).toBe('Τα Σχέδιά μου');
+    expect(toTitleCase('events in stories')).toBe('Events in Stories');
+  });
+
+  it('capitalises a small word that opens the title or follows a colon', () => {
+    expect(toTitleCase('σε εξέλιξη')).toBe('Σε Εξέλιξη');
+    expect(toTitleCase('Επόμενο: πότε και πού')).toBe('Επόμενο: Πότε και Πού');
   });
 });

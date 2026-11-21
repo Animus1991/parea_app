@@ -18,7 +18,7 @@ export const THEME_LABELS: Record<ThemeId, { el: string; en: string }> = {
   vibrant: { el: 'Ζωντανό', en: 'Vibrant' },
   bento: { el: 'Bento', en: 'Bento' },
   neon: { el: 'Neon', en: 'Neon' },
-  'vibrant-dark': { el: 'Ζωντανό Σκοτεινό', en: 'Vibrant Dark' },
+  'vibrant-dark': { el: 'Ζωντανό σκοτεινό', en: 'Vibrant Dark' },
   'bento-dark': { el: 'Bento Σκοτεινό', en: 'Bento Dark' },
   'neon-dark': { el: 'Neon Σκοτεινό', en: 'Neon Dark' },
   activebuddies: { el: 'Active Buddies', en: 'Active Buddies' },

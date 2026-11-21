@@ -99,8 +99,8 @@ export function HomeFeedToolbar({
           type="button"
           onClick={() => navigate('/nearby')}
           className={cn(TOOLBAR_CHIP, mapClassName)}
-          title={t('Άνοιγμα Χάρτη', 'Open Map')}
-          aria-label={t('Άνοιγμα Χάρτη', 'Open Map')}
+          title={t('Άνοιγμα χάρτη', 'Open Map')}
+          aria-label={t('Άνοιγμα χάρτη', 'Open Map')}
         >
           <MapIcon className={TOOLBAR_ICON} aria-hidden />
           <span>{t('Χάρτης', 'Map')}</span>

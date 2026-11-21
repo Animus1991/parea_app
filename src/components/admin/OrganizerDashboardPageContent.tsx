@@ -30,6 +30,7 @@ import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { useStore } from '../../store';
 import { toast } from 'sonner';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { formatEur } from '../../lib/money';
 
 const QUICK_TEMPLATES = [
   { labelEl: 'Πεζοπορία', labelEn: 'Hiking', icon: '🥾' },
@@ -98,7 +99,7 @@ export default function OrganizerDashboardPageContent() {
     const dayNames =
       language === 'en'
         ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        : ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ'];
+        : ['Δευ', 'Τρί', 'Τετ', 'Πέμ', 'Παρ', 'Σάβ', 'Κυρ'];
     const baseViews = Math.max(12, liveStats.participants * 14 + liveStats.active * 48);
     const baseClicks = Math.max(4, Math.round(baseViews * 0.38));
     return dayNames.map((name, i) => {
@@ -149,7 +150,7 @@ export default function OrganizerDashboardPageContent() {
     {
       labelEl: 'Έσοδα',
       labelEn: 'Revenue',
-      val: `€${liveStats.revenue}`,
+      val: formatEur(liveStats.revenue, language),
       trendEl: t('Από επί πληρωμή', 'From paid events'),
       trendEn: t('Από επί πληρωμή', 'From paid events'),
       icon: DollarSign,
@@ -196,11 +197,11 @@ export default function OrganizerDashboardPageContent() {
   };
 
   usePublishPageSnapshot({
-    titleEl: 'Πίνακας Διοργανωτή',
+    titleEl: 'Πίνακας διοργανωτή',
     titleEn: 'Organizer Workspace',
     state: section,
-    summaryEl: `${liveStats.active} ενεργές · €${liveStats.revenue} έσοδα ομάδων`,
-    summaryEn: `${liveStats.active} active · €${liveStats.revenue} group revenue`,
+    summaryEl: `${liveStats.active} ενεργές · ${formatEur(liveStats.revenue, 'el')} έσοδα ομάδων`,
+    summaryEn: `${liveStats.active} active · ${formatEur(liveStats.revenue, 'en')} group revenue`,
     visibleIds: myEvents.slice(0, 8).map((e) => e.id),
   });
 
@@ -218,7 +219,7 @@ export default function OrganizerDashboardPageContent() {
           </div>
           <div>
             <h1 className={cn(APP_TYPO.pageTitle, p.isDark ? p.head : 'text-white')}>
-              {t('Πίνακας Διοργανωτή', 'Organizer Workspace')}
+              {t('Πίνακας διοργανωτή', 'Organizer Workspace')}
             </h1>
             <p className={cn('text-sm font-medium mt-1', p.isDark ? p.sub : 'text-indigo-200')}>
               {t(
@@ -235,7 +236,7 @@ export default function OrganizerDashboardPageContent() {
             onClick={() => navigate('/create')}
             className="w-full md:w-auto font-bold px-4 shadow-soft hover:shadow-soft-md rounded-2xl"
           >
-            <Plus className="w-5 h-5 mr-1" /> {t('Νέα Εκδήλωση', 'New Event')}
+            <Plus className="w-5 h-5 mr-1" /> {t('Νέα εκδήλωση', 'New Event')}
           </Button>
         </div>
 
@@ -268,7 +269,7 @@ export default function OrganizerDashboardPageContent() {
                   {isRevenue
                     ? t('Άνοιγμα πορτοφολιού', 'Open wallet')
                     : isReliability
-                      ? t('Κέντρο εμπιστοσύνης', 'Trust center')
+                      ? t('Αξιοπιστία', 'Trust center')
                       : stat.trendEl}
                 </p>
               </div>
@@ -315,7 +316,7 @@ export default function OrganizerDashboardPageContent() {
       >
         <div>
           <h3 className={cn('text-sm md:text-base font-bold tracking-tight', p.head)}>
-            {t('Γρήγορη Δημιουργία', 'Quick Create')}
+            {t('Γρήγορη δημιουργία', 'Quick Create')}
           </h3>
           <p className={cn('text-sm font-medium mt-1', p.muted)}>
             {t(
@@ -357,7 +358,7 @@ export default function OrganizerDashboardPageContent() {
               'Δημιούργησε την πρώτη σου εμπειρία για να εμφανιστεί εδώ.',
               'Create your first experience to see it here.',
             )}
-            actionLabel={t('Νέα Εκδήλωση', 'New Event')}
+            actionLabel={t('Νέα εκδήλωση', 'New Event')}
             onAction={() => navigate('/create')}
           />
         ) : (
@@ -418,7 +419,7 @@ export default function OrganizerDashboardPageContent() {
                   <div className="md:col-span-2 space-y-4">
                     <h4 className={cn('text-xs font-bold tracking-widest flex items-center gap-2', p.muted)}>
                       <Users className="w-4 h-4" />
-                      {t('Διαχείριση Ομάδων', 'Group Management')}
+                      {t('Διαχείριση ομάδων', 'Group Management')}
                     </h4>
 
                     {eventGroups.length === 0 ? (
@@ -505,7 +506,7 @@ export default function OrganizerDashboardPageContent() {
                       {actionsMode === 'full' && primaryGroupId && (
                         <>
                           <Button variant="outline" className="w-full justify-between rounded-2xl" size="sm" onClick={() => handleAnnouncement(primaryGroupId)}>
-                            {t('Αποστολή Ανακοίνωσης', 'Send Announcement')}
+                            {t('Αποστολή ανακοίνωσης', 'Send Announcement')}
                             <ArrowRight className="w-3.5 h-3.5 opacity-50" />
                           </Button>
                           <Button
@@ -518,7 +519,7 @@ export default function OrganizerDashboardPageContent() {
                             size="sm"
                             onClick={() => handleMeetingPoint(primaryGroupId)}
                           >
-                            {t('Δημοσίευση Τοποθεσίας', 'Publish Meeting Point')}
+                            {t('Δημοσίευση τοποθεσίας', 'Publish Meeting Point')}
                             <ArrowRight className="w-3.5 h-3.5 opacity-50" />
                           </Button>
                           <Button
@@ -527,7 +528,7 @@ export default function OrganizerDashboardPageContent() {
                             size="sm"
                             onClick={() => handleCancelEvent(ev.id)}
                           >
-                            {t('Ακύρωση Εκδήλωσης', 'Cancel Event')}
+                            {t('Ακύρωση εκδήλωσης', 'Cancel Event')}
                           </Button>
                         </>
                       )}
@@ -554,7 +555,7 @@ export default function OrganizerDashboardPageContent() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className={cn('text-sm md:text-base font-bold tracking-tight', p.head)}>
-                {t('Επισκεψιμότητα Εκδηλώσεων', 'Event Traffic')}
+                {t('Επισκεψιμότητα εκδηλώσεων', 'Event Traffic')}
               </h3>
               <p className={cn('text-xs font-medium mt-1', p.muted)}>
                 {t(
@@ -636,7 +637,7 @@ export default function OrganizerDashboardPageContent() {
         >
           <div>
             <h3 className={cn('text-sm md:text-base font-bold tracking-tight mb-4', p.head)}>
-              {t('Συνολική Πληρότητα', 'Overall Fill Rate')}
+              {t('Συνολική πληρότητα', 'Overall Fill Rate')}
             </h3>
             <div className="flex items-end justify-between mb-2">
               <span className="text-sm md:text-base font-bold text-cyan-600 dark:text-cyan-400 leading-none tabular-nums">{liveStats.fillPct}%</span>

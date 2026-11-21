@@ -25,7 +25,7 @@ export function EphemeralChatBanner({
     <>
       <div
         className={cn(
-          'flex items-center gap-2 px-3 py-1 border-b border-border/80 text-2xs text-ink-muted',
+          'flex items-center gap-2 px-3 py-1 border-b border-border/80 text-xs text-ink-muted',
           className,
         )}
       >

@@ -38,7 +38,7 @@ export function GroupChatLeaveModal({
             onClick={onConfirm}
             className="w-full px-4 py-2 min-h-9 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-full transition-all duration-200 shadow-soft active:scale-[0.98]"
           >
-            {t('Ναι, Αποχώρηση', 'Yes, Leave Group')}
+            {t('Ναι, αποχώρηση', 'Yes, Leave Group')}
           </button>
           <button
             type="button"

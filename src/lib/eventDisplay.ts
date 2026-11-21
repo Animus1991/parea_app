@@ -1,7 +1,17 @@
 import type { Event, Group, User } from '../types';
+import { formatEur } from './money';
 import { eventTagLabels } from './eventTags';
 
 const LOCATION_EL: Record<string, string> = {
+  'Ilisia, Athens': 'Ιλίσια, Αθήνα',
+  'Metaxourgeio, Athens': 'Μεταξουργείο, Αθήνα',
+  'Mets, Athens': 'Μετς, Αθήνα',
+  'Pangrati, Athens': 'Παγκράτι, Αθήνα',
+  'Parnitha, Attica': 'Πάρνηθα, Αττική',
+  'Piraeus → Aegina': 'Πειραιάς → Αίγινα',
+  'Plaka, Athens': 'Πλάκα, Αθήνα',
+  'Syntagma, Athens': 'Σύνταγμα, Αθήνα',
+  'Vouliagmeni, Athens': 'Βουλιαγμένη, Αθήνα',
   'Thisio, Athens': 'Θησείο, Αθήνα',
   'Exarchia, Athens': 'Εξάρχεια, Αθήνα',
   'Kaisariani, Athens': 'Καισαριανή, Αθήνα',
@@ -92,10 +102,7 @@ export function formatEventPrice(
   freeEn = 'Free',
 ): string {
   if (!event.isPaid || event.price <= 0) return language === 'el' ? freeEl : freeEn;
-  if (language === 'el') {
-    return `${event.price.toLocaleString('el-GR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
-  }
-  return `€${event.price.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return formatEur(event.price, language);
 }
 
 export function formatLocationArea(area: string, language: 'el' | 'en'): string {

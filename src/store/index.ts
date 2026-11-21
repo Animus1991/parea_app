@@ -1525,7 +1525,7 @@ export const useStore = create<AppState>()(
       notifications: [
         normalizeAppNotification({
           type: 'system',
-          messageGr: `Νέο αίτημα σύνδεσης από ${fromName} — άνοιξε «Οι Συνδέσεις μου».`,
+          messageGr: `Νέο αίτημα σύνδεσης από ${fromName} — άνοιξε «Οι Nakamas μου».`,
           messageEn: `New connection request from ${fromName} — open My Nakamas.`,
           timeGr: 'μόλις τώρα',
           timeEn: 'just now',

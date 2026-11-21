@@ -83,7 +83,7 @@ export function StandingCard({ className }: { className?: string }) {
           badge: i === currentIndex ? t('τώρα', 'now') : undefined,
         }))}
       />
-      <p className="mt-3 text-2xs font-medium leading-snug text-ink-muted">
+      <p className="mt-3 text-xs font-medium leading-snug text-ink-muted">
         {t(
           `Μετράνε μόνο οι τελευταίες ${STRIKE_WINDOW_DAYS} ημέρες. Αν η θέση σου περάσει σε λίστα αναμονής, δεν μετράει.`,
           `Only the last ${STRIKE_WINDOW_DAYS} days count. If your seat passes to the waitlist, it does not count.`,
@@ -100,7 +100,7 @@ export function StandingCard({ className }: { className?: string }) {
                   {strikeLabel(s.kind, t)}
                   {event ? ` · ${event.title}` : ''}
                 </p>
-                <p className="text-2xs font-medium text-ink-muted">
+                <p className="text-xs font-medium text-ink-muted">
                   {new Date(s.at).toLocaleDateString(language === 'el' ? 'el-GR' : 'en-GB')} · {s.reliabilityDelta} {t('αξιοπιστία', 'reliability')}
                   {!active.has(s.id) ? t(' · δεν μετράει πια', ' · no longer counts') : ''}
                 </p>

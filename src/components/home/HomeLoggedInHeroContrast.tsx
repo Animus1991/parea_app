@@ -1,13 +1,7 @@
 import { RefObject, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import {
-  Search,
-  ShieldCheck,
-  Map as MapIcon,
-  Users,
-  MapPin,
-} from 'lucide-react';
+import { Search, MapPin } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useHomeTheme } from '../../hooks/useHomeTheme';
 import { useStore } from '../../store';
@@ -28,7 +22,6 @@ export interface HomeLoggedInHeroContrastProps {
 /** Compact/balanced hero for non-Classic Home themes (replaces gradient hero when mode ≠ rich). */
 export function HomeLoggedInHeroContrast({
   greeting,
-  motivation,
   searchQuery,
   onSearchChange,
   searchRef,
@@ -65,8 +58,8 @@ export function HomeLoggedInHeroContrast({
             type="button"
             onClick={() => navigate('/nearby')}
             className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-gray-600 hover:text-gray-900"
-            title={t('Εμφάνιση στον Χάρτη', 'View on Map')}
-            aria-label={t('Εμφάνιση στον Χάρτη', 'View on Map')}
+            title={t('Εμφάνιση στον χάρτη', 'View on Map')}
+            aria-label={t('Εμφάνιση στον χάρτη', 'View on Map')}
           >
             <MapPin className="w-4 h-4" aria-hidden />
           </button>
@@ -81,7 +74,7 @@ export function HomeLoggedInHeroContrast({
             'flex items-center justify-center gap-2 px-3 h-9 rounded-xl border font-bold text-xs transition-all shadow-soft shrink-0',
             h.heroSearchInput,
           )}
-          title={t('Άνοιγμα Χάρτη', 'Open Map')}
+          title={t('Άνοιγμα χάρτη', 'Open Map')}
         >
           <MapPin className="w-4 h-4" />
           <span className="hidden sm:inline">{t('Στον Χάρτη', 'On Map')}</span>
@@ -127,29 +120,7 @@ export function HomeLoggedInHeroContrast({
             <h1 className={cn(h.heroGreeting, 'mb-0 truncate')}>{greeting}</h1>
             <HomeWeatherBadge size="sm" />
           </div>
-          <div className="hidden md:block space-y-2">
-            <HomeReturnLine className={cn(h.heroMotivation, 'text-sm')} fallback={motivation} />
-            <p className={cn(h.heroTitle, 'max-w-2xl')}>
-              {t('home.hero.title1', 'Βρες παρέα για τις')}{' '}
-              <span className={h.heroTitleAccent}>{t('home.hero.title2', 'εμπειρίες')}</span>{' '}
-              {t('home.hero.title3', 'που ήδη θέλεις να ζήσεις.')}
-            </p>
-            <div className="flex flex-wrap gap-x-4 gap-y-1">
-              {[
-                { icon: Users, label: t('home.hero.stat1', 'Μικρές ομάδες') },
-                { icon: ShieldCheck, label: t('home.hero.stat2', 'Επαληθευμένη συμμετοχή') },
-                { icon: MapIcon, label: t('home.hero.stat3', 'Δημόσια σημεία') },
-              ].map(({ icon: Icon, label }) => (
-                <span
-                  key={label}
-                  className={cn('inline-flex items-center gap-1.5 text-sm font-semibold', h.heroStat)}
-                >
-                  <Icon className={cn('w-3.5 h-3.5', h.heroStatIcon)} />
-                  {label}
-                </span>
-              ))}
-            </div>
-          </div>
+          <HomeReturnLine className={cn(h.heroMotivation, 'hidden md:block text-sm')} />
           {searchBlock}
         </div>
       )}

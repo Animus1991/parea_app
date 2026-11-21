@@ -48,6 +48,7 @@ function useUnreadCount() {
 }
 import { useLanguage } from '../../lib/i18n';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
+import { APP_VERSION } from '../../lib/appVersion';
 
 // ─────────────────────────────────────────────
 // NakamasLogo — SVG ψάθινο καπέλο με αχυρωτό στέλεχος
@@ -237,7 +238,7 @@ function NavSection({ id, title, paths, children, compact = false, rail = false 
 // NavLinks
 // ─────────────────────────────────────────────
 function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?: boolean }) {
-  const { t } = useLanguage();
+  const { t, tu } = useLanguage();
   const { toggle: toggleNotifications } = useNotificationsToggle();
   const currentUser = useStore((s) => s.currentUser);
   // Same predicate as CommandPalette and the copilot (lib/roles.ts).
@@ -246,15 +247,15 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
 
   return (
     <>
-      <NavSection id="explore" paths={['/', '/categories', '/tags', '/collections', '/nearby']} title={t('Εξερεύνηση & Ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
-        <NavItem to="/" icon={Compass} label={t('Ανακάλυψη Εκδηλώσεων', 'Discover Events')} compact={compact} rail={rail} />
+      <NavSection id="explore" paths={['/', '/categories', '/tags', '/collections', '/nearby']} title={tu('Εξερεύνηση & ανακάλυψη', 'Explore & Discover')} compact={compact} rail={rail}>
+        <NavItem to="/" icon={Compass} label={t('Ανακάλυψη εκδηλώσεων', 'Discover Events')} compact={compact} rail={rail} />
         <NavItem to="/categories" icon={Grid} label={t('Κατηγορίες', 'Categories')} compact={compact} rail={rail} />
         <NavItem to="/tags" icon={Hash} label={t('Ετικέτες', 'Tags')} compact={compact} rail={rail} />
         <NavItem to="/collections" icon={Library} label={t('Συλλογές', 'Collections')} compact={compact} rail={rail} />
-        <NavItem to="/nearby" icon={MapPin} label={t('Τοπικές Ομάδες', 'Local Groups')} compact={compact} rail={rail} />
+        <NavItem to="/nearby" icon={MapPin} label={t('Τοπικές ομάδες', 'Local Groups')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection id="experience" paths={['/agenda', '/plans', '/night', '/buddy-seek', '/saved', '/history']} title={t('Η Εμπειρία μου', 'My Experience')} compact={compact} rail={rail}>
+      <NavSection id="experience" paths={['/agenda', '/plans', '/night', '/buddy-seek', '/saved', '/history']} title={tu('Η Εμπειρία μου', 'My Experience')} compact={compact} rail={rail}>
         <NavItem to="/agenda" icon={Calendar} label={t('Το Ημερολόγιό μου', 'My Calendar')} compact={compact} rail={rail} />
         <NavItem to="/plans" icon={CalendarCheck} label={t('Τα Σχέδιά μου', 'My Plans')} compact={compact} rail={rail} />
         <NavItem to="/buddy-seek" icon={UserPlus} label={t('Βρες Nakamas', 'Find Nakamas')} compact={compact} rail={rail} />
@@ -262,37 +263,37 @@ function NavLinks({ compact = false, rail = false }: { compact?: boolean; rail?:
         <NavItem to="/history" icon={History} label={t('Ιστορικό', 'History')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection id="community" paths={['/wall', '/connections', '/chats', '/chat', '/leaderboard', '/challenges', '/achievements', '/u']} title={t('Κοινότητα', 'Community')} compact={compact} rail={rail}>
+      <NavSection id="community" paths={['/wall', '/connections', '/chats', '/chat', '/leaderboard', '/challenges', '/achievements', '/u']} title={tu('Κοινότητα', 'Community')} compact={compact} rail={rail}>
         <NavItem to="/wall" icon={Newspaper} label={t('Τοίχος Nakamas', 'Nakamas Wall')} compact={compact} rail={rail} />
         <NavItem to="/connections" icon={Users} label={t('Οι Nakamas μου', 'My Nakamas')} compact={compact} rail={rail} />
-        <NavItem to="/chats" icon={MessageSquare} label={t('Ομαδικές Συνομιλίες', 'Group Chats')} compact={compact} rail={rail} />
+        <NavItem to="/chats" icon={MessageSquare} label={t('Συνομιλίες', 'Chats')} compact={compact} rail={rail} />
         <NavItem to="/leaderboard" icon={Trophy} label={t('Κατάταξη', 'Leaderboard')} compact={compact} rail={rail} />
         <NavItem to="/challenges" icon={Zap} label={t('Προκλήσεις', 'Challenges')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection id="host" paths={['/manage', '/create', '/wallet']} title={t('Διοργάνωση', 'Host')} compact={compact} rail={rail}>
+      <NavSection id="host" paths={['/manage', '/create', '/wallet']} title={tu('Διοργάνωση', 'Host')} compact={compact} rail={rail}>
         {isOrganizer && (
-          <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας Διοργανωτή', 'Organizer Dashboard')} compact={compact} rail={rail} />
+          <NavItem to="/manage" icon={TrendingUp} label={t('Πίνακας διοργανωτή', 'Organizer Dashboard')} compact={compact} rail={rail} />
         )}
-        <NavItem to="/create" icon={PlusSquare} label={t('Δημιουργία Εκδήλωσης', 'Create Event')} compact={compact} rail={rail} />
-        <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & Κέρδη', 'Wallet & Earnings')} compact={compact} rail={rail} />
+        <NavItem to="/create" icon={PlusSquare} label={t('Δημιουργία εκδήλωσης', 'Create Event')} compact={compact} rail={rail} />
+        <NavItem to="/wallet" icon={CreditCard} label={t('Πορτοφόλι & έσοδα', 'Wallet & Earnings')} compact={compact} rail={rail} />
       </NavSection>
 
-      <NavSection id="account" paths={['/profile', '/verification', '/trust', '/notifications', '/settings', '/admin']} title={t('Λογαριασμός', 'Account')} compact={compact} rail={rail}>
+      <NavSection id="account" paths={['/profile', '/verification', '/trust', '/notifications', '/settings', '/admin']} title={tu('Λογαριασμός', 'Account')} compact={compact} rail={rail}>
         <NavItem to="/profile" icon={User} label={t('Το Προφίλ μου', 'My Profile')} compact={compact} rail={rail} />
         <NavItem to="/verification" icon={BadgeCheck} label={t('Επαλήθευση', 'Verification')} compact={compact} rail={rail} />
         <NavItem to="/trust" icon={ShieldCheck} label={t('Αξιοπιστία', 'Reliability')} compact={compact} rail={rail} />
         <NavItem to="/notifications" icon={Bell} label={t('Ειδοποιήσεις', 'Notifications')} compact={compact} rail={rail} onClick={toggleNotifications} />
-        <NavItem to="/settings" icon={Settings} label={t('Ρυθμίσεις & Απόρρητο', 'Settings & Privacy')} compact={compact} rail={rail} />
+        <NavItem to="/settings" icon={Settings} label={t('Ρυθμίσεις & απόρρητο', 'Settings & Privacy')} compact={compact} rail={rail} />
         {isAdmin && (
-          <NavItem to="/admin" icon={Terminal} label={t('Διαχείριση & Έλεγχος', 'Admin & Moderation')} compact={compact} rail={rail} />
+          <NavItem to="/admin" icon={Terminal} label={t('Διαχείριση & έλεγχος', 'Admin & Moderation')} compact={compact} rail={rail} />
         )}
       </NavSection>
 
-      <NavSection id="support" paths={['/help', '/report', '/onboarding']} title={t('Υποστήριξη', 'Support')} compact={compact} rail={rail}>
-        <NavItem to="/help" icon={HelpCircle} label={t('Κέντρο Βοήθειας', 'Help Center')} compact={compact} rail={rail} />
+      <NavSection id="support" paths={['/help', '/report', '/onboarding']} title={tu('Υποστήριξη', 'Support')} compact={compact} rail={rail}>
+        <NavItem to="/help" icon={HelpCircle} label={t('Κέντρο βοήθειας', 'Help Center')} compact={compact} rail={rail} />
         <NavItem to="/report" icon={Flag} label={t('Αναφορά', 'Report')} compact={compact} rail={rail} />
-        <NavItem to="/onboarding" icon={BookOpen} label={t('Οδηγός Εισαγωγής', 'Onboarding')} compact={compact} rail={rail} />
+        <NavItem to="/onboarding" icon={BookOpen} label={t('Οδηγός εισαγωγής', 'Onboarding')} compact={compact} rail={rail} />
       </NavSection>
     </>
   );
@@ -603,15 +604,15 @@ export function AppShell({ children }: { children: ReactNode }) {
           </main>
         <footer className="hidden md:flex h-8 px-4 border-t border-border bg-surface text-xs text-ink-muted items-center justify-between shrink-0">
           <div className="flex space-x-4">
-            <span>Nakamas v1.0.5-beta</span>
+            <span>Nakamas v{APP_VERSION}</span>
             <span className="flex items-center">
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2" />
-              {t('Σύστημα Λειτουργικό', 'System Operational')}
+              {t('Το σύστημα λειτουργεί', 'All systems working')}
             </span>
           </div>
           <div className="hidden sm:flex space-x-4">
-            <Link to="/settings" className="hover:text-ink transition-colors">{t('Πολιτική Απορρήτου', 'Privacy Policy')}</Link>
-            <Link to="/report" className="hover:text-ink transition-colors">{t('Αναφορά Προβλημάτων', 'Report Issues')}</Link>
+            <Link to="/settings" className="hover:text-ink transition-colors">{t('Πολιτική απορρήτου', 'Privacy Policy')}</Link>
+            <Link to="/report" className="hover:text-ink transition-colors">{t('Αναφορά προβλήματος', 'Report an Issue')}</Link>
             <Link to="/trust" className="hover:text-ink transition-colors">{t('Πώς λειτουργεί η αξιοπιστία', 'How trust works')}</Link>
           </div>
         </footer>

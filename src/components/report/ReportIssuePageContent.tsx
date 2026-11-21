@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { ShieldAlert, ShieldCheck, CheckCircle2, X, Upload, Clock } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, X, Upload, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
@@ -56,11 +56,8 @@ export default function ReportIssuePageContent() {
       <div className="flex justify-between items-center mb-4">
         <div>
           <h1 className={cn(APP_TYPO.pageTitle, p.head)}>
-            {t('Αναφορά Προβλήματος', 'Report an Issue')}
+            {t('Αναφορά προβλήματος', 'Report an Issue')}
           </h1>
-          <p className={cn(APP_TYPO.pageSub, 'mt-1', p.sub)}>
-            {t('Βοήθησέ μας να κρατήσουμε την κοινότητα ασφαλή', 'Help us keep the community safe')}
-          </p>
         </div>
         <button
           onClick={() => navigate(-1)}
@@ -79,33 +76,6 @@ export default function ReportIssuePageContent() {
 
       {step === 1 ? (
         <div className={cn('rounded-2xl shadow-soft border overflow-hidden', c.surfaceElevated, c.border)}>
-          <div
-            className={cn(
-              'p-4 md:p-4 border-b flex items-start gap-4',
-              p.isDark ? 'bg-red-950/30 border-red-900/40' : 'bg-red-50 border-red-100',
-            )}
-          >
-            <div
-              className={cn(
-                'w-10 h-10 rounded-full flex items-center justify-center shrink-0',
-                p.isDark ? 'bg-red-900/40' : 'bg-red-100',
-              )}
-            >
-              <ShieldAlert className={cn('w-5 h-5', p.isDark ? 'text-red-300' : 'text-red-600')} />
-            </div>
-            <div>
-              <h3 className={cn('font-bold text-sm md:text-base', p.head)}>
-                {t('Αναφορά προβλήματος', 'Report an issue')}
-              </h3>
-              <p className={cn('card-copy mt-1 leading-relaxed', p.isDark ? 'text-red-200' : 'text-red-800')}>
-                {t(
-                  'Η αναφορά σου θα εξεταστεί από την ομάδα μας εντός 24 ωρών.',
-                  'Your report will be reviewed by our team within 24 hours.',
-                )}
-              </p>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit} className="p-4 md:p-4 space-y-4">
             <div>
               <label className={cn('block text-xs font-bold tracking-wider mb-2', p.head)}>
@@ -198,7 +168,7 @@ export default function ReportIssuePageContent() {
               <textarea
                 className={cn(inputClass, 'px-3 py-2.5 resize-none')}
                 rows={5}
-                placeholder={t('Περιγράψτε τι συνέβη...', 'Describe what happened...')}
+                placeholder={t('Περίγραψε τι συνέβη...', 'Describe what happened...')}
                 required
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -236,7 +206,7 @@ export default function ReportIssuePageContent() {
               >
                 <Upload className={cn('w-5 h-5 mx-auto mb-1', p.muted)} />
                 <p className={cn('card-copy font-medium', p.uploadText)}>
-                  {t('Ανέβασε screenshots ή φωτογραφίες', 'Upload screenshots or photos')}
+                  {t('Ανέβασε στιγμιότυπα οθόνης ή φωτογραφίες', 'Upload screenshots or photos')}
                 </p>
                 <p className={cn('text-xs mt-0.5', p.muted)}>
                   PNG, JPG {t('έως', 'up to')} 5MB
@@ -279,7 +249,7 @@ export default function ReportIssuePageContent() {
             <div className={cn('flex items-center gap-2 justify-center text-sm font-medium', p.muted)}>
               <Clock className="w-3.5 h-3.5" />
               <span>
-                {t('Αναμενόμενος χρόνος απόκρισης: <24 ώρες', 'Expected response time: <24 hours')}
+                {t('Απάντηση σε λιγότερο από 24 ώρες', 'Reply in under 24 hours')}
               </span>
             </div>
 
@@ -292,7 +262,7 @@ export default function ReportIssuePageContent() {
                 p.isDark ? '' : 'hover:opacity-90',
               )}
             >
-              {t('Υποβολή Αναφοράς', 'Submit Report')}
+              {t('Υποβολή αναφοράς', 'Submit Report')}
             </button>
           </form>
         </div>

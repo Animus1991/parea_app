@@ -15,6 +15,7 @@ import { NakamasMini } from '../../illustrations/NakamasMini';
 import type { PlansFormingInsights } from '../../../hooks/usePlansFormingFeed';
 import type { PlansFormingEnrichedItem } from '../../../lib/plansFormingUtils';
 import type { Event } from '../../../types';
+import { formatLocationArea } from '../../../lib/eventDisplay';
 
 export function PlansFormingStatsBar({
   insights,
@@ -191,7 +192,7 @@ export function PlansFormingEmptyState({
   onBrowse?: () => void;
   onCreate?: () => void;
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
 
   return (
@@ -225,7 +226,7 @@ export function PlansFormingEmptyState({
           </p>
           <p className={cn(PLANS_FORMING_TYPO.statChip, 'flex items-center gap-1 mt-1', isDark ? 'text-gray-500' : 'text-gray-500')}>
             <MapPin className="w-3 h-3" />
-            {suggestedEvent.locationArea}
+            {formatLocationArea(suggestedEvent.locationArea, language)}
           </p>
         </button>
       )}

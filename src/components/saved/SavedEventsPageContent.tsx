@@ -17,6 +17,7 @@ import { dateFnsLocale } from '../../lib/dateLocale';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { AppSelect } from '../common/AppSelect';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 const NO_IDS: string[] = [];
 
@@ -53,7 +54,7 @@ export default function SavedEventsPageContent() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Αποθηκευμένα', 'Saved Events')}</h1>
+          <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Αποθηκευμένες', 'Saved Events')}</h1>
           <p className={cn(APP_TYPO.pageSub, "mt-1", a.sub)}>
             {savedEventIds.length > 0
               ? t(`${savedEventIds.length} αποθηκευμένες εκδηλώσεις`, `${savedEventIds.length} saved events`)
@@ -178,11 +179,11 @@ export default function SavedEventsPageContent() {
                   <span aria-hidden className="opacity-40">·</span>
                   <span className="inline-flex items-center gap-1 min-w-0">
                     <MapPin className="w-3.5 h-3.5 shrink-0 opacity-70" aria-hidden />
-                    <span className="truncate">{event.locationArea}</span>
+                    <span className="truncate">{formatLocationArea(event.locationArea, language)}</span>
                   </span>
                 </p>
                 <div className={cn("mt-3 pt-3 border-t flex items-center gap-1.5 card-meta font-semibold", a.isDark ? "border-gray-700/40" : "border-gray-100", a.link)}>
-                  {t('Προβολή Λεπτομερειών', 'View Details')} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" aria-hidden />
+                  {t('Προβολή λεπτομερειών', 'View Details')} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" aria-hidden />
                 </div>
               </div>
             </Card>

@@ -103,7 +103,7 @@ export function HomeSearchDropdown({
               )}
             >
               <Clock className="w-3 h-3 opacity-70" />
-              {t('Πρόσφατες Αναζητήσεις', 'Recent Searches')}
+              {t('Πρόσφατες αναζητήσεις', 'Recent Searches')}
             </span>
           </div>
           {recentSearches.map((s) => (
@@ -128,7 +128,7 @@ export function HomeSearchDropdown({
       )}
       <div className={cn('px-3 pt-2 pb-1', hasRecent && 'border-t border-black/10')}>
         <span className={cn('text-xs font-bold tracking-widest', h.heroSearchDropdownLabel)}>
-          {t('Δημοφιλείς Αναζητήσεις', 'Popular Searches')}
+          {t('Δημοφιλείς αναζητήσεις', 'Popular Searches')}
         </span>
       </div>
       {popularSuggestions.map((s) => (

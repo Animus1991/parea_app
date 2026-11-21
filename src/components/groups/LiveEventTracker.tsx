@@ -237,7 +237,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 bg-white/80 backdrop-blur-sm z-10">
             <Users className="w-12 h-12 text-indigo-200 mb-4" />
             <h4 className="font-bold text-ink mb-2">
-              {t("Συνδέσου στον Χάρτη", "Join the Map")}
+              {t("Συνδέσου στον χάρτη", "Join the Map")}
             </h4>
             <p className="text-xs text-gray-500 mb-4 max-w-[250px]">
               {t(
@@ -250,7 +250,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                 onClick={() => setIsSharing(true)}
                 className="w-full text-xs"
               >
-                {t("Κοινοποίηση (30 Λεπτά)", "Share (30 Mins)")}
+                {t("Κοινοποίηση (30 λεπτά)", "Share (30 Mins)")}
               </Button>
               <Button
                 onClick={() => setIsSharing(true)}
@@ -306,7 +306,7 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                         {loc.sos
                           ? t("Χρειάζεται βοήθεια", "Needs help")
                           : loc.isOutOfBounds
-                            ? t("Εκτός Ορίων", "Out Of Bounds")
+                            ? t("Εκτός ορίων", "Out Of Bounds")
                             : t('Κοινοποίηση', 'Sharing')}
                       </p>
                     </div>

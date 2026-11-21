@@ -4,7 +4,7 @@ export function getDefaultHomeSearchSuggestions(
   return [
     t('Πεζοπορία', 'Hiking'),
     t('Επιτραπέζια', 'Board Games'),
-    t('Μουσικά Φεστιβάλ', 'Music Festivals'),
+    t('Μουσικά φεστιβάλ', 'Music Festivals'),
     t('Δικτύωση', 'Networking'),
     t('Συναυλίες', 'Concerts'),
     t('Σινεμά', 'Cinema'),

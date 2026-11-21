@@ -14,9 +14,10 @@ import { WALLET_TYPO } from '../../lib/typographyTokens';
 import { formatWalletEur, WALLET_DEMO } from '../../lib/walletDemo';
 import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { AppSelect } from '../common/AppSelect';
+import { formatEur } from '../../lib/money';
 
 export default function WalletPageContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const a = usePageContrast();
   const [txFilter, setTxFilter] = useState<'all' | 'month' | 'last'>('all');
@@ -25,11 +26,11 @@ export default function WalletPageContent() {
   const stripeReady = isStripeConfigured();
 
   usePublishPageSnapshot({
-    titleEl: 'Πορτοφόλι & Έσοδα',
+    titleEl: 'Πορτοφόλι & έσοδα',
     titleEn: 'Wallet & Earnings',
     state: txFilter,
-    summaryEl: `Διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur)} · εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur)}`,
-    summaryEn: `Available ${formatWalletEur(WALLET_DEMO.availableEur)} · pending ${formatWalletEur(WALLET_DEMO.pendingEur)}`,
+    summaryEl: `Διαθέσιμο ${formatWalletEur(WALLET_DEMO.availableEur, 'el')} · εκκρεμές ${formatWalletEur(WALLET_DEMO.pendingEur, 'el')}`,
+    summaryEn: `Available ${formatWalletEur(WALLET_DEMO.availableEur, 'en')} · pending ${formatWalletEur(WALLET_DEMO.pendingEur, 'en')}`,
   });
 
   const transactions = [
@@ -45,8 +46,7 @@ export default function WalletPageContent() {
   return (
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
-        <h1 className={cn(WALLET_TYPO.pageTitle, a.head)}>{t('Πορτοφόλι & Έσοδα', 'Wallet & Earnings')}</h1>
-        <p className={cn(WALLET_TYPO.pageSub, 'mt-1', a.sub)}>{t('Τα έσοδα και οι πληρωμές σου.', 'Manage your event revenue and payouts.')}</p>
+        <h1 className={cn(WALLET_TYPO.pageTitle, a.head)}>{t('Πορτοφόλι & έσοδα', 'Wallet & Earnings')}</h1>
         {stripeReady && (
           <p className={cn(WALLET_TYPO.statusNote, 'mt-2', a.muted)}>
             {t('Οι αναλήψεις γίνονται μέσω Stripe.', 'Withdrawals go through Stripe.')}
@@ -58,9 +58,9 @@ export default function WalletPageContent() {
         <Card className={cn("p-4 text-white shadow-soft-md", a.balanceBg)}>
           <div className={cn("flex items-center gap-2 mb-2", a.balanceLabel)}>
             <Euro className="w-4 h-4" />
-            <h3 className={WALLET_TYPO.kpiLabel}>{t('Διαθέσιμο Υπόλοιπο', 'Available Balance')}</h3>
+            <h3 className={WALLET_TYPO.kpiLabel}>{t('Διαθέσιμο υπόλοιπο', 'Available Balance')}</h3>
           </div>
-          <p className={cn(WALLET_TYPO.kpiValue, 'mb-4')}>{formatWalletEur(WALLET_DEMO.availableEur)}</p>
+          <p className={cn(WALLET_TYPO.kpiValue, 'mb-4')}>{formatWalletEur(WALLET_DEMO.availableEur, language)}</p>
           <Button className={cn("w-full", a.withdrawBtn)} onClick={() => setShowWithdraw(true)}>
             {t('Ανάληψη χρημάτων', 'Withdraw Funds')}
           </Button>
@@ -71,7 +71,7 @@ export default function WalletPageContent() {
             <Clock className="w-4 h-4" />
             <h3 className={WALLET_TYPO.kpiLabel}>{t('Εκκρεμεί', 'Pending')}</h3>
           </div>
-          <p className={cn(WALLET_TYPO.kpiValueSecondary, 'mb-2', a.head)}>{formatWalletEur(WALLET_DEMO.pendingEur)}</p>
+          <p className={cn(WALLET_TYPO.kpiValueSecondary, 'mb-2', a.head)}>{formatWalletEur(WALLET_DEMO.pendingEur, language)}</p>
           <p className={cn(WALLET_TYPO.kpiHint, a.muted)}>
             {t('Εξοφλούνται 3-5 ημέρες μετά.', 'Clears 3-5 days after event.')}
           </p>
@@ -93,7 +93,7 @@ export default function WalletPageContent() {
 
       <Card className="mt-2">
         <div className={cn("p-4 md:p-4 border-b flex items-center justify-between", a.borderB)}>
-          <h2 className={cn(WALLET_TYPO.sectionInCard, a.head)}>{t('Πρόσφατες Συναλλαγές', 'Recent Transactions')}</h2>
+          <h2 className={cn(WALLET_TYPO.sectionInCard, a.head)}>{t('Πρόσφατες συναλλαγές', 'Recent Transactions')}</h2>
           <AppSelect
             className={cn("filter-select border outline-none", a.selectBg)}
             value={txFilter}
@@ -155,7 +155,7 @@ export default function WalletPageContent() {
                 </div>
                 <div className="text-right">
                   <p className={cn(WALLET_TYPO.rowTitle, tx.type === 'Payout' ? a.head : a.isDark ? 'text-emerald-400' : 'text-emerald-700')}>
-                    {tx.type === 'Payout' ? '-' : '+'}€{tx.amount.toFixed(2)}
+                    {tx.type === 'Payout' ? '−' : '+'}{formatEur(tx.amount, language, true)}
                   </p>
                 </div>
               </div>

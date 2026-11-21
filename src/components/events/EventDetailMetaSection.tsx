@@ -10,6 +10,7 @@ import type { EventDetailMapAccent } from './EventDetailMapSection';
 import { dateFnsLocale } from '../../lib/dateLocale';
 import { useStore } from '../../store';
 import { isUserEventParticipant } from '../../lib/eventParticipation';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 export interface EventDetailMetaSectionProps {
   event: Event;
@@ -62,7 +63,7 @@ export function EventDetailMetaSection({
           {event.time} ({event.duration})
         </p>
         <p className={cn('text-xs mt-0.5 font-medium', content.metaMuted)}>
-          {event.timeZone || t('Τοπική Ώρα', 'Local Time')}
+          {event.timeZone || t('Τοπική ώρα', 'Local Time')}
         </p>
       </div>
       <div className="space-y-3 col-span-2 sm:col-span-1">
@@ -75,7 +76,7 @@ export function EventDetailMetaSection({
           >
             <MapPin className="h-3.5 w-3.5" /> {t('Τοποθεσία', 'Location')}
           </div>
-          <p className={cn('card-copy font-medium', content.metaValue)}>{event.locationArea}</p>
+          <p className={cn('card-copy font-medium', content.metaValue)}>{formatLocationArea(event.locationArea, language)}</p>
           {meetingPoint ? (
             <p className={cn('text-xs mt-0.5 font-semibold', content.metaValue)}>
               {t('Σημείο συνάντησης', 'Meeting point')}: {meetingPoint}
@@ -98,7 +99,7 @@ export function EventDetailMetaSection({
           )}
         >
           <ShieldCheck className="h-3.5 w-3.5" />{' '}
-          {t('Κανόνες Συμμετοχής', 'Participation Rules')}
+          {t('Κανόνες συμμετοχής', 'Participation Rules')}
         </div>
         <div className="flex items-center gap-2">
           <p className={cn('card-copy font-medium capitalize', content.metaValue)}>{ruleText}</p>

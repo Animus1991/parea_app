@@ -48,9 +48,6 @@ export default function CollectionPageContent() {
         <h1 className={cn(APP_TYPO.pageTitle, 'flex items-center gap-2 text-ink')}>
           <Library className="h-5 w-5" aria-hidden /> {t('Συλλογές', 'Collections')}
         </h1>
-        <p className={cn(APP_TYPO.pageSub, 'text-ink-muted')}>
-          {t('Διαλεγμένες εκδηλώσεις ανά διάθεση — και πόσες παρέες σχηματίζονται σε καθεμία.', 'Events picked by mood — and how many groups are forming in each.')}
-        </p>
         <CollectionsRail title={false} fill />
       </div>
     );

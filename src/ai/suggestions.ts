@@ -62,7 +62,7 @@ const BY_ROUTE: Record<string, CopilotSuggestion[]> = {
   trust: [
     S('Σύνοψη αξιοπιστίας και κενών', 'Summarise my trust and gaps'),
     S('Πώς ανεβαίνει η αξιοπιστία μου;', 'How does my reliability go up?'),
-    S('Τι είναι οι βαθμίδες εμπιστοσύνης;', 'What are trust tiers?'),
+    S('Τι είναι τα επίπεδα επαλήθευσης;', 'What are trust tiers?'),
   ],
   verification: [
     S('Σύνοψη αξιοπιστίας και κενών', 'Summarise my trust and gaps'),

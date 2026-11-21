@@ -21,7 +21,7 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
   {
     id: 'reliability',
     stems: ['αξιοπιστ', 'reliability', 'σκορ', 'score', 'no-show', 'no show'],
-    titleEl: 'Βαθμός Αξιοπιστίας',
+    titleEl: 'Βαθμός αξιοπιστίας',
     titleEn: 'Reliability Score',
     path: '/trust',
     answer: (u) => {
@@ -38,15 +38,15 @@ export const KNOWLEDGE_TOPICS: KnowledgeTopic[] = [
   {
     id: 'tiers',
     stems: ['βαθμιδ', 'επιπεδο εμπιστοσυν', 'tier', 'trust level', 'επαληθευσ', 'verification'],
-    titleEl: 'Βαθμίδες Εμπιστοσύνης',
-    titleEn: 'Trust Tiers',
+    titleEl: 'Επίπεδα επαλήθευσης',
+    titleEn: 'Verification levels',
     path: '/verification',
     answer: (u) => {
-      const tierEl = u ? ` Είσαι στη βαθμίδα «${tierLabelEl(u.trustTier)}».` : '';
+      const tierEl = u ? ` Είσαι στο επίπεδο «${tierLabelEl(u.trustTier)}».` : '';
       const tierEn = u ? ` You are currently "${tierLabelEn(u.trustTier)}".` : '';
       return {
-        el: `Υπάρχουν 3 βαθμίδες: 1) Εξερευνητής — δωρεάν δημόσιες εκδηλώσεις· 2) Επιβεβαιωμένος (email + τηλέφωνο) — μικρές ομάδες 3–5 ατόμων & εκδηλώσεις με εισιτήριο· 3) Υψηλής Εμπιστοσύνης — εκδρομές, ιδιωτικές συναντήσεις και διοργάνωση. Η ταυτότητα ζητείται μόνο σε αυτό το βήμα, κατά προτίμηση μέσω Gov.gr Wallet.${tierEl}`,
-        en: `There are 3 tiers: 1) Explorer — free public events; 2) Confirmed (email + phone) — small groups of 3–5 and ticketed events; 3) High Trust — trips, private meetups and hosting. ID is only asked at that step, preferably via Gov.gr Wallet.${tierEn}`,
+        el: `Υπάρχουν 3 επίπεδα επαλήθευσης: 1) Εξερευνητής — δωρεάν δημόσιες εκδηλώσεις· 2) Επιβεβαιωμένος (email + τηλέφωνο) — μικρές ομάδες 3–5 ατόμων & εκδηλώσεις με εισιτήριο· 3) Πλήρως επαληθευμένο — εκδρομές, ιδιωτικές συναντήσεις και διοργάνωση. Η ταυτότητα ζητείται μόνο σε αυτό το βήμα, κατά προτίμηση μέσω Gov.gr Wallet.${tierEl}`,
+        en: `There are 3 verification levels: 1) Explorer — free public events; 2) Confirmed (email + phone) — small groups of 3–5 and ticketed events; 3) Fully verified — trips, private meetups and hosting. ID is only asked at that step, preferably via Gov.gr Wallet.${tierEn}`,
       };
     },
   },

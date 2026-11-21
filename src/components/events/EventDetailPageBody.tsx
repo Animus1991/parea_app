@@ -33,6 +33,7 @@ import { APP_TYPO } from '../../lib/typographyTokens';
 import { EventCoverImg } from '../common/EventCoverImg';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 import { isLiveCatalogEvent } from '../../lib/eventDisplay';
+import { formatEur } from '../../lib/money';
 
 const ShareToWallModal = lazy(() => import('../wall/ShareToWallModal'));
 
@@ -50,7 +51,7 @@ interface EventDetailPageBodyProps {
 export default function EventDetailPageBody({ accent, darkSurface = false }: EventDetailPageBodyProps) {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const categoryLabel = useCategoryLabel();
   const theme = useStore((s) => s.theme);
   const panelDark = darkSurface || isDarkTheme(theme);
@@ -144,7 +145,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         <div className="flex justify-between items-center">
           <button
             onClick={() => navigateBack(navigate)}
-            aria-label={t('Επιστροφή στην Ανακάλυψη', 'Back to Discover')}
+            aria-label={t('Επιστροφή στην ανακάλυψη', 'Back to Discover')}
             className="inline-flex items-center gap-1 min-h-8 text-xs font-semibold text-ink-muted hover:text-ink"
           >
             <span aria-hidden>&larr;</span> {t('Πίσω', 'Back')}
@@ -175,7 +176,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
         <div className="flex flex-wrap gap-2 mt-4">
           <Badge variant="neutral">{categoryLabel(event.category)}</Badge>
           {event.isPaid ? (
-            <Badge variant="outline" icon={<Ticket className="h-3 w-3" />}>€{event.price}</Badge>
+            <Badge variant="outline" icon={<Ticket className="h-3 w-3" />}>{formatEur(event.price, language)}</Badge>
           ) : (
             <Badge variant="outline">{t('Δωρεάν', 'Free')}</Badge>
           )}
@@ -185,7 +186,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
              </Badge>
           )}
           {event.minTrustTierAccess === '3_high_trust' && (
-            <Badge variant="outline" icon={<ShieldCheck className="h-3 w-3" />}>{t('Πρόσβαση με Επαλήθευση', 'Verified Access')}</Badge>
+            <Badge variant="outline" icon={<ShieldCheck className="h-3 w-3" />}>{t('Πρόσβαση με επαλήθευση', 'Verified Access')}</Badge>
           )}
 
           {/* Match score: the same formula as the event card, and the only coloured chip here. */}
@@ -233,7 +234,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
 
             <h3 id="groups" className="scroll-mt-28 text-xs font-bold text-ink-muted tracking-wide mb-4">{t('Ομάδες για αυτή την εκδήλωση', 'Groups for this event')}</h3>
             <div className="mb-4 bg-accent-soft border border-accent/20 rounded-lg p-3 flex flex-col xl:flex-row xl:justify-between items-start xl:items-center gap-2 text-xs font-bold text-accent-strong">
-              <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική Χωρητικότητα Εκδήλωσης', 'Overall Event Capacity')}</span>
+              <span className="flex items-center gap-1.5"><Ticket className="h-4 w-4" /> {t('Συνολική χωρητικότητα εκδήλωσης', 'Overall Event Capacity')}</span>
               <span className="text-accent bg-surface-raised xl:bg-transparent px-2 py-0.5 xl:p-0 rounded-full text-xs border border-accent/20 xl:border-transparent">{Math.max(0, spotsLeftEvent)} {t('θέσεις έμειναν', 'spots left')}</span>
             </div>
 
@@ -263,7 +264,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
               ) : (
                 <Button className="w-full bg-accent text-accent-fg hover:bg-accent-strong shadow-soft-md flex items-center justify-center gap-2" size="lg" onClick={() => navigate(`/events/${eventId}/join`)}>
                   <Users className="w-5 h-5" />
-                  {t('Δημιουργία Νέας Ομάδας', 'Create New Group')}
+                  {t('Δημιουργία νέας ομάδας', 'Create New Group')}
                 </Button>
               )}
             </div>
@@ -279,7 +280,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                       onValueChange={(v) => setGroupSizeFilter(v as typeof groupSizeFilter)}
                       className="filter-select bg-surface border border-border"
                       options={[
-                        { value: 'All', label: t('Όλα τα Μεγέθη', 'Any Size') },
+                        { value: 'All', label: t('Όλα τα μεγέθη', 'Any Size') },
                         { value: '3', label: t('3 Μέλη', '3 Members') },
                         { value: '4', label: t('4 Μέλη', '4 Members') },
                         { value: '5', label: t('5 Μέλη', '5 Members') },
@@ -291,7 +292,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
                         onClick={() => setDiscountFilter(!discountFilter)}
                         className={`text-xs px-2 py-1 rounded-lg border font-medium transition-colors ${discountFilter ? 'bg-emerald-100 border-emerald-300 text-emerald-800 dark:bg-emerald-900/40 dark:border-emerald-700 dark:text-emerald-300' : 'bg-surface border-border text-ink-muted hover:bg-ink/5'}`}
                       >
-                        {t('Μόνο με Έκπτωση', 'Discount Only')}
+                        {t('Μόνο με έκπτωση', 'Discount Only')}
                       </button>
                     )}
                   </div>
@@ -314,7 +315,7 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             <div className="space-y-4 pt-5 border-t border-border">
               <div className="grid grid-cols-1 gap-3">
                 <Button variant="outline" className="w-full border-border text-ink hover:bg-ink/5" size="lg" disabled={isWaitlisted} onClick={handleJoinWaitlist}>
-                  {isWaitlisted ? t('Στη λίστα αναμονής ✓', 'On waitlist ✓') : t('Λίστα Αναμονής', 'Join Waitlist')}
+                  {isWaitlisted ? t('Στη λίστα αναμονής ✓', 'On waitlist ✓') : t('Λίστα αναμονής', 'Join Waitlist')}
                 </Button>
               </div>
               <div className="text-2xs text-ink-muted font-medium bg-surface rounded-lg text-center p-3 leading-relaxed tracking-wide">

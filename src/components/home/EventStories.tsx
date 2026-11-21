@@ -131,7 +131,7 @@ export function EventStories({ events }: EventStoriesProps) {
                         {day} {mon}
                       </span>
                     ) : null}
-                    <span className="block text-2xs font-bold leading-tight line-clamp-2">
+                    <span className="block text-xs font-bold leading-tight line-clamp-2">
                       {e.title}
                     </span>
                   </div>

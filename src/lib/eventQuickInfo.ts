@@ -1,5 +1,6 @@
 import type { Event, Group, TrustTier } from '../types';
 import { tierLabelEl, tierLabelEn } from './trust';
+import { formatEur } from './money';
 
 export type ComfortLevelLabel = 'public' | 'organized' | 'high_trust' | 'basic';
 
@@ -130,8 +131,8 @@ export function buildEventQuickInfo(
       ? t('Email και τηλέφωνο', 'Email and phone')
       : t('Ανοιχτό', 'Open'),
     verificationEn: verificationRequired ? 'Email and phone' : 'Open',
-    costEl: event.isPaid ? `€${event.price}` : t('Δωρεάν', 'Free'),
-    costEn: event.isPaid ? `€${event.price}` : 'Free',
+    costEl: event.isPaid ? formatEur(event.price, 'el') : t('Δωρεάν', 'Free'),
+    costEn: event.isPaid ? formatEur(event.price, 'en') : 'Free',
     groupStatusEl,
     groupStatusEn,
     locationTypeEl: locEl,

@@ -9,7 +9,7 @@ describe('interestLabel', () => {
   });
 
   it('matches ids and English labels regardless of case and spacing', () => {
-    expect(interestLabel(' language Exchange ', 'el')).toBe('Ανταλλαγή Γλωσσών');
+    expect(interestLabel(' language Exchange ', 'el')).toBe('Ανταλλαγή γλωσσών');
     expect(interestLabel('Board Games', 'el')).toBe('Επιτραπέζια');
     expect(interestLabel('Live Music', 'el')).toBe('Ζωντανή μουσική');
   });

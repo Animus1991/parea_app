@@ -97,12 +97,6 @@ export function EventDetailSafetySection({
             <h3 className={cn('card-heading font-bold', darkSurface ? 'text-white' : 'text-ink')}>
               {t('Δημόσιο σημείο συνάντησης', 'Public meeting point')}
             </h3>
-            <p className={cn('card-copy mt-1 text-balance leading-relaxed', tok.muted)}>
-              {t(
-                'Συναντιέστε σε δημόσιο χώρο. Το ακριβές σημείο φαίνεται μόνο στα επιβεβαιωμένα μέλη της ομάδας.',
-                'You meet in a public place. The exact pin is visible only to confirmed group members.',
-              )}
-            </p>
           </div>
         </div>
 

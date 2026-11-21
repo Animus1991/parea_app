@@ -175,7 +175,7 @@ export function exposureSummary(exposure: ProfileExposure, t: (el: string, en: s
     anonymous: ['Ανώνυμο αίτημα', 'Anonymous intent'],
     nickname: ['Όνομα / ψευδώνυμο', 'First name / nickname'],
     interests_only: ['Ενδιαφέροντα', 'Interests'],
-    trust_badges: ['Σήμα εμπιστοσύνης', 'Trust badge'],
+    trust_badges: ['Σήμα επαλήθευσης', 'Verification badge'],
     optional_photo: ['Προαιρετική φωτογραφία', 'Optional photo'],
     mini_profile: ['Μίνι προφίλ', 'Mini profile'],
   };

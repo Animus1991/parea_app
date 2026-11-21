@@ -54,7 +54,7 @@ export function NakamasCast({ className, heading }: NakamasCastProps) {
           <li key={item.id} className="flex flex-col items-center text-center px-1">
             <NakamasMini id={item.id} size={48} />
             <p className="mt-1 text-2xs font-bold text-ink leading-tight">{t(item.titleEl, item.titleEn)}</p>
-            <p className="mt-0.5 text-2xs font-medium leading-snug text-ink-muted">
+            <p className="mt-0.5 text-xs font-medium leading-snug text-ink-muted">
               {t(item.bodyEl, item.bodyEn)}
             </p>
           </li>

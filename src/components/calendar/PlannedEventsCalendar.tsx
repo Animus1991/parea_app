@@ -37,11 +37,11 @@ import { dateFnsLocale } from '../../lib/dateLocale';
 
 const WEEKDAY_LABELS = (t: (el: string, en: string) => string) => [
   t('Δευ', 'Mon'),
-  t('Τρι', 'Tue'),
+  t('Τρί', 'Tue'),
   t('Τετ', 'Wed'),
-  t('Πεμ', 'Thu'),
+  t('Πέμ', 'Thu'),
   t('Παρ', 'Fri'),
-  t('Σαβ', 'Sat'),
+  t('Σάβ', 'Sat'),
   t('Κυρ', 'Sun'),
 ];
 
@@ -234,12 +234,6 @@ export function PlannedEventsCalendar({ className }: PlannedEventsCalendarProps)
           </div>
         </div>
 
-        <p className={cn('text-xs font-medium px-4 md:px-5 py-2 border-b', p.borderB, p.muted)}>
-          {t(
-            'Πάτημα: προεπισκόπηση · Διπλό πάτημα: ωριαίο πρόγραμμα',
-            'Tap: preview · Double-tap: hourly schedule',
-          )}
-        </p>
 
         <AnimatePresence mode="wait">
           {view === 'week' ? (

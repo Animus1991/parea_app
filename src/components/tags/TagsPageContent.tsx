@@ -257,17 +257,14 @@ export default function TagsPageContent() {
             ? t(selectedLabel, selectedLabelEn)
             : t('Ετικέτες', 'Tags')}
         </h1>
-        <p className={cn(APP_TYPO.pageSub, 'text-ink-muted')}>
-          {selectedSlugs.length > 0
-            ? t(
-                `${taggedEvents.length} ${taggedEvents.length === 1 ? 'εκδήλωση' : 'εκδηλώσεις'} με ${selectedItems.length === 1 ? 'αυτή την ετικέτα' : 'οποιαδήποτε από αυτές'}.`,
-                `${taggedEvents.length} ${taggedEvents.length === 1 ? 'event' : 'events'} with ${selectedItems.length === 1 ? 'this tag' : 'any of these tags'}.`,
-              )
-            : t(
-                'Πάτα όσες ετικέτες θες. Ξαναπάτα για να τις βγάλεις.',
-                'Tap as many tags as you want. Tap again to remove them.',
-              )}
-        </p>
+        {selectedSlugs.length > 0 ? (
+          <p className={cn(APP_TYPO.pageSub, 'text-ink-muted')}>
+            {t(
+              `${taggedEvents.length} ${taggedEvents.length === 1 ? 'εκδήλωση' : 'εκδηλώσεις'}`,
+              `${taggedEvents.length} ${taggedEvents.length === 1 ? 'event' : 'events'}`,
+            )}
+          </p>
+        ) : null}
         {selectedSlugs.length === 0 ? (
           <p className="text-xs font-medium text-ink-muted">
             {t(`${catalog.length} ετικέτες`, `${catalog.length} tags`)}

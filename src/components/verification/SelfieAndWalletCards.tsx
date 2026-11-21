@@ -123,7 +123,7 @@ export function SelfieCheckCard() {
           {t('Ξεκίνα (30″)', 'Start (30s)')}
         </Button>
       )}
-      <p className="mt-3 flex items-start gap-1.5 text-2xs font-medium text-ink-muted">
+      <p className="mt-3 flex items-start gap-1.5 text-xs font-medium text-ink-muted">
         <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
         {t('Δεν ανεβαίνει και δεν κρατιέται καμία εικόνα. Κρατάμε μόνο: αποτέλεσμα, μέθοδο, ημερομηνία.', 'No image is uploaded or kept. We keep only: result, method, date.')}
       </p>
@@ -153,7 +153,7 @@ export function GovWalletCard() {
           'We are looking into age and identity checks through Gov.gr Wallet, without seeing your details. It is not available yet.',
         )}
       </p>
-      <ul className="mt-2 list-disc space-y-0.5 pl-5 text-2xs font-medium text-ink-muted">
+      <ul className="mt-2 list-disc space-y-0.5 pl-5 text-xs font-medium text-ink-muted">
         <li>{t('Θα κρατάμε μόνο: αποτέλεσμα (ναι/όχι), μέθοδο, ημερομηνία.', 'We would keep only: result (yes/no), method, date.')}</li>
         <li>{t('Ποτέ αριθμό ταυτότητας, ΑΦΜ, διεύθυνση ή φωτογραφία εγγράφου.', 'Never an ID number, tax number, address or document photo.')}</li>
       </ul>

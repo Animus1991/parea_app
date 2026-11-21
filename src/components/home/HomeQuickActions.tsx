@@ -39,7 +39,7 @@ export function HomeQuickActions({
     key: string;
   }[] = [
     { icon: Grid, label: t('Κατηγορίες', 'Categories'), onClick: scrollCategories, key: 'categories' },
-    { icon: Users, label: t('Φίλοι', 'Friends'), onClick: () => navigate('/connections'), key: 'friends' },
+    { icon: Users, label: t('Nakamas', 'Nakamas'), onClick: () => navigate('/connections'), key: 'friends' },
     { icon: Calendar, label: t('Πρόγραμμα', 'Schedule'), onClick: () => navigate('/agenda'), key: 'agenda' },
     { icon: MapIcon, label: t('Κοντά μου', 'Nearby'), onClick: () => navigate('/nearby'), key: 'nearby' },
   ];
@@ -48,7 +48,7 @@ export function HomeQuickActions({
   const features = [
     {
       icon: Calendar,
-      title: t('Διοργάνωσε Εκδήλωση', 'Host Event'),
+      title: t('Διοργάνωσε εκδήλωση', 'Host Event'),
       body: t(
         'Δημιούργησε την δική σου εμπειρία.',
         'Create your own experience.',
@@ -57,7 +57,7 @@ export function HomeQuickActions({
     },
     {
       icon: Trophy,
-      title: t('Φτιάξε μια Ομάδα', 'Create a Group'),
+      title: t('Φτιάξε μια ομάδα', 'Create a Group'),
       body: t(
         'Μάζεψε άτομα για μια ιδέα σου.',
         'Gather people for your idea.',

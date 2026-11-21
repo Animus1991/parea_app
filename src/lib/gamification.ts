@@ -12,9 +12,9 @@ export interface BadgeDef {
 
 /** Unified badge catalogue (Φ19.4) — superset of Achievements + Leaderboard definitions. */
 export const BADGES_CATALOGUE: BadgeDef[] = [
-  { id: 'b1', emoji: '🏅', labelEl: 'Πρώτη Εμπειρία', labelEn: 'First Timer', descriptionEl: 'Παρακολούθησες 1η εκδήλωση', descriptionEn: 'Attended your first event', unlocked: true },
-  { id: 'b2', emoji: '🦋', labelEl: 'Κοινωνική Πεταλούδα', labelEn: 'Social Butterfly', descriptionEl: 'Εντάχθηκες σε 3 ομάδες', descriptionEn: 'Joined 3 different groups', unlocked: true },
-  { id: 'b3', emoji: '⭐', labelEl: 'Αστέρι Αξιοπιστίας', labelEn: 'Reliability Star', descriptionEl: 'Διατήρησε 90%+ αξιοπιστία', descriptionEn: 'Maintained 90%+ reliability', unlocked: false },
+  { id: 'b1', emoji: '🏅', labelEl: 'Πρώτη εμπειρία', labelEn: 'First Timer', descriptionEl: 'Παρακολούθησες 1η εκδήλωση', descriptionEn: 'Attended your first event', unlocked: true },
+  { id: 'b2', emoji: '🦋', labelEl: 'Κοινωνική πεταλούδα', labelEn: 'Social Butterfly', descriptionEl: 'Εντάχθηκες σε 3 ομάδες', descriptionEn: 'Joined 3 different groups', unlocked: true },
+  { id: 'b3', emoji: '⭐', labelEl: 'Αστέρι αξιοπιστίας', labelEn: 'Reliability Star', descriptionEl: 'Διατήρησε 90%+ αξιοπιστία', descriptionEn: 'Maintained 90%+ reliability', unlocked: false },
   { id: 'b4', emoji: '🔥', labelEl: 'Φλόγα', labelEn: 'On Fire', descriptionEl: 'Ενεργός 4 εβδομάδες σερί', descriptionEn: '4 consecutive active weeks', unlocked: false },
   { id: 'b5', emoji: '🌍', labelEl: 'Εξερευνητής', labelEn: 'Explorer', descriptionEl: 'Δοκίμασες 4 κατηγορίες', descriptionEn: 'Tried 4 different categories', unlocked: true },
   { id: 'b6', emoji: '🎯', labelEl: 'Πρωτοπόρος', labelEn: 'Trailblazer', descriptionEl: 'Δημιούργησες γεμάτη ομάδα', descriptionEn: 'Created a full group', unlocked: false },

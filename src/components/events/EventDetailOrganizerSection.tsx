@@ -157,18 +157,18 @@ export function EventDetailOrganizerSection({
           `Επαληθευμένος Διοργανωτής • ${hostedCount} εκδηλώσεις`,
           `Verified Organizer • ${hostedCount} events hosted`,
         )
-      : t('Επαληθευμένος Διοργανωτής', 'Verified Organizer');
+      : t('Επαληθευμένος διοργανωτής', 'Verified Organizer');
 
   const trustTierLabel =
     organizer.trustTier === '3_high_trust'
-      ? t('Υψηλή Εμπιστοσύνη', 'High Trust')
+      ? t('Πλήρως επαληθευμένο', 'Fully verified')
       : t(tierLabelEl(organizer.trustTier), tierLabelEn(organizer.trustTier));
 
   return (
     <div className={cn('pt-5 border-t mt-5', tok.sectionBorder, className)}>
       <div className="flex items-center justify-between mb-4">
         <h3 className={cn('text-xs font-bold tracking-wide mt-1', tok.heading)}>
-          {t('Διοργανωτής Εκδήλωσης', 'Event Organizer')}
+          {t('Διοργανωτής εκδήλωσης', 'Event Organizer')}
         </h3>
       </div>
       <div className={cn('flex items-center justify-between p-4', tok.card)}>
@@ -236,7 +236,7 @@ export function EventDetailOrganizerSection({
           className="hidden sm:flex"
           onClick={() => navigate(`/organizer/${organizer.id}`)}
         >
-          {t('Προβολή Προφίλ', 'View Profile')}
+          {t('Προβολή προφίλ', 'View Profile')}
         </Button>
       </div>
     </div>

@@ -101,7 +101,7 @@ export function JoinRequestPreviewModal({
             <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <p className="text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
               {t(
-                'Αυτή είναι προεπισκόπηση — όχι πραγματική συνομιλία. Σχεδιασμένο με privacy controls.',
+                'Αυτή είναι προεπισκόπηση, όχι πραγματική συνομιλία. Βλέπεις μόνο ό,τι επιτρέπουν οι ρυθμίσεις απορρήτου.',
                 'This is a preview — not a live chat. Designed with privacy controls.',
               )}
             </p>

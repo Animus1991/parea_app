@@ -58,11 +58,12 @@ import { WallPrivacyPanel } from "../wall/WallPrivacyPanel";
 import { PersonAvatar } from "../wall/PersonAvatar";
 import { VibeProfileCard } from '../outings/VibeProfileCard';
 import { PhotoOrInitials } from "../common/PhotoOrInitials";
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 // ─── Main component ──────────────────────────────────────────
 export default function ProfilePageContent() {
   const navigate = useNavigate();
-  const { t, language } = useLanguage();
+  const { t, tu, language } = useLanguage();
   const a = useProfileContrast();
   const currentUser = useStore((state) => state.currentUser);
   const updateUser = useStore((state) => state.updateUser);
@@ -269,7 +270,7 @@ export default function ProfilePageContent() {
                 )}
               </div>
               <div className={cn("flex flex-wrap gap-2", PROFILE_TYPO.identityMeta, sub)}>
-                <span>{currentUser.ageRange}</span><span>•</span><span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{currentUser.city}</span>
+                <span>{currentUser.ageRange}</span><span>•</span><span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{formatLocationArea(currentUser.city, language)}</span>
               </div>
 
               <div className="mt-3">
@@ -293,7 +294,7 @@ export default function ProfilePageContent() {
               {currentUser.isOrganizer ? (
                 <>
                   <Button size="sm" variant="outline" onClick={() => navigate(`/organizer/${currentUser.id}`)}>
-                    {t('Προφίλ Διοργανωτή', 'Organizer Profile')}
+                    {t('Προφίλ διοργανωτή', 'Organizer Profile')}
                   </Button>
                   <Button
                     size="sm"
@@ -301,7 +302,7 @@ export default function ProfilePageContent() {
                     onClick={() => navigate('/manage')}
                     className="flex items-center gap-1.5"
                   >
-                    <Star className="w-3 h-3" /> {t('Πίνακας Διοργανωτή', 'Organizer Workspace')}
+                    <Star className="w-3 h-3" /> {t('Πίνακας διοργανωτή', 'Organizer Workspace')}
                   </Button>
                 </>
               ) : (
@@ -311,7 +312,7 @@ export default function ProfilePageContent() {
                   onClick={() => navigate('/create')}
                   className="flex items-center gap-1.5"
                 >
-                  <Star className="w-3 h-3" /> {t('Γίνε Διοργανωτής', 'Become Organizer')}
+                  <Star className="w-3 h-3" /> {t('Γίνε διοργανωτής', 'Become Organizer')}
                 </Button>
               )}
             </div>
@@ -369,7 +370,7 @@ export default function ProfilePageContent() {
           <div className="space-y-5 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
         {/* ─── Interests ─── */}
         <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
-          <h3 className={cn(PROFILE_TYPO.sectionTitle, 'mb-4', label)}>{t("Ενδιαφέροντα", "Interests")}</h3>
+          <h3 className={cn(PROFILE_TYPO.sectionTitle, 'mb-4', label)}>{tu("Ενδιαφέροντα", "Interests")}</h3>
           <div className="flex flex-wrap gap-2 items-center">
             {interests.map((i) => (
               <Badge key={i} variant="neutral" className={`pr-1.5 select-none ${a.isDark ? "" : "bg-gray-50 border-gray-200 text-gray-700"}`}>
@@ -406,10 +407,10 @@ export default function ProfilePageContent() {
 
         {/* ─── Availability ─── */}
         <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
-          <h3 className={cn(PROFILE_TYPO.sectionTitle, 'mb-4', label)}>{t("Προτιμήσεις Διαθεσιμότητας", "Availability Preferences")}</h3>
+          <h3 className={cn(PROFILE_TYPO.sectionTitle, 'mb-4', label)}>{tu("Προτιμήσεις διαθεσιμότητας", "Availability Preferences")}</h3>
           <div className="flex flex-wrap gap-2">
             {userSettings.availability.includes('weekends') && <Badge variant="neutral">{t("Σαββατοκύριακα", "Weekends")}</Badge>}
-            {userSettings.availability.includes('weekday_evenings') && <Badge variant="neutral">{t("Βράδια Καθημερινών", "Weekday Evenings")}</Badge>}
+            {userSettings.availability.includes('weekday_evenings') && <Badge variant="neutral">{t("Βράδια καθημερινών", "Weekday Evenings")}</Badge>}
             {userSettings.availability.includes('weekday_mornings') && <Badge variant="neutral">{t("Πρωινά καθημερινών", "Weekday mornings")}</Badge>}
             {userSettings.availability.length === 0 && (
               <span className={cn(PROFILE_TYPO.rowMeta, sub)}>{t('Δεν έχεις ορίσει διαθεσιμότητα', 'No availability set yet')}</span>
@@ -423,8 +424,8 @@ export default function ProfilePageContent() {
         {/* ─── History & Reviews ─── */}
         <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
           <div className="flex items-center justify-between mb-4">
-            <h3 className={cn(PROFILE_TYPO.sectionTitle, label)}>{t("Ιστορικό & Αξιολογήσεις", "History & Reviews")}</h3>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/history")} className={`font-bold ${a.btnAccent}`}>{t("Προβολή Όλων", "View All")}</Button>
+            <h3 className={cn(PROFILE_TYPO.sectionTitle, label)}>{tu("Ιστορικό & αξιολογήσεις", "History & Reviews")}</h3>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/history")} className={`font-bold ${a.btnAccent}`}>{t("Προβολή όλων", "View All")}</Button>
           </div>
           <div className={`rounded-2xl border p-4 flex items-center justify-between gap-3 ${historyBg}`}>
             <div className="flex items-center gap-3 min-w-0">
@@ -442,8 +443,8 @@ export default function ProfilePageContent() {
         {connectedUsers.length > 0 && (
           <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className={cn(PROFILE_TYPO.sectionTitle, label)}>{t("Οι Nakamas μου", "My Nakamas")} <span className={cn('ml-1 font-medium tracking-normal', sub)}>({connectionCount})</span></h3>
-              <Button variant="ghost" size="sm" onClick={() => navigate("/connections")} className={`font-bold ${a.btnAccent}`}>{t("Προβολή Όλων", "View All")}</Button>
+              <h3 className={cn(PROFILE_TYPO.sectionTitle, label)}>{tu("Οι Nakamas μου", "My Nakamas")} <span className={cn('ml-1 font-medium tracking-normal', sub)}>({connectionCount})</span></h3>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/connections")} className={`font-bold ${a.btnAccent}`}>{t("Προβολή όλων", "View All")}</Button>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
               {connectedUsers.slice(0, 8).map((u) => (
@@ -509,7 +510,7 @@ export default function ProfilePageContent() {
           <div className="space-y-5 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
         {/* ─── Identity Tiers ─── */}
         <div className={`mt-4 pt-4 border-t ${sectionBorder}`}>
-          <h3 className={cn(PROFILE_TYPO.sectionTitle, 'mb-4', label)}>{t("Επίπεδα Ταυτότητας & Δικαιώματα", "Identity Tiers & Permissions")}</h3>
+          <h3 className={cn(PROFILE_TYPO.sectionTitle, 'mb-4', label)}>{tu("Επίπεδα ταυτότητας & δικαιώματα", "Identity Tiers & Permissions")}</h3>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className={`h-7 w-7 rounded-lg flex items-center justify-center shrink-0 ${a.isDark ? "bg-emerald-900/20" : "bg-emerald-100"}`}>
@@ -550,7 +551,7 @@ export default function ProfilePageContent() {
                 <Shield className={`h-4 w-4 ${a.isDark ? "text-gray-500" : "text-gray-400"}`} />
               </div>
               <div className="flex-1">
-                <p className={cn(PROFILE_TYPO.rowTitle, a.isDark ? "text-gray-300" : "text-gray-700")}>{t("Επίπεδο 3: Υψηλή Εμπιστοσύνη", "Tier 3: High Trust")}</p>
+                <p className={cn(PROFILE_TYPO.rowTitle, a.isDark ? "text-gray-300" : "text-gray-700")}>{t("Επίπεδο 3: Πλήρως επαληθευμένο", "Level 3: Fully verified")}</p>
                 <p className={cn(PROFILE_TYPO.rowMeta, 'mt-0.5', sub)}>{t("Ταυτότητα/Selfie + Υψηλή Αξιοπιστία → Ιδιωτικές/Εκδρομές", "ID/Selfie + High Reliability → Private/Trips")}</p>
               </div>
               <ChevronRight className={`w-4 h-4 shrink-0 ${sub}`} />
@@ -560,7 +561,7 @@ export default function ProfilePageContent() {
 
         {/* ─── Group Preferences ─── */}
         <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
-          <h3 className={cn(PROFILE_TYPO.sectionTitle, 'mb-4', label)}>{t("Προτιμήσεις Ομάδας", "Group Preferences")}</h3>
+          <h3 className={cn(PROFILE_TYPO.sectionTitle, 'mb-4', label)}>{tu("Προτιμήσεις ομάδας", "Group Preferences")}</h3>
           <div className="space-y-3">
             <label className={`flex items-start gap-3 p-4 border rounded-2xl cursor-pointer transition-colors ${a.radioActive}`}>
               <input type="radio" name="groupsize" defaultChecked className={`mt-0.5 h-4 w-4 rounded-full ${a.checkbox}`} />
@@ -575,7 +576,7 @@ export default function ProfilePageContent() {
                   <span className={cn(PROFILE_TYPO.rowTitle, 'block', a.isDark ? "text-gray-300" : "text-gray-700")}>{t("1-προς-1 Εμπειρίες", "1-on-1 Experiences")}</span>
                   <Badge variant="neutral" className="rounded-lg">{t("Επίπεδο 3", "Tier 3")}</Badge>
                 </div>
-                <span className={cn(PROFILE_TYPO.rowMeta, 'leading-relaxed block mt-1', sub)}>{t("Απαιτεί Υψηλό Επίπεδο Εμπιστοσύνης.", "Requires High Trust Tier.")}</span>
+                <span className={cn(PROFILE_TYPO.rowMeta, 'leading-relaxed block mt-1', sub)}>{t("Απαιτεί πλήρη επαλήθευση.", "Requires full verification.")}</span>
               </div>
             </label>
           </div>
@@ -587,14 +588,14 @@ export default function ProfilePageContent() {
           <div className="space-y-5 [&>*:first-child]:mt-0 [&>*:first-child]:pt-0 [&>*:first-child]:border-t-0">
         {/* ─── Privacy Settings ─── */}
         <div className={`mt-5 pt-4 border-t ${sectionBorder}`}>
-          <h3 className={cn(PROFILE_TYPO.sectionTitle, 'mb-4', label)}>{t("Ορατότητα, Συνδέσεις & Απόρρητο", "Visibility, Connections & Privacy")}</h3>
+          <h3 className={cn(PROFILE_TYPO.sectionTitle, 'mb-4', label)}>{tu("Ορατότητα, Nakamas & απόρρητο", "Visibility, Nakamas & Privacy")}</h3>
           <div className="space-y-3">
             {/* Profile Visibility */}
             <div className={`flex flex-col sm:flex-row sm:items-start justify-between gap-3 p-4 border rounded-2xl transition-colors ${a.settingCard}`}>
               <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-lg shrink-0 ${a.isDark ? "bg-gray-700/30" : "bg-gray-100"}`}><Eye className={`w-4 h-4 ${sub}`} /></div>
                 <div>
-                  <p className={cn(PROFILE_TYPO.rowTitle, heading)}>{t("Ορατότητα Προφίλ", "Profile Visibility")}</p>
+                  <p className={cn(PROFILE_TYPO.rowTitle, heading)}>{t("Ορατότητα προφίλ", "Profile Visibility")}</p>
                   <p className={cn(PROFILE_TYPO.rowMeta, 'mt-0.5', sub)}>{t("Δημόσιο, Nakamas, συγκεκριμένα άτομα, λίστα ή «εκτός από…».", "Public, Nakamas, specific people, a list or “except…”.")}</p>
                 </div>
               </div>
@@ -634,7 +635,7 @@ export default function ProfilePageContent() {
                 className={`filter-select outline-none border ${a.selectBg} ${a.selectRing}`}
                 options={[
                   { value: "everyone", label: t("Όλοι", "Everyone") },
-                  { value: "connections", label: t("Μόνο συνδέσεις Nakamas", "Connections only") },
+                  { value: "connections", label: t("Μόνο οι Nakamas μου", "My Nakamas only") },
                   { value: "groups", label: t("Ομάδες ίδιας εκδήλωσης", "Same event groups") },
                 ]}
               />
@@ -644,7 +645,7 @@ export default function ProfilePageContent() {
             <label className={`flex items-start gap-3 p-4 border rounded-2xl cursor-pointer transition-colors ${a.settingCard} ${a.isDark ? "hover:bg-gray-700/20" : "hover:bg-gray-50"}`}>
               <div className={`p-2 rounded-lg shrink-0 ${a.isDark ? "bg-gray-700/30" : "bg-gray-100"}`}><MapPin className={`w-4 h-4 ${sub}`} /></div>
               <div className="flex-1">
-                <span className={cn(PROFILE_TYPO.rowTitle, 'block', heading)}>{t("Κοινοποίηση Τοποθεσίας", "Share Location")}</span>
+                <span className={cn(PROFILE_TYPO.rowTitle, 'block', heading)}>{t("Κοινοποίηση τοποθεσίας", "Share Location")}</span>
               </div>
               <input
                 type="checkbox"
@@ -658,10 +659,10 @@ export default function ProfilePageContent() {
             <div className={`p-4 border rounded-2xl space-y-4 ${a.settingCard}`}>
               <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-lg shrink-0 ${a.isDark ? "bg-gray-700/30" : "bg-gray-100"}`}><Lock className={`w-4 h-4 ${sub}`} /></div>
-                <span className={cn(PROFILE_TYPO.rowTitle, heading)}>{t("Ρυθμίσεις Απορρήτου", "Privacy Controls")}</span>
+                <span className={cn(PROFILE_TYPO.rowTitle, heading)}>{t("Ρυθμίσεις απορρήτου", "Privacy Controls")}</span>
               </div>
               {[
-                { key: "revealPhoto", icon: Camera, label: t("Εμφάνιση φωτογραφίας σε μη-συνδέσεις", "Show photo to non-connections") },
+                { key: "revealPhoto", icon: Camera, label: t("Φωτογραφία και σε όσους δεν είναι Nakamas μου", "Show photo to people outside my Nakamas") },
                 { key: "allowMutualPing", icon: Users, label: t("Αμοιβαία αιτήματα μετά εκδήλωση", 'Allow "Keep in touch" post-event') },
                 { key: "allowOrganizerMsg", icon: MessageSquare, label: t("Μηνύματα διοργανωτών μετά εκδήλωση", "Organizer messages after event") },
               ].map((opt) => (
@@ -709,10 +710,11 @@ export default function ProfilePageContent() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           // «Ρυθμίσεις» is already the first button at the top of this page (declutter, Φ28).
-          { icon: CalendarCheck, label: t("Τα Σχέδιά μου", "My Plans"), desc: t("Οι επόμενες έξοδοί σου", "Your next outings"), to: "/plans" },
-          { icon: ShieldCheck, label: t("Επαλήθευση", "Verification"), desc: t("Αύξηση εμπιστοσύνης", "Increase your trust"), to: "/verification" },
-          { icon: Bookmark, label: t("Αποθηκευμένα", "Saved"), desc: t("Αγαπημένες εκδηλώσεις", "Favorite events"), to: "/saved" },
-          { icon: MessageSquare, label: t("Συνομιλίες", "Chats"), desc: t("Ομαδικά μηνύματα", "Group messages"), to: "/chats" },
+          // Icon and name are enough; a second line only repeated the name.
+          { icon: CalendarCheck, label: t("Τα Σχέδιά μου", "My Plans"), to: "/plans" },
+          { icon: ShieldCheck, label: t("Επαλήθευση", "Verification"), to: "/verification" },
+          { icon: Bookmark, label: t("Αποθηκευμένες", "Saved"), to: "/saved" },
+          { icon: MessageSquare, label: t("Συνομιλίες", "Chats"), to: "/chats" },
         ].map((link) => (
           <button
             key={link.to}
@@ -728,7 +730,6 @@ export default function ProfilePageContent() {
               <ChevronRight className={`w-3.5 h-3.5 ${sub} opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity`} aria-hidden />
             </div>
             <p className={cn(PROFILE_TYPO.rowTitle, 'mt-2', heading)}>{link.label}</p>
-            <p className={cn(PROFILE_TYPO.micro, 'mt-0.5', sub)}>{link.desc}</p>
           </button>
         ))}
       </div>

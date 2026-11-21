@@ -256,7 +256,7 @@ export function ChatComposerTools({
             <p className="font-bold text-brand text-2xs">
               {t(`Απάντηση στον/στην ${replyTo.senderName}`, `Replying to ${replyTo.senderName}`)}
             </p>
-            <p className="text-ink-muted text-2xs truncate">{replyTo.body}</p>
+            <p className="text-ink-muted text-xs truncate">{replyTo.body}</p>
           </div>
           <button
             type="button"
@@ -489,7 +489,7 @@ export function ChatComposerTools({
             <span className="text-xs font-bold text-red-700 dark:text-red-300 tabular-nums">
               {String(Math.floor(recSec / 60))}:{String(recSec % 60).padStart(2, '0')}
             </span>
-            <span className="text-2xs text-red-600/80 dark:text-red-300/80 truncate">
+            <span className="text-xs text-red-600/80 dark:text-red-300/80 truncate">
               {t('Ηχογράφηση φωνητικού…', 'Recording voice note…')}
             </span>
           </div>

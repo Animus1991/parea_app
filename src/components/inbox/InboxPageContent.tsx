@@ -13,8 +13,8 @@ import { useChatStore } from '../../store/chatStore';
 import { EmptyState } from '../common/EmptyState';
 import { cn } from '../../lib/utils';
 import { INBOX_TYPO } from '../../lib/typographyTokens';
-import { isBefore, parseISO } from 'date-fns';
 import type { Conversation } from '../../types/chat';
+import { isEventPast } from '../../lib/eventDisplay';
 
 type InboxTab = 'messages' | 'notifications';
 
@@ -66,9 +66,8 @@ export default function InboxPageContent() {
           : group
             ? events.find((e) => e.id === group.eventId)
             : undefined;
-        const eventDate = event?.date ? parseISO(event.date) : null;
-        const isPast =
-          c.status === 'expired' || (eventDate ? isBefore(eventDate, now) : false);
+        // Date and time: tonight's chat is not «past» from midnight on.
+        const isPast = c.status === 'expired' || (event?.date ? isEventPast(event, now) : false);
 
         return {
           key: c.id,
@@ -92,8 +91,7 @@ export default function InboxPageContent() {
       .filter((g) => g.members.includes(currentUser.id) && !coveredGroupIds.has(g.id))
       .map((g) => {
         const event = events.find((e) => e.id === g.eventId);
-        const eventDate = event?.date ? parseISO(event.date) : null;
-        const isPast = eventDate ? isBefore(eventDate, now) : false;
+        const isPast = event?.date ? isEventPast(event, now) : false;
         return {
           key: `group_${g.id}`,
           title: event?.title ?? t('Nakamas Εκδήλωσης', 'Event Nakamas'),
@@ -140,7 +138,7 @@ export default function InboxPageContent() {
     <div className="w-full max-w-full min-w-0 flex flex-col relative animate-in fade-in duration-500">
       <div className="shrink-0 mb-4">
         <h1 className={cn(INBOX_TYPO.pageTitle, p.head)}>
-          {t('Μηνύματα', 'Messages')}
+          {t('Συνομιλίες', 'Chats')}
         </h1>
         <p className={cn(INBOX_TYPO.pageSub, 'mt-1', p.sub)}>
           {t('Συνομιλίες ομάδων & ειδοποιήσεις', 'Group conversations & notifications')}
@@ -169,7 +167,7 @@ export default function InboxPageContent() {
                 : p.muted,
             )}
           >
-            <MessageSquare className="w-3.5 h-3.5" aria-hidden /> {t('Μηνύματα', 'Messages')}
+            <MessageSquare className="w-3.5 h-3.5" aria-hidden /> {t('Συνομιλίες', 'Chats')}
           </button>
           <button
             type="button"
@@ -354,7 +352,7 @@ export default function InboxPageContent() {
                 onClick={() => navigate('/notifications')}
                 className={cn('mt-2 px-4 py-1.5 min-h-8 rounded-full bg-cyan-600 hover:bg-cyan-700 text-white shadow-soft', INBOX_TYPO.cta)}
               >
-                {t('Όλες οι Ειδοποιήσεις', 'All Notifications')}
+                {t('Όλες οι ειδοποιήσεις', 'All Notifications')}
               </button>
               <button
                 type="button"

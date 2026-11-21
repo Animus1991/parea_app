@@ -14,6 +14,7 @@ import { useStore } from '../../store';
 import type { FeedbackData } from '../../store';
 import { FEEDBACK_MOODS, starsForMood } from '../../lib/feedbackDue';
 import { PersonAvatar } from '../wall/PersonAvatar';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 const COMMENT_MAX = 280;
 
@@ -81,7 +82,7 @@ export default function PostEventFeedbackPageContent() {
           {t('Η εκδήλωση δεν βρέθηκε.', 'Event not found.')}
         </p>
         <Button variant={p.isAB ? 'primary' : 'outline'} onClick={() => navigate('/history')}>
-          {t('Επιστροφή στο Ιστορικό', 'Back to History')}
+          {t('Επιστροφή στο ιστορικό', 'Back to History')}
         </Button>
       </div>
     );
@@ -120,7 +121,7 @@ export default function PostEventFeedbackPageContent() {
             {event.locationArea && (
               <span className={cn('text-xs font-bold flex items-center gap-1', p.muted)}>
                 <MapPin className="w-3.5 h-3.5 shrink-0" />
-                {event.locationArea}
+                {formatLocationArea(event.locationArea, language)}
               </span>
             )}
           </div>
@@ -184,7 +185,7 @@ export default function PostEventFeedbackPageContent() {
             size="md"
             className="rounded-full"
           >
-            {t('Επιστροφή στο Ιστορικό', 'Back to History')}
+            {t('Επιστροφή στο ιστορικό', 'Back to History')}
           </Button>
         </div>
       ) : (

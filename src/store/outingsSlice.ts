@@ -33,7 +33,7 @@ import { activeTicketPartner, settleReservation } from '../services/ticketPartne
 import { coversFor } from '../lib/planCovers';
 import { MINI_OUTING_COVERS } from '../lib/eventCover';
 import { mockPlanInvites, mockSeeAgainPicks, mockStrikes } from '../data/mockOutings';
-import { fetchInviteResponses, newHostKey, publishInvite } from '../services/invitesApi';
+import { fetchInviteResponses, newHostKey, newInviteId, publishInvite } from '../services/invitesApi';
 
 /** Check-in opens 2 h before the start and closes 6 h after it (demo mode: always open). */
 export const CHECKIN_OPENS_BEFORE_MS = 2 * 3_600_000;
@@ -473,7 +473,7 @@ export function createOutingsSlice(set: SetFn, get: GetFn): OutingsSlice {
       }
       const event = s.events.find((e) => e.id === group.eventId);
       const invite: PlanInvite = {
-        id: newId('inv'),
+        id: newInviteId(),
         groupId,
         eventId: group.eventId,
         hostId: me.id,

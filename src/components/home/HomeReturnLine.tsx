@@ -10,12 +10,12 @@ import { prefetchPath } from '../../lib/routeLoaders';
  * within two days, news since the last visit) it says so, each part one tap
  * away; otherwise it keeps the time-of-day line. Same text style either way.
  */
-export function HomeReturnLine({ className, fallback }: { className?: string; fallback: string }) {
+export function HomeReturnLine({ className, fallback }: { className?: string; fallback?: string }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const parts = useReturnSummary();
 
-  if (parts.length === 0) return <p className={className}>{fallback}</p>;
+  if (parts.length === 0) return fallback ? <p className={className}>{fallback}</p> : null;
 
   const lead = parts[0].kind === 'next' ? '' : t('Από την τελευταία σου επίσκεψη: ', 'Since your last visit: ');
   return (

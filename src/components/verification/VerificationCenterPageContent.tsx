@@ -89,7 +89,7 @@ export default function VerificationCenterPageContent() {
           <ShieldCheck className={cn('w-6 h-6', a.progressIconColor)} />
         </div>
         <div className="flex-1">
-          <h2 className={cn('font-bold text-sm', a.progressHead)}>{t('Πρόοδος Επαλήθευσης', 'Verification Progress')}</h2>
+          <h2 className={cn('font-bold text-sm', a.progressHead)}>{t('Πρόοδος επαλήθευσης', 'Verification Progress')}</h2>
           <p className={cn('text-xs mt-1 mb-3', a.progressSub)}>
             {t(`${completedSteps} από 2 βασικά βήματα`, `${completedSteps} of 2 core steps completed`)}
           </p>
@@ -97,7 +97,7 @@ export default function VerificationCenterPageContent() {
             <div className={cn('h-2 rounded-full transition-all', a.progressFill)} style={{ width: `${progressPct}%` }} />
           </div>
           <p className={cn('text-xs mt-2 font-medium', a.muted)}>
-            {t('Βαθμός Αξιοπιστίας', 'Reliability Score')}: {currentUser.reliabilityScore}%
+            {t('Βαθμός αξιοπιστίας', 'Reliability Score')}: {currentUser.reliabilityScore}%
           </p>
         </div>
       </div>
@@ -124,7 +124,7 @@ export default function VerificationCenterPageContent() {
                 {t('Θα σου στείλουμε σύνδεσμο επιβεβαίωσης στο email σου.', "We'll send a confirmation link to your email.")}
               </p>
               <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleVerifyEmail}>
-                {t('Επαλήθευση Τώρα', 'Verify Now')}
+                {t('Επαλήθευση τώρα', 'Verify Now')}
               </Button>
             </>
           )}
@@ -149,7 +149,7 @@ export default function VerificationCenterPageContent() {
             <>
               <p className={cn('card-copy mb-3', a.sub)}>{t('Θα σου στείλουμε SMS με κωδικό.', "We'll send you an SMS code.")}</p>
               <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleVerifyPhone}>
-                {t('Επαλήθευση Τώρα', 'Verify Now')}
+                {t('Επαλήθευση τώρα', 'Verify Now')}
               </Button>
             </>
           )}

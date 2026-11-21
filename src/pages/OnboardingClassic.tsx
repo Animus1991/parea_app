@@ -28,7 +28,7 @@ const ACTIVITY_LEVELS = [
 
 const SCHEDULES = [
   { id: 'weekends', gr: 'Σαββατοκύριακα', en: 'Weekends', emoji: '🌅' },
-  { id: 'weekday_eve', gr: 'Βραδιές Εργάσιμων', en: 'Weekday Evenings', emoji: '🌆' },
+  { id: 'weekday_eve', gr: 'Βραδιές εργάσιμων', en: 'Weekday Evenings', emoji: '🌆' },
   { id: 'flexible', gr: 'Ελεύθερο πρόγραμμα', en: 'Flexible schedule', emoji: '🔄' },
   { id: 'mornings', gr: 'Πρωινά', en: 'Morning hours', emoji: '☀️' },
 ];
@@ -110,7 +110,7 @@ export default function OnboardingClassic() {
     { gr: 'Σχεδόν έτοιμος/η!', en: 'Almost done!' },
   ];
   const stepSubs = [
-    { gr: 'Διάλεξε τουλάχιστον 3 — θα σου δείχνουμε βραδιές που σου ταιριάζουν.', en: "Pick at least 3 — we'll show you nights that fit." },
+    { gr: 'Διάλεξε τουλάχιστον 3.', en: 'Pick at least 3.' },
     { gr: 'Πότε είσαι συνήθως διαθέσιμος/η και πόσο μακριά πας;', en: 'When are you usually free and how far will you go?' },
     { gr: 'Το όνομά σου και, αν θέλεις, λίγα λόγια για σένα.', en: 'Your name and, if you like, a few words about you.' },
   ];
@@ -192,8 +192,8 @@ export default function OnboardingClassic() {
                 >
                   {selectedInterests.length >= 3
                     ? t(
-                        `${selectedInterests.length} επιλεγμένα — μπορείς να συνεχίσεις`,
-                        `${selectedInterests.length} selected — you can continue`,
+                        `${selectedInterests.length} επιλεγμένα`,
+                        `${selectedInterests.length} selected`,
                       )
                     : t(
                         `${selectedInterests.length}/3 τουλάχιστον — επιλέξτε ακόμα ${3 - selectedInterests.length}`,

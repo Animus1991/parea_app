@@ -287,7 +287,7 @@ export function ChatMessageBubble({
               )}
             >
               <span className="block text-2xs font-bold">{message.replyTo.senderName}</span>
-              <span className="block text-2xs truncate max-w-[200px]">
+              <span className="block text-xs truncate max-w-[200px]">
                 {message.replyTo.body}
               </span>
             </button>
@@ -344,7 +344,7 @@ export function ChatMessageBubble({
                       type="button"
                       onClick={() => onVotePoll?.(message.id, opt.id)}
                       className={cn(
-                        'w-full text-left rounded-xl px-2.5 py-1.5 text-2xs font-semibold relative overflow-hidden border transition-colors',
+                        'w-full text-left rounded-xl px-2.5 py-1.5 text-xs font-semibold relative overflow-hidden border transition-colors',
                         mine
                           ? voted
                             ? 'border-brand-fg bg-brand-fg/20 text-brand-fg'

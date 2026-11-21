@@ -42,7 +42,7 @@ export function AdminOutingsPanel({ section }: { section: 'metrics' | 'appeals' 
                 <Icon className="h-3.5 w-3.5" aria-hidden /> {label}
               </p>
               <p className="mt-1 text-sm font-bold text-ink md:text-base">{value}</p>
-              <p className="text-2xs font-medium text-ink-muted">{hint}</p>
+              <p className="text-xs font-medium text-ink-muted">{hint}</p>
             </div>
           ))}
         </div>
@@ -72,7 +72,7 @@ export function AdminOutingsPanel({ section }: { section: 'metrics' | 'appeals' 
                   {u?.name ?? s.userId} · {strikeLabel(s.kind, t)}
                   {e ? ` · ${e.title}` : ''}
                 </p>
-                <p className="text-2xs font-medium text-ink-muted">
+                <p className="text-xs font-medium text-ink-muted">
                   {fmt(s.at)} · {s.reliabilityDelta} {t('αξιοπιστία', 'reliability')} · {t('ένσταση', 'appeal')} {fmt(s.appeal!.at)}
                 </p>
                 <blockquote className="mt-1 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-medium text-ink">{s.appeal!.text}</blockquote>

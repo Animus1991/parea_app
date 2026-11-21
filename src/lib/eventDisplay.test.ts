@@ -62,7 +62,7 @@ describe('eventDisplay', () => {
   });
 
   it('formats Greek euro amounts with a decimal comma', () => {
-    expect(formatEventPrice(event(), 'el')).toBe('8,50 €');
+    expect(formatEventPrice(event(), 'el')).toBe('8,50\u00a0€');
     expect(formatEventPrice(event(), 'en')).toBe('€8.50');
     expect(formatEventPrice(event({ isPaid: false, price: 0 }), 'el')).toBe('Δωρεάν');
   });
@@ -72,6 +72,8 @@ describe('eventDisplay', () => {
     expect(formatLocationArea('Thisio, Athens', 'en')).toBe('Thisio, Athens');
     expect(formatLocationArea('Koukaki, Athens', 'el')).toBe('Κουκάκι, Αθήνα');
     expect(formatLocationArea('Zappeio, Athens', 'el')).toBe('Ζάππειο, Αθήνα');
+    expect(formatLocationArea('Plaka, Athens', 'el')).toBe('Πλάκα, Αθήνα');
+    expect(formatLocationArea('Syntagma, Athens', 'el')).toBe('Σύνταγμα, Αθήνα');
     expect(translateEventTag('boardgames', (el) => el)).toBe('Επιτραπέζια');
     expect(translateEventTag('board games', (_el, en) => en)).toBe('Board games');
     expect(translateEventTag('nakamas nights', (el) => el)).toBe('Nakamas Nights');
@@ -109,5 +111,12 @@ describe('eventDisplay', () => {
         now,
       }),
     ).toBe('join');
+  });
+
+  it('keeps a plan later today upcoming (date and time, not date alone)', () => {
+    const morning = new Date(2026, 10, 21, 9, 6);
+    expect(isEventPast({ date: '2026-11-21', time: '11:00' }, morning)).toBe(false);
+    expect(isEventPast({ date: '2026-11-21', time: '08:00' }, morning)).toBe(true);
+    expect(isEventPast({ date: '2026-11-20', time: '23:30' }, morning)).toBe(true);
   });
 });

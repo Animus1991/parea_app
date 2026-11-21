@@ -43,6 +43,7 @@ import { OverflowMenu, type OverflowMenuItem } from './OverflowMenu';
 import { PostReactionBar } from './PostReactionBar';
 import { CommentComposer } from './CommentComposer';
 import { CommentThread } from './CommentThread';
+import { formatLocationArea } from '../../lib/eventDisplay';
 
 const LONG_TEXT = 420;
 
@@ -425,7 +426,7 @@ export function PostCard({
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-bold text-ink">{event.title}</span>
               <span className="block truncate text-xs font-medium text-ink-muted">
-                {formatPlanWhen(event.date, event.time, language)} · {event.locationArea}
+                {formatPlanWhen(event.date, event.time, language)} · {formatLocationArea(event.locationArea, language)}
               </span>
             </span>
             <ChevronRight className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />
