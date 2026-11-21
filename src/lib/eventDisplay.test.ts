@@ -5,6 +5,7 @@ import {
   getEventJoinState,
   isEventImminent,
   isEventPast,
+  isLiveCatalogEvent,
   showNightCoordinationTools,
   translateEventTag,
 } from './eventDisplay';
@@ -30,6 +31,12 @@ const event = (over: Partial<Event> = {}): Event => ({
 });
 
 describe('eventDisplay', () => {
+  it('keeps cancelled and archived nights off browse lists', () => {
+    expect(isLiveCatalogEvent(event())).toBe(true);
+    expect(isLiveCatalogEvent(event({ status: 'cancelled' }))).toBe(false);
+    expect(isLiveCatalogEvent(event({ status: 'archived' }))).toBe(false);
+  });
+
   it('treats a finished night as past and a later night as upcoming', () => {
     const now = new Date('2026-11-18T14:00:00');
     expect(isEventPast(event(), now)).toBe(true);

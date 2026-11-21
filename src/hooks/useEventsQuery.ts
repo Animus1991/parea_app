@@ -4,6 +4,7 @@ import { useStore } from '../store';
 import { queryKeys } from '../lib/queryClient';
 import { api } from '../lib/apiClient';
 import { mergeNotificationLists } from '../lib/notificationsUtil';
+import { isLiveCatalogEvent } from '../lib/eventDisplay';
 import type { Event } from '../types';
 import type { AppNotification } from '../data/mockNotifications';
 
@@ -54,7 +55,10 @@ export function useEventsQuery() {
 /** Normalized loading / error / data for list pages that depend on events. */
 export function useEventsResource() {
   const query = useEventsQuery();
-  const events = query.data ?? [];
+  const events = useMemo(
+    () => (query.data ?? []).filter(isLiveCatalogEvent),
+    [query.data],
+  );
   return {
     events,
     isLoading: query.isPending && events.length === 0,

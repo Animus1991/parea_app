@@ -467,7 +467,9 @@ export const useStore = create<AppState>()(
   hydrateEventsFromApi: (apiEvents) =>
     set((state) => {
       const apiIds = new Set(apiEvents.map((e) => e.id));
-      const extras = state.events.filter((e) => !apiIds.has(e.id));
+      const extras = state.events.filter(
+        (e) => !apiIds.has(e.id) && e.status !== 'cancelled' && e.status !== 'archived',
+      );
       return {
         events: extras.length ? [...apiEvents, ...extras] : apiEvents,
         eventsSource: extras.length ? 'mixed' : 'api',

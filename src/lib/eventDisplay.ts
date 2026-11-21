@@ -36,6 +36,11 @@ export function eventOccursAt(event: { date: string; time?: string }): Date {
   return new Date(`${event.date}T${padTime(event.time || '23:59')}`);
 }
 
+/** Browse lists hide these; the store may still keep them for history. */
+export function isLiveCatalogEvent(event: Pick<Event, 'status'>): boolean {
+  return event.status !== 'cancelled' && event.status !== 'archived';
+}
+
 export function isEventPast(
   event: { date: string; time?: string },
   now: Date = new Date(),

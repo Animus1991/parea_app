@@ -181,4 +181,13 @@ describe('«Ξανά μαζί» — mutual only (Φ28)', () => {
     const res = useStore.getState().pickSeeAgain('e5', ['u2']);
     expect(res).toEqual({ mutual: ['u2'], connected: [] });
   });
+
+  it('catalog hydrate keeps live mini outings and drops cancelled extras', () => {
+    useStore.getState().cancelEvent('mo1');
+    const catalog = useStore.getState().events.filter((e) => e.id !== 'mo1' && e.id !== 'mo2');
+    useStore.getState().hydrateEventsFromApi(catalog);
+    const ids = useStore.getState().events.map((e) => e.id);
+    expect(ids).toContain('mo2');
+    expect(ids).not.toContain('mo1');
+  });
 });
