@@ -208,6 +208,14 @@ export function PlansFormingCard({
                 </div>
               )}
               {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
+              {flags.coverFull && item.intent.message && (
+                <p className="card-copy leading-relaxed text-white/85">«{item.intent.message}»</p>
+              )}
+              {flags.coverFull && showMatchReason && item.matchReason && (
+                <p className="card-copy leading-relaxed text-white/85">
+                  {t(item.matchReason.el, item.matchReason.en)}
+                </p>
+              )}
               {flags.coverFull && (
                 <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-white/25 pt-4">
                   <button
@@ -689,6 +697,9 @@ export function PlansFormingGroupCard({
               </div>
             )}
             {flags.coverRoomy && <div className="min-h-16 flex-1" aria-hidden />}
+            {flags.coverFull && meta.note && (
+              <p className="card-copy leading-relaxed text-white/85">«{meta.note}»</p>
+            )}
             {flags.coverProgress && (
               <div className="mt-auto border-t border-white/25 pt-4">
                 <GroupProgressBar current={meta.filled} target={meta.target} onPhoto className={flags.coverFull ? 'mb-3' : undefined} />
@@ -708,6 +719,15 @@ export function PlansFormingGroupCard({
                     >
                       {t('Εκδήλωση', 'Event')}
                     </button>
+                    {onSuggestMerge && (
+                      <button
+                        type="button"
+                        onClick={onSuggestMerge}
+                        className="min-h-9 card-cta text-white/80 transition-colors hover:text-white"
+                      >
+                        {t('Συγχώνευση', 'Merge')}
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

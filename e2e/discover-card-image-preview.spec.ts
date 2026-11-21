@@ -108,4 +108,16 @@ test.describe('Discover card image picker', () => {
     await seekPicker.locator('[data-card-image-option="facts"]').click();
     await expect(page.locator('#main-content [data-image-depth]').first()).toHaveAttribute('data-image-depth', 'facts');
   });
+
+  test('Full cards keep hosting and Find Nakamas notes', async ({ page }) => {
+    await enterDemoGuest(page);
+    const hostChip = page.getByRole('button', { name: /Χωρίς διοργανωτή|Seeking organizer/ });
+    if (await hostChip.count()) {
+      await hostChip.click();
+      await expect(page.getByRole('button', { name: /Ανάλαβε τη διοργάνωση|Take on hosting/ }).first()).toBeVisible();
+    }
+    await page.goto('/buddy-seek');
+    await expect(page.locator('#main-content [data-image-depth]').first()).toHaveAttribute('data-image-depth', 'full');
+    await expect(page.getByText(/Φαγητό δρόμου με μικρή ομάδα|Street food with a small group/)).toBeVisible();
+  });
 });

@@ -53,9 +53,6 @@ test.describe('Find Nakamas', () => {
     await expect(page.getByText('Board game night')).toHaveCount(0);
     await expect(page.getByText('Chat πρώτα')).toHaveCount(0);
     await expect(page.getByText('Food & Drink')).toHaveCount(0);
-    const picker = page.locator('[data-card-image-picker]');
-    await picker.locator('[data-card-image-toggle]').click();
-    await picker.locator('[data-card-image-option="photo"]').click();
     await expect(page.getByText(/Φαγητό δρόμου με μικρή ομάδα|Street food with a small group/)).toBeVisible();
 
     await page.getByRole('button', { name: /Νέο αίτημα από εκδήλωση|New request from event/ }).click();
