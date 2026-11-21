@@ -520,7 +520,7 @@ export function ChatMessageBubble({
 
       {/* Reaction chips */}
       {reactionEntries.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-1 px-1">
+        <div className="flex flex-wrap gap-x-1 gap-y-3 mt-1 px-1">
           {reactionEntries.map(([em, ids]) => {
             const reacted = Boolean(viewerId && ids.includes(viewerId));
             return (

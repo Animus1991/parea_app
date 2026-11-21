@@ -193,7 +193,7 @@ export default function TagsPageContent() {
           >
             {group.letter}
           </h2>
-          <div className={cn('flex min-w-0 flex-1 flex-wrap', tight ? 'gap-1' : 'gap-1.5')}>
+          <div className={cn('flex min-w-0 flex-1 flex-wrap', tight ? 'gap-x-1 gap-y-3' : 'gap-x-1.5 gap-y-3')}>
             {group.tags.map(renderChip)}
           </div>
         </section>
@@ -277,7 +277,7 @@ export default function TagsPageContent() {
             {t(`${catalog.length} ετικέτες`, `${catalog.length} tags`)}
           </p>
         ) : selectedItems.length > 1 ? (
-          <div className="flex flex-wrap gap-1.5">{selectedItems.map(renderChip)}</div>
+          <div className="flex flex-wrap gap-x-1.5 gap-y-3">{selectedItems.map(renderChip)}</div>
         ) : null}
       </header>
 
@@ -324,7 +324,7 @@ export default function TagsPageContent() {
           <h2 className={cn(APP_TYPO.sectionLabel, 'mb-2 text-ink-muted')}>
             {t('Δημοφιλείς', 'Popular')}
           </h2>
-          <div className="flex flex-wrap gap-1.5">{popular.map(renderChip)}</div>
+          <div className="flex flex-wrap gap-x-1.5 gap-y-3">{popular.map(renderChip)}</div>
         </section>
       )}
 

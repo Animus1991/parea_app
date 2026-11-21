@@ -112,6 +112,8 @@
 
 Το ad-hoc `z-[90]` στο reaction tray αντικαταστάθηκε με `z-20` (τοπικό stacking, ίδιο με το comment tray).
 
+Το `::after` hit-area των chip/tab (Animus round 21, 6px πάνω-κάτω) έκλεβε το κάτω άκρο του chip από πάνω όταν η σειρά τύλιγε με `gap-1`. Τα chip/tab μένουν στα 2px (ήδη ≥28px)· οι wrapping αντιδράσεις chat κρατούν 6px με `gap-y-3`. E2E: compact tags, κλικ στο κάτω άκρο.
+
 ## 9. Cloudflare preview
 
 Το workflow `cloudflare-pages.yml` χρειάζεται `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` στο fork για `*.pages.dev`. Χωρίς αυτά το job παραλείπει το deploy.

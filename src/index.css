@@ -1275,8 +1275,17 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   .tap-area-y {
     position: relative;
   }
+  /* Chips and tabs are already ≥28px tall. A 6px vertical halo steals taps from
+     the row above when those controls wrap with gap-1 / gap-1.5 (4–6px). Keep a
+     2px cushion so wrapping rows never overlap a neighbour's visible edge. */
   .filter-chip::after,
-  [role='tab']::after,
+  [role='tab']::after {
+    content: '';
+    position: absolute;
+    inset: -2px 0;
+  }
+  /* Small links and reaction pills still need the full 6px. Wrapping rows that
+     use this class must leave ≥12px of row gap (see chat reactions). */
   .tap-area-y::after {
     content: '';
     position: absolute;
