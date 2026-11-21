@@ -6,12 +6,16 @@ import { StrawHatSpin } from '../illustrations/StrawHatMark';
 import { cn } from '../../lib/utils';
 import { CHAT_HAT_FAB, chatHatById } from '../../lib/chatHatStyles';
 import { useUIStore } from '../../store/uiStore';
+import { useDraggableChatHat } from '../../hooks/useDraggableChatHat';
 
 export function PopupChatLauncher({ onClick, className }: { onClick: () => void; className?: string }) {
   const { t } = useLanguage();
   const inboxOpen = useChatStore((s) => s.inboxOpen);
   const hatStyleId = useUIStore((s) => s.chatHatStyle);
   const hatSrc = chatHatById(hatStyleId)?.src;
+  const chatHatPos = useUIStore((s) => s.chatHatPos);
+  const setChatHatPos = useUIStore((s) => s.setChatHatPos);
+  const drag = useDraggableChatHat(chatHatPos, setChatHatPos);
   const conversations = useChatStore((s) => s.conversations);
   const unread = useMemo(
     () => conversations.reduce((n, c) => n + (c.status === 'archived' ? 0 : c.unreadCount), 0),
@@ -25,18 +29,40 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
   return (
     <button
       type="button"
-      onClick={onClick}
-      aria-label={t('Συνομιλίες σχεδίων', 'Plan chats')}
+      onClick={(event) => {
+        if (drag.shouldIgnoreClick()) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        onClick();
+      }}
+      onPointerDown={drag.onPointerDown}
+      onPointerMove={drag.onPointerMove}
+      onPointerUp={drag.onPointerUp}
+      onPointerCancel={drag.onPointerCancel}
+      onKeyDown={drag.onKeyDown}
+      aria-label={t('Συνομιλίες σχεδίων. Σύρε για μετακίνηση.', 'Plan chats. Drag to move.')}
       aria-expanded={inboxOpen}
+      title={t('Σύρε για μετακίνηση · πάτησε για συνομιλίες', 'Drag to move · tap to open chats')}
+      data-chat-hat-launcher=""
+      data-placed={drag.placed ? '1' : undefined}
+      style={
+        drag.placed
+          ? { left: drag.placed.left, top: drag.placed.top, right: 'auto', bottom: 'auto' }
+          : undefined
+      }
       className={cn(
         'chat-hat-fab fixed z-chat-toggle inline-flex items-center justify-center p-0 m-0',
         'bg-transparent border-0 shadow-none rounded-full overflow-visible',
-        'right-3 md:right-6 copilot-shift',
+        'touch-none select-none cursor-grab',
+        drag.dragging && 'cursor-grabbing scale-[1.04]',
+        drag.placed ? 'right-auto bottom-auto' : 'right-3 md:right-6 copilot-shift',
         hideOnPhones && 'max-md:hidden',
         className,
       )}
     >
-      <span className="relative inline-flex">
+      <span className="relative inline-flex pointer-events-none">
         <StrawHatSpin
           open={inboxOpen}
           src={hatSrc}

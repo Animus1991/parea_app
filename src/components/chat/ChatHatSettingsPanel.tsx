@@ -11,6 +11,8 @@ export function ChatHatSettingsPanel() {
   const a = usePageContrast();
   const selected = useUIStore((s) => s.chatHatStyle);
   const setChatHatStyle = useUIStore((s) => s.setChatHatStyle);
+  const chatHatPos = useUIStore((s) => s.chatHatPos);
+  const setChatHatPos = useUIStore((s) => s.setChatHatPos);
   const current = chatHatById(selected) ?? CHAT_HAT_STYLES[0];
 
   return (
@@ -23,8 +25,8 @@ export function ChatHatSettingsPanel() {
       </p>
       <p className={cn('text-xs mt-1 mb-4 leading-relaxed', a.sub)}>
         {t(
-          'Διάλεξε το ψάθινο καπέλο του κουμπιού συνομιλιών. Μόνο αυτό εμφανίζεται στην εφαρμογή — εδώ βλέπεις όλες τις επιλογές.',
-          'Choose the straw hat for the chat button. Only that hat appears in the app — every option lives here.',
+          'Διάλεξε το ψάθινο καπέλο του κουμπιού συνομιλιών. Μόνο αυτό εμφανίζεται στην εφαρμογή — εδώ βλέπεις όλες τις επιλογές. Σύρε το καπέλο οπουδήποτε στην οθόνη· ένα απλό πάτημα ανοίγει τις συνομιλίες.',
+          'Choose the straw hat for the chat button. Only that hat appears in the app — every option lives here. Drag the hat anywhere on the screen; a tap opens chats.',
         )}
       </p>
       <div className="flex flex-col items-center gap-2 mb-4">
@@ -37,6 +39,21 @@ export function ChatHatSettingsPanel() {
         >
           {t('Ενεργό', 'Active')}: {t(current.labelEl, current.labelEn)}
         </span>
+        {chatHatPos && (
+          <button
+            type="button"
+            onClick={() => {
+              setChatHatPos(null);
+              toast.success(t('Η θέση του καπέλου επαναφέρθηκε', 'Chat hat position reset'));
+            }}
+            className={cn(
+              'text-xs font-bold underline underline-offset-2',
+              a.isDark ? 'text-cyan-300' : 'text-cyan-700',
+            )}
+          >
+            {t('Επαναφορά θέσης', 'Reset position')}
+          </button>
+        )}
       </div>
       <div
         role="radiogroup"

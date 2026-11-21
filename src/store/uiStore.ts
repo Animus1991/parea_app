@@ -4,6 +4,7 @@ import {
   DEFAULT_QUICK_NAV_LAYOUT,
   type QuickNavLayout,
 } from '../lib/quickNavLayout';
+import { isChatHatAnchor, type ChatHatAnchor } from '../lib/chatHatPosition';
 import { CHAT_HAT_STYLES, DEFAULT_CHAT_HAT_STYLE } from '../lib/chatHatStyles';
 
 interface UIState {
@@ -29,6 +30,9 @@ interface UIState {
   setChatHatStyle: (id: string) => void;
   dismissChatHat: (id: string) => void;
   restoreChatHats: () => void;
+  /** Normalized chat-hat screen position. Null keeps the default corner. */
+  chatHatPos: ChatHatAnchor | null;
+  setChatHatPos: (pos: ChatHatAnchor | null) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -53,6 +57,9 @@ export const useUIStore = create<UIState>()(
       resetQuickNavLayout: () => set({ quickNavLayout: DEFAULT_QUICK_NAV_LAYOUT }),
       chatHatStyle: DEFAULT_CHAT_HAT_STYLE,
       dismissedChatHats: [],
+      chatHatPos: null,
+      setChatHatPos: (chatHatPos) =>
+        set({ chatHatPos: chatHatPos && isChatHatAnchor(chatHatPos) ? chatHatPos : null }),
       setChatHatStyle: (chatHatStyle) =>
         set((s) => ({
           chatHatStyle,
@@ -81,6 +88,7 @@ export const useUIStore = create<UIState>()(
         aiHintsHidden: s.aiHintsHidden,
         chatHatStyle: s.chatHatStyle,
         dismissedChatHats: s.dismissedChatHats,
+        chatHatPos: s.chatHatPos,
       }),
     },
   ),

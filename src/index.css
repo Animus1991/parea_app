@@ -128,6 +128,10 @@
 .chat-hat-fab {
   bottom: var(--chat-hat-bottom);
 }
+.chat-hat-fab[data-placed] {
+  bottom: auto;
+  right: auto;
+}
 @media (max-width: 767px) {
   html[data-chat-hat='event'] .chat-hat-fab {
     bottom: var(--chat-hat-bottom-event);
@@ -182,6 +186,12 @@
     bottom: 1.5rem;
     max-height: min(520px, calc(100dvh - var(--header-h) - 4.5rem));
   }
+}
+.chat-hat-fab[data-placed],
+html[data-chat-hat='event'] .chat-hat-fab[data-placed],
+html[data-chat-hat='composer'] .chat-hat-fab[data-placed] {
+  bottom: auto;
+  right: auto;
 }
 
 .hero-search-field {

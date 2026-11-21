@@ -46,6 +46,31 @@ test.describe('Nakamas Chat preview', () => {
     await expect(chatsButton(page).locator('img[src="/chat-hats/12-chinstrap.png"]')).toBeVisible();
   });
 
+  test('the chat hat can be dragged without opening, then tapped', async ({ page }) => {
+    await enterDemoGuest(page);
+    const btn = chatsButton(page);
+    const before = await btn.boundingBox();
+    expect(before).toBeTruthy();
+    const start = { x: before!.x + before!.width / 2, y: before!.y + before!.height / 2 };
+    await page.mouse.move(start.x, start.y);
+    await page.mouse.down();
+    await page.mouse.move(start.x - 90, start.y - 160, { steps: 12 });
+    await page.mouse.up();
+    await expect(inbox(page)).toHaveCount(0);
+    const after = await btn.boundingBox();
+    expect(after).toBeTruthy();
+    expect(after!.x).toBeLessThan(before!.x - 40);
+    expect(after!.y).toBeLessThan(before!.y - 40);
+    const stored = await page.evaluate(() => {
+      const raw = localStorage.getItem('nakamas-ui');
+      return raw ? JSON.parse(raw) : null;
+    });
+    expect(stored?.state?.chatHatPos?.nx).toBeGreaterThanOrEqual(0);
+    expect(stored?.state?.chatHatPos?.nx).toBeLessThan(1);
+    await btn.click();
+    await expect(inbox(page)).toBeVisible();
+  });
+
   test('the floated straw hat opens plan chats', async ({ page }) => {
     await enterDemoGuest(page);
     const btn = chatsButton(page);
