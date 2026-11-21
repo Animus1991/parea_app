@@ -60,6 +60,7 @@ export default function CollectionPageContent() {
     return (
       <div className={cn(PAGE_FILL, 'py-6')}>
         <EmptyState
+          character="helper"
           title={t('Η συλλογή δεν βρέθηκε', 'Collection not found')}
           description={t('Ίσως μετακινήθηκε — δες όλες τις συλλογές.', 'It may have moved — see all collections.')}
           actionLabel={t('Όλες οι συλλογές', 'All collections')}
@@ -99,8 +100,8 @@ export default function CollectionPageContent() {
       </div>
       {list.length === 0 ? (
         <EmptyState
+          character="explorer"
           title={t('Τίποτα εδώ αυτή τη στιγμή', 'Nothing here right now')}
-          description={t('Δοκίμασε χωρίς φίλτρα ή δες άλλη συλλογή.', 'Try without filters or see another collection.')}
           actionLabel={formingOnly || !showPast ? t('Δείξε όλες', 'Show all') : t('Άλλη συλλογή', 'Another collection')}
           onAction={() => {
             if (formingOnly || !showPast) {

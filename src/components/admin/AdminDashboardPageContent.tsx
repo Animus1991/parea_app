@@ -21,7 +21,7 @@ import { AdminBrandingPanel } from './AdminBrandingPanel';
 import { AdminSSOPanel } from './AdminSSOPanel';
 import { toast } from 'sonner';
 import { useAiAuditStore, type AiAuditStatus } from '../../store/aiAuditStore';
-import { intlLocale } from '../../lib/dateLocale';
+import { intlLocale, formatPlanWhenDay } from '../../lib/dateLocale';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { AppSelect } from '../common/AppSelect';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
@@ -492,7 +492,7 @@ export default function AdminDashboardPageContent() {
                         {report.description || t('Χωρίς περιγραφή', 'No description')}
                       </p>
                       <p className={cn('text-xs mt-1', a.muted)}>
-                        {report.severity} • {new Date(report.createdAt).toLocaleDateString(intlLocale(language))}
+                        {report.severity} • {formatPlanWhenDay(report.createdAt, language)}
                       </p>
                     </div>
                   </div>

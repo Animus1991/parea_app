@@ -196,7 +196,7 @@ export function UserMenu({ children, label, header, showAccountLinks = false }: 
         aria-haspopup="menu"
         aria-expanded={open}
         className={cn(
-          'flex items-center space-x-2 relative group rounded-full outline-none focus-visible:ring-2',
+          'tap-area flex items-center space-x-2 relative group rounded-full outline-none focus-visible:ring-2',
           tok.isDark ? 'focus-visible:ring-white/40' : 'focus-visible:ring-accent/40',
           !children && cn('justify-center px-2.5 py-1.5 rounded-lg min-h-8 min-w-8', tok.chipButton),
         )}

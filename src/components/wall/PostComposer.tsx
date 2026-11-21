@@ -16,6 +16,7 @@ import { AudienceChip } from './AudienceChip';
 import { AudiencePickerModal } from './AudiencePickerModal';
 import { PersonAvatar } from './PersonAvatar';
 import { cn } from '../../lib/utils';
+import { formatPlanWhenDay } from '../../lib/dateLocale';
 
 const COMPOSER_ROW =
   'flex w-full flex-wrap items-stretch justify-between gap-x-2 gap-y-1.5';
@@ -75,7 +76,7 @@ export function PostComposer({
   /** Inside a dialog the person just opened: start typing right away. */
   focusOnOpen?: boolean;
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const me = useStore((s) => s.currentUser);
   const users = useStore((s) => s.users);
@@ -293,7 +294,7 @@ export function PostComposer({
                     >
                       <CalendarDays className="h-3.5 w-3.5 shrink-0" aria-hidden />
                       <span className="min-w-0 flex-1 truncate">{e.title}</span>
-                      <span className="shrink-0 font-medium text-ink-muted">{e.date}</span>
+                      <span className="shrink-0 font-medium text-ink-muted">{formatPlanWhenDay(e.date, language)}</span>
                     </button>
                   </li>
                 ))}

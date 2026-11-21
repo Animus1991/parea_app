@@ -221,6 +221,7 @@ export default function TagsPageContent() {
       >
         {taggedEvents.length === 0 ? (
           <EmptyState
+            character="explorer"
             icon={Hash}
             title={t('Δεν υπάρχουν εκδηλώσεις με αυτές τις ετικέτες', 'No events with these tags')}
             description={t(
@@ -347,9 +348,9 @@ export default function TagsPageContent() {
 
       {visibleCatalog.length === 0 ? (
         <EmptyState
+          character="explorer"
           icon={Search}
           title={t('Καμία ετικέτα δεν ταιριάζει', 'No tags match')}
-          description={t('Δοκίμασε άλλη λέξη ή καθάρισε την αναζήτηση.', 'Try another word or clear the search.')}
           actionLabel={t('Καθαρισμός', 'Clear search')}
           onAction={() => setQuery('')}
         />

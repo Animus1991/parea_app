@@ -7,6 +7,7 @@ import { tierLabelEl, tierLabelEn } from '../../lib/trust';
 import { cn } from '../../lib/utils';
 import type { User } from '../../types';
 import type { EventDetailMapAccent } from './EventDetailMapSection';
+import { PhotoOrInitials } from '../common/PhotoOrInitials';
 
 interface OrganizerTokens {
   sectionBorder: string;
@@ -180,12 +181,9 @@ export function EventDetailOrganizerSection({
             )}
           >
             {organizer.photoUrl ? (
-              <img
-                referrerPolicy="no-referrer"
-                src={organizer.photoUrl}
-                alt={organizer.name}
-                className="w-full h-full object-cover"
-              />
+              <span className="flex h-full w-full items-center justify-center text-xs font-bold">
+                <PhotoOrInitials src={organizer.photoUrl} name={organizer.name} imgClassName="w-full h-full object-cover" />
+              </span>
             ) : (
               <div
                 className={cn(

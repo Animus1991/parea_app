@@ -236,6 +236,7 @@ export default function InboxPageContent() {
           <div className={cn('rounded-2xl border shadow-soft overflow-hidden', p.cardSurface, p.borderB)}>
             {filteredChats.length === 0 ? (
               <EmptyState
+                character="crew"
                 icon={MessageSquare}
                 title={
                   search
@@ -244,16 +245,7 @@ export default function InboxPageContent() {
                       ? t('Δεν υπάρχουν παλαιότερες συνομιλίες', 'No past conversations')
                       : t('Δεν υπάρχουν συνομιλίες', 'No conversations')
                 }
-                description={
-                  search
-                    ? t('Δοκίμασε άλλον όρο ή καθάρισε την αναζήτηση.', 'Try another term or clear the search.')
-                    : chatFilter === 'past'
-                      ? t('Οι ολοκληρωμένες συνομιλίες εμφανίζονται εδώ.', 'Completed conversations appear here.')
-                      : t(
-                          'Οι συνομιλίες ομάδας εμφανίζονται εδώ μετά από αποδοχή.',
-                          'Group chats appear here after you accept a join.',
-                        )
-                }
+                description={!search && chatFilter !== 'past' ? t('Οι συνομιλίες ομάδας εμφανίζονται εδώ μετά από αποδοχή.', 'Group chats appear here after you accept a join.') : undefined}
                 actionLabel={
                   search
                     ? t('Καθαρισμός αναζήτησης', 'Clear search')

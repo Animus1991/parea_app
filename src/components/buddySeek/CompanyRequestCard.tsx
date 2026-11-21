@@ -10,6 +10,7 @@ import { cn } from '../../lib/utils';
 import { CardInterestLine } from '../common/CardInterestLine';
 import type { CompanyRequest } from '../../types/companyRequest';
 import type { Event, User } from '../../types';
+import { PhotoOrInitials } from '../common/PhotoOrInitials';
 
 export function CompanyRequestCard({
   request,
@@ -60,12 +61,9 @@ export function CompanyRequestCard({
     <article className={cn('nakamas-card rounded-2xl border p-3', shell, compact && 'p-2.5')}>
       <div className="flex gap-2.5">
         {projection.showPhoto && seeker.photoUrl ? (
-          <img
-            src={seeker.photoUrl}
-            alt=""
-            className="w-10 h-10 rounded-xl object-cover shrink-0"
-            referrerPolicy="no-referrer"
-          />
+          <span className="flex w-10 h-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-accent-soft text-xs font-bold text-ink">
+            <PhotoOrInitials src={seeker.photoUrl} name={projection.displayName || ""} imgClassName="h-full w-full object-cover" />
+          </span>
         ) : (
           <div
             className={cn(

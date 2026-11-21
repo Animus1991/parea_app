@@ -34,13 +34,14 @@ export function ResourceStateGate({
   if (isError) {
     return (
       <EmptyState
+        character="helper"
         icon={errorIcon}
         title={errorTitle ?? t('Αδυναμία φόρτωσης', 'Could not load')}
         description={
           errorDescription ??
           t(
-            'Έλεγξε τη σύνδεσή σου και δοκίμασε ξανά.',
-            'Check your connection and try again.',
+            'Έλεγξε τη σύνδεσή σου.',
+            'Check your connection.',
           )
         }
         actionLabel={onRetry ? t('Δοκιμή ξανά', 'Try again') : undefined}

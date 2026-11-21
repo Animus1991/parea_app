@@ -46,6 +46,7 @@ import { CalendarHourlySchedule } from "./CalendarHourlySchedule";
 import type { Event } from "../../types";
 import { usePublishPageSnapshot } from "../../hooks/usePublishPageSnapshot";
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { formatPlanWhenDay } from '../../lib/dateLocale';
 
 export default function MyCalendarPageContent() {
   const navigate = useNavigate();
@@ -432,12 +433,9 @@ export default function MyCalendarPageContent() {
       >
       {upcomingEvents.length === 0 && (
         <EmptyState
+          character="explorer"
           icon={Compass}
           title={t("Δεν έχεις προγραμματισμένες εκδηλώσεις", "No planned events yet")}
-          description={t(
-            "Εξερεύνησε εκδηλώσεις και μπες σε ομάδα — θα εμφανίζονται στο ημερολόγιο.",
-            "Explore events and join a group — they will show on your calendar.",
-          )}
           actionLabel={t("Εξερεύνησε εκδηλώσεις", "Explore experiences")}
           onAction={() => navigate("/")}
           secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
@@ -624,7 +622,7 @@ export default function MyCalendarPageContent() {
                           p.muted,
                         )}
                       >
-                        {format(event.parsedDate, "d MMM", { locale: dateLocale })}
+                        {formatPlanWhenDay(event.parsedDate, language)}
                       </div>
                       <div className="w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)] shrink-0" />
                       <div
@@ -672,6 +670,7 @@ export default function MyCalendarPageContent() {
             </ul>
           ) : (
             <EmptyState
+              character="explorer"
               icon={CalendarClock}
               title={t('Δεν υπάρχουν εκδηλώσεις για αυτή την ημέρα.', 'No events on this day.')}
               className="mt-3"

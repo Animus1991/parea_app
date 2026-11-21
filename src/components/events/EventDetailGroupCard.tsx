@@ -10,6 +10,7 @@ import { redundantClick } from '../../lib/a11y';
 import type { Event, Group } from '../../types';
 import { GroupInsights } from '../outings/GroupInsights';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
+import { PhotoOrInitials } from '../common/PhotoOrInitials';
 
 export type EventDetailGroupAccent = 'classic' | 'vibrant' | 'neon' | 'bento';
 
@@ -244,12 +245,9 @@ export function EventDetailGroupCard({
                 >
                   {groupHost.photoUrl &&
                   shouldRevealMemberPhoto(event.date, event.time, group, groupHost.id, false) ? (
-                    <img
-                      referrerPolicy="no-referrer"
-                      src={groupHost.photoUrl}
-                      alt={groupHost.name}
-                      className="h-full w-full object-cover"
-                    />
+                    <span className="flex h-full w-full items-center justify-center text-xs font-bold">
+                      <PhotoOrInitials src={groupHost.photoUrl} name={groupHost.name} imgClassName="h-full w-full object-cover" />
+                    </span>
                   ) : (
                     <div
                       className={cn(

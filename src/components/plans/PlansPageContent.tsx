@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card } from '../common/Card';
 import { MessageCircle, MapPin, Calendar, Clock, ShieldAlert, CheckCircle, XCircle, Users, CalendarClock, CalendarCheck, Compass, PartyPopper } from 'lucide-react';
 import { useStore } from '../../store';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { parseISO, differenceInDays } from 'date-fns';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
@@ -207,6 +207,8 @@ export default function PlansPageContent() {
             <CardImageDepthFrame
               event={event}
               depth={cardImage.depth}
+              onPhotoClick={() => navigate(`/events/${event.id}`)}
+              photoAriaLabel={event.title}
               top={
                 isConfirmed ? (
                   <div className="absolute top-2 left-2 z-10 bg-brand/95 text-white px-2 py-0.5 rounded-lg text-2xs font-bold tracking-wide">
@@ -221,7 +223,14 @@ export default function PlansPageContent() {
               overlay={
                 <>
                   <div>
-                    <h3 className={cn(PLANS_TYPO.cardTitle, 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]')}>{event.title}</h3>
+                    <h3 className={cn(PLANS_TYPO.cardTitle, 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.75)]')}>
+                      <Link
+                        to={`/events/${event.id}`}
+                        className="tap-area-y rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+                      >
+                        {event.title}
+                      </Link>
+                    </h3>
                     {group && isPlansFormingGroupId(group.id) && (
                       <p className="card-meta mt-0.5 text-white/80">
                         {t('Από Βρες Nakamas', 'From Find Nakamas')}
@@ -313,7 +322,14 @@ export default function PlansPageContent() {
               {!flags.coverTitle && (
               <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0">
-                  <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>{event.title}</h3>
+                  <h3 className={cn(PLANS_TYPO.cardTitle, p.head)}>
+                    <Link
+                      to={`/events/${event.id}`}
+                      className="tap-area-y rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    >
+                      {event.title}
+                    </Link>
+                  </h3>
                   {group && isPlansFormingGroupId(group.id) && (
                     <p className={cn('card-meta mt-0.5', p.muted)}>
                       {t('Από Βρες Nakamas', 'From Find Nakamas')}
@@ -378,13 +394,6 @@ export default function PlansPageContent() {
                 >
                   <MessageCircle className="h-3.5 w-3.5" /> {t('Chat', 'Chat')}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => navigate(`/events/${event.id}`)}
-                  className={cn('min-h-8 px-2 text-xs font-bold', p.muted)}
-                >
-                  {t('Λεπτομέρειες', 'Details')}
-                </button>
                 {/* Leaving stays one tap away, but quiet: it is confirmed in a dialog. */}
                 <button
                   type="button"
@@ -409,7 +418,6 @@ export default function PlansPageContent() {
               icon={Compass}
               character="explorer"
               title={t(`Κανένα επερχόμενο σχέδιο`, `No upcoming plans`)}
-              description={t('Βρες μια βραδιά στην Ανακάλυψη.', 'Find a night on Discover.')}
               actionLabel={t(`Ανακάλυψη`, `Discover`)}
               onAction={() => navigate('/')}
               askAi
@@ -542,9 +550,9 @@ export default function PlansPageContent() {
         {pendingEvents.length === 0 && (
           <div className="col-span-full">
             <EmptyState
+              character="crew"
               icon={Clock}
               title={t('Καμία εκκρεμής ομάδα', 'No pending groups')}
-              description={t('Όταν δηλώσεις ενδιαφέρον, θα εμφανιστεί εδώ.', 'When you express interest, it shows up here.')}
               actionLabel={t('Ανακάλυψη', 'Discover')}
               onAction={() => navigate('/')}
               askAi
@@ -625,9 +633,9 @@ export default function PlansPageContent() {
         {pastEvents.length === 0 && (
           <div className="col-span-full">
             <EmptyState
+              character="spark"
               icon={CalendarCheck}
               title={t('Κανένα ολοκληρωμένο σχέδιο', 'No completed plans yet')}
-              description={t('Όσα παρακολουθήσεις θα μείνουν εδώ.', 'Nights you attend will stay here.')}
               actionLabel={t('Ανακάλυψη', 'Discover')}
               onAction={() => navigate('/')}
               askAi

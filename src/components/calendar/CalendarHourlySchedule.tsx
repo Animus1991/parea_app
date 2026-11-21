@@ -1,5 +1,4 @@
-import { format, isSameDay } from 'date-fns';
-import { el as elLocale, enUS } from 'date-fns/locale';
+import { isSameDay } from 'date-fns';
 import { motion } from 'motion/react';
 import { MapPin, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +7,7 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
 import type { CalendarEventWithDate } from '../../hooks/useUserCalendarEvents';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { formatLongDay } from '../../lib/dateLocale';
 
 export interface CalendarHourlyScheduleProps {
   day: Date;
@@ -41,7 +41,7 @@ export function CalendarHourlySchedule({ day, events, onClose }: CalendarHourlyS
       >
         <div className={cn('p-5 flex items-center justify-between border-b', p.borderB)}>
           <div>
-            <h3 className={cn('font-bold text-sm md:text-base', p.head)}>{format(day, 'd MMMM yyyy', { locale: language === 'el' ? elLocale : enUS })}</h3>
+            <h3 className={cn('font-bold text-sm md:text-base', p.head)}>{formatLongDay(day, language)}</h3>
             <p className={cn('text-xs font-bold tracking-widest', p.muted)}>
               {tu('Ημερήσιο Πρόγραμμα', 'Daily Schedule')}
             </p>

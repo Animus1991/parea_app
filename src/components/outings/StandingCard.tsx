@@ -9,6 +9,7 @@ import { Card } from '../common/Card';
 import { SectionLabel } from '../common/SectionLabel';
 import { TrustLadder } from '../trust/TrustLadder';
 import { cn } from '../../lib/utils';
+import { formatPlanWhenDay } from '../../lib/dateLocale';
 
 /**
  * Graduated consequences, explained (Timeleft, adapted): where you stand,
@@ -101,7 +102,7 @@ export function StandingCard({ className }: { className?: string }) {
                   {event ? ` · ${event.title}` : ''}
                 </p>
                 <p className="text-xs font-medium text-ink-muted">
-                  {new Date(s.at).toLocaleDateString(language === 'el' ? 'el-GR' : 'en-GB')} · {s.reliabilityDelta} {t('αξιοπιστία', 'reliability')}
+                  {formatPlanWhenDay(s.at, language)} · {s.reliabilityDelta} {t('αξιοπιστία', 'reliability')}
                   {!active.has(s.id) ? t(' · δεν μετράει πια', ' · no longer counts') : ''}
                 </p>
                 {s.appeal ? (

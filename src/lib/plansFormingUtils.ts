@@ -1,10 +1,9 @@
-import { format, parseISO } from 'date-fns';
-import { el } from 'date-fns/locale';
 import { sharedInterestCount } from './companyRequestUtils';
 import { interestLabel } from './interests';
 import type { CompanyRequest, MeetingPreference } from '../types/companyRequest';
 import type { Event, Group, User } from '../types';
 import type { BuddySeekDiscoveryItem } from '../hooks/useBuddySeekDiscovery';
+import { formatPlanWhen } from './dateLocale';
 
 export type PlanRoleKind = 'seeker' | 'group_builder' | 'coordinator';
 
@@ -118,11 +117,8 @@ export function formatEventDateTimeFull(event: Event): { el: string; en: string 
     return { el: 'Ημερομηνία προς επιβεβαίωση', en: 'Date to be confirmed' };
   }
   try {
-    const iso = `${event.date}T${event.time || '20:00'}:00`;
-    const d = parseISO(iso);
-    const elStr = format(d, "EEEE d MMMM yyyy · HH:mm", { locale: el });
-    const enStr = format(d, 'EEEE, MMMM d, yyyy · h:mm a');
-    return { el: elStr, en: enStr };
+    // The app's one short date, same as every other card.
+    return { el: formatPlanWhen(event.date, event.time, 'el'), en: formatPlanWhen(event.date, event.time, 'en') };
   } catch {
     return formatEventSchedule(event);
   }

@@ -273,7 +273,7 @@ export default function ChallengesClassic() {
                   {!done && (
                     <button
                       onClick={() => toggleJoin(c.id)}
-                      className={`text-xs font-bold px-4 py-1.5 rounded-full transition-all duration-200 ${
+                      className={`tap-area-y text-xs font-bold px-4 py-1.5 rounded-full transition-all duration-200 ${
                         joined
                           ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/15'
                           : 'bg-ink text-white hover:bg-black'

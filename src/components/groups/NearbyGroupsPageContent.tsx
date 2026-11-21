@@ -710,12 +710,9 @@ export default function NearbyGroupsPageContent() {
           >
           {filteredLocalGroups.length === 0 ? (
             <EmptyState
+              character="explorer"
               icon={MapIcon}
               title={t("Καμία εκδήλωση στην ακτίνα", "No events in this radius")}
-              description={t(
-                "Δοκίμασε μεγαλύτερη ακτίνα ή διαφορετικά φίλτρα.",
-                "Try a larger radius or different filters.",
-              )}
               actionLabel={
                 radius < 15
                   ? t("Ορισμός ακτίνας στα 15km", "Set radius to 15km")

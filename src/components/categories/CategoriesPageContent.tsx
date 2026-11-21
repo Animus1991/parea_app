@@ -364,6 +364,7 @@ export default function CategoriesPageContent() {
 
       {sortedCategories.length === 0 && filteredEvents.length === 0 && (
         <EmptyState
+          character="explorer"
           icon={Search}
           title={t('Δεν βρέθηκαν αποτελέσματα', 'No categories match your search')}
           actionLabel={t('Καθαρισμός', 'Clear search')}
@@ -468,9 +469,9 @@ export default function CategoriesPageContent() {
             {filteredEvents.length === 0 ? (
               <div className="col-span-full">
                 <EmptyState
+                  character="explorer"
                   icon={Bookmark}
                   title={t('Δεν βρέθηκαν εκδηλώσεις', 'No events found')}
-                  description={t('Δοκίμασε άλλα φίλτρα ή κατηγορία.', 'Try changing filters or category.')}
                   actionLabel={t('Καθαρισμός φίλτρων', 'Reset Filters')}
                   onAction={() => {
                     setActiveCategory(null);

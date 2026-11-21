@@ -16,6 +16,7 @@ import {
 import { toast } from "sonner";
 import { Button } from "../common/Button";
 import { applyBundledLeafletPins } from '../../lib/leafletDefaultIcon';
+import { PhotoOrInitials } from '../common/PhotoOrInitials';
 
 applyBundledLeafletPins();
 
@@ -284,11 +285,9 @@ export function LiveEventTracker({ groupId }: { groupId: string }) {
                   <div className="flex items-center gap-2 min-w-[120px]">
                     <div className="w-8 h-8 rounded-full overflow-hidden bg-indigo-100 shrink-0">
                       {loc.photoUrl ? (
-                        <img
-                          src={loc.photoUrl}
-                          alt={loc.name}
-                          className="w-full h-full object-cover"
-                        />
+                        <span className="flex h-full w-full items-center justify-center text-xs font-bold">
+                          <PhotoOrInitials src={loc.photoUrl} name={loc.name} imgClassName="w-full h-full object-cover" />
+                        </span>
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-indigo-600 font-bold text-xs">
                           {loc.name.substring(0, 2)}

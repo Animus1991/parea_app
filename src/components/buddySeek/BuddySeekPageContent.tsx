@@ -34,6 +34,7 @@ import {
   type BuddySeekFilterKey,
 } from './BuddySeekChrome';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { formatPlanWhen } from '../../lib/dateLocale';
 import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
 import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
 
@@ -395,7 +396,7 @@ export default function BuddySeekPageContent() {
               )}
             >
               <span className={cn('font-bold block', a.head)}>{event.title}</span>
-              <span className={cn('text-xs', a.muted)}>{event.date} · {formatLocationArea(event.locationArea, language)}</span>
+              <span className={cn('text-xs', a.muted)}>{formatPlanWhen(event.date, event.time, language)} · {formatLocationArea(event.locationArea, language)}</span>
             </button>
           ))}
           {upcomingEvents.length === 0 && (

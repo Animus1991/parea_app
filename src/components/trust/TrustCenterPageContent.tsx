@@ -1,6 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { format, parseISO } from 'date-fns';
-import { el as elLocale, enUS } from 'date-fns/locale';
 import { TabBar } from '../common/TabBar';
 import { ShieldCheck, Phone, Mail, CreditCard, UserCheck, TrendingUp, History as HistoryIcon, Check, ChevronDown, BadgeCheck } from 'lucide-react';
 import { Card } from '../common/Card';
@@ -17,6 +15,7 @@ import type { TrustTier } from '../../types';
 import { StandingCard } from '../outings/StandingCard';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import VerificationCenterPageContent from '../verification/VerificationCenterPageContent';
+import { formatPlanWhenDay } from '../../lib/dateLocale';
 
 const TRUST_TIERS: TrustTier[] = ['1_explorer', '2_confirmed', '3_high_trust'];
 
@@ -80,10 +79,9 @@ export default function TrustCenterPageContent() {
   /** Φ25 — live trust history (replaces the hardcoded timeline). */
   const history = useMemo(() => {
     if (!currentUser) return [];
-    const locale = language === 'el' ? elLocale : enUS;
     const fmt = (iso: string) => {
       try {
-        return format(parseISO(iso), 'd MMM yyyy', { locale });
+        return formatPlanWhenDay(iso, language);
       } catch {
         return iso;
       }

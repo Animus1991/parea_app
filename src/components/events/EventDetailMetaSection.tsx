@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, MapPin, ShieldCheck } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
 import { useLanguage } from '../../lib/i18n';
 import { getEventParticipationRuleText } from '../../lib/eventParticipationRule';
 import { getEventDetailContentTokens } from '../../lib/designTokens';
 import { cn } from '../../lib/utils';
 import type { Event } from '../../types';
 import type { EventDetailMapAccent } from './EventDetailMapSection';
-import { dateFnsLocale } from '../../lib/dateLocale';
+import { formatLongDay } from '../../lib/dateLocale';
 import { useStore } from '../../store';
 import { isUserEventParticipant } from '../../lib/eventParticipation';
 import { formatLocationArea } from '../../lib/eventDisplay';
@@ -47,7 +46,7 @@ export function EventDetailMetaSection({
           <Calendar className="h-3.5 w-3.5" /> {t('Ημερομηνία', 'Date')}
         </div>
         <p className={cn('card-copy font-medium', content.metaValue)}>
-          {format(parseISO(event.date), 'EEEE, PPP', { locale: dateFnsLocale(language) })}
+          {formatLongDay(event.date, language)}
         </p>
       </div>
       <div className="space-y-1">

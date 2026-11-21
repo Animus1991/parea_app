@@ -44,6 +44,7 @@ import { PostReactionBar } from './PostReactionBar';
 import { CommentComposer } from './CommentComposer';
 import { CommentThread } from './CommentThread';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { formatPlanWhen } from '../../lib/dateLocale';
 
 const LONG_TEXT = 420;
 
@@ -274,14 +275,14 @@ export function PostCard({
           </Link>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold leading-snug text-ink">
-              <Link to={profilePathFor(author)} className="hover:underline">
+              <Link to={profilePathFor(author)} className="tap-area-y hover:underline">
                 {author.name}
               </Link>
               {onOtherWall && owner && (
                 <>
                   <ChevronRight className="mx-0.5 inline h-3.5 w-3.5 text-ink-muted" aria-hidden />
                   <span className="sr-only">{t(' στον τοίχο του/της ', ' on the wall of ')}</span>
-                  <Link to={profilePathFor(owner)} className="hover:underline">
+                  <Link to={profilePathFor(owner)} className="tap-area-y hover:underline">
                     {owner.name}
                   </Link>
                 </>

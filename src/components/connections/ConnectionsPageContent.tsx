@@ -20,6 +20,7 @@ import { profilePathFor } from '../../lib/profileLinks';
 import { PersonAvatar } from '../wall/PersonAvatar';
 import { APP_TYPO } from '../../lib/typographyTokens';
 import { formatLocationArea, locationMatchesQuery } from '../../lib/eventDisplay';
+import { formatPlanWhenDay } from '../../lib/dateLocale';
 
 // ─── More dropdown ──────────────────────────────────────────────
 function MoreMenu({
@@ -402,7 +403,7 @@ export default function ConnectionsPageContent() {
                   <div className="flex gap-1 mt-1">
                     {(['name', 'mutual', 'trust'] as const).map((s) => (
                       <button key={s} onClick={() => setSortBy(s)} className={`px-2 py-1 rounded-lg text-xs font-bold transition-colors ${sortBy === s ? a.acceptBtn : (a.isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')}`}>
-                        {s === 'name' ? t('Όνομα', 'Name') : s === 'mutual' ? t('Κοινοί', 'Mutual') : t('Εμπιστοσύνη', 'Trust')}
+                        {s === 'name' ? t('Όνομα', 'Name') : s === 'mutual' ? t('Κοινοί', 'Mutual') : t('Αξιοπιστία', 'Reliability')}
                       </button>
                     ))}
                   </div>
@@ -420,9 +421,8 @@ export default function ConnectionsPageContent() {
             <div className="col-span-full">
               <EmptyState
                 icon={Users}
-                character={search ? undefined : 'crew'}
+                character={search ? 'explorer' : 'crew'}
                 title={search ? t('Δεν βρέθηκαν αποτελέσματα', 'No results found') : t('Δεν έχεις Nakamas ακόμα', 'No Nakamas yet')}
-                description={t('Βρες παρέα για την επόμενη έξοδο.', 'Find company for your next outing.')}
                 actionLabel={search ? t('Καθαρισμός', 'Clear') : t('Βρες Nakamas', 'Find Nakamas')}
                 onAction={search ? () => setSearch('') : () => navigate('/buddy-seek')}
               />
@@ -531,7 +531,7 @@ export default function ConnectionsPageContent() {
                 >
                   {ev.title}
                   <span className={`block text-xs font-medium mt-0.5 ${a.muted}`}>
-                    {ev.date} · {formatLocationArea(ev.locationArea, language)}
+                    {formatPlanWhenDay(ev.date, language)} · {formatLocationArea(ev.locationArea, language)}
                   </span>
                 </button>
               </li>
@@ -605,7 +605,6 @@ export default function ConnectionsPageContent() {
               icon={Users}
               character="crew"
               title={t('Δεν υπάρχουν προτάσεις', 'No suggestions yet')}
-              description={t('Βρες παρέα για την επόμενη έξοδο.', 'Find company for your next outing.')}
               actionLabel={t('Βρες Nakamas', 'Find Nakamas')}
               onAction={() => navigate('/buddy-seek')}
             />

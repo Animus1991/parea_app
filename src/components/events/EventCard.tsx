@@ -52,6 +52,7 @@ import { AppSelect } from "../common/AppSelect";
 import "leaflet/dist/leaflet.css";
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 import { applyBundledLeafletPins } from '../../lib/leafletDefaultIcon';
+import { PhotoOrInitials } from '../common/PhotoOrInitials';
 
 applyBundledLeafletPins();
 
@@ -351,7 +352,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         <Link
           to={`/events/${event.id}`}
           onClick={(e) => e.stopPropagation()}
-          className="rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          className="tap-area-y rounded-sm outline-none focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
         >
           {event.title}
         </Link>
@@ -409,12 +410,10 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
           }}
         >
           <span className="relative shrink-0">
-            <img
-              referrerPolicy="no-referrer"
-              src={displayOrganizer.photoUrl}
-              alt=""
-              className={cn("h-8 w-8 rounded-full object-cover", onPhoto ? "ring-1 ring-white/40" : isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}
-            />
+            {/* Photo, or initials when it does not load: never a broken image. */}
+            <span className={cn("flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-accent-soft text-2xs font-bold text-ink", onPhoto ? "ring-1 ring-white/40" : isDark ? "ring-1 ring-gray-700" : "ring-1 ring-gray-200")}>
+              <PhotoOrInitials src={displayOrganizer.photoUrl} name={displayOrganizer.name} />
+            </span>
             <span className={cn("absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 border", onPhoto || !isDark ? "border-white" : "border-gray-800")} aria-hidden />
           </span>
           <span className="min-w-0">
@@ -432,10 +431,11 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
             e.stopPropagation();
             setShowTrustSheet(true);
           }}
-          aria-label={t('Εμπιστοσύνη διοργανωτή', 'Organizer trust')}
-          title={t('Εμπιστοσύνη', 'Trust')}
+          aria-label={t(`Αξιοπιστία διοργανωτή ${displayOrganizer.reliabilityScore}%`, `Organizer reliability ${displayOrganizer.reliabilityScore}%`)}
+          title={t('Αξιοπιστία', 'Reliability')}
           className={cn(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+            // Shield and number together say what the button is; no caption needed.
+            "flex h-8 min-w-8 shrink-0 items-center justify-center gap-1 rounded-xl border px-1.5 text-xs font-bold tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
             onPhoto
               ? "border-white/30 text-white"
               : isDark
@@ -444,6 +444,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
           )}
         >
           <Shield className="h-3.5 w-3.5" aria-hidden />
+          <span aria-hidden>{displayOrganizer.reliabilityScore}%</span>
         </button>
       </div>
     ) : null;
@@ -550,7 +551,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
                 aria-label={t(`Ετικέτα ${label}`, `Tag ${label}`)}
                 onClick={(e) => e.stopPropagation()}
                 className={cn(
-                  "inline-flex h-7 w-max shrink-0 items-center overflow-visible rounded-full bg-black/40 px-2.5 text-xs font-medium tracking-wide text-white/95 backdrop-blur-sm whitespace-nowrap",
+                  "tap-area-y inline-flex h-7 w-max shrink-0 items-center overflow-visible rounded-full bg-black/40 px-2.5 text-xs font-medium tracking-wide text-white/95 backdrop-blur-sm whitespace-nowrap",
                   i > 0 && "hidden @[20rem]:inline-flex",
                 )}
               >
@@ -847,7 +848,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         <BottomSheet
           open={showTrustSheet}
           onClose={() => setShowTrustSheet(false)}
-          title={t('Εμπιστοσύνη', 'Trust')}
+          title={t('Αξιοπιστία', 'Reliability')}
           className="sm:max-w-lg sm:mx-auto sm:mb-4 sm:rounded-2xl sm:border"
         >
           {displayOrganizer && (

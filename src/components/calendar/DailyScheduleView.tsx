@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { format } from 'date-fns';
-import { el as elLocale, enUS } from 'date-fns/locale';
 import { motion } from 'motion/react';
 import { MapPin, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +8,7 @@ import { usePageContrast } from '../../hooks/usePageContrast';
 import { cn } from '../../lib/utils';
 import type { PlannedEvent } from '../../types/plannedEvent';
 import { plannedEventsForDay } from '../../lib/plannedEvents';
+import { formatLongDay } from '../../lib/dateLocale';
 
 const DAY_START_HOUR = 6;
 const DAY_END_HOUR = 24;
@@ -84,7 +84,7 @@ export function DailyScheduleView({ day, events, onClose }: DailyScheduleViewPro
       >
         <div className={cn('p-5 flex items-center justify-between border-b shrink-0', p.borderB)}>
           <div>
-            <h3 className={cn('font-bold text-sm md:text-base', p.head)}>{format(day, 'd MMMM yyyy', { locale: language === 'el' ? elLocale : enUS })}</h3>
+            <h3 className={cn('font-bold text-sm md:text-base', p.head)}>{formatLongDay(day, language)}</h3>
             <p className={cn('text-xs font-bold tracking-widest', p.muted)}>
               {tu('Ημερήσιο πρόγραμμα', 'Daily schedule')}
             </p>
