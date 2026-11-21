@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { Heart, MessageCircle, ThumbsUp } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { cn } from '../../lib/utils';
@@ -35,9 +35,46 @@ export function PostReactionBar({
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const likeRef = useRef<HTMLButtonElement>(null);
+  const trayBtnRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const holdTimer = useRef<number | null>(null);
   const closeTimer = useRef<number | null>(null);
   const held = useRef(false);
+  const focusTray = (index: number) => {
+    const n = QUICK_POST_REACTIONS.length;
+    trayBtnRefs.current[((index % n) + n) % n]?.focus();
+  };
+  const openTrayFromKeyboard = () => {
+    cancelClose();
+    setOpen(true);
+    requestAnimationFrame(() => {
+      const idx = Math.max(0, QUICK_POST_REACTIONS.indexOf(myReaction ?? 'like'));
+      focusTray(idx);
+    });
+  };
+  const onTrayKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    const i = trayBtnRefs.current.findIndex((b) => b === document.activeElement);
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      setOpen(false);
+      likeRef.current?.focus();
+      return;
+    }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      focusTray(i + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      focusTray(i - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      focusTray(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      focusTray(QUICK_POST_REACTIONS.length - 1);
+    }
+  };
 
   const clearHold = () => {
     if (holdTimer.current) {
@@ -63,8 +100,11 @@ export function PostReactionBar({
     const onDoc = (e: PointerEvent) => {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
     };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        likeRef.current?.focus();
+      }
     };
     document.addEventListener('pointerdown', onDoc);
     document.addEventListener('keydown', onKey);
@@ -85,6 +125,7 @@ export function PostReactionBar({
   const pick = (kind: ReactionKind) => {
     onReact(myReaction === kind ? null : kind);
     setOpen(false);
+    likeRef.current?.focus();
   };
 
   const likeLabel = reactionLabel(myReaction ?? 'like', t);
@@ -104,12 +145,16 @@ export function PostReactionBar({
           <div
             role="group"
             aria-label={t('Διάλεξε αντίδραση', 'Choose a reaction')}
+            onKeyDown={onTrayKeyDown}
             className="absolute bottom-full left-1/2 z-30 flex -translate-x-1/2 items-center gap-0.5 rounded-full border border-border bg-surface-raised px-1.5 py-1 mb-1 shadow-soft-lg after:absolute after:left-0 after:right-0 after:top-full after:h-2 after:content-['']"
           >
-            {QUICK_POST_REACTIONS.map((k) => (
+            {QUICK_POST_REACTIONS.map((k, i) => (
               <button
                 key={k}
                 type="button"
+                ref={(el) => {
+                  trayBtnRefs.current[i] = el;
+                }}
                 aria-label={reactionLabel(k, t)}
                 aria-pressed={myReaction === k}
                 title={reactionLabel(k, t)}
@@ -126,10 +171,20 @@ export function PostReactionBar({
         )}
         <button
           type="button"
+          ref={likeRef}
           aria-pressed={Boolean(myReaction)}
           aria-label={likeLabel}
           aria-haspopup="true"
           aria-expanded={open}
+          data-testid="wall-post-like"
+          aria-keyshortcuts="ArrowUp"
+          title={t('Πάτα ↑ ή κράτα πατημένο για περισσότερες αντιδράσεις', 'Press ↑ or hold for more reactions')}
+          onKeyDown={(e) => {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+              e.preventDefault();
+              openTrayFromKeyboard();
+            }
+          }}
           onContextMenu={(e) => e.preventDefault()}
           onPointerDown={(e) => {
             if (e.pointerType !== 'touch') return;

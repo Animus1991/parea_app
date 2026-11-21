@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, type KeyboardEvent, type MutableRefObject } from 'react';
 import { Link } from 'react-router-dom';
 import { Copy, Heart, Pencil, Reply, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -34,24 +34,33 @@ function CommentReactionTray({
   myEmoji,
   onPick,
   t,
+  buttonRefs,
+  onKeyDown,
 }: {
   open: boolean;
   myEmoji?: string;
   onPick: (emoji: string) => void;
   t: (el: string, en: string) => string;
+  buttonRefs: MutableRefObject<(HTMLButtonElement | null)[]>;
+  onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => void;
 }) {
   if (!open) return null;
   return (
     <div
       role="group"
       aria-label={t('Αντίδραση στο σχόλιο', 'React to comment')}
+      onKeyDown={onKeyDown}
       className="absolute bottom-full left-0 z-20 mb-1 flex items-center gap-0.5 rounded-full border border-border bg-surface-raised px-1 py-0.5 shadow-soft-lg after:absolute after:left-0 after:right-0 after:top-full after:h-2 after:content-['']"
     >
-      {COMMENT_REACTION_EMOJIS.map((em) => (
+      {COMMENT_REACTION_EMOJIS.map((em, i) => (
         <button
           key={em}
           type="button"
+          ref={(el) => {
+            buttonRefs.current[i] = el;
+          }}
           onClick={() => onPick(em)}
+          aria-label={em}
           aria-pressed={myEmoji === em}
           className={cn('flex h-9 w-9 items-center justify-center rounded-full text-lg hover:scale-125', myEmoji === em && 'bg-accent-soft')}
         >
@@ -92,10 +101,23 @@ function CommentCard({
   const [tray, setTray] = useState(false);
   const hold = useRef(false);
   const holdTimer = useRef<number | null>(null);
+  const likeRef = useRef<HTMLButtonElement>(null);
+  const trayBtnRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const focusTray = (index: number) => {
+    const n = COMMENT_REACTION_EMOJIS.length;
+    trayBtnRefs.current[((index % n) + n) % n]?.focus();
+  };
   if (!author) return null;
 
   const mine = viewer?.id === comment.authorId;
   const myEmoji = viewer?.id ? comment.reactions?.[viewer.id] : undefined;
+  const openTrayFromKeyboard = () => {
+    setTray(true);
+    requestAnimationFrame(() => {
+      const idx = Math.max(0, COMMENT_REACTION_EMOJIS.findIndex((em) => em === (myEmoji ?? '👍')));
+      focusTray(idx);
+    });
+  };
   const reactionCounts = Object.values(comment.reactions ?? {}).reduce<Record<string, number>>((acc, em) => {
     acc[em] = (acc[em] ?? 0) + 1;
     return acc;
@@ -224,6 +246,23 @@ function CommentCard({
                 open={tray}
                 myEmoji={myEmoji}
                 t={t}
+                buttonRefs={trayBtnRefs}
+                onKeyDown={(e) => {
+                  const i = trayBtnRefs.current.findIndex((b) => b === document.activeElement);
+                  if (e.key === 'Escape') {
+                    e.preventDefault();
+                    setTray(false);
+                    likeRef.current?.focus();
+                    return;
+                  }
+                  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    focusTray(i + 1);
+                  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    focusTray(i - 1);
+                  }
+                }}
                 onPick={(em) => {
                   run(reactToComment(postId, comment.id, em));
                   setTray(false);
@@ -231,8 +270,19 @@ function CommentCard({
               />
               <button
                 type="button"
+                ref={likeRef}
                 aria-pressed={Boolean(myEmoji)}
+                aria-haspopup="true"
+                aria-expanded={tray}
+                aria-keyshortcuts="ArrowUp"
                 aria-label={t(`Μου αρέσει το σχόλιο του/της ${author.name}`, `Like ${author.name}'s comment`)}
+                title={t('Πάτα ↑ για περισσότερες αντιδράσεις', 'Press ↑ for more reactions')}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    openTrayFromKeyboard();
+                  }
+                }}
                 onContextMenu={(e) => e.preventDefault()}
                 onPointerDown={(e) => {
                   if (e.pointerType !== 'touch') return;

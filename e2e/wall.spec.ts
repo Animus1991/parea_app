@@ -53,11 +53,17 @@ test.describe('Nakamas wall', () => {
   test('reacts and comments on a friend’s post', async ({ page }) => {
     await page.goto('/wall');
     const post = page.locator('[data-post-id="wp1"]');
-    const like = post.locator('button[aria-haspopup="true"]');
+    const like = post.getByTestId('wall-post-like');
     await expect(like).toHaveAttribute('aria-pressed', 'false');
     await expect(like).toHaveAccessibleName(/^Μου αρέσει$|^Like$/);
+    await like.focus();
+    await like.press('ArrowUp');
+    const tray = post.getByRole('group', { name: /Διάλεξε αντίδραση|Choose a reaction/ });
+    await expect(tray).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(tray).toHaveCount(0);
     await like.hover();
-    await post.getByRole('group', { name: /Διάλεξε αντίδραση|Choose a reaction/ }).getByRole('button', { name: /^Τέλειο$|^Love$/ }).click();
+    await tray.getByRole('button', { name: /^Τέλειο$|^Love$/ }).click();
     await expect(like).toHaveAttribute('aria-pressed', 'true');
     await expect(like).toHaveAccessibleName(/^Τέλειο$|^Love$/);
     await post.getByRole('button', { name: /^Σχόλιο$|^Comment$/ }).click();
