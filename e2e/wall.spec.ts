@@ -115,7 +115,7 @@ test.describe('Nakamas wall v2', () => {
     await composer.getByRole('textbox').fill('Καλημέρα, σε έβαλα στην παρέα.');
     await composer.getByRole('button', { name: /Με ποιους|With whom/ }).click();
     const tagDialog = page.getByRole('dialog');
-    await tagDialog.locator('label').filter({ hasText: /^Alex/ }).click();
+    await tagDialog.getByRole('checkbox', { name: /^Alex/ }).check();
     await tagDialog.getByRole('button', { name: /^Τέλος$|^Done$/ }).click();
     await composer.getByRole('button', { name: /^Δημοσίευση$|^Post$/ }).click();
     await expect(page.getByTestId('wall-post').filter({ hasText: 'Καλημέρα, σε έβαλα στην παρέα' })).toBeVisible();
