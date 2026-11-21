@@ -4,6 +4,7 @@ import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
 import { PopupChatLauncher } from './PopupChatLauncher';
+import { ChatHatPicker } from './ChatHatPicker';
 
 const ChatInboxPanel = lazy(() =>
   import('./ChatInboxPanel').then((m) => ({ default: m.ChatInboxPanel })),
@@ -75,7 +76,10 @@ export function PopupChatRoot() {
         </div>
       )}
       {!(onChatPage || inboxOpen || windows.length > 0) && (
-        <PopupChatLauncher onClick={toggleInbox} />
+        <>
+          <ChatHatPicker />
+          <PopupChatLauncher onClick={toggleInbox} />
+        </>
       )}
       {inboxOpen && (
         <>

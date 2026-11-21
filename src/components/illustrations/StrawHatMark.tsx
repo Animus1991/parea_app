@@ -255,10 +255,12 @@ export function StrawHatSpin({
   open,
   className,
   markClassName,
+  src,
 }: {
   open: boolean;
   className?: string;
   markClassName?: string;
+  src?: string;
 }) {
   const [rotate, setRotate] = useState(0);
   const [scale, setScale] = useState<number | number[]>(1);
@@ -280,7 +282,11 @@ export function StrawHatSpin({
       transition={{ duration: HAT_SPIN_SECONDS, ease: [0.22, 1, 0.36, 1] }}
       aria-hidden
     >
-      <StrawHatMark variant="plan" className={markClassName} />
+      {src ? (
+        <img src={src} alt="" draggable={false} className={cn('object-contain', markClassName)} />
+      ) : (
+        <StrawHatMark variant="plan" className={markClassName} />
+      )}
     </motion.span>
   );
 }

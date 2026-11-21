@@ -4,13 +4,14 @@ import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
 import { StrawHatSpin } from '../illustrations/StrawHatMark';
 import { cn } from '../../lib/utils';
-
-/** 4× the old 24px glyph, a bit more on desktop so the hat reads as the FAB. */
-const HAT_FAB = 'w-24 h-24 md:w-28 md:h-28';
+import { CHAT_HAT_FAB, chatHatById } from '../../lib/chatHatStyles';
+import { useUIStore } from '../../store/uiStore';
 
 export function PopupChatLauncher({ onClick, className }: { onClick: () => void; className?: string }) {
   const { t } = useLanguage();
   const inboxOpen = useChatStore((s) => s.inboxOpen);
+  const hatStyleId = useUIStore((s) => s.chatHatStyle);
+  const hatSrc = chatHatById(hatStyleId)?.src;
   const conversations = useChatStore((s) => s.conversations);
   const unread = useMemo(
     () => conversations.reduce((n, c) => n + (c.status === 'archived' ? 0 : c.unreadCount), 0),
@@ -38,7 +39,8 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
       <span className="relative inline-flex">
         <StrawHatSpin
           open={inboxOpen}
-          markClassName={cn(HAT_FAB, 'drop-shadow-[0_8px_14px_rgba(63,42,27,0.4)]')}
+          src={hatSrc}
+          markClassName={cn(CHAT_HAT_FAB, 'drop-shadow-[0_8px_14px_rgba(63,42,27,0.4)]')}
         />
         {unread > 0 && (
           <span className="absolute top-1 right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-brand text-brand-fg text-xs font-bold flex items-center justify-center">

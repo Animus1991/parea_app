@@ -26,6 +26,46 @@ async function openInbox(page: Page) {
 test.describe('Nakamas Chat preview', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
+  test('hat picker dismisses a candidate without opening chat', async ({ page }) => {
+    await enterDemoGuest(page);
+    const picker = page.getByRole('region', { name: /Επιλογή καπέλου συνομιλιών|Chat hat picker/ });
+    await expect(picker).toBeVisible();
+    const hats = picker.getByRole('button', { name: /Δοκιμή:|Try:/ });
+    const count = await hats.count();
+    expect(count).toBeGreaterThan(3);
+    await picker.getByRole('button', { name: /Αφαίρεση: Κάτοψη|Remove: Plan view/ }).click();
+    await expect(inbox(page)).toHaveCount(0);
+    await expect(hats).toHaveCount(count - 1);
+  });
+
+  test('tapping a photo hat puts it on the chat button', async ({ page }) => {
+    await enterDemoGuest(page);
+    const picker = page.getByRole('region', { name: /Επιλογή καπέλου συνομιλιών|Chat hat picker/ });
+    await picker.getByRole('button', { name: /Δοκιμή: Μπροστά$|Try: Front$/ }).click();
+    await expect(inbox(page)).toHaveCount(0);
+    await expect(chatsButton(page).locator('img[src="/chat-hats/08-front.png"]')).toBeVisible();
+  });
+
+  test('settings chat hat choice becomes the chat button', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/settings?section=chat');
+    const choose = page.getByRole('radio', { name: /Επιλογή: Με λουρί|Choose: Chin strap/ });
+    await expect(choose).toBeVisible();
+    await choose.click();
+    await expect(page.getByRole('region', { name: /Επιλογή καπέλου συνομιλιών|Chat hat picker/ })).toHaveCount(0);
+    await page.goto('/');
+    await expect(chatsButton(page).locator('img[src="/chat-hats/12-chinstrap.png"]')).toBeVisible();
+  });
+
+  test('hat picker settings link opens the chat hat chooser', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page
+      .getByRole('region', { name: /Επιλογή καπέλου συνομιλιών|Chat hat picker/ })
+      .getByRole('link', { name: /Ρυθμίσεις|Settings/ })
+      .click();
+    await expect(page.getByRole('radio', { name: /Επιλογή:|Choose:/ }).first()).toBeVisible();
+  });
+
   test('the floated straw hat opens plan chats', async ({ page }) => {
     await enterDemoGuest(page);
     const btn = chatsButton(page);

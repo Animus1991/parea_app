@@ -339,7 +339,7 @@ export default function SettingsPageContent() {
       <div ref={buddySeekSectionRef}>
         <BuddySeekPrivacySettings />
       </div>
-      <div ref={chatPrivacySectionRef}>
+      <div ref={chatPrivacySectionRef} className="scroll-mt-24">
         <ChatPrivacySettingsPanel />
       </div>
 
