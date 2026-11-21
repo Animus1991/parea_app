@@ -78,12 +78,37 @@ export const REACTION_KINDS: ReactionKind[] = [
   'music',
 ];
 
+/**
+ * Hover / long-press tray on a post — the five people expect from every
+ * social app. Everything else lives in the comment composer.
+ */
+export const QUICK_POST_REACTIONS: ReactionKind[] = ['like', 'love', 'haha', 'wow', 'cheers'];
+
+/** One-tap hearts on a comment (Instagram / Facebook style). */
+export const COMMENT_REACTION_EMOJIS = ['👍', '❤️', '😂', '😮', '🎉'] as const;
+
+export interface CommentDraft {
+  imageUrl?: string;
+  gifUrl?: string;
+  gifFallbackUrl?: string;
+  parentId?: string;
+  mentionIds?: string[];
+}
+
 export interface WallComment {
   id: string;
   authorId: string;
   text: string;
   createdAt: string;
   editedAt?: string;
+  imageUrl?: string;
+  gifUrl?: string;
+  gifFallbackUrl?: string;
+  /** Reply to another comment on the same post. */
+  parentId?: string;
+  mentionIds?: string[];
+  /** userId → emoji. */
+  reactions?: Record<string, string>;
 }
 
 export interface WallPost {

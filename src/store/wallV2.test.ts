@@ -89,6 +89,26 @@ describe('activity', () => {
     expect(reactions()).toHaveLength(0);
   });
 
+  it('accepts a GIF-only comment, a reply, an edit and a comment reaction', () => {
+    expect(useWallStore.getState().addComment('wp1', '').ok).toBe(false);
+    expect(useWallStore.getState().addComment('wp1', '', { gifUrl: 'https://example.com/g.gif' }).ok).toBe(true);
+    const gif = post('wp1').comments.at(-1)!;
+    expect(gif.text).toBe('');
+    expect(gif.gifUrl).toBe('https://example.com/g.gif');
+    const reply = useWallStore.getState().addComment('wp1', 'Κι εγώ! 🙌', { parentId: 'wc1' });
+    expect(reply.ok).toBe(true);
+    expect(post('wp1').comments.find((c) => c.id === reply.id)?.parentId).toBe('wc1');
+    expect(useWallStore.getState().updateComment('wp1', 'wc1', { text: 'Μέσα! Φέρνω και θερμός 😄' }).ok).toBe(false); // not the author
+    useStore.getState().login('u3');
+    expect(useWallStore.getState().updateComment('wp1', 'wc1', { text: 'Τελικά φέρνω νερό.' }).ok).toBe(true);
+    expect(post('wp1').comments.find((c) => c.id === 'wc1')?.editedAt).toBeTruthy();
+    useStore.getState().login('u1');
+    expect(useWallStore.getState().reactToComment('wp1', 'wc1', '❤️').ok).toBe(true);
+    expect(post('wp1').comments.find((c) => c.id === 'wc1')?.reactions?.u1).toBe('❤️');
+    expect(useWallStore.getState().reactToComment('wp1', 'wc1', '❤️').ok).toBe(true);
+    expect(post('wp1').comments.find((c) => c.id === 'wc1')?.reactions?.u1).toBeUndefined();
+  });
+
   it('nobody is notified about their own actions, and read state is per person', () => {
     useWallStore.getState().addComment('wp8', 'Σημείωση για μένα');
     expect(myActivity('u1').some((a) => a.excerpt === 'Σημείωση για μένα')).toBe(false);

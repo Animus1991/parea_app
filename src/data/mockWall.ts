@@ -21,7 +21,8 @@ export const mockWallPosts: WallPost[] = [
     createdAt: ago(95),
     reactions: { u3: 'going', u4: 'love' },
     comments: [
-      { id: 'wc1', authorId: 'u3', text: 'Μέσα! Φέρνω και θερμός 😄', createdAt: ago(80) },
+      { id: 'wc1', authorId: 'u3', text: 'Μέσα! Φέρνω και θερμός 😄', createdAt: ago(80), reactions: { u2: '👍' } },
+      { id: 'wc1r', authorId: 'u2', text: 'Τέλεια, πάρε και εμένα 🙌', createdAt: ago(70), parentId: 'wc1' },
     ],
   },
   {

@@ -53,14 +53,17 @@ test.describe('Nakamas wall', () => {
   test('reacts and comments on a friend’s post', async ({ page }) => {
     await page.goto('/wall');
     const post = page.locator('[data-post-id="wp1"]');
-    const like = post.getByRole('button', { name: /^Μου αρέσει$|^Like$/ });
+    const like = post.locator('button[aria-haspopup="true"]');
     await expect(like).toHaveAttribute('aria-pressed', 'false');
-    await like.click();
+    await expect(like).toHaveAccessibleName(/^Μου αρέσει$|^Like$/);
+    await like.hover();
+    await post.getByRole('group', { name: /Διάλεξε αντίδραση|Choose a reaction/ }).getByRole('button', { name: /^Τέλειο$|^Love$/ }).click();
     await expect(like).toHaveAttribute('aria-pressed', 'true');
+    await expect(like).toHaveAccessibleName(/^Τέλειο$|^Love$/);
     await post.getByRole('button', { name: /^Σχόλιο$|^Comment$/ }).click();
-    await post.getByRole('textbox').fill('Τέλειο, έρχομαι!');
+    await post.getByRole('textbox').fill('Τέλειο, έρχομαι! 🙌');
     await post.getByRole('button', { name: /Αποστολή σχολίου|Send comment/ }).click();
-    await expect(post.getByText('Τέλειο, έρχομαι!')).toBeVisible();
+    await expect(post.getByText('Τέλειο, έρχομαι! 🙌')).toBeVisible();
   });
 });
 
