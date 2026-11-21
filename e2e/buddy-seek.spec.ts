@@ -121,5 +121,8 @@ test.describe('Find Nakamas', () => {
     });
     await expect(sheet.getByText('Athens Street Food Festival 2026')).toBeVisible();
     await expect(sheet.getByText('ADD Festival 2026')).toBeVisible();
+    await sheet.getByRole('button', { name: /Δες εκδήλωση|View event/ }).first().click();
+    await expect(page).toHaveURL(/\/events\//);
+    await expect(page.getByRole('dialog', { name: /Βρες Nakamas|Find Nakamas/ })).toHaveCount(0);
   });
 });

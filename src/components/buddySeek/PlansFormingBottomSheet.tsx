@@ -186,6 +186,7 @@ export function PlansFormingBottomSheet() {
                   item={item}
                   variant="sheet"
                   isDarkSurface={tok.isDark}
+                  onNavigate={leave}
                   onDismiss={() => {
                     const id = item.intent.id;
                     dismiss(id);
@@ -204,6 +205,7 @@ export function PlansFormingBottomSheet() {
                       entry={entry}
                       variant="sheet"
                       isDarkSurface={tok.isDark}
+                      onNavigate={leave}
                     />
                   ))}
                 </section>

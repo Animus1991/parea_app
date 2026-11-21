@@ -74,16 +74,22 @@ export function PlansFormingCard({
   variant = 'sidebar',
   isDarkSurface = false,
   onDismiss,
+  onNavigate,
   imageDepth = 'photo',
 }: {
   item: PlansFormingEnrichedItem;
   variant?: 'sidebar' | 'sheet' | 'inline' | 'page';
   isDarkSurface?: boolean;
   onDismiss?: () => void;
+  onNavigate?: (path: string) => void;
   imageDepth?: EventCardImageDepth;
 }) {
   const { t, tu, language } = useLanguage();
   const navigate = useNavigate();
+  const go = (path: string) => {
+    if (onNavigate) onNavigate(path);
+    else navigate(path);
+  };
   const currentUser = useStore((s) => s.currentUser);
   const prefs = useStore((s) => s.companyRequestPreferences);
   const savedIds = useStore((s) => s.savedCompanyRequestIds);
@@ -137,7 +143,7 @@ export function PlansFormingCard({
           event={item.event}
           depth={depth}
           photoHeightClass={variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24'}
-          onPhotoClick={() => navigate(`/events/${item.event.id}`)}
+          onPhotoClick={() => go(`/events/${item.event.id}`)}
           photoAriaLabel={t('Δες εκδήλωση', 'View event')}
           top={
             variant === 'page' ? (
@@ -213,7 +219,7 @@ export function PlansFormingCard({
                   </button>
                   <button
                     type="button"
-                    onClick={() => navigate(`/events/${item.event.id}`)}
+                    onClick={() => go(`/events/${item.event.id}`)}
                     className="min-h-9 card-cta text-white/90 transition-colors hover:text-white"
                   >
                     {t('Εκδήλωση', 'Event')}
@@ -330,7 +336,7 @@ export function PlansFormingCard({
             </button>
             <button
               type="button"
-              onClick={() => navigate(`/events/${item.event.id}`)}
+              onClick={() => go(`/events/${item.event.id}`)}
               className={cn('min-h-9 card-cta transition-colors', muted, onDark ? 'hover:text-white' : 'hover:text-ink')}
             >
               {t('Εκδήλωση', 'Event')}
@@ -384,7 +390,7 @@ export function PlansFormingCard({
           <div className="min-w-0 flex-1 space-y-1.5">
           <button
             type="button"
-            onClick={() => navigate(`/events/${item.event.id}`)}
+            onClick={() => go(`/events/${item.event.id}`)}
             className="text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-lg"
           >
             <h3 className={cn('card-heading-lg font-bold leading-normal line-clamp-3', darkCard ? 'text-white' : 'text-gray-900')}>
@@ -417,7 +423,7 @@ export function PlansFormingCard({
       <div className="flex gap-3 px-4 pt-3.5 pb-3">
         <button
           type="button"
-          onClick={() => navigate(`/events/${item.event.id}`)}
+          onClick={() => go(`/events/${item.event.id}`)}
           className="relative shrink-0 w-12 h-12 rounded-xl overflow-hidden bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 group"
           aria-label={t('Δες εκδήλωση', 'View event')}
         >
@@ -553,7 +559,7 @@ export function PlansFormingCard({
         </button>
         <button
           type="button"
-          onClick={() => navigate(`/events/${item.event.id}`)}
+          onClick={() => go(`/events/${item.event.id}`)}
           className={cn(
             'px-2.5 min-h-8 py-1.5 rounded-full card-cta transition-colors',
             darkCard ? 'text-gray-300 hover:bg-white/5' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/5',
@@ -618,16 +624,22 @@ export function PlansFormingGroupCard({
   variant = 'sidebar',
   isDarkSurface = false,
   onSuggestMerge,
+  onNavigate,
   imageDepth = 'photo',
 }: {
   entry: PlansFormingGroupItem;
   variant?: 'sidebar' | 'sheet' | 'page';
   isDarkSurface?: boolean;
   onSuggestMerge?: () => void;
+  onNavigate?: (path: string) => void;
   imageDepth?: EventCardImageDepth;
 }) {
   const { t, tu, language } = useLanguage();
   const navigate = useNavigate();
+  const go = (path: string) => {
+    if (onNavigate) onNavigate(path);
+    else navigate(path);
+  };
   const compact = variant !== 'page';
   const onDark = compact && isDarkSurface;
   const { group, event, meta } = entry;
@@ -649,7 +661,7 @@ export function PlansFormingGroupCard({
         event={event}
         depth={depth}
         photoHeightClass={variant === 'page' ? 'h-48 md:h-64 lg:h-80' : variant === 'sheet' ? 'h-36' : 'h-24'}
-        onPhotoClick={() => navigate(`/events/${event.id}`)}
+        onPhotoClick={() => go(`/events/${event.id}`)}
         photoAriaLabel={t('Δες εκδήλωση', 'View event')}
         overlay={
           <>
@@ -684,14 +696,14 @@ export function PlansFormingGroupCard({
                   <div className="flex flex-wrap items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
+                      onClick={() => go(`/events/${event.id}/join?group=${group.id}`)}
                       className="px-4 min-h-9 rounded-full card-cta bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
                     >
                       {t('Αίτημα συμμετοχής', 'Ask to join')}
                     </button>
                     <button
                       type="button"
-                      onClick={() => navigate(`/events/${event.id}`)}
+                      onClick={() => go(`/events/${event.id}`)}
                       className="min-h-9 card-cta text-white/90 transition-colors hover:text-white"
                     >
                       {t('Εκδήλωση', 'Event')}
@@ -753,7 +765,7 @@ export function PlansFormingGroupCard({
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
           <button
             type="button"
-            onClick={() => navigate(`/events/${event.id}/join?group=${group.id}`)}
+            onClick={() => go(`/events/${event.id}/join?group=${group.id}`)}
             className="px-4 min-h-9 rounded-full card-cta bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
           >
             {t('Αίτημα συμμετοχής', 'Ask to join')}
