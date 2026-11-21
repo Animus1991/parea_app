@@ -139,6 +139,7 @@ test.describe('Nakamas Chat preview', () => {
     const strip = win.locator('[data-chat-status-strip]');
     await expect(strip).toBeVisible();
     await expect(strip.getByText(/Σημείο συνάντησης|Meeting point/)).toHaveCount(1);
+    await expect(strip.getByText(/20:30/)).toBeVisible();
     await expect(strip.getByRole('button', { name: /Ανακοίνωση άφιξης|Announce arrival/ })).toBeVisible();
     await expect(strip.getByRole('button', { name: /Άνοιγμα χάρτη|Open map/ })).toBeVisible();
     await expect(win.getByText(/Καρφιτσωμένο:|Pinned:/)).toHaveCount(0);
@@ -150,6 +151,42 @@ test.describe('Nakamas Chat preview', () => {
     await expect(win.getByRole('button', { name: /Αντίδραση|React/ }).first()).toBeHidden();
     await win.locator('[data-message-id="m3"]').click();
     await expect(win.getByRole('button', { name: /Απάντηση|Reply/ }).first()).toBeVisible();
+
+    await page.evaluate(() => {
+      (window as Window & { __mapUrls?: string[] }).__mapUrls = [];
+      window.open = ((url?: string | URL) => {
+        (window as Window & { __mapUrls?: string[] }).__mapUrls?.push(String(url ?? ''));
+        return null;
+      }) as typeof window.open;
+    });
+    await strip.getByRole('button', { name: /Άνοιγμα χάρτη|Open map/ }).click();
+    const mapUrls = await page.evaluate(() => (window as Window & { __mapUrls?: string[] }).__mapUrls ?? []);
+    expect(mapUrls.join(' ')).toMatch(/Cine(\+|%20| )Thisio/);
+    expect(mapUrls.join(' ')).not.toMatch(/Thisio(%2C|,)%20Athens/);
+  });
+
+  test('keyboard focus on a message reveals reply and react', async ({ page }) => {
+    await enterDemoGuest(page);
+    const sheet = await openInbox(page);
+    await sheet.getByRole('button', { name: /Summer Cinema/ }).click();
+    const win = page.locator('[data-chat-window]');
+    await expect(win).toBeVisible();
+    await win.locator('[data-message-id="m3"]').focus();
+    await page.keyboard.press('Enter');
+    await expect(win.getByRole('button', { name: /Απάντηση|Reply/ }).first()).toBeVisible();
+    await expect(win.getByRole('button', { name: /Αντίδραση|React/ }).first()).toBeVisible();
+  });
+
+  test('a direct chat does not borrow the event venue as a meeting point', async ({ page }) => {
+    await enterDemoGuest(page);
+    const sheet = await openInbox(page);
+    await sheet.getByRole('button', { name: /Maria Τέλεια|Maria Great, see you/ }).click();
+    const win = page.locator('[data-chat-window]');
+    await expect(win).toBeVisible();
+    await expect(win.getByText(/Plateia Nerou|Σημείο συνάντησης|Meeting point/)).toHaveCount(0);
+    await win.locator('[data-message-id="m4"]').click();
+    await win.getByRole('button', { name: /Καρφίτσωμα|Pin/ }).click();
+    await expect(win.getByText(/Καρφιτσωμένο:|Pinned:/)).toBeVisible();
   });
 
   test('the first mention chip stays tappable in a popup', async ({ page }) => {

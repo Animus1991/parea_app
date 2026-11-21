@@ -4,40 +4,45 @@ import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
 import { useStore } from '../../store';
 import { cn } from '../../lib/utils';
+import { meetingPointMapQuery } from '../../lib/meetingPoint';
 
 export function MeetingPointActions({
   conversationId,
   venue,
   meetingPoint,
   compact = false,
+  canAnnounce = true,
 }: {
   conversationId: string;
   venue?: string;
   meetingPoint?: string;
   compact?: boolean;
+  canAnnounce?: boolean;
 }) {
   const { t } = useLanguage();
   const viewer = useStore((s) => s.currentUser);
   const announceArrival = useChatStore((s) => s.announceArrival);
-  const mapQuery = encodeURIComponent(venue ?? meetingPoint ?? '');
+  const mapQuery = encodeURIComponent(meetingPointMapQuery(venue, meetingPoint));
 
   return (
     <div className={cn('flex gap-1.5', compact ? 'shrink-0' : 'gap-2')}>
-      <button
-        type="button"
-        className={cn(
-          'rounded-full text-xs font-bold bg-brand text-brand-fg',
-          compact ? 'px-2.5 min-h-8' : 'flex-1 min-h-9',
-        )}
-        aria-label={t('Ανακοίνωση άφιξης', 'Announce arrival')}
-        onClick={() => {
-          if (!viewer) return;
-          announceArrival(conversationId, viewer.id);
-          toast.success(t('Έφτασα — ειδοποιήθηκαν τα μέλη', 'Arrived — members notified'));
-        }}
-      >
-        {t('Έφτασα', 'I arrived')}
-      </button>
+      {canAnnounce && (
+        <button
+          type="button"
+          className={cn(
+            'rounded-full text-xs font-bold bg-brand text-brand-fg',
+            compact ? 'px-2.5 min-h-8' : 'flex-1 min-h-9',
+          )}
+          aria-label={t('Ανακοίνωση άφιξης', 'Announce arrival')}
+          onClick={() => {
+            if (!viewer) return;
+            if (!announceArrival(conversationId, viewer.id)) return;
+            toast.success(t('Έφτασα — ειδοποιήθηκαν τα μέλη', 'Arrived — members notified'));
+          }}
+        >
+          {t('Έφτασα', 'I arrived')}
+        </button>
+      )}
       <button
         type="button"
         className={cn(
@@ -86,7 +91,12 @@ export function MeetingPointPanel({
       {meetingPoint && meetingPoint !== venue && (
         <p className="text-xs text-ink-muted">{meetingPoint}</p>
       )}
-      <MeetingPointActions conversationId={conversationId} venue={venue} meetingPoint={meetingPoint} />
+      <MeetingPointActions
+        conversationId={conversationId}
+        venue={venue}
+        meetingPoint={meetingPoint}
+        canAnnounce={!locked}
+      />
     </div>
   );
 }

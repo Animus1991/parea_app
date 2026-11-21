@@ -86,7 +86,7 @@ interface ChatState {
   /** Φ17 — real keep-chat request: flags the conversation + system message. */
   requestKeepChat: (conversationId: string, userId: string) => void;
   /** Φ17 — "I arrived" at the meeting point: arrival system message. */
-  announceArrival: (conversationId: string, userId: string) => void;
+  announceArrival: (conversationId: string, userId: string) => boolean;
   ensureEventGroupConversation: (input: {
     groupId: string;
     eventId: string;
@@ -448,6 +448,12 @@ export const useChatStore = create<ChatState>()(
       },
 
       announceArrival: (conversationId, userId) => {
+        const conv = get().conversations.find((c) => c.id === conversationId);
+        if (!conv) return false;
+        const isParty =
+          conv.participantUserIds.includes(userId) || conv.organizerUserId === userId;
+        if (!isParty) return false;
+        if (conv.status !== 'active' && conv.status !== 'persistent') return false;
         const sysMsg: ChatMessage = {
           id: `m_arr_${Date.now()}`,
           conversationId,
@@ -473,6 +479,7 @@ export const useChatStore = create<ChatState>()(
               : c,
           ),
         }));
+        return true;
       },
 
       ensureEventGroupConversation: ({

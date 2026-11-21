@@ -16,13 +16,17 @@ export function GroupChatStatusStrip({
   isEphemeral,
   venue,
   meetingPoint,
+  meetAt,
   locked,
+  canAnnounce = true,
 }: {
   conversationId: string;
   isEphemeral: boolean;
   venue?: string;
   meetingPoint?: string;
+  meetAt?: string;
   locked?: boolean;
+  canAnnounce?: boolean;
 }) {
   const { t } = useLanguage();
   const dismissedIds = useChatStore((s) => s.dismissedEphemeralBanners);
@@ -55,13 +59,16 @@ export function GroupChatStatusStrip({
                 <p className="text-2xs font-bold text-brand tracking-wide">
                   {t('Σημείο συνάντησης', 'Meeting point')}
                 </p>
-                <p className="text-xs font-medium text-ink leading-snug">{point}</p>
+                <p className="text-xs font-medium text-ink leading-snug">
+                  {meetAt ? `${point} · ${meetAt}` : point}
+                </p>
               </div>
               <MeetingPointActions
                 conversationId={conversationId}
                 venue={venue}
                 meetingPoint={meetingPoint}
                 compact
+                canAnnounce={canAnnounce && !locked}
               />
             </div>
           ))}

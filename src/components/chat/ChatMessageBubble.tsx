@@ -247,8 +247,19 @@ export function ChatMessageBubble({
     <div
       id={`msg-${message.id}`}
       data-message-id={message.id}
+      role="article"
+      tabIndex={0}
+      aria-expanded={isSelected}
+      aria-label={
+        mine
+          ? t('Το μήνυμά σου. Enter για ενέργειες.', 'Your message. Press Enter for actions.')
+          : t(
+              `Μήνυμα από ${senderName}. Enter για ενέργειες.`,
+              `Message from ${senderName}. Press Enter for actions.`,
+            )
+      }
       className={cn(
-        'group flex flex-col transition-colors',
+        'group flex flex-col transition-colors rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-brand/60',
         compact ? 'max-w-[92%]' : 'max-w-[85%] sm:max-w-[75%]',
         mine ? 'ml-auto items-end' : 'items-start',
       )}
@@ -259,6 +270,13 @@ export function ChatMessageBubble({
       onContextMenu={(event) => {
         event.preventDefault();
         toggleSelect();
+      }}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          toggleSelect();
+        }
       }}
     >
       {!mine && <span className={CHAT_TYPO.sender}>{senderName}</span>}
@@ -453,7 +471,7 @@ export function ChatMessageBubble({
             'flex items-center gap-1 shrink-0 transition-opacity',
             isSelected || reactOpen
               ? 'visible opacity-100'
-              : 'invisible opacity-0 md:group-hover:visible md:group-hover:opacity-100 md:group-focus-within:visible md:group-focus-within:opacity-100',
+              : 'invisible opacity-0 md:group-hover:visible md:group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100',
           )}
         >
           <div className="relative">

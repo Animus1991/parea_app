@@ -26,6 +26,10 @@ import { ChatCallModal } from './ChatCallModal';
 import { cn } from '../../lib/utils';
 import { CHAT_TYPO } from '../../lib/typographyTokens';
 import { useSwipeDownDismiss } from '../../hooks/useSwipeDownDismiss';
+import {
+  conversationShowsEventVenue,
+  meetingPointMeetAt,
+} from '../../lib/meetingPoint';
 
 function typeBadge(c: Conversation, t: (el: string, en: string) => string) {
   if (c.type === 'organizer_announcement') return t('Ανάγνωση μόνο', 'Read only');
@@ -138,9 +142,18 @@ export function ChatWindow({
   }, [messages, tagFilter, searchQuery, conversation.meetingPoint]);
 
   const pinnedMsg = useMemo(
-    () => [...messages].reverse().find((m) => m.pinned),
+    () => [...messages].reverse().find((m) => m.pinned && m.type !== 'meeting_point'),
     [messages],
   );
+
+  const eventVenue = conversationShowsEventVenue(conversation.type)
+    ? event?.exactLocation || event?.locationArea
+    : undefined;
+
+  const meetAt = useMemo(() => {
+    const announcement = [...messages].reverse().find((m) => m.type === 'meeting_point');
+    return meetingPointMeetAt(announcement?.body) || (eventVenue ? event?.time : undefined);
+  }, [messages, eventVenue, event?.time]);
 
   const jumpToMessage = (id: string) => {
     const el = document.getElementById(`msg-${id}`);
@@ -334,7 +347,7 @@ export function ChatWindow({
             </div>
           )}
 
-          {pinnedMsg && pinnedMsg.type !== 'meeting_point' && (
+          {pinnedMsg && (
             <button
               type="button"
               onClick={() => jumpToMessage(pinnedMsg.id)}
@@ -349,9 +362,11 @@ export function ChatWindow({
           <GroupChatStatusStrip
             conversationId={conversation.id}
             isEphemeral={conversation.isEphemeral && conversation.status === 'active'}
-            venue={event?.exactLocation || event?.locationArea || conversation.meetingPoint}
+            venue={eventVenue}
             meetingPoint={conversation.meetingPoint}
+            meetAt={meetAt}
             locked={conversation.status === 'locked'}
+            canAnnounce={perm.canSend}
           />
 
           {/* Messages */}

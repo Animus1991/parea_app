@@ -548,7 +548,9 @@ export default function GroupChatPageContent() {
             isEphemeral={isEphemeral}
             venue={event.exactLocation || event.locationArea}
             meetingPoint={group.meetingPoint}
+            meetAt={event.time}
             locked={group.status !== "confirmed" && group.status !== "completed"}
+            canAnnounce={isMember}
           />
 
           {/* Messages Virtualized */}

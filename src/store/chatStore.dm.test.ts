@@ -109,3 +109,38 @@ describe('ensureEventGroupConversation', () => {
     ).toHaveLength(1);
   });
 });
+
+describe('announceArrival', () => {
+  const baseConv = {
+    id: 'c-arrive',
+    type: 'event_group' as const,
+    title: 'Cinema',
+    participantUserIds: ['u2'],
+    status: 'active' as const,
+    isEphemeral: true,
+    canPersist: true,
+    unreadCount: 0,
+    lastMessageAt: '2026-01-01T00:00:00.000Z',
+    lastMessagePreview: { el: '', en: '' },
+  };
+
+  beforeEach(() => {
+    useChatStore.setState({
+      conversations: [baseConv],
+      messages: [],
+    });
+  });
+
+  it('posts an arrival only for a participant who can send', () => {
+    expect(useChatStore.getState().announceArrival('c-arrive', 'u2')).toBe(true);
+    expect(useChatStore.getState().messages).toHaveLength(1);
+    expect(useChatStore.getState().conversations[0].arrivedAt).toBeTruthy();
+  });
+
+  it('ignores outsiders and locked threads', () => {
+    expect(useChatStore.getState().announceArrival('c-arrive', 'u1')).toBe(false);
+    useChatStore.setState({ conversations: [{ ...baseConv, status: 'locked' }] });
+    expect(useChatStore.getState().announceArrival('c-arrive', 'u2')).toBe(false);
+    expect(useChatStore.getState().messages).toHaveLength(0);
+  });
+});
