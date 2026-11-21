@@ -42,13 +42,13 @@ export function MeetingPointActions({
         type="button"
         className={cn(
           'rounded-full text-xs font-bold border border-border-strong flex items-center justify-center gap-1',
-          compact ? 'px-2 min-h-8 min-w-8' : 'px-3.5 min-h-9',
+          compact ? 'px-2.5 min-h-8' : 'px-3.5 min-h-9',
         )}
         aria-label={t('Άνοιγμα χάρτη', 'Open map')}
         onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${mapQuery}`, '_blank', 'noopener,noreferrer')}
       >
         <Navigation className="w-3 h-3" aria-hidden />
-        {!compact && t('Χάρτης', 'Map')}
+        {t('Χάρτης', 'Map')}
       </button>
     </div>
   );

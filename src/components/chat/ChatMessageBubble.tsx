@@ -195,6 +195,8 @@ export function ChatMessageBubble({
   onPin,
   onVotePoll,
   onTagClick,
+  selected = false,
+  onSelect,
 }: {
   message: ChatMessage;
   senderName: string;
@@ -209,8 +211,13 @@ export function ChatMessageBubble({
   onPin?: (messageId: string) => void;
   onVotePoll?: (messageId: string, optionId: string) => void;
   onTagClick?: (tag: string) => void;
+  selected?: boolean;
+  onSelect?: () => void;
 }) {
   const { t } = useLanguage();
+  const [localSelected, setLocalSelected] = useState(false);
+  const isSelected = onSelect ? selected : localSelected;
+  const toggleSelect = onSelect ?? (() => setLocalSelected((v) => !v));
   const [reactOpen, setReactOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(message.body);
@@ -245,6 +252,14 @@ export function ChatMessageBubble({
         compact ? 'max-w-[92%]' : 'max-w-[85%] sm:max-w-[75%]',
         mine ? 'ml-auto items-end' : 'items-start',
       )}
+      onClick={(event) => {
+        if ((event.target as HTMLElement).closest('button, a, input, textarea')) return;
+        toggleSelect();
+      }}
+      onContextMenu={(event) => {
+        event.preventDefault();
+        toggleSelect();
+      }}
     >
       {!mine && <span className={CHAT_TYPO.sender}>{senderName}</span>}
 
@@ -432,8 +447,15 @@ export function ChatMessageBubble({
           </div>
         </div>
 
-        {/* Hover / focus action bar */}
-        <div className="flex items-center gap-1 opacity-70 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition-opacity shrink-0">
+        {/* Actions stay tucked until hover (desktop) or a tap on the bubble (touch). */}
+        <div
+          className={cn(
+            'flex items-center gap-1 shrink-0 transition-opacity',
+            isSelected || reactOpen
+              ? 'visible opacity-100'
+              : 'invisible opacity-0 md:group-hover:visible md:group-hover:opacity-100 md:group-focus-within:visible md:group-focus-within:opacity-100',
+          )}
+        >
           <div className="relative">
             <button
               type="button"

@@ -107,6 +107,28 @@ test.describe('Nakamas Chat preview', () => {
     await expect(sheet).toHaveCount(0);
   });
 
+  test('popup chat names the meeting point once and tucks extra actions', async ({ page }) => {
+    await enterDemoGuest(page);
+    const sheet = await openInbox(page);
+    await sheet.getByRole('button', { name: /Summer Cinema/ }).click();
+    const win = page.locator('[data-chat-window]');
+    await expect(win).toBeVisible();
+    const strip = win.locator('[data-chat-status-strip]');
+    await expect(strip).toBeVisible();
+    await expect(strip.getByText(/Σημείο συνάντησης|Meeting point/)).toHaveCount(1);
+    await expect(strip.getByRole('button', { name: /Ανακοίνωση άφιξης|Announce arrival/ })).toBeVisible();
+    await expect(strip.getByRole('button', { name: /Άνοιγμα χάρτη|Open map/ })).toBeVisible();
+    await expect(win.getByText(/Καρφιτσωμένο:|Pinned:/)).toHaveCount(0);
+    await expect(win.getByRole('button', { name: /Φωνητική κλήση|Voice call/ })).toHaveCount(0);
+    await win.getByRole('button', { name: /^Ενέργειες$|^Actions$/ }).click();
+    await expect(win.getByRole('menuitem', { name: /Φωνητική κλήση|Voice call/ })).toBeVisible();
+    await expect(win.getByRole('menuitem', { name: /Βιντεοκλήση|Video call/ })).toBeVisible();
+    await win.getByRole('button', { name: /^Κλείσιμο μενού$|^Close menu$/ }).click();
+    await expect(win.getByRole('button', { name: /Αντίδραση|React/ }).first()).toBeHidden();
+    await win.locator('[data-message-id="m3"]').click();
+    await expect(win.getByRole('button', { name: /Απάντηση|Reply/ }).first()).toBeVisible();
+  });
+
   test('the first mention chip stays tappable in a popup', async ({ page }) => {
     await enterDemoGuest(page);
     const sheet = await openInbox(page);

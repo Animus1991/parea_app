@@ -16,8 +16,7 @@ import { useChatStore } from '../../store/chatStore';
 import { useStore } from '../../store';
 import { useChatPermission } from '../../lib/chatPermissions';
 import type { ChatMessage, ChatReplyRef, Conversation } from '../../types/chat';
-import { EphemeralChatBanner } from './EphemeralChatBanner';
-import { MeetingPointPanel } from './MeetingPointPanel';
+import { GroupChatStatusStrip } from './GroupChatStatusStrip';
 import { QuickReplies } from './QuickReplies';
 import { ReportConversationModal } from './ReportConversationModal';
 import { ChatMessageBubble } from './ChatMessageBubble';
@@ -30,9 +29,15 @@ import { useSwipeDownDismiss } from '../../hooks/useSwipeDownDismiss';
 
 function typeBadge(c: Conversation, t: (el: string, en: string) => string) {
   if (c.type === 'organizer_announcement') return t('Ανάγνωση μόνο', 'Read only');
-  if (c.isEphemeral) return t('Προσωρινό', 'Temporary');
   if (c.status === 'persistent') return t('Μόνιμο', 'Persistent');
   return null;
+}
+
+function titlesOverlap(a: string, b: string) {
+  const norm = (s: string) => s.toLowerCase().replace(/[·:,|/—–-]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const left = norm(a);
+  const right = norm(b);
+  return left === right || left.includes(right) || right.includes(left);
 }
 
 export function ChatWindow({
@@ -74,6 +79,7 @@ export function ChatWindow({
   const [callMode, setCallMode] = useState<'video' | 'audio' | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const dismissRef = useRef<HTMLElement>(null);
@@ -125,8 +131,11 @@ export function ChatWindow({
       const q = searchQuery.trim().toLowerCase();
       list = list.filter((m) => m.body.toLowerCase().includes(q));
     }
+    if (conversation.meetingPoint) {
+      list = list.filter((m) => m.type !== 'meeting_point');
+    }
     return list;
-  }, [messages, tagFilter, searchQuery]);
+  }, [messages, tagFilter, searchQuery, conversation.meetingPoint]);
 
   const pinnedMsg = useMemo(
     () => [...messages].reverse().find((m) => m.pinned),
@@ -166,45 +175,12 @@ export function ChatWindow({
           >
             <div className="min-w-0 flex-1">
               <p className={cn(CHAT_TYPO.title, 'truncate')}>{conversation.title}</p>
-              {event?.title && <p className={cn(CHAT_TYPO.subtitle, 'truncate')}>{event.title}</p>}
+              {event?.title && !titlesOverlap(conversation.title, event.title) && (
+                <p className={cn(CHAT_TYPO.subtitle, 'truncate')}>{event.title}</p>
+              )}
               {badge && <p className={CHAT_TYPO.badge}>{badge}</p>}
             </div>
 
-            {perm.canSend && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setCallMode('audio')}
-                  aria-label={t('Φωνητική κλήση', 'Voice call')}
-                  title={t('Φωνητική κλήση', 'Voice call')}
-                  className="p-1.5 rounded-full text-ink-muted hover:bg-ink/10 hover:text-brand"
-                >
-                  <Phone className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCallMode('video')}
-                  aria-label={t('Βιντεοκλήση', 'Video call')}
-                  title={t('Βιντεοκλήση', 'Video call')}
-                  className="p-1.5 rounded-full text-ink-muted hover:bg-ink/10 hover:text-brand"
-                >
-                  <Video className="w-4 h-4" />
-                </button>
-              </>
-            )}
-
-            <button
-              type="button"
-              onClick={() => setShowStories((s) => !s)}
-              aria-label={t('Stories', 'Stories')}
-              title={t('Stories Nakamas', 'Nakamas Stories')}
-              className={cn(
-                'p-1.5 rounded-full transition-colors',
-                showStories ? 'bg-brand-soft text-brand' : 'text-ink-muted hover:bg-ink/10 hover:text-ink',
-              )}
-            >
-              <Images className="w-4 h-4" />
-            </button>
             <button
               type="button"
               onClick={() => setSearchOpen((s) => !s)}
@@ -221,6 +197,8 @@ export function ChatWindow({
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
               className="p-1.5 rounded-full text-ink-muted hover:bg-ink/10"
+              aria-expanded={menuOpen}
+              aria-haspopup="menu"
               aria-label={t('Ενέργειες', 'Actions')}
             >
               <MoreVertical className="w-4 h-4" />
@@ -244,34 +222,90 @@ export function ChatWindow({
           </header>
 
           {menuOpen && (
-            <div className={cn('absolute right-3 top-11 z-30 rounded-2xl border border-border bg-surface-raised py-1 shadow-soft-lg min-w-[130px]', CHAT_TYPO.menu)}>
+            <>
               <button
                 type="button"
-                className="block w-full text-left px-3.5 py-2 hover:bg-ink/5"
-                onClick={() => {
-                  const nextMuted = !conversation.muted;
-                  muteConversation(conversation.id, nextMuted);
-                  setMenuOpen(false);
-                  toast.success(
-                    nextMuted
-                      ? t('Η συνομιλία σε σίγαση', 'Conversation muted')
-                      : t('Η σίγαση απενεργοποιήθηκε', 'Unmuted'),
-                  );
-                }}
+                className="absolute inset-0 z-20 cursor-default"
+                aria-label={t('Κλείσιμο μενού', 'Close menu')}
+                onClick={() => setMenuOpen(false)}
+              />
+              <div
+                role="menu"
+                className={cn(
+                  'absolute right-3 top-11 z-30 rounded-2xl border border-border bg-surface-raised py-1 shadow-soft-lg min-w-[180px]',
+                  CHAT_TYPO.menu,
+                )}
               >
-                {conversation.muted ? t('Ξεσίγαση', 'Unmute') : t('Σίγαση', 'Mute')}
-              </button>
-              <button
-                type="button"
-                className="block w-full text-left px-3.5 py-2 hover:bg-ink/5 text-red-600"
-                onClick={() => {
-                  setMenuOpen(false);
-                  setReportOpen(true);
-                }}
-              >
-                {t('Αναφορά', 'Report')}
-              </button>
-            </div>
+                {perm.canSend && (
+                  <>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className="flex w-full items-center gap-2 text-left px-3.5 py-2 hover:bg-ink/5"
+                      onClick={() => {
+                        setCallMode('audio');
+                        setMenuOpen(false);
+                      }}
+                    >
+                      <Phone className="w-3.5 h-3.5" aria-hidden />
+                      {t('Φωνητική κλήση', 'Voice call')}
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className="flex w-full items-center gap-2 text-left px-3.5 py-2 hover:bg-ink/5"
+                      onClick={() => {
+                        setCallMode('video');
+                        setMenuOpen(false);
+                      }}
+                    >
+                      <Video className="w-3.5 h-3.5" aria-hidden />
+                      {t('Βιντεοκλήση', 'Video call')}
+                    </button>
+                  </>
+                )}
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="flex w-full items-center gap-2 text-left px-3.5 py-2 hover:bg-ink/5"
+                  onClick={() => {
+                    setShowStories((s) => !s);
+                    setMenuOpen(false);
+                  }}
+                >
+                  <Images className="w-3.5 h-3.5" aria-hidden />
+                  {t('Πολυμέσα και stories', 'Media and stories')}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="flex w-full items-center gap-2 text-left px-3.5 py-2 hover:bg-ink/5"
+                  onClick={() => {
+                    const nextMuted = !conversation.muted;
+                    muteConversation(conversation.id, nextMuted);
+                    setMenuOpen(false);
+                    toast.success(
+                      nextMuted
+                        ? t('Η συνομιλία σε σίγαση', 'Conversation muted')
+                        : t('Η σίγαση απενεργοποιήθηκε', 'Unmuted'),
+                    );
+                  }}
+                >
+                  {conversation.muted ? t('Ξεσίγαση', 'Unmute') : t('Σίγαση', 'Mute')}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="flex w-full items-center gap-2 text-left px-3.5 py-2 hover:bg-ink/5 text-red-600"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setReportOpen(true);
+                  }}
+                >
+                  {t('Αναφορά', 'Report')}
+                </button>
+              </div>
+            </>
           )}
 
           {showStories && <ChatStoriesStrip conversationId={conversation.id} compact />}
@@ -300,8 +334,7 @@ export function ChatWindow({
             </div>
           )}
 
-          {/* Pinned Banner */}
-          {pinnedMsg && (
+          {pinnedMsg && pinnedMsg.type !== 'meeting_point' && (
             <button
               type="button"
               onClick={() => jumpToMessage(pinnedMsg.id)}
@@ -313,18 +346,13 @@ export function ChatWindow({
             </button>
           )}
 
-          {conversation.isEphemeral && conversation.status === 'active' && (
-            <EphemeralChatBanner conversationId={conversation.id} />
-          )}
-
-          {(conversation.type === 'event_group' || conversation.meetingPoint) && (
-            <MeetingPointPanel
-              conversationId={conversation.id}
-              venue={conversation.meetingPoint}
-              meetingPoint={conversation.meetingPoint}
-              locked={conversation.status === 'locked'}
-            />
-          )}
+          <GroupChatStatusStrip
+            conversationId={conversation.id}
+            isEphemeral={conversation.isEphemeral && conversation.status === 'active'}
+            venue={event?.exactLocation || event?.locationArea || conversation.meetingPoint}
+            meetingPoint={conversation.meetingPoint}
+            locked={conversation.status === 'locked'}
+          />
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-3 py-2.5 flex flex-col gap-2.5 min-h-0">
@@ -344,6 +372,8 @@ export function ChatWindow({
                   mine={m.senderId === viewer?.id}
                   viewerId={viewer?.id}
                   compact
+                  selected={selectedMessageId === m.id}
+                  onSelect={() => setSelectedMessageId((cur) => (cur === m.id ? null : m.id))}
                   onJumpTo={jumpToMessage}
                   onTagClick={(tag) => setTagFilter((cur) => (cur === tag ? null : tag))}
                   onReply={(msg) =>
@@ -382,7 +412,7 @@ export function ChatWindow({
             <div ref={bottomRef} />
           </div>
 
-          <div className="shrink-0 min-h-0 max-h-[55%] overflow-y-auto">
+          <div className="shrink-0 min-h-0 max-h-[55%] overflow-y-auto pb-[env(safe-area-inset-bottom,0px)]">
           <QuickReplies
             onSelect={(q) => {
               if (!viewer || !perm.canSend) return;
