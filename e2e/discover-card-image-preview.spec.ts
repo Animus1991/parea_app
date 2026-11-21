@@ -123,6 +123,30 @@ test.describe('Discover card image picker', () => {
     await expect(sheet.locator('[data-image-depth]').first()).toHaveAttribute('data-image-depth', 'photo');
   });
 
+  test('suitcase sheet follows the card photo chosen on Discover without reload', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await enterDemoGuest(page);
+    const homePicker = page.locator('#main-content [data-card-image-picker]');
+    await homePicker.locator('[data-card-image-toggle]').click();
+    await homePicker.locator('[data-card-image-option="title"]').click();
+    await expect(page.locator('#main-content .nakamas-card [data-image-depth]').first()).toHaveAttribute(
+      'data-image-depth',
+      'title',
+    );
+
+    await page.getByRole('button', { name: /Βρες Nakamas — σχέδια που σχηματίζονται|Find Nakamas — plans forming/ }).click();
+    const sheet = page.getByRole('dialog', { name: /Βρες Nakamas|Find Nakamas/ });
+    await expect(sheet.locator('[data-image-depth]').first()).toHaveAttribute('data-image-depth', 'title');
+    await sheet.locator('[data-card-image-toggle]').click();
+    await sheet.locator('[data-card-image-option="photo"]').click();
+    await expect(sheet.locator('[data-image-depth]').first()).toHaveAttribute('data-image-depth', 'photo');
+    await sheet.getByRole('button', { name: /Κλείσιμο|Close/ }).last().click();
+    await expect(page.locator('#main-content .nakamas-card [data-image-depth]').first()).toHaveAttribute(
+      'data-image-depth',
+      'photo',
+    );
+  });
+
   test('Full cards keep hosting and Find Nakamas notes', async ({ page }) => {
     await enterDemoGuest(page);
     const hostChip = page.getByRole('button', { name: /Χωρίς διοργανωτή|Seeking organizer/ });

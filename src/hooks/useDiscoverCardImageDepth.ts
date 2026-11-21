@@ -1,7 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   CARD_IMAGE_DEPTHS,
+  CARD_IMAGE_DEPTH_STORAGE_KEY,
   applyDefaultCardImageDepthIfUnset,
+  parseCardImageDepth,
+  subscribeCardImageDepth,
   writeStoredCardImageDepth,
   type EventCardImageDepth,
 } from '../lib/discoverCardImagePreview';
@@ -9,8 +12,20 @@ import {
 export function useDiscoverCardImageDepth() {
   const [stored, setStored] = useState<EventCardImageDepth>(applyDefaultCardImageDepthIfUnset);
 
+  useEffect(() => {
+    const unsub = subscribeCardImageDepth(setStored);
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== CARD_IMAGE_DEPTH_STORAGE_KEY) return;
+      setStored(parseCardImageDepth(event.newValue));
+    };
+    window.addEventListener('storage', onStorage);
+    return () => {
+      unsub();
+      window.removeEventListener('storage', onStorage);
+    };
+  }, []);
+
   const setDepth = useCallback((next: EventCardImageDepth) => {
-    setStored(next);
     writeStoredCardImageDepth(next);
   }, []);
 

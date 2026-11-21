@@ -76,8 +76,19 @@ export function readStoredCardImageDepth(): EventCardImageDepth {
   return parseCardImageDepth(readStorage(CARD_IMAGE_DEPTH_STORAGE_KEY));
 }
 
+const cardImageDepthListeners = new Set<(depth: EventCardImageDepth) => void>();
+
+/** Same-tab subscribers (the suitcase sheet stays mounted while Discover/Plans change). */
+export function subscribeCardImageDepth(listener: (depth: EventCardImageDepth) => void): () => void {
+  cardImageDepthListeners.add(listener);
+  return () => {
+    cardImageDepthListeners.delete(listener);
+  };
+}
+
 export function writeStoredCardImageDepth(depth: EventCardImageDepth): void {
   writeStorage(CARD_IMAGE_DEPTH_STORAGE_KEY, depth);
+  cardImageDepthListeners.forEach((listener) => listener(depth));
 }
 
 /** Persist Full for a new account unless the person already picked a depth. */

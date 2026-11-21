@@ -7,6 +7,7 @@ import {
   cardImageDepthFlags,
   parseCardImageDepth,
   readStoredCardImageDepth,
+  subscribeCardImageDepth,
   writeStoredCardImageDepth,
 } from './discoverCardImagePreview';
 
@@ -70,5 +71,17 @@ describe('card image depth storage', () => {
     expect(localStorage.getItem(CARD_IMAGE_DEPTH_STORAGE_KEY)).toBe('full');
     writeStoredCardImageDepth('title');
     expect(applyDefaultCardImageDepthIfUnset()).toBe('title');
+  });
+
+  it('notifies every subscriber so a mounted sheet follows Discover', () => {
+    const seen: string[] = [];
+    const stop = subscribeCardImageDepth((depth) => {
+      seen.push(depth);
+    });
+    writeStoredCardImageDepth('facts');
+    writeStoredCardImageDepth('photo');
+    stop();
+    writeStoredCardImageDepth('title');
+    expect(seen).toEqual(['facts', 'photo']);
   });
 });
