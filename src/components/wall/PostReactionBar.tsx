@@ -101,10 +101,7 @@ export function PostReactionBar({
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
     };
     const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setOpen(false);
-        likeRef.current?.focus();
-      }
+      if (e.key === 'Escape') setOpen(false);
     };
     document.addEventListener('pointerdown', onDoc);
     document.addEventListener('keydown', onKey);
