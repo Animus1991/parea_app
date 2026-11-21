@@ -138,13 +138,8 @@
 }
 .chat-inbox-phone {
   top: calc(var(--header-h) + 2.5rem);
-  bottom: calc(var(--bottom-nav-total) + env(safe-area-inset-bottom, 0px));
-}
-@media (max-width: 767px) and (max-height: 540px) {
-  .chat-inbox-phone {
-    top: calc(var(--header-h) + 2.5rem);
-    bottom: 0;
-  }
+  /* Phone sheet covers the tab bar; the hat unmounts while chat is open. */
+  bottom: 0;
 }
 @media (min-width: 768px) {
   .chat-popup-window {

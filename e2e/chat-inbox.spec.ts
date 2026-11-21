@@ -56,7 +56,7 @@ test.describe('Nakamas Chat preview', () => {
     await expect(chatsButton(page)).toHaveCount(0);
     const sheetBox = await sheet.boundingBox();
     expect(sheetBox).toBeTruthy();
-    expect(sheetBox!.y + sheetBox!.height).toBeGreaterThan((page.viewportSize()?.height ?? 0) - 100);
+    expect(sheetBox!.y + sheetBox!.height).toBeGreaterThan((page.viewportSize()?.height ?? 0) - 8);
     await expect(sheet.getByRole('button', { name: /Summer Cinema/ })).toBeVisible();
     await sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).click();
     await expect(sheet).toHaveCount(0);

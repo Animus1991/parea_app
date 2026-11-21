@@ -83,7 +83,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
           </button>
         </header>
       </div>
-      <div className="flex-1 min-h-0 overflow-y-auto">
+      <div className="flex-1 min-h-0 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)]">
       <ChatStoriesStrip compact />
       <div className="p-2 space-y-4">
         {conversations.length === 0 && (
