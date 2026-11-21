@@ -77,7 +77,7 @@ export function PopupChatRoot() {
       )}
       {!(onChatPage || inboxOpen || windows.length > 0) && (
         <>
-          <ChatHatPicker />
+          {minimized.length === 0 && <ChatHatPicker />}
           <PopupChatLauncher onClick={toggleInbox} />
         </>
       )}

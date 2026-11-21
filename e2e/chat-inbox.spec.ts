@@ -148,6 +148,25 @@ test.describe('Nakamas Chat desktop hat', () => {
   });
 });
 
+test.describe('Nakamas Chat restore vs hat picker', () => {
+  test.use({ viewport: { width: 1024, height: 768 } });
+
+  test('minimizing the last popup keeps restore tappable', async ({ page }) => {
+    await enterDemoGuest(page);
+    const sheet = await openInbox(page);
+    await sheet.getByRole('button', { name: /Summer Cinema/ }).click();
+    const win = page.locator('[data-chat-window]');
+    await expect(win).toBeVisible();
+    await win.getByRole('button', { name: /^Ελαχιστοποίηση$|^Minimize$/ }).click();
+    await expect(win).toHaveCount(0);
+    await expect(page.getByRole('region', { name: /Επιλογή καπέλου συνομιλιών|Chat hat picker/ })).toHaveCount(0);
+    const restore = page.getByRole('button', { name: /Επαναφορά συνομιλίας|Restore conversation/ });
+    await expect(restore).toBeVisible();
+    await restore.click();
+    await expect(page.locator('[data-chat-window]')).toBeVisible();
+  });
+});
+
 test.describe('Nakamas Chat event page', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
