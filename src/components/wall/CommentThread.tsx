@@ -80,6 +80,7 @@ function CommentCard({
   language,
   t,
   canModerate,
+  canReply,
   readOnly,
   onReply,
 }: {
@@ -91,6 +92,7 @@ function CommentCard({
   language: string;
   t: (el: string, en: string) => string;
   canModerate: boolean;
+  canReply: boolean;
   readOnly: boolean;
   onReply: (c: WallComment) => void;
 }) {
@@ -142,15 +144,19 @@ function CommentCard({
         },
       });
     }
-    menuItems.push({
-      key: 'copy',
-      icon: Copy,
-      label: t('Αντιγραφή', 'Copy'),
-      onSelect: () => {
-        void navigator.clipboard?.writeText(comment.text || '');
-        toast.success(t('Αντιγράφηκε', 'Copied'));
-      },
-    });
+    if (comment.text.trim()) {
+      menuItems.push({
+        key: 'copy',
+        icon: Copy,
+        label: t('Αντιγραφή', 'Copy'),
+        onSelect: () => {
+          void navigator.clipboard?.writeText(comment.text).then(
+            () => toast.success(t('Αντιγράφηκε', 'Copied')),
+            () => toast.error(t('Δεν αντιγράφηκε', 'Could not copy')),
+          );
+        },
+      });
+    }
     if (mine || canModerate) {
       menuItems.push({
         key: 'delete',
@@ -308,14 +314,16 @@ function CommentCard({
                 {t('Μου αρέσει', 'Like')}
               </button>
             </div>
-            <button
-              type="button"
-              onClick={() => onReply(comment)}
-              className="inline-flex min-h-8 items-center gap-1 rounded-full px-2 hover:bg-surface hover:text-ink"
-            >
-              <Reply className="h-3.5 w-3.5" aria-hidden />
-              {t('Απάντηση', 'Reply')}
-            </button>
+            {canReply && (
+              <button
+                type="button"
+                onClick={() => onReply(comment)}
+                className="inline-flex min-h-8 items-center gap-1 rounded-full px-2 hover:bg-surface hover:text-ink"
+              >
+                <Reply className="h-3.5 w-3.5" aria-hidden />
+                {t('Απάντηση', 'Reply')}
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -331,6 +339,7 @@ export function CommentThread({
   viewer,
   readOnly,
   canModerate,
+  canReply,
   showAll,
   onShowAll,
   onReply,
@@ -341,6 +350,7 @@ export function CommentThread({
   viewer: User | null | undefined;
   readOnly: boolean;
   canModerate: boolean;
+  canReply: boolean;
   showAll: boolean;
   onShowAll: () => void;
   onReply: (c: WallComment) => void;
@@ -375,6 +385,7 @@ export function CommentThread({
         language={language}
         t={t}
         canModerate={canModerate}
+        canReply={canReply}
         readOnly={readOnly}
         onReply={onReply}
       />

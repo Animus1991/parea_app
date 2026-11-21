@@ -48,6 +48,7 @@ export function CommentComposer({
   const [imageUrl, setImageUrl] = useState<string | undefined>();
   const [gif, setGif] = useState<{ url: string; fallbackUrl?: string; label: string } | undefined>();
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (autoFocus) inputRef.current?.focus();
@@ -139,7 +140,7 @@ export function CommentComposer({
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       send();
     }
@@ -305,11 +306,21 @@ export function CommentComposer({
             >
               <Smile className="h-4 w-4" />
             </button>
-            <label className={cn('flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-ink-muted hover:bg-surface-raised')}>
-              <span className="sr-only">{t('Φωτογραφία', 'Photo')}</span>
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              aria-label={t('Φωτογραφία', 'Photo')}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-ink-muted hover:bg-surface-raised"
+            >
               <ImageIcon className="h-4 w-4" />
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => void handlePhoto(e)} />
-            </label>
+            </button>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => void handlePhoto(e)}
+            />
             <button
               type="button"
               onClick={() => setPanel((p) => (p === 'gif' ? 'none' : 'gif'))}

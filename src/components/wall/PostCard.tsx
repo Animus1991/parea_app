@@ -490,6 +490,7 @@ export function PostCard({
             viewer={viewer}
             readOnly={readOnly}
             canModerate={isAuthor || isOwner}
+            canReply={commentGate?.allowed === true}
             showAll={showAllComments}
             onShowAll={openComments}
             onReply={(c) => {

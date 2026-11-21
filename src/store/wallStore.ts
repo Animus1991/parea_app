@@ -433,6 +433,7 @@ export const useWallStore = create<WallState>()(
         const comment = post?.comments.find((c) => c.id === commentId);
         if (!me || !post || !comment) return fail('Το σχόλιο δεν βρέθηκε.', 'Comment not found.');
         if (comment.authorId !== me) return fail('Επεξεργάζεσαι μόνο τα δικά σου σχόλια.', 'You can only edit your own comments.');
+        if (!canViewPost(me, post, wallAccessContext())) return fail('Δεν είναι διαθέσιμο.', 'Not available.');
         const text = patch.text.trim();
         if (!text && !comment.imageUrl && !comment.gifUrl) return fail('Γράψε ένα σχόλιο.', 'Write a comment.');
         if (text.length > COMMENT_MAX_CHARS) return fail(`Έως ${COMMENT_MAX_CHARS} χαρακτήρες.`, `Up to ${COMMENT_MAX_CHARS} characters.`);

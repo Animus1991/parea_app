@@ -302,6 +302,7 @@ service cloud.firestore {
                  wallSetting(get(postPath(postId)).data.authorId, 'whoCanComment'), request.auth.uid));
         allow update: if signedIn()
           && request.auth.uid == resource.data.authorId
+          && canReadPost(get(postPath(postId)).data)
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'editedAt'])
           && request.resource.data.text is string
           && request.resource.data.text.size() <= 1000;
