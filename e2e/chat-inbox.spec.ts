@@ -171,7 +171,10 @@ test.describe('Nakamas Chat preview', () => {
     await sheet.getByRole('button', { name: /Summer Cinema/ }).click();
     const win = page.locator('[data-chat-window]');
     await expect(win).toBeVisible();
-    await win.locator('[data-message-id="m3"]').focus();
+    await win
+      .locator('[data-message-id="m3"]')
+      .getByRole('button', { name: /Ενέργειες μηνύματος|Message actions/ })
+      .focus();
     await page.keyboard.press('Enter');
     await expect(win.getByRole('button', { name: /Απάντηση|Reply/ }).first()).toBeVisible();
     await expect(win.getByRole('button', { name: /Αντίδραση|React/ }).first()).toBeVisible();

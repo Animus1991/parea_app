@@ -247,19 +247,8 @@ export function ChatMessageBubble({
     <div
       id={`msg-${message.id}`}
       data-message-id={message.id}
-      role="article"
-      tabIndex={0}
-      aria-expanded={isSelected}
-      aria-label={
-        mine
-          ? t('Το μήνυμά σου. Enter για ενέργειες.', 'Your message. Press Enter for actions.')
-          : t(
-              `Μήνυμα από ${senderName}. Enter για ενέργειες.`,
-              `Message from ${senderName}. Press Enter for actions.`,
-            )
-      }
       className={cn(
-        'group flex flex-col transition-colors rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-brand/60',
+        'group relative flex flex-col transition-colors rounded-2xl',
         compact ? 'max-w-[92%]' : 'max-w-[85%] sm:max-w-[75%]',
         mine ? 'ml-auto items-end' : 'items-start',
       )}
@@ -271,14 +260,20 @@ export function ChatMessageBubble({
         event.preventDefault();
         toggleSelect();
       }}
-      onKeyDown={(event) => {
-        if (event.target !== event.currentTarget) return;
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          toggleSelect();
-        }
-      }}
     >
+      <button
+        type="button"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:z-10 focus:inline-flex focus:items-center rounded-full border border-border bg-surface-raised px-2 py-1 text-2xs font-bold text-ink shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60"
+        aria-expanded={isSelected}
+        onClick={(event) => {
+          event.stopPropagation();
+          toggleSelect();
+        }}
+      >
+        {mine
+          ? t('Ενέργειες μηνύματος', 'Message actions')
+          : t(`Ενέργειες μηνύματος από ${senderName}`, `Message actions from ${senderName}`)}
+      </button>
       {!mine && <span className={CHAT_TYPO.sender}>{senderName}</span>}
 
       <div className={cn('flex items-end gap-1.5', mine && 'flex-row-reverse')}>
