@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { computeAchievements, dailyChallengeMet, weeklyActivity } from './achievements';
 import type { Event, Group, User } from '../types';
 import { ACHIEVEMENT_MINI, NAKAMAS_MINI_IDS } from '../components/illustrations/miniMaps';
+import { execFileSync } from 'node:child_process';
 
 const user = {
   id: 'u1', name: 'A', ageRange: '25-34', city: 'Athens', interests: [], trustTier: '2_confirmed', reliabilityScore: 96,
@@ -12,6 +13,20 @@ const grp = (id: string, eventId: string, members: string[], hostId?: string, ta
   ({ id, eventId, members, hostId, targetSize, status: 'pending', pendingMembers: [], discountUnlocked: false } as Group);
 
 describe('live achievements', () => {
+  it('uses the local day across midnight and a DST timezone boundary', () => {
+    const moduleUrl = new URL('./achievements.ts', import.meta.url).href;
+    const result = execFileSync(process.execPath, ['--import', 'tsx', '--input-type=module', '-e', `
+      import { localDay, dailyChallengeMet } from ${JSON.stringify(moduleUrl)};
+      const now = new Date('2026-03-29T22:30:00Z');
+      console.log(JSON.stringify({
+        today: localDay(now),
+        claimDay: localDay('2026-03-30'),
+        met: dailyChallengeMet(['2026-03-29T22:15:00Z'], now),
+        yesterday: dailyChallengeMet(['2026-03-29T20:30:00Z'], now),
+      }));
+    `], { env: { ...process.env, TZ: 'Europe/Athens' }, encoding: 'utf8' });
+    expect(JSON.parse(result)).toEqual({ today: '2026-03-30', claimDay: '2026-03-30', met: true, yesterday: false });
+  });
   it('derives progress from real memberships, categories, weeks and verifications', () => {
     const events = [ev('a', '2026-06-01', 'Hiking'), ev('b', '2026-06-08', 'Cinema'), ev('c', '2026-06-15', 'Cinema')];
     const groups = [grp('g1', 'a', ['u1']), grp('g2', 'b', ['u1']), grp('g3', 'c', ['u1', 'x', 'y', 'z'], 'u1')];

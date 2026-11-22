@@ -37,7 +37,7 @@ export function useGamificationData() {
       }))
       .sort((a, b) => b.xp - a.xp);
     const rank = Math.max(1, ranking.findIndex((r) => r.id === currentUser?.id) + 1);
-    const today = localDay(new Date().toISOString());
+    const today = localDay();
     return {
       xp,
       level,

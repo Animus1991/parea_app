@@ -130,15 +130,15 @@ export const DAILY_CHALLENGE_XP = 30;
 
 /** Today's verifiable challenge: send at least one group message. */
 export function dailyChallengeMet(messageDatesByMe: string[], now: Date = new Date()): boolean {
-  const today = format(now, 'yyyy-MM-dd');
+  const today = localDay(now);
   return messageDatesByMe.some((d) => localDay(d) === today);
 }
 
 /** ISO timestamp or date → local yyyy-MM-dd (UTC timestamps near midnight land on the right day). */
-export function localDay(value: string): string {
+export function localDay(value: string | Date = new Date()): string {
   try {
-    return format(parseISO(value), 'yyyy-MM-dd');
+    return format(typeof value === 'string' ? parseISO(value) : value, 'yyyy-MM-dd');
   } catch {
-    return value.slice(0, 10);
+    return typeof value === 'string' ? value.slice(0, 10) : '';
   }
 }
