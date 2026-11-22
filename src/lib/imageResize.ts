@@ -16,7 +16,7 @@ export interface ResizeOptions {
 /** Inputs larger than this are refused before decoding (protects low-end phones). */
 export const MAX_IMAGE_INPUT_BYTES = 15 * 1024 * 1024;
 
-export type ImageResizeError = 'not_image' | 'too_large' | 'decode_failed';
+export type ImageResizeError = 'not_image' | 'too_large' | 'decode_failed' | 'empty_hat';
 
 export class ImageResizeFailure extends Error {
   constructor(public readonly code: ImageResizeError) {
@@ -69,5 +69,6 @@ export function imageErrorText(err: unknown, t: (el: string, en: string) => stri
   const code = err instanceof ImageResizeFailure ? err.code : 'decode_failed';
   if (code === 'not_image') return t('Διάλεξε αρχείο εικόνας (JPG, PNG, WebP).', 'Pick an image file (JPG, PNG, WebP).');
   if (code === 'too_large') return t('Η εικόνα είναι πάνω από 15 MB.', 'The image is larger than 15 MB.');
+  if (code === 'empty_hat') return t('Η εικόνα είναι άδεια.', 'That image is empty.');
   return t('Δεν ήταν δυνατή η ανάγνωση της εικόνας.', 'The image could not be read.');
 }

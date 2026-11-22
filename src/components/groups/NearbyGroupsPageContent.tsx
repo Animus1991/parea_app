@@ -639,7 +639,7 @@ export default function NearbyGroupsPageContent() {
         <div className={cn("p-5 md:p-5 border-b shrink-0", p.borderB)}>
           <h2 className={cn(APP_TYPO.pageTitle, p.head)}>{t("Τοπικές ομάδες", "Local Groups")}</h2>
           <p className={cn(APP_TYPO.pageSub, "mt-1.5 flex items-center gap-1.5", p.muted)}>
-            <Navigation className="h-3.5 w-3.5" aria-hidden /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius}km</span>
+            <Navigation className="h-3.5 w-3.5" aria-hidden /> {t("Εντός", "Within")} <span className={cn("font-bold", p.iconAccent)}>{radius} {t('χλμ', 'km')}</span>
           </p>
           <div className="mt-4 flex items-center gap-4">
             <input
@@ -649,7 +649,7 @@ export default function NearbyGroupsPageContent() {
               value={radius}
               onChange={(e) => setRadius(parseInt(e.target.value))}
               aria-label={t("Ακτίνα αναζήτησης (χλμ)", "Search radius (km)")}
-              aria-valuetext={`${radius} km`}
+              aria-valuetext={`${radius} ${t('χλμ', 'km')}`}
               className="flex-1 h-6 -my-1 accent-cyan-500"
             />
           </div>
@@ -715,9 +715,9 @@ export default function NearbyGroupsPageContent() {
               title={t("Καμία εκδήλωση στην ακτίνα", "No events in this radius")}
               actionLabel={
                 radius < 15
-                  ? t("Ορισμός ακτίνας στα 15km", "Set radius to 15km")
+                  ? t("Ορισμός ακτίνας στα 15 χλμ", "Set radius to 15 km")
                   : radius < 25
-                    ? t("Ορισμός ακτίνας στα 25km", "Set radius to 25km")
+                    ? t("Ορισμός ακτίνας στα 25 χλμ", "Set radius to 25 km")
                     : t("Αναζήτηση εκδηλώσεων", "Browse Events")
               }
               onAction={
@@ -756,7 +756,7 @@ export default function NearbyGroupsPageContent() {
                     <span aria-hidden className="opacity-40">·</span>
                     <span className={cn("inline-flex items-center gap-1 font-semibold", p.isDark ? "text-cyan-400" : "text-cyan-700")}>
                       <MapPin className="h-3 w-3 shrink-0" aria-hidden />
-                      {group.distanceKm.toFixed(1)}km
+                      {group.distanceKm.toFixed(1)} {t('χλμ', 'km')}
                     </span>
                   </p>
                 </div>
@@ -779,9 +779,9 @@ export default function NearbyGroupsPageContent() {
               disabled={radius >= 25}
             >
               {radius < 15
-                ? t("Ορισμός ακτίνας στα 15km", "Set radius to 15km")
+                ? t("Ορισμός ακτίνας στα 15 χλμ", "Set radius to 15 km")
                 : radius < 25
-                  ? t("Ορισμός ακτίνας στα 25km", "Set radius to 25km")
+                  ? t("Ορισμός ακτίνας στα 25 χλμ", "Set radius to 25 km")
                   : t("Μέγιστη ακτίνα", "Max radius")}
             </Button>
           </div>

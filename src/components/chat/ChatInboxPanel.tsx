@@ -5,6 +5,7 @@ import { useLanguage } from '../../lib/i18n';
 import { EmptyState } from '../common/EmptyState';
 import { ChatStoriesStrip } from './ChatStoriesStrip';
 import { useChatStore } from '../../store/chatStore';
+import { useFittedOpenConversation } from '../../hooks/useFittedOpenConversation';
 import { useStore } from '../../store';
 import { canOpenConversation } from '../../lib/chatPermissions';
 import type { Conversation, ConversationType } from '../../types/chat';
@@ -42,7 +43,7 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
     () => allConversations.filter((c) => c.status !== 'archived'),
     [allConversations],
   );
-  const openConversation = useChatStore((s) => s.openConversation);
+  const openConversation = useFittedOpenConversation();
   const viewer = useStore((s) => s.currentUser);
   const groups = useStore((s) => s.groups);
   const companyJoinRequests = useStore((s) => s.companyJoinRequests);

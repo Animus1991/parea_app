@@ -56,11 +56,20 @@ export default function PlansPageContent() {
   // Phones: after the next 3 plans, the rest wait in a short list and open into a card.
   const isMobile = useIsMobile();
   const [openedPlans, setOpenedPlans] = useState<Set<string>>(() => new Set());
+  const [focusPlanId, setFocusPlanId] = useState<string | null>(null);
   const [nowMs, setNowMs] = useState(() => Date.now());
   useEffect(() => {
     const id = window.setInterval(() => setNowMs(Date.now()), 60_000);
     return () => window.clearInterval(id);
   }, []);
+  useEffect(() => {
+    if (!focusPlanId) return;
+    const el = document.getElementById(`plan-${focusPlanId}`);
+    if (!el) return;
+    el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    el.focus({ preventScroll: true });
+    setFocusPlanId(null);
+  }, [focusPlanId, openedPlans]);
   const navigate = useNavigate();
 
   const { events, isLoading, isError, refetch } = useEventsResource();
@@ -209,7 +218,7 @@ export default function PlansPageContent() {
           const hasMeetingPoint = Boolean(group?.meetingPoint);
 
           return (
-          <Card key={event.id} id={`plan-${event.id}`} className="!rounded-2xl p-0 overflow-hidden flex h-full flex-col scroll-mt-20">
+          <Card key={event.id} id={`plan-${event.id}`} tabIndex={-1} className="!rounded-2xl p-0 overflow-hidden flex h-full flex-col scroll-mt-20 outline-none focus-visible:ring-2 focus-visible:ring-accent">
             <CardImageDepthFrame
               event={event}
               depth={cardImage.depth}
@@ -429,12 +438,7 @@ export default function PlansPageContent() {
                       type="button"
                       onClick={() => {
                         setOpenedPlans((prev) => new Set(prev).add(event.id));
-                        // The row leaves the list: bring the opened card into view and move focus to it.
-                        requestAnimationFrame(() => {
-                          const card = document.getElementById(`plan-${event.id}`);
-                          card?.scrollIntoView({ block: 'start', behavior: 'smooth' });
-                          card?.querySelector<HTMLElement>('button, a[href]')?.focus({ preventScroll: true });
-                        });
+                        setFocusPlanId(event.id);
                       }}
                       className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-surface"
                     >

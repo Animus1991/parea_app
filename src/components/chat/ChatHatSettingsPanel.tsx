@@ -53,13 +53,15 @@ export function ChatHatSettingsPanel() {
         custom: true,
       });
       if (added) {
-        toast.success(t('Το καπέλο κόπηκε στο μέγεθος του κουμπιού', 'Hat cropped to the chat-button size'));
+        toast.success(t('Προστέθηκε', 'Added'));
       } else {
         toast.error(
-          t(
-            `Μπορείς να έχεις μέχρι ${MAX_CUSTOM_CHAT_HATS} δικά σου καπέλα.`,
-            `You can keep up to ${MAX_CUSTOM_CHAT_HATS} of your own hats.`,
-          ),
+          customChatHats.length >= MAX_CUSTOM_CHAT_HATS
+            ? t(
+                `Μπορείς να έχεις μέχρι ${MAX_CUSTOM_CHAT_HATS} δικά σου καπέλα.`,
+                `You can keep up to ${MAX_CUSTOM_CHAT_HATS} of your own hats.`,
+              )
+            : t('Δεν χωράει άλλο καπέλο στη συσκευή.', 'No room left on this device for another hat.'),
         );
       }
     } catch (err) {
@@ -195,7 +197,7 @@ export function ChatHatSettingsPanel() {
                       toast.success(t('Το καπέλο κρύφτηκε', 'Hat hidden'));
                     }
                   }}
-                  className="absolute -right-1 -top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface-raised text-ink-muted shadow-soft"
+                  className="absolute right-1 top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface-raised/95 text-ink-muted shadow-soft"
                   aria-label={
                     hat.custom
                       ? t(`Διαγραφή: ${hat.labelEl}`, `Delete: ${hat.labelEn}`)

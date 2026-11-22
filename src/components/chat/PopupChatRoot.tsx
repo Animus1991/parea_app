@@ -1,9 +1,11 @@
-import { Suspense, lazy, useEffect, useState, type CSSProperties } from 'react';
-import { cn } from '../../lib/utils';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
+import { popupDockRightCss, POPUP_MD_PX } from '../../lib/popupChatLayout';
 import { useChatStore } from '../../store/chatStore';
+import { useFittedOpenConversation } from '../../hooks/useFittedOpenConversation';
+import { useViewportWidth } from '../../hooks/useViewportWidth';
 import { PopupChatLauncher } from './PopupChatLauncher';
 
 const ChatInboxPanel = lazy(() =>
@@ -20,8 +22,10 @@ export function PopupChatRoot() {
   const setInboxOpen = useChatStore((s) => s.setInboxOpen);
   const activeWindowIds = useChatStore((s) => s.activeWindowIds);
   const minimizedIds = useChatStore((s) => s.minimizedIds);
-  const openConversation = useChatStore((s) => s.openConversation);
+  const fitActiveWindowsToViewport = useChatStore((s) => s.fitActiveWindowsToViewport);
+  const openConversation = useFittedOpenConversation();
   const conversations = useChatStore((s) => s.conversations);
+  const vw = useViewportWidth();
   const pathname = useLocation().pathname;
   // On a group chat page the composer sits at the bottom: float above it.
   const onChatPage = pathname.startsWith('/chat/');
@@ -43,6 +47,10 @@ export function PopupChatRoot() {
     return () => window.removeEventListener('keydown', onKey);
   }, [setInboxOpen]);
 
+  useEffect(() => {
+    fitActiveWindowsToViewport(vw);
+  }, [vw, activeWindowIds, fitActiveWindowsToViewport]);
+
   const windows = activeWindowIds
     .map((id) => conversations.find((c) => c.id === id))
     .filter((c): c is NonNullable<typeof c> => !!c);
@@ -59,18 +67,23 @@ export function PopupChatRoot() {
   const parked = windows.slice(0, windows.length - shown.length);
   const chips = [...parked, ...minimized];
 
+  const desktopStack = vw >= POPUP_MD_PX && shown.length > 0;
+  const dockRight = desktopStack ? popupDockRightCss(shown.length) : undefined;
+  // Phone sheets fill the screen; the hat would cover the composer. Web popups
+  // park the hat to the left of the stack so it stays a way to open more chats.
+  const hideHat = onChatPage || inboxOpen || (windows.length > 0 && vw < POPUP_MD_PX);
+
   return (
     <>
       {chips.length > 0 && (
         <div
-          className={cn(
-            'fixed z-chat flex flex-col items-end gap-2 right-4 copilot-shift',
-            // Beside the open popups (never under them); above the hat when none is open.
-            shown.length > 0
-              ? 'chat-above-hat md:bottom-6 md:right-[calc(1.5rem+var(--chat-stack)*22.5rem)]'
-              : 'chat-above-hat md:right-6',
-          )}
-          style={{ '--chat-stack': String(shown.length) } as CSSProperties}
+          data-chat-restore-dock=""
+          style={dockRight ? { right: dockRight } : undefined}
+          className={
+            desktopStack
+              ? 'chat-above-hat fixed z-modal-high flex flex-col items-end gap-2 copilot-shift'
+              : 'chat-above-hat fixed z-chat flex flex-col items-end gap-2 right-4 md:right-6 copilot-shift'
+          }
         >
           {chips.map((c) => (
             <button
@@ -92,8 +105,8 @@ export function PopupChatRoot() {
           ))}
         </div>
       )}
-      {!(onChatPage || inboxOpen || windows.length > 0) && (
-        <PopupChatLauncher onClick={toggleInbox} />
+      {!hideHat && (
+        <PopupChatLauncher onClick={toggleInbox} dockRight={dockRight} raise={desktopStack} />
       )}
       {inboxOpen && (
         <>

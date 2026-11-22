@@ -8,7 +8,17 @@ import { CHAT_HAT_FAB, chatHatById } from '../../lib/chatHatStyles';
 import { useUIStore } from '../../store/uiStore';
 import { useDraggableChatHat } from '../../hooks/useDraggableChatHat';
 
-export function PopupChatLauncher({ onClick, className }: { onClick: () => void; className?: string }) {
+export function PopupChatLauncher({
+  onClick,
+  className,
+  dockRight,
+  raise,
+}: {
+  onClick: () => void;
+  className?: string;
+  dockRight?: string;
+  raise?: boolean;
+}) {
   const { t } = useLanguage();
   const inboxOpen = useChatStore((s) => s.inboxOpen);
   const hatStyleId = useUIStore((s) => s.chatHatStyle);
@@ -52,14 +62,17 @@ export function PopupChatLauncher({ onClick, className }: { onClick: () => void;
       style={
         drag.placed
           ? { left: drag.placed.left, top: drag.placed.top, right: 'auto', bottom: 'auto' }
-          : undefined
+          : dockRight
+            ? { right: dockRight }
+            : undefined
       }
       className={cn(
         'chat-hat-fab fixed z-chat-toggle inline-flex items-center justify-center p-0 m-0',
         'bg-transparent border-0 shadow-none rounded-full overflow-visible',
         'touch-none select-none cursor-grab',
         drag.dragging && 'cursor-grabbing scale-[1.04]',
-        drag.placed ? 'right-auto bottom-auto' : 'right-3 md:right-6 copilot-shift',
+        drag.placed ? 'right-auto bottom-auto' : dockRight ? 'copilot-shift' : 'right-3 md:right-6 copilot-shift',
+        raise && 'z-modal-high',
         hideOnPhones && 'max-md:hidden',
         className,
       )}

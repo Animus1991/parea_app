@@ -3,6 +3,7 @@ import { Plus, ChevronLeft, ChevronRight, Send, X, Image as ImageIcon } from 'lu
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useChatStore } from '../../store/chatStore';
+import { useFittedOpenConversation } from '../../hooks/useFittedOpenConversation';
 import { useStore } from '../../store';
 import type { ChatStory } from '../../types/chat';
 import { STORY_BG_GRADIENTS } from '../../lib/chatMediaCatalog';
@@ -27,7 +28,7 @@ export function ChatStoriesStrip({
   const reactToStory = useChatStore((s) => s.reactToStory);
   const addStory = useChatStore((s) => s.addStory);
   const sendRichMessage = useChatStore((s) => s.sendRichMessage);
-  const openConversation = useChatStore((s) => s.openConversation);
+  const openConversation = useFittedOpenConversation();
   const ensureDirectConversation = useChatStore((s) => s.ensureDirectConversation);
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null);

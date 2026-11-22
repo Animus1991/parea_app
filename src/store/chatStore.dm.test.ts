@@ -215,4 +215,19 @@ describe('popup windows', () => {
     expect(activeWindowIds).toEqual(ids.slice(-4));
     expect(minimizedIds).toEqual(['conv_g2']);
   });
+
+  it('honours a narrower fit so extras become restore pills', () => {
+    const ids = ['conv_g2', 'conv_direct_maria', 'conv_org_e3', 'conv_support'];
+    for (const id of ids) useChatStore.getState().openConversation(id, { maxWindows: 2 });
+    expect(useChatStore.getState().activeWindowIds).toEqual(['conv_org_e3', 'conv_support']);
+    expect(useChatStore.getState().minimizedIds).toEqual(['conv_g2', 'conv_direct_maria']);
+  });
+
+  it('fits already-open popups when the viewport shrinks', () => {
+    const ids = ['conv_g2', 'conv_direct_maria', 'conv_org_e3', 'conv_support'];
+    for (const id of ids) useChatStore.getState().openConversation(id);
+    useChatStore.getState().fitActiveWindowsToViewport(1024);
+    expect(useChatStore.getState().activeWindowIds).toHaveLength(2);
+    expect(useChatStore.getState().minimizedIds).toEqual(['conv_g2', 'conv_direct_maria']);
+  });
 });

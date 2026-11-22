@@ -35,7 +35,7 @@ export function HikeRouteCard({ route, revealStart, className }: { route: HikeRo
   const { t } = useLanguage();
   const d = DIFFICULTY[route.difficulty];
   const stats = [
-    { icon: RouteIcon, label: t('Απόσταση', 'Distance'), value: `${route.distanceKm.toLocaleString('el-GR')} km` },
+    { icon: RouteIcon, label: t('Απόσταση', 'Distance'), value: `${route.distanceKm.toLocaleString('el-GR')} ${t('χλμ', 'km')}` },
     { icon: TrendingUp, label: t('Ανάβαση', 'Climb'), value: `${route.elevationGainM} m` },
     { icon: Timer, label: t('Διάρκεια', 'Time'), value: `~${route.durationH.toLocaleString('el-GR')} ${t('ώρ.', 'h')}` },
     { icon: Mountain, label: t('Δυσκολία', 'Difficulty'), value: t(d.el, d.en) },

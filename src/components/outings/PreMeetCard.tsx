@@ -122,7 +122,7 @@ export function PreMeetCard({
                 )}
               >
                 {v.name}
-                {km > 0 ? ` · ${km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`}` : ''} · −{v.discountPct}%
+                {km > 0 ? ` · ${km < 1 ? `${Math.round(km * 1000)} ${t('μ', 'm')}` : `${km.toFixed(1)} ${t('χλμ', 'km')}`}` : ''} · −{v.discountPct}%
               </button>
             ))}
           </div>

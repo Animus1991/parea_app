@@ -54,6 +54,12 @@ describe('prepareChatHatImage', () => {
     expect(opaqueShare(image.data)).toBe(1);
   });
 
+  it('refuses a fully transparent image as empty', () => {
+    const image = makeImage(8, 8);
+    expect(opaqueBounds(image.data, 8, 8)).toBeNull();
+    expect(opaqueShare(image.data)).toBe(0);
+  });
+
   it('skips files that are already cut out', () => {
     const image = makeImage(8, 8);
     fill(image, 196, 155, 80, 0);

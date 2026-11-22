@@ -301,13 +301,20 @@ test.describe('Nakamas Chat desktop hat', () => {
     await expect(sheet).toHaveCount(0);
   });
 
-  test('opening a popup conversation hides the hat', async ({ page }) => {
+  test('opening a popup conversation parks the hat left of the stack', async ({ page }) => {
     await enterDemoGuest(page);
     const sheet = await openInbox(page);
     await sheet.getByRole('button').filter({ hasText: /Διοργανωτής|Organizer|Ομάδ|Group|Nakamas/ }).first().click();
-    await expect(page.locator('[data-chat-window]')).toBeVisible();
-    await expect(chatsButton(page)).toHaveCount(0);
+    const win = page.locator('[data-chat-window]');
+    await expect(win).toBeVisible();
     await expect(inbox(page)).toHaveCount(0);
+    const hat = chatsButton(page);
+    await expect(hat).toBeVisible();
+    const hatBox = await hat.boundingBox();
+    const winBox = await win.boundingBox();
+    expect(hatBox).toBeTruthy();
+    expect(winBox).toBeTruthy();
+    expect(hatBox!.x + hatBox!.width).toBeLessThanOrEqual(winBox!.x + 12);
   });
 });
 
@@ -367,6 +374,30 @@ test.describe('Nakamas Chat web popups', () => {
     await page.getByRole('button', { name: /Nakamas Support/ }).click();
     await page.getByRole('button', { name: /Διοργανωτής · Ωδείο|Organizer/ }).click();
     await expect(windows).toHaveCount(3);
+  });
+});
+
+test.describe('Nakamas Chat popup fit', () => {
+  test.use({ viewport: { width: 1024, height: 768 } });
+
+  test('only as many popups as fit stay open; extras restore beside the stack', async ({ page }) => {
+    await enterDemoGuest(page);
+    await page.goto('/chats');
+    await page.getByRole('button', { name: /Nakamas Support/ }).click();
+    await page.getByRole('button', { name: /Διοργανωτής · Ωδείο|Organizer/ }).click();
+    await page.getByRole('button', { name: /Maria/ }).first().click();
+    const search = page.getByPlaceholder(/Αναζήτηση συνομιλιών|Search conversations/);
+    await search.fill('Workshop');
+    await page.getByRole('button', { name: /Workshop: UX Basics/ }).click();
+    const windows = page.locator('[data-chat-window]');
+    await expect(windows).toHaveCount(2);
+    await expect(page.getByRole('button', { name: /Επαναφορά συνομιλίας|Restore conversation/ })).toHaveCount(2);
+    await expect(chatsButton(page)).toBeVisible();
+    const hat = await chatsButton(page).boundingBox();
+    const win = await windows.first().boundingBox();
+    expect(hat).toBeTruthy();
+    expect(win).toBeTruthy();
+    expect(hat!.x + hat!.width).toBeLessThanOrEqual(win!.x + 12);
   });
 });
 

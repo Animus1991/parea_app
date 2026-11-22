@@ -16,6 +16,9 @@ import { mockConversations, mockChatMessages, mockChatStories } from '../data/mo
 import { emitChatMessage, joinChatRoom } from '../lib/realtime/socket';
 import { isFirebaseConfigured as isFirebaseChatEnabled } from '../lib/firebaseConfig';
 import { SYS_COORDINATION_UNLOCKED, SYS_DM_UNLOCKED } from '../lib/chatSystemCopy';
+import { MAX_POPUP_WINDOWS, desktopPopupSlots, popupMaxFromViewport } from '../lib/popupChatLayout';
+
+export { MAX_POPUP_WINDOWS };
 
 export interface ChatReport {
   id: string;
@@ -57,9 +60,10 @@ interface ChatState {
 
   setInboxOpen: (open: boolean) => void;
   toggleInbox: () => void;
-  openConversation: (id: string) => void;
+  openConversation: (id: string, opts?: { maxWindows?: number }) => void;
   closeConversation: (id: string) => void;
   minimizeConversation: (id: string) => void;
+  fitActiveWindowsToViewport: (viewportWidth: number) => void;
   sendMessage: (conversationId: string, body: string, senderId: string) => void;
   sendRichMessage: (input: SendRichMessageInput) => string;
   /** Φ17 — inbound message (simulated/peer): appends + bumps unreadCount. */
@@ -103,9 +107,6 @@ interface ChatState {
   }) => string | null;
 }
 
-/** How many popup windows can sit on screen at once. Extra opens minimize the oldest. */
-export const MAX_POPUP_WINDOWS = 4;
-
 function previewForRich(input: SendRichMessageInput): { el: string; en: string } {
   if (input.media?.kind === 'gif') return { el: 'GIF · ' + (input.media.label || 'GIF'), en: 'GIF · ' + (input.media.label || 'GIF') };
   if (input.media?.kind === 'voice') return { el: '🎙️ Φωνητικό μήνυμα', en: '🎙️ Voice message' };
@@ -136,15 +137,16 @@ export const useChatStore = create<ChatState>()(
       setInboxOpen: (open) => set({ inboxOpen: open }),
       toggleInbox: () => set((s) => ({ inboxOpen: !s.inboxOpen })),
 
-      openConversation: (id) => {
+      openConversation: (id, opts) => {
+        const cap = Math.max(1, Math.min(MAX_POPUP_WINDOWS, opts?.maxWindows ?? MAX_POPUP_WINDOWS));
         const { activeWindowIds, minimizedIds } = get();
         let next = activeWindowIds.filter((x) => x !== id);
         let nextMinimized = minimizedIds.filter((x) => x !== id);
         if (!next.includes(id)) {
           next = [...next, id];
-          if (next.length > MAX_POPUP_WINDOWS) {
-            const overflow = next.slice(0, next.length - MAX_POPUP_WINDOWS);
-            next = next.slice(-MAX_POPUP_WINDOWS);
+          if (next.length > cap) {
+            const overflow = next.slice(0, next.length - cap);
+            next = next.slice(-cap);
             nextMinimized = [...new Set([...nextMinimized, ...overflow])];
           }
         }
@@ -155,6 +157,17 @@ export const useChatStore = create<ChatState>()(
           openConversationIds: [...new Set([...get().openConversationIds, id])],
         });
         get().markRead(id);
+      },
+
+      fitActiveWindowsToViewport: (viewportWidth) => {
+        const cap = desktopPopupSlots(viewportWidth);
+        const { activeWindowIds, minimizedIds } = get();
+        if (activeWindowIds.length <= cap) return;
+        const overflow = activeWindowIds.slice(0, activeWindowIds.length - cap);
+        set({
+          activeWindowIds: activeWindowIds.slice(-cap),
+          minimizedIds: [...new Set([...minimizedIds, ...overflow])],
+        });
       },
 
       closeConversation: (id) =>
@@ -519,7 +532,7 @@ export const useChatStore = create<ChatState>()(
               ),
             }));
           }
-          if (openWindow) get().openConversation(existing.id);
+          if (openWindow) get().openConversation(existing.id, { maxWindows: popupMaxFromViewport() });
           return existing.id;
         }
 
@@ -558,7 +571,7 @@ export const useChatStore = create<ChatState>()(
           messages: [...s.messages, sysMsg],
         }));
 
-        if (openWindow) get().openConversation(conversationId);
+        if (openWindow) get().openConversation(conversationId, { maxWindows: popupMaxFromViewport() });
         return conversationId;
       },
 
@@ -581,7 +594,7 @@ export const useChatStore = create<ChatState>()(
               pair.every((id) => c.participantUserIds.includes(id))),
         );
         if (existing) {
-          if (openWindow) get().openConversation(existing.id);
+          if (openWindow) get().openConversation(existing.id, { maxWindows: popupMaxFromViewport() });
           return existing.id;
         }
 
@@ -616,7 +629,7 @@ export const useChatStore = create<ChatState>()(
           messages: [...s.messages, sysMsg],
         }));
 
-        if (openWindow) get().openConversation(conversationId);
+        if (openWindow) get().openConversation(conversationId, { maxWindows: popupMaxFromViewport() });
         return conversationId;
       },
     }),

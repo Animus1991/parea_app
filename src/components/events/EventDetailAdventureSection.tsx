@@ -49,7 +49,7 @@ export function EventDetailAdventureSection({
           </div>
           <div className="card-heading font-bold text-ink">
             {routeDifficulty
-              ? `${routeDifficulty} · ${event.route!.distanceKm.toLocaleString('el-GR')} km`
+              ? `${routeDifficulty} · ${event.route!.distanceKm.toLocaleString('el-GR')} ${t('χλμ', 'km')}`
               : isHiking
                 ? t('Μέτρια / έδαφος', 'Moderate / Terrain')
                 : t('Εύκολο / αναψυχή', 'Easy / Leisure')}

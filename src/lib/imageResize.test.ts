@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fitWithin, fileToResizedDataUrl, ImageResizeFailure, MAX_IMAGE_INPUT_BYTES } from './imageResize';
+import { fitWithin, fileToResizedDataUrl, imageErrorText, ImageResizeFailure, MAX_IMAGE_INPUT_BYTES } from './imageResize';
 
 describe('imageResize', () => {
   it('keeps the aspect ratio and never upscales', () => {
@@ -14,5 +14,10 @@ describe('imageResize', () => {
     const big = new File(['x'], 'b.jpg', { type: 'image/jpeg' });
     Object.defineProperty(big, 'size', { value: MAX_IMAGE_INPUT_BYTES + 1 });
     await expect(fileToResizedDataUrl(big, { maxSize: 100 })).rejects.toBeInstanceOf(ImageResizeFailure);
+  });
+
+  it('explains an empty hat without a wall of copy', () => {
+    const t = (el: string, en: string) => en;
+    expect(imageErrorText(new ImageResizeFailure('empty_hat'), t)).toBe('That image is empty.');
   });
 });

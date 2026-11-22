@@ -8,6 +8,8 @@ import {
 /** 2× the desktop FAB (112px) so the bubble stays sharp. */
 export const CHAT_HAT_ASSET_PX = 224;
 export const MAX_CUSTOM_CHAT_HATS = 8;
+/** Hard cap on a persisted data URL so localStorage cannot blow the quota. */
+export const MAX_CUSTOM_HAT_DATA_URL_CHARS = 400_000;
 /** Working copy before the final square — keeps flood-fill cheap on phones. */
 const WORK_MAX_EDGE = 640;
 const ALPHA_CUTOUT = 16;
@@ -206,12 +208,8 @@ export async function fileToChatHatDataUrl(file: File): Promise<string> {
     }
     workCtx.putImageData(snapshot, 0, 0);
 
-    const box = opaqueBounds(snapshot.data, fitted.width, fitted.height) ?? {
-      x: 0,
-      y: 0,
-      w: fitted.width,
-      h: fitted.height,
-    };
+    const box = opaqueBounds(snapshot.data, fitted.width, fitted.height);
+    if (!box) throw new ImageResizeFailure('empty_hat');
 
     const out = document.createElement('canvas');
     out.width = CHAT_HAT_ASSET_PX;
@@ -219,7 +217,9 @@ export async function fileToChatHatDataUrl(file: File): Promise<string> {
     const outCtx = out.getContext('2d');
     if (!outCtx) throw new ImageResizeFailure('decode_failed');
     drawContained(outCtx, work, box.x, box.y, box.w, box.h, CHAT_HAT_ASSET_PX);
-    return out.toDataURL('image/png');
+    const src = out.toDataURL('image/png');
+    if (src.length > MAX_CUSTOM_HAT_DATA_URL_CHARS) throw new ImageResizeFailure('too_large');
+    return src;
   } finally {
     URL.revokeObjectURL(objectUrl);
   }

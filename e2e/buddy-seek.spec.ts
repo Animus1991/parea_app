@@ -104,6 +104,7 @@ test.describe('Find Nakamas', () => {
     expect(searchBox).toBeTruthy();
     expect(ctaBox!.y).toBeLessThan(80);
     expect(ctaBox!.x + ctaBox!.width).toBeLessThanOrEqual(searchBox!.x + 4);
+    await expect(headerCta).toContainText(/Βρες παρέα τώρα|Find company now/);
     await headerCta.click();
     await expect(page.getByRole('dialog', { name: /Βρες παρέα τώρα|Find company now/ })).toBeVisible();
     await page.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).last().click();
@@ -168,5 +169,19 @@ test.describe('Find Nakamas', () => {
     ).toHaveCount(0);
     await expect(page.getByRole('dialog', { name: /Βρες παρέα τώρα|Find company now/ })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: /Μικρές έξοδοι δίπλα σου|Small outings near you/ })).toHaveCount(0);
+  });
+
+  test('at 1024 the header shortcut is the people icon', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await enterDemoGuest(page);
+    await page.goto('/connections');
+    const headerCta = page.locator('[data-find-company-cta="header"]');
+    await expect(headerCta).toBeVisible();
+    await expect(headerCta.locator('span')).toBeHidden();
+    const box = await headerCta.boundingBox();
+    expect(box).toBeTruthy();
+    expect(box!.width).toBeLessThan(56);
+    await headerCta.click();
+    await expect(page.getByRole('dialog', { name: /Βρες παρέα τώρα|Find company now/ })).toBeVisible();
   });
 });

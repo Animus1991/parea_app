@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useUIStore } from './uiStore';
 import { DEFAULT_CHAT_HAT_STYLE } from '../lib/chatHatStyles';
+import { MAX_CUSTOM_HAT_DATA_URL_CHARS } from '../lib/prepareChatHatImage';
 
 const sample = {
   id: 'custom_test',
@@ -23,6 +24,17 @@ describe('custom chat hats', () => {
     expect(useUIStore.getState().addCustomChatHat(sample)).toBe(true);
     expect(useUIStore.getState().chatHatStyle).toBe('custom_test');
     expect(useUIStore.getState().customChatHats).toHaveLength(1);
+  });
+
+  it('refuses a hat that would overflow device storage', () => {
+    expect(
+      useUIStore.getState().addCustomChatHat({
+        ...sample,
+        id: 'custom_huge',
+        src: `data:image/png;base64,${'a'.repeat(MAX_CUSTOM_HAT_DATA_URL_CHARS)}`,
+      }),
+    ).toBe(false);
+    expect(useUIStore.getState().customChatHats).toHaveLength(0);
   });
 
   it('hides a built-in hat and restores it', () => {

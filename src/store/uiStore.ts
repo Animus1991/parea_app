@@ -12,7 +12,7 @@ import {
   visibleChatHats,
   type ChatHatStyle,
 } from '../lib/chatHatStyles';
-import { MAX_CUSTOM_CHAT_HATS } from '../lib/prepareChatHatImage';
+import { MAX_CUSTOM_CHAT_HATS, MAX_CUSTOM_HAT_DATA_URL_CHARS } from '../lib/prepareChatHatImage';
 
 interface UIState {
   sideNavCollapsed: boolean;
@@ -96,6 +96,7 @@ export const useUIStore = create<UIState>()(
         let added = false;
         set((s) => {
           if (!isCustomChatHat(hat) || s.customChatHats.length >= MAX_CUSTOM_CHAT_HATS) return s;
+          if (hat.src.length > MAX_CUSTOM_HAT_DATA_URL_CHARS) return s;
           if (s.customChatHats.some((h) => h.id === hat.id)) return s;
           added = true;
           return {

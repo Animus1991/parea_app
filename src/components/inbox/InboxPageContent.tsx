@@ -11,6 +11,7 @@ import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useChatStore } from '../../store/chatStore';
+import { useFittedOpenConversation } from '../../hooks/useFittedOpenConversation';
 import { EmptyState } from '../common/EmptyState';
 import { cn } from '../../lib/utils';
 import { INBOX_TYPO } from '../../lib/typographyTokens';
@@ -43,7 +44,7 @@ export default function InboxPageContent() {
   const rawNotifications = useStore((s) => s.notifications);
   const notifications = rawNotifications.filter((n) => !n.forUserId || n.forUserId === currentUser?.id);
   const conversations = useChatStore((s) => s.conversations);
-  const openConversation = useChatStore((s) => s.openConversation);
+  const openConversation = useFittedOpenConversation();
   const setInboxOpen = useChatStore((s) => s.setInboxOpen);
   const ensureEventGroupConversation = useChatStore((s) => s.ensureEventGroupConversation);
   const isDesktop = useMediaQuery('(min-width: 768px)');
