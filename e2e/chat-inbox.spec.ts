@@ -386,9 +386,9 @@ test.describe('Nakamas Chat popup fit', () => {
     await page.getByRole('button', { name: /Nakamas Support/ }).click();
     await page.getByRole('button', { name: /Διοργανωτής · Ωδείο|Organizer/ }).click();
     await page.getByRole('button', { name: /Maria/ }).first().click();
-    const search = page.getByPlaceholder(/Αναζήτηση συνομιλιών|Search conversations/);
-    await search.fill('Workshop');
-    await page.getByRole('button', { name: /Workshop: UX Basics/ }).click();
+    const sheet = await openInbox(page);
+    await sheet.getByRole('button').filter({ hasText: /Summer Cinema/ }).click();
+    await expect(sheet).toHaveCount(0);
     const windows = page.locator('[data-chat-window]');
     await expect(windows).toHaveCount(2);
     await expect(page.getByRole('button', { name: /Επαναφορά συνομιλίας|Restore conversation/ })).toHaveCount(2);
