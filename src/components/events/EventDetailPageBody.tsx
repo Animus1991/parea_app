@@ -321,6 +321,24 @@ export default function EventDetailPageBody({ accent, darkSurface = false }: Eve
             ))}
 
             {isLiveCatalogEvent(event) && (
+              <div className="rounded-2xl overflow-hidden border border-border mb-4">
+                <div className="bg-gradient-to-br from-hero-from to-hero-to p-3 flex items-center justify-between gap-3">
+                  <p className="text-sm font-bold text-hero-fg truncate">{event.title}</p>
+                  <button
+                    type="button"
+                    onClick={() => void handleShare()}
+                    className="shrink-0 min-h-8 rounded-full bg-hero-fg/15 px-3 text-xs font-bold text-hero-fg hover:bg-hero-fg/25 transition-colors"
+                  >
+                    {t('Κάλεσε φίλο →', 'Invite a friend →')}
+                  </button>
+                </div>
+                <div className="px-3 py-2 bg-surface-raised text-2xs font-medium text-ink-muted">
+                  {t('Στείλε τον σύνδεσμο σε φίλο που θα ήθελες μαζί σου.', 'Send the link to a friend you want with you.')}
+                </div>
+              </div>
+            )}
+
+            {isLiveCatalogEvent(event) && (
             <div className="space-y-4 pt-5 border-t border-border">
               <div className="grid grid-cols-1 gap-3">
                 <Button variant="outline" className="w-full border-border text-ink hover:bg-ink/5" size="lg" disabled={isWaitlisted} onClick={handleJoinWaitlist}>

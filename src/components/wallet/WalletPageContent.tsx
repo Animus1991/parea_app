@@ -48,6 +48,12 @@ export default function WalletPageContent() {
     <div className="max-w-full mx-auto space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in">
       <div>
         <h1 className={cn(WALLET_TYPO.pageTitle, a.head)}>{t('Πορτοφόλι & έσοδα', 'Wallet & Earnings')}</h1>
+        <p className={cn(WALLET_TYPO.statusNote, 'mt-1', a.muted)}>
+          {t(
+            `${formatWalletEur(WALLET_DEMO.availableEur, 'el')} διαθέσιμα · ${transactions.length} κινήσεις`,
+            `${formatWalletEur(WALLET_DEMO.availableEur, 'en')} available · ${transactions.length} transactions`,
+          )}
+        </p>
         {stripeReady && (
           <p className={cn(WALLET_TYPO.statusNote, 'mt-2', a.muted)}>
             {t('Οι αναλήψεις γίνονται μέσω Stripe.', 'Withdrawals go through Stripe.')}

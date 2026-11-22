@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Image as ImageIcon, Ban, Newspaper, Bot, MessageCircle } from 'lucide-react';
+import { Bell, Lock, Eye, Globe, CreditCard, LogOut, Smartphone, Download, Laptop, Info, Palette, LayoutGrid, Image as ImageIcon, Ban, Newspaper, Bot, MessageCircle, Search } from 'lucide-react';
 import { useUIStore } from '../../store/uiStore';
 import { HomeHeroModeSetting } from './HomeHeroModeSetting';
 import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
@@ -75,6 +75,7 @@ export default function SettingsPageContent() {
   const [showAvailability, setShowAvailability] = useState(false);
   const [showBlockedUsers, setShowBlockedUsers] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [settingsSearch, setSettingsSearch] = useState('');
   const homeHeroMode = useStore((s) => s.homeHeroMode);
   const aiHintsHidden = useUIStore((s) => s.aiHintsHidden);
   const setAiHintsHidden = useUIStore((s) => s.setAiHintsHidden);
@@ -308,12 +309,31 @@ export default function SettingsPageContent() {
         <h1 className={cn(APP_TYPO.pageTitle, a.head)}>{t('Ρυθμίσεις & απόρρητο', 'Settings & Privacy')}</h1>
       </div>
 
-      {sections.map((section, idx) => (
+      <div className="relative">
+        <Search className={cn('absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none', a.muted)} aria-hidden />
+        <input
+          type="search"
+          value={settingsSearch}
+          onChange={(e) => setSettingsSearch(e.target.value)}
+          placeholder={t('Αναζήτηση ρύθμισης…', 'Search settings…')}
+          aria-label={t('Αναζήτηση ρύθμισης', 'Search settings')}
+          className={cn('search-control w-full h-9 pl-9 pr-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand/40', a.inputBg)}
+        />
+      </div>
+
+      {sections.map((section, idx) => {
+        const items = settingsSearch.trim()
+          ? section.items.filter((item) =>
+              item.label.toLowerCase().includes(settingsSearch.trim().toLowerCase()),
+            )
+          : section.items;
+        if (items.length === 0) return null;
+        return (
         <div key={idx} className="space-y-3">
           <h2 className={cn("text-xs font-bold tracking-wider mb-3", a.sectionHead)}>{section.title}</h2>
           <Card className={a.divider}>
             <div className={cn("divide-y", a.divider)}>
-              {section.items.map((item, i) => {
+              {items.map((item, i) => {
                 const Icon = item.icon;
                 return (
                   <div key={i} {...(item.onClick ? pressable<HTMLDivElement>(() => item.onClick!()) : {})} className={cn("flex items-center justify-between p-4 transition-colors", cn("cursor-pointer", a.itemHover))}>
@@ -361,7 +381,8 @@ export default function SettingsPageContent() {
             </div>
           )}
         </div>
-      ))}
+        );
+      })}
 
       <div ref={buddySeekSectionRef}>
         <BuddySeekPrivacySettings />

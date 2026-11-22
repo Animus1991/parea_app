@@ -15,19 +15,19 @@ bootstrap();
 window.addEventListener('error', (e) => {
   if (e.message && (e.message.includes('Google Maps') || e.message.includes('InvalidKeyMapError') || e.message === 'Script error.')) {
     e.preventDefault();
-    console.warn('Suppressed global script error:', e.message);
+    console.debug('Suppressed global script error:', e.message);
   }
 });
 
 window.addEventListener('unhandledrejection', (e) => {
   if (e.reason && e.reason.message && (e.reason.message.includes('Google Maps') || e.reason.message.includes('InvalidKeyMapError'))) {
     e.preventDefault();
-    console.warn('Suppressed global rejection:', e.reason.message);
+    console.debug('Suppressed global rejection:', e.reason.message);
   }
 });
 
 (window as Window & { gm_authFailure?: () => void }).gm_authFailure = () => {
-  console.warn('Google Maps Authentication Failed. API Key may be invalid or restricted.');
+  console.debug('Google Maps Authentication Failed. API Key may be invalid or restricted.');
 };
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: unknown }> {

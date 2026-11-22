@@ -35,6 +35,8 @@ import { cn } from '../../lib/utils';
 import { useLanguage } from '../../lib/i18n';
 import { trackEvent } from '../../lib/analytics';
 import { useStore } from '../../store';
+import { useChatStore } from '../../store/chatStore';
+import { profilePathFor } from '../../lib/profileLinks';
 import { useOverlayBehavior } from '../../hooks/useOverlayBehavior';
 import { isOrganizerUser, isPlatformAdmin } from '../../lib/roles';
 
@@ -81,6 +83,53 @@ export function CommandPalette() {
   const isAdmin = isPlatformAdmin(currentUser);
   const isOrganizer = isOrganizerUser(currentUser);
   const { mode, q } = detectMode(query);
+
+  const events = useStore((s) => s.events);
+  const users = useStore((s) => s.users);
+  const conversations = useChatStore((s) => s.conversations);
+
+  /** Unified data search: events, people and conversations beside pages. */
+  const dataItems: CommandItem[] = useMemo(() => {
+    const items: CommandItem[] = [];
+    for (const e of events.slice(0, 40)) {
+      items.push({
+        id: `ev-${e.id}`,
+        labelEl: e.title,
+        labelEn: e.title,
+        icon: Calendar,
+        path: `/events/${e.id}`,
+        sectionEl: 'Εκδηλώσεις',
+        sectionEn: 'Events',
+        keywords: [e.category ?? '', e.locationArea ?? ''],
+        kind: 'page',
+      });
+    }
+    for (const u of users.slice(0, 30)) {
+      items.push({
+        id: `user-${u.id}`,
+        labelEl: u.name,
+        labelEn: u.name,
+        icon: User,
+        path: profilePathFor(u),
+        sectionEl: 'Άτομα',
+        sectionEn: 'People',
+        kind: 'page',
+      });
+    }
+    for (const c of conversations.slice(0, 30)) {
+      items.push({
+        id: `conv-${c.id}`,
+        labelEl: c.title,
+        labelEn: c.title,
+        icon: MessageSquare,
+        path: `/chat/${c.groupId}`,
+        sectionEl: 'Συνομιλίες',
+        sectionEn: 'Conversations',
+        kind: 'page',
+      });
+    }
+    return items;
+  }, [events, users, conversations]);
 
   const pageItems: CommandItem[] = useMemo(
     () =>
@@ -245,14 +294,15 @@ export function CommandPalette() {
   const visible = useMemo(() => {
     if (!q) return pool;
     const needle = q.toLowerCase();
-    return pool.filter(
+    const matched = (mode === 'mixed' ? [...pool, ...dataItems] : pool).filter(
       (c) =>
         c.labelEl.toLowerCase().includes(needle) ||
         c.labelEn.toLowerCase().includes(needle) ||
         c.keywords?.some((k) => k.includes(needle)) ||
         (c.path && c.path.includes(needle)),
     );
-  }, [pool, q]);
+    return matched.slice(0, 24);
+  }, [pool, dataItems, q, mode]);
 
   const runItem = useCallback(
     (item: CommandItem) => {

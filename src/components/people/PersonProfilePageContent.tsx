@@ -513,14 +513,12 @@ export default function PersonProfilePageContent() {
                 {t(`Nakamas (${theirConnections.length})`, `Nakamas (${theirConnections.length})`)}
               </h2>
               {theirConnections.length === 0 ? (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-ink-muted">{t('Καμία σύνδεση ακόμα.', 'No connections yet.')}</p>
-                  {isSelf && (
-                    <Button size="sm" variant="ghost" onClick={() => navigate('/buddy-seek')}>
-                      {t('Βρες Nakamas', 'Find Nakamas')}
-                    </Button>
-                  )}
-                </div>
+                <EmptyState
+                  title={t('Καμία σύνδεση ακόμα.', 'No connections yet.')}
+                  actionLabel={isSelf ? t('Βρες Nakamas', 'Find Nakamas') : undefined}
+                  onAction={isSelf ? () => navigate('/buddy-seek') : undefined}
+                  className="border-none bg-transparent py-4"
+                />
               ) : (
                 <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {theirConnections.map((u) => (
@@ -547,17 +545,14 @@ export default function PersonProfilePageContent() {
               <h2 className={cn(APP_TYPO.sectionLabel, 'mb-3 text-ink-muted')}>{t('Εκδηλώσεις', 'Events')}</h2>
               {theirEvents.length === 0 ? (
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-ink-muted">{t('Καμία εκδήλωση ακόμα.', 'No events yet.')}</p>
-                  {isSelf && (
-                    <div className="flex flex-wrap gap-2">
-                      <Button size="sm" variant="ghost" onClick={() => navigate('/')}>
-                        {t('Εξερεύνηση', 'Explore')}
-                      </Button>
-                      <Button size="sm" variant="ghost" onClick={() => navigate('/buddy-seek')}>
-                        {t('Βρες Nakamas', 'Find Nakamas')}
-                      </Button>
-                    </div>
-                  )}
+                  <EmptyState
+                    title={t('Καμία εκδήλωση ακόμα.', 'No events yet.')}
+                    actionLabel={isSelf ? t('Εξερεύνηση', 'Explore') : undefined}
+                    onAction={isSelf ? () => navigate('/') : undefined}
+                    secondaryLabel={isSelf ? t('Βρες Nakamas', 'Find Nakamas') : undefined}
+                    onSecondary={isSelf ? () => navigate('/buddy-seek') : undefined}
+                    className="border-none bg-transparent py-4"
+                  />
                 </div>
               ) : (
                 <ul className="space-y-2">

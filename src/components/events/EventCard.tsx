@@ -312,7 +312,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         detail={event.time}
         align="start"
         wellClass={onPhoto ? photoWell : factWell}
-        labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold capitalize", onPhoto ? "text-white" : headColor)}
+        labelClass={cn(EVENT_CARD_TYPO.meta, "font-medium capitalize", onPhoto ? "text-white" : headColor)}
         detailClass={cn(EVENT_CARD_TYPO.progressSub, onPhoto ? "text-white/80" : mutedColor)}
       />
       <CardFact
@@ -321,7 +321,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         detail={locationDetail}
         align="center"
         wellClass={onPhoto ? photoWell : factWell}
-        labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold", onPhoto ? "text-white" : headColor)}
+        labelClass={cn(EVENT_CARD_TYPO.meta, "font-medium", onPhoto ? "text-white" : headColor)}
         detailClass={cn(EVENT_CARD_TYPO.progressSub, onPhoto ? "text-white/80" : mutedColor)}
       />
       <CardFact
@@ -329,7 +329,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
         label={`${groupProgress.spotsLeft} ${t("θέσεις", "spots")}`}
         align="end"
         wellClass={onPhoto ? photoWell : factWell}
-        labelClass={cn(EVENT_CARD_TYPO.meta, "font-bold tabular-nums", onPhoto ? "text-white" : headColor)}
+        labelClass={cn(EVENT_CARD_TYPO.meta, "font-medium tabular-nums", onPhoto ? "text-white" : headColor)}
         detailClass={cn(EVENT_CARD_TYPO.progressSub, onPhoto ? "text-white/80" : mutedColor)}
       />
     </div>

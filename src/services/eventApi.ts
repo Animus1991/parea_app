@@ -106,7 +106,7 @@ export async function fetchTicketmasterEvents(
     const data: TmResponse = await res.json();
     return (data._embedded?.events ?? []).map(mapTmEvent);
   } catch (err) {
-    console.warn("Ticketmaster fetch failed:", err);
+    console.debug("Ticketmaster fetch failed:", err);
     return [];
   }
 }

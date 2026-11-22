@@ -301,7 +301,7 @@ export default function NearbyGroupsPageContent() {
           setMapCenter(loc);
           setUserLocation(loc);
         },
-        (error) => console.warn("Geolocation permission denied:", error)
+        (error) => console.debug("Geolocation permission denied:", error)
       );
     }
   }, []);

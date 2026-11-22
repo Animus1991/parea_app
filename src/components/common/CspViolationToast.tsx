@@ -21,11 +21,7 @@ export function CspViolationToast() {
       }
       shown.current = true;
       toast({
-        title: t('Περιορισμός ασφαλείας', 'Security restriction'),
-        description: t(
-          'Κάποιο εξωτερικό σενάριο μπλοκαρίστηκε. Αν η σύνδεση αποτύχει, δοκίμασε ξανά ή ρύθμισε CSP_MODE=report-only.',
-          'An external script was blocked. If sign-in fails, retry or set CSP_MODE=report-only.',
-        ),
+        title: t('Κάποιο σενάριο μπλοκαρίστηκε — αν η σύνδεση αποτύχει, δοκίμασε ξανά.', 'A script was blocked — if sign-in fails, retry.'),
       });
     };
     document.addEventListener('securitypolicyviolation', onViolation);
