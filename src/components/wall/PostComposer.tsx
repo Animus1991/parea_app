@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CalendarDays, ImagePlus, Lock, UserPlus, X } from 'lucide-react';
+import { CalendarDays, ImagePlus, Lock, MapPin, Palette, Plus, Smile, UserPlus, Vote, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
@@ -17,6 +17,8 @@ import { AudiencePickerModal } from './AudiencePickerModal';
 import { PersonAvatar } from './PersonAvatar';
 import { cn } from '../../lib/utils';
 import { formatPlanWhenDay } from '../../lib/dateLocale';
+import { FEELINGS, WALL_TEXT_BACKGROUNDS } from '../../lib/chatMediaCatalog';
+import { MediaPicker, type PickedMedia } from './MediaPicker';
 
 const COMPOSER_ROW =
   'flex w-full flex-wrap items-stretch justify-between gap-x-2 gap-y-1.5';
@@ -95,8 +97,20 @@ export function PostComposer({
   const [engaged, setEngaged] = useState(() =>
     Boolean(focusOnOpen || initialEventId || (initialText ?? readDraft(ownerId)).trim()),
   );
-  const [imageUrl, setImageUrl] = useState<string | undefined>();
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [gif, setGif] = useState<PickedMedia | undefined>();
   const [eventId, setEventId] = useState<string | undefined>(initialEventId);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
+  const [pickerTab, setPickerTab] = useState<'emoji' | 'gif' | 'stickers'>('gif');
+  const [pollEnabled, setPollEnabled] = useState(false);
+  const [pollQuestion, setPollQuestion] = useState('');
+  const [pollOptions, setPollOptions] = useState(['', '']);
+  const [feelingId, setFeelingId] = useState<string | undefined>();
+  const [feelingOpen, setFeelingOpen] = useState(false);
+  const [location, setLocation] = useState('');
+  const [bgId, setBgId] = useState<string | undefined>();
+  const [bgOpen, setBgOpen] = useState(false);
   const [taggedIds, setTaggedIds] = useState<string[]>([]);
   const [tagsOpen, setTagsOpen] = useState(false);
   const textRef = useRef<HTMLTextAreaElement>(null);
@@ -138,6 +152,11 @@ export function PostComposer({
   }, [events, savedEvents, groups, me]);
 
   const myConnections = me ? connectionIdsOf(access.graph, me.id) : [];
+  const backgroundAllowed = text.trim().length <= 140 && imageUrls.length === 0 && !gif && !pollEnabled;
+
+  useEffect(() => {
+    if (bgId && !backgroundAllowed) setBgId(undefined);
+  }, [bgId, backgroundAllowed]);
 
   if (!me) return null;
   const gate = canPostOnWall(me.id, ownerId, access);
@@ -154,13 +173,31 @@ export function PostComposer({
   const ownerAudience = wallPrivacyOf(access.privacyByUser, ownerId).othersPostsAudience;
   const attached = eventId ? events.find((e) => e.id === eventId) : undefined;
   const remaining = POST_MAX_CHARS - text.length;
-  const canSubmit = !busy && (text.trim().length > 0 || Boolean(imageUrl) || Boolean(eventId)) && remaining >= 0;
+  const pollValid =
+    !pollEnabled ||
+    (pollQuestion.length <= 120 &&
+      pollOptions.length >= 2 &&
+      pollOptions.length <= 4 &&
+      pollOptions.every((option) => option.trim().length > 0 && option.trim().length <= 60));
+  const canSubmit =
+    !busy &&
+    (text.trim().length > 0 || imageUrls.length > 0 || Boolean(gif) || Boolean(eventId) || pollEnabled) &&
+    remaining >= 0 &&
+    pollValid;
 
-  const pickImage = async (file?: File) => {
-    if (!file) return;
+  const pickImages = async (files: File[]) => {
+    const selected = files;
+    if (!selected.length) return;
+    const slots = Math.max(0, 4 - imageUrls.length);
+    if (selected.length > slots) toast.error(t('Μπορείς να προσθέσεις έως 4 φωτογραφίες.', 'You can add up to 4 photos.'));
+    const toResize = selected.slice(0, slots);
+    if (!toResize.length) return;
     try {
       setBusy(true);
-      setImageUrl(await fileToResizedDataUrl(file, { maxSize: 960, quality: 0.78 }));
+      const resized = await Promise.all(
+        toResize.map((file) => fileToResizedDataUrl(file, { maxSize: 960, quality: 0.78 })),
+      );
+      setImageUrls((current) => [...current, ...resized].slice(0, 4));
     } catch (err) {
       toast.error(imageErrorText(err, t));
     } finally {
@@ -170,14 +207,50 @@ export function PostComposer({
 
   const submit = () => {
     if (!canSubmit) return;
-    const res = createPost({ wallOwnerId: ownerId, text, imageUrl, eventId, audience: isOwnWall ? audience : undefined, taggedIds });
+    const poll = pollEnabled
+      ? {
+          id: `poll-${Date.now()}`,
+          question: pollQuestion.trim(),
+          options: pollOptions.map((label, index) => ({
+            id: `poll-option-${Date.now()}-${index}`,
+            label: label.trim(),
+            voterIds: [],
+          })),
+        }
+      : undefined;
+    const res = createPost({
+      wallOwnerId: ownerId,
+      text,
+      imageUrls,
+      imageUrl: imageUrls[0],
+      gifUrl: gif?.url,
+      gifFallbackUrl: gif?.fallbackUrl,
+      poll,
+      feeling: feelingId,
+      location,
+      bg: bgId,
+      eventId,
+      audience: isOwnWall ? audience : undefined,
+      taggedIds,
+    });
     if (!res.ok) {
       toast.error(t(res.reasonEl ?? '', res.reasonEn ?? ''));
       return;
     }
     setText('');
-    setImageUrl(undefined);
+    setImageUrls([]);
+    setGif(undefined);
     setEventId(undefined);
+    setMoreOpen(false);
+    setMediaPickerOpen(false);
+    setPollEnabled(false);
+    setPollQuestion('');
+    setPollOptions(['', '']);
+    setFeelingId(undefined);
+    setFeelingOpen(false);
+    setLocation('');
+    setBgId(undefined);
+    setBgOpen(false);
     setTaggedIds([]);
     setEngaged(false);
     setAudienceTouched(false);
@@ -202,7 +275,10 @@ export function PostComposer({
   const placeholder = isOwnWall
     ? t(`Τι σκέφτεσαι, ${me.name};`, `What's on your mind, ${me.name}?`)
     : t(`Γράψε κάτι στον τοίχο του/της ${owner?.name ?? ''}…`, `Write something on ${owner?.name ?? ''}'s wall…`);
-  const toolsOpen = engaged || Boolean(text.trim() || imageUrl || eventId || taggedIds.length);
+  const toolsOpen = engaged || Boolean(
+    text.trim() || imageUrls.length || gif || eventId || taggedIds.length || pollEnabled || feelingId || location || bgId,
+  );
+  const selectedBackground = WALL_TEXT_BACKGROUNDS.find((background) => background.id === bgId);
 
   return (
     <Card className={cn('p-3 sm:p-4', !toolsOpen && 'py-3')} data-testid="wall-composer">
@@ -228,9 +304,11 @@ export function PostComposer({
             rows={toolsOpen ? (text.length > 120 ? 4 : 2) : 1}
             maxLength={POST_MAX_CHARS + 50}
             placeholder={placeholder}
+            style={selectedBackground ? { backgroundImage: selectedBackground.gradient } : undefined}
             className={cn(
               'w-full resize-none border border-border bg-surface px-3 text-sm text-ink outline-none placeholder:text-ink-muted focus:ring-2 focus:ring-accent',
-              toolsOpen ? 'rounded-2xl py-2.5' : 'rounded-full py-2',
+              selectedBackground && 'min-h-36 rounded-2xl py-4 text-center text-xl font-bold text-white placeholder:text-white/80',
+              toolsOpen ? (selectedBackground ? 'rounded-2xl py-4' : 'rounded-2xl py-2.5') : 'rounded-full py-2',
             )}
           />
 
@@ -245,14 +323,43 @@ export function PostComposer({
             </p>
           )}
 
-          {imageUrl && (
-            <div className="relative overflow-hidden rounded-2xl border border-border">
-              <img src={imageUrl} alt={t('Προεπισκόπηση φωτογραφίας', 'Photo preview')} className="max-h-72 w-full object-cover" />
+          {imageUrls.length > 0 && (
+            <div className={cn('grid grid-cols-2 gap-1.5', imageUrls.length === 1 && 'grid-cols-1')}>
+              {imageUrls.map((url, index) => (
+                <div key={`${url.slice(0, 24)}-${index}`} className="relative overflow-hidden rounded-xl border border-border">
+                  <img
+                    src={url}
+                    alt={t(`Προεπισκόπηση φωτογραφίας ${index + 1}`, `Photo preview ${index + 1}`)}
+                    className="aspect-square max-h-56 w-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setImageUrls((current) => current.filter((_, imageIndex) => imageIndex !== index))}
+                    className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white"
+                    aria-label={t(`Αφαίρεση φωτογραφίας ${index + 1}`, `Remove photo ${index + 1}`)}
+                  >
+                    <X className="h-4 w-4" aria-hidden />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {gif && (
+            <div className="relative max-w-[16rem] overflow-hidden rounded-xl border border-border">
+              <img
+                src={gif.url}
+                alt={gif.label}
+                onError={(event) => {
+                  event.currentTarget.src = gif.fallbackUrl;
+                }}
+                className="aspect-[3/2] w-full object-cover"
+              />
               <button
                 type="button"
-                onClick={() => setImageUrl(undefined)}
+                onClick={() => setGif(undefined)}
                 className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white"
-                aria-label={t('Αφαίρεση φωτογραφίας', 'Remove photo')}
+                aria-label={t('Αφαίρεση GIF ή αυτοκόλλητου', 'Remove GIF or sticker')}
               >
                 <X className="h-4 w-4" aria-hidden />
               </button>
@@ -303,7 +410,15 @@ export function PostComposer({
 
       {toolsOpen && (
       <div className="mt-3 space-y-2">
-        {engaged && !text && !eventId && !imageUrl && (
+        {engaged &&
+          !text &&
+          !eventId &&
+          imageUrls.length === 0 &&
+          !gif &&
+          !pollEnabled &&
+          !feelingId &&
+          !location &&
+          !bgId && (
           <div className={COMPOSER_ROW} role="group" aria-label={t('Γρήγορη αρχή', 'Quick start')}>
             {QUICK_STARTS.map((q) => (
               <button
@@ -322,6 +437,224 @@ export function PostComposer({
                 <span className="min-w-0">{t(q.el, q.en).trim()}</span>
               </button>
             ))}
+          </div>
+        )}
+
+        {moreOpen && (
+          <div className="space-y-2">
+            <div className={COMPOSER_ROW} role="group" aria-label={t('Περισσότερα εργαλεία', 'More tools')}>
+              <button
+                type="button"
+                onClick={() => {
+                  setPickerTab('gif');
+                  setMediaPickerOpen((open) => !open);
+                }}
+                aria-expanded={mediaPickerOpen}
+                className={cn(COMPOSER_PILL, 'inline-flex items-center justify-center gap-1 rounded-full px-2.5 text-xs font-semibold text-ink-muted hover:bg-surface hover:text-ink')}
+              >
+                <Smile className="h-4 w-4" aria-hidden /> {t('GIF / Sticker', 'GIF / Sticker')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPollEnabled((enabled) => !enabled)}
+                aria-pressed={pollEnabled}
+                className={cn(COMPOSER_PILL, 'inline-flex items-center justify-center gap-1 rounded-full px-2.5 text-xs font-semibold text-ink-muted hover:bg-surface hover:text-ink', pollEnabled && 'bg-accent-soft text-ink')}
+              >
+                <Vote className="h-4 w-4" aria-hidden /> {t('Δημοσκόπηση', 'Poll')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setFeelingOpen((open) => !open)}
+                aria-expanded={feelingOpen}
+                className={cn(COMPOSER_PILL, 'inline-flex items-center justify-center gap-1 rounded-full px-2.5 text-xs font-semibold text-ink-muted hover:bg-surface hover:text-ink')}
+              >
+                <span aria-hidden>🤩</span> {t('Διάθεση', 'Feeling')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const input = document.getElementById(`location-${ownerId}`);
+                  input?.focus();
+                }}
+                className={cn(COMPOSER_PILL, 'inline-flex items-center justify-center gap-1 rounded-full px-2.5 text-xs font-semibold text-ink-muted hover:bg-surface hover:text-ink')}
+              >
+                <MapPin className="h-4 w-4" aria-hidden /> {t('Τοποθεσία', 'Location')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setBgOpen((open) => !open)}
+                aria-expanded={bgOpen}
+                aria-label={t('Φόντο', 'Background')}
+                title={backgroundAllowed ? undefined : t('Διαθέσιμο σε σύντομο κείμενο χωρίς media ή δημοσκόπηση', 'Available for short text without media or a poll')}
+                disabled={!backgroundAllowed}
+                className={cn(COMPOSER_PILL, 'inline-flex items-center justify-center gap-1 rounded-full px-2.5 text-xs font-semibold text-ink-muted hover:bg-surface hover:text-ink disabled:cursor-not-allowed disabled:opacity-40')}
+              >
+                <Palette className="h-4 w-4" aria-hidden /> {t('Φόντο', 'Background')}
+              </button>
+            </div>
+
+            {mediaPickerOpen && (
+              <MediaPicker
+                initialTab={pickerTab}
+                onEmoji={(emoji) =>
+                  setText((current) => `${current}${current && !current.endsWith(' ') ? ' ' : ''}${emoji}`)
+                }
+                onGif={(media) => {
+                  setGif(media);
+                  setMediaPickerOpen(false);
+                }}
+                onSticker={(media) => {
+                  setGif(media);
+                  setMediaPickerOpen(false);
+                }}
+                onClose={() => setMediaPickerOpen(false)}
+              />
+            )}
+
+            {pollEnabled && (
+              <div className="space-y-2 rounded-2xl border border-border/60 bg-surface p-3">
+                <label className="sr-only" htmlFor={`poll-question-${ownerId}`}>{t('Ερώτηση δημοσκόπησης', 'Poll question')}</label>
+                <input
+                  id={`poll-question-${ownerId}`}
+                  value={pollQuestion}
+                  onChange={(event) => setPollQuestion(event.target.value.slice(0, 120))}
+                  maxLength={120}
+                  placeholder={t('Ερώτηση (προαιρετικά)', 'Question (optional)')}
+                  className="h-9 w-full rounded-xl border border-border bg-surface-raised px-3 text-sm text-ink outline-none focus:ring-2 focus:ring-accent"
+                />
+                {pollOptions.map((option, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <label className="sr-only" htmlFor={`poll-option-${ownerId}-${index}`}>
+                      {t(`Επιλογή ${index + 1}`, `Option ${index + 1}`)}
+                    </label>
+                    <input
+                      id={`poll-option-${ownerId}-${index}`}
+                      value={option}
+                      onChange={(event) =>
+                        setPollOptions((current) => current.map((value, optionIndex) =>
+                          optionIndex === index ? event.target.value.slice(0, 60) : value,
+                        ))
+                      }
+                      maxLength={60}
+                      placeholder={t(`Επιλογή ${index + 1}`, `Option ${index + 1}`)}
+                      className="h-9 min-w-0 flex-1 rounded-xl border border-border bg-surface-raised px-3 text-sm text-ink outline-none focus:ring-2 focus:ring-accent"
+                    />
+                    {pollOptions.length > 2 && (
+                      <button
+                        type="button"
+                        onClick={() => setPollOptions((current) => current.filter((_, optionIndex) => optionIndex !== index))}
+                        aria-label={t(`Αφαίρεση επιλογής ${index + 1}`, `Remove option ${index + 1}`)}
+                        className="flex h-8 w-8 items-center justify-center rounded-full text-ink-muted hover:bg-surface-raised"
+                      >
+                        <X className="h-4 w-4" aria-hidden />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                {pollOptions.length < 4 && (
+                  <button
+                    type="button"
+                    onClick={() => setPollOptions((current) => [...current, ''])}
+                    className="inline-flex min-h-8 items-center gap-1 rounded-full px-2 text-xs font-semibold text-accent hover:bg-accent-soft"
+                  >
+                    <Plus className="h-3.5 w-3.5" aria-hidden /> {t('+ Επιλογή', '+ Option')}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPollEnabled(false);
+                    setPollQuestion('');
+                    setPollOptions(['', '']);
+                  }}
+                  className="ml-2 inline-flex min-h-8 items-center gap-1 rounded-full px-2 text-xs font-semibold text-ink-muted hover:bg-surface-raised"
+                >
+                  <X className="h-3.5 w-3.5" aria-hidden /> {t('Αφαίρεση δημοσκόπησης', 'Remove poll')}
+                </button>
+              </div>
+            )}
+
+            {feelingOpen && (
+              <div role="group" aria-label={t('Διάλεξε διάθεση', 'Choose a feeling')} className="grid grid-cols-3 gap-1.5 rounded-2xl border border-border/60 bg-surface p-2 sm:grid-cols-4">
+                {FEELINGS.map((feeling) => (
+                  <button
+                    key={feeling.id}
+                    type="button"
+                    onClick={() => {
+                      setFeelingId(feeling.id);
+                      setFeelingOpen(false);
+                    }}
+                    aria-pressed={feelingId === feeling.id}
+                    className={cn('flex min-h-9 items-center gap-1.5 rounded-xl px-2 text-left text-xs font-medium text-ink hover:bg-surface-raised', feelingId === feeling.id && 'bg-accent-soft')}
+                  >
+                    <span aria-hidden>{feeling.emoji}</span> {t(feeling.el, feeling.en)}
+                  </button>
+                ))}
+              </div>
+            )}
+            {feelingId && (() => {
+              const feeling = FEELINGS.find((item) => item.id === feelingId);
+              if (!feeling) return null;
+              return (
+                <span className="inline-flex min-h-8 items-center gap-1 rounded-full bg-accent-soft px-3 text-xs font-semibold text-ink">
+                  {feeling.emoji} {t(feeling.el, feeling.en)}
+                  <button type="button" onClick={() => setFeelingId(undefined)} aria-label={t('Αφαίρεση διάθεσης', 'Remove feeling')} className="ml-1 rounded-full p-1 hover:bg-surface">
+                    <X className="h-3 w-3" aria-hidden />
+                  </button>
+                </span>
+              );
+            })()}
+
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="sr-only" htmlFor={`location-${ownerId}`}>{t('Τοποθεσία', 'Location')}</label>
+              <input
+                id={`location-${ownerId}`}
+                value={location}
+                onChange={(event) => setLocation(event.target.value.slice(0, 80))}
+                maxLength={80}
+                placeholder={t('Πού βρίσκεσαι; (έως 80 χαρακτήρες)', 'Where are you? (up to 80 characters)')}
+                className="h-9 min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 text-sm text-ink outline-none focus:ring-2 focus:ring-accent"
+              />
+              {location && (
+                <button
+                  type="button"
+                  onClick={() => setLocation('')}
+                  aria-label={t('Αφαίρεση τοποθεσίας', 'Remove location')}
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-ink-muted hover:bg-surface"
+                >
+                  <X className="h-4 w-4" aria-hidden />
+                </button>
+              )}
+            </div>
+
+            {bgOpen && (
+              <div role="group" aria-label={t('Διάλεξε φόντο', 'Choose a background')} className="flex gap-2">
+                {WALL_TEXT_BACKGROUNDS.map((background) => (
+                  <button
+                    key={background.id}
+                    type="button"
+                    onClick={() => {
+                      setBgId(background.id);
+                      setBgOpen(false);
+                    }}
+                    aria-label={t(`Φόντο ${background.id.slice(2)}`, `Background ${background.id.slice(2)}`)}
+                    aria-pressed={bgId === background.id}
+                    className={cn('h-9 w-12 rounded-lg border-2 border-transparent', bgId === background.id && 'border-ink')}
+                    style={{ backgroundImage: background.gradient }}
+                  />
+                ))}
+                {bgId && (
+                  <button
+                    type="button"
+                    onClick={() => setBgId(undefined)}
+                    aria-label={t('Αφαίρεση φόντου', 'Remove background')}
+                    className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted hover:bg-surface"
+                  >
+                    <X className="h-4 w-4" aria-hidden />
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -349,11 +682,12 @@ export function PostComposer({
             ref={fileRef}
             type="file"
             accept="image/*"
+            multiple
             className="hidden"
             onChange={(e) => {
-              const f = e.target.files?.[0];
+              const files = Array.from(e.target.files ?? []);
               e.target.value = '';
-              void pickImage(f);
+              void pickImages(files);
             }}
           />
           <button
@@ -376,6 +710,19 @@ export function PostComposer({
             )}
           >
             <UserPlus className="h-4 w-4 shrink-0" aria-hidden /> {t('Με ποιους;', 'With whom?')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMoreOpen((open) => !open)}
+            aria-label={t('Περισσότερα', 'More')}
+            aria-expanded={moreOpen}
+            className={cn(
+              COMPOSER_PILL,
+              'inline-flex items-center justify-center gap-1 rounded-full px-2.5 text-xs font-semibold text-ink-muted hover:bg-surface hover:text-ink',
+              moreOpen && 'bg-accent-soft text-ink',
+            )}
+          >
+            <Plus className="h-4 w-4" aria-hidden /> {t('Περισσότερα', 'More')}
           </button>
           <span className="ml-auto flex min-h-8 basis-full items-center justify-end gap-2 sm:ml-0 sm:basis-auto sm:flex-none">
             {remaining < 200 && (

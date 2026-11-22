@@ -66,7 +66,7 @@ export function buildCsp(env: CspEnv, opts: { reportUri?: string } = {}): string
     'script-src': ["'self'", 'https://accounts.google.com', 'https://apis.google.com', 'https://www.gstatic.com'],
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://accounts.google.com'],
     'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
-    'img-src': ["'self'", 'data:', 'blob:', 'https:'],
+    'img-src': ["'self'", 'data:', 'blob:', 'https:', 'https://media*.giphy.com'],
     'media-src': ["'self'", 'data:', 'blob:'],
     'connect-src': [
       "'self'",
@@ -76,6 +76,7 @@ export function buildCsp(env: CspEnv, opts: { reportUri?: string } = {}): string
       'https://*.firebaseapp.com',
       'https://accounts.google.com',
       'https://app.ticketmaster.com',
+      'https://api.giphy.com',
       'https://api.open-meteo.com',
       ...extraConnect,
     ],

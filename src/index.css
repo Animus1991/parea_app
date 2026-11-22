@@ -1,6 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=Outfit:wght@700;800;900&family=Poppins:wght@600;700;800&display=swap');
 @import "tailwindcss";
 
+@keyframes reaction-pop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+}
+
+@utility animate-reaction-pop {
+  animation: reaction-pop 220ms ease-out;
+}
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 

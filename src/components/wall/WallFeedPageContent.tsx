@@ -15,6 +15,8 @@ import { usePublishPageSnapshot } from '../../hooks/usePublishPageSnapshot';
 import { PostComposer } from './PostComposer';
 import { WallPostList } from './WallPostList';
 import { PostCard } from './PostCard';
+import { ChatStoriesStrip } from '../chat/ChatStoriesStrip';
+import { foldSearchText } from '../../lib/greekText';
 
 type FeedFilter = 'all' | 'connections' | 'network' | 'mine';
 
@@ -32,15 +34,30 @@ export default function WallFeedPageContent() {
   const feedSeenAt = useWallStore((s) => s.feedSeenAt);
   const markFeedSeen = useWallStore((s) => s.markFeedSeen);
   const access = useWallAccess();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [filter, setFilter] = useState<FeedFilter>('all');
-  const [wallSearch, setWallSearch] = useState('');
+  const [wallSearch, setWallSearch] = useState(() => searchParams.get('q') ?? '');
   const [showHidden, setShowHidden] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
   const savedByViewer = useWallStore((s) => s.savedPostIds);
   const composerRef = useRef<HTMLDivElement>(null);
   const myId = me?.id ?? null;
-  const [searchParams, setSearchParams] = useSearchParams();
   const focusId = searchParams.get('post');
+  useEffect(() => {
+    setWallSearch(searchParams.get('q') ?? '');
+  }, [searchParams]);
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      const next = new URLSearchParams(searchParams);
+      const query = wallSearch.trim();
+      if (query) next.set('q', query);
+      else next.delete('q');
+      if (next.toString() !== searchParams.toString()) {
+        setSearchParams(next, { replace: true, preventScrollReset: true });
+      }
+    }, 300);
+    return () => window.clearTimeout(timeout);
+  }, [wallSearch, searchParams, setSearchParams]);
   const focusPost = useMemo(() => {
     const p = focusId ? posts.find((x) => x.id === focusId) : undefined;
     return p && myId && canViewPost(myId, p, access) ? p : null;
@@ -90,12 +107,12 @@ export default function WallFeedPageContent() {
 
   if (!me) return null;
 
-  const needle = wallSearch.trim().toLowerCase();
-  const nameOf = (id: string) => users.find((u) => u.id === id)?.name.toLowerCase() ?? '';
+  const needle = foldSearchText(wallSearch);
+  const nameOf = (id: string) => foldSearchText(users.find((u) => u.id === id)?.name ?? '');
   const list = (needle
     ? byFilter[filter].filter(
         (p) =>
-          p.text.toLowerCase().includes(needle) ||
+          foldSearchText(p.text).includes(needle) ||
           nameOf(p.authorId).includes(needle) ||
           nameOf(p.wallOwnerId).includes(needle),
       )
@@ -157,6 +174,7 @@ export default function WallFeedPageContent() {
           )}
         </div>
       </div>
+      <ChatStoriesStrip compact />
       {focusId && (
         <div className="space-y-2">
           <button

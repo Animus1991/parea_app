@@ -22,9 +22,11 @@ import type {
   WallPost,
   WallPrivacySettings,
 } from '../types/wall';
+import type { ChatPoll } from '../types/chat';
 import { AUDIENCE_BASES_FOR, DEFAULT_WALL_PRIVACY, MAX_TAGS, REACTION_KINDS } from '../types/wall';
 import { mockAudienceLists, mockWallActivity, mockWallPosts, mockWallPrivacy } from '../data/mockWall';
 import { isPlatformAdmin } from '../lib/roles';
+import { FEELINGS, WALL_TEXT_BACKGROUNDS } from '../lib/chatMediaCatalog';
 import {
   AUDIENCE_RANK,
   canCommentOnPost,
@@ -65,6 +67,13 @@ interface WallState {
     wallOwnerId?: string;
     text: string;
     imageUrl?: string;
+    imageUrls?: string[];
+    gifUrl?: string;
+    gifFallbackUrl?: string;
+    poll?: ChatPoll;
+    feeling?: string;
+    location?: string;
+    bg?: string;
     eventId?: string;
     audience?: Audience;
     taggedIds?: string[];
@@ -86,6 +95,7 @@ interface WallState {
   restorePost: (post: WallPost) => void;
   togglePin: (postId: string) => WallResult;
   react: (postId: string, kind: ReactionKind | null) => WallResult;
+  votePoll: (postId: string, optionId: string) => WallResult;
   addComment: (postId: string, text: string, extra?: CommentDraft) => WallResult;
   updateComment: (postId: string, commentId: string, patch: { text: string }) => WallResult;
   reactToComment: (postId: string, commentId: string, emoji: string | null) => WallResult;
@@ -231,15 +241,55 @@ export const useWallStore = create<WallState>()(
         if (!me) return fail('Σύνδεση απαιτείται', 'Sign in required');
         const ownerId = input.wallOwnerId ?? me;
         const text = (input.text ?? '').trim();
-        if (!text && !input.imageUrl && !input.eventId) {
-          return fail('Γράψε κάτι ή πρόσθεσε φωτογραφία/εκδήλωση.', 'Write something or add a photo/event.');
+        const imageUrls = input.imageUrls ?? (input.imageUrl ? [input.imageUrl] : []);
+        if (imageUrls.length > 4) {
+          return fail('Μπορείς να προσθέσεις έως 4 φωτογραφίες.', 'You can add up to 4 photos.');
         }
         if (text.length > POST_MAX_CHARS) {
           return fail(`Έως ${POST_MAX_CHARS} χαρακτήρες.`, `Up to ${POST_MAX_CHARS} characters.`);
         }
-        if (input.imageUrl && !input.imageUrl.startsWith('data:image/') && !/^https:\/\//.test(input.imageUrl)) {
+        if (imageUrls.some((url) => !url.startsWith('data:image/') && !/^https:\/\//.test(url))) {
           return fail('Μη έγκυρη εικόνα.', 'Invalid image.');
         }
+        const imageUrl = imageUrls[0];
+        let poll: ChatPoll | undefined;
+        if (input.poll) {
+          if (input.poll.options.length < 2 || input.poll.options.length > 4) {
+            return fail('Η δημοσκόπηση χρειάζεται 2–4 επιλογές.', 'A poll needs 2–4 options.');
+          }
+          const questionText = input.poll.question.trim();
+          if (questionText.length > 120) {
+            return fail('Η ερώτηση μπορεί να έχει έως 120 χαρακτήρες.', 'The question can be up to 120 characters.');
+          }
+          const options = input.poll.options.map((option) => ({
+            ...option,
+            label: option.label.trim(),
+            voterIds: [],
+          }));
+          if (options.some((option) => !option.label || option.label.length > 60)) {
+            return fail('Κάθε επιλογή μπορεί να έχει 1–60 χαρακτήρες.', 'Each option needs 1–60 characters.');
+          }
+          poll = { ...input.poll, question: (questionText || text).slice(0, 120), options };
+        }
+        if (!text && imageUrls.length === 0 && !input.gifUrl && !poll && !input.eventId) {
+          return fail('Γράψε κάτι ή πρόσθεσε φωτογραφία/εκδήλωση.', 'Write something or add a photo/event.');
+        }
+        if (input.feeling && !FEELINGS.some((feeling) => feeling.id === input.feeling)) {
+          return fail('Άγνωστη διάθεση.', 'Unknown feeling.');
+        }
+        const location = input.location?.trim();
+        if (location && location.length > 80) {
+          return fail('Η τοποθεσία μπορεί να έχει έως 80 χαρακτήρες.', 'Location can be up to 80 characters.');
+        }
+        if (input.bg && !WALL_TEXT_BACKGROUNDS.some((background) => background.id === input.bg)) {
+          return fail('Άγνωστο φόντο.', 'Unknown background.');
+        }
+        const canUseBackground =
+          Boolean(input.bg) &&
+          text.length <= 140 &&
+          imageUrls.length === 0 &&
+          !input.gifUrl &&
+          !poll;
         if (input.eventId && !useStore.getState().events.some((e) => e.id === input.eventId)) {
           return fail('Η εκδήλωση δεν βρέθηκε.', 'Event not found.');
         }
@@ -264,7 +314,13 @@ export const useWallStore = create<WallState>()(
           authorId: me,
           wallOwnerId: ownerId,
           text,
-          ...(input.imageUrl ? { imageUrl: input.imageUrl } : {}),
+          ...(imageUrls.length ? { imageUrls, imageUrl } : {}),
+          ...(input.gifUrl ? { gifUrl: input.gifUrl } : {}),
+          ...(input.gifFallbackUrl ? { gifFallbackUrl: input.gifFallbackUrl } : {}),
+          ...(poll ? { poll } : {}),
+          ...(input.feeling ? { feeling: input.feeling } : {}),
+          ...(location ? { location } : {}),
+          ...(canUseBackground && input.bg ? { bg: input.bg } : {}),
           ...(input.eventId ? { eventId: input.eventId } : {}),
           ...(taggedIds.length ? { taggedIds } : {}),
           audience,
@@ -369,6 +425,29 @@ export const useWallStore = create<WallState>()(
               ? pushActivity(s.activity, [makeActivity('reaction', post.authorId, me, postId, { reaction: kind })])
               : // Taking a reaction back also takes back its notification.
                 s.activity.filter((a) => !(a.kind === 'reaction' && a.actorId === me && a.postId === postId)),
+        }));
+        return { ok: true, id: postId };
+      },
+
+      votePoll: (postId, optionId) => {
+        const me = viewerId();
+        const post = get().posts.find((p) => p.id === postId);
+        if (!me || !post?.poll || !canViewPost(me, post, wallAccessContext())) {
+          return fail('Η δημοσκόπηση δεν είναι διαθέσιμη.', 'This poll is not available.');
+        }
+        if (!post.poll.options.some((option) => option.id === optionId)) {
+          return fail('Η επιλογή δεν βρέθηκε.', 'Option not found.');
+        }
+        const alreadyVoted = post.poll.options.find((option) => option.voterIds.includes(me))?.id;
+        const nextOptions = post.poll.options.map((option) => {
+          const voterIds = option.voterIds.filter((id) => id !== me);
+          if (alreadyVoted !== optionId && option.id === optionId) voterIds.push(me);
+          return { ...option, voterIds };
+        });
+        set((s) => ({
+          posts: s.posts.map((p) =>
+            p.id === postId && p.poll ? { ...p, poll: { ...p.poll, options: nextOptions } } : p,
+          ),
         }));
         return { ok: true, id: postId };
       },

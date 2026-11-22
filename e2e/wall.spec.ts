@@ -68,7 +68,7 @@ test.describe('Nakamas wall', () => {
     await tray.getByRole('button', { name: /^Τέλειο$|^Love$/ }).click();
     await expect(like).toHaveAttribute('aria-pressed', 'true');
     await expect(like).toHaveAccessibleName(/^Τέλειο$|^Love$/);
-    await post.getByRole('button', { name: /^Σχόλιο$|^Comment$/ }).click();
+    await post.getByRole('button', { name: /^(?:Σχόλιο|Comment|\d+ σχόλια|\d+ comments)$/ }).click();
     await post.getByRole('textbox').fill('Τέλειο, έρχομαι! 🙌');
     await post.getByRole('button', { name: /Αποστολή σχολίου|Send comment/ }).click();
     await expect(post.getByText('Τέλειο, έρχομαι! 🙌')).toBeVisible();
@@ -125,10 +125,12 @@ test.describe('Nakamas wall v2', () => {
     await expect(page.locator('#main-content')).toBeVisible();
     await page.goto('/wall');
     const post = page.getByTestId('wall-post').filter({ hasText: 'Καλημέρα, σε έβαλα στην παρέα' });
-    await expect(post.getByRole('button', { name: /^Ναι$|^Yes$/ })).toBeVisible();
-    await post.getByRole('button', { name: /^Ναι$|^Yes$/ }).click();
-    await expect(post.getByRole('button', { name: /^Ναι$|^Yes$/ })).toHaveCount(0);
-    await post.getByRole('button', { name: /Ενέργειες δημοσίευσης|Post actions/ }).click();
+    const postActions = post.getByRole('button', { name: /Ενέργειες δημοσίευσης|Post actions/ });
+    await postActions.click();
+    await page.getByRole('menuitem', { name: /Εμφάνιση στο προφίλ μου|Show on my profile/ }).click();
+    await postActions.click();
+    await expect(page.getByRole('menuitem', { name: /Εμφάνιση στο προφίλ μου|Show on my profile/ })).toHaveCount(0);
+    await expect(page.getByRole('menuitem', { name: /Αφαίρεση της ετικέτας μου|Remove my tag/ })).toBeVisible();
     await page.getByRole('menuitem', { name: /Αφαίρεση της ετικέτας μου|Remove my tag/ }).click();
     await expect(post.getByText(/με εσένα|with you/)).toHaveCount(0);
   });

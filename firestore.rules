@@ -183,7 +183,7 @@ service cloud.firestore {
     }
 
     function validPostData(d) {
-      return d.keys().hasOnly(['authorId', 'wallOwnerId', 'text', 'imageUrl', 'eventId', 'audience', 'createdAt', 'editedAt', 'pinned', 'commentsDisabled', 'taggedIds', 'tagApprovedIds', 'moderation'])
+      return d.keys().hasOnly(['authorId', 'wallOwnerId', 'text', 'imageUrl', 'imageUrls', 'gifUrl', 'gifFallbackUrl', 'poll', 'feeling', 'location', 'bg', 'eventId', 'audience', 'createdAt', 'editedAt', 'pinned', 'commentsDisabled', 'taggedIds', 'tagApprovedIds', 'moderation'])
         && (!('taggedIds' in d) || (d.taggedIds is list && d.taggedIds.size() <= 20))
         && (!('tagApprovedIds' in d) || (d.tagApprovedIds is list && d.get('taggedIds', []).hasAll(d.tagApprovedIds)))
         && (!('moderation' in d) || (d.moderation is map && d.moderation.status == 'removed'))
@@ -191,6 +191,13 @@ service cloud.firestore {
         && d.text is string && d.text.size() <= 2000
         && validAudience(d.audience, allBases())
         && (!('imageUrl' in d) || (d.imageUrl is string && d.imageUrl.size() <= 2048 && d.imageUrl.matches('https://.*')))
+        && (!('imageUrls' in d) || (d.imageUrls is list && d.imageUrls.size() <= 4))
+        && (!('gifUrl' in d) || (d.gifUrl is string && d.gifUrl.size() <= 2048 && d.gifUrl.matches('https://.*')))
+        && (!('gifFallbackUrl' in d) || (d.gifFallbackUrl is string && d.gifFallbackUrl.size() <= 2048 && d.gifFallbackUrl.matches('https://.*')))
+        && (!('poll' in d) || d.poll is map)
+        && (!('feeling' in d) || (d.feeling is string && d.feeling.size() <= 32))
+        && (!('location' in d) || (d.location is string && d.location.size() <= 80))
+        && (!('bg' in d) || (d.bg is string && d.bg.size() <= 32))
         && (!('eventId' in d) || (d.eventId is string && d.eventId.size() <= 128))
         && (!('pinned' in d) || d.pinned is bool)
         && (!('commentsDisabled' in d) || d.commentsDisabled is bool);
@@ -257,10 +264,16 @@ service cloud.firestore {
         && request.resource.data.createdAt == resource.data.createdAt
         && (
           (request.auth.uid == resource.data.authorId
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'audience', 'editedAt', 'commentsDisabled', 'imageUrl', 'eventId', 'taggedIds', 'tagApprovedIds'])
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'audience', 'editedAt', 'commentsDisabled', 'imageUrl', 'imageUrls', 'gifUrl', 'gifFallbackUrl', 'poll', 'feeling', 'location', 'bg', 'eventId', 'taggedIds', 'tagApprovedIds'])
             && connsOf(request.auth.uid).hasAll(request.resource.data.get('taggedIds', []))
             // Posts on someone else's wall keep the owner's audience.
             && (resource.data.wallOwnerId == resource.data.authorId || !('audience' in request.resource.data.diff(resource.data).affectedKeys())))
+          || (canReadPost(resource.data)
+            && 'poll' in resource.data
+            && 'poll' in request.resource.data
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['poll'])
+            && request.resource.data.poll.question == resource.data.poll.question
+            && request.resource.data.poll.options.size() == resource.data.poll.options.size())
           || (request.auth.uid == resource.data.wallOwnerId
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pinned', 'commentsDisabled']))
           || (request.auth.uid in resource.data.get('taggedIds', [])

@@ -5,6 +5,8 @@ import {
   Bookmark,
   BookmarkCheck,
   CalendarDays,
+  Check,
+  ChevronLeft,
   Link2,
   ShieldAlert,
   ShieldCheck,
@@ -39,13 +41,13 @@ import { cn } from '../../lib/utils';
 import { AudienceChip } from './AudienceChip';
 import { AudiencePickerModal } from './AudiencePickerModal';
 import { PersonAvatar } from './PersonAvatar';
-import { formatPlanWhen } from '../../lib/dateLocale';
 import { REACTION_EMOJI, reactionLabel, relativeTime } from './wallText';
 import { OverflowMenu, type OverflowMenuItem } from './OverflowMenu';
 import { PostReactionBar } from './PostReactionBar';
 import { CommentComposer } from './CommentComposer';
 import { CommentThread } from './CommentThread';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { FEELINGS, WALL_TEXT_BACKGROUNDS } from '../../lib/chatMediaCatalog';
 
 const LONG_TEXT = 420;
 
@@ -91,6 +93,7 @@ export function PostCard({
     approveTag,
     removeMyTag,
     toggleSavedPost,
+    votePoll,
   } = useWallStore.getState();
   const savedByViewer = useWallStore((s) => s.savedPostIds);
 
@@ -135,6 +138,8 @@ export function PostCard({
   const [reportOpen, setReportOpen] = useState(false);
   const [reportReason, setReportReason] = useState(REPORT_REASONS[0].id);
   const [thumbFailed, setThumbFailed] = useState(false);
+  const [gifFailed, setGifFailed] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const comments = useMemo(() => visibleComments(viewerId, post, access.graph), [viewerId, post, access.graph]);
   const commentGate = viewerId ? canCommentOnPost(viewerId, post, access) : null;
@@ -165,6 +170,10 @@ export function PostCard({
     return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([k]) => k);
   }, [reactionEntries]);
   const myReaction = viewerId ? post.reactions[viewerId] : undefined;
+  const postImages = post.imageUrls ?? (post.imageUrl ? [post.imageUrl] : []);
+  const feeling = FEELINGS.find((item) => item.id === post.feeling);
+  const background = WALL_TEXT_BACKGROUNDS.find((item) => item.id === post.bg);
+  const authorGoingTogether = Boolean(myEventGroup?.members.includes(post.authorId));
 
   if (!author) return null;
 
@@ -207,6 +216,24 @@ export function PostCard({
   const handleBlock = () => {
     blockUser(author.id);
     toast.success(t(`Αποκλείστηκε ο/η ${author.name}. Δεν θα βλέπετε ο ένας τον άλλον.`, `Blocked ${author.name}. You will not see each other.`));
+  };
+
+  const sharePost = async () => {
+    const url = `${window.location.origin}/wall?post=${post.id}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ url });
+        return;
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success(t('Ο σύνδεσμος αντιγράφηκε', 'Link copied'));
+    } catch {
+      toast.success(url);
+    }
   };
 
   const menuItems: OverflowMenuItem[] = [];
@@ -293,21 +320,32 @@ export function PostCard({
 
   return (
     <Card
-      className={cn('p-0 scroll-mt-24', highlighted && 'ring-2 ring-accent')}
+      className={cn('border-border/60 p-0 scroll-mt-24', highlighted && 'ring-2 ring-accent')}
       data-testid="wall-post"
       data-post-id={post.id}
       id={`post-${post.id}`}
     >
       <article aria-label={t(`Δημοσίευση από ${author.name}`, `Post by ${author.name}`)} className="p-4">
         <header className="flex items-start gap-3">
-          <Link to={profilePathFor(author)} className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label={author.name}>
-            <PersonAvatar user={author} viewer={viewer} />
+          <Link
+            to={profilePathFor(author)}
+            className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            aria-label={authorGoingTogether ? t(`${author.name}, πάτε μαζί`, `${author.name}, going together`) : author.name}
+          >
+            <PersonAvatar
+              user={author}
+              viewer={viewer}
+              ring={authorGoingTogether}
+              title={authorGoingTogether ? t('Πάτε μαζί', 'Going together') : undefined}
+            />
           </Link>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold leading-snug text-ink">
+            <p className="text-[15px] font-semibold leading-snug text-ink">
               <Link to={profilePathFor(author)} className="tap-area-y hover:underline">
                 {author.name}
               </Link>
+              {feeling && <span className="ml-1 font-normal text-ink-muted">· {feeling.emoji} {t(feeling.el, feeling.en)}</span>}
+              {post.location && <span className="ml-1 font-normal text-ink-muted">· 📍 {post.location}</span>}
               {onOtherWall && owner && (
                 <>
                   <ChevronRight className="mx-0.5 inline h-3.5 w-3.5 text-ink-muted" aria-hidden />
@@ -395,51 +433,142 @@ export function PostCard({
           </div>
         ) : (
           text && (
-            <p className="mt-3 whitespace-pre-wrap break-words text-sm font-medium leading-relaxed text-ink">
-              <RichText text={shownText} />
-              {long && (
-                <button type="button" onClick={() => setExpanded((v) => !v)} className="ml-1 font-bold underline">
-                  {expanded ? t('Λιγότερα', 'Less') : t('Περισσότερα', 'More')}
-                </button>
+            <div
+              className={cn(
+                'mt-3 whitespace-pre-wrap break-words text-[15px] font-normal leading-[1.55] text-ink',
+                background && 'flex min-h-44 items-center justify-center rounded-2xl p-5 text-center text-2xl font-bold text-white',
               )}
-            </p>
+              style={background ? { backgroundImage: background.gradient } : undefined}
+            >
+              <div>
+                <RichText text={shownText} />
+                {long && (
+                  <button type="button" onClick={() => setExpanded((v) => !v)} className="ml-1 font-semibold underline">
+                    {expanded ? t('Λιγότερα', 'Less') : t('Περισσότερα', 'More')}
+                  </button>
+                )}
+              </div>
+            </div>
           )
         )}
 
-        {post.imageUrl && (
+        {postImages.length > 0 && (
+          <div
+            className={cn(
+              'mt-3 -mx-4 overflow-hidden rounded-none sm:mx-0 sm:rounded-2xl',
+              postImages.length === 1 && 'aspect-[4/3]',
+              postImages.length === 2 && 'grid aspect-[2/1] grid-cols-2 gap-[2px]',
+              postImages.length >= 3 && 'grid aspect-square grid-cols-2 grid-rows-2 gap-[2px]',
+            )}
+          >
+            {postImages.slice(0, 4).map((url, index) => (
+              <button
+                key={`${url.slice(0, 32)}-${index}`}
+                type="button"
+                onClick={() => setLightboxIndex(index)}
+                aria-label={t(`Άνοιγμα φωτογραφίας ${index + 1} από ${postImages.length}`, `Open photo ${index + 1} of ${postImages.length}`)}
+                className={cn('min-h-0 min-w-0 overflow-hidden', postImages.length === 3 && index === 0 && 'row-span-2')}
+              >
+                <img
+                  src={url}
+                  alt={t(`Φωτογραφία ${index + 1} από ${author.name}`, `Photo ${index + 1} by ${author.name}`)}
+                  loading="lazy"
+                  className={cn('h-full w-full object-cover', postImages.length === 1 && 'aspect-[4/3]')}
+                />
+              </button>
+            ))}
+          </div>
+        )}
+
+        {post.gifUrl && (
           <img
-            src={post.imageUrl}
-            alt={t(`Φωτογραφία από ${author.name}`, `Photo by ${author.name}`)}
+            src={gifFailed ? post.gifFallbackUrl ?? post.gifUrl : post.gifUrl}
+            alt={t(`GIF από ${author.name}`, `GIF by ${author.name}`)}
+            onError={() => setGifFailed(true)}
             loading="lazy"
-            className="mt-3 max-h-[28rem] w-full rounded-2xl border border-border object-cover"
+            className="mt-3 max-h-[28rem] w-full rounded-2xl object-cover"
           />
+        )}
+
+        {post.poll && (
+          <section className="mt-3 space-y-2 rounded-2xl border border-border/60 bg-surface-raised p-3" aria-label={t('Δημοσκόπηση', 'Poll')}>
+            <p className="text-sm font-semibold text-ink">{post.poll.question || text}</p>
+            {(() => {
+              const totalVotes = post.poll.options.reduce((total, option) => total + option.voterIds.length, 0);
+              const selectedOption = post.poll.options.find((option) => viewerId && option.voterIds.includes(viewerId));
+              return (
+                <>
+                  <div className="space-y-1.5">
+                    {post.poll.options.map((option) => {
+                      const votes = option.voterIds.length;
+                      const percent = totalVotes ? Math.round((votes / totalVotes) * 100) : 0;
+                      const selected = selectedOption?.id === option.id;
+                      return (
+                        <button
+                          key={option.id}
+                          type="button"
+                          disabled={readOnly || !viewerId}
+                          onClick={() => run(votePoll(post.id, option.id))}
+                          aria-pressed={selected}
+                          className="relative flex min-h-10 w-full items-center justify-between overflow-hidden rounded-xl border border-border px-3 text-left text-sm font-medium text-ink disabled:cursor-default"
+                        >
+                          <span className="absolute inset-y-0 left-0 bg-accent-soft/80" style={{ width: `${percent}%` }} aria-hidden />
+                          <span className="relative inline-flex min-w-0 items-center gap-2">
+                            {selected && <Check className="h-4 w-4 shrink-0 text-accent" aria-hidden />}
+                            <span className="truncate">{option.label}</span>
+                          </span>
+                          <span className="relative ml-2 shrink-0 text-xs tabular-nums text-ink-muted">{percent}%</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-xs font-medium text-ink-muted">
+                    {t(`${totalVotes} ψήφοι`, `${totalVotes} votes`)}
+                  </p>
+                </>
+              );
+            })()}
+          </section>
         )}
 
         {event && (
           <Link
             to={`/events/${event.id}`}
-            className="mt-3 flex items-center gap-3 rounded-2xl border border-border bg-surface p-3 transition-colors hover:border-border-strong"
+            className="mt-3 block overflow-hidden rounded-2xl border border-border/60 bg-surface transition-colors hover:border-border-strong"
           >
-            {event.imageUrl && !thumbFailed ? (
-              <img
-                src={event.imageUrl}
-                alt=""
-                referrerPolicy="no-referrer"
-                onError={() => setThumbFailed(true)}
-                className="h-14 w-14 shrink-0 rounded-xl object-cover"
-              />
-            ) : (
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-accent-soft">
-                <CalendarDays className="h-5 w-5 text-ink" aria-hidden />
-              </span>
-            )}
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-bold text-ink">{event.title}</span>
-              <span className="block truncate text-xs font-medium text-ink-muted">
-                {formatPlanWhen(event.date, event.time, language)} · {formatLocationArea(event.locationArea, language)}
+            <span className="relative block aspect-video w-full overflow-hidden bg-accent-soft">
+              {event.imageUrl && !thumbFailed ? (
+                <img
+                  src={event.imageUrl}
+                  alt=""
+                  referrerPolicy="no-referrer"
+                  onError={() => setThumbFailed(true)}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center bg-accent-soft">
+                  <CalendarDays className="h-8 w-8 text-ink-muted" aria-hidden />
+                </span>
+              )}
+              <span className="absolute left-2 top-2 flex min-w-10 flex-col items-center rounded-lg bg-white px-1.5 py-1 text-center text-ink shadow-soft">
+                <span className="text-2xs font-bold uppercase leading-none">
+                  {new Intl.DateTimeFormat(language === 'el' ? 'el-GR' : 'en-US', { weekday: 'short' })
+                    .format(new Date(`${event.date}T12:00:00`))
+                    .replace('.', '')
+                    .toLocaleUpperCase(language === 'el' ? 'el-GR' : 'en-US')}
+                </span>
+                <span className="mt-0.5 text-sm font-bold leading-none">
+                  {new Intl.DateTimeFormat(language === 'el' ? 'el-GR' : 'en-US', { day: '2-digit' })
+                    .format(new Date(`${event.date}T12:00:00`))}
+                </span>
               </span>
             </span>
-            <ChevronRight className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />
+            <span className="block min-w-0 p-3">
+              <span className="block truncate text-sm font-semibold text-ink">{event.title}</span>
+              <span className="mt-0.5 block truncate text-xs font-medium text-ink-muted">
+                {[event.time, formatLocationArea(event.locationArea, language)].filter(Boolean).join(' · ')}
+              </span>
+            </span>
           </Link>
         )}
         {event && !readOnly && event.status !== 'cancelled' && event.status !== 'archived' && (
@@ -464,34 +593,21 @@ export function PostCard({
           ) : null
         )}
 
-        {(reactionEntries.length > 0 || comments.length > 0) && (
-          <div className="mt-3 flex items-center justify-between text-xs font-medium text-ink-muted">
-            {reactionEntries.length > 0 ? (
-              <button type="button" onClick={() => setReactionsOpen(true)} className="inline-flex min-h-8 items-center gap-1 hover:underline">
-                <span aria-hidden>{topReactions.map((k) => REACTION_EMOJI[k]).join('')}</span>
-                <span>
-                  {reactionEntries.length === 1 ? t('1 αντίδραση', '1 reaction') : t(`${reactionEntries.length} αντιδράσεις`, `${reactionEntries.length} reactions`)}
-                </span>
-              </button>
-            ) : (
-              <span />
-            )}
-            {comments.length > 0 && (
-              <button type="button" onClick={() => { setShowAllComments(true); setCommenting(true); }} className="min-h-8 hover:underline">
-                {comments.length === 1 ? t('1 σχόλιο', '1 comment') : t(`${comments.length} σχόλια`, `${comments.length} comments`)}
-              </button>
-            )}
-          </div>
-        )}
-
-        {!readOnly && viewerId && (
-          <PostReactionBar
-            myReaction={myReaction}
-            onReact={(kind) => run(react(post.id, kind))}
-            onComment={openComments}
-            canComment={commentGate?.allowed !== false}
-          />
-        )}
+        <PostReactionBar
+          myReaction={myReaction}
+          onReact={(kind) => run(react(post.id, kind))}
+          onComment={() => {
+            if (!readOnly && commentGate?.allowed) openComments();
+            else setShowAllComments(true);
+          }}
+          onOpenReactions={() => setReactionsOpen(true)}
+          onShare={() => void sharePost()}
+          reactionCount={reactionEntries.length}
+          reactionEmojis={topReactions.map((kind) => REACTION_EMOJI[kind])}
+          commentCount={comments.length}
+          canReact={!readOnly && Boolean(viewerId)}
+          canComment={!readOnly && commentGate?.allowed === true}
+        />
 
         {comments.length > 0 && (
           <CommentThread
@@ -577,6 +693,47 @@ export function PostCard({
             );
           })}
         </ul>
+      </Modal>
+
+      <Modal
+        open={lightboxIndex !== null}
+        onClose={() => setLightboxIndex(null)}
+        title={t('Φωτογραφίες δημοσίευσης', 'Post photos')}
+        size="lg"
+        className="p-3"
+      >
+        {lightboxIndex !== null && postImages[lightboxIndex] && (
+          <div className="relative flex items-center justify-center">
+            <img
+              src={postImages[lightboxIndex]}
+              alt={t(
+                `Φωτογραφία ${lightboxIndex + 1} από ${author.name}`,
+                `Photo ${lightboxIndex + 1} by ${author.name}`,
+              )}
+              className="max-h-[72vh] w-full rounded-xl object-contain"
+            />
+            {postImages.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex((index) => ((index ?? 0) + postImages.length - 1) % postImages.length)}
+                  aria-label={t('Προηγούμενη φωτογραφία', 'Previous photo')}
+                  className="absolute left-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white"
+                >
+                  <ChevronLeft className="h-5 w-5" aria-hidden />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex((index) => ((index ?? 0) + 1) % postImages.length)}
+                  aria-label={t('Επόμενη φωτογραφία', 'Next photo')}
+                  className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white"
+                >
+                  <ChevronRight className="h-5 w-5" aria-hidden />
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </Modal>
     </Card>
   );

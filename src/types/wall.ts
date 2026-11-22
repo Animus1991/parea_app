@@ -1,3 +1,5 @@
+import type { ChatPoll } from './chat';
+
 /**
  * Wall & audience model (Φ26).
  *
@@ -119,6 +121,14 @@ export interface WallPost {
   text: string;
   /** Downscaled JPEG data URL (see lib/imageResize). */
   imageUrl?: string;
+  /** Up to four images; imageUrl remains the first image for older readers. */
+  imageUrls?: string[];
+  gifUrl?: string;
+  gifFallbackUrl?: string;
+  poll?: ChatPoll;
+  feeling?: string;
+  location?: string;
+  bg?: string;
   /** Optional event attached to the post («Πάω σε αυτό — ποιος έρχεται;»). */
   eventId?: string;
   /**

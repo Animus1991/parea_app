@@ -21,12 +21,16 @@ export function PersonAvatar({
   size = 'md',
   className,
   viewer,
+  ring = false,
+  title,
 }: {
   user: Pick<User, 'id' | 'name' | 'photoUrl'> & Partial<User>;
   size?: keyof typeof SIZES;
   className?: string;
   /** Simulated viewer for «Δες ως…»; defaults to the signed-in user. */
   viewer?: User | null;
+  ring?: boolean;
+  title?: string;
 }) {
   const currentUser = useStore((s) => s.currentUser);
   const blockedUserIds = useStore((s) => s.blockedUserIds);
@@ -47,8 +51,10 @@ export function PersonAvatar({
       className={cn(
         'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-accent-soft font-bold text-ink',
         SIZES[size],
+        ring && 'ring-2 ring-accent ring-offset-2 ring-offset-surface-raised',
         className,
       )}
+      title={title}
       aria-hidden
     >
       {photo ? (

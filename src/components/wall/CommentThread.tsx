@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState, type KeyboardEvent, type MutableRefObject } from 'react';
 import { Link } from 'react-router-dom';
-import { Copy, Heart, Pencil, Reply, Trash2 } from 'lucide-react';
+import { Copy, Heart, Pencil, Plus, Reply, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { COMMENT_MAX_CHARS, useWallStore } from '../../store/wallStore';
@@ -8,6 +8,8 @@ import { cn } from '../../lib/utils';
 import { profilePathFor } from '../../lib/profileLinks';
 import type { WallComment } from '../../types/wall';
 import { COMMENT_REACTION_EMOJIS } from '../../types/wall';
+import { EMOJI_CATEGORIES } from '../../lib/chatMediaCatalog';
+import { REACTION_EMOJI } from './wallText';
 import type { User } from '../../types';
 import { OverflowMenu, type OverflowMenuItem } from './OverflowMenu';
 import { PersonAvatar } from './PersonAvatar';
@@ -62,7 +64,10 @@ function CommentReactionTray({
           onClick={() => onPick(em)}
           aria-label={em}
           aria-pressed={myEmoji === em}
-          className={cn('flex h-9 w-9 items-center justify-center rounded-full text-lg hover:scale-125', myEmoji === em && 'bg-accent-soft')}
+          className={cn(
+            'flex h-9 w-9 items-center justify-center rounded-full text-lg hover:scale-125',
+            myEmoji === em && 'bg-accent-soft motion-safe:animate-reaction-pop',
+          )}
         >
           {em}
         </button>
@@ -101,6 +106,7 @@ function CommentCard({
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(comment.text);
   const [tray, setTray] = useState(false);
+  const [allReactionsOpen, setAllReactionsOpen] = useState(false);
   const hold = useRef(false);
   const holdTimer = useRef<number | null>(null);
   const likeRef = useRef<HTMLButtonElement>(null);
@@ -185,7 +191,7 @@ function CommentCard({
               {author.name}
             </Link>
             <span className="ml-2 font-medium text-ink-muted">{relativeTime(comment.createdAt, language)}</span>
-            {comment.editedAt && <span className="ml-1 font-medium text-ink-muted">· {t('επεξεργασμένο', 'edited')}</span>}
+            {comment.editedAt && <span className="ml-1 font-medium text-ink-muted">· {t('επεξεργάστηκε', 'edited')}</span>}
           </p>
           {editing ? (
             <div className="mt-1.5 space-y-2">
@@ -234,6 +240,7 @@ function CommentCard({
                 className={cn(
                   'inline-flex min-h-6 items-center gap-0.5 rounded-full border px-1.5 text-count font-bold',
                   myEmoji === em ? 'border-accent bg-accent-soft text-ink' : 'border-border text-ink-muted',
+                  myEmoji === em && 'motion-safe:animate-reaction-pop',
                 )}
               >
                 {em} {n}
@@ -315,6 +322,43 @@ function CommentCard({
                 {t('Μου αρέσει', 'Like')}
               </button>
             </div>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setAllReactionsOpen((open) => !open)}
+                aria-label={t('Περισσότερες αντιδράσεις', 'More reactions')}
+                aria-expanded={allReactionsOpen}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full text-base font-medium text-ink-muted hover:bg-surface"
+              >
+                <Plus className="h-4 w-4" aria-hidden />
+              </button>
+              {allReactionsOpen && (
+                <div
+                  role="toolbar"
+                  aria-label={t('Όλες οι αντιδράσεις', 'All reactions')}
+                  className="absolute bottom-full left-0 z-20 mb-1 grid max-h-44 w-56 grid-cols-6 gap-0.5 overflow-y-auto rounded-2xl border border-border bg-surface-raised p-1 shadow-soft-lg"
+                >
+                  {Array.from(new Set([...Object.values(REACTION_EMOJI), ...EMOJI_CATEGORIES[0].emojis])).map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => {
+                        run(reactToComment(postId, comment.id, emoji));
+                        setAllReactionsOpen(false);
+                      }}
+                      aria-label={emoji}
+                      aria-pressed={myEmoji === emoji}
+                      className={cn(
+                        'flex h-8 w-8 items-center justify-center rounded-full text-lg hover:bg-surface',
+                        myEmoji === emoji && 'bg-accent-soft motion-safe:animate-reaction-pop',
+                      )}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             {canReply && (
               <button
                 type="button"
@@ -357,6 +401,7 @@ export function CommentThread({
   onReply: (c: WallComment) => void;
 }) {
   const { t, language } = useLanguage();
+  const [sort, setSort] = useState<'top' | 'newest'>('top');
   const { roots, byParent } = useMemo(() => {
     const ids = new Set(comments.map((c) => c.id));
     const roots = comments.filter((c) => !c.parentId || !ids.has(c.parentId));
@@ -371,7 +416,25 @@ export function CommentThread({
     return { roots, byParent };
   }, [comments]);
 
-  const shownRoots = showAll ? roots : roots.slice(-2);
+  const sortedRoots = useMemo(
+    () =>
+      [...roots].sort((a, b) => {
+        if (sort === 'newest') return b.createdAt.localeCompare(a.createdAt);
+        const score = (comment: WallComment) => {
+          let replyCount = 0;
+          const pending = [...(byParent.get(comment.id) ?? [])];
+          while (pending.length) {
+            const reply = pending.pop()!;
+            replyCount += 1;
+            pending.push(...(byParent.get(reply.id) ?? []));
+          }
+          return Object.keys(comment.reactions ?? {}).length + replyCount;
+        };
+        return score(b) - score(a) || a.createdAt.localeCompare(b.createdAt);
+      }),
+    [roots, byParent, sort],
+  );
+  const shownRoots = showAll ? sortedRoots : sortedRoots.slice(0, 2);
 
   if (roots.length === 0) return null;
 
@@ -395,7 +458,23 @@ export function CommentThread({
   );
 
   return (
-    <ul className="mt-3 space-y-2">
+    <>
+      {roots.length >= 3 && (
+        <div className="mt-2 flex justify-end">
+          <button
+            type="button"
+            onClick={() => setSort((current) => (current === 'top' ? 'newest' : 'top'))}
+            aria-label={t(
+              sort === 'top' ? 'Ταξινόμηση: σχετικά' : 'Ταξινόμηση: νεότερα',
+              sort === 'top' ? 'Sort: top' : 'Sort: newest',
+            )}
+            className="min-h-7 rounded-full px-2 text-xs font-medium text-ink-muted hover:bg-surface hover:text-ink"
+          >
+            {sort === 'top' ? t('Σχετικότερα', 'Top') : t('Νεότερα', 'Newest')}
+          </button>
+        </div>
+      )}
+      <ul className="mt-3 space-y-2">
       {!showAll && roots.length > shownRoots.length && (
         <li>
           <button type="button" onClick={onShowAll} className="text-xs font-bold text-ink-muted hover:underline">
@@ -408,6 +487,7 @@ export function CommentThread({
           {renderTree(c, 0)}
         </li>
       ))}
-    </ul>
+      </ul>
+    </>
   );
 }

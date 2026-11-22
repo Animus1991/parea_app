@@ -1,8 +1,10 @@
 import { Fragment, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { safeExternalUrl } from '../../lib/safeUrl';
 
 const URL_RE = /\b((?:https?:\/\/|www\.)[^\s<>"«»]+[^\s<>"«».,;:!?)\]])/gi;
 const MENTION_RE = /(@[\p{L}\p{N}_-]{1,40})/gu;
+const HASHTAG_RE = /#([\p{L}\p{N}_]+)/gu;
 
 function withMentions(text: string, keyPrefix: string): ReactNode[] {
   const bits = text.split(MENTION_RE);
@@ -15,6 +17,28 @@ function withMentions(text: string, keyPrefix: string): ReactNode[] {
       <Fragment key={`${keyPrefix}-t-${i}`}>{bit}</Fragment>
     ),
   );
+}
+
+function withHashtagsAndMentions(text: string, keyPrefix: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  let last = 0;
+  for (const [index, match] of [...text.matchAll(HASHTAG_RE)].entries()) {
+    const start = match.index ?? 0;
+    if (start > last) nodes.push(...withMentions(text.slice(last, start), `${keyPrefix}-${index}`));
+    const tag = match[1];
+    nodes.push(
+      <Link
+        key={`${keyPrefix}-h-${index}`}
+        to={`/wall?q=${encodeURIComponent(`#${tag}`)}`}
+        className="font-medium text-accent hover:underline"
+      >
+        #{tag}
+      </Link>,
+    );
+    last = start + match[0].length;
+  }
+  if (last < text.length) nodes.push(...withMentions(text.slice(last), `${keyPrefix}-tail`));
+  return nodes;
 }
 
 /**
@@ -42,7 +66,7 @@ export function RichText({ text }: { text: string }) {
             {p.value}
           </a>
         ) : (
-          <Fragment key={i}>{withMentions(p.value, String(i))}</Fragment>
+          <Fragment key={i}>{withHashtagsAndMentions(p.value, String(i))}</Fragment>
         ),
       )}
     </>
