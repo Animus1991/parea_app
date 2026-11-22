@@ -21,7 +21,7 @@ export function AdminSSOPanel() {
     <Card className={cn('p-5 space-y-4', a.cardSurface)}>
       <div className="flex items-center gap-2">
         <KeyRound className={cn('w-5 h-5', a.iconAccent)} />
-        <h2 className={cn('text-sm font-bold', a.head)}>{t('SSO & Enterprise Auth', 'SSO & Enterprise Auth')}</h2>
+        <h2 className={cn('text-sm font-bold', a.head)}>{t('SSO & εταιρική σύνδεση', 'SSO & Enterprise Auth')}</h2>
       </div>
       <p className={cn('text-sm', a.sub)}>
         {t(
@@ -31,9 +31,9 @@ export function AdminSSOPanel() {
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="block">
-          <span className={cn('text-xs font-bold tracking-wider', a.muted)} aria-hidden>Provider</span>
+          <span className={cn('text-xs font-bold tracking-wider', a.muted)} aria-hidden>{t('Πάροχος', 'Provider')}</span>
           <AppSelect
-            ariaLabel="Provider"
+            ariaLabel={t('Πάροχος', 'Provider')}
             value={provider}
             onValueChange={(v) => setProvider(v as typeof provider)}
             className={cn('mt-1 w-full rounded-xl border px-3 py-2 text-sm', a.borderB, a.cardSurface)}
@@ -46,7 +46,7 @@ export function AdminSSOPanel() {
         </div>
         <label className="block">
           <span className={cn('text-xs font-bold tracking-wider', a.muted)}>
-            {t('Domain', 'Email domain')}
+            {t('Τομέας email', 'Email domain')}
           </span>
           <input
             value={domain}

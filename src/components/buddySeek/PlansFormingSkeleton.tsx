@@ -1,4 +1,5 @@
 import { cn } from '../../lib/utils';
+import { useLanguage } from '../../lib/i18n';
 
 export function PlansFormingSkeleton({
   count = 2,
@@ -7,9 +8,10 @@ export function PlansFormingSkeleton({
   count?: number;
   variant?: 'sidebar' | 'inline' | 'sheet';
 }) {
+  const { t } = useLanguage();
   const isSidebar = variant === 'sidebar';
   return (
-    <div className="space-y-3" aria-busy="true" aria-label="Loading">
+    <div className="space-y-3" aria-busy="true" aria-label={t('Φόρτωση', 'Loading')}>
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}

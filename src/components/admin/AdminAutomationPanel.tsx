@@ -39,7 +39,7 @@ export function AdminAutomationPanel() {
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Zap className={cn('w-5 h-5', a.iconAccent)} />
-          <h2 className={cn('text-sm font-bold', a.head)}>{t('Automation Engine', 'Automation Engine')}</h2>
+          <h2 className={cn('text-sm font-bold', a.head)}>{t('Μηχανή αυτοματισμών', 'Automation Engine')}</h2>
         </div>
         <Button
           variant="outline"

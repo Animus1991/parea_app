@@ -391,7 +391,7 @@ export default function PersonProfilePageContent() {
                 {/* Φ27 — selfie check badge (result only; no image is ever kept). */}
                 {subject.selfieVerified && (
                   <span className="inline-flex items-center gap-1 font-bold text-ink" title={t('Επαληθευμένο με selfie', 'Verified with a selfie')}>
-                    <ShieldCheck className="h-3 w-3" aria-hidden /> Selfie ✓
+                    <ShieldCheck className="h-3 w-3" aria-hidden /> {t('Σέλφι ✓', 'Selfie ✓')}
                   </span>
                 )}
               </div>

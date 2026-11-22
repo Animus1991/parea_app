@@ -198,8 +198,8 @@ export default function AdminDashboardPageContent() {
           { id: 'moderation', label: t('Μετριασμός', 'Moderation'), icon: Flag, count: pendingReports.length },
           { id: 'users', label: t('Χρήστες', 'Users'), icon: UsersIcon, count: suspendedUserIds.length },
           { id: 'system', label: t('Σύστημα', 'System'), icon: Settings2 },
-          { id: 'automation', label: 'Automation', icon: Wand2 },
-          { id: 'branding', label: 'Branding', icon: Palette },
+          { id: 'automation', label: t('Αυτοματισμοί', 'Automation'), icon: Wand2 },
+          { id: 'branding', label: t('Εταιρική ταυτότητα', 'Branding'), icon: Palette },
           { id: 'sso', label: 'SSO', icon: KeyRound },
         ]}
       />
