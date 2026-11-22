@@ -5,6 +5,7 @@
  */
 import { addDays, format, getISOWeek, getISOWeekYear, parseISO, startOfWeek } from 'date-fns';
 import type { Event, Group, User } from '../types';
+import type { ChatMessage, Conversation } from '../types/chat';
 
 export type AchievementId =
   | 'first_experience'
@@ -127,6 +128,20 @@ export function weeklyActivity(
 }
 
 export const DAILY_CHALLENGE_XP = 30;
+
+export function groupMessageDates(
+  messages: Pick<ChatMessage, 'senderId' | 'senderType' | 'conversationId' | 'createdAt'>[],
+  conversations: Pick<Conversation, 'id' | 'type'>[],
+  userId: string | undefined,
+): string[] {
+  if (!userId) return [];
+  const groupIds = new Set(conversations
+    .filter((c) => c.type === 'event_group' || c.type === 'group_to_group')
+    .map((c) => c.id));
+  return messages
+    .filter((m) => m.senderId === userId && m.senderType === 'user' && groupIds.has(m.conversationId))
+    .map((m) => m.createdAt);
+}
 
 /** Today's verifiable challenge: send at least one group message. */
 export function dailyChallengeMet(messageDatesByMe: string[], now: Date = new Date()): boolean {

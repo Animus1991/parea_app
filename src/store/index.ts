@@ -56,7 +56,7 @@ import { canJoinGroup as gateJoinGroup, fitsGenderMode } from "../lib/outings";
 import { STRIKE_RELIABILITY } from "../lib/consequences";
 import type { GroupGenderMode, Strike } from "../types/outings";
 import { pendingFeedbackEvents, shouldBlockJoinForFeedback } from "../lib/feedbackDue";
-import { localDay } from '../lib/achievements';
+import { dailyChallengeMet, groupMessageDates, localDay } from '../lib/achievements';
 
 export interface FeedbackData {
   eventId: string;
@@ -1373,6 +1373,8 @@ export const useStore = create<AppState>()(
   claimDailyChallenge: (amount) => {
     const today = localDay();
     if (get().dailyChallengeClaimedOn === today) return false;
+    const { messages, conversations } = useChatStore.getState();
+    if (!dailyChallengeMet(groupMessageDates(messages, conversations, get().currentUser?.id))) return false;
     set({ dailyChallengeClaimedOn: today });
     get().awardXp(amount, 'Ημερήσια πρόκληση', 'Daily challenge');
     return true;

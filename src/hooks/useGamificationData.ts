@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useStore } from '../store';
 import { useChatStore } from '../store/chatStore';
 import { computeUserXp, levelForXp } from '../lib/gamification';
-import { computeAchievements, dailyChallengeMet, localDay, weeklyActivity } from '../lib/achievements';
+import { computeAchievements, dailyChallengeMet, groupMessageDates, localDay, weeklyActivity } from '../lib/achievements';
 
 /** Single source of truth for every gamification number shown in the hub. */
 export function useGamificationData() {
@@ -14,6 +14,7 @@ export function useGamificationData() {
   const bonusXp = useStore((s) => s.bonusXp);
   const claimedOn = useStore((s) => s.dailyChallengeClaimedOn);
   const messages = useChatStore((s) => s.messages);
+  const conversations = useChatStore((s) => s.conversations);
 
   return useMemo(() => {
     const feedbackCount = Object.keys(feedbackSubmitted).length;
@@ -47,8 +48,8 @@ export function useGamificationData() {
       weekly,
       rank,
       totalUsers: ranking.length,
-      dailyMet: dailyChallengeMet(myMessageDates),
+      dailyMet: dailyChallengeMet(groupMessageDates(messages, conversations, currentUser?.id)),
       dailyClaimed: claimedOn === today,
     };
-  }, [currentUser, users, events, groups, feedbackSubmitted, bonusXp, claimedOn, messages]);
+  }, [currentUser, users, events, groups, feedbackSubmitted, bonusXp, claimedOn, messages, conversations]);
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeAchievements, dailyChallengeMet, weeklyActivity } from './achievements';
+import { computeAchievements, dailyChallengeMet, groupMessageDates, weeklyActivity } from './achievements';
 import type { Event, Group, User } from '../types';
 import { ACHIEVEMENT_MINI, NAKAMAS_MINI_IDS } from '../components/illustrations/miniMaps';
 import { execFileSync } from 'node:child_process';
@@ -56,5 +56,22 @@ describe('live achievements', () => {
     const now = new Date('2026-11-13T12:00:00');
     expect(dailyChallengeMet(['2026-11-12T10:00:00'], now)).toBe(false);
     expect(dailyChallengeMet(['2026-11-13T09:30:00'], now)).toBe(true);
+  });
+
+  it('counts only the current user’s messages in shared group conversations', () => {
+    const conversations = [
+      { id: 'g', type: 'event_group' as const }, { id: 'gg', type: 'group_to_group' as const },
+      { id: 'dm', type: 'direct' as const }, { id: 'support', type: 'support' as const },
+      { id: 'announcement', type: 'organizer_announcement' as const },
+    ];
+    const message = (conversationId: string, senderId = 'u1', senderType: 'user' | 'system' = 'user') =>
+      ({ conversationId, senderId, senderType, createdAt: '2026-11-13T09:30:00' });
+    expect(groupMessageDates([message('g'), message('gg')], conversations, 'u1')).toHaveLength(2);
+    expect(groupMessageDates([
+      message('dm'), message('support'), message('announcement'), message('missing'),
+      message('g', 'u2'), message('g', 'u1', 'system'),
+    ], conversations, 'u1')).toEqual([]);
+    expect(groupMessageDates([], conversations, 'u1')).toEqual([]);
+    expect(groupMessageDates([message('g')], conversations, undefined)).toEqual([]);
   });
 });
