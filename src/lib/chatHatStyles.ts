@@ -29,7 +29,7 @@ export const CHAT_HAT_STYLES: ChatHatStyle[] = [
   { id: '04-underside', src: '/chat-hats/04-underside.png', labelEl: 'Από κάτω', labelEn: 'Underside' },
 ];
 
-export const DEFAULT_CHAT_HAT_STYLE = 'drawn';
+export const DEFAULT_CHAT_HAT_STYLE = '01-plan';
 
 export function isCustomChatHat(value: unknown): value is ChatHatStyle {
   if (!value || typeof value !== 'object') return false;
