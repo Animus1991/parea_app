@@ -35,7 +35,7 @@ export function AudienceChip({
       {onClick && <ChevronDown className="h-3 w-3 shrink-0" aria-hidden />}
     </>
   );
-  const base = 'inline-flex max-w-full items-center gap-1 rounded-full border border-border bg-surface px-2.5 text-xs font-bold text-ink';
+  const base = 'inline-flex max-w-full items-center gap-1 rounded-full border border-border bg-surface px-2.5 text-xs font-medium text-ink';
   if (onClick) {
     return (
       <button

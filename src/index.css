@@ -99,9 +99,9 @@
   /* Reserved phone dock (Find Nakamas) sitting on top of the tab bar.
      min-h-11 plus the pill border — keep in sync with MobileDock. */
   --mobile-dock-h: 48px;
-  /* Floated straw-hat chat control (w-24 / md:w-28). */
-  --chat-hat-fab: 6rem;
-  --chat-hat-bottom: calc(var(--bottom-nav-total) + 6px + env(safe-area-inset-bottom, 0px));
+  /* Floated straw-hat chat control (w-20 / md:w-28). */
+  --chat-hat-fab: 5rem;
+  --chat-hat-bottom: calc(var(--bottom-nav-total) + 10px + env(safe-area-inset-bottom, 0px));
   --chat-hat-bottom-event: calc(var(--bottom-nav-total) + 5.25rem + env(safe-area-inset-bottom, 0px));
   --chat-hat-bottom-composer: 7rem;
   /* BottomNav + fab-zone gap + dock + air so the last card sits fully above the pill. */

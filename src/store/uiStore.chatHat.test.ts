@@ -48,7 +48,8 @@ describe('custom chat hats', () => {
     useUIStore.getState().addCustomChatHat(sample);
     useUIStore.getState().removeCustomChatHat('custom_test');
     expect(useUIStore.getState().customChatHats).toHaveLength(0);
-    expect(useUIStore.getState().chatHatStyle).toBe(DEFAULT_CHAT_HAT_STYLE);
+    // Falls back to the first still-visible built-in style.
+    expect(useUIStore.getState().chatHatStyle).toBe('drawn');
   });
 
   it('keeps the last remaining hat', () => {

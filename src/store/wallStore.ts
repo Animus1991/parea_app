@@ -54,6 +54,8 @@ interface WallState {
   privacyByUser: Record<string, WallPrivacySettings>;
   /** viewerId → posts hidden from their own feed. */
   hiddenPostIds: Record<string, string[]>;
+  /** viewerId → posts bookmarked for later (their own saved list). */
+  savedPostIds: Record<string, string[]>;
   /** viewerId → ISO time the feed was last opened (for «νέες δημοσιεύσεις»). */
   feedSeenAt: Record<string, string>;
   /** Everyone's wall activity (each entry has a recipient); newest first, capped. */
@@ -91,6 +93,8 @@ interface WallState {
   restoreComment: (postId: string, comment: WallComment) => void;
   hidePost: (postId: string) => void;
   unhidePost: (postId: string) => void;
+  /** Bookmark/unbookmark a post for the viewer's saved list. Returns the new state. */
+  toggleSavedPost: (postId: string) => boolean;
   /** Narrows the viewer's public / friends-of-friends posts to connections. Returns previous audiences for Undo. */
   limitPastPosts: () => Record<string, Audience>;
   restoreAudiences: (previous: Record<string, Audience>) => void;
@@ -218,6 +222,7 @@ export const useWallStore = create<WallState>()(
       lists: mockAudienceLists,
       privacyByUser: mockWallPrivacy,
       hiddenPostIds: {},
+      savedPostIds: {},
       feedSeenAt: {},
       activity: mockWallActivity,
 
@@ -575,6 +580,18 @@ export const useWallStore = create<WallState>()(
         set((s) => ({ hiddenPostIds: { ...s.hiddenPostIds, [me]: (s.hiddenPostIds[me] ?? []).filter((id) => id !== postId) } }));
       },
 
+      toggleSavedPost: (postId) => {
+        const me = viewerId();
+        if (!me) return false;
+        let saved = false;
+        set((s) => {
+          const cur = s.savedPostIds[me] ?? [];
+          saved = !cur.includes(postId);
+          return { savedPostIds: { ...s.savedPostIds, [me]: saved ? [...cur, postId] : cur.filter((id) => id !== postId) } };
+        });
+        return saved;
+      },
+
       limitPastPosts: () => {
         const me = viewerId();
         if (!me) return {};
@@ -702,6 +719,7 @@ export const useWallStore = create<WallState>()(
         lists: s.lists,
         privacyByUser: s.privacyByUser,
         hiddenPostIds: s.hiddenPostIds,
+        savedPostIds: s.savedPostIds,
         feedSeenAt: s.feedSeenAt,
         activity: s.activity,
       }),
@@ -721,6 +739,7 @@ export const useWallStore = create<WallState>()(
           lists: mergeSeeds(current.lists, p.lists),
           privacyByUser,
           hiddenPostIds: (p.hiddenPostIds as Record<string, string[]>) ?? {},
+          savedPostIds: (p.savedPostIds as Record<string, string[]>) ?? {},
           feedSeenAt: (p.feedSeenAt as Record<string, string>) ?? {},
           activity: Array.isArray(p.activity) ? (p.activity as WallActivity[]) : current.activity,
         };
@@ -738,6 +757,7 @@ export function wallSeedState() {
     lists: mockAudienceLists.map((l) => ({ ...l, memberIds: [...l.memberIds] })),
     privacyByUser: { ...mockWallPrivacy },
     hiddenPostIds: {} as Record<string, string[]>,
+    savedPostIds: {} as Record<string, string[]>,
     feedSeenAt: {} as Record<string, string>,
     activity: mockWallActivity.map((a) => ({ ...a })),
   };

@@ -1,5 +1,5 @@
 /** Same box as the live chat FAB — keep picker hats at this size. */
-export const CHAT_HAT_FAB = 'w-24 h-24 md:w-28 md:h-28';
+export const CHAT_HAT_FAB = 'w-20 h-20 md:w-28 md:h-28';
 
 export type ChatHatStyle = {
   id: string;

@@ -203,7 +203,7 @@ export function PostReactionBar({
             onReact(myReaction ? null : 'like');
           }}
           className={cn(
-            'inline-flex min-h-10 w-full items-center justify-center gap-1.5 rounded-xl text-sm font-bold hover:bg-surface',
+            'inline-flex min-h-10 w-full items-center justify-center gap-1.5 rounded-xl text-sm font-medium hover:bg-surface',
             reactionTint(myReaction),
           )}
         >
@@ -223,7 +223,7 @@ export function PostReactionBar({
         <button
           type="button"
           onClick={onComment}
-          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl text-sm font-bold text-ink-muted hover:bg-surface hover:text-ink"
+          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl text-sm font-medium text-ink-muted hover:bg-surface hover:text-ink"
         >
           <MessageCircle className="h-4 w-4" aria-hidden /> {t('Σχόλιο', 'Comment')}
         </button>

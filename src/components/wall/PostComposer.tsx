@@ -228,7 +228,10 @@ export function PostComposer({
             rows={toolsOpen ? (text.length > 120 ? 4 : 2) : 1}
             maxLength={POST_MAX_CHARS + 50}
             placeholder={placeholder}
-            className="w-full resize-none rounded-2xl border border-border bg-surface px-3 py-2.5 text-sm text-ink outline-none placeholder:text-ink-muted focus:ring-2 focus:ring-accent"
+            className={cn(
+              'w-full resize-none border border-border bg-surface px-3 text-sm text-ink outline-none placeholder:text-ink-muted focus:ring-2 focus:ring-accent',
+              toolsOpen ? 'rounded-2xl py-2.5' : 'rounded-full py-2',
+            )}
           />
 
           {taggedIds.length > 0 && (

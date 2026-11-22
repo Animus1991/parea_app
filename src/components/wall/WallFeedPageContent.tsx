@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Eye, Newspaper, CircleDot } from 'lucide-react';
+import { ArrowLeft, Bookmark, Eye, Newspaper, CircleDot, Search, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
 import { useStore } from '../../store';
@@ -33,7 +33,10 @@ export default function WallFeedPageContent() {
   const markFeedSeen = useWallStore((s) => s.markFeedSeen);
   const access = useWallAccess();
   const [filter, setFilter] = useState<FeedFilter>('all');
+  const [wallSearch, setWallSearch] = useState('');
   const [showHidden, setShowHidden] = useState(false);
+  const [showSaved, setShowSaved] = useState(false);
+  const savedByViewer = useWallStore((s) => s.savedPostIds);
   const composerRef = useRef<HTMLDivElement>(null);
   const myId = me?.id ?? null;
   const [searchParams, setSearchParams] = useSearchParams();
@@ -50,7 +53,13 @@ export default function WallFeedPageContent() {
   }, [markFeedSeen]);
 
   const hiddenIds = useMemo(() => (myId ? hiddenByViewer[myId] ?? [] : []), [hiddenByViewer, myId]);
+  const savedIds = useMemo(() => (myId ? savedByViewer[myId] ?? [] : []), [savedByViewer, myId]);
   const all = useMemo(() => visiblePosts(myId, posts, access, { hiddenIds }), [myId, posts, access, hiddenIds]);
+  const savedPosts = useMemo(
+    () => visiblePosts(myId, posts.filter((p) => savedIds.includes(p.id)), access),
+    [myId, posts, savedIds, access],
+  );
+  const users = useStore((s) => s.users);
   const hiddenPosts = useMemo(
     () => visiblePosts(myId, posts.filter((p) => hiddenIds.includes(p.id)), access),
     [myId, posts, hiddenIds, access],
@@ -81,7 +90,20 @@ export default function WallFeedPageContent() {
 
   if (!me) return null;
 
-  const list = byFilter[filter];
+  const needle = wallSearch.trim().toLowerCase();
+  const nameOf = (id: string) => users.find((u) => u.id === id)?.name.toLowerCase() ?? '';
+  const list = (needle
+    ? byFilter[filter].filter(
+        (p) =>
+          p.text.toLowerCase().includes(needle) ||
+          nameOf(p.authorId).includes(needle) ||
+          nameOf(p.wallOwnerId).includes(needle),
+      )
+    : byFilter[filter]);
+  const newFromId =
+    seenBefore && filter === 'all' && !needle
+      ? list.find((p) => p.authorId !== myId && p.createdAt > seenBefore)?.id
+      : undefined;
   const filters: { id: FeedFilter; el: string; en: string; hintEl: string; hintEn: string }[] = [
     { id: 'all', el: 'Όλα', en: 'All', hintEl: 'Ό,τι μπορείς να δεις', hintEn: 'Everything you can see' },
     {
@@ -113,6 +135,27 @@ export default function WallFeedPageContent() {
         <h1 className={cn(APP_TYPO.pageTitle, 'flex items-center gap-2 text-ink')}>
           <Newspaper className="h-5 w-5" aria-hidden /> {t('Τοίχος Nakamas', 'Nakamas Wall')}
         </h1>
+        <div className="relative mt-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" aria-hidden />
+          <input
+            type="search"
+            value={wallSearch}
+            onChange={(e) => setWallSearch(e.target.value)}
+            placeholder={t('Αναζήτηση στον τοίχο…', 'Search the wall…')}
+            aria-label={t('Αναζήτηση στον τοίχο', 'Search the wall')}
+            className="h-9 w-full rounded-full border border-border bg-surface pl-9 pr-8 text-sm font-medium text-ink outline-none placeholder:text-ink-muted focus:ring-2 focus:ring-accent"
+          />
+          {wallSearch && (
+            <button
+              type="button"
+              onClick={() => setWallSearch('')}
+              className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-ink-muted hover:bg-surface-raised hover:text-ink"
+              aria-label={t('Καθαρισμός αναζήτησης', 'Clear search')}
+            >
+              <X className="h-3.5 w-3.5" aria-hidden />
+            </button>
+          )}
+        </div>
       </div>
       {focusId && (
         <div className="space-y-2">
@@ -163,9 +206,9 @@ export default function WallFeedPageContent() {
         <PostComposer />
       </div>
 
-      <div className="space-y-2">
+      <div className="sticky top-1 z-10 -mx-1 space-y-2 bg-surface/95 px-1 py-1 backdrop-blur supports-[backdrop-filter]:bg-surface/80">
         <div
-          className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex gap-1.5 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           role="group"
           aria-label={t('Φίλτρο ροής', 'Feed filter')}
         >
@@ -225,7 +268,22 @@ export default function WallFeedPageContent() {
           }
         />
       ) : (
-        <WallPostList key={filter} posts={list} />
+        <WallPostList key={filter} posts={list} newFromId={newFromId} />
+      )}
+
+      {savedPosts.length > 0 && (
+        <div className="space-y-3">
+          <button
+            type="button"
+            onClick={() => setShowSaved((v) => !v)}
+            aria-expanded={showSaved}
+            className="inline-flex min-h-8 items-center gap-2 text-xs font-bold text-ink-muted hover:text-ink"
+          >
+            <Bookmark className="h-4 w-4" aria-hidden />
+            {t(`Αποθηκευμένες (${savedPosts.length})`, `Saved (${savedPosts.length})`)}
+          </button>
+          {showSaved && savedPosts.map((p) => <PostCard key={p.id} post={p} />)}
+        </div>
       )}
 
       {hiddenPosts.length > 0 && (

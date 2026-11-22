@@ -2,8 +2,10 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Ban,
+  Bookmark,
+  BookmarkCheck,
   CalendarDays,
-  Check,
+  Link2,
   ShieldAlert,
   ShieldCheck,
   Tag,
@@ -88,11 +90,14 @@ export function PostCard({
     moderatePost,
     approveTag,
     removeMyTag,
+    toggleSavedPost,
   } = useWallStore.getState();
+  const savedByViewer = useWallStore((s) => s.savedPostIds);
 
   const viewer = viewerOverride === undefined ? me : viewerOverride;
   const readOnly = viewerOverride !== undefined; // «Δες ως…» preview
   const viewerId = viewer?.id ?? null;
+  const savedIds = useMemo(() => (viewerId ? savedByViewer[viewerId] ?? [] : []), [savedByViewer, viewerId]);
   const author = users.find((u) => u.id === post.authorId);
   const owner = users.find((u) => u.id === post.wallOwnerId);
   const event = post.eventId ? events.find((e) => e.id === post.eventId) : undefined;
@@ -219,6 +224,14 @@ export function PostCard({
       });
     }
     if (iAmTagged && !isAuthor) {
+      if (!myTagShown) {
+        menuItems.push({
+          key: 'approve-tag',
+          icon: Tag,
+          label: t('Εμφάνιση στο προφίλ μου', 'Show on my profile'),
+          onSelect: () => run(approveTag(post.id)) && toast.success(t('Εμφανίζεται πλέον στο προφίλ σου', 'Now shown on your profile')),
+        });
+      }
       menuItems.push({
         key: 'untag',
         icon: UserMinus,
@@ -226,6 +239,24 @@ export function PostCard({
         onSelect: () => run(removeMyTag(post.id)) && toast.success(t('Η ετικέτα σου αφαιρέθηκε', 'Your tag was removed')),
       });
     }
+    menuItems.push({
+      key: 'save',
+      icon: savedIds.includes(post.id) ? BookmarkCheck : Bookmark,
+      label: savedIds.includes(post.id) ? t('Αφαίρεση από αποθηκευμένες', 'Remove from saved') : t('Αποθήκευση δημοσίευσης', 'Save post'),
+      onSelect: () => toast.success(toggleSavedPost(post.id) ? t('Αποθηκεύτηκε', 'Saved') : t('Αφαιρέθηκε από τις αποθηκευμένες', 'Removed from saved')),
+    });
+    menuItems.push({
+      key: 'copy',
+      icon: Link2,
+      label: t('Αντιγραφή συνδέσμου', 'Copy link'),
+      onSelect: () => {
+        const url = `${window.location.origin}/wall?post=${post.id}`;
+        void navigator.clipboard?.writeText(url).then(
+          () => toast.success(t('Ο σύνδεσμος αντιγράφηκε', 'Link copied')),
+          () => toast.success(url),
+        );
+      },
+    });
     if (isAuthor || isOwner) {
       menuItems.push({
         key: 'comments',
@@ -332,28 +363,7 @@ export function PostCard({
           </p>
         )}
 
-        {iAmTagged && !isAuthor && !myTagShown && (
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-medium text-ink-muted">
-            <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span className="flex-1 text-ink">
-              {t('Να φαίνεται και στο προφίλ σου;', 'Show this on your profile too?')}
-            </span>
-            <button
-              type="button"
-              onClick={() => run(approveTag(post.id)) && toast.success(t('Εμφανίζεται πλέον στο προφίλ σου', 'Now shown on your profile'))}
-              className="inline-flex min-h-8 items-center gap-1 rounded-full bg-accent px-3 font-bold text-accent-fg"
-            >
-              <Check className="h-3.5 w-3.5" aria-hidden /> {t('Ναι', 'Yes')}
-            </button>
-            <button
-              type="button"
-              onClick={() => run(removeMyTag(post.id)) && toast.success(t('Η ετικέτα σου αφαιρέθηκε', 'Your tag was removed'))}
-              className="inline-flex min-h-8 items-center rounded-full px-2 font-bold text-ink-muted hover:text-ink"
-            >
-              {t('Αφαίρεση', 'Remove')}
-            </button>
-          </div>
-        )}
+
 
         {editing ? (
           <div className="mt-3 space-y-2">
@@ -436,7 +446,7 @@ export function PostCard({
           myEventGroup ? (
             <Link
               to={`/night/${myEventGroup.id}`}
-              className="mt-2 inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-ink hover:border-border-strong"
+              className="mt-2 inline-flex min-h-8 items-center gap-1.5 rounded-full border border-accent/40 bg-accent-soft px-2.5 text-xs font-bold text-ink hover:border-accent"
             >
               <UsersRound className="h-3.5 w-3.5" aria-hidden /> {t('Η βραδιά μας', 'Our night')}
             </Link>
@@ -447,9 +457,9 @@ export function PostCard({
                   ? `/events/${event.id}/join?groupId=${authorRecruitingGroup.id}`
                   : `/events/${event.id}/join`
               }
-              className="mt-2 inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-bold text-ink hover:border-border-strong"
+              className="mt-2 inline-flex min-h-8 items-center gap-1.5 rounded-full border border-accent/40 bg-accent-soft px-2.5 text-xs font-bold text-ink hover:border-accent"
             >
-              <UsersRound className="h-3.5 w-3.5" aria-hidden /> {t(`Μπες στην παρέα με ${author.name}`, `Join ${author.name}'s company`)}
+              <UsersRound className="h-3.5 w-3.5" aria-hidden /> {t(`Παρέα με ${author.name}`, `With ${author.name}`)}
             </Link>
           ) : null
         )}
