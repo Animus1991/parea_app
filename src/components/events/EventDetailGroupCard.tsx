@@ -225,7 +225,7 @@ export function EventDetailGroupCard({
             variant={spotsLeft <= 2 ? 'warning' : 'outline'}
             className={spotsLeft <= 2 ? 'font-bold animate-pulse' : ''}
           >
-            {spotsLeft === 1 ? t('1 Θέση!', '1 Spot!') : spotsLeft + t(' Θέσεις', ' Spots')}
+            {spotsLeft === 1 ? t('1 θέση!', '1 spot!') : spotsLeft + t(' θέσεις', ' spots')}
           </Badge>
 
           {groupHost && (
@@ -271,7 +271,7 @@ export function EventDetailGroupCard({
                 ) : null}
               </div>
               <span className={cn('text-xs font-bold mt-1', tok.hostLabel)}>
-                {t('Οικοδεσποτης', 'Host')}
+                {t('Οικοδεσπότης', 'Host')}
               </span>
             </div>
           )}
