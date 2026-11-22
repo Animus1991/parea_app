@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
 import { useContrastTheme } from '../../hooks/useContrastTheme';
@@ -9,7 +9,6 @@ import { useStore } from '../../store';
 import { MiniOutingsSection } from '../outings/MiniOutingsSection';
 import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
 import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
-import { hidesFindCompanyShortcut } from '../../lib/plansFormingRail';
 import { cn } from '../../lib/utils';
 
 /**
@@ -23,26 +22,16 @@ export function PlansFormingBottomSheet() {
   const c = useContrastTheme();
   const tok = useThemeStyles();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const [searchParams] = useSearchParams();
   const cardImage = useDiscoverCardImageDepth();
   const panelRef = useRef<HTMLDivElement>(null);
   useOverlayBehavior(open, () => setOpen(false), panelRef);
-
-  useEffect(() => {
-    if (hidesFindCompanyShortcut(pathname)) setOpen(false);
-  }, [pathname, setOpen]);
-
-  useEffect(() => {
-    if (searchParams.get('reconnect') && !hidesFindCompanyShortcut(pathname)) setOpen(true);
-  }, [searchParams, pathname, setOpen]);
 
   const leave = (path: string) => {
     setOpen(false);
     navigate(path);
   };
 
-  if (!open || hidesFindCompanyShortcut(pathname)) return null;
+  if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-sheet" role="dialog" aria-modal="true" aria-labelledby="plans-forming-sheet-title">

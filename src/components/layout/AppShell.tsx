@@ -13,12 +13,11 @@ import { cn } from '../../lib/utils';
 import { useStore } from '../../store';
 import { useThemeStyles } from '../../hooks/useThemeStyles';
 import { UserMenu } from './UserMenu';
-import { PlansFormingSidebar } from '../buddySeek/PlansFormingSidebar';
-import { PlansFormingSidebarReopenTab } from '../buddySeek/PlansFormingSidebar';
+import { PlansFormingSidebarReopenTab } from '../buddySeek/PlansFormingSidebarReopenTab';
 import { isPlansRailRoute } from '../../lib/plansFormingRail';
 import { pageTitleForPath } from '../../lib/pageTitle';
 import { tierLabelEl, tierLabelEn } from '../../lib/trust';
-import { PlansFormingBottomSheet } from '../buddySeek/PlansFormingBottomSheet';
+import { PlansFormingSheetGate } from '../buddySeek/PlansFormingSheetGate';
 import { PlansFormingHeaderButton, PlansFormingMobileFab } from '../buddySeek/PlansFormingMobileFab';
 import { MobileDock } from './MobileDock';
 import { BottomNav } from './BottomNav';
@@ -34,6 +33,7 @@ import { isOrganizerUser, isPlatformAdmin } from '../../lib/roles';
 const CopilotPanel = lazy(() =>
   import('../copilot/CopilotPanel').then((m) => ({ default: m.CopilotPanel })),
 );
+const PlansFormingSidebar = lazy(() => import('../buddySeek/PlansFormingSidebar').then((m) => ({ default: m.PlansFormingSidebar })));
 import { DESKTOP_DOCK_QUERY, useMediaQuery } from '../../hooks/useMediaQuery';
 import { useWallUnreadCount } from '../../hooks/useWallUnreadCount';
 import { useLiveCatalogDates } from '../../hooks/useLiveCatalogDates';
@@ -493,6 +493,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const currentUser = useStore((s) => s.currentUser);
   const tok = useThemeStyles();
   const copilotOpen = useCopilotStore((s) => s.open);
+  const plansSidebarOpen = useStore((s) => s.plansFormingSidebarOpen);
+  const isWideDesktop = useMediaQuery('(min-width: 1280px)');
   const maintenanceMode = useStore((s) => s.adminSafeguards.maintenanceMode);
   const { pathname } = useLocation();
   // Any store that cannot save (device storage full) says so once, wherever you are.
@@ -528,7 +530,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     meta.setAttribute('content', usable ? bg : theme.endsWith('-dark') ? '#0f1419' : '#ffffff');
   }, [theme]);
   // The plans rail is contextual to discovery screens (lib/plansFormingRail.ts).
-  const showPlansRail = !copilotOpen && isPlansRailRoute(pathname);
+  const showPlansRail = isWideDesktop && !copilotOpen && isPlansRailRoute(pathname);
 
   useRealtimeChat(currentUser?.id);
   useFirebaseAuth();
@@ -609,7 +611,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           <MobileDock />
         </div>
         {/* The docked copilot replaces the plans-forming rail while open (both live on the right edge). */}
-        {showPlansRail && <PlansFormingSidebar />}
+        {showPlansRail && plansSidebarOpen && (
+          <Suspense fallback={<div aria-hidden className="hidden xl:block w-[300px] 2xl:w-[340px] shrink-0" />}>
+            <PlansFormingSidebar />
+          </Suspense>
+        )}
         {showPlansRail && <PlansFormingSidebarReopenTab />}
         {copilotOpen && (
           <Suspense fallback={null}>
@@ -618,10 +624,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         )}
       </div>
       </div>
-      <PlansFormingBottomSheet />
+      <PlansFormingSheetGate />
       <PopupChatRoot />
       <Toaster position="top-right" richColors closeButton />
     </div>
   );
 }
-
