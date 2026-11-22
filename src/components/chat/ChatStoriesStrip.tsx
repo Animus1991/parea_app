@@ -331,20 +331,22 @@ export function ChatStoriesStrip({
             placeholder={t('Κείμενο story…', 'Story caption…')}
             className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-xs text-ink focus:outline-none focus:ring-2 focus:ring-brand/40"
           />
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3 p-1.5">
               {STORY_BG_GRADIENTS.map((g, i) => (
                 <button
                   key={g}
                   type="button"
                   onClick={() => setNewBg(g)}
                   aria-label={`${t('Χρώμα', 'Color')} ${i + 1}`}
-                  className={cn(
-                    'w-6 h-6 rounded-full border-2',
-                    newBg === g ? 'border-ink scale-110' : 'border-transparent',
-                  )}
-                  style={{ background: g }}
-                />
+                  aria-pressed={newBg === g}
+                  className="tap-area flex w-8 h-8 items-center justify-center rounded-full"
+                >
+                  <span
+                    className={cn('w-6 h-6 rounded-full border-2', newBg === g ? 'border-ink scale-110' : 'border-transparent')}
+                    style={{ background: g }}
+                  />
+                </button>
               ))}
             </div>
             <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-xs font-bold text-ink cursor-pointer hover:bg-surface">

@@ -378,7 +378,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           aria-label={t('Ρυθμίσεις', 'Settings')}
           title={t('Ρυθμίσεις', 'Settings')}
           className={cn(
-            'relative flex h-9 w-9 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+            'tap-area relative flex h-9 w-9 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
             currentPath === '/settings' ? 'text-accent' : tok.muted,
             'hover:bg-black/5 dark:hover:bg-white/10',
           )}
@@ -413,7 +413,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           onFocus={() => prefetchPath('/notifications')}
           onClick={() => toggleNotifications()}
           className={cn(
-            'relative inline-flex min-h-9 min-w-9 items-center justify-center rounded-lg transition-colors',
+            'tap-area relative inline-flex min-h-9 min-w-9 items-center justify-center rounded-lg transition-colors',
             notificationsOpen
               ? tok.navActive
               : theme === 'activebuddies-dark'
@@ -624,5 +624,4 @@ export function AppShell({ children }: { children: ReactNode }) {
     </div>
   );
 }
-
 

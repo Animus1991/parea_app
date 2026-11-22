@@ -197,7 +197,8 @@ export function ChatHatSettingsPanel() {
                       toast.success(t('Το καπέλο κρύφτηκε', 'Hat hidden'));
                     }
                   }}
-                  className="absolute right-1 top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface-raised/95 text-ink-muted shadow-soft"
+                  className="tap-area right-1 top-1 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface-raised/95 text-ink-muted shadow-soft"
+                  style={{ position: 'absolute' }}
                   aria-label={
                     hat.custom
                       ? t(`Διαγραφή: ${hat.labelEl}`, `Delete: ${hat.labelEn}`)
