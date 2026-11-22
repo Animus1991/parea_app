@@ -15,7 +15,7 @@ const RULES = [
 ];
 
 export function AdminAutomationPanel() {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const a = usePageContrast();
   const logAdminAction = useStore((s) => s.logAdminAction);
   const [enabled, setEnabled] = useState<Record<string, boolean>>({
@@ -61,24 +61,25 @@ export function AdminAutomationPanel() {
             className={cn('flex items-center justify-between gap-3 p-3 rounded-xl border', a.borderB)}
           >
             <span className={cn('text-sm font-medium', a.head)}>
-              {language === 'el' ? rule.labelEl : rule.labelEn}
+              {t(rule.labelEl, rule.labelEn)}
             </span>
             <button
               type="button"
               role="switch"
               aria-checked={enabled[rule.id]}
+              aria-label={t(rule.labelEl, rule.labelEn)}
               onClick={() => toggle(rule.id)}
-              className={cn(
-                'relative w-11 h-6 rounded-full transition-colors',
-                enabled[rule.id] ? 'bg-cyan-600' : 'bg-gray-300',
-              )}
+              className="tap-area flex w-11 h-8 shrink-0 items-center rounded-full"
             >
               <span
                 className={cn(
-                  'absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform',
-                  enabled[rule.id] ? 'translate-x-5' : 'translate-x-0.5',
+                  'relative w-11 h-6 rounded-full transition-colors',
+                  enabled[rule.id] ? 'bg-cyan-600' : 'bg-gray-300',
                 )}
-              />
+                aria-hidden="true"
+              >
+                <span className={cn('absolute top-0.5 left-0 w-5 h-5 rounded-full bg-white shadow transition-transform', enabled[rule.id] ? 'translate-x-5' : 'translate-x-0.5')} />
+              </span>
             </button>
           </li>
         ))}
