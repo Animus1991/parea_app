@@ -388,7 +388,7 @@ export default function CategoriesPageContent() {
                     ? 'border-accent ring-1 ring-accent'
                     : cn(contrast.borderB, contrast.isDark ? 'hover:border-gray-500' : 'hover:border-border-strong'),
                   category.count === 0 && 'opacity-60',
-                  hideMobileExtraCategories && index >= 8 && 'hidden sm:block',
+                  hideMobileExtraCategories && index >= 8 && 'hidden sm:flex',
                 )}
               >
                 <span
@@ -435,10 +435,10 @@ export default function CategoriesPageContent() {
               )}
             >
               {categoriesExpanded
-                ? t('Λιγότερες ▴', 'Fewer ▴')
+                ? t('Λιγότερες', 'Fewer')
                 : t(
-                    `Όλες οι ${sortedCategories.length} κατηγορίες ▾`,
-                    `All ${sortedCategories.length} categories ▾`,
+                    `Όλες οι ${sortedCategories.length} κατηγορίες`,
+                    `All ${sortedCategories.length} categories`,
                   )}
               <ChevronDown
                 className={cn('h-3.5 w-3.5 transition-transform', categoriesExpanded && 'rotate-180')}
