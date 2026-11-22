@@ -1,4 +1,4 @@
-import React, { useState, memo, useRef, useEffect } from "react";
+import React, { useState, memo, useRef, lazy, Suspense } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
 import { Card } from "../common/Card";
@@ -46,15 +46,11 @@ import { GroupProgressBar } from "./GroupProgressBar";
 import { cardImageDepthFlags, type EventCardImageDepth } from "../../lib/discoverCardImagePreview";
 import { toast } from "sonner";
 import { useOverlayBehavior } from "../../hooks/useOverlayBehavior";
-import { TileLayer, Marker } from "react-leaflet";
-import { LeafletMapHost, LeafletMapReady } from "../common/LeafletMapHost";
 import { AppSelect } from "../common/AppSelect";
-import "leaflet/dist/leaflet.css";
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
-import { applyBundledLeafletPins } from '../../lib/leafletDefaultIcon';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
 
-applyBundledLeafletPins();
+const EventCardMiniMap = lazy(() => import('./EventCardMiniMap'));
 
 interface EventCardProps {
   event: Event;
@@ -65,58 +61,6 @@ interface EventCardProps {
    * `title` / `facts` / `organizer` / `roomy` overlay those rows on the image.
    */
   imageDepth?: EventCardImageDepth;
-}
-
-/** Mount Leaflet only when the mini-map enters the viewport (avoids N× Strict Mode races). */
-function EventCardMiniMap({ lat, lng, isDark, className }: { lat: number; lng: number; isDark: boolean; className?: string }) {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = hostRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '120px', threshold: 0.01 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={hostRef}
-      className={cn(
-        'h-24 w-full rounded-lg overflow-hidden border mt-1 relative z-0 pointer-events-none',
-        isDark ? 'border-gray-700/40' : 'border-gray-200',
-        className,
-      )}
-      {...stopBubbling}
-    >
-      {inView ? (
-        <LeafletMapHost
-          center={[lat, lng]}
-          zoom={14}
-          zoomControl={false}
-          attributionControl={false}
-          style={{ height: '100%', width: '100%' }}
-          placeholder={<div className="h-full w-full bg-gray-100 dark:bg-gray-800" aria-hidden />}
-        >
-          <LeafletMapReady>
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <Marker position={[lat, lng]} />
-          </LeafletMapReady>
-        </LeafletMapHost>
-      ) : (
-        <div className="h-full w-full bg-gray-100 dark:bg-gray-800" aria-hidden />
-      )}
-    </div>
-  );
 }
 
 function CardFact({
@@ -899,7 +843,9 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
               </p>
             </div>
             {event.lat && event.lng ? (
-              <EventCardMiniMap lat={event.lat} lng={event.lng} isDark={isDark} className="h-40 rounded-xl" />
+              <Suspense fallback={<div className="h-40 w-full rounded-xl bg-gray-100 dark:bg-gray-800" aria-hidden />}>
+                <EventCardMiniMap lat={event.lat} lng={event.lng} isDark={isDark} className="h-40 rounded-xl" />
+              </Suspense>
             ) : (
               <div className={cn("h-24 w-full rounded-xl border flex items-center justify-center", isDark ? "border-gray-700/40 bg-gray-800/30" : "border-gray-200 bg-gray-50")}>
                 <span className={cn("text-xs font-bold flex items-center gap-1", mutedColor)}>
