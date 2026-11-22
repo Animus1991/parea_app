@@ -12,7 +12,7 @@ describe('truthful challenge progress', () => {
     const result = challengeProgress({
       userId: 'u1', now,
       events: [event('a', '2025-12-29'), event('b', '2026-01-05'), event('c', '2026-01-12', 'Hiking'), event('d', '2026-01-13'), event('e', '2026-02-01')],
-      groups: [{ id: 'g', eventId: 'b', status: 'completed', checkIns: { u1: { at: '2026-01-05T18:00:00' } } } as Group],
+      groups: [{ id: 'g', eventId: 'b', status: 'completed', members: ['u1'], pendingMembers: [], targetSize: 4, discountUnlocked: false, checkIns: { u1: { at: '2026-01-05T18:00:00', by: 'host', method: 'manual' } } }],
       feedback: { a: feedback('a', 'Great'), b: feedback('b'), c: feedback('c', 'Nice'), d: feedback('d'), e: feedback('e') },
     });
     expect(result).toEqual({ monthlyEvents: 3, monthDaysLeft: 1, weeklyStreak: 3, categories: 2, commentedReviews: 2 });

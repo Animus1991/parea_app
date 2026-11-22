@@ -3,6 +3,7 @@ import { computeAchievements, dailyChallengeMet, groupMessageDates, weeklyActivi
 import type { Event, Group, User } from '../types';
 import { ACHIEVEMENT_MINI, NAKAMAS_MINI_IDS } from '../components/illustrations/miniMaps';
 import { execFileSync } from 'node:child_process';
+import { pathToFileURL } from 'node:url';
 
 const user = {
   id: 'u1', name: 'A', ageRange: '25-34', city: 'Athens', interests: [], trustTier: '2_confirmed', reliabilityScore: 96,
@@ -14,7 +15,7 @@ const grp = (id: string, eventId: string, members: string[], hostId?: string, ta
 
 describe('live achievements', () => {
   it('uses the local day across midnight and a DST timezone boundary', () => {
-    const moduleUrl = new URL('./achievements.ts', import.meta.url).href;
+    const moduleUrl = pathToFileURL(`${process.cwd()}/src/lib/achievements.ts`).href;
     const result = execFileSync(process.execPath, ['--import', 'tsx', '--input-type=module', '-e', `
       import { localDay, dailyChallengeMet } from ${JSON.stringify(moduleUrl)};
       const now = new Date('2026-03-29T22:30:00Z');
