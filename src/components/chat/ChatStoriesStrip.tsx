@@ -307,6 +307,7 @@ export function ChatStoriesStrip({
       {/* Create Story Modal */}
       <Modal
         open={createOpen}
+        aboveChat
         onClose={() => setCreateOpen(false)}
         title={t('Δημιουργία Story (24ω)', 'Create Story (24h)')}
         size="sm"

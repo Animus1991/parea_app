@@ -16,6 +16,7 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg';
   closeOnScrim?: boolean;
   labelledBy?: string;
+  aboveChat?: boolean;
 }
 
 const SIZE_CLASSES: Record<NonNullable<ModalProps['size']>, string> = {
@@ -40,6 +41,7 @@ export function Modal({
   size = 'md',
   closeOnScrim = true,
   labelledBy,
+  aboveChat = false,
 }: ModalProps) {
   const { t } = useLanguage();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -50,7 +52,7 @@ export function Modal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-modal flex items-center justify-center p-4"
+      className={cn('fixed inset-0 flex items-center justify-center p-4', aboveChat ? 'z-fullscreen' : 'z-modal')}
       role="dialog"
       aria-modal="true"
       aria-labelledby={labelledBy ?? (title ? titleId : undefined)}
