@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Users, User, Megaphone, LifeBuoy, GitMerge, Lock, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
@@ -12,6 +12,7 @@ import type { Conversation, ConversationType } from '../../types/chat';
 import { cn } from '../../lib/utils';
 import { CHAT_TYPO } from '../../lib/typographyTokens';
 import { useSwipeDownDismiss } from '../../hooks/useSwipeDownDismiss';
+import { useInboxConversations } from '../../hooks/useInboxConversations';
 
 const TYPE_ICON: Record<ConversationType, typeof Users> = {
   event_group: Users,
@@ -38,11 +39,8 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const dismissRef = useRef<HTMLDivElement>(null);
   useSwipeDownDismiss(dismissRef, panelRef, onClose);
-  const allConversations = useChatStore((s) => s.conversations);
-  const conversations = useMemo(
-    () => allConversations.filter((c) => c.status !== 'archived'),
-    [allConversations],
-  );
+  const conversations = useInboxConversations();
+  const ensureEventGroupConversation = useChatStore((s) => s.ensureEventGroupConversation);
   const openConversation = useFittedOpenConversation();
   const viewer = useStore((s) => s.currentUser);
   const groups = useStore((s) => s.groups);
@@ -120,7 +118,13 @@ export function ChatInboxPanel({ onClose }: { onClose: () => void }) {
                     <li key={c.id}>
                       <button
                         type="button"
-                        onClick={() => openConversation(c.id)}
+                        onClick={() => {
+                          const group = c.groupId ? groups.find((g) => g.id === c.groupId) : undefined;
+                          const id = group && c.type === 'event_group'
+                            ? ensureEventGroupConversation({ groupId: group.id, eventId: group.eventId, title: c.title, participantUserIds: group.members, meetingPoint: group.meetingPoint })
+                            : c.id;
+                          openConversation(id);
+                        }}
                         className="w-full text-left rounded-2xl px-3 py-2.5 hover:bg-ink/5 flex gap-3 items-start"
                       >
                         <Icon className="w-4 h-4 text-brand shrink-0 mt-0.5" />

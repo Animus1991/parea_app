@@ -49,6 +49,14 @@ async function expectMenuItemAboveStrip(page: Page, item: ReturnType<Page['getBy
 test.describe('Nakamas Chat preview', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
+  test('hat inbox includes and opens legacy membership conversations', async ({ page }) => {
+    await enterDemoGuest(page);
+    const sheet = await openInbox(page);
+    await sheet.getByRole('button', { name: /Workshop: UX Basics/ }).click();
+    await expect(sheet).toHaveCount(0);
+    await expect(page.locator('[data-chat-window]').getByText(/Workshop: UX Basics/)).toBeVisible();
+  });
+
   test('home shows only the selected chat hat, not the chooser', async ({ page }) => {
     await enterDemoGuest(page);
     await expect(chatsButton(page)).toBeVisible();

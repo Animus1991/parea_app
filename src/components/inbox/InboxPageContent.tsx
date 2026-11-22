@@ -18,6 +18,7 @@ import { INBOX_TYPO } from '../../lib/typographyTokens';
 import type { Conversation } from '../../types/chat';
 import { isEventPast } from '../../lib/eventDisplay';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
+import { useInboxConversations } from '../../hooks/useInboxConversations';
 
 type InboxTab = 'messages' | 'notifications';
 
@@ -44,6 +45,7 @@ export default function InboxPageContent() {
   const rawNotifications = useStore((s) => s.notifications);
   const notifications = rawNotifications.filter((n) => !n.forUserId || n.forUserId === currentUser?.id);
   const conversations = useChatStore((s) => s.conversations);
+  const inboxConversations = useInboxConversations();
   const openConversation = useFittedOpenConversation();
   const setInboxOpen = useChatStore((s) => s.setInboxOpen);
   const ensureEventGroupConversation = useChatStore((s) => s.ensureEventGroupConversation);
@@ -58,12 +60,7 @@ export default function InboxPageContent() {
     if (!currentUser) return [];
     const now = new Date();
 
-    const fromConversations: InboxRow[] = conversations
-      .filter(
-        (c) =>
-          c.status !== 'archived' &&
-          (c.participantUserIds.includes(currentUser.id) || c.type === 'support'),
-      )
+    return inboxConversations
       .map((c: Conversation) => {
         const group = c.groupId ? groups.find((g) => g.id === c.groupId) : undefined;
         const event = c.eventId
@@ -88,33 +85,7 @@ export default function InboxPageContent() {
         };
       });
 
-    // Legacy groups without a chatStore conversation yet (pre-bridge memberships).
-    const coveredGroupIds = new Set(
-      fromConversations.map((r) => r.groupId).filter(Boolean) as string[],
-    );
-    const legacyGroups: InboxRow[] = groups
-      .filter((g) => g.members.includes(currentUser.id) && !coveredGroupIds.has(g.id))
-      .map((g) => {
-        const event = events.find((e) => e.id === g.eventId);
-        const isPast = event?.date ? isEventPast(event, now) : false;
-        return {
-          key: `group_${g.id}`,
-          title: event?.title ?? t('Nakamas Εκδήλωσης', 'Event Nakamas'),
-          imageUrl: event?.imageUrl,
-          previewEl: 'Πάτα για συνομιλία',
-          previewEn: 'Tap to open chat',
-          unread: 0,
-          members: g.members.length,
-          isPast,
-          groupId: g.id,
-          conversationId: `conv_${g.id}`,
-        };
-      });
-
-    return [...fromConversations, ...legacyGroups].sort(
-      (a, b) => Number(b.unread > 0) - Number(a.unread > 0),
-    );
-  }, [conversations, groups, events, currentUser, t]);
+  }, [inboxConversations, groups, events, currentUser, t]);
 
   const filteredChats = useMemo(() => {
     return inboxRows.filter((c) => {
