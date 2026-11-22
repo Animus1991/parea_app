@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { APP_TYPO } from '../lib/typographyTokens';
 import { NakamasMini, type NakamasMiniId } from '../components/illustrations/NakamasMini';
 import { CHALLENGE_MINI } from '../components/illustrations/miniMaps';
+import { challengeProgress } from '../lib/challengeProgress';
 
 interface Challenge {
   id: string;
@@ -23,11 +24,11 @@ interface Challenge {
   titleEn: string;
   descGr: string;
   descEn: string;
-  progress: number;
+  progress: number | null;
   goal: number;
   unit: string;
   xp: number;
-  daysLeft: number;
+  daysLeft?: number;
   type: 'events' | 'streak' | 'social' | 'explorer';
 }
 
@@ -47,13 +48,9 @@ export default function ChallengesClassic() {
   const toggleChallengeJoined = useStore((s) => s.toggleChallengeJoined);
   const joinedIds = useMemo(() => new Set(challengesJoined), [challengesJoined]);
 
-  const feedbackCount = Object.keys(feedbackSubmitted).length;
-  const userGroupIds = currentUser
-    ? groups.filter((g) => g.members.includes(currentUser.id)).map((g) => g.eventId)
-    : [];
-  const uniqueCategories = new Set(
-    events.filter((e) => userGroupIds.includes(e.id)).map((e) => e.category),
-  ).size;
+  const { monthlyEvents, monthDaysLeft, weeklyStreak, categories, commentedReviews } = challengeProgress({
+    userId: currentUser?.id, events, groups, feedback: feedbackSubmitted,
+  });
   const connectionsCount = currentUser?.connections?.length ?? 0;
 
   const challenges: Challenge[] = useMemo(
@@ -65,11 +62,11 @@ export default function ChallengesClassic() {
         titleEn: '5 Events This Month',
         descGr: 'Παρακολούθησε 5 εκδηλώσεις κατά τη διάρκεια του τρέχοντος μήνα.',
         descEn: 'Attend 5 events during the current month.',
-        progress: Math.min(feedbackCount, 5),
+        progress: Math.min(monthlyEvents, 5),
         goal: 5,
         unit: t('εκδ.', 'events'),
         xp: 200,
-        daysLeft: 8,
+        daysLeft: monthDaysLeft,
         type: 'events',
       },
       {
@@ -79,11 +76,10 @@ export default function ChallengesClassic() {
         titleEn: '4-Week Streak',
         descGr: 'Πήγαινε σε τουλάχιστον μία εκδήλωση κάθε εβδομάδα για 4 συνεχόμενες εβδομάδες.',
         descEn: 'Attend at least one event per week for 4 consecutive weeks.',
-        progress: Math.min(feedbackCount, 4),
+        progress: Math.min(weeklyStreak, 4),
         goal: 4,
         unit: t('εβδ.', 'weeks'),
         xp: 300,
-        daysLeft: 15,
         type: 'streak',
       },
       {
@@ -97,7 +93,6 @@ export default function ChallengesClassic() {
         goal: 5,
         unit: t('συνδ.', 'connections'),
         xp: 150,
-        daysLeft: 22,
         type: 'social',
       },
       {
@@ -107,11 +102,10 @@ export default function ChallengesClassic() {
         titleEn: 'Explore 4 Categories',
         descGr: 'Παρακολούθησε εκδηλώσεις από 4 διαφορετικές κατηγορίες.',
         descEn: 'Attend events from 4 different categories.',
-        progress: Math.min(uniqueCategories, 4),
+        progress: Math.min(categories, 4),
         goal: 4,
         unit: t('κατηγ.', 'categories'),
         xp: 180,
-        daysLeft: 30,
         type: 'explorer',
       },
       {
@@ -121,11 +115,10 @@ export default function ChallengesClassic() {
         titleEn: 'Quick Join ×3',
         descGr: 'Εγγράψου σε εκδήλωση εντός 5 λεπτών από τη δημοσίευσή της, 3 φορές.',
         descEn: 'Join an event within 5 minutes of posting, 3 times.',
-        progress: 1,
+        progress: null,
         goal: 3,
         unit: t('φορές', 'times'),
         xp: 120,
-        daysLeft: 14,
         type: 'events',
       },
       {
@@ -133,17 +126,16 @@ export default function ChallengesClassic() {
         mini: 'helper',
         titleGr: 'Κορυφαίος αξιολογητής',
         titleEn: 'Top Reviewer',
-        descGr: 'Αξιολόγησε 3 εκδηλώσεις με αναλυτικό σχόλιο.',
-        descEn: 'Rate 3 events with a detailed comment.',
-        progress: Math.min(feedbackCount, 3),
+        descGr: 'Αξιολόγησε 3 εκδηλώσεις με γραπτό σχόλιο.',
+        descEn: 'Rate 3 events with a written comment.',
+        progress: Math.min(commentedReviews, 3),
         goal: 3,
         unit: t('αξιολογήσεις', 'reviews'),
         xp: 100,
-        daysLeft: 20,
         type: 'social',
       },
     ],
-    [feedbackCount, connectionsCount, uniqueCategories, t],
+    [monthlyEvents, monthDaysLeft, weeklyStreak, connectionsCount, categories, commentedReviews, t],
   );
 
   const filtered = filterType === 'all' ? challenges : challenges.filter((c) => c.type === filterType);
@@ -158,7 +150,7 @@ export default function ChallengesClassic() {
     );
   };
 
-  const totalXP = challenges.filter((c) => c.progress >= c.goal).reduce((s, c) => s + c.xp, 0);
+  const totalXP = challenges.filter((c) => c.progress !== null && c.progress >= c.goal).reduce((s, c) => s + c.xp, 0);
 
   const filterLabels: Record<FilterType, { gr: string; en: string }> = {
     all: { gr: 'Όλες', en: 'All' },
@@ -212,8 +204,8 @@ export default function ChallengesClassic() {
       {/* Challenge cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.map((c, i) => {
-          const pct = Math.round((c.progress / c.goal) * 100);
-          const done = c.progress >= c.goal;
+          const pct = c.progress === null ? 0 : Math.round((c.progress / c.goal) * 100);
+          const done = c.progress !== null && c.progress >= c.goal;
           const joined = joinedIds.has(c.id);
           return (
             <motion.div
@@ -247,14 +239,14 @@ export default function ChallengesClassic() {
                 </div>
 
                 {/* Progress bar */}
-                <div>
+                {c.progress !== null ? <div>
                   <div className="flex justify-between items-center mb-1">
                     <span className={cn('card-meta font-medium', p.muted)}>
                       {c.progress} / {c.goal} {c.unit}
                     </span>
                     <span className="card-meta font-bold text-brand">{pct}%</span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                  <div role="progressbar" aria-label={t(c.titleGr, c.titleEn)} aria-valuemin={0} aria-valuemax={c.goal} aria-valuenow={c.progress} className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${
                         done ? 'bg-green-500' : 'bg-gradient-to-r from-accent to-cyan-400'
@@ -262,14 +254,14 @@ export default function ChallengesClassic() {
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                </div>
+                </div> : <p className={cn('card-meta', p.muted)}>{t('Η αυτόματη καταγραφή προόδου δεν είναι διαθέσιμη ακόμα.', 'Automatic progress tracking is not available yet.')}</p>}
 
                 {/* Footer */}
                 <div className="flex items-center justify-between mt-auto pt-1">
-                  <span className={cn('card-meta font-medium flex items-center gap-1', p.muted)}>
+                  {c.daysLeft !== undefined ? <span className={cn('card-meta font-medium flex items-center gap-1', p.muted)}>
                     <Clock className="w-3 h-3" aria-hidden />
                     {c.daysLeft} {t('ημέρες απομένουν', 'days left')}
-                  </span>
+                  </span> : <span className={cn('card-meta', p.muted)}>{t('Χωρίς προθεσμία', 'No deadline')}</span>}
                   {!done && (
                     <button
                       onClick={() => toggleJoin(c.id)}
