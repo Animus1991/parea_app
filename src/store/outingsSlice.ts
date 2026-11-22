@@ -154,7 +154,7 @@ const now = () => Date.now();
 const newId = (prefix: string) => `${prefix}_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
 /** Change one person everywhere they live (users list + signed-in copy). */
-export function patchPerson(state: Pick<Host, 'users' | 'currentUser'>, userId: string, patch: (u: User) => Partial<User>) {
+export function patchPerson(state: { users: User[]; currentUser: User | null }, userId: string, patch: (u: User) => Partial<User>) {
   const users = state.users.map((u) => (u.id === userId ? { ...u, ...patch(u) } : u));
   const currentUser =
     state.currentUser && state.currentUser.id === userId ? { ...state.currentUser, ...patch(state.currentUser) } : state.currentUser;

@@ -20,6 +20,7 @@ const THEME_IDS = [
   'vibrant-dark',
   'bento-dark',
   'neon-dark',
+  'classic-dark',
   'activebuddies',
   'activebuddies-dark',
 ];

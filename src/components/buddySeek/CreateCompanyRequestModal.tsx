@@ -63,9 +63,9 @@ export function CreateCompanyRequestModal({
       setLookingForType(existingRequest.lookingForType);
       setVisibilityMode(existingRequest.visibilityMode);
       setProfileExposure(existingRequest.profileExposure);
-      setPreferredGroupMin(existingRequest.preferredGroupMin);
-      setPreferredGroupMax(existingRequest.preferredGroupMax);
-      setFlexibleDates(existingRequest.flexibleDates);
+      setPreferredGroupMin(existingRequest.preferredGroupMin ?? 3);
+      setPreferredGroupMax(existingRequest.preferredGroupMax ?? 6);
+      setFlexibleDates(existingRequest.flexibleDates ?? true);
       setMeetingPreference(existingRequest.meetingPreference);
       setMessage(existingRequest.message ?? '');
     } else {

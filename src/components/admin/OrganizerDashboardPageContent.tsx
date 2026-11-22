@@ -211,7 +211,7 @@ export default function OrganizerDashboardPageContent() {
       <div
         className={cn(
           'relative overflow-hidden p-4 md:p-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-soft border',
-          p.isDark ? 'bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]' : 'bg-gradient-to-br from-indigo-900 to-purple-900 border-indigo-800 text-white',
+          p.isDark ? 'bg-[hsl(220_16%_16%)] border-[hsl(220_13%_22%)]' : 'bg-gradient-to-br from-hero-from to-hero-to border-hero-from text-hero-fg',
         )}
       >
         <div className="flex items-center gap-4 relative z-10">

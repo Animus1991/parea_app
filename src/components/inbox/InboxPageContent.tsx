@@ -54,6 +54,7 @@ export default function InboxPageContent() {
   const [activeTab, setActiveTab] = useState<InboxTab>('messages');
   const [search, setSearch] = useState('');
   const [chatFilter, setChatFilter] = useState<'active' | 'past'>('active');
+  const [chatLimit, setChatLimit] = useState(12);
 
   /** Page density of the same chatStore truth the popup inbox uses. */
   const inboxRows = useMemo((): InboxRow[] => {
@@ -269,7 +270,7 @@ export default function InboxPageContent() {
               />
             ) : (
               <div className={cn('divide-y', p.isDark ? 'divide-white/5' : 'divide-gray-100')}>
-                {filteredChats.map((chat) => (
+                {filteredChats.slice(0, chatLimit).map((chat) => (
                   <button
                     key={chat.key}
                     type="button"
@@ -319,6 +320,17 @@ export default function InboxPageContent() {
                     )}
                   </button>
                 ))}
+                {filteredChats.length > chatLimit && (
+                  <div className="flex justify-center p-3">
+                    <button
+                      type="button"
+                      onClick={() => setChatLimit((n) => n + 12)}
+                      className="min-h-8 rounded-full border border-border bg-surface-raised px-4 text-xs font-bold text-ink hover:border-border-strong"
+                    >
+                      {t(`Περισσότερες συνομιλίες (${filteredChats.length - chatLimit})`, `More conversations (${filteredChats.length - chatLimit})`)}
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -802,7 +802,7 @@ export const useStore = create<AppState>()(
         start > Date.now() &&
         start - Date.now() < LATE_CANCEL_MS;
       let strikes = state.strikes;
-      let people = { users: state.users, currentUser: state.currentUser };
+      let people: { users: User[]; currentUser: User | null } = { users: state.users, currentUser: state.currentUser };
       const notifications = [...state.notifications];
       const note = (
         messageGr: string,

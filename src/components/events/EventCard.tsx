@@ -423,7 +423,7 @@ export const EventCard = memo(function EventCard({ event, emphasis = 'join', ima
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className={cn("bg-gradient-to-br from-cyan-100 to-purple-50 flex items-center justify-center p-4 text-center", coverTitle ? "absolute inset-0" : "w-full h-full")}>
+          <div className={cn("bg-gradient-to-br from-cyan-100 to-purple-50 flex items-center justify-center px-4 pt-14 pb-6 text-center", coverTitle ? "absolute inset-0" : "w-full h-full")}>
             <span className="text-cyan-600 font-bold card-heading tracking-tight">
               {categoryLabel(event.category)}
             </span>

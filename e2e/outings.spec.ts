@@ -191,4 +191,21 @@ test.describe('Group outings', () => {
     await page.goto('/connections');
     await expect(page.getByText('Elena').first()).toBeVisible();
   });
+
+  test('the night page keeps working fully offline', async ({ page, context }) => {
+    await enterDemoGuest(page);
+    await page.goto('/night/g-nn1');
+    await expect(page.getByRole('heading', { name: /^Η βραδιά μας$|^Our night$/ })).toBeVisible();
+    await context.setOffline(true);
+    // Live offline: the saved-version banner appears and every interactive
+    // element stays usable — the group code, the timeline steps, check-in.
+    // (A cold-load-while-offline path is covered by the prod service worker,
+    // which only registers in production builds.)
+    await expect(page.getByRole('status').filter({ hasText: /Εκτός σύνδεσης|Offline/ })).toBeVisible();
+    await expect(page.getByTestId('group-code')).toBeVisible();
+    await page.getByRole('list', { name: /Χρονοδιάγραμμα βραδιάς|Night timeline/ }).locator('summary').filter({ hasText: /Check-in στην πόρτα|Door check-in/ }).click();
+    const door = page.getByRole('region', { name: /Check-in στην πόρτα|Door check-in/ });
+    await door.getByRole('button', { name: /Check-in για Maria|Check in Maria/ }).click();
+    await expect(door.getByText(/^2\/4/)).toBeVisible();
+  });
 });

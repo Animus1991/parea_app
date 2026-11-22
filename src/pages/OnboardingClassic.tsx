@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import { useStore } from '../store';
@@ -41,6 +41,36 @@ const LOCATION_PREFS = [
 
 const TOTAL_STEPS = 3;
 
+const STORAGE_KEY = 'nakamas_onboarding_progress';
+
+type OnboardingProgress = {
+  step: number;
+  interests: string[];
+  schedule: string[];
+  groupSize: string;
+  activity: string;
+  location: string;
+};
+
+function readProgress(): OnboardingProgress | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw) as Partial<OnboardingProgress>;
+    if (typeof p.step !== 'number') return null;
+    return {
+      step: Math.min(Math.max(0, p.step), TOTAL_STEPS - 1),
+      interests: Array.isArray(p.interests) ? p.interests : [],
+      schedule: Array.isArray(p.schedule) ? p.schedule : ['weekends'],
+      groupSize: typeof p.groupSize === 'string' ? p.groupSize : 'small',
+      activity: typeof p.activity === 'string' ? p.activity : 'medium',
+      location: typeof p.location === 'string' ? p.location : 'city',
+    };
+  } catch {
+    return null;
+  }
+}
+
 export default function OnboardingClassic() {
   const { t, tu } = useLanguage();
   const navigate = useNavigate();
@@ -48,16 +78,18 @@ export default function OnboardingClassic() {
   const updateUser = useStore((s) => s.updateUser);
   const completeOnboarding = useStore((s) => s.completeOnboarding);
 
-  const [step, setStep] = useState(0);
+  const saved = useRef(readProgress());
+
+  const [step, setStep] = useState(saved.current?.step ?? 0);
   const [dir, setDir] = useState(1);
 
   const [selectedInterests, setSelectedInterests] = useState<string[]>(
-    currentUser?.interests ?? [],
+    saved.current?.interests.length ? saved.current.interests : currentUser?.interests ?? [],
   );
-  const [selectedSchedule, setSelectedSchedule] = useState<string[]>(['weekends']);
-  const [selectedGroupSize, setSelectedGroupSize] = useState<string>('small');
-  const [selectedActivity, setSelectedActivity] = useState<string>('medium');
-  const [selectedLocation, setSelectedLocation] = useState<string>('city');
+  const [selectedSchedule, setSelectedSchedule] = useState<string[]>(saved.current?.schedule ?? ['weekends']);
+  const [selectedGroupSize, setSelectedGroupSize] = useState<string>(saved.current?.groupSize ?? 'small');
+  const [selectedActivity, setSelectedActivity] = useState<string>(saved.current?.activity ?? 'medium');
+  const [selectedLocation, setSelectedLocation] = useState<string>(saved.current?.location ?? 'city');
   const [bio, setBio] = useState(currentUser?.bio ?? '');
   const [name, setName] = useState(currentUser?.name ?? '');
 
@@ -88,6 +120,7 @@ export default function OnboardingClassic() {
       });
     }
     completeOnboarding();
+    try { localStorage.removeItem(STORAGE_KEY); } catch { /* private mode */ }
     markOnboardingWelcomeSession();
     navigate(
       buildPostOnboardingHomePath({
@@ -99,8 +132,25 @@ export default function OnboardingClassic() {
 
   const handleSkip = () => {
     completeOnboarding();
+    try { localStorage.removeItem(STORAGE_KEY); } catch { /* private mode */ }
     navigate('/');
   };
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          step,
+          interests: selectedInterests,
+          schedule: selectedSchedule,
+          groupSize: selectedGroupSize,
+          activity: selectedActivity,
+          location: selectedLocation,
+        } satisfies OnboardingProgress),
+      );
+    } catch { /* private mode */ }
+  }, [step, selectedInterests, selectedSchedule, selectedGroupSize, selectedActivity, selectedLocation]);
 
 
   // Three short steps; group size and activity level stay one tap away as optional extras.

@@ -96,7 +96,7 @@ export const useUIStore = create<UIState>()(
         let added = false;
         set((s) => {
           if (!isCustomChatHat(hat) || s.customChatHats.length >= MAX_CUSTOM_CHAT_HATS) return s;
-          if (hat.src.length > MAX_CUSTOM_HAT_DATA_URL_CHARS) return s;
+          if ((hat.src?.length ?? 0) > MAX_CUSTOM_HAT_DATA_URL_CHARS) return s;
           if (s.customChatHats.some((h) => h.id === hat.id)) return s;
           added = true;
           return {

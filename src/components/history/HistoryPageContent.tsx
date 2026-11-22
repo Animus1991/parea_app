@@ -31,6 +31,7 @@ export default function HistoryPageContent() {
   const feedbackSubmitted = useStore((s) => s.feedbackSubmitted);
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState<'all' | 'reviewed' | 'pending'>('all');
+  const [listLimit, setListLimit] = useState(12);
 
   const allPastEvents = useMemo(() => {
     if (!currentUser) return [];
@@ -168,7 +169,7 @@ export default function HistoryPageContent() {
       >
       {pastEvents.length > 0 ? (
         <div className="space-y-3">
-          {pastEvents.map((event) => (
+          {pastEvents.slice(0, listLimit).map((event) => (
             <Card
               key={event.id}
               className={cn("p-4 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-cyan-500", a.cardHover)}
@@ -229,6 +230,17 @@ export default function HistoryPageContent() {
               </div>
             </Card>
           ))}
+          {pastEvents.length > listLimit && (
+            <div className="flex justify-center pt-1">
+              <button
+                type="button"
+                onClick={() => setListLimit((n) => n + 12)}
+                className="min-h-8 rounded-full border border-border bg-surface-raised px-4 text-xs font-bold text-ink hover:border-border-strong"
+              >
+                {t(`Περισσότερες εκδηλώσεις (${pastEvents.length - listLimit})`, `More events (${pastEvents.length - listLimit})`)}
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <EmptyState

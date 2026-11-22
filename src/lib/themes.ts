@@ -7,6 +7,7 @@ export const THEME_IDS = [
   'vibrant-dark',
   'bento-dark',
   'neon-dark',
+  'classic-dark',
   'activebuddies',
   'activebuddies-dark',
 ] as const;
@@ -21,6 +22,7 @@ export const THEME_LABELS: Record<ThemeId, { el: string; en: string }> = {
   'vibrant-dark': { el: 'Ζωντανό σκοτεινό', en: 'Vibrant Dark' },
   'bento-dark': { el: 'Bento Σκοτεινό', en: 'Bento Dark' },
   'neon-dark': { el: 'Neon Σκοτεινό', en: 'Neon Dark' },
+  'classic-dark': { el: 'Κλασικό σκοτεινό', en: 'Classic Dark' },
   activebuddies: { el: 'Active Buddies', en: 'Active Buddies' },
   'activebuddies-dark': { el: 'Active Buddies Σκοτεινό', en: 'Active Buddies Dark' },
 };
@@ -33,6 +35,7 @@ export const THEME_SWATCH: Record<ThemeId, string> = {
   'vibrant-dark': 'bg-fuchsia-700',
   'bento-dark': 'bg-indigo-700',
   'neon-dark': 'bg-emerald-700',
+  'classic-dark': 'bg-teal-800',
   activebuddies: 'bg-[hsl(220_14%_12%)]',
   'activebuddies-dark': 'bg-[hsl(0_0%_95%)]',
 };
@@ -42,6 +45,7 @@ export function isDarkTheme(theme: string): boolean {
     theme === 'bento-dark' ||
     theme === 'vibrant-dark' ||
     theme === 'neon-dark' ||
+    theme === 'classic-dark' ||
     theme === 'activebuddies-dark'
   );
 }

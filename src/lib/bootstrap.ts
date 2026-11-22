@@ -10,7 +10,7 @@ export function bootstrap(): void {
   booted = true;
 
   for (const warning of validateEnv()) {
-    log.warn(warning);
+    log.debug(warning);
   }
 
   log.info('application bootstrapped', { mode: appEnv.mode, appName: appEnv.appName });

@@ -34,6 +34,7 @@ import { useGroupChatMessages, type GroupChatMessage } from "../../hooks/useGrou
 import { useChatStore } from "../../store/chatStore";
 import { toChatMessage } from "../../lib/chatMessageAdapters";
 import type { ChatReplyRef } from "../../types/chat";
+import type { User } from "../../types";
 import { ChatMessageBubble } from "../chat/ChatMessageBubble";
 import { ChatComposerTools } from "../chat/ChatComposerTools";
 import { ChatStoriesStrip } from "../chat/ChatStoriesStrip";
@@ -300,9 +301,9 @@ export default function GroupChatPageContent() {
   // Host or event organizer only: being an organizer elsewhere grants nothing here.
   const isGroupAdmin = canModerateGroup(currentUser, group, event);
 
-  const groupMembersDetailed = group.members.map(
-    (mId) => users.find((u) => u.id === mId) || currentUser,
-  );
+  const groupMembersDetailed = group.members
+    .map((mId) => users.find((u) => u.id === mId) || currentUser)
+    .filter((u): u is User => Boolean(u));
   const potentialNewMembers = users.filter(
     (u) => !group.members.includes(u.id) && !u.isOrganizer,
   );
@@ -310,7 +311,7 @@ export default function GroupChatPageContent() {
   const renderMessage = (index: number, msg: GroupChatMessage) => {
     const isSystem = msg.senderId === "system" && msg.type !== "location";
     const isLocationMsg = msg.type === "location";
-    const isMe = msg.senderId === currentUser.id;
+    const isMe = msg.senderId === currentUser?.id;
 
     if (isSystem) {
       return (
@@ -622,7 +623,7 @@ export default function GroupChatPageContent() {
                 type="button"
                 onClick={() => setShowSosConfirm(true)}
                 className={`p-2 rounded-full transition-all flex items-center justify-center shrink-0 border ${
-                  group.membersLocations?.[currentUser.id]?.sos
+                  group.membersLocations?.[currentUser?.id ?? '']?.sos
                     ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500 animate-pulse"
                     : "bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
                 }`}
@@ -856,7 +857,7 @@ export default function GroupChatPageContent() {
                           <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/15 overflow-hidden shrink-0 relative group shadow-soft border border-gray-100 dark:border-border">
                             {member.photoUrl ? (
                               <span className="flex h-full w-full items-center justify-center text-xs font-bold">
-                                <PhotoOrInitials src={member.photoUrl} name={member.name} imgClassName={`w-full h-full object-cover transition-all ${!isCloseToEvent && member.id !== currentUser.id ? "blur-sm grayscale opacity-80" : ""}`} />
+                                <PhotoOrInitials src={member.photoUrl} name={member.name} imgClassName={`w-full h-full object-cover transition-all ${!isCloseToEvent && member.id !== currentUser?.id ? "blur-sm grayscale opacity-80" : ""}`} />
                               </span>
                             ) : (
                               <div className={cn("w-full h-full flex items-center justify-center font-bold text-xs", gc.avatarPlaceholder)}>
@@ -864,7 +865,7 @@ export default function GroupChatPageContent() {
                               </div>
                             )}
                             {!isCloseToEvent &&
-                              member.id !== currentUser.id && (
+                              member.id !== currentUser?.id && (
                                 <div className="absolute inset-0 bg-black/20 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[1px]">
                                   <ShieldCheck className="w-4 h-4 text-white mb-0.5" />
                                   <span className="text-xs font-bold text-white tracking-wide text-center px-1">
@@ -877,7 +878,7 @@ export default function GroupChatPageContent() {
                             <div className="flex items-center gap-2 mb-0.5">
                               <p className="text-sm font-bold text-ink truncate">
                                 {member.name}{" "}
-                                {member.id === currentUser.id && (
+                                {member.id === currentUser?.id && (
                                   <span className="text-gray-400 font-medium ml-1">
                                     ({t("Εσείς", "You")})
                                   </span>
@@ -1178,7 +1179,7 @@ export default function GroupChatPageContent() {
                     id: Date.now().toString(),
                     senderId: "system",
                     senderName: t("Σύστημα", "System"),
-                    text: `${currentUser.name} ${t("κράτησε το ιστορικό συνομιλίας σε αυτή τη συσκευή.", "kept chat history on this device.")}`,
+                    text: `${currentUser?.name} ${t("κράτησε το ιστορικό συνομιλίας σε αυτή τη συσκευή.", "kept chat history on this device.")}`,
                     timestamp: new Date().toISOString(),
                   },
                 ]);
@@ -1230,7 +1231,7 @@ export default function GroupChatPageContent() {
                       id: Date.now().toString(),
                       senderId: "system",
                       senderName: t("Σύστημα", "System"),
-                      text: `${currentUser.name} ${t("ενημέρωσε την κατάστασή του", "updated their ETA")}: ETA ${eta} ${t("λεπτά", "mins")}`,
+                      text: `${currentUser?.name} ${t("ενημέρωσε την κατάστασή του", "updated their ETA")}: ETA ${eta} ${t("λεπτά", "mins")}`,
                       timestamp: new Date().toISOString(),
                     },
                   ]);
@@ -1284,7 +1285,7 @@ export default function GroupChatPageContent() {
                       id: Date.now().toString(),
                       senderId: "system",
                       senderName: t("Σύστημα", "System"),
-                      text: `${currentUser.name} ${t("ενημέρωσε την κατάστασή του", "updated their status")}: "${status.text}"`,
+                      text: `${currentUser?.name} ${t("ενημέρωσε την κατάστασή του", "updated their status")}: "${status.text}"`,
                       timestamp: new Date().toISOString(),
                     },
                   ]);

@@ -316,7 +316,7 @@ export default function SettingsPageContent() {
               {section.items.map((item, i) => {
                 const Icon = item.icon;
                 return (
-                  <div key={i} {...(item.onClick ? pressable<HTMLDivElement>(() => item.onClick!()) : {})} className={cn("flex items-center justify-between p-4 transition-colors", item.onClick ? cn("cursor-pointer", a.itemHover) : '')}>
+                  <div key={i} {...(item.onClick ? pressable<HTMLDivElement>(() => item.onClick!()) : {})} className={cn("flex items-center justify-between p-4 transition-colors", cn("cursor-pointer", a.itemHover))}>
                     <div className="flex items-center gap-3">
                       <Icon className={cn("w-4 h-4", a.muted)} />
                       <span className={cn("text-sm font-medium", a.head)}>{item.label}</span>

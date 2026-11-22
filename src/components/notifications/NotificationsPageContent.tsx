@@ -102,6 +102,7 @@ export default function NotificationsPageContent() {
   const unreadCount = notifications.filter((n) => !n.read).length;
   const todayNotifs = visibleNotifs.filter((n) => !n.read);
   const earlierNotifs = visibleNotifs.filter((n) => n.read);
+  const [earlierLimit, setEarlierLimit] = useState(12);
 
   const setDigest = (next: NotificationDigestWindow) => {
     updateUserSettings({
@@ -196,7 +197,7 @@ export default function NotificationsPageContent() {
   const renderNotifRow = (notif: AppNotification, isUnread: boolean) => {
     const Icon = iconMap[notif.type] || Bell;
     const isPendingFeedback =
-      notif.type === 'feedback' && Boolean(notif.eventId) && pendingFeedbackIds.has(notif.eventId);
+      notif.type === 'feedback' && Boolean(notif.eventId) && pendingFeedbackIds.has(notif.eventId as string);
     const iconColor = notif.color && isUnread ? notif.color : getIconColor(notif.type, !isUnread, notif.color);
 
     return (
@@ -399,7 +400,18 @@ export default function NotificationsPageContent() {
               <h3 className={cn('text-xs font-bold tracking-wider ', a.muted)}>
                 {tu('Προηγούμενες', 'Earlier')}
               </h3>
-              {earlierNotifs.map((notif) => renderNotifRow(notif, false))}
+              {earlierNotifs.slice(0, earlierLimit).map((notif) => renderNotifRow(notif, false))}
+              {earlierNotifs.length > earlierLimit && (
+                <div className="flex justify-center pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setEarlierLimit((n) => n + 12)}
+                    className="min-h-8 rounded-full border border-border bg-surface-raised px-4 text-xs font-bold text-ink hover:border-border-strong"
+                  >
+                    {t(`Περισσότερες ειδοποιήσεις (${earlierNotifs.length - earlierLimit})`, `More notifications (${earlierNotifs.length - earlierLimit})`)}
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
