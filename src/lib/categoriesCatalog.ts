@@ -81,19 +81,19 @@ export function getCategoryGroupTabLabel(
 ): string {
   switch (tab) {
     case 'All':
-      return t('Όλα', 'All');
+      return t('Όλες', 'All');
     case 'Arts & Entertainment':
-      return t('Τέχνες', 'Arts');
+      return t('Τέχνες & θέαμα', 'Arts & shows');
     case 'Culture & Education':
-      return t('Πολιτισμός', 'Culture');
+      return t('Πολιτισμός & μάθηση', 'Culture & learning');
     case 'Activities':
-      return t('Δράση', 'Active');
+      return t('Κίνηση & φύση', 'Active & outdoors');
     case 'Lifestyle':
-      return t('Ζωή', 'Lifestyle');
+      return t('Φαγητό & παρέα', 'Food & social');
     case 'Hobbies':
       return t('Χόμπι', 'Hobbies');
     case 'Professional':
-      return t('Εργασία', 'Work');
+      return t('Επαγγελματικά', 'Professional');
     default:
       return tab;
   }

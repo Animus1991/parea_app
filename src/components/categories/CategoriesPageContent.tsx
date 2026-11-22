@@ -1,42 +1,71 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Search,
-  Grid,
-  TrendingUp,
-  Star,
-  Compass,
-  Calendar,
-  ArrowRight,
   Bookmark,
+  Calendar,
+  ChevronDown,
+  Search,
 } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { isToday, isThisWeek, isThisMonth, parseISO } from 'date-fns';
-import { Badge } from '../common/Badge';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../common/Button';
-import { EventCard } from '../events/EventCard';
-import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
-import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
+import { Chip } from '../common/Chip';
+import { AppSelect } from '../common/AppSelect';
 import { EmptyState } from '../common/EmptyState';
 import { EventCardSkeleton } from '../common/Skeleton';
 import { ResourceStateGate } from '../common/ResourceStateGate';
-import { useEventsResource } from '../../hooks/useEventsQuery';
-import { useLanguage } from '../../lib/i18n';
-import { usePageContrast } from '../../hooks/usePageContrast';
-import { cn } from '../../lib/utils';
-import {
-  CATEGORY_CATALOG,
-  CATEGORY_GROUP_TABS,
-  getCategoryGroupTabLabel,
-  type CategoryGroupTab,
-} from '../../lib/categoriesCatalog';
+import { EventCard } from '../events/EventCard';
+import { DiscoverCardImagePicker } from '../home/DiscoverCardImagePicker';
 import { CollectionsRail } from '../outings/CollectionsRail';
-import { AppSelect } from '../common/AppSelect';
-import { APP_TYPO } from '../../lib/typographyTokens';
-import { isEventPast } from '../../lib/eventDisplay';
+import { useDiscoverCardImageDepth } from '../../hooks/useDiscoverCardImageDepth';
+import { useEventsResource } from '../../hooks/useEventsQuery';
+import { useGeolocation } from '../../hooks/useGeolocation';
+import { usePageContrast } from '../../hooks/usePageContrast';
+import { useStore } from '../../store';
+import type { Event } from '../../types';
+import { useLanguage } from '../../lib/i18n';
+import { cn } from '../../lib/utils';
+import { CATEGORY_CATALOG, CATEGORY_GROUP_TABS, getCategoryGroupTabLabel, type CategoryGroupTab } from '../../lib/categoriesCatalog';
+import { formingGroups } from '../../lib/outings';
+import { eventOccursAt, isEventPast } from '../../lib/eventDisplay';
+import { countNoun } from '../../lib/plural';
+import { foldSearchText } from '../../lib/greekText';
+import { ATHENS_CENTER } from '../../lib/haversine';
+import { CategoriesHero } from './CategoriesHero';
+import {
+  matchesCategoryFilter,
+  matchesDateFilter,
+  matchesEventQuery,
+  sortEventsByDistance,
+  type DateFilter,
+  type PriceFilter,
+  type SortBy,
+} from '../../lib/categoryFilters';
 
-type PriceFilter = 'All' | 'Free' | 'Paid' | 'Group Discount';
-type DateFilter = 'Any' | 'Today' | 'This Week' | 'This Month' | 'Weekend';
-type SortBy = 'Relevance' | 'Trending' | 'Distance' | 'Group Progress';
+const DEFAULT_PRICE: PriceFilter = 'All';
+const DEFAULT_DATE: DateFilter = 'Any';
+const DEFAULT_SORT: SortBy = 'Trending';
+const DEFAULT_GROUP: CategoryGroupTab = 'All';
+const PAGE_SIZE = 12;
+
+const PRICE_FILTERS: PriceFilter[] = ['All', 'Free', 'Paid', 'Group Discount'];
+const DATE_FILTERS: DateFilter[] = ['Any', 'Today', 'This Week', 'This Month', 'Weekend'];
+const SORT_OPTIONS: SortBy[] = ['Relevance', 'Trending', 'Distance', 'Group Progress'];
+
+function readFilterParams(params: URLSearchParams) {
+  const category = params.get('c');
+  const group = params.get('g');
+  const price = params.get('price');
+  const when = params.get('when');
+  const sort = params.get('sort');
+
+  return {
+    activeCategory: CATEGORY_CATALOG.some((item) => item.name === category) ? category : null,
+    activeTab: CATEGORY_GROUP_TABS.find((item) => item === group) ?? DEFAULT_GROUP,
+    priceFilter: PRICE_FILTERS.find((item) => item === price) ?? DEFAULT_PRICE,
+    dateFilter: DATE_FILTERS.find((item) => item === when) ?? DEFAULT_DATE,
+    sortBy: SORT_OPTIONS.find((item) => item === sort) ?? DEFAULT_SORT,
+    searchQuery: params.get('q') ?? '',
+  };
+}
 
 function scrollToEvents() {
   const area = document.getElementById('events-area');
@@ -51,369 +80,448 @@ function scrollToEvents() {
 }
 
 const SELECT_CLASS =
-  'filter-select border shadow-soft focus:outline-none shrink-0 pr-2 transition-colors';
+  'filter-select shrink-0 border pr-2 shadow-soft transition-colors focus:outline-none';
 
-/** Unified categories (ZIP parity + Classic design tokens via usePageContrast). */
 export default function CategoriesPageContent() {
   const cardImage = useDiscoverCardImageDepth();
   const navigate = useNavigate();
-  const { t, tu, language } = useLanguage();
-  const p = usePageContrast();
-  const { events, isLoading, isError, refetch } = useEventsResource();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { t, tu, language } = useLanguage();
+  const contrast = usePageContrast();
+  const { events, isLoading, isError, refetch } = useEventsResource();
+  const groups = useStore((state) => state.groups);
+  const {
+    granted: locationGranted,
+    loading: locationLoading,
+    lat: locationLat,
+    lng: locationLng,
+    request: requestLocation,
+  } = useGeolocation();
+  const now = useMemo(() => new Date(), []);
+  const lastSynchronizedSearch = useRef<string | null>(null);
+  const skipUrlSync = useRef(false);
+  const locationRequestStarted = useRef(false);
+  const initialFilters = readFilterParams(searchParams);
 
-  const initialCat = searchParams.get('c') || null;
-  const [activeCategory, setActiveCategory] = useState<string | null>(initialCat);
-  const [activeTab, setActiveTab] = useState<CategoryGroupTab>('All');
-  const [priceFilter, setPriceFilter] = useState<PriceFilter>('All');
-  const [dateFilter, setDateFilter] = useState<DateFilter>('Any');
-  const [sortBy, setSortBy] = useState<SortBy>('Trending');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState<string | null>(initialFilters.activeCategory);
+  const [activeTab, setActiveTab] = useState<CategoryGroupTab>(initialFilters.activeTab);
+  const [priceFilter, setPriceFilter] = useState<PriceFilter>(initialFilters.priceFilter);
+  const [dateFilter, setDateFilter] = useState<DateFilter>(initialFilters.dateFilter);
+  const [sortBy, setSortBy] = useState<SortBy>(initialFilters.sortBy);
+  const [searchQuery, setSearchQuery] = useState(initialFilters.searchQuery);
+  const [categoriesExpanded, setCategoriesExpanded] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
-    const current = searchParams.get('c');
-    if ((current || null) === (activeCategory || null)) return;
-    const next = new URLSearchParams(searchParams);
-    if (activeCategory) next.set('c', activeCategory);
-    else next.delete('c');
-    setSearchParams(next, { replace: true, preventScrollReset: true });
-  }, [activeCategory, searchParams, setSearchParams]);
+    const params = new URLSearchParams(location.search);
+    if (lastSynchronizedSearch.current === params.toString()) {
+      lastSynchronizedSearch.current = null;
+      return;
+    }
 
-  const categoryCounts = useMemo(() => {
-    return events.reduce<Record<string, number>>((acc, event) => {
-      const cat = event.category || '';
-      acc[cat] = (acc[cat] || 0) + 1;
-      return acc;
-    }, {});
-  }, [events]);
+    skipUrlSync.current = true;
+    const filters = readFilterParams(params);
+    setActiveCategory(filters.activeCategory);
+    setActiveTab(filters.activeTab);
+    setPriceFilter(filters.priceFilter);
+    setDateFilter(filters.dateFilter);
+    setSortBy(filters.sortBy);
+    setSearchQuery(filters.searchQuery);
+
+    const normalized = new URLSearchParams(params);
+    const setOrDelete = (key: string, value: string | null) => {
+      if (value) normalized.set(key, value);
+      else normalized.delete(key);
+    };
+    setOrDelete('c', filters.activeCategory);
+    setOrDelete('q', filters.searchQuery.trim() || null);
+    setOrDelete('g', filters.activeTab === DEFAULT_GROUP ? null : filters.activeTab);
+    setOrDelete('price', filters.priceFilter === DEFAULT_PRICE ? null : filters.priceFilter);
+    setOrDelete('when', filters.dateFilter === DEFAULT_DATE ? null : filters.dateFilter);
+    setOrDelete('sort', filters.sortBy === DEFAULT_SORT ? null : filters.sortBy);
+    if (normalized.toString() !== params.toString()) {
+      lastSynchronizedSearch.current = normalized.toString();
+      setSearchParams(normalized, { replace: true, preventScrollReset: true });
+    }
+  }, [location.search, setSearchParams]);
+
+  useEffect(() => {
+    if (skipUrlSync.current) {
+      skipUrlSync.current = false;
+      return;
+    }
+
+    const next = new URLSearchParams(location.search);
+    const setOrDelete = (key: string, value: string | null) => {
+      if (value) next.set(key, value);
+      else next.delete(key);
+    };
+    setOrDelete('c', activeCategory);
+    setOrDelete('q', searchQuery.trim() || null);
+    setOrDelete('g', activeTab === DEFAULT_GROUP ? null : activeTab);
+    setOrDelete('price', priceFilter === DEFAULT_PRICE ? null : priceFilter);
+    setOrDelete('when', dateFilter === DEFAULT_DATE ? null : dateFilter);
+    setOrDelete('sort', sortBy === DEFAULT_SORT ? null : sortBy);
+
+    if (next.toString() === new URLSearchParams(location.search).toString()) return;
+    const delay = searchQuery.trim() === (new URLSearchParams(location.search).get('q') ?? '') ? 0 : 300;
+    const timer = window.setTimeout(() => {
+      lastSynchronizedSearch.current = next.toString();
+      setSearchParams(next, { replace: true, preventScrollReset: true });
+    }, delay);
+    return () => window.clearTimeout(timer);
+  }, [
+    activeCategory,
+    activeTab,
+    dateFilter,
+    location.search,
+    priceFilter,
+    searchQuery,
+    setSearchParams,
+    sortBy,
+  ]);
+
+  useEffect(() => {
+    if (!activeCategory) return;
+    const timer = window.setTimeout(scrollToEvents, 80);
+    return () => window.clearTimeout(timer);
+  }, [activeCategory]);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [activeCategory, activeTab, dateFilter, priceFilter, searchQuery, sortBy]);
+
+  useEffect(() => {
+    if (sortBy !== 'Distance' || locationGranted || locationLoading || locationRequestStarted.current) return;
+    locationRequestStarted.current = true;
+    requestLocation();
+  }, [locationGranted, locationLoading, requestLocation, sortBy]);
+
+  const upcomingCatalogEvents = useMemo(
+    () => events.filter((event) => !isEventPast(event, now)),
+    [events, now],
+  );
+
+  const categoryStats = useMemo(() => {
+    const stats = CATEGORY_CATALOG.map((category) => ({
+      ...category,
+      count: 0,
+      forming: 0,
+      displayName: language === 'el' ? category.labelGr : category.labelEn,
+    }));
+    const byName = new Map(stats.map((category) => [category.name, category]));
+    for (const event of upcomingCatalogEvents) {
+      const category = byName.get(event.category);
+      if (!category) continue;
+      category.count += 1;
+      category.forming += formingGroups(event, groups).length;
+    }
+    return stats;
+  }, [groups, language, upcomingCatalogEvents]);
 
   const sortedCategories = useMemo(() => {
-    let cats = CATEGORY_CATALOG.map((cat) => ({
-      ...cat,
-      count: categoryCounts[cat.name] || 0,
-      displayName: language === 'el' ? cat.labelGr : cat.labelEn,
-    }));
-
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      cats = cats.filter(
-        (cat) =>
-          cat.displayName.toLowerCase().includes(q) ||
-          cat.name.toLowerCase().includes(q),
+    let categories = [...categoryStats];
+    const query = foldSearchText(searchQuery);
+    if (query) {
+      categories = categories.filter(
+        (category) =>
+          foldSearchText(category.displayName).includes(query) ||
+          foldSearchText(category.name).includes(query),
       );
     }
-
-    if (activeTab !== 'All') {
-      cats = cats.filter((c) => c.group === activeTab);
+    if (activeTab !== DEFAULT_GROUP) {
+      categories = categories.filter((category) => category.group === activeTab);
     }
-
-    return cats.sort((a, b) => b.count - a.count);
-  }, [categoryCounts, activeTab, searchQuery, language]);
+    return categories.sort((a, b) => b.count - a.count);
+  }, [activeTab, categoryStats, searchQuery]);
 
   const trendingCategories = useMemo(
+    () => [...categoryStats].sort((a, b) => b.count - a.count).slice(0, 3),
+    [categoryStats],
+  );
+  const totalFormingGroups = useMemo(
+    () => upcomingCatalogEvents.reduce((total, event) => total + formingGroups(event, groups).length, 0),
+    [groups, upcomingCatalogEvents],
+  );
+
+  const activeCategoryIndex = sortedCategories.findIndex((category) => category.name === activeCategory);
+  const categoriesAlwaysExpanded =
+    Boolean(searchQuery.trim()) || activeCategoryIndex >= 8 || (Boolean(activeCategory) && activeCategoryIndex < 0);
+  const hideMobileExtraCategories = !categoriesExpanded && !categoriesAlwaysExpanded;
+  const canToggleCategories =
+    !searchQuery.trim() && activeCategoryIndex < 8 && !categoriesAlwaysExpanded && sortedCategories.length > 8;
+
+  const distanceOrigin = useMemo(
     () =>
-      CATEGORY_CATALOG.map((cat) => ({
-        ...cat,
-        count: categoryCounts[cat.name] || 0,
-        displayName: language === 'el' ? cat.labelGr : cat.labelEn,
-      }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 3),
-    [categoryCounts, language],
+      locationGranted && typeof locationLat === 'number' && typeof locationLng === 'number'
+        ? { lat: locationLat, lng: locationLng }
+        : ATHENS_CENTER,
+    [locationGranted, locationLat, locationLng],
   );
 
   const filteredEvents = useMemo(() => {
-    return [...events]
-      .filter((e) => {
-        if (
-          activeCategory &&
-          e.category !== activeCategory &&
-          !activeCategory.includes(e.category)
-        ) {
-          return false;
-        }
-        if (priceFilter === 'Free' && e.isPaid) return false;
-        if (priceFilter === 'Paid' && !e.isPaid) return false;
-        if (priceFilter === 'Group Discount' && !e.groupDiscount) return false;
+    const matched = events.filter((event) => {
+      if (!matchesCategoryFilter(event, activeCategory)) return false;
+      if (priceFilter === 'Free' && event.isPaid) return false;
+      if (priceFilter === 'Paid' && !event.isPaid) return false;
+      if (priceFilter === 'Group Discount' && !event.groupDiscount) return false;
+      if (!matchesEventQuery(event, searchQuery)) return false;
+      return matchesDateFilter(eventOccursAt(event), dateFilter, now);
+    });
 
-        if (searchQuery.trim()) {
-          const q = searchQuery.toLowerCase();
-          const inTitle = e.title.toLowerCase().includes(q);
-          const inDesc = e.description?.toLowerCase().includes(q) ?? false;
-          const inTags = (e.tags ?? []).some((tag) => tag.toLowerCase().includes(q));
-          const inCat = (e.category || '').toLowerCase().includes(q);
-          if (!inTitle && !inDesc && !inTags && !inCat) return false;
-        }
-        if (dateFilter !== 'Any') {
-          const eDate = parseISO(e.date);
-          const day = eDate.getDay();
-          if (dateFilter === 'Today' && !isToday(eDate)) return false;
-          if (dateFilter === 'This Week' && !isThisWeek(eDate)) return false;
-          if (dateFilter === 'This Month' && !isThisMonth(eDate)) return false;
-          if (dateFilter === 'Weekend' && day !== 0 && day !== 6) return false;
-        }
-        return true;
-      })
-      .sort((a, b) => {
-        const pastA = isEventPast(a) ? 1 : 0;
-        const pastB = isEventPast(b) ? 1 : 0;
-        if (pastA !== pastB) return pastA - pastB;
+    const upcoming = matched.filter((event) => !isEventPast(event, now));
+    const past = matched.filter((event) => isEventPast(event, now));
+    const sortList = (list: Event[]) => {
+      if (sortBy === 'Distance') return sortEventsByDistance(list, distanceOrigin);
+      return [...list].sort((a, b) => {
         if (sortBy === 'Trending') {
           return (b.currentParticipants || 0) - (a.currentParticipants || 0);
         }
         if (sortBy === 'Group Progress') {
-          const progA = (a.currentParticipants || 0) / (a.maxParticipants || 1);
-          const progB = (b.currentParticipants || 0) / (b.maxParticipants || 1);
-          return progB - progA;
-        }
-        if (sortBy === 'Distance') {
-          return (a.lat ? 1 : 0) - (b.lat ? 1 : 0);
+          const progressA = (a.currentParticipants || 0) / (a.maxParticipants || 1);
+          const progressB = (b.currentParticipants || 0) / (b.maxParticipants || 1);
+          return progressB - progressA;
         }
         return 0;
       });
-  }, [events, activeCategory, priceFilter, dateFilter, sortBy, searchQuery]);
+    };
 
-  const selectTone = p.isDark
-    ? 'bg-gray-800/80 border-gray-700 text-gray-200'
-    : 'bg-white border-gray-200 text-gray-800 cursor-pointer';
+    return { upcoming: sortList(upcoming), past: sortList(past) };
+  }, [
+    activeCategory,
+    dateFilter,
+    distanceOrigin,
+    events,
+    now,
+    priceFilter,
+    searchQuery,
+    sortBy,
+  ]);
+
+  const activeCategoryItem = CATEGORY_CATALOG.find((category) => category.name === activeCategory);
+  const activeCategoryLabel = activeCategoryItem
+    ? language === 'el'
+      ? activeCategoryItem.labelGr
+      : activeCategoryItem.labelEn
+    : '';
+  const hasAdditionalFilters =
+    activeTab !== DEFAULT_GROUP ||
+    priceFilter !== DEFAULT_PRICE ||
+    dateFilter !== DEFAULT_DATE ||
+    sortBy !== DEFAULT_SORT ||
+    Boolean(searchQuery.trim());
 
   const chooseCategory = (name: string) => {
-    const next = activeCategory === name ? null : name;
-    setActiveCategory(next);
+    setActiveCategory((current) => (current === name ? null : name));
   };
 
-  useEffect(() => {
-    if (!activeCategory) return;
-    const id = window.setTimeout(scrollToEvents, 80);
-    return () => window.clearTimeout(id);
-  }, [activeCategory]);
+  const clearFilters = () => {
+    setActiveCategory(null);
+    setActiveTab(DEFAULT_GROUP);
+    setPriceFilter(DEFAULT_PRICE);
+    setDateFilter(DEFAULT_DATE);
+    setSortBy(DEFAULT_SORT);
+    setSearchQuery('');
+  };
+
+  const selectTone = contrast.isDark
+    ? 'border-gray-700 bg-gray-800/80 text-gray-200'
+    : 'cursor-pointer border-gray-200 bg-white text-gray-800';
+  const remainingEvents = Math.max(0, filteredEvents.upcoming.length - visibleCount);
 
   return (
-    <div className="max-w-full mx-auto space-y-4 md:space-y-5 animate-in slide-in-from-bottom-4 duration-500 fade-in">
-      <div
-        className={cn(
-          'p-4 md:p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 overflow-hidden relative shadow-soft',
-          'bg-gradient-to-br from-hero-from to-hero-to text-hero-fg',
-        )}
-      >
-        <div className="relative z-10 w-full md:max-w-2xl text-center md:text-left">
-          <Badge
-            variant="outline"
-            className="mb-2 border-hero-fg/20 bg-hero-fg/10 text-hero-fg backdrop-blur-md"
-          >
-            <Compass className="w-3.5 h-3.5 mr-1" />{' '}
-            {t('Εξερεύνηση δραστηριοτήτων', 'Activity explorer')}
-          </Badge>
-          <h1 className={cn(APP_TYPO.pageTitle, 'mb-1.5')}>
-            {t('Βρες την επόμενη', 'Find your next')}{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-hero-accent-from to-hero-accent-to">
-              {t('εμπειρία σου', 'experience')}
-            </span>
-          </h1>
-          <div className="relative w-full max-w-md mx-auto md:mx-0">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-hero-fg/60" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && searchQuery.trim()) scrollToEvents();
-              }}
-              placeholder={t(
-                'Αναζήτηση κατηγορίας ή εκδήλωσης...',
-                'Search a category or event...',
-              )}
-              aria-label={t('Αναζήτηση κατηγορίας ή εκδήλωσης', 'Search a category or event')}
-              className="search-control w-full h-9 pl-9 pr-3 rounded-xl border-0 bg-hero-fg/10 text-hero-fg placeholder:text-hero-fg/60 focus:outline-none focus:ring-2 focus:ring-hero-fg/40 backdrop-blur-md transition-all"
-            />
-          </div>
-        </div>
-        <div className="absolute right-0 top-0 w-64 h-64 bg-hero-fg/15 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-      </div>
-
-      {/* Φ27 — themed collections */}
-      {!searchQuery.trim() && <CollectionsRail />}
-
-      {!searchQuery && !activeCategory && (
-        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className={cn('w-4 h-4', p.iconAccent)} />
-            <span className={cn('text-xs font-bold tracking-wider', p.sub)}>
-              {tu('Δημοφιλή Τώρα', 'Trending Now')}
-            </span>
-          </div>
-          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 noscrollbar">
-            {trendingCategories.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => chooseCategory(cat.name)}
-                className={cn(
-                  'flex min-w-[11.5rem] shrink-0 items-center gap-2.5 rounded-2xl border p-2.5 text-left text-xs shadow-soft',
-                  p.cardSurface,
-                  p.borderB,
-                )}
-              >
-                <div
-                  className={cn(
-                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border',
-                    cat.bg,
-                    cat.border,
-                  )}
-                >
-                  <cat.icon className={cn('h-4 w-4', cat.color)} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className={cn('truncate text-xs font-bold', p.head)}>{cat.displayName}</h3>
-                  <p className={cn('text-2xs font-medium', p.muted)}>
-                    {cat.count} {t('ενεργές', 'active')}
-                  </p>
-                </div>
-                <ArrowRight className={cn('h-3.5 w-3.5 shrink-0', p.iconAccent)} aria-hidden />
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+    <div className="mx-auto max-w-full space-y-4 animate-in slide-in-from-bottom-4 duration-500 fade-in md:space-y-5">
+      <CategoriesHero
+        query={searchQuery}
+        onQuery={setSearchQuery}
+        onSubmit={scrollToEvents}
+        trending={trendingCategories}
+        totals={{
+          categories: CATEGORY_CATALOG.length,
+          events: upcomingCatalogEvents.length,
+          forming: totalFormingGroups,
+        }}
+        onPick={chooseCategory}
+      />
 
       {!searchQuery.trim() && (
-      <div
-        className={cn(
-          'rounded-2xl border shadow-soft p-1',
-          p.isDark ? 'bg-[hsl(220_16%_14%)] border-gray-700/50' : 'bg-white border-gray-100',
-        )}
-      >
         <div
-          role="tablist"
+          role="group"
           aria-label={t('Ομάδες κατηγοριών', 'Category groups')}
-          className="flex overflow-x-auto noscrollbar"
+          className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 noscrollbar"
         >
           {CATEGORY_GROUP_TABS.map((tab) => (
-            <button
+            <Chip
               key={tab}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab}
+              active={activeTab === tab}
               onClick={() => {
                 setActiveTab(tab);
                 setActiveCategory(null);
               }}
-              className={cn(
-                'shrink-0 px-2 py-2 whitespace-nowrap text-xs font-bold rounded-xl transition-all text-center',
-                activeTab === tab
-                  ? p.isDark
-                    ? 'bg-[hsl(220_16%_18%)] text-white shadow-soft'
-                    : 'bg-gray-100 text-ink shadow-soft'
-                  : cn(
-                      'hover:bg-gray-50',
-                      p.isDark ? 'text-gray-400 hover:bg-white/5' : 'text-gray-500 hover:text-gray-900',
-                    ),
-              )}
+              className="h-9 shrink-0 whitespace-nowrap"
             >
               {getCategoryGroupTabLabel(tab, t)}
-            </button>
+            </Chip>
           ))}
         </div>
-      </div>
       )}
 
       {sortedCategories.length > 0 && (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-        {sortedCategories.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            onClick={() => chooseCategory(cat.name)}
-            className={cn(
-              'rounded-2xl p-3 sm:p-4 border shadow-soft flex flex-col items-center text-center text-xs',
-              p.cardSurface,
-              activeCategory === cat.name
-                ? cn(
-                    'ring-2 ring-offset-1 ring-accent border-transparent',
-                    p.isDark ? 'ring-offset-gray-900' : 'ring-offset-white',
-                  )
-                : cn(p.borderB, p.isDark ? 'hover:border-gray-500' : 'hover:border-gray-300'),
-            )}
+        <div className="space-y-2">
+          <div
+            data-testid="category-tiles"
+            className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
           >
-            <div
+            {sortedCategories.map((category, index) => (
+              <button
+                key={category.id}
+                type="button"
+                data-testid="category-tile"
+                data-category-name={category.name}
+                aria-pressed={activeCategory === category.name}
+                onClick={() => chooseCategory(category.name)}
+                className={cn(
+                  'flex min-h-14 items-center gap-3 rounded-2xl border p-2.5 text-left text-xs shadow-soft transition-colors',
+                  contrast.cardSurface,
+                  activeCategory === category.name
+                    ? 'border-accent ring-1 ring-accent'
+                    : cn(contrast.borderB, contrast.isDark ? 'hover:border-gray-500' : 'hover:border-border-strong'),
+                  category.count === 0 && 'opacity-60',
+                  hideMobileExtraCategories && index >= 8 && 'hidden sm:block',
+                )}
+              >
+                <span
+                  className={cn(
+                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border',
+                    category.bg,
+                    category.border,
+                  )}
+                >
+                  <category.icon className={cn('h-4 w-4', category.color)} aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className={cn('block truncate text-sm font-bold', contrast.head)}>
+                    {category.displayName}
+                  </span>
+                  <span className={cn('block text-xs font-medium', contrast.muted)}>
+                    {t(
+                      countNoun(category.count, 'εκδήλωση', 'εκδηλώσεις'),
+                      countNoun(category.count, 'event', 'events'),
+                    )}
+                    {category.forming > 0 && (
+                      <span className="block text-accent sm:inline sm:text-ink-muted">
+                        <span className="hidden sm:inline"> · </span>
+                        {t(
+                          countNoun(category.forming, 'παρέα', 'παρέες'),
+                          countNoun(category.forming, 'group', 'groups'),
+                        )}
+                      </span>
+                    )}
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
+          {canToggleCategories && (
+            <button
+              type="button"
+              aria-expanded={categoriesExpanded}
+              onClick={() => setCategoriesExpanded((expanded) => !expanded)}
               className={cn(
-                'w-11 h-11 rounded-2xl border-2 flex items-center justify-center mb-2.5 shadow-soft',
-                cat.bg,
-                cat.border,
+                'flex h-10 w-full items-center justify-center gap-1 rounded-xl border text-xs font-semibold sm:hidden',
+                contrast.borderB,
+                contrast.head,
               )}
             >
-              <cat.icon className={cn('w-5 h-5 sm:w-6 sm:h-6', cat.color)} />
-            </div>
-            <h3
-              className={cn(
-                'font-bold text-sm sm:text-sm leading-tight line-clamp-1 w-full',
-                p.head,
-                p.hoverText,
-              )}
-            >
-              {cat.displayName}
-            </h3>
-            <p className={cn('card-meta font-medium mt-1.5', p.muted)}>
-              {cat.count}{' '}
-              {cat.count === 1 ? t('εκδήλωση', 'event') : t('εκδηλώσεις', 'events')}
-            </p>
-          </button>
-        ))}
-      </div>
+              {categoriesExpanded
+                ? t('Λιγότερες ▴', 'Fewer ▴')
+                : t(
+                    `Όλες οι ${sortedCategories.length} κατηγορίες ▾`,
+                    `All ${sortedCategories.length} categories ▾`,
+                  )}
+              <ChevronDown
+                className={cn('h-3.5 w-3.5 transition-transform', categoriesExpanded && 'rotate-180')}
+                aria-hidden="true"
+              />
+            </button>
+          )}
+        </div>
       )}
 
-      {sortedCategories.length === 0 && filteredEvents.length === 0 && (
+      {!searchQuery.trim() && <CollectionsRail />}
+
+      {sortedCategories.length === 0 && filteredEvents.upcoming.length === 0 && (
         <EmptyState
           character="explorer"
           icon={Search}
           title={t('Δεν βρέθηκαν αποτελέσματα', 'No categories match your search')}
           actionLabel={t('Καθαρισμός', 'Clear search')}
-          onAction={() => setSearchQuery('')}
+          onAction={clearFilters}
           secondaryLabel={t('Βρες Nakamas', 'Find Nakamas')}
           onSecondary={() => navigate('/buddy-seek')}
         />
       )}
 
-      <div className={cn('mt-6 border-t pt-5 scroll-mt-24', p.borderT)} id="events-area">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
-          <div className="flex items-center gap-3">
+      <section className={cn('mt-6 scroll-mt-24 border-t pt-5', contrast.borderT)} id="events-area">
+        <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
             <div
               className={cn(
-                'w-10 h-10 rounded-2xl flex items-center justify-center border shadow-soft',
-                p.cardSurface,
-                p.borderB,
+                'flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border shadow-soft',
+                contrast.cardSurface,
+                contrast.borderB,
               )}
             >
-              {activeCategory ? (
-                (() => {
-                  const Ac = CATEGORY_CATALOG.find((c) => c.name === activeCategory);
-                  if (Ac) return <Ac.icon className={cn('w-5 h-5', Ac.color)} />;
-                  return <Grid className={cn('w-5 h-5', p.iconAccent)} />;
-                })()
+              {activeCategoryItem ? (
+                <activeCategoryItem.icon className={cn('h-5 w-5', activeCategoryItem.color)} aria-hidden="true" />
               ) : (
-                <Calendar className={cn('w-5 h-5', p.iconAccent)} />
+                <Calendar className={cn('h-5 w-5', contrast.iconAccent)} aria-hidden="true" />
               )}
             </div>
-            <div>
-              <h2 className={cn('text-sm md:text-base font-bold tracking-tight', p.head)}>
-                {activeCategory
-                  ? language === 'el'
-                    ? CATEGORY_CATALOG.find((c) => c.name === activeCategory)?.labelGr
-                    : CATEGORY_CATALOG.find((c) => c.name === activeCategory)?.labelEn
-                  : t('Όλες οι εκδηλώσεις', 'All Discoveries')}
+            <div className="min-w-0">
+              <h2 className={cn('text-sm font-bold tracking-tight md:text-base', contrast.head)}>
+                {activeCategoryLabel || t('Όλες οι εκδηλώσεις', 'All Discoveries')}
               </h2>
-              <p className={cn('text-xs font-bold tracking-wider mt-0.5', p.muted)}>
-                {filteredEvents.length} {tu('αποτελέσματα', 'results found')}
+              <p className={cn('mt-0.5 text-xs font-bold tracking-wider', contrast.muted)}>
+                {filteredEvents.upcoming.length} {tu('αποτελέσματα', 'results found')}
               </p>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                {activeCategoryItem && (
+                  <Chip
+                    active
+                    onClick={() => setActiveCategory(null)}
+                    aria-label={t(
+                      `Αφαίρεση φίλτρου ${activeCategoryLabel}`,
+                      `Remove ${activeCategoryLabel} filter`,
+                    )}
+                    className="h-8"
+                  >
+                    {activeCategoryLabel} ×
+                  </Chip>
+                )}
+                {hasAdditionalFilters && (
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className={cn(
+                      'h-8 rounded-lg px-2 text-xs font-semibold underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50',
+                      contrast.iconAccent,
+                    )}
+                  >
+                    {t('Καθαρισμός φίλτρων', 'Clear filters')}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="flex gap-2 items-center overflow-x-auto noscrollbar pb-0.5">
+          <div className="flex items-center gap-2 overflow-x-auto pb-0.5 noscrollbar">
             <AppSelect
-              ariaLabel={t("Φίλτρο κόστους", "Cost filter")}
+              ariaLabel={t('Φίλτρο κόστους', 'Cost filter')}
               className={cn(SELECT_CLASS, selectTone)}
               value={priceFilter}
-              onValueChange={(v) => setPriceFilter(v as PriceFilter)}
+              onValueChange={(value) => setPriceFilter(value as PriceFilter)}
               options={[
                 { value: 'All', label: t('Κόστος: Οποιοδήποτε', 'Cost: Any') },
                 { value: 'Free', label: t('Μόνο δωρεάν', 'Free only') },
@@ -421,91 +529,117 @@ export default function CategoriesPageContent() {
                 { value: 'Group Discount', label: t('Με ομαδική έκπτωση', 'Has Group Discount') },
               ]}
             />
-
             <AppSelect
-              ariaLabel={t("Φίλτρο χρόνου", "Time filter")}
+              ariaLabel={t('Φίλτρο χρόνου', 'Time filter')}
               className={cn(SELECT_CLASS, selectTone)}
               value={dateFilter}
-              onValueChange={(v) => setDateFilter(v as DateFilter)}
+              onValueChange={(value) => setDateFilter(value as DateFilter)}
               options={[
                 { value: 'Any', label: t('Χρόνος: Οποτεδήποτε', 'Time: Anytime') },
                 { value: 'Today', label: t('Σήμερα', 'Today') },
-                { value: 'This Week', label: t('Αυτή την Εβδομάδα', 'This Week') },
+                { value: 'This Week', label: t('Αυτή την εβδομάδα', 'This Week') },
                 { value: 'This Month', label: t('Αυτόν τον μήνα', 'This Month') },
                 { value: 'Weekend', label: t('Το Σαββατοκύριακο', 'This Weekend') },
               ]}
             />
-
             <AppSelect
-              ariaLabel={t("Ταξινόμηση", "Sort by")}
+              ariaLabel={t('Ταξινόμηση', 'Sort by')}
               className={cn(SELECT_CLASS, selectTone)}
               value={sortBy}
-              onValueChange={(v) => setSortBy(v as SortBy)}
+              onValueChange={(value) => setSortBy(value as SortBy)}
               options={[
                 { value: 'Trending', label: t('Ταξινόμηση: Κορυφαία', 'Sort: Trending') },
-                { value: 'Distance', label: t('Ταξινόμηση: Πιο κοντά', 'Sort: Distance') },
+                { value: 'Distance', label: t('Ταξινόμηση: Πιο κοντά', 'Sort: Nearest') },
                 { value: 'Group Progress', label: t('Ταξινόμηση: Πρόοδος', 'Sort: Fill rate') },
+                { value: 'Relevance', label: t('Ταξινόμηση: Σχετικότητα', 'Sort: Relevance') },
               ]}
             />
           </div>
         </div>
 
-        <DiscoverCardImagePicker depth={cardImage.depth} options={cardImage.options} onChange={cardImage.setDepth} />
+        <DiscoverCardImagePicker
+          depth={cardImage.depth}
+          options={cardImage.options}
+          onChange={cardImage.setDepth}
+        />
 
         <ResourceStateGate
           isLoading={isLoading}
           isError={isError}
           onRetry={() => void refetch()}
           loading={
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <EventCardSkeleton key={`cat-sk-${i}`} />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <EventCardSkeleton key={`category-skeleton-${index}`} />
               ))}
             </div>
           }
           errorTitle={t('Αδυναμία φόρτωσης εκδηλώσεων', 'Could not load events')}
         >
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredEvents.length === 0 ? (
-              <div className="col-span-full">
-                <EmptyState
-                  character="explorer"
-                  icon={Bookmark}
-                  title={t('Δεν βρέθηκαν εκδηλώσεις', 'No events found')}
-                  actionLabel={t('Καθαρισμός φίλτρων', 'Reset Filters')}
-                  onAction={() => {
-                    setActiveCategory(null);
-                    setPriceFilter('All');
-                    setDateFilter('Any');
-                    setSearchQuery('');
-                  }}
-                />
+          {filteredEvents.upcoming.length === 0 ? (
+            <EmptyState
+              character="explorer"
+              icon={Bookmark}
+              title={t('Δεν βρέθηκαν εκδηλώσεις', 'No upcoming events found')}
+              actionLabel={t('Καθαρισμός φίλτρων', 'Clear filters')}
+              onAction={clearFilters}
+            />
+          ) : (
+            <>
+              <div
+                data-testid="upcoming-events-grid"
+                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+              >
+                {filteredEvents.upcoming.slice(0, visibleCount).map((event) => (
+                  <EventCard key={event.id} event={event} imageDepth={cardImage.depth} />
+                ))}
               </div>
-            ) : (
-              filteredEvents.map((event) => <EventCard key={event.id} event={event} imageDepth={cardImage.depth} />)
-            )}
-          </div>
+              {remainingEvents > 0 && (
+                <Button
+                  data-testid="show-more-events"
+                  variant="outline"
+                  className="mt-4 w-full sm:w-auto"
+                  onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
+                >
+                  {t(
+                    `Δείξε περισσότερες (${remainingEvents})`,
+                    `Show more (${remainingEvents})`,
+                  )}
+                </Button>
+              )}
+            </>
+          )}
         </ResourceStateGate>
-      </div>
+
+        {filteredEvents.past.length > 0 && (
+          <details className={cn('mt-6 rounded-2xl border p-4', contrast.cardSurface, contrast.borderB)}>
+            <summary className={cn('cursor-pointer text-sm font-semibold', contrast.head)}>
+              {t('Περασμένες εκδηλώσεις', 'Past events')} ({filteredEvents.past.length})
+            </summary>
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+              {filteredEvents.past.map((event) => (
+                <EventCard key={event.id} event={event} imageDepth={cardImage.depth} />
+              ))}
+            </div>
+          </details>
+        )}
+      </section>
 
       <div
         className={cn(
-          'mt-12 rounded-2xl p-4 md:p-5 border shadow-soft flex flex-col justify-center items-center text-center gap-5 relative overflow-hidden',
-          p.isDark ? 'bg-[hsl(220_16%_16%)] border-gray-700' : 'bg-cyan-50/50 border-cyan-100',
+          'mt-8 flex flex-col items-center justify-center gap-4 rounded-2xl border p-4 text-center shadow-soft md:flex-row md:justify-between md:p-5 md:text-left',
+          contrast.cardSurface,
+          contrast.borderB,
         )}
       >
-        <Badge
-          variant="outline"
-          className={cn(
-            'mb-2',
-            p.isDark ? 'border-cyan-500/30 text-cyan-400 bg-cyan-900/10' : 'border-cyan-200 text-cyan-700 bg-white',
-          )}
-        >
-          <Star className="w-3.5 h-3.5 mr-1" /> {t('Γίνε οικοδεσπότης', 'Become a Host')}
-        </Badge>
-        <h3 className={cn('text-sm md:text-base font-bold tracking-tight', p.head)}>
-          {t('Δεν βρήκες αυτό που έψαχνες;', "Couldn't find what you wanted?")}
-        </h3>
+        <div>
+          <h3 className={cn('text-sm font-bold tracking-tight md:text-base', contrast.head)}>
+            {t('Δεν βρήκες αυτό που έψαχνες;', "Couldn't find what you were looking for?")}
+          </h3>
+          <p className={cn('mt-1 text-xs font-medium', contrast.muted)}>
+            {t('Γίνε οικοδεσπότης και φτιάξε τη δική σου.', 'Become a host and create your own.')}
+          </p>
+        </div>
         <Button onClick={() => navigate('/create')} size="md">
           {t('Δημιουργία νέας εμπειρίας', 'Create New Experience')}
         </Button>
