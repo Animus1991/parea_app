@@ -94,14 +94,17 @@ export function routeKeyForPath(path: string): RouteKey | null {
   return PATH_KEYS.find(([re]) => re.test(clean))?.[1] ?? null;
 }
 
-const started = new Set<RouteKey>();
+const started = new Map<RouteKey, Promise<unknown>>();
 
 /** Start downloading a page's code (once). Safe to call on hover, focus or idle. */
-export function prefetchPath(path: string): void {
+export function prefetchPath(path: string): Promise<unknown> {
   const key = routeKeyForPath(path);
-  if (!key || started.has(key)) return;
-  started.add(key);
-  routeLoaders[key]().catch(() => started.delete(key));
+  if (!key) return Promise.resolve();
+  const existing = started.get(key);
+  if (existing) return existing;
+  const pending = routeLoaders[key]().catch(() => { started.delete(key); });
+  started.set(key, pending);
+  return pending;
 }
 
 /** Prefetch when the browser is idle; skipped on data-saver and very slow links. */
@@ -109,11 +112,26 @@ export function prefetchWhenIdle(paths: string[]): () => void {
   if (typeof window === 'undefined') return () => undefined;
   const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
   if (connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType ?? '')) return () => undefined;
-  const run = () => paths.forEach(prefetchPath);
-  if ('requestIdleCallback' in window) {
-    const id = window.requestIdleCallback(run, { timeout: 4000 });
-    return () => window.cancelIdleCallback(id);
-  }
-  const timer = globalThis.setTimeout(run, 1500);
-  return () => globalThis.clearTimeout(timer);
+  const queue = [...paths];
+  let cancelled = false;
+  let idleId: number | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const schedule = (delay: number) => {
+    if (cancelled || !queue.length) return;
+    if (typeof window.requestIdleCallback === 'function') {
+      idleId = window.requestIdleCallback(run, { timeout: 4000 });
+    } else {
+      timer = globalThis.setTimeout(run, delay);
+    }
+  };
+  const run = () => {
+    if (cancelled) return;
+    void Promise.all(queue.splice(0, 2).map(prefetchPath)).then(() => schedule(250));
+  };
+  schedule(1500);
+  return () => {
+    cancelled = true;
+    if (idleId !== undefined) window.cancelIdleCallback(idleId);
+    if (timer !== undefined) globalThis.clearTimeout(timer);
+  };
 }
