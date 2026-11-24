@@ -8,6 +8,9 @@ import { registerServiceWorker } from './lib/serviceWorker';
 import { LanguageProvider } from './lib/LanguageProvider';
 import { MotionConfig } from 'motion/react';
 import { RootErrorFallback } from './components/common/RootErrorFallback';
+import { createLogger } from './lib/logger';
+
+const bootLog = createLogger('boot');
 
 bootstrap();
 
@@ -15,19 +18,19 @@ bootstrap();
 window.addEventListener('error', (e) => {
   if (e.message && (e.message.includes('Google Maps') || e.message.includes('InvalidKeyMapError') || e.message === 'Script error.')) {
     e.preventDefault();
-    console.debug('Suppressed global script error:', e.message);
+    bootLog.debug('Suppressed global script error', e.message);
   }
 });
 
 window.addEventListener('unhandledrejection', (e) => {
   if (e.reason && e.reason.message && (e.reason.message.includes('Google Maps') || e.reason.message.includes('InvalidKeyMapError'))) {
     e.preventDefault();
-    console.debug('Suppressed global rejection:', e.reason.message);
+    bootLog.debug('Suppressed global rejection', e.reason.message);
   }
 });
 
 (window as Window & { gm_authFailure?: () => void }).gm_authFailure = () => {
-  console.debug('Google Maps Authentication Failed. API Key may be invalid or restricted.');
+  bootLog.debug('Google Maps authentication failed; the API key may be invalid or restricted.');
 };
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: unknown }> {

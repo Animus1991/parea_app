@@ -340,7 +340,7 @@ export function PostCard({
             />
           </Link>
           <div className="min-w-0 flex-1">
-            <p className="text-[15px] font-semibold leading-snug text-ink">
+            <p className="text-xl font-semibold leading-snug text-ink">
               <Link to={profilePathFor(author)} className="tap-area-y hover:underline">
                 {author.name}
               </Link>
@@ -435,7 +435,7 @@ export function PostCard({
           text && (
             <div
               className={cn(
-                'mt-3 whitespace-pre-wrap break-words text-[15px] font-normal leading-[1.55] text-ink',
+                'mt-3 whitespace-pre-wrap break-words text-xl font-normal leading-[1.55] text-ink',
                 background && 'flex min-h-44 items-center justify-center rounded-2xl p-5 text-center text-2xl font-bold text-white',
               )}
               style={background ? { backgroundImage: background.gradient } : undefined}

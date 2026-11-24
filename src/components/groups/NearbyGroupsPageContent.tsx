@@ -24,6 +24,9 @@ import { applyBundledLeafletPins } from '../../lib/leafletDefaultIcon';
 import { useCategoryLabel } from '../../hooks/useCategoryLabel';
 import { DEFAULT_EVENT_COVER } from '../../lib/eventCover';
 import { formatLocationArea } from '../../lib/eventDisplay';
+import { createLogger } from '../../lib/logger';
+
+const log = createLogger('nearby');
 
 applyBundledLeafletPins();
 
@@ -301,7 +304,7 @@ export default function NearbyGroupsPageContent() {
           setMapCenter(loc);
           setUserLocation(loc);
         },
-        (error) => console.debug("Geolocation permission denied:", error)
+        (error) => log.debug("Geolocation permission denied", error)
       );
     }
   }, []);

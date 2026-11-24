@@ -1,5 +1,8 @@
 import { Event } from "../types";
 import { RUNTIME_MODE } from "../lib/runtimeMode";
+import { createLogger } from '../lib/logger';
+
+const log = createLogger('events-api');
 
 const TICKETMASTER_API_KEY = import.meta.env.VITE_TICKETMASTER_API_KEY || "";
 const TICKETMASTER_BASE = "https://app.ticketmaster.com/discovery/v2";
@@ -106,7 +109,7 @@ export async function fetchTicketmasterEvents(
     const data: TmResponse = await res.json();
     return (data._embedded?.events ?? []).map(mapTmEvent);
   } catch (err) {
-    console.debug("Ticketmaster fetch failed:", err);
+    log.debug("Ticketmaster fetch failed", err);
     return [];
   }
 }
