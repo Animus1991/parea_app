@@ -302,7 +302,7 @@ export function ChatMessageBubble({
               )}
             >
               <span className="font-bold block">
-                {t(`Απάντηση στο story · ${message.storyRef.authorName}`, `Replied to ${message.storyRef.authorName}'s story`)}
+                {t(`Απάντηση στην ιστορία · ${message.storyRef.authorName}`, `Replied to ${message.storyRef.authorName}'s story`)}
               </span>
               {message.storyRef.caption && (
                 <span className="line-clamp-1 opacity-85">«{message.storyRef.caption}»</span>

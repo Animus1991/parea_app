@@ -234,7 +234,7 @@ test.describe('Nakamas Chat preview', () => {
     await expect(voice).toBeVisible();
     await expectMenuItemAboveStrip(page, voice);
     await expect(page.getByRole('menuitem', { name: /Βιντεοκλήση|Video call/ })).toBeVisible();
-    await expect(page.getByRole('menuitem', { name: /Πολυμέσα και stories|Media and stories/ })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: /Πολυμέσα και ιστορίες|Media and stories/ })).toBeVisible();
   });
 
   test('keyboard focus on a message reveals reply and react', async ({ page }) => {

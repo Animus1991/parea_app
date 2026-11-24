@@ -78,7 +78,7 @@ export function ChatStoriesStrip({
     setNewTag('');
     setNewPhoto(undefined);
     setCreateOpen(false);
-    toast.success(t('Το Story δημοσιεύτηκε (24ω)', 'Story published (24h)'));
+    toast.success(t('Η ιστορία δημοσιεύτηκε για 24 ώρες', 'Story published (24h)'));
   };
 
   const handleStoryReply = (e: React.FormEvent) => {
@@ -133,7 +133,7 @@ export function ChatStoriesStrip({
             <Plus className="w-4 h-4" aria-hidden />
           </span>
           <span className="text-2xs font-bold text-ink-muted max-w-[52px] truncate">
-            {t('Story', 'Story')}
+            {t('Ιστορία', 'Story')}
           </span>
         </button>
 
@@ -287,7 +287,7 @@ export function ChatStoriesStrip({
                   type="text"
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
-                  placeholder={t('Απάντησε στο Story...', 'Reply to story...')}
+                  placeholder={t('Απάντησε στην ιστορία…', 'Reply to story...')}
                   className="flex-1 min-h-9 rounded-full bg-white/15 backdrop-blur-md border border-white/25 px-3.5 text-xs text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
                 />
                 <button
@@ -309,7 +309,7 @@ export function ChatStoriesStrip({
         open={createOpen}
         aboveChat
         onClose={() => setCreateOpen(false)}
-        title={t('Δημιουργία Story (24ω)', 'Create Story (24h)')}
+        title={t('Νέα ιστορία για 24 ώρες', 'Create Story (24h)')}
         size="sm"
       >
         <form onSubmit={handlePublishStory} className="space-y-3">
@@ -329,7 +329,7 @@ export function ChatStoriesStrip({
             onChange={(e) => setNewCaption(e.target.value)}
             rows={2}
             maxLength={160}
-            placeholder={t('Κείμενο story…', 'Story caption…')}
+            placeholder={t('Κείμενο ιστορίας…', 'Story caption…')}
             className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-xs text-ink focus:outline-none focus:ring-2 focus:ring-brand/40"
           />
           <div className="flex flex-wrap items-center justify-between gap-3">

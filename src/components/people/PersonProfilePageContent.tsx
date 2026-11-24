@@ -469,7 +469,7 @@ export default function PersonProfilePageContent() {
             {aboutVisible ? (
               <div className="space-y-2">
                 <h2 className={cn(APP_TYPO.sectionLabel, 'text-ink-muted')}>{t('Σχετικά', 'About')}</h2>
-                <p className="whitespace-pre-wrap text-sm font-medium text-ink">{subject.bio || t('Δεν έχει γράψει bio ακόμα.', 'No bio yet.')}</p>
+                <p className="whitespace-pre-wrap text-sm font-medium text-ink">{subject.bio || t('Δεν έχει γράψει περιγραφή ακόμα.', 'No bio yet.')}</p>
                 <div className="flex flex-wrap gap-2 text-xs font-bold text-ink">
                   {subject.city && <span className="rounded-full border border-border px-2.5 py-1">{formatLocationArea(subject.city, language)}</span>}
                   {subject.ageRange && <span className="rounded-full border border-border px-2.5 py-1">{subject.ageRange}</span>}

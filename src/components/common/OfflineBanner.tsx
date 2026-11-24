@@ -49,7 +49,7 @@ export function OfflineBanner() {
       ) : (
         <>
           <WifiOff className="w-3.5 h-3.5" aria-hidden />
-          {t('Είσαι offline — οι αλλαγές μπορεί να μην αποθηκευτούν', 'You are offline — changes may not be saved')}
+          {t('Είσαι εκτός σύνδεσης. Οι αλλαγές μπορεί να μην αποθηκευτούν', 'You are offline — changes may not be saved')}
         </>
       )}
     </div>

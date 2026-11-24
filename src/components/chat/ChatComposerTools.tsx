@@ -509,8 +509,8 @@ export function ChatComposerTools({
             type="button"
             disabled={disabled}
             onClick={() => setPanel((p) => (p === 'more' ? 'none' : 'more'))}
-            aria-label={t('Περισσότερα (Φωτό, Δημοσκόπηση, Tags)', 'More tools (Photo, Poll, Tags)')}
-            title={t('Φωτό · Δημοσκόπηση · #Tags', 'Photo · Poll · #Tags')}
+            aria-label={t('Περισσότερα: φωτογραφία, δημοσκόπηση, ετικέτες', 'More tools (Photo, Poll, Tags)')}
+            title={t('Φωτογραφία · Δημοσκόπηση · #ετικέτες', 'Photo · Poll · #Tags')}
             className={cn(
               'p-1.5 rounded-full transition-colors shrink-0 disabled:opacity-40',
               panel === 'more' || panel === 'poll' ? 'bg-brand text-brand-fg' : 'text-ink-muted hover:bg-ink/10 hover:text-ink',
@@ -552,7 +552,7 @@ export function ChatComposerTools({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             disabled={disabled}
-            placeholder={t('Μήνυμα, @όνομα ή #tag…', 'Message, @name or #tag…')}
+            placeholder={t('Μήνυμα, @όνομα ή #ετικέτα…', 'Message, @name or #tag…')}
             className="flex-1 min-w-0 min-h-9 rounded-full bg-ink/5 border border-border px-3 text-xs text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand/40"
             aria-label={t('Σύνθεση μηνύματος', 'Compose message')}
           />

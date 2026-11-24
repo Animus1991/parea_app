@@ -295,7 +295,7 @@ export function ChatWindow({
                   }}
                 >
                   <Images className="w-3.5 h-3.5" aria-hidden />
-                  {t('Πολυμέσα και stories', 'Media and stories')}
+                  {t('Πολυμέσα και ιστορίες', 'Media and stories')}
                 </button>
                 <button
                   type="button"

@@ -278,7 +278,7 @@ export default function ProfilePageContent() {
                   <div className="space-y-2">
                     <textarea value={tempBio} onChange={(e) => setTempBio(e.target.value)} className={cn("w-full rounded-2xl p-3 focus:ring-2 outline-none resize-none", PROFILE_TYPO.identityBio, inputBg, a.ring)} rows={3} />
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => { setBio(tempBio); setIsEditingBio(false); updateUser(currentUser.id, { bio: tempBio }); toast.success(t('Το bio αποθηκεύτηκε', 'Bio saved')); }}>{t("Αποθήκευση", "Save")}</Button>
+                      <Button size="sm" variant="outline" onClick={() => { setBio(tempBio); setIsEditingBio(false); updateUser(currentUser.id, { bio: tempBio }); toast.success(t('Η περιγραφή αποθηκεύτηκε', 'Bio saved')); }}>{t("Αποθήκευση", "Save")}</Button>
                       <Button size="sm" variant="outline" onClick={() => { setTempBio(bio); setIsEditingBio(false); }}>{t("Ακύρωση", "Cancel")}</Button>
                     </div>
                   </div>

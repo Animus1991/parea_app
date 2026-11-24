@@ -131,7 +131,7 @@ export function sectionLabel(key: ProfileSectionKey, t: T): string {
 export function sectionHint(key: ProfileSectionKey, t: T): string {
   switch (key) {
     case 'about':
-      return t('Bio, πόλη και ηλικιακό εύρος', 'Bio, city and age range');
+      return t('Περιγραφή, πόλη και ηλικιακό εύρος', 'Bio, city and age range');
     case 'interests':
       return t('Τα ενδιαφέροντα που βοηθούν στο ταίριασμα', 'The interests that help matching');
     case 'connections':

@@ -516,7 +516,7 @@ export default function GroupChatPageContent() {
                             <Video className="h-4 w-4" aria-hidden /> {t('Βιντεοκλήση', 'Video call')}
                           </button>
                           <button role="menuitem" type="button" onClick={() => { setShowStories((s) => !s); setToolsOpen(false); }} className="flex min-h-9 w-full items-center gap-2 rounded-lg px-3 text-left text-xs font-medium text-ink hover:bg-surface">
-                            <Images className="h-4 w-4" aria-hidden /> {t('Πολυμέσα και stories', 'Media and stories')}
+                            <Images className="h-4 w-4" aria-hidden /> {t('Πολυμέσα και ιστορίες', 'Media and stories')}
                           </button>
                           {event && (
                             <div role="none" className="px-2 py-1">
@@ -544,7 +544,7 @@ export default function GroupChatPageContent() {
 
           {tagFilter && (
             <div className="px-4 py-1.5 border-b border-border bg-surface flex items-center gap-2 text-xs shrink-0">
-              <span className="text-ink-muted">{t('Φίλτρο tag:', 'Tag filter:')}</span>
+              <span className="text-ink-muted">{t('Φίλτρο ετικέτας:', 'Tag filter:')}</span>
               <button
                 type="button"
                 onClick={() => setTagFilter(null)}

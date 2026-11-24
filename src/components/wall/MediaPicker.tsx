@@ -151,7 +151,7 @@ export function MediaPicker({
   const tabs: { id: PickerTab; labelEl: string; labelEn: string }[] = [
     { id: 'emoji', labelEl: 'Emoji', labelEn: 'Emoji' },
     { id: 'gif', labelEl: 'GIF', labelEn: 'GIF' },
-    { id: 'stickers', labelEl: 'Stickers', labelEn: 'Stickers' },
+    { id: 'stickers', labelEl: 'Αυτοκόλλητα', labelEn: 'Stickers' },
   ];
 
   return (

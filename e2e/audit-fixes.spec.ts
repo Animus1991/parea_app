@@ -26,7 +26,7 @@ test('mobile header, story colors and hat removal have effective 40px targets', 
   await expectTouchTarget(page.getByRole('button', { name: /^(Ρυθμίσεις|Settings)$/ }));
   await expectTouchTarget(page.getByRole('button', { name: /^(Ειδοποιήσεις|Notifications)( \(\d+\))?$/ }).first());
   await page.getByRole('button', { name: /Συνομιλίες σχεδίων|Plan chats/ }).click();
-  await page.getByRole('dialog', { name: 'Nakamas Chat', exact: true }).getByRole('button', { name: 'Story', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Nakamas Chat', exact: true }).getByRole('button', { name: /^(Ιστορία|Story)$/ }).click();
   const colors = page.getByRole('button', { name: /^(Χρώμα|Color) \d+$/ });
   expect(await colors.count()).toBeGreaterThan(1);
   for (const color of await colors.all()) await expectTouchTarget(color);
