@@ -99,6 +99,14 @@ describe('copilot action registry', () => {
     expect(useStore.getState().theme).toBe('bento');
   });
 
+  it('keeps the Classic family when asked for dark', async () => {
+    useStore.getState().setTheme('classic');
+    await run('set_theme', { theme: 'dark' });
+    expect(useStore.getState().theme).toBe('classic-dark');
+    await run('set_theme', { theme: 'light' });
+    expect(useStore.getState().theme).toBe('classic');
+  });
+
   it('changes the persisted UI language', async () => {
     useLanguageStore.getState().setLanguage('el');
     const res = await run('set_language', { language: 'en' });

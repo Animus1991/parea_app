@@ -48,6 +48,7 @@ function useUnreadCount() {
   return notifications.filter(n => !n.read && (!n.forUserId || n.forUserId === userId)).length + wallUnread;
 }
 import { useLanguage } from '../../lib/i18n';
+import { isActiveBuddiesTheme, isDarkTheme } from '../../lib/themes';
 import { PhotoOrInitials } from '../common/PhotoOrInitials';
 import { StrawHatMark } from '../illustrations/StrawHatMark';
 import { APP_VERSION } from '../../lib/appVersion';
@@ -175,8 +176,8 @@ function NavSection({ id, title, paths, children, compact = false, rail = false 
   const { pathname } = useLocation();
   const collapsedIds = useUIStore((s) => s.navCollapsed);
   const toggle = useUIStore((s) => s.toggleNavSection);
-  const isDark = theme === 'bento-dark' || theme === 'vibrant-dark' || theme === 'neon-dark' || theme === 'activebuddies-dark';
-  const isAB = theme === 'activebuddies' || theme === 'activebuddies-dark';
+  const isDark = isDarkTheme(theme);
+  const isAB = isActiveBuddiesTheme(theme);
   const containsActive = paths.some((p) => (p === '/' ? pathname === '/' : pathname === p || pathname.startsWith(`${p}/`)));
   const collapsed = collapsedIds.includes(id) && !containsActive;
   const listId = `nav-section-${id}`;
@@ -424,6 +425,8 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
                     ? 'text-white hover:text-emerald-400'
                     : theme === 'vibrant-dark'
                       ? 'text-white hover:text-fuchsia-400'
+                      : theme === 'classic-dark'
+                        ? 'text-white hover:text-teal-300'
                       : theme === 'vibrant'
                         ? 'text-gray-500 hover:text-fuchsia-600'
                         : theme === 'bento'
@@ -454,9 +457,9 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
               }
             >
               <div className={cn("hidden flex-col items-end", copilotDocked ? "2xl:flex" : "lg:flex")}>
-                <span className={cn("text-xs font-bold", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-white" : "text-ink")}>{currentUser.name}</span>
+                <span className={cn("text-xs font-bold", isDarkTheme(theme) ? "text-white" : "text-ink")}>{currentUser.name}</span>
               </div>
-              <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-xs overflow-hidden border", theme === "activebuddies-dark" ? "bg-gray-700/50 border-gray-600 text-gray-200" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] border-[hsl(220_13%_92%)] text-[hsl(220_14%_12%)]" : theme === "vibrant-dark" ? "bg-white/10 border-white/15 text-gray-300" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "vibrant" ? "bg-gray-100 border-gray-200 text-gray-600" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-brand")}>
+              <div className={cn("w-[28px] h-[28px] rounded-full flex items-center justify-center font-bold text-xs overflow-hidden border", theme === "activebuddies-dark" ? "bg-gray-700/50 border-gray-600 text-gray-200" : theme === "activebuddies" ? "bg-[hsl(220_14%_96%)] border-[hsl(220_13%_92%)] text-[hsl(220_14%_12%)]" : theme === "vibrant-dark" ? "bg-white/10 border-white/15 text-gray-300" : theme === "bento-dark" || theme === "neon-dark" ? "bg-emerald-900/30 border-emerald-700 text-emerald-400" : theme === "classic-dark" ? "bg-teal-900/30 border-teal-700 text-teal-300" : theme === "vibrant" ? "bg-gray-100 border-gray-200 text-gray-600" : theme === "bento" ? "bg-indigo-100 border-indigo-200 text-indigo-700" : theme === "neon" ? "bg-emerald-100 border-emerald-200 text-emerald-700" : "bg-cyan-100 border-cyan-200 text-brand")}>
                 <PhotoOrInitials src={currentUser.photoUrl} name={currentUser.name} />
               </div>
             </UserMenu>
@@ -473,7 +476,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
           )}
         </div>
 
-        <button onClick={onMenuClick} aria-label={t('Άνοιγμα μενού','Open menu')} className={cn("tap-area md:hidden", theme === "bento-dark" || theme === "vibrant-dark" || theme === "neon-dark" || theme === "activebuddies-dark" ? "text-gray-300 hover:text-white" : "text-gray-500 hover:text-ink")}>
+        <button onClick={onMenuClick} aria-label={t('Άνοιγμα μενού','Open menu')} className={cn("tap-area md:hidden", isDarkTheme(theme) ? "text-gray-300 hover:text-white" : "text-gray-500 hover:text-ink")}>
           <Menu className="h-[22px] w-[22px]" />
         </button>
       </div>

@@ -175,7 +175,7 @@ function themeTarget(raw: string, current: string): ThemeId | null {
   const family = current.replace(/-dark$/, '');
   if (n === 'dark') {
     if (isDarkTheme(current)) return current as ThemeId;
-    return (family === 'classic' ? 'neon-dark' : `${family}-dark`) as ThemeId;
+    return `${family}-dark` as ThemeId;
   }
   if (n === 'light') {
     if (!isDarkTheme(current)) return current as ThemeId;
