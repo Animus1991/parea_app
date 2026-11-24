@@ -485,7 +485,7 @@ export function PostComposer({
                 onClick={() => setBgOpen((open) => !open)}
                 aria-expanded={bgOpen}
                 aria-label={t('Φόντο', 'Background')}
-                title={backgroundAllowed ? undefined : t('Διαθέσιμο σε σύντομο κείμενο χωρίς media ή δημοσκόπηση', 'Available for short text without media or a poll')}
+                title={backgroundAllowed ? undefined : t('Μόνο για σύντομο κείμενο, χωρίς φωτογραφίες, GIF ή δημοσκόπηση', 'Only for short text, without photos, GIFs or a poll')}
                 disabled={!backgroundAllowed}
                 className={cn(COMPOSER_PILL, 'inline-flex items-center justify-center gap-1 rounded-full px-2.5 text-xs font-semibold text-ink-muted hover:bg-surface hover:text-ink disabled:cursor-not-allowed disabled:opacity-40')}
               >

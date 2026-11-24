@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../store';
 import { useLanguage } from '../../lib/i18n';
+import { countNoun } from '../../lib/plural';
 import { usePageContrast } from '../../hooks/usePageContrast';
 import { useChatStore } from '../../store/chatStore';
 import { useFittedOpenConversation } from '../../hooks/useFittedOpenConversation';
@@ -364,7 +365,7 @@ export default function InboxPageContent() {
             <>
               <div className={cn('px-4 py-3 border-b flex items-center justify-between', p.borderB)}>
                 <h3 className={cn('font-bold text-sm', p.head)}>
-                  {t(`${unreadNotifications} νέες`, `${unreadNotifications} new`)}
+                  {t(countNoun(unreadNotifications, 'νέα', 'νέες'), `${unreadNotifications} new`)}
                 </h3>
                 <button
                   type="button"

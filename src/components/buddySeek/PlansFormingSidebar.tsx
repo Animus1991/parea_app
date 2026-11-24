@@ -177,7 +177,7 @@ export function PlansFormingSidebar({ className }: { className?: string }) {
                   title={t('Ομάδες με θέσεις', 'Groups with spots')}
                   subtitle={
                     recruitingSpots > 0
-                      ? t(`${recruitingSpots} ανοιχτές θέσεις`, `${recruitingSpots} open spots`)
+                      ? t(countNoun(recruitingSpots, 'ανοιχτή θέση', 'ανοιχτές θέσεις'), countNoun(recruitingSpots, 'open spot', 'open spots'))
                       : undefined
                   }
                 />

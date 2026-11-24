@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store';
 import type { AppNotification } from '../../data/mockNotifications';
 import { useLanguage } from '../../lib/i18n';
+import { countNoun } from '../../lib/plural';
 import { cn } from '../../lib/utils';
 import { EmptyState } from '../common/EmptyState';
 import { ListViewSkeleton } from '../common/Skeleton';
@@ -281,7 +282,7 @@ export default function NotificationsPageContent() {
           </h1>
           <p className={cn(APP_TYPO.pageSub, 'mt-1', a.sub)}>
             {unreadCount > 0
-              ? t(`${unreadCount} μη αναγνωσμένες`, `${unreadCount} unread`)
+              ? t(countNoun(unreadCount, 'μη αναγνωσμένη', 'μη αναγνωσμένες'), `${unreadCount} unread`)
               : t('Τα είδες όλα!', "You're all caught up!")}
           </p>
         </div>

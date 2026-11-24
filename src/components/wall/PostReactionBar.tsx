@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { ArrowUpRight, Heart, MessageCircle, ThumbsUp } from 'lucide-react';
 import { useLanguage } from '../../lib/i18n';
+import { countNoun } from '../../lib/plural';
 import { cn } from '../../lib/utils';
 import type { ReactionKind } from '../../types/wall';
 import { QUICK_POST_REACTIONS } from '../../types/wall';
@@ -237,7 +238,7 @@ export function PostReactionBar({
           <button
             type="button"
             onClick={onOpenReactions}
-            aria-label={t(`${reactionCount} αντιδράσεις`, `${reactionCount} reactions`)}
+            aria-label={t(countNoun(reactionCount, 'αντίδραση', 'αντιδράσεις'), countNoun(reactionCount, 'reaction', 'reactions'))}
             className="inline-flex min-h-9 shrink-0 items-center gap-0.5 rounded-full px-1.5 text-xs font-medium text-ink-muted hover:bg-surface"
           >
             <span aria-hidden>{reactionEmojis.slice(0, 3).join('')}</span>
@@ -249,7 +250,7 @@ export function PostReactionBar({
         type="button"
         onClick={onComment}
         disabled={!canComment && commentCount === 0}
-        aria-label={commentCount ? t(`${commentCount} σχόλια`, `${commentCount} comments`) : t('Σχόλιο', 'Comment')}
+        aria-label={commentCount ? t(countNoun(commentCount, 'σχόλιο', 'σχόλια'), countNoun(commentCount, 'comment', 'comments')) : t('Σχόλιο', 'Comment')}
         className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl text-xs font-medium text-ink-muted hover:bg-surface hover:text-ink disabled:cursor-default disabled:opacity-50"
       >
         <MessageCircle className="h-4 w-4" aria-hidden />

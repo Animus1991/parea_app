@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
+import { countNoun } from '../../lib/plural';
 import { useStore } from '../../store';
 import { projectRequestForViewer } from '../../lib/companyRequestUtils';
 import { JoinRequestPreviewModal } from './JoinRequestPreviewModal';
@@ -116,7 +117,7 @@ export function PlansFormingCard({
   const interestLine = item.sharedInterestTags.length
     ? item.sharedInterestTags.slice(0, 2).map((tag) => interestLabel(tag, language)).join(' · ')
     : item.sharedInterestCount > 0
-      ? t(`${item.sharedInterestCount} κοινά`, `${item.sharedInterestCount} shared`)
+      ? t(countNoun(item.sharedInterestCount, 'κοινό', 'κοινά'), `${item.sharedInterestCount} shared`)
       : '';
   const iconBtn =
     'min-h-9 min-w-9 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-black/[0.04] dark:hover:bg-white/5 transition-colors';
@@ -541,7 +542,7 @@ export function PlansFormingCard({
         {item.sharedInterestCount > 0 && item.sharedInterestTags.length === 0 && (
           <>
             <span aria-hidden className="opacity-40">·</span>
-            <span>{t(`${item.sharedInterestCount} κοινά`, `${item.sharedInterestCount} shared`)}</span>
+            <span>{t(countNoun(item.sharedInterestCount, 'κοινό', 'κοινά'), `${item.sharedInterestCount} shared`)}</span>
           </>
         )}
       </p>

@@ -29,6 +29,7 @@ import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
 import { useLanguage } from '../../lib/i18n';
+import { countNoun } from '../../lib/plural';
 import { useStore } from '../../store';
 import { POST_MAX_CHARS, useWallAccess, useWallStore } from '../../store/wallStore';
 import { canCommentOnPost, tagShownOnProfile, visibleComments } from '../../lib/audience';
@@ -523,7 +524,7 @@ export function PostCard({
                     })}
                   </div>
                   <p className="text-xs font-medium text-ink-muted">
-                    {t(`${totalVotes} ψήφοι`, `${totalVotes} votes`)}
+                    {t(countNoun(totalVotes, 'ψήφος', 'ψήφοι'), countNoun(totalVotes, 'vote', 'votes'))}
                   </p>
                 </>
               );
