@@ -315,7 +315,7 @@ export default function InboxPageContent() {
                       </p>
                     </div>
                     {chat.unread > 0 && (
-                      <span className={cn('bg-brand text-white min-w-[20px] h-5 flex items-center justify-center rounded-full shrink-0 shadow-soft', INBOX_TYPO.unread)}>
+                      <span className={cn('bg-brand text-brand-fg min-w-[20px] h-5 flex items-center justify-center rounded-full shrink-0 shadow-soft', INBOX_TYPO.unread)}>
                         {chat.unread}
                       </span>
                     )}

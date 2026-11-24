@@ -1251,7 +1251,7 @@ export default function GroupChatPageContent() {
               />
               <button
                 type="submit"
-                className="px-4 py-2 min-h-9 text-xs font-bold text-white bg-brand hover:bg-brand-strong rounded-full shadow-soft transition-all duration-200 whitespace-nowrap"
+                className="px-4 py-2 min-h-9 text-xs font-bold text-brand-fg bg-brand hover:bg-brand-strong rounded-full shadow-soft transition-all duration-200 whitespace-nowrap"
               >
                 {t("Αποστολή", "Send")}
               </button>
@@ -1386,7 +1386,7 @@ export default function GroupChatPageContent() {
                           t(`${member.name} προστέθηκε`, `${member.name} added`),
                         );
                       }}
-                      className="text-xs font-semibold px-3 py-1.5 rounded-full border flex items-center gap-1 transition-all duration-200 bg-brand text-white border-brand hover:bg-brand-strong shadow-soft shrink-0"
+                      className="text-xs font-semibold px-3 py-1.5 rounded-full border flex items-center gap-1 transition-all duration-200 bg-brand text-brand-fg border-brand hover:bg-brand-strong shadow-soft shrink-0"
                     >
                       <UserPlus className="w-3 h-3" /> {t("Προσθήκη", "Add")}
                     </button>

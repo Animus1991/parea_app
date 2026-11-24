@@ -399,6 +399,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
               : theme === 'vibrant' || theme === 'vibrant-dark' ? 'bg-fuchsia-600 text-white hover:bg-fuchsia-700'
               : theme === 'bento' || theme === 'bento-dark' ? 'bg-indigo-600 text-white hover:bg-indigo-700'
               : theme === 'neon' || theme === 'neon-dark' ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+              : theme === 'classic-dark' ? 'bg-teal-700 text-white hover:bg-teal-600'
               : 'bg-brand text-white hover:bg-[#0b6d6f]',
           )}
         >
