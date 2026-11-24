@@ -111,6 +111,15 @@ export default function MyCalendarPageContent() {
     const dayEvents = upcomingEvents.filter((e) =>
       isSameDay(e.parsedDate, day),
     );
+    // Photos sit behind the number only from md up; on phones a busy day is a pale tint in
+    // light themes, so the number turns dark there.
+    const dayNumberTone = isToday(day)
+      ? "text-white drop-shadow-soft-md"
+      : dayEvents.length === 0
+        ? p.head
+        : p.isDark
+          ? "text-white drop-shadow-soft-md"
+          : "text-cyan-900 md:text-white md:drop-shadow-soft-md";
     return (
       <div
         key={day.toISOString()}
@@ -318,9 +327,7 @@ export default function MyCalendarPageContent() {
               // Desktop cells are small (72px at 1280px): the number sits top-left, clear of the
               // daily-schedule button top-right.
               "relative z-10 inline-flex min-h-7 min-w-7 items-center justify-center rounded-md text-sm md:text-base font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 md:absolute md:left-1.5 md:top-1.5",
-              isToday(day) || dayEvents.length > 0
-                ? "text-white drop-shadow-soft-md"
-                : p.head,
+              dayNumberTone,
             )}
           >
             {format(day, "d")}
@@ -329,9 +336,7 @@ export default function MyCalendarPageContent() {
           <span
             className={cn(
               "relative z-10 text-sm md:text-base font-bold md:absolute md:left-2.5 md:top-2",
-              isToday(day) || dayEvents.length > 0
-                ? "text-white drop-shadow-soft-md"
-                : p.head,
+              dayNumberTone,
             )}
           >
             {format(day, "d")}

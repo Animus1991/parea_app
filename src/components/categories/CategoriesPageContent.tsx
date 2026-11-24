@@ -410,7 +410,7 @@ export default function CategoriesPageContent() {
                       countNoun(category.count, 'event', 'events'),
                     )}
                     {category.forming > 0 && (
-                      <span className="block text-accent sm:inline sm:text-ink-muted">
+                      <span className="block text-accent-strong sm:inline sm:text-ink-muted">
                         <span className="hidden sm:inline"> · </span>
                         {t(
                           countNoun(category.forming, 'παρέα', 'παρέες'),
