@@ -141,6 +141,16 @@ describe.skipIf(!emulator)('firestore.rules', () => {
         await post('me', { base: 'only_me' });
         await post('fof', { base: 'friends_of_friends', reachIds: ['carol'] });
         await post('closed', { base: 'connections' }, { commentsDisabled: true });
+        await post('poll', { base: 'connections' }, {
+          poll: {
+            id: 'p1',
+            question: 'Πότε;',
+            options: [
+              { id: 'a', label: '20:00', voterIds: ['dave'] },
+              { id: 'b', label: '21:00', voterIds: [] },
+            ],
+          },
+        });
         // bob wrote on alice's wall; alice keeps others' posts to herself.
         await setDoc(doc(db, 'wallPosts/onAlice'), { authorId: 'bob', wallOwnerId: 'alice', text: 'hi', audience: { base: 'connections' }, createdAt: 1 });
         await setDoc(doc(db, 'wallSettings/alice'), { othersPostsAudience: { base: 'only_me' }, whoCanPost: { base: 'connections' }, whoCanComment: { base: 'connections' } });
@@ -173,6 +183,38 @@ describe.skipIf(!emulator)('firestore.rules', () => {
         await setDoc(doc(ctx.firestore(), 'socialGraph/alice'), { connections: ['bob', 'dave'], blocked: ['eve'] });
       });
       await assertFails(read('eve', 'pub'));
+    });
+
+    it('lets a reader change only their own poll vote', async () => {
+      const poll = (a: string[], b: string[], labelA = '20:00') => ({
+        poll: {
+          id: 'p1',
+          question: 'Πότε;',
+          options: [
+            { id: 'a', label: labelA, voterIds: a },
+            { id: 'b', label: '21:00', voterIds: b },
+          ],
+        },
+      });
+      const asBob = doc(as('bob'), 'wallPosts/poll');
+      // bob adds his own vote, then moves it.
+      await assertSucceeds(updateDoc(asBob, poll(['dave', 'bob'], [])));
+      await assertSucceeds(updateDoc(asBob, poll(['dave'], ['bob'])));
+      // bob cannot remove dave's vote, vote for carol, or rename an option.
+      await assertFails(updateDoc(asBob, poll([], ['bob'])));
+      await assertFails(updateDoc(asBob, poll(['dave'], ['bob', 'carol'])));
+      await assertFails(updateDoc(asBob, poll(['dave'], ['bob'], 'never')));
+      // a new poll starts with no votes.
+      await assertFails(
+        setDoc(doc(as('alice'), 'wallPosts/newPoll'), {
+          authorId: 'alice',
+          wallOwnerId: 'alice',
+          text: 'q',
+          audience: { base: 'connections' },
+          createdAt: serverTimestamp(),
+          ...poll(['bob'], []),
+        }),
+      );
     });
 
     it('applies the wall owner’s setting to posts others wrote there', async () => {

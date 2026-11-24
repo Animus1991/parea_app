@@ -182,6 +182,39 @@ service cloud.firestore {
       );
     }
 
+    // Wall polls: 2–4 options, each with its own voter list.
+    function validPoll(p) {
+      return p is map
+        && p.keys().hasOnly(['id', 'question', 'options'])
+        && p.question is string && p.question.size() <= 140
+        && p.options is list && p.options.size() >= 2 && p.options.size() <= 4;
+    }
+
+    function noVotes(p) {
+      return p.options[0].voterIds.size() == 0
+        && p.options[1].voterIds.size() == 0
+        && (p.options.size() < 3 || p.options[2].voterIds.size() == 0)
+        && (p.options.size() < 4 || p.options[3].voterIds.size() == 0);
+    }
+
+    function sameOptionOnlyMyVote(n, o) {
+      return n.keys().hasOnly(['id', 'label', 'voterIds'])
+        && n.id == o.id && n.label == o.label
+        && n.voterIds is list && n.voterIds.size() <= 1000
+        && n.voterIds.toSet().difference(o.voterIds.toSet()).hasOnly([request.auth.uid])
+        && o.voterIds.toSet().difference(n.voterIds.toSet()).hasOnly([request.auth.uid]);
+    }
+
+    function onlyMyVoteChanged(n, o) {
+      return validPoll(n)
+        && n.id == o.id && n.question == o.question
+        && n.options.size() == o.options.size()
+        && sameOptionOnlyMyVote(n.options[0], o.options[0])
+        && sameOptionOnlyMyVote(n.options[1], o.options[1])
+        && (n.options.size() < 3 || sameOptionOnlyMyVote(n.options[2], o.options[2]))
+        && (n.options.size() < 4 || sameOptionOnlyMyVote(n.options[3], o.options[3]));
+    }
+
     function validPostData(d) {
       return d.keys().hasOnly(['authorId', 'wallOwnerId', 'text', 'imageUrl', 'imageUrls', 'gifUrl', 'gifFallbackUrl', 'poll', 'feeling', 'location', 'bg', 'eventId', 'audience', 'createdAt', 'editedAt', 'pinned', 'commentsDisabled', 'taggedIds', 'tagApprovedIds', 'moderation'])
         && (!('taggedIds' in d) || (d.taggedIds is list && d.taggedIds.size() <= 20))
@@ -194,7 +227,7 @@ service cloud.firestore {
         && (!('imageUrls' in d) || (d.imageUrls is list && d.imageUrls.size() <= 4))
         && (!('gifUrl' in d) || (d.gifUrl is string && d.gifUrl.size() <= 2048 && d.gifUrl.matches('https://.*')))
         && (!('gifFallbackUrl' in d) || (d.gifFallbackUrl is string && d.gifFallbackUrl.size() <= 2048 && d.gifFallbackUrl.matches('https://.*')))
-        && (!('poll' in d) || d.poll is map)
+        && (!('poll' in d) || validPoll(d.poll))
         && (!('feeling' in d) || (d.feeling is string && d.feeling.size() <= 32))
         && (!('location' in d) || (d.location is string && d.location.size() <= 80))
         && (!('bg' in d) || (d.bg is string && d.bg.size() <= 32))
@@ -246,6 +279,8 @@ service cloud.firestore {
       allow create: if signedIn()
         && request.resource.data.authorId == request.auth.uid
         && validPostData(request.resource.data)
+        // A new poll starts with no votes.
+        && (!('poll' in request.resource.data) || noVotes(request.resource.data.poll))
         && request.resource.data.createdAt == request.time
         && !('editedAt' in request.resource.data)
         && !('pinned' in request.resource.data)
@@ -272,8 +307,9 @@ service cloud.firestore {
             && 'poll' in resource.data
             && 'poll' in request.resource.data
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['poll'])
-            && request.resource.data.poll.question == resource.data.poll.question
-            && request.resource.data.poll.options.size() == resource.data.poll.options.size())
+            // A reader changes only their own vote: same question and options, and no
+            // other voter added or removed.
+            && onlyMyVoteChanged(request.resource.data.poll, resource.data.poll))
           || (request.auth.uid == resource.data.wallOwnerId
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pinned', 'commentsDisabled']))
           || (request.auth.uid in resource.data.get('taggedIds', [])
