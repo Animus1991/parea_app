@@ -182,6 +182,15 @@ service cloud.firestore {
       );
     }
 
+    // GIFs are https; Nakamas stickers are bundled images (/chat-hats/…) or small
+    // inline SVGs, which the app also uses as the fallback when a GIF does not load.
+    function validGifUrl(u) {
+      return u is string && (
+        (u.size() <= 2048 && u.matches('https://.*'))
+        || u.matches('/chat-hats/[A-Za-z0-9._-]+')
+        || (u.size() <= 8192 && u.matches('data:image/svg[+]xml.*')));
+    }
+
     // Wall polls: 2–4 options, each with its own voter list.
     function validPoll(p) {
       return p is map
@@ -225,8 +234,8 @@ service cloud.firestore {
         && validAudience(d.audience, allBases())
         && (!('imageUrl' in d) || (d.imageUrl is string && d.imageUrl.size() <= 2048 && d.imageUrl.matches('https://.*')))
         && (!('imageUrls' in d) || (d.imageUrls is list && d.imageUrls.size() <= 4))
-        && (!('gifUrl' in d) || (d.gifUrl is string && d.gifUrl.size() <= 2048 && d.gifUrl.matches('https://.*')))
-        && (!('gifFallbackUrl' in d) || (d.gifFallbackUrl is string && d.gifFallbackUrl.size() <= 2048 && d.gifFallbackUrl.matches('https://.*')))
+        && (!('gifUrl' in d) || validGifUrl(d.gifUrl))
+        && (!('gifFallbackUrl' in d) || validGifUrl(d.gifFallbackUrl))
         && (!('poll' in d) || validPoll(d.poll))
         && (!('feeling' in d) || (d.feeling is string && d.feeling.size() <= 32))
         && (!('location' in d) || (d.location is string && d.location.size() <= 80))
@@ -341,8 +350,8 @@ service cloud.firestore {
           && (request.resource.data.text.size() > 0 || request.resource.data.keys().hasAny(['imageUrl', 'gifUrl']))
           && request.resource.data.createdAt == request.time
           && (!('imageUrl' in request.resource.data) || (request.resource.data.imageUrl is string && request.resource.data.imageUrl.size() <= 2048 && request.resource.data.imageUrl.matches('https://.*')))
-          && (!('gifUrl' in request.resource.data) || (request.resource.data.gifUrl is string && request.resource.data.gifUrl.size() <= 2048 && request.resource.data.gifUrl.matches('https://.*')))
-          && (!('gifFallbackUrl' in request.resource.data) || (request.resource.data.gifFallbackUrl is string && request.resource.data.gifFallbackUrl.size() <= 2048 && request.resource.data.gifFallbackUrl.matches('https://.*')))
+          && (!('gifUrl' in request.resource.data) || validGifUrl(request.resource.data.gifUrl))
+          && (!('gifFallbackUrl' in request.resource.data) || validGifUrl(request.resource.data.gifFallbackUrl))
           && (!('parentId' in request.resource.data) || (request.resource.data.parentId is string && request.resource.data.parentId.size() <= 128))
           && (!('mentionIds' in request.resource.data) || (request.resource.data.mentionIds is list && request.resource.data.mentionIds.size() <= 20))
           && (request.auth.uid == get(postPath(postId)).data.authorId

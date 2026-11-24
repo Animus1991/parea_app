@@ -217,6 +217,24 @@ describe.skipIf(!emulator)('firestore.rules', () => {
       );
     });
 
+    it('accepts GIFs and Nakamas stickers as the app sends them, nothing else', async () => {
+      const svg = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg"><text>🙌</text></svg>');
+      const base = { authorId: 'alice', wallOwnerId: 'alice', text: '', audience: { base: 'connections' } };
+      const write = (id: string, media: Record<string, string>) =>
+        setDoc(doc(as('alice'), `wallPosts/${id}`), { ...base, ...media, createdAt: serverTimestamp() });
+      await assertSucceeds(write('gif', { gifUrl: 'https://media.giphy.com/media/x/giphy.gif', gifFallbackUrl: svg }));
+      await assertSucceeds(write('sticker', { gifUrl: '/chat-hats/01-plan.png', gifFallbackUrl: svg }));
+      await assertSucceeds(write('svgSticker', { gifUrl: svg }));
+      await assertFails(write('js', { gifUrl: 'javascript:alert(1)' }));
+      await assertFails(write('http', { gifUrl: 'http://example.com/a.gif' }));
+      await assertFails(write('path', { gifUrl: '/chat-hats/../../secret' }));
+      await assertFails(write('png', { gifUrl: 'data:image/png;base64,AAAA' }));
+      // comments take the same media
+      await assertSucceeds(
+        addDoc(collection(as('bob'), 'wallPosts/conn/comments'), { authorId: 'bob', text: '', gifUrl: '/chat-hats/05-wear.png', gifFallbackUrl: svg, createdAt: serverTimestamp() }),
+      );
+    });
+
     it('applies the wall owner’s setting to posts others wrote there', async () => {
       await assertSucceeds(read('bob', 'onAlice')); // author
       await assertSucceeds(read('alice', 'onAlice')); // wall owner
