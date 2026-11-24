@@ -200,6 +200,8 @@ test.describe('Discover card image picker', () => {
   });
 
   test('Full cards keep hosting and Find Nakamas notes', async ({ page }) => {
+    // Demo company requests sit on fixed dates; read the page before they pass.
+    await page.clock.setFixedTime(new Date('2026-11-20T10:00:00+02:00'));
     await enterDemoGuest(page);
     const hostChip = page.getByRole('button', { name: /Χωρίς διοργανωτή|Seeking organizer/ });
     if (await hostChip.count()) {
