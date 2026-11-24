@@ -4,6 +4,8 @@ interface ImportMetaEnv {
   readonly VITE_GOOGLE_MAPS_API_KEY: string;
   readonly VITE_GOOGLE_MAPS_PLATFORM_KEY: string;
   readonly VITE_TICKETMASTER_API_KEY: string;
+  /** Optional: live GIPHY search in the Wall media picker. */
+  readonly VITE_GIPHY_API_KEY?: string;
   readonly VITE_GEMINI_API_KEY: string;
   readonly GEMINI_API_KEY: string;
 }

@@ -594,6 +594,23 @@ time, [data-numeric], .tabular-nums { font-variant-numeric: tabular-nums; }
   line-height: 1.4;
 }
 
+/*
+ * Calendar day cells: event titles show only when the cell is wide enough to
+ * read them (desktop cells are about 72px at 1280px). The photos always show;
+ * the day button names the date and how many events it has.
+ */
+.cal-cell {
+  container-type: inline-size;
+}
+.cal-cell-text {
+  display: none;
+}
+@container (min-width: 8rem) {
+  .cal-cell-text {
+    display: block;
+  }
+}
+
 /* Readable card prose/lists under 12px card titles (11.04px, > 10px micro/buttons) */
 .card-prose {
   font-size: calc(var(--text-sm) * 0.92); /* ~11px */

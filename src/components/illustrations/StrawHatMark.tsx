@@ -283,7 +283,7 @@ export function StrawHatSpin({
       aria-hidden
     >
       {src ? (
-        <img src={src} alt="" draggable={false} className={cn('object-contain', markClassName)} />
+        <img src={src} alt="" draggable={false} data-straw-hat="photo" className={cn('object-contain', markClassName)} />
       ) : (
         <StrawHatMark variant="plan" className={markClassName} />
       )}

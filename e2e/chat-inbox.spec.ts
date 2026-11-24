@@ -153,7 +153,8 @@ test.describe('Nakamas Chat preview', () => {
   test('the floated straw hat opens plan chats', async ({ page }) => {
     await enterDemoGuest(page);
     const btn = chatsButton(page);
-    await expect(btn.locator('svg[data-straw-hat="plan"]')).toBeVisible();
+    // The default hat is a photo; a drawn plan view is the fallback.
+    await expect(btn.locator('[data-straw-hat="photo"], svg[data-straw-hat="plan"]').first()).toBeVisible();
     await btn.click();
     const sheet = inbox(page);
     await expect(sheet).toBeVisible();
@@ -303,7 +304,8 @@ test.describe('Nakamas Chat desktop hat', () => {
   test('floated straw hat opens plan chats', async ({ page }) => {
     await enterDemoGuest(page);
     const btn = chatsButton(page);
-    await expect(btn.locator('svg[data-straw-hat="plan"]')).toBeVisible();
+    // The default hat is a photo; a drawn plan view is the fallback.
+    await expect(btn.locator('[data-straw-hat="photo"], svg[data-straw-hat="plan"]').first()).toBeVisible();
     const sheet = await openInbox(page);
     await sheet.getByRole('button', { name: /^Κλείσιμο$|^Close$/ }).click();
     await expect(sheet).toHaveCount(0);

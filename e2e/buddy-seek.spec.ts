@@ -6,6 +6,8 @@ test.describe('Find Nakamas', () => {
   test('keeps every action while staying one language and not repeating mini outings', async ({
     page,
   }) => {
+    // Demo company requests sit on fixed dates; read the page before they pass.
+    await page.clock.setFixedTime(new Date('2026-11-20T10:00:00+02:00'));
     await page.setViewportSize({ width: 390, height: 844 });
     await enterDemoGuest(page);
     await page.goto('/buddy-seek');
@@ -67,6 +69,8 @@ test.describe('Find Nakamas', () => {
   });
 
   test('Discover rail matches the quiet Find Nakamas cards', async ({ page }) => {
+    // Demo company requests sit on fixed dates; read the page before they pass.
+    await page.clock.setFixedTime(new Date('2026-11-20T10:00:00+02:00'));
     await page.setViewportSize({ width: 1440, height: 900 });
     await enterDemoGuest(page);
     const rail = page.getByRole('complementary', { name: /Βρες Nakamas|Find Nakamas/ });
@@ -133,6 +137,8 @@ test.describe('Find Nakamas', () => {
   });
 
   test('mobile sheet is nearby outings, not My Plans or the event feed', async ({ page }) => {
+    // Demo company requests sit on fixed dates; read the page before they pass.
+    await page.clock.setFixedTime(new Date('2026-11-20T10:00:00+02:00'));
     await page.setViewportSize({ width: 390, height: 844 });
     await enterDemoGuest(page);
     await page.getByRole('button', { name: /Βρες παρέα τώρα — μικρές έξοδοι δίπλα σου|Find company now — small outings next to you/ }).click();

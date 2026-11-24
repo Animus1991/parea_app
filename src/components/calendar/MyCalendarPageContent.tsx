@@ -26,7 +26,8 @@ import {
   isSameMonth,
 } from "date-fns";
 import { el as elLocale, enUS } from "date-fns/locale";
-import { pressable } from "../../lib/a11y";
+import { pressable, redundantClick } from "../../lib/a11y";
+import { countNoun } from "../../lib/plural";
 import { motion, AnimatePresence } from "motion/react";
 import { useStore } from "../../store";
 import { useLanguage } from "../../lib/i18n";
@@ -113,10 +114,11 @@ export default function MyCalendarPageContent() {
     return (
       <div
         key={day.toISOString()}
-        {...(isCurrentPeriod ? pressable<HTMLDivElement>(() => handleCellClick(day, dayEvents)) : {})}
-        aria-label={`${format(day, "EEEE d MMMM", { locale: dateLocale })}${dayEvents.length ? ` · ${dayEvents.length} ${t("εκδηλώσεις", "events")}` : ""}`}
+        // The whole cell is a mouse/touch shortcut; keyboards and screen readers use the
+        // day number button below, so the daily-schedule button is not nested in another.
+        {...(isCurrentPeriod ? redundantClick<HTMLDivElement>(() => handleCellClick(day, dayEvents)) : {})}
         className={cn(
-          "relative min-h-[140px] md:min-h-0 md:aspect-[3/4] lg:aspect-square flex flex-col items-center justify-center rounded-xl md:rounded-2xl cursor-pointer transition-all border overflow-hidden",
+          "cal-cell relative min-h-[140px] md:min-h-0 md:aspect-[3/4] lg:aspect-square flex flex-col items-center justify-center rounded-xl md:rounded-2xl cursor-pointer transition-all border overflow-hidden",
           isToday(day)
             ? p.isAB
               ? "bg-[hsl(220_16%_22%)] text-white border-[hsl(220_13%_30%)] shadow-soft"
@@ -139,7 +141,7 @@ export default function MyCalendarPageContent() {
               setHourlyViewDay(day);
             }}
             className={cn(
-              "absolute top-1.5 right-1.5 z-20 p-1 rounded-lg min-h-8 min-w-8 flex items-center justify-center",
+              "absolute top-1.5 right-1.5 z-20 p-1 rounded-lg min-h-8 min-w-8 md:min-h-6 md:min-w-6 flex items-center justify-center",
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500",
               "bg-black/40 hover:bg-black/55 text-white",
             )}
@@ -160,12 +162,12 @@ export default function MyCalendarPageContent() {
                 }}
               >
                 <div className="absolute inset-0 bg-black/30" />
-                <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
+                <div className="cal-cell-text absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
                   <p className="text-xs text-white truncate font-bold">
                     {dayEvents[0].title}
                   </p>
                   <p className="text-xs text-white/80 truncate">
-                    {dayEvents[0].time} • {dayEvents[0].locationArea}
+                    {dayEvents[0].time} · {formatLocationArea(dayEvents[0].locationArea, language)}
                   </p>
                 </div>
               </div>
@@ -182,7 +184,7 @@ export default function MyCalendarPageContent() {
                   }}
                 >
                   <div className="absolute inset-0 bg-black/40" />
-                  <div className="absolute top-1 right-1 max-w-[60%] text-right">
+                  <div className="cal-cell-text absolute top-1 right-1 max-w-[60%] text-right">
                     <p className="text-xs text-white truncate font-bold">
                       {dayEvents[0].title}
                     </p>
@@ -201,7 +203,7 @@ export default function MyCalendarPageContent() {
                   }}
                 >
                   <div className="absolute inset-0 bg-black/40" />
-                  <div className="absolute bottom-1 left-1 max-w-[60%] text-left">
+                  <div className="cal-cell-text absolute bottom-1 left-1 max-w-[60%] text-left">
                     <p className="text-xs text-white truncate font-bold">
                       {dayEvents[1].title}
                     </p>
@@ -229,7 +231,7 @@ export default function MyCalendarPageContent() {
                   >
                     <div className="absolute inset-0 bg-black/40" />
                     <div
-                      className="absolute inset-x-0 bottom-0 px-1 py-0.5"
+                      className="cal-cell-text absolute inset-x-0 bottom-0 px-1 py-0.5"
                       style={{
                         background:
                           "linear-gradient(transparent, rgba(0,0,0,0.8))",
@@ -257,7 +259,7 @@ export default function MyCalendarPageContent() {
                   >
                     <div className="absolute inset-0 bg-black/40" />
                     <div
-                      className="absolute inset-x-0 bottom-0 px-1 py-0.5"
+                      className="cal-cell-text absolute inset-x-0 bottom-0 px-1 py-0.5"
                       style={{
                         background: "linear-gradient(transparent, rgba(0,0,0,0.8))",
                       }}
@@ -287,7 +289,7 @@ export default function MyCalendarPageContent() {
                     }}
                   >
                     <div className="absolute inset-0 bg-black/40" />
-                    <div className="absolute inset-x-0 bottom-0 px-1 py-px" style={{ background: "linear-gradient(transparent, rgba(0,0,0,0.8))" }}>
+                    <div className="cal-cell-text absolute inset-x-0 bottom-0 px-1 py-px" style={{ background: "linear-gradient(transparent, rgba(0,0,0,0.8))" }}>
                       <p className="text-xs text-white truncate font-bold leading-tight">
                         {ev.title}
                       </p>
@@ -304,16 +306,37 @@ export default function MyCalendarPageContent() {
           </div>
         )}
 
-        <span
-          className={cn(
-            "relative z-10 text-sm md:text-base font-bold",
-            isToday(day) || dayEvents.length > 0
-              ? "text-white drop-shadow-soft-md"
-              : p.head,
-          )}
-        >
-          {format(day, "d")}
-        </span>
+        {isCurrentPeriod ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCellClick(day, dayEvents);
+            }}
+            aria-label={`${format(day, "EEEE d MMMM", { locale: dateLocale })}${dayEvents.length ? ` · ${countNoun(dayEvents.length, t("εκδήλωση", "event"), t("εκδηλώσεις", "events"))}` : ""}`}
+            className={cn(
+              // Desktop cells are small (72px at 1280px): the number sits top-left, clear of the
+              // daily-schedule button top-right.
+              "relative z-10 inline-flex min-h-7 min-w-7 items-center justify-center rounded-md text-sm md:text-base font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 md:absolute md:left-1.5 md:top-1.5",
+              isToday(day) || dayEvents.length > 0
+                ? "text-white drop-shadow-soft-md"
+                : p.head,
+            )}
+          >
+            {format(day, "d")}
+          </button>
+        ) : (
+          <span
+            className={cn(
+              "relative z-10 text-sm md:text-base font-bold md:absolute md:left-2.5 md:top-2",
+              isToday(day) || dayEvents.length > 0
+                ? "text-white drop-shadow-soft-md"
+                : p.head,
+            )}
+          >
+            {format(day, "d")}
+          </span>
+        )}
 
         {dayEvents.length > 0 && (
           <div className="md:hidden relative z-10 flex items-center justify-center bg-amber-500 text-white rounded-full w-[18px] h-[18px] text-xs font-bold mt-1 shadow-soft">
